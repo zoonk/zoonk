@@ -10,6 +10,13 @@ struct BuddyChoice: Equatable, Sendable {
   var kind: BuddyKind
   var name: String?
   var glasses: BuddyGlasses
+
+  var input: Components.Schemas.BuddyInput? {
+    guard let kind = Components.Schemas.BuddyInput.KindPayload(rawValue: kind.rawValue),
+      let glasses = Components.Schemas.BuddyInput.GlassesPayload(rawValue: glasses.rawValue)
+    else { return nil }
+    return .init(glasses: glasses, kind: kind, name: name)
+  }
 }
 
 protocol BuddyAPIClient: Sendable {
@@ -59,10 +66,7 @@ struct BuddyAPI: BuddyAPIClient {
 
   func save(_ buddy: BuddyChoice, token: String) async throws {
     try await clients.perform(token: token) { client in
-      let input = Components.Schemas.BuddyInput(
-        glasses: .init(rawValue: buddy.glasses.rawValue),
-        kind: .init(rawValue: buddy.kind.rawValue) ?? .zu,
-        name: buddy.name)
+      guard let input = buddy.input else { throw APIError.unavailable }
       let output = try await client.updateCurrentUserLearningProfile(
         body: .json(.init(buddy: .init(value1: input))))
 

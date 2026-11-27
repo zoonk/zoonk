@@ -327,6 +327,7 @@ struct CharacterRow: View {
         Group {
           if let role = intro.speakingTask?.task.role {
             switch role {
+            case .unrecognized: EmptyView()
             case .examiner:
               Text(
                 "Examiner (AI)", tableName: "Voice",

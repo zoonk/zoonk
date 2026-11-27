@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.activities
 
+import com.zoonk.android.feature.player.model.canvasOwnsAnswer
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test

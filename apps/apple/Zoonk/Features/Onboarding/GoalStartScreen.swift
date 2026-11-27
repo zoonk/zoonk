@@ -429,6 +429,7 @@ struct DraftView: View {
   @ViewBuilder
   private func page(_ draft: OnboardingDraft) -> some View {
     switch draft.status {
+    case .unrecognized: EmptyView()
     case .understanding:
       UnderstandingWaitView(
         goal: draft.prompt, generationID: draft.generationId, onboardingID: draft.id,

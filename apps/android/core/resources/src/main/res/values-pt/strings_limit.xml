@@ -40,7 +40,8 @@
   "limit_quick_explanations_used": "9ae36640a58801c2b964f89da8800ca6d596ca446f96079d21e61e04542dcacb",
   "limit_sentence": "c6bb79f104338d21507dfe5720114f9a8ddddab7105f8c1607c83eec63a42dd1",
   "limit_sign_up_required": "fa73cb939432b1bb3cfc09b2ffdeade658ec30565a8491980ab8a17e8229d260",
-  "limit_slow_down": "7af94c1fc078a29b60f35b87a1accb32ebbbf7703b86ad99863ad4b1b8e74813",
+  "limit_slow_down_minutes": "142e40bb37f5a3d01c69a1846c4109343530995eaf0c5408f933f9ce3098cb7d",
+  "limit_slow_down_seconds": "0b693eecaa8fef9996f87a0f85610bcff97aa70f6c3f781746fc52f9f8988993",
   "limit_still_review": "ad345509d64f54386a731580ca3b656614f3d10d8d5cf23ae5838d219c1d061d",
   "limit_try_again_now": "a980e414860bcdc38ed57a08da5b0f55acbda04313ff11acedfe2048ef7bf5bc",
   "limit_uploads_day": "63ec48d1026e1dd581b40c6f4ebe5cc8cd78fa851b402cf4680665a88e0063c9",
@@ -49,7 +50,18 @@
 -->
 <resources>
     <string name="limit_create_account">Criar uma conta grátis</string>
-    <string name="limit_slow_down">Faça uma pausa rápida e tente de novo.</string>
+    <!-- The line of a notice that the learner sent too many requests in a short time, such as questions to their study buddy, and must wait before the next one. It counts down every second until they can try again. -->
+    <plurals name="limit_slow_down_seconds">
+        <item quantity="one">Faça uma pausa rápida. Você pode tentar de novo em %1$s segundo.</item>
+        <item quantity="many">Faça uma pausa rápida. Você pode tentar de novo em %1$s segundos.</item>
+        <item quantity="other">Faça uma pausa rápida. Você pode tentar de novo em %1$s segundos.</item>
+    </plurals>
+    <!-- The line of a notice that the learner sent too many requests in a short time, such as questions to their study buddy, and must wait before the next one. It counts down every minute until they can try again. -->
+    <plurals name="limit_slow_down_minutes">
+        <item quantity="one">Faça uma pausa rápida. Você pode tentar de novo em %1$s minuto.</item>
+        <item quantity="many">Faça uma pausa rápida. Você pode tentar de novo em %1$s minutos.</item>
+        <item quantity="other">Faça uma pausa rápida. Você pode tentar de novo em %1$s minutos.</item>
+    </plurals>
     <string name="limit_sign_up_required">Você precisa de uma conta grátis para isso</string>
     <string name="limit_more_tomorrow">Amanhã tem mais.</string>
     <string name="limit_more_tomorrow_or_subscribe">Você terá mais amanhã ou pode assinar para continuar.</string>

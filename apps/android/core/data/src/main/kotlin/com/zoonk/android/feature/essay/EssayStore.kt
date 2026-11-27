@@ -227,6 +227,10 @@ private fun WritingStartOneOf2Task.name(): WritingTaskName? {
 
 private fun WritingStart.toAnswer(): WritingStartAnswer =
     when (this) {
+        is WritingStart.WritingStartOneOf3Value -> {
+            throw ApiException(ApiError.Unavailable)
+        }
+
         is WritingStart.WritingStartOneOfValue -> {
             WritingStartAnswer.Ready(value.admissionId)
         }

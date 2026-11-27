@@ -158,6 +158,8 @@ internal fun rememberCountryRebuild(
     }
     LaunchedEffect(rebuild) {
         when (rebuild) {
+            GoalContentCountry.Rebuild.UNKNOWN_DEFAULT_OPEN_API -> {}
+
             GoalContentCountry.Rebuild.PREPARING -> {
                 waited = true
                 ready = false

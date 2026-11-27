@@ -50,12 +50,11 @@ internal fun EssayStepContent(
     onGrade: () -> Unit,
 ) {
     val essay = step.essay
-    val grade = essay.grade
+    val grade = remember(essay.grade) { essay.grade?.toGrade() }
     val writing = essay.writing
     if (grade != null && writing != null) {
-        val shown = remember(grade) { grade.toGrade() }
         WritingResultView(
-            shown,
+            grade,
             writing,
             essay.text.orEmpty(),
             eyebrow = writing.title,

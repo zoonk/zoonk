@@ -41,7 +41,7 @@ sealed interface CallRequest {
                     LanguageConversationStartInputOneOf(
                         chapterId = chapterId,
                         kind = LanguageConversationStartInputOneOf.Kind.PRACTICE,
-                        minutes = LanguageConversationStartInputOneOf.Minutes.entries.first { it.value == minutes.toDouble() },
+                        minutes = minutes.toDouble(),
                         goalId = goalId,
                     ),
                 )

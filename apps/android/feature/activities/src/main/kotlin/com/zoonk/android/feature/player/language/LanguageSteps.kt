@@ -119,7 +119,7 @@ fun LanguageStepView(
     val languages = language.languages
     val prompt = language.prompt
     val speech = language.speech
-    val exercise = remember(content.exercise) { content.exercise.toExercise() }
+    val exercise = remember(content.exercise) { content.exercise.toExercise() } ?: return
     val select = { answer: LessonAnswer? -> if (!locked) actions.select(answer) }
     val sound: (@Composable () -> Unit)? =
         prompt?.let {
@@ -291,7 +291,7 @@ fun languageOptionAnswer(
     content: StepContent.Language,
     index: Int,
 ): LessonAnswer? {
-    val exercise = content.exercise.toExercise()
+    val exercise = content.exercise.toExercise() ?: return null
     return when (content.kind) {
         StepKind.MultipleChoice -> {
             (exercise.content as? ExerciseContent.MultipleChoice)

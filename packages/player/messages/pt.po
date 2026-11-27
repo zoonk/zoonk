@@ -3704,11 +3704,6 @@ msgid "We couldn't send this question. Try again."
 msgstr "Não conseguimos enviar esta pergunta. Tente de novo."
 
 #: src/questions/lesson-question-errors.tsx
-msgctxt "-xjsCZ"
-msgid "Take a short break, then ask again."
-msgstr "Faça uma pausa curta e pergunte de novo."
-
-#: src/questions/lesson-question-errors.tsx
 msgctxt "3kJE8G"
 msgid "Something went wrong. Try again."
 msgstr "Algo deu errado. Tente de novo."

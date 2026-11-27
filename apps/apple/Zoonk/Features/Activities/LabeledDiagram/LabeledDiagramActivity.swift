@@ -4,10 +4,8 @@ extension ActivityRenderer {
   static let labeledDiagram = ActivityRenderer(
     template: "labeledDiagram",
     grade: ActivityExpectedAnswer.grader(LabeledDiagramFields.self) { $0.expected }
-  ) { context in
-    if let fields = try? context.fields(as: LabeledDiagramFields.self) {
-      LabeledDiagramCanvas(fields: fields, context: context)
-    }
+  ) { context, fields in
+    LabeledDiagramCanvas(fields: fields, context: context)
   }
 }
 

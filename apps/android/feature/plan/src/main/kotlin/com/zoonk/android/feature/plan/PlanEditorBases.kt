@@ -358,7 +358,7 @@ private fun basesSummary(bases: PlanBases): String {
                 .toSet()
                 .singleOrNull()
         ) {
-            null -> R.plurals.plan_bases_mixed
+            PlanBase.Choice.UNKNOWN_DEFAULT_OPEN_API, null -> R.plurals.plan_bases_mixed
             PlanBase.Choice.DEEP -> R.plurals.plan_bases_deep
             PlanBase.Choice.QUICK -> R.plurals.plan_bases_quick
             PlanBase.Choice.SKIP -> R.plurals.plan_bases_skip
@@ -368,15 +368,17 @@ private fun basesSummary(bases: PlanBases): String {
 }
 
 @Composable
-private fun baseChoiceName(choice: PlanBase.Choice) =
-    stringResource(
+private fun baseChoiceName(choice: PlanBase.Choice): String {
+    return stringResource(
         when (choice) {
+            PlanBase.Choice.UNKNOWN_DEFAULT_OPEN_API -> return ""
             PlanBase.Choice.DEEP -> R.string.plan_base_deep
             PlanBase.Choice.ESSENTIAL -> R.string.plan_base_essential
             PlanBase.Choice.QUICK -> R.string.plan_base_quick
             PlanBase.Choice.SKIP -> R.string.plan_base_skip
         },
     )
+}
 
 /** A studied prerequisite takes only the depth beyond its core. */
 internal fun PlanBase.minutesFor(choice: PlanBase.Choice): Long =
@@ -388,6 +390,7 @@ internal fun PlanBase.minutesFor(choice: PlanBase.Choice): Long =
 
 private fun PlanBase.Choice.minutesIn(minutes: PlanBaseMinutes): Long =
     when (this) {
+        PlanBase.Choice.UNKNOWN_DEFAULT_OPEN_API -> 0
         PlanBase.Choice.DEEP -> minutes.deep
         PlanBase.Choice.ESSENTIAL -> minutes.essential
         PlanBase.Choice.QUICK -> minutes.quick
@@ -406,7 +409,10 @@ internal fun PlanBase.chooseFor(
 ): PlanBase.Choice = if (choices.any { it.value == choice.value }) choice else current
 
 internal fun openChoices(items: List<PlanBase>): List<PlanBase.Choice> =
-    PlanBase.Choice.entries.filter { choice -> items.any { item -> item.choices.any { it.value == choice.value } } }
+    PlanBase.Choice.entries.filter { choice ->
+        choice != PlanBase.Choice.UNKNOWN_DEFAULT_OPEN_API &&
+            items.any { item -> item.choices.any { it.value == choice.value } }
+    }
 
 /** The prerequisites still to study, or all of them when every one is studied. */
 internal fun listOpen(items: List<PlanBase>): List<PlanBase> = items.filterNot { it.studied }.ifEmpty { items }

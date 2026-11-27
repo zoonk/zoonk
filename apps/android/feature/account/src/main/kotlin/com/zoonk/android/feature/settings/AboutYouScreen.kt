@@ -132,21 +132,20 @@ private val ABOUT_YOU_GROUPS =
 
 @Composable
 private fun profileRowTitle(question: ProfileQuestion): String =
-    stringResource(
-        when (question) {
-            ProfileQuestion.WORK -> R.string.profile_questions_row_work
-            ProfileQuestion.TOOLS -> R.string.profile_questions_row_tools
-            ProfileQuestion.STUDIES -> R.string.profile_questions_row_studies
-            ProfileQuestion.WATCH -> R.string.profile_questions_row_watch
-            ProfileQuestion.LISTEN -> R.string.profile_questions_row_listen
-            ProfileQuestion.PLAY -> R.string.profile_questions_row_play
-            ProfileQuestion.READ -> R.string.profile_questions_row_read
-            ProfileQuestion.ACTIVITIES -> R.string.profile_questions_row_activities
-            ProfileQuestion.CONDITIONS -> R.string.profile_questions_row_conditions
-            ProfileQuestion.LEARNING_SUPPORT -> R.string.profile_questions_row_support
-            ProfileQuestion.ADDRESS_FORM -> R.string.profile_questions_row_address
-        },
-    )
+    when (question) {
+        ProfileQuestion.UNKNOWN_DEFAULT_OPEN_API -> null
+        ProfileQuestion.WORK -> R.string.profile_questions_row_work
+        ProfileQuestion.TOOLS -> R.string.profile_questions_row_tools
+        ProfileQuestion.STUDIES -> R.string.profile_questions_row_studies
+        ProfileQuestion.WATCH -> R.string.profile_questions_row_watch
+        ProfileQuestion.LISTEN -> R.string.profile_questions_row_listen
+        ProfileQuestion.PLAY -> R.string.profile_questions_row_play
+        ProfileQuestion.READ -> R.string.profile_questions_row_read
+        ProfileQuestion.ACTIVITIES -> R.string.profile_questions_row_activities
+        ProfileQuestion.CONDITIONS -> R.string.profile_questions_row_conditions
+        ProfileQuestion.LEARNING_SUPPORT -> R.string.profile_questions_row_support
+        ProfileQuestion.ADDRESS_FORM -> R.string.profile_questions_row_address
+    }?.let { stringResource(it) }.orEmpty()
 
 @Composable
 private fun profileSummary(question: ProfileQuestionView): String {

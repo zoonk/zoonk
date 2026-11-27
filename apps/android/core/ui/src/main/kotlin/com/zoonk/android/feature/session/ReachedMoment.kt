@@ -114,7 +114,7 @@ private fun LevelReached(
     level: MistakePracticeFeedbackReachedLevel,
     delayMillis: Int?,
 ) {
-    val belt = Belt.entries.first { it.name.equals(level.color.value, ignoreCase = true) }
+    val belt = Belt.fromKey(level.color.value) ?: return
     val locale = currentLocale()
     val number = formatNumber(level.level.toDouble(), locale)
     val next = Belt.entries.getOrNull(belt.ordinal + 1)

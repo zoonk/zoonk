@@ -42,8 +42,9 @@ internal fun BuddyFirstStepsSection(
 ) {
     firstSteps ?: return
     val locale = currentLocale()
-    val open = firstSteps.steps.filter { it.status == Status.TODAY || it.status == Status.AVAILABLE }
-    val later = firstSteps.steps.count { it.status == Status.LATER }
+    val steps = firstSteps.steps.filter { it.kind != Kind.UNKNOWN_DEFAULT_OPEN_API }
+    val open = steps.filter { it.status == Status.TODAY || it.status == Status.AVAILABLE }
+    val later = steps.count { it.status == Status.LATER }
 
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         SectionHeader(
@@ -143,6 +144,7 @@ private fun firstStepName(
     buddyName: String,
 ): String =
     when (kind) {
+        Kind.UNKNOWN_DEFAULT_OPEN_API -> ""
         Kind.SOMETHING_NEW -> stringResource(R.string.buddy_page_first_lesson)
         Kind.REVIEW -> stringResource(R.string.buddy_page_first_review)
         Kind.FIX_MISTAKE -> stringResource(R.string.buddy_page_first_mistake)

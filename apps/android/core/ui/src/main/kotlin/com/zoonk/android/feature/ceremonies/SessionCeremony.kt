@@ -11,6 +11,7 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.perform
 import com.zoonk.android.data.value
 import com.zoonk.api.models.Buddy
+import com.zoonk.api.models.LearnerSummaryBuddy
 import com.zoonk.api.models.Milestone
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -35,7 +36,7 @@ fun SessionCeremony(
         onClose = onClose,
         timeSource = app.timeSource,
         onWearGlasses =
-            learnerBuddy?.let { buddy ->
+            learnerBuddy?.takeUnless { it.kind == LearnerSummaryBuddy.Kind.UNKNOWN_DEFAULT_OPEN_API }?.let { buddy ->
                 { glasses ->
                     app.scope
                         .async {

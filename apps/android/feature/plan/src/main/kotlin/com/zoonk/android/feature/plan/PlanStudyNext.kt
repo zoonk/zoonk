@@ -51,7 +51,8 @@ internal fun StudyNextSuggestion(
                 ) { Text(it.actionLabel()) }
             }
         }
-    val more = next.nextLevel != null || next.related.isNotEmpty()
+    val nextLevel = next.nextLevel?.let { courseLevelName(it.level.value) }
+    val more = nextLevel != null || next.related.isNotEmpty()
 
     // The certificate is offered on the line too, so it reads the same at every width; View opens what's next.
     Suggestion(
@@ -79,15 +80,15 @@ internal fun StudyNextSuggestion(
             },
     ) {
         SuggestionHeader(title)
-        if (next.nextLevel != null || next.related.isNotEmpty()) SuggestionDescription(stringResource(R.string.plan_study_next))
-        if (certificates != null || next.nextLevel != null) {
+        if (more) SuggestionDescription(stringResource(R.string.plan_study_next))
+        if (certificates != null || nextLevel != null) {
             SuggestionActions {
-                next.nextLevel?.let { level ->
+                nextLevel?.let { level ->
                     SuggestionAction(onClick = host.onContinue, busy = starting, leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) }) {
-                        Text(stringResource(R.string.plan_continue_at, courseLevelName(level.level.value)))
+                        Text(stringResource(R.string.plan_continue_at, level))
                     }
                 }
-                certificateAction(next.nextLevel != null)
+                certificateAction(nextLevel != null)
             }
             if (start == NextLevelStart.Failed || host.claimFailed) SuggestionSaveError()
         }
@@ -131,7 +132,7 @@ internal fun CourseCompleteSuggestion(slot: Slot) {
             ?.singleOrNull()
             ?.courseLevel
     val title =
-        level?.let { stringResource(R.string.plan_level_complete, courseLevelName(it.value)) }
+        level?.let { courseLevelName(it.value) }?.let { stringResource(R.string.plan_level_complete, it) }
             ?: stringResource(R.string.plan_course_complete)
     val claim =
         @Composable {

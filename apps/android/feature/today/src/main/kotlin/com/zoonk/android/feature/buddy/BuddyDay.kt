@@ -57,12 +57,10 @@ internal fun BuddyStatus.look(): BuddyLook =
     BuddyLook(
         kind = BuddyKind.of(buddy.kind.value),
         glasses = BuddyGlasses.of(buddy.glasses.value),
-        belt = belt(belt.color),
+        belt = Belt.fromKey(belt.color) ?: Belt.White,
         energy = energy.current,
         studiedToday = energy.studiedToday,
     )
-
-private fun belt(color: String): Belt = Belt.entries.first { it.name.equals(color, ignoreCase = true) }
 
 /** What the buddy's day rows open, and the row whose tap is opening or couldn't open. */
 internal class BuddyDayTaps(
@@ -171,7 +169,7 @@ private fun BuddyMissions(
     val today = status.today ?: return
 
     MissionsCard(
-        missions = today.missions.map { it.toDayMission() },
+        missions = today.missions.mapNotNull { it.toDayMission() },
         bonus = today.fullMeal.bonus,
         bonusEarned = today.fullMeal.earned,
         buddy = look,
@@ -233,7 +231,7 @@ private fun BuddyEnergy(
 @Composable
 private fun growthLine(next: BuddyStatusNextStage?): String {
     next ?: return stringResource(R.string.buddy_page_fully_grown)
-    val belt = stringResource(belt(next.belt).label)
+    val belt = Belt.fromKey(next.belt)?.let { stringResource(it.label) } ?: return ""
 
     return stringResource(R.string.buddy_page_grows, belt)
 }
