@@ -1,13 +1,16 @@
 "use client";
 
 import { type TrackEvent } from "@zoonk/core/analytics/events";
-import { type MouseEvent, type ReactNode, type Ref, createContext, use } from "react";
+import { type AnchorHTMLAttributes, type ReactNode, type Ref, createContext, use } from "react";
 import { type CountryChoice } from "./country/country-choice";
 import { type LearnTab } from "./shell/learn-tabs";
 
 type LearnRoute = string;
 
-export type LearnLinkComponentProps = {
+export type LearnLinkComponentProps = Pick<
+  AnchorHTMLAttributes<HTMLAnchorElement>,
+  "onClick" | "onFocus" | "onMouseEnter" | "onTouchStart"
+> & {
   "aria-current"?: "page";
   "aria-describedby"?: string;
   "aria-label"?: string;
@@ -16,13 +19,11 @@ export type LearnLinkComponentProps = {
   className?: string;
   href: LearnRoute;
   lessonWritten?: boolean;
-  onClick?: (event: MouseEvent<HTMLAnchorElement>) => void;
   /** Runs only for a navigation the router makes, so a click with a modifier still opens a new tab. */
   onNavigate?: (event: { preventDefault: () => void }) => void;
   prefetch?: boolean | "auto";
   ref?: Ref<HTMLAnchorElement>;
   scroll?: boolean;
-  unstable_dynamicOnHover?: boolean;
 };
 
 type LearnLinkComponent = (props: LearnLinkComponentProps) => ReactNode;

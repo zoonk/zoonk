@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { instant } from "@next/playwright";
 import { type Response } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
@@ -182,11 +183,34 @@ test.describe("Mind maps", () => {
 
     try {
       await page.goto("/mind-maps");
-      await page.getByRole("link", { name: new RegExp(second.chapter.title, "u") }).click();
+      const row = page.getByRole("link", { name: new RegExp(second.chapter.title, "u") });
+      await expectHydrated(row);
 
-      await expect(
-        page.getByRole("heading", { level: 1, name: second.chapter.title }),
-      ).toBeVisible();
+      const prefetched = page.waitForResponse(async (response) => {
+        const url = new URL(response.url());
+
+        if (
+          url.pathname !== "/mind-maps/study" ||
+          url.searchParams.get("at") !== second.chapter.id ||
+          !response.ok()
+        ) {
+          return false;
+        }
+
+        const content = await response.text();
+        return content.includes(STRUCTURE.summary);
+      });
+
+      await row.hover();
+      await prefetched;
+
+      await instant(page, async () => {
+        await row.click();
+
+        await expect(
+          page.getByRole("heading", { level: 1, name: second.chapter.title }),
+        ).toBeVisible();
+      });
 
       await page.getByRole("button", { exact: true, name: "Save" }).click();
       await expect(page.getByRole("button", { exact: true, name: "Saved" })).toBeVisible();
