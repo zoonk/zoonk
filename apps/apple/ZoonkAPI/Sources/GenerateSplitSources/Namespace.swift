@@ -1,6 +1,5 @@
 import Foundation
 
-/// A type the generator fills with declarations in one file.
 struct Namespace {
   let file: String
   let opening: String
@@ -46,7 +45,7 @@ struct Namespace {
     let closingCount = memberIndent.count / 4
 
     guard
-      let lastImport = lines.lastIndex(where: { !$0.hasPrefix(" ") && $0.contains("import ") }),
+      let lastImport = lines.lastIndex(where: isImport),
       let openingIndex = lines.firstIndex(where: { $0 == opening }),
       lines.count - closingCount > openingIndex
     else {
@@ -78,6 +77,10 @@ struct Namespace {
     }
 
     return (keptSource, shards.map { ($0 + ["}"]).joined(separator: "\n") + "\n" })
+  }
+
+  private func isImport(_ line: Substring) -> Bool {
+    !line.hasPrefix(" ") && !line.hasPrefix("/") && line.contains("import ")
   }
 
   private func members(

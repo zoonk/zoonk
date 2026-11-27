@@ -1,9 +1,8 @@
 import Foundation
 
-/// The generator writes nearly all of its code into three files of about 100,000 lines each, and
-/// the compiler holds a whole file in memory at once. This runs the generator, then spreads those
-/// files' declarations over the smaller files the plugin declared. A declaration's file depends
-/// only on its name, so a contract change recompiles the files it touches instead of all of them.
+/// swift-openapi-generator writes its code into three very large files, and the compiler holds a
+/// whole file in memory. Spreading their declarations over smaller files, by name, keeps a build
+/// within CI's memory and a contract change from recompiling all of them.
 @main
 struct GenerateSplitSources {
   static func main() {
@@ -22,6 +21,8 @@ struct GenerateSplitSources {
 
     let unsplit = URL(fileURLWithPath: arguments[3])
     let outputs = arguments[4...].map { URL(fileURLWithPath: $0) }
+
+    try? FileManager.default.removeItem(at: unsplit)
 
     try run(
       URL(fileURLWithPath: arguments[0]),
