@@ -52,6 +52,8 @@ struct RowSaveSpace: View {
 struct UnavailableSaveRow<Detail: View>: View {
   let title: String
   let remove: Text
+  /// What VoiceOver says for Remove, naming the save, as each bookmark does.
+  let spoken: Text
   let action: () -> Void
   @ViewBuilder let detail: Detail
 
@@ -62,6 +64,8 @@ struct UnavailableSaveRow<Detail: View>: View {
       }
       .buttonStyle(.outline)
       .controlSize(.small)
+      .accessibilityLabel(spoken)
+      .accessibilityInputLabels([remove])
     } label: {
       VStack(alignment: .leading, spacing: 2) {
         Text(title)
