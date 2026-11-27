@@ -7,6 +7,8 @@ import { mockSession } from "../../_test-utils/mock-session";
 import { analytics } from "../../_test-utils/test-boundaries";
 import { recordPlacementPrepared } from "../../lookahead/placement-item-skills";
 import { learnerGoalFixture } from "../_test-utils/learner-goal";
+import { placementItemBank } from "../_test-utils/placement-tap-items";
+import { answerPlacementQuestion } from "./answer-placement-question";
 import { finishGoalPlacement } from "./finish-goal-placement";
 import { getGoalPlacement } from "./get-goal-placement";
 import { startPlacementSitting } from "./start-placement-sitting";
@@ -101,6 +103,63 @@ describe("Whole-course question preparation", () => {
       });
     },
   );
+
+  it("passes over a topic without questions and opens the next part when the material runs out", async () => {
+    const user = await userFixture();
+
+    const { goal, skills } = await learnerGoalFixture({
+      itemsPerSkill: 0,
+      phases: [6],
+      userId: user.id,
+    });
+
+    const bank = await placementItemBank(skills.filter((_, i) => i !== 1).map(({ id }) => id));
+    const answers = new Map(bank.flat().map(({ item, answer }) => [item.id, answer]));
+    mockSession(user.id);
+    const start = () => startPlacementSitting({ goalId: goal.id, input: { length: "quick" } });
+    const opened = await start();
+
+    if (opened.status !== "ready" || !opened.placement.attempt) {
+      throw new Error("Expected an open attempt");
+    }
+
+    const { id: attemptId } = opened.placement.attempt;
+
+    await recordPlacementPrepared({
+      failed: false,
+      goalId: goal.id,
+      placementPart: { attemptId, part: 1 },
+      planRunId: null,
+    });
+
+    let placement = opened.placement;
+
+    for (let i = 0; i < 8; i += 1) {
+      const itemId = placement.next?.itemId;
+      const answer = itemId && answers.get(itemId);
+
+      if (!answer || !itemId) {
+        throw new Error(`Expected question ${i + 1}, got ${placement.status}`);
+      }
+      // oxlint-disable-next-line no-await-in-loop -- The next question depends on this answer.
+      const result = await answerPlacementQuestion({
+        goalId: goal.id,
+        input: { answer, attemptId, durationMs: 90_000, itemId, part: 1 },
+      });
+
+      if (result.status !== "ready") {
+        throw new Error("Expected the saved answer");
+      }
+
+      placement = result.placement;
+    }
+
+    await expect(
+      finishGoalPlacement({ goalId: goal.id, input: { attemptId, part: 1 } }),
+    ).resolves.toMatchObject({ completion: { finish: { end: "material_exhausted" } } });
+
+    await expect(start()).resolves.toMatchObject({ placement: { attempt: { part: 2 } } });
+  });
 
   it("does not advance a part whose writer has not delivered questions", async () => {
     const user = await userFixture();

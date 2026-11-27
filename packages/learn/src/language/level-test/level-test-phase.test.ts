@@ -63,6 +63,7 @@ describe(toOpenedLevelTestPhase, () => {
 
     expect(toOpenedLevelTestPhase({ surface: "plan", view })).toStrictEqual({
       attemptId: ATTEMPT_ID,
+      failures: 0,
       kind: "test",
       test: view,
     });

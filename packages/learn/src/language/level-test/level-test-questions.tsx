@@ -6,7 +6,7 @@ import {
 } from "@zoonk/core/language/level-test/contract";
 import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { usePoll } from "../../_utils/use-poll";
 import { PlacementQuestionScreen } from "../../onboarding/steps/placement-question";
 import { useTestFacts } from "../../placement-test/use-test-facts";
@@ -64,20 +64,24 @@ export function useLevelTestAudio({
 type Sent = "answer" | "defer" | null;
 
 function AskedQuestion({
-  answer,
   audioPending,
+  failures,
+  onAnswer,
   onClose,
   onStop,
-  onView,
+  pending,
   step,
   targetLanguage,
   test,
 }: {
-  answer: (input: LevelTestAnswerInput) => Promise<LanguageLevelTestView | null>;
   audioPending: boolean;
+  /** Saves from this question (answers and Stop) that failed in a row. */
+  failures: number;
+  onAnswer: (input: Omit<LevelTestAnswerInput, "attemptId">) => void;
   onClose: () => void;
   onStop: () => void;
-  onView: (view: LanguageLevelTestView) => void;
+  /** An answer or Stop is saving. */
+  pending: boolean;
   step: AskedStep;
   targetLanguage: string;
   test: ReadyLevelTest;
@@ -85,9 +89,7 @@ function AskedQuestion({
   const t = useExtracted();
   const facts = useTestFacts();
   const skillName = useSkillName();
-  const [failures, setFailures] = useState(0);
   const [sent, setSent] = useState<Sent>(null);
-  const [isPending, startTransition] = useTransition();
   const speech = useSpokenAudio(targetLanguage);
   const { question } = step;
   const isListening = question.skill === "listening";
@@ -95,19 +97,12 @@ function AskedQuestion({
   const listeningOut = noAudio ? t("Skip this question") : t("I didn't understand the audio");
   const number = test.answered + 1;
 
-  const send = (kind: Exclude<Sent, null>, input: Omit<LevelTestAnswerInput, "questionId">) => {
+  const send = (
+    kind: Exclude<Sent, null>,
+    input: Omit<LevelTestAnswerInput, "attemptId" | "questionId">,
+  ) => {
     setSent(kind);
-
-    startTransition(async () => {
-      const view = await answer({ ...input, questionId: question.id }).catch(() => null);
-
-      if (!view) {
-        setFailures((count) => count + 1);
-        return;
-      }
-
-      onView(view);
-    });
+    onAnswer({ ...input, questionId: question.id });
   };
 
   return (
@@ -125,9 +120,9 @@ function AskedQuestion({
               speech={speech}
             />
             <Button
-              busy={isPending && sent === "defer"}
+              busy={pending && sent === "defer"}
               className="self-start"
-              disabled={isPending}
+              disabled={pending}
               focusableWhenDisabled
               onClick={() => send("defer", { answerIndex: null, audioDeferred: true })}
               type="button"
@@ -155,7 +150,7 @@ function AskedQuestion({
       }}
       onClose={onClose}
       onStop={onStop}
-      pending={isPending}
+      pending={pending}
       position={[facts.question({ number, total: test.total })]}
       progress={test.answered / test.total}
       question={{

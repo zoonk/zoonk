@@ -2,12 +2,9 @@ import "server-only";
 import { type Goal, type TransactionClient, prisma } from "@zoonk/db";
 import { formatCefrScore } from "@zoonk/utils/cefr";
 import { type JsonObject, isJsonObject } from "@zoonk/utils/json";
+import { languagePlanningBand } from "../aims/language-aims";
 import { readLevelTestDetails } from "../level-test/read-level-test-summary";
-import {
-  TAP_ASSESSED_SKILLS,
-  getMeasuredSkillScore,
-  languagePlanningBand,
-} from "./skill-level-rules";
+import { TAP_ASSESSED_SKILLS, getMeasuredSkillScore } from "./skill-level-rules";
 
 export async function loadCurrentLanguageLevel(
   goal: Pick<Goal, "details" | "kind" | "targetLanguage" | "userId">,
@@ -29,7 +26,9 @@ export async function loadCurrentLanguageLevel(
   const details = isJsonObject(goal.details) ? goal.details : {};
 
   const { planningStart } = readLevelTestDetails(goal);
-  const start = forPlanning && typeof planningStart === "number" ? planningStart : null;
+
+  const start =
+    forPlanning && typeof planningStart === "number" ? Math.max(0, planningStart - 1) : null;
 
   const scores = TAP_ASSESSED_SKILLS.flatMap((skill) => {
     const row = rows.find((candidate) => candidate.skill === skill);

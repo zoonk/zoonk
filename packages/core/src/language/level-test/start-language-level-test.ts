@@ -13,11 +13,7 @@ import { type LanguagePair, findBankRow, readBank } from "./_utils/level-test-ba
 import { getLevelTestStart } from "./_utils/level-test-start-score";
 import { levelTestDetailsWithProgress, readLevelTestProgress } from "./_utils/level-test-state";
 import { getLanguageLevelTest } from "./get-language-level-test";
-import {
-  LANGUAGE_LEVEL_TEST_OFFER,
-  type LevelTestLength,
-  type LevelTestProgress,
-} from "./level-test-contract";
+import { LANGUAGE_LEVEL_TEST_OFFER, type LevelTestProgress } from "./level-test-contract";
 import { isOpenLevelTestOut } from "./level-test-out-contract";
 import { readLevelTestAttempts } from "./read-level-test-summary";
 
@@ -44,12 +40,7 @@ async function oweLevelTestPreparation({
   });
 }
 
-export async function startLanguageLevelTest({
-  goalId,
-}: {
-  goalId: string;
-  length?: LevelTestLength;
-}) {
+export async function startLanguageLevelTest({ goalId }: { goalId: string }) {
   const owned = await findOwnedGoal(goalId);
 
   if (owned.status !== "ready") {

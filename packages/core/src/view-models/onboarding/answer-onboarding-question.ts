@@ -1,8 +1,7 @@
-import { type SupportedLocale } from "@zoonk/utils/locale";
+import { type Goal } from "@zoonk/db";
 import "server-only";
+import { type SupportedLocale } from "@zoonk/utils/locale";
 import { after } from "next/server";
-import { type AnalyticsEvent } from "../../analytics/events";
-import { trackTestEvents } from "../../analytics/test-events";
 import { trackLearnerEvents } from "../../analytics/track-learner-event";
 import { trackOnboardingProgress } from "../../analytics/track-onboarding-progress";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
@@ -25,6 +24,7 @@ import { unlessPlanConflict } from "../../plans/plan-conflict";
 import { refreshGoalPlan } from "../../plans/refresh-goal-plan";
 import { updateLearningProfile } from "../../profile/update-learning-profile";
 import { answerProfileOnboardingQuestion } from "./_utils/answer-profile-onboarding-question";
+import { readOnboardingPlacementEvent } from "./_utils/onboarding-placement-event";
 import { saveAnswerInputs } from "./_utils/save-onboarding-answer";
 import { type OnboardingAnswerInput } from "./onboarding-contract";
 
@@ -79,15 +79,25 @@ function trackAnswer({
   goal,
   input,
   changed,
-  placementEvent,
+  previousGoal,
 }: {
-  goal: Parameters<typeof trackTestEvents>[0];
-  placementEvent?: AnalyticsEvent | null;
+  goal: Goal;
+  previousGoal?: Goal;
   input: OnboardingAnswerInput;
   changed: boolean;
 }): void {
-  if (placementEvent) {
-    trackTestEvents(goal, [placementEvent]);
+  if (
+    changed &&
+    previousGoal &&
+    (input.question === "placement" || input.question === "schedule")
+  ) {
+    after(async () => {
+      const event = await readOnboardingPlacementEvent({ goal: previousGoal, input });
+
+      if (event) {
+        await trackLearnerEvents({ events: [event], goalId: goal.id, userId: goal.userId });
+      }
+    });
   }
 
   if (changed) {
@@ -167,7 +177,7 @@ export async function answerOnboardingQuestion({
     changed: saved.goalIds.includes(goalId),
     goal,
     input,
-    placementEvent: saved.placementEvent,
+    previousGoal: saved.previousGoal,
   });
 
   revalidateCacheTags([

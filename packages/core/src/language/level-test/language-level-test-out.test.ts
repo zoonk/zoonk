@@ -300,9 +300,9 @@ describe("a language level test-out", () => {
 
     expect(started.test).toMatchObject({ answered: 0, level: "C2", total: 8 });
 
-    await expect(
-      startLanguageLevelTest({ goalId: goal.id, length: "quick" }),
-    ).resolves.toMatchObject({ status: "invalid" });
+    await expect(startLanguageLevelTest({ goalId: goal.id })).resolves.toMatchObject({
+      status: "invalid",
+    });
 
     const seenSkills = new Set<"reading" | "listening">();
     await takeTest({ goalId: goal.id, seenSkills, view: started.test });

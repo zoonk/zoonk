@@ -34,7 +34,12 @@ export type PlacementTestActions = {
     itemId: string;
     part: number;
   }) => Promise<PlacementOutcome>;
-  finish: (input: { attemptId: string; part: number }) => Promise<PlacementPartOutcome>;
+  /** `answered`: the answers a stop's question showed; a server that counts others refuses it. */
+  finish: (input: {
+    answered?: number;
+    attemptId: string;
+    part: number;
+  }) => Promise<PlacementPartOutcome>;
   get: () => Promise<PlacementOutcome>;
   /**
    * Opens a test of this length, the open test's next part, or the part the learner stopped in.

@@ -177,24 +177,25 @@ export async function getOnboarding({
     profileSteps: getStateProfileSteps({ goal, state: profileState }),
   });
 
-  const placement = await readOnboardingPlacement({
-    goal,
-    requested: details.placementRequested === true,
-    steps: plannedSteps,
-  });
-
-  const steps = plannedSteps.filter((step) => step !== "placement" || placement !== null);
-
   const courseStart = readCourseStart(details);
 
-  const libraryCourse = courseStart
-    ? null
-    : await findLibraryCourse({
-        goal,
-        steps,
-        subject:
-          typeof details.subject === "string" && details.subject ? details.subject : goal.title,
-      });
+  const [placement, libraryCourse] = await Promise.all([
+    readOnboardingPlacement({
+      goal,
+      requested: details.placementRequested === true,
+      steps: plannedSteps,
+    }),
+    courseStart
+      ? null
+      : findLibraryCourse({
+          goal,
+          steps: plannedSteps,
+          subject:
+            typeof details.subject === "string" && details.subject ? details.subject : goal.title,
+        }),
+  ]);
+
+  const steps = plannedSteps.filter((step) => step !== "placement" || placement !== null);
 
   const targetDate = isCourseDateSkipped({ details, targetDate: view.targetDate })
     ? null

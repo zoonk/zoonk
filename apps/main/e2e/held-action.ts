@@ -31,8 +31,15 @@ export async function holdActionAnswer(page: Page, path: string) {
     /**
      * Hands the answer over and says whether it then took the learner to `away`. A navigation counts
      * from its request, since on a loaded machine its page can take longer than the wait to show.
+     * Without `away`, it only hands the answer over.
      */
-    release: async (away: RegExp): Promise<boolean> => {
+    release: async (away?: RegExp): Promise<boolean> => {
+      if (!away) {
+        released.resolve(null);
+        await delivered.promise;
+        return true;
+      }
+
       const leadsAway = (request: Request) => {
         const { origin, pathname } = new URL(request.url());
 

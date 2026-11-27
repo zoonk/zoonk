@@ -119,7 +119,6 @@ export async function pickSessionChecks({
   easySkillIds = [],
   excludeItemIds,
   focusAreas,
-  followUpSkillIds = new Set(),
   goal,
   limit,
   listeningSkillIds,
@@ -134,7 +133,6 @@ export async function pickSessionChecks({
   blueprint?: Pick<ExamBlueprint, "ownerId"> | null;
   easySkillIds?: readonly string[];
   excludeItemIds: ReadonlySet<string>;
-  followUpSkillIds?: ReadonlySet<string>;
   goal: Pick<Goal, "details" | "examBlueprintId" | "id">;
   limit: number;
   /** The day plan's listening-only skills; without them, they're read fresh. */
@@ -156,13 +154,7 @@ export async function pickSessionChecks({
   const easy = new Set(easySkillIds);
 
   const skillIds = skills
-    .filter(
-      (skill) =>
-        !recheckOnly ||
-        recheckSkillIds.has(skill.id) ||
-        followUpSkillIds.has(skill.id) ||
-        easy.has(skill.id),
-    )
+    .filter((skill) => !recheckOnly || recheckSkillIds.has(skill.id) || easy.has(skill.id))
     .map((skill) => skill.id);
 
   const [{ confirmationAnswers, evidence, seenItemIds, testSkills }, bankItems, blueprint] =
@@ -215,22 +207,15 @@ export async function pickSessionChecks({
   }));
 
   const taps = candidates.filter((item) => isQuickChoice(item) || isLowGuessTap(item));
-  const lowGuess = taps.filter((item) => isLowGuessTap(item));
 
   const rechecks = [...recheckSkillIds].flatMap(
     (skillId) => pickPlacementItem({ confirming: true, items: taps, quickFormat, skillId }) ?? [],
   );
 
-  const followUps = [...followUpSkillIds].flatMap((skillId) =>
-    recheckSkillIds.has(skillId) || ["known", "unknown"].includes(statuses.get(skillId) ?? "")
-      ? []
-      : (pickPlacementItem({ confirming: true, items: lowGuess, quickFormat, skillId }) ?? []),
-  );
-
   const bySkill = Map.groupBy(confirmationAnswers, (answer) => answer.skillId);
 
   const easyChecks = easySkillIds.flatMap((skillId) =>
-    recheckSkillIds.has(skillId) || followUpSkillIds.has(skillId)
+    recheckSkillIds.has(skillId)
       ? []
       : (pickPlacementItem({
           confirming: hasRecentQuickChoice(bySkill.get(skillId) ?? []),
@@ -240,7 +225,7 @@ export async function pickSessionChecks({
         }) ?? []),
   );
 
-  const priority = [...rechecks, ...followUps, ...easyChecks].map((item) => item.id);
+  const priority = [...rechecks, ...easyChecks].map((item) => item.id);
   const placementRecheckItemIds = rechecks.slice(0, limit).map((item) => item.id);
 
   if (recheckOnly || priority.length >= limit) {

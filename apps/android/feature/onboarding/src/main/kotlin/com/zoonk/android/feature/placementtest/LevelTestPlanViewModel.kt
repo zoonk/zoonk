@@ -34,7 +34,7 @@ internal class LevelTestPlanViewModel(
 ) : ViewModel() {
     val visit = Visit()
 
-    /** When this visit began and whether it opened the test, for the first question's analytics. */
+    /** When this visit began and whether it opened the test or a test-out, for the first question's analytics. */
     val sitting = TestVisit()
 
     private val failure = visit.outcome<Unit>()
@@ -87,11 +87,12 @@ internal class LevelTestPlanViewModel(
         if (attemptId == null) openAttempt(id)
     }
 
-    /** [button] is the one the learner pressed: the length screen's Start, or the level result's other action. */
+    /** [button] is the one the learner pressed: the offer's choice, or the link on the level result. */
     fun testOut(
         level: String,
         button: Pressed = Pressed.Main,
     ) = save(button) {
+        sitting.started()
         val asked = StartLanguageLevelTestOutInput.Level.entries.firstOrNull { it.value == level } ?: return@save false
         when (val started = store.startLevelTestOut(goalId, asked)) {
             is WriteOutcome.Done -> {

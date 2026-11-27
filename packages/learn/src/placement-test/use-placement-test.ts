@@ -4,18 +4,18 @@ import { useRef, useState } from "react";
 import { type GenerationRun } from "../generation/generation-run";
 import { type PlacementAnswer, type PlacementOutcome } from "../onboarding/onboarding-actions";
 import { usePlacementQuestionPoll } from "../onboarding/steps/use-placement-question-poll";
-import { useReadOnOpen } from "../onboarding/steps/use-read-on-open";
 import { isRunStopped } from "../onboarding/steps/wait-run";
 import { type PlacementLength, type PlacementTestActions } from "./placement-test-actions";
 import {
   type PlacementQuestionPhase,
   type PlacementTestPhase,
+  answerOrRead,
   toFinishedPhase,
   toPlacementTestPhase,
 } from "./placement-test-phase";
 import { type TestPressed } from "./test-offer";
 import { type TestAnalytics } from "./use-test-analytics";
-import { useTestSaves } from "./use-test-saves";
+import { useTestVisit } from "./use-test-visit";
 
 const FAILED: PlacementOutcome = { status: "failed" };
 
@@ -62,17 +62,17 @@ export function usePlacementTest({
   const { surface } = host;
   const direct = host.surface === "onboarding" && host.mode === "direct";
 
-  const [phase, setPhase] = useState<PlacementTestPhase>({
-    kind: host.surface === "onboarding" && host.mode === "offer" ? "offer" : "loading",
-  });
-
-  const { failed, hasActed, isPending, markRead, pressed, run, save, setFailed } = useTestSaves();
+  const offered = host.surface === "onboarding" && host.mode === "offer";
+  const [phase, setPhase] = useState<PlacementTestPhase>({ kind: offered ? "offer" : "loading" });
   const wanted = useRef<PlacementLength>("quick");
   const waiting = phase.kind === "waiting" ? phase : null;
 
-  /** Closing a part applies what it skipped; another device that closed it first wins. */
-  const close = async (attempt: OpenAttempt) => {
-    const finished = await actions.finish({ attemptId: attempt.id, part: attempt.part });
+  /**
+   * Closing a part applies what it skipped; another device that closed it first wins. A stop sends
+   * the answers its question showed, so a stop from a question another device moved past is refused.
+   */
+  const close = async (attempt: OpenAttempt, answered?: number) => {
+    const finished = await actions.finish({ answered, attemptId: attempt.id, part: attempt.part });
 
     if (finished.status === "failed") {
       return false;
@@ -112,12 +112,7 @@ export function usePlacementTest({
     return outcome.status !== "failed" && show(outcome, true);
   };
 
-  /** A read that comes back after the learner pressed something no longer says where they are. */
   const open = async (outcome: PlacementOutcome) => {
-    if (hasActed()) {
-      return;
-    }
-
     const next = toPlacementTestPhase({ outcome, surface });
 
     if (next.kind !== "offer" || !direct) {
@@ -130,10 +125,10 @@ export function usePlacementTest({
     }
   };
 
-  const reopen = useReadOnOpen({
-    onRead: (outcome) => void open(outcome ?? FAILED),
+  const { failed, isPending, pressed, reopen, run, save, setFailed } = useTestVisit({
+    onRead: (outcome) => open(outcome ?? FAILED),
+    opened: offered,
     read: () => {
-      markRead();
       analytics.markOpened();
       return actions.get();
     },
@@ -152,17 +147,20 @@ export function usePlacementTest({
 
   const answer = (from: PlacementQuestionPhase) => (choice: PlacementAnswer, durationMs: number) =>
     run(async () => {
-      const outcome = await actions
-        .answer({
-          answer: choice,
-          attemptId: from.attempt.id,
-          durationMs,
-          itemId: from.question.itemId,
-          part: from.attempt.part,
-        })
-        .catch(() => FAILED);
+      const outcome = await answerOrRead({
+        answer: () =>
+          actions.answer({
+            answer: choice,
+            attemptId: from.attempt.id,
+            durationMs,
+            itemId: from.question.itemId,
+            part: from.attempt.part,
+          }),
+        question: from.question,
+        read: actions.get,
+      });
 
-      if (outcome.status === "failed") {
+      if (!outcome) {
         setPhase((current) => countFailure({ current, from }));
         return;
       }
@@ -209,7 +207,7 @@ export function usePlacementTest({
     reopen,
     stop: (from: PlacementQuestionPhase) =>
       run(async () => {
-        if (!(await close(from.attempt).catch(() => false))) {
+        if (!(await close(from.attempt, from.attempt.answered).catch(() => false))) {
           setPhase((current) => countFailure({ current, from }));
         }
       }),

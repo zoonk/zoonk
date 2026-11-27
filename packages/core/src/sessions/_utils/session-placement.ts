@@ -6,7 +6,6 @@ import { type GoalPlan, type GoalSkillNode } from "../../learner/_utils/goal-ski
 import { loadSkippedRecheckSkills } from "../../learner/_utils/load-skill-claims";
 import { type ClaimEvent, listSkippedRechecks } from "../../learner/_utils/skill-claims";
 import { type readScheduledAnswers } from "../../learner/facts/scheduled-answers";
-import { readPlacementAttempt } from "../../learner/placement/_utils/placement-attempt-record";
 import { pickSessionChecks } from "../../learner/placement/_utils/session-placement-items";
 import { listTestSubjects, mapSkillAreas } from "../../learner/placement/focus-test-subjects";
 import { readSessionQuestions } from "../../learner/placement/focus-test-summary";
@@ -149,14 +148,8 @@ export async function loadSessionPlacement({
 
   const practiceRechecks = await readRechecks({ context, skillIds });
   const recheckSkillIds = new Set([...signals.hardRecheckSkillIds, ...practiceRechecks]);
-  const followUpSkillIds = new Set(readPlacementAttempt(context.goal).quickFollowUpSkillIds);
 
-  if (
-    recheckOnly &&
-    recheckSkillIds.size === 0 &&
-    followUpSkillIds.size === 0 &&
-    signals.easySkillIds.length === 0
-  ) {
+  if (recheckOnly && recheckSkillIds.size === 0 && signals.easySkillIds.length === 0) {
     return empty;
   }
 
@@ -168,7 +161,6 @@ export async function loadSessionPlacement({
     easySkillIds: signals.easySkillIds,
     excludeItemIds: used,
     focusAreas: settings.focusAreas,
-    followUpSkillIds,
     goal: context.goal,
     limit: SESSION_PLACEMENT_QUESTIONS,
     listeningSkillIds: plan.listeningSkillIds,

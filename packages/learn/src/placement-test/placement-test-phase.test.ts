@@ -6,7 +6,7 @@ import {
   type PlacementResult,
 } from "../onboarding/onboarding-actions";
 import { type PlacementPartOutcome } from "./placement-test-actions";
-import { toFinishedPhase, toPlacementTestPhase } from "./placement-test-phase";
+import { answerOrRead, toFinishedPhase, toPlacementTestPhase } from "./placement-test-phase";
 
 const ATTEMPT_ID = "0198a6c4-2f6e-7c1a-9b1e-3f2d4c5b6a71";
 const CHANGE_ID = "0198a6c4-2f6e-7c1a-9b1e-3f2d4c5b6a75";
@@ -286,5 +286,49 @@ describe(toFinishedPhase, () => {
     });
 
     expect(phase).toMatchObject({ heldUntilTomorrow: true, kind: "result", lessonsSkipped: 0 });
+  });
+});
+
+describe(answerOrRead, () => {
+  const OTHER = { ...QUESTION, itemId: "0198a6c4-2f6e-7c1a-9b1e-3f2d4c5b6a77" };
+  const FAILED: PlacementOutcome = { status: "failed" };
+  const moved = ready({ attempt: { ...FULL, part: 4 }, next: OTHER });
+
+  it("takes where a saved answer leaves the test, without reading it again", async () => {
+    let reads = 0;
+
+    const outcome = await answerOrRead({
+      answer: async () => moved,
+      question: QUESTION,
+      read: async () => {
+        reads += 1;
+        return moved;
+      },
+    });
+
+    expect(outcome).toBe(moved);
+    expect(reads).toBe(0);
+  });
+
+  it("opens where the test is when another device moved it past the question", async () => {
+    await expect(
+      answerOrRead({ answer: async () => FAILED, question: QUESTION, read: async () => moved }),
+    ).resolves.toBe(moved);
+  });
+
+  it("says the answer didn't save while the test still asks the question, or can't be read", async () => {
+    const still = ready({ attempt: FULL, next: QUESTION });
+
+    await expect(
+      answerOrRead({ answer: async () => FAILED, question: QUESTION, read: async () => still }),
+    ).resolves.toBeNull();
+
+    await expect(
+      answerOrRead({
+        answer: () => Promise.reject(new Error("offline")),
+        question: QUESTION,
+        read: () => Promise.reject(new Error("offline")),
+      }),
+    ).resolves.toBeNull();
   });
 });

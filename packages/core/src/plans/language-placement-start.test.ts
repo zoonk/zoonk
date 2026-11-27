@@ -16,7 +16,8 @@ import { refreshGoalPlan } from "./refresh-goal-plan";
 async function takeTest(
   goalId: string,
   pair: { language: string; targetLanguage: string },
-  path: "lower" | "pass" | "practice" | "defer",
+  path: "agree" | "lower" | "pass" | "practice" | "defer",
+  stated: string,
 ) {
   const questions = levelTestQuestions(CEFR_LEVELS);
 
@@ -52,6 +53,9 @@ async function takeTest(
   ) {
     const { kind, question } = view.next;
 
+    const known =
+      path !== "agree" || CEFR_LEVELS.indexOf(question.level) <= (stated === "B2" ? 3 : 1);
+
     // oxlint-disable-next-line no-await-in-loop -- Each response supplies the next question.
     const answer = await answerLanguageLevelTest({
       goalId,
@@ -61,10 +65,10 @@ async function takeTest(
           path === "lower" ||
           (path === "defer" && question.skill === "listening")
             ? null
-            : 0,
+            : Number(!known),
         attemptId,
         questionId: question.id,
-        ...(kind === "confirmation" && { answerIndices: [0, 2] }),
+        ...(kind === "confirmation" && { answerIndices: known ? [0, 2] : [1, 2] }),
         ...(path === "defer" && question.skill === "listening" && { audioDeferred: true }),
       },
     });
@@ -83,15 +87,22 @@ async function takeTest(
 
 describe("the first lesson after language placement", () => {
   it.each([
-    { expected: 1, expectedEnd: null, path: "skip" },
-    { expected: 1, expectedEnd: "audio_deferred", path: "defer" },
-    { expected: 0, expectedEnd: "unknown_streak", path: "lower" },
-    { expected: 3, expectedEnd: "check_passed", path: "pass" },
-    { expected: 2, expectedEnd: "check_passed", path: "practice" },
-    { expected: 1, expectedEnd: "unknown_streak", path: "raise" },
+    { expected: 1, expectedEnd: null, path: "skip", stated: "basic" },
+    { expected: 1, expectedEnd: "nothing_to_check", path: "agree", stated: "basic" },
+    { expected: 1, expectedEnd: null, path: "skip", stated: "A2" },
+    { expected: 1, expectedEnd: "nothing_to_check", path: "agree", stated: "A2" },
+    { expected: 3, expectedEnd: null, path: "skip", stated: "B2" },
+    { expected: 3, expectedEnd: "check_passed", path: "agree", stated: "B2" },
+
+    { expected: 1, expectedEnd: null, path: "skip", stated: "B1+" },
+    { expected: 1, expectedEnd: "audio_deferred", path: "defer", stated: "B1+" },
+    { expected: 0, expectedEnd: "unknown_streak", path: "lower", stated: "B1+" },
+    { expected: 3, expectedEnd: "check_passed", path: "pass", stated: "B1+" },
+    { expected: 2, expectedEnd: "check_passed", path: "practice", stated: "B1+" },
+    { expected: 1, expectedEnd: "unknown_streak", path: "raise", stated: "B1+" },
   ] as const)(
-    "replans after $path for the same stated level",
-    async ({ path, expected, expectedEnd }) => {
+    "replans after $path for stated $stated",
+    async ({ path, expected, expectedEnd, stated }) => {
       const user = await userFixture();
       const bands = ["beginner", "intermediate", "intermediate", "advanced"] as const;
 
@@ -103,7 +114,7 @@ describe("the first lesson after language placement", () => {
 
       const { goal, plan } = await unplannedGoalFixture({
         ...pair,
-        details: { level: "B1+", targetScore: "C2" },
+        details: { level: stated, targetScore: "C2" },
         kind: "language",
         userId: user.id,
       });
@@ -121,7 +132,9 @@ describe("the first lesson after language placement", () => {
       mockSession(user.id);
 
       const end =
-        path === "skip" ? null : await takeTest(goal.id, pair, path === "raise" ? "lower" : path);
+        path === "skip"
+          ? null
+          : await takeTest(goal.id, pair, path === "raise" ? "lower" : path, stated);
 
       expect(end).toBe(expectedEnd);
 
@@ -139,8 +152,8 @@ describe("the first lesson after language placement", () => {
 
       if (path === "raise") {
         for (const skill of ["reading", "listening"] as const) {
-          // Each window adds half a CEFR level. Four raise the measured A1 to B1.
-          for (let window = 0; window < 4; window += 1) {
+          // Each window adds half a CEFR level. Two raise the measured A1 to A2, where B1 lessons start.
+          for (let window = 0; window < 2; window += 1) {
             // oxlint-disable-next-line no-await-in-loop -- Each window works from the previous live score.
             await prisma.$transaction((tx) =>
               addSkillEvidence(tx, {
