@@ -153,7 +153,7 @@ export function BuddyToday({
         </LearnLink>
         <button
           aria-haspopup="dialog"
-          className="hit-area text-muted-foreground hover:text-foreground relative flex min-h-7 items-center gap-1.5 rounded-md px-2 py-1 text-xs tabular-nums"
+          className="hit-area text-muted-foreground hover:text-foreground held-pressed:bg-muted held-pressed:text-foreground relative flex min-h-7 items-center gap-1.5 rounded-md px-2 py-1 text-xs tabular-nums"
           onClick={() => {
             setAsked(false);
             setOpen(true);
