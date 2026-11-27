@@ -71,6 +71,10 @@ const LANGUAGE_WORDS = {
   ]),
 };
 
+export function canDetectLanguage(language: string): boolean {
+  return Object.hasOwn(LANGUAGE_WORDS, language);
+}
+
 export function detectLanguage(text: string): "en" | "pt" | null {
   const tokens = text
     .replaceAll(/["“][^"”]*["”]/gu, " ")

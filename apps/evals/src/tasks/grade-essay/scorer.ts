@@ -1,5 +1,5 @@
 import { createFixedScore } from "@/lib/score";
-import { detectLanguage } from "@/lib/text-language";
+import { canDetectLanguage, detectLanguage } from "@/lib/text-language";
 import { type TaskScorer } from "@/lib/types";
 import {
   countWritingLines,
@@ -395,14 +395,22 @@ function feedbackChecks({
       ]
     : [];
 
+  const { feedbackLanguage } = expected;
+
+  const languageChecks: Check[] = canDetectLanguage(feedbackLanguage)
+    ? [
+        {
+          detail: `Feedback language: expected ${feedbackLanguage}, detected ${language ?? "unknown"}.`,
+          name: "language",
+          passed: language === feedbackLanguage,
+        },
+      ]
+    : [];
+
   return [
     ...levels,
     stepCheck,
-    {
-      detail: `Feedback language: expected ${expected.feedbackLanguage}, detected ${language ?? "unknown"}.`,
-      name: "language",
-      passed: language === expected.feedbackLanguage,
-    },
+    ...languageChecks,
     {
       detail: `${quoted.filter((criterion) => criterion.quote).length} of ${quoted.length} assessed criteria quote the answer exactly.`,
       name: "quotes",
