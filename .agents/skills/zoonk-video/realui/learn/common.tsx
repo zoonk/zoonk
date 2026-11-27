@@ -39,7 +39,6 @@ export function Link({
   prefetch: _prefetch,
   scroll: _scroll,
   lessonWritten: _lessonWritten,
-  unstable_dynamicOnHover: _dynamicOnHover,
   ref,
   title,
   ...rest
