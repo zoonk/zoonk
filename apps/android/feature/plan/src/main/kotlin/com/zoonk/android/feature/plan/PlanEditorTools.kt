@@ -143,6 +143,8 @@ private fun ToolStatus(tool: PlanTool) {
     val quiet = MaterialTheme.colorScheme.onSurfaceVariant
 
     when (tool.choice) {
+        PlanTool.Choice.UNKNOWN_DEFAULT_OPEN_API -> {}
+
         PlanTool.Choice.HAVE -> {
             Text(
                 text = stringResource(R.string.plan_tool_have_it),
@@ -309,7 +311,7 @@ internal fun ColumnScope.ToolChoiceForm(
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     SectionLabel(stringResource(R.string.plan_tool_device))
                     FlowRow(Modifier.selectableGroup(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        PlanTool.System.entries.forEach { option ->
+                        PlanTool.System.entries.filterNot { it == PlanTool.System.UNKNOWN_DEFAULT_OPEN_API }.forEach { option ->
                             SelectionChip(
                                 text = systemName(option.value),
                                 selected = option == system,

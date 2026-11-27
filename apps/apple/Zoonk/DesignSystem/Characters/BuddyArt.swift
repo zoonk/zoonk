@@ -43,9 +43,9 @@ struct BuddyArt: CharacterArt {
       case (.otto, .adult): (9, 6, 106, 116)
       case (.otto, .young): (16.5, 22, 91, 99)
       case (.otto, .baby): (24, 38, 75.5, 83)
-      case (.zu, .adult): (7, -18, 108, 139)
-      case (.zu, .young): (15, 2, 92.5, 119)
-      case (.zu, .baby): (22.5, 22, 77, 98)
+      case (.zu, .adult), (.unrecognized, .adult): (7, -18, 108, 139)
+      case (.zu, .young), (.unrecognized, .young): (15, 2, 92.5, 119)
+      case (.zu, .baby), (.unrecognized, .baby): (22.5, 22, 77, 98)
       }
 
     return CGRect(x: box.0, y: box.1, width: box.2, height: box.3)
@@ -102,7 +102,7 @@ private struct BuddyBodyArt {
 
   func draw(_ painter: ArtPainter) {
     switch look.kind {
-    case .zu: zu(painter)
+    case .unrecognized, .zu: zu(painter)
     case .noodle: noodle(painter)
     case .beep: beep(painter)
     case .otto: otto(painter)

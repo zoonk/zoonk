@@ -245,7 +245,7 @@ private fun Turns(
 
 private fun StudyMissionMoment.facts() =
     MissionMomentFacts(
-        missions = missions.map { it.toDayMission() },
+        missions = missions.mapNotNull { it.toDayMission() },
         completed = completed.map { done -> StudyMission.Kind.entries.first { it.value == done.value } },
         bonus = fullMeal.bonus,
         bonusPaid = fullMeal.paid,

@@ -109,7 +109,7 @@ private fun passRule(pass: SpeakingPassRule): String? {
             stringResource(R.string.mock_result_pass_floor, number(pass.value.min))
         }
 
-        is SpeakingPassRule.SpeakingPassRuleOneOf3Value -> {
+        is SpeakingPassRule.SpeakingPassRuleOneOf3Value, is SpeakingPassRule.SpeakingPassRuleOneOf4Value -> {
             null
         }
     }

@@ -81,8 +81,9 @@ class LearningProfileStore(
         kind: Buddy.Kind,
         glasses: Buddy.Glasses,
         name: String?,
-    ): Boolean =
-        update(
+    ): Boolean {
+        if (kind == Buddy.Kind.UNKNOWN_DEFAULT_OPEN_API || glasses == Buddy.Glasses.UNKNOWN_DEFAULT_OPEN_API) return false
+        return update(
             { it.copy(buddy = it.buddy.copy(kind = kind, glasses = glasses, name = name, picked = true)) },
             buildJsonObject {
                 putJsonObject("buddy") {
@@ -92,6 +93,7 @@ class LearningProfileStore(
                 }
             },
         )
+    }
 
     private val writing = Mutex()
     private var pending = 0

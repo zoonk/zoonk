@@ -173,7 +173,12 @@ internal fun CompletedLessons(
 
     val locale = currentLocale()
     val tabs = filter?.let { groupTabs(it, group) }
-    val groupsTitle = filter?.let { stringResource(it.kind.title) }.orEmpty()
+    val groupsTitle =
+        filter
+            ?.kind
+            ?.title
+            ?.let { stringResource(it) }
+            .orEmpty()
     val months = list?.`data`.orEmpty().groupBy { it.finishedOn.toJavaLocalDate().withDayOfMonth(1) }
     val content: LazyListScope.(Boolean) -> Unit = { groupsBeside ->
         item(key = "title", contentType = "title") {
@@ -272,9 +277,10 @@ private fun groupTabs(
 }
 
 /** The plan's own word for its groups, as its Plan page titles them. */
-private val CompletedLessonFilter.Kind.title: Int
+private val CompletedLessonFilter.Kind.title: Int?
     get() =
         when (this) {
+            CompletedLessonFilter.Kind.UNKNOWN_DEFAULT_OPEN_API -> null
             CompletedLessonFilter.Kind.SUBJECTS -> R.string.goalcontent_subjects
             CompletedLessonFilter.Kind.MODULES -> R.string.goalcontent_modules
             CompletedLessonFilter.Kind.PHASES -> R.string.onboarding_reveal_phases

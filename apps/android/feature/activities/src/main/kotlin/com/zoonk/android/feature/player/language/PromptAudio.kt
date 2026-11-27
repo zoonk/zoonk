@@ -82,7 +82,7 @@ fun promptAudioUrl(
     language: StepContent.Language,
     cantListen: Boolean,
 ): String? {
-    val exercise = language.exercise.toExercise()
+    val exercise = language.exercise.toExercise() ?: return null
     return when (language.kind) {
         StepKind.Alphabet -> (exercise.content as? ExerciseContent.Alphabet)?.content?.audioUrl
         StepKind.Listening -> exercise.sentence?.let { listeningAudioUrl(it, cantListen) }

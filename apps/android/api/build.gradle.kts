@@ -36,6 +36,7 @@ openApiGenerate {
             "dateLibrary" to "kotlinx-datetime",
             // An enum value is named `context`, a Kotlin soft keyword.
             "enumPropertyNaming" to "UPPERCASE",
+            "enumUnknownDefaultCase" to "true",
         )
     // The contract's integers have no format, and epoch milliseconds (`readAt`) overflow an Int. An
     // empty object (some language exercises' `content`) would be `kotlin.Any`, which can't decode.

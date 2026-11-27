@@ -19,6 +19,22 @@ struct CodeActivityGradingTests {
     #expect(ActivityRenderer.codeRunner.grade?(content, .output("a  b\n5050")) == false)
   }
 
+  @Test func aCodeRunnerWithAnUnknownLanguageCannotEnterTheLessonQueue() throws {
+    let step = try checkCodeStep(language: "python")
+    #expect(!ActivityRendererRegistry.app.isUnplayable(step))
+    let unknown = try checkCodeStep(language: "futureLanguage")
+    #expect(ActivityRendererRegistry.app.isUnplayable(unknown))
+  }
+
+  private func checkCodeStep(language: String) throws -> LessonStep {
+    let json = """
+      {"id":"exercise","position":1,"kind":"activity","content":{"template":"codeRunner","prompt":"Run",
+       "check":{"kind":"interaction","explanation":"Output"},"fields":{"language":"\(language)",
+       "editableLines":[1],"expectedOutput":"1","mistakes":[],"starterCode":"print(0)","solution":"print(1)"}}}
+      """
+    return try JSONDecoder().decode(LessonStep.self, from: Data(json.utf8))
+  }
+
   @Test func tracerPredictionsMatchTheTracedValue() throws {
     let content = try content(
       #"""

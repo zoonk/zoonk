@@ -121,6 +121,24 @@ final class MusicActivitiesTests: XCTestCase {
                "target":{"kind":"chord","quality":"minor","root":"C"}}}
     """#
 
+  func testRequiredKeyboardInteractionNeedsAPlayableChordAndInstrument() throws {
+    func isUnplayable(_ activity: String) throws -> Bool {
+      let json = """
+        {"id":"exercise","position":1,"kind":"activity","content":\(activity)}
+        """
+      let step = try JSONDecoder().decode(LessonStep.self, from: Data(json.utf8))
+      return ActivityRendererRegistry.app.isUnplayable(step)
+    }
+
+    XCTAssertFalse(try isUnplayable(changeOneNote))
+    XCTAssertTrue(
+      try isUnplayable(
+        changeOneNote.replacingOccurrences(of: #""minor""#, with: #""futureQuality""#)))
+    XCTAssertTrue(
+      try isUnplayable(
+        changeOneNote.replacingOccurrences(of: #""piano","guitar""#, with: #""futureInstrument""#)))
+  }
+
   func testChangingOneNoteTurnsCMajorIntoCMinor() throws {
     let content = try content(changeOneNote)
     let fields = try content.fields(as: KeyboardFretboardFields.self)

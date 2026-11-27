@@ -422,15 +422,17 @@ private fun UnitMistakes(mistakes: List<LanguageUnitMistakesInner>) {
 }
 
 @Composable
-private fun skillLabel(skill: LanguageUnitMistakesInner.Skill): String =
-    stringResource(
+private fun skillLabel(skill: LanguageUnitMistakesInner.Skill): String {
+    return stringResource(
         when (skill) {
+            LanguageUnitMistakesInner.Skill.UNKNOWN_DEFAULT_OPEN_API -> return ""
             LanguageUnitMistakesInner.Skill.LISTENING -> R.string.language_skill_listening
             LanguageUnitMistakesInner.Skill.SPEAKING -> R.string.language_skill_speaking
             LanguageUnitMistakesInner.Skill.WORDS -> R.string.language_skill_words
             LanguageUnitMistakesInner.Skill.WRITING -> R.string.language_skill_writing
         },
     )
+}
 
 private fun hasReference(unit: LanguageUnit) = unit.grammarTips.isNotEmpty() || unit.words.count > 0 || unit.summaries.isNotEmpty()
 

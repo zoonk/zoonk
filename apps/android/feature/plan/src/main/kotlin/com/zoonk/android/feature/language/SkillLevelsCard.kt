@@ -64,9 +64,10 @@ fun SkillLevelsCard(
     modifier: Modifier = Modifier,
 ) {
     val target = progress.target
+    val levels = progress.levels.filterNot { it.skill == LanguageSkillLevel.Skill.UNKNOWN_DEFAULT_OPEN_API }
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        if (progress.levels.isNotEmpty()) {
+        if (levels.isNotEmpty()) {
             FlowRow(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -76,10 +77,10 @@ fun SkillLevelsCard(
                 SectionHeader(stringResource(R.string.language_practice_estimates))
                 if (target != null) TargetLabel(target.label, progress.goal.targetDate)
             }
-            LevelGrid(progress.levels, target?.let { levelShare(it.score) })
+            LevelGrid(levels, target?.let { levelShare(it.score) })
         }
-        RiseLine(progress.levels)
-        if (progress.levels.isNotEmpty()) {
+        RiseLine(levels)
+        if (levels.isNotEmpty()) {
             Text(
                 stringResource(R.string.language_estimates_note),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -90,20 +91,23 @@ fun SkillLevelsCard(
 }
 
 @Composable
-fun skillName(skill: LanguageSkillLevel.Skill): String =
-    stringResource(
+fun skillName(skill: LanguageSkillLevel.Skill): String {
+    return stringResource(
         when (skill) {
+            LanguageSkillLevel.Skill.UNKNOWN_DEFAULT_OPEN_API -> return ""
             LanguageSkillLevel.Skill.READING -> R.string.language_skill_reading
             LanguageSkillLevel.Skill.LISTENING -> R.string.language_skill_listening
             LanguageSkillLevel.Skill.SPEAKING -> R.string.language_skill_speaking
             LanguageSkillLevel.Skill.WRITING -> R.string.language_skill_writing
         },
     )
+}
 
 @Composable
-private fun estimatedLevel(level: LanguageSkillLevel): String =
-    stringResource(
+private fun estimatedLevel(level: LanguageSkillLevel): String {
+    return stringResource(
         when (level.skill) {
+            LanguageSkillLevel.Skill.UNKNOWN_DEFAULT_OPEN_API -> return ""
             LanguageSkillLevel.Skill.READING -> R.string.language_estimate_reading
             LanguageSkillLevel.Skill.LISTENING -> R.string.language_estimate_listening
             LanguageSkillLevel.Skill.SPEAKING -> R.string.language_estimate_speaking
@@ -111,11 +115,13 @@ private fun estimatedLevel(level: LanguageSkillLevel): String =
         },
         level.label,
     )
+}
 
 @Composable
-private fun estimateRose(level: LanguageSkillLevel): String =
-    stringResource(
+private fun estimateRose(level: LanguageSkillLevel): String {
+    return stringResource(
         when (level.skill) {
+            LanguageSkillLevel.Skill.UNKNOWN_DEFAULT_OPEN_API -> return ""
             LanguageSkillLevel.Skill.READING -> R.string.language_estimate_rose_reading
             LanguageSkillLevel.Skill.LISTENING -> R.string.language_estimate_rose_listening
             LanguageSkillLevel.Skill.SPEAKING -> R.string.language_estimate_rose_speaking
@@ -123,6 +129,7 @@ private fun estimateRose(level: LanguageSkillLevel): String =
         },
         level.label,
     )
+}
 
 /** Skills that rose since the level test, the biggest rise first. */
 internal fun listRises(levels: List<LanguageSkillLevel>): List<LanguageSkillLevel> =
@@ -246,6 +253,7 @@ private fun LevelRow(
 ) {
     val trend =
         when (level.trend) {
+            LanguageSkillLevel.Trend.UNKNOWN_DEFAULT_OPEN_API -> null
             LanguageSkillLevel.Trend.UP -> stringResource(R.string.language_level_up)
             LanguageSkillLevel.Trend.DOWN -> stringResource(R.string.language_level_down)
             LanguageSkillLevel.Trend.SAME -> null
@@ -291,6 +299,8 @@ private fun LevelRow(
 @Composable
 private fun TrendArrow(trend: LanguageSkillLevel.Trend) {
     when (trend) {
+        LanguageSkillLevel.Trend.UNKNOWN_DEFAULT_OPEN_API -> {}
+
         LanguageSkillLevel.Trend.UP -> {
             Icon(painterResource(R.drawable.ic_arrow_upward), null, tint = MaterialTheme.colorScheme.onTertiaryContainer)
         }

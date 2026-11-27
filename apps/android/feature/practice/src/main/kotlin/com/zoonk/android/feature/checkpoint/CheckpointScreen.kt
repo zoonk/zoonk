@@ -197,7 +197,7 @@ private fun CheckpointRead(
         .checkpointCall(blockId)
         .state
         .collectAsStateWithLifecycle()
-    val plusRequired = (call as? LoadState.Loaded)?.value is LanguageCheckpointCall.PlusrequiredWrapper
+    val plusRequired = (call as? LoadState.Loaded)?.value is LanguageCheckpointCall.LanguageCheckpointCallPlusRequiredValue
 
     when (val read = loaded) {
         is LoadState.Loaded -> {
@@ -866,6 +866,8 @@ private fun NotWonDetails(
 ) {
     Section(stringResource(R.string.checkpoint_whats_next)) {
         when (rows.retry) {
+            Checkpoint.Retry.UNKNOWN_DEFAULT_OPEN_API -> {}
+
             Checkpoint.Retry.PASSED -> {
                 DetailRow(
                     R.drawable.ic_check,

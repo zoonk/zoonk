@@ -680,6 +680,7 @@ class OnboardingStore(
 val LanguageLevelTest.attemptId: UUID?
     get() =
         when (this) {
+            is LanguageLevelTest.LanguageLevelTestOneOf2Value -> null
             is LanguageLevelTest.LanguageLevelTestOneOfValue -> value.attemptId
             is LanguageLevelTest.LanguageLevelTestOneOf1Value -> value.attemptId
         }

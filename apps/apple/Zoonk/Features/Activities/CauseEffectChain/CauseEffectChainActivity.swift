@@ -4,10 +4,8 @@ extension ActivityRenderer {
   static let causeEffectChain = ActivityRenderer(
     template: "causeEffectChain",
     grade: ActivityExpectedAnswer.grader(CauseEffectFields.self) { .links($0.expected) }
-  ) { context in
-    if let fields = try? context.fields(as: CauseEffectFields.self) {
-      CauseEffectCanvas(fields: fields, context: context)
-    }
+  ) { context, fields in
+    CauseEffectCanvas(fields: fields, context: context)
   }
 }
 

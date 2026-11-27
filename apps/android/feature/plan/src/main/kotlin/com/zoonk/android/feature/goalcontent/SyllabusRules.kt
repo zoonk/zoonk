@@ -133,6 +133,7 @@ internal val SyllabusTopic.mark: TopicMark?
     get() =
         when (status) {
             null -> null
+            SyllabusTopic.Status.UNKNOWN_DEFAULT_OPEN_API -> null
             SyllabusTopic.Status.STUDIED -> TopicMark.Studied
             SyllabusTopic.Status.KNOWN -> TopicMark.Known
             SyllabusTopic.Status.TO_STUDY -> TopicMark.ToStudy
