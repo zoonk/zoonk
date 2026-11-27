@@ -34,11 +34,11 @@ This isn't a rule to strip screens. A screen cut down to a title and a button is
 
 ## Draw it
 
-Look at the sketch as a picture before anyone builds or briefs it. `pnpm design:sketch <file.html>` renders an HTML fragment written with the app's classes and tokens at phone size in about 20 seconds, with no server, and writes a squint copy beside it ([how](#the-sketch-tool)). Change the fragment until the picture passes the scan below, then build that. A debate's result and a build brief carry this picture ([what a debate about screens decides](../../../guides/design-debate.md#what-a-debate-about-screens-decides)).
+Look at the sketch as a picture before anyone builds or briefs it. `pnpm design:sketch <file.html>` renders an HTML fragment written with the app's classes and tokens at phone size in a few seconds, with no server, and writes a squint copy beside it ([how](#the-sketch-tool)). Change the fragment until the picture passes the scan below, then build that. A debate's result and a build brief carry this picture ([what a debate about screens decides](../../../guides/design-debate.md#what-a-debate-about-screens-decides)).
 
 ## The scan
 
-Asked of every new or changed screen, on its phone picture, before any other question and before any ruler. The builder asks it of the sketch; a reader who built none of it asks it again of the built screen ([the first-glance test](../SKILL.md#the-first-glance-test)), on the squint copy first, where words can't be read (`pnpm design:sketch --squint <picture>` makes one from any screenshot).
+Asked of every new or changed screen, on its phone picture, before any other question and before any ruler. The builder asks it of the sketch; a reader who built none of it asks it again of the built screen ([the first-glance test](../SKILL.md#the-first-glance-test)), on the squint copy first, where body text can't be read (`pnpm design:sketch --squint <picture>` makes one from any screenshot).
 
 1. What do you see first, second and third, named as shapes (a big number, a bar, a row of marks, a button, a block of gray lines)? Is the first one the one thing?
 2. How many free lines are there between the title and the main action?
@@ -74,4 +74,4 @@ A finding that a learner can't tell something is one fact back at the top of the
 
 ## The sketch tool
 
-`pnpm design:sketch <file.html>` takes what goes inside `<body>`: plain HTML with the classes the app's pieces use (read the piece in `packages/ui`, `packages/learn` or `packages/player` and redraw it), since it compiles the app's `globals.css`. `<i data-lucide="clock" class="size-4"></i>` becomes that Lucide icon. It writes `<file>.png` at 390 by 844 and `<file>.squint.png`, the same picture blurred until no word reads; `--dark` draws dark mode and `--squint <picture.png>` blurs any screenshot, such as a built screen's. The fragment and its pictures stay outside the repository. A sketch shows structure and hierarchy; the built screen is still judged in the running app.
+`pnpm design:sketch <file.html>` takes what goes inside `<body>`: plain HTML with the classes the app's pieces use (read the piece in `packages/ui`, `packages/learn` or `packages/player` and redraw it), since it compiles the app's `globals.css`. `<i data-lucide="clock" class="size-4"></i>` becomes that Lucide icon. It writes `<file>.png`, what a phone shows of the screen (390 by 844; it says so when the screen is taller), and `<file>.squint.png`, the same picture blurred until its body text can't be read: a title keeps its shape. `--dark` draws dark mode and `--squint <picture.png>` blurs any screenshot, such as a built screen's. It draws with the Chromium the E2E tests use (`pnpm exec playwright install chromium`). The fragment and its pictures stay outside the repository. A sketch shows structure and hierarchy; the built screen is still judged in the running app.
