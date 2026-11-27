@@ -33,11 +33,16 @@ export async function readSkillMistakeSignals({
     WITH candidates AS (
       SELECT DISTINCT unnest(${[...skillIds]}::uuid[]) AS skill_id
     ), completed_lessons AS (
-      SELECT lesson.id, lesson.identity_key, event.kind, event.ended_at
+      SELECT lesson.id, lesson.identity_key, event.kind, event.ended_at,
+        block.payload->>'returning' AS returning, block.payload->'skillIds' AS block_skill_ids
       FROM learning_events event
       JOIN library_lessons lesson ON lesson.id = CASE
         WHEN pg_input_is_valid(event.content_ids->>'lessonId', 'uuid')
         THEN (event.content_ids->>'lessonId')::uuid
+      END
+      LEFT JOIN study_session_blocks block ON block.id = CASE
+        WHEN pg_input_is_valid(event.content_ids->>'studySessionBlockId', 'uuid')
+        THEN (event.content_ids->>'studySessionBlockId')::uuid
       END
       WHERE event.user_id = ${userId}::uuid
         AND event.kind IN ('lesson', 'review')
@@ -47,10 +52,12 @@ export async function readSkillMistakeSignals({
       SELECT candidate.skill_id,
         MIN(lesson.ended_at) FILTER (WHERE lesson.identity_key !~ ${SECOND_TAKE_IDENTITY_PATTERN}) AS first_at,
         MAX(lesson.ended_at) FILTER (
-          WHERE lesson.kind = 'review' AND lesson.identity_key !~ ${SECOND_TAKE_IDENTITY_PATTERN}
+          WHERE (lesson.kind = 'review' OR lesson.returning = 'missed')
+            AND lesson.identity_key !~ ${SECOND_TAKE_IDENTITY_PATTERN}
         ) AS replayed_at,
         MAX(lesson.ended_at) FILTER (
           WHERE lesson.identity_key ~ ${SECOND_TAKE_IDENTITY_PATTERN}
+            OR (lesson.returning = 'anotherWay' AND lesson.block_skill_ids ? candidate.skill_id::text)
         ) AS second_take_at
       FROM candidates candidate
       JOIN lesson_skills link USING (skill_id)

@@ -21,7 +21,7 @@ import {
 } from "../../sessions/_utils/plan-items";
 import { refitSessionLessons } from "../../sessions/_utils/refit-session-lessons";
 import { trackBlockCompleted } from "../../sessions/_utils/session-events";
-import { readBlockPayload } from "../../sessions/block-payload";
+import { type BlockPayload, readBlockPayload } from "../../sessions/block-payload";
 import { isOutsidePlanLesson } from "../../sessions/day-block";
 import { getCompletionEnergyContext } from "../../stats/completion-energy";
 import { upsertDailyProgress } from "../../stats/daily-progress";
@@ -52,19 +52,45 @@ async function refitAfterMainBlock(
   await refitSessionLessons(tx, { completedBlockId: block.id, sessionId: block.sessionId });
 }
 
+/** A lesson served another way teaches only the stuck skill it was chosen for. */
+function getTaughtSkillIds({
+  payload,
+  secondTakeSkillId,
+  teachingSkillIds,
+}: {
+  payload: BlockPayload | null;
+  secondTakeSkillId: string | null;
+  teachingSkillIds: readonly string[];
+}): readonly string[] {
+  if (secondTakeSkillId) {
+    return [secondTakeSkillId];
+  }
+
+  return payload?.returning === "anotherWay" ? payload.skillIds : teachingSkillIds;
+}
+
+/** Replays, second takes and lessons Today brings back move the evidence cutoff; another first finish sets only a missing one. */
 async function markTeachingBoundary({
+  block,
   completedAt,
-  refresh,
-  skillIds,
+  isReview,
+  secondTakeSkillId,
+  teachingSkillIds,
   tx,
   userId,
 }: {
+  block: RunBlock | null;
   completedAt: Date;
-  refresh: boolean;
-  skillIds: readonly string[];
+  isReview: boolean;
+  secondTakeSkillId: string | null;
+  teachingSkillIds: readonly string[];
   tx: TransactionClient;
   userId: string;
 }) {
+  const payload = block ? readBlockPayload(block) : null;
+  const refresh = isReview || Boolean(payload?.returning);
+  const skillIds = getTaughtSkillIds({ payload, secondTakeSkillId, teachingSkillIds });
+
   if (skillIds.length === 0) {
     return;
   }
@@ -173,9 +199,11 @@ export async function finishLessonRun({
     }
 
     await markTeachingBoundary({
+      block,
       completedAt,
-      refresh: isReview,
-      skillIds: secondTakeSkillId ? [secondTakeSkillId] : teachingSkillIds,
+      isReview,
+      secondTakeSkillId,
+      teachingSkillIds,
       tx,
       userId,
     });

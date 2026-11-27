@@ -246,7 +246,9 @@ function chooseRemedialLesson({
     const alternative = alternatives.find((lesson) => isWritten(lesson));
 
     if (alternative) {
-      return startable(alternative.id) ? toTeachingBlock(alternative, "anotherWay") : undefined;
+      return startable(alternative.id)
+        ? toTeachingBlock({ ...alternative, skills: [{ skillId }] }, "anotherWay")
+        : undefined;
     }
 
     const ready = secondTakes.get(skillId);

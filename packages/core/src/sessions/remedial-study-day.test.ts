@@ -19,7 +19,9 @@ import { startLibraryLesson } from "../lesson-player/start-library-lesson";
 import { getSecondTakeIdentityKey } from "../library/second-takes/second-take-identity";
 import { answerMistakePractice } from "../mistakes/answer-mistake-practice";
 import { readPlanSummary } from "../plans/_utils/plan-summary";
+import { readSkillMistakeSignals } from "../learner/read-skill-mistake-signals";
 import {
+  DAY_MS,
   SESSION_NOW,
   SESSION_TODAY,
   daysAgo,
@@ -304,6 +306,127 @@ describe("adaptive study days", () => {
 
     await expect(read()).resolves.toMatchObject({ teaching: [] });
   });
+
+  it("serves an unfinished lesson another way for the stuck skill alone", async () => {
+    const { context, skill, skills } = await withRecentMisses({ replay: true });
+    const { lesson } = await playableLessonFixture({ steps: ["summary"] });
+
+    await prisma.lessonSkill.createMany({
+      data: [skill, skills[1]!].map(({ id }) => ({ lessonId: lesson.id, skillId: id })),
+    });
+
+    await expect(
+      loadDayRemediation({ context, plan: await loadDayPlan(context) }),
+    ).resolves.toMatchObject({
+      teaching: [{ lessonId: lesson.id, payload: { returning: "anotherWay", skillIds: [skill.id] } }],
+    });
+  });
+
+  it.each([
+    { next: "anotherWay", replay: false, returning: "missed", stage: "replay" },
+    { next: null, replay: true, returning: "anotherWay", stage: "secondTake" },
+  ] as const)(
+    "counts the first finish of a $returning lesson as its stage and moves the cutoff",
+    async ({ next, replay, returning, stage }) => {
+      const { context, goal, skill, skills, userId } = await withRecentMisses({ replay });
+
+      await prisma.learnerSkill.upsert({
+        create: { helpedAt: daysAgo(12), skillId: skill.id, userId },
+        update: { helpedAt: daysAgo(12) },
+        where: { userSkill: { skillId: skill.id, userId } },
+      });
+
+      const { lesson } = await playableLessonFixture({ steps: ["summary"] });
+      const { lesson: spare } = await playableLessonFixture({ steps: ["summary"] });
+
+      await prisma.lessonSkill.createMany({
+        data: [
+          ...[lesson, spare].map(({ id }) => ({ lessonId: id, skillId: skill.id })),
+          { lessonId: lesson.id, skillId: skills[1]!.id },
+        ],
+      });
+
+      const read = async (at = context) =>
+        loadDayRemediation({ context: at, plan: await loadDayPlan(at) });
+
+      const session = await studySessionFixture({
+        goalId: goal.id,
+        localDate: SESSION_TODAY,
+        userId,
+      });
+
+      await studySessionBlockFixture({
+        kind: "learn",
+        lessonId: lesson.id,
+        payload: { returning, skillIds: [skill.id] },
+        sessionId: session.id,
+      });
+
+      const started = await startLibraryLesson({ input: { timeZone: "UTC" }, lessonId: lesson.id });
+
+      if (started.status !== "started") {
+        throw new Error("The returning lesson did not start");
+      }
+
+      await completeLibraryLesson({
+        input: { runId: started.run.runId, timeZone: "UTC" },
+        lessonId: lesson.id,
+      });
+
+      await expect(
+        prisma.learningEvent.findUniqueOrThrow({ where: { id: started.run.runId } }),
+      ).resolves.toMatchObject({ kind: "lesson" });
+
+      await expect(
+        readSkillMistakeSignals({ now: SESSION_NOW, skillIds: [skill.id], userId }),
+      ).resolves.toStrictEqual(
+        new Map([
+          [
+            skill.id,
+            expect.objectContaining({
+              helpedAt: SESSION_NOW,
+              [stage === "replay" ? "replayedAt" : "secondTakeAt"]: SESSION_NOW,
+            }),
+          ],
+        ]),
+      );
+
+      await expect(read()).resolves.toMatchObject({ teaching: [] });
+
+      const later = new Date(SESSION_NOW.getTime() + 10 * DAY_MS);
+      const item = await prisma.item.findFirstOrThrow({ where: { skillId: skill.id } });
+
+      await Promise.all(
+        [8, 9].map((days) =>
+          attemptFixture({
+            answeredAt: new Date(SESSION_NOW.getTime() + days * DAY_MS),
+            cause: "gap",
+            evidence: "independent",
+            isCorrect: false,
+            itemId: item.id,
+            skillId: skill.id,
+            userId,
+          }),
+        ),
+      );
+
+      vi.setSystemTime(later);
+
+      await expect(
+        readSkillMistakeSignals({ now: later, skillIds: [skill.id], userId }),
+      ).resolves.toStrictEqual(
+        new Map([
+          [skill.id, expect.objectContaining({ dueSecondTake: next !== null, stage, stuck: true })],
+        ]),
+      );
+
+      await expect(
+        read({ ...context, localDate: new Date(later.toISOString().slice(0, 10)), now: later }),
+      ).resolves.toMatchObject({
+        teaching: next ? [{ lessonId: spare.id, payload: { returning: next } }] : [],
+      });
+    },
+  );
 
   it.each([
     { kind: "review", previous: true, returning: "again", status: "todo" },
