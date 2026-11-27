@@ -16,6 +16,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ANA
+import com.zoonk.android.data.ApiError
+import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
@@ -138,6 +140,60 @@ class MistakePracticeScreenshots {
         rule.waitForIdle()
         if (fold) rule.unfoldBook(folds)
         write(name)
+    }
+
+    /** A day block whose mistakes are all gone: its completion is the only thing that marks the row, so it waits for it. */
+    private fun emptyBlock(
+        name: String,
+        dark: Boolean = false,
+        retried: Boolean = false,
+    ) {
+        val api = FakeMistakesApi(practice(), finish = { throw ApiException(ApiError.Network) })
+        val cache =
+            AppCache(
+                FakeSession(AuthenticatedSession(ANA, "token", "local")),
+                CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
+            )
+        val viewModel = practiceViewModel(cache, api, key = PracticeKey(goalId = null, blockId = java.util.UUID.randomUUID()))
+        viewModel.beginEmpty()
+        if (retried) {
+            api.finish = { completion() }
+            viewModel.retryFinish()
+        }
+
+        rule.setContent {
+            ZoonkTheme(darkTheme = dark) {
+                val navigator = rememberAppNavigator()
+                val state by viewModel.state.collectAsStateWithLifecycle()
+                state?.let { PracticeRun(it, viewModel, AppContainer.preview(rule.activity), navigator) }
+            }
+        }
+        rule.waitForIdle()
+        write(name)
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneEmptyBlockFailed() = emptyBlock("phone-empty-block-failed")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun phoneEmptyBlockFailedDark() = emptyBlock("phone-empty-block-failed-dark", dark = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneEmptyBlockRetried() = emptyBlock("phone-empty-block-retried", retried = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun phoneDonePracticeAgainDark() {
+        show("phone-done-again-dark", dark = true, play = ::playToEnd, feedback = { practiceFeedback(requiresLaterDay = true) })
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun phoneDoneDark() {
+        show("phone-done-dark", dark = true, play = ::finish)
     }
 
     private fun check() {

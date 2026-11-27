@@ -17,6 +17,11 @@ struct MistakePracticeScreen: View {
   @State private var shownAt = Date.now
   @State private var attempt: (id: String, index: Int)?
   @State private var showsSaveReport = false
+  /// A day block's completion that didn't get through: the run waits on it, with a retry.
+  @State private var finishFailures = 0
+  @State private var isFinishing = false
+  /// "Practice again" reading the next batch; its outcome is the read's failure.
+  @State private var again = VisitRequest<APIError>()
   @FocusState private var focus: PracticeFocus?
   @AccessibilityFocusState private var voiceOverFocus: PracticeFocus?
   @State private var pressedWithFocus: PracticeFocus?
@@ -39,7 +44,7 @@ struct MistakePracticeScreen: View {
           ProgressView().frame(maxWidth: .infinity, maxHeight: .infinity)
         case .failed(let error):
           PracticeLoadFailureView(error: error) { Task { await read() } }
-        case .loaded(let set) where set.entries.isEmpty:
+        case .loaded(let set) where set.entries.isEmpty && state.phase != .ending:
           nothingToPractice
         case .loaded:
           run
@@ -64,6 +69,7 @@ struct MistakePracticeScreen: View {
       isPresented: $showsSaveReport,
       context: FeedbackContext(screen: "mistake-practice", reportType: .saveFailure), isReport: true
     )
+    .onDisappear { again.leave() }
   }
 
   /// Main's `QuestionMenu`: the question or lesson screen in view, once answered on a timed drill.
@@ -92,12 +98,25 @@ struct MistakePracticeScreen: View {
   @ViewBuilder
   private var run: some View {
     switch state.phase {
+    case .ending where finishFailures > 0 && !isFinishing:
+      PracticeTaskLayout(isResult: true) {
+        unsavedEnd
+      } actions: {
+        PracticeMainButton(
+          title: LocalizedStringResource(
+            "Try again", table: "Practice", comment: "Sends an answer that didn't save again.")
+        ) {
+          Task { await finish() }
+        }
+      }
     case .ending:
       ProgressView().frame(maxWidth: .infinity, maxHeight: .infinity)
     case .ended(let summary):
       PracticeDoneView(
         summary: summary, fixed: state.fixedIds.count, reached: state.reached,
-        canPracticeAgain: scope.blockId == nil && !state.entriesToPracticeAgain.isEmpty,
+        canPracticeAgain: state.offersAgain(
+          scope: scope, hasMorePractice: summary?.hasMorePractice == true),
+        isLoadingAgain: again.isRunning, againFailed: again.outcome != nil,
         again: practiceAgain
       ) {
         dismiss()
@@ -109,7 +128,7 @@ struct MistakePracticeScreen: View {
         if let lesson = step.entry.lesson {
           MistakeLessonQuestionView(
             replay: lesson, entry: step.entry, segments: state.segments, index: state.index,
-            goalId: goalId, blockId: scope.blockId, answerIds: state.answerIds,
+            goalId: goalId, scope: scope, answerIds: state.answerIds,
             checking: { state.checkingLesson() }, failed: { state.lessonFailed() },
             answered: { state.answeredLesson($0, mistakeId: step.entry.mistakeId) },
             next: next
@@ -361,20 +380,61 @@ struct MistakePracticeScreen: View {
     .lonePage()
   }
 
+  /// A run's end that didn't reach the server. With nothing answered (a day block emptied
+  /// elsewhere), there's nothing kept to mention.
+  @ViewBuilder
+  private var unsavedEnd: some View {
+    if state.answerIds.isEmpty {
+      PracticeResultTitle(
+        title: LocalizedStringResource(
+          "Nothing to practice", table: "Practice",
+          comment: "Title when no mistake is ready to practice."),
+        detail: nil)
+      SaveFailureNotice(
+        failures: finishFailures,
+        firstMessage: LocalizedStringResource(
+          "That didn't go through.", table: "Practice",
+          comment:
+            "A day's step with nothing left to ask couldn't be marked done; Try again follows")
+      ) { showsSaveReport = true }
+    } else {
+      PracticeResultTitle(
+        title: LocalizedStringResource(
+          "Your practice isn't saved yet", table: "Practice",
+          comment: "Title when a run's end didn't reach the server; the learner can try again"),
+        detail: nil)
+      SaveFailureNotice(failures: finishFailures) { showsSaveReport = true }
+    }
+  }
+
+  private func fetchSet(_ identity: AuthenticatedSession) async throws -> MistakePracticeSet {
+    try await practice.api.mistakePractice(
+      token: identity.bearerToken, goalId: goalId, scope: scope)
+  }
+
+  private func start(_ set: MistakePracticeSet) {
+    draft = nil
+    attempt = nil
+    labels = set.trueFalseLabels
+    state = MistakePracticeState(entries: set.entries)
+    shownAt = .now
+    load = .loaded(set)
+  }
+
   private func read() async {
     // Practice is scoped to the active goal, so it waits for the summary that names it.
     guard let identity = session.authenticatedSession, summary.summary.value != nil else { return }
 
     do {
-      let set = try await practice.api.mistakePractice(
-        token: identity.bearerToken, goalId: goalId, scope: scope)
+      let set = try await fetchSet(identity)
       guard session.authenticatedSession == identity else { return }
-      labels = set.trueFalseLabels
-      state = MistakePracticeState(entries: set.entries)
-      shownAt = .now
-      load = .loaded(set)
-      // A block whose mistakes can no longer be asked is done: the day never waits on it.
-      if set.entries.isEmpty, scope.blockId != nil { await finish() }
+      start(set)
+      // A block whose mistakes can no longer be asked is done once its completion gets through:
+      // the day never waits on it.
+      if set.entries.isEmpty, scope.blockId != nil {
+        state.end()
+        await finish()
+      }
     } catch let error as APIError {
       if error == .unauthorized { await session.expire(identity) }
       load = .failed(error)
@@ -415,8 +475,7 @@ struct MistakePracticeScreen: View {
           token: identity.bearerToken, mistakeId: step.entry.mistakeId,
           itemId: question.itemId,
           answer: sent.answer, durationMs: sent.durationMs,
-          attemptId: attemptId, runAnswerIds: runAnswerIds, goalId: goalId,
-          blockId: scope.blockId)
+          attemptId: attemptId, runAnswerIds: runAnswerIds, goalId: goalId, scope: scope)
       })
     {
     case .done(let grade):
@@ -463,39 +522,56 @@ struct MistakePracticeScreen: View {
     await finish()
   }
 
-  /// Another run on what this one didn't fix. A day's block offers none: the day goes on from
-  /// Today.
+  /// A fresh batch from the server in the same scope: a run holds at most 50, so more can be open
+  /// than this one asked. The done screen stays while it loads, and says so if it doesn't.
   private func practiceAgain() {
-    draft = nil
-    attempt = nil
-    shownAt = .now
-    state = MistakePracticeState(entries: state.entriesToPracticeAgain)
+    guard !again.isRunning, let identity = session.authenticatedSession else { return }
+
+    again.run {
+      do {
+        let set = try await fetchSet(identity)
+        guard session.authenticatedSession == identity, !Task.isCancelled else { return nil }
+        start(set)
+        return nil
+      } catch let error as APIError {
+        if error == .unauthorized { await session.expire(identity) }
+        return error
+      } catch {
+        return .unavailable
+      }
+    }
   }
 
   /// A block's run always tells the server it ended, so the block completes even with nothing
-  /// answered in it.
+  /// answered in it, and it isn't over until that gets through. Any other run's count is best
+  /// effort: each answer was counted as it came.
   private func finish() async {
-    let blockId = scope.blockId
-
-    guard !state.answerIds.isEmpty || blockId != nil else {
+    guard !state.answerIds.isEmpty || scope.blockId != nil else {
       state.ended(nil)
       return
     }
 
     let answerIds = state.answerIds
     let goalId = goalId
+    isFinishing = true
+    defer { isFinishing = false }
 
-    // A count that didn't get through still ends the run: each answer was counted as it came.
     switch await practice.write(
       .finished,
       { identity in
         try await practice.api.finishMistakePractice(
-          token: identity.bearerToken, answerIds: answerIds, ended: true, goalId: goalId,
-          blockId: blockId)
+          token: identity.bearerToken, answerIds: answerIds, goalId: goalId, scope: scope)
       })
     {
-    case .done(let summary): state.ended(summary)
-    case .refused, .failed: state.ended(nil)
+    case .done(let summary):
+      finishFailures = 0
+      state.ended(summary)
+    case .refused, .failed:
+      if scope.blockId == nil {
+        state.ended(nil)
+      } else {
+        finishFailures += 1
+      }
     case .obsolete: break
     }
   }
@@ -508,6 +584,8 @@ private struct PracticeDoneView: View {
   let fixed: Int
   let reached: PracticeReached
   let canPracticeAgain: Bool
+  let isLoadingAgain: Bool
+  let againFailed: Bool
   let again: () -> Void
   let close: () -> Void
 
@@ -528,11 +606,15 @@ private struct PracticeDoneView: View {
         day: day)
     } actions: {
       if canPracticeAgain {
+        if againFailed {
+          SaveFailureNotice(failures: 1) {}
+        }
+
         PracticeMainButton(
           title: LocalizedStringResource(
             "Practice again", table: "Practice",
             comment: "Starts another mistakes practice run after one ends."),
-          action: again)
+          isBusy: isLoadingAgain, action: again)
       } else {
         PracticeMainButton(
           title: LocalizedStringResource(

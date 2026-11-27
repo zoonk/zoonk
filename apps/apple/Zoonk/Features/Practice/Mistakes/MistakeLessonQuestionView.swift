@@ -6,7 +6,7 @@ struct MistakeLessonQuestionView: View {
   let segments: [TaskSegment]
   let index: Int
   let goalId: String?
-  let blockId: String?
+  let scope: MistakePracticeScope
   let answerIds: [String]
   let checking: () -> Void
   let failed: () -> Void
@@ -41,7 +41,8 @@ struct MistakeLessonQuestionView: View {
 
   init(
     replay: MistakeLessonReplay, entry: MistakePracticeEntry, segments: [TaskSegment], index: Int,
-    goalId: String?, blockId: String?, answerIds: [String], checking: @escaping () -> Void,
+    goalId: String?, scope: MistakePracticeScope, answerIds: [String],
+    checking: @escaping () -> Void,
     failed: @escaping () -> Void, answered: @escaping (MistakePracticeGrade) -> Void,
     next: @escaping () -> Void
   ) {
@@ -50,7 +51,7 @@ struct MistakeLessonQuestionView: View {
     self.segments = segments
     self.index = index
     self.goalId = goalId
-    self.blockId = blockId
+    self.scope = scope
     self.answerIds = answerIds
     self.checking = checking
     self.failed = failed
@@ -274,7 +275,8 @@ struct MistakeLessonQuestionView: View {
       cantTalk: $cantTalk, cantListen: $cantListen, micBlocked: $micBlocked,
       mistake: SpokenMistakeTarget(
         mistakeId: entry.mistakeId, attemptId: attemptId,
-        goalId: goalId, blockId: blockId, answerIds: answerIds, questionStartedAt: shownAt),
+        goalId: scope.goal(goalId), blockId: scope.blockId, mockId: scope.mockId,
+        answerIds: answerIds, questionStartedAt: shownAt),
       onPracticeGraded: { feedback in
         if let result = try? MistakePracticeGrade(feedback) { show(result) }
       },
@@ -338,7 +340,7 @@ struct MistakeLessonQuestionView: View {
         try await practice.api.answerLessonMistake(
           token: identity.bearerToken, mistakeId: entry.mistakeId, stepId: replay.step.id,
           answer: answer, durationMs: sentDuration ?? 0,
-          attemptId: attemptId, runAnswerIds: answerIds, goalId: goalId, blockId: blockId)
+          attemptId: attemptId, runAnswerIds: answerIds, goalId: goalId, scope: scope)
       })
     {
     case .done(let result):

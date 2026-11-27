@@ -82,7 +82,9 @@ internal fun practiceFeedback(
 internal fun completion(
     correct: Int = 1,
     total: Int = 2,
-): MistakePracticeCompletion = decodeFixture("mistake-practice-completion", "correct" to correct, "total" to total)
+    hasMorePractice: Boolean = false,
+): MistakePracticeCompletion =
+    decodeFixture("mistake-practice-completion", "correct" to correct, "total" to total, "hasMorePractice" to hasMorePractice)
 
 internal class FakeMistakesApi(
     var read: MistakePractice,

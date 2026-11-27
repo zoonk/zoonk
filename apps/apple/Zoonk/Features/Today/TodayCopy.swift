@@ -277,8 +277,14 @@ extension StudyBlock {
       comment: "A practice block's questions")
   }
 
-  /// The row's one short line on Today's list: the subject, or what a challenge or review is.
-  func label(document: ExamDocument) -> String? {
+  /// Main's `useBlockSubject`: the subject a block belongs to, or that the exam doesn't test it.
+  func subjectLine(document: ExamDocument) -> String? {
+    subjectExtra.map { examExtraLabel(hasNotice: $0 == .notice, document: document) } ?? subject
+  }
+
+  /// Main's `useStepLabel`: the row's line under its subject on Today's list, what a challenge,
+  /// practice or review is, or why remedial work is in the day.
+  var label: String? {
     // A refused start is the one thing to know before tapping it, even while lessons come first.
     if case .tomorrow = writingAvailability {
       return writingLine
@@ -313,12 +319,7 @@ extension StudyBlock {
           locale: .appLanguage, comment: "A practice block's questions")
     }
 
-    if kind == .produce, let writingLine {
-      return writingLine
-    }
-
-    return subjectExtra.map { examExtraLabel(hasNotice: $0 == .notice, document: document) }
-      ?? subject
+    return kind == .produce ? writingLine : nil
   }
 }
 

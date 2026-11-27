@@ -224,7 +224,7 @@ struct PracticeAPI: Sendable {
     try await perform(token) { client in
       switch try await client.getCurrentUserMistakePractice(
         query: .init(
-          blockId: scope.blockId, goalId: goalId, includeAllFormats: ._true,
+          blockId: scope.blockId, goalId: scope.goal(goalId), includeAllFormats: ._true,
           mockId: scope.mockId, skillId: scope.skillId, timeZone: timeZone))
       {
       case .ok(let response):
@@ -249,14 +249,13 @@ struct PracticeAPI: Sendable {
 
   func answerMistake(
     token: String, mistakeId: String, itemId: String, answer: PracticeAnswer, durationMs: Int,
-    attemptId: String, runAnswerIds: [String], goalId: String?, blockId: String?
+    attemptId: String, runAnswerIds: [String], goalId: String?, scope: MistakePracticeScope
   ) async throws -> MistakePracticeGrade {
     let body: Components.Schemas.MistakePracticeAnswerInput = try PracticeJSON.recode(
       MistakeAnswerRequest(
         answer: answer, durationMs: min(durationMs, 3_600_000), itemId: itemId,
         stepId: nil, attemptId: attemptId,
-        run: .init(answerIds: runAnswerIds, blockId: blockId, goalId: goalId),
-        timeZone: timeZone))
+        run: .init(answerIds: runAnswerIds, scope: scope, goalId: goalId), timeZone: timeZone))
 
     return try await perform(token) { client in
       switch try await client.createMistakePracticeAnswer(
@@ -274,12 +273,12 @@ struct PracticeAPI: Sendable {
 
   func answerLessonMistake(
     token: String, mistakeId: String, stepId: String, answer: LessonAnswer?, durationMs: Int,
-    attemptId: String, runAnswerIds: [String], goalId: String?, blockId: String?
+    attemptId: String, runAnswerIds: [String], goalId: String?, scope: MistakePracticeScope
   ) async throws -> MistakePracticeGrade {
     let request = MistakeAnswerRequest(
       answer: LessonMistakeAnswer(answer), durationMs: min(durationMs, 3_600_000),
       itemId: nil, stepId: stepId, attemptId: attemptId,
-      run: .init(answerIds: runAnswerIds, blockId: blockId, goalId: goalId), timeZone: timeZone)
+      run: .init(answerIds: runAnswerIds, scope: scope, goalId: goalId), timeZone: timeZone)
     let body: Components.Schemas.MistakePracticeAnswerInput = try PracticeJSON.recode(request)
     return try await perform(token) { client in
       switch try await client.createMistakePracticeAnswer(
@@ -292,11 +291,14 @@ struct PracticeAPI: Sendable {
     }
   }
 
+  /// Names the run's scope and format filter as its read did, so the answer says whether another
+  /// batch is left to practice.
   func finishMistakePractice(
-    token: String, answerIds: [String], ended: Bool, goalId: String?, blockId: String?
+    token: String, answerIds: [String], goalId: String?, scope: MistakePracticeScope
   ) async throws -> Components.Schemas.MistakePracticeCompletion {
     let body = Components.Schemas.MistakePracticeFinishInput(
-      answerIds: answerIds, blockId: blockId, ended: ended, goalId: goalId, timeZone: timeZone)
+      answerIds: answerIds, blockId: scope.blockId, ended: true, goalId: scope.goal(goalId),
+      includeAllFormats: true, mockId: scope.mockId, skillId: scope.skillId, timeZone: timeZone)
 
     return try await perform(token) { client in
       switch try await client.createMistakePracticeCompletion(body: .json(body)) {
@@ -659,6 +661,14 @@ private struct MistakeAnswerRequest<Answer: Encodable>: Encodable {
     let answerIds: [String]
     let blockId: String?
     let goalId: String?
+    let mockId: String?
+
+    init(answerIds: [String], scope: MistakePracticeScope, goalId: String?) {
+      self.answerIds = answerIds
+      blockId = scope.blockId
+      self.goalId = scope.goal(goalId)
+      mockId = scope.mockId
+    }
   }
   let answer: Answer
   let durationMs: Int
