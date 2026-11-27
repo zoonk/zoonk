@@ -62,7 +62,7 @@ export async function pickItemInBlock({
 }
 
 /** The answer a learner gives by tapping the right option, or a wrong one, where a mock shows it. */
-export function pickInMock({
+function pickInMock({
   item,
   mock,
   right = true,
