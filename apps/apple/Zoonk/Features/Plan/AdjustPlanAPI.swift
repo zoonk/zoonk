@@ -230,7 +230,7 @@ enum PlanChangeOutcome: Equatable, Sendable {
   /// Saved without moving a lesson (a focus taken back): the plan is read again.
   case saved
   case invalid
-  case unchanged(UnchangedReason? = nil)
+  case unchanged(UnchangedReason?)
   /// It set back by hand what the latest change set, so core undid that change (`undoSetBack`).
   case undone
 }

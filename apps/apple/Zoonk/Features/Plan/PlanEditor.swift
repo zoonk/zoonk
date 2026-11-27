@@ -11,7 +11,7 @@ final class PlanEditor {
     case invalid
     case undone
     /// What the change's own words say about why nothing changed, when they say it.
-    case unchanged(sentence: String? = nil)
+    case unchanged(sentence: String?)
   }
 
   private(set) var latest: Latest?

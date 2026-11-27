@@ -113,9 +113,13 @@ final class PlanStoreTests: XCTestCase {
     let api = PlanAPIStub()
     let editor = PlanEditor(goalId: "goal", store: makeStore(api: api))
 
-    await api.setChangeOutcome(.unchanged)
+    await api.setChangeOutcome(.unchanged(nil))
     await editor.change([.dailyMinutes(20)], sentence: "")
-    XCTAssertEqual(editor.latest, .unchanged)
+    XCTAssertEqual(editor.latest, .unchanged(sentence: nil))
+
+    await api.setChangeOutcome(.unchanged(.cantMove))
+    await editor.change([.focusAreas(["Math"])], unchanged: { "Nothing changed: \($0)" })
+    XCTAssertEqual(editor.latest, .unchanged(sentence: "Nothing changed: cantMove"))
 
     await api.setChangeOutcome(.invalid)
     await editor.change([.targetDate("2020-01-01")], sentence: "")
@@ -959,11 +963,11 @@ actor PlanAPIStub: PlanAPIClient {
   }
   func chooseExamOption(token: String, goalId: String, group: String, subjects: [String])
     async throws -> PlanChangeOutcome
-  { .unchanged }
+  { .unchanged(nil) }
   func chooseTools(
     token: String, goalId: String, tools: [String], choice: ToolChoice, system: String?,
     whileWriting: @escaping @MainActor () -> Void
-  ) async throws -> PlanChangeOutcome { .unchanged }
+  ) async throws -> PlanChangeOutcome { .unchanged(nil) }
   func timeToCover(token: String, goalId: String) async throws -> TimeToCover {
     calls.timeToCover += 1
     defer { completed[.timeToCover, default: 0] += 1 }
