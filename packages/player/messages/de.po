@@ -3618,11 +3618,6 @@ msgid "Ask {name} about this mock exam"
 msgstr "Frag {name} zu dieser Probeprüfung"
 
 #: src/questions/ask-tutor.tsx
-msgctxt "tLlk0f"
-msgid "Ask {name} about your plan"
-msgstr "Frag {name} zu deinem Plan"
-
-#: src/questions/ask-tutor.tsx
 msgctxt "VgQdYo"
 msgid "Ask {name} about this module"
 msgstr "Frag {name} etwas zu diesem Modul"

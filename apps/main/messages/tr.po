@@ -817,21 +817,16 @@ msgctxt "1JgBls"
 msgid "Expand sidebar"
 msgstr "Kenar çubuğunu genişlet"
 
-#: src/app/[lang]/(app)/(learn)/buddy/page.tsx
+#: src/app/[lang]/(app)/(learn)/buddy/layout.tsx
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 msgctxt "FRwDt3"
 msgid "Your buddy"
 msgstr "Arkadaşın"
 
-#: src/app/[lang]/(app)/(learn)/buddy/page.tsx
+#: src/app/[lang]/(app)/(learn)/buddy/layout.tsx
 msgctxt "6YPtag"
 msgid "Your buddy answers your questions and adjusts your plan."
 msgstr "Arkadaşın sorularını cevaplar ve planını düzenler."
-
-#: src/app/[lang]/(app)/(learn)/buddy/page.tsx
-msgctxt "BV0cQk"
-msgid "Your day"
-msgstr "Günün"
 
 #: src/app/[lang]/(app)/(learn)/certificates/page.tsx
 msgctxt "xQ7ze5"

@@ -1321,6 +1321,7 @@ msgid "Change"
 msgstr "Cambiar"
 
 #: src/appearance/buddy-settings.tsx
+#: src/buddies/buddy-menu.tsx
 #: src/buddies/buddy-screen.tsx
 #: src/onboarding/steps/buddy-step.tsx
 msgctxt "DWD-Vm"
@@ -1353,6 +1354,35 @@ msgctxt "y0ef9b"
 msgid "App language"
 msgstr "Idioma de la aplicación"
 
+#: src/buddies/buddy-conversations.tsx
+msgctxt "6dIxDP"
+msgid "Yesterday"
+msgstr ""
+
+#: src/buddies/buddy-conversations.tsx
+msgctxt "PQ8A3I"
+msgid "New conversation"
+msgstr ""
+
+#: src/buddies/buddy-conversations.tsx
+msgctxt "sf91oU"
+msgid "Couldn't load more conversations. Try again."
+msgstr ""
+
+#: src/buddies/buddy-conversations.tsx
+#: src/completed-lessons/completed-lessons-screen.tsx
+#: src/mistakes/mistakes-notebook.tsx
+msgctxt "aWpBzj"
+msgid "Show more"
+msgstr "Mostrar más"
+
+#: src/buddies/buddy-conversations.tsx
+#: src/buddies/buddy-screen-skeleton.tsx
+#: src/buddies/buddy-screen.tsx
+msgctxt "1udzha"
+msgid "Conversations"
+msgstr ""
+
 #: src/buddies/buddy-day-parts.tsx
 msgctxt "6YRolu"
 msgid "Fully grown"
@@ -1383,38 +1413,6 @@ msgstr "Energía de {buddy}"
 msgctxt "Q88QPu"
 msgid "It starts with your first lesson."
 msgstr "Empieza con tu primera lección."
-
-#: src/buddies/buddy-day.tsx
-msgctxt "16z6WC"
-msgid "What {buddy} remembers"
-msgstr "Lo que {buddy} recuerda"
-
-#. Names the glasses the learner has collected for their study buddy, as a row and a menu item that opens them; {buddy} is the buddy's name. A name, not an action.
-#: src/buddies/buddy-day.tsx
-#: src/buddies/buddy-screen.tsx
-msgctxt "86EPQq"
-msgid "{buddy}'s glasses"
-msgstr "Lentes de {buddy}"
-
-#: src/buddies/buddy-day.tsx
-#: src/buddies/buddy-screen.tsx
-#: src/journey/schedule-details.tsx
-msgctxt "ca-yU-"
-msgid "Weekly summary"
-msgstr "Resumen semanal"
-
-#: src/buddies/buddy-day.tsx
-msgctxt "cVpmV7"
-msgid "Energy"
-msgstr "Energía"
-
-#: src/buddies/buddy-day.tsx
-#: src/buddies/buddy-today.tsx
-#: src/missions/missions-card.tsx
-#: src/session/summary/summary-rewards.tsx
-msgctxt "IFviMa"
-msgid "Today's missions"
-msgstr "Misiones de hoy"
 
 #. {target} is 7, so a noun that counts it stays plural in every form.
 #: src/buddies/buddy-glasses-picker.tsx
@@ -1531,6 +1529,33 @@ msgctxt "QRnLkX"
 msgid "Comes with your buddy"
 msgstr "Vienen con tu compa"
 
+#: src/buddies/buddy-menu.tsx
+msgctxt "T3IH3o"
+msgid "More about {buddy}"
+msgstr "Más sobre {buddy}"
+
+#: src/buddies/buddy-menu.tsx
+msgctxt "wjFAMp"
+msgid "Change {buddy}"
+msgstr "Cambiar a {buddy}"
+
+#. Names the glasses the learner has collected for their study buddy, as a row and a menu item that opens them; {buddy} is the buddy's name. A name, not an action.
+#: src/buddies/buddy-menu.tsx
+msgctxt "86EPQq"
+msgid "{buddy}'s glasses"
+msgstr "Lentes de {buddy}"
+
+#: src/buddies/buddy-menu.tsx
+msgctxt "16z6WC"
+msgid "What {buddy} remembers"
+msgstr "Lo que {buddy} recuerda"
+
+#: src/buddies/buddy-menu.tsx
+#: src/journey/schedule-details.tsx
+msgctxt "ca-yU-"
+msgid "Weekly summary"
+msgstr "Resumen semanal"
+
 #: src/buddies/buddy-picker.tsx
 #: src/shell/learn-bar.tsx
 #: src/shell/learn-navigation.tsx
@@ -1543,17 +1568,6 @@ msgctxt "HAlOn1"
 msgid "Name"
 msgstr "Nombre"
 
-#: src/buddies/buddy-screen.tsx
-msgctxt "T3IH3o"
-msgid "More about {buddy}"
-msgstr "Más sobre {buddy}"
-
-#: src/buddies/buddy-screen.tsx
-msgctxt "wjFAMp"
-msgid "Change {buddy}"
-msgstr "Cambiar a {buddy}"
-
-#: src/buddies/buddy-screen.tsx
 #: src/buddies/buddy-today.tsx
 msgctxt "xVM8pQ"
 msgid "{buddy} today"
@@ -1564,6 +1578,13 @@ msgstr "{buddy} hoy"
 msgctxt "lO7wKc"
 msgid "Not yet"
 msgstr "Aún no"
+
+#: src/buddies/buddy-today.tsx
+#: src/missions/missions-card.tsx
+#: src/session/summary/summary-rewards.tsx
+msgctxt "IFviMa"
+msgid "Today's missions"
+msgstr "Misiones de hoy"
 
 #: src/buddies/use-buddy-name.ts
 msgctxt "buddyNames.WsAzWR"
@@ -2805,12 +2826,6 @@ msgstr "Fases"
 msgctxt "completedLessonsAll"
 msgid "All"
 msgstr "Todas"
-
-#: src/completed-lessons/completed-lessons-screen.tsx
-#: src/mistakes/mistakes-notebook.tsx
-msgctxt "aWpBzj"
-msgid "Show more"
-msgstr "Mostrar más"
 
 #: src/completed-lessons/completed-lessons-screen.tsx
 msgctxt "qckJsw"
