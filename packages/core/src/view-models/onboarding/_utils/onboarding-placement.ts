@@ -78,7 +78,7 @@ async function readCourse({
     return { mode: "resume", test: { kind: "course", offer: null } };
   }
 
-  const { offer, ready } = await readCoursePlacementOffer({ checkReadiness: true, goal });
+  const { offer, ready } = await readCoursePlacementOffer(goal);
   return mode === "direct" || ready ? { mode, test: { kind: "course", offer } } : null;
 }
 

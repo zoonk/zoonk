@@ -313,6 +313,14 @@ export function loadPlacementPlan(
   return loadTextTestPlan({ goalId, tx, withLeftOut: true });
 }
 
+/** Includes course topics beyond the laid-out lessons, using the saved plan on render paths. */
+export function loadCoursePlacementPlan(
+  goalId: string,
+  { source, tx }: { source?: GoalPlanSource; tx?: TransactionClient } = {},
+): Promise<GoalPlan> {
+  return loadPlan({ goalId, sharedLibrary: source !== undefined, source, tx, withLeftOut: true });
+}
+
 /** Preserves plan order. */
 export async function loadGoalSkillIds(goalId: string): Promise<string[]> {
   const plan = await loadGoalPlan(goalId);
