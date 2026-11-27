@@ -111,7 +111,7 @@ test("holds a file waiting to be split to its own ceiling, and asks to drop it o
   });
 
   expect(problems).toStrictEqual([
-    ".agents/guides/grown.md is 1010 bytes, over the 500 it may hold until it's split. Take as much out as you add, or split it by subject.",
+    ".agents/guides/grown.md is 1010 bytes, over the 500 it may hold until it's split. Split it: move what not every task needs into its own file and link it, then lower this ceiling.",
     ".agents/guides/split.md is under the budget now: remove it from OVER_BUDGET_UNTIL_SPLIT.",
     ".agents/guides/removed.md is gone: remove it from OVER_BUDGET_UNTIL_SPLIT.",
   ]);

@@ -18,7 +18,7 @@ This skill is a workflow, not a frozen copy of Google's Android or Material Desi
 3. If a Material page requires JavaScript, use the official Material sitemap to find the current page:
    - `https://m3.material.io/sitemap.xml`
 4. Choose the default Material or AndroidX component first, styled only through `MaterialTheme` roles and [the design-system mapping](references/design-system.md). Only build custom UI when no platform component can carry the design, and give it the same accessibility, input, and adaptive behavior as the platform one.
-5. Before finishing, review the work against the relevant Android form-factor page, Material foundation pages, and component pages, and compare its meaning (hierarchy, states, colors' jobs) and its words with the matching `main` screen: the copy is main's, written to zoonk-design's [Words](../zoonk-design/SKILL.md#words), and a Material slot with room for a sentence (supporting text, a dialog's body) doesn't earn one.
+5. Before finishing, review the work against the relevant Android form-factor page, Material foundation pages, and component pages, and compare its meaning (hierarchy, states, colors' jobs) and its words with the matching `main` screen: the copy is main's, written to zoonk-design's [Words](../zoonk-design/references/words.md), and a Material slot with room for a sentence (supporting text, a dialog's body) doesn't earn one.
 
 ## Product Rule
 
@@ -35,6 +35,7 @@ Examples of native behavior:
 
 ## Design Defaults
 
+- The content layer is main's and the chrome the platform's ([what's ours and what's the platform's](../zoonk-design/references/native.md)).
 - Prefer Jetpack Compose with default Material 3 components for new Android UI unless the local app architecture requires Views. Use platform-provided components and AndroidX libraries before custom controls.
 - Style through `MaterialTheme.colorScheme`, `MaterialTheme.typography`, and `MaterialTheme.shapes`, plus `MaterialTheme.zoonk` for the meanings Material has no role for. Never put raw colors, fixed font sizes, or fixed frames in composables; sizes come from the content, the component defaults, and the window.
 - Use the theme's type roles, in `sp` so text follows the device's font scale: Geist in every Material slot and `MaterialTheme.zoonkType` for main's roles no slot carries ([mapping](references/design-system.md#type)). Screens use roles, never sizes.
