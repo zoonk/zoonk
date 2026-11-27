@@ -129,7 +129,6 @@ function getCloneShift({
   return { days, ms: moved - excess };
 }
 
-/** Plus exactly when the app would let the learner use it. */
 export async function hasPlus(userId: string): Promise<boolean> {
   const subscription = await prisma.subscription.findFirst(
     getActiveSubscriptionQuery({ now: new Date(), userId }),

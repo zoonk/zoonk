@@ -22,7 +22,7 @@ const READ: Read = {
 };
 
 /** A white picture with a black bar at `left`; `compression` changes the bytes, never the pixels. */
-async function png({ compression = 6, left = 10 }: { compression?: number; left?: number } = {}) {
+async function png({ compression, left = 10 }: { compression?: number; left?: number } = {}) {
   return sharp({ create: { background: "#fff", channels: 4, height: SIZE, width: SIZE } })
     .composite([
       {
@@ -150,6 +150,7 @@ describe("a re-capture keeps the read of pictures whose pixels didn't change", (
 
   it("carries the read when a retake returns to the pixels last read in different bytes", async () => {
     const picture = await png({ compression: 0, left: 2 });
+    assert.notEqual(sha256(picture), sha256(await png({ left: 2 })));
 
     const { carried } = await recapture({
       before: { read: undefined, retakes: { file: RETAKEN, read: READ } },
