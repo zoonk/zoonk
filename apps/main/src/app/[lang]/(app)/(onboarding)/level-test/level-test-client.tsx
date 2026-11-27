@@ -20,10 +20,8 @@ export function LevelTestClient({
 }) {
   const router = useRouter();
 
-  // The pages kept from before were read before the test changed the plan.
   const leaveTo = async (href: "/plan" | `/learn/${string}`) => {
     router.push(href);
-    router.refresh();
     return true;
   };
 
