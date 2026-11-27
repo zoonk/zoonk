@@ -287,29 +287,18 @@ struct WrittenStandingLine: View {
 
       switch part.standing {
       case .met:
-        Label {
-          Text("Likely above the \(points) points needed", tableName: "Plan")
-        } icon: {
-          Image(systemName: "checkmark").foregroundStyle(.successText)
-        }
-        .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
+        line(
+          Text("Likely above the \(points) points needed", tableName: "Plan"),
+          mark: Image(systemName: "checkmark").foregroundStyle(.successText),
+          style: .mutedForeground)
       case .below:
-        Label {
-          Text("Likely below the \(points) points needed", tableName: "Plan")
-        } icon: {
-          Image(systemName: "xmark")
-        }
-        .typeStyle(.note)
-        .foregroundStyle(.destructiveText)
+        line(
+          Text("Likely below the \(points) points needed", tableName: "Plan"),
+          mark: Image(systemName: "xmark"), style: .destructiveText)
       case .overlaps:
-        Label {
-          Text("Could be either side of the \(points) points needed", tableName: "Plan")
-        } icon: {
-          Image(systemName: "exclamationmark.triangle")
-        }
-        .typeStyle(.note)
-        .foregroundStyle(.warningText)
+        line(
+          Text("Could be either side of the \(points) points needed", tableName: "Plan"),
+          mark: Image(systemName: "exclamationmark.triangle"), style: .warningText)
       case .unmeasured:
         Text("Can't say yet whether this reaches the \(points) points needed", tableName: "Plan")
           .typeStyle(.note)
@@ -318,6 +307,17 @@ struct WrittenStandingLine: View {
         EmptyView()
       }
     }
+  }
+
+  /// A `Label` inside a `LabeledContent`'s label splits into two lines of it, so the mark sits on
+  /// the words' first baseline here instead.
+  private func line(_ words: Text, mark: some View, style: some ShapeStyle) -> some View {
+    HStack(alignment: .firstTextBaseline, spacing: 4) {
+      mark.accessibilityHidden(true)
+      words
+    }
+    .typeStyle(.note)
+    .foregroundStyle(style)
   }
 }
 
