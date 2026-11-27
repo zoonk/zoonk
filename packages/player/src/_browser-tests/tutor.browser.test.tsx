@@ -421,16 +421,61 @@ describe("asking the tutor", () => {
     await expect.element(sheet.getByRole("button", { name: "Try again" })).not.toBeInTheDocument();
     expect(api.requests.answer).toBe(1);
 
-    await expect.element(composer(sheet)).not.toBeInTheDocument();
-    await expect.element(sendButton(sheet)).not.toBeInTheDocument();
-    await expect.element(limitReached).toHaveFocus();
+    await expect.element(composer(sheet)).toBeVisible();
+    await expect.element(sendButton(sheet)).toBeDisabled();
 
     await press("Escape");
     await openTutor();
     await expect.element(limitReached).toBeVisible();
     await expect.element(subscribe).toBeVisible();
-    await expect.element(composer(sheet)).not.toBeInTheDocument();
+    await expect.element(sendButton(sheet)).toBeDisabled();
     expect(api.requests.answer).toBe(1);
+  });
+
+  it("keeps a question the limit refuses in the composer, and sends it once the short wait is over", async () => {
+    freezeClock();
+    const { api, lesson } = lessonWithTutor();
+    const waitSeconds = 30;
+
+    api.next("create", () =>
+      Promise.resolve(
+        Response.json(
+          {
+            error: {
+              code: LESSON_PLAYER_ERROR_CODES.slowDown,
+              details: { retryAfterSeconds: waitSeconds },
+              message: "Slow down",
+            },
+          },
+          { status: 429 },
+        ),
+      ),
+    );
+
+    playLesson({ lesson });
+    const sheet = await openTutor();
+    const question = "Why does the sky look blue and not violet?";
+    await composer(sheet).fill(question);
+    await pressKeepingClock(sendButton(sheet));
+
+    await expect
+      .element(sheet.getByRole("alert"))
+      .toHaveTextContent("Take a short break, then try again.");
+    await expect.element(composer(sheet)).toHaveValue(question);
+    await expect.element(sendButton(sheet)).toBeDisabled();
+    expect(api.questions).toHaveLength(0);
+
+    await composer(sheet).fill(`${question} Or purple?`);
+    await expect.element(sendButton(sheet)).toBeDisabled();
+
+    await vi.advanceTimersByTimeAsync(waitSeconds * 1000);
+
+    await expect.element(sheet.getByRole("alert")).not.toBeInTheDocument();
+    await expect.element(sendButton(sheet)).toBeEnabled();
+
+    await pressKeepingClock(sendButton(sheet));
+    await expect.element(sheet.getByText(`${question} Or purple?`)).toBeVisible();
+    expect(api.requests.create).toBe(2);
   });
 
   it("gives the day more messages come back once a free learner's messages for the month are used", async () => {
@@ -477,7 +522,7 @@ describe("asking the tutor", () => {
       .toBeVisible();
 
     await expect.element(sheet.getByRole("link", { name: "Subscribe" })).toBeVisible();
-    await expect.element(composer(sheet)).not.toBeInTheDocument();
+    await expect.element(sendButton(sheet)).toBeDisabled();
   });
 
   it("keeps the notice, with no day, for a refusal whose day the device's clock already shows as past", async () => {
@@ -518,7 +563,7 @@ describe("asking the tutor", () => {
       .toBeVisible();
 
     await expect.element(sheet.getByRole("link", { name: "Subscribe" })).toBeVisible();
-    await expect.element(composer(sheet)).not.toBeInTheDocument();
+    await expect.element(sendButton(sheet)).toBeDisabled();
     await expect.element(sheet.getByText("You can try again now.")).not.toBeInTheDocument();
     await expect.element(sheet.getByRole("button", { name: "Try again" })).not.toBeInTheDocument();
   });
@@ -563,11 +608,11 @@ describe("asking the tutor", () => {
 
     await expect.element(sheet.getByText("This one wasn't answered.")).toBeVisible();
     await expect.element(sheet.getByRole("button", { name: "Try again" })).not.toBeInTheDocument();
-    await expect.element(composer(sheet)).not.toBeInTheDocument();
+    await expect.element(sheet.getByRole("alert")).toBeVisible();
 
     await vi.advanceTimersByTimeAsync(reopensInMs);
 
-    await expect.element(composer(sheet)).toBeInTheDocument();
+    await expect.element(sheet.getByRole("alert")).not.toBeInTheDocument();
     await expect.element(sheet.getByRole("button", { name: "Try again" })).toBeVisible();
     await expect.element(sheet.getByText("This one wasn't answered.")).toBeVisible();
 
