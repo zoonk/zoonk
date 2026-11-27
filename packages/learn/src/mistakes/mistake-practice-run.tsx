@@ -152,12 +152,16 @@ function PracticeBody({
   const { phase } = run.state;
   useScreenAtTop(`${run.state.index}:${getScreen(phase.kind)}`);
 
+  // An emptied block has no answers to keep: only marking it done didn't go through.
   if (phase.kind === "finishFailed") {
+    const answered = run.state.answerIds.length > 0;
+
     return (
       <FailedMoment
         failures={run.state.failures}
+        kept={answered}
         onRetry={run.end}
-        title={t("Your practice isn't saved yet")}
+        title={answered ? t("Your practice isn't saved yet") : t("Nothing to practice")}
       />
     );
   }

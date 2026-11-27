@@ -400,9 +400,8 @@ describe("the end of a mistake practice run", () => {
 
     openPractice(null, { finish }, undefined, undefined, { dayBlock: true });
 
-    await expect
-      .element(page.getByRole("heading", { name: "Your practice isn't saved yet" }))
-      .toBeVisible();
+    await expect.element(page.getByRole("heading", { name: "Nothing to practice" })).toBeVisible();
+    await expect.element(page.getByText("That didn't go through.", { exact: true })).toBeVisible();
 
     await page.getByRole("button", { name: "Try again" }).click();
     await expect.element(page.getByRole("heading", { name: "Nothing to practice" })).toBeVisible();
