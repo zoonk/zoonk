@@ -1,12 +1,14 @@
 "use client";
 
 import { Switch as SwitchPrimitive } from "@base-ui/react/switch";
+import { BusySpinner } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 
 /**
  * Off is quiet, a pale track with its knob at the start; on is the text color. The knob's place says
  * the state, so the off track turns dark only when the device asks for more contrast. A press made
- * before the page hydrates (`data-held`) draws the state it asks for at once.
+ * before the page hydrates (`data-held`) draws the state it asks for at once, with the spinner in the
+ * knob until the press lands, so it never looks saved before it is.
  */
 function Switch({
   className,
@@ -28,11 +30,13 @@ function Switch({
     >
       <SwitchPrimitive.Thumb
         className={cn(
-          "bg-background dark:data-unchecked:bg-muted-foreground pointer-events-none block rounded-full shadow-xs ring-0 transition-transform group-data-[size=default]/switch:size-4 group-data-[size=sm]/switch:size-3 group-data-[size=default]/switch:data-checked:translate-x-[calc(100%-2px)] group-data-[size=sm]/switch:data-checked:translate-x-[calc(100%-2px)] group-data-[size=default]/switch:data-unchecked:translate-x-0 group-data-[size=sm]/switch:data-unchecked:translate-x-0 dark:shadow-none forced-colors:bg-[ButtonText]!",
+          "bg-background dark:data-unchecked:bg-muted-foreground pointer-events-none relative block rounded-full shadow-xs ring-0 transition-transform group-data-[size=default]/switch:size-4 group-data-[size=sm]/switch:size-3 group-data-[size=default]/switch:data-checked:translate-x-[calc(100%-2px)] group-data-[size=sm]/switch:data-checked:translate-x-[calc(100%-2px)] group-data-[size=default]/switch:data-unchecked:translate-x-0 group-data-[size=sm]/switch:data-unchecked:translate-x-0 dark:shadow-none forced-colors:bg-[ButtonText]!",
           "dark:group-data-[held=checked]/switch:bg-background! dark:group-data-[held=unchecked]/switch:bg-muted-foreground! group-data-[held=checked]/switch:translate-x-[calc(100%-2px)]! group-data-[held=unchecked]/switch:translate-x-0!",
         )}
         data-slot="switch-thumb"
-      />
+      >
+        <BusySpinner iconClassName="text-muted-foreground dark:text-foreground dark:group-data-[held=unchecked]/switch:text-background forced-colors:text-[ButtonFace] size-3/4" />
+      </SwitchPrimitive.Thumb>
     </SwitchPrimitive.Root>
   );
 }

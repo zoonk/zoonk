@@ -2,6 +2,7 @@
 
 import { Radio as RadioPrimitive } from "@base-ui/react/radio";
 import { RadioGroup as RadioGroupPrimitive } from "@base-ui/react/radio-group";
+import { BusySpinner } from "@zoonk/ui/components/button";
 import { Label } from "@zoonk/ui/components/label";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CircleIcon } from "lucide-react";
@@ -31,6 +32,7 @@ function RadioGroupOption({ id, ...props }: ComponentProps<typeof Label>) {
   );
 }
 
+/** A press made before the page hydrates draws it picked, its dot giving way to the spinner until the press lands. */
 function RadioGroupItem({ className, ...props }: RadioPrimitive.Root.Props) {
   const labelId = useContext(OptionLabelContext);
 
@@ -43,17 +45,18 @@ function RadioGroupItem({ className, ...props }: RadioPrimitive.Root.Props) {
         className,
       )}
       data-slot="radio-group-item"
-      // A press made before the page hydrates marks it held, drawn as picked.
+      // A press made before the page hydrates marks it held.
       suppressHydrationWarning
       {...props}
     >
       <RadioPrimitive.Indicator
-        className="text-selected-foreground group-aria-invalid/radio-group-item:text-destructive-text flex size-full items-center justify-center group-data-held/radio-group-item:visible data-unchecked:invisible"
+        className="text-selected-foreground group-aria-invalid/radio-group-item:text-destructive-text flex size-full items-center justify-center group-data-held/radio-group-item:invisible! data-unchecked:invisible"
         data-slot="radio-group-indicator"
         keepMounted
       >
         <CircleIcon className="absolute top-1/2 left-1/2 size-2 -translate-x-1/2 -translate-y-1/2 fill-current" />
       </RadioPrimitive.Indicator>
+      <BusySpinner iconClassName="text-selected-foreground size-3" />
     </RadioPrimitive.Root>
   );
 }

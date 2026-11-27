@@ -1,6 +1,7 @@
 "use client";
 
 import { Toggle as TogglePrimitive } from "@base-ui/react/toggle";
+import { BusyContent } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type VariantProps, cva } from "class-variance-authority";
 
@@ -28,8 +29,13 @@ const toggleVariants = cva(
   },
 );
 
-/** Base UI's Toggle has no `focusableWhenDisabled`, so it's added here to match Button. */
+/**
+ * Base UI's Toggle has no `focusableWhenDisabled`, so it's added here to match Button. A press made
+ * before the page hydrates draws the state it asks for, its label under the spinner until the press
+ * lands, as a button's is.
+ */
 function Toggle({
+  children,
   className,
   disabled,
   focusableWhenDisabled = false,
@@ -53,7 +59,9 @@ function Toggle({
         keepsFocus ? details.cancel() : onPressedChange?.(pressed, details)
       }
       {...props}
-    />
+    >
+      <BusyContent>{children}</BusyContent>
+    </TogglePrimitive>
   );
 }
 
