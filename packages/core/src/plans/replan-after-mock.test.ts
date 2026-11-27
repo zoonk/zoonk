@@ -410,7 +410,7 @@ describe(replanAfterMock, () => {
     expect(after.changes).toHaveLength(before.changes.length + 1);
   });
 
-  it("keeps the schedule when the move would cost coverage or phase dates, and tries once more when the learner opens a new day", async () => {
+  it("keeps the schedule when the move would cost coverage or phase dates, and tries again each day the learner opens until it holds", async () => {
     const fixture = await setup();
     const missed = lastTopic(fixture, "Direito");
     const mock = await finishedMock({ answers: [{ outcome: "wrong", skill: missed }], fixture });
@@ -423,42 +423,26 @@ describe(replanAfterMock, () => {
       replanAfterMock({ goalId: fixture.goal.id, mockId: mock.id, now: new Date(), timeZone: UTC }),
     ).resolves.toStrictEqual([]);
 
+    const catchUp = () =>
+      catchUpMockReplan({ goalId: fixture.goal.id, timeZone: UTC, userId: fixture.goal.userId });
+
+    await catchUp();
+
     const refused = await readPlan(fixture.plan.id);
 
     expect(refused.items).toStrictEqual(before.items);
     expect(refused.version).toBe(before.version);
+    expect(refused.changes).toHaveLength(before.changes.length);
     expect(refused.settings.mockReplan).toBeUndefined();
-
-    await catchUpMockReplan({
-      goalId: fixture.goal.id,
-      timeZone: UTC,
-      userId: fixture.goal.userId,
-    });
-
-    const caughtUp = await readPlan(fixture.plan.id);
-
-    expect(caughtUp.items).toStrictEqual(before.items);
-    expect(caughtUp.inputVersion).toBeGreaterThan(refused.inputVersion);
-    expect(caughtUp.changes).toHaveLength(before.changes.length);
-    expect(caughtUp.settings.mockReplan).toStrictEqual({ applied: false, mockId: mock.id });
-
-    await expect(
-      loadPlanMockMisses({
-        goalId: fixture.goal.id,
-        mockReplan: caughtUp.settings.mockReplan,
-        now: new Date(),
-      }),
-    ).resolves.toStrictEqual(new Map());
-
     expect(holds).toHaveBeenCalledTimes(2);
 
-    await catchUpMockReplan({
-      goalId: fixture.goal.id,
-      timeZone: UTC,
-      userId: fixture.goal.userId,
-    });
+    holds.mockRestore();
+    await catchUp();
 
-    expect(holds).toHaveBeenCalledTimes(2);
+    const applied = await readPlan(fixture.plan.id);
+
+    expect(applied.settings.mockReplan).toStrictEqual({ applied: true, mockId: mock.id });
+    expect(applied.firstDay(missed)).toBeLessThan(before.firstDay(missed));
   });
 });
 

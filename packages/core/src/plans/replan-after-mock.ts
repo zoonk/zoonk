@@ -158,18 +158,16 @@ async function commitReplan({
 /**
  * Re-plans from the next day when a mock finishes, in one plan write: the lessons of topics taken as
  * known that it missed come back (relearn), and the topics it missed that the plan hasn't taught
- * yet move earlier within the same selected work and schedule limits. A refused move is tried
- * once more at the next day the learner opens (`catchUp`), which records the mock either way.
+ * yet move earlier within the same selected work and schedule limits. A refused move records
+ * nothing, so each new day the learner opens tries it again while the mock is the one to follow.
  * Returns the moved topics' names.
  */
 export async function replanAfterMock({
-  catchUp = false,
   goalId,
   mockId,
   now,
   timeZone,
 }: {
-  catchUp?: boolean;
   goalId: string;
   mockId: string;
   now: Date;
@@ -224,16 +222,8 @@ export async function replanAfterMock({
       return [];
     }
 
-    const refused = { applied: false, mockId };
-
     const [baseline, reordered] = await Promise.all([
-      planRelearn({
-        context,
-        ids,
-        now,
-        openedKeys,
-        state: catchUp ? withMockReplan(context.state, refused) : context.state,
-      }),
+      planRelearn({ context, ids, now, openedKeys }),
       planRelearn({ context, ids, now, openedKeys, state: withMockReplan(context.state, applied) }),
     ]);
 
@@ -268,8 +258,6 @@ export async function replanAfterMock({
         context,
         mockId,
       });
-    } else if (catchUp) {
-      await recordMockReplan({ context, mockReplan: refused });
     }
 
     return [];
@@ -347,6 +335,6 @@ export async function catchUpMockReplan({
   const latest = goal && (await findMockToCatchUp({ goal, now }));
 
   if (latest) {
-    await replanAfterMock({ catchUp: true, goalId, mockId: latest.id, now, timeZone });
+    await replanAfterMock({ goalId, mockId: latest.id, now, timeZone });
   }
 }
