@@ -165,6 +165,7 @@ private struct PlanFocusSection: View {
           .typeStyle(.note.weight(.medium))
           .foregroundStyle(.mutedForeground)
           .listRowSeparator(.hidden, edges: .bottom)
+          .layoutSectionText()
 
           picks(choices, focused: focused, selection: selection)
         } footer: {
