@@ -12391,6 +12391,7 @@ msgctxt "t7w-Fo"
 msgid "Nothing saved yet. Tap the bookmark on a lesson to keep it here."
 msgstr "아직 저장한 레슨이 없어요. 레슨의 북마크를 눌러 여기에 저장해 보세요."
 
+#. Taking the lesson out of the saved lessons didn't work, so it's still saved.
 #: src/saved-lessons/use-lesson-saves.ts
 msgctxt "BcKHqn"
 msgid "Couldn't remove this lesson. Try again."

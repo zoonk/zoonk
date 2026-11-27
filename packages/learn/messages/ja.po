@@ -12391,10 +12391,11 @@ msgctxt "t7w-Fo"
 msgid "Nothing saved yet. Tap the bookmark on a lesson to keep it here."
 msgstr "まだ保存したレッスンはありません。レッスンのブックマークをタップすると、ここに保存できます。"
 
+#. Taking the lesson out of the saved lessons didn't work, so it's still saved.
 #: src/saved-lessons/use-lesson-saves.ts
 msgctxt "BcKHqn"
 msgid "Couldn't remove this lesson. Try again."
-msgstr "このレッスンを削除できませんでした。もう一度お試しください。"
+msgstr "このレッスンを保存リストから削除できませんでした。もう一度お試しください。"
 
 #: src/saved-lessons/use-lesson-saves.ts
 msgctxt "JBnz9z"

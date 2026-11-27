@@ -12391,6 +12391,7 @@ msgctxt "t7w-Fo"
 msgid "Nothing saved yet. Tap the bookmark on a lesson to keep it here."
 msgstr "Nie masz jeszcze żadnych zapisanych lekcji. Stuknij zakładkę przy lekcji, aby zachować ją tutaj."
 
+#. Taking the lesson out of the saved lessons didn't work, so it's still saved.
 #: src/saved-lessons/use-lesson-saves.ts
 msgctxt "BcKHqn"
 msgid "Couldn't remove this lesson. Try again."

@@ -12,7 +12,10 @@ export function useLessonSaves(save: SaveLesson) {
 
   return useSaves<string>({
     failed: {
-      remove: t("Couldn't remove this lesson. Try again."),
+      remove: t({
+        description: "Taking the lesson out of the saved lessons didn't work, so it's still saved.",
+        message: "Couldn't remove this lesson. Try again.",
+      }),
       save: t("Couldn't save this lesson. Try again."),
     },
     keyOf: (lessonId) => lessonId,
