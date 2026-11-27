@@ -272,6 +272,7 @@ export function ExamPlan({ lang, state }: { lang: Lang; state?: string }) {
           logbook: "/logbook",
           mindMaps: null,
           placementTest: "/placement-test",
+          savedLessons: null,
           subject: (key: string) => `/plan/${key}`,
         }}
         plan={plan}

@@ -8,6 +8,7 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.data.SaveFailure
 import com.zoonk.android.data.VisitOutcome
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.goalcontent.ChapterKey
@@ -83,9 +84,9 @@ class MindMapViewModelTest {
                     throw ApiException(ApiError.Network)
                 }
             }
-            maps.save(target, chapterId, saved = true)
+            maps.save(target, saved = true)
             advanceUntilIdle()
-            maps.save(target, chapterId, saved = false)
+            maps.save(target, saved = false)
             maps.visit.end()
             first.complete(Unit)
             advanceUntilIdle()
@@ -695,7 +696,7 @@ class MindMapViewModelTest {
         }
 
     @Test
-    fun aSaveShowsAtOnceThenTheListShowsWhatTheServerKept() =
+    fun aSaveShowsAtOnceThenWhatTheServerKept() =
         runTest(dispatcher) {
             val (maps, store) = setUp()
             val shown = launch { store.list[goalId].shown.collect {} }
@@ -703,14 +704,33 @@ class MindMapViewModelTest {
             val target = MindMapTarget(SavedMindMapKind.CHAPTER, chapterId)
             api.mindMaps = { goalMindMaps(listOf(mapJson(3, "Waves and sound", "ready", saved = true))) }
 
-            maps.save(target, chapterId, saved = true)
+            maps.save(target, saved = true)
             assertEquals(true, maps.saves.value[target])
             advanceUntilIdle()
 
             assertEquals(listOf(target to true), api.saved)
-            assertNull(maps.saves.value[target])
+            assertEquals(true, maps.saves.value[target])
             assertTrue(store.listed(chapterId).saved)
             shown.cancel()
+        }
+
+    @Test
+    fun aSavedLessonMapShowsSavedInItsChaptersLessonMapsRead() =
+        runTest(dispatcher) {
+            val (maps, store) = setUp()
+            val target = MindMapTarget(SavedMindMapKind.LESSON, UUID.fromString(mapLesson(1)))
+            store.lessonMaps[key].load()
+
+            maps.save(target, saved = true)
+            advanceUntilIdle()
+
+            assertEquals(
+                listOf(true, false),
+                store.lessonMaps[key]
+                    .state.value.value
+                    ?.lessons
+                    ?.map { it.saved },
+            )
         }
 
     @Test
@@ -724,11 +744,11 @@ class MindMapViewModelTest {
                 savedState(t, saved)
             }
 
-            maps.save(target, chapterId, saved = true)
+            maps.save(target, saved = true)
             advanceUntilIdle()
-            maps.save(target, chapterId, saved = false)
-            maps.save(target, chapterId, saved = true)
-            maps.save(target, chapterId, saved = false)
+            maps.save(target, saved = false)
+            maps.save(target, saved = true)
+            maps.save(target, saved = false)
             advanceUntilIdle()
             assertEquals(listOf(target to true), api.saved)
             assertEquals(false, maps.saves.value[target])
@@ -737,7 +757,7 @@ class MindMapViewModelTest {
             advanceUntilIdle()
 
             assertEquals(listOf(target to true, target to false), api.saved)
-            assertNull(maps.saves.value[target])
+            assertEquals(false, maps.saves.value[target])
         }
 
     @Test
@@ -748,11 +768,11 @@ class MindMapViewModelTest {
             api.save = { _, _ -> throw ApiException(ApiError.Unavailable) }
 
             // No frame acts while the save is out, as when the window is recreated.
-            maps.save(target, chapterId, saved = true)
+            maps.save(target, saved = true)
             advanceUntilIdle()
 
             assertNull(maps.saves.value[target])
-            assertEquals(Unit, actOn(maps.saveFailed))
+            assertEquals(SaveFailure.Save, actOn(maps.saveFailed))
             assertNull(actOn(maps.saveFailed))
         }
 
@@ -767,7 +787,7 @@ class MindMapViewModelTest {
                 throw ApiException(ApiError.Unavailable)
             }
 
-            maps.save(target, chapterId, saved = true)
+            maps.save(target, saved = true)
             advanceUntilIdle()
             maps.visit.end()
             held.complete(Unit)

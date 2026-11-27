@@ -423,3 +423,39 @@ describe("learner store timing", () => {
     expect(reads).toHaveLength(3);
   });
 });
+
+describe("summary read again after a write", () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.unstubAllGlobals();
+  });
+
+  it("sends a read after the write even when one sent before it is still out, once for several writes", async () => {
+    stubPage({ seeded: false });
+    const reads = stubSummaryReads();
+    const store = await loadStore();
+
+    store.ensureLearnerSummary();
+    store.readLearnerSummaryAgain();
+    store.readLearnerSummaryAgain();
+    expect(reads).toHaveLength(1);
+
+    reads[0]?.resolve(answerFor(summaryOf("first")));
+    await settle();
+    expect(reads).toHaveLength(2);
+
+    const saved = summaryOf("first");
+    reads[1]?.resolve(answerFor({ ...saved, places: { ...saved.places, savedLessons: true } }));
+    await settle();
+    expect(reads).toHaveLength(2);
+
+    expect(store.getLearnerSummaryState()).toMatchObject({
+      status: "ready",
+      summary: { places: { savedLessons: true } },
+    });
+  });
+});

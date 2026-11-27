@@ -1455,8 +1455,65 @@
         }
       }
     },
+    "Couldn't remove this map. Try again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Mindmap konnte nicht entfernt werden. Versuch es noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No pudimos quitar este mapa. Inténtalo de nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de retirer cette carte mentale. Réessaie."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non siamo riusciti a rimuovere questa mappa. Riprova."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このマップの保存を解除できませんでした。もう一度お試しください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 마인드맵을 저장 목록에서 삭제하지 못했어요. 다시 시도해 보세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie udało się usunąć tej mapy. Spróbuj ponownie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não deu para remover esse mapa. Tente de novo."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu harita kaldırılamadı. Tekrar dene."
+          }
+        }
+      }
+    },
     "Couldn't save this map. Try again." : {
-      "comment" : "Saving or removing a saved map didn't work, so it's back as it was",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1473,19 +1530,19 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impossible d’enregistrer cette carte. Réessaie."
+            "value" : "Impossible d’enregistrer cette carte mentale. Réessaie."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Non siamo riusciti a salvare questa mappa. Riprova."
+            "value" : "Non abbiamo potuto salvare questa mappa. Riprova."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "このマップを保存できませんでした。もう一度お試しください。"
+            "value" : "このマップを保存できませんでした。もう一度試してください。"
           }
         },
         "ko" : {
@@ -1503,7 +1560,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível salvar este mapa. Tente de novo."
+            "value" : "Não deu para salvar este mapa. Tente de novo."
           }
         },
         "tr" : {
@@ -2877,65 +2934,6 @@
         }
       }
     },
-    "OK" : {
-      "comment" : "Closes the message that a save didn't work",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OK"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aceptar"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OK"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OK"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OK"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "확인"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OK"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OK"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tamam"
-          }
-        }
-      }
-    },
     "Open" : {
       "comment" : "Opens the chapter's mind map",
       "localizations" : {
@@ -3290,6 +3288,65 @@
         }
       }
     },
+    "Remove %@ from saved maps" : {
+      "comment" : "What screen readers say for Remove, naming the map.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ aus den gespeicherten Mindmaps entfernen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quitar %@ de los mapas guardados"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retirer %@ des cartes mentales enregistrées"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rimuovi %@ dalle mappe salvate"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@を保存済みのマップから削除する"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장한 마인드맵에서 %@ 삭제하기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usuń z zapisanych map: %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remover %@ dos mapas salvos"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ haritasını kaydedilenlerden kaldır"
+          }
+        }
+      }
+    },
     "Remove from saved" : {
       "comment" : "Takes a map out of the learner's saved maps",
       "localizations" : {
@@ -3408,6 +3465,64 @@
         }
       }
     },
+    "Save %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ speichern"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guardar %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistrer %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salva %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@を保存"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 저장"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zapisz %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salvar %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kaydet: %@"
+          }
+        }
+      }
+    },
     "Saved" : {
       "comment" : "A map the learner saved to study again",
       "localizations" : {
@@ -3463,6 +3578,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kaydedildi"
+          }
+        }
+      }
+    },
+    "Saved %@" : {
+      "comment" : "Read aloud for the bookmark on a saved mind map's row, which removes it: says the map {title} is saved.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mindmap %@ gespeichert"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, guardado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistrée : %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salvata %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「%@」は保存済み"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 저장됨"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zapisano: %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapa mental %@ salvo"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ kaydedildi"
           }
         }
       }

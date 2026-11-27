@@ -1,6 +1,7 @@
 import {
   AwardIcon,
   BellIcon,
+  BookmarkIcon,
   Brain,
   BrainCircuitIcon,
   CalendarCheckIcon,
@@ -59,6 +60,7 @@ const menu = {
   privacy: { icon: ShieldCheckIcon, url: "/settings/privacy" },
   profile: { icon: IdCardLanyard, url: "/profile" },
   reminders: { icon: BellIcon, url: "/settings/reminders" },
+  savedLessons: { icon: BookmarkIcon, url: "/saved-lessons" },
   score: { icon: TargetIcon, url: "/score" },
   settings: { icon: SettingsIcon, url: "/settings" },
   speaking: { icon: MicIcon, url: "/speaking" },

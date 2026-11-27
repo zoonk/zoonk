@@ -3,7 +3,13 @@
 import { Drawer, DrawerContent, DrawerPopup, DrawerTitle } from "@zoonk/ui/components/drawer";
 import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { cn } from "@zoonk/ui/lib/utils";
-import { GraduationCapIcon, HistoryIcon, LibraryIcon, NetworkIcon } from "lucide-react";
+import {
+  BookmarkIcon,
+  GraduationCapIcon,
+  HistoryIcon,
+  LibraryIcon,
+  NetworkIcon,
+} from "lucide-react";
 import { useExtracted } from "next-intl";
 import {
   ListGroup,
@@ -25,6 +31,7 @@ import { PATH_ROW_CLASS, PATH_ROW_LEADING_CLASS } from "./journey-phase-events";
 type MoreLinks = Pick<JourneyPathLinks, "exam"> & {
   completedLessons: string | null;
   mindMaps: string | null;
+  savedLessons: string | null;
 };
 
 function PathLinkRow({
@@ -125,7 +132,7 @@ function MoreRow({
 export function MoreSection({ links }: { links: MoreLinks }) {
   const t = useExtracted();
 
-  if (!links.exam && !links.completedLessons && !links.mindMaps) {
+  if (!links.exam && !links.savedLessons && !links.completedLessons && !links.mindMaps) {
     return null;
   }
 
@@ -141,6 +148,11 @@ export function MoreSection({ links }: { links: MoreLinks }) {
       </PageSectionHeader>
 
       <ListGroup>
+        {links.savedLessons && (
+          <MoreRow href={links.savedLessons} icon={<BookmarkIcon />}>
+            {t("Saved lessons")}
+          </MoreRow>
+        )}
         {links.completedLessons && (
           <MoreRow href={links.completedLessons} icon={<HistoryIcon />}>
             {t("Completed lessons")}
