@@ -87,8 +87,8 @@ class CompletedLessonsScreenshots {
             ).takeUnless { empty }.orEmpty()
         val data =
             lessons.filter { group == null || it.group == group }.mapIndexed { index, lesson ->
-                """{"available":${lesson.available},"chapterTitle":${lesson.chapter?.let { "\"$it\"" } ?: "null"},"finishedOn":"${lesson.day}",
-                "group":"${lesson.group}","lessonId":"00000000-0000-4000-8000-00000000000$index","saved":${index == 1},"title":"${lesson.title}"}"""
+                """{"chapterTitle":${lesson.chapter?.let { "\"$it\"" } ?: "null"},"finishedOn":"${lesson.day}",
+                "available":${lesson.available},"group":"${lesson.group}","lessonId":"00000000-0000-4000-8000-00000000000$index","saved":${index == 1},"title":"${lesson.title}"}"""
             }
         val filter =
             """{"groups":[{"key":"biology","lessons":212,"name":"Biology"},{"key":"chemistry","lessons":96,"name":"Chemistry"},
