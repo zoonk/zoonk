@@ -35,6 +35,7 @@ Examples of native behavior:
 
 ## Design Defaults
 
+- The content layer is main's and the chrome the platform's ([what's ours and what's the platform's](../zoonk-design/references/native.md)).
 - Prefer Jetpack Compose with default Material 3 components for new Android UI unless the local app architecture requires Views. Use platform-provided components and AndroidX libraries before custom controls.
 - Style through `MaterialTheme.colorScheme`, `MaterialTheme.typography`, and `MaterialTheme.shapes`, plus `MaterialTheme.zoonk` for the meanings Material has no role for. Never put raw colors, fixed font sizes, or fixed frames in composables; sizes come from the content, the component defaults, and the window.
 - Use the theme's type roles, in `sp` so text follows the device's font scale: Geist in every Material slot and `MaterialTheme.zoonkType` for main's roles no slot carries ([mapping](references/design-system.md#type)). Screens use roles, never sizes.
