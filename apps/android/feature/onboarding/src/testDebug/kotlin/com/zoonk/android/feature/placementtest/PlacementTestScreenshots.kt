@@ -195,6 +195,30 @@ class PlacementTestScreenshots(
             Ask(QuestionFormat.Order, "Put a civil case's stages in order.", options = listOf("Complaint", "Answer", "Discovery", "Trial"))
         }
 
+    /** A topic too long to share the chip's row with the position. */
+    @Test
+    fun questionLongTopic() =
+        shoot("course-question-long-topic", progress = 4 / 12f) {
+            Ask(
+                QuestionFormat.Order,
+                "Put a civil case's stages in order.",
+                options = listOf("Complaint", "Answer", "Discovery", "Trial"),
+                subject = "Investing for the long run",
+            )
+        }
+
+    /** A topic whose chip needs two rows on a phone. */
+    @Test
+    fun questionTwoRowTopic() =
+        shoot("course-question-two-row-topic", progress = 4 / 12f) {
+            Ask(
+                QuestionFormat.Order,
+                "Put a civil case's stages in order.",
+                options = listOf("Complaint", "Answer", "Discovery", "Trial"),
+                subject = "Constitutional limits on the taxing power of states and municipalities",
+            )
+        }
+
     @Test
     fun questionOrder() =
         shoot("question-order", progress = 4 / 12f) {
@@ -438,9 +462,10 @@ class PlacementTestScreenshots(
         left: List<String>? = null,
         right: List<String>? = null,
         select: Select? = null,
+        subject: String = "Contract law",
     ) = PlacementQuestion(
         item = Question("item-1", format, question, options = options, select = select, left = left, right = right),
-        subject = "Contract law",
+        subject = subject,
         position = "Part 3 of 14 · Question 5 of 12",
         labels = TrueFalseLabels.TRUE_FALSE,
         pending = false,

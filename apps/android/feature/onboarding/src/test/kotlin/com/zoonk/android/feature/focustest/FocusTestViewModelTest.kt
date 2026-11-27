@@ -15,6 +15,7 @@ import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.OnboardingApi
 import com.zoonk.android.feature.onboarding.OnboardingStore
+import com.zoonk.android.feature.onboarding.focusSittingOf
 import com.zoonk.android.feature.onboarding.focusTestOf
 import com.zoonk.android.feature.onboarding.placementOf
 import com.zoonk.android.feature.plan.FakePlanApi
@@ -64,11 +65,12 @@ class FocusTestViewModelTest {
         api: OnboardingApi,
         handle: SavedStateHandle,
         plans: PlanApi = FakePlanApi(),
+        asked: Boolean = false,
     ): FocusTestViewModel {
         val session = FakeSession(ana)
         val cache = AppCache(session, backgroundScope)
         val store = OnboardingStore(api, cache, session) { SignInResult.SignedIn }
-        return FocusTestViewModel(GOAL_ID, store, PlanStore(plans, cache), handle).also { models.put("$it", it) }
+        return FocusTestViewModel(GOAL_ID, store, PlanStore(plans, cache), handle, askedFor = asked).also { models.put("$it", it) }
     }
 
     /** The proposal the result of [vm] would ask about when the test's latest answers propose [next]. */
@@ -179,6 +181,34 @@ class FocusTestViewModelTest {
 
             assertEquals(2, api.sittingsStarted)
             assertFalse(back.failed)
+        }
+
+    /** A learner who asked for the test before its questions were written never lands back on its offer. */
+    @Test
+    fun anAskedStartThatFailsOnceTheQuestionsArriveWaitsForTryAgain() =
+        runTest {
+            Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+            val api =
+                FakeOnboardingApi().apply {
+                    placement = placementOf(status = "waitingForQuestions", next = null)
+                    writeFailure = ApiException(ApiError.Network)
+                }
+            val vm = viewModel(api, SavedStateHandle(), asked = true)
+            assertEquals(FocusTestPhase.Waiting(answered = false), vm.phase(LoadState.Loaded(api.placement)))
+
+            val arrived = LoadState.Loaded(placementOf(next = null, focusTest = focusTestOf()))
+            assertEquals(FocusTestPhase.Starting, vm.phase(arrived))
+            vm.startAsked()
+            runCurrent()
+            assertEquals(FocusTestPhase.StartFailed, vm.phase(arrived))
+
+            api.writeFailure = null
+            api.sitting = { placementOf(focusTest = focusTestOf(asked = 3, sitting = focusSittingOf(), offer = null)) }
+            vm.start()
+            runCurrent()
+
+            assertEquals(2, api.sittingsStarted)
+            assertTrue(vm.phase(LoadState.Loaded(api.placement)) is FocusTestPhase.Question)
         }
 
     @Test

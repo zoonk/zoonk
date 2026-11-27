@@ -162,7 +162,7 @@ internal fun ColumnScope.PlacementQuestion(
     stopLabel: String = stringResource(R.string.onboarding_placement_stop),
     /** Said right above Stop, when stopping is worth suggesting. */
     stopHint: String? = null,
-    /** Where the question sits, at the end of [subject]'s row, such as "Question 2 of 12" or the full test's part too. */
+    /** Where the question sits, under [subject], such as "Question 2 of 12" or the full test's part too. */
     position: String? = null,
     media: @Composable () -> Unit = {},
 ) {

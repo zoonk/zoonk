@@ -247,7 +247,8 @@ internal fun ColumnScope.PlacementTestFlow(
                     },
                 hold = hold,
                 pending = onboarding?.saving == true,
-                failed = vm.failed,
+                // A start that didn't go through says so in the wait's failure, not again beside Skip.
+                failed = vm.failed && held != PlacementTestPhase.Arrived,
                 onSkip = leave,
                 onboarding = onboarding != null,
             )

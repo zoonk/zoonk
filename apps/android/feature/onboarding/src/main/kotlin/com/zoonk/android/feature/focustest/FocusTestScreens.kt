@@ -36,8 +36,8 @@ import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.api.models.FocusTest
 
 /**
- * A test screen's one headline, under the test's name with [position] (how long it takes, or what's left) at that row's
- * end, and at most one line under it, said again when [announced] and it changes.
+ * A test screen's one headline, under the test's name and [position] (how long it takes, or what's left), and at most one
+ * line under it, said again when [announced] and it changes.
  */
 @Composable
 internal fun TestHeader(
