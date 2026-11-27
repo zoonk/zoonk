@@ -1,12 +1,22 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { copyFileSync, mkdirSync, mkdtempSync, utimesSync, writeFileSync } from "node:fs";
+import {
+  appendFileSync,
+  copyFileSync,
+  mkdirSync,
+  mkdtempSync,
+  utimesSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { describe, it } from "vitest";
 import { bindBuild, readCheckoutBuild, servedBuildId } from "./provenance.mts";
 
 const MINUTE = 60_000;
+
+/** The repository's own file marking what never reaches a screen. */
+const ATTRIBUTES = resolve(import.meta.dirname, "../../.gitattributes");
 
 /** When the sources were written and committed: the test's own time, never the real clock's. */
 const WRITTEN = Date.parse("2026-01-01T12:00:00.000Z");
@@ -28,12 +38,13 @@ function makeBuiltCheckout() {
   mkdirSync(join(repository, "apps/main/.next"), { recursive: true });
   mkdirSync(join(repository, "packages/ui"), { recursive: true });
   writeFileSync(join(repository, ".gitignore"), ".next\n");
-  copyFileSync(resolve(import.meta.dirname, "../../.gitattributes"), join(repository, ".gitattributes"));
+  copyFileSync(ATTRIBUTES, join(repository, ".gitattributes"));
   writeFileSync(join(repository, "apps/main/page.txt"), "page");
   writeFileSync(join(repository, "packages/ui/row.txt"), "row");
   const written = new Date(WRITTEN);
+  const sources = [".gitignore", ".gitattributes", "apps/main/page.txt", "packages/ui/row.txt"];
 
-  for (const source of [".gitignore", ".gitattributes", "apps/main/page.txt", "packages/ui/row.txt"]) {
+  for (const source of sources) {
     utimesSync(join(repository, source), written, written);
   }
 
@@ -128,5 +139,9 @@ describe("the build a web picture shows", () => {
 
     assert.equal(checkout.changes, undefined);
     assert.equal(checkout.current, "abc123");
+    appendFileSync(join(repository, ".gitattributes"), "apps/main/page.txt never-on-screen\n");
+    const remarked = await readCheckoutBuild({ app: "main", repository });
+
+    assert.match(remarked.changes ?? "", /^[0-9a-f]{64}$/u);
   });
 });

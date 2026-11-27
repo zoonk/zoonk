@@ -93,6 +93,17 @@ describe("pr:media check", () => {
     assert.deepEqual(kinds(await picture.check()), ["stale"]);
   });
 
+  it("fails an after picture after a commit to .gitattributes, which decides what counts", async () => {
+    const marked = checkFixture();
+    const picture = marked.capture([marked.shot({ file: "a.png" })]);
+    const current = await picture.check();
+
+    marked.commit(".gitattributes");
+
+    assert.deepEqual(current.problems, []);
+    assert.deepEqual(kinds(await picture.check()), ["stale"]);
+  });
+
   it("fails an after picture nobody read", async () => {
     assert.deepEqual(kinds(await capture([shot({ file: "a.png", read: undefined })]).check()), [
       "unread",
@@ -224,10 +235,18 @@ describe("pr:media check, on an Android render's build stamp", () => {
     assert.deepEqual(kinds(await clean.check()), ["stale"]);
   });
 
-  it("counts a commit to a screenshot test as a change to the render it draws", async () => {
-    const clean = android.capture([android.shot({ ...picture, build: stamp })]);
-    android.commit("apps/android/app/src/testDebug/kotlin/PlanScreenshots.kt");
+  it.each([
+    "apps/android/app/src/testDebug/kotlin/PlanScreenshots.kt",
+    "apps/android/feature/today/src/test/kotlin/TodayFlowTest.kt",
+  ])("counts a commit to %s, test code that draws renders", async (path) => {
+    const drawn = checkFixture();
+    const render = drawn.shot({ ...picture, build: { ...stamp, commit: drawn.current } });
+    const clean = drawn.capture([render]);
+    const current = await clean.check();
 
+    drawn.commit(path);
+
+    assert.deepEqual(current.problems, []);
     assert.deepEqual(kinds(await clean.check()), ["stale"]);
   });
 });

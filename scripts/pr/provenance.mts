@@ -24,10 +24,11 @@ async function git(repository: string, args: string[]): Promise<string> {
 
 /**
  * The files a picture of `app` can be drawn from: the app and the shared packages, without the
- * files `.gitattributes` marks `never-on-screen`, such as tests.
+ * files `.gitattributes` marks `never-on-screen`, such as tests. `.gitattributes` counts itself,
+ * since a change to it changes which files count.
  */
 export function screenSources(app: string): string[] {
-  return [`apps/${app}`, "packages", ":(top,exclude,attr:never-on-screen)"];
+  return [`apps/${app}`, "packages", ".gitattributes", ":(top,exclude,attr:never-on-screen)"];
 }
 
 export async function sha256File(path: string): Promise<string> {
