@@ -15,7 +15,7 @@ export const savedLessonStateSchema = saveLessonSchema
   .extend({ saved: z.boolean().meta({ description: "Whether the lesson is saved now" }) })
   .meta({ id: "SavedLessonState" });
 
-export const savedLessonSchema = z
+const savedLessonSchema = z
   .object({
     available: z.boolean().meta({ description: "The lesson is available to start" }),
     chapterTitle: z.string().nullable(),
