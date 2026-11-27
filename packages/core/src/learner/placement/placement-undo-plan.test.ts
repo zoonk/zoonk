@@ -121,9 +121,10 @@ describe("placement Undo restores the plan", () => {
 
     expect(finished.completion.lessonsSkipped).toBeGreaterThan(0);
 
-    expect(finished.completion.attempt?.partComplete ?? null).toBe(
-      scenario.length === "wholeCourse" ? true : null,
-    );
+    expect(finished.completion).toMatchObject({
+      attempt: { partComplete: false, resume: { part: 1, question: 5 } },
+      finish: { answered: 4, end: "stopped" },
+    });
 
     await refreshTestedOutPlan({ goalId: goal.id, userId: user.id });
 

@@ -1,6 +1,10 @@
 import "server-only";
 import { type TransactionClient } from "@zoonk/db";
 import { NOT_LESSON_ANSWER_FILTER } from "@zoonk/db/lesson-answer";
+import { isJsonObject } from "@zoonk/utils/json";
+import { type AnalyticsEvent } from "../../analytics/events";
+import { type TestEnd } from "../../analytics/test-event-catalog";
+import { testEventContext, trackTestEvents } from "../../analytics/test-events";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import {
   getGoalsCacheTag,
@@ -15,7 +19,11 @@ import { levelTestOutReceipt } from "../../plans/_utils/test-out-receipt";
 import { recordTestOutChange } from "../../plans/record-test-out-change";
 import { settleAnsweredActivity } from "../../stats/_utils/settle-answered-activity";
 import { getCompletionEnergyContext } from "../../stats/completion-energy";
-import { loadTestOutAnswers, saveTestOut } from "./_utils/level-test-out-state";
+import {
+  loadTestOutAnswers,
+  nextTestOutQuestion,
+  saveTestOut,
+} from "./_utils/level-test-out-state";
 import { skipConfirmedLanguageLessons } from "./_utils/level-test-placement";
 import {
   type LanguageLevelTestOutResult,
@@ -80,6 +88,24 @@ async function getPassedTopics({
   return new Set(passed.length === 2 ? passed : []);
 }
 
+function testOutEnd({
+  answered,
+  canContinue,
+  passed,
+  questions,
+}: {
+  answered: number;
+  canContinue: boolean;
+  passed: boolean;
+  questions: number;
+}): TestEnd {
+  if (answered < questions) {
+    return canContinue ? "stopped" : "material_exhausted";
+  }
+
+  return passed ? "check_passed" : "check_missed";
+}
+
 export async function finishLanguageLevelTestOut({
   attemptId,
   goalId,
@@ -112,7 +138,7 @@ export async function finishLanguageLevelTestOut({
       }
 
       if (testOut.result) {
-        return unchanged(testOut);
+        return unchanged({ event: null });
       }
 
       const answers = await loadTestOutAnswers({ progress: testOut, tx, userId });
@@ -164,12 +190,49 @@ export async function finishLanguageLevelTestOut({
         await owePlanStartLessons({ db: tx, goalId, userId });
       }
 
-      return finished;
+      const next =
+        answers.length < testOut.questions.length
+          ? await nextTestOutQuestion({
+              answered: new Set(answers.map(({ itemId }) => itemId)),
+              progress: testOut,
+              tx,
+            })
+          : null;
+
+      const event: AnalyticsEvent = {
+        name: "Test Finished",
+        properties: {
+          ...testEventContext(current, {
+            attemptId,
+            questions: testOut.questions.length,
+            test: "level_test_out",
+          }),
+          answered: answers.length,
+          duration_ms: answers.reduce((total, answer) => total + answer.durationMs, 0),
+          end: testOutEnd({
+            answered: answers.length,
+            canContinue: next !== null,
+            passed: topicIds.size > 0,
+            questions: testOut.questions.length,
+          }),
+          lessons_skipped: itemIds.length,
+          levels_skipped: itemIds.length > 0 ? 1 : 0,
+          parts_left: 0,
+          unknowns: answers.filter(({ answer }) => isJsonObject(answer) && answer.dontKnow === true)
+            .length,
+        },
+      };
+
+      return { event };
     },
   );
 
   if (!progress) {
     return { status: "notFound" };
+  }
+
+  if (progress.event) {
+    trackTestEvents(goal, [progress.event]);
   }
 
   revalidateCacheTags([

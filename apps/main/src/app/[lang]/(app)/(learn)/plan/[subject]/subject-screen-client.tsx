@@ -7,6 +7,7 @@ import { useTopicOutlineActions } from "@/lib/topic-outlines/use-topic-outline-a
 import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
 import { type SyllabusSubject } from "@zoonk/core/view-models/syllabus/contract";
 import { buildSubjectMindMapsHref } from "@zoonk/learn/mind-maps/urls";
+import { namesModules } from "@zoonk/learn/names-modules";
 import { SubjectScreen, type SubjectSyllabus } from "@zoonk/learn/subject";
 import { TopicOutlineProvider } from "@zoonk/learn/topic-outline";
 import { AskTutorEntry } from "@zoonk/player/tutor";
@@ -54,7 +55,7 @@ export function SubjectScreenClient({
 
   return (
     <TopicOutlineProvider value={outlineActions}>
-      <MainTutorScope {...tutor} target={target}>
+      <MainTutorScope {...tutor} isModule={namesModules(syllabus.goal.kind)} target={target}>
         <SubjectScreen
           actions={{
             restore: (areas) => change([{ areas, kind: "restoreAreas" }]),

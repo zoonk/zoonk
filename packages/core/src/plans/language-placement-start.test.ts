@@ -88,6 +88,7 @@ describe("the first lesson after language placement", () => {
     { expected: 0, expectedEnd: "unknown_streak", path: "lower" },
     { expected: 3, expectedEnd: "check_passed", path: "pass" },
     { expected: 2, expectedEnd: "check_passed", path: "practice" },
+    { expected: 1, expectedEnd: "unknown_streak", path: "raise" },
   ] as const)(
     "replans after $path for the same stated level",
     async ({ path, expected, expectedEnd }) => {
@@ -119,7 +120,9 @@ describe("the first lesson after language placement", () => {
       await createGoalPlan({ goalId: goal.id, graph: library.graph });
       mockSession(user.id);
 
-      const end = path === "skip" ? null : await takeTest(goal.id, pair, path);
+      const end =
+        path === "skip" ? null : await takeTest(goal.id, pair, path === "raise" ? "lower" : path);
+
       expect(end).toBe(expectedEnd);
 
       if (path === "practice") {
@@ -132,6 +135,28 @@ describe("the first lesson after language placement", () => {
             userId: user.id,
           }),
         );
+      }
+
+      if (path === "raise") {
+        for (const skill of ["reading", "listening"] as const) {
+          // Each window adds half a CEFR level. Four raise the measured A1 to B1.
+          for (let window = 0; window < 4; window += 1) {
+            // oxlint-disable-next-line no-await-in-loop -- Each window works from the previous live score.
+            await prisma.$transaction((tx) =>
+              addSkillEvidence(tx, {
+                evidence: {
+                  ceiling: 1.5,
+                  correct: LEVEL_WINDOW_ANSWERS,
+                  total: LEVEL_WINDOW_ANSWERS,
+                },
+                language: pair.targetLanguage,
+                skill,
+                startScore: 0,
+                userId: user.id,
+              }),
+            );
+          }
+        }
       }
 
       await refreshGoalPlan({ goalId: goal.id, mode: "forced" });

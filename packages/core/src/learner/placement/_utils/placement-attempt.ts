@@ -2,6 +2,9 @@ import "server-only";
 import { randomUUID } from "node:crypto";
 import { type Goal, type TransactionClient } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
+import { type AnalyticsEvent } from "../../../analytics/events";
+import { type TestRow } from "../../../analytics/test-event-catalog";
+import { testEventContext, trackTestEvents } from "../../../analytics/test-events";
 import { revalidateCacheTags } from "../../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag } from "../../../cache/tags";
 import { type PlacementPartPreparation } from "../../../follow-ups/follow-up-contract";
@@ -11,10 +14,12 @@ import { unchanged, writeLearnerChange } from "../../_utils/write-learner-change
 import { loadCoursePlacementTopics } from "./course-placement-offer";
 import { loadPlacementWithSummary } from "./load-placement-state";
 import {
+  PART_QUESTIONS,
   type PlacementAttempt,
   type PlacementLength,
   type PlacementRecord,
   getAttemptParts,
+  getCourseOffer,
   readPlacementAttempt,
   splitPlacementParts,
 } from "./placement-attempt-record";
@@ -105,6 +110,82 @@ async function retryPartQuestions({
   return { ...current, partPreparationFailed: false, partPrepared: false, partRequestedAt: at };
 }
 
+function openingRow({
+  attempt,
+  goal,
+  previous,
+}: {
+  attempt: PlacementAttempt;
+  goal: Pick<Goal, "details" | "planRevealedAt">;
+  previous?: PlacementAttempt;
+}): TestRow {
+  if (previous) {
+    return previous.length === attempt.length ? "continue" : "whole_course";
+  }
+
+  if (
+    !goal.planRevealedAt &&
+    isJsonObject(goal.details) &&
+    goal.details.placementRequested === true
+  ) {
+    return "direct";
+  }
+
+  return attempt.length === "wholeCourse" ? "whole_course" : "quick";
+}
+
+function openingEvents({
+  attempt,
+  goal,
+  previous,
+}: {
+  attempt: PlacementAttempt;
+  goal: Pick<Goal, "details" | "id" | "planRevealedAt" | "userId">;
+  previous?: PlacementAttempt;
+}): AnalyticsEvent[] {
+  const parts = getAttemptParts(attempt).length;
+
+  const properties = testEventContext(goal, {
+    attemptId: attempt.id,
+    part: attempt.part,
+    parts,
+    questions: attempt.parts
+      ? (getCourseOffer(attempt.partSkillIds?.length ?? 0)?.questions ?? 0)
+      : PART_QUESTIONS,
+    test: "course",
+  });
+
+  const started: AnalyticsEvent = {
+    name: "Test Started",
+    properties: {
+      ...properties,
+      resumed: previous?.paused === true && previous.part === attempt.part,
+      row: openingRow({ attempt, goal, previous }),
+    },
+  };
+
+  if (!previous) {
+    return [started];
+  }
+
+  const changedLength = previous.length !== attempt.length;
+
+  const continued: AnalyticsEvent = {
+    name: "Test Continued",
+    properties: {
+      ...properties,
+      from_part: previous.part,
+      reason: changedLength ? "whole_course" : "next_part",
+    },
+  };
+
+  if (previous.part !== attempt.part || changedLength) {
+    return previous.partComplete || previous.paused ? [continued, started] : [continued];
+  }
+
+  return previous.paused ? [started] : [];
+}
+
 async function resumePlacementAttempt({
   at,
   current,
@@ -115,7 +196,7 @@ async function resumePlacementAttempt({
 }: {
   at: string;
   current: NonNullable<PlacementRecord["attempt"]>;
-  goal: Pick<Goal, "details" | "id" | "userId">;
+  goal: Pick<Goal, "details" | "id" | "planRevealedAt" | "userId">;
   length: PlacementLength;
   record: PlacementRecord;
   tx: TransactionClient;
@@ -130,34 +211,25 @@ async function resumePlacementAttempt({
       !current.paused &&
       (current.length === length || length === "quick")
     ) {
-      return unchanged(true);
+      return unchanged({ events: [], goal });
     }
 
-    await savePlacementAttempt({
-      goal,
-      record: {
-        ...record,
-        attempt: {
-          ...retried,
-          length: length === "wholeCourse" ? length : current.length,
-          paused: false,
-        },
-      },
-      tx,
-    });
+    const attempt = {
+      ...retried,
+      length: length === "wholeCourse" ? length : current.length,
+      paused: false,
+    };
 
-    return true;
+    await savePlacementAttempt({ goal, record: { ...record, attempt }, tx });
+    return { events: openingEvents({ attempt, goal, previous: current }), goal };
   }
 
-  if (current.length === "quick" && length === "quick") {
-    return unchanged(true);
-  }
-
+  // Released Android sends the completed part's length when the learner taps Keep going.
   const plan = await loadPlacementPlan(goalId, tx);
   const { attemptNextPart } = await loadPlacementWithSummary({ goalId, plan, tx, userId });
 
   if (!attemptNextPart) {
-    return unchanged(true);
+    return unchanged({ events: [], goal });
   }
 
   const { ids: partSkillIds, part } = attemptNextPart;
@@ -170,28 +242,22 @@ async function resumePlacementAttempt({
     userId,
   });
 
-  await savePlacementAttempt({
-    goal,
-    record: {
-      ...record,
-      attempt: {
-        ...current,
-        length: "wholeCourse",
-        part,
-        partComplete: false,
-        partPreparationFailed: false,
-        partPrepared: false,
-        partRequestedAt: null,
-        partSkillIds,
-        partStartedAt: at,
-        parts: getAttemptParts(current),
-        paused: false,
-      },
-    },
-    tx,
-  });
+  const attempt = {
+    ...current,
+    length: "wholeCourse" as const,
+    part,
+    partComplete: false,
+    partPreparationFailed: false,
+    partPrepared: false,
+    partRequestedAt: null,
+    partSkillIds,
+    partStartedAt: at,
+    parts: getAttemptParts(current),
+    paused: false,
+  };
 
-  return true;
+  await savePlacementAttempt({ goal, record: { ...record, attempt }, tx });
+  return { events: openingEvents({ attempt, goal, previous: current }), goal };
 }
 
 export async function openPlacementAttempt({
@@ -210,7 +276,7 @@ export async function openPlacementAttempt({
       const record = readPlacementAttempt(goal);
 
       if (goal.kind !== "learn") {
-        return unchanged(false);
+        return unchanged(null);
       }
 
       const at = new Date().toISOString();
@@ -225,7 +291,7 @@ export async function openPlacementAttempt({
       const first = parts[0];
 
       if (!first) {
-        return unchanged(false);
+        return unchanged(null);
       }
 
       const attempt = {
@@ -253,13 +319,12 @@ export async function openPlacementAttempt({
         });
       }
 
-      return true;
+      return { events: openingEvents({ attempt, goal }), goal };
     },
   );
 
   if (opened) {
     revalidateCacheTags([getGoalsCacheTag(userId)]);
+    trackTestEvents(opened.goal, opened.events);
   }
-
-  return opened;
 }

@@ -1,6 +1,10 @@
 import { CEFR_LEVELS } from "@zoonk/utils/cefr";
 import { describe, expect, it } from "vitest";
-import { type LevelTestBank, type LevelTestProgress } from "./level-test-contract";
+import {
+  type LevelTestBank,
+  type LevelTestProgress,
+  levelTestProgressSchema,
+} from "./level-test-contract";
 import {
   getBand,
   getLevelTestFloors,
@@ -168,7 +172,7 @@ describe(getNextLevelTestStep, () => {
     expect(step).toMatchObject({ kind: "question", question: { level: "B1", skill: "reading" } });
   });
 
-  it("tries the next level down when there are too few fresh checks at the proposed level", () => {
+  it("resumes an old sitting with four answers per skill at the highest available check", () => {
     const answers = ["reading", "listening"].flatMap((skill) =>
       ["B1", "B2", "C1", "C2"].map((level) => ({
         answerIndex: 0,
@@ -192,7 +196,7 @@ describe(getNextLevelTestStep, () => {
     expect(
       getNextLevelTestStep({
         bank: { ...bank, confirmations },
-        progress: progress(answers),
+        progress: levelTestProgressSchema.parse({ answers, length: "wholeCourse", start: A2 }),
         start: A2,
       }),
     ).toMatchObject({ kind: "confirmation", question: { level: "A1" } });

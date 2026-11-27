@@ -184,13 +184,14 @@ async function answerNext({
 
   expect(analytics.trackServerEvent).toHaveBeenCalledWith(
     expect.objectContaining({
-      name: "Placement Answered",
-      properties: {
+      name: "Test Answered",
+      properties: expect.objectContaining({
         answer: "dontKnow" in answer ? "dont_know" : "correct",
         duration_ms: 5000,
-        question_number: (placement?.answered ?? 0) + 1,
+        goal_id: goalId,
+        question_number: (placement?.focusTest?.sitting?.answered ?? placement?.answered ?? 0) + 1,
         skill_id: placement?.next?.skillId,
-      },
+      }),
     }),
   );
 

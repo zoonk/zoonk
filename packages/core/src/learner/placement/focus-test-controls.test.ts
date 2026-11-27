@@ -7,7 +7,9 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { toUTCMidnight } from "@zoonk/utils/date";
 import { describe, expect, it } from "vitest";
+import { runDeferredWork } from "../../_test-utils/deferred-work";
 import { listOwed } from "../../_test-utils/follow-ups";
+import { analytics } from "../../_test-utils/test-boundaries";
 import { readBlockPayload, toBlockPayload } from "../../sessions/block-payload";
 import { PLAN_SHOWN, examTestGoalFixture, startSitting } from "../_test-utils/exam-test-goal";
 import { getGoalPlacement } from "./get-goal-placement";
@@ -49,6 +51,7 @@ describe(updateFocusTest, () => {
     await expect(control(goal.id, { sessionQuestions: "on" })).resolves.toStrictEqual({
       offer: null,
       sessionQuestions: "on",
+      sitting: null,
       state: "checked",
       suggestsFocus: true,
     });
@@ -81,12 +84,24 @@ describe(updateFocusTest, () => {
 
     await startSitting(goal.id);
 
+    const flush = runDeferredWork();
+
     await expect(control(goal.id, { suggestion: "dismissed" })).resolves.toStrictEqual({
       offer: { minutes: 6, questions: 6 },
       sessionQuestions: "on",
+      sitting: { answered: 0, questions: 6 },
       state: "sitting",
       suggestsFocus: true,
     });
+
+    await control(goal.id, { suggestion: "dismissed" });
+    await flush();
+
+    expect(
+      analytics.trackServerEvent.mock.calls.flat().filter((event) => event.name === "Test Skipped"),
+    ).toMatchObject([
+      { properties: { goal_id: goal.id, questions: 6, row: "not_now", test: "focus" } },
+    ]);
   });
 
   it("has no controls for a goal that isn't an exam, or for another learner's", async () => {

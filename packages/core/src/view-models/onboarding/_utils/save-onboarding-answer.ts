@@ -3,6 +3,7 @@ import { isDeepStrictEqual } from "node:util";
 import { type Goal, type Plan, type TransactionClient } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { type AnalyticsEvent } from "../../../analytics/events";
 import { getLeastDailyBudget, splitDailyBudget } from "../../../goals/daily-budget";
 import { getAnswerTimeZone } from "../../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
@@ -24,6 +25,7 @@ import {
   withoutReplacedAnswer,
 } from "./onboarding-answer-details";
 import { findOnboardingGoalIds } from "./onboarding-goals";
+import { readOnboardingPlacementEvent } from "./onboarding-placement-event";
 import { saveAnswerGoal } from "./save-answer-goal";
 
 /** Goals typed together share the day's time: the main one gets the bigger share. */
@@ -119,6 +121,30 @@ async function getAnswerOperations({
   return choices && [...operations, ...choices];
 }
 
+function acceptedPlacementEvent({
+  before,
+  changedGoalIds,
+  goal,
+  placementEvent,
+}: {
+  before?: Goal;
+  changedGoalIds: string[];
+  goal: Goal;
+  placementEvent: AnalyticsEvent | null;
+}): AnalyticsEvent | null {
+  return before &&
+    !before.planRevealedAt &&
+    changedGoalIds.includes(goal.id) &&
+    isDeepStrictEqual(goal.details, before.details)
+    ? placementEvent
+    : null;
+}
+
+type OnboardingAnswerWrite = {
+  placementEvent?: AnalyticsEvent | null;
+  status: "invalid" | "notFound" | "saved";
+};
+
 export async function saveAnswerInputs({
   goal,
   input,
@@ -126,7 +152,11 @@ export async function saveAnswerInputs({
   goal: Goal;
   input: GoalAnswerInput;
 }): Promise<
-  | { goalIds: string[]; status: "invalid" | "notFound" | "saved" }
+  | {
+      goalIds: string[];
+      placementEvent?: AnalyticsEvent | null;
+      status: "invalid" | "notFound" | "saved";
+    }
   | { goals: number; minutes: number; status: "dayTooShort" }
 > {
   if (isInvalidGoalAnswer({ current: goal, input })) {
@@ -153,7 +183,9 @@ export async function saveAnswerInputs({
 
   const changedGoalIds: string[] = [];
 
-  const status = await writeLearnerChange<"invalid" | "notFound" | "saved">(
+  const placementEvent = await readOnboardingPlacementEvent({ goal, input });
+
+  const saved = await writeLearnerChange<OnboardingAnswerWrite>(
     { goalIds, planInputs: true, userId: goal.userId },
     async (tx) => {
       const currentGoals = await tx.goal.findMany({
@@ -162,12 +194,12 @@ export async function saveAnswerInputs({
       });
 
       if (!currentGoals.some((current) => current.id === goal.id)) {
-        return unchanged("notFound");
+        return unchanged({ status: "notFound" });
       }
 
       for (const current of currentGoals) {
         if (isInvalidGoalAnswer({ current, input })) {
-          return unchanged("invalid");
+          return unchanged({ status: "invalid" });
         }
 
         const own = current.id === goal.id;
@@ -195,7 +227,7 @@ export async function saveAnswerInputs({
 
         // Unlike a plan change, onboarding can't keep a date that is gone: no plan can be made for it.
         if (schedule.targetDate && schedule.targetDate <= toIsoDate(today)) {
-          return unchanged("invalid");
+          return unchanged({ status: "invalid" });
         }
 
         assertTargetDates({
@@ -227,13 +259,13 @@ export async function saveAnswerInputs({
         });
 
         if (!operations) {
-          return unchanged("invalid");
+          return unchanged({ status: "invalid" });
         }
 
         const applied = applyPlanOperations({ goalKind: current.kind, operations, state, today });
 
         if ("error" in applied) {
-          return unchanged("invalid");
+          return unchanged({ status: "invalid" });
         }
 
         const data = {
@@ -265,9 +297,21 @@ export async function saveAnswerInputs({
         }
       }
 
-      return changedGoalIds.length > 0 ? "saved" : unchanged("saved");
+      const before = currentGoals.find((current) => current.id === goal.id);
+
+      return changedGoalIds.length > 0
+        ? {
+            placementEvent: acceptedPlacementEvent({
+              before,
+              changedGoalIds,
+              goal,
+              placementEvent,
+            }),
+            status: "saved",
+          }
+        : unchanged({ status: "saved" });
     },
   );
 
-  return { goalIds: changedGoalIds, status };
+  return { goalIds: changedGoalIds, ...saved };
 }

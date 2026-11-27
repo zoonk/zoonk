@@ -50,7 +50,7 @@ internal fun TutorComposer(
     state: TutorConversationState,
     routes: TutorRoutes,
     modifier: Modifier = Modifier,
-    placeholder: String = placeholderLabel(vm.scope),
+    placeholder: String,
     focus: FocusRequester = remember { FocusRequester() },
 ) {
     val limit = turns?.let(state::limit)

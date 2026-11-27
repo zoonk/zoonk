@@ -23,8 +23,10 @@ import { CEFR_LEVELS } from "@zoonk/utils/cefr";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { normalizeString } from "@zoonk/utils/string";
 import { describe, expect, it, vi } from "vitest";
+import { runDeferredWork } from "../../_test-utils/deferred-work";
 import { listOwed } from "../../_test-utils/follow-ups";
 import { mockSession } from "../../_test-utils/mock-session";
+import { analytics } from "../../_test-utils/test-boundaries";
 import { type GoalDraft } from "../../goals/goal-contract";
 import { recordGoalGeneration } from "../../goals/record-goal-generation";
 import { examTestGoalFixture } from "../../learner/_test-utils/exam-test-goal";
@@ -456,10 +458,51 @@ describe("onboarding a new goal", () => {
     await expect(listOwed(user.id)).resolves.toStrictEqual([]);
   });
 
+  it("records a cold offer once when a schedule moves onboarding past it", async () => {
+    const user = await useLearner();
+
+    const goal = await goalFixture({
+      details: { answered: GOAL_QUESTIONS, level: "basic" },
+      kind: "language",
+      language: "pt",
+      planRevealedAt: null,
+      targetLanguage: `en-x-${randomUUID().slice(0, 5)}`,
+      userId: user.id,
+    });
+
+    const flush = runDeferredWork();
+
+    const save = () =>
+      answerOnboardingQuestion({
+        goalId: goal.id,
+        input: { dailyMinutes: 30, question: "schedule" },
+      });
+
+    await expect(save()).resolves.toMatchObject({ status: "saved" });
+    await expect(save()).resolves.toMatchObject({ status: "saved" });
+    await flush();
+
+    const events = analytics.trackServerEvent.mock.calls.flat();
+
+    expect(events.filter((event) => event.name === "Test Offer Deferred")).toMatchObject([
+      {
+        properties: {
+          attempt_id: null,
+          goal_id: goal.id,
+          part: 1,
+          parts: 1,
+          questions: 12,
+          surface: "onboarding",
+          test: "language",
+        },
+      },
+    ]);
+  });
+
   it("reads the learner's language bank without starting its writer", async () => {
     const user = await useLearner();
     const language = "pt";
-    const targetLanguage = `en-x-${randomUUID().slice(0, 8)}`;
+    const targetLanguage = `en-x-${randomUUID().slice(0, 5)}`;
 
     const goal = await goalFixture({
       details: { answered: GOAL_QUESTIONS, level: "basic" },

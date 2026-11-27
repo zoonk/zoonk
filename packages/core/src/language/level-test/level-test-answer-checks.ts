@@ -49,7 +49,7 @@ function getSkillGap({ bank, tests }: { bank: LevelTestBank; tests: JudgedLevelT
     return listening === undefined || reading === undefined ? [] : [listening - reading];
   });
 
-  return gaps.length === 0 ? 0 : gaps.reduce((sum, gap) => sum + gap, 0) / gaps.length;
+  return gaps.length === 0 ? null : gaps.reduce((sum, gap) => sum + gap, 0) / gaps.length;
 }
 
 function judgeAnswers({
@@ -152,16 +152,21 @@ export function findWrongLevelTestQuestions({
   tests: RecordedLevelTest[];
 }): { skillGap: number; verdicts: LevelTestQuestionVerdict[] } {
   const tests = recorded.map((test) => judgeByKey({ bank, test }));
-  const skillGap = getSkillGap({ bank, tests });
-
-  if (Math.abs(skillGap) >= MAX_SKILL_GAP) {
-    return { skillGap, verdicts: [] };
-  }
 
   const verdicts = bank.questions.flatMap((question) => {
     const verdict = judgeQuestion({ answers: judgeAnswers({ bank, question, tests }), question });
     return verdict ? [verdict] : [];
   });
 
-  return { skillGap, verdicts };
+  const suspects = new Set(verdicts.map(({ id }) => id));
+  // A wrong key or level can itself make listening look stronger than reading.
+  const skillGap =
+    getSkillGap({
+      bank: { ...bank, questions: bank.questions.filter(({ id }) => !suspects.has(id)) },
+      tests,
+    }) ??
+    getSkillGap({ bank, tests }) ??
+    0;
+
+  return { skillGap, verdicts: Math.abs(skillGap) >= MAX_SKILL_GAP ? [] : verdicts };
 }

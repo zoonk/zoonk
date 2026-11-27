@@ -329,6 +329,7 @@
   "plan_outside_past_basics": "1ff45c72db29a4c3ba03bb49c9868fe6a509158380feebc6fe905a5d5b70cca3",
   "plan_outside_skipped": "f2010712ba202a2ea48dfe103707a89c0e9a7d68d7d3f1941e1fac4688a9d617",
   "plan_outside_skipped_base": "be5b66d8912e53c5f6062622a0ed23005b7d6c49e4711f25e236ab820ed8eae7",
+  "plan_outside_skipped_module": "1cb06cd83de5f1c39b47c804813a844141b0a5cd8d9d81914880edaff9fcb6f4",
   "plan_pace": "cf3459896b82bb7e8e5648a5e4f90b8bc382c1a30170915d0095202140a45980",
   "plan_pace_challenges_to_go": "57b05e9169ff3be90d41153129d1487157da5025b55f7d77da2939bd0868d568",
   "plan_pace_date_passed": "323becaeb1031be947673c021396fdfcf05356839c0183a8e26eac278f15488b",
@@ -1405,6 +1406,8 @@
     <string name="plan_outside_others_first">Fora do seu plano · outros tópicos vêm primeiro</string>
     <!-- Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out. -->
     <string name="plan_outside_skipped">Fora do seu plano · você tirou esta matéria</string>
+    <!-- Why a module or a step on the path isn't in the learner's plan: they took the module out. Said on a plan that isn't for an exam, whose list is titled "Modules". -->
+    <string name="plan_outside_skipped_module">Fora do seu plano · você tirou este módulo</string>
     <!-- A phase whose challenge, a duel with the Trickster, has no day before the plan's date. -->
     <string name="plan_trickster_not_in_plan">O Pegadinha não está no seu plano</string>
     <!-- A language phase whose challenge, a live call, has no day before the plan's date. -->

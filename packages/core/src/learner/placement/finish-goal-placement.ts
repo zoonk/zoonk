@@ -1,12 +1,20 @@
 import "server-only";
 import { type Goal } from "@zoonk/db";
+import { safeAsync } from "@zoonk/utils/error";
 import { isJsonObject } from "@zoonk/utils/json";
+import { testEventContext, testSkipRow, trackTestEvents } from "../../analytics/test-events";
 import { owePlanStartLessons } from "../../follow-ups/owe-goal-lessons";
 import { loadPlacementPlan } from "../_utils/goal-skill-graph";
 import { findOwnedGoal, getAnswerTimeZone } from "../_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../_utils/write-learner-change";
 import { type PlacementCompletion, completePlacement } from "./_utils/complete-placement";
+import { loadCoursePlacementTopics } from "./_utils/course-placement-offer";
 import { finishPlacementAttempt } from "./_utils/finish-placement-attempt";
+import {
+  getAttemptParts,
+  getCourseOffer,
+  readPlacementAttempt,
+} from "./_utils/placement-attempt-record";
 import { type PlacementCompletionInput } from "./placement-contract";
 import { getScratchAreaStarts, getScratchPhaseStarts } from "./placement-steps";
 
@@ -18,19 +26,48 @@ export type FinishPlacementResult =
   | { status: "unavailable" };
 
 async function declinePlacement(goal: Goal) {
-  await writeLearnerChange({ planInputs: true, userId: goal.userId }, async (tx) => {
-    const current = await tx.goal.findUnique({ where: { id: goal.id } });
-    const details = isJsonObject(current?.details) ? current.details : {};
+  const declined = await writeLearnerChange(
+    { planInputs: true, userId: goal.userId },
+    async (tx) => {
+      const current = await tx.goal.findUnique({ where: { id: goal.id } });
+      const details = isJsonObject(current?.details) ? current.details : {};
 
-    if (!current || details.placementDeclined === true) {
-      return unchanged(null);
-    }
+      if (!current || details.placementDeclined === true) {
+        return unchanged(null);
+      }
 
-    await tx.goal.update({
-      data: { details: { ...details, placementDeclined: true } },
-      where: { id: goal.id },
-    });
-  });
+      await tx.goal.update({
+        data: { details: { ...details, placementDeclined: true } },
+        where: { id: goal.id },
+      });
+
+      return current;
+    },
+  );
+
+  if (!declined || declined.kind !== "learn") {
+    return;
+  }
+
+  const { data: topics } = await safeAsync(() => loadCoursePlacementTopics(goal.id));
+  const { attempt } = readPlacementAttempt(declined);
+  const offer = getCourseOffer(attempt?.partSkillIds?.length ?? topics?.length ?? 0);
+
+  trackTestEvents(declined, [
+    {
+      name: "Test Skipped",
+      properties: {
+        ...testEventContext(declined, {
+          attemptId: attempt?.id,
+          part: attempt?.part,
+          parts: attempt ? getAttemptParts(attempt).length : (offer?.wholeCourse?.parts ?? 1),
+          questions: offer?.questions ?? null,
+          test: "course",
+        }),
+        row: testSkipRow(declined, attempt?.id),
+      },
+    },
+  ]);
 }
 
 /**

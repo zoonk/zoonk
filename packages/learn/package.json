@@ -50,6 +50,7 @@
     "./download-row": "./src/_components/download-row.tsx",
     "./edit-text-dialog": "./src/_components/edit-text-dialog.tsx",
     "./name-hint": "./src/_components/name-hint.tsx",
+    "./names-modules": "./src/syllabus/names-modules.ts",
     "./enter-button": "./src/_components/enter-button.tsx",
     "./writing": "./src/writing/writing-screen.tsx",
     "./writing/answer": "./src/writing/writing-answer.tsx",

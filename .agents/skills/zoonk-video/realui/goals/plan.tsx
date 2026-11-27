@@ -196,6 +196,7 @@ export function examSyllabus(lang: Lang): SyllabusView {
     subjects: exam.subjects.map((subject) => ({
       areas: [subject.name],
       chapters: [],
+      covers: [],
       displayWeight: null,
       group: null,
       imageUrl: null,

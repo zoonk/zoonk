@@ -3623,6 +3623,11 @@ msgid "Ask {name} about your plan"
 msgstr "Fai una domanda a {name} sul tuo piano"
 
 #: src/questions/ask-tutor.tsx
+msgctxt "VgQdYo"
+msgid "Ask {name} about this module"
+msgstr "Fai una domanda a {name} su questo modulo"
+
+#: src/questions/ask-tutor.tsx
 msgctxt "dHV3p3"
 msgid "Ask {name} about this subject"
 msgstr "Fai una domanda a {name} su questa materia"
@@ -3744,6 +3749,11 @@ msgid "Ask questions about your plan"
 msgstr "Fai domande sul tuo piano"
 
 #: src/questions/lesson-question-panel.tsx
+msgctxt "eDiytU"
+msgid "Ask questions about this module"
+msgstr "Fai domande su questo modulo"
+
+#: src/questions/lesson-question-panel.tsx
 msgctxt "zoFfdl"
 msgid "Ask questions about this subject"
 msgstr "Fai domande su questa materia"
@@ -3787,6 +3797,11 @@ msgstr "Domande su questa simulazione"
 msgctxt "Nx3NqL"
 msgid "Questions about your plan"
 msgstr "Domande sul tuo piano"
+
+#: src/questions/lesson-question-thread.tsx
+msgctxt "KCTpmM"
+msgid "Questions about this module"
+msgstr "Domande su questo modulo"
 
 #: src/questions/lesson-question-thread.tsx
 msgctxt "6QK3he"
@@ -3842,6 +3857,11 @@ msgstr "Sul tuo piano"
 msgctxt "e0zkbG"
 msgid "About this part"
 msgstr "Su questa parte"
+
+#: src/questions/lesson-question-turn.tsx
+msgctxt "W40WkX"
+msgid "About this module"
+msgstr "Informazioni sul modulo"
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "XHGiOR"

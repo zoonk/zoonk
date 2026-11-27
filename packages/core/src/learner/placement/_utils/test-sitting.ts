@@ -3,6 +3,8 @@ import { randomUUID } from "node:crypto";
 import { type Goal, type TransactionClient } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { type z } from "zod";
+import { type AnalyticsEvent } from "../../../analytics/events";
+import { testEventContext, trackTestEvents } from "../../../analytics/test-events";
 import { revalidateCacheTags } from "../../../cache/revalidate-cache-tags";
 import {
   getGoalsCacheTag,
@@ -15,8 +17,7 @@ import { type PlanState } from "../../../plans/planner/plan-state";
 import { settleAnsweredActivity } from "../../../stats/_utils/settle-answered-activity";
 import { getCompletionEnergyContext } from "../../../stats/completion-energy";
 import { loadPlacementPlan } from "../../_utils/goal-skill-graph";
-import { writeLearnerChange } from "../../_utils/write-learner-change";
-import { type SittingKind } from "../focus-test-rules";
+import { unchanged, writeLearnerChange } from "../../_utils/write-learner-change";
 import { readFocusTestRecord } from "../focus-test-state";
 import { type SittingOffer } from "../focus-test-view";
 import { isPlacementSkipped, type placementFinishSchema } from "../placement-contract";
@@ -36,47 +37,86 @@ export async function openTestSitting({
   offer,
   planId,
 }: {
-  goal: Pick<Goal, "details" | "id" | "userId">;
+  goal: Pick<Goal, "details" | "id" | "planRevealedAt" | "userId">;
   now: Date;
   offer: Pick<SittingOffer, "kind" | "questions">;
   planId: string;
 }): Promise<void> {
   const at = now.toISOString();
 
-  await writeLearnerChange({ lockPlanIds: [planId], userId: goal.userId }, async (tx) => {
-    const { before } = await changeFocusTestRecord({
-      change: (record) =>
-        record.sitting
-          ? record
-          : {
-              ...record,
-              sitting: {
-                answered: 0,
-                id: randomUUID(),
-                kind: offer.kind,
-                questions: offer.questions,
+  const sitting = await writeLearnerChange(
+    { lockPlanIds: [planId], userId: goal.userId },
+    async (tx) => {
+      const saved = await changeFocusTestRecord({
+        change: (record) =>
+          record.sitting
+            ? record
+            : {
+                ...record,
+                sitting: {
+                  answered: 0,
+                  id: randomUUID(),
+                  kind: offer.kind,
+                  questions: offer.questions,
+                },
+                startedAt: record.startedAt ?? at,
               },
-              startedAt: record.startedAt ?? at,
-            },
-      goalId: goal.id,
-      tx,
-    });
+        goalId: goal.id,
+        tx,
+      });
 
-    if (before.startedAt !== null || !isPlacementSkipped(goal)) {
-      return;
-    }
+      if (saved.before.sitting) {
+        return unchanged(null);
+      }
 
-    await tx.plan.update({ data: { placementPreparedAt: null }, where: { goalId: goal.id } });
+      if (saved.before.startedAt !== null || !isPlacementSkipped(goal)) {
+        return saved.after.sitting;
+      }
 
-    await oweFollowUps({
-      db: tx,
-      followUps: [
-        { input: { goalId: goal.id, waitsForNotice: true }, kind: "preparePlacementItems" },
-      ],
-      userId: goal.userId,
-    });
+      await tx.plan.update({ data: { placementPreparedAt: null }, where: { goalId: goal.id } });
+
+      await oweFollowUps({
+        db: tx,
+        followUps: [
+          { input: { goalId: goal.id, waitsForNotice: true }, kind: "preparePlacementItems" },
+        ],
+        userId: goal.userId,
+      });
+
+      return saved.after.sitting;
+    },
+  );
+
+  if (!sitting) {
+    return;
+  }
+
+  const properties = testEventContext(goal, {
+    attemptId: sitting.id,
+    questions: sitting.questions,
+    test: "focus",
   });
 
+  const continuation = sitting.kind === "continuation";
+  const details = isJsonObject(goal.details) ? goal.details : {};
+  const direct = !goal.planRevealedAt && details.placementRequested === true;
+  const firstRow = direct ? "direct" : "quick";
+
+  const events: AnalyticsEvent[] = [
+    {
+      name: "Test Started",
+      properties: { ...properties, resumed: false, row: continuation ? "continue" : firstRow },
+    },
+  ];
+
+  if (continuation) {
+    events.unshift({
+      name: "Test Continued",
+      properties: { ...properties, from_part: 1, reason: "more_focus" },
+    });
+  }
+
+  trackTestEvents(goal, events);
   revalidateCacheTags([getGoalsCacheTag(goal.userId)]);
 }
 
@@ -85,7 +125,7 @@ export type ClosedSitting = {
   dontKnow: number;
   durationMs: number;
   end: z.infer<typeof placementFinishSchema>["end"];
-  kind: SittingKind;
+  id: string;
   questions: number;
 };
 
@@ -178,7 +218,7 @@ export async function closeTestSitting({
         focusTest,
         questions: before.sitting.questions,
       }),
-      kind: before.sitting.kind,
+      id: before.sitting.id,
       questions: before.sitting.questions,
     };
   });

@@ -5,6 +5,7 @@
   "tutor_about_chapter": "e74ebbe1b7bc757bdc2600fd93f05ba47769264014aa5606b4ee7b728233f3c6",
   "tutor_about_lesson": "2862ebc3c38d411ef6c3bce3191bd5002e34e77847e9bb37588215786fe1b877",
   "tutor_about_mock": "a2d6391a97db367b629754a0eedd26538e150194e4434cec4790cdb85314922a",
+  "tutor_about_module": "6b555e2bd58ea0c3ed8d3c66b940171464506db039fbd36d866a1acf08491580",
   "tutor_about_plan": "0c4db8e39e16a2ccae87bea862521ca23bffad251e9f4299195b4587d2844bb3",
   "tutor_about_question": "79fb09ee475f627692ede00bc17b35397ce3d299d521bfaead7522d5890d1b58",
   "tutor_about_step": "096e1cf433f2a297629a9976bd55290396548c98216bd1cc94e003beddb15dc5",
@@ -15,6 +16,7 @@
   "tutor_ask_chapter": "2c0b225f97aae02a088a8fab2ea66ecd934df3264be3585f605d8b271b1c9652",
   "tutor_ask_for_help": "67369a362951ef6cad291865dca17b78b3e96d601cdf749b41574bb8abd95c97",
   "tutor_ask_mock": "4421028a0a2f9023361aa5a025d5d85a2a3bf2583b668ae403b2dff2762d3973",
+  "tutor_ask_module": "fd401c830ea8a3f267826fbd51d6b619951636de3c59206fa62f22bce8dc7ef1",
   "tutor_ask_plan": "31e376549564968038e9943694373051e347c9081b1064963d2f02f425d3e99d",
   "tutor_ask_question": "3ae2f5bd4fac07614e0bbd90b774613d63ae46243481c5ba122f8b752517c40b",
   "tutor_ask_screen": "a8a0c82aa8cf09d425965ab89533659daa23f96a86cbbbd6362451f9e698ad96",
@@ -26,6 +28,7 @@
   "tutor_description_item": "2260cd3912f63eec2ad9bb0f74f33e8ee90d2bf855d06810638465d4ed43bf0f",
   "tutor_description_lesson": "2100e3d6c0d01c78788c9f783809ef3e181db6a5e75da722a8501da0446dcffc",
   "tutor_description_mock": "20fcb74ba7975faaffed111097aef7b7e49d71767187acfc220108ae8a377072",
+  "tutor_description_module": "7d7ac9fb70e498242f90c5b5669ad9f4721bf99aa692f7e1886f72861fa7bfea",
   "tutor_description_plan": "2d96efea4ba09bbd1694ee0bcf8aafce96fa2516bccfb349c5a7377587420297",
   "tutor_description_step": "60a30c52b4fe7ac91f119b4db3a100c39ec09382d71fb791855b6f9647f7b9a6",
   "tutor_description_subject": "7d70905c45764708079621ee7e0154d8c3789557c861c2b141506092f26da68f",
@@ -93,13 +96,6 @@
   "tutor_offer_variety_applied": "8dcebb9c71abdf80d6b752086a9d7f34d25671aab37f7c9ef32d4ccfc6707240",
   "tutor_offer_variety_description": "688f320bedb1ea6173079135aeeb1a77f4787615917603720cb5d9d97ae51683",
   "tutor_page_sign_up": "349a8b2de9f39977b0cd54eebcff21a3a4643f4deec83e02a949af825eb65ab3",
-  "tutor_placeholder_answer": "104c0b18cb6c7b307b9a3def09f3dc47be2e04de023fcac4a99d2ad8b9e06754",
-  "tutor_placeholder_chapter": "cdfae927d4934de7ba2f07cf7d56ad35a51785c9b8812b1cee88c769c154b23f",
-  "tutor_placeholder_item": "675b2ddb063bf99396a720729810655532ad90dcdae0ef787fd41ecb1eec7d39",
-  "tutor_placeholder_lesson": "3db1751e6b1a0760d5c03e9199ccf4abfc4266ce77ef4d28f3c4f359630ccaca",
-  "tutor_placeholder_mock": "0db2111a93862b16489a9c109c5c4e69bdf2381c3a53a63841c505dba4b6e8ae",
-  "tutor_placeholder_plan": "b2f8202aa4df30b24612a5f92780094daa61268ae88c1a5d24eb1d834123aea6",
-  "tutor_placeholder_subject": "38df5d978f5e98f23adb2e1baa4e5db2bc2db83bf89520cdcd6eab3cccc899ac",
   "tutor_plan_change_apply": "1beaee74a33604511234d6000dd063567b3e4b8ba7ec4946e952c1c591d3c2d7",
   "tutor_plan_change_declined": "8a870cae6f0fbbfecea836cf94bee8f71536df095c2606a2bcec1fb53d7680d8",
   "tutor_plan_change_failed": "d8688098102e1caea4ef597e8463419d5e2028514d098d31dd58fd0a7ad776dc",
@@ -138,6 +134,7 @@
     <string name="tutor_ask_mock">Preguntar a %1$s sobre este simulacro</string>
     <string name="tutor_ask_plan">Preguntar a %1$s sobre tu plan</string>
     <string name="tutor_ask_subject">Preguntar a %1$s sobre esta materia</string>
+    <string name="tutor_ask_module">Preguntar a %1$s sobre este módulo</string>
     <string name="tutor_ask_answer">Pregunta a %1$s sobre tu respuesta</string>
     <string name="tutor_ask_question">Pregunta a %1$s sobre esta pregunta</string>
     <string name="tutor_ask_screen">Pregunta a %1$s sobre esta pantalla</string>
@@ -148,6 +145,7 @@
     <string name="tutor_description_mock">Haz preguntas sobre este simulacro</string>
     <string name="tutor_description_plan">Haz preguntas sobre tu plan</string>
     <string name="tutor_description_subject">Haz preguntas sobre esta materia</string>
+    <string name="tutor_description_module">Haz preguntas sobre este módulo</string>
     <string name="tutor_description_item">Consultar sobre esta pregunta</string>
     <string name="tutor_close">Cerrar preguntas</string>
     <string name="tutor_about_answer">Sobre tu respuesta</string>
@@ -157,6 +155,7 @@
     <string name="tutor_about_plan">Sobre tu plan</string>
     <string name="tutor_about_step">Sobre esta parte</string>
     <string name="tutor_about_subject">Sobre esta materia</string>
+    <string name="tutor_about_module">Acerca de este módulo</string>
     <string name="tutor_about_question">Sobre esta pregunta</string>
     <string name="tutor_empty_title">¿En qué te gustaría recibir ayuda?</string>
     <!-- The buddy says it's an AI where every conversation opens (EU AI Act art. 50). -->
@@ -181,13 +180,6 @@
     <string name="tutor_error_last_question">No pudimos enviar tu última pregunta. Inténtalo de nuevo.</string>
     <string name="tutor_sign_in">Iniciar sesión</string>
     <string name="tutor_try_again">Intentar de nuevo</string>
-    <string name="tutor_placeholder_chapter">Pregunta sobre este capítulo…</string>
-    <string name="tutor_placeholder_mock">Pregunta sobre este simulacro…</string>
-    <string name="tutor_placeholder_plan">Pregunta sobre tu plan…</string>
-    <string name="tutor_placeholder_subject">Pregunta sobre esta materia…</string>
-    <string name="tutor_placeholder_item">Consulta sobre esta pregunta…</string>
-    <string name="tutor_placeholder_answer">Pregunta sobre tu respuesta…</string>
-    <string name="tutor_placeholder_lesson">Pregunta sobre el contenido de la lección…</string>
     <string name="tutor_send">Enviar</string>
     <string name="tutor_retry_last_question">Volver a enviar la última pregunta</string>
     <string name="tutor_suggest_walk_through">Explícame esta respuesta paso a paso</string>
