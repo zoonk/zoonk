@@ -55,10 +55,10 @@ const buttonVariants = cva(
 );
 
 const BUSY_HIDDEN =
-  "group-aria-busy/busy:opacity-0 in-held:opacity-0 group-has-data-busy/busy:opacity-0";
+  "in-busy:opacity-0 in-held:opacity-0 group-has-data-busy/busy:opacity-0";
 
 const BUSY_HIDDEN_WITHOUT_KEYS =
-  "not-pointer-fine:group-aria-busy/busy:opacity-0 not-pointer-fine:in-held:opacity-0 not-pointer-fine:group-has-data-busy/busy:opacity-0";
+  "not-pointer-fine:in-busy:opacity-0 not-pointer-fine:in-held:opacity-0 not-pointer-fine:group-has-data-busy/busy:opacity-0";
 
 // A `<button>` makes an inline span atomic, out of reach of the link variant's underline.
 const BUSY_CONTENT_CLASS =
@@ -73,14 +73,14 @@ function BusySpinner({ className, iconClassName }: { className?: string; iconCla
     <span
       aria-hidden="true"
       className={cn(
-        "in-held:opacity-100 pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 group-has-data-busy/busy:opacity-100 group-aria-busy/busy:opacity-100",
+        "in-held:opacity-100 pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 group-has-data-busy/busy:opacity-100 in-busy:opacity-100",
         className,
       )}
       data-slot="busy-spinner"
     >
       <Loader2Icon
         className={cn(
-          "in-held:animate-spin group-has-data-busy/busy:animate-spin group-aria-busy/busy:animate-spin",
+          "in-held:animate-spin group-has-data-busy/busy:animate-spin in-busy:animate-spin",
           iconClassName,
         )}
       />
