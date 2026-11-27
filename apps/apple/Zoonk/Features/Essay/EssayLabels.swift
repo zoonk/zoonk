@@ -60,8 +60,8 @@ enum WritingLabels {
         localized: "\(low)–\(high)", table: "Essay")
   }
 
-  /// What language errors take away, to one decimal: "−0.3 to −0.6", one number when both ends
-  /// read alike, and "0" when nothing is taken, never "−0".
+  /// What language errors take away, to one decimal: "−0.3 to −0.6", "0.0 to −0.4" from none,
+  /// one number when both ends read alike, and "0" when nothing is taken, never "−0".
   static func deduction(_ range: WritingRange) -> String {
     let low = points(range.low, decimals: 1)
     let high = points(range.high, decimals: 1)
@@ -71,9 +71,9 @@ enum WritingLabels {
 
     return isZero(low)
       ? String(
-        localized: "0 to −\(high)", table: "Essay",
+        localized: "\(low) to −\(high)", table: "Essay",
         comment:
-          "Points language errors take off an answer, from none to some, like '0 to −0.6'")
+          "Points language errors take off an answer, from none to some, like '0.0 to −0.6'")
       : String(
         localized: "−\(low) to −\(high)", table: "Essay",
         comment: "Points language errors take off an answer, as a range, like '−0.3 to −0.6'")

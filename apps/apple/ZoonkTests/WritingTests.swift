@@ -334,7 +334,10 @@ final class WritingResultDecodingTests: XCTestCase {
     XCTAssertEqual(WritingLabels.range(.init(high: 0.04, low: 0), decimals: 1), "0")
     XCTAssertEqual(WritingLabels.deduction(.init(high: 0.6, low: 0.3)), "−0.3 to −0.6")
     XCTAssertEqual(WritingLabels.deduction(.init(high: 0.6, low: 0.6)), "−0.6")
-    XCTAssertEqual(WritingLabels.deduction(.init(high: 0.6, low: 0)), "0 to −0.6")
+    XCTAssertEqual(WritingLabels.deduction(.init(high: 0.6, low: 0)), "0.0 to −0.6")
+    XCTAssertEqual(
+      WritingLabels.deduction(.init(high: 0.35, low: 0.02)), "0.0 to −0.4",
+      "A deduction from none keeps its decimal, as web and Android write it")
     XCTAssertEqual(WritingLabels.deduction(.init(high: 0.04, low: 0)), "0")
     XCTAssertEqual(WritingLabels.deduction(.init(high: 2, low: 1)), "−1.0 to −2.0")
   }
