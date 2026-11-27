@@ -9,6 +9,7 @@ import { mockSession } from "../_test-utils/mock-session";
 import { mockConditionsSchema, mockResultSchema } from "../exams/mocks/mock-contract";
 import { PLAN_SHOWN } from "../learner/_test-utils/exam-test-goal";
 import { getTodayStudySession } from "../sessions/_test-utils/open-today";
+import { readBlockPayload } from "../sessions/block-payload";
 import { getTodayView } from "../view-models/today/get-today-view";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { loadMockMisses, loadPlanMockMisses } from "./_utils/mock-misses";
@@ -525,6 +526,57 @@ describe(catchUpMockReplan, () => {
 
     await expect(readToday(fixture.goal.id)).resolves.toStrictEqual(preview);
     await expect(readPlan(fixture.plan.id)).resolves.toMatchObject({ version: opened.version });
+  });
+
+  it("keeps today's opened lessons in the day's order whatever order its blocks are read in", async () => {
+    const fixture = await setup({ dailyMinutes: 20 });
+    const missed = lastTopic(fixture, "Direito");
+
+    await getTodayStudySession({ goalId: fixture.goal.id, timeZone: UTC });
+
+    const blocks = await prisma.studySessionBlock.findMany({
+      orderBy: { position: "asc" },
+      where: { session: { goalId: fixture.goal.id } },
+    });
+
+    const lessons = blocks.filter((block) => block.lessonId && readBlockPayload(block).planItemKey);
+    const [first, second] = lessons;
+
+    if (!first || !second) {
+      throw new Error("Expected two lessons on the opened day");
+    }
+
+    // The day now shows the second lesson first, and both rewritten rows are stored after the rest.
+    await prisma.$transaction([
+      prisma.studySessionBlock.update({ data: { position: 1000 }, where: { id: first.id } }),
+      prisma.studySessionBlock.update({
+        data: { position: first.position },
+        where: { id: second.id },
+      }),
+      prisma.studySessionBlock.update({
+        data: { position: second.position },
+        where: { id: first.id },
+      }),
+    ]);
+
+    await finishedMock({
+      answers: [{ outcome: "wrong", skill: missed }],
+      finishedAt: new Date(Date.now() - 3 * MS_PER_DAY),
+      fixture,
+    });
+
+    await catchUpMockReplan({ goal: fixture.goal, now: new Date(), timeZone: UTC });
+
+    const plan = await readPlan(fixture.plan.id);
+    const shown = [second, first, ...lessons.slice(2)].map((block) => block.lessonId);
+
+    expect(plan.changes.filter((change) => change.kind === "mockReordered")).toHaveLength(1);
+
+    expect(
+      plan.items
+        .filter((item) => item.lessonId && shown.includes(item.lessonId))
+        .map((item) => item.lessonId),
+    ).toStrictEqual(shown);
   });
 
   it("applies the relearn and the reorder of a mock marked finished whose re-plan never ran when the learner opens a new day, once", async () => {

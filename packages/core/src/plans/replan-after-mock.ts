@@ -68,7 +68,7 @@ async function loadMockRelearnSkillIds({
 /** The plan items of the day the learner opened, so the re-plan starts from the next one. */
 async function loadOpenedKeys(context: PlanContext): Promise<string[] | undefined> {
   const opened = await prisma.studySession.findUnique({
-    select: { blocks: true },
+    select: { blocks: { orderBy: { position: "asc" } } },
     where: {
       userGoalDate: {
         goalId: context.goal.id,
