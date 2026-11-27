@@ -279,7 +279,6 @@ msgstr "{days, plural, other {약 #일 남았어요}}"
 #: src/onboarding/steps/reveal-body.tsx
 #: src/onboarding/steps/step-form.tsx
 #: src/onboarding/test-outcome.tsx
-#: src/placement-test/placement-test-flow.tsx
 #: src/placement-test/placement-test-offers.tsx
 #: src/placement-test/placement-test-screens.tsx
 #: src/questions/test-out-run.tsx
@@ -834,6 +833,7 @@ msgstr "보기"
 
 #: src/_components/task-close.tsx
 #: src/mock/mock-runner-view.tsx
+#: src/onboarding/onboarding-task.tsx
 #: src/writing/writing-write-screen.tsx
 msgctxt "fnihsY"
 msgid "Leave"
@@ -2487,6 +2487,7 @@ msgstr "챕터 {number, number}"
 
 #: src/chapter/chapter-header.tsx
 #: src/language/unit/unit-header.tsx
+#: src/placement-test/placement-test-screens.tsx
 #: src/plan-diff/use-change-rows.ts
 #: src/plan/plan-fit-suggestion.tsx
 #: src/syllabus/subject-aside.tsx
@@ -3893,7 +3894,6 @@ msgstr "{count, plural, other {계획에서 이미 아는 레슨 #개도 건너�
 
 #: src/focus-test/focus-test-screens.tsx
 #: src/onboarding/steps/placement-screens.tsx
-#: src/placement-test/placement-test-screens.tsx
 msgctxt "n4uIps"
 msgid "Your answers are saved"
 msgstr "답변이 저장됐어요"
@@ -4004,7 +4004,6 @@ msgstr "선택한 과목에 집중하는 계획을 유지해요."
 
 #: src/focus-test/use-result-line.ts
 #: src/mock/mock-result-plan.tsx
-#: src/placement-test/placement-test-screens.tsx
 #: src/plan-diff/plan-effect-diff.tsx
 #: src/plan/plan-bases-sheet.tsx
 #: src/plan/plan-offer-preview.tsx
@@ -6288,11 +6287,6 @@ msgctxt "Z05RU-"
 msgid "Level test"
 msgstr "레벨 테스트"
 
-#: src/language/level-test/level-test-offer.tsx
-msgctxt "3NCmfj"
-msgid "Skip {level} if you already know it"
-msgstr "이미 아는 {level} 건너뛰기"
-
 #. A short test of one language level, such as “Test out of B2”.
 #: src/language/level-test/level-test-offer.tsx
 #: src/language/level-test/level-test-out-screens.tsx
@@ -6301,6 +6295,11 @@ msgstr "이미 아는 {level} 건너뛰기"
 msgctxt "h5ZSCC"
 msgid "Test out of {level}"
 msgstr "{level} 건너뛰기 테스트"
+
+#: src/language/level-test/level-test-offer.tsx
+msgctxt "3NCmfj"
+msgid "Skip {level} if you already know it"
+msgstr "이미 아는 {level} 건너뛰기"
 
 #: src/language/level-test/level-test-parts.tsx
 msgctxt "KlIXoI"
@@ -6316,16 +6315,6 @@ msgstr "메시지 듣기"
 msgctxt "jsopgk"
 msgid "The voice message is on its way…"
 msgstr "음성 메시지를 준비하고 있어요…"
-
-#: src/language/level-test/level-test-parts.tsx
-msgctxt "T6bERo"
-msgid "Getting the message ready. The first time can take a few seconds."
-msgstr "메시지를 준비하고 있어요. 처음에는 몇 초 걸릴 수 있어요."
-
-#: src/language/level-test/level-test-parts.tsx
-msgctxt "yFzzBV"
-msgid "You got a voice message. Listen and answer."
-msgstr "음성 메시지가 도착했어요. 듣고 답해 보세요."
 
 #. A CEFR level range the test found for reading, such as “B1–B2”.
 #: src/language/level-test/level-test-parts.tsx
@@ -6346,21 +6335,22 @@ msgctxt "xBapiR"
 msgid "This takes a minute or two."
 msgstr "1~2분 정도 걸려요."
 
-#: src/language/level-test/level-test-questions.tsx
-msgctxt "-JyB5g"
-msgid "Skip this question"
-msgstr "이 문제 건너뛰기"
-
-#: src/language/level-test/level-test-questions.tsx
-msgctxt "U86096"
-msgid "I didn't understand the audio"
-msgstr "무슨 말인지 못 알아들었어요"
-
 #. Button on a listening question for a learner who can't play sound right now, such as on a bus. It ends the listening questions for this test.
 #: src/language/level-test/level-test-questions.tsx
 msgctxt "KjCRMy"
 msgid "Can't listen now"
 msgstr "지금은 듣지 않기"
+
+#. Button on a listening question, after the learner played the message: they heard it and didn't understand it.
+#: src/language/level-test/level-test-questions.tsx
+msgctxt "DxEIkj"
+msgid "I didn't understand"
+msgstr ""
+
+#: src/language/level-test/level-test-questions.tsx
+msgctxt "-JyB5g"
+msgid "Skip this question"
+msgstr "이 문제 건너뛰기"
 
 #: src/language/level-test/level-test-results.tsx
 msgctxt "H4wCrn"
@@ -8188,7 +8178,6 @@ msgid "Come back to this page to start it."
 msgstr "이 페이지로 돌아와 시작해 보세요."
 
 #: src/mock/mock-preparing.tsx
-#: src/placement-test/use-test-facts.ts
 msgctxt "89t5lc"
 msgid "About {time} left"
 msgstr "약 {time} 남음"
@@ -8666,7 +8655,6 @@ msgstr "모의고사를 제출했어요"
 #: src/mock/mock-screen.tsx
 #: src/onboarding/steps/plan-building.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
-#: src/placement-test/placement-test-screens.tsx
 msgctxt "ni-x13"
 msgid "Your answers are saved."
 msgstr "답변은 저장되어 있어요."
@@ -8703,7 +8691,6 @@ msgid "Every task is done. After this, you can't do them again in this mock exam
 msgstr "모든 과제를 마쳤어요. 제출하면 이번 모의고사에서 과제를 다시 할 수 없어요."
 
 #: src/mock/mock-speaking.tsx
-#: src/placement-test/placement-test-screens.tsx
 msgctxt "JiaScE"
 msgid "Keep going"
 msgstr "계속하기"
@@ -9295,15 +9282,27 @@ msgctxt "UdYIBZ"
 msgid "Or start this ready-made course now"
 msgstr "또는 미리 준비된 코스 바로 시작하기"
 
-#: src/onboarding/onboarding-bar.tsx
-msgctxt "jVVPcv"
-msgid "Questions answered"
-msgstr "답한 문제 수"
-
 #: src/onboarding/onboarding-page.tsx
 msgctxt "EKtClK"
 msgid "Getting started"
 msgstr "시작하기"
+
+#: src/onboarding/onboarding-task.tsx
+#: src/onboarding/start-over-menu.tsx
+msgctxt "c6IvRW"
+msgid "Finish later"
+msgstr "나중에 마무리하기"
+
+#: src/onboarding/onboarding-task.tsx
+msgctxt "8Zf--i"
+msgid "Stop and use my answers"
+msgstr "그만 풀고 내 답변 반영하기"
+
+#: src/onboarding/onboarding-task.tsx
+#: src/placement-test/use-test-facts.ts
+msgctxt "HUvYmi"
+msgid "Question {number, number} of {total, number}"
+msgstr "{number, number}번 문제 (총 {total, number}문제)"
 
 #. Row with what the learner said they already know about their goal's subject, such as "I know a few things".
 #: src/onboarding/plan-receipt.tsx
@@ -9346,13 +9345,6 @@ msgstr "지금까지 정한 계획"
 msgctxt "_zDDtb"
 msgid "Save your plan so it's here next time."
 msgstr "다음에도 볼 수 있도록 계획을 저장하세요."
-
-#: src/onboarding/start-over-menu.tsx
-#: src/placement-test/placement-test-offers.tsx
-#: src/placement-test/placement-test-screens.tsx
-msgctxt "c6IvRW"
-msgid "Finish later"
-msgstr "나중에 마무리하기"
 
 #: src/onboarding/start-over-menu.tsx
 msgctxt "kbmC81"
@@ -9607,11 +9599,6 @@ msgstr "공식 문서를 읽고 있어요"
 msgctxt "vFV7b5"
 msgid "This plan follows the exam's usual structure while we finish reading its official documents. If they change your plan, you'll decide on Today."
 msgstr "공식 문서를 다 읽기 전까지는 시험의 일반적인 구성에 맞춘 계획이에요. 문서 내용에 따라 계획을 바꿀 필요가 생기면 오늘 화면에서 변경 여부를 결정할 수 있어요."
-
-#: src/onboarding/steps/placement-question.tsx
-msgctxt "8Zf--i"
-msgid "Stop and use my answers"
-msgstr "그만 풀고 내 답변 반영하기"
 
 #: src/onboarding/steps/placement-screens.tsx
 msgctxt "rxz4rg"
@@ -10173,11 +10160,6 @@ msgid "Reason"
 msgstr "이유"
 
 #: src/placement-test/placement-test-offers.tsx
-msgctxt "C8qBZz"
-msgid "Starts at the level you gave"
-msgstr "입력한 레벨부터 시작"
-
-#: src/placement-test/placement-test-offers.tsx
 msgctxt "mvfEjE"
 msgid "First lesson"
 msgstr "첫 레슨"
@@ -10197,91 +10179,32 @@ msgctxt "jZ8hrg"
 msgid "Where would you like to start?"
 msgstr "어디서 시작할까요?"
 
-#. The long test: it checks every topic still ahead, in parts.
+#. The name of a course's placement test, on the card that offers it.
 #: src/placement-test/placement-test-offers.tsx
-msgctxt "MVOTf7"
-msgid "Full test"
-msgstr "전체 테스트"
+msgctxt "xu6eM8"
+msgid "Test"
+msgstr ""
 
-#. The short test: about six minutes of questions.
-#: src/placement-test/placement-test-offers.tsx
-msgctxt "mleMdh"
-msgid "Quick test"
-msgstr "간단한 테스트"
-
-#: src/placement-test/placement-test-offers.tsx
-#: src/plan/plan-placement-test.tsx
-msgctxt "QZI9sA"
-msgid "Test what you know"
-msgstr "아는 내용 확인하기"
-
-#: src/placement-test/placement-test-offers.tsx
-msgctxt "G9nQHt"
-msgid "Continue your test"
-msgstr "테스트 이어서 풀기"
-
+#. Under a picture of a course, after a placement test: how many of the course's lessons the learner starts past.
 #: src/placement-test/placement-test-screens.tsx
-msgctxt "Yr5YUZ"
-msgid "You undid these today. Answer again tomorrow to skip them."
-msgstr "오늘 이 레슨들의 건너뛰기를 취소했어요. 내일 다시 답하면 건너뛸 수 있어요."
-
-#. After one part of a test: how many lessons that part took out of the learner's plan.
-#: src/placement-test/placement-test-screens.tsx
-msgctxt "jPv5OK"
-msgid "{count, plural, =0 {No lessons skipped in this part.} one {This part skipped # lesson you already know.} other {This part skipped # lessons you already know.}}"
-msgstr "{count, plural, =0 {이 파트에서 건너뛴 레슨이 없어요.} other {이 파트에서 이미 아는 레슨 #개를 건너뛰었어요.}}"
-
-#. After a part of a course's test, when later parts were removed because the learner didn't know topics they depend on.
-#: src/placement-test/placement-test-screens.tsx
-msgctxt "jWl7zP"
-msgid "The test got shorter: topics that build on ones you don't know yet aren't tested."
-msgstr "테스트가 짧아졌어요. 아직 모르는 주제를 바탕으로 하는 주제는 테스트하지 않아요."
-
-#. The title after one part of a test split into parts, such as “Part 3 of 14 done”.
-#: src/placement-test/placement-test-screens.tsx
-msgctxt "dpLv4V"
-msgid "Part {part, number} of {parts, number} done"
-msgstr "{parts, number}개 파트 중 {part, number}개 완료"
+msgctxt "yjiD94"
+msgid "{skipped, plural, one {# of {lessons, number} lessons skipped} other {# of {lessons, number} lessons skipped}}"
+msgstr ""
 
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "eBoUdl"
 msgid "Start lesson"
 msgstr "레슨 시작하기"
 
-#. Button after the short test: goes on to test the rest of the course, in parts.
 #: src/placement-test/placement-test-screens.tsx
-msgctxt "T8fqdI"
-msgid "Test the rest"
-msgstr "나머지 테스트하기"
+msgctxt "Yr5YUZ"
+msgid "You undid these today. Answer again tomorrow to skip them."
+msgstr "오늘 이 레슨들의 건너뛰기를 취소했어요. 내일 다시 답하면 건너뛸 수 있어요."
 
-#. Where a learner who stopped a test picks it up: the part of the test and the question in it.
-#: src/placement-test/use-test-facts.ts
-msgctxt "XiCeiq"
-msgid "Next time: part {part, number} of {parts, number}, question {number, number}"
-msgstr "다음에 이어서: {part, number}/{parts, number} 파트, {number, number}번 문제"
-
-#. Where the learner is in a test split into parts, such as “Part 3 of 14”.
-#: src/placement-test/use-test-facts.ts
-msgctxt "0UGVVt"
-msgid "Part {part, number} of {parts, number}"
-msgstr "{parts, number}개 파트 중 {part, number}개"
-
-#. How many parts the long test has. The learner can take each part on a different day.
-#: src/placement-test/use-test-facts.ts
-msgctxt "CTgGII"
-msgid "{count, plural, one {# part, any day you like} other {# parts, any day you like}}"
-msgstr "{count, plural, other {#개 파트, 원하는 날에}}"
-
-#. How many parts of a test the learner still has to take.
-#: src/placement-test/use-test-facts.ts
-msgctxt "91hHI1"
-msgid "{count, plural, one {# part left} other {# parts left}}"
-msgstr "{count, plural, other {남은 파트 #개}}"
-
-#: src/placement-test/use-test-facts.ts
-msgctxt "HUvYmi"
-msgid "Question {number, number} of {total, number}"
-msgstr "{number, number}번 문제 (총 {total, number}문제)"
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "SGu5bG"
+msgid "You start here"
+msgstr ""
 
 #. The most questions a test asks. It can end sooner.
 #: src/placement-test/use-test-facts.ts
@@ -10728,6 +10651,11 @@ msgstr "이미 아는 레슨 건너뛰기"
 msgctxt "Ye4GUJ"
 msgid "Find your level and skip what you know"
 msgstr "레벨을 확인하고 아는 내용 건너뛰기"
+
+#: src/plan/plan-placement-test.tsx
+msgctxt "QZI9sA"
+msgid "Test what you know"
+msgstr "아는 내용 확인하기"
 
 #: src/plan/plan-properties.tsx
 msgctxt "xqyYxG"

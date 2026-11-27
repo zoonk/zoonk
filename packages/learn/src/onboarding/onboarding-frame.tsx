@@ -8,8 +8,7 @@ import { EnterButton } from "../_components/enter-button";
 import { Eyebrow } from "../_components/eyebrow";
 import { CLEAR_OF_PINNED_ACTIONS_CLASS } from "../_components/pinned-actions";
 import { ChangeSaveError } from "../_components/save-error";
-import { TASK_WRAPPING_ACTION_CLASS, TaskActions } from "../_components/task-layout";
-import { FactSegments } from "../_components/task-meta";
+import { TASK_WRAPPING_ACTION_CLASS, TaskActionBar, TaskActions } from "../_components/task-layout";
 import { OnboardingBarRow } from "./onboarding-bar";
 import {
   NO_BAR,
@@ -21,9 +20,10 @@ import {
 } from "./onboarding-host";
 import { OnboardingScreenPage, OnboardingSectionFrame } from "./onboarding-page";
 import { useOnboardingRail } from "./onboarding-rail";
+import { OnboardingTaskScreen } from "./onboarding-task";
 import { PlanStartNotice, usePlanStartFailure } from "./steps/plan-start-notice";
 
-export { OnboardingEmbedded, OnboardingPage } from "./onboarding-host";
+export { OnboardingEmbedded, OnboardingPage, OnboardingTask } from "./onboarding-host";
 
 const STANDALONE_COLUMN_CLASS =
   "mx-auto w-full max-w-xl px-(--page-gutter) [--page-gutter:--spacing(4)]";
@@ -42,7 +42,7 @@ export function OnboardingFrame({
 }) {
   const host = useOnboardingHost();
 
-  if (host?.kind === "page") {
+  if (host?.kind === "page" || host?.kind === "task") {
     return (
       <OnboardingScreenProvider value={{ bar, failure, notice }}>
         {children}
@@ -87,6 +87,14 @@ export function OnboardingColumn({
 }) {
   const host = useOnboardingHost();
   const flowRail = useOnboardingRail();
+
+  if (host?.kind === "task") {
+    return (
+      <OnboardingTaskScreen backHref={host.backHref} bar={bar} className={className} {...props}>
+        {children}
+      </OnboardingTaskScreen>
+    );
+  }
 
   if (host?.kind === "page") {
     return (
@@ -190,28 +198,10 @@ export function OnboardingDescription({
  * Named apart, since an exam's name inside a sentence would need an article that depends on the
  * name ("sobre o ENEM", "über den SAT").
  */
-export function OnboardingSubject({
-  children,
-  position,
-}: {
-  children: string;
-  /**
-   * Where the learner is, such as "Question 2 of 8": on its own line under the chip, so a topic's
-   * name never moves it from one question to the next.
-   */
-  position?: readonly string[];
-}) {
+export function OnboardingSubject({ children }: { children: string }) {
   return (
-    <div
-      className="text-muted-foreground flex flex-col items-start gap-1"
-      data-slot="onboarding-subject"
-    >
+    <div className="text-muted-foreground flex flex-col items-start" data-slot="onboarding-subject">
       <Eyebrow className="wrap-break-word">{children}</Eyebrow>
-      {position && position.length > 0 && (
-        <p className="font-mono text-xs tabular-nums">
-          <FactSegments facts={position} />
-        </p>
-      )}
     </div>
   );
 }
@@ -225,7 +215,7 @@ export function OnboardingHeading({
 }) {
   const host = useOnboardingHost();
 
-  if (host?.kind === "page") {
+  if (host?.kind === "page" || host?.kind === "task") {
     return (
       <div
         className={cn(
@@ -271,9 +261,10 @@ export function OnboardingBottomBar({ children, failed = false, note }: ActionsP
   const { failure } = useOnboardingScreen();
   const planFailure = usePlanStartFailure();
   const said = failure || failed || note || planFailure;
+  const Bar = useOnboardingHost()?.kind === "task" ? TaskActionBar : BottomBar;
 
   return (
-    <BottomBar
+    <Bar
       note={
         said && (
           <div className="flex flex-col gap-2">
@@ -286,7 +277,7 @@ export function OnboardingBottomBar({ children, failed = false, note }: ActionsP
       }
     >
       {children}
-    </BottomBar>
+    </Bar>
   );
 }
 

@@ -4,8 +4,13 @@ import { expectHydrated } from "@zoonk/e2e/hydration";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { expect, test } from "./fixtures";
 import { followRun, stopRuns } from "./generation-run";
-import { ANSWERED, createMappedGoal, mapGoalSkills } from "./onboarding-fixtures";
-import { refuseStartAfterWait } from "./refused-start";
+import {
+  ANSWERED,
+  addOrderQuestions,
+  createMappedGoal,
+  mapGoalSkills,
+  testQuestion,
+} from "./onboarding-fixtures";
 
 /** The page gives a run 45 s to appear. */
 const RUN_START_LIMIT_MS = 46_000;
@@ -77,7 +82,7 @@ test.describe("Refreshing mid-onboarding", () => {
 });
 
 test.describe("Waiting for a test the learner asked for", () => {
-  test("opens on the wait with a way on, survives a refresh and moves on when questions arrive", async ({
+  test("opens on the wait with a way on, survives a refresh, and Try again starts the test once its questions are there", async ({
     noProgressUser,
     userWithoutProgress: page,
   }) => {
@@ -110,48 +115,20 @@ test.describe("Waiting for a test the learner asked for", () => {
     await expect(page.getByRole("heading", { name: "Getting your test ready" })).toBeVisible();
 
     await mapGoalSkills({ goalId: goal.id });
+    await addOrderQuestions(goal.id);
 
-    await expect(page.getByText("Question 1 of 12", { exact: true })).toBeVisible({
-      timeout: NEXT_CHECK_TIMEOUT_MS,
-    });
-  });
+    // Only the question writer's last step hands a waiting test its questions, and no writer runs
+    // here. So the wait ends as it does when that writer stops short, and the retry reads them.
+    await prisma.$executeRaw`
+      UPDATE goals SET details = jsonb_set(details, '{placementTest,attempt,search,failed}', 'true')
+      WHERE id = ${goal.id}::uuid
+    `;
 
-  test("a start that doesn't go through once questions arrive offers Try again", async ({
-    noProgressUser,
-    userWithoutProgress: page,
-  }) => {
-    const runId = `e2e-steps-${randomUUID()}`;
+    const retry = page.getByRole("button", { exact: true, name: "Try again" });
+    await expect(retry).toBeVisible({ timeout: NEXT_CHECK_TIMEOUT_MS });
+    await retry.click();
 
-    const goal = await createGoalBeingMapped({
-      askedForTest: true,
-      runId,
-      userId: noProgressUser.id,
-    });
-
-    await followRun({
-      events: [
-        { entityId: goal.id, status: "started", step: "understandGoal" },
-        { entityId: goal.id, status: "started", step: "buildSkillGraph" },
-        { entityId: goal.id, status: "completed", step: "buildSkillGraph" },
-        { entityId: goal.id, status: "started", step: "preparePlacement" },
-      ],
-      page,
-      runId,
-    });
-
-    await page.goto(`/start/${goal.id}`);
-    await expect(page.getByRole("heading", { name: "Getting your test ready" })).toBeVisible();
-
-    const refused = await refuseStartAfterWait(page, goal.id);
-    await mapGoalSkills({ goalId: goal.id });
-    await expect.poll(refused, { timeout: NEXT_CHECK_TIMEOUT_MS }).toBe(true);
-
-    await expect(
-      page.getByRole("alert").filter({ hasText: "Something went wrong on our side" }),
-    ).toBeVisible();
-
-    await page.getByRole("button", { exact: true, name: "Try again" }).click();
-    await expect(page.getByText("Question 1 of 12", { exact: true })).toBeVisible();
+    await expect(testQuestion(page, 1)).toBeVisible();
   });
 });
 

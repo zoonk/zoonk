@@ -143,27 +143,32 @@ export type PlacementAnswer = PlacementAnswerInput["answer"];
 
 type LearnPlacementTest = Extract<NonNullable<PlanView["placementTest"]>, { kind: "learn" }>;
 
-/** A test taken from the plan, open or between its parts. */
+/** A test taken from the plan, while it's open. */
 export type PlacementAttemptView = NonNullable<LearnPlacementTest["attempt"]>;
 
 export type PlacementResult = NonNullable<LearnPlacementTest["result"]>;
 
 export type PlacementOutcome =
   | {
-      /** The course test, when one is open or between parts; null for the Focus test. */
+      /** The course test, when one is open; null for the Focus test. */
       attempt: PlacementAttemptView | null;
       /** An exam goal's placement is its Focus test; null for other goals. */
       focusTest: FocusTestView | null;
       next: PlacementQuestion | null;
-      /** The course test's result so far; it stays readable while the test has parts left. */
+      /** The course test's result, once it ended. */
       result: PlacementResult | null;
       status: "ready";
       trueFalseLabels: TrueFalseLabels;
     }
   | { status: "failed" }
   | { attempt?: PlacementAttemptView | null; focusTest: FocusTestView | null; status: "notReady" }
-  | { attempt?: PlacementAttemptView | null; status: "unavailable" }
-  /** With an `attempt`, this part's questions couldn't be written: starting it again retries. */
+  /** Nothing to ask: no test is open. `result` is the last test's, when one ended. */
+  | {
+      attempt?: PlacementAttemptView | null;
+      result?: PlacementResult | null;
+      status: "unavailable";
+    }
+  /** With an `attempt`, its questions couldn't be written: starting it again retries. */
   | { attempt?: PlacementAttemptView | null; status: "generationFailed" };
 
 export type RevealedPlan = {

@@ -4,16 +4,15 @@ import {
   type LanguageLevelTestView,
   type LevelTestAnswerInput,
 } from "@zoonk/core/language/level-test/contract";
-import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
+import { SteadyLabel } from "../../_components/steady-label";
 import { usePoll } from "../../_utils/use-poll";
 import { PlacementQuestionScreen } from "../../onboarding/steps/placement-question";
-import { useTestFacts } from "../../placement-test/use-test-facts";
 import { useSpokenAudio } from "../../speech/use-spoken-audio";
 import { useSkillName } from "../_utils/use-skill-name";
 import { ListeningMessage } from "./level-test-parts";
-import { type ReadyLevelTest } from "./level-test-phase";
+import { type ReadyLevelTest, toLevelTestGroups } from "./level-test-phase";
 
 const POLL_MS = 3000;
 
@@ -61,7 +60,26 @@ export function useLevelTestAudio({
   return poll.status === "polling";
 }
 
-type Sent = "answer" | "defer" | null;
+const LISTENING_OUTS = ["cantListen", "notUnderstood", "skip"] as const;
+
+/** A listening question's bar: the way around it until the message has played, then the miss. */
+function useListeningOuts(): Record<(typeof LISTENING_OUTS)[number], string> {
+  const t = useExtracted();
+
+  return {
+    cantListen: t({
+      description:
+        "Button on a listening question for a learner who can't play sound right now, such as on a bus. It ends the listening questions for this test.",
+      message: "Can't listen now",
+    }),
+    notUnderstood: t({
+      description:
+        "Button on a listening question, after the learner played the message: they heard it and didn't understand it.",
+      message: "I didn't understand",
+    }),
+    skip: t("Skip this question"),
+  };
+}
 
 function AskedQuestion({
   audioPending,
@@ -86,62 +104,40 @@ function AskedQuestion({
   targetLanguage: string;
   test: ReadyLevelTest;
 }) {
-  const t = useExtracted();
-  const facts = useTestFacts();
   const skillName = useSkillName();
-  const [sent, setSent] = useState<Sent>(null);
+  const outs = useListeningOuts();
+  const [heard, setHeard] = useState(false);
   const speech = useSpokenAudio(targetLanguage);
   const { question } = step;
   const isListening = question.skill === "listening";
   const noAudio = isListening && (audioPending || speech.state.status === "failed");
-  const listeningOut = noAudio ? t("Skip this question") : t("I didn't understand the audio");
-  const number = test.answered + 1;
+  const heardOut = heard ? "notUnderstood" : "cantListen";
+  const out = noAudio ? "skip" : heardOut;
 
-  const send = (
-    kind: Exclude<Sent, null>,
-    input: Omit<LevelTestAnswerInput, "attemptId" | "questionId">,
-  ) => {
-    setSent(kind);
+  const send = (input: Omit<LevelTestAnswerInput, "attemptId" | "questionId">) =>
     onAnswer({ ...input, questionId: question.id });
-  };
 
   return (
     <PlacementQuestionScreen
+      answered={test.answered}
       canStop={test.canStop}
-      dontKnowLabel={isListening ? listeningOut : undefined}
       failures={failures}
+      groups={toLevelTestGroups(test.total)}
       media={
         isListening ? (
-          <div className="flex flex-col gap-2">
-            <ListeningMessage
-              language={targetLanguage}
-              pending={audioPending}
-              question={question}
-              speech={speech}
-            />
-            <Button
-              busy={pending && sent === "defer"}
-              className="self-start"
-              disabled={pending}
-              focusableWhenDisabled
-              onClick={() => send("defer", { answerIndex: null, audioDeferred: true })}
-              type="button"
-              variant="link"
-            >
-              {t({
-                description:
-                  "Button on a listening question for a learner who can't play sound right now, such as on a bus. It ends the listening questions for this test.",
-                message: "Can't listen now",
-              })}
-            </Button>
-          </div>
+          <ListeningMessage
+            language={targetLanguage}
+            onHeard={() => setHeard(true)}
+            pending={audioPending}
+            question={question}
+            speech={speech}
+          />
         ) : null
       }
-      number={number}
       onAnswer={(choice, durationMs) => {
         const answerIndices = "selectedIndexes" in choice ? choice.selectedIndexes : undefined;
 
-        send("answer", {
+        send({
           answerIndex: "selectedIndex" in choice ? choice.selectedIndex : null,
           durationMs,
           ...(answerIndices && { answerIndices }),
@@ -151,8 +147,6 @@ function AskedQuestion({
       onClose={onClose}
       onStop={onStop}
       pending={pending}
-      position={[facts.question({ number, total: test.total })]}
-      progress={test.answered / test.total}
       question={{
         context: isListening ? null : question.passage,
         format: "multipleChoice",
@@ -165,7 +159,25 @@ function AskedQuestion({
         skillId: question.skill,
         visual: null,
       }}
+      second={
+        isListening
+          ? {
+              label: (
+                <SteadyLabel
+                  labels={LISTENING_OUTS.map((name) => outs[name])}
+                  shown={LISTENING_OUTS.indexOf(out)}
+                />
+              ),
+              // Until the message has played, the way around it ends the test's listening.
+              onPress:
+                noAudio || heard
+                  ? undefined
+                  : () => send({ answerIndex: null, audioDeferred: true }),
+            }
+          : undefined
+      }
       subject={skillName(question.skill)}
+      total={test.total}
     />
   );
 }

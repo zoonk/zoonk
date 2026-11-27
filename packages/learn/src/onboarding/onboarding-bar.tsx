@@ -1,18 +1,14 @@
 "use client";
 
 import { BackLink, PageTopBar, PageTopRow } from "@zoonk/ui/components/page-top";
-import { ProgressIndicator, ProgressRoot, ProgressTrack } from "@zoonk/ui/components/progress";
 import { useEscapeClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
-import { getFormattingLocale } from "@zoonk/utils/locale";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { StepDots } from "../_components/step-dots";
 import { TaskClose } from "../_components/task-close";
-import { useAppLocale } from "../_utils/locale";
 import { getSetupProgress } from "./_utils/setup-progress";
 import { type OnboardingBar } from "./onboarding-host";
-import { testProgressPercent } from "./test-progress";
 
 export const BAR_MIDDLE_CLASS = "w-full";
 
@@ -22,24 +18,6 @@ export function stepBarProgress(state: Parameters<typeof getSetupProgress>[0]) {
 
   return (
     setup && <StepDots className={BAR_MIDDLE_CLASS} current={setup.current} total={setup.total} />
-  );
-}
-
-export function TestProgress({ value }: { value: number }) {
-  const t = useExtracted();
-  const locale = useAppLocale();
-
-  return (
-    <ProgressRoot
-      aria-label={t("Questions answered")}
-      className={cn(BAR_MIDDLE_CLASS, "gap-0")}
-      locale={getFormattingLocale(locale)}
-      value={testProgressPercent(value)}
-    >
-      <ProgressTrack className="bg-surface-3 h-1 rounded-xs">
-        <ProgressIndicator className="bg-foreground rounded-xs motion-reduce:transition-none" />
-      </ProgressTrack>
-    </ProgressRoot>
   );
 }
 

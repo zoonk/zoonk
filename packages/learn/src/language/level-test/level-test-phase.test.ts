@@ -4,7 +4,7 @@ import {
   type LevelTestResult,
 } from "@zoonk/core/language/level-test/contract";
 import { describe, expect, it } from "vitest";
-import { toOpenedLevelTestPhase } from "./level-test-phase";
+import { toLevelTestGroups, toOpenedLevelTestPhase } from "./level-test-phase";
 
 const ATTEMPT_ID = "0198a6c4-2f6e-7c1a-9b1e-3f2d4c5b6a71";
 
@@ -113,5 +113,16 @@ describe(toOpenedLevelTestPhase, () => {
     expect(toOpenedLevelTestPhase({ surface: "plan", view: null })).toStrictEqual({
       kind: "loadFailed",
     });
+  });
+});
+
+describe(toLevelTestGroups, () => {
+  it("draws the test as reading, listening and both skills' check", () => {
+    expect(toLevelTestGroups(LANGUAGE_LEVEL_TEST_OFFER.total)).toStrictEqual([4, 4, 4]);
+  });
+
+  it("covers every question of a test of another size", () => {
+    expect(toLevelTestGroups(10)).toStrictEqual([4, 4, 2]);
+    expect(toLevelTestGroups(6)).toStrictEqual([4, 2]);
   });
 });

@@ -4,87 +4,69 @@ import {
 } from "@zoonk/core/plans/time-advice-contract";
 import { prisma } from "@zoonk/db";
 import { expectHydrated, holdScripts } from "@zoonk/e2e/hydration";
-import { itemFixture } from "@zoonk/testing/fixtures/skills";
 import { isJsonObject } from "@zoonk/utils/json";
-import { pressAnswerKey } from "./answer-key";
 import { expect, test } from "./fixtures";
 import { followRun } from "./generation-run";
 import { asPersona } from "./learn-personas";
-import { ANSWERED, createMappedGoal, solvePlacementEquation } from "./onboarding-fixtures";
+import {
+  ANSWERED,
+  addOrderQuestions,
+  answerDontKnow,
+  createMappedGoal,
+  testLeave,
+  testQuestion,
+} from "./onboarding-fixtures";
 import { createStudyDay, openAs } from "./study-day";
 
 function inMinutes(minutes: number): Date {
   return new Date(Date.now() + minutes * 60_000);
 }
 
-/** A right answer is followed by harder questions on the same topic, so each topic has some. */
-async function addConfirmingQuestions(goalId: string) {
-  const items = await prisma.planItem.findMany({
-    select: { skillId: true },
-    where: { plan: { goalId }, skillId: { not: null } },
-  });
-
-  await Promise.all(
-    [...new Set(items.flatMap((item) => item.skillId ?? []))].flatMap((skillId) =>
-      ["first", "second", "third"].map((copy) =>
-        itemFixture({
-          content: {
-            question: `Put the ${copy} steps in order.`,
-            reason: "In order.",
-            steps: ["Write the equation", "Undo the addition", "Simplify both sides", "Check it"],
-          },
-          format: "order",
-          skillId,
-        }),
-      ),
-    ),
-  );
-}
-
 test.describe("Placement and the plan", () => {
-  test("placement adapts to answers, survives a refresh, welcomes 'I don't know yet' and ends on its result, then the plan", async ({
+  test("placement survives a refresh, welcomes 'I don't know yet' and ends on where the learner starts, then the plan", async ({
     noProgressUser,
     userWithoutProgress: page,
   }) => {
     const goal = await createMappedGoal(noProgressUser.id);
-    await addConfirmingQuestions(goal.id);
+    await addOrderQuestions(goal.id);
     await page.goto(`/start/${goal.id}`);
     await page.getByRole("button", { exact: true, name: "Start" }).click();
 
-    const question = page.getByRole("heading", { name: /^Solve x/u });
-    await expect(question).toBeVisible();
-    await expect(page.getByText("Question 1 of 12", { exact: true })).toBeVisible();
-    const stop = page.getByRole("button", { name: "Stop and use my answers" });
-    await expect(stop).toBeHidden();
-    const first = await question.innerText();
-    const solution = solvePlacementEquation(first);
+    await expect(testQuestion(page, 1)).toBeVisible();
+    // Stopping on the first question would use no answer, so ✕ only leaves.
+    const leave = testLeave(page);
+    await expect(leave).not.toHaveAttribute("aria-haspopup");
+    await answerDontKnow(page);
 
-    if (solution === null) {
-      throw new Error(`Expected a one-step equation, got ${first}`);
-    }
-
-    const right = page.getByRole("radio", { exact: true, name: solution });
-    await expect(right).toBeEnabled();
-    await pressAnswerKey(page, right);
-    await expect(right).toBeChecked();
-    await page.keyboard.press("Enter");
-
-    await expect(page.getByText("Question 2 of 12", { exact: true })).toBeVisible();
+    await expect(testQuestion(page, 2)).toBeVisible();
 
     await page.reload();
-    await expect(page.getByText("Question 2 of 12", { exact: true })).toBeVisible();
-    await expect(stop).toBeEnabled();
+    await expect(testQuestion(page, 2)).toBeVisible();
+    await expect(leave).toHaveAttribute("aria-haspopup", "dialog");
 
-    // An unknown topic closes the ones that build on it, so here the test has nothing more to ask.
-    await page.getByRole("button", { name: "I don't know yet" }).click();
+    // Misses with no right answer send the test down to the first topic, where one more ends it.
+    const next = page.getByRole("button", { exact: true, name: "Continue" });
+    const asking = page.getByRole("progressbar", { name: /^Question \d+ of \d+$/u });
 
-    await expect(page.getByRole("heading", { name: "No lessons skipped" })).toBeVisible();
-    await page.getByRole("button", { exact: true, name: "Continue" }).click();
+    for (let asked = 2; asked <= 8; asked += 1) {
+      // oxlint-disable-next-line no-await-in-loop -- Questions come one at a time.
+      await expect(asking.or(next).filter({ visible: true }).first()).toBeVisible();
+
+      // oxlint-disable-next-line no-await-in-loop -- Questions come one at a time.
+      if (await next.isVisible()) {
+        break;
+      }
+
+      // oxlint-disable-next-line no-await-in-loop -- Questions come one at a time.
+      await answerDontKnow(page);
+    }
+
+    await next.click();
 
     await expect(page.getByRole("button", { name: "Adjust plan" })).toBeVisible();
-    // The topics the test left open have questions for the first days, so Start opens the session.
+    // Start opens the day: its first step where that can open at once, Today otherwise.
     await page.getByRole("button", { exact: true, name: "Start" }).click();
-    await expect(page).toHaveURL((url) => url.pathname === "/session");
+    await expect(page).toHaveURL((url) => ["/session", "/today"].includes(url.pathname));
 
     const [attempts, saved] = await Promise.all([
       prisma.attempt.count({ where: { itemId: { not: null }, userId: noProgressUser.id } }),
@@ -167,9 +149,8 @@ test("keeps the learner's time when saving it fails, and saves it on the next tr
     where: { id: goal.id },
   });
 
+  // A course with no questions written yet is passed by: the test is offered later, from the Plan.
   await page.goto(`/start/${goal.id}`);
-  await page.getByRole("radio", { name: /First lesson/u }).click();
-  await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
   await expect(
     page.getByRole("heading", { name: "How much time can you study each day?" }),
@@ -245,9 +226,8 @@ test("waits for the time new study days need before saving the suggestion", asyn
     await route.fulfill({ json });
   });
 
+  // A course with no questions written yet is passed by: the test is offered later, from the Plan.
   await page.goto(`/start/${goal.id}`);
-  await page.getByRole("radio", { name: /First lesson/u }).click();
-  await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
   const time = page.getByLabel("Time a day", { exact: true });
   const next = page.getByRole("button", { exact: true, name: "Continue" });

@@ -42,9 +42,11 @@ const FIT_CLASS = {
 
 export function TaskFrame({
   aside,
+  bar: ownBar,
   beforeExit,
   children,
   confirmExit = null,
+  exitAsk,
   exitDialog,
   exitHref,
   exitToApp = false,
@@ -56,6 +58,8 @@ export function TaskFrame({
   progress,
 }: {
   aside?: TaskFrameAside | null;
+  /** A screen's own `TaskActionBar`, in `footer`'s place, where the screen draws the bar itself. */
+  bar?: React.ReactNode;
   /**
    * A promise for work still being saved, which leaving waits for; null when nothing is in flight.
    */
@@ -63,6 +67,8 @@ export function TaskFrame({
   children: React.ReactNode;
   /** Asked first, by the ✕ and by Esc, while leaving would lose something. */
   confirmExit?: TaskExitConfirmation | null;
+  /** The task's own ways out, opened first by the ✕ and by Esc (`TaskClose`'s `ask`). */
+  exitAsk?: React.ReactNode;
   exitDialog?: typeof TaskExitDialog;
   /** Null while leaving would lose work, such as a call being saved. */
   exitHref: string | null;
@@ -80,10 +86,18 @@ export function TaskFrame({
   footerNote?: React.ReactNode;
   headerEnd?: React.ReactNode;
   headerTitle?: React.ReactNode;
-  /** `value` is 0 to 100; `segments` draws one per question, and `bar` a bar of the task's own. */
+  /**
+   * `value` is 0 to 100; `segments` draws one per question, in `groups` when the task has
+   * sections, and `bar` a bar of the task's own.
+   */
   progress?:
     | { bar: React.ReactNode }
-    | { label: string; segments?: readonly TaskSegment[]; value: number };
+    | {
+        groups?: readonly number[];
+        label: string;
+        segments?: readonly TaskSegment[];
+        value: number;
+      };
 }) {
   const asideRoot = aside ? getTaskAsideRootProps({ width: aside.width }) : null;
   const frame = useRef<HTMLDivElement>(null);
@@ -107,6 +121,7 @@ export function TaskFrame({
         <TaskHeaderBar>
           <TaskHeaderSide align="start">
             <TaskClose
+              ask={exitAsk}
               beforeExit={beforeExit}
               confirm={confirmExit}
               confirmationDialog={exitDialog}
@@ -124,6 +139,7 @@ export function TaskFrame({
 
         {progress && "segments" in progress && progress.segments && (
           <TaskHeaderSegments
+            groups={progress.groups}
             label={progress.label}
             segments={progress.segments}
             value={progress.value}
@@ -143,6 +159,8 @@ export function TaskFrame({
       >
         {fit === "always" ? children : <TaskBody>{children}</TaskBody>}
       </main>
+
+      {ownBar}
 
       {footer && (
         <TaskActionBar note={footerNote} ref={bar} tabIndex={-1}>

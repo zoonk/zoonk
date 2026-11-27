@@ -6,19 +6,15 @@ import {
   type OnboardingActions,
   type PlacementAttemptView,
 } from "../onboarding/onboarding-actions";
+import { OnboardingTask } from "../onboarding/onboarding-frame";
 import { PlacementQuestionScreen } from "../onboarding/steps/placement-question";
 import { PlacementDone, PlacementUnavailable } from "../onboarding/steps/placement-screens";
 import { PlacementWaiting, useWaitLeave } from "../onboarding/steps/placement-waiting";
 import { StepLoadFailed, StepLoading } from "../onboarding/steps/step-parts";
 import { type PlacementTestActions } from "./placement-test-actions";
-import {
-  CoursePlanOffer,
-  CourseStartOffer,
-  type CourseTestOffer,
-  PlacementContinue,
-} from "./placement-test-offers";
-import { type PlacementQuestionPhase, type PlacementTestPhase } from "./placement-test-phase";
-import { PlacementCheckpoint, PlacementResult, PlacementStopped } from "./placement-test-screens";
+import { CoursePlanOffer, CourseStartOffer, type CourseTestOffer } from "./placement-test-offers";
+import { type PlacementTestPhase } from "./placement-test-phase";
+import { PlacementResult } from "./placement-test-screens";
 import { type PlacementTestHost, usePlacementTest } from "./use-placement-test";
 import {
   type TestAnalytics,
@@ -26,122 +22,93 @@ import {
   useFirstQuestionShown,
   useTestAnalytics,
 } from "./use-test-analytics";
-import { useTestFacts } from "./use-test-facts";
-
-function PlacementQuestion({
-  onAnswer,
-  onClose,
-  onStop,
-  pending,
-  phase,
-  subject,
-}: {
-  onAnswer: React.ComponentProps<typeof PlacementQuestionScreen>["onAnswer"];
-  onClose: (number: number) => void;
-  onStop: () => void;
-  pending: boolean;
-  phase: PlacementQuestionPhase;
-  subject: string;
-}) {
-  const facts = useTestFacts();
-  const { attempt } = phase;
-  const number = attempt.answered + 1;
-  const question = facts.question({ number, total: attempt.questions });
-
-  return (
-    <PlacementQuestionScreen
-      failures={phase.failures}
-      number={number}
-      onAnswer={onAnswer}
-      onClose={() => onClose(number)}
-      onStop={onStop}
-      pending={pending}
-      position={
-        attempt.length === "wholeCourse"
-          ? [facts.part({ part: attempt.part, parts: attempt.parts }), question]
-          : [question]
-      }
-      progress={attempt.answered / attempt.questions}
-      question={phase.question}
-      subject={attempt.chapter?.trim() || subject}
-      trueFalseLabels={phase.trueFalseLabels}
-    />
-  );
-}
 
 function toSittingFacts(attempt: PlacementAttemptView): TestFactsNow {
-  return {
-    attemptId: attempt.id,
-    part: attempt.part,
-    parts: attempt.parts,
-    questions: attempt.questions,
-  };
+  return { attemptId: attempt.id, questions: attempt.questions };
 }
 
-type AfterSitting = Extract<
-  PlacementTestPhase,
-  { kind: "checkpoint" | "continue" | "result" | "stopped" }
->;
-
-/** Where a sitting leaves the learner: a full test's place between parts, or a test's result. */
-function PlacementAfterSitting({
-  analytics,
-  onStartLesson,
-  onUndo,
-  onboarding,
-  phase,
-  test,
-}: {
+type Flow = {
+  actions: PlacementTestActions;
   analytics: TestAnalytics;
   onStartLesson?: (lessonId: string) => Promise<boolean>;
-  onUndo: PlacementTestActions["undo"];
   onboarding: boolean;
-  phase: AfterSitting;
+  readWarmUp: OnboardingActions["readWarmUp"];
+  run: GenerationRun | null;
+  /** The goal's name, over a question whose chapter isn't known. */
+  subject: string;
   test: ReturnType<typeof usePlacementTest>;
-}) {
+  waitLeave: ReturnType<typeof useWaitLeave>;
+};
+
+type OpenPhase = Exclude<PlacementTestPhase, { kind: "loadFailed" | "loading" | "offer" }>;
+
+/** The test once it's open: its questions, the wait for them and its result, each a task screen. */
+function PlacementOpenTest({
+  actions,
+  analytics,
+  onStartLesson,
+  onboarding,
+  phase,
+  readWarmUp,
+  run,
+  subject,
+  test,
+  waitLeave,
+}: Flow & { phase: OpenPhase }) {
   const t = useExtracted();
   const { failed, pressed } = test;
-  const undo = (changeId: string | null) => ({ changeId, onUndo });
 
   switch (phase.kind) {
-    case "continue":
+    case "waiting":
       return (
-        <PlacementContinue
-          attempt={phase.attempt}
-          failed={failed}
-          onContinue={test.onContinue}
-          onLeave={() => {
-            analytics.notNow(toSittingFacts(phase.attempt));
-            test.onLeave("other", phase.attempt.id);
-          }}
-          onShown={(offered) => analytics.offered({ ...offered, ...toSittingFacts(phase.attempt) })}
-          pressed={pressed}
+        <PlacementWaiting
+          buildFailed={Boolean(phase.buildFailed)}
+          existingPlan={!onboarding}
+          onQuestions={test.continueWait}
+          onSkip={() => test.onLeave("other")}
+          poll={test.poll}
+          questionsReady={test.questionsReady}
+          readWarmUp={readWarmUp}
+          retry={phase.retry ? test.onRetryWait : undefined}
+          run={run}
+          skip={waitLeave}
+          skipFailed={failed}
+          skipping={pressed === "other"}
         />
       );
-    case "checkpoint":
+    case "unavailable":
       return (
-        <PlacementCheckpoint
-          attempt={phase.attempt}
+        <PlacementUnavailable
+          continueLabel={onboarding ? undefined : t("Done")}
           failed={failed}
-          heldUntilTomorrow={phase.heldUntilTomorrow}
-          lessonsSkipped={phase.lessonsSkipped}
-          onFinishLater={() => test.onLeave("other", phase.attempt.id)}
-          onKeepGoing={test.onContinue}
-          pressed={pressed}
-          undo={undo(phase.changeId)}
+          onContinue={() => test.onLeave("main")}
+          pending={test.isPending}
         />
       );
-    case "stopped":
+    case "question":
       return (
-        <PlacementStopped
-          attempt={phase.attempt}
-          doneLabel={onboarding ? t("Continue") : t("Done")}
+        <PlacementQuestionScreen
+          answered={phase.attempt.answered}
+          failures={phase.failures}
+          key={phase.question.itemId}
+          onAnswer={test.answer(phase)}
+          onClose={() =>
+            analytics.left({ ...toSittingFacts(phase.attempt), number: phase.attempt.answered + 1 })
+          }
+          onStop={() => test.stop(phase)}
+          pending={test.isPending}
+          question={phase.question}
+          subject={phase.attempt.chapter?.trim() || subject}
+          total={phase.attempt.questions}
+          trueFalseLabels={phase.trueFalseLabels}
+        />
+      );
+    case "over":
+      return (
+        <PlacementDone
           failed={failed}
-          heldUntilTomorrow={phase.heldUntilTomorrow}
-          lessonsSkipped={phase.lessonsSkipped}
-          onDone={() => test.onLeave("main", phase.attempt.id)}
-          pressed={pressed}
-          undo={undo(phase.changeId)}
+          onContinue={() => test.onFinish(phase.attempt)}
+          pending={test.isPending}
         />
       );
     case "result":
@@ -153,11 +120,10 @@ function PlacementAfterSitting({
             analytics.lessonStarted({ attemptId: phase.attemptId, lessonId });
             test.onOpenLesson(lessonId, onStartLesson);
           }}
-          onTestTheRest={test.onTestTheRest}
           onboarding={onboarding}
           pressed={pressed}
           result={phase}
-          undo={undo(phase.changeId)}
+          undo={{ changeId: phase.changeId, onUndo: actions.undo }}
         />
       );
     default:
@@ -190,7 +156,6 @@ export function PlacementTestFlow({
   /** The goal's name, over a question whose chapter isn't known. */
   subject: string;
 }) {
-  const t = useExtracted();
   const analytics = useTestAnalytics({ goalId, surface: host.surface, test: "course" });
   const test = usePlacementTest({ actions, analytics, host, onLeave, run });
   const { failed, phase, pressed } = test;
@@ -201,7 +166,7 @@ export function PlacementTestFlow({
     onShown: () =>
       asked &&
       analytics.firstQuestionShown({ ...toSittingFacts(asked), number: asked.answered + 1 }),
-    sitting: asked && `${asked.id}:${asked.part}`,
+    sitting: asked && asked.id,
   });
 
   const waitLeave = useWaitLeave(onboarding);
@@ -215,7 +180,7 @@ export function PlacementTestFlow({
       return host.surface === "onboarding" ? (
         <CourseStartOffer
           failed={failed}
-          levelGiven={host.levelGiven}
+          firstLesson={host.firstLesson}
           offer={offer}
           onFirstLesson={test.onDecline}
           onShown={analytics.offered}
@@ -236,64 +201,25 @@ export function PlacementTestFlow({
         />
       );
     case "waiting":
-      return (
-        <PlacementWaiting
-          buildFailed={Boolean(phase.buildFailed)}
-          existingPlan={!onboarding}
-          onQuestions={test.continueWait}
-          onSkip={() => test.onLeave("other")}
-          poll={test.poll}
-          questionsReady={test.questionsReady}
-          readWarmUp={readWarmUp}
-          retry={phase.retryLength ? test.onRetryWait : undefined}
-          run={run}
-          skip={waitLeave}
-          skipFailed={failed}
-          skipping={pressed === "other"}
-        />
-      );
     case "unavailable":
-      return (
-        <PlacementUnavailable
-          continueLabel={onboarding ? undefined : t("Done")}
-          failed={failed}
-          onContinue={() => test.onLeave("main")}
-          pending={test.isPending}
-        />
-      );
     case "question":
-      return (
-        <PlacementQuestion
-          key={phase.question.itemId}
-          onAnswer={test.answer(phase)}
-          onClose={(number) => analytics.left({ ...toSittingFacts(phase.attempt), number })}
-          onStop={() => test.stop(phase)}
-          pending={test.isPending}
-          phase={phase}
-          subject={subject}
-        />
-      );
-    case "partOver":
-      return (
-        <PlacementDone
-          failed={failed}
-          onContinue={() => test.onFinishPart(phase.attempt)}
-          pending={test.isPending}
-        />
-      );
-    case "continue":
-    case "checkpoint":
-    case "stopped":
+    case "over":
     case "result":
       return (
-        <PlacementAfterSitting
-          analytics={analytics}
-          onStartLesson={onStartLesson}
-          onUndo={actions.undo}
-          onboarding={onboarding}
-          phase={phase}
-          test={test}
-        />
+        <OnboardingTask>
+          <PlacementOpenTest
+            actions={actions}
+            analytics={analytics}
+            onStartLesson={onStartLesson}
+            onboarding={onboarding}
+            phase={phase}
+            readWarmUp={readWarmUp}
+            run={run}
+            subject={subject}
+            test={test}
+            waitLeave={waitLeave}
+          />
+        </OnboardingTask>
       );
     default:
       return phase satisfies never;

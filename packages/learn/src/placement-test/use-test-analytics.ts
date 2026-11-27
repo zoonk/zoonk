@@ -16,12 +16,7 @@ type TestSurface = Offered["surface"];
 type TestKind = Offered["test"];
 
 /** The server's facts about the sitting on screen; null where it has none yet. */
-export type TestFactsNow = {
-  attemptId?: string | null;
-  part?: number | null;
-  parts?: number | null;
-  questions?: number | null;
-};
+export type TestFactsNow = { attemptId?: string | null; questions?: number | null };
 
 export type TestIdentity = { goalId: string; surface: TestSurface; test: TestKind };
 
@@ -38,8 +33,9 @@ export function useTestAnalytics({ goalId, surface, test }: TestIdentity) {
     const context = (now: TestFactsNow = {}) => ({
       attempt_id: now.attemptId ?? null,
       goal_id: goalId,
-      part: now.part ?? null,
-      parts: now.parts ?? null,
+      // No test has parts; the events keep the fields for the reports that read them.
+      part: null,
+      parts: null,
       questions: now.questions ?? null,
       surface,
       test,

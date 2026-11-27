@@ -142,13 +142,11 @@ function DiagnosticView({ lang, state, q }: ViewProps) {
         steps={["placement", "plan"]}
       >
         <PlacementQuestionScreen
+          answered={number - 1}
           failures={0}
-          number={number}
           onAnswer={noop}
           onStop={noop}
           pending={false}
-          position={[lang === "pt" ? `Questão ${number} de 12` : `Question ${number} of 12`]}
-          progress={Number(q.get("progress") ?? 0.3)}
           question={{
             context: null,
             format: "multipleChoice",
@@ -160,6 +158,7 @@ function DiagnosticView({ lang, state, q }: ViewProps) {
             visual: null,
           }}
           subject={c.title}
+          total={12}
         />
       </StepsBar>
     </OnboardingShell>

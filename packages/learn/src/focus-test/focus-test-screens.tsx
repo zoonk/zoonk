@@ -4,8 +4,7 @@ import { type FocusTestOffer } from "@zoonk/core/learner/placement/focus-test-co
 import { useExtracted } from "next-intl";
 import { TestOutcome } from "../onboarding/test-outcome";
 import { useTestOfferTexts } from "../placement-test/placement-test-offers";
-import { TestInvitation, TestOffer, type TestPressed } from "../placement-test/test-offer";
-import { useTestFacts } from "../placement-test/use-test-facts";
+import { TestOffer, type TestPressed } from "../placement-test/test-offer";
 import { type FocusTestHost } from "./focus-test-result";
 import { useFocusTestLine, useFocusTestTitle, useSeeResultLabel } from "./use-focus-test-texts";
 
@@ -14,8 +13,8 @@ type OfferChoice = "firstLesson" | "focusTest";
 /** Onboarding offers the test beside a first lesson; the Plan offers the test alone. */
 export function FocusTestInvitation({
   failed,
+  firstLesson,
   host,
-  levelGiven,
   next,
   onShown,
   onSkip,
@@ -24,8 +23,9 @@ export function FocusTestInvitation({
   suggestsFocus,
 }: {
   failed: boolean;
+  /** Onboarding's first lesson by its name, where it's known. */
+  firstLesson: string | null;
   host: FocusTestHost;
-  levelGiven: boolean;
   next: FocusTestOffer;
   onShown: () => void;
   onSkip: () => void;
@@ -36,18 +36,22 @@ export function FocusTestInvitation({
   const t = useExtracted();
   const title = useFocusTestTitle();
   const line = useFocusTestLine();
-  const facts = useTestFacts();
   const texts = useTestOfferTexts();
-  const name = t("Focus test");
-  const testFacts = [facts.upToQuestions(next.questions), facts.about(next.minutes)];
+
+  const test = texts.test<OfferChoice>({
+    label: t("Focus test"),
+    minutes: next.minutes,
+    questions: next.questions,
+    value: "focusTest",
+  });
 
   if (host === "plan") {
     return (
-      <TestInvitation
-        chip={name}
+      <TestOffer<OfferChoice>
+        cards={[test]}
         description={line.offer(suggestsFocus)}
-        facts={testFacts}
         failed={failed}
+        initial="focusTest"
         onShown={onShown}
         onStart={onStart}
         other={{ label: t("Not now"), onPress: onSkip }}
@@ -59,6 +63,7 @@ export function FocusTestInvitation({
 
   return (
     <TestOffer<OfferChoice>
+      cards={[test, texts.firstLesson(firstLesson)]}
       description={line.offer(suggestsFocus)}
       failed={failed}
       initial="focusTest"
@@ -66,7 +71,6 @@ export function FocusTestInvitation({
       onShown={onShown}
       onStart={(choice) => (choice === "firstLesson" ? onSkip() : onStart())}
       pressed={pressed}
-      rows={[texts.firstLesson(levelGiven), { facts: testFacts, label: name, value: "focusTest" }]}
       title={texts.startTitle}
     />
   );

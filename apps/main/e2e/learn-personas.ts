@@ -16,10 +16,10 @@ async function openPersona(browser: Browser, user: E2EPersona) {
 
 export async function asPersona(
   browser: Browser,
-  { persona }: { persona: PersonaName },
+  { persona, state }: { persona: PersonaName; state?: string },
   run: (session: { page: Page; user: E2EPersona }) => Promise<void>,
 ) {
-  const user = await createE2EPersona(getBaseURL(), { persona });
+  const user = await createE2EPersona(getBaseURL(), { persona, state });
   const { context, page } = await openPersona(browser, user);
 
   try {

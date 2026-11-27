@@ -7,6 +7,7 @@ const ANA: Prerequisites["persona"] = { flags: ["--locale", "en"], name: "ana" }
 const SELECT_ALL = "[data-slot=answer-option-group][role=group]";
 const SELECT_ONE = "[data-slot=answer-option-group][role=radiogroup]";
 const MATCH = "[data-slot=match-board]";
+const ORDER = "[aria-roledescription=sortable]";
 
 /** A test's question, written by the seed, in the page that asks it; each start saves a sitting. */
 function question(scenario: Omit<Scenario, "anchors" | "sizes" | "writes">): Scenario {
@@ -33,15 +34,15 @@ export const PLACEMENT_SCENARIOS: Scenario[] = [
   screen({
     id: "placement-test.offer",
     prerequisites: { persona: PEDRO },
-    proof: "Full test",
+    proof: "Skip what you already know",
     reach: [],
     screen: "/placement-test",
   }),
   question({
-    evidence: [SELECT_ONE],
-    id: "placement.level-check.choice",
+    evidence: [ORDER],
+    id: "placement.level-check.order",
     prerequisites: { persona: PEDRO, state: "placement" },
-    proof: "Question 1 of 12",
+    proof: "I don't know yet",
     reach: [{ click: "Continue" }, { click: "Start" }],
     screen: "/today",
   }),
@@ -49,36 +50,23 @@ export const PLACEMENT_SCENARIOS: Scenario[] = [
     evidence: [MATCH],
     id: "placement.level-check.match",
     prerequisites: { persona: PEDRO, state: "placement" },
-    proof: "Question 2 of 12",
-    reach: [{ click: "Continue" }, { click: "Start" }, { click: "$20.12" }, { click: "Confirm" }],
+    proof: "Match each group to what a company owes it.",
+    reach: [{ click: "Continue" }, { click: "Start" }, { click: "I don't know yet" }],
     screen: "/today",
   }),
   question({
-    evidence: [SELECT_ONE],
+    evidence: [ORDER],
     id: "placement-test.question",
     prerequisites: { persona: PEDRO },
-    proof: "Part 1 of 4",
-    reach: [{ click: "Full test" }, { click: "Start" }],
-    screen: "/placement-test",
-  }),
-  question({
-    id: "placement-test.checkpoint",
-    prerequisites: { persona: PEDRO },
-    proof: "Part 1 of 4 done",
-    reach: [
-      { click: "Full test" },
-      { click: "Start" },
-      { click: "I don't know yet" },
-      { click: "I don't know yet" },
-      { click: "I don't know yet" },
-    ],
+    proof: "I don't know yet",
+    reach: [{ click: "Start" }],
     screen: "/placement-test",
   }),
   question({
     evidence: [SELECT_ALL],
     id: "focus-test.select-all",
     prerequisites: { persona: ANA },
-    proof: "Question 1 of 10",
+    proof: "I don't know yet",
     reach: [{ click: "Answer more questions" }],
     screen: "/focus-test",
   }),
@@ -86,7 +74,7 @@ export const PLACEMENT_SCENARIOS: Scenario[] = [
     evidence: [MATCH],
     id: "focus-test.match",
     prerequisites: { persona: ANA },
-    proof: "Question 2 of 10",
+    proof: "I don't know yet",
     reach: [
       { click: "Answer more questions" },
       { click: "The library is looking for volunteers" },

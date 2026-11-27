@@ -3,7 +3,11 @@
 import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { type HelpLimit } from "../_components/help-limit-notice";
-import { type SpeechClipOutcome, useSpeechPlayer } from "./speech-player-provider";
+import {
+  type PlaybackTime,
+  type SpeechClipOutcome,
+  useSpeechPlayer,
+} from "./speech-player-provider";
 
 export type SpokenText = string | { audioUrl: string | null; personal?: boolean; text: string };
 
@@ -15,6 +19,8 @@ type SpeakInput = {
   from?: number;
   onDone?: () => void;
   onSegment?: (index: number) => void;
+  /** Where the clip being played is, a few times a second. */
+  onTime?: (time: PlaybackTime) => void;
   rate?: number;
   segments: readonly SpokenText[];
 };
@@ -22,7 +28,7 @@ type SpeakInput = {
 type SpeechPlayer = NonNullable<ReturnType<typeof useSpeechPlayer>>;
 
 type Reading = Required<Pick<SpeakInput, "rate">> &
-  Pick<SpeakInput, "onDone" | "onSegment"> & {
+  Pick<SpeakInput, "onDone" | "onSegment" | "onTime"> & {
     isCurrent: () => boolean;
     language: string;
     owner: object;
@@ -92,6 +98,11 @@ async function readFrom(reading: Reading, index: number): Promise<void> {
         reading.onSegment?.(index);
       }
     },
+    onTime: (time) => {
+      if (reading.isCurrent()) {
+        reading.onTime?.(time);
+      }
+    },
     owner: reading.owner,
     rate: reading.rate,
     url: clip.url,
@@ -128,7 +139,7 @@ export function useSpokenAudio(language: string) {
   }, [player]);
 
   const speak = useCallback(
-    ({ from = 0, onDone, onSegment, rate = 1, segments }: SpeakInput) => {
+    ({ from = 0, onDone, onSegment, onTime, rate = 1, segments }: SpeakInput) => {
       if (!player) {
         return;
       }
@@ -145,6 +156,7 @@ export function useSpokenAudio(language: string) {
           language,
           onDone,
           onSegment,
+          onTime,
           owner: ownerRef.current,
           player,
           rate,

@@ -3,6 +3,7 @@
 import { type GoalView } from "@zoonk/core/goals/contract";
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
 import { type OnboardingActions } from "../../onboarding/onboarding-actions";
+import { OnboardingTask } from "../../onboarding/onboarding-frame";
 import { PlanReceipt } from "../../onboarding/plan-receipt";
 import { PlacementDone } from "../../onboarding/steps/placement-screens";
 import { useWaitLeave } from "../../onboarding/steps/placement-waiting";
@@ -121,6 +122,88 @@ export function LanguagePlanTestFlow({
     test: phase.kind === "test" ? phase.test : null,
   });
 
+  /** The test once it's open: its questions, the wait for them and its result, each a task screen. */
+  const open = (shown: Exclude<LevelTestPhase, { kind: "loadFailed" | "loading" | "offer" }>) => {
+    switch (shown.kind) {
+      case "waiting":
+        return (
+          <LevelTestPreparing
+            leave={waitLeave}
+            onSkip={() => test.onLeave("other")}
+            run={test.bankRun}
+            skipping={pressed === "other"}
+          />
+        );
+      case "test":
+        return (
+          <LevelTestQuestion
+            audioPending={audioPending}
+            failures={shown.failures}
+            onAnswer={test.onAnswer(shown)}
+            onClose={() =>
+              analytics.left({
+                attemptId: shown.attemptId,
+                number: shown.test.answered + 1,
+                questions: shown.test.total,
+              })
+            }
+            onStop={() => test.onStop(shown.attemptId)}
+            pending={test.isPending}
+            targetLanguage={targetLanguage}
+            test={shown.test}
+          />
+        );
+      case "finish":
+      case "testOutFinish":
+        return (
+          <PlacementDone
+            failed={failed}
+            onContinue={() =>
+              shown.kind === "finish"
+                ? test.onStop(shown.attemptId)
+                : test.onTestOutStop(shown.attemptId)
+            }
+            pending={test.isPending}
+          />
+        );
+      case "result":
+        return (
+          <LevelResult
+            failed={failed}
+            onDone={() => test.onLeave("main")}
+            onStartLesson={(lessonId) => {
+              analytics.lessonStarted({ attemptId: shown.result?.attemptId, lessonId });
+              test.onOpenLesson(lessonId, onStartLesson);
+            }}
+            onTestOut={(level) => startTestOut(level, "other")}
+            onUndo={actions.undo}
+            onboarding={onboarding}
+            ownLanguage={ownLanguage}
+            pressed={pressed}
+            rail={goal && <PlanReceipt goal={goal} testRanges={shown.result?.ranges ?? null} />}
+            result={shown.result}
+            targetLanguage={targetLanguage}
+            testOutLevel={onboarding ? null : shown.nextTestOutLevel}
+          />
+        );
+      case "testOut":
+      case "testOutWaiting":
+      case "testOutResult":
+        return (
+          <LevelTestOutScreens
+            analytics={testOutAnalytics}
+            onUndo={actions.undo}
+            phase={shown}
+            readWarmUp={readWarmUp}
+            test={test}
+            trueFalseLabels={trueFalseLabels}
+          />
+        );
+      default:
+        return shown satisfies never;
+    }
+  };
+
   switch (phase.kind) {
     case "loading":
       return <StepLoading />;
@@ -130,7 +213,7 @@ export function LanguagePlanTestFlow({
       return (
         <LevelTestOfferStep
           analytics={analytics}
-          levelGiven={host.surface === "onboarding" && host.levelGiven}
+          firstLesson={host.surface === "onboarding" ? host.firstLesson : null}
           offer={phase.offer}
           onStartTestOut={(level) => startTestOut(level, "main")}
           onboarding={onboarding}
@@ -140,79 +223,14 @@ export function LanguagePlanTestFlow({
         />
       );
     case "waiting":
-      return (
-        <LevelTestPreparing
-          leave={waitLeave}
-          onSkip={() => test.onLeave("other")}
-          run={test.bankRun}
-          skipping={pressed === "other"}
-        />
-      );
     case "test":
-      return (
-        <LevelTestQuestion
-          audioPending={audioPending}
-          failures={phase.failures}
-          onAnswer={test.onAnswer(phase)}
-          onClose={() =>
-            analytics.left({
-              attemptId: phase.attemptId,
-              number: phase.test.answered + 1,
-              questions: phase.test.total,
-            })
-          }
-          onStop={() => test.onStop(phase.attemptId)}
-          pending={test.isPending}
-          targetLanguage={targetLanguage}
-          test={phase.test}
-        />
-      );
     case "finish":
     case "testOutFinish":
-      return (
-        <PlacementDone
-          failed={failed}
-          onContinue={() =>
-            phase.kind === "finish"
-              ? test.onStop(phase.attemptId)
-              : test.onTestOutStop(phase.attemptId)
-          }
-          pending={test.isPending}
-        />
-      );
     case "result":
-      return (
-        <LevelResult
-          failed={failed}
-          onDone={() => test.onLeave("main")}
-          onStartLesson={(lessonId) => {
-            analytics.lessonStarted({ attemptId: phase.result?.attemptId, lessonId });
-            test.onOpenLesson(lessonId, onStartLesson);
-          }}
-          onTestOut={(level) => startTestOut(level, "other")}
-          onUndo={actions.undo}
-          onboarding={onboarding}
-          ownLanguage={ownLanguage}
-          pressed={pressed}
-          rail={goal && <PlanReceipt goal={goal} testRanges={phase.result?.ranges ?? null} />}
-          result={phase.result}
-          targetLanguage={targetLanguage}
-          testOutLevel={onboarding ? null : phase.nextTestOutLevel}
-        />
-      );
     case "testOut":
     case "testOutWaiting":
     case "testOutResult":
-      return (
-        <LevelTestOutScreens
-          analytics={testOutAnalytics}
-          onUndo={actions.undo}
-          phase={phase}
-          readWarmUp={readWarmUp}
-          test={test}
-          trueFalseLabels={trueFalseLabels}
-        />
-      );
+      return <OnboardingTask>{open(phase)}</OnboardingTask>;
     default:
       return phase satisfies never;
   }

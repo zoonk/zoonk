@@ -5,21 +5,22 @@ import {
   type LevelTestRanges,
 } from "@zoonk/core/language/level-test/contract";
 import { Button } from "@zoonk/ui/components/button";
-import { LineMarker } from "@zoonk/ui/components/line-marker";
-import { MediaPending } from "@zoonk/ui/components/media-pending";
+import { Meter, MeterFill } from "@zoonk/ui/components/meter";
+import { Spinner } from "@zoonk/ui/components/spinner";
 import { useAudioKey } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CEFR_LEVELS } from "@zoonk/utils/cefr";
-import { HeadphonesIcon, PlayIcon } from "lucide-react";
+import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import { SURFACE_CLASS } from "../../_components/surface";
+import { formatClock } from "../../_utils/clock";
 import {
   SpeechFailedNote,
   SpeechStatusIcon,
   useSpeechActionLabel,
   withoutFailure,
 } from "../../speech/speech-parts";
+import { type PlaybackTime } from "../../speech/speech-player-provider";
 import { type useSpokenAudio } from "../../speech/use-spoken-audio";
 import { useSkillName } from "../_utils/use-skill-name";
 import { LevelBar } from "../level-bar";
@@ -27,27 +28,40 @@ import { LevelBar } from "../level-bar";
 /** Slower than normal, so a level test isn't a test of catching fast speech. */
 const LISTENING_RATE = 0.9;
 
-const MESSAGE_CLASS = cn(SURFACE_CLASS, "min-h-20");
-
 type ReadyTest = Extract<LanguageLevelTestView, { status: "ready" }>;
 type LevelView = ReadyTest["levels"][number];
 type TestQuestion = Extract<ReadyTest["next"], { kind: "question" }>["question"];
 
+/** The clip's own length is stretched by the slower rate it plays at. */
+function toPlayedMs(clipMs: number): number {
+  return clipMs / LISTENING_RATE;
+}
+
+/**
+ * A listening question's message: play, a line that fills as it plays, and its length, which
+ * counts down while it plays. `onHeard` says the message played to its end.
+ */
 export function ListeningMessage({
   language,
+  onHeard,
   pending,
   question,
   speech,
 }: {
   language: string;
+  onHeard: () => void;
   pending: boolean;
   question: TestQuestion;
   speech: ReturnType<typeof useSpokenAudio>;
 }) {
   const t = useExtracted();
   const [played, setPlayed] = useState(false);
+  const [time, setTime] = useState<PlaybackTime | null>(null);
   const buttonState = withoutFailure(speech.state);
   const { status } = buttonState;
+  const playing = status === "playing";
+  const totalMs = time?.totalMs ?? question.audio?.durationMs ?? null;
+  const elapsedMs = playing ? (time?.elapsedMs ?? 0) : 0;
 
   const label = useSpeechActionLabel(
     buttonState,
@@ -58,12 +72,14 @@ export function ListeningMessage({
     setPlayed(true);
 
     speech.speak({
+      onDone: onHeard,
+      onTime: setTime,
       rate: LISTENING_RATE,
       segments: [{ audioUrl: question.audio?.url ?? null, text: question.passage }],
     });
   };
 
-  const toggle = status === "loading" || status === "playing" ? speech.cancel : play;
+  const toggle = status === "loading" || playing ? speech.cancel : play;
 
   const audioKey = useAudioKey(() => (speech.isAvailable && !pending ? toggle() : false));
 
@@ -71,38 +87,45 @@ export function ListeningMessage({
     return <p lang={language}>{question.passage}</p>;
   }
 
-  if (pending) {
-    return (
-      <MediaPending
-        className={cn(MESSAGE_CLASS, "text-muted-foreground")}
-        icon={<HeadphonesIcon aria-hidden="true" className="size-5" />}
-      >
-        <p role="status">{t("The voice message is on its way…")}</p>
-      </MediaPending>
-    );
-  }
-
   return (
-    <div className={cn(MESSAGE_CLASS, "flex flex-col justify-center gap-3 p-4")}>
-      <div className="flex items-center gap-3">
+    <div className="flex flex-col gap-3" data-slot="listening-message">
+      <div className="flex min-h-11 items-center gap-3">
         <Button
-          aria-busy={status === "loading"}
+          aria-busy={status === "loading" || pending}
+          disabled={pending}
+          focusableWhenDisabled
           onClick={toggle}
           size="icon-lg"
           type="button"
           {...audioKey}
         >
-          <SpeechStatusIcon idle={<PlayIcon aria-hidden="true" />} state={buttonState} />
+          {pending ? (
+            <Spinner aria-hidden="true" />
+          ) : (
+            <SpeechStatusIcon idle={<PlayIcon aria-hidden="true" />} state={buttonState} />
+          )}
           <span className="sr-only">{label}</span>
         </Button>
-        <p aria-live="polite" className="text-muted-foreground flex items-start gap-2 text-sm">
-          <LineMarker aria-hidden="true">
-            <HeadphonesIcon className="size-4" />
-          </LineMarker>
-          {status === "loading"
-            ? t("Getting the message ready. The first time can take a few seconds.")
-            : t("You got a voice message. Listen and answer.")}
-        </p>
+
+        {pending ? (
+          <p className="text-muted-foreground min-w-0 flex-1 text-sm" role="status">
+            {t("The voice message is on its way…")}
+          </p>
+        ) : (
+          <>
+            <Meter className="h-1 min-w-0 flex-1 rounded-xs">
+              <MeterFill
+                className="rounded-xs transition-[width] duration-200 ease-linear motion-reduce:transition-none"
+                share={playing && totalMs ? elapsedMs / totalMs : 0}
+              />
+            </Meter>
+
+            {/* The length's room is kept while it isn't known yet, so the line never jumps. */}
+            <span className="text-muted-foreground min-w-[4ch] text-end font-mono text-xs tabular-nums">
+              {totalMs !== null && formatClock(toPlayedMs(totalMs - elapsedMs))}
+            </span>
+          </>
+        )}
       </div>
 
       {speech.state.status === "failed" && (

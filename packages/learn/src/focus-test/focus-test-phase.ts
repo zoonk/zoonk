@@ -18,7 +18,10 @@ export type QuestionPhase = {
 export type FocusTestPhase =
   | QuestionPhase
   /** `ended`: the open sitting asks nothing more and isn't closed yet. */
-  | { kind: "ended" | "loadFailed" | "loading" | "unavailable" }
+  | { kind: "ended" }
+  | { kind: "loadFailed" }
+  | { kind: "loading" }
+  | { kind: "unavailable" }
   /**
    * `answered`: the learner has test answers, so leaving the wait uses them.
    * `startFailed`: the questions came but the test couldn't start, so the wait offers "Try again".
