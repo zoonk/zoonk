@@ -1119,92 +1119,6 @@
       "categoryScores": [
         {
           "categoryId": "correctness",
-          "reasoning": "Independent calculation confirms every key and numerical claim. The balls meet at 2.5 s and 43.75 m with velocities −5 and +5 m/s; their landing times are 5 and 6 s. The graph gives distance 80/3 m and displacement 4 m. The vehicle separation peaks at 100 m, and the actual catch occurs at 12.5 s; incorrectly extending acceleration gives 5 + 5√2 s. Every item has exactly one defensible correct-option set.",
-          "score": 10,
-          "label": "Correctness",
-          "weight": 30
-        },
-        {
-          "categoryId": "misconceptionsAndFeedback",
-          "reasoning": "All three distractors represent specific, realistic mistakes, with matching labels and corrective explanations. Equal acceleration does not imply equal flight times; omitting the negative-displacement interval produces exactly 12 m; extending the acceleration phase produces exactly 5 + 5√2 s. The feedback identifies the relevant mistake rather than merely declaring the option wrong.",
-          "score": 10,
-          "label": "Misconceptions & feedback",
-          "weight": 25
-        },
-        {
-          "categoryId": "realism",
-          "reasoning": "The four-option, select-all structure, independent statements, SI units, and concise wording fit the requested exam format. However, the graph item includes a direct sign-change reading and an elementary area-cancellation statement, falling short of the explicitly required multistep JEE Advanced level. The set therefore does not consistently meet the named exam's difficulty standard, warranting the cap of 7.",
-          "score": 7,
-          "label": "Exam and setting realism",
-          "weight": 25
-        },
-        {
-          "categoryId": "skillFit",
-          "reasoning": "All three items require applying one-dimensional kinematics rather than recalling definitions. They cover vertical motion under gravity, piecewise velocity-time graph interpretation, and acceleration followed by constant-speed pursuit. Although relative motion appears twice, the setups and required reasoning differ materially. The set stays within the requested skill and is entirely in English.",
-          "score": 9,
-          "label": "Skill fit & variety",
-          "weight": 20
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 3 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 3331,
-          "outputTokens": 1091,
-          "reasoningTokens": 448
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "The graph item's direction-reversal statement is answered directly by counting sign changes, contrary to the explicit requirement that no statement follow from a single graph reading. Its equal-position statement also requires only a simple cancellation of two triangular areas. These options weaken the required JEE Advanced difficulty, although the other two items combine multiple kinematic ideas.",
-          "kind": "majorErrors",
-          "score": 7
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Show the graph's distance calculation explicitly: the four successive intervals contribute 8, 20/3, 8, and 4 m, totaling 80/3 m. Giving the intermediate zero-crossing times would make this explanation more useful for learners.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "JEE Advanced-style physics items in English on kinematics where one or more options are correct. Each item has 4 options, at least one correct and at least one wrong, every correct option is right on its own (never \"both A and C\"), wrong options come from real mistakes (sign of acceleration, mixing displacement and distance), and fixedOrder is false. Difficulty matches JEE Advanced's own one-or-more-correct questions, not a textbook's: each item needs several steps that combine at least two ideas (a graph read and then integrated, a relative motion set up and then solved), so no statement follows from one formula or one reading of a given value.",
-        "id": "en-jee-advanced-kinematics-multi-correct-1",
-        "userInput": {
-          "count": 3,
-          "examFormat": {
-            "name": "JEE Advanced",
-            "optionCount": 4,
-            "style": "Physics, chemistry and mathematics problems for engineering admission in India: multiple-choice questions with four options where one or more may be correct (full marks only when every correct option is chosen and no wrong one), and numerical-answer questions entered as a number; concise, rigorous wording with SI units.",
-            "select": "all"
-          },
-          "format": "multipleChoice",
-          "language": "en",
-          "level": "advanced",
-          "skill": {
-            "description": "Use the equations of motion for constant acceleration, including motion under gravity, and read velocity-time graphs.",
-            "name": "Kinematics in one dimension"
-          }
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "correctness",
           "reasoning": "Independent calculations give 18 m, 56 m and 200 m, matching the keys and worked expressions. Across all allowed combinations, item 1 has integer return time launch_speed/4; item 2 has integer extra_speed/2; and item 3 has even initial and intermediate speeds, making its distance an integer. All answers remain non-negative, both reversals in item 3 occur within their respective intervals, and each question has one defensible answer. Expressions use bare variable names, and no rounding is requested.",
           "score": 10,
           "label": "Correctness",
@@ -2451,6 +2365,94 @@
             "Rodrigo pediu à secretaria municipal de obras cópia de um contrato; parte do documento é sigilosa, e o órgão entregou o restante com a parte sigilosa ocultada.",
             "Um órgão federal recebeu um pedido de informação e, sem conseguir responder em 20 dias, prorrogou o prazo por mais 10 dias, avisando o requerente."
           ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "All three keys are correct. The balls meet at 2.5 s and 43.75 m with velocities −5 and +5 m/s; their separation is |25 − 10t| and their landing times are 5 and 6 s. For the graph, the signed areas over the four successive intervals are 8, 4, −8 and 0 m; the corresponding distances are 8, 20/3, 8 and 4 m. There are two reversals. For the vehicles, the gap peaks at 100 m at 5 s, returns to 50 m at 10 s and then closes at 20 m/s, giving a meeting at 12.5 s and a separation of 50 m at 15 s.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Each distractor has a specific diagnosis. Equal gravitational acceleration does not ensure equal flight times; omitting the −8 m interval gives exactly 12 m; extending the accelerating phase gives the spurious positive root 5 + 5√2 s. The main feedback improvement is to show why the distance from 2 to 4 s is 20/3 m rather than the 4 m signed area.",
+          "score": 9,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The four-option, independently judged statements, SI units and concise setups generally fit JEE Advanced. The projectile and pursuit items require genuine relative-motion reasoning. The graph item is uneven for that exam: its distance calculation is suitably demanding, but one option is settled by inspection alone.",
+          "score": 8,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The set stays within one-dimensional kinematics and varies the method: cancel a common acceleration, interpret signed and unsigned graph areas, and switch from acceleration to constant-speed pursuit. The reversal-count statement tests graph reading but not the requested combination of skills.",
+          "score": 8,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "itemsScored": 3,
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 1271,
+          "cacheWriteTokens": 2596,
+          "inputTokens": 3870,
+          "outputTokens": 755,
+          "reasoningTokens": 71
+        }
+      },
+      "keyFlaws": [],
+      "steps": [
+        {
+          "conclusion": "The graph's direction-reversal option falls short of the explicit difficulty requirement: a learner can count two sign changes without calculating either crossing time or combining the graph reading with another idea.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The graph feedback gives the correct rule for total distance but jumps straight to 80/3 m. It does not show how to split an interval in which the velocity changes sign, the step most likely to cause difficulty.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Replace the reversal count with a comparison of the positions at the two reversals. This would require locating the zero crossings and integrating the signed area between them. The same crossing times could be reused in the distance feedback.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "JEE Advanced-style physics items in English on kinematics where one or more options are correct. Each item has 4 options, at least one correct and at least one wrong, every correct option is right on its own (never \"both A and C\"), wrong options come from real mistakes (sign of acceleration, mixing displacement and distance), and fixedOrder is false. Difficulty matches JEE Advanced's own one-or-more-correct questions, not a textbook's: each item needs several steps that combine at least two ideas (a graph read and then integrated, a relative motion set up and then solved), so no statement follows from one formula or one reading of a given value. No question says how many options to pick or that several are right (\"Select all that apply\"): the app shows that line.",
+        "id": "en-jee-advanced-kinematics-multi-correct-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "JEE Advanced",
+            "optionCount": 4,
+            "style": "Physics, chemistry and mathematics problems for engineering admission in India: multiple-choice questions with four options where one or more may be correct (full marks only when every correct option is chosen and no wrong one), and numerical-answer questions entered as a number; concise, rigorous wording with SI units.",
+            "select": "all"
+          },
+          "format": "multipleChoice",
+          "language": "en",
+          "level": "advanced",
+          "skill": {
+            "description": "Use the equations of motion for constant acceleration, including motion under gravity, and read velocity-time graphs.",
+            "name": "Kinematics in one dimension"
+          }
         }
       }
     }
