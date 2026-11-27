@@ -150,18 +150,16 @@ internal fun partSkippedLine(lessons: Int): String =
         pluralStringResource(R.plurals.placementtest_part_skipped, lessons, lessons)
     }
 
-/** The parts the full test has left and how long each takes. */
+/** The parts the full test has left and about how long they all take, by the server's estimate. */
 @Composable
 internal fun partsLeftFacts(
     partsLeft: Int,
-    minutesEach: Int,
-): List<String> {
-    val time = formatMinutes(minutesEach, currentLocale())
-    return listOf(
+    minutesLeft: Int,
+): List<String> =
+    listOfNotNull(
         pluralStringResource(R.plurals.placementtest_parts_left, partsLeft, partsLeft),
-        stringResource(if (partsLeft == 1) R.string.placementtest_about else R.string.placementtest_about_each, time),
+        minutesLeft.takeIf { it > 0 }?.let { stringResource(R.string.placementtest_about, formatMinutes(it, currentLocale())) },
     )
-}
 
 /**
  * After a part of the full test (main's `PlacementCheckpoint`): it's done, what it skipped and what's left. "Keep going"
@@ -174,7 +172,7 @@ internal fun ColumnScope.PartDone(
     lessonsSkipped: Int,
     heldUntilTomorrow: Boolean,
     partsLeft: Int,
-    minutesEach: Int,
+    minutesLeft: Int,
     pressed: Pressed?,
     failed: Boolean,
     onFinishLater: () -> Unit,
@@ -193,7 +191,7 @@ internal fun ColumnScope.PartDone(
                 },
                 announceDescription = restored != null,
             )
-            Facts(partsLeftFacts(partsLeft, minutesEach))
+            Facts(partsLeftFacts(partsLeft, minutesLeft))
         }
         TestActions(
             action = stringResource(R.string.placementtest_keep_going),

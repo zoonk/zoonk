@@ -65,7 +65,7 @@ internal sealed interface PlacementTestPhase {
         val parts: Int,
         val lessonsSkipped: Int,
         val partsLeft: Int,
-        val minutesEach: Int,
+        val minutesLeft: Int,
         @Contextual val changeId: UUID? = null,
         val heldUntilTomorrow: Boolean = false,
     ) : PlacementTestPhase
@@ -94,7 +94,7 @@ internal sealed interface PlacementTestPhase {
         @Contextual val nextLessonId: UUID? = null,
         val nextLesson: String? = null,
         val partsLeft: Int = 0,
-        val minutesEach: Int = 0,
+        val minutesLeft: Int = 0,
     ) : PlacementTestPhase
 }
 
@@ -157,8 +157,8 @@ private val Placement.isReady
 /** An open part with nothing more to ask, which closing applies. */
 internal fun Placement.partOver(): PlacementAttempt? = attempt?.takeIf { !it.isStopped && isReady && next == null }
 
-/** The minutes a part left takes; none once the server has no estimate. */
-private val PlacementAttempt.minutesEach get() = estimatedMinutes.toInt()
+/** About how long the parts left take, by the server's estimate. */
+private val PlacementAttempt.minutesLeft get() = remainingEstimatedMinutes.toInt()
 
 /** Undo puts back the last part's skips, so it shows only when they're all the result counts. */
 private fun PlacementResult.wholeChange(): UUID? = changeId?.takeIf { (partLessonsSkipped ?: lessonsSkipped) == lessonsSkipped }
@@ -184,7 +184,7 @@ internal fun PlacementResult.phase(attempt: PlacementAttempt?) =
         nextLessonId = nextLesson?.id,
         nextLesson = nextLesson?.title,
         partsLeft = attempt?.takeIf { it.length == PlacementLength.QUICK }?.partsLeft?.toInt() ?: 0,
-        minutesEach = attempt?.minutesEach ?: 0,
+        minutesLeft = attempt?.minutesLeft ?: 0,
     )
 
 /** What closing [attempt]'s part did: a full test's part done or stopped with parts left, else the test's result. */
@@ -215,7 +215,7 @@ internal fun PlacementCompletion.phase(attempt: PlacementAttempt): PlacementTest
                 parts = next.parts.toInt(),
                 lessonsSkipped = partSkipped,
                 partsLeft = next.partsLeft.toInt(),
-                minutesEach = next.minutesEach,
+                minutesLeft = next.minutesLeft,
                 changeId = changeId,
                 heldUntilTomorrow = held,
             )

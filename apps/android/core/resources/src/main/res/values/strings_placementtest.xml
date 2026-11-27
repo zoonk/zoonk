@@ -84,8 +84,6 @@
         <item quantity="one">%d part left</item>
         <item quantity="other">%d parts left</item>
     </plurals>
-    <!-- {time} is a duration with its unit, such as “6 min”: how long each part of a test takes. -->
-    <string name="placementtest_about_each">About %1$s each</string>
     <string name="placementtest_finish_later">Finish later</string>
     <!-- Where a learner who stopped a test picks it up: the part of the test and the question in it. -->
     <string name="placementtest_next_time">Next time: part %1$d of %2$d, question %3$d</string>

@@ -209,13 +209,13 @@ class PlacementTestScreenshots(
     @Test
     fun partDone() =
         shoot("course-checkpoint", captureUndo = true, undone = "Part 3 of 14 done") {
-            PartDone(3, 14, 2, heldUntilTomorrow = false, partsLeft = 11, minutesEach = 6, null, false, {}, {}, undo())
+            PartDone(3, 14, 2, heldUntilTomorrow = false, partsLeft = 11, minutesLeft = 66, null, false, {}, {}, undo())
         }
 
     @Test
     fun partDoneNothingSkipped() =
         shoot("course-checkpoint-none-skipped") {
-            PartDone(3, 14, 0, heldUntilTomorrow = false, partsLeft = 1, minutesEach = 6, null, false, {}, {}, undo = null)
+            PartDone(3, 14, 0, heldUntilTomorrow = false, partsLeft = 1, minutesLeft = 6, null, false, {}, {}, undo = null)
         }
 
     @Test
@@ -233,7 +233,7 @@ class PlacementTestScreenshots(
                 action = "Start lesson",
                 onAction = {},
                 undo = undo(),
-                rest = partsLeftFacts(13, 6),
+                rest = partsLeftFacts(13, 78),
                 onTestTheRest = {},
             )
         }

@@ -298,7 +298,7 @@ internal fun ColumnScope.PlacementTestFlow(
                 lessonsSkipped = shown.lessonsSkipped,
                 heldUntilTomorrow = shown.heldUntilTomorrow,
                 partsLeft = shown.partsLeft,
-                minutesEach = shown.minutesEach,
+                minutesLeft = shown.minutesLeft,
                 pressed = vm.pressed ?: Pressed.Other.takeIf { onboarding?.saving == true },
                 failed = vm.failed,
                 onFinishLater = leave,
@@ -357,7 +357,7 @@ internal fun ColumnScope.PlacementTestFlow(
                 pressed = vm.pressed,
                 failed = vm.failed,
                 heldUntilTomorrow = shown.heldUntilTomorrow,
-                rest = if (shown.partsLeft > 0) partsLeftFacts(shown.partsLeft, shown.minutesEach) else emptyList(),
+                rest = if (shown.partsLeft > 0) partsLeftFacts(shown.partsLeft, shown.minutesLeft) else emptyList(),
                 onTestTheRest = { vm.start(PlacementLength.WHOLE_COURSE, Pressed.Other) }.takeIf { shown.partsLeft > 0 },
             )
         }

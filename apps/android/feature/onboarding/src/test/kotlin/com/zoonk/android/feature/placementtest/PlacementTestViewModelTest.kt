@@ -124,7 +124,7 @@ class PlacementTestViewModelTest {
             assertEquals(listOf(PlacementPart(ATTEMPT, 1)), api.finishedParts)
             val done = vm.phase(store.placements[GOAL_ID].state.value) as PlacementTestPhase.PartDone
             assertEquals(
-                PlacementTestPhase.PartDone(ATTEMPT, 1, 3, 6, partsLeft = 2, minutesEach = 6, heldUntilTomorrow = true),
+                PlacementTestPhase.PartDone(ATTEMPT, 1, 3, 6, partsLeft = 2, minutesLeft = 12, heldUntilTomorrow = true),
                 done.copy(changeId = null),
             )
 
