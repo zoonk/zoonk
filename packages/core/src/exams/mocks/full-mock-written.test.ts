@@ -1043,7 +1043,7 @@ describe("written mock sittings", () => {
       where: { id: latest.id },
     });
 
-    await expect(readScores(numeric)).resolves.toStrictEqual({ ...before, standing: "unmeasured" });
+    await expect(readScores(numeric)).resolves.toStrictEqual(before);
 
     const structure = structuredClone(numeric);
     const task = structure.mock?.sections.find(({ kind }) => kind === "written")?.tasks?.[0];

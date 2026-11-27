@@ -20,7 +20,7 @@ export function withMockStanding({
 
   const byMock = Map.groupBy(samples, (sample) => sample.mockExamId);
 
-  return parts.map((part) => {
+  return parts.map((part): WrittenProjection["parts"][number] => {
     const latest = mocks.find((mock) => mock.part.name === part.name);
 
     if (
@@ -50,6 +50,11 @@ export function withMockStanding({
       grades,
       part: { ...latest.part, max: part.max, minimum: part.minimum },
     });
+
+    // A mock graded before points could be measured can't be judged; the practice verdict stands.
+    if (sitting === "unmeasured") {
+      return part;
+    }
 
     // The estimate beside this verdict averages practice answers too, so the two can disagree.
     const practice = writtenStanding(part);

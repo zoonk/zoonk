@@ -300,6 +300,21 @@ describe("a verdict from the latest mock exam beside an estimate from practice",
     expect(standing(sitting)).toMatchObject({ range: { low: 90 }, standing: "met" });
   });
 
+  it("keeps the practice verdict when the last mock's answers can't be judged", () => {
+    const unjudged = sitting.map(({ answer, ...taken }) => ({
+      ...taken,
+      answer: { conditions: answer.conditions, grade: answer.grade },
+      numericEligible: false,
+    }));
+
+    const practice = [
+      sample({ high: 28, id: "short-practice", key: "short", low: 28 }),
+      sample({ high: 62, id: "long-practice", key: "long", low: 62 }),
+    ].map((taken) => ({ ...taken, answer: { ...taken.answer, grader: GRADER } }));
+
+    expect(standing([...practice, ...unjudged])?.standing).toBe("met");
+  });
+
   it("gives no verdict when later practice puts the whole estimate on the other side", () => {
     const later = Array.from({ length: 6 }, (_, index) => [
       sample({ high: 6, id: `short-${index}`, key: "short", low: 6 }),
