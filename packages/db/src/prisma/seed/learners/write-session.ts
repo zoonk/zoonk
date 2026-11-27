@@ -72,12 +72,27 @@ function todayBlockId(learner: SeedLearner, position: number): string {
   return seedId(`learner:${learner.key}:session:today:block:${position}`);
 }
 
-function getBlockStatus(session: SeedSession, position: number): StudyBlockStatus {
-  if (position < session.finished) {
+function getBlockStatus(session: SeedSession, turn: number): StudyBlockStatus {
+  if (turn < session.finished) {
     return "completed";
   }
 
-  return position === session.finished && session.started ? "active" : "pending";
+  return turn === session.finished && session.started ? "active" : "pending";
+}
+
+function isMistakesRun(block: BuiltBlock): boolean {
+  return Array.isArray(block.payload.mistakeIds) && block.payload.mistakeIds.length > 0;
+}
+
+/**
+ * Rows open in any order, and the seed answers no notebook question, so the learner leaves the
+ * mistakes run for last: its entries stay open and its row stays there to start.
+ */
+function orderOfStudy(blocks: readonly BuiltBlock[]): BuiltBlock[] {
+  return [
+    ...blocks.filter((block) => !isMistakesRun(block)),
+    ...blocks.filter((block) => isMistakesRun(block)),
+  ];
 }
 
 function getSessionStatus(session: SeedSession, blocks: readonly BuiltBlock[]): StudySessionStatus {
@@ -111,11 +126,14 @@ function placeBlocks(
   scope: LearnerScope,
   { blocks, session }: { blocks: readonly BuiltBlock[]; session: SeedSession },
 ) {
-  const minutesBefore = (position: number) =>
-    blocks.slice(0, position).reduce((sum, block) => sum + block.estimatedMinutes, 0);
+  const studied = orderOfStudy(blocks);
+
+  const minutesBefore = (turn: number) =>
+    studied.slice(0, turn).reduce((sum, block) => sum + block.estimatedMinutes, 0);
 
   return blocks.map((block, position) => {
-    const status = getBlockStatus(session, position);
+    const turn = studied.indexOf(block);
+    const status = getBlockStatus(session, turn);
     const isStarted = status !== "pending";
 
     return {
@@ -125,11 +143,10 @@ function placeBlocks(
         status === "active"
           ? { ...block, payload: { ...block.payload, timing: { activeAt: null, elapsedMs: 0 } } }
           : block,
-      completedAt:
-        status === "completed" ? studyMoment(scope, 0, minutesBefore(position + 1)) : null,
+      completedAt: status === "completed" ? studyMoment(scope, 0, minutesBefore(turn + 1)) : null,
       id: todayBlockId(scope.learner, position),
       position,
-      startedAt: isStarted ? studyMoment(scope, 0, minutesBefore(position)) : null,
+      startedAt: isStarted ? studyMoment(scope, 0, minutesBefore(turn)) : null,
       status,
     };
   });

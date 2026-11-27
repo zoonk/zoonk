@@ -56,10 +56,10 @@ describe("Continue on an already studied day while another device reads it", () 
 
     expect(followed).toMatchObject({ status: "ready" });
     const target = before.session.blocks.find((block) => block.id === before.session.nextBlockId);
-    expect(target).toMatchObject({ kind: "review", screen: "session" });
+    expect(target).toMatchObject({ kind: "learn", returning: "again", screen: "lesson" });
 
     expect(opened.result).toMatchObject({
-      opening: { blockId: target?.id, kind: "session", sessionId: saved.id },
+      opening: { kind: "lesson", lessonId: target?.lessonId, sessionId: saved.id },
       status: "ready",
     });
 
