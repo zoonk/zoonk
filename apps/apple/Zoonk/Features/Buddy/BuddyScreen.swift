@@ -338,13 +338,23 @@ private struct BuddyContent: View {
       })
   }
 
-  /// Where the list isn't beside it, its button is on the name's row, as main's is: the bar has no
-  /// room left on a phone.
+  /// The buddy's face, its name as the page's title and its Energy on one row, as main's; where the
+  /// list isn't beside it, its button ends the row too: the bar has no room left on a phone.
   private func thread(listsBeside: Bool) -> some View {
     conversationView
       .safeAreaBar(edge: .top) {
-        VStack(alignment: .leading, spacing: 0) {
-          PageHeader(Text(name)) {
+        MarkedRow(alignment: .center, stackedSpacing: 4) {
+          face
+        } content: {
+          Text(name)
+            .typeStyle(.pageTitle)
+            .foregroundStyle(Color(.foreground))
+            .accessibilityAddTraits(.isHeader)
+            .heroTitle()
+        } end: {
+          HStack(spacing: 4) {
+            energyButton
+
             if !listsBeside, list?.value != nil {
               Button {
                 isListShown = true
@@ -364,12 +374,11 @@ private struct BuddyContent: View {
               .controlSize(.small)
             }
           }
-          dayLine
         }
         .listRowEdges()
         // A list's first row sits this far under the bar, so the title is where every page's is.
         .padding(.top, 12)
-        .padding(.bottom, 8)
+        .padding(.bottom, 16)
       }
       .pageColumn()
   }
@@ -513,7 +522,7 @@ private struct BuddyContent: View {
       comment: "The buddy's Energy; the argument is its name")
   }
 
-  /// Main's Energy beside the buddy: its mark and value, opening the buddy's day.
+  /// Main's Energy on the buddy's row: its value, or a dash before the first lesson.
   private var energyValue: Text {
     guard let current = status.energy.current else {
       return Text(verbatim: "–")
@@ -523,34 +532,28 @@ private struct BuddyContent: View {
       (current / 100).formatted(.percent.precision(.fractionLength(0)).locale(.appLanguage)))
   }
 
-  private var dayLine: some View {
+  private var energyButton: some View {
     Button {
       isDayShown = true
     } label: {
-      HStack(spacing: 12) {
-        face
-
-        Label {
-          energyValue
-        } icon: {
-          Image(systemName: "bolt.fill")
-            .foregroundStyle(.energy)
-        }
-        .labelStyle(.titleAndIcon)
-        .typeStyle(.note)
-        .monospacedDigit()
-        .foregroundStyle(.mutedForeground)
-
-        Spacer(minLength: 0)
-
-        DisclosureChevron()
+      Label {
+        energyValue
+      } icon: {
+        Image(systemName: "bolt.fill")
+          .foregroundStyle(.energy)
       }
+      .labelStyle(.titleAndIcon)
+      .typeStyle(.note)
+      .monospacedDigit()
+      .foregroundStyle(.mutedForeground)
+      .frame(minWidth: 44, minHeight: 44)
       .contentShape(.rect)
     }
     .buttonStyle(.plain)
-    .accessibilityElement(children: .ignore)
     .accessibilityLabel(energyTitle)
-    .accessibilityValue(status.energy.current == nil ? Text(verbatim: "") : energyValue)
+    .accessibilityValue(
+      status.energy.current == nil ? Text(verbatim: "") : energyValue
+    )
     .accessibilityHint(
       Text(
         "Shows \(name)'s day", tableName: "Buddy",
