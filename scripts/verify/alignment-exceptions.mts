@@ -17,6 +17,22 @@ export type AlignmentException = {
 
 export const EXCEPTIONS: AlignmentException[] = [
   {
+    configuration: "phone touch",
+    issue: 3315,
+    piece: "page",
+    reason: "Android's answer field scrolls a long answer with no sign it continues, on main too",
+    relation: "cut",
+    scenario: "04-writing-may-not-fit",
+  },
+  {
+    configuration: "phone touch",
+    issue: 3315,
+    piece: "page",
+    reason: "Android's answer field scrolls a long answer with no sign it continues, on main too",
+    relation: "cut",
+    scenario: "04-writing-over-limit",
+  },
+  {
     configuration: "laptop keys",
     issue: 3228,
     piece: "page",
