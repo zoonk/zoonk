@@ -461,6 +461,7 @@ describe("asking the tutor", () => {
     await expect
       .element(sheet.getByRole("alert"))
       .toHaveTextContent("Take a short break, then try again.");
+
     await expect.element(composer(sheet)).toHaveValue(question);
     await expect.element(sendButton(sheet)).toBeDisabled();
     expect(api.questions).toHaveLength(0);
