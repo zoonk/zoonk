@@ -3,9 +3,9 @@ import XCTest
 
 @testable import Zoonk
 
-/// The mark that tells one answer from several is drawn only, so VoiceOver hears the kind from the
-/// option's traits: a toggle, as a checkbox is, where several count, and a button that's selected
-/// where one does.
+/// The mark that tells one answer from several is only drawn, so VoiceOver hears the kind from the
+/// option itself: where several count, a toggle that's on or off, as a checkbox is; where one
+/// does, a button that's selected.
 @MainActor
 final class AnswerChoiceTraitsTests: XCTestCase {
   func testOnlyAPickSeveralQuestionsOptionsReadAsToggles() async throws {
@@ -33,12 +33,20 @@ final class AnswerChoiceTraitsTests: XCTestCase {
         return options["Sun"] != nil && options["Moon"] != nil
       }
 
-      let picked = try XCTUnwrap(options["Sun"]).accessibilityTraits
-      let other = try XCTUnwrap(options["Moon"]).accessibilityTraits
-      XCTAssertEqual(picked.contains(.toggleButton), select.isMulti, "\(select)")
-      XCTAssertEqual(other.contains(.toggleButton), select.isMulti, "\(select)")
-      XCTAssertTrue(picked.contains(.selected), "\(select)")
-      XCTAssertFalse(other.contains(.selected), "\(select)")
+      let picked = try XCTUnwrap(options["Sun"])
+      let other = try XCTUnwrap(options["Moon"])
+
+      if select.isMulti {
+        XCTAssertTrue(picked.accessibilityTraits.contains(.toggleButton))
+        XCTAssertTrue(other.accessibilityTraits.contains(.toggleButton))
+        XCTAssertEqual(picked.accessibilityValue, "1")
+        XCTAssertEqual(other.accessibilityValue, "0")
+      } else {
+        XCTAssertFalse(picked.accessibilityTraits.contains(.toggleButton))
+        XCTAssertTrue(picked.accessibilityTraits.contains(.selected))
+        XCTAssertFalse(other.accessibilityTraits.contains(.selected))
+      }
+
       window.isHidden = true
     }
   }
