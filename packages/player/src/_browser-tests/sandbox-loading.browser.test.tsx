@@ -1,11 +1,8 @@
-import { beforeAll, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
 import { openActivity } from "../_test-utils/activity-player";
-import { serveLocalRuntimes } from "../_test-utils/local-runtimes";
 
 describe("runtime startup", () => {
-  beforeAll(serveLocalRuntimes);
-
   it("retries Python after its worker stalls during startup", async () => {
     const terminate = vi.spyOn(Worker.prototype, "terminate");
 

@@ -5,7 +5,7 @@ import react from "@vitejs/plugin-react";
 import { playwright } from "@vitest/browser-playwright";
 import { assertBrowserLaunchAllowed } from "@zoonk/testing/browser-preflight";
 import { stalledRunReporter } from "@zoonk/testing/stalled-run-reporter";
-import { type CDPSession, type Page, type Route } from "playwright";
+import { type BrowserContext, type CDPSession, type Page, type Route } from "playwright";
 import { configDefaults, defineConfig } from "vitest/config";
 import { type BrowserCommand } from "vitest/node";
 
@@ -29,22 +29,31 @@ const webHapticsShim = fileURLToPath(
   new URL("src/_test-utils/shims/web-haptics-react.ts", import.meta.url),
 );
 
-const serveLocalRuntimes: BrowserCommand<[]> = async ({ page }) => {
-  for (const [pattern, directory] of [
-    ["https://cdn.jsdelivr.net/pyodide/*/full/*", "pyodide"],
-    ["https://cdn.jsdelivr.net/npm/sql.js@*/dist/*", "sql.js/dist"],
-  ] as const) {
-    // oxlint-disable-next-line no-await-in-loop -- Install both routes before a worker can start.
-    await page.context().route(pattern, (route) => {
-      const file = basename(new URL(route.request().url()).pathname);
+const runtimeRoutes = new WeakMap<BrowserContext, Promise<void>>();
+
+const serveLocalRuntimes: BrowserCommand<[]> = ({ context }) => {
+  const installed = runtimeRoutes.get(context);
+
+  if (installed) {
+    return installed;
+  }
+
+  const routes = context.route(
+    /^https:\/\/cdn\.jsdelivr\.net\/(?:pyodide\/v[^/]+\/full|npm\/sql\.js@[^/]+\/dist)\/[^/]+$/u,
+    (route) => {
+      const { pathname } = new URL(route.request().url());
+      const directory = pathname.startsWith("/pyodide/") ? "pyodide" : "sql.js/dist";
 
       const path = fileURLToPath(
-        new URL(`../core/node_modules/${directory}/${file}`, import.meta.url),
+        new URL(`../core/node_modules/${directory}/${basename(pathname)}`, import.meta.url),
       );
 
       return route.fulfill({ headers: { "access-control-allow-origin": "*" }, path });
-    });
-  }
+    },
+  );
+
+  runtimeRoutes.set(context, routes);
+  return routes;
 };
 
 const emulateMedia: BrowserCommand<[Parameters<Page["emulateMedia"]>[0]]> = async (

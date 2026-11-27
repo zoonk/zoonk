@@ -1,5 +1,5 @@
 import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
-import { beforeAll, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import { page, userEvent } from "vitest/browser";
 import {
   checkActivity,
@@ -10,7 +10,6 @@ import {
   press,
 } from "../_test-utils/activity-player";
 import { atViewport } from "../_test-utils/browser-viewport";
-import { serveLocalRuntimes } from "../_test-utils/local-runtimes";
 import { runProgram } from "../activities/_sandbox/run-program";
 import { REGEX_TIME_LIMIT_MS } from "../activities/_sandbox/sandbox-host";
 
@@ -81,8 +80,6 @@ async function stepForward(times: number) {
 }
 
 describe("computing activities", () => {
-  beforeAll(serveLocalRuntimes);
-
   it("code runner: fixing the loop in Python prints the expected output", async () => {
     openActivity({ template: "codeRunner" });
     await page.getByRole("button", { name: "Run" }).click();

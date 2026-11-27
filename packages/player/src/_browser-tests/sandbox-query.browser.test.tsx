@@ -1,10 +1,7 @@
-import { beforeAll, describe, expect, it } from "vitest";
-import { serveLocalRuntimes } from "../_test-utils/local-runtimes";
+import { describe, expect, it } from "vitest";
 import { runQuery } from "../activities/_sandbox/run-query";
 
 describe(runQuery, () => {
-  beforeAll(serveLocalRuntimes);
-
   it("runs SQLite's own functions, as the server's check and the iPhone app do", async () => {
     const [math, notSqlite] = await Promise.all([
       runQuery({
