@@ -25051,6 +25051,10 @@
                                   "mistakesOnly": {
                                     "type": "boolean"
                                   },
+                                  "mistakesPractice": {
+                                    "default": false,
+                                    "type": "boolean"
+                                  },
                                   "mockPreparationReview": {
                                     "type": "boolean"
                                   },
@@ -25059,6 +25063,16 @@
                                   },
                                   "reinforcement": {
                                     "type": "boolean"
+                                  },
+                                  "returning": {
+                                    "default": null,
+                                    "nullable": true,
+                                    "type": "string",
+                                    "enum": [
+                                      "again",
+                                      "anotherWay",
+                                      "missed"
+                                    ]
                                   },
                                   "weakest": {
                                     "type": "boolean"
@@ -25085,6 +25099,13 @@
                                 ]
                               },
                               "lessonId": {
+                                "nullable": true,
+                                "type": "string",
+                                "format": "uuid",
+                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                              },
+                              "patternId": {
+                                "default": null,
                                 "nullable": true,
                                 "type": "string",
                                 "format": "uuid",
@@ -25259,6 +25280,10 @@
                                   "mistakesOnly": {
                                     "type": "boolean"
                                   },
+                                  "mistakesPractice": {
+                                    "default": false,
+                                    "type": "boolean"
+                                  },
                                   "mockPreparationReview": {
                                     "type": "boolean"
                                   },
@@ -25267,6 +25292,16 @@
                                   },
                                   "reinforcement": {
                                     "type": "boolean"
+                                  },
+                                  "returning": {
+                                    "default": null,
+                                    "nullable": true,
+                                    "type": "string",
+                                    "enum": [
+                                      "again",
+                                      "anotherWay",
+                                      "missed"
+                                    ]
                                   },
                                   "weakest": {
                                     "type": "boolean"
@@ -25293,6 +25328,13 @@
                                 ]
                               },
                               "lessonId": {
+                                "nullable": true,
+                                "type": "string",
+                                "format": "uuid",
+                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                              },
+                              "patternId": {
+                                "default": null,
                                 "nullable": true,
                                 "type": "string",
                                 "format": "uuid",
@@ -29661,6 +29703,10 @@
                                   "mistakesOnly": {
                                     "type": "boolean"
                                   },
+                                  "mistakesPractice": {
+                                    "default": false,
+                                    "type": "boolean"
+                                  },
                                   "mockPreparationReview": {
                                     "type": "boolean"
                                   },
@@ -29669,6 +29715,16 @@
                                   },
                                   "reinforcement": {
                                     "type": "boolean"
+                                  },
+                                  "returning": {
+                                    "default": null,
+                                    "nullable": true,
+                                    "type": "string",
+                                    "enum": [
+                                      "again",
+                                      "anotherWay",
+                                      "missed"
+                                    ]
                                   },
                                   "weakest": {
                                     "type": "boolean"
@@ -29695,6 +29751,13 @@
                                 ]
                               },
                               "lessonId": {
+                                "nullable": true,
+                                "type": "string",
+                                "format": "uuid",
+                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                              },
+                              "patternId": {
+                                "default": null,
                                 "nullable": true,
                                 "type": "string",
                                 "format": "uuid",
@@ -29869,6 +29932,10 @@
                                   "mistakesOnly": {
                                     "type": "boolean"
                                   },
+                                  "mistakesPractice": {
+                                    "default": false,
+                                    "type": "boolean"
+                                  },
                                   "mockPreparationReview": {
                                     "type": "boolean"
                                   },
@@ -29877,6 +29944,16 @@
                                   },
                                   "reinforcement": {
                                     "type": "boolean"
+                                  },
+                                  "returning": {
+                                    "default": null,
+                                    "nullable": true,
+                                    "type": "string",
+                                    "enum": [
+                                      "again",
+                                      "anotherWay",
+                                      "missed"
+                                    ]
                                   },
                                   "weakest": {
                                     "type": "boolean"
@@ -29903,6 +29980,13 @@
                                 ]
                               },
                               "lessonId": {
+                                "nullable": true,
+                                "type": "string",
+                                "format": "uuid",
+                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                              },
+                              "patternId": {
+                                "default": null,
                                 "nullable": true,
                                 "type": "string",
                                 "format": "uuid",
@@ -82670,6 +82754,13 @@
             "type": "boolean",
             "description": "Written work that can navigate to the player before the combined start admits it"
           },
+          "patternId": {
+            "default": null,
+            "nullable": true,
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
           "planItemId": {
             "nullable": true,
             "type": "string",
@@ -82704,6 +82795,16 @@
             "type": "boolean",
             "description": "A short lesson before a boss rematch"
           },
+          "returning": {
+            "default": null,
+            "nullable": true,
+            "type": "string",
+            "enum": [
+              "again",
+              "anotherWay",
+              "missed"
+            ]
+          },
           "screen": {
             "type": "string",
             "enum": [
@@ -82711,9 +82812,11 @@
               "lesson",
               "challenge",
               "essay",
+              "mistakesPractice",
+              "pattern",
               "unknown"
             ],
-            "description": "Where a tap on the block opens it. `session`: the session screen, which plays questions and shows the wait of a lesson not written yet (or not picked yet). `lesson`: the lesson player, since its lesson is written. `challenge`: its own screen (a checkpoint or a mock), on its intro while it hasn't started. `essay`: the writing screen. `unknown`: a lesson block whose lesson this response didn't check (a block's questions read on their own): ask for its lesson's readiness (`GET /v1/library/lessons/{lessonId}/readiness`) before opening it"
+            "description": "Where a tap on the block opens it. `session`: the session screen, which plays questions and shows the wait of a lesson not written yet (or not picked yet). `lesson`: the lesson player, since its lesson is written. `challenge`: its own screen (a checkpoint or a mock), on its intro while it hasn't started. `essay`: the writing screen. `mistakesPractice`: mistake practice scoped to this block. `pattern`: the existing pattern drill identified by patternId. `unknown`: a lesson block whose lesson this response didn't check (a block's questions read on their own): ask for its lesson's readiness (`GET /v1/library/lessons/{lessonId}/readiness`) before opening it"
           },
           "status": {
             "type": "string",
@@ -83345,6 +83448,12 @@
             "$ref": "#/components/schemas/StudyBlockOpeningPreparingLesson"
           },
           {
+            "$ref": "#/components/schemas/StudyBlockOpeningMistakesPractice"
+          },
+          {
+            "$ref": "#/components/schemas/StudyBlockOpeningPattern"
+          },
+          {
             "$ref": "#/components/schemas/StudyBlockOpeningEssay"
           },
           {
@@ -83373,6 +83482,8 @@
             "lesson": "#/components/schemas/StudyBlockOpeningLesson",
             "unwrittenLesson": "#/components/schemas/StudyBlockOpeningUnwrittenLesson",
             "preparingLesson": "#/components/schemas/StudyBlockOpeningPreparingLesson",
+            "mistakesPractice": "#/components/schemas/StudyBlockOpeningMistakesPractice",
+            "pattern": "#/components/schemas/StudyBlockOpeningPattern",
             "essay": "#/components/schemas/StudyBlockOpeningEssay",
             "checkpoint": "#/components/schemas/StudyBlockOpeningCheckpoint",
             "mock": "#/components/schemas/StudyBlockOpeningMock",
@@ -83475,6 +83586,70 @@
         ],
         "additionalProperties": false,
         "description": "The plan hasn't picked this step's lesson yet. The server is preparing it, and a later read has it"
+      },
+      "StudyBlockOpeningMistakesPractice": {
+        "type": "object",
+        "properties": {
+          "blockId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "mistakesPractice"
+            ]
+          },
+          "sessionId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "description": "The study session the block belongs to"
+          }
+        },
+        "required": [
+          "blockId",
+          "kind",
+          "sessionId"
+        ],
+        "additionalProperties": false,
+        "description": "Open mistake practice scoped to this block"
+      },
+      "StudyBlockOpeningPattern": {
+        "type": "object",
+        "properties": {
+          "blockId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "pattern"
+            ]
+          },
+          "patternId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "sessionId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "description": "The study session the block belongs to"
+          }
+        },
+        "required": [
+          "blockId",
+          "kind",
+          "patternId",
+          "sessionId"
+        ],
+        "additionalProperties": false,
+        "description": "Open the existing pattern drill"
       },
       "StudyBlockOpeningEssay": {
         "type": "object",
@@ -100434,6 +100609,13 @@
                   "type": "boolean",
                   "description": "Written work that can navigate to the player before the combined start admits it"
                 },
+                "patternId": {
+                  "default": null,
+                  "nullable": true,
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
                 "planItemId": {
                   "nullable": true,
                   "type": "string",
@@ -100468,6 +100650,16 @@
                   "type": "boolean",
                   "description": "A short lesson before a boss rematch"
                 },
+                "returning": {
+                  "default": null,
+                  "nullable": true,
+                  "type": "string",
+                  "enum": [
+                    "again",
+                    "anotherWay",
+                    "missed"
+                  ]
+                },
                 "screen": {
                   "type": "string",
                   "enum": [
@@ -100475,9 +100667,11 @@
                     "lesson",
                     "challenge",
                     "essay",
+                    "mistakesPractice",
+                    "pattern",
                     "unknown"
                   ],
-                  "description": "Where a tap on the block opens it. `session`: the session screen, which plays questions and shows the wait of a lesson not written yet (or not picked yet). `lesson`: the lesson player, since its lesson is written. `challenge`: its own screen (a checkpoint or a mock), on its intro while it hasn't started. `essay`: the writing screen. `unknown`: a lesson block whose lesson this response didn't check (a block's questions read on their own): ask for its lesson's readiness (`GET /v1/library/lessons/{lessonId}/readiness`) before opening it"
+                  "description": "Where a tap on the block opens it. `session`: the session screen, which plays questions and shows the wait of a lesson not written yet (or not picked yet). `lesson`: the lesson player, since its lesson is written. `challenge`: its own screen (a checkpoint or a mock), on its intro while it hasn't started. `essay`: the writing screen. `mistakesPractice`: mistake practice scoped to this block. `pattern`: the existing pattern drill identified by patternId. `unknown`: a lesson block whose lesson this response didn't check (a block's questions read on their own): ask for its lesson's readiness (`GET /v1/library/lessons/{lessonId}/readiness`) before opening it"
                 },
                 "status": {
                   "type": "string",
@@ -100877,6 +101071,10 @@
                                 "mistakesOnly": {
                                   "type": "boolean"
                                 },
+                                "mistakesPractice": {
+                                  "default": false,
+                                  "type": "boolean"
+                                },
                                 "mockPreparationReview": {
                                   "type": "boolean"
                                 },
@@ -100885,6 +101083,16 @@
                                 },
                                 "reinforcement": {
                                   "type": "boolean"
+                                },
+                                "returning": {
+                                  "default": null,
+                                  "nullable": true,
+                                  "type": "string",
+                                  "enum": [
+                                    "again",
+                                    "anotherWay",
+                                    "missed"
+                                  ]
                                 },
                                 "weakest": {
                                   "type": "boolean"
@@ -100911,6 +101119,13 @@
                               ]
                             },
                             "lessonId": {
+                              "nullable": true,
+                              "type": "string",
+                              "format": "uuid",
+                              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                            },
+                            "patternId": {
+                              "default": null,
                               "nullable": true,
                               "type": "string",
                               "format": "uuid",

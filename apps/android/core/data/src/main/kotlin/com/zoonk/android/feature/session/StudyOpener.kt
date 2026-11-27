@@ -307,6 +307,14 @@ fun StudyBlockOpening.route(): AppRoute? =
                 ?: AppRoute.Session(sessionId = value.sessionId.toString())
         }
 
+        is StudyBlockOpening.MistakespracticeWrapper -> {
+            null
+        }
+
+        is StudyBlockOpening.PatternWrapper -> {
+            AppRoute.Pattern(value.patternId.toString())
+        }
+
         is StudyBlockOpening.TodayWrapper -> {
             AppRoute.Today
         }

@@ -6,7 +6,7 @@ import { writingBlockSchema, writingPacingSchema } from "../exams/essays/writing
 import { brainPowerRewardSchema } from "../milestones/milestone-reward";
 import { MISTAKE_DRILL_KINDS } from "../mistakes/mistake-drills";
 import { CAPSULE_FORMATS } from "./capsules";
-import { mockIdentitySchema } from "./day-block";
+import { mockIdentitySchema, returningLessonSchema } from "./day-block";
 import { MISSION_KINDS } from "./missions/catalog";
 
 const capsuleSchema = z.object({
@@ -84,6 +84,7 @@ const blockPayloadSchema = z.object({
   mockPreparationReview: z.literal(true).optional(),
   /** Wrong answers cancel right ones and blanks are allowed; swipe capsules score net separately. */
   netScored: z.boolean().default(false),
+  patternId: uuidSchema().nullable().default(null),
   /** Unsettled placement questions lead the first week's sessions. */
   placementItemIds: z.array(z.string()).default([]),
   placementRecheckItemIds: z.array(z.string()).optional(),
@@ -95,6 +96,7 @@ const blockPayloadSchema = z.object({
   refresh: z.boolean().default(false),
   /** A short lesson before a boss rematch, on the skills the lost duel missed. */
   reinforcement: z.boolean().default(false),
+  returning: returningLessonSchema.nullable().default(null),
   skillIds: z.array(z.string()).default([]),
   /** Focused time survives switching blocks; only the most recently opened clock runs. */
   timing: z
@@ -124,6 +126,13 @@ const blockPayloadSchema = z.object({
 export type BlockPayload = z.infer<typeof blockPayloadSchema>;
 export type BlockCapsule = z.infer<typeof capsuleSchema>;
 export type BlockCheckpoint = z.infer<typeof checkpointSchema>;
+
+export function isRemedialPractice({
+  mistakeIds,
+  patternId,
+}: Pick<BlockPayload, "mistakeIds" | "patternId">): boolean {
+  return mistakeIds.length > 0 || patternId !== null;
+}
 
 export function hasWritingProgress({ writing }: BlockPayload): boolean {
   return Boolean(writing?.admissionId || writing?.draft);

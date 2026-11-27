@@ -6,7 +6,7 @@ import { type BlockCheckpoint, getBlockItemIds, readBlockPayload } from "../bloc
 import { studyCheckpointSchema } from "../block-view-contract";
 import { getStoredBlockWait } from "../block-wait";
 import { type BlockOutcome, EMPTY_OUTCOME, estimateBrainPower } from "../brain-power";
-import { getBlockScreen } from "../day-block";
+import { getBlockScreen, isOutsidePlanLesson } from "../day-block";
 import { type DayBlockView } from "../day-view";
 
 /** Planned blocks lack database ids until persistence. */
@@ -148,6 +148,7 @@ export function toDayBlockView({
     canDo: block.canDo,
     canTestOut:
       block.kind === "learn" &&
+      !isOutsidePlanLesson(payload) &&
       payload.chapterId !== null &&
       !blockedTestOutChapters.has(payload.chapterId),
     capsules: payload.capsules.map((capsule) => ({
@@ -172,14 +173,24 @@ export function toDayBlockView({
     netScored: payload.netScored,
     oftenTested: teaches && payload.skillIds.some((skillId) => oftenTestedSkillIds.has(skillId)),
     opensInPlayer: false,
+    patternId: payload.patternId,
     planItemId: payload.planItemId,
     planItemKey: payload.planItemKey,
     position: block.position,
     preparing,
-    questions: getBlockQuestions(block, payload.checkpoint, itemIds.length),
+    questions: getBlockQuestions(
+      block,
+      payload.checkpoint,
+      itemIds.length + payload.mistakeIds.length,
+    ),
     refresh: payload.refresh,
     reinforcement: payload.reinforcement,
-    screen: getBlockScreen(block),
+    returning: payload.returning,
+    screen: getBlockScreen({
+      ...block,
+      mistakesPractice: payload.mistakeIds.length > 0,
+      patternId: payload.patternId,
+    }),
     status: block.status,
     subject,
     subjectExtra,

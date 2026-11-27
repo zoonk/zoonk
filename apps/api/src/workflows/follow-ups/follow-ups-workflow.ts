@@ -145,9 +145,7 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
     case "writeSecondTake":
       return startSecondTake({ skillId: followUp.input.skillId, userId });
     case "writeLesson":
-      return startLessonContent(
-        await requestLessonWritingStep({ lessonId: followUp.input.lessonId, userId }),
-      );
+      return startLessonContent(await requestLessonWritingStep(followUp.input, userId));
     case "writeSentenceOrders":
       await startSentenceOrders(followUp.input.lessonId);
       return;

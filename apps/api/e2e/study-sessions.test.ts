@@ -7,7 +7,7 @@ import { studyBlockOpeningSchema } from "@zoonk/core/sessions/open-block-contrac
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
-import { learnerSkillFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
+import { learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
@@ -17,11 +17,7 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { milestoneListResponseSchema } from "../src/lib/openapi/schemas/milestones";
-import {
-  mistakePracticeCompletionSchema,
-  mistakePracticeFeedbackSchema,
-  mistakePracticeResponseSchema,
-} from "../src/lib/openapi/schemas/mistakes";
+import { mistakePracticeResponseSchema } from "../src/lib/openapi/schemas/mistakes";
 import { openedStudyDayResponseSchema } from "../src/lib/openapi/schemas/open-study-day";
 import { studySessionSummaryResponseSchema } from "../src/lib/openapi/schemas/study-session-results";
 import {
@@ -126,7 +122,7 @@ async function createGoal(userId: string) {
     ]),
   ]);
 
-  const [items] = await Promise.all([
+  await Promise.all([
     Promise.all(
       skills.flatMap((skill) =>
         Array.from({ length: QUESTIONS_PER_SKILL }, () =>
@@ -148,26 +144,18 @@ async function createGoal(userId: string) {
     }),
   ]);
 
-  const [, mistake] = await Promise.all([
-    learnerSkillFixture({
-      difficulty: 5,
-      due: new Date(Date.now() - DAY_MS),
-      lastReviewedAt: new Date(Date.now() - 4 * DAY_MS),
-      reps: 2,
-      skillId: skills[0]?.id ?? "",
-      stability: 3,
-      state: "learning",
-      userId,
-    }),
-    mistakeFixture({
-      createdAt: new Date(Date.now() - DAY_MS),
-      itemId: items[0]?.id,
-      skillId: skills[0]?.id,
-      userId,
-    }),
-  ]);
+  await learnerSkillFixture({
+    difficulty: 5,
+    due: new Date(Date.now() - DAY_MS),
+    lastReviewedAt: new Date(Date.now() - 4 * DAY_MS),
+    reps: 2,
+    skillId: skills[0]?.id ?? "",
+    stability: 3,
+    state: "learning",
+    userId,
+  });
 
-  return { goal, lessons, mistake, skills };
+  return { goal, lessons, skills };
 }
 
 async function playBlock({
@@ -355,7 +343,7 @@ test.describe("Study sessions API", () => {
 
   test("plays today's session from capsules to the summary", async () => {
     const { api, userId } = await createBearerLearner({ baseURL, prefix: "study-session" });
-    const { goal, lessons, mistake, skills } = await createGoal(userId);
+    const { goal, lessons, skills } = await createGoal(userId);
 
     const today = await openStudyDay({ api, goalId: goal.id });
 
@@ -364,34 +352,8 @@ test.describe("Study sessions API", () => {
     expect(today.missions.map((mission) => mission.kind)).toStrictEqual([
       "review",
       "somethingNew",
-      "fixMistake",
+      "askBuddy",
     ]);
-
-    const correction = await readBody({
-      response: await api.post(`/v1/me/mistakes/${mistake.id}/answers`, {
-        data: {
-          answer: { selectedIndex: 0 },
-          attemptId: randomUUID(),
-          durationMs: 2000,
-          itemId: mistake.itemId,
-          timeZone: "UTC",
-        },
-      }),
-      schema: mistakePracticeFeedbackSchema,
-    });
-
-    expect(correction).toMatchObject({ fixed: true, fixedMistakeIds: [mistake.id] });
-
-    const notebookDone = await readBody({
-      response: await api.post("/v1/me/mistake-practice/completions", {
-        data: { answerIds: [correction.answerId], ended: true, goalId: goal.id, timeZone: "UTC" },
-      }),
-      schema: mistakePracticeCompletionSchema,
-    });
-
-    expect(notebookDone).toMatchObject({
-      missionMoment: { completed: ["fixMistake"], fullMeal: { paid: false } },
-    });
 
     const { session: again } = await readBody({
       response: await api.get(`/v1/today?goalId=${goal.id}`),
@@ -425,10 +387,27 @@ test.describe("Study sessions API", () => {
       schema: studyBlockCompletionSchema,
     });
 
-    expect(lessonDone).toMatchObject({ fullMeal: { paid: true } });
+    expect(lessonDone.sessionCompleted).toBe(false);
+
+    const thread = await prisma.lessonQuestionThread.create({
+      data: { goalId: goal.id, kind: "plan", userId },
+    });
+
+    await prisma.lessonQuestion.create({
+      data: {
+        contextKind: "lesson",
+        contextSnapshot: {},
+        goalId: goal.id,
+        question: "When would I compare ratios?",
+        requestFingerprint: randomUUID(),
+        requestId: randomUUID(),
+        threadId: thread.id,
+      },
+    });
 
     const practiceDone = await playBlock({ api, blockId: practice?.id ?? "", sessionId: today.id });
-    expect(practiceDone).toMatchObject({ fullMeal: { paid: false }, sessionCompleted: true });
+    expect(practiceDone).toMatchObject({ fullMeal: { paid: true }, sessionCompleted: true });
+    expect([reviewDone, lessonDone].some(({ fullMeal }) => fullMeal.paid)).toBe(false);
 
     const summary = await readBody({
       response: await api.get(`/v1/study-sessions/${today.id}/summary`),
@@ -449,6 +428,61 @@ test.describe("Study sessions API", () => {
     });
 
     expect(extra).toMatchObject({ extra: true, kind: "practice", status: "pending" });
+  });
+
+  test("opens a later saved block while remedial work stays pending", async () => {
+    const { api, userId } = await createBearerLearner({ baseURL, prefix: "remedial-openings" });
+    const session = await studySessionFixture({ userId });
+
+    const [mistakes, pattern, later] = await Promise.all([
+      studySessionBlockFixture({
+        kind: "practice",
+        payload: { mistakeIds: [randomUUID()] },
+        position: 0,
+        sessionId: session.id,
+      }),
+      studySessionBlockFixture({
+        kind: "practice",
+        payload: { patternId: randomUUID() },
+        position: 1,
+        sessionId: session.id,
+      }),
+      studySessionBlockFixture({ kind: "practice", position: 2, sessionId: session.id }),
+    ]);
+
+    const view = await readBody({
+      response: await api.get(`/v1/study-sessions/${session.id}`),
+      schema: studySessionResponseSchema,
+    });
+
+    expect(view.blocks.map(({ screen }) => screen)).toStrictEqual([
+      "mistakesPractice",
+      "pattern",
+      "session",
+    ]);
+
+    const open = (blockId: string) =>
+      api.post("/v1/study-block-openings", {
+        data: { target: { blockId, kind: "block" }, timeZone: "UTC" },
+      });
+
+    await expect(
+      readBody({ response: await open(later.id), schema: studyBlockOpeningSchema }),
+    ).resolves.toMatchObject({ blockId: later.id, kind: "session" });
+
+    await expect(
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: mistakes.id } }),
+    ).resolves.toMatchObject({ status: "pending" });
+
+    await expect(
+      readBody({ response: await open(pattern.id), schema: studyBlockOpeningSchema }),
+    ).resolves.toMatchObject({ blockId: pattern.id, kind: "pattern" });
+
+    await expect(
+      readBody({ response: await open(mistakes.id), schema: studyBlockOpeningSchema }),
+    ).resolves.toMatchObject({ blockId: mistakes.id, kind: "mistakesPractice" });
+
+    await api.dispose();
   });
 
   test("opens the day's next step with the day, then each step where the server says", async () => {

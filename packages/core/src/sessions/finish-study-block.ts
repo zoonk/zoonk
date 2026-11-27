@@ -325,6 +325,12 @@ export async function finishStudyBlock({
     return finishLessonBlock(context);
   }
 
+  const { mistakeIds, patternId } = readBlockPayload(owned.block);
+
+  if (mistakeIds.length > 0 || patternId) {
+    return { status: "notFound" };
+  }
+
   const source = await findMissionSource(owned.block);
 
   if (owned.block.status === "skipped") {

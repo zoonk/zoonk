@@ -97,7 +97,13 @@ export const followUpSchema = z.discriminatedUnion("kind", [
     }),
     kind: z.literal("replenishLevelTestChecks"),
   }),
-  z.object({ input: z.object({ lessonId: uuidSchema() }), kind: z.literal("writeLesson") }),
+  z.object({
+    input: z.union([
+      z.object({ lessonId: uuidSchema() }),
+      z.object({ quickSkillId: uuidSchema() }),
+    ]),
+    kind: z.literal("writeLesson"),
+  }),
   z.object({ input: writeSecondTakeInputSchema, kind: z.literal("writeSecondTake") }),
   z.object({ input: z.object({ goalId: uuidSchema() }), kind: z.literal("rebuildGoalCurriculum") }),
   z.object({

@@ -8,6 +8,7 @@ import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
 import { NOT_A_CAPSULE } from "../../lesson-player/_utils/lesson-runs";
 import { finishLessonChapters } from "../../mind-maps/finished-chapters";
 import { readBlockPayload } from "../block-payload";
+import { isOutsidePlanLesson } from "../day-block";
 import { oweDaySettlement } from "../settle-owed-session-day";
 import { completeLessonPlanItems, scheduleLessonCanDos } from "./plan-items";
 import { type StudySessionRow } from "./study-session-access";
@@ -143,7 +144,7 @@ export async function markLessonBlockDone({
 
       await oweDaySettlement(tx, { block, timeZone, userId });
 
-      if (!lessonId) {
+      if (!lessonId || isOutsidePlanLesson(readBlockPayload(block))) {
         return { languageGoals: [] };
       }
 

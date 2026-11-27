@@ -16,6 +16,8 @@ export const mockIdentitySchema: z.ZodType<MockIdentity> = z
   .object({ day: z.int().positive().nullable(), fullLength: z.boolean() })
   .strict();
 
+export const returningLessonSchema = z.enum(["again", "anotherWay", "missed"]);
+
 const checkpointRefShape = {
   kind: z.enum(["boss", "finalBoss", "weekly"]),
   phase: z.int().nullable(),
@@ -45,14 +47,17 @@ export const dayBlockRefSchema = z
         extra: z.boolean(),
         fullReview: z.boolean(),
         mistakesOnly: z.boolean(),
+        mistakesPractice: z.boolean().default(false).optional(),
         mockPreparationReview: z.boolean().optional(),
         refresh: z.boolean(),
         reinforcement: z.boolean(),
+        returning: returningLessonSchema.nullable().default(null).optional(),
         weakest: z.boolean(),
       })
       .strict(),
     kind: z.enum(["learn", "review", "practice", "produce", "checkpoint"]),
     lessonId: uuidSchema().nullable(),
+    patternId: uuidSchema().nullable().default(null).optional(),
     planItemKey: z.string().max(MAX_PLAN_ITEM_KEY_LENGTH).nullable(),
     position: z.int().nonnegative(),
   })
@@ -69,15 +74,31 @@ export type DayWork = Omit<DayBlockRef, "flags" | "checkpoint"> &
       | null;
   };
 
-export const dayBlockScreenSchema = z.enum(["session", "lesson", "challenge", "essay", "unknown"]);
+export const dayBlockScreenSchema = z.enum([
+  "session",
+  "lesson",
+  "challenge",
+  "essay",
+  "mistakesPractice",
+  "pattern",
+  "unknown",
+]);
 
 export type DayBlockScreen = z.infer<typeof dayBlockScreenSchema>;
 
 /** Unknown readiness must go through the learner's action before navigating to a player. */
 function getDayBlockScreen(
-  block: Pick<DayWork, "kind" | "lessonId">,
+  block: Pick<DayWork, "kind" | "lessonId" | "mistakesPractice" | "patternId">,
   { lessonReady }: { lessonReady: boolean | null },
 ): DayBlockScreen {
+  if (block.mistakesPractice) {
+    return "mistakesPractice";
+  }
+
+  if (block.patternId) {
+    return "pattern";
+  }
+
   if (block.kind === "learn") {
     if (lessonReady === null) {
       return "unknown";
@@ -99,7 +120,7 @@ function getDayBlockScreen(
  * whose lesson the plan hasn't picked yet.
  */
 export function getBlockScreen(
-  block: Pick<DayWork, "kind" | "lessonId">,
+  block: Pick<DayWork, "kind" | "lessonId" | "mistakesPractice" | "patternId">,
   lessonStates?: ReadonlyMap<string, { status: string }>,
 ): DayBlockScreen {
   const state = block.lessonId ? lessonStates?.get(block.lessonId) : undefined;
@@ -108,7 +129,7 @@ export function getBlockScreen(
   return getDayBlockScreen(block, { lessonReady });
 }
 
-export function toDayBlockRef(block: DayWork): DayBlockRef {
+export function toDayBlockRef(block: DayWork & { screen?: DayBlockScreen }): DayBlockRef {
   return {
     areaId: block.areaId,
     chapterId: block.chapterId,
@@ -128,13 +149,18 @@ export function toDayBlockRef(block: DayWork): DayBlockRef {
       extra: block.extra,
       fullReview: block.fullReview,
       mistakesOnly: block.mistakesOnly,
+      ...((block.mistakesPractice || block.screen === "mistakesPractice") && {
+        mistakesPractice: true,
+      }),
       ...(block.mockPreparationReview && { mockPreparationReview: true }),
       refresh: block.refresh,
       reinforcement: block.reinforcement,
+      ...(block.returning && { returning: block.returning }),
       weakest: block.weakest,
     },
     kind: block.kind,
     lessonId: block.lessonId,
+    ...(block.patternId && { patternId: block.patternId }),
     planItemKey: block.planItemKey,
     position: block.position,
   };
@@ -158,6 +184,13 @@ function hasSameCheckpoint(first: DayBlockRef["checkpoint"], second: DayBlockRef
   );
 }
 
+export function isOutsidePlanLesson({
+  reinforcement,
+  returning,
+}: Pick<DayWork, "reinforcement" | "returning">): boolean {
+  return reinforcement || Boolean(returning);
+}
+
 /** Never opens different work just because it occupies the same position after a change. */
 export function isSameDayWork(first: DayBlockRef, second: DayBlockRef): boolean {
   return (
@@ -166,10 +199,13 @@ export function isSameDayWork(first: DayBlockRef, second: DayBlockRef): boolean 
     first.chapterId === second.chapterId &&
     first.areaId === second.areaId &&
     first.planItemKey === second.planItemKey &&
+    (first.patternId ?? null) === (second.patternId ?? null) &&
     hasSameCheckpoint(first.checkpoint, second.checkpoint) &&
     first.flags.extra === second.flags.extra &&
     first.flags.fullReview === second.flags.fullReview &&
     first.flags.mistakesOnly === second.flags.mistakesOnly &&
+    Boolean(first.flags.mistakesPractice) === Boolean(second.flags.mistakesPractice) &&
+    (first.flags.returning ?? null) === (second.flags.returning ?? null) &&
     Boolean(first.flags.mockPreparationReview) === Boolean(second.flags.mockPreparationReview) &&
     first.flags.refresh === second.flags.refresh &&
     first.flags.reinforcement === second.flags.reinforcement &&

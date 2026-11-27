@@ -82,6 +82,26 @@ export const studyBlockOpeningSchema = z
         id: "StudyBlockOpeningPreparingLesson",
       }),
     z
+      .object({
+        blockId: uuidSchema(),
+        kind: z.literal("mistakesPractice"),
+        sessionId: sessionIdSchema,
+      })
+      .strict()
+      .meta({
+        description: "Open mistake practice scoped to this block",
+        id: "StudyBlockOpeningMistakesPractice",
+      }),
+    z
+      .object({
+        blockId: uuidSchema(),
+        kind: z.literal("pattern"),
+        patternId: uuidSchema(),
+        sessionId: sessionIdSchema,
+      })
+      .strict()
+      .meta({ description: "Open the existing pattern drill", id: "StudyBlockOpeningPattern" }),
+    z
       .object({ blockId: uuidSchema(), kind: z.literal("essay"), sessionId: sessionIdSchema })
       .strict()
       .meta({ description: "The block started: open the essay", id: "StudyBlockOpeningEssay" }),

@@ -14,10 +14,15 @@ import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learne
 import { getSecondTakeSkillId } from "../../library/second-takes/second-take-identity";
 import { finishLessonChapters } from "../../mind-maps/finished-chapters";
 import { clampEnergy } from "../../progress/energy";
-import { completeLessonPlanItems, scheduleLessonCanDos } from "../../sessions/_utils/plan-items";
+import {
+  type CompletedLessonItems,
+  completeLessonPlanItems,
+  scheduleLessonCanDos,
+} from "../../sessions/_utils/plan-items";
 import { refitSessionLessons } from "../../sessions/_utils/refit-session-lessons";
 import { trackBlockCompleted } from "../../sessions/_utils/session-events";
 import { readBlockPayload } from "../../sessions/block-payload";
+import { isOutsidePlanLesson } from "../../sessions/day-block";
 import { getCompletionEnergyContext } from "../../stats/completion-energy";
 import { upsertDailyProgress } from "../../stats/daily-progress";
 import { finishLearningEvent } from "../../stats/record-learning-event";
@@ -40,7 +45,7 @@ async function refitAfterMainBlock(
 ): Promise<void> {
   const payload = readBlockPayload(block);
 
-  if (payload.extra || payload.reinforcement) {
+  if (payload.extra || isOutsidePlanLesson(payload)) {
     return;
   }
 
@@ -82,6 +87,30 @@ async function markTeachingBoundary({
   });
 }
 
+function lessonAccounting({
+  block,
+  identityKey,
+  isReplay,
+}: {
+  block: RunBlock | null;
+  identityKey: string;
+  isReplay: boolean;
+}) {
+  const payload = block ? readBlockPayload(block) : null;
+  const secondTakeSkillId = getSecondTakeSkillId(identityKey);
+  const returning = Boolean(payload?.returning);
+
+  const isFirstCompletion = !isReplay && (!returning || secondTakeSkillId !== null);
+  const isReview = isReplay || returning || secondTakeSkillId !== null;
+
+  return {
+    isFirstCompletion,
+    isReview,
+    planCompletion: !(payload && isOutsidePlanLesson(payload)) && !secondTakeSkillId,
+    secondTakeSkillId,
+  };
+}
+
 type FinishLessonRunInput = {
   answerPoints: number;
   answeredCount: number;
@@ -120,8 +149,6 @@ export async function finishLessonRun({
     });
 
     const isReplay = await hasFinishedLessonBefore(tx, { lessonId, runId: run.id, userId });
-    const secondTakeSkillId = getSecondTakeSkillId(identityKey);
-    const score = scoreLibraryLesson({ ...tally, answerPoints, isFirstCompletion: !isReplay });
 
     const currentRun = await tx.learningEvent.findUniqueOrThrow({ where: { id: run.id } });
 
@@ -138,6 +165,14 @@ export async function finishLessonRun({
       userId,
     });
 
+    const { isFirstCompletion, isReview, planCompletion, secondTakeSkillId } = lessonAccounting({
+      block,
+      identityKey,
+      isReplay,
+    });
+
+    const score = scoreLibraryLesson({ ...tally, answerPoints, isFirstCompletion });
+
     const seconds = await getLessonCompletionSeconds({
       block,
       now: completedAt,
@@ -148,7 +183,7 @@ export async function finishLessonRun({
     const closed = await finishLearningEvent(tx, {
       endedAt: completedAt,
       eventId: run.id,
-      kind: isReplay || secondTakeSkillId ? "review" : "lesson",
+      kind: isReview ? "review" : "lesson",
       outcome: {
         brainPower: score.brainPower,
         correctAnswers: tally.correctCount,
@@ -165,7 +200,7 @@ export async function finishLessonRun({
 
     await markTeachingBoundary({
       completedAt,
-      refresh: isReplay || secondTakeSkillId !== null,
+      refresh: isReview,
       skillIds: secondTakeSkillId ? [secondTakeSkillId] : teachingSkillIds,
       tx,
       userId,
@@ -189,7 +224,7 @@ export async function finishLessonRun({
       date: completionDate,
       durationSeconds: seconds,
       field: answeredCount > 0 ? "interactiveCompleted" : "staticCompleted",
-      lessonsCompleted: isReplay || secondTakeSkillId ? 0 : 1,
+      lessonsCompleted: Number(!isReview),
       score: {
         brainPower: score.brainPower,
         correctCount: tally.correctCount,
@@ -223,11 +258,9 @@ export async function finishLessonRun({
         userId,
       }));
 
-    const { languageGoals, planItemIds } = await completeLessonPlanItems(tx, {
-      lessonId,
-      now: completedAt,
-      userId,
-    });
+    const { languageGoals, planItemIds }: CompletedLessonItems = planCompletion
+      ? await completeLessonPlanItems(tx, { lessonId, now: completedAt, userId })
+      : { languageGoals: [], planItemIds: [] };
 
     await finishLessonChapters(tx, {
       eventId: run.id,
@@ -248,7 +281,7 @@ export async function finishLessonRun({
         ...score,
         correctCount: tally.correctCount,
         incorrectCount: tally.incorrectCount,
-        isFirstCompletion: !isReplay,
+        isFirstCompletion,
         seconds,
         totalBrainPower: Number(progress.totalBrainPower),
       },
