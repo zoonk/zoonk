@@ -4,11 +4,12 @@ import { loadScheduledAnswersForRefresh } from "../../learner/facts/scheduled-an
 import { loadPlanAtToken } from "../../plans/_utils/plan-token";
 import { PlanConflictError, withPlanRetry } from "../../plans/plan-conflict";
 import { getItemKey } from "../../plans/planner/plan-items";
-import { getBlockItemIds, readBlockPayload } from "../block-payload";
+import { getBlockItemIds, isRemedialPractice, readBlockPayload } from "../block-payload";
 import { loadRebuildMissionFacts, rebuildMissions } from "../missions/rebuild-missions";
 import { type PlannedLesson, type SessionBuildInput, buildSessionBlocks } from "../session-builder";
 import { getSessionUsedMinutes } from "../session-minutes";
 import { getKeptBlocks, hasSameBlocks, hasSameContent } from "./day-block-content";
+import { getGoalDayMinutes } from "./day-minutes";
 import { loadDayPlan } from "./day-plan";
 import { withSessionAppendLock } from "./extra-blocks";
 import { loadSessionBuildInput } from "./load-build-inputs";
@@ -57,7 +58,7 @@ function withoutKept({
   const kinds = new Set(
     kept.flatMap((block) => {
       const payload = readBlockPayload(block);
-      return payload.mistakeIds.length > 0 || payload.patternId ? [] : [block.kind];
+      return isRemedialPractice(payload) ? [] : [block.kind];
     }),
   );
 
@@ -173,7 +174,15 @@ async function replaceNotStartedBlocks({
   // A rest day must not fill from future lessons outside its selected allocation.
   const selection = selected ?? (await selectDayPlan(context)) ?? undefined;
 
-  const kept = getKeptBlocks(session.blocks, selection?.state);
+  const minutes = selection
+    ? getGoalDayMinutes({
+        date: context.localDate,
+        goal: context.goal,
+        planSettings: selection.state.settings,
+      })
+    : context.goal.dailyMinutes;
+
+  const kept = getKeptBlocks(session.blocks, selection?.state, minutes > 0);
   const keptIds = new Set(kept.map((block) => block.id));
   const replaced = session.blocks.filter((block) => !keptIds.has(block.id));
 

@@ -1,5 +1,5 @@
 import { type StudySessionBlock } from "@zoonk/db";
-import { readBlockPayload } from "../block-payload";
+import { isRemedialPractice, readBlockPayload } from "../block-payload";
 import { isOutsidePlanLesson } from "../day-block";
 import { type MissionPick } from "./catalog";
 
@@ -36,7 +36,12 @@ export function getMissionBlocks<
   return blocks.filter((block) => {
     const payload = readPayload(block);
 
-    if (payload.extra || isOutsidePlanLesson(payload) || block.status === "skipped") {
+    if (
+      payload.extra ||
+      isOutsidePlanLesson(payload) ||
+      isRemedialPractice(payload) ||
+      block.status === "skipped"
+    ) {
       return false;
     }
 

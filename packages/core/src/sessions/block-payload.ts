@@ -127,6 +127,13 @@ export type BlockPayload = z.infer<typeof blockPayloadSchema>;
 export type BlockCapsule = z.infer<typeof capsuleSchema>;
 export type BlockCheckpoint = z.infer<typeof checkpointSchema>;
 
+export function isRemedialPractice({
+  mistakeIds,
+  patternId,
+}: Pick<BlockPayload, "mistakeIds" | "patternId">): boolean {
+  return mistakeIds.length > 0 || patternId !== null;
+}
+
 export function hasWritingProgress({ writing }: BlockPayload): boolean {
   return Boolean(writing?.admissionId || writing?.draft);
 }

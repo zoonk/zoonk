@@ -3,6 +3,7 @@ import { type GoalPlan } from "../../learner/_utils/goal-skill-graph";
 import { LEARN_KINDS } from "../../plans/planner/plan-item-rules";
 import { getItemKey } from "../../plans/planner/plan-items";
 import { type SessionPlanItem } from "../_utils/session-plan-item";
+import { isRemedialPractice } from "../block-payload";
 import { isOutsidePlanLesson } from "../day-block";
 import { type PlannedBlock } from "../session-builder";
 import { type MissionKind, type MissionPick } from "./catalog";
@@ -72,7 +73,11 @@ export function blockCandidates({
   const review = reviews[0];
   const lessons = planned.filter((block) => block.kind === "learn");
   const lesson = planned.find((block) => block.kind === "learn");
-  const practice = planned.find((block) => block.kind === "practice");
+
+  const practice = planned.find(
+    (block) => block.kind === "practice" && !isRemedialPractice(block.payload),
+  );
+
   const essay = planned.find((block) => block.kind === "produce");
 
   const checkpoints = planned

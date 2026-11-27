@@ -2,12 +2,9 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { findFreshMistakePatternWithDrill } from "../../language/patterns/find-fresh-pattern";
 import { PATTERN_DRILL_SECONDS } from "../../language/patterns/pattern-contract";
-import { getStartOfLocalDay } from "../../learner/_utils/local-time";
 import { readSkillMistakeSignals } from "../../learner/read-skill-mistake-signals";
-import { MINUTES_PER_REVIEW } from "../../learner/review-load";
-import { openVisibleMistakeWhere } from "../../mistakes/_utils/visible-mistake";
-import { type MistakeReplay, loadMistakeReplays } from "../../mistakes/mistake-replay";
-import { PRACTICE_MINUTES_PER_QUESTION } from "../block-minutes";
+import { listReadyMistakes } from "../../mistakes/mistake-availability";
+import { loadPracticeMistakes } from "../../mistakes/mistake-practice-eligibility";
 import { toBlockPayload } from "../block-payload";
 import { type loadDayPlan } from "./day-plan";
 import { type TeachingCandidate, loadTeaching } from "./load-remedial-lessons";
@@ -16,16 +13,6 @@ import { type SessionDayContext } from "./session-placement";
 
 type DayPlan = Awaited<ReturnType<typeof loadDayPlan>>;
 type Signals = Awaited<ReturnType<typeof readSkillMistakeSignals>>;
-
-function getReplayMinutes(replay: MistakeReplay): number {
-  const format = replay.kind === "item" ? replay.item.format : replay.lesson.step.kind;
-
-  if (format === "typed" || format === "spokenAnswer" || format === "typedAnswer") {
-    return 2;
-  }
-
-  return format === "numeric" ? PRACTICE_MINUTES_PER_QUESTION : MINUTES_PER_REVIEW;
-}
 
 async function loadReadyMistakes({
   context,
@@ -36,34 +23,22 @@ async function loadReadyMistakes({
   signals: Signals;
   weights: ReadonlyMap<string, number>;
 }): Promise<RemedialWork["mistakes"]> {
-  const { userId } = context;
+  const { readDayMistakes, userId } = context;
 
-  const rows = await prisma.mistake.findMany({
-    orderBy: [{ createdAt: "asc" }, { id: "asc" }],
-    where: {
-      ...openVisibleMistakeWhere,
-      missedAt: { lt: getStartOfLocalDay(context) },
-      skillId: { in: [...signals.keys()] },
-      userId,
-    },
-  });
+  const mistakes = readDayMistakes
+    ? await readDayMistakes()
+    : await loadPracticeMistakes({ skillIds: [...signals.keys()], userId });
 
-  if (rows.length === 0) {
-    return [];
-  }
+  const rows = listReadyMistakes({ ...context, mistakes }).filter(
+    ({ skillId }) => skillId !== null && signals.has(skillId),
+  );
 
-  const replays = await loadMistakeReplays({ mistakes: rows, userId });
   const stuck = (id: string | null) => Number(Boolean(id && signals.get(id)?.stuck));
   const weight = (id: string | null) => (id ? (weights.get(id) ?? 0) : 0);
 
-  return rows
-    .toSorted(
-      (a, b) => stuck(b.skillId) - stuck(a.skillId) || weight(b.skillId) - weight(a.skillId),
-    )
-    .flatMap(({ id, skillId }) => {
-      const replay = replays.get(id);
-      return replay ? [{ id, minutes: getReplayMinutes(replay), skillId }] : [];
-    });
+  return rows.toSorted(
+    (a, b) => stuck(b.skillId) - stuck(a.skillId) || weight(b.skillId) - weight(a.skillId),
+  );
 }
 
 async function loadPattern({ goal, now, userId }: SessionDayContext): Promise<TeachingCandidate[]> {
