@@ -5015,6 +5015,13 @@ msgid "More"
 msgstr "Mehr"
 
 #: src/journey/plan-sections.tsx
+#: src/saved-lessons/saved-lessons-row.tsx
+#: src/saved-lessons/saved-lessons-screen.tsx
+msgctxt "BwmLVN"
+msgid "Saved lessons"
+msgstr "Gespeicherte Lektionen"
+
+#: src/journey/plan-sections.tsx
 #: src/mind-maps/mind-maps-screen.tsx
 #: src/syllabus/subject-chapters.tsx
 msgctxt "Z9Sg5E"
@@ -7135,6 +7142,12 @@ msgstr "Kapitel-Mindmap"
 msgctxt "Oku1XG"
 msgid "Lesson map"
 msgstr "Lektions-Mindmap"
+
+#. What screen readers say for Remove, naming the map.
+#: src/mind-maps/mind-map-index-rows.tsx
+msgctxt "-S6z5P"
+msgid "Remove {title} from saved maps"
+msgstr "{title} aus den gespeicherten Mindmaps entfernen"
 
 #: src/mind-maps/mind-map-index-rows.tsx
 #: src/saved-lessons/saved-lessons-screen.tsx
@@ -12374,17 +12387,17 @@ msgctxt "lessonSaved"
 msgid "Saved"
 msgstr "Gespeichert"
 
-#: src/saved-lessons/saved-lessons-row.tsx
-#: src/saved-lessons/saved-lessons-screen.tsx
-msgctxt "BwmLVN"
-msgid "Saved lessons"
-msgstr "Gespeicherte Lektionen"
-
 #. The line under Saved lessons in Practice anytime.
 #: src/saved-lessons/saved-lessons-row.tsx
 msgctxt "u7HPS5"
 msgid "Lessons you want to do again"
 msgstr "Lektionen, die du noch einmal machen möchtest"
+
+#. What screen readers say for Remove, naming the lesson.
+#: src/saved-lessons/saved-lessons-screen.tsx
+msgctxt "mezuKn"
+msgid "Remove {title} from saved lessons"
+msgstr "{title} aus gespeicherten Lektionen entfernen"
 
 #: src/saved-lessons/saved-lessons-screen.tsx
 msgctxt "t7w-Fo"

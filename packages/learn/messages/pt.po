@@ -5015,6 +5015,13 @@ msgid "More"
 msgstr "Mais"
 
 #: src/journey/plan-sections.tsx
+#: src/saved-lessons/saved-lessons-row.tsx
+#: src/saved-lessons/saved-lessons-screen.tsx
+msgctxt "BwmLVN"
+msgid "Saved lessons"
+msgstr "Aulas salvas"
+
+#: src/journey/plan-sections.tsx
 #: src/mind-maps/mind-maps-screen.tsx
 #: src/syllabus/subject-chapters.tsx
 msgctxt "Z9Sg5E"
@@ -7135,6 +7142,12 @@ msgstr "Mapa do capítulo"
 msgctxt "Oku1XG"
 msgid "Lesson map"
 msgstr "Mapa de aula"
+
+#. What screen readers say for Remove, naming the map.
+#: src/mind-maps/mind-map-index-rows.tsx
+msgctxt "-S6z5P"
+msgid "Remove {title} from saved maps"
+msgstr "Remover {title} dos mapas salvos"
 
 #: src/mind-maps/mind-map-index-rows.tsx
 #: src/saved-lessons/saved-lessons-screen.tsx
@@ -12374,17 +12387,17 @@ msgctxt "lessonSaved"
 msgid "Saved"
 msgstr "Salva"
 
-#: src/saved-lessons/saved-lessons-row.tsx
-#: src/saved-lessons/saved-lessons-screen.tsx
-msgctxt "BwmLVN"
-msgid "Saved lessons"
-msgstr "Aulas salvas"
-
 #. The line under Saved lessons in Practice anytime.
 #: src/saved-lessons/saved-lessons-row.tsx
 msgctxt "u7HPS5"
 msgid "Lessons you want to do again"
 msgstr "Aulas que você quer fazer de novo"
+
+#. What screen readers say for Remove, naming the lesson.
+#: src/saved-lessons/saved-lessons-screen.tsx
+msgctxt "mezuKn"
+msgid "Remove {title} from saved lessons"
+msgstr "Remover {title} das aulas salvas"
 
 #: src/saved-lessons/saved-lessons-screen.tsx
 msgctxt "t7w-Fo"

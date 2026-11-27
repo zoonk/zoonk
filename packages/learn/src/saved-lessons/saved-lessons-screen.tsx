@@ -73,7 +73,16 @@ function UnavailableLessonRow({ lesson, onRemove }: { lesson: SavedLesson; onRem
         <ListRowTitle>{lesson.title}</ListRowTitle>
         {lesson.chapterTitle && <ListRowDescription>{lesson.chapterTitle}</ListRowDescription>}
       </ListRowContent>
-      <Button onClick={onRemove} size="sm" variant="outline">
+      <Button
+        aria-label={t({
+          description: "What screen readers say for Remove, naming the lesson.",
+          message: "Remove {title} from saved lessons",
+          values: { title: lesson.title },
+        })}
+        onClick={onRemove}
+        size="sm"
+        variant="outline"
+      >
         {t("Remove")}
       </Button>
     </div>

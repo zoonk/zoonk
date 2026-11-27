@@ -172,7 +172,7 @@ test.describe("Saved lessons", () => {
     }
   });
 
-  test("Today opens Saved lessons, where a save removed keeps its row to save again, one that can't open leaves at once, and a lesson opened there closes back to it", async ({
+  test("the Plan and Today open Saved lessons, where a save removed keeps its row to save again, one that can't open leaves at once, and a lesson opened there closes back to it", async ({
     browser,
   }) => {
     const { chapter, finished, goal, unfinished, user } = await createLearner();
@@ -190,6 +190,10 @@ test.describe("Saved lessons", () => {
     await page.setViewportSize({ height: 844, width: 390 });
 
     try {
+      await page.goto("/plan");
+      await page.getByRole("region", { name: "More" }).getByRole("link", { name: "Saved lessons" }).click();
+      await expect(page).toHaveURL(/\/saved-lessons$/u);
+
       await page.goto("/today");
 
       await page
@@ -217,7 +221,7 @@ test.describe("Saved lessons", () => {
 
       const gone = page.getByRole("region", { name: "No longer available" });
       await expect(gone.getByText(goneTitle)).toBeVisible();
-      await gone.getByRole("button", { name: "Remove" }).click();
+      await gone.getByRole("button", { name: `Remove ${goneTitle} from saved lessons` }).click();
       await expect(gone).toBeHidden();
       await expect.poll(() => savedCount(user.id)).toBe(2);
 

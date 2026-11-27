@@ -177,7 +177,16 @@ export function UnavailableMapRow({
         <ListRowTitle>{saved.title}</ListRowTitle>
         <ListRowDescription>{kind}</ListRowDescription>
       </ListRowContent>
-      <Button onClick={onRemove} size="sm" variant="outline">
+      <Button
+        aria-label={t({
+          description: "What screen readers say for Remove, naming the map.",
+          message: "Remove {title} from saved maps",
+          values: { title: saved.title },
+        })}
+        onClick={onRemove}
+        size="sm"
+        variant="outline"
+      >
         {t("Remove")}
       </Button>
     </div>
