@@ -580,7 +580,8 @@ private struct StepScreen: View {
           LevelTestFlow(
             goalID: view.goal.id, targetLanguage: targetLanguage, testOutLevel: nil,
             opening: view.testStep?.mode == .direct ? .start : .read,
-            appLanguage: view.goal.language, onFirstLesson: { try await onPlacementDone(nil) },
+            appLanguage: view.goal.language, statedLevel: view.statedLevel,
+            onFirstLesson: { try await onPlacementDone(nil) },
             onOnboardingDone: onPlacementDone
           ) {
             try await onPlacementDone(nil)

@@ -99,7 +99,7 @@ final class PlacementTestRenderTests: XCTestCase {
       detail: "Full test"
     ) {
       TestOffer(
-        rows: [TestCopy.firstLessonRow] + TestCopy.courseRows(offer),
+        rows: [TestCopy.firstLessonRow(statedLevel: true)] + TestCopy.courseRows(offer),
         title: Text(TestCopy.whereToStart), description: Text(TestCopy.findsSkips),
         preselected: .quick,
         context: .init(goalID: goalID, test: .course, surface: .onboarding), isSaving: false,
@@ -311,7 +311,7 @@ final class PlacementTestRenderTests: XCTestCase {
     readingOnly.ranges = ["reading": LevelRange(high: "B2", low: "B1")]
     try await capture(
       "language-result-listening-not-tested", title: "Not tested yet",
-      detail: "You can test your listening later, from your plan."
+      detail: "You can take the test again later, from your plan."
     ) {
       LanguageTestResultView(
         result: readingOnly, targetLanguage: "en", testOutLevel: nil, pressed: nil,

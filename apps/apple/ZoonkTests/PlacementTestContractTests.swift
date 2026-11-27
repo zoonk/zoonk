@@ -85,7 +85,9 @@ final class PlacementTestContractTests: XCTestCase {
     XCTAssertEqual(step.courseOffer?.wholeCourse?.parts, 14)
     XCTAssertEqual(
       TestCopy.courseRows(try XCTUnwrap(step.courseOffer)).map { plainFacts($0.facts) },
-      [["12 questions", "About 6 min"], ["14 parts, any day you like", "About 1 hr 25 min"]])
+      [
+        ["Up to 12 questions", "About 6 min"], ["14 parts, any day you like", "About 1 hr 25 min"],
+      ])
 
     let direct = try read(
       #"{"mode":"direct","test":{"kind":"language"}}"#,

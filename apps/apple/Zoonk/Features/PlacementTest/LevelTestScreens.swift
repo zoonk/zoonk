@@ -123,7 +123,7 @@ struct LanguageTestResultView: View {
     }
 
     if result?.ranges?[LevelTest.Skill.reading.rawValue] != nil, result?.listeningUntested == true {
-      return String(localized: TestCopy.listeningLater)
+      return String(localized: TestCopy.testAgainLater)
     }
 
     return String(

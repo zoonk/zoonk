@@ -157,7 +157,9 @@ struct FocusTestFlow: View {
     let onboarding = host == .onboarding
 
     return TestOffer(
-      rows: onboarding ? [TestCopy.firstLessonRow, test] : [test],
+      rows: onboarding
+        ? [TestCopy.firstLessonRow(statedLevel: self.onboarding?.statedLevel == true), test]
+        : [test],
       chip: String(localized: FocusTestCopy.name),
       title: onboarding
         ? Text(TestCopy.whereToStart) : Text(FocusTestCopy.title(findsFocus: findsFocus)),

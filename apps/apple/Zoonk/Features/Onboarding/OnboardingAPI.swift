@@ -15,6 +15,15 @@ extension GoalOnboarding {
     return (try? PracticeJSON.recode(goal.details, as: Details.self))?.onboardingId
   }
 
+  /// The learner gave a level on the level question; "Not sure" gives none.
+  var statedLevel: Bool {
+    struct Details: Decodable {
+      let level: String?
+    }
+
+    return (try? PracticeJSON.recode(goal.details, as: Details.self))?.level != nil
+  }
+
   var languageAimView: LanguageAimView? {
     languageAim.flatMap { try? PracticeJSON.recode($0, as: LanguageAimView.self) }
   }

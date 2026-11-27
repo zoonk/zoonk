@@ -51,9 +51,11 @@ struct TestOffer: View {
                   .typeStyle(.rowTitle)
                   .foregroundStyle(Color(.foreground))
 
-                FactSegments(row.facts)
-                  .typeStyle(.meta)
-                  .foregroundStyle(.mutedForeground)
+                if !row.facts.isEmpty {
+                  FactSegments(row.facts)
+                    .typeStyle(.meta)
+                    .foregroundStyle(.mutedForeground)
+                }
               }
             }
           }
@@ -160,16 +162,20 @@ enum TestCopy {
       "Button on a listening question for a learner who can't play sound right now, such as on a bus. It ends the listening questions for this test."
   )
 
-  static let listeningLater = LocalizedStringResource(
-    "You can test your listening later, from your plan.", table: "Onboarding")
+  static let testAgainLater = LocalizedStringResource(
+    "You can take the test again later, from your plan.", table: "Onboarding",
+    comment:
+      "On a level test's result when listening wasn't tested, such as after the learner said they can't listen now."
+  )
 
   static let notTested = LocalizedStringResource(
     "Not tested yet", table: "Onboarding")
 
-  static func questions(_ count: Int) -> String {
+  /// "Up to 12 questions": a test can end sooner than its ceiling.
+  static func upToQuestions(_ count: Int) -> String {
     String(
-      localized: "\(count) questions", table: "Onboarding", locale: .appLanguage,
-      comment: "The number of questions in an exam's written test.")
+      localized: "Up to \(count) questions", table: "Onboarding", locale: .appLanguage,
+      comment: "The most questions a test asks. It can end sooner.")
   }
 
   static func about(minutes: Int) -> String {
@@ -234,9 +240,9 @@ enum TestCopy {
     )
   }
 
-  /// A test's facts before it starts: "12 questions · About 6 min".
+  /// A test's facts before it starts: "Up to 12 questions · About 6 min".
   static func testFacts(questions: Int, minutes: Int) -> [String] {
-    [Self.questions(questions), about(minutes: minutes)]
+    [upToQuestions(questions), about(minutes: minutes)]
   }
 
   /// The full test's facts before it starts: "14 parts, any day you like · About 1 hr 25 min".
@@ -244,10 +250,11 @@ enum TestCopy {
     [parts(wholeCourse.parts), about(minutes: wholeCourse.estimatedMinutes)]
   }
 
-  static var firstLessonRow: TestOfferRow {
+  /// "First lesson", with where it starts when the learner gave a level.
+  static func firstLessonRow(statedLevel: Bool) -> TestOfferRow {
     TestOfferRow(
       id: .firstLesson, label: String(localized: firstLesson),
-      facts: [String(localized: startsAtLevel)])
+      facts: statedLevel ? [String(localized: startsAtLevel)] : [])
   }
 
   /// A course's rows: its quick test, and the full test when it has more than one part.

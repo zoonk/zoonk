@@ -86,6 +86,8 @@ struct LevelTestFlow: View {
   var onStartLesson: ((String) -> Void)?
   /// Onboarding's: the learner's own language, which the result offers to switch the app to.
   var appLanguage: String?
+  /// Onboarding's: the learner gave a level, so "First lesson" says it starts there.
+  var statedLevel = false
   /// Onboarding's "First lesson".
   var onFirstLesson: (() async throws -> Void)?
   var onOnboardingDone: ((String?) async throws -> Void)?
@@ -259,7 +261,8 @@ struct LevelTestFlow: View {
     }
     let rows =
       isOnboarding
-      ? [TestCopy.firstLessonRow, levelTest] : [levelTest] + (testOutRow.map { [$0] } ?? [])
+      ? [TestCopy.firstLessonRow(statedLevel: statedLevel), levelTest]
+      : [levelTest] + (testOutRow.map { [$0] } ?? [])
 
     return TestOffer(
       rows: rows, chip: String(localized: PlacementTestCopy.languageName),

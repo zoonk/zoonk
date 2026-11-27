@@ -62,7 +62,8 @@ struct PlacementStep: View {
         flow(.start(chosen))
       } else if step?.mode == .offer, let offer = step?.courseOffer {
         TestOffer(
-          rows: [TestCopy.firstLessonRow] + TestCopy.courseRows(offer),
+          rows: [TestCopy.firstLessonRow(statedLevel: view.statedLevel)]
+            + TestCopy.courseRows(offer),
           title: Text(TestCopy.whereToStart), description: Text(TestCopy.findsSkips),
           preselected: .quick,
           context: AnalyticsEvent.TestContext(
