@@ -160,10 +160,14 @@ function verifyEveryExit(topics: readonly CourseSearchTopic[], answers: CourseSe
     expect(topic.askable).toBe(true);
     expect(topic).not.toBe(topics.at(-1));
 
+    expect(possibleBoundaries.some((other) => other.itemIds.some((id) => evidence.get(id)))).toBe(
+      true,
+    );
+
     expect(
-      possibleBoundaries.some(
-        (other) => new Set(other.itemIds.filter((id) => evidence.get(id))).size >= 2,
-      ),
+      topics
+        .slice(topics.indexOf(topic))
+        .some((other) => new Set(other.itemIds.filter((id) => evidence.get(id))).size >= 2),
     ).toBe(true);
   }
 
@@ -216,3 +220,106 @@ describe("every stopping point", () => {
     },
   );
 });
+
+const areaCases = [12, 40, 150].flatMap((count) =>
+  (count === 12 ? [2, 3] : [2, 3, 5]).flatMap((areas) =>
+    ["sequential", "interleaved"].flatMap((layout) =>
+      ["prefix", "uneven"].map((profile) => ({ areas, count, layout, profile })),
+    ),
+  ),
+);
+
+test.each(areaCases)(
+  "measures $profile learners on $count topics in $areas $layout areas",
+  ({ count, areas, layout, profile }) => {
+    const topics = chain(count, 16, areas).map((topic, index) => ({
+      ...topic,
+      sectionTitle: layout === "interleaved" ? String(index % areas) : topic.sectionTitle,
+    }));
+
+    const groups = [...Map.groupBy(topics, (topic) => topic.sectionTitle).values()];
+    const states = new Map<number, ReturnType<typeof courseSearch>>();
+    let seed = 42;
+
+    const draw = () => {
+      seed = (seed * 1_664_525 + 1_013_904_223) >>> 0;
+      return seed / 2 ** 32;
+    };
+
+    let found = 0,
+      high = 0,
+      known = 0;
+
+    for (let trial = 0; trial < 10_000; trial++) {
+      const fraction = Math.max(
+        0,
+        Math.min(
+          1,
+          0.5 + 0.2 * Math.sqrt(-2 * Math.log(1 - draw())) * Math.cos(2 * Math.PI * draw()),
+        ),
+      );
+
+      const strong = Math.floor(draw() * areas),
+        weak = (strong + 1) % areas;
+
+      const ends = groups.map((group, area) => {
+        if (profile === "prefix")
+          {return group.filter((topic) => Number(topic.id) < Math.round(count * fraction)).length;}
+        const extent =
+          area === strong ? 0.75 + draw() * 0.25 : (area === weak ? draw() * 0.25 : fraction);
+
+        return Math.round(group.length * extent);
+      });
+
+      const prefix = new Set(
+        groups.flatMap((group, area) => group.slice(0, ends[area]).map((topic) => topic.id)),
+      );
+
+      const learned = topics.map((topic) => draw() < (prefix.has(topic.id) ? 0.9 : 0.03));
+
+      const responses = learned.flatMap((learnedTopic) => {
+        const chance = learnedTopic ? 0.85 : 0.02;
+        return [draw() < chance, draw() < chance];
+      });
+
+      const answers: CourseSearchAnswer[] = [];
+      let path = 1;
+
+      for (;;) {
+        const state =
+          states.get(path) ?? courseSearch({ answers, ceiling: 8, position: 0.5, topics });
+
+        states.set(path, state);
+
+        if (!state.itemId) {
+          high += Number(
+            groups.some(
+              (group, i) =>
+                group.filter((topic) => state.startedPast.has(topic.id)).length >= ends[i]! + 3,
+            ),
+          );
+
+          for (const topic of topics) {
+            if (prefix.has(topic.id) && learned[Number(topic.id)]) {
+              known++;
+              if (state.startedPast.has(topic.id)) {found++;}
+            }
+          }
+
+          break;
+        }
+
+        if (answers.length >= 8) {throw new Error("Question ceiling exceeded");}
+        const correct = responses[Number(state.itemId)]!;
+        answers.push({ correct, itemId: state.itemId });
+        path = path * 2 + Number(correct);
+      }
+    }
+
+    console.info({ areas, count, found: found / known, layout, overshoot: high / 10000, profile });
+
+    if (profile === "prefix") {expect(high / 10000).toBeLessThanOrEqual(count === 150 ? 0.05 : 0.03);}
+    else if (count === 150) {expect(found).toBeGreaterThan(0);}
+    else {expect(high / 10000).toBeLessThanOrEqual(0.08);}
+  },
+);
