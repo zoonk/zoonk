@@ -29,7 +29,6 @@ msgid "Your answer and the right one"
 msgstr "Twoja odpowiedź i poprawna odpowiedź"
 
 #: src/_components/answer-pair.tsx
-#: src/essay/essay-labels.tsx
 #: src/mock/mock-question.tsx
 #: src/onboarding/steps/question-steps.tsx
 #: src/questions/numeric-answer-field.tsx
@@ -3205,11 +3204,6 @@ msgctxt "3Rx6Qo"
 msgid "Advanced"
 msgstr "Zaawansowany"
 
-#: src/essay/essay-labels.tsx
-msgctxt "EWD_9X"
-msgid "Your essay"
-msgstr "Twoje wypracowanie"
-
 #: src/essay/essay-skip-button.tsx
 #: src/focus-test/focus-test-flow.tsx
 #: src/focus-test/focus-test-screens.tsx
@@ -5156,6 +5150,7 @@ msgstr "Podejmij pierwsze wyzwanie tygodnia"
 
 #: src/journey/preparation/written-projection.tsx
 #: src/language/exam-speaking/exam-speaking-labels.ts
+#: src/mock/mock-result-points.tsx
 #: src/syllabus/subject-written-standing.tsx
 msgctxt "st8F-L"
 msgid "{range} of {max}"
@@ -5173,21 +5168,6 @@ msgid "Not measured yet"
 msgstr "Jeszcze nie zmierzono"
 
 #: src/journey/preparation/written-projection.tsx
-msgctxt "uOG8dr"
-msgid "Above the {minimum} points needed"
-msgstr "Powyżej wymaganego minimum {minimum} pkt"
-
-#: src/journey/preparation/written-projection.tsx
-msgctxt "qjfXcf"
-msgid "{points} points short of the {minimum} needed"
-msgstr "Brakuje {points} pkt do wymaganego minimum {minimum}"
-
-#: src/journey/preparation/written-projection.tsx
-msgctxt "vUZHcz"
-msgid "Close to the {minimum} points needed"
-msgstr "Blisko wymaganego minimum {minimum}"
-
-#: src/journey/preparation/written-projection.tsx
 msgctxt "iPMJIn"
 msgid "{part} needs {share} of its points, whatever your other scores."
 msgstr "Do zaliczenia {part} potrzeba {share} punktów, niezależnie od pozostałych wyników."
@@ -5198,9 +5178,9 @@ msgid "{part} needs {minimum} points, whatever your other scores."
 msgstr "Z {part} trzeba zdobyć {minimum} pkt, niezależnie od pozostałych wyników."
 
 #: src/journey/preparation/written-projection.tsx
-msgctxt "doYQpO"
-msgid "Below the minimum to pass"
-msgstr "Poniżej progu zaliczenia"
+msgctxt "IDmbkm"
+msgid "Likely below the minimum to pass"
+msgstr "Prawdopodobnie poniżej minimum wymaganego do zdania"
 
 #: src/journey/preparation/written-projection.tsx
 msgctxt "P8eo6O"
@@ -8470,6 +8450,11 @@ msgstr "W testach z pytaniami zamkniętymi trzeba łącznie zdobyć {unit, selec
 msgctxt "Z_itEC"
 msgid "{name} needs {unit, select, percent {{minimum} of its points} other {{value, plural, one {# point} other {# points}}}} and isn't in this mock exam."
 msgstr "{name}: wymagane minimum to {unit, select, percent {{minimum} możliwych punktów} other {{value, plural, one {# punkt} few {# punkty} many {# punktów} other {# punktu}}}}, a tej części nie ma w tym egzaminie próbnym."
+
+#: src/mock/mock-result-points.tsx
+msgctxt "o4fVUK"
+msgid "No points estimate in this mock exam"
+msgstr "Brak szacunku punktów w tym egzaminie próbnym"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "JOdrmN"
@@ -14343,6 +14328,11 @@ msgid "The exam notice doesn't say how many points each criterion is worth."
 msgstr "Oficjalne ogłoszenie nie podaje, ile punktów jest warte każde kryterium."
 
 #: src/writing/writing-result.tsx
+msgctxt "0LHFOC"
+msgid "Graded by level: we can't yet estimate this answer's points closely enough."
+msgstr "Ocena według poziomu: nie możemy jeszcze wystarczająco dokładnie oszacować wyniku punktowego tej odpowiedzi."
+
+#: src/writing/writing-result.tsx
 msgctxt "JrF1rx"
 msgid "Criteria and points from the exam notice."
 msgstr "Kryteria i punktacja z oficjalnego ogłoszenia."
@@ -14549,3 +14539,28 @@ msgstr "Usuń imiona i nazwiska, podpisy oraz oznaczenia, które nie są częśc
 msgctxt "DsBKHH"
 msgid "Leave out anything that identifies you"
 msgstr "Pomiń wszystko, co pozwala cię zidentyfikować"
+
+#: src/writing/written-standing.tsx
+msgctxt "S2T3vo"
+msgid "Likely above the {minimum} points needed"
+msgstr "Prawdopodobnie powyżej wymaganego minimum {minimum} pkt"
+
+#: src/writing/written-standing.tsx
+msgctxt "kLoJFQ"
+msgid "Likely {points} points short of the {minimum} needed"
+msgstr "Prawdopodobnie brakuje {points} pkt do wymaganego minimum {minimum} pkt"
+
+#: src/writing/written-standing.tsx
+msgctxt "sUornn"
+msgid "Likely below the {minimum} points needed"
+msgstr "Prawdopodobnie poniżej wymaganego minimum {minimum} pkt"
+
+#: src/writing/written-standing.tsx
+msgctxt "8vhDfM"
+msgid "Could be either side of the {minimum} points needed"
+msgstr "Wynik może być powyżej lub poniżej wymaganego minimum {minimum} pkt"
+
+#: src/writing/written-standing.tsx
+msgctxt "bNTvU0"
+msgid "Can't say yet whether this reaches the {minimum} points needed"
+msgstr "Nie można jeszcze stwierdzić, czy wynik osiągnie wymagane minimum {minimum} pkt"

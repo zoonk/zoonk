@@ -29,7 +29,6 @@ msgid "Your answer and the right one"
 msgstr "回答と正解"
 
 #: src/_components/answer-pair.tsx
-#: src/essay/essay-labels.tsx
 #: src/mock/mock-question.tsx
 #: src/onboarding/steps/question-steps.tsx
 #: src/questions/numeric-answer-field.tsx
@@ -3205,11 +3204,6 @@ msgctxt "3Rx6Qo"
 msgid "Advanced"
 msgstr "上級"
 
-#: src/essay/essay-labels.tsx
-msgctxt "EWD_9X"
-msgid "Your essay"
-msgstr "小論文"
-
 #: src/essay/essay-skip-button.tsx
 #: src/focus-test/focus-test-flow.tsx
 #: src/focus-test/focus-test-screens.tsx
@@ -5156,6 +5150,7 @@ msgstr "初めての週間チャレンジに挑戦する"
 
 #: src/journey/preparation/written-projection.tsx
 #: src/language/exam-speaking/exam-speaking-labels.ts
+#: src/mock/mock-result-points.tsx
 #: src/syllabus/subject-written-standing.tsx
 msgctxt "st8F-L"
 msgid "{range} of {max}"
@@ -5173,21 +5168,6 @@ msgid "Not measured yet"
 msgstr "まだ測定されていません"
 
 #: src/journey/preparation/written-projection.tsx
-msgctxt "uOG8dr"
-msgid "Above the {minimum} points needed"
-msgstr "必要な{minimum}点を上回っています"
-
-#: src/journey/preparation/written-projection.tsx
-msgctxt "qjfXcf"
-msgid "{points} points short of the {minimum} needed"
-msgstr "必要な{minimum}点まであと{points}点です"
-
-#: src/journey/preparation/written-projection.tsx
-msgctxt "vUZHcz"
-msgid "Close to the {minimum} points needed"
-msgstr "必要な{minimum}点に近い状態です"
-
-#: src/journey/preparation/written-projection.tsx
 msgctxt "iPMJIn"
 msgid "{part} needs {share} of its points, whatever your other scores."
 msgstr "ほかのスコアにかかわらず、{part}は配点の{share}が必要です。"
@@ -5198,9 +5178,9 @@ msgid "{part} needs {minimum} points, whatever your other scores."
 msgstr "ほかのスコアにかかわらず、{part}は{minimum}点が必要です。"
 
 #: src/journey/preparation/written-projection.tsx
-msgctxt "doYQpO"
-msgid "Below the minimum to pass"
-msgstr "合格に必要な最低点を下回っています"
+msgctxt "IDmbkm"
+msgid "Likely below the minimum to pass"
+msgstr "合格最低点に届かない可能性が高い"
 
 #: src/journey/preparation/written-projection.tsx
 msgctxt "P8eo6O"
@@ -8470,6 +8450,11 @@ msgstr "選択式の試験では合計で{unit, select, percent {満点の{minim
 msgctxt "Z_itEC"
 msgid "{name} needs {unit, select, percent {{minimum} of its points} other {{value, plural, one {# point} other {# points}}}} and isn't in this mock exam."
 msgstr "{name}では{unit, select, percent {満点の{minimum}} other {{value, plural, other {#点}}}}が必要ですが、この模試には含まれていません。"
+
+#: src/mock/mock-result-points.tsx
+msgctxt "o4fVUK"
+msgid "No points estimate in this mock exam"
+msgstr "この模試では得点を推定できません"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "JOdrmN"
@@ -14343,6 +14328,11 @@ msgid "The exam notice doesn't say how many points each criterion is worth."
 msgstr "試験要項には、各採点基準の配点が記載されていません。"
 
 #: src/writing/writing-result.tsx
+msgctxt "0LHFOC"
+msgid "Graded by level: we can't yet estimate this answer's points closely enough."
+msgstr "レベルで評価：この回答の得点は、まだ十分な精度で推定できません。"
+
+#: src/writing/writing-result.tsx
 msgctxt "JrF1rx"
 msgid "Criteria and points from the exam notice."
 msgstr "採点基準と配点は試験要項に記載されています。"
@@ -14549,3 +14539,28 @@ msgstr "回答に関係のない名前、署名、印を取り除きましょう
 msgctxt "DsBKHH"
 msgid "Leave out anything that identifies you"
 msgstr "自分だとわかる情報を入れない"
+
+#: src/writing/written-standing.tsx
+msgctxt "S2T3vo"
+msgid "Likely above the {minimum} points needed"
+msgstr "必要な{minimum}点を上回る可能性が高い"
+
+#: src/writing/written-standing.tsx
+msgctxt "kLoJFQ"
+msgid "Likely {points} points short of the {minimum} needed"
+msgstr "必要な{minimum}点に{points}点足りない可能性が高い"
+
+#: src/writing/written-standing.tsx
+msgctxt "sUornn"
+msgid "Likely below the {minimum} points needed"
+msgstr "必要な{minimum}点に届かない可能性が高い"
+
+#: src/writing/written-standing.tsx
+msgctxt "8vhDfM"
+msgid "Could be either side of the {minimum} points needed"
+msgstr "必要な{minimum}点を上回る可能性も下回る可能性もあります"
+
+#: src/writing/written-standing.tsx
+msgctxt "bNTvU0"
+msgid "Can't say yet whether this reaches the {minimum} points needed"
+msgstr "必要な{minimum}点に届くかどうかは、まだ判断できません"
