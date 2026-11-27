@@ -183,12 +183,12 @@ import {{packageName}}.infrastructure.ITransformForStorage
         @JsonProperty(value = {{#lambda.doublequote}}{{{value}}}{{/lambda.doublequote}}) {{#enumUnknownDefaultCase}}{{#-last}}@JsonEnumDefaultValue {{/-last}}{{/enumUnknownDefaultCase}}{{&name}}({{{value}}}){{^-last}},{{/-last}}{{#-last}};{{/-last}}
         {{/jackson}}
         {{#kotlinx_serialization}}
-        {{#vendorExtensions.x-zoonk-union-tag}}
+        {{#vendorExtensions.x-zoonk-closed-enum}}
         {{^-last}}@SerialName(value = {{#lambda.doublequote}}{{{value}}}{{/lambda.doublequote}}) {{&name}}({{{value}}}),{{/-last}}{{#-last}};{{/-last}}
-        {{/vendorExtensions.x-zoonk-union-tag}}
-        {{^vendorExtensions.x-zoonk-union-tag}}
+        {{/vendorExtensions.x-zoonk-closed-enum}}
+        {{^vendorExtensions.x-zoonk-closed-enum}}
         @SerialName(value = {{#lambda.doublequote}}{{{value}}}{{/lambda.doublequote}}) {{&name}}({{{value}}}){{^-last}},{{/-last}}{{#-last}};{{/-last}}
-        {{/vendorExtensions.x-zoonk-union-tag}}
+        {{/vendorExtensions.x-zoonk-closed-enum}}
         {{/kotlinx_serialization}}
         {{/multiplatform}}
         {{#multiplatform}}
@@ -207,9 +207,17 @@ import {{packageName}}.infrastructure.ITransformForStorage
 
             override fun deserialize(decoder: Decoder): {{{nameInPascalCase}}} {
                 val value = decoder.decodeSerializableValue({{^isContainer}}{{dataType}}{{/isContainer}}{{#isContainer}}kotlin.String{{/isContainer}}.serializer())
+                {{#vendorExtensions.x-zoonk-unknown-tag}}
+                if ({{{nameInPascalCase}}}.entries.any { it.value == value && it.value != "__unknown_api_union_tag__" && it.value != "unknown_default_open_api" }) {
+                    throw kotlinx.serialization.SerializationException("Known {{baseName}} tag: $value")
+                }
+                return {{{nameInPascalCase}}}.entries.first { it.value == "__unknown_api_union_tag__" }
+                {{/vendorExtensions.x-zoonk-unknown-tag}}
+                {{^vendorExtensions.x-zoonk-unknown-tag}}
                 return {{{nameInPascalCase}}}.entries.firstOrNull { it.value == value }
-                    {{#vendorExtensions.x-zoonk-union-tag}}?: throw kotlinx.serialization.SerializationException("Unexpected {{baseName}} tag: $value"){{/vendorExtensions.x-zoonk-union-tag}}
-                    {{^vendorExtensions.x-zoonk-union-tag}}?: {{{nameInPascalCase}}}.{{#allowableValues}}{{#enumVars}}{{#-last}}{{&name}}{{/-last}}{{/enumVars}}{{/allowableValues}}{{/vendorExtensions.x-zoonk-union-tag}}
+                    {{#vendorExtensions.x-zoonk-closed-enum}}?: throw kotlinx.serialization.SerializationException("Unexpected {{baseName}} tag: $value"){{/vendorExtensions.x-zoonk-closed-enum}}
+                    {{^vendorExtensions.x-zoonk-closed-enum}}?: {{{nameInPascalCase}}}.{{#allowableValues}}{{#enumVars}}{{#-last}}{{&name}}{{/-last}}{{/enumVars}}{{/allowableValues}}{{/vendorExtensions.x-zoonk-closed-enum}}
+                {{/vendorExtensions.x-zoonk-unknown-tag}}
             }
 
             override fun serialize(encoder: Encoder, value: {{{nameInPascalCase}}}) {

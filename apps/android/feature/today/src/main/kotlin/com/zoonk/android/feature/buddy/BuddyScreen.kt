@@ -282,6 +282,8 @@ internal fun BuddyChanges(
         BuddyEditor(
             look = look,
             name = status.buddy.name.orEmpty(),
+            knownKind = look.kind.key == status.buddy.kind.value,
+            knownGlasses = look.glasses.key == status.buddy.glasses.value,
             isSaving = vm.isSaving,
             saveFailed = vm.editorSaveFailed,
             onClose = closeEditor,
@@ -480,7 +482,7 @@ internal fun GlassesSheet(
 ) {
     val earned =
         status.glasses
-            .filter { it.earned }
+            .filter { it.earned && look.kind.key == status.buddy.kind.value }
             .map { BuddyGlasses.of(it.glasses.value) }
             .toSet()
 

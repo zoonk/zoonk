@@ -293,11 +293,12 @@ struct CheckpointScreen: View {
 
     do {
       switch try await checkpointCall.read(blockId, token) {
-      case .notLanguage:
+      case .LanguageCheckpointCallNotLanguage, .case7:
         return .none
-      case .plusRequired:
+      case .LanguageCheckpointCallPlusRequired:
         return .plusRequired
-      case .earlierFirst, .notStarted, .preparing, .ready:
+      case .LanguageCheckpointCallEarlierFirst, .LanguageCheckpointCallIntro,
+        .LanguageCheckpointCallPreparing, .LanguageCheckpointCallReady:
         return .call
       }
     } catch APIError.notFound {

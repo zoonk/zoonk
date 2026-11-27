@@ -1028,6 +1028,10 @@ private struct LessonWaitAlternative: View {
   let alternative: Components.Schemas.ReadyAlternative
 
   var body: some View {
+    if case .case3 = alternative { EmptyView() } else { content }
+  }
+
+  private var content: some View {
     VStack(alignment: .leading, spacing: 8) {
       Text(
         "Ready to start now", tableName: "Player",
@@ -1066,6 +1070,7 @@ private struct LessonWaitAlternative: View {
 
   private var title: Text {
     switch alternative {
+    case .case3: Text(verbatim: "")
     case .case1(let lesson):
       Text(lesson.title)
     case .case2(let review):
@@ -1077,6 +1082,7 @@ private struct LessonWaitAlternative: View {
 
   private func open() {
     switch alternative {
+    case .case3: break
     case .case1(let lesson):
       router.dismissTask()
       router.open(.lesson(lessonId: lesson.lessonId))

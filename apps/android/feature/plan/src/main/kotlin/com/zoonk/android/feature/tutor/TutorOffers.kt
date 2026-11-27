@@ -86,6 +86,10 @@ internal fun TutorOffer(
     modifier: Modifier = Modifier,
 ) {
     when (offer) {
+        is TutorToolOffer.TutorToolOfferOneOf14Value -> {
+            return
+        }
+
         is TutorToolOffer.TutorToolOfferOneOfValue -> {
             StartGoalOffer(offer.value, routes, modifier)
         }

@@ -10,6 +10,16 @@ extension UnknownAPIValue {
 }
 
 extension KeyedDecodingContainer {
+  func decode(_ type: String.Type, forKey key: Key) throws -> String {
+    let value = try decodeScalar(type, forKey: key)
+    guard value != "__unknown_api_union_tag__" else { throw UnsupportedAPIEnum() }
+    return value
+  }
+
+  private func decodeScalar<Value: Decodable>(_ type: Value.Type, forKey key: Key) throws -> Value {
+    try decode(type, forKey: key)
+  }
+
   /// Skip only a row that this version cannot interpret. Missing data and malformed rows still fail.
   func decode<Row: Decodable>(_ type: [Row].Type, forKey key: Key) throws -> [Row] {
     var items = try nestedUnkeyedContainer(forKey: key)

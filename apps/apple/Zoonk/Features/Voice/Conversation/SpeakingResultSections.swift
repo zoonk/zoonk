@@ -119,7 +119,8 @@ struct ExamSpeakingSections: View {
   private var levelLine: String? {
     let bands = Set(task.criteria.map(\.levelBand))
 
-    guard task.criteria.allSatisfy({ $0.display == .band }), bands.count == 1,
+    guard task.level != .unrecognized, task.criteria.allSatisfy({ $0.display == .band }),
+      bands.count == 1,
       let band = bands.first, let band
     else {
       return nil
@@ -154,22 +155,27 @@ struct ExamSpeakingSections: View {
         .typeWeight(.medium)
         .monospacedDigit()
       Group {
-        switch grade.standing {
-        case .unrecognized: EmptyView()
-        case .at:
-          Text("At \(task.level.rawValue)", tableName: "Voice", comment: "An estimate at the level")
+        if task.level != .unrecognized {
+          switch grade.standing {
+          case .unrecognized: EmptyView()
+          case .at:
+            Text(
+              "At \(task.level.rawValue)", tableName: "Voice", comment: "An estimate at the level"
+            )
             .foregroundStyle(.successText)
-        case .near:
-          Text(
-            "Near \(task.level.rawValue)", tableName: "Voice", comment: "An estimate near the level"
-          )
-          .foregroundStyle(.mutedForeground)
-        case .below:
-          Text(
-            "Below \(task.level.rawValue)", tableName: "Voice",
-            comment: "An estimate below the level"
-          )
-          .foregroundStyle(.mutedForeground)
+          case .near:
+            Text(
+              "Near \(task.level.rawValue)", tableName: "Voice",
+              comment: "An estimate near the level"
+            )
+            .foregroundStyle(.mutedForeground)
+          case .below:
+            Text(
+              "Below \(task.level.rawValue)", tableName: "Voice",
+              comment: "An estimate below the level"
+            )
+            .foregroundStyle(.mutedForeground)
+          }
         }
       }
       .typeStyle(.meta)
@@ -282,7 +288,7 @@ struct SpeakingMockSections: View {
     )?
   {
     switch feedback {
-    case .ielts(let feedback):
+    case .LanguageIeltsSpeakingMockFeedback(let feedback):
       (
         (feedback.overall.bandLow, feedback.overall.bandHigh),
         String(
@@ -297,7 +303,7 @@ struct SpeakingMockSections: View {
         },
         feedback.focus.rawValue
       )
-    case .toefl(let feedback):
+    case .LanguageToeflSpeakingMockFeedback(let feedback):
       (
         (feedback.overall.bandLow, feedback.overall.bandHigh),
         String(
@@ -312,7 +318,7 @@ struct SpeakingMockSections: View {
         },
         feedback.focus.rawValue
       )
-    case nil:
+    case .case3, nil:
       nil
     }
   }
@@ -361,14 +367,15 @@ enum SpeakingEstimateText {
       .appLanguage)
 
     switch estimate {
-    case .letter(let letter):
+    case .case4: return ""
+    case .SpeakingLetterEstimate(let letter):
       return span(letter.high, letter.low)
-    case .points(let points):
+    case .SpeakingPointsEstimate(let points):
       return String(
         localized:
           "\(span(points.low.formatted(number), points.high.formatted(number))) of \(points.max.formatted(number)) points",
         table: "Voice", comment: "An estimate in the points its bands give, of the line's most")
-    case .band(let band):
+    case .SpeakingBandEstimate(let band):
       return String(
         localized:
           "\(span(band.low.formatted(number), band.high.formatted(number))) of \(band.max.formatted(number))",

@@ -38,6 +38,7 @@ sealed interface NoteTarget {
             when (field) {
                 is ChordTargetValue -> chordQuality(field.value.quality)?.let { Chord(field.value.root, it) }
                 is NotesTargetValue -> Notes(field.value.notes)
+                else -> null
             }
 
         private fun chordQuality(quality: PlayableLibraryStepAnyOfContentOneOf30FieldsStartOneOf.Quality): ChordQuality? =
@@ -125,7 +126,8 @@ object KeyboardFretboard {
         expected: ActivityExpected?,
         fallback: List<Int>,
     ): List<Int> =
-        (expected.interaction as? ActivityExpectedAnswer.PitchclassesWrapper)?.value?.pitchClasses?.map { it.toInt() } ?: fallback
+        (expected.interaction as? ActivityExpectedAnswer.ActivityExpectedPitchClassesValue)?.value?.pitchClasses?.map { it.toInt() }
+            ?: fallback
 
     /**
      * Where the notes start: the learner's answer when there is one; in an explanation, the solved target, since without the

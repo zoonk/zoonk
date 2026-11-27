@@ -454,6 +454,10 @@ private fun topic(context: LessonQuestionContext): String =
 
 private fun about(context: LessonQuestionContext): TutorTurn.About =
     when (context) {
+        is LessonQuestionContext.LessonQuestionContextOneOf4Value -> {
+            TutorTurn.About.Lesson
+        }
+
         is LessonQuestionContext.LessonQuestionContextOneOfValue -> {
             TutorTurn.About.Lesson
         }

@@ -6,6 +6,7 @@ import com.zoonk.api.models.AnytimeMockInputShapeAnyOf
 import com.zoonk.api.models.ItemSetListening
 import com.zoonk.api.models.MatchAnswer
 import com.zoonk.api.models.MistakePracticePracticeInnerQuestionsInner
+import com.zoonk.api.models.PlanChangeOperationsInner
 import com.zoonk.api.models.StudyMissionOpens
 import com.zoonk.api.models.WrittenTestShape
 import kotlinx.serialization.Serializable
@@ -32,6 +33,12 @@ class ApiJsonTest {
                 """{"audio":null,"plays":3,"task":null,"title":null,"transcript":null}""",
             )
         assertEquals(3.0, listening.plays, 0.0)
+    }
+
+    @Test
+    fun aNestedPlanOperationLeavesTheOuterNoticeRouteAlone() {
+        val operation = ApiJson.decodeFromString<PlanChangeOperationsInner>("""{"kind":"followNotice"}""")
+        assertTrue(operation is PlanChangeOperationsInner.PlanChangeOperationsInnerAnyOf2Value)
     }
 
     @Test

@@ -10,16 +10,21 @@ final class TodayStoreTests: XCTestCase {
       blocks: [], nextPosition: nil, id: nil, emptyDay: nil, localDate: "2026-10-28",
       goalID: "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d00", state: "future",
       missions:
-        #"[{"done":0,"kind":"future","status":"todo","total":1},{"done":0,"kind":"review","status":"todo","total":1}]"#
+        #"[{"done":0,"kind":"future","status":"todo","opens":{"kind":"listening"},"total":1},{"done":0,"kind":"review","status":"todo","opens":{"kind":"listening"},"total":1}]"#
     )
+    let futureSession = session.replacingOccurrences(
+      of: #""status":"unstarted""#, with: #""status":"archived""#)
     let wire: Components.Schemas.Today = try decode(
       """
       {"earlierWork":[],"goal":{"dateEstimated":false,"displayName":"Goal","id":"5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d00","kind":"learn","title":"Goal"},
-      "lessonStatus":{},"session":\(session),"studiedToday":false,"userId":"5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d00"}
+      "lessonStatus":{},"progress":{"measure":"mastery"},"session":\(futureSession),"studiedToday":false,"userId":"5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d00"}
       """)
     let today: TodayView = try StudyJSON.recode(wire)
 
     XCTAssertEqual(today.session.state, .unrecognized)
+    XCTAssertEqual(today.session.status, .unrecognized)
+    XCTAssertNil(today.progress)
+    XCTAssertNil(today.session.missions.first?.opens)
     XCTAssertEqual(today.session.localDate, "2026-10-28")
     XCTAssertEqual(today.session.missions.map(\.kind), [.review])
   }

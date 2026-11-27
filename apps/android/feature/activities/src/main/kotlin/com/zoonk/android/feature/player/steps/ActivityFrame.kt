@@ -500,6 +500,8 @@ private fun ActivityFeedback(
             is InteractionCheckValue -> {
                 FeedbackText(check.value.explanation)
             }
+
+            else -> {}
         }
 
         LocalResultNotes.current?.invoke()

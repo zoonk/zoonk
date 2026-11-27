@@ -160,6 +160,7 @@ private fun Loaded(
         }
     val groups =
         MemoryCategory.entries
+            .filterNot { it == MemoryCategory.UNKNOWN_DEFAULT_OPEN_API }
             .map { category ->
                 category to memory.facts.filter { it.category == category }
             }.filter { it.second.isNotEmpty() }
@@ -363,7 +364,8 @@ private fun sourceName(fact: MemoryFact): String? {
     return stringResource(
         when {
             fact.origin == MemoryFact.Origin.NOTICED -> R.string.memory_source_noticed
-            fact.origin == MemoryFact.Origin.UNKNOWN_DEFAULT_OPEN_API || fact.source?.kind == MemorySource.Kind.UNKNOWN_DEFAULT_OPEN_API -> return null
+            fact.origin == MemoryFact.Origin.UNKNOWN_DEFAULT_OPEN_API -> return null
+            fact.source?.kind == MemorySource.Kind.UNKNOWN_DEFAULT_OPEN_API -> return null
             fact.source == null || fact.source?.kind == MemorySource.Kind.ONBOARDING -> R.string.memory_source_you
             fact.source?.kind == MemorySource.Kind.CALL -> R.string.memory_source_call
             fact.source?.kind == MemorySource.Kind.CHAT -> R.string.memory_source_chat

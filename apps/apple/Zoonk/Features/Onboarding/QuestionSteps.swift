@@ -1024,6 +1024,7 @@ enum DateProblem: Equatable {
       self = .passed
     case .case2:
       self = .today
+    case .case4: return nil
     case .case3(let noSitting):
       self = .noSitting(month: noSitting.month, closest: noSitting.closest)
     case nil:

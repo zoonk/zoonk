@@ -58,15 +58,10 @@ enum PreferencesUpdate: Equatable, Sendable {
     return next
   }
 
-  var body: Components.Schemas.LearningProfileUpdate {
+  var body: Components.Schemas.LearningProfileUpdate? {
     switch self {
     case .buddy(let buddy):
-      .init(
-        buddy: .init(
-          value1: .init(
-            glasses: .init(rawValue: buddy.glasses.rawValue),
-            kind: .init(rawValue: buddy.kind.rawValue) ?? .zu,
-            name: buddy.name)))
+      buddy.input.map { .init(buddy: .init(value1: $0)) }
     case .homeCountry(let country):
       .init(homeCountry: country.code)
     case .shareUsageData(let shares):

@@ -47,12 +47,14 @@ struct BuddyEditor: View {
 
         ToolbarItem(placement: .confirmationAction) {
           Button(role: .confirm, action: saveChoice)
+            .disabled(choice.input == nil)
         }
       }
     }
   }
 
   private func saveChoice() {
+    guard choice.input != nil else { return }
     let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
     save(
       BuddyChoice(kind: choice.kind, name: trimmed.isEmpty ? nil : trimmed, glasses: choice.glasses)
@@ -209,7 +211,9 @@ struct BuddyGlassesPicker: View {
         ForEach(status.glasses.filter { $0.glasses != .unrecognized }, id: \.glasses) { option in
           let isWorn = store.status.value?.buddy.glasses == option.glasses.worn
 
-          ChoiceRow(isPicked: isWorn, isLocked: !option.earned) {
+          ChoiceRow(
+            isPicked: isWorn, isLocked: !option.earned || status.buddy.kind == .unrecognized
+          ) {
             let choice = BuddyChoice(
               kind: status.buddy.kind, name: status.buddy.name, glasses: option.glasses.worn)
             saving.run { [store] in await store.save(choice) }

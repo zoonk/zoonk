@@ -243,10 +243,8 @@ private fun checkpointKind(value: String) =
 
 fun StudyDay.toDayView(): DayView =
     when (this) {
-        is StudyDay.ActiveWrapper -> value.toDayView()
-        is StudyDay.CompletedWrapper -> value.toDayView()
-        is StudyDay.PlannedWrapper -> value.toDayView()
-        is StudyDay.UnstartedWrapper -> value.toDayView()
+        is StudyDay.StudySessionValue -> value.toDayView()
+        is StudyDay.UnstartedStudyDayValue -> value.toDayView()
     }
 
 fun StudySession.toDayView(): DayView =
@@ -441,8 +439,9 @@ private fun UnstartedStudyDayMissionsInner.toDayMission(): DayMission? {
     )
 }
 
-fun StudyMissionOpens.toMissionOpens(): MissionOpens =
+fun StudyMissionOpens.toMissionOpens(): MissionOpens? =
     when (this) {
+        is StudyMissionOpens.StudyMissionOpensOneOf8Value -> null
         is StudyMissionOpens.StudyMissionOpensOneOfValue -> MissionOpens.Block(blockId = value.blockId, position = null)
         is StudyMissionOpens.StudyMissionOpensOneOf1Value -> MissionOpens.MistakesPractice
         is StudyMissionOpens.StudyMissionOpensOneOf2Value -> MissionOpens.Pattern(value.patternId)
@@ -453,8 +452,12 @@ fun StudyMissionOpens.toMissionOpens(): MissionOpens =
         is StudyMissionOpens.StudyMissionOpensOneOf7Value -> MissionOpens.MockChooser
     }
 
-private fun UnstartedStudyDayMissionsInnerOpens.toMissionOpens(): MissionOpens =
+private fun UnstartedStudyDayMissionsInnerOpens.toMissionOpens(): MissionOpens? =
     when (this) {
+        is UnstartedStudyDayMissionsInnerOpens.StudyMissionOpensOneOf8Value -> {
+            null
+        }
+
         is UnstartedStudyDayMissionsInnerOpens.UnstartedStudyDayMissionsInnerOpensAnyOfValue -> {
             MissionOpens.Block(blockId = null, position = value.ref.position)
         }

@@ -43,10 +43,11 @@ struct SettingsAPI: SettingsAPIClient {
   func updatePreferences(token: String, _ update: PreferencesUpdate) async throws
     -> LearningPreferences
   {
-    try await clients.perform(token: token) { client in
+    guard let body = update.body else { throw APIError.unavailable }
+    return try await clients.perform(token: token) { client in
       switch try await client.updateCurrentUserLearningProfile(
         query: .init(language: .init(rawValue: OnboardingAPI.language) ?? .en),
-        body: .json(update.body))
+        body: .json(body))
       {
       case .ok(let response):
         return LearningPreferences(try response.body.json.profile)

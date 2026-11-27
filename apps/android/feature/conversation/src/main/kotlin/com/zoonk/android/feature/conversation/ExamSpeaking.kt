@@ -116,16 +116,17 @@ fun examTaskTitle(task: ExamSpeakingTask) =
 @Composable
 internal fun standingText(
     standing: ExamSpeakingFeedbackCriteriaInner.Standing,
-    level: String,
-): String {
+    level: ExamSpeakingTask.Level,
+): String? {
+    if (level == ExamSpeakingTask.Level.UNKNOWN_DEFAULT_OPEN_API) return null
     val label =
         when (standing) {
-            ExamSpeakingFeedbackCriteriaInner.Standing.UNKNOWN_DEFAULT_OPEN_API -> return ""
+            ExamSpeakingFeedbackCriteriaInner.Standing.UNKNOWN_DEFAULT_OPEN_API -> return null
             ExamSpeakingFeedbackCriteriaInner.Standing.AT -> R.string.conversation_at_level
             ExamSpeakingFeedbackCriteriaInner.Standing.NEAR -> R.string.conversation_near_level
             ExamSpeakingFeedbackCriteriaInner.Standing.BELOW -> R.string.conversation_below_level
         }
-    return stringResource(label, level)
+    return stringResource(label, level.value)
 }
 
 /** Main's `useEstimateText`: Goethe's letters best first, else the range of the scale or of the task's points. */
@@ -141,11 +142,15 @@ internal fun estimateText(estimate: SpeakingEstimate): String {
     ) = if (first == last) first else "$first–$last"
 
     return when (estimate) {
-        is SpeakingEstimate.LetterWrapper -> {
+        is SpeakingEstimate.SpeakingEstimateOneOfValue -> {
+            ""
+        }
+
+        is SpeakingEstimate.SpeakingLetterEstimateValue -> {
             span(estimate.value.high, estimate.value.low)
         }
 
-        is SpeakingEstimate.PointsWrapper -> {
+        is SpeakingEstimate.SpeakingPointsEstimateValue -> {
             stringResource(
                 R.string.conversation_band_points,
                 span(number(estimate.value.low), number(estimate.value.high)),
@@ -153,7 +158,7 @@ internal fun estimateText(estimate: SpeakingEstimate): String {
             )
         }
 
-        is SpeakingEstimate.BandWrapper -> {
+        is SpeakingEstimate.SpeakingBandEstimateValue -> {
             stringResource(
                 R.string.conversation_band,
                 span(number(estimate.value.low), number(estimate.value.high)),

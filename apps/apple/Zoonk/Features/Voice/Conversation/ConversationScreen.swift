@@ -66,7 +66,7 @@ struct ConversationScreen: View {
     if let started {
       conversation(started, callsRightAway: callsNow)
     } else if let call = checkpointCall {
-      if case .ready(let made)? = call.value {
+      if case .LanguageCheckpointCallReady(let made)? = call.value {
         conversation(made.conversationId, callsRightAway: false)
       } else {
         CheckpointCallIntro(call: call, blockId: blockId) { conversationId, callsNow in

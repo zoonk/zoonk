@@ -1,7 +1,8 @@
 import SwiftUI
 
 struct StudyDay: Decodable, Equatable, Sendable {
-  enum Status: String, Decodable, Sendable {
+  enum Status: String, UnknownAPIValue, Sendable {
+    case unrecognized
     case active
     case completed
     case planned

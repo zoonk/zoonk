@@ -197,7 +197,7 @@ private fun CheckpointRead(
         .checkpointCall(blockId)
         .state
         .collectAsStateWithLifecycle()
-    val plusRequired = (call as? LoadState.Loaded)?.value is LanguageCheckpointCall.PlusrequiredWrapper
+    val plusRequired = (call as? LoadState.Loaded)?.value is LanguageCheckpointCall.LanguageCheckpointCallPlusRequiredValue
 
     when (val read = loaded) {
         is LoadState.Loaded -> {

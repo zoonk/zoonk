@@ -125,6 +125,7 @@ struct LessonPlayerAPI: Sendable {
     switch output {
     case .ok(let response):
       switch try response.body.json {
+      case .case4: throw APIError.unavailable
       case .case1(let ready):
         let lesson = ready.lesson
         return .ready(

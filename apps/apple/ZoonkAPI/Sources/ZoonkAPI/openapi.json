@@ -643,8 +643,7 @@
                 "math",
                 "science",
                 "society",
-                "tech",
-                "__unknown_api_value__"
+                "tech"
               ]
             },
             "description": "Course category filter"
@@ -4572,8 +4571,7 @@
                 "ja",
                 "ko",
                 "tr",
-                "pl",
-                "__unknown_api_value__"
+                "pl"
               ]
             }
           }
@@ -9588,8 +9586,7 @@
                 "ja",
                 "ko",
                 "tr",
-                "pl",
-                "__unknown_api_value__"
+                "pl"
               ]
             }
           }
@@ -9659,8 +9656,7 @@
                 "ja",
                 "ko",
                 "tr",
-                "pl",
-                "__unknown_api_value__"
+                "pl"
               ]
             }
           }
@@ -10895,8 +10891,7 @@
                 "chapter",
                 "plan",
                 "mock",
-                "subject",
-                "__unknown_api_value__"
+                "subject"
               ]
             },
             "description": "Filter by context kind; use lesson for the completion conversation"
@@ -11157,8 +11152,7 @@
                 "chapter",
                 "plan",
                 "mock",
-                "subject",
-                "__unknown_api_value__"
+                "subject"
               ]
             },
             "description": "Filter by context kind; use lesson for the completion conversation"
@@ -11431,8 +11425,7 @@
                 "chapter",
                 "plan",
                 "mock",
-                "subject",
-                "__unknown_api_value__"
+                "subject"
               ]
             },
             "description": "Filter by context kind; use lesson for the completion conversation"
@@ -11705,8 +11698,7 @@
                 "chapter",
                 "plan",
                 "mock",
-                "subject",
-                "__unknown_api_value__"
+                "subject"
               ]
             },
             "description": "Filter by context kind; use lesson for the completion conversation"
@@ -11967,8 +11959,7 @@
                 "chapter",
                 "plan",
                 "mock",
-                "subject",
-                "__unknown_api_value__"
+                "subject"
               ]
             },
             "description": "Filter by context kind; use lesson for the completion conversation"
@@ -12302,8 +12293,7 @@
                 "chapter",
                 "plan",
                 "mock",
-                "subject",
-                "__unknown_api_value__"
+                "subject"
               ]
             },
             "description": "Filter by context kind; use lesson for the completion conversation"
@@ -13192,8 +13182,7 @@
               "enum": [
                 "audio",
                 "images",
-                "sources",
-                "__unknown_api_value__"
+                "sources"
               ],
               "description": "`images` (a private course's pictures), `sources` (uploads) or `audio` (a learner's own sentences read aloud)"
             },
@@ -15084,8 +15073,7 @@
                 "learning",
                 "solid",
                 "mastered",
-                "fading",
-                "__unknown_api_value__"
+                "fading"
               ]
             },
             "description": "Mastered is the gold card; fading means memory is dropping"
@@ -15715,6 +15703,23 @@
                     },
                     {
                       "$ref": "#/components/schemas/NothingToSkip"
+                    },
+                    {
+                      "properties": {
+                        "status": {
+                          "enum": [
+                            "ready",
+                            "generating",
+                            "nothingToSkip",
+                            "__unknown_api_union_tag__"
+                          ],
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "status"
+                      ],
+                      "type": "object"
                     }
                   ]
                 }
@@ -20782,8 +20787,7 @@
               "type": "string",
               "enum": [
                 "true",
-                "false",
-                "__unknown_api_value__"
+                "false"
               ]
             }
           },
@@ -20979,8 +20983,7 @@
                 "misread",
                 "trap",
                 "time",
-                "guess",
-                "__unknown_api_value__"
+                "guess"
               ]
             }
           },
@@ -21021,8 +21024,7 @@
               "type": "string",
               "enum": [
                 "open",
-                "fixed",
-                "__unknown_api_value__"
+                "fixed"
               ]
             }
           },
@@ -25124,8 +25126,7 @@
                                         "enum": [
                                           "boss",
                                           "finalBoss",
-                                          "weekly",
-                                          "__unknown_api_value__"
+                                          "weekly"
                                         ]
                                       },
                                       "phase": {
@@ -25187,8 +25188,7 @@
                                         "enum": [
                                           "boss",
                                           "finalBoss",
-                                          "weekly",
-                                          "__unknown_api_value__"
+                                          "weekly"
                                         ]
                                       },
                                       "phase": {
@@ -25260,8 +25260,7 @@
                                   "review",
                                   "practice",
                                   "produce",
-                                  "checkpoint",
-                                  "__unknown_api_value__"
+                                  "checkpoint"
                                 ]
                               },
                               "lessonId": {
@@ -25335,8 +25334,7 @@
                                         "enum": [
                                           "boss",
                                           "finalBoss",
-                                          "weekly",
-                                          "__unknown_api_value__"
+                                          "weekly"
                                         ]
                                       },
                                       "phase": {
@@ -25398,8 +25396,7 @@
                                         "enum": [
                                           "boss",
                                           "finalBoss",
-                                          "weekly",
-                                          "__unknown_api_value__"
+                                          "weekly"
                                         ]
                                       },
                                       "phase": {
@@ -25471,8 +25468,7 @@
                                   "review",
                                   "practice",
                                   "produce",
-                                  "checkpoint",
-                                  "__unknown_api_value__"
+                                  "checkpoint"
                                 ]
                               },
                               "lessonId": {
@@ -27120,8 +27116,7 @@
                   "kind": {
                     "type": "string",
                     "enum": [
-                      "stored",
-                      "__unknown_api_value__"
+                      "stored"
                     ]
                   }
                 },
@@ -27714,8 +27709,7 @@
             "type": "string",
             "enum": [
               "app",
-              "web",
-              "__unknown_api_value__"
+              "web"
             ]
           },
           "idToken": {
@@ -27826,8 +27820,7 @@
                       "work",
                       "student",
                       "workAndStudy",
-                      "neither",
-                      "__unknown_api_value__"
+                      "neither"
                     ]
                   }
                 },
@@ -27921,8 +27914,7 @@
                             "naturalSciences",
                             "education",
                             "law",
-                            "other",
-                            "__unknown_api_value__"
+                            "other"
                           ],
                           "description": "Field studied, past or present"
                         },
@@ -27989,8 +27981,7 @@
                         "crime",
                         "reality",
                         "novelas",
-                        "kDramas",
-                        "__unknown_api_value__"
+                        "kDramas"
                       ]
                     }
                   }
@@ -28045,8 +28036,7 @@
                         "sertanejo",
                         "funk",
                         "reggaeton",
-                        "kPop",
-                        "__unknown_api_value__"
+                        "kPop"
                       ]
                     }
                   }
@@ -28099,8 +28089,7 @@
                         "chess",
                         "mobileGames",
                         "futsal",
-                        "padel",
-                        "__unknown_api_value__"
+                        "padel"
                       ]
                     }
                   }
@@ -28151,8 +28140,7 @@
                         "business",
                         "tech",
                         "comics",
-                        "selfImprovement",
-                        "__unknown_api_value__"
+                        "selfImprovement"
                       ]
                     }
                   }
@@ -28203,8 +28191,7 @@
                         "drawPaint",
                         "playMusic",
                         "fixBuild",
-                        "pets",
-                        "__unknown_api_value__"
+                        "pets"
                       ]
                     }
                   }
@@ -28250,8 +28237,7 @@
                             "speech",
                             "motor",
                             "anxiety",
-                            "other",
-                            "__unknown_api_value__"
+                            "other"
                           ],
                           "description": "Condition the learner consents to save"
                         },
@@ -28317,8 +28303,7 @@
                         "plainWords",
                         "shortAnswers",
                         "examplesFirst",
-                        "shorterDays",
-                        "__unknown_api_value__"
+                        "shorterDays"
                       ]
                     }
                   },
@@ -28368,8 +28353,7 @@
                     "enum": [
                       "feminine",
                       "masculine",
-                      "neutral",
-                      "__unknown_api_value__"
+                      "neutral"
                     ]
                   }
                 },
@@ -28468,8 +28452,7 @@
                     "type": "string",
                     "enum": [
                       "platform",
-                      "cross-platform",
-                      "__unknown_api_value__"
+                      "cross-platform"
                     ]
                   },
                   "clientExtensionResults": {
@@ -28529,8 +28512,7 @@
                   "type": {
                     "type": "string",
                     "enum": [
-                      "public-key",
-                      "__unknown_api_value__"
+                      "public-key"
                     ]
                   }
                 },
@@ -28597,8 +28579,7 @@
           "decision": {
             "type": "string",
             "enum": [
-              "reject",
-              "__unknown_api_value__"
+              "reject"
             ]
           }
         },
@@ -28615,8 +28596,7 @@
             "enum": [
               "lesson",
               "explanation",
-              "curriculum",
-              "__unknown_api_value__"
+              "curriculum"
             ],
             "description": "What the learner waited for"
           },
@@ -28636,8 +28616,7 @@
             "enum": [
               "android",
               "ios",
-              "web",
-              "__unknown_api_value__"
+              "web"
             ]
           }
         },
@@ -28774,8 +28753,7 @@
               "points",
               "ap",
               "sat",
-              "toefl",
-              "__unknown_api_value__"
+              "toefl"
             ],
             "description": "irt for item response theory scales like ENEM's; ap, sat and toefl for those exams' own scales (1 to 5, 400 to 1600, bands 1 to 6)"
           },
@@ -28889,8 +28867,7 @@
             "type": "string",
             "enum": [
               "quick",
-              "wholeCourse",
-              "__unknown_api_value__"
+              "wholeCourse"
             ]
           }
         },
@@ -28977,8 +28954,7 @@
             "enum": [
               "B2",
               "C1",
-              "C2",
-              "__unknown_api_value__"
+              "C2"
             ]
           }
         },
@@ -29358,8 +29334,7 @@
             "type": "string",
             "enum": [
               "learner",
-              "character",
-              "__unknown_api_value__"
+              "character"
             ]
           },
           "text": {
@@ -29576,8 +29551,7 @@
               "aviator",
               "catEye",
               "retro",
-              "monocle",
-              "__unknown_api_value__"
+              "monocle"
             ]
           },
           "kind": {
@@ -29586,8 +29560,7 @@
               "zu",
               "noodle",
               "beep",
-              "otto",
-              "__unknown_api_value__"
+              "otto"
             ],
             "description": "Which buddy"
           },
@@ -29629,8 +29602,7 @@
             "type": "string",
             "enum": [
               "paused",
-              "running",
-              "__unknown_api_value__"
+              "running"
             ]
           }
         },
@@ -29736,8 +29708,7 @@
                                         "enum": [
                                           "boss",
                                           "finalBoss",
-                                          "weekly",
-                                          "__unknown_api_value__"
+                                          "weekly"
                                         ]
                                       },
                                       "phase": {
@@ -29799,8 +29770,7 @@
                                         "enum": [
                                           "boss",
                                           "finalBoss",
-                                          "weekly",
-                                          "__unknown_api_value__"
+                                          "weekly"
                                         ]
                                       },
                                       "phase": {
@@ -29872,8 +29842,7 @@
                                   "review",
                                   "practice",
                                   "produce",
-                                  "checkpoint",
-                                  "__unknown_api_value__"
+                                  "checkpoint"
                                 ]
                               },
                               "lessonId": {
@@ -29947,8 +29916,7 @@
                                         "enum": [
                                           "boss",
                                           "finalBoss",
-                                          "weekly",
-                                          "__unknown_api_value__"
+                                          "weekly"
                                         ]
                                       },
                                       "phase": {
@@ -30010,8 +29978,7 @@
                                         "enum": [
                                           "boss",
                                           "finalBoss",
-                                          "weekly",
-                                          "__unknown_api_value__"
+                                          "weekly"
                                         ]
                                       },
                                       "phase": {
@@ -30083,8 +30050,7 @@
                                   "review",
                                   "practice",
                                   "produce",
-                                  "checkpoint",
-                                  "__unknown_api_value__"
+                                  "checkpoint"
                                 ]
                               },
                               "lessonId": {
@@ -30235,7 +30201,8 @@
           "kind": {
             "type": "string",
             "enum": [
-              "block"
+              "block",
+              "__unknown_api_value__"
             ]
           }
         },
@@ -30447,8 +30414,7 @@
                           "down",
                           "left",
                           "right",
-                          "up",
-                          "__unknown_api_value__"
+                          "up"
                         ]
                       },
                       "kind": {
@@ -31039,8 +31005,7 @@
             "enum": [
               "simpler",
               "deeper",
-              "example",
-              "__unknown_api_value__"
+              "example"
             ]
           }
         },
@@ -31223,8 +31188,7 @@
                   "plan",
                   "planChange",
                   "step",
-                  "stepVariant",
-                  "__unknown_api_value__"
+                  "stepVariant"
                 ]
               },
               "platform": {
@@ -31232,15 +31196,13 @@
                 "enum": [
                   "android",
                   "ios",
-                  "web",
-                  "__unknown_api_value__"
+                  "web"
                 ]
               },
               "reportType": {
                 "type": "string",
                 "enum": [
-                  "saveFailure",
-                  "__unknown_api_value__"
+                  "saveFailure"
                 ]
               },
               "screen": {
@@ -31507,16 +31469,14 @@
             "enum": [
               "on",
               "paused",
-              "skippedToday",
-              "__unknown_api_value__"
+              "skippedToday"
             ]
           },
           "suggestion": {
             "description": "Today stops suggesting the test for this goal",
             "type": "string",
             "enum": [
-              "dismissed",
-              "__unknown_api_value__"
+              "dismissed"
             ]
           },
           "timeZone": {
@@ -31723,8 +31683,7 @@
               "learn",
               "explain",
               "language",
-              "exam",
-              "__unknown_api_value__"
+              "exam"
             ]
           },
           "language": {
@@ -31808,8 +31767,7 @@
               "active",
               "paused",
               "archived",
-              "completed",
-              "__unknown_api_value__"
+              "completed"
             ]
           },
           "studyDays": {
@@ -32138,8 +32096,7 @@
                     "vocabulary",
                     "listening",
                     "writing",
-                    "speaking",
-                    "__unknown_api_value__"
+                    "speaking"
                   ]
                 },
                 "description": "Language practice to leave out of lessons, such as writing"
@@ -32170,8 +32127,7 @@
                     "vocabulary",
                     "listening",
                     "writing",
-                    "speaking",
-                    "__unknown_api_value__"
+                    "speaking"
                   ]
                 }
               },
@@ -32196,8 +32152,7 @@
                 "enum": [
                   "moreExplanation",
                   "balanced",
-                  "morePractice",
-                  "__unknown_api_value__"
+                  "morePractice"
                 ]
               },
               "kind": {
@@ -32221,8 +32176,7 @@
                 "enum": [
                   "easier",
                   "standard",
-                  "harder",
-                  "__unknown_api_value__"
+                  "harder"
                 ]
               },
               "kind": {
@@ -32246,8 +32200,7 @@
                 "enum": [
                   "weekly",
                   "biweekly",
-                  "finalWeeks",
-                  "__unknown_api_value__"
+                  "finalWeeks"
                 ],
                 "description": "When an exam's written tests (an essay, a discursive test) are practiced: weekly (the default, spaced practice), biweekly (every other week and the final stretch) or finalWeeks (only the final weeks before the exam, which needs a date). The total practice stays the same"
               },
@@ -32300,8 +32253,7 @@
                         "deep",
                         "essential",
                         "quick",
-                        "skip",
-                        "__unknown_api_value__"
+                        "skip"
                       ],
                       "description": "deep: every lesson of it, core and depth, with the time what the plan keeps leaves. essential: its core, the first third of its lessons, before what builds on it (the default). quick: one short lesson that sums it up with a worked example. skip: none of it; what builds on it no longer waits for it, and its own topics leave the plan unless another skill teaches them. No choice ever pushes out a topic its core keeps"
                     },
@@ -32357,8 +32309,7 @@
                   "A2",
                   "B1",
                   "B2",
-                  "C1",
-                  "__unknown_api_value__"
+                  "C1"
                 ]
               },
               "kind": {
@@ -32398,8 +32349,7 @@
                 "type": "string",
                 "enum": [
                   "pastBasics",
-                  "basics",
-                  "__unknown_api_value__"
+                  "basics"
                 ],
                 "description": "pastBasics: these areas start past their foundations, at their higher bands (the learner said their lessons are too basic). basics: they start from their foundations again"
               }
@@ -32488,8 +32438,7 @@
               "applied",
               "declined",
               "undone",
-              "seen",
-              "__unknown_api_value__"
+              "seen"
             ],
             "description": "Accept or decline a proposed change, undo an applied one (a proposal the learner applied then waits for their answer again, status proposed, as before Apply; replaced when a newer proposal asks about the same thing), or mark an applied one as seen, which sets its `seen`"
           },
@@ -32499,8 +32448,7 @@
             "enum": [
               "today",
               "tutor",
-              "behind",
-              "__unknown_api_value__"
+              "behind"
             ]
           },
           "timeZone": {
@@ -32542,8 +32490,7 @@
             "enum": [
               "have",
               "setup",
-              "none",
-              "__unknown_api_value__"
+              "none"
             ],
             "description": "have: the learner has it. setup: a short lesson sets it up on `system`, before the first chapter that needs it. none: no install, the learner learns it with examples"
           },
@@ -32557,8 +32504,7 @@
               "macos",
               "linux",
               "chromebook",
-              "phone",
-              "__unknown_api_value__"
+              "phone"
             ]
           },
           "timeZone": {
@@ -32652,8 +32598,7 @@
               "A2",
               "B1",
               "B2",
-              "C1",
-              "__unknown_api_value__"
+              "C1"
             ]
           },
           "dailyMinutes": {
@@ -32693,8 +32638,7 @@
         "type": "string",
         "enum": [
           "plan",
-          "today",
-          "__unknown_api_value__"
+          "today"
         ],
         "description": "plan: the goal's plan, its items, their lessons and the courses they come from (an outline that ends), which the plan's screen shows; today: those and the learner's sessions from the last two days, their stops and the stops' lessons, which Today shows"
       },
@@ -32799,8 +32743,7 @@
             "type": "string",
             "enum": [
               "accepted",
-              "dismissed",
-              "__unknown_api_value__"
+              "dismissed"
             ],
             "description": "accepted applies a plan change or schedule idea; dismissed declines it or closes a tip"
           }
@@ -33152,8 +33095,7 @@
             "type": "string",
             "enum": [
               "skip",
-              "focus",
-              "__unknown_api_value__"
+              "focus"
             ],
             "description": "`skip`: the plan skips the lessons of the topics the mock showed the learner knows (`adapt.skip`), with an undo. `focus`: the area that went worst gets more of the plan's time (`adapt.focus`)"
           },
@@ -33355,8 +33297,7 @@
             "type": "string",
             "enum": [
               "exam",
-              "understand",
-              "__unknown_api_value__"
+              "understand"
             ]
           },
           "sourceIds": {
@@ -33589,8 +33530,7 @@
                   "work",
                   "careerChange",
                   "refresh",
-                  "other",
-                  "__unknown_api_value__"
+                  "other"
                 ]
               },
               "question": {
@@ -33660,8 +33600,7 @@
                   "work",
                   "fluent",
                   "certificate",
-                  "other",
-                  "__unknown_api_value__"
+                  "other"
                 ],
                 "description": "Why the learner studies the language, which sets the level the course goes up to (`languageAim.reasons`): certificate moves the goal to an exam goal for the certificate `words` names"
               },
@@ -33801,8 +33740,7 @@
                   "none",
                   "basic",
                   "intermediate",
-                  "advanced",
-                  "__unknown_api_value__"
+                  "advanced"
                 ]
               },
               "question": {
@@ -33936,8 +33874,7 @@
                       "work",
                       "student",
                       "workAndStudy",
-                      "neither",
-                      "__unknown_api_value__"
+                      "neither"
                     ]
                   }
                 },
@@ -34033,8 +33970,7 @@
                             "naturalSciences",
                             "education",
                             "law",
-                            "other",
-                            "__unknown_api_value__"
+                            "other"
                           ],
                           "description": "Field studied, past or present"
                         },
@@ -34102,8 +34038,7 @@
                         "crime",
                         "reality",
                         "novelas",
-                        "kDramas",
-                        "__unknown_api_value__"
+                        "kDramas"
                       ]
                     }
                   }
@@ -34159,8 +34094,7 @@
                         "sertanejo",
                         "funk",
                         "reggaeton",
-                        "kPop",
-                        "__unknown_api_value__"
+                        "kPop"
                       ]
                     }
                   }
@@ -34214,8 +34148,7 @@
                         "chess",
                         "mobileGames",
                         "futsal",
-                        "padel",
-                        "__unknown_api_value__"
+                        "padel"
                       ]
                     }
                   }
@@ -34267,8 +34200,7 @@
                         "business",
                         "tech",
                         "comics",
-                        "selfImprovement",
-                        "__unknown_api_value__"
+                        "selfImprovement"
                       ]
                     }
                   }
@@ -34320,8 +34252,7 @@
                         "drawPaint",
                         "playMusic",
                         "fixBuild",
-                        "pets",
-                        "__unknown_api_value__"
+                        "pets"
                       ]
                     }
                   }
@@ -34368,8 +34299,7 @@
                             "speech",
                             "motor",
                             "anxiety",
-                            "other",
-                            "__unknown_api_value__"
+                            "other"
                           ],
                           "description": "Condition the learner consents to save"
                         },
@@ -34436,8 +34366,7 @@
                         "plainWords",
                         "shortAnswers",
                         "examplesFirst",
-                        "shorterDays",
-                        "__unknown_api_value__"
+                        "shorterDays"
                       ]
                     }
                   },
@@ -34488,8 +34417,7 @@
                     "enum": [
                       "feminine",
                       "masculine",
-                      "neutral",
-                      "__unknown_api_value__"
+                      "neutral"
                     ]
                   }
                 },
@@ -34565,8 +34493,7 @@
             "enum": [
               "checkNow",
               "readAgain",
-              "stop",
-              "__unknown_api_value__"
+              "stop"
             ],
             "description": "`checkNow` reads a notice or source again only when its document changed; `readAgain` reads an exam's stored notice again with today's instructions, even unchanged (the only way a stored reading is redone; exams only); `stop` ends its checks"
           },
@@ -34831,8 +34758,7 @@
           "type": {
             "type": "string",
             "enum": [
-              "blob.generate-presigned-url",
-              "__unknown_api_value__"
+              "blob.generate-presigned-url"
             ]
           }
         },
@@ -34861,8 +34787,7 @@
               "ja",
               "ko",
               "tr",
-              "pl",
-              "__unknown_api_value__"
+              "pl"
             ],
             "description": "The app language reminders are written in: send the app's current one"
           },
@@ -34896,8 +34821,7 @@
               "ja",
               "ko",
               "tr",
-              "pl",
-              "__unknown_api_value__"
+              "pl"
             ],
             "description": "The app language reminders are written in: send the app's current one"
           }
@@ -34928,8 +34852,7 @@
               "ja",
               "ko",
               "tr",
-              "pl",
-              "__unknown_api_value__"
+              "pl"
             ],
             "description": "The app language reminders are written in: send the app's current one"
           },
@@ -34965,8 +34888,7 @@
           "List-Unsubscribe": {
             "type": "string",
             "enum": [
-              "One-Click",
-              "__unknown_api_value__"
+              "One-Click"
             ]
           }
         },
@@ -35025,8 +34947,7 @@
             "type": "string",
             "enum": [
               "accepted",
-              "dismissed",
-              "__unknown_api_value__"
+              "dismissed"
             ],
             "description": "accepted when the learner goes on to plan the goal (open onboarding with its title); dismissed closes it"
           }
@@ -35090,8 +35011,7 @@
             "enum": [
               "notice",
               "publishedStandard",
-              "practiceKey",
-              "__unknown_api_value__"
+              "practiceKey"
             ]
           },
           "lines": {
@@ -35131,8 +35051,7 @@
                     "type": "string",
                     "enum": [
                       "points",
-                      "percent",
-                      "__unknown_api_value__"
+                      "percent"
                     ]
                   },
                   "value": {
@@ -35170,8 +35089,7 @@
             "type": "string",
             "enum": [
               "drill",
-              "answer",
-              "__unknown_api_value__"
+              "answer"
             ]
           }
         },
@@ -35310,8 +35228,7 @@
                         "missing",
                         "partial",
                         "strong",
-                        "complete",
-                        "__unknown_api_value__"
+                        "complete"
                       ]
                     },
                     "name": {
@@ -35391,8 +35308,7 @@
                       "criterion",
                       "limit",
                       "short",
-                      "zero",
-                      "__unknown_api_value__"
+                      "zero"
                     ]
                   },
                   "quote": {
@@ -35472,8 +35388,7 @@
                         "missing",
                         "partial",
                         "strong",
-                        "complete",
-                        "__unknown_api_value__"
+                        "complete"
                       ]
                     },
                     "name": {
@@ -35553,8 +35468,7 @@
                       "criterion",
                       "limit",
                       "short",
-                      "zero",
-                      "__unknown_api_value__"
+                      "zero"
                     ]
                   },
                   "quote": {
@@ -35673,8 +35587,7 @@
                   "wrongForm",
                   "tooFewLines",
                   "copiedSupport",
-                  "identification",
-                  "__unknown_api_value__"
+                  "identification"
                 ]
               },
               "zeroReason": {
@@ -35719,8 +35632,7 @@
             "type": "string",
             "nullable": true,
             "enum": [
-              null,
-              "__unknown_api_value__"
+              null
             ]
           },
           "day": {
@@ -37196,17 +37108,26 @@
               },
               {
                 "$ref": "#/components/schemas/CatalogFirstStart"
+              },
+              {
+                "properties": {
+                  "kind": {
+                    "enum": [
+                      "choice",
+                      "text",
+                      "start",
+                      "__unknown_api_union_tag__"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "type": "object"
               }
             ],
-            "type": "object",
-            "discriminator": {
-              "propertyName": "kind",
-              "mapping": {
-                "choice": "#/components/schemas/CatalogFirstQuestion",
-                "text": "#/components/schemas/CatalogFirstText",
-                "start": "#/components/schemas/CatalogFirstStart"
-              }
-            }
+            "type": "object"
           },
           "id": {
             "type": "string",
@@ -40946,7 +40867,8 @@
           {
             "type": "string",
             "enum": [
-              "all"
+              "all",
+              "__unknown_api_value__"
             ]
           }
         ],
@@ -41328,6 +41250,23 @@
                   "source"
                 ],
                 "additionalProperties": false
+              },
+              {
+                "properties": {
+                  "kind": {
+                    "enum": [
+                      "chart",
+                      "timeline",
+                      "plot",
+                      "__unknown_api_union_tag__"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "type": "object"
               }
             ]
           }
@@ -41610,6 +41549,23 @@
               "source"
             ],
             "additionalProperties": false
+          },
+          {
+            "properties": {
+              "kind": {
+                "enum": [
+                  "chart",
+                  "timeline",
+                  "plot",
+                  "__unknown_api_union_tag__"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object"
           }
         ],
         "description": "A category chart, numeric plot, or timeline of dated events, drawn from its data"
@@ -41642,20 +41598,29 @@
           },
           {
             "$ref": "#/components/schemas/LanguageCheckpointCallNotLanguage"
+          },
+          {
+            "properties": {
+              "status": {
+                "enum": [
+                  "ready",
+                  "notStarted",
+                  "preparing",
+                  "earlierFirst",
+                  "plusRequired",
+                  "notLanguage",
+                  "__unknown_api_union_tag__"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "status"
+            ],
+            "type": "object"
           }
         ],
-        "type": "object",
-        "discriminator": {
-          "propertyName": "status",
-          "mapping": {
-            "ready": "#/components/schemas/LanguageCheckpointCallReady",
-            "notStarted": "#/components/schemas/LanguageCheckpointCallIntro",
-            "preparing": "#/components/schemas/LanguageCheckpointCallPreparing",
-            "earlierFirst": "#/components/schemas/LanguageCheckpointCallEarlierFirst",
-            "plusRequired": "#/components/schemas/LanguageCheckpointCallPlusRequired",
-            "notLanguage": "#/components/schemas/LanguageCheckpointCallNotLanguage"
-          }
-        }
+        "type": "object"
       },
       "LanguageCheckpointCallReady": {
         "type": "object",
@@ -42503,6 +42468,23 @@
             ],
             "additionalProperties": false,
             "description": "The selection no longer matches the batch's proposed fixes; read it again"
+          },
+          {
+            "properties": {
+              "status": {
+                "enum": [
+                  "ready",
+                  "needsPasskey",
+                  "changed",
+                  "__unknown_api_union_tag__"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "status"
+            ],
+            "type": "object"
           }
         ],
         "type": "object"
@@ -42636,6 +42618,23 @@
             ],
             "additionalProperties": false,
             "description": "The assertion isn't this person's passkey signing the batch's challenge"
+          },
+          {
+            "properties": {
+              "status": {
+                "enum": [
+                  "decided",
+                  "approvalExpired",
+                  "assertionInvalid",
+                  "__unknown_api_union_tag__"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "status"
+            ],
+            "type": "object"
           }
         ],
         "type": "object"
@@ -42861,6 +42860,22 @@
               "kind"
             ],
             "additionalProperties": false
+          },
+          {
+            "properties": {
+              "kind": {
+                "enum": [
+                  "lesson",
+                  "review",
+                  "__unknown_api_union_tag__"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object"
           }
         ],
         "type": "object"
@@ -45564,6 +45579,46 @@
                     "kind"
                   ],
                   "additionalProperties": false
+                },
+                {
+                  "properties": {
+                    "kind": {
+                      "enum": [
+                        "setDailyMinutes",
+                        "setWeekdayMinutes",
+                        "addLightWeek",
+                        "moveWeeklyEvent",
+                        "setTargetDate",
+                        "focusAreas",
+                        "skipAreas",
+                        "restoreAreas",
+                        "reduceAreas",
+                        "skipActivities",
+                        "restoreActivities",
+                        "setPracticeBias",
+                        "setDifficultyBias",
+                        "setWrittenCadence",
+                        "setFullCourse",
+                        "setBaseChoices",
+                        "fitLessons",
+                        "setAim",
+                        "setAreaStart",
+                        "setExtras",
+                        "addSkills",
+                        "setTools",
+                        "followNotice",
+                        "setNoticeDate",
+                        "fitPhaseDates",
+                        "setExamChoice",
+                        "__unknown_api_union_tag__"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "kind"
+                  ],
+                  "type": "object"
                 }
               ]
             }
@@ -46182,6 +46237,46 @@
             ],
             "additionalProperties": false,
             "description": "Sets the optional exam skills the learner chose. New skills must be offered by the current plan."
+          },
+          {
+            "properties": {
+              "kind": {
+                "enum": [
+                  "setDailyMinutes",
+                  "setWeekdayMinutes",
+                  "addLightWeek",
+                  "moveWeeklyEvent",
+                  "setTargetDate",
+                  "focusAreas",
+                  "skipAreas",
+                  "restoreAreas",
+                  "reduceAreas",
+                  "skipActivities",
+                  "restoreActivities",
+                  "setPracticeBias",
+                  "setDifficultyBias",
+                  "setWrittenCadence",
+                  "setFullCourse",
+                  "setBaseChoices",
+                  "fitLessons",
+                  "setAim",
+                  "setAreaStart",
+                  "setExtras",
+                  "addSkills",
+                  "setTools",
+                  "followNotice",
+                  "setNoticeDate",
+                  "fitPhaseDates",
+                  "setExamChoice",
+                  "__unknown_api_union_tag__"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object"
           }
         ],
         "type": "object"
@@ -46609,17 +46704,26 @@
           },
           {
             "$ref": "#/components/schemas/ActivityExpectedNumeric"
+          },
+          {
+            "properties": {
+              "kind": {
+                "enum": [
+                  "choice",
+                  "interaction",
+                  "numeric",
+                  "__unknown_api_union_tag__"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object"
           }
         ],
-        "type": "object",
-        "discriminator": {
-          "propertyName": "kind",
-          "mapping": {
-            "choice": "#/components/schemas/ActivityExpectedChoice",
-            "interaction": "#/components/schemas/ActivityExpectedInteraction",
-            "numeric": "#/components/schemas/ActivityExpectedNumeric"
-          }
-        }
+        "type": "object"
       },
       "ActivityExpectedChoice": {
         "type": "object",
@@ -46699,27 +46803,36 @@
           },
           {
             "$ref": "#/components/schemas/ActivityExpectedSelection"
+          },
+          {
+            "properties": {
+              "kind": {
+                "enum": [
+                  "assignment",
+                  "curveShift",
+                  "formula",
+                  "grid",
+                  "links",
+                  "molecule",
+                  "order",
+                  "output",
+                  "pitchClasses",
+                  "regex",
+                  "rhythm",
+                  "rows",
+                  "selection",
+                  "__unknown_api_union_tag__"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object"
           }
         ],
-        "type": "object",
-        "discriminator": {
-          "propertyName": "kind",
-          "mapping": {
-            "assignment": "#/components/schemas/ActivityExpectedAssignment",
-            "curveShift": "#/components/schemas/ActivityExpectedCurveShift",
-            "formula": "#/components/schemas/ActivityExpectedFormula",
-            "grid": "#/components/schemas/ActivityExpectedGrid",
-            "links": "#/components/schemas/ActivityExpectedLinks",
-            "molecule": "#/components/schemas/ActivityExpectedMolecule",
-            "order": "#/components/schemas/ActivityExpectedOrder",
-            "output": "#/components/schemas/ActivityExpectedOutput",
-            "pitchClasses": "#/components/schemas/ActivityExpectedPitchClasses",
-            "regex": "#/components/schemas/ActivityExpectedRegex",
-            "rhythm": "#/components/schemas/ActivityExpectedRhythm",
-            "rows": "#/components/schemas/ActivityExpectedRows",
-            "selection": "#/components/schemas/ActivityExpectedSelection"
-          }
-        }
+        "type": "object"
       },
       "ActivityExpectedAssignment": {
         "type": "object",
@@ -47075,7 +47188,8 @@
                     "type": "string",
                     "nullable": true,
                     "enum": [
-                      null
+                      null,
+                      "__unknown_api_value__"
                     ]
                   }
                 ]
@@ -48202,6 +48316,24 @@
                       "kind"
                     ],
                     "additionalProperties": false
+                  },
+                  {
+                    "properties": {
+                      "kind": {
+                        "enum": [
+                          "question",
+                          "confirmation",
+                          "speaking",
+                          "done",
+                          "__unknown_api_union_tag__"
+                        ],
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "kind"
+                    ],
+                    "type": "object"
                   }
                 ],
                 "type": "object"
@@ -48236,6 +48368,22 @@
               "total"
             ],
             "additionalProperties": false
+          },
+          {
+            "properties": {
+              "status": {
+                "enum": [
+                  "preparing",
+                  "ready",
+                  "__unknown_api_union_tag__"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "status"
+            ],
+            "type": "object"
           }
         ],
         "type": "object"
@@ -49825,6 +49973,28 @@
               "kind"
             ],
             "additionalProperties": false
+          },
+          {
+            "properties": {
+              "kind": {
+                "enum": [
+                  "block",
+                  "mistakesPractice",
+                  "pattern",
+                  "pronunciation",
+                  "call",
+                  "buddy",
+                  "areaPractice",
+                  "mockChooser",
+                  "__unknown_api_union_tag__"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object"
           }
         ],
         "description": "Where the learner can complete the mission or first step. Opening this target is an explicit learner action; reading missions never starts generation.",
@@ -50002,17 +50172,26 @@
                   },
                   {
                     "$ref": "#/components/schemas/ExamSpeakingFeedback"
+                  },
+                  {
+                    "properties": {
+                      "kind": {
+                        "enum": [
+                          "call",
+                          "speakingMock",
+                          "examSpeaking",
+                          "__unknown_api_union_tag__"
+                        ],
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "kind"
+                    ],
+                    "type": "object"
                   }
                 ],
-                "type": "object",
-                "discriminator": {
-                  "propertyName": "kind",
-                  "mapping": {
-                    "call": "#/components/schemas/LanguageCallFeedback",
-                    "speakingMock": "#/components/schemas/LanguageSpeakingMockFeedback",
-                    "examSpeaking": "#/components/schemas/ExamSpeakingFeedback"
-                  }
-                }
+                "type": "object"
               },
               "passed": {
                 "type": "boolean"
@@ -50178,16 +50357,32 @@
           },
           {
             "$ref": "#/components/schemas/LanguageToeflSpeakingMockFeedback"
+          },
+          {
+            "properties": {
+              "exam": {
+                "enum": [
+                  "ielts",
+                  "toefl",
+                  "__unknown_api_union_tag__"
+                ],
+                "type": "string"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "speakingMock"
+                ]
+              }
+            },
+            "required": [
+              "exam",
+              "kind"
+            ],
+            "type": "object"
           }
         ],
-        "type": "object",
-        "discriminator": {
-          "propertyName": "exam",
-          "mapping": {
-            "ielts": "#/components/schemas/LanguageIeltsSpeakingMockFeedback",
-            "toefl": "#/components/schemas/LanguageToeflSpeakingMockFeedback"
-          }
-        }
+        "type": "object"
       },
       "LanguageIeltsSpeakingMockFeedback": {
         "type": "object",
@@ -50255,8 +50450,7 @@
           "kind": {
             "type": "string",
             "enum": [
-              "speakingMock",
-              "__unknown_api_value__"
+              "speakingMock"
             ]
           },
           "overall": {
@@ -50361,8 +50555,7 @@
           "kind": {
             "type": "string",
             "enum": [
-              "speakingMock",
-              "__unknown_api_value__"
+              "speakingMock"
             ]
           },
           "overall": {
@@ -50486,17 +50679,26 @@
           },
           {
             "$ref": "#/components/schemas/SpeakingPointsEstimate"
+          },
+          {
+            "properties": {
+              "display": {
+                "enum": [
+                  "band",
+                  "letter",
+                  "points",
+                  "__unknown_api_union_tag__"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "display"
+            ],
+            "type": "object"
           }
         ],
-        "type": "object",
-        "discriminator": {
-          "propertyName": "display",
-          "mapping": {
-            "band": "#/components/schemas/SpeakingBandEstimate",
-            "letter": "#/components/schemas/SpeakingLetterEstimate",
-            "points": "#/components/schemas/SpeakingPointsEstimate"
-          }
-        }
+        "type": "object"
       },
       "SpeakingBandEstimate": {
         "type": "object",
@@ -50717,17 +50919,26 @@
                   },
                   {
                     "$ref": "#/components/schemas/ExamSpeakingFeedback"
+                  },
+                  {
+                    "properties": {
+                      "kind": {
+                        "enum": [
+                          "call",
+                          "speakingMock",
+                          "examSpeaking",
+                          "__unknown_api_union_tag__"
+                        ],
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "kind"
+                    ],
+                    "type": "object"
                   }
                 ],
-                "type": "object",
-                "discriminator": {
-                  "propertyName": "kind",
-                  "mapping": {
-                    "call": "#/components/schemas/LanguageCallFeedback",
-                    "speakingMock": "#/components/schemas/LanguageSpeakingMockFeedback",
-                    "examSpeaking": "#/components/schemas/ExamSpeakingFeedback"
-                  }
-                }
+                "type": "object"
               },
               "passed": {
                 "type": "boolean"
@@ -52573,6 +52784,23 @@
             ],
             "additionalProperties": false,
             "description": "A written lesson read without a session: only its public outline. Start a guest session (POST /guests) or sign in, then read it again for its screens"
+          },
+          {
+            "properties": {
+              "status": {
+                "enum": [
+                  "ready",
+                  "notGenerated",
+                  "sessionRequired",
+                  "__unknown_api_union_tag__"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "status"
+            ],
+            "type": "object"
           }
         ],
         "type": "object"
@@ -52691,6 +52919,23 @@
                       "kind"
                     ],
                     "additionalProperties": false
+                  },
+                  {
+                    "properties": {
+                      "kind": {
+                        "enum": [
+                          "material",
+                          "source",
+                          "notInMaterial",
+                          "__unknown_api_union_tag__"
+                        ],
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "kind"
+                    ],
+                    "type": "object"
                   }
                 ],
                 "type": "object"
@@ -52891,6 +53136,23 @@
                               "tolerance"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "choice",
+                                  "interaction",
+                                  "numeric",
+                                  "__unknown_api_union_tag__"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "type": "object"
                           }
                         ],
                         "type": "object"
@@ -53337,6 +53599,23 @@
                               "tolerance"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "choice",
+                                  "interaction",
+                                  "numeric",
+                                  "__unknown_api_union_tag__"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "type": "object"
                           }
                         ],
                         "type": "object"
@@ -53700,6 +53979,23 @@
                               "tolerance"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "choice",
+                                  "interaction",
+                                  "numeric",
+                                  "__unknown_api_union_tag__"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "type": "object"
                           }
                         ],
                         "type": "object"
@@ -53894,6 +54190,22 @@
                               "model"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "model": {
+                                "enum": [
+                                  "area",
+                                  "bar",
+                                  "__unknown_api_union_tag__"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "model"
+                            ],
+                            "type": "object"
                           }
                         ],
                         "type": "object"
@@ -54141,6 +54453,23 @@
                               "tolerance"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "choice",
+                                  "interaction",
+                                  "numeric",
+                                  "__unknown_api_union_tag__"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "type": "object"
                           }
                         ],
                         "type": "object"
@@ -54561,6 +54890,23 @@
                               "tolerance"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "choice",
+                                  "interaction",
+                                  "numeric",
+                                  "__unknown_api_union_tag__"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "type": "object"
                           }
                         ],
                         "type": "object"
@@ -54961,6 +55307,23 @@
                               "tolerance"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "choice",
+                                  "interaction",
+                                  "numeric",
+                                  "__unknown_api_union_tag__"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "type": "object"
                           }
                         ],
                         "type": "object"
@@ -55115,6 +55478,22 @@
                                   "value"
                                 ],
                                 "additionalProperties": false
+                              },
+                              {
+                                "properties": {
+                                  "kind": {
+                                    "enum": [
+                                      "computed",
+                                      "cited",
+                                      "__unknown_api_union_tag__"
+                                    ],
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "kind"
+                                ],
+                                "type": "object"
                               }
                             ],
                             "type": "object"
@@ -55378,6 +55757,23 @@
                               "tolerance"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "choice",
+                                  "interaction",
+                                  "numeric",
+                                  "__unknown_api_union_tag__"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "type": "object"
                           }
                         ],
                         "type": "object"
@@ -55751,6 +56147,23 @@
                               "tolerance"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "choice",
+                                  "interaction",
+                                  "numeric",
+                                  "__unknown_api_union_tag__"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "type": "object"
                           }
                         ],
                         "type": "object"
@@ -56096,6 +56509,23 @@
                               "tolerance"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "choice",
+                                  "interaction",
+                                  "numeric",
+                                  "__unknown_api_union_tag__"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "type": "object"
                           }
                         ],
                         "type": "object"
@@ -56306,6 +56736,23 @@
                                       "people"
                                     ],
                                     "additionalProperties": false
+                                  },
+                                  {
+                                    "properties": {
+                                      "kind": {
+                                        "enum": [
+                                          "binomial",
+                                          "diceSum",
+                                          "sharedBirthday",
+                                          "__unknown_api_union_tag__"
+                                        ],
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": [
+                                      "kind"
+                                    ],
+                                    "type": "object"
                                   }
                                 ],
                                 "type": "object"
@@ -56388,6 +56835,22 @@
                                       "sd"
                                     ],
                                     "additionalProperties": false
+                                  },
+                                  {
+                                    "properties": {
+                                      "kind": {
+                                        "enum": [
+                                          "proportion",
+                                          "mean",
+                                          "__unknown_api_union_tag__"
+                                        ],
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": [
+                                      "kind"
+                                    ],
+                                    "type": "object"
                                   }
                                 ],
                                 "type": "object"
@@ -56431,6 +56894,22 @@
                               "sampleSizes"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "mode": {
+                                "enum": [
+                                  "chance",
+                                  "sampling",
+                                  "__unknown_api_union_tag__"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "mode"
+                            ],
+                            "type": "object"
                           }
                         ],
                         "type": "object"
@@ -56678,6 +57157,23 @@
                               "tolerance"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "choice",
+                                  "interaction",
+                                  "numeric",
+                                  "__unknown_api_union_tag__"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "type": "object"
                           }
                         ],
                         "type": "object"
@@ -56790,6 +57286,22 @@
                                   "min"
                                 ],
                                 "additionalProperties": false
+                              },
+                              {
+                                "properties": {
+                                  "kind": {
+                                    "enum": [
+                                      "normal",
+                                      "uniform",
+                                      "__unknown_api_union_tag__"
+                                    ],
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "kind"
+                                ],
+                                "type": "object"
                               }
                             ],
                             "type": "object"
@@ -57089,6 +57601,23 @@
                               "tolerance"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "choice",
+                                  "interaction",
+                                  "numeric",
+                                  "__unknown_api_union_tag__"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "type": "object"
                           }
                         ],
                         "type": "object"
@@ -57483,6 +58012,23 @@
                               "tolerance"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "choice",
+                                  "interaction",
+                                  "numeric",
+                                  "__unknown_api_union_tag__"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "type": "object"
                           }
                         ],
                         "type": "object"
@@ -57881,6 +58427,23 @@
                               "tolerance"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "choice",
+                                  "interaction",
+                                  "numeric",
+                                  "__unknown_api_union_tag__"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "type": "object"
                           }
                         ],
                         "type": "object"
@@ -58346,6 +58909,23 @@
                               "tolerance"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "choice",
+                                  "interaction",
+                                  "numeric",
+                                  "__unknown_api_union_tag__"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "type": "object"
                           }
                         ],
                         "type": "object"
@@ -58673,6 +59253,23 @@
                               "tolerance"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "choice",
+                                  "interaction",
+                                  "numeric",
+                                  "__unknown_api_union_tag__"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "type": "object"
                           }
                         ],
                         "type": "object"
@@ -58964,6 +59561,23 @@
                               "rule"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "rule": {
+                                "enum": [
+                                  "alleles",
+                                  "sum",
+                                  "product",
+                                  "__unknown_api_union_tag__"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "rule"
+                            ],
+                            "type": "object"
                           }
                         ],
                         "type": "object"
@@ -59211,6 +59825,23 @@
                               "tolerance"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "choice",
+                                  "interaction",
+                                  "numeric",
+                                  "__unknown_api_union_tag__"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "type": "object"
                           }
                         ],
                         "type": "object"
@@ -59627,6 +60258,23 @@
                               "tolerance"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "choice",
+                                  "interaction",
+                                  "numeric",
+                                  "__unknown_api_union_tag__"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "type": "object"
                           }
                         ],
                         "type": "object"
@@ -60006,6 +60654,23 @@
                               "tolerance"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "choice",
+                                  "interaction",
+                                  "numeric",
+                                  "__unknown_api_union_tag__"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "type": "object"
                           }
                         ],
                         "type": "object"
@@ -60452,6 +61117,23 @@
                               "tolerance"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "choice",
+                                  "interaction",
+                                  "numeric",
+                                  "__unknown_api_union_tag__"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "type": "object"
                           }
                         ],
                         "type": "object"
@@ -60548,7 +61230,8 @@
                                         "type": "string",
                                         "nullable": true,
                                         "enum": [
-                                          null
+                                          null,
+                                          "__unknown_api_value__"
                                         ]
                                       }
                                     ]
@@ -60649,7 +61332,8 @@
                                           "type": "string",
                                           "nullable": true,
                                           "enum": [
-                                            null
+                                            null,
+                                            "__unknown_api_value__"
                                           ]
                                         }
                                       ]
@@ -60919,6 +61603,23 @@
                               "tolerance"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "choice",
+                                  "interaction",
+                                  "numeric",
+                                  "__unknown_api_union_tag__"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "type": "object"
                           }
                         ],
                         "type": "object"
@@ -61167,6 +61868,22 @@
                               "tolerance"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "mode": {
+                                "enum": [
+                                  "regex",
+                                  "formula",
+                                  "__unknown_api_union_tag__"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "mode"
+                            ],
+                            "type": "object"
                           }
                         ],
                         "type": "object"
@@ -61414,6 +62131,23 @@
                               "tolerance"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "choice",
+                                  "interaction",
+                                  "numeric",
+                                  "__unknown_api_union_tag__"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "type": "object"
                           }
                         ],
                         "type": "object"
@@ -61799,6 +62533,23 @@
                               "tolerance"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "choice",
+                                  "interaction",
+                                  "numeric",
+                                  "__unknown_api_union_tag__"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "type": "object"
                           }
                         ],
                         "type": "object"
@@ -62198,6 +62949,23 @@
                               "tolerance"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "choice",
+                                  "interaction",
+                                  "numeric",
+                                  "__unknown_api_union_tag__"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "type": "object"
                           }
                         ],
                         "type": "object"
@@ -62579,6 +63347,23 @@
                               "tolerance"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "choice",
+                                  "interaction",
+                                  "numeric",
+                                  "__unknown_api_union_tag__"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "type": "object"
                           }
                         ],
                         "type": "object"
@@ -62940,6 +63725,23 @@
                               "tolerance"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "choice",
+                                  "interaction",
+                                  "numeric",
+                                  "__unknown_api_union_tag__"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "type": "object"
                           }
                         ],
                         "type": "object"
@@ -63314,6 +64116,23 @@
                               "tolerance"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "choice",
+                                  "interaction",
+                                  "numeric",
+                                  "__unknown_api_union_tag__"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "type": "object"
                           }
                         ],
                         "type": "object"
@@ -63728,6 +64547,23 @@
                               "tolerance"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "choice",
+                                  "interaction",
+                                  "numeric",
+                                  "__unknown_api_union_tag__"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "type": "object"
                           }
                         ],
                         "type": "object"
@@ -64109,6 +64945,23 @@
                               "tolerance"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "choice",
+                                  "interaction",
+                                  "numeric",
+                                  "__unknown_api_union_tag__"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "type": "object"
                           }
                         ],
                         "type": "object"
@@ -64492,6 +65345,23 @@
                               "tolerance"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "choice",
+                                  "interaction",
+                                  "numeric",
+                                  "__unknown_api_union_tag__"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "type": "object"
                           }
                         ],
                         "type": "object"
@@ -64887,6 +65757,23 @@
                               "tolerance"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "choice",
+                                  "interaction",
+                                  "numeric",
+                                  "__unknown_api_union_tag__"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "type": "object"
                           }
                         ],
                         "type": "object"
@@ -65263,6 +66150,23 @@
                               "tolerance"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "choice",
+                                  "interaction",
+                                  "numeric",
+                                  "__unknown_api_union_tag__"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "type": "object"
                           }
                         ],
                         "type": "object"
@@ -65402,6 +66306,22 @@
                                   "notes"
                                 ],
                                 "additionalProperties": false
+                              },
+                              {
+                                "properties": {
+                                  "kind": {
+                                    "enum": [
+                                      "chord",
+                                      "notes",
+                                      "__unknown_api_union_tag__"
+                                    ],
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "kind"
+                                ],
+                                "type": "object"
                               }
                             ],
                             "type": "object"
@@ -65466,6 +66386,22 @@
                                   "notes"
                                 ],
                                 "additionalProperties": false
+                              },
+                              {
+                                "properties": {
+                                  "kind": {
+                                    "enum": [
+                                      "chord",
+                                      "notes",
+                                      "__unknown_api_union_tag__"
+                                    ],
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "kind"
+                                ],
+                                "type": "object"
                               }
                             ],
                             "type": "object"
@@ -65720,6 +66656,23 @@
                               "tolerance"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "choice",
+                                  "interaction",
+                                  "numeric",
+                                  "__unknown_api_union_tag__"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "type": "object"
                           }
                         ],
                         "type": "object"
@@ -66052,6 +67005,23 @@
                               "tolerance"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "choice",
+                                  "interaction",
+                                  "numeric",
+                                  "__unknown_api_union_tag__"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "type": "object"
                           }
                         ],
                         "type": "object"
@@ -66394,6 +67364,23 @@
                               "tolerance"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "choice",
+                                  "interaction",
+                                  "numeric",
+                                  "__unknown_api_union_tag__"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "type": "object"
                           }
                         ],
                         "type": "object"
@@ -66628,6 +67615,54 @@
                       "template"
                     ],
                     "additionalProperties": false
+                  },
+                  {
+                    "properties": {
+                      "template": {
+                        "enum": [
+                          "formulaModel",
+                          "numberLine",
+                          "areaModel",
+                          "balance",
+                          "stepSolver",
+                          "guessReveal",
+                          "geometryBoard",
+                          "unitCircle",
+                          "randomSimulation",
+                          "distributionExplorer",
+                          "chartReader",
+                          "labeledDiagram",
+                          "processOrder",
+                          "moleculeBuilder",
+                          "combinationGrid",
+                          "lineCrossing",
+                          "codeRunner",
+                          "codeTracer",
+                          "sqlPlayground",
+                          "patternTester",
+                          "patternTable",
+                          "dialogueSimulator",
+                          "timeline",
+                          "mapExplorer",
+                          "causeEffectChain",
+                          "sourceComparison",
+                          "categorize",
+                          "matchPairs",
+                          "argumentBuilder",
+                          "findError",
+                          "keyboardFretboard",
+                          "notationPlayer",
+                          "rhythmTapper",
+                          "beforeAfter",
+                          "__unknown_api_union_tag__"
+                        ],
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "template"
+                    ],
+                    "type": "object"
                   }
                 ],
                 "type": "object"
@@ -66894,6 +67929,23 @@
                       "kind"
                     ],
                     "additionalProperties": false
+                  },
+                  {
+                    "properties": {
+                      "kind": {
+                        "enum": [
+                          "material",
+                          "source",
+                          "notInMaterial",
+                          "__unknown_api_union_tag__"
+                        ],
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "kind"
+                    ],
+                    "type": "object"
                   }
                 ],
                 "type": "object"
@@ -67417,6 +68469,22 @@
                                 "source"
                               ],
                               "additionalProperties": false
+                            },
+                            {
+                              "properties": {
+                                "kind": {
+                                  "enum": [
+                                    "chart",
+                                    "plot",
+                                    "__unknown_api_union_tag__"
+                                  ],
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "kind"
+                              ],
+                              "type": "object"
                             }
                           ]
                         }
@@ -67813,6 +68881,23 @@
                       "kind"
                     ],
                     "additionalProperties": false
+                  },
+                  {
+                    "properties": {
+                      "kind": {
+                        "enum": [
+                          "material",
+                          "source",
+                          "notInMaterial",
+                          "__unknown_api_union_tag__"
+                        ],
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "kind"
+                    ],
+                    "type": "object"
                   }
                 ],
                 "type": "object"
@@ -68200,6 +69285,23 @@
                           "source"
                         ],
                         "additionalProperties": false
+                      },
+                      {
+                        "properties": {
+                          "kind": {
+                            "enum": [
+                              "chart",
+                              "timeline",
+                              "plot",
+                              "__unknown_api_union_tag__"
+                            ],
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "kind"
+                        ],
+                        "type": "object"
                       }
                     ]
                   }
@@ -68440,6 +69542,23 @@
                       "kind"
                     ],
                     "additionalProperties": false
+                  },
+                  {
+                    "properties": {
+                      "kind": {
+                        "enum": [
+                          "material",
+                          "source",
+                          "notInMaterial",
+                          "__unknown_api_union_tag__"
+                        ],
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "kind"
+                    ],
+                    "type": "object"
                   }
                 ],
                 "type": "object"
@@ -69003,6 +70122,22 @@
                                   "model"
                                 ],
                                 "additionalProperties": false
+                              },
+                              {
+                                "properties": {
+                                  "model": {
+                                    "enum": [
+                                      "area",
+                                      "bar",
+                                      "__unknown_api_union_tag__"
+                                    ],
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "model"
+                                ],
+                                "type": "object"
                               }
                             ],
                             "type": "object"
@@ -69674,6 +70809,23 @@
                                           "people"
                                         ],
                                         "additionalProperties": false
+                                      },
+                                      {
+                                        "properties": {
+                                          "kind": {
+                                            "enum": [
+                                              "binomial",
+                                              "diceSum",
+                                              "sharedBirthday",
+                                              "__unknown_api_union_tag__"
+                                            ],
+                                            "type": "string"
+                                          }
+                                        },
+                                        "required": [
+                                          "kind"
+                                        ],
+                                        "type": "object"
                                       }
                                     ],
                                     "type": "object"
@@ -69756,6 +70908,22 @@
                                           "sd"
                                         ],
                                         "additionalProperties": false
+                                      },
+                                      {
+                                        "properties": {
+                                          "kind": {
+                                            "enum": [
+                                              "proportion",
+                                              "mean",
+                                              "__unknown_api_union_tag__"
+                                            ],
+                                            "type": "string"
+                                          }
+                                        },
+                                        "required": [
+                                          "kind"
+                                        ],
+                                        "type": "object"
                                       }
                                     ],
                                     "type": "object"
@@ -69799,6 +70967,22 @@
                                   "sampleSizes"
                                 ],
                                 "additionalProperties": false
+                              },
+                              {
+                                "properties": {
+                                  "mode": {
+                                    "enum": [
+                                      "chance",
+                                      "sampling",
+                                      "__unknown_api_union_tag__"
+                                    ],
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "mode"
+                                ],
+                                "type": "object"
                               }
                             ],
                             "type": "object"
@@ -69927,6 +71111,22 @@
                                       "min"
                                     ],
                                     "additionalProperties": false
+                                  },
+                                  {
+                                    "properties": {
+                                      "kind": {
+                                        "enum": [
+                                          "normal",
+                                          "uniform",
+                                          "__unknown_api_union_tag__"
+                                        ],
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": [
+                                      "kind"
+                                    ],
+                                    "type": "object"
                                   }
                                 ],
                                 "type": "object"
@@ -70946,6 +72146,23 @@
                                   "rule"
                                 ],
                                 "additionalProperties": false
+                              },
+                              {
+                                "properties": {
+                                  "rule": {
+                                    "enum": [
+                                      "alleles",
+                                      "sum",
+                                      "product",
+                                      "__unknown_api_union_tag__"
+                                    ],
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "rule"
+                                ],
+                                "type": "object"
                               }
                             ],
                             "type": "object"
@@ -71606,7 +72823,8 @@
                                             "type": "string",
                                             "nullable": true,
                                             "enum": [
-                                              null
+                                              null,
+                                              "__unknown_api_value__"
                                             ]
                                           }
                                         ]
@@ -71707,7 +72925,8 @@
                                               "type": "string",
                                               "nullable": true,
                                               "enum": [
-                                                null
+                                                null,
+                                                "__unknown_api_value__"
                                               ]
                                             }
                                           ]
@@ -71994,6 +73213,22 @@
                                   "tolerance"
                                 ],
                                 "additionalProperties": false
+                              },
+                              {
+                                "properties": {
+                                  "mode": {
+                                    "enum": [
+                                      "regex",
+                                      "formula",
+                                      "__unknown_api_union_tag__"
+                                    ],
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "mode"
+                                ],
+                                "type": "object"
                               }
                             ],
                             "type": "object"
@@ -72572,6 +73807,22 @@
                                       "notes"
                                     ],
                                     "additionalProperties": false
+                                  },
+                                  {
+                                    "properties": {
+                                      "kind": {
+                                        "enum": [
+                                          "chord",
+                                          "notes",
+                                          "__unknown_api_union_tag__"
+                                        ],
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": [
+                                      "kind"
+                                    ],
+                                    "type": "object"
                                   }
                                 ],
                                 "type": "object"
@@ -72636,6 +73887,22 @@
                                       "notes"
                                     ],
                                     "additionalProperties": false
+                                  },
+                                  {
+                                    "properties": {
+                                      "kind": {
+                                        "enum": [
+                                          "chord",
+                                          "notes",
+                                          "__unknown_api_union_tag__"
+                                        ],
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": [
+                                      "kind"
+                                    ],
+                                    "type": "object"
                                   }
                                 ],
                                 "type": "object"
@@ -72958,6 +74225,44 @@
                           "template"
                         ],
                         "additionalProperties": false
+                      },
+                      {
+                        "properties": {
+                          "template": {
+                            "enum": [
+                              "formulaModel",
+                              "numberLine",
+                              "areaModel",
+                              "balance",
+                              "geometryBoard",
+                              "unitCircle",
+                              "randomSimulation",
+                              "distributionExplorer",
+                              "chartReader",
+                              "labeledDiagram",
+                              "processOrder",
+                              "moleculeBuilder",
+                              "combinationGrid",
+                              "lineCrossing",
+                              "codeRunner",
+                              "codeTracer",
+                              "sqlPlayground",
+                              "patternTester",
+                              "timeline",
+                              "mapExplorer",
+                              "causeEffectChain",
+                              "keyboardFretboard",
+                              "notationPlayer",
+                              "beforeAfter",
+                              "__unknown_api_union_tag__"
+                            ],
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "template"
+                        ],
+                        "type": "object"
                       }
                     ],
                     "type": "object"
@@ -73266,6 +74571,23 @@
                           "source"
                         ],
                         "additionalProperties": false
+                      },
+                      {
+                        "properties": {
+                          "kind": {
+                            "enum": [
+                              "chart",
+                              "timeline",
+                              "plot",
+                              "__unknown_api_union_tag__"
+                            ],
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "kind"
+                        ],
+                        "type": "object"
                       }
                     ]
                   }
@@ -73390,17 +74712,26 @@
                   },
                   {
                     "$ref": "#/components/schemas/ActivityExpectedNumeric"
+                  },
+                  {
+                    "properties": {
+                      "kind": {
+                        "enum": [
+                          "choice",
+                          "interaction",
+                          "numeric",
+                          "__unknown_api_union_tag__"
+                        ],
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "kind"
+                    ],
+                    "type": "object"
                   }
                 ],
-                "type": "object",
-                "discriminator": {
-                  "propertyName": "kind",
-                  "mapping": {
-                    "choice": "#/components/schemas/ActivityExpectedChoice",
-                    "interaction": "#/components/schemas/ActivityExpectedInteraction",
-                    "numeric": "#/components/schemas/ActivityExpectedNumeric"
-                  }
-                }
+                "type": "object"
               }
             },
             "required": [
@@ -73530,6 +74861,23 @@
                       "kind"
                     ],
                     "additionalProperties": false
+                  },
+                  {
+                    "properties": {
+                      "kind": {
+                        "enum": [
+                          "material",
+                          "source",
+                          "notInMaterial",
+                          "__unknown_api_union_tag__"
+                        ],
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "kind"
+                    ],
+                    "type": "object"
                   }
                 ],
                 "type": "object"
@@ -73878,6 +75226,23 @@
                               "source"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "chart",
+                                  "timeline",
+                                  "plot",
+                                  "__unknown_api_union_tag__"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "type": "object"
                           }
                         ]
                       }
@@ -74198,6 +75563,23 @@
                               "source"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "chart",
+                                  "timeline",
+                                  "plot",
+                                  "__unknown_api_union_tag__"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "type": "object"
                           }
                         ]
                       }
@@ -74207,6 +75589,22 @@
                       "variant"
                     ],
                     "additionalProperties": false
+                  },
+                  {
+                    "properties": {
+                      "variant": {
+                        "enum": [
+                          "guess",
+                          "text",
+                          "__unknown_api_union_tag__"
+                        ],
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "variant"
+                    ],
+                    "type": "object"
                   }
                 ],
                 "type": "object"
@@ -74440,6 +75838,23 @@
                       "kind"
                     ],
                     "additionalProperties": false
+                  },
+                  {
+                    "properties": {
+                      "kind": {
+                        "enum": [
+                          "material",
+                          "source",
+                          "notInMaterial",
+                          "__unknown_api_union_tag__"
+                        ],
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "kind"
+                    ],
+                    "type": "object"
                   }
                 ],
                 "type": "object"
@@ -77584,6 +78999,28 @@
                       "kind"
                     ],
                     "additionalProperties": false
+                  },
+                  {
+                    "properties": {
+                      "kind": {
+                        "enum": [
+                          "alphabet",
+                          "fillBlank",
+                          "listening",
+                          "matchColumns",
+                          "multipleChoice",
+                          "reading",
+                          "translation",
+                          "vocabulary",
+                          "__unknown_api_union_tag__"
+                        ],
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "kind"
+                    ],
+                    "type": "object"
                   }
                 ],
                 "type": "object"
@@ -77716,6 +79153,23 @@
                       "kind"
                     ],
                     "additionalProperties": false
+                  },
+                  {
+                    "properties": {
+                      "kind": {
+                        "enum": [
+                          "material",
+                          "source",
+                          "notInMaterial",
+                          "__unknown_api_union_tag__"
+                        ],
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "kind"
+                    ],
+                    "type": "object"
                   }
                 ],
                 "type": "object"
@@ -77976,6 +79430,23 @@
                       "kind"
                     ],
                     "additionalProperties": false
+                  },
+                  {
+                    "properties": {
+                      "kind": {
+                        "enum": [
+                          "material",
+                          "source",
+                          "notInMaterial",
+                          "__unknown_api_union_tag__"
+                        ],
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "kind"
+                    ],
+                    "type": "object"
                   }
                 ],
                 "type": "object"
@@ -78301,6 +79772,23 @@
                           "source"
                         ],
                         "additionalProperties": false
+                      },
+                      {
+                        "properties": {
+                          "kind": {
+                            "enum": [
+                              "chart",
+                              "timeline",
+                              "plot",
+                              "__unknown_api_union_tag__"
+                            ],
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "kind"
+                        ],
+                        "type": "object"
                       }
                     ]
                   }
@@ -78542,6 +80030,23 @@
                       "kind"
                     ],
                     "additionalProperties": false
+                  },
+                  {
+                    "properties": {
+                      "kind": {
+                        "enum": [
+                          "material",
+                          "source",
+                          "notInMaterial",
+                          "__unknown_api_union_tag__"
+                        ],
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "kind"
+                    ],
+                    "type": "object"
                   }
                 ],
                 "type": "object"
@@ -78881,6 +80386,23 @@
                           "source"
                         ],
                         "additionalProperties": false
+                      },
+                      {
+                        "properties": {
+                          "kind": {
+                            "enum": [
+                              "chart",
+                              "timeline",
+                              "plot",
+                              "__unknown_api_union_tag__"
+                            ],
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "kind"
+                        ],
+                        "type": "object"
                       }
                     ]
                   }
@@ -82030,6 +83552,28 @@
                       "kind"
                     ],
                     "additionalProperties": false
+                  },
+                  {
+                    "properties": {
+                      "kind": {
+                        "enum": [
+                          "alphabet",
+                          "fillBlank",
+                          "listening",
+                          "matchColumns",
+                          "multipleChoice",
+                          "reading",
+                          "translation",
+                          "vocabulary",
+                          "__unknown_api_union_tag__"
+                        ],
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "kind"
+                    ],
+                    "type": "object"
                   }
                 ],
                 "type": "object"
@@ -82078,6 +83622,37 @@
             ],
             "additionalProperties": false,
             "description": "A language exercise screen: `exercise` holds what it shows and checks"
+          },
+          {
+            "properties": {
+              "kind": {
+                "enum": [
+                  "activity",
+                  "challenge",
+                  "check",
+                  "explanation",
+                  "hook",
+                  "spokenAnswer",
+                  "summary",
+                  "typedAnswer",
+                  "workedExample",
+                  "alphabet",
+                  "fillBlank",
+                  "listening",
+                  "matchColumns",
+                  "multipleChoice",
+                  "reading",
+                  "translation",
+                  "vocabulary",
+                  "__unknown_api_union_tag__"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object"
           }
         ]
       },
@@ -82591,6 +84166,22 @@
                   "level"
                 ],
                 "additionalProperties": false
+              },
+              {
+                "properties": {
+                  "kind": {
+                    "enum": [
+                      "quick",
+                      "levelTestOut",
+                      "__unknown_api_union_tag__"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "type": "object"
               }
             ],
             "type": "object"
@@ -83394,6 +84985,23 @@
                   "status"
                 ],
                 "additionalProperties": false
+              },
+              {
+                "properties": {
+                  "status": {
+                    "enum": [
+                      "available",
+                      "continue",
+                      "tomorrow",
+                      "__unknown_api_union_tag__"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "status"
+                ],
+                "type": "object"
               }
             ],
             "type": "object"
@@ -83965,24 +85573,33 @@
           },
           {
             "$ref": "#/components/schemas/StudyBlockOpeningChanged"
+          },
+          {
+            "properties": {
+              "kind": {
+                "enum": [
+                  "lesson",
+                  "unwrittenLesson",
+                  "preparingLesson",
+                  "essay",
+                  "checkpoint",
+                  "mock",
+                  "challenge",
+                  "session",
+                  "today",
+                  "changed",
+                  "__unknown_api_union_tag__"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object"
           }
         ],
-        "type": "object",
-        "discriminator": {
-          "propertyName": "kind",
-          "mapping": {
-            "lesson": "#/components/schemas/StudyBlockOpeningLesson",
-            "unwrittenLesson": "#/components/schemas/StudyBlockOpeningUnwrittenLesson",
-            "preparingLesson": "#/components/schemas/StudyBlockOpeningPreparingLesson",
-            "essay": "#/components/schemas/StudyBlockOpeningEssay",
-            "checkpoint": "#/components/schemas/StudyBlockOpeningCheckpoint",
-            "mock": "#/components/schemas/StudyBlockOpeningMock",
-            "challenge": "#/components/schemas/StudyBlockOpeningChallenge",
-            "session": "#/components/schemas/StudyBlockOpeningSession",
-            "today": "#/components/schemas/StudyBlockOpeningToday",
-            "changed": "#/components/schemas/StudyBlockOpeningChanged"
-          }
-        }
+        "type": "object"
       },
       "StudyBlockOpeningLesson": {
         "type": "object",
@@ -84721,6 +86338,28 @@
                   "stepNumber"
                 ],
                 "additionalProperties": false
+              },
+              {
+                "properties": {
+                  "kind": {
+                    "enum": [
+                      "lesson",
+                      "item",
+                      "chapter",
+                      "plan",
+                      "mock",
+                      "subject",
+                      "step",
+                      "answer",
+                      "__unknown_api_union_tag__"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "type": "object"
               }
             ],
             "type": "object"
@@ -85272,6 +86911,35 @@
               "subscribed"
             ],
             "additionalProperties": false
+          },
+          {
+            "properties": {
+              "kind": {
+                "enum": [
+                  "startGoal",
+                  "chapterTest",
+                  "chooseFocus",
+                  "conversationCall",
+                  "mockExam",
+                  "essay",
+                  "mistakes",
+                  "pronunciation",
+                  "variety",
+                  "contentCountry",
+                  "homeCountry",
+                  "stats",
+                  "logbook",
+                  "memory",
+                  "plus",
+                  "__unknown_api_union_tag__"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object"
           }
         ],
         "type": "object"
@@ -85393,6 +87061,28 @@
                   "stepNumber"
                 ],
                 "additionalProperties": false
+              },
+              {
+                "properties": {
+                  "kind": {
+                    "enum": [
+                      "lesson",
+                      "item",
+                      "chapter",
+                      "plan",
+                      "mock",
+                      "subject",
+                      "step",
+                      "answer",
+                      "__unknown_api_union_tag__"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "type": "object"
               }
             ],
             "type": "object"
@@ -86497,17 +88187,26 @@
           },
           {
             "$ref": "#/components/schemas/NextLessonLessonResponse"
+          },
+          {
+            "properties": {
+              "type": {
+                "enum": [
+                  "empty",
+                  "chapter",
+                  "lesson",
+                  "__unknown_api_union_tag__"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "type"
+            ],
+            "type": "object"
           }
         ],
-        "type": "object",
-        "discriminator": {
-          "mapping": {
-            "chapter": "#/components/schemas/NextLessonChapterResponse",
-            "empty": "#/components/schemas/NextLessonEmptyResponse",
-            "lesson": "#/components/schemas/NextLessonLessonResponse"
-          },
-          "propertyName": "type"
-        }
+        "type": "object"
       },
       "NextLessonEmptyResponse": {
         "type": "object",
@@ -87499,6 +89198,27 @@
             ],
             "additionalProperties": false,
             "description": "The plan's date came with lessons left, and the plan doesn't end: one change keeps it going, previewed when the learner asks (POST /v1/goals/{goalId}/plan/change-previews): a goal's date moves to the day its time covers what's left by (`fittingDate` from POST /v1/goals/{goalId}/plan/time-to-cover, sent as `setTargetDate`); an exam's plan goes on after it (`setFullCourse`)"
+          },
+          {
+            "properties": {
+              "kind": {
+                "enum": [
+                  "onTrack",
+                  "ahead",
+                  "behind",
+                  "challengesLeft",
+                  "finished",
+                  "needsAdjusting",
+                  "pastDate",
+                  "__unknown_api_union_tag__"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object"
           }
         ],
         "type": "object"
@@ -88388,6 +90108,24 @@
               "question"
             ],
             "additionalProperties": false
+          },
+          {
+            "properties": {
+              "format": {
+                "enum": [
+                  "multipleChoice",
+                  "trueFalse",
+                  "matchPairs",
+                  "order",
+                  "__unknown_api_union_tag__"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "format"
+            ],
+            "type": "object"
           }
         ],
         "description": "A placement question without its answer",
@@ -91370,6 +93108,24 @@
                               "status"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "properties": {
+                              "status": {
+                                "enum": [
+                                  "available",
+                                  "continue",
+                                  "tomorrow",
+                                  "needsChoice",
+                                  "__unknown_api_union_tag__"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "status"
+                            ],
+                            "type": "object"
                           }
                         ],
                         "type": "object"
@@ -93062,6 +94818,22 @@
               "result"
             ],
             "additionalProperties": false
+          },
+          {
+            "properties": {
+              "kind": {
+                "enum": [
+                  "learn",
+                  "language",
+                  "__unknown_api_union_tag__"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object"
           }
         ],
         "type": "object"
@@ -94648,6 +96420,29 @@
                         "kind"
                       ],
                       "additionalProperties": false
+                    },
+                    {
+                      "properties": {
+                        "kind": {
+                          "enum": [
+                            "challenge",
+                            "essay",
+                            "mistake",
+                            "review",
+                            "pattern",
+                            "call",
+                            "buddy",
+                            "lesson",
+                            "mock",
+                            "__unknown_api_union_tag__"
+                          ],
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "type": "object"
                     }
                   ],
                   "type": "object"
@@ -96489,6 +98284,23 @@
                   "source"
                 ],
                 "additionalProperties": false
+              },
+              {
+                "properties": {
+                  "kind": {
+                    "enum": [
+                      "chart",
+                      "timeline",
+                      "plot",
+                      "__unknown_api_union_tag__"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "type": "object"
               }
             ]
           }
@@ -99187,6 +100999,24 @@
               "kind"
             ],
             "additionalProperties": false
+          },
+          {
+            "properties": {
+              "kind": {
+                "enum": [
+                  "group",
+                  "paper",
+                  "floor",
+                  "none",
+                  "__unknown_api_union_tag__"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object"
           }
         ],
         "description": "The paper's own rule: a minimum shared with another paper (`group`, DELE's with listening), its own minimum (`paper`), a floor below which the whole exam fails (`floor`, DELF), or none",
@@ -99549,6 +101379,25 @@
               "status"
             ],
             "additionalProperties": false
+          },
+          {
+            "properties": {
+              "status": {
+                "enum": [
+                  "goals",
+                  "explain",
+                  "instrument",
+                  "unclear",
+                  "unsafe",
+                  "__unknown_api_union_tag__"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "status"
+            ],
+            "type": "object"
           }
         ],
         "type": "object"
@@ -100095,6 +101944,23 @@
                   "kind"
                 ],
                 "additionalProperties": false
+              },
+              {
+                "properties": {
+                  "kind": {
+                    "enum": [
+                      "passed",
+                      "today",
+                      "noSitting",
+                      "__unknown_api_union_tag__"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "type": "object"
               }
             ],
             "type": "object"
@@ -100574,16 +102440,7 @@
           }
         ],
         "description": "A saved authoritative session or the read-only unopened preview",
-        "type": "object",
-        "discriminator": {
-          "propertyName": "status",
-          "mapping": {
-            "planned": "#/components/schemas/StudySession",
-            "active": "#/components/schemas/StudySession",
-            "completed": "#/components/schemas/StudySession",
-            "unstarted": "#/components/schemas/UnstartedStudyDay"
-          }
-        }
+        "type": "object"
       },
       "StudySession": {
         "type": "object",
@@ -100864,7 +102721,8 @@
             "enum": [
               "planned",
               "active",
-              "completed"
+              "completed",
+              "__unknown_api_value__"
             ]
           },
           "week": {
@@ -101487,6 +103345,23 @@
                         "status"
                       ],
                       "additionalProperties": false
+                    },
+                    {
+                      "properties": {
+                        "status": {
+                          "enum": [
+                            "available",
+                            "continue",
+                            "tomorrow",
+                            "__unknown_api_union_tag__"
+                          ],
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "status"
+                      ],
+                      "type": "object"
                     }
                   ],
                   "type": "object"
@@ -102000,6 +103875,28 @@
                         "kind"
                       ],
                       "additionalProperties": false
+                    },
+                    {
+                      "properties": {
+                        "kind": {
+                          "enum": [
+                            "block",
+                            "mistakesPractice",
+                            "pattern",
+                            "pronunciation",
+                            "call",
+                            "buddy",
+                            "areaPractice",
+                            "mockChooser",
+                            "__unknown_api_union_tag__"
+                          ],
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "type": "object"
                     }
                   ]
                 }
@@ -102016,7 +103913,8 @@
           "status": {
             "type": "string",
             "enum": [
-              "unstarted"
+              "unstarted",
+              "__unknown_api_value__"
             ]
           }
         },
@@ -102122,6 +104020,23 @@
                   "kind"
                 ],
                 "additionalProperties": false
+              },
+              {
+                "properties": {
+                  "kind": {
+                    "enum": [
+                      "draft",
+                      "goal",
+                      "today",
+                      "__unknown_api_union_tag__"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "type": "object"
               }
             ],
             "type": "object"
@@ -102532,7 +104447,8 @@
                     {
                       "type": "string",
                       "enum": [
-                        "all"
+                        "all",
+                        "__unknown_api_value__"
                       ]
                     }
                   ]
@@ -102703,7 +104619,8 @@
                             {
                               "type": "string",
                               "enum": [
-                                "all"
+                                "all",
+                                "__unknown_api_value__"
                               ]
                             }
                           ]
@@ -103986,6 +105903,24 @@
                   "status"
                 ],
                 "additionalProperties": false
+              },
+              {
+                "properties": {
+                  "status": {
+                    "enum": [
+                      "missing",
+                      "notNeeded",
+                      "needsUpload",
+                      "ready",
+                      "__unknown_api_union_tag__"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "status"
+                ],
+                "type": "object"
               }
             ],
             "type": "object"
@@ -105910,6 +107845,22 @@
                   "value"
                 ],
                 "additionalProperties": false
+              },
+              {
+                "properties": {
+                  "measure": {
+                    "enum": [
+                      "preparation",
+                      "lessons",
+                      "__unknown_api_union_tag__"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "measure"
+                ],
+                "type": "object"
               }
             ],
             "type": "object"
@@ -106332,7 +108283,8 @@
             "type": "string",
             "nullable": true,
             "enum": [
-              null
+              null,
+              "__unknown_api_value__"
             ]
           },
           {
@@ -106540,6 +108492,23 @@
               "status"
             ],
             "additionalProperties": false
+          },
+          {
+            "properties": {
+              "status": {
+                "enum": [
+                  "ready",
+                  "writing",
+                  "limitReached",
+                  "__unknown_api_union_tag__"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "status"
+            ],
+            "type": "object"
           }
         ],
         "type": "object"
@@ -107326,7 +109295,8 @@
                                 "type": "string",
                                 "nullable": true,
                                 "enum": [
-                                  null
+                                  null,
+                                  "__unknown_api_value__"
                                 ]
                               }
                             ]
@@ -107364,6 +109334,34 @@
                       "kind"
                     ],
                     "additionalProperties": false
+                  },
+                  {
+                    "properties": {
+                      "kind": {
+                        "enum": [
+                          "assignment",
+                          "choice",
+                          "curveShift",
+                          "grid",
+                          "links",
+                          "molecule",
+                          "notes",
+                          "numeric",
+                          "order",
+                          "output",
+                          "pattern",
+                          "rhythm",
+                          "rows",
+                          "selection",
+                          "__unknown_api_union_tag__"
+                        ],
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "kind"
+                    ],
+                    "type": "object"
                   }
                 ],
                 "type": "object"
@@ -107563,6 +109561,31 @@
               "selectedOptionId"
             ],
             "additionalProperties": false
+          },
+          {
+            "properties": {
+              "kind": {
+                "enum": [
+                  "check",
+                  "typedAnswer",
+                  "spokenAnswer",
+                  "activity",
+                  "challenge",
+                  "fillBlank",
+                  "listening",
+                  "matchColumns",
+                  "multipleChoice",
+                  "reading",
+                  "translation",
+                  "__unknown_api_union_tag__"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object"
           }
         ],
         "type": "object"
@@ -107986,6 +110009,22 @@
               "zeroReason"
             ],
             "additionalProperties": false
+          },
+          {
+            "properties": {
+              "kind": {
+                "enum": [
+                  "levels",
+                  "points",
+                  "__unknown_api_union_tag__"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object"
           }
         ],
         "type": "object"
@@ -107995,8 +110034,7 @@
         "enum": [
           "ready",
           "signUpRequired",
-          "writeWritingPrompt",
-          "__unknown_api_value__"
+          "writeWritingPrompt"
         ],
         "description": "Step names in the writing prompt generation event stream"
       }

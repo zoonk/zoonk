@@ -478,7 +478,7 @@ extension TutorTurn.Step {
     switch context {
     case .case4(let step): self.init(id: step.stepId, number: step.stepNumber)
     case .case5(let answer): self.init(id: answer.stepId, number: answer.stepNumber)
-    case .case1, .case2, .case3: return nil
+    case .case1, .case2, .case3, .case6: return nil
     }
   }
 
@@ -486,7 +486,7 @@ extension TutorTurn.Step {
     switch context {
     case .case4(let step): self.init(id: step.stepId, number: step.stepNumber)
     case .case5(let answer): self.init(id: answer.stepId, number: answer.stepNumber)
-    case .case1, .case2, .case3: return nil
+    case .case1, .case2, .case3, .case6: return nil
     }
   }
 }
@@ -494,7 +494,7 @@ extension TutorTurn.Step {
 extension TutorTurn.About {
   fileprivate init(_ context: Components.Schemas.LessonQuestion.ContextPayload) {
     switch context {
-    case .case1: self = .lesson
+    case .case1, .case6: self = .lesson
     case .case2(let item): self = item.answered ? .answer : .item
     case .case3(let whole): self = Self(whole.kind.rawValue)
     case .case4: self = .step
@@ -504,7 +504,7 @@ extension TutorTurn.About {
 
   fileprivate init(_ context: Components.Schemas.CreatedLessonQuestion.ContextPayload) {
     switch context {
-    case .case1: self = .lesson
+    case .case1, .case6: self = .lesson
     case .case2(let item): self = item.answered ? .answer : .item
     case .case3(let whole): self = Self(whole.kind.rawValue)
     case .case4: self = .step

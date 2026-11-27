@@ -101,6 +101,10 @@ private fun placementTestLine(test: PlanPlacementTest): String {
     val locale = currentLocale()
     val (state, minutes, result) =
         when (test) {
+            is PlanPlacementTest.PlanPlacementTestOneOf2Value -> {
+                return ""
+            }
+
             is PlanPlacementTest.PlanPlacementTestOneOfValue -> {
                 Triple(
                     test.value.state.value,
@@ -139,6 +143,10 @@ val PlanPlacementTest.opensLevelTest: Boolean
 /** A test there's nothing left to check with has no row, as main hides it. */
 fun PlanPlacementTest.isShown(): Boolean =
     when (this) {
+        is PlanPlacementTest.PlanPlacementTestOneOf2Value -> {
+            false
+        }
+
         is PlanPlacementTest.PlanPlacementTestOneOfValue -> {
             value.state != PlanPlacementTestOneOf.State.START || value.estimatedMinutes > 0
         }
