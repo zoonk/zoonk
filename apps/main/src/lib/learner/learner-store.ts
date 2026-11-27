@@ -159,6 +159,12 @@ export function mergeLearnerSummary({
   }
 }
 
+/** A write sent from the browser changed what the frame shows, such as its places: the summary is read again, the page left as it is. */
+export function readLearnerSummaryAgain(): void {
+  install();
+  void readLearnerSummary();
+}
+
 export function getLearnerSummaryState(): LearnerSummaryState {
   return store.state;
 }

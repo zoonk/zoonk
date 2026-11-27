@@ -28,6 +28,7 @@ import com.zoonk.android.app.AppSnackbars
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.isSaved
+import com.zoonk.android.data.saveSections
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.saves.UnavailableSaveRow
 import com.zoonk.android.navigation.AppNavigator
@@ -112,8 +113,7 @@ internal fun SavedLessons(
         return
     }
 
-    val opens = saves.shown(served.filter { it.available }, states)
-    val gone = served.filter { !it.available && states.isSaved(it.lessonId, true) }
+    val (opens, gone) = saves.shown(served, states).saveSections({ it.available }) { states.isSaved(it.lessonId, true) }
     val shown = if (showAll) opens else opens.take(SHOWN_FIRST)
 
     BeforeFold { beforeFold ->

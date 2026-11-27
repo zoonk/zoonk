@@ -142,7 +142,7 @@ internal fun MindMapsContent(
                             createAll,
                             host.plus(),
                             host.tier(),
-                            savedShown = maps.savedShown(shown.value.saved.filter { it.available }, saves),
+                            savedShown = maps.savedShown(shown.value.saved, saves),
                         ),
                     actions =
                         MindMapsActions(
@@ -234,7 +234,7 @@ internal data class MindMapsState(
     val createAll: CreateAll? = null,
     val plus: Boolean = false,
     val tier: LimitTier = LimitTier.Free,
-    /** The Saved tab's maps that open, each one changed on this visit kept where it showed; null lists them as read. */
+    /** The Saved tab's maps, each one changed on this visit kept where it showed; null lists them as read. */
     val savedShown: List<SavedMindMap>? = null,
 )
 

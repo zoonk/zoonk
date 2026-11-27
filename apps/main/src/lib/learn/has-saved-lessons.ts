@@ -1,7 +1,8 @@
 import "server-only";
-import { listCurrentUserSavedLessons } from "@zoonk/core/saved-lessons/list";
+import { getLearnerSummary } from "@zoonk/core/learner/summary";
 
+/** The frame's summary, read once for the request, already says it for the active goal. */
 export async function hasSavedLessons(goalId: string): Promise<boolean> {
-  const result = await listCurrentUserSavedLessons({ goalId });
-  return result.status === "ready" && result.lessons.length > 0;
+  const summary = await getLearnerSummary();
+  return summary?.activeGoalId === goalId && summary.places.savedLessons;
 }

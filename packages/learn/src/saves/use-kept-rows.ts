@@ -1,19 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { keepRows } from "./_utils/keep-rows";
+import { keepRows, shownRows } from "./_utils/keep-rows";
 
 /**
- * A list of saves keeps the rows the learner removed on this page, where they were, until they
+ * A list of saves keeps the rows the learner removed on this visit, where they were, until they
  * leave: nothing moves under their thumb, and a tap saves it again. A newer copy of the list from
  * the server drops only the rows removed somewhere else.
  */
 export function useKeptRows<Row>({
   isKept,
+  isSaved,
   keyOf,
   rows,
 }: {
   isKept: (row: Row) => boolean;
+  isSaved: (row: Row) => boolean;
   keyOf: (row: Row) => string;
   rows: readonly Row[];
 }): readonly Row[] {
@@ -25,5 +27,5 @@ export function useKeptRows<Row>({
     setShown(keepRows({ isKept, keyOf, next: rows, previous: shown }));
   }
 
-  return shown;
+  return shownRows({ isKept, isSaved, keyOf, rows: shown, served: rows });
 }

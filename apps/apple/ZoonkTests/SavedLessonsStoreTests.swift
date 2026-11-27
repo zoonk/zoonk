@@ -58,6 +58,18 @@ final class SavedLessonsStoreTests: XCTestCase {
     XCTAssertEqual(kept.rows([rows[2]]).map(\.lessonId), ["a", "b", "c"])
   }
 
+  func testAKeptLessonThatCanNoLongerOpenShowsOnlyUnderNoLongerAvailable() {
+    let rows = ["a", "b"].map(Self.lesson)
+    var kept = KeptRows<SavedLesson>()
+    kept.keep(rows[0], shown: rows)
+
+    let gone = SavedLesson(lessonId: "a", title: "a", chapterTitle: nil, available: false)
+    let sections = kept.sections([gone, rows[1]], available: \.available) { _ in true }
+
+    XCTAssertEqual(sections.open.map(\.lessonId), ["b"])
+    XCTAssertEqual(sections.gone.map(\.lessonId), ["a"])
+  }
+
   private func makeStore(api: SavedLessonsAPIStub) -> SavedLessonsStore {
     SavedLessonsStore(
       api: api, cache: AppCache(session: .preview(account: .savedLessonsTestAccount)))

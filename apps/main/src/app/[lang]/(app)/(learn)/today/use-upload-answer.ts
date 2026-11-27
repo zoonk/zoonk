@@ -2,7 +2,7 @@
 
 import { type GoalUploadRequest } from "@zoonk/core/library/sources/upload-request";
 import { type AttachedSource } from "@zoonk/learn/onboarding/actions";
-import { useTodayVisit } from "@zoonk/learn/today/visit";
+import { usePageVisit } from "@zoonk/learn/page-visit";
 import { type UploadRequestView } from "@zoonk/learn/upload-request";
 import { useState } from "react";
 
@@ -20,7 +20,7 @@ type HostUpload = {
 };
 
 export function useUploadAnswer() {
-  const visit = useTodayVisit();
+  const visit = usePageVisit();
   const [upload, setUpload] = useState<UploadAnswer | null>(null);
   const state = upload?.visit === visit ? upload.state : null;
 

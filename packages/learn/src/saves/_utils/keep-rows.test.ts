@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { keepRows } from "./keep-rows";
+import { keepRows, shownRows } from "./keep-rows";
 
 function keep({ kept, next, previous }: { kept: string[]; next: string[]; previous: string[] }) {
   return keepRows({ isKept: (row) => kept.includes(row), keyOf: (row) => row, next, previous });
@@ -37,5 +37,46 @@ describe(keepRows, () => {
       "a",
       "c",
     ]);
+  });
+});
+
+function shown({
+  kept,
+  removed,
+  rows,
+  served,
+}: {
+  kept: string[];
+  removed: string[];
+  rows: string[];
+  served: string[];
+}) {
+  return shownRows({
+    isKept: (row) => kept.includes(row),
+    isSaved: (row) => !removed.includes(row),
+    keyOf: (row) => row,
+    rows,
+    served,
+  });
+}
+
+describe(shownRows, () => {
+  it("shows a row removed on this visit", () => {
+    expect(shown({ kept: ["b"], removed: ["b"], rows: ["a", "b"], served: ["a"] })).toStrictEqual([
+      "a",
+      "b",
+    ]);
+  });
+
+  it("drops a row kept on an earlier visit once the list no longer has it", () => {
+    expect(shown({ kept: [], removed: ["b"], rows: ["a", "b"], served: ["a"] })).toStrictEqual([
+      "a",
+    ]);
+  });
+
+  it("drops a row an older copy of the list still has after it was removed", () => {
+    expect(shown({ kept: [], removed: ["b"], rows: ["a", "b"], served: ["a", "b"] })).toStrictEqual(
+      ["a"],
+    );
   });
 });

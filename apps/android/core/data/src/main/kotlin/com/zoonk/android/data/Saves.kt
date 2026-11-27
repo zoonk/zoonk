@@ -107,6 +107,21 @@ class KeptRows<R, K>(
     }
 }
 
+/** A list of saves in its two sections: the rows that open, then the ones that can't anymore. */
+data class SaveSections<R>(
+    val opens: List<R>,
+    val gone: List<R>,
+)
+
+/**
+ * These rows (the read with each kept row back, as [KeptRows.arrange] returns them) split where each one's newest copy
+ * says, so a kept row that can no longer open shows only among the gone ones, and only while it's [saved].
+ */
+fun <R> List<R>.saveSections(
+    available: (R) -> Boolean,
+    saved: (R) -> Boolean,
+): SaveSections<R> = SaveSections(filter(available), filter { !available(it) && saved(it) })
+
 /** [next], with each [touched] row of [previous] back after the row it followed there, in its newest version. */
 fun <R, K> keepRows(
     previous: List<R>,

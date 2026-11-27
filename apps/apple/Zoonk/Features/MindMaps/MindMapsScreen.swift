@@ -484,9 +484,9 @@ private struct MindMapSavedTab: View {
   @Binding var kept: KeptRows<SavedMindMap>
 
   var body: some View {
-    let open = kept.rows(
-      maps.saved.filter { $0.available && store.saves.isSaved($0.key, server: true) })
-    let gone = maps.saved.filter { !$0.available && store.saves.isSaved($0.key, server: true) }
+    let (open, gone) = kept.sections(maps.saved, available: \.available) {
+      store.saves.isSaved($0.key, server: true)
+    }
 
     if open.isEmpty, gone.isEmpty {
       EmptyTab {

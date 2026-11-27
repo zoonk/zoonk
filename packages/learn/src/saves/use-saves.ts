@@ -2,8 +2,14 @@
 
 import { showErrorToast } from "@zoonk/ui/components/toast";
 import { useRef, useState } from "react";
+import { usePageVisit } from "../_utils/use-page-visit";
 
 type States = ReadonlyMap<string, boolean>;
+
+/** What the learner changed on one visit to the page. */
+type Touched = { keys: ReadonlySet<string>; visit: number };
+
+const UNTOUCHED: Touched = { keys: new Set(), visit: 0 };
 
 function without(states: States, key: string): States {
   return new Map([...states].filter(([other]) => other !== key));
@@ -15,7 +21,8 @@ export type SaveState<Target> = { saved: boolean; target: Target };
 /**
  * Shows the learner's choice at once and sends it as the state they want, one request at a time
  * for each thing, so quick taps end on the last one. A save that fails goes back and says so.
- * What the server stored wins over what the page was served for the rest of the visit.
+ * What the server stored wins over what the page was served, a copy the router kept from before
+ * the tap included.
  */
 export function useSaves<Target>({
   failed,
@@ -31,7 +38,9 @@ export function useSaves<Target>({
 }) {
   const [wanted, setWanted] = useState<States>(new Map());
   const [stored, setStored] = useState<States>(new Map());
+  const [touched, setTouched] = useState(UNTOUCHED);
   const sending = useRef(new Map<string, boolean>());
+  const visit = usePageVisit();
 
   const settle = (key: string) => {
     sending.current.delete(key);
@@ -64,10 +73,16 @@ export function useSaves<Target>({
 
   return {
     isSaved: (state: SaveState<Target>) => wanted.get(keyOf(state.target)) ?? current(state),
-    /** The learner changed it on this page, so a list keeps its row until they leave. */
-    isTouched: (target: Target) => wanted.has(keyOf(target)) || stored.has(keyOf(target)),
+    /** The learner changed it on this visit, so a list keeps its row until they leave. */
+    isTouched: (target: Target) => touched.visit === visit && touched.keys.has(keyOf(target)),
     toggle: (state: SaveState<Target>) => {
       const key = keyOf(state.target);
+
+      setTouched((earlier) => ({
+        keys: new Set(earlier.visit === visit ? earlier.keys : []).add(key),
+        visit,
+      }));
+
       const isSending = sending.current.has(key);
       const next = !(sending.current.get(key) ?? current(state));
 
@@ -80,5 +95,3 @@ export function useSaves<Target>({
     },
   };
 }
-
-export type Saves<Target> = ReturnType<typeof useSaves<Target>>;

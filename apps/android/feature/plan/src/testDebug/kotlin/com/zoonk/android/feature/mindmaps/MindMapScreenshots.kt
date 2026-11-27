@@ -252,7 +252,7 @@ class MindMapScreenshots {
                     createAll = createAll,
                     plus = tier == LimitTier.Plus,
                     tier = tier,
-                    savedShown = maps.saved.filter { it.available },
+                    savedShown = maps.saved,
                 ),
                 NO_ACTIONS,
                 initialTab = tab,

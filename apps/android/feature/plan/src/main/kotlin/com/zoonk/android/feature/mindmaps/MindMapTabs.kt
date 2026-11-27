@@ -34,6 +34,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.data.isSaved
+import com.zoonk.android.data.saveSections
 import com.zoonk.android.feature.plan.MoreChaptersRow
 import com.zoonk.android.feature.saves.SaveMenu
 import com.zoonk.android.feature.saves.SaveSwipe
@@ -469,8 +470,8 @@ internal fun LazyListScope.savedTab(
     shown: IndexState,
     actions: TabActions,
 ) {
-    val opens = actions.state.savedShown ?: mindMaps.saved.filter { it.available }
-    val gone = mindMaps.saved.filter { !it.available && actions.saved(it.target, true) }
+    val (opens, gone) =
+        (actions.state.savedShown ?: mindMaps.saved).saveSections({ it.available }) { actions.saved(it.target, true) }
     if (opens.isEmpty() && gone.isEmpty()) {
         item(key = "saved-empty", contentType = "empty") {
             TabEmpty(R.string.mindmaps_saved_empty)

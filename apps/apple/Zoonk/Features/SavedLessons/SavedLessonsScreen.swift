@@ -45,9 +45,9 @@ private struct SavedLessonsList: View {
   private func content(_ lessons: Resource<[SavedLesson]>) -> some View {
     switch lessons.state {
     case .loaded(let read):
-      let open = kept.rows(
-        read.filter { $0.available && store.saves.isSaved($0.lessonId, server: true) })
-      let gone = read.filter { !$0.available && store.saves.isSaved($0.lessonId, server: true) }
+      let (open, gone) = kept.sections(read, available: \.available) {
+        store.saves.isSaved($0.lessonId, server: true)
+      }
 
       if open.isEmpty, gone.isEmpty {
         StateMessage {
