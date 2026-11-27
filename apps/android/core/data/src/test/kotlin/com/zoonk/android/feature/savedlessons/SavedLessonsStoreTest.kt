@@ -34,7 +34,7 @@ class SavedLessonsStoreTest {
         completedReads++
         return ApiJson.decodeFromString(
             CompletedLessonList.serializer(),
-            """{"data":[{"chapterTitle":"Cells","finishedOn":"2026-11-01","group":null,"lessonId":"$lessonId","saved":false,"title":"Lesson"}],
+            """{"data":[{"available":true,"chapterTitle":"Cells","finishedOn":"2026-11-01","group":null,"lessonId":"$lessonId","saved":false,"title":"Lesson"}],
             "filter":null,"pagination":{"hasMore":false,"nextCursor":null}}""",
         )
     }
