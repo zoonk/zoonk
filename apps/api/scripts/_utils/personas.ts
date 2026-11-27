@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { getActiveSubscriptionQuery } from "@zoonk/auth/active-subscription";
 import { type ScenarioState, seedPersonaCopy } from "@zoonk/core/seed";
 import { prisma } from "@zoonk/db";
 import { seedPlus } from "@zoonk/db/seed";
@@ -128,12 +129,18 @@ function getCloneShift({
   return { days, ms: moved - excess };
 }
 
+/** Plus exactly when the app would let the learner use it. */
+export async function hasPlus(userId: string): Promise<boolean> {
+  const subscription = await prisma.subscription.findFirst(
+    getActiveSubscriptionQuery({ now: new Date(), userId }),
+  );
+
+  return subscription !== null;
+}
+
 async function findSource(email: string) {
   const source = await prisma.user.findUnique({
-    include: {
-      goals: { include: { plan: true }, orderBy: { createdAt: "desc" } },
-      subscriptions: { where: { status: "active" } },
-    },
+    include: { goals: { include: { plan: true }, orderBy: { createdAt: "desc" } } },
     where: { email: email.toLowerCase() },
   });
 
@@ -147,7 +154,7 @@ async function findSource(email: string) {
     throw new Error(`${email} has no plan yet: finish their onboarding first.`);
   }
 
-  return { goal, plus: source.subscriptions.length > 0, userId: source.id };
+  return { goal, plus: await hasPlus(source.id), userId: source.id };
 }
 
 export async function clonePersona({ awayDays, day, from, plus, timeZone }: PersonaCloneRequest) {
