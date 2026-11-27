@@ -20,19 +20,25 @@ function scheduleFacts(plan: GuardedPlan, movableFrom: Date) {
   const { built, feasibility, selected } = plan;
   const deadline = selected.coverage?.deadline;
 
-  const items = built.items.map(({ chapterId, id, key, kind, phase, scheduledFor, status }) => {
+  const items = built.items.flatMap(({ chapterId, id, key, kind, phase, scheduledFor, status }) => {
+    if (kind === "review") {
+      return [];
+    }
+
     const day = scheduledFor && toIsoDate(scheduledFor);
 
     const movable =
       LEARN_KINDS.has(kind) && status === "todo" && scheduledFor && scheduledFor >= movableFrom;
 
-    return {
-      chapterId,
-      id,
-      key,
-      status,
-      ...(movable ? { beforeDeadline: deadline && day && day <= deadline } : { day, phase }),
-    };
+    return [
+      {
+        chapterId,
+        id,
+        key,
+        status,
+        ...(movable ? { beforeDeadline: deadline && day && day <= deadline } : { day, phase }),
+      },
+    ];
   });
 
   return {
@@ -40,7 +46,6 @@ function scheduleFacts(plan: GuardedPlan, movableFrom: Date) {
     coverageBySkill: selected.coverage?.skills,
     coveredShare: feasibility.coveredShare,
     dropped: built.droppedSkillIds.toSorted(),
-    endDate: selected.endDate,
     fits: feasibility.fits,
     items: items.toSorted((a, b) => a.key.localeCompare(b.key)),
     phases: built.phases.map(({ endDate, startDate }) => [startDate, endDate]),
@@ -76,6 +81,24 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   );
 }
 
+function listReviewKeys(plan: GuardedPlan): Set<string> {
+  return new Set(plan.built.items.flatMap(({ key, kind }) => (kind === "review" ? [key] : [])));
+}
+
+/**
+ * Lessons packed in a new order can end a day sooner, which frees that day for a review before the
+ * exam; ending later, or losing a review day, is what a learner would see as worse.
+ */
+function endsNoLater({ baseline, computed }: { baseline: GuardedPlan; computed: GuardedPlan }) {
+  const before = baseline.selected.endDate;
+  const after = computed.selected.endDate;
+
+  return (
+    (before === after || (before !== null && after !== null && after <= before)) &&
+    listReviewKeys(baseline).isSubsetOf(listReviewKeys(computed))
+  );
+}
+
 /** A mock can move future lessons while holding the plan's work, coverage and pace. */
 export function holdsSchedule({
   baseline,
@@ -88,6 +111,7 @@ export function holdsSchedule({
 }): boolean {
   return (
     isSameFact(scheduleFacts(baseline, movableFrom), scheduleFacts(computed, movableFrom)) &&
+    endsNoLater({ baseline, computed }) &&
     baseline.feasibility.timeCovers === computed.feasibility.timeCovers
   );
 }
