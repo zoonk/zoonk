@@ -37,19 +37,23 @@ function SkipLead({
   held,
   lessons,
   said,
+  saved = false,
   undone,
 }: {
   held: boolean;
   lessons: number;
   said: string;
+  saved?: boolean;
   undone: boolean;
 }) {
+  const t = useExtracted();
   const sentences = useSkipSentences();
   const kept = held && lessons === 0 ? sentences.heldUntilTomorrow : said;
 
   return (
     <OnboardingDescription role="status">
       {undone ? sentences.back(lessons) : kept}
+      {saved && ` ${t("Your answers are saved.")}`}
     </OnboardingDescription>
   );
 }
@@ -100,6 +104,7 @@ export function PlacementCheckpoint({
           held={heldUntilTomorrow}
           lessons={lessonsSkipped}
           said={sentences.part(lessonsSkipped)}
+          saved
           undone={undone}
         />
       }

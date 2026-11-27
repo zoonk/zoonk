@@ -8637,6 +8637,7 @@ msgstr "Mock exam handed in"
 #: src/mock/mock-screen.tsx
 #: src/onboarding/steps/plan-building.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
+#: src/placement-test/placement-test-screens.tsx
 msgctxt "ni-x13"
 msgid "Your answers are saved."
 msgstr "Your answers are saved."

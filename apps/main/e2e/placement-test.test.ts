@@ -252,6 +252,11 @@ test.describe("Testing what you know from the plan", () => {
     await expect(page.getByText("Part 1 of 2").filter({ visible: true })).toBeVisible();
     await page.getByRole("button", { name: "I don't know yet" }).click();
     await expect(page.getByRole("heading", { name: "Part 1 of 2 done" })).toBeVisible();
+
+    await expect(
+      page.getByText("No lessons skipped in this part. Your answers are saved.", { exact: true }),
+    ).toBeVisible();
+
     await page.getByRole("button", { exact: true, name: "Keep going" }).click();
 
     const secondQuestion = "What would you do next?";
