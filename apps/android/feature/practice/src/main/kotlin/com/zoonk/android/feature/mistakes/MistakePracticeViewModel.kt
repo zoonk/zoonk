@@ -110,9 +110,9 @@ data class PracticeState(
      */
     val offersAgain: Boolean
         get() {
-            val summary = end?.summary ?: return false
+            val end = end ?: return false
             val unfixed = read.tasks.any { it.mistakeId !in fixedIds }
-            return run.index >= read.tasks.size && again != AgainLoad.NothingLeft && (unfixed || summary.hasMorePractice)
+            return run.index >= read.tasks.size && again != AgainLoad.NothingLeft && (unfixed || end.summary?.hasMorePractice == true)
         }
 }
 
