@@ -114,7 +114,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bugün %@"
+            "value" : "Bugün %@ ile"
           }
         }
       }
@@ -173,7 +173,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · Enerji"
+            "value" : "%@ için Enerji"
           }
         }
       }
@@ -1257,7 +1257,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ ändern"
+            "value" : "%@ wechseln"
           }
         },
         "es" : {
@@ -1269,7 +1269,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Changer %@"
+            "value" : "Remplacer %@"
           }
         },
         "it" : {
@@ -1281,7 +1281,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@を変更する"
+            "value" : "%@を変える"
           }
         },
         "ko" : {
@@ -1305,7 +1305,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ yerine başkasını seç"
+            "value" : "%@ yerine başka bir arkadaş seç"
           }
         }
       }
@@ -3110,13 +3110,13 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ 더 알아보기"
+            "value" : "%@에 대해 더 보기"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Więcej o kumplu: %@"
+            "value" : "Dowiedz się więcej: %@"
           }
         },
         "pt" : {
@@ -3128,7 +3128,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ hakkında daha fazla bilgi edin"
+            "value" : "%@ hakkında daha fazla bilgi al"
           }
         }
       }
@@ -5060,13 +5060,13 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Otwórz podsumowanie tygodnia"
+            "value" : "Podsumowanie tygodnia"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Resumo da semana"
+            "value" : "Resumo semanal"
           }
         },
         "tr" : {
