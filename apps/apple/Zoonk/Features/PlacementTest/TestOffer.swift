@@ -32,6 +32,8 @@ struct TestOffer: View {
 
   @State private var picked: AnalyticsEvent.TestRow?
   @State private var offered = false
+  /// Each card's own height, so every card takes the tallest and they read as a pair.
+  @State private var heights: [AnalyticsEvent.TestRow: CGFloat] = [:]
 
   var body: some View {
     let picked = self.picked ?? preselected
@@ -45,7 +47,10 @@ struct TestOffer: View {
             Button {
               self.picked = card.id
             } label: {
-              TestOfferCardView(card: card, isPicked: picked == card.id, picks: true)
+              TestOfferCardView(
+                card: card, isPicked: picked == card.id, picks: true,
+                minHeight: heights.values.max()
+              ) { heights[card.id] = $0 }
             }
             .buttonStyle(.plain)
             .accessibilityAddTraits(picked == card.id ? .isSelected : [])
@@ -88,6 +93,8 @@ private struct TestOfferCardView: View {
   let card: TestOfferCard
   let isPicked: Bool
   let picks: Bool
+  var minHeight: CGFloat?
+  var onHeight: (CGFloat) -> Void = { _ in }
 
   var body: some View {
     let shape = RoundedRectangle(cornerRadius: Radius.option, style: .continuous)
@@ -123,6 +130,12 @@ private struct TestOfferCardView: View {
         ChoiceMark(isPicked: isPicked)
       }
     }
+    .onGeometryChange(for: CGFloat.self) {
+      $0.size.height
+    } action: {
+      onHeight($0)
+    }
+    .frame(minHeight: minHeight)
     .padding(16)
     .contentShape(shape)
     .background {
