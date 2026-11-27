@@ -62,7 +62,7 @@ export type WritingPromptInput = {
   usedTitles: string[];
 };
 
-/** @internal Calibration tracks the template shared across learner languages. */
+/** Calibration tracks the template shared across learner languages. */
 export function getWritingKeyWriter() {
   return {
     model: defaultModel,

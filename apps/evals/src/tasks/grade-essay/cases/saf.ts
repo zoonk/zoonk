@@ -1,7 +1,7 @@
 import questions from "./saf-answers.json";
 import { type WritingCase, basis } from "./shared";
 
-export const SAF_SOURCE =
+const SAF_SOURCE =
   "https://huggingface.co/datasets/Short-Answer-Feedback/saf_legal_domain_german";
 
 export const SAF_CASES: WritingCase[] = questions.flatMap(({ answers, id, points, question }) => {
