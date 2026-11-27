@@ -1,5 +1,6 @@
 import { type OptionalCountry, type TestCase } from "@/lib/types";
 import { type LessonSpecParams } from "@zoonk/ai/tasks/lesson-spec";
+import { type SecondTakeInput } from "@zoonk/ai/tasks/lesson-spec/second-take";
 import { listPlannerTemplates } from "@zoonk/core/library/activities/writer-templates";
 
 export type LessonSpecExpected = {
@@ -7,6 +8,8 @@ export type LessonSpecExpected = {
   pictures?: "any" | "none" | "some";
   /** Answering this lesson's questions means seeing something, so at least one shows it in a picture. */
   questionPicture?: boolean;
+  /** The case's own `secondTake` input again, since the scorer reads only `expected`. */
+  secondTake?: SecondTakeInput;
 };
 
 const ACTIVITY_TEMPLATES: LessonSpecParams["activityTemplates"] = listPlannerTemplates();

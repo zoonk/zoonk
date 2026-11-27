@@ -24,6 +24,7 @@ export type RawLessonSpec = {
   screens: RawLessonScreen[];
   skills: LessonSpecSkill[];
   title: string;
+  opensOn?: number;
 };
 
 function cleanSkill(skill: LessonSpecSkill): LessonSpecSkill {
@@ -162,6 +163,7 @@ export function normalizeLessonSpec({
     canDo: toPlainLine(raw.canDo),
     description: toPlainLine(raw.description),
     estimatedMinutes: estimateLessonMinutes(screens.map((screen) => screen.kind)),
+    ...(raw.opensOn === undefined ? {} : { opensOn: raw.opensOn }),
     screens,
     skills,
     title: toPlainLine(raw.title),

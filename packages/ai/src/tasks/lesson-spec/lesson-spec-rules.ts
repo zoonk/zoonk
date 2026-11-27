@@ -47,6 +47,8 @@ export type LessonSpec = {
   screens: LessonScreen[];
   /** Computed from the screen plan, never written by a model. */
   estimatedMinutes: number;
+  /** A second take's opening wrong answer: its number in the list the plan was given, from 1. */
+  opensOn?: number;
 };
 
 /** Screens are a tweet long, so a lesson goes deep in more of them rather than longer ones. */
