@@ -67,8 +67,14 @@ class AnswerRowScreenshots {
     private val one =
         blockQuestion(
             "4b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b",
-            "question" to "Uma bicicleta custava R$ 800 e teve um desconto de 15%. Quanto ela passou a custar?",
-            "options" to strings("R$ 680", "R$ 785", "R$ 120, porque o desconto de 15% sobre R$ 800 é o novo preço da bicicleta", "R$ 920"),
+            "question" to "Uma bicicleta custava 800 reais e teve um desconto de 15%. Quanto ela passou a custar?",
+            "options" to
+                strings(
+                    "680 reais",
+                    "785 reais",
+                    "120 reais, porque o desconto de 15% sobre 800 reais é o novo preço da bicicleta",
+                    "920 reais",
+                ),
         )
 
     private val filler =
@@ -145,19 +151,19 @@ class AnswerRowScreenshots {
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
-    fun oneAfterAPick() = show("one-picked", one, taps = listOf("R$ 120"))
+    fun oneAfterAPick() = show("one-picked", one, taps = listOf("120 reais"))
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
-    fun oneAfterAPickDark() = show("one-picked-dark", one, taps = listOf("R$ 120"), dark = true)
+    fun oneAfterAPickDark() = show("one-picked-dark", one, taps = listOf("120 reais"), dark = true)
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi-qwerty")
-    fun oneAfterAPickWithAKeyboard() = show("one-picked-keyboard", one, taps = listOf("R$ 120"))
+    fun oneAfterAPickWithAKeyboard() = show("one-picked-keyboard", one, taps = listOf("120 reais"))
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
-    fun oneChecked() = show("one-checked", one, taps = listOf("R$ 120"), check = true)
+    fun oneChecked() = show("one-checked", one, taps = listOf("120 reais"), check = true)
 }
 
 private fun wrongAnswer(right: String): StudyAnswerFeedback =
