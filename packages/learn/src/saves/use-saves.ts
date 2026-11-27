@@ -3,6 +3,7 @@
 import { showErrorToast } from "@zoonk/ui/components/toast";
 import { useRef, useState } from "react";
 import { usePageVisit } from "../_utils/use-page-visit";
+import { storeSave, useStoredSaves } from "./stored-saves";
 
 type States = ReadonlyMap<string, boolean>;
 
@@ -21,8 +22,8 @@ export type SaveState<Target> = { saved: boolean; target: Target };
 /**
  * Shows the learner's choice at once and sends it as the state they want, one request at a time
  * for each thing, so quick taps end on the last one. A save that fails goes back and says so.
- * What the server stored wins over what the page was served, a copy the router kept from before
- * the tap included.
+ * What the server last stored for a save made in this tab, on any page, wins over what the page
+ * was served, a copy the router kept from before the tap included.
  */
 export function useSaves<Target>({
   failed,
@@ -37,7 +38,7 @@ export function useSaves<Target>({
   save: (target: Target, saved: boolean) => Promise<boolean | null>;
 }) {
   const [wanted, setWanted] = useState<States>(new Map());
-  const [stored, setStored] = useState<States>(new Map());
+  const stored = useStoredSaves();
   const [touched, setTouched] = useState(UNTOUCHED);
   const sending = useRef(new Map<string, boolean>());
   const visit = usePageVisit();
@@ -64,7 +65,7 @@ export function useSaves<Target>({
       return;
     }
 
-    setStored((current) => new Map(current).set(key, result));
+    storeSave(key, result);
     onSaved?.(target, result);
     await send({ last: result, target });
   };

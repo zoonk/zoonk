@@ -172,6 +172,41 @@ test.describe("Saved lessons", () => {
     }
   });
 
+  test("a lesson saved on Completed lessons and removed in its player shows unsaved back on Completed lessons, where a tap saves it again", async ({
+    browser,
+  }) => {
+    const { finished, user } = await createLearner();
+    const page = await openAs(browser, user);
+    await page.setViewportSize({ height: 900, width: 1440 });
+
+    try {
+      await page.goto("/completed-lessons");
+
+      const save = page.getByRole("button", { name: `Save ${finished.title}` });
+      await expectHydrated(save);
+      await save.click();
+      await expect.poll(() => savedCount(user.id)).toBe(1);
+
+      const started = waitForLessonStart(page, finished.id);
+      await page.getByRole("main").getByRole("link", { name: finished.title }).click();
+      await started;
+
+      const saved = page.getByRole("button", { exact: true, name: "Saved" });
+      await expect(saved).toHaveAttribute("aria-pressed", "true");
+      await saved.click();
+      await expect.poll(() => savedCount(user.id)).toBe(0);
+
+      await page.getByRole("link", { name: "Leave" }).click();
+      await expect(page).toHaveURL(/\/completed-lessons$/u);
+
+      await expect(save).toHaveAttribute("aria-pressed", "false");
+      await save.click();
+      await expect.poll(() => savedCount(user.id)).toBe(1);
+    } finally {
+      await page.context().close();
+    }
+  });
+
   test("the Plan and Today open Saved lessons, where a save removed keeps its row to save again, one that can't open leaves at once, and a lesson opened there closes back to it", async ({
     browser,
   }) => {
