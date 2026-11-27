@@ -202,6 +202,8 @@ test.describe("Mocks whenever the learner wants", () => {
     };
 
     const handIn = async () => {
+      // Each section opens on its first question; the previous one's counter is gone by then.
+      await expect(page.getByText(/^Question 1 of \d+/u)).toBeVisible();
       await answerMockQuestions({ answers, knows, page });
 
       await page
@@ -223,13 +225,8 @@ test.describe("Mocks whenever the learner wants", () => {
       .getByRole("link", { name: /^Practice mistakes/u })
       .filter({ visible: true });
 
-    await expect(async () => {
-      if (!(await practice.isVisible())) {
-        await page.getByRole("button", { exact: true, name: "Continue" }).click();
-      }
-
-      await expect(practice).toBeVisible({ timeout: 1000 });
-    }).toPass();
+    // A wide screen shows the whole result as one step, with its actions on the bar.
+    await expect(practice).toBeVisible();
 
     await practice.click();
     await expect(page).toHaveURL(`/mistakes/practice?mockId=${mockId}&mockPage=${mockId}`);
