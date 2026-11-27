@@ -210,7 +210,7 @@ internal class FakeMockRunApi(
         offerFailure?.let { throw it }
         offers += offer
         afterOffer?.invoke()
-        return MockPlanOfferResult(changeId = null, lessonsSkipped = 3, reason = null, status = MockPlanOfferResult.Status.APPLIED)
+        return MockPlanOfferResult(changeId = null, lessonsSkipped = 3, status = MockPlanOfferResult.Status.APPLIED)
     }
 }
 

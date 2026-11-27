@@ -709,33 +709,6 @@ describe("mocks taken any time", () => {
     await expect(readMock(id)).resolves.toMatchObject(result);
   });
 
-  it("offers the area that went worst more of the plan's time, and says when it has it all", async () => {
-    const { goal, plan, skills } = await anytimeSetup();
-    const mathSkills = new Set(skills.slice(0, SKILLS_PER_AREA).map((skill) => skill.id));
-
-    const started = await startAnytimeMock({
-      goalId: goal.id,
-      input: { shape: { area: null, day: null, kind: "full" } },
-    });
-
-    const id = started.status === "started" ? started.id : "";
-
-    await answerSection({ id, rightOn: mathSkills });
-    await finishMock({ blockId: id, input: { timeZone: UTC } });
-
-    await expect(readMock(id)).resolves.toMatchObject({
-      adapt: { focus: { area: "Languages", correct: 0, total: 8 } },
-    });
-
-    await expect(
-      adaptPlanFromMock({ blockId: id, input: { offer: "focus", timeZone: UTC } }),
-    ).resolves.toStrictEqual({ reason: "alreadyIn", status: "unchanged" });
-
-    const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
-
-    expect(saved.settings).not.toMatchObject({ focusAreas: ["Languages"] });
-  });
-
   it("saves a short request across devices and starts it only after the reserve is full", async () => {
     const { goal, skills, user } = await anytimeSetup({ itemsPerSkill: 3 });
     const input = { shape: MATH_SHAPE };

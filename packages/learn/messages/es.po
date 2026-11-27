@@ -1592,7 +1592,6 @@ msgstr "Zu"
 #: src/focus-test/focus-test-screens.tsx
 #: src/language/level-test/level-test-flow.tsx
 #: src/language/level-test/level-test-preparing.tsx
-#: src/mock/mock-result-plan.tsx
 #: src/placement-test/placement-test-flow.tsx
 #: src/plan/plan-fit-suggestion.tsx
 #: src/plan/plan-offer-preview.tsx
@@ -3051,7 +3050,6 @@ msgstr "Usar mi fecha"
 
 #: src/conversation/tutor-plan-change.tsx
 #: src/focus-test/focus-test-proposal.tsx
-#: src/mock/mock-result-plan.tsx
 #: src/plan/plan-offer-preview.tsx
 #: src/today/today-plan-change.tsx
 msgctxt "ZPLfTK"
@@ -7578,11 +7576,6 @@ msgid "Open the lesson"
 msgstr "Abrir la lección"
 
 #: src/mistakes/mistake-entry.tsx
-msgctxt "BICox_"
-msgid "Practice tomorrow"
-msgstr "Podrás practicar mañana"
-
-#: src/mistakes/mistake-entry.tsx
 msgctxt "E7KLhm"
 msgid "Practice this topic"
 msgstr "Practicar este tema"
@@ -7652,34 +7645,14 @@ msgid "What you got wrong"
 msgstr "En qué te equivocaste"
 
 #: src/mistakes/mistakes-row.tsx
-msgctxt "lLGcbO"
-msgid "{ready, plural, =0 {# ready to practice} one {# ready to practice} other {# ready to practice}} · {tomorrow, plural, =0 {# available tomorrow} one {# available tomorrow} other {# available tomorrow}}"
-msgstr "{ready, plural, =0 {# disponibles para practicar} one {# listo para practicar} other {# listos para practicar}} · {tomorrow, plural, =0 {# disponibles a partir de mañana} one {# disponible mañana} other {# disponibles mañana}}"
-
-#: src/mistakes/mistakes-row.tsx
 msgctxt "AMKpbi"
 msgid "Redo what you got wrong"
 msgstr "Vuelve a intentar lo que respondiste mal"
 
 #: src/mistakes/mistakes-row.tsx
-msgctxt "DZU4se"
-msgid "Today's mistakes return tomorrow"
-msgstr "Los errores de hoy vuelven mañana"
-
-#: src/mistakes/mistakes-row.tsx
 msgctxt "DWCSOn"
 msgid "{count, plural, =0 {# ready to practice} one {# ready to practice} other {# ready to practice}}"
 msgstr "{count, plural, =0 {# listos para practicar} one {# listo para practicar} other {# listos para practicar}}"
-
-#: src/mistakes/mistakes-row.tsx
-msgctxt "XiaKfK"
-msgid "{count, plural, =0 {# available tomorrow} one {# available tomorrow} other {# available tomorrow}}"
-msgstr "{count, plural, =0 {# disponibles mañana} one {# disponible mañana} other {# disponibles mañana}}"
-
-#: src/mistakes/notebook-availability-text.tsx
-msgctxt "LoO9E7"
-msgid "Practice opens tomorrow"
-msgstr "Podrás practicar mañana"
 
 #: src/mistakes/practice-done.tsx
 msgctxt "_GkpAM"
@@ -8351,11 +8324,6 @@ msgid "{count, plural, one {# lesson} other {# lessons}} skipped."
 msgstr "{count, plural, one {Se saltó # lección} other {Se saltaron # lecciones}}."
 
 #: src/mock/mock-result-plan.tsx
-msgctxt "DRJEUg"
-msgid "Your plan gives {area} more time."
-msgstr "Tu plan dedica más tiempo a {area}."
-
-#: src/mock/mock-result-plan.tsx
 #: src/plan-diff/change-names.ts
 #: src/plan/use-short-list.ts
 msgctxt "v5V1P2"
@@ -8381,16 +8349,6 @@ msgstr "Acertaste todo en {topics}."
 msgctxt "SvO1ek"
 msgid "Skip {count, plural, one {# lesson} other {# lessons}} you already know?"
 msgstr "¿Saltar {count, plural, one {# lección} other {# lecciones}} que ya conoces?"
-
-#: src/mock/mock-result-plan.tsx
-msgctxt "b4G-y7"
-msgid "You got {correct, plural, =0 {# of {total} right} one {# of {total} right} other {# of {total} right}} there."
-msgstr "Ahí tuviste {correct, plural, =0 {# aciertos de {total}} one {# acierto de {total}} other {# aciertos de {total}}}."
-
-#: src/mock/mock-result-plan.tsx
-msgctxt "1-4FCE"
-msgid "Focus more on {area}?"
-msgstr "¿Dedicar más tiempo a {area}?"
 
 #: src/mock/mock-result-plan.tsx
 msgctxt "iaHiP_"

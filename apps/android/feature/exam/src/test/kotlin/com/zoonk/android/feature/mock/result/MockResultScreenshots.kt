@@ -443,7 +443,7 @@ class MockResultScreenshots {
                         "preparation":{"after":0.48,"before":0.41}""",
                 ),
             extra =
-                """"review":[$MISSED,$STATEMENT],"adapt":{"focus":{"area":"Languages","correct":0,"total":1},"skip":{"lessons":3,"topics":["Addition","Fractions"]}},
+                """"review":[$MISSED,$STATEMENT],"adapt":{"skip":{"lessons":3,"topics":["Addition","Fractions"]}},
                 "scoreNotes":{"noticeScoring":null,"relative":false,"scale":{"max":1000,"min":0,"name":"ENEM","passScore":null,"score":null}}""",
         )
 

@@ -22,6 +22,7 @@ import {
   MOCK_QUESTIONS,
   createBreakExamGoal,
   createExamGoal,
+  createReorderExamGoal,
   examEdition,
   isoDayFromToday,
 } from "./helpers/exams";
@@ -377,7 +378,7 @@ test.describe("Exams API", () => {
       schema: mockPlanOfferResultSchema,
     });
 
-    expect(skipped).toMatchObject({ lessonsSkipped: 1, reason: null, status: "applied" });
+    expect(skipped).toMatchObject({ lessonsSkipped: 1, status: "applied" });
 
     const again = await readBody({
       response: await api.post(`${path}/plan-changes`, {
@@ -386,14 +387,62 @@ test.describe("Exams API", () => {
       schema: mockPlanOfferResultSchema,
     });
 
-    expect(again).toStrictEqual({
-      changeId: null,
-      lessonsSkipped: 0,
-      reason: null,
-      status: "unchanged",
+    expect(again).toStrictEqual({ changeId: null, lessonsSkipped: 0, status: "unchanged" });
+
+    const focus = await api.post(`${path}/plan-changes`, {
+      data: { offer: "focus", timeZone: "UTC" },
     });
 
+    expect(focus.status()).toBe(400);
+
     await Promise.all([api.dispose(), other.api.dispose()]);
+  });
+
+  test("moves the topic a finished mock missed earlier in the plan and names it in the result", async () => {
+    const { api, userId } = await createBearerLearner({ baseURL, prefix: "mock-reorder" });
+    const { goal, missed } = await createReorderExamGoal(userId);
+
+    const started = await readBody({
+      response: await api.post(`/v1/goals/${goal.id}/mocks`, {
+        data: { shape: { area: null, day: null, kind: "half" } },
+      }),
+      schema: anytimeMockResponseSchema,
+      status: 201,
+    });
+
+    const path = `/v1/mocks/${started.id}`;
+
+    const running = await readBody({
+      response: await api.get(path),
+      schema: mockViewResponseSchema,
+    });
+
+    await (running.current?.questions ?? []).reduce(async (previous, question) => {
+      await previous;
+
+      await api.put(`${path}/answers`, {
+        data: {
+          answer: { selectedIndex: 1 },
+          durationMs: 5000,
+          flagged: false,
+          itemId: question.itemId,
+        },
+      });
+    }, Promise.resolve());
+
+    const finished = await readBody({
+      response: await api.post(`${path}/finishes`, { data: { timeZone: "UTC" } }),
+      schema: mockStepResponseSchema,
+    });
+
+    expect(finished).toStrictEqual({ status: "finished" });
+
+    const view = await readBody({ response: await api.get(path), schema: mockViewResponseSchema });
+
+    expect(view.result?.movedTopics).toStrictEqual([missed.name]);
+    expect(view.adapt).toBeNull();
+
+    await api.dispose();
   });
 
   test("keeps the notice's break between sections, with each section's tools, and ends it early on request", async () => {
