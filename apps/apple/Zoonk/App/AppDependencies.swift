@@ -88,7 +88,7 @@ struct AppDependencies {
       preferences: settingsStore.preferences,
       blockFinished: { studySessionStore.apply($1, sessionID: $0) },
       sessionStarted: { todayStore.lessonStarted(in: $0) },
-      runStarted: { savedLessonsStore.runStarted(lessonId: $0, saved: $1) })
+      runStarting: { savedLessonsStore.runStarting(lessonId: $0) })
     goalContentStore = GoalContentStore(api: GoalContentAPI(clients: clients), cache: cache)
     self.imageLoader = imageLoader
     mindMapsStore = MindMapsStore(api: MindMapsAPI(clients: clients), cache: cache)

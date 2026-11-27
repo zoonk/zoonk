@@ -27,8 +27,8 @@ struct LessonSaveTarget: Saveable {
 @Observable
 final class SavedLessonsStore {
   let saves: Saves<LessonSaveTarget>
-  /// What each lesson's run said when it started, for the player's bookmark, until a save the
-  /// server took says otherwise.
+  /// What each lesson's run said when it started, for the player's bookmark, or a save the server
+  /// took since, whichever is newer.
   private(set) var runs: [Saves<LessonSaveTarget>.Pending: Bool] = [:]
 
   /// Shows a save the server took in the other lists read so far, such as Completed lessons.
@@ -39,6 +39,8 @@ final class SavedLessonsStore {
   @ObservationIgnored private let api: any SavedLessonsAPIClient
   @ObservationIgnored private let cache: AppCache
   @ObservationIgnored private var lists: [String: Resource<[SavedLesson]>] = [:]
+  /// How many saves of each lesson the server took, so a run's start sent before one never undoes it.
+  @ObservationIgnored private var taken: [Saves<LessonSaveTarget>.Pending: Int] = [:]
 
   init(api: any SavedLessonsAPIClient, cache: AppCache) {
     self.api = api
@@ -74,12 +76,20 @@ final class SavedLessonsStore {
     return list
   }
 
-  func runStarted(lessonId: String, saved: Bool) {
+  /// Call it as the lesson's start is sent; the call it returns takes what the run says.
+  func runStarting(lessonId: String) -> @MainActor (_ saved: Bool) -> Void {
     guard let session = cache.session.authenticatedSession else {
-      return
+      return { _ in }
     }
 
-    runs[.init(session: session, key: lessonId)] = saved
+    let run = Saves<LessonSaveTarget>.Pending(session: session, key: lessonId)
+    let takenBefore = taken[run]
+
+    return { [weak self] saved in
+      if let self, taken[run] == takenBefore {
+        runs[run] = saved
+      }
+    }
   }
 
   /// What the lesson's run said, for this session; nil before a run started.
@@ -112,10 +122,8 @@ final class SavedLessonsStore {
 
     if let session = cache.session.authenticatedSession {
       let run = Saves<LessonSaveTarget>.Pending(session: session, key: target.lessonId)
-
-      if runs[run] != nil {
-        runs[run] = saved
-      }
+      taken[run, default: 0] += 1
+      runs[run] = saved
     }
 
     showElsewhere(target.lessonId, saved)

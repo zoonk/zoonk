@@ -7,21 +7,23 @@ final class LessonPlayerDependencies {
   let preferences: Resource<LearningPreferences>
   let blockFinished: @MainActor (_ sessionID: String, BlockMoment) -> Void
   let sessionStarted: @MainActor (_ sessionID: String) -> Void
-  let runStarted: @MainActor (_ lessonID: String, _ saved: Bool) -> Void
+  let runStarting: @MainActor (_ lessonID: String) -> @MainActor (_ saved: Bool) -> Void
   private var lessons: [String: Resource<LessonLoad>] = [:]
 
   init(
     api: LessonPlayerAPI, cache: AppCache, preferences: Resource<LearningPreferences>,
     blockFinished: @escaping @MainActor (_ sessionID: String, BlockMoment) -> Void,
     sessionStarted: @escaping @MainActor (_ sessionID: String) -> Void,
-    runStarted: @escaping @MainActor (_ lessonID: String, _ saved: Bool) -> Void = { _, _ in }
+    runStarting: @escaping @MainActor (_ lessonID: String) -> @MainActor (_ saved: Bool) -> Void = {
+      _ in { _ in }
+    }
   ) {
     self.api = api
     self.cache = cache
     self.preferences = preferences
     self.blockFinished = blockFinished
     self.sessionStarted = sessionStarted
-    self.runStarted = runStarted
+    self.runStarting = runStarting
   }
 
   /// A host that plays the lesson its own way, as an explanation, reshapes what's played; the tutor's
@@ -89,7 +91,7 @@ struct LessonPlayerScreen: View {
           api: player.api, cache: player.cache, preferences: player.preferences,
           lessonResource: player.lesson(id: lessonId, hostedAs: host),
           blockFinished: player.blockFinished,
-          sessionStarted: player.sessionStarted, runStarted: player.runStarted),
+          sessionStarted: player.sessionStarted, runStarting: player.runStarting),
         ending: ending, savesLesson: host == nil
       )
       .id(lessonId)

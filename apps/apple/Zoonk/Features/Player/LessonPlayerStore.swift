@@ -144,8 +144,9 @@ final class LessonPlayerStore {
   private let blockFinished: @MainActor (_ sessionID: String, BlockMoment) -> Void
   /// A start that opened a study block names its session, which the session screen shows.
   private let sessionStarted: @MainActor (_ sessionID: String) -> Void
-  /// Says whether the learner saved the lesson, as its run started.
-  private let runStarted: @MainActor (_ lessonID: String, _ saved: Bool) -> Void
+  /// Called as the run's start is sent; the call it returns says whether the learner saved the
+  /// lesson, as the run started.
+  private let runStarting: @MainActor (_ lessonID: String) -> @MainActor (_ saved: Bool) -> Void
   private var identity: AuthenticatedSession?
   private(set) var openedAt = Date.now
   /// The lesson's example lines are written once, after the learner's first action.
@@ -178,7 +179,9 @@ final class LessonPlayerStore {
     defaults: UserDefaults = .standard,
     blockFinished: @escaping @MainActor (_ sessionID: String, BlockMoment) -> Void = { _, _ in },
     sessionStarted: @escaping @MainActor (_ sessionID: String) -> Void = { _ in },
-    runStarted: @escaping @MainActor (_ lessonID: String, _ saved: Bool) -> Void = { _, _ in }
+    runStarting: @escaping @MainActor (_ lessonID: String) -> @MainActor (_ saved: Bool) -> Void = {
+      _ in { _ in }
+    }
   ) {
     self.lessonId = lessonId
     self.studySessionId = studySessionId
@@ -194,7 +197,7 @@ final class LessonPlayerStore {
     self.defaults = defaults
     self.blockFinished = blockFinished
     self.sessionStarted = sessionStarted
-    self.runStarted = runStarted
+    self.runStarting = runStarting
     cantTalkToday = choices.isChosenToday(.cantTalk)
     cantListenToday = choices.isChosenToday(.cantListen)
   }
@@ -473,6 +476,7 @@ final class LessonPlayerStore {
     sendUnsaved()
     await heldAnswersSent()
 
+    let runStarted = runStarting(lesson.id)
     let started = await write(invalidating: opening == nil ? [] : [.userProgress, .userSession]) {
       token in
       try await api.startLesson(
@@ -492,7 +496,7 @@ final class LessonPlayerStore {
 
     switch run {
     case .success(let run):
-      runStarted(lesson.id, run.saved)
+      runStarted(run.saved)
       startClock(run)
       self.studySessionId = run.sessionId
       if opening != nil, let sessionId = run.sessionId { sessionStarted(sessionId) }

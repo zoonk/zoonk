@@ -11,7 +11,7 @@ final class SavedLessonsStoreTests: XCTestCase {
     store.showElsewhere = { elsewhere.append(($0, $1)) }
     let list = store.lessons(goalId: "goal")
     await list.load()
-    store.runStarted(lessonId: "new", saved: false)
+    store.runStarting(lessonId: "new")(false)
 
     store.saves.set(true, Self.target("new"), goalId: "goal")
     XCTAssertTrue(store.saves.isSaved("new", server: false))
@@ -29,7 +29,7 @@ final class SavedLessonsStoreTests: XCTestCase {
     let store = makeStore(api: api)
     let list = store.lessons(goalId: "goal")
     await list.load()
-    store.runStarted(lessonId: "saved", saved: true)
+    store.runStarting(lessonId: "saved")(true)
     let visit = SaveVisit<LessonSaveTarget>()
 
     visit.set(false, Self.target("saved"), goalId: "goal", in: store.saves)
@@ -40,6 +40,18 @@ final class SavedLessonsStoreTests: XCTestCase {
     XCTAssertEqual(store.runSaved(lessonId: "saved"), true)
     XCTAssertEqual(list.value?.map(\.lessonId), ["saved"])
     XCTAssertEqual(visit.failure?.saved, false, "says it couldn't remove")
+  }
+
+  func testARunStartedBeforeASaveTheServerTookNeverUndoesIt() async throws {
+    let store = makeStore(api: SavedLessonsAPIStub(lessons: []))
+    store.runStarting(lessonId: "again")(false)
+
+    let started = store.runStarting(lessonId: "again")
+    store.saves.set(true, Self.target("again"), goalId: "goal")
+    _ = try await waitForTestCondition("The save did not end") { store.saves.pending.isEmpty }
+    started(false)
+
+    XCTAssertEqual(store.runSaved(lessonId: "again"), true)
   }
 
   func testARemovedRowKeepsItsPlaceAndASecondTapSavesItThere() {
