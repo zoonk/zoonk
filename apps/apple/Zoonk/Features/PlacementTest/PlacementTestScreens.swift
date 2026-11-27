@@ -53,6 +53,7 @@ struct PlacementStopped: View {
 
 /// Main's `PlacementResult`: what the test skipped and the lesson the plan goes on with. A quick
 /// test with more of the course ahead says how much is left, and "Test the rest" goes on with it.
+/// The quick test never mentioned parts, so what's left is named as the test the offer showed.
 struct PlacementTestResultView: View {
   let end: PlacementTestEnd
   let onboarding: Bool
@@ -68,7 +69,10 @@ struct PlacementTestResultView: View {
     TestOutcome(
       title: Text(PlacementTestCopy.lessonsSkipped(restored ? 0 : end.lessonsSkipped)),
       description: undo?.restored ?? description,
-      facts: end.rest.map(PlacementTestCopy.partsLeftFacts) ?? [],
+      facts: end.rest.map {
+        [String(localized: TestCopy.fullTest)] + PlacementTestCopy.partsLeftFacts($0)
+      }
+        ?? [],
       continueLabel: onboarding
         ? nil
         : end.nextLesson == nil || restored ? Text(TestCopy.done) : Text(TestCopy.startLesson),

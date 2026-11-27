@@ -107,7 +107,7 @@ struct PlacementTestFlow: View {
     let attempt = phase.attempt
     return AnalyticsEvent.TestContext(
       goalID: goalID, test: .course, surface: isOnboarding ? .onboarding : .plan,
-      part: attempt?.part ?? 1, parts: attempt?.parts ?? offer?.wholeCourse?.parts ?? 1,
+      part: attempt?.part, parts: attempt?.parts ?? offer?.wholeCourse?.parts,
       questions: attempt?.questions ?? offer?.questions, attemptID: attempt?.id)
   }
 
@@ -164,7 +164,7 @@ struct PlacementTestFlow: View {
         ],
         chip: String(localized: PlacementTestCopy.learnName), title: Text(TestCopy.continueTest),
         preselected: .continue, context: context,
-        notNowLabel: isOnboarding ? TestCopy.finishLater : PlacementTestCopy.notNow,
+        notNowLabel: TestCopy.finishLater,
         isSaving: pressed != nil, failed: failed,
         onNotNow: {
           if !isOnboarding {

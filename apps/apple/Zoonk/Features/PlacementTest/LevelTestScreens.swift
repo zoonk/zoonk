@@ -126,8 +126,7 @@ struct LanguageTestResultView: View {
     }
 
     return String(
-      localized: "Your lessons keep adjusting as you answer.", table: "Onboarding",
-      comment: "Under a level test's result that skipped no level")
+      localized: "Your lessons keep adjusting as you answer.", table: "Onboarding")
   }
 }
 
@@ -180,8 +179,7 @@ struct LevelTestOutResult: View {
           : lessons > 0
             ? Text(PlacementTestCopy.knownLessons(lessons))
             : Text(
-              "Your lessons keep adjusting as you answer.", tableName: "Onboarding",
-              comment: "Under a level test's result that skipped no level")),
+              "Your lessons keep adjusting as you answer.", tableName: "Onboarding")),
       continueLabel: Text("Done", tableName: "Onboarding", comment: "Leaves a test's result"),
       undo: undo, isSaving: isSaving, failed: failed, onContinue: onDone
     )

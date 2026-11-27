@@ -181,8 +181,8 @@ struct FocusTestFlow: View {
 
   private func context(questions: Int?) -> AnalyticsEvent.TestContext {
     AnalyticsEvent.TestContext(
-      goalID: goalID, test: .focus, surface: host == .onboarding ? .onboarding : .plan, part: 1,
-      parts: 1, questions: questions)
+      goalID: goalID, test: .focus, surface: host == .onboarding ? .onboarding : .plan,
+      questions: questions)
   }
 
   private func question(_ asked: FocusTestQuestion) -> some View {

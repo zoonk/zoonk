@@ -10,8 +10,10 @@ enum LanguageTestPhase: Equatable {
   case offer(LevelTest)
   /// The test's questions are being written; `generationID` once the learner's Start joined the run.
   case preparing(attemptID: String, generationID: String?)
+  /// `canStop`: "Stop and use my answers" shows only once stopping saves something.
   case question(
-    attemptID: String, LevelTest.Question, selectsAll: Bool, number: Int, total: Int)
+    attemptID: String, LevelTest.Question, selectsAll: Bool, number: Int, total: Int,
+    canStop: Bool)
   case finish(attemptID: String, completion: Completion = .levelTest)
   case result(PlacementTestResult?)
   /// A level's test-out whose questions are still being written.
@@ -46,7 +48,7 @@ enum LanguageTestPhase: Equatable {
 
     self = .question(
       attemptID: attemptID, question, selectsAll: next.kind == "confirmation",
-      number: (test.answered ?? 0) + 1, total: test.total)
+      number: (test.answered ?? 0) + 1, total: test.total, canStop: test.canStop == true)
   }
 
   init(testOut: LevelTestOut) {
@@ -126,7 +128,7 @@ struct LevelTestFlow: View {
     var questions = total
 
     switch phase {
-    case .preparing(let id, _), .question(let id, _, _, _, _), .finish(let id, _):
+    case .preparing(let id, _), .question(let id, _, _, _, _, _), .finish(let id, _):
       attemptID = id
     case .result(let result):
       attemptID = result?.attemptId
@@ -139,7 +141,7 @@ struct LevelTestFlow: View {
     }
 
     return AnalyticsEvent.TestContext(
-      goalID: goalID, test: test, surface: isOnboarding ? .onboarding : .plan, part: 1, parts: 1,
+      goalID: goalID, test: test, surface: isOnboarding ? .onboarding : .plan,
       questions: questions, attemptID: attemptID)
   }
 
@@ -157,9 +159,10 @@ struct LevelTestFlow: View {
       offer(test)
     case .preparing(let attemptID, let generationID):
       preparing(attemptID: attemptID, generationID: generationID)
-    case .question(let attemptID, let question, let selectsAll, let number, let total):
+    case .question(let attemptID, let question, let selectsAll, let number, let total, let canStop):
       LevelTestQuestionScreen(
         question: question, selectsAll: selectsAll, number: number, total: total,
+        canStop: canStop,
         targetLanguage: targetLanguage, isSaving: isAnswering || pressed != nil,
         failures: answerFailures, context: context, onReport: { showsSaveReport = true },
         onAnswer: { answer(question, attemptID: attemptID, with: $0, skips: $1) },
@@ -261,8 +264,8 @@ struct LevelTestFlow: View {
       description: Text(TestCopy.findsSkips),
       preselected: testOutFirst && testOutRow != nil ? .testOut : .quick,
       context: AnalyticsEvent.TestContext(
-        goalID: goalID, test: .language, surface: isOnboarding ? .onboarding : .plan, part: 1,
-        parts: 1, questions: test.total),
+        goalID: goalID, test: .language, surface: isOnboarding ? .onboarding : .plan,
+        questions: test.total),
       isSaving: pressed != nil, failed: failed,
       onNotNow: isOnboarding
         ? nil
@@ -306,11 +309,12 @@ struct LevelTestFlow: View {
   private func preparing(attemptID: String, generationID: String?) -> some View {
     GenerationWaitView(
       title: LocalizedStringResource(
-        "Getting your test ready", table: "Onboarding",
-        comment: "Title while placement questions are written"),
+        "Getting your test ready", table: "Onboarding"),
       description: LocalizedStringResource(
         "This takes a minute or two.", table: "Onboarding",
-        comment: "How long placement questions take to write. \"This\" is the wait."),
+        comment:
+          "Shown while the learner waits for their first questions to be prepared. “This” is the wait."
+      ),
       generationID: generationID,
       kind: .levelTestBank,
       restart: { try await store.prepareLevelTest(goalID: goalID) },
@@ -394,14 +398,15 @@ struct LevelTestFlow: View {
       let shown = try? await question.waitingForAudio(read: {
         try await store.languageTest(goalID: goalID, attemptID: attemptID)
       }),
-      case .question(_, let current, let selectsAll, let number, let total) = phase,
+      case .question(_, let current, let selectsAll, let number, let total, let canStop) = phase,
       current.id == shown.id
     else {
       return
     }
 
     phase = .question(
-      attemptID: attemptID, shown, selectsAll: selectsAll, number: number, total: total)
+      attemptID: attemptID, shown, selectsAll: selectsAll, number: number, total: total,
+      canStop: canStop)
   }
 
   private func waitForTestOut(_ view: LevelTestOut) async {

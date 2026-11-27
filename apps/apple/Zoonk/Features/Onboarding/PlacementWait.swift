@@ -43,8 +43,7 @@ struct PlacementWaitScreen: View {
     let title =
       holding == nil
       ? Text(
-        "Getting your test ready", tableName: "Onboarding",
-        comment: "Title while placement questions are written")
+        "Getting your test ready", tableName: "Onboarding")
       : Text(Self.questionsReady)
 
     WaitScreen(
@@ -78,7 +77,9 @@ struct PlacementWaitScreen: View {
               comment: "How long placement questions take to write from the learner's material")
             : Text(
               "This takes a minute or two.", tableName: "Onboarding",
-              comment: "How long placement questions take to write. \"This\" is the wait."))
+              comment:
+                "Shown while the learner waits for their first questions to be prepared. “This” is the wait."
+            ))
 
       Section {
         GenerationTimeline(wait: shown, failure: failure)

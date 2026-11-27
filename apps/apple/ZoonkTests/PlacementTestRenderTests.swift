@@ -28,6 +28,29 @@ final class PlacementTestRenderTests: XCTestCase {
     }
   }
 
+  func testALevelTestOffersToStopOnlyOnceStoppingSavesALevel() async throws {
+    let cache = AppCache(session: SessionStore.preview())
+    let clients = APIClientFactory.live(baseURL: URL(string: "https://api.zoonk.test")!)
+    let reading = LevelTest.Question(
+      id: goalID, options: ["Monday", "Tuesday"], passage: "The train leaves on Monday.",
+      question: "When does the train leave?", skill: .reading, audio: nil, audioPending: false)
+
+    for (number, canStop) in [(2, false), (5, true)] {
+      try await capture(
+        "placement-level-question-\(number)", title: "Question \(number) of 12",
+        detail: canStop ? "Stop and use my answers" : "When does the train leave?",
+        absent: canStop ? [] : ["Stop and use my answers"]
+      ) {
+        LevelTestQuestionScreen(
+          question: reading, number: number, total: 12, canStop: canStop, targetLanguage: "en",
+          isSaving: false, failures: 0, onReport: {}, onAnswer: { _, _ in }, onDeferAudio: {},
+          onStop: {}
+        )
+        .environment(VoiceServices(clients: clients, cache: cache))
+      }
+    }
+  }
+
   func testBackFromLanguageResultReturnsToThePreviousQuestionWithoutWriting() async throws {
     let server = LevelTestBackServer(goalID: goalID)
     let dependencies = AppDependencies(
@@ -107,6 +130,21 @@ final class PlacementTestRenderTests: XCTestCase {
         onboarding: false, pressed: nil, failed: false, undo: undo, onTestTheRest: {},
         onDone: {})
     }
+
+    let rest = PlacementAttempt(
+      answered: 12, chapter: nil, estimatedMinutes: 6, id: goalID, length: .quick, nextPart: 2,
+      part: 1, partComplete: true, parts: 3, partsLeft: 2, questions: 12, resume: nil,
+      totalEstimatedMinutes: 15, remainingEstimatedMinutes: 9)
+    try await capture(
+      "placement-result-quick-rest", title: "6 lessons skipped", detail: "Test the rest"
+    ) {
+      PlacementTestResultView(
+        end: PlacementTestEnd(
+          lessonsSkipped: 6, changeId: goalID, undoLessons: 6,
+          nextLesson: .init(id: goalID, title: "Loops with for"), rest: rest),
+        onboarding: false, pressed: nil, failed: false, undo: undo, onTestTheRest: {},
+        onDone: {})
+    }
   }
 
   func testListeningQuestion() async throws {
@@ -122,7 +160,7 @@ final class PlacementTestRenderTests: XCTestCase {
           id: goalID, options: ["Monday", "Tuesday"], passage: "The train leaves on Monday.",
           question: "When does the train leave?", skill: .listening, audio: nil, audioPending: false
         ),
-        number: 6, total: 12, targetLanguage: "en", isSaving: false, failures: 0,
+        number: 6, total: 12, canStop: true, targetLanguage: "en", isSaving: false, failures: 0,
         onReport: {}, onAnswer: { _, _ in }, onDeferAudio: {}, onStop: {}
       )
       .environment(VoiceServices(clients: clients, cache: cache))

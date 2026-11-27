@@ -56,6 +56,8 @@ struct LevelTestQuestionScreen: View {
   var selectsAll = false
   let number: Int
   let total: Int
+  /// The server's word that stopping now saves something.
+  let canStop: Bool
   let targetLanguage: String
   let isSaving: Bool
   let failures: Int
@@ -87,14 +89,11 @@ struct LevelTestQuestionScreen: View {
       question: shown,
       dontKnowLabel: skips
         ? LocalizedStringResource(
-          "Skip this question", table: "Onboarding",
-          comment:
-            "Skips a level test listening question whose message can't play yet; it doesn't count toward the level"
+          "Skip this question", table: "Onboarding"
         )
         : isListening
           ? LocalizedStringResource(
-            "I didn't understand the audio", table: "Onboarding",
-            comment: "Answers a listening question of the level test without guessing")
+            "I didn't understand the audio", table: "Onboarding")
           : LocalizedStringResource(
             "I don't know yet", table: "Onboarding",
             comment: "Answers a placement question without guessing"),
@@ -102,7 +101,7 @@ struct LevelTestQuestionScreen: View {
       isSaving: isSaving, failures: failures, context: context,
       onReport: onReport,
       onAnswer: { onAnswer($0, skips) },
-      onStop: onStop,
+      onStop: canStop ? onStop : nil,
       media: {
         if isListening {
           ListeningMessage(question: question, language: targetLanguage, owner: owner)

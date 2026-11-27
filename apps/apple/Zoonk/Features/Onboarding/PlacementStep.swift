@@ -66,8 +66,8 @@ struct PlacementStep: View {
           title: Text(TestCopy.whereToStart), description: Text(TestCopy.findsSkips),
           preselected: .quick,
           context: AnalyticsEvent.TestContext(
-            goalID: view.goal.id, test: .course, surface: .onboarding, part: 1,
-            parts: offer.wholeCourse?.parts ?? 1, questions: offer.questions),
+            goalID: view.goal.id, test: .course, surface: .onboarding,
+            parts: offer.wholeCourse?.parts, questions: offer.questions),
           isSaving: isSaving, failed: failed
         ) { row in
           switch row {
@@ -139,7 +139,16 @@ struct TestOutcome<Lead: View>: View {
 
   var body: some View {
     ZoonkList {
-      StepHeader(subject: subject, title: title, description: description, facts: facts)
+      StepHeader(subject: subject, title: title, description: description)
+
+      // Main's facts are what the test found, under the heading rather than in it.
+      if !facts.isEmpty {
+        FactSegments(facts)
+          .typeStyle(.data)
+          .foregroundStyle(.mutedForeground)
+          .listRowBackground(Color.clear)
+          .listRowSeparator(.hidden)
+      }
 
       lead()
     }
@@ -227,7 +236,8 @@ struct PlacementQuestionScreen<Media: View>: View {
   var context: AnalyticsEvent.TestContext?
   let onReport: () -> Void
   let onAnswer: (PracticeAnswer) -> Void
-  let onStop: () -> Void
+  /// "Stop and use my answers", from the second question; nil where stopping saves nothing yet.
+  let onStop: (() -> Void)?
   @ViewBuilder var media: () -> Media
 
   @State private var draft: PracticeAnswer?
@@ -266,7 +276,7 @@ struct PlacementQuestionScreen<Media: View>: View {
         SaveFailureNotice(failures: failures, onReport: onReport)
       }
 
-      if number > 1 {
+      if number > 1, let onStop {
         if let stopHint {
           Text(stopHint)
             .typeStyle(.note)
@@ -278,8 +288,7 @@ struct PlacementQuestionScreen<Media: View>: View {
           onStop()
         } label: {
           Text(
-            "Stop and use my answers", tableName: "Onboarding",
-            comment: "Ends a test early; the answers given so far count at once"
+            "Stop and use my answers", tableName: "Onboarding"
           )
           .underline()
         }

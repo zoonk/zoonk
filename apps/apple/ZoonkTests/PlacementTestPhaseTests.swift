@@ -121,7 +121,7 @@ final class PlacementTestPhaseTests: XCTestCase {
   }
 
   func testAQuickTestsCloseShowsItsResultEvenWithTheCourseLeft() {
-    let rest = attempt(length: .quick, partComplete: true, partsLeft: 13)
+    let rest = attempt(length: .quick, partComplete: true, partsLeft: 13, remainingMinutes: 78)
 
     guard
       case .result(let end) = PlacementTestPhase(
@@ -132,7 +132,7 @@ final class PlacementTestPhaseTests: XCTestCase {
 
     XCTAssertEqual(end.rest, rest)
     XCTAssertEqual(
-      plainFacts(PlacementTestCopy.partsLeftFacts(rest)), ["13 parts left", "About 6 min each"])
+      plainFacts(PlacementTestCopy.partsLeftFacts(rest)), ["13 parts left", "About 1 hr 18 min"])
   }
 
   func testAnExhaustedLevelTestOutWaitsForItsResult() {
@@ -158,7 +158,21 @@ final class PlacementTestPhaseTests: XCTestCase {
     XCTAssertEqual(
       LanguageTestPhase(
         levelTest(answered: 4, next: .init(kind: "question", question: reading)), attemptID: "a1"),
-      .question(attemptID: "a1", reading, selectsAll: false, number: 5, total: 12))
+      .question(attemptID: "a1", reading, selectsAll: false, number: 5, total: 12, canStop: false))
+  }
+
+  func testALevelTestOffersToStopOnlyOnceStoppingSavesALevel() {
+    let reading = LevelTest.Question(
+      id: "q4", options: ["A", "B", "C", "D"], passage: "Hola", question: "?", skill: .reading,
+      audio: nil, audioPending: false)
+    let next = LevelTest.Next(kind: "question", question: reading)
+
+    XCTAssertEqual(
+      LanguageTestPhase(levelTest(answered: 3, next: next, canStop: false), attemptID: "a1"),
+      .question(attemptID: "a1", reading, selectsAll: false, number: 4, total: 12, canStop: false))
+    XCTAssertEqual(
+      LanguageTestPhase(levelTest(answered: 4, next: next, canStop: true), attemptID: "a1"),
+      .question(attemptID: "a1", reading, selectsAll: false, number: 5, total: 12, canStop: true))
   }
 
   func testCantListenNowGoesStraightToTheResult() {
@@ -177,7 +191,8 @@ final class PlacementTestPhaseTests: XCTestCase {
 
     XCTAssertEqual(
       LanguageTestPhase(opened: open, onboarding: false),
-      .question(attemptID: "a1", listening, selectsAll: false, number: 6, total: 12))
+      .question(
+        attemptID: "a1", listening, selectsAll: false, number: 6, total: 12, canStop: false))
 
     var finished = levelTest(answered: 6, next: .init(kind: "done", question: nil))
     finished.attemptId = "a1"
@@ -189,10 +204,10 @@ final class PlacementTestPhaseTests: XCTestCase {
     XCTAssertEqual(LanguageTestPhase(opened: finished, onboarding: false), .offer(finished))
   }
 
-  private func levelTest(answered: Int, next: LevelTest.Next) -> LevelTest {
+  private func levelTest(answered: Int, next: LevelTest.Next, canStop: Bool? = nil) -> LevelTest {
     LevelTest(
-      status: .ready, startedAt: nil, answered: answered, total: 12, estimatedMinutes: 6,
-      levels: [], next: next)
+      status: .ready, startedAt: nil, answered: answered, canStop: canStop, total: 12,
+      estimatedMinutes: 6, levels: [], next: next)
   }
 
   private func levelTestOut(total: Int, result: LevelTestOut.Result? = nil) -> LevelTestOut {
@@ -212,13 +227,13 @@ final class PlacementTestPhaseTests: XCTestCase {
   private func attempt(
     length: PlacementLength = .wholeCourse, part: Int = 1, answered: Int = 0,
     partComplete: Bool = false, nextPart: Int? = nil, partsLeft: Int = 12,
-    resume: PlacementAttempt.Resume? = nil
+    resume: PlacementAttempt.Resume? = nil, remainingMinutes: Int = 66
   ) -> PlacementAttempt {
     PlacementAttempt(
       answered: answered, chapter: "Variables and types", estimatedMinutes: 6, id: "a1",
       length: length, nextPart: nextPart, part: part, partComplete: partComplete, parts: 14,
       partsLeft: partsLeft, questions: 12, resume: resume, totalEstimatedMinutes: 85,
-      remainingEstimatedMinutes: 66)
+      remainingEstimatedMinutes: remainingMinutes)
   }
 
   private func phase(

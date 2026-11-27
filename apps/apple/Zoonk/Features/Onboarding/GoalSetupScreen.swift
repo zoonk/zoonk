@@ -208,8 +208,7 @@ private struct GoalSteps: View {
         router.dismissTask()
       } label: {
         Text(
-          "Finish later", tableName: "Onboarding",
-          comment: "Leaves onboarding, keeping the answers")
+          "Finish later", tableName: "Onboarding")
         Text("Your answers are kept", tableName: "Onboarding", comment: "Under Finish later")
       }
 

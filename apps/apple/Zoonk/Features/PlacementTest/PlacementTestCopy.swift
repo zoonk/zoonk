@@ -18,10 +18,9 @@ enum PlacementTestCopy {
   }
 
   static let learnName = LocalizedStringResource(
-    "Test what you know", table: "Onboarding",
-    comment: "The test of what the learner already knows in a course, taken from the plan")
+    "Test what you know", table: "Onboarding")
   static let languageName = LocalizedStringResource(
-    "Level test", table: "Onboarding", comment: "A language course's test of the learner's level")
+    "Level test", table: "Onboarding")
 
   static func name(_ kind: PlanPlacementTest.Kind) -> LocalizedStringResource {
     kind == .language ? languageName : learnName
@@ -43,11 +42,11 @@ enum PlacementTestCopy {
     count == 0
       ? String(
         localized: "No lessons skipped", table: "Onboarding",
-        comment: "After a test of what the learner knows: it took no lesson out of the plan")
+        comment: "The title after a placement test: how many lessons it took out of the plan.")
       : String(
         localized: "\(count) lessons skipped", table: "Onboarding",
         locale: .appLanguage,
-        comment: "After a test of what the learner knows: how many lessons it took out of the plan")
+        comment: "The title after a placement test: how many lessons it took out of the plan.")
   }
 
   /// What a closed part skipped, or that its skips wait until tomorrow.
@@ -56,13 +55,13 @@ enum PlacementTestCopy {
       ? String(localized: retakeTomorrow) : TestCopy.partSkipped(stop.partLessonsSkipped)
   }
 
-  /// "11 parts left · About 6 min each": the full test still to do, part by part.
+  /// "11 parts left · About 1 hr 6 min": the parts still to take and how long they take together,
+  /// since parts shrink as topics close.
   static func partsLeftFacts(_ attempt: PlacementAttempt) -> [String] {
-    let minutes = attempt.estimatedMinutes
-
-    return attempt.partsLeft == 1
-      ? [TestCopy.partsLeft(1), TestCopy.about(minutes: minutes)]
-      : [TestCopy.partsLeft(attempt.partsLeft), TestCopy.aboutEach(minutes: minutes)]
+    [
+      TestCopy.partsLeft(attempt.partsLeft),
+      TestCopy.about(minutes: attempt.remainingEstimatedMinutes),
+    ]
   }
 
   /// Where a full test with parts left stands: its next part and the time left, or the question a

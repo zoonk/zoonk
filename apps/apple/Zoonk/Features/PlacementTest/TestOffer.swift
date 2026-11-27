@@ -20,7 +20,7 @@ struct TestOffer: View {
   let preselected: AnalyticsEvent.TestRow
   /// For the offer's analytics, sent once per presentation.
   let context: AnalyticsEvent.TestContext
-  /// The plan's way out: "Not now", or "Finish later" for a test with parts left in onboarding.
+  /// The plan's way out: "Not now", or "Finish later" for a test with parts left.
   var notNowLabel = PlacementTestCopy.notNow
   let isSaving: Bool
   let failed: Bool
@@ -110,8 +110,7 @@ enum TestCopy {
     comment: "Under the test offer's title")
 
   static let skipWhatYouKnow = LocalizedStringResource(
-    "Skip what you already know", table: "Onboarding",
-    comment: "Title of the test offer on the plan")
+    "Skip what you already know", table: "Onboarding")
 
   static let firstLesson = LocalizedStringResource(
     "First lesson", table: "Onboarding")
@@ -128,8 +127,7 @@ enum TestCopy {
     comment: "The long test: it checks every topic still ahead, in parts.")
 
   static let continueTest = LocalizedStringResource(
-    "Continue your test", table: "Onboarding",
-    comment: "Title of a full test the learner came back to with parts left")
+    "Continue your test", table: "Onboarding")
 
   static let continueLabel = LocalizedStringResource(
     "Continue", table: "Onboarding", comment: "Goes on with a test the learner came back to")
@@ -138,8 +136,7 @@ enum TestCopy {
     "Keep going", table: "Onboarding", comment: "Starts the full test's next part")
 
   static let finishLater = LocalizedStringResource(
-    "Finish later", table: "Onboarding",
-    comment: "Leaves the full test between its parts; the rest waits in the plan")
+    "Finish later", table: "Onboarding")
 
   static let testTheRest = LocalizedStringResource(
     "Test the rest", table: "Onboarding",
@@ -152,8 +149,7 @@ enum TestCopy {
     "Done", table: "Onboarding", comment: "Leaves a test's result")
 
   static let answersSaved = LocalizedStringResource(
-    "Your answers are saved", table: "Onboarding",
-    comment: "Title after the learner stopped a test midway, or once its answers wait to be saved")
+    "Your answers are saved", table: "Onboarding")
 
   static let upNext = LocalizedStringResource(
     "Up next", table: "Onboarding", comment: "Over the lesson the plan goes on with")
@@ -178,20 +174,12 @@ enum TestCopy {
 
   static func about(minutes: Int) -> String {
     String(
-      localized: "About \(studyDuration(minutes: minutes))", table: "Onboarding",
-      comment: "How long a test takes, such as \"About 6 min\"")
+      localized: "About \(studyDuration(minutes: minutes))", table: "Onboarding")
   }
 
   static func aboutLeft(minutes: Int) -> String {
     String(
       localized: "About \(studyDuration(minutes: minutes)) left", table: "Onboarding")
-  }
-
-  static func aboutEach(minutes: Int) -> String {
-    String(
-      localized: "About \(studyDuration(minutes: minutes)) each", table: "Onboarding",
-      comment:
-        "{time} is a duration with its unit, such as “6 min”: how long each part of a test takes.")
   }
 
   static func parts(_ count: Int) -> String {
@@ -215,8 +203,7 @@ enum TestCopy {
 
   static func question(_ number: Int, of total: Int) -> String {
     String(
-      localized: "Question \(number) of \(total)", table: "Onboarding",
-      comment: "Which question of a test with a promised count this is")
+      localized: "Question \(number) of \(total)", table: "Onboarding")
   }
 
   static func partDone(_ part: Int, of parts: Int) -> String {

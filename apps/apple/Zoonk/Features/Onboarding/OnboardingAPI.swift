@@ -333,6 +333,9 @@ struct LevelTest: Decodable, Equatable, Sendable {
   /// Set while a run writes the pair's questions.
   let startedAt: Date?
   let answered: Int?
+  /// Whether stopping now saves something: at least one skill's questions are done. Only a ready
+  /// test that's still open says so.
+  var canStop: Bool?
   /// The test's ceiling, its check included, fixed before the first question.
   let total: Int
   /// About how long its questions take.

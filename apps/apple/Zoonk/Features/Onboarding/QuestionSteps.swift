@@ -171,8 +171,6 @@ struct StepHeader: View {
   var position: Text?
   let title: Text
   var description: Text?
-  /// Data under the description, such as a test's "12 questions · About 6 min".
-  var facts: [String] = []
   /// The plan's reveal ends setup: no step after it has a title to line up with.
   var linesUpWithSteps = true
 
@@ -192,8 +190,7 @@ struct StepHeader: View {
         chip: subject.map { Chip(Text(verbatim: $0)) },
         position: position,
         keepsChipRoom: keepsChipRoom,
-        supporting: description,
-        facts: facts
+        supporting: description
       )
       .listRowBackground(Color.clear)
     }
@@ -1305,8 +1302,7 @@ enum LevelChoices {
           comment: "Level choice"),
         detail: testMinutes.map { minutes in
           Text(
-            "About \(studyDuration(minutes: minutes))", tableName: "Onboarding",
-            comment: "Level choice detail: how long the short test takes, such as \"4 min\"")
+            "About \(studyDuration(minutes: minutes))", tableName: "Onboarding")
         }),
     ]
   }
