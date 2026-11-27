@@ -9,6 +9,7 @@ import {
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
+import { RadioInput } from "@zoonk/ui/components/radio-input";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
@@ -59,12 +60,11 @@ function MinuteChips({
           )}
           key={minutes}
         >
-          <input
+          <RadioInput
             checked={selected === minutes}
             className="sr-only"
             name={name}
             onChange={() => onChange(minutes)}
-            type="radio"
             value={minutes}
           />
           <span className="font-mono tabular-nums">{formatDuration(minutes)}</span>
