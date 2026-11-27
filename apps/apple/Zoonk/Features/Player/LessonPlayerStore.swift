@@ -584,7 +584,7 @@ final class LessonPlayerStore {
   }
 
   /// Required interactions need a renderer before a run can start.
-  var isUnplayable: (LessonStep) -> Bool = { _ in false }
+  var isUnplayable: (LessonStep) -> Bool = ActivityRendererRegistry.app.isUnplayable
 
   /// A listening sentence that is its own answer can't be read instead without giving the answer
   /// away, so while the learner can't listen it's left out too, as core leaves out one with no sound.
@@ -1100,9 +1100,11 @@ final class LessonPlayerStore {
         startClock(run)
         let steps: [LessonStep] =
           if case .ready(let lesson) = lessonResource.value { lesson.steps } else { [] }
-        state?.resync(
-          answers: run.answers, optionalStepIds: run.optionalStepIds,
-          lesson: steps.filter { !isUnplayable($0) })
+        guard !steps.contains(where: isUnplayable) else {
+          state?.completionFailed()
+          return
+        }
+        state?.resync(answers: run.answers, optionalStepIds: run.optionalStepIds, lesson: steps)
       } else if case .obsolete = restarted {
         return
       } else {

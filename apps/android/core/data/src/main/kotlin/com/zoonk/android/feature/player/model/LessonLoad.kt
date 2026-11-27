@@ -4,8 +4,8 @@ import androidx.compose.runtime.Immutable
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.recode
-import com.zoonk.android.feature.activities.code.codeLanguage
 import com.zoonk.api.ApiJson
+import com.zoonk.api.encodeWithKnownEnums
 import com.zoonk.api.models.ActivityBaseMap
 import com.zoonk.api.models.ActivityExpected
 import com.zoonk.api.models.ExplanationLesson
@@ -20,18 +20,20 @@ import com.zoonk.api.models.PlayableLibraryStepAnyOf4Content
 import com.zoonk.api.models.PlayableLibraryStepAnyOf5Listening
 import com.zoonk.api.models.PlayableLibraryStepAnyOf9
 import com.zoonk.api.models.PlayableLibraryStepAnyOf9Exercise
+import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf30Fields.Instruments
 import com.zoonk.api.models.PlayableLibraryStepAnyOfImage
 import com.zoonk.api.models.PlayableLibraryStepAnyOfOptionPicturesValue
 import com.zoonk.api.models.ScreenPicture
 import com.zoonk.api.models.StepMarks
 import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.put
-import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf16Value as CodeRunnerContent
+import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf30Value as KeyboardContent
+import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOf2Value as NumericCheckValue
+import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOfValue as ChoiceCheckValue
 
 /** What `/learn/{lessonId}` opens to: its screens, its outline waiting to be written, or a visitor's gate. */
 @Immutable
@@ -361,7 +363,7 @@ private fun exploredActivity(
     val content = ApiJson.decodeFromJsonElement(ActivityStepContent.serializer(), JsonObject(written + NOTHING_TO_ASK))
     return ExploredActivity(
         content,
-        activityFrame(content) ?: return null,
+        activityFrame(content)?.takeIf { it.hasSupportedCanvas } ?: return null,
         expected?.recode<PlayableLibraryStepAnyOf3ExploreExpected, ActivityExpected>(),
         baseMap,
     )
@@ -379,27 +381,24 @@ private val NOTHING_TO_ASK =
     )
 
 private fun activityFrame(content: ActivityStepContent): ActivityFrame? {
-    if (content is CodeRunnerContent && content.value.fields.codeLanguage == null) return null
-    val payload = ApiJson.encodeToJsonElement(ActivityStepContent.serializer(), content)
-    if (payload.containsUnsupportedVariant()) return null
-    return ApiJson.decodeFromJsonElement(ActivityFrame.serializer(), payload)
+    val serializer = ActivityStepContent.serializer()
+    val supported = encodeWithKnownEnums(serializer, content.withPlayableInstruments())
+    if (supported != null) return ApiJson.decodeFromJsonElement(ActivityFrame.serializer(), supported)
+
+    val payload = ApiJson.encodeToJsonElement(serializer, content).jsonObject
+    if ("check" !in payload) return null
+    val frame = ApiJson.decodeFromJsonElement(ActivityFrame.serializer(), payload)
+    if (frame.check !is ChoiceCheckValue && frame.check !is NumericCheckValue) return null
+    if (canvasOwnsAnswer(frame.template) || encodeWithKnownEnums(ActivityCheck.serializer(), frame.check) == null) return null
+    return frame.copy(hasSupportedCanvas = false)
 }
 
-private fun JsonElement.containsUnsupportedVariant(): Boolean =
-    when (this) {
-        is JsonObject -> {
-            values.singleOrNull() == JsonPrimitive("__unknown_api_union_tag__") ||
-                values.any { it.containsUnsupportedVariant() }
-        }
-
-        is JsonArray -> {
-            any { it.containsUnsupportedVariant() }
-        }
-
-        is JsonPrimitive -> {
-            false
-        }
-    }
+private fun ActivityStepContent.withPlayableInstruments(): ActivityStepContent {
+    if (this !is KeyboardContent || Instruments.UNKNOWN_DEFAULT_OPEN_API !in value.fields.instruments) return this
+    val supported = value.fields.instruments.filter { it != Instruments.UNKNOWN_DEFAULT_OPEN_API }
+    if (supported.isEmpty()) return this
+    return KeyboardContent(value.copy(fields = value.fields.copy(instruments = supported)))
+}
 
 private fun PlayableLibraryStepAnyOf9.Kind.toStepKind() =
     when (this) {

@@ -85,9 +85,6 @@ public struct LessonStep: Codable, Hashable, Sendable, Identifiable {
         listening: try container.decodeIfPresent(LanguageExercise.self, forKey: .listening))
     case "activity":
       var activity = try container.decode(ActivityStepContent.self, forKey: .content)
-      if activity.template == "codeRunner", case .interaction = activity.check {
-        _ = try (activity.payload["fields"]?["language"] ?? .null).decode(as: CodeLanguage.self)
-      }
       activity.minTolerance = try container.decodeIfPresent(
         ActivityCheck.Tolerance.self, forKey: .minTolerance)
       activity.roundedAnswer = try container.decodeIfPresent(

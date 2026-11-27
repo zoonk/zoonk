@@ -42,6 +42,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Contextual
 {{#enumUnknownDefaultCase}}
 import kotlinx.serialization.KSerializer
+import com.zoonk.api.unknownApiEnum
 import kotlinx.serialization.Serializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.encoding.Decoder
@@ -221,6 +222,14 @@ import {{packageName}}.infrastructure.ITransformForStorage
             }
 
             override fun serialize(encoder: Encoder, value: {{{nameInPascalCase}}}) {
+                {{#vendorExtensions.x-zoonk-unknown-tag}}
+                encoder.unknownApiEnum()
+                {{/vendorExtensions.x-zoonk-unknown-tag}}
+                {{^vendorExtensions.x-zoonk-unknown-tag}}
+                {{^vendorExtensions.x-zoonk-closed-enum}}
+                if (value == {{{nameInPascalCase}}}.{{#allowableValues}}{{#enumVars}}{{#-last}}{{&name}}{{/-last}}{{/enumVars}}{{/allowableValues}}) encoder.unknownApiEnum()
+                {{/vendorExtensions.x-zoonk-closed-enum}}
+                {{/vendorExtensions.x-zoonk-unknown-tag}}
                 encoder.encodeSerializableValue({{^isContainer}}{{dataType}}{{/isContainer}}{{#isContainer}}kotlin.String{{/isContainer}}.serializer(), value.value)
             }
         }

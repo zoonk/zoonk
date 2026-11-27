@@ -4,10 +4,8 @@ extension ActivityRenderer {
   static let stepSolver = ActivityRenderer(
     template: "stepSolver", badge: .always(.stepByStep),
     grade: ActivityExpectedAnswer.grader(StepSolverFields.self) { $0.expected }
-  ) { context in
-    if let fields = try? context.fields(as: StepSolverFields.self) {
-      StepSolverCanvas(fields: fields, context: context)
-    }
+  ) { context, fields in
+    StepSolverCanvas(fields: fields, context: context)
   }
 }
 

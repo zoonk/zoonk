@@ -1,9 +1,5 @@
 import Foundation
 
-public enum CodeLanguage: String, Decodable, Sendable {
-  case javascript, python
-}
-
 /// The player owns the prompt, the check and the feedback; the template's renderer reads its own
 /// `fields` from `payload`.
 public struct ActivityStepContent: Codable, Hashable, Sendable {

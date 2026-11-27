@@ -21,8 +21,9 @@ struct CodeActivityGradingTests {
 
   @Test func aCodeRunnerWithAnUnknownLanguageCannotEnterTheLessonQueue() throws {
     let step = try checkCodeStep(language: "python")
-    #expect(step.kind == .activity)
-    #expect(throws: DecodingError.self) { try checkCodeStep(language: "futureLanguage") }
+    #expect(!ActivityRendererRegistry.app.isUnplayable(step))
+    let unknown = try checkCodeStep(language: "futureLanguage")
+    #expect(ActivityRendererRegistry.app.isUnplayable(unknown))
   }
 
   private func checkCodeStep(language: String) throws -> LessonStep {
