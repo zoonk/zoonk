@@ -141,7 +141,7 @@ extension StudyBlock: NamedBlock {
         String(
           localized: "practicePattern", defaultValue: "Practice: \($0)", table: "Today",
           comment:
-            "A study step that drills one rule the learner keeps getting wrong. {pattern} names the rule, like \"Adjective endings after der\"."
+            "A study step that drills one rule the learner keeps getting wrong, titled like the day's other practice steps (\"Practice: Fractions\"). {pattern} names the rule, like \"Adjective endings after der\"."
         )
       }
     case .challenge, .essay, .lesson, .session, .unknown:
@@ -154,7 +154,11 @@ extension StudyBlock: NamedBlock {
   var remedialLine: String? {
     switch screen {
     case .mistakesPractice:
-      return String(localized: "Questions you missed before", table: "Today")
+      return String(
+        localized: "Questions you missed before", table: "Today",
+        comment:
+          "Under \"Fix 3 mistakes\", a step of the day that practices questions the learner got wrong."
+      )
     case .pattern:
       return String(localized: "A pattern in your mistakes", table: "Today")
     case .challenge, .essay, .lesson, .session, .unknown:
@@ -165,7 +169,8 @@ extension StudyBlock: NamedBlock {
     case .again:
       return String(
         localized: "Once more: this one's been tricky", table: "Today",
-        comment: "Under a lesson the learner takes again because they keep missing its idea.")
+        comment:
+          "Under a lesson the learner takes again because its idea has been hard for them.")
     case .anotherWay:
       return String(
         localized: "Another way to see it", table: "Today",
@@ -174,7 +179,8 @@ extension StudyBlock: NamedBlock {
     case .missed:
       return String(
         localized: "This one's been tricky", table: "Today",
-        comment: "Under a lesson written for an idea the learner keeps missing.")
+        comment:
+          "Under a short lesson written for an idea that has been hard for the learner.")
     case nil:
       return nil
     }

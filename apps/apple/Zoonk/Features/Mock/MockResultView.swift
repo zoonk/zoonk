@@ -1030,7 +1030,9 @@ private struct MockPlanMoves: View {
   private static var movedTitle: Text {
     Text(
       "What you missed now comes sooner", tableName: "Mock",
-      comment: "After a mock, the plan moved the topics it missed earlier")
+      comment:
+        "On a mock exam's result: the plan moved the topics the learner missed earlier. The topics follow, one per line."
+    )
   }
 }
 

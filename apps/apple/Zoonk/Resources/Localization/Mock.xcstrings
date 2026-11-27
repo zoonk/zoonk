@@ -13982,7 +13982,63 @@
       }
     },
     "What you missed now comes sooner" : {
-      "comment" : "After a mock, the plan moved the topics it missed earlier"
+      "comment" : "On a mock exam's result: the plan moved the topics the learner missed earlier. The topics follow, one per line.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was du verpasst hast, kommt jetzt früher dran"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ahora verás antes los temas que no supiste"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce que tu as raté arrive maintenant plus tôt"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gli argomenti che ti erano sfuggiti arrivano prima"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "間違えた内容が、より早く出てきます"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "전에 놓친 주제가 이제 더 일찍 나와요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zagadnienia, które ci umknęły, pojawią się wcześniej"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que você errou agora aparece antes"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kaçırdığın konular artık daha erken karşına çıkıyor"
+          }
+        }
+      }
     },
     "Work on: %@." : {
       "comment" : "Under a mock exam's score when only the subject to work on is named: the words of the second half of “Strongest: {best}. Work on: {worst}.”",
@@ -15826,7 +15882,63 @@
       }
     },
     "Your plan" : {
-      "comment" : "What a mock changed in the plan"
+      "comment" : "What a mock changed in the plan",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Plan"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu plan"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo piano"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習計画"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "내 계획"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twój plan"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planın"
+          }
+        }
+      }
     },
     "Your plan didn't need to change." : {
       "comment" : "A plan change the plan already had",

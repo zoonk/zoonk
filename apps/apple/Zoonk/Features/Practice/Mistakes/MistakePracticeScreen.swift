@@ -386,14 +386,14 @@ struct MistakePracticeScreen: View {
 
   private static let alreadyFixedTitle = LocalizedStringResource(
     "Already fixed", table: "Practice",
-    comment: "A day's step of mistakes to fix, opened after they were all fixed elsewhere")
+    comment:
+      "Title when a day's practice of mistakes opens and every one of its mistakes was already fixed elsewhere."
+  )
 
   private var nothingToPractice: some View {
     StateMessage {
       Label {
-        Text(
-          "Nothing to practice", tableName: "Practice",
-          comment: "Title when no mistake is ready to practice.")
+        Text("Nothing to practice", tableName: "Practice")
       } icon: {
         Image(systemName: "checkmark.circle")
       }
@@ -418,13 +418,16 @@ struct MistakePracticeScreen: View {
         failures: finishFailures,
         firstMessage: LocalizedStringResource(
           "We couldn't mark it done. Check your connection.", table: "Practice",
-          comment: "A day's step whose mistakes were already fixed couldn't be marked done")
+          comment:
+            "Under \"Already fixed\" when marking the day's practice done didn't reach the server.")
       ) { showsSaveReport = true }
     } else {
       PracticeResultTitle(
         title: LocalizedStringResource(
           "Your practice isn't saved yet", table: "Practice",
-          comment: "Title when a run's end didn't reach the server; the learner can try again"),
+          comment:
+            "Title of a practice of mistakes whose end didn't reach the server, so it doesn't count yet."
+        ),
         detail: nil)
       SaveFailureNotice(failures: finishFailures) { showsSaveReport = true }
     }
@@ -643,7 +646,9 @@ private struct PracticeDoneView: View {
           PracticeSecondaryButton(
             title: LocalizedStringResource(
               "Practice again", table: "Practice",
-              comment: "Starts another mistakes practice run after one ends."),
+              comment:
+                "Beside Done at the end of a practice of mistakes: starts another round right away."
+            ),
             icon: nil, isBusy: isLoadingAgain, action: again)
         }
 
