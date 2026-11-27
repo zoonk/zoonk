@@ -16,6 +16,7 @@ import com.zoonk.android.R
 import com.zoonk.android.feature.session.DayPart
 import com.zoonk.android.feature.session.DayProgress
 import com.zoonk.android.feature.session.DayStep
+import com.zoonk.android.feature.session.alreadyFixed
 import com.zoonk.android.feature.session.blockTitle
 import com.zoonk.android.feature.session.dayParts
 import com.zoonk.android.feature.session.learnKind
@@ -116,7 +117,8 @@ private fun segmentFacts(
 ): SegmentFacts {
     val step = part.step
     val locale = currentLocale()
-    val time = formatMinutes(step.estimatedMinutes.toInt(), locale)
+    // A mistakes row with nothing left to answer has no time to give.
+    val time = formatMinutes(step.estimatedMinutes.toInt(), locale).takeUnless { step.alreadyFixed }
 
     if (gettingReady && part.state != DayPart.State.Done) {
         return SegmentFacts(stringResource(R.string.today_step_being_written), time)
