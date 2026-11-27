@@ -1,0 +1,69 @@
+import "server-only";
+import { prisma } from "@zoonk/db";
+import { parseItemContent } from "../items/item-content";
+import { CURRENT_STEPS } from "../lessons/lesson-versions";
+import { safeParseStepContent } from "../steps/contract/step-contract";
+
+const MAX_WRONG_ANSWERS = 12;
+
+type SourceQuestion = {
+  content: unknown;
+  item: { content: unknown; format: string; skillId: string } | null;
+  kind: string;
+};
+
+function getWrongAnswers({ item, content, kind }: SourceQuestion, skillId: string) {
+  if (item?.format === "multipleChoice" && item.skillId === skillId) {
+    const parsed = parseItemContent({ content: item.content, format: "multipleChoice" });
+
+    if (parsed.format === "multipleChoice") {
+      return parsed.content.options
+        .filter((option) => !option.isCorrect)
+        .map(({ misconception, reason, text }) => ({
+          answer: text,
+          question: parsed.content.question,
+          reason: misconception ? `${misconception}: ${reason}` : reason,
+        }));
+    }
+  }
+
+  const check = kind === "check" ? safeParseStepContent("check", content).data : null;
+
+  return (
+    check?.options
+      .filter((option) => !option.isCorrect)
+      .map(({ reason, text }) => ({ answer: text, question: check.question, reason })) ?? []
+  );
+}
+
+export async function loadSecondTakeWrongAnswers({
+  lessonId,
+  skillId,
+}: {
+  lessonId: string;
+  skillId: string;
+}) {
+  const questions = await prisma.step.findMany({
+    orderBy: [{ position: "asc" }, { id: "asc" }],
+    select: {
+      content: true,
+      item: { select: { content: true, format: true, skillId: true } },
+      kind: true,
+    },
+    where: {
+      ...CURRENT_STEPS,
+      AND: [
+        { OR: [{ skillId }, { skillId: null }] },
+        { OR: [{ kind: "check" }, { item: { format: "multipleChoice", skillId } }] },
+      ],
+      lessonId,
+    },
+  });
+
+  const wrong = questions.flatMap((question) => getWrongAnswers(question, skillId));
+
+  return [...new Map(wrong.map((answer) => [JSON.stringify(answer), answer])).values()].slice(
+    0,
+    MAX_WRONG_ANSWERS,
+  );
+}

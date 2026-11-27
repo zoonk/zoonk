@@ -8,8 +8,11 @@ import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import {
   chapterLessonFixture,
+  lessonSkillFixture,
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
+import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
+import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { sleep } from "workflow";
@@ -23,6 +26,8 @@ import {
   getSentenceOrdersToken,
   sentenceOrdersWorkflow,
 } from "../language/sentence-orders-workflow";
+import { getLessonContentHookToken } from "../lessons/lesson-content-result";
+import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { chapterMindMapWorkflow } from "../mind-maps/chapter-mind-map-workflow";
 import { followUpsWorkflow } from "./follow-ups-workflow";
 
@@ -74,6 +79,44 @@ async function owedMindMap() {
 }
 
 describe(followUpsWorkflow, () => {
+  it("dispatches a second take on its lesson token and acknowledges the ask", async () => {
+    const [user, skill, original] = await Promise.all([
+      userFixture(),
+      skillFixture(),
+      libraryLessonFixture({
+        contentStatus: "completed",
+        summary: { ideas: [{ text: "The denominator names the size of each equal part." }] },
+      }),
+    ]);
+
+    await Promise.all([
+      lessonSkillFixture({ lessonId: original.id, skillId: skill.id }),
+      libraryStepFixture({ lessonId: original.id, skillId: skill.id }),
+      prisma.followUp.create({
+        data: {
+          input: { skillId: skill.id, userId: user.id },
+          key: skill.id,
+          kind: "writeSecondTake",
+          userId: user.id,
+        },
+      }),
+    ]);
+
+    await followUpsWorkflow({ userId: user.id });
+
+    const secondTake = await prisma.lesson.findFirstOrThrow({
+      where: { identityKey: `retake:${skill.id}`, language: skill.language },
+    });
+
+    expect(getStartMock()).toHaveBeenCalledExactlyOnceWith(
+      lessonContentWorkflow,
+      [{ lessonId: secondTake.id, wait: "soon" }],
+      { experimental_hook: { token: getLessonContentHookToken(secondTake.id) } },
+    );
+
+    await expect(prisma.followUp.count({ where: { userId: user.id } })).resolves.toBe(0);
+  });
+
   it("starts the word orders an approved sentence fix owes at once", async () => {
     const user = await userFixture({ role: "admin" });
     const lesson = await libraryLessonFixture({ contentStatus: "completed" });

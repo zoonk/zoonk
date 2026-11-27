@@ -9,6 +9,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { lessonRunFixture } from "../lesson-player/_test-utils/lesson-run-fixture";
+import { getSecondTakeIdentityKey } from "../library/second-takes/second-take-identity";
 import { completedLessonListInputSchema } from "./contract";
 import { listCurrentUserCompletedLessons } from "./list-current-user-completed-lessons";
 
@@ -94,12 +95,23 @@ describe(listCurrentUserCompletedLessons, () => {
     const { goal, user } = await learnerWithGoals();
     const chapter = await libraryChapterFixture({ title: "Waves" });
 
-    const [replayed, single] = await Promise.all([
+    const [replayed, single, secondTake] = await Promise.all([
       libraryLessonFixture({ homeChapterId: chapter.id, title: "Interference" }),
       libraryLessonFixture({ title: "Explained by you" }),
+      libraryLessonFixture({
+        identityKey: getSecondTakeIdentityKey({ ownerId: null, skillId: randomUUID() }),
+        title: "Interference another way",
+      }),
     ]);
 
     await Promise.all([
+      finishedRun({
+        endedAt: "2026-10-31T15:00:00.000Z",
+        goalId: goal.id,
+        kind: "review",
+        lessonId: secondTake.id,
+        userId: user.id,
+      }),
       finishedRun({
         endedAt: "2026-10-20T15:00:00.000Z",
         goalId: goal.id,

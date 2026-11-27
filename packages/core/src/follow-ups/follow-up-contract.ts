@@ -3,6 +3,7 @@ import { CEFR_LEVELS } from "@zoonk/utils/cefr";
 import { SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
+import { writeSecondTakeInputSchema } from "../library/second-takes/second-take-follow-up";
 
 export const FOLLOW_UP_SECRET_HEADER = "x-zoonk-follow-up-secret";
 
@@ -97,6 +98,7 @@ export const followUpSchema = z.discriminatedUnion("kind", [
     kind: z.literal("replenishLevelTestChecks"),
   }),
   z.object({ input: z.object({ lessonId: uuidSchema() }), kind: z.literal("writeLesson") }),
+  z.object({ input: writeSecondTakeInputSchema, kind: z.literal("writeSecondTake") }),
   z.object({ input: z.object({ goalId: uuidSchema() }), kind: z.literal("rebuildGoalCurriculum") }),
   z.object({
     input: z.object({

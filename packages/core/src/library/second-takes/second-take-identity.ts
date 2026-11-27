@@ -1,6 +1,12 @@
 import { scopeIdentityKey } from "@zoonk/utils/identity-key";
 
 const SECOND_TAKE_KEY = "retake:";
+export const SECOND_TAKE_KEY_WHERE = {
+  OR: [
+    { identityKey: { startsWith: SECOND_TAKE_KEY } },
+    { identityKey: { contains: `:${SECOND_TAKE_KEY}` } },
+  ],
+};
 export const SECOND_TAKE_IDENTITY_PATTERN = `(^|:)${SECOND_TAKE_KEY}[0-9a-f-]{36}$`;
 const secondTakeIdentity = new RegExp(SECOND_TAKE_IDENTITY_PATTERN, "u");
 

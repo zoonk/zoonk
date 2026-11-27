@@ -30,6 +30,8 @@ function getFollowUpKey(followUp: FollowUp): string {
       return followUp.input.placementPart
         ? `whole-course:${followUp.input.goalId}`
         : followUp.input.goalId;
+    case "writeSecondTake":
+      return followUp.input.skillId;
     case "writeLesson":
     case "writeSentenceOrders":
       return followUp.input.lessonId;

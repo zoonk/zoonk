@@ -120,6 +120,7 @@ export async function finishLessonRun({
     });
 
     const isReplay = await hasFinishedLessonBefore(tx, { lessonId, runId: run.id, userId });
+    const secondTakeSkillId = getSecondTakeSkillId(identityKey);
     const score = scoreLibraryLesson({ ...tally, answerPoints, isFirstCompletion: !isReplay });
 
     const currentRun = await tx.learningEvent.findUniqueOrThrow({ where: { id: run.id } });
@@ -147,7 +148,7 @@ export async function finishLessonRun({
     const closed = await finishLearningEvent(tx, {
       endedAt: completedAt,
       eventId: run.id,
-      kind: isReplay ? "review" : "lesson",
+      kind: isReplay || secondTakeSkillId ? "review" : "lesson",
       outcome: {
         brainPower: score.brainPower,
         correctAnswers: tally.correctCount,
@@ -161,8 +162,6 @@ export async function finishLessonRun({
     if (!closed) {
       return unchanged(null);
     }
-
-    const secondTakeSkillId = getSecondTakeSkillId(identityKey);
 
     await markTeachingBoundary({
       completedAt,
