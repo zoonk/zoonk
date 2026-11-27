@@ -173,18 +173,19 @@ export function scoreWritingSheet({
       return [];
     }
 
-    const caps = limits.filter(({ criteria }) => criteria.includes(criterion.id));
+    const ceilings = [
+      max,
+      ...limits.filter(({ criteria }) => criteria.includes(criterion.id)).map((limit) => limit.max),
+    ];
 
-    const range = roundWritingRange({
-      range: capRange(zero || !earned ? { high: 0, low: 0 } : earned, [
-        max,
-        ...caps.map((limit) => limit.max),
-      ]),
+    const rounded = roundWritingRange({
+      range: capRange(zero || !earned ? { high: 0, low: 0 } : earned, ceilings),
       rounding: sheet.rounding,
       stage: "criterion",
     });
 
-    return [{ id: criterion.id, max, range }];
+    // Rounding up can pass a ceiling that isn't on the rounding step.
+    return [{ id: criterion.id, max, range: capRange(rounded, ceilings) }];
   });
 
   return scores.length === sheet.criteria.length

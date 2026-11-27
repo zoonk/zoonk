@@ -134,14 +134,12 @@ export function buildWritingFeedback({
   };
 }
 
-function getDeduction({
+function getLanguagePenalty({
   basis,
-  content,
   errorCount,
   estimatedLines,
 }: {
   basis: Basis;
-  content: number;
   errorCount: number;
   estimatedLines: number;
 }) {
@@ -151,8 +149,8 @@ function getDeduction({
   const perLine = language?.method === "errorsPerLine";
 
   return {
-    high: Math.min(content, penalty / (perLine ? Math.max(1, applicableLines - 1) : 1)),
-    low: Math.min(content, penalty / (perLine ? applicableLines : 1)),
+    high: penalty / (perLine ? Math.max(1, applicableLines - 1) : 1),
+    low: penalty / (perLine ? applicableLines : 1),
   };
 }
 
@@ -218,17 +216,24 @@ export function applyWritingArithmetic({
 
   const { content } = score;
 
-  const deduction = getDeduction({
+  const penalty = getLanguagePenalty({
     basis,
-    content: content.low,
     errorCount: feedback.errors.length,
     estimatedLines,
   });
 
+  const deduction = {
+    high: Math.min(content.high, penalty.high),
+    low: Math.min(content.low, penalty.low),
+  };
+
   const total = roundWritingRange({
     range: zero
       ? { high: 0, low: 0 }
-      : { high: content.high - deduction.low, low: content.low - deduction.high },
+      : {
+          high: Math.max(0, content.high - penalty.low),
+          low: Math.max(0, content.low - penalty.high),
+        },
     rounding: grading.rounding,
     stage: "total",
   });

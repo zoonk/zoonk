@@ -386,6 +386,61 @@ describe("one holistic mark", () => {
       total: { high: 20, low: 16 },
     });
   });
+
+  it("takes a language penalty off each end of the band, never below zero", () => {
+    const citation = { passage: "Each error costs ten marks.", sourceId: "notice" };
+    const example = SCORING_SHEET_EXAMPLES.holistic;
+
+    const penalized = issue({
+      ...example,
+      grading: {
+        ...example.grading,
+        language: {
+          citation,
+          factor: 10,
+          formula: "mark = content - 10 × errors",
+          method: "perError",
+          text: "Ten marks an error",
+        },
+      },
+    });
+
+    const grade = mark({
+      basis: penalized,
+      evidence: {
+        awards: awards([1, "in broad terms"]),
+        errors: [{ correction: "essay", kind: "spelling", quote: "esay" }],
+      },
+      text: "The esay addresses the question in broad terms.",
+    });
+
+    expect(grade).toMatchObject({
+      content: { high: 5, low: 1 },
+      deduction: { high: 5, low: 1 },
+      total: { high: 0, low: 0 },
+    });
+  });
+
+  it("keeps a criterion rounded up at its maximum", () => {
+    const citation = { passage: "Marks are rounded up to even numbers.", sourceId: "notice" };
+    const example = SCORING_SHEET_EXAMPLES.holistic;
+
+    const rounded = issue({
+      ...example,
+      grading: {
+        ...example.grading,
+        rounding: { citation, mode: "up", stage: "criterion", step: 2, text: "Even marks" },
+      },
+    });
+
+    const grade = mark({
+      basis: rounded,
+      evidence: { awards: awards([5, "a well-substantiated judgement"]) },
+      text: "The essay reaches a well-substantiated judgement.",
+    });
+
+    expect(grade).toMatchObject({ rows: [{ max: 25, range: { high: 25, low: 22 } }] });
+  });
 });
 
 describe("a criterion with no scale and no key", () => {
