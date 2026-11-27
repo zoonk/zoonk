@@ -5,7 +5,9 @@ description: >-
 
 inputs:
   build:
-    description: The build to restore, `device` for `make build` or `simulator` for `make test`.
+    description: >-
+      The build to restore, `device` for `make build`, `mac` for `make test-mac` or `simulator` for
+      `make test`.
     required: true
 
 outputs:
