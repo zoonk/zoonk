@@ -30,6 +30,22 @@ enum AppTab: Hashable {
 
   static let sidebarPlaces = study + stats
 
+  /// The Study tabs the learner's goal has. Saved lessons stays while it shows: removing the last
+  /// save there takes the place away once the learner leaves, as main's sidebar does.
+  static func listedStudy(for places: LearnerPlaces?, showing selected: AppTab) -> [AppTab] {
+    study.filter { tab in
+      switch tab {
+      case .exam, .mockExam: places?.exam == true
+      case .speaking: places?.speaking == true
+      case .mindMaps: places?.mindMaps == true
+      case .savedLessons: places?.savedLessons == true || selected == .savedLessons
+      case .completedLessons: places?.completedLessons == true
+      case .certificates: places?.certificates == true
+      default: true
+      }
+    }
+  }
+
   var studyRoute: AppRoute? {
     switch self {
     case .mistakes: .mistakes
