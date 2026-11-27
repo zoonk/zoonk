@@ -62,52 +62,61 @@ function didPreparationFail({
   );
 }
 
-type RemainingPart = { ids: string[]; part: number };
+function countRemainingQuestions(
+  ids: readonly string[],
+  bySkill: ReadonlyMap<string, readonly PlacementEvidence[]>,
+) {
+  return ids.reduce(
+    (total, id) => total + Math.max(0, QUESTIONS_PER_TOPIC - (bySkill.get(id)?.length ?? 0)),
+    0,
+  );
+}
 
-function getRemainingParts({
-  attempt,
-  complete,
-  current,
+function readPartProgress({
+  bySkill,
+  currentAllowance,
+  currentTopics,
+  part,
   parts,
   remaining,
 }: {
-  attempt: PlacementAttempt;
-  complete: boolean;
-  current: string[];
-  parts: string[][];
-  remaining: ReadonlySet<string>;
-}): RemainingPart[] {
-  return parts.flatMap((ids, index) => {
-    const part = index + 1;
-
-    if (part < attempt.part || (part === attempt.part && (complete || attempt.partComplete))) {
-      return [];
-    }
-
-    const topics = (part === attempt.part ? current : ids).filter((id) => remaining.has(id));
-    return topics.length > 0 ? [{ ids: topics, part }] : [];
-  });
-}
-
-function getRemainingQuestions({
-  bySkill,
-  currentAllowance,
-  currentPart,
-  remainingParts,
-}: {
   bySkill: ReadonlyMap<string, readonly PlacementEvidence[]>;
   currentAllowance: number;
-  currentPart: number;
-  remainingParts: RemainingPart[];
+  currentTopics: string[];
+  part: number;
+  parts: string[][];
+  remaining: ReadonlySet<string>;
 }) {
-  return remainingParts.reduce((count, { ids, part }) => {
-    const questions = ids.reduce(
-      (sum, id) => sum + Math.max(0, QUESTIONS_PER_TOPIC - (bySkill.get(id)?.length ?? 0)),
-      0,
-    );
+  // Only future parts can move. The current number identifies answers, receipts and preparation.
+  const futureParts = parts
+    .slice(part)
+    .map((ids) => ids.filter((id) => remaining.has(id)))
+    .filter((ids) => ids.length > 0);
 
-    return count + (part === currentPart ? Math.min(questions, currentAllowance) : questions);
-  }, 0);
+  const retainedParts = [...parts.slice(0, part), ...futureParts];
+  const [nextTopics] = futureParts;
+
+  const currentQuestions = Math.min(
+    currentAllowance,
+    countRemainingQuestions(currentTopics, bySkill),
+  );
+
+  const remainingQuestions =
+    currentQuestions + countRemainingQuestions(futureParts.flat(), bySkill);
+
+  const totalQuestions = retainedParts.reduce(
+    (total, ids) => total + Math.min(PART_QUESTIONS, ids.length * QUESTIONS_PER_TOPIC),
+    0,
+  );
+
+  return {
+    nextPart: nextTopics ? { ids: nextTopics, part: part + 1 } : undefined,
+    parts: retainedParts.length,
+    partsLeft: futureParts.length + Number(currentAllowance > 0),
+    remainingEstimatedMinutes: getCourseMinutes(remainingQuestions),
+    retainedParts,
+    totalEstimatedMinutes: getCourseMinutes(totalQuestions),
+  };
 }
 
 export function readAttemptQuestions({
@@ -164,6 +173,7 @@ export function readAttemptQuestions({
 
   const capped = partAnswers.length >= questions;
   const complete = capped || !nextSkillId;
+  const partOver = complete || attempt.partComplete;
   const blocked = Boolean(nextSkillId && !item && !complete);
   const waiting = blocked && nextSkillId !== undefined && build.preparingSkillIds.has(nextSkillId);
 
@@ -174,17 +184,17 @@ export function readAttemptQuestions({
     waiting,
   });
 
-  const remainingParts = getRemainingParts({ attempt, complete, current, parts, remaining });
-  const nextPart = remainingParts.find(({ part }) => part > attempt.part);
-
-  const remainingQuestions = getRemainingQuestions({
+  const progress = readPartProgress({
     bySkill,
-    currentAllowance: Math.max(0, questions - partAnswers.length),
-    currentPart: attempt.part,
-    remainingParts,
+    currentAllowance: partOver ? 0 : questions - partAnswers.length,
+    currentTopics: remainingTopics,
+    part: attempt.part,
+    parts,
+    remaining,
   });
 
   return {
+    ...progress,
     answered: partAnswers.length,
     chapter: item
       ? (plan.skills.find((skill) => skill.id === item.skillId)?.areaTitle ?? null)
@@ -193,17 +203,12 @@ export function readAttemptQuestions({
     durationMs: partAnswers.reduce((total, answer) => total + answer.durationMs, 0),
     end: getEnd({ capped, complete }),
     estimatedMinutes: getCourseMinutes(questions),
-    item: attempt.partComplete || attempt.paused || complete ? null : item,
+    item: partOver || attempt.paused ? null : item,
     knownSkillIds: [...walk.confirmed],
-    nextPart,
     partAnswers: partAnswers.map((row) => row.skillId),
-    parts: parts.length,
-    partsLeft: remainingParts.length,
     preparationFailed,
     questions,
-    remainingEstimatedMinutes: getCourseMinutes(remainingQuestions),
     remainingTopics,
-    totalEstimatedMinutes: getCourseMinutes(parts.flat().length * QUESTIONS_PER_TOPIC),
     unknowns: partAnswers.filter((row) => toPlacementEvidence(row)?.outcome === "dontKnow").length,
     waiting,
   };

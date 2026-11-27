@@ -88242,7 +88242,7 @@
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991,
-            "description": "Estimated minutes for all parts at the start of the attempt"
+            "description": "Estimated minutes for the current, completed and retained future parts"
           }
         },
         "required": [

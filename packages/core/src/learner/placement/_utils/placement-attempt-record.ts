@@ -88,6 +88,29 @@ export function getAttemptParts(attempt: PlacementAttempt): string[][] {
   ];
 }
 
+export function settlePlacementPart({
+  attempt,
+  lessonsSkipped,
+  progress,
+}: {
+  attempt: PlacementAttempt;
+  lessonsSkipped: number;
+  progress: { complete: boolean; partsLeft: number; retainedParts: string[][] };
+}): PlacementAttempt | null {
+  if (progress.partsLeft === 0) {
+    return null;
+  }
+
+  return {
+    ...attempt,
+    lessonsSkipped,
+    partComplete: progress.complete,
+    // Attempts without stored parts still use timestamps for the current part's answers.
+    ...(attempt.parts && { parts: progress.retainedParts }),
+    paused: !progress.complete,
+  };
+}
+
 export function getCourseOffer(topics: number): z.infer<typeof coursePlacementOfferSchema> | null {
   if (topics === 0) {
     return null;
