@@ -3623,6 +3623,11 @@ msgid "Ask {name} about your plan"
 msgstr "学習計画について{name}に質問する"
 
 #: src/questions/ask-tutor.tsx
+msgctxt "VgQdYo"
+msgid "Ask {name} about this module"
+msgstr "{name}にこのモジュールについて質問する"
+
+#: src/questions/ask-tutor.tsx
 msgctxt "dHV3p3"
 msgid "Ask {name} about this subject"
 msgstr "この科目について{name}に質問する"
@@ -3744,6 +3749,11 @@ msgid "Ask questions about your plan"
 msgstr "学習計画について質問できます"
 
 #: src/questions/lesson-question-panel.tsx
+msgctxt "eDiytU"
+msgid "Ask questions about this module"
+msgstr "このモジュールについて質問する"
+
+#: src/questions/lesson-question-panel.tsx
 msgctxt "zoFfdl"
 msgid "Ask questions about this subject"
 msgstr "この科目について質問できます"
@@ -3787,6 +3797,11 @@ msgstr "この模試についての質問"
 msgctxt "Nx3NqL"
 msgid "Questions about your plan"
 msgstr "学習計画についての質問"
+
+#: src/questions/lesson-question-thread.tsx
+msgctxt "KCTpmM"
+msgid "Questions about this module"
+msgstr "このモジュールについての質問"
 
 #: src/questions/lesson-question-thread.tsx
 msgctxt "6QK3he"
@@ -3842,6 +3857,11 @@ msgstr "学習計画について"
 msgctxt "e0zkbG"
 msgid "About this part"
 msgstr "この部分について"
+
+#: src/questions/lesson-question-turn.tsx
+msgctxt "W40WkX"
+msgid "About this module"
+msgstr "このモジュールについて"
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "XHGiOR"

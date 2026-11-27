@@ -360,7 +360,7 @@ describe(startCourseGoal, () => {
     const steps = onboarding.status === "ready" ? onboarding.onboarding.steps : [];
 
     expect(steps).not.toContain("level");
-    expect(steps).toContain("placement");
+    expect(steps).not.toContain("placement");
 
     await expect(listPlanSetupTasks(goalId)).resolves.toStrictEqual(["placement", "routine"]);
     await setUpPlanInSteps(goalId);
@@ -374,7 +374,7 @@ describe(startCourseGoal, () => {
     const result = await startCourseWithPlan({ courseId: course.id, input: { level: null } });
     const goal = result.status === "created" ? result.goal : null;
 
-    expect(goal?.details).toMatchObject({ answered: ["level"] });
+    expect(goal?.details).toMatchObject({ answered: ["level"], placementRequested: true });
     expect(goal?.details).not.toHaveProperty("level");
   });
 

@@ -168,57 +168,132 @@ describe("learn placement attempts", () => {
     });
   });
 
-  it("passes a pruned part without renumbering the next one", async () => {
+  it.each(["wholeCourse", "quick"] as const)(
+    "continues a %s test past a pruned part when Android sends the saved length",
+    async (length) => {
+      const user = await userFixture();
+
+      const { goal, items, skills } = await learnerGoalFixture({
+        itemsPerSkill: 1,
+        phases: [8],
+        userId: user.id,
+      });
+
+      const independent = skills[7]!;
+      await prisma.skillPrerequisite.deleteMany({ where: { skillId: independent.id } });
+      mockSession(user.id);
+
+      const goalId = goal.id;
+      const timeZone = "UTC";
+      const start = () => startPlacementSitting({ goalId, input: { length, timeZone } });
+
+      await expect(getGoalPlacement({ goalId })).resolves.toMatchObject({
+        placement: { attempt: null },
+      });
+
+      const opened = await start();
+
+      if (opened.status !== "ready" || !opened.placement.attempt) {
+        throw new Error("Expected the first part");
+      }
+
+      const { id: attemptId, part } = opened.placement.attempt;
+
+      const answered = await answerPlacementQuestion({
+        goalId,
+        input: {
+          answer: { dontKnow: true },
+          attemptId,
+          durationMs: 1000,
+          itemId: items[0]!.id,
+          part,
+          timeZone,
+        },
+      });
+
+      expect(answered).toMatchObject({ placement: { next: null, status: "done" } });
+
+      await expect(
+        finishGoalPlacement({ goalId, input: { attemptId, fromScratch: false, part, timeZone } }),
+      ).resolves.toMatchObject({
+        completion: {
+          attempt: {
+            nextPart: 3,
+            part: 1,
+            partComplete: true,
+            parts: 3,
+            partsLeft: 1,
+            remainingEstimatedMinutes: 2,
+          },
+          finish: { answered: 1, end: "material_exhausted", lessonsSkipped: 0, unknowns: 1 },
+        },
+      });
+
+      const continuation = {
+        placement: {
+          attempt: { id: attemptId, length: "wholeCourse", part: 3, parts: 3, questions: 4 },
+          next: { skillId: independent.id },
+          status: "asking",
+        },
+      };
+
+      await expect(start()).resolves.toMatchObject(continuation);
+      await expect(start()).resolves.toMatchObject(continuation);
+    },
+  );
+
+  it("does not replay a course attempt's answer to released Android's attempt-less Quick test", async () => {
     const user = await userFixture();
 
-    const { goal, items, skills } = await learnerGoalFixture({
-      itemsPerSkill: 1,
-      phases: [8],
+    const { goal, skills } = await learnerGoalFixture({
+      itemsPerSkill: 0,
+      phases: [1],
       userId: user.id,
     });
 
-    const independent = skills[7]!;
-    await prisma.skillPrerequisite.deleteMany({ where: { skillId: independent.id } });
+    const bank = await placementItemBank(skills.map(({ id }) => id));
+    const answers = new Map(bank.flat().map(({ answer, item }) => [item.id, answer]));
+    const goalId = goal.id;
+    const timeZone = "UTC";
     mockSession(user.id);
 
-    const start = () =>
-      startPlacementSitting({ goalId: goal.id, input: { length: "wholeCourse" } });
+    const read = await getGoalPlacement({ goalId });
 
-    const opened = await start();
-
-    if (opened.status !== "ready" || !opened.placement.attempt) {
-      throw new Error("Expected the first part");
+    if (read.status !== "ready" || read.placement.attempt || !read.placement.next) {
+      throw new Error("Expected a question from the attempt-less test");
     }
 
-    const { id: attemptId } = opened.placement.attempt;
+    const { itemId } = read.placement.next;
+    const answer = answers.get(itemId);
 
-    const answered = await answerPlacementQuestion({
-      goalId: goal.id,
-      input: { answer: { dontKnow: true }, attemptId, durationMs: 1000, itemId: items[0]!.id },
-    });
+    if (!answer) {
+      throw new Error("Expected the seeded answer");
+    }
 
-    expect(answered).toMatchObject({ placement: { next: null, status: "done" } });
+    const opened = await startPlacementSitting({ goalId, input: { length: "quick", timeZone } });
+
+    if (opened.status !== "ready" || !opened.placement.attempt) {
+      throw new Error("Expected the other client's course attempt");
+    }
+
+    expect(opened.placement.next?.itemId).toBe(itemId);
+
+    const { id: attemptId, part } = opened.placement.attempt;
+    const input = { answer, durationMs: 1000, itemId, timeZone };
 
     await expect(
-      finishGoalPlacement({ goalId: goal.id, input: { attemptId } }),
-    ).resolves.toMatchObject({
-      completion: {
-        attempt: {
-          nextPart: 3,
-          part: 1,
-          partComplete: true,
-          parts: 3,
-          partsLeft: 1,
-          remainingEstimatedMinutes: 2,
-        },
-        finish: { answered: 1, end: "material_exhausted", lessonsSkipped: 0, unknowns: 1 },
-      },
+      answerPlacementQuestion({ goalId, input: { ...input, attemptId, part } }),
+    ).resolves.toMatchObject({ placement: { attempt: { answered: 1 } }, status: "ready" });
+
+    await expect(answerPlacementQuestion({ goalId, input })).resolves.toStrictEqual({
+      status: "invalidItem",
     });
 
-    await expect(start()).resolves.toMatchObject({
+    await expect(getGoalPlacement({ goalId })).resolves.toMatchObject({
       placement: {
-        attempt: { id: attemptId, part: 3, parts: 3, questions: 4 },
-        next: { skillId: independent.id },
+        attempt: { answered: 1, id: attemptId, part },
+        next: { itemId: expect.not.stringMatching(itemId) },
+        status: "asking",
       },
     });
   });

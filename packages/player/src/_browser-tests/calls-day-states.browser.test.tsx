@@ -91,7 +91,7 @@ describe("calls with partial or empty days", () => {
   });
 
   it("names a phase the learner already knows", async () => {
-    render(<ReasonText reason="known" />);
+    render(<ReasonText isModule={false} reason="known" />);
     await expect.element(page.getByText("Skipped · you already know it")).toBeVisible();
   });
 

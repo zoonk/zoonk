@@ -1,37 +1,25 @@
 import "server-only";
-import { type Goal, type TransactionClient, prisma } from "@zoonk/db";
-import { readDatabaseFacts } from "../../../_utils/read-database-facts";
-import { loadPlacementPlan } from "../../_utils/goal-skill-graph";
+import { type Goal, type TransactionClient } from "@zoonk/db";
+import { loadCoursePlacementPlan } from "../../_utils/goal-skill-graph";
 import { isQuickChoice } from "../../_utils/placement-guess-rate";
-import { loadWritingSkillIds } from "../../writing-skills";
 import { pickPlacementItem } from "../placement-item-choice";
 import { getCourseOffer, getTopicsAhead } from "./placement-attempt-record";
 import { loadPlacementItems } from "./placement-bank-items";
 import { loadSeenPlacementItems } from "./placement-evidence";
 import { loadQuestion } from "./placement-state-view";
 
-export async function loadCoursePlacementTopics(goalId: string, tx: TransactionClient = prisma) {
-  const [plan, writing] = await readDatabaseFacts(
-    tx,
-    () => loadPlacementPlan(goalId, tx),
-    () => loadWritingSkillIds(goalId, tx),
-  );
-
-  return getTopicsAhead(plan).filter((skill) => !writing.has(skill.id));
+export async function loadCoursePlacementTopics(goalId: string, tx?: TransactionClient) {
+  return getTopicsAhead(await loadCoursePlacementPlan(goalId, { tx }));
 }
 
-export async function readCoursePlacementOffer({
-  goal,
-  checkReadiness = false,
-}: {
-  goal: Pick<Goal, "id" | "userId" | "examBlueprintId">;
-  checkReadiness?: boolean;
-}) {
+export async function readCoursePlacementOffer(
+  goal: Pick<Goal, "id" | "userId" | "examBlueprintId">,
+) {
   const topics = await loadCoursePlacementTopics(goal.id);
   const offer = getCourseOffer(topics.length);
   const first = topics[0];
 
-  if (!checkReadiness || !first) {
+  if (!first) {
     return { offer, ready: false };
   }
 

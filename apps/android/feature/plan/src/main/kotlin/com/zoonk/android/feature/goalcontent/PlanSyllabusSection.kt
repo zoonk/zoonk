@@ -31,7 +31,6 @@ import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatProgressShare
 import com.zoonk.android.ui.theme.layoutEnd
-import com.zoonk.api.models.GoalContentGoal
 import com.zoonk.api.models.Syllabus
 import com.zoonk.api.models.SyllabusCourseWeights
 import com.zoonk.api.models.SyllabusSubject
@@ -49,7 +48,7 @@ fun PlanSyllabusSection(
     modifier: Modifier = Modifier,
 ) {
     val groups = groupSubjects(syllabus.subjects, modules = syllabus.kind == Syllabus.Kind.MODULES)
-    val exam = syllabus.goal.kind == GoalContentGoal.Kind.EXAM
+    val exam = syllabus.isExam
     val extraLabel = optionalStudyLabel(syllabus.hasNotice == true, syllabus.examDocument)
 
     BoxWithConstraints(modifier.fillMaxWidth()) {
@@ -91,6 +90,7 @@ fun PlanSyllabusSection(
                         alsoIn = alsoInLine(syllabus.sharedExams, subject.sharedWith),
                         layout = layout,
                         barWidth = barWidth,
+                        module = !exam,
                         onClick = { onOpenSubject(subject.key) },
                     )
                 }
@@ -151,6 +151,7 @@ private fun SubjectRow(
     alsoIn: String?,
     layout: RowLayout,
     barWidth: Dp,
+    module: Boolean,
     onClick: () -> Unit,
 ) {
     val notPlanned = subject.notPlannedReason != null
@@ -177,7 +178,7 @@ private fun SubjectRow(
             CoverageBar(studied = bar.studied, known = bar.known, modifier = progressModifier)
         } else {
             Text(
-                if (subject.isExtra) lessonsDoneText(subject) else planOutsideReason(subject.notPlannedReason),
+                if (subject.isExtra) lessonsDoneText(subject) else planOutsideReason(subject.notPlannedReason, module),
                 progressModifier,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodySmall,
@@ -283,11 +284,15 @@ private val SHARE_WIDTH = 40.dp
 /** The gap between a row's columns: the headline's own, and the list row's before its value and its chevron. */
 private val COLUMN_GAP = 12.dp
 
+/** Why a row isn't in the plan; one the learner took out names it as its list does, a [module] or a subject. */
 @Composable
-internal fun planOutsideReason(reason: String?): String =
+internal fun planOutsideReason(
+    reason: String?,
+    module: Boolean,
+): String =
     stringResource(
         when (reason) {
-            "skipped" -> R.string.plan_outside_skipped
+            "skipped" -> if (module) R.string.plan_outside_skipped_module else R.string.plan_outside_skipped
             "known" -> R.string.plan_skipped_known
             "pastBasics" -> R.string.plan_outside_past_basics
             "skippedBase" -> R.string.plan_outside_skipped_base
