@@ -1,50 +1,16 @@
 import Foundation
 
-/// How much a course's test checks: one part of about twelve questions, or every topic still ahead
-/// in parts. The quick test is the full test's first part, so it can go on as the full test.
-enum PlacementLength: String, Codable, Equatable, Sendable {
-  case quick
-  case wholeCourse
-}
-
-/// A course's test, open or between its parts. Core fixes its parts and each part's question count
-/// when it starts; the screens only say them.
+/// A course's open test: one test of up to `questions` answers that looks for where the learner
+/// starts. Core fixes its ceiling when it starts; the screens only say it.
 struct PlacementAttempt: Decodable, Equatable, Sendable {
-  /// Where a part the learner stopped midway goes on: "part 5 of 14, question 4".
-  struct Resume: Decodable, Equatable, Sendable {
-    let part: Int
-    let question: Int
-  }
-
-  /// This part's answers, never more than `questions`.
   let answered: Int
   /// The chapter the next question asks about.
   let chapter: String?
-  /// About how long the current part takes.
+  /// About how long the test takes.
   let estimatedMinutes: Int
   let id: String
-  let length: PlacementLength
-  /// The next part with topics left; nil when none is.
-  let nextPart: Int?
-  let part: Int
-  /// This part asks nothing more and closed: the next one starts on "Keep going".
-  let partComplete: Bool
-  let parts: Int
-  /// Parts with questions left, the current one included while it has some.
-  let partsLeft: Int
-  /// Parts the current part removed because they build on topics the learner doesn't know yet;
-  /// 0 until it closes.
-  let partsRemoved: Int
-  /// The current part's ceiling, fixed when it opened.
+  /// The test's ceiling, fixed when it started.
   let questions: Int
-  /// Set once the learner stopped this part midway.
-  let resume: Resume?
-  let totalEstimatedMinutes: Int
-  /// About how long the rest takes: this part's unanswered questions and every later part.
-  let remainingEstimatedMinutes: Int
-
-  /// The learner chose the quick test and it's over: what's left is its result's "Test the rest".
-  var quickTestEnded: Bool { length == .quick && (partComplete || resume != nil) }
 }
 
 /// The levels a skill's answers place it between, such as B1 to B2.
@@ -56,41 +22,50 @@ struct LevelRange: Decodable, Hashable, Sendable {
   var shown: String { low == high ? low : "\(low)–\(high)" }
 }
 
-/// What a course's test offers before it starts: one part's questions and time, and the full
-/// test's parts and time when the course has more than one part.
+/// What a course's test asks before it starts: its ceiling and about how long it takes.
 struct CoursePlacementOffer: Decodable, Equatable, Sendable {
-  struct WholeCourse: Decodable, Equatable, Sendable {
-    let estimatedMinutes: Int
-    let parts: Int
-  }
-
   let estimatedMinutes: Int
   let questions: Int
-  let wholeCourse: WholeCourse?
+}
+
+/// A course as a test's result draws it: its chapters in plan order, each with its lessons, the
+/// lessons the learner starts past and whether it holds the next lesson.
+struct PlacementCourse: Decodable, Equatable, Sendable {
+  struct Chapter: Decodable, Equatable, Sendable {
+    let lessons: Int
+    /// Lessons the learner starts past.
+    let skipped: Int
+    /// Holds the lesson the learner starts on.
+    let start: Bool
+  }
+
+  let lessons: Int
+  let chapters: [Chapter]
 }
 
 /// The last finished test, which stays readable while another is open. A language course's also
-/// has each skill's range and the levels it skipped; a course's, the part it closed and the lesson
-/// the plan goes on with.
+/// has each skill's range and the levels it skipped; a course's, where the learner starts and the
+/// lesson the plan goes on with.
 struct PlacementTestResult: Decodable, Equatable, Sendable {
   struct NextLesson: Decodable, Equatable, Sendable {
     let id: String
     let title: String
+    /// A course's next lesson's minutes and chapter.
+    var estimatedMinutes: Int?
+    var chapter: String?
   }
 
   var attemptId: String?
   var changeId: String?
   var heldUntilTomorrow: Bool?
   let finishedAt: Date
-  /// Every part's skips, for a course's test.
   let lessonsSkipped: Int
   var levelsSkipped: [String]?
   var nextLesson: NextLesson?
-  /// A course's last closed part, and what that part skipped.
-  var part: Int?
-  var partLessonsSkipped: Int?
-  /// The parts that part removed, as the attempt's `partsRemoved`.
-  var partsRemoved: Int?
+  /// The chapter a course's learner starts in; nil before the plan has one.
+  var chapter: String?
+  /// The course as the result draws it; nil when the result came before the plan.
+  var course: PlacementCourse?
   var ranges: [String: LevelRange]?
 
   init(finishedAt: Date, lessonsSkipped: Int) {
@@ -107,15 +82,14 @@ struct PlacementTestResult: Decodable, Equatable, Sendable {
     lessonsSkipped = try container.decodeIfPresent(Int.self, forKey: .lessonsSkipped) ?? 0
     levelsSkipped = try container.decodeIfPresent([String].self, forKey: .levelsSkipped)
     nextLesson = try container.decodeIfPresent(NextLesson.self, forKey: .nextLesson)
-    part = try container.decodeIfPresent(Int.self, forKey: .part)
-    partLessonsSkipped = try container.decodeIfPresent(Int.self, forKey: .partLessonsSkipped)
-    partsRemoved = try container.decodeIfPresent(Int.self, forKey: .partsRemoved)
+    chapter = try container.decodeIfPresent(String.self, forKey: .chapter)
+    course = try container.decodeIfPresent(PlacementCourse.self, forKey: .course)
     ranges = try container.decodeIfPresent([String: LevelRange].self, forKey: .ranges)
   }
 
   private enum CodingKeys: String, CodingKey {
-    case attemptId, changeId, finishedAt, heldUntilTomorrow, lessonsSkipped, levelsSkipped,
-      nextLesson, part, partLessonsSkipped, partsRemoved, ranges
+    case attemptId, changeId, chapter, course, finishedAt, heldUntilTomorrow, lessonsSkipped,
+      levelsSkipped, nextLesson, ranges
   }
 
   struct SkillRange: Hashable, Sendable {
@@ -157,7 +131,7 @@ struct PlanPlacementTest: Decodable, Equatable, Sendable {
   /// A language's open level test: its answers and its ceiling.
   var answered: Int?
   var total: Int?
-  /// A course's full test's length before it starts, or the test's own; a language's level test's.
+  /// About how long the test takes.
   let estimatedMinutes: Int
   let kind: Kind
   /// A language course's next level the learner can test out of; nil when none is left.
@@ -171,11 +145,4 @@ struct PlanPlacementTest: Decodable, Equatable, Sendable {
 
   /// Nothing is left ahead to check and nothing was checked yet.
   var isShown: Bool { !(state == .start && estimatedMinutes == 0) }
-
-  /// A full test with parts left: the plan opens it on "Continue your test". A quick test that
-  /// ended shows its result instead, with "Test the rest" on it.
-  var continuesInParts: Bool {
-    guard state == .continue, let attempt else { return false }
-    return !attempt.quickTestEnded
-  }
 }

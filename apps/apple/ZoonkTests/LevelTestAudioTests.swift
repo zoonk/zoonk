@@ -28,7 +28,8 @@ final class LevelTestAudioTests: XCTestCase {
   ) -> LevelTest.Question {
     LevelTest.Question(
       id: id, options: ["A", "B"], passage: "Hallo, hier ist Anna.", question: "Who calls?",
-      skill: .listening, audio: audio.map(LevelTest.Question.Audio.init), audioPending: pending)
+      skill: .listening, audio: audio.map { LevelTest.Question.Audio(url: $0) },
+      audioPending: pending)
   }
 
   private func test(showing question: LevelTest.Question) -> LevelTest {

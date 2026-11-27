@@ -38,6 +38,7 @@ struct FocusTestCheckpoint: View {
     }
     // The answer's buttons leave with it, so VoiceOver says what it did.
     .announcesStatus(decision.map(Self.answerLine))
+    .testTop(.open)
   }
 
   private var focus: FocusTest.Focus? { focusTest.checkpoint?.focus }

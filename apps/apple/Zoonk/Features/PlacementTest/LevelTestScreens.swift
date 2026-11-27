@@ -72,7 +72,7 @@ struct LanguageTestResultView: View {
     }
     .onboardingColumn()
     .announcesStatus(undo?.announcement)
-    .environment(\.isSavingAnswer, pressed != nil || undo?.request.isRunning == true)
+    .environment(\.isSavingAnswer, pressed != nil || undo?.request.isRunning == true).testTop(.open)
   }
 
   private let skills: [LevelTest.Skill] = [.reading, .listening]

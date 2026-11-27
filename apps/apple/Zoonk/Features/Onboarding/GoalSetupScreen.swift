@@ -173,11 +173,8 @@ private struct GoalSteps: View {
   /// Start over's request, cancelled if the screen goes away first, so it never acts after.
   private var startingOver: VisitRequest<Bool> { failures.startingOver }
   @State private var conditionPicks: [String] = []
-  /// How far a test is while its question shows. Its answer is final, so the bar keeps only ✕,
-  /// as main's `OnboardingTestQuestion` does, with this in the dashes' place.
-  @State private var testProgress: Double?
-  /// What ✕ reports while a test question shows.
-  @State private var leavingTest: AnalyticsEvent?
+  /// An open test's bar: its answers are final, so the bar keeps only ✕, as main's test task does.
+  @State private var testTop: TestTop?
 
   init(
     view: GoalOnboarding,
@@ -257,17 +254,27 @@ private struct GoalSteps: View {
     .id(step)
     .navigationBarBackButtonHidden()
     // The dashes or a test's progress take the title's place; without either, no title shows.
-    .toolbar(removing: progress == nil && testProgress == nil ? .title : nil)
-    .onPreferenceChange(TestQuestionProgressKey.self) { testProgress = $0 }
-    .onPreferenceChange(TestLeaveKey.self) { leavingTest = $0 }
+    .onPreferenceChange(TestTopKey.self) { testTop = $0 }
+    // An open test is a task: ✕, and while a question shows, what it tests over its segments.
+    .taskSegmentsBar(testTop?.question?.segments)
+    .taskTitle(
+      testTop?.question.map { Text(verbatim: $0.title) },
+      name: Text("Your plan", tableName: "Onboarding", comment: "Title of a new plan")
+    )
+    // The dashes or a test question's title take the title's place; without either, none shows.
+    .toolbar(
+      removing: testTop == nil
+        ? (progress == nil ? .title : nil)
+        : testTop?.question == nil ? .title : nil
+    )
     .taskOptions(
-      isShown: step != .plan && testProgress == nil,
+      isShown: step != .plan && testTop == nil,
       label: Text("More", tableName: "Onboarding", comment: "Opens onboarding's menu")
     ) {
       moreActions
     }
     .toolbar {
-      if previousStepIndex != nil, step != .plan, testProgress == nil {
+      if previousStepIndex != nil, step != .plan, testTop == nil {
         ToolbarItem(placement: .navigation) {
           Button(action: back) {
             Label {
@@ -298,23 +305,16 @@ private struct GoalSteps: View {
         }
       }
 
-      if let testProgress {
-        ToolbarItem(placement: .principal) {
-          TestProgressBar(value: testProgress)
-        }
-      } else if let progress {
+      if testTop == nil, let progress {
         ToolbarItem(placement: .principal) {
           StepDashes(progress: progress)
         }
       }
 
       // As on main, Back takes the ✕'s place once there's a step to go back to; "Finish later" stays in the menu.
-      if previousStepIndex == nil || step == .plan || testProgress != nil {
+      if previousStepIndex == nil || step == .plan || testTop != nil {
         ToolbarItem(placement: .cancellationAction) {
-          Button(role: .close) {
-            leavingTest.map(UsageAnalytics.track)
-            router.dismissTask()
-          }
+          TestClose(top: testTop) { router.dismissTask() }
         }
       }
     }
@@ -580,7 +580,7 @@ private struct StepScreen: View {
           LevelTestFlow(
             goalID: view.goal.id, targetLanguage: targetLanguage, testOutLevel: nil,
             opening: view.testStep?.mode == .direct ? .start : .read,
-            appLanguage: view.goal.language, statedLevel: view.statedLevel,
+            appLanguage: view.goal.language, firstLesson: view.firstLesson?.title,
             onFirstLesson: { try await onPlacementDone(nil) },
             onOnboardingDone: onPlacementDone
           ) {

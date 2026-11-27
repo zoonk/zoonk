@@ -9,18 +9,44 @@ import XCTest
 final class PlacementTestContractTests: XCTestCase {
   private let finishedAt = Date(timeIntervalSince1970: 1_795_278_219)
 
-  func testALearnCoursesLastResultReadsFromThePlan() throws {
+  func testALearnCoursesLastResultReadsWhereTheLearnerStarts() throws {
     let test = try planTest(
       #"""
-      {"attempt":null,"estimatedMinutes":27,"kind":"learn","state":"result",
+      {"attempt":null,"estimatedMinutes":4,"kind":"learn","offer":null,"state":"result",
        "result":{"attemptId":"c367d72f-4d87-408a-ba10-6bbcddca31ba",
-                 "finishedAt":"2026-11-21T16:23:39Z","lessonsSkipped":3,"part":4,
-                 "partsRemoved":2}}
+                 "finishedAt":"2026-11-21T16:23:39Z","lessonsSkipped":4,
+                 "chapter":"Why prices move",
+                 "course":{"lessons":9,"chapters":[{"lessons":4,"skipped":4,"start":false},
+                                                   {"lessons":5,"skipped":0,"start":true}]},
+                 "nextLesson":{"id":"c367d72f-4d87-408a-ba10-6bbcddca31ba",
+                               "title":"News, results and expectations","estimatedMinutes":5,
+                               "chapter":"Why prices move"}}}
       """#)
 
-    XCTAssertEqual(test.result?.lessonsSkipped, 3)
-    XCTAssertEqual(test.result?.partsRemoved, 2)
-    XCTAssertEqual(test.result?.finishedAt, finishedAt)
+    let result = try XCTUnwrap(test.result)
+    XCTAssertEqual(result.lessonsSkipped, 4)
+    XCTAssertEqual(result.finishedAt, finishedAt)
+    XCTAssertEqual(result.chapter, "Why prices move")
+    XCTAssertEqual(result.course?.chapters.map(\.start), [false, true])
+    XCTAssertEqual(result.nextLesson?.estimatedMinutes, 5)
+    XCTAssertEqual(
+      plainFacts(PlacementTestCopy.planLine(test)).first, "4 lessons skipped",
+      "The plan's row says what the last test found")
+  }
+
+  func testAResultFromBeforeThePlanHasNoCourseToDraw() throws {
+    let test = try planTest(
+      #"""
+      {"attempt":null,"estimatedMinutes":4,"kind":"learn","offer":null,"state":"result",
+       "result":{"attemptId":"c367d72f-4d87-408a-ba10-6bbcddca31ba",
+                 "finishedAt":"2026-11-21T16:23:39Z","lessonsSkipped":0,
+                 "chapter":null,"course":null,"nextLesson":null}}
+      """#)
+
+    let end = PlacementTestEnd(read: try XCTUnwrap(test.result))
+    XCTAssertNil(end.course)
+    XCTAssertNil(end.chapter)
+    XCTAssertNil(end.nextLesson)
   }
 
   func testALanguageCoursesResultKeepsEachSkillsRange() throws {
@@ -57,40 +83,39 @@ final class PlacementTestContractTests: XCTestCase {
     XCTAssertEqual(test.estimatedMinutes, 6)
   }
 
-  func testAFullTestsPartsAndItsPlaceInThemRead() throws {
+  func testAnOpenTestSaysItsQuestionOfItsCeilingOnThePlan() throws {
     let test = try planTest(
       #"""
-      {"estimatedMinutes":85,"kind":"learn","offer":null,"result":null,"state":"continue",
-       "attempt":{"answered":3,"chapter":null,"estimatedMinutes":6,
-                  "id":"c367d72f-4d87-408a-ba10-6bbcddca31ba","length":"wholeCourse",
-                  "nextPart":5,"part":5,"partComplete":false,"parts":14,"partsLeft":10,"partsRemoved":2,
-                  "questions":12,"resume":{"part":5,"question":4},"totalEstimatedMinutes":85,
-                  "remainingEstimatedMinutes":60}}
+      {"estimatedMinutes":4,"kind":"learn","offer":null,"result":null,"state":"continue",
+       "attempt":{"answered":3,"chapter":null,"estimatedMinutes":4,
+                  "id":"c367d72f-4d87-408a-ba10-6bbcddca31ba","length":"quick","part":1,
+                  "partComplete":false,"questions":8}}
       """#)
 
-    let attempt = try XCTUnwrap(test.attempt)
-    XCTAssertEqual(attempt.partsRemoved, 2)
-    XCTAssertTrue(test.continuesInParts)
-    XCTAssertEqual(attempt.resume, .init(part: 5, question: 4))
+    XCTAssertEqual(test.attempt?.questions, 8)
+    XCTAssertEqual(PlacementTestCopy.planLine(test), ["In progress", "Question 4 of 8"])
+
+    let fresh = try planTest(
+      #"""
+      {"estimatedMinutes":4,"kind":"learn","offer":{"estimatedMinutes":4,"questions":8},
+       "result":null,"state":"start","attempt":null}
+      """#)
     XCTAssertEqual(
-      plainFacts(PlacementTestCopy.planLine(test)), ["Part 5 of 14", "Question 4 of 12"])
+      plainFacts(PlacementTestCopy.planLine(fresh)),
+      ["Skip lessons you already know", "About 4 min"])
   }
 
   func testAnOnboardingTestStepReadsItsModeAndItsOffer() throws {
     let step = try read(
       #"""
-      {"mode":"offer","test":{"kind":"course","offer":{"estimatedMinutes":6,"questions":12,
-       "wholeCourse":{"estimatedMinutes":85,"parts":14}}}}
+      {"mode":"offer","test":{"kind":"course","offer":{"estimatedMinutes":4,"questions":8}}}
       """#, as: Components.Schemas.OnboardingPlacement.self, then: OnboardingTestStep.self)
 
     XCTAssertEqual(step.mode, .offer)
     XCTAssertEqual(step.kind, .course)
-    XCTAssertEqual(step.courseOffer?.wholeCourse?.parts, 14)
-    XCTAssertEqual(
-      TestCopy.courseRows(try XCTUnwrap(step.courseOffer)).map { plainFacts($0.facts) },
-      [
-        ["Up to 12 questions", "About 6 min"], ["14 parts, any day you like", "About 1 hr 25 min"],
-      ])
+    let card = TestCopy.courseCard(try XCTUnwrap(step.courseOffer))
+    XCTAssertEqual(card.line, "Up to 8 questions")
+    XCTAssertEqual(card.minutes, 4)
 
     let direct = try read(
       #"{"mode":"direct","test":{"kind":"language"}}"#,
@@ -137,24 +162,21 @@ final class PlacementTestContractTests: XCTestCase {
 
   @MainActor
   func testAStopSendsTheAnswersTheLearnerSawSoAnOlderPositionIsRefused() async throws {
-    let server = PartCloseServer()
+    let server = FinishRefusingServer()
     let dependencies = AppDependencies(
       clients: APIClientFactory(baseURL: URL(string: "https://api.zoonk.test")!, transport: server),
       session: .preview(account: .planTestAccount), imageLoader: .live(),
       subscriptionStore: .live())
     let attempt = PlacementAttempt(
-      answered: 3, chapter: nil, estimatedMinutes: 6, id: "c367d72f-4d87-408a-ba10-6bbcddca31ba",
-      length: .wholeCourse, nextPart: nil, part: 2, partComplete: false, parts: 4, partsLeft: 3,
-      partsRemoved: 0,
-      questions: 12, resume: nil, totalEstimatedMinutes: 24, remainingEstimatedMinutes: 18)
+      answered: 3, chapter: nil, estimatedMinutes: 4, id: "c367d72f-4d87-408a-ba10-6bbcddca31ba",
+      questions: 8)
 
-    let outcome = try await dependencies.onboardingStore.finishPlacementPart(
+    let outcome = try await dependencies.onboardingStore.finishPlacementTest(
       goalID: "00000000-0000-4000-8000-0000000000a1", attempt: attempt, stoppedAt: 3)
 
     let body = await server.body
     let sent = try XCTUnwrap(try JSONSerialization.jsonObject(with: body) as? [String: Any])
     XCTAssertEqual(sent["answered"] as? Int, 3)
-    XCTAssertEqual(sent["part"] as? Int, 2)
     XCTAssertEqual(sent["attemptId"] as? String, attempt.id)
     guard case .stale = outcome else {
       return XCTFail("A refused stop reads the test again")
@@ -202,8 +224,8 @@ private actor LevelTestAnswerServer: ClientTransport {
   }
 }
 
-/// Refuses a part's close, as core does for a position another device moved past, keeping its body.
-private actor PartCloseServer: ClientTransport {
+/// Refuses a finish, as core does for a position another device moved past, keeping its body.
+private actor FinishRefusingServer: ClientTransport {
   private(set) var body = Data()
 
   func send(

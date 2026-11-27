@@ -16,7 +16,7 @@ final class DeferredTestStartTests: XCTestCase {
     let server = DeferredStartServer(goalID: goalID, test: .course)
 
     try await expectTryAgainStarts("course-test-start-failed", server: server) { dependencies in
-      PlacementTestFlow(goalID: goalID, subject: "Fractions", opening: .start(.quick)) {}
+      PlacementTestFlow(goalID: goalID, subject: "Fractions", opening: .start) {}
         .appDependencies(dependencies)
     }
   }
@@ -114,7 +114,7 @@ private actor DeferredStartServer: ClientTransport {
     let next =
       #"{"context":null,"image":null,"itemId":"\#(goalID)","skillId":"\#(goalID)","visual":null,"format":"multipleChoice","options":["1/2","1/3"],"question":"Which fraction is smaller?","select":1}"#
     let attempt =
-      #"{"answered":0,"chapter":null,"estimatedMinutes":6,"id":"\#(goalID)","length":"quick","nextPart":null,"part":1,"partComplete":false,"parts":1,"partsLeft":1,"partsRemoved":0,"questions":12,"resume":null,"totalEstimatedMinutes":6,"remainingEstimatedMinutes":6}"#
+      #"{"answered":0,"chapter":null,"estimatedMinutes":4,"id":"\#(goalID)","length":"quick","part":1,"partComplete":false,"questions":8}"#
     let focusTest =
       opened
       ? #"{"checkpoint":null,"offer":null,"sessionQuestions":"off","sitting":{"questions":6,"answered":0,"minutes":6,"subject":null,"hint":null},"subjects":[],"suggestsFocus":true}"#

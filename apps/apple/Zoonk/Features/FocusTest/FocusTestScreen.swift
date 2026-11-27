@@ -14,7 +14,6 @@ struct FocusTestScreen: View {
   @Environment(PlanStore.self) private var plans
   @Environment(SessionStore.self) private var session
   @State private var choosesFocus = false
-  @State private var leaving: AnalyticsEvent?
 
   var body: some View {
     let goal = learner.summary.value?.goals.first { $0.id == goalId }
@@ -42,17 +41,7 @@ struct FocusTestScreen: View {
           .id(session.authenticatedSession)
         }
       }
-      .onPreferenceChange(TestLeaveKey.self) { leaving = $0 }
-      .navigationTitle(Text(FocusTestCopy.name))
-      .navigationBarTitleDisplayMode(.inline)
-      .testBar()
-      .taskClose {
-        Button(role: .close) {
-          leaving.map(UsageAnalytics.track)
-          dismiss()
-        }
-        .leavesOnEscape()
-      }
+      .testTask(name: Text(FocusTestCopy.name)) { dismiss() }
     }
     .loads(plan, refreshable: false)
     .sheet(isPresented: $choosesFocus) {

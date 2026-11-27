@@ -1,111 +1,102 @@
 import SwiftUI
 
-/// Main's part checkpoint: a part of the full test is done, what it skipped and what's left.
-/// "Keep going" opens the next part; "Finish later" leaves the rest for the plan.
-struct PlacementCheckpoint: View {
-  let stop: PlacementPartStop
-  let pressed: FocusTestPress?
-  let failed: Bool
-  var undo: PlacementResultUndo?
-  let onKeepGoing: () -> Void
-  let onFinishLater: () -> Void
-
-  var body: some View {
-    let attempt = stop.attempt
-
-    TestOutcome(
-      title: Text(verbatim: TestCopy.partDone(attempt.part, of: attempt.parts)),
-      description: Text(
-        verbatim: [
-          undo?.announcement ?? PlacementTestCopy.partLine(stop),
-          String(localized: TestCopy.answersSavedLine),
-        ].joined(separator: " ")),
-      facts: PlacementTestCopy.partsLeftFacts(attempt),
-      footnote: attempt.partsRemoved > 0 ? PlacementTestCopy.testGotShorter : nil,
-      continueLabel: Text(TestCopy.keepGoing),
-      secondary: .init(label: Text(TestCopy.finishLater), action: onFinishLater),
-      undo: undo, isSaving: pressed != nil || undo?.request.isRunning == true, failed: failed,
-      onContinue: onKeepGoing
-    )
-    .announcesStatus(undo?.announcement)
-  }
-}
-
-/// Main's stopped part: the learner stopped the full test midway. Their answers count, and the
-/// test goes on later where they stopped.
-struct PlacementStopped: View {
-  let stop: PlacementPartStop
-  let onboarding: Bool
-  let pressed: FocusTestPress?
-  let failed: Bool
-  var undo: PlacementResultUndo?
-  let onDone: () -> Void
-
-  var body: some View {
-    TestOutcome(
-      title: Text(TestCopy.answersSaved),
-      description: undo?.restored ?? Text(verbatim: PlacementTestCopy.partLine(stop)),
-      facts: stop.attempt.resume.map { resume in
-        [TestCopy.nextTime(part: resume.part, of: stop.attempt.parts, question: resume.question)]
-      } ?? [],
-      continueLabel: onboarding ? nil : Text(TestCopy.done),
-      undo: undo, isSaving: pressed != nil || undo?.request.isRunning == true, failed: failed,
-      onContinue: onDone
-    )
-    .announcesStatus(undo?.announcement)
-  }
-}
-
-/// Main's `PlacementResult`: what the test skipped and the lesson the plan goes on with. A quick
-/// test with more of the course ahead says how much is left, and "Test the rest" goes on with it.
-/// The quick test never mentioned parts, so what's left is named as the test the offer showed.
+/// Main's `PlacementResult`: where the learner starts, drawn before it's said. A small "You start
+/// here" over the chapter's name; the course as one line of chapters, each as wide as its lessons,
+/// the lessons started past filled and a ring on the chapter that starts; how many lessons that
+/// skips; and the next lesson as the highlighted "Up next" row. With no course to draw (the result
+/// came before the plan), the title and the way on alone.
 struct PlacementTestResultView: View {
   let end: PlacementTestEnd
   let onboarding: Bool
   let pressed: FocusTestPress?
   let failed: Bool
   var undo: PlacementResultUndo?
-  let onTestTheRest: () -> Void
   let onDone: () -> Void
 
   var body: some View {
     let restored = undo?.restored != nil
+    // Undone, the start is back at the course's first lesson, which the result doesn't name.
+    let place = restored ? nil : end.chapter
 
     TestOutcome(
-      title: Text(PlacementTestCopy.lessonsSkipped(restored ? 0 : end.lessonsSkipped)),
-      description: undo?.restored ?? description,
-      facts: end.rest.map {
-        [String(localized: TestCopy.fullTest)] + PlacementTestCopy.partsLeftFacts($0)
-      }
-        ?? [],
-      footnote: end.partsRemoved > 0 ? PlacementTestCopy.testGotShorter : nil,
+      subject: place == nil ? nil : String(localized: PlacementTestCopy.youStartHere),
+      title: place.map { Text(verbatim: $0) }
+        ?? Text(PlacementTestCopy.lessonsSkipped(restored ? 0 : end.lessonsSkipped)),
+      description: undo?.restored
+        ?? (end.heldUntilTomorrow && end.lessonsSkipped == 0
+          ? Text(PlacementTestCopy.retakeTomorrow) : nil),
       continueLabel: onboarding
         ? nil
         : end.nextLesson == nil || restored ? Text(TestCopy.done) : Text(TestCopy.startLesson),
-      secondary: end.rest == nil
-        ? nil : .init(label: Text(TestCopy.testTheRest), action: onTestTheRest),
       undo: undo, isSaving: pressed != nil || undo?.request.isRunning == true, failed: failed,
       onContinue: onDone
     ) {
-      if let nextLesson = end.nextLesson, !restored {
-        UpNextPanel(title: nextLesson.title)
+      if let course = end.course, !restored {
+        PlacementCourseLine(course: course, lessonsSkipped: end.lessonsSkipped)
+
+        if let nextLesson = end.nextLesson {
+          UpNextLessonRow(lesson: nextLesson)
+        }
       }
     }
     .announcesStatus(undo?.announcement)
   }
+}
 
-  private var description: Text {
-    if end.lessonsSkipped > 0 {
-      return Text(PlacementTestCopy.knownLessons(end.lessonsSkipped))
+/// The course on a test's result: one line of chapters in plan order, each as wide as its
+/// lessons, and how many lessons the learner starts past.
+struct PlacementCourseLine: View {
+  /// Lessons a test started the learner past, in progress blue as the language result's level
+  /// meters draw a level reached.
+  static let startedPastTone = Color.success
+
+  let course: PlacementCourse
+  let lessonsSkipped: Int
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 12) {
+      MeterParts(
+        parts: course.chapters.map { chapter in
+          MeterParts.Part(
+            weight: Double(max(chapter.lessons, 1)),
+            fill: .share(
+              chapter.lessons > 0 ? Double(chapter.skipped) / Double(chapter.lessons) : 0,
+              color: Self.startedPastTone),
+            ringed: chapter.start)
+        },
+        height: 6, gap: 3)
+
+      Text(
+        lessonsSkipped > 0
+          ? PlacementTestCopy.lessonsSkipped(lessonsSkipped, of: course.lessons)
+          : PlacementTestCopy.lessons(course.lessons)
+      )
+      .typeStyle(.data)
+      .foregroundStyle(.mutedForeground)
     }
+    .padding(.vertical, 4)
+    .accessibilityElement(children: .combine)
+    .listRowBackground(Color.clear)
+    .listRowSeparator(.hidden)
+  }
+}
 
-    if end.heldUntilTomorrow {
-      return Text(PlacementTestCopy.retakeTomorrow)
+/// The lesson the plan goes on with, as the highlighted "Up next" row with its minutes.
+struct UpNextLessonRow: View {
+  let lesson: PlacementTestResult.NextLesson
+
+  var body: some View {
+    ListRow(Text(verbatim: lesson.title), description: Text(TestCopy.upNext)) {
+      StatusMark(status: .next)
+    } trailing: {
+      if let minutes = lesson.estimatedMinutes {
+        Text(verbatim: studyDuration(minutes: minutes))
+          .typeStyle(.data)
+          .foregroundStyle(.mutedForeground)
+      }
     }
-
-    return Text(
-      "Your plan stays as it is.", tableName: "Onboarding",
-      comment: "Under \"No lessons skipped\" after a test")
+    .currentRow()
+    .listRowBackground(Color.clear)
   }
 }
 
