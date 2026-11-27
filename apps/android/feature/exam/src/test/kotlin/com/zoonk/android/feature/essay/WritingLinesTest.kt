@@ -1,48 +1,34 @@
 package com.zoonk.android.feature.essay
 
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.int
+import kotlinx.serialization.json.intOrNull
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.io.File
 
-/**
- * Every case of core's `_test-utils/writing-lines.json`, so a line counts alike on every client and
- * in grading.
- */
 class WritingLinesTest {
-    private fun assertLines(
-        text: String,
-        charactersPerLine: Int,
-        limit: Int?,
-        estimated: Int,
-        ignoredFrom: Int?,
-    ) = assertEquals(text, WritingLines(estimated, ignoredFrom), countWritingLines(text, charactersPerLine, limit))
-
     @Test
-    fun graphemesCountOnceAndOffsetsStayUtf16() = assertLines("é🙂\r\n\r\nnext", 2, 2, estimated = 4, ignoredFrom = 8)
-
-    @Test
-    fun aBreakThatEndsTheTextStartsNoLine() {
-        listOf("\n", "\r\n", "\r", " ", " ").forEach { lineBreak ->
-            assertLines("a".repeat(10) + lineBreak, 10, 1, estimated = 1, ignoredFrom = null)
+    fun everyCoreCaseCountsAsCoreDoes() {
+        val cases = Json.parseToJsonElement(File(requireNotNull(System.getProperty("zoonk.writingLines"))).readText()).jsonArray
+        assertTrue(cases.isNotEmpty())
+        cases.forEach { case ->
+            val fields = case.jsonObject.mapValues { it.value.jsonPrimitive }
+            val text = fields.getValue("text").content
+            assertEquals(
+                text,
+                WritingLines(fields.getValue("estimatedLines").int, fields.getValue("ignoredFrom").intOrNull),
+                countWritingLines(
+                    text,
+                    fields.getValue("charactersPerLine").int,
+                    fields.getValue("maxCharactersPerLine").int,
+                    fields.getValue("limit").intOrNull,
+                ),
+            )
         }
-    }
-
-    @Test
-    fun aBlankLineInsideStillCounts() = assertLines("a".repeat(10) + "\r\n\r\n", 10, 1, estimated = 2, ignoredFrom = 12)
-
-    @Test
-    fun emptyTextTakesNoLines() = assertLines("", 10, 1, estimated = 0, ignoredFrom = null)
-
-    @Test
-    fun aFullLineWrapsOnlyWhenMoreTextFollows() {
-        assertLines("abcd", 4, 1, estimated = 1, ignoredFrom = null)
-        assertLines("abcde", 4, 1, estimated = 2, ignoredFrom = 4)
-    }
-
-    @Test
-    fun onlyAWordTheLimitSplitsIsShownPastIt() {
-        val cut = countWritingLines("abc def", 3, 1).ignoredFrom!!
-        assertEquals(3, wordStart("abc def", cut))
-        assertEquals(4, wordStart("abc def", 6))
-        assertEquals(7, wordStart("abc def", 7))
     }
 }

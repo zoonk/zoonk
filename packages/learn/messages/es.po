@@ -14071,11 +14071,17 @@ msgctxt "a2NxUG"
 msgid "0 of {lines} lines"
 msgstr "0 de {lines} líneas"
 
-#. The approximate line count of a written answer past its limit; the lines past it are ones the exam's graders won't read.
+#. The approximate line count of a written answer so far past its limit that no handwriting would fit it; the exam's graders won't read its end.
 #: src/writing/writing-editor.tsx
-msgctxt "6omgAR"
-msgid "about {used} of {lines} lines · {over} won't be read"
-msgstr "aproximadamente {used} de {lines} líneas · {over} no se leerán"
+msgctxt "O21PBU"
+msgid "about {used} of {lines} lines · the end won't be read"
+msgstr "aproximadamente {used} de {lines} líneas · el final no se leerá"
+
+#. The approximate line count of a written answer past its limit at a typical handwriting size; it's still graded in full, since small handwriting could fit it.
+#: src/writing/writing-editor.tsx
+msgctxt "VxrG7A"
+msgid "about {used} of {lines} lines · may not fit on paper"
+msgstr "aproximadamente {used} de {lines} líneas · quizá no quepa en el papel"
 
 #: src/writing/writing-editor.tsx
 msgctxt "F6UFzM"
