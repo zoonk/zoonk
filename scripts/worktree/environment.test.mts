@@ -159,6 +159,11 @@ describe(requireCheckoutDatabase, () => {
       "postgres://postgres:postgres@localhost:5432/zoonk",
       "postgresql://postgres:postgres@127.0.0.1/zoonk_test",
       `postgres://postgres:postgres@localhost:5432/${other}`,
+      "postgres://postgres@localhost/zoonk?port=5432",
+      "postgres://postgres@LOCALHOST/zoonk",
+      "postgres://postgres@db.example.test/zoonk?host=localhost",
+      "postgres://postgres@localhost/zoonk?host=/tmp",
+      "postgres:///zoonk",
     ]) {
       expect(() => requireCheckoutDatabase(url, worktree)).toThrow(
         worktreeDatabaseName({ mode: "dev", worktree }),

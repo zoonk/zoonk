@@ -7,8 +7,9 @@ import {
   worktreeDatabaseName,
   worktreeDatabasePrefix,
 } from "#local-database-names";
+import { parse } from "pg-connection-string";
 
-const LOCAL_DATABASE_HOSTS = new Set(["127.0.0.1", "[::1]", "localhost"]);
+const LOCAL_DATABASE_HOSTS = new Set(["127.0.0.1", "[::1]", "::1", "localhost"]);
 const POSTGRES_PROTOCOLS = new Set(["postgres:", "postgresql:"]);
 
 /** Target overrides bypass the authority/path check, including pg and libpq connection options. */
@@ -61,29 +62,6 @@ export function getUnpooledDatabaseUrl(environment: NodeJS.Dict<string> = proces
   return environment.DATABASE_URL_UNPOOLED || getDatabaseUrl(environment);
 }
 
-/** The database a URL names on this machine; undefined when it may connect elsewhere. */
-function localDatabaseName(connectionString: string): string | undefined {
-  if (!URL.canParse(connectionString)) {
-    return undefined;
-  }
-
-  const url = new URL(connectionString);
-
-  if (
-    !POSTGRES_PROTOCOLS.has(url.protocol) ||
-    !LOCAL_DATABASE_HOSTS.has(url.hostname) ||
-    [...url.searchParams.keys()].some((key) => CONNECTION_TARGET_PARAMETERS.has(key.toLowerCase()))
-  ) {
-    return undefined;
-  }
-
-  try {
-    return decodeURIComponent(url.pathname.replace(/^\//u, ""));
-  } catch {
-    return undefined;
-  }
-}
-
 /**
  * A `DATABASE_URL` in the shell outranks a worktree's env files, so it can send the worktree's
  * seeds, migrations and servers to another checkout's database. Remote hosts are left alone.
@@ -96,10 +74,13 @@ export function requireCheckoutDatabase(
     return connectionString;
   }
 
-  const name = localDatabaseName(connectionString);
+  // pg's own parser, so query parameters such as `?host=` or `?port=` count as pg counts them.
+  const { database, host } = parse(connectionString);
   const prefix = worktreeDatabasePrefix(realpathSync(checkout));
+  const name = database ?? "";
+  const local = !host || host.startsWith("/") || LOCAL_DATABASE_HOSTS.has(host.toLowerCase());
 
-  if (name === undefined || name.startsWith(prefix)) {
+  if (!local || name.startsWith(prefix)) {
     return connectionString;
   }
 
@@ -109,5 +90,24 @@ export function requireCheckoutDatabase(
 }
 
 export function isLocalDevelopmentDatabase(connectionString: string): boolean {
-  return DEVELOPMENT_DATABASE_NAME.test(localDatabaseName(connectionString) ?? "");
+  if (!URL.canParse(connectionString)) {
+    return false;
+  }
+
+  const url = new URL(connectionString);
+
+  if (
+    !POSTGRES_PROTOCOLS.has(url.protocol) ||
+    [...url.searchParams.keys()].some((key) => CONNECTION_TARGET_PARAMETERS.has(key.toLowerCase()))
+  ) {
+    return false;
+  }
+
+  try {
+    const databaseName = decodeURIComponent(url.pathname.replace(/^\//u, ""));
+
+    return LOCAL_DATABASE_HOSTS.has(url.hostname) && DEVELOPMENT_DATABASE_NAME.test(databaseName);
+  } catch {
+    return false;
+  }
 }
