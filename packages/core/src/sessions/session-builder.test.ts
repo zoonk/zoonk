@@ -994,6 +994,32 @@ describe("funding remedial blocks", () => {
     { id: "other-skill", minutes: 2, skillId: "s1" },
   ];
 
+  it.each([
+    { checks: [], minutes: 15 },
+    { checks: ["focus-test"], minutes: 16 },
+  ])(
+    "uses the last due review minute for a mistake and keeps any placement questions ($minutes minutes)",
+    ({ checks, minutes }) => {
+      const { blocks } = buildSessionBlocks({
+        ...baseInput,
+        capsules: [capsule("due", 1)],
+        dailyMinutes: minutes,
+        lessons: [lesson("l1", 14)],
+        placementItemIds: checks,
+        practice: [],
+        remedial: { dated: true, mistakes: mistakes.slice(0, 1), teaching: [] },
+      });
+
+      expect(blocks[0]?.payload.mistakeIds).toStrictEqual(["first"]);
+
+      expect(
+        blocks
+          .filter((block) => block.kind === "review")
+          .map(({ payload }) => getBlockItemIds(payload)),
+      ).toStrictEqual(checks.length > 0 ? [checks] : []);
+    },
+  );
+
   it("leads an exam learner's day with missed questions and keeps dated plan lessons whole", () => {
     const before = buildSessionBlocks(baseInput);
 

@@ -5,15 +5,16 @@ import { listSeedPersonas } from "../../../db/src/prisma/seed/learners/seed-pers
 import { getSeedAnswerEvidence } from "../../../db/src/prisma/seed/learners/write-learning";
 import { readSkillMistakeSignals } from "../learner/read-skill-mistake-signals";
 import { getStudyAnswerEvidence } from "../sessions/_utils/record-study-answer";
-import { readBlockPayload } from "../sessions/block-payload";
+import { getBlockItemIds, readBlockPayload } from "../sessions/block-payload";
 import { seedPersonaCopy } from "./seed";
 
 const FRIDAY = new Date("2026-10-16T20:52:12Z");
 
-async function readSeededDay(persona: SeedPersonaName) {
+async function readSeededDay(persona: SeedPersonaName, language?: "en") {
   const copy = await seedPersonaCopy({
     copyKey: `signal-${persona}`,
     email: `seed-signal-${persona}@zoonk.test`,
+    language,
     persona,
   });
 
@@ -56,7 +57,7 @@ async function readSeededDay(persona: SeedPersonaName) {
     };
   });
 
-  return { rows, stuck };
+  return { rows, stuck, today };
 }
 
 describe("seeded answers", () => {
@@ -85,6 +86,53 @@ describe("a persona's seeded day", () => {
 
   afterEach(() => {
     vi.useRealTimers();
+  });
+
+  it("records the completed placement questions in today's study history", async () => {
+    const { today } = await readSeededDay("exam", "en");
+
+    const review = today.blocks.find(
+      (block) => block.kind === "review" && block.status === "completed",
+    );
+
+    if (!review) {
+      throw new Error("The seeded learner did not finish a review.");
+    }
+
+    const payload = readBlockPayload(review);
+    expect(payload.placementItemIds).toHaveLength(1);
+
+    const [answers, events, progress] = await Promise.all([
+      prisma.attempt.findMany({
+        select: { isCorrect: true, isPlacement: true, itemId: true },
+        where: { studySessionId: today.id },
+      }),
+      prisma.learningEvent.findMany({
+        select: { correctAnswers: true, lessonKind: true, seconds: true },
+        where: { kind: "review", localDate: today.localDate, userId: today.userId },
+      }),
+      prisma.dailyProgress.findUnique({
+        where: { userDate: { date: today.localDate, userId: today.userId } },
+      }),
+    ]);
+
+    expect(answers).toHaveLength(getBlockItemIds(payload).length);
+
+    expect(answers.map(({ itemId }) => itemId)).toStrictEqual(
+      expect.arrayContaining(getBlockItemIds(payload)),
+    );
+
+    expect(answers.filter(({ isPlacement }) => isPlacement)).toStrictEqual([
+      { isCorrect: true, isPlacement: true, itemId: payload.placementItemIds[0] },
+    ]);
+
+    expect(events).toContainEqual({
+      correctAnswers: 1,
+      lessonKind: "placement",
+      seconds: expect.any(Number),
+    });
+
+    expect(progress?.timeSpentSeconds).toBeGreaterThan(0);
   });
 
   it.each([

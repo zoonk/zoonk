@@ -29,6 +29,7 @@ export type BuiltBlock = {
     chapterId: string | null;
     drills: readonly { itemIds: readonly string[] }[];
     itemIds: readonly string[];
+    placementItemIds: readonly string[];
     title: string | null;
   };
 };
@@ -187,11 +188,12 @@ function toBlockAttempts(
 ): Prisma.AttemptCreateManyInput[] {
   const { learner, userId } = scope;
 
-  return blocks.flatMap(({ answers, completedAt, startedAt }) => {
+  return blocks.flatMap(({ answers, completedAt, payload, startedAt }) => {
     const step = (completedAt.getTime() - startedAt.getTime()) / (answers.length + 1);
 
     return answers.map(({ answer, evidence, itemId, skillId }, index) => {
       const answeredAt = new Date(startedAt.getTime() + step * (index + 1));
+      const isPlacement = payload.placementItemIds.includes(itemId);
 
       return {
         answer,
@@ -199,6 +201,7 @@ function toBlockAttempts(
         durationMs: Math.round(step),
         evidence,
         isCorrect: true,
+        isPlacement,
         itemId,
         skillId,
         studySessionId: sessionId,
