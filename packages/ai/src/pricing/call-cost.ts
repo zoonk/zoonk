@@ -37,6 +37,11 @@ function getModelPricing({ at, model }: { at: Date; model: string }): ModelPrici
   return change?.pricing ?? MODEL_PRICES[model];
 }
 
+export function getOfferedServiceTiers(model: string): ServiceTier[] {
+  const tiers = getModelPricing({ at: new Date(), model })?.serviceTiers ?? {};
+  return (["flex", "priority"] as const).filter((tier) => tiers[tier]);
+}
+
 /** Long-context tiers switch on the prompt's size, so every rate of a call is picked by it. */
 function getRate({
   base,

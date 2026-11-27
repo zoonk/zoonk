@@ -75,6 +75,37 @@ describe(buildProviderOptions, () => {
     });
   });
 
+  it("leaves out a tier the model doesn't offer, which our provider key would refuse", () => {
+    expect(
+      buildProviderOptions({
+        fallbackModels: ["anthropic/claude-opus-5.5"],
+        model: "openai/gpt-6.2-sol",
+        serviceTier: "flex",
+        useFallback: true,
+      }).gateway,
+    ).not.toHaveProperty("serviceTier");
+  });
+
+  it("lets the first model that takes tiers decide when Claude answers first", () => {
+    expect(
+      buildProviderOptions({
+        fallbackModels: ["openai/gpt-6-luna"],
+        model: "anthropic/claude-haiku-5.5",
+        serviceTier: "flex",
+        useFallback: true,
+      }).gateway.serviceTier,
+    ).toBe("flex");
+
+    expect(
+      buildProviderOptions({
+        fallbackModels: ["openai/gpt-6.2-sol"],
+        model: "anthropic/claude-opus-5.5",
+        serviceTier: "flex",
+        useFallback: true,
+      }).gateway,
+    ).not.toHaveProperty("serviceTier");
+  });
+
   it("asks the gateway to serve the same model fast", () => {
     expect(
       buildProviderOptions({

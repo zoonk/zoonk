@@ -1,6 +1,7 @@
 import { type GatewayProviderOptions } from "@ai-sdk/gateway";
 import { type LanguageModelCallOptions } from "ai";
 import { getModelFamily } from "./_utils/model-family";
+import { getOfferedServiceTiers } from "./pricing/call-cost";
 
 export type Reasoning = NonNullable<LanguageModelCallOptions["reasoning"]>;
 export type ImageGenerationQuality = "auto" | "low" | "medium" | "high";
@@ -213,6 +214,25 @@ export function chooseServiceTier({ wait }: { wait: CallWait }): ServiceTier | u
 }
 
 /**
+ * A provider refuses a tier its model doesn't offer (GPT-6.2 Sol has no flex), and the gateway then
+ * retries the call on its own credits instead of our key. The first model in the chain that takes
+ * tiers decides, since Anthropic's models take none.
+ */
+function getOfferedServiceTier({
+  chain,
+  serviceTier,
+}: {
+  chain: readonly ChainModel[];
+  serviceTier?: ServiceTier;
+}): ServiceTier | undefined {
+  const tiered = chain
+    .map(({ model }) => getOfferedServiceTiers(model))
+    .find((tiers) => tiers.length > 0);
+
+  return serviceTier && tiered?.includes(serviceTier) ? serviceTier : undefined;
+}
+
+/**
  * Every model in a chain gets the same sampling settings, so tasks leave them at the defaults:
  * Anthropic's models from Opus 4.7 and OpenAI's reasoning models drop them, and Google advises
  * against lowering Gemini 3's temperature. Pass the call's `reasoning` when a fallback names its
@@ -236,13 +256,14 @@ export function buildProviderOptions({
   const chain = getChain({ fallbackModels, model, reasoning, useFallback });
   const [, ...fallbacks] = chain;
   const order = getGatewayProviderOrder(model);
+  const tier = getOfferedServiceTier({ chain, serviceTier });
 
   return {
     ...buildReasoningOptions(chain),
     gateway: {
       models: fallbacks.map((entry) => entry.model),
       ...(order ? { order } : {}),
-      ...(serviceTier ? { serviceTier } : {}),
+      ...(tier ? { serviceTier: tier } : {}),
       ...(speed ? { speed } : {}),
     },
   };
