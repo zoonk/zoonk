@@ -1392,67 +1392,24 @@
         }
       }
     },
-    "about %lld of %lld lines · %lld won't be read" : {
-      "comment" : "The approximate line count of a written answer past its limit; the lines past it are ones the exam's graders won't read.",
+    "about %lld of %lld lines · fits only in small handwriting" : {
+      "comment" : "The approximate line count of a written answer past its limit at a typical hand; it fits the exam's answer sheet only if the learner writes small.",
       "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "etwa %1$lld von %2$lld Zeilen · %3$lld werden nicht gelesen"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "about %1$lld of %2$lld lines · %3$lld won't be read"
+            "value" : "about %1$lld of %2$lld lines · fits only in small handwriting"
           }
-        },
-        "es" : {
+        }
+      }
+    },
+    "about %lld of %lld lines · the end won't be read" : {
+      "comment" : "The approximate line count of a written answer that won't fit the exam's answer sheet even in small handwriting; graders stop reading at the last line.",
+      "localizations" : {
+        "en" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "aproximadamente %1$lld de %2$lld líneas · %3$lld no se leerán"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "environ %1$lld sur %2$lld lignes · %3$lld ne seront pas lues"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "circa %1$lld righe su %2$lld · %3$lld non verranno lette"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "約%1$lld/%2$lld行 · 超過した%3$lld行は読まれません"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "약 %1$lld/%2$lld줄 · %3$lld줄은 채점자가 읽지 않아요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "około %1$lld z %2$lld wierszy · %3$lld wierszy nie będzie ocenianych"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "cerca de %1$lld de %2$lld linhas · %3$lld não serão lidas"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Yaklaşık %1$lld / %2$lld satır · %3$lld satır okunmayacak"
+            "state" : "new",
+            "value" : "about %1$lld of %2$lld lines · the end won't be read"
           }
         }
       }
@@ -2449,6 +2406,8 @@
         }
       }
     },
+    "Even in small handwriting, it runs past line %@, where graders stop." : {},
+    "Even in small handwriting, it runs past the line limit, where graders stop." : {},
     "Every criterion has full marks in this estimate." : {
       "comment" : "Full marks\nFull marks on every criterion",
       "localizations" : {
@@ -3205,122 +3164,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yeniden yazımı değerlendir"
-          }
-        }
-      }
-    },
-    "Graders stop at line %@, so the rest isn't read." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Die Bewertung endet bei Zeile %@; der Rest wird nicht mehr gelesen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quienes califican se detienen en la línea %@, así que no leen el resto."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Les correcteurs s’arrêtent à la ligne %@ et ne lisent pas la suite."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "I correttori si fermano alla riga %@, quindi il resto non viene letto."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "採点者は%@行目で読むのをやめるため、その先は読まれません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "채점은 %@번째 줄까지만 진행돼요. 그 뒤는 읽지 않아요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Oceniający czytają tylko do wiersza %@, więc dalsza część nie jest czytana."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quem corrige para na linha %@, então o restante não é lido."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Değerlendirenler %@ satırdan sonrasını okumaz."
-          }
-        }
-      }
-    },
-    "Graders stop at the line limit, so the rest isn't read." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Die Bewertung endet am Zeilenlimit; der Rest wird nicht mehr gelesen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quienes califican se detienen en el límite de líneas, así que no leen el resto."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Les correcteurs s’arrêtent à la limite de lignes et ne lisent pas la suite."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "I correttori si fermano al limite di righe, quindi il resto non viene letto."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "採点者は行数の上限で読むのをやめるため、その先は読まれません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "채점은 줄 수 제한까지만 진행돼요. 그 뒤는 읽지 않아요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Oceniający czytają tylko do limitu wierszy, więc dalsza część nie jest czytana."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quem corrige para no limite de linhas, então o restante não é lido."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Değerlendirenler satır sınırından sonrasını okumaz."
           }
         }
       }
@@ -4792,122 +4635,8 @@
         }
       }
     },
-    "Past line %@: graders stop reading here" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nach Zeile %@: Bewertende lesen hier nicht weiter"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Después de la línea %@: los evaluadores dejan de leer aquí"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Au-delà de la ligne %@ : les correcteurs ne lisent plus"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Oltre la riga %@: chi corregge smette di leggere qui"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@行目以降は採点者は読みません"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@번째 줄 이후: 여기부터 채점자가 읽지 않아요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Poza linią %@: sprawdzający nie czytają dalej"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Depois da linha %@: os corretores param de ler aqui"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ satır geçildikten sonra değerlendirenler okumayı bırakır"
-          }
-        }
-      }
-    },
-    "Past the limit: graders stop reading here" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hinter dem Limit: Bewertende lesen hier nicht weiter"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Después del límite: los evaluadores dejan de leer aquí"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Au-delà de la limite : les correcteurs ne lisent plus"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Oltre il limite: chi corregge smette di leggere qui"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "上限を超えた部分は採点者は読みません"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "분량 제한 이후: 여기부터 채점자가 읽지 않아요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Poza limitem: sprawdzający nie czytają dalej"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Depois do limite: os corretores param de ler aqui"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sınırdan sonrası: değerlendirenler okumayı bırakır"
-          }
-        }
-      }
-    },
+    "Past line %@ even in small handwriting: not read" : {},
+    "Past the limit even in small handwriting: not read" : {},
     "present" : {
       "comment" : "A proposal element is there",
       "localizations" : {
