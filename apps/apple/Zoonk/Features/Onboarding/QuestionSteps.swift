@@ -1160,6 +1160,7 @@ private struct ExamChoiceQuestion: View {
           Section {
             ExamPickLimit(take: choice.take)
               .listRowSeparator(.hidden)
+              .layoutSectionText()
 
             ExamOptionChecks(
               options: options, take: choice.take,

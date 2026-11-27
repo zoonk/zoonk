@@ -94,6 +94,7 @@ private struct PlanExamChoiceSection: View {
       // Main's quiet line over the options, not a second header line.
       ExamPickLimit(take: choice.take)
         .listRowSeparator(.hidden)
+        .layoutSectionText()
 
       ExamOptionChecks(
         options: choice.options, take: choice.take,
