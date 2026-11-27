@@ -1,7 +1,8 @@
 import { routing } from "@/i18n/routing";
-import { FONT_WEIGHTS, shareCardFonts } from "@/lib/certificates/certificate-fonts";
+import { FONT_WEIGHTS } from "@/lib/certificates/certificate-fonts";
 import { getOpenGraphLogo } from "@/lib/metadata/open-graph-brand";
 import { getOpenGraphWordBreak } from "@/lib/metadata/open-graph-word-break";
+import { shareCardFonts } from "@/lib/metadata/share-card-fonts";
 import { DEFAULT_LOCALE, isValidLocale } from "@zoonk/utils/locale";
 import { getExtracted } from "next-intl/server";
 import { ImageResponse } from "next/og";

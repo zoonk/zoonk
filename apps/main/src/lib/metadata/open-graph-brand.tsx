@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { FONT_WEIGHTS } from "@/lib/certificates/certificate-fonts";
 
-/** Read while the module loads, for the same reason as `shareCardFonts`. */
+/** Read while the module loads, as `shareCardFonts` are. */
 const ICON = await readFile(join(process.cwd(), "src/app/icon.svg"), "utf8");
 
 const BRAND_NAME = "Zoonk";

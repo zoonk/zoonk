@@ -38,9 +38,6 @@ const LOCALE_FONTS: Record<string, FontFile[]> = {
 /** Satori's weights for the design's: kind and chips 560, readouts 620, the brand 640. */
 export const FONT_WEIGHTS = { brand: 800, kind: 600, readout: 700 } as const;
 
-/** A link's share card: its words, and the brand and title in the brand's weight. */
-const SHARE_CARD_FILES = new Set(["Geist-400.ttf", "Geist-640.ttf", "NotoSans-400.ttf"]);
-
 async function loadFont({ file, ...font }: FontFile): Promise<SatoriFont> {
   return { ...font, data: await readFile(join(FONTS_DIR, file)), style: "normal" };
 }
@@ -66,11 +63,8 @@ export function getCertificateFonts(locale: string): Promise<SatoriFont[]> {
   return loadFonts(locale, [...LATIN_FONTS, ...(LOCALE_FONTS[locale] ?? [])]);
 }
 
-/**
- * Read while the module loads: Next doesn't wait for a file read when it prerenders a card, and a
- * card still waiting on one is silently left to render on every request. Words in a script Geist
- * doesn't draw are fetched as `next/og` does without fonts of its own.
- */
-export const shareCardFonts: SatoriFont[] = await Promise.all(
-  LATIN_FONTS.filter(({ file }) => SHARE_CARD_FILES.has(file)).map((font) => loadFont(font)),
-);
+export function readLatinFonts(files: ReadonlySet<string>): Promise<SatoriFont[]> {
+  return Promise.all(
+    LATIN_FONTS.filter(({ file }) => files.has(file)).map((font) => loadFont(font)),
+  );
+}
