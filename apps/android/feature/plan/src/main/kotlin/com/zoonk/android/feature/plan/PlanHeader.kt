@@ -38,6 +38,7 @@ import com.zoonk.android.navigation.AppLink
 import com.zoonk.android.ui.characters.BuddyKind
 import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.components.AlertDialog
+import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.MoreButton
@@ -46,6 +47,7 @@ import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.fitTo
+import com.zoonk.android.ui.components.iconButtonEdge
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.api.models.LearnerSummaryGoal
 import kotlinx.datetime.toJavaLocalDate
@@ -140,7 +142,7 @@ internal fun GoalMenu(
         }
     }
 
-    Box {
+    Box(Modifier.iconButtonEdge(ButtonEdge.End)) {
         MoreButton(onClick = { expanded = true }, contentDescription = stringResource(R.string.plan_options))
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
             planItems(closing)

@@ -1,10 +1,10 @@
 ---
 name: apple-human-interface-guidelines
-description: Use when designing, reviewing, or implementing any Apple-platform UI or feature for iOS, iPadOS, macOS, visionOS, tvOS, watchOS, SwiftUI, UIKit, AppKit, WatchKit, app icons, Dark Mode, SF Symbols, native controls, Liquid Glass, iPhone Duo, or when porting web features to Apple platforms. Ensures the app uses Apple's native components, navigation and behavior (bars, sheets, Liquid Glass, SF Symbols, Dynamic Type, adaptive containers) styled with Zoonk's design system (its generated colors, Geist type roles, radii and shared pieces), following current official Human Interface Guidelines.
+description: Use when designing, reviewing or building UI or features for an Apple platform (iOS, iPadOS, macOS, visionOS, tvOS, watchOS; SwiftUI, UIKit, AppKit), or porting a web feature to one.
 license: MIT
 metadata:
   author: zoonk
-  version: "3.1.1"
+  version: "3.2.0"
 ---
 
 # Apple Human Interface Guidelines

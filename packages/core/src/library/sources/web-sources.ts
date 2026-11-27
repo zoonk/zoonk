@@ -80,7 +80,7 @@ function toSourceContent({
   fetched: Awaited<ReturnType<typeof fetchAndParse>>;
   now: Date;
   topic: SourceTopic;
-  validUntil: Date | null;
+  validUntil: Date | undefined;
 }) {
   return {
     contentHash: fetched.contentHash,
@@ -241,9 +241,11 @@ export async function refreshWebSource(sourceId: string): Promise<SourceRefresh 
     throw new PermanentDocumentError(`${source.url} now redirects to ${fetched.url}`);
   }
 
+  const validUntil = topic === "exam" ? undefined : getSourceValidUntil({ fetchedAt: now, topic });
+
   if (fetched.contentHash === source.contentHash) {
     const updated = await prisma.source.update({
-      data: { fetchedAt: now, readVersion: SOURCE_READ_VERSION },
+      data: { fetchedAt: now, readVersion: SOURCE_READ_VERSION, validUntil },
       omit: { extractedText: true },
       where: { id: source.id },
     });
@@ -251,13 +253,7 @@ export async function refreshWebSource(sourceId: string): Promise<SourceRefresh 
     return { source: updated, status: "unchanged" };
   }
 
-  const content = toSourceContent({
-    fetched,
-    now,
-    topic,
-    validUntil:
-      topic === "exam" ? source.validUntil : getSourceValidUntil({ fetchedAt: now, topic }),
-  });
+  const content = toSourceContent({ fetched, now, topic, validUntil });
 
   return {
     source: await saveChangedContent({

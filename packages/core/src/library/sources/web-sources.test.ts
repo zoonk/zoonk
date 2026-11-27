@@ -317,9 +317,15 @@ describe(refreshWebSource, () => {
       url,
     });
 
+    const examDate = new Date("2028-04-10T00:00:00Z");
+    await prisma.source.update({ data: { validUntil: examDate }, where: { id: source.id } });
+
     servePage(noticePage({ questions: 50, token: "c" }));
 
-    await expect(refreshWebSource(source.id)).resolves.toMatchObject({ status: "unchanged" });
+    await expect(refreshWebSource(source.id)).resolves.toMatchObject({
+      source: { validUntil: examDate },
+      status: "unchanged",
+    });
   });
 
   it("stores a new version, and keeps a law's earlier text until a notice covers the change", async () => {

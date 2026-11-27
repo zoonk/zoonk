@@ -24,7 +24,7 @@ A rule about behavior, architecture, tests or process gives way the same way: wh
 
 ## Where it's recorded
 
-- **The pull request** lists every departure under **Judgment calls**, so the user keeps or overrules each one ([PR description](../skills/zoonk-commit/SKILL.md#pr-description)).
+- **The pull request** lists every departure under **Judgment calls**, so the user keeps or overrules each one ([PR description](../skills/zoonk-commit/references/pr-description.md)).
 - **A departure the user keeps is written beside its rule,** so the next agent leaves it: for design, in craft's [exceptions the user granted](../skills/zoonk-design/references/craft.md#exceptions-the-user-granted). Only what the user has accepted goes there.
 
 ## In a task with lanes

@@ -137,9 +137,12 @@ async function offerChooseFocus(goalId: string): Promise<TutorToolResult> {
   }
 
   const { feasibility, areas } = result.plan;
-  const canChoose = Boolean(feasibility?.deadline && !feasibility.fits);
 
-  return canChoose && areas.filter((candidate) => !candidate.skipped).length > 1
+  if (areas.filter((candidate) => !candidate.skipped).length < 2) {
+    return { reason: "oneSubject", status: "unavailable" };
+  }
+
+  return feasibility?.deadline && !feasibility.fits
     ? { offer: { goalId, kind: "chooseFocus" }, status: "offered" }
     : { reason: "everythingFits", status: "unavailable" };
 }

@@ -400,18 +400,10 @@
         <item quantity="other">%d days</item>
     </plurals>
     <string name="onboarding_schedule_title">How much time can you study each day?</string>
-    <string name="onboarding_full_course">Keep studying after the exam</string>
-    <string name="onboarding_full_course_rule">Until the exam, what comes up most comes first. What doesn\'t fit comes after it.</string>
-    <string name="onboarding_full_course_until_exam">Until the exam, what comes up most comes first.</string>
-    <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's day with its year, such as "May 5, 2027". -->
-    <string name="onboarding_full_course_finish">At %1$s a day, you finish in %2$s, after the exam on %3$s.</string>
-    <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "prévu en %3$s"). -->
-    <string name="onboarding_full_course_finish_month">At %1$s a day, you finish in %2$s, after the exam in %3$s.</string>
     <string name="onboarding_schedule_time_label">Time a day</string>
-    <!-- A link under the daily time that opens the question about the goal's date, when the goal has no date. -->
-    <string name="onboarding_choose_date">Choose a date</string>
-    <!-- The same link when the goal has a date. -->
-    <string name="onboarding_change_date">Change date</string>
+    <string name="onboarding_change_exam_date">Change exam date</string>
+    <string name="onboarding_change_end_date">Change end date</string>
+    <string name="onboarding_set_end_date">Set end date</string>
     <string name="onboarding_study_days">Study days</string>
     <string name="onboarding_answers_saved">Your answers are saved.</string>
     <!-- On a setup question when the plan's run never started. -->
