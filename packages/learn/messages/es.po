@@ -7670,9 +7670,9 @@ msgstr "{count, plural, =0 {# errores corregidos} one {# error corregido. Sale d
 
 #. After a right answer to a question the learner missed earlier the same day. A mistake is fixed only by a right answer on a later day.
 #: src/mistakes/practice-step.tsx
-msgctxt "6kBNqI"
-msgid "It comes back another day to make sure."
-msgstr "Volverá a aparecer otro día para comprobarlo."
+msgctxt "rOJjcd"
+msgid "This question comes back another day to make sure."
+msgstr "Esta pregunta volverá otro día para comprobar que ya la sabes."
 
 #: src/mistakes/practice-step.tsx
 #: src/session/question-block/question-feedback.tsx

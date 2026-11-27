@@ -205,7 +205,10 @@ test.describe("Mistakes notebook", () => {
     await page.getByRole("radio", { name: "Right answer" }).click();
     await page.getByRole("button", { name: /^Check/u }).click();
     await expect(feedback.getByText("Correct!")).toBeVisible();
-    await expect(feedback.getByText("It comes back another day to make sure.")).toBeVisible();
+
+    await expect(
+      feedback.getByText("This question comes back another day to make sure."),
+    ).toBeVisible();
 
     await page.getByRole("button", { name: /^Continue/u }).click();
     await expect(page.getByRole("heading", { name: "Practice done" })).toBeVisible();

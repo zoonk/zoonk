@@ -7670,9 +7670,9 @@ msgstr "{count, plural, =0 {克服した間違いはありません} other {#個
 
 #. After a right answer to a question the learner missed earlier the same day. A mistake is fixed only by a right answer on a later day.
 #: src/mistakes/practice-step.tsx
-msgctxt "6kBNqI"
-msgid "It comes back another day to make sure."
-msgstr "確認のため、別の日にもう一度出てきます。"
+msgctxt "rOJjcd"
+msgid "This question comes back another day to make sure."
+msgstr "定着を確認するため、この問題は別の日にもう一度出てきます。"
 
 #: src/mistakes/practice-step.tsx
 #: src/session/question-block/question-feedback.tsx

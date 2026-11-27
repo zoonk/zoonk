@@ -7670,9 +7670,9 @@ msgstr "{count, plural, =0 {고친 오답 없음} other {오답 #개를 고쳤�
 
 #. After a right answer to a question the learner missed earlier the same day. A mistake is fixed only by a right answer on a later day.
 #: src/mistakes/practice-step.tsx
-msgctxt "6kBNqI"
-msgid "It comes back another day to make sure."
-msgstr "확실히 익힐 수 있도록 다른 날 다시 나와요."
+msgctxt "rOJjcd"
+msgid "This question comes back another day to make sure."
+msgstr "확실히 익힐 수 있도록 이 문제는 다른 날 다시 나와요."
 
 #: src/mistakes/practice-step.tsx
 #: src/session/question-block/question-feedback.tsx

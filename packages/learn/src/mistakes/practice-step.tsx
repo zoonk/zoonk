@@ -144,7 +144,7 @@ function NotebookNote({ feedback }: { feedback: NonNullable<MistakePracticeFeedb
         {t({
           description:
             "After a right answer to a question the learner missed earlier the same day. A mistake is fixed only by a right answer on a later day.",
-          message: "It comes back another day to make sure.",
+          message: "This question comes back another day to make sure.",
         })}
       </FeedbackNote>
     );
