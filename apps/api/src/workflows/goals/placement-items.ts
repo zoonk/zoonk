@@ -18,18 +18,18 @@ export type PlacementItemsWritten = { failed: number; written: number };
 /** The first pick's tap questions come right after its quick one, so both are a learner's wait. */
 function getBatchWait({
   batch,
-  first,
+  priority,
   later,
 }: {
   batch: PlacementBatch["skills"];
-  first: string | undefined;
+  priority: ReadonlySet<string>;
   later: boolean;
 }): CallWait {
   if (later) {
     return "later";
   }
 
-  return batch[0]?.id === first ? "learner" : "soon";
+  return batch.some((skill) => priority.has(skill.id)) ? "learner" : "soon";
 }
 
 /** A skill counts once, though the first pick's quick and tap questions are written apart. */
@@ -119,9 +119,14 @@ export async function preparePlacementItems(
   request: PlacementItemsRequest,
 ): Promise<PlacementItemsWritten> {
   const { analytics, later = false, workflowRunId } = request;
-  const { batches, quickFormat } = await pickPlacementBatchesStep(request);
+  const { batches, prioritySkillIds, quickFormat } = await pickPlacementBatchesStep(request);
 
   const first = batches[0]?.[0]?.id;
+  const priority = new Set(prioritySkillIds);
+
+  if (first) {
+    priority.add(first);
+  }
 
   const results = await Promise.allSettled(
     batches.map((skills) =>
@@ -129,7 +134,7 @@ export async function preparePlacementItems(
         analytics,
         quickFormat,
         skills,
-        wait: getBatchWait({ batch: skills, first, later }),
+        wait: getBatchWait({ batch: skills, later, priority }),
         workflowRunId,
       }),
     ),

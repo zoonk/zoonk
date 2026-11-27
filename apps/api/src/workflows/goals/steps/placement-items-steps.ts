@@ -151,11 +151,12 @@ export async function pickPlacementBatchesStep({
   skillIds,
 }: PlacementItemsRequest): Promise<{
   batches: PlacementSkillBatch[];
+  prioritySkillIds: string[];
   quickFormat: PlacementQuickFormat;
 }> {
   "use step";
 
-  const { confirmingCount, quickFormat, skills } = await pickPlacementItemSkills({
+  const { confirmingCount, prioritySkillIds, quickFormat, skills } = await pickPlacementItemSkills({
     choice,
     exceptAnswered,
     forPlacement,
@@ -167,6 +168,7 @@ export async function pickPlacementBatchesStep({
 
   return {
     batches: toPlacementItemBatches({ quickCount: quickCount + confirmingCount, skills }),
+    prioritySkillIds,
     quickFormat,
   };
 }

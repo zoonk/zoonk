@@ -23,7 +23,7 @@ describe(getCourseQuickTestMinutes, () => {
       Promise.all(courses.map((course) => getCourseQuickTestMinutes(course))),
     ).resolves.toStrictEqual([
       getQuickTestMinutes("language"),
-      DAY_PLACEMENT_MINUTES,
+      getQuickTestMinutes("learn"),
       DAY_PLACEMENT_MINUTES,
     ]);
   });

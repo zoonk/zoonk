@@ -2,12 +2,8 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { type GoalPlan } from "../../_utils/goal-skill-graph";
-import {
-  PART_QUESTIONS,
-  QUESTIONS_PER_TOPIC,
-  TOPICS_PER_PART,
-  getCourseMinutes,
-} from "../placement-budget";
+import { COURSE_QUESTION_LIMIT } from "../course-search";
+import { getCourseMinutes } from "../placement-budget";
 import {
   type coursePlacementOfferSchema,
   type placementAttemptViewSchema,
@@ -39,26 +35,21 @@ const frozenTopicSchema = z.object({
 });
 
 const attemptSchema = z.object({
-  search: z
-    .object({
-      position: z.number().min(0).max(1),
-      questions: z.int().min(1).max(8),
-      topics: z.array(frozenTopicSchema).nullable(),
-    })
-    .optional(),
   id: uuidSchema(),
   length: placementLengthSchema,
   lessonsSkipped: z.number().int().nonnegative(),
   part: z.int().positive(),
   partComplete: z.boolean(),
-  partPreparationFailed: z.boolean().optional(),
-  partPrepared: z.boolean().optional(),
-  partRequestedAt: z.iso.datetime().nullable().optional(),
-  partSkillIds: z.array(uuidSchema()).optional(),
   partStartedAt: z.iso.datetime(),
-  parts: z.array(z.array(uuidSchema())).optional(),
-  partsAtOpen: z.int().positive().optional(),
   paused: z.boolean().optional(),
+  search: z
+    .object({
+      failed: z.boolean().optional(),
+      position: z.number().min(0).max(1),
+      questions: z.int().min(1).max(COURSE_QUESTION_LIMIT),
+      topics: z.array(frozenTopicSchema).nullable(),
+    })
+    .optional(),
   skillIds: z.array(uuidSchema()),
 });
 
@@ -71,10 +62,10 @@ const recordSchema = z.object({
       course: placementResultSchema.shape.course.default(null),
       nextLesson: z
         .object({
+          chapter: z.string().nullable().optional(),
+          estimatedMinutes: z.int().positive().optional(),
           id: uuidSchema(),
           title: z.string(),
-          estimatedMinutes: z.int().positive().optional(),
-          chapter: z.string().nullable().optional(),
         })
         .nullable()
         .optional(),
@@ -92,54 +83,12 @@ export function readPlacementAttempt(goal: { details: unknown }): PlacementRecor
   return record.data ?? { attempt: null, finishedParts: [], result: null };
 }
 
-export function splitPlacementParts(skillIds: readonly string[]): string[][] {
-  return Array.from({ length: Math.ceil(skillIds.length / TOPICS_PER_PART) }, (_, index) =>
-    skillIds.slice(index * TOPICS_PER_PART, (index + 1) * TOPICS_PER_PART),
-  );
-}
-
-export function getAttemptParts(attempt: PlacementAttempt): string[][] {
-  if (attempt.parts) {
-    return attempt.parts;
-  }
-
-  // An already-open sitting retains its scope and uses the new twelve-question cap.
-  const current = attempt.partSkillIds ?? attempt.skillIds.slice(0, TOPICS_PER_PART);
-  const later = attempt.skillIds.filter((id) => !current.includes(id));
-
-  return [
-    ...Array.from({ length: attempt.part - 1 }, () => []),
-    current,
-    ...splitPlacementParts(later),
-  ];
-}
-
-export function settlePlacementPart({
-  attempt,
-  lessonsSkipped,
-  progress,
-}: {
-  attempt: PlacementAttempt;
-  lessonsSkipped: number;
-  progress: { complete: boolean; partsLeft: number; retainedParts: string[][] };
-}): PlacementAttempt | null {
-  if (progress.partsLeft === 0) {
+export function getCourseOffer(topics: number): z.infer<typeof coursePlacementOfferSchema> | null {
+  if (topics < 2) {
     return null;
   }
 
-  return {
-    ...attempt,
-    lessonsSkipped,
-    partComplete: progress.complete,
-    // Attempts without stored parts still use timestamps for the current part's answers.
-    ...(attempt.parts && { parts: progress.retainedParts }),
-    paused: !progress.complete,
-  };
-}
-
-export function getCourseOffer(topics: number): z.infer<typeof coursePlacementOfferSchema> | null {
-  if (topics < 2) return null;
-  const questions = Math.min(8, topics * 2);
+  const questions = Math.min(COURSE_QUESTION_LIMIT, topics * 2);
   return { estimatedMinutes: getCourseMinutes(questions), questions };
 }
 
@@ -157,4 +106,21 @@ export function getTopicsAhead(plan: GoalPlan) {
   );
 
   return plan.skills.filter((skill) => !skill.removed && isTopicAhead(itemsBySkill.get(skill.id)));
+}
+
+export function matchesAttempt({
+  attempt,
+  attemptId,
+  part,
+}: {
+  attempt: PlacementAttempt | null;
+  attemptId?: string;
+  part?: number;
+}): boolean {
+  if (!attemptId) {
+    // Released Android starts onboarding's quick course test without a sitting.
+    return attempt === null;
+  }
+
+  return attempt?.id === attemptId && !attempt.partComplete && (part ?? 1) === attempt.part;
 }

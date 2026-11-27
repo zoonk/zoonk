@@ -5,8 +5,7 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { oweFollowUps } from "../../../follow-ups/owe-follow-ups";
 import { hasCountryReading } from "../../../goals/_utils/goal-content-country";
 import { saveMetadataInTransaction } from "../../../goals/_utils/goal-metadata";
-import { loadCoursePlacementTopics } from "../../../learner/placement/_utils/course-placement-offer";
-import { TOPICS_PER_PART } from "../../../learner/placement/placement-budget";
+import { readCourseProbes } from "../../../learner/placement/_utils/course-placement-bank";
 import { parsePlanGraph } from "../../../plans/planner/plan-state";
 import { type OnboardingAnswerInput } from "../onboarding-contract";
 import { getAnsweredQuestions } from "../onboarding-steps";
@@ -103,7 +102,7 @@ export async function saveAnswerGoal({
   }
 
   const placementTopics =
-    placement && current.kind === "learn" ? await loadCoursePlacementTopics(current.id, tx) : null;
+    placement && current.kind === "learn" ? await readCourseProbes(current, tx) : null;
 
   await oweFollowUps({
     db: tx,
@@ -113,9 +112,7 @@ export async function saveAnswerGoal({
             {
               input: {
                 goalId: current.id,
-                ...(placementTopics && {
-                  skillIds: placementTopics.slice(0, TOPICS_PER_PART).map((topic) => topic.id),
-                }),
+                ...(placementTopics && { skillIds: placementTopics.ids }),
                 waitsForNotice: current.kind === "exam",
               },
               kind: "preparePlacementItems" as const,

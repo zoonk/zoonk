@@ -316,7 +316,7 @@ describe(placementItemsWorkflow, () => {
   });
 
   it("asks a question about a figure once its picture is drawn, and checks the picture in the background", async () => {
-    const { goal, skillIds } = await goalWithSkills({ count: 1 });
+    const { goal, skillIds } = await goalWithSkills({ count: 1, kind: "exam" });
     const figure = { alt: "A cell with its nucleus labeled.", prompt: `A cell ${randomUUID()}` };
 
     vi.mocked(generatePlacementItems).mockImplementation(async (params) =>
@@ -363,7 +363,7 @@ describe(placementItemsWorkflow, () => {
   });
 
   it("never stores a quick question whose key a blind solve doesn't reach, and keeps the one written beside it", async () => {
-    const { goal, skillIds } = await goalWithSkills({ count: 1 });
+    const { goal, skillIds } = await goalWithSkills({ count: 1, kind: "exam" });
 
     const noRightOption = {
       ...QUICK_ITEMS.multipleChoice,
@@ -398,16 +398,17 @@ describe(placementItemsWorkflow, () => {
     ]);
   });
 
-  it("replaces the answered quick question on a Quick retake and reuses the remaining bank", async () => {
+  it("replenishes the answered course probe on a retake and reuses unseen taps", async () => {
     const user = await userFixture();
 
     const { goal, skills } = await learnerGoalFixture({
       itemsPerSkill: 1,
-      phases: [1],
+      phases: [2],
       userId: user.id,
     });
 
-    await lowGuessTapItems(skills[0]!.id);
+    const banks = await Promise.all(skills.map((skill) => lowGuessTapItems(skill.id)));
+    await prisma.item.deleteMany({ where: { id: { in: banks.map((bank) => bank[2]!.item.id) } } });
     mockSession(user.id);
 
     const open = () => startPlacementSitting({ goalId: goal.id, input: { length: "quick" } });
@@ -445,24 +446,18 @@ describe(placementItemsWorkflow, () => {
     await placementItemsWorkflow(owed.input);
 
     await expect(open()).resolves.toMatchObject({
-      placement: {
-        next: {
-          format: "multipleChoice",
-          itemId: expect.not.stringMatching(itemId),
-          skillId: skills[0]!.id,
-        },
-      },
+      placement: { next: { itemId: expect.not.stringMatching(itemId) } },
     });
 
     await placementItemsWorkflow(owed.input);
 
-    expect(
-      vi.mocked(generatePlacementItems).mock.calls.map(([params]) => params.skills),
-    ).toMatchObject([[{ quickCount: 1, tapCount: 0 }]]);
+    const picks = vi.mocked(generatePlacementItems).mock.calls.flatMap(([params]) => params.skills);
+    expect(picks.length).toBeGreaterThan(0);
+    expect(picks.every((pick) => pick.quickCount === 0 && pick.tapCount > 0)).toBe(true);
   });
 
   it("writes each picked skill's quick and tap questions, the first pick's in two calls at the learner's wait", async () => {
-    const { goal, skillIds } = await goalWithSkills({ count: 7 });
+    const { goal, skillIds } = await goalWithSkills({ count: 7, kind: "exam" });
 
     await expect(
       placementItemsWorkflow({ analytics: context.analytics, goalId: goal.id, skillIds }),
@@ -525,7 +520,7 @@ describe(placementItemsWorkflow, () => {
   });
 
   it("never stores a tap question a guess passes too often", async () => {
-    const { goal, skillIds } = await goalWithSkills({ count: 1 });
+    const { goal, skillIds } = await goalWithSkills({ count: 1, kind: "exam" });
     const [pairs, order, selectAll] = TAP_ITEMS as [GeneratedItem, GeneratedItem, GeneratedItem];
 
     const fewPairs = {
