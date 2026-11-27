@@ -38,14 +38,19 @@ class FakeTutorApi : TutorApi {
     var conversationsFailure: ApiException? = null
     val conversationReads = mutableListOf<String?>()
 
+    /** Holds every conversations read, which answers with the page as it was when asked. */
+    var conversationsGate: kotlinx.coroutines.CompletableDeferred<Unit>? = null
+
     override suspend fun conversations(
         goalId: String,
         cursor: String?,
         session: AuthenticatedSession,
     ): BuddyConversationList {
         conversationReads += cursor
+        val page = conversationPages[cursor] ?: BuddyConversationList(emptyList(), currentId = null, nextCursor = null)
+        conversationsGate?.await()
         conversationsFailure?.let { throw it }
-        return conversationPages[cursor] ?: BuddyConversationList(emptyList(), currentId = null, nextCursor = null)
+        return page
     }
 
     override suspend fun thread(

@@ -465,8 +465,9 @@ class TutorViewModel internal constructor(
         }
 
         viewModelScope.launch {
+            val listed = if (pending.scope is TutorScope.Plan) setOf(DataDomain.BuddyConversations) else emptySet()
             val result =
-                cache.mutate { session ->
+                cache.mutate(invalidating = listed) { session ->
                     api.ask(pending.scope, pending.question, pending.suggestion, pending.requestId, session) to session
                 }
             mutableState.update { it.copy(sending = null) }

@@ -333,6 +333,37 @@ internal class TutorViewModelTest : TutorFixture() {
             assertTrue(vm.state.value.offersSuggestions(vm.turns))
         }
 
+    /** A list read that began before the question saved can't land over it: the conversation stays listed and current. */
+    @Test
+    fun aListReadInFlightWhenAQuestionSavesIsReadAgain() =
+        runTest(dispatcher) {
+            val cache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))
+            val store = tutorStore(api, cache, session)
+            val earlier = BuddyConversation(CONVERSATION, "Why cells?", Instant.parse("2026-11-25T09:00:00Z"))
+            api.conversationPages = mapOf(null to BuddyConversationList(listOf(earlier), currentId = null, nextCursor = null))
+            api.conversationsGate = CompletableDeferred()
+            val list = store.conversations[GOAL]
+            val reading = launch { list.load() }
+            advanceUntilIdle()
+
+            val fresh = store.newConversation(GOAL)
+            val asked = BuddyConversation(fresh, "Why osmosis?", Instant.parse("2026-11-26T09:00:00Z"))
+            api.conversationPages = mapOf(null to BuddyConversationList(listOf(asked, earlier), currentId = fresh, nextCursor = null))
+            val asking = TutorViewModel(TutorScope.Plan(GOAL, fresh), store, SavedStateHandle(), openMission = { MutationResult.Obsolete })
+            asking.thread.load()
+            asking.draft.setTextAndPlaceCursorAtEnd("Why osmosis?")
+            asking.send()
+            advanceUntilIdle()
+
+            api.conversationsGate?.complete(Unit)
+            reading.join()
+            advanceUntilIdle()
+
+            val shown = list.state.value.value!!
+            assertEquals(fresh, shown.currentId)
+            assertEquals(listOf(fresh, CONVERSATION), shown.conversations.map { it.id })
+        }
+
     @Test
     fun eachConversationKeepsItsOwnQuestionsAndAFirstOneJoinsTheList() =
         runTest(dispatcher) {

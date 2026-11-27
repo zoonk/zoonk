@@ -4,6 +4,7 @@ import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.Audience
+import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.KeyedResources
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.SessionSource
@@ -30,7 +31,9 @@ class TutorStore(
 
     /** Each goal's buddy conversations, by goal id; a guest's list is never read. */
     val conversations: KeyedResources<String, BuddyConversationList> =
-        cache.keyed(Audience.SignedIn) { session, goalId -> session?.let { api.conversations(goalId, cursor = null, it) } }
+        cache.keyed(Audience.SignedIn, setOf(DataDomain.BuddyConversations)) { session, goalId ->
+            session?.let { api.conversations(goalId, cursor = null, it) }
+        }
 
     /** Names a new conversation for [goalId], which its first question creates: until then it's empty, read from nowhere. */
     fun newConversation(goalId: String): String {
