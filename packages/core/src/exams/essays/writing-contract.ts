@@ -46,8 +46,21 @@ export const writingPromptSchema = z
   })
   .meta({ id: "WritingPrompt" });
 
+const aspectAwardSchema = z.object({ points: z.number().nonnegative(), text: z.string().min(1) });
+
+const aspectSchema = z.object({
+  awards: z
+    .array(aspectAwardSchema)
+    .min(2)
+    .optional()
+    .describe("Its steps of credit, lowest first; absent when it is earned whole or not at all"),
+  criterionId: z.string(),
+  description: z.string(),
+  points,
+});
+
 export const writtenItemSchema = writingPromptSchema.extend({
-  aspects: z.array(z.object({ criterionId: z.string(), description: z.string(), points })),
+  aspects: z.array(aspectSchema),
   assessedSkillIds: z.array(uuidSchema()).min(1),
   /** The learner's options it was written for; only learners with the same options get it. */
   chosenSubjects: z.array(z.string()).optional(),
