@@ -17,11 +17,11 @@ import com.zoonk.android.ui.format.formatMomentDay
 import com.zoonk.api.models.FocusTestOffer
 import com.zoonk.api.models.FocusTestSummary
 import com.zoonk.api.models.LanguageLevelTestOneOfResultRangesValue
+import com.zoonk.api.models.PlacementLength
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanPlacementTest
 import com.zoonk.api.models.PlanPlacementTestOneOf
 import com.zoonk.api.models.PlanPlacementTestOneOf1
-import com.zoonk.api.models.PlacementLength
 
 /** The test's first sitting, for a learner who hasn't started it and whose time doesn't cover everything: where a focus would help most. */
 fun focusTestOffer(plan: Plan): FocusTestOffer? =
@@ -93,6 +93,15 @@ fun lessonsSkippedLine(lessons: Int): String =
     }
 
 @Composable
+private fun about(minutes: Long): String = stringResource(R.string.placementtest_about, formatMinutes(minutes.toInt(), currentLocale()))
+
+@Composable
+private fun done(
+    finishedAt: kotlin.time.Instant,
+    lessonsSkipped: Long,
+): String = factsLine(lessonsSkippedLine(lessonsSkipped.toInt()), formatMomentDay(finishedAt, currentLocale()))
+
+@Composable
 private fun questionOf(
     number: Long,
     total: Long,
@@ -108,10 +117,6 @@ private fun partOf(
 @Composable
 private fun placementTestLine(test: PlanPlacementTest): String {
     val locale = currentLocale()
-    val about = { minutes: Long -> stringResource(R.string.placementtest_about, formatMinutes(minutes.toInt(), locale)) }
-    val done = { finishedAt: kotlin.time.Instant, lessonsSkipped: Long ->
-        factsLine(lessonsSkippedLine(lessonsSkipped.toInt()), formatMomentDay(finishedAt, locale))
-    }
     return when (test) {
         is PlanPlacementTest.PlanPlacementTestOneOf1Value -> {
             val row = test.value
@@ -170,7 +175,7 @@ private fun placementTestLine(test: PlanPlacementTest): String {
                 }
 
                 else -> {
-                    factsLine(stringResource(R.string.placementtest_skip_lessons), row.offer?.let { about(it.estimatedMinutes) })
+                    factsLine(stringResource(R.string.placementtest_skip_lessons), row.offer?.estimatedMinutes?.let { about(it) })
                 }
             }
         }

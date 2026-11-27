@@ -28,6 +28,9 @@ internal sealed interface PlacementTestPhase {
     /** The open part's questions are still being written. */
     data object Waiting : PlacementTestPhase
 
+    /** The open part's next question can't be had and nothing is writing it: the first days place the learner instead. */
+    data object Unavailable : PlacementTestPhase
+
     /** Writing the open part's questions failed: starting it again retries them. */
     data class PreparationFailed(
         val attempt: PlacementAttempt,
@@ -130,6 +133,10 @@ internal fun placementTestPhase(
             PlacementTestPhase.PreparationFailed(attempt)
         }
 
+        read.status == PlacementStatus.UNAVAILABLE -> {
+            PlacementTestPhase.Unavailable
+        }
+
         !read.isReady -> {
             PlacementTestPhase.Waiting
         }
@@ -145,7 +152,7 @@ internal fun placementTestPhase(
 private val PlacementAttempt.isStopped get() = partComplete || resume != null
 
 private val Placement.isReady
-    get() = status == PlacementStatus.ASKING || status == PlacementStatus.DONE || status == PlacementStatus.UNAVAILABLE
+    get() = status == PlacementStatus.ASKING || status == PlacementStatus.DONE
 
 /** An open part with nothing more to ask, which closing applies. */
 internal fun Placement.partOver(): PlacementAttempt? = attempt?.takeIf { !it.isStopped && isReady && next == null }

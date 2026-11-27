@@ -80,9 +80,10 @@ class PlacementTestViewModelTest {
     }
 
     @Test
-    fun anOpenPartWithNoAvailableQuestionsCanFinish() {
+    fun anOpenPartWhoseNextQuestionCannotBeHadSaysTheFirstDaysPlaceTheLearner() {
         val read = placement(PART_ONE, next = null, status = "unavailable")
-        assertTrue(placementTestPhase(LoadState.Loaded(read), closed = null) is PlacementTestPhase.PartOver)
+        assertEquals(PlacementTestPhase.Unavailable, placementTestPhase(LoadState.Loaded(read), closed = null))
+        assertEquals(null, read.partOver())
     }
 
     @Test

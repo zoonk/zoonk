@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -72,18 +73,22 @@ internal fun OnboardingHeading(
     }
 }
 
-/** Main's `OnboardingSubject`: the chip over a test's title, with where the learner is ([position]) at the row's end, never in the chip. */
+/**
+ * Main's `OnboardingSubject`: the chip over a test's title, with where the learner is ([position]) at the row's end, never
+ * in the chip. When both don't fit on one line, the position goes under the chip rather than squeezing it.
+ */
 @Composable
 internal fun OnboardingSubject(
     subject: String,
     position: String? = null,
 ) {
-    Row(
+    FlowRow(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        itemVerticalAlignment = Alignment.CenterVertically,
     ) {
-        Box(Modifier.weight(1f)) { Eyebrow(subject) }
+        Box(Modifier.padding(end = 12.dp)) { Eyebrow(subject) }
         position?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.zoonkType.data) }
     }
 }

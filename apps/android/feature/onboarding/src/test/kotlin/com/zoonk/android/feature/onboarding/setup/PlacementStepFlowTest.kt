@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.onboarding.setup
 
+import com.zoonk.android.ui.format.FACT_SEPARATOR
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
@@ -97,6 +98,7 @@ class PlacementStepFlowTest {
         show()
         tap("First lesson")
         tap("Continue")
+        rule.waitUntil(WAIT_MS) { api.answers.isNotEmpty() }
 
         assertEquals(listOf<PlacementPart?>(null), api.finishedParts)
         assertEquals(0, api.sittingsStarted)
@@ -114,18 +116,20 @@ class PlacementStepFlowTest {
         show()
         tap("Full test")
         tap("Start")
-        rule.onNodeWithText("Part 1 of 2 · Question 1 of 12").assertIsDisplayed()
+        rule.onNodeWithText("Part 1 of 2${FACT_SEPARATOR}Question 1 of 12").assertIsDisplayed()
         tap("Confirm")
 
         assertEquals(listOf<PlacementPart?>(PlacementPart(ID, 1)), api.finishedParts)
         rule.onNodeWithText("Part 1 of 2 done").assertIsDisplayed()
         tap("Finish later")
+        rule.waitUntil(WAIT_MS) { api.answers.isNotEmpty() }
 
         val answer = api.answers.single().second as OnboardingAnswerInput.OnboardingAnswerInputOneOf10Value
         assertEquals(ID, answer.value.attemptId)
     }
 
     private companion object {
+        const val WAIT_MS = 5_000L
         val ID: UUID = UUID.fromString("0a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d")
 
         fun attempt(length: PlacementLength) =

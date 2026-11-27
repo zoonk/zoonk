@@ -33,6 +33,7 @@ import com.zoonk.android.feature.focustest.Pressed
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.setup.PlacementDone
 import com.zoonk.android.feature.onboarding.setup.PlacementQuestion
+import com.zoonk.android.feature.onboarding.setup.PlacementUnavailable
 import com.zoonk.android.feature.onboarding.setup.PlacementWaiting
 import com.zoonk.android.feature.onboarding.setup.SetupColumn
 import com.zoonk.android.feature.onboarding.setup.SetupContent
@@ -271,6 +272,10 @@ internal fun ColumnScope.PlacementTestFlow(
             }
         }
 
+        PlacementTestPhase.Unavailable -> {
+            PlacementUnavailable(pending = onboarding?.saving == true, failed = false, onContinue = leave)
+        }
+
         is PlacementTestPhase.PartOver -> {
             PlacementDone(pending = vm.busy, failed = vm.failed, onContinue = { vm.finishPart(shown.attempt) })
         }
@@ -316,7 +321,9 @@ internal fun ColumnScope.PlacementTestFlow(
         }
 
         is PlacementTestPhase.Result -> {
-            val lesson = shown.nextLessonId?.takeIf { onboarding == null }
+            val undo = rememberPlacementUndo(plans, goalId, shown.changeId)
+            // Undo puts the skipped lessons back, so the next lesson may be one of them.
+            val lesson = shown.nextLessonId?.takeIf { onboarding == null && undo?.restoredLessons == null }
             PlacementResult(
                 lessonsSkipped = shown.lessonsSkipped,
                 nextLesson = shown.nextLesson,
@@ -345,7 +352,7 @@ internal fun ColumnScope.PlacementTestFlow(
                         }
                     }
                 },
-                undo = rememberPlacementUndo(plans, goalId, shown.changeId),
+                undo = undo,
                 busy = onboarding?.saving == true,
                 pressed = vm.pressed,
                 failed = vm.failed,

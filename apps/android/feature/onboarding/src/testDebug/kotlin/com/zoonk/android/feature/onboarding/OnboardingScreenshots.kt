@@ -1253,6 +1253,7 @@ class OnboardingScreenshots {
                 PlacementSetup(
                     UUID.fromString(GOAL_ID),
                     "bar exam",
+                    language = "en",
                     targetLanguage = null,
                     placement = ApiJson.decodeFromString(COURSE_OFFER),
                     store = store,

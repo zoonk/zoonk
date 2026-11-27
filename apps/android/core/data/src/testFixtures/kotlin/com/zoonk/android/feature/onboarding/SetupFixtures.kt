@@ -4,7 +4,9 @@ import com.zoonk.api.ApiJson
 import com.zoonk.api.models.Goal
 import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.Placement
+import com.zoonk.api.models.PlacementAttempt
 import com.zoonk.api.models.PlacementCompletion
+import com.zoonk.api.models.PlacementLength
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.Syllabus
 import java.time.LocalDate
@@ -105,6 +107,30 @@ fun focusSittingOf(
     {"questions":$questions,"answered":$answered,"minutes":${maxOf(1, questions - answered)},
      "subject":${subject?.let(::subjectRef) ?: "null"},"hint":${hint?.let { "\"$it\"" } ?: "null"}}
     """.trimIndent()
+
+/** A course test's open attempt, the quick test's by default. */
+fun placementAttemptOf(
+    length: PlacementLength = PlacementLength.QUICK,
+    answered: Long = 0,
+    part: Long = 1,
+    parts: Long = 2,
+): PlacementAttempt =
+    PlacementAttempt(
+        answered = answered,
+        chapter = "Civil procedure",
+        estimatedMinutes = 6,
+        id = java.util.UUID.fromString("0a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d"),
+        length = length,
+        nextPart = null,
+        part = part,
+        partComplete = false,
+        parts = parts,
+        partsLeft = parts - part + 1,
+        questions = 12,
+        remainingEstimatedMinutes = 6 * (parts - part + 1),
+        resume = null,
+        totalEstimatedMinutes = 6 * parts,
+    )
 
 fun focusOfferOf(
     minutes: Int = 6,

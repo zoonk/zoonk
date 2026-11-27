@@ -342,6 +342,36 @@ class PlacementTestScreenshots(
         levelResult()
     }
 
+    @Test
+    fun offerAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        courseOfferOnboarding()
+    }
+
+    @Test
+    fun questionAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        questionFullTest()
+    }
+
+    @Test
+    fun checkpointAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        partDone()
+    }
+
+    @Test
+    fun resultAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        resultQuick()
+    }
+
+    @Test
+    fun continueAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        continueBetweenParts()
+    }
+
     @Composable
     private fun ColumnScope.Ask(
         format: QuestionFormat,

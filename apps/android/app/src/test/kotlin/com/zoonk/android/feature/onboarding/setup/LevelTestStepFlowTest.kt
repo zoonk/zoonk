@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.onboarding.setup
 
+import com.zoonk.android.ui.format.FACT_SEPARATOR
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.isDisplayed
@@ -109,7 +110,7 @@ class LevelTestStepFlowTest {
         show()
 
         rule.onNodeWithText("Where would you like to start?").assertIsDisplayed()
-        rule.onNodeWithText("12 questions · About 6 min").assertIsDisplayed()
+        rule.onNodeWithText("12 questions${FACT_SEPARATOR}About 6 min").assertIsDisplayed()
         assertEquals(1, api.levelTestReads)
         assertEquals(0, api.levelTestStarts)
         assertEquals(0, api.prepared)

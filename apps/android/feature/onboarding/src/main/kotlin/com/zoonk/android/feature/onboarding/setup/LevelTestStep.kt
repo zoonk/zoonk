@@ -1,5 +1,11 @@
 package com.zoonk.android.feature.onboarding.setup
 
+import android.app.LocaleConfig
+import android.app.LocaleManager
+import android.os.Build
+import android.os.LocaleList
+import androidx.compose.ui.platform.LocalContext
+import com.zoonk.android.ui.format.formattingLocale
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -196,6 +202,21 @@ private fun LanguageLevelTest.savedResult(attemptId: UUID): LanguageLevelTestRes
     val test = (this as? LanguageLevelTest.LanguageLevelTestOneOf1Value)?.value ?: return null
     val saved = test.result?.takeIf { it.attemptId == attemptId } ?: return null
     return LanguageLevelTestResult(levels = test.levels, result = saved.recode())
+}
+
+/** Main switches the app to the learner's own language when it isn't showing in it; Android keeps an app's language from API 33. */
+@Composable
+internal fun InterfaceOffer(language: String) {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
+    val context = LocalContext.current
+    val own = formattingLocale(language)
+    val supported = remember(context) { LocaleConfig(context).supportedLocales }
+    val translated = supported != null && (0 until supported.size()).any { supported[it].language == own.language }
+    if (!translated || own.language == currentLocale().language) return
+
+    TextButton(onClick = { context.getSystemService(LocaleManager::class.java).applicationLocales = LocaleList(own) }, edge = ButtonEdge.Start) {
+        Text(stringResource(R.string.onboarding_language_test_use_app_in, languageName(language, own)), textDecoration = TextDecoration.Underline)
+    }
 }
 
 @Composable

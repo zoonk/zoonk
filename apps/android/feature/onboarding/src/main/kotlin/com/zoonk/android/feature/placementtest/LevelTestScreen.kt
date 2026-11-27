@@ -28,6 +28,7 @@ import com.zoonk.android.data.recode
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.focustest.Pressed
 import com.zoonk.android.feature.onboarding.LevelTestAttempt
+import com.zoonk.android.feature.onboarding.setup.InterfaceOffer
 import com.zoonk.android.feature.onboarding.setup.LevelRow
 import com.zoonk.android.feature.onboarding.setup.LevelRows
 import com.zoonk.android.feature.onboarding.setup.LevelTestSteps
@@ -131,8 +132,9 @@ private fun ColumnScope.LevelTestPlanFlow(
                 onSitting = onSitting,
                 plan =
                     PlanAttempt(attempt, onLeave = navigator::closeTask, leaving = false, visit = vm.sitting) { result ->
-                        val changeId = result.result?.takeIf { it.lessonsSkipped > 0 }?.changeId
-                        val lesson = result.result?.nextLesson
+                        val undo = rememberPlacementUndo(app.plans, goal.id, result.result?.takeIf { it.lessonsSkipped > 0 }?.changeId)
+                        // Undo puts the skipped lessons back, so the next lesson may be one of them.
+                        val lesson = result.result?.nextLesson?.takeIf { undo?.restoredLessons == null }
                         LevelResult(
                             result = result,
                             targetLanguage = targetLanguage,
@@ -157,7 +159,7 @@ private fun ColumnScope.LevelTestPlanFlow(
                                 }
                             },
                             onTestOut = { vm.testOut(it, Pressed.Other) },
-                            undo = rememberPlacementUndo(app.plans, goal.id, changeId),
+                            undo = undo,
                         )
                     },
             )
@@ -259,6 +261,8 @@ internal fun ColumnScope.LevelResult(
     onTestOut: (String) -> Unit,
     undo: PlacementUndoViewModel? = null,
     busy: Boolean = false,
+    /** Onboarding's quiet offer to use the app in the learner's own language, under what the test found. */
+    appLanguage: String? = null,
 ) {
     val lessons = result.result?.lessonsSkipped?.toInt() ?: 0
     val ranges = result.result?.ranges.orEmpty()
@@ -307,6 +311,7 @@ internal fun ColumnScope.LevelResult(
                 Text(stringResource(R.string.placementtest_test_out, testOutLevel), textDecoration = TextDecoration.Underline)
             }
         }
+        appLanguage?.let { InterfaceOffer(it) }
     }
 }
 

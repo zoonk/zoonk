@@ -538,6 +538,10 @@ private fun ColumnScope.QuestionStep(
                 PlacementSetup(
                     goalId = view.goal.id,
                     subject = subject,
+                    language =
+                        view.goal.details
+                            .text("nativeLanguage")
+                            ?.takeIf(String::isNotBlank) ?: view.goal.language,
                     targetLanguage = view.goal.targetLanguage.takeIf { view.goal.kind == Goal.Kind.LANGUAGE },
                     placement = view.placement,
                     store = store,

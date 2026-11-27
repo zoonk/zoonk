@@ -35,6 +35,8 @@ import java.util.UUID
 internal fun ColumnScope.PlacementSetup(
     goalId: UUID,
     subject: String,
+    /** The learner's own language, which a language's result offers to use the app in. */
+    language: String,
     targetLanguage: String?,
     placement: OnboardingPlacement?,
     store: OnboardingStore,
@@ -45,7 +47,7 @@ internal fun ColumnScope.PlacementSetup(
     onReportSaveFailure: () -> Unit,
 ) {
     if (targetLanguage != null) {
-        LanguageSetup(goalId.toString(), targetLanguage, placement?.mode, store, plans, navigator, end, onSitting, onReportSaveFailure)
+        LanguageSetup(goalId.toString(), language, targetLanguage, placement?.mode, store, plans, navigator, end, onSitting, onReportSaveFailure)
     } else {
         CourseSetup(goalId, subject, placement, store, plans, navigator, end, onSitting)
     }
@@ -113,6 +115,7 @@ private fun ColumnScope.CourseSetup(
 @Composable
 private fun ColumnScope.LanguageSetup(
     goalId: String,
+    language: String,
     targetLanguage: String,
     mode: OnboardingPlacement.Mode?,
     store: OnboardingStore,
@@ -159,6 +162,7 @@ private fun ColumnScope.LanguageSetup(
                                 result.result?.takeIf { it.lessonsSkipped > 0 }?.changeId,
                             ),
                         busy = end.saving,
+                        appLanguage = language,
                     )
                 },
         )
