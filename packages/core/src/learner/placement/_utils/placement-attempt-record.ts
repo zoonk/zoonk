@@ -2,7 +2,12 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { type GoalPlan } from "../../_utils/goal-skill-graph";
-import { LOW_GUESS_ANSWERS_TO_SKIP } from "../../_utils/placement-guess-rate";
+import {
+  PART_QUESTIONS,
+  QUESTIONS_PER_TOPIC,
+  TOPICS_PER_PART,
+  getCourseMinutes,
+} from "../placement-budget";
 import {
   type coursePlacementOfferSchema,
   type placementAttemptViewSchema,
@@ -53,16 +58,6 @@ export function readPlacementAttempt(goal: { details: unknown }): PlacementRecor
   const details = isJsonObject(goal.details) ? goal.details : {};
   const record = recordSchema.safeParse(details.placementTest);
   return record.data ?? { attempt: null, finishedParts: [], result: null };
-}
-
-const COURSE_ANSWER_SECONDS = 32;
-
-export const TOPICS_PER_PART = 3;
-export const QUESTIONS_PER_TOPIC = 1 + LOW_GUESS_ANSWERS_TO_SKIP;
-export const PART_QUESTIONS = TOPICS_PER_PART * QUESTIONS_PER_TOPIC;
-
-export function getCourseMinutes(questions: number): number {
-  return Math.round((questions * COURSE_ANSWER_SECONDS) / 60);
 }
 
 export function splitPlacementParts(skillIds: readonly string[]): string[][] {

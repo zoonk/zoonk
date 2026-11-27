@@ -11,10 +11,10 @@ import { type PlacementPartPreparation } from "../../../follow-ups/follow-up-con
 import { oweFollowUps } from "../../../follow-ups/owe-follow-ups";
 import { loadPlacementPlan } from "../../_utils/goal-skill-graph";
 import { unchanged, writeLearnerChange } from "../../_utils/write-learner-change";
+import { PART_QUESTIONS } from "../placement-budget";
 import { loadCoursePlacementTopics } from "./course-placement-offer";
 import { loadPlacementWithSummary } from "./load-placement-state";
 import {
-  PART_QUESTIONS,
   type PlacementAttempt,
   type PlacementLength,
   type PlacementRecord,
