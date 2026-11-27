@@ -3,6 +3,7 @@ package com.zoonk.android.feature.buddy
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.LearningProfileStore
@@ -12,6 +13,8 @@ import com.zoonk.android.data.VisitOutcome
 import com.zoonk.android.feature.session.MissionOpens
 import com.zoonk.android.feature.session.StudyOpener
 import com.zoonk.android.feature.session.page
+import com.zoonk.android.feature.tutor.BuddyConversationList
+import com.zoonk.android.feature.tutor.TutorStore
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.characters.BuddyGlasses
 import com.zoonk.android.ui.characters.BuddyKind
@@ -22,12 +25,110 @@ class BuddyViewModel internal constructor(
     private val store: BuddyStore,
     private val profile: LearningProfileStore,
     private val opener: StudyOpener,
+    private val tutor: TutorStore,
+    private val saved: SavedStateHandle,
 ) : ViewModel() {
     var isSaving by mutableStateOf(false)
         private set
 
-    /** Search's question goes in the composer once: the tab keeps its route, so the page would put it back on each return. */
-    var askPlaced = false
+    /** The conversation the page shows, kept while it's left open and through Android closing the app. */
+    private var open by mutableStateOf(
+        saved.get<String>(OPEN_GOAL)?.let { goal ->
+            saved.get<String>(OPEN_ID)?.let { OpenConversation(goal, it) }
+        },
+    )
+
+    /** The open conversation of [goalId]'s, or none while it's still to be chosen, as after a switch to another goal. */
+    fun openConversation(goalId: String): String? = open?.takeIf { it.goalId == goalId }?.id
+
+    /**
+     * A link or search opens its conversation once, as the tab keeps its route. Otherwise a visit with
+     * none open opens the [list]'s current one once it's read, or a new one when there's none today.
+     */
+    fun choose(
+        goalId: String,
+        route: AppRoute.Buddy,
+        list: BuddyConversationList?,
+    ) {
+        if (saved.get<Boolean>(ROUTE_TAKEN) != true) {
+            saved[ROUTE_TAKEN] = true
+            val ask = route.ask
+            val linked = route.conversationId
+            when {
+                ask != null -> return startNew(goalId, ask)
+                route.startsNew -> return startNew(goalId)
+                linked != null -> return show(goalId, linked)
+            }
+        }
+        if (openConversation(goalId) != null || list == null) return
+        val current = list.currentId
+        if (current != null) show(goalId, current) else startNew(goalId)
+    }
+
+    /**
+     * [conversationId] answered not found (a link to another goal's conversation, or someone else's):
+     * the page opens what a visit opens instead, once the [list] is read.
+     */
+    fun unreadable(
+        goalId: String,
+        conversationId: String,
+        list: BuddyConversationList?,
+    ) {
+        if (openConversation(goalId) != conversationId) return
+        open = null
+        saved.remove<String>(OPEN_GOAL)
+        saved.remove<String>(OPEN_ID)
+        choose(goalId, AppRoute.Buddy(), list)
+    }
+
+    fun show(
+        goalId: String,
+        conversationId: String,
+    ) {
+        open = OpenConversation(goalId, conversationId)
+        saved[OPEN_GOAL] = goalId
+        saved[OPEN_ID] = conversationId
+    }
+
+    /** A new conversation; [ask] waits in its composer. */
+    fun startNew(
+        goalId: String,
+        ask: String? = null,
+    ) {
+        val id = tutor.newConversation(goalId)
+        if (ask != null) {
+            saved[ASK_FOR] = id
+            saved[ASK] = ask
+        }
+        show(goalId, id)
+    }
+
+    /** The next page of conversations is being read, or couldn't be. */
+    var loadingMore by mutableStateOf(false)
+        private set
+
+    var moreFailed by mutableStateOf(false)
+        private set
+
+    fun showMore(goalId: String) {
+        if (loadingMore) return
+        loadingMore = true
+        moreFailed = false
+        viewModelScope.launch {
+            try {
+                moreFailed = !tutor.showMoreConversations(goalId)
+            } finally {
+                loadingMore = false
+            }
+        }
+    }
+
+    /** Search's question for [conversationId], given once: it waits in that conversation's composer. */
+    fun takeAsk(conversationId: String): String? {
+        if (saved.get<String>(ASK_FOR) != conversationId) return null
+        saved.remove<String>(ASK_FOR)
+        return saved.remove<String>(ASK)
+    }
 
     /** The row whose block is opening, and the one whose block couldn't, so only that row says so. */
     var opening by mutableStateOf<BuddyTap?>(null)
@@ -129,6 +230,19 @@ class BuddyViewModel internal constructor(
 
     /** The page left the screen (a lesson over it, another tab) or moved to another goal. */
     fun endVisit() = visit.end()
+
+    private data class OpenConversation(
+        val goalId: String,
+        val id: String,
+    )
+
+    private companion object {
+        const val OPEN_GOAL = "openGoal"
+        const val OPEN_ID = "openConversation"
+        const val ROUTE_TAKEN = "routeTaken"
+        const val ASK_FOR = "askFor"
+        const val ASK = "ask"
+    }
 }
 
 /** A tapped row of the buddy's day. A first step can open the same block as a mission, and only the tapped row shows how it went. */

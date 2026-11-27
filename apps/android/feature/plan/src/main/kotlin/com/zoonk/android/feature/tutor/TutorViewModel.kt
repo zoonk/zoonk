@@ -477,6 +477,7 @@ class TutorViewModel internal constructor(
                 is MutationResult.Done -> {
                     val (asked, session) = result.value
                     unresolved = null
+                    store.asked(pending.scope, asked.turn)
                     // Replacing cancels an older read still in flight, which would drop the new question.
                     thread.state.value.value?.let { page ->
                         thread.replace(page.copy(turns = page.turns.filterNot { it.id == asked.turn.id } + asked.turn))

@@ -7,9 +7,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -22,7 +20,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,15 +27,11 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.clearAndSetSemantics
-import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zoonk.android.R
-import com.zoonk.android.app.AppContainer
-import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.missions.MissionsCard
 import com.zoonk.android.feature.session.DayMission
@@ -183,74 +176,6 @@ private fun BuddyTodaySheet(
                 HorizontalDivider()
                 BuddyFirstStepsSection(status.firstSteps, look, name, taps)
             }
-        }
-    }
-}
-
-/** The buddy's day beside its conversation, where there's room. */
-@Composable
-internal fun BuddyDayPane(
-    status: BuddyStatus,
-    look: BuddyLook,
-    name: String,
-    taps: BuddyDayTaps,
-    onGlasses: () -> Unit,
-    navigator: AppNavigator,
-    app: AppContainer,
-) {
-    val memory by app.memory.memory.collectShown()
-
-    Column(
-        Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(24.dp),
-        verticalArrangement = Arrangement.spacedBy(24.dp),
-    ) {
-        BuddyEnergy(status.energy, name) { navigator.open(AppRoute.StatsEnergy) }
-        BuddyMissions(status, look, name, taps) { navigator.open(AppRoute.StatsLevel) }
-        BuddyFirstStepsSection(status.firstSteps, look, name, taps)
-
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(name, Modifier.semantics { heading() }, style = MaterialTheme.typography.titleSmall)
-            Column {
-                PaneRow(growthLine(status.nextStage))
-                HorizontalDivider()
-                PaneRow(stringResource(R.string.buddy_page_remembers, name), onClick = { navigator.open(AppRoute.Memory) }) {
-                    memory.value?.let {
-                        Text(
-                            it.facts.size.toString(),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.labelMedium.withTabularFigures(),
-                        )
-                    }
-                }
-                HorizontalDivider()
-                PaneRow(stringResource(R.string.buddy_glasses), onClick = onGlasses) { GlassesCount(status) }
-                HorizontalDivider()
-                PaneRow(stringResource(R.string.buddy_page_weekly_summary), onClick = { navigator.open(AppRoute.Logbook) })
-            }
-        }
-    }
-}
-
-/** One of the buddy's rows; one that opens something says so with a chevron. */
-@Composable
-private fun PaneRow(
-    text: String,
-    onClick: (() -> Unit)? = null,
-    trailing: @Composable () -> Unit = {},
-) {
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
-            .heightIn(min = 48.dp)
-            .padding(vertical = 10.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(text, Modifier.weight(1f), style = MaterialTheme.typography.titleSmall)
-        trailing()
-        if (onClick != null) {
-            ListRowChevron()
         }
     }
 }
