@@ -11,6 +11,7 @@ import { MS_PER_DAY } from "@zoonk/utils/date";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { pickInPlacement } from "../../_test-utils/shown-choice";
 import { loadTodayPlanChange } from "../../plans/_utils/today-plan-change";
 import { decidePlanChange } from "../../plans/decide-plan-change";
 import { getGoalPlan } from "../../plans/get-goal-plan";
@@ -320,7 +321,12 @@ describe("learn placement attempts", () => {
 
     await answerPlacementQuestion({
       goalId: goal.id,
-      input: { answer: { selectedIndex: 0 }, attemptId, durationMs: 1000, itemId: items[0]!.id },
+      input: {
+        answer: await pickInPlacement({ itemId: items[0]!.id }),
+        attemptId,
+        durationMs: 1000,
+        itemId: items[0]!.id,
+      },
     });
 
     await expect(
@@ -436,7 +442,12 @@ describe("learn placement attempts", () => {
 
       const sent = await answerPlacementQuestion({
         goalId: goal.id,
-        input: { answer: { selectedIndex: 0 }, attemptId, durationMs: 100, itemId: items[0]!.id },
+        input: {
+          answer: await pickInPlacement({ itemId: items[0]!.id }),
+          attemptId,
+          durationMs: 100,
+          itemId: items[0]!.id,
+        },
       });
 
       const answerTaps = async (result: typeof sent, remaining: number): Promise<typeof sent> => {

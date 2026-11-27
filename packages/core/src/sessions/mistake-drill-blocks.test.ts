@@ -9,6 +9,7 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { pickInBlock } from "../_test-utils/shown-choice";
 import { gradeChoiceAnswer, parseChoiceItem } from "../learner/_utils/choice-items";
 import { SESSION_NOW, daysAgo } from "./_test-utils/session-goal";
 import { toStudyBlockView } from "./_utils/session-view";
@@ -121,7 +122,11 @@ describe("mistake drills in today's session", () => {
 
     const result = await answerStudyQuestion({
       blockId: block.id,
-      input: { answer: { selectedIndex: 0 }, durationMs: 45_000, itemId: item.id },
+      input: {
+        answer: pickInBlock({ blockId: block.id, item }),
+        durationMs: 45_000,
+        itemId: item.id,
+      },
       sessionId: session.id,
     });
 
@@ -140,7 +145,11 @@ describe("mistake drills in today's session", () => {
 
     const result = await answerStudyQuestion({
       blockId: block.id,
-      input: { answer: { selectedIndex: 0 }, durationMs: 9000, itemId: item.id },
+      input: {
+        answer: pickInBlock({ blockId: block.id, item }),
+        durationMs: 9000,
+        itemId: item.id,
+      },
       sessionId: session.id,
     });
 

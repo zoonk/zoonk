@@ -9,6 +9,7 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { pickInPlacement } from "../_test-utils/shown-choice";
 import { placementItemBank } from "../learner/_test-utils/placement-tap-items";
 import { answerPlacementQuestion } from "../learner/placement/answer-placement-question";
 import { finishGoalPlacement } from "../learner/placement/finish-goal-placement";
@@ -143,9 +144,6 @@ describe("an exam plan after placement", () => {
   });
 });
 
-/** The fixture's choice items have their right option first. */
-const WRONG = { selectedIndex: 1 };
-
 async function shortExamSetup() {
   const user = await userFixture();
 
@@ -208,7 +206,12 @@ describe("an exam plan short on time when placement ends", () => {
 
     await answerPlacementQuestion({
       goalId: goal.id,
-      input: { answer: WRONG, durationMs: 4000, itemId: item.id, timeZone: "UTC" },
+      input: {
+        answer: await pickInPlacement({ itemId: item.id, right: false }),
+        durationMs: 4000,
+        itemId: item.id,
+        timeZone: "UTC",
+      },
     });
 
     const finished = await finishGoalPlacement({ goalId: goal.id, input: { timeZone: "UTC" } });

@@ -5,6 +5,7 @@ import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { pickItemInMock } from "../../_test-utils/shown-choice";
 import { getItemAudienceFilter } from "../../library/items/item-field";
 import { SESSION_NOW } from "../../sessions/_test-utils/session-goal";
 import { endMockBreak } from "./end-mock-break";
@@ -139,11 +140,15 @@ async function answer({ id, right }: { id: string; right: number }) {
   const running = await readMock(id);
 
   await Promise.all(
-    (running.current?.questions ?? []).map((question, index) =>
+    (running.current?.questions ?? []).map(async (question, index) =>
       saveMockAnswer({
         blockId: id,
         input: {
-          answer: { selectedIndex: (right < 0 ? index > 0 : index < right) ? 0 : 1 },
+          answer: await pickItemInMock({
+            itemId: question.itemId,
+            mockId: id,
+            right: right < 0 ? index > 0 : index < right,
+          }),
           durationMs: 30_000,
           flagged: false,
           itemId: question.itemId,

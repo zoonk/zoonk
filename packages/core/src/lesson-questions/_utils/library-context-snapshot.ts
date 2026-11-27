@@ -6,11 +6,14 @@ import {
 import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { findOpenedVersion, findPlayableLessonRow } from "../../lesson-player/_utils/lesson-rows";
+import { findLastLessonFinish } from "../../lesson-player/_utils/lesson-runs";
 import { loadPlayableSteps } from "../../lesson-player/_utils/load-playable-steps";
+import { getLessonSitting, showStepOptions } from "../../lesson-player/_utils/shown-step-options";
 import { type LessonStepAnswer } from "../../lesson-player/contract";
 import { gradeStepAnswer } from "../../lesson-player/grade-step-answer";
 import { isAnswerableStep } from "../../lesson-player/lesson-run";
 import { type PlayableLibraryStep } from "../../lesson-player/playable-lesson";
+import { getAnsweredShowing } from "../../mistakes/mistake-item";
 import { loadMistakeReplay } from "../../mistakes/mistake-replay";
 import { type LessonScopeContextInput } from "../contract";
 import { type LibraryQuestionLesson } from "./question-access";
@@ -208,7 +211,19 @@ async function buildMistakeContext({
     return { status: "invalidContext" as const };
   }
 
-  const { step } = replay.lesson;
+  const practiced =
+    context.kind === "answer"
+      ? await prisma.attempt.findFirst({
+          orderBy: { answeredAt: "desc" },
+          select: { answer: true },
+          where: { answer: { equals: mistake.id, path: ["practiceMistakeId"] }, userId },
+        })
+      : null;
+
+  const step = showStepOptions({
+    seed: getAnsweredShowing({ answer: practiced?.answer, mistake }),
+    step: replay.lesson.step,
+  });
 
   const answer =
     context.kind === "answer"
@@ -257,11 +272,14 @@ export async function buildLibraryQuestionContextSnapshot({
     return buildMistakeContext({ context, lesson, userId });
   }
   // Use the learner's opened version even when a background check has replaced it.
-  const version = await findOpenedVersion({
-    lessonId: lesson.id,
-    stepIds: getContextStepIds(context).filter((id) => isUuid(id)),
-    userId,
-  });
+  const [version, finishedAt] = await Promise.all([
+    findOpenedVersion({
+      lessonId: lesson.id,
+      stepIds: getContextStepIds(context).filter((id) => isUuid(id)),
+      userId,
+    }),
+    findLastLessonFinish({ lessonId: lesson.id, userId }),
+  ]);
 
   const row = await findPlayableLessonRow({ lessonId: lesson.id, userId, version });
 
@@ -269,7 +287,9 @@ export async function buildLibraryQuestionContextSnapshot({
     return { status: "invalidContext" as const };
   }
 
-  const lessonRows = await loadPlayableSteps({ lesson: row, rows: row.steps });
+  const sitting = getLessonSitting({ finishedAt, lessonId: lesson.id, userId });
+  const loaded = await loadPlayableSteps({ lesson: row, rows: row.steps });
+  const lessonRows = loaded.map((step) => showStepOptions({ seed: sitting, step }));
   const steps = getRequestedSteps({ context, steps: lessonRows });
 
   if (!steps) {

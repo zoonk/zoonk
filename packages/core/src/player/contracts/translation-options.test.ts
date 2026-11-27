@@ -1,5 +1,6 @@
 import { shuffle } from "@zoonk/utils/shuffle";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { anyOrder } from "../../_test-utils/any-order";
 import {
   type DistractorWord,
   buildDistractorWordLookup,
@@ -62,6 +63,8 @@ describe(buildTranslationOptions, () => {
       },
     });
 
-    expect(options.map((option) => option.word)).toStrictEqual([word, ...distractors]);
+    expect(anyOrder(options.map((option) => option.word))).toStrictEqual(
+      anyOrder([word, ...distractors]),
+    );
   });
 });

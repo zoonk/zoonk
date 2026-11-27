@@ -5,6 +5,7 @@ import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtur
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { stepVariantFixture } from "@zoonk/testing/fixtures/library-steps";
 import { describe, expect, it } from "vitest";
+import { z } from "zod";
 import { lessonRunFixture } from "../../lesson-player/_test-utils/lesson-run-fixture";
 import {
   setupPlayableLesson,
@@ -126,7 +127,14 @@ describe("personal versions of shared lessons", () => {
       image: null,
     });
 
-    expect(contentOf(served, "check")).toStrictEqual(check.content);
+    const shared = z.looseObject({ options: z.array(z.unknown()) }).parse(check.content);
+
+    expect(contentOf(served, "check")).toStrictEqual({
+      ...shared,
+      options: expect.arrayContaining(shared.options),
+    });
+
+    expect(contentOf(served, "check")).toHaveProperty("options.length", shared.options.length);
   });
 
   it("gives a tool version's explore the solved end state of its own content", async () => {

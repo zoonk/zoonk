@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import {
   type ChoiceItem,
   parseChoiceItem,
+  showChoiceItem,
   toQuestionView,
 } from "../../../learner/_utils/choice-items";
 import {
@@ -25,6 +26,7 @@ import {
   toItemCitation,
 } from "../../../library/sources/source-citation";
 import { type IrtItem, toIrtItem } from "../../scoring/irt";
+import { type MockConditions } from "../mock-contract";
 import { type MockQuestion } from "../mock-view-contract";
 
 type MockQuestionItem = ChoiceItem | MathItem | TypedItem;
@@ -103,19 +105,31 @@ export function serveMockMath({ item, mockId }: { item: MathItem; mockId: string
   return serveMath({ item, seed: `${mockId}:${item.id}` });
 }
 
+export type MockShowing = {
+  conditions: Pick<MockConditions, "partialCredit" | "shufflesOptions">;
+  id: string;
+};
+
+/** A mock shows each question's options in an order of its own; show and grade from this item. */
+export function showMockChoice({ item, mock }: { item: ChoiceItem; mock: MockShowing }) {
+  return mock.conditions.shufflesOptions
+    ? showChoiceItem({ item, seed: `${mock.id}:${item.id}` })
+    : item;
+}
+
 const NO_EXTRAS = { entry: null, select: null, unit: null };
 
-function toFormatView({ item, mockId }: { item: MockItem; mockId: string }) {
+function toFormatView({ item, mock }: { item: MockItem; mock: MockShowing }) {
   switch (item.format) {
     case "numeric": {
-      const version = serveMockMath({ item, mockId });
+      const version = serveMockMath({ item, mockId: mock.id });
       return { ...NO_EXTRAS, ...toMathQuestionView({ item, version }) };
     }
     case "typed":
       return { ...NO_EXTRAS, ...toTypedQuestionView(item) };
     case "multipleChoice":
     case "trueFalse":
-      return { ...NO_EXTRAS, ...toQuestionView(item) };
+      return { ...NO_EXTRAS, ...toQuestionView(showMockChoice({ item, mock })) };
     default:
       throw new Error("Unknown mock question format.");
   }
@@ -124,10 +138,10 @@ function toFormatView({ item, mockId }: { item: MockItem; mockId: string }) {
 /** Safe for a running mock: excludes answers and explanations. */
 export function toMockQuestionView({
   item,
-  mockId,
+  mock,
 }: {
   item: MockItem;
-  mockId: string;
+  mock: MockShowing;
 }): Omit<MockQuestion, "area" | "number"> {
-  return { ...toFormatView({ item, mockId }), set: item.set };
+  return { ...toFormatView({ item, mock }), set: item.set };
 }

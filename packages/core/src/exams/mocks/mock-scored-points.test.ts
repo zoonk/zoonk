@@ -5,6 +5,7 @@ import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { pickItemInMock } from "../../_test-utils/shown-choice";
 import { SESSION_NOW } from "../../sessions/_test-utils/session-goal";
 import { finishMock } from "./finish-mock";
 import { getMock } from "./get-mock";
@@ -159,11 +160,15 @@ describe("a mock scored in the notice's points", () => {
     const running = await readMock(id);
 
     await Promise.all(
-      (running.current?.questions ?? []).map((question) =>
+      (running.current?.questions ?? []).map(async (question) =>
         saveMockAnswer({
           blockId: id,
           input: {
-            answer: { selectedIndex: question.skillId === mathSkillId ? 0 : 1 },
+            answer: await pickItemInMock({
+              itemId: question.itemId,
+              mockId: id,
+              right: question.skillId === mathSkillId,
+            }),
             durationMs: 30_000,
             flagged: false,
             itemId: question.itemId,

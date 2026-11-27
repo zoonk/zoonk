@@ -2,6 +2,7 @@ import { prisma } from "@zoonk/db";
 import { planChangeFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { describe, expect, it } from "vitest";
+import { pickInPlacement } from "../../_test-utils/shown-choice";
 import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
 import { PLAN_SHOWN, examTestGoalFixture } from "../_test-utils/exam-test-goal";
@@ -28,7 +29,7 @@ const CASES = [
     ticked: false,
   },
   {
-    answer: { selectedIndex: 0 },
+    answer: "right",
     asked: "Target",
     expected: "Other",
     name: "a subject answered right",
@@ -136,13 +137,12 @@ describe("the Focus test ranking acceptance examples", () => {
       });
     }
 
+    const itemId = items.find((item) => subjectOf(item.skillId) === sample.asked)?.id ?? "";
+    const answer = sample.answer === "right" ? await pickInPlacement({ itemId }) : sample.answer;
+
     const result = await answerPlacementQuestion({
       goalId: goal.id,
-      input: {
-        answer: sample.answer,
-        durationMs: 10_000,
-        itemId: items.find((item) => subjectOf(item.skillId) === sample.asked)?.id ?? "",
-      },
+      input: { answer, durationMs: 10_000, itemId },
     });
 
     expect(result.status).toBe("ready");

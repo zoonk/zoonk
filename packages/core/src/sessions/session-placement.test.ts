@@ -5,6 +5,7 @@ import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { pickItemInBlock } from "../_test-utils/shown-choice";
 import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
 import { lowGuessTapItems } from "../learner/_test-utils/placement-tap-items";
 import { loadSkillsToConfirm } from "../learner/_utils/load-skill-claims";
@@ -285,7 +286,7 @@ describe("placement in the first week's sessions", () => {
     const capsule = await answerStudyQuestion({
       blockId,
       input: {
-        answer: { selectedIndex: 0 },
+        answer: await pickItemInBlock({ blockId, itemId: capsuleItem?.id ?? "" }),
         durationMs: 3000,
         itemId: capsuleItem?.id ?? "",
         timeZone: TIME_ZONE,
@@ -354,7 +355,7 @@ describe("placement in the first week's sessions", () => {
     const result = await answerStudyQuestion({
       blockId,
       input: {
-        answer: { selectedIndex: 0 },
+        answer: await pickItemInBlock({ blockId, itemId: placementItemId }),
         durationMs: 3000,
         itemId: placementItemId,
         timeZone: TIME_ZONE,
@@ -389,7 +390,7 @@ describe("placement in the first week's sessions", () => {
     await answerStudyQuestion({
       blockId,
       input: {
-        answer: { selectedIndex: 1 },
+        answer: await pickItemInBlock({ blockId, itemId: placementItemId, right: false }),
         durationMs: 3000,
         itemId: placementItemId,
         timeZone: TIME_ZONE,
@@ -409,7 +410,7 @@ describe("placement in the first week's sessions", () => {
     await answerStudyQuestion({
       blockId,
       input: {
-        answer: { selectedIndex: 0 },
+        answer: await pickItemInBlock({ blockId, itemId: placementItemId }),
         durationMs: 3000,
         itemId: placementItemId,
         timeZone: TIME_ZONE,
@@ -441,7 +442,7 @@ describe("placement in the first week's sessions", () => {
     await answerStudyQuestion({
       blockId,
       input: {
-        answer: { selectedIndex: 0 },
+        answer: await pickItemInBlock({ blockId, itemId: placementItemId }),
         durationMs: 3000,
         itemId: placementItemId,
         timeZone: TIME_ZONE,

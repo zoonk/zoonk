@@ -4,6 +4,7 @@ import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fix
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { pickInBlock } from "../_test-utils/shown-choice";
 import { recordLearnerAnswer } from "../learner/record-learner-answer";
 import { gradeSessionAnswer, parseSessionItem } from "../sessions/_utils/session-items";
 import { getMistakePractice } from "./get-mistake-practice";
@@ -28,7 +29,7 @@ describe("legacy original identity", () => {
       }
 
       const oldGrade = gradeSessionAnswer({
-        answer: { selectedIndex: 1 },
+        answer: pickInBlock({ blockId: original.id, item: original, right: false }),
         blockId: original.id,
         item: parsed,
       });

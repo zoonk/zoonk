@@ -71,11 +71,13 @@ async function toCheckpointResult({
   blockId,
   checkpoint,
   itemIds,
+  keepsStoredOrder,
   sessionId,
   userId,
 }: {
   blockId: string;
   checkpoint: CheckpointOutcome | null;
+  keepsStoredOrder?: boolean;
   itemIds: string[];
   sessionId: string;
   userId: string;
@@ -106,7 +108,7 @@ async function toCheckpointResult({
       return [];
     }
 
-    const graded = gradeSessionAnswer({ answer, blockId, item });
+    const graded = gradeSessionAnswer({ answer, blockId, item, keepsStoredOrder });
 
     return [
       {
@@ -180,6 +182,7 @@ async function finishQuestionBlock(
       blockId: owned.block.id,
       checkpoint: settlement.checkpoint,
       itemIds: answeredItemIds,
+      keepsStoredOrder: !payload.shufflesOptions,
       sessionId: owned.session.id,
       userId: owned.userId,
     }),
