@@ -701,6 +701,7 @@ describe(countWritingLines, () => {
       source: "international politics Q4, written small",
     },
     { characters: 111, lines: 60, paragraphs: 3, source: "history Q2" },
+    { characters: 130, lines: 60, paragraphs: 19, source: "2025 history Q1, 30 of 30" },
     { characters: 62, lines: 30, paragraphs: 4, source: "translation" },
   ])(
     "grades in full a published answer of $characters characters a line ($source)",
@@ -727,7 +728,7 @@ describe(countWritingLines, () => {
   );
 
   it("stops where even the densest measured handwriting runs past the sheet", () => {
-    const text = handwrittenAnswer({ characters: 150, lines: 40, paragraphs: 4 });
+    const text = handwrittenAnswer({ characters: 180, lines: 40, paragraphs: 4 });
 
     const { estimatedLines, ignoredFrom } = countWritingLines({
       charactersPerLine: WRITING_CHARACTERS_PER_LINE,
@@ -741,8 +742,8 @@ describe(countWritingLines, () => {
   });
 
   it("keeps each issued task's typical width and scales the dense one from it", () => {
-    expect(getDenseCharactersPerLine(WRITING_CHARACTERS_PER_LINE)).toBe(135);
-    expect(getDenseCharactersPerLine(55)).toBe(85);
+    expect(getDenseCharactersPerLine(WRITING_CHARACTERS_PER_LINE)).toBe(155);
+    expect(getDenseCharactersPerLine(55)).toBe(98);
   });
 
   it.each(lineFixtures)(

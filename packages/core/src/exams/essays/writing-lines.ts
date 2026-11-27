@@ -6,9 +6,9 @@ const GRAPHEMES = new Intl.Segmenter(undefined, { granularity: "grapheme" });
 // Median of 38 published handwritten answers from CACD 2024–2025 and Inep’s 2020 booklet.
 export const WRITING_CHARACTERS_PER_LINE = 87;
 
-// The densest answers the CACD 2024 guide records as read in full fit about 133 characters a
-// line on their sheet, one written small on purpose to fit (#3265).
-const DENSEST_CHARACTERS_PER_LINE = 135;
+// The densest of 122 published CACD answers read in full: a 2025 history answer of 7,771
+// characters and 19 paragraphs on 60 lines, marked 30 of 30 (#3265).
+const DENSEST_CHARACTERS_PER_LINE = 155;
 
 /** The densest real handwriting on a sheet whose typical hand fits `charactersPerLine`. */
 export function getDenseCharactersPerLine(charactersPerLine: number) {
