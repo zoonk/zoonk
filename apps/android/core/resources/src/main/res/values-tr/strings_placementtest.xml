@@ -20,7 +20,6 @@
   "placementtest_lessons_you_know": "91867c92bc57b4aaa729e0cdaa7ca99e61c8c542090d817ef94a103adf912cb4",
   "placementtest_level_stays": "d6eda51f18be37751548dcba13d65ae337fdc928ec2eb4416c5df1f76fd5a9a4",
   "placementtest_level_title": "c3c9b6d7d26941e8d3c537f0b1acc9c06719299630655fdef861a13e6eacb8b0",
-  "placementtest_listening_later": "384ea89920e001cd2c27e38cadbbde26ca0c05b3a1316666be26d291f93270db",
   "placementtest_listening_range": "a181b1263290aa62941dabf8266bd35e77a2657520d2fa8f69b7ebf26338f117",
   "placementtest_next_time": "80996fcfb2a1354dbee093c0885f1a57ae8c5201a805acef2762fcee96aaf2d2",
   "placementtest_no_lessons_skipped": "e6ffe69770cd92565cd67936c05677c45a740f8e5f900ed92e1b28bb35339c20",
@@ -36,7 +35,6 @@
   "placementtest_parts_any_day": "68ee123bf22892d82608bf14636512c642f8e687c1b05019a8dc8c0b2e438a8d",
   "placementtest_parts_left": "a6698ef8b8f66209a8248cdc4f404118b23afd0dff6764606289a82bb151e71e",
   "placementtest_plan_stays": "06ffaffa1fe251545b939357a4a2127af706225ac97f589a6ba3766e8b987749",
-  "placementtest_questions": "af7822ce74dea760848a70c2ace12b04339c463df1686777cf18247b1b54b72d",
   "placementtest_quick": "e04d7fb357a53a3fb50185c90e7a04fa74033c861257582fc618b671c8b05d94",
   "placementtest_reading_range": "720e57a1e6b0e80b117eeb4c8801ac7c7807f1e1ed6630690b08c5a2e6e36557",
   "placementtest_retake_tomorrow": "b79e7a9f3dd22ae19f1849323f1f979195cc0f233554b217b36979b791f6241f",
@@ -44,12 +42,14 @@
   "placementtest_start": "2b53df7129f78ca4d5c8571a94be42ae623975b3c82e311f90168d7a4e4270d6",
   "placementtest_start_lesson": "17b79a26e7ac1833a4f3bd813f8189687c0478232bfd0039c8d13ac15a8557f9",
   "placementtest_start_title": "27ac4448c089aa7eebcff6547aac076aceee254fd5090717a1741c60e46fdab7",
+  "placementtest_take_again_later": "a6356a645dd706f07504141f75c60c73baa260f9ae4fa46aefb876ac9a0c6174",
   "placementtest_test_out": "b7d39d9b2aa9ee6364a998a761b113e6be611badd132435548bed7e390486278",
   "placementtest_test_out_description": "8d36a874b0bb57c785ec8982c79155466d0130820de1029ca8a584f5695e284c",
   "placementtest_test_out_unavailable": "64b1d108553f6341dc76561c1033bf2a8655edca82da633feb6b0e38f72ce57e",
   "placementtest_test_the_rest": "b8add9d1930c6d7302f7a67cf2b02ea5340494a846a331306df7819d1fc42f48",
   "placementtest_title": "6b9565f72ab097bc91ed0b3de292b9056249128d8cd31880a9f9abf491e157ed",
   "placementtest_up_next": "fd500bc5da44eace258e4d04ae9e2565d4e332422603803b955bdfb09dff385f",
+  "placementtest_up_to_questions": "387fa99af9eded21d57e732799ae4cf8c4e42132074f505abe9201bc2e3fcfcd",
   "placementtest_where_to_start": "0659a1883759d0b53f6317fe1edbf5ec4d21fd5c012b9285b9c794566d6b6638",
   "placementtest_your_level": "07adfc6bdbc8d4bf2c275d9a7687a94fbe31300409f3c17df5439be8a7dd94f8"
 }
@@ -108,9 +108,10 @@
         <item quantity="one">%d bölüm, istediğin gün</item>
         <item quantity="other">%d bölüm, istediğin gün</item>
     </plurals>
-    <plurals name="placementtest_questions">
-        <item quantity="one">%d soru</item>
-        <item quantity="other">%d soru</item>
+    <!-- The most questions a test asks. It can end sooner. -->
+    <plurals name="placementtest_up_to_questions">
+        <item quantity="one">En fazla %d soru</item>
+        <item quantity="other">En fazla En çok %d soru</item>
     </plurals>
     <!-- Where the learner is in a test split into parts, such as “Part 3 of 14”. -->
     <string name="placementtest_part_of">%2$d bölümün %1$d. bölümü</string>
@@ -138,7 +139,8 @@
         <item quantity="one">Zaten bildiğin %d ders atlandı.</item>
         <item quantity="other">Zaten bildiğin %d ders atlandı.</item>
     </plurals>
-    <string name="placementtest_listening_later">Dinleme testini daha sonra planından yapabilirsin.</string>
+    <!-- On a level test's result when listening wasn't tested, such as after the learner said they can't listen now. -->
+    <string name="placementtest_take_again_later">Planındaki testi daha sonra tekrar çözebilirsin.</string>
     <string name="placementtest_not_tested">Henüz test edilmedi</string>
     <string name="placementtest_about_left">Yaklaşık %1$s kaldı</string>
 </resources>

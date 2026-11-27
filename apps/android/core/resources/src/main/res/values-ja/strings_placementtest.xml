@@ -20,7 +20,6 @@
   "placementtest_lessons_you_know": "d926acecc2e9e8ba589365659222bfe3f6b2395bffae76b2129caff25e4a1ec4",
   "placementtest_level_stays": "50e02b4c50590f0bae9d87349b5a26c238b8e880f05de771f2589f0fee5649a7",
   "placementtest_level_title": "7779b36e988024a3862ac8264dcff889e97e6018c67fb48aac694980a1abe23b",
-  "placementtest_listening_later": "129170061d927eed9380a11464add6d09a14b116054f0827d4747b4e96b118bf",
   "placementtest_listening_range": "b3d49f32655878f9cadf0a0c912dcc9a80f868bc561df30b2781f6cb97770674",
   "placementtest_next_time": "832da2c7878ede0ac836e58a41527080d1c4aa9822ee7a3cd0b814dda2cc3664",
   "placementtest_no_lessons_skipped": "d7a3ff8f972afd0923c9757763ebf15e70fce9aea8330a9443b04d2ba6c8e529",
@@ -36,7 +35,6 @@
   "placementtest_parts_any_day": "4d041a4d57094308a7bfa09a1f23d715cd25043b18e08e29bc0d00fa093e76ce",
   "placementtest_parts_left": "89592685c5661cb3f6be27d7800327017b5252b141a339b226289a3d4ad1b0ce",
   "placementtest_plan_stays": "899a9544875a2fceaff76c79ad74bec1d1976502c35dfdae45e57519025a2adc",
-  "placementtest_questions": "2ac43719c802508173556d498624d7eb1536cff638042f0411e50d01d54cbf47",
   "placementtest_quick": "6f8aabdbc9033b3920d122574842bdf03e5b50a7c24ef591262b6d5709d84334",
   "placementtest_reading_range": "46926aa07af8f417594bb0c32737e9fb24e9e9f93c208077e6b8b3bdca3ae489",
   "placementtest_retake_tomorrow": "e9243b5a572d038d48d3358c3e80d20cee8aec8a06d4827337f4913c2b493ec5",
@@ -44,12 +42,14 @@
   "placementtest_start": "f21bcdce1a282950dd342c211a721aa9ccf1fa8d64b7e0776c8336c00c050ee0",
   "placementtest_start_lesson": "c74079037eefd27e344dd9d4bef94919659abe757456c8b5ed5186b0433ce791",
   "placementtest_start_title": "43cbd2e118e3c9bc7c58adde415a1325bb05e46b6ccfa7f064c73f07d3a7893b",
+  "placementtest_take_again_later": "d6f8101ce6933d9124731b8886012b6aa78aa840d2da23fff320132b454be732",
   "placementtest_test_out": "5938c797a204e1ba2dc716cc78c83fad14e1f35ffedfe5e0ba37218126cd4b46",
   "placementtest_test_out_description": "4f0a2a17138bfb535b1209daa37106cb561b3b8193ae8e76fdfa2c1023da2b6f",
   "placementtest_test_out_unavailable": "9c78e8b0d4e85833e4dcd3e25d5d604f256eccde2a7f4c2fdbbb998f10509aac",
   "placementtest_test_the_rest": "a9619efa1962bd6f47068aa9d564d160982da306809ed347628eceaad4e487ae",
   "placementtest_title": "7de03d824e836683f6c48b228a1fd6bd2d167dfce400039c7f705493ee7cf186",
   "placementtest_up_next": "080e102fad6e336c7bf87743b3a8d011c813c20287f6ab380fa500f6e162f249",
+  "placementtest_up_to_questions": "ccc4a2870e3f4f0c32d779670844b3118bf74acee65b51452385e857739b9162",
   "placementtest_where_to_start": "7d26cd014b2e8b151e3cdd55411c90bc9d32e085cf2eb2ad7fd362d06068e6f6",
   "placementtest_your_level": "42b86d084486717d65a28fbb7f590f410143d8f5a291dc6896f42555c1bb80d5"
 }
@@ -106,8 +106,9 @@
     <plurals name="placementtest_parts_any_day">
         <item quantity="other">好きな日に受けられる%dパート</item>
     </plurals>
-    <plurals name="placementtest_questions">
-        <item quantity="other">%d問</item>
+    <!-- The most questions a test asks. It can end sooner. -->
+    <plurals name="placementtest_up_to_questions">
+        <item quantity="other">最大%d問</item>
     </plurals>
     <!-- Where the learner is in a test split into parts, such as “Part 3 of 14”. -->
     <string name="placementtest_part_of">全%2$dパート中%1$dパート</string>
@@ -132,7 +133,8 @@
     <plurals name="placementtest_lessons_you_know">
         <item quantity="other">すでに知っている%dレッスンをスキップしました。</item>
     </plurals>
-    <string name="placementtest_listening_later">リスニングはあとで学習計画からテストできます。</string>
+    <!-- On a level test's result when listening wasn't tested, such as after the learner said they can't listen now. -->
+    <string name="placementtest_take_again_later">学習計画から、後でテストをもう一度受けられます。</string>
     <string name="placementtest_not_tested">未受験</string>
     <string name="placementtest_about_left">残り約%1$s</string>
 </resources>

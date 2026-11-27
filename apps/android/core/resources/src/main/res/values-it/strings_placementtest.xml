@@ -20,7 +20,6 @@
   "placementtest_lessons_you_know": "43da5d13460e8c90409133d51295c8a440f8420fc073b07f030f2643840458bf",
   "placementtest_level_stays": "fd4a62131e1668dddced1dac1791301c31950636cca8bba99272c845ff57f045",
   "placementtest_level_title": "ad6f95ce0a1bed977cc6bae4748c6dbda7690a22caf2d9598da37bf422d969cf",
-  "placementtest_listening_later": "f8e3e36a0b2b4455be6d68646af80edc9a5be367875ed4c558e2ddc0bd80067e",
   "placementtest_listening_range": "0a465c45e3a0ca92010668600b680d95f411b14b1418011ca6e301a8b866f816",
   "placementtest_next_time": "2e4f81a9ff13fbdc6ae93be03144c4897682b2acb2f6fb0916a7c9da36a47e4f",
   "placementtest_no_lessons_skipped": "4e57535eb14147b3342deb2cd85904458f6b9406a418e2048ee9e9b6aca23c18",
@@ -36,7 +35,6 @@
   "placementtest_parts_any_day": "6dc68ce5074aa7b4b446dfc6102d2ee4d31a187f2570ce04e6e128080d906d2e",
   "placementtest_parts_left": "d278c1f12c1dfd89a152ad2176b4462fe11ac16e49a1071e3ee60f2014c9f344",
   "placementtest_plan_stays": "f68b8e9234f11cb68c67ebd31f1d049be5edb9f079cc875fde1565ee54e341df",
-  "placementtest_questions": "2a02ea80c899a00a74fb9c9566ebb21995873c3b01a8418567e8b87096625ded",
   "placementtest_quick": "9f5924e76649f36569afd04345ff313fb52f2e7b38ad294c50151193d8b02c53",
   "placementtest_reading_range": "01755a61edf1cea8929366ff848bde3305170af5751f2b02cc34e36df94f99ee",
   "placementtest_retake_tomorrow": "588eda29eee573a3c59bbb133d42cbc5ed3ac9cf0d318947a7670ed9f12fbf79",
@@ -44,12 +42,14 @@
   "placementtest_start": "3fa981ba5c86163cc534fd4fb3f1d74009066d4775f44eea317f3a0e4497f66c",
   "placementtest_start_lesson": "02b1777a3fb88f2b4a0c0f97e98ac27ef503ddb97f18ec430f036fb3d3f653f8",
   "placementtest_start_title": "12dd3e425e77fcdee48cbb5c0adbd8ecdf414e0c5794ec7d7567df4eef54c6a7",
+  "placementtest_take_again_later": "7f7cefdbc06525d849a50948832ef65c079a77b7910b49c813d8735653614ef5",
   "placementtest_test_out": "d2251381e8fedb25af9b9c4944e79f106d4fab3c126a489f87272def30dac367",
   "placementtest_test_out_description": "d2fdda710997421d57fa9e0cd86f76e4fa6a3fb1cf9dea42de1d00e7cbe9d1e8",
   "placementtest_test_out_unavailable": "648c9616af1695202237fd3aedc0e956cb3f2647db42dec835bd7953f8894ce9",
   "placementtest_test_the_rest": "0c1b3155fbbbf30788a356df16583ccd96c1797752c3139f1fae01248cebcf0e",
   "placementtest_title": "cc5f17e9971bc0690fe402fbffeb009b300c30d72253991bdb15846d52909943",
   "placementtest_up_next": "ea4cca9e2439a9afec9ead58380b2d4d491479938b57563cbf164fced4679705",
+  "placementtest_up_to_questions": "c524f6eee99f3768c5f5bcd60d41ed011c194d47e7483d7e930ec458fec5a58a",
   "placementtest_where_to_start": "21a2c07feafacd494f1f0ccde0cf2d369b1fb458a4ea377a6da4725dda94e4d6",
   "placementtest_your_level": "89336748f857044b5e7d41dc46a1475ad82da4319ccf7f02cd1f3c46554e63af"
 }
@@ -110,10 +110,11 @@
         <item quantity="many">Puoi fare tutte le %d parti quando vuoi</item>
         <item quantity="other">%d parti, quando vuoi</item>
     </plurals>
-    <plurals name="placementtest_questions">
-        <item quantity="one">%d domanda</item>
-        <item quantity="many">%d domande</item>
-        <item quantity="other">%d domande</item>
+    <!-- The most questions a test asks. It can end sooner. -->
+    <plurals name="placementtest_up_to_questions">
+        <item quantity="one">Fino a %d domanda</item>
+        <item quantity="many">Fino a %d domande</item>
+        <item quantity="other">Fino a %d domande</item>
     </plurals>
     <!-- Where the learner is in a test split into parts, such as “Part 3 of 14”. -->
     <string name="placementtest_part_of">Parte %1$d di %2$d</string>
@@ -144,7 +145,8 @@
         <item quantity="many">Saltate %d lezioni che conosci già.</item>
         <item quantity="other">Saltate %d lezioni che conosci già.</item>
     </plurals>
-    <string name="placementtest_listening_later">Puoi fare la prova di ascolto più tardi, dal tuo piano.</string>
+    <!-- On a level test's result when listening wasn't tested, such as after the learner said they can't listen now. -->
+    <string name="placementtest_take_again_later">Puoi ripetere il test più tardi, dal tuo piano.</string>
     <string name="placementtest_not_tested">Non ancora valutato</string>
     <string name="placementtest_about_left">Ancora circa %1$s</string>
 </resources>
