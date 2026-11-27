@@ -1,8 +1,8 @@
 import { randomUUID } from "node:crypto";
-import { type Locator, type Route } from "@playwright/test";
+import { type Route } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
-import { holdScripts } from "@zoonk/e2e/hydration";
+import { centerOf, holdScripts } from "@zoonk/e2e/hydration";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import {
   courseChapterFixture,
@@ -117,11 +117,6 @@ async function createLibraryCourse() {
     unwrittenPath: `${chapterPath}/l/${unwritten.slug}`,
     written,
   };
-}
-
-async function centerOf(locator: Locator) {
-  const box = await locator.boundingBox();
-  return { x: (box?.x ?? 0) + (box?.width ?? 0) / 2, y: (box?.y ?? 0) + (box?.height ?? 0) / 2 };
 }
 
 async function writeLessonWhenFollowed({ lessonId, page }: { lessonId: string; page: Page }) {
@@ -246,7 +241,6 @@ test.describe("public Library lesson page", () => {
 
     await page.goto(lessonPath, { waitUntil: "domcontentloaded" });
 
-    // Measured first: once a tap starts the player's page, a locator waits for that page.
     const [cloud, planet] = await Promise.all([
       centerOf(page.getByRole("button", { name: "No, it's more like a cloud" })),
       centerOf(page.getByRole("button", { name: "Yes, like a tiny planet" })),

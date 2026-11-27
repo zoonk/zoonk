@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
-import { type Page, type Request } from "@playwright/test";
+import { type Page, type Request, type Route } from "@playwright/test";
 import { prisma } from "@zoonk/db";
-import { expectHydrated, holdScripts } from "@zoonk/e2e/hydration";
+import { centerOf, expectHydrated, holdScripts } from "@zoonk/e2e/hydration";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { expect, test } from "./fixtures";
@@ -190,6 +190,81 @@ test.describe("Presses made before the page hydrates", () => {
 
     expect(submissions).toHaveLength(0);
     expect(saves).toHaveLength(1);
+  });
+
+  test("a buddy picked, changed and picked again before the page hydrates saves the last pick", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    const goal = await openOnboardingStep(noProgressUser.id, "buddy");
+    const path = `/start/${goal.id}`;
+    const isAnswer = isOnboardingAnswer({ path, question: "buddy" });
+    const release = await holdScripts(page);
+
+    await page.goto(path, { waitUntil: "domcontentloaded" });
+    const noodle = page.getByRole("radio", { name: /^Noodle/u });
+    const otto = page.getByRole("radio", { name: /^Otto/u });
+
+    await noodle.click();
+    await otto.click();
+    await noodle.click();
+    await expect(noodle).toHaveAttribute("data-held", "checked");
+    await expect(otto).not.toHaveAttribute("data-held");
+    await release();
+
+    await expect(noodle).toBeChecked();
+
+    const [saved] = await Promise.all([
+      page.waitForResponse((response) => isAnswer(response.request())),
+      page.getByRole("button", { exact: true, name: "Continue" }).click(),
+    ]);
+
+    expect(saved.ok()).toBe(true);
+
+    await expect
+      .poll(() =>
+        prisma.userLearningProfile.findUnique({
+          select: { buddyKind: true },
+          where: { userId: noProgressUser.id },
+        }),
+      )
+      .toEqual({ buddyKind: "noodle" });
+  });
+
+  test("a tab tapped before the page hydrates shows it's on its way, and a tab tapped after never keeps that look", async ({
+    userWithoutProgress: page,
+  }) => {
+    const opening: Route[] = [];
+    const release = await holdScripts(page);
+
+    await page.route("**/plan", (route) => {
+      opening.push(route);
+    });
+
+    await page.goto("/today", { waitUntil: "domcontentloaded" });
+    const tabs = page.getByRole("navigation", { name: "Learning tabs" });
+    const plan = tabs.getByRole("link", { name: "Plan" });
+    const today = tabs.getByRole("link", { name: "Today" });
+
+    const tap = await centerOf(plan);
+    await page.mouse.click(tap.x, tap.y);
+    await expect.poll(() => opening.length).toBe(1);
+
+    // Cancelled as the browser's stop button would: the page stays, still showing the tap.
+    await opening[0]?.abort("aborted");
+    await page.unroute("**/plan");
+    await expect(plan).toHaveAttribute("data-held", "");
+    await release();
+
+    await expectHydrated(plan);
+    await plan.click();
+    await expect(page).toHaveURL(/\/plan$/u);
+    await expect(plan).toHaveAttribute("aria-current", "page");
+    await expect(plan).not.toHaveAttribute("data-held");
+
+    await today.click();
+    await expect(page).toHaveURL(/\/today$/u);
+    await expect(today).not.toHaveAttribute("data-held");
   });
 
   test("an early memory switch press shows the new setting and saves it once", async ({
