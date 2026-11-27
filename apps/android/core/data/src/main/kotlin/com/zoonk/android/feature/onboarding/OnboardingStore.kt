@@ -510,13 +510,13 @@ class OnboardingStore(
             session?.let { api.placement(it, goalId) }
         }
 
-    /** [attempt] is the part of the test taken from the plan the answer belongs to; onboarding's and the Focus test's have none. */
+    /** [attemptId] is the test taken from the plan the answer belongs to; onboarding's and the Focus test's have none. */
     suspend fun answerPlacement(
         goalId: String,
         itemId: String,
         answer: TapAnswer,
         durationMs: Long,
-        attempt: PlacementPart? = null,
+        attemptId: UUID? = null,
     ): WriteOutcome<PlacementAnswerResult> =
         write(
             setOf(DataDomain.LearnerModel),
@@ -527,8 +527,7 @@ class OnboardingStore(
                     answer = answer,
                     durationMs = durationMs,
                     itemId = UUID.fromString(itemId),
-                    attemptId = attempt?.attemptId,
-                    part = attempt?.part,
+                    attemptId = attemptId,
                     timeZone = TimeZone.getDefault().id,
                 )
             api.answerPlacement(session, goalId, input)
@@ -536,7 +535,7 @@ class OnboardingStore(
 
     /**
      * An exam's Focus test sitting turns its questions on in sessions, which the plan and Today say. With a [length],
-     * the test taken from the plan, or its next part.
+     * the course's test taken from the plan.
      */
     suspend fun startPlacementSitting(
         goalId: String,
@@ -547,16 +546,16 @@ class OnboardingStore(
         }
 
     /**
-     * The API starts writing the lessons the plan now opens with, so nothing else prepares them. A part of the test
-     * taken from the plan ([attempt]) that another device closed first fails; the placement read then says where it is.
+     * The API starts writing the lessons the plan now opens with, so nothing else prepares them. A test taken from the
+     * plan ([attemptId]) that another device closed first fails; the placement read then says where it is.
      */
     suspend fun finishPlacement(
         goalId: String,
         fromScratch: Boolean,
-        attempt: PlacementPart? = null,
+        attemptId: UUID? = null,
         answered: Long? = null,
     ) = write(setOf(DataDomain.Goals, DataDomain.LearnerModel, DataDomain.UserProgress)) {
-        api.finishPlacement(it, goalId, fromScratch, attempt, answered)
+        api.finishPlacement(it, goalId, fromScratch, attemptId, answered)
     }
 
     /** A language goal's onboarding level test; each answer replies with its next step. */

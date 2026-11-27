@@ -3,10 +3,9 @@ import { itemFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
-import { pickInPlacement } from "../../_test-utils/shown-choice";
 import { learnerGoalFixture } from "../_test-utils/learner-goal";
-import { answerPlacementQuestion } from "./answer-placement-question";
 import { getGoalPlacement } from "./get-goal-placement";
+import { startPlacementSitting } from "./start-placement-sitting";
 
 describe("placement tap questions", () => {
   it.each([
@@ -44,48 +43,33 @@ describe("placement tap questions", () => {
       const user = await userFixture();
 
       const { goal, skills } = await learnerGoalFixture({
-        itemsPerSkill: 1,
-        phases: [1],
+        itemsPerSkill: 0,
+        phases: [2],
         userId: user.id,
       });
 
-      const confirmation = await itemFixture({ content, format, skillId: skills[0]?.id ?? "" });
+      await Promise.all(
+        skills.flatMap((skill) =>
+          [0, 1].map(() => itemFixture({ content, format, skillId: skill.id })),
+        ),
+      );
 
       mockSession(user.id);
-      const first = await getGoalPlacement({ goalId: goal.id });
+      const opened = await startPlacementSitting({ goalId: goal.id, input: {} });
 
-      expect(first).toMatchObject({
-        placement: { next: { format: "multipleChoice" } },
-        status: "ready",
-      });
-
-      if (first.status !== "ready" || !first.placement.next) {
-        throw new Error("Expected a quick placement question");
+      if (opened.status !== "ready" || !opened.placement.next) {
+        throw new Error("Expected a tap question");
       }
 
-      const second = await answerPlacementQuestion({
-        goalId: goal.id,
-        input: {
-          answer: await pickInPlacement({ itemId: first.placement.next.itemId }),
-          durationMs: 100,
-          itemId: first.placement.next.itemId,
-        },
-      });
+      const next = opened.placement.next;
 
-      if (second.status !== "ready") {
-        throw new Error("Expected a tap placement question after the answer");
-      }
-
-      expect(second.isCorrect).toBe(true);
-      expect(second.placement.knownSkillIds).toStrictEqual([]);
-
-      expect(second.placement.next).toStrictEqual({
+      expect(next).toStrictEqual({
         context: null,
         format,
         image: null,
-        itemId: confirmation.id,
+        itemId: next.itemId,
         question: content.question,
-        skillId: confirmation.skillId,
+        skillId: next.skillId,
         visual: null,
         ...expected,
       });

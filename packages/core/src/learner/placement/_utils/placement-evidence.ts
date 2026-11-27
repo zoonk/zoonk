@@ -127,6 +127,14 @@ export async function loadSeenPlacementItems({
   return new Set(answered.map((attempt) => attempt.itemId));
 }
 
+export function loadCourseAnswers(attemptId: string, userId: string, tx: TransactionClient) {
+  return tx.attempt.findMany({
+    orderBy: [{ answeredAt: "asc" }, { id: "asc" }],
+    select: ATTEMPT_EVIDENCE_SELECT,
+    where: { ...SITTING_ANSWER_FILTER, focusTestId: attemptId, userId },
+  });
+}
+
 /** Returns evidence oldest first. */
 export async function loadEvidence({
   attemptId,

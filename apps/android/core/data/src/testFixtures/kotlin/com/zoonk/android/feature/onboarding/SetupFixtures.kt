@@ -6,7 +6,10 @@ import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.Placement
 import com.zoonk.api.models.PlacementAttempt
 import com.zoonk.api.models.PlacementCompletion
-import com.zoonk.api.models.PlacementLength
+import com.zoonk.api.models.PlacementResult
+import com.zoonk.api.models.PlacementResultCourse
+import com.zoonk.api.models.PlacementResultCourseChaptersInner
+import com.zoonk.api.models.PlacementResultNextLesson
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.Syllabus
 import java.time.LocalDate
@@ -108,30 +111,57 @@ fun focusSittingOf(
      "subject":${subject?.let(::subjectRef) ?: "null"},"hint":${hint?.let { "\"$it\"" } ?: "null"}}
     """.trimIndent()
 
-/** A course test's open attempt, the quick test's by default. */
+/** A course test's open attempt: a search of at most [questions] for where the learner starts. */
 fun placementAttemptOf(
-    length: PlacementLength = PlacementLength.QUICK,
     answered: Long = 0,
-    part: Long = 1,
-    parts: Long = 2,
+    questions: Long = 8,
+    chapter: String? = "Civil procedure",
 ): PlacementAttempt =
     PlacementAttempt(
         answered = answered,
-        chapter = "Civil procedure",
-        estimatedMinutes = 6,
+        chapter = chapter,
+        estimatedMinutes = 4,
         id = java.util.UUID.fromString("0a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d"),
-        length = length,
-        nextPart = null,
-        part = part,
+        length = PlacementAttempt.Length.QUICK,
+        part = PlacementAttempt.Part._1,
         partComplete = false,
-        parts = parts,
-        partsLeft = parts - part + 1,
-        partsRemoved = 0,
-        questions = 12,
-        remainingEstimatedMinutes = 6 * (parts - part + 1),
-        resume = null,
-        totalEstimatedMinutes = 6 * parts,
+        questions = questions,
     )
+
+/**
+ * A course test's result: where it starts the learner, the course's line in plan order (4 of 9 lessons started past,
+ * the start in the third chapter) and the lesson that's next. [course] null is a result from before the plan existed.
+ */
+fun placementResultOf(
+    lessonsSkipped: Long = 4,
+    chapter: String? = "Why prices move",
+    course: PlacementResultCourse? =
+        PlacementResultCourse(
+            lessons = 9,
+            chapters =
+                listOf(
+                    PlacementResultCourseChaptersInner(lessons = 2, skipped = 2, start = false),
+                    PlacementResultCourseChaptersInner(lessons = 2, skipped = 2, start = false),
+                    PlacementResultCourseChaptersInner(lessons = 2, skipped = 0, start = true),
+                    PlacementResultCourseChaptersInner(lessons = 3, skipped = 0, start = false),
+                ),
+        ),
+    changeId: java.util.UUID? = java.util.UUID.fromString("5e6f7a8b-9c0d-4e1f-8a2b-3c4d5e6f7a8b"),
+) = PlacementResult(
+    attemptId = java.util.UUID.fromString("0a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d"),
+    finishedAt = kotlin.time.Instant.parse("2026-11-27T10:00:00Z"),
+    lessonsSkipped = lessonsSkipped,
+    chapter = chapter,
+    course = course,
+    nextLesson =
+        PlacementResultNextLesson(
+            id = java.util.UUID.fromString("6f7a8b9c-0d1e-4f2a-8b3c-4d5e6f7a8b9c"),
+            title = "News, results and expectations",
+            estimatedMinutes = 5,
+            chapter = chapter,
+        ),
+    changeId = changeId,
+)
 
 fun focusOfferOf(
     minutes: Int = 6,
@@ -277,9 +307,10 @@ private fun readingQuestion() =
 fun listeningQuestion(
     audioUrl: String? = null,
     audioPending: Boolean = false,
+    durationMs: Long? = null,
 ): String {
     val audio =
-        audioUrl?.let { """{"durationMs":null,"id":"00000000-0000-4000-8000-0000000000c1","language":"it","url":"$it"}""" } ?: "null"
+        audioUrl?.let { """{"durationMs":$durationMs,"id":"00000000-0000-4000-8000-0000000000c1","language":"it","url":"$it"}""" } ?: "null"
     return """
         {"kind":"question","question":{"audio":$audio,"audioPending":$audioPending,"id":"listening-1","level":"A2","options":["At the station","At home"],
          "passage":"Ci vediamo alla stazione alle otto.","question":"Where are they meeting?","skill":"listening"}}

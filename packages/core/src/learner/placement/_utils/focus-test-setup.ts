@@ -149,7 +149,7 @@ export function startTestTurn({
   });
 
   return {
-    areaOrder: getAreaOrder(progress.subjects),
+    areaOrder: getAreaOrder(progress.subjects, progress.sitting?.kind === "first"),
     progress,
     setup,
     skills: skills.map((skill) => ({ ...skill, sectionTitle: places.get(skill.id)?.area ?? null })),

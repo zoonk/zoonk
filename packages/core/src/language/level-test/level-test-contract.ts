@@ -4,7 +4,8 @@ import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { speechClipSchema } from "../../audio/speech-clip-contract";
 import { answerDurationSchema } from "../../learner/contract";
-import { DAY_PLACEMENT_MINUTES } from "../../learner/placement/placement-budget";
+import { COURSE_QUESTION_LIMIT } from "../../learner/placement/course-search";
+import { DAY_PLACEMENT_MINUTES, getCourseMinutes } from "../../learner/placement/placement-budget";
 import { LANGUAGE_SKILLS } from "../levels/skill-level-rules";
 
 const OPTIONS = 4;
@@ -261,7 +262,11 @@ export const LANGUAGE_LEVEL_TEST_OFFER = {
 
 /** How long the level question's quick test takes: a language goal's is its level test. */
 export function getQuickTestMinutes(kind: GoalKind): number {
-  return kind === "language" ? LANGUAGE_LEVEL_TEST_OFFER.estimatedMinutes : DAY_PLACEMENT_MINUTES;
+  if (kind === "language") {
+    return LANGUAGE_LEVEL_TEST_OFFER.estimatedMinutes;
+  }
+
+  return kind === "learn" ? getCourseMinutes(COURSE_QUESTION_LIMIT) : DAY_PLACEMENT_MINUTES;
 }
 
 export const languageLevelTestViewSchema = z

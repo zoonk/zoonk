@@ -7,9 +7,18 @@ import { loadSkillPrerequisites } from "../../../library/skills/skill-prerequisi
 import { parsePlanGraph } from "../../../plans/planner/plan-state";
 import { pickPlacementItemSkillIds } from "../placement-item-picks";
 import { type OwnLevel } from "../placement-steps";
+import { type PlacementAttempt } from "./placement-attempt-record";
 
 /** Lost generation runs must not leave placement waiting indefinitely. */
 export const QUESTION_WRITING_WINDOW_MS = 10 * 60 * 1000;
+
+export function coursePreparationFailed(attempt: PlacementAttempt) {
+  return (
+    attempt.search?.topics === null &&
+    (attempt.search.failed === true ||
+      Date.now() - Date.parse(attempt.partStartedAt) > QUESTION_WRITING_WINDOW_MS)
+  );
+}
 
 type PlanBuild = {
   failed: boolean;
@@ -25,7 +34,6 @@ export async function loadPlanBuild({
   goalId,
   knownAreas,
   ownLevel,
-  partSettled,
   requestedSkillIds,
   tx = prisma,
 }: {
@@ -39,7 +47,6 @@ export async function loadPlanBuild({
   knownAreas: readonly string[];
   /** The learner's own level, where placement starts asking in each subject. */
   ownLevel: OwnLevel | null;
-  partSettled?: boolean;
   requestedSkillIds?: readonly string[];
   tx?: TransactionClient;
 }): Promise<PlanBuild> {
@@ -65,8 +72,7 @@ export async function loadPlanBuild({
   const writingSince = Math.max(graphWrittenAt.getTime(), askedAt?.getTime() ?? 0);
 
   const writing =
-    (partSettled === undefined ? plan.placementPreparedAt === null : !partSettled) &&
-    Date.now() - writingSince < QUESTION_WRITING_WINDOW_MS;
+    plan.placementPreparedAt === null && Date.now() - writingSince < QUESTION_WRITING_WINDOW_MS;
 
   const graph = parsePlanGraph(plan.graph);
 

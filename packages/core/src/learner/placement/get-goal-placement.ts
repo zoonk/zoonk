@@ -1,6 +1,5 @@
 import "server-only";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { loadPlacementPlan } from "../_utils/goal-skill-graph";
 import { getAnswerTimeZone } from "../_utils/owned-goal";
 import { getRequestInstant } from "../facts/request-instant";
 import { getOwnedGoal } from "../get-owned-goal";
@@ -30,12 +29,11 @@ export async function getGoalPlacement({
     return owned;
   }
 
-  const [plan, now] = await Promise.all([loadPlacementPlan(goalId), getRequestInstant()]);
+  const now = await getRequestInstant();
 
   const placement = await loadPlacementState({
     goalId,
     ownLevel: getOwnLevel({ goal: owned.goal, level }),
-    plan,
     timeZone,
     today: getDateInTimeZone({
       date: now,

@@ -7,21 +7,6 @@ import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.LocalEventTracker
 import com.zoonk.android.data.TestContext
 
-/** A question on screen: the bar's share of its sitting, and what ✕ there says the learner left. */
-internal data class Sitting(
-    val share: Float,
-    val left: AnalyticsEvent.TestLeft,
-)
-
-internal fun sitting(
-    test: TestContext,
-    answered: Long,
-    total: Long,
-) = Sitting(
-    share = if (total > 0) (answered.toFloat() / total).coerceIn(0f, 1f) else 0f,
-    left = AnalyticsEvent.TestLeft(test, questionNumber = answered + 1),
-)
-
 /**
  * One visit to a test, for its sittings' first questions: when the wait for one began (the visit, or the learner's
  * start or "Keep going" in it), and whether the question picks up a sitting opened before.

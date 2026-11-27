@@ -1,11 +1,13 @@
 package com.zoonk.android.feature.placementtest
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -29,7 +31,6 @@ import com.zoonk.android.data.TestContext
 import com.zoonk.android.data.TestRow
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
-import com.zoonk.android.feature.focustest.Pressed
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.setup.PlacementDone
 import com.zoonk.android.feature.onboarding.setup.PlacementQuestion
@@ -38,7 +39,6 @@ import com.zoonk.android.feature.onboarding.setup.PlacementWaiting
 import com.zoonk.android.feature.onboarding.setup.SetupColumn
 import com.zoonk.android.feature.onboarding.setup.SetupContent
 import com.zoonk.android.feature.onboarding.setup.StepLoading
-import com.zoonk.android.feature.onboarding.setup.TestProgress
 import com.zoonk.android.feature.onboarding.setup.isPending
 import com.zoonk.android.feature.onboarding.setup.labelCase
 import com.zoonk.android.feature.onboarding.setup.rememberPoll
@@ -51,14 +51,10 @@ import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.PageLoading
-import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.factsLine
-import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.PlacementAttempt
-import com.zoonk.api.models.PlacementLength
 import com.zoonk.api.models.PlanPlacementTest
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -92,8 +88,9 @@ fun PlacementTestScreen(
 }
 
 /**
- * The frame the tests from the plan share: the open question's bar, a ✕ that saves and leaves, and the goal in the
- * route or the switcher. A goal whose test is another route ([elsewhere]) goes there; without one, Today.
+ * The frame the tests from the plan share, a task: a question's title and segments, a ✕ that leaves or offers the
+ * test's ways out, and the goal in the route or the switcher. A goal whose test is another route ([elsewhere]) goes
+ * there; without one, Today.
  */
 @Composable
 internal fun TestTask(
@@ -105,41 +102,47 @@ internal fun TestTask(
     content: @Composable ColumnScope.(UUID, (Sitting?) -> Unit) -> Unit,
 ) {
     var sitting by remember { mutableStateOf<Sitting?>(null) }
+    val waysOut = rememberWaysOut()
     val scope = rememberCoroutineScope()
     val tracker = LocalEventTracker.current
+    val leave = {
+        sitting?.asking?.let { tracker.track(it.left) }
+        navigator.closeTask()
+    }
 
     TaskScaffold(
-        onClose = {
-            sitting?.let { tracker.track(it.left) }
-            navigator.closeTask()
-        },
-        title = { sitting?.let { TestProgress(it.share) } },
+        onClose = { closeTest(sitting, waysOut, leave) },
+        title = { TestTitle(sitting) },
     ) { padding ->
-        Box(Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding)) {
-            when {
-                elsewhere != null -> {
-                    TestRedirect(elsewhere, navigator)
-                }
+        Column(Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding)) {
+            TestSegments(sitting)
+            Box(Modifier.weight(1f)) {
+                when {
+                    elsewhere != null -> {
+                        TestRedirect(elsewhere, navigator)
+                    }
 
-                goal != null -> {
-                    SetupColumn { content(goal.id) { sitting = it } }
-                }
+                    goal != null -> {
+                        SetupColumn { content(goal.id) { sitting = it } }
+                    }
 
-                summary is LoadState.Failed -> {
-                    LoadFailedMessage(onRetry = { scope.launch { summaries.refresh() } })
-                }
+                    summary is LoadState.Failed -> {
+                        LoadFailedMessage(onRetry = { scope.launch { summaries.refresh() } })
+                    }
 
-                summary is LoadState.Loaded || summary == LoadState.Empty -> {
-                    LaunchedEffect(Unit) { navigator.showRoot(AppTab.Today) }
-                    PageLoading()
-                }
+                    summary is LoadState.Loaded || summary == LoadState.Empty -> {
+                        LaunchedEffect(Unit) { navigator.showRoot(AppTab.Today) }
+                        PageLoading()
+                    }
 
-                else -> {
-                    PageLoading()
+                    else -> {
+                        PageLoading()
+                    }
                 }
             }
         }
     }
+    TestWaysOut(sitting, waysOut, leave)
 }
 
 @Composable
@@ -190,9 +193,32 @@ internal fun ColumnScope.PlacementTestFlow(
     val attempt = placement.value?.attempt
     val test = courseTest(goalId, onboarding != null, attempt)
     val question = shown as? PlacementTestPhase.Question
-    LaunchedEffect(question?.attempt?.answered, question?.attempt?.id) {
-        onSitting(question?.attempt?.let { sitting(test, it.answered, it.questions) })
+    val title = (question?.attempt?.chapter?.takeIf { it.isNotBlank() } ?: subject).labelCase()
+    val open = shown !in OUTSIDE_THE_TEST
+    LaunchedEffect(question?.attempt?.answered, question?.attempt?.id, open) {
+        onSitting(
+            when {
+                question != null -> {
+                    asking(
+                        test,
+                        title,
+                        question.attempt.answered,
+                        question.attempt.questions,
+                        stop = TestStop { vm.stop(question) }.takeIf { question.number > 1 },
+                    )
+                }
+
+                open -> {
+                    Sitting()
+                }
+
+                else -> {
+                    null
+                }
+            },
+        )
     }
+    DisposableEffect(Unit) { onDispose { onSitting(null) } }
     val leave = { onboarding?.continueWith(shown.closedAttempt) ?: navigator.closeTask() }
 
     when (shown) {
@@ -216,13 +242,12 @@ internal fun ColumnScope.PlacementTestFlow(
         }
 
         PlacementTestPhase.Arrived -> {
-            LaunchedEffect(Unit) { vm.start(vm.askedLength) }
+            LaunchedEffect(Unit) { vm.start() }
             StepLoading()
         }
 
         PlacementTestPhase.Waiting, is PlacementTestPhase.PreparationFailed -> {
             val failedStart = shown is PlacementTestPhase.PreparationFailed
-            val length = (shown as? PlacementTestPhase.PreparationFailed)?.attempt?.length ?: vm.askedLength
             PlacementWaiting(
                 existingPlan = onboarding == null,
                 run =
@@ -233,17 +258,9 @@ internal fun ColumnScope.PlacementTestFlow(
                     },
                 onRetry =
                     when {
-                        failedStart -> {
-                            { vm.start(length) }
-                        }
-
-                        poll.stopped -> {
-                            poll::restart
-                        }
-
-                        else -> {
-                            null
-                        }
+                        failedStart -> vm::start
+                        poll.stopped -> poll::restart
+                        else -> null
                     },
                 hold = hold,
                 pending = onboarding?.saving == true,
@@ -255,27 +272,15 @@ internal fun ColumnScope.PlacementTestFlow(
         }
 
         is PlacementTestPhase.Question -> {
-            TrackFirstQuestion(vm.sitting, test, shown.number.toLong(), "${shown.attempt.id}:${shown.attempt.part}")
+            TrackFirstQuestion(vm.sitting, test, shown.number.toLong(), shown.attempt.id.toString())
             SetupContent {
                 key(shown.item.itemId) {
                     PlacementQuestion(
                         item = shown.item,
-                        subject = (shown.attempt.chapter?.takeIf { it.isNotBlank() } ?: subject).labelCase(),
-                        position =
-                            questionPosition(
-                                shown.number,
-                                shown.attempt.questions.toInt(),
-                                shown.attempt.part
-                                    .toInt()
-                                    .takeIf { shown.wholeCourse },
-                                shown.attempt.parts.toInt(),
-                            ),
                         labels = shown.labels,
                         pending = vm.answering,
                         saveFailures = vm.saveFailures,
                         onAnswer = { answer, durationMs -> vm.answer(shown, answer, durationMs) },
-                        onStop = { vm.stop(shown) },
-                        canStop = shown.number > 1,
                     )
                 }
             }
@@ -285,48 +290,8 @@ internal fun ColumnScope.PlacementTestFlow(
             PlacementUnavailable(pending = onboarding?.saving == true, failed = false, onContinue = leave)
         }
 
-        is PlacementTestPhase.PartOver -> {
-            PlacementDone(pending = vm.busy, failed = vm.failed, onContinue = { vm.finishPart(shown.attempt) })
-        }
-
-        is PlacementTestPhase.Continue -> {
-            ContinueTest(
-                facts = continueFacts(shown.attempt),
-                pressed = vm.pressed ?: Pressed.Other.takeIf { onboarding?.saving == true },
-                failed = vm.failed,
-                onContinue = { vm.start(PlacementLength.WHOLE_COURSE) },
-                onFinishLater = leave,
-            )
-        }
-
-        is PlacementTestPhase.PartDone -> {
-            PartDone(
-                part = shown.part,
-                parts = shown.parts,
-                lessonsSkipped = shown.lessonsSkipped,
-                heldUntilTomorrow = shown.heldUntilTomorrow,
-                partsLeft = shown.partsLeft,
-                minutesLeft = shown.minutesLeft,
-                partsRemoved = shown.partsRemoved,
-                pressed = vm.pressed ?: Pressed.Other.takeIf { onboarding?.saving == true },
-                failed = vm.failed,
-                onFinishLater = leave,
-                onKeepGoing = { vm.start(PlacementLength.WHOLE_COURSE) },
-                undo = rememberPlacementUndo(plans, goalId, shown.changeId),
-            )
-        }
-
-        is PlacementTestPhase.PartStopped -> {
-            PartStopped(
-                part = shown.part,
-                parts = shown.parts,
-                question = shown.question,
-                lessonsSkipped = shown.lessonsSkipped,
-                action = stringResource(if (onboarding == null) R.string.placementtest_done else R.string.onboarding_continue),
-                onAction = leave,
-                busy = onboarding?.saving == true,
-                undo = rememberPlacementUndo(plans, goalId, shown.changeId),
-            )
+        is PlacementTestPhase.Over -> {
+            PlacementDone(pending = vm.busy, failed = vm.failed, onContinue = { vm.finish(shown.attempt) })
         }
 
         is PlacementTestPhase.Result -> {
@@ -334,8 +299,7 @@ internal fun ColumnScope.PlacementTestFlow(
             // Undo puts the skipped lessons back, so the next lesson may be one of them.
             val lesson = shown.nextLessonId?.takeIf { onboarding == null && undo?.restoredLessons == null }
             PlacementResult(
-                lessonsSkipped = shown.lessonsSkipped,
-                nextLesson = shown.nextLesson,
+                result = shown,
                 action =
                     stringResource(
                         when {
@@ -365,14 +329,13 @@ internal fun ColumnScope.PlacementTestFlow(
                 busy = onboarding?.saving == true,
                 pressed = vm.pressed,
                 failed = vm.failed,
-                heldUntilTomorrow = shown.heldUntilTomorrow,
-                rest = if (shown.partsLeft > 0) testTheRestFacts(shown.partsLeft, shown.minutesLeft) else emptyList(),
-                partsRemoved = shown.partsRemoved,
-                onTestTheRest = { vm.start(PlacementLength.WHOLE_COURSE, Pressed.Other) }.takeIf { shown.partsLeft > 0 },
             )
         }
     }
 }
+
+/** The phases before a test opens, which are the page's, not the test's task. */
+private val OUTSIDE_THE_TEST = setOf(PlacementTestPhase.Loading, PlacementTestPhase.LoadFailed, PlacementTestPhase.Choose)
 
 /** A course's test for analytics, with the open attempt's facts once there is one. */
 internal fun courseTest(
@@ -383,33 +346,11 @@ internal fun courseTest(
     goalId = goalId.toString(),
     test = TestContext.Kind.Course,
     surface = if (onboarding) TestContext.Surface.Onboarding else TestContext.Surface.Plan,
-    part = attempt?.part,
-    parts = attempt?.parts,
     questions = attempt?.questions,
     attemptId = attempt?.id?.toString(),
 )
 
-/** Where a full test with parts left stands: the question it picks up at, or the part it goes on with and the time left. */
-@Composable
-private fun continueFacts(attempt: PlacementAttempt): List<String> {
-    val resume = attempt.resume
-    val parts = attempt.parts.toInt()
-    return if (resume != null) {
-        listOf(
-            stringResource(R.string.placementtest_part_of, resume.part.toInt(), parts),
-            stringResource(R.string.onboarding_test_question_progress, resume.question.toInt(), attempt.questions.toInt()),
-        )
-    } else {
-        listOfNotNull(
-            stringResource(R.string.placementtest_part_of, (attempt.nextPart ?: attempt.part).toInt(), parts),
-            attempt.remainingEstimatedMinutes.takeIf { it > 0 }?.let {
-                stringResource(R.string.placementtest_about_left, formatMinutes(it.toInt(), currentLocale()))
-            },
-        )
-    }
-}
-
-/** The plan's offer for a course: the quick and the full test when it has parts, else the one test with its facts. */
+/** The plan's offer for a course: the test's card alone, with "Not now". */
 @Composable
 private fun ColumnScope.PlanCourseOffer(
     goalId: UUID,
@@ -424,30 +365,23 @@ private fun ColumnScope.PlanCourseOffer(
         return
     }
     val offer = (plan.value?.plan?.placementTest as? PlanPlacementTest.PlanPlacementTestOneOfValue)?.value?.offer
-    val quick = offer?.let { testFacts(it.questions.toInt(), it.estimatedMinutes.toInt()) }.orEmpty()
-    val whole = offer?.wholeCourse
-    val rows =
-        listOfNotNull(
-            OfferRow(TestRow.Quick, stringResource(R.string.placementtest_quick), quick.factsLine()),
-            whole?.let {
-                OfferRow(
-                    TestRow.WholeCourse,
-                    stringResource(R.string.placementtest_full_test),
-                    fullTestFacts(it.parts.toInt(), it.estimatedMinutes.toInt()).factsLine(),
-                )
-            },
-        )
     TestOffer(
         title = stringResource(R.string.placementtest_start_title),
         sentence = stringResource(R.string.placementtest_choose_description),
-        rows = rows,
+        cards =
+            listOf(
+                testCard(
+                    TestRow.Quick,
+                    stringResource(R.string.placementtest_test),
+                    offer?.questions?.toInt(),
+                    offer?.estimatedMinutes?.toInt(),
+                ),
+            ),
         initial = TestRow.Quick,
         pressed = vm.pressed,
         failed = vm.failed,
-        onChoose = { vm.start(if (it == TestRow.WholeCourse) PlacementLength.WHOLE_COURSE else PlacementLength.QUICK) },
-        test = test.copy(parts = whole?.parts, questions = offer?.questions),
-        chip = stringResource(R.string.placementtest_title),
-        facts = quick,
+        onChoose = { vm.start() },
+        test = test.copy(questions = offer?.questions),
         onNotNow = onNotNow,
     )
 }

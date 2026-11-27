@@ -3,6 +3,7 @@ package com.zoonk.android.feature.placementtest
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -52,6 +53,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.ActOn
 import com.zoonk.android.ui.VisitOf
+import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.LevelRangeBar
 import com.zoonk.android.ui.components.LinkButton
 import com.zoonk.android.ui.components.LoadFailedMessage
@@ -167,29 +169,33 @@ private fun ColumnScope.LevelTestPlanFlow(
         }
 
         else -> {
-            val facts = opened.value?.let { testFacts(it.total.toInt(), it.estimatedMinutes.toInt()) }.orEmpty()
-            val rows =
+            val read = opened.value
+            val cards =
                 listOfNotNull(
-                    OfferRow(TestRow.Quick, stringResource(R.string.placementtest_level_title), facts.factsLine()),
+                    testCard(
+                        TestRow.Quick,
+                        stringResource(R.string.placementtest_level_title),
+                        read?.total?.toInt(),
+                        read?.estimatedMinutes?.toInt(),
+                    ),
                     testOutLevel?.let {
-                        OfferRow(
+                        OfferCard(
                             TestRow.TestOut,
                             stringResource(R.string.placementtest_test_out, it),
-                            stringResource(R.string.placementtest_test_out_description, it),
+                            LearnKind.Mock,
+                            line = stringResource(R.string.placementtest_test_out_description, it),
                         )
                     },
                 )
             TestOffer(
                 title = stringResource(R.string.placementtest_start_title),
                 sentence = stringResource(R.string.placementtest_choose_description),
-                rows = rows,
+                cards = cards,
                 initial = if (testOutFirst) TestRow.TestOut else TestRow.Quick,
                 pressed = vm.pressed,
                 failed = vm.failed,
                 onChoose = { if (it == TestRow.TestOut) testOutLevel?.let(vm::testOut) else vm.start() },
                 test = test,
-                chip = stringResource(R.string.placementtest_level_title),
-                facts = facts,
                 onNotNow = {
                     tracker.track(AnalyticsEvent.TestSkipped(test))
                     navigator.closeTask()
@@ -337,9 +343,17 @@ private fun ColumnScope.TestOutFlow(
             questions = test?.total,
             attemptId = attemptId.toString(),
         )
-    LaunchedEffect(next?.itemId, test?.total) {
-        onSitting(test?.takeIf { next != null && it.total > 0 }?.let { sitting(context, it.answered, it.total) })
+    val title = test?.let { stringResource(R.string.placementtest_test_out, it.level.value) }
+    LaunchedEffect(next?.itemId, test?.total, title) {
+        onSitting(
+            if (title != null && next != null && test.total > 0) {
+                asking(context, title, test.answered, test.total, stop = TestStop(onStop = vm::stopTestOut).takeIf { test.answered > 0 })
+            } else {
+                Sitting()
+            },
+        )
     }
+    DisposableEffect(Unit) { onDispose { onSitting(null) } }
 
     when {
         test == null && state is LoadState.Failed -> {
@@ -369,19 +383,10 @@ private fun ColumnScope.TestOutFlow(
                     val question = next.recode<LanguageLevelTestOutNext, Question>()
                     PlacementQuestion(
                         item = question,
-                        subject = stringResource(R.string.placementtest_test_out, test.level.value),
-                        position =
-                            stringResource(
-                                R.string.onboarding_test_question_progress,
-                                test.answered.toInt() + 1,
-                                test.total.toInt(),
-                            ),
                         labels = TrueFalseLabels.TRUE_FALSE,
                         pending = vm.answering,
                         saveFailures = vm.saveFailures,
                         onAnswer = { answer, durationMs -> vm.answerTestOut(next.itemId.toString(), answer, durationMs) },
-                        onStop = vm::stopTestOut,
-                        canStop = test.answered > 0,
                         media = { question.set?.let { TestOutMaterial(it, "$attemptId:${question.itemId}", app) } },
                     )
                 }

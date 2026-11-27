@@ -8,34 +8,39 @@ import { type loadEvidence, toPlacementEvidence } from "./placement-evidence";
 export function readAttemptQuestions({
   attempt,
   attempts,
-  plan,
+  plan = { items: [], skills: [] },
 }: {
   attempt: PlacementAttempt;
   attempts: Awaited<ReturnType<typeof loadEvidence>>["attempts"];
-  plan: GoalPlan;
+  plan?: GoalPlan;
 }) {
   const given = attempts.filter(
     (answer) => answer.focusTestId === attempt.id && answer.itemId !== null,
   );
+
   const evidence = given.flatMap((row) => toPlacementEvidence(row) ?? []);
   const search = attempt.search;
+
   const answers = given.flatMap((answer) =>
-    answer.itemId ? [{ itemId: answer.itemId, correct: answer.isCorrect }] : [],
+    answer.itemId ? [{ correct: answer.isCorrect, itemId: answer.itemId }] : [],
   );
+
   const choice = search?.topics
     ? courseSearch({
-        topics: search.topics,
-        position: search.position,
-        ceiling: search.questions,
         answers,
+        ceiling: search.questions,
+        position: search.position,
+        topics: search.topics,
       })
     : null;
+
   const itemId = choice?.itemId ?? null;
   const topic = search?.topics?.find((t) => itemId && t.itemIds.includes(itemId));
   const startedPastSkillIds = [...(choice?.startedPast ?? [])];
   const waiting = search?.topics === null;
   const complete = !itemId && !waiting;
   const questions = search?.questions ?? Math.max(1, given.length);
+
   const legacyKnown = search
     ? []
     : listKnownSkillIds({
@@ -43,13 +48,11 @@ export function readAttemptQuestions({
         evidence,
         skillIds: plan.skills.map((skill) => skill.id),
       });
-  const end = !complete
-    ? "stopped"
-    : given.length >= questions
-      ? "question_cap"
-      : search
-        ? "found"
-        : "material_exhausted";
+
+  const settled = search ? "found" : "material_exhausted";
+  const finished = given.length >= questions ? "question_cap" : settled;
+  const end = complete ? finished : "stopped";
+
   return {
     answered: given.length,
     chapter: topic?.chapter ?? null,

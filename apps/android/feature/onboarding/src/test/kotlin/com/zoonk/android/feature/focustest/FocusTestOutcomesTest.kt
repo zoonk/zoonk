@@ -14,7 +14,6 @@ import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.OnboardingApi
 import com.zoonk.android.feature.onboarding.OnboardingStore
-import com.zoonk.android.feature.onboarding.PlacementPart
 import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.focusSittingOf
 import com.zoonk.android.feature.onboarding.focusTestOf
@@ -90,12 +89,12 @@ class FocusTestOutcomesTest {
                         session: AuthenticatedSession,
                         goalId: String,
                         fromScratch: Boolean,
-                        attempt: PlacementPart?,
+                        attemptId: java.util.UUID?,
                         answered: Long?,
                     ): PlacementCompletion {
                         gate.await()
                         if (fails) throw ApiException(ApiError.Network)
-                        return fake.finishPlacement(session, goalId, fromScratch, attempt, answered)
+                        return fake.finishPlacement(session, goalId, fromScratch, attemptId, answered)
                     }
                 }
             val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))

@@ -1,32 +1,42 @@
 package com.zoonk.android.feature.placementtest
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.TestContext
 import com.zoonk.android.data.TestRow
 import com.zoonk.android.data.TrackShown
-import com.zoonk.android.feature.focustest.Note
 import com.zoonk.android.feature.focustest.Pressed
-import com.zoonk.android.feature.onboarding.Choice
-import com.zoonk.android.feature.onboarding.ChoiceList
 import com.zoonk.android.feature.onboarding.setup.FinishFailed
 import com.zoonk.android.feature.onboarding.setup.SetupContent
 import com.zoonk.android.feature.onboarding.start.OnboardingActions
@@ -35,94 +45,93 @@ import com.zoonk.android.feature.onboarding.start.OnboardingSubject
 import com.zoonk.android.feature.plan.lessonsSkippedLine
 import com.zoonk.android.feature.plan.restoredLessonsLine
 import com.zoonk.android.ui.components.Button
-import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.Facts
+import com.zoonk.android.ui.components.KindMark
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
+import com.zoonk.android.ui.components.LearnKind
+import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.MarkStatus
+import com.zoonk.android.ui.components.MeterPart
+import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.Readout
+import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.answerTone
+import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.components.controlInk
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
-import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.scaffold.BarError
+import com.zoonk.android.ui.theme.ZoonkRadius
 
-/** One of the offer's rows: what it starts ([id]), its name and its facts, if it has any. */
-internal data class OfferRow(
+/**
+ * One way to start (main's `TestOfferCard`): a test with its kind's mark, the most it asks and its minutes as the
+ * readout, or the first lesson by its name where it's known.
+ */
+internal data class OfferCard(
     val id: TestRow,
     val label: String,
-    val line: String?,
+    val kind: LearnKind,
+    val line: String? = null,
+    val minutes: Int? = null,
+)
+
+/** "First lesson": the other way to start, by the lesson's name where onboarding knows it. */
+@Composable
+internal fun firstLessonCard(title: String?) =
+    OfferCard(TestRow.FirstLesson, stringResource(R.string.placementtest_first_lesson), LearnKind.Lesson, line = title)
+
+/** A test's card: the most questions it asks (it can end sooner) and about how long they take. */
+@Composable
+internal fun testCard(
+    id: TestRow,
+    label: String,
+    questions: Int?,
+    minutes: Int?,
+) = OfferCard(
+    id = id,
+    label = label,
+    kind = LearnKind.Mock,
+    line = questions?.let { pluralStringResource(R.plurals.placementtest_up_to_questions, it, it) },
+    minutes = minutes?.takeIf { it > 0 },
 )
 
 /**
- * "First lesson": onboarding's way to decline. It says where declining starts only when the learner gave a level
- * ([levelGiven]); a learner who wasn't sure has none to start from.
- */
-@Composable
-internal fun firstLessonRow(levelGiven: Boolean) =
-    OfferRow(
-        TestRow.FirstLesson,
-        stringResource(R.string.placementtest_first_lesson),
-        stringResource(R.string.placementtest_first_lesson_line).takeIf { levelGiven },
-    )
-
-/** A test's facts before it starts: the most questions it asks (it can end sooner) and about how long they take. */
-@Composable
-internal fun testFacts(
-    questions: Int,
-    minutes: Int,
-): List<String> =
-    listOf(
-        pluralStringResource(R.plurals.placementtest_up_to_questions, questions, questions),
-        stringResource(R.string.placementtest_about, formatMinutes(minutes, currentLocale())),
-    )
-
-/** The full test's facts: its parts, each on a day of the learner's choosing, and about how long they all take. */
-@Composable
-internal fun fullTestFacts(
-    parts: Int,
-    minutes: Int,
-): List<String> =
-    listOf(
-        pluralStringResource(R.plurals.placementtest_parts_any_day, parts, parts),
-        stringResource(R.string.placementtest_about, formatMinutes(minutes, currentLocale())),
-    )
-
-/**
- * Main's `TestOffer`, one piece for every test: its message, the [rows] to pick from, and one main action that follows
- * the row picked. A single test ([rows] of one) has nothing to pick, so it shows under its [chip] with its [facts]
- * instead. [initial] is the row it opens with. [onNotNow] is the Plan's way out; onboarding has none, since its first
- * row is the way to decline. [test] says the offer was shown, once per time it shows.
+ * Main's `TestOffer`, one piece for every test: a title, one sentence, and each way to start as a card. With two
+ * cards [initial] comes picked and the main action starts the picked one; a test offered alone is its card and the way
+ * in. [onNotNow] is the Plan's way out; onboarding has none, since its first lesson is the way to decline. [test] says
+ * the offer was shown, once per time it shows.
  */
 @Composable
 internal fun ColumnScope.TestOffer(
     title: String,
     sentence: String,
-    rows: List<OfferRow>,
+    cards: List<OfferCard>,
     initial: TestRow,
     pressed: Pressed?,
     failed: Boolean,
     onChoose: (TestRow) -> Unit,
     test: TestContext,
-    chip: String? = null,
-    facts: List<String> = emptyList(),
     onNotNow: (() -> Unit)? = null,
 ) {
-    var selected by rememberSaveable { mutableStateOf(initial.takeIf { id -> rows.any { it.id == id } } ?: rows.first().id) }
-    val row = rows.firstOrNull { it.id == selected } ?: rows.first()
-    TrackShown(AnalyticsEvent.TestOffered(test, rows.map { it.id }, initial))
+    var selected by rememberSaveable { mutableStateOf(initial.takeIf { id -> cards.any { it.id == id } } ?: cards.first().id) }
+    val card = cards.firstOrNull { it.id == selected } ?: cards.first()
+    TrackShown(AnalyticsEvent.TestOffered(test, cards.map { it.id }, initial))
 
     SetupContent {
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            if (rows.size == 1) chip?.let { OnboardingSubject(it, facts.factsLine().takeIf(String::isNotEmpty)) }
-            OnboardingHeading(title, sentence)
-        }
-        if (rows.size > 1) {
-            ChoiceList(
-                choices = rows.map { Choice(it.id, it.label, it.line) },
-                value = row.id,
-                label = title,
-                onChange = { selected = it },
-                readOnly = pressed != null,
-            )
+        OnboardingHeading(title, sentence)
+        Column(
+            Modifier.selectableGroup().semantics { contentDescription = title },
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            cards.forEach { option ->
+                OfferCardFace(
+                    card = option,
+                    picked = cards.size > 1 && option.id == selected,
+                    onPick = { selected = option.id }.takeIf { cards.size > 1 && pressed == null },
+                )
+            }
         }
         OnboardingActions {
             FinishFailed(failed)
@@ -130,14 +139,10 @@ internal fun ColumnScope.TestOffer(
                 onNotNow?.let {
                     OutlinedButton(onClick = it, enabled = pressed == null) { Text(stringResource(R.string.placementtest_not_now)) }
                 }
-                Button(busy = pressed == Pressed.Main, onClick = { onChoose(row.id) }, modifier = main, enabled = pressed == null) {
+                Button(busy = pressed == Pressed.Main, onClick = { onChoose(card.id) }, modifier = main, enabled = pressed == null) {
                     Text(
                         stringResource(
-                            if (row.id == TestRow.FirstLesson || row.id == TestRow.Continue) {
-                                R.string.onboarding_continue
-                            } else {
-                                R.string.placementtest_start
-                            },
+                            if (card.id == TestRow.FirstLesson) R.string.onboarding_continue else R.string.placementtest_start,
                         ),
                     )
                 }
@@ -146,152 +151,48 @@ internal fun ColumnScope.TestOffer(
     }
 }
 
-/** "This part skipped 2 lessons you already know.", or that it skipped none. */
+/** A card of the offer: the picked one in the pick's soft fill, the other on its line; a lone card has no radio. */
 @Composable
-internal fun partSkippedLine(lessons: Int): String =
-    if (lessons == 0) {
-        stringResource(R.string.placementtest_part_skipped_none)
-    } else {
-        pluralStringResource(R.plurals.placementtest_part_skipped, lessons, lessons)
-    }
-
-/** The parts the full test has left and about how long they all take, by the server's estimate. */
-@Composable
-internal fun partsLeftFacts(
-    partsLeft: Int,
-    minutesLeft: Int,
-): List<String> =
-    listOfNotNull(
-        pluralStringResource(R.plurals.placementtest_parts_left, partsLeft, partsLeft),
-        minutesLeft.takeIf { it > 0 }?.let { stringResource(R.string.placementtest_about, formatMinutes(it, currentLocale())) },
-    )
-
-/** What a quick test leaves for the full test: the quick test never said it had parts, so they're named as the full test's. */
-@Composable
-internal fun testTheRestFacts(
-    partsLeft: Int,
-    minutesLeft: Int,
-): List<String> = listOf(stringResource(R.string.placementtest_full_test)) + partsLeftFacts(partsLeft, minutesLeft)
-
-/** What's left of the test, with why it's less than the learner was told when it [removed parts][partsRemoved]. */
-@Composable
-private fun PartsLeft(
-    facts: List<String>,
-    partsRemoved: Int,
+private fun OfferCardFace(
+    card: OfferCard,
+    picked: Boolean,
+    onPick: (() -> Unit)?,
 ) {
-    if (facts.isEmpty() && partsRemoved == 0) return
-    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        if (facts.isNotEmpty()) Facts(facts)
-        if (partsRemoved > 0) {
-            Text(
-                stringResource(R.string.placementtest_got_shorter),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodySmall,
-            )
-        }
-    }
-}
-
-/**
- * After a part of the full test (main's `PlacementCheckpoint`): it's done, what it skipped, that the answers are saved,
- * and what's left. "Keep going" goes on with the next part; "Finish later" leaves the rest for another day.
- */
-@Composable
-internal fun ColumnScope.PartDone(
-    part: Int,
-    parts: Int,
-    lessonsSkipped: Int,
-    heldUntilTomorrow: Boolean,
-    partsLeft: Int,
-    minutesLeft: Int,
-    partsRemoved: Int,
-    pressed: Pressed?,
-    failed: Boolean,
-    onFinishLater: () -> Unit,
-    onKeepGoing: () -> Unit,
-    undo: PlacementUndoViewModel?,
-) {
-    val restored = undo?.restoredLessons
-    SetupContent {
-        OnboardingHeading(
-            stringResource(R.string.placementtest_part_done, part, parts),
-            joinSentences(
-                when {
-                    restored != null -> restoredLessonsLine(restored)
-                    heldUntilTomorrow && lessonsSkipped == 0 -> stringResource(R.string.placementtest_retake_tomorrow)
-                    else -> partSkippedLine(lessonsSkipped)
+    val tone = answerTone(picked = picked, result = null)
+    val choosable = onPick != null || picked
+    Surface(
+        shape = RoundedCornerShape(ZoonkRadius.option),
+        color = if (picked) tone.container else Color.Transparent,
+        border = if (picked) tone.border else BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        modifier =
+            Modifier.fillMaxWidth().then(
+                if (choosable) {
+                    Modifier.selectable(
+                        selected = picked,
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null,
+                        enabled = onPick != null,
+                        role = Role.RadioButton,
+                    ) { onPick?.invoke() }
+                } else {
+                    Modifier
                 },
-                stringResource(R.string.onboarding_answers_saved),
             ),
-            announceDescription = restored != null,
-        )
-        PartsLeft(partsLeftFacts(partsLeft, minutesLeft), partsRemoved)
-        TestActions(
-            action = stringResource(R.string.placementtest_keep_going),
-            onAction = onKeepGoing,
-            busy = pressed == Pressed.Main,
-            enabled = pressed == null,
-            failed = failed,
-            undo = undo,
+    ) {
+        Row(
+            Modifier.padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            OutlinedButton(onClick = onFinishLater, enabled = pressed == null && undo?.saving != true) {
-                Text(stringResource(R.string.placementtest_finish_later))
+            KindMark(card.kind, Modifier.align(Alignment.Top))
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Text(card.label, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium))
+                card.line?.let {
+                    Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
+                }
             }
-        }
-    }
-}
-
-/**
- * The full test stopped with questions left in its part: the answers count, and the test picks up at [part]'s
- * [question] next time, never "done".
- */
-@Composable
-internal fun ColumnScope.PartStopped(
-    part: Int,
-    parts: Int,
-    question: Int,
-    lessonsSkipped: Int,
-    action: String,
-    onAction: () -> Unit,
-    busy: Boolean,
-    undo: PlacementUndoViewModel?,
-) {
-    val restored = undo?.restoredLessons
-    SetupContent {
-        OnboardingHeading(
-            stringResource(R.string.focustest_answers_saved_title),
-            restored?.let { restoredLessonsLine(it) } ?: partSkippedLine(lessonsSkipped),
-            announceDescription = restored != null,
-        )
-        Facts(listOf(stringResource(R.string.placementtest_next_time, part, parts, question)))
-        TestActions(action, onAction, busy = busy, enabled = !busy, failed = false, undo = undo)
-    }
-}
-
-/** A full test with parts left, opened again (main's `PlacementContinue`): where it stands, and the way back in. */
-@Composable
-internal fun ColumnScope.ContinueTest(
-    facts: List<String>,
-    pressed: Pressed?,
-    failed: Boolean,
-    onContinue: () -> Unit,
-    onFinishLater: () -> Unit,
-) {
-    SetupContent {
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            OnboardingSubject(stringResource(R.string.placementtest_title), facts.factsLine())
-            OnboardingHeading(stringResource(R.string.placementtest_continue_title))
-        }
-        TestActions(
-            stringResource(R.string.focustest_continue),
-            onContinue,
-            busy = pressed == Pressed.Main,
-            enabled = pressed == null,
-            failed,
-        ) {
-            OutlinedButton(onClick = onFinishLater, enabled = pressed == null) {
-                Text(stringResource(R.string.placementtest_finish_later))
-            }
+            card.minutes?.let { Readout(formatMinutes(it, currentLocale()), style = MaterialTheme.typography.headlineSmall) }
+            if (choosable) RadioButton(selected = picked, onClick = null, modifier = Modifier.controlInk())
         }
     }
 }
@@ -300,74 +201,108 @@ internal fun ColumnScope.ContinueTest(
 internal fun placementKnownLine(lessons: Int): String =
     stringResource(if (lessons == 1) R.string.placementtest_known_one else R.string.placementtest_known_other)
 
-/**
- * A result's next lesson, under "Up next", until an Undo puts the skipped lessons back. The title drops the leading
- * under its last line, so its letters sit as far from the card's bottom as the chip from its top.
- */
+/** A result's next lesson, under "Up next", until an Undo puts the skipped lessons back. */
 @Composable
-internal fun UpNext(title: String) {
-    OutlinedCard(Modifier.fillMaxWidth()) {
-        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Eyebrow(stringResource(R.string.placementtest_up_next))
-            Text(
-                title,
-                style =
-                    MaterialTheme.typography.titleSmall.copy(
-                        lineHeightStyle = LineHeightStyle(LineHeightStyle.Alignment.Center, LineHeightStyle.Trim.LastLineBottom),
-                    ),
-            )
-        }
-    }
+internal fun UpNext(
+    title: String,
+    minutes: Int? = null,
+) {
+    ListRow(
+        headline = { Text(title) },
+        modifier = Modifier.bleed(LIST_ITEM_INSET),
+        highlighted = true,
+        leading = { StatusMark(MarkStatus.Next) },
+        supporting = { Text(stringResource(R.string.placementtest_up_next)) },
+        meta = minutes?.let { { Text(formatMinutes(it, currentLocale())) } },
+    )
 }
 
 /**
- * Main's `PlacementResult`: what the course test skipped in all, and where the plan goes on ([nextLesson]). A quick test
- * with parts left says them and offers [onTestTheRest].
+ * Lessons a test started the learner past, on the course's line: the progress blue, as the language result's level
+ * meters show what the learner reached.
+ */
+@Composable
+private fun passedFill(): Color = MaterialTheme.colorScheme.tertiary
+
+/**
+ * The course as one line (main's `CourseLine`): its chapters in plan order, each as wide as its lessons, the lessons
+ * started past filled and a ring on the chapter the learner starts in. With several areas the skipped chapters need not
+ * be one run, and the start can sit before chapters with skipped lessons; each chapter draws its own share.
+ */
+@Composable
+private fun CourseLine(course: PlacementTestPhase.Course) {
+    val passed = passedFill()
+    MeterParts(
+        course.chapters.map { chapter ->
+            val share = if (chapter.lessons > 0) chapter.skipped.toFloat() / chapter.lessons else 0f
+            MeterPart(
+                fill =
+                    when {
+                        chapter.start -> MeterPart.Fill.Place(share)
+                        share > 0f -> MeterPart.Fill.Solid(passed, share)
+                        else -> MeterPart.Fill.Track
+                    },
+                weight = chapter.lessons.toFloat(),
+            )
+        },
+    )
+}
+
+/**
+ * Main's `PlacementResult`: where the course's test starts the learner. The chapter's name is the title under "You
+ * start here", over the course's line, how much of it was skipped and the lesson that's next. A result that exists
+ * before the plan does has no line to draw and says only where they start. A sentence shows only for what the picture
+ * can't: lessons Undo put back, or skips held until tomorrow.
  */
 @Composable
 internal fun ColumnScope.PlacementResult(
-    lessonsSkipped: Int,
-    nextLesson: String?,
+    result: PlacementTestPhase.Result,
     action: String,
     onAction: () -> Unit,
     undo: PlacementUndoViewModel? = null,
     busy: Boolean = false,
     pressed: Pressed? = null,
     failed: Boolean = false,
-    heldUntilTomorrow: Boolean = false,
-    rest: List<String> = emptyList(),
-    partsRemoved: Int = 0,
-    onTestTheRest: (() -> Unit)? = null,
 ) {
-    TestOutcome(
-        title = lessonsSkippedLine(lessonsSkipped),
-        lead =
-            when {
-                lessonsSkipped > 0 -> placementKnownLine(lessonsSkipped)
-                heldUntilTomorrow -> stringResource(R.string.placementtest_retake_tomorrow)
-                else -> stringResource(R.string.placementtest_plan_stays)
-            },
-        action = action,
-        onAction = onAction,
-        busy = busy || pressed == Pressed.Main,
-        enabled = !busy && pressed == null,
-        failed = failed,
-        undo = undo,
-        other =
-            onTestTheRest?.let {
-                {
-                    OutlinedButton(
-                        onClick = it,
-                        busy = pressed == Pressed.Other,
-                        enabled = !busy && pressed == null && undo?.saving != true,
-                    ) {
-                        Text(stringResource(R.string.placementtest_test_the_rest))
-                    }
-                }
-            },
-    ) {
-        PartsLeft(rest, partsRemoved)
-        nextLesson?.takeIf { undo?.restoredLessons == null }?.let { UpNext(it) }
+    val restored = undo?.restoredLessons
+    val undone = restored != null
+    val place = result.chapter.takeUnless { undone }
+    val course = result.course.takeUnless { undone }
+    SetupContent {
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            place?.let { OnboardingSubject(stringResource(R.string.placementtest_you_start_here)) }
+            OnboardingHeading(
+                title = place ?: lessonsSkippedLine(if (undone) 0 else result.lessonsSkipped),
+                description =
+                    when {
+                        restored != null -> restoredLessonsLine(restored)
+                        result.heldUntilTomorrow && result.lessonsSkipped == 0 -> stringResource(R.string.placementtest_retake_tomorrow)
+                        else -> null
+                    },
+                announceDescription = undone,
+            )
+        }
+        course?.let {
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                CourseLine(it)
+                Facts(
+                    listOf(
+                        if (result.lessonsSkipped > 0) {
+                            pluralStringResource(
+                                R.plurals.placementtest_course_skipped,
+                                result.lessonsSkipped,
+                                result.lessonsSkipped,
+                                it.lessons,
+                            )
+                        } else {
+                            pluralStringResource(R.plurals.placementtest_course_lessons, it.lessons, it.lessons)
+                        },
+                    ),
+                )
+            }
+            result.nextLesson?.let { title -> UpNext(title, result.nextMinutes) }
+        }
+        TestActions(action, onAction, busy = busy || pressed == Pressed.Main, enabled = !busy && pressed == null, failed, undo)
     }
 }
 
@@ -382,7 +317,6 @@ internal fun ColumnScope.TestOutcome(
     enabled: Boolean = true,
     failed: Boolean = false,
     undo: PlacementUndoViewModel? = null,
-    other: (@Composable () -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit = {},
 ) {
     SetupContent {
@@ -393,7 +327,7 @@ internal fun ColumnScope.TestOutcome(
             announceDescription = restored != null,
         )
         content()
-        TestActions(action, onAction, busy, enabled, failed, undo, other)
+        TestActions(action, onAction, busy, enabled, failed, undo)
     }
 }
 
@@ -405,27 +339,13 @@ private fun TestActions(
     enabled: Boolean,
     failed: Boolean,
     undo: PlacementUndoViewModel? = null,
-    other: (@Composable () -> Unit)? = null,
 ) {
     val undoFailure = if (undo?.failed == true) stringResource(R.string.plan_undo_failed) else null
     OnboardingActions(note = undoFailure?.let { { BarError(it) } }) {
         FinishFailed(failed)
         TaskActions { main ->
             PlacementUndoButton(undo, enabled = enabled && !busy)
-            other?.invoke()
             Button(busy = busy, onClick = onAction, modifier = main, enabled = enabled && undo?.saving != true) { Text(action) }
         }
     }
-}
-
-/** "Part 3 of 14 · Question 5 of 12" in the full test, "Question 5 of 12" otherwise. */
-@Composable
-internal fun questionPosition(
-    number: Int,
-    total: Int,
-    part: Int? = null,
-    parts: Int? = null,
-): String {
-    val question = stringResource(R.string.onboarding_test_question_progress, number, total)
-    return if (part != null && parts != null) factsLine(stringResource(R.string.placementtest_part_of, part, parts), question) else question
 }

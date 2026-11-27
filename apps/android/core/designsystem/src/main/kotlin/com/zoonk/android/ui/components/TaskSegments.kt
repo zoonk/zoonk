@@ -35,7 +35,8 @@ enum class TaskSegment {
 
 /**
  * Main's `TaskHeaderSegments`: a task's progress, one segment per screen, each as wide as its weight when [weights]
- * gives one. Hidden from TalkBack unless [contentDescription] names it; with [done] too, TalkBack reads it as a
+ * gives one. [groups] sizes runs of segments in order (a test's reading, listening and check), drawn with a wider gap
+ * between them. Hidden from TalkBack unless [contentDescription] names it; with [done] too, TalkBack reads it as a
  * progress bar.
  */
 @Composable
@@ -43,6 +44,7 @@ fun TaskSegments(
     segments: List<TaskSegment>,
     modifier: Modifier = Modifier,
     weights: List<Float>? = null,
+    groups: List<Int> = emptyList(),
     contentDescription: String? = null,
     done: Int? = null,
 ) {
@@ -50,6 +52,7 @@ fun TaskSegments(
     val wrong = MaterialTheme.zoonk.destructive
     val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     val shares = segments.indices.map { weights?.getOrNull(it)?.coerceAtLeast(1f) ?: 1f }
+    val groupEnds = groups.runningReduce(Int::plus).filter { it in 1 until segments.size }.toSet()
     val semantics =
         if (contentDescription == null) {
             Modifier.clearAndSetSemantics {}
@@ -64,8 +67,10 @@ fun TaskSegments(
 
     Canvas(modifier.fillMaxWidth().height(SEGMENT_HEIGHT).then(semantics)) {
         val gap = (if (segments.size > DENSE_SEGMENTS) 1.dp else 3.dp).toPx()
+        val groupGap = GROUP_GAP.toPx()
         val radius = CornerRadius(2.dp.toPx())
-        val shared = (size.width - gap * (segments.size - 1).coerceAtLeast(0)).coerceAtLeast(0f)
+        val gaps = gap * ((segments.size - 1).coerceAtLeast(0) - groupEnds.size) + groupGap * groupEnds.size
+        val shared = (size.width - gaps).coerceAtLeast(0f)
         val total = shares.sum()
         var start = 0f
 
@@ -84,12 +89,13 @@ fun TaskSegments(
 
             drawRoundRect(fill, Offset(left, 0f), Size(width, size.height), radius)
 
-            start += width + gap
+            start += width + if (index + 1 in groupEnds) groupGap else gap
         }
     }
 }
 
 private val SEGMENT_HEIGHT = 4.dp
+private val GROUP_GAP = 8.dp
 private const val DENSE_SEGMENTS = 40
 private const val READ_ALPHA = 0.25f
 

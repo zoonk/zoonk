@@ -10,12 +10,12 @@ import { finishGoalPlacement } from "./finish-goal-placement";
 import { startPlacementSitting } from "./start-placement-sitting";
 
 describe(finishGoalPlacement, () => {
-  it("explains when fresh correct answers cannot restore a skip undone today", async () => {
+  it("accepts a new provisional start on fresh questions after Undo", async () => {
     const user = await userFixture();
 
     const { goal, skills } = await learnerGoalFixture({
       itemsPerSkill: 0,
-      phases: [1],
+      phases: [2],
       userId: user.id,
     });
 
@@ -25,7 +25,7 @@ describe(finishGoalPlacement, () => {
       throw new Error("Expected one test topic");
     }
 
-    const banks = await placementItemBank([skill.id, skill.id]);
+    const banks = await placementItemBank([...skills, ...skills].map((topic) => topic.id));
     const answers = new Map(banks.flat().map(({ answer, item }) => [item.id, answer]));
     mockSession(user.id);
 
@@ -57,7 +57,7 @@ describe(finishGoalPlacement, () => {
           return;
         }
 
-        expect(remaining).toBe(1);
+        expect(result.status === "ready" && result.placement.next).toBeNull();
       };
 
       await send(start.placement.next.itemId, 4);
@@ -78,7 +78,7 @@ describe(finishGoalPlacement, () => {
     ).resolves.toMatchObject({ status: "updated" });
 
     const retake = await takeTest();
-    const held = { heldUntilTomorrow: true, lessonsSkipped: 0 };
+    const held = { lessonsSkipped: 1 };
     expect(retake.result).toMatchObject({ completion: { ...held, result: held }, status: "ready" });
     await expect(retake.finish()).resolves.toStrictEqual(retake.result);
 

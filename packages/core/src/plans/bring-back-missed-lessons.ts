@@ -1,8 +1,10 @@
 import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
+import { trackTestEvents } from "../analytics/test-events";
 import { keepOpenSessionSelection } from "../sessions/_utils/skip-tested-out-blocks";
 import { isPlanReady } from "./_utils/apply-plan-change";
 import { commitPlan } from "./_utils/commit-plan";
+import { loadCourseStarts } from "./_utils/course-starts";
 import {
   appendLivingPlanBatch,
   listChangeTopics,
@@ -216,6 +218,11 @@ export async function bringBackMissedLessons({
       }
     };
 
+    const starts =
+      restoredIds.size > 0 && context.goal.kind === "learn"
+        ? await loadCourseStarts(goalId)
+        : new Map();
+
     await commitPlan({
       change: batch
         ? null
@@ -231,5 +238,15 @@ export async function bringBackMissedLessons({
       phaseDates: { mode: "forced", pace: "saved" },
       snapshotContext: context,
     });
+
+    trackTestEvents(
+      context.goal,
+      missed
+        .filter((id) => starts.has(id))
+        .map((skillId) => ({
+          name: "Course Placement Topic Restored",
+          properties: { goal_id: goalId, skill_id: skillId },
+        })),
+    );
   });
 }

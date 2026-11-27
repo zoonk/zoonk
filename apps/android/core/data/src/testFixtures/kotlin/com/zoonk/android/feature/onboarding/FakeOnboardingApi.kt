@@ -487,7 +487,9 @@ class FakeOnboardingApi : OnboardingApi {
 
     var placementFinishGate: CompletableDeferred<Unit>? = null
     var completion: PlacementCompletion = completionOf()
-    val finishedParts = mutableListOf<PlacementPart?>()
+
+    /** The attempt each close named; null for onboarding's, which has none. */
+    val finishedAttempts = mutableListOf<UUID?>()
 
     /** The answers each stop said the learner saw; null for a close that wasn't a stop. */
     val finishedAnswered = mutableListOf<Long?>()
@@ -496,10 +498,10 @@ class FakeOnboardingApi : OnboardingApi {
         session: AuthenticatedSession,
         goalId: String,
         fromScratch: Boolean,
-        attempt: PlacementPart?,
+        attemptId: UUID?,
         answered: Long?,
     ): PlacementCompletion {
-        finishedParts += attempt
+        finishedAttempts += attemptId
         finishedAnswered += answered
         placementFinishGate?.await()
         writeFailure?.let { throw it }

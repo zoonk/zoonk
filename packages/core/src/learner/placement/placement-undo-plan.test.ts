@@ -63,7 +63,7 @@ async function finishPart({
   const { id: attemptId, part } = started.placement.attempt;
 
   const answerNext = async (itemId: string | undefined, remaining: number): Promise<void> => {
-    if (remaining === 0) {
+    if (remaining === 0 || !itemId) {
       return;
     }
 
@@ -85,7 +85,7 @@ async function finishPart({
     await answerNext(result.placement.next?.itemId, remaining - 1);
   };
 
-  await answerNext(started.placement.next?.itemId, 4);
+  await answerNext(started.placement.next?.itemId, 8);
   return finishGoalPlacement({ goalId, input: { attemptId, part } });
 }
 
@@ -187,10 +187,7 @@ describe("placement Undo restores the plan", () => {
 
     expect(finished.completion.lessonsSkipped).toBeGreaterThan(0);
 
-    expect(finished.completion).toMatchObject({
-      attempt: { partComplete: false, resume: { part: 1, question: 5 } },
-      finish: { answered: 4, end: "stopped" },
-    });
+    expect(finished.completion).toMatchObject({ attempt: null, finish: { end: "found" } });
 
     await refreshTestedOutPlan({ goalId: goal.id, userId: user.id });
 
