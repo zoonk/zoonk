@@ -206,7 +206,7 @@ function verifyEveryExit(topics: readonly CourseSearchTopic[], answers: CourseSe
 }
 
 describe("every stopping point", () => {
-  it.each([1, 2, 3, 4])(
+  it.each([1, 2, 3, 4, 5])(
     "keeps every early exit in %i independent areas inside its proven boundary",
     (areas) => {
       const topics = chain(40, 16, areas).map((topic, i) =>
@@ -215,6 +215,10 @@ describe("every stopping point", () => {
 
       expect.hasAssertions();
       verifyEveryExit(topics);
+
+      if (areas > 1) {
+        verifyEveryExit(topics.map((topic, i) => ({ ...topic, sectionTitle: String(i % areas) })));
+      }
     },
   );
 
