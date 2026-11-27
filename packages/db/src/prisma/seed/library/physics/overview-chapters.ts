@@ -26,10 +26,14 @@ export const overviewChapters: SeedChapter[] = [
         ),
         {
           answer: t("20", "20"),
+          correction: t(
+            "Two would span only about 0.2 nm. Divide the distance by the width of one atom.",
+            "Dois ocupariam só cerca de 0,2 nm. Divida a distância pela largura de um átomo.",
+          ),
           distractor: t("2", "2"),
           example: t(
-            "A typical atom spans about a tenth of a nanometer. Ten of them laid side by side span about one nanometer.",
-            "Um átomo típico mede cerca de um décimo de nanômetro. Dez átomos lado a lado ocupam cerca de um nanômetro.",
+            "Imagine lining up atoms that each measure 0.1 nanometers across. Ten of them side by side span one nanometer.",
+            "Imagine alinhar átomos de 0,1 nanômetro de diâmetro. Dez deles lado a lado ocupam um nanômetro.",
           ),
           question: t(
             "About how many fit across 2 nanometers?",
@@ -38,6 +42,10 @@ export const overviewChapters: SeedChapter[] = [
           reason: t(
             "Each nanometer holds about ten, so two hold about twenty.",
             "Cada nanômetro comporta cerca de dez, então em dois cabem cerca de vinte.",
+          ),
+          takeaway: t(
+            "Estimate how many atoms fit by comparing lengths in the same unit.",
+            "Para estimar quantos átomos cabem, compare comprimentos na mesma unidade.",
           ),
         },
       ),
@@ -59,6 +67,10 @@ export const overviewChapters: SeedChapter[] = [
         ),
         {
           answer: t("The distribution of landing spots", "A distribuição dos pontos de chegada"),
+          correction: t(
+            "Even when the preparation is identical, successive electrons can arrive at different spots.",
+            "Mesmo com preparação idêntica, elétrons sucessivos podem chegar a pontos diferentes.",
+          ),
           distractor: t("The exact spot for each electron", "O ponto exato de cada elétron"),
           example: t(
             "A rolling marble follows a path. For an electron prepared in the same way many times, quantum theory predicts how often each landing spot will occur.",
@@ -71,6 +83,10 @@ export const overviewChapters: SeedChapter[] = [
           reason: t(
             "Individual arrivals can vary while their frequencies follow a pattern.",
             "Os pontos de chegada variam, mas suas frequências seguem um padrão.",
+          ),
+          takeaway: t(
+            "Quantum predictions give probabilities for measurement outcomes.",
+            "As previsões quânticas dão probabilidades para os resultados de uma medição.",
           ),
         },
       ),
@@ -103,6 +119,10 @@ export const overviewChapters: SeedChapter[] = [
         ),
         {
           answer: t("The spot darkens", "O ponto escurece"),
+          correction: t(
+            "Crests reinforce other crests. A trough offsets a crest of the same height.",
+            "Cristas reforçam outras cristas. Um vale compensa uma crista de mesma altura.",
+          ),
           distractor: t("The spot brightens", "O ponto clareia"),
           example: t(
             "Two light waves reach the same spot. When the crest of one meets the crest of the other, their amplitudes add and the spot looks brighter.",
@@ -115,6 +135,10 @@ export const overviewChapters: SeedChapter[] = [
           reason: t(
             "Opposite displacements cancel. This is destructive interference.",
             "Deslocamentos opostos se cancelam. É a interferência destrutiva.",
+          ),
+          takeaway: t(
+            "Light waves can reinforce or cancel each other where they meet.",
+            "Ondas de luz podem se reforçar ou se cancelar onde se encontram.",
           ),
         },
       ),
@@ -133,6 +157,10 @@ export const overviewChapters: SeedChapter[] = [
         ),
         {
           answer: t("More photons per second", "Mais fótons por segundo"),
+          correction: t(
+            "Increasing the energy per photon would change the frequency of the light.",
+            "Aumentar a energia por fóton mudaria a frequência da luz.",
+          ),
           distractor: t("More energy per photon", "Mais energia por fóton"),
           example: t(
             "A detector registers light one photon at a time. At a fixed frequency, each photon carries the same energy.",
@@ -145,6 +173,10 @@ export const overviewChapters: SeedChapter[] = [
           reason: t(
             "The color fixes the frequency and the energy per photon. Brightness can rise through the number arriving.",
             "A cor determina a frequência e a energia por fóton. O brilho pode aumentar com a quantidade de fótons que chegam.",
+          ),
+          takeaway: t(
+            "At one frequency, more light means more photons.",
+            "Para uma mesma frequência, mais luz significa mais fótons.",
           ),
         },
       ),
@@ -163,6 +195,10 @@ export const overviewChapters: SeedChapter[] = [
         ),
         {
           answer: t("After many detections", "Depois de muitas detecções"),
+          correction: t(
+            "A single detection marks only a spot. You need many spots to see where arrivals concentrate.",
+            "Uma detecção marca apenas um ponto. São necessários muitos pontos para ver onde as chegadas se concentram.",
+          ),
           distractor: t("In the mark of one photon", "Na marca de um único fóton"),
           example: t(
             "Send photons one at a time toward two open slits. Each marks a single spot on the screen. After many arrivals, bright and dark bands emerge.",
@@ -175,6 +211,10 @@ export const overviewChapters: SeedChapter[] = [
           reason: t(
             "Each arrival makes one dot. The interference pattern is in the distribution of many dots.",
             "Cada chegada produz um ponto. O padrão de interferência está na distribuição de muitos pontos.",
+          ),
+          takeaway: t(
+            "Individual detections accumulate into an interference pattern.",
+            "As detecções individuais se acumulam até formar um padrão de interferência.",
           ),
         },
       ),
@@ -211,6 +251,10 @@ export const overviewChapters: SeedChapter[] = [
         ),
         {
           answer: t("The region around the nucleus", "A região em volta do núcleo"),
+          correction: t(
+            "The nucleus dominates the mass. Its size is tiny compared with the region occupied by electrons.",
+            "O núcleo concentra a massa. Seu tamanho é minúsculo em relação à região ocupada pelos elétrons.",
+          ),
           distractor: t("The nucleus itself", "O próprio núcleo"),
           example: t(
             "Imagine enlarging an atom until its nucleus is a bead at the center of a stadium. The electrons occupy the surrounding region, while almost all the mass sits in the bead.",
@@ -223,6 +267,10 @@ export const overviewChapters: SeedChapter[] = [
           reason: t(
             "The nucleus contains most of the mass in a tiny fraction of the volume.",
             "O núcleo concentra quase toda a massa em uma fração minúscula do volume.",
+          ),
+          takeaway: t(
+            "An atom’s mass and volume are concentrated in different places.",
+            "A massa e o volume de um átomo se concentram em regiões diferentes.",
           ),
         },
       ),

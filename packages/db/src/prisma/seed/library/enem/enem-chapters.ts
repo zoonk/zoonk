@@ -43,6 +43,10 @@ export const enemMathChapters: SeedChapter[] = [
         ),
         {
           answer: t("20", "20"),
+          correction: t(
+            "Twenty-five seats would be one quarter of 100 seats. This hall has only 80.",
+            "Vinte e cinco lugares seriam um quarto de 100. Este auditório tem apenas 80 lugares.",
+          ),
           distractor: t("25", "25"),
           example: t(
             "A class fills 25 of the 100 seats in a hall. It occupies 25%, or one quarter, of the seats.",
@@ -52,6 +56,10 @@ export const enemMathChapters: SeedChapter[] = [
           reason: t(
             "Take one quarter of 80. The percentage stays the same even when the total changes.",
             "Calcule um quarto de 80. A porcentagem é a mesma, mesmo quando o total muda.",
+          ),
+          takeaway: t(
+            "A percentage specifies a share of the total.",
+            "A porcentagem indica uma parte do total.",
           ),
         },
       ),
@@ -118,6 +126,10 @@ export const enemMathChapters: SeedChapter[] = [
         ),
         {
           answer: t("28 reais", "28 reais"),
+          correction: t(
+            "Four extra notebooks cost 16 reais. Add the original three to get the cost for all seven.",
+            "Quatro cadernos a mais custam 16 reais. Some o preço dos três iniciais para obter o total dos sete.",
+          ),
           distractor: t("16 reais", "16 reais"),
           example: t(
             "At a fixed price per notebook, 3 notebooks cost 12 reais. One costs 4 reais, so 5 cost 20 reais.",
@@ -130,6 +142,10 @@ export const enemMathChapters: SeedChapter[] = [
           reason: t(
             "Multiply the unit price of 4 reais by the quantity, 7.",
             "Multiplique o preço unitário de 4 reais pela quantidade, 7.",
+          ),
+          takeaway: t(
+            "When the price per unit stays fixed, doubling the quantity doubles the cost.",
+            "Quando o preço por unidade é fixo, dobrar a quantidade dobra o custo.",
           ),
         },
       ),
@@ -339,6 +355,10 @@ export const enemAreaChapters: SeedChapter[] = [
             "Political alliances among state elites",
             "Alianças políticas entre as elites estaduais",
           ),
+          correction: t(
+            "There was no legal rotation between the two states. Their elites negotiated support.",
+            "Não havia rodízio legal entre os dois estados. Suas elites negociavam apoio.",
+          ),
           distractor: t(
             "A constitutional rule reserving the office",
             "Uma regra constitucional que reservava o cargo",
@@ -354,6 +374,10 @@ export const enemAreaChapters: SeedChapter[] = [
           reason: t(
             "Their influence depended on political arrangements. The Constitution did not reserve the presidency for those states.",
             "A influência dependia de acordos políticos. A Constituição não reservava a presidência a esses estados.",
+          ),
+          takeaway: t(
+            "State alliances helped shape presidential succession in the First Republic.",
+            "Alianças estaduais influenciaram a sucessão presidencial na Primeira República.",
           ),
         },
       ),
@@ -405,6 +429,10 @@ export const enemAreaChapters: SeedChapter[] = [
             "Street trees help keep neighborhoods cool",
             "As árvores de rua ajudam a refrescar os bairros",
           ),
+          correction: t(
+            "Counting trees on one street leaves out the point all three examples illustrate.",
+            "Contar as árvores de uma rua deixa de fora o que os três exemplos mostram.",
+          ),
           distractor: t("One street has twelve trees", "Uma rua tem doze árvores"),
           example: t(
             "A paragraph describes three ways street trees cool a neighborhood. The examples differ, but each supports the same idea about temperature.",
@@ -417,6 +445,10 @@ export const enemAreaChapters: SeedChapter[] = [
           reason: t(
             "The main idea connects the examples. A count from one street covers only a detail.",
             "A ideia principal conecta os exemplos. A contagem de uma rua cobre apenas um detalhe.",
+          ),
+          takeaway: t(
+            "Look for the claim that the whole paragraph supports.",
+            "Procure a afirmação que o parágrafo inteiro sustenta.",
           ),
         },
       ),

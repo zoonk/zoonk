@@ -97,6 +97,10 @@ export const mathChapters: SeedChapter[] = [
         ),
         {
           answer: t("13", "13"),
+          correction: t(
+            "Fifteen comes from tripling 4 + 1. The machine triples the input first.",
+            "Quinze é o triplo de 4 + 1. A máquina primeiro triplica a entrada.",
+          ),
           distractor: t("15", "15"),
           example: t(
             "A machine triples its input and adds one. Put in 2 and it returns 7 because 3 × 2 + 1 = 7.",
@@ -106,6 +110,10 @@ export const mathChapters: SeedChapter[] = [
           reason: t(
             "Apply the same rule to the new input. Three times four plus one is thirteen.",
             "Aplique a mesma regra à nova entrada. Três vezes quatro mais um dá treze.",
+          ),
+          takeaway: t(
+            "A function applies the same rule each time you give it an input.",
+            "Uma função aplica a mesma regra sempre que recebe uma entrada.",
           ),
         },
       ),
@@ -123,6 +131,10 @@ export const mathChapters: SeedChapter[] = [
         ),
         {
           answer: t("23 degrees", "23 graus"),
+          correction: t(
+            "Twelve locates noon on the horizontal axis. Read the vertical coordinate for the temperature.",
+            "Doze marca o meio-dia no eixo horizontal. Leia a coordenada vertical para achar a temperatura.",
+          ),
           distractor: t("12 degrees", "12 graus"),
           example: t(
             "On a temperature graph, time runs across the bottom and degrees run up the side. A point at (9, 18) means it was 18 degrees at 9 o’clock.",
@@ -135,6 +147,10 @@ export const mathChapters: SeedChapter[] = [
           reason: t(
             "The first coordinate locates the time. The second gives the temperature.",
             "A primeira coordenada indica a hora. A segunda dá a temperatura.",
+          ),
+          takeaway: t(
+            "Read the axis labels to tell what each coordinate measures.",
+            "Leia os rótulos dos eixos para saber o que cada coordenada mede.",
           ),
         },
       ),
@@ -153,6 +169,10 @@ export const mathChapters: SeedChapter[] = [
         ),
         {
           answer: t("2 liters per minute", "2 litros por minuto"),
+          correction: t(
+            "Four is the time in minutes. The slope measures how much volume is added in each minute.",
+            "Quatro é o tempo em minutos. A inclinação mede quanto volume entra a cada minuto.",
+          ),
           distractor: t("4 liters per minute", "4 litros por minuto"),
           example: t(
             "A tank gains 6 liters in 2 minutes at a steady pace. On a graph of volume against time, its slope is 6 ÷ 2 = 3 liters per minute.",
@@ -165,6 +185,10 @@ export const mathChapters: SeedChapter[] = [
           reason: t(
             "Divide the change in volume by the time it took. Eight divided by four is two.",
             "Divida a variação do volume pelo tempo que passou. Oito dividido por quatro dá dois.",
+          ),
+          takeaway: t(
+            "Slope is the change on the vertical axis divided by the change on the horizontal axis.",
+            "A inclinação é a variação no eixo vertical dividida pela variação no eixo horizontal.",
           ),
         },
       ),
@@ -197,6 +221,10 @@ export const mathChapters: SeedChapter[] = [
         ),
         {
           answer: t("10,000", "10.000"),
+          correction: t(
+            "The exponent counts factors of ten. It does not multiply the result by four.",
+            "O expoente conta fatores dez. Ele não multiplica o resultado por quatro.",
+          ),
           distractor: t("4,000", "4.000"),
           example: t(
             "Start at 1 and multiply by 10 three times. You get 10, then 100, then 1,000. That last number is 10³.",
@@ -206,6 +234,10 @@ export const mathChapters: SeedChapter[] = [
           reason: t(
             "One more factor of ten takes one thousand to ten thousand.",
             "Mais um fator dez leva de mil a dez mil.",
+          ),
+          takeaway: t(
+            "Increasing the exponent of ten by one multiplies the value by ten.",
+            "Aumentar o expoente de dez em um multiplica o valor por dez.",
           ),
         },
       ),

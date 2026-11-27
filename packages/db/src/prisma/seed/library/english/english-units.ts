@@ -46,6 +46,9 @@ export const englishUnits: SeedChapter[] = [
         ),
         {
           answer: pt("For two weeks."),
+          correction: pt(
+            "“To visit my family” explica o motivo da viagem. O agente perguntou a duração.",
+          ),
           distractor: pt("To visit my family."),
           example: pt(
             "Na imigração, “What brings you to Canada?” pergunta o motivo da viagem. Para visitar parentes, diga “I’m here to visit my family.”",
@@ -56,6 +59,7 @@ export const englishUnits: SeedChapter[] = [
           reason: pt(
             "“How long” pergunta por quanto tempo. “For two weeks” informa que a estadia dura duas semanas.",
           ),
+          takeaway: pt("Na imigração, responda a “why” com o motivo e a “how long” com a duração."),
         },
       ),
       withPractice(
@@ -67,6 +71,9 @@ export const englishUnits: SeedChapter[] = [
         ),
         {
           answer: pt("À direita, depois da saída"),
+          correction: pt(
+            "Para indicar a esquerda antes da saída, a funcionária diria “left before the exit”.",
+          ),
           distractor: pt("À esquerda, antes da saída"),
           example: pt(
             "Para perguntar onde ficam as malas, diga “Where is baggage claim?” Se ouvir “Go straight and turn left”, siga em frente e vire à esquerda.",
@@ -74,6 +81,9 @@ export const englishUnits: SeedChapter[] = [
           question: pt("Uma funcionária diz “Turn right after the exit.” Para onde você vira?"),
           reason: pt(
             "“Right” indica direita e “after the exit” indica que você passa pela saída antes de virar.",
+          ),
+          takeaway: pt(
+            "Em instruções de caminho, identifique tanto a direção quanto o ponto de referência.",
           ),
         },
       ),

@@ -34,6 +34,10 @@ export const stockMarketCourse: SeedCourse = {
           ),
           {
             answer: t("The bakery", "A padaria"),
+            correction: t(
+              "An existing shareholder gets paid when selling their own shares. Here the bakery is selling newly issued shares.",
+              "Um acionista recebe quando vende suas próprias ações. Aqui, a padaria está vendendo ações recém-emitidas.",
+            ),
             distractor: t(
               "The investor who owned shares yesterday",
               "O investidor que já tinha ações ontem",
@@ -49,6 +53,10 @@ export const stockMarketCourse: SeedCourse = {
             reason: t(
               "In a new issue, the company raises capital. In a resale, the buyer pays the selling shareholder.",
               "Na emissão, a empresa capta recursos. Na revenda, o comprador paga ao acionista que vende.",
+            ),
+            takeaway: t(
+              "Issuing shares raises money by selling part of the company.",
+              "Emitir ações capta recursos pela venda de parte da empresa.",
             ),
           },
         ),
@@ -66,6 +74,10 @@ export const stockMarketCourse: SeedCourse = {
           ),
           {
             answer: t("10 reais", "10 reais"),
+            correction: t(
+              "Two reais is the payment for just one share. Each of the five earns that amount.",
+              "Dois reais é o pagamento por apenas uma ação. Cada uma das cinco rende esse valor.",
+            ),
             distractor: t("2 reais", "2 reais"),
             example: t(
               "A company declares a dividend of 2 reais per share. Someone holding 3 eligible shares receives 6 reais.",
@@ -78,6 +90,10 @@ export const stockMarketCourse: SeedCourse = {
             reason: t(
               "Multiply the dividend per share by the number of eligible shares.",
               "Multiplique o dividendo por ação pelo número de ações com direito ao pagamento.",
+            ),
+            takeaway: t(
+              "Your dividend depends on the declared rate and how many eligible shares you hold.",
+              "Seu dividendo depende do valor declarado por ação e de quantas ações têm direito ao pagamento.",
             ),
           },
         ),
