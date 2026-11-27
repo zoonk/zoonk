@@ -8637,6 +8637,7 @@ msgstr "Examen blanc rendu"
 #: src/mock/mock-screen.tsx
 #: src/onboarding/steps/plan-building.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
+#: src/placement-test/placement-test-screens.tsx
 msgctxt "ni-x13"
 msgid "Your answers are saved."
 msgstr "Tes réponses sont enregistrées."
@@ -10200,6 +10201,12 @@ msgstr "Tu as annulé ces sauts aujourd’hui. Réponds à nouveau demain pour l
 msgctxt "jPv5OK"
 msgid "{count, plural, =0 {No lessons skipped in this part.} one {This part skipped # lesson you already know.} other {This part skipped # lessons you already know.}}"
 msgstr "{count, plural, =0 {Aucune leçon n’a été sautée dans cette partie.} one {Dans cette partie, # leçon que tu connaissais déjà a été sautée.} other {Dans cette partie, # leçons que tu connaissais déjà ont été sautées.}}"
+
+#. After a part of a course's test, when later parts were removed because the learner didn't know topics they depend on.
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "jWl7zP"
+msgid "The test got shorter: topics that build on ones you don't know yet aren't tested."
+msgstr "Le test est plus court : les sujets qui reposent sur des notions que tu ne connais pas encore ne sont pas évalués."
 
 #. The title after one part of a test split into parts, such as “Part 3 of 14 done”.
 #: src/placement-test/placement-test-screens.tsx

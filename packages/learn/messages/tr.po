@@ -8637,6 +8637,7 @@ msgstr "Deneme sınavı teslim edildi"
 #: src/mock/mock-screen.tsx
 #: src/onboarding/steps/plan-building.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
+#: src/placement-test/placement-test-screens.tsx
 msgctxt "ni-x13"
 msgid "Your answers are saved."
 msgstr "Cevapların kaydedildi."
@@ -10200,6 +10201,12 @@ msgstr "Bugün bunları geri aldın. Atlamak için yarın yeniden cevapla."
 msgctxt "jPv5OK"
 msgid "{count, plural, =0 {No lessons skipped in this part.} one {This part skipped # lesson you already know.} other {This part skipped # lessons you already know.}}"
 msgstr "{count, plural, =0 {Bu bölümde plandan çıkarılan ders yok.} other {Bu bölümde zaten bildiğin # ders plandan çıkarıldı.}}"
+
+#. After a part of a course's test, when later parts were removed because the learner didn't know topics they depend on.
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "jWl7zP"
+msgid "The test got shorter: topics that build on ones you don't know yet aren't tested."
+msgstr "Test kısaldı: Henüz bilmediğin konuların üzerine kurulu konular test edilmiyor."
 
 #. The title after one part of a test split into parts, such as “Part 3 of 14 done”.
 #: src/placement-test/placement-test-screens.tsx

@@ -8637,6 +8637,7 @@ msgstr "Simulado entregue"
 #: src/mock/mock-screen.tsx
 #: src/onboarding/steps/plan-building.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
+#: src/placement-test/placement-test-screens.tsx
 msgctxt "ni-x13"
 msgid "Your answers are saved."
 msgstr "Suas respostas estão salvas."
@@ -10200,6 +10201,12 @@ msgstr "Você desfez isso hoje. Responda de novo amanhã para pular essas aulas.
 msgctxt "jPv5OK"
 msgid "{count, plural, =0 {No lessons skipped in this part.} one {This part skipped # lesson you already know.} other {This part skipped # lessons you already know.}}"
 msgstr "{count, plural, =0 {Nenhuma aula pulada nesta parte.} one {Esta parte pulou # aula que você já sabia.} other {Esta parte pulou # aulas que você já sabia.}}"
+
+#. After a part of a course's test, when later parts were removed because the learner didn't know topics they depend on.
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "jWl7zP"
+msgid "The test got shorter: topics that build on ones you don't know yet aren't tested."
+msgstr "O teste ficou mais curto: tópicos que dependem de outros que você ainda não conhece não serão avaliados."
 
 #. The title after one part of a test split into parts, such as “Part 3 of 14 done”.
 #: src/placement-test/placement-test-screens.tsx

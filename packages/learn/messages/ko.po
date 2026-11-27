@@ -8637,6 +8637,7 @@ msgstr "모의고사를 제출했어요"
 #: src/mock/mock-screen.tsx
 #: src/onboarding/steps/plan-building.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
+#: src/placement-test/placement-test-screens.tsx
 msgctxt "ni-x13"
 msgid "Your answers are saved."
 msgstr "답변은 저장되어 있어요."
@@ -10200,6 +10201,12 @@ msgstr "오늘 이 레슨들의 건너뛰기를 취소했어요. 내일 다시 �
 msgctxt "jPv5OK"
 msgid "{count, plural, =0 {No lessons skipped in this part.} one {This part skipped # lesson you already know.} other {This part skipped # lessons you already know.}}"
 msgstr "{count, plural, =0 {이 파트에서 건너뛴 레슨이 없어요.} other {이 파트에서 이미 아는 레슨 #개를 건너뛰었어요.}}"
+
+#. After a part of a course's test, when later parts were removed because the learner didn't know topics they depend on.
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "jWl7zP"
+msgid "The test got shorter: topics that build on ones you don't know yet aren't tested."
+msgstr "테스트가 짧아졌어요. 아직 모르는 주제를 바탕으로 하는 주제는 테스트하지 않아요."
 
 #. The title after one part of a test split into parts, such as “Part 3 of 14 done”.
 #: src/placement-test/placement-test-screens.tsx
