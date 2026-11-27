@@ -115,7 +115,7 @@ export function DayTime({ className }: { className?: string }) {
   return (
     <Popover>
       <PopoverTrigger
-        className="decoration-faint hit-area focus-visible:ring-ring/50 relative rounded-sm underline decoration-dotted decoration-1 underline-offset-4 outline-none focus-visible:ring-[3px]"
+        className="decoration-faint held-pressed:decoration-foreground hit-area focus-visible:ring-ring/50 relative rounded-sm underline decoration-dotted decoration-1 underline-offset-4 outline-none focus-visible:ring-[3px]"
         data-slot="today-shorter-day"
       >
         <DayTimeReadout className={className} />

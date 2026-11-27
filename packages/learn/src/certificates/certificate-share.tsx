@@ -203,6 +203,7 @@ function NetworkLinks({ text, url }: { text: string; url: string }) {
           className={buttonVariants({ size: "lg", variant: "outline" })}
           href={getNetworkUrl({ network, text, url })}
           key={network}
+          // oxlint-disable-next-line zoonk/held-press-control -- The mounted dialog uses native links to open a share destination, with clipboard access in the original gesture.
           onClick={() => {
             if (copied) {
               void copy(text).then(() => showSuccessToast(copied));

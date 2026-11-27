@@ -6,6 +6,7 @@ import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profile
 import { memoryFactFixture, memoryInsightFixture } from "@zoonk/testing/fixtures/memory";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { revalidateTag } from "next/cache";
 import { after } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -22,7 +23,6 @@ import { undoMemoryChanges } from "./undo-memory-changes";
 import { updateMemoryFact } from "./update-memory-fact";
 import { updateMemorySettings } from "./update-memory-settings";
 
-const DAY_MS = 86_400_000;
 const TOTAL_PAIRS = 20;
 /** Eight transactions leave room in the ten-connection pool for post-commit queries. */
 const CONCURRENT_PAIRS = 4;
@@ -59,7 +59,7 @@ describe(getCurrentUserMemory, () => {
     const user = await useLearner();
 
     const older = await memoryFactFixture({
-      createdAt: new Date(Date.now() - DAY_MS),
+      createdAt: new Date(Date.now() - MS_PER_DAY),
       sourceRef: { id: null, kind: "onboarding" },
       statement: "Needs 700+ in the essay",
       userId: user.id,
@@ -75,7 +75,7 @@ describe(getCurrentUserMemory, () => {
     await Promise.all([
       memoryFactFixture({ statement: "Wants Medicine", status: "superseded", userId: user.id }),
       memoryFactFixture({ deletedAt: new Date(), status: "deleted", userId: user.id }),
-      memoryFactFixture({ expiresAt: new Date(Date.now() - DAY_MS), userId: user.id }),
+      memoryFactFixture({ expiresAt: new Date(Date.now() - MS_PER_DAY), userId: user.id }),
     ]);
 
     const memory = await getCurrentUserMemory();
@@ -328,7 +328,7 @@ describe("memory and answer transaction lock order", () => {
         memoryFactFixture({ userId: user.id }),
         learnerSkillFixture({
           difficulty: 5,
-          lastReviewedAt: new Date(Date.now() - DAY_MS),
+          lastReviewedAt: new Date(Date.now() - MS_PER_DAY),
           reps: 1,
           skillId: skill.id,
           stability: 3,

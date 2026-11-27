@@ -177,7 +177,7 @@ function MistakesInbox({
               data-shown={open || undefined}
               className={cn(
                 LIST_ROW_INTERACTIVE_CLASS,
-                "group/skill lg:col-start-1",
+                "group/skill lg:data-held:before:bg-muted lg:col-start-1",
                 open && "lg:before:bg-muted",
               )}
               onClick={() => select(key)}

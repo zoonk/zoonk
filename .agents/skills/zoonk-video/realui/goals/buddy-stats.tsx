@@ -2,6 +2,7 @@
 import { ProgressContent } from "@repo/apps/main/src/app/[lang]/(app)/(stats)/_components/progress-content.tsx";
 import { calculateBeltLevel, getNextBelt } from "@repo/packages/utils/src/belt-level.ts";
 import { getContributionCalendarDateRangeFromEndDate } from "@repo/packages/utils/src/contribution-calendar.ts";
+import { MS_PER_DAY } from "@repo/packages/utils/src/date.ts";
 import { useExtracted } from "next-intl";
 import { type Lang } from "../story";
 import { DEFAULT_BP, buddyStatus, tabBuddy } from "./buddy-energy";
@@ -12,7 +13,6 @@ import { SectionPage } from "./buddy-main-section-page";
 import { StatsPage } from "./buddy-main-stats-page";
 import { AppFrame } from "./shell";
 
-const MS_PER_DAY = 86_400_000;
 const TODAY = new Date("2026-11-03T00:00:00Z");
 const STARTED = new Date("2026-09-14T00:00:00Z");
 

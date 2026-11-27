@@ -10,6 +10,7 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { mistakeShowing, pickInMistake } from "../_test-utils/shown-choice";
@@ -21,7 +22,6 @@ import { getSecondTakeIdentityKey } from "../library/second-takes/second-take-id
 import { answerMistakePractice } from "../mistakes/answer-mistake-practice";
 import { readPlanSummary } from "../plans/_utils/plan-summary";
 import {
-  DAY_MS,
   SESSION_NOW,
   SESSION_TODAY,
   daysAgo,
@@ -396,13 +396,13 @@ describe("adaptive study days", () => {
 
       await expect(read()).resolves.toMatchObject({ teaching: [] });
 
-      const later = new Date(SESSION_NOW.getTime() + 10 * DAY_MS);
+      const later = new Date(SESSION_NOW.getTime() + 10 * MS_PER_DAY);
       const item = await prisma.item.findFirstOrThrow({ where: { skillId: skill.id } });
 
       await Promise.all(
         [8, 9].map((days) =>
           attemptFixture({
-            answeredAt: new Date(SESSION_NOW.getTime() + days * DAY_MS),
+            answeredAt: new Date(SESSION_NOW.getTime() + days * MS_PER_DAY),
             cause: "gap",
             evidence: "independent",
             isCorrect: false,

@@ -8,6 +8,23 @@ describe(apportion, () => {
     expect(apportion({ total: 7, weights: [0.5, 0.25, 0.25] })).toStrictEqual([3, 2, 2]);
   });
 
+  it("borrows from the largest share when every part can receive one", () => {
+    const weights = [50, 30, 1, 1, 1];
+    expect(apportion({ total: 20, weights })).toStrictEqual([12, 7, 1, 0, 0]);
+
+    expect(apportion({ minimumOneIfPossible: true, total: 20, weights })).toStrictEqual([
+      10, 7, 1, 1, 1,
+    ]);
+
+    expect(apportion({ minimumOneIfPossible: true, total: 3, weights: [100, 1, 1] })).toStrictEqual(
+      [1, 1, 1],
+    );
+
+    expect(apportion({ minimumOneIfPossible: true, total: 2, weights: [100, 1, 1] })).toStrictEqual(
+      [2, 0, 0],
+    );
+  });
+
   it("shares equally when no weight counts", () => {
     expect(apportion({ total: 4, weights: [0, 0] })).toStrictEqual([2, 2]);
   });

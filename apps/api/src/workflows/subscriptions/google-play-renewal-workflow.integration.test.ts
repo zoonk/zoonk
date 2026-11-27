@@ -2,12 +2,11 @@ import { generateKeyPairSync, randomUUID } from "node:crypto";
 import { waitForSleep } from "@workflow/vitest";
 import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY, MS_PER_MINUTE } from "@zoonk/utils/date";
 import { afterEach, assert, beforeEach, describe, expect, it, vi } from "vitest";
 import { type Run, getRun, start } from "workflow/api";
 import { googlePlayRenewalWorkflow } from "./google-play-renewal-workflow";
 
-const DAY_MS = 86_400_000;
-const MINUTE_MS = 60_000;
 const realFetch = globalThis.fetch;
 const { privateKey } = generateKeyPairSync("rsa", { modulusLength: 2048 });
 
@@ -37,7 +36,7 @@ function getRenewedPurchase() {
         productId: "plus",
       },
     ],
-    startTime: new Date(Date.now() - 30 * DAY_MS).toISOString(),
+    startTime: new Date(Date.now() - 30 * MS_PER_DAY).toISOString(),
     subscriptionState: "SUBSCRIPTION_STATE_ACTIVE",
   };
 }
@@ -76,13 +75,13 @@ async function googleFetch(input: RequestInfo | URL, init?: RequestInit) {
 /** A Plus learner whose paid period ended a minute ago with no word from Google yet. */
 async function lapsedRenewal({ acknowledged = true }: { acknowledged?: boolean } = {}) {
   const user = await userFixture();
-  const lapsedAt = new Date(Date.now() - MINUTE_MS);
+  const lapsedAt = new Date(Date.now() - MS_PER_MINUTE);
 
   return prisma.subscription.create({
     data: {
       billingInterval: "month",
       periodEnd: lapsedAt,
-      periodStart: new Date(lapsedAt.getTime() - 30 * DAY_MS),
+      periodStart: new Date(lapsedAt.getTime() - 30 * MS_PER_DAY),
       plan: "plus",
       provider: "google",
       providerAcknowledged: acknowledged,
@@ -119,7 +118,7 @@ describe(googlePlayRenewalWorkflow, () => {
     google.acknowledgements = [];
     google.answer = "renewed";
     google.reads = [];
-    google.renewedUntil = new Date(Date.now() + 30 * DAY_MS);
+    google.renewedUntil = new Date(Date.now() + 30 * MS_PER_DAY);
     vi.stubEnv("GOOGLE_PLAY_SERVICE_ACCOUNT_KEY", SERVICE_ACCOUNT_KEY);
     vi.stubGlobal("fetch", vi.fn(googleFetch));
   });

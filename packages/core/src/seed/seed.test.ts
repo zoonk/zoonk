@@ -1,5 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { SEED_PERSONA_NAMES } from "@zoonk/db/seed/personas";
+import { MS_PER_HOUR } from "@zoonk/utils/date";
 import { after } from "next/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { session as sessionBoundary } from "../_test-utils/test-boundaries";
@@ -20,7 +21,6 @@ import { seedPersonaCopy } from "./seed";
 const FRIDAY = new Date("2026-10-16T20:52:12Z");
 const TODAY = new Date("2026-10-16T00:00:00Z");
 const HISTORY_DAYS = 14;
-const MS_PER_HOUR = 3_600_000;
 
 const ANA_STUDY_DATES = Array.from({ length: HISTORY_DAYS }, (_, index) =>
   toIsoDate(addDays(TODAY, index - HISTORY_DAYS)),

@@ -132,6 +132,7 @@ export function EventCard({
       )}
       data-slot="timeline-event"
       onKeyDown={handleKeyDown}
+      // oxlint-disable-next-line zoonk/held-press-control -- The slider captures the live pointer to drag. A replayed click cannot capture it.
       onPointerDown={(pointerEvent) => {
         if (isMovable) {
           pointerEvent.stopPropagation();

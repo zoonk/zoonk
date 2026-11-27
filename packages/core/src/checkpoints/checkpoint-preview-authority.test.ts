@@ -3,10 +3,10 @@ import { layOutPlanFixture, planItemFixture } from "@zoonk/testing/fixtures/goal
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import {
-  DAY_MS,
   SESSION_NOW,
   SESSION_TODAY,
   checkpointItemFixture,
@@ -92,7 +92,7 @@ describe("checkpoint previews follow the day Start actually opens", () => {
     const skill = skills[0]!;
 
     await attemptFixture({
-      answeredAt: new Date(SESSION_NOW.getTime() - 2 * DAY_MS),
+      answeredAt: new Date(SESSION_NOW.getTime() - 2 * MS_PER_DAY),
       itemId: items[0]!.id,
       skillId: skill.id,
       userId: user.id,

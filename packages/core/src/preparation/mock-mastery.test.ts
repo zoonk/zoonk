@@ -1,6 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { itemFixture } from "@zoonk/testing/fixtures/skills";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { pickItemInMock } from "../_test-utils/shown-choice";
 import {
@@ -13,7 +14,7 @@ import { getMock } from "../exams/mocks/get-mock";
 import { saveMockAnswer } from "../exams/mocks/save-mock-answer";
 import { startMock } from "../exams/mocks/start-mock";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
-import { DAY_MS, SESSION_NOW, SESSION_TODAY } from "../sessions/_test-utils/session-goal";
+import { SESSION_NOW, SESSION_TODAY } from "../sessions/_test-utils/session-goal";
 import { getGoalPreparation } from "./get-goal-preparation";
 
 describe("mock answers in preparation's mastery evidence", () => {
@@ -44,7 +45,7 @@ describe("mock answers in preparation's mastery evidence", () => {
         .map((question) =>
           attemptFixture({
             answer: { dontKnow: true },
-            answeredAt: new Date(SESSION_NOW.getTime() - DAY_MS),
+            answeredAt: new Date(SESSION_NOW.getTime() - MS_PER_DAY),
             isCorrect: false,
             isPlacement: true,
             itemId: question.itemId,

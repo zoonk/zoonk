@@ -6,6 +6,7 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession } from "../_test-utils/mock-session";
@@ -17,7 +18,6 @@ import { finishStudyBlock } from "./finish-study-block";
 import { startStudyBlock } from "./start-study-block";
 
 const NOW = new Date("2026-10-13T12:00:00Z");
-const MINUTE = 60_000;
 
 async function setup() {
   freezeClock();
@@ -85,7 +85,7 @@ async function setup() {
 }
 
 function at(minutes: number) {
-  vi.setSystemTime(new Date(NOW.getTime() + minutes * MINUTE));
+  vi.setSystemTime(new Date(NOW.getTime() + minutes * MS_PER_MINUTE));
 }
 
 describe("session focus time", () => {
@@ -112,6 +112,46 @@ describe("session focus time", () => {
     await finish(0);
     await finish(1);
     await expect(seconds()).resolves.toBe(420);
+  });
+
+  it("pauses running clocks and leaves blocks stopped on earlier days as they were", async () => {
+    const { start, user } = await setup();
+
+    const earlier = await studySessionFixture({
+      localDate: new Date("2026-10-01"),
+      userId: user.id,
+    });
+
+    const [stopped, untimed] = await Promise.all([
+      studySessionBlockFixture({
+        kind: "practice",
+        payload: { timing: { activeAt: null, clock: null, elapsedMs: 5 * MINUTE } },
+        position: 0,
+        sessionId: earlier.id,
+        startedAt: new Date("2026-10-01T09:00:00Z"),
+        status: "active",
+      }),
+      studySessionBlockFixture({
+        kind: "practice",
+        position: 1,
+        sessionId: earlier.id,
+        startedAt: new Date(NOW.getTime() - 3 * MINUTE),
+        status: "active",
+      }),
+    ]);
+
+    at(4);
+    await start(0);
+
+    await expect(
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: stopped.id } }),
+    ).resolves.toStrictEqual(stopped);
+
+    expect(
+      readBlockPayload(
+        await prisma.studySessionBlock.findUniqueOrThrow({ where: { id: untimed.id } }),
+      ).timing,
+    ).toMatchObject({ activeAt: null, elapsedMs: 7 * MINUTE });
   });
 
   it("pauses the earlier clock across different owned sessions", async () => {

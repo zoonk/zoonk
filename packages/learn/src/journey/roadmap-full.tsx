@@ -61,7 +61,7 @@ function PhaseBand({
             className={cn(
               BAND_CLASS,
               BAND_STATE_CLASS[phase.state],
-              "focus-visible:ring-ring/50 hit-area cursor-pointer transition-[filter] outline-none hover:brightness-95 focus-visible:ring-[3px] dark:hover:brightness-125",
+              "focus-visible:ring-ring/50 hit-area held-pressed:brightness-90 dark:held-pressed:brightness-125 cursor-pointer transition-[filter] outline-none hover:brightness-95 focus-visible:ring-[3px] dark:hover:brightness-125",
             )}
             data-slot="roadmap-band"
             tabIndex={focusable ? 0 : -1}

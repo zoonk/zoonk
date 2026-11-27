@@ -4,7 +4,6 @@ import { ONBOARDING_QUESTIONS } from "@zoonk/core/view-models/onboarding/contrac
 import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
-import { expectHydrated } from "@zoonk/e2e/hydration";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
@@ -146,7 +145,6 @@ test.describe("Exam date", () => {
         .getByRole("region", { exact: true, name: "Your plan" })
         .getByRole("button", { name: /^Exam date/u });
 
-      await expectHydrated(editDate);
       await editDate.click();
 
       const editor = page.getByRole("dialog", { name: "Adjust your plan" });

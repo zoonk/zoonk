@@ -1,8 +1,8 @@
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it } from "vitest";
 import { type RebalanceArea, pickRebalance } from "./rebalance-rule";
 
 const NOW = new Date("2026-10-07T12:00:00Z");
-const DAY_MS = 86_400_000;
 
 function counts(attrs: Partial<RebalanceArea["skills"]> = {}): RebalanceArea["skills"] {
   return { fading: 0, learning: 0, mastered: 0, new: 0, solid: 0, total: 0, ...attrs };
@@ -40,9 +40,9 @@ describe(pickRebalance, () => {
   });
 
   it("waits a week between rebalances", () => {
-    expect(pick({ lastRebalanceAt: new Date(NOW.getTime() - 2 * DAY_MS) })).toBeNull();
+    expect(pick({ lastRebalanceAt: new Date(NOW.getTime() - 2 * MS_PER_DAY) })).toBeNull();
 
-    expect(pick({ lastRebalanceAt: new Date(NOW.getTime() - 8 * DAY_MS) })).toStrictEqual([
+    expect(pick({ lastRebalanceAt: new Date(NOW.getTime() - 8 * MS_PER_DAY) })).toStrictEqual([
       "Science",
     ]);
   });

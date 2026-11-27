@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import * as fc from "fast-check";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
@@ -17,8 +18,7 @@ import { claimUsage, claimUsageFor } from "./claim-usage";
 import { getAllowance } from "./get-allowance";
 
 const NOW = new Date("2026-11-13T12:00:00Z");
-const DAY_MS = 24 * 60 * 60 * 1000;
-const WINDOW_MS = 30 * DAY_MS;
+const WINDOW_MS = 30 * MS_PER_DAY;
 const LIMIT = 20;
 
 async function lessonAllowance() {
@@ -79,7 +79,7 @@ describe("the window", () => {
   it("refuses exactly at 20 in the window, and availableAt is the first instant a start is allowed", () => {
     fc.assert(
       fc.property(
-        fc.array(fc.integer({ max: 5 * DAY_MS, min: -40 * DAY_MS }), { maxLength: 60 }),
+        fc.array(fc.integer({ max: 5 * MS_PER_DAY, min: -40 * MS_PER_DAY }), { maxLength: 60 }),
         (offsets) => {
           const starts = offsets.map((offset) => new Date(NOW.getTime() + offset));
           const ledger = freeLedger({ now: NOW, starts });
@@ -119,7 +119,7 @@ describe("a map's bundle of lesson starts", () => {
   it("returns a date at which the same bundle is admitted", () => {
     const starts = Array.from(
       { length: 15 },
-      (_, index) => new Date(NOW.getTime() - (index + 1) * DAY_MS),
+      (_, index) => new Date(NOW.getTime() - (index + 1) * MS_PER_DAY),
     );
 
     const claims = chapterMapClaims({
@@ -143,7 +143,7 @@ describe("a map's bundle of lesson starts", () => {
       throw new Error("Expected a bundle availability date");
     }
 
-    expect(availableAt).toStrictEqual(new Date(NOW.getTime() + 17 * DAY_MS));
+    expect(availableAt).toStrictEqual(new Date(NOW.getTime() + 17 * MS_PER_DAY));
 
     expect(
       decideBundle({
@@ -226,7 +226,7 @@ describe("admission against the database", () => {
     const user = await userFixture();
     mockSession(user.id);
     const targetId = randomUUID();
-    vi.setSystemTime(new Date(NOW.getTime() - 40 * DAY_MS));
+    vi.setSystemTime(new Date(NOW.getTime() - 40 * MS_PER_DAY));
 
     await expect(
       claimUsageFor({ generated: true, kind: "lessonStart", targetId, userId: user.id }),
@@ -244,11 +244,11 @@ describe("admission against the database", () => {
       }),
     ).resolves.toMatchObject({
       countedAt: NOW,
-      createdAt: new Date(NOW.getTime() - 40 * DAY_MS),
+      createdAt: new Date(NOW.getTime() - 40 * MS_PER_DAY),
       generated: true,
     });
 
-    vi.setSystemTime(new Date(NOW.getTime() + DAY_MS));
+    vi.setSystemTime(new Date(NOW.getTime() + MS_PER_DAY));
     await claimUsage({ kind: "lessonStart", targetId });
 
     await expect(lessonAllowance()).resolves.toMatchObject({ usedLast30Days: 1 });

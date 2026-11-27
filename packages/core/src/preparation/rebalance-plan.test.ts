@@ -1,6 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { attemptFixture, learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { updateGoal } from "../goals/update-goal";
@@ -17,17 +18,16 @@ import { rebalancePlanAfterSession } from "./rebalance-plan";
 
 /** A Wednesday in 2020, before other tests' learning events, so the planner's pace is its own. */
 const NOW = new Date("2020-09-30T12:00:00Z");
-const DAY_MS = 86_400_000;
 
 const REMEMBERED = {
   difficulty: 5,
-  lastReviewedAt: new Date(NOW.getTime() - DAY_MS),
+  lastReviewedAt: new Date(NOW.getTime() - MS_PER_DAY),
   stability: 30,
 };
 
 const FADING = {
   difficulty: 5,
-  lastReviewedAt: new Date(NOW.getTime() - 10 * DAY_MS),
+  lastReviewedAt: new Date(NOW.getTime() - 10 * MS_PER_DAY),
   stability: 1,
 };
 
@@ -61,7 +61,7 @@ async function setup({ phases = "shared" }: { phases?: "separate" | "shared" } =
 
   await createGoalPlan({ goalId: goal.id, graph });
 
-  const studiedAt = new Date(NOW.getTime() - 2 * DAY_MS);
+  const studiedAt = new Date(NOW.getTime() - 2 * MS_PER_DAY);
   const [humanities, science] = [library.skills.slice(0, 2), library.skills.slice(2)];
 
   await Promise.all([

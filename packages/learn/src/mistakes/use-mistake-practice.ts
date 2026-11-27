@@ -1,5 +1,6 @@
 "use client";
 
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { useEffect, useEffectEvent, useReducer, useRef, useState } from "react";
 import { type ChoiceAnswer } from "../questions/choice-question";
 import { type AnswerSender, getSentDurationMs } from "./drill/drill-types";
@@ -16,7 +17,6 @@ import {
 } from "./mistake-practice-state";
 import { type RecordMistakeAction, usePracticeRecording } from "./use-practice-recording";
 
-const MS_PER_SECOND = 1000;
 const NOT_SURE: ChoiceAnswer = { dontKnow: true };
 
 /**

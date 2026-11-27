@@ -45,14 +45,12 @@ function ComingLessonsValue({ asks, minutes }: { asks: boolean; minutes: number 
 
   return (
     <>
-      <form action={() => void run()} className="contents">
-        <Button busy={isPending} size="sm" type="submit" variant="outline">
-          {t({
-            description: "Button that asks for today's lessons to be made ready.",
-            message: "Get lessons",
-          })}
-        </Button>
-      </form>
+      <Button busy={isPending} size="sm" onClick={run} variant="outline">
+        {t({
+          description: "Button that asks for today's lessons to be made ready.",
+          message: "Get lessons",
+        })}
+      </Button>
 
       {failed && <ChangeSaveError className="basis-full text-xs" />}
     </>

@@ -10,13 +10,13 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { lockPlanSourceWrite, writePlanInputs } from "../library/_utils/plan-input-write";
 import { type SavedItemFacts } from "../plans/_utils/selected-item-contract";
 import { getGoalPlan } from "../plans/get-goal-plan";
 import {
-  DAY_MS,
   SESSION_NOW,
   SESSION_TODAY,
   checkpointItemFixture,
@@ -557,7 +557,7 @@ describe("a challenge intro is a read", () => {
 
     await Promise.all([
       prisma.planItem.update({
-        data: { scheduledFor: new Date(SESSION_NOW.getTime() + 2 * DAY_MS) },
+        data: { scheduledFor: new Date(SESSION_NOW.getTime() + 2 * MS_PER_DAY) },
         where: { id: boss.id },
       }),
       prisma.plan.update({
@@ -590,7 +590,7 @@ describe("a challenge intro is a read", () => {
     await prisma.plan.update({
       data: {
         settings: {
-          startDate: new Date(SESSION_NOW.getTime() - DAY_MS).toISOString().slice(0, 10),
+          startDate: new Date(SESSION_NOW.getTime() - MS_PER_DAY).toISOString().slice(0, 10),
           weekdayMinutes: Array.from({ length: 7 }, (_, weekday) =>
             weekday === SESSION_NOW.getUTCDay() ? 0 : goal.dailyMinutes,
           ),

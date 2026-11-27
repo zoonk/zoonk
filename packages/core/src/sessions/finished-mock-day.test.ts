@@ -1,8 +1,8 @@
 import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
-  DAY_MS,
   SESSION_NOW,
   SESSION_TODAY,
   checkpointItemFixture,
@@ -26,7 +26,7 @@ describe("a mock day rebuilt after the learner finished the mock", () => {
       goal: {
         dailyMinutes: 120,
         kind: "exam",
-        targetDate: new Date(SESSION_TODAY.getTime() + 30 * DAY_MS),
+        targetDate: new Date(SESSION_TODAY.getTime() + 30 * MS_PER_DAY),
       },
       userId: user.id,
     });

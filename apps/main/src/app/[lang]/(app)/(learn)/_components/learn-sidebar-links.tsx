@@ -3,6 +3,7 @@
 import { Link, usePathname } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
 import { useContentFeedback } from "@zoonk/learn/feedback";
+import { BusyIcon } from "@zoonk/ui/components/button";
 import { SIDEBAR_COUNT_CLASS, SIDEBAR_ITEM_CLASS } from "@zoonk/ui/components/sidebar";
 import { BarSearch, SidebarSearch, SidebarTooltip } from "@zoonk/ui/components/sidebar-toggle";
 import { openCommandPalette } from "@zoonk/ui/lib/command-palette-event";
@@ -49,7 +50,9 @@ export function LearnSidebarFeedback() {
         }
         type="button"
       >
-        <MessageSquareIcon aria-hidden="true" />
+        <BusyIcon className="shrink-0">
+          <MessageSquareIcon aria-hidden="true" className="size-4" />
+        </BusyIcon>
         <span className="min-w-0 flex-1 truncate text-left">{label}</span>
       </button>
     </SidebarTooltip>

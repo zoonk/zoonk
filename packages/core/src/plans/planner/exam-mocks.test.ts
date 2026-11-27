@@ -1,3 +1,4 @@
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it } from "vitest";
 import { checkMocksInEveryPhase } from "../_test-utils/rules/day-rules";
 import { type BuildPlanInput, buildPlan } from "./build-plan";
@@ -5,10 +6,9 @@ import { toIsoDate } from "./plan-calendar";
 import { type PlanGraph, parsePlanSettings } from "./plan-state";
 
 const TODAY = new Date("2026-10-12T00:00:00Z");
-const DAY_MS = 86_400_000;
 
 function day(offset: number): Date {
-  return new Date(TODAY.getTime() + offset * DAY_MS);
+  return new Date(TODAY.getTime() + offset * MS_PER_DAY);
 }
 
 const AREAS = ["Natureza", "Humanas", "Matemática"];

@@ -2,20 +2,19 @@ import { prisma } from "@zoonk/db";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it } from "vitest";
 import { loadPaceSamples } from "./pace-samples";
 
-const DAY_MS = 86_400_000;
-
 /** Shared samples read the month before `now`, so a far-off day sees this test's lessons alone. */
 function isolatedNow(): Date {
-  return new Date(Date.UTC(2091, 0, 1) + Math.floor(Math.random() * 100_000) * DAY_MS);
+  return new Date(Date.UTC(2091, 0, 1) + Math.floor(Math.random() * 100_000) * MS_PER_DAY);
 }
 
 describe(loadPaceSamples, () => {
   it("counts the lessons of learners who deleted their accounts, kept without them", async () => {
     const now = isolatedNow();
-    const yesterday = new Date(now.getTime() - DAY_MS);
+    const yesterday = new Date(now.getTime() - MS_PER_DAY);
 
     const [learner, other, lesson] = await Promise.all([
       userFixture(),
@@ -57,7 +56,7 @@ describe(loadPaceSamples, () => {
       libraryLessonFixture({ estimatedMinutes: 4, targetLanguage: "es" }),
     ]);
 
-    const recent = new Date(now.getTime() - DAY_MS);
+    const recent = new Date(now.getTime() - MS_PER_DAY);
 
     await Promise.all([
       learningEventFixture({
@@ -113,7 +112,7 @@ describe(loadPaceSamples, () => {
 
     await learningEventFixture({
       contentIds: { lessonId: subject.id },
-      endedAt: new Date(now.getTime() - 2 * DAY_MS),
+      endedAt: new Date(now.getTime() - 2 * MS_PER_DAY),
       seconds: 240,
       userId: learner.id,
     });
@@ -122,7 +121,7 @@ describe(loadPaceSamples, () => {
       Array.from({ length: 200 }, (_, index) =>
         learningEventFixture({
           contentIds: { lessonId: index === 0 ? subject.id : language.id },
-          endedAt: new Date(now.getTime() - DAY_MS + index),
+          endedAt: new Date(now.getTime() - MS_PER_DAY + index),
           seconds: index === 0 ? 10_000 : 240,
           userId: learner.id,
         }),

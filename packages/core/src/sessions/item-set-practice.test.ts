@@ -14,6 +14,7 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_HOUR } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { pickItemInBlock } from "../_test-utils/shown-choice";
@@ -33,8 +34,6 @@ import { readBlockPayload } from "./block-payload";
 import { finishStudyBlock } from "./finish-study-block";
 import { getStudyBlock } from "./get-study-block";
 import { startStudyBlock } from "./start-study-block";
-
-const HOUR_MS = 3_600_000;
 
 async function passageFixture() {
   const user = await userFixture();
@@ -130,7 +129,7 @@ describe("question sets in practice", () => {
     const { alone, goal, setItems, skillId, user } = await passageFixture();
 
     await attemptFixture({
-      answeredAt: new Date(SESSION_NOW.getTime() - 2 * HOUR_MS),
+      answeredAt: new Date(SESSION_NOW.getTime() - 2 * MS_PER_HOUR),
       itemId: setItems[1],
       skillId,
       userId: user.id,

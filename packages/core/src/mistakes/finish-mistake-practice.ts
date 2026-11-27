@@ -3,6 +3,7 @@ import { type Goal, type TransactionClient, prisma } from "@zoonk/db";
 import { trackLearnerEvents } from "../analytics/track-learner-event";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getUserProgressCacheTag } from "../cache/tags";
+import { getLearnerLocalTime } from "../learner/_utils/local-time";
 import { findOwnedGoal } from "../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { celebrateProgress } from "../milestones/celebrate-progress";
@@ -18,7 +19,7 @@ import { withActivityMissionMoment } from "../sessions/missions/activity-mission
 import { settleLearnerMissions } from "../sessions/missions/settle-learner-missions";
 import { type ProgressCelebration } from "../sessions/progress-celebration";
 import { getCompletionEnergyContext } from "../stats/completion-energy";
-import { getLedgerLocalTime, recordLearningEvent } from "../stats/record-learning-event";
+import { recordLearningEvent } from "../stats/record-learning-event";
 import { getSession } from "../users/get-session";
 import { findPracticeMock, mockMistakeWhere } from "./_utils/mock-practice";
 import { findPracticeBlock } from "./_utils/practice-block";
@@ -146,7 +147,7 @@ async function writeRun(
         brainPower: run.brainPower + brainPower,
         energyDelta: { increment: energyDelta },
         seconds: run.seconds + seconds,
-        ...getLedgerLocalTime({ date: lock.completedAt, timeZone }),
+        ...getLearnerLocalTime({ date: lock.completedAt, timeZone }),
       },
       where: { id: run.id },
     });

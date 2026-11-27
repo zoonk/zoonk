@@ -5,6 +5,7 @@ import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { sourceFixture, unnoticedSourceChangeFixture } from "@zoonk/testing/fixtures/sources";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { assert, beforeEach, describe, expect, it, vi } from "vitest";
 import { start } from "workflow/api";
 import { mockHookConflict } from "../../../mocks/workflow";
@@ -13,8 +14,6 @@ import { flaggedContentWorkflow } from "./flagged-content-workflow";
 
 const LAW_TEXT =
   "Art. 13. A posse ocorrerá no prazo de quinze dias contados da publicação do ato de provimento.";
-
-const DAY_MS = 86_400_000;
 
 function drillResult() {
   return {
@@ -80,7 +79,7 @@ describe(flaggedContentWorkflow, () => {
       libraryLessonFixture({ contentStatus: "completed" }),
     ]);
 
-    const writtenBefore = new Date(Date.now() - DAY_MS);
+    const writtenBefore = new Date(Date.now() - MS_PER_DAY);
 
     const [drill] = await Promise.all([
       itemFixture({
@@ -133,7 +132,7 @@ describe(flaggedContentWorkflow, () => {
       skillFixture(),
     ]);
 
-    const writtenBefore = new Date(Date.now() - DAY_MS);
+    const writtenBefore = new Date(Date.now() - MS_PER_DAY);
 
     const [rewritten, failed] = await Promise.all(
       ["Art. 13", "Art. 14"].map((article) =>
@@ -188,7 +187,7 @@ describe(flaggedContentWorkflow, () => {
 
     const drill = await itemFixture({
       format: "trueFalse",
-      generatedAt: new Date(Date.now() - DAY_MS),
+      generatedAt: new Date(Date.now() - MS_PER_DAY),
       language: "pt",
       skillId: skill.id,
       sourceCitation: "Lei nº 8.112, Art. 13",

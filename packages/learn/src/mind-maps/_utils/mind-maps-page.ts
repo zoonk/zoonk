@@ -4,10 +4,9 @@ import {
   type MindMapAllowanceStop,
   type MindMapCreateOffer,
 } from "@zoonk/core/mind-maps/contract";
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { type MindMapLimit } from "../../_components/help-limit-notice";
 import { type MindMapTab } from "./mind-map-urls";
-
-const MS_PER_SECOND = 1000;
 
 /** A chapter as the page draws it: its outline and full picture stay on the server. */
 export type MindMapsPageChapter = Omit<GoalMindMapView, "image" | "outline"> & {

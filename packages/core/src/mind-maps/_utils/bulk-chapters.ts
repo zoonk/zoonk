@@ -1,3 +1,4 @@
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { fitsGuestSpend } from "../../entitlements/_utils/guest-spend-budget";
 import {
   type BundleClaim,
@@ -13,8 +14,6 @@ import {
   type MindMapCreateOffer,
   type MindMapStatus,
 } from "../mind-map-contract";
-
-const MS_PER_SECOND = 1000;
 
 type BulkChapter = { chapterId: string; lessonsToWrite: number; status: MindMapStatus };
 

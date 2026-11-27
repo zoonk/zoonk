@@ -1,9 +1,8 @@
-import { MS_PER_DAY } from "@zoonk/utils/date";
+import { MS_PER_DAY, MS_PER_MINUTE } from "@zoonk/utils/date";
 import { getStartOfWeek } from "../plans/planner/plan-calendar";
 
 const DAYS_PER_WEEK = 7;
 const SECONDS_PER_MINUTE = 60;
-const MS_PER_MINUTE = 60_000;
 
 const MAX_BLOCK_TIME_FACTOR = 2;
 

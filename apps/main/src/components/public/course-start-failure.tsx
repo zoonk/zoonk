@@ -5,7 +5,7 @@ import { useAppLocale } from "@zoonk/learn/locale";
 import { ONBOARDING_ACTION_LINK_CLASS } from "@zoonk/learn/onboarding/frame";
 import { useGoalLimitText } from "@zoonk/learn/onboarding/goal-errors";
 import { SignUpMainAction, SubscribeMainAction } from "@zoonk/learn/subscribe-gate";
-import { buttonVariants } from "@zoonk/ui/components/button";
+import { BusyContent, buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PendingLink } from "@zoonk/ui/patterns/links/pending";
 import { UserPlusIcon } from "lucide-react";
@@ -62,7 +62,7 @@ function FailureAction({
 
   return (
     <button className={className} onClick={onRetry} type="button">
-      {t("Try again")}
+      <BusyContent>{t("Try again")}</BusyContent>
     </button>
   );
 }

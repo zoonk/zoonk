@@ -22,31 +22,24 @@ concurrency:
   # finishes. GitHub keeps one run pending, the newest.
   cancel-in-progress: false
 
+# One job builds Main and the API into turbo's remote cache, and every suite restores that build.
+# Each app's build bakes in the other's address, so every job runs them at the same fixed ones.
+env:
+  DATABASE_URL: postgres://postgres:postgres@localhost:5432/zoonk_e2e
+  DATABASE_URL_UNPOOLED: postgres://postgres:postgres@localhost:5432/zoonk_e2e
+  E2E_API_URL: http://localhost:4000
+  E2E_TESTING: "true"
+  MAIN_APP_URL: http://localhost:3000
+  NEXT_PUBLIC_APP_DOMAIN: localhost:3000
+  NEXT_PUBLIC_API_URL: http://localhost:4000
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+
 jobs:
-  suites:
-    name: e2e (${{ matrix.suite }})
+  build:
+    name: e2e (build)
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    strategy:
-      fail-fast: false
-      # The live-call-states project runs in its own job. That job is the shortest, so it also checks
-      # that Main's navigation pages are prerendered whole and saves the build caches.
-      matrix:
-        include:
-          - { suite: chromium 1/3, args: --project=chromium --shard=1/3 }
-          - { suite: chromium 2/3, args: --project=chromium --shard=2/3 }
-          - { suite: chromium 3/3, args: --project=chromium --shard=3/3 }
-          - { suite: live-call-states, args: --project=live-call-states, gates: true }
-    env:
-      DATABASE_URL: postgres://postgres:postgres@localhost:5432/zoonk_e2e
-      DATABASE_URL_UNPOOLED: postgres://postgres:postgres@localhost:5432/zoonk_e2e
-      E2E_TESTING: "true"
-      MAIN_PERF_GATES: ${{ matrix.gates && 'true' || 'false' }}
-      NEXT_PUBLIC_APP_DOMAIN: localhost:3000
-      NEXT_PUBLIC_API_URL: http://localhost:4000
-      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
-
     steps:
       # Postgres pulls and starts while the code checks out and installs (see `vitest.yml`).
       - name: Start Postgres
@@ -69,21 +62,26 @@ jobs:
           echo "lockfile=${{ hashFiles('pnpm-lock.yaml') }}" >> "$GITHUB_OUTPUT"
           echo "sources=${{ hashFiles('apps/main/**/*.ts', 'apps/main/**/*.tsx', 'apps/api/**/*.ts', 'packages/**/*.ts', 'packages/**/*.tsx') }}" >> "$GITHUB_OUTPUT"
 
-      # Turbopack's build caches: a warm build compiles only what changed since the cache's run.
-      # The API's is its own entry, which the API's E2E job restores too (`e2e-api.yml`).
+      # Turbopack's build caches: a warm build compiles only what changed since the cache's run, and
+      # one from before a lockfile change still holds every package that didn't change. The API's
+      # is its own entry, which the API's E2E job restores too (`e2e-api.yml`).
       - name: Restore Main's build cache
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: apps/main/.next-e2e/cache
           key: nextjs-e2e-main-${{ steps.cache-keys.outputs.lockfile }}-${{ steps.cache-keys.outputs.sources }}
-          restore-keys: nextjs-e2e-main-${{ steps.cache-keys.outputs.lockfile }}-
+          restore-keys: |
+            nextjs-e2e-main-${{ steps.cache-keys.outputs.lockfile }}-
+            nextjs-e2e-main-
 
       - name: Restore the API's build cache
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: apps/api/.next-e2e/cache
           key: nextjs-e2e-api-${{ steps.cache-keys.outputs.lockfile }}-${{ steps.cache-keys.outputs.sources }}
-          restore-keys: nextjs-e2e-api-${{ steps.cache-keys.outputs.lockfile }}-
+          restore-keys: |
+            nextjs-e2e-api-${{ steps.cache-keys.outputs.lockfile }}-
+            nextjs-e2e-api-
 
       # Node comes from the runner's tool cache: pnpm/setup would download it from nodejs.org,
       # whose slow downloads time jobs out.
@@ -111,31 +109,108 @@ jobs:
           docker logs db
           exit 1
 
-      - name: Test performance gates
-        if: matrix.gates
-        run: pnpm test:deploy scripts/perf
+      # Main's build prerenders the catalog from the database. Through turbo's cache, so unchanged
+      # inputs restore the last build; `main` always builds, since only a build refreshes the
+      # Turbopack caches every pull request starts from.
+      - name: Build Main and the API
+        id: build
+        run: |
+          pnpm --filter @zoonk/db db:setup:e2e
+          /usr/bin/time -v -o "$RUNNER_TEMP/build-time.txt" \
+            pnpm turbo run build:e2e --filter main --filter api --env-mode=loose \
+            --log-order=stream --log-prefix=none ${{ github.ref == 'refs/heads/main' && '--force' || '' }}
 
-      # Through turbo's cache: a shard whose inputs passed before replays that run. Streamed, since
-      # turbo's CI default holds a task's output until it ends, and a hung task's never does.
-      - name: Run E2E tests
-        run: pnpm turbo run e2e:suite --filter main --env-mode=loose --log-order=stream --log-prefix=none -- ${{ matrix.args }} --workers=2
+      - name: Report the build's time and memory
+        run: pnpm perf:build-metrics --metrics "$RUNNER_TEMP/build-time.txt"
 
-      # Only main saves, once the build finished (`pnpm e2e:main` marks it), whether or not the tests
-      # then passed. A pull request's own entries serve only its later runs, and in the repository's
+      - name: Check Main's navigation pages are prerendered whole
+        run: pnpm perf:check
+
+      # A pull request's own entries would serve only its later runs, and in the repository's
       # shared cache storage they evict main's, which every pull request restores.
       - name: Save Main's build cache
-        if: always() && matrix.gates && github.ref == 'refs/heads/main' && hashFiles('apps/main/.next-e2e/e2e-build-complete') != ''
+        if: always() && steps.build.outcome == 'success' && github.ref == 'refs/heads/main'
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: apps/main/.next-e2e/cache
           key: nextjs-e2e-main-${{ steps.cache-keys.outputs.lockfile }}-${{ steps.cache-keys.outputs.sources }}
 
       - name: Save the API's build cache
-        if: always() && matrix.gates && github.ref == 'refs/heads/main' && hashFiles('apps/api/.next-e2e/e2e-build-complete') != ''
+        if: always() && steps.build.outcome == 'success' && github.ref == 'refs/heads/main'
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: apps/api/.next-e2e/cache
           key: nextjs-e2e-api-${{ steps.cache-keys.outputs.lockfile }}-${{ steps.cache-keys.outputs.sources }}
+
+  suites:
+    name: e2e (${{ matrix.suite }})
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      # Playwright deals each shard the same number of tests; enough shards keep the slowest
+      # one's tests near two minutes as the suite grows.
+      matrix:
+        include:
+          - { suite: chromium 1/6, args: --project=chromium --shard=1/6 }
+          - { suite: chromium 2/6, args: --project=chromium --shard=2/6 }
+          - { suite: chromium 3/6, args: --project=chromium --shard=3/6 }
+          - { suite: chromium 4/6, args: --project=chromium --shard=4/6 }
+          - { suite: chromium 5/6, args: --project=chromium --shard=5/6 }
+          - { suite: chromium 6/6, args: --project=chromium --shard=6/6 }
+          - { suite: live-call-states, args: --project=live-call-states }
+
+    steps:
+      - name: Start Postgres
+        run: >-
+          docker run --detach --name db --publish 5432:5432 --tmpfs /var/lib/postgresql
+          --env POSTGRES_PASSWORD=postgres --env POSTGRES_DB=zoonk_e2e
+          --env POSTGRES_INITDB_ARGS=--no-sync
+          postgres:18-alpine -c max_connections=200 > "$RUNNER_TEMP/db.log" 2>&1 &
+
+      - name: Check out code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: package.json
+
+      - name: Setup pnpm
+        uses: pnpm/setup@731dfb6463bbd11c11fd0ee11fe00ed0e36d48a1 # v3.2.0
+        with:
+          node-version-file: false
+          cache: true
+          save-cache: false
+
+      - name: Wait for Postgres
+        run: |
+          for _ in $(seq 120); do
+            docker exec db pg_isready --host 127.0.0.1 --quiet 2> /dev/null && exit 0
+            sleep 0.5
+          done
+
+          cat "$RUNNER_TEMP/db.log"
+          docker logs db
+          exit 1
+
+      # The build job's apps, from turbo's cache. A separate run, since turbo hashes a run's
+      # arguments into every task in it, and a shard's would miss the build job's entry.
+      - name: Restore Main and the API
+        run: |
+          pnpm --filter @zoonk/db db:setup:e2e
+          pnpm turbo run build:e2e --filter main --filter api --env-mode=loose \
+            --log-order=stream --log-prefix=none
+
+      # Through turbo's cache: a shard whose inputs passed before replays that run. Streamed, since
+      # turbo's CI default holds a task's output until it ends, and a hung task's never does.
+      - name: Run E2E tests
+        run: >-
+          pnpm turbo run e2e:suite --filter main --env-mode=loose --log-order=stream
+          --log-prefix=none -- ${{ matrix.args }} --workers=2
 
   # The one check branch protection requires: it passes only when every part passed.
   e2e-main:

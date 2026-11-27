@@ -5,16 +5,16 @@ import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtur
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 
 export const MOCK_QUESTIONS = 6;
 
 export const citation = { passage: "", sourceId: "notice" };
 
-export const DAY_MS = 86_400_000;
 export const EXAM_IN_DAYS = 60;
 
 export function isoDayFromToday(days: number): string {
-  return new Date(Date.now() + days * DAY_MS).toISOString().slice(0, "yyyy-mm-dd".length);
+  return new Date(Date.now() + days * MS_PER_DAY).toISOString().slice(0, "yyyy-mm-dd".length);
 }
 
 export function examEdition(examDay: string) {

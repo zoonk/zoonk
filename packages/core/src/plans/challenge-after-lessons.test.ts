@@ -1,14 +1,13 @@
 import { prisma } from "@zoonk/db";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { takenChallengeFixture } from "./_test-utils/taken-challenge";
 import { createGoalPlan } from "./create-goal-plan";
 import { refreshGoalPlan } from "./refresh-goal-plan";
-
-const DAY = 86_400_000;
 
 /** A Sunday in 2020, before the learning events other tests write, which estimates read. */
 const SUNDAY = new Date("2020-09-27T12:00:00Z");
@@ -37,7 +36,7 @@ async function setup({ dailyMinutes, lessons }: { dailyMinutes: number; lessons:
 }
 
 async function comeBack({ days, goalId }: { days: number; goalId: string }) {
-  vi.setSystemTime(new Date(SUNDAY.getTime() + days * DAY));
+  vi.setSystemTime(new Date(SUNDAY.getTime() + days * MS_PER_DAY));
   await refreshGoalPlan({ goalId });
 }
 
@@ -123,7 +122,7 @@ async function readPhaseRuns({
 function listDaysAfterLessons(runs: Awaited<ReturnType<typeof readPhaseRuns>>): number[] {
   return runs.flatMap((run, index) =>
     run.name.endsWith("challenge")
-      ? [(run.first - (runs[index - 1]?.last ?? Number.NaN)) / DAY]
+      ? [(run.first - (runs[index - 1]?.last ?? Number.NaN)) / MS_PER_DAY]
       : [],
   );
 }

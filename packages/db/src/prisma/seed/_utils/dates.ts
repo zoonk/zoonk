@@ -1,8 +1,5 @@
-import { MS_PER_DAY } from "@zoonk/utils/date";
+import { MS_PER_DAY, MS_PER_HOUR, MS_PER_MINUTE } from "@zoonk/utils/date";
 import { getDateInTimeZone, getHourInTimeZone } from "@zoonk/utils/time-zone";
-
-const MS_PER_HOUR = 3_600_000;
-const MS_PER_MINUTE = 60_000;
 
 export function daysFrom(date: Date, days: number): Date {
   return new Date(date.getTime() + days * MS_PER_DAY);

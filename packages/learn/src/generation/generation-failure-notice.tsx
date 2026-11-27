@@ -62,13 +62,11 @@ export function GenerationFailureNotice({
         <NoticeCardTitle>{copy.title}</NoticeCardTitle>
         {copy.description && <NoticeCardDescription>{copy.description}</NoticeCardDescription>}
         {retry && (
-          <form action={() => retry()} className="contents">
-            <NoticeCardActions>
-              <Button size="sm" type="submit" variant={barHasMainAction ? "outline" : "default"}>
-                {copy.action}
-              </Button>
-            </NoticeCardActions>
-          </form>
+          <NoticeCardActions>
+            <Button size="sm" onClick={retry} variant={barHasMainAction ? "outline" : "default"}>
+              {copy.action}
+            </Button>
+          </NoticeCardActions>
         )}
       </NoticeCardContent>
     </NoticeCard>

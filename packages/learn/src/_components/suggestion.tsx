@@ -136,10 +136,10 @@ export function SuggestionLine({ children, className, ...props }: React.Componen
         data-slot="suggestion-line"
         {...props}
       >
-        <form className={LINE_ROW_CLASS}>
+        <div className={LINE_ROW_CLASS}>
           <SuggestionMark />
           {children}
-        </form>
+        </div>
       </div>
     </PresentationContext>
   );
@@ -233,8 +233,8 @@ export function SuggestionSheet({ children }: { children: React.ReactNode }) {
 }
 
 /**
- * The title starts on the edge the lines and buttons under it start on: the kind's mark stays with
- * the one-line form, where it leads the row.
+ * The title starts on the edge the lines and buttons under it start on: the kind's mark
+ * leads the summary row.
  */
 export function SuggestionHeader({ children }: { children: React.ReactNode }) {
   const t = useExtracted();
@@ -308,7 +308,7 @@ const ACTIONS_CLASS: Readonly<Record<Presentation, string>> = {
 /**
  * The answers by role: `main`, the other one, then `menu` ("Other options"). The line and the panel
  * are part of the page and draw them in that order; the sheet is written as every sheet's foot is,
- * ending with `main`. The line is already their form, so there they're only kept together.
+ * ending with `main`.
  */
 export function SuggestionActions({
   children,
@@ -322,17 +322,16 @@ export function SuggestionActions({
 }>) {
   const presentation = use(PresentationContext);
   const sheet = presentation === "sheet";
-  const Group = presentation === "line" ? "div" : "form";
 
   return (
-    <Group
+    <div
       className={cn(ACTIONS_CLASS[presentation], "empty:hidden", className)}
       data-slot="suggestion-actions"
     >
       {sheet ? menu : main}
       {children}
       {sheet ? main : menu}
-    </Group>
+    </div>
   );
 }
 
@@ -340,27 +339,10 @@ function useActionSize(): "lg" | "sm" {
   return use(PresentationContext) === "sheet" ? "lg" : "sm";
 }
 
-/**
- * An `action` submits the `SuggestionLine` or `SuggestionActions` form around it, so React holds a press made before
- * the page hydrates and sends it once it does, where a press on `onClick` is lost.
- */
-export function SuggestionAction({
-  action,
-  ...props
-}: Omit<React.ComponentProps<typeof Button>, "formAction" | "size" | "type"> & {
-  action?: () => void;
-}) {
+export function SuggestionAction(props: Omit<React.ComponentProps<typeof Button>, "size">) {
   const size = useActionSize();
 
-  return (
-    <Button
-      focusableWhenDisabled
-      formAction={action && (() => action())}
-      size={size}
-      type={action ? "submit" : "button"}
-      {...props}
-    />
-  );
+  return <Button focusableWhenDisabled size={size} {...props} />;
 }
 
 export function SuggestionLinkAction({

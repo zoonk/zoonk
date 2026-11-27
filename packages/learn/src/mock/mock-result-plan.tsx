@@ -154,11 +154,9 @@ export function MockPlanChange({
 
           {answers && (
             <div className="flex flex-wrap gap-2">
-              <form action={() => change.accept()} className="contents">
-                <Button busy={change.isPending} size="sm" type="submit" variant="outline">
-                  {copy.accept}
-                </Button>
-              </form>
+              <Button busy={change.isPending} size="sm" onClick={change.accept} variant="outline">
+                {copy.accept}
+              </Button>
               <Button
                 disabled={change.isPending}
                 focusableWhenDisabled

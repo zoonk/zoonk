@@ -13,7 +13,7 @@ How Vitest and E2E runs reach their databases, and what breaks them. [Which chec
 - E2E runs in any checkout with its own E2E database: the primary checkout's `zoonk_e2e`, or a worktree's after `pnpm worktree:setup`.
 - `pnpm e2e:main` and `pnpm e2e:api` migrate that database and build what they test, and pass any further arguments to Playwright (a test file, `--project`, `--grep`). Main's command also builds and starts the real API and a no-spend live-call provider, so specs that reach the API run as in CI; Main's Playwright run on its own has no API, and those specs fail.
 - Run one E2E command per checkout at a time. The checkout's `pnpm dev` can keep running, since E2E builds and servers keep their own output and workflow store (`.next-e2e`).
-- CI runs the same suites through turbo's cache (`pnpm turbo run e2e:suite --filter main`, `pnpm turbo run e2e --filter api`), so a push that leaves their inputs unchanged replays the last passing run; the local commands always run the tests.
+- CI runs the same suites through turbo's cache (`pnpm turbo run e2e:suite --filter main`, `pnpm turbo run e2e --filter api`), so a push that leaves their inputs unchanged replays the last passing run; the local commands always run the tests. Main's CI builds both apps once, at fixed addresses, and each shard restores that build from turbo's cache.
 - In a macOS sandbox, run browser-launching tests with escalated permissions on the first attempt, because Chromium needs Mach services. This is an execution permission, not a reason to stop for review.
 
 ## When a database or a build gets in the way
