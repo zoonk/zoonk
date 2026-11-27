@@ -145,6 +145,9 @@ test.describe("Today's mistakes", () => {
     await expect(patternRow.getByText("A pattern in your mistakes")).toBeVisible();
 
     await patternRow.getByRole("button", { exact: true, name: "Practice: since and for" }).click();
+
+    // The drill opens on its own screen; Today also has a row named "Practice".
+    await expect(page).toHaveURL(/\/pattern\/[\w-]+\?session=/u);
     await page.getByRole("button", { exact: true, name: "Practice" }).click();
     await page.getByRole("radio", { name: "since" }).click();
     await page.getByRole("button", { name: /^Check/u }).click();
