@@ -21,26 +21,28 @@ struct TutorComposerBar: View {
       if !canTalk {
         signUpPrompt
       } else {
-        if conversation.thread.value?.turns.isEmpty == true, !conversation.hasUnsentQuestion,
-          !suggestions.isEmpty
-        {
-          suggestionChips
-        }
+        TutorSuggestionChips(conversation: conversation, suggestions: suggestions)
 
-        if let limit = conversation.limit {
-          TutorLimitNotice(failure: limit)
-        } else if let failure = conversation.askFailure, !failure.isLimit {
-          FailureLine(
-            message: failure == .failed
-              ? String(
-                localized: "We couldn't send your last question. Try again.", table: "Tutor",
-                comment: "Sending a question to the buddy failed")
-              : failure.message
-          )
-          .typeStyle(.note)
-        }
+        VStack(alignment: .leading, spacing: 0) {
+          if let limit = conversation.limit {
+            TutorLimitNotice(failure: limit)
+              .padding(.bottom, 16)
+          }
 
-        composer
+          composer
+
+          if conversation.limit == nil, let failure = conversation.askFailure, !failure.isLimit {
+            FailureLine(
+              message: failure == .failed
+                ? String(
+                  localized: "We couldn't send your last question. Try again.", table: "Tutor",
+                  comment: "Sending a question to the buddy failed")
+                : failure.message
+            )
+            .typeStyle(.note)
+            .padding(.top, 8)
+          }
+        }
       }
     }
     .listRowEdges()
@@ -90,23 +92,6 @@ struct TutorComposerBar: View {
     .inputPanel(isFocused: isFocused, softFocus: true)
   }
 
-  private var suggestionChips: some View {
-    TapChips {
-      ForEach(suggestions) { suggestion in
-        Button {
-          Task { await conversation.send(suggestion) }
-        } label: {
-          Text(suggestion.label)
-            .multilineTextAlignment(.leading)
-        }
-        .disabled(!conversation.canAsk)
-      }
-    }
-    .accessibilityElement(children: .contain)
-    .accessibilityLabel(
-      Text("Suggestions", tableName: "Tutor", comment: "Questions to the buddy sent with one tap"))
-  }
-
   private var signUpPrompt: some View {
     VStack(alignment: .leading, spacing: 10) {
       Text(
@@ -127,6 +112,33 @@ struct TutorComposerBar: View {
     }
 
     Task { await conversation.send() }
+  }
+}
+
+struct TutorSuggestionChips: View {
+  let conversation: TutorConversation
+  let suggestions: [TutorSuggestion]
+
+  var body: some View {
+    if conversation.thread.value?.turns.isEmpty == true, !conversation.hasUnsentQuestion,
+      !suggestions.isEmpty
+    {
+      TapChips {
+        ForEach(suggestions) { suggestion in
+          Button {
+            Task { await conversation.send(suggestion) }
+          } label: {
+            Text(suggestion.label)
+              .multilineTextAlignment(.leading)
+          }
+          .disabled(!conversation.canAsk)
+        }
+      }
+      .accessibilityElement(children: .contain)
+      .accessibilityLabel(
+        Text("Suggestions", tableName: "Tutor", comment: "Questions to the buddy sent with one tap")
+      )
+    }
   }
 }
 
