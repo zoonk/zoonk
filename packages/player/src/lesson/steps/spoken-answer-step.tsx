@@ -54,7 +54,7 @@ function RecordAnswer({
 
   const onRecorded = useCallback(
     ({ audio, durationMs }: { audio: Blob; durationMs: number }) =>
-      actions.submitSpokenAnswer({ audio, durationMs, stepId }),
+      actions.submitSpokenAnswer({ attemptId: crypto.randomUUID(), audio, durationMs, stepId }),
     [actions, stepId],
   );
 

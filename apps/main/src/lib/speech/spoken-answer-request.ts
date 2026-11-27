@@ -30,25 +30,22 @@ async function toSpokenAnswerOutcome(response: Response): Promise<SpokenAnswerOu
 
 /** From the browser: transcribing takes a second or more, which would hold up the lesson's Server Actions. */
 export async function requestSpokenGrade({
+  attemptId,
   audio,
   durationMs,
   stepId,
   studySessionId,
   practice,
 }: {
+  attemptId: string;
   audio: Blob;
   durationMs: number;
   stepId: string;
   studySessionId: string | null;
-  practice?: {
-    mistakeId: string;
-    attemptId: string;
-    goalId: string;
-    answerIds: string[];
-    practiceDurationMs: number;
-  };
+  practice?: { mistakeId: string; goalId: string; answerIds: string[]; practiceDurationMs: number };
 }): Promise<SpokenAnswerOutcome> {
   const form = new FormData();
+  form.set("attemptId", attemptId);
   form.set("audio", audio);
   form.set("durationMs", String(Math.round(durationMs)));
   form.set("timeZone", getLocalTimeZone());
@@ -56,7 +53,6 @@ export async function requestSpokenGrade({
   if (practice) {
     form.set("mistakeId", practice.mistakeId);
     form.set("practiceDurationMs", String(Math.round(practice.practiceDurationMs)));
-    form.set("attemptId", practice.attemptId);
     form.set("goalId", practice.goalId);
     form.set("answerIds", JSON.stringify(practice.answerIds));
   }

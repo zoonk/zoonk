@@ -41,7 +41,12 @@ export const spokenAnswerFieldsSchema = z
       .pipe(z.array(uuidSchema()).max(MAX_PRACTICE_ANSWERS - 1))
       .optional()
       .meta({ description: "For notebook practice, a JSON array of the run's earlier answer IDs" }),
-    attemptId: uuidSchema().optional(),
+    attemptId: uuidSchema()
+      .optional()
+      .meta({
+        description:
+          "ID for this recording. Sending it again returns the same result and uses help once. Required for notebook practice.",
+      }),
     durationMs: z.coerce
       .number()
       .int()
