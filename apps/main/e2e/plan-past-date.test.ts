@@ -1,5 +1,4 @@
 import { type Page } from "@playwright/test";
-import { expectHydrated } from "@zoonk/e2e/hydration";
 import { expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
 import { countSetAside, isoDaysFromNow, passTheDate, readTargetDate } from "./past-date";
@@ -40,7 +39,6 @@ test.describe("A plan whose date came with lessons left", () => {
 
       const slot = suggestionSlot(page);
       const findDate = slot.getByRole("button", { exact: true, name: "Find a date" });
-      await expectHydrated(findDate);
       await findDate.click();
       await slot.getByRole("button", { exact: true, name: "Change my plan" }).click();
 

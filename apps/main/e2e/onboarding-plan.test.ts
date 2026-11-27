@@ -3,7 +3,7 @@ import {
   type PlanTimeToCoverInput,
 } from "@zoonk/core/plans/time-advice-contract";
 import { prisma } from "@zoonk/db";
-import { expectHydrated, holdScripts } from "@zoonk/e2e/hydration";
+import { holdScripts } from "@zoonk/e2e/hydration";
 import { isJsonObject } from "@zoonk/utils/json";
 import { expect, test } from "./fixtures";
 import { followRun } from "./generation-run";
@@ -83,7 +83,6 @@ test.describe("Placement and the plan", () => {
       await expect(page.getByRole("region", { name: "Today" })).toHaveCount(0);
 
       const first = path.getByRole("button").first();
-      await expectHydrated(first);
       await first.click();
 
       await expect(first).toHaveAttribute("aria-expanded", "true");

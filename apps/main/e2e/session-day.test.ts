@@ -332,7 +332,6 @@ test.describe("Today's session", () => {
     const missions = page.getByRole("region", { name: "Today's missions" });
     const showMissions = missions.getByRole("button", { name: "Today's missions" });
 
-    await expectHydrated(showMissions);
     await showMissions.click();
     await missions.getByRole("button", { name: /^Practice/u }).click();
     await expect(page).toHaveURL((url) => url.searchParams.get("block") === practice.id);

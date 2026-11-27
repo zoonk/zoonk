@@ -8,7 +8,6 @@ test("Save follows the selection on an unanswered About you question", async ({
 
   const anime = page.getByRole("button", { exact: true, name: "Anime" });
   const save = page.getByRole("button", { exact: true, name: "Save" });
-  await expectHydrated(anime);
   await expect(save).toBeDisabled();
 
   await anime.click();
@@ -28,7 +27,6 @@ test("an About you question opens beside the list on a wide screen and takes the
   const row = page.getByRole("link", { name: /^What you watch/u });
   const detail = page.locator('[data-slot="settings-detail"]');
   const save = detail.getByRole("button", { exact: true, name: "Save" });
-  await expectHydrated(row);
   const titleTop = await title.evaluate((element) => element.getBoundingClientRect().top);
 
   await row.click();
@@ -58,7 +56,6 @@ test("saving the question a wide screen opened marks it in the list and opens th
   const detail = page.locator('[data-slot="settings-detail"]');
   const work = detail.getByRole("radio", { exact: true, name: "I work" });
   await expect(detail.getByRole("heading", { name: "What do you do now?" })).toBeVisible();
-  await expectHydrated(work);
 
   await work.click();
   await detail.getByRole("button", { exact: true, name: "Save" }).click();
@@ -81,7 +78,6 @@ test("every chip stays tappable, so more than three are saved", async ({
   await page.goto("/settings/about-you/watch");
 
   const picks = ["Sports", "Comedy", "Drama", "Anime"];
-  await expectHydrated(page.getByRole("button", { exact: true, name: "Sports" }));
 
   for (const name of picks) {
     // oxlint-disable-next-line no-await-in-loop -- One tap after another, as a learner taps.

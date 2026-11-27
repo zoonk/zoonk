@@ -53,10 +53,12 @@ test.describe("Study reminders", () => {
     await page.goto("/today");
 
     const row = page.getByRole("link", { exact: true, name: lesson.title });
-    await expectHydrated(row);
     await row.click();
 
-    await expect(page.getByText('What does the electron "cloud" show?')).toBeVisible();
+    await expectHydrated(
+      page.getByRole("radio", { name: "Where the electron is most likely to be found" }),
+    );
+
     await page.keyboard.press("2");
     await page.keyboard.press("Enter");
     await expect(page.getByRole("status").filter({ hasText: "Correct!" })).toBeVisible();
@@ -93,7 +95,6 @@ test.describe("Study reminders", () => {
 
     const email = page.getByRole("switch", { name: "Email reminders" });
     const time = page.getByLabel("Time", { exact: true });
-    await expectHydrated(email);
     await expect(time).toBeDisabled();
 
     const guidance = page.getByText(
@@ -131,7 +132,6 @@ test.describe("Study reminders", () => {
     await page.goto(`/study-reminders/unsubscribe?token=${signUnsubscribeToken(user.id)}`);
 
     const turnOff = page.getByRole("button", { name: "Turn off" });
-    await expectHydrated(turnOff);
     await expect(readReminder(user.id)).resolves.toMatchObject({ emailOn: true });
 
     await turnOff.click();
@@ -151,7 +151,6 @@ test.describe("Study reminders", () => {
     await page.goto(`/today?goal=${other.id}`);
 
     const switchGoal = page.getByRole("button", { exact: true, name: "Switch" });
-    await expectHydrated(switchGoal);
     await expect(page.getByText(`Your study reminder was for ${other.title}.`)).toBeVisible();
     await expect(readActiveGoalId(day.user.id)).resolves.toBe(day.goal.id);
 

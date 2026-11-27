@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { type Page, expect } from "@playwright/test";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
+import { expectHydrated } from "@zoonk/e2e/hydration";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
@@ -123,16 +124,10 @@ export async function answerDuelQuestion(page: Page, number: number) {
     page.getByRole("progressbar", { name: `Question ${number} of ${CHECKPOINT_QUESTIONS}` }),
   ).toBeAttached();
 
-  // Keys work once the page hydrates, so the first press retries until it picks.
-  await expect(async () => {
-    await page.keyboard.press("1");
-
-    await expect(page.getByRole("radio", { name: "Right answer" })).toHaveAttribute(
-      "aria-checked",
-      "true",
-      { timeout: 1000 },
-    );
-  }).toPass({ timeout: 10_000 });
+  const right = page.getByRole("radio", { name: "Right answer" });
+  await expectHydrated(right);
+  await page.keyboard.press("1");
+  await expect(right).toHaveAttribute("aria-checked", "true");
 
   await page.keyboard.press("Enter");
   await expect(page.getByRole("status")).toHaveText(decides ? /^Correct!/u : "Correct!");

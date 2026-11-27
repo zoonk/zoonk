@@ -7,7 +7,7 @@ import {
 import { type TutorToolOffer } from "@zoonk/core/lesson-questions/tool-offer-contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { prisma } from "@zoonk/db";
-import { expectHydrated, holdScripts } from "@zoonk/e2e/hydration";
+import { holdScripts } from "@zoonk/e2e/hydration";
 import { isJsonObject } from "@zoonk/utils/json";
 import { expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
@@ -80,7 +80,6 @@ test.describe("Buddy tab", () => {
 
       await page.goto("/buddy");
       const menu = page.getByRole("button", { name: "More about Zu" });
-      await expectHydrated(menu);
       await menu.click();
       await page.getByRole("menuitem", { name: "Change Zu" }).click();
 

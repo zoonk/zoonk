@@ -18,7 +18,6 @@ test.describe("Text typed before the page hydrates", () => {
     const name = page.getByRole("textbox", { exact: true, name: "Name" });
     await name.fill(typedName);
     await release();
-    await expectHydrated(name);
 
     await page.getByRole("button", { name: "Save" }).click();
     await expect(page.getByText("Saved.")).toBeVisible();
@@ -52,7 +51,6 @@ test.describe("Text typed before the page hydrates", () => {
 
     await answer.fill("It shows where the electron is likely to be");
     await release();
-    await expectHydrated(answer);
 
     await page.getByRole("button", { name: /^Check/u }).click();
     await expect(page.getByRole("status").filter({ hasText: "Correct!" })).toBeVisible();
@@ -91,7 +89,6 @@ test.describe("Text typed before the page hydrates", () => {
     const time = page.getByLabel("Time a day", { exact: true });
     await time.selectOption("45");
     await release();
-    await expectHydrated(time);
 
     await expect(time).toHaveValue("45");
     await page.getByRole("button", { exact: true, name: "Continue" }).click();

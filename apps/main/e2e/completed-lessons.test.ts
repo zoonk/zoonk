@@ -114,7 +114,6 @@ test.describe("Completed lessons", () => {
 
     const modules = page.getByRole("navigation", { name: "Modules" });
     const arriving = modules.getByRole("link", { name: "Arriving 8" });
-    await expectHydrated(arriving);
     await expect(page.getByRole("complementary", { name: "Modules" })).toBeHidden();
 
     await arriving.click();

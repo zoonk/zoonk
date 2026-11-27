@@ -3,7 +3,7 @@ import { type Response } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
-import { expectHydrated, holdScripts } from "@zoonk/e2e/hydration";
+import { holdScripts } from "@zoonk/e2e/hydration";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
@@ -140,7 +140,6 @@ test.describe("Mind maps", () => {
       await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
 
       const next = page.getByRole("button", { name: /^Continue/u });
-      await expectHydrated(next);
       await next.click();
 
       await expect(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
@@ -629,7 +628,6 @@ test.describe("Mind maps", () => {
         .getByRole("list", { name: "Your path" })
         .getByRole("link", { name: new RegExp(chapter.title, "u") });
 
-      await expectHydrated(chapterLink);
       await chapterLink.click();
       await map.getByRole("button", { name: "Create" }).click();
       await expect(map.getByText("Drawing the mind map…")).toBeVisible();
@@ -689,7 +687,6 @@ test.describe("Mind maps", () => {
 
     try {
       await page.goto("/plan");
-      await expectHydrated(chapterLink);
       await chapterLink.click();
       await expect(page.getByRole("heading", { level: 1, name: chapter.title })).toBeVisible();
 
