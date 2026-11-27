@@ -6,8 +6,8 @@ import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import {
-  LIST_GROUP_CLASS,
   LIST_ROW_INTERACTIVE_CLASS,
+  ListGroup,
   ListRowBody,
   ListRowContent,
   ListRowTitle,
@@ -142,10 +142,7 @@ export function ExamMapSection() {
         <div className="flex flex-col gap-2" key={group.name ?? "all"}>
           {group.name && <PageSectionLabel id={getGroupId(index)}>{group.name}</PageSectionLabel>}
 
-          <ul
-            aria-labelledby={group.name ? getGroupId(index) : "exam-map-title"}
-            className={LIST_GROUP_CLASS}
-          >
+          <ListGroup as="ul" aria-labelledby={group.name ? getGroupId(index) : "exam-map-title"}>
             {group.subjects.map((subject) => (
               <SubjectRow
                 hasFrequency={map.hasFrequency}
@@ -154,7 +151,7 @@ export function ExamMapSection() {
                 subject={subject}
               />
             ))}
-          </ul>
+          </ListGroup>
         </div>
       ))}
 

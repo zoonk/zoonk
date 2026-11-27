@@ -1,7 +1,7 @@
 import { normalizeDistractorKey, sanitizeDistractors } from "@zoonk/utils/distractors";
-import { shuffle } from "@zoonk/utils/shuffle";
 import { normalizePunctuation } from "@zoonk/utils/string";
 import { getTileRomanization } from "./_utils/tile-romanization";
+import { stableOrder } from "./stable-order";
 
 const VOCABULARY_DISTRACTOR_COUNT = 3;
 const TERMINAL_PUNCTUATION_PATTERN = /[.!?…。！？؟]+$/u;
@@ -118,5 +118,5 @@ export function buildTranslationOptions(params: {
     matchTerminalPunctuation({ option, terminalPunctuation }),
   );
 
-  return shuffle(options);
+  return stableOrder({ items: options, key: params.word.id, text: (option) => option.word });
 }

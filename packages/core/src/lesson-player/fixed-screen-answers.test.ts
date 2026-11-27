@@ -448,9 +448,14 @@ describe("answers to a screen fixed during the run", () => {
     expect(resumed.runId).toBe(run.runId);
     expect(resumed.answers.map((saved) => saved.stepId)).not.toContain(fixed.id);
 
-    expect(
-      played?.status === "ready" && played.lesson.steps.find((step) => step.id === fixed.id),
-    ).toMatchObject({ content: movedKey });
+    const shownFixed =
+      played?.status === "ready" ? played.lesson.steps.find((step) => step.id === fixed.id) : null;
+
+    expect(shownFixed).toMatchObject({
+      content: { ...movedKey, options: expect.arrayContaining(movedKey.options) },
+    });
+
+    expect(shownFixed).toHaveProperty("content.options.length", movedKey.options.length);
 
     await answer({
       runId: run.runId,

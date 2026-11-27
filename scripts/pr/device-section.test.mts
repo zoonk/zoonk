@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import { assert as assertProperty, asyncProperty, string } from "fast-check";
+import sharp from "sharp";
 import { describe, it } from "vitest";
 import { checkBody } from "./body-check.mts";
 import { CLEAN, checkFixture, kinds } from "./check-fixture.mts";
@@ -17,11 +18,15 @@ const LINE = "Pixel 9, Android 16; build not verified, installed 2026-11-15T10:0
 const WRITTEN_LINE = String.raw`Pixel 9\, Android 16\; build not verified\, installed 2026\-11\-15T10\:00\:00\.000Z\, app 1\.0`;
 const HEADING = "## On a device (layout not measured)";
 
+const png = await sharp({ create: { background: "#fff", channels: 4, height: 8, width: 8 } })
+  .png()
+  .toBuffer();
+
 const emulator: DeviceBridge = {
   appearance: async () => "light",
   describe: async () => "Pixel 9, Android 16",
   installed: async () => ({ installedAt: new Date("2026-11-15T10:00:00.000Z"), version: "1.0" }),
-  screenshot: async (_id, file) => writeFileSync(file, "the emulator's picture"),
+  screenshot: async (_id, file) => writeFileSync(file, png),
 };
 
 /** An emulator's picture with its read, and a measured web picture, in one fixture repository. */

@@ -240,7 +240,7 @@ async function finishFirstBoss(fixture: Fixture) {
   }
 
   const { blockId, sessionId } = started.destination;
-  await answerBlockInOrder({ blockId, optionIndex: 0, sessionId });
+  await answerBlockInOrder({ blockId, sessionId });
 
   await expect(
     finishStudyBlock({ blockId, input: { timeZone: fixture.timeZone }, sessionId }),

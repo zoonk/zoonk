@@ -58,6 +58,7 @@ async function shownPicture() {
       mediaAssetId: asset.id,
       pictureAvailableAt: new Date("2020-01-01T00:00:00Z"),
       position: 0,
+      updatedAt: new Date(Date.now() - DAY_MS),
     }),
     itemFixture({ mediaAssetId: asset.id, skillId: skill.id }),
   ]);
@@ -346,6 +347,7 @@ describe(removeImageAsset, () => {
       content: pictureCheckContent,
       kind: "check",
       lessonId: lesson.id,
+      updatedAt: new Date(Date.now() - DAY_MS),
     });
 
     await prisma.stepOptionPicture.create({

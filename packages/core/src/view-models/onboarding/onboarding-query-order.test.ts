@@ -6,6 +6,7 @@ import { observeDatabaseQueries } from "@zoonk/testing/statement-counter";
 import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../../_test-utils/frozen-clock";
 import { mockSession } from "../../_test-utils/mock-session";
+import { pickInPlacement } from "../../_test-utils/shown-choice";
 import { getMockOptions } from "../../exams/mocks/get-mock-options";
 import { learnerGoalFixture } from "../../learner/_test-utils/learner-goal";
 import { placementItemBank } from "../../learner/_test-utils/placement-tap-items";
@@ -62,10 +63,12 @@ describe("onboarding transaction queries", () => {
     const item = await itemFixture({ content: choiceItemContent(), skillId: skills[0]!.id });
     mockSession(user.id);
 
+    const answer = await pickInPlacement({ itemId: item.id });
+
     const { overlaps, result } = await observeDatabaseQueries(() =>
       answerPlacementQuestion({
         goalId: goal.id,
-        input: { answer: { selectedIndex: 0 }, durationMs: 3000, itemId: item.id },
+        input: { answer, durationMs: 3000, itemId: item.id },
       }),
     );
 

@@ -98,7 +98,7 @@ describe(getCheckpoint, () => {
     const { block, sessionId } = await reachedBoss();
 
     await startStudyBlock({ blockId: block.id, input: {}, sessionId });
-    await answerBlockInOrder({ blockId: block.id, optionIndex: 0, sessionId });
+    await answerBlockInOrder({ blockId: block.id, sessionId });
     await finishStudyBlock({ blockId: block.id, input: {}, sessionId });
 
     await expect(getCheckpoint(block.id)).resolves.toMatchObject({

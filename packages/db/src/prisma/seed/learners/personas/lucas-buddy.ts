@@ -1,5 +1,9 @@
+import { t } from "../../_utils/localize";
 import { physicsCourse } from "../../library/physics/physics-course";
 import { type SeedAttempt, type SeedLearner } from "../types";
+
+const SMALL_WORLD_CHALLENGE = t("Challenge: A very small world", "Desafio: Um mundo muito pequeno");
+const TRICKSTER_DUEL = t("Duel with the Trickster", "Duelo com o Trapaceiro");
 
 const lessonAnswers: SeedAttempt[] = (
   [
@@ -34,11 +38,19 @@ export const lucasBuddy: SeedLearner = {
         snapshot: {
           answer: "true",
           correctAnswer: "false",
-          explanation: "Uma luz mais forte tem mais fótons, não fótons mais fortes.",
+          explanation: t(
+            "Brighter light has more photons, not stronger ones.",
+            "Uma luz mais forte tem mais fótons, não fótons mais fortes.",
+          ),
           format: "trueFalse",
-          misconception: "Acha que o brilho define a energia do fóton",
-          question:
+          misconception: t(
+            "Thinks brightness sets a photon's energy",
+            "Acha que o brilho define a energia do fóton",
+          ),
+          question: t(
+            "A brighter red light is made of red photons that each carry more energy.",
             "Uma luz vermelha mais forte é feita de fótons vermelhos com mais energia cada um.",
+          ),
         },
         status: "open",
       },
@@ -66,17 +78,11 @@ export const lucasBuddy: SeedLearner = {
       items: [
         { day: -18, kind: "lesson", lesson: "how-small-is-an-atom", phase: 0, status: "done" },
         { day: -16, kind: "lesson", lesson: "rules-change-when-small", phase: 0, status: "done" },
-        {
-          day: -13,
-          kind: "boss",
-          phase: 0,
-          status: "done",
-          title: "Desafio: Um mundo muito pequeno",
-        },
+        { day: -13, kind: "boss", phase: 0, status: "done", title: SMALL_WORLD_CHALLENGE },
         { day: -11, kind: "lesson", lesson: "light-as-wave", phase: 1, status: "done" },
         { day: -9, kind: "lesson", lesson: "light-comes-in-packets", phase: 1, status: "done" },
         { day: -7, kind: "lesson", lesson: "double-slit", phase: 1, status: "done" },
-        { day: -4, kind: "boss", phase: 1, status: "done", title: "Duelo com o Trapaceiro" },
+        { day: -4, kind: "boss", phase: 1, status: "done", title: TRICKSTER_DUEL },
         { day: -1, kind: "lesson", lesson: "almost-empty-atom", phase: 2, status: "done" },
         { day: 0, kind: "lesson", lesson: "electron-cloud", phase: 2, status: "todo" },
         { day: 1, kind: "lesson", lesson: "confined-jittery", phase: 2, status: "todo" },
@@ -86,23 +92,23 @@ export const lucasBuddy: SeedLearner = {
         { chapter: "in-your-phone", kind: "chapter", phase: 5, status: "todo" },
       ],
       phases: [
-        { name: "Um mundo muito pequeno" },
-        { name: "Luz: onda ou partícula?" },
-        { name: "Dentro do átomo" },
-        { name: "Incerteza" },
-        { name: "Emaranhamento" },
-        { name: "O quântico no seu celular" },
+        { name: t("A very small world", "Um mundo muito pequeno") },
+        { name: t("Light: wave or particle?", "Luz: onda ou partícula?") },
+        { name: t("Inside the atom", "Dentro do átomo") },
+        { name: t("Uncertainty", "Incerteza") },
+        { name: t("Entanglement", "Emaranhamento") },
+        { name: t("Quantum physics in your phone", "O quântico no seu celular") },
       ],
     },
     prompt: "quero entender física quântica sem precisar fazer conta",
     studyTime: "21:00",
-    title: "Entender física quântica",
+    title: t("Understand quantum physics", "Entender física quântica"),
   },
   history: {
     accuracy: 0.8,
     checkpoints: [
-      { correct: 8, day: -13, title: "Desafio: Um mundo muito pequeno", total: 10 },
-      { correct: 7, day: -4, title: "Duelo com o Trapaceiro", total: 10 },
+      { correct: 8, day: -13, title: SMALL_WORLD_CHALLENGE, total: 10 },
+      { correct: 7, day: -4, title: TRICKSTER_DUEL, total: 10 },
     ],
     days: 18,
     energy: 68,

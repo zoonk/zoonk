@@ -1,8 +1,9 @@
 import { execFile } from "node:child_process";
-import { copyFile, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { copyFile, mkdir, mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
+import sharp from "sharp";
 import { z } from "zod";
 import { carryReads } from "./carry.mts";
 import { REFERENCE, captionWords, unwritablePath } from "./device-section.mts";
@@ -44,11 +45,8 @@ const STAMP = z.object({ commit: z.string(), dirty: z.boolean() });
 /** The Debug build an emulator runs (`applicationIdSuffix = ".debug"`). */
 const ANDROID_PACKAGE = "com.zoonk.debug";
 
-/** Room for a full-resolution PNG from `screencap`: 64 MB. */
-const SCREENSHOT_BYTES = 67_108_864;
-
 /** A booted simulator, by its udid. */
-const simulator: DeviceBridge = {
+const simulator: Omit<DeviceBridge, "screenshot"> = {
   appearance: async (udid) => {
     const { stdout } = await run("xcrun", ["simctl", "ui", udid, "appearance"]);
     return stdout.trim() === "dark" ? "dark" : "light";
@@ -77,13 +75,10 @@ const simulator: DeviceBridge = {
     const stamp = await readFile(join(stdout.trim(), "build-stamp.json"), "utf8");
     return STAMP.parse(JSON.parse(stamp));
   },
-  screenshot: async (udid, file) => {
-    await run("xcrun", ["simctl", "io", udid, "screenshot", file]);
-  },
 };
 
 /** A booted emulator, by its adb serial. */
-const emulator: DeviceBridge = {
+const emulator: Omit<DeviceBridge, "screenshot"> = {
   appearance: async (serial) => {
     const { stdout } = await run("adb", ["-s", serial, "shell", "cmd", "uimode", "night"]);
     return stdout.includes("Night mode: yes") ? "dark" : "light";
@@ -133,17 +128,48 @@ const emulator: DeviceBridge = {
 
     return { installedAt: new Date(`${updated.at}T${updated.time}${offset}`), version };
   },
-  screenshot: async (serial, file) => {
-    const { stdout } = await run("adb", ["-s", serial, "exec-out", "screencap", "-p"], {
-      encoding: "buffer",
-      maxBuffer: SCREENSHOT_BYTES,
-    });
-
-    await writeFile(file, stdout);
-  },
 };
 
-export const DEVICE_BRIDGES = { android: emulator, apple: simulator };
+export function deviceBridge({
+  command = "agent-device",
+  platform,
+}: {
+  command?: string;
+  platform: "android" | "apple";
+}): DeviceBridge {
+  const apple = platform === "apple";
+
+  return {
+    ...(apple ? simulator : emulator),
+    screenshot: async (id, file) => {
+      await run(command, [
+        "screenshot",
+        file,
+        "--platform",
+        apple ? "ios" : "android",
+        apple ? "--udid" : "--serial",
+        id,
+      ]);
+    },
+  };
+}
+
+async function pictureHash(file: string): Promise<string> {
+  try {
+    const image = sharp(file);
+    const { format } = await image.metadata();
+
+    if (format !== "png") {
+      throw new Error(`Expected PNG, got ${format ?? "unknown format"}.`);
+    }
+
+    await image.stats();
+  } catch (error) {
+    throw new Error("The device did not return a valid PNG.", { cause: error });
+  }
+
+  return sha256File(file);
+}
 
 async function git(repository: string, args: string[]) {
   const { stdout } = await run("git", args, { cwd: repository });
@@ -295,8 +321,9 @@ export async function takeDevicePicture({
   const shot = await mkdtemp(join(tmpdir(), "device-"));
 
   try {
-    await bridge.screenshot(deviceId, join(shot, file));
-    const taken = { ...item, sha256: await sha256File(join(shot, file)) };
+    const picture = join(shot, file);
+    await bridge.screenshot(deviceId, picture);
+    const taken = { ...item, sha256: await pictureHash(picture) };
 
     // Before the new picture overwrites the old one: a retake keeps the read it retakes.
     const [carried = taken] = await carryReads({

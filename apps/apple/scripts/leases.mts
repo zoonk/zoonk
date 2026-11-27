@@ -1,28 +1,42 @@
 import { spawnSync } from "node:child_process";
-import { closeSync, fstatSync, ftruncateSync, writeSync } from "node:fs";
+import { closeSync, ftruncateSync, readFileSync, writeSync } from "node:fs";
 import { availableParallelism, homedir, loadavg } from "node:os";
 import path from "node:path";
 import { setTimeout as sleep } from "node:timers/promises";
 import { listCrashReports } from "../../../scripts/dev/crash-reports.mts";
 import { openExclusiveLock, tryExclusiveLock } from "../../../scripts/dev/exclusive-lock.mts";
 import { type QueueTurn, waitForTurn } from "../../../scripts/dev/queue.mts";
-import { type Simulator, listSimulators } from "./simulators.mts";
+import { deviceClaims } from "./device-claims.mts";
+import { joinWaitLine } from "./simulator-wait-line.mts";
+import { type Simulator, TEMPORARY_TEST_SIMULATOR_NAME, listSimulators } from "./simulators.mts";
 
-// More booted at once crash Apple's simulator services on a busy Mac; a quiet one runs more. The
-// limits are apps/apple/AGENTS.md's "Simulators", which agents booting by hand follow too.
 const BUSY_MAX_BOOTED_SIMULATORS = 3;
 const QUIET_MAX_BOOTED_SIMULATORS = 6;
-export const POLL_MS = 5000;
-
-export const BOOT_LIMIT =
-  `at most ${BUSY_MAX_BOOTED_SIMULATORS} booted at once while the machine is busy ` +
-  `(${QUIET_MAX_BOOTED_SIMULATORS} while it's quiet)`;
+const POLL_MS = 5000;
+const REPORT_INTERVAL_MS = 30_000;
+const DEFAULT_WAIT_SECONDS = 600;
 
 const leaseDirectory = path.join(homedir(), ".cache", "zoonk", "simulators");
 
-export type Lease = { descriptor: number; device: Simulator; reportsBefore: Set<string> };
+type LeaseKind = "test" | "hold" | "launch";
+type Candidates = { devices: Simulator[]; create?: () => Simulator };
 
-/** Quiet while fewer tasks wait to run than the machine has cores. */
+type LeaseOptions = {
+  getCandidates: () => Candidates;
+  kind: LeaseKind;
+  label: string;
+  automatic?: boolean;
+};
+
+type Reservation = {
+  descriptor: number;
+  device: Simulator;
+  temporary: boolean;
+  wasBooted: boolean;
+};
+
+export type Lease = Reservation & { reportsBefore: Set<string>; shutDownAfter: boolean };
+
 function getMaxBootedSimulators() {
   const [lastMinute = Infinity] = loadavg();
 
@@ -37,16 +51,12 @@ export function getBootedSimulators(): Simulator[] {
     .filter((device) => device.state !== "Shutdown");
 }
 
-/** Undefined while a test run, a launch or a hold has the simulator. */
-export function tryLocking({ udid }: Pick<Simulator, "udid">): number | undefined {
-  return tryExclusiveLock(path.join(leaseDirectory, udid));
+function leaseFile(udid: string) {
+  return path.join(leaseDirectory, udid);
 }
 
-/** A test run's lease names it until released, so a run that's killed leaves its simulator marked. */
-function markAsTestRun(descriptor: number) {
-  const owner = String(process.pid);
-  writeSync(descriptor, owner, 0);
-  ftruncateSync(descriptor, Buffer.byteLength(owner));
+export function tryLocking({ udid }: Pick<Simulator, "udid">): number | undefined {
+  return tryExclusiveLock(leaseFile(udid));
 }
 
 export function releaseLease({ descriptor }: { descriptor: number }) {
@@ -54,126 +64,293 @@ export function releaseLease({ descriptor }: { descriptor: number }) {
   closeSync(descriptor);
 }
 
-/** False when something else booted the simulator first. */
-function bootSimulator(device: Simulator) {
-  const boot = spawnSync("xcrun", ["simctl", "boot", device.udid], { encoding: "utf8" });
+function markLease({ descriptor, kind }: { descriptor: number; kind: LeaseKind | "pinned test" }) {
+  ftruncateSync(descriptor);
 
-  if (boot.status === 0) {
-    return true;
-  }
-
-  if (getBootedSimulators().some(({ udid }) => udid === device.udid)) {
-    return false;
-  }
-
-  throw new Error(`Couldn't boot ${device.name}: ${boot.stderr.trim()}`);
+  writeSync(
+    descriptor,
+    `${kind} / PID ${process.pid} / ${process.cwd()} / since ${new Date().toISOString()}`,
+    0,
+  );
 }
 
-/**
- * Undefined when booting the locked simulator would pass the limit. To a test run, a booted
- * simulator is someone else's unless a killed run left it marked. Someone driving one by hand takes
- * the booted one they chose, and clears a killed run's mark: it's theirs now, and stays theirs
- * however their lease ends.
- */
-function tryLeasing({
-  descriptor,
-  device,
-  isTestRun,
-}: {
-  descriptor: number;
-  device: Simulator;
-  isTestRun: boolean;
-}): Lease | undefined {
-  // Read after locking: the run that just let go of it may have shut it down.
-  const booted = getBootedSimulators();
-  const isBooted = booted.some(({ udid }) => udid === device.udid);
-  const isLeftBehind = fstatSync(descriptor).size > 0;
+function isAbandonedTest(udid: string) {
+  const mark = readFileSync(leaseFile(udid), "utf8");
+  return mark.startsWith("test /") || /^\d+$/u.test(mark);
+}
 
-  if (isBooted ? !isTestRun || isLeftBehind : booted.length < getMaxBootedSimulators()) {
-    if (isTestRun) {
-      markAsTestRun(descriptor);
-    } else {
-      ftruncateSync(descriptor);
+function boot(device: Simulator) {
+  const result = spawnSync("xcrun", ["simctl", "boot", device.udid], { encoding: "utf8" });
+
+  if (result.status !== 0) {
+    throw new Error(
+      `Couldn't boot ${device.name}: ${result.error?.message ?? result.stderr.trim()}`,
+    );
+  }
+}
+
+function underChoosingLock<T>(action: () => T): T {
+  const descriptor = openExclusiveLock({ lockPath: path.join(leaseDirectory, "choosing") });
+
+  try {
+    return action();
+  } finally {
+    closeSync(descriptor);
+  }
+}
+
+function waitDetails({
+  booted,
+  devices,
+  claims,
+}: {
+  booted: Simulator[];
+  devices: Simulator[];
+  claims: Map<string, string>;
+}) {
+  const relevant = new Map([...booted, ...devices].map((device) => [device.udid, device]));
+
+  const owners = [...relevant.values()].flatMap((device) => {
+    const claim = claims.get(device.udid);
+    const descriptor = tryLocking(device);
+
+    if (descriptor !== undefined) {
+      closeSync(descriptor);
+    }
+
+    const owner = descriptor === undefined ? readFileSync(leaseFile(device.udid), "utf8") : "";
+
+    const description = [owner || (descriptor === undefined ? "Zoonk lease" : ""), claim]
+      .filter(Boolean)
+      .join("; ");
+
+    if (description) {
+      return `${device.name} (${device.udid}): ${description}`;
+    }
+
+    return booted.some(({ udid }) => udid === device.udid)
+      ? `${device.name} (${device.udid}): booted without a lease`
+      : [];
+  });
+
+  return `${booted.length}/${getMaxBootedSimulators()} simulators booted${owners.length > 0 ? `\n  ${owners.join("\n  ")}` : ""}.`;
+}
+
+function reserveDevice({
+  automatic,
+  canBoot,
+  device,
+  kind,
+  wasBooted,
+}: {
+  automatic: boolean;
+  canBoot: boolean;
+  device: Simulator;
+  kind: LeaseKind;
+  wasBooted: boolean;
+}): Reservation | "boot-limit" | undefined {
+  const descriptor = tryLocking(device);
+
+  if (descriptor === undefined) {
+    return;
+  }
+
+  if (wasBooted ? automatic && !isAbandonedTest(device.udid) : !canBoot) {
+    closeSync(descriptor);
+    return wasBooted ? undefined : "boot-limit";
+  }
+
+  markLease({ descriptor, kind: kind === "test" && !automatic ? "pinned test" : kind });
+
+  return {
+    descriptor,
+    device,
+    temporary: device.name === TEMPORARY_TEST_SIMULATOR_NAME,
+    wasBooted,
+  };
+}
+
+function reserve({
+  automatic = false,
+  firstInLine,
+  getCandidates,
+  kind,
+}: LeaseOptions & { firstInLine: boolean }): Reservation | { details: string } {
+  if (!firstInLine) {
+    return { details: "Earlier automatic tests are waiting for a simulator." };
+  }
+
+  return underChoosingLock(() => {
+    const { devices, create } = getCandidates();
+    const booted = getBootedSimulators();
+    const claims = deviceClaims();
+    const bootLimit = getMaxBootedSimulators();
+    const canBoot = booted.length < bootLimit;
+
+    for (const device of devices.filter(({ udid }) => !claims.has(udid))) {
+      const reservation = reserveDevice({
+        automatic,
+        canBoot,
+        device,
+        kind,
+        wasBooted: booted.some(({ udid }) => udid === device.udid),
+      });
+
+      if (reservation === "boot-limit" && kind === "launch") {
+        break;
+      }
+
+      if (reservation && reservation !== "boot-limit") {
+        return reservation;
+      }
+    }
+
+    const occupiedSlots = new Set(
+      [...booted, ...devices.filter(({ name }) => name === TEMPORARY_TEST_SIMULATOR_NAME)].map(
+        ({ udid }) => udid,
+      ),
+    );
+
+    if (create && occupiedSlots.size < bootLimit) {
+      const reservation = reserveDevice({
+        automatic,
+        canBoot,
+        device: create(),
+        kind,
+        wasBooted: false,
+      });
+
+      if (reservation && reservation !== "boot-limit") {
+        return reservation;
+      }
+    }
+
+    return { details: waitDetails({ booted, claims, devices }) };
+  });
+}
+
+function startLease(reservation: Reservation, options: LeaseOptions): Lease | undefined {
+  return underChoosingLock(() => {
+    const { device } = reservation;
+    const booted = getBootedSimulators();
+    const isBooted = booted.some(({ udid }) => udid === device.udid);
+
+    if (
+      deviceClaims().has(device.udid) ||
+      (isBooted && !reservation.wasBooted && options.automatic) ||
+      (!isBooted && booted.length >= getMaxBootedSimulators())
+    ) {
+      return;
     }
 
     const reportsBefore = new Set(listCrashReports());
 
-    if (isBooted || bootSimulator(device)) {
-      return { descriptor, device, reportsBefore };
-    }
-  }
+    if (!isBooted) {
+      if (options.kind === "test" && !options.automatic) {
+        markLease({ descriptor: reservation.descriptor, kind: "test" });
+      }
 
-  releaseLease({ descriptor });
-  return undefined;
+      boot(device);
+    }
+
+    return {
+      ...reservation,
+      reportsBefore,
+      shutDownAfter: options.kind === "test" && (Boolean(options.automatic) || !isBooted),
+    };
+  });
 }
 
-/**
- * Two runs can't share a simulator: the app hosts the tests and runs once per simulator, and
- * xcodebuild shuts down a simulator it booted as soon as its own run ends. So each run leases its
- * own: one a killed run left booted, or a shut-down one it boots itself, which xcodebuild then
- * leaves alone. Leases are chosen one at a time so none boots past the limit.
- */
-function chooseSimulator({
-  getCandidates,
-  isTestRun,
-}: {
-  getCandidates: () => Simulator[];
-  isTestRun: boolean;
-}): Lease | { booted: Simulator[] } {
-  const choosing = openExclusiveLock({ lockPath: path.join(leaseDirectory, "choosing") });
+function discardReservation(reservation: Reservation) {
+  try {
+    if (
+      reservation.temporary &&
+      !getBootedSimulators().some(({ udid }) => udid === reservation.device.udid) &&
+      !deviceClaims().has(reservation.device.udid)
+    ) {
+      spawnSync("xcrun", ["simctl", "delete", reservation.device.udid], { stdio: "inherit" });
+    }
+  } finally {
+    releaseLease(reservation);
+  }
+}
+
+async function startQueuedLease(reservation: Reservation, options: LeaseOptions) {
+  let turn: QueueTurn | undefined;
+  let lease: Lease | undefined;
 
   try {
-    for (const device of getCandidates()) {
-      const descriptor = tryLocking(device);
+    // A waiter that cannot reserve a simulator never joins the heavy build queue.
+    turn = await waitForTurn();
+    lease = startLease(reservation, options);
 
-      if (descriptor !== undefined) {
-        const lease = tryLeasing({ descriptor, device, isTestRun });
-
-        if (lease) {
-          return lease;
-        }
-
-        // By hand, wait for the first one nobody holds rather than take someone else's booted one.
-        if (!isTestRun) {
-          break;
-        }
-      }
+    if (lease) {
+      return { lease, turn };
     }
-
-    return { booted: getBootedSimulators() };
   } finally {
-    closeSync(choosing);
+    if (!lease) {
+      turn?.release();
+      discardReservation(reservation);
+    }
   }
 }
 
-/**
- * Leases the first candidate free, booting it on a queue turn, and waits until one is. Gives the
- * turn back while it waits, so waiting runs don't hold every slot.
- */
-export async function leaseSimulator({
-  describeWait,
-  getCandidates,
-  isTestRun,
-  isWaiting = false,
-}: {
-  describeWait: (booted: Simulator[]) => string;
-  getCandidates: () => Simulator[];
-  isTestRun: boolean;
-  isWaiting?: boolean;
-}): Promise<{ lease: Lease; turn: QueueTurn | undefined }> {
-  const turn = await waitForTurn();
-  const attempt = chooseSimulator({ getCandidates, isTestRun });
+export async function leaseSimulator(
+  options: LeaseOptions,
+): Promise<{ lease: Lease; turn: QueueTurn | undefined }> {
+  const timeout = Number(process.env.ZOONK_SIMULATOR_WAIT_SECONDS ?? DEFAULT_WAIT_SECONDS);
 
-  if ("descriptor" in attempt) {
-    return { lease: attempt, turn };
+  if (!Number.isFinite(timeout) || timeout <= 0) {
+    throw new Error("ZOONK_SIMULATOR_WAIT_SECONDS must be a positive number.");
   }
 
-  turn?.release();
+  const waitLine = path.join(leaseDirectory, "test-waiters");
+  let waiting = options.automatic ? joinWaitLine(waitLine) : undefined;
+  let started = performance.now();
+  let reportedAt = -Infinity;
 
-  if (!isWaiting) {
-    process.stderr.write(describeWait(attempt.booted));
+  try {
+    for (;;) {
+      const attempt = reserve({ ...options, firstInLine: waiting?.isFirst() ?? true });
+
+      if ("descriptor" in attempt) {
+        waiting?.leave();
+        waiting = undefined;
+        const queuedAt = performance.now();
+
+        // oxlint-disable-next-line no-await-in-loop -- get a build slot for this reservation
+        const startedLease = await startQueuedLease(attempt, options);
+
+        if (startedLease) {
+          return startedLease;
+        }
+
+        started += performance.now() - queuedAt;
+        waiting = options.automatic ? joinWaitLine(waitLine) : undefined;
+      }
+
+      const now = performance.now();
+      const elapsed = now - started;
+
+      const details =
+        "details" in attempt ? attempt.details : "Simulator availability changed before boot.";
+
+      if (elapsed >= timeout * 1000) {
+        throw new Error(`Timed out after ${timeout}s waiting for ${options.label}. ${details}`);
+      }
+
+      if (now - reportedAt >= REPORT_INTERVAL_MS) {
+        process.stderr.write(
+          `Waiting for ${options.label} (${Math.floor(elapsed / 1000)}s). ${details}\n`,
+        );
+
+        reportedAt = now;
+      }
+
+      // oxlint-disable-next-line no-await-in-loop -- retry admission when a simulator becomes free
+      await sleep(Math.min(POLL_MS, timeout * 1000 - elapsed));
+    }
+  } finally {
+    waiting?.leave();
   }
-
-  await sleep(POLL_MS);
-  return leaseSimulator({ describeWait, getCandidates, isTestRun, isWaiting: true });
 }

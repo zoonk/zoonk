@@ -22,6 +22,8 @@ function git(args: string[]): string {
   return execFileSync("git", args, { cwd: repository, encoding: "utf8", maxBuffer: OUTPUT_LIMIT });
 }
 
+const base = git(["merge-base", "--", "HEAD", values.base]).trim();
+
 function read(path: string): string {
   try {
     return readFileSync(join(repository, path), "utf8");
@@ -32,7 +34,7 @@ function read(path: string): string {
 
 function readBase(path: string): string {
   try {
-    return execFileSync("git", ["show", `${values.base}:${path}`], {
+    return execFileSync("git", ["show", `${base}:${path}`], {
       cwd: repository,
       encoding: "utf8",
       maxBuffer: OUTPUT_LIMIT,
@@ -57,7 +59,7 @@ const untracked: ChangedFile[] = git(["ls-files", "--others", "--exclude-standar
 const files = [
   // A rename counts as a new file, so `.env.example` renamed to `.env` meets the same checks.
   ...parseDiff(
-    git(["diff", "--unified=0", "--no-color", "--no-ext-diff", "--no-renames", values.base, "--"]),
+    git(["diff", "--unified=0", "--no-color", "--no-ext-diff", "--no-renames", base, "--"]),
   ),
   ...untracked,
 ];
@@ -79,14 +81,14 @@ const installsChanged = files.some((file) =>
   ["pnpm-lock.yaml", "pnpm-workspace.yaml"].includes(file.path),
 );
 
-const dependencies = installsChanged ? auditDependencies(repository, values.base) : [];
+const dependencies = installsChanged ? auditDependencies(repository, base) : [];
 
 const blocking =
   flags.filter((flag) => flag.rule.blocks).length + Number(addsVulnerability(dependencies));
 
 console.log(
   [
-    `# Diff audit: ${files.length} changed files against ${values.base}`,
+    `# Diff audit: ${files.length} changed files against ${values.base} (merge base ${base.slice(0, 12)})`,
     "",
     flags.length + dependencies.length === 0
       ? "Nothing to question."

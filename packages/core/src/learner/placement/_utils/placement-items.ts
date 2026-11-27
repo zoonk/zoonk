@@ -1,7 +1,11 @@
 import { type ItemFormat } from "@zoonk/db";
 import { type MatchItem, toMatchQuestion } from "../../../sessions/_utils/match-items";
 import { type OrderItem, toOrderQuestion } from "../../../sessions/_utils/order-items";
-import { gradeSessionAnswer, parseSessionItem } from "../../../sessions/_utils/session-items";
+import {
+  gradeSessionAnswer,
+  parseSessionItem,
+  showChoiceInBlock,
+} from "../../../sessions/_utils/session-items";
 import { type BankItem, type ChoiceItem, toQuestionView } from "../../_utils/choice-items";
 import { isLowGuessTap, isQuickChoice } from "../../_utils/placement-guess-rate";
 import { type PlacementAnswerInput } from "../placement-contract";
@@ -46,7 +50,9 @@ export function toPlacementQuestionView(item: PlacementItem) {
     return { ...toMatchQuestion({ blockId, item }), key: null };
   }
 
-  return item.format === "order" ? toOrderQuestion({ blockId, item }) : toQuestionView(item);
+  return item.format === "order"
+    ? toOrderQuestion({ blockId, item })
+    : toQuestionView(showChoiceInBlock({ blockId, item }));
 }
 
 export type PlacementQuestionView = ReturnType<typeof toPlacementQuestionView>;

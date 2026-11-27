@@ -1,5 +1,6 @@
 import { type LearningEventKind, type Prisma } from "../../../generated/prisma/client";
 import { localTimeFields } from "../_utils/dates";
+import { localizeText } from "../_utils/localize";
 import { seedId } from "../_utils/seed-id";
 import { SEED_TRANSACTION } from "../_utils/seed-transaction";
 import { seededRandom } from "../progress";
@@ -133,7 +134,7 @@ function mockEvent(scope: LearnerScope, mock: SeedHistoryEvent): HistoryEvent {
     kind: "mock",
     lessonKind: LEDGER_KINDS.weekly,
     seconds: mock.total * MOCK_MINUTES_PER_QUESTION * SECONDS_PER_MINUTE,
-    title: mock.title,
+    title: localizeText(mock.title, scope.learner.language),
   };
 }
 
@@ -146,7 +147,7 @@ function checkpointEvent(scope: LearnerScope, checkpoint: SeedHistoryEvent): His
     kind: "checkpoint",
     lessonKind: LEDGER_KINDS.boss,
     seconds: checkpoint.total * SECONDS_PER_QUESTION,
-    title: checkpoint.title,
+    title: localizeText(checkpoint.title, scope.learner.language),
   };
 }
 

@@ -11,6 +11,7 @@ import {
   studySessionBlockFixture,
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
+import { pressAnswerKey } from "./answer-key";
 
 const SKILL_NAMES = ["Discounts", "Ratios"];
 const QUESTIONS_PER_SKILL = 3;
@@ -115,27 +116,25 @@ export async function createCheckpointLearner() {
   return { block, boss, user };
 }
 
-/** The options keep their order, so the right answer is the first. */
-export async function answerDuelQuestion(page: Page, number: number) {
-  const decides = number === CHECKPOINT_PASS_MARK;
-
+export async function checkDuelQuestion(page: Page, number: number) {
   await expect(
     page.getByRole("progressbar", { name: `Question ${number} of ${CHECKPOINT_QUESTIONS}` }),
   ).toBeAttached();
 
-  // Keys work once the page hydrates, so the first press retries until it picks.
-  await expect(async () => {
-    await page.keyboard.press("1");
+  const right = page.getByRole("radio", { exact: true, name: "Right answer" });
 
-    await expect(page.getByRole("radio", { name: "Right answer" })).toHaveAttribute(
-      "aria-checked",
-      "true",
-      { timeout: 1000 },
-    );
+  await expect(async () => {
+    await pressAnswerKey(page, right);
+    await expect(right).toBeChecked({ timeout: 1000 });
   }).toPass({ timeout: 10_000 });
 
   await page.keyboard.press("Enter");
+  const decides = number === CHECKPOINT_PASS_MARK;
   await expect(page.getByRole("status")).toHaveText(decides ? /^Correct!/u : "Correct!");
+}
+
+export async function answerDuelQuestion(page: Page, number: number) {
+  await checkDuelQuestion(page, number);
   await page.keyboard.press("Enter");
 }
 

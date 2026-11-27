@@ -7,7 +7,8 @@ export function readSavedPracticeAnswer(value: unknown): JsonObject {
 
   return Object.fromEntries(
     Object.entries(value).filter(
-      ([key]) => key !== "practiceMistakeId" && key !== "fixedMistakeIds",
+      ([key]) =>
+        key !== "practiceMistakeId" && key !== "practiceShowing" && key !== "fixedMistakeIds",
     ),
   );
 }

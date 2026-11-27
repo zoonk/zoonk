@@ -3,14 +3,15 @@
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { LIST_GROUP_CLASS } from "../_components/list-group";
+import { ListGroup } from "../_components/list-group";
 import { DoneMark } from "../_components/status-mark";
 
 export function ChecklistRows({ className, ...props }: React.ComponentProps<"ul">) {
   return (
-    <ul
-      className={cn(LIST_GROUP_CLASS, "w-full text-left", className)}
-      data-slot="checklist-rows"
+    <ListGroup
+      as="ul"
+      className={cn("w-full text-left", className)}
+
       {...props}
     />
   );
@@ -47,10 +48,16 @@ export function ChecklistRow({
       </LineMarker>
       <span className="flex min-w-0 flex-col gap-0.5">
         <span className="font-medium">
-          <span lang={lang}>{children}</span>
+          <span data-slot="list-row-title" lang={lang}>
+            {children}
+          </span>
           <span className="sr-only">{done ? t(", done") : t(", not yet")}</span>
         </span>
-        {description && <span className="text-muted-foreground text-xs">{description}</span>}
+        {description && (
+          <span className="text-muted-foreground text-xs" data-slot="list-row-description">
+            {description}
+          </span>
+        )}
       </span>
     </li>
   );
