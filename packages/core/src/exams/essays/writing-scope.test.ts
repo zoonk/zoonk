@@ -64,7 +64,7 @@ function cguStructure(): ExamStructure {
 function useWriter() {
   vi.mocked(writeWritingPrompt, { partial: true }).mockImplementation(async ({ input }) => ({
     data: {
-      aspects: [{ criterionId: "case", description: "Apply the rule", points: 1 }],
+      aspects: [{ criterionId: "case", description: "Apply the rule", points: 1, steps: null }],
       assessedSkillIds: input.skills.map(({ id }) => id),
       context: null,
       criteria: [{ id: "case", name: "Application", points: 1 }],

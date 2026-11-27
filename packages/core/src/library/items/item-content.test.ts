@@ -1,6 +1,6 @@
 import { type GeneratedItem } from "@zoonk/ai/tasks/items/schemas";
 import { describe, expect, it } from "vitest";
-import { writingPromptSchema } from "../../exams/essays/writing-contract";
+import { readWritingPrompt } from "../../exams/essays/writing-contract";
 import { generatedMultipleChoice } from "./_test-utils/generated-items";
 import { discountMath } from "./_test-utils/math-problems";
 import { parseItemContent, toStoredItem } from "./item-content";
@@ -186,7 +186,7 @@ describe(parseItemContent, () => {
     });
 
     expect(item).toMatchObject({ content: { writing } });
-    const question = writingPromptSchema.parse(writing);
+    const question = readWritingPrompt(writing);
     expect(question.criteria).toStrictEqual([criterion]);
     expect(question).not.toHaveProperty("aspects");
     expect(question).not.toHaveProperty("grading");
