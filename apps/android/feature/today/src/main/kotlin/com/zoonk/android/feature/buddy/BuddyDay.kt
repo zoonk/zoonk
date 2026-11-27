@@ -102,7 +102,7 @@ internal fun BuddyTodayLine(
         Text(
             energy ?: DASH,
             Modifier.padding(start = LINE_GAP),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = if (energy == null) MaterialTheme.zoonk.faint else MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.labelMedium.withTabularFigures(),
         )
     }
