@@ -24,7 +24,7 @@ function daysAgo(days: number): Date {
  * Titles and questions carry a tag of their own, so each test finds only its own learner's words.
  * The right option is always the first.
  */
-export async function createUnstartedDay() {
+export async function createUnstartedDay({ withMistake = false } = {}) {
   // A letter first: rich text groups a long number's digits ("775,202"), which no title search finds.
   const tag = `t${randomUUID().slice(0, SHORT_ID_LENGTH)}`;
 
@@ -100,12 +100,14 @@ export async function createUnstartedDay() {
       state: "learning",
       userId: user.id,
     }),
-    mistakeFixture({
-      createdAt: daysAgo(1),
-      itemId: firstQuestion?.id,
-      skillId: firstSkill?.id,
-      userId: user.id,
-    }),
+    withMistake
+      ? mistakeFixture({
+          createdAt: daysAgo(1),
+          itemId: firstQuestion?.id,
+          skillId: firstSkill?.id,
+          userId: user.id,
+        })
+      : null,
     learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
   ]);
 
