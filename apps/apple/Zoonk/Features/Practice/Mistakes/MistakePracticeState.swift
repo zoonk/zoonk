@@ -31,6 +31,13 @@ enum MistakePracticeScope: Hashable, Sendable {
     if case .mock(let id) = self { id } else { nil }
   }
 
+  /// "Practice again" only while the server says a mistake from an earlier day is still open in
+  /// the scope, the one case where another run can fix something today. A day's block never
+  /// offers it: the day goes on.
+  func offersPracticeAgain(hasMorePractice: Bool?) -> Bool {
+    blockId == nil && hasMorePractice == true
+  }
+
   /// The goal the run names: a mock's run takes it from the finished sitting, so it still works
   /// after the learner switched goals.
   func goal(_ activeGoalId: String?) -> String? {
@@ -184,12 +191,9 @@ struct MistakePracticeState: Equatable {
     phase = .ended(summary)
   }
 
-  /// "Practice again" follows a run played to its end (one left early ends there) while an entry it
-  /// asked is still open or the server has more. A day's block never offers it: the day goes on
-  /// from Today.
-  func offersAgain(scope: MistakePracticeScope, hasMorePractice: Bool) -> Bool {
-    let leftUnfixed = steps.contains { !fixedIds.contains($0.entry.mistakeId) }
-    return scope.blockId == nil && index >= steps.count && (leftUnfixed || hasMorePractice)
+  /// The run's answers graded right, for its score.
+  var rightAnswers: Int {
+    verdicts.filter { $0 == .right }.count
   }
 
   var segments: [TaskSegment] {

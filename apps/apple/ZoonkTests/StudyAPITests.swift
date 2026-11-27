@@ -59,9 +59,12 @@ final class StudyAPITests: XCTestCase {
     let base = try XCTUnwrap(
       JSONSerialization.jsonObject(with: Data(Self.block.utf8)) as? [String: Any])
     let cases: [([String: Any], String, String)] = [
-      (["returning": "again"], "What you own when you buy a share", "Again: you keep missing this"),
+      (
+        ["returning": "again"], "What you own when you buy a share",
+        "Once more: this one's been tricky"
+      ),
       (["returning": "anotherWay"], "What you own when you buy a share", "Another way to see it"),
-      (["returning": "missed"], "What you own when you buy a share", "You keep missing this"),
+      (["returning": "missed"], "What you own when you buy a share", "This one's been tricky"),
       (
         ["kind": "practice", "screen": "mistakesPractice", "questions": 3, "title": NSNull()],
         "Fix 3 mistakes", "Questions you missed before"

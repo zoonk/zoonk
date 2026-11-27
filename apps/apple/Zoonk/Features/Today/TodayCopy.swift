@@ -164,7 +164,7 @@ extension StudyBlock: NamedBlock {
     switch returning {
     case .again:
       return String(
-        localized: "Again: you keep missing this", table: "Today",
+        localized: "Once more: this one's been tricky", table: "Today",
         comment: "Under a lesson the learner takes again because they keep missing its idea.")
     case .anotherWay:
       return String(
@@ -172,7 +172,9 @@ extension StudyBlock: NamedBlock {
         comment:
           "Under a short lesson that explains, in a new way, an idea the learner keeps missing.")
     case .missed:
-      return String(localized: "You keep missing this", table: "Today")
+      return String(
+        localized: "This one's been tricky", table: "Today",
+        comment: "Under a lesson written for an idea the learner keeps missing.")
     case nil:
       return nil
     }

@@ -125,8 +125,8 @@ extension AppRoute {
       QuestionBlockScreen(sessionId: sessionId, blockId: blockId)
     case .mistakePractice(let scope):
       MistakePracticeScreen(scope: scope)
-    case .pattern(let patternId):
-      PatternScreen(patternId: patternId)
+    case .pattern(let patternId, let inDay):
+      PatternScreen(patternId: patternId, inDay: inDay)
     case .testOut(let chapterId, let resultId):
       TestOutScreen(chapterId: chapterId, resultId: resultId)
     case .focusTest(let goalId, let startsTest):

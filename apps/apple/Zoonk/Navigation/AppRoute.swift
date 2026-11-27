@@ -28,7 +28,8 @@ enum AppRoute: Hashable, Identifiable {
     opening: LessonOpening? = nil, activated: Bool = false)
   case questionBlock(sessionId: String, blockId: String)
   case mistakePractice(MistakePracticeScope = .notebook)
-  case pattern(patternId: String)
+  /// `inDay`: opened from its row on Today, so it ends by going on into the day.
+  case pattern(patternId: String, inDay: Bool = false)
   /// `resultId` opens a test-out already sent, as it was recorded.
   case testOut(chapterId: String, resultId: String? = nil)
   /// `startsTest` opens on the first question, for a learner who already chose to start.

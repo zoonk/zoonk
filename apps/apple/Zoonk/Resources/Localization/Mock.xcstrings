@@ -13981,6 +13981,9 @@
         }
       }
     },
+    "What you missed now comes sooner" : {
+      "comment" : "After a mock, the plan moved the topics it missed earlier"
+    },
     "Work on: %@." : {
       "comment" : "Under a mock exam's score when only the subject to work on is named: the words of the second half of “Strongest: {best}. Work on: {worst}.”",
       "localizations" : {
@@ -15883,9 +15886,6 @@
           }
         }
       }
-    },
-    "Your plan now starts with what you missed" : {
-      "comment" : "After a mock, the plan moved the topics it missed earlier"
     },
     "Your plan stays as it is." : {
       "localizations" : {

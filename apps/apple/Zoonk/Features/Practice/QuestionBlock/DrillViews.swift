@@ -161,7 +161,7 @@ struct FixedMistakesNote: View {
         )
       } else if grade.requiresLaterDay {
         Text(
-          "Get it right again another day to fix it.", tableName: "Practice",
+          "It comes back another day to make sure.", tableName: "Practice",
           comment:
             "After a right answer to a question the learner missed earlier the same day. A mistake is fixed only by a right answer on a later day."
         )

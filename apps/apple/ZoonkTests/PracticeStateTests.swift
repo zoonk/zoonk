@@ -83,28 +83,28 @@ final class MistakePracticeStateTests: XCTestCase {
     XCTAssertEqual(state.phase, .ending)
   }
 
-  func testPracticeAgainFollowsARunPlayedToItsEndWithMoreToPractice() {
-    let entries = [makeEntry("m1", questions: ["a"]), makeEntry("m2", questions: ["b"])]
-    var state = MistakePracticeState(entries: entries)
+  /// Another run only while the server says an earlier day's mistake is still open; never in the
+  /// day, which goes on.
+  func testPracticeAgainFollowsTheServerOutsideTheDay() {
+    XCTAssertTrue(MistakePracticeScope.notebook.offersPracticeAgain(hasMorePractice: true))
+    XCTAssertTrue(MistakePracticeScope.mock("k").offersPracticeAgain(hasMorePractice: true))
+    XCTAssertFalse(MistakePracticeScope.skill("s").offersPracticeAgain(hasMorePractice: false))
+    XCTAssertFalse(MistakePracticeScope.notebook.offersPracticeAgain(hasMorePractice: nil))
+    XCTAssertFalse(MistakePracticeScope.block("b").offersPracticeAgain(hasMorePractice: true))
+  }
 
-    answer(&state, grade: makeGrade(isCorrect: true, fixed: true, fixedIds: ["m1"]))
+  /// The score comes from the run's own answers, so a batch with no summary still ends on it.
+  func testTheScoreCountsTheRunsRightAnswers() {
+    var state = MistakePracticeState(entries: [makeEntry("m", questions: ["a", "b", "c"])])
+
+    answer(&state, grade: makeGrade(isCorrect: true))
     state.next()
-    XCTAssertFalse(
-      state.offersAgain(scope: .notebook, hasMorePractice: true), "a run left early ends there")
-
+    answer(&state, .dontKnow, by: .notSure, grade: makeGrade(isCorrect: false))
+    state.next()
     answer(&state, grade: makeGrade(isCorrect: false))
-    state.next()
-    XCTAssertTrue(state.offersAgain(scope: .notebook, hasMorePractice: false))
-    XCTAssertTrue(state.offersAgain(scope: .mock("k"), hasMorePractice: false))
-    XCTAssertFalse(state.offersAgain(scope: .block("b"), hasMorePractice: true))
 
-    var fixedAll = MistakePracticeState(entries: [makeEntry("m1", questions: ["a"])])
-    answer(&fixedAll, grade: makeGrade(isCorrect: true, fixed: true, fixedIds: ["m1"]))
-    fixedAll.next()
-    XCTAssertFalse(fixedAll.offersAgain(scope: .notebook, hasMorePractice: false))
-    XCTAssertTrue(
-      fixedAll.offersAgain(scope: .skill("s"), hasMorePractice: true),
-      "more open entries than one run holds")
+    XCTAssertEqual(state.rightAnswers, 1)
+    XCTAssertEqual(state.answerIds.count, 3)
   }
 
   private func answer(

@@ -214,7 +214,7 @@ struct MockResultView: View {
     let moved = view.result?.movedTopics.flatMap { $0.isEmpty ? nil : $0 }
 
     if preparation != nil || moved != nil {
-      MockPlanMoves(preparation: preparation, movedTopics: moved)
+      MockPlanMoves(preparation: preparation, movedTopics: moved, isWide: !answersInBar)
     }
 
     if let adapt = view.adapt {
@@ -990,10 +990,14 @@ private struct MockSpeakingSection: View {
 }
 
 /// What the mock already changed: the preparation it measured and the topics the plan moved
-/// earlier, which ask nothing of the learner.
+/// earlier, which ask nothing of the learner. On a phone the moved topics are the step's own title;
+/// beside the result they sit under "Your plan", and under a moved preparation as a small line.
 private struct MockPlanMoves: View {
   let preparation: MockResult.Preparation?
   let movedTopics: [String]?
+  let isWide: Bool
+
+  private var movedIsTitle: Bool { preparation == nil && !isWide }
 
   var body: some View {
     Section {
@@ -1003,22 +1007,30 @@ private struct MockPlanMoves: View {
 
       if let movedTopics {
         VStack(alignment: .leading, spacing: 4) {
-          Text(
-            "Your plan now starts with what you missed", tableName: "Mock",
-            comment: "After a mock, the plan moved the topics it missed earlier"
-          )
-          .typeStyle(.body.weight(.semibold))
-          Text(verbatim: movedTopics.prefix(3).formatted(.list(type: .and).locale(.appLanguage)))
-            .foregroundStyle(.mutedForeground)
+          if !movedIsTitle {
+            Self.movedTitle.typeStyle(.body.weight(.semibold))
+          }
+
+          ForEach(Array(movedTopics.prefix(3).enumerated()), id: \.offset) { _, topic in
+            Text(verbatim: topic).foregroundStyle(.mutedForeground)
+          }
         }
         .accessibilityElement(children: .combine)
       }
     } header: {
       SectionTitle(
-        preparation == nil
-          ? Text("Your plan", tableName: "Mock", comment: "What a mock changed in the plan")
-          : Text("Your preparation", tableName: "Mock", comment: "How preparation moved"))
+        preparation != nil
+          ? Text("Your preparation", tableName: "Mock", comment: "How preparation moved")
+          : movedIsTitle
+            ? Self.movedTitle
+            : Text("Your plan", tableName: "Mock", comment: "What a mock changed in the plan"))
     }
+  }
+
+  private static var movedTitle: Text {
+    Text(
+      "What you missed now comes sooner", tableName: "Mock",
+      comment: "After a mock, the plan moved the topics it missed earlier")
   }
 }
 
