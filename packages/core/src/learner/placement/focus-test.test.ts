@@ -33,7 +33,7 @@ const RIGHT = { selectedIndex: 0 };
 
 const THREE_SUBJECTS = [
   { name: "Português", questions: 8 },
-  { name: "Direito Administrativo", questions: 6 },
+  { name: "Direito Administrativo", questions: 12 },
   { name: "Informática", questions: 4 },
 ];
 
@@ -140,7 +140,7 @@ describe("an exam goal's Focus test", () => {
     await expect(readRecord(goal.id)).resolves.toBeNull();
   });
 
-  it("promises what fits six questions on a 24-subject exam", async () => {
+  it("offers six questions on a 24-subject exam", async () => {
     const { goal } = await examTestGoalFixture({ subjects: manySubjects(24) });
     const placement = await read(goal.id);
 
