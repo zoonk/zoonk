@@ -13,8 +13,11 @@ import { listWrittenTasks, updateWrittenTasks } from "./written-task-ids";
 
 /**
  * Its own read, since the blueprint reading's schema is at the most states Gemini serves (the
- * scoring sheet's fields there failed every reading, 26 Nov 2026). Flash, the blueprint's reader of
- * the same documents; untuned: no model comparison has run on its eval yet.
+ * scoring sheet's fields there failed every reading, 26 Nov 2026). On its eval's 6 cases run twice
+ * (27 Nov 2026), Flash read every task's fields right and dropped one passage, at $55/1k and 45 s
+ * p50, with one 240 s timeout. GPT-6 Luna quoted every passage at $17/1k and 32 s p50 but lost the
+ * Enem total in both runs and the OAB zero rules in both. Gemini 3.5 Flash Lite missed CGU's
+ * rounding and OAB's criteria, and Haiku 5.5 failed the schema on 8 of 12 readings.
  */
 const defaultModel = "google/gemini-3.8-flash";
 const fallbackModels = ["openai/gpt-6-luna"] as const;
