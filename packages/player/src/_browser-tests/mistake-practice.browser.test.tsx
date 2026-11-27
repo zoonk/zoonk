@@ -6,6 +6,7 @@ import {
   type Actions,
   practiceFeedback as feedback,
   openPractice,
+  practiceEntries,
 } from "../_test-utils/mistake-practice";
 import { languageStep, spokenAnswerStep, teachingStep } from "../preview/preview-steps";
 
@@ -324,5 +325,88 @@ describe("exact lesson mistake practice", () => {
     await expect.element(verdict).toBeVisible();
     await expect.element(verdict).toMatchTextContent(/Not quite/u);
     await expect.element(verdict).toMatchTextContent(/How much is the rent\?/u);
+  });
+});
+
+const SUMMARY = {
+  brainPower: 0,
+  ceremony: null,
+  certificates: [],
+  correct: 0,
+  hasMorePractice: false,
+  missionMoment: null,
+  reached: { energy: null, level: null },
+  seconds: 30,
+  total: 1,
+};
+
+async function answerAndContinue() {
+  await page.getByRole("textbox").fill("A paraphrase");
+  await page.getByRole("button", { name: /^Check/u }).click();
+  await expect.element(page.getByRole("region", { name: "Answer feedback" })).toBeVisible();
+  await page.getByRole("button", { name: /^Continue/u }).click();
+}
+
+describe("the end of a mistake practice run", () => {
+  afterEach(() => vi.restoreAllMocks());
+
+  it("loads a fresh batch for Practice again, and says so when that fails", async () => {
+    const again = vi
+      .fn<Actions["again"]>()
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce(practiceEntries(teachingStep("typedAnswer")));
+
+    openPractice(teachingStep("typedAnswer"), {
+      again,
+      answer: vi.fn<Actions["answer"]>().mockResolvedValue(feedback(false)),
+      finish: vi.fn<Actions["finish"]>().mockResolvedValue(SUMMARY),
+    });
+
+    await answerAndContinue();
+    await page.getByRole("button", { name: /^Practice again/u }).click();
+
+    await expect
+      .element(page.getByText("That didn't go through. Your answers are kept."))
+      .toBeVisible();
+
+    await page.getByRole("button", { name: /^Practice again/u }).click();
+    await expect.element(page.getByRole("textbox")).toBeVisible();
+    expect(again).toHaveBeenCalledTimes(2);
+  });
+
+  it("offers Practice again after fixing everything only when the server holds more", async () => {
+    openPractice(teachingStep("typedAnswer"), {
+      finish: vi.fn<Actions["finish"]>().mockResolvedValue({ ...SUMMARY, hasMorePractice: true }),
+    });
+
+    await answerAndContinue();
+    await expect.element(page.getByRole("button", { name: /^Practice again/u })).toBeVisible();
+  });
+
+  it("ends with Done when everything is fixed and nothing more waits", async () => {
+    openPractice(teachingStep("typedAnswer"), {
+      finish: vi.fn<Actions["finish"]>().mockResolvedValue(SUMMARY),
+    });
+
+    await answerAndContinue();
+    await expect.element(page.getByRole("link", { name: "Done" })).toBeVisible();
+  });
+
+  it("holds an emptied day's block until its completion goes through, with Try again", async () => {
+    const finish = vi
+      .fn<Actions["finish"]>()
+      .mockRejectedValueOnce(new Error("offline"))
+      .mockResolvedValueOnce(SUMMARY);
+
+    openPractice(null, { finish }, undefined, undefined, { dayBlock: true });
+
+    await expect
+      .element(page.getByRole("heading", { name: "Your practice isn't saved yet" }))
+      .toBeVisible();
+
+    await page.getByRole("button", { name: "Try again" }).click();
+    await expect.element(page.getByRole("heading", { name: "Nothing to practice" })).toBeVisible();
+    expect(finish).toHaveBeenCalledTimes(2);
+    expect(finish).toHaveBeenLastCalledWith({ answerIds: [] });
   });
 });

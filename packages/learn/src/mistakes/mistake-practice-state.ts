@@ -59,6 +59,7 @@ type PracticePhase =
   | ({ kind: "answerFailed" } & SentPracticeAnswer)
   | ({ feedback: Graded; kind: "feedback"; spoken?: SpokenAnswerGrade } & SentPracticeAnswer)
   | { kind: "ending" }
+  | { kind: "finishFailed" }
   | { kind: "ended"; summary: MistakePracticeSummary | null };
 
 /**
@@ -86,7 +87,8 @@ export type PracticeAction =
   | { type: "next" }
   | { type: "end" }
   | { summary: MistakePracticeSummary | null; type: "ended" }
-  | { type: "again" };
+  | { type: "finishFailed" }
+  | { practice: readonly PracticeEntry[]; type: "again" };
 
 function toPracticeSteps(practice: readonly PracticeEntry[]): PracticeStep[] {
   return practice.flatMap<PracticeStep>((entry) => {
@@ -246,29 +248,30 @@ export function practiceReducer(state: PracticeState, action: PracticeAction): P
           ? mergeReached(state.reached, action.summary.reached)
           : state.reached,
       };
-    case "again":
-      return state.phase.kind === "ended"
-        ? createPracticeState(getEntriesToPracticeAgain(state))
+    case "finishFailed":
+      return state.phase.kind === "ending"
+        ? { ...state, failures: state.failures + 1, phase: { kind: "finishFailed" } }
         : state;
+    case "again":
+      return state.phase.kind === "ended" ? createPracticeState(action.practice) : state;
     default:
       return state;
   }
 }
 
 /**
- * A run played to its end can start again on what it didn't fix, in the same order. One the learner
- * left early ends there.
+ * A run played to its end can start a fresh batch while this one left something unfixed or the
+ * server holds more. One the learner left early ends there.
  */
-export function getEntriesToPracticeAgain(state: PracticeState): PracticeEntry[] {
-  if (state.index < state.steps.length) {
-    return [];
+export function canPracticeAgain(state: PracticeState): boolean {
+  if (state.phase.kind !== "ended" || state.index < state.steps.length) {
+    return false;
   }
 
   const fixed = new Set(state.fixedIds);
+  const unfixed = state.steps.some(({ entry }) => !fixed.has(entry.mistakeId));
 
-  return state.steps.flatMap(({ entry, firstOfEntry }) =>
-    firstOfEntry && !fixed.has(entry.mistakeId) ? [entry] : [],
-  );
+  return unfixed || Boolean(state.phase.summary?.hasMorePractice);
 }
 
 export function getPracticeSegments(state: PracticeState): TaskSegment[] {

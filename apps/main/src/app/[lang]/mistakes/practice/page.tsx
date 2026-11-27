@@ -98,7 +98,8 @@ async function PracticeBody({ searchParams }: Pick<Props, "searchParams">) {
 
   const result = await getMistakePractice({
     blockId: scope.blockId,
-    goalId: goal.id,
+    // A mock's run follows the sitting's goal, which may not be the current one.
+    goalId: scope.mockId ? undefined : goal.id,
     includeAllFormats: true,
     mockId: scope.mockId,
     skillId: scope.skillId,
@@ -117,9 +118,9 @@ async function PracticeBody({ searchParams }: Pick<Props, "searchParams">) {
       <DrawnMath content={result.practice}>
         <MistakePracticeClient
           backHref={getBackHref(scope)}
-          blockId={scope.blockId}
           goalId={goal.id}
           practice={result.practice}
+          scope={{ blockId: scope.blockId, mockId: scope.mockId, skillId: scope.skillId }}
           trueFalseLabels={result.trueFalseLabels}
           tutor={tutor}
         />

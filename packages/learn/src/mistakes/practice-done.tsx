@@ -3,6 +3,7 @@
 import { type Reached } from "@zoonk/core/sessions/reached";
 import { useExtracted } from "next-intl";
 import { MomentReadouts } from "../_components/moment-readouts";
+import { AnswersSaveError } from "../_components/save-error";
 import { StepCard, StepHeader } from "../_components/step-card";
 import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
@@ -64,15 +65,20 @@ export function NothingToPractice({ backHref }: { backHref: string }) {
   );
 }
 
-/** Practicing again plays what the run didn't fix; with nothing left, the learner is done. */
-function DoneBar({ again, backHref }: { again: (() => void) | null; backHref: string }) {
+export type PracticeAgain = { failed: boolean; loading: boolean; start: () => void };
+
+/** Practicing again loads a fresh batch; with nothing left, the learner is done. */
+function DoneBar({ again, backHref }: { again: PracticeAgain | null; backHref: string }) {
   const t = useExtracted();
 
   return (
     <TaskActionBar>
+      {again?.failed && <AnswersSaveError failures={1} />}
       <TaskActions>
         {again ? (
-          <TaskMainButton onClick={again}>{t("Practice again")}</TaskMainButton>
+          <TaskMainButton busy={again.loading} onClick={again.start}>
+            {t("Practice again")}
+          </TaskMainButton>
         ) : (
           <TaskMainLink href={backHref}>{t("Done")}</TaskMainLink>
         )}
@@ -90,7 +96,7 @@ export function PracticeDone({
   renderCeremony,
   summary,
 }: {
-  again: (() => void) | null;
+  again: PracticeAgain | null;
   backHref: string;
   buddy?: LearnBuddy | null;
   fixed: number;

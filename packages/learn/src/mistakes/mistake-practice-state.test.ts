@@ -3,8 +3,8 @@ import { describe, expect, it } from "vitest";
 import {
   type MistakePracticeSummary,
   type PracticeEntry,
+  canPracticeAgain,
   createPracticeState,
-  getEntriesToPracticeAgain,
   getPracticeSegments,
   practiceReducer,
 } from "./mistake-practice-state";
@@ -65,6 +65,7 @@ const SUMMARY: MistakePracticeSummary = {
   ceremony: null,
   certificates: [],
   correct: 2,
+  hasMorePractice: false,
   missionMoment: null,
   reached: NOTHING_REACHED,
   seconds: 60,
@@ -356,8 +357,8 @@ describe(getPracticeSegments, () => {
   });
 });
 
-describe(getEntriesToPracticeAgain, () => {
-  const practice = [entry("first", {}, 1), entry("second", {}, 2), entry("third", {}, 1)];
+describe(canPracticeAgain, () => {
+  const practice = [entry("first", {}, 1), entry("second", {}, 1)];
   const answer = { selectedIndex: 0 };
 
   const answered = (mistakeId: string, fixed: boolean) =>
@@ -367,45 +368,58 @@ describe(getEntriesToPracticeAgain, () => {
       { type: "next" },
     ] as const;
 
-  const play = (...actions: ReturnType<typeof answered>[number][]) =>
-    actions.reduce(
-      (current, action) => practiceReducer(current, action),
-      createPracticeState(practice),
+  const end = (hasMorePractice: boolean, ...actions: ReturnType<typeof answered>[number][]) =>
+    practiceReducer(
+      actions.reduce(
+        (current, action) => practiceReducer(current, action),
+        createPracticeState(practice),
+      ),
+      { summary: { ...SUMMARY, hasMorePractice }, type: "ended" },
     );
 
-  const finished = play(
-    ...answered("first", true),
-    ...answered("second", false),
-    ...answered("second", false),
-    ...answered("third", false),
-  );
-
-  it("starts again on the mistakes a finished run didn't fix, in their order", () => {
-    expect(getEntriesToPracticeAgain(finished).map(({ mistakeId }) => mistakeId)).toStrictEqual([
-      "second",
-      "third",
-    ]);
-
-    const ended = practiceReducer(practiceReducer(finished, { type: "end" }), {
-      summary: SUMMARY,
-      type: "ended",
-    });
-
-    const again = practiceReducer(ended, { type: "again" });
-
-    expect(again).toStrictEqual(createPracticeState(practice.slice(1)));
+  it("offers a played run again while this batch left something unfixed", () => {
+    expect(
+      canPracticeAgain(end(false, ...answered("first", true), ...answered("second", false))),
+    ).toBe(true);
   });
 
-  it("offers nothing again once the learner left early or fixed everything", () => {
-    expect(getEntriesToPracticeAgain(play(...answered("first", false)))).toStrictEqual([]);
+  it("offers it again when every entry was fixed but the server holds more", () => {
+    const allFixed = [...answered("first", true), ...answered("second", true)];
 
-    const allFixed = play(
-      ...answered("first", true),
-      ...answered("second", true),
-      ...answered("second", true),
-      ...answered("third", true),
-    );
+    expect(canPracticeAgain(end(true, ...allFixed))).toBe(true);
+    expect(canPracticeAgain(end(false, ...allFixed))).toBe(false);
+  });
 
-    expect(getEntriesToPracticeAgain(allFixed)).toStrictEqual([]);
+  it("ends a run the learner left early", () => {
+    expect(canPracticeAgain(end(true, ...answered("first", false)))).toBe(false);
+  });
+
+  it("starts the fresh batch it's given", () => {
+    const fresh = [entry("third", {}, 1)];
+
+    const again = practiceReducer(end(true, ...answered("first", true)), {
+      practice: fresh,
+      type: "again",
+    });
+
+    expect(again).toStrictEqual(createPracticeState(fresh));
+  });
+});
+
+describe("a finish that didn't go through", () => {
+  it("holds the run until a retry's finish ends it", () => {
+    const ending = createPracticeState([]);
+    const failed = practiceReducer(ending, { type: "finishFailed" });
+
+    expect(failed.phase).toStrictEqual({ kind: "finishFailed" });
+    expect(failed.failures).toBe(1);
+
+    const retried = practiceReducer(failed, { type: "end" });
+    expect(retried.phase).toStrictEqual({ kind: "ending" });
+
+    expect(practiceReducer(retried, { summary: SUMMARY, type: "ended" }).phase).toStrictEqual({
+      kind: "ended",
+      summary: SUMMARY,
+    });
   });
 });
