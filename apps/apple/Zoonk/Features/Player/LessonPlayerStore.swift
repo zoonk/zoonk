@@ -281,6 +281,12 @@ final class LessonPlayerStore {
 
     do {
       let revision = lessonResource.revision
+      if !refresh, identity != nil, case .ready(let cached) = lessonResource.value,
+        !cached.steps.contains(where: isUnplayable)
+      {
+        showLesson(cached)
+        if activated { beginStart() }
+      }
       if refresh || !activated {
         await lessonResource.refresh()
       } else {
@@ -312,20 +318,10 @@ final class LessonPlayerStore {
             LessonOutline(id: lesson.id, title: lesson.title, description: "", estimatedMinutes: 0))
           return
         }
-        guard !lesson.steps.contains(where: isUnplayable) else { throw APIError.unavailable }
-        self.lesson = lesson
-        heldForRun = []
-        var state = LessonPlayerState(
-          lessonId: lesson.id, steps: lesson.steps, hasMap: lesson.summary != nil)
-        leaveOutDictation(&state)
-        state.resume(from: lesson.resume)
-        self.state = state
-        works = [:]
-        acted = false
-        workedHere = []
-        openedAt = .now
-        // Written content can paint before admission; server actions await the run.
-        screen = .playing
+        if screen != .playing || (!activated && self.lesson != lesson) {
+          guard !lesson.steps.contains(where: isUnplayable) else { throw APIError.unavailable }
+          showLesson(lesson)
+        }
         if activated {
           beginStart()
           await starting?.value
@@ -338,6 +334,21 @@ final class LessonPlayerStore {
     } catch {
       screen = .failed
     }
+  }
+
+  private func showLesson(_ lesson: PlayableLesson) {
+    if screen != .playing { openedAt = .now }
+    self.lesson = lesson
+    heldForRun = []
+    var state = LessonPlayerState(
+      lessonId: lesson.id, steps: lesson.steps, hasMap: lesson.summary != nil)
+    leaveOutDictation(&state)
+    state.resume(from: lesson.resume)
+    self.state = state
+    works = [:]
+    acted = false
+    workedHere = []
+    screen = .playing
   }
 
   func leave() {

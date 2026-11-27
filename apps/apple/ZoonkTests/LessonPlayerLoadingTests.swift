@@ -357,26 +357,43 @@ final class LessonPlayerLoadingTests: XCTestCase {
   }
 
   func testStandaloneLessonResumesWithoutStartingUntilInput() async throws {
-    let transport = OpeningStartTransport(holds: false)
-    let cache = AppCache(session: SessionStore.preview(account: .lessonLoadingTestAccount))
     var lesson = try checkLesson(["one", "two"])
     lesson.resume = [heldAnswer("one", attemptId: UUID().uuidString, isCorrect: true).runAnswer]
-    let ready = lesson
-    let content: Resource<LessonLoad> = cache.resource(audience: .viewer) { _ in .ready(ready) }
-    await content.load()
-    content.update { _ in
-      var earlier = ready
+    for actsDuringRefresh in [false, true] {
+      let transport = OpeningStartTransport(holds: false)
+      let cache = AppCache(session: SessionStore.preview(account: .lessonLoadingTestAccount))
+      let gate = TestGate()
+      var earlier = lesson
       earlier.resume = []
-      return .ready(earlier)
+      var reads = 0
+      let content: Resource<LessonLoad> = cache.resource(audience: .viewer) { _ in
+        reads += 1
+        if reads == 1 { return .ready(earlier) }
+        await gate.wait()
+        return .ready(lesson)
+      }
+      await content.load()
+      let store = player(cache: cache, content: content, transport: transport, activated: false)
+      let loading = Task { await store.load() }
+      try await waitForTestCondition("The cached lesson is being refreshed") {
+        content.isRefreshing
+      }
+      XCTAssertEqual(store.screen, .playing)
+      XCTAssertEqual(store.state?.currentStep?.id, "one")
+      let before = await transport.count
+      XCTAssertEqual(before, 0)
+      if actsDuringRefresh { store.act() }
+      gate.open()
+      await loading.value
+      XCTAssertEqual(store.state?.currentStep?.id, actsDuringRefresh ? "one" : "two")
+      if !actsDuringRefresh {
+        let afterRefresh = await transport.count
+        XCTAssertEqual(afterRefresh, 0)
+        store.act()
+      }
+      let started = await store.ensureRun()
+      XCTAssertTrue(started)
     }
-    let store = player(cache: cache, content: content, transport: transport, activated: false)
-    await store.load()
-    XCTAssertEqual(store.state?.currentStep?.id, "two")
-    let before = await transport.count
-    XCTAssertEqual(before, 0)
-    store.act()
-    let started = await store.ensureRun()
-    XCTAssertTrue(started)
   }
 
   func testRestoredOpeningWaitsForActionAndFollowsOpenedOnce() async throws {
