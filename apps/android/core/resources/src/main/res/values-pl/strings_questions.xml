@@ -29,6 +29,10 @@
   "questions_left_blank": "4143ea8d02e3dc1cd0fe3f509d1e2aa0181f5b7dc9464b383bb6dc26e503b927",
   "questions_mark_correct": "ecf5d44e26215e869666494d16049dd050c2783b61404c5922aaaeb5ec40b04b",
   "questions_mark_wrong": "e8b0113e83ae64838db84e9504c9596b3fd8a21c88089c24cb7f42ef5c3f29e8",
+  "questions_match_first_tries": "45381ea9bb72c1f51d2d019583a1ac6a60eeea3b5dd38e98d5191287ee387b1f",
+  "questions_match_not_a_pair": "471c81baf650120149c67bc71b03ff4074e4375625d7f104bc99f333d0f1529b",
+  "questions_match_paired": "31bbd033c96d46addadc751ee8b3c03eaefa9b2b5cd21e3f6cb350d0e0fbd786",
+  "questions_match_unpaired": "5192767fa51aef7a403aa0beb5075f77f39b7d9463d5670a177f8df20fddb69b",
   "questions_matched_with": "d8e4814f42d17dbae844d75bd9a571c9139366c6c4418b4f38351f5877fe3ee5",
   "questions_mistake_fixed": "4fda4d5c20d207d669925c98c8984f1b1a8e42e0ca34c5d906e37dd079dc092b",
   "questions_mistakes_fixed": "9868fe5d1e79a375cee5feb18dc78d2531e5c17eac01c00fde2f57c895d6d68c",
@@ -76,6 +80,11 @@
     <string name="questions_place_wrong">Miejsce %1$d, niepoprawne</string>
     <!-- An entry on the right read aloud with the entry on the left it was matched with. -->
     <string name="questions_matched_with">%1$s, dopasowanie: %2$s</string>
+    <string name="questions_match_paired">Dopasowano %1$s do %2$s. Dopasowane pary: %3$d z %4$d.</string>
+    <string name="questions_match_not_a_pair">%1$s i %2$s do siebie nie pasują.</string>
+    <string name="questions_match_unpaired">Rozłączono %1$s i %2$s.</string>
+    <!-- Under a matching question's verdict, before the pairs of cards the learner first put together wrong, one per line as “card → card”. -->
+    <string name="questions_match_first_tries">Najpierw połączono:</string>
     <string name="questions_your_answer">Twoja odpowiedź</string>
     <string name="questions_mark_correct">Oznacz jako poprawną</string>
     <string name="questions_mark_wrong">Oznacz jako błędną</string>

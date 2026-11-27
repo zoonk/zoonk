@@ -18,7 +18,7 @@ import {
   valueList,
 } from "./alignment-fixtures.mts";
 import { alignmentLines, summarize, summaryLine } from "./alignment-summary.mts";
-import { applyExceptions, evaluateCapture, evaluateFile } from "./alignment.mts";
+import { evaluateCapture, evaluateFile } from "./alignment.mts";
 
 describe("relationships with no vote", () => {
   it("fails two neighbors farther apart than their flow's gap, with two rows alone", () => {
@@ -289,37 +289,5 @@ describe("printing and the summary line", () => {
     );
 
     assert.match(lines.join("\n"), /list-group Today: Today row; list-group Plan: Plan row/u);
-  });
-
-  it("keeps an excepted fault listed but resolved", () => {
-    const findings = applyExceptions(failures(real("plan roadmap before 5ae2e06daa, phone")), [
-      {
-        configuration: "phone touch",
-        grantedBy: "user",
-        piece: "plan-roadmap",
-        reason: "granted",
-        relation: "end-edge",
-        scenario: "/plan",
-      },
-    ]);
-
-    assert.equal(findings[0]?.exception, "granted");
-    assert.equal(summarize(findings).unresolved, 0);
-  });
-
-  it("resolves a fault the base has too, tracked in an issue, as it does a granted one", () => {
-    const findings = applyExceptions(failures(real("plan roadmap before 5ae2e06daa, phone")), [
-      {
-        configuration: "phone touch",
-        issue: 2790,
-        piece: "plan-roadmap",
-        reason: "on main too, fixed by #2790",
-        relation: "end-edge",
-        scenario: "/plan",
-      },
-    ]);
-
-    assert.equal(findings[0]?.exception, "on main too, fixed by #2790");
-    assert.equal(summarize(findings).unresolved, 0);
   });
 });

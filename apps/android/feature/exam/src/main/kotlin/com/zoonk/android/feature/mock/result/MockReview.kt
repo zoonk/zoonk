@@ -224,6 +224,7 @@ private fun EntryFacts(
                 ?: stringResource(R.string.mock_result_question, entry.number.toInt()),
             sectionTitle ?: entry.area,
             when (entry.outcome) {
+                MockExamReviewInner.Outcome.UNKNOWN_DEFAULT_OPEN_API -> null
                 MockExamReviewInner.Outcome.BLANK -> stringResource(R.string.mock_result_blank)
                 MockExamReviewInner.Outcome.PARTIAL -> stringResource(R.string.mock_result_partly_right)
                 MockExamReviewInner.Outcome.RIGHT -> stringResource(R.string.mock_result_right)

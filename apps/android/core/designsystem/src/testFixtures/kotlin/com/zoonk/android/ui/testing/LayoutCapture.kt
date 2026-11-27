@@ -26,6 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.DrawnDescriptionsKey
+import com.zoonk.android.ui.components.LayoutNoWordsKey
 import com.zoonk.android.ui.components.LayoutPart
 import com.zoonk.android.ui.components.LayoutPartKey
 import com.zoonk.android.ui.components.LayoutScrollSignKey
@@ -268,7 +269,8 @@ internal object LayoutCapture {
             row: Element?,
         ) {
             pageNode(node)
-            val unread = node.config.isClearingSemantics && node.children.isEmpty() && textLayout(node) == null
+            val unread =
+                node.config.isClearingSemantics && node.children.isEmpty() && textLayout(node) == null && !drawsNoWords(node)
             // Only a main action's fill counts toward one filled action per surface, so other buttons aren't written.
             val part =
                 node.config.getOrNull(LayoutPartKey)?.takeUnless {
@@ -438,7 +440,7 @@ internal object LayoutCapture {
                         rowFields(fields, box)
                     }
 
-                    LayoutPart.Part.Label, LayoutPart.Part.Note, LayoutPart.Part.Value -> {
+                    LayoutPart.Part.Lead, LayoutPart.Part.Label, LayoutPart.Part.Note, LayoutPart.Part.Value -> {
                         textFields(fields)
                     }
 
@@ -493,9 +495,6 @@ internal object LayoutCapture {
                 val rtl = node?.layoutInfo?.layoutDirection == LayoutDirection.Rtl
                 fields["endEdge"] =
                     if (inset != null && box != null) (if (rtl) box[0] + inset else box[0] + box[2] - inset) else NOT_MEASURED
-                fields["note"] = written.any { it.row === this && it.part.part == LayoutPart.Part.Note }
-                // A row with a text lead is top-aligned as a whole: its end goes with the first line.
-                if (part.firstLine) fields["aligned"] = "first-line"
             }
 
             private fun textFields(fields: MutableMap<String, Any?>) {
@@ -510,6 +509,10 @@ internal object LayoutCapture {
                         }
                     }
                 fields["text"] = text(node)
+                if (laidOutTexts.isEmpty() && drawsNoWords(node)) {
+                    fields["ink"] = pixelInk(bounds(node))
+                    return
+                }
                 val (text, layout) =
                     texts.firstOrNull() ?: run {
                         fields["ink"] = pixelInk(bounds(node))
@@ -617,6 +620,9 @@ internal object LayoutCapture {
         private fun drawnDescriptions(node: SemanticsNode): Int? = node.config.getOrNull(DrawnDescriptionsKey)?.invoke()
 
         /** The part's own text, or the texts inside it, in order. */
+        private fun drawsNoWords(node: SemanticsNode): Boolean =
+            node.config.getOrNull(LayoutNoWordsKey) == true || (node.children.isNotEmpty() && node.children.all { drawsNoWords(it) })
+
         private fun textNodes(node: SemanticsNode): List<SemanticsNode> =
             if (node.config.getOrNull(SemanticsActions.GetTextLayoutResult) != null) {
                 listOf(node)

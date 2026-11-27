@@ -2,7 +2,11 @@ import "server-only";
 import { type Goal, type TransactionClient, prisma } from "@zoonk/db";
 import { type SavedPlan } from "../../../learner/facts/saved-plan";
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
-import { type MockIdentity } from "../../../plans/planner/mock-identity";
+import {
+  type MockIdentity,
+  canHoldMock,
+  getNextMockDay,
+} from "../../../plans/planner/mock-identity";
 import { type PlanGraph, parsePlanGraph, parsePlanPhases } from "../../../plans/planner/plan-state";
 import { getFinalStretchStart, isInFinalStretch } from "../../final-stretch/final-stretch-rules";
 import { loadFinalStretchStart } from "../../final-stretch/load-final-stretch-start";
@@ -14,6 +18,7 @@ import {
   type MockPlan,
   getMockClock,
   getMockDays,
+  listMockClocks,
   outlineMock,
   planMock,
 } from "../mock-plan";
@@ -142,7 +147,14 @@ export async function loadWeeklyOutline({
     };
   };
 
-  const { day, fullLength } = await resolveIdentity();
+  const resolved = await resolveIdentity();
+  const { fullLength } = resolved;
+  const clocks = listMockClocks(structure);
+
+  // A plan saved before the notice moved the exam's sections can name a day the exam no longer has.
+  const day = canHoldMock({ clocks, identity: resolved })
+    ? resolved.day
+    : getNextMockDay({ after: undefined, clocks, fullLength });
 
   // The paper keeps a place for each written question; a start seats the learner's unseen prompts.
   const written = fullLength ? outlineWrittenPrompts({ day, structure }) : [];

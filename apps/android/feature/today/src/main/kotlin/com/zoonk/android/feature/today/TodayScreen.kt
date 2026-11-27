@@ -198,12 +198,14 @@ private fun TodayRead(
                                 isExam = read.today.goal.kind == TodayGoal.Kind.EXAM,
                                 isLanguage = read.today.goal.kind == TodayGoal.Kind.LANGUAGE,
                                 completedLessons = summary.value?.places?.completedLessons == true,
+                                savedLessons = summary.value?.places?.savedLessons == true,
                                 navigate = navigator::open,
                             )
                         },
                         snackbars = app.snackbars,
                         schedule = app.mockSchedule,
                         refreshIfChanged = app.today::refreshIfChanged,
+                        refreshIfLessonsMoved = app.today::refreshIfLessonsMoved,
                         language = language,
                         onboarding = app.onboarding,
                     )
@@ -361,6 +363,7 @@ private fun GoalAtRest(
     GoalAtRestPage(
         goal = summary?.goals?.firstOrNull { it.id == summary.activeGoalId },
         completedLessons = summary?.places?.completedLessons == true,
+        savedLessons = summary?.places?.savedLessons == true,
         viewModel = viewModel,
         today = app.today,
         mocks = app.mocks,
@@ -383,6 +386,7 @@ internal fun GoalAtRestPage(
     navigate: (AppRoute) -> Unit,
     banner: @Composable () -> Unit = {},
     resume: @Composable (LearnerSummaryGoal) -> Unit = {},
+    savedLessons: Boolean = false,
 ) {
     val newGoal = { navigate(AppRoute.StartGoal()) }
 
@@ -414,6 +418,7 @@ internal fun GoalAtRestPage(
                     isExam = false,
                     isLanguage = false,
                     completedLessons = completedLessons,
+                    savedLessons = savedLessons,
                     navigate = navigate,
                 )
             }

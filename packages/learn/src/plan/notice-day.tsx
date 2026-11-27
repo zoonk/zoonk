@@ -75,19 +75,17 @@ export function UseDateButton({
   const t = useExtracted();
 
   return (
-    <form action={() => onUse()} className="contents">
-      <Button
-        busy={busy}
-        disabled={disabled}
-        focusableWhenDisabled
-        icon={<CalendarCheckIcon aria-hidden="true" />}
-        size="sm"
-        type="submit"
-        variant="outline"
-      >
-        {t("Use this date")}
-      </Button>
-    </form>
+    <Button
+      busy={busy}
+      disabled={disabled}
+      focusableWhenDisabled
+      icon={<CalendarCheckIcon aria-hidden="true" />}
+      size="sm"
+      onClick={onUse}
+      variant="outline"
+    >
+      {t("Use this date")}
+    </Button>
   );
 }
 
@@ -161,23 +159,20 @@ function NoSittingCard({
             month: formatDate(noSitting.month, "sentenceMonth", { year: "always" }),
           })}
         </NoticeCardTitle>
-        <form className="contents">
-          <NoticeCardActions>
-            {noSitting.closest.map((date) => (
-              <Button
-                disabled={isPending}
-                focusableWhenDisabled
-                formAction={() => use(date)}
-                key={date}
-                size="sm"
-                type="submit"
-                variant="outline"
-              >
-                {t("Use {date}", { date: formatDate(date, "sentence") })}
-              </Button>
-            ))}
-          </NoticeCardActions>
-        </form>
+        <NoticeCardActions>
+          {noSitting.closest.map((date) => (
+            <Button
+              disabled={isPending}
+              focusableWhenDisabled
+              onClick={() => use(date)}
+              key={date}
+              size="sm"
+              variant="outline"
+            >
+              {t("Use {date}", { date: formatDate(date, "sentence") })}
+            </Button>
+          ))}
+        </NoticeCardActions>
       </NoticeCardContent>
     </NoticeCard>
   );

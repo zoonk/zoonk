@@ -48,7 +48,7 @@ const SELECT_ALL = {
       text: "Over the limit",
     },
   ],
-  question: "Select all that apply.",
+  question: "Which of these are true about the daily dose?",
   select: "all",
 };
 
@@ -214,10 +214,17 @@ describe("exam answer formats in practice", () => {
       { content: SELECT_ALL, format: "multipleChoice" },
     ]);
 
-    const [question] = questions;
-    const right = SELECT_ALL.options.flatMap((option, index) => (option.isCorrect ? [index] : []));
-    const shown = question?.options ?? [];
-    const rightShown = right.map((index) => shown.indexOf(SELECT_ALL.options[index]?.text ?? ""));
+    const [question, second] = itemIds.map((itemId) =>
+      questions.find((shown) => shown.itemId === itemId),
+    );
+
+    const right = SELECT_ALL.options.flatMap((option) => (option.isCorrect ? [option.text] : []));
+
+    const rightIn = (shown: readonly string[] | null | undefined) =>
+      right.map((text) => (shown ?? []).indexOf(text));
+
+    const rightShown = rightIn(question?.options);
+    const oneRight = rightIn(second?.options).slice(0, 1);
 
     expect(question).toMatchObject({ format: "multipleChoice", select: "all" });
 
@@ -228,7 +235,7 @@ describe("exam answer formats in practice", () => {
     });
 
     const oneMissed = await answer({
-      answer: { selectedIndexes: rightShown.slice(0, 1) },
+      answer: { selectedIndexes: oneRight },
       itemId: itemIds[1] ?? "",
       ref,
     });
@@ -251,7 +258,7 @@ describe("exam answer formats in practice", () => {
     });
 
     expect(attempts.map((attempt) => attempt.answer)).toStrictEqual(
-      expect.arrayContaining([{ selectedIndexes: rightShown.slice(0, 1) }]),
+      expect.arrayContaining([{ selectedIndexes: oneRight }]),
     );
   });
 

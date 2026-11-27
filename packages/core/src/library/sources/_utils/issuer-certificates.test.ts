@@ -16,6 +16,7 @@ import {
   getCACertificates,
   setDefaultCACertificates,
 } from "node:tls";
+import { MS_PER_DAY, MS_PER_HOUR } from "@zoonk/utils/date";
 import { safeAsync } from "@zoonk/utils/error";
 import { fetch } from "undici";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
@@ -50,9 +51,6 @@ const TAG = {
 };
 
 const TRUE = 255;
-
-const HOUR_MS = 3_600_000;
-const DAY_MS = 86_400_000;
 
 type TestCertificate = { certificate: X509Certificate; key: KeyObject; name: string; pem: string };
 
@@ -116,7 +114,8 @@ function issueCertificate({
 }): TestCertificate {
   const privateKey = key ?? generateKeyPairSync("ec", { namedCurve: "prime256v1" }).privateKey;
   const algorithm = sequence(oid(OID.ecdsaWithSha256));
-  const now = Date.now();
+  // The native TLS verifier uses the real clock even when Vitest moves Date.
+  const now = vi.getRealSystemTime();
 
   const extensions = [
     extension({
@@ -141,7 +140,7 @@ function issueCertificate({
     der(TAG.integer, Buffer.from([0x40 + randomInt(0x40), ...randomBytes(7)])),
     algorithm,
     distinguishedName(issuer?.name ?? name),
-    sequence(utcTime(now - HOUR_MS), utcTime(now + DAY_MS)),
+    sequence(utcTime(now - MS_PER_HOUR), utcTime(now + MS_PER_DAY)),
     distinguishedName(name),
     createPublicKey(privateKey).export({ format: "der", type: "spki" }),
     der(TAG.extensions, sequence(...extensions)),

@@ -11,6 +11,7 @@ import { MS_PER_DAY } from "@zoonk/utils/date";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { pickInPlacement } from "../../_test-utils/shown-choice";
 import { loadTodayPlanChange } from "../../plans/_utils/today-plan-change";
 import { decidePlanChange } from "../../plans/decide-plan-change";
 import { getGoalPlan } from "../../plans/get-goal-plan";
@@ -21,6 +22,7 @@ import { answerOnboardingQuestion } from "../../view-models/onboarding/answer-on
 import { learnerGoalFixture } from "../_test-utils/learner-goal";
 import { lowGuessTapItems, placementItemBank } from "../_test-utils/placement-tap-items";
 import { loadPlacementPlan } from "../_utils/goal-skill-graph";
+import { getPlacementBlockId } from "./_utils/placement-items";
 import { answerPlacementQuestion } from "./answer-placement-question";
 import { finishGoalPlacement } from "./finish-goal-placement";
 import { getGoalPlacement } from "./get-goal-placement";
@@ -319,7 +321,12 @@ describe("learn placement attempts", () => {
 
     await answerPlacementQuestion({
       goalId: goal.id,
-      input: { answer: { selectedIndex: 0 }, attemptId, durationMs: 1000, itemId: items[0]!.id },
+      input: {
+        answer: await pickInPlacement({ itemId: items[0]!.id }),
+        attemptId,
+        durationMs: 1000,
+        itemId: items[0]!.id,
+      },
     });
 
     await expect(
@@ -424,14 +431,23 @@ describe("learn placement attempts", () => {
 
           return [
             tap.id,
-            gradeOrder({ answer: { dontKnow: true }, item: parsed }).correctAnswer,
+            gradeOrder({
+              answer: { dontKnow: true },
+              blockId: getPlacementBlockId(parsed),
+              item: parsed,
+            }).correctAnswer,
           ] as const;
         }),
       );
 
       const sent = await answerPlacementQuestion({
         goalId: goal.id,
-        input: { answer: { selectedIndex: 0 }, attemptId, durationMs: 100, itemId: items[0]!.id },
+        input: {
+          answer: await pickInPlacement({ itemId: items[0]!.id }),
+          attemptId,
+          durationMs: 100,
+          itemId: items[0]!.id,
+        },
       });
 
       const answerTaps = async (result: typeof sent, remaining: number): Promise<typeof sent> => {

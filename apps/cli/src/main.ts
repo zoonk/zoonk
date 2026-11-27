@@ -1,3 +1,4 @@
+import { isJsonObject } from "../../../packages/utils/src/json.ts";
 import { loginCommand, resolveApiOrigin } from "./api-origin.ts";
 import { type ApiRequest, WHOAMI_REQUEST, parseInvocation } from "./args.ts";
 import { credentialsPath } from "./credentials.ts";
@@ -8,7 +9,6 @@ import {
   FORBIDDEN,
   type HttpResult,
   UNAUTHORIZED,
-  isRecord,
   unexpectedResponse,
 } from "./http.ts";
 import { logIn, logOut } from "./login.ts";
@@ -21,7 +21,8 @@ function apiError({ origin, result }: { origin: string; result: HttpResult }): C
     return notLoggedIn(origin);
   }
 
-  const error = isRecord(result.body) && isRecord(result.body.error) ? result.body.error : null;
+  const error =
+    isJsonObject(result.body) && isJsonObject(result.body.error) ? result.body.error : null;
 
   if (result.status === FORBIDDEN && error?.code === "SCOPE_REQUIRED") {
     return new CliError(
@@ -74,7 +75,7 @@ async function runRequest({
     throw apiError({ origin, result });
   }
 
-  if (!isRecord(result.body)) {
+  if (!isJsonObject(result.body)) {
     throw unexpectedResponse(result);
   }
 

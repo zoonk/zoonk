@@ -18,6 +18,9 @@ struct ActivityCanvasContext {
   let phase: ActivityPhase
   let answer: ActivityAnswer?
   let setAnswer: @MainActor (ActivityAnswer?) -> Void
+  /// Sets a finished answer and checks it once, for a canvas whose last move ends it (a match
+  /// board's last pair), so there's no Check to press.
+  let complete: @MainActor (ActivityAnswer) -> Void
   var baseMap: ActivityBaseMap?
   /// A numeric check's answer as the verdict writes it.
   var roundedAnswer: ActivityRoundedAnswer? = nil
@@ -42,32 +45,36 @@ struct ActivityRenderer: Sendable {
   /// Computed like core's `checkActivityAnswer`, for instant feedback. Without it, the player waits
   /// for the server's verdict.
   let grade: (@Sendable (ActivityStepContent, ActivityAnswer) -> Bool)?
+  let canAnswer: @Sendable (ActivityStepContent) -> Bool
   let canvas: @MainActor @Sendable (ActivityCanvasContext) -> AnyView
 
-  init<Canvas: View>(
+  init<Fields: Decodable & Sendable, Canvas: View>(
     template: String,
     badge: ActivityBadge.Rule? = nil,
     showsCheckFirst: @escaping @Sendable (ActivityStepContent) -> Bool = { _ in false },
     answersOnCanvas: Bool = false,
     grade: (@Sendable (ActivityStepContent, ActivityAnswer) -> Bool)? = nil,
-    @ViewBuilder canvas: @escaping @MainActor @Sendable (ActivityCanvasContext) -> Canvas
+    canAnswer: @escaping @Sendable (Fields) -> Bool = { _ in true },
+    @ViewBuilder canvas: @escaping @MainActor @Sendable (ActivityCanvasContext, Fields) -> Canvas
   ) {
     self.template = template
     self.badge = badge
     self.showsCheckFirst = showsCheckFirst
     self.answersOnCanvas = answersOnCanvas
     self.grade = grade
+    self.canAnswer = { content in
+      (try? content.fields(as: Fields.self)).map(canAnswer) ?? false
+    }
     self.canvas = { context in
-      AnyView(
-        canvas(context)
+      guard let fields = try? context.fields(as: Fields.self) else { return AnyView(EmptyView()) }
+      return AnyView(
+        canvas(context, fields)
           .frame(maxWidth: .infinity, alignment: .leading)
           .activityPanel())
     }
   }
 }
 
-/// A template without a renderer plays with `ActivityFallbackCanvas`: an interaction can't be
-/// answered, so the player lets the learner move past it.
 struct ActivityRendererRegistry: Sendable {
   private let renderers: [String: ActivityRenderer]
 
@@ -78,6 +85,28 @@ struct ActivityRendererRegistry: Sendable {
 
   func renderer(for template: String) -> ActivityRenderer? {
     renderers[template]
+  }
+
+  func isUnplayable(_ step: LessonStep) -> Bool {
+    guard case .activity(let content) = step.content else { return false }
+    let renderer = renderer(for: content.template)
+    switch content.check {
+    case .interaction:
+      return renderer?.canAnswer(content) != true
+    case .numeric where renderer?.answersOnCanvas == true:
+      return renderer?.canAnswer(content) != true
+    default:
+      return false
+    }
+  }
+
+  /// An activity step's instant grade, so its check doesn't wait for the server.
+  func grade(for step: LessonStep) -> ((ActivityStepContent, ActivityAnswer) -> Bool)? {
+    guard case .activity(let content) = step.content else {
+      return nil
+    }
+
+    return renderer(for: content.template)?.grade
   }
 
   static let empty = ActivityRendererRegistry([])

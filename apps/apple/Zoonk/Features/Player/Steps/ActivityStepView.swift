@@ -78,6 +78,11 @@ struct ActivityStepView: View {
         if !context.isLocked {
           context.select(value.map(LessonAnswer.activity))
         }
+      },
+      complete: { value in
+        if !context.isLocked {
+          context.complete(.activity(value))
+        }
       }, baseMap: content.baseMap, roundedAnswer: content.roundedAnswer)
 
     // As on main, nothing on the canvas answers (taps, menus, number keys) until a required
@@ -201,9 +206,12 @@ private struct NumericAnswerField: View {
         Text(unit).foregroundStyle(.mutedForeground).accessibilityHidden(true)
       }
 
-      TextField(text: Binding(get: { checkedText ?? typed ?? shown }, set: type)) {
-        Text("Your answer", tableName: "Player", comment: "Placeholder of a number answer")
-      }
+      let example = Text(
+        "Your answer", tableName: "Player", comment: "Placeholder of a number answer")
+      TextField(
+        text: Binding(get: { checkedText ?? typed ?? shown }, set: type),
+        prompt: example.fieldPrompt()
+      ) { example }
       .keyboardType(.decimalPad)
       .focused($isFocused)
       .disabled(isLocked)

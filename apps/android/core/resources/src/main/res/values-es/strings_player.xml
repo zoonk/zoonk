@@ -67,7 +67,6 @@
   "player_create_account_to_save": "7152875babbda21a5f4c831a0a7d167a2a077402c5e318b62168b0cf1749bee4",
   "player_didnt_get_it": "b7c786460243c97fe3c1ae0204167e5af301caca59efb47ff6dcedd75a75a3d8",
   "player_done": "6cae236c3f8b5671934e5d6bf39e1e4b0923d62405eb2e9d5366d831b544ea92",
-  "player_dont_know_yet": "686c0cae0db5ee5fe16e8a49ef662420a5a9f4f203f861ce5770624cc02b9970",
   "player_drawing_picture": "b42a7f87cbf8073658d7c7e8f91bb8bef0fa168b199c56c4692e7585383c3561",
   "player_enter_hint": "bedcd1ab46fe5cfe0fe532db6b75033677bd979df6bb0609761161391eb62e9c",
   "player_example": "3fe6f03616c902c5eed20b2360a87308e59490c4b1e8485e86c383ec87c4fbc7",
@@ -289,7 +288,6 @@
     </plurals>
     <string name="player_in_your_own_words">Con tus propias palabras</string>
     <string name="player_cant_write_now">Saltar las preguntas de escritura por hoy</string>
-    <string name="player_dont_know_yet">Aún no lo sé</string>
     <!-- Button asking Zoonk to show the explanation before the learner answers. It doesn't tell the learner to explain. -->
     <string name="player_explain_first">Ver la explicación primero</string>
     <string name="player_enter_hint">Presiona Enter para comprobar y Shift+Enter para una nueva línea.</string>

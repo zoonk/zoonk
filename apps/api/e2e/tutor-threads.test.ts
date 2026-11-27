@@ -3,6 +3,7 @@ import { type APIRequestContext, type APIResponse, request } from "@playwright/t
 import { mockConditionsSchema } from "@zoonk/core/exams/mocks/contract";
 import {
   type LessonScreenSuggestion,
+  buddyConversationsSchema,
   createdLessonQuestionSchema,
   lessonQuestionResourceSchema,
   lessonQuestionThreadResponseSchema,
@@ -130,23 +131,126 @@ test.describe("Tutor threads beyond lessons", () => {
     const paths = [
       `/v1/chapters/${id}/questions`,
       `/v1/goals/${id}/plan/questions`,
+      `/v1/goals/${id}/buddy/conversations/${id}/questions`,
       `/v1/goals/${id}/subjects/law/questions`,
       `/v1/items/${id}/questions`,
       `/v1/mocks/${id}/questions`,
     ];
 
-    const responses = await Promise.all(
-      paths.flatMap((path) => [
+    const responses = await Promise.all([
+      ...paths.flatMap((path) => [
         anonymous.get(path),
         ask({ api: anonymous, context: { kind: "chapter" }, path }),
       ]),
-    );
+      anonymous.get(`/v1/goals/${id}/buddy/conversations`),
+    ]);
 
-    expect(responses.map((response) => response.status())).toStrictEqual(
-      paths.flatMap(() => [401, 401]),
-    );
+    expect(responses.map((response) => response.status())).toStrictEqual([
+      ...paths.flatMap(() => [401, 401]),
+      401,
+    ]);
 
     await anonymous.dispose();
+  });
+
+  test("opens and retries separate Buddy conversations without moving the legacy thread", async () => {
+    const [{ api, userId }, other] = await Promise.all([
+      createBearerLearner({ baseURL, prefix: "buddy-conversations" }),
+      createBearerLearner({ baseURL, prefix: "buddy-conversation-other" }),
+    ]);
+
+    const [goal, siblingGoal, otherGoal] = await Promise.all([
+      createPlannedGoal(userId),
+      goalFixture({ userId }),
+      goalFixture({ userId: other.userId }),
+    ]);
+
+    const listPath = `/v1/goals/${goal.id}/buddy/conversations`;
+    const legacyPath = `/v1/goals/${goal.id}/plan/questions`;
+    const firstId = randomUUID();
+    const secondId = randomUUID();
+    const firstPath = `${listPath}/${firstId}/questions`;
+    const secondPath = `${listPath}/${secondId}/questions`;
+    const requestId = randomUUID();
+    const data = { context: { kind: "plan" }, question: "How do I study this?", requestId };
+
+    const [emptyThread, emptyList, emptyLegacy] = await Promise.all([
+      api.get(firstPath),
+      api.get(listPath),
+      api.get(legacyPath),
+    ]);
+
+    expect(emptyThread.status()).toBe(200);
+    await expect(emptyThread.json()).resolves.toBeNull();
+    await expect(emptyLegacy.json()).resolves.toBeNull();
+
+    expect(buddyConversationsSchema.parse(await emptyList.json())).toStrictEqual({
+      conversations: [],
+      currentId: null,
+      nextCursor: null,
+    });
+
+    await expect(prisma.lessonQuestionThread.count({ where: { goalId: goal.id } })).resolves.toBe(
+      0,
+    );
+
+    const original = await readCreated(await api.post(legacyPath, { data }));
+
+    const [first, retry, second] = await Promise.all([
+      api.post(firstPath, { data }).then(readCreated),
+      api.post(firstPath, { data }).then(readCreated),
+      api
+        .post(secondPath, { data: { ...data, question: "What should I review?" } })
+        .then(readCreated),
+    ]);
+
+    expect(retry.id).toBe(first.id);
+    expect(new Set([original.id, first.id, second.id]).size).toBe(3);
+
+    const [legacy, firstThread, secondThread, list, legacyRetry] = await Promise.all([
+      api.get(legacyPath),
+      api.get(firstPath),
+      api.get(secondPath),
+      api.get(listPath),
+      api.post(legacyPath, { data }).then(readCreated),
+    ]);
+
+    expect(legacyRetry.id).toBe(original.id);
+
+    expect(lessonQuestionThreadResponseSchema.parse(await legacy.json())).toMatchObject({
+      questions: [{ id: original.id }],
+    });
+
+    expect(lessonQuestionThreadResponseSchema.parse(await firstThread.json())).toMatchObject({
+      id: firstId,
+      questions: [{ id: first.id }],
+    });
+
+    expect(lessonQuestionThreadResponseSchema.parse(await secondThread.json())).toMatchObject({
+      id: secondId,
+      questions: [{ id: second.id }],
+    });
+
+    expect(buddyConversationsSchema.parse(await list.json()).conversations).toHaveLength(3);
+
+    const siblingPath = `/v1/goals/${siblingGoal.id}/buddy/conversations/${firstId}/questions`;
+    const otherPath = `/v1/goals/${otherGoal.id}/buddy/conversations/${firstId}/questions`;
+
+    const refused = await Promise.all([
+      api.get(siblingPath),
+      api.post(siblingPath, { data }),
+      other.api.get(otherPath),
+      other.api.post(otherPath, { data }),
+      other.api.get(listPath),
+      api.get(`${firstPath}?cursor=${second.id}`),
+      api.post(firstPath, { data: { ...data, question: "Changed retry" } }),
+    ]);
+
+    expect(refused.map((response) => response.status())).toStrictEqual([
+      404, 404, 404, 404, 404, 400, 409,
+    ]);
+
+    await Promise.all([api.dispose(), other.api.dispose()]);
   });
 
   test("keeps a private thread about a chapter", async () => {
@@ -438,7 +542,7 @@ test.describe("Tutor threads beyond lessons", () => {
     await api.dispose();
   });
 
-  test("streams the shared answer to a tutor's suggestion on a screen without a new generation", async () => {
+  test("answers a tutor's suggestion on a screen from its shared answer when it's asked, without a new generation", async () => {
     const [{ api, userId }, { lesson, steps }] = await Promise.all([
       createBearerLearner({ baseURL, prefix: "tutor-shared" }),
       playableLessonFixture({ steps: ["explanation", "check"] }),
@@ -472,15 +576,7 @@ test.describe("Tutor threads beyond lessons", () => {
       }),
     );
 
-    const answer = await api.post(`/v1/questions/${question.id}/answers`);
-
-    expect(answer.status()).toBe(200);
-    expect(answer.headers()["x-vercel-ai-ui-message-stream"]).toBe("v1");
-
-    const body = await answer.text();
-
-    expect(body).toContain('"delta":"A simpler take on this screen."');
-    expect(body).toContain("data: [DONE]");
+    expect(question).toMatchObject({ answer: shared.answer, status: "completed" });
 
     const [stored, usage] = await Promise.all([
       prisma.lessonQuestion.findUniqueOrThrow({ where: { id: question.id } }),

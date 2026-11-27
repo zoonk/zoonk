@@ -1,7 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { type BlockCapsule } from "../block-payload";
-import { loadRightAnswers } from "./load-review-capsules";
 
 /** Reserve mistakes' own questions for drills and checkpoints' unseen questions for the duel. */
 function withoutLeftOutItems({
@@ -41,28 +40,16 @@ async function withRecordingSiblings({
   ]);
 }
 
-/** Review days must not repeat questions answered right on the previous review day. */
-export async function loadDayCapsules({
+/** Exclude reservations from capsules that have already been picked. */
+export async function loadUnreservedCapsules({
   capsules,
-  isReviewDay,
   reserved,
-  userId,
 }: {
   capsules: readonly BlockCapsule[];
-  isReviewDay: boolean;
   reserved: ReadonlySet<string>;
-  userId: string;
 }): Promise<BlockCapsule[]> {
   const itemIds = capsules.flatMap((capsule) => capsule.itemIds);
-
-  const answeredRight = isReviewDay
-    ? await loadRightAnswers({ itemIds, userId })
-    : new Set<string>();
-
-  const leftOut = await withRecordingSiblings({
-    itemIds,
-    leftOut: new Set([...reserved, ...answeredRight]),
-  });
+  const leftOut = await withRecordingSiblings({ itemIds, leftOut: reserved });
 
   return withoutLeftOutItems({ capsules, leftOut });
 }

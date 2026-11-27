@@ -5,15 +5,16 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { CAPSULE_LEDGER_KIND } from "../milestones/award-milestones";
 import { lessonRunFixture } from "./_test-utils/lesson-run-fixture";
 import { setupPlayableLesson, stepOfKind } from "./_test-utils/playable-lesson-setup";
 import { typedGrade } from "./_test-utils/typed-grade";
 import { checkLessonStep } from "./check-lesson-step";
 import { type LessonStepAnswer } from "./contract";
-import { getLessonProgress, hasStartedLesson } from "./get-lesson-progress";
+import { getLessonVisit, hasStartedLesson } from "./get-lesson-progress";
 import { startLibraryLesson } from "./start-library-lesson";
 
-describe(getLessonProgress, () => {
+describe(getLessonVisit, () => {
   it("reads the answers of the sittings the learner left unfinished this week, oldest first", async () => {
     const { lesson, steps, user } = await setupPlayableLesson();
     const check = stepOfKind(steps, "check");
@@ -42,7 +43,7 @@ describe(getLessonProgress, () => {
       }),
     ]);
 
-    const progress = await getLessonProgress({ lessonId: lesson.id });
+    const { resume: progress } = await getLessonVisit({ lessonId: lesson.id });
 
     expect(
       progress.map(({ answeredAt, isCorrect, stepId }) => ({ answeredAt, isCorrect, stepId })),
@@ -58,6 +59,33 @@ describe(getLessonProgress, () => {
         stepId: typed.id,
       },
     ]);
+  });
+
+  it("keeps an unfinished sitting's answers when a review capsule on the lesson ends", async () => {
+    const { lesson, steps, user } = await setupPlayableLesson();
+    const check = stepOfKind(steps, "check");
+    const sitting = new Date(Date.now() - MS_PER_DAY);
+
+    await Promise.all([
+      lessonRunFixture({ lessonId: lesson.id, startedAt: sitting, userId: user.id }),
+      lessonRunFixture({
+        endedAt: new Date(),
+        kind: "review",
+        lessonId: lesson.id,
+        lessonKind: CAPSULE_LEDGER_KIND,
+        startedAt: new Date(Date.now() - 60_000),
+        userId: user.id,
+      }),
+      attemptFixture({
+        answeredAt: new Date(sitting.getTime() + 1000),
+        stepId: check.id,
+        userId: user.id,
+      }),
+    ]);
+
+    const { resume: progress } = await getLessonVisit({ lessonId: lesson.id });
+
+    expect(progress.map(({ stepId }) => stepId)).toStrictEqual([check.id]);
   });
 
   it("brings back each answer with the same answer and result as starting the lesson does", async () => {
@@ -99,7 +127,7 @@ describe(getLessonProgress, () => {
       userId: user.id,
     });
 
-    const progress = await getLessonProgress({ lessonId: lesson.id });
+    const { resume: progress } = await getLessonVisit({ lessonId: lesson.id });
 
     const started = await startLibraryLesson({
       input: { runId: run.id, timeZone: "UTC" },
@@ -134,12 +162,22 @@ describe(getLessonProgress, () => {
 
     await attemptFixture({ stepId: check.id, userId: user.id });
 
-    await expect(getLessonProgress({ lessonId: lesson.id })).resolves.toStrictEqual([]);
-    await expect(getLessonProgress({ lessonId: randomUUID() })).resolves.toStrictEqual([]);
+    await expect(getLessonVisit({ lessonId: lesson.id })).resolves.toStrictEqual({
+      resume: [],
+      saved: false,
+    });
+
+    await expect(getLessonVisit({ lessonId: randomUUID() })).resolves.toStrictEqual({
+      resume: [],
+      saved: false,
+    });
 
     mockSession(null);
 
-    await expect(getLessonProgress({ lessonId: lesson.id })).resolves.toStrictEqual([]);
+    await expect(getLessonVisit({ lessonId: lesson.id })).resolves.toStrictEqual({
+      resume: [],
+      saved: false,
+    });
   });
 });
 

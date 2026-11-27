@@ -26,6 +26,7 @@ import {
   ThreadViewportSkeleton,
 } from "./lesson-question-thread-viewport";
 import { EarlierTurns, QuestionTurn, SENDING_TURN_ID, SendingTurn } from "./lesson-question-turn";
+import { useModuleSubject } from "./module-subject";
 import { TutorSuggestions, useOffersSuggestions } from "./tutor-suggestions";
 import { type LessonQuestionController } from "./use-lesson-questions";
 import { useTutorSuggestions } from "./use-tutor-suggestions";
@@ -57,6 +58,7 @@ function ThreadLoadError({
 
 function useThreadLabel(contextKind: LessonQuestionController["state"]["context"]["kind"]) {
   const t = useExtracted();
+  const isModule = useModuleSubject();
 
   switch (contextKind) {
     case "chapter":
@@ -66,7 +68,7 @@ function useThreadLabel(contextKind: LessonQuestionController["state"]["context"
     case "plan":
       return t("Questions about your plan");
     case "subject":
-      return t("Questions about this subject");
+      return isModule ? t("Questions about this module") : t("Questions about this subject");
     case "item":
       return t("Questions about this question");
     case "answer":
@@ -78,13 +80,7 @@ function useThreadLabel(contextKind: LessonQuestionController["state"]["context"
   }
 }
 
-export function TutorIntro({
-  guest = false,
-  identity,
-}: {
-  guest?: boolean;
-  identity: TutorIdentity;
-}) {
+function TutorIntro({ guest = false, identity }: { guest?: boolean; identity: TutorIdentity }) {
   const t = useExtracted();
 
   return (
@@ -109,6 +105,27 @@ export function TutorIntro({
   );
 }
 
+/** The buddy's empty state wherever its chat opens: who it is, then what to ask. */
+export function TutorWelcome({
+  identity,
+  onSelect,
+  suggestions,
+  ...props
+}: Omit<React.ComponentProps<typeof Empty>, "onSelect"> & {
+  identity: TutorIdentity;
+  onSelect: (suggestion: OfferedSuggestion) => void;
+  suggestions: readonly OfferedSuggestion[];
+}) {
+  return (
+    <Empty {...props}>
+      <TutorIntro identity={identity} />
+      <EmptyContent>
+        <TutorSuggestions onSelect={onSelect} suggestions={suggestions} />
+      </EmptyContent>
+    </Empty>
+  );
+}
+
 function EmptyThread({
   context,
   identity,
@@ -125,12 +142,12 @@ function EmptyThread({
   const suggestions = lessonSuggestions ? offered : [];
 
   return (
-    <Empty className="min-h-full">
-      <TutorIntro identity={identity} />
-      <EmptyContent>
-        <TutorSuggestions onSelect={onSelect} suggestions={suggestions} />
-      </EmptyContent>
-    </Empty>
+    <TutorWelcome
+      className="min-h-full"
+      identity={identity}
+      onSelect={onSelect}
+      suggestions={suggestions}
+    />
   );
 }
 

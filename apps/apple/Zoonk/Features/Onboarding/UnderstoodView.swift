@@ -88,6 +88,7 @@ struct ReadDraftView: View {
 
   @ViewBuilder private var outcome: some View {
     switch draft.understanding?.value1 {
+    case .case5: EmptyView()
     case .case1(let understood):
       UnderstoodCard(
         draft: draft, understood: understood, isCreating: isWaiting, error: creation.error,
@@ -748,7 +749,7 @@ private struct RowEditor: View {
         FittedTextInput(
           text: $text, limit: field == .displayName ? Self.goalNameLimit : onboardingAnswerLimit
         ) { text, selection in
-          TextField(text: text, selection: selection) {
+          TextField(text: text, selection: selection, prompt: Text(row.label).fieldPrompt()) {
             Text(row.label)
           }
           .focused($isFocused)

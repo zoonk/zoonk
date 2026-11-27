@@ -32,6 +32,7 @@ import {
   unnoticedSourceChangeFixture,
 } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY, MS_PER_MINUTE } from "@zoonk/utils/date";
 import { assert, describe, expect, it } from "vitest";
 import { start } from "workflow/api";
 import { mockHookConflict } from "../../../mocks/workflow";
@@ -47,7 +48,6 @@ import { examNoticePlansWorkflow } from "../research/exam-notice-plans-workflow"
 import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow";
 import { dailySweepsWorkflow } from "./daily-sweeps-workflow";
 
-const DAY_MS = 86_400_000;
 const LEARNERS_TO_RECALIBRATE = 20;
 
 function scheduledRun() {
@@ -65,7 +65,12 @@ async function missedQuestionFixture() {
   const item = await itemFixture({ difficulty: 0, skillId: skill.id });
 
   await Promise.all([
-    attemptFixture({ isCorrect: false, itemId: item.id, userId: learner.id }),
+    attemptFixture({
+      answeredAt: new Date(Date.now() - MS_PER_MINUTE),
+      isCorrect: false,
+      itemId: item.id,
+      userId: learner.id,
+    }),
     prisma.anonymousFirstAnswer.createMany({
       data: Array.from({ length: LEARNERS_TO_RECALIBRATE - 1 }, () => ({
         isCorrect: false,
@@ -122,40 +127,40 @@ describe(dailySweepsWorkflow, () => {
       userFixture(),
       // The sweep takes the latest due first, so other tests' due exams can't push this one out of
       // its batch.
-      examBlueprintFixture({ nextCheckAt: new Date(now + DAY_MS - 60_000) }),
+      examBlueprintFixture({ nextCheckAt: new Date(now + MS_PER_DAY - 60_000) }),
     ]);
 
     await prisma.user.update({
-      data: { createdAt: new Date(now - 60 * DAY_MS), isAnonymous: true },
+      data: { createdAt: new Date(now - 60 * MS_PER_DAY), isAnonymous: true },
       where: { id: guest.id },
     });
 
     const [oldCode, expiredCode] = await Promise.all([
-      verificationFixture(new Date(now - 2 * DAY_MS)),
+      verificationFixture(new Date(now - 2 * MS_PER_DAY)),
       verificationFixture(new Date(now - 60_000)),
       memoryFactFixture({
-        deletedAt: new Date(now - 40 * DAY_MS),
+        deletedAt: new Date(now - 40 * MS_PER_DAY),
         status: "deleted",
         userId: learner.id,
       }),
       missedQuestionFixture(),
-      evaluationRunFixture({ createdAt: new Date(now - 31 * DAY_MS) }),
+      evaluationRunFixture({ createdAt: new Date(now - 31 * MS_PER_DAY) }),
       libraryLessonFixture({ contentStatus: "completed" }).then((replacedIn) =>
         libraryStepFixture({
           lessonId: replacedIn.id,
           position: 0,
-          retiredAt: new Date(now - 2 * DAY_MS),
+          retiredAt: new Date(now - 2 * MS_PER_DAY),
         }),
       ),
     ]);
 
     const [expiredSession, oldAccessRecord] = await Promise.all([
       prisma.session.create({
-        data: { expiresAt: new Date(now - DAY_MS), token: randomUUID(), userId: learner.id },
+        data: { expiresAt: new Date(now - MS_PER_DAY), token: randomUUID(), userId: learner.id },
       }),
       prisma.accessRecord.create({
         data: {
-          createdAt: new Date(now - 200 * DAY_MS),
+          createdAt: new Date(now - 200 * MS_PER_DAY),
           id: randomUUID(),
           ipAddress: "203.0.113.1",
           userId: learner.id,
@@ -209,7 +214,7 @@ describe(dailySweepsWorkflow, () => {
           input: { language: "en" },
           key: "en",
           kind: "findMistakePattern",
-          requestedAt: new Date(Date.now() - DAY_MS),
+          requestedAt: new Date(Date.now() - MS_PER_DAY),
           userId: waiting.id,
         },
         { input: { language: "en" }, key: "en", kind: "findMistakePattern", userId: recent.id },
@@ -239,9 +244,12 @@ describe(dailySweepsWorkflow, () => {
     const [taught] = await Promise.all([
       productReleaseFixture({
         productId: product.id,
-        releasedAt: new Date(Date.now() - 400 * DAY_MS),
+        releasedAt: new Date(Date.now() - 400 * MS_PER_DAY),
       }),
-      productReleaseFixture({ productId: product.id, releasedAt: new Date(Date.now() - DAY_MS) }),
+      productReleaseFixture({
+        productId: product.id,
+        releasedAt: new Date(Date.now() - MS_PER_DAY),
+      }),
     ]);
 
     const course = await courseFixture({
@@ -264,7 +272,7 @@ describe(dailySweepsWorkflow, () => {
     const [owed, checked] = await Promise.all([
       // The sweep takes the longest-owed first, so other tests' owed pictures can't push this one out
       // of its batch.
-      mediaAssetFixture({ checkOwedAt: new Date(Date.now() - 30 * DAY_MS) }),
+      mediaAssetFixture({ checkOwedAt: new Date(Date.now() - 30 * MS_PER_DAY) }),
       mediaAssetFixture({ checkOwedAt: null }),
     ]);
 
@@ -346,7 +354,7 @@ describe(dailySweepsWorkflow, () => {
 
     await Promise.all([
       prisma.lessonSentence.updateMany({
-        data: { ordersOwedAt: new Date(Date.now() - 30 * DAY_MS) },
+        data: { ordersOwedAt: new Date(Date.now() - 30 * MS_PER_DAY) },
         where: { lessonId: owed.lesson.id },
       }),
       prisma.lessonSentence.updateMany({
@@ -396,22 +404,22 @@ describe(dailySweepsWorkflow, () => {
 
     await Promise.all([
       prisma.lessonSentence.updateMany({
-        data: { ordersOwedAt: new Date(now - 60 * DAY_MS) },
+        data: { ordersOwedAt: new Date(now - 60 * MS_PER_DAY) },
         where: { lessonId: unplayed.lesson.id },
       }),
       learningEventFixture({
         contentIds: { lessonId: recent.lesson.id },
-        endedAt: new Date(now - DAY_MS),
+        endedAt: new Date(now - MS_PER_DAY),
         userId: user.id,
       }),
       learningEventFixture({
         contentIds: { lessonId: recent.lesson.id },
-        endedAt: new Date(now - 30 * DAY_MS),
+        endedAt: new Date(now - 30 * MS_PER_DAY),
         userId: user.id,
       }),
       learningEventFixture({
         contentIds: { lessonId: older.lesson.id },
-        endedAt: new Date(now - 2 * DAY_MS),
+        endedAt: new Date(now - 2 * MS_PER_DAY),
         userId: user.id,
       }),
     ]);
@@ -501,7 +509,7 @@ describe(dailySweepsWorkflow, () => {
     ]);
 
     await libraryStepFixture({
-      generatedAt: new Date(Date.now() - DAY_MS),
+      generatedAt: new Date(Date.now() - MS_PER_DAY),
       lessonId: lesson.id,
       sourceId: law.id,
     });
@@ -528,7 +536,7 @@ describe(dailySweepsWorkflow, () => {
   it("starts nothing when another delivery of the same scheduled run already took it", async () => {
     const executionId = randomUUID();
 
-    await examBlueprintFixture({ nextCheckAt: new Date(Date.now() + DAY_MS - 60_000) });
+    await examBlueprintFixture({ nextCheckAt: new Date(Date.now() + MS_PER_DAY - 60_000) });
 
     mockHookConflict(
       { returnValue: Promise.resolve(null), runId: "first-delivery" },
@@ -556,8 +564,8 @@ describe(dailySweepsWorkflow, () => {
     const [exam] = await Promise.all([
       // The sweep takes the latest due first, so other tests' due exams can't push this one out of
       // its batch.
-      examBlueprintFixture({ nextCheckAt: new Date(Date.now() + DAY_MS - 60_000) }),
-      evaluationRunFixture({ createdAt: new Date(Date.now() - 31 * DAY_MS) }),
+      examBlueprintFixture({ nextCheckAt: new Date(Date.now() + MS_PER_DAY - 60_000) }),
+      evaluationRunFixture({ createdAt: new Date(Date.now() - 31 * MS_PER_DAY) }),
     ]);
 
     getStartMock().mockImplementation(async (workflow) => {

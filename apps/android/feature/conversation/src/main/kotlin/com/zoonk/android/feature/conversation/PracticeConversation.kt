@@ -279,8 +279,8 @@ private fun CallSetup(
     val offered =
         call.limit?.let {
             Limit.Reached(
-                LimitTier.entries.first { tier -> tier.name.equals(it.tier.value, ignoreCase = true) },
-                LimitPeriod.entries.first { period -> period.name.equals(it.period.value, ignoreCase = true) },
+                LimitTier.entries.firstOrNull { tier -> tier.name.equals(it.tier.value, ignoreCase = true) } ?: LimitTier.Free,
+                LimitPeriod.entries.firstOrNull { period -> period.name.equals(it.period.value, ignoreCase = true) },
                 it.availableAt?.toJavaInstant(),
             )
         }

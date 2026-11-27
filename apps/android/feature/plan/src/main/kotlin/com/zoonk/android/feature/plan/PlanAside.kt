@@ -44,23 +44,25 @@ import com.zoonk.api.models.PlanSteering
 import kotlinx.datetime.toJavaLocalDate
 
 /**
- * Main's "More": the lessons already done and the mind maps, which the drawer lists on wide windows instead, then the
+ * Main's "More": the lessons saved and already done and the mind maps, which the drawer lists on wide windows instead, then the
  * exam's page, which the page's menu holds beside the aside.
  */
 @Composable
 internal fun MoreSection(
     links: PlanLinks,
+    savedLessons: Boolean,
     completedLessons: Boolean,
     mindMaps: Boolean,
     exam: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val showsExam = exam && links.hasExam
-    if (!completedLessons && !mindMaps && !showsExam) return
+    if (!savedLessons && !completedLessons && !mindMaps && !showsExam) return
 
     Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SectionHeader(stringResource(R.string.plan_more))
         Column(Modifier.bleed(LIST_ITEM_INSET)) {
+            if (savedLessons) LinkRow(R.drawable.ic_bookmark, stringResource(R.string.navigation_saved_lessons), links::savedLessons)
             if (completedLessons) {
                 LinkRow(
                     R.drawable.ic_history,
@@ -161,13 +163,13 @@ internal fun PlanProperties(
                 val skipped =
                     page.plan.steering.skippedActivities
                         .toSet()
-                val practiced = PlanSteering.SkippedActivities.entries.filterNot { it in skipped }
+                val practiced = planActivities.filterNot { it in skipped }
                 if (practiced.isNotEmpty()) {
                     PropertyRow(
                         label = stringResource(R.string.plan_practice),
                         value =
                             AnnotatedString(
-                                if (practiced.size == PlanSteering.SkippedActivities.entries.size) {
+                                if (practiced.size == planActivities.size) {
                                     stringResource(R.string.plan_everything)
                                 } else {
                                     practiced.map { activityName(it) }.factsLine()
@@ -369,12 +371,14 @@ private fun weekdaysWord(weekday: Int): String =
     )
 
 @Composable
-internal fun activityName(activity: PlanSteering.SkippedActivities): String =
-    stringResource(
+internal fun activityName(activity: PlanSteering.SkippedActivities): String {
+    return stringResource(
         when (activity) {
+            PlanSteering.SkippedActivities.UNKNOWN_DEFAULT_OPEN_API -> return ""
             PlanSteering.SkippedActivities.VOCABULARY -> R.string.plan_activity_vocabulary
             PlanSteering.SkippedActivities.LISTENING -> R.string.plan_activity_listening
             PlanSteering.SkippedActivities.WRITING -> R.string.plan_activity_writing
             PlanSteering.SkippedActivities.SPEAKING -> R.string.plan_activity_speaking
         },
     )
+}

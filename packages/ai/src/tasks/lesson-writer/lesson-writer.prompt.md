@@ -74,6 +74,7 @@ Each check asks something new. Apart from that practice after a worked example, 
 {{TYPED_QUESTION}}
 {{/shortAnswers}}
 - `basis`, on every `check` and `mathCheck`{{#shortAnswers}} (and `typedAnswer`){{/shortAnswers}}: after a wrong answer, the app marks one sentence of an earlier screen for the learner to read again. `screen` is the number in `SCREENS` of an earlier hook text, explanation or worked example, and `quote` is the one sentence on it that decides the right answer: the fact, rule or step the right option's reason relies on, never a definition or an example that leaves the answer open. Copy it character for character as you wrote it there, Markdown marks included: never reworded, shortened, merged with the next sentence or taken from a table or a code block. Null only on the application when it combines ideas from several screens: every other check is decided by one sentence of an earlier screen, so when none decides it, change the question to use what an earlier screen taught.
+- `standsAlone`, on every `check`: the app may also ask a check on its own, in practice or placement, without the lesson's other screens. True when someone who has the skill could answer it from its own `context`, `question`, options and picture or visual alone: it states its case, gives its table, code or equation, or asks about the idea itself. False when it needs something only an earlier screen shows, such as "the same table", "the figure" or a person's plan it names without restating. When a check can stand alone without growing longer or less clear, write it that way; a check that builds on the lesson's case is fine and gets false.
 
 ## Activity (`activity`)
 
@@ -106,7 +107,7 @@ The lesson's skills applied to a realistic situation the learner can picture: th
 - Where a brief leaves a detail open (a name, a company, a number, a situation), pick one no other lesson uses (people and towns from `CAST`), and never copy another lesson's question.
 - An idea or term an earlier lesson explained gets a reminder in a few everyday words when this lesson needs it, never a full explanation again.
 {{#usedSituations}}
-- `USED_SITUATIONS` are questions the app keeps for mock exams, so no screen may let a learner answer one from memory: never use one of those cases, whether the same statement in other words or the same scenario with other names, numbers or places. When a brief uses one, give it a case of its own that teaches the same thing. The lesson may still teach the same fact or rule, in a case of its own.
+- `USED_SITUATIONS` are questions the app already asks about these skills in practice, mock exams and other lessons, so no screen may let a learner answer one from memory: never use one of those cases, whether the same statement in other words or the same scenario with other names, numbers or places. When a brief uses one, give it a case of its own that teaches the same thing. The lesson may still teach the same fact or rule, in a case of its own.
 {{/usedSituations}}
 
 {{#material}}

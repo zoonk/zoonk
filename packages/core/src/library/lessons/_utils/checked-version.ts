@@ -91,6 +91,7 @@ export function toScreensToSave({
         mathItem: screen.mathItem,
         provenance,
         skillId,
+        standsAlone: screen.standsAlone,
       },
     ];
   });

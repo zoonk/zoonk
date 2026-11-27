@@ -14,6 +14,14 @@ export const studyCheckpointSchema = z
   ])
   .meta({ id: "StudyCheckpoint" });
 
+export const lessonGenerationStatusSchema = z
+  .enum(["ready", "generating", "notStarted", "failed"])
+  .meta({ id: "LessonGenerationStatus" });
+
+const studyBlockLessonSchema = z
+  .object({ setAside: z.boolean(), status: lessonGenerationStatusSchema })
+  .meta({ id: "StudyBlockLesson" });
+
 export const studyBlockSchema = z
   .object({
     answered: z.number().int().min(0),
@@ -25,7 +33,7 @@ export const studyBlockSchema = z
       .array(z.string())
       .meta({
         description:
-          "The areas most of a practice block asks about, at most two, as the plan names them; a practice without `topics` is about these. Empty for other blocks",
+          "The areas most of a practice block asks about, at most two, as the plan names them. Empty for other blocks",
       }),
     brainPower: z.number().int().min(0).meta({ description: "Brain Power the block earned" }),
     canDo: z.string().nullable().meta({ description: "What the learner will be able to do" }),
@@ -72,6 +80,11 @@ export const studyBlockSchema = z
       ),
     id: idSchema,
     kind: z.enum(StudyBlockKind),
+    lesson: studyBlockLessonSchema
+      .nullable()
+      .describe(
+        "Saved generation state of the lesson this block teaches. Null when there is no lesson or the response does not read lesson state.",
+      ),
     lessonId: idSchema.nullable(),
     mistakesOnly: z
       .boolean()
@@ -101,6 +114,14 @@ export const studyBlockSchema = z
       "Logical plan work identity; never a database UUID",
     ),
     position: z.number().int().min(0),
+    practiceNumber: z
+      .int()
+      .min(1)
+      .nullable()
+      .meta({
+        description:
+          "Which of the day's practice blocks this is, counting from 1 in the order they were planned, so each one's name differs (\"Practice 2\") and stays the same once opened, finished or skipped. Null when it's the day's only practice, and for a practice of mistakes, of every topic or of one chosen subject (`title`), which have names of their own",
+      }),
     preparing: z
       .boolean()
       .describe("True when a scheduled mock cannot start because some questions are unavailable."),
@@ -135,7 +156,7 @@ export const studyBlockSchema = z
       .array(z.string())
       .meta({
         description:
-          "A practice block's topics as the plan names them, most asked first, except that the parts of one practice lead with different topics when they can (a part with fewer topics keeps the shared lead), so two practices on one subject differ by their first topic. Empty for other blocks",
+          "A practice block's topics as the plan names them, most asked first. A practice mixes them, so none of them names it. Empty for other blocks",
       }),
     waitReason: z
       .enum(["lessons", "challenge"])

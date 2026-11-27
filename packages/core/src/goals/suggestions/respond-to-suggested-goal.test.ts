@@ -2,12 +2,11 @@ import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { suggestedGoalFixture } from "@zoonk/testing/fixtures/goals";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getCurrentSuggestedGoal } from "./get-current-suggested-goal";
 import { respondToSuggestedGoal } from "./respond-to-suggested-goal";
-
-const DAY_MS = 24 * 60 * 60 * 1000;
 
 async function setup() {
   const user = await userFixture();
@@ -15,12 +14,12 @@ async function setup() {
 
   const [physics, chemistry] = await Promise.all([
     suggestedGoalFixture({
-      lastActiveAt: new Date(now - DAY_MS),
+      lastActiveAt: new Date(now - MS_PER_DAY),
       title: "Physics",
       userId: user.id,
     }),
     suggestedGoalFixture({
-      lastActiveAt: new Date(now - 3 * DAY_MS),
+      lastActiveAt: new Date(now - 3 * MS_PER_DAY),
       title: "Chemistry",
       userId: user.id,
     }),
@@ -91,7 +90,7 @@ describe(respondToSuggestedGoal, () => {
       suggestedGoalFixture({ courseId: spanish.id, title: "Spanish", userId: user.id }),
       suggestedGoalFixture({
         courseId: retired.id,
-        lastActiveAt: new Date(Date.now() - DAY_MS),
+        lastActiveAt: new Date(Date.now() - MS_PER_DAY),
         title: "Retired",
         userId: user.id,
       }),

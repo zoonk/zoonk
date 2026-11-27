@@ -7,6 +7,7 @@ import { mockSession } from "../_test-utils/mock-session";
 import { getBudgetForGoal, getDaySplit } from "../goals/daily-budget";
 import { updateGoal } from "../goals/update-goal";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
+import { openStudyDay } from "../sessions/open-study-day";
 import { answerOnboardingQuestion } from "../view-models/onboarding/answer-onboarding-question";
 import { noticeWaitFixture } from "./_test-utils/notice-landing";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
@@ -435,6 +436,28 @@ describe(getPlanTimeAdvice, () => {
       kind: "everything",
       minutes,
     });
+  });
+
+  it("suggests on the plan the time the time question suggests once today's lessons are shown", async () => {
+    const { goal, library } = await setup(24);
+    await prisma.goal.update({ data: { targetDate: CLOSE_DATE }, where: { id: goal.id } });
+    await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
+
+    await expect(
+      openStudyDay({ goalId: goal.id, shownDate: "2020-09-28", timeZone: "UTC" }),
+    ).resolves.toMatchObject({ status: "opened" });
+
+    await refreshPlanSuggestion({ goalId: goal.id, userId: goal.userId });
+
+    const { suggested } = await readPlanTime(goal.id);
+
+    await expect(readSuggestedTime(goal.id)).resolves.toStrictEqual({
+      kind: suggested?.kind,
+      minutes: suggested?.minutes,
+    });
+
+    await change(goal.id, [{ kind: "setDailyMinutes", minutes: suggested?.minutes ?? 0 }]);
+    await expect(readFeasibility(goal.id)).resolves.toMatchObject({ fits: true });
   });
 
   it("suggests four hours on the plan, and no more, when everything takes longer", async () => {

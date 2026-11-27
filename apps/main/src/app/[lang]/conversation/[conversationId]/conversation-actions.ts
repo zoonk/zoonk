@@ -141,7 +141,8 @@ export async function completeConversationAction(
     return { status: "failed" };
   }
 
-  // API cache invalidation cannot refresh Main's retained exam, unit, allowance and progress views.
-  revalidatePath("/[lang]", "layout");
+  // The API's write can't reach the exam, unit, allowance and progress pages the browser keeps.
+  // Revalidating any path drops them all; this route's own leaves the server's other pages cached.
+  revalidatePath("/[lang]/conversation/[conversationId]", "page");
   return { conversation: result.data, status: "completed" };
 }

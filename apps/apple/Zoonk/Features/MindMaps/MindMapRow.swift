@@ -111,7 +111,8 @@ struct MindMapRow: View {
     } end: {
       HStack(spacing: 12) {
         if place.isMindMapsPage, shown == .ready,
-          store.isSaved(MindMapKey(kind: .chapter, targetId: map.chapterId), server: map.saved)
+          store.saves.isSaved(
+            MindMapKey(kind: .chapter, targetId: map.chapterId), server: map.saved)
         {
           SavedMark()
         }

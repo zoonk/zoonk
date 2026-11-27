@@ -1,10 +1,10 @@
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { type IrtItem, estimateAbility, getIrtCoherence, toScaleRange } from "../scoring/irt";
 import { getPointsScope, scoreMockPoints, sumAnswerPoints } from "../scoring/mock-points";
 import { type NetOutcome, getNetCalibration, getNetScore } from "../scoring/net-score";
 import { type MockConditions, type MockResult, type MockScoring } from "./mock-contract";
 import { type ItemMarking } from "./mock-points-contract";
 
-const MS_PER_SECOND = 1000;
 const SECONDS_PER_MINUTE = 60;
 const PERCENT = 100;
 const POINT_DECIMALS = 100;

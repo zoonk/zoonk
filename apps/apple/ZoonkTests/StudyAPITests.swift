@@ -5,6 +5,47 @@ import XCTest
 @testable import Zoonk
 
 final class StudyAPITests: XCTestCase {
+  func testResendingARecordingKeepsItsAttemptID() async throws {
+    let transport = StudyRecordingTransport()
+    let api = VoiceAPI(clients: APIClientFactory(baseURL: Self.baseURL, transport: transport))
+    let take = VoiceRecording(audio: Data([1]), durationMs: 800)
+    let next = VoiceRecording(audio: Data([1]), durationMs: 800)
+    let stepId = UUID().uuidString
+    for recording in [take, take, next] {
+      _ = try? await api.answerSpokenStep(
+        stepId: stepId, studySessionId: nil, recording: recording, token: "token")
+    }
+    XCTAssertNotEqual(take.attemptId, next.attemptId)
+    XCTAssertEqual(transport.sent.value.count, 3)
+    for (sent, id) in zip(transport.sent.value, [take.attemptId, take.attemptId, next.attemptId]) {
+      XCTAssertTrue(String(decoding: sent.body, as: UTF8.self).contains(id))
+    }
+  }
+
+  func testReviewMatchDecodesItsKeyAndKeepsTheOrderOfMisses() throws {
+    let question = #"""
+      {"answered":null,"capsuleKey":"review","citation":null,"context":null,"drill":null,
+       "entry":null,"format":"matchPairs","image":null,"itemId":"item","key":[1,0],
+       "left":["Mars","Moon"],"mistakeId":null,"options":null,"placement":false,
+       "question":"Match the names.","quoted":false,"right":["Satellite","Planet"],
+       "select":null,"set":null,"skillId":"skill","unit":null,"visual":null}
+      """#
+    let match = try JSONDecoder().decode(
+      Components.Schemas.StudyBlockDetail.QuestionsPayloadPayload.self, from: Data(question.utf8))
+    XCTAssertEqual(match.key, [1, 0])
+
+    let answer = Components.Schemas.MatchAnswer(
+      matches: [1, 0], misses: [.init(left: 1, right: 1), .init(left: 0, right: 0)])
+    let sent = try XCTUnwrap(
+      JSONSerialization.jsonObject(with: JSONEncoder().encode(answer)) as? NSDictionary)
+    XCTAssertEqual(sent["matches"] as? [Int], [1, 0])
+    XCTAssertEqual(
+      sent["misses"] as? [[String: Int]],
+      [
+        ["left": 1, "right": 1], ["left": 0, "right": 0],
+      ])
+  }
+
   func testWritingRowUsesSavedDraftField() throws {
     let base = try XCTUnwrap(
       JSONSerialization.jsonObject(with: Data(Self.block.utf8)) as? [String: Any])
@@ -81,7 +122,8 @@ final class StudyAPITests: XCTestCase {
       token: "token", target: .next(.init(expectedBlockId: "b1", kind: .next, sessionId: "s1")),
       timeZone: "America/Sao_Paulo")
 
-    XCTAssertEqual(opening, .lesson(.init(kind: .lesson, lessonId: "l1", sessionId: "s1")))
+    XCTAssertEqual(
+      opening, .StudyBlockOpeningLesson(.init(kind: .lesson, lessonId: "l1", sessionId: "s1")))
     XCTAssertEqual(transport.sent.value.count, 2, "once more, in a request of its own")
     let target = try XCTUnwrap(transport.sent.value.first?.json["target"] as? NSDictionary)
     XCTAssertEqual(target["kind"] as? String, "next")

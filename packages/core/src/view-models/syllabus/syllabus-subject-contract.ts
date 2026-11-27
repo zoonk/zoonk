@@ -127,6 +127,12 @@ export const syllabusSubjectSchema = z
         description:
           "Every chapter of the plan in this subject: the ones done, then in the order the plan studies them next",
       }),
+    covers: z
+      .array(z.string())
+      .meta({
+        description:
+          "What it would teach, by the names of its skills in the plan's graph, in the graph's order. Set only while it's out of the plan (`notPlannedReason`) and has no `topics` or `chapters`; empty otherwise",
+      }),
     displayWeight: displayWeightSchema,
     extra: z
       .boolean()

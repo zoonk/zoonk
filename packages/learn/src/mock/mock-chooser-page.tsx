@@ -2,7 +2,6 @@
 
 import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
-import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { DETAIL_PRIMARY_CLASS } from "../_components/detail-page";
@@ -120,7 +119,6 @@ function ChooserMainAction({
 }: Pick<ChooserBarProps, "busy" | "preparing"> & { disabled: boolean; onStart: () => void }) {
   const t = useExtracted();
   const routes = useLearnRoutes();
-  const mounted = useIsMounted();
 
   if (preparing) {
     return (
@@ -134,7 +132,7 @@ function ChooserMainAction({
     <EnterButton
       busy={busy}
       className={DETAIL_PRIMARY_CLASS}
-      disabled={disabled || !mounted}
+      disabled={disabled}
       onClick={onStart}
       size="lg"
     >

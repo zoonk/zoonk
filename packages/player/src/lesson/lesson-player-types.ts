@@ -12,6 +12,7 @@ import {
 } from "@zoonk/core/lesson-player/playable-lesson";
 import { type SpokenAnswerGrade } from "@zoonk/core/library/language/spoken-answer-contract";
 import { type HelpLimit } from "@zoonk/learn/help-limit";
+import { type SaveLesson } from "@zoonk/learn/saved-lessons/saves";
 
 export type {
   PlayableLanguageStep,
@@ -65,6 +66,8 @@ export type LessonStartOutcome =
       /** The learner already finished this lesson, so its end offers no next lesson. */
       replay: boolean;
       runId: string;
+      /** The learner kept this lesson to do again later. */
+      saved: boolean;
       startedAt: string;
     };
 
@@ -126,10 +129,13 @@ export type LessonPlayerAdapters = {
   explainAnswer?: (input: { answer: string; stepId: string }) => Promise<AnswerExplanationOutcome>;
   /** Grades a recording of a spoken answer. Without it, spoken screens take a typed answer. */
   gradeSpokenAnswer?: (input: {
+    attemptId: string;
     audio: Blob;
     durationMs: number;
     stepId: string;
   }) => Promise<SpokenAnswerOutcome>;
+  /** Saves the lesson for later, or stops keeping it; without it, the player has no bookmark. */
+  saveLesson?: SaveLesson;
   startLesson: (input?: { runId: string }) => Promise<LessonStartOutcome>;
   /**
    * Must outlive the page, since a pause goes out as it hides. Resolves `null` when the

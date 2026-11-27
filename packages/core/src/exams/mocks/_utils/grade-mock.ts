@@ -1,5 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { gradeTypedItemAnswer } from "../../../learner/_utils/typed-grading";
 import { recordLearnerAnswer } from "../../../learner/record-learner-answer";
 import { isStillAsked } from "../../../library/items/item-image";
@@ -13,8 +14,6 @@ import { type MockItemGrade, gradeMockItem } from "./mock-item-grading";
 import { type MockItem, loadMockItems } from "./mock-items";
 import { getAskedItemIds } from "./mock-sections";
 import { type MockSitting } from "./owned-mock";
-
-const MS_PER_MINUTE = 60_000;
 
 type AskedQuestion = {
   answer: MockAnswer | null;
@@ -84,12 +83,7 @@ async function gradeAsked({
 }): Promise<GradedQuestion> {
   const { item } = asked;
 
-  const grade = gradeMockItem({
-    answer: asked.answer,
-    item,
-    mockId: mock.id,
-    partialCredit: mock.conditions.partialCredit,
-  });
+  const grade = gradeMockItem({ answer: asked.answer, item, mock });
 
   if (item.format !== "typed" || !grade.answered || grade.isCorrect) {
     return { ...asked, grade };

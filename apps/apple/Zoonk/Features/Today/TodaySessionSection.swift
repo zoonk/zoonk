@@ -48,15 +48,14 @@ struct TodaySessionSection: View {
     let (before, upcoming) = session.queue(next: next)
     let foldsDone = done.count > doneRows
     let coming = session.comingLessons
-    let timedRows = upcoming.count + (coming == nil ? 0 : 1)
-    let upcomingCount = timedRows
+    let upcomingCount = upcoming.count + (coming == nil ? 0 : 1)
     let foldedShown = StudyDay.shownUpcomingRows(upcomingCount)
     let shownUpcoming = disclosures.showsMore ? upcomingCount : foldedShown
 
     if foldsDone {
       DayFoldRow(
         isOpen: $disclosures.showsDone, isDone: true, count: done.count,
-        skipped: done.filter { $0.status == .skipped }.count, minutes: nil)
+        skipped: done.filter { $0.status == .skipped }.count)
     }
 
     if !foldsDone || disclosures.showsDone {
@@ -112,11 +111,7 @@ struct TodaySessionSection: View {
       DayFoldRow(
         isOpen: $disclosures.showsMore, isDone: false, count: upcomingCount - foldedShown,
         more: StudyDay.moreLabel(
-          hidden: Array(upcoming.dropFirst(foldedShown)), lessonsAhead: coming != nil),
-        minutes: timedRows > foldedShown
-          ? session.foldedMinutes(
-            showing: before + [next].compactMap { $0 } + upcoming.prefix(foldedShown))
-          : nil
+          hidden: Array(upcoming.dropFirst(foldedShown)), lessonsAhead: coming != nil)
       )
       .id(Self.moreFold)
     }
@@ -131,7 +126,7 @@ struct TodaySessionSection: View {
       tagsExtra: true, isBusy: busy == .block(block.position),
       failed: failed == .block(block.position))
 
-    if block.waitReason == nil && !block.preparing {
+    if block.screen != .unknown && block.waitReason == nil && !block.preparing {
       Button {
         open(block, false)
       } label: {
@@ -213,7 +208,7 @@ struct TodaySessionAction: View {
     // A started day asks from its list's row for the lessons to come.
     case .prepare: return view.session.blocks.isEmpty
     case .ahead, .rest: return view.session.extraTime.available
-    case .waiting: return false
+    case .waiting, .unrecognized: return false
     }
   }
 
@@ -307,7 +302,7 @@ struct TodaySessionAction: View {
       return TodayMainAction(
         kind: .practice(minutes: session.extraTime.minutes), isBusy: busy == .keepLearning,
         failed: failed == .keepLearning, action: keepLearning)
-    case .waiting:
+    case .waiting, .unrecognized:
       return nil
     }
   }
@@ -620,7 +615,6 @@ struct DayFoldRow: View {
   let count: Int
   var more: String?
   var skipped = 0
-  let minutes: Double?
 
   private var onlySkipped: Bool { skipped > 0 && skipped == count }
 
@@ -637,7 +631,6 @@ struct DayFoldRow: View {
           .frame(minWidth: 20)
           .accessibilityHidden(true)
 
-        // The chevron beside the words, so the minutes end on the other rows' column.
         HStack(spacing: 6) {
           Group {
             if isDone, skipped > 0 {
@@ -659,11 +652,6 @@ struct DayFoldRow: View {
         }
 
         Spacer()
-
-        if let minutes, minutes > 0, !isOpen {
-          Text(studyDuration(minutes: minutes))
-            .typeStyle(.data)
-        }
       }
       .foregroundStyle(.mutedForeground)
     }
@@ -783,7 +771,7 @@ struct TodayDayStatus: View {
         sentence = String(
           localized: "You're all caught up.", table: "Today", comment: "Nothing new today")
       }
-    case .underway:
+    case .underway, .unrecognized:
       return nil
     }
   }

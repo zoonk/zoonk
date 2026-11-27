@@ -107,7 +107,6 @@ internal fun ColumnScope.StepForm(
     onContinue: () -> Unit,
     description: String? = null,
     subject: String? = null,
-    chips: List<String> = listOfNotNull(subject),
     canContinue: Boolean = true,
     continueLabel: String? = null,
     onSkip: (() -> Unit)? = null,
@@ -125,7 +124,7 @@ internal fun ColumnScope.StepForm(
         }
         val continueStep = { send(StepSender.Continue, onContinue) }
 
-        StepHeading(title, description, chips = chips)
+        StepHeading(title, description, subject)
         content(continueStep)
         PlanStartNotice()
         PageActions {
@@ -193,14 +192,9 @@ internal fun StepHeading(
     title: String,
     description: String? = null,
     subject: String? = null,
-    chips: List<String> = listOfNotNull(subject),
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        if (chips.isNotEmpty()) {
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                chips.forEach { Eyebrow(it) }
-            }
-        }
+        subject?.let { Eyebrow(it) }
         OnboardingHeading(title, description)
     }
 }

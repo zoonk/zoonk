@@ -27,11 +27,11 @@ export const NUMBER_ITEM_CLASS = ROWS_CLASS;
 const NUMBER_CLASS = {
   stats: cn(
     ROWS_CLASS,
-    "hover:bg-muted/70 focus-visible:ring-ring/50 -m-2 w-[calc(100%+1rem)] min-w-0 rounded-lg p-2 text-left transition-colors outline-none focus-visible:ring-[3px]",
+    "hover:bg-muted/70 held-pressed:bg-muted focus-visible:ring-ring/50 -m-2 w-[calc(100%+1rem)] min-w-0 rounded-lg p-2 text-left transition-colors outline-none focus-visible:ring-[3px]",
   ),
   tiles: cn(
     ROWS_CLASS,
-    "ring-border hover:bg-muted/50 focus-visible:ring-ring/50 w-full min-w-0 rounded-xl p-3 text-left ring-1 transition-colors outline-none ring-inset focus-visible:ring-[3px]",
+    "ring-border hover:bg-muted/50 held-pressed:bg-muted focus-visible:ring-ring/50 w-full min-w-0 rounded-xl p-3 text-left ring-1 transition-colors outline-none ring-inset focus-visible:ring-[3px]",
   ),
 } as const;
 

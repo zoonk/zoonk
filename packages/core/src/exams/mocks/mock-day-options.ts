@@ -5,6 +5,7 @@ import { estimateMockMinutes } from "./mock-estimate";
 import { type MockTypedPart, listCoveredSections, listMockLeftOut } from "./mock-left-out";
 import { type MockPlan, getMockDays, outlineMock } from "./mock-plan";
 import { type UnpickedChoice, listLeftOutChoices } from "./mock-unpicked";
+import { isPartOfAnother } from "./subject-paper-size";
 import { countPartEssays, getDayWrittenParts } from "./written-parts";
 import { isObjectiveSection } from "./written-subject";
 import {
@@ -26,16 +27,6 @@ function getDayObjectiveSections({
   return (structure?.mock?.sections ?? []).filter(
     (section) => section.day === day && isObjectiveSection(section),
   );
-}
-
-export function isPartOfAnother({
-  subject,
-  subjects,
-}: {
-  subject: Subject;
-  subjects: readonly Subject[];
-}): boolean {
-  return Boolean(subject.partOf) && subjects.some((other) => other.name === subject.partOf);
 }
 
 function getDayAreas({

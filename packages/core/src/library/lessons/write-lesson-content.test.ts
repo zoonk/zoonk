@@ -200,7 +200,16 @@ describe(writeLessonContent, () => {
       skillId: skill.id,
     });
 
-    expect(steps.filter((step) => step.itemId !== null)).toHaveLength(1);
+    expect(steps[6]?.itemId).toBeNull();
+
+    expect(steps[7]?.item).toMatchObject({
+      content: { question: "What will the thermometer show?", select: 1 },
+      format: "multipleChoice",
+      runId: draft.runId,
+      skillId: skill.id,
+    });
+
+    expect(steps.filter((step) => step.itemId !== null)).toHaveLength(2);
 
     for (const { content, contractVersion, kind } of steps) {
       expect(() => parseStepContent(kind, content)).not.toThrow();
@@ -784,6 +793,7 @@ describe(writeLessonContent, () => {
         },
       ],
       question: "What will the thermometer show?",
+      standsAlone: false,
       visual: null,
     });
 

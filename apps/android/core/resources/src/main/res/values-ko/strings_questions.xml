@@ -29,12 +29,16 @@
   "questions_left_blank": "c6a97c9bcb0639d019f156604aca4060470f02c2fb8b5defa2d540ab96ec82ef",
   "questions_mark_correct": "503dd47e909506e40b15b5c68a7861b9144c2b0285dc34bc91d37823a2f48890",
   "questions_mark_wrong": "ebc4bc09b1b314dccbf396ce8df847daeb0d122a8319af75a26af61fc3e65897",
+  "questions_match_first_tries": "ae3d56f8eb4807c9d7cd08aaea967dc1c3fc64a426b810c93059cfca38ffce34",
+  "questions_match_not_a_pair": "6bec49cd6b47116ff28f30d0f356049d9b307d16972099d9b404e1b2c8cc97b8",
+  "questions_match_paired": "90ae5a90c39491a62ea8e575b0d77d692cf82a30f034e0ef5b6951fab582797e",
+  "questions_match_unpaired": "e4a00c8c5987993c85159beb51853187c43e14f48e2cd626a812fb8746f1bfb7",
   "questions_matched_with": "fed2b901231c69128d45130907d3f64e68d440d692f5f5a0d00457e7d86c4c73",
   "questions_mistake_fixed": "9ebfa1cdcda5602c4d111df264321e267dcadb3f92febe3cf8e4a4d7d8515b7b",
   "questions_mistakes_fixed": "acb3820d35f1709094fe89227d421638143166c71949d72a02490b46c601fd1d",
   "questions_not_quite": "1cc0cfef3c1a9b06305c65c56f639bf5443c70d5831391ccd82389bb0ff5cd05",
   "questions_pick_all": "5e40865407ecf31cbfc49eac61c494a52e310ca3cd145cc89ca351ab251a8c02",
-  "questions_pick_count": "6ba0440bad0423cec81c835bb2102ac42518c9c4abc56ab2cd968ada49be1f2a",
+  "questions_pick_count": "8c1ed8704c4aeb379ded3c51dcdd981221aa00471fa00b31a6258888d5f50e9a",
   "questions_place_right": "c41f5afd11de1b794f173d9615462f73586c693c5b4d72c7acb05ed3e1ebd032",
   "questions_place_wrong": "6dcca0bfa1e4a49352af9de46850a67fcc6077e9dd92adb4c3cb9b6012f43314",
   "questions_placement_note": "55ad8fc5b26d4433f60539e02154c119d76bc48be70e477e8115967275b1167d",
@@ -58,7 +62,7 @@
 <resources>
     <string name="questions_pick_all">해당하는 항목을 모두 선택하세요.</string>
     <plurals name="questions_pick_count">
-        <item quantity="other">선택지를 %d개 고르세요.</item>
+        <item quantity="other">보기 %d개를 선택하세요.</item>
     </plurals>
     <string name="questions_true">참</string>
     <string name="questions_false">거짓</string>
@@ -73,6 +77,11 @@
     <string name="questions_place_wrong">%1$d번째 위치, 잘못된 위치</string>
     <!-- An entry on the right read aloud with the entry on the left it was matched with. -->
     <string name="questions_matched_with">%1$s, %2$s에 연결됨</string>
+    <string name="questions_match_paired">%1$s와(과) %2$s을(를) 연결했어요. 맞춘 짝: %4$d개 중 %3$d개.</string>
+    <string name="questions_match_not_a_pair">%1$s와(과) 짝인 카드는 %2$s이(가) 아니에요.</string>
+    <string name="questions_match_unpaired">%1$s와(과) %2$s의 짝을 풀었어요.</string>
+    <!-- Under a matching question's verdict, before the pairs of cards the learner first put together wrong, one per line as “card → card”. -->
+    <string name="questions_match_first_tries">처음에 이렇게 짝지었어요:</string>
     <string name="questions_your_answer">내 답</string>
     <string name="questions_mark_correct">정답</string>
     <string name="questions_mark_wrong">오답</string>

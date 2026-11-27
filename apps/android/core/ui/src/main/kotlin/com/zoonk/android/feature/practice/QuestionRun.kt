@@ -153,13 +153,13 @@ fun netTally(
 
 enum class NotSure { Drill, DontKnowYet }
 
-/** A mistakes practice offers "I don't know yet" on [every] question. */
+/** A mistakes practice offers "I don't know yet" on [every] question, and a block on a learning match too. */
 fun notSureOffer(
     question: Question,
     every: Boolean = false,
 ): NotSure? =
     when {
         question.drill?.kind == Drill.Kind.NoGuessing -> NotSure.Drill
-        every || question.placement || question.format == QuestionFormat.Typed -> NotSure.DontKnowYet
+        every || question.placement || question.format == QuestionFormat.Typed || question.key != null -> NotSure.DontKnowYet
         else -> null
     }

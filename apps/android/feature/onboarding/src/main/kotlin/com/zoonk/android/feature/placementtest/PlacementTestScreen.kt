@@ -320,6 +320,7 @@ internal fun Plan.nextTopic(): String? =
 internal val PlanPlacementTest.estimatedMinutes: Int
     get() =
         when (this) {
+            is PlanPlacementTest.PlanPlacementTestOneOf2Value -> 0
             is PlanPlacementTest.PlanPlacementTestOneOfValue -> value.estimatedMinutes.toInt()
             is PlanPlacementTest.PlanPlacementTestOneOf1Value -> value.estimatedMinutes.toInt()
         }

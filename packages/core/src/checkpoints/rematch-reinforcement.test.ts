@@ -1,11 +1,12 @@
 import { prisma } from "@zoonk/db";
 import { layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { pickInBlock } from "../_test-utils/shown-choice";
 import { getTodayStudySession } from "../sessions/_test-utils/open-today";
 import {
-  DAY_MS,
   SESSION_NOW,
   SESSION_TODAY,
   checkpointItemFixture,
@@ -83,9 +84,17 @@ describe("a lost duel's actual reinforcement lessons", () => {
     const feedback = await missed.reduce<Promise<unknown>>(async (previous, item) => {
       await previous;
 
+      if (!item) {
+        throw new Error("Expected a missed question");
+      }
+
       return answerStudyQuestion({
         blockId: block.id,
-        input: { answer: { selectedIndex: 1 }, durationMs: 4000, itemId: item?.id ?? "" },
+        input: {
+          answer: pickInBlock({ blockId: block.id, item, right: false }),
+          durationMs: 4000,
+          itemId: item.id,
+        },
         sessionId: today.session.id,
       });
     }, Promise.resolve(null));
@@ -112,9 +121,9 @@ describe("a lost duel's actual reinforcement lessons", () => {
 
     await expect(
       prisma.planItem.findUniqueOrThrow({ select: { scheduledFor: true }, where: { id: boss.id } }),
-    ).resolves.toStrictEqual({ scheduledFor: new Date(SESSION_TODAY.getTime() + DAY_MS) });
+    ).resolves.toStrictEqual({ scheduledFor: new Date(SESSION_TODAY.getTime() + MS_PER_DAY) });
 
-    vi.setSystemTime(new Date(SESSION_NOW.getTime() + DAY_MS));
+    vi.setSystemTime(new Date(SESSION_NOW.getTime() + MS_PER_DAY));
     const tomorrow = await getTodayStudySession({ goalId: fixture.goal.id });
 
     if (tomorrow.status !== "ready") {

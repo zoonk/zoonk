@@ -79,7 +79,7 @@ fun DayMoment(
 
 fun StudyBlockCompletion.missionMomentFacts(): MissionMomentFacts =
     MissionMomentFacts(
-        missions = missions.map { it.toDayMission() },
+        missions = missions.mapNotNull { it.toDayMission() },
         completed = completedMissions.map { done -> StudyMission.Kind.entries.first { it.value == done.value } },
         bonus = fullMeal.bonus,
         bonusPaid = fullMeal.paid,
@@ -87,7 +87,7 @@ fun StudyBlockCompletion.missionMomentFacts(): MissionMomentFacts =
 
 fun StudyMissionMoment.missionMomentFacts(): MissionMomentFacts =
     MissionMomentFacts(
-        missions = missions.map { it.toDayMission() },
+        missions = missions.mapNotNull { it.toDayMission() },
         completed = completed.map { done -> StudyMission.Kind.entries.first { it.value == done.value } },
         bonus = fullMeal.bonus,
         bonusPaid = fullMeal.paid,

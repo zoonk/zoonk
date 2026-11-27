@@ -168,20 +168,22 @@ const restoredCheckResultSchema = lessonStepCheckResultSchema
   });
 
 /** Answers are ordered by arrival. */
-const lessonRunAnswerSchema = z.object({
-  answer: lessonStepAnswerSchema
-    .nullable()
-    .meta({
-      description:
-        "What the learner answered, which `result` judged. Null for a recording (its words are `result.answerText`) and for an answer that no longer fits the screen",
-    }),
-  answeredAt: z.iso
-    .datetime()
-    .meta({ description: "Before the run's `startedAt` for an answer from an earlier sitting" }),
-  isCorrect: z.boolean(),
-  result: restoredCheckResultSchema,
-  stepId: uuidSchema(),
-});
+const lessonRunAnswerSchema = z
+  .object({
+    answer: lessonStepAnswerSchema
+      .nullable()
+      .meta({
+        description:
+          "What the learner answered, which `result` judged. Null for a recording (its words are `result.answerText`) and for an answer that no longer fits the screen",
+      }),
+    answeredAt: z.iso
+      .datetime()
+      .meta({ description: "Before the run's `startedAt` for an answer from an earlier sitting" }),
+    isCorrect: z.boolean(),
+    result: restoredCheckResultSchema,
+    stepId: uuidSchema(),
+  })
+  .meta({ id: "LibraryLessonRunAnswer" });
 
 export const libraryLessonRunSchema = z
   .object({
@@ -227,6 +229,7 @@ export const libraryLessonRunSchema = z
           "True when the learner already finished this lesson, so no next lesson follows it",
       }),
     runId: uuidSchema().meta({ description: "Send it with every answer and with the completion" }),
+    saved: z.boolean().meta({ description: "The learner saved the lesson" }),
     sessionId: uuidSchema()
       .nullable()
       .meta({ description: "The run's canonical study session, or null for standalone work" }),

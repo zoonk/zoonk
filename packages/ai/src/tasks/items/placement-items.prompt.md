@@ -23,8 +23,8 @@ The app skips a skill's lessons only when the learner gets its quick question an
 - Each stands alone: a learner who never saw a lesson, but has the skill, can answer it.
 - For each one, pick the format that fits what the skill does, and use more than one format for a skill when more than one fits. Never force a format: a skill with no real order gets no `order` question.
   - `order` when the skill puts steps, stages or events in the one order that works (a procedure, a calculation's steps, a timeline, the words of a sentence).
-  - `matchPairs` when the skill links cases to what they are or do (examples to their category, symptoms to causes, situations to the rule that applies, words to meanings).
-  - `selectAll` when the skill judges which of several cases meet a condition (which expenses are deductible, which sentences are correct, which actions are safe).
+  - `matchPairs` when the skill links short items to what they are or do (terms to meanings, examples to their category, symptoms to causes, words to their translation).
+  - `selectAll` when the skill judges which of several cases meet a condition (which expenses are deductible, which sentences are correct, which actions are safe), and when its cases need a sentence each.
 
 ## order
 
@@ -35,13 +35,13 @@ The app skips a skill's lessons only when the learner gets its quick question an
 ## matchPairs
 
 - `question`: the situation and the command ("Match each … to …").
-- `pairs`: 4 to 6 pairs. Each left item matches exactly one right item, and no right item could also fit another left item. Keep both sides short, and never let a pair match by a word they share.
+- `pairs`: 4 or 5 pairs, since three let a guess through. Each left item matches exactly one right item, and no right item could also fit another left item. Never let a pair match by a word they share. A board is hard to guess because its right items are close to each other, never because its cards are long.
 - `reason`: why each left item goes with its right item.
 
 ## selectAll
 
 - `context`: the situation or support text the question needs, or null when the question stands alone.
-- `question`: asks which options fit ("Which of these expenses can Ana deduct?"). The app tells the learner to select every right one.
+- `question`: asks which options fit ("Which of these expenses can Ana deduct?"). The app tells the learner to select every right one, so the question never says how many to pick or that several are right ("Select all that apply").
 - `options`: 5 or 6 options, at least 2 correct and at least 2 wrong. Each is right or wrong on its own, never by pointing at another ("Both of the above"), and none is "all of the above" or "none of the above". Options are similar in length, specificity and confidence.
 - Every wrong option comes from a specific, realistic mistake a learner makes with this skill. Its `misconception` is a short neutral label of that mistake, and its `reason` tells the learner why it is wrong, naming the mistake. Every correct option has `misconception` null and a `reason` that says why it is right.
 - A `reason` names another option by what it says, never by its place or a letter: the app shuffles the options.

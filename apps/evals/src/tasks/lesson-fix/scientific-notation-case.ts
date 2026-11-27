@@ -107,6 +107,7 @@ export const RECORDED_SCIENTIFIC_NOTATION_FIX = {
           },
         ],
         question: "Which grain is wider?",
+        standsAlone: true,
         visual: null,
       },
       {
@@ -166,6 +167,7 @@ export const RECORDED_SCIENTIFIC_NOTATION_FIX = {
           },
         ],
         question: "How do you write that distance in scientific notation?",
+        standsAlone: true,
         visual: null,
       },
       {
@@ -225,6 +227,7 @@ export const RECORDED_SCIENTIFIC_NOTATION_FIX = {
           },
         ],
         question: "How do you write that width in scientific notation?",
+        standsAlone: true,
         visual: null,
       },
       {
@@ -262,6 +265,7 @@ export const RECORDED_SCIENTIFIC_NOTATION_FIX = {
           },
         ],
         question: "Which line belongs on the card?",
+        standsAlone: true,
         visual: null,
       },
     ],

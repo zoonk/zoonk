@@ -13,6 +13,7 @@ import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixture
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import {
   gradeMathAnswer,
   parseMathItem,
@@ -29,9 +30,8 @@ import {
   mistakePracticeResponseSchema,
 } from "../src/lib/openapi/schemas/mistakes";
 import { createBearerLearner } from "./helpers/bearer";
+import { tapOption } from "./helpers/choices";
 import { readBody } from "./helpers/response";
-
-const DAY_MS = 86_400_000;
 
 async function createMistakeGoal({
   cause,
@@ -75,15 +75,15 @@ async function createMistakeGoal({
   const [mistake] = await Promise.all([
     mistakeFixture({
       cause,
-      createdAt: new Date(Date.now() - DAY_MS),
+      createdAt: new Date(Date.now() - MS_PER_DAY),
       itemId: items[0]?.id,
       skillId: skills[0]?.id,
       userId,
     }),
     learnerSkillFixture({
       difficulty: 5,
-      due: new Date(Date.now() - DAY_MS),
-      lastReviewedAt: new Date(Date.now() - 4 * DAY_MS),
+      due: new Date(Date.now() - MS_PER_DAY),
+      lastReviewedAt: new Date(Date.now() - 4 * MS_PER_DAY),
       reps: 2,
       skillId: skills[0]?.id ?? "",
       stability: 3,
@@ -147,14 +147,14 @@ test.describe("Mistake practice API", () => {
     });
 
     const mistake = await mistakeFixture({
-      createdAt: new Date(Date.now() - DAY_MS),
+      createdAt: new Date(Date.now() - MS_PER_DAY),
       skillId: skill.skillId,
       stepId: step.id,
       userId,
     });
 
     const other = await mistakeFixture({
-      createdAt: new Date(Date.now() - DAY_MS),
+      createdAt: new Date(Date.now() - MS_PER_DAY),
       skillId: skill.skillId,
       stepId: otherStep.id,
       userId,
@@ -250,7 +250,7 @@ test.describe("Mistake practice API", () => {
 
     const attempt = await attemptFixture({
       answer: graded.recorded,
-      answeredAt: new Date(Date.now() - DAY_MS),
+      answeredAt: new Date(Date.now() - MS_PER_DAY),
       itemId: item.id,
       skillId: item.skillId,
       userId,
@@ -258,7 +258,7 @@ test.describe("Mistake practice API", () => {
 
     const original = await mistakeFixture({
       attemptId: attempt.id,
-      createdAt: new Date(Date.now() - DAY_MS),
+      createdAt: new Date(Date.now() - MS_PER_DAY),
       itemId: item.id,
       skillId: item.skillId,
       snapshot: readMistakeSnapshot(graded.snapshot),
@@ -330,7 +330,7 @@ test.describe("Mistake practice API", () => {
     const feedback = await readBody({
       response: await api.post(`/v1/me/mistakes/${mistake.id}/answers`, {
         data: {
-          answer: { selectedIndex: 0 },
+          answer: tapOption(entry?.questions[0]?.options),
           durationMs: 12_000,
           itemId: entry?.questions[0]?.itemId,
           timeZone: "UTC",

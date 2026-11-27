@@ -29,6 +29,10 @@
   "questions_left_blank": "f9eee1c3651b653ada744bf4b2a7ebe73473da1be2d1e9dd49e075ecd9ba1a12",
   "questions_mark_correct": "eeafa25065f7f752506334549e94b6065cc7d701bf28840476cbf35e879b8b4b",
   "questions_mark_wrong": "9e05d1fb2e72a94134a2d36de9b84a7818ce9cb2269add2dd6d7fa9ba3ca90a0",
+  "questions_match_first_tries": "d5a271e8c76733c1e09c76461a36d1e44668c31e6abe413dcbda5a16cbd5212f",
+  "questions_match_not_a_pair": "a6e50072bc4d5eaf36dd30d058b9e19754168357ff02af023dd97a63312f5848",
+  "questions_match_paired": "eff831180674624903bba7000921940a219e9b86efe00ca1613f499c74d0b04d",
+  "questions_match_unpaired": "7e218f17ffe451273501598009025cfb1ce33033b6346a58f05018829e2e686f",
   "questions_matched_with": "b2638afbeaf521387a821946109267b1ce988655edb4376b1e8b2c7872d91494",
   "questions_mistake_fixed": "35a246bf7ca3d42cb99fb2995863e109d74eebdb27f0d69c0ff27d8e71f4c817",
   "questions_mistakes_fixed": "5ab4316176c0a6ae3f409c6cc0de54cddeca916b1ddd9eafd93646f1e9dbe735",
@@ -75,6 +79,11 @@
     <string name="questions_place_wrong">Posizione %1$d, posizione sbagliata</string>
     <!-- An entry on the right read aloud with the entry on the left it was matched with. -->
     <string name="questions_matched_with">%1$s, in coppia con %2$s</string>
+    <string name="questions_match_paired">Abbinamento riuscito tra %1$s e %2$s. Coppie abbinate: %3$d su %4$d.</string>
+    <string name="questions_match_not_a_pair">%1$s e %2$s non vanno insieme.</string>
+    <string name="questions_match_unpaired">Hai tolto l’abbinamento tra %1$s e %2$s.</string>
+    <!-- Under a matching question's verdict, before the pairs of cards the learner first put together wrong, one per line as “card → card”. -->
+    <string name="questions_match_first_tries">Avevi abbinato:</string>
     <string name="questions_your_answer">La tua risposta</string>
     <string name="questions_mark_correct">Corretto</string>
     <string name="questions_mark_wrong">Errata</string>

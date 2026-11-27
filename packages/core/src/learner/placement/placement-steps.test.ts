@@ -83,7 +83,12 @@ function answer(
   outcome: PlacementEvidence["outcome"],
   format: PlacementEvidence["format"] = "multipleChoice",
 ): PlacementEvidence {
-  return { format, outcome, skillId };
+  return {
+    ...(format === "multipleChoice" && { content: { options: ["a", "b", "c", "d"], select: 1 } }),
+    format,
+    outcome,
+    skillId,
+  };
 }
 
 function place(evidence: PlacementEvidence[], skills = CHAIN) {

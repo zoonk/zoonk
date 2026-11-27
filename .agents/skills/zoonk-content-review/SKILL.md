@@ -1,10 +1,10 @@
 ---
 name: zoonk-content-review
-description: Review the content Zoonk generated in production over a window (plans, exam blueprints, skill graphs, courses, lessons, items, words), as the learner who got it would, against the sources it came from. Propose content fixes for what's wrong and start a fix thread for each cause in our code. Use for the weekly content review, or when asked to audit recent production content.
+description: Use for the weekly content review, or when asked to audit the plans, courses, lessons or exams Zoonk generated in production over a period.
 license: MIT
 metadata:
   author: zoonk
-  version: "1.0.0"
+  version: "1.2.0"
 ---
 
 # Review production content
@@ -55,7 +55,7 @@ Group findings that share a cause; one cause is one fix however many rows it tou
 
 ## Act
 
-- **Content:** propose every content fix of the run as one batch with `pnpm zoonk staff fixes propose` ([fix content](../zoonk-staff-data/SKILL.md#fix-content)), after checking `ContentFix` for a proposal already waiting on the same rows. When a code fix will regenerate the content after its release, leave that content to the fix's after-release work instead of fixing it by hand.
+- **Content:** propose every content fix of the run as one batch with `pnpm zoonk staff fixes propose` ([propose a fix](../zoonk-staff-data/references/propose-a-fix.md)), after checking `ContentFix` for a proposal already waiting on the same rows. When a code fix will regenerate the content after its release, leave that content to the fix's after-release work instead of fixing it by hand.
 - **Code:** for each cause, look for an open issue, PR or thread already on it (`gh issue list`, `gh pr list`, `t3_thread_search`). When none is, start a thread in its own worktree from `origin/main`, titled `Fix content: <the cause in a few words>`. Brief it with the evidence (what's wrong, how many rows of which models, the code path and the suspected cause), and tell it to confirm the cause first, follow the repository's AGENTS.md through a ready pull request, add the eval case or test that would have caught it, and fix the content already made, by an after-release trigger when a regeneration does it. When your harness can't start threads, list each cause with its evidence in your report.
 
 Briefs and threads stay on this machine, so they may name shared content (a lesson, a blueprint, an exam) by id. A learner's own data still goes in no brief, issue or PR: describe it by counts and shapes.

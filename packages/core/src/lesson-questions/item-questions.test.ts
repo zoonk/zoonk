@@ -10,9 +10,11 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { runDeferredWork } from "../_test-utils/deferred-work";
 import { mockSession } from "../_test-utils/mock-session";
+import { pickInMistake, shownOptionTexts } from "../_test-utils/shown-choice";
 import { trackServerEvent } from "../analytics/server";
 import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
 import { updateMemoryFromActivity } from "../memory/update-memory-from-activity";
+import { parseSessionItem, toSessionQuestion } from "../sessions/_utils/session-items";
 import { parseLessonQuestionContextSnapshot } from "./_utils/context-snapshot-schema";
 import { claimLessonQuestionAnswer } from "./answer-lifecycle";
 import { type LessonQuestionContextInput } from "./contract";
@@ -37,10 +39,10 @@ async function practiceQuestion() {
     skillId: skills[0]?.id ?? "",
   });
 
-  await mistakeFixture({ itemId: item.id, skillId: item.skillId, userId: user.id });
+  const mistake = await mistakeFixture({ itemId: item.id, skillId: item.skillId, userId: user.id });
 
   mockSession(user.id);
-  return { item, user };
+  return { item, mistake, user };
 }
 
 function ask({
@@ -83,8 +85,17 @@ async function claimedHistory(questionId: string) {
   return claimed.claim.priorTurns;
 }
 
-function missQuestion({ itemId, userId }: { itemId: string; userId: string }) {
-  return attemptFixture({ answer: { selectedIndex: 1 }, isCorrect: false, itemId, userId });
+async function missQuestion({
+  itemId,
+  mistakeId,
+  userId,
+}: {
+  itemId: string;
+  mistakeId: string;
+  userId: string;
+}) {
+  const answer = await pickInMistake({ mistakeId, right: false });
+  return attemptFixture({ answer, isCorrect: false, itemId, userId });
 }
 
 async function askedScreen(result: Awaited<ReturnType<typeof ask>>) {
@@ -114,7 +125,7 @@ describe("asking the buddy about a session's or practice's question", () => {
       language: item.language,
       question: {
         format: "multipleChoice",
-        options: ["Right answer", "Wrong answer"],
+        options: shownOptionTexts({ blockId: "", item }),
         text: "Which number is even?",
       },
       scope: { kind: "item" },
@@ -145,7 +156,7 @@ describe("asking the buddy about a session's or practice's question", () => {
     const after = await ask({ context: { answered: true, kind: "item" }, itemId: item.id });
 
     await expect(askedScreen(after)).resolves.toMatchObject({
-      answer: { correctAnswer: "Right answer", isCorrect: false, learnerAnswer: "Wrong answer" },
+      answer: { correctAnswer: "Right answer", isCorrect: false, learnerAnswer: null },
     });
 
     await expect(
@@ -158,7 +169,7 @@ describe("asking the buddy about a session's or practice's question", () => {
   });
 
   it("leaves what the buddy said about an earlier answer out of a hint's history until it's checked again", async () => {
-    const { item, user } = await practiceQuestion();
+    const { item, mistake, user } = await practiceQuestion();
 
     await askAnswered({
       answer: "Even numbers end in 0, 2, 4, 6 or 8.",
@@ -166,7 +177,7 @@ describe("asking the buddy about a session's or practice's question", () => {
       itemId: item.id,
     });
 
-    await missQuestion({ itemId: item.id, userId: user.id });
+    await missQuestion({ itemId: item.id, mistakeId: mistake.id, userId: user.id });
 
     await askAnswered({
       answer: "The right answer is the first one.",
@@ -208,7 +219,7 @@ describe("asking the buddy about a session's or practice's question", () => {
   });
 
   it("says which turns were asked about the learner's checked answer", async () => {
-    const { item, user } = await practiceQuestion();
+    const { item, mistake, user } = await practiceQuestion();
     const target = { itemId: item.id, kind: "item" } as const;
 
     const hint = await ask({ context: { answered: false, kind: "item" }, itemId: item.id });
@@ -218,7 +229,7 @@ describe("asking the buddy about a session's or practice's question", () => {
       where: { thread: { userId: user.id } },
     });
 
-    await missQuestion({ itemId: item.id, userId: user.id });
+    await missQuestion({ itemId: item.id, mistakeId: mistake.id, userId: user.id });
 
     const why = await ask({
       context: { answered: true, kind: "item" },
@@ -268,6 +279,65 @@ describe("asking the buddy about a session's or practice's question", () => {
       { answered: true, kind: "item" },
       { answered: true, kind: "item" },
     ]);
+  });
+
+  it("quotes a match answer only in the block that showed it", async () => {
+    const { item: practice, user } = await practiceQuestion();
+    const pairs = ["A", "B", "C", "D"].map((left) => ({ left, right: `${left} side` }));
+
+    const item = await itemFixture({
+      content: { pairs, question: "Match each letter to its side.", reason: "Letters." },
+      format: "matchPairs",
+      skillId: practice.skillId,
+    });
+
+    const session = await studySessionFixture({ userId: user.id });
+
+    const block = await studySessionBlockFixture({
+      kind: "review",
+      payload: { itemIds: [item.id] },
+      sessionId: session.id,
+    });
+
+    const parsed = parseSessionItem(item);
+
+    if (!parsed) {
+      throw new Error("The match item should parse");
+    }
+
+    const shown = toSessionQuestion({ blockId: block.id, item: parsed }).right ?? [];
+    const matches = pairs.map((pair) => shown.indexOf(pair.right));
+
+    await attemptFixture({
+      answer: { matches },
+      itemId: item.id,
+      studySessionId: session.id,
+      userId: user.id,
+    });
+
+    const solved = "A → A side; B → B side; C → C side; D → D side";
+
+    await expect(
+      askedScreen(
+        await ask({
+          context: { answered: true, blockId: block.id, kind: "item" },
+          itemId: item.id,
+        }),
+      ),
+    ).resolves.toMatchObject({
+      answer: { correctAnswer: solved, isCorrect: true, learnerAnswer: solved },
+    });
+
+    await prisma.lessonQuestion.updateMany({
+      data: { answer: "Each letter goes with its own side.", status: "completed" },
+      where: { thread: { userId: user.id } },
+    });
+
+    await expect(
+      askedScreen(await ask({ context: { answered: true, kind: "item" }, itemId: item.id })),
+    ).resolves.toMatchObject({
+      answer: { correctAnswer: solved, isCorrect: true, learnerAnswer: null },
+    });
   });
 
   it("keeps a checkpoint's questions out until the learner finishes it, even from practice", async () => {

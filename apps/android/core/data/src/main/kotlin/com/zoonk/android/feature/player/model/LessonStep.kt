@@ -237,4 +237,7 @@ data class ActivityFrame(
     val prompt: String,
     val check: ActivityCheck,
     val data: ActivityData? = null,
+    @kotlinx.serialization.Transient val hasSupportedCanvas: Boolean = true,
 )
+
+fun canvasOwnsAnswer(template: String): Boolean = template == "guessReveal"

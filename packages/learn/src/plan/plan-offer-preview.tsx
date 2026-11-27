@@ -11,7 +11,8 @@ import { useTimeAnswerTexts } from "../_components/time-answer";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { type GoalDateMove } from "../plan-diff/change-names";
 import { PlanEffectDiff, PlanEffectNote } from "../plan-diff/plan-effect-diff";
-import { usePlanScreen } from "./plan-context";
+import { usePlanScreen, useSubjectsTakenOut } from "./plan-context";
+import { useMoveDateToCoverLabel } from "./plan-coverage";
 import { useCanChooseFocus, useChooseFocus } from "./plan-focus";
 import { useFullCourse, useKeepStudyingLabel } from "./plan-full-course";
 import { type SlotItem, type SlotPreview, usePlanSuggestionSlot } from "./plan-suggestion-context";
@@ -142,7 +143,7 @@ export function OfferPreview({
           // Never applied before its effect is worked out, as Today's proposals.
           !unchanged &&
           effect !== null && (
-            <SuggestionAction action={onApply} busy={pending}>
+            <SuggestionAction onClick={onApply} busy={pending}>
               {t("Change my plan")}
             </SuggestionAction>
           )
@@ -204,6 +205,7 @@ export function useDateOffer() {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
   const { goal } = usePlanScreen();
+  const subjectsTakenOut = useSubjectsTakenOut();
 
   return function dateOffer(time: PlanTimeToCover): CoverageOffer | null {
     const { fittingDate } = time;
@@ -212,16 +214,26 @@ export function useDateOffer() {
       return null;
     }
 
+    const values = { date: formatDate(fittingDate, "sentence"), dateKind: "day" };
+
     return {
       description: [],
       operations: [{ kind: "setTargetDate", targetDate: fittingDate }],
-      title: t({
-        description:
-          'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
-        message:
-          "{dateKind, select, month {Your time covers everything by {date}} other {Your time covers everything by {date}}}",
-        values: { date: formatDate(fittingDate, "sentence"), dateKind: "day" },
-      }),
+      title: subjectsTakenOut
+        ? t({
+            description:
+              'When the learner took a part of their goal out of their plan. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
+            message:
+              "{dateKind, select, month {Your time covers everything in your plan by {date}} other {Your time covers everything in your plan by {date}}}",
+            values,
+          })
+        : t({
+            description:
+              'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
+            message:
+              "{dateKind, select, month {Your time covers everything by {date}} other {Your time covers everything by {date}}}",
+            values,
+          }),
     };
   };
 }
@@ -230,6 +242,7 @@ export function useDateOffer() {
 export function useSuggestedTimeOffer() {
   const answerTexts = useTimeAnswerTexts();
   const { goal, plan } = usePlanScreen();
+  const subjectsTakenOut = useSubjectsTakenOut();
   const exam = goal.kind === "exam";
   const { schedule } = plan;
 
@@ -242,7 +255,7 @@ export function useSuggestedTimeOffer() {
 
     const line =
       suggested.kind === "everything" && date
-        ? answerTexts.enoughBy({ date, exam })
+        ? answerTexts.enoughBy({ date, exam, subjectsTakenOut })
         : answerTexts.startsWithMost(exam);
 
     return {
@@ -261,14 +274,11 @@ export function OtherOptions({ onMoveDate }: { onMoveDate: (() => void) | null }
   const course = useFullCourse();
   const keepStudying = useKeepStudyingLabel();
   const { dismiss } = usePlanSuggestionSlot();
+  const moveDateLabel = useMoveDateToCoverLabel();
 
   return (
     <SuggestionMenu>
-      {onMoveDate && (
-        <DropdownMenuItem onClick={onMoveDate}>
-          {t("Move your date to cover everything")}
-        </DropdownMenuItem>
-      )}
+      {onMoveDate && <DropdownMenuItem onClick={onMoveDate}>{moveDateLabel}</DropdownMenuItem>}
       {canChooseFocus && (
         <DropdownMenuItem aria-haspopup="dialog" onClick={chooseFocus}>
           {t("Choose where to focus")}

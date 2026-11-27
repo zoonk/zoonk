@@ -1,5 +1,6 @@
 // A sample learner's screens as the app's own view models, typed against core with no `any`, so a
 // contract change fails the type check (npm run typecheck) instead of drawing a wrong screen.
+
 import { type GoalView } from "@repo/packages/core/src/goals/goal-contract.ts";
 import {
   type PlanPhaseView,
@@ -18,10 +19,10 @@ import {
   type SyllabusView,
 } from "@repo/packages/core/src/view-models/syllabus/syllabus-contract.ts";
 import { type TodayView } from "@repo/packages/core/src/view-models/today/get-today-view.ts";
+import { MS_PER_DAY } from "@repo/packages/utils/src/date.ts";
 import { TODAY } from "../story";
 import { type SampleLearner } from "./learners";
 
-const DAY_MS = 86_400_000;
 const STUDY_DAYS = [1, 2, 3, 4, 5];
 const today = TODAY.slice(0, 10);
 const utc = (iso: string) => new Date(`${iso}T00:00:00.000Z`);
@@ -117,6 +118,7 @@ function block(learner: SampleLearner, position: number): DayBlockView {
     extra: false,
     fullReview: false,
     kind: "learn",
+    lesson: { setAside: false, status: "ready" },
     lessonId: `lesson-${position}`,
     mistakesOnly: false,
     netScored: false,
@@ -125,6 +127,8 @@ function block(learner: SampleLearner, position: number): DayBlockView {
     planItemId: `item-${position}`,
     planItemKey: null,
     position,
+    practiceNumber: null,
+    preparing: false,
     questions: 8,
     refresh: false,
     reinforcement: false,
@@ -142,12 +146,13 @@ function block(learner: SampleLearner, position: number): DayBlockView {
 export function firstDay(learner: SampleLearner): UnstartedDayView {
   const blocks = learner.lessons.map((_, position) => block(learner, position));
   const localDate = utc(today);
-  const monday = localDate.getTime() - (localDate.getUTCDay() - 1) * DAY_MS;
+  const monday = localDate.getTime() - (localDate.getUTCDay() - 1) * MS_PER_DAY;
   const days = Array.from({ length: 7 }, (_, offset) => {
-    const date = new Date(monday + offset * DAY_MS);
+    const date = new Date(monday + offset * MS_PER_DAY);
     const before = date < localDate;
     const weekend = offset >= 5;
     return {
+      completed: 0,
       date,
       goalMinutes: before || weekend ? 0 : learner.minutesPerDay,
       hitGoal: false,
@@ -155,16 +160,18 @@ export function firstDay(learner: SampleLearner): UnstartedDayView {
       kind: before ? ("beforeStart" as const) : weekend ? ("rest" as const) : ("study" as const),
       minutes: 0,
       studied: false,
+      total: date.getTime() === localDate.getTime() ? blocks.length : 0,
     };
   });
   const minutes = learner.minutesPerDay;
 
   return {
+    alternativePosition: null,
     blocks,
     brainPower: 0,
     catchUp: null,
     current: true,
-    dayEndsAt: localDate.getTime() + DAY_MS + 3 * 3_600_000,
+    dayEndsAt: localDate.getTime() + MS_PER_DAY + 3 * 3_600_000,
     emptyDay: null,
     examAccess: { includesMockExams: false },
     examTomorrow: false,
@@ -183,7 +190,7 @@ export function firstDay(learner: SampleLearner): UnstartedDayView {
     sessionBar: { completed: 0, total: blocks.length },
     state: "underway",
     status: "unstarted",
-    week: { days, nextStudyDate: new Date(localDate.getTime() + DAY_MS) },
+    week: { days, nextStudyDate: new Date(localDate.getTime() + MS_PER_DAY) },
   };
 }
 
@@ -299,6 +306,7 @@ export function planView(learner: SampleLearner): PlanView {
       ),
     },
     shortPlan: null,
+    suggestedTime: null,
     status: { kind: "onTrack" },
     steering: {
       difficultyBias: "standard",
@@ -317,6 +325,7 @@ function subject(input: SampleLearner["subjects"][number], index: number): Sylla
   return {
     areas: [input.name],
     chapters: [],
+    covers: [],
     displayWeight: null,
     group: null,
     imageUrl: null,
@@ -388,8 +397,9 @@ export function todayView(learner: SampleLearner): TodayView {
     focusTest: null,
     goal: {
       dateEstimated: false,
-      daysLeft: Math.round((target.getTime() - utc(today).getTime()) / DAY_MS),
+      daysLeft: Math.round((target.getTime() - utc(today).getTime()) / MS_PER_DAY),
       displayName: learner.goal.displayName,
+      examDocument: "notice",
       id: learner.goalId,
       kind: learner.goal.kind,
       targetDate: target,

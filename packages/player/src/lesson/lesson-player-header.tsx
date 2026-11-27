@@ -1,5 +1,7 @@
 "use client";
 
+import { LessonSaveButton } from "@zoonk/learn/saved-lessons/save";
+import { type LessonSaves } from "@zoonk/learn/saved-lessons/saves";
 import { StatusRegion } from "@zoonk/learn/status-region";
 import { TaskClose } from "@zoonk/learn/task-close";
 import {
@@ -82,6 +84,27 @@ function UnsavedAnswers() {
   );
 }
 
+function LessonBookmark({ saves }: { saves: LessonSaves }) {
+  const { lesson, saved } = useLessonPlayerConfig();
+  const { state } = useLessonPlayer();
+
+  const saveState = {
+    saved: state.run.status === "started" ? state.run.saved : (saved ?? false),
+    target: lesson.id,
+  };
+
+  return (
+    <LessonSaveButton
+      className="shrink-0"
+      labelled={false}
+      onToggle={() => saves.toggle(saveState)}
+      saved={saves.isSaved(saveState)}
+      size="icon-bar"
+      variant="ghost"
+    />
+  );
+}
+
 function LessonProgress() {
   const t = useExtracted();
   const { screen, state } = useLessonPlayer();
@@ -115,7 +138,8 @@ function LessonProgress() {
   );
 }
 
-export function LessonPlayerHeader() {
+/** `saves` is null where the lesson can't be saved. */
+export function LessonPlayerHeader({ saves }: { saves: LessonSaves | null }) {
   const { lesson, slots } = useLessonPlayerConfig();
   const { state } = useLessonPlayer();
   const end = useCompletionProps();
@@ -147,6 +171,7 @@ export function LessonPlayerHeader() {
 
         <TaskHeaderSide align="end">
           <UnsavedAnswers />
+          {saves && <LessonBookmark saves={saves} />}
           <LessonScreenMenu />
         </TaskHeaderSide>
       </TaskHeaderBar>

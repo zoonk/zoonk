@@ -6,12 +6,12 @@ import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { dailyProgressFixtureMany, userProgressFixture } from "@zoonk/testing/fixtures/progress";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY, MS_PER_SECOND } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { markCertificateShown } from "../certificates/mark-certificate-shown";
 import { getTodayStudySession } from "./_test-utils/open-today";
 import {
-  DAY_MS,
   SESSION_NOW,
   SESSION_TODAY,
   dueSkillFixture,
@@ -25,7 +25,7 @@ import { scoreLessonAnswers } from "./score-lesson-answers";
 import { startStudyBlock } from "./start-study-block";
 import { stopStudySession } from "./stop-study-session";
 
-const daysFromToday = (days: number) => new Date(SESSION_TODAY.getTime() + days * DAY_MS);
+const daysFromToday = (days: number) => new Date(SESSION_TODAY.getTime() + days * MS_PER_DAY);
 
 async function setup() {
   const user = await userFixture();
@@ -201,7 +201,7 @@ describe("ending a session", () => {
 
   it("keeps the summary as the session ended, counts the day it was finished and owes what follows once", async () => {
     const user = await userFixture();
-    const targetDate = new Date(SESSION_TODAY.getTime() + 3 * DAY_MS);
+    const targetDate = new Date(SESSION_TODAY.getTime() + 3 * MS_PER_DAY);
 
     const { goal, lessons, plan, skills } = await sessionGoalFixture({
       challengesDone: true,
@@ -214,7 +214,7 @@ describe("ending a session", () => {
       layOutPlanFixture(plan.id),
       userProgressFixture({ currentEnergy: 40, totalBrainPower: 2480n, userId: user.id }),
       dueSkillFixture({
-        due: new Date(SESSION_NOW.getTime() + 10 * DAY_MS),
+        due: new Date(SESSION_NOW.getTime() + 10 * MS_PER_DAY),
         skillId: skills[0]?.id ?? "",
         userId: user.id,
       }),
@@ -456,7 +456,7 @@ describe("ending a session", () => {
       where: { id: session.id },
     });
 
-    vi.setSystemTime(SESSION_NOW.getTime() + DAY_MS);
+    vi.setSystemTime(SESSION_NOW.getTime() + MS_PER_DAY);
 
     const dayOver = { available: false, lessons: [], minutes: 10, reason: "dayOver" };
 
@@ -552,10 +552,33 @@ describe("ending a session", () => {
   });
 });
 
-const MS_PER_SECOND = 1000;
 const at = (second: number) => new Date(SESSION_NOW.getTime() + second * MS_PER_SECOND);
 
 describe(scoreLessonAnswers, () => {
+  it("scores the first answer to a step once when a later replay links to the bank", async () => {
+    const user = await userFixture();
+
+    const first = {
+      answeredAt: at(1),
+      id: crypto.randomUUID(),
+      isCorrect: false,
+      itemId: null,
+      stepId: crypto.randomUUID(),
+    };
+
+    const replay = {
+      ...first,
+      answeredAt: at(2),
+      id: crypto.randomUUID(),
+      isCorrect: true,
+      itemId: crypto.randomUUID(),
+    };
+
+    await expect(
+      scoreLessonAnswers({ answers: [first, replay], userId: user.id }),
+    ).resolves.toStrictEqual({ brainPower: 0, topHyperdrive: 0 });
+  });
+
   it("scores new answers with Hyperdrive and pays replayed questions less", async () => {
     const [user, skill] = await Promise.all([userFixture(), skillFixture()]);
 

@@ -429,6 +429,7 @@ struct DraftView: View {
   @ViewBuilder
   private func page(_ draft: OnboardingDraft) -> some View {
     switch draft.status {
+    case .unrecognized: EmptyView()
     case .understanding:
       UnderstandingWaitView(
         goal: draft.prompt, generationID: draft.generationId, onboardingID: draft.id,
@@ -538,12 +539,11 @@ private struct CloseTaskButton: ViewModifier {
   @Environment(AppRouter.self) private var router
 
   func body(content: Content) -> some View {
-    content.toolbar {
-      ToolbarItem(placement: .cancellationAction) {
-        Button(role: .close) {
-          router.dismissTask()
-        }
+    content.taskClose {
+      Button(role: .close) {
+        router.dismissTask()
       }
+      .leavesOnEscape()
     }
   }
 }

@@ -1,10 +1,11 @@
+import { basename } from "node:path";
 import { fileURLToPath } from "node:url";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { playwright } from "@vitest/browser-playwright";
 import { assertBrowserLaunchAllowed } from "@zoonk/testing/browser-preflight";
 import { stalledRunReporter } from "@zoonk/testing/stalled-run-reporter";
-import { type CDPSession, type Page, type Route } from "playwright";
+import { type BrowserContext, type CDPSession, type Page, type Route } from "playwright";
 import { configDefaults, defineConfig } from "vitest/config";
 import { type BrowserCommand } from "vitest/node";
 
@@ -15,6 +16,9 @@ const unitTests = ["src/**/*.test.ts", "src/**/*.test.tsx"];
 
 const touchTests = ["src/**/*.touch.browser.test.tsx"];
 
+const CI_BROWSER_CONNECT_TIMEOUT_MS = 90_000;
+const STALLED_RUN_TIMEOUT_MS = 120_000;
+
 const launchOptions = process.env.CI ? { channel: "chrome" } : {};
 
 const nextImageShim = fileURLToPath(
@@ -24,6 +28,33 @@ const nextImageShim = fileURLToPath(
 const webHapticsShim = fileURLToPath(
   new URL("src/_test-utils/shims/web-haptics-react.ts", import.meta.url),
 );
+
+const runtimeRoutes = new WeakMap<BrowserContext, Promise<void>>();
+
+const serveLocalRuntimes: BrowserCommand<[]> = ({ context }) => {
+  const installed = runtimeRoutes.get(context);
+
+  if (installed) {
+    return installed;
+  }
+
+  const routes = context.route(
+    /^https:\/\/cdn\.jsdelivr\.net\/(?:pyodide\/v[^/]+\/full|npm\/sql\.js@[^/]+\/dist)\/[^/]+$/u,
+    (route) => {
+      const { pathname } = new URL(route.request().url());
+      const directory = pathname.startsWith("/pyodide/") ? "pyodide" : "sql.js/dist";
+
+      const path = fileURLToPath(
+        new URL(`../core/node_modules/${directory}/${basename(pathname)}`, import.meta.url),
+      );
+
+      return route.fulfill({ headers: { "access-control-allow-origin": "*" }, path });
+    },
+  );
+
+  runtimeRoutes.set(context, routes);
+  return routes;
+};
 
 const emulateMedia: BrowserCommand<[Parameters<Page["emulateMedia"]>[0]]> = async (
   { page },
@@ -141,7 +172,8 @@ export default defineConfig({
         extends: true,
         test: {
           browser: {
-            commands: { answerPicture, emulateMedia, holdPictures, tap, touch },
+            commands: { answerPicture, emulateMedia, holdPictures, serveLocalRuntimes, tap, touch },
+            connectTimeout: process.env.CI ? CI_BROWSER_CONNECT_TIMEOUT_MS : undefined,
             enabled: true,
             headless: true,
             instances: [
@@ -165,7 +197,9 @@ export default defineConfig({
         },
       },
     ],
-    // Vitest's own deadlines in a page are 60 s at most, so a page silent for twice that is stuck.
-    reporters: [...configDefaults.reporters, stalledRunReporter({ quietMs: 120_000 })],
+    reporters: [
+      ...configDefaults.reporters,
+      stalledRunReporter({ quietMs: STALLED_RUN_TIMEOUT_MS }),
+    ],
   },
 });

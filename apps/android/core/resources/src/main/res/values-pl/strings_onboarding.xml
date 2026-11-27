@@ -35,8 +35,8 @@
   "onboarding_buddy_description": "af68f3efb439b65a20107e3c93a3542ee0402991cbac5384795ba736d1473aab",
   "onboarding_buddy_title": "ed19ec370e00c852c8343e201aa722fb58ed2efcaaada4b49d04ea4e8788ae8b",
   "onboarding_cancel": "63f4d6bf872960b3a566c8478a757ccbb3ec2645049f2e25239bcc9082393d82",
-  "onboarding_change_date": "64fa9b0f4f92d3fa25e72ab9c0e84445811eef365e8125e1a6828406785b7f57",
-  "onboarding_choose_date": "a0ee32c6febdd6e1f8e903ddaddfe2761b4ac302a213fe91e0311cb960050f51",
+  "onboarding_change_end_date": "43c26ad13b5583c257b480d899b6d32cbf8291bf89537be7f73f55a27ffc72b9",
+  "onboarding_change_exam_date": "ace8fc51548110a77cd884c8ecefc7ccdd8138f0277ece790a0e20574052fe05",
   "onboarding_continue": "66346dc40f787c5f51921d49e6b4b3cce5822b0a858636576dc45a2babb020b2",
   "onboarding_country_description": "d365adba0fb3989889d22c71c333b5bee8fb4856545d939fbd725461cca3f678",
   "onboarding_country_from_home": "dfdbd0649147952c08937e8ebd31e99e77ef1d9ff0cf6551669a23589ca820ae",
@@ -84,11 +84,6 @@
   "onboarding_fix_something": "ce5a881f888b0a2ed581c28bd07b503c60e260433c0f14b8d923a48359c69fe0",
   "onboarding_follow_ups_description": "0ba6e6661b5fbe12d199251676e1b88179966165e3164872719c64ac1bc54d8a",
   "onboarding_follow_ups_title": "474f0c1c44067e4a9b38504768b337127097ca1702aca4c85152ab399425a84f",
-  "onboarding_full_course": "cc787cf1d2a1d6b13e669de4b6f0e11e92b948b15d096f617916e1b9c588a674",
-  "onboarding_full_course_finish": "43b1726501b03e57d6747d7f875e05ea1b64a1a2ceaf33d84e603643bc2afcb4",
-  "onboarding_full_course_finish_month": "c8653f44622cc7b43524391024d15a8daaa9f82669fffbc6eece6aa1aa930e5e",
-  "onboarding_full_course_rule": "b5bfdfb3a84c19b6d3de1359b9264d8a6d0a083b6e212ec1ca2b7ffb45eaa09f",
-  "onboarding_full_course_until_exam": "ecd14b4c1b0701697f521656a116ca5080a75effbc7c0086f285a316f6454246",
   "onboarding_go_to_plan": "0a1348e01cf2d254f57b1891a60f63cb719b555024f349b3c95ed34bb9a32d9d",
   "onboarding_goals_at_once_line": "f0caec688addcf53eca359bd1d303e2b26a8ea6624bc2b59c7c758c00ba2f790",
   "onboarding_goals_at_once_title": "0e2302c019021c846cba8aec0a49e04d2a4bacda0e11107ff642c9870ccda7e1",
@@ -172,17 +167,13 @@
   "onboarding_placement_answer_failed": "1792b676282d66dd8575b0ab22940ac925d5d1f0f2c343263f0f15f90918a450",
   "onboarding_placement_confirm": "2c9ce11e78dd1a8a6f684c75ea0aad25b39e1b705723695d45af0f0dd6029c46",
   "onboarding_placement_dont_know": "c2f1f1adcd8931ed770570b8040263ba510c89df099194928f2460b23cdc1e56",
-  "onboarding_placement_false": "ac5caed6a92458242d68e76ce6316124c182c4c6448d672cee25e23f585ad644",
   "onboarding_placement_progress": "99067341bbd69e815af97526e9d8b66826f65c128aee36b1b909da05c5719fc5",
   "onboarding_placement_question_number": "dfd9886f88c4803b84b7a46203796f3e7a234a94db8b88b49d1be22693ef3784",
   "onboarding_placement_ready": "d40f60d6674bb7da6afd002a133fd0feab63e9ae255465d7a236637045e5e9aa",
-  "onboarding_placement_right": "ac264ec61c94109946f5de9be6dfd9129ae85977ebaa3234074248ad1bd663ed",
   "onboarding_placement_stop": "ba3c832aa7401776b468b7094fb2f63543c23e96a6d61a6fea4f2e41f34ac225",
-  "onboarding_placement_true": "fc0c09f61fe8a5e8ebbbcf7cdc02520db1b68427a95016f924768d4ec35f60c5",
   "onboarding_placement_unavailable_title": "e081a2e6d1de796211f97d223912ff8655888ffa654424c9cf0408159fef7946",
   "onboarding_placement_waiting_material": "521b474f039387ed4517acdb64262f75e5dcd5ec999acf9e06ea8c05cb19aedf",
   "onboarding_placement_waiting_time": "6ad927daebadf6eea83afb724fedbdb2e6109748ea33436bb7c3c7ab2c5b1ca0",
-  "onboarding_placement_wrong": "580be32900283ff6f404e66ba717dcca361e25c91c3cae7998937a2ccb47a4a5",
   "onboarding_plan_answers_saved": "80d2470c670ea42423e2b1c705631026008f07043041a610c65150463fb5dd6b",
   "onboarding_plan_not_started": "e58e677724da223ea0cb468f5e4ce158c05f548b97bde6aa8a72fbda199d6eac",
   "onboarding_plan_ready_goal": "6a379d107e3783f90edcbc59546c3b4b0efe21958453969068bd9465a80b2fbe",
@@ -315,6 +306,7 @@
   "onboarding_score_placeholder": "976c17a4be8307eb615c058cb32933c1b198e23cb65fc8ed2a2d983e01e456cb",
   "onboarding_score_title": "65ed83818ed251e7e4fe3793ed3df4caea4c5fe3f75eb38c0be5b8f24f5479b5",
   "onboarding_see_plan": "7f96c648e281157ce91a3536fee9a3d4b30cd7020abeef7717be67f44252cfca",
+  "onboarding_set_end_date": "8908f46f819f2f79e8d309730b589a11d00a387ae70f81e7527fac3c451d1fa3",
   "onboarding_skip": "9970bbd186f0a59c6958adacf80161f7f8c8a867a89c4109f199ad389a48e217",
   "onboarding_source": "ff59000a3ce9b03de7772fc2392d9a2f4bc9440d21f91a42513eb368a9dd88cc",
   "onboarding_start_description": "2071e4c89b97676c76840ca37edd080ff1f407da39f952b614207ae617843da6",
@@ -587,13 +579,6 @@
     <string name="onboarding_placement_confirm">Potwierdź</string>
     <string name="onboarding_placement_stop">Przerwij i użyj moich odpowiedzi</string>
     <string name="onboarding_placement_answer_failed">Nie udało się przesłać odpowiedzi. Nic nie przepadło.</string>
-    <!-- The two answers to a statement judged true or false. -->
-    <string name="onboarding_placement_true">Prawda</string>
-    <string name="onboarding_placement_false">Fałsz</string>
-    <!-- An answer option judging a statement right, for exams that word it so, such as Cebraspe. Not feedback on the learner's answer. -->
-    <string name="onboarding_placement_right">Poprawne</string>
-    <!-- An answer option judging a statement wrong, for exams that word it so, such as Cebraspe. Not feedback on the learner's answer. -->
-    <string name="onboarding_placement_wrong">Błędne</string>
     <string name="onboarding_placement_unavailable_title">Sprawdzimy, co już wiesz, w ciągu kilku pierwszych dni</string>
     <!-- The level test: a language goal's placement, in reading and listening. -->
     <string name="onboarding_language_test_new_alphabet">Nie znasz jeszcze tego alfabetu? Pomiń test. Na pierwszej lekcji nauczysz się go czytać.</string>
@@ -776,18 +761,10 @@
         <item quantity="other">%d dni</item>
     </plurals>
     <string name="onboarding_schedule_title">Ile czasu dziennie możesz poświęcić na naukę?</string>
-    <string name="onboarding_full_course">Ucz się dalej po egzaminie</string>
-    <string name="onboarding_full_course_rule">Do egzaminu pierwszeństwo mają tematy, które pojawiają się najczęściej. To, co się nie mieści, przerabiasz po egzaminie.</string>
-    <string name="onboarding_full_course_until_exam">Do egzaminu pierwszeństwo mają tematy, które pojawiają się najczęściej.</string>
-    <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's day with its year, such as "May 5, 2027". -->
-    <string name="onboarding_full_course_finish">Przy %1$s nauki dziennie koniec planu przypada na %2$s, już po egzaminie (%3$s).</string>
-    <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "prévu en %3$s"). -->
-    <string name="onboarding_full_course_finish_month">Przy %1$s nauki dziennie koniec planu przypada na %2$s, już po egzaminie (%3$s).</string>
     <string name="onboarding_schedule_time_label">Dzienny czas nauki</string>
-    <!-- A link under the daily time that opens the question about the goal's date, when the goal has no date. -->
-    <string name="onboarding_choose_date">Wybierz datę</string>
-    <!-- The same link when the goal has a date. -->
-    <string name="onboarding_change_date">Zmień datę</string>
+    <string name="onboarding_change_exam_date">Zmień datę egzaminu</string>
+    <string name="onboarding_change_end_date">Zmień datę zakończenia</string>
+    <string name="onboarding_set_end_date">Ustaw datę końcową</string>
     <string name="onboarding_study_days">Dni nauki</string>
     <string name="onboarding_answers_saved">Twoje odpowiedzi są zapisane.</string>
     <!-- On a setup question when the plan's run never started. -->

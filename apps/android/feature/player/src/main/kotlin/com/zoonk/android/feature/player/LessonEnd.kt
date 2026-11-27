@@ -17,9 +17,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -80,6 +77,7 @@ import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.freeLessonReady
 import com.zoonk.android.ui.components.limitWords
+import com.zoonk.android.ui.components.rememberSecondsLeft
 import com.zoonk.android.ui.components.stillReviewLine
 import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.format.currentLocale
@@ -91,9 +89,8 @@ import com.zoonk.api.models.LearnerSummaryBuddy
 import com.zoonk.api.models.LessonFit
 import com.zoonk.api.models.LibraryLessonCompletion
 import com.zoonk.api.models.Milestone
-import kotlinx.coroutines.delay
+import java.time.Instant
 import kotlin.math.roundToLong
-import kotlin.time.Duration.Companion.seconds
 
 /** The notes under a screen that draws its own result: the streak and where the question goes next. */
 @Composable
@@ -131,7 +128,7 @@ fun LessonAccessScreen(
         is LessonRefusal.Limited -> {
             val limit = refusal.limit
             if (limit is Limit.SlowDown) {
-                SlowDown(limit.retryAfterSeconds.toLong(), onRetry)
+                SlowDown(limit.until, onRetry)
             } else {
                 refusal.reached()?.let { Limited(it) }
             }
@@ -281,24 +278,19 @@ private fun Limited(reached: Limit.Reached) {
     }
 }
 
-/** Counts down, then opens the lesson by itself. */
+/** Counts down to [until], then opens the lesson by itself; a refusal after that counts its own wait. */
 @Composable
 private fun SlowDown(
-    retryAfterSeconds: Long,
+    until: Instant,
     onRetry: () -> Unit,
 ) {
-    var secondsLeft by rememberSaveable(retryAfterSeconds) { mutableLongStateOf(retryAfterSeconds) }
+    val shown = rememberSecondsLeft(until)
+    val over = shown <= 0
 
-    LaunchedEffect(secondsLeft) {
-        if (secondsLeft <= 0) {
-            onRetry()
-        } else {
-            delay(1.seconds)
-            secondsLeft--
-        }
+    LaunchedEffect(until, over) {
+        if (over) onRetry()
     }
 
-    val shown = secondsLeft.coerceAtLeast(0)
     AccessLayout(
         R.drawable.ic_hourglass_empty,
         stringResource(R.string.player_slow_down_title),

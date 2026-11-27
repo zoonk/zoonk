@@ -3,6 +3,7 @@ import { itemFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { pickInPlacement } from "../../_test-utils/shown-choice";
 import { learnerGoalFixture } from "../_test-utils/learner-goal";
 import { answerPlacementQuestion } from "./answer-placement-question";
 import { getGoalPlacement } from "./get-goal-placement";
@@ -21,6 +22,7 @@ describe("placement tap questions", () => {
         reason: "The letters follow the alphabet",
       },
       expected: {
+        key: null,
         left: ["A", "B", "C", "D"],
         options: null,
         right: expect.arrayContaining(["1", "2", "3", "4"]),
@@ -64,7 +66,7 @@ describe("placement tap questions", () => {
       const second = await answerPlacementQuestion({
         goalId: goal.id,
         input: {
-          answer: { selectedIndex: 0 },
+          answer: await pickInPlacement({ itemId: first.placement.next.itemId }),
           durationMs: 100,
           itemId: first.placement.next.itemId,
         },

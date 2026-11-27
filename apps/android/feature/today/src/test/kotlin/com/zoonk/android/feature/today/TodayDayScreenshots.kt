@@ -9,10 +9,12 @@ import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.AppSnackbars
+import com.zoonk.android.data.ApiClients
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.SignInResult
+import com.zoonk.android.feature.challenge.MockScheduleStore
 import com.zoonk.android.feature.exam.FakeMockApi
 import com.zoonk.android.feature.focustest.unusedFocusTests
 import com.zoonk.android.feature.mock.MockStore
@@ -43,6 +45,8 @@ import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
+import okhttp3.HttpUrl.Companion.toHttpUrl
+import okhttp3.OkHttpClient
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
@@ -178,6 +182,14 @@ class TodayDayScreenshots {
         )
     }
 
+    @Test
+    @Config(qualifiers = "w411dp-h1100dp-xxhdpi")
+    fun mockExamPhone() = render("today-mock-exam-phone", mockExam(), schedule = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h1100dp-night-xxhdpi")
+    fun mockExamPhoneDark() = render("today-mock-exam-phone-dark", mockExam(), schedule = true)
+
     private class Day(
         val session: JsonObject,
         val today: List<Pair<String, Any?>> = emptyList(),
@@ -188,6 +200,7 @@ class TodayDayScreenshots {
         day: Day,
         unfinished: String? = null,
         paused: Boolean = false,
+        schedule: Boolean = false,
     ) {
         val session = JsonObject(day.session + ("sessionBar" to sessionBar(day.session)))
         val today = decodeFixture<Today>("today", "session" to session, *day.today.toTypedArray())
@@ -244,7 +257,17 @@ class TodayDayScreenshots {
                         buddyName = "Zu",
                         snackbars = AppSnackbars(),
                         refreshIfChanged = { false },
+                        refreshIfLessonsMoved = {},
                         onboarding = onboarding,
+                        schedule =
+                            if (schedule) {
+                                MockScheduleStore(
+                                    ApiClients("http://localhost:1/".toHttpUrl(), OkHttpClient()),
+                                    cache,
+                                ) { "UTC" }
+                            } else {
+                                null
+                            },
                     )
                 }
             }
@@ -548,6 +571,46 @@ class TodayDayScreenshots {
             put("value", 0.6)
             put("weekGain", 0.0)
         }
+
+    /** A day whose mock exam is still to come, with the action to move it. */
+    private fun mockExam() =
+        Day(
+            day(
+                "underway",
+                listOf(
+                    lesson(0, "Cell membranes", "subject" to "Biology", "status" to "completed"),
+                    lesson(1, "Mitosis and meiosis", "subject" to "Biology"),
+                    block(
+                        2,
+                        "practice",
+                        "estimatedMinutes" to 90,
+                        "questions" to 45,
+                        "title" to "Mock exam",
+                        "planItemId" to "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d90",
+                        "checkpoint" to
+                            buildJsonObject {
+                                put("kind", "boss")
+                                put("phase", 2)
+                                put("rematch", false)
+                                put("mock", true)
+                                put(
+                                    "mockIdentity",
+                                    buildJsonObject {
+                                        put("day", null as Int?)
+                                        put("fullLength", true)
+                                    },
+                                )
+                                put("passMark", 27)
+                                put("timeLimitMinutes", 90)
+                            },
+                    ),
+                ),
+                next = 1,
+                left = 96,
+                done = 6,
+                dailyGoal = 102,
+            ),
+        )
 
     private fun checkpoint() =
         buildJsonObject {

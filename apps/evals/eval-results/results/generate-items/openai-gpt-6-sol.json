@@ -220,7 +220,11 @@
           "kind": "majorErrors",
           "score": 8
         },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
         {
           "conclusion": "For a modest progression in difficulty, one prompt could ask the learner to combine two safety points in a short patient explanation, such as the prescribed dose and timing. Keep the independently checkable key points and the under-one-minute response length.",
           "kind": "potentialImprovements",
@@ -292,7 +296,11 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
         {
           "conclusion": "The difficulty progression is weak for an intermediate set. The supposedly hard third item explicitly states that the withheld information is protected by legal confidentiality, making the publicity exception straightforward. The second item similarly supplies nearly every condition needed to approve the simplification.",
           "kind": "minorErrors",
@@ -382,7 +390,11 @@
           "kind": "minorErrors",
           "score": 8
         },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expectations": "Digital SAT Math student-produced-response items in English on percent change, stored as math data. The variable ranges must keep every new version sensible, the solution expression must compute the answer and the common mistakes must be real (for example dividing by the new value instead of the original).",
@@ -458,8 +470,16 @@
           "kind": "majorErrors",
           "score": 6
         },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expectations": "Digital SAT Math student-produced-response (grid-in) items in English whose answers are fractions such as 2/3 or 5/8, stored as math data. The answer box takes a fraction or a decimal, so no question asks to round, the answer for every combination of the variable ranges is a positive value that fits a grid-in, and the common mistakes are real (inverting the fraction, using the part instead of the remainder).",
@@ -470,7 +490,10 @@
             "name": "Digital SAT Math",
             "optionCount": 4,
             "style": "A short context or equation, one direct question and 4 options (A to D), or a student-produced numeric response; calculator allowed; plain, precise wording with no trick phrasing.",
-            "entry": { "kind": "fraction", "places": null }
+            "entry": {
+              "kind": "fraction",
+              "places": null
+            }
           },
           "format": "numeric",
           "language": "en",
@@ -531,9 +554,21 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expectations": "No items: \"Words in Context\" is a Digital SAT Reading and Writing skill, choosing the most precise word for a passage, so it has no problem whose answer is one number the learner works out. The right output is an empty items list. Any item fails the case, above all one that forces a number onto the skill (counting words or letters, a line number, a year, a share of a passage).",
@@ -541,7 +576,10 @@
         "userInput": {
           "count": 3,
           "examFormat": {
-            "entry": { "kind": "fraction", "places": null },
+            "entry": {
+              "kind": "fraction",
+              "places": null
+            },
             "name": "Digital SAT",
             "optionCount": 4,
             "style": "Reading and Writing: short passages, each with one question and 4 options (A to D). Math: a short context or equation with 4 options, or a student-produced numeric response typed into a grid."
@@ -610,7 +648,11 @@
           "kind": "majorErrors",
           "score": 6
         },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
         {
           "conclusion": "Show the simultaneous equations in the alloy solution before presenting the derived expression. Use the missing third item for a different stoichiometric task, such as a limiting-reagent calculation, to broaden practice.",
           "kind": "potentialImprovements",
@@ -626,7 +668,10 @@
             "name": "JEE Main",
             "optionCount": 4,
             "style": "Physics, chemistry and mathematics problems for engineering admission in India: multiple-choice questions with four options where one or more may be correct (full marks only when every correct option is chosen and no wrong one), and numerical-answer questions entered as a number; concise, rigorous wording with SI units.",
-            "entry": { "kind": "integer", "places": null }
+            "entry": {
+              "kind": "integer",
+              "places": null
+            }
           },
           "format": "numeric",
           "language": "en",
@@ -687,8 +732,16 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
         {
           "conclusion": "Make the validity of the motion intervals explicit in the worked explanations: in item 1, show that the next meeting always occurs after reversal because speed > 2*other_speed throughout the ranges; in item 3, explain that relative velocity changes from positive to negative at 2*duration, establishing the maximum separation before overtaking.",
           "kind": "potentialImprovements",
@@ -704,7 +757,10 @@
             "name": "JEE Advanced",
             "optionCount": 4,
             "style": "Physics, chemistry and mathematics problems for engineering admission in India: multiple-choice questions with four options where one or more may be correct (full marks only when every correct option is chosen and no wrong one), and numerical-answer questions entered as a number; concise, rigorous wording with SI units.",
-            "entry": { "kind": "integer", "places": null }
+            "entry": {
+              "kind": "integer",
+              "places": null
+            }
           },
           "format": "numeric",
           "language": "en",
@@ -797,88 +853,6 @@
           "skill": {
             "description": "Usar vocabulário, expressões e estruturas linguísticas para entender o tema e a função de textos em espanhol.",
             "name": "Interpretar vocabulário e estruturas de textos em espanhol"
-          }
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "correctness",
-          "reasoning": "Independent calculation confirms the unique correct set is the first two options in every item. Item 1 gives distance 20 m, displacement 5 m, first-five-second displacement −2 m, and acceleration 2 m/s² at 6 s. Item 2 gives a meeting 2/3 s after the second launch, a fall of 20/9 m from the first ball's peak, and relative speed 30 m/s. Item 3 gives maximum position 18 m, position 10 m at 5 s, final position −6 m, and distance 42 m; its subsequent monotonic motion establishes exactly one return crossing. The keys and explanations are accurate.",
-          "score": 10,
-          "label": "Correctness",
-          "weight": 30
-        },
-        {
-          "categoryId": "misconceptionsAndFeedback",
-          "reasoning": "All distractors have specific, plausible misconception labels and explanations identifying the mistaken operation or reasoning. The numerical mistakes reproduce their options: taking the magnitude of −2 m gives +2 m; dividing distance 20 m by 10 s gives 2 m/s; subtracting asynchronous launch speeds gives 10 m/s; and treating the first-stage displacement as distance gives 10 + 16 = 26 m. The qualitative traps likewise reflect realistic timing and direction errors.",
-          "score": 10,
-          "label": "Misconceptions & feedback",
-          "weight": 25
-        },
-        {
-          "categoryId": "realism",
-          "reasoning": "The four-option, independently judged multiple-select structure, SI units, and concise wording fit the requested format. However, the difficulty is uneven and includes a textbook-level single-slope option explicitly excluded by the expectations. The second item also contains a direction claim that bypasses its main relative-motion calculation. This prevents the set from consistently resembling the requested JEE Advanced level, triggering the maximum score of 7.",
-          "score": 7,
-          "label": "Exam and setting realism",
-          "weight": 25
-        },
-        {
-          "categoryId": "skillFit",
-          "reasoning": "The set is entirely in English and appropriately covers piecewise velocity graphs, delayed vertical launches, and successive constant-acceleration intervals with reversal. These are distinct applications rather than recall or duplicate questions. Nevertheless, not every option demands the requested advanced combination of ideas: the single-slope statement is a clear depth weakness, and the first ball's direction can be inferred without solving the meeting problem.",
-          "score": 8,
-          "label": "Skill fit & variety",
-          "weight": 20
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 3 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 3352,
-          "outputTokens": 1225,
-          "reasoningTokens": 481
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "The set does not consistently meet the explicitly required JEE Advanced difficulty. Item 1's acceleration statement requires only one slope calculation, (4 − (−2))/(8 − 5) = 2 m/s², directly violating the requirement that no statement follow from one formula or graph reading. Item 2's rising/descending statement can also be resolved simply by observing that the first ball reaches its peak at the second launch, without solving the relative-motion problem.",
-          "kind": "majorErrors",
-          "score": 7
-        },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        {
-          "conclusion": "Replace the directly readable acceleration statement with a claim requiring both graph interpretation and accumulated displacement, such as a comparison of positions at different times. Strengthen the second item's direction statement by asking about a meeting-dependent quantity that requires actually solving the relative motion.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
-      "testCase": {
-        "expectations": "JEE Advanced-style physics items in English on kinematics where one or more options are correct. Each item has 4 options, at least one correct and at least one wrong, every correct option is right on its own (never \"both A and C\"), wrong options come from real mistakes (sign of acceleration, mixing displacement and distance), and fixedOrder is false. Difficulty matches JEE Advanced's own one-or-more-correct questions, not a textbook's: each item needs several steps that combine at least two ideas (a graph read and then integrated, a relative motion set up and then solved), so no statement follows from one formula or one reading of a given value.",
-        "id": "en-jee-advanced-kinematics-multi-correct-1",
-        "userInput": {
-          "count": 3,
-          "examFormat": {
-            "name": "JEE Advanced",
-            "optionCount": 4,
-            "style": "Physics, chemistry and mathematics problems for engineering admission in India: multiple-choice questions with four options where one or more may be correct (full marks only when every correct option is chosen and no wrong one), and numerical-answer questions entered as a number; concise, rigorous wording with SI units.",
-            "select": "all"
-          },
-          "format": "multipleChoice",
-          "language": "en",
-          "level": "advanced",
-          "skill": {
-            "description": "Use the equations of motion for constant acceleration, including motion under gravity, and read velocity-time graphs.",
-            "name": "Kinematics in one dimension"
           }
         }
       }
@@ -1013,7 +987,11 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
         {
           "conclusion": "Items 1 and 3 test percent increase in essentially the same way, using counts and identical distractor patterns. The easy/medium/hard labels also do not reflect a meaningful progression: all three require the same straightforward calculation.",
           "kind": "minorErrors",
@@ -1090,7 +1068,11 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
         {
           "conclusion": "All three questions give a percentage and a single base amount, then ask directly for the resulting monetary amount. Different percentages introduce some computational variety, but the repeated task structure triggers the skill-fit cap for questions testing the same thing the same way.",
           "kind": "minorErrors",
@@ -1415,8 +1397,16 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
         {
           "conclusion": "The first item's feedback could reinforce why temperatures closer to zero are warmer. Using a different everyday context for the second item would also broaden the set beyond two freezer scenarios.",
           "kind": "potentialImprovements",
@@ -1492,7 +1482,11 @@
           "kind": "majorErrors",
           "score": 7
         },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
         {
           "conclusion": "Make the difficulty progression substantive rather than mainly changing the cell part. For example, replace one identification-and-function item with a simple prediction about what happens when the membrane cannot control substance movement. Keep the explicit one-or-two-sentence limit and independently checkable key points.",
           "kind": "potentialImprovements",
@@ -1651,7 +1645,11 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
         {
           "conclusion": "Part (a) describes one trial as the reference for every changed condition, which obscures the need to compare inhibitor-present and inhibitor-absent trials at the same substrate concentration when evaluating inhibition. Part (d) asks students to predict an outcome already explicitly reported in the table, weakening the prediction task.",
           "kind": "minorErrors",
@@ -1741,7 +1739,11 @@
           "kind": "minorErrors",
           "score": 8
         },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expectations": "One ENEM essay prompt (redação) in Brazilian Portuguese: a theme with short motivating texts and the standard command for a dissertative-argumentative text with an intervention proposal. The rubric uses ENEM's five competencies, and since ENEM's grid doesn't give its rows points of their own, every row's points is null.",
@@ -1812,9 +1814,21 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expectations": "ENEM-style Natural Sciences items in US English about household electricity use (energy is power times time, in kWh, and its cost). Each item has a short everyday support text and 5 options; distractors come from typical mistakes such as not converting watts to kilowatts or minutes to hours, or using the wrong number of days. All learner-facing text must be in English.",
@@ -1886,9 +1900,21 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expectations": "ENEM-style Mathematics items in Brazilian Portuguese about successive percentage changes. Distractors should come from typical mistakes such as adding the percentages (10% + 20% = 30%) or applying the second change to the original value. Every item needs 5 options. People and towns come from CAST, a different person and town in each item, and no reason points at an option by its place (\"a segunda\", \"alternativa B\"): each names the option by what it says.",
@@ -1960,7 +1986,11 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
         {
           "conclusion": "Item 2 introduces two legal problems rather than the requested single trap: revocation cannot operate retroactively, and a permit whose effects were exhausted by the completed event is not subject to revocation. The feedback explains only retroactivity, leaving the second problem unaddressed.",
           "kind": "minorErrors",
@@ -2126,8 +2156,16 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
         {
           "conclusion": "The sign-error feedback could be more instructional by showing the correct expression alongside the mistaken one. For example, in item 2, explicitly contrast 2(x - 4) = 2x - 8 with the incorrect positive constant.",
           "kind": "potentialImprovements",
@@ -2236,6 +2274,94 @@
             "description": "Reconhecer marcas de variação linguística em falas transcritas e explicar seu efeito de sentido e sua adequação à situação.",
             "example": "Na fala «a gente se reunia toda sexta», «a gente» marca um registro informal, adequado a uma conversa entre vizinhos.",
             "name": "Variação linguística em falas transcritas"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "A and B form the unique correct set in each item. For Leah, the signed segment areas sum to 4 − 6 + 3 + 4 = 5 m, the absolute areas sum to 20 m, and the slope at 6 s is 2 m/s². For the balls, a 20 m gap closes at 30 m/s in 2/3 s, during which the first ball falls 20/9 m. The cart's successive positions at 0, 3, 5 and 9 s are 0, 18, 10 and −6 m; it travels 42 m and crosses the origin once while moving in the negative direction.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The distractors trace to specific mistakes, and the feedback explains why each fails. For example, subtracting the balls' nonsimultaneous launch speeds gives the offered 10 m/s, and treating the cart's first-stage displacement as distance gives the offered 10 + 16 = 26 m. The direction traps likewise identify which earlier velocity the learner has incorrectly carried forward.",
+          "score": 10,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The four-option structure, SI units and delayed-launch problem fit the requested exam. However, every stem repeats the prohibited selection cue, and the graph's acceleration claim is a routine slope calculation rather than the explicitly requested JEE Advanced level of reasoning.",
+          "score": 7,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The English-language set exercises three distinct applications: integrating a velocity graph, solving relative motion under gravity, and tracking a reversal across acceleration stages. The first item's slope-only option underuses the requested multi-step skill, but the set otherwise tests application rather than recall.",
+          "score": 8,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "itemsScored": 3,
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 1271,
+          "cacheWriteTokens": 2677,
+          "inputTokens": 3951,
+          "outputTokens": 731,
+          "reasoningTokens": 45
+        }
+      },
+      "keyFlaws": [],
+      "steps": [
+        {
+          "conclusion": "All three stems include “Select all that apply,” explicitly duplicating the app instruction. The first item also falls short of the required difficulty: its acceleration option needs only the slope of a single graph segment, with no second inference.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The graph specifies unequal time intervals as category labels. If those labels are rendered at equal spacing, the visual slopes and areas will not be proportional to acceleration and displacement, even though the labeled values are sufficient to solve the problem.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Replace the first item's direct slope check with a claim about position when the velocity next reaches zero. That would require locating the reversal by interpolation and accumulating signed area up to that time. Varying the placement of the correct options would also avoid repeating A and B as the key in every item.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "JEE Advanced-style physics items in English on kinematics where one or more options are correct. Each item has 4 options, at least one correct and at least one wrong, every correct option is right on its own (never \"both A and C\"), wrong options come from real mistakes (sign of acceleration, mixing displacement and distance), and fixedOrder is false. Difficulty matches JEE Advanced's own one-or-more-correct questions, not a textbook's: each item needs several steps that combine at least two ideas (a graph read and then integrated, a relative motion set up and then solved), so no statement follows from one formula or one reading of a given value. No question says how many options to pick or that several are right (\"Select all that apply\"): the app shows that line.",
+        "id": "en-jee-advanced-kinematics-multi-correct-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "JEE Advanced",
+            "optionCount": 4,
+            "style": "Physics, chemistry and mathematics problems for engineering admission in India: multiple-choice questions with four options where one or more may be correct (full marks only when every correct option is chosen and no wrong one), and numerical-answer questions entered as a number; concise, rigorous wording with SI units.",
+            "select": "all"
+          },
+          "format": "multipleChoice",
+          "language": "en",
+          "level": "advanced",
+          "skill": {
+            "description": "Use the equations of motion for constant acceleration, including motion under gravity, and read velocity-time graphs.",
+            "name": "Kinematics in one dimension"
           }
         }
       }

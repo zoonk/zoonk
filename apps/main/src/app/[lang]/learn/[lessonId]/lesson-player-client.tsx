@@ -18,7 +18,9 @@ import {
   requestExampleLine,
 } from "@/lib/lessons/lesson-help-requests";
 import { checkLessonStep } from "@/lib/lessons/lesson-step-check";
+import { takeStudyNavigation } from "@/lib/lessons/wait-for-user-activation";
 import { getLevelCheckHref } from "@/lib/placement-test/level-check-href";
+import { saveLessonIn } from "@/lib/saved-lessons/save-lesson";
 import { type LessonOpening } from "@/lib/session/lesson-opening";
 import { requestSpokenGrade } from "@/lib/speech/spoken-answer-request";
 import { trackEvent } from "@zoonk/core/analytics/client";
@@ -67,12 +69,15 @@ const FINISHED_CHAPTER_SLOT: Pick<LessonPlayerSlots, "finishedChapter"> = {
 };
 
 function createAdapters({
+  goalId,
   learnerId,
   lessonId,
   studySessionId,
   opening,
   onOpened,
 }: {
+  /** The active goal: a lesson is saved from one, so without it the player has no bookmark. */
+  goalId: string | null;
   opening: LessonOpening;
   onOpened: (opening: StudyBlockOpening) => void;
   learnerId: string | null;
@@ -90,6 +95,7 @@ function createAdapters({
     getLessonPictures: (stepIds) => getLessonPicturesAction(lessonId, stepIds),
     gradeSpokenAnswer: (input) => requestSpokenGrade({ ...input, studySessionId: visit.sessionId }),
     requestExampleLine,
+    ...(goalId && { saveLesson: saveLessonIn(goalId) }),
     startLesson: (input) =>
       startLibraryLesson({
         lessonId,
@@ -118,6 +124,7 @@ type LessonPlayerClientProps = {
   lesson: PlayableLibraryLesson;
   outline?: boolean;
   resume?: LessonRunAnswers;
+  saved?: boolean;
   routing?: LessonRouting;
   finishedBlockId?: string | null;
   opening?: LessonOpening;
@@ -136,6 +143,7 @@ function LessonPlayerVisit({
   lesson,
   outline = false,
   resume,
+  saved,
   routing = DEFAULT_ROUTING,
   finishedBlockId = null,
   opening = null,
@@ -153,6 +161,7 @@ function LessonPlayerVisit({
   const adapters = useMemo(
     () =>
       createAdapters({
+        goalId: lessonGoalId,
         learnerId,
         lessonId: lesson.id,
         onOpened: (destination) => {
@@ -186,7 +195,7 @@ function LessonPlayerVisit({
         opening,
         studySessionId,
       }),
-    [learnerId, lesson.id, opening, router, studySessionId],
+    [learnerId, lesson.id, lessonGoalId, opening, router, studySessionId],
   );
 
   const { buddy, canAsk, goalId } = tutorViewer;
@@ -238,9 +247,11 @@ function LessonPlayerVisit({
       linkComponent={LearningLink}
       outline={outline}
       resume={resume}
+      saved={saved}
       routes={routes}
       slots={slots}
       soundsEnabled={soundsEnabled}
+      takeNavigationStart={opening ? takeStudyNavigation : undefined}
       track={trackEvent}
       tutor={tutor}
       viewer={{ learnerId }}

@@ -1,5 +1,6 @@
 import { spawnSync } from "node:child_process";
 import path from "node:path";
+import { isJsonObject } from "../../../packages/utils/src/json.ts";
 
 export type DeviceFamily = "ipad" | "iphone";
 
@@ -12,6 +13,8 @@ export type Simulator = {
 };
 
 type SimulatorCatalog = { devices: Record<string, Simulator[]> };
+
+export const TEMPORARY_TEST_SIMULATOR_NAME = "Zoonk Lease Test";
 
 const DEVICE_TYPE_PREFIXES = {
   ipad: "com.apple.CoreSimulator.SimDeviceType.iPad-",
@@ -64,12 +67,8 @@ export function readCommand({
   return result.stdout.trim();
 }
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null;
-}
-
 function isSimulator(value: unknown): value is Simulator {
-  if (!isRecord(value)) {
+  if (!isJsonObject(value)) {
     return false;
   }
 
@@ -83,7 +82,7 @@ function isSimulator(value: unknown): value is Simulator {
 }
 
 function isSimulatorCatalog(value: unknown): value is SimulatorCatalog {
-  if (!isRecord(value) || !isRecord(value.devices)) {
+  if (!isJsonObject(value) || !isJsonObject(value.devices)) {
     return false;
   }
 
@@ -108,7 +107,9 @@ export function listSimulators(): SimulatorCatalog {
 }
 
 function isDeviceType(value: unknown): value is { identifier: string; name: string } {
-  return isRecord(value) && typeof value.identifier === "string" && typeof value.name === "string";
+  return (
+    isJsonObject(value) && typeof value.identifier === "string" && typeof value.name === "string"
+  );
 }
 
 /** Xcode names its simulators after their model; other tools, like simlock, name theirs. */
@@ -118,7 +119,7 @@ function listModelNames(): Map<string, string> {
   );
 
   if (
-    !isRecord(list) ||
+    !isJsonObject(list) ||
     !Array.isArray(list.devicetypes) ||
     !list.devicetypes.every((deviceType) => isDeviceType(deviceType))
   ) {
@@ -193,4 +194,57 @@ export function getNewestSimulators({
   }
 
   return runtime;
+}
+
+export function getTestSimulators() {
+  const catalog = listSimulators();
+  const { devices, runtimeIdentifier } = getNewestSimulators({ catalog, family: "iphone" });
+
+  const temporary = (catalog.devices[runtimeIdentifier] ?? []).filter(
+    (device) => device.name === TEMPORARY_TEST_SIMULATOR_NAME,
+  );
+
+  return {
+    create() {
+      const deviceTypeIdentifier =
+        devices[0]?.deviceTypeIdentifier ?? PREFERRED_DEVICE_TYPES.iphone;
+
+      const udid = readCommand({
+        arguments: [
+          "simctl",
+          "create",
+          TEMPORARY_TEST_SIMULATOR_NAME,
+          deviceTypeIdentifier,
+          runtimeIdentifier,
+        ],
+        command: "xcrun",
+      });
+
+      return {
+        deviceTypeIdentifier,
+        isAvailable: true,
+        name: TEMPORARY_TEST_SIMULATOR_NAME,
+        state: "Shutdown",
+        udid,
+      };
+    },
+    devices: [...temporary, ...devices.toReversed()],
+  };
+}
+
+export function getTestDestination(destination: string) {
+  const match = /^(?:platform=iOS Simulator,)?id=(?<id>[\da-f-]+)$/iu.exec(destination);
+  const id = match?.groups?.id?.toUpperCase();
+
+  const device = Object.values(listSimulators().devices)
+    .flat()
+    .find(({ udid }) => udid === id);
+
+  if (!device) {
+    throw new Error(
+      "Select an available simulator with TEST_DESTINATION='platform=iOS Simulator,id=<udid>'.",
+    );
+  }
+
+  return { devices: [device] };
 }

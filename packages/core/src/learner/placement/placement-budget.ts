@@ -1,6 +1,6 @@
-const DAY_PLACEMENT_ANSWERS = 12;
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
 
-const MS_PER_MINUTE = 60_000;
+const DAY_PLACEMENT_ANSWERS = 12;
 
 /** Also what a learner is told the short test takes: it stops at this much answering. */
 export const DAY_PLACEMENT_MINUTES = 4;

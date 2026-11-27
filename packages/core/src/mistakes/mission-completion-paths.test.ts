@@ -26,6 +26,7 @@ import {
   testCallCompletionInput,
 } from "../_test-utils/connect-test-call";
 import { reviewRunsInline } from "../_test-utils/review-runs";
+import { pickInMistake } from "../_test-utils/shown-choice";
 import { completeLanguageConversation } from "../language/conversations/complete-language-conversation";
 import { getLanguageConversation } from "../language/conversations/get-language-conversation";
 import { practiceMistakePattern } from "../language/patterns/practice-mistake-pattern";
@@ -184,7 +185,12 @@ describe("missions completed outside a study block", () => {
     ]);
 
     const answered = await answerMistakePractice({
-      input: { answer: { selectedIndex: 0 }, durationMs: 5000, itemId: item.id, timeZone: "UTC" },
+      input: {
+        answer: await pickInMistake({ mistakeId: mistake.id }),
+        durationMs: 5000,
+        itemId: item.id,
+        timeZone: "UTC",
+      },
       mistakeId: mistake.id,
     });
 
@@ -874,8 +880,8 @@ describe("missions completed outside a study block", () => {
     ).resolves.toBe(1);
 
     await expect(
-      prisma.usageRecord.count({ where: { kind: "tutorMessage", userId: user.id } }),
-    ).resolves.toBe(0);
+      prisma.usageRecord.findMany({ where: { kind: "tutorMessage", userId: user.id } }),
+    ).resolves.toMatchObject([{ targetId: created.status === "created" && created.question.id }]);
 
     await expect(
       prisma.userProgress.findUniqueOrThrow({ where: { userId: user.id } }),

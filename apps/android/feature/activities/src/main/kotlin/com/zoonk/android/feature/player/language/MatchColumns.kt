@@ -1,65 +1,35 @@
 package com.zoonk.android.feature.player.language
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.liveRegion
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
-import androidx.compose.ui.unit.dp
-import com.zoonk.android.R
-import com.zoonk.android.feature.activities.sorting.MatchBoard
-import com.zoonk.android.feature.activities.sorting.MatchSide
-import com.zoonk.android.feature.activities.sorting.SolvedMatchBoard
+import androidx.compose.ui.text.AnnotatedString
+import com.zoonk.android.feature.activities.ActivityCanvas
 import com.zoonk.android.feature.player.model.LessonAnswer
+import com.zoonk.android.feature.player.steps.FocusPrimaryOnceChecked
+import com.zoonk.android.feature.player.steps.LocalBoardMisses
 import com.zoonk.android.feature.player.steps.QuestionScene
-import com.zoonk.android.ui.components.AnswerResult
-import com.zoonk.android.ui.components.answerTone
-import com.zoonk.android.ui.theme.ZoonkRadius
-import kotlinx.coroutines.delay
-
-/** One side's item: [index] is its row in its own column. */
-internal data class MatchItem(
-    val left: Boolean,
-    val index: Int,
-)
-
-/** A tried pair, by row on each side. */
-internal data class MatchAttempt(
-    val left: Int,
-    val right: Int,
-)
+import com.zoonk.android.feature.questions.Announcement
+import com.zoonk.android.feature.questions.LetGoOnBack
+import com.zoonk.android.feature.questions.MatchBoard
+import com.zoonk.android.feature.questions.MatchEntry
+import com.zoonk.android.feature.questions.MatchMisses
+import com.zoonk.android.feature.questions.MatchNumberKeys
+import com.zoonk.android.feature.questions.MatchSide
+import com.zoonk.android.feature.questions.MatchSpot
+import com.zoonk.android.feature.questions.MatchWork
+import com.zoonk.android.feature.questions.rememberMatchBoardState
+import com.zoonk.android.ui.richtext.SpokenText
 
 /**
- * Main's `MatchColumnsStep`: tap a word on each side to pair them. A right pair stays matched; a wrong
- * one flashes and counts as a mistake. The answer goes once every pair is matched, and the board then
- * shows each word with its partner, so the learner sees what goes together.
+ * Main's `MatchColumnsStep`: the shared match board on the activity's panel, each pair checked as it's made. A right
+ * pair stays matched; a wrong one shows briefly and counts as a mistake. The last pair sends the answer and checks it
+ * through [onDone], and the board then shows each word with its partner.
  */
 @Composable
 internal fun MatchColumnsView(
@@ -68,110 +38,88 @@ internal fun MatchColumnsView(
     answer: LessonAnswer?,
     checked: Boolean,
     locked: Boolean,
-    onAnswer: (LessonAnswer?) -> Unit,
+    onPick: () -> Unit,
+    onRestore: (LessonAnswer) -> Unit,
+    onDone: (LessonAnswer) -> Unit,
+    takeNumberKeys: (((Int) -> Boolean)?) -> Unit,
     question: @Composable () -> Unit,
 ) {
     val lefts = content.pairs.map(MatchPair::left)
-    var matched by rememberSaveable { mutableStateOf(initialMatches(answer, lefts, rightItems)) }
-    var selected by rememberSaveable { mutableStateOf<Pair<Boolean, Int>?>(null) }
-    var mistakes by rememberSaveable { mutableIntStateOf((answer as? LessonAnswer.MatchColumns)?.mistakes ?: 0) }
-    var flashing by remember { mutableStateOf<MatchAttempt?>(null) }
-    val haptics = LocalHapticFeedback.current
-    val allMatched = matched.size == content.pairs.size
-    val rights = if (allMatched) content.pairs.map(MatchPair::right) else rightItems
+    val words = { spot: MatchSpot -> stripWrappingQuotes((if (spot.side == MatchSide.Left) lefts else rightItems)[spot.index]) }
+    val earlier = (answer as? LessonAnswer.MatchColumns)?.mistakes ?: 0
+    val board =
+        rememberMatchBoardState(
+            count = lefts.size,
+            goesWith = { l, r -> content.pairs.any { it.left == lefts[l] && it.right == rightItems[r] } },
+            name = words,
+            content,
+            rightItems,
+            initial = { MatchWork(pairs = initialMatches(answer, lefts, rightItems).toMap()) },
+        )
+    val work = board.work
+    val ended = board.isComplete
+
+    fun answerOf(next: MatchWork) =
+        LessonAnswer.MatchColumns(lefts.indices.map { lefts[it] to rightItems[next.pairs.getValue(it)] }, earlier + next.misses.size)
 
     // After the app was closed in the background, the saved pairs come back but the player's answer doesn't.
     LaunchedEffect(Unit) {
-        if (answer == null && !checked && allMatched) {
-            onAnswer(LessonAnswer.MatchColumns(matched.map { (l, r) -> lefts[l] to rightItems[r] }, mistakes))
+        if (answer == null && !checked && board.isComplete) onRestore(answerOf(work))
+    }
+
+    var sent by remember { mutableStateOf(false) }
+    FocusPrimaryOnceChecked(sent, checked)
+
+    // The verdict names the first misses from the board's saved work, so a recreated screen still shows them.
+    val showMisses = LocalBoardMisses.current
+    val misses = @Composable { MatchMisses(work.misses) { side, index -> SpokenText(AnnotatedString(words(MatchSpot(side, index)))) } }
+    LaunchedEffect(ended, showMisses) {
+        if (ended) showMisses?.value = misses
+    }
+
+    fun tap(spot: MatchSpot) {
+        if (locked) return
+        onPick()
+        val next = board.tap(spot)
+        if (next.isComplete(lefts.size)) {
+            sent = true
+            onDone(answerOf(next))
         }
     }
 
-    LaunchedEffect(flashing) {
-        if (flashing != null) {
-            delay(FLASH_MILLIS)
-            flashing = null
-        }
-    }
+    fun canTap(spot: MatchSpot) = !ended && !checked && !locked && work.partnerOf(spot) == null
 
-    fun tap(item: MatchItem) {
-        val pairs = matched.map { (l, r) -> MatchAttempt(l, r) }
-        if (locked || flashing != null || pairs.any { if (item.left) it.left == item.index else it.right == item.index }) return
-        val previous = selected?.let { (left, index) -> MatchItem(left, index) }
-        when {
-            previous == null -> {
-                selected = item.left to item.index
-            }
-
-            previous.left == item.left -> {
-                selected = if (previous == item) null else item.left to item.index
-            }
-
-            else -> {
-                val attempt = if (item.left) MatchAttempt(item.index, previous.index) else MatchAttempt(previous.index, item.index)
-                selected = null
-                val right = content.pairs.any { it.left == lefts[attempt.left] && it.right == rightItems[attempt.right] }
-                if (right) {
-                    haptics.performHapticFeedback(HapticFeedbackType.Confirm)
-                    val next = matched + (attempt.left to attempt.right)
-                    matched = next
-                    if (next.size == content.pairs.size) {
-                        onAnswer(LessonAnswer.MatchColumns(next.map { (l, r) -> lefts[l] to rightItems[r] }, mistakes))
-                    }
-                } else {
-                    haptics.performHapticFeedback(HapticFeedbackType.Reject)
-                    mistakes += 1
-                    flashing = attempt
-                }
-            }
-        }
-    }
+    MatchNumberKeys(takeNumberKeys, lefts.size) { spot -> canTap(spot).also { if (it) tap(spot) } }
+    board.LetGoOnBack(enabled = !ended && !checked && !locked)
 
     QuestionScene {
         question()
 
-        val rows = List(minOf(lefts.size, rights.size)) { it }
-        val cell: @Composable (MatchSide, Int, Modifier) -> Unit = { side, row, modifier ->
-            val item = MatchItem(side == MatchSide.Left, row)
-            val isMatched = matched.any { (l, r) -> if (item.left) l == row else r == row }
-            val isFlashing = flashing?.let { if (item.left) it.left == row else it.right == row } == true
-            MatchCell(
-                label = stripWrappingQuotes(if (item.left) lefts[row] else rights[row]),
-                picked = selected == (item.left to item.index),
-                result =
-                    when {
-                        isMatched -> AnswerResult.Right
-                        isFlashing -> AnswerResult.Wrong
-                        else -> null
-                    },
-                enabled = !locked && !isMatched && !isFlashing,
-                onTap = { tap(item) },
+        val card: @Composable (MatchSide, Int, Modifier) -> Unit = { side, index, modifier ->
+            val spot = MatchSpot(side, index)
+            val partner = work.partnerOf(spot)
+            val state = work.stateOf(spot, held = false, ended = ended)
+            MatchEntry(
+                state = state,
+                onClick = { tap(spot) }.takeIf { canTap(spot) },
                 modifier = modifier,
+                place = spot.place(lefts.size),
+                pair = work.pairNumber(spot),
+                label = board.label(spot, partner),
+                cue = work.cue,
+            ) { Text(words(spot)) }
+        }
+        ActivityCanvas {
+            MatchBoard(
+                lefts.indices.toList(),
+                rightItems.indices.toList(),
+                solved = if (ended) lefts.indices.map { it to work.pairs.getValue(it) } else null,
+                card = card,
             )
         }
-        if (allMatched) {
-            SolvedMatchBoard(rows.map { it to it }, card = cell)
-        } else {
-            MatchBoard(rows, rows, alignRows = true, card = cell)
-        }
-
-        // What TalkBack hears that the eye gets from color: a wrong pair, then every pair matched.
-        val announcement =
-            when {
-                allMatched -> stringResource(R.string.player_language_all_matched)
-                flashing != null -> stringResource(R.string.player_language_not_a_pair)
-                else -> ""
-            }
-        Box(
-            Modifier.size(1.dp).semantics {
-                liveRegion = LiveRegionMode.Polite
-                contentDescription = announcement
-            },
-        )
+        board.Announcement()
     }
 }
-
-private const val FLASH_MILLIS = 800L
 
 private fun initialMatches(
     answer: LessonAnswer?,
@@ -187,40 +135,5 @@ private fun initialMatches(
         usedLeft += l
         usedRight += r
         l to r
-    }
-}
-
-@Composable
-private fun MatchCell(
-    label: String,
-    picked: Boolean,
-    result: AnswerResult?,
-    enabled: Boolean,
-    onTap: () -> Unit,
-    modifier: Modifier,
-) {
-    val tone = answerTone(picked, result)
-    val shape = RoundedCornerShape(ZoonkRadius.option)
-    val state =
-        when {
-            result == AnswerResult.Right -> stringResource(R.string.player_language_matched)
-            picked -> stringResource(R.string.player_language_selected)
-            else -> null
-        }
-
-    Row(
-        modifier =
-            modifier
-                .heightIn(min = 48.dp)
-                .clip(shape)
-                .background(tone.container)
-                .border(tone.border, shape)
-                .clickable(enabled = enabled, role = Role.Button, onClick = onTap)
-                .semantics { state?.let { stateDescription = it } }
-                .padding(horizontal = 12.dp, vertical = 12.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.Top,
-    ) {
-        Text(label, style = MaterialTheme.typography.bodyLarge)
     }
 }

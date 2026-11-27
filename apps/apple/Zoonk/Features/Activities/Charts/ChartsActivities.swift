@@ -2,11 +2,11 @@ import SwiftUI
 
 enum ChartsActivities {
   static let renderers: [ActivityRenderer] = [
-    ActivityRenderer(template: "chartReader") { context in
-      ChartsFields(context: context) { ChartReaderCanvas(context: context, fields: $0) }
+    ActivityRenderer(template: "chartReader") { context, fields in
+      ChartReaderCanvas(context: context, fields: fields)
     },
-    ActivityRenderer(template: "distributionExplorer") { context in
-      ChartsFields(context: context) { DistributionExplorerCanvas(context: context, fields: $0) }
+    ActivityRenderer(template: "distributionExplorer") { context, fields in
+      DistributionExplorerCanvas(context: context, fields: fields)
     },
     ActivityRenderer(
       template: "randomSimulation",
@@ -21,12 +21,12 @@ enum ChartsActivities {
         if case .chance = try? content.fields(as: RandomSimulationFields.self) { return true }
         return false
       },
-      canvas: { context in
-        ChartsFields(context: context) { RandomSimulationCanvas(context: context, fields: $0) }
+      canvas: { context, fields in
+        RandomSimulationCanvas(context: context, fields: fields)
       }
     ),
-    ActivityRenderer(template: "numberLine") { context in
-      ChartsFields(context: context) { NumberLineCanvas(context: context, fields: $0) }
+    ActivityRenderer(template: "numberLine") { context, fields in
+      NumberLineCanvas(context: context, fields: fields)
     },
     ActivityRenderer(
       template: "lineCrossing", badge: .always(.moveLine),
@@ -35,36 +35,36 @@ enum ChartsActivities {
           LineCrossingModel.grade($0, answer)
         } ?? false
       },
-      canvas: { context in
-        ChartsFields(context: context) { LineCrossingCanvas(context: context, fields: $0) }
+      canvas: { context, fields in
+        LineCrossingCanvas(context: context, fields: fields)
       }
     ),
-    ActivityRenderer(template: "formulaModel") { context in
-      ChartsFields(context: context) { FormulaModelCanvas(context: context, fields: $0) }
+    ActivityRenderer(template: "formulaModel") { context, fields in
+      FormulaModelCanvas(context: context, fields: fields)
     },
     ActivityRenderer(
       template: "patternTable",
       grade: { content, answer in
         (try? content.fields(as: PatternTableFields.self))?.grade(answer) ?? false
       },
-      canvas: { context in
-        ChartsFields(context: context) { PatternTableCanvas(context: context, fields: $0) }
+      canvas: { context, fields in
+        PatternTableCanvas(context: context, fields: fields)
       }
     ),
-    ActivityRenderer(template: "patternTester") { context in
-      ChartsFields(context: context) { PatternTesterCanvas(context: context, fields: $0) }
+    ActivityRenderer(template: "patternTester") { context, fields in
+      PatternTesterCanvas(context: context, fields: fields)
     },
-    ActivityRenderer(template: "areaModel") { context in
-      ChartsFields(context: context) { AreaModelCanvas(context: context, fields: $0) }
+    ActivityRenderer(template: "areaModel") { context, fields in
+      AreaModelCanvas(context: context, fields: fields)
     },
-    ActivityRenderer(template: "balance") { context in
-      ChartsFields(context: context) { BalanceCanvas(context: context, fields: $0) }
+    ActivityRenderer(template: "balance") { context, fields in
+      BalanceCanvas(context: context, fields: fields)
     },
-    ActivityRenderer(template: "unitCircle", badge: .always(.turnIt)) { context in
-      ChartsFields(context: context) { UnitCircleCanvas(context: context, fields: $0) }
+    ActivityRenderer(template: "unitCircle", badge: .always(.turnIt)) { context, fields in
+      UnitCircleCanvas(context: context, fields: fields)
     },
-    ActivityRenderer(template: "geometryBoard", badge: .always(.dragCorner)) { context in
-      ChartsFields(context: context) { GeometryBoardCanvas(context: context, fields: $0) }
+    ActivityRenderer(template: "geometryBoard", badge: .always(.dragCorner)) { context, fields in
+      GeometryBoardCanvas(context: context, fields: fields)
     },
     ActivityRenderer(
       template: "moleculeBuilder",
@@ -78,22 +78,9 @@ enum ChartsActivities {
 
         return MoleculeModel.isComplete(build, target)
       },
-      canvas: { context in
-        ChartsFields(context: context) { MoleculeBuilderCanvas(context: context, fields: $0) }
+      canvas: { context, fields in
+        MoleculeBuilderCanvas(context: context, fields: fields)
       }
     ),
   ]
-}
-
-/// Content that doesn't decode (a template changed on the server before the app) leaves the canvas
-/// out, and the check still works.
-struct ChartsFields<Fields: Decodable, Canvas: View>: View {
-  let context: ActivityCanvasContext
-  @ViewBuilder let canvas: (Fields) -> Canvas
-
-  var body: some View {
-    if let fields = try? context.fields(as: Fields.self) {
-      canvas(fields)
-    }
-  }
 }

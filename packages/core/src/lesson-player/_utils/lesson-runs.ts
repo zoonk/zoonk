@@ -1,6 +1,6 @@
 import "server-only";
 import { type Attempt, type LearningEvent, type TransactionClient, prisma } from "@zoonk/db";
-import { MS_PER_DAY } from "@zoonk/utils/date";
+import { MS_PER_WEEK } from "@zoonk/utils/date";
 import { getString } from "@zoonk/utils/json";
 import { CURRENT_STEPS } from "../../library/lessons/lesson-versions";
 import { CAPSULE_LEDGER_KIND } from "../../milestones/award-milestones";
@@ -163,38 +163,61 @@ export function findResumableRun(
 }
 
 /** Progress survives a weekend, but a lesson left longer than a week starts over. */
-const PROGRESS_WINDOW_MS = 7 * MS_PER_DAY;
+const PROGRESS_WINDOW_MS = MS_PER_WEEK;
 
 type ProgressRun = Pick<LearningEvent, "contentIds" | "startedAt">;
+
+function lessonRunsWhere({ lessonId, userId }: { lessonId: string; userId: string }) {
+  return {
+    contentIds: { equals: lessonId, path: ["lessonId"] },
+    kind: { in: [...LESSON_RUN_KINDS] },
+    userId,
+  };
+}
+
+/** When the learner last finished the lesson, or null if they never have. */
+export async function findLastLessonFinish({
+  client = prisma,
+  lessonId,
+  userId,
+}: {
+  client?: TransactionClient;
+  lessonId: string;
+  userId: string;
+}): Promise<Date | null> {
+  const finished = await client.learningEvent.findFirst({
+    orderBy: { endedAt: "desc" },
+    select: { endedAt: true },
+    where: { ...lessonRunsWhere({ lessonId, userId }), ...NOT_A_CAPSULE, endedAt: { not: null } },
+  });
+
+  return finished?.endedAt ?? null;
+}
 
 /** Oldest first, bounded by until and the last completion, at most one week back. */
 export async function loadProgressRuns({
   client = prisma,
+  finishedAt,
   lessonId,
   until,
   userId,
 }: {
   client?: TransactionClient;
+  /** The last completion, when the caller already read it. */
+  finishedAt?: Date | null;
   lessonId: string;
   until: Date;
   userId: string;
 }): Promise<ProgressRun[]> {
-  const lessonRuns = {
-    contentIds: { equals: lessonId, path: ["lessonId"] },
-    kind: { in: [...LESSON_RUN_KINDS] },
-    userId,
-  };
+  const lessonRuns = lessonRunsWhere({ lessonId, userId });
 
-  const finished = await client.learningEvent.findFirst({
-    orderBy: { endedAt: "desc" },
-    select: { endedAt: true },
-    where: { ...lessonRuns, endedAt: { not: null } },
-  });
+  const finished =
+    finishedAt === undefined
+      ? await findLastLessonFinish({ client, lessonId, userId })
+      : finishedAt;
 
   const windowStart = new Date(until.getTime() - PROGRESS_WINDOW_MS);
-
-  const after =
-    finished?.endedAt && finished.endedAt > windowStart ? finished.endedAt : windowStart;
+  const after = finished && finished > windowStart ? finished : windowStart;
 
   return client.learningEvent.findMany({
     orderBy: { startedAt: "asc" },

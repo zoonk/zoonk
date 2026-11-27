@@ -67,7 +67,6 @@
   "player_create_account_to_save": "4d47e7c517e235adb59356437ac7d880dc56dbda4ff90845768fc2c71236ad2c",
   "player_didnt_get_it": "2baf1d8da2fdd09850d68ba3a7cf1e87a9c2828fe48c9d130f7fe1a11cec58e0",
   "player_done": "a4e9646c524011e053a3f1bc023df5902c0b97981df586214b70bed93bc3eb5d",
-  "player_dont_know_yet": "7e05563ef48817f0d8c348a88cd47b29e124f5148532d056bf5e3d6db66c05ca",
   "player_drawing_picture": "6a2bfe1939744e01b878d99f7e44d237380229b17aca82578f48c5f601f8a3a6",
   "player_enter_hint": "06108e643aaf58826b9fdf6b737ed38ae91af43e51a42473120fdcc2edc9aa2e",
   "player_example": "6d45bd647726eb4b5b16870518efcdef444428662f572cb5c4fcceea5cc70af9",
@@ -289,7 +288,6 @@
     </plurals>
     <string name="player_in_your_own_words">Avec tes propres mots</string>
     <string name="player_cant_write_now">Sauter les questions à réponse écrite aujourd’hui</string>
-    <string name="player_dont_know_yet">Je ne sais pas encore</string>
     <!-- Button asking Zoonk to show the explanation before the learner answers. It doesn't tell the learner to explain. -->
     <string name="player_explain_first">Voir d’abord l’explication</string>
     <string name="player_enter_hint">Appuie sur Entrée pour vérifier, Maj+Entrée pour passer à la ligne.</string>

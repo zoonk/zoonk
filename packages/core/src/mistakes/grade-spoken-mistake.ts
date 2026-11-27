@@ -8,6 +8,7 @@ import {
 import { schedulePronunciationReviews } from "../language/pronunciation/schedule-pronunciation-reviews";
 import { getAnswerAttemptId, recordAnswerOnce } from "../learner/_utils/answer-once";
 import { getLearnerTimeZone } from "../learner/_utils/goal-time-zone";
+import { runAnswerGrade } from "../learner/_utils/run-answer-grade";
 import { toCheckResult } from "../lesson-player/_utils/check-results";
 import { type PlayableLibraryStep } from "../lesson-player/playable-lesson";
 import {
@@ -26,7 +27,6 @@ import {
 } from "../library/language/spoken-answer-contract";
 import { saveDayBeforeActivity } from "../sessions/ensure-study-session";
 import { getSession } from "../users/get-session";
-import { runMistakeGrade } from "./_utils/mistake-grade";
 import { finishPracticeAnswer } from "./_utils/practice-feedback";
 import { visibleMistakeWhere } from "./_utils/visible-mistake";
 import { applyDrillRules } from "./drill-answer";
@@ -91,7 +91,7 @@ export async function gradeSpokenMistake({
     return usage;
   }
 
-  const graded = await runMistakeGrade({
+  const graded = await runAnswerGrade({
     attemptId,
     cacheWithoutModelClaim: true,
     grade: async () => ({

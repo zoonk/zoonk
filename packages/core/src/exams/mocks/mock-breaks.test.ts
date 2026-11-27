@@ -3,8 +3,10 @@ import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtur
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { pickItemInMock } from "../../_test-utils/shown-choice";
 import { getItemAudienceFilter } from "../../library/items/item-field";
 import { SESSION_NOW } from "../../sessions/_test-utils/session-goal";
 import { endMockBreak } from "./end-mock-break";
@@ -17,7 +19,6 @@ import { submitMockSection } from "./submit-mock-section";
 
 const CITATION = { passage: "From the notice.", sourceId: "source" };
 const UTC = "UTC";
-const MINUTE_MS = 60_000;
 const AREAS = ["Physics", "Mathematics"] as const;
 
 const STRUCTURE = {
@@ -139,11 +140,15 @@ async function answer({ id, right }: { id: string; right: number }) {
   const running = await readMock(id);
 
   await Promise.all(
-    (running.current?.questions ?? []).map((question, index) =>
+    (running.current?.questions ?? []).map(async (question, index) =>
       saveMockAnswer({
         blockId: id,
         input: {
-          answer: { selectedIndex: (right < 0 ? index > 0 : index < right) ? 0 : 1 },
+          answer: await pickItemInMock({
+            itemId: question.itemId,
+            mockId: id,
+            right: right < 0 ? index > 0 : index < right,
+          }),
           durationMs: 30_000,
           flagged: false,
           itemId: question.itemId,
@@ -180,7 +185,7 @@ describe("a mock with the notice's breaks, tools and penalty", () => {
     const onBreak = await readMock(id);
 
     expect(onBreak).toMatchObject({
-      breakUntil: new Date(SESSION_NOW.getTime() + 10 * MINUTE_MS).toISOString(),
+      breakUntil: new Date(SESSION_NOW.getTime() + 10 * MS_PER_MINUTE).toISOString(),
       current: null,
       status: "running",
     });
@@ -200,7 +205,7 @@ describe("a mock with the notice's breaks, tools and penalty", () => {
       }),
     ).resolves.toStrictEqual({ status: "notRunning" });
 
-    vi.setSystemTime(SESSION_NOW.getTime() + 3 * MINUTE_MS);
+    vi.setSystemTime(SESSION_NOW.getTime() + 3 * MS_PER_MINUTE);
 
     await expect(endMockBreak({ blockId: id })).resolves.toStrictEqual({ status: "started" });
 
@@ -210,7 +215,7 @@ describe("a mock with the notice's breaks, tools and penalty", () => {
     expect(next).toMatchObject({ breakUntil: null });
 
     expect(next.current?.deadline).toBe(
-      new Date(SESSION_NOW.getTime() + (3 + minutes) * MINUTE_MS).toISOString(),
+      new Date(SESSION_NOW.getTime() + (3 + minutes) * MS_PER_MINUTE).toISOString(),
     );
 
     await expect(endMockBreak({ blockId: id })).resolves.toStrictEqual({ status: "notOnBreak" });
@@ -302,7 +307,7 @@ describe("a mock with the notice's breaks, tools and penalty", () => {
     const { id } = await breakSetup();
 
     await submitMockSection({ blockId: id, input: { timeZone: UTC }, section: 0 });
-    vi.setSystemTime(SESSION_NOW.getTime() + 11 * MINUTE_MS);
+    vi.setSystemTime(SESSION_NOW.getTime() + 11 * MS_PER_MINUTE);
 
     const next = await readMock(id);
 

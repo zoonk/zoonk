@@ -2,16 +2,16 @@ import "server-only";
 import { type Attempt, type Mistake } from "@zoonk/db";
 import { z } from "zod";
 import { recordAnswerOnce } from "../../learner/_utils/answer-once";
+import { runAnswerGrade } from "../../learner/_utils/run-answer-grade";
 import { gradeTypedItemAnswer } from "../../learner/_utils/typed-grading";
 import { readRecordedAnswer } from "../../sessions/_utils/session-items";
 import { type MistakePracticeAnswerResult } from "../answer-mistake-practice";
 import { type MistakePracticeAnswerInput } from "../contract";
 import { applyDrillRules } from "../drill-answer";
 import { type MistakeDrillKind } from "../mistake-drills";
-import { gradeMistakeItem } from "../mistake-item";
+import { getAnsweredShowing, getPracticeAnswerKeys, gradeMistakeItem } from "../mistake-item";
 import { type MistakeReplay } from "../mistake-replay";
 import { cachedGradeDuration } from "./cached-grade-duration";
-import { runMistakeGrade } from "./mistake-grade";
 import { refuseAnsweredMistake } from "./practice-claim";
 import { finishPracticeAnswer } from "./practice-feedback";
 
@@ -40,7 +40,9 @@ export async function answerItemMistake({
 }): Promise<MistakePracticeAnswerResult> {
   const { item } = replay;
   const answer = saved ? (readRecordedAnswer(saved.answer) ?? input.answer) : input.answer;
-  const graded = gradeMistakeItem({ answer, replay });
+
+  const showing = getAnsweredShowing({ answer: saved?.answer, mistake });
+  const graded = gradeMistakeItem({ answer, replay, showing });
   const model = item.format === "typed" && "text" in answer && !graded.isCorrect;
 
   if (model && !input.attemptId) {
@@ -49,7 +51,7 @@ export async function answerItemMistake({
 
   const checked =
     model && item.format === "typed" && "text" in answer
-      ? await runMistakeGrade({
+      ? await runAnswerGrade({
           attemptId,
           grade: async () => ({
             durationMs: input.durationMs,
@@ -85,7 +87,7 @@ export async function answerItemMistake({
 
   const canonical =
     item.format === "typed" && text !== null
-      ? gradeMistakeItem({ answer: { text }, replay })
+      ? gradeMistakeItem({ answer: { text }, replay, showing })
       : graded;
 
   const durationMs = cachedGradeDuration({ fallback: input.durationMs, result: checked.result });
@@ -102,7 +104,7 @@ export async function answerItemMistake({
     ? { saved, status: "saved" as const }
     : await recordAnswerOnce({
         answer: {
-          answer: { ...canonical.recorded, practiceMistakeId: mistake.id },
+          answer: { ...canonical.recorded, ...getPracticeAnswerKeys({ mistake, showing }) },
           attemptId,
           graded: { durationMs, isCorrect: drilled.isCorrect },
           itemId: mistake.itemId,

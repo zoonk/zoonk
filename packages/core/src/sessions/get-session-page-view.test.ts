@@ -66,8 +66,12 @@ describe("the narrow session page read", () => {
       opened.session.blocks.map((block) => block.id),
     );
 
-    expect(Object.keys(result.lessonStatus).toSorted()).toStrictEqual(
-      opened.session.blocks.flatMap((block) => block.lessonId ?? []).toSorted(),
+    expect(
+      result.session.blocks.flatMap((block) => (block.lesson ? [block.lessonId] : [])),
+    ).toStrictEqual(
+      opened.session.blocks.flatMap((block) =>
+        block.kind === "learn" && block.lessonId ? [block.lessonId] : [],
+      ),
     );
 
     await expect(readDay(input)).resolves.toStrictEqual(before);

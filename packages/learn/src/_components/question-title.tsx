@@ -4,6 +4,11 @@ import { ItemStem } from "../questions/item-text";
 const QUESTION_TITLE_CLASS =
   "text-foreground in-data-[phase=feedback]:text-muted-foreground text-xl leading-[1.35] font-semibold tracking-[-0.02em] outline-none";
 
+export type QuestionTitleProps = Pick<
+  React.ComponentProps<typeof QuestionTitle>,
+  "heading" | "ref" | "tabIndex"
+>;
+
 /**
  * A question's title, one size everywhere a question is asked. `text` is the question as written,
  * with its math and line breaks; `children` is a title a screen composes itself. `heading={false}`

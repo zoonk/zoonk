@@ -8,9 +8,13 @@ import {
 import { switchGoal } from "@/app/[lang]/(app)/(learn)/_components/switch-goal";
 import { hasSessionHint } from "@/lib/learner/session-hint";
 import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
-import { type LearnerSummary } from "@zoonk/core/learner/summary/contract";
+import { useListedPlaces } from "@/lib/saved-lessons/saved-lessons-place";
+import {
+  type LearnerSummary,
+  type LearnerSummaryPlaces,
+} from "@zoonk/core/learner/summary/contract";
 
-function toLearnerPalette(summary: LearnerSummary): LearnerPalette {
+function toLearnerPalette(summary: LearnerSummary, places: LearnerSummaryPlaces): LearnerPalette {
   const active = summary.goals.find((goal) => goal.isActive);
 
   return {
@@ -25,21 +29,27 @@ function toLearnerPalette(summary: LearnerSummary): LearnerPalette {
       .filter((goal) => goal.kind !== "explain")
       .map(({ id, kind, title, displayName }) => ({ displayName, id, kind, title })),
     onSwitchGoal: switchGoal,
-    places: summary.places,
+    places,
     today: summary.today,
   };
+}
+
+function ReadyCommandPalette({ summary }: { summary: LearnerSummary }) {
+  const places = useListedPlaces(summary.places);
+
+  return (
+    <CommandPalette
+      isLoggedIn={!summary.identity.isAnonymous}
+      learner={toLearnerPalette(summary, places)}
+    />
+  );
 }
 
 export default function AppCommandPaletteDialog() {
   const learner = useLearnerSummary();
 
   if (learner.status === "ready") {
-    return (
-      <CommandPalette
-        isLoggedIn={!learner.summary.identity.isAnonymous}
-        learner={toLearnerPalette(learner.summary)}
-      />
-    );
+    return <ReadyCommandPalette summary={learner.summary} />;
   }
 
   if (learner.status !== "visitor" && hasSessionHint()) {

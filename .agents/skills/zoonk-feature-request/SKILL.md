@@ -1,10 +1,10 @@
 ---
 name: zoonk-feature-request
-description: Post a Zoonk idea or feature request to GitHub Discussions for anyone, technical or not, in any language. Find the need behind the request, write it in English and keep private details out. Use when someone asks you to request, suggest or propose a feature, an idea or a change to Zoonk.
+description: Use when someone, technical or not and in any language, asks you to request, suggest or propose a feature, an idea or a change to Zoonk.
 license: MIT
 metadata:
   author: zoonk
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Requesting a Zoonk feature

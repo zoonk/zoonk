@@ -206,7 +206,7 @@ private func makeCourse(
   _ payload: Components.Schemas.CourseResource
 ) -> Course {
   Course(
-    categories: payload.categories.map(makeCourseCategory),
+    categories: payload.categories.compactMap { CourseCategory(rawValue: $0.rawValue) },
     contentCountry: ContentCountry(payload.contentCountry),
     description: payload.description,
     supportsEditions: payload.supportsEditions,
@@ -231,31 +231,6 @@ private func makeCourse(
     slug: payload.slug,
     targetLanguage: payload.targetLanguage,
     title: payload.title)
-}
-
-/// Maps every generated category explicitly, so regenerating the spec with a new category fails the
-/// build until the app can title and draw it, instead of failing the course at runtime.
-private func makeCourseCategory(
-  _ payload: Components.Schemas.CourseResource.CategoriesPayloadPayload
-) -> CourseCategory {
-  switch payload {
-  case .arts: .arts
-  case .business: .business
-  case .communication: .communication
-  case .culture: .culture
-  case .economics: .economics
-  case .engineering: .engineering
-  case .exams: .exams
-  case .geography: .geography
-  case .health: .health
-  case .history: .history
-  case .languages: .languages
-  case .law: .law
-  case .math: .math
-  case .science: .science
-  case .society: .society
-  case .tech: .tech
-  }
 }
 
 /// Generation states share one set of values across resources. A value the app doesn't know yet

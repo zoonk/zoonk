@@ -68,7 +68,7 @@ internal data class CombinationGrid(
         }
 
     companion object {
-        fun of(fields: PlayableLibraryStepAnyOfContentOneOf14Fields): CombinationGrid =
+        fun of(fields: PlayableLibraryStepAnyOfContentOneOf14Fields): CombinationGrid? =
             when (fields) {
                 is AlleleFields -> {
                     with(fields.value) {
@@ -102,6 +102,10 @@ internal data class CombinationGrid(
                             numberSide(columns.label, columns.propertyValues),
                         )
                     }
+                }
+
+                else -> {
+                    null
                 }
             }
 

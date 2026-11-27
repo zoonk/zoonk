@@ -157,6 +157,10 @@ private func places(_ summary: LearnerSummary) -> SearchGroup {
       action: .open(.mistakes)),
   ]
 
+  if places.savedLessons {
+    items.append(place(.savedLessons, route: .savedLessons))
+  }
+
   if places.completedLessons {
     items.append(place(.completedLessons, route: .completedLessons))
   }

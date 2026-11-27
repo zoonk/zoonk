@@ -4757,7 +4757,6 @@
       }
     },
     "Subscription" : {
-      "comment" : "Account option for subscription",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4815,61 +4814,360 @@
         }
       }
     },
-    "Take a short break, then try again." : {
-      "comment" : "Fair use asks the learner to wait a moment before trying again",
+    "Take a short break. You can try again in %lld minutes." : {
+      "comment" : "The line of a notice that the learner sent too many requests in a short time, such as questions to their study buddy, and must wait before the next one. It counts down every minute until they can try again.",
       "localizations" : {
         "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mach eine kurze Pause und versuch es dann noch einmal."
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Mach eine kurze Pause. Du kannst es in %lld Minute noch einmal versuchen."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Mach eine kurze Pause. Du kannst es in %lld Minuten noch einmal versuchen."
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Take a short break. You can try again in %lld minute."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Take a short break. You can try again in %lld minutes."
+                }
+              }
+            }
           }
         },
         "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Descansa un momento y vuelve a intentarlo."
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Tómate un breve descanso. Puedes volver a intentarlo en %lld minuto."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Tómate un breve descanso. Puedes volver a intentarlo en %lld minutos."
+                }
+              }
+            }
           }
         },
         "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fais une petite pause, puis réessaie."
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Fais une petite pause. Tu pourras réessayer dans %lld minute."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Fais une petite pause. Tu pourras réessayer dans %lld minutes."
+                }
+              }
+            }
           }
         },
         "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fai una breve pausa, poi riprova."
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Fai una breve pausa. Puoi riprovare tra %lld minuto."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Fai una breve pausa. Puoi riprovare tra %lld minuti."
+                }
+              }
+            }
           }
         },
         "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "少し休んでから、もう一度試してください。"
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "少し休憩してください。%lld分後にもう一度試せます。"
+                }
+              }
+            }
           }
         },
         "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "잠시 쉬었다가 다시 시도해 보세요."
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "잠깐 쉬어 보세요. %lld분 후에 다시 시도해 보세요."
+                }
+              }
+            }
           }
         },
         "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zrób krótką przerwę, a potem spróbuj ponownie."
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Zrób krótką przerwę. Spróbuj ponownie za %lld minuty."
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Zrób krótką przerwę. Spróbuj ponownie za %lld minut."
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Zrób krótką przerwę. Spróbuj ponownie za %lld minutę."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Zrób krótką przerwę. Spróbuj ponownie za %lld minuty."
+                }
+              }
+            }
           }
         },
         "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Faça uma pausa rápida e tente de novo."
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Faça uma pausa rápida. Você pode tentar de novo em %lld minuto."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Faça uma pausa rápida. Você pode tentar de novo em %lld minutos."
+                }
+              }
+            }
           }
         },
         "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kısa bir ara ver, sonra tekrar dene."
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Kısa bir mola ver. %lld dakika sonra tekrar deneyebilirsin."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Take a short break. You can try again in %lld seconds." : {
+      "comment" : "The line of a notice that the learner sent too many requests in a short time, such as questions to their study buddy, and must wait before the next one. It counts down every second until they can try again.",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Mach eine kurze Pause. Du kannst es in %lld Sekunde noch einmal versuchen."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Mach eine kurze Pause. Du kannst es in %lld Sekunden noch einmal versuchen."
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Take a short break. You can try again in %lld second."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Take a short break. You can try again in %lld seconds."
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Tómate un breve descanso. Puedes volver a intentarlo en %lld segundo."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Tómate un breve descanso. Puedes volver a intentarlo en %lld segundos."
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Fais une petite pause. Tu pourras réessayer dans %lld seconde."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Fais une petite pause. Tu pourras réessayer dans %lld secondes."
+                }
+              }
+            }
+          }
+        },
+        "it" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Fai una breve pausa. Puoi riprovare tra %lld secondo."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Fai una breve pausa. Puoi riprovare tra %lld secondi."
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "少し休憩してください。%lld秒後にもう一度試せます。"
+                }
+              }
+            }
+          }
+        },
+        "ko" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "잠깐 쉬어 보세요. %lld초 후에 다시 시도해 보세요."
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Zrób krótką przerwę. Spróbuj ponownie za %lld sekundy."
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Zrób krótką przerwę. Spróbuj ponownie za %lld sekund."
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Zrób krótką przerwę. Spróbuj ponownie za %lld sekundę."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Zrób krótką przerwę. Spróbuj ponownie za %lld sekundy."
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Faça uma pausa rápida. Você pode tentar de novo em %lld segundo."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Faça uma pausa rápida. Você pode tentar de novo em %lld segundos."
+                }
+              }
+            }
+          }
+        },
+        "tr" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Kısa bir mola ver. %lld saniye sonra tekrar deneyebilirsin."
+                }
+              }
+            }
           }
         }
       }

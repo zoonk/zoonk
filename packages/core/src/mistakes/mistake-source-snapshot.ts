@@ -5,10 +5,24 @@ import { gradeMistakeItem, toMistakeQuestion } from "./mistake-item";
 import { type MistakeReplay } from "./mistake-replay";
 import { type MistakeSnapshot, readMistakeSnapshot } from "./mistake-snapshot";
 
+function normalizeText(text: string | null | undefined): string {
+  return (text ?? "").replaceAll(/\s+/gu, " ").trim();
+}
+
 function sameText(left: string | null | undefined, right: string | null | undefined): boolean {
-  return (
-    (left ?? "").replaceAll(/\s+/gu, " ").trim() === (right ?? "").replaceAll(/\s+/gu, " ").trim()
-  );
+  return normalizeText(left) === normalizeText(right);
+}
+
+function answerParts(text: string): string[] {
+  return text
+    .split(";")
+    .map((part) => normalizeText(part))
+    .toSorted();
+}
+
+/** Several right options are joined in the order their showing laid them out, so compare them as a set. */
+function sameAnswers(left: string, right: string | null | undefined): boolean {
+  return isDeepStrictEqual(answerParts(left), answerParts(right ?? ""));
 }
 
 function matchesItemSource({
@@ -18,17 +32,18 @@ function matchesItemSource({
   replay: Extract<MistakeReplay, { kind: "item" }>;
   saved: MistakeSnapshot;
 }): boolean {
-  const graded = gradeMistakeItem({ answer: { dontKnow: true }, replay });
+  const showing = replay.item.id;
+  const graded = gradeMistakeItem({ answer: { dontKnow: true }, replay, showing });
 
   if (!saved.question || !sameText(saved.question, graded.snapshot.question)) {
     return false;
   }
 
-  if (saved.correctAnswer && !sameText(saved.correctAnswer, graded.snapshot.correctAnswer)) {
+  if (saved.correctAnswer && !sameAnswers(saved.correctAnswer, graded.snapshot.correctAnswer)) {
     return false;
   }
 
-  const shown = toMistakeQuestion(replay);
+  const shown = toMistakeQuestion({ replay, showing });
   const fields = ["context", "image", "set", "visual"] as const;
 
   return fields.every(

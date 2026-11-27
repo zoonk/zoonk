@@ -1,10 +1,10 @@
 ---
 name: zoonk-social-post
-description: Write Zoonk's social media posts for X, LinkedIn and Instagram in US English and Brazilian Portuguese, for Zoonk's accounts and the owner's personal account, with images and silent demo clips made from the app's real screens. Covers picking the one thing a post shows from a release or feature, the voice, what each platform needs, making the media with the video studio, checking, and storing the campaign in the marketing repository, where the owner reviews it. Use when asked for a social post, a launch thread, a carousel, post copy or post images, or to review or update one.
+description: Use when asked for a Zoonk social media post (X, LinkedIn, Instagram), a launch thread, a carousel, post copy or post images, or to review or update one.
 license: MIT
 metadata:
   author: zoonk
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Social posts

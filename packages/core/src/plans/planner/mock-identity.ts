@@ -41,8 +41,13 @@ export function canHoldMock({
   clocks: readonly MockClock[];
   identity: MockIdentity;
 }): boolean {
+  if (clocks.length === 0) {
+    return true;
+  }
+
+  // A new notice can move the exam's sections off the day a plan saved.
   const clock = clocks.find((entry) => entry.day === identity.day);
-  return !clock || asksAnything({ clock, fullLength: identity.fullLength });
+  return clock !== undefined && asksAnything({ clock, fullLength: identity.fullLength });
 }
 
 /** Skips days with nothing to ask at this length, such as a written-only day for a weekly mock. */

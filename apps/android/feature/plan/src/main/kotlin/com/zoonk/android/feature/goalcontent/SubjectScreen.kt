@@ -72,6 +72,7 @@ import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.ResourceScaffold
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.zoonkType
+import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.Syllabus
 import com.zoonk.api.models.SyllabusChapter
 import com.zoonk.api.models.SyllabusSubject
@@ -107,7 +108,14 @@ fun SubjectScreen(
             plans = app.plans,
             navigator = navigator,
             menu = { ReportProblemMenu(report) },
-            ask = { AskTutor(TutorScope.Subject(goal.id.toString(), route.subjectKey), app, navigator, appearance = it) },
+            ask = {
+                AskTutor(
+                    TutorScope.Subject(goal.id.toString(), route.subjectKey, module = goal.kind != LearnerSummaryGoal.Kind.EXAM),
+                    app,
+                    navigator,
+                    appearance = it,
+                )
+            },
             mindMaps = summary.value?.places?.mindMaps == true,
             writeNow = rememberWriteNow(app, goal.id, navigator),
         )
@@ -281,7 +289,8 @@ internal fun SubjectPage(
             }
         }
 
-        item(key = "not-planned", contentType = "notice") { NotPlannedNotice(subject, writes, actions) }
+        item(key = "not-planned", contentType = "notice") { NotPlannedNotice(subject, module = !syllabus.isExam, writes, actions) }
+        subjectCovers(subject.covers)
         written?.let { subjectWritten(it, actions.openAnswer, standing = !asideBeside) }
 
         subjectChapters(subject, today, actions)
@@ -387,17 +396,18 @@ internal fun knownLine(subject: SyllabusSubject): String? {
 }
 
 /** A write action's state, whichever variant the server sent. */
-private val WrittenPracticeSubjectsInnerWriteActionsInner.status: String
+private val WrittenPracticeSubjectsInnerWriteActionsInner.status: String?
     get() =
         when (val availability = availability) {
+            is WriteAvailability.WrittenPracticeSubjectsInnerWriteActionsInnerAvailabilityOneOf1Value -> null
             is WriteAvailability.StudyBlockWritingAvailabilityOneOfValue -> availability.value.status.value
             is WriteAvailability.StudyBlockWritingAvailabilityOneOf1Value -> availability.value.status.value
-            is WriteAvailability.WrittenPracticeSubjectsInnerAvailabilityValue -> availability.value.status.value
+            is WriteAvailability.WrittenPracticeSubjectsInnerWriteActionsInnerAvailabilityOneOfValue -> availability.value.status.value
         }
 
 private val WrittenPracticeSubjectsInnerWriteActionsInner.choiceGroups: List<String>
     get() =
-        (availability as? WriteAvailability.WrittenPracticeSubjectsInnerAvailabilityValue)
+        (availability as? WriteAvailability.WrittenPracticeSubjectsInnerWriteActionsInnerAvailabilityOneOfValue)
             ?.value
             ?.choiceGroups
             .orEmpty()

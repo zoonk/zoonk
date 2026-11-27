@@ -67,7 +67,6 @@
   "player_create_account_to_save": "e9c7779956e1884f8e23e07ce19abe8113710a5e2febcb2fe0e1b98607a63d65",
   "player_didnt_get_it": "d6a1cf1cb25ce674019fa3ff6dff785dc8a285f214b15c19f2be16b46c6e9f0b",
   "player_done": "3278a9ede9c38d807432a240a4d56a315fd64556d423ceba2ab5d45e986bfc1a",
-  "player_dont_know_yet": "29fdfe7aef4884a8a5984eba3461381665c15b2bfe9a5e93bc244f87ccb48d81",
   "player_drawing_picture": "bee2ef7b8b13f5299486bf4790562b0b9b4030f92c09927a6ff7b05ae3022a25",
   "player_enter_hint": "b69085f0f988908d8a951b29c01874a0c7e67e95924f2641838ffb69356d625e",
   "player_example": "12060d1fa4b3b067a213ada421295c08bbc2fae2f86491d4aab814b106fed59e",
@@ -291,7 +290,6 @@
     </plurals>
     <string name="player_in_your_own_words">Własnymi słowami</string>
     <string name="player_cant_write_now">Pomiń dziś pytania pisemne</string>
-    <string name="player_dont_know_yet">Jeszcze nie wiem</string>
     <!-- Button asking Zoonk to show the explanation before the learner answers. It doesn't tell the learner to explain. -->
     <string name="player_explain_first">Najpierw pokaż wyjaśnienie</string>
     <string name="player_enter_hint">Naciśnij Enter, by sprawdzić, lub Shift+Enter, by dodać nowy wiersz.</string>

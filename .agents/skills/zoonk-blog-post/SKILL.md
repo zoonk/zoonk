@@ -1,15 +1,15 @@
 ---
 name: zoonk-blog-post
-description: Write a Zoonk blog post, such as a release or launch post, that makes readers want to try what it shows, in Zoonk's voice and with real screenshots, clips and a cover from the app. Use when asked to write, rewrite or review a post for the blog (apps/blog).
+description: Use when asked to write, rewrite or review a post for the Zoonk blog (apps/blog), such as a release or launch post.
 license: MIT
 metadata:
   author: zoonk
-  version: "1.0.0"
+  version: "1.2.0"
 ---
 
 # Blog posts
 
-A reader should finish a Zoonk post understanding what something does for them and thinking "this is really cool, I want to use it". A release post shows what each feature is and how it solves the reader's problem. Everything else stays out. A post is a marketing page, so zoonk-design's [Marketing pages](../zoonk-design/SKILL.md#marketing-pages) applies to it.
+A reader should finish a Zoonk post understanding what something does for them and thinking "this is really cool, I want to use it". A release post shows what each feature is and how it solves the reader's problem. Everything else stays out. A post is a marketing page, so zoonk-design's [Marketing pages](../zoonk-design/references/marketing-pages.md) applies to it.
 
 [The 2.0 launch post](<../../../apps/blog/src/app/(post)/2026/zoonk-2/page.mdx>) is the model. Read it and look at its pictures before you write.
 

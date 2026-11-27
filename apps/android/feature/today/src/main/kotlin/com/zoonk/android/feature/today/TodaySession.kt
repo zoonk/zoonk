@@ -16,7 +16,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,6 +40,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.mock.ChangeMockSchedule
 import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.SessionBar
 import com.zoonk.android.feature.session.StepOpenFailed
@@ -65,6 +65,7 @@ import com.zoonk.api.models.PlanStatus
 import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.StudyExtraTimeLessonsInner
 import com.zoonk.api.models.StudySession
+import java.util.UUID
 
 internal fun LazyListScope.todaySession(
     model: TodayDayModel,
@@ -146,14 +147,8 @@ private fun LazyListScope.sessionQueue(
             modifier = Modifier.pageRow(),
             onNavigate = actions.navigate,
             divider = index != beforeNext && !(stepsEnd && index == rowsShown.lastIndex),
+            schedule = actions.schedule,
         )
-        if (step.checkpointFacts?.mock == true && step.status == StudyBlock.Status.PENDING && step.planItemId != null &&
-            actions.schedule != null
-        ) {
-            TextButton(onClick = { actions.schedule.invoke(requireNotNull(step.planItemId)) }, modifier = Modifier.pageItem()) {
-                Text(stringResource(R.string.mock_schedule_change))
-            }
-        }
     }
 
     if (showsComing) {
@@ -294,24 +289,32 @@ private fun StepRow(
     openFailed: Boolean = false,
     onNavigate: (AppRoute) -> Unit = {},
     divider: Boolean = true,
+    schedule: ((UUID) -> Unit)? = null,
 ) {
+    val mockItem = step.planItemId?.takeIf { step.checkpointFacts?.mock == true && step.status == StudyBlock.Status.PENDING }
     DayStepRow(
         model.day,
         step,
         isNext,
         model.today.goal.examDocument ?: ExamDocument.NOTICE,
         modifier,
-        model.today.lessonStatus,
-        model.writingStalled,
         onOpen = onOpen.takeIf { opens },
         busy = busy,
         openFailed = openFailed,
         divider = divider,
-        testOut =
-            if (isNext && step.canTestOut && step.chapterId != null) {
-                { TestOutLink(model, requireNotNull(step.chapterId), onNavigate) }
-            } else {
-                null
+        below =
+            when {
+                mockItem != null && schedule != null -> {
+                    { ChangeMockSchedule { schedule(mockItem) } }
+                }
+
+                isNext && step.canTestOut && step.chapterId != null -> {
+                    { TestOutLink(model, requireNotNull(step.chapterId), onNavigate) }
+                }
+
+                else -> {
+                    null
+                }
             },
     )
 }
@@ -320,7 +323,7 @@ private fun StepRow(
 @Composable
 private fun TestOutLink(
     model: TodayDayModel,
-    chapterId: java.util.UUID,
+    chapterId: UUID,
     onNavigate: (AppRoute) -> Unit,
 ) {
     val take = stringResource(R.string.test_out_skip_chapter)
@@ -453,7 +456,7 @@ private fun TodayDayStatus(
             )
         }
 
-        StudySession.State.UNDERWAY -> {
+        StudySession.State.UNDERWAY, StudySession.State.UNKNOWN_DEFAULT_OPEN_API -> {
             return
         }
     }

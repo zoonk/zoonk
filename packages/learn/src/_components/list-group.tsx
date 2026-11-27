@@ -1,4 +1,3 @@
-import { BusyIcon } from "@zoonk/ui/components/button";
 import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type LearnLinkComponentProps } from "../learn-context";
@@ -7,7 +6,7 @@ import { SURFACE_CLASS } from "./surface";
 import { TITLE_ROW_CLASS } from "./title-row";
 
 /** Rows are direct children, or the items of one `ol`/`ul` directly inside. */
-export const LIST_GROUP_CLASS = "divided-rows flex flex-col";
+const LIST_GROUP_CLASS = "divided-rows flex flex-col";
 
 /**
  * `overflow-clip`, not `overflow-hidden`: a scroll container would shrink to a line in a sheet's
@@ -16,16 +15,21 @@ export const LIST_GROUP_CLASS = "divided-rows flex flex-col";
 const LIST_GROUP_PANEL_CLASS = cn(SURFACE_CLASS, LIST_GROUP_CLASS, "overflow-clip");
 
 export function ListGroup({
+  as: Group = "div",
   className,
   variant = "flat",
   ...props
-}: React.ComponentProps<"div"> & { variant?: "flat" | "panel" }) {
+}: React.HTMLAttributes<HTMLElement> &
+  Pick<React.ComponentProps<"ol">, "reversed" | "start" | "type"> & {
+    as?: "div" | "ol" | "ul";
+    variant?: "flat" | "panel";
+  }) {
   return (
-    <div
+    <Group
+      {...props}
       className={cn(variant === "panel" ? LIST_GROUP_PANEL_CLASS : LIST_GROUP_CLASS, className)}
       data-list={variant}
       data-slot="list-group"
-      {...props}
     />
   );
 }
@@ -39,7 +43,7 @@ export const LIST_ROW_CLASS = cn(
 
 export const LIST_ROW_INTERACTIVE_CLASS = cn(
   LIST_ROW_CLASS,
-  "hover:before:bg-muted/70 active:before:bg-muted press focus-visible:before:ring-ring/50 outline-none select-none [--press-scale:0.99] focus-visible:before:ring-[3px] focus-visible:before:ring-inset",
+  "hover:before:bg-muted/70 active:before:bg-muted held-pressed:before:bg-muted press focus-visible:before:ring-ring/50 outline-none select-none [--press-scale:0.99] focus-visible:before:ring-[3px] focus-visible:before:ring-inset",
 );
 
 /** A fold's panel clips what it folds, so it reaches as far as its rows' fills do (craft E7). */
@@ -67,6 +71,7 @@ export function ListRowLink({
   children,
   className,
   current,
+  end,
   href,
   lessonWritten,
   onClick,
@@ -76,6 +81,7 @@ export function ListRowLink({
   className?: string;
   /** The page it opens is the one showing beside the list. */
   current?: boolean;
+  end?: React.ReactNode;
   href: string;
   lessonWritten?: boolean;
   onClick?: LearnLinkComponentProps["onClick"];
@@ -91,10 +97,39 @@ export function ListRowLink({
       prefetch={prefetch}
     >
       {children}
-      <BusyIcon className="text-muted-foreground self-center">
-        <RowChevron />
-      </BusyIcon>
+      {end ?? <RowChevron />}
     </LearnLink>
+  );
+}
+
+/** A row that opens something, with its own button at its end, outside the link. */
+export function ListRowLinkWithAction({
+  action,
+  children,
+  className,
+  href,
+  lessonWritten,
+  prefetch,
+}: {
+  action: React.ReactNode;
+  children: React.ReactNode;
+  className?: string;
+  href: string;
+  lessonWritten?: boolean;
+  prefetch?: LearnPrefetch;
+}) {
+  return (
+    <div className="flex items-center gap-1" data-slot="list-row-with-action">
+      <LearnLink
+        className={cn(LIST_ROW_INTERACTIVE_CLASS, "min-w-0 flex-1", className)}
+        href={href}
+        lessonWritten={lessonWritten}
+        prefetch={prefetch}
+      >
+        {children}
+      </LearnLink>
+      {action}
+    </div>
   );
 }
 
@@ -120,15 +155,13 @@ export function ListRowButton({
       )}
       data-slot="list-row"
       onClick={disabled ? undefined : onClick}
+      // A press made before the page hydrates marks it held, its chevron turned to a spinner.
+      suppressHydrationWarning
       type="button"
       {...props}
     >
       {children}
-      {chevron && (
-        <BusyIcon className="text-muted-foreground self-center">
-          <RowChevron />
-        </BusyIcon>
-      )}
+      {chevron && <RowChevron />}
     </button>
   );
 }
@@ -139,17 +172,12 @@ export function ListRowButton({
  */
 const MARK_ALIGN_CLASS = "self-center beside-three-lines:row-first-line";
 
-/** `firstLine`: a lead, such as a date before a day's lessons, sits on the first line however many follow. */
-export function ListRowLeading({
-  className,
-  firstLine = false,
-  ...props
-}: React.ComponentProps<"span"> & { firstLine?: boolean }) {
+export function ListRowLeading({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
       className={cn(
         "flex min-w-4 shrink-0 items-center justify-center empty:hidden",
-        firstLine ? "row-first-line" : MARK_ALIGN_CLASS,
+        MARK_ALIGN_CLASS,
         className,
       )}
       data-slot="list-row-leading"
@@ -230,8 +258,11 @@ export function ListRowNumberedTitle({
   textClassName?: string;
 }) {
   return (
-    <span className={cn("flex items-baseline", className)}>
-      <span className="text-muted-foreground shrink-0 font-mono text-xs whitespace-pre tabular-nums">
+    <span className={cn("flex items-start", className)}>
+      <span
+        className="text-muted-foreground flex h-5 shrink-0 items-center font-mono text-xs whitespace-pre tabular-nums"
+        data-slot="list-row-lead"
+      >
         {`${number}. `}
       </span>
       <span className="flex min-w-0 flex-col">

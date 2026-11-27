@@ -3,6 +3,7 @@ import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { memoryInsightFixture } from "@zoonk/testing/fixtures/memory";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { revalidateTag } from "next/cache";
 import { beforeEach, describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
@@ -11,10 +12,8 @@ import { seenInsightQuote } from "../../plans/_test-utils/seen-quote";
 import { getCurrentMemoryInsight } from "./get-current-memory-insight";
 import { respondToMemoryInsight } from "./respond-to-memory-insight";
 
-const DAY_MS = 86_400_000;
-
 function daysAgo(days: number): Date {
-  return new Date(Date.now() - days * DAY_MS);
+  return new Date(Date.now() - days * MS_PER_DAY);
 }
 
 function utcDay(date: Date): Date {

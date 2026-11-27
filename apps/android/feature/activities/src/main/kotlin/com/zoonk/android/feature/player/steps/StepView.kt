@@ -2,6 +2,7 @@ package com.zoonk.android.feature.player.steps
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -27,10 +28,22 @@ import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.ui.characters.BuddyLook
+import com.zoonk.android.ui.components.rememberMoveFocus
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOfValue as ChoiceCheckValue
 
 /** The action bar's main button, for a screen that hands it keyboard focus once its answer is complete. */
 val LocalPrimaryFocus = staticCompositionLocalOf<FocusRequester?> { null }
+
+/** A screen that [sent] its own answer (a match board's last pair) hands focus to Continue once it's [checked]. */
+@Composable
+internal fun FocusPrimaryOnceChecked(
+    sent: Boolean,
+    checked: Boolean,
+) {
+    val primary = LocalPrimaryFocus.current ?: return
+    val moveFocus = rememberMoveFocus()
+    LaunchedEffect(checked) { if (checked && sent) moveFocus(primary) }
+}
 
 /** How tall a screen's one column shows at once; null where the screen isn't in one column. */
 val LocalStepViewHeight = compositionLocalOf<Dp?> { null }
@@ -51,19 +64,17 @@ val LocalAskSimpler = compositionLocalOf<AskSimpler?> { null }
 /** What a screen's view can ask the player to do. */
 @Stable
 interface StepActions {
+    fun engage() = Unit
+
     fun select(answer: LessonAnswer?)
 
-    /** A number key's pick: through the view's own pick when it took the keys, so a key does what a tap does. */
-    fun pickByKey(answer: LessonAnswer?) = select(answer)
+    fun restoreAnswer(answer: LessonAnswer) = select(answer)
 
     /** A view whose pick does more than select (a translation says its word) takes the number keys while it shows. */
     fun takeKeyPicks(pick: ((LessonAnswer?) -> Unit)?) = Unit
 
     /** A canvas whose number keys act on its own state (categorize's groups) takes them while it shows, saying whether a key did anything. */
     fun takeNumberKeys(keys: ((Int) -> Boolean)?) = Unit
-
-    /** The number key at [index] for the canvas that took the keys; false when none did or the key did nothing. */
-    fun pressNumberKey(index: Int): Boolean = false
 
     /** The action bar's main action, for a field's Enter key. */
     fun runPrimary()
@@ -137,6 +148,40 @@ fun isPlayable(step: LessonStep): Boolean =
         else -> true
     }
 
+/**
+ * The number keys a screen's views take while they show ([StepActions.takeKeyPicks], [StepActions.takeNumberKeys]), for a
+ * screen that sends its keys to them: the lesson player and a lesson screen replayed from mistakes.
+ */
+class StepKeys {
+    private var picks: ((LessonAnswer?) -> Unit)? = null
+    private var numbers: ((Int) -> Boolean)? = null
+
+    fun takePicks(pick: ((LessonAnswer?) -> Unit)?) {
+        picks = pick
+    }
+
+    fun takeNumbers(keys: ((Int) -> Boolean)?) {
+        numbers = keys
+    }
+
+    /**
+     * The number key at [index] on [step]: the canvas that took the keys acts on it first; otherwise it makes the pick a
+     * screen of options takes, through the view's own pick when it took them so a key does what a tap does, else
+     * [select]. False when it does nothing.
+     */
+    fun press(
+        step: LessonStep?,
+        index: Int,
+        state: LessonPlayerState,
+        select: (LessonAnswer?) -> Unit,
+    ): Boolean {
+        if (numbers?.invoke(index) == true) return true
+        val pick = step?.let { keyPick(it, index, state) } ?: return false
+        (picks ?: select)(pick.answer)
+        return true
+    }
+}
+
 /** What a number key leaves picked: [answer] is null once pressing the pick again cleared it. */
 @JvmInline
 value class KeyPick(
@@ -184,7 +229,9 @@ fun keyPick(
 
             is StepContent.Activity -> {
                 val picked =
-                    activityRenderers[content.frame.template]?.keyPick?.invoke(content.content, index)
+                    content.frame.renderer
+                        ?.keyPick
+                        ?.invoke(content.content, index)
                         ?: (content.frame.check as? ChoiceCheckValue)
                             ?.value
                             ?.options

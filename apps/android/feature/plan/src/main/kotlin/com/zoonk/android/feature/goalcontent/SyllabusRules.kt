@@ -9,6 +9,10 @@ import com.zoonk.api.models.SyllabusTopic
 internal val List<SyllabusChapter>.doneChapters: List<SyllabusChapter>
     get() = filter { it.state == SyllabusChapter.State.DONE }
 
+/** An exam's plan lists subjects; any other plan lists modules, and its pages call each one a module. */
+internal val Syllabus.isExam: Boolean
+    get() = goal.kind == GoalContentGoal.Kind.EXAM
+
 /** Language units and single-course paths keep the plan's path; exams and multi-module plans have subject pages. */
 val Syllabus.hasSubjectPages: Boolean
     get() = goal.kind != GoalContentGoal.Kind.LANGUAGE && (kind == Syllabus.Kind.NOTICE || subjects.size > 1)
@@ -129,6 +133,7 @@ internal val SyllabusTopic.mark: TopicMark?
     get() =
         when (status) {
             null -> null
+            SyllabusTopic.Status.UNKNOWN_DEFAULT_OPEN_API -> null
             SyllabusTopic.Status.STUDIED -> TopicMark.Studied
             SyllabusTopic.Status.KNOWN -> TopicMark.Known
             SyllabusTopic.Status.TO_STUDY -> TopicMark.ToStudy

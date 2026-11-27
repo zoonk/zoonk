@@ -40,6 +40,8 @@ export type Scenario = {
   reach: Step[] | null;
   /** Words on the screen that prove this state is showing. */
   proof: string;
+  /** The state's own region when its exact proof text also appears elsewhere on the page. */
+  proofWithin?: string;
   /** Its steps change what the learner has (a skip that saves), so each size gets its own learner. */
   writes?: boolean;
   /**
@@ -60,6 +62,11 @@ export type Scenario = {
    * and the page may add what it didn't draw.
    */
   pair?: { change: string[]; placeholder?: boolean; with: string };
+};
+
+export const PINNED_ACTION: Anchor = {
+  id: "pinned-action",
+  web: "[data-slot=task-action-bar], [data-slot=bottom-bar]",
 };
 
 export const PHONE_AND_LAPTOP: Scenario["sizes"] = [

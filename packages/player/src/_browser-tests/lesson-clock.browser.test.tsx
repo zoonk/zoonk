@@ -55,6 +55,7 @@ describe("lesson clock", () => {
         updateLessonClock,
       }),
       lesson,
+      takeNavigationStart: () => true,
     });
 
     setVisibility("hidden");
@@ -80,6 +81,7 @@ describe("lesson clock", () => {
     const player = lessonPlayerElement({
       adapters: buildAdapters(lesson, { startLesson, updateLessonClock }),
       lesson,
+      takeNavigationStart: () => true,
     });
 
     const view = render(<Activity mode="visible">{player}</Activity>);
@@ -120,6 +122,7 @@ describe("lesson clock", () => {
       const player = lessonPlayerElement({
         adapters: buildAdapters(lesson, { startLesson, updateLessonClock }),
         lesson,
+        takeNavigationStart: () => true,
       });
 
       const view = render(<Activity mode="visible">{player}</Activity>);
@@ -175,6 +178,7 @@ describe("lesson clock", () => {
     renderLessonPlayer({
       adapters: buildAdapters(lesson, { startLesson, updateLessonClock }),
       lesson,
+      takeNavigationStart: () => true,
     });
 
     await expect.element(page.getByRole("radio", { name: RIGHT_OPTION })).toBeVisible();
@@ -215,6 +219,7 @@ describe("lesson clock", () => {
       const player = lessonPlayerElement({
         adapters: buildAdapters(lesson, { startLesson, updateLessonClock }),
         lesson,
+        takeNavigationStart: () => true,
       });
 
       const view = render(<Activity mode="visible">{player}</Activity>);
@@ -261,6 +266,7 @@ describe("lesson clock", () => {
     const { unmount } = renderLessonPlayer({
       adapters: buildAdapters(lesson, { startLesson, updateLessonClock }),
       lesson,
+      takeNavigationStart: () => true,
     });
 
     await expect.poll(() => startLesson.mock.calls.length).toBe(1);
@@ -277,7 +283,7 @@ describe("lesson clock", () => {
     const updateLessonClock = clockServer();
     const adapters = buildAdapters(lesson, { updateLessonClock });
 
-    const { unmount } = renderLessonPlayer({ adapters, lesson });
+    const { unmount } = renderLessonPlayer({ adapters, lesson, takeNavigationStart: () => true });
 
     await answerRight();
     await expect.poll(() => vi.mocked(adapters.checkStep).mock.calls.length).toBe(1);
@@ -300,6 +306,7 @@ describe("lesson clock", () => {
         updateLessonClock,
       }),
       lesson,
+      takeNavigationStart: () => true,
     });
 
     setVisibility("hidden");
@@ -338,6 +345,7 @@ describe("lesson clock", () => {
           updateLessonClock,
         }),
         lesson,
+        takeNavigationStart: () => true,
       });
 
       setVisibility("hidden");
@@ -376,7 +384,7 @@ describe("lesson clock", () => {
       updateLessonClock,
     });
 
-    renderLessonPlayer({ adapters, lesson });
+    renderLessonPlayer({ adapters, lesson, takeNavigationStart: () => true });
 
     await expect.element(page.getByRole("radio", { name: RIGHT_OPTION })).toBeVisible();
     setVisibility("hidden");
@@ -425,7 +433,7 @@ describe("lesson clock", () => {
       updateLessonClock,
     });
 
-    renderLessonPlayer({ adapters, lesson });
+    renderLessonPlayer({ adapters, lesson, takeNavigationStart: () => true });
 
     await expect.element(page.getByRole("radio", { name: RIGHT_OPTION })).toBeVisible();
     setVisibility("hidden");
@@ -472,7 +480,7 @@ describe("lesson clock", () => {
       .mockReturnValue(restarted.promise);
 
     const adapters = buildAdapters(lesson, { startLesson, updateLessonClock });
-    renderLessonPlayer({ adapters, lesson });
+    renderLessonPlayer({ adapters, lesson, takeNavigationStart: () => true });
 
     await expect.element(page.getByRole("radio", { name: RIGHT_OPTION })).toBeVisible();
     setVisibility("hidden");
@@ -513,6 +521,7 @@ describe("lesson clock", () => {
     renderLessonPlayer({
       adapters: buildAdapters(lesson, { startLesson, updateLessonClock }),
       lesson,
+      takeNavigationStart: () => true,
     });
 
     await answerRight();
@@ -545,6 +554,7 @@ describe("lesson clock", () => {
     renderLessonPlayer({
       adapters: buildAdapters(lesson, { completeLesson, startLesson, updateLessonClock }),
       lesson,
+      takeNavigationStart: () => true,
     });
 
     setVisibility("hidden");

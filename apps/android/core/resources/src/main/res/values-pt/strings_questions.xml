@@ -29,11 +29,15 @@
   "questions_left_blank": "b50efbca552cadd0879aedaaa38db2ac589a7a24e033505b1bbceea601086f12",
   "questions_mark_correct": "daa0ec24812d480cbb77a796018189c95c533eecd88663c44eed2ff71ca715db",
   "questions_mark_wrong": "55a13884779f665e2eebc3cdf986d1d690114b5ae614bacd9ca8ee28b908cfa1",
+  "questions_match_first_tries": "6441ba5d8938e556322a74c64039e95af9130186d626e81190b8d25d5f990b19",
+  "questions_match_not_a_pair": "2169a76f81eaced5bba3e4aab7216fd1f1f00be5b30cbe9dcdc42086b7399e2d",
+  "questions_match_paired": "271c71654f53546ee988a295c19f276686212404c7a0ec0a76ac84f8bad9dcde",
+  "questions_match_unpaired": "b9c1dd8d06a8f81143cae098ebb524d7f44acf3a10583feefae4375777e19df6",
   "questions_matched_with": "f4b3e5acaa767112be164fa7405e78e95b8ddbe5ec77735ef14d8291f830b4e6",
   "questions_mistake_fixed": "94255fb9db59bff45ed755945879d16a72d1cbdbc58c6b53b6af4cba5d6636d1",
   "questions_mistakes_fixed": "5f606109f5b12ffc939e7e243493dfa22b6d7812a225e3cce0c9cefb2cea5f75",
   "questions_not_quite": "f1db16257f3131d0e5ec5e0e1a8b28fa0d8ff9c291ed92d3bf50762fbc0571c7",
-  "questions_pick_all": "741b5f7e7cbbbf1d77e4e21823a61d1aafa703d53f4058b96370cc09d4168959",
+  "questions_pick_all": "2de48cdc3e8d3e659bd7853c28b73dcded6d6ef2b822de3b12b161853f6fb361",
   "questions_pick_count": "863b0475d69fede971d2f0eee1c6fa84e088952d4b2ee41533dd77342980a50d",
   "questions_place_right": "71968d44b7cd4a7e0c1ac506921de3934f5a69af0cec5c09547c27e367cec01e",
   "questions_place_wrong": "20de412472a81696e160d0cef8b1833d22536ea5a2bcc2b7ea286f3990dbac59",
@@ -56,7 +60,7 @@
 }
 -->
 <resources>
-    <string name="questions_pick_all">Selecione todas as alternativas corretas.</string>
+    <string name="questions_pick_all">Selecione todas as alternativas que se aplicam.</string>
     <plurals name="questions_pick_count">
         <item quantity="one">Escolha %d alternativa.</item>
         <item quantity="many">Escolha %d alternativas.</item>
@@ -75,6 +79,11 @@
     <string name="questions_place_wrong">Posição %1$d, lugar errado</string>
     <!-- An entry on the right read aloud with the entry on the left it was matched with. -->
     <string name="questions_matched_with">%1$s, combinado com %2$s</string>
+    <string name="questions_match_paired">Você combinou %1$s com %2$s. Pares combinados: %3$d de %4$d.</string>
+    <string name="questions_match_not_a_pair">%1$s e %2$s não formam um par.</string>
+    <string name="questions_match_unpaired">Desfez o par entre %1$s e %2$s.</string>
+    <!-- Under a matching question's verdict, before the pairs of cards the learner first put together wrong, one per line as “card → card”. -->
+    <string name="questions_match_first_tries">Você tinha combinado primeiro:</string>
     <string name="questions_your_answer">Sua resposta</string>
     <string name="questions_mark_correct">Correta</string>
     <string name="questions_mark_wrong">Errada</string>

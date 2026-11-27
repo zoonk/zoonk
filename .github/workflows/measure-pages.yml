@@ -9,16 +9,16 @@ on:
         required: true
         default: /today /plan
       email:
-        description: Seeded learner to sign in as; empty measures the pages signed out
+        description: Seeded learner to sign in as; use none to measure signed out
         default: v2-exam@zoonk.test
       app:
         description: App to measure, such as api or admin; empty measures Main
         default: ""
       base:
-        description: Ref measured first on the same runner, to compare with; empty skips it
+        description: Ref measured first on the same runner, to compare with; use none to skip it
         default: main
       flags:
-        description: More `pnpm verify:pages` flags
+        description: More `pnpm verify:pages` flags; use none for the checker defaults
         default: --viewports phone,laptop --schemes light
 
 permissions:
@@ -30,9 +30,9 @@ jobs:
     timeout-minutes: 60
     env:
       APP: ${{ inputs.app }}
-      BASE: ${{ inputs.base }}
-      EMAIL: ${{ inputs.email }}
-      FLAGS: ${{ inputs.flags }}
+      BASE: ${{ inputs.base != 'none' && inputs.base || '' }}
+      EMAIL: ${{ inputs.email != 'none' && inputs.email || '' }}
+      FLAGS: ${{ inputs.flags != 'none' && inputs.flags || '' }}
       PATHS: ${{ inputs.paths }}
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ vars.TURBO_TEAM }}
@@ -48,10 +48,10 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Check out the base
-        if: inputs.base != ''
+        if: env.BASE != ''
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          ref: ${{ inputs.base }}
+          ref: ${{ env.BASE }}
           path: base
 
       - name: Setup Node.js
@@ -79,7 +79,7 @@ jobs:
 
       # The base runs first: the ref's migrations then apply on top of the same seeded learners.
       - name: Measure the base
-        if: inputs.base != ''
+        if: env.BASE != ''
         continue-on-error: true
         run: bash scripts/verify/measure-checkout.sh base "$RUNNER_TEMP/base"
 

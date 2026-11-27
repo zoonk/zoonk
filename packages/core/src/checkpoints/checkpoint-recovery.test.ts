@@ -1,12 +1,12 @@
 import { prisma } from "@zoonk/db";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { answerBlockInOrder } from "../sessions/_test-utils/answer-block";
 import { getTodayStudySession } from "../sessions/_test-utils/open-today";
 import {
-  DAY_MS,
   SESSION_NOW,
   checkpointItemFixture,
   sessionGoalFixture,
@@ -106,7 +106,7 @@ describe("challenge recovery after question removal", () => {
       prisma.studySession.findUniqueOrThrow({ where: { id: ref.sessionId } }),
     ).resolves.toMatchObject({ fullMealAt: null });
 
-    vi.setSystemTime(new Date(SESSION_NOW.getTime() + DAY_MS));
+    vi.setSystemTime(new Date(SESSION_NOW.getTime() + MS_PER_DAY));
 
     await expect(startChallenge({ input: {}, planItemId: boss.id })).resolves.toStrictEqual({
       status: "questionsNeeded",
@@ -147,15 +147,15 @@ describe("challenge recovery after question removal", () => {
   });
 
   it.each([
-    { deleteAnswered: false, optionIndex: 0 },
-    { deleteAnswered: false, optionIndex: 1 },
-    { deleteAnswered: true, optionIndex: 0 },
-    { deleteAnswered: true, optionIndex: 1 },
+    { deleteAnswered: false, right: true },
+    { deleteAnswered: false, right: false },
+    { deleteAnswered: true, right: true },
+    { deleteAnswered: true, right: false },
   ])(
-    "judges the asked question when questions vanish (option $optionIndex, answered removed $deleteAnswered)",
-    async ({ deleteAnswered, optionIndex }) => {
+    "judges the asked question when questions vanish (right $right, answered removed $deleteAnswered)",
+    async ({ deleteAnswered, right }) => {
       const { itemIds, ref } = await startedBoss();
-      await answerBlockInOrder({ ...ref, count: 1, optionIndex });
+      await answerBlockInOrder({ ...ref, count: 1, right });
 
       await prisma.item.deleteMany({
         where: { id: { in: deleteAnswered ? itemIds : itemIds.slice(1) } },
@@ -163,12 +163,7 @@ describe("challenge recovery after question removal", () => {
 
       await expect(finishStudyBlock({ ...ref, input: {} })).resolves.toMatchObject({
         completion: {
-          checkpoint: {
-            correct: optionIndex === 0 ? 1 : 0,
-            passMark: 1,
-            passed: optionIndex === 0,
-            total: 1,
-          },
+          checkpoint: { correct: right ? 1 : 0, passMark: 1, passed: right, total: 1 },
         },
         status: "ready",
       });

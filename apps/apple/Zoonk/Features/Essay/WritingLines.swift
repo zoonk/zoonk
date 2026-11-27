@@ -1,8 +1,10 @@
 import Foundation
 
-/// Core's `countWritingLines`: the lines a handwritten sheet would take, at `charactersPerLine`
-/// characters a line, erring toward more. A break starts a new line, except one that ends the text;
-/// `ignoredFrom` is where the text passes `limit`, in UTF-16 code units as the grade's offsets.
+/// Core's `countWritingLines`: the lines a handwritten sheet would take, erring toward more. A
+/// paragraph starts on the next line, none is left blank between paragraphs, and a space never
+/// starts a line, so only text opens one. `estimatedLines` counts at a typical hand
+/// (`charactersPerLine`); `ignoredFrom` is the start of the word that passes `limit` even at the
+/// densest published hand (`maxCharactersPerLine`), in UTF-16 code units as the grade's offsets.
 enum WritingLines {
   struct Count: Equatable {
     var estimatedLines: Int
@@ -11,35 +13,56 @@ enum WritingLines {
 
   private static let breaks: Set<Character> = ["\r\n", "\r", "\n", "\u{2028}", "\u{2029}"]
 
-  static func count(_ text: String, charactersPerLine: Int, limit: Int?) -> Count {
+  static func estimate(_ text: String, charactersPerLine: Int) -> Int {
+    lines(text, charactersPerLine: charactersPerLine, limit: nil).lines
+  }
+
+  static func count(
+    _ text: String, charactersPerLine: Int, maxCharactersPerLine: Int, limit: Int?
+  ) -> Count {
+    Count(
+      estimatedLines: estimate(text, charactersPerLine: charactersPerLine),
+      ignoredFrom: lines(text, charactersPerLine: maxCharactersPerLine, limit: limit).passedFrom)
+  }
+
+  private static func lines(
+    _ text: String, charactersPerLine: Int, limit: Int?
+  ) -> (lines: Int, passedFrom: Int?) {
     var lines = 0
     var used = 0
-    var ignoredFrom: Int?
+    var broken = false
+    var passedFrom: Int?
+    var wordStart = 0
     var offset = 0
-    let length = text.utf16.count
 
     for character in text {
-      let isBreak = breaks.contains(character)
+      let isSpace = character.unicodeScalars.allSatisfy(\.properties.isWhitespace)
 
-      if lines == 0 || (used == charactersPerLine && !isBreak) {
-        lines += 1
-        used = 0
-      }
+      if breaks.contains(character) {
+        broken = lines > 0
+      } else if !isSpace {
+        if lines == 0 || broken || used == charactersPerLine {
+          lines += 1
+          used = 0
+          broken = false
+        }
 
-      if let limit, lines > limit, ignoredFrom == nil {
-        ignoredFrom = offset
-      }
+        if let limit, lines > limit, passedFrom == nil {
+          passedFrom = wordStart
+        }
 
-      if isBreak {
-        lines += offset + character.utf16.count < length ? 1 : 0
-        used = 0
-      } else {
+        used += 1
+      } else if lines > 0, !broken, used < charactersPerLine {
         used += 1
       }
 
       offset += character.utf16.count
+
+      if isSpace {
+        wordStart = offset
+      }
     }
 
-    return Count(estimatedLines: lines, ignoredFrom: ignoredFrom)
+    return (lines, passedFrom)
   }
 }

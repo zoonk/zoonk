@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { getLearnerSummary } from "@zoonk/core/learner/summary";
 import { getSession } from "@zoonk/core/users/session";
 import { prisma } from "@zoonk/db";
-import { writeSeed, writeSeedPersonaCopy } from "@zoonk/db/seed";
+import { seedPlus, writeSeed, writeSeedPersonaCopy } from "@zoonk/db/seed";
 import { listSeedPersonas } from "@zoonk/db/seed/personas";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
@@ -319,6 +319,94 @@ describe("persona command", () => {
       expect(goal.timezone).toBe("Europe/Lisbon");
       expect(goal.language).toBe("pt");
       expect(course.language).toBe("pt");
+      expect(goal.title).toBe("Dominar física quântica do zero");
+      expect(goal.prompt).toBe("I want to master quantum physics, starting from scratch");
+
+      expect(goal.plan.graph).toMatchObject({
+        phases: [
+          expect.objectContaining({
+            milestone: "Resolver equações e usar vetores",
+            name: "A matemática da física",
+          }),
+          expect.anything(),
+          expect.anything(),
+          expect.anything(),
+          expect.anything(),
+        ],
+      });
+
+      expect(persona.mistakes).toStrictEqual([
+        expect.objectContaining({
+          snapshot: expect.objectContaining({
+            answer: "−1.000",
+            correctAnswer: "0,001",
+            question: "Quanto é 10⁻³?",
+          }),
+        }),
+      ]);
+
+      const change = await prisma.planChange.findFirstOrThrow({
+        where: { kind: "testedOut", planId: goal.plan.id },
+      });
+
+      expect(change.reason).toBe(
+        "Você já sabe frações e equações lineares, então o plano pula as 48 aulas desses tópicos.",
+      );
+    });
+
+    it("writes Lucas's challenge title in English wherever it appears", async () => {
+      const { userId } = await createPersona({ language: "en", name: "lucas" });
+      const persona = await loadPersona(userId);
+      const goal = getGoal(persona);
+      const challenge = "Duel with the Trickster";
+
+      expect(goal).toMatchObject({
+        displayName: "Understand quantum physics",
+        language: "en",
+        prompt: "quero entender física quântica sem precisar fazer conta",
+        title: "Understand quantum physics",
+      });
+
+      expect(goal.plan.items).toContainEqual(
+        expect.objectContaining({ kind: "boss", titleSnapshot: challenge }),
+      );
+
+      expect(persona.learningEvents).toContainEqual(
+        expect.objectContaining({ kind: "checkpoint", titleSnapshot: challenge }),
+      );
+
+      expect(persona.mistakes).toContainEqual(
+        expect.objectContaining({
+          snapshot: expect.objectContaining({
+            question: "A brighter red light is made of red photons that each carry more energy.",
+          }),
+        }),
+      );
+    });
+
+    it.each([
+      { language: "en", name: "pedro", title: "Understand the stock market" },
+      { language: "pt", name: "sam", title: "O que significa “a bolsa subiu 2%”?" },
+    ] as const)("writes $name's goal title in $language", async ({ language, name, title }) => {
+      const { userId } = await createPersona({ language, name });
+      const goal = getGoal(await loadPersona(userId));
+      expect(goal).toMatchObject({ displayName: title, language, title });
+    });
+
+    it("localizes Ana's focus and mistakes for an English plan", async () => {
+      const { userId } = await createPersona({ language: "en", name: "ana" });
+      const persona = await loadPersona(userId);
+      const goal = getGoal(persona);
+
+      expect(goal.plan.settings).toMatchObject({ focusAreas: ["Natural Sciences"] });
+
+      expect(persona.mistakes).toContainEqual(
+        expect.objectContaining({
+          snapshot: expect.objectContaining({
+            question: "What is the electric current in the circuit?",
+          }),
+        }),
+      );
     });
 
     it("refuses a persona or language the seed doesn't have", async () => {
@@ -464,6 +552,39 @@ describe("persona command", () => {
       );
 
       await expect(clonePersona({ from: "nobody@zoonk.test" })).rejects.toThrow(/no learner/u);
+    });
+
+    it("keeps the source's Plus or Free by the app's rule unless asked otherwise", async () => {
+      const [plusSource, lapsedSource] = await Promise.all([createSource(), createSource()]);
+
+      await Promise.all([
+        seedPlus(prisma, { now: new Date(), userId: plusSource.userId }),
+        prisma.subscription.create({
+          data: {
+            periodEnd: new Date(Date.now() - MS_PER_DAY),
+            plan: "plus",
+            provider: "apple",
+            providerSubscriptionId: randomUUID(),
+            referenceId: lapsedSource.userId,
+            status: "active",
+            userId: lapsedSource.userId,
+          },
+        }),
+      ]);
+
+      const [plus, lapsed, free] = await Promise.all([
+        clonePersona({ from: plusSource.email }),
+        clonePersona({ from: lapsedSource.email }),
+        clonePersona({ from: plusSource.email, plus: false }),
+      ]);
+
+      const counts = await Promise.all(
+        [plus, lapsed, free].map(({ userId }) =>
+          prisma.subscription.count({ where: { referenceId: userId } }),
+        ),
+      );
+
+      expect(counts).toStrictEqual([1, 0, 0]);
     });
 
     it("gives a copy the plan and time zone asked for, at the same local times", async () => {

@@ -24,6 +24,7 @@ export function useLessonRun({
   lesson: HeldLesson;
 }) {
   const runRef = useRef<Promise<StartedRun | null> | null>(null);
+  const beforeStartRef = useRef<(() => Promise<boolean>) | null>(null);
   const pendingRef = useRef(new Set<Promise<unknown>>());
   const screensRef = useRef(new Map<string, ScreenQueue>());
   const heldRef = useRef(new Map<string, HeldAnswer>());
@@ -49,7 +50,11 @@ export function useLessonRun({
 
     dispatch({ type: "runStarting" });
 
-    const run = startRun().then((outcome) => {
+    const recover = beforeStartRef.current;
+    beforeStartRef.current = null;
+    const starting = recover ? recover().then(() => startRun()) : startRun();
+
+    const run = starting.then((outcome) => {
       if (outcome.reason === "opened") {
         return null;
       }
@@ -62,6 +67,7 @@ export function useLessonRun({
           optionalStepIds: outcome.optionalStepIds,
           replay: outcome.replay,
           runId: outcome.runId,
+          saved: outcome.saved,
           startedAt: outcome.startedAt,
           type: "runStarted",
         });
@@ -106,6 +112,7 @@ export function useLessonRun({
 
   const { hold, reopen, resendKept, resendUnsaved } = useHeldAnswers({
     adapters,
+    beforeStartRef,
     dispatch,
     ensureRun,
     getQueue,

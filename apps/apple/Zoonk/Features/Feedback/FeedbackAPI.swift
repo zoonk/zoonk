@@ -4,7 +4,11 @@ import OpenAPIRuntime
 enum FeedbackContentKind: String, Equatable, Sendable {
   case chapter
   case course
+  /// A question from the bank, as review and the notebook ask it.
+  case item
   case plan
+  /// A lesson's screen.
+  case step
 }
 
 enum FeedbackReportType: String, Equatable, Sendable {
@@ -133,7 +137,9 @@ struct FeedbackAPI: FeedbackAPIClient, @unchecked Sendable {
     switch kind {
     case .chapter: .chapter
     case .course: .course
+    case .item: .item
     case .plan: .plan
+    case .step: .step
     }
   }
 

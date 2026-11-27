@@ -3,9 +3,10 @@ import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
-import { DAY_MS, SESSION_NOW, daysAgo } from "../../sessions/_test-utils/session-goal";
+import { SESSION_NOW, daysAgo } from "../../sessions/_test-utils/session-goal";
 import { type MockConditions, type MockResult } from "../mocks/mock-contract";
 import { loadExamHistory } from "./_utils/exam-history";
 import { getExamView } from "./get-exam-view";
@@ -89,7 +90,7 @@ async function historySetup(mocks = MOCKS) {
     return {
       conditions: {},
       createdAt,
-      finishedAt: new Date(createdAt.getTime() + DAY_MS),
+      finishedAt: new Date(createdAt.getTime() + MS_PER_DAY),
       goalId,
       result,
       sectionStartedAt: createdAt,

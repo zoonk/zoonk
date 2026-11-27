@@ -1,10 +1,7 @@
-/** Zoonk's tap target rule sits above WCAG 2.2's 24 px floor (2.5.8), which axe leaves off. */
-export const MIN_TARGET_PX = 44;
-
 const TARGET_LIMITS = {
   /** A word in a sentence can be a little taller than its line (padding, room for focus). */
   lineTolerance: 1.25,
-  min: MIN_TARGET_PX,
+  min: 44,
   nameLength: 40,
   /** Roughly what browsers use for `line-height: normal`. */
   normalLineHeight: 1.2,
@@ -164,25 +161,22 @@ export function describeTarget(sample: TargetSample): string {
   return `<${sample.role}${slot}> "${name}"`;
 }
 
-function getMinimum(sample: TargetSample): number {
-  const min = sample.finePointer ? MOUSE_TARGET_PX : TARGET_LIMITS.min;
-
-  return min - TARGET_LIMITS.sizeTolerance;
-}
-
 export function findSmallTargets(samples: TargetSample[]): string[] {
   return samples.flatMap((sample) => {
     if (isHiddenTarget(sample) || isInText(sample) || EXEMPT_SLOTS.has(sample.slot ?? "")) {
       return [];
     }
 
-    const smallest = getMinimum(sample);
+    const minimum = sample.finePointer ? MOUSE_TARGET_PX : TARGET_LIMITS.min;
+    const smallest = minimum - TARGET_LIMITS.sizeTolerance;
     const size = getHitArea(sample);
 
     if (size.height >= smallest && size.width >= smallest) {
       return [];
     }
 
-    return [`${describeTarget(sample)} is ${Math.round(size.width)}×${Math.round(size.height)} px`];
+    return [
+      `Zoonk tap target (${minimum} px): ${describeTarget(sample)} is ${Math.round(size.width)}×${Math.round(size.height)} px`,
+    ];
   });
 }

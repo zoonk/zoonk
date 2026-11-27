@@ -383,7 +383,7 @@ private fun title(awarded: List<CertificateName>): String {
     val only = awarded.singleOrNull() ?: return pluralStringResource(R.plurals.certificates_earned, awarded.size, awarded.size)
     return when (only.kind) {
         CertificateKind.Course -> {
-            only.courseLevel?.let { stringResource(R.string.certificates_level_complete, courseLevelName(it)) }
+            only.courseLevel?.let { courseLevelName(it) }?.let { stringResource(R.string.certificates_level_complete, it) }
                 ?: stringResource(R.string.certificates_course_complete)
         }
 

@@ -1,18 +1,20 @@
 import { prisma } from "@zoonk/db";
 import { planItemFixture } from "@zoonk/testing/fixtures/goals";
-import { learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
+import { attemptFixture, learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { pickItemInBlock } from "../_test-utils/shown-choice";
 import { getChallenge } from "../checkpoints/get-challenge";
 import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { getGoalPlan } from "../plans/get-goal-plan";
 import { getItemKey } from "../plans/planner/plan-items";
-import { sessionGoalFixture } from "./_test-utils/session-goal";
+import { dueSkillFixture, sessionGoalFixture } from "./_test-utils/session-goal";
+import { loadSessionBuildInput } from "./_utils/load-build-inputs";
 import { planStudyDay } from "./_utils/plan-study-day";
 import { selectDayPlan } from "./_utils/selected-day-plan";
 import { answerStudyQuestion } from "./answer-study-question";
@@ -46,6 +48,57 @@ describe("a selected review day", () => {
   });
 
   afterEach(() => vi.useRealTimers());
+
+  it("keeps a due skill's wordy match when the review day excludes its last-right question", async () => {
+    const user = await userFixture();
+    const { goal, plan, skills } = await sessionGoalFixture({ itemsPerSkill: 0, userId: user.id });
+    const skillId = skills[0]!.id;
+
+    const [choice, match, review] = await Promise.all([
+      itemFixture({ skillId }),
+      itemFixture({
+        content: {
+          pairs: [
+            { left: "The quantity increases by the same amount at each step", right: "Linear" },
+            {
+              left: "The quantity increases by the same factor at each step",
+              right: "Exponential",
+            },
+          ],
+          reason: "A constant difference and a constant ratio describe different patterns.",
+        },
+        format: "matchPairs",
+        skillId,
+      }),
+      planItemFixture({ kind: "review", planId: plan.id, position: 10, scheduledFor: TODAY }),
+      dueSkillFixture({ skillId, userId: user.id }),
+    ]);
+
+    await attemptFixture({
+      answeredAt: START,
+      isCorrect: true,
+      itemId: choice.id,
+      skillId,
+      userId: user.id,
+    });
+
+    vi.setSystemTime(NOW);
+
+    const input = await loadSessionBuildInput({
+      goal,
+      keepsBlocks: true,
+      localDate: TODAY,
+      now: NOW,
+      timeZone: "UTC",
+      userId: user.id,
+    });
+
+    expect(input.reviewPlanItemId).toBe(review.id);
+
+    expect(input.capsules).toMatchObject([
+      { format: "matchPairs", itemIds: [match.id], skillIds: [skillId] },
+    ]);
+  });
 
   it.each([
     ["the past review", "review", new Date("2026-09-29")],
@@ -320,10 +373,15 @@ describe("a selected review day", () => {
     });
 
     const answers = await Promise.all(
-      payload.itemIds.map((itemId) =>
+      payload.itemIds.map(async (itemId) =>
         answerStudyQuestion({
           ...ref,
-          input: { answer: { selectedIndex: 0 }, durationMs: 1000, itemId, timeZone: "UTC" },
+          input: {
+            answer: await pickItemInBlock({ blockId: ref.blockId, itemId }),
+            durationMs: 1000,
+            itemId,
+            timeZone: "UTC",
+          },
         }),
       ),
     );

@@ -2,7 +2,7 @@
   "sourceLanguage" : "en",
   "strings" : {
     "%@ · %@" : {
-      "comment" : "The buddy's growth stage and glasses, as in “Baby · Round glasses”\nWhere a remembered fact came from and its day, as in “From a chat · Oct 11”",
+      "comment" : "Where a remembered fact came from and its day, as in “From a chat · Oct 11”",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1788,13 +1788,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "De una conversación"
+            "value" : "De un chat"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "D’après une conversation"
+            "value" : "D’une discussion"
           }
         },
         "it" : {
@@ -1824,13 +1824,13 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "De uma conversa"
+            "value" : "De um chat"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bir sohbetten"
+            "value" : "Bir yazışmadan"
           }
         }
       }
@@ -2013,7 +2013,7 @@
       }
     },
     "Language" : {
-      "comment" : "Preferences section about language\nRow opening the app's language",
+      "comment" : "Row opening the app's language",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4249,6 +4249,7 @@
       }
     },
     "Where you live" : {
+      "comment" : "Row with the country the learner lives in, which they tell us",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4601,7 +4602,7 @@
       }
     },
     "Your data" : {
-      "comment" : "Preferences section about the learner's data",
+      "comment" : "Privacy section with the data download and account deletion",
       "localizations" : {
         "de" : {
           "stringUnit" : {

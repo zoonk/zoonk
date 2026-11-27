@@ -170,7 +170,7 @@ private struct RevealSubjectRow: View {
   /// Why it isn't in the plan, else how much it holds.
   private var line: Text? {
     if subject.notPlannedReason != nil {
-      return planOutsideReason(subject.notPlannedReason)
+      return planOutsideReason(subject.notPlannedReason, module: goal.kind != .exam)
     }
 
     if !subject.topics.isEmpty {

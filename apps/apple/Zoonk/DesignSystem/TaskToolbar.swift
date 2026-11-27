@@ -3,9 +3,11 @@ import SwiftUI
 extension View {
   /// A task's title in its bar, on the screen's middle whatever the bar holds beside it, as the
   /// system's own title is, and on up to two lines there, so an ordinary chapter or lesson title
-  /// shows whole. The system still has it as the screen's title (VoiceOver, the window, Back's
-  /// menu), and a vertical bar (iPhone Duo) has no room for it. A screen that shows the same title
-  /// large in its body keeps it out of the bar (`isShown` false) and only names the screen.
+  /// shows whole. Like the system's, a title that doesn't fit on one line on the middle moves off
+  /// it, up to the whole room between the bar's buttons, so it wraps or shortens only when that
+  /// room is too narrow too. The system still has it as the screen's title (VoiceOver, the window,
+  /// Back's menu), and a vertical bar (iPhone Duo) has no room for it. A screen that shows the same
+  /// title large in its body keeps it out of the bar (`isShown` false) and only names the screen.
   @ViewBuilder
   func taskTitle(_ title: Text, isShown: Bool = true) -> some View {
     if isShown {
@@ -19,6 +21,29 @@ extension View {
   /// short vertical bar can), so leaving never hides in the overflow menu.
   func taskClose<Close: View>(@ViewBuilder _ close: () -> Close) -> some View {
     modifier(TaskCloseToolbar(close: close()))
+  }
+
+  /// Esc lets go of something the screen holds (a picked match card) while `isHeld`, instead of
+  /// leaving: main's board takes Esc ahead of the ✕. The task's close gives up its Esc meanwhile.
+  func holdsEscape(_ isHeld: Bool, cancel: @escaping () -> Void) -> some View {
+    // iOS gives a button in a `background` no keyboard shortcut, so this one sits beside the content.
+    ZStack {
+      self
+
+      if isHeld {
+        Button(action: cancel) { EmptyView() }
+          .keyboardShortcut(.cancelAction)
+          .frame(width: 0, height: 0)
+          .opacity(0)
+          .accessibilityHidden(true)
+      }
+    }
+    .preference(key: EscapeHoldKey.self, value: isHeld)
+  }
+
+  /// A task close's Esc, which it gives up while the screen holds Esc (`holdsEscape`).
+  func leavesOnEscape() -> some View {
+    modifier(LeavesOnEscape())
   }
 
   /// A screen's own options in the toolbar's "…" menu: the system's overflow menu on iOS 27, which
@@ -43,19 +68,30 @@ private struct TaskTitleToolbar: ViewModifier {
   /// The screen's edges and the room the bar gives the title, both across the window.
   @State private var screen: ClosedRange<CGFloat>?
   @State private var room: ClosedRange<CGFloat>?
+  @State private var lineWidth: CGFloat?
 
   let title: Text
 
   /// Takes from the side nearer the screen's edge what the other side lacks, so the title's room is
-  /// as wide on each side of the screen's middle.
+  /// as wide on each side of the screen's middle, but no more than the room the title can spare on
+  /// one line.
   private var inset: (leading: CGFloat, trailing: CGFloat) {
-    guard let screen, let room else {
+    guard let screen, let room, let lineWidth else {
       return (0, 0)
     }
 
     let leading = room.lowerBound - screen.lowerBound
     let trailing = screen.upperBound - room.upperBound
-    return (max(0, trailing - leading), max(0, leading - trailing))
+    let spare = max(0, room.upperBound - room.lowerBound - lineWidth)
+    return (min(max(0, trailing - leading), spare), min(max(0, leading - trailing), spare))
+  }
+
+  private func styled(_ title: Text) -> some View {
+    title
+      // The bar's own title font, without the tracking main's body sets for app text, so a title
+      // that fits one line looks as the system draws it.
+      .font(.headline)
+      .tracking(0)
   }
 
   func body(content: Content) -> some View {
@@ -71,15 +107,22 @@ private struct TaskTitleToolbar: ViewModifier {
       .toolbar {
         // Stands in for the bar's own title, which keeps to one line.
         ToolbarItem(placement: .title) {
-          title
-            // The bar's own title font, without the tracking main's body sets for app text, so a
-            // title that fits one line looks as the system draws it.
-            .font(.headline)
-            .tracking(0)
+          styled(title)
             .lineLimit(2)
             .multilineTextAlignment(.center)
             .minimumScaleFactor(0.85)
             .fixedSize(horizontal: false, vertical: true)
+            .background {
+              styled(title)
+                .lineLimit(1)
+                .fixedSize()
+                .hidden()
+                .onGeometryChange(for: CGFloat.self) { proxy in
+                  proxy.size.width.rounded(.up)
+                } action: {
+                  lineWidth = $0
+                }
+            }
             .padding(.leading, inset.leading)
             .padding(.trailing, inset.trailing)
             // The bar sizes a title to its ideal width when it first lays it out, and then puts a
@@ -105,8 +148,12 @@ private struct TaskTitleToolbar: ViewModifier {
 
 private struct TaskCloseToolbar<Close: View>: ViewModifier {
   let close: Close
+  @State private var isEscapeHeld = false
 
   func body(content: Content) -> some View {
+    let content = content.onPreferenceChange(EscapeHoldKey.self) { isEscapeHeld = $0 }
+    let close = close.environment(\.isEscapeHeld, isEscapeHeld)
+
     if #available(iOS 27, *) {
       content.toolbar {
         ToolbarItem(placement: .cancellationAction) { close }
@@ -117,6 +164,26 @@ private struct TaskCloseToolbar<Close: View>: ViewModifier {
         ToolbarItem(placement: .cancellationAction) { close }
       }
     }
+  }
+}
+
+private struct EscapeHoldKey: PreferenceKey {
+  static let defaultValue = false
+
+  static func reduce(value: inout Bool, nextValue: () -> Bool) {
+    value = value || nextValue()
+  }
+}
+
+extension EnvironmentValues {
+  @Entry var isEscapeHeld = false
+}
+
+private struct LeavesOnEscape: ViewModifier {
+  @Environment(\.isEscapeHeld) private var isEscapeHeld
+
+  func body(content: Content) -> some View {
+    content.keyboardShortcut(isEscapeHeld ? nil : .cancelAction)
   }
 }
 

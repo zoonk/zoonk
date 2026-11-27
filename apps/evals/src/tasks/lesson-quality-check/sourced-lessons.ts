@@ -63,6 +63,7 @@ const taxDeadlines: WrittenLesson = {
         },
       ],
       question: "Mia sent Form 4868 on April 10, 2026. By when must she pay the tax she owes?",
+      standsAlone: true,
       visual: null,
     },
     {
@@ -94,6 +95,7 @@ const taxDeadlines: WrittenLesson = {
         },
       ],
       question: "What should he do?",
+      standsAlone: true,
       visual: null,
     },
   ],
@@ -163,6 +165,7 @@ const estabilidade: WrittenLesson = {
       ],
       question:
         "Pedro completou três anos de efetivo exercício em cargo efetivo, mas a comissão ainda não avaliou o trabalho dele. Ele já é estável?",
+      standsAlone: true,
       visual: null,
     },
     {
@@ -203,6 +206,7 @@ const estabilidade: WrittenLesson = {
         },
       ],
       question: "O chefe pode demiti-la no mesmo dia, sem processo?",
+      standsAlone: true,
       visual: null,
     },
   ],

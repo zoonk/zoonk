@@ -1,49 +1,44 @@
 import { type ActivityAnswer } from "@zoonk/core/library/activities/answer-schema";
+import { type MatchTry } from "@zoonk/learn/use-match-board";
 import { type MatchCard } from "./match-pairs-columns";
 
-export type MatchProgress = {
-  firstTries: Readonly<Record<string, string>>;
-  matched: readonly string[];
-};
+type Columns = { left: readonly MatchCard[]; right: readonly MatchCard[] };
 
-const EMPTY_MATCH_PROGRESS: MatchProgress = { firstTries: {}, matched: [] };
-
-export function isMatch(left: MatchCard, right: MatchCard): boolean {
-  return left.id === right.id;
-}
-
-export function recordTry(
-  progress: MatchProgress,
-  { left, right }: { left: MatchCard; right: MatchCard },
-): MatchProgress {
-  const firstTries =
-    progress.firstTries[left.id] === undefined
-      ? { ...progress.firstTries, [left.id]: right.id }
-      : progress.firstTries;
-
-  const matched = isMatch(left, right) ? [...progress.matched, left.id] : progress.matched;
-
-  return { firstTries, matched };
-}
-
+/** For each left card, the right card it was first tried with: its partner, or the first miss. */
 export function matchAnswer(
-  pairIds: readonly string[],
-  progress: MatchProgress,
-): Extract<ActivityAnswer, { kind: "assignment" }> | null {
-  if (!pairIds.every((id) => progress.matched.includes(id))) {
-    return null;
-  }
-
+  { left, right }: Columns,
+  misses: readonly MatchTry[],
+): Extract<ActivityAnswer, { kind: "assignment" }> {
   return {
     kind: "assignment",
-    pairs: Object.fromEntries(pairIds.map((id) => [id, progress.firstTries[id] ?? id])),
+    pairs: Object.fromEntries(
+      left.map((card, index) => {
+        const first = misses.find((miss) => miss.left === index);
+        return [card.id, (first && right[first.right]?.id) ?? card.id];
+      }),
+    ),
   };
 }
 
-export function progressFromAnswer(answer: ActivityAnswer | null): MatchProgress {
+/**
+ * The finished board an answer stands for, and each left card's first wrong try. A first try at a
+ * card the activity no longer has, from before its unpaired cards were removed, can't be named.
+ */
+export function boardFromAnswer(
+  { left, right }: Columns,
+  answer: ActivityAnswer | null,
+): { misses: MatchTry[]; pairs: number[] } | undefined {
   if (answer?.kind !== "assignment") {
-    return EMPTY_MATCH_PROGRESS;
+    return undefined;
   }
 
-  return { firstTries: answer.pairs, matched: Object.keys(answer.pairs) };
+  const placeOf = (id: string | undefined) => right.findIndex((card) => card.id === id);
+
+  return {
+    misses: left.flatMap((card, index) => {
+      const tried = placeOf(answer.pairs[card.id]);
+      return tried >= 0 && right[tried]?.id !== card.id ? [{ left: index, right: tried }] : [];
+    }),
+    pairs: left.map((card) => placeOf(card.id)),
+  };
 }

@@ -11,7 +11,9 @@ export function getTutorQuestionsPath(target: TutorTarget): string {
     case "mock":
       return `/v1/mocks/${encodeURIComponent(target.blockId)}/questions`;
     case "plan":
-      return `/v1/goals/${encodeURIComponent(target.goalId)}/plan/questions`;
+      return target.conversationId === null
+        ? `/v1/goals/${encodeURIComponent(target.goalId)}/plan/questions`
+        : `/v1/goals/${encodeURIComponent(target.goalId)}/buddy/conversations/${encodeURIComponent(target.conversationId)}/questions`;
     case "subject":
       return `/v1/goals/${encodeURIComponent(target.goalId)}/subjects/${encodeURIComponent(target.subjectKey)}/questions`;
     default:

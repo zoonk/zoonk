@@ -16,12 +16,14 @@ enum LayoutPart: String {
   case lead
   /// The row's main text.
   case label
-  /// A supporting line under the label.
+  /// A supporting line under the label: a description, or a line with no words, such as a
+  /// progress bar.
   case note
   /// Short text at the row's end: a date, a count, a duration.
   case value
   /// What closes a row on its end edge: a chevron, a checkmark.
   case end
+  case holder
 }
 
 /// What a value says where the pieces' captures compare its face with its column's: a word in a
@@ -53,10 +55,20 @@ extension View {
     #endif
   }
 
-  /// A part of the row around it; `text` names it in a capture's findings.
-  func layoutPart(_ part: LayoutPart, text: Text? = nil) -> some View {
+  /// A section label or footer that a plain list may draw in a cell of its own.
+  func layoutSectionText() -> some View {
     #if DEBUG
-      modifier(LayoutPartReporter(part: part, text: text))
+      modifier(LayoutSectionTextReporter())
+    #else
+      self
+    #endif
+  }
+
+  /// A part of the row around it; `text` names it in a capture's findings. `words: false` is a
+  /// part drawn with no words, such as a progress bar: it is read by its ink, as a mark is.
+  func layoutPart(_ part: LayoutPart, text: Text? = nil, words: Bool = true) -> some View {
+    #if DEBUG
+      modifier(LayoutPartReporter(part: part, text: text, words: words))
     #else
       self
     #endif

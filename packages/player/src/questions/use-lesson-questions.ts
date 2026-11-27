@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  type LessonQuestionResource,
   type LessonScreenSuggestion,
   type LessonTutorSuggestion,
   type TutorTarget,
@@ -26,9 +27,14 @@ import { useSendLessonQuestion } from "./use-send-lesson-question";
 export type LessonQuestionHost = {
   activeContext: LessonQuestionContext;
   canAskQuestions: boolean;
+  /** The active context's thread as the page read it, there from the first render. */
   initialThread?: LessonQuestionThreadPage | null;
   lessonStepIds: readonly string[];
   onMissionMoment?: (moment: MissionMomentView | null) => void;
+  onQuestionSaved?: (saved: {
+    context: LessonQuestionContext;
+    question: LessonQuestionResource;
+  }) => void;
   page?: boolean;
   preload?: boolean;
   suggestions?: readonly LessonTutorSuggestion[];
@@ -73,6 +79,7 @@ export function useLessonQuestions({
   initialThread = null,
   lessonStepIds,
   onMissionMoment,
+  onQuestionSaved,
   page = false,
   preload = true,
   suggestions = NO_SUGGESTIONS,
@@ -172,6 +179,7 @@ export function useLessonQuestions({
     getState,
     lessonStepIds,
     onMissionMoment,
+    onQuestionSaved,
     reconcileThread: reconcileLatestThread,
     state,
     streamAnswer,

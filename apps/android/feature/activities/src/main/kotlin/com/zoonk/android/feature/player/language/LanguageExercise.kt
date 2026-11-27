@@ -63,7 +63,7 @@ sealed interface ExerciseContent {
     data object Shared : ExerciseContent
 }
 
-fun LanguageExercise.toExercise(): Exercise =
+fun LanguageExercise.toExercise(): Exercise? =
     when (this) {
         is PlayableLibraryStepAnyOf9Exercise.PlayableLibraryStepAnyOf5ListeningOneOfValue -> {
             with(value) {
@@ -184,6 +184,10 @@ fun LanguageExercise.toExercise(): Exercise =
                 )
             }
         }
+
+        else -> {
+            null
+        }
     }
 
 /** A listening screen whose sentence is its own answer, as in a lesson in the learner's own language: showing it gives the answer away. */
@@ -192,6 +196,6 @@ val LessonStep.isDictation: Boolean
         val language = content as? StepContent.Language ?: return false
         return language.kind == StepKind.Listening && language.exercise
             .toExercise()
-            .sentence
+            ?.sentence
             ?.readsItself == true
     }

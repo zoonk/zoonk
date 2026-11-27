@@ -119,6 +119,8 @@ class FakeLessonPlayerApi(
     var lessonGate: CompletableDeferred<Unit>? = null
     val readinessStates = ArrayDeque<String>()
     var readinessKind = "lesson"
+    var readinessSetAside = false
+    var readinessGenerationId = "gen-1"
     var warmUpId: String? = null
     var writes = 0
     var writeResponse: suspend () -> LessonGeneration = { ApiJson.decodeFromString("""{"generationId":"gen-1","status":"generating"}""") }
@@ -167,7 +169,7 @@ class FakeLessonPlayerApi(
                 {"clockId":${clockId?.let {
                     "\"$it\""
                 } ?: "null"},"sessionId":null,"answers":$runAnswers,"hyperdrive":{"knownStepIds":[],"streak":0},"optionalStepIds":$optionalStepIds,"runId":"$RUN_ID",
-                 "replay":false,"startedAt":"2026-10-28T10:00:00Z","support":$support}
+                 "replay":false,"saved":false,"startedAt":"2026-10-28T10:00:00Z","support":$support}
                 """.trimIndent(),
             ),
         )
@@ -245,7 +247,7 @@ class FakeLessonPlayerApi(
         val status = readinessStates.removeFirstOrNull() ?: throw ApiException(ApiError.Network)
         val warmUp = warmUpId?.let { "\"$it\"" } ?: "null"
         return ApiJson.decodeFromString(
-            """{"alternative":null,"generationId":"gen-1","kind":"$readinessKind","setAside":false,"status":"$status","warmUpId":$warmUp}""",
+            """{"alternative":null,"generationId":"$readinessGenerationId","kind":"$readinessKind","setAside":$readinessSetAside,"status":"$status","warmUpId":$warmUp}""",
         )
     }
 

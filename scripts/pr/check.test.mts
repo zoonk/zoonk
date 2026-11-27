@@ -1,6 +1,5 @@
 import assert from "node:assert/strict";
-import { execFileSync } from "node:child_process";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, it } from "vitest";
 import { CLEAN, checkFixture, kinds, sha256 } from "./check-fixture.mts";
@@ -68,6 +67,41 @@ describe("pr:media check", () => {
 
     assert.deepEqual(kinds(result), ["stale"]);
     assert.match(result.problems[0]?.detail ?? "", /change packages\/ui\/row\.txt/u);
+  });
+
+  it("passes an after picture when later commits change only tests, which never reach a screen", async () => {
+    const tested = checkFixture();
+    const picture = tested.capture([tested.shot({ file: "a.png" })]);
+
+    for (const path of [
+      "apps/main/e2e/saved-lessons.test.ts",
+      "apps/main/e2e/fixtures.ts",
+      "packages/core/src/plans/plan.test.ts",
+      "packages/core/src/plans/_test-utils/plan.ts",
+      "packages/player/src/_browser-tests/choice.test.tsx",
+      "apps/main/__mocks__/server-only.ts",
+      "apps/main/vitest.config.mts",
+      "apps/main/playwright.config.ts",
+    ]) {
+      tested.commit(path);
+    }
+
+    const afterTests = await picture.check();
+
+    assert.deepEqual(afterTests.problems, []);
+    tested.commit("packages/core/src/plans/plan.ts");
+    assert.deepEqual(kinds(await picture.check()), ["stale"]);
+  });
+
+  it("fails an after picture after a commit to .gitattributes, which decides what counts", async () => {
+    const marked = checkFixture();
+    const picture = marked.capture([marked.shot({ file: "a.png" })]);
+    const current = await picture.check();
+
+    marked.commit(".gitattributes");
+
+    assert.deepEqual(current.problems, []);
+    assert.deepEqual(kinds(await picture.check()), ["stale"]);
   });
 
   it("fails an after picture nobody read", async () => {
@@ -166,10 +200,7 @@ describe("pr:media check, on a native app's build stamp", () => {
     const clean = apple.capture([apple.shot({ ...picture, build: stamp })]);
     const current = await clean.check();
 
-    mkdirSync(join(apple.repository, "apps/apple"), { recursive: true });
-    writeFileSync(join(apple.repository, "apps/apple/App.swift"), "changed");
-    execFileSync("git", ["add", "apps/apple"], { cwd: apple.repository });
-    execFileSync("git", ["commit", "-qm", "change the app"], { cwd: apple.repository });
+    apple.commit("apps/apple/App.swift");
 
     assert.deepEqual(current.problems, []);
     assert.deepEqual(kinds(await clean.check()), ["stale"]);
@@ -198,10 +229,22 @@ describe("pr:media check, on an Android render's build stamp", () => {
     const clean = android.capture([android.shot({ ...picture, build: stamp })]);
     const current = await clean.check();
 
-    mkdirSync(join(android.repository, "apps/android"), { recursive: true });
-    writeFileSync(join(android.repository, "apps/android/Plan.kt"), "changed");
-    execFileSync("git", ["add", "apps/android"], { cwd: android.repository });
-    execFileSync("git", ["commit", "-qm", "change the app"], { cwd: android.repository });
+    android.commit("apps/android/Plan.kt");
+
+    assert.deepEqual(current.problems, []);
+    assert.deepEqual(kinds(await clean.check()), ["stale"]);
+  });
+
+  it.each([
+    "apps/android/app/src/testDebug/kotlin/PlanScreenshots.kt",
+    "apps/android/feature/today/src/test/kotlin/TodayFlowTest.kt",
+  ])("counts a commit to %s, test code that draws renders", async (path) => {
+    const drawn = checkFixture();
+    const render = drawn.shot({ ...picture, build: { ...stamp, commit: drawn.current } });
+    const clean = drawn.capture([render]);
+    const current = await clean.check();
+
+    drawn.commit(path);
 
     assert.deepEqual(current.problems, []);
     assert.deepEqual(kinds(await clean.check()), ["stale"]);

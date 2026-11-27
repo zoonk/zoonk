@@ -6,6 +6,7 @@ import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture, mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
 import { pictureCheckContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { buildImageReuseKey } from "@zoonk/utils/identity-key";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { serveStoredFile, storeBlobUploads } from "../../_test-utils/blob-uploads";
@@ -34,8 +35,6 @@ import { createStepImage } from "./lesson-images";
 
 const alt = "Mão com um pequeno corte na pele e micróbios entrando pelo corte.";
 
-const DAY_MS = 86_400_000;
-
 async function owedCheckOf(assetId: string) {
   const { checkOwedAt } = await prisma.mediaAsset.findUniqueOrThrow({ where: { id: assetId } });
   return checkOwedAt;
@@ -58,6 +57,7 @@ async function shownPicture() {
       mediaAssetId: asset.id,
       pictureAvailableAt: new Date("2020-01-01T00:00:00Z"),
       position: 0,
+      updatedAt: new Date(Date.now() - MS_PER_DAY),
     }),
     itemFixture({ mediaAssetId: asset.id, skillId: skill.id }),
   ]);
@@ -303,10 +303,10 @@ describe(listOwedPictureChecks, () => {
     const now = Date.now();
 
     const [older, newer, checked, failing] = await Promise.all([
-      mediaAssetFixture({ checkOwedAt: new Date(now - 30 * DAY_MS) }),
-      mediaAssetFixture({ checkFailures: 2, checkOwedAt: new Date(now - 29 * DAY_MS) }),
+      mediaAssetFixture({ checkOwedAt: new Date(now - 30 * MS_PER_DAY) }),
+      mediaAssetFixture({ checkFailures: 2, checkOwedAt: new Date(now - 29 * MS_PER_DAY) }),
       mediaAssetFixture({ checkOwedAt: null }),
-      mediaAssetFixture({ checkFailures: 3, checkOwedAt: new Date(now - 31 * DAY_MS) }),
+      mediaAssetFixture({ checkFailures: 3, checkOwedAt: new Date(now - 31 * MS_PER_DAY) }),
     ]);
 
     const listed = await listOwedPictureChecks();
@@ -346,6 +346,7 @@ describe(removeImageAsset, () => {
       content: pictureCheckContent,
       kind: "check",
       lessonId: lesson.id,
+      updatedAt: new Date(Date.now() - MS_PER_DAY),
     });
 
     await prisma.stepOptionPicture.create({

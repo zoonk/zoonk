@@ -356,6 +356,46 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertTrue(inputs[0].contains("block"))
   }
 
+  func testStandaloneLessonResumesWithoutStartingUntilInput() async throws {
+    var lesson = try checkLesson(["one", "two"])
+    lesson.resume = [heldAnswer("one", attemptId: UUID().uuidString, isCorrect: true).runAnswer]
+    for actsDuringRefresh in [false, true] {
+      let transport = OpeningStartTransport(holds: false)
+      let cache = AppCache(session: SessionStore.preview(account: .lessonLoadingTestAccount))
+      let gate = TestGate()
+      var earlier = lesson
+      earlier.resume = []
+      var reads = 0
+      let content: Resource<LessonLoad> = cache.resource(audience: .viewer) { _ in
+        reads += 1
+        if reads == 1 { return .ready(earlier) }
+        await gate.wait()
+        return .ready(lesson)
+      }
+      await content.load()
+      let store = player(cache: cache, content: content, transport: transport, activated: false)
+      let loading = Task { await store.load() }
+      try await waitForTestCondition("The cached lesson is being refreshed") {
+        content.isRefreshing
+      }
+      XCTAssertEqual(store.screen, .playing)
+      XCTAssertEqual(store.state?.currentStep?.id, "one")
+      let before = await transport.count
+      XCTAssertEqual(before, 0)
+      if actsDuringRefresh { store.act() }
+      gate.open()
+      await loading.value
+      XCTAssertEqual(store.state?.currentStep?.id, actsDuringRefresh ? "one" : "two")
+      if !actsDuringRefresh {
+        let afterRefresh = await transport.count
+        XCTAssertEqual(afterRefresh, 0)
+        store.act()
+      }
+      let started = await store.ensureRun()
+      XCTAssertTrue(started)
+    }
+  }
+
   func testRestoredOpeningWaitsForActionAndFollowsOpenedOnce() async throws {
     let transport = OpeningStartTransport(holds: false, opensElsewhere: true)
     let cache = AppCache(session: SessionStore.preview(account: .lessonLoadingTestAccount))
@@ -365,7 +405,7 @@ final class LessonPlayerLoadingTests: XCTestCase {
     var destinations: [StudyBlockOpening] = []
     let store = player(
       cache: cache, content: content, transport: transport,
-      opening: .block("block"), onOpened: { destinations.append($0) })
+      opening: .block("block"), activated: false, onOpened: { destinations.append($0) })
     await store.load()
     let before = await transport.count
     XCTAssertEqual(before, 0)
@@ -376,7 +416,7 @@ final class LessonPlayerLoadingTests: XCTestCase {
     let after = await transport.count
     XCTAssertEqual(after, 2, "one retry for 503")
     XCTAssertEqual(destinations.count, 1)
-    XCTAssertEqual(destinations.first, .today(.init(kind: .today)))
+    XCTAssertEqual(destinations.first, .StudyBlockOpeningToday(.init(kind: .today)))
     XCTAssertNil(store.state?.runId)
   }
 
@@ -556,18 +596,38 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertEqual(store.state?.currentStep?.id, "three")
   }
 
-  /// A canvas or field answering on its own, with no touch or key from the learner, isn't the learner acting.
-  func testAnAnswerSetWithoutTheLearnerDoesNotKeepTheScreen() async throws {
+  func testRestoredProgressDoesNotKeepTheScreenWhenAdmissionHasNewerAnswers() async throws {
     let transport = OpeningStartTransport(holds: true, runAnswers: runAnswers(["one", "two"]))
-    let store = try openingPlayer(checkLesson(["one", "two", "three"]), transport: transport)
+    var lesson = try checkLesson(["one", "two", "three"])
+    lesson.resume = [heldAnswer("one", attemptId: UUID().uuidString, isCorrect: true).runAnswer]
+    let store = openingPlayer(lesson, transport: transport)
     let loading = Task { await store.load() }
     await startRequested(transport)
 
-    store.select(.check(optionId: "wrong"))
+    XCTAssertEqual(store.state?.currentStep?.id, "two")
     await transport.release()
     await loading.value
 
     XCTAssertEqual(store.state?.currentStep?.id, "three")
+  }
+
+  func testActivityAnswerOnAResumedScreenSurvivesAdmissionWithoutATap() async throws {
+    let transport = OpeningStartTransport(holds: true, runAnswers: runAnswers(["one"]))
+    let cache = AppCache(session: SessionStore.preview(account: .lessonLoadingTestAccount))
+    var lesson = try checkLesson(["one", "two"], code: ["two"])
+    lesson.resume = [heldAnswer("one", attemptId: UUID().uuidString, isCorrect: true).runAnswer]
+    let content: Resource<LessonLoad> = cache.resource(audience: .viewer) { _ in .ready(lesson) }
+    let store = player(cache: cache, content: content, transport: transport, activated: false)
+    await store.load()
+    XCTAssertEqual(store.state?.currentStep?.id, "two")
+    let answer = LessonAnswer.activity(.output("1"))
+    store.select(answer)
+    await startRequested(transport)
+    await transport.release()
+    let started = await store.ensureRun()
+    XCTAssertTrue(started)
+    XCTAssertEqual(store.state?.currentStep?.id, "two")
+    XCTAssertEqual(store.state?.currentAnswer, answer)
   }
 
   /// A first miss on a match board or a take still recording changes no answer; the tap that
@@ -984,6 +1044,19 @@ final class LessonPlayerLoadingTests: XCTestCase {
       LessonPlayerStore.WarmUp(deckID: "019a482c-6a00-7000-8000-000000000001", outline: outline))
   }
 
+  func testOpeningALessonItsChecksSetAsideSaysWhyInsteadOfOfferingToTryAgain() async {
+    let cache = AppCache(session: SessionStore.preview(account: .lessonLoadingTestAccount))
+    let outline = LessonOutline(id: "lesson", title: "Swarms", description: "", estimatedMinutes: 5)
+    let content: Resource<LessonLoad> = cache.resource(audience: .viewer) { _ in
+      .notGenerated(outline)
+    }
+    let store = player(cache: cache, content: content, transport: SetAsideLessonTransport())
+
+    await store.load()
+
+    XCTAssertEqual(store.screen, .waiting(outline, .setAside))
+  }
+
   /// The first screen's miss reached the server but its reply didn't; the second screen's miss and
   /// its retry never did.
   func testKeptAnswersGoOutBeforeTheRunAndPlaceTheLearnerWithIt() async throws {
@@ -1311,7 +1384,7 @@ final class LessonPlayerLoadingTests: XCTestCase {
   private func player(
     cache: AppCache, content: Resource<LessonLoad>,
     transport: any ClientTransport = UnexpectedLessonTransport(),
-    defaults: UserDefaults = .standard, opening: LessonOpening? = nil, activated: Bool = false,
+    defaults: UserDefaults = .standard, opening: LessonOpening? = nil, activated: Bool = true,
     choices: LessonTodayChoices = .standard,
     onOpened: @escaping @MainActor (StudyBlockOpening) -> Void = { _ in },
     sessionStarted: @escaping @MainActor (String) -> Void = { _ in }
@@ -1501,6 +1574,27 @@ private actor FirstLessonWritingTransport: ClientTransport {
   }
 }
 
+/// Readiness says the lesson's checks set it aside; any other request fails the test.
+private actor SetAsideLessonTransport: ClientTransport {
+  func send(
+    _ request: HTTPRequest, body: HTTPBody?, baseURL: URL, operationID: String
+  ) async throws -> (HTTPResponse, HTTPBody?) {
+    guard operationID == "getLibraryLessonReadiness" else {
+      XCTFail("Unexpected player request: \(operationID)")
+      throw APIError.network
+    }
+
+    var headerFields = HTTPFields()
+    headerFields[.contentType] = "application/json"
+    return (
+      HTTPResponse(status: .ok, headerFields: headerFields),
+      HTTPBody(
+        #"{"alternative": null, "generationId": null, "kind": "lesson", "setAside": true, "status": "failed", "warmUpId": null}"#
+      )
+    )
+  }
+}
+
 /// Starts a run with `runAnswers` and records each request in order; a check on a step in
 /// `failingSteps` finds the network down.
 private actor HeldAnswersTransport: ClientTransport {
@@ -1563,7 +1657,7 @@ private actor HeldAnswersTransport: ClientTransport {
       return (
         HTTPResponse(status: .created, headerFields: headerFields),
         HTTPBody(
-          #"{"answers": \#(runAnswers), "hyperdrive": {"knownStepIds": [], "streak": 0}, "optionalStepIds": [], "replay": false, "sessionId":null, "runId": "run", "startedAt": "2026-11-07T09:00:00.000Z"}"#
+          #"{"answers": \#(runAnswers), "hyperdrive": {"knownStepIds": [], "streak": 0}, "optionalStepIds": [], "replay": false, "saved": false, "sessionId":null, "runId": "run", "startedAt": "2026-11-07T09:00:00.000Z"}"#
         )
       )
     case "createStepCheck":
@@ -1767,7 +1861,7 @@ private actor OpeningStartTransport: ClientTransport {
     return (
       HTTPResponse(status: .created, headerFields: headers),
       HTTPBody(
-        #"{"answers":\#(runAnswers),"clockId":\#(clockIds[min(count - 1, clockIds.count - 1)].map { "\"\($0)\"" } ?? "null"),"hyperdrive":{"knownStepIds":[],"streak":0},"replay":false,"runId":"run","sessionId":"canonical","startedAt":"2026-11-07T09:00:00.000Z"}"#
+        #"{"answers":\#(runAnswers),"clockId":\#(clockIds[min(count - 1, clockIds.count - 1)].map { "\"\($0)\"" } ?? "null"),"hyperdrive":{"knownStepIds":[],"streak":0},"replay":false,"runId":"run","saved":false,"sessionId":"canonical","startedAt":"2026-11-07T09:00:00.000Z"}"#
       )
     )
   }

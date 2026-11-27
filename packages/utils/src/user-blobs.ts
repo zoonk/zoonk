@@ -23,6 +23,17 @@ export function getUserBlobFolders(userId: string): string[] {
   return PRIVATE_FILE_FOLDERS.map((folder) => getUserFolder({ folder, userId }));
 }
 
+/**
+ * Blob's SDK puts a pathname into a URL unescaped, and URL parsing reads `\` as `/`, `%2e` as `.` and
+ * `..` as the parent, cuts at `?` or `#` and drops tabs. Only a pathname the URL keeps as written
+ * names the file we checked.
+ */
+function isReadAsWritten(pathname: string) {
+  const parsed = new URL(`https://blob.invalid/${pathname}`).pathname;
+
+  return !pathname.includes("%") && decodeURIComponent(parsed) === `/${pathname}`;
+}
+
 /** Directly inside the folder; a name can't climb out of it. */
 export function isFileInFolder({ folder, pathname }: { folder: string; pathname: string }) {
   const fileName = pathname.slice(folder.length);
@@ -31,7 +42,7 @@ export function isFileInFolder({ folder, pathname }: { folder: string; pathname:
     pathname.startsWith(folder) &&
     fileName.length > 0 &&
     !fileName.includes("/") &&
-    !fileName.includes("..")
+    isReadAsWritten(pathname)
   );
 }
 

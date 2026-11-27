@@ -4,28 +4,50 @@ extension ActivityRenderer {
   static let matchPairs = ActivityRenderer(
     template: "matchPairs",
     grade: ActivityExpectedAnswer.grader(MatchPairsFields.self) { $0.expected }
-  ) { context in
-    if let fields = try? context.fields(as: MatchPairsFields.self) {
-      MatchPairsCanvas(fields: fields, context: context)
+  ) { context, fields in
+    MatchPairsCanvas(fields: fields, context: context)
+  }
+}
+
+extension MatchPairs {
+  /// Main's `MatchPairsMisses`: each left card's first wrong try, from the answer's first tries.
+  @MainActor
+  static func misses(_ content: ActivityStepContent, answer: LessonAnswer?) -> MatchMisses? {
+    guard let fields = try? content.fields(as: MatchPairsFields.self),
+      case .activity(let answer)? = answer
+    else { return nil }
+
+    let columns = columns(fields)
+    let firstTries = progress(from: answer).firstTries
+    let misses = columns.left.enumerated().compactMap { index, card in
+      firstTries[card.id].flatMap { tried in
+        tried == card.id
+          ? nil
+          : columns.right.firstIndex { $0.id == tried }.map { MatchTry(left: index, right: $0) }
+      }
+    }
+
+    return MatchMisses(misses) { card in
+      let cards = card.side == .left ? columns.left : columns.right
+      return cards.indices.contains(card.index)
+        ? LessonRichText.typeset(cards[card.index].text) : nil
     }
   }
 }
 
 private struct MatchPairsCanvas: View {
-  private struct Miss: Equatable, Sendable {
-    let left: String
-    let right: String
-    let explanation: String?
+  /// Why the last try didn't go together, in the card's own words, until the next tap.
+  private struct MissNote: Equatable, Sendable {
+    let explanation: String
   }
 
   let fields: MatchPairsFields
   let context: ActivityCanvasContext
 
   @Environment(\.legibilityWeight) private var legibilityWeight
-  @Environment(\.stacksContent) private var isStacked
   @ActivityState private var progress: MatchPairs.Progress
-  @ActivityState("selection") private var selection: [MatchPairs.Side: String] = [:]
-  @ActivityState("miss") private var miss: Miss? = nil
+  @ActivityState("picking") private var picking = MatchPicking()
+  @ActivityState("missNote") private var missNote: MissNote? = nil
 
   init(fields: MatchPairsFields, context: ActivityCanvasContext) {
     self.fields = fields
@@ -42,52 +64,44 @@ private struct MatchPairsCanvas: View {
 
   var body: some View {
     let columns = MatchPairs.columns(fields)
+
     VStack(alignment: .leading, spacing: 16) {
-      ActivityCaption(caption)
-
-      if isComplete {
-        solvedBoard(columns)
-      } else {
-        AccessibilityStack(alignment: .top, spacing: 10, stackedSpacing: 16) {
-          column(.left, columns.left, others: columns.right)
-          column(.right, columns.right, others: columns.left)
-        }
+      MatchBoard(
+        leftCount: columns.left.count, rightCount: columns.right.count,
+        solvedRows: isComplete ? solvedRows(columns) : nil
+      ) { ref in
+        cardButton(ref, columns: columns)
       }
+      .matchBoardFeedback($picking, locked: progress.matched.count, isPlaying: !isChecked)
 
-      if let miss {
+      if let missNote {
         Label {
-          missLine(miss, spoken: false)
+          missLine(missNote, spoken: false)
         } icon: {
           Image(systemName: "xmark.circle")
             .foregroundStyle(.destructive)
         }
-        .accessibilityLabel(missLine(miss, spoken: true))
+        .accessibilityLabel(missLine(missNote, spoken: true))
         .typeStyle(.body)
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
         .background(Color.destructive.opacity(0.1), in: .rect(cornerRadius: Radius.option))
-      }
-
-      if isChecked {
-        results(columns)
+        // Each miss's own note, so it comes into sight under a tall board as the verdict does.
+        .id(picking.missCount)
+        .scrollsIntoSightWhenShown()
       }
     }
   }
 
-  private var caption: Text {
-    Text(
-      "\(progress.matched.count) of \(pairIds.count) pairs matched", tableName: "Activities",
-      comment: "How many pairs the learner matched")
+  private func solvedRows(_ columns: (left: [MatchCard], right: [MatchCard])) -> [MatchTry] {
+    columns.left.enumerated().compactMap { index, card in
+      columns.right.firstIndex { $0.id == card.id }.map { MatchTry(left: index, right: $0) }
+    }
   }
 
-  private func missLine(_ miss: Miss, spoken: Bool) -> Text {
-    let explanation =
-      miss.explanation.map {
-        LessonRichText.typeset($0).quoted(spoken: spoken, legibility: legibilityWeight)
-      }
-      ?? Text(
-        "Those two don't go together.", tableName: "Activities",
-        comment: "Two picked cards don't match and there's no note on why")
+  private func missLine(_ miss: MissNote, spoken: Bool) -> Text {
+    let explanation = LessonRichText.typeset(miss.explanation)
+      .quoted(spoken: spoken, legibility: legibilityWeight)
 
     return Text(
       "\(Text("Not quite:", tableName: "Activities", comment: "Before why two picked cards don't match").typeWeight(.semibold, legibility: legibilityWeight)) \(explanation)",
@@ -95,173 +109,84 @@ private struct MatchPairsCanvas: View {
       comment: "Why two picked cards don't match, after a bold 'Not quite:'")
   }
 
-  private func column(_ side: MatchPairs.Side, _ cards: [MatchCard], others: [MatchCard])
-    -> some View
-  {
-    VStack(spacing: 8) {
-      ForEach(cards) { card in
-        cardButton(card, side: side, others: others)
-      }
-    }
-    .frame(maxWidth: .infinity, alignment: .top)
-  }
+  private func cardButton(
+    _ ref: MatchCardRef, columns: (left: [MatchCard], right: [MatchCard])
+  ) -> some View {
+    let card = ref.side == .left ? columns.left[ref.index] : columns.right[ref.index]
+    let isMatched = progress.matched.contains(card.id)
+    let others = ref.side == .left ? columns.right : columns.left
 
-  private func solvedBoard(_ columns: (left: [MatchCard], right: [MatchCard])) -> some View {
-    VStack(spacing: isStacked ? 16 : 8) {
-      ForEach(MatchPairs.solvedRows(left: columns.left, right: columns.right), id: \.self) { row in
-        AccessibilityStack(spacing: 10, stackedSpacing: 8) {
-          cardButton(row.left, side: .left, others: columns.right)
-          cardButton(row.right, side: .right, others: columns.left)
-        }
-        .fixedSize(horizontal: false, vertical: true)
-      }
-    }
-  }
-
-  private func cardButton(_ card: MatchCard, side: MatchPairs.Side, others: [MatchCard])
-    -> some View
-  {
-    let state = state(of: card, side: side)
-    let other: MatchPairs.Side = side == .left ? .right : .left
-
-    return Button {
-      pick(card, side: side)
-    } label: {
+    return MatchEntry(
+      state: state(of: ref, card: card, columns: columns),
+      keyIndex: ref.side == .left ? ref.index : columns.left.count + ref.index,
+      partner: isMatched
+        ? others.first { $0.id == card.id }.map { LessonRichText.spoken($0.text) } : nil,
+      action: isChecked ? nil : { tap(ref, columns: columns) }
+    ) {
       LessonRichText(card.text)
-        .frame(maxHeight: isComplete ? .infinity : nil, alignment: .leading)
-    }
-    .buttonStyle(ActivityTileStyle(mark: state.mark))
-    .disabled(isChecked || state == .matched)
-    .draggable(ActivityDragItem(id: "\(side.rawValue):\(card.id)"))
-    .dropDestination(for: ActivityDragItem.self) { dropped, _ in
-      guard !isChecked, state != .matched, let payload = dropped.first?.id,
-        payload.hasPrefix("\(other.rawValue):"),
-        let dragged = others.first(where: { "\(other.rawValue):\($0.id)" == payload })
-      else {
-        return false
-      }
-
-      let (left, right) = side == .left ? (card, dragged) : (dragged, card)
-      tryPair(left: left, right: right)
-      return true
-    }
-    .accessibilityLabel(label(card, state: state))
-    .accessibilityAddTraits(state == .selected ? .isSelected : [])
-  }
-
-  private func label(_ card: MatchCard, state: MatchCardState) -> Text {
-    let text = LessonRichText.spoken(card.text)
-
-    switch state {
-    case .matched:
-      return Text(
-        "\(text), matched", tableName: "Activities", comment: "VoiceOver: a card already matched")
-    default:
-      return Text(verbatim: text)
     }
   }
 
-  private func state(of card: MatchCard, side: MatchPairs.Side) -> MatchCardState {
-    if progress.matched.contains(card.id) {
-      return .matched
+  private func state(
+    of ref: MatchCardRef, card: MatchCard, columns: (left: [MatchCard], right: [MatchCard])
+  ) -> MatchEntryState {
+    // A pair's two cards share its id.
+    if progress.matched.contains(card.id),
+      let owner = columns.left.firstIndex(where: { $0.id == card.id })
+    {
+      let firstTry = progress.firstTries[card.id]
+      return isComplete
+        ? .solved(missed: firstTry.map { $0 != card.id } ?? false)
+        : picking.kept(ref, pair: owner + 1)
     }
 
-    if let miss, (side == .left ? miss.left : miss.right) == card.id {
-      return .missed
+    if picking.isMissed(ref) {
+      return .wrong(picking.missCount)
     }
 
-    return selection[side] == card.id ? .selected : .idle
+    return picking.selected == ref ? .selected : .idle
   }
 
-  private func pick(_ card: MatchCard, side: MatchPairs.Side) {
-    var next = selection
-    next[side] = selection[side] == card.id ? nil : card.id
-    miss = nil
+  private func tap(_ ref: MatchCardRef, columns: (left: [MatchCard], right: [MatchCard])) {
+    let card = ref.side == .left ? columns.left[ref.index] : columns.right[ref.index]
+    guard !progress.matched.contains(card.id) else { return }
 
-    let columns = MatchPairs.columns(fields)
-    let left = next[.left].flatMap { id in columns.left.first { $0.id == id } }
-    let right = next[.right].flatMap { id in columns.right.first { $0.id == id } }
+    missNote = nil
 
-    if let left, let right {
-      tryPair(left: left, right: right)
-    } else {
-      selection = next
+    guard
+      let (attempt, isRight) = picking.tap(
+        ref, goesTogether: { columns.left[$0.left].id == columns.right[$0.right].id })
+    else {
+      return
     }
-  }
 
-  private func tryPair(left: MatchCard, right: MatchCard) {
+    let (left, right) = (columns.left[attempt.left], columns.right[attempt.right])
     let next = MatchPairs.recordTry(progress, left: left, right: right)
     progress = next
-    selection = [:]
-    context.setAnswer(MatchPairs.answer(pairIds: pairIds, progress: next))
+
+    if let answer = MatchPairs.answer(pairIds: pairIds, progress: next) {
+      context.complete(answer)
+    } else {
+      context.setAnswer(nil)
+    }
 
     let leftText = LessonRichText.spoken(left.text)
     let rightText = LessonRichText.spoken(right.text)
 
-    if left.id == right.id {
-      miss = nil
+    if isRight {
       announcePolitely(
-        String(
-          localized:
-            "Matched \(leftText) with \(rightText). \(next.matched.count) of \(pairIds.count) pairs matched.",
-          table: "Activities", locale: .appLanguage, comment: "VoiceOver, after a pair is matched"))
+        MatchAnnouncement.matched(
+          leftText, rightText, matched: next.matched.count, total: pairIds.count))
       return
     }
 
     let explanation = right.why ?? left.why
-    miss = Miss(left: left.id, right: right.id, explanation: explanation)
+    missNote = explanation.map(MissNote.init)
 
     announcePolitely(
       [
-        String(
-          localized: "\(leftText) and \(rightText) don't go together.", table: "Activities",
-          comment: "VoiceOver, after two cards that don't match are picked"),
+        MatchAnnouncement.missed(leftText, rightText),
         explanation.map { LessonRichText.spoken($0) },
       ].compactMap(\.self).joinedSentences())
-  }
-
-  @ViewBuilder
-  private func results(_ columns: (left: [MatchCard], right: [MatchCard])) -> some View {
-    let expected = Dictionary(pairIds.map { ($0, $0) }, uniquingKeysWith: { first, _ in first })
-    let missed = columns.left.filter { progress.firstTries[$0.id] != expected[$0.id] }
-    let textOf = { (id: String?) in columns.right.first { $0.id == id }?.text }
-
-    if !missed.isEmpty {
-      VStack(alignment: .leading, spacing: 8) {
-        Text(
-          "Missed on the first try", tableName: "Activities",
-          comment: "Above the pairs a learner missed at first"
-        )
-        .typeStyle(.body.weight(.semibold))
-        ActivityReasonList(
-          reasons: missed.map { card in
-            let partner = textOf(expected[card.id]) ?? card.text
-            let text =
-              textOf(progress.firstTries[card.id]).map { picked in
-                String(
-                  localized: "\(card.text) goes with \(partner), not \(picked).",
-                  table: "Activities",
-                  comment: "After the check: a pair the learner first matched wrong")
-              } ?? "\(card.text) → \(partner)"
-            return ActivityReasonList.Reason(
-              id: card.id, text: text,
-              why: card.why)
-          })
-      }
-    }
-
-  }
-}
-
-private enum MatchCardState {
-  case idle, selected, matched, missed
-
-  var mark: ActivityTileMark {
-    switch self {
-    case .selected: .selected
-    case .matched: .right
-    case .missed: .wrong
-    default: .plain
-    }
   }
 }

@@ -67,7 +67,6 @@
   "player_create_account_to_save": "7f95c454c97d4c99a6fe8064c3b1bac36aaa09bef4c68d7e80182c66e231d6dc",
   "player_didnt_get_it": "36e33ef51b33c48a6bcaec3d9f056af660bb342cfda97bc05e23cc7b2559c545",
   "player_done": "77c71e67d8ce266b33a1d0fd7bdd80437205c9804bb282d237171b8fbb1125e2",
-  "player_dont_know_yet": "c3ffdc0441acc26e7372c9d8c1d8f14a7e579250b9c6a601ad434ccebd385573",
   "player_drawing_picture": "3e0f196a982c1d6ee2b2c1f71a773cc7c95fe481aaf930a0fd476c5253fd1abb",
   "player_enter_hint": "9342536f0d87d8fa17faf16d03183fb6031d2ac2b625889d9ae5bdeb86387655",
   "player_example": "92df9757460ea9cd363b9037ea6d31f8a36d6810856139c4f8de8a1f86a6a3d3",
@@ -287,7 +286,6 @@
     </plurals>
     <string name="player_in_your_own_words">Kendi cümlelerinle</string>
     <string name="player_cant_write_now">Bugün yazma sorularını atla</string>
-    <string name="player_dont_know_yet">Henüz bilmiyorum</string>
     <!-- Button asking Zoonk to show the explanation before the learner answers. It doesn't tell the learner to explain. -->
     <string name="player_explain_first">Önce açıklamayı göster</string>
     <string name="player_enter_hint">Kontrol etmek için Enter’a, yeni satır için Shift+Enter’a bas.</string>

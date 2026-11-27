@@ -1,7 +1,11 @@
 import { type ItemFormat } from "@zoonk/db";
 import { type MatchItem, toMatchQuestion } from "../../../sessions/_utils/match-items";
 import { type OrderItem, toOrderQuestion } from "../../../sessions/_utils/order-items";
-import { gradeSessionAnswer, parseSessionItem } from "../../../sessions/_utils/session-items";
+import {
+  gradeSessionAnswer,
+  parseSessionItem,
+  showChoiceInBlock,
+} from "../../../sessions/_utils/session-items";
 import { type BankItem, type ChoiceItem, toQuestionView } from "../../_utils/choice-items";
 import { isLowGuessTap, isQuickChoice } from "../../_utils/placement-guess-rate";
 import { type PlacementAnswerInput } from "../placement-contract";
@@ -34,12 +38,21 @@ export function parsePlacementItem(item: BankItem): PlacementItem | null {
     : null;
 }
 
+/** A placement question has no block, so it's shown and graded in a context of its own. @internal */
+export function getPlacementBlockId(item: PlacementItem): string {
+  return item.id;
+}
+
 export function toPlacementQuestionView(item: PlacementItem) {
+  const blockId = getPlacementBlockId(item);
+
   if (item.format === "matchPairs") {
-    return toMatchQuestion(item);
+    return { ...toMatchQuestion({ blockId, item }), key: null };
   }
 
-  return item.format === "order" ? toOrderQuestion(item) : toQuestionView(item);
+  return item.format === "order"
+    ? toOrderQuestion({ blockId, item })
+    : toQuestionView(showChoiceInBlock({ blockId, item }));
 }
 
 export type PlacementQuestionView = ReturnType<typeof toPlacementQuestionView>;
@@ -51,5 +64,5 @@ export function gradePlacementAnswer({
   answer: PlacementAnswerInput["answer"];
   item: PlacementItem;
 }) {
-  return gradeSessionAnswer({ answer, blockId: item.id, item });
+  return gradeSessionAnswer({ answer, blockId: getPlacementBlockId(item), item });
 }

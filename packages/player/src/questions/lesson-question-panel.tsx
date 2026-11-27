@@ -23,6 +23,7 @@ import {
 import { useLessonQuestionController } from "./lesson-question-provider";
 import { QuestionThread } from "./lesson-question-thread";
 import { THREAD_SIDE_CLASS } from "./lesson-question-thread-viewport";
+import { useModuleSubject } from "./module-subject";
 import { type LessonQuestionController } from "./use-lesson-questions";
 
 function LessonQuestionPanelDescription({
@@ -31,6 +32,7 @@ function LessonQuestionPanelDescription({
   context: LessonQuestionController["state"]["context"];
 }) {
   const t = useExtracted();
+  const isModule = useModuleSubject();
 
   switch (context.kind) {
     case "answer":
@@ -46,7 +48,9 @@ function LessonQuestionPanelDescription({
     case "plan":
       return t("Ask questions about your plan");
     case "subject":
-      return t("Ask questions about this subject");
+      return isModule
+        ? t("Ask questions about this module")
+        : t("Ask questions about this subject");
     case "item":
       return t("Ask about this question");
     default:
@@ -70,13 +74,14 @@ function LessonQuestionPanelHeader({
     >
       {controller.canAskQuestions ? (
         <BuddyIdentityRow
+          description={
+            <DrawerDescription className="text-xs">
+              <LessonQuestionPanelDescription context={controller.state.context} />
+            </DrawerDescription>
+          }
           face={identity.avatar}
           title={<DrawerTitle className={BUDDY_NAME_CLASS}>{identity.name}</DrawerTitle>}
-        >
-          <DrawerDescription className="text-xs">
-            <LessonQuestionPanelDescription context={controller.state.context} />
-          </DrawerDescription>
-        </BuddyIdentityRow>
+        />
       ) : (
         <DrawerTitle className={BUDDY_NAME_CLASS}>
           {t("Ask {name} with a free account", { name: identity.name })}

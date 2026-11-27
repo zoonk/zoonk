@@ -10,6 +10,7 @@ import { ONE_SECOND_RECORDING } from "@zoonk/testing/fixtures/recordings";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it, vi } from "vitest";
 import { GUEST_OUT_OF_HELP } from "../../_test-utils/guest-out-of-help";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
@@ -22,7 +23,6 @@ import { schedulePronunciationReviews } from "./schedule-pronunciation-reviews";
 
 const AUDIO = { bytes: ONE_SECOND_RECORDING, mediaType: "audio/webm;codecs=opus" };
 const TIME_ZONE = "America/Sao_Paulo";
-const DAY_MS = 86_400_000;
 
 function mockHeard({ heard, word }: { heard: string; word: string }) {
   const isCorrect = heard === word;
@@ -166,7 +166,7 @@ describe(getPronunciationReviews, () => {
     const [due] = await Promise.all([
       pronunciationReviewFixture({ userId: user.id, wordId: word.id }),
       pronunciationReviewFixture({
-        dueAt: new Date(Date.now() + DAY_MS),
+        dueAt: new Date(Date.now() + MS_PER_DAY),
         userId: user.id,
         wordId: later.id,
       }),
@@ -258,7 +258,7 @@ describe(answerPronunciationReview, () => {
     ]);
 
     expect(updated.stage).toBe(1);
-    expect(updated.dueAt?.getTime()).toBeGreaterThan(Date.now() + DAY_MS);
+    expect(updated.dueAt?.getTime()).toBeGreaterThan(Date.now() + MS_PER_DAY);
 
     expect(attempt).toMatchObject({
       answer: { kind: "spoken", pronunciationReviewId: review.id, roundId, transcript: word.word },
@@ -294,33 +294,33 @@ describe(answerPronunciationReview, () => {
     await expect(prisma.mistake.count({ where: { userId: user.id } })).resolves.toBe(0);
   });
 
-  it("transcribes with the default model when the audio model fails", async () => {
+  it("passes a matching transcript when the audio model fails, but never fails on spelling alone", async () => {
     const { goal, user, word } = await learnerWithWord();
     const review = await pronunciationReviewFixture({ userId: user.id, wordId: word.id });
 
-    vi.mocked(assessPronunciation).mockRejectedValueOnce(new Error("provider down"));
+    const answer = (text: string) => {
+      vi.mocked(assessPronunciation).mockRejectedValueOnce(new Error("provider down"));
 
-    vi.mocked(transcribeSpeech).mockResolvedValueOnce({ data: { text: "hent" } } as Awaited<
-      ReturnType<typeof transcribeSpeech>
-    >);
+      vi.mocked(transcribeSpeech).mockResolvedValueOnce({ data: { text } } as Awaited<
+        ReturnType<typeof transcribeSpeech>
+      >);
 
-    const result = await answerPronunciationReview({
-      audio: AUDIO,
-      fields: {
-        durationMs: 900,
-        goalId: goal.id,
-        roundId: crypto.randomUUID(),
-        timeZone: TIME_ZONE,
-      },
-      reviewId: review.id,
-    });
+      return answerPronunciationReview({
+        audio: AUDIO,
+        fields: {
+          durationMs: 900,
+          goalId: goal.id,
+          roundId: crypto.randomUUID(),
+          timeZone: TIME_ZONE,
+        },
+        reviewId: review.id,
+      });
+    };
 
-    expect(result).toMatchObject({ grade: { isCorrect: false, transcript: "hent" } });
+    await expect(answer("hent")).rejects.toThrow("provider down");
+    await expect(answer(word.word)).resolves.toMatchObject({ grade: { isCorrect: true } });
 
-    expect(transcribeSpeech).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({ language: "en" }),
-    );
-
+    expect(transcribeSpeech).toHaveBeenCalledWith(expect.objectContaining({ language: "en" }));
     expect(vi.mocked(transcribeSpeech).mock.calls[0]?.[0]).not.toHaveProperty("model");
   });
 
@@ -465,7 +465,7 @@ describe("the pronunciation row on a language goal's Today", () => {
     );
 
     await pronunciationReviewFixture({
-      dueAt: new Date(Date.now() - DAY_MS),
+      dueAt: new Date(Date.now() - MS_PER_DAY),
       userId: user.id,
       wordId: word.id,
     });

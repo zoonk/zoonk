@@ -101,8 +101,6 @@ private fun icon(id: Int): @Composable (Modifier) -> Unit =
         ) { Icon(painterResource(id), contentDescription = null, Modifier.glyphInk(id)) }
     }
 
-private fun beltOf(color: String) = Belt.entries.first { it.name.equals(color, ignoreCase = true) }
-
 /** A read the overview shows beside its own: a wheel while nothing is cached, and a retry when it failed. */
 @Composable
 private fun <T : Any> Beside(
@@ -247,7 +245,7 @@ private fun BeltTile(
     modifier: Modifier,
     onClick: () -> Unit,
 ) {
-    val belt = beltOf(level.belt.value)
+    val belt = Belt.fromKey(level.belt.value) ?: return
 
     StatTile(
         label = stringResource(R.string.stats_level),
@@ -317,8 +315,8 @@ internal fun LevelPage(context: StatsContext) {
             .collectShown()
             .value.value
             ?.level ?: return StatsEmpty(context)
-    val belt = beltOf(level.belt.value)
-    val nextBelt = level.nextBelt?.let { beltOf(it.belt.value) }
+    val belt = Belt.fromKey(level.belt.value) ?: return
+    val nextBelt = level.nextBelt?.let { Belt.fromKey(it.belt.value) }
 
     BeltProgression(level, belt, nextBelt)
 }
@@ -628,7 +626,7 @@ internal fun PatternsPage(context: StatsContext) {
             title = stringResource(R.string.stats_throughout_week),
             bestLabel = stringResource(R.string.stats_best_day),
             columns =
-                patterns.weekdays.map {
+                patterns.weekdays.filter { dayOfWeek(it.dayOfWeek.value) != null }.map {
                     patternColumn(
                         name = weekdayName(it.dayOfWeek.value, locale),
                         pattern = Pattern(it.score, it.totalAnswers, best = it.dayOfWeek.value == bestDay),
@@ -795,6 +793,7 @@ private fun verdict(
     strongest: Verdict.Best?,
 ): Verdict =
     when (verdict.kind) {
+        ScorePatternVerdict.Kind.UNKNOWN_DEFAULT_OPEN_API -> Verdict.NotEnough
         ScorePatternVerdict.Kind.BEST -> strongest ?: Verdict.NotEnough
         ScorePatternVerdict.Kind.EVEN -> Verdict.Even(verdict.points?.toInt() ?: 0)
         ScorePatternVerdict.Kind.NOT_ENOUGH -> Verdict.NotEnough
@@ -802,7 +801,14 @@ private fun verdict(
 
 private fun patternsSummary(patterns: CurrentUserScorePatternsResponsePatterns) =
     PatternsSummary(
-        days = verdict(patterns.dayVerdict, patterns.strongestWeekday?.let { Verdict.Best(it.dayOfWeek.value) }),
+        days =
+            verdict(
+                patterns.dayVerdict,
+                patterns.strongestWeekday
+                    ?.takeIf {
+                        dayOfWeek(it.dayOfWeek.value) != null
+                    }?.let { Verdict.Best(it.dayOfWeek.value) },
+            ),
         times = verdict(patterns.timeVerdict, patterns.strongestTime?.let { Verdict.Best(it.period.value) }),
     )
 
@@ -822,13 +828,15 @@ private fun bestTimeName(verdict: Verdict): String? =
         Verdict.NotEnough -> null
     }
 
+private fun dayOfWeek(key: String): DayOfWeek? = DayOfWeek.entries.firstOrNull { it.name.equals(key, ignoreCase = true) }
+
 private fun weekdayName(
     key: String,
     locale: Locale,
     short: Boolean = false,
 ): String {
     val names = weekdayNames(locale)
-    return (if (short) names.short else names.full).getValue(DayOfWeek.valueOf(key.uppercase(Locale.ROOT)))
+    return (if (short) names.short else names.full)[dayOfWeek(key)].orEmpty()
 }
 
 @StringRes

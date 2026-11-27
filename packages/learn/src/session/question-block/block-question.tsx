@@ -1,5 +1,6 @@
 "use client";
 
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { QuestionDontKnow, QuestionMainAction } from "../../_components/question-actions";
@@ -27,11 +28,10 @@ import {
 } from "../session-types";
 import { PlacementNote } from "./placement-note";
 import { type QuestionBlockPhase } from "./question-block-state";
-import { QuestionView } from "./question-view";
+import { QuestionView, drawsOwnTitle } from "./question-view";
 import { QuotedSource } from "./quoted-source";
 import { type useQuestionBlock } from "./use-question-block";
 
-const MS_PER_SECOND = 1000;
 const NOT_SURE = { dontKnow: true } as const;
 
 type Run = ReturnType<typeof useQuestionBlock>;
@@ -178,7 +178,7 @@ function QuestionText({
       <PlacementNote onSkipToday={graded ? undefined : onSkipTestQuestions} question={question} />
       <QuotedSource question={question} />
       <QuestionMaterial continued={continued} question={question} />
-      {question.format !== "trueFalse" && <QuestionTitle muted={graded} text={question.question} />}
+      {!drawsOwnTitle(question.format) && <QuestionTitle muted={graded} text={question.question} />}
     </>
   );
 }
@@ -272,8 +272,10 @@ type BlockActionsProps = {
   run: Run;
 };
 
+/** A board checked pair by pair sends itself with its last pair, so its action waits as Continue. */
 function getMainAction({
   draft,
+  question,
   run,
 }: BlockActionsProps): React.ComponentProps<typeof QuestionMainAction> {
   const { phase } = run.state;
@@ -287,7 +289,7 @@ function getMainAction({
   }
 
   return {
-    action: "check",
+    action: question.key ? "continue" : "check",
     busy: phase.kind === "checking" && pressesCheck(phase.sender),
     disabled: phase.kind === "checking" || draft.answer === null,
     onPress: () => (draft.answer ? void run.submit(draft.answer) : undefined),
@@ -301,7 +303,12 @@ export function BlockQuestionActions(props: BlockActionsProps) {
   const checking = phase.kind === "checking";
   const asking = phase.kind === "answering" || checking || phase.kind === "answerFailed";
   const noGuessing = drill?.kind === "noGuessing";
-  const notSureFits = noGuessing || props.question.placement || props.question.format === "typed";
+
+  const notSureFits =
+    noGuessing ||
+    props.question.placement ||
+    props.question.format === "typed" ||
+    Boolean(props.question.key);
 
   return (
     <>

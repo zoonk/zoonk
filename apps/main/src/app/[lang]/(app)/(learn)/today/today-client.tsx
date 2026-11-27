@@ -19,6 +19,7 @@ import { MOCK_ENTRY_HREFS } from "@/lib/mocks/mock-entry-hrefs";
 import { getLessonAgainHref } from "@/lib/public/public-hrefs";
 import { type TapStep } from "@/lib/session/day-entry";
 import { getStudyLessonHref } from "@/lib/session/lesson-opening";
+import { readLessonReadiness } from "@/lib/session/read-lesson-readiness";
 import { answerMemoryInsightAction } from "@/lib/session/study-session-actions";
 import { answerHere, openingHere } from "@/lib/session/tap-answer";
 import { useDayTaps } from "@/lib/session/use-day-taps";
@@ -118,6 +119,17 @@ function toTapSteps(data: TodayScreenData): TapStep[] {
   });
 }
 
+/** The next lesson to open, or else the call the day waits on. */
+function getContinueHref(today: TodayScreenData["today"]): string | null {
+  const next = today.session.blocks.find((block) => block.position === today.session.nextPosition);
+  const call = findNextCall({ goalKind: today.goal.kind, session: today.session });
+
+  return (
+    (next && getStudyLessonHref({ block: next, goalId: today.goal.id, session: today.session })) ||
+    (call ? `/checkpoint/${call.blockId}?session=${call.sessionId}` : null)
+  );
+}
+
 function useFocusTestSuggestionActions(goalId: string) {
   const router = useRouter();
 
@@ -206,7 +218,6 @@ export function TodayClient({
   const answerSuggestedGoal = useAnswerSuggestedGoal({ hasGoal: true });
   const startTestOut = useStartTestOut();
   const sessionHref = getSessionHref({ goalId, limit: null });
-  const call = findNextCall({ goalKind: today.goal.kind, session: today.session });
 
   useFollowTimeZone(goalId);
 
@@ -260,17 +271,7 @@ export function TodayClient({
         },
         chooseFocusHref: "/plan?focus=choose",
         completedLessonsHref: "/completed-lessons",
-        continueHref: (() => {
-          const next = today.session.blocks.find(
-            (block) => block.position === today.session.nextPosition,
-          );
-
-          return (
-            (next &&
-              getStudyLessonHref({ block: next, goalId: today.goal.id, session: today.session })) ||
-            (call ? `/checkpoint/${call.blockId}?session=${call.sessionId}` : null)
-          );
-        })(),
+        continueHref: getContinueHref(today),
         continueSession: () => {
           const next = stepAt(today.session.nextPosition);
           return next ? taps.next(next) : Promise.resolve(false);
@@ -288,7 +289,10 @@ export function TodayClient({
         },
         plusHref: "/subscription",
         prepareLessons: taps.prepareLessons,
+        readLesson: readLessonReadiness,
         refresh: refreshOnPlanChange,
+        reread: refresh,
+        savedLessonsHref: "/saved-lessons",
         startTestOut: (chapterId) =>
           startTestOut({ chapterId, fromSession: true, goalId: today.goal.id }),
         studyEverythingHref: "/plan?focus=everything",
@@ -301,6 +305,7 @@ export function TodayClient({
       mockEntry={data.mocks && <MockEntryRow hrefs={MOCK_ENTRY_HREFS} view={data.mocks} />}
       notices={toHostNotices({ ...uploadAnswer, data, goalId: today.goal.id })}
       planEnd={data.planEnd}
+      savedLessons={data.savedLessons}
       speakingEntry={
         data.language?.speaking && (
           <SpeakingPracticeRow entry={data.language.speaking} href="/speaking" />

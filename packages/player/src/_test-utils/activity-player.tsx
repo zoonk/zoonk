@@ -187,7 +187,7 @@ export async function expectSideBySide(left: Locator, right: Locator) {
       const rightCard = right.element();
 
       return {
-        follows: leftCard.nextElementSibling === rightCard,
+        follows: leftCard.parentElement?.nextElementSibling === rightCard.parentElement,
         rowGap: rightCard.getBoundingClientRect().top - leftCard.getBoundingClientRect().top,
       };
     })

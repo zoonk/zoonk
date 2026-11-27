@@ -612,10 +612,6 @@ struct LessonPlayerState: Equatable, Sendable {
       retried.insert(stepId)
     }
 
-    // Matching pairs gives feedback pair by pair, so its check moves on without a second tap.
-    if step.kind == .matchColumns {
-      advance(now: now)
-    }
   }
 
   /// The server recorded a device-graded answer: its verdict, when its idea comes back, and whether
@@ -709,6 +705,7 @@ struct LessonPlayerState: Equatable, Sendable {
     if keepsScreen {
       fillUntouched(from: known, workedStepIds: workedStepIds)
     } else {
+      if !firstVerdicts.isEmpty { resetForResume() }
       resume(from: known)
     }
   }
@@ -1170,7 +1167,7 @@ struct LessonPlayerState: Equatable, Sendable {
   /// shows their last answer and counts with their first, a check they missed once comes back at
   /// the end, and the lesson opens at the first screen still to answer, after the reading that
   /// leads to it.
-  private mutating func resume(from known: [LessonRunAnswer]) {
+  mutating func resume(from known: [LessonRunAnswer]) {
     guard !known.isEmpty else {
       return
     }

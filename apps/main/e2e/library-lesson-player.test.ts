@@ -9,8 +9,9 @@ import { chapterLessonFixture, lessonSkillFixture } from "@zoonk/testing/fixture
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { TEACHING_LESSON_STEPS } from "@zoonk/testing/fixtures/playable-step-contents";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
-import { MS_PER_DAY } from "@zoonk/utils/date";
+import { MS_PER_WEEK } from "@zoonk/utils/date";
 import { captureAnalytics } from "./analytics";
+import { pressAnswerKey } from "./answer-key";
 import { type Page, expect, test } from "./fixtures";
 import { waitForLessonStart } from "./study-day";
 
@@ -27,7 +28,6 @@ async function expectVerdict(page: Page, verdict: string) {
 async function answerHook(page: Page) {
   await expect(page.getByText("Just a guess, it doesn't count")).toBeVisible();
   const no = page.getByRole("radio", { name: "No" });
-  await expectHydrated(no);
   await no.click();
   await primary(page, /^See answer/u).click();
   await expectVerdict(page, "Good guess!");
@@ -37,7 +37,6 @@ async function answerHook(page: Page) {
 async function readExplanation(page: Page) {
   await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
   const next = primary(page, /^Continue/u);
-  await expectHydrated(next);
   await next.click();
 }
 
@@ -56,11 +55,9 @@ async function followWorkedExample(page: Page) {
 
 async function answerCheckWithKeys(page: Page) {
   await expect(page.getByText('What does the electron "cloud" show?')).toBeVisible();
-  await page.keyboard.press("2");
-
-  await expect(
-    page.getByRole("radio", { name: "Where the electron is most likely to be found" }),
-  ).toBeChecked();
+  const right = page.getByRole("radio", { name: "Where the electron is most likely to be found" });
+  await pressAnswerKey(page, right);
+  await expect(right).toBeChecked();
 
   await page.keyboard.press("Enter");
   await expectVerdict(page, "Correct!");
@@ -104,7 +101,7 @@ async function createChapterGuest(browser: Browser) {
     playableLessonFixture({ lesson: { title: "Why the electron doesn't fall" }, steps: ["check"] }),
   ]);
 
-  const nextWeek = new Date(Date.now() + 7 * MS_PER_DAY);
+  const nextWeek = new Date(Date.now() + MS_PER_WEEK);
   const lessons = [first.lesson, second.lesson];
 
   const [
@@ -229,8 +226,8 @@ test.describe("Library lesson player", () => {
       await expect(page).toHaveURL(new RegExp(`/learn/${first.id}$`, "u"));
       await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
 
-      await started;
       await primary(page, /^Continue/u).click();
+      await started;
       await expect(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
 
       await expect
@@ -282,6 +279,12 @@ test.describe("Library lesson player", () => {
     await page.reload();
 
     await expect(page.getByText("Reading it")).toBeVisible();
+
+    expect(
+      await prisma.attempt.count({ where: { stepId: missed, userId: noProgressUser.id } }),
+    ).toBe(0);
+
+    await primary(page, /^Continue/u).click();
     await expect(notSaved).toBeHidden();
 
     await expect
@@ -385,6 +388,9 @@ test.describe("Library lesson player", () => {
 
     await page.goto(`/learn/${lesson.id}`);
 
+    const explanation = page.getByText("A cloud, not a little ball");
+    await expectHydrated(primary(page, /^Continue/u));
+    await explanation.click();
     await expect(page.getByRole("heading", { name: "We couldn't open this lesson" })).toBeVisible();
     expect(guestSignIns).toStrictEqual([]);
 

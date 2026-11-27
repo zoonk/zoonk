@@ -5,7 +5,6 @@ type UnavailableReason =
   | "alreadySet"
   /** The goal's language doesn't list that country. */
   | "countryNotOffered"
-  /** Includes a one-subject plan where there is no depth choice. */
   | "everythingFits"
   | "noMistakes"
   /** Includes tests lacking both source material and enough bank questions. */
@@ -18,6 +17,8 @@ type UnavailableReason =
   | "nothingDue"
   /** No chapter has enough remaining lessons to offer a test-out. */
   | "nothingToSkip"
+  /** The plan keeps one subject, so there's no focus to choose. */
+  | "oneSubject"
   /** Offers unlock after a full chapter lesson or the next local day. */
   | "testFailedToday"
   | "unavailable";

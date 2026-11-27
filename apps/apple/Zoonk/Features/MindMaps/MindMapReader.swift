@@ -39,7 +39,7 @@ struct MindMapReader: View {
           open(value)
         }
       }
-      .mindMapSaveFailureAlert(goalId: goalId)
+      .mindMapSaveVisit()
       .toolbarTitleDisplayMode(.inline)
       .taskClose {
         Button(role: .close) {
@@ -500,7 +500,7 @@ private struct MindMapZoom: View {
           MindMapSaveButton(target: map.target, goalId: goalId, server: saved)
             .keyboardShortcut("s", modifiers: [])
         }
-        .mindMapSaveFailureAlert(goalId: goalId)
+        .mindMapSaveVisit()
     }
   }
 }

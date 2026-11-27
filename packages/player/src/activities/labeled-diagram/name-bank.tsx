@@ -7,7 +7,7 @@ import { useRef } from "react";
 import { useActivityDraggable } from "../_components/activity-drag-drop";
 
 const CHIP_CLASS =
-  "flex min-h-11 items-center gap-1.5 rounded-lg border bg-background ps-2.5 pe-3.5 text-sm font-medium";
+  "flex min-h-11 items-center gap-1.5 rounded-lg border bg-background ps-2.5 pe-3.5 text-sm font-medium in-data-held:border-viz-accent in-data-held:ring-1 in-data-held:ring-viz-accent in-data-held:ring-inset";
 
 function NameChipFace({ isLifted, name }: { isLifted: boolean; name: string }) {
   return (

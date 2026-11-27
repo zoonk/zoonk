@@ -1,150 +1,81 @@
 "use client";
 
-import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
-import { useExtracted } from "next-intl";
-import { useRef, useState } from "react";
+import { MAX_MATCH_MISSES } from "@zoonk/core/sessions/answer-limits";
+import { useRef } from "react";
+import { MatchBoard } from "../../_components/match-board";
 import { MatchEntry } from "../../_components/match-entry";
-import { useFocusMainActionWhenComplete } from "../../_components/question-actions";
+import {
+  focusQuestionMainAction,
+  useFocusMainActionWhenComplete,
+} from "../../_components/question-actions";
+import {
+  type MatchBoardAnswer,
+  type MatchSide,
+  useMatchBoard,
+} from "../../_components/use-match-board";
 import { ItemLine } from "../../questions/item-text";
 import { useSpokenText } from "../../rich-text/use-spoken-text";
 
-type Matches = number[];
-
-const UNMATCHED = -1;
-
-function getLeftState({ matched, selected }: { matched: boolean; selected: boolean }) {
-  if (matched) {
-    return "matched";
-  }
-
-  return selected ? "selected" : "idle";
-}
-
-/** The host gets the pairs once all are matched, null before. */
+/**
+ * With `answerKey` (a learning question) each pair is checked as it's made and the last one sends
+ * the answer through `onSubmit`, wrong tries included; without it (a test) the host gets the pairs
+ * once all are made, null before, and grades them on Check. `revealed` is the answer to a board
+ * the learner didn't finish ("I don't know yet").
+ */
 export function MatchPairsQuestion({
+  answerKey,
   disabled,
   left,
   onChange,
+  onSubmit,
+  revealed,
   right,
 }: {
+  answerKey?: readonly number[] | null;
   disabled: boolean;
   left: readonly string[];
-  onChange: (answer: { matches: number[] } | null) => void;
+  onChange: (answer: MatchBoardAnswer | { matches: number[] } | null) => void;
+  onSubmit: (answer: MatchBoardAnswer) => void;
+  revealed: readonly number[] | null;
   right: readonly string[];
 }) {
-  const t = useExtracted();
   const spoken = useSpokenText();
-  const [matches, setMatches] = useState<Matches>(() => left.map(() => UNMATCHED));
-  const [selected, setSelected] = useState<number | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
+  const text = (side: MatchSide, index: number) => (side === "left" ? left : right)[index] ?? "";
 
-  useFocusMainActionWhenComplete({
-    complete: matches.every((match) => match !== UNMATCHED),
-    containerRef: listRef,
-  });
-
-  const updateMatches = (next: Matches) => {
-    setMatches(next);
-    onChange(next.every((match) => match !== UNMATCHED) ? { matches: next } : null);
-  };
-
-  const pickLeft = (index: number) => {
-    if (matches[index] !== UNMATCHED) {
-      updateMatches(matches.map((match, position) => (position === index ? UNMATCHED : match)));
-      return;
-    }
-
-    setSelected(selected === index ? null : index);
-  };
-
-  const pickRight = (rightIndex: number) => {
-    const owner = matches.indexOf(rightIndex);
-
-    if (owner !== UNMATCHED) {
-      updateMatches(matches.map((match, position) => (position === owner ? UNMATCHED : match)));
-      return;
-    }
-
-    if (selected === null) {
-      return;
-    }
-
-    updateMatches(matches.map((match, position) => (position === selected ? rightIndex : match)));
-    setSelected(null);
-  };
-
-  useNumberKeys({
-    count: left.length + right.length,
-    enabled: !disabled,
-    onPick: (index) => {
-      if (index < left.length) {
-        if (matches[index] !== UNMATCHED) {
-          return false;
-        }
-
-        pickLeft(index);
-        return;
-      }
-
-      const rightIndex = index - left.length;
-
-      if (selected === null || matches.includes(rightIndex)) {
-        return false;
-      }
-
-      pickRight(rightIndex);
+  const board = useMatchBoard({
+    disabled,
+    isPair: answerKey ? (attempt) => answerKey[attempt.left] === attempt.right : undefined,
+    leftCount: left.length,
+    onChange: (matches) => onChange(matches ? { matches } : null),
+    onComplete: ({ matches, misses }) => {
+      const answer = { matches, misses: misses.slice(0, MAX_MATCH_MISSES) };
+      onChange(answer);
+      onSubmit(answer);
+      focusQuestionMainAction();
     },
+    reveal: answerKey ? revealed : null,
+    rightCount: right.length,
+    say: (side, index) => spoken.inline(text(side, index)),
   });
+
+  useFocusMainActionWhenComplete({ complete: board.complete, containerRef: listRef });
 
   return (
-    <div className="grid grid-cols-2 gap-2 text-sm" ref={listRef}>
-      <ul aria-label={t("Match these")} className="flex flex-col gap-2">
-        {left.map((entry, index) => (
-          <li key={entry}>
-            <MatchEntry
-              disabled={disabled}
-              index={index}
-              onClick={() => pickLeft(index)}
-              pair={index}
-              state={getLeftState({
-                matched: matches[index] !== UNMATCHED,
-                selected: selected === index,
-              })}
-            >
-              <ItemLine text={entry} />
-            </MatchEntry>
-          </li>
-        ))}
-      </ul>
-
-      <ul aria-label={t("With these")} className="flex flex-col gap-2">
-        {right.map((entry, index) => {
-          const owner = matches.indexOf(index);
-          const matched = owner !== UNMATCHED;
-
-          return (
-            <li key={entry}>
-              <MatchEntry
-                label={
-                  matched
-                    ? t("{entry}, matched with {other}", {
-                        entry: spoken.inline(entry),
-                        other: spoken.inline(left[owner] ?? ""),
-                      })
-                    : spoken.inline(entry)
-                }
-                disabled={disabled || (selected === null && !matched)}
-                index={left.length + index}
-                onClick={() => pickRight(index)}
-                pair={owner}
-                state={matched ? "matched" : "idle"}
-              >
-                <ItemLine text={entry} />
-              </MatchEntry>
-            </li>
-          );
-        })}
-      </ul>
+    <div ref={listRef}>
+      <MatchBoard
+        leftCount={left.length}
+        renderCard={(side, index) => (
+          <MatchEntry {...board.entry(side, index)}>
+            <ItemLine text={text(side, index)} />
+          </MatchEntry>
+        )}
+        rightCount={right.length}
+        solved={board.solved}
+      />
+      <p aria-live="polite" className="sr-only">
+        {board.announcement}
+      </p>
     </div>
   );
 }

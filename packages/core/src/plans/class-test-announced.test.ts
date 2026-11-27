@@ -4,6 +4,7 @@ import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profile
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
@@ -12,7 +13,6 @@ import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
 
 const TODAY = new Date("2026-10-08T00:00:00Z");
-const DAY_MS = 86_400_000;
 
 const ANNOUNCEMENT =
   "A prof disse: vai ter questão de completar a tabela das organelas e uma dissertativa sobre osmose!";
@@ -67,7 +67,7 @@ async function setup() {
     details: { placementDeclined: true },
     examBlueprintId: blueprint.id,
     kind: "exam",
-    targetDate: new Date(TODAY.getTime() + 2 * DAY_MS),
+    targetDate: new Date(TODAY.getTime() + 2 * MS_PER_DAY),
     timezone: "UTC",
     userId: user.id,
   });
@@ -78,7 +78,7 @@ async function setup() {
 
   const answer = (index: number, isCorrect: boolean) =>
     attemptFixture({
-      answeredAt: new Date(TODAY.getTime() - DAY_MS),
+      answeredAt: new Date(TODAY.getTime() - MS_PER_DAY),
       isCorrect,
       itemId: items[index]?.id ?? null,
       skillId: library.skills[index]?.id ?? null,
@@ -88,8 +88,8 @@ async function setup() {
   const knownOnce = (skillId: string) =>
     learnerSkillFixture({
       difficulty: 5,
-      due: new Date(TODAY.getTime() + 2 * DAY_MS),
-      lastReviewedAt: new Date(TODAY.getTime() - DAY_MS),
+      due: new Date(TODAY.getTime() + 2 * MS_PER_DAY),
+      lastReviewedAt: new Date(TODAY.getTime() - MS_PER_DAY),
       reps: 1,
       skillId,
       stability: 2.3,
@@ -229,7 +229,7 @@ async function setupFormatSkills() {
     details: { placementDeclined: true },
     examBlueprintId: blueprint.id,
     kind: "exam",
-    targetDate: new Date(TODAY.getTime() + 7 * DAY_MS),
+    targetDate: new Date(TODAY.getTime() + 7 * MS_PER_DAY),
     timezone: "UTC",
     userId: user.id,
   });

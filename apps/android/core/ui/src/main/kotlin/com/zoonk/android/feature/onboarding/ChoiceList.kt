@@ -1,6 +1,5 @@
 package com.zoonk.android.feature.onboarding
 
-import android.view.KeyEvent
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.selection.selectable
@@ -17,6 +16,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalResources
@@ -32,6 +32,7 @@ import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.controlInk
 import com.zoonk.android.ui.components.layoutPart
 import com.zoonk.android.ui.components.listRowDescription
+import com.zoonk.android.ui.components.pickIndex
 import com.zoonk.android.ui.theme.zoonk
 
 data class Choice<T>(
@@ -95,9 +96,8 @@ fun <T> ChoiceList(
                 modifier =
                     Modifier
                         .onPreviewKeyEvent { event ->
-                            val number = event.nativeKeyEvent.keyCode - KeyEvent.KEYCODE_1
-                            val numbered = choices.getOrNull(number)
-                            if (event.type == KeyEventType.KeyUp && number in 0 until NUMBER_KEYS && numbered != null) {
+                            val numbered = event.key.pickIndex()?.let(choices::getOrNull)
+                            if (event.type == KeyEventType.KeyUp && numbered != null) {
                                 choose(numbered)
                                 true
                             } else {
@@ -166,8 +166,6 @@ fun <T> CheckList(
         }
     }
 }
-
-private const val NUMBER_KEYS = 9
 
 /** Material's disabled emphasis. */
 private const val DISABLED_ALPHA = 0.38f

@@ -25,9 +25,9 @@ _Based on [Supabase's security policy](https://supabase.com/.well-known/security
 
 Zoonk applies bug fixes only to the latest version.
 
-## Announcements
+## Disclosure
 
-[Security advisories will be published on GitHub](https://github.com/zoonk/zoonk/security).
+Zoonk is a hosted service: we fix vulnerabilities in production, which protects everyone at once. We publish a [security advisory on GitHub](https://github.com/zoonk/zoonk/security) only when you need to act, such as installing a fixed app version, or to credit the person who reported the issue. If a vulnerability exposed your data, we tell you directly.
 
 ## Reporting a vulnerability
 

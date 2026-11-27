@@ -30,7 +30,7 @@ export function findAskingScreen(
 ): Promise<AskingScreen | null> {
   return db.step.findFirst({
     select: { id: true, lessonId: true },
-    where: { itemId, ...CURRENT_STEPS },
+    where: { item: { format: "numeric" }, itemId, ...CURRENT_STEPS },
   });
 }
 
@@ -197,7 +197,7 @@ export async function numericScreenProblem(
     },
     where: {
       OR: [{ id: { in: [...screens.keys()] } }, { itemId: { in: [...items.keys()] } }],
-      itemId: { not: null },
+      item: { format: "numeric" },
       ...CURRENT_STEPS,
     },
   });

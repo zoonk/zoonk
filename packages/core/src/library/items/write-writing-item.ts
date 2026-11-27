@@ -8,7 +8,6 @@ import { scopeIdentityKey } from "@zoonk/utils/identity-key";
 import { ENEM_WRITING_MAX, hasEnemCompetences } from "../../exams/essays/_utils/enem-writing";
 import { type listPracticeWritingTasks } from "../../exams/essays/_utils/practice-writing-tasks";
 import { getWritingTaskBasis } from "../../exams/essays/_utils/writing-task-basis";
-import { getNamedEssayRubric } from "../../exams/essays/essay-rubric";
 import { type WritingPrompt, writtenItemSchema } from "../../exams/essays/writing-contract";
 import { WRITING_CHARACTERS_PER_LINE } from "../../exams/essays/writing-lines";
 import { getWrittenPartMinimum } from "../../exams/scoring/written-points";
@@ -50,26 +49,13 @@ function getAnswerWordFloor({
 
 type Task = Omit<ReturnType<typeof listPracticeWritingTasks>[number], "subjects">;
 
-function getIssuedTask(
-  task: Task,
-  namedRubric: ReturnType<typeof getNamedEssayRubric>,
-  unit: WritingSupplyInput["unit"],
-): Task {
-  if (unit === "drill") {
+function getIssuedTask(task: Task, unit: WritingSupplyInput["unit"]): Task {
+  if (unit === "drill" || task.grading.kind !== "enem") {
     return task;
   }
 
-  const kind =
-    task.grading.kind === "levels" && task.grading.criteria.length === 0
-      ? (namedRubric ?? task.grading.kind)
-      : task.grading.kind;
-
-  if (kind === "enem") {
-    const criteria = hasEnemCompetences(task.grading.criteria) ? task.grading.criteria : [];
-    return { ...task, grading: { ...task.grading, criteria, kind }, points: ENEM_WRITING_MAX };
-  }
-
-  return kind === task.grading.kind ? task : { ...task, grading: { ...task.grading, kind } };
+  const criteria = hasEnemCompetences(task.grading.criteria) ? task.grading.criteria : [];
+  return { ...task, grading: { ...task.grading, criteria }, points: ENEM_WRITING_MAX };
 }
 
 export function promptContent({
@@ -248,7 +234,7 @@ export async function writeWritingItem({
   });
 
   const { subjects: _subjects, ...writtenTask } = task;
-  const issuedTask = getIssuedTask(writtenTask, getNamedEssayRubric(blueprint), input.unit);
+  const issuedTask = getIssuedTask(writtenTask, input.unit);
 
   const { data, provenance } = await writeWritingPrompt({
     analytics: { distinctId: input.userId, goalId: input.goalId },

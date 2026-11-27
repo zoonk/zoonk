@@ -12,7 +12,7 @@ import { useExtracted } from "next-intl";
 import { DetailContent, DetailLayout } from "../_components/detail-page";
 import { EnterLink } from "../_components/enter-button";
 import {
-  LIST_GROUP_CLASS,
+  ListGroup,
   ListRow,
   ListRowBody,
   ListRowContent,
@@ -168,13 +168,13 @@ function EmptyCertificates({ upNext }: { upNext: CertificateUpNext[] }) {
               {t("Your next certificate")}
             </PageSectionTitle>
           </PageSectionHeader>
-          <ul className={LIST_GROUP_CLASS}>
+          <ListGroup as="ul">
             {upNext.map((item) => (
               <li key={item.id}>
                 <UpNextRow item={item} />
               </li>
             ))}
-          </ul>
+          </ListGroup>
         </PageSection>
       )}
     </div>

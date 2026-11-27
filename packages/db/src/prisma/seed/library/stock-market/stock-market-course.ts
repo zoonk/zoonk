@@ -1,11 +1,12 @@
 import { t } from "../../_utils/localize";
-import { outlineLesson } from "../content";
+import { outlineLesson, withPractice } from "../content";
 import { type SeedCourse } from "../types";
 import { ownAShareLesson } from "./lessons/own-a-share";
 import { wherePriceComesFromLesson } from "./lessons/where-price-comes-from";
 import { marketUpExplanation } from "./market-up-explanation";
 import { stockMarketChallengeItems } from "./stock-market-challenge-items";
 import { stockMarketItems } from "./stock-market-items";
+import { stockMarketPlacementItems } from "./stock-market-placement-items";
 import { stockMarketSkills } from "./stock-market-skills";
 
 export const stockMarketCourse: SeedCourse = {
@@ -19,27 +20,82 @@ export const stockMarketCourse: SeedCourse = {
       key: "what-a-stock-is",
       lessons: [
         ownAShareLesson,
-        outlineLesson(
-          "why-companies-sell",
+        withPractice(
+          outlineLesson(
+            "why-companies-sell",
+            {
+              description: t(
+                "Raising money without a loan, in exchange for sharing the profit.",
+                "Levantar dinheiro sem empréstimo, em troca de dividir o lucro.",
+              ),
+              title: t("Why companies sell shares", "Por que as empresas vendem ações"),
+            },
+            ["ipo"],
+          ),
           {
-            description: t(
-              "Raising money without a loan, in exchange for sharing the profit.",
-              "Levantar dinheiro sem empréstimo, em troca de dividir o lucro.",
+            answer: t("The bakery", "A padaria"),
+            correction: t(
+              "An existing shareholder gets paid when selling their own shares. Here the bakery is selling newly issued shares.",
+              "Um acionista recebe quando vende suas próprias ações. Aqui, a padaria está vendendo ações recém-emitidas.",
             ),
-            title: t("Why companies sell shares", "Por que as empresas vendem ações"),
+            distractor: t(
+              "The investor who owned shares yesterday",
+              "O investidor que já tinha ações ontem",
+            ),
+            example: t(
+              "A bakery needs new ovens. It issues shares to investors and uses their money to buy the ovens. The investors now own part of the bakery.",
+              "Uma padaria precisa de fornos novos. Ela emite ações para investidores e usa o dinheiro para comprar os fornos. Os investidores passam a ser donos de parte da padaria.",
+            ),
+            question: t(
+              "Who receives the money when the bakery issues new shares?",
+              "Quem recebe o dinheiro quando a padaria emite ações novas?",
+            ),
+            reason: t(
+              "In a new issue, the company raises capital. In a resale, the buyer pays the selling shareholder.",
+              "Na emissão, a empresa capta recursos. Na revenda, o comprador paga ao acionista que vende.",
+            ),
+            takeaway: t(
+              "Issuing shares raises money by selling part of the company.",
+              "Emitir ações capta recursos pela venda de parte da empresa.",
+            ),
           },
-          ["ipo"],
         ),
-        outlineLesson(
-          "dividends",
+        withPractice(
+          outlineLesson(
+            "dividends",
+            {
+              description: t(
+                "The part of the profit that lands in your account.",
+                "A parte do lucro que cai na sua conta.",
+              ),
+              title: t("Dividends: a share of the profit", "Dividendos: uma parte do lucro"),
+            },
+            ["dividends"],
+          ),
           {
-            description: t(
-              "The part of the profit that lands in your account.",
-              "A parte do lucro que cai na sua conta.",
+            answer: t("10 reais", "10 reais"),
+            correction: t(
+              "Two reais is the payment for just one share. Each of the five earns that amount.",
+              "Dois reais é o pagamento por apenas uma ação. Cada uma das cinco rende esse valor.",
             ),
-            title: t("Dividends: a share of the profit", "Dividendos: uma parte do lucro"),
+            distractor: t("2 reais", "2 reais"),
+            example: t(
+              "A company declares a dividend of 2 reais per share. Someone holding 3 eligible shares receives 6 reais.",
+              "Uma empresa declara dividendos de 2 reais por ação. Quem tem 3 ações com direito ao pagamento recebe 6 reais.",
+            ),
+            question: t(
+              "How much does a holder of 5 eligible shares receive?",
+              "Quanto recebe quem tem 5 ações com direito ao pagamento?",
+            ),
+            reason: t(
+              "Multiply the dividend per share by the number of eligible shares.",
+              "Multiplique o dividendo por ação pelo número de ações com direito ao pagamento.",
+            ),
+            takeaway: t(
+              "Your dividend depends on the declared rate and how many eligible shares you hold.",
+              "Seu dividendo depende do valor declarado por ação e de quantas ações têm direito ao pagamento.",
+            ),
           },
-          ["dividends"],
         ),
       ],
       level: "overview",
@@ -198,7 +254,7 @@ export const stockMarketCourse: SeedCourse = {
   ),
   explanations: [marketUpExplanation],
   format: "core",
-  items: [...stockMarketItems, ...stockMarketChallengeItems],
+  items: [...stockMarketItems, ...stockMarketChallengeItems, ...stockMarketPlacementItems],
   key: "stock-market",
   languages: ["en", "pt"],
   skills: stockMarketSkills,

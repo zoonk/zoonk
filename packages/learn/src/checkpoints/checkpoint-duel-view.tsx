@@ -8,6 +8,7 @@ import { QuestionTitle } from "../_components/question-title";
 import { StepRow, StepRows } from "../_components/step-card";
 import { TaskHeaderSegments, TaskHeaderTitle, type TaskSegment } from "../_components/task-header";
 import { TaskMeta } from "../_components/task-meta";
+import { useScreenAtTop } from "../_utils/use-screen-at-top";
 import { ItemSetStimulus } from "../questions/item-set-stimulus";
 import { ItemSupport } from "../questions/item-text";
 import { NumericAnswerField } from "../questions/numeric-answer-field";
@@ -277,6 +278,7 @@ export function CheckpointDuelView() {
   const current = Math.min(position + 1, total);
   const label = t("Question {current, number} of {total, number}", { current, total });
   const value = total > 0 ? (score.answered / total) * PERCENT : 0;
+  useScreenAtTop(question?.itemId ?? "over");
 
   const shieldThenQuestions = (
     <>

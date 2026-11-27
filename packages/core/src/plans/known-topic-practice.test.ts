@@ -5,8 +5,10 @@ import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { pickItemInBlock } from "../_test-utils/shown-choice";
 import { lowGuessTapItems } from "../learner/_test-utils/placement-tap-items";
 import { loadPlacementPlan } from "../learner/_utils/goal-skill-graph";
 import { markPlanItemsTestedOut, markSkillsKnown } from "../learner/_utils/known-skills";
@@ -26,11 +28,10 @@ import { createGoalPlan } from "./create-goal-plan";
 import { type PlanGraph } from "./planner/plan-state";
 
 const TODAY = new Date("2026-10-08T00:00:00Z");
-const DAY_MS = 86_400_000;
 const STUDY_DAY_SECONDS = 30 * 60;
 
 function day(offset: number): Date {
-  return new Date(TODAY.getTime() + offset * DAY_MS);
+  return new Date(TODAY.getTime() + offset * MS_PER_DAY);
 }
 
 function setClock(offset: number) {
@@ -44,9 +45,6 @@ function setClock(offset: number) {
     timeZone: "UTC",
   });
 }
-
-const RIGHT = 0;
-const WRONG = 1;
 
 const NOTES = "4) Organelas (CAI MUITO!!)";
 const ANNOUNCEMENT = "A prof disse: vai ter uma dissertativa sobre osmose!";
@@ -335,7 +333,11 @@ describe.each([
 
     const answer = await answerStudyQuestion({
       blockId,
-      input: { answer: { selectedIndex: RIGHT }, durationMs: 4000, itemId: question ?? "" },
+      input: {
+        answer: await pickItemInBlock({ blockId, itemId: question ?? "" }),
+        durationMs: 4000,
+        itemId: question ?? "",
+      },
       sessionId,
     });
 
@@ -359,7 +361,10 @@ describe.each([
         await answerStudyQuestion({
           blockId: first.blockId,
           input: {
-            answer: { selectedIndex: RIGHT },
+            answer: await pickItemInBlock({
+              blockId: first.blockId,
+              itemId: first.payload.itemIds.find(isOrdinary)!,
+            }),
             durationMs: 4000,
             itemId: first.payload.itemIds.find(isOrdinary)!,
           },
@@ -375,7 +380,11 @@ describe.each([
         answerStudyQuestion({
           blockId,
           input: {
-            answer: { selectedIndex: WRONG },
+            answer: await pickItemInBlock({
+              blockId,
+              itemId: payload.itemIds.find(isOrdinary)!,
+              right: false,
+            }),
             durationMs: 4000,
             itemId: payload.itemIds.find(isOrdinary)!,
           },
@@ -487,7 +496,11 @@ describe("a known topic Pedro's time left without lessons", () => {
 
     await answerStudyQuestion({
       blockId,
-      input: { answer: { selectedIndex: WRONG }, durationMs: 4000, itemId: question ?? "" },
+      input: {
+        answer: await pickItemInBlock({ blockId, itemId: question ?? "", right: false }),
+        durationMs: 4000,
+        itemId: question ?? "",
+      },
       sessionId,
     });
 

@@ -25,22 +25,13 @@ enum StudyTap: Sendable {
 
 enum LessonWriting: Hashable, Sendable {
   case writing(run: String?)
-  case preparing
   /// Every draft was held back by its checks; the plan moved on without it.
   case setAside
   case refused(LessonRunRefusal)
   case failed
 
   var isRunning: Bool {
-    switch self {
-    case .writing, .preparing: true
-    case .setAside, .refused, .failed: false
-    }
-  }
-
-  /// The run the learner's tap started.
-  var run: String? {
-    if case .writing(let run) = self { run } else { nil }
+    if case .writing = self { true } else { false }
   }
 }
 
@@ -57,12 +48,6 @@ final class TodayStore {
   private var answered:
     (owner: AuthenticatedSession, day: OpenedSession.Day, value: AnsweredPlanChange)?
   private var writings: [String: (owner: AuthenticatedSession, writing: LessonWriting)] = [:]
-  /// Lessons whose run ended without writing them, or that couldn't be followed, while Today still
-  /// reads them as being written; main's Today stops saying so once its wait gives up. Asking for
-  /// one again clears it.
-  private var stalledLessons: [String: AuthenticatedSession] = [:]
-  /// Lessons whose readiness said their checks set them aside: they're never written again.
-  private var setAsideLessons: [String: AuthenticatedSession] = [:]
 
   @ObservationIgnored private let api: any StudyAPIClient
   @ObservationIgnored private let cache: AppCache
@@ -118,19 +103,11 @@ final class TodayStore {
     return resource
   }
 
-  func isBeingWritten(_ block: StudyBlock, in view: TodayView) -> Bool {
-    view.isBeingWritten(block) && !(block.lessonId.map(isStalled) ?? false)
-  }
-
   func isGettingReady(_ block: StudyBlock, in view: TodayView?) -> Bool {
-    block.preparing || view.map { isBeingWritten(block, in: $0) } == true
+    block.preparing || view?.isBeingWritten(block) == true
   }
 
-  func writingLessonIDs(in view: TodayView) -> [String] {
-    view.writingLessonIDs.filter { !isStalled($0) }
-  }
-
-  /// Reads Today again as each lesson's writing ends.
+  /// Only readiness says a lesson stopped, so each is followed until it names no run writing it.
   func followWriting(lessonIDs: [String]) async {
     guard let owner = cache.session.authenticatedSession else {
       return
@@ -143,40 +120,40 @@ final class TodayStore {
         group.addTask {
           let lesson = try? await api.followWriting(
             token: owner.bearerToken, lessonID: lessonID, run: nil)
-          await self.followed(lessonID, endedAs: lesson?.status.rawValue, owner: owner)
+          await self.followed(lessonID, endedAs: lesson, owner: owner)
         }
       }
     }
   }
 
-  /// What the follow found shows even if Today can't be read again.
-  private func followed(_ lessonID: String, endedAs status: String?, owner: AuthenticatedSession)
-    async
-  {
+  private func followed(
+    _ lessonID: String, endedAs lesson: Components.Schemas.LessonReadiness?,
+    owner: AuthenticatedSession
+  ) async {
     guard !Task.isCancelled, owner == cache.session.authenticatedSession else {
       return
     }
 
-    if let status, status != "failed" {
+    if let lesson, let status = LessonStatus(rawValue: lesson.status.rawValue) {
       today.update { content in
         guard case .day(var view) = content else {
           return content
         }
 
-        view.lessonStatus[lessonID] = status
+        view.session.blocks = view.session.blocks.map { block in
+          var block = block
+          if block.lessonId == lessonID {
+            block.lesson = StudyBlock.Lesson(status: status, setAside: lesson.setAside)
+          }
+          return block
+        }
         return .day(view)
       }
-    } else {
-      stalledLessons[lessonID] = owner
     }
 
     // A read already on its way may predate the lesson's end.
     today.invalidate()
     await today.refresh()
-  }
-
-  private func isStalled(_ lessonID: String) -> Bool {
-    stalledLessons[lessonID].map { $0 == cache.session.authenticatedSession } ?? false
   }
 
   var day: TodayView? {
@@ -199,15 +176,7 @@ final class TodayStore {
     return opened.sessionID
   }
 
-  /// What the learner's tap was told, or that the lesson's checks set it aside once its readiness
-  /// says so, as main's next stop reads it.
   func writing(for block: StudyBlock) -> LessonWriting? {
-    if let lessonID = block.lessonId,
-      setAsideLessons[lessonID].map({ $0 == cache.session.authenticatedSession }) == true
-    {
-      return .setAside
-    }
-
     guard let blockID = block.id, let asked = writings[blockID],
       asked.owner == cache.session.authenticatedSession
     else {
@@ -215,10 +184,6 @@ final class TodayStore {
     }
 
     return asked.writing
-  }
-
-  func setAside(lessonID: String, owner: AuthenticatedSession) {
-    setAsideLessons[lessonID] = owner
   }
 
   /// A step that couldn't open fails after Today is read again, so the learner sees why.
@@ -258,7 +223,7 @@ final class TodayStore {
         let ref = DayBlockRef(block)
         let opened = try await self.openDay(
           shown, target: tap == .next ? .next(ref) : .ref(ref), token: token)
-        return opened.opening ?? .changed(.init(kind: .changed))
+        return opened.opening ?? .StudyBlockOpeningChanged(.init(kind: .changed))
       }
 
       return try await self.openBlock(tap, blockID: blockID, sessionID: sessionID, token: token)
@@ -482,7 +447,7 @@ final class TodayStore {
     async throws -> StudyDestination
   {
     // Opening a written question is its start: the tap admits the grading, or starts writing it.
-    if case .essay(let essay) = opening {
+    if case .StudyBlockOpeningEssay(let essay) = opening {
       guard cache.session.authenticatedSession == identity else {
         throw CancellationError()
       }
@@ -492,7 +457,7 @@ final class TodayStore {
       return .essay(blockID: essay.blockId, start: start)
     }
 
-    guard case .unwrittenLesson(let lesson) = opening else {
+    guard case .StudyBlockOpeningUnwrittenLesson(let lesson) = opening else {
       return StudyDestination(opening)
     }
 
@@ -500,7 +465,6 @@ final class TodayStore {
       throw CancellationError()
     }
 
-    stalledLessons[lesson.lessonId] = nil
     let token = identity.bearerToken
 
     switch try await api.writeLesson(token: token, lessonID: lesson.lessonId) {
@@ -543,7 +507,7 @@ final class TodayStore {
       let block = try await api.addExtraBlock(
         token: token, sessionID: sessionID, timeZone: TimeZone.current.identifier)
     else {
-      return .today(.init(kind: .today))
+      return .StudyBlockOpeningToday(.init(kind: .today))
     }
 
     guard let blockID = block.id else {
@@ -574,15 +538,15 @@ extension StudyBlockOpening {
   /// Nil for Today or a change.
   var sessionID: String? {
     switch self {
-    case .lesson(let lesson): lesson.sessionId
-    case .unwrittenLesson(let lesson): lesson.sessionId
-    case .preparingLesson(let step): step.sessionId
-    case .essay(let essay): essay.sessionId
-    case .checkpoint(let checkpoint): checkpoint.sessionId
-    case .mock(let mock): mock.sessionId
-    case .challenge(let challenge): challenge.sessionId
-    case .session(let session): session.sessionId
-    case .today, .changed: nil
+    case .StudyBlockOpeningLesson(let lesson): lesson.sessionId
+    case .StudyBlockOpeningUnwrittenLesson(let lesson): lesson.sessionId
+    case .StudyBlockOpeningPreparingLesson(let step): step.sessionId
+    case .StudyBlockOpeningEssay(let essay): essay.sessionId
+    case .StudyBlockOpeningCheckpoint(let checkpoint): checkpoint.sessionId
+    case .StudyBlockOpeningMock(let mock): mock.sessionId
+    case .StudyBlockOpeningChallenge(let challenge): challenge.sessionId
+    case .StudyBlockOpeningSession(let session): session.sessionId
+    case .StudyBlockOpeningToday, .StudyBlockOpeningChanged, .case11: nil
     }
   }
 }
@@ -592,25 +556,25 @@ extension StudyDestination {
   /// it again.
   init(_ opening: StudyBlockOpening) {
     switch opening {
-    case .lesson(let lesson):
+    case .StudyBlockOpeningLesson(let lesson):
       self = .lesson(lessonID: lesson.lessonId, sessionID: lesson.sessionId)
-    case .unwrittenLesson:
+    case .StudyBlockOpeningUnwrittenLesson:
       self = .session
-    case .preparingLesson(let step):
-      self = .lessonWait(blockID: step.blockId, writing: .preparing)
-    case .essay(let essay):
-      self = .essay(blockID: essay.blockId, start: nil)
-    case .checkpoint(let checkpoint):
-      self = .checkpoint(blockID: checkpoint.blockId, sessionID: checkpoint.sessionId)
-    case .mock(let mock):
-      self = .mock(blockID: mock.blockId, sessionID: mock.sessionId)
-    case .challenge(let challenge):
-      self = .challenge(planItemID: challenge.planItemId, sessionID: challenge.sessionId)
-    case .session(let session):
-      self = session.blockId.map { .questionBlock(blockID: $0) } ?? .session
-    case .today:
+    case .StudyBlockOpeningPreparingLesson:
       self = .today
-    case .changed:
+    case .StudyBlockOpeningEssay(let essay):
+      self = .essay(blockID: essay.blockId, start: nil)
+    case .StudyBlockOpeningCheckpoint(let checkpoint):
+      self = .checkpoint(blockID: checkpoint.blockId, sessionID: checkpoint.sessionId)
+    case .StudyBlockOpeningMock(let mock):
+      self = .mock(blockID: mock.blockId, sessionID: mock.sessionId)
+    case .StudyBlockOpeningChallenge(let challenge):
+      self = .challenge(planItemID: challenge.planItemId, sessionID: challenge.sessionId)
+    case .StudyBlockOpeningSession(let session):
+      self = session.blockId.map { .questionBlock(blockID: $0) } ?? .session
+    case .StudyBlockOpeningToday:
+      self = .today
+    case .StudyBlockOpeningChanged, .case11:
       self = .changed
     }
   }

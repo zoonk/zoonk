@@ -1,6 +1,5 @@
 import { normalizeTypedAnswer } from "@zoonk/ai/tasks/grading/typed-answer-match";
 import { getBaseLanguage } from "@zoonk/utils/languages";
-import { hasMatchingPhonemes } from "./transcript-phonemes";
 
 const SERBIAN_LATIN = new Map([
   ["а", "a"],
@@ -52,29 +51,6 @@ function inLessonScript(text: string, language: string): string {
   return text;
 }
 
-function swapsKanjiForKana(left: string, right: string): boolean {
-  let start = 0;
-
-  while (start < left.length && left[start] === right[start]) {
-    start += 1;
-  }
-
-  let end = 0;
-
-  while (
-    end < Math.min(left.length, right.length) - start &&
-    left.at(-end - 1) === right.at(-end - 1)
-  ) {
-    end += 1;
-  }
-
-  const a = left.slice(start, left.length - end);
-  const b = right.slice(start, right.length - end);
-  const kanji = /^\p{Script=Han}+$/u;
-  const kana = /^[\p{Script=Hiragana}ー]+$/u;
-  return (kanji.test(a) && kana.test(b)) || (kana.test(a) && kanji.test(b));
-}
-
 function isMandarin(language: string): boolean {
   const base = getBaseLanguage(language);
   return base === "zh" || base === "cmn";
@@ -97,6 +73,11 @@ export async function needsSurnameCheck({
   return hasSurnameReading(expected, romanization);
 }
 
+/**
+ * A transcript spells what the transcriber guessed, so another spelling can still be the sentence
+ * said right (a homophone, a silent letter, a number or letter name written another way): only the
+ * recording can tell. A Mandarin transcript is the exception, since its tones show other syllables.
+ */
 export async function transcriptReading({
   expected,
   heard,
@@ -126,26 +107,8 @@ export async function transcriptReading({
 
   if (target === transcript) {
     // In Cyrillic нј and њ are distinct, but both can be written "nj" in Latin.
-    if (base === "sr" && /нј|лј|дж/u.test(`${written} ${recognized}`)) {
-      return /\p{Script=Latin}/u.test(written) === /\p{Script=Latin}/u.test(recognized)
-        ? "different"
-        : "listen";
-    }
-
-    return "equivalent";
+    return base === "sr" && /нј|лј|дж/u.test(`${written} ${recognized}`) ? "listen" : "equivalent";
   }
 
-  if (target.replaceAll(/[ -]/gu, "") === transcript.replaceAll(/[ -]/gu, "")) {
-    return "listen";
-  }
-
-  if (base === "ja") {
-    return swapsKanjiForKana(target.replaceAll(" ", ""), transcript.replaceAll(" ", ""))
-      ? "listen"
-      : "different";
-  }
-
-  return hasMatchingPhonemes({ expected: target, heard: transcript, language })
-    ? "listen"
-    : "different";
+  return "listen";
 }

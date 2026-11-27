@@ -12,6 +12,7 @@ import { coverageLeads, isOneStack } from "./alignment-coverage.mts";
 import { cutLeads } from "./alignment-cut.mts";
 import { axisLeads, endLeads, stackedLeads, startLeads } from "./alignment-edges.mts";
 import { evenLeads } from "./alignment-even.mts";
+import { type AlignmentException, EXCEPTIONS } from "./alignment-exceptions.mts";
 import { gapLeads } from "./alignment-gap.mts";
 import {
   type Context,
@@ -30,12 +31,7 @@ import { pinnedLeads } from "./alignment-pinned.mts";
 import { roomLeads } from "./alignment-room.mts";
 import { pairLeads, reconcile } from "./alignment-scenarios.mts";
 import { type Summary, summarize } from "./alignment-summary.mts";
-import {
-  type AlignmentException,
-  DECLARATIONS,
-  EXCEPTIONS,
-  type Relation,
-} from "./alignment-table.mts";
+import { DECLARATIONS, type Relation } from "./alignment-table.mts";
 import { lineEndLeads, loneWordLeads } from "./alignment-wrap.mts";
 
 /**
@@ -173,13 +169,17 @@ function filledLeads(context: Context): AlignmentFinding[] {
     }
 
     return [
-      finding(context, {
-        detail: `${actions.map((action) => action.name ?? action.text ?? action.id).join(", ")} on ${surface}`,
-        level: "fail",
-        message: "more than one filled action on one surface",
-        piece: "action",
-        rule: "one-filled",
-      }),
+      finding(
+        { ...context, unit: "actions" },
+        {
+          detail: `${actions.map((action) => action.name ?? action.text ?? action.id).join(", ")} on ${surface}`,
+          level: "fail",
+          measured: actions.length,
+          message: "more than one filled action on one surface",
+          piece: "action",
+          rule: "one-filled",
+        },
+      ),
     ];
   });
 }
@@ -314,7 +314,10 @@ function excepted(item: AlignmentFinding, exceptions: AlignmentException[]) {
       exception.relation === item.rule &&
       exception.piece === item.piece &&
       exception.scenario === (item.scenario ?? item.screen) &&
-      exception.configuration === item.configuration,
+      exception.configuration === item.configuration &&
+      (item.measured === undefined
+        ? exception.maxMeasured === null
+        : exception.maxMeasured !== null && Math.abs(item.measured) <= exception.maxMeasured),
   );
 }
 

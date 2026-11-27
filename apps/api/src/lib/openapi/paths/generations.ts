@@ -1,5 +1,9 @@
 import { generationPathParamsSchema } from "../schemas/paths";
-import { notFoundResponse, validationErrorResponse } from "../schemas/responses";
+import {
+  notFoundResponse,
+  serviceUnavailableResponse,
+  validationErrorResponse,
+} from "../schemas/responses";
 import {
   generationEventStreamSchema,
   generationResourceSchema,
@@ -15,10 +19,11 @@ export const generationPaths = {
       responses: {
         "200": {
           content: { "application/json": { schema: generationResourceSchema } },
-          description: "Current generation status",
+          description: "Current generation status. A stalled run reports `failed`.",
         },
         "400": validationErrorResponse,
         "404": notFoundResponse,
+        "503": serviceUnavailableResponse,
       },
       security: PUBLIC_SECURITY,
       summary: "Get a generation",
@@ -38,6 +43,7 @@ export const generationPaths = {
         },
         "400": validationErrorResponse,
         "404": notFoundResponse,
+        "503": serviceUnavailableResponse,
       },
       security: PUBLIC_SECURITY,
       summary: "Stream generation events (SSE)",

@@ -302,7 +302,7 @@ private fun ChapterStrip(
             formatNumber(place.number.toDouble(), locale),
             formatNumber(place.total.toDouble(), locale),
         )
-    val label = position + FACT_SEPARATOR + place.chapter.level.label()
+    val label = listOfNotNull(position, place.chapter.level.label()).joinToString(FACT_SEPARATOR)
     val stretch = detail.chapters.drop(place.number - 1).take(NEXT_CHAPTERS + 1)
     val subject =
         Subject
@@ -512,13 +512,12 @@ internal fun ChapterLessonRows(
                         { navigator.open(AppRoute.CatalogLesson(lessonId, chapter.id.toString(), courseId)) }
                     },
                 highlighted = isCurrent,
-                leading = {
+                lead = {
                     Text(
                         formatNumber((index + 1).toDouble(), locale),
                         style = MaterialTheme.typography.bodyMedium.withTabularFigures(),
                     )
                 },
-                leadOnFirstLine = true,
                 meta = { Text(formatMinutes(lesson.estimatedMinutes.toInt(), locale)) },
                 chevronSpace = true,
             )

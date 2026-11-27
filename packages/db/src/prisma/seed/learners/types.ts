@@ -21,7 +21,12 @@ import {
   type PlanItemStatus,
   type Prisma,
 } from "../../../generated/prisma/client";
-import { type Localized, type SeedLanguage } from "../_utils/localize";
+import {
+  type Localized,
+  type LocalizedObject,
+  type SeedLanguage,
+  type SeedText,
+} from "../_utils/localize";
 import { type SeedCourse } from "../library/types";
 import { type MemoryPreset } from "./memory-presets";
 
@@ -29,7 +34,7 @@ import { type MemoryPreset } from "./memory-presets";
 type Day = number;
 
 /** An exam plan's time windows have no name: apps name them by kind. */
-type SeedPhase = { name: string; milestone?: string };
+type SeedPhase = { name: SeedText; milestone?: SeedText };
 
 export type SeedGraphSkill = {
   skill: string;
@@ -49,15 +54,15 @@ export type SeedPlanItem = {
   status: PlanItemStatus;
   lesson?: string;
   chapter?: string;
-  title?: string;
+  title?: SeedText;
   day?: Day;
 };
 
 export type SeedPlanChange = {
   kind: "edited" | "estimateUpdated" | "missedDays" | "resumed" | "testedOut";
   status?: "applied" | "proposed";
-  reason: string | Localized;
-  payload: Prisma.InputJsonObject;
+  reason: SeedText;
+  payload: LocalizedObject;
   day: Day;
 };
 
@@ -68,7 +73,7 @@ export type SeedGoal = {
   course: SeedCourse;
   exam?: string;
   prompt: string;
-  title: string;
+  title: SeedText;
   details: Pick<
     UnderstoodGoal,
     | "examName"
@@ -98,7 +103,7 @@ export type SeedGoal = {
     /** Without it, the graph is the skills the plan items teach. */
     graph?: readonly SeedGraphSkill[];
     changes?: SeedPlanChange[];
-    focusAreas?: string[];
+    focusAreas?: SeedText[];
     examChoices?: { group: Localized; subjects: Localized[] }[];
   };
 };
@@ -116,7 +121,7 @@ export type SeedAttempt = {
   mistake?: {
     cause: MistakeCause | null;
     status: MistakeStatus;
-    snapshot: Prisma.InputJsonObject;
+    snapshot: LocalizedObject;
     /** Yesterday when absent. */
     fixedDay?: Day;
   };
@@ -128,8 +133,8 @@ type SeedHistory = {
   minutesPerDay: number;
   accuracy: number;
   energy: number;
-  mocks?: { day: Day; correct: number; total: number; title: string }[];
-  checkpoints?: { day: Day; correct: number; total: number; title: string }[];
+  mocks?: { day: Day; correct: number; total: number; title: SeedText }[];
+  checkpoints?: { day: Day; correct: number; total: number; title: SeedText }[];
 };
 
 type SeedConversationScenario = { chapter: string; level: string; content: Prisma.InputJsonValue };

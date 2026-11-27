@@ -17,9 +17,13 @@ import {
   LessonQuestionHostProvider,
   useLessonQuestionController,
 } from "./lesson-question-provider";
+import { ModuleSubjectContext, useModuleSubject } from "./module-subject";
 import { preloadTutorMarkdown } from "./tutor-markdown-preload";
 
-type ScreenTarget = Extract<TutorTarget, { kind: LessonQuestionScreenKind }>;
+/** The plan's conversations are the buddy's page, never a drawer over another screen. */
+type ScreenKind = Exclude<LessonQuestionScreenKind, "plan">;
+
+type ScreenTarget = Extract<TutorTarget, { kind: ScreenKind }>;
 
 const questionPanel = createOnDemand(() => import("./lesson-question-panel"));
 
@@ -28,7 +32,7 @@ function preloadDrawer() {
   preloadTutorMarkdown();
 }
 
-function useOpenDrawer(kind: LessonQuestionScreenKind) {
+function useOpenDrawer(kind: ScreenKind) {
   const { open } = useLessonQuestionController();
 
   return () => {
@@ -43,18 +47,19 @@ const PRELOAD_ON_INTENT = {
   onPointerEnter: preloadDrawer,
 };
 
-function useAskLabel({ kind, name }: { kind: LessonQuestionScreenKind; name: string }) {
+function useAskLabel({ kind, name }: { kind: ScreenKind; name: string }) {
   const t = useExtracted();
+  const isModule = useModuleSubject();
 
   switch (kind) {
     case "chapter":
       return t("Ask {name} about this chapter", { name });
     case "mock":
       return t("Ask {name} about this mock exam", { name });
-    case "plan":
-      return t("Ask {name} about your plan", { name });
     case "subject":
-      return t("Ask {name} about this subject", { name });
+      return isModule
+        ? t("Ask {name} about this module", { name })
+        : t("Ask {name} about this subject", { name });
     default:
       return kind satisfies never;
   }
@@ -76,13 +81,7 @@ const BAR_ASK_CLASS = cn(
 const BAR_ASK_LABEL_CLASS =
   "truncate max-[18rem]:hidden max-sm:group-data-title-away/page-bar:hidden";
 
-function AskTutorRow({
-  identity,
-  kind,
-}: {
-  identity: TutorIdentity;
-  kind: LessonQuestionScreenKind;
-}) {
+function AskTutorRow({ identity, kind }: { identity: TutorIdentity; kind: ScreenKind }) {
   const openDrawer = useOpenDrawer(kind);
   const label = useAskLabel({ kind, name: identity.name });
 
@@ -106,7 +105,7 @@ function AskTutorButton({
   size,
 }: {
   identity: TutorIdentity;
-  kind: LessonQuestionScreenKind;
+  kind: ScreenKind;
   size: AskTutorSize;
 }) {
   const t = useExtracted();
@@ -210,13 +209,16 @@ const SharedTutorContext = createContext<SharedTutor | null>(null);
  * One conversation for a screen that places the tutor's entry more than once (a bar on a phone, a
  * row in the side column from wide screens): every `AskTutorEntry` inside opens this one, so a
  * layout change that swaps the entry keeps what the learner asked. Keep `target` and `tutor` stable.
+ * `isModule`: the target is a subject of a plan that isn't for an exam, which calls it a module.
  */
 export function AskTutorScope({
   children,
+  isModule = false,
   target,
   tutor,
 }: {
   children: React.ReactNode;
+  isModule?: boolean;
   target: ScreenTarget;
   tutor: LessonTutorConfig;
 }) {
@@ -224,9 +226,11 @@ export function AskTutorScope({
   const shared = useMemo(() => ({ identity, kind: target.kind }), [identity, target.kind]);
 
   return (
-    <AskTutorProvider identity={identity} target={target} tutor={tutor}>
-      <SharedTutorContext value={shared}>{children}</SharedTutorContext>
-    </AskTutorProvider>
+    <ModuleSubjectContext value={isModule}>
+      <AskTutorProvider identity={identity} target={target} tutor={tutor}>
+        <SharedTutorContext value={shared}>{children}</SharedTutorContext>
+      </AskTutorProvider>
+    </ModuleSubjectContext>
   );
 }
 

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -41,6 +42,7 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -85,7 +87,11 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
+import com.zoonk.android.ui.components.LocalPickKeys
+import com.zoonk.android.ui.components.LocalRevealPage
 import com.zoonk.android.ui.components.LocalTaskBarKeys
+import com.zoonk.android.ui.components.PickKeys
+import com.zoonk.android.ui.components.RevealPage
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
@@ -94,7 +100,9 @@ import com.zoonk.android.ui.components.TaskBarKeys
 import com.zoonk.android.ui.components.TaskSegment
 import com.zoonk.android.ui.components.TaskSegments
 import com.zoonk.android.ui.components.focusMoveTarget
+import com.zoonk.android.ui.components.pressesNumberKey
 import com.zoonk.android.ui.components.rememberMoveFocus
+import com.zoonk.android.ui.components.revealPage
 import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.scaffold.PageFold
 import com.zoonk.android.ui.scaffold.PageSpan
@@ -139,7 +147,8 @@ interface RunControls {
 
 /**
  * A keyboard's Enter runs [mainAction] and Escape closes, as in the lesson player; Enter presses a Record in [actions] instead,
- * and P its sound ([TaskBarKeys]). On a wide window
+ * P its sound ([TaskBarKeys]), and a number key picks what the question shows ([PickKeys]), or else does what [onNumberKey]
+ * says. On a wide window
  * a question's passage shows beside it, or else [aside]. Across an unfolded book's fold the run is a
  * spread: the question with its passage ([StepPart.Screen]), then [aside], on the page before the
  * fold, the learner's turn ([StepPart.Turn]) on the page after it. A new [place] starts at its top.
@@ -159,10 +168,12 @@ internal fun RunFrame(
     aside: (@Composable ColumnScope.() -> Unit)? = null,
     asideTitle: String? = null,
     note: (@Composable () -> Unit)? = null,
+    onNumberKey: ((Int) -> Boolean)? = null,
     content: @Composable ColumnScope.(part: StepPart, inlineSet: Boolean, asideShown: Boolean) -> Unit,
 ) {
     val focus = remember { FocusRequester() }
     val barKeys = remember { TaskBarKeys() }
+    val pickKeys = remember { PickKeys() }
     val set = question?.set?.takeIf { it.listening == null }
     val hasAside = set == null && aside != null
     // The one column and the screen's page across a fold share their scroll, so a reading place keeps as the book opens
@@ -210,7 +221,7 @@ internal fun RunFrame(
                             }
 
                             else -> {
-                                false
+                                event.pressesNumberKey { pickKeys.press(it) || onNumberKey?.invoke(it) == true }
                             }
                         }
                     },
@@ -237,31 +248,34 @@ internal fun RunFrame(
                 val inlineSet = set == null || fold != null || !taskAsideBeside()
                 val shown = asideShown(hasAside, fold)
 
-                Column(Modifier.padding(padding).fillMaxSize()) {
-                    Box(if (fold == null) Modifier else Modifier.width(fold.start)) { progress(shown) }
-                    BoxWithConstraints(Modifier.weight(1f).fillMaxWidth()) {
-                        // The turn's page is the one column's place, so its unsent work stays as the book opens or closes.
-                        val turnPage =
-                            if (fold == null) Modifier else Modifier.padding(start = fold.end).semantics { isTraversalGroup = true }
-                        CompositionLocalProvider(LocalStepViewHeight provides if (fold == null) maxHeight - PAGE_PADDING * 2 else null) {
-                            ScrollingPage(
-                                Modifier.fillMaxSize().then(turnPage),
-                                if (fold == null) scroll else turnScroll,
-                                if (fold == null) Alignment.CenterHorizontally else Alignment.Start,
-                            ) { content(if (fold == null) StepPart.Whole else StepPart.Turn, inlineSet, shown) }
-                        }
+                CompositionLocalProvider(LocalPickKeys provides pickKeys) {
+                    Column(Modifier.padding(padding).fillMaxSize()) {
+                        Box(if (fold == null) Modifier else Modifier.width(fold.start)) { progress(shown) }
+                        BoxWithConstraints(Modifier.weight(1f).fillMaxWidth()) {
+                            // The turn's page is the one column's place, so its unsent work stays as the book opens or closes.
+                            val turnPage =
+                                if (fold == null) Modifier else Modifier.padding(start = fold.end).semantics { isTraversalGroup = true }
+                            val viewHeight = if (fold == null) maxHeight - PAGE_PADDING * 2 else null
+                            CompositionLocalProvider(LocalStepViewHeight provides viewHeight) {
+                                ScrollingPage(
+                                    Modifier.fillMaxSize().then(turnPage),
+                                    if (fold == null) scroll else turnScroll,
+                                    if (fold == null) Alignment.CenterHorizontally else Alignment.Start,
+                                ) { content(if (fold == null) StepPart.Whole else StepPart.Turn, inlineSet, shown) }
+                            }
 
-                        if (fold != null) {
-                            ScrollingPage(
-                                Modifier.width(fold.start).fillMaxHeight().semantics { isTraversalGroup = true },
-                                scroll,
-                                Alignment.End,
-                            ) {
-                                content(StepPart.Screen, inlineSet, shown)
-                                if (shown) {
-                                    HorizontalDivider()
-                                    asideTitle?.let { SectionLabel(it) }
-                                    aside?.invoke(this)
+                            if (fold != null) {
+                                ScrollingPage(
+                                    Modifier.width(fold.start).fillMaxHeight().semantics { isTraversalGroup = true },
+                                    scroll,
+                                    Alignment.End,
+                                ) {
+                                    content(StepPart.Screen, inlineSet, shown)
+                                    if (shown) {
+                                        HorizontalDivider()
+                                        asideTitle?.let { SectionLabel(it) }
+                                        aside?.invoke(this)
+                                    }
                                 }
                             }
                         }
@@ -279,7 +293,10 @@ private fun asideShown(
     fold: PageFold?,
 ) = hasAside && (fold != null || taskAsideBeside())
 
-/** A page of the run; a page of a spread [align]s its column toward the split, so on a very wide window the pages still meet there. */
+/**
+ * A page of the run; a page of a spread [align]s its column toward the split, so on a very wide window the pages still
+ * meet there. A verdict on it scrolls into sight by main's rule, leaving no sliver of the question at its top.
+ */
 @Composable
 private fun ScrollingPage(
     modifier: Modifier,
@@ -287,8 +304,12 @@ private fun ScrollingPage(
     align: Alignment.Horizontal,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    Column(modifier.verticalScroll(scroll).padding(vertical = PAGE_PADDING), horizontalAlignment = align) {
-        Column(Modifier.taskColumn(), verticalArrangement = Arrangement.spacedBy(PAGE_SPACING), content = content)
+    val page = remember(scroll) { RevealPage(scroll) }
+    CompositionLocalProvider(LocalRevealPage provides page) {
+        Column(modifier.revealPage(page).verticalScroll(scroll).padding(vertical = PAGE_PADDING), horizontalAlignment = align) {
+            Column(Modifier.taskColumn(), verticalArrangement = Arrangement.spacedBy(PAGE_SPACING), content = content)
+            Spacer(Modifier.height(with(LocalDensity.current) { page.extraRoom.toDp() }))
+        }
     }
 }
 
@@ -454,7 +475,8 @@ internal fun AnswerActions(
         val main = remember { FocusRequester() }
         val moveFocus = rememberMoveFocus()
         var notSureSent by rememberSaveable { mutableStateOf(false) }
-        LaunchedEffect(done) { if (done && notSureSent) moveFocus(main) }
+        // A learning match sends itself with its last pair, so its verdict, like "I don't know yet"'s, takes focus to Continue.
+        LaunchedEffect(done) { if (done && (notSureSent || question.key != null)) moveFocus(main) }
 
         if (phase ==
             RunPhase.AnswerFailed
@@ -488,9 +510,10 @@ internal fun AnswerActions(
                 enabled = done || (run.canAnswer && draft != null),
                 focusableWhenDisabled = sender != null,
             ) {
+                // A learning match checks each pair and sends its last one by itself, so it has nothing to check by hand.
                 Text(
                     stringResource(
-                        if (done) R.string.practice_continue else R.string.practice_check,
+                        if (done || question.key != null) R.string.practice_continue else R.string.practice_check,
                     ),
                 )
             }

@@ -1,10 +1,9 @@
 import { decideLibraryIdentity } from "@zoonk/ai/tasks/identity/decision";
 import { sourceFixture } from "@zoonk/testing/fixtures/sources";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { uniqueWord } from "../identity/_test-utils/identity-mocks";
 import { findStoredResearchSources, loadResearchSourceCandidates } from "./stored-research-sources";
-
-const DAY_MS = 86_400_000;
 
 const LAW_TEXT = [
   "Art. 1º Esta Lei dispõe sobre o tratamento de dados pessoais, inclusive nos meios digitais,",
@@ -42,7 +41,7 @@ function storedSource({
     publisher: "Presidência da República",
     structure: { images: 0, pages: 1, topic },
     title: `Lei Geral de Proteção de Dados ${word}`,
-    validUntil: new Date(Date.now() + 10 * DAY_MS),
+    validUntil: new Date(Date.now() + 10 * MS_PER_DAY),
     ...attrs,
   });
 }
@@ -96,7 +95,7 @@ describe(findStoredResearchSources, () => {
     const word = uniqueWord();
 
     await Promise.all([
-      storedSource({ topic: "regulation", validUntil: new Date(Date.now() - DAY_MS), word }),
+      storedSource({ topic: "regulation", validUntil: new Date(Date.now() - MS_PER_DAY), word }),
       storedSource({ ownerId: null, topic: "regulation", visibility: "private", word }),
       storedSource({ kind: "secondary", topic: "regulation", word }),
       storedSource({ topic: "software", word }),
@@ -129,7 +128,7 @@ describe(findStoredResearchSources, () => {
       publisher: "USP",
       title: `Ementa LGPD ${word}`,
       topic: "syllabus",
-      validUntil: new Date(Date.now() + 300 * DAY_MS),
+      validUntil: new Date(Date.now() + 300 * MS_PER_DAY),
       word,
     });
 

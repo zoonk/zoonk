@@ -9,6 +9,7 @@ import {
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
+import { RadioInput } from "@zoonk/ui/components/radio-input";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
@@ -54,17 +55,16 @@ function MinuteChips({
         <label
           className={cn(
             "border-input text-muted-foreground min-h-control flex cursor-pointer items-center justify-center gap-2 rounded-xl border px-3 text-sm font-medium transition-colors duration-150 motion-reduce:transition-none",
-            "hover:bg-muted/60 hover:text-foreground has-focus-visible:ring-ring/50 has-focus-visible:ring-[3px]",
+            "hover:bg-muted/60 has-focus-visible:ring-ring/50 has-focus-visible:ring-[3px]",
             "has-checked:bg-selected-tint has-checked:text-foreground has-checked:hover:bg-selected-tint contrast-more:has-checked:border-input has-checked:border-transparent",
           )}
           key={minutes}
         >
-          <input
+          <RadioInput
             checked={selected === minutes}
             className="sr-only"
             name={name}
             onChange={() => onChange(minutes)}
-            type="radio"
             value={minutes}
           />
           <span className="font-mono tabular-nums">{formatDuration(minutes)}</span>
@@ -286,24 +286,21 @@ export function PracticeConversation({
     );
   }
 
-  // A submit, so a tap before the page hydrates opens the call's setup once it does.
   return (
     <>
-      <form action={() => setOpen(true)} className="contents">
-        <ListRowButton aria-haspopup="dialog" type="submit">
-          <ListRowLeading>
-            <KindDot kind="conversation" />
-          </ListRowLeading>
-          <ListRowContent>
-            <ListRowTitle>{t("Practice a conversation")}</ListRowTitle>
-            {character && (
-              <ListRowDescription>
-                {t("with {name} · {role}", { name: character.name, role: character.role })}
-              </ListRowDescription>
-            )}
-          </ListRowContent>
-        </ListRowButton>
-      </form>
+      <ListRowButton aria-haspopup="dialog" onClick={() => setOpen(true)}>
+        <ListRowLeading>
+          <KindDot kind="conversation" />
+        </ListRowLeading>
+        <ListRowContent>
+          <ListRowTitle>{t("Practice a conversation")}</ListRowTitle>
+          {character && (
+            <ListRowDescription>
+              {t("with {name} · {role}", { name: character.name, role: character.role })}
+            </ListRowDescription>
+          )}
+        </ListRowContent>
+      </ListRowButton>
 
       <PracticeCallSheet
         conversation={conversation}

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, renameSync, writeFileSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
@@ -111,6 +111,26 @@ describe("the reader's sheet", () => {
     assert.ok(sheet.indexOf("before/today.png") > sort);
     assert.ok(sheet.includes("- after/today.png: [before/today.png](../before/today.png)"));
     assert.match(sheet, /- after\/goal\.png: no before, so everything on it is this change's/u);
+  });
+
+  it("pairs the same scene within each persona's capture folder", async () => {
+    const root = mkdtempSync(join(tmpdir(), "pr-media-personas-"));
+    const [ana, pedro] = await Promise.all([capturedRoot(), capturedRoot()]);
+    renameSync(ana, join(root, "ana"));
+    renameSync(pedro, join(root, "pedro"));
+
+    const { path } = await writeReadingSheet({ root, sheet: join(root, "read") });
+    const sheet = await readFile(path, "utf8");
+
+    assert.ok(
+      sheet.includes("- ana/after/today.png: [ana/before/today.png](../ana/before/today.png)"),
+    );
+
+    assert.ok(
+      sheet.includes(
+        "- pedro/after/today.png: [pedro/before/today.png](../pedro/before/today.png)",
+      ),
+    );
   });
 
   it("asks only whether a retake's fixes held, and leaves out the pictures already read", async () => {

@@ -67,7 +67,6 @@
   "player_create_account_to_save": "7e9efc0f474bf3031167ca5baa97ebb538d45e90347243b4bd8c01badb111855",
   "player_didnt_get_it": "de5c78896fc0e415ae340208646a69de456055dd776a4ed054e3d14c0c7f5ee2",
   "player_done": "c988fc5c6858b68dc1a09a4cd993d6003dc2da26f0b40c743ee7311e4a499563",
-  "player_dont_know_yet": "29e1b6b7b832a0f3b4f0d37fd76f50b509e03a181a9cc37fd83776a32f470616",
   "player_drawing_picture": "cd7311395bd38a4906423bd5f159e5e96ec83e397a634d63aab61e76d86d5f14",
   "player_enter_hint": "282fe54894c9f7c4ca759d39c417325b6b71f80ec3ddd0afbe6ee7c32688587b",
   "player_example": "a796ac1588621ad573b72c770599838c9916c41677c7795b6fb8041a8798a16c",
@@ -289,7 +288,6 @@
     </plurals>
     <string name="player_in_your_own_words">Con parole tue</string>
     <string name="player_cant_write_now">Salta le domande scritte per oggi</string>
-    <string name="player_dont_know_yet">Non lo so ancora</string>
     <!-- Button asking Zoonk to show the explanation before the learner answers. It doesn't tell the learner to explain. -->
     <string name="player_explain_first">Mostra prima la spiegazione</string>
     <string name="player_enter_hint">Premi Invio per controllare, Maiusc+Invio per andare a capo.</string>

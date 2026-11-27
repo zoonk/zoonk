@@ -1,7 +1,11 @@
 /** Lists the test learners by default; `--yes` removes them. */
 import { parseArgs } from "node:util";
+import { list } from "@vercel/blob";
 import { prisma } from "@zoonk/db";
+import { safeAsync } from "@zoonk/utils/error";
 import { logError, logInfo } from "@zoonk/utils/logger";
+import { getPrivateBlobStore, isPrivateBlobStoreConfigured } from "@zoonk/utils/private-blob-store";
+import { getPrivateImageFolder } from "@zoonk/utils/user-blobs";
 import {
   clearTestLeftovers,
   countOnboardedLearners,
@@ -59,6 +63,26 @@ async function removeLearners(learners: TestLearner[]): Promise<boolean> {
   return true;
 }
 
+async function canReachPrivateBlobStore(learner: TestLearner): Promise<boolean> {
+  if (!isPrivateBlobStoreConfigured()) {
+    return true;
+  }
+
+  const { error } = await safeAsync(() =>
+    list({ limit: 1, prefix: getPrivateImageFolder(learner.id), ...getPrivateBlobStore() }),
+  );
+
+  if (error) {
+    logError(
+      "Couldn't reach the private Blob store. Sign in with the Vercel CLI, link apps/api to its Vercel project, and try again. If these learners have never stored files in Blob, rerun with PRIVATE_BLOB_STORE_ID= to clean up local data only.",
+    );
+
+    return false;
+  }
+
+  return true;
+}
+
 async function removeTestLearners(): Promise<boolean> {
   const { values } = parseArgs({ options: { yes: { default: false, type: "boolean" } } });
   const refusal = getTestLearnerRefusal();
@@ -68,6 +92,12 @@ async function removeTestLearners(): Promise<boolean> {
   }
 
   const learners = await findTestLearners();
+  const first = learners[0];
+
+  if (values.yes && first && !(await canReachPrivateBlobStore(first))) {
+    return false;
+  }
+
   await describePlan(learners);
 
   if (!values.yes) {

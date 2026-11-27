@@ -9,9 +9,11 @@ import com.zoonk.android.feature.session.decodeFixture
 import com.zoonk.android.feature.session.fixture
 import com.zoonk.android.feature.session.toDayView
 import com.zoonk.api.models.LessonGenerationStatus
+import com.zoonk.api.models.LessonReadiness
 import com.zoonk.api.models.MemoryInsight
 import com.zoonk.api.models.MistakeListAvailability
 import com.zoonk.api.models.PlanChange
+import com.zoonk.api.models.StudyBlockLesson
 import com.zoonk.api.models.StudyDay
 import com.zoonk.api.models.StudySession
 import com.zoonk.api.models.SuggestedGoal
@@ -51,7 +53,7 @@ class TodayStoreTest {
             ).toDayView()
         val unopened =
             StudyDay
-                .UnstartedWrapper(
+                .UnstartedStudyDayValue(
                     decodeFixture<UnstartedStudyDay>(
                         "unstarted-study-day",
                         "minutes" to minutes,
@@ -93,6 +95,11 @@ class TodayStoreTest {
                 goalId: UUID,
                 since: Instant,
             ) = false
+
+            override suspend fun lessonReadiness(
+                session: AuthenticatedSession,
+                lessonId: UUID,
+            ): com.zoonk.api.models.LessonReadiness = error("Not used")
 
             override suspend fun brainPower(session: AuthenticatedSession): Long? = null
 
@@ -139,7 +146,13 @@ class TodayStoreTest {
     fun aDayNotOpenedYetReadsWithoutIdsAndKeepsEachLessonsStatus() =
         runTest {
             val lesson = "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d21"
-            val block = fixture("unstarted-study-day-blocks-inner", "kind" to "learn", "lessonId" to lesson, "position" to 2)
+            val writing =
+                buildJsonObject {
+                    put("setAside", false)
+                    put("status", "generating")
+                }
+            val block =
+                fixture("unstarted-study-day-blocks-inner", "kind" to "learn", "lessonId" to lesson, "lesson" to writing, "position" to 2)
             val session =
                 fixture(
                     "unstarted-study-day",
@@ -147,7 +160,7 @@ class TodayStoreTest {
                     "nextPosition" to 2,
                     "state" to "underway",
                 )
-            val today = decodeFixture<Today>("today", "session" to session, "lessonStatus" to buildJsonObject { put(lesson, "generating") })
+            val today = decodeFixture<Today>("today", "session" to session)
 
             val read = read(api { today }, ana, "UTC") as TodayRead.Day
 
@@ -157,8 +170,10 @@ class TodayStoreTest {
                     .single()
                     .id,
             )
-            assertEquals(LessonGenerationStatus.GENERATING, read.today.lessonStatus[lesson])
-            assertEquals(true, read.day.isWaitingForLessons(read.today.lessonStatus))
+            assertEquals(
+                StudyBlockLesson(setAside = false, status = LessonGenerationStatus.GENERATING),
+                read.day.lessonsBeingWritten[UUID.fromString(lesson)],
+            )
         }
 
     @Test
@@ -230,6 +245,39 @@ class TodayStoreTest {
             assertTrue(store.refreshIfChanged())
             assertFalse(store.refreshIfChanged())
         }
+
+    @Test
+    fun aLessonShownAsBeingWrittenReadsTheDayAgainOnlyOnceItsReadinessSaysOtherwise() =
+        runTest {
+            val lesson = UUID.fromString("5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d21")
+            val shown = mapOf(lesson to StudyBlockLesson(setAside = false, status = LessonGenerationStatus.GENERATING))
+            val api = FakeTodayApi(listOf(decodeFixture<Today>("today")))
+            val store = TodayStore(api, AppCache(FakeSession(ana), backgroundScope), backgroundScope, { "UTC" }, now = { READ_AT })
+            store.today.refresh()
+
+            // Its readiness can't be read yet, so the day isn't read again.
+            store.refreshIfLessonsMoved(shown)
+            assertEquals(1, api.reads)
+
+            api.readiness[lesson] =
+                mutableListOf({ readiness(LessonReadiness.Status.GENERATING) }, { readiness(LessonReadiness.Status.FAILED) })
+            store.refreshIfLessonsMoved(shown)
+            assertEquals(1, api.reads)
+
+            store.refreshIfLessonsMoved(shown)
+            assertEquals(2, api.reads)
+            assertEquals(List(3) { lesson }, api.readinessAsked)
+        }
+
+    private fun readiness(status: LessonReadiness.Status) =
+        LessonReadiness(
+            alternative = null,
+            generationId = "run-1".takeIf { status == LessonReadiness.Status.GENERATING },
+            kind = LessonReadiness.Kind.LESSON,
+            setAside = false,
+            status = status,
+            warmUpId = null,
+        )
 
     private companion object {
         const val READ_AT = 1_800_000_000_000L

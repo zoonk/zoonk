@@ -13,7 +13,7 @@ describe("Buddy thread render reads", () => {
     });
 
     const counts = await countDatabaseStatements(() =>
-      getLessonQuestionThread({ target: { goalId: goal.id, kind: "plan" } }),
+      getLessonQuestionThread({ target: { conversationId: null, goalId: goal.id, kind: "plan" } }),
     );
 
     expect(counts.writes).toBe(0);

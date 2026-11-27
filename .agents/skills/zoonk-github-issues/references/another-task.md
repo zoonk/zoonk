@@ -1,0 +1,3 @@
+# A find from another task
+
+A thread started for a find outside someone's task ([scope](../../../../AGENTS.md#scope-and-completion)) confirms it before filing: reproduce a bug, check a suspected one, or work out what the improvement is and why it matters. Ask whether it is a symptom of a design that should change ([question it](../../zoonk-address-issue/SKILL.md#5-question-them)), and say so in the issue. File one issue with what you found and how to reproduce it, opening with the [disclosure](../../zoonk-post-on-behalf/SKILL.md#the-disclosure); a security hole gets a [private advisory](security-advisory.md) instead. A find that doesn't hold up gets no issue: say why.

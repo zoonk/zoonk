@@ -48,6 +48,38 @@ describe(isOwnPrivateFile, () => {
       isOwnPrivateFile({ pathname: `images/${USER_ID}/../other/a.webp`, userId: USER_ID }),
     ).toBe(false);
   });
+
+  it("refuses a name that a URL reads as another path", () => {
+    const names = [
+      String.raw`%2e%2e\%2e%2e\other\a.pdf`,
+      String.raw`..\..\other\a.pdf`,
+      "%2e%2e%2fother%2fa.pdf",
+      "%2e%2e%5cother%5ca.pdf",
+      ".%2e",
+      ".\t.",
+      "..",
+      ".",
+      "a.pdf?b",
+      "a.pdf#b",
+      "50% off.pdf",
+    ];
+
+    for (const name of names) {
+      expect(isOwnPrivateFile({ pathname: `sources/${USER_ID}/${name}`, userId: USER_ID })).toBe(
+        false,
+      );
+    }
+  });
+
+  it("accepts the names learners give their files", () => {
+    const names = ["My notes (1).pdf", "Anotações de aula.pdf", "日本語.pdf", "v1..v2 [draft].pdf"];
+
+    for (const name of names) {
+      expect(isOwnPrivateFile({ pathname: `sources/${USER_ID}/${name}`, userId: USER_ID })).toBe(
+        true,
+      );
+    }
+  });
 });
 
 describe(getPrivateBlobPathname, () => {

@@ -44,7 +44,7 @@ function DayRow({ minutesText, step }: { minutesText: string; step: DayListStep 
           {!done && step.detail && <ListRowDescription>{step.detail}</ListRowDescription>}
         </ListRowContent>
 
-        <ListRowTrailing>{minutesText}</ListRowTrailing>
+        {!done && <ListRowTrailing>{minutesText}</ListRowTrailing>}
       </ListRowBody>
     </ListRow>
   );
@@ -85,11 +85,7 @@ export async function DaySegments({
         "{done, plural, =0 {# of {total, number} done} one {# of {total, number} done} other {# of {total, number} done}}",
         { done, total: steps.length },
       )}
-      parts={steps.map((step) => ({
-        id: step.id,
-        kind: step.kind,
-        state: SEGMENT_STATE[step.state],
-      }))}
+      parts={steps.map((step) => ({ id: step.id, state: SEGMENT_STATE[step.state] }))}
     />
   );
 }

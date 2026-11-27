@@ -1,10 +1,9 @@
 import { type LearnerSummary } from "@zoonk/core/learner/summary/contract";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { vi } from "vitest";
 import { type LearnerSummaryResponse } from "../learner-summary-response";
 
-const DAY_MS = 24 * 60 * 60 * 1000;
-
-const SIGNED_IN_AT = Date.now() - DAY_MS;
+const SIGNED_IN_AT = Date.now() - MS_PER_DAY;
 
 export function summaryOf(userId: string, activeGoalId: string | null = null): LearnerSummary {
   const now = Date.now();
@@ -25,20 +24,21 @@ export function summaryOf(userId: string, activeGoalId: string | null = null): L
     goals: [],
     homeCountry: null,
     identity: {
-      expiresAt: SIGNED_IN_AT + 2 * DAY_MS,
+      expiresAt: SIGNED_IN_AT + 2 * MS_PER_DAY,
       isAnonymous: false,
       signedInAt: SIGNED_IN_AT,
       userId,
     },
     level: null,
     missions: null,
-    nextChangeAt: now + DAY_MS,
+    nextChangeAt: now + MS_PER_DAY,
     places: {
       certificates: false,
       completedLessons: false,
       exam: false,
       mindMaps: false,
       readyMistakes: 0,
+      savedLessons: false,
       speaking: false,
     },
     readAt: now,

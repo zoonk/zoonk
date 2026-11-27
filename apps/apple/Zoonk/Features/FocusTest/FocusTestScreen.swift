@@ -46,6 +46,7 @@ struct FocusTestScreen: View {
       .testBar()
       .taskClose {
         Button(role: .close) { dismiss() }
+          .leavesOnEscape()
       }
     }
     .loads(plan, refreshable: false)

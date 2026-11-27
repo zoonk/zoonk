@@ -214,11 +214,11 @@ private fun LessonFirstScreen(
     }
 
     when (val screen = lesson.firstScreen) {
-        is CatalogLessonFirstScreen.ChoiceWrapper -> {
+        is CatalogLessonFirstScreen.CatalogFirstQuestionValue -> {
             FirstQuestion(app, navigator, lessonId, lesson.estimatedMinutes, screen.value, started)
         }
 
-        is CatalogLessonFirstScreen.TextWrapper -> {
+        is CatalogLessonFirstScreen.CatalogFirstTextValue -> {
             Column {
                 RichText(screen.value.text, style = MaterialTheme.typography.titleLarge)
                 Spacer(Modifier.size(24.dp))

@@ -1642,26 +1642,6 @@ msgid "Simplified street plan, after John Snow's 1854 map."
 msgstr "Mapa simplificado das ruas, baseado no mapa de John Snow de 1854."
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "Z7Xcs6"
-msgid "Those two don't go together."
-msgstr "Esses dois não formam um par."
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "HfJhT9"
-msgid "Matched {left} with {right}. {matched, plural, one {# of {total} pairs matched.} other {# of {total} pairs matched.}}"
-msgstr "Você formou um par com {left} e {right}. {matched, plural, other {# de {total} pares formados.}}"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "5sU5Ih"
-msgid "{left} and {right} don't go together."
-msgstr "{left} e {right} não formam um par."
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "LbHKlv"
-msgid "{text}, matched"
-msgstr "{text}, par formado"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "nuMsTW"
 msgid "Cards to match"
 msgstr "Cartões para formar pares"
@@ -1670,16 +1650,6 @@ msgstr "Cartões para formar pares"
 msgctxt "jih4mf"
 msgid "Two columns of cards. Pick a card on the left and one on the right to match them. {matched, plural, one {# of {total} pairs matched.} other {# of {total} pairs matched.}}"
 msgstr "Duas colunas de cartões. Escolha um cartão à esquerda e outro à direita para formar um par. {matched, plural, other {# de {total} pares formados.}}"
-
-#: src/activities/match-pairs/match-pairs-results.tsx
-msgctxt "rnH_6_"
-msgid "<left></left> goes with <right></right>, not <guess></guess>."
-msgstr "<left></left> faz par com <right></right>, não com <guess></guess>."
-
-#: src/activities/match-pairs/match-pairs-results.tsx
-msgctxt "kzygtu"
-msgid "Missed on the first try"
-msgstr "Pares que você não acertou na primeira tentativa"
 
 #: src/activities/molecule-builder/molecule-builder-activity.tsx
 msgctxt "G7a_3q"
@@ -2835,20 +2805,10 @@ msgctxt "wCy_Tc"
 msgid "Translate"
 msgstr "Traduza"
 
-#: src/components/match-board.tsx
-msgctxt "nDkRHw"
-msgid "{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}"
-msgstr "{matched, plural, other {# de {total} pares formados}}"
-
 #: src/components/match-columns-step.tsx
 msgctxt "fV1MzK"
 msgid "Match the pairs."
 msgstr "Combine os pares."
-
-#: src/components/match-columns-step.tsx
-msgctxt "ja1JDt"
-msgid "All pairs matched. Press Check to continue."
-msgstr "Todos os pares foram combinados. Toque em Conferir para continuar."
 
 #. Starts the explanation of why the learner's answer is wrong.
 #: src/components/not-quite-lead.tsx
@@ -3658,9 +3618,9 @@ msgid "Ask {name} about this mock exam"
 msgstr "Pergunte para {name} sobre este simulado"
 
 #: src/questions/ask-tutor.tsx
-msgctxt "tLlk0f"
-msgid "Ask {name} about your plan"
-msgstr "Pergunte para {name} sobre seu plano"
+msgctxt "VgQdYo"
+msgid "Ask {name} about this module"
+msgstr "Pergunte para {name} sobre este módulo"
 
 #: src/questions/ask-tutor.tsx
 msgctxt "dHV3p3"
@@ -3744,11 +3704,6 @@ msgid "We couldn't send this question. Try again."
 msgstr "Não conseguimos enviar esta pergunta. Tente de novo."
 
 #: src/questions/lesson-question-errors.tsx
-msgctxt "-xjsCZ"
-msgid "Take a short break, then ask again."
-msgstr "Faça uma pausa curta e pergunte de novo."
-
-#: src/questions/lesson-question-errors.tsx
 msgctxt "3kJE8G"
 msgid "Something went wrong. Try again."
 msgstr "Algo deu errado. Tente de novo."
@@ -3782,6 +3737,11 @@ msgstr "Faça perguntas sobre este simulado"
 msgctxt "btkiEQ"
 msgid "Ask questions about your plan"
 msgstr "Faça perguntas sobre seu plano"
+
+#: src/questions/lesson-question-panel.tsx
+msgctxt "eDiytU"
+msgid "Ask questions about this module"
+msgstr "Faça perguntas sobre este módulo"
 
 #: src/questions/lesson-question-panel.tsx
 msgctxt "zoFfdl"
@@ -3827,6 +3787,11 @@ msgstr "Perguntas sobre este simulado"
 msgctxt "Nx3NqL"
 msgid "Questions about your plan"
 msgstr "Perguntas sobre seu plano"
+
+#: src/questions/lesson-question-thread.tsx
+msgctxt "KCTpmM"
+msgid "Questions about this module"
+msgstr "Perguntas sobre este módulo"
 
 #: src/questions/lesson-question-thread.tsx
 msgctxt "6QK3he"
@@ -3882,6 +3847,11 @@ msgstr "Sobre seu plano"
 msgctxt "e0zkbG"
 msgid "About this part"
 msgstr "Sobre esta parte"
+
+#: src/questions/lesson-question-turn.tsx
+msgctxt "W40WkX"
+msgid "About this module"
+msgstr "Sobre este módulo"
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "XHGiOR"

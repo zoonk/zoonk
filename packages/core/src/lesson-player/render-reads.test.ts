@@ -10,7 +10,7 @@ import { getLessonGenerationState } from "../library/generation/lesson-generatio
 import { getLessonWaitingState } from "../lookahead/get-lesson-waiting-state";
 import { signedInCourseGoal } from "../view-models/_test-utils/course-goal";
 import { setupPlayableLesson } from "./_test-utils/playable-lesson-setup";
-import { getLessonProgress } from "./get-lesson-progress";
+import { getLessonVisit } from "./get-lesson-progress";
 import { getLibraryLessonOutline, getPlayableLibraryLesson } from "./get-playable-library-lesson";
 
 describe("lesson render reads", () => {
@@ -46,7 +46,7 @@ describe("lesson render reads", () => {
       generation: () => getLessonGenerationState(lesson.id),
       outline: () => getLibraryLessonOutline(input),
       playable: () => getPlayableLibraryLesson(input),
-      progress: () => getLessonProgress(input),
+      progress: () => getLessonVisit(input),
       "stored team": () => getChallengeTeam(input),
     };
 
@@ -58,7 +58,7 @@ describe("lesson render reads", () => {
       generation: { status: "ready" },
       outline: expect.objectContaining({ id: lesson.id }),
       playable: expect.objectContaining({ status: "ready" }),
-      progress: expect.any(Array),
+      progress: { resume: [], saved: false },
       "stored team": expect.objectContaining({ status: "ready" }),
     };
 

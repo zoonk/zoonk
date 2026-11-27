@@ -51,6 +51,7 @@ import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.fadingHorizontalScroll
+import com.zoonk.android.ui.components.layoutNoWords
 import com.zoonk.android.ui.components.listRowDescription
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -121,8 +122,7 @@ class LayoutCaptureTest {
             capture {
                 ListRow(
                     headline = { Text("How atoms share or transfer electrons to form bonds.") },
-                    leading = { Text("1", style = MaterialTheme.typography.bodyMedium.withTabularFigures()) },
-                    leadOnFirstLine = true,
+                    lead = { Text("1", style = MaterialTheme.typography.bodyMedium.withTabularFigures()) },
                     meta = { Text("7 min") },
                     onClick = {},
                 )
@@ -136,7 +136,10 @@ class LayoutCaptureTest {
         val labelBounds = label.getJSONArray("bounds")
         val valueBounds = value.getJSONArray("bounds")
         val endBounds = end.getJSONArray("bounds")
-        val numberBounds = own.first { it.optString("part") == "mark" }.getJSONArray("bounds")
+        val number = own.first { it.optString("part") == "lead" }
+        val numberBounds = number.getJSONArray("bounds")
+        assertTrue(number.has("capTop"))
+        assertTrue(number.has("capBottom"))
         val middle = rowBounds.getDouble(1) + rowBounds.getDouble(3) / 2
         assertEquals("The title wraps to two lines", 2, label.getInt("lines"))
         assertTrue("The value stays beside the title", valueBounds.getDouble(0) >= labelBounds.getDouble(0) + labelBounds.getDouble(2))
@@ -266,7 +269,34 @@ class LayoutCaptureTest {
         assertEquals(14 * 0.71, label.getDouble("capBottom") - label.getDouble("capTop"), 0.01)
         assertEquals(label.getDouble("baseline"), label.getDouble("capBottom"), 0.0)
         assertTrue(parts.has("end"))
-        assertEquals(false, parts.part("row").getBoolean("note"))
+        assertFalse(parts.has("note"))
+    }
+
+    @Test
+    fun aBarUnderARowsNameIsANoteReadByItsInk() {
+        val parts =
+            capture {
+                ListRow(
+                    headline = { Text("Basics") },
+                    meta = { Text("50%") },
+                    supporting = {
+                        Box(
+                            Modifier
+                                .fillMaxWidth()
+                                .height(6.dp)
+                                .background(PAGE)
+                                .layoutNoWords()
+                                .clearAndSetSemantics {},
+                        )
+                    },
+                    onClick = {},
+                )
+            }
+
+        val note = parts.part("note")
+        assertTrue(note.get("ink") is JSONArray)
+        listOf("baseline", "capTop", "capBottom", "type").forEach { assertFalse(it, note.has(it)) }
+        assertFalse(parts.has("unmeasured"))
     }
 
     @Test

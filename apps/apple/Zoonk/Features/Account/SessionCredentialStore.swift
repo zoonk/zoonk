@@ -1,4 +1,5 @@
 import Foundation
+import OSLog
 import Security
 
 protocol SessionCredentialStoring {
@@ -31,6 +32,16 @@ struct SessionCredentialStore: SessionCredentialStoring {
     if status == errSecItemNotFound {
       return nil
     }
+
+    #if DEBUG && targetEnvironment(simulator)
+      if status == errSecMissingEntitlement {
+        Logger(subsystem: "com.zoonk", category: "Account")
+          .error(
+            """
+            This simulator build cannot access the Keychain. Install the signed simulator build +            from pnpm iphone or pnpm ipad before testing sign-in.
+            """)
+      }
+    #endif
 
     guard status == errSecSuccess else {
       throw SessionCredentialStoreError.keychain(status)

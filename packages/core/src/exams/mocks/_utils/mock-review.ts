@@ -34,16 +34,12 @@ function toEntry({
     return null;
   }
 
-  const grade = gradeMockItem({
-    answer: readRecordedMockAnswer(attempt.answer),
-    item,
-    mockId: mockExamId,
-    partialCredit: conditions.partialCredit,
-  });
+  const mock = { conditions, id: mockExamId };
+  const grade = gradeMockItem({ answer: readRecordedMockAnswer(attempt.answer), item, mock });
 
   const outcome = getPickOutcome({ answered: grade.answered, credit: grade.credit });
   const missedOutcome = outcome === "right" ? "wrong" : outcome;
-  const shown = toMockQuestionView({ item, mockId: mockExamId });
+  const shown = toMockQuestionView({ item, mock });
 
   return {
     area,

@@ -360,6 +360,7 @@ msgstr "キャンセル"
 #: src/plan/plan-focus.tsx
 #: src/plan/plan-tool-sheet.tsx
 #: src/profile-questions/about-you-question-screen.tsx
+#: src/saved-lessons/lesson-save-button.tsx
 msgctxt "jvo0vs"
 msgid "Save"
 msgstr "保存する"
@@ -383,11 +384,6 @@ msgstr "1日{time}なら、{level}に到達するのは{month}ごろです。"
 msgctxt "6Due7K"
 msgid "You finish around {month}."
 msgstr "{month}ごろに完了する予定です。"
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "X6_KO5"
-msgid "Take a short break, then try again."
-msgstr "少し休んでから、もう一度お試しください。"
 
 #: src/_components/help-limit-notice.tsx
 #: src/speech/record-note.tsx
@@ -574,6 +570,22 @@ msgctxt "vc1FfA"
 msgid "Summaries"
 msgstr "まとめ"
 
+#: src/_components/match-board.tsx
+msgctxt "hu7rTE"
+msgid "Match these"
+msgstr "組み合わせる項目"
+
+#: src/_components/match-board.tsx
+msgctxt "t4J0rv"
+msgid "With these"
+msgstr "組み合わせ先の項目"
+
+#. Under a matching question's verdict, before the pairs of cards the learner first put together wrong, one per line as “card → card”.
+#: src/_components/match-misses.tsx
+msgctxt "8PETCo"
+msgid "You first matched:"
+msgstr "最初に組み合わせたカード："
+
 #. How many answers the learner got right in a challenge.
 #: src/_components/moment-readouts.tsx
 msgctxt "42ufnf"
@@ -724,6 +736,18 @@ msgstr "閉じる"
 msgctxt "IIe6nO"
 msgid "To review"
 msgstr "要復習"
+
+#. The line of a notice that the learner sent too many requests in a short time, such as questions to their study buddy, and must wait before the next one. It counts down every second until they can try again.
+#: src/_components/slow-down-words.ts
+msgctxt "limits.1flNDY"
+msgid "Take a short break. You can try again in {seconds, plural, one {# second} other {# seconds}}."
+msgstr "少し休憩してください。{seconds, plural, other {#秒後にもう一度試せます。}}"
+
+#. The line of a notice that the learner sent too many requests in a short time, such as questions to their study buddy, and must wait before the next one. It counts down every minute until they can try again.
+#: src/_components/slow-down-words.ts
+msgctxt "limits.m_DHa2"
+msgid "Take a short break. You can try again in {minutes, plural, one {# minute} other {# minutes}}."
+msgstr "少し休憩してください。{minutes, plural, other {#分後にもう一度試せます。}}"
 
 #: src/_components/sortable-list.tsx
 msgctxt "TkDZ5b"
@@ -886,6 +910,12 @@ msgctxt "cOD9je"
 msgid "We suggest {time} a day. Your plan starts with what matters most for your goal."
 msgstr "1日あたり{time}の学習をおすすめします。学習計画では、目標にとって特に重要な内容から学びます。"
 
+#. When the learner took a subject out of their plan. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {time} is a daily study time, like "2 h".
+#: src/_components/time-answer-lines.tsx
+msgctxt "5ZCekJ"
+msgid "{dateKind, select, month {We suggest {time} a day to cover everything in your plan by {date}.} other {We suggest {time} a day to cover everything in your plan by {date}.}}"
+msgstr "{dateKind, select, month {学習計画の内容をすべて{date}までに終えるには、1日あたり{time}がおすすめです。} other {学習計画の内容をすべて{date}までに終えるには、1日あたり{time}がおすすめです。}}"
+
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {time} is a daily study time, like "2 h".
 #: src/_components/time-answer-lines.tsx
 msgctxt "aL9GHA"
@@ -936,6 +966,12 @@ msgctxt "-TVG-n"
 msgid "We couldn't work out when you'd finish."
 msgstr "いつ終わるか計算できませんでした。"
 
+#. Said under "We suggest {time} a day" when the learner took a subject out of their plan. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#: src/_components/time-answer-texts.ts
+msgctxt "zbyuSM"
+msgid "{dateKind, select, month {That's enough to cover everything in your plan by {date}.} other {That's enough to cover everything in your plan by {date}.}}"
+msgstr "{dateKind, select, month {これで、{date}までに学習計画の内容をすべて終えるのに十分です。} other {これで、{date}までに学習計画の内容をすべて終えるのに十分です。}}"
+
 #. Said under "We suggest {time} a day". In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/_components/time-answer-texts.ts
 msgctxt "u1mVPL"
@@ -979,6 +1015,26 @@ msgstr "1日の学習時間は、この目標が{main}、ほかの目標が合�
 msgctxt "T3LP-r"
 msgid "Use {time}"
 msgstr "{time}に設定"
+
+#: src/_components/use-match-board.ts
+msgctxt "Y-oZiJ"
+msgid "Unmatched {left} and {right}."
+msgstr "{left}と{right}のペアを解除しました。"
+
+#: src/_components/use-match-board.ts
+msgctxt "5sU5Ih"
+msgid "{left} and {right} don't go together."
+msgstr "{left}と{right}は組み合わせが違います。"
+
+#: src/_components/use-match-board.ts
+msgctxt "IYSXye"
+msgid "Matched {left} with {right}. Pairs matched: {matched} of {total}."
+msgstr "「{left}」と「{right}」を組み合わせました。組み合わせたペア：{total}組中{matched}組。"
+
+#: src/_components/use-match-board.ts
+msgctxt "BwID7H"
+msgid "{entry}, matched with {other}"
+msgstr "{entry}、{other}と組み合わせ済み"
 
 #. Verdict on an answer that is almost right.
 #: src/_components/verdict-label.tsx
@@ -1285,6 +1341,7 @@ msgid "Change"
 msgstr "変更する"
 
 #: src/appearance/buddy-settings.tsx
+#: src/buddies/buddy-menu.tsx
 #: src/buddies/buddy-screen.tsx
 #: src/onboarding/steps/buddy-step.tsx
 msgctxt "DWD-Vm"
@@ -1317,6 +1374,34 @@ msgctxt "y0ef9b"
 msgid "App language"
 msgstr "アプリの言語"
 
+#. The first row of the conversations list: starts a conversation with no questions yet.
+#: src/buddies/buddy-conversations.tsx
+msgctxt "PQ8A3I"
+msgid "New conversation"
+msgstr "新しいチャット"
+
+#: src/buddies/buddy-conversations.tsx
+msgctxt "sf91oU"
+msgid "Couldn't load more conversations. Try again."
+msgstr "さらにチャットを読み込めませんでした。もう一度お試しください。"
+
+#. A button under a list that loads more of its rows.
+#: src/buddies/buddy-conversations.tsx
+#: src/completed-lessons/completed-lessons-screen.tsx
+#: src/mistakes/mistakes-notebook.tsx
+#: src/saved-lessons/saved-lessons-screen.tsx
+msgctxt "aWpBzj"
+msgid "Show more"
+msgstr "もっと見る"
+
+#. The list of the learner's separate conversations with their buddy, and the button that opens it.
+#: src/buddies/buddy-conversations.tsx
+#: src/buddies/buddy-screen-skeleton.tsx
+#: src/buddies/buddy-screen.tsx
+msgctxt "1udzha"
+msgid "Conversations"
+msgstr "チャット"
+
 #: src/buddies/buddy-day-parts.tsx
 msgctxt "6YRolu"
 msgid "Fully grown"
@@ -1347,38 +1432,6 @@ msgstr "{buddy}のエネルギー"
 msgctxt "Q88QPu"
 msgid "It starts with your first lesson."
 msgstr "最初のレッスンから始まります。"
-
-#: src/buddies/buddy-day.tsx
-msgctxt "16z6WC"
-msgid "What {buddy} remembers"
-msgstr "{buddy}が覚えていること"
-
-#. Names the glasses the learner has collected for their study buddy, as a row and a menu item that opens them; {buddy} is the buddy's name. A name, not an action.
-#: src/buddies/buddy-day.tsx
-#: src/buddies/buddy-screen.tsx
-msgctxt "86EPQq"
-msgid "{buddy}'s glasses"
-msgstr "{buddy}のメガネ"
-
-#: src/buddies/buddy-day.tsx
-#: src/buddies/buddy-screen.tsx
-#: src/journey/schedule-details.tsx
-msgctxt "ca-yU-"
-msgid "Weekly summary"
-msgstr "週間まとめ"
-
-#: src/buddies/buddy-day.tsx
-msgctxt "cVpmV7"
-msgid "Energy"
-msgstr "エネルギー"
-
-#: src/buddies/buddy-day.tsx
-#: src/buddies/buddy-today.tsx
-#: src/missions/missions-card.tsx
-#: src/session/summary/summary-rewards.tsx
-msgctxt "IFviMa"
-msgid "Today's missions"
-msgstr "今日のミッション"
 
 #. {target} is 7, so a noun that counts it stays plural in every form.
 #: src/buddies/buddy-glasses-picker.tsx
@@ -1495,6 +1548,33 @@ msgctxt "QRnLkX"
 msgid "Comes with your buddy"
 msgstr "相棒が最初から持っています"
 
+#: src/buddies/buddy-menu.tsx
+msgctxt "T3IH3o"
+msgid "More about {buddy}"
+msgstr "{buddy}について"
+
+#: src/buddies/buddy-menu.tsx
+msgctxt "wjFAMp"
+msgid "Change {buddy}"
+msgstr "{buddy}を変える"
+
+#. Names the glasses the learner has collected for their study buddy, as a row and a menu item that opens them; {buddy} is the buddy's name. A name, not an action.
+#: src/buddies/buddy-menu.tsx
+msgctxt "86EPQq"
+msgid "{buddy}'s glasses"
+msgstr "{buddy}のメガネ"
+
+#: src/buddies/buddy-menu.tsx
+msgctxt "16z6WC"
+msgid "What {buddy} remembers"
+msgstr "{buddy}が覚えていること"
+
+#: src/buddies/buddy-menu.tsx
+#: src/journey/schedule-details.tsx
+msgctxt "ca-yU-"
+msgid "Weekly summary"
+msgstr "週間まとめ"
+
 #: src/buddies/buddy-picker.tsx
 #: src/shell/learn-bar.tsx
 #: src/shell/learn-navigation.tsx
@@ -1507,17 +1587,6 @@ msgctxt "HAlOn1"
 msgid "Name"
 msgstr "名前"
 
-#: src/buddies/buddy-screen.tsx
-msgctxt "T3IH3o"
-msgid "More about {buddy}"
-msgstr "{buddy}について"
-
-#: src/buddies/buddy-screen.tsx
-msgctxt "wjFAMp"
-msgid "Change {buddy}"
-msgstr "{buddy}を変える"
-
-#: src/buddies/buddy-screen.tsx
 #: src/buddies/buddy-today.tsx
 msgctxt "xVM8pQ"
 msgid "{buddy} today"
@@ -1528,6 +1597,13 @@ msgstr "今日の{buddy}"
 msgctxt "lO7wKc"
 msgid "Not yet"
 msgstr "まだです"
+
+#: src/buddies/buddy-today.tsx
+#: src/missions/missions-card.tsx
+#: src/session/summary/summary-rewards.tsx
+msgctxt "IFviMa"
+msgid "Today's missions"
+msgstr "今日のミッション"
 
 #: src/buddies/use-buddy-name.ts
 msgctxt "buddyNames.WsAzWR"
@@ -1689,6 +1765,7 @@ msgid "Copy link"
 msgstr "リンクをコピーする"
 
 #: src/certificates/certificate-details.tsx
+#: src/shell/level-link.tsx
 msgctxt "y1Qr81"
 msgid "Level"
 msgstr "レベル"
@@ -2756,7 +2833,7 @@ msgstr "科目"
 #: src/syllabus/syllabus-section.tsx
 msgctxt "TwcPrx"
 msgid "Modules"
-msgstr "単元"
+msgstr "モジュール"
 
 #: src/completed-lessons/completed-lessons-screen.tsx
 #: src/journey/roadmap-full.tsx
@@ -2769,12 +2846,6 @@ msgstr "フェーズ"
 msgctxt "completedLessonsAll"
 msgid "All"
 msgstr "すべて"
-
-#: src/completed-lessons/completed-lessons-screen.tsx
-#: src/mistakes/mistakes-notebook.tsx
-msgctxt "aWpBzj"
-msgid "Show more"
-msgstr "もっと見る"
 
 #: src/completed-lessons/completed-lessons-screen.tsx
 msgctxt "qckJsw"
@@ -3756,11 +3827,11 @@ msgctxt "feedback.hBQCdX"
 msgid "Your email, if you'd like a reply"
 msgstr "メールアドレス（返信をご希望の場合）"
 
-#. An example email address in an empty field. Adapt it to the language.
+#. An example email address in an empty email field. Localize "you" and keep example.com.
 #: src/feedback/feedback-form.tsx
-msgctxt "feedback.OiSL94"
-msgid "myemail@gmail.com"
-msgstr "taro@gmail.com"
+msgctxt "feedback.PwhG9W"
+msgid "you@example.com"
+msgstr "taro@example.com"
 
 #: src/feedback/feedback-form.tsx
 msgctxt "feedback.Xx0WZV"
@@ -4975,6 +5046,13 @@ msgstr "{done, number}フェーズ完了（全{total, plural, other {#フェー�
 msgctxt "I5NMJ8"
 msgid "More"
 msgstr "その他"
+
+#: src/journey/plan-sections.tsx
+#: src/saved-lessons/saved-lessons-row.tsx
+#: src/saved-lessons/saved-lessons-screen.tsx
+msgctxt "BwmLVN"
+msgid "Saved lessons"
+msgstr "保存したレッスン"
 
 #: src/journey/plan-sections.tsx
 #: src/mind-maps/mind-maps-screen.tsx
@@ -7098,7 +7176,14 @@ msgctxt "Oku1XG"
 msgid "Lesson map"
 msgstr "レッスンのマップ"
 
+#. What screen readers say for Remove, naming the map.
 #: src/mind-maps/mind-map-index-rows.tsx
+msgctxt "-S6z5P"
+msgid "Remove {title} from saved maps"
+msgstr "{title}を保存済みのマップから削除する"
+
+#: src/mind-maps/mind-map-index-rows.tsx
+#: src/saved-lessons/saved-lessons-screen.tsx
 msgctxt "G_yZLu"
 msgid "Remove"
 msgstr "保存を解除する"
@@ -7118,6 +7203,18 @@ msgstr "まとめ："
 msgctxt "mindMapSaved"
 msgid "Saved"
 msgstr "保存済み"
+
+#: src/mind-maps/mind-map-save-button.tsx
+#: src/saved-lessons/lesson-save-button.tsx
+msgctxt "eIjk1v"
+msgid "Save {title}"
+msgstr "{title}を保存"
+
+#. Read aloud for the bookmark on a saved mind map's row, which removes it: says the map {title} is saved.
+#: src/mind-maps/mind-map-save-button.tsx
+msgctxt "mindMapSavedTitle"
+msgid "Saved {title}"
+msgstr "「{title}」は保存済み"
 
 #: src/mind-maps/mind-map-viewer.tsx
 msgctxt "_UnJ3S"
@@ -7182,6 +7279,7 @@ msgid "Saved maps"
 msgstr "保存したマップ"
 
 #: src/mind-maps/mind-maps-screen.tsx
+#: src/saved-lessons/saved-lessons-screen.tsx
 msgctxt "g41uEF"
 msgid "No longer available"
 msgstr "利用できなくなりました"
@@ -7230,14 +7328,14 @@ msgid "Create all"
 msgstr "すべて作成する"
 
 #: src/mind-maps/use-mind-map-saves.ts
-msgctxt "U0yWHz"
-msgid "Couldn't save this map. Try again."
-msgstr "このマップを保存できませんでした。もう一度試してください。"
-
-#: src/mind-maps/use-mind-map-saves.ts
 msgctxt "w16BF2"
 msgid "Couldn't remove this map. Try again."
 msgstr "このマップの保存を解除できませんでした。もう一度お試しください。"
+
+#: src/mind-maps/use-mind-map-saves.ts
+msgctxt "U0yWHz"
+msgid "Couldn't save this map. Try again."
+msgstr "このマップを保存できませんでした。もう一度試してください。"
 
 #: src/missions/first-step-copy.tsx
 msgctxt "missions.0TTPFv"
@@ -8212,7 +8310,6 @@ msgid "Show less"
 msgstr "折りたたむ"
 
 #: src/mock/mock-result-breakdown.tsx
-#: src/today/use-row-label.ts
 msgctxt "SjSDDA"
 msgid "{count, plural, one {# more topic} other {# more topics}}"
 msgstr "{count, plural, other {ほか#件のトピック}}"
@@ -10482,15 +10579,19 @@ msgid "The Focus test shows what to study most."
 msgstr "重点診断で、重点的に学ぶ科目がわかります。"
 
 #: src/plan/plan-coverage.tsx
-msgctxt "0YytO3"
-msgid "Move your date to {date}"
-msgstr "期日を{date}に変更する"
+msgctxt "Cb15Rz"
+msgid "Move your date to cover everything in your plan"
+msgstr "計画をすべて終えられるよう日付を変更"
 
 #: src/plan/plan-coverage.tsx
-#: src/plan/plan-offer-preview.tsx
 msgctxt "hzzrUH"
 msgid "Move your date to cover everything"
 msgstr "すべて学べるように期日を変更する"
+
+#: src/plan/plan-coverage.tsx
+msgctxt "0YytO3"
+msgid "Move your date to {date}"
+msgstr "期日を{date}に変更する"
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/plan/plan-date-text.tsx
@@ -10608,6 +10709,12 @@ msgstr "「今日」では、遅れているレッスンが先に表示されま
 msgctxt "XVhC0H"
 msgid "{days, plural, one {Study {minutes, number} more min a day for # day to be up to date.} other {Study {minutes, number} more min a day for # days to be up to date.}}"
 msgstr "{days, plural, other {1日の学習時間を{minutes, number}分増やして#日間続けると、順調なペースに戻れます。}}"
+
+#. When the learner took a part of their goal out of their plan. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#: src/plan/plan-offer-preview.tsx
+msgctxt "zRlPAp"
+msgid "{dateKind, select, month {Your time covers everything in your plan by {date}} other {Your time covers everything in your plan by {date}}}"
+msgstr "{dateKind, select, month {この学習時間なら、{date}までに学習計画の内容をすべて終えられます} other {この学習時間なら、{date}までに学習計画の内容をすべて終えられます}}"
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/plan/plan-offer-preview.tsx
@@ -10914,9 +11021,19 @@ msgid "You'll use"
 msgstr "使うツール"
 
 #: src/plan/study-everything.tsx
+msgctxt "WCKfwD"
+msgid "You study every topic in your plan. What doesn't fit before the exam comes after it."
+msgstr "学習計画にあるトピックをすべて学びます。試験前に終わらない分は、試験後に学びます。"
+
+#: src/plan/study-everything.tsx
 msgctxt "f0hmbu"
 msgid "You study every topic. What doesn't fit before the exam comes after it."
 msgstr "すべてのトピックを学びます。試験前の計画に入りきらない分は、試験後に学びます。"
+
+#: src/plan/study-everything.tsx
+msgctxt "YCt9Qf"
+msgid "Every part of your plan, with no end date."
+msgstr "期限を決めず、学習計画の内容をすべて学びます。"
 
 #: src/plan/study-everything.tsx
 msgctxt "x7ZSzV"
@@ -12310,6 +12427,46 @@ msgctxt "WIPDp7"
 msgid "vector {base}"
 msgstr "ベクトル{base}"
 
+#. Read aloud for the bookmark on a saved lesson's row, which removes it: says the lesson {title} is saved.
+#: src/saved-lessons/lesson-save-button.tsx
+msgctxt "lessonSavedTitle"
+msgid "Saved {title}"
+msgstr "「{title}」は保存済み"
+
+#. Says the lesson is saved to do again later: the bookmark's state.
+#: src/saved-lessons/lesson-save-button.tsx
+msgctxt "lessonSaved"
+msgid "Saved"
+msgstr "保存済み"
+
+#. The line under Saved lessons in Practice anytime.
+#: src/saved-lessons/saved-lessons-row.tsx
+msgctxt "u7HPS5"
+msgid "Lessons you want to do again"
+msgstr "もう一度取り組みたいレッスン"
+
+#. What screen readers say for Remove, naming the lesson.
+#: src/saved-lessons/saved-lessons-screen.tsx
+msgctxt "mezuKn"
+msgid "Remove {title} from saved lessons"
+msgstr "保存済みレッスンから{title}を削除"
+
+#: src/saved-lessons/saved-lessons-screen.tsx
+msgctxt "t7w-Fo"
+msgid "Nothing saved yet. Tap the bookmark on a lesson to keep it here."
+msgstr "まだ保存したレッスンはありません。レッスンのブックマークをタップすると、ここに保存できます。"
+
+#. Taking the lesson out of the saved lessons didn't work, so it's still saved.
+#: src/saved-lessons/use-lesson-saves.ts
+msgctxt "BcKHqn"
+msgid "Couldn't remove this lesson. Try again."
+msgstr "このレッスンを保存リストから削除できませんでした。もう一度お試しください。"
+
+#: src/saved-lessons/use-lesson-saves.ts
+msgctxt "JBnz9z"
+msgid "Couldn't save this lesson. Try again."
+msgstr "このレッスンを保存できませんでした。もう一度お試しください。"
+
 #: src/session/action-failed.tsx
 #: src/session/open-next-step.tsx
 #: src/today/today-action.tsx
@@ -12401,11 +12558,6 @@ msgid "Review now"
 msgstr "今すぐ復習する"
 
 #: src/session/next-stop-wait.tsx
-msgctxt "UI79fv"
-msgid "Next lesson"
-msgstr "次のレッスン"
-
-#: src/session/next-stop-wait.tsx
 msgctxt "kY8Exq"
 msgid "Practice now"
 msgstr "今すぐ練習する"
@@ -12446,21 +12598,6 @@ msgstr "文章"
 msgctxt "5jOH04"
 msgid "What the question is about"
 msgstr "問題の内容"
-
-#: src/session/question-block/match-pairs-question.tsx
-msgctxt "hu7rTE"
-msgid "Match these"
-msgstr "組み合わせる項目"
-
-#: src/session/question-block/match-pairs-question.tsx
-msgctxt "t4J0rv"
-msgid "With these"
-msgstr "組み合わせ先の項目"
-
-#: src/session/question-block/match-pairs-question.tsx
-msgctxt "BwID7H"
-msgid "{entry}, matched with {other}"
-msgstr "{entry}、{other}と組み合わせ済み"
 
 #: src/session/question-block/order-question.tsx
 msgctxt "NGRcqI"
@@ -12728,22 +12865,23 @@ msgctxt "n1W87b"
 msgid "New lesson"
 msgstr "新しいレッスン"
 
-#. A block of the day's practice. {topic} names the topic most of its questions are on, like "Calculating discounts".
+#. A block practising one subject the learner chose. {subject} names it, like "Percentages".
 #: src/session/use-block-copy.ts
-msgctxt "YGPuF7"
-msgid "Practice: {topic}"
-msgstr "練習：{topic}"
+msgctxt "kjsfD5"
+msgid "Practice: {subject}"
+msgstr "練習：{subject}"
 
-#. A block of the day's practice. {areas} names the one or two subjects most of its questions are on, like "Math and Languages".
+#. One of the day's practice blocks, numbered in the order the day lists them, like "Practice 2".
 #: src/session/use-block-copy.ts
-msgctxt "I85zr9"
-msgid "Practice: {areas}"
-msgstr "練習：{areas}"
+msgctxt "5-NTPa"
+msgid "Practice {number, number}"
+msgstr "練習{number, number}"
 
+#. A block of the day's practice questions, when it's the day's only one
 #: src/session/use-block-copy.ts
-msgctxt "MbAJ4_"
-msgid "Mixed practice"
-msgstr "総合練習"
+msgctxt "practiceBlock.KV-O0y"
+msgid "Practice"
+msgstr "練習"
 
 #: src/session/use-block-copy.ts
 msgctxt "87izcS"
@@ -12875,6 +13013,17 @@ msgstr "学習タブ"
 msgctxt "xmcVZ0"
 msgid "Search"
 msgstr "検索"
+
+#: src/shell/level-link.tsx
+msgctxt "bzSrZ6"
+msgid "Level {level}"
+msgstr "レベル{level}"
+
+#. Accessible name of the chip that opens Level. belt is the translated belt name; level is the learner’s level number. Each locale controls their order and punctuation.
+#: src/shell/level-link.tsx
+msgctxt "xjYKLD"
+msgid "{belt}, Level {level}"
+msgstr "{belt}、レベル{level}"
 
 #: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.tFFMkF"
@@ -13026,6 +13175,12 @@ msgctxt "tDrkTA"
 msgid "{done, number} of {total, number} chapters"
 msgstr "{done, number}章完了（全{total, number}章）"
 
+#. Titles the list of what a subject or module contains, on its page while it's out of the learner's plan, so they can decide whether to add it back. Their plan doesn't teach it, so the title names its contents without promising they'll learn them.
+#: src/syllabus/subject-covers.tsx
+msgctxt "PllRqz"
+msgid "What it covers"
+msgstr "扱う内容"
+
 #: src/syllabus/subject-matrix.tsx
 #: src/syllabus/subject-screen.tsx
 msgctxt "eNbJHf"
@@ -13047,16 +13202,34 @@ msgctxt "MaFsVi"
 msgid "Add it back"
 msgstr "学習計画に戻す"
 
+#. On a module's page, on a plan that isn't for an exam: the learner took this module out of their plan. Followed by a button to add it back.
+#: src/syllabus/subject-not-planned.tsx
+msgctxt "6pJpYl"
+msgid "You took this module out of your plan."
+msgstr "このモジュールを学習計画から外しました。"
+
 #: src/syllabus/subject-not-planned.tsx
 msgctxt "kK7vYa"
 msgid "You took this subject out of your plan."
 msgstr "この科目を学習計画から外しました。"
+
+#. Why a module isn't in the learner's plan, on a plan that isn't for an exam: their study time goes to modules that matter more first. Followed by a link to change the plan.
+#: src/syllabus/subject-not-planned.tsx
+msgctxt "NmEJhW"
+msgid "This module isn't in your plan. Other modules come first."
+msgstr "このモジュールは学習計画に入っていません。ほかのモジュールが優先されています。"
 
 #. Why a subject isn't in the learner's plan: their study time goes to subjects that matter more first. Followed by a link to change the plan.
 #: src/syllabus/subject-not-planned.tsx
 msgctxt "ydjRGM"
 msgid "This subject isn't in your plan. Other subjects come first."
 msgstr "この科目は学習計画に含まれていません。ほかの科目を優先しています。"
+
+#. On a module's page, on a plan that isn't for an exam: no lesson of the plan teaches this module yet.
+#: src/syllabus/subject-not-planned.tsx
+msgctxt "6YC_jf"
+msgid "This module isn't in your plan yet."
+msgstr "このモジュールはまだ学習計画に入っていません。"
 
 #: src/syllabus/subject-not-planned.tsx
 msgctxt "aqUWND"
@@ -13085,9 +13258,19 @@ msgid "{total, plural, one {{done, number} of # topic} other {{done, number} of 
 msgstr "{total, plural, other {{done, number} / #トピック}}"
 
 #: src/syllabus/subject-screen.tsx
+msgctxt "W40WkX"
+msgid "About this module"
+msgstr "このモジュールについて"
+
+#: src/syllabus/subject-screen.tsx
 msgctxt "XHGiOR"
 msgid "About this subject"
 msgstr "この科目について"
+
+#: src/syllabus/subject-screen.tsx
+msgctxt "qsKSNx"
+msgid "Module options"
+msgstr "モジュールのオプション"
 
 #: src/syllabus/subject-screen.tsx
 msgctxt "vx7zl3"
@@ -13250,6 +13433,12 @@ msgstr "{course}（{institution}）では、試験の各パートを同じ比重
 msgctxt "uZd7hU"
 msgid "On the exam"
 msgstr "試験の出題数"
+
+#. Why a module or a step on the path isn't in the learner's plan: they took the module out. Said on a plan that isn't for an exam, whose list is titled "Modules".
+#: src/syllabus/topic-note.tsx
+msgctxt "i2ZFZr"
+msgid "Not in your plan · you took this module out"
+msgstr "学習計画に入っていない · このモジュールを外しました"
 
 #. Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out.
 #: src/syllabus/topic-note.tsx
@@ -13737,6 +13926,12 @@ msgctxt "-FZPmK"
 msgid "Not studied"
 msgstr "学習なし"
 
+#. Today's line under a practice: how many topics it mixes, then the one it asks most, like "3 topics · Calculating discounts".
+#: src/today/use-row-label.ts
+msgctxt "AX3sJq"
+msgid "{count, plural, one {# topic} other {# topics}} · {topic}"
+msgstr "{count, plural, other {#トピック}} · {topic}"
+
 #: src/today/use-row-label.ts
 msgctxt "OUc_Xr"
 msgid "Every topic"
@@ -13998,11 +14193,17 @@ msgctxt "a2NxUG"
 msgid "0 of {lines} lines"
 msgstr "0/{lines}行"
 
-#. The approximate line count of a written answer past its limit; the lines past it are ones the exam's graders won't read.
+#. The approximate line count of a written answer so far past its limit that no handwriting would fit it; the exam's graders won't read its end.
 #: src/writing/writing-editor.tsx
-msgctxt "6omgAR"
-msgid "about {used} of {lines} lines · {over} won't be read"
-msgstr "約{used}/{lines}行 · 超過した{over}行は読まれません"
+msgctxt "O21PBU"
+msgid "about {used} of {lines} lines · the end won't be read"
+msgstr "約{used}行／{lines}行 · 末尾は読まれません"
+
+#. The approximate line count of a written answer past its limit at a typical handwriting size; it's still graded in full, since small handwriting could fit it.
+#: src/writing/writing-editor.tsx
+msgctxt "VxrG7A"
+msgid "about {used} of {lines} lines · may not fit on paper"
+msgstr "約{used}行／{lines}行 · 紙に収まらない可能性があります"
 
 #: src/writing/writing-editor.tsx
 msgctxt "F6UFzM"

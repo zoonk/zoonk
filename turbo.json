@@ -29,7 +29,8 @@
       "!VERCEL_PLUGIN_*",
       "PORTLESS_*",
       "PRIVATE_BLOB_*",
-      "ZOONK_DEV_PROJECT"
+      "ZOONK_DEV_PROJECT",
+      "ZOONK_NO_AI_SPEND"
     ],
     "ui": "tui",
     "passThroughEnv": [
@@ -39,6 +40,7 @@
       "CODEX_SANDBOX",
       "DATABASE_*",
       "MAIN_CACHE_BYPASS_SECRET",
+      "NODE_EXTRA_CA_CERTS",
       "ZOONK_DEV_LAUNCHER_PID",
       "ZOONK_QUEUE_*",
       "ZOONK_QUERY_LOG"
@@ -60,6 +62,7 @@
         ".next/**",
         "!.next/cache/**",
         "!.next/dev/**",
+        "!.next/workflow-data/**",
         "next-env.d.ts",
         "src/app/.well-known/workflow/**"
       ]
@@ -67,7 +70,13 @@
     "build:e2e": {
       "dependsOn": ["db:generate", "i18n:extract", "^i18n:extract", "^build:e2e"],
       "env": ["DATABASE_*"],
-      "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/packages/db/.env.e2e.local"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/packages/db/.env.e2e.local",
+        "$TURBO_ROOT$/scripts/dev/process.mts",
+        "$TURBO_ROOT$/scripts/dev/queue.mts",
+        "$TURBO_ROOT$/scripts/run-test-env.mts"
+      ],
       "outputs": [
         ".next-e2e/**",
         "!.next-e2e/cache/**",
@@ -96,7 +105,7 @@
     },
     "e2e:suite": {
       "dependsOn": ["^transit", "api#transit"],
-      "env": ["CI", "MAIN_PERF_GATES"],
+      "env": ["CI"],
       "inputs": [
         "$TURBO_DEFAULT$",
         "$TURBO_ROOT$/packages/db/.env.e2e.local",
@@ -112,6 +121,7 @@
     "start": { "cache": false, "dependsOn": ["build", "^start"], "persistent": true },
     "test": {
       "dependsOn": ["db:generate", "^db:setup:test", "transit"],
+      "env": ["ZOONK_TEST_NOW"],
       "inputs": ["$TURBO_DEFAULT$"]
     },
     "test:workflow": {

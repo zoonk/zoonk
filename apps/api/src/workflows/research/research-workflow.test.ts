@@ -35,6 +35,7 @@ import {
   sourceFixture,
 } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { Response as PageResponse, fetch } from "undici";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -1820,8 +1821,6 @@ describe(researchWorkflow, () => {
   });
 });
 
-const DAY_MS = 86_400_000;
-
 function syllabusPlan(word: string, queries = ["quantum mechanics course syllabus topics"]) {
   return {
     country: "ZZ",
@@ -1918,7 +1917,7 @@ describe("research for goals that aren't exams", () => {
 
     for (const { source } of links) {
       expect(source.structure).toMatchObject({ topic: "syllabus" });
-      expect(source.validUntil?.getTime()).toBeGreaterThan(Date.now() + 360 * DAY_MS);
+      expect(source.validUntil?.getTime()).toBeGreaterThan(Date.now() + 360 * MS_PER_DAY);
       expect(source.nextCheckAt).toBeNull();
     }
   });
@@ -1973,7 +1972,7 @@ describe("research for goals that aren't exams", () => {
       publisher: "Presidência da República",
       structure: { images: 0, pages: 1, topic: "regulation" },
       title: `Lei Geral de Proteção de Dados ${word}`,
-      validUntil: new Date(Date.now() + 10 * DAY_MS),
+      validUntil: new Date(Date.now() + 10 * MS_PER_DAY),
     });
 
     vi.mocked(generateSourceResearchPlan).mockResolvedValue({

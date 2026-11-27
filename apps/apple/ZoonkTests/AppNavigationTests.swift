@@ -16,6 +16,17 @@ final class AppNavigationTests: XCTestCase {
       ("https://www.zoonk.com/today", .tab(.today)),
       ("https://www.zoonk.com/pt/plan", .tab(.plan)),
       ("https://www.zoonk.com/pt/buddy/earlier-questions?cursor=old", .tab(.buddy)),
+      ("https://www.zoonk.com/buddy", .tab(.buddy)),
+      ("https://www.zoonk.com/buddy?ask=Why%20orbits%3F", .buddy(.new(ask: "Why orbits?"))),
+      ("https://www.zoonk.com/buddy/new", .buddy(.new(ask: nil))),
+      (
+        "https://www.zoonk.com/pt/buddy/new?ask=Can%20I%20skip%20Saturday%3F",
+        .buddy(.new(ask: "Can I skip Saturday?"))
+      ),
+      (
+        "https://www.zoonk.com/pt/buddy/0b9a6f3e-5d1c-4f7a-9a51-2f6c3d8e7b10",
+        .buddy(.conversation(id: "0b9a6f3e-5d1c-4f7a-9a51-2f6c3d8e7b10"))
+      ),
       ("https://www.zoonk.com/stats", .route(.statistics())),
       (
         "https://www.zoonk.com/plan/biology%20basics",
@@ -76,6 +87,7 @@ final class AppNavigationTests: XCTestCase {
       "https://www.zoonk.com/pricing",
       "https://www.zoonk.com/learn",
       "https://www.zoonk.com/content/chapters/c1/extra",
+      "https://www.zoonk.com/buddy/not-a-conversation",
       "com.googleusercontent.apps.123:/oauth2redirect?code=1",
     ] {
       XCTAssertNil(AppLink(url: try XCTUnwrap(URL(string: url))), url)

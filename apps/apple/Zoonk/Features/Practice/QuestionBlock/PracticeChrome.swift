@@ -131,14 +131,12 @@ private struct PracticeBar: ViewModifier {
   let readableWidth: CGFloat
   let isWide: Bool
   let hasNote: Bool
-  let widthChanged: (CGFloat) -> Void
 
   func body(content: Content) -> some View {
     content
       // Main's `BottomBar`: wide, the main action sits at the bar's end at its own width.
       .environment(\.practiceBarIsWide, isWide)
       .frame(maxWidth: .infinity)
-      .onGeometryChange(for: CGFloat.self, of: \.size.width, action: widthChanged)
       .frame(maxWidth: readableWidth)
       // The bottom bar's inset, so a run's actions sit where every screen's do.
       .scenePadding()
@@ -149,14 +147,15 @@ private struct PracticeBar: ViewModifier {
 
 private struct PracticeMainAction: ViewModifier {
   @Environment(\.practiceBarIsWide) private var isWide
-  @Environment(\.practiceActionsSideBySide) private var sideBySide
+  @Environment(\.isInPracticeActionRow) private var isInRow
 
   func body(content: Content) -> some View {
     content
       .controlSize(.large)
-      .buttonSizing(isWide ? .automatic : .flexible)
+      .buttonSizing(isWide && !isInRow ? .automatic : .flexible)
       .environment(\.mainActionMinWidth, isWide ? WideBar.mainActionMinWidth : nil)
-      .frame(maxWidth: isWide && !sideBySide ? .infinity : nil, alignment: .trailing)
+      .frame(maxWidth: isWide && !isInRow ? .infinity : nil, alignment: .trailing)
+      .barMainAction()
   }
 }
 
@@ -219,7 +218,7 @@ struct QuestionSpread<Header: View, Stimulus: View, Response: View, Actions: Vie
 
 struct QuestionColumn<Header: View, Content: View, Actions: View>: View {
   @Environment(\.stacksContent) private var isStacked
-  @State private var barWidth: CGFloat = 0
+  @Environment(\.windowWidth) private var windowWidth
 
   let readableWidth: CGFloat
   let spacing: CGFloat
@@ -230,7 +229,7 @@ struct QuestionColumn<Header: View, Content: View, Actions: View>: View {
   @ViewBuilder let content: () -> Content
   @ViewBuilder let actions: () -> Actions
 
-  private var isWide: Bool { barWidth >= WideBar.width && !isStacked }
+  private var isWide: Bool { WideBar.isWide(windowWidth: windowWidth, isStacked: isStacked) }
 
   var body: some View {
     ScrollingPage(
@@ -247,9 +246,7 @@ struct QuestionColumn<Header: View, Content: View, Actions: View>: View {
       if usesPracticeBar {
         actions()
           .modifier(
-            PracticeBar(readableWidth: readableWidth, isWide: isWide, hasNote: note != nil) {
-              barWidth = $0
-            })
+            PracticeBar(readableWidth: readableWidth, isWide: isWide, hasNote: note != nil))
       } else {
         actions()
       }
@@ -318,27 +315,23 @@ struct PracticeMainButton: View {
   }
 }
 
+/// Main's `QuestionActions`: on a wide bar the buttons keep their own width at its end, wrapping
+/// once they don't fit; on a phone they share lines (`BarLines`).
 struct PracticeActionRow<Content: View>: View {
   @Environment(\.practiceBarIsWide) private var isWide
   @ViewBuilder let content: Content
 
   var body: some View {
-    ViewThatFits(in: .horizontal) {
-      HStack(spacing: 8) {
-        content
-      }
-      .environment(\.practiceActionsSideBySide, true)
-
-      VStack(spacing: 8) {
-        content
-      }
+    BarLines(spacing: 8, isWide: isWide) {
+      content
     }
-    .frame(maxWidth: isWide ? .infinity : nil, alignment: .trailing)
+    .environment(\.isInPracticeActionRow, true)
   }
 }
 
 extension EnvironmentValues {
-  @Entry var practiceActionsSideBySide = false
+  /// A practice button takes the width its row (`BarLines`) gives it.
+  @Entry var isInPracticeActionRow = false
   @Entry var practiceBarIsWide = false
 }
 
@@ -391,11 +384,12 @@ private struct PracticeFocusTag: ViewModifier {
 }
 
 struct PracticeSecondaryButton: View {
-  @Environment(\.practiceActionsSideBySide) private var sideBySide
   @Environment(\.practiceBarIsWide) private var isWide
+  @Environment(\.isInPracticeActionRow) private var isInRow
 
   let title: LocalizedStringResource
-  let icon: ActionIcon
+  let icon: ActionIcon?
+  var isTight = false
   var isBusy = false
   var isDisabled = false
   let action: () -> Void
@@ -404,34 +398,66 @@ struct PracticeSecondaryButton: View {
     BusyButton(isBusy: isBusy, icon: icon, action: action) {
       Text(title)
     }
-    // Beside the main action it keeps its own width, so its label stays on one line; the row
-    // stacks instead when that doesn't fit.
-    .fixedSize(horizontal: sideBySide, vertical: false)
-    .buttonStyle(.outline)
+    .buttonStyle(isTight && !isWide ? .outline.tight : .outline)
     .controlSize(.large)
-    .buttonSizing(sideBySide || isWide ? .fitted : .flexible)
+    .buttonSizing(isWide && !isInRow ? .fitted : .flexible)
     .disabled(isDisabled && !isBusy)
-    .frame(maxWidth: isWide && !sideBySide ? .infinity : nil, alignment: .trailing)
+    .frame(maxWidth: isWide && !isInRow ? .infinity : nil, alignment: .trailing)
   }
 }
 
+/// Main's `QuestionDontKnow`: the quieter of a question's two answers, its words alone and, on a
+/// phone's bar, with tighter padding, so the main action beside it keeps the larger part of the row.
+struct QuestionDontKnowButton: View {
+  let title: LocalizedStringResource
+  var isBusy = false
+  var isDisabled = false
+  let action: () -> Void
+
+  var body: some View {
+    PracticeSecondaryButton(
+      title: title, icon: nil, isTight: true, isBusy: isBusy, isDisabled: isDisabled,
+      action: action)
+  }
+}
+
+/// Main's `AnswersSaveError`: what didn't go through, with its Try again closing the sentence as a
+/// link, so the bar keeps one button, its main action.
 struct PracticeSaveError: View {
   let failures: Int
   let onReport: () -> Void
   let retry: () -> Void
 
   var body: some View {
-    HStack {
-      SaveFailureNotice(failures: failures, onReport: onReport)
-        .typeStyle(.body)
-
-      Spacer()
-
-      Button(action: retry) {
-        Text("Try again", tableName: "Practice", comment: "Sends an answer that didn't save again.")
-      }
-      .buttonStyle(.outline)
+    SaveFailureNotice(
+      failures: failures, firstMessage: SaveFailureNotice<Text>.answersKept, onReport: onReport
+    ) { message in
+      sentence(AttributedString(localized: message))
     }
+    .typeStyle(.body)
+    .frame(maxWidth: .infinity, alignment: .leading)
+  }
+
+  private func sentence(_ message: AttributedString) -> some View {
+    let action = String(
+      localized: "Try again", table: "Practice", comment: "Sends an answer that didn't save again.")
+    var link = AttributedString(action)
+    link.link = URL(string: "zoonk-practice:try-again")
+    link.foregroundColor = Color(.foreground)
+    link.underlineStyle = .single
+
+    return Text(message + AttributedString(" ") + link)
+      .foregroundStyle(.destructiveText)
+      .tint(Color(.foreground))
+      .environment(
+        \.openURL,
+        OpenURLAction { _ in
+          retry()
+          return .handled
+        }
+      )
+      .accessibilityAction(named: Text(action), retry)
+      .announcesAlert(String(message.characters))
   }
 }
 
@@ -458,13 +484,18 @@ struct SaveFailureNotice<Line: View>: View {
   }
 }
 
-extension SaveFailureNotice where Line == FailureLine {
-  init(
-    failures: Int,
-    firstMessage: LocalizedStringResource = LocalizedStringResource(
+extension SaveFailureNotice {
+  static var answersKept: LocalizedStringResource {
+    LocalizedStringResource(
       "That didn't go through. Your answers are kept.", table: "Practice",
       comment: "An answer or finish didn't reach the server; the learner's answers stay on screen"
-    ),
+    )
+  }
+}
+
+extension SaveFailureNotice where Line == FailureLine {
+  init(
+    failures: Int, firstMessage: LocalizedStringResource = Self.answersKept,
     onReport: @escaping () -> Void
   ) {
     self.init(failures: failures, firstMessage: firstMessage, onReport: onReport) {
@@ -488,7 +519,7 @@ struct PracticeCloseButton: View {
         Image(systemName: "xmark")
       }
     }
-    .keyboardShortcut(.cancelAction)
+    .leavesOnEscape()
   }
 }
 

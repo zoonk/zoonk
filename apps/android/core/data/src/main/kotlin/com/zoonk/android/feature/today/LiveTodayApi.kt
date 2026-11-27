@@ -6,6 +6,7 @@ import com.zoonk.android.data.perform
 import com.zoonk.api.apis.MistakesApi
 import com.zoonk.api.models.LanguageToday
 import com.zoonk.api.models.LearnerSummaryGoal
+import com.zoonk.api.models.LessonReadiness
 import com.zoonk.api.models.MemoryInsight
 import com.zoonk.api.models.MemoryInsightAnswer
 import com.zoonk.api.models.PlanWatch
@@ -24,6 +25,11 @@ class LiveTodayApi(
         session: AuthenticatedSession,
         timeZone: String,
     ): Today = perform { api.clients(session).studySessions.getToday(timeZone = timeZone) }
+
+    override suspend fun lessonReadiness(
+        session: AuthenticatedSession,
+        lessonId: UUID,
+    ): LessonReadiness = perform { api.clients(session).contentGeneration.getLibraryLessonReadiness(lessonId) }
 
     override suspend fun brainPower(session: AuthenticatedSession): Long? =
         perform { api.clients(session).progress.getCurrentUserLevel() }.level?.totalBrainPower

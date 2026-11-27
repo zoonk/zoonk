@@ -2,6 +2,7 @@ import { waitForSleep } from "@workflow/vitest";
 import { hangUpLiveCallSession } from "@zoonk/ai/tasks/language/live-call-session";
 import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_HOUR } from "@zoonk/utils/date";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getRun, start } from "workflow/api";
 import { liveCallDeadlineWorkflow } from "./live-call-deadline-workflow";
@@ -13,7 +14,6 @@ vi.mock("@zoonk/ai/tasks/language/live-call-session", () => ({
 }));
 
 const HELD_SECONDS = 60;
-const HOUR_MS = 3_600_000;
 
 async function liveConnection() {
   const user = await userFixture();
@@ -24,7 +24,7 @@ async function liveConnection() {
     data: {
       conversationId: crypto.randomUUID(),
       costMicros: 72_500,
-      deadlineAt: new Date(startedAt.getTime() + HOUR_MS),
+      deadlineAt: new Date(startedAt.getTime() + MS_PER_HOUR),
       heldSeconds: HELD_SECONDS,
       providerSessionId,
       startedAt,

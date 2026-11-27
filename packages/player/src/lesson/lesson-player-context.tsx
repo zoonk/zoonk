@@ -34,7 +34,12 @@ export type LessonPlayerActions = {
   skipWriting: () => void;
   skipSteps: (stepIds: string[]) => void;
   startRecording: () => void;
-  submitSpokenAnswer: (input: { audio: Blob; durationMs: number; stepId: string }) => void;
+  submitSpokenAnswer: (input: {
+    attemptId: string;
+    audio: Blob;
+    durationMs: number;
+    stepId: string;
+  }) => void;
 };
 
 export type LessonCompletionSlotProps = {
@@ -79,6 +84,7 @@ type LessonPlayerConfig = {
   >;
   linkComponent: PlayerLinkComponent;
   outline: boolean;
+  saved?: boolean;
   routes: LessonPlayerRoutes;
   slots: LessonPlayerSlots;
   soundsEnabled: boolean;

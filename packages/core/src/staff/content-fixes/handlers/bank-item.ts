@@ -6,7 +6,11 @@ import { PRIVATE_CONTENT, refuse } from "../_utils/resolved-change";
  * A practice question a fix may change on its own. A set's questions share one passage, and a
  * question a current screen asks is the same question as that screen, so those change with it.
  */
-export async function loadBankItem(db: TransactionClient, id: string) {
+export async function loadBankItem(
+  db: TransactionClient,
+  id: string,
+  { allowAskedCheck = false }: { allowAskedCheck?: boolean } = {},
+) {
   const item = await db.item.findUnique({
     include: {
       _count: { select: { steps: { where: CURRENT_STEPS } } },
@@ -31,6 +35,12 @@ export async function loadBankItem(db: TransactionClient, id: string) {
     return refuse(
       "This question belongs to a set that shares one passage; it changes with its set, not alone.",
     );
+  }
+
+  if (item.format === "multipleChoice" && item._count.steps > 0) {
+    return allowAskedCheck
+      ? { item, ok: true as const }
+      : refuse("A lesson screen supplies this question. Fix the lesson screen.");
   }
 
   return item._count.steps > 0

@@ -6,7 +6,7 @@ import {
 } from "@zoonk/core/view-models/syllabus/contract";
 import { useExtracted } from "next-intl";
 
-export function useNotPlannedReason() {
+export function useNotPlannedReason({ isModule }: { isModule: boolean }) {
   const t = useExtracted();
 
   return function reasonText(reason: NotPlannedReason | null): string | null {
@@ -16,11 +16,17 @@ export function useNotPlannedReason() {
 
     switch (reason) {
       case "skipped":
-        return t({
-          description:
-            "Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out.",
-          message: "Not in your plan · you took this subject out",
-        });
+        return isModule
+          ? t({
+              description:
+                "Why a module or a step on the path isn't in the learner's plan: they took the module out. Said on a plan that isn't for an exam, whose list is titled \"Modules\".",
+              message: "Not in your plan · you took this module out",
+            })
+          : t({
+              description:
+                "Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out.",
+              message: "Not in your plan · you took this subject out",
+            });
       case "known":
         return t("Skipped · you already know it");
       case "pastBasics":
@@ -45,12 +51,24 @@ export function useNotPlannedReason() {
   };
 }
 
-export function ReasonText({ reason }: { reason: NotPlannedReason | null }) {
-  const reasonText = useNotPlannedReason();
+export function ReasonText({
+  isModule,
+  reason,
+}: {
+  isModule: boolean;
+  reason: NotPlannedReason | null;
+}) {
+  const reasonText = useNotPlannedReason({ isModule });
   const text = reasonText(reason);
   return text ? <span className="text-muted-foreground text-xs">{text}</span> : null;
 }
 
+/** Only an exam's subjects list topics. */
 export function TopicNote({ topic }: { topic: SyllabusTopic }) {
-  return <ReasonText reason={topic.status === "known" ? "known" : topic.notPlannedReason} />;
+  return (
+    <ReasonText
+      isModule={false}
+      reason={topic.status === "known" ? "known" : topic.notPlannedReason}
+    />
+  );
 }

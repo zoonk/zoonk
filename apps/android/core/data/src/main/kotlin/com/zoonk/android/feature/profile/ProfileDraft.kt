@@ -18,7 +18,7 @@ import kotlinx.serialization.json.putJsonArray
 import kotlinx.serialization.json.putJsonObject
 
 val OnboardingStep.profileQuestion: ProfileQuestion?
-    get() = ProfileQuestion.entries.find { it.value == value }
+    get() = ProfileQuestion.entries.find { it != ProfileQuestion.UNKNOWN_DEFAULT_OPEN_API && it.value == value }
 
 /**
  * One question's answer while the learner edits it. For tools, [typed] holds the tools they added by name and

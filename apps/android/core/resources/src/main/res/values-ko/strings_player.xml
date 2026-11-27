@@ -67,7 +67,6 @@
   "player_create_account_to_save": "6de170c1d7b0912da458f1d53b74c55f2b0d7e6d119d2ec33b6cb72fc7695202",
   "player_didnt_get_it": "32f61a8f9f0277ef3fc100d8e2e6c4beced1921de47baf1537907c3e78242603",
   "player_done": "d4d492ac052e51d7e3498faafa0dba7a6b8d92a1756f9c8628bfde7885a7d57b",
-  "player_dont_know_yet": "ae1ebfed81873f1b482da813703cac9caffd87f53f0b8c0296422381d333ac04",
   "player_drawing_picture": "b9212d76e61f1007c31ceec73bad939d06ec3a9582e8a33cc21a145faef696b6",
   "player_enter_hint": "6b1a8fc4f8a27335b9787480812f4fe1335259ac020a7920f273d6d37658625f",
   "player_example": "1dfa2944d7a09293cd83de333ed5cb63112d69036379ff45b7f69a0a4fb85a14",
@@ -285,7 +284,6 @@
     </plurals>
     <string name="player_in_your_own_words">내 말로 설명하기</string>
     <string name="player_cant_write_now">오늘 쓰기 문제 건너뛰기</string>
-    <string name="player_dont_know_yet">아직 모르겠어요</string>
     <!-- Button asking Zoonk to show the explanation before the learner answers. It doesn't tell the learner to explain. -->
     <string name="player_explain_first">먼저 설명 보기</string>
     <string name="player_enter_hint">Enter를 눌러 답을 확인하고, Shift+Enter를 눌러 줄을 바꾸세요.</string>

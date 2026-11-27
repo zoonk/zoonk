@@ -10,7 +10,7 @@ import { TimeAnswer } from "../_components/time-answer";
 import { WeekdayGrid, WeekdayToggle } from "../_components/weekday-toggle";
 import { WeekendTime, getMissingDays } from "../_components/weekend-time";
 import { getSuggestedMinutes, getTimeLine } from "../_utils/time-answer";
-import { usePlanScreen } from "./plan-context";
+import { usePlanScreen, useSubjectsTakenOut } from "./plan-context";
 import { MoveDateSwitch, useCanMoveDate } from "./plan-coverage";
 import { getEditorSectionId } from "./plan-editor-sections";
 import { PlanFinish } from "./plan-finish";
@@ -60,6 +60,7 @@ function DailyCoverage({
   const pending = planChange.isPending;
   const canChooseFocus = useCanChooseFocus();
   const canMoveDate = useCanMoveDate();
+  const subjectsTakenOut = useSubjectsTakenOut();
   const { feasibility, schedule } = plan;
 
   if (!feasibility?.deadline || !schedule.targetDate) {
@@ -103,6 +104,7 @@ function DailyCoverage({
           minutes={minutes}
           onRetry={answer.retry}
           onUseOffer={onUseTime}
+          subjectsTakenOut={subjectsTakenOut}
         />
 
         <div className="flex flex-wrap items-center gap-2 empty:hidden">

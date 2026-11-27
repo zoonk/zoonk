@@ -389,6 +389,7 @@ private struct LessonCheckAdded: View {
           willReturn: state.queue.lastIndex(of: step.id).map { $0 > state.position } ?? false,
           hyperdriveStreak: state.hyperdriveStreak(for: step.id)
         )
+        .environment(store.work(for: step.id, round: state.rounds[step.id] ?? 0))
 
         if state.struggleOffer != nil {
           LessonAskBuddyOffer(reason: .misses, store: store)
@@ -453,6 +454,7 @@ struct LessonActionBar: View {
 
   @Environment(\.activityRenderers) private var activityRenderers
   @Environment(\.lessonTutor) private var tutor
+  @Environment(\.horizontalSizeClass) private var sizeClass
   @Environment(RecordInBar.self) private var recordInBar: RecordInBar?
 
   var body: some View {
@@ -481,15 +483,20 @@ struct LessonActionBar: View {
               "Reveals the answer: a good answer to a written question, or the answer to the lesson's opening guess"
           )
         }
-        .buttonStyle(.outline)
+        // Main's `QuestionDontKnow`: tighter on a phone, so Check keeps the larger part of the row.
+        .buttonStyle(sizeClass == .compact ? .outline.tight : .outline)
       }
 
-      if state.phase == .playing, let record = recordInBar?.button, recordInBar?.isChecking == false
-      {
-        record
-      } else {
-        primaryButton
+      Group {
+        if state.phase == .playing, let record = recordInBar?.button,
+          recordInBar?.isChecking == false
+        {
+          record
+        } else {
+          primaryButton
+        }
       }
+      .barMainAction()
 
       if showsLessonAsk(
         isExplanation: step?.kind == .explanation, hasPanel: tutor.panel != nil,
@@ -544,11 +551,7 @@ struct LessonActionBar: View {
   }
 
   private var activityGrade: ((ActivityStepContent, ActivityAnswer) -> Bool)? {
-    guard case .activity(let content) = step?.content else {
-      return nil
-    }
-
-    return activityRenderers.renderer(for: content.template)?.grade
+    step.flatMap(activityRenderers.grade(for:))
   }
 
   private enum PrimaryKind {
@@ -638,9 +641,15 @@ struct LessonActionBar: View {
   }
 
   private func checkTitle(_ step: LessonStep) -> LocalizedStringResource {
-    step.kind == .hook
-      ? LocalizedStringResource(
+    if step.kind == .hook {
+      return LocalizedStringResource(
         "See answer", table: "Player", comment: "Reveals a hook's answer after a guess")
+    }
+
+    // A board checked pair by pair checks itself with its last pair, so its action waits as
+    // Continue.
+    return step.checksEachPair
+      ? Self.continueTitle
       : LocalizedStringResource("Check", table: "Player", comment: "Checks the learner's answer")
   }
 
@@ -650,7 +659,18 @@ struct LessonActionBar: View {
 
 extension LessonStep {
   var showsOwnResult: Bool {
-    kind == .challenge || kind == .matchColumns
+    kind == .challenge
+  }
+
+  /// Main's `checksEachPair`: a board that checks each pair as it's made and sends itself with the
+  /// last one.
+  @MainActor
+  var checksEachPair: Bool {
+    switch content {
+    case .language(let exercise, _): exercise.kind == .matchColumns
+    case .activity(let content): content.template == ActivityRenderer.matchPairs.template
+    default: false
+    }
   }
 
   func canCheck(_ answer: LessonAnswer?, openedAt: Date) -> Bool {

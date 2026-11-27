@@ -67,6 +67,7 @@ async function SubjectBody({ params }: Props) {
       syllabus={{
         examDocument: result.syllabus.examDocument,
         fromMaterial: result.syllabus.fromMaterial,
+        goal: result.syllabus.goal,
         hasNotice: result.syllabus.hasNotice,
         questionsSource: result.syllabus.questionsSource,
         sharedExams: result.syllabus.sharedExams,

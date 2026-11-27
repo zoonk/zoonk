@@ -274,12 +274,14 @@ class TodayScreenshots {
                     buddyName = "Zu",
                     snackbars = app.snackbars,
                     refreshIfChanged = app.today::refreshIfChanged,
+                    refreshIfLessonsMoved = app.today::refreshIfLessonsMoved,
                     practice = {
                         TodayPracticeRows(
                             MistakeListAvailability(ready = 3, tomorrow = 1),
                             MOCKS,
                             SPEAKING,
                             completedLessons = true,
+                            savedLessons = true,
                             navigate = {},
                         )
                     },

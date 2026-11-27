@@ -2,6 +2,7 @@ package com.zoonk.android.feature.player.language
 
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -15,6 +16,7 @@ import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.lifecycle.SavedStateHandle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.LocalSnackbarHostState
@@ -82,7 +84,10 @@ class LanguageStepsFlowTest {
             override fun replace(route: AppRoute) = Unit
         }
 
-    private fun play(steps: List<LessonStep>) {
+    private fun play(
+        steps: List<LessonStep>,
+        restoration: StateRestorationTester? = null,
+    ) {
         val lesson = playable(steps).copy(language = "en", targetLanguage = "es")
         api = FakeLessonPlayerApi(LessonLoad.Ready(lesson))
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
@@ -94,6 +99,7 @@ class LanguageStepsFlowTest {
                 lessonId = LESSON_ID,
                 studySessionId = null,
                 firstAnswer = null,
+                tapped = true,
                 store = LessonPlayerStore(api, cache),
                 cache = cache,
                 sessions = session,
@@ -104,7 +110,7 @@ class LanguageStepsFlowTest {
                 saved = SavedStateHandle(),
             )
 
-        rule.setContent {
+        val screen: @Composable () -> Unit = {
             ZoonkTheme {
                 CompositionLocalProvider(
                     LocalSnackbarHostState provides SnackbarHostState(),
@@ -117,6 +123,7 @@ class LanguageStepsFlowTest {
                 }
             }
         }
+        if (restoration == null) rule.setContent(screen) else restoration.setContent(screen)
         rule.waitUntil { viewModel.state.value?.run is LessonRun.Started }
     }
 
@@ -124,6 +131,14 @@ class LanguageStepsFlowTest {
         rule
             .onAllNodesWithText(text)
             .onFirst()
+            .performClick()
+
+    /** A card on the board, scrolled to as a learner would, since the board can reach under the bar. */
+    private fun tapCard(text: String) =
+        rule
+            .onAllNodesWithText(text)
+            .onFirst()
+            .performScrollTo()
             .performClick()
 
     /** What the player sent for [stepId], as the API reads it. */
@@ -134,18 +149,16 @@ class LanguageStepsFlowTest {
     }
 
     @Test
-    fun aWrongPairFlashesAndCountsThenEveryPairIsSentWithTheMistakes() {
+    fun aWrongPairCountsAndTheLastPairSendsEveryPairWithTheMistakesThenNamesTheMiss() {
         play(listOf(matchColumns("pairs"), summaryStep("end")))
 
         rule.onNodeWithText("Match the pairs.").assertIsDisplayed()
-        tap("hola")
-        tap("cat")
-        rule.mainClock.advanceTimeBy(1_000)
-        tap("hola")
-        tap("hello")
-        tap("gato")
-        tap("cat")
-        tap("Check")
+        tapCard("hola")
+        tapCard("cat")
+        // The first word stays picked after a miss, so its partner is one tap away, even while the miss still shows.
+        tapCard("hello")
+        tapCard("gato")
+        tapCard("cat")
 
         assertEquals(
             Json.parseToJsonElement(
@@ -153,6 +166,27 @@ class LanguageStepsFlowTest {
             ),
             sent("pairs"),
         )
+        // The answer only counts the miss; the board itself names it under the verdict.
+        rule.onNodeWithText("You first matched:").assertExists()
+        rule.onNodeWithText("hola → cat").assertExists()
+    }
+
+    @Test
+    fun theMissStaysNamedUnderTheVerdictAfterTheScreenIsRecreated() {
+        val restoration = StateRestorationTester(rule)
+        play(listOf(matchColumns("pairs"), summaryStep("end")), restoration)
+        tapCard("hola")
+        tapCard("cat")
+        tapCard("hello")
+        tapCard("gato")
+        tapCard("cat")
+        rule.onNodeWithText("hola → cat").assertExists()
+
+        // A rotation: the board's saved work comes back, already checked, with no tap left to make.
+        restoration.emulateSavedInstanceStateRestore()
+
+        rule.onNodeWithText("You first matched:").assertExists()
+        rule.onNodeWithText("hola → cat").assertExists()
     }
 
     @Test

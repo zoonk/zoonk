@@ -1,20 +1,21 @@
 import SwiftUI
 
 struct StudyDay: Decodable, Equatable, Sendable {
-  enum Status: String, Decodable, Sendable {
+  enum Status: String, UnknownAPIValue, Sendable {
+    case unrecognized
     case active
     case completed
     case planned
     case unstarted
   }
 
-  enum EmptyDay: String, Decodable, Sendable {
+  enum EmptyDay: String, OmittableAPIContent, Sendable {
     case lessonsComing
     case lessonsToPrepare
     case nothingNew
   }
 
-  enum FreshStart: String, Decodable, Sendable {
+  enum FreshStart: String, OmittableAPIContent, Sendable {
     case newPhase
     case newWeek
     case welcomeBack
@@ -56,6 +57,8 @@ struct StudyDay: Decodable, Equatable, Sendable {
   typealias Minutes = Components.Schemas.StudySessionMinutes
 
   let id: String?
+  /// The block core offers while the next one's lesson is written or failed.
+  let alternativePosition: Int?
   var blocks: [StudyBlock]
   let brainPower: Int
   let catchUp: CatchUp?
@@ -82,6 +85,10 @@ struct StudyDay: Decodable, Equatable, Sendable {
 
   var nextBlock: StudyBlock? {
     blocks.first { $0.position == nextPosition }
+  }
+
+  var alternative: StudyBlock? {
+    alternativePosition.flatMap { position in blocks.first { $0.position == position } }
   }
 
   /// Main's `waitsForStart`: a question block that hasn't begun opens on the session and waits for
@@ -205,14 +212,12 @@ enum DaySegment {
   case block(StudyBlock, State)
   case held(minutes: Double, ComingLessons, title: String)
 
-  /// How the part is drawn: done, next up, or waiting in its kind's color.
+  /// How the part is drawn: done, next up, or still to do on the track whatever its kind.
   var mark: DaySegments.Segment {
     switch self {
     case .block(_, .done): .done
     case .block(_, .current): .current
-    case .block(let block, .ahead):
-      block.learnKind == .lesson ? .ahead : .kind(block.learnKind.color)
-    case .held: .ahead
+    case .block(_, .ahead), .held: .ahead
     }
   }
 }
@@ -240,7 +245,8 @@ enum ComingLessons {
 }
 
 /// Core decides where the day stands.
-enum DayState: String, Decodable, Sendable {
+enum DayState: String, UnknownAPIValue, Sendable {
+  case unrecognized
   case ahead
   case done
   /// Its lessons wait for the learner to ask for them.
@@ -250,8 +256,10 @@ enum DayState: String, Decodable, Sendable {
   case waiting
 }
 
-struct StudyBlock: Decodable, Hashable, Sendable {
-  enum Kind: String, Codable, Sendable {
+typealias LessonStatus = Components.Schemas.LessonGenerationStatus
+
+struct StudyBlock: OmittableAPIContent, Hashable, Sendable {
+  enum Kind: String, Decodable, Encodable, Sendable {
     case checkpoint
     case learn
     case practice
@@ -266,13 +274,15 @@ struct StudyBlock: Decodable, Hashable, Sendable {
     case skipped
   }
 
-  enum WaitReason: String, Decodable, Sendable {
+  enum WaitReason: String, UnknownAPIValue, Sendable {
+    case unrecognized
     case challenge
     case lessons
   }
 
   /// Where a tap on the block opens it, as core decides.
-  enum Screen: String, Decodable, Sendable {
+  enum Screen: String, UnknownAPIValue, Sendable {
+    static var unrecognized: Self { .unknown }
     case challenge
     case essay
     case lesson
@@ -281,7 +291,7 @@ struct StudyBlock: Decodable, Hashable, Sendable {
   }
 
   /// Whether the exam that leaves the optional study out has an official guide.
-  enum SubjectExtra: String, Decodable, Hashable, Sendable {
+  enum SubjectExtra: String, OmittableAPIContent, Hashable, Sendable {
     case notice
     case optional
   }
@@ -289,6 +299,12 @@ struct StudyBlock: Decodable, Hashable, Sendable {
   struct Capsule: Decodable, Hashable, Sendable {
     let questions: Int
     let title: String?
+  }
+
+  /// As saved when the day was read; only readiness confirms `generating`.
+  struct Lesson: Decodable, Hashable, Sendable {
+    var status: LessonStatus
+    var setAside: Bool
   }
 
   struct Checkpoint: Codable, Hashable, Sendable {
@@ -310,7 +326,6 @@ struct StudyBlock: Decodable, Hashable, Sendable {
   let id: String?
   let answered: Int
   let areaId: String?
-  let areas: [String]
   let brainPower: Int
   let canDo: String?
   let canTestOut: Bool
@@ -321,6 +336,7 @@ struct StudyBlock: Decodable, Hashable, Sendable {
   let extra: Bool
   let fullReview: Bool
   let kind: Kind
+  var lesson: Lesson?
   let lessonId: String?
   let mistakesOnly: Bool
   let mockPreparationReview: Bool?
@@ -329,6 +345,7 @@ struct StudyBlock: Decodable, Hashable, Sendable {
   let planItemId: String?
   let planItemKey: String?
   let position: Int
+  let practiceNumber: Int?
   let preparing: Bool
   let questions: Int
   let refresh: Bool
@@ -398,7 +415,7 @@ struct StudyBlock: Decodable, Hashable, Sendable {
   }
 }
 
-enum WritingAvailability: Decodable, Hashable, Sendable {
+enum WritingAvailability: OmittableAPIContent, Hashable, Sendable {
   case available
   case `continue`
   case tomorrow(returnsOn: String)
@@ -431,7 +448,7 @@ enum WritingAvailability: Decodable, Hashable, Sendable {
 
 struct StudyWeek: Decodable, Equatable, Sendable {
   /// Core's `StudyWeekDay`, which Today's week and the Plan's draw with `WeekDayRing`.
-  struct Day: Decodable, Equatable, Sendable {
+  struct Day: OmittableAPIContent, Equatable, Sendable {
     /// Day blocks done and not skipped; extra work isn't counted.
     let completed: Int
     let date: String

@@ -9,6 +9,7 @@
     "./account-deletion": "./src/account-deletion.ts",
     "./app-challenge": "./src/native-app-challenge.ts",
     "./auth-events": "./src/auth-events.ts",
+    "./auth-secret": "./src/auth-secret.ts",
     "./available-username": "./src/available-username.ts",
     "./certificate-issuance": "./src/certificate-issuance.ts",
     "./client": "./src/client.ts",

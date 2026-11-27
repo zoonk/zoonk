@@ -6,7 +6,6 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { CoverageBar, CoverageLegend } from "../_components/coverage-bar";
 import {
-  LIST_GROUP_CLASS,
   ListRowChevronSpace,
   ListRowDescription,
   ListRowLink,
@@ -17,9 +16,10 @@ import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components
 import { QuietDisclosure } from "../_components/quiet-disclosure";
 import { useFormatProgressShare } from "../_utils/percent";
 import { useExamQuestionCount } from "../exam/use-exam-question-count";
-import { groupSubjects } from "./group-subjects";
+import { namesModules } from "./names-modules";
 import { SharedExamsNote, useAlsoIn } from "./shared-exams";
-import { CourseWeightsNote, QuestionsSourceNote, SubjectGroupHeading } from "./syllabus-notes";
+import { SubjectGroups } from "./subject-groups";
+import { CourseWeightsNote, QuestionsSourceNote } from "./syllabus-notes";
 import { type SyllabusSectionSubject, type SyllabusSectionView } from "./syllabus-section-view";
 import { getSubjectShare, useSubjectProgress } from "./use-subject-progress";
 
@@ -33,7 +33,7 @@ export function hasSyllabusSection<Syllabus extends SyllabusSectionView>(
 
 function useSectionTitle(syllabus: SyllabusSectionView): string {
   const t = useExtracted();
-  return syllabus.goal.kind === "exam" ? t("Subjects") : t("Modules");
+  return namesModules(syllabus.goal.kind) ? t("Modules") : t("Subjects");
 }
 
 /** From this width a row shows its exam's question count in a column of its own. */
@@ -89,16 +89,18 @@ function BarsMeaning({ syllabus }: { syllabus: SyllabusSectionView }) {
 
 function SubjectRow({
   href,
+  isModule,
   sharedExams,
   subject,
 }: {
   href: string;
+  isModule: boolean;
   sharedExams: SyllabusView["sharedExams"];
   subject: SyllabusSectionSubject;
 }) {
   const formatShare = useFormatProgressShare();
   const questionCount = useExamQuestionCount();
-  const progress = useSubjectProgress()(subject);
+  const progress = useSubjectProgress({ isModule })(subject);
   const alsoIn = useAlsoIn({ sharedExams, sharedWith: subject.sharedWith });
   const notPlanned = subject.notPlannedReason !== null;
   const share = progress.bar ? getSubjectShare(progress.bar) : subject.preparation;
@@ -121,7 +123,7 @@ function SubjectRow({
         {progress.bar ? (
           <CoverageBar {...progress.bar} />
         ) : (
-          <span className="text-muted-foreground text-xs">{progress.label}</span>
+          <ListRowDescription>{progress.label}</ListRowDescription>
         )}
       </span>
 
@@ -130,10 +132,6 @@ function SubjectRow({
       </ListRowTrailing>
     </ListRowLink>
   );
-}
-
-function getGroupId(index: number): string {
-  return `${SECTION_TITLE_ID}-group-${index}`;
 }
 
 export function SyllabusSection({
@@ -145,7 +143,7 @@ export function SyllabusSection({
 }) {
   const t = useExtracted();
   const title = useSectionTitle(syllabus);
-  const groups = groupSubjects(syllabus.subjects, { modules: syllabus.kind === "modules" });
+  const isModule = namesModules(syllabus.goal.kind);
 
   return (
     <PageSection
@@ -160,30 +158,18 @@ export function SyllabusSection({
 
       <SharedExamsNote sharedExams={syllabus.sharedExams} />
 
-      <div className={LIST_GROUP_CLASS}>
-        {groups.map((group, index) => (
-          // A group's heading and its rows are one item of the list, so a rule sits above the
-          // heading and none between it and its rows.
-          <div key={group.extra ? "extra" : (group.name ?? "all")}>
-            <SubjectGroupHeading group={group} id={getGroupId(index)} syllabus={syllabus} />
-
-            <ul
-              aria-labelledby={group.extra || group.name ? getGroupId(index) : SECTION_TITLE_ID}
-              className="divided-rows"
-            >
-              {group.subjects.map((subject) => (
-                <li key={subject.key}>
-                  <SubjectRow
-                    href={subjectHref(subject.key)}
-                    sharedExams={syllabus.sharedExams}
-                    subject={subject}
-                  />
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
+      <SubjectGroups
+        renderSubject={(subject) => (
+          <SubjectRow
+            href={subjectHref(subject.key)}
+            isModule={isModule}
+            sharedExams={syllabus.sharedExams}
+            subject={subject}
+          />
+        )}
+        syllabus={syllabus}
+        titleId={SECTION_TITLE_ID}
+      />
 
       {(syllabus.questionsSource || syllabus.courseWeights?.source) && (
         <QuietDisclosure label={t("Sources")}>

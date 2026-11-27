@@ -5,6 +5,7 @@ import {
   type Context,
   EDGE,
   type Group,
+  box,
   drawn,
   finding,
   glyphsOnly,
@@ -50,20 +51,10 @@ function readByInk(element: CaptureElement) {
   return element.part === "mark" || element.part === "end" || glyphsOnly(element);
 }
 
-// Apple records both ListRow's number and the plan reveal's date as `lead`. The former is
-// attached to the title by ListRow's 6pt spacing, while the latter sits in its own column.
-function isNumberedLabel(context: Context, lead: CaptureElement, label: CaptureElement) {
-  const [leadX, , leadWidth] = lead.bounds;
-  const [labelX, , labelWidth] = label.bounds;
-  const gap = Math.max(labelX - (leadX + leadWidth), leadX - (labelX + labelWidth));
-
-  return context.capture.platform === "apple" && Math.abs(gap - 6) <= 1 / context.capture.scale;
-}
-
 /**
  * Each part's distance from where it belongs (craft E5 and E6). One line: on the label's middle.
- * Beside a title and one description, or a title that wraps: a mark, a value and an end glyph on
- * the row's center. Beside three lines or more (a title and two descriptions): a mark on the
+ * Beside a title and one line under it (a description or a progress bar), or a title that wraps:
+ * a mark, a value and an end glyph on the row's center. Beside three lines or more (a title and two descriptions): a mark on the
  * label's first line, a value and an end glyph on the row's center. A row with a text lead (a date
  * before its day's entries) is top-aligned as a whole: every part sits on its first entry's line.
  * A value stacked under its label has no line to share.
@@ -110,8 +101,18 @@ function misses(context: Context, row: CaptureElement, own: CaptureElement[]): M
     return null;
   }
 
-  // A title counts as one line however it wraps; each description under it is another (E5).
-  const notes = Math.max(own.filter((element) => element.part === "note").length, row.note ? 1 : 0);
+  // A title counts as one line however it wraps; each line under it is another (E5): a
+  // description, or a line with no words such as a progress bar. A wide row that lays one out
+  // beside the title, across its first baseline, keeps one line. Where a capture saw no ink (an
+  // empty bar's faint track), its box still holds the line the row makes room for.
+  const baseline = measured(label.capBottom);
+
+  const notes = own
+    .filter((element) => {
+      const place = element.part === "note" ? (drawn(element) ?? box(element.bounds)) : null;
+      return place && place.bottom > place.top && baseline !== null && place.top >= baseline;
+    })
+    .reduce((count, note) => count + (measured(note.texts, 1) ?? 1), 0);
 
   const lines = measured(label.lines, 1);
 
@@ -122,9 +123,7 @@ function misses(context: Context, row: CaptureElement, own: CaptureElement[]): M
   const oneLine = !stacked && lines === 1 && notes === 0;
   const endMiddle = middles.find(({ element }) => element.part === "end")?.middle ?? null;
 
-  const led = others.some(
-    (element) => element.part === "lead" && !isNumberedLabel(context, element, label),
-  );
+  const dateLed = others.some((element) => element.part === "lead" && element.role === "date");
 
   return middles.flatMap(({ element, middle }): Miss[] => {
     const at = middle ?? labelMiddle;
@@ -134,8 +133,7 @@ function misses(context: Context, row: CaptureElement, own: CaptureElement[]): M
       return [{ inked, off: at - labelMiddle, part: element.part, to: "the label's middle" }];
     }
 
-    // A row with a text lead sits on its first line; a mark does beside three lines or more.
-    if (led || element.part === "lead" || (element.part === "mark" && notes >= 2)) {
+    if (dateLed || element.part === "lead" || (element.part === "mark" && notes >= 2)) {
       return [{ inked, off: at - labelMiddle, part: element.part, to: "the label's first line" }];
     }
 

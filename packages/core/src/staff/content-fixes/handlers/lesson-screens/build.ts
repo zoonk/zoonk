@@ -1,6 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { isDeepStrictEqual } from "node:util";
 import { getLessonScreenSkillId } from "../../../../library/lessons/_utils/lesson-screen-skill";
+import { findQuestionMatch } from "../../../../library/lessons/_utils/screen-question-item";
+import { toCheckQuestion } from "../../../../library/steps/_utils/check-question";
 import { STEP_CONTRACT_VERSION } from "../../../../library/steps/contract/step-contract";
 import { type ContentFixEffect } from "../../contract";
 import { prepareAdded } from "./added";
@@ -105,6 +107,45 @@ function screenWasEdited({
   );
 }
 
+function updateCheckLink({
+  allocatedItemId,
+  item,
+  newItems,
+  screen,
+}: {
+  allocatedItemId?: string | null;
+  item: ReturnType<ScreenLesson["items"]["get"]>;
+  newItems: StoredScreens["newItems"];
+  screen: Screen;
+}) {
+  if (screen.kind !== "check" || item?.format !== "multipleChoice") {
+    return;
+  }
+
+  const question =
+    !screen.mediaAssetId && screen.optionPictures.length === 0
+      ? toCheckQuestion(screen.content)
+      : null;
+
+  if (!question || !screen.skillId) {
+    screen.itemId = null;
+    return;
+  }
+
+  if (findQuestionMatch({ items: [item], question, skillId: screen.skillId })) {
+    return;
+  }
+
+  if (item.retiredAt) {
+    screen.itemId = null;
+    return;
+  }
+
+  const id = allocatedItemId ?? randomUUID();
+  screen.itemId = id;
+  newItems.push({ id, question, skillId: screen.skillId });
+}
+
 export function buildScreens({
   lesson,
   list,
@@ -162,7 +203,22 @@ export function buildScreens({
     }
 
     setPictureRequest({ entry, path, problems, screen });
-    setContent({ entry, list, map, original, path, problems, screen, vocabulary });
+    const item = base.itemId ? lesson.items.get(base.itemId) : undefined;
+
+    setContent({
+      entry,
+      list,
+      map,
+      numeric: item?.format === "numeric",
+      original,
+      path,
+      problems,
+      screen,
+      vocabulary,
+    });
+
+    updateCheckLink({ allocatedItemId: allocatedScreen?.itemId, item, newItems, screen });
+
     screen.variants = editVariants({ allocatedScreen, base, entry, lesson, list, path, problems });
     const contentChanged = !isDeepStrictEqual(screen.content, base.content);
 

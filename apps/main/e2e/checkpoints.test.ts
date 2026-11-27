@@ -1,7 +1,9 @@
+import { expectHydrated } from "@zoonk/e2e/hydration";
 import {
   CHECKPOINT_PASS_MARK,
   CHECKPOINT_QUESTIONS,
   answerDuelQuestion,
+  checkDuelQuestion,
   createCheckpointLearner,
   playDuel,
 } from "./checkpoint-fixtures";
@@ -18,22 +20,12 @@ test.describe("A checkpoint from today's session", () => {
 
     await page.goto("/today");
 
-    // Keys work once the page hydrates, so each first press retries until the screen changes.
-    await expect(async () => {
-      await page.keyboard.press("Enter");
+    await expectHydrated(page.getByRole("button", { name: /^Start/u }));
+    await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(new RegExp(`/challenge/${boss.id}\\?session=`, "u"));
 
-      await expect(page).toHaveURL(new RegExp(`/challenge/${boss.id}\\?session=`, "u"), {
-        timeout: 1000,
-      });
-    }).toPass({ timeout: 10_000 });
-
-    await expect(async () => {
-      await page.keyboard.press("Enter");
-
-      await expect(
-        page.getByRole("progressbar", { name: `Question 1 of ${CHECKPOINT_QUESTIONS}` }),
-      ).toBeAttached({ timeout: 1000 });
-    }).toPass({ timeout: 5000 });
+    await expectHydrated(page.getByRole("button", { exact: true, name: "Start" }));
+    await page.keyboard.press("Enter");
 
     await expect(page).toHaveURL(new RegExp(`/checkpoint/${block.id}\\?session=`, "u"));
 
@@ -135,9 +127,7 @@ test.describe("A checkpoint from today's session", () => {
       await answerDuelQuestion(page, number);
     }
 
-    await page.keyboard.press("1");
-    await page.keyboard.press("Enter");
-    await expect(page.getByRole("status")).toHaveText(/^Correct!/u);
+    await checkDuelQuestion(page, CHECKPOINT_PASS_MARK);
 
     const finish = await holdActionAnswer(page, `/checkpoint/${block.id}`);
     await page.getByRole("button", { name: /^See result/u }).click();

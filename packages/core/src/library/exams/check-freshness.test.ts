@@ -13,13 +13,16 @@ import {
   sourceFixture,
 } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { Response as PageResponse, fetch } from "undici";
 import { describe, expect, it, vi } from "vitest";
+import { mockDecision, uniqueWord } from "../identity/_test-utils/identity-mocks";
+import { getSourceValidUntil } from "../sources/freshness-schedule";
+import { findStoredResearchSources } from "../sources/stored-research-sources";
 import { storeWebSource } from "../sources/web-sources";
 import { checkFreshness } from "./check-freshness";
 
 const NOW = new Date("2026-09-26T12:00:00.000Z");
-const DAY_MS = 86_400_000;
 
 function servePage(text: string) {
   vi.mocked(fetch).mockImplementation(
@@ -28,7 +31,7 @@ function servePage(text: string) {
 }
 
 function daysFromNow(days: number) {
-  return new Date(NOW.getTime() + days * DAY_MS);
+  return new Date(NOW.getTime() + days * MS_PER_DAY);
 }
 
 async function examWithLearner({
@@ -94,6 +97,13 @@ async function productReleasesPage({ releasesHash }: { releasesHash?: string } =
 
   const course = await courseFixture({ organizationId: brand.id, productId: product.id });
   return { course, product, source };
+}
+
+async function linkSourceToGoal(sourceId: string) {
+  const user = await userFixture();
+  const goal = await goalFixture({ userId: user.id });
+
+  await learnerSourceFixture({ goalId: goal.id, origin: "research", sourceId, userId: user.id });
 }
 
 describe(checkFreshness, () => {
@@ -218,6 +228,55 @@ describe(checkFreshness, () => {
     ).resolves.toStrictEqual({ reason: "noUrl", status: "stopped" });
   });
 
+  it("renews an expired unchanged law for the next check and for reuse", async () => {
+    const name = uniqueWord();
+    const topic = "regulation";
+
+    const request = {
+      country: "BR",
+      language: "pt",
+      name,
+      publisher: null,
+      searchTerms: [name],
+      topic,
+    } as const;
+
+    servePage("Art. 1º A autoridade deve publicar o relatório anual de fiscalização. ".repeat(4));
+
+    const source = await storeWebSource({
+      kind: "official",
+      language: request.language,
+      publisher: null,
+      title: name,
+      topic,
+      url: `https://www.planalto.gov.br/${randomUUID()}`,
+    });
+
+    await linkSourceToGoal(source.id);
+
+    await prisma.source.update({
+      data: { validUntil: new Date(Date.now() - MS_PER_DAY) },
+      where: { id: source.id },
+    });
+
+    mockDecision(source.id);
+    await expect(findStoredResearchSources(request)).resolves.toStrictEqual([]);
+
+    const check = await checkFreshness({ target: { kind: "source", sourceId: source.id } });
+    const stored = await prisma.source.findUniqueOrThrow({ where: { id: source.id } });
+    const validUntil = getSourceValidUntil({ fetchedAt: stored.fetchedAt, topic });
+
+    expect(stored).toMatchObject({ nextCheckAt: validUntil, validUntil });
+
+    expect(check).toMatchObject({
+      nextCheckAt: validUntil.toISOString(),
+      sourceChange: null,
+      status: "scheduled",
+    });
+
+    await expect(findStoredResearchSources(request)).resolves.toStrictEqual([source.id]);
+  });
+
   it("reports what changed in a source learners rely on", async () => {
     servePage("Alíquota de 15%.");
 
@@ -230,15 +289,7 @@ describe(checkFreshness, () => {
       url: `https://www.planalto.gov.br/${randomUUID()}`,
     });
 
-    const user = await userFixture();
-    const goal = await goalFixture({ userId: user.id });
-
-    await learnerSourceFixture({
-      goalId: goal.id,
-      origin: "research",
-      sourceId: source.id,
-      userId: user.id,
-    });
+    await linkSourceToGoal(source.id);
 
     servePage("Alíquota de 17%.");
 

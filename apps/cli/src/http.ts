@@ -22,10 +22,6 @@ const UNSENT_CODES = new Set([
 
 export type HttpResult = { body: unknown; ok: boolean; status: number };
 
-export function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
 export function unexpectedResponse(result: HttpResult): CliError {
   return new CliError(`The server answered with an unexpected response (HTTP ${result.status}).`);
 }

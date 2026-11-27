@@ -7,6 +7,8 @@ export type PronunciationClipInput = {
   romanization?: string;
   spokenText: string;
   targetText: string;
+  /** What a transcriber wrote for the clip, given to the judge as the app does. */
+  transcriberHeard?: string;
 };
 
 export type PronunciationClipExpected = { flaggedWords: string[]; stressWords: string[] };
@@ -169,6 +171,39 @@ export const PRONUNCIATION_CLIP_CASES: PronunciationTestCase[] = [
     expected: { flaggedWords: ["rent"], stressWords: [] },
     id: "en-rent-alone",
     userInput: { language: "en", learnerLanguage: "pt", spokenText: "hent", targetText: "rent" },
+  },
+  {
+    expected: { flaggedWords: [], stressWords: [] },
+    id: "it-ha-fratelli",
+    userInput: {
+      language: "it",
+      learnerLanguage: "pt",
+      spokenText: "Ha fratelli?",
+      targetText: "Ha fratelli?",
+      transcriberHeard: "Ah, fratelli.",
+    },
+  },
+  {
+    expected: { flaggedWords: [], stressWords: [] },
+    id: "de-isst-ist",
+    userInput: {
+      language: "de",
+      learnerLanguage: "pt",
+      spokenText: "Er isst viel.",
+      targetText: "Er isst viel.",
+      transcriberHeard: "Er ist viel.",
+    },
+  },
+  {
+    expected: { flaggedWords: ["fame."], stressWords: [] },
+    id: "it-fame-fama",
+    userInput: {
+      language: "it",
+      learnerLanguage: "pt",
+      spokenText: "Ho fama.",
+      targetText: "Ho fame.",
+      transcriberHeard: "O fama.",
+    },
   },
   {
     expected: { flaggedWords: [], stressWords: [] },

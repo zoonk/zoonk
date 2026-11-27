@@ -9,6 +9,7 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { pickInMistake } from "../../_test-utils/shown-choice";
 import { recordLearnerAnswer } from "../../learner/record-learner-answer";
 import { answerMistakePractice } from "../../mistakes/answer-mistake-practice";
 import { finishMistakePractice } from "../../mistakes/finish-mistake-practice";
@@ -64,7 +65,12 @@ describe("notebook practice mission moments", () => {
     mockSession(user.id);
 
     const answered = await answerMistakePractice({
-      input: { answer: { selectedIndex: 0 }, durationMs: 5000, itemId: item.id, timeZone: "UTC" },
+      input: {
+        answer: await pickInMistake({ mistakeId: mistake.id }),
+        durationMs: 5000,
+        itemId: item.id,
+        timeZone: "UTC",
+      },
       mistakeId: mistake.id,
     });
 
@@ -132,7 +138,12 @@ describe("notebook practice mission moments", () => {
     });
 
     const later = await answerMistakePractice({
-      input: { answer: { selectedIndex: 0 }, durationMs: 5000, itemId: item.id, timeZone: "UTC" },
+      input: {
+        answer: await pickInMistake({ mistakeId: laterMistake.id }),
+        durationMs: 5000,
+        itemId: item.id,
+        timeZone: "UTC",
+      },
       mistakeId: laterMistake.id,
     });
 
@@ -219,7 +230,9 @@ describe("notebook practice mission moments", () => {
 
       const answered = await answerMistakePractice({
         input: {
-          answer: dontKnow ? { dontKnow: true } : { selectedIndex: 1 },
+          answer: dontKnow
+            ? { dontKnow: true }
+            : await pickInMistake({ mistakeId: practiceMistake.id, right: false }),
           durationMs: 5000,
           itemId: practiceItem.id,
           timeZone: "UTC",

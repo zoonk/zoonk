@@ -66,6 +66,8 @@ fun ItemSupport(
     modifier: Modifier = Modifier,
     contextStyle: TextStyle = MaterialTheme.typography.bodyLarge,
 ) {
+    if (context == null && image == null && visual == null) return
+
     Column(modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
         context?.let { ItemText(it, style = contextStyle) }
         image?.let { image ->

@@ -20,6 +20,14 @@ extension View {
   }
 }
 
+extension Text {
+  /// Main's `placeholder:text-muted-foreground`: a field's example is the muted step, never the
+  /// system's prompt color, so it reads as a hint in every appearance.
+  func fieldPrompt() -> Text {
+    foregroundStyle(.mutedForeground)
+  }
+}
+
 extension InsettableShape {
   /// Main's `ring-[3px] ring-ring/50` just outside a focused field's ink line, more contrast
   /// included.

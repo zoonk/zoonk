@@ -67,12 +67,11 @@
       }
     },
     "%@ and %@ don't go together." : {
-      "comment" : "VoiceOver, after two cards that don't match are picked",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ und %2$@ passen nicht zusammen."
+            "value" : "%1$@ und %2$@ gehören nicht zusammen."
           }
         },
         "en" : {
@@ -84,7 +83,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ y %2$@ no forman una pareja."
+            "value" : "%1$@ y %2$@ no forman pareja."
           }
         },
         "fr" : {
@@ -96,25 +95,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ e %2$@ non si abbinano."
+            "value" : "%1$@ e %2$@ non vanno insieme."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@と%2$@はペアになりません。"
+            "value" : "%1$@と%2$@は組み合わせが違います。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@와(과) %2$@ 조합은 맞지 않아요."
+            "value" : "%1$@와(과) 짝인 카드는 %2$@이(가) 아니에요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ i %2$@ nie pasują do siebie."
+            "value" : "%1$@ i %2$@ do siebie nie pasują."
           }
         },
         "pt" : {
@@ -440,71 +439,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@: %2$@ (%3$@) ile %4$@ (%5$@) arası"
-          }
-        }
-      }
-    },
-    "%@ goes with %@, not %@." : {
-      "comment" : "After the check: a pair the learner first matched wrong",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ gehört zu %2$@, nicht zu %3$@."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ goes with %2$@, not %3$@."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ va con %2$@, no con %3$@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ va avec %2$@, pas avec %3$@."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ si abbina a %2$@, non a %3$@."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@とペアになるのは%2$@で、%3$@ではありません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@의 짝은 %2$@이고, %3$@은(는) 아니에요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ i %2$@ tworzą parę. %3$@ tu nie pasuje."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ forma par com %2$@, não com %3$@."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@, %2$@ ile eşleşir, %3$@ ile değil."
           }
         }
       }
@@ -1343,65 +1277,6 @@
         }
       }
     },
-    "%@, matched" : {
-      "comment" : "VoiceOver: a card already matched",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@, zugeordnet"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@, emparejada"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@, associé"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@, abbinata"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@、ペア成立"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@, 짝 맞춤"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@, dopasowana"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@, par encontrado"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@, eşleştirildi"
-          }
-        }
-      }
-    },
     "%@: %@ (%@) down the side, %@ (%@) across the top, each square their product." : {
       "comment" : "VoiceOver: what a grid of products shows",
       "localizations" : {
@@ -2184,71 +2059,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "%lld of %lld pairs matched" : {
-      "comment" : "How many pairs the learner matched",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$lld von %2$lld Paaren zugeordnet"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld of %2$lld pairs matched"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$lld de %2$lld parejas formadas"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$lld paires associées sur %2$lld"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$lld su %2$lld coppie abbinate"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ペアが%1$lld／%2$lld組成立"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$lld/%2$lld쌍 짝 맞춤"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dopasowano %1$lld z %2$lld par"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$lld de %2$lld pares encontrados"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$lld / %2$lld çift eşleştirildi"
           }
         }
       }
@@ -5346,67 +5156,66 @@
         }
       }
     },
-    "Matched %@ with %@. %lld of %lld pairs matched." : {
-      "comment" : "VoiceOver, after a pair is matched",
+    "Matched %@ with %@. Pairs matched: %lld of %lld." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ und %2$@ zugeordnet. %3$lld von %4$lld Paaren zugeordnet."
+            "value" : "%1$@ mit %2$@ verbunden. Zugeordnete Paare: %3$lld von %4$lld."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Matched %1$@ with %2$@. %3$lld of %4$lld pairs matched."
+            "value" : "Matched %1$@ with %2$@. Pairs matched: %3$lld of %4$lld."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Emparejaste %1$@ con %2$@. %3$lld de %4$lld parejas formadas."
+            "value" : "Se emparejó %1$@ con %2$@. Parejas encontradas: %3$lld de %4$lld."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ associé à %2$@. %3$lld paires associées sur %4$lld."
+            "value" : "Tu as associé %1$@ à %2$@. Paires associées : %3$lld sur %4$lld."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hai abbinato %1$@ a %2$@. Le coppie abbinate sono %3$lld su %4$lld."
+            "value" : "Abbinamento riuscito tra %1$@ e %2$@. Coppie abbinate: %3$lld su %4$lld."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@と%2$@がペアになりました。完成したペアは%3$lld組、全部で%4$lld組です。"
+            "value" : "「%1$@」と「%2$@」を組み合わせました。組み合わせたペア：%4$lld組中%3$lld組。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@와(과) %2$@의 짝을 맞췄어요. 맞춘 짝은 %3$lld쌍, 전체는 %4$lld쌍이에요."
+            "value" : "%1$@와(과) %2$@을(를) 연결했어요. 맞춘 짝: %4$lld개 중 %3$lld개."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Połączono „%1$@” z „%2$@”. Liczba dopasowanych par to %3$lld z %4$lld."
+            "value" : "Dopasowano %1$@ do %2$@. Dopasowane pary: %3$lld z %4$lld."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Par formado: %1$@ e %2$@. %3$lld de %4$lld pares encontrados."
+            "value" : "Você combinou %1$@ com %2$@. Pares combinados: %3$lld de %4$lld."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ ile %2$@ eşleştirildi. %3$lld / %4$lld çift eşleştirildi."
+            "value" : "%1$@ ile %2$@ eşleşti. Eşleşen çiftler: %3$lld / %4$lld."
           }
         }
       }
@@ -5525,65 +5334,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Gözden kaçan ilişki"
-          }
-        }
-      }
-    },
-    "Missed on the first try" : {
-      "comment" : "Above the pairs a learner missed at first",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Beim ersten Versuch verpasst"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sin acertar al primer intento"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Manquées au premier essai"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non abbinate al primo tentativo"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1回目に間違えたペア"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "첫 시도에 놓친 짝"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Niedopasowane za pierwszym razem"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não encontrados na primeira tentativa"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "İlk denemede eşleşmeyenler"
           }
         }
       }
@@ -9074,65 +8824,6 @@
         }
       }
     },
-    "Those two don't go together." : {
-      "comment" : "Two picked cards don't match and there's no note on why",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Die beiden passen nicht zusammen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Esas dos no van juntas."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ces deux cartes ne vont pas ensemble."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Queste due carte non vanno insieme."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "その2枚は正しい組み合わせではありません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "두 카드는 짝이 아니에요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Te dwie karty nie pasują do siebie."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Esses dois não combinam."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu ikisi eşleşmiyor."
-          }
-        }
-      }
-    },
     "Took back %@." : {
       "comment" : "VoiceOver, after Undo puts the last card sorted back in hand",
       "localizations" : {
@@ -9542,6 +9233,70 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "İşareti kaldır: %@"
+          }
+        }
+      }
+    },
+    "Unmatched %@ and %@." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zuordnung von %1$@ und %2$@ aufgehoben."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Unmatched %1$@ and %2$@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desemparejaste %1$@ y %2$@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as dissocié %1$@ et %2$@."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hai tolto l’abbinamento tra %1$@ e %2$@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@と%2$@のペアを解除しました。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@와(과) %2$@의 짝을 풀었어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rozłączono %1$@ i %2$@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desfez o par entre %1$@ e %2$@."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ ile %2$@ eşleşmesi kaldırıldı."
           }
         }
       }

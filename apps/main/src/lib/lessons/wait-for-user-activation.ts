@@ -27,9 +27,30 @@ export function trackUserActivation(): void {
   }
 }
 
+function hasUserActivation(): boolean {
+  return globalThis.navigator?.userActivation?.hasBeenActive ?? documentActivation.seen;
+}
+
+let studyNavigation: string | null = null;
+
+/** A fresh document and a history traversal have no study navigation to consume. */
+export function noteStudyNavigation(
+  url: string,
+  navigation: "push" | "replace" | "traverse",
+): void {
+  studyNavigation =
+    navigation === "push" && hasUserActivation() ? new URL(url, location.href).href : null;
+}
+
+export function takeStudyNavigation(): boolean {
+  const tapped = studyNavigation === location.href;
+  studyNavigation = null;
+  return tapped;
+}
+
 /** A study URL must not owe preparation merely because a document loaded; every automatic start waits here too. */
 export async function waitForUserActivation(): Promise<void> {
-  if (navigator.userActivation ? navigator.userActivation.hasBeenActive : documentActivation.seen) {
+  if (hasUserActivation()) {
     return;
   }
 

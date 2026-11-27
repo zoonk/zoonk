@@ -1,6 +1,7 @@
 import { type StudySessionBlock } from "@zoonk/db";
 import { type z } from "zod";
 import { type StudyWeek } from "../../progress/_utils/load-study-week";
+import { getAlternativeStudyBlockPosition } from "../alternative-study-block";
 import { type studyBlockSchema } from "../block-view-contract";
 import { getNextBlock, isDayBlock } from "../day-blocks";
 import { type DayState, withDayState } from "../day-state";
@@ -39,8 +40,9 @@ export function toStudyBlockViews({
   subjects?: ReadonlyMap<number, BlockSubject>;
   writingTasks?: Parameters<typeof toDayBlockView>[0]["writingTasks"];
 }): StudyBlockView[] {
-  const answeredAttemptIds = new Set(answers.map((answer) => answer.id));
-  const answeredItemIds = new Set(answers.flatMap((answer) => answer.itemId ?? []));
+  const questionAnswers = answers.filter((answer) => answer.isBlockAnswer);
+  const answeredAttemptIds = new Set(questionAnswers.map((answer) => answer.id));
+  const answeredItemIds = new Set(questionAnswers.flatMap((answer) => answer.itemId ?? []));
 
   const savedWritingTasks = new Map(
     answers.flatMap(({ itemId, writingTask }) =>
@@ -77,6 +79,7 @@ export type CatchUpView = {
 };
 
 export type StudySessionView = {
+  alternativePosition: number | null;
   blocks: StudyBlockView[];
   /** Brain Power earned so far in this session, full meal included. */
   brainPower: number;
@@ -139,15 +142,17 @@ export function toStudySessionView({
   const { session } = input;
   const preparing = new Set(blocks.flatMap((block) => (block.preparing ? [block.position] : [])));
   const next = getNextBlock(blocks);
+  const nextPosition = next?.position ?? null;
 
   return withDayState(
     {
       ...toDayViewFields({ ...input, preparing, sessionBar: getSessionBar(session.blocks) }),
+      alternativePosition: getAlternativeStudyBlockPosition(blocks),
       blocks,
       id: session.id,
       missions: input.missions,
       nextBlockId: next?.id ?? null,
-      nextPosition: next?.position ?? null,
+      nextPosition,
       status: session.status,
     },
     session.endedAt,

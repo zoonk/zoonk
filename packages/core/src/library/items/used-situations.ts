@@ -49,18 +49,21 @@ export function getItemSituation(item: { content: unknown; set: { content: unkno
 
 /**
  * Openings of every question a learner of this audience can be served for each skill, sets
- * included, so a writer adding questions to one of them puts its cases elsewhere.
+ * included, so a writer adding questions to one of them puts its cases elsewhere. A lesson being
+ * rewritten passes its id, since its own screens' questions are what it rewrites, not cases to avoid.
  */
 export async function loadUsedSituations({
   examBlueprintId = null,
   field = null,
   includeMockReserve = false,
+  lessonId,
   publicOnly = false,
   skillIds,
 }: {
   examBlueprintId?: string | null;
   field?: string | null;
   includeMockReserve?: boolean;
+  lessonId?: string;
   publicOnly?: boolean;
   skillIds: readonly string[];
 }): Promise<Map<string, string[]>> {
@@ -78,6 +81,7 @@ export async function loadUsedSituations({
       AND: [
         ...(publicOnly ? getPublicItemFilter().AND : []),
         includeMockReserve ? { OR: [audience, reserve] } : audience,
+        ...(lessonId ? [{ steps: { none: { lessonId } } }] : []),
       ],
       skillId: { in: [...skillIds] },
     },

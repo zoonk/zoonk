@@ -41,6 +41,7 @@ import com.zoonk.android.feature.player.engine.isServerGradedAnswer
 import com.zoonk.android.feature.player.engine.isWaitingForPicture
 import com.zoonk.android.feature.player.engine.playedSteps
 import com.zoonk.android.feature.player.engine.reduce
+import com.zoonk.android.feature.player.engine.resume
 import com.zoonk.android.feature.player.engine.revealGuess
 import com.zoonk.android.feature.player.engine.round
 import com.zoonk.android.feature.player.language.isDictation
@@ -69,7 +70,7 @@ import com.zoonk.api.models.LessonStepCheckInput
 import com.zoonk.api.models.LessonStepCheckResult
 import com.zoonk.api.models.LibraryLessonCompletion
 import com.zoonk.api.models.LibraryLessonRun
-import com.zoonk.api.models.LibraryLessonRunAnswersInner
+import com.zoonk.api.models.LibraryLessonRunAnswer
 import com.zoonk.api.models.LibraryLessonStartInputOpening
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -235,9 +236,11 @@ class LessonPlayerViewModel(
     private val saved: SavedStateHandle,
     private val now: () -> Long = System::currentTimeMillis,
     private val opening: String? = null,
-    private val tapped: Boolean = false,
+    tapped: Boolean = false,
     /** A host that plays the lesson its own way, as an explanation without its summary, keeps its copy. */
     private val hosted: Boolean = false,
+    /** Called as the run's start is sent: what the run says of its save, or one the server took since. */
+    private val runStarting: (lessonId: String) -> (saved: Boolean) -> Boolean = { { it } },
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<LessonPlayerState?>(null)
     private val mutableEnding = MutableStateFlow(LessonEnding(inSession = studySessionId != null))
@@ -258,7 +261,7 @@ class LessonPlayerViewModel(
     val sessionMove: StateFlow<SessionMove> = mutableSessionMove.asStateFlow()
 
     // A restored study link waits for a learner action before its start can owe preparation.
-    private var activated = opening == null || tapped
+    private var activated = tapped
 
     private val mutableExplanations = MutableStateFlow<Map<String, AnswerExplanation>>(emptyMap())
 
@@ -286,6 +289,14 @@ class LessonPlayerViewModel(
     private var resending: Deferred<Boolean>? = null
     var hasUnsent by mutableStateOf(false)
         private set
+
+    private var runSaved by mutableStateOf<(() -> Boolean)?>(null)
+
+    /**
+     * Whether the lesson is saved, as its run said or as the server took a save since, which outlasts the save visit
+     * a covering screen ends; null until a lesson of the library starts.
+     */
+    val lessonSaved: Boolean? get() = runSaved?.invoke()
     private var exampleLinesWrite: Job? = null
     private var writingExampleLines by mutableStateOf(false)
     private var sceneRecorded = false
@@ -319,18 +330,20 @@ class LessonPlayerViewModel(
     /** By screen: a server-graded answer sent with no verdict back yet, so Check sends it again under the same attempt. */
     private val unverdicted = HashMap<String, Pair<LessonAnswer, UUID>>()
 
-    /**
-     * Starts the lesson's run when it opens, as main does after its player mounts (never on a
-     * prefetch); reopening it for the same learner keeps where they are.
-     */
     fun open(lesson: PlayableLesson) {
         val session = sessions.current
 
-        if (this.lesson?.id == lesson.id && owner == session && (mutableState.value != null || starting?.isActive == true)) return
+        if (this.lesson?.id == lesson.id && owner == session && (mutableState.value != null || starting?.isActive == true)) {
+            if (!activated && this.lesson != lesson) {
+                showLesson(lesson)
+                leaveOutUnheardDictations()
+            }
+            return
+        }
 
         work.cancel()
         work = openScope()
-        this.lesson = lesson
+        if (owner != session) activated = false
         owner = session
         admittedRunId = null
         clock = null
@@ -349,12 +362,21 @@ class LessonPlayerViewModel(
         val reading = day.read(session, work)
         // Written content is usable while admission runs; server work still waits for its run.
         openedAt = now()
-        mutableState.value = LessonPlayerState.initial(lesson.id, lesson.playedSteps, now = openedAt).withFirstAnswer(openedAt)
+        showLesson(lesson)
         work.launch {
             reading.join()
             leaveOutUnheardDictations()
         }
         if (activated) startRun()
+    }
+
+    private fun showLesson(lesson: PlayableLesson) {
+        this.lesson = lesson
+        mutableState.value =
+            LessonPlayerState
+                .initial(lesson.id, lesson.playedSteps, now = openedAt)
+                .resume(lesson.resume.map(LibraryLessonRunAnswer::toRunAnswer), openedAt)
+                .withFirstAnswer(openedAt)
     }
 
     fun resume() {
@@ -477,7 +499,6 @@ class LessonPlayerViewModel(
         }
     }
 
-    /** The learner tapped or typed in the lesson, seen once at the player's root ([LearnerInput]). */
     fun act() {
         mutableState.value
             ?.currentStep
@@ -491,8 +512,10 @@ class LessonPlayerViewModel(
     fun dispatch(action: LessonAction) {
         when (action) {
             LessonAction.Continue, LessonAction.GoBack, LessonAction.ExplainFirst, LessonAction.KnowThis,
-            LessonAction.RestoreWriting, is LessonAction.SelectAnswer, is LessonAction.DontKnow, is LessonAction.SkipWriting,
-            -> activate()
+            LessonAction.RestoreWriting, LessonAction.CompletionRetried, is LessonAction.DontKnow, is LessonAction.SkipWriting,
+            -> act()
+
+            is LessonAction.SelectAnswer -> activate()
 
             else -> Unit
         }
@@ -535,6 +558,13 @@ class LessonPlayerViewModel(
     ): String? {
         encodedAnswers[stepId]?.takeIf { it.first === answer }?.let { return it.second }
         return savedJson(ApiJson, LessonAnswer.serializer(), answer).also { encodedAnswers[stepId] = answer to it }
+    }
+
+    fun restoreAnswer(answer: LessonAnswer) {
+        mutableState.update { state ->
+            val step = state?.currentStep ?: return@update state
+            reduce(state, LessonAction.SelectAnswer(step.id, answer), now())
+        }
     }
 
     fun select(answer: LessonAnswer?) {
@@ -802,6 +832,7 @@ class LessonPlayerViewModel(
                     .filterNot { it.attemptId in queued }
                     .forEach { unsaved.getOrPut(it.stepId) { mutableListOf() } += it }
                 sendUnsent()
+                val shownSaved = runStarting(lessonId)
                 val outcome = start(runId = null)
                 if (outcome !is StartOutcome.Started) reading.cancel()
                 if (outcome == null) return@launch
@@ -824,6 +855,7 @@ class LessonPlayerViewModel(
                         val state = playFrom(lesson, outcome.run)
                         if (sessions.current != owner) return@launch
                         replay = outcome.run.replay
+                        if (!hosted) runSaved = { shownSaved(outcome.run.saved) }
                         mutableState.value = state
                         leaveOutUnheardDictations()
                         if (hasHeld) sendUnsent()
@@ -1196,7 +1228,7 @@ class LessonPlayerViewModel(
         dispatch(
             LessonAction.RunResynced(
                 runId = run.runId.toString(),
-                answers = run.answers.map(LibraryLessonRunAnswersInner::toRunAnswer),
+                answers = run.answers.map(LibraryLessonRunAnswer::toRunAnswer),
                 optionalStepIds = run.optionalStepIds.orEmpty().map(UUID::toString),
                 pictures = pictures,
             ),
@@ -1261,7 +1293,7 @@ private fun LibraryLessonRun.toStartedAction(
     keepsScreen: Boolean,
 ) = LessonAction.RunStarted(
     runId = runId.toString(),
-    answers = answers.map(LibraryLessonRunAnswersInner::toRunAnswer),
+    answers = answers.map(LibraryLessonRunAnswer::toRunAnswer),
     hyperdrive = HyperdriveStart(hyperdrive.knownStepIds.map(UUID::toString).toSet(), hyperdrive.streak.toInt()),
     startedAt = startedAt,
     optionalStepIds = optionalStepIds.orEmpty().map(UUID::toString),
@@ -1269,7 +1301,7 @@ private fun LibraryLessonRun.toStartedAction(
     keepsScreen = keepsScreen,
 )
 
-private fun LibraryLessonRunAnswersInner.toRunAnswer(): RunAnswer {
+private fun LibraryLessonRunAnswer.toRunAnswer(): RunAnswer {
     val saved = answer?.toLessonAnswer()
     return RunAnswer(stepId.toString(), isCorrect, answeredAt, saved, result.toStepResult(isRecording = saved == null))
 }
