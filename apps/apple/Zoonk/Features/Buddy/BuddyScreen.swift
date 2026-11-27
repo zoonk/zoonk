@@ -143,20 +143,7 @@ private struct BuddyContent: View {
           .onAppear { isListShown = false }
       }
     } content: { isBeside in
-      thread
-        .taskAction(isShown: !isBeside && list?.value != nil) {
-          Button {
-            isListShown = true
-          } label: {
-            Label {
-              Text(
-                "Conversations", tableName: "Buddy",
-                comment: "Title of the list of buddy conversations")
-            } icon: {
-              Image(systemName: "bubble.left.and.bubble.right")
-            }
-          }
-        }
+      thread(listsBeside: isBeside)
     }
     .barTitleAfterHero(name)
     .taskOptions(
@@ -248,10 +235,25 @@ private struct BuddyContent: View {
       openConversation()
     }
     // A link to a conversation that isn't this goal's opens the tab as a visit does.
-    .onChange(of: conversation?.thread.state == .failed(.notFound)) { _, isMissing in
+    .onChange(of: isMissing) { _, isMissing in
       if isMissing {
         router.buddyConversation = nil
       }
+    }
+  }
+
+  /// Not the learner's under this goal, or no conversation at all: one always has a question.
+  private var isMissing: Bool {
+    guard let conversation, !conversation.isNew, !conversation.isAsking,
+      !conversation.hasUnsentQuestion, conversation.askFailure == nil
+    else {
+      return false
+    }
+
+    switch conversation.thread.state {
+    case .failed(.notFound): return true
+    case .loaded(let page): return page.turns.isEmpty
+    default: return false
     }
   }
 
@@ -316,18 +318,37 @@ private struct BuddyContent: View {
     let questions = conversation.turns + [conversation.asking].compactMap(\.self)
 
     return BuddyOpenRow(
-      id: id, isNew: conversation.isNew,
+      id: id,
       asked: questions.first.map { first in
         BuddyOpenRow.Asked(
           title: first.question, lastAskedAt: questions.last?.createdAt ?? first.createdAt)
       })
   }
 
-  private var thread: some View {
+  /// Where the list isn't beside it, its button is on the name's row, as main's is: the bar has no
+  /// room left on a phone.
+  private func thread(listsBeside: Bool) -> some View {
     conversationView
       .safeAreaBar(edge: .top) {
         VStack(alignment: .leading, spacing: 0) {
-          PageHeader(Text(name))
+          PageHeader(Text(name)) {
+            if !listsBeside, list?.value != nil {
+              Button {
+                isListShown = true
+              } label: {
+                Label {
+                  Text(
+                    "Conversations", tableName: "Buddy",
+                    comment: "Title of the list of buddy conversations")
+                } icon: {
+                  Image(systemName: "bubble.left.and.bubble.right")
+                }
+                .labelStyle(.iconOnly)
+              }
+              .buttonStyle(.ghost.icon.endsRow)
+              .controlSize(.small)
+            }
+          }
           dayLine
         }
         .listRowEdges()

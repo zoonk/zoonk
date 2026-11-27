@@ -18,18 +18,15 @@ struct BuddyConversationList: View {
     ZoonkList {
       Section {
         Button(action: startNew) {
-          Label {
-            Text(
-              "New conversation", tableName: "Buddy",
-              comment: "Starts a new conversation with the buddy")
-          } icon: {
-            Image(systemName: "square.and.pencil")
-          }
+          Text(
+            "New conversation", tableName: "Buddy",
+            comment: "Starts a new conversation with the buddy"
+          )
           .foregroundStyle(.primary)
           .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .currentRow(open?.isNew == true)
-        .accessibilityAddTraits(open?.isNew == true ? .isSelected : [])
+        .currentRow(isOpenNew)
+        .accessibilityAddTraits(isOpenNew ? .isSelected : [])
 
         rows(list)
       } header: {
@@ -37,7 +34,36 @@ struct BuddyConversationList: View {
           SectionTitle(title)
         }
       }
+
+      if list.value?.nextCursor != nil {
+        Section {
+          VStack(alignment: .leading, spacing: 8) {
+            if store.nextConversations[goalId] == .failed {
+              FailureLine(
+                message: LocalizedStringResource(
+                  "Couldn't load more conversations. Try again.", table: "Buddy")
+              )
+              .typeStyle(.note)
+            }
+
+            BusyButton(isBusy: store.nextConversations[goalId] == .loading) {
+              Task { await store.loadMoreConversations(goalId: goalId) }
+            } label: {
+              Text(
+                "Show more", tableName: "Buddy", comment: "Loads the next buddy conversations")
+            }
+            .buttonStyle(.outline)
+            .controlSize(.small)
+          }
+          .listRowBackground(Color.clear)
+        }
+      }
     }
+  }
+
+  /// The open conversation has no question yet.
+  private var isOpenNew: Bool {
+    open?.asked == nil
   }
 
   var title: Text {
@@ -50,25 +76,6 @@ struct BuddyConversationList: View {
     case .loaded, .empty:
       ForEach(shown(list.value?.conversations ?? []), id: \.id) { conversation in
         row(conversation)
-      }
-
-      if list.value?.nextCursor != nil {
-        if store.nextConversations[goalId] == .failed {
-          FailureLine(
-            message: LocalizedStringResource(
-              "Something went wrong. Try again.", table: "Buddy",
-              comment: "More buddy conversations couldn't be read")
-          )
-          .typeStyle(.note)
-        }
-
-        BusyButton(isBusy: store.nextConversations[goalId] == .loading, isRow: true) {
-          Task { await store.loadMoreConversations(goalId: goalId) }
-        } label: {
-          Text(
-            "Show more", tableName: "Buddy",
-            comment: "Loads the next buddy conversations")
-        }
       }
     case .failed:
       VStack(alignment: .leading, spacing: 12) {
@@ -114,19 +121,39 @@ struct BuddyConversationList: View {
     return Button {
       select(conversation.id)
     } label: {
-      HStack(alignment: .firstTextBaseline, spacing: 12) {
+      VStack(alignment: .leading, spacing: 2) {
         Text(conversation.title)
           .foregroundStyle(.primary)
           .lineLimit(1)
-          .frame(maxWidth: .infinity, alignment: .leading)
 
-        Text(buddyConversationDay(conversation.lastAskedAt))
-          .typeStyle(.data)
+        BuddyConversationDay(date: conversation.lastAskedAt)
           .foregroundStyle(.mutedForeground)
       }
+      .frame(maxWidth: .infinity, alignment: .leading)
     }
     .currentRow(isOpen)
     .accessibilityAddTraits(isOpen ? .isSelected : [])
+  }
+}
+
+/// Today's rows say when, earlier ones which day; a day said in words keeps the text's face.
+private struct BuddyConversationDay: View {
+  let date: Date
+
+  var body: some View {
+    let calendar = Calendar.current
+
+    if let yesterday = calendar.date(byAdding: .day, value: -1, to: .now),
+      calendar.isDate(date, inSameDayAs: yesterday)
+    {
+      Text("Yesterday", tableName: "Buddy", comment: "When a buddy conversation was last asked in")
+        .typeStyle(.note)
+    } else {
+      Text(
+        calendar.isDateInToday(date) ? PlanDate.timeOfDay(date) : PlanDate.momentDay(date)
+      )
+      .typeStyle(.data)
+    }
   }
 }
 
@@ -138,15 +165,6 @@ struct BuddyOpenRow: Equatable {
   }
 
   let id: String
-  /// Named by the app and nothing asked yet.
-  let isNew: Bool
   /// Its first question and when its latest was asked; nil before the first.
   let asked: Asked?
-}
-
-/// Its time when it's today's, its day otherwise (main's `useFormatMomentDay`).
-func buddyConversationDay(_ date: Date, now: Date = .now) -> String {
-  Calendar.current.isDate(date, inSameDayAs: now)
-    ? PlanDate.timeOfDay(date)
-    : PlanDate.momentDay(date, now: now)
 }

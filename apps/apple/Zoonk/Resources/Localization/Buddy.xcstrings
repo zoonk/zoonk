@@ -1460,6 +1460,10 @@
         }
       }
     },
+    "Conversations" : {
+      "comment" : "Title of the list of buddy conversations"
+    },
+    "Couldn't load more conversations. Try again." : {},
     "Curious alien" : {
       "comment" : "What the Zu buddy is",
       "localizations" : {
@@ -2876,6 +2880,9 @@
         }
       }
     },
+    "New conversation" : {
+      "comment" : "Starts a new conversation with the buddy"
+    },
     "No thanks" : {
       "comment" : "Declines a plan change from an insight",
       "localizations" : {
@@ -3643,6 +3650,9 @@
         }
       }
     },
+    "Show more" : {
+      "comment" : "Loads the next buddy conversations"
+    },
     "Shows %@'s day" : {
       "comment" : "VoiceOver hint of the buddy's day line; the argument is the buddy's name",
       "localizations" : {
@@ -4055,6 +4065,9 @@
           }
         }
       }
+    },
+    "Try again" : {
+      "comment" : "Reads the buddy conversations again"
     },
     "Understand quantum physics" : {
       "comment" : "An example goal",
@@ -4763,6 +4776,9 @@
           }
         }
       }
+    },
+    "Yesterday" : {
+      "comment" : "When a buddy conversation was last asked in"
     },
     "Young" : {
       "comment" : "The buddy's second stage",
