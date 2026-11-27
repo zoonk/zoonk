@@ -58,6 +58,8 @@ export type OnboardingBar = {
   end?: ReactNode;
   middle?: ReactNode;
   onBack?: () => void;
+  /** The learner pressed ✕, before the page changes. */
+  onClose?: () => void;
 };
 
 export const NO_BAR: OnboardingBar = {};
@@ -90,16 +92,18 @@ export function useOnboardingScreen(): OnboardingScreen {
  */
 export function OnboardingTestQuestion({
   children,
+  onClose,
   progress,
 }: {
   children: ReactNode;
+  onClose?: () => void;
   progress: number;
 }) {
   const screen = useOnboardingScreen();
 
   return (
     <OnboardingScreenContext
-      value={{ ...screen, bar: { middle: <TestProgress value={progress} /> } }}
+      value={{ ...screen, bar: { middle: <TestProgress value={progress} />, onClose } }}
     >
       {children}
     </OnboardingScreenContext>

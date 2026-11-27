@@ -4,96 +4,159 @@ import {
   type LanguageLevelTestView,
   type LevelTestAnswerInput,
 } from "@zoonk/core/language/level-test/contract";
-import { useCanRecord, useVoiceRecorder } from "@zoonk/ui/hooks/voice-recorder";
+import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
-import { useCallback, useState, useTransition } from "react";
-import {
-  OnboardingActions,
-  OnboardingColumn,
-  OnboardingDescription,
-  OnboardingHeading,
-  OnboardingSecondaryButton,
-  OnboardingTitle,
-} from "../../onboarding/onboarding-frame";
-import { OnboardingTestQuestion } from "../../onboarding/onboarding-host";
+import { useState, useTransition } from "react";
+import { usePoll } from "../../_utils/use-poll";
 import { PlacementQuestionScreen } from "../../onboarding/steps/placement-question";
-import { RecordButton } from "../../speech/record-button";
-import { type RecordProblem, useRecordNote } from "../../speech/record-note";
+import { useTestFacts } from "../../placement-test/use-test-facts";
 import { useSpokenAudio } from "../../speech/use-spoken-audio";
+import { useSkillName } from "../_utils/use-skill-name";
 import { ListeningMessage } from "./level-test-parts";
+import { type ReadyLevelTest } from "./level-test-phase";
 
-type ReadyTest = Extract<LanguageLevelTestView, { status: "ready" }>;
-type NextStep = ReadyTest["next"];
+const POLL_MS = 3000;
 
-export function LevelTestQuestion({
+type AskedStep = Extract<ReadyLevelTest["next"], { kind: "confirmation" | "question" }>;
+
+function isAsked(next: ReadyLevelTest["next"]): next is AskedStep {
+  return next.kind === "question" || next.kind === "confirmation";
+}
+
+export function useLevelTestAudio({
+  onRead,
+  read,
+  test,
+}: {
+  onRead: (view: ReadyLevelTest) => void;
+  read: () => Promise<LanguageLevelTestView | null>;
+  test: ReadyLevelTest | null;
+}) {
+  const next = test?.next;
+  const question = next && isAsked(next) ? next.question : null;
+
+  const poll = usePoll({
+    active: Boolean(question?.audioPending),
+    intervalMs: POLL_MS,
+    key: question?.id,
+    onPoll: async (signal) => {
+      const view = await read();
+
+      if (!view) {
+        throw new Error("The level test couldn't be read");
+      }
+
+      if (
+        !signal.aborted &&
+        view.status === "ready" &&
+        isAsked(view.next) &&
+        view.next.question.id === question?.id
+      ) {
+        onRead(view);
+      }
+    },
+    startNow: false,
+  });
+
+  return poll.status === "polling";
+}
+
+type Sent = "answer" | "defer" | null;
+
+function AskedQuestion({
   answer,
   audioPending,
+  onClose,
   onStop,
   onView,
-  progress,
-  question,
-  selectAll = false,
+  step,
   targetLanguage,
+  test,
 }: {
   answer: (input: LevelTestAnswerInput) => Promise<LanguageLevelTestView | null>;
   audioPending: boolean;
+  onClose: () => void;
   onStop: () => void;
   onView: (view: LanguageLevelTestView) => void;
-  /** 0 to 1. */
-  progress: number;
-  question: Extract<NextStep, { kind: "question" }>["question"];
-  /** A level's confirmation: every right option is picked, so a guess rarely passes. */
-  selectAll?: boolean;
+  step: AskedStep;
   targetLanguage: string;
+  test: ReadyLevelTest;
 }) {
   const t = useExtracted();
+  const facts = useTestFacts();
+  const skillName = useSkillName();
   const [failures, setFailures] = useState(0);
+  const [sent, setSent] = useState<Sent>(null);
   const [isPending, startTransition] = useTransition();
   const speech = useSpokenAudio(targetLanguage);
+  const { question } = step;
   const isListening = question.skill === "listening";
   const noAudio = isListening && (audioPending || speech.state.status === "failed");
   const listeningOut = noAudio ? t("Skip this question") : t("I didn't understand the audio");
+  const number = test.answered + 1;
+
+  const send = (kind: Exclude<Sent, null>, input: Omit<LevelTestAnswerInput, "questionId">) => {
+    setSent(kind);
+
+    startTransition(async () => {
+      const view = await answer({ ...input, questionId: question.id }).catch(() => null);
+
+      if (!view) {
+        setFailures((count) => count + 1);
+        return;
+      }
+
+      onView(view);
+    });
+  };
 
   return (
     <PlacementQuestionScreen
       dontKnowLabel={isListening ? listeningOut : undefined}
       failures={failures}
-      key={question.id}
       media={
         isListening ? (
-          <ListeningMessage
-            language={targetLanguage}
-            pending={audioPending}
-            question={question}
-            speech={speech}
-          />
+          <>
+            <ListeningMessage
+              language={targetLanguage}
+              pending={audioPending}
+              question={question}
+              speech={speech}
+            />
+            <Button
+              busy={isPending && sent === "defer"}
+              className="self-start"
+              disabled={isPending}
+              focusableWhenDisabled
+              onClick={() => send("defer", { answerIndex: null, audioDeferred: true })}
+              type="button"
+              variant="link"
+            >
+              {t({
+                description:
+                  "Button on a listening question for a learner who can't play sound right now, such as on a bus. It ends the listening questions for this test.",
+                message: "Can't listen now",
+              })}
+            </Button>
+          </>
         ) : null
       }
-      onAnswer={(choice, durationMs) =>
-        startTransition(async () => {
-          const answerIndex = "selectedIndex" in choice ? choice.selectedIndex : null;
-          const answerIndices = "selectedIndexes" in choice ? choice.selectedIndexes : undefined;
-          const skipped = noAudio && "dontKnow" in choice;
+      number={number}
+      onAnswer={(choice, durationMs) => {
+        const answerIndices = "selectedIndexes" in choice ? choice.selectedIndexes : undefined;
 
-          const view = await answer({
-            answerIndex,
-            durationMs,
-            questionId: question.id,
-            ...(answerIndices && { answerIndices }),
-            ...(skipped && { skipped }),
-          }).catch(() => null);
-
-          if (!view) {
-            setFailures((count) => count + 1);
-            return;
-          }
-
-          onView(view);
-        })
-      }
+        send("answer", {
+          answerIndex: "selectedIndex" in choice ? choice.selectedIndex : null,
+          durationMs,
+          ...(answerIndices && { answerIndices }),
+          ...(noAudio && "dontKnow" in choice && { skipped: true }),
+        });
+      }}
+      onClose={onClose}
       onStop={onStop}
       pending={isPending}
-      progress={progress}
+      position={[facts.question({ number, total: test.total })]}
+      progress={test.answered / test.total}
       question={{
         context: isListening ? null : question.passage,
         format: "multipleChoice",
@@ -101,92 +164,23 @@ export function LevelTestQuestion({
         itemId: question.id,
         options: question.options,
         question: question.question,
-        select: selectAll ? "all" : 1,
+        // A level's check: every right option is picked, so a guess rarely passes.
+        select: step.kind === "confirmation" ? "all" : 1,
         skillId: question.skill,
         visual: null,
       }}
+      subject={skillName(question.skill)}
     />
   );
 }
 
-export function SpeakingStep({
-  language,
-  onSkip,
-  onView,
-  progress,
-  sentence,
-  speak,
-}: {
-  language: string;
-  onSkip: () => void;
-  onView: (view: LanguageLevelTestView) => void;
-  /** 0 to 1. */
-  progress: number;
-  sentence: Extract<NextStep, { kind: "speaking" }>;
-  speak: (audio: Blob) => Promise<LanguageLevelTestView | "noSpeech" | "signUpRequired" | null>;
-}) {
-  const t = useExtracted();
-  const [problem, setProblem] = useState<RecordProblem | null>(null);
-  const [isPending, startTransition] = useTransition();
+export function LevelTestQuestion({
+  test,
+  ...props
+}: Omit<React.ComponentProps<typeof AskedQuestion>, "step">) {
+  const { next } = test;
 
-  const send = useCallback(
-    ({ audio }: { audio: Blob }) =>
-      startTransition(async () => {
-        const result = await speak(audio).catch(() => null);
-
-        if (result === null || result === "noSpeech" || result === "signUpRequired") {
-          setProblem(result ?? "failed");
-          return;
-        }
-
-        setProblem(null);
-        onView(result);
-      }),
-    [onView, speak],
-  );
-
-  const canRecord = useCanRecord();
-  const recorder = useVoiceRecorder({ onRecorded: send });
-  const micAvailable = canRecord && recorder.status !== "denied";
-  const recording = recorder.status === "recording";
-
-  const note = useRecordNote({
-    acquiring: recorder.status === "acquiring",
-    checking: isPending,
-    problem,
-    recording,
-    unavailable: micAvailable
-      ? null
-      : t("The microphone isn't available here. You can skip this part."),
-  });
-
-  return (
-    <OnboardingTestQuestion progress={progress}>
-      <OnboardingColumn
-        bar={
-          <OnboardingActions note={note}>
-            <OnboardingSecondaryButton disabled={isPending} onClick={onSkip}>
-              {t("Skip this part")}
-            </OnboardingSecondaryButton>
-            {micAvailable && (
-              <RecordButton
-                busy={recorder.status === "acquiring" || isPending}
-                disabled={isPending}
-                elapsedMs={recorder.elapsedMs}
-                onStart={() => void recorder.start()}
-                onStop={recorder.stop}
-                preparation={recorder}
-                recording={recording}
-              />
-            )}
-          </OnboardingActions>
-        }
-      >
-        <OnboardingHeading>
-          <OnboardingTitle lang={language}>{sentence.speaking.sentence}</OnboardingTitle>
-          <OnboardingDescription>{sentence.speaking.translation}</OnboardingDescription>
-        </OnboardingHeading>
-      </OnboardingColumn>
-    </OnboardingTestQuestion>
-  );
+  return isAsked(next) ? (
+    <AskedQuestion key={next.question.id} step={next} test={test} {...props} />
+  ) : null;
 }

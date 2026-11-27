@@ -22,8 +22,6 @@ export type FocusTestPhase =
   /** `answered`: the learner has test answers, so leaving the wait uses them. */
   | (PlacementQuestionWait & { answered: boolean; buildFailed?: boolean })
   | { focusTest: FocusTestView; kind: "invitation"; next: FocusTestOffer }
-  /** `answered`: every answer the learner has saved, earlier sittings included. */
-  | { answered: number; kind: "resume"; question: QuestionPhase }
   | { focusTest: FocusTestView; kind: "checkpoint" };
 
 /** Null when there's no result to show and nothing to offer. */
@@ -36,19 +34,17 @@ function toRestingPhase(focusTest: FocusTestView): FocusTestPhase | null {
 }
 
 /**
- * `opening` is a page load, which never drops the learner into a question: a sitting with answers
- * shows its resume screen, and one without is offered again, unless the learner `started` it on the
- * screen that led here. A test with no result and nothing to ask is `unavailable`, and a read that
- * failed is `loadFailed`.
+ * `opening` is a page load, which shows the test's result or its offer while questions are still
+ * being written, instead of a wait the learner didn't ask for. An open sitting goes on at its next
+ * question. A test with no result and nothing to ask is `unavailable`, and a read that failed is
+ * `loadFailed`.
  */
 export function toFocusTestPhase({
   opening,
   outcome,
-  started = false,
 }: {
   opening: boolean;
   outcome: PlacementOutcome;
-  started?: boolean;
 }): FocusTestPhase {
   if (outcome.status === "failed") {
     return { kind: "loadFailed" };
@@ -87,21 +83,11 @@ export function toFocusTestPhase({
     return { kind: "ended" };
   }
 
-  const question: QuestionPhase = {
+  return {
     failures: 0,
     kind: "question",
     question: next,
     sitting,
     trueFalseLabels: outcome.trueFalseLabels,
   };
-
-  if (!opening) {
-    return question;
-  }
-
-  if (sitting.answered > 0) {
-    return { answered: outcome.answered, kind: "resume", question };
-  }
-
-  return started ? question : (toRestingPhase(focusTest) ?? question);
 }

@@ -18,8 +18,6 @@ import {
 } from "@zoonk/core/learner/placement/focus-test-contract";
 import { getGoalPlacement } from "@zoonk/core/learner/placement/get";
 import { startPlacementSitting } from "@zoonk/core/learner/placement/sitting";
-import { getGoalPlan } from "@zoonk/core/plans/get";
-import { type PlanView } from "@zoonk/core/plans/view-contract";
 import { onboardingAnswerInputSchema } from "@zoonk/core/view-models/onboarding/contract";
 import { getOnboarding } from "@zoonk/core/view-models/onboarding/get";
 import {
@@ -199,13 +197,7 @@ export async function finishPlacementAction({
   return result.status === "ready" ? { focusTest: result.completion.focusTest } : null;
 }
 
-/** The first topic still to study, where the plan goes on after a test; null when none is left. */
-function findNextTopic(plan: PlanView): string | null {
-  const chapters = plan.phases.flatMap((phase) => phase.chapters);
-  return chapters.find((chapter) => chapter.state !== "done" && !chapter.testedOut)?.title ?? null;
-}
-
-/** Closes a part of the test taken from the plan and applies what it skipped. */
+/** Closes a part of the course test, or stops it midway, and applies what its answers skip. */
 export async function finishPlacementPartAction({
   goalId,
   ...input
@@ -232,26 +224,16 @@ export async function finishPlacementPartAction({
   }
 
   const { completion } = finished;
-  const plan = await getGoalPlan(goalId);
 
   return {
     attempt: completion.attempt ?? null,
     changeId: completion.changeId,
     ...(completion.heldUntilTomorrow && { heldUntilTomorrow: completion.heldUntilTomorrow }),
     lessonsSkipped: completion.lessonsSkipped,
-    nextTopic: plan.status === "ready" ? findNextTopic(plan.plan) : null,
+    partLessonsSkipped: completion.partLessonsSkipped ?? completion.lessonsSkipped,
     result: completion.result ?? null,
     status: "finished",
   };
-}
-
-export async function getPlacementMinutesAction(goalId: string): Promise<number> {
-  if (!isUuid(goalId)) {
-    return 0;
-  }
-
-  const result = await getGoalPlan(goalId);
-  return result.status === "ready" ? (result.plan.placementTest?.estimatedMinutes ?? 0) : 0;
 }
 
 export async function getPlanAction(goalId: string): Promise<PlanOutcome> {

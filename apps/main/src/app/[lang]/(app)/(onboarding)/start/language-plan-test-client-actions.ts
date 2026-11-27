@@ -10,30 +10,15 @@ import {
   startLevelTestAttemptAction,
   startLevelTestOutAction,
 } from "../level-test/level-test-plan-actions";
-import {
-  answerLevelTestAction,
-  speakLevelTestAction,
-  startLevelTestBankAction,
-} from "./language-level-test-actions";
+import { answerLevelTestAction, startLevelTestBankAction } from "./language-level-test-actions";
 
-export function getLanguagePlanTestActions({
-  goalId,
-  walkTopics,
-}: {
-  goalId: string;
-  walkTopics: () => Promise<boolean>;
-}): LanguagePlanTestActions {
+export function getLanguagePlanTestActions(goalId: string): LanguagePlanTestActions {
   return {
     answer: (input) => answerLevelTestAction(goalId, input),
     finish: (attemptId) => finishLevelTestAttemptAction(goalId, attemptId),
     get: () => getLevelTestAttemptAction(goalId),
     prepare: () => startLevelTestBankAction(goalId),
-    speak: (audio) => {
-      const form = new FormData();
-      form.set("audio", audio);
-      return speakLevelTestAction(goalId, form);
-    },
-    start: (length) => startLevelTestAttemptAction(goalId, length),
+    start: () => startLevelTestAttemptAction(goalId),
     testOut: {
       answer: (input) =>
         answerLevelTestOutAction(goalId, { ...input, timeZone: getLocalTimeZone() }),
@@ -42,6 +27,5 @@ export function getLanguagePlanTestActions({
       start: (level) => startLevelTestOutAction(goalId, level),
     },
     undo: (changeId) => decidePlanChangeAction(goalId, { changeId, status: "undone" }),
-    walkTopics,
   };
 }

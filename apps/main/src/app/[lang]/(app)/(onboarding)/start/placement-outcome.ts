@@ -35,23 +35,18 @@ export function toPlacementOutcome(placement: PlacementState): PlacementOutcome 
   }
 
   if (placement.status === "failed") {
-    return { status: "generationFailed" };
+    return { attempt: placement.attempt ?? null, status: "generationFailed" };
   }
 
   if (placement.status === "unavailable") {
-    return { status: "unavailable" };
+    return { attempt: placement.attempt ?? null, status: "unavailable" };
   }
 
   return {
-    answered: placement.answered,
     attempt: placement.attempt ?? null,
-    complete: placement.complete,
-    dayBudgetSpent: placement.dayBudgetSpent,
-    dayBudgetUsed: placement.dayBudgetUsed,
     focusTest: placement.focusTest,
     next: placement.next && toPlacementQuestion(placement.next),
     result: placement.result ?? null,
-    started: placement.started,
     status: "ready",
     trueFalseLabels: placement.trueFalseLabels,
   };

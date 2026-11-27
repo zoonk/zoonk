@@ -31,10 +31,12 @@ export function PlacementDone({
 }
 
 export function PlacementUnavailable({
+  continueLabel,
   failed,
   onContinue,
   pending,
 }: {
+  continueLabel?: string;
   failed?: boolean;
   onContinue: () => void;
   pending: boolean;
@@ -44,6 +46,7 @@ export function PlacementUnavailable({
   return (
     <TestOutcome
       busy={pending}
+      continueLabel={continueLabel}
       failed={failed}
       onContinue={onContinue}
       title={t("We'll see what you know in your first few days")}

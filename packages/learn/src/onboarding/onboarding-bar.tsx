@@ -93,7 +93,14 @@ export function OnboardingPageBar({
           {bar.onBack ? (
             <BackButton disabled={bar.backDisabled} onBack={bar.onBack} />
           ) : (
-            <TaskClose href={backHref} toApp />
+            <TaskClose
+              beforeExit={() => {
+                bar.onClose?.();
+                return null;
+              }}
+              href={backHref}
+              toApp
+            />
           )}
         </>
       }

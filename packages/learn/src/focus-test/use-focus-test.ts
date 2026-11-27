@@ -1,16 +1,16 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { type GenerationRun } from "../generation/generation-run";
 import { type PlacementAnswer, type PlacementOutcome } from "../onboarding/onboarding-actions";
 import { usePlacementQuestionPoll } from "../onboarding/steps/use-placement-question-poll";
 import { useReadOnOpen } from "../onboarding/steps/use-read-on-open";
 import { isRunStopped } from "../onboarding/steps/wait-run";
+import { type TestPressed } from "../placement-test/test-offer";
+import { type TestAnalytics } from "../placement-test/use-test-analytics";
+import { useTestSaves } from "../placement-test/use-test-saves";
 import { type FocusTestActions } from "./focus-test-actions";
 import { type FocusTestPhase, type QuestionPhase, toFocusTestPhase } from "./focus-test-phase";
-
-/** The button a save started from, which shows it's busy while the other waits. */
-export type Pressed = "main" | "other" | null;
 
 const FAILED: PlacementOutcome = { status: "failed" };
 
@@ -27,23 +27,27 @@ function countFailure({
     : current;
 }
 
-function useTestState({
+export function useFocusTest({
   actions,
+  analytics,
+  asked,
+  onDone,
   run,
-  started,
 }: {
   actions: FocusTestActions;
+  analytics: Pick<TestAnalytics, "markOpened" | "markStarted">;
+  /** The learner asked for the test on the screen that led here, so it starts as it opens. */
+  asked: boolean;
+  onDone: () => Promise<boolean>;
   run: GenerationRun | null;
-  started: boolean;
 }) {
   const [phase, setPhase] = useState<FocusTestPhase>({ kind: "loading" });
+  const saves = useTestSaves();
+  const { failed, hasActed, isPending, markRead, pressed, save, setFailed } = saves;
+  const [sittingsStarted, setSittingsStarted] = useState(0);
   const waiting = phase.kind === "waiting" ? phase : null;
-
-  const reopen = useReadOnOpen({
-    onRead: (outcome) =>
-      setPhase(toFocusTestPhase({ opening: true, outcome: outcome ?? FAILED, started })),
-    read: actions.get,
-  });
+  const leave = () => onDone().catch(() => false);
+  const arrived = waiting?.arrived;
 
   const poll = usePlacementQuestionPoll<FocusTestPhase>({
     onProgress: (wait, outcome) =>
@@ -55,28 +59,6 @@ function useTestState({
     setPhase,
     waiting,
   });
-
-  return { phase, poll, reopen, setPhase, waiting };
-}
-
-export function useFocusTest({
-  actions,
-  onDone,
-  run,
-  started,
-}: {
-  actions: FocusTestActions;
-  onDone: () => Promise<boolean>;
-  run: GenerationRun | null;
-  started: boolean;
-}) {
-  const { phase, poll, reopen, setPhase, waiting } = useTestState({ actions, run, started });
-
-  const [failed, setFailed] = useState(false);
-  const [pressed, setPressed] = useState<Pressed>(null);
-  const [isPending, startTransition] = useTransition();
-  const leave = () => onDone().catch(() => false);
-  const arrived = waiting?.arrived;
 
   /** Closing applies the answers; a test that still has none is only skipped, and the host moves on. */
   const close = async (): Promise<boolean> => {
@@ -112,26 +94,43 @@ export function useFocusTest({
     return closed;
   };
 
-  const save = (button: Pressed, action: () => Promise<boolean>) => {
-    setPressed(button);
-    setFailed(false);
-
-    startTransition(async () => {
-      const saved = await action().catch(() => false);
-      setFailed(!saved);
-      setPressed(null);
-    });
-  };
-
   const start = async (): Promise<boolean> => {
+    analytics.markStarted();
+    setSittingsStarted((count) => count + 1);
     const outcome = await actions.start().catch(() => FAILED);
     return outcome.status !== "failed" && show(outcome);
   };
 
-  const answer = (from: QuestionPhase) => (choice: PlacementAnswer, durationMs: number) => {
-    setFailed(false);
+  /** A read that comes back after the learner pressed something no longer says where they are. */
+  const open = async (outcome: PlacementOutcome) => {
+    if (hasActed()) {
+      return;
+    }
 
-    startTransition(async () => {
+    const next = toFocusTestPhase({ opening: true, outcome });
+
+    if (next.kind === "invitation" && asked) {
+      if (!(await start())) {
+        setPhase({ kind: "loadFailed" });
+      }
+
+      return;
+    }
+
+    setPhase(next);
+  };
+
+  const reopen = useReadOnOpen({
+    onRead: (outcome) => void open(outcome ?? FAILED),
+    read: () => {
+      markRead();
+      analytics.markOpened();
+      return actions.get();
+    },
+  });
+
+  const answer = (from: QuestionPhase) => (choice: PlacementAnswer, durationMs: number) =>
+    saves.run(async () => {
       const outcome = await actions
         .answer({ answer: choice, durationMs, itemId: from.question.itemId })
         .catch(() => FAILED);
@@ -143,10 +142,9 @@ export function useFocusTest({
 
       setFailed(!(await show(outcome).catch(() => false)));
     });
-  };
 
   const stop = (from: QuestionPhase) =>
-    startTransition(async () => {
+    saves.run(async () => {
       if (!(await close().catch(() => false))) {
         setPhase((current) => countFailure({ current, from }));
       }
@@ -166,14 +164,16 @@ export function useFocusTest({
     onDone: () => save("main", leave),
     onFinish: () => save("main", close),
     /** A learner who never started has nothing to close on a plan that's already theirs. */
-    onLeave: (closes: boolean) => save("other", () => (closes ? close() : leave())),
+    onLeave: ({ button, closes }: { button: Exclude<TestPressed, null>; closes: boolean }) =>
+      save(button, () => (closes ? close() : leave())),
     onStart: () => save("main", start),
     phase,
     poll,
     pressed,
     questionsReady: Boolean(arrived),
     reopen,
-    resume: (question: QuestionPhase) => setPhase(question),
+    /** Tells one sitting from the next within a visit; 0 while the open one was resumed. */
+    sittingsStarted,
     stop,
   };
 }

@@ -39,10 +39,15 @@ async function PlacementTestContent() {
     return null;
   }
 
+  if (goal.kind === "language") {
+    redirect({ href: "/level-test", locale });
+    return null;
+  }
+
   const plan = await getGoalPlan(goal.id);
   const test = plan.status === "ready" ? plan.plan.placementTest : null;
 
-  if (!test) {
+  if (test?.kind !== "learn") {
     redirect({ href: "/plan", locale });
     return null;
   }
@@ -50,10 +55,9 @@ async function PlacementTestContent() {
   return (
     <OnboardingPage backHref="/plan">
       <PlacementTestClient
-        arrivesAtLevelTest={test.kind === "language" && !test.attempt}
         goalId={goal.id}
+        offer={test.offer}
         subject={getGoalSubject(goal, locale)}
-        wholeCourseMinutes={test.estimatedMinutes}
       />
     </OnboardingPage>
   );

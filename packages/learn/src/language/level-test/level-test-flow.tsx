@@ -2,80 +2,76 @@
 
 import { type GoalView } from "@zoonk/core/goals/contract";
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
-import { useExtracted } from "next-intl";
 import { type OnboardingActions } from "../../onboarding/onboarding-actions";
 import { PlanReceipt } from "../../onboarding/plan-receipt";
-import { PlacementQuestionScreen } from "../../onboarding/steps/placement-question";
 import { PlacementDone } from "../../onboarding/steps/placement-screens";
-import { PlacementWaiting } from "../../onboarding/steps/placement-waiting";
+import { useWaitLeave } from "../../onboarding/steps/placement-waiting";
 import { StepLoadFailed, StepLoading } from "../../onboarding/steps/step-parts";
-import { PlacementLengthChoice } from "../../placement-test/placement-test-screens";
-import { ItemSetStimulus } from "../../questions/item-set-stimulus";
+import {
+  type TestAnalytics,
+  useFirstQuestionShown,
+  useTestAnalytics,
+} from "../../placement-test/use-test-analytics";
+import { LevelTestOfferStep } from "./level-test-offer";
+import { LevelTestOutScreens } from "./level-test-out-screens";
+import { type LevelTestPhase } from "./level-test-phase";
 import { LevelTestPreparing } from "./level-test-preparing";
-import { LevelResult, TestOutResult } from "./level-test-results";
-import { TestIntro } from "./level-test-screens";
-import { TestStep, useLevelTestAudio } from "./level-test-step";
-import { type LanguagePlanTestActions, useLanguagePlanTest } from "./use-language-plan-test";
+import { LevelTestQuestion, useLevelTestAudio } from "./level-test-questions";
+import { LevelResult } from "./level-test-results";
+import {
+  type LanguagePlanTestActions,
+  type LevelTestHost,
+  useLanguagePlanTest,
+} from "./use-language-plan-test";
 
 export type { LanguagePlanTestActions } from "./use-language-plan-test";
 
-/** Onboarding's own way past the test, before one opens, and the learner's own language. */
-type OnboardingLevelTest = {
-  goal: GoalView;
-  language: string;
-  /** Goes on without a test; false when it didn't. */
-  skip: () => Promise<boolean>;
-  switchLanguage: (language: string) => void;
-};
-
-function LengthStep({
-  onboarding,
-  showAlphabetNote,
-  test,
-  testOutFirst,
-  testOutLevel,
-  wholeCourseMinutes,
+/** Says the first question the learner sees of the level test and of a test-out. */
+function useQuestionsShown({
+  analytics,
+  phase,
+  testOutAnalytics,
 }: {
-  onboarding?: OnboardingLevelTest;
-  showAlphabetNote: boolean;
-  test: ReturnType<typeof useLanguagePlanTest>;
-  testOutFirst: boolean;
-  testOutLevel: string | null;
-  wholeCourseMinutes: number;
+  analytics: TestAnalytics;
+  phase: LevelTestPhase;
+  testOutAnalytics: TestAnalytics;
 }) {
-  if (onboarding) {
-    return (
-      <TestIntro
-        failed={test.failed}
-        language={onboarding.language}
-        onSkip={() => test.onSkip(onboarding.skip)}
-        onStart={test.onStart}
-        onSwitch={onboarding.switchLanguage}
-        pressed={test.pressed}
-        showAlphabetNote={showAlphabetNote}
-        wholeCourseMinutes={wholeCourseMinutes}
-      />
-    );
-  }
+  const asked = phase.kind === "test" ? phase : null;
+  const testOut = phase.kind === "testOut" ? phase.view : null;
 
-  return (
-    <PlacementLengthChoice
-      failed={test.failed}
-      onStart={test.onStart}
-      initialChoice={testOutFirst && testOutLevel ? "testOut" : "quick"}
-      onTestOut={testOutLevel ? () => test.onTestOut(testOutLevel) : undefined}
-      pressed={test.pressed}
-      testOutLevel={testOutLevel}
-      wholeCourseMinutes={wholeCourseMinutes}
-    />
-  );
+  useFirstQuestionShown({
+    onShown: () =>
+      asked &&
+      analytics.firstQuestionShown({
+        attemptId: asked.attemptId,
+        number: asked.test.answered + 1,
+        questions: asked.test.total,
+      }),
+    sitting: asked && asked.attemptId,
+  });
+
+  useFirstQuestionShown({
+    onShown: () =>
+      testOut &&
+      testOutAnalytics.firstQuestionShown({
+        attemptId: testOut.attemptId,
+        number: testOut.answered + 1,
+        questions: testOut.total,
+      }),
+    sitting: testOut && testOut.attemptId,
+  });
 }
 
 type LanguagePlanTestProps = {
   actions: LanguagePlanTestActions;
-  /** Goes back to the plan, read again; false when it didn't. */
-  onDone: () => Promise<boolean>;
-  onboarding?: OnboardingLevelTest;
+  goalId: string;
+  /** Onboarding's plan so far, beside the result. */
+  goal?: GoalView;
+  host: LevelTestHost;
+  /** Leaves the test: onboarding goes on with setup, the Plan is read again. False when it didn't. */
+  onLeave: () => Promise<boolean>;
+  /** Opens a lesson from a result on the Plan. */
+  onStartLesson?: (lessonId: string) => Promise<boolean>;
   readWarmUp: OnboardingActions["readWarmUp"];
   targetLanguage: string;
   /** Opened from a lesson's offer to test out of a level, so that choice comes picked. */
@@ -83,23 +79,34 @@ type LanguagePlanTestProps = {
   /** The next level the learner can test out of; null when none is left. */
   testOutLevel: string | null;
   trueFalseLabels: TrueFalseLabels;
-  wholeCourseMinutes: number;
 };
 
 export function LanguagePlanTestFlow({
   actions,
-  onDone,
-  onboarding,
+  goal,
+  goalId,
+  host,
+  onLeave,
+  onStartLesson,
   readWarmUp,
   targetLanguage,
   testOutFirst = false,
   testOutLevel,
   trueFalseLabels,
-  wholeCourseMinutes,
 }: LanguagePlanTestProps) {
-  const t = useExtracted();
-  const test = useLanguagePlanTest({ actions, onDone, onboarding: Boolean(onboarding) });
+  const { surface } = host;
+  const analytics = useTestAnalytics({ goalId, surface, test: "language" });
+  const testOutAnalytics = useTestAnalytics({ goalId, surface, test: "level_test_out" });
+  const test = useLanguagePlanTest({ actions, analytics, host, onLeave });
   const { failed, phase, pressed } = test;
+  const onboarding = surface === "onboarding";
+  const waitLeave = useWaitLeave(onboarding);
+  useQuestionsShown({ analytics, phase, testOutAnalytics });
+
+  const startTestOut = (level: string, button: "main" | "other") => {
+    testOutAnalytics.markStarted();
+    test.onTestOut(level, button);
+  };
 
   const audioPending = useLevelTestAudio({
     onRead: (view) => {
@@ -116,40 +123,43 @@ export function LanguagePlanTestFlow({
       return <StepLoading />;
     case "loadFailed":
       return <StepLoadFailed onRetry={test.reopen} />;
-    case "choose":
+    case "offer":
       return (
-        <LengthStep
+        <LevelTestOfferStep
+          analytics={analytics}
+          offer={phase.offer}
+          onStartTestOut={(level) => startTestOut(level, "main")}
           onboarding={onboarding}
-          showAlphabetNote={phase.showAlphabetNote}
           test={test}
           testOutFirst={testOutFirst}
           testOutLevel={testOutLevel}
-          wholeCourseMinutes={wholeCourseMinutes}
         />
       );
     case "waiting":
       return (
         <LevelTestPreparing
-          fromPlan={!onboarding}
-          onSkip={test.onLeave}
+          leave={waitLeave}
+          onSkip={() => test.onLeave("other")}
           run={test.bankRun}
           skipping={pressed === "other"}
-          targetLanguage={targetLanguage}
         />
       );
     case "test":
       return (
-        <TestStep
-          actions={{
-            answer: (input) => actions.answer({ ...input, attemptId: phase.attemptId }),
-            speak: actions.speak,
-          }}
+        <LevelTestQuestion
+          answer={(input) => actions.answer({ ...input, attemptId: phase.attemptId })}
           audioPending={audioPending}
-          next={phase.test.next}
-          onStop={() => test.onStop(phase.attemptId, "quick")}
+          onClose={() =>
+            analytics.left({
+              attemptId: phase.attemptId,
+              number: phase.test.answered + 1,
+              questions: phase.test.total,
+            })
+          }
+          onStop={() => test.onStop(phase.attemptId)}
           onView={test.onView(phase.attemptId)}
-          progress={phase.test.answered / phase.test.total}
           targetLanguage={targetLanguage}
+          test={phase.test}
         />
       );
     case "finish":
@@ -159,7 +169,7 @@ export function LanguagePlanTestFlow({
           failed={failed}
           onContinue={() =>
             phase.kind === "finish"
-              ? test.onStop(phase.attemptId, phase.length)
+              ? test.onStop(phase.attemptId)
               : test.onTestOutStop(phase.attemptId)
           }
           pending={test.isPending}
@@ -169,69 +179,32 @@ export function LanguagePlanTestFlow({
       return (
         <LevelResult
           failed={failed}
-          length={phase.length}
-          onDone={test.onDone}
-          onTestOut={test.onTestOut}
-          onWalkTopics={test.onWalkTopics}
-          onboarding={Boolean(onboarding)}
+          onDone={() => test.onLeave("main")}
+          onStartLesson={(lessonId) => {
+            analytics.lessonStarted({ attemptId: phase.result?.attemptId, lessonId });
+            test.onOpenLesson(lessonId, onStartLesson);
+          }}
+          onTestOut={(level) => startTestOut(level, "other")}
+          onUndo={actions.undo}
+          onboarding={onboarding}
           pressed={pressed}
-          rail={
-            onboarding && (
-              <PlanReceipt goal={onboarding.goal} testRanges={phase.result?.ranges ?? null} />
-            )
-          }
+          rail={goal && <PlanReceipt goal={goal} testRanges={phase.result?.ranges ?? null} />}
           result={phase.result}
           targetLanguage={targetLanguage}
           testOutLevel={onboarding ? null : phase.nextTestOutLevel}
-          onUndo={actions.undo}
         />
       );
-    case "testOut": {
-      const { question, view } = phase;
-      const askedIn = `${view.attemptId}:${question.itemId}`;
-
-      return (
-        <PlacementQuestionScreen
-          failures={phase.failures}
-          key={question.itemId}
-          media={question.set && <ItemSetStimulus askedIn={askedIn} set={question.set} />}
-          number={view.answered + 1}
-          onAnswer={test.onTestOutAnswer(phase)}
-          onStop={() => test.onTestOutStop(view.attemptId)}
-          pending={test.isPending}
-          position={t("Question {number, number} of {total, number}", {
-            number: view.answered + 1,
-            total: view.total,
-          })}
-          progress={view.answered / view.total}
-          question={question}
-          subject={t("Test out of {level}", { level: view.level })}
-          trueFalseLabels={trueFalseLabels}
-        />
-      );
-    }
+    case "testOut":
     case "testOutWaiting":
-      return (
-        <PlacementWaiting
-          buildFailed={false}
-          existingPlan
-          onQuestions={test.continueTestOut}
-          onSkip={test.onLeave}
-          poll={test.testOutPoll}
-          questionsReady={test.arrivedTestOut}
-          readWarmUp={readWarmUp}
-          run={null}
-          skip={{ label: t("Not now"), note: null }}
-          skipping={pressed === "other"}
-        />
-      );
     case "testOutResult":
       return (
-        <TestOutResult
-          onDone={test.onDone}
+        <LevelTestOutScreens
+          analytics={testOutAnalytics}
           onUndo={actions.undo}
-          pressed={pressed}
-          view={phase.view}
+          phase={phase}
+          readWarmUp={readWarmUp}
+          test={test}
+          trueFalseLabels={trueFalseLabels}
         />
       );
     default:

@@ -173,7 +173,7 @@ function CourseStartForm({
     initialFailure,
   });
 
-  const startHere = () => (level ? startWithLevel(toLevelAnswer(level)) : start());
+  const startHere = () => (level ? startWithLevel(toLevelAnswer(level).level) : start());
   const blocked = isStartBlocked(failure);
   const blockedOnOpen = isStartBlocked(useLiveLimit(initialFailure));
 

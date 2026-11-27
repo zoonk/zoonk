@@ -3,25 +3,33 @@ import {
   type PlacementAttemptView,
   type PlacementOutcome,
   type PlacementQuestion,
+  type PlacementResult,
 } from "../onboarding/onboarding-actions";
+import { type PlacementPartOutcome } from "./placement-test-actions";
 import { toFinishedPhase, toPlacementTestPhase } from "./placement-test-phase";
 
-const ATTEMPT: PlacementAttemptView = {
-  answered: 0,
-  chapter: null,
-  estimatedMinutes: 20,
-  id: "0198a6c4-2f6e-7c1a-9b1e-3f2d4c5b6a71",
+const ATTEMPT_ID = "0198a6c4-2f6e-7c1a-9b1e-3f2d4c5b6a71";
+const CHANGE_ID = "0198a6c4-2f6e-7c1a-9b1e-3f2d4c5b6a75";
+const NEXT_LESSON = { id: "0198a6c4-2f6e-7c1a-9b1e-3f2d4c5b6a76", title: "Loops with for" };
+
+const FULL: PlacementAttemptView = {
+  answered: 4,
+  chapter: "Variables and types",
+  estimatedMinutes: 6,
+  id: ATTEMPT_ID,
   length: "wholeCourse",
-  nextPart: 2,
-  part: 1,
+  nextPart: 4,
+  part: 3,
   partComplete: false,
-  parts: 2,
-  partsLeft: 2,
+  parts: 14,
+  partsLeft: 12,
   questions: 12,
-  remainingEstimatedMinutes: 20,
+  remainingEstimatedMinutes: 70,
   resume: null,
-  totalEstimatedMinutes: 20,
+  totalEstimatedMinutes: 85,
 };
+
+const QUICK: PlacementAttemptView = { ...FULL, length: "quick", nextPart: 2, part: 1 };
 
 const QUESTION: PlacementQuestion = {
   context: null,
@@ -36,119 +44,221 @@ const QUESTION: PlacementQuestion = {
   visual: null,
 };
 
-function ready(
-  attempt: PlacementAttemptView | null,
-  next: PlacementQuestion | null,
-): PlacementOutcome {
+const RESULT: PlacementResult = {
+  attemptId: ATTEMPT_ID,
+  changeId: CHANGE_ID,
+  finishedAt: "2026-11-26T12:00:00.000Z",
+  lessonsSkipped: 5,
+  nextLesson: NEXT_LESSON,
+  part: 1,
+  partLessonsSkipped: 5,
+};
+
+function ready({
+  attempt = null,
+  next = null,
+  result = null,
+}: {
+  attempt?: PlacementAttemptView | null;
+  next?: PlacementQuestion | null;
+  result?: PlacementResult | null;
+}): PlacementOutcome {
+  return { attempt, focusTest: null, next, result, status: "ready", trueFalseLabels: "trueFalse" };
+}
+
+function finished(
+  outcome: Partial<Extract<PlacementPartOutcome, { status: "finished" }>>,
+): Extract<PlacementPartOutcome, { status: "finished" }> {
   return {
-    answered: 3,
-    attempt,
-    complete: false,
-    dayBudgetSpent: 0.25,
-    dayBudgetUsed: false,
-    focusTest: null,
-    next,
+    attempt: null,
+    changeId: CHANGE_ID,
+    lessonsSkipped: 2,
+    partLessonsSkipped: 2,
     result: null,
-    started: true,
-    status: "ready",
-    trueFalseLabels: "trueFalse",
+    status: "finished",
+    ...outcome,
   };
 }
 
 describe(toPlacementTestPhase, () => {
-  it("with no test open, the learner chooses how much to check, whatever onboarding's state", () => {
-    expect(toPlacementTestPhase(ready(null, QUESTION))).toStrictEqual({ kind: "choose" });
-    expect(toPlacementTestPhase({ status: "unavailable" })).toStrictEqual({ kind: "choose" });
+  it("offers a test when none is open", () => {
+    const outcome = ready({ next: QUESTION });
+
+    for (const surface of ["plan", "onboarding"] as const) {
+      expect(toPlacementTestPhase({ outcome, surface })).toStrictEqual({ kind: "offer" });
+    }
   });
 
-  it("an open test goes on at its next question", () => {
-    expect(toPlacementTestPhase(ready(ATTEMPT, QUESTION))).toMatchObject({
-      answered: 3,
-      kind: "question",
-      progress: 0.25,
-      question: QUESTION,
+  it("offers the test again from the Plan after one ended, and shows onboarding the result of the test it ran", () => {
+    const outcome = ready({ result: RESULT });
+
+    expect(toPlacementTestPhase({ outcome, surface: "plan" })).toStrictEqual({ kind: "offer" });
+
+    expect(toPlacementTestPhase({ outcome, surface: "onboarding" })).toStrictEqual({
+      attempt: null,
+      attemptId: ATTEMPT_ID,
+      changeId: CHANGE_ID,
+      heldUntilTomorrow: false,
+      kind: "result",
+      lessonsSkipped: 5,
+      nextLesson: NEXT_LESSON,
     });
   });
 
-  it("an open test waits while its questions are written", () => {
-    expect(
-      toPlacementTestPhase({ attempt: ATTEMPT, focusTest: null, status: "notReady" }),
-    ).toStrictEqual({ kind: "waiting" });
+  it("goes on at the next question of an open sitting", () => {
+    const outcome = ready({ attempt: FULL, next: QUESTION });
+
+    expect(toPlacementTestPhase({ outcome, surface: "plan" })).toStrictEqual({
+      attempt: FULL,
+      failures: 0,
+      kind: "question",
+      question: QUESTION,
+      trueFalseLabels: "trueFalse",
+    });
   });
 
-  it("a part with nothing left to ask closes next", () => {
-    expect(toPlacementTestPhase(ready(ATTEMPT, null))).toStrictEqual({
-      attempt: ATTEMPT,
+  it("waits while an open part's questions are being written", () => {
+    const outcome: PlacementOutcome = { attempt: FULL, focusTest: null, status: "notReady" };
+
+    expect(toPlacementTestPhase({ outcome, surface: "plan" })).toStrictEqual({ kind: "waiting" });
+  });
+
+  it("keeps the wait open for a retry when a part's questions couldn't be written", () => {
+    const outcome: PlacementOutcome = { attempt: QUICK, status: "generationFailed" };
+
+    expect(toPlacementTestPhase({ outcome, surface: "onboarding" })).toStrictEqual({
+      failedAttempt: QUICK,
+      kind: "waiting",
+    });
+  });
+
+  it("says a started test has nothing to ask instead of offering it again", () => {
+    const outcome: PlacementOutcome = { attempt: QUICK, status: "unavailable" };
+
+    expect(toPlacementTestPhase({ outcome, surface: "plan" })).toStrictEqual({
+      kind: "unavailable",
+    });
+  });
+
+  it("closes a part that has nothing more to ask", () => {
+    const outcome = ready({ attempt: FULL });
+
+    expect(toPlacementTestPhase({ outcome, surface: "plan" })).toStrictEqual({
+      attempt: FULL,
       kind: "partOver",
     });
   });
 
-  it("a part closed earlier offers the next one", () => {
-    const closed = { ...ATTEMPT, partComplete: true };
+  it("says where a full test stands between parts and after a stop midway", () => {
+    const between = { ...FULL, partComplete: true };
+    const stopped = { ...FULL, resume: { part: 3, question: 5 } };
 
-    expect(toPlacementTestPhase(ready(closed, null))).toStrictEqual({
-      attempt: closed,
-      changeId: null,
-      kind: "between",
-      lessonsSkipped: null,
+    for (const attempt of [between, stopped]) {
+      const outcome = ready({ attempt, result: RESULT });
+
+      expect(toPlacementTestPhase({ outcome, surface: "plan" })).toStrictEqual({
+        attempt,
+        kind: "continue",
+      });
+    }
+  });
+
+  it("shows a short test that ended as its result, with the rest of the course still to test", () => {
+    const ended = { ...QUICK, partComplete: true };
+    const outcome = ready({ attempt: ended, result: RESULT });
+
+    expect(toPlacementTestPhase({ outcome, surface: "plan" })).toMatchObject({
+      attempt: ended,
+      kind: "result",
+      lessonsSkipped: 5,
+    });
+  });
+
+  it("says a read that failed couldn't open the test", () => {
+    expect(toPlacementTestPhase({ outcome: { status: "failed" }, surface: "plan" })).toStrictEqual({
+      kind: "loadFailed",
     });
   });
 });
 
 describe(toFinishedPhase, () => {
-  it("a whole-course part with more to check says what it skipped and what's left", () => {
-    const next = { ...ATTEMPT, estimatedMinutes: 12, partComplete: true };
+  it("stops a full test's finished part at its checkpoint, counting that part's skips", () => {
+    const attempt = { ...FULL, partComplete: true };
+    const phase = toFinishedPhase({ attemptId: ATTEMPT_ID, finished: finished({ attempt }) });
 
-    expect(
-      toFinishedPhase({
-        attemptId: ATTEMPT.id,
-        finished: {
-          attempt: next,
-          changeId: QUESTION.skillId,
-          heldUntilTomorrow: true,
-          lessonsSkipped: 6,
-          nextTopic: null,
-          result: null,
-          status: "finished",
-        },
-        length: "wholeCourse",
-      }),
-    ).toStrictEqual({
-      attempt: next,
-      changeId: QUESTION.skillId,
-      heldUntilTomorrow: true,
-      kind: "between",
-      lessonsSkipped: 6,
+    expect(phase).toStrictEqual({
+      attempt,
+      changeId: CHANGE_ID,
+      heldUntilTomorrow: false,
+      kind: "checkpoint",
+      lessonsSkipped: 2,
     });
   });
 
-  it("the last part shows the whole test's result", () => {
-    expect(
-      toFinishedPhase({
-        attemptId: ATTEMPT.id,
-        finished: {
-          attempt: null,
-          changeId: QUESTION.skillId,
-          lessonsSkipped: 2,
-          nextTopic: "Compound interest",
-          result: {
-            attemptId: ATTEMPT.id,
-            finishedAt: "2026-11-21T12:00:00.000Z",
-            heldUntilTomorrow: true,
-            lessonsSkipped: 9,
-          },
-          status: "finished",
-        },
-        length: "wholeCourse",
-      }),
-    ).toStrictEqual({
-      attemptId: ATTEMPT.id,
-      changeId: QUESTION.skillId,
-      heldUntilTomorrow: true,
-      kind: "result",
-      length: "wholeCourse",
-      lessonsSkipped: 9,
-      nextTopic: "Compound interest",
+  it("says where a full test resumes when the learner stopped midway, never that the part is done", () => {
+    const attempt = { ...FULL, resume: { part: 3, question: 5 } };
+    const phase = toFinishedPhase({ attemptId: ATTEMPT_ID, finished: finished({ attempt }) });
+
+    expect(phase).toMatchObject({ attempt, kind: "stopped", lessonsSkipped: 2 });
+  });
+
+  it("ends the short test at its result, stopped or not, while the course has parts left", () => {
+    const complete = { ...QUICK, partComplete: true };
+    const stopped = { ...QUICK, resume: { part: 1, question: 5 } };
+
+    for (const attempt of [complete, stopped]) {
+      const phase = toFinishedPhase({
+        attemptId: ATTEMPT_ID,
+        finished: finished({ attempt, lessonsSkipped: 5, result: RESULT }),
+      });
+
+      expect(phase).toStrictEqual({
+        attempt,
+        attemptId: ATTEMPT_ID,
+        changeId: CHANGE_ID,
+        heldUntilTomorrow: false,
+        kind: "result",
+        lessonsSkipped: 5,
+        nextLesson: NEXT_LESSON,
+      });
+    }
+  });
+
+  it("counts the whole test on its last part's result, without an Undo that restores only that part", () => {
+    const phase = toFinishedPhase({
+      attemptId: ATTEMPT_ID,
+      finished: finished({ result: { ...RESULT, lessonsSkipped: 9, part: 14 } }),
     });
+
+    expect(phase).toMatchObject({
+      attempt: null,
+      changeId: null,
+      kind: "result",
+      lessonsSkipped: 9,
+    });
+  });
+
+  it("offers no Undo on a part whose earlier stop already skipped some of what the screen counts", () => {
+    const attempt = { ...FULL, partComplete: true };
+
+    const phase = toFinishedPhase({
+      attemptId: ATTEMPT_ID,
+      finished: finished({ attempt, lessonsSkipped: 1, partLessonsSkipped: 3 }),
+    });
+
+    expect(phase).toMatchObject({ changeId: null, kind: "checkpoint", lessonsSkipped: 3 });
+  });
+
+  it("carries a skip held until tomorrow", () => {
+    const phase = toFinishedPhase({
+      attemptId: ATTEMPT_ID,
+      finished: finished({
+        heldUntilTomorrow: true,
+        lessonsSkipped: 0,
+        result: { ...RESULT, lessonsSkipped: 0 },
+      }),
+    });
+
+    expect(phase).toMatchObject({ heldUntilTomorrow: true, kind: "result", lessonsSkipped: 0 });
   });
 });

@@ -1,10 +1,4 @@
-import { type OnboardingView } from "@zoonk/core/view-models/onboarding/contract";
 import { type ExamTarget } from "../steps/question-steps";
-
-export function getNativeLanguage(view: OnboardingView): string {
-  const native = view.goal.details.nativeLanguage;
-  return typeof native === "string" && native.trim() ? native : view.goal.language;
-}
 
 export function readKnownSubjects(details: Record<string, unknown>): string[] {
   const known = details.knownSubjects;

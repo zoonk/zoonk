@@ -45,18 +45,12 @@ function testWith(focusTest: Partial<FocusTestView> = {}): FocusTestView {
 function ready(
   focusTest: FocusTestView | null,
   next: PlacementQuestion | null = null,
-  answered = 0,
 ): PlacementOutcome {
   return {
-    answered,
     attempt: null,
-    complete: false,
-    dayBudgetSpent: 0,
-    dayBudgetUsed: false,
     focusTest,
     next,
     result: null,
-    started: false,
     status: "ready",
     trueFalseLabels: "trueFalse",
   };
@@ -97,49 +91,21 @@ describe(toFocusTestPhase, () => {
     });
   });
 
-  it("never opens a page on a question: a sitting with answers waits on its resume screen", () => {
-    const sitting = sittingWith({ answered: 6, minutes: 9 });
-    const outcome = ready(testWith({ checkpoint: CHECKPOINT, sitting }), QUESTION);
+  it("opens a sitting the learner left on its next question, with or without answers", () => {
+    const answered = sittingWith({ answered: 6, minutes: 9 });
+    const left = ready(testWith({ checkpoint: CHECKPOINT, sitting: answered }), QUESTION);
 
-    expect(toFocusTestPhase({ opening: true, outcome })).toMatchObject({
-      kind: "resume",
-      question: { kind: "question", question: QUESTION, sitting },
-    });
-  });
-
-  it("counts every saved answer on the resume screen, earlier sittings included", () => {
-    const sitting = sittingWith({ answered: 1, minutes: 9 });
-    const outcome = ready(testWith({ checkpoint: CHECKPOINT, sitting }), QUESTION, 7);
-
-    expect(toFocusTestPhase({ opening: true, outcome })).toMatchObject({
-      answered: 7,
-      kind: "resume",
-    });
-  });
-
-  it("invites again when a sitting was left before its first answer", () => {
-    const focusTest = testWith({ offer: OFFER, sitting: sittingWith() });
-
-    expect(toFocusTestPhase({ opening: true, outcome: ready(focusTest, QUESTION) })).toStrictEqual({
-      focusTest,
-      kind: "invitation",
-      next: OFFER,
-    });
-  });
-
-  it("opens on the first question when the learner started the test on the screen before", () => {
-    const sitting = sittingWith();
-    const outcome = ready(testWith({ offer: OFFER, sitting }), QUESTION);
-
-    expect(toFocusTestPhase({ opening: true, outcome, started: true })).toMatchObject({
+    expect(toFocusTestPhase({ opening: true, outcome: left })).toMatchObject({
       kind: "question",
       question: QUESTION,
+      sitting: answered,
     });
 
-    const left = ready(testWith({ sitting: sittingWith({ answered: 2 }) }), QUESTION);
+    const fresh = ready(testWith({ offer: OFFER, sitting: sittingWith() }), QUESTION);
 
-    expect(toFocusTestPhase({ opening: true, outcome: left, started: true })).toMatchObject({
-      kind: "resume",
+    expect(toFocusTestPhase({ opening: true, outcome: fresh })).toMatchObject({
+      kind: "question",
+      question: QUESTION,
     });
   });
 

@@ -11,6 +11,7 @@ import { ChangeSaveError } from "../_components/save-error";
 import { SettingRow } from "../_components/setting-rows";
 import { OnboardingDescription, OnboardingSecondaryButton } from "../onboarding/onboarding-frame";
 import { TestOutcome } from "../onboarding/test-outcome";
+import { type TestPressed } from "../placement-test/test-offer";
 import {
   type FocusTestPlanActions,
   FocusTestProposal,
@@ -18,7 +19,6 @@ import {
   useProposalAnswer,
 } from "./focus-test-proposal";
 import { FocusSubjects, FocusTestSubjectsSheet } from "./focus-test-subjects";
-import { type Pressed } from "./use-focus-test";
 import { useResultWords } from "./use-result-line";
 
 export type FocusTestHost = "onboarding" | "plan";
@@ -116,7 +116,7 @@ function FocusTestResult({
   onDone: () => void;
   onUndo: () => void;
   plan: FocusTestPlanActions | null;
-  pressed: Pressed;
+  pressed: TestPressed;
   undoing: boolean;
 }) {
   const t = useExtracted();
@@ -211,7 +211,7 @@ export function FocusTestCheckpoint({
   onContinueTest: () => void;
   onDone: () => void;
   plan: FocusTestPlanActions | null;
-  pressed: Pressed;
+  pressed: TestPressed;
 }) {
   const {
     answer,

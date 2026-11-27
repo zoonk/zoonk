@@ -22,7 +22,7 @@ import { useOnboardingAnnounce } from "./onboarding-announcer";
 export type Choice<Value extends string> = {
   /** What the choice asks for, such as a field. Shown under the list, so picking moves no row. */
   after?: React.ReactNode;
-  description?: string;
+  description?: React.ReactNode;
   label: React.ReactNode;
   /** A short value at the row's end, such as what the choice comes to. */
   trailing?: React.ReactNode;
@@ -54,7 +54,7 @@ function ChoiceRowText({
   numberKeys,
 }: {
   children: React.ReactNode;
-  description?: string;
+  description?: React.ReactNode;
   index: number;
   numberKeys: boolean;
 }) {
