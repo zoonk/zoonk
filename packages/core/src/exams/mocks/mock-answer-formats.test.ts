@@ -212,7 +212,15 @@ describe("a mock in the exam's own answer formats", () => {
       answer({ id, itemId: itemIds.pick, value: { text: "4 g a day" } }),
     ).resolves.toStrictEqual({ status: "invalidItem" });
 
-    await answer({ id, itemId: itemIds.pick, value: { selectedIndexes: [0] } });
+    const shownPick = questions.get(itemIds.pick ?? "")?.options ?? [];
+    const rightPicks = new Set(["4 g a day", "Within limit"]);
+
+    await answer({
+      id,
+      itemId: itemIds.pick,
+      value: { selectedIndexes: [shownPick.indexOf("4 g a day")] },
+    });
+
     await answer({ id, itemId: itemIds.number, value: { number: 2 / 3 } });
     await answer({ id, itemId: itemIds.word, value: { text: " Went " } });
     await answer({ id, itemId: itemIds.miss, value: { text: "goed" } });
@@ -235,7 +243,7 @@ describe("a mock in the exam's own answer formats", () => {
     expect(review.get(itemIds.miss ?? "")?.outcome).toBe("wrong");
 
     expect(review.get(itemIds.pick ?? "")).toMatchObject({
-      correctAnswer: "4 g a day; Within limit",
+      correctAnswer: shownPick.filter((text) => rightPicks.has(text)).join("; "),
       learnerAnswer: "4 g a day",
       outcome: "partial",
     });

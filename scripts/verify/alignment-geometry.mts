@@ -99,7 +99,7 @@ export type Group = {
   unreadable: CaptureElement[];
 };
 
-const PARTS = new Set<string>(PART_NAMES);
+const PARTS = new Set<string>([...PART_NAMES, "section-text"]);
 
 function mirrorBounds([x, y, width, height]: Bounds): Bounds {
   return [-(x + width), y, width, height];

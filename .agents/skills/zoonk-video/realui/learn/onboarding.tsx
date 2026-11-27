@@ -291,7 +291,7 @@ function UnderstoodView({ lang }: ViewProps) {
           goal={c.goalText}
           hasAccount
           isCreating={false}
-          material={[]}
+          material={{ materialMissing: false, sources: [] }}
           onConfirm={noop}
           onRevise={async () => true}
           onRewrite={noop}

@@ -22,7 +22,7 @@ export function getTestLearnerRefusal(): string | null {
   }
 
   if (!isLocalDevelopmentDatabase(getDatabaseUrl())) {
-    return "DATABASE_URL isn't the local development database (zoonk on localhost).";
+    return "DATABASE_URL must point to a local development database for Zoonk.";
   }
 
   return null;

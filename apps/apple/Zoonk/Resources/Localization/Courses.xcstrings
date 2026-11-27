@@ -515,7 +515,7 @@
       }
     },
     "%lld lessons · %@" : {
-      "comment" : "How many lessons an example plan's first day has, and how long",
+      "comment" : "How many lessons a chapter has, and how long\nHow many lessons an example plan's first day has, and how long",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1389,7 +1389,7 @@
       }
     },
     "~%lld weeks" : {
-      "comment" : "How many weeks a course's example plan takes",
+      "comment" : "How many weeks a course's plan takes",
       "localizations" : {
         "de" : {
           "variations" : {
@@ -4520,7 +4520,7 @@
       }
     },
     "Lessons" : {
-      "comment" : "A part of an example plan's time\nHeader of a chapter's lessons",
+      "comment" : "Header of a chapter's lessons",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -7049,7 +7049,7 @@
       }
     },
     "What you'll learn" : {
-      "comment" : "Header of what a chapter teaches",
+      "comment" : "Header of what a chapter teaches\nHeader of what a lesson teaches",
       "localizations" : {
         "de" : {
           "stringUnit" : {

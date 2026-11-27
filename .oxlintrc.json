@@ -390,7 +390,7 @@
     "dist",
     "build",
     "**/generated/**",
-    "**/messages/**",
+    "**/messages/*.po",
     ".turbo",
     "pnpm-lock.yaml",
     ".agents",

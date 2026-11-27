@@ -42,7 +42,7 @@ No environment variable is required: the apps use local defaults, sign-in codes 
 ### Local Development
 
 - `pnpm dev` to start every app through Portless. Open the URLs it prints. Their hostnames include the clone name, such as `main.zoonk.localhost`, and linked worktrees also receive a branch prefix
-- `pnpm dev:lan` when testing from a phone or another device on the same trusted network. Open the `.local` Main URL it prints on that device
+- `pnpm dev:lan` when testing from a phone or another device on the same trusted network. Follow the [LAN setup](#lan-setup) to use the HTTPS URLs it prints
 - `pnpm dev:direct` to bypass Portless and use the original fixed localhost ports
 - `pnpm dev:prune` to let Portless remove orphaned servers left by crashed sessions. A stack's services stop by themselves within seconds of its `pnpm dev` or `pnpm start` ending, even when that process is force-killed
 - `pnpm build` to create a production build
@@ -54,6 +54,15 @@ No environment variable is required: the apps use local defaults, sign-in codes 
 - `pnpm e2e` to run end-to-end tests with Playwright, or `pnpm e2e:main` and `pnpm e2e:api` for one app (they pass further arguments, such as a test file, to Playwright)
 - `pnpm i18n:lint` to run i18n linting
 - `pnpm i18n` to translate missing i18n keys
+
+### LAN setup
+
+1. Run `pnpm dev:lan main api` on the laptop. Main, API and Mailbox each get an HTTPS `.local` URL. The first run creates a local certificate authority at `~/.portless-zoonk-lan/ca.pem`.
+2. Transfer that public certificate to each test device, for example with AirDrop, USB or a local file share. An extension of `.crt` makes the certificate file easier to open. Keep `ca-key.pem` on the laptop.
+3. On iPhone or iPad, open the certificate file, then install the downloaded profile in **Settings → General → VPN & Device Management**. Enable full trust for the Portless root in **Settings → General → About → Certificate Trust Settings**. On Android, use **Settings → Security & privacy → More security settings → Encryption & credentials → Install a certificate → CA certificate**. Settings names vary by device.
+4. Open the printed Main URL and use Mailbox to read local sign-in codes. For native testing, rebuild the Debug app so it picks up the printed API URL. Allow local network access if the device asks.
+
+To open the LAN URLs in a browser on the laptop, trust the same certificate with `PORTLESS_STATE_DIR="$HOME/.portless-zoonk-lan" pnpm exec portless trust`. This may ask for administrator access.
 
 ### Working with Git worktrees
 

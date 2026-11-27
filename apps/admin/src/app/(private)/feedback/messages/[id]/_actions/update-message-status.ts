@@ -36,7 +36,11 @@ export async function updateMessageStatusAction(
   );
 
   if (error) {
-    return { error: "Could not update the message. Please try again.", status: "error", submissionId };
+    return {
+      error: "Could not update the message. Please try again.",
+      status: "error",
+      submissionId,
+    };
   }
 
   revalidatePath("/feedback/messages");

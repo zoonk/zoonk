@@ -25,6 +25,7 @@
       case part(LayoutPart)
       case action(String)
       case anchor(String)
+      case sectionText
       case surface
     }
 
@@ -243,6 +244,28 @@
 
     func body(content: Content) -> some View {
       content.environment(\.layoutNestID, id)
+    }
+  }
+
+  struct LayoutSectionTextReporter: ViewModifier {
+    @Environment(\.layoutSurfaceID) private var surface
+    @State private var id = UUID()
+
+    func body(content: Content) -> some View {
+      if LayoutCapture.isOn {
+        content
+          .probes { frame in
+            LayoutRegistry.shared.update(id, kind: .sectionText) {
+              $0.frame = frame
+              $0.surface = surface
+            }
+          } host: { host in
+            LayoutRegistry.shared.update(id, kind: .sectionText) { $0.host = host }
+          }
+          .onDisappear { LayoutRegistry.shared.remove(id) }
+      } else {
+        content
+      }
     }
   }
 
@@ -876,7 +899,7 @@
       // anchors, which a state pair and the count of filled actions read by their surface.
       records = shown.filter {
         switch $0.record.kind {
-        case .row, .part: $0.record.surface == active
+        case .row, .part, .sectionText: $0.record.surface == active
         default: true
         }
       }
@@ -1119,16 +1142,34 @@
             "row": NSNull(), "bounds": Self.bounds(record.frame), "ink": "not measured",
             "anchor": name, "name": name,
           ])
-        case .row:
+        case .row, .sectionText:
           continue
         }
       }
 
       let systemEnds = systemEnds(rowsByCell: rowsByCell, cellKey: cellKey)
+      let nativeEndRows = Set(
+        systemEnds.compactMap { end in
+          end["ink"] is [Double] ? end["row"] as? String : nil
+        })
+      out.removeAll { element in
+        guard element["part"] as? String == LayoutPart.holder.rawValue,
+          let row = element["row"] as? String
+        else { return false }
+        return nativeEndRows.contains(row)
+      }
       out.append(contentsOf: systemEnds)
+      let sectionText = Set(
+        records.compactMap { entry -> String? in
+          guard entry.record.kind == .sectionText, let host = entry.record.host,
+            let cell = cells.cells.last(where: { host.isDescendant(of: $0.view) })
+          else { return nil }
+          return cellKey(cell)
+        })
       out.append(
-        contentsOf: unreportedRows(
-          reported: Set(rowsByCell.keys), groups: groupIDs, cellKey: cellKey))
+        contentsOf: otherCells(
+          reported: Set(rowsByCell.keys), sectionText: sectionText, groups: groupIDs,
+          cellKey: cellKey))
 
       // The system lays out its own chevron, and its glyph ends inside the margin a value without
       // one reaches; that row's end edge is where the system ends it.
@@ -1164,6 +1205,11 @@
       _ part: LayoutPart, _ id: UUID, _ record: LayoutRegistry.Record
     ) -> [String: Any] {
       var element: [String: Any] = ["part": part.rawValue, "bounds": Self.bounds(record.frame)]
+
+      if part == .holder {
+        element["ink"] = NSNull()
+        return element
+      }
 
       if part == .mark {
         guard picture.shows(record.frame, host: record.host) else { return clipped(element) }
@@ -1271,7 +1317,7 @@
         guard let rows = rowsByCell[cellKey(cell)], !rows.isEmpty else { return nil }
 
         let contentEnd = records.filter {
-          if case .part = $0.record.kind {
+          if case .part(let part) = $0.record.kind, part != .holder {
             return cell.frame.contains(CGPoint(x: $0.record.frame.midX, y: $0.record.frame.midY))
           }
           return false
@@ -1318,14 +1364,23 @@
       }
     }
 
-    /// List rows no shared piece reports: written so they count, never guessed at.
-    /// In a group with measured rows, they stay its neighbors, so a gap is read between rows that
-    /// really are next to each other.
-    private mutating func unreportedRows(
-      reported: Set<String>, groups: [String: String], cellKey: (ListCells.Cell) -> String
+    private func otherCells(
+      reported: Set<String>, sectionText: Set<String>, groups: [String: String],
+      cellKey: (ListCells.Cell) -> String
     ) -> [[String: Any]] {
-      cells.cells.filter { !reported.contains(cellKey($0)) }.enumerated().map { index, cell in
+      cells.cells.filter { !reported.contains(cellKey($0)) }.enumerated().compactMap {
+        index, cell in
         let group = groups[cell.section]
+        if sectionText.contains(cellKey(cell)) {
+          guard let group else { return nil }
+          return [
+            "id": "\(group).s\(index)", "piece": LayoutPiece.listGroup.rawValue,
+            "part": "section-text", "group": group, "row": NSNull(),
+            "bounds": Self.bounds(cell.frame), "ink": "not measured",
+            "flow": cell.section, "gapBefore": 0, "margins": [0, 0], "name": "section text",
+          ]
+        }
+
         return [
           "id": group.map { "\($0).u\(index)" } ?? "u\(index)",
           "piece": group == nil ? "unreported" : LayoutPiece.listGroup.rawValue, "part": "row",

@@ -10,6 +10,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { runDeferredWork } from "../_test-utils/deferred-work";
 import { mockSession } from "../_test-utils/mock-session";
+import { pickInMistake, shownOptionTexts } from "../_test-utils/shown-choice";
 import { trackServerEvent } from "../analytics/server";
 import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
 import { updateMemoryFromActivity } from "../memory/update-memory-from-activity";
@@ -38,10 +39,10 @@ async function practiceQuestion() {
     skillId: skills[0]?.id ?? "",
   });
 
-  await mistakeFixture({ itemId: item.id, skillId: item.skillId, userId: user.id });
+  const mistake = await mistakeFixture({ itemId: item.id, skillId: item.skillId, userId: user.id });
 
   mockSession(user.id);
-  return { item, user };
+  return { item, mistake, user };
 }
 
 function ask({
@@ -84,8 +85,17 @@ async function claimedHistory(questionId: string) {
   return claimed.claim.priorTurns;
 }
 
-function missQuestion({ itemId, userId }: { itemId: string; userId: string }) {
-  return attemptFixture({ answer: { selectedIndex: 1 }, isCorrect: false, itemId, userId });
+async function missQuestion({
+  itemId,
+  mistakeId,
+  userId,
+}: {
+  itemId: string;
+  mistakeId: string;
+  userId: string;
+}) {
+  const answer = await pickInMistake({ mistakeId, right: false });
+  return attemptFixture({ answer, isCorrect: false, itemId, userId });
 }
 
 async function askedScreen(result: Awaited<ReturnType<typeof ask>>) {
@@ -115,7 +125,7 @@ describe("asking the buddy about a session's or practice's question", () => {
       language: item.language,
       question: {
         format: "multipleChoice",
-        options: ["Right answer", "Wrong answer", "Incomplete answer", "Unrelated answer"],
+        options: shownOptionTexts({ blockId: "", item }),
         text: "Which number is even?",
       },
       scope: { kind: "item" },
@@ -146,7 +156,7 @@ describe("asking the buddy about a session's or practice's question", () => {
     const after = await ask({ context: { answered: true, kind: "item" }, itemId: item.id });
 
     await expect(askedScreen(after)).resolves.toMatchObject({
-      answer: { correctAnswer: "Right answer", isCorrect: false, learnerAnswer: "Wrong answer" },
+      answer: { correctAnswer: "Right answer", isCorrect: false, learnerAnswer: null },
     });
 
     await expect(
@@ -159,7 +169,7 @@ describe("asking the buddy about a session's or practice's question", () => {
   });
 
   it("leaves what the buddy said about an earlier answer out of a hint's history until it's checked again", async () => {
-    const { item, user } = await practiceQuestion();
+    const { item, mistake, user } = await practiceQuestion();
 
     await askAnswered({
       answer: "Even numbers end in 0, 2, 4, 6 or 8.",
@@ -167,7 +177,7 @@ describe("asking the buddy about a session's or practice's question", () => {
       itemId: item.id,
     });
 
-    await missQuestion({ itemId: item.id, userId: user.id });
+    await missQuestion({ itemId: item.id, mistakeId: mistake.id, userId: user.id });
 
     await askAnswered({
       answer: "The right answer is the first one.",
@@ -209,7 +219,7 @@ describe("asking the buddy about a session's or practice's question", () => {
   });
 
   it("says which turns were asked about the learner's checked answer", async () => {
-    const { item, user } = await practiceQuestion();
+    const { item, mistake, user } = await practiceQuestion();
     const target = { itemId: item.id, kind: "item" } as const;
 
     const hint = await ask({ context: { answered: false, kind: "item" }, itemId: item.id });
@@ -219,7 +229,7 @@ describe("asking the buddy about a session's or practice's question", () => {
       where: { thread: { userId: user.id } },
     });
 
-    await missQuestion({ itemId: item.id, userId: user.id });
+    await missQuestion({ itemId: item.id, mistakeId: mistake.id, userId: user.id });
 
     const why = await ask({
       context: { answered: true, kind: "item" },

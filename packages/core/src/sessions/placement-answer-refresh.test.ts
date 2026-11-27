@@ -4,6 +4,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { after } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { pickItemInBlock } from "../_test-utils/shown-choice";
 import { finishChallengesFixture } from "../plans/_test-utils/finish-challenges";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { createGoalPlan } from "../plans/create-goal-plan";
@@ -95,7 +96,12 @@ describe("a placement answer in a first-week session", () => {
 
     await answerStudyQuestion({
       blockId,
-      input: { answer: { selectedIndex: 1 }, durationMs: 3000, itemId, timeZone: TIME_ZONE },
+      input: {
+        answer: await pickItemInBlock({ blockId, itemId, right: false }),
+        durationMs: 3000,
+        itemId,
+        timeZone: TIME_ZONE,
+      },
       sessionId,
     });
 

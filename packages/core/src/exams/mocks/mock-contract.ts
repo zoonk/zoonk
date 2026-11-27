@@ -95,6 +95,8 @@ export const mockConditionsSchema = z.object({
   scoring: z.enum(MOCK_SCORINGS),
   sections: z.array(mockSectionSchema),
   shape: mockShapeSchema.nullable(),
+  /** Unset on mocks started before each mock showed options in its own order: their saved answers point into the stored order. */
+  shufflesOptions: z.literal(true).optional(),
   startTime: z.string().nullable(),
   timeZone: z.string().nullable(),
   timedOutSections: z.array(z.int()),

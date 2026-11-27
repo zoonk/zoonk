@@ -798,179 +798,6 @@
         }
       }
     },
-    "%lld tasks · %@ in the exam" : {
-      "comment" : "How many tasks the speaking paper has and how long it is",
-      "localizations" : {
-        "de" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld Aufgabe · %@ in der Prüfung"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld Aufgaben · %@ in der Prüfung"
-                }
-              }
-            }
-          }
-        },
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld task · %@ in the exam"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld tasks · %@ in the exam"
-                }
-              }
-            }
-          }
-        },
-        "es" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld tarea · %@ en el examen"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld tareas · %@ en el examen"
-                }
-              }
-            }
-          }
-        },
-        "fr" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld tâche · %@ à l’examen"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld tâches · %@ à l’examen"
-                }
-              }
-            }
-          }
-        },
-        "it" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld compito · %@ all’esame"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld compiti · %@ all’esame"
-                }
-              }
-            }
-          }
-        },
-        "ja" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lldタスク・試験時間%@"
-                }
-              }
-            }
-          }
-        },
-        "ko" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "과제 %lld개 · 시험 시간 %@"
-                }
-              }
-            }
-          }
-        },
-        "pl" : {
-          "variations" : {
-            "plural" : {
-              "many" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld zadań · %@ na egzaminie"
-                }
-              },
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld zadanie · %@ na egzaminie"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld zadania · %@ na egzaminie"
-                }
-              }
-            }
-          }
-        },
-        "pt" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld tarefa · %@ na prova"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld tarefas · %@ na prova"
-                }
-              }
-            }
-          }
-        },
-        "tr" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld bölüm · sınavda %@"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "%lld–%lld min" : {
       "comment" : "A task's length range",
       "localizations" : {
@@ -4477,7 +4304,7 @@
       }
     },
     "Listening…" : {
-      "comment" : "The call is listening",
+      "comment" : "The call hears the learner speaking",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -9267,7 +9094,7 @@
       }
     },
     "Try again" : {
-      "comment" : "Button to retry loading\nCalls again\nRetries saving a call\nRetries saving the round\nSays the same word again",
+      "comment" : "Calls again\nRetries saving a call\nRetries saving the round\nSays the same word again\nStarts the same exam task again with a new card",
       "localizations" : {
         "de" : {
           "stringUnit" : {

@@ -1,9 +1,9 @@
 import SwiftUI
 
-/// Main's note row (`ListRow role="note"` with `ListRowLeading firstLine`): an icon on its title's
-/// first line and the lines that explain it under the title, such as a mock result's insight or how
-/// an exam is scored.
 struct NoteRow<Lines: View>: View {
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+  @Environment(\.legibilityWeight) private var legibility
+
   let title: Text
   let systemImage: String
   @ViewBuilder let lines: Lines
@@ -15,20 +15,40 @@ struct NoteRow<Lines: View>: View {
   }
 
   var body: some View {
-    RowLayout(alignment: .firstTextBaseline) {
-      Image(systemName: systemImage)
-        .foregroundStyle(.mutedForeground)
-        .accessibilityHidden(true)
-    } words: {
-      VStack(alignment: .leading, spacing: 4) {
-        title
-          .layoutPart(.label, text: title)
-          .typeStyle(.body.weight(.semibold))
-        lines
+    let titleStyle = TypeStyle.body.weight(.semibold)
+    let capHeight = titleStyle.uiFont(dynamicTypeSize, legibility: legibility).capHeight
+
+    Group(subviews: lines) { descriptions in
+      RowLayout(alignment: descriptions.count >= 2 ? .noteMark : .center) {
+        Image(systemName: systemImage)
           .foregroundStyle(.mutedForeground)
+          .accessibilityHidden(true)
+      } words: {
+        VStack(alignment: .leading, spacing: 4) {
+          title
+            .layoutPart(.label, text: title)
+            .typeStyle(titleStyle)
+            .alignmentGuide(.noteMark) { $0[.firstTextBaseline] - capHeight / 2 }
+
+          ForEach(descriptions) { description in
+            description
+              .foregroundStyle(.mutedForeground)
+              .layoutPart(.note)
+          }
+        }
+      } value: {
+        EmptyView()
       }
-    } value: {
-      EmptyView()
+    }
+  }
+}
+
+extension VerticalAlignment {
+  fileprivate static let noteMark = VerticalAlignment(NoteMarkAlignment.self)
+
+  private struct NoteMarkAlignment: AlignmentID {
+    static func defaultValue(in context: ViewDimensions) -> CGFloat {
+      context[VerticalAlignment.center]
     }
   }
 }

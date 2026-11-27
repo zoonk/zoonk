@@ -1725,6 +1725,7 @@ msgid "Copy link"
 msgstr "Link kopieren"
 
 #: src/certificates/certificate-details.tsx
+#: src/shell/level-link.tsx
 msgctxt "y1Qr81"
 msgid "Level"
 msgstr "Level"
@@ -12896,6 +12897,17 @@ msgstr "Lernbereiche"
 msgctxt "xmcVZ0"
 msgid "Search"
 msgstr "Suchen"
+
+#: src/shell/level-link.tsx
+msgctxt "bzSrZ6"
+msgid "Level {level}"
+msgstr "Level {level}"
+
+#. Accessible name of the chip that opens Level. belt is the translated belt name; level is the learner’s level number. Each locale controls their order and punctuation.
+#: src/shell/level-link.tsx
+msgctxt "xjYKLD"
+msgid "{belt}, Level {level}"
+msgstr "{belt}, Level {level}"
 
 #: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.tFFMkF"

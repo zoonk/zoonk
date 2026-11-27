@@ -125,6 +125,7 @@ function block(learner: SampleLearner, position: number): DayBlockView {
     planItemId: `item-${position}`,
     planItemKey: null,
     position,
+    preparing: false,
     questions: 8,
     refresh: false,
     reinforcement: false,
@@ -148,6 +149,7 @@ export function firstDay(learner: SampleLearner): UnstartedDayView {
     const before = date < localDate;
     const weekend = offset >= 5;
     return {
+      completed: 0,
       date,
       goalMinutes: before || weekend ? 0 : learner.minutesPerDay,
       hitGoal: false,
@@ -155,6 +157,7 @@ export function firstDay(learner: SampleLearner): UnstartedDayView {
       kind: before ? ("beforeStart" as const) : weekend ? ("rest" as const) : ("study" as const),
       minutes: 0,
       studied: false,
+      total: date.getTime() === localDate.getTime() ? blocks.length : 0,
     };
   });
   const minutes = learner.minutesPerDay;
@@ -299,6 +302,7 @@ export function planView(learner: SampleLearner): PlanView {
       ),
     },
     shortPlan: null,
+    suggestedTime: null,
     status: { kind: "onTrack" },
     steering: {
       difficultyBias: "standard",
@@ -391,6 +395,7 @@ export function todayView(learner: SampleLearner): TodayView {
       dateEstimated: false,
       daysLeft: Math.round((target.getTime() - utc(today).getTime()) / DAY_MS),
       displayName: learner.goal.displayName,
+      examDocument: "notice",
       id: learner.goalId,
       kind: learner.goal.kind,
       targetDate: target,

@@ -40,12 +40,7 @@ export async function loadCurrentSection({
     const item = items.get(itemId);
 
     return item && isStillAsked({ answered: answered.has(itemId), item })
-      ? [
-          {
-            ...toMockQuestionView({ item, mockId: mock.id }),
-            area: areas.get(item.skillId) ?? null,
-          },
-        ]
+      ? [{ ...toMockQuestionView({ item, mock }), area: areas.get(item.skillId) ?? null }]
       : [];
   });
 

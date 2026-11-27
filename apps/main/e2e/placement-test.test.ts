@@ -3,7 +3,7 @@ import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { type Page, expect, test } from "./fixtures";
-import { ANSWERED, createMappedGoal } from "./onboarding-fixtures";
+import { ANSWERED, createMappedGoal, solvePlacementEquation } from "./onboarding-fixtures";
 
 const STEPS = [
   "Write the equation",
@@ -72,14 +72,13 @@ async function sortSteps(page: Page) {
   /* oxlint-enable no-await-in-loop */
 }
 
-/** The quick question asks "Solve x + a = b": its right answer is b - a. */
 async function answerRight(page: Page) {
   const title = page.getByRole("heading", { level: 1, name: /Solve x \+|Put the/u });
   const text = await title.innerText();
-  const solve = /x \+ (?<add>\d+) = (?<sum>\d+)/u.exec(text)?.groups;
+  const solution = solvePlacementEquation(text);
 
-  if (solve) {
-    await page.getByRole("radio", { name: String(Number(solve.sum) - Number(solve.add)) }).click();
+  if (solution) {
+    await page.getByRole("radio", { exact: true, name: solution }).click();
   } else {
     await sortSteps(page);
   }

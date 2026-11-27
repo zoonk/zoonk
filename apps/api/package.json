@@ -6,7 +6,7 @@
   "scripts": {
     "analyze": "next experimental-analyze",
     "build": "next build",
-    "build:e2e": "node ../../scripts/run-test-env.mts e2e next build",
+    "build:e2e": "node ../../scripts/run-test-env.mts e2e --quiet-on-success next build",
     "dev": "node ../../scripts/dev/run-service.mts api",
     "dev:app": "next dev",
     "dev:direct": "next dev -p 4000",

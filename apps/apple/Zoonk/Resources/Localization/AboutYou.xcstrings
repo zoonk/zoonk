@@ -275,7 +275,7 @@
       }
     },
     "Add" : {
-      "comment" : "About you row value for an answer whose facts were deleted in Memory",
+      "comment" : "About you row value for an answer whose facts were deleted in Memory\nAdds the tool typed in the box as a chip",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2516,7 +2516,7 @@
       }
     },
     "Remove %@" : {
-      "comment" : "Removes a tool the learner typed. {tool} is its name, such as Photoshop.",
+      "comment" : "Removes a tool the learner typed",
       "localizations" : {
         "de" : {
           "stringUnit" : {
