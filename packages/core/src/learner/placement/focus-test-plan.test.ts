@@ -147,9 +147,11 @@ describe("the Focus test on a plan whose time is short", () => {
       plan: { focusTest: { sitting: { answered: 0, questions: 6 }, state: "sitting" } },
     });
 
+    const itemId = opened.next?.itemId ?? "";
+
     await answerPlacementQuestion({
       goalId: goal.id,
-      input: { answer: RIGHT, durationMs: 20_000, itemId: opened.next?.itemId ?? "" },
+      input: { answer: await pickInPlacement({ itemId }), durationMs: 20_000, itemId },
     });
 
     await expect(getGoalPlan(goal.id)).resolves.toMatchObject({

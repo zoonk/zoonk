@@ -4,6 +4,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { CEFR_LEVELS } from "@zoonk/utils/cefr";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { tapInLevelTest } from "../_test-utils/shown-choice";
 import { answerLanguageLevelTest } from "../language/level-test/answer-language-level-test";
 import { finishLanguageLevelTest } from "../language/level-test/finish-language-level-test";
 import { startLanguageLevelTest } from "../language/level-test/start-language-level-test";
@@ -56,6 +57,15 @@ async function takeTest(
     const known =
       path !== "agree" || CEFR_LEVELS.indexOf(question.level) <= (stated === "B2" ? 3 : 1);
 
+    const tap = (answerIndex: number) =>
+      tapInLevelTest({
+        answerIndex,
+        attemptId,
+        count: question.options.length,
+        goalId,
+        questionId: question.id,
+      });
+
     // oxlint-disable-next-line no-await-in-loop -- Each response supplies the next question.
     const answer = await answerLanguageLevelTest({
       goalId,
@@ -65,10 +75,12 @@ async function takeTest(
           path === "lower" ||
           (path === "defer" && question.skill === "listening")
             ? null
-            : Number(!known),
+            : tap(Number(!known)),
         attemptId,
         questionId: question.id,
-        ...(kind === "confirmation" && { answerIndices: known ? [0, 2] : [1, 2] }),
+        ...(kind === "confirmation" && {
+          answerIndices: (known ? [0, 2] : [1, 2]).map((index) => tap(index)),
+        }),
         ...(path === "defer" && question.skill === "listening" && { audioDeferred: true }),
       },
     });
