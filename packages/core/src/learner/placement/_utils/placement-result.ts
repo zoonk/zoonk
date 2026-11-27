@@ -31,15 +31,16 @@ export async function readPlacementResult({
 
   const part = latest.part;
 
-  const partLessonsSkipped = placement.finishedParts
-    .filter((receipt) => receipt.part === part)
-    .reduce((count, receipt) => count + receipt.lessonsSkipped, 0);
-
   const stoppedAt = latest.finish?.end === "stopped" ? latest.finish.answered : undefined;
   const receipt = placementPartReceipt(result.attemptId, part, stoppedAt);
 
   const change =
     latest.lessonsSkipped > 0 ? await readTestOutChange({ db: tx, goalId, receipt }) : null;
 
-  return { ...result, changeId: change?.id ?? null, part, partLessonsSkipped };
+  return {
+    ...result,
+    changeId: change?.id ?? null,
+    part,
+    partLessonsSkipped: latest.lessonsSkipped,
+  };
 }
