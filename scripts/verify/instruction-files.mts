@@ -15,7 +15,7 @@ const OVER_BUDGET_UNTIL_SPLIT: Record<string, number> = {
   ".agents/skills/apple-human-interface-guidelines/references/official-links.md": 22_000,
   ".agents/skills/verify/references/pages.md": 48_000,
   ".agents/skills/zoonk-address-issue/SKILL.md": 18_000,
-  ".agents/skills/zoonk-design/SKILL.md": 44_000,
+  ".agents/skills/zoonk-design/SKILL.md": 41_000,
   ".agents/skills/zoonk-design/references/app-patterns.md": 82_000,
   ".agents/skills/zoonk-design/references/color.md": 14_000,
   ".agents/skills/zoonk-design/references/craft.md": 58_000,
