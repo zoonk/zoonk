@@ -49,6 +49,7 @@ const BLOCK: StudyBlockDetail["block"] = {
   fullReview: false,
   id: "block",
   kind: "practice",
+  lesson: null,
   lessonId: null,
   mistakesOnly: false,
   netScored: false,

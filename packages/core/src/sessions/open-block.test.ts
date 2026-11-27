@@ -16,8 +16,11 @@ import {
 } from "../_test-utils/learner-lock";
 import { mockSession } from "../_test-utils/mock-session";
 import { toProduceBlock } from "../exams/essays/produce-block";
+import { endLessonsAsk } from "../lookahead/lessons-ask";
 import { SESSION_NOW, SESSION_TODAY, sessionGoalFixture } from "./_test-utils/session-goal";
+import { loadDayStandInCourseIds } from "./_utils/outlining-stand-ins";
 import { claimStudySessionSummaryVisit } from "./claim-study-session-summary-visit";
+import { getStudySession } from "./get-study-session";
 import { openStudyBlock } from "./open-block";
 import { openStudyDay } from "./open-study-day";
 
@@ -108,17 +111,69 @@ describe("the learner opens a study block", () => {
     await expect(owedPreparations(session.id)).resolves.toBe(0);
   });
 
-  it("prepares a step whose lesson the plan hasn't picked yet, without starting it", async () => {
+  it("returns to Today without preparing a deleted lesson in a session without a goal", async () => {
     const { session } = await learnerSession();
     const block = await studySessionBlockFixture({ lessonId: null, sessionId: session.id });
 
     await expect(tap(block)).resolves.toStrictEqual({
-      opening: { blockId: block.id, kind: "preparingLesson", sessionId: session.id },
+      opening: { kind: "today" },
       status: "ready",
     });
 
     await expect(readBlock(block)).resolves.toMatchObject({ status: "pending" });
-    await expect(owedPreparations(session.id)).resolves.toBe(1);
+    await expect(owedPreparations(session.id)).resolves.toBe(0);
+  });
+
+  it("returns to Today and records a preparation ask for a saved block whose lesson was deleted", async () => {
+    const [{ plan, session }, lesson] = await Promise.all([
+      goalDaySession(),
+      libraryLessonFixture(),
+    ]);
+
+    const block = await studySessionBlockFixture({ lessonId: lesson.id, sessionId: session.id });
+    await prisma.lesson.delete({ where: { id: lesson.id } });
+
+    const goal = await prisma.goal.findUniqueOrThrow({ where: { id: plan.goalId } });
+
+    await expect(
+      loadDayStandInCourseIds({ goal, localDate: session.localDate }),
+    ).resolves.toStrictEqual([]);
+
+    const readSession = () =>
+      getStudySession({ input: { timeZone: "UTC" }, sessionId: session.id });
+
+    await expect(readSession()).resolves.toMatchObject({ session: { lessonsComing: false } });
+
+    await expect(tap(block)).resolves.toStrictEqual({
+      opening: { kind: "today" },
+      status: "ready",
+    });
+
+    const askedAt = SESSION_NOW.getTime();
+
+    await expect(readBlock(block)).resolves.toMatchObject({ lessonId: null, status: "pending" });
+
+    await expect(prisma.plan.findUnique({ where: { id: plan.id } })).resolves.toMatchObject({
+      lessonsAskedAt: SESSION_NOW,
+    });
+
+    await expect(
+      prisma.followUp.findMany({
+        where: { key: goal.id, kind: "prepareGoalLessons", userId: session.userId },
+      }),
+    ).resolves.toMatchObject([{ input: { goalId: goal.id, lessonsAskedAt: askedAt } }]);
+
+    await expect(readSession()).resolves.toMatchObject({
+      session: { blocks: [{ lesson: null }], lessonsComing: true },
+    });
+
+    await endLessonsAsk({ askedAt, goalId: goal.id, startedCourseIds: [] });
+
+    await expect(prisma.plan.findUnique({ where: { id: plan.id } })).resolves.toMatchObject({
+      lessonsAskedAt: null,
+    });
+
+    await expect(readSession()).resolves.toMatchObject({ session: { lessonsComing: false } });
   });
 
   it("starts review on the session screen and an essay on its own", async () => {

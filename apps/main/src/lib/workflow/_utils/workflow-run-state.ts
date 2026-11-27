@@ -20,7 +20,11 @@ const REOPEN_DELAY_MS = 1500;
 
 const MAX_RECONNECT_DELAY_MS = 16_000;
 
+const UNAVAILABLE_RETRY_MS = 5000;
+
 export type RunStatus = "cancelled" | "completed" | "failed" | "pending" | "running";
+
+export type RunLookup = RunStatus | "missing" | "unavailable";
 
 export type WorkflowRunState = {
   ended: boolean;
@@ -47,7 +51,7 @@ export type WorkflowRunAction =
   | { kind: GenerationKind; message: StepStreamMessage; type: "event" }
   | { offsetMs: number; type: "serverClock" }
   | { namespace?: string; runId: string | null; type: "polled" }
-  | { runId: string; status: RunStatus; type: "runStatus" }
+  | { runId: string; status: RunLookup; type: "runStatus" }
   | { type: "connectionLost" }
   | { type: "notStarted" }
   | { type: "reconnect" }
@@ -173,7 +177,17 @@ function applyEvent({
 }
 
 /** A run still running behind a closed stream had its connection cut (a function timeout). */
-function applyRunStatus(state: WorkflowRunState, status: RunStatus): WorkflowRunState {
+function applyRunStatus(state: WorkflowRunState, status: RunLookup): WorkflowRunState {
+  if (status === "unavailable") {
+    return isSettled(state) ? state : { ...state, reconnectIn: UNAVAILABLE_RETRY_MS };
+  }
+
+  if (status === "missing") {
+    return isSettled(state)
+      ? { ...state, ended: true }
+      : { ...state, ended: true, failure: "generation", lostConnections: 0, reconnectIn: null };
+  }
+
   if (state.ready) {
     return { ...state, ended: true, reconnectIn: null };
   }
@@ -263,6 +277,25 @@ export function getFollowedRunId({
 }): string | null {
   const known = state.joined ?? state.polled ?? generationId;
   return known && !state.replaced.includes(known) ? known : null;
+}
+
+/** A newly confirmed writer replaces the run followed so far, whose state no longer applies. */
+export function getReplacedRunIds({
+  confirmed,
+  previous,
+  state,
+}: {
+  confirmed: string | null;
+  previous: string | null;
+  state: WorkflowRunState;
+}): string[] | null {
+  const followed = getFollowedRunId({ generationId: previous, state });
+
+  if (!confirmed || confirmed === followed || state.replaced.includes(confirmed)) {
+    return null;
+  }
+
+  return followed ? [followed] : [];
 }
 
 export function getRunStatus({

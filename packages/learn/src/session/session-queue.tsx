@@ -40,7 +40,9 @@ function BlockRow({ block, state }: SessionQueueRow) {
             {state === "done" && <span className="sr-only">{t(", done")}</span>}
           </ListRowTitle>
         </ListRowContent>
-        <ListRowTrailing>{formatDuration(block.estimatedMinutes)}</ListRowTrailing>
+        {state !== "done" && (
+          <ListRowTrailing>{formatDuration(block.estimatedMinutes)}</ListRowTrailing>
+        )}
       </ListRowBody>
     </ListRow>
   );

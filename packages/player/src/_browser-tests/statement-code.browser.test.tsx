@@ -33,6 +33,7 @@ const DETAIL: Detail = {
     fullReview: false,
     id: "block",
     kind: "practice",
+    lesson: null,
     lessonId: null,
     mistakesOnly: false,
     netScored: false,

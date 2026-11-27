@@ -360,59 +360,58 @@ struct LessonPlayerAPI: Sendable {
       throw APIError.unauthorized
     case .notFound, .badRequest:
       throw APIError.notFound
-    case .internalServerError, .undocumented:
+    case .internalServerError, .serviceUnavailable, .undocumented:
       throw APIError.network
     }
   }
 
-  /// Waits while a run writes the lesson (`run` when the learner's tap just started it, since the
-  /// lesson names its run only once the run claims it) and returns how it stands once none does:
-  /// `failed` when a run ended without writing it, as main's waits give up on a stalled lesson.
+  /// Returns the first readiness that names no run writing the lesson: only readiness decides, so a
+  /// stream that ends or fails asks it again.
   func followWriting(
-    id: String, run: String?, token: String,
+    id: String, run: String?, token: String, tick: Duration = .seconds(5),
     progress: @escaping @MainActor @Sendable (_ run: String, _ event: GenerationEvent) -> Void = {
       _, _ in
     }
   ) async throws -> Components.Schemas.LessonReadiness {
-    var followed: String
-
-    if let run {
-      followed = run
-    } else {
-      let readiness = try await getReadiness(id: id, token: token)
-
-      guard let generationId = readiness.generationId else {
-        return readiness
-      }
-
-      followed = generationId
-    }
+    var followed = run
 
     while true {
-      do {
-        for try await event in clients.generationEvents(id: followed, token: token) {
-          await progress(followed, event)
+      if let followed {
+        do {
+          for try await event in clients.generationEvents(id: followed, token: token) {
+            await progress(followed, event)
 
-          if event.step == "lessonReady" {
-            break
+            if event.step == "lessonReady" {
+              break
+            }
           }
-        }
-      } catch {}
+        } catch {}
+      }
 
       try Task.checkCancellation()
-      var readiness = try await getReadiness(id: id, token: token)
+      let readiness = try await answeredReadiness(id: id, token: token, tick: tick)
 
-      if readiness.status == .ready {
+      guard readiness.status == .generating else {
         return readiness
       }
 
-      guard readiness.status == .generating, let next = readiness.generationId, next != followed
-      else {
-        readiness.status = .failed
-        return readiness
+      if readiness.generationId == nil || readiness.generationId == followed {
+        try await Task.sleep(for: tick)
       }
 
-      followed = next
+      followed = readiness.generationId
+    }
+  }
+
+  private func answeredReadiness(id: String, token: String, tick: Duration) async throws
+    -> Components.Schemas.LessonReadiness
+  {
+    while true {
+      do {
+        return try await getReadiness(id: id, token: token)
+      } catch APIError.network {
+        try await Task.sleep(for: tick)
+      }
     }
   }
 

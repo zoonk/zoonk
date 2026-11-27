@@ -626,6 +626,7 @@ final class LessonPlayerStore {
     switch lesson?.status {
     case .generating: waitForWriting(outline)
     case .ready: await load(refresh: true)
+    case .failed where lesson?.setAside == true: screen = .waiting(outline, .setAside)
     case .failed, .unrecognized: screen = .waiting(outline, .failed)
     case .notStarted, nil: screen = .waiting(outline, .notStarted)
     }
@@ -672,8 +673,6 @@ final class LessonPlayerStore {
     }
   }
 
-  /// Reading never writes anything. A run that ended without the lesson, or a follow that couldn't
-  /// finish, leaves it to the learner to try again.
   private func followWriting(
     _ outline: LessonOutline, run: String?, identity: AuthenticatedSession
   ) async {
@@ -692,6 +691,7 @@ final class LessonPlayerStore {
     case .ready where warmUp != nil: screen = .waiting(outline, .written)
     case .ready: await load(refresh: true)
     case .failed, .unrecognized, nil: screen = .waiting(outline, .failed)
+    // The follow returns only once no run writes it.
     case .generating, .notStarted: screen = .waiting(outline, .notStarted)
     }
   }

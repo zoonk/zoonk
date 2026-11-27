@@ -1,4 +1,10 @@
-import { type GenerationStatus, type Goal, type TransactionClient, prisma } from "@zoonk/db";
+import {
+  type GenerationStatus,
+  type Goal,
+  type Plan,
+  type TransactionClient,
+  prisma,
+} from "@zoonk/db";
 import "server-only";
 import { getOutlineStaleBefore } from "../../lookahead/outline-ahead";
 import { listDayStandIns } from "../../lookahead/outline-window";
@@ -69,25 +75,37 @@ export async function hasOutliningCourses({
   return outlining > 0;
 }
 
-/**
- * Whether the day's stand-ins are getting lessons (`awaiting`) or wait for someone to ask (`idle`);
- * null without stand-ins. They're getting lessons while an outline is writing a course they need or
- * the learner's own ask is fresh.
- */
-export async function getDayOutlines(input: DayOutlinesInput): Promise<DayOutlines> {
-  const { client = prisma, goal, now = new Date() } = input;
-  const courseIds = await loadDayStandInCourseIds(input);
+type OutliningPlan = Pick<Plan, "graph" | "lessonsAskedAt">;
+
+/** A learner's ask can be awaiting preparation even before the day has stand-in courses. */
+export async function getDayOutlines({
+  client = prisma,
+  goal,
+  localDate,
+  now = new Date(),
+  plan: knownPlan,
+}: Omit<DayOutlinesInput, "graph"> & { plan?: OutliningPlan | null }): Promise<DayOutlines> {
+  const plan =
+    knownPlan === undefined
+      ? await client.plan.findUnique({
+          select: { graph: true, lessonsAskedAt: true },
+          where: { goalId: goal.id },
+        })
+      : knownPlan;
+
+  if (!plan) {
+    return null;
+  }
+
+  if (plan.lessonsAskedAt && plan.lessonsAskedAt > getOutlineStaleBefore(now)) {
+    return "awaiting";
+  }
+
+  const courseIds = await loadDayStandInCourseIds({ client, goal, graph: plan.graph, localDate });
 
   if (courseIds.length === 0) {
     return null;
   }
 
-  const [outlining, asked] = await Promise.all([
-    hasOutliningCourses({ client, courseIds, now }),
-    client.plan.count({
-      where: { goalId: goal.id, lessonsAskedAt: { gt: getOutlineStaleBefore(now) } },
-    }),
-  ]);
-
-  return outlining || asked > 0 ? "awaiting" : "idle";
+  return (await hasOutliningCourses({ client, courseIds, now })) ? "awaiting" : "idle";
 }

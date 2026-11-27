@@ -30,8 +30,10 @@ import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.Generation
+import com.zoonk.api.models.LessonGenerationStatus
 import com.zoonk.api.models.LessonReadiness
 import com.zoonk.api.models.StudyBlock
+import com.zoonk.api.models.StudyBlockLesson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -207,7 +209,6 @@ class NextStopWarmUpScreenshots {
                     day = day(steps = steps),
                     step = steps[2],
                     goalId = GOAL,
-                    asked = false,
                     notWritten = null,
                     alternative = null,
                     refresh = {},
@@ -262,11 +263,13 @@ class NextStopWarmUpScreenshots {
                         override suspend fun status(id: String) = if (failed) Generation.Status.FAILED else Generation.Status.RUNNING
                     }
                 },
-                now = { compose.mainClock.currentTime },
             )
         val warmUps = WarmUpStore({ _, _ -> beekeepingDeck() }, cache, session)
         kotlinx.coroutines.runBlocking { warmUps.decks[WARM_UP_ID].prepare() }
-        var shown by mutableStateOf(step(0, screen = StudyBlock.Screen.SESSION, lessonId = LESSON).copy(title = "Inside the hive"))
+        val snapshot = StudyBlockLesson(setAside = false, status = LessonGenerationStatus.entries.first { it.value == status.value })
+        var shown by mutableStateOf(
+            step(0, screen = StudyBlock.Screen.SESSION, lessonId = LESSON, lesson = snapshot).copy(title = "Inside the hive"),
+        )
 
         compose.setContent {
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
@@ -276,7 +279,6 @@ class NextStopWarmUpScreenshots {
                         day = day(steps = listOf(shown, step(1).copy(title = "The waggle dance"))),
                         step = shown,
                         goalId = GOAL,
-                        asked = true,
                         notWritten = null,
                         alternative = alternative,
                         refresh = { shown = shown.copy(screen = StudyBlock.Screen.LESSON) },

@@ -27,7 +27,6 @@ import {
   NotWritten,
   Waiting,
   useKeptDeck,
-  useWaitFailed,
   useWrittenWhileWaiting,
 } from "./next-stop-wait";
 import { ReviewIntro, noteReviewStart, useReviewLine } from "./review-intro";
@@ -35,18 +34,17 @@ import { SessionFrame } from "./session-frame";
 import { SessionHeader } from "./session-header";
 import { useSessionQueueAside } from "./session-queue";
 import { getSessionQueue } from "./session-queue-rows";
-import { type DayStep } from "./session-types";
+import { type DayStep, type LessonReadiness } from "./session-types";
 import { useBlockDetail, useBlockTitle } from "./use-block-copy";
+import { useLessonReadiness } from "./use-lesson-readiness";
 import { useSessionAction } from "./use-session-action";
 
+/** `notStarted`: the learner asked for the lesson and the run they started hasn't taken it yet. */
 export type NextStopLesson = "failed" | "notStarted" | "ready" | "writing";
 
 export type NextStopActions = {
   refresh: () => void;
-  /** Null when it couldn't be read. */
-  readLesson?: (
-    lessonId: string,
-  ) => Promise<{ generationId: string | null; lesson: NextStopLesson; setAside: boolean } | null>;
+  readLesson?: (lessonId: string) => Promise<LessonReadiness | null>;
   start: (step: DayStep) => Promise<boolean>;
   stop: () => Promise<boolean>;
 };
@@ -239,18 +237,29 @@ export function NextStop({
   const formatDuration = useFormatDuration();
   const title = useBlockTitle();
   const detail = useBlockDetail();
-  const isReady = lesson === "ready";
+
+  const readiness = useLessonReadiness({
+    actions,
+    enabled: !notWritten,
+    generationId,
+    lesson,
+    lessonId: block.kind === "learn" ? block.lessonId : null,
+  });
+
+  const shown = readiness.lesson;
+  const refused: LessonNotWritten | null = readiness.setAside ? { status: "setAside" } : notWritten;
+  const isReady = shown === "ready";
   const line = useReviewLine({ block, detail: detail(block), goalId });
   const rows = getSessionQueue({ blocks, nextPosition: block.position });
   const aside = useSessionQueueAside({ left: minutesLeft, rows });
 
-  const written = useWrittenWhileWaiting({ block, lesson });
-  const failed = useWaitFailed({ generationId, lesson });
+  const written = useWrittenWhileWaiting({ block, lesson: shown });
+  const failed = shown === "failed";
   const deck = useKeptDeck(warmUp);
   const hold = useReadyHold(isReady);
   const { track } = useLearnAnalytics();
   // A learner who played keeps the finished wait and their card; anyone else sees Start alone.
-  const showsWait = !notWritten && (!isReady || (written && hold.status !== "go"));
+  const showsWait = !refused && (!isReady || (written && hold.status !== "go"));
 
   useVisibleWait({ contentKind: "lesson", enabled: showsWait, goalId, surface: "nextStop", track });
   const facts = [formatDuration(block.estimatedMinutes), block.oftenTested && t("Often tested")];
@@ -258,7 +267,7 @@ export function NextStop({
   return (
     <WaitScreen
       // A failed run has nothing to wait for, so it offers Try again and no quiz.
-      deck={hold.status === "go" || failed.failed ? null : deck}
+      deck={hold.status === "go" || failed ? null : deck}
       goalId={goalId}
       hold={hold}
       surface="lessonWait"
@@ -283,9 +292,7 @@ export function NextStop({
 
           <StatusRegion className="text-sm">{written && t("Your lesson is ready.")}</StatusRegion>
 
-          {!isReady && notWritten && (
-            <NotWritten actions={actions} block={block} reason={notWritten} />
-          )}
+          {!isReady && refused && <NotWritten actions={actions} block={block} reason={refused} />}
 
           {showsWait && (
             <Waiting
@@ -293,9 +300,11 @@ export function NextStop({
               barHasMainAction={alternative !== null}
               block={block}
               failed={failed}
-              generationId={generationId}
+              generationId={readiness.generationId}
               kind={lessonKind}
-              lesson={lesson}
+              lesson={shown}
+              onInterrupted={readiness.check}
+              onRunStopped={readiness.runStopped}
             />
           )}
         </TaskBody>
@@ -311,7 +320,7 @@ export function NextStop({
           alternative={alternative}
           block={block}
           isReady={isReady}
-          notWritten={notWritten}
+          notWritten={refused}
           sessionBar={sessionBar}
           tap={tap}
           written={written}

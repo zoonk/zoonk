@@ -6,7 +6,7 @@ import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fix
 import { isJsonObject } from "@zoonk/utils/json";
 import { pressAnswerKey } from "./answer-key";
 import { type Page, expect, test } from "./fixtures";
-import { type StreamEvent, followRun } from "./generation-run";
+import { type StreamEvent, confirmLessonWriter, followRun } from "./generation-run";
 import {
   answerRight,
   carryLessons,
@@ -19,6 +19,10 @@ import {
 } from "./study-day";
 
 const WAITING_CHECK_MS = 5000;
+
+const LEFT_OPEN_MS = 11 * 60_000;
+
+const DEAD_RUN_ID = "wrun_01M8982VDS3WKDANEEEB0P3DWK";
 
 async function expectMoment(page: Page, title: string) {
   await expect(page.getByRole("heading", { level: 2, name: title })).toBeVisible();
@@ -413,7 +417,7 @@ test.describe("Today's session", () => {
     await page.context().close();
   });
 
-  test("a lesson whose writing failed checks only its readiness until Try again's run takes it", async ({
+  test("a lesson whose writing failed checks only its readiness, and Try again follows its run", async ({
     browser,
   }) => {
     const { lesson, user } = await createStudyDay({ reviewDone: true, writtenLesson: false });
@@ -450,22 +454,74 @@ test.describe("Today's session", () => {
 
     expect(reads.session).toBe(0);
 
+    // A screen left open keeps checking, so a retry from another device still reaches it.
+    const before = reads.readiness;
+    await page.clock.fastForward(LEFT_OPEN_MS);
+
+    await expect(async () => {
+      await page.clock.runFor(WAITING_CHECK_MS);
+      expect(reads.readiness).toBeGreaterThanOrEqual(before + 2);
+    }).toPass({ timeout: 10_000 });
+
     await retry.click();
     await expect(page).toHaveURL((url) => url.searchParams.get("generation") === runId);
     expect(asked).toStrictEqual(["POST"]);
 
-    // The run takes the lesson in its workflow's first step, after the request that started it.
-    await prisma.lesson.update({
-      data: { contentRunId: runId, contentStatus: "running" },
-      where: { id: lesson.id },
+    await expect(page.getByRole("progressbar", { name: "Writing your lesson" })).toBeVisible();
+    await expect(retry).toHaveCount(0);
+
+    await page.context().close();
+  });
+
+  test("a lesson claimed by a run that no longer exists reads as failed, on the session, on Today and on its page", async ({
+    browser,
+  }) => {
+    const { lesson, user } = await createStudyDay({ reviewDone: true, writtenLesson: false });
+    const deadClaim = { contentRunId: DEAD_RUN_ID, contentStatus: "running" } as const;
+    await prisma.lesson.update({ data: deadClaim, where: { id: lesson.id } });
+
+    const page = await openAs(browser, user);
+    await page.goto("/session");
+
+    await expect(page.getByText("Something went wrong on our side")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();
+    await expect(page.getByRole("progressbar", { name: "Writing your lesson" })).toHaveCount(0);
+
+    await expect
+      .poll(async () => {
+        const saved = await prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } });
+        return saved.contentStatus;
+      })
+      .toBe("failed");
+
+    await prisma.lesson.update({ data: deadClaim, where: { id: lesson.id } });
+    const readiness = `**/v1/library/lessons/${lesson.id}/readiness`;
+    const firstRead = Promise.withResolvers<null>();
+
+    await page.route(readiness, async (route) => {
+      await firstRead.promise;
+      await route.fallback();
     });
 
-    const writing = page.getByRole("progressbar", { name: "Writing your lesson" });
+    await page.goto("/today");
 
-    await expect(async () => {
-      await page.clock.runFor(WAITING_CHECK_MS);
-      await expect(writing).toBeVisible({ timeout: 1000 });
-    }).toPass({ timeout: 15_000 });
+    const row = page.getByRole("listitem").filter({ hasText: lesson.title });
+    await expect(row.getByText("Getting ready…", { exact: true })).toBeVisible();
+
+    // Today asks as it loads, well before its next check is due.
+    firstRead.resolve(null);
+    await expect(row.getByText("Getting ready…", { exact: true })).toBeHidden({ timeout: 3000 });
+
+    await page.unroute(readiness);
+    await prisma.lesson.update({ data: deadClaim, where: { id: lesson.id } });
+    await page.goto(`/learn/${lesson.id}`);
+
+    await expect(
+      page.getByRole("heading", { level: 1, name: "We couldn't get this lesson ready" }),
+    ).toBeVisible();
+
+    await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Prepare" })).toHaveCount(0);
 
     await page.context().close();
   });
@@ -490,6 +546,7 @@ test.describe("Today's session", () => {
 
     const page = await openAs(browser, user);
     await followRun({ events, page, runId });
+    await confirmLessonWriter({ lessonId: lesson.id, page, runId });
     await page.goto("/session");
 
     await expect(page.getByRole("progressbar", { name: "Writing your lesson" })).toBeVisible();

@@ -63,3 +63,28 @@ export async function stopRuns({ entityId, page }: { entityId?: string; page: Pa
 
   return () => Promise.all([page.unroute(ANY_RUN_EVENTS), page.unroute(ANY_RUN_STATUS)]);
 }
+
+/** The API can't find a run faked with `followRun`, so this answers its readiness as for a live run. */
+export async function confirmLessonWriter({
+  lessonId,
+  page,
+  runId,
+}: {
+  lessonId: string;
+  page: Page;
+  runId: string;
+}) {
+  await page.route(`**/v1/library/lessons/${lessonId}/readiness`, (route) =>
+    route.fulfill({
+      json: {
+        alternative: null,
+        generationId: runId,
+        kind: "lesson",
+        setAside: false,
+        status: "generating",
+        warmUpId: null,
+      },
+      status: 200,
+    }),
+  );
+}

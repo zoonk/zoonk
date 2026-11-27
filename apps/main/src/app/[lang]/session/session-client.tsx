@@ -17,7 +17,7 @@ import {
   markDayEntryApplied,
   moveDayEntry,
 } from "@/lib/session/day-entry-registry";
-import { readWaitedLesson } from "@/lib/session/read-waited-lesson";
+import { readLessonReadiness } from "@/lib/session/read-lesson-readiness";
 import { sendStudyAnswer } from "@/lib/session/study-answer-request";
 import {
   claimSummaryVisitAction,
@@ -42,7 +42,6 @@ import { NextStop, type NextStopLesson, type NextStopTap } from "@zoonk/learn/se
 import { SessionSummary, type SummaryGoalKind } from "@zoonk/learn/session/summary";
 import {
   type DayStep,
-  type StudyBlock,
   type StudyBlockDetail,
   type StudyDay,
   type StudySession,
@@ -189,7 +188,7 @@ export function SessionNextStopClient({
   userId,
   warmUp,
 }: {
-  alternative: StudyBlock | null;
+  alternative: DayStep | null;
   day: StudyDay;
   generationId: string | null;
   goalId: string;
@@ -235,7 +234,7 @@ export function SessionNextStopClient({
   return (
     <NextStop
       goalId={goalId}
-      actions={{ readLesson: readWaitedLesson, refresh, start, stop: navigation.stop }}
+      actions={{ readLesson: readLessonReadiness, refresh, start, stop: navigation.stop }}
       alternative={tapped ? null : alternative}
       block={drawn}
       blocks={day.blocks}

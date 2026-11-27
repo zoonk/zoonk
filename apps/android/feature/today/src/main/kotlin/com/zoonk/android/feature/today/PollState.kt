@@ -24,7 +24,7 @@ internal class PollState(
 
 /**
  * Runs [poll] every 5 seconds while [active] and the app is in the foreground, as main does while
- * lessons are written; [poll] says whether it read [read] again. It gives up after 3 failed reads in
+ * lessons are outlined; [poll] says whether it read [read] again. It gives up after 3 failed reads in
  * a row, or once a learner's ask for lessons could have lapsed with nothing read again: the server
  * stops waiting on an ask after 15 minutes, so the poll one interval later reads the day without it.
  * Each read again waits that long anew. A new [context] (another goal or day) starts over.

@@ -11,7 +11,7 @@ import { type TestOutStart } from "../_components/test-out-start-link";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { type MissionLinks } from "../missions/mission-links";
 import { type MissionsDay } from "../missions/missions-card";
-import { type DayStep } from "../session/session-types";
+import { type DayStep, type LessonReadiness } from "../session/session-types";
 
 /**
  * `continueSession` and `openBlock` resolve to false when they couldn't open; every other action to
@@ -63,6 +63,9 @@ export type TodayActions = {
   /** Asks for the day's lessons nobody is outlining yet; resolves once the next read says they're coming. */
   prepareLessons: () => Promise<boolean>;
   mistakesHref: string;
+  readLesson: (lessonId: string) => Promise<LessonReadiness | null>;
+  reread: () => void;
+  /** Reads the day again only when the plan changed since it was read. */
   refresh: () => unknown;
   /** Starts the Focus test and opens its first question; false when it didn't start. */
   startFocusTest: () => Promise<boolean>;

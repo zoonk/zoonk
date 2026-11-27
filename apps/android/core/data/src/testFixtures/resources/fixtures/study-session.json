@@ -20,6 +20,7 @@
   "missions": [],
   "nextBlockId": null,
   "nextPosition": null,
+  "alternativePosition": null,
   "pauseSuggested": false,
   "plusLessons": [],
   "sessionBar": { "completed": 0, "total": 0 },
