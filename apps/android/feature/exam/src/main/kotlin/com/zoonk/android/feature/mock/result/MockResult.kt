@@ -94,6 +94,7 @@ internal fun MockResult(
     // A question with several picks answered partly right missed some, so the notebook keeps it too.
     val mistakes =
         view.review.count { it.outcome == MockExamReviewInner.Outcome.WRONG || it.outcome == MockExamReviewInner.Outcome.PARTIAL }
+    val practice = view.mockId?.takeIf { mistakes > 0 && !placement }?.let { AppRoute.MistakePractice(mockId = it.toString()) }
     val essays = essaySteps(view)
     val speaking = view.speaking
     val preparation = result?.preparation?.takeIf { it.hasMoved() }
@@ -224,7 +225,7 @@ internal fun MockResult(
             val position = shown.indexOf(current).coerceAtLeast(0)
             // Beside the main action on a wide layout and above it on a phone or a book's page, as main's `MockResultSkip`.
             val secondaryBeside = isWideLayout()
-            val secondary = stringResource(R.string.mock_result_continue).takeUnless { placement || mistakes == 0 }
+            val secondary = stringResource(R.string.mock_result_continue).takeIf { practice != null }
             // Main's `MockPlanDecline` and `MockPlanAccept`: while the plan step asks, its answers are the bar's, in place of the way on.
             val asking =
                 view.adapt
@@ -278,7 +279,7 @@ internal fun MockResult(
                             ) { Text(copy.accept) }
                         } else {
                             if (secondaryBeside && secondary != null) OutlinedButton(onClick = onContinue) { Text(secondary) }
-                            MainAction(placement, mistakes, onMistakes = { navigator.open(AppRoute.Mistakes) }, onContinue, main)
+                            MainAction(practice, navigator, onContinue, main)
                         }
                     }
                 }
@@ -360,18 +361,18 @@ internal fun MockResult(
     }
 }
 
+/** [practice] is the run of this mock's mistakes, there when it missed some; otherwise the way on. */
 @Composable
 private fun MainAction(
-    placement: Boolean,
-    mistakes: Int,
-    onMistakes: () -> Unit,
+    practice: AppRoute.MistakePractice?,
+    navigator: AppNavigator,
     onContinue: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    if (placement || mistakes == 0) {
+    if (practice == null) {
         Button(onClick = onContinue, modifier) { Text(stringResource(R.string.mock_result_continue)) }
     } else {
-        Button(onClick = onMistakes, modifier) {
+        Button(onClick = { navigator.open(practice) }, modifier) {
             Text(stringResource(R.string.mistakes_practice))
         }
     }
