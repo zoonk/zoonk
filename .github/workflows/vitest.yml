@@ -113,7 +113,7 @@ jobs:
           export ZOONK_TEST_NOW
           echo "Run with ZOONK_TEST_NOW=$ZOONK_TEST_NOW to reproduce this instant."
           pnpm turbo run test --filter=@zoonk/core --filter=api --concurrency=2 \
-            --env-mode=loose --cache=local:,remote: -- --changed="$PR_BASE" --passWithNoTests
+            --cache=local:,remote: -- --changed="$PR_BASE" --passWithNoTests
 
   # The one check branch protection requires: it passes only when every part passed.
   vitest:

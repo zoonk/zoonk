@@ -114,6 +114,7 @@
     "start": { "cache": false, "dependsOn": ["build", "^start"], "persistent": true },
     "test": {
       "dependsOn": ["db:generate", "^db:setup:test", "transit"],
+      "env": ["ZOONK_TEST_NOW"],
       "inputs": ["$TURBO_DEFAULT$"]
     },
     "test:workflow": {
