@@ -234,6 +234,8 @@ private struct StackingLabel: View {
 /// where the label takes the whole width.
 private struct StackingLabelLayout: Layout {
   private static let besideSpacing: CGFloat = 8
+  /// Less than a point: what layout's rounding takes from a measured size.
+  private static let rounding: CGFloat = 1
 
   /// Like a stack, it places each view with the proposal it measured it with: proposing a wrapped
   /// text its own measured width can wrap it onto one more line than its height holds.
@@ -279,11 +281,14 @@ private struct StackingLabelLayout: Layout {
       width: proposal.width.map { max($0 - besideWidth, 0) } ?? idealWidth, height: nil)
     let besideSize = title.sizeThatFits(besideProposal)
     // Beside the icon, the label must neither wrap nor truncate. A label that takes any width it
-    // gets, like a `LabeledContent`, only has to keep its lines.
+    // gets, like a `LabeledContent`, only has to keep its lines. Placed with the width it measured,
+    // a label gets it back rounded, so a fraction of a point less still fits: otherwise a button
+    // sized for its label beside the icon would place it stacked, past its own edge.
     let keepsItsWidth =
-      unwrapped.width.isInfinite || unwrapped.width <= besideProposal.width ?? .infinity
+      unwrapped.width.isInfinite
+      || unwrapped.width <= (besideProposal.width ?? .infinity) + Self.rounding
 
-    if besideSize.height <= unwrapped.height, keepsItsWidth {
+    if besideSize.height <= unwrapped.height + Self.rounding, keepsItsWidth {
       let iconBaseline = icon.dimensions(in: .unspecified)[VerticalAlignment.firstTextBaseline]
       let titleBaseline = title.dimensions(in: besideProposal)[VerticalAlignment.firstTextBaseline]
       let baseline = max(iconBaseline, titleBaseline)
