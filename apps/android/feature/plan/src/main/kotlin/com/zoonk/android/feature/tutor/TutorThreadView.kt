@@ -127,7 +127,7 @@ internal fun TutorThreadView(
             thread is LoadState.Loaded -> {
                 val turns = thread.value.turns
                 if (state.isEmpty(thread.value)) {
-                    EmptyThread(identity, suggestions.takeIf { state.offersSuggestions(turns) }.orEmpty(), state.canAsk(turns), vm::send)
+                    EmptyThread(identity, suggestions.takeIf { state.offersSuggestions }.orEmpty(), state.canAsk(turns), vm::send)
                 } else {
                     Turns(vm, thread.value, state, identity, routes)
                 }

@@ -43,6 +43,7 @@ import java.util.UUID
 import kotlin.math.min
 import kotlin.math.pow
 import kotlin.random.Random
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.TimeSource
 
 @Immutable
@@ -73,11 +74,15 @@ data class TutorConversationState(
     /** Suggestions wait for the first question, which counts from the moment it's sent. */
     fun isEmpty(thread: TutorThread): Boolean = sending == null && thread.turns.isEmpty() && !thread.hasMore
 
-    /** Nothing can be asked until it resets, so it takes the composer's place. */
-    fun limit(turns: List<TutorTurn>): Limit? = askFailure?.helpLimit ?: turns.lastOrNull()?.let { answerFailures[it.id]?.helpLimit }
+    /**
+     * Nothing can be asked until it lifts (a help limit when it resets, a slow-down when its wait is over), so
+     * its notice sits above the composer, which keeps the refused question for then.
+     */
+    fun limit(turns: List<TutorTurn>): Limit? =
+        (askFailure as? TutorFailure.Refused)?.limit ?: turns.lastOrNull()?.let { answerFailures[it.id]?.helpLimit }
 
     /** A lost question is sent again before anything new, so a suggestion would only resend it. */
-    fun offersSuggestions(turns: List<TutorTurn>): Boolean = limit(turns) == null && unresolvedQuestion == null
+    val offersSuggestions: Boolean get() = unresolvedQuestion == null
 
     /** Every earlier question needs its answer first; a failed one is retried first, as on main. */
     fun canAsk(turns: List<TutorTurn>): Boolean =
@@ -507,6 +512,8 @@ class TutorViewModel internal constructor(
                     // The question may have been saved: only then is it sent again with the same request.
                     if (failure != TutorFailure.Failed) unresolved = null
                     mutableState.update { it.copy(askFailure = failure, unresolvedQuestion = unresolved?.question) }
+                    val slowDown = (failure as? TutorFailure.Refused)?.limit as? Limit.SlowDown
+                    if (slowDown != null) waitOut(failure, slowDown)
                 }
 
                 MutationResult.Obsolete -> {
@@ -514,6 +521,15 @@ class TutorViewModel internal constructor(
                 }
             }
         }
+    }
+
+    /** A slow-down lifts once its wait is over, unless something else was asked or refused meanwhile. */
+    private suspend fun waitOut(
+        failure: TutorFailure,
+        slowDown: Limit.SlowDown,
+    ) {
+        delay(slowDown.retryAfterSeconds.seconds)
+        mutableState.update { if (it.askFailure === failure) it.copy(askFailure = null) else it }
     }
 
     private suspend fun streamAnswer(

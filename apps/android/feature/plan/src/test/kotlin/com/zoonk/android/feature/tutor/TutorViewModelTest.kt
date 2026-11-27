@@ -30,6 +30,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -287,19 +288,80 @@ internal class TutorViewModelTest : TutorFixture() {
         }
 
     @Test
-    fun aHelpLimitTakesTheComposersPlace() =
+    fun aQuestionALimitRefusesWaitsInTheComposerUnderItsNotice() =
+        runTest(dispatcher) {
+            val refusals =
+                listOf(
+                    Triple(402, "USAGE_LIMIT_REACHED", """{"limit":{"period":"day","tier":"free"}}""") to
+                        Limit.Reached(LimitTier.Free, LimitPeriod.Day),
+                    Triple(403, "USAGE_LIMIT_REACHED", """{"limit":{"period":"total","tier":"guest"}}""") to
+                        Limit.Reached(LimitTier.Guest, LimitPeriod.Total),
+                    Triple(403, "SIGN_UP_REQUIRED", null) to Limit.SignUpRequired,
+                )
+            refusals.forEach { (refusal, limit) ->
+                val (status, code, details) = refusal
+                val vm = conversation()
+                api.refusal = ApiException(ApiError.Unavailable, code, status, details?.let(Json::parseToJsonElement))
+
+                vm.draft.setTextAndPlaceCursorAtEnd("Why?")
+                vm.send()
+                advanceUntilIdle()
+
+                assertEquals(limit, vm.state.value.limit(vm.turns))
+                assertEquals("Why?", vm.draft.text.toString())
+                assertFalse(vm.state.value.canAsk(vm.turns))
+                assertTrue(vm.turns.isEmpty())
+                assertTrue(vm.state.value.offersSuggestions)
+
+                vm.limitLifted()
+
+                assertTrue(vm.state.value.canAsk(vm.turns))
+                assertEquals("Why?", vm.draft.text.toString())
+            }
+        }
+
+    @Test
+    fun aQuestionASlowDownRefusesCanBeSentAgainOnceItsWaitIsOver() =
         runTest(dispatcher) {
             val vm = conversation()
-            val details = Json.parseToJsonElement("""{"limit":{"period":"day","tier":"free"}}""")
-            api.refusal = ApiException(ApiError.Unavailable, "USAGE_LIMIT_REACHED", 403, details)
+            val details = Json.parseToJsonElement("""{"retryAfterSeconds":30}""")
+            api.refusal = ApiException(ApiError.Unavailable, "SLOW_DOWN", 429, details)
 
             vm.draft.setTextAndPlaceCursorAtEnd("Why?")
             vm.send()
+            advanceTimeBy(29_000)
+
+            assertEquals(Limit.SlowDown(30), vm.state.value.limit(vm.turns))
+            assertFalse(vm.state.value.canAsk(vm.turns))
+
+            advanceTimeBy(2_000)
+
+            assertNull(vm.state.value.limit(vm.turns))
+            assertTrue(vm.state.value.canAsk(vm.turns))
+            assertEquals("Why?", vm.draft.text.toString())
+
+            api.refusal = null
+            vm.send()
+            advanceUntilIdle()
+
+            assertEquals(listOf("Why?", "Why?"), api.asked.map { it.question })
+            assertEquals("Why?", vm.turns.single().question)
+        }
+
+    @Test
+    fun aSuggestionALimitRefusesLeavesTheComposerEmptyAndTheSuggestionsInPlace() =
+        runTest(dispatcher) {
+            val vm = conversation()
+            val details = Json.parseToJsonElement("""{"limit":{"period":"day","tier":"free"}}""")
+            api.refusal = ApiException(ApiError.Unavailable, "USAGE_LIMIT_REACHED", 402, details)
+
+            vm.send(TutorSuggestion("Explain it more simply", "simpler"))
             advanceUntilIdle()
 
             assertEquals(Limit.Reached(LimitTier.Free, LimitPeriod.Day), vm.state.value.limit(vm.turns))
+            assertEquals("", vm.draft.text.toString())
+            assertTrue(vm.state.value.offersSuggestions)
             assertFalse(vm.state.value.canAsk(vm.turns))
-            assertNull(vm.state.value.unresolvedQuestion)
         }
 
     @Test
@@ -313,7 +375,7 @@ internal class TutorViewModelTest : TutorFixture() {
 
             assertEquals("Why?", vm.state.value.unresolvedQuestion)
             assertEquals("Why?", vm.draft.text.toString())
-            assertFalse(vm.state.value.offersSuggestions(vm.turns))
+            assertFalse(vm.state.value.offersSuggestions)
 
             api.refusal = null
             api.answers = { flowOf(TutorAnswerEvent.Text("Because."), TutorAnswerEvent.Finish) }
@@ -330,7 +392,7 @@ internal class TutorViewModelTest : TutorFixture() {
                     .size,
             )
             assertNull(vm.state.value.unresolvedQuestion)
-            assertTrue(vm.state.value.offersSuggestions(vm.turns))
+            assertTrue(vm.state.value.offersSuggestions)
         }
 
     @Test
