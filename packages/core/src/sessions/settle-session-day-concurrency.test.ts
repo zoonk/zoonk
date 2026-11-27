@@ -4,10 +4,9 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { describe, expect, it } from "vitest";
 import { settleSessionDay } from "./_utils/settle-session-day";
-
-const MS_PER_MINUTE = 60_000;
 
 async function finishedDay(finishedAt: Date) {
   const user = await userFixture();

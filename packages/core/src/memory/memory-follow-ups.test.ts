@@ -11,6 +11,7 @@ import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profile
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession } from "../_test-utils/mock-session";
@@ -23,7 +24,6 @@ import {
 } from "./memory-follow-ups";
 import { updateMemoryFact } from "./update-memory-fact";
 
-const DAY_MS = 86_400_000;
 const NO_PATTERNS: SessionPattern[] = [];
 
 const PROVENANCE = {
@@ -71,7 +71,7 @@ async function learnerWithAnswers({
 
   const answers = Array.from({ length: days * answersPerDay }, (_, index) => {
     const day = Math.floor(index / answersPerDay);
-    const answeredAt = new Date(todayNoon - day * DAY_MS - index * 1000);
+    const answeredAt = new Date(todayNoon - day * MS_PER_DAY - index * 1000);
 
     return attemptFixture({
       answeredAt,
@@ -195,7 +195,7 @@ describe("memory after a session", () => {
     await endSessionFor({ goalId: goal.id, userId: user.id });
 
     await prisma.memoryInsight.updateMany({
-      data: { localDate: new Date(Date.now() - 3 * DAY_MS) },
+      data: { localDate: new Date(Date.now() - 3 * MS_PER_DAY) },
       where: { userId: user.id },
     });
 

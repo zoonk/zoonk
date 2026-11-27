@@ -1,8 +1,8 @@
 import { formatLabel } from "@zoonk/utils/chart";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { type HistoryPeriod } from "@zoonk/utils/date-ranges";
 
 export type MetricTrendDataPoint = { date: string; label: string; value: number | null };
-const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
 
 function getFirstBucket({ date, period }: { date: Date; period: HistoryPeriod }): Date {
   if (period === "all") {
@@ -60,7 +60,7 @@ function getBucketCount({
     return yearDifference * 12 + end.getUTCMonth() - firstBucket.getUTCMonth() + 1;
   }
 
-  return Math.floor((end.getTime() - firstBucket.getTime()) / MILLISECONDS_PER_DAY) + 1;
+  return Math.floor((end.getTime() - firstBucket.getTime()) / MS_PER_DAY) + 1;
 }
 
 /** Additive metrics pass zero, a real zero; rates and averages pass null, since no data isn't 0%. */

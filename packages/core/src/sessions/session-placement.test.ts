@@ -3,6 +3,7 @@ import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { pickItemInBlock } from "../_test-utils/shown-choice";
@@ -26,8 +27,6 @@ import { startStudyBlock } from "./start-study-block";
 
 const TIME_ZONE = "UTC";
 
-const DAY_MS = 86_400_000;
-
 async function seedLowGuessEvidence({ skillId, userId }: { skillId: string; userId: string }) {
   const items = await lowGuessTapItems(skillId);
 
@@ -35,7 +34,7 @@ async function seedLowGuessEvidence({ skillId, userId }: { skillId: string; user
     items.map(({ answer, item }) =>
       attemptFixture({
         answer,
-        answeredAt: new Date(Date.now() - DAY_MS),
+        answeredAt: new Date(Date.now() - MS_PER_DAY),
         isPlacement: true,
         itemId: item.id,
         skillId,
@@ -62,7 +61,7 @@ async function setup({
 
   await Promise.all([
     prisma.goal.update({
-      data: { createdAt: new Date(Date.now() - DAY_MS), details, timezone: TIME_ZONE },
+      data: { createdAt: new Date(Date.now() - MS_PER_DAY), details, timezone: TIME_ZONE },
       where: { id: fixture.goal.id },
     }),
     confirming
@@ -99,7 +98,7 @@ async function plannedSetup({ confirming = false }: { confirming?: boolean } = {
   const skillId = library.skills[0]?.id ?? "";
 
   const { goal, plan } = await unplannedGoalFixture({
-    createdAt: new Date(Date.now() - DAY_MS),
+    createdAt: new Date(Date.now() - MS_PER_DAY),
     timezone: TIME_ZONE,
     userId: user.id,
   });
@@ -116,7 +115,7 @@ async function plannedSetup({ confirming = false }: { confirming?: boolean } = {
     await seedLowGuessEvidence({ skillId, userId: user.id });
   } else {
     await attemptFixture({
-      answeredAt: new Date(Date.now() - DAY_MS),
+      answeredAt: new Date(Date.now() - MS_PER_DAY),
       isCorrect: true,
       isPlacement: true,
       itemId: answered.id,
@@ -510,7 +509,7 @@ describe("placement in the first week's sessions", () => {
     await Promise.all([
       prisma.goal.update({ data: { createdAt: new Date() }, where: { id: today.goal.id } }),
       prisma.goal.update({
-        data: { createdAt: new Date(Date.now() - 10 * DAY_MS) },
+        data: { createdAt: new Date(Date.now() - 10 * MS_PER_DAY) },
         where: { id: late.goal.id },
       }),
     ]);

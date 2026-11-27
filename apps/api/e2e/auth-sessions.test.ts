@@ -3,11 +3,11 @@ import { request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { getString } from "@zoonk/utils/json";
 import { cleanupVerifications, getOTPForEmail } from "./helpers/db";
 
 const TEST_RUN_ID = randomUUID().slice(0, 8);
-const DAY_MS = 24 * 60 * 60 * 1000;
 const SESSION_DAYS = 30;
 const BANNED_EMAIL = `e2e-session-banned-${TEST_RUN_ID}@zoonk.test`;
 const INVALID_CODE_EMAIL = `e2e-session-invalid-${TEST_RUN_ID}@zoonk.test`;
@@ -77,10 +77,13 @@ test.describe("Native session API", () => {
     });
 
     // The app's reads keep its session going: a read a day or more after the last renewal renews it.
-    const usedAt = new Date(Date.now() - 3 * DAY_MS);
+    const usedAt = new Date(Date.now() - 3 * MS_PER_DAY);
 
     await prisma.session.update({
-      data: { expiresAt: new Date(usedAt.getTime() + SESSION_DAYS * DAY_MS), updatedAt: usedAt },
+      data: {
+        expiresAt: new Date(usedAt.getTime() + SESSION_DAYS * MS_PER_DAY),
+        updatedAt: usedAt,
+      },
       where: { token },
     });
 
@@ -88,7 +91,10 @@ test.describe("Native session API", () => {
     expect(read.status()).toBe(200);
     const renewed = await prisma.session.findUniqueOrThrow({ where: { token } });
     expect(renewed.updatedAt.getTime()).toBeGreaterThan(usedAt.getTime());
-    expect(renewed.expiresAt.getTime()).toBeGreaterThan(Date.now() + (SESSION_DAYS - 1) * DAY_MS);
+
+    expect(renewed.expiresAt.getTime()).toBeGreaterThan(
+      Date.now() + (SESSION_DAYS - 1) * MS_PER_DAY,
+    );
 
     const signOutResponse = await bearerContext.delete("/v1/sessions/current");
     expect(signOutResponse.status()).toBe(204);

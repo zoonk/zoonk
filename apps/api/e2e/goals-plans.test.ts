@@ -23,6 +23,7 @@ import {
 } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY, MS_PER_HOUR } from "@zoonk/utils/date";
 import { z } from "zod";
 import {
   goalCreateResponseSchema,
@@ -37,8 +38,6 @@ import { readBody } from "./helpers/response";
 
 const LESSONS = 12;
 const LESSONS_PER_DAY = 4;
-const DAY_MS = 86_400_000;
-const HOUR_MS = 3_600_000;
 
 /** A fixed layout, not the planner's own: reads keep a layout the learner saw while its inputs stay the same. */
 async function createPlannedGoal(userId: string) {
@@ -69,8 +68,8 @@ async function createPlannedGoal(userId: string) {
   );
 
   const goal = await goalFixture({ dailyMinutes: 12, primaryCourseId: course.id, userId });
-  const today = Math.floor(Date.now() / DAY_MS) * DAY_MS;
-  const lastDay = new Date(today + (LESSONS / LESSONS_PER_DAY - 1) * DAY_MS);
+  const today = Math.floor(Date.now() / MS_PER_DAY) * MS_PER_DAY;
+  const lastDay = new Date(today + (LESSONS / LESSONS_PER_DAY - 1) * MS_PER_DAY);
 
   const plan = await planFixture({
     goalId: goal.id,
@@ -105,7 +104,7 @@ async function createPlannedGoal(userId: string) {
         lessonId: lesson.id,
         planId: plan.id,
         position,
-        scheduledFor: new Date(today + Math.floor(position / LESSONS_PER_DAY) * DAY_MS),
+        scheduledFor: new Date(today + Math.floor(position / LESSONS_PER_DAY) * MS_PER_DAY),
         skillId: skill.id,
         titleSnapshot: lesson.title,
       }),
@@ -489,7 +488,7 @@ test.describe("Goals and plans API", () => {
       createPlannedGoal(stranger.id),
     ]);
 
-    const targetDate = new Date(Date.now() + 2 * DAY_MS).toISOString().slice(0, 10);
+    const targetDate = new Date(Date.now() + 2 * MS_PER_DAY).toISOString().slice(0, 10);
 
     await prisma.goal.update({
       data: { targetDate: new Date(`${targetDate}T00:00:00Z`) },
@@ -612,7 +611,7 @@ test.describe("Goals and plans API", () => {
       createPlannedGoal(stranger.id),
     ]);
 
-    const before = new Date(Date.now() - HOUR_MS).toISOString();
+    const before = new Date(Date.now() - MS_PER_HOUR).toISOString();
     const after = new Date(Date.now() + 5000).toISOString();
     const path = `/v1/goals/${goal.id}/plan/changed-since`;
 
@@ -760,7 +759,7 @@ test.describe("Goals and plans API", () => {
     await Promise.all(
       items.map((item) =>
         prisma.planItem.update({
-          data: { scheduledFor: new Date((item.scheduledFor?.getTime() ?? 0) - 3 * DAY_MS) },
+          data: { scheduledFor: new Date((item.scheduledFor?.getTime() ?? 0) - 3 * MS_PER_DAY) },
           where: { id: item.id },
         }),
       ),

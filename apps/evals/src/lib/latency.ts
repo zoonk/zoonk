@@ -1,6 +1,5 @@
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { type LatencyBudget } from "./types";
-
-const MS_TO_SECONDS = 1000;
 
 function getPercentile(sortedValues: number[], percentile: number): number {
   if (sortedValues.length === 0) {
@@ -15,8 +14,8 @@ export function summarizeLatency(durationsMs: number[]): { p50: number; p95: num
   const sorted = durationsMs.toSorted((a, b) => a - b);
 
   return {
-    p50: getPercentile(sorted, 50) / MS_TO_SECONDS,
-    p95: getPercentile(sorted, 95) / MS_TO_SECONDS,
+    p50: getPercentile(sorted, 50) / MS_PER_SECOND,
+    p95: getPercentile(sorted, 95) / MS_PER_SECOND,
   };
 }
 

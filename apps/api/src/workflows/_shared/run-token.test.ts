@@ -1,3 +1,4 @@
+import { MS_PER_HOUR } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { getRun } from "workflow/api";
 import { HookConflictError, WorkflowStartError } from "workflow/errors";
@@ -6,7 +7,6 @@ import { getStartMock } from "../_test-utils/start-mock";
 import { startOnce } from "./run-token";
 
 const TOKEN = "lesson-content:lesson-1";
-const HOUR_MS = 60 * 60 * 1000;
 
 async function writeLesson(_lessonId: string): Promise<void> {}
 
@@ -63,7 +63,7 @@ describe(startOnce, () => {
       .mockImplementationOnce(() => conflictWith("stalled"))
       .mockResolvedValueOnce({ runId: "new-run" } as never);
 
-    lastHeardFrom("stalled", HOUR_MS);
+    lastHeardFrom("stalled", MS_PER_HOUR);
 
     await expect(startOnce(writeLesson, ["lesson-1"], TOKEN)).resolves.toBe("new-run");
 
@@ -76,7 +76,7 @@ describe(startOnce, () => {
       .mockImplementationOnce(() => conflictWith("stalled"))
       .mockImplementationOnce(() => conflictWith("next-holder"));
 
-    lastHeardFrom("stalled", HOUR_MS);
+    lastHeardFrom("stalled", MS_PER_HOUR);
 
     await expect(startOnce(writeLesson, ["lesson-1"], TOKEN)).resolves.toBe("next-holder");
     expect(getStartMock()).toHaveBeenCalledTimes(2);
@@ -87,8 +87,8 @@ describe(startOnce, () => {
       .mockImplementationOnce(() => conflictWith("stalled"))
       .mockImplementationOnce(() => conflictWith("next-stalled"));
 
-    lastHeardFrom("stalled", HOUR_MS);
-    lastHeardFrom("next-stalled", HOUR_MS);
+    lastHeardFrom("stalled", MS_PER_HOUR);
+    lastHeardFrom("next-stalled", MS_PER_HOUR);
 
     await expect(startOnce(writeLesson, ["lesson-1"], TOKEN)).rejects.toThrow("next-stalled");
     expect(cancel).toHaveBeenCalledTimes(2);
@@ -105,7 +105,7 @@ describe(startOnce, () => {
   it("throws without stopping a holder it can't read", async () => {
     holderRun({ readable: false });
     getStartMock().mockImplementationOnce(() => conflictWith("unreadable"));
-    lastHeardFrom("unreadable", HOUR_MS);
+    lastHeardFrom("unreadable", MS_PER_HOUR);
 
     await expect(startOnce(writeLesson, ["lesson-1"], TOKEN)).rejects.toThrow("unreadable");
     expect(cancel).not.toHaveBeenCalled();

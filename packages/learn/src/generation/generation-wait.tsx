@@ -14,6 +14,7 @@ import {
 } from "@zoonk/ui/components/generation-timeline";
 import { useAnimatedProgress } from "@zoonk/ui/hooks/animated-progress";
 import { useTickCount } from "@zoonk/ui/hooks/tick-count";
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { useExtracted } from "next-intl";
 import { useEffect, useState } from "react";
 import { formatClock } from "../_utils/clock";
@@ -111,13 +112,11 @@ function ActiveDetail({
   ) : null;
 }
 
-const SECOND_MS = 1000;
-
 function RunningTime({ offsetMs, startedAt }: { offsetMs: number; startedAt: number }) {
   const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
-    const timer = setInterval(() => setNow(Date.now()), SECOND_MS);
+    const timer = setInterval(() => setNow(Date.now()), MS_PER_SECOND);
     return () => clearInterval(timer);
   }, []);
 

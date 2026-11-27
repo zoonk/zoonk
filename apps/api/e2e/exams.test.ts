@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { examResultResponseSchema, examViewResponseSchema } from "../src/lib/openapi/schemas/exams";
 import {
   mockEssayGradesResponseSchema,
@@ -18,7 +19,6 @@ import { tapOption } from "./helpers/choices";
 import { FORMATS_QUESTIONS, createFormatsExamGoal } from "./helpers/exam-formats";
 import {
   BREAK_SECTION_QUESTIONS,
-  DAY_MS,
   EXAM_IN_DAYS,
   MOCK_QUESTIONS,
   createBreakExamGoal,
@@ -153,7 +153,7 @@ test.describe("Exams API", () => {
         where: { id: blueprintId },
       }),
       prisma.goal.update({
-        data: { createdAt: new Date(Date.now() - EXAM_IN_DAYS * DAY_MS) },
+        data: { createdAt: new Date(Date.now() - EXAM_IN_DAYS * MS_PER_DAY) },
         where: { id: goal.id },
       }),
     ]);

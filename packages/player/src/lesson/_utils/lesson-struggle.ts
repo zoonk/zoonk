@@ -1,3 +1,4 @@
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { countWords } from "@zoonk/utils/string";
 import { type LessonPlayerState, getCurrentStep } from "../lesson-player-state";
 import { type PlayableLibraryStep } from "../lesson-player-types";
@@ -16,8 +17,6 @@ const MIN_STRUGGLE_PAUSE_MS = 45_000;
 const READING_WORDS_PER_MINUTE = 150;
 
 const PAUSE_READING_FACTOR = 3;
-
-const MS_PER_MINUTE = 60_000;
 
 export function isExplaining(step: PlayableLibraryStep | null | undefined): step is ExplainingStep {
   return step?.kind === "explanation" || step?.kind === "workedExample";

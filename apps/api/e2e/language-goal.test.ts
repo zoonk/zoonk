@@ -12,13 +12,13 @@ import {
   languageGoalFixture,
 } from "@zoonk/testing/fixtures/language";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { createAuthenticatedApiContext } from "./helpers/auth";
 
 const OFFER = { sdp: LIVE_CALL_SDP_OFFER };
 
 const LEVELS = ["A1", "A2", "B1", "B2", "C1", "C2"] as const;
 const FREE_CALL_SECONDS = 120;
-const DAY_MS = 86_400_000;
 
 async function ensureLevelTestBank() {
   const questions = LEVELS.flatMap((level) =>
@@ -355,7 +355,7 @@ test.describe("Language goal API", () => {
     const oldCall = await start();
 
     await prisma.languageConversation.update({
-      data: { createdAt: new Date(Date.now() - DAY_MS) },
+      data: { createdAt: new Date(Date.now() - MS_PER_DAY) },
       where: { id: oldCall },
     });
 

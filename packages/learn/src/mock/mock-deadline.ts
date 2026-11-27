@@ -1,6 +1,5 @@
 import { type MockDraft } from "@zoonk/core/exams/mocks/view-contract";
-
-const MS_PER_SECOND = 1000;
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 
 export function isSavedQuestionExpired({
   drafts,

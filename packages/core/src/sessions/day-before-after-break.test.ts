@@ -4,6 +4,7 @@ import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
@@ -14,13 +15,12 @@ import { readBlockPayload } from "./block-payload";
 import { getStudySessionSummary } from "./get-study-session-summary";
 
 const TODAY = new Date("2026-10-02T00:00:00Z");
-const DAY_MS = 86_400_000;
 const TEST_IN_DAYS = 7;
 
 const TOPICS = 8;
 
 function day(offset: number): Date {
-  return new Date(TODAY.getTime() + offset * DAY_MS);
+  return new Date(TODAY.getTime() + offset * MS_PER_DAY);
 }
 
 function setClock(offset: number) {

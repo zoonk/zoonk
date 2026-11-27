@@ -1,4 +1,5 @@
 import { USAGE_KINDS, type UsageKind } from "@zoonk/db";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import * as fc from "fast-check";
 import { describe, expect, it } from "vitest";
 import { toAllowance } from "./_utils/allowance-view";
@@ -8,7 +9,6 @@ import { type BundleClaim, type UsageLedger, decideBundle } from "./_utils/usage
 import { USAGE_WINDOW_MS, getCallMonthlyBudgetMicros, getUsageRule } from "./limits";
 
 const NOW = new Date("2026-12-01T12:00:00Z");
-const DAY = 86_400_000;
 type Row = { at: Date; kind: UsageKind; seconds: number; cost: number };
 
 function totalsAt(
@@ -76,7 +76,7 @@ function ledgerAt(rows: readonly Row[], now: Date, tier: "free" | "plus" = "free
   };
 }
 
-const age = fc.integer({ max: 35 * DAY, min: 0 });
+const age = fc.integer({ max: 35 * MS_PER_DAY, min: 0 });
 const ages = fc.array(age, { maxLength: 35, minLength: 0 });
 
 function usageRow(kind: UsageKind, ageMs: number, seconds = 0): Row {
@@ -97,8 +97,8 @@ function mapClaims(lessons: number): BundleClaim[] {
 describe("rolling request openings", () => {
   it("admits a chapter at the date when both its map and all its lessons fit", () => {
     const rows = [
-      ...Array.from({ length: 20 }, () => usageRow("lessonStart", 26 * DAY)),
-      ...Array.from({ length: 10 }, () => usageRow("mindMap", 11 * DAY)),
+      ...Array.from({ length: 20 }, () => usageRow("lessonStart", 26 * MS_PER_DAY)),
+      ...Array.from({ length: 10 }, () => usageRow("mindMap", 11 * MS_PER_DAY)),
     ];
 
     const claims = mapClaims(2);
@@ -324,7 +324,7 @@ describe("rolling request openings", () => {
   )("reports the later daily or rolling cap for $tier $kind", ({ kind, tier, day, rolling }) => {
     fc.assert(
       fc.property(
-        fc.integer({ max: 2 * DAY, min: 1 }),
+        fc.integer({ max: 2 * MS_PER_DAY, min: 1 }),
         fc.integer({ max: 5, min: 0 }),
         (delay, over) => {
           const now = NOW;
@@ -357,10 +357,10 @@ describe("rolling request openings", () => {
             });
 
           const first = decide(now);
-          const availableAt = new Date(now.getTime() + Math.max(delay, DAY / 2));
+          const availableAt = new Date(now.getTime() + Math.max(delay, MS_PER_DAY / 2));
 
           expect(first).toMatchObject({
-            limit: { availableAt, period: delay >= DAY / 2 ? "rolling30Days" : "day" },
+            limit: { availableAt, period: delay >= MS_PER_DAY / 2 ? "rolling30Days" : "day" },
             status: "limitReached",
           });
 
@@ -376,7 +376,7 @@ describe("rolling request openings", () => {
     fc.assert(
       fc.property(
         fc.constantFrom("free" as const, "plus" as const),
-        fc.integer({ max: 2 * DAY, min: 1 }),
+        fc.integer({ max: 2 * MS_PER_DAY, min: 1 }),
         (tier, delay) => {
           const day = getUsageRule({ kind: "conversation", tier }).daySeconds ?? 0;
           const rows = [usageRow("conversation", 0, day)];
@@ -398,13 +398,13 @@ describe("rolling request openings", () => {
               tier,
             });
 
-          const availableAt = new Date(NOW.getTime() + Math.max(delay, DAY / 2));
+          const availableAt = new Date(NOW.getTime() + Math.max(delay, MS_PER_DAY / 2));
 
           expect(decide(NOW)).toMatchObject({
             limit: {
               availableAt,
-              period: delay >= DAY / 2 ? "rolling30Days" : "day",
-              resource: delay >= DAY / 2 ? "aiSpend" : "callSeconds",
+              period: delay >= MS_PER_DAY / 2 ? "rolling30Days" : "day",
+              resource: delay >= MS_PER_DAY / 2 ? "aiSpend" : "callSeconds",
             },
             status: "limitReached",
           });

@@ -12,7 +12,6 @@ import {
 import { getMock } from "../get-mock";
 import { saveMockAnswer } from "../save-mock-answer";
 
-export const MINUTE_MS = 60_000;
 const DEFAULT_DAILY_MINUTES = 45;
 
 function mockStructure(

@@ -3,10 +3,10 @@ import { request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
+import { MS_PER_HOUR } from "@zoonk/utils/date";
 import { createAuthenticatedApiContext } from "./helpers/auth";
 import { createBearerAdmin } from "./helpers/bearer";
 
-const HOUR_MS = 3_600_000;
 const PATH = "/v1/freshness/commands";
 
 test.describe("Freshness commands API", () => {
@@ -40,7 +40,7 @@ test.describe("Freshness commands API", () => {
   });
 
   test("stops an exam's or source's checks and starts a check now", async () => {
-    const nextCheckAt = new Date(Date.now() + HOUR_MS);
+    const nextCheckAt = new Date(Date.now() + MS_PER_HOUR);
 
     const [apiContext, exam, source] = await Promise.all([
       createBearerAdmin({ baseURL, prefix: "freshness-admin" }),

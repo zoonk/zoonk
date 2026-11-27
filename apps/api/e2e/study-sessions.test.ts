@@ -16,6 +16,7 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { milestoneListResponseSchema } from "../src/lib/openapi/schemas/milestones";
 import {
   mistakePracticeCompletionSchema,
@@ -36,7 +37,6 @@ import { tapOption } from "./helpers/choices";
 import { openStudyDay } from "./helpers/open-study-day";
 import { readBody } from "./helpers/response";
 
-const DAY_MS = 86_400_000;
 const CHALLENGE_QUESTIONS = 5;
 /** The phase's challenge then asks ten, too long for the welcome-back day after its lesson. */
 const QUESTIONS_PER_SKILL = 10;
@@ -115,7 +115,7 @@ async function expectEarlierFirst({
 async function createGoal(userId: string) {
   const [goal, skills, lessons] = await Promise.all([
     goalFixture({
-      createdAt: new Date(Date.now() - 30 * DAY_MS),
+      createdAt: new Date(Date.now() - 30 * MS_PER_DAY),
       dailyMinutes: 30,
       timezone: "UTC",
       userId,
@@ -152,8 +152,8 @@ async function createGoal(userId: string) {
   const [, mistake] = await Promise.all([
     learnerSkillFixture({
       difficulty: 5,
-      due: new Date(Date.now() - DAY_MS),
-      lastReviewedAt: new Date(Date.now() - 4 * DAY_MS),
+      due: new Date(Date.now() - MS_PER_DAY),
+      lastReviewedAt: new Date(Date.now() - 4 * MS_PER_DAY),
       reps: 2,
       skillId: skills[0]?.id ?? "",
       stability: 3,
@@ -161,7 +161,7 @@ async function createGoal(userId: string) {
       userId,
     }),
     mistakeFixture({
-      createdAt: new Date(Date.now() - DAY_MS),
+      createdAt: new Date(Date.now() - MS_PER_DAY),
       itemId: items[0]?.id,
       skillId: skills[0]?.id,
       userId,
@@ -331,7 +331,7 @@ test.describe("Study sessions API", () => {
     expect(mistake.snapshot).toMatchObject({ answer: "Mars → Satellite" });
 
     await prisma.mistake.update({
-      data: { missedAt: new Date(Date.now() - DAY_MS) },
+      data: { missedAt: new Date(Date.now() - MS_PER_DAY) },
       where: { id: mistake.id },
     });
 

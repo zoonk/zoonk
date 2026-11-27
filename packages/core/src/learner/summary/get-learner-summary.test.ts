@@ -19,6 +19,7 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { calculateBeltLevel } from "@zoonk/utils/belt-level";
+import { MS_PER_DAY, MS_PER_MINUTE } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   mockAccountSession,
@@ -39,9 +40,6 @@ const TODAY = new Date("2026-03-10T00:00:00.000Z");
 const YESTERDAY = new Date("2026-03-09T00:00:00.000Z");
 const SIGNED_IN_AT = new Date("2026-03-01T08:00:00.000Z");
 const SESSION_ENDS_AT = new Date("2026-04-01T08:00:00.000Z");
-const MINUTE_MS = 60_000;
-
-const DAY_MS = 24 * 60 * 60 * 1000;
 
 type User = Awaited<ReturnType<typeof userFixture>>;
 
@@ -69,7 +67,7 @@ async function savedDay({ goalId, userId }: { goalId: string; userId: string }) 
       ],
       version: 1,
     },
-    startedAt: new Date(NOW.getTime() - 30 * MINUTE_MS),
+    startedAt: new Date(NOW.getTime() - 30 * MS_PER_MINUTE),
     userId,
   });
 
@@ -241,7 +239,7 @@ describe(getLearnerSummary, () => {
     const day = await savedDay({ goalId: goal.id, userId: user.id });
 
     await mistakeFixture({
-      fixedAt: new Date(NOW.getTime() - 5 * MINUTE_MS),
+      fixedAt: new Date(NOW.getTime() - 5 * MS_PER_MINUTE),
       status: "fixed",
       userId: user.id,
     });
@@ -554,13 +552,13 @@ describe(getLearnerSummary, () => {
     const yesterday = await studySessionFixture({
       goalId: goal.id,
       localDate: YESTERDAY,
-      startedAt: new Date(NOW.getTime() - 40 * MINUTE_MS),
+      startedAt: new Date(NOW.getTime() - 40 * MS_PER_MINUTE),
       userId: user.id,
     });
 
     await studySessionBlockFixture({
       sessionId: yesterday.id,
-      startedAt: new Date(NOW.getTime() - 10 * MINUTE_MS),
+      startedAt: new Date(NOW.getTime() - 10 * MS_PER_MINUTE),
       status: "active",
     });
 
@@ -694,12 +692,12 @@ describe(getLearnerSummary, () => {
 
   it("reads again once a day carried over from the night before stops being the learner's", async () => {
     const { goal, user } = await learnerWithGoal();
-    const lastActivity = new Date(NOW.getTime() - 10 * MINUTE_MS);
+    const lastActivity = new Date(NOW.getTime() - 10 * MS_PER_MINUTE);
 
     const yesterday = await studySessionFixture({
       goalId: goal.id,
       localDate: YESTERDAY,
-      startedAt: new Date(NOW.getTime() - 40 * MINUTE_MS),
+      startedAt: new Date(NOW.getTime() - 40 * MS_PER_MINUTE),
       userId: user.id,
     });
 
@@ -710,7 +708,7 @@ describe(getLearnerSummary, () => {
     });
 
     await expect(getLearnerSummary()).resolves.toMatchObject({
-      nextChangeAt: lastActivity.getTime() + 60 * MINUTE_MS,
+      nextChangeAt: lastActivity.getTime() + 60 * MS_PER_MINUTE,
     });
   });
 
@@ -718,7 +716,7 @@ describe(getLearnerSummary, () => {
     "offers Continue for an unfinished written answer from %i days ago",
     async (days) => {
       const { goal, user } = await learnerWithGoal({ kind: "exam" });
-      const localDate = new Date(TODAY.getTime() - days * DAY_MS);
+      const localDate = new Date(TODAY.getTime() - days * MS_PER_DAY);
 
       const day = await studySessionFixture({
         goalId: goal.id,
@@ -760,7 +758,7 @@ describe(getLearnerSummary, () => {
     await Promise.all([
       userProgressFixture({
         currentEnergy: 50,
-        lastActiveAt: new Date(NOW.getTime() - 60 * MINUTE_MS),
+        lastActiveAt: new Date(NOW.getTime() - 60 * MS_PER_MINUTE),
         totalBrainPower: 15_000n,
         userId: user.id,
       }),
@@ -788,7 +786,7 @@ describe(getLearnerSummary, () => {
     await Promise.all([
       userProgressFixture({
         currentEnergy: 2,
-        lastActiveAt: new Date(NOW.getTime() - 10 * MINUTE_MS),
+        lastActiveAt: new Date(NOW.getTime() - 10 * MS_PER_MINUTE),
         totalBrainPower: 30n,
         userId: user.id,
       }),
@@ -913,7 +911,7 @@ describe("the summary's ready mistakes", () => {
 
     const today = await getLearnerSummary();
     const allowanceResets = new Date("2026-03-11T00:00:00.000Z");
-    const nextMidnight = new Date(LOCAL_MIDNIGHT.getTime() + DAY_MS);
+    const nextMidnight = new Date(LOCAL_MIDNIGHT.getTime() + MS_PER_DAY);
 
     expect(today).toMatchObject({
       nextChangeAt: allowanceResets.getTime(),
