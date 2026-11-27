@@ -208,6 +208,8 @@ export type OnboardingActions = {
   /** Ends onboarding: until it's saved, Today and resume bring the learner back to the reveal. */
   markPlanRevealed: (goalId: string) => Promise<boolean>;
   startOver: (goalIds: string[]) => Promise<void>;
+  /** Shows the goal's setup in another language of the app, where the learner left it. */
+  switchAppLanguage: (input: { goalId: string; language: string }) => void;
   understanding: UnderstandingActions;
 };
 

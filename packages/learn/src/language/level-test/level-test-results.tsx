@@ -2,8 +2,11 @@
 
 import { type LevelTestResult } from "@zoonk/core/language/level-test/contract";
 import { Button } from "@zoonk/ui/components/button";
+import { getLanguageNameInSentence } from "@zoonk/utils/languages";
+import { isValidLocale } from "@zoonk/utils/locale";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
+import { useAppLocale } from "../../_utils/locale";
 import { useLanguageNameInSentence } from "../../_utils/use-language-name";
 import { OnboardingDescription } from "../../onboarding/onboarding-frame";
 import { TestOutcome } from "../../onboarding/test-outcome";
@@ -14,6 +17,32 @@ import { useResultUndo } from "../../questions/undo-button";
 import { LevelRanges } from "./level-test-parts";
 import { type TestOutView } from "./level-test-phase";
 
+export type OwnLanguage = { language: string; onSwitch: (language: string) => void };
+
+/** Offered once the learner has seen their level, only where the app isn't in their language yet. */
+function InterfaceOffer({ language, onSwitch }: OwnLanguage) {
+  const t = useExtracted();
+  const locale = useAppLocale();
+
+  if (language === locale || !isValidLocale(language)) {
+    return null;
+  }
+
+  return (
+    <Button
+      className="self-start"
+      lang={language}
+      onClick={() => onSwitch(language)}
+      type="button"
+      variant="link"
+    >
+      {t("Use the app in {language}", {
+        language: getLanguageNameInSentence({ targetLanguage: language, userLanguage: language }),
+      })}
+    </Button>
+  );
+}
+
 export function LevelResult({
   failed,
   onDone,
@@ -21,6 +50,7 @@ export function LevelResult({
   onTestOut,
   onUndo,
   onboarding,
+  ownLanguage,
   pressed,
   rail,
   result,
@@ -33,6 +63,7 @@ export function LevelResult({
   onTestOut: (level: string) => void;
   onUndo: (changeId: string) => Promise<boolean>;
   onboarding: boolean;
+  ownLanguage?: OwnLanguage;
   pressed: TestPressed;
   rail?: ReactNode;
   result: LevelTestResult | null;
@@ -75,6 +106,7 @@ export function LevelResult({
           {t("Test out of {level}", { level: testOutLevel })}
         </Button>
       )}
+      {ownLanguage && <InterfaceOffer {...ownLanguage} />}
     </TestOutcome>
   );
 }

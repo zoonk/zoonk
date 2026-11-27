@@ -9,13 +9,6 @@ export function useTestFacts() {
 
   return {
     about: (minutes: number): string => t("About {time}", { time: formatDuration(minutes) }),
-    aboutEach: (minutes: number): string =>
-      t({
-        description:
-          "{time} is a duration with its unit, such as “6 min”: how long each part of a test takes.",
-        message: "About {time} each",
-        values: { time: formatDuration(minutes) },
-      }),
     aboutLeft: (minutes: number): string =>
       t("About {time} left", { time: formatDuration(minutes) }),
     nextTime: ({ part, parts, question }: { part: number; parts: number; question: number }) =>

@@ -105,6 +105,32 @@ describe(toPlacementTestPhase, () => {
     });
   });
 
+  it("waits for a test the learner asked for while the course's questions aren't there yet", () => {
+    const cold: PlacementOutcome = { attempt: null, focusTest: null, status: "notReady" };
+
+    expect(toPlacementTestPhase({ outcome: cold, surface: "onboarding" })).toStrictEqual({
+      kind: "offer",
+    });
+
+    expect(
+      toPlacementTestPhase({ asked: true, outcome: cold, surface: "onboarding" }),
+    ).toStrictEqual({ kind: "waiting" });
+
+    expect(
+      toPlacementTestPhase({
+        asked: true,
+        outcome: { status: "generationFailed" },
+        surface: "onboarding",
+      }),
+    ).toStrictEqual({ buildFailed: true, kind: "waiting" });
+  });
+
+  it("says there is nothing to test when an asked-for test has nothing to open", () => {
+    expect(
+      toPlacementTestPhase({ asked: true, outcome: ready({ next: QUESTION }), surface: "plan" }),
+    ).toStrictEqual({ kind: "unavailable" });
+  });
+
   it("goes on at the next question of an open sitting", () => {
     const outcome = ready({ attempt: FULL, next: QUESTION });
 

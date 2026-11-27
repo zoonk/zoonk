@@ -6355,6 +6355,11 @@ msgid "Can't listen now"
 msgstr ""
 
 #: src/language/level-test/level-test-results.tsx
+msgctxt "H4wCrn"
+msgid "Use the app in {language}"
+msgstr ""
+
+#: src/language/level-test/level-test-results.tsx
 #: src/plan/use-system-change-sentence.ts
 msgctxt "qd8BIn"
 msgid "{lessons, plural, one {Skipped # lesson you already know.} other {Skipped # lessons you already know.}}"
@@ -10212,12 +10217,6 @@ msgstr ""
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "T8fqdI"
 msgid "Test the rest"
-msgstr ""
-
-#. {time} is a duration with its unit, such as “6 min”: how long each part of a test takes.
-#: src/placement-test/use-test-facts.ts
-msgctxt "QRtyoQ"
-msgid "About {time} each"
 msgstr ""
 
 #. Where a learner who stopped a test picks it up: the part of the test and the question in it.

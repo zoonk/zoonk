@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { type GenerationRun } from "../generation/generation-run";
 import { type PlacementAnswer, type PlacementOutcome } from "../onboarding/onboarding-actions";
 import { usePlacementQuestionPoll } from "../onboarding/steps/use-placement-question-poll";
 import { useReadOnOpen } from "../onboarding/steps/use-read-on-open";
+import { isRunStopped } from "../onboarding/steps/wait-run";
 import { type PlacementLength, type PlacementTestActions } from "./placement-test-actions";
 import {
   type PlacementQuestionPhase,
@@ -47,21 +49,25 @@ export function usePlacementTest({
   analytics,
   host,
   onLeave,
+  run: build,
 }: {
   actions: PlacementTestActions;
   analytics: Pick<TestAnalytics, "markOpened" | "markStarted">;
   host: PlacementTestHost;
   /** Leaves the test: onboarding goes on with setup, the Plan is read again. False when it didn't. */
   onLeave: (attemptId?: string) => Promise<boolean>;
+  /** The run building the course, in onboarding: a wait for it stops checking once it stops. */
+  run: GenerationRun | null;
 }) {
   const { surface } = host;
-  const asked = host.surface === "onboarding" && host.mode === "direct";
+  const direct = host.surface === "onboarding" && host.mode === "direct";
 
   const [phase, setPhase] = useState<PlacementTestPhase>({
     kind: host.surface === "onboarding" && host.mode === "offer" ? "offer" : "loading",
   });
 
   const { failed, hasActed, isPending, markRead, pressed, run, save, setFailed } = useTestSaves();
+  const wanted = useRef<PlacementLength>("quick");
   const waiting = phase.kind === "waiting" ? phase : null;
 
   /** Closing a part applies what it skipped; another device that closed it first wins. */
@@ -73,7 +79,7 @@ export function usePlacementTest({
     }
 
     if (finished.status === "stale") {
-      setPhase(toPlacementTestPhase({ outcome: await actions.get(), surface }));
+      setPhase(toPlacementTestPhase({ asked: true, outcome: await actions.get(), surface }));
       return true;
     }
 
@@ -82,8 +88,8 @@ export function usePlacementTest({
   };
 
   /** A part that's over closes in the same save; if that fails, its screen holds the retry. */
-  const show = async (outcome: PlacementOutcome): Promise<boolean> => {
-    const next = toPlacementTestPhase({ outcome, surface });
+  const show = async (outcome: PlacementOutcome, asked: boolean): Promise<boolean> => {
+    const next = toPlacementTestPhase({ asked, outcome, surface });
 
     if (next.kind !== "partOver") {
       setPhase(next);
@@ -101,8 +107,9 @@ export function usePlacementTest({
 
   const start = (length: PlacementLength) => async () => {
     analytics.markStarted();
+    wanted.current = length;
     const outcome = await actions.start(length).catch(() => FAILED);
-    return outcome.status !== "failed" && show(outcome);
+    return outcome.status !== "failed" && show(outcome, true);
   };
 
   /** A read that comes back after the learner pressed something no longer says where they are. */
@@ -113,8 +120,8 @@ export function usePlacementTest({
 
     const next = toPlacementTestPhase({ outcome, surface });
 
-    if (next.kind !== "offer" || !asked) {
-      await show(outcome).catch(() => setPhase(next));
+    if (next.kind !== "offer" || !direct) {
+      await show(outcome, false).catch(() => setPhase(next));
       return;
     }
 
@@ -135,9 +142,9 @@ export function usePlacementTest({
   const poll = usePlacementQuestionPoll<PlacementTestPhase>({
     onProgress: (wait, outcome) =>
       outcome.status === "generationFailed" || outcome.status === "unavailable"
-        ? toPlacementTestPhase({ outcome, surface })
+        ? toPlacementTestPhase({ asked: true, outcome, surface })
         : wait,
-    paused: Boolean(waiting?.failedAttempt),
+    paused: Boolean(waiting?.failedAttempt) || isRunStopped(build),
     read: actions.get,
     setPhase,
     waiting,
@@ -160,7 +167,7 @@ export function usePlacementTest({
         return;
       }
 
-      setFailed(!(await show(outcome).catch(() => false)));
+      setFailed(!(await show(outcome, true).catch(() => false)));
     });
 
   return {
@@ -168,8 +175,9 @@ export function usePlacementTest({
     continueWait: () => {
       const arrived = waiting?.arrived;
 
+      // Questions for a test that couldn't open yet: the start the learner asked for opens it now.
       if (arrived) {
-        save(null, () => show(arrived));
+        save(null, () => (arrived.attempt ? show(arrived, true) : start(wanted.current)()));
       }
     },
     failed,
@@ -188,7 +196,7 @@ export function usePlacementTest({
       save("main", () => (openLesson ? openLesson(lessonId) : onLeave()).catch(() => false)),
     onRetryWait: () => {
       if (!isPending) {
-        save("main", start(waiting?.failedAttempt?.length ?? "quick"));
+        save("main", start(waiting?.failedAttempt?.length ?? wanted.current));
       }
     },
     onStart: (length: PlacementLength) => save("main", start(length)),

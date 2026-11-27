@@ -31,8 +31,11 @@ export type PlacementResultPhase = Skips & {
 
 export type PlacementTestPhase =
   | PlacementQuestionPhase
-  /** `failedAttempt`: this part's questions couldn't be written, so the wait offers "Try again". */
-  | (PlacementQuestionWait & { failedAttempt?: PlacementAttemptView })
+  /**
+   * `failedAttempt`: this part's questions couldn't be written, so the wait offers "Try again".
+   * `buildFailed`: the course itself is still being built and that stopped.
+   */
+  | (PlacementQuestionWait & { buildFailed?: true; failedAttempt?: PlacementAttemptView })
   | { kind: "loadFailed" | "loading" | "offer" | "unavailable" }
   /** This part asks nothing more and isn't closed yet: closing it is the next save. */
   | { attempt: PlacementAttemptView; kind: "partOver" }
@@ -96,15 +99,39 @@ function toRestingPhase({
     : { attempt, kind: "continue" };
 }
 
+/** With no test open, one the learner asked for waits for the course's questions; otherwise it's offered. */
+function toUnopenedPhase({
+  asked,
+  outcome,
+}: {
+  asked: boolean;
+  outcome: Exclude<PlacementOutcome, { status: "failed" }>;
+}): PlacementTestPhase {
+  if (!asked) {
+    return { kind: "offer" };
+  }
+
+  if (outcome.status === "notReady") {
+    return { kind: "waiting" };
+  }
+
+  return outcome.status === "generationFailed"
+    ? { buildFailed: true, kind: "waiting" }
+    : { kind: "unavailable" };
+}
+
 /**
  * Where a read of the test leaves the learner. A sitting goes on at its next question; a short test
  * that ended shows its result, and a full test with parts left says where it stands. With nothing
- * open, onboarding shows the result of the test it ran and the Plan offers a test.
+ * open, onboarding shows the result of the test it ran; otherwise the test is offered, or waited
+ * for when the learner already `asked` for it.
  */
 export function toPlacementTestPhase({
+  asked = false,
   outcome,
   surface,
 }: {
+  asked?: boolean;
   outcome: PlacementOutcome;
   surface: "onboarding" | "plan";
 }): PlacementTestPhase {
@@ -118,7 +145,7 @@ export function toPlacementTestPhase({
   if (!attempt) {
     return surface === "onboarding" && result
       ? toSavedResult({ attempt: null, result })
-      : { kind: "offer" };
+      : toUnopenedPhase({ asked, outcome });
   }
 
   if (isResting(attempt)) {

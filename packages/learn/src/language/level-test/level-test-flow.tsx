@@ -17,7 +17,7 @@ import { LevelTestOutScreens } from "./level-test-out-screens";
 import { type LevelTestPhase } from "./level-test-phase";
 import { LevelTestPreparing } from "./level-test-preparing";
 import { LevelTestQuestion, useLevelTestAudio } from "./level-test-questions";
-import { LevelResult } from "./level-test-results";
+import { LevelResult, type OwnLanguage } from "./level-test-results";
 import {
   type LanguagePlanTestActions,
   type LevelTestHost,
@@ -72,6 +72,8 @@ type LanguagePlanTestProps = {
   onLeave: () => Promise<boolean>;
   /** Opens a lesson from a result on the Plan. */
   onStartLesson?: (lessonId: string) => Promise<boolean>;
+  /** Onboarding's offer, on the result, to use the app in the learner's own language. */
+  ownLanguage?: OwnLanguage;
   readWarmUp: OnboardingActions["readWarmUp"];
   targetLanguage: string;
   /** Opened from a lesson's offer to test out of a level, so that choice comes picked. */
@@ -88,6 +90,7 @@ export function LanguagePlanTestFlow({
   host,
   onLeave,
   onStartLesson,
+  ownLanguage,
   readWarmUp,
   targetLanguage,
   testOutFirst = false,
@@ -187,6 +190,7 @@ export function LanguagePlanTestFlow({
           onTestOut={(level) => startTestOut(level, "other")}
           onUndo={actions.undo}
           onboarding={onboarding}
+          ownLanguage={ownLanguage}
           pressed={pressed}
           rail={goal && <PlanReceipt goal={goal} testRanges={phase.result?.ranges ?? null} />}
           result={phase.result}

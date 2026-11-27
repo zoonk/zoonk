@@ -193,7 +193,7 @@ export function PlacementTestFlow({
 }) {
   const t = useExtracted();
   const analytics = useTestAnalytics({ goalId, surface: host.surface, test: "course" });
-  const test = usePlacementTest({ actions, analytics, host, onLeave });
+  const test = usePlacementTest({ actions, analytics, host, onLeave, run });
   const { failed, phase, pressed } = test;
   const onboarding = host.surface === "onboarding";
   const asked = phase.kind === "question" ? phase.attempt : null;
@@ -238,7 +238,7 @@ export function PlacementTestFlow({
     case "waiting":
       return (
         <PlacementWaiting
-          buildFailed={false}
+          buildFailed={Boolean(phase.buildFailed)}
           existingPlan={!onboarding}
           onQuestions={test.continueWait}
           onSkip={() => test.onLeave("other")}

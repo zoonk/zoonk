@@ -5,6 +5,7 @@ import { FocusTestFlow } from "../../focus-test/focus-test-flow";
 import { type GenerationRun } from "../../generation/generation-run";
 import { LanguagePlanTestFlow } from "../../language/level-test/level-test-flow";
 import { PlacementTestFlow } from "../../placement-test/placement-test-flow";
+import { getNativeLanguage } from "../_utils/onboarding-view-reads";
 import { type OnboardingActions } from "../onboarding-actions";
 
 /** Each kind of goal finds where the learner starts its own way; an exam's is its Focus test. */
@@ -50,6 +51,10 @@ export function PlacementStepScreen({
         goalId={goal.id}
         host={{ mode, surface: "onboarding" }}
         onLeave={() => onDone()}
+        ownLanguage={{
+          language: getNativeLanguage(view),
+          onSwitch: (language) => actions.switchAppLanguage({ goalId: goal.id, language }),
+        }}
         readWarmUp={actions.readWarmUp}
         targetLanguage={goal.targetLanguage}
         testOutLevel={null}

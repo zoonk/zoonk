@@ -1,6 +1,7 @@
 import { useSignUpHref } from "@/components/learn/use-sign-up-href";
 import { getCourseHref } from "@/data/courses/course-href";
 import { getPageLanguage } from "@/i18n/page-language";
+import { switchLanguage } from "@/i18n/switch-language";
 import { getGoalFocusTestHref } from "@/lib/focus-test/focus-test-href";
 import { askMaterialQuestion } from "@/lib/goals/goal-material-questions";
 import { findGoalTimeToCover, getGoalTimeAdvice } from "@/lib/goals/goal-time-advice";
@@ -17,6 +18,7 @@ import {
   type OnboardingActions,
   type OnboardingRoutes,
 } from "@zoonk/learn/onboarding/actions";
+import { isValidLocale } from "@zoonk/utils/locale";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useMemo } from "react";
 import { getFocusTestActions } from "./focus-test-client-actions";
@@ -75,6 +77,11 @@ export const WEB_ONBOARDING_ACTIONS: OnboardingActions = {
   readFirstLesson: readFirstLessonAction,
   readWarmUp,
   startOver: startOverAction,
+  switchAppLanguage: ({ goalId, language }) => {
+    if (isValidLocale(language)) {
+      void switchLanguage({ href: `/start/${goalId}`, locale: language });
+    }
+  },
   understanding: WEB_UNDERSTANDING_ACTIONS,
 };
 

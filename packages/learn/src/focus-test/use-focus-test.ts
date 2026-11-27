@@ -154,9 +154,13 @@ export function useFocusTest({
     answer,
     buildFailed: Boolean(waiting?.buildFailed && !arrived),
     continueWait: () => {
-      if (arrived) {
-        save(null, () => show(arrived));
+      if (!arrived) {
+        return;
       }
+
+      // Questions for a test the learner asked for before it could open: their start opens it now.
+      const offered = toFocusTestPhase({ opening: false, outcome: arrived }).kind === "invitation";
+      save(null, () => (asked && offered ? start() : show(arrived)));
     },
     failed,
     isPending,

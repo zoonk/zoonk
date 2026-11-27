@@ -62,14 +62,13 @@ type PartEnd = {
   undo: ResultUndo;
 };
 
+/** The parts still to take and how long they take together: parts shrink as topics close. */
 function usePartsLeftFacts() {
   const facts = useTestFacts();
 
   return (attempt: PlacementAttemptView): string[] => [
     facts.partsLeft(attempt.partsLeft),
-    attempt.partsLeft > 1
-      ? facts.aboutEach(attempt.estimatedMinutes)
-      : facts.about(attempt.estimatedMinutes),
+    facts.about(attempt.remainingEstimatedMinutes),
   ];
 }
 
