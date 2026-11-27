@@ -10,8 +10,8 @@ struct TutorComposerBar: View {
   @FocusState private var isFocused: Bool
 
   var body: some View {
-    // Draws again when a limit's day comes, which gives the composer back.
-    OpeningClock(availableAt: conversation.limit?.helpLimit?.availableAt) { _ in
+    // Draws again when a limit lifts, which enables Send.
+    OpeningClock(availableAt: conversation.limit?.liftsAt) { _ in
       content
     }
   }
@@ -20,8 +20,6 @@ struct TutorComposerBar: View {
     VStack(alignment: .leading, spacing: 10) {
       if !canTalk {
         signUpPrompt
-      } else if let limit = conversation.limit {
-        TutorLimitNotice(failure: limit)
       } else {
         if conversation.thread.value?.turns.isEmpty == true, !conversation.hasUnsentQuestion,
           !suggestions.isEmpty
@@ -29,7 +27,9 @@ struct TutorComposerBar: View {
           suggestionChips
         }
 
-        if let failure = conversation.askFailure, !failure.isLimit {
+        if let limit = conversation.limit {
+          TutorLimitNotice(failure: limit)
+        } else if let failure = conversation.askFailure, !failure.isLimit {
           FailureLine(
             message: failure == .failed
               ? String(
@@ -141,7 +141,7 @@ struct TutorLimitNotice: View {
   let failure: TutorFailure
 
   var body: some View {
-    OpeningClock(availableAt: failure.helpLimit?.availableAt) { now in
+    OpeningClock(availableAt: failure.liftsAt) { now in
       notice(failure.words(now: now))
     }
   }

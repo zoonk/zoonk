@@ -48,10 +48,10 @@ final class RefusalReceivedTests: XCTestCase {
           .utf8))
 
     XCTAssertEqual(
-      TutorFailure(refusal: error, fallback: .failed, receivedAt: late),
+      TutorFailure(refused: 402, error: error, receivedAt: late),
       .limit(.usedUp(tier: .free, availableAt: nil)))
     XCTAssertEqual(
-      TutorFailure(refusal: error, fallback: .failed, receivedAt: early),
+      TutorFailure(refused: 402, error: error, receivedAt: early),
       .limit(.usedUp(tier: .free, availableAt: opens)))
   }
 
