@@ -20,14 +20,14 @@ import { homedir, userInfo } from "node:os";
 import path from "node:path";
 import { READY_FILE, swiftPackagesDirectory } from "../../apps/apple/scripts/swift-packages.mts";
 import { trimSimulators } from "../../apps/apple/scripts/trim-simulators.mts";
-import { MS_PER_HOUR } from "../../packages/utils/src/date.ts";
+import { MS_PER_HOUR, MS_PER_WEEK } from "../../packages/utils/src/date.ts";
 import { tryExclusiveLock } from "../dev/exclusive-lock.mts";
 import { isInside, listProcessDirectories } from "./cleanup.mts";
 import { run } from "./postgres.mts";
 
 /** Build output nobody touched for this long belongs to a task that stopped; one that resumes rebuilds. */
 export const IDLE_MS = 12 * MS_PER_HOUR;
-const UNUSED_SWIFT_PACKAGES_MS = 7 * 24 * MS_PER_HOUR;
+const UNUSED_SWIFT_PACKAGES_MS = MS_PER_WEEK;
 
 // Deep enough for a scratch or review folder's copied checkout, such as task/build/lane/apple/DerivedData.
 const MAX_DEPTH = 8;
