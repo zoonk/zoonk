@@ -120,6 +120,8 @@ export function ListRowButton({
       )}
       data-slot="list-row"
       onClick={disabled ? undefined : onClick}
+      // A press made before the page hydrates marks it held, its chevron turned to a spinner.
+      suppressHydrationWarning
       type="button"
       {...props}
     >

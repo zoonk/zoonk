@@ -39,14 +39,18 @@ function RadioGroupItem({ className, ...props }: RadioPrimitive.Root.Props) {
       aria-labelledby={labelId}
       className={cn(
         "group/radio-group-item peer border-input text-primary focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 data-checked:border-selected data-checked:bg-selected dark:bg-input/30 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 hit-area relative flex aspect-square size-4 shrink-0 rounded-full border transition-none outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:ring-[3px]",
+        "data-held:border-selected data-held:bg-selected",
         className,
       )}
       data-slot="radio-group-item"
+      // A press made before the page hydrates marks it held, drawn as picked.
+      suppressHydrationWarning
       {...props}
     >
       <RadioPrimitive.Indicator
-        className="text-selected-foreground group-aria-invalid/radio-group-item:text-destructive-text flex size-full items-center justify-center"
+        className="text-selected-foreground group-aria-invalid/radio-group-item:text-destructive-text flex size-full items-center justify-center group-data-held/radio-group-item:visible data-unchecked:invisible"
         data-slot="radio-group-indicator"
+        keepMounted
       >
         <CircleIcon className="absolute top-1/2 left-1/2 size-2 -translate-x-1/2 -translate-y-1/2 fill-current" />
       </RadioPrimitive.Indicator>
