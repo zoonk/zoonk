@@ -1,4 +1,5 @@
 import { type WritingPromptOutput } from "@zoonk/ai/tasks/items/write-writing-prompt";
+import { keyAspects } from "@zoonk/core/library/items/write-writing-item";
 import { type GradeWritingInput } from "../grade-essay/cases/shared";
 import { type SourceQuestion } from "./source-questions";
 
@@ -54,7 +55,7 @@ export function blindKeyInput({
     ...userInput,
     basis: {
       ...userInput.basis,
-      aspects: key.data.aspects,
+      aspects: keyAspects({ aspects: key.data.aspects, grading }),
       criteria: grading.criteria.map(({ id, points, text: name }) => ({ id, name, points })),
       grading,
       keySource: "practiceKey",

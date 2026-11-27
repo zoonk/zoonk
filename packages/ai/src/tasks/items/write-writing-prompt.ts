@@ -19,7 +19,21 @@ const fallbackModels = ["anthropic/claude-opus-5.5"] as const;
 const points = z.number().positive().nullable();
 
 const schema = z.object({
-  aspects: z.array(z.object({ criterionId: z.string(), description: z.string(), points })).min(1),
+  aspects: z
+    .array(
+      z.object({
+        criterionId: z.string(),
+        description: z.string(),
+        points,
+        steps: z
+          .array(z.string())
+          .nullable()
+          .describe(
+            "Its steps of credit, lowest first; null when it is earned whole or not at all",
+          ),
+      }),
+    )
+    .min(1),
   assessedSkillIds: z.array(z.string()).min(1),
   context: z.string().nullable(),
   criteria: z.array(z.object({ id: z.string(), name: z.string(), points })).min(1),

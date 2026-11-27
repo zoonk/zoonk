@@ -1,5 +1,6 @@
 import { type TestCase } from "@/lib/types";
 import { type WritingPromptInput } from "@zoonk/ai/tasks/items/write-writing-prompt";
+import { SCORING_SHEET_EXAMPLES } from "@zoonk/core/exams/essays/scoring-sheet-examples";
 import { cguWritingGrading } from "../_fixtures/cgu-writing-grading";
 
 /** A written task as the notice reading lists it, which the app sends whole. */
@@ -63,9 +64,7 @@ const ENEM_REDACAO: WrittenTask = {
   description:
     "uma redação em Língua Portuguesa, texto dissertativo-argumentativo, com nota entre 0 e 1.000 pontos",
   grading: {
-    criteria: [],
-    language: null,
-    rounding: null,
+    ...SCORING_SHEET_EXAMPLES.enem.grading,
     zeroing: [
       {
         citation: {
@@ -207,7 +206,7 @@ const CGU_SYSTEMS = {
   ],
 };
 
-const ANSWER_EXPECTATIONS = `A question the board could set for this task, on a topic inside the task's description and the skills' field, in the kind of text the task asks for. The question numbers the aspects to address and states the marks of each when the task has points; it doesn't restate the line limit or total. The keyed aspects are each one thing an examiner can see present or missing, split into steps where a board grades in steps, covering every requested aspect; every fact in the key points is correct and current, with its legal basis when an answer would cite one. The context, when present, invents nothing attributed to a real source. assessedSkillIds name only skills the answer exercises (never a revising or proofreading skill). The title names the topic in a few words.`;
+const ANSWER_EXPECTATIONS = `A question the board could set for this task, on a topic inside the task's description and the skills' field, in the kind of text the task asks for. The question numbers the aspects to address and states the marks of each when the task has points; it doesn't restate the line limit or total. An item with definite answers is keyed as aspects that are each one thing an examiner can see present or missing (with a middle step when the item asks to explain or justify), an item that asks to discuss or relate a topic is one aspect with steps on how well it is treated, and every requested item is covered; every fact in the key points is correct and current, with its legal basis when an answer would cite one. The context, when present, invents nothing attributed to a real source. assessedSkillIds name only skills the answer exercises (never a revising or proofreading skill). The title names the topic in a few words.`;
 
 export const TEST_CASES: TestCase<unknown, WriteWritingPromptInput>[] = [
   {
@@ -314,7 +313,7 @@ export const TEST_CASES: TestCase<unknown, WriteWritingPromptInput>[] = [
     },
   },
   {
-    expectations: `An ENEM redação proposal: a social theme stated as Inep states themes, two to four short motivating texts in the context that never attribute invented quotes or figures to real sources, and the command to write a dissertative-argumentative text in formal Portuguese with an intervention proposal that respects human rights. The criteria are the five competences with ids c1 to c5 and null points. Aspects name what earns credit on this theme (the exact theme, not only its broad subject; the proposal's agent, action, means, effect and detail).`,
+    expectations: `An ENEM redação proposal: a social theme stated as Inep states themes, two to four short motivating texts in the context that never attribute invented quotes or figures to real sources, and the command to write a dissertative-argumentative text in formal Portuguese with an intervention proposal that respects human rights. The criteria are the sheet's five competences, c1 to c5, with their points, and the aspects under them have null points and no steps, since the board's own scales mark them. Aspects name what earns credit on this theme (the exact theme, not only its broad subject; the proposal's agent, action, means, effect and detail).`,
     id: "enem-redacao-pt",
     userInput: {
       board: "Inep",

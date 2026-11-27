@@ -15,6 +15,7 @@ import { getWritingSkillIds } from "../../learner/writing-skills";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { toProvenanceData } from "../_utils/library-rows";
 import { lockPlanBlueprintWrite, writePlanInputs } from "../_utils/plan-input-write";
+import { type WritingSheet } from "../exams/written-grading";
 import { createSkill } from "../skills/create-skill";
 import { requireWritingPromptSpend } from "./_utils/writing-prompt-spend";
 import { type WritingSupplyInput, loadWritingSupply, readWritingPool } from "./writing-prompt-pool";
@@ -48,6 +49,37 @@ function getAnswerWordFloor({
 
 type Task = Omit<ReturnType<typeof listPracticeWritingTasks>[number], "subjects">;
 
+function stepAwards(points: number, steps: readonly string[]) {
+  const last = steps.length - 1;
+
+  return steps.map((text, index) => ({
+    points: index === last ? points : Math.round((points * index * 100) / last) / 100,
+    text,
+  }));
+}
+
+/** A key's aspects as the sheet keeps them: points only under a pointed criterion with no board scale, split evenly across the aspect's steps. */
+export function keyAspects({
+  aspects,
+  grading,
+}: {
+  aspects: WritingPromptOutput["aspects"];
+  grading: Pick<WritingSheet, "criteria">;
+}) {
+  const scaled = new Set(grading.criteria.flatMap(({ awards, id }) => (awards ? [id] : [])));
+
+  return aspects.map(({ steps, ...aspect }) => {
+    const points =
+      grading.criteria.length > 0 && !scaled.has(aspect.criterionId) ? aspect.points : null;
+
+    return {
+      ...aspect,
+      ...(points !== null && steps && steps.length > 1 && { awards: stepAwards(points, steps) }),
+      points,
+    };
+  });
+}
+
 export function promptContent({
   data,
   input,
@@ -69,8 +101,6 @@ export function promptContent({
     ? { criteria: [], language: null, rounding: null, zeroing: [] }
     : task.grading;
 
-  const scaled = new Set(grading.criteria.flatMap(({ awards, id }) => (awards ? [id] : [])));
-
   const criteria =
     grading.criteria.length > 0
       ? grading.criteria.map(({ id, points, text: name }) => ({ id, name, points }))
@@ -89,10 +119,7 @@ export function promptContent({
   }
 
   const writing = writtenItemSchema.parse({
-    aspects: data.aspects.map((aspect) => ({
-      ...aspect,
-      points: grading.criteria.length > 0 && !scaled.has(aspect.criterionId) ? aspect.points : null,
-    })),
+    aspects: keyAspects({ aspects: data.aspects, grading }),
     assessedSkillIds,
     charactersPerLine: WRITING_CHARACTERS_PER_LINE,
     criteria,
