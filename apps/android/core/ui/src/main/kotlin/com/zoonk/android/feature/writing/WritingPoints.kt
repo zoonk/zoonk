@@ -48,10 +48,7 @@ fun pointsRange(
     decimals: Int,
     headline: Boolean = false,
 ): String {
-    val locale = currentLocale()
-    // A zeroed score is "0", never "0.0" or "0–0".
-    if (low == 0.0 && high == 0.0) return formatNumber(0.0, locale)
-    val (from, to) = rangeEnds(low, high, decimals, locale, headline)
+    val (from, to) = rangeEnds(low, high, decimals, currentLocale(), headline)
     return if (from == to) from else stringResource(R.string.essay_range, from, to)
 }
 

@@ -34,6 +34,19 @@ class WritingPointsTest {
     }
 
     @Test
+    fun aZeroKeepsItsScalesDecimals() {
+        compose.setContent {
+            Column {
+                Text(pointsRange(0.0, 0.0, 1))
+                Text(pointsRange(0.0, 0.0, 0, headline = true))
+            }
+        }
+
+        compose.onNodeWithText("0.0").assertIsDisplayed()
+        compose.onNodeWithText("0").assertIsDisplayed()
+    }
+
+    @Test
     fun deductionsRoundToOneDecimalWithoutNegativeZero() {
         compose.setContent {
             Column {
