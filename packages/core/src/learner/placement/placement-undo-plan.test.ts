@@ -1,6 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import { keepRequestReads } from "../../_test-utils/keep-request-reads";
 import { mockSession } from "../../_test-utils/mock-session";
 import { loadPlanSnapshot } from "../../plans/_utils/restore-plan";
 import { loadTodayPlanChange } from "../../plans/_utils/today-plan-change";
@@ -10,6 +11,7 @@ import { parsePlanGraph, parsePlanPhases } from "../../plans/planner/plan-state"
 import { refreshTestedOutPlan } from "../../plans/refresh-tested-out-plan";
 import { learnerGoalFixture } from "../_test-utils/learner-goal";
 import { placementItemBank } from "../_test-utils/placement-tap-items";
+import * as savedPlan from "../facts/saved-plan";
 import { answerPlacementQuestion } from "./answer-placement-question";
 import { finishGoalPlacement } from "./finish-goal-placement";
 import { startPlacementSitting } from "./start-placement-sitting";
@@ -88,6 +90,70 @@ async function finishPart({
 }
 
 describe("placement Undo restores the plan", () => {
+  it("keeps Undo on Plan and Today when the follow-up commits during the render", async () => {
+    const user = await userFixture();
+
+    const { goal, skills } = await learnerGoalFixture({
+      itemsPerSkill: 0,
+      phases: [3, 2],
+      userId: user.id,
+    });
+
+    mockSession(user.id);
+
+    const finished = await finishPart({
+      goalId: goal.id,
+      length: "quick",
+      skillIds: skills.map(({ id }) => id),
+    });
+
+    if (finished.status !== "ready" || !finished.completion.changeId) {
+      throw new Error("Expected a finish that skips lessons and offers Undo");
+    }
+
+    const { changeId } = finished.completion;
+    const { readSavedPlan } = savedPlan;
+    // Vitest runs private reads uncached. Hold the real plan read as Next does for a render.
+    const read = vi.spyOn(savedPlan, "readSavedPlan").mockImplementation(
+      keepRequestReads(async (userId, goalId) => {
+        const plan = await readSavedPlan(userId, goalId);
+
+        if (!plan) {
+          throw new Error("Expected the plan saved by the test");
+        }
+
+        await refreshTestedOutPlan({ goalId, userId });
+
+        const change = await prisma.planChange.findUniqueOrThrow({ where: { id: changeId } });
+
+        expect(change.payload).toMatchObject({
+          testOutRescheduled: true,
+          versionAfter: plan.version + 1,
+        });
+
+        return plan;
+      }),
+    );
+
+    try {
+      const [plan, today] = await Promise.all([
+        getGoalPlan(goal.id),
+        loadTodayPlanChange({ goal, now: new Date() }),
+      ]);
+
+      expect
+        .soft(plan)
+        .toMatchObject({
+          plan: { changes: [expect.objectContaining({ canUndo: true, id: changeId })] },
+          status: "ready",
+        });
+
+      expect(today).toMatchObject({ canUndo: true, id: changeId });
+    } finally {
+      read.mockRestore();
+    }
+  });
+
   it.each([
     { length: "quick", surface: "result" },
     { length: "wholeCourse", surface: "result" },
