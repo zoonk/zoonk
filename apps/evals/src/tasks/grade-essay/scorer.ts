@@ -421,7 +421,7 @@ function competenceChecks({
 }): Check[] {
   return Object.entries(expected.officialCompetences ?? {}).map(([id, official]) => {
     const row = result.kind === "points" ? result.rows.find((entry) => entry.id === id) : null;
-    const band = row?.range;
+    const band = row && (row.range ?? { high: row.earned, low: row.earned });
 
     return {
       detail: `${id}: published ${official}, ${band ? `range ${band.low}–${band.high}` : "no range"}.`,
