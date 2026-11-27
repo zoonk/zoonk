@@ -161,6 +161,87 @@ describe("Whole-course question preparation", () => {
     await expect(start()).resolves.toMatchObject({ placement: { attempt: { part: 2 } } });
   });
 
+  it("writes the first part's questions in onboarding when the plan's writer covered other topics", async () => {
+    const user = await userFixture();
+
+    const { goal, plan, skills } = await learnerGoalFixture({
+      itemsPerSkill: 0,
+      phases: [6],
+      userId: user.id,
+    });
+
+    const [first, second, third] = skills;
+
+    if (!first || !second || !third) {
+      throw new Error("Expected the first part's three topics");
+    }
+
+    await prisma.goal.update({ data: { planRevealedAt: null }, where: { id: goal.id } });
+
+    await prisma.plan.update({ data: { placementPreparedAt: new Date() }, where: { id: plan.id } });
+
+    const [firstBank = []] = await placementItemBank([first.id]);
+    const answers = new Map(firstBank.map(({ item, answer }) => [item.id, answer]));
+    mockSession(user.id);
+    const opened = await startPlacementSitting({ goalId: goal.id, input: { length: "quick" } });
+
+    if (opened.status !== "ready" || !opened.placement.attempt) {
+      throw new Error("Expected an open attempt");
+    }
+
+    const { id: attemptId } = opened.placement.attempt;
+
+    await expect(
+      prisma.followUp.findMany({ where: { kind: "preparePlacementItems", userId: user.id } }),
+    ).resolves.toMatchObject([
+      {
+        input: { placementPart: { attemptId, part: 1 }, skillIds: [first.id, second.id, third.id] },
+      },
+    ]);
+
+    let placement = opened.placement;
+
+    while (placement.next) {
+      const { itemId } = placement.next;
+      const answer = answers.get(itemId);
+
+      if (!answer) {
+        throw new Error("Expected only the first topic's questions before the part's writer ends");
+      }
+      // oxlint-disable-next-line no-await-in-loop -- The next question depends on this answer.
+      const result = await answerPlacementQuestion({
+        goalId: goal.id,
+        input: { answer, attemptId, durationMs: 30_000, itemId, part: 1 },
+      });
+
+      if (result.status !== "ready") {
+        throw new Error("Expected the saved answer");
+      }
+
+      placement = result.placement;
+    }
+
+    expect(placement).toMatchObject({
+      answered: firstBank.length,
+      next: null,
+      status: "waitingForQuestions",
+    });
+
+    const [secondBank = []] = await placementItemBank([second.id]);
+    const [secondQuestion] = secondBank;
+
+    await recordPlacementPrepared({
+      failed: false,
+      goalId: goal.id,
+      placementPart: { attemptId, part: 1 },
+      planRunId: null,
+    });
+
+    await expect(getGoalPlacement({ goalId: goal.id })).resolves.toMatchObject({
+      placement: { next: { itemId: secondQuestion?.item.id }, status: "asking" },
+    });
+  });
+
   it("does not advance a part whose writer has not delivered questions", async () => {
     const user = await userFixture();
 

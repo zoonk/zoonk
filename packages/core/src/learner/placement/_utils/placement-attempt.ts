@@ -301,7 +301,7 @@ export async function openPlacementAttempt({
         lessonsSkipped: 0,
         part: 1,
         partComplete: false,
-        ...(goal.planRevealedAt && { partPrepared: false }),
+        partPrepared: false,
         partSkillIds: first,
         partStartedAt: at,
         parts,
@@ -311,15 +311,13 @@ export async function openPlacementAttempt({
 
       await savePlacementAttempt({ goal, record: { ...record, attempt, finishedParts: [] }, tx });
 
-      if (goal.planRevealedAt) {
-        await owePartQuestions({
-          goalId,
-          placementPart: { attemptId: attempt.id, part: 1 },
-          skillIds: first,
-          tx,
-          userId,
-        });
-      }
+      await owePartQuestions({
+        goalId,
+        placementPart: { attemptId: attempt.id, part: 1 },
+        skillIds: first,
+        tx,
+        userId,
+      });
 
       return { events: openingEvents({ attempt, goal }), goal };
     },
