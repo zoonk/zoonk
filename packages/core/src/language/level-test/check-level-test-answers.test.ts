@@ -102,6 +102,7 @@ describe("level test answers kept for checking the bank", () => {
   it("keeps an answer sent twice at once only once", async () => {
     const { goalId } = await learnerOfStoredBank();
     const questionId = await shownQuestionId(goalId);
+
     const input = {
       answerIndex: tapInLevelTest({ answerIndex: 0, goalId, questionId }),
       questionId,
