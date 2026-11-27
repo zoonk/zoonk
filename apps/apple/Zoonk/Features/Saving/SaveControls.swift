@@ -24,6 +24,10 @@ struct SaveToggle: View {
 
 /// A row's bookmark at its end, as main's ghost icon button: it saves without opening the row.
 struct RowSaveToggle: View {
+  /// Between the row and its bookmark, as between a row and its chevron: the button is only as
+  /// wide as its glyph here, so a smaller gap would crowd the row's date.
+  static let gap: CGFloat = 12
+
   let isSaved: Bool
   let save: Text
   let saved: Text

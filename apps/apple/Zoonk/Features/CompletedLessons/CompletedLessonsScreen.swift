@@ -276,7 +276,7 @@ private struct CompletedLessonRow: View {
           lessonId: lesson.lessonId, title: lesson.title, chapterTitle: lesson.chapterTitle),
         goalId: goalId, server: lesson.saved)
     } else {
-      HStack(spacing: 4) {
+      HStack(spacing: RowSaveToggle.gap) {
         row
         RowSaveSpace()
       }

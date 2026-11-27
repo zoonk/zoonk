@@ -14,7 +14,7 @@ struct LessonRowSave: ViewModifier {
   func body(content: Content) -> some View {
     let isSaved = store.saves.isSaved(target.lessonId, server: server)
 
-    HStack(spacing: 4) {
+    HStack(spacing: RowSaveToggle.gap) {
       content
 
       RowSaveToggle(
