@@ -1,5 +1,9 @@
 import { config } from "dotenv";
-import { getUnpooledDatabaseUrl, isLocalDevelopmentDatabase } from "../../local-database";
+import {
+  getUnpooledDatabaseUrl,
+  isLocalDevelopmentDatabase,
+  requireCheckoutDatabase,
+} from "../../local-database";
 
 config();
 
@@ -37,7 +41,7 @@ export function getContentDatabaseUrls(): {
 } {
   const sourceConnectionString = getRequiredEnvironmentVariable("CONTENT_SOURCE_DATABASE_URL");
 
-  const destinationConnectionString = getUnpooledDatabaseUrl();
+  const destinationConnectionString = requireCheckoutDatabase(getUnpooledDatabaseUrl());
 
   assertLocalDestination(destinationConnectionString);
   assertDifferentDatabases({ destinationConnectionString, sourceConnectionString });

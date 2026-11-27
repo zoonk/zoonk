@@ -5,6 +5,7 @@ import {
   LOCAL_DATABASE_NAMES,
   isLinkedWorktree,
   worktreeDatabaseName,
+  worktreeDatabasePrefix,
 } from "#local-database-names";
 
 const LOCAL_DATABASE_HOSTS = new Set(["127.0.0.1", "[::1]", "localhost"]);
@@ -34,11 +35,15 @@ function findCheckout(directory: string): string {
   return findCheckout(parent);
 }
 
+function currentCheckout(): string {
+  // Turbopack leaves out import.meta.dirname in the bundled server.
+  return findCheckout(import.meta.dirname ?? process.cwd());
+}
+
 /** `scripts/cloud/setup.sh` gives Debian's `postgres` role this password. */
 export function getLocalDatabaseUrl(
   mode: DatabaseMode = "dev",
-  // Turbopack leaves out import.meta.dirname in the bundled server.
-  checkout = findCheckout(import.meta.dirname ?? process.cwd()),
+  checkout = currentCheckout(),
 ): string {
   const name = isLinkedWorktree(checkout)
     ? worktreeDatabaseName({ mode, worktree: realpathSync(checkout) })
@@ -56,25 +61,53 @@ export function getUnpooledDatabaseUrl(environment: NodeJS.Dict<string> = proces
   return environment.DATABASE_URL_UNPOOLED || getDatabaseUrl(environment);
 }
 
-export function isLocalDevelopmentDatabase(connectionString: string): boolean {
+/** The database a URL names on this machine; undefined when it may connect elsewhere. */
+function localDatabaseName(connectionString: string): string | undefined {
   if (!URL.canParse(connectionString)) {
-    return false;
+    return undefined;
   }
 
   const url = new URL(connectionString);
 
   if (
     !POSTGRES_PROTOCOLS.has(url.protocol) ||
+    !LOCAL_DATABASE_HOSTS.has(url.hostname) ||
     [...url.searchParams.keys()].some((key) => CONNECTION_TARGET_PARAMETERS.has(key.toLowerCase()))
   ) {
-    return false;
+    return undefined;
   }
 
   try {
-    const databaseName = decodeURIComponent(url.pathname.replace(/^\//u, ""));
-
-    return LOCAL_DATABASE_HOSTS.has(url.hostname) && DEVELOPMENT_DATABASE_NAME.test(databaseName);
+    return decodeURIComponent(url.pathname.replace(/^\//u, ""));
   } catch {
-    return false;
+    return undefined;
   }
+}
+
+/**
+ * A `DATABASE_URL` in the shell outranks a worktree's env files, so it can send the worktree's
+ * seeds, migrations and servers to another checkout's database. Remote hosts are left alone.
+ */
+export function requireCheckoutDatabase(
+  connectionString: string,
+  checkout = currentCheckout(),
+): string {
+  if (!isLinkedWorktree(checkout)) {
+    return connectionString;
+  }
+
+  const name = localDatabaseName(connectionString);
+  const prefix = worktreeDatabasePrefix(realpathSync(checkout));
+
+  if (name === undefined || name.startsWith(prefix)) {
+    return connectionString;
+  }
+
+  throw new Error(
+    `This worktree's database is ${prefix}dev, but DATABASE_URL or DATABASE_URL_UNPOOLED names the local database ${name}, which isn't this worktree's. Unset DATABASE_URL and DATABASE_URL_UNPOOLED in your shell, or run pnpm worktree:setup if the worktree has no database yet.`,
+  );
+}
+
+export function isLocalDevelopmentDatabase(connectionString: string): boolean {
+  return DEVELOPMENT_DATABASE_NAME.test(localDatabaseName(connectionString) ?? "");
 }
