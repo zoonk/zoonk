@@ -8,6 +8,7 @@ import {
   isRollingCap,
   receivedAtOf,
   useComesBackLine,
+  useLines,
   useMapLessonsWords,
   useOpeningDay,
 } from "./comes-back-words";
@@ -19,6 +20,8 @@ import {
   SubscribeAction,
   SubscribeMainAction,
 } from "./subscribe-gate";
+
+export { slowDownEnd } from "./slow-down-words";
 
 /**
  * A refusal as it arrives in answer to a request this screen just made, stamped with that moment so
@@ -51,6 +54,20 @@ export type SlowDown = {
   retryAfterSeconds: number;
   status: "slowDown";
 };
+
+/**
+ * Said once to a screen reader, from a place that stays when the notice goes, that a short break is
+ * over and the learner can try again.
+ */
+export function WaitOverStatus({ over }: { over: boolean }) {
+  const { ready } = useLines();
+
+  return (
+    <p className="sr-only" role="status">
+      {over ? ready() : null}
+    </p>
+  );
+}
 
 /**
  * A cap counted over the last 30 days, the rule for every monthly cap: each use comes back 30 days

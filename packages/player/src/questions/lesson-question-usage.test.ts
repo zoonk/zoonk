@@ -35,6 +35,21 @@ describe(getRefusalError, () => {
     });
   });
 
+  it("ends a wait too long for a date at the latest date there is", async () => {
+    await expect(
+      refusal({
+        body: {
+          error: {
+            code: "SLOW_DOWN",
+            details: { retryAfterSeconds: Number.MAX_SAFE_INTEGER },
+            message: "",
+          },
+        },
+        status: 429,
+      }),
+    ).resolves.toMatchObject({ availableAt: "+275760-09-13T00:00:00.000Z", kind: "slowDown" });
+  });
+
   it("reads which plan's tutor allowance ran out", async () => {
     await expect(refusal({ body: limitReachedBody("guest"), status: 403 })).resolves.toStrictEqual({
       kind: "usageLimit",

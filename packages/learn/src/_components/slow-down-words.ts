@@ -10,6 +10,14 @@ import { type LimitWords, type SlowDown } from "./help-limit-notice";
 const MS_PER_SECOND = 1000;
 const SECONDS_PER_MINUTE = 60;
 
+/** The latest instant a `Date` holds (ECMAScript's own bound): a later end would be no instant. */
+const LATEST_INSTANT_MS = 8.64e15;
+
+/** When a short break of `seconds` counted from `from` ends: any wait still lands on an instant. */
+export function slowDownEnd(from: number, seconds: number): number {
+  return Math.min(from + seconds * MS_PER_SECOND, LATEST_INSTANT_MS);
+}
+
 /**
  * A slow-down's wait ends at the instant the screen was given (`availableAt`), or counted from when
  * the refusal arrived, or else from when its notice first showed.
@@ -23,7 +31,7 @@ function useSlowDownEnd(limit: SlowDown | null): number | null {
 
   return limit.availableAt
     ? Date.parse(limit.availableAt)
-    : (limit.receivedAt ?? shownAt) + limit.retryAfterSeconds * MS_PER_SECOND;
+    : slowDownEnd(limit.receivedAt ?? shownAt, limit.retryAfterSeconds);
 }
 
 function useWaitLine() {

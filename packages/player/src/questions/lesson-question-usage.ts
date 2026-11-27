@@ -1,5 +1,5 @@
 import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
-import { received } from "@zoonk/learn/help-limit";
+import { received, slowDownEnd } from "@zoonk/learn/help-limit";
 import { safeAsync } from "@zoonk/utils/error";
 import { z } from "zod";
 import { type LessonQuestionApiError } from "./lesson-question-api";
@@ -7,7 +7,6 @@ import { type LessonQuestionApiError } from "./lesson-question-api";
 const HTTP_STATUS_PAYMENT_REQUIRED = 402;
 const HTTP_STATUS_FORBIDDEN = 403;
 const HTTP_STATUS_TOO_MANY_REQUESTS = 429;
-const MS_PER_SECOND = 1000;
 
 const slowDownSchema = z.object({
   code: z.literal(LESSON_PLAYER_ERROR_CODES.slowDown),
@@ -76,7 +75,7 @@ export async function getRefusalError(response: Response): Promise<LessonQuestio
   }
 
   if (usage?.kind === "slowDown") {
-    const opens = Date.now() + usage.retryAfterSeconds * MS_PER_SECOND;
+    const opens = slowDownEnd(Date.now(), usage.retryAfterSeconds);
     return { ...usage, availableAt: new Date(opens).toISOString() };
   }
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { MAX_LESSON_QUESTION_LENGTH } from "@zoonk/core/lesson-questions/contract";
-import { type HelpLimit } from "@zoonk/learn/help-limit";
+import { type HelpLimit, WaitOverStatus } from "@zoonk/learn/help-limit";
 import { TUTOR_COMPOSER_FRAME_CLASS } from "@zoonk/learn/tutor-composer";
 import {
   InputGroup,
@@ -22,6 +22,7 @@ import {
   RequestErrorMessage,
   useQuestionLimit,
 } from "./lesson-question-errors";
+import { getQuestionRefusal } from "./lesson-question-state-helpers";
 import { getComposerAvailability } from "./lesson-question-status";
 import { isUsageRefusal } from "./lesson-question-usage";
 import { type LessonQuestionController } from "./use-lesson-questions";
@@ -102,6 +103,7 @@ export function QuestionComposer({
   const isResolvingPreviousQuestion = controller.unresolvedQuestion !== null;
 
   const limit = useQuestionLimit(state);
+  const isShortBreak = getQuestionRefusal(state)?.kind === "slowDown";
 
   const { canSend, createNavigationError } = getComposerAvailability({
     isResolvingPreviousQuestion,
@@ -126,6 +128,7 @@ export function QuestionComposer({
   return (
     <div className={className}>
       {limit && <ComposerLimit limit={limit} />}
+      {isShortBreak && <WaitOverStatus over={limit === null} />}
 
       <label className="sr-only" htmlFor={inputId}>
         {label ?? t("Ask a question")}

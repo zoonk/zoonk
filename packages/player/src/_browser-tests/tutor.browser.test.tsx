@@ -486,10 +486,27 @@ describe("asking the tutor", () => {
     await expect.element(wait).toMatchTextContent(said);
     await expect.element(sendButton(sheet)).toBeDisabled();
 
+    // The countdown is hidden from a screen reader, which hears the first wait in its place.
+    await expect
+      .element(
+        wait.getByText("Take a short break. You can try again in 59 seconds.", { exact: true }),
+      )
+      .toHaveAttribute("aria-hidden", "true");
+
+    await expect
+      .element(
+        wait.getByText("Take a short break. You can try again in 2 minutes.", { exact: true }),
+      )
+      .not.toHaveAttribute("aria-hidden");
+
+    const waitOver = sheet.getByRole("status").filter({ hasText: "You can try again now." });
+    await expect.element(waitOver).not.toBeInTheDocument();
+
     await vi.advanceTimersByTimeAsync(59 * 1000);
 
     await expect.element(sheet.getByRole("alert")).not.toBeInTheDocument();
     await expect.element(sendButton(sheet)).toBeEnabled();
+    await expect.element(waitOver).toBeInTheDocument();
 
     await pressKeepingClock(sendButton(sheet));
     await expect.element(sheet.getByText(`${question} Or purple?`)).toBeVisible();
