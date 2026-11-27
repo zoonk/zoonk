@@ -72,6 +72,7 @@ function renderEssay() {
             criteria: [{ id: "a1", name: "Argument", points: null }],
             keySource: "practiceKey",
             lines: 30,
+            maxCharactersPerLine: 160,
             minimumWords: 30,
             points: null,
             taskKey: "short",

@@ -29,9 +29,14 @@ export function read() {
 type Hit = Element | null | ((x: number, y: number) => Element | null);
 
 let hit: Hit = null;
+let hitStack: Element[] = [];
 
 export function setHit(value: Hit) {
   hit = value;
+}
+
+export function setHitStack(elements: Element[]) {
+  hitStack = elements;
 }
 
 /** jsdom set up as a page the probe reads: boxes, fonts, a canvas, what shows at a point. */
@@ -110,6 +115,11 @@ export function setUpProbeDom() {
       value: (x: number, y: number) => (typeof hit === "function" ? hit(x, y) : hit),
     });
 
+    Object.defineProperty(document, "elementsFromPoint", {
+      configurable: true,
+      value: () => hitStack,
+    });
+
     // After the mocks, so the helpers' canvas is the one that draws colors.
     installPageHelpers();
   });
@@ -118,5 +128,6 @@ export function setUpProbeDom() {
     vi.restoreAllMocks();
     document.body.replaceChildren();
     hit = null;
+    hitStack = [];
   });
 }

@@ -109,7 +109,7 @@ function PassMarksRow() {
 
   return (
     <ListRow role="note">
-      <ListRowLeading firstLine>
+      <ListRowLeading>
         <ListRowIcon>
           <FlagIcon />
         </ListRowIcon>
@@ -139,7 +139,7 @@ function NoticeScaleRow() {
 
   return (
     <ListRow role="note">
-      <ListRowLeading firstLine>
+      <ListRowLeading>
         <ListRowIcon>
           <GaugeIcon />
         </ListRowIcon>

@@ -13,8 +13,8 @@ import {
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import {
-  LIST_GROUP_CLASS,
   LIST_ROW_INTERACTIVE_CLASS,
+  ListGroup,
   ListRow,
   ListRowBody,
   ListRowContent,
@@ -276,16 +276,13 @@ export function SubjectTopics({
     <div className="flex flex-col gap-2" key={run.heading ?? `topics-${index}`}>
       {run.heading && <PageSectionLabel id={getHeadingId(index)}>{run.heading}</PageSectionLabel>}
 
-      <ul
-        aria-labelledby={run.heading ? getHeadingId(index) : labelledBy}
-        className={LIST_GROUP_CLASS}
-      >
+      <ListGroup as="ul" aria-labelledby={run.heading ? getHeadingId(index) : labelledBy}>
         {groupTopics(run.topics).map((group) => (
           <li key={group.topic.name}>
             <TopicGroupRow chapterHref={chapterHref} group={group} showFrequency={showFrequency} />
           </li>
         ))}
-      </ul>
+      </ListGroup>
     </div>
   ));
 }

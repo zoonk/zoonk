@@ -2,6 +2,7 @@ import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { isJsonObject } from "@zoonk/utils/json";
 import { describe, expect, it } from "vitest";
+import { pickInPlacement } from "../../_test-utils/shown-choice";
 import { changeGoalPlan } from "../../plans/change-goal-plan";
 import { ENERGY_PER_CORRECT } from "../../progress/energy";
 import {
@@ -63,7 +64,7 @@ describe("overlapping Focus tests", () => {
         answerPlacementQuestion({
           goalId: goal.id,
           input: {
-            answer: { selectedIndex: 0 },
+            answer: await pickInPlacement({ itemId: started.next?.itemId ?? "" }),
             durationMs: 20_000,
             itemId: started.next?.itemId ?? "",
           },
@@ -115,7 +116,7 @@ describe("a Focus test closed after a plan edit", () => {
     await expect(
       answerPlacementQuestion({
         goalId: goal.id,
-        input: { answer: { selectedIndex: 0 }, durationMs: 20_000, itemId },
+        input: { answer: await pickInPlacement({ itemId }), durationMs: 20_000, itemId },
       }),
     ).resolves.toMatchObject({ status: "ready" });
 

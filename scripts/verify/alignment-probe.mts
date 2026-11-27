@@ -34,8 +34,11 @@ export function readAlignment({
   surfaces: string;
 }): AlignmentPage {
   const LABEL_LENGTH = 32;
+  // oxlint-disable-next-line no-magic-numbers -- Sample the middle and both sides of the overlap.
+  const PINNED_SAMPLE_X = [0.1, 0.5, 0.9];
   const { shown } = globalThis.zoonkPage;
   const { scrollX, scrollY } = globalThis;
+  const pinnedRows = new Map<string, Element>();
 
   const bounds = (rect: { bottom: number; left: number; right: number; top: number }): Bounds => [
     rect.left + scrollX,
@@ -555,6 +558,7 @@ export function readAlignment({
   ): CaptureElement[] {
     const { pixels } = globalThis.zoonkPage;
     const rowId = `${read.groupId}.${rowIndex}`;
+    pinnedRows.set(rowId, row);
     const unit = unitIn(row, read.group);
     const chain: Element[] = [];
 
@@ -905,13 +909,20 @@ export function readAlignment({
     ];
   }
 
-  /** What scrolls under a bar: a sticky bar's nearest clipping ancestor, else the document. */
+  /** The bar's own clipping ancestor or surface. A modal scroll lock on body is document CSS. */
   function scrollerOf(bar: Element): Element {
-    if (getComputedStyle(bar).position === "sticky") {
-      for (let holder = bar.parentElement; holder; holder = holder.parentElement) {
-        if (["auto", "hidden", "scroll"].includes(getComputedStyle(holder).overflowY)) {
-          return holder;
-        }
+    const sticky = getComputedStyle(bar).position === "sticky";
+
+    for (
+      let holder = bar.parentElement;
+      holder && holder !== document.body;
+      holder = holder.parentElement
+    ) {
+      if (
+        holder.matches(surfaces) ||
+        (sticky && ["auto", "hidden", "scroll"].includes(getComputedStyle(holder).overflowY))
+      ) {
+        return holder;
       }
     }
 
@@ -1331,6 +1342,8 @@ export function readAlignment({
     return cover ? surfaceName(cover) : "page";
   };
 
+  const activeSurface = top ? surfaceName(top) : "page";
+
   const filled = (control: Element) =>
     getComputedStyle(control).getPropertyValue("--button-variant").trim() === "default";
 
@@ -1385,16 +1398,52 @@ export function readAlignment({
     ];
   });
 
-  const pinned = pinnedShown.map((bar, index): CaptureElement => ({
-    bounds: bounds(boxOf(bar)),
-    group: null,
-    id: `pinned.${index}`,
-    ink: null,
-    name: name(bar),
-    part: "pinned",
-    piece: "page",
-    row: null,
-  }));
+  function coversRow(bar: Element, row: Element, pinned: Rect) {
+    const drawn = boxOf(row);
+    const left = Math.max(pinned.left, drawn.left, 0);
+    const right = Math.min(pinned.right, drawn.right, innerWidth);
+    const overlapTop = Math.max(pinned.top, drawn.top, 0);
+    const bottom = Math.min(pinned.bottom, drawn.bottom, innerHeight);
+
+    if (left >= right || overlapTop >= bottom || bar.contains(row) || row.contains(bar)) {
+      return false;
+    }
+
+    return PINNED_SAMPLE_X.some((fraction) => {
+      const [front, ...behind] = document.elementsFromPoint(
+        left + (right - left) * fraction,
+        (overlapTop + bottom) / 2,
+      );
+
+      return front && bar.contains(front) && behind.some((element) => row.contains(element));
+    });
+  }
+
+  const pinned = pinnedShown.flatMap((bar, index): CaptureElement[] => {
+    const surface = surfaceOf(bar);
+
+    if (top === null || surface !== activeSurface) {
+      return [];
+    }
+
+    const pinnedBox = boxOf(bar);
+
+    return [
+      {
+        bounds: bounds(pinnedBox),
+        coversRows: [...pinnedRows].flatMap(([id, row]) =>
+          coversRow(bar, row, pinnedBox) && surfaceOf(row) === surface ? [id] : [],
+        ),
+        group: null,
+        id: `pinned.${index}`,
+        ink: null,
+        name: name(bar),
+        part: "pinned",
+        piece: "page",
+        row: null,
+      },
+    ];
+  });
 
   function pagePart(
     element: Element,
@@ -1797,12 +1846,7 @@ export function readAlignment({
     ...readUnsignedScrollers(),
   ];
 
-  // Null when two surfaces overlap and the document shows no declared surface where they do.
-  if (top === null) {
-    return { activeSurface: "not measured", elements: all };
-  }
-
-  return { activeSurface: top ? surfaceName(top) : "page", elements: all };
+  return { activeSurface: top === null ? "not measured" : activeSurface, elements: all };
 }
 
 /** The UI's locale is the path's first segment where it names one (`/pt/plan`). */

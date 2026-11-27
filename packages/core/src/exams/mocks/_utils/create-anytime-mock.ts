@@ -106,6 +106,7 @@ function toConditions({
     scoring: getMockScoring({ blueprint: setup.blueprint, goal, structure: setup.structure }),
     sections: plan.sections,
     shape: { area: option.area, day: option.day, kind: option.kind },
+    shufflesOptions: true,
     startTime: getExamStartTime({ day: plan.day, edition }),
     timeZone: edition?.timeZone ?? null,
     timedOutSections: [],

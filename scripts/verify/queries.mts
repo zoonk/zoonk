@@ -1,4 +1,4 @@
-import { readFileSync, statSync } from "node:fs";
+import { existsSync, readFileSync, statSync } from "node:fs";
 import { createRequire } from "node:module";
 import { join } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
@@ -18,14 +18,35 @@ const QUIET_LIMIT_MS = 15_000;
 const QUIET_POLL_MS = 200;
 const LABEL_LENGTH = 140;
 
+const QUERY_LOG_UNAVAILABLE =
+  "The server has not opened this query log. Start it with ZOONK_QUERY_LOG set to a fresh log path.";
+
 export function readStatements(
   file: string,
   { from, to }: { from: number; to: number },
-): Statement[] {
-  return readFileSync(file, "utf8")
+): Statement[] | null {
+  if (!existsSync(file)) {
+    return null;
+  }
+
+  const entries = readFileSync(file, "utf8")
     .split("\n")
     .filter(Boolean)
-    .map((line): unknown => JSON.parse(line))
+    .map((line): unknown => JSON.parse(line));
+
+  if (
+    !entries.some(
+      (entry) =>
+        entry !== null &&
+        typeof entry === "object" &&
+        "queryLog" in entry &&
+        entry.queryLog === "ready",
+    )
+  ) {
+    return null;
+  }
+
+  return entries
     .filter(
       (entry): entry is Statement =>
         entry !== null && typeof entry === "object" && "at" in entry && "sql" in entry,
@@ -38,7 +59,7 @@ async function waitForQuietDatabase(file: string) {
   const last = { changedAt: Date.now(), size: -1 };
 
   while (Date.now() < deadline && Date.now() - last.changedAt < QUIET_MS) {
-    const { size } = statSync(file);
+    const size = statSync(file, { throwIfNoEntry: false })?.size ?? 0;
 
     if (size !== last.size) {
       last.size = size;
@@ -149,7 +170,7 @@ function connect(repository: string, production: boolean): Client {
  * With sequential scans off, Postgres uses any index that can serve the query, so a sequential scan
  * that remains is a filter no index serves, even on a small local table.
  */
-export async function findUnindexed(
+async function findUnindexed(
   repository: string,
   { production, reads }: { production: boolean; reads: string[] },
 ): Promise<Finding[]> {
@@ -205,13 +226,17 @@ export async function measureRender({
   baseUrl,
   file,
   path,
+  production,
+  repository,
   storageState,
 }: {
   baseUrl: string;
   file: string;
   path: string;
+  production: boolean;
+  repository: string;
   storageState?: StorageState;
-}): Promise<Statement[]> {
+}): Promise<Omit<RenderReport, "path">> {
   await waitForQuietDatabase(file);
   const context = await request.newContext({ baseURL: baseUrl, storageState });
   const from = Date.now();
@@ -224,13 +249,24 @@ export async function measureRender({
   }
 
   await waitForQuietDatabase(file);
-  return readStatements(file, { from, to: Date.now() });
+  const statements = readStatements(file, { from, to: Date.now() });
+
+  if (!statements) {
+    return {
+      findings: [{ check: "query log", level: "warn", message: QUERY_LOG_UNAVAILABLE }],
+      summary: null,
+    };
+  }
+
+  const summary = summarizeStatements(statements);
+  const unindexed = await findUnindexed(repository, { production, reads: summary.reads });
+  return { findings: [...queryFindings(summary), ...unindexed], summary };
 }
 
 export type RenderReport = {
   findings: Finding[];
   path: string;
-  summary: ReturnType<typeof summarizeStatements>;
+  summary: ReturnType<typeof summarizeStatements> | null;
 };
 
 export function renderRows(renders: RenderReport[]): string[] {
@@ -246,6 +282,10 @@ export function renderRows(renders: RenderReport[]): string[] {
     "| Page | DB time | Slow statements | Repeated reads | Large results | Filters without an index | Statements |",
     "| --- | --- | --- | --- | --- | --- | --- |",
     ...renders.map(({ findings, path, summary }) => {
+      if (!summary) {
+        return `| ${path} | Unavailable | — | — | — | — | — |`;
+      }
+
       const unindexed = findings.filter((finding) => finding.check === "no index").length;
       return `| ${path} | ${Math.round(summary.dbMs)} ms | ${summary.slow.length} | ${summary.repeated.length} | ${summary.large.length} | ${unindexed} | ${summary.count} |`;
     }),

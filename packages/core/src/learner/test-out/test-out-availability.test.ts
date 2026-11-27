@@ -10,6 +10,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../../_test-utils/frozen-clock";
+import { pickInPlacement } from "../../_test-utils/shown-choice";
 import { getStudyBlock } from "../../sessions/get-study-block";
 import { getStudySession } from "../../sessions/get-study-session";
 import { signedInCourseGoal } from "../../view-models/_test-utils/course-goal";
@@ -222,11 +223,13 @@ describe("test-out offers after a failed test", () => {
         chapterId: fixture.chapterId,
         goalId: fixture.goal.id,
         input: {
-          answers: questions.map((question) => ({
-            answer: { selectedIndex: 0 },
-            durationMs: 1000,
-            itemId: question.id,
-          })),
+          answers: await Promise.all(
+            questions.map(async (question) => ({
+              answer: await pickInPlacement({ itemId: question.id }),
+              durationMs: 1000,
+              itemId: question.id,
+            })),
+          ),
           requestId: randomUUID(),
         },
       }),

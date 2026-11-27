@@ -4,10 +4,10 @@ import { httpStatus } from "@/lib/api-errors";
 import { DISPOSABLE_EMAIL_ERROR_CODE } from "@zoonk/auth/email-signup-contract";
 import { getAuthError } from "@zoonk/auth/errors";
 import { createEmailSignInCode } from "@zoonk/auth/native-sessions";
-import { isLocalhostSupported } from "@zoonk/utils/environment";
 import { safeAsync } from "@zoonk/utils/error";
 import { parseFormField } from "@zoonk/utils/form";
 import { getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
+import { getAppProtocol } from "@zoonk/utils/origin";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getOtpHref } from "../../_utils/auth-redirect";
@@ -53,12 +53,10 @@ async function sendSignInCode({
   email: string;
   requestHeaders: Headers;
 }) {
-  const protocol = isLocalhostSupported() ? "http" : "https";
-
   await createEmailSignInCode({
     email,
     headers: requestHeaders,
-    requestURL: `${protocol}://${requestHeaders.get("host")}`,
+    requestURL: `${getAppProtocol()}://${requestHeaders.get("host")}`,
   });
 }
 

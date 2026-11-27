@@ -1,4 +1,5 @@
 import { skipAfterTimeout } from "@zoonk/testing/skip-after-timeout";
+import { installTestClock } from "@zoonk/testing/test-clock";
 import { afterAll, beforeAll, beforeEach, vi } from "vitest";
 import { boundaries, resetBoundaries } from "./src/_test-utils/test-boundaries";
 
@@ -36,6 +37,7 @@ Object.entries(boundaries).forEach(([path, mocks]) => {
 });
 
 skipAfterTimeout();
+installTestClock();
 
 // Test files share workers, so reset their boundaries and restore their globals between files.
 beforeAll(async () => {

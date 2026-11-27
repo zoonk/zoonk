@@ -1,6 +1,7 @@
 import { execFileSync } from "node:child_process";
 import {
   closeSync,
+  existsSync,
   fstatSync,
   openSync,
   readFileSync,
@@ -10,6 +11,7 @@ import {
 } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { RouteStore } from "portless";
 import { z } from "zod";
 import { getPnpmCommand } from "./process.mts";
 
@@ -116,6 +118,7 @@ export function startProxy({
 }): void {
   const pnpmCommand = getPnpmCommand(environment);
   const stateDirectory = String(environment.PORTLESS_STATE_DIR);
+  const lanMode = environment.PORTLESS_LAN === "1";
 
   try {
     trimProxyLog(join(stateDirectory, "proxy.log"));
@@ -124,16 +127,29 @@ export function startProxy({
     process.stderr.write(`Couldn't trim the proxy log: ${String(error)}\n`);
   }
 
-  const portless = (command: string) =>
-    execFileSync(pnpmCommand.command, [...pnpmCommand.args, "exec", "portless", "proxy", command], {
-      cwd: currentDirectory,
-      env: environment,
-      // Its "already running" notice and restart advice answer nothing a `pnpm dev` asked; errors still show.
-      stdio: ["ignore", "ignore", "inherit"],
-    });
+  const portless = (command: string, ...args: string[]) =>
+    execFileSync(
+      pnpmCommand.command,
+      [...pnpmCommand.args, "exec", "portless", "proxy", command, ...args],
+      { cwd: currentDirectory, env: environment, stdio: ["ignore", "ignore", "inherit"] },
+    );
 
-  // Started first, so the check sees whichever proxy won when several checkouts start at once.
-  portless("start");
+  const start = () => (lanMode ? portless("start", "--skip-trust") : portless("start"));
+
+  if (
+    lanMode &&
+    getRunningProxyVersion(stateDirectory) &&
+    !existsSync(join(stateDirectory, "proxy.tls"))
+  ) {
+    if (new RouteStore(stateDirectory).loadRoutes().length > 0) {
+      throw new Error("The LAN proxy is still serving HTTP. Stop the other LAN stacks and retry.");
+    }
+
+    portless("stop");
+  }
+
+  // Check the version after starting, so it is the proxy that won any concurrent start.
+  start();
 
   const proxyVersion = getRunningProxyVersion(stateDirectory);
 
@@ -147,6 +163,6 @@ export function startProxy({
     );
 
     portless("stop");
-    portless("start");
+    start();
   }
 }

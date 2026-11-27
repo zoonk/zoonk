@@ -15,7 +15,7 @@ import { screenshot } from "../screenshot.mts";
 import { signIn } from "../sign-in.mts";
 import { VIEWPORTS, VIEWPORT_NAMES, type ViewportName } from "../viewports.mts";
 import { localePath, proofIn } from "./configuration.mts";
-import { hasEvidence } from "./evidence.mts";
+import { hasEvidence, hasProof, scenarioField } from "./evidence.mts";
 import { installFailure } from "./failures.mts";
 import { type Prerequisites, SCENARIOS, type Scenario, type Step } from "./scenarios.mts";
 
@@ -146,8 +146,7 @@ async function take(page: Page, step: Step) {
   } else if ("press" in step) {
     await page.keyboard.press(step.press);
   } else if ("fill" in step) {
-    const field = page.getByLabel(step.fill.field).or(page.getByPlaceholder(step.fill.field));
-    await field.first().fill(step.fill.value);
+    await scenarioField(page, step.fill.field).filter({ visible: true }).fill(step.fill.value);
   } else {
     // A full-screen task (the lesson player) scrolls inside its own element, not the document.
     await page.evaluate(() => {
@@ -243,31 +242,21 @@ async function capture(
 
     await page.waitForTimeout(SETTLE_MS);
 
-    const proof = scenario.firstPaint
-      ? page.locator("[aria-busy=true]")
-      : page.getByText(proofIn(scenario.proof, locale));
-
-    // Words a learner typed are a field's value, not its text.
-    const typed = async () =>
-      page
-        .locator("input, textarea")
-        .evaluateAll(
-          (fields, words) => fields.some((field) => "value" in field && field.value === words),
-          proofIn(scenario.proof, locale),
-        );
-
-    const evidence = await hasEvidence(page, scenario.evidence ?? []);
-
     const reached =
-      evidence &&
       stepped &&
       scenario.reach !== null &&
-      ((await proof
-        .filter({ visible: true })
-        .first()
-        .isVisible()
-        .catch(() => false)) ||
-        (await typed()));
+      (await hasEvidence(page, scenario.evidence ?? [])) &&
+      (await hasProof({
+        page,
+        scenario,
+        words: scenario.firstPaint ? "" : proofIn(scenario.proof, locale),
+      }).catch((error: unknown) => {
+        console.error(
+          `${scenario.id} ${label}: ${error instanceof Error ? error.message : String(error)}`,
+        );
+
+        return false;
+      }));
 
     const anchors = scenario.anchors.flatMap((anchor) =>
       anchor.web ? [{ id: anchor.id, web: anchor.web }] : [],
