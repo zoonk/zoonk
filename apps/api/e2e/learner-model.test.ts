@@ -267,7 +267,7 @@ test.describe("Learner model API", () => {
     await readBody({
       response: await apiContext.post(`${path}/placement/answers`, {
         data: {
-          answer: { selectedIndex: 0 },
+          answer: tapOption(next.options),
           attemptId: attempt.id,
           durationMs: 1000,
           itemId: next.itemId,

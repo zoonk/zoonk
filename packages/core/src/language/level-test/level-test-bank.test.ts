@@ -17,6 +17,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { storeBlobUploads } from "../../_test-utils/blob-uploads";
 import { useGuestOutOfHelp } from "../../_test-utils/guest-out-of-help";
 import { mockSession } from "../../_test-utils/mock-session";
+import { tapInLevelTest } from "../../_test-utils/shown-choice";
 import * as speechClips from "../../audio/_utils/speech-clips";
 import { requestSpeechClip } from "../../audio/request-speech-clip";
 import { getSpeechClipKey } from "../../audio/speech-clip-key";
@@ -177,10 +178,21 @@ async function answerReadingQuestions(goalId: string, count = 1) {
       throw new Error("Expected a reading question");
     }
 
+    const { attemptId, next } = view.test;
+
     // oxlint-disable-next-line no-await-in-loop -- Each answer determines the next question.
     const result = await answerLanguageLevelTest({
       goalId,
-      input: { answerIndex: 0, durationMs: 30_000, questionId: view.test.next.question.id },
+      input: {
+        answerIndex: tapInLevelTest({
+          answerIndex: 0,
+          attemptId,
+          goalId,
+          questionId: next.question.id,
+        }),
+        durationMs: 30_000,
+        questionId: next.question.id,
+      },
     });
 
     if (result.status !== "ready") {

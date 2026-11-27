@@ -837,28 +837,26 @@ describe("a post-start level test", () => {
     const { attemptId, next } = started.test;
     expect(next.question.level).toBe("A1");
 
-    await expect(
-      answerLanguageLevelTest({
+    const input = {
+      answerIndex: tapInLevelTest({
+        answerIndex: 1,
+        attemptId,
         goalId: goal.id,
-        input: {
-          answerIndex: tapInLevelTest({
-            answerIndex: 1,
-            attemptId,
-            goalId: goal.id,
-            questionId: next.question.id,
-          }),
-          attemptId,
-          questionId: next.question.id,
-        },
+        questionId: next.question.id,
       }),
-    ).resolves.toMatchObject({ status: "ready", test: { answered: 1 } });
+      attemptId,
+      questionId: next.question.id,
+    };
 
-    await expect(
-      answerLanguageLevelTest({
-        goalId: goal.id,
-        input: { answerIndex: 1, attemptId, questionId: next.question.id },
-      }),
-    ).resolves.toMatchObject({ status: "ready", test: { answered: 1 } });
+    await expect(answerLanguageLevelTest({ goalId: goal.id, input })).resolves.toMatchObject({
+      status: "ready",
+      test: { answered: 1 },
+    });
+
+    await expect(answerLanguageLevelTest({ goalId: goal.id, input })).resolves.toMatchObject({
+      status: "ready",
+      test: { answered: 1 },
+    });
 
     await flush();
 

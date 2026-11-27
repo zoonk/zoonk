@@ -448,7 +448,10 @@ test.describe("Language goal API", () => {
       expect(view.next.question.skill).toBe("reading");
       // oxlint-disable-next-line no-await-in-loop -- The server chooses the next question from this answer.
       const response = await apiContext.post(`${path}/answers`, {
-        data: { answerIndex: 0, questionId: view.next.question.id },
+        data: {
+          answerIndex: view.next.question.options.indexOf("Certa"),
+          questionId: view.next.question.id,
+        },
       });
       // oxlint-disable-next-line no-await-in-loop -- The next POST needs this response's question ID.
       view = await response.json();
@@ -499,7 +502,11 @@ test.describe("Language goal API", () => {
     expect(await loaded.json()).toStrictEqual(open);
 
     const firstRetakeAnswer = await apiContext.post(`${path}/answers`, {
-      data: { answerIndex: 0, attemptId: open.attemptId, questionId: open.next.question.id },
+      data: {
+        answerIndex: open.next.question.options.indexOf("Certa"),
+        attemptId: open.attemptId,
+        questionId: open.next.question.id,
+      },
     });
 
     expect(firstRetakeAnswer.status()).toBe(200);
