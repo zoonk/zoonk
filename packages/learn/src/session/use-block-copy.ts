@@ -92,8 +92,9 @@ export function useRemedialLine() {
 
     if (block.returning === "again") {
       return t({
-        description: "Under a lesson the learner takes again because they keep missing its idea.",
-        message: "Again: you keep missing this",
+        description:
+          "Under a lesson the learner takes again because its idea has been hard for them.",
+        message: "Once more: this one's been tricky",
       });
     }
 
@@ -105,7 +106,7 @@ export function useRemedialLine() {
       });
     }
 
-    return block.returning === "missed" ? t("You keep missing this") : null;
+    return block.returning === "missed" ? t("This one's been tricky") : null;
   };
 }
 

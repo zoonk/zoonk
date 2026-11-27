@@ -247,7 +247,7 @@ type MovedTopics = MockResult["movedTopics"];
 
 function useMovedTitle() {
   const t = useExtracted();
-  return () => t("Your plan now starts with what you missed");
+  return () => t("What you missed now comes sooner");
 }
 
 /** The plan already moved these earlier when the mock finished: there's nothing to answer. */
@@ -258,15 +258,16 @@ export function MockMovedTopics({
   showTitle?: boolean;
   topics: NonNullable<MovedTopics>;
 }) {
-  const format = useFormatter();
   const movedTitle = useMovedTitle();
 
   return (
     <div className="flex flex-col gap-1" data-slot="mock-moved-topics">
       {showTitle && <p className="text-sm">{movedTitle()}</p>}
-      <p className="text-muted-foreground text-sm">
-        {format.list(topics.slice(0, TOPICS_NAMED), { type: "conjunction" })}
-      </p>
+      <ul className="text-muted-foreground flex flex-col gap-1 text-sm">
+        {topics.slice(0, TOPICS_NAMED).map((topic) => (
+          <li key={topic}>{topic}</li>
+        ))}
+      </ul>
     </div>
   );
 }
@@ -287,7 +288,8 @@ export function MockPlanStep({
   return (
     <StepCard>
       <StepHeader>
-        <Eyebrow>{preparation ? t("Your preparation") : t("Your plan")}</Eyebrow>
+        {/* The moved title already says it's the plan; a chip saying so would repeat it. */}
+        {!movedIsTitle && <Eyebrow>{preparation ? t("Your preparation") : t("Your plan")}</Eyebrow>}
         <StepTitle>
           {preparation && <PreparationReadout change={preparation} />}
           {movedIsTitle && movedTitle()}
