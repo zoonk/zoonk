@@ -12,12 +12,24 @@ export function BeltLevel({
 }: {
   belt: string;
   color: BeltColor;
-  level: string;
+  level: ReactNode;
 }) {
   return (
     <>
       <BeltIndicator aria-hidden="true" className="size-2.5" color={color} label={belt} />
       <span aria-hidden="true">{level}</span>
+    </>
+  );
+}
+
+/** Under `lg` the bar is a phone's or a tablet's, with room for the number only. */
+function LevelWords({ level }: { level: string }) {
+  const t = useExtracted();
+
+  return (
+    <>
+      <span className="lg:hidden">{level}</span>
+      <span className="max-lg:hidden">{t("Level {level}", { level })}</span>
     </>
   );
 }
@@ -29,14 +41,12 @@ const LEVEL_BOX_CLASS = "text-compact -ms-2 h-9 shrink-0 items-center px-2 white
  * every level and while the learner loads. The mark and its words (`children`) end where the room
  * does.
  */
-function LevelRoom({ children }: { children?: React.ReactNode }) {
-  const t = useExtracted();
-
+function LevelRoom({ children }: { children?: ReactNode }) {
   return (
     <span className="grid tabular-nums *:col-start-1 *:row-start-1 *:flex *:items-center *:gap-1.5">
       <span aria-hidden="true" className="invisible">
         <span className="size-2.5" />
-        {t("Level {level}", { level: String(LEVELS_PER_COLOR) })}
+        <LevelWords level={String(LEVELS_PER_COLOR)} />
       </span>
 
       {children && <span className="justify-self-end">{children}</span>}
@@ -75,11 +85,7 @@ export function LearnLevelLink({
       title={t("Level")}
     >
       <LevelRoom>
-        <BeltLevel
-          belt={belt}
-          color={level.color}
-          level={t("Level {level}", { level: levelNumber })}
-        />
+        <BeltLevel belt={belt} color={level.color} level={<LevelWords level={levelNumber} />} />
       </LevelRoom>
       <span className="sr-only">
         {t({
