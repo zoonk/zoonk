@@ -23,7 +23,7 @@ class ApiJsonTest {
     @Test
     fun aMissionStillOpensPronunciationWhenOtherKindsHaveTheSameShape() {
         val opens = ApiJson.decodeFromString<StudyMissionOpens>("""{"kind":"pronunciation"}""")
-        assertTrue(opens is StudyMissionOpens.StudyMissionOpensOneOf3Value)
+        assertTrue(opens is StudyMissionOpens.StudyMissionOpensOneOf1Value)
     }
 
     @Test
