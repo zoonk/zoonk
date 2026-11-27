@@ -45,7 +45,7 @@ export const spokenAnswerFieldsSchema = z
       .optional()
       .meta({
         description:
-          "ID for this recording. Sending it again returns the same result and uses help once. Required for notebook practice.",
+          "ID for this recording. A retry after grading returns the saved result without using more help. While grading is in progress, a retry can return 429. Required for notebook practice.",
       }),
     durationMs: z.coerce
       .number()
