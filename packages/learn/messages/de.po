@@ -1354,6 +1354,7 @@ msgctxt "y0ef9b"
 msgid "App language"
 msgstr "App-Sprache"
 
+#. The first row of the conversations list: starts a conversation with no questions yet.
 #: src/buddies/buddy-conversations.tsx
 msgctxt "PQ8A3I"
 msgid "New conversation"
@@ -1364,6 +1365,7 @@ msgctxt "sf91oU"
 msgid "Couldn't load more conversations. Try again."
 msgstr "Weitere Chats konnten nicht geladen werden. Versuch es noch einmal."
 
+#. A button under a list that loads more of its rows.
 #: src/buddies/buddy-conversations.tsx
 #: src/completed-lessons/completed-lessons-screen.tsx
 #: src/mistakes/mistakes-notebook.tsx
@@ -1371,6 +1373,7 @@ msgctxt "aWpBzj"
 msgid "Show more"
 msgstr "Mehr anzeigen"
 
+#. The list of the learner's separate conversations with their buddy, and the button that opens it.
 #: src/buddies/buddy-conversations.tsx
 #: src/buddies/buddy-screen-skeleton.tsx
 #: src/buddies/buddy-screen.tsx

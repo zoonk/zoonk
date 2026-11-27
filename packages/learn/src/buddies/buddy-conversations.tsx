@@ -61,7 +61,13 @@ function ConversationRows({ list, onOpen }: { list: BuddyConversationList; onOpe
           onClick={onOpen}
         >
           <ListRowContent>
-            <ListRowTitle>{t("New conversation")}</ListRowTitle>
+            <ListRowTitle>
+              {t({
+                description:
+                  "The first row of the conversations list: starts a conversation with no questions yet.",
+                message: "New conversation",
+              })}
+            </ListRowTitle>
           </ListRowContent>
         </ListRowLink>
 
@@ -91,7 +97,10 @@ function ConversationRows({ list, onOpen }: { list: BuddyConversationList; onOpe
             </p>
           )}
           <Button busy={list.more.busy} onClick={list.more.show} size="sm" variant="outline">
-            {t("Show more")}
+            {t({
+              description: "A button under a list that loads more of its rows.",
+              message: "Show more",
+            })}
           </Button>
         </div>
       )}
@@ -113,7 +122,13 @@ export function BuddyConversations({
   return (
     <PageSection aria-labelledby={titleId} data-slot="buddy-conversations">
       <PageSectionHeader>
-        <PageSectionTitle id={titleId}>{t("Conversations")}</PageSectionTitle>
+        <PageSectionTitle id={titleId}>
+          {t({
+            description:
+              "The list of the learner's separate conversations with their buddy, and the button that opens it.",
+            message: "Conversations",
+          })}
+        </PageSectionTitle>
       </PageSectionHeader>
       <ConversationRows list={list} onOpen={onOpen} />
     </PageSection>
