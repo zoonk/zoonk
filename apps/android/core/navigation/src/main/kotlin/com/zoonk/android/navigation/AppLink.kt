@@ -272,7 +272,7 @@ object AppLink {
                 when (first) {
                     "plan" -> AppRoute.Subject(subjectKey = second)
 
-                    "buddy" -> buddyPage(second)
+                    "buddy" -> buddyPage(second, ask = query["ask"])
 
                     "mock" -> if (second == "new") AppRoute.MockChooser else AppRoute.Mock(second, session)
 
@@ -330,10 +330,13 @@ object AppLink {
     }
 
     /** Earlier questions were one page of the buddy's single conversation, which is now the tab. */
-    private fun buddyPage(page: String): AppRoute? =
+    private fun buddyPage(
+        page: String,
+        ask: String?,
+    ): AppRoute? =
         when (page) {
             "earlier-questions" -> AppRoute.Buddy()
-            "new" -> AppRoute.Buddy(startsNew = true)
+            "new" -> AppRoute.Buddy(ask = ask, startsNew = true)
             else -> runCatching { UUID.fromString(page) }.getOrNull()?.let { AppRoute.Buddy(conversationId = page) }
         }
 
