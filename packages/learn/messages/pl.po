@@ -3207,7 +3207,7 @@ msgid "Not saved yet. It's kept on this device."
 msgstr "Jeszcze nie zapisano. Odpowiedź jest zachowana na tym urządzeniu."
 
 #: src/essay/essay-word-count.tsx
-#: src/writing/writing-editor.tsx
+#: src/writing/writing-line-count.tsx
 msgctxt "-8LNI4"
 msgid "{count, plural, one {# word} other {# words}}"
 msgstr "{count, plural, one {# słowo} many {# słów} other {# słowa}}"
@@ -13177,7 +13177,7 @@ msgid "{count, plural, one {about # line} other {about # lines}}"
 msgstr "{count, plural, one {około # wiersza} few {około # wierszy} many {około # wierszy} other {około # wiersza}}"
 
 #: src/syllabus/subject-written-score.tsx
-#: src/writing/writing-editor.tsx
+#: src/writing/writing-line-count.tsx
 #: src/writing/writing-points-header.tsx
 msgctxt "sKcJTn"
 msgid "about {used} of {lines} lines"
@@ -13994,17 +13994,6 @@ msgid "Keep this one"
 msgstr "Zachowaj tę"
 
 #: src/writing/writing-editor.tsx
-msgctxt "a2NxUG"
-msgid "0 of {lines} lines"
-msgstr "0 z {lines} wierszy"
-
-#. The approximate line count of a written answer past its limit; the lines past it are ones the exam's graders won't read.
-#: src/writing/writing-editor.tsx
-msgctxt "6omgAR"
-msgid "about {used} of {lines} lines · {over} won't be read"
-msgstr "około {used} z {lines} wierszy · {over} wierszy nie będzie ocenianych"
-
-#: src/writing/writing-editor.tsx
 msgctxt "F6UFzM"
 msgid "This answer is {count} characters too long. Shorten it to save and grade it."
 msgstr "Ta odpowiedź jest za długa o {count} znaków. Skróć ją, żeby ją zapisać i ocenić."
@@ -14101,6 +14090,23 @@ msgstr "Wróć jutro: dziś nie będzie już oceniania"
 msgctxt "cvptXL"
 msgid "Back on {date}: no more grading today"
 msgstr "Wróć {date}: dziś nie będzie już oceniania"
+
+#: src/writing/writing-line-count.tsx
+msgctxt "a2NxUG"
+msgid "0 of {lines} lines"
+msgstr "0 z {lines} wierszy"
+
+#. The approximate line count of a written answer past its limit at a typical hand; it fits the exam's answer sheet only if the learner writes small.
+#: src/writing/writing-line-count.tsx
+msgctxt "BpElGj"
+msgid "about {used} of {lines} lines · fits only in small handwriting"
+msgstr ""
+
+#. The approximate line count of a written answer that won't fit the exam's answer sheet even in small handwriting; graders stop reading at the last line.
+#: src/writing/writing-line-count.tsx
+msgctxt "O21PBU"
+msgid "about {used} of {lines} lines · the end won't be read"
+msgstr ""
 
 #: src/writing/writing-next-step.tsx
 msgctxt "BQrBD9"
@@ -14208,14 +14214,14 @@ msgid "Write a longer answer"
 msgstr "Napisz dłuższą odpowiedź"
 
 #: src/writing/writing-result.tsx
-msgctxt "QYZhu-"
-msgid "Graders stop at line {lines}, so the rest isn't read."
-msgstr "Oceniający czytają tylko do wiersza {lines}, więc dalsza część nie jest czytana."
+msgctxt "2TSlUm"
+msgid "Even in small handwriting, it runs past line {lines}, where graders stop."
+msgstr ""
 
 #: src/writing/writing-result.tsx
-msgctxt "UIwidi"
-msgid "Graders stop at the line limit, so the rest isn't read."
-msgstr "Oceniający czytają tylko do limitu wierszy, więc dalsza część nie jest czytana."
+msgctxt "0sJLK2"
+msgid "Even in small handwriting, it runs past the line limit, where graders stop."
+msgstr ""
 
 #: src/writing/writing-result.tsx
 msgctxt "rxvcLB"
@@ -14359,9 +14365,9 @@ msgid "With one, we write your question and grade what you write."
 msgstr "W bezpłatnym koncie przygotowujemy pytanie i oceniamy to, co napiszesz."
 
 #: src/writing/writing-text.tsx
-msgctxt "-QTlEJ"
-msgid "Past line {lines}: graders stop reading here"
-msgstr "Poza linią {lines}: sprawdzający nie czytają dalej"
+msgctxt "h4IHcs"
+msgid "Past line {lines} even in small handwriting: not read"
+msgstr ""
 
 #: src/writing/writing-text.tsx
 msgctxt "ecaPI4"
