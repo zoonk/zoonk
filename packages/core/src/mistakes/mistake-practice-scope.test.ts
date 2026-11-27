@@ -103,6 +103,62 @@ describe("Scoped mistake practice", () => {
     ).resolves.toBe(2);
   });
 
+  it("keeps a block fixed from the notebook untouched until the empty completion POST", async () => {
+    const user = await userFixture();
+    const [assigned] = await questions(user.id);
+
+    const session = await studySessionFixture({
+      startedAt: new Date(),
+      status: "active",
+      userId: user.id,
+    });
+
+    const block = await studySessionBlockFixture({
+      kind: "practice",
+      payload: { mistakeIds: [assigned!.mistake.id] },
+      sessionId: session.id,
+      status: "pending",
+    });
+
+    await prisma.mistake.update({
+      data: { missedAt: new Date(0) },
+      where: { id: assigned!.mistake.id },
+    });
+
+    mockSession(user.id);
+
+    await expect(
+      answerMistakePractice({
+        input: {
+          answer: { selectedIndex: 0 },
+          durationMs: 4000,
+          itemId: assigned!.item.id,
+          timeZone: "UTC",
+        },
+        mistakeId: assigned!.mistake.id,
+      }),
+    ).resolves.toMatchObject({ feedback: { fixed: true }, status: "ready" });
+
+    const input = { blockId: block.id, timeZone: "UTC" };
+    const read = () => prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } });
+
+    await expect(getMistakePractice(input)).resolves.toMatchObject({
+      practice: [],
+      status: "ready",
+    });
+
+    await expect(read()).resolves.toStrictEqual(block);
+
+    await expect(
+      finishMistakePractice({ ...input, answerIds: [], ended: true }),
+    ).resolves.toMatchObject({ result: { hasMorePractice: false, total: 0 }, status: "ready" });
+
+    await expect(read()).resolves.toMatchObject({
+      completedAt: expect.any(Date),
+      status: "completed",
+    });
+  });
+
   it("includes a finished mock miss that reused an older notebook entry", async () => {
     const user = await userFixture();
 
@@ -224,40 +280,50 @@ describe("Scoped mistake practice", () => {
     });
   });
 
-  it("offers another notebook batch while a different question remains open", async () => {
-    const user = await userFixture();
-    const [first, next] = await questions(user.id);
+  it.each([false, true])(
+    "offers another batch only for earlier misses (earlier: %s)",
+    async (earlier) => {
+      const user = await userFixture();
+      const [first, next] = await questions(user.id);
 
-    await prisma.mistake.update({
-      data: { missedAt: new Date(0) },
-      where: { id: first!.mistake.id },
-    });
+      await prisma.mistake.update({
+        data: { missedAt: new Date(0) },
+        where: { id: first!.mistake.id },
+      });
 
-    mockSession(user.id);
+      if (earlier) {
+        await prisma.mistake.update({
+          data: { missedAt: new Date(0) },
+          where: { id: next!.mistake.id },
+        });
+      }
 
-    const answered = await answerMistakePractice({
-      input: {
-        answer: { selectedIndex: 0 },
-        durationMs: 4000,
-        itemId: first!.item.id,
-        timeZone: "UTC",
-      },
-      mistakeId: first!.mistake.id,
-    });
+      mockSession(user.id);
 
-    if (answered.status !== "ready") {
-      throw new Error(answered.status);
-    }
+      const answered = await answerMistakePractice({
+        input: {
+          answer: { selectedIndex: 0 },
+          durationMs: 4000,
+          itemId: first!.item.id,
+          timeZone: "UTC",
+        },
+        mistakeId: first!.mistake.id,
+      });
 
-    await expect(
-      finishMistakePractice({
-        answerIds: [answered.feedback.answerId],
-        ended: true,
-        skillId: next!.mistake.skillId ?? undefined,
-        timeZone: "UTC",
-      }),
-    ).resolves.toMatchObject({ result: { hasMorePractice: true }, status: "ready" });
-  });
+      if (answered.status !== "ready") {
+        throw new Error(answered.status);
+      }
+
+      await expect(
+        finishMistakePractice({
+          answerIds: [answered.feedback.answerId],
+          ended: true,
+          skillId: next!.mistake.skillId ?? undefined,
+          timeZone: "UTC",
+        }),
+      ).resolves.toMatchObject({ result: { hasMorePractice: earlier }, status: "ready" });
+    },
+  );
 
   it("returns only an owned finished mock's mistakes, including today's", async () => {
     const [user, other] = await Promise.all([userFixture(), userFixture()]);

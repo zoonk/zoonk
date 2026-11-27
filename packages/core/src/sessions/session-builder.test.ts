@@ -1047,6 +1047,64 @@ describe("funding remedial blocks", () => {
     expect(blocks[2]?.kind).toBe("learn");
   });
 
+  it("makes a three-minute pattern fit a dated language day with five new lessons", () => {
+    const pattern = {
+      ...teaching("pattern", 3),
+      kind: "practice" as const,
+      lessonId: null,
+      payload: toBlockPayload({ patternId: "019ea8a4-f48a-70e8-98af-d72c80b44280" }),
+    };
+
+    const input = {
+      ...baseInput,
+      capsules: [],
+      dailyMinutes: 25,
+      lessons: Array.from({ length: 5 }, (_, index) => lesson(`new-${index}`, 4)),
+      placementItemIds: ["placement"],
+      practice: [],
+    };
+
+    expect(newLessons(buildSessionBlocks(input).blocks)).toHaveLength(5);
+
+    const { blocks, plannedMinutes } = buildSessionBlocks({
+      ...input,
+      remedial: { dated: true, mistakes: [], teaching: [pattern] },
+    });
+
+    expect(blocks.find(({ payload }) => payload.patternId)?.estimatedMinutes).toBe(3);
+    expect(newLessons(blocks)).toHaveLength(4);
+    expect(plannedMinutes).toBeLessThanOrEqual(25);
+  });
+
+  it("lets teaching replace the sole new lesson every other undated study day", () => {
+    const input = {
+      ...baseInput,
+      capsules: [],
+      dailyMinutes: 10,
+      lessons: [lesson("only-new", 8)],
+      practice: [],
+    };
+
+    const remedial = { dated: false, mistakes: [], teaching: [teaching("return", 8)] };
+    const first = buildSessionBlocks({ ...input, remedial });
+
+    expect(first.blocks.map(({ lessonId }) => lessonId)).toStrictEqual(["return"]);
+    expect(first.blocks[0]?.payload.replacedOnlyLesson).toBe(true);
+
+    expect(
+      newLessons(
+        buildSessionBlocks({
+          ...input,
+          remedial: { ...remedial, previousReplacedOnlyLesson: true },
+        }).blocks,
+      ),
+    ).toStrictEqual(newLessons(buildSessionBlocks(input).blocks));
+
+    expect(buildSessionBlocks({ ...input, remedial: { ...remedial, dated: true } })).toStrictEqual(
+      buildSessionBlocks(input),
+    );
+  });
+
   it("uses at most the last ordinary lesson on an undated day", () => {
     const input = {
       ...baseInput,
@@ -1088,8 +1146,21 @@ describe("funding remedial blocks", () => {
 
   it("keeps welcome-back mistakes short and keeps remedial work off a full-mock day", () => {
     const remedial = { dated: true, mistakes, teaching: [teaching("again", 4)] };
-    const welcome = buildSessionBlocks({ ...baseInput, freshStart: "welcomeBack", remedial });
-    expect(welcome.blocks[0]?.payload.mistakeIds).toStrictEqual(["first"]);
+
+    const welcome = buildSessionBlocks({
+      ...baseInput,
+      freshStart: "welcomeBack",
+      placementItemIds: ["placement"],
+      remedial,
+    });
+
+    expect(welcome.blocks[0]?.kind).toBe("review");
+    expect(welcome.blocks[1]?.payload.mistakeIds).toStrictEqual(["first"]);
+
+    const withoutReview = buildSessionBlocks({ ...baseInput, freshStart: "welcomeBack", remedial });
+
+    expect(withoutReview.blocks[0]?.payload.mistakeIds).toStrictEqual([]);
+    expect(withoutReview.blocks[1]?.payload.mistakeIds).toStrictEqual(["first"]);
 
     const mock = { ...baseInput, checkpoints: [{ ...boss, mock: true }], mockReplacesDay: true };
     expect(buildSessionBlocks({ ...mock, remedial })).toStrictEqual(buildSessionBlocks(mock));

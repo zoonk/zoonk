@@ -73,6 +73,38 @@ const newLessons = (blocks: readonly PlannedBlock[]) =>
     .map((block) => block.lessonId);
 
 describe("a saved day with remedial blocks, rebuilt after a plan change (followPlanChangeToday)", () => {
+  it("keeps a displaced sole lesson out of the saved day's refill", () => {
+    const input = {
+      ...baseInput,
+      capsules: [],
+      dailyMinutes: 10,
+      lessons: [lesson("only-new", 8)],
+      practice: [],
+    };
+
+    const opened = buildSessionBlocks({
+      ...input,
+      remedial: { dated: false, mistakes: [], teaching: [teaching("old", 4)] },
+    });
+
+    const kept = opened.blocks.map((block) => ({
+      ...block,
+      id: "kept",
+      status: "active" as const,
+    }));
+
+    expect(kept).toMatchObject([{ payload: { replacedOnlyLesson: true } }]);
+
+    const rebuilt = buildRemainingDay({
+      dated: false,
+      input: { ...input, dailyMinutes: 15 },
+      kept,
+      session: { blocks: kept, plannedMinutes: opened.plannedMinutes },
+    });
+
+    expect(rebuilt.blocks).toStrictEqual([]);
+  });
+
   it.each(["pending", "active"] as const)("keeps new lessons with %s remedial blocks", (status) => {
     const remedial = {
       dated: true,

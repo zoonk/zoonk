@@ -115,11 +115,13 @@ async function orderRefilledBlocks({
   blocks,
   items,
   tx,
+  welcomeBack,
 }: {
   added: readonly StudySessionBlock[];
   blocks: readonly StudySessionBlock[];
   items: readonly ChallengeReachItem[];
   tx: TransactionClient;
+  welcomeBack: boolean;
 }) {
   if (added.length > 0) {
     const pending = [...blocks, ...added].filter(
@@ -127,7 +129,7 @@ async function orderRefilledBlocks({
         (block.status === "pending" || block.status === "active") && !readBlockPayload(block).extra,
     );
 
-    const ordered = orderDayBlocks({ blocks: pending, items });
+    const ordered = orderDayBlocks({ blocks: pending, items, welcomeBack });
     const positions = pending.map((block) => block.position).toSorted((a, b) => a - b);
     const moved = ordered.filter((block, index) => block.position !== positions[index]);
 
@@ -251,7 +253,13 @@ export async function refitSessionLessons(
         })
       : [];
 
-  await orderRefilledBlocks({ added, blocks, items: plan.items, tx });
+  await orderRefilledBlocks({
+    added,
+    blocks,
+    items: plan.items,
+    tx,
+    welcomeBack: session.freshStart === "welcomeBack",
+  });
 
   await saveDeferredCount({ blocks: [...blocks, ...added], completedBlockId, leaving, tx });
 

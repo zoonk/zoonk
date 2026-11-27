@@ -145,7 +145,7 @@ export const mistakePracticeCompletionSchema = z
       .boolean()
       .meta({
         description:
-          "After the run ends, its scope has more open practice. Always false for day blocks.",
+          "After the run ends, a playable mistake from an earlier local day remains open in its scope. Always false for day blocks.",
       }),
     missionMoment: missionMomentSchema.nullable(),
     seconds: z.number().int().min(0).meta({ description: "Learning time the run added to today" }),

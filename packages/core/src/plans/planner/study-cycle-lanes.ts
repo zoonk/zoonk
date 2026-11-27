@@ -59,8 +59,25 @@ export type CycleContext = {
   counts: ReadonlyMap<string, number>;
   cumulative: readonly number[];
   days: readonly PlanDay[];
+  mockPriority?: (a: QueueUnit, b: QueueUnit) => number;
   prerequisites: ReadonlyMap<string, readonly string[]>;
 };
+
+export function compareLanes({
+  a,
+  b,
+  context,
+}: {
+  a: Lane;
+  b: Lane;
+  context: CycleContext;
+}): number {
+  const [first] = a.units;
+  const [second] = b.units;
+
+  const priority = first && second ? context.mockPriority?.(first, second) : 0;
+  return priority || a.pass - b.pass || a.order - b.order;
+}
 
 export function getJoinWindow(days: readonly PlanDay[]): number {
   const studyDays = days.filter((day) => getLessonCapacity(day) > 0).length;

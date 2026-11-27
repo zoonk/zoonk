@@ -69,7 +69,7 @@ describe("an exam plan after a mock", () => {
     expect(topicOrder(examInput(misses)).slice(0, 2)).toStrictEqual(["equations", "ratios"]);
   });
 
-  it("keeps a heavier topic the mock didn't miss ahead of a light one it did", () => {
+  it("puts a missed topic ahead of an unmissed heavier topic in the same phase", () => {
     const input = examInput(new Map([["equations", "missed"]]));
 
     const weighted = {
@@ -83,7 +83,80 @@ describe("an exam plan after a mock", () => {
       },
     };
 
-    expect(topicOrder(weighted).slice(0, 2)).toStrictEqual(["fractions", "equations"]);
+    expect(topicOrder(weighted).slice(0, 2)).toStrictEqual(["equations", "fractions"]);
+  });
+
+  it("leads the next study day with an available mock miss across exam subjects", () => {
+    const input = examInput();
+    const missed = "word-choice";
+
+    const skills = [
+      { area: "Math", skillId: "percentages", weight: 8 },
+      { area: "Science", skillId: "food-chains", weight: 7 },
+      { area: "Writing", skillId: "competencies", weight: 6 },
+      { area: "Languages", skillId: "interpretation", weight: 3 },
+      { area: "Languages", skillId: missed, weight: 3 },
+      { area: "Languages", skillId: "register", weight: 2 },
+      { area: "Languages", skillId: "genre", weight: 5 },
+    ];
+
+    const exam = {
+      ...input,
+      goal: { ...input.goal, dailyMinutes: 45 },
+      graph: {
+        ...input.graph,
+        skills: skills.map((skill) => ({ ...skill, lessons: 3, name: skill.skillId, phase: 0 })),
+      },
+      openedKeys: [],
+      prerequisites: new Map([["genre", ["register"]]]),
+      settings: parsePlanSettings({ reducedAreas: ["Languages"], startDate: toIsoDate(TODAY) }),
+      todayShown: true,
+    } satisfies BuildPlanInput;
+
+    const baseline = buildPlan(exam);
+
+    const applied = buildPlan({
+      ...exam,
+      mockMisses: new Map([
+        [missed, "missed"],
+        ["register", "missed"],
+        ["genre", "missed"],
+      ]),
+    });
+
+    const lessonOf = (plan: typeof baseline, skillId: string) =>
+      plan.items.find((item) => item.kind === "lesson" && item.skillId === skillId);
+
+    expect(lessonOf(baseline, missed)?.scheduledFor).toBeDefined();
+    expect(lessonOf(applied, missed)?.scheduledFor).toStrictEqual(addDays(TODAY, 1));
+
+    expect(applied.items.indexOf(lessonOf(applied, missed)!)).toBeLessThan(
+      applied.items.indexOf(lessonOf(applied, "interpretation")!),
+    );
+
+    expect(applied.items.indexOf(lessonOf(applied, "register")!)).toBeLessThan(
+      applied.items.indexOf(lessonOf(applied, "genre")!),
+    );
+
+    expect(applied.droppedSkillIds).toStrictEqual(baseline.droppedSkillIds);
+
+    expect(applied.phases.map(({ endDate }) => endDate)).toStrictEqual(
+      baseline.phases.map(({ endDate }) => endDate),
+    );
+
+    const skipped = buildPlan({
+      ...exam,
+      mockMisses: new Map([[missed, "missed"]]),
+      settings: { ...exam.settings, skippedAreas: ["Languages"] },
+    });
+
+    expect(lessonOf(skipped, missed)).toBeUndefined();
+
+    const nextMock = buildPlan({ ...exam, mockMisses: new Map([["food-chains", "missed"]]) });
+
+    expect(nextMock.items.indexOf(lessonOf(nextMock, "food-chains")!)).toBeLessThan(
+      nextMock.items.indexOf(lessonOf(nextMock, missed)!),
+    );
   });
 });
 

@@ -42,6 +42,7 @@ type RestInput = {
   planStart: Date;
   queue: {
     focused: ReadonlySet<string>;
+    mockPriority?: ReadonlyMap<string, number>;
     prerequisites: ReadonlyMap<string, readonly string[]>;
     ranks: ReadonlyMap<string, number>;
     rates: ReadonlyMap<string, number> | null;
@@ -117,6 +118,8 @@ function scheduleWith({
   const { graph, queue } = input;
   const gapAreas = getAreasOf({ graph, skillIds: input.missedSkillIds });
 
+  const priorityOf = (unit: QueueUnit) => queue.mockPriority?.get(unit.skillId ?? "") ?? 0;
+
   const schedulePending = (list: readonly QueueUnit[]) =>
     queue.rates
       ? scheduleUnits({
@@ -127,6 +130,9 @@ function scheduleWith({
             days: input.days,
             firstAreas: gapAreas,
             knownAreas: input.opening.knownAreas,
+            mockPriority: queue.mockPriority?.size
+              ? (a, b) => priorityOf(b) - priorityOf(a)
+              : undefined,
             noticeAreas: input.opening.noticeAreas,
             prerequisites: queue.prerequisites,
             rates: queue.rates,
