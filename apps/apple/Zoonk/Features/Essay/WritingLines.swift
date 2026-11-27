@@ -1,11 +1,10 @@
 import Foundation
 
 /// Core's `countWritingLines`: the lines a handwritten sheet would take, erring toward more. A
-/// paragraph starts on the next line and none is left blank between paragraphs, so a run of breaks
-/// and the whitespace around it open one line, and only once more text follows. `estimatedLines`
-/// counts at a typical hand (`charactersPerLine`); `ignoredFrom` is where the text passes `limit`
-/// even at the densest published hand (`maxCharactersPerLine`), in UTF-16 code units as the
-/// grade's offsets.
+/// paragraph starts on the next line, none is left blank between paragraphs, and a space never
+/// starts a line, so only text opens one. `estimatedLines` counts at a typical hand
+/// (`charactersPerLine`); `ignoredFrom` is the start of the word that passes `limit` even at the
+/// densest published hand (`maxCharactersPerLine`), in UTF-16 code units as the grade's offsets.
 enum WritingLines {
   struct Count: Equatable {
     var estimatedLines: Int
@@ -33,14 +32,15 @@ enum WritingLines {
     var used = 0
     var broken = false
     var passedFrom: Int?
+    var wordStart = 0
     var offset = 0
 
     for character in text {
+      let isSpace = character.unicodeScalars.allSatisfy(\.properties.isWhitespace)
+
       if breaks.contains(character) {
         broken = lines > 0
-      } else if !character.unicodeScalars.allSatisfy(\.properties.isWhitespace)
-        || (lines > 0 && !broken)
-      {
+      } else if !isSpace {
         if lines == 0 || broken || used == charactersPerLine {
           lines += 1
           used = 0
@@ -48,13 +48,19 @@ enum WritingLines {
         }
 
         if let limit, lines > limit, passedFrom == nil {
-          passedFrom = offset
+          passedFrom = wordStart
         }
 
+        used += 1
+      } else if lines > 0, !broken, used < charactersPerLine {
         used += 1
       }
 
       offset += character.utf16.count
+
+      if isSpace {
+        wordStart = offset
+      }
     }
 
     return (lines, passedFrom)

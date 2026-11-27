@@ -51,10 +51,10 @@ final class WritingLinesTests: XCTestCase {
       ("ab\r\ncd", 5, 1, 2, 4),
       ("abcde\nf", 5, 3, 2, nil),
       ("a\n\n\nb", 5, 2, 2, nil),
-      ("👍🏽👨‍👩‍👧e\u{301}x", 2, 1, 2, 12),
+      ("👍🏽 👨‍👩‍👧e\u{301}x", 2, 1, 3, 5),
       ("line\u{2028}two\u{2029}three", 10, nil, 3, nil),
       ("\n", 5, nil, 0, nil),
-      ("abcdefghijkl", 3, 2, 4, 6),
+      ("abc def ghi jkl", 3, 2, 4, 8),
     ]
 
     for item in cases {
@@ -87,25 +87,74 @@ final class WritingLinesTests: XCTestCase {
       "about 3 of 1 lines · the end won't be read")
   }
 
-  func testTheFirstCharacterPastTheLimitIsWhereTheBoardStopsReading() {
-    let text = String(repeating: "a", count: 55 * 30) + "b"
+  func testAnErrorAfterAnEmojiIsMarkedAtItsUTF16Offset() throws {
+    let grade = try decode(
+      WritingResult.self,
+      Self.levels(
+        ignoredFrom: nil,
+        errors: #"[{"correction":"two","kind":"spelling","quote":"tow","start":3}]"#))
 
-    let count = WritingLines.count(
-      text, charactersPerLine: 55, maxCharactersPerLine: 55, limit: 30)
+    let pieces = WritingMarks.pieces(grade: grade, text: "👍 tow cats")
 
-    XCTAssertEqual(count, .init(estimatedLines: 31, ignoredFrom: 1650))
+    XCTAssertEqual(pieces.first { $0.error == 0 }.map { ($0.start, $0.end) }?.0, 3)
+    XCTAssertEqual(pieces.first { $0.error == 0 }.map { ($0.start, $0.end) }?.1, 6)
   }
 
-  func testALimitOnTheSpaceAfterAWordLeavesThatWordRead() {
-    XCTAssertEqual(WritingMarks.wordStart("abc def", 3), 3)
-    XCTAssertEqual(WritingMarks.wordStart("alpha beta", 5), 5)
-    XCTAssertEqual(WritingMarks.wordStart("abc defghij", 6), 4)
-    XCTAssertEqual(WritingMarks.wordStart("abc\ndef", 4), 4)
+  /// Core places marks by JavaScript's UTF-16 offsets, which can fall inside a character.
+  func testAMarkInsideACharacterTakesInTheWholeCharacter() throws {
+    let cases: [(text: String, errors: String, marked: [String])] = [
+      // "cafe" ends between the "e" and its accent.
+      (
+        "cafe\u{301} teh",
+        #"[{"correction":"café","kind":"accent","quote":"cafe","start":0},{"correction":"the","kind":"spelling","quote":"teh","start":6}]"#,
+        ["cafe\u{301}", "teh"]
+      ),
+      // A mark starting on the second half of a thumbs-up and ending inside its skin tone.
+      (
+        "👍🏽 ok",
+        #"[{"correction":"x","kind":"style","quote":"x","start":1}]"#,
+        ["👍🏽"]
+      ),
+      // A mark ending between a family's members.
+      (
+        "👨‍👩‍👧 go",
+        #"[{"correction":"x","kind":"style","quote":"xxx","start":0}]"#,
+        ["👨‍👩‍👧"]
+      ),
+    ]
 
-    let cut = WritingLines.count(
-      "abc def", charactersPerLine: 3, maxCharactersPerLine: 3, limit: 1
-    ).ignoredFrom
-    XCTAssertEqual(cut.map { WritingMarks.wordStart("abc def", $0) }, 3)
+    for item in cases {
+      let grade = try decode(WritingResult.self, Self.levels(ignoredFrom: nil, errors: item.errors))
+      let pieces = WritingMarks.pieces(grade: grade, text: item.text)
+      let utf16 = Array(item.text.utf16)
+      let marked = pieces.filter { $0.error != nil }.map {
+        String(decoding: utf16[$0.start..<$0.end], as: UTF16.self)
+      }
+
+      XCTAssertEqual(marked, item.marked, item.text.debugDescription)
+      XCTAssertEqual(
+        pieces.map { String(decoding: utf16[$0.start..<$0.end], as: UTF16.self) }.joined(),
+        item.text, "the whole text is still shown")
+    }
+  }
+
+  func testAMarkThatDoesntFitTheTextIsLeftOutAndTheTextStaysReadable() throws {
+    let grade = try decode(
+      WritingResult.self,
+      Self.levels(
+        ignoredFrom: 99,
+        errors:
+          #"[{"correction":"x","kind":"style","quote":"far beyond","start":40},{"correction":"x","kind":"style","quote":"a","start":-3}]"#
+      ))
+
+    let pieces = WritingMarks.pieces(grade: grade, text: "e\u{301}🙂 short")
+
+    XCTAssertEqual(pieces.map(\.error), [nil])
+    XCTAssertEqual(pieces.map(\.ignored), [false])
+    XCTAssertFalse(
+      WritingMarks.attributed(
+        grade: grade, lines: 30, text: "e\u{301}🙂 short", noteFont: .body, numberFont: .body
+      ).characters.isEmpty)
   }
 
   static func levels(ignoredFrom: Int?, errors: String) -> String {
