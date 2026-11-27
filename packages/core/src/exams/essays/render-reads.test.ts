@@ -99,9 +99,6 @@ describe("essay render reads", () => {
     const counts = await countDatabaseStatements(() => getEssay({ blockId: block.id }));
     expect(counts.writes).toBe(0);
 
-    expect(counts.result).toMatchObject({
-      essay: { drafts: [], rubric: "levels" },
-      status: "ready",
-    });
+    expect(counts.result).toMatchObject({ essay: { drafts: [] }, status: "ready" });
   });
 });

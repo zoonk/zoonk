@@ -86,7 +86,7 @@ const mockEssaySchema = z
       }),
     text: z.string().nullable(),
     unsure: z.boolean().meta({ description: "Whether the learner marked the essay as unsure" }),
-    writing: writingPromptSchema.optional(),
+    writing: writingPromptSchema,
   })
   .meta({ id: "MockEssay" });
 
@@ -183,10 +183,6 @@ export const mockViewResponseSchema = z
       .int()
       .nullable()
       .meta({ description: "Which exam day it copies, when the exam runs over several days" }),
-    essayRubric: z
-      .enum(["enem", "oab", "points", "levels"])
-      .nullable()
-      .meta({ description: "The rubric its essays are graded by; null when it asks none" }),
     essays: z
       .array(mockEssaySchema)
       .meta({

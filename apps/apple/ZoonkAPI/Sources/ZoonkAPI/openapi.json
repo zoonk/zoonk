@@ -4782,7 +4782,7 @@
     },
     "/essays/{blockId}": {
       "get": {
-        "description": "A writing block of the learner's session (produce): an exam's essay prompt, the rubric it's graded with (ENEM's five competencies, OAB's brief section by section, or the item's criteria) and the graded drafts so far, latest first, with how many grades are left today.",
+        "description": "A writing block of the learner's session (produce): an exam's written question with the criteria its notice grades it by, and the graded drafts so far, latest first, with how many grades are left today.",
         "operationId": "getEssay",
         "security": [
           {
@@ -43049,16 +43049,6 @@
           "question": {
             "type": "string"
           },
-          "rubric": {
-            "type": "string",
-            "enum": [
-              "enem",
-              "oab",
-              "points",
-              "levels"
-            ],
-            "description": "The scoring rubric recorded with the writing prompt"
-          },
           "sessionId": {
             "type": "string",
             "format": "uuid",
@@ -43092,7 +43082,6 @@
           "gradesLeft",
           "pacing",
           "question",
-          "rubric",
           "sessionId",
           "status",
           "writing"
@@ -96256,7 +96245,7 @@
             "items": {
               "type": "string"
             },
-            "description": "The written parts a full mock asks beside its questions, as the notice names them (the exam's own essays, graded by its rubric once it's over)"
+            "description": "The written parts a full mock asks beside its questions, as the notice names them (the exam's own written questions, graded by their notice's criteria once it's over)"
           }
         },
         "required": [
@@ -96719,17 +96708,6 @@
             "type": "integer",
             "minimum": -9007199254740991,
             "maximum": 9007199254740991
-          },
-          "essayRubric": {
-            "nullable": true,
-            "description": "The rubric its essays are graded by; null when it asks none",
-            "type": "string",
-            "enum": [
-              "enem",
-              "oab",
-              "points",
-              "levels"
-            ]
           },
           "essays": {
             "type": "array",
@@ -97236,7 +97214,6 @@
           "current",
           "date",
           "day",
-          "essayRubric",
           "essays",
           "examDocument",
           "examName",
@@ -97376,11 +97353,7 @@
             "description": "Whether the learner marked the essay as unsure"
           },
           "writing": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/WritingPromptOutput"
-              }
-            ]
+            "$ref": "#/components/schemas/WritingPromptOutput"
           }
         },
         "required": [
@@ -97391,7 +97364,8 @@
           "question",
           "status",
           "text",
-          "unsure"
+          "unsure",
+          "writing"
         ],
         "additionalProperties": false
       },
@@ -97831,9 +97805,10 @@
               ],
               "additionalProperties": false
             },
-            "description": "Minimums this mock couldn't check, so they're still ahead: a written test, a test on another exam day, a test none of its questions belong to, or the tests together when it didn't ask them all"
+            "description": "Minimums this mock couldn't check, so they're still ahead: a test on another exam day, a test none of its questions belong to, or the tests together when it didn't ask them all. A written part this mock asked carries its minimum in `written` instead"
           },
           "written": {
+            "description": "Each written part this mock asked, with its estimate once its answers are graded in points, and where that estimate stands against the part's minimum",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/WrittenPartPoints"

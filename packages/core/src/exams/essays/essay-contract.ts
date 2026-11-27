@@ -57,7 +57,6 @@ export type EssayView = {
   gradesLeft: number;
   pacing: WritingPacing;
   question: string;
-  rubric: "points" | "levels";
   sessionId: string;
   status: StudySessionBlock["status"];
   writing: WritingPrompt;

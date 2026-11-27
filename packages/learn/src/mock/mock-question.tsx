@@ -8,7 +8,7 @@ import { countWords } from "@zoonk/utils/string";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
 import { QuestionTitle } from "../_components/question-title";
-import { ESSAY_FIELD_CLASS, useWritingName } from "../essay/essay-labels";
+import { ESSAY_FIELD_CLASS } from "../essay/essay-labels";
 import { EssayWordCount } from "../essay/essay-word-count";
 import { ItemSetStimulus } from "../questions/item-set-stimulus";
 import { ItemSupport } from "../questions/item-text";
@@ -77,9 +77,9 @@ function MockWordAnswer({ question }: { question: MockQuestion }) {
 }
 
 function EssayAnswer({ question }: { question: MockQuestion }) {
+  const t = useExtracted();
   const textId = useId();
   const { runner } = useMockScreen();
-  const writingName = useWritingName();
   const answer = runner.drafts[question.itemId]?.answer ?? null;
   const text = answer && "text" in answer ? answer.text : "";
   const words = countWords(text);
@@ -87,7 +87,7 @@ function EssayAnswer({ question }: { question: MockQuestion }) {
   return (
     <section className="flex flex-col gap-2">
       <label className="text-sm font-medium" htmlFor={textId}>
-        {writingName(runner.view.essayRubric ?? "custom")}
+        {t("Your answer")}
       </label>
       <Textarea
         className={ESSAY_FIELD_CLASS}

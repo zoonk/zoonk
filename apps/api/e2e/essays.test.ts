@@ -218,7 +218,6 @@ test.describe("Essays API", () => {
         gradesLeft: DAILY_EXTRA_WRITES - 1,
         pacing: { minutes: MINUTES, source: "practice" },
         question: essay.question,
-        rubric: "levels",
         sessionId,
         status: "active",
         writing: prompt,

@@ -52,11 +52,6 @@ export function canCalibrateWritingTask(basis: TaskBasis): boolean {
   );
 }
 
-/** Feeds the API's `rubric` fields until its clients read the sheet itself. */
-export function getWritingRubric(basis: Basis): "points" | "levels" {
-  return isComputableSheet(basis) ? "points" : "levels";
-}
-
 export function isNumericWritingRubric(basis: Basis, observed?: WritingGrader): boolean {
   return getWritingCalibration({ basis, observed }) !== null;
 }

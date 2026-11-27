@@ -34,14 +34,11 @@ export const essayViewResponseSchema = z
       ),
     pacing: writingPacingSchema,
     question: z.string(),
-    rubric: z
-      .enum(["enem", "oab", "points", "levels"])
-      .meta({ description: "The scoring rubric recorded with the writing prompt" }),
     sessionId: uuidSchema(),
     status: z.enum(StudyBlockStatus),
     writing: writingPromptSchema,
     writingTask: writingTaskSchema.optional(),
   })
-  .meta({ id: "Essay" }) satisfies z.ZodType<Omit<EssayView, "rubric"> & { rubric: string }>;
+  .meta({ id: "Essay" }) satisfies z.ZodType<EssayView>;
 
 export const writingAttemptPathParamsSchema = z.object({ attemptId: uuidSchema() });

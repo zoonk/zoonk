@@ -8,12 +8,10 @@ import { EXAM_DAY_CHECKLIST } from "../../checkpoints/weekly-challenge-rules";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { type PassMarks, getPassMarks } from "../../library/exams/pass-marks";
 import { getTrueFalseLabels } from "../../library/exams/true-false-labels";
-import { listWrittenTasks } from "../../library/exams/written-tasks";
 import { NO_RESULT_MOMENTS, loadResultMoments } from "../../milestones/load-ceremony";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { BRAIN_POWER_BONUS } from "../../sessions/brain-power";
 import { NOTHING_REACHED, reachedSchema } from "../../sessions/reached";
-import { getWritingRubric } from "../essays/writing-rubric-policy";
 import { getExamDocument } from "../exam-document";
 import { getScoreNotes } from "../scoring/mock-scoring";
 import { loadMockPlanOffers } from "./_utils/mock-adapt";
@@ -24,7 +22,7 @@ import { loadMockEssayViews } from "./_utils/mock-essays";
 import { loadMockMissionMoment } from "./_utils/mock-mission-moment";
 import { countFinishedMocksBefore } from "./_utils/mock-number";
 import { loadMockReview } from "./_utils/mock-review";
-import { getAskedItemIds, getEssayItemIds, toSectionViews } from "./_utils/mock-sections";
+import { getAskedItemIds, toSectionViews } from "./_utils/mock-sections";
 import { loadMockSpeaking } from "./_utils/mock-speaking";
 import { loadAskedTypedParts } from "./_utils/mock-typed-parts";
 import { type MockSitting, type OwnedMock, findOwnedMock } from "./_utils/owned-mock";
@@ -145,15 +143,8 @@ function describeOwner({
   result: MockView["result"];
   typed: readonly MockTypedPart[];
 }) {
-  const asksEssays = getEssayItemIds(conditions).length > 0;
-
-  const tasks = listWrittenTasks({ day: conditions.day ?? undefined, structure: owned.structure });
-
-  const rubric = tasks.map((task) => getWritingRubric(task)).find((own) => own === "points");
-
   return {
     date: toIsoDate(owned.sessionDate),
-    essayRubric: asksEssays ? (rubric ?? ("levels" as const)) : null,
     examDocument: owned.goal ? getExamDocument(owned.goal) : "notice",
     examName: owned.blueprint?.name ?? owned.goal?.title ?? null,
     goalId: owned.goal?.id ?? null,

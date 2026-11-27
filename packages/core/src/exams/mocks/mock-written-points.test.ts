@@ -3,6 +3,7 @@ import {
   rowCalibrationFixture,
   weightedResiduals,
 } from "../essays/_test-utils/writing-calibration";
+import { readWritingPrompt } from "../essays/writing-contract";
 import { CGU } from "./_test-utils/cgu-written";
 import { analyzeMock } from "./mock-analysis";
 import { type MockConditions } from "./mock-contract";
@@ -81,6 +82,17 @@ function graded({
     status: "graded",
     text: "Answer",
     unsure: false,
+    writing: readWritingPrompt({
+      charactersPerLine: 70,
+      criteria: [],
+      keySource: "notice",
+      lines: 30,
+      minimumWords: 0,
+      points: max,
+      taskKey: itemId,
+      title: "A question",
+      unit: "answer",
+    }),
   };
 }
 
