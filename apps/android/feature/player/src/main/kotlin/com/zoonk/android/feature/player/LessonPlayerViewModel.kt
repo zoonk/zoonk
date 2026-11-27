@@ -502,7 +502,7 @@ class LessonPlayerViewModel(
     fun dispatch(action: LessonAction) {
         when (action) {
             LessonAction.Continue, LessonAction.GoBack, LessonAction.ExplainFirst, LessonAction.KnowThis,
-            LessonAction.RestoreWriting, is LessonAction.DontKnow, is LessonAction.SkipWriting,
+            LessonAction.RestoreWriting, LessonAction.CompletionRetried, is LessonAction.DontKnow, is LessonAction.SkipWriting,
             -> act()
 
             is LessonAction.SelectAnswer -> activate()
