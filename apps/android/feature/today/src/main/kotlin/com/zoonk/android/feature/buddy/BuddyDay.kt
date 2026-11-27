@@ -117,17 +117,13 @@ internal fun BuddyTodayLine(
                 val total = today.missions.size
                 MissionsRing(done, total, Modifier.size(icon), strokeWidth = RING_STROKE)
                 Spacer(Modifier.width(MISSIONS_GAP))
-                Text(stringResource(R.string.missions_title), color = muted, style = number)
-                Text(
+                val count =
                     stringResource(
                         R.string.buddy_page_count,
                         formatNumber(done.toDouble(), locale),
                         formatNumber(total.toDouble(), locale),
-                    ),
-                    Modifier.padding(start = ENERGY_GAP),
-                    color = muted,
-                    style = number,
-                )
+                    )
+                Text("${stringResource(R.string.missions_title)} $count", color = muted, style = number)
             } else {
                 Text(stringResource(R.string.buddy_page_today, name), color = muted, style = number)
             }
