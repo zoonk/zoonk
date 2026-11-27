@@ -73,7 +73,7 @@ final class PlacementTestRenderTests: XCTestCase {
       estimatedMinutes: 6, questions: 12, wholeCourse: .init(estimatedMinutes: 85, parts: 14))
     try await capture(
       "placement-offer-onboarding", title: "Where would you like to start?",
-      detail: "14 parts, any day you like"
+      detail: "Full test"
     ) {
       TestOffer(
         rows: [TestCopy.firstLessonRow] + TestCopy.courseRows(offer),
@@ -85,7 +85,7 @@ final class PlacementTestRenderTests: XCTestCase {
 
     try await capture(
       "placement-offer-plan-one-test", title: "Skip what you already know",
-      detail: "12 questions", absent: ["First lesson", "Full test"]
+      detail: "Test what you know", absent: ["First lesson", "Full test"]
     ) {
       TestOffer(
         rows: TestCopy.courseRows(.init(estimatedMinutes: 6, questions: 12, wholeCourse: nil)),
