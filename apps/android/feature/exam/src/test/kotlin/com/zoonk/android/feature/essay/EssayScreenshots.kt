@@ -126,7 +126,8 @@ class EssayScreenshots {
 
     @Test
     @Config(qualifiers = "w390dp-h844dp-xxhdpi")
-    fun writingThatFitsOnlyInSmallHandwriting() = writing("04-writing-small-hand", (ANSWER_TEXT + "\n\n").repeat(9).trim())
+    fun writingThatFitsOnlyInSmallHandwriting() =
+        writing("04-writing-small-hand", (ANSWER_TEXT.replace("\n\n", " ") + " ").repeat(9).trim())
 
     @Test
     @Config(qualifiers = "w320dp-h568dp-xhdpi")
