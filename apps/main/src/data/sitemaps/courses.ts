@@ -1,7 +1,8 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { getSitemapCourseWhere } from "./course-where";
-import { isSitemapPage, warnIfSitemapPageIsFull } from "./sitemap-pages";
+import { isSitemapPage } from "./sitemap-page-ids";
+import { warnIfSitemapPageIsFull } from "./sitemap-pages";
 
 type SitemapCourse = { brandSlug: string; courseSlug: string; language: string; updatedAt: Date };
 

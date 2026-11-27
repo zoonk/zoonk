@@ -8,7 +8,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { listSitemapLibraryChapters } from "./library-chapters";
 import { listSitemapLibraryLessons } from "./library-lessons";
-import { type SitemapResource, getSitemapPageIds } from "./sitemap-pages";
+import { type SitemapResource, getSitemapPageIds } from "./sitemap-page-ids";
 
 async function listAllPages<Row>({
   list,
