@@ -38,6 +38,11 @@
         <item quantity="other">%d questions on every topic</item>
     </plurals>
     <!-- %1$s names the first topics; %2$d counts the rest. -->
+    <!-- Today's line under a practice: how many topics it mixes, then the one it asks most, like "3 topics · Calculating discounts". -->
+    <plurals name="today_step_practice_topics">
+        <item quantity="one">%1$d topic · %2$s</item>
+        <item quantity="other">%1$d topics · %2$s</item>
+    </plurals>
     <plurals name="session_topics_and_more">
         <item quantity="one">%1$s and %2$d more topic</item>
         <item quantity="other">%1$s and %2$d more topics</item>

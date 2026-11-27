@@ -83,7 +83,8 @@
   "session_summary_streak": "8d2eb01f755101782f06b856b76db43af618f5bd75358617dbd6ef7d795f0847",
   "session_summary_tomorrow": "9076007757c181efe94f1b57d6c5d221a14738817320dc4d3217bd9e49e7e0c2",
   "session_summary_up_from": "ec0beb23f5c676f4119f94715dce44370f93cb6c6c0a37d987b1fe6f7bcf40da",
-  "session_topics_and_more": "e6fd058f6fd737dd9c3228eff9600f99405bb7db87d00081134c632ff32f53c0"
+  "session_topics_and_more": "e6fd058f6fd737dd9c3228eff9600f99405bb7db87d00081134c632ff32f53c0",
+  "today_step_practice_topics": "44705310b34adda125c8ca78b20328f1e0779b41550c28d7718c3f0b577535bc"
 }
 -->
 <resources>
@@ -125,6 +126,11 @@
         <item quantity="other">Tüm konuları kapsayan %d soru</item>
     </plurals>
     <!-- %1$s names the first topics; %2$d counts the rest. -->
+    <!-- Today's line under a practice: how many topics it mixes, then the one it asks most, like "3 topics · Calculating discounts". -->
+    <plurals name="today_step_practice_topics">
+        <item quantity="one">%1$d konu · %2$s</item>
+        <item quantity="other">%1$d konu · %2$s</item>
+    </plurals>
     <plurals name="session_topics_and_more">
         <item quantity="one">%1$s ve %2$d konu daha</item>
         <item quantity="other">%1$s ve %2$d konu daha</item>

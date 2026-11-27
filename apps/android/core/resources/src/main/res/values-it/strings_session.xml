@@ -83,7 +83,8 @@
   "session_summary_streak": "0fa307839f71f31a224d6fafb57ba39f9cd7bfcd2d5e62864a0cd7668f7ed4c6",
   "session_summary_tomorrow": "1c0ce29a9efe0feacc34ead9e3d1cb74630d6e141e9e3cc813876802b8df3f2f",
   "session_summary_up_from": "57678a88222bafcfe229da3a35fc68687a55b28db8cd5fbd3e1f7c384aa76b6a",
-  "session_topics_and_more": "52a446c4d3c6457f68ff0f0ae0a553a4ba09252c6eb6a7b8a31a2873b560270a"
+  "session_topics_and_more": "52a446c4d3c6457f68ff0f0ae0a553a4ba09252c6eb6a7b8a31a2873b560270a",
+  "today_step_practice_topics": "5b0515f380403315bdd0cd391dcdb906f8721afe1d4048a173b0b29f6aff3ff3"
 }
 -->
 <resources>
@@ -129,6 +130,12 @@
         <item quantity="other">%d domande su tutti gli argomenti</item>
     </plurals>
     <!-- %1$s names the first topics; %2$d counts the rest. -->
+    <!-- Today's line under a practice: how many topics it mixes, then the one it asks most, like "3 topics · Calculating discounts". -->
+    <plurals name="today_step_practice_topics">
+        <item quantity="one">%1$d argomento · %2$s</item>
+        <item quantity="many">%1$d argomenti · %2$s</item>
+        <item quantity="other">%1$d argomenti · %2$s</item>
+    </plurals>
     <plurals name="session_topics_and_more">
         <item quantity="one">%1$s e %2$d altro argomento</item>
         <item quantity="many">%1$s e %2$d altri argomenti</item>

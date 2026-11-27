@@ -191,6 +191,17 @@ fun shortTopicList(
     }
 }
 
+/**
+ * A practice's name doesn't say what it's on, so Today's line counts its topics before naming the one
+ * it asks most: a long name can only cut off its own end.
+ */
+@Composable
+fun practiceTopicsLine(topics: List<String>): String {
+    val topic = topicWords(topics.first())
+
+    return if (topics.size == 1) topic else pluralStringResource(R.plurals.today_step_practice_topics, topics.size, topics.size, topic)
+}
+
 /** "1", "1.1", "5.7.": a notice's item number, never a year opening a topic ("2026 in numbers"). */
 private val ITEM_NUMBER = Regex("""^\s*(\d{1,3}(?:\.\d{1,3})*)\.?\s+(\S.*)$""", RegexOption.DOT_MATCHES_ALL)
 

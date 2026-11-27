@@ -40,6 +40,14 @@ class PracticeBlockTitleTest {
         assertTitles(listOf(practice.copy(title = "Percentages", extra = true)), listOf("Practice: Percentages"))
     }
 
+    @Test
+    fun todaysLineCountsTheTopicsBeforeNamingTheMostAsked() {
+        var lines = emptyList<String>()
+        rule.setContent { lines = listOf(practiceTopicsLine(listOf("12 Calculating discounts", "Reading graphs")), practiceTopicsLine(listOf("Reading graphs"))) }
+        rule.waitForIdle()
+        assertEquals(listOf("2 topics · Calculating discounts", "Reading graphs"), lines)
+    }
+
     private fun assertTitles(
         blocks: List<StudyBlock>,
         expected: List<String>,

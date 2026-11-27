@@ -83,7 +83,8 @@
   "session_summary_streak": "192e1b67ead74c700256aa463c86ace5c7c1e5175b1d92ff4ee64b040d7e9171",
   "session_summary_tomorrow": "cb3e610d0b67c4244b1a74a93e41808a7dc61b56011c65f2605996d46f77dbba",
   "session_summary_up_from": "d09c800dd1e37d1ae15b4868e166935442018f841a11ce790359e912f8d59bf1",
-  "session_topics_and_more": "5e327e54fbfea5e59ea95f817db652d11f41be979ecfdaaa85ccb0c5665b1660"
+  "session_topics_and_more": "5e327e54fbfea5e59ea95f817db652d11f41be979ecfdaaa85ccb0c5665b1660",
+  "today_step_practice_topics": "d7f1554d4d48723cb34d764e0044d22382dddf54e55478907590afe3a30742e9"
 }
 -->
 <resources>
@@ -121,6 +122,10 @@
         <item quantity="other">すべてのトピックから合計%d問</item>
     </plurals>
     <!-- %1$s names the first topics; %2$d counts the rest. -->
+    <!-- Today's line under a practice: how many topics it mixes, then the one it asks most, like "3 topics · Calculating discounts". -->
+    <plurals name="today_step_practice_topics">
+        <item quantity="other">%1$dトピック · %2$s</item>
+    </plurals>
     <plurals name="session_topics_and_more">
         <item quantity="other">%1$s、ほか%2$dトピック</item>
     </plurals>

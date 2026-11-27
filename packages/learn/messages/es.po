@@ -13810,6 +13810,12 @@ msgctxt "-FZPmK"
 msgid "Not studied"
 msgstr "Sin estudiar"
 
+#. Today's line under a practice: how many topics it mixes, then the one it asks most, like "3 topics · Calculating discounts".
+#: src/today/use-row-label.ts
+msgctxt "AX3sJq"
+msgid "{count, plural, one {# topic} other {# topics}} · {topic}"
+msgstr "{count, plural, one {# tema} other {# temas}} · {topic}"
+
 #: src/today/use-row-label.ts
 msgctxt "OUc_Xr"
 msgid "Every topic"

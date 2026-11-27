@@ -135,7 +135,9 @@ extension StudyBlock: NamedBlock {
 }
 
 /// Main's `useShortList`: every name up to `named`, else the first `named` and how many more.
-func shortList(_ names: [String], named: Int) -> String {
+func shortList(_ topics: [String], named: Int) -> String {
+  let names = topics.map(topicWords)
+
   guard names.count > named else {
     return names.formatted(.list(type: .and))
   }
@@ -143,8 +145,25 @@ func shortList(_ names: [String], named: Int) -> String {
   let shown = names.prefix(named).joined(separator: ", ")
 
   return String(
-    localized: "\(shown) and \(names.count - named) more", table: "Today",
-    locale: .appLanguage, comment: "A short list of topics and how many more")
+    localized: "\(shown) and \(names.count - named) more topics", table: "Today",
+    locale: .appLanguage)
+}
+
+/// Main's `toTopicWords`: a topic without the notice's item number ("12 Noções…", "H18 - …"), which
+/// would read as a count.
+func topicWords(_ name: String) -> String {
+  let patterns = [
+    #/^\s*\d{1,3}(?:\.\d{1,3})*\.?\s+(?<text>\S.*)$/#,
+    #/^\s*[A-Z]{1,3}\d{1,3}\s*[-–—:]\s+(?<text>\S.*)$/#,
+  ]
+
+  for pattern in patterns {
+    if let match = name.wholeMatch(of: pattern.dotMatchesNewlines()) {
+      return String(match.text)
+    }
+  }
+
+  return name
 }
 
 extension StudyBlock {
@@ -233,9 +252,19 @@ extension StudyBlock {
         comment: "A challenge that opens once the lessons before it are done")
     }
 
-    // A practice's name doesn't say what it's on, so the line does, most asked first.
+    // A practice's name doesn't say what it's on, so the line counts its topics before naming the
+    // one it asks most: a long name can only cut off its own end.
     if practisesTopics {
-      return shortList(topics, named: 1)
+      let topic = topicWords(topics[0])
+
+      return topics.count == 1
+        ? topic
+        : String(
+          localized: "\(topics.count) topics\u{00A0}· \(topic)", table: "Today",
+          locale: .appLanguage,
+          comment:
+            "Today's line under a practice: how many topics it mixes, then the one it asks most, like \"3 topics · Calculating discounts\"."
+        )
     }
 
     if fullReview {

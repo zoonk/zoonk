@@ -1,9 +1,9 @@
 "use client";
 
 import { useExtracted } from "next-intl";
-import { useShortList } from "../plan/use-short-list";
 import { type DayStep } from "../session/session-types";
 import { practisesTopics } from "../session/use-block-copy";
+import { toTopicWords } from "../syllabus/topic-number";
 import { useExtraLabel } from "../syllabus/use-extra-label";
 import { useWritingLine } from "../writing/writing-header";
 import { useTodayScreen } from "./today-context";
@@ -28,7 +28,6 @@ export function useBlockSubject() {
  */
 export function useStepLabel({ includeSubject = true } = {}) {
   const t = useExtracted();
-  const shortList = useShortList();
   const writingLine = useWritingLine();
 
   return function stepLabel(block: DayStep): string | null {
@@ -41,9 +40,19 @@ export function useStepLabel({ includeSubject = true } = {}) {
       return t("After today's lessons");
     }
 
-    // A practice's name doesn't say what it's on, so the line does, most asked first.
+    // A practice's name doesn't say what it's on, so the line counts its topics before naming the
+    // one it asks most: a long name can only cut off its own end.
     if (practisesTopics(block)) {
-      return shortList(block.topics, "topics", { named: 1 });
+      const topic = toTopicWords(block.topics[0] ?? "");
+
+      return block.topics.length === 1
+        ? topic
+        : t({
+            description:
+              'Today\'s line under a practice: how many topics it mixes, then the one it asks most, like "3 topics · Calculating discounts".',
+            message: "{count, plural, one {# topic} other {# topics}} · {topic}",
+            values: { count: block.topics.length, topic },
+          });
     }
 
     if (block.checkpoint) {
