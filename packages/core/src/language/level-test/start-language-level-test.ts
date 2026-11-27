@@ -1,6 +1,7 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
 import { type TransactionClient } from "@zoonk/db";
+import { testEventContext, trackTestEvents } from "../../analytics/test-events";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag } from "../../cache/tags";
 import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
@@ -12,7 +13,11 @@ import { type LanguagePair, findBankRow, readBank } from "./_utils/level-test-ba
 import { getLevelTestStart } from "./_utils/level-test-start-score";
 import { levelTestDetailsWithProgress, readLevelTestProgress } from "./_utils/level-test-state";
 import { getLanguageLevelTest } from "./get-language-level-test";
-import { type LevelTestLength, type LevelTestProgress } from "./level-test-contract";
+import {
+  LANGUAGE_LEVEL_TEST_OFFER,
+  type LevelTestLength,
+  type LevelTestProgress,
+} from "./level-test-contract";
 import { isOpenLevelTestOut } from "./level-test-out-contract";
 import { readLevelTestAttempts } from "./read-level-test-summary";
 
@@ -67,7 +72,7 @@ export async function startLanguageLevelTest({
     }
 
     if (attempt?.attemptId && !attempt.result) {
-      return unchanged({ attemptId: attempt.attemptId, opened: false });
+      return unchanged({ attemptId: attempt.attemptId, opened: false as const });
     }
 
     const legacy = readLevelTestProgress(current);
@@ -104,7 +109,7 @@ export async function startLanguageLevelTest({
 
     await oweLevelTestPreparation({ db, goalId, pair: { language, targetLanguage }, userId });
 
-    return { attemptId: id, opened: true };
+    return { attemptId: id, opened: true as const, resumed: continueOnboarding };
   });
 
   if (!selected) {
@@ -115,6 +120,24 @@ export async function startLanguageLevelTest({
 
   if (opened) {
     revalidateCacheTags([getGoalsCacheTag(userId)]);
+
+    trackTestEvents(goal, [
+      {
+        name: "Test Started",
+        properties: {
+          ...testEventContext(goal, {
+            attemptId,
+            questions: LANGUAGE_LEVEL_TEST_OFFER.total,
+            test: "language",
+          }),
+          resumed: selected.resumed,
+          row:
+            readGoalDetails(goal).placementRequested === true && !goal.planRevealedAt
+              ? "direct"
+              : "quick",
+        },
+      },
+    ]);
   }
 
   return getLanguageLevelTest(goalId, attemptId);

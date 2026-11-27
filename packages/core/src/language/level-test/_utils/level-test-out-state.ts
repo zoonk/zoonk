@@ -36,6 +36,7 @@ export async function loadTestOutAnswers({
   return tx.attempt.findMany({
     orderBy: [{ answeredAt: "asc" }, { id: "asc" }],
     select: {
+      answer: true,
       durationMs: true,
       isCorrect: true,
       item: { select: { content: true, format: true } },

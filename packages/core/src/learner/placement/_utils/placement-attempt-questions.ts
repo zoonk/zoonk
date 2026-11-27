@@ -190,6 +190,7 @@ export function readAttemptQuestions({
       ? (plan.skills.find((skill) => skill.id === item.skillId)?.areaTitle ?? null)
       : null,
     complete,
+    durationMs: partAnswers.reduce((total, answer) => total + answer.durationMs, 0),
     end: getEnd({ capped, complete }),
     estimatedMinutes: getCourseMinutes(questions),
     item: attempt.partComplete || attempt.paused || complete ? null : item,

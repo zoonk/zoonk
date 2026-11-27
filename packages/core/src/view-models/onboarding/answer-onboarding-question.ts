@@ -1,6 +1,8 @@
 import { type SupportedLocale } from "@zoonk/utils/locale";
 import "server-only";
 import { after } from "next/server";
+import { type AnalyticsEvent } from "../../analytics/events";
+import { trackTestEvents } from "../../analytics/test-events";
 import { trackLearnerEvents } from "../../analytics/track-learner-event";
 import { trackOnboardingProgress } from "../../analytics/track-onboarding-progress";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
@@ -77,11 +79,17 @@ function trackAnswer({
   goal,
   input,
   changed,
+  placementEvent,
 }: {
-  goal: { id: string; userId: string };
+  goal: Parameters<typeof trackTestEvents>[0];
+  placementEvent?: AnalyticsEvent | null;
   input: OnboardingAnswerInput;
   changed: boolean;
 }): void {
+  if (placementEvent) {
+    trackTestEvents(goal, [placementEvent]);
+  }
+
   if (changed) {
     trackOnboardingProgress({
       at: Date.now(),
@@ -155,7 +163,12 @@ export async function answerOnboardingQuestion({
     return { status: saved.status };
   }
 
-  trackAnswer({ changed: saved.goalIds.includes(goalId), goal, input });
+  trackAnswer({
+    changed: saved.goalIds.includes(goalId),
+    goal,
+    input,
+    placementEvent: saved.placementEvent,
+  });
 
   revalidateCacheTags([
     getGoalsCacheTag(goal.userId),
