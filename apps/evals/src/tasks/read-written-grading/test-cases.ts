@@ -63,6 +63,7 @@ export const TEST_CASES: WrittenGradingCase[] = [
       },
     },
     id: "cgu-2026-two-questions-pt",
+    language: "pt",
     userInput: {
       ...readingOf("cgu-2026-affc-ti-points"),
       tasks: [
@@ -94,6 +95,7 @@ export const TEST_CASES: WrittenGradingCase[] = [
       },
     },
     id: "enem-2026-redacao-pt",
+    language: "pt",
     userInput: {
       ...readingOf("enem-2026"),
       tasks: [
@@ -143,6 +145,7 @@ export const TEST_CASES: WrittenGradingCase[] = [
       "1.2": { criterionPoints: [1.25], total: true },
     },
     id: "oab-47-peca-and-questions-pt",
+    language: "pt",
     userInput: {
       ...readingOf("oab-47-2a-fase-written"),
       tasks: [
@@ -168,6 +171,7 @@ export const TEST_CASES: WrittenGradingCase[] = [
   {
     expected: { "2.1": { criterionPoints: [], language: null, total: false, zeroing: false } },
     id: "municipal-notice-no-marking-pt",
+    language: "pt",
     userInput: {
       ...readingOf("municipal-notice-written-no-scale"),
       tasks: [
@@ -198,6 +202,7 @@ export const TEST_CASES: WrittenGradingCase[] = [
       },
     },
     id: "invented-mark-scheme-banded-essay-en",
+    language: "en",
     userInput: {
       documents: [{ text: MARK_SCHEME, title: "Paper 2 mark scheme, Section B" }],
       exam: "Northfield School-Leaving Certificate, English",
