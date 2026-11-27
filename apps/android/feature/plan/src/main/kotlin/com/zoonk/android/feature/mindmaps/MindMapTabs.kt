@@ -534,7 +534,7 @@ private fun SavedRow(
         Box {
             ListRow(
                 headline = { Text(entry.title) },
-                onClick = { actions.page.study(StudyTab.Saved, place) },
+                onClick = { actions.page.study(entry.deckTab(saved), place) },
                 onLongClickLabel = if (saved) words.unsave else words.save,
                 onLongClick = { menu = true },
                 leading = { MapMark(chapter?.image?.thumbnailUrl?.takeUnless { lesson }, MindMapShown.Ready) },

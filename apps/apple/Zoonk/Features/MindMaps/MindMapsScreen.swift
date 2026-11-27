@@ -542,7 +542,7 @@ extension SavedMindMap: Identifiable {
 }
 
 /// Opens the Saved deck at this map; its bookmark, a swipe or its menu takes it out, and the row
-/// stays with its bookmark empty until the learner leaves the page.
+/// stays with its bookmark empty until the learner leaves the page, opening its kind's deck.
 private struct SavedRow: View {
   @Environment(AppRouter.self) private var router
   @Environment(MindMapsStore.self) private var store
@@ -562,7 +562,7 @@ private struct SavedRow: View {
       Button {
         router.open(
           .mindMapStudy(
-            goalId: goalId, tab: .saved,
+            goalId: goalId, tab: MindMapDeck.tab(opening: save, isSaved: isSaved),
             start: save.chapterId.map { MindMapPosition(chapterId: $0, key: save.key) }))
       } label: {
         MarkedRow(alignment: .center) {
