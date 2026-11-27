@@ -9,6 +9,7 @@ import { useStatsPages } from "@/app/[lang]/(app)/(stats)/_components/stats-page
 import { useFrameLearner } from "@/components/learner/learner-seed-provider";
 import { VisitorLook } from "@/components/learner/visitor-look";
 import { useBeltLabel } from "@/lib/belt-label";
+import { useListedPlaces } from "@/lib/saved-lessons/saved-lessons-place";
 import {
   type LearnerSummary,
   type LearnerSummaryPlaces,
@@ -28,8 +29,9 @@ import { BeltLevel } from "./learn-bar-end";
 import { LearnSidebarLink } from "./learn-sidebar-links";
 import { PrivateShellPlaceholder } from "./private-shell-placeholder";
 
-function StudyLinksView({ places }: { places: LearnerSummaryPlaces }) {
+function StudyLinksView({ places: summaryPlaces }: { places: LearnerSummaryPlaces }) {
   const t = useExtracted();
+  const places = useListedPlaces(summaryPlaces);
 
   return (
     <>
