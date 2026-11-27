@@ -80,13 +80,7 @@ function useThreadLabel(contextKind: LessonQuestionController["state"]["context"
   }
 }
 
-function TutorIntro({
-  guest = false,
-  identity,
-}: {
-  guest?: boolean;
-  identity: TutorIdentity;
-}) {
+function TutorIntro({ guest = false, identity }: { guest?: boolean; identity: TutorIdentity }) {
   const t = useExtracted();
 
   return (
