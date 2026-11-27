@@ -134,6 +134,14 @@ class TodayDayScreenshots {
 
     @Test
     @Config(qualifiers = "w411dp-h1500dp-xxhdpi")
+    fun mistakesAlreadyFixedPhone() = render("today-mistakes-already-fixed-phone", remedial(oneSubject = true, mistakesLeft = 0))
+
+    @Test
+    @Config(qualifiers = "w411dp-h1500dp-night-xxhdpi")
+    fun mistakesAlreadyFixedPhoneDark() = render("today-mistakes-already-fixed-phone-dark", remedial(oneSubject = true, mistakesLeft = 0))
+
+    @Test
+    @Config(qualifiers = "w411dp-h1500dp-xxhdpi")
     fun remedialOneSubjectPhone() = render("today-remedial-one-subject-phone", remedial(oneSubject = true))
 
     @Test
@@ -443,11 +451,12 @@ class TodayDayScreenshots {
     private fun remedial(
         language: Boolean = false,
         oneSubject: Boolean = false,
+        mistakesLeft: Int = 3,
     ) = Day(
         day(
             "underway",
             listOfNotNull(
-                block(0, "practice", "screen" to "mistakesPractice", "estimatedMinutes" to 3, "questions" to 3),
+                block(0, "practice", "screen" to "mistakesPractice", "estimatedMinutes" to mistakesLeft, "questions" to mistakesLeft),
                 block(1, "review", "estimatedMinutes" to 4, "questions" to 6, "subject" to "Biology".takeUnless { language }),
                 block(
                     5,

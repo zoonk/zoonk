@@ -62,10 +62,18 @@ private val DayStep.isCall: Boolean
 private val DayStep.fromMistakes: Boolean
     get() = screen == StudyBlock.Screen.MISTAKES_PRACTICE || screen == StudyBlock.Screen.PATTERN
 
+/**
+ * A day's mistakes block whose questions were all fixed elsewhere before it opened: it still opens,
+ * says so and completes. A finished one keeps the count it recorded.
+ */
+val DayStep.alreadyFixed: Boolean
+    get() = screen == StudyBlock.Screen.MISTAKES_PRACTICE && !isFinished && questions == 0L
+
 /** Why a mistakes block or a returning lesson is in the day, said in place of what the row would say otherwise. */
 @Composable
 fun remedialLine(step: DayStep): String? =
     when {
+        step.alreadyFixed -> null
         step.screen == StudyBlock.Screen.MISTAKES_PRACTICE -> stringResource(R.string.session_block_mistakes_line)
         step.screen == StudyBlock.Screen.PATTERN -> stringResource(R.string.session_block_pattern_line)
         step.kind != StudyBlock.Kind.LEARN -> null
@@ -112,6 +120,10 @@ fun blockTitle(step: DayStep): String {
             writingTaskTitle(drill = step.drill, task = step.writingTask, fallback = step.title)
         }
 
+        step.alreadyFixed -> {
+            stringResource(R.string.mistakes_practice_already_fixed)
+        }
+
         step.screen == StudyBlock.Screen.MISTAKES_PRACTICE -> {
             pluralStringResource(R.plurals.session_block_fix_mistakes, step.questions.toInt(), step.questions.toInt())
         }
@@ -145,6 +157,7 @@ fun blockTitle(step: DayStep): String {
 @Composable
 fun blockDetail(step: DayStep): String? {
     val count = step.questions.toInt()
+    if (step.alreadyFixed) return null
     remedialLine(step)?.let { return it }
 
     return when {

@@ -22,6 +22,7 @@ import com.zoonk.android.feature.session.DayView
 import com.zoonk.android.feature.session.MissionOpens
 import com.zoonk.android.feature.session.StepOpenFailed
 import com.zoonk.android.feature.session.WritingRow
+import com.zoonk.android.feature.session.alreadyFixed
 import com.zoonk.android.feature.session.blockDetail
 import com.zoonk.android.feature.session.blockTitle
 import com.zoonk.android.feature.session.practisesTopics
@@ -100,7 +101,8 @@ fun DayStepRow(
                                 tint = MaterialTheme.zoonk.brain,
                             )
                         }
-                        DayMinutes(step.estimatedMinutes)
+                        // Nothing is left to answer, so there's no time to show.
+                        if (!step.alreadyFixed) DayMinutes(step.estimatedMinutes)
                     }
                 }
             },
