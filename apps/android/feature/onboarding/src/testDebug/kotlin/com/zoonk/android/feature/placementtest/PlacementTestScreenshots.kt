@@ -160,13 +160,13 @@ class PlacementTestScreenshots(
     @Test
     fun continueBetweenParts() =
         shoot("course-continue-between-parts") {
-            ContinueTest(listOf("Part 4 of 14", "About 1 hr 6 min left"), null, false, {}, "Not now", {})
+            ContinueTest(listOf("Part 4 of 14", "About 1 hr 6 min left"), null, false, {}, {})
         }
 
     @Test
     fun continueStopped() =
         shoot("course-continue-stopped") {
-            ContinueTest(listOf("Part 5 of 14", "Question 4 of 12"), null, false, {}, "Not now", {})
+            ContinueTest(listOf("Part 5 of 14", "Question 4 of 12"), null, false, {}, {})
         }
 
     @Test
@@ -233,7 +233,7 @@ class PlacementTestScreenshots(
                 action = "Start lesson",
                 onAction = {},
                 undo = undo(),
-                rest = partsLeftFacts(13, 78),
+                rest = testTheRestFacts(13, 78),
                 onTestTheRest = {},
             )
         }

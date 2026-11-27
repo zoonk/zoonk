@@ -184,7 +184,9 @@ internal fun ColumnScope.PlacementTestFlow(
     val run = remember { GenerationRun() }
     val poll = rememberPoll(active = waiting) { vm.check() }
     val hold = rememberReadyHold(ready = !waiting)
-    val shown = if (hold.over) phase else PlacementTestPhase.Waiting
+    val held = if (hold.over) phase else PlacementTestPhase.Waiting
+    // A test whose questions arrived but that couldn't open is the wait's failure, which starts it again.
+    val shown = if (held == PlacementTestPhase.Arrived && vm.failed) PlacementTestPhase.PreparationFailed(attempt = null) else held
     val attempt = placement.value?.attempt
     val test = courseTest(goalId, onboarding != null, attempt)
     val question = shown as? PlacementTestPhase.Question
@@ -213,20 +215,26 @@ internal fun ColumnScope.PlacementTestFlow(
             }
         }
 
+        PlacementTestPhase.Arrived -> {
+            LaunchedEffect(Unit) { vm.start(vm.askedLength) }
+            StepLoading()
+        }
+
         PlacementTestPhase.Waiting, is PlacementTestPhase.PreparationFailed -> {
-            val failedAttempt = (shown as? PlacementTestPhase.PreparationFailed)?.attempt
+            val failedStart = shown is PlacementTestPhase.PreparationFailed
+            val length = (shown as? PlacementTestPhase.PreparationFailed)?.attempt?.length ?: vm.askedLength
             PlacementWaiting(
                 existingPlan = onboarding == null,
                 run =
-                    if (failedAttempt == null) {
-                        run.withPoll(poll.stopped)
-                    } else {
+                    if (failedStart) {
                         GenerationRun(GenerationRun.Status.Failed, GenerationFailure.Generation)
+                    } else {
+                        run.withPoll(poll.stopped)
                     },
                 onRetry =
                     when {
-                        failedAttempt != null -> {
-                            { vm.start(failedAttempt.length) }
+                        failedStart -> {
+                            { vm.start(length) }
                         }
 
                         poll.stopped -> {
@@ -251,7 +259,7 @@ internal fun ColumnScope.PlacementTestFlow(
                 key(shown.item.itemId) {
                     PlacementQuestion(
                         item = shown.item,
-                        subject = (shown.attempt.chapter ?: subject).labelCase(),
+                        subject = (shown.attempt.chapter?.takeIf { it.isNotBlank() } ?: subject).labelCase(),
                         position =
                             questionPosition(
                                 shown.number,
@@ -286,8 +294,7 @@ internal fun ColumnScope.PlacementTestFlow(
                 pressed = vm.pressed ?: Pressed.Other.takeIf { onboarding?.saving == true },
                 failed = vm.failed,
                 onContinue = { vm.start(PlacementLength.WHOLE_COURSE) },
-                other = stringResource(if (onboarding == null) R.string.placementtest_not_now else R.string.placementtest_finish_later),
-                onOther = leave,
+                onFinishLater = leave,
             )
         }
 
@@ -357,7 +364,7 @@ internal fun ColumnScope.PlacementTestFlow(
                 pressed = vm.pressed,
                 failed = vm.failed,
                 heldUntilTomorrow = shown.heldUntilTomorrow,
-                rest = if (shown.partsLeft > 0) partsLeftFacts(shown.partsLeft, shown.minutesLeft) else emptyList(),
+                rest = if (shown.partsLeft > 0) testTheRestFacts(shown.partsLeft, shown.minutesLeft) else emptyList(),
                 onTestTheRest = { vm.start(PlacementLength.WHOLE_COURSE, Pressed.Other) }.takeIf { shown.partsLeft > 0 },
             )
         }

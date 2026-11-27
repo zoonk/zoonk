@@ -48,6 +48,15 @@ internal class PlacementTestViewModel(
     private var savedClosed by handle.saved { "" }
     private var autoStarted by handle.saved { false }
 
+    /** The length the learner last started in this visit; empty until they start one. */
+    private var wanted by handle.saved { "" }
+
+    /** The learner's last start came back before the course had questions: it opens once they're written. */
+    private var awaiting by handle.saved { false }
+
+    /** The length of the test the learner asked for, which opens once its questions are written. */
+    val askedLength get() = PlacementLength.entries.firstOrNull { it.value == wanted } ?: PlacementLength.QUICK
+
     /** What a part closed in this visit did, shown until the learner moves on, after a reclaimed process too. */
     private var closed by mutableStateOf(
         savedClosed
@@ -73,7 +82,7 @@ internal class PlacementTestViewModel(
     fun phase(
         placement: LoadState<Placement>,
         finished: Boolean = false,
-    ) = placementTestPhase(placement, closed, finished)
+    ) = placementTestPhase(placement, closed, finished, asked = wanted.isNotEmpty(), awaiting = awaiting)
 
     /** One of the wait's reads: true when it came back. */
     suspend fun check(): Boolean = store.placements[goalId].refreshed()
@@ -84,6 +93,7 @@ internal class PlacementTestViewModel(
         button: Pressed = Pressed.Main,
     ) = save(button) {
         sitting.started()
+        wanted = length.value
         open(length)
     }
 
@@ -104,9 +114,6 @@ internal class PlacementTestViewModel(
 
     /** Closes a part the learner came back to after its questions ran out. */
     fun finishPart(attempt: PlacementAttempt) = save(Pressed.Main) { close(attempt) }
-
-    /** Moves on from what a closed part showed, to the test as the server has it. */
-    fun dismissClosed() = show(null)
 
     fun answer(
         question: PlacementTestPhase.Question,
@@ -151,6 +158,7 @@ internal class PlacementTestViewModel(
         when (val started = store.startPlacementSitting(goalId, length)) {
             is WriteOutcome.Done -> {
                 show(null)
+                awaiting = started.value.attempt == null && !started.value.isReady
                 started.value.partOver()?.let { close(it) } ?: true
             }
 

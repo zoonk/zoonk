@@ -161,6 +161,13 @@ internal fun partsLeftFacts(
         minutesLeft.takeIf { it > 0 }?.let { stringResource(R.string.placementtest_about, formatMinutes(it, currentLocale())) },
     )
 
+/** What a quick test leaves for the full test: the quick test never said it had parts, so they're named as the full test's. */
+@Composable
+internal fun testTheRestFacts(
+    partsLeft: Int,
+    minutesLeft: Int,
+): List<String> = listOf(stringResource(R.string.placementtest_full_test)) + partsLeftFacts(partsLeft, minutesLeft)
+
 /**
  * After a part of the full test (main's `PlacementCheckpoint`): it's done, what it skipped and what's left. "Keep going"
  * goes on with the next part; "Finish later" leaves the rest for another day.
@@ -181,18 +188,16 @@ internal fun ColumnScope.PartDone(
 ) {
     val restored = undo?.restoredLessons
     SetupContent {
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            OnboardingHeading(
-                stringResource(R.string.placementtest_part_done, part, parts),
-                when {
-                    restored != null -> restoredLessonsLine(restored)
-                    heldUntilTomorrow && lessonsSkipped == 0 -> stringResource(R.string.placementtest_retake_tomorrow)
-                    else -> partSkippedLine(lessonsSkipped)
-                },
-                announceDescription = restored != null,
-            )
-            Facts(partsLeftFacts(partsLeft, minutesLeft))
-        }
+        OnboardingHeading(
+            stringResource(R.string.placementtest_part_done, part, parts),
+            when {
+                restored != null -> restoredLessonsLine(restored)
+                heldUntilTomorrow && lessonsSkipped == 0 -> stringResource(R.string.placementtest_retake_tomorrow)
+                else -> partSkippedLine(lessonsSkipped)
+            },
+            announceDescription = restored != null,
+        )
+        Facts(partsLeftFacts(partsLeft, minutesLeft))
         TestActions(
             action = stringResource(R.string.placementtest_keep_going),
             onAction = onKeepGoing,
@@ -225,30 +230,24 @@ internal fun ColumnScope.PartStopped(
 ) {
     val restored = undo?.restoredLessons
     SetupContent {
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            OnboardingHeading(
-                stringResource(R.string.focustest_answers_saved_title),
-                restored?.let { restoredLessonsLine(it) } ?: partSkippedLine(lessonsSkipped),
-                announceDescription = restored != null,
-            )
-            Facts(listOf(stringResource(R.string.placementtest_next_time, part, parts, question)))
-        }
+        OnboardingHeading(
+            stringResource(R.string.focustest_answers_saved_title),
+            restored?.let { restoredLessonsLine(it) } ?: partSkippedLine(lessonsSkipped),
+            announceDescription = restored != null,
+        )
+        Facts(listOf(stringResource(R.string.placementtest_next_time, part, parts, question)))
         TestActions(action, onAction, busy = busy, enabled = !busy, failed = false, undo = undo)
     }
 }
 
-/**
- * A full test with parts left, opened again (main's `PlacementContinue`): where it stands, and the way back in. [other]
- * is the way out: "Not now" on the Plan, "Finish later" in the setup.
- */
+/** A full test with parts left, opened again (main's `PlacementContinue`): where it stands, and the way back in. */
 @Composable
 internal fun ColumnScope.ContinueTest(
     facts: List<String>,
     pressed: Pressed?,
     failed: Boolean,
     onContinue: () -> Unit,
-    other: String,
-    onOther: () -> Unit,
+    onFinishLater: () -> Unit,
 ) {
     SetupContent {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -262,7 +261,9 @@ internal fun ColumnScope.ContinueTest(
             enabled = pressed == null,
             failed,
         ) {
-            OutlinedButton(onClick = onOther, enabled = pressed == null) { Text(other) }
+            OutlinedButton(onClick = onFinishLater, enabled = pressed == null) {
+                Text(stringResource(R.string.placementtest_finish_later))
+            }
         }
     }
 }
@@ -349,14 +350,12 @@ internal fun ColumnScope.TestOutcome(
 ) {
     SetupContent {
         val restored = undo?.restoredLessons
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            OnboardingHeading(
-                if (restored != null) lessonsSkippedLine(0) else title,
-                if (restored != null) restoredLessonsLine(restored) else lead,
-                announceDescription = restored != null,
-            )
-            if (facts.isNotEmpty()) Facts(facts)
-        }
+        OnboardingHeading(
+            if (restored != null) lessonsSkippedLine(0) else title,
+            if (restored != null) restoredLessonsLine(restored) else lead,
+            announceDescription = restored != null,
+        )
+        if (facts.isNotEmpty()) Facts(facts)
         content()
         TestActions(action, onAction, busy, enabled, failed, undo, other)
     }
