@@ -1,5 +1,5 @@
 import "server-only";
-import { type Goal, type PlanChange, prisma } from "@zoonk/db";
+import { type Goal, sql } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
@@ -13,6 +13,7 @@ import { loadGraphPartAreas } from "./part-areas";
 import { parsePlanChangePayload } from "./plan-change-payload";
 import { canUndoChange, toPlanChangeView } from "./plan-change-view";
 import { isDateReached } from "./plan-end";
+import { readPlanChanges } from "./read-plan-changes";
 
 export const RECENT_CHANGE_MS = 24 * 60 * 60 * 1000;
 
@@ -24,29 +25,19 @@ async function findTodayChanges({
   dateReached,
   now,
   planId,
-  planVersion,
 }: {
   dateReached: boolean;
   now: Date;
   planId: string;
-  planVersion: number;
 }) {
   const [proposals, recent] = await Promise.all([
-    prisma.planChange.findMany({
-      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
-      take: MAX_PROPOSALS,
-      where: { ...waitingPlanProposal, planId },
-    }),
-    prisma.planChange.findMany({
-      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
-      where: {
-        OR: [
-          { createdAt: { gte: new Date(now.getTime() - RECENT_CHANGE_MS) } },
-          { kind: "noticeChanged" },
-        ],
-        planId,
-        status: { in: ["applied", "undone"] },
-      },
+    readPlanChanges({ limit: MAX_PROPOSALS, planId, where: waitingPlanProposal }),
+    readPlanChanges({
+      planId,
+      where: sql`
+        change.status IN ('applied', 'undone')
+        AND (change.created_at >= ${new Date(now.getTime() - RECENT_CHANGE_MS)} OR change.kind = 'noticeChanged')
+      `,
     }),
   ]);
 
@@ -58,7 +49,7 @@ async function findTodayChanges({
     (change) =>
       change.kind === "testedOut" &&
       Boolean(parsePlanChangePayload(change.payload).lessonsSkipped) &&
-      canUndoChange({ change, planVersion }),
+      canUndoChange({ change, planVersion: change.planVersion }),
   );
 
   const notice = changes.find(
@@ -76,26 +67,22 @@ async function pickTodayChange({
   dateReached,
   now,
   planId,
-  planVersion,
 }: {
   dateReached: boolean;
   now: Date;
   planId: string;
-  planVersion: number;
-}): Promise<{ change: PlanChange; effect: PlanChangeView["effect"] } | null> {
+}) {
   const { automatic, notice, proposals, testOut } = await findTodayChanges({
     dateReached,
     now,
     planId,
-    planVersion,
   });
 
   const proposal = proposals.find(
     (candidate) => parsePlanChangePayload(candidate.payload).effect !== null,
   );
 
-  const change = testOut ?? notice ?? proposal ?? automatic;
-  return change && { change, effect: parsePlanChangePayload(change.payload).effect };
+  return testOut ?? notice ?? proposal ?? automatic;
 }
 
 export async function loadTodayPlanChange({
@@ -117,22 +104,18 @@ export async function loadTodayPlanChange({
       today: getDateInTimeZone({ date: now, timeZone: getAnswerTimeZone({ goal, timeZone }) }),
     });
 
-  const picked = plan
-    ? await pickTodayChange({ dateReached, now, planId: plan.id, planVersion: plan.version })
-    : null;
+  const change = plan ? await pickTodayChange({ dateReached, now, planId: plan.id }) : null;
 
-  if (!plan || !picked) {
+  if (!plan || !change) {
     return null;
   }
-
-  const { change, effect } = picked;
 
   const partAreas = await loadGraphPartAreas({
     examBlueprintId: goal.examBlueprintId,
     graph: parsePlanGraph(plan.graph),
   });
 
-  const view = toPlanChangeView({ change, goal, planVersion: plan.version });
+  const view = toPlanChangeView({ change, goal, planVersion: change.planVersion });
 
-  return foldChangeAreas({ change: { ...view, effect }, partAreas });
+  return foldChangeAreas({ change: view, partAreas });
 }

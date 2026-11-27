@@ -22,10 +22,8 @@ export function FocusTestClient({
 }) {
   const router = useRouter();
 
-  // The pages kept from before were read before the test changed the plan.
   const leave = async () => {
     router.push(backHref);
-    router.refresh();
     return true;
   };
 

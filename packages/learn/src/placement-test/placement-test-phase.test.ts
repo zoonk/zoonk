@@ -23,6 +23,7 @@ const FULL: PlacementAttemptView = {
   partComplete: false,
   parts: 14,
   partsLeft: 12,
+  partsRemoved: 0,
   questions: 12,
   remainingEstimatedMinutes: 70,
   resume: null,

@@ -476,7 +476,7 @@ class PlacementTestViewModelTest {
             answered: Int = 0,
             resume: Int? = null,
         ) = """{"id":"$ATTEMPT","length":"$length","part":$part,"partComplete":$complete,"estimatedMinutes":6,"answered":$answered,
-            |"chapter":"Loops","nextPart":${if (complete) part + 1 else "null"},"parts":3,"partsLeft":${if (complete) 2 else 3 - part + 1},
+            |"chapter":"Loops","nextPart":${if (complete) part + 1 else "null"},"parts":3,"partsLeft":${if (complete) 2 else 3 - part + 1},"partsRemoved":0,
             |"questions":12,"remainingEstimatedMinutes":12,"resume":${resume?.let { """{"part":$part,"question":$it}""" } ?: "null"},
             |"totalEstimatedMinutes":18}
             """.trimMargin()

@@ -126,6 +126,7 @@ fun placementAttemptOf(
         partComplete = false,
         parts = parts,
         partsLeft = parts - part + 1,
+        partsRemoved = 0,
         questions = 12,
         remainingEstimatedMinutes = 6 * (parts - part + 1),
         resume = null,

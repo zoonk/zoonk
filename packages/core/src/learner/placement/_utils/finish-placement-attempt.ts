@@ -223,6 +223,7 @@ async function savePart({
         finishedAt: now.toISOString(),
         lessonsSkipped,
         nextLesson: await readPlacementNextLesson(goalId, tx),
+        partsRemoved: attemptQuestions.partsRemovedOnFinish,
       },
     },
     tx,
@@ -247,7 +248,7 @@ async function savePart({
         ...testEventContext(current, {
           attemptId,
           part,
-          parts: attemptQuestions.parts,
+          parts: attemptQuestions.partsAfterFinish,
           questions: attemptQuestions.questions,
           test: "course",
         }),

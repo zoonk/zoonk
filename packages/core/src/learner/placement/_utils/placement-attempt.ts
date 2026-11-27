@@ -143,7 +143,7 @@ function openingEvents({
   goal: Pick<Goal, "details" | "id" | "planRevealedAt" | "userId">;
   previous?: PlacementAttempt;
 }): AnalyticsEvent[] {
-  const parts = getAttemptParts(attempt).length;
+  const parts = attempt.partsAtOpen ?? getAttemptParts(attempt).length;
 
   const properties = testEventContext(goal, {
     attemptId: attempt.id,
@@ -253,6 +253,7 @@ async function resumePlacementAttempt({
     partSkillIds,
     partStartedAt: at,
     parts: attemptQuestions.retainedParts,
+    partsAtOpen: attemptQuestions.parts,
     paused: false,
   };
 
@@ -304,6 +305,7 @@ export async function openPlacementAttempt({
         partSkillIds: first,
         partStartedAt: at,
         parts,
+        partsAtOpen: parts.length,
         skillIds,
       };
 
