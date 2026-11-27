@@ -47,6 +47,7 @@ import {
   cacd2025H42,
   cacd2025H43,
 } from "./cebraspe-answers";
+import { CEBRASPE_TECHNICAL_CASES } from "./cebraspe-technical";
 import {
   type GradeWritingExpected,
   type GradeWritingInput,
@@ -1081,4 +1082,8 @@ const LANGUAGE_CASES = [
   ),
 ];
 
-export const CEBRASPE_PUBLISHED_CASES = [...HISTORY_CASES, ...LANGUAGE_CASES];
+export const CEBRASPE_PUBLISHED_CASES = [
+  ...HISTORY_CASES,
+  ...LANGUAGE_CASES,
+  ...CEBRASPE_TECHNICAL_CASES,
+];

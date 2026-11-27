@@ -1,7 +1,7 @@
 import { type TestCase } from "@/lib/types";
 import readerFile from "../../../eval-results/blind-keys/ablation-readers.json";
 import keyFile from "../../../eval-results/blind-keys/keys.json";
-import { type GradeWritingInput } from "../grade-essay/cases/shared";
+import { type GradeWritingExpected, type GradeWritingInput } from "../grade-essay/cases/shared";
 import { type MarkRange, getAblationMark } from "./ablation-marks";
 import { ABLATIONS, getAblationSource } from "./ablations";
 import { type BlindKey, type BlindKeyFile, blindKeyInput } from "./blind-keys";
@@ -12,6 +12,7 @@ type BlindKeyStratum = SourceQuestion["stratum"] | "fgv-oab-ablation";
 export type BlindKeyExpected = {
   answer: string;
   board: MarkRange;
+  cacd?: GradeWritingExpected["cacd"];
   draw: number;
   max: number;
   cutoffShare: number;
@@ -57,6 +58,7 @@ const REAL_CASES: BlindKeyCase[] = SOURCE_QUESTIONS.flatMap((source) =>
         expected: {
           answer: testCase.id,
           board: { high: official, low: official },
+          ...(testCase.expected?.cacd && { cacd: testCase.expected.cacd }),
           cutoffShare: source.cutoffShare,
           draw: key.draw,
           kind: "real" as const,
