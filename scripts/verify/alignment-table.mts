@@ -54,7 +54,8 @@ const LIST_PARTS = {
   label: "[data-slot=list-row-title]",
   lead: "[data-slot=list-row-lead]",
   mark: "[data-slot=list-row-leading], [data-slot=list-row-icon]",
-  note: "[data-slot=list-row-description]",
+  // A line under the label: a description, or a progress bar, which has no words.
+  note: "[data-slot=list-row-description], [data-slot=coverage-bar]",
   value: "[data-slot=list-row-trailing]",
 } satisfies WebPiece["parts"];
 

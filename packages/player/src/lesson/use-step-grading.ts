@@ -120,10 +120,12 @@ export function useStepGrading({
 
   const submitSpokenAnswer = useCallback(
     async ({
+      attemptId,
       audio,
       durationMs: spokenMs,
       stepId,
     }: {
+      attemptId: string;
       audio: Blob;
       durationMs: number;
       stepId: string;
@@ -140,7 +142,7 @@ export function useStepGrading({
       const outcome = await boundedGrade(CHECK_BOUNDS.timeoutMs.spoken, () =>
         keepGrade({
           request: ensureRun().then((run) =>
-            run ? gradeSpokenAnswer({ audio, durationMs: spokenMs, stepId }) : null,
+            run ? gradeSpokenAnswer({ attemptId, audio, durationMs: spokenMs, stepId }) : null,
           ),
           stepId,
         }),
