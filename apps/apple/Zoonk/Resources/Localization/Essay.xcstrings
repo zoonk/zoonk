@@ -1392,6 +1392,136 @@
         }
       }
     },
+    "about %lld of %lld lines · may not fit on paper" : {
+      "comment" : "The approximate line count of a written answer past its limit at a typical handwriting size; it's still graded in full, since small handwriting could fit it.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ca. %1$lld von %2$lld Zeilen · passt vielleicht nicht aufs Papier"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "about %1$lld of %2$lld lines · may not fit on paper"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "aproximadamente %1$lld de %2$lld líneas · quizá no quepa en el papel"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "environ %1$lld lignes sur %2$lld · risque de ne pas tenir sur la copie"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "circa %1$lld righe su %2$lld · potrebbero non entrare sul foglio"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "約%1$lld行／%2$lld行 · 紙に収まらない可能性があります"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "약 %1$lld/%2$lld줄 · 종이에 다 들어가지 않을 수 있어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "około %1$lld z %2$lld wierszy · może się nie zmieścić na papierze"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "cerca de %1$lld de %2$lld linhas · talvez não caiba no papel"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "yaklaşık %1$lld/%2$lld satır · kâğıda sığmayabilir"
+          }
+        }
+      }
+    },
+    "about %lld of %lld lines · the end won't be read" : {
+      "comment" : "The approximate line count of a written answer so far past its limit that no handwriting would fit it; the exam's graders won't read its end.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ca. %1$lld von %2$lld Zeilen · das Ende wird nicht gelesen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "about %1$lld of %2$lld lines · the end won't be read"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "aproximadamente %1$lld de %2$lld líneas · el final no se leerá"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "environ %1$lld lignes sur %2$lld · la fin ne sera pas lue"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "circa %1$lld righe su %2$lld · la parte finale non verrà letta"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "約%1$lld行／%2$lld行 · 末尾は読まれません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "약 %1$lld/%2$lld줄 · 끝부분은 읽지 않아요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "około %1$lld z %2$lld wierszy · końcówka nie będzie sprawdzana"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "cerca de %1$lld de %2$lld linhas · o final não será lido"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "yaklaşık %1$lld/%2$lld satır · sonu okunmayacak"
+          }
+        }
+      }
+    },
     "Answer the question asked" : {
       "localizations" : {
         "de" : {

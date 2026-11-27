@@ -48,6 +48,8 @@
   "essay_limit_title": "9f0598ee107985b0f46d8bf44be4299bf3fc1790df4177b69975ca8536114b3c",
   "essay_limit_title_any": "66dfd7f4ba94d0dfd2727f640a904b06f672fe66241dda1a9f170f7f24f4e3e1",
   "essay_lines_empty": "82ed3ad53cd8ce930329fef349f1a4a540d7fb7eac41f0168130eb2ffda14591",
+  "essay_lines_end_unread": "971f0905d37317c23903aaa42a76552a60de82eafe1ba556c7cd838eb9309b47",
+  "essay_lines_may_not_fit": "e94fa47c6389928ccfe422b4093e69fc3e5b28d67c17c4d55a0efe948e756812",
   "essay_lines_question": "681c47adf980bbb61e0f6921011689087b63522a0fddcffb57dfc3531f0e9732",
   "essay_lines_used": "839f5ec178c9129cfc7ed62dd119779834bca0d392e2942cda9f312d90d6dbf4",
   "essay_minus": "689cf8e60ffbb92537f64ca18a72ba1e885c8c0983564573161ad47e57f99a13",
@@ -200,6 +202,10 @@
         <item quantity="many">0 sur %1$d lignes</item>
         <item quantity="other">0 sur %1$d lignes</item>
     </plurals>
+    <!-- The approximate line count of a written answer past its limit at a typical handwriting size; it's still graded in full, since small handwriting could fit it. -->
+    <string name="essay_lines_may_not_fit">environ %1$d lignes sur %2$d · risque de ne pas tenir sur la copie</string>
+    <!-- The approximate line count of a written answer so far past its limit that no handwriting would fit it; the exam's graders won't read its end. -->
+    <string name="essay_lines_end_unread">environ %1$d lignes sur %2$d · la fin ne sera pas lue</string>
     <string name="essay_conflict_title">Cette réponse a changé sur un autre appareil</string>
     <string name="essay_conflict_body">Garde la version que tu écris ici ou passe à l’autre.</string>
     <!-- A choice between two versions of one written answer: keep what's typed on this device and save it over the other. -->
