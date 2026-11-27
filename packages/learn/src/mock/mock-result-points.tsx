@@ -5,9 +5,20 @@ import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { CheckIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { StepRow, StepRows } from "../_components/step-card";
+import { useFormatScore } from "../essay/essay-labels";
+import { useFormatPointsRange } from "../writing/writing-labels";
+import { WrittenStandingLine } from "../writing/written-standing";
 import { useMockNumber, useMockPercent } from "./mock-labels";
 import { ResultSection } from "./mock-result-section";
-import { type MockPoints, type Tally, type TestRow, toTestRows } from "./mock-result-test-rows";
+import {
+  type MockPoints,
+  type Tally,
+  type TestRow,
+  type WrittenPart,
+  getWrittenRows,
+  hasTestRows,
+  toTestRows,
+} from "./mock-result-test-rows";
 
 type Minimum = MockPoints["unjudged"][number]["minimum"];
 
@@ -19,12 +30,6 @@ function round(value: number): number {
 
 function toScorePercent({ asked, earned }: Tally): number {
   return asked > 0 ? (earned / asked) * 100 : 0;
-}
-
-export function hasTestRows(points: MockPoints | null | undefined): points is MockPoints {
-  return Boolean(
-    points && (points.parts.length > 0 || points.minimum || points.unjudged.length > 0),
-  );
 }
 
 function useFormatMinimum() {
@@ -161,12 +166,6 @@ export function useMissedMinimum(
   };
 }
 
-/** True when the mock exam checked at least one minimum and every one was reached. */
-export function reachedEveryMinimum(points: MockPoints | null | undefined): boolean {
-  const rows = hasTestRows(points) ? toTestRows(points) : [];
-  return rows.some((row) => row.met === true) && rows.every((row) => row.met !== false);
-}
-
 function ProjectedLine({ points }: { points: MockPoints }) {
   const t = useExtracted();
   const number = useMockNumber();
@@ -211,17 +210,66 @@ function UnjudgedLine({ entry }: { entry: MockPoints["unjudged"][number] }) {
   );
 }
 
+/** A written part beside the tests: its estimate and where it stands, or why it has none. */
+function WrittenRowItem({ part }: { part: WrittenPart }) {
+  const t = useExtracted();
+  const formatMinimum = useFormatMinimum();
+  const formatRange = useFormatPointsRange();
+  const formatScore = useFormatScore();
+  const { max, range } = part;
+
+  return (
+    <StepRow className="justify-between">
+      <span className="flex min-w-0 flex-col gap-0.5">
+        <span className="font-medium">{part.name}</span>
+        {range && max !== null ? (
+          <WrittenStandingLine part={part} />
+        ) : (
+          <span className="text-muted-foreground text-xs">
+            {[
+              part.minimum &&
+                t(
+                  "Needs {unit, select, percent {{minimum} of its points} other {{value, plural, one {# point} other {# points}}}}",
+                  {
+                    minimum: formatMinimum(part.minimum),
+                    unit: part.minimum.unit,
+                    value: round(part.minimum.value),
+                  },
+                ),
+              t("No points estimate in this mock exam"),
+            ]
+              .filter(Boolean)
+              .join(FACT_SEPARATOR)}
+          </span>
+        )}
+      </span>
+      {range && max !== null && (
+        <span className="shrink-0 font-mono text-xs tabular-nums">
+          {t("{range} of {max}", {
+            max: formatScore(max),
+            range: formatRange(range, { decimals: part.decimals }),
+          })}
+        </span>
+      )}
+    </StepRow>
+  );
+}
+
 export function MockResultPoints({ points }: { points: MockPoints }) {
   const t = useExtracted();
   const rows = toTestRows(points);
+  const written = getWrittenRows(points);
 
   return (
     <ResultSection rows title={t("By test")}>
       <div className="flex flex-col gap-3">
-        {rows.length > 0 && (
+        {(rows.length > 0 || written.length > 0) && (
           <StepRows>
             {rows.map((row) => (
               <TestRowItem key={row.name ?? "total"} row={row} />
+            ))}
+            {written.map((part) => (
+              <WrittenRowItem key={part.name} part={part} />
             ))}
           </StepRows>
         )}

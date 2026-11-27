@@ -8,6 +8,7 @@ import { getMinimumShare } from "../writing/minimum-points";
 import { MinimumLegend, PointsMeter, PointsReadout } from "../writing/points-readout";
 import { useWritingTaskName } from "../writing/writing-header";
 import { useFormatPointsRange } from "../writing/writing-labels";
+import { WrittenStandingLine } from "../writing/written-standing";
 import { type WrittenSubject } from "./subject-written-score";
 
 const PERCENT = 100;
@@ -98,6 +99,7 @@ function PointsScale({ written }: { written: WrittenSubject }) {
           />
         )}
         {minimum && <MinimumLegend>{minimumLine(written.points)}</MinimumLegend>}
+        <WrittenStandingLine part={{ ...written.points, decimals }} />
       </div>
       <StepRows>
         {tasks.map((task) => (

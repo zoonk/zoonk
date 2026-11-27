@@ -3,7 +3,6 @@
 import { type WrittenProjection } from "@zoonk/core/exams/scoring/written-points-contract";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CheckIcon, TriangleAlertIcon, XIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { useState } from "react";
 import { useFormatScore } from "../../essay/essay-labels";
@@ -12,6 +11,7 @@ import { getMinimumPoints, getMinimumShare } from "../../writing/minimum-points"
 import { PointsMeter, PointsReadout, usePointsEstimate } from "../../writing/points-readout";
 import { useWritingTaskName } from "../../writing/writing-header";
 import { useFormatPointsRange } from "../../writing/writing-labels";
+import { WrittenStandingLine } from "../../writing/written-standing";
 import { getProjectionWriteTask } from "./projection-write-task";
 
 type Range = { high: number; low: number };
@@ -125,48 +125,6 @@ function TaskRows({ part }: { part: Part }) {
   );
 }
 
-/** Said against the part's own minimum, never the objective's: 50 of 100 on the sum of its answers. */
-function Standing({ part }: { part: Part }) {
-  const t = useExtracted();
-  const formatScore = useFormatScore();
-  const formatRange = useFormatPointsRange();
-  const minimum = part.minimum && getMinimumPoints({ max: part.max, minimum: part.minimum });
-
-  if (minimum === null || !part.range || part.standing === "unmeasured" || !part.standing) {
-    return null;
-  }
-
-  if (part.standing === "met") {
-    return (
-      <p className="text-muted-foreground flex items-center gap-1.5 text-xs">
-        <CheckIcon aria-hidden="true" className="text-success-text size-3.5" />
-        {t("Above the {minimum} points needed", { minimum: formatScore(minimum) })}
-      </p>
-    );
-  }
-
-  if (part.standing === "below") {
-    const short = { high: minimum - part.range.low, low: minimum - part.range.high };
-
-    return (
-      <p className="text-destructive-text flex items-center gap-1.5 text-xs">
-        <XIcon aria-hidden="true" className="size-3.5" />
-        {t("{points} points short of the {minimum} needed", {
-          minimum: formatScore(minimum),
-          points: formatRange(short, { decimals: part.decimals }),
-        })}
-      </p>
-    );
-  }
-
-  return (
-    <p className="text-warning-text flex items-center gap-1.5 text-xs">
-      <TriangleAlertIcon aria-hidden="true" className="size-3.5" />
-      {t("Close to the {minimum} points needed", { minimum: formatScore(minimum) })}
-    </p>
-  );
-}
-
 function useHeadline(projection: WrittenProjection) {
   const t = useExtracted();
   const format = useFormatter();
@@ -195,16 +153,17 @@ function useHeadline(projection: WrittenProjection) {
 
   const below = projection.parts.find(({ standing }) => standing === "below");
 
-  // A part graded by level has no points to wait for, so the headline doesn't say it's waiting.
+  // A part graded by level has no points to wait for, and one with an estimate says on its own row
+  // whether it reaches its minimum, so the headline names only a part with no estimate yet.
   const unmeasured = projection.parts.find(
-    (part) => getPartScale(part) === "points" && (part.standing === "unmeasured" || !part.range),
+    (part) => getPartScale(part) === "points" && !part.range,
   );
 
   // A part's name comes from the notice, so it opens a sentence rather than sitting inside one.
   if (below) {
     return {
       detail: below.minimum && minimumDetail({ ...below, minimum: below.minimum }),
-      title: t("Below the minimum to pass"),
+      title: t("Likely below the minimum to pass"),
     };
   }
 
@@ -312,7 +271,7 @@ export function WrittenProjectionScore({
             written
           >
             {getPartScale(part) === "points" && <TaskRows part={part} />}
-            <Standing part={part} />
+            <WrittenStandingLine part={part} />
           </ScoreRow>
         ))}
       </div>

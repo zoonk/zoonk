@@ -179,15 +179,16 @@ function CriterionComments({ grade }: { grade: WritingResult }) {
   );
 }
 
-function useCriteriaSource(prompt: WritingPrompt, grade: WritingResult): string | null {
+function useCriteriaFooter(prompt: WritingPrompt, grade: WritingResult): string | null {
   const t = useExtracted();
 
   if (grade.kind === "levels" && prompt.criteria.every(({ points }) => points === null)) {
     return t("The exam notice doesn't say how many points each criterion is worth.");
   }
 
+  // An answer on a sheet with points can still come back by level, even after one with points.
   if (grade.kind === "levels") {
-    return null;
+    return t("Graded by level: we can't yet estimate this answer's points closely enough.");
   }
 
   return prompt.keySource === "notice"
@@ -201,7 +202,7 @@ function WritingCriteria({ grade, prompt }: { grade: WritingResult; prompt: Writ
   const formatScore = useFormatScore();
   const formatPoints = useFormatPointsRange();
   const levelName = useLevelName();
-  const source = useCriteriaSource(prompt, grade);
+  const footer = useCriteriaFooter(prompt, grade);
   const rows = grade.kind === "points" ? grade.rows : [];
 
   const scoreLabel = (row: Points["rows"][number]) => {
@@ -257,7 +258,7 @@ function WritingCriteria({ grade, prompt }: { grade: WritingResult; prompt: Writ
       <DetailsDrawer label={t("See comments")} title={t("Comments")} trigger="small">
         <CriterionComments grade={grade} />
       </DetailsDrawer>
-      {source && <PageSectionFooter>{source}</PageSectionFooter>}
+      {footer && <PageSectionFooter>{footer}</PageSectionFooter>}
     </section>
   );
 }
