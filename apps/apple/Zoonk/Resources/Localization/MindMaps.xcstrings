@@ -1456,7 +1456,7 @@
       }
     },
     "Couldn't save this map. Try again." : {
-      "comment" : "Saving or removing a saved map didn't work, so it's back as it was",
+      "comment" : "Saving a map didn't work, so its bookmark is back as it was",
       "localizations" : {
         "de" : {
           "stringUnit" : {

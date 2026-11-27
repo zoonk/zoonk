@@ -52,6 +52,10 @@ final class SavedLessonsStoreTests: XCTestCase {
 
     // Saved again, the server lists it first: it stays where the learner's thumb is.
     XCTAssertEqual(kept.rows([rows[1], rows[0], rows[2]]).map(\.lessonId), ["a", "b", "c"])
+
+    // The row above it removed too, both go back where they were.
+    kept.keep(rows[0], shown: rows)
+    XCTAssertEqual(kept.rows([rows[2]]).map(\.lessonId), ["a", "b", "c"])
   }
 
   private func makeStore(api: SavedLessonsAPIStub) -> SavedLessonsStore {

@@ -2,7 +2,8 @@
 /// leave the page, its bookmark empty once it's removed, so nothing moves under their thumb and a
 /// second tap saves it again where it was.
 struct KeptRows<Row: Identifiable> {
-  private var kept: [(index: Int, row: Row)] = []
+  /// Each kept row with the row that was above it when it was tapped, nil at the top.
+  private var kept: [(after: Row.ID?, row: Row)] = []
 
   /// As the learner taps a row's bookmark, in the rows shown then.
   mutating func keep(_ row: Row, shown: [Row]) {
@@ -12,17 +13,28 @@ struct KeptRows<Row: Identifiable> {
       return
     }
 
-    kept.append((index, row))
+    kept.append((index > 0 ? shown[index - 1].id : nil, row))
   }
 
-  /// The list read, with each kept row where it was: the newest read of it, or what it showed when
-  /// the read no longer lists it.
+  /// The list read, with each kept row back after the row that was above it: the newest read of it,
+  /// or what it showed once the read no longer lists it. One whose row above has gone since goes
+  /// back to the top.
   func rows(_ read: [Row]) -> [Row] {
     let ids = Set(kept.map(\.row.id))
     var rows = read.filter { !ids.contains($0.id) }
 
-    for (index, row) in kept.sorted(by: { $0.index < $1.index }) {
-      rows.insert(read.first { $0.id == row.id } ?? row, at: min(index, rows.count))
+    var waiting = kept
+
+    // A row kept after another kept row waits for that one to be back.
+    while !waiting.isEmpty {
+      let next =
+        waiting.firstIndex { entry in
+          entry.after.map { above in rows.contains { $0.id == above } } ?? true
+        } ?? waiting.firstIndex { entry in !waiting.contains { $0.row.id == entry.after } }
+        ?? 0
+      let (after, row) = waiting.remove(at: next)
+      let index = after.flatMap { above in rows.firstIndex { $0.id == above }.map { $0 + 1 } } ?? 0
+      rows.insert(read.first { $0.id == row.id } ?? row, at: index)
     }
 
     return rows

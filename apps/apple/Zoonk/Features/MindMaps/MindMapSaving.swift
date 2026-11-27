@@ -48,7 +48,7 @@ extension View {
       SavesMindMap(target: target, goalId: goalId, server: server, isAvailable: isAvailable))
   }
 
-  /// "Couldn't save this map. Try again." over the screen that tried.
+  /// "Couldn't save this map." or "Couldn't remove this map." over the screen that tried.
   func mindMapSaveFailureAlert(goalId: String) -> some View {
     modifier(MindMapSaveFailureAlert(goalId: goalId))
   }
@@ -87,10 +87,14 @@ private struct MindMapSaveFailureAlert: ViewModifier {
 
   func body(content: Content) -> some View {
     content.saveFailureAlert(
-      store.saves.failure(goalId: goalId).map { _ in
-        Text(
-          "Couldn't save this map. Try again.", tableName: "MindMaps",
-          comment: "Saving or removing a saved map didn't work, so it's back as it was")
+      store.saves.failure(goalId: goalId).map { failure in
+        failure.saved
+          ? Text(
+            "Couldn't save this map. Try again.", tableName: "MindMaps",
+            comment: "Saving a map didn't work, so its bookmark is back as it was")
+          : Text(
+            "Couldn't remove this map. Try again.", tableName: "MindMaps",
+            comment: "Taking a map out of the saved maps didn't work, so it's still saved")
       }
     ) {
       store.saves.dismissFailure()
