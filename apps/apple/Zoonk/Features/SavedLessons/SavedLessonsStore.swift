@@ -63,7 +63,7 @@ final class SavedLessonsStore {
 
     let api = api
     let list: Resource<[SavedLesson]> = cache.resource(
-      audience: .signedIn, domains: [.goals, .savedLessons, .userProgress]
+      audience: .signedIn, domains: [.goals, .savedLessons]
     ) { session in
       guard let session else {
         return nil

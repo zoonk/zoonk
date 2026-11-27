@@ -51,6 +51,9 @@ struct CompletedLessonsQuery: Hashable, Sendable {
 @MainActor
 @Observable
 final class CompletedLessonsStore {
+  static let pageSize = 50
+  static let maxPageSize = 1000
+
   private(set) var loadMoreFailures: [CompletedLessonsQuery: APIError] = [:]
 
   @ObservationIgnored private let api: any CompletedLessonsAPIClient
@@ -69,14 +72,21 @@ final class CompletedLessonsStore {
     }
 
     let api = api
+    // Main's tags for the list: a save reads it again too, since a read out as it lands predates it.
     let list: Resource<CompletedLessonsPage> = cache.resource(
-      audience: .signedIn, domains: [.userProgress], isEmpty: \.lessons.isEmpty
-    ) { session in
+      audience: .signedIn, domains: [.goals, .savedLessons, .userProgress],
+      isEmpty: \.lessons.isEmpty
+    ) { [weak self] session in
       guard let session else {
         return nil
       }
 
-      return try await api.list(token: session.bearerToken, query: query, cursor: nil)
+      // Read again, it keeps every page shown, so no row leaves from under the learner's thumb.
+      let shown = self?.lists[query]?.value?.lessons.count ?? 0
+
+      return try await api.list(
+        token: session.bearerToken, query: query, cursor: nil,
+        limit: min(max(shown, Self.pageSize), Self.maxPageSize))
     }
 
     lists[query] = list
@@ -122,7 +132,8 @@ final class CompletedLessonsStore {
     loadMoreFailures[query] = nil
 
     do {
-      let next = try await api.list(token: session.bearerToken, query: query, cursor: cursor)
+      let next = try await api.list(
+        token: session.bearerToken, query: query, cursor: cursor, limit: Self.pageSize)
 
       guard resource.revision == revision else {
         return
@@ -148,19 +159,19 @@ final class CompletedLessonsStore {
 }
 
 protocol CompletedLessonsAPIClient: Sendable {
-  func list(token: String, query: CompletedLessonsQuery, cursor: String?) async throws
+  func list(token: String, query: CompletedLessonsQuery, cursor: String?, limit: Int) async throws
     -> CompletedLessonsPage
 }
 
 struct CompletedLessonsAPI: CompletedLessonsAPIClient {
   let clients: APIClientFactory
 
-  func list(token: String, query: CompletedLessonsQuery, cursor: String?) async throws
+  func list(token: String, query: CompletedLessonsQuery, cursor: String?, limit: Int) async throws
     -> CompletedLessonsPage
   {
     try await clients.perform(token: token) { client in
       switch try await client.listCurrentUserCompletedLessons(
-        query: .init(goalId: query.goalId, group: query.group, cursor: cursor))
+        query: .init(goalId: query.goalId, group: query.group, limit: limit, cursor: cursor))
       {
       case .ok(let response):
         let list = try response.body.json
