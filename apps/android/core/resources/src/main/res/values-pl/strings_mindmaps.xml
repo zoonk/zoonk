@@ -51,8 +51,10 @@
   "mindmaps_save": "da0294eeddcc67470db5a8da2ec4494a74c9448161c8e5e03a4b5f3b8de0c962",
   "mindmaps_save_failed": "9cb169de24a54ebaaf05ee0183dfcb6b806a81d5be7994a182cda13220910b82",
   "mindmaps_save_map_failed": "5577dc6e6b6a570341452810e8d4a03bf1b5b847b14ce7a12a1b400e8cb91c0f",
+  "mindmaps_save_named": "9ecaa39034c751d7977bfe69b6dd9207e05365f2eb46c1193858c754718d258d",
   "mindmaps_saved": "0b1651086bee40a6c62d45612f314495430124043b40184601d3c32b93ea69c0",
   "mindmaps_saved_empty": "e1651ede8a3ffc08771a2cb37632b59a19572730a3c6902a0b82650721d5d0a1",
+  "mindmaps_saved_named": "93f25ad688a5b816448f4593fe7192bb98391fd7924ea5a96071925b8ebf85ca",
   "mindmaps_saved_state": "8ddef8944b68e36579ba5af2a1a8d2a0888de3dd87912d6f41a262f7c146b51b",
   "mindmaps_show_all": "12acc8db1658648b3db2d466e2214fc932554da7ee52cb3654111064ec4a8686",
   "mindmaps_shown_as": "ed5f16c7d0b07334b0e31dc329380dd988a371628fc89787163425a0e68d5123",
@@ -215,6 +217,9 @@
     <string name="mindmaps_save">Zapisz</string>
     <!-- A map the learner saved; tapping it again removes it. -->
     <string name="mindmaps_saved_state">Zapisano</string>
+    <string name="mindmaps_save_named">Zapisz %1$s</string>
+    <!-- Read aloud for the bookmark on a saved mind map's row, which removes it: says the map {title} is saved. -->
+    <string name="mindmaps_saved_named">Zapisano: %1$s</string>
     <!-- Removes a map from the saved ones, from a row's menu. -->
     <string name="mindmaps_unsave">Usuń z zapisanych</string>
     <string name="mindmaps_save_map_failed">Nie udało się zapisać tej mapy. Spróbuj ponownie.</string>

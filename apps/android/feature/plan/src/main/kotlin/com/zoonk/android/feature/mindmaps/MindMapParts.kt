@@ -54,12 +54,14 @@ import com.zoonk.android.feature.saves.SaveWords
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.ActOn
 import com.zoonk.android.ui.VisitOf
+import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.PrivatePictures
+import com.zoonk.android.ui.components.iconButtonEdge
 import com.zoonk.api.models.AllowanceItem
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.MindMapImage
@@ -284,9 +286,23 @@ internal fun KeyFocus() {
 internal fun MapBookmark(
     saved: Boolean,
     onToggle: () -> Unit,
-    modifier: Modifier = Modifier,
 ) {
-    BookmarkToggle(saved, stringResource(if (saved) R.string.mindmaps_saved_state else R.string.mindmaps_save), onToggle, modifier)
+    BookmarkToggle(saved, stringResource(if (saved) R.string.mindmaps_saved_state else R.string.mindmaps_save), onToggle)
+}
+
+/** A saved map's row bookmark, on the row's end edge, named with the map's [title] so TalkBack tells the rows apart. */
+@Composable
+internal fun MapRowBookmark(
+    title: String,
+    saved: Boolean,
+    onToggle: () -> Unit,
+) {
+    BookmarkToggle(
+        saved,
+        stringResource(if (saved) R.string.mindmaps_saved_named else R.string.mindmaps_save_named, title),
+        onToggle,
+        Modifier.iconButtonEdge(ButtonEdge.End),
+    )
 }
 
 /** A map's own words for saving it, apart from a lesson's. */

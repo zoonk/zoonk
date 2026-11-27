@@ -51,8 +51,10 @@
   "mindmaps_save": "de4476a190a3a00489dfa7a0aadf58fb1f4ce46da0d5e6e92a5d11d3b9ab34b9",
   "mindmaps_save_failed": "7d4b7832227f6eb83e670af538d6fc61c174e620fc32d64059fc50cc17da73ce",
   "mindmaps_save_map_failed": "b3513ae444fc576acfd110d7385d063f0de61a0a47eb8d2c8389011a7c71454f",
+  "mindmaps_save_named": "1b534c3c0057868024b6886e248e0166b67bb5b6e7b11990739912ae6d5f0f95",
   "mindmaps_saved": "6a3d9eb18923ee6324a3741bbc7e4a78d95b7aa1f1df9aecdcab3c799f25fa02",
   "mindmaps_saved_empty": "64e2339dafe0d6f73def50df8ec725e968f03af683cb1681fa736cb3b48f14be",
+  "mindmaps_saved_named": "f612f6cc563e571298591c36a5e33fe49154545ef02878944e7f28c1913409bd",
   "mindmaps_saved_state": "7e4fd5363d978db650673fbd6e960f239c403177539cfe6d9501d7a1d2e70e98",
   "mindmaps_show_all": "8a6d82e2ee217a7e15c87df6adabeb7a32a7906236be1d64489586cf1c0cda8a",
   "mindmaps_shown_as": "f0a6bd2dfb7ac7c9eee1afc3fdac74ca54455e7d914fa3f43ae914890b24dd52",
@@ -207,6 +209,9 @@
     <string name="mindmaps_save">Guardar</string>
     <!-- A map the learner saved; tapping it again removes it. -->
     <string name="mindmaps_saved_state">Guardado</string>
+    <string name="mindmaps_save_named">Guardar %1$s</string>
+    <!-- Read aloud for the bookmark on a saved mind map's row, which removes it: says the map {title} is saved. -->
+    <string name="mindmaps_saved_named">%1$s, guardado</string>
     <!-- Removes a map from the saved ones, from a row's menu. -->
     <string name="mindmaps_unsave">Quitar de guardados</string>
     <string name="mindmaps_save_map_failed">No pudimos guardar este mapa. Inténtalo de nuevo.</string>

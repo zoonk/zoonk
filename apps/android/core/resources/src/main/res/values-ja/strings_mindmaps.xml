@@ -51,8 +51,10 @@
   "mindmaps_save": "2fdc4fc68ebb591b1b69b03c3dcea5fb0a603be476049735b9911ae58236b129",
   "mindmaps_save_failed": "8a884e1f8793d596248094d48824eb635f74793dcee74f2f5d3fdef58c6d343c",
   "mindmaps_save_map_failed": "54a11c51b46f6846fddbfd6162ab9689a0d5b58f82fcbaa0c6643939ccc35f89",
+  "mindmaps_save_named": "33e73ff6a32df00a76f5ad90344faa288bc4226aeb0d1da5ea539e9c6f88ceda",
   "mindmaps_saved": "94bb487abd006eede8dd8525985e40e6dbbc107fff9cd735212b9518a87a839b",
   "mindmaps_saved_empty": "5c518de1a85b820c71915825f72515cc4f9b1535d45b4d1ca058fcd1be117213",
+  "mindmaps_saved_named": "ebd0899466cd4b8e2a022191827a906c8ddd40ac21505190fcc57c08a56dcc08",
   "mindmaps_saved_state": "14114ba00a4ed1dd4df7b36bc471030e326a777a615e171ef6c7907c235e45c1",
   "mindmaps_show_all": "e416d1939f873aae278a4c29cec042b3c7253429bca533b126069e0827cf2785",
   "mindmaps_shown_as": "663fa3e084b367115bc2838560cadf4a8da9e34df648660f35c09b10fef067bd",
@@ -191,6 +193,9 @@
     <string name="mindmaps_save">保存する</string>
     <!-- A map the learner saved; tapping it again removes it. -->
     <string name="mindmaps_saved_state">保存済み</string>
+    <string name="mindmaps_save_named">%1$sを保存</string>
+    <!-- Read aloud for the bookmark on a saved mind map's row, which removes it: says the map {title} is saved. -->
+    <string name="mindmaps_saved_named">「%1$s」は保存済み</string>
     <!-- Removes a map from the saved ones, from a row's menu. -->
     <string name="mindmaps_unsave">保存済みから削除する</string>
     <string name="mindmaps_save_map_failed">このマップを保存できませんでした。もう一度試してください。</string>

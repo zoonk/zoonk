@@ -51,8 +51,10 @@
   "mindmaps_save": "10a84a5b5d7c489b2475721d25fa111249b0463e674e8c0cbe2420405ef409cc",
   "mindmaps_save_failed": "2be82fcc902724856b6c4488a3f0b35c50e6df79da37f9f83919293e512babd7",
   "mindmaps_save_map_failed": "f86254f44512d0e1d280e8505d40faf2f1bc1985d7d2f9769580a7a11965a72b",
+  "mindmaps_save_named": "626298ce3afae167ee1a5609141fbaa590304e6acd4c15e27182b1360a446146",
   "mindmaps_saved": "f8435eb144f3491959b63b6b3b2c8a80dc068fee0f7b39e63b8db33433c19e71",
   "mindmaps_saved_empty": "ca99ff617322bbd11b7b14c47a1f1f704023826b042651e0f67e6f386d3fec86",
+  "mindmaps_saved_named": "142a56cece81504f72d6ddf195f06230d3e498e5b8df43ade9eb73a6588b7d0b",
   "mindmaps_saved_state": "73bc22257a6bebf97060e7fdbea6b7a89017b52d0dfe0eeb2d2099c9c99632f9",
   "mindmaps_show_all": "0262aff550f5e46b29563b87e3819506ad6e76d07828edb0f9f6fd2c1a665c01",
   "mindmaps_shown_as": "d2d5ac0526142b7728e5ec5f76e7eae10ae68580b6aea7949cc2c6335262e8e8",
@@ -199,6 +201,9 @@
     <string name="mindmaps_save">Kaydet</string>
     <!-- A map the learner saved; tapping it again removes it. -->
     <string name="mindmaps_saved_state">Kaydedildi</string>
+    <string name="mindmaps_save_named">Kaydet: %1$s</string>
+    <!-- Read aloud for the bookmark on a saved mind map's row, which removes it: says the map {title} is saved. -->
+    <string name="mindmaps_saved_named">%1$s kaydedildi</string>
     <!-- Removes a map from the saved ones, from a row's menu. -->
     <string name="mindmaps_unsave">Kaydedilenlerden kaldır</string>
     <string name="mindmaps_save_map_failed">Bu harita kaydedilemedi. Tekrar dene.</string>
