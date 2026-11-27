@@ -56,14 +56,11 @@ export function MissionsRing({
   className,
   missions,
   moment = true,
-  strokeWidth = 2,
 }: {
   children?: React.ReactNode;
   className?: string;
   missions: MissionsCount;
   moment?: boolean;
-  /** In the ring's 36-unit box. */
-  strokeWidth?: number;
 }) {
   const ring = useRef<SVGSVGElement>(null);
   const complete = missions.total > 0 && missions.done >= missions.total;
@@ -91,7 +88,7 @@ export function MissionsRing({
             pathLength={1}
             strokeDasharray="1"
             strokeLinecap="round"
-            strokeWidth={strokeWidth}
+            strokeWidth={2}
           />
         ))}
       </svg>
