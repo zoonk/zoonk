@@ -20,7 +20,7 @@ const NOT_SURE: ChoiceAnswer = { dontKnow: true };
 
 /**
  * Each answer carries the run's earlier ones, so a run left halfway still counts; `finish` counts
- * it once more at the end.
+ * it once more at the end, also with no answers: a day's block needs it to complete.
  */
 export type MistakePracticeActions = {
   record?: RecordMistakeAction;
@@ -57,10 +57,7 @@ export function useMistakePractice({
 
   const finish = useEffectEvent(async () => {
     // A count that didn't get through still ends the run: each answer was counted as it came.
-    const summary =
-      state.answerIds.length === 0
-        ? null
-        : await actions.finish({ answerIds: state.answerIds }).catch(() => null);
+    const summary = await actions.finish({ answerIds: state.answerIds }).catch(() => null);
 
     dispatch({ summary, type: "ended" });
   });
@@ -125,6 +122,12 @@ export function useMistakePractice({
   };
 
   return {
+    again: () => {
+      attempt.current = null;
+      recording.reset();
+      shownAt.current = Date.now();
+      dispatch({ type: "again" });
+    },
     check: (answer: PracticeAnswer) => check(answer, "check"),
     end: () => dispatch({ type: "end" }),
     next: () => {

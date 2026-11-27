@@ -43,6 +43,7 @@ export async function requestSpokenGrade({
   practice?: {
     mistakeId: string;
     attemptId: string;
+    blockId?: string;
     goalId: string;
     answerIds: string[];
     practiceDurationMs: number;
@@ -59,6 +60,10 @@ export async function requestSpokenGrade({
     form.set("attemptId", practice.attemptId);
     form.set("goalId", practice.goalId);
     form.set("answerIds", JSON.stringify(practice.answerIds));
+
+    if (practice.blockId) {
+      form.set("blockId", practice.blockId);
+    }
   }
 
   if (studySessionId) {

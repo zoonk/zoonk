@@ -85,7 +85,8 @@ export type PracticeAction =
   | { type: "retry" }
   | { type: "next" }
   | { type: "end" }
-  | { summary: MistakePracticeSummary | null; type: "ended" };
+  | { summary: MistakePracticeSummary | null; type: "ended" }
+  | { type: "again" };
 
 function toPracticeSteps(practice: readonly PracticeEntry[]): PracticeStep[] {
   return practice.flatMap<PracticeStep>((entry) => {
@@ -112,6 +113,7 @@ function getOpeningPhase(step: PracticeStep | undefined): PracticePhase {
     : { kind: "answering", selected: initialOrderAnswer(step.question) };
 }
 
+/** An empty run still ends through its finish, so a day's block with nothing left completes. */
 export function createPracticeState(practice: readonly PracticeEntry[]): PracticeState {
   const steps = toPracticeSteps(practice);
 
@@ -120,7 +122,7 @@ export function createPracticeState(practice: readonly PracticeEntry[]): Practic
     failures: 0,
     fixedIds: [],
     index: 0,
-    phase: steps.length === 0 ? { kind: "ended", summary: null } : getOpeningPhase(steps[0]),
+    phase: getOpeningPhase(steps[0]),
     reached: NOTHING_REACHED,
     steps,
     verdicts: [],
@@ -244,22 +246,29 @@ export function practiceReducer(state: PracticeState, action: PracticeAction): P
           ? mergeReached(state.reached, action.summary.reached)
           : state.reached,
       };
+    case "again":
+      return state.phase.kind === "ended"
+        ? createPracticeState(getEntriesToPracticeAgain(state))
+        : state;
     default:
       return state;
   }
 }
 
-export type PracticeEndNote = "missed" | "missedAndUnreached" | "unreached";
-
-export function getPracticeEndNote(state: PracticeState): PracticeEndNote | null {
-  const missed = state.verdicts.some((verdict) => verdict !== "right");
-  const unreached = state.verdicts.length < state.steps.length;
-
-  if (missed) {
-    return unreached ? "missedAndUnreached" : "missed";
+/**
+ * A run played to its end can start again on what it didn't fix, in the same order. One the learner
+ * left early ends there.
+ */
+export function getEntriesToPracticeAgain(state: PracticeState): PracticeEntry[] {
+  if (state.index < state.steps.length) {
+    return [];
   }
 
-  return unreached ? "unreached" : null;
+  const fixed = new Set(state.fixedIds);
+
+  return state.steps.flatMap(({ entry, firstOfEntry }) =>
+    firstOfEntry && !fixed.has(entry.mistakeId) ? [entry] : [],
+  );
 }
 
 export function getPracticeSegments(state: PracticeState): TaskSegment[] {

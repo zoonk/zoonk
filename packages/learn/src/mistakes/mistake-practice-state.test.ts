@@ -4,7 +4,7 @@ import {
   type MistakePracticeSummary,
   type PracticeEntry,
   createPracticeState,
-  getPracticeEndNote,
+  getEntriesToPracticeAgain,
   getPracticeSegments,
   practiceReducer,
 } from "./mistake-practice-state";
@@ -104,8 +104,8 @@ describe(createPracticeState, () => {
     });
   });
 
-  it("has nothing to play without mistakes", () => {
-    expect(createPracticeState([]).phase).toStrictEqual({ kind: "ended", summary: null });
+  it("ends at once through its finish without mistakes, so a day's empty block completes", () => {
+    expect(createPracticeState([]).phase).toStrictEqual({ kind: "ending" });
   });
 });
 
@@ -356,28 +356,56 @@ describe(getPracticeSegments, () => {
   });
 });
 
-describe(getPracticeEndNote, () => {
-  it("says a miss waits for another day and the mistakes a stopped run never reached are still ready", () => {
-    const practice = [entry("first", {}, 1), entry("second", {}, 1)];
-    const answer = { selectedIndex: 1 };
+describe(getEntriesToPracticeAgain, () => {
+  const practice = [entry("first", {}, 1), entry("second", {}, 2), entry("third", {}, 1)];
+  const answer = { selectedIndex: 0 };
 
-    const answered = (isCorrect: boolean) =>
-      [
-        { answer, durationMs: 4000, sender: "check", type: "check" },
-        { feedback: { ...graded(`a${isCorrect}`), isCorrect }, mistakeId: "m", type: "answered" },
-        { type: "next" },
-      ] as const;
+  const answered = (mistakeId: string, fixed: boolean) =>
+    [
+      { answer, durationMs: 4000, sender: "check", type: "check" },
+      { feedback: graded(`${mistakeId}-answer`, fixed), mistakeId, type: "answered" },
+      { type: "next" },
+    ] as const;
 
-    const play = (...actions: ReturnType<typeof answered>[number][]) =>
-      actions.reduce(
-        (current, action) => practiceReducer(current, action),
-        createPracticeState(practice),
-      );
+  const play = (...actions: ReturnType<typeof answered>[number][]) =>
+    actions.reduce(
+      (current, action) => practiceReducer(current, action),
+      createPracticeState(practice),
+    );
 
-    expect(getPracticeEndNote(play())).toBe("unreached");
-    expect(getPracticeEndNote(play(...answered(false)))).toBe("missedAndUnreached");
-    expect(getPracticeEndNote(play(...answered(true)))).toBe("unreached");
-    expect(getPracticeEndNote(play(...answered(false), ...answered(true)))).toBe("missed");
-    expect(getPracticeEndNote(play(...answered(true), ...answered(true)))).toBeNull();
+  const finished = play(
+    ...answered("first", true),
+    ...answered("second", false),
+    ...answered("second", false),
+    ...answered("third", false),
+  );
+
+  it("starts again on the mistakes a finished run didn't fix, in their order", () => {
+    expect(getEntriesToPracticeAgain(finished).map(({ mistakeId }) => mistakeId)).toStrictEqual([
+      "second",
+      "third",
+    ]);
+
+    const ended = practiceReducer(practiceReducer(finished, { type: "end" }), {
+      summary: SUMMARY,
+      type: "ended",
+    });
+
+    const again = practiceReducer(ended, { type: "again" });
+
+    expect(again).toStrictEqual(createPracticeState(practice.slice(1)));
+  });
+
+  it("offers nothing again once the learner left early or fixed everything", () => {
+    expect(getEntriesToPracticeAgain(play(...answered("first", false)))).toStrictEqual([]);
+
+    const allFixed = play(
+      ...answered("first", true),
+      ...answered("second", true),
+      ...answered("second", true),
+      ...answered("third", true),
+    );
+
+    expect(getEntriesToPracticeAgain(allFixed)).toStrictEqual([]);
   });
 });

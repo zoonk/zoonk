@@ -27,10 +27,32 @@ function PracticeMain({ children }: { children: React.ReactNode }) {
   return <main className="bg-background flex min-h-dvh flex-col">{children}</main>;
 }
 
-function readSkillId(query: Awaited<Props["searchParams"]>): string | undefined {
-  const skill = Array.isArray(query.skill) ? query.skill[0] : query.skill;
-  const parsed = mistakePracticeInputSchema.shape.skillId.safeParse(skill);
-  return parsed.success ? parsed.data : undefined;
+function readParam(query: Awaited<Props["searchParams"]>, name: string): string | undefined {
+  const value = query[name];
+  return Array.isArray(value) ? value[0] : value;
+}
+
+/** One scope at a time: a day's block, a finished mock, a skill, or the whole notebook. */
+function readScope(query: Awaited<Props["searchParams"]>) {
+  const parsed = mistakePracticeInputSchema.safeParse({
+    blockId: readParam(query, "blockId"),
+    mockId: readParam(query, "mockId"),
+    skillId: readParam(query, "skill"),
+  });
+
+  return parsed.success
+    ? { blockId: parsed.data.blockId, mockId: parsed.data.mockId, skillId: parsed.data.skillId }
+    : {};
+}
+
+function getPracticeHref({ blockId, mockId, skillId }: ReturnType<typeof readScope>): string {
+  const params = new URLSearchParams({
+    ...(blockId && { blockId }),
+    ...(mockId && { mockId }),
+    ...(skillId && { skill: skillId }),
+  });
+
+  return params.size > 0 ? `/mistakes/practice?${params}` : "/mistakes/practice";
 }
 
 async function PracticeBody({ searchParams }: Pick<Props, "searchParams">) {
@@ -42,14 +64,10 @@ async function PracticeBody({ searchParams }: Pick<Props, "searchParams">) {
     getTutorViewer(),
   ]);
 
-  const skillId = readSkillId(query);
+  const scope = readScope(query);
 
   if (!session) {
-    return (
-      <AuthGateScreen
-        next={skillId ? `/mistakes/practice?skill=${skillId}` : "/mistakes/practice"}
-      />
-    );
+    return <AuthGateScreen next={getPracticeHref(scope)} />;
   }
 
   if (!goal) {
@@ -57,7 +75,7 @@ async function PracticeBody({ searchParams }: Pick<Props, "searchParams">) {
     return null;
   }
 
-  const result = await getMistakePractice({ goalId: goal.id, includeAllFormats: true, skillId });
+  const result = await getMistakePractice({ ...scope, goalId: goal.id, includeAllFormats: true });
 
   if (result.status !== "ready") {
     return (
@@ -71,6 +89,7 @@ async function PracticeBody({ searchParams }: Pick<Props, "searchParams">) {
     <PracticeMain>
       <DrawnMath content={result.practice}>
         <MistakePracticeClient
+          blockId={scope.blockId}
           goalId={goal.id}
           practice={result.practice}
           trueFalseLabels={result.trueFalseLabels}

@@ -15,13 +15,18 @@ import { finishMistakePracticeAction } from "./practice-actions";
 
 type RunProps = ComponentProps<typeof MistakePracticeRun>;
 
-/** A link opens practice with the mistakes ready now; Back and forward keep the screen as it was. */
+/**
+ * A link opens practice with the mistakes ready now; Back and forward keep the screen as it was. A
+ * day's block (`blockId`) plays the mistakes it holds and ends back on Today.
+ */
 export function MistakePracticeClient({
+  blockId,
   goalId,
   practice,
   trueFalseLabels,
   tutor,
 }: {
+  blockId?: string;
   goalId: string;
   practice: RunProps["practice"];
   trueFalseLabels: RunProps["trueFalseLabels"];
@@ -38,18 +43,22 @@ export function MistakePracticeClient({
           postToApp<MistakePracticeFeedback>({
             body: {
               ...answer,
-              run: { answerIds: runAnswerIds, goalId },
+              run: { answerIds: runAnswerIds, blockId, goalId },
               timeZone: getLocalTimeZone(),
             },
             path: `/api/me/mistakes/${encodeURIComponent(mistakeId)}/answers`,
           }),
-        finish: (run) =>
-          finishMistakePracticeAction({
-            ...run,
-            ended: true,
-            goalId,
-            timeZone: getLocalTimeZone(),
-          }),
+        // A block's run finishes even unanswered: one whose mistakes are all gone completes it.
+        finish: async (run) =>
+          run.answerIds.length === 0 && !blockId
+            ? null
+            : finishMistakePracticeAction({
+                ...run,
+                blockId,
+                ended: true,
+                goalId,
+                timeZone: getLocalTimeZone(),
+              }),
         record: async ({
           audio,
           durationMs,
@@ -62,7 +71,14 @@ export function MistakePracticeClient({
           const outcome = await requestSpokenGrade({
             audio,
             durationMs,
-            practice: { answerIds: runAnswerIds, attemptId, goalId, mistakeId, practiceDurationMs },
+            practice: {
+              answerIds: runAnswerIds,
+              attemptId,
+              blockId,
+              goalId,
+              mistakeId,
+              practiceDurationMs,
+            },
             stepId,
             studySessionId: null,
           });
@@ -76,11 +92,12 @@ export function MistakePracticeClient({
             : { status: "failed" };
         },
       }}
-      backHref="/mistakes"
+      backHref={blockId ? "/today" : "/mistakes"}
       buddy={tutor.buddy}
       key={bfcacheId}
       lessonHref={lessonHref}
       practice={practice}
+      practiceAgain={!blockId}
       renderCeremony={(moments, onClose) => (
         <SessionCeremony buddy={tutor.buddy} moments={moments} onClose={onClose} />
       )}

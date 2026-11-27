@@ -3,15 +3,15 @@
 import { type Reached } from "@zoonk/core/sessions/reached";
 import { useExtracted } from "next-intl";
 import { MomentReadouts } from "../_components/moment-readouts";
-import { StepCard, StepDetail, StepHeader } from "../_components/step-card";
+import { StepCard, StepHeader } from "../_components/step-card";
 import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { DayMoment } from "../session/day-moment";
 import { MomentAfterCeremony, type MomentCeremony } from "../session/moment-ceremony";
 import { MomentHeader } from "../session/moment-header";
 import { PendingMoment } from "../session/pending-moment";
-import { TaskMainLink } from "../shell/task-frame";
-import { type MistakePracticeSummary, type PracticeEndNote } from "./mistake-practice-state";
+import { TaskMainButton, TaskMainLink } from "../shell/task-frame";
+import { type MistakePracticeSummary } from "./mistake-practice-state";
 
 function BackBar({ backHref }: { backHref: string }) {
   const t = useExtracted();
@@ -54,10 +54,7 @@ export function NothingToPractice({ backHref }: { backHref: string }) {
       <TaskBody>
         <StepCard role="status">
           <StepHeader>
-            <h2 className="text-title">{t("Nothing to practice yet")}</h2>
-            <StepDetail>
-              {t("Mistakes come back for practice from the day after you make them.")}
-            </StepDetail>
+            <h2 className="text-title">{t("Nothing to practice")}</h2>
           </StepHeader>
         </StepCard>
       </TaskBody>
@@ -67,37 +64,36 @@ export function NothingToPractice({ backHref }: { backHref: string }) {
   );
 }
 
-function PracticeEndDetail({ note }: { note: PracticeEndNote | null }) {
+/** Practicing again plays what the run didn't fix; with nothing left, the learner is done. */
+function DoneBar({ again, backHref }: { again: (() => void) | null; backHref: string }) {
   const t = useExtracted();
 
-  if (note === "missed") {
-    return t("The ones you missed come back another day, when they stick better.");
-  }
-
-  if (note === "missedAndUnreached") {
-    return t("The ones you missed come back another day. The rest are still ready to practice.");
-  }
-
-  if (note === "unreached") {
-    return t("The rest are still ready to practice.");
-  }
-
-  return null;
+  return (
+    <TaskActionBar>
+      <TaskActions>
+        {again ? (
+          <TaskMainButton onClick={again}>{t("Practice again")}</TaskMainButton>
+        ) : (
+          <TaskMainLink href={backHref}>{t("Done")}</TaskMainLink>
+        )}
+      </TaskActions>
+    </TaskActionBar>
+  );
 }
 
 export function PracticeDone({
+  again,
   backHref,
   buddy,
   fixed,
-  note,
   reached,
   renderCeremony,
   summary,
 }: {
+  again: (() => void) | null;
   backHref: string;
   buddy?: LearnBuddy | null;
   fixed: number;
-  note: PracticeEndNote | null;
   reached: Reached;
   renderCeremony?: MomentCeremony;
   summary: MistakePracticeSummary | null;
@@ -108,7 +104,7 @@ export function PracticeDone({
   return (
     <MomentAfterCeremony moments={summary} render={renderCeremony}>
       <TaskBody>
-        <MomentHeader detail={note && <PracticeEndDetail note={note} />} title={t("Practice done")}>
+        <MomentHeader title={t("Practice done")}>
           <PracticeEarned fixed={fixed} summary={summary} />
         </MomentHeader>
 
@@ -120,7 +116,7 @@ export function PracticeDone({
         />
       </TaskBody>
 
-      <BackBar backHref={backHref} />
+      <DoneBar again={again} backHref={backHref} />
     </MomentAfterCeremony>
   );
 }

@@ -24,7 +24,7 @@ import { QuestionBlockHeader } from "../session/question-block/question-block-he
 import { type LessonHref } from "./drill/drill-types";
 import {
   type PracticeEntry,
-  getPracticeEndNote,
+  getEntriesToPracticeAgain,
   getPracticeSegments,
 } from "./mistake-practice-state";
 import { NothingToPractice, PracticeDone, PracticeSaving } from "./practice-done";
@@ -123,6 +123,7 @@ function PracticeBody({
   backHref,
   buddy,
   lessonHref,
+  practiceAgain,
   renderCeremony,
   renderLesson,
   run,
@@ -132,6 +133,7 @@ function PracticeBody({
   backHref: string;
   buddy?: LearnBuddy | null;
   lessonHref: LessonHref | null;
+  practiceAgain: boolean;
   renderCeremony?: MomentCeremony;
   renderLesson: LessonPracticeRenderer;
   run: Run;
@@ -151,10 +153,12 @@ function PracticeBody({
   if (phase.kind === "ended" || !run.step) {
     return (
       <PracticeDone
+        again={
+          practiceAgain && getEntriesToPracticeAgain(run.state).length > 0 ? run.again : null
+        }
         backHref={backHref}
         buddy={buddy}
         fixed={run.state.fixedIds.length}
-        note={getPracticeEndNote(run.state)}
         reached={run.state.reached}
         renderCeremony={renderCeremony}
         summary={phase.kind === "ended" ? phase.summary : null}
@@ -180,12 +184,17 @@ function PracticeBody({
   );
 }
 
+/**
+ * `practiceAgain` offers a finished run again on what it didn't fix; a day's block run leaves it out,
+ * since the day goes on from Today.
+ */
 export function MistakePracticeRun({
   actions,
   backHref,
   buddy,
   lessonHref,
   practice,
+  practiceAgain = true,
   renderCeremony,
   renderLesson,
   trueFalseLabels,
@@ -196,6 +205,7 @@ export function MistakePracticeRun({
   buddy?: LearnBuddy | null;
   lessonHref: LessonHref | null;
   practice: PracticeEntry[];
+  practiceAgain?: boolean;
   renderCeremony?: MomentCeremony;
   renderLesson: LessonPracticeRenderer;
   trueFalseLabels: TrueFalseLabels;
@@ -228,6 +238,7 @@ export function MistakePracticeRun({
         backHref={backHref}
         buddy={buddy}
         lessonHref={lessonHref}
+        practiceAgain={practiceAgain}
         renderCeremony={renderCeremony}
         renderLesson={renderLesson}
         run={run}
