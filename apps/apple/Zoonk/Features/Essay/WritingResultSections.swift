@@ -467,6 +467,12 @@ private struct WritingCriteriaSection: View {
     }
 
     guard grade.points != nil else {
+      let turnedBack = grade.nextStep?.kind == .short || grade.nextStep?.kind == .zero
+
+      if turnedBack {
+        return nil
+      }
+
       return String(
         localized: "Graded by level: we can't yet estimate this answer's points closely enough.",
         table: "Essay")

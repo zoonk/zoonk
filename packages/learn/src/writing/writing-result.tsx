@@ -185,7 +185,11 @@ function useCriteriaFooter(prompt: WritingPrompt, grade: WritingResult): string 
   }
 
   if (grade.kind === "levels") {
-    return t("Graded by level: we can't yet estimate this answer's points closely enough.");
+    const turnedBack = grade.nextStep?.kind === "short" || grade.nextStep?.kind === "zero";
+
+    return turnedBack
+      ? null
+      : t("Graded by level: we can't yet estimate this answer's points closely enough.");
   }
 
   return prompt.keySource === "notice"

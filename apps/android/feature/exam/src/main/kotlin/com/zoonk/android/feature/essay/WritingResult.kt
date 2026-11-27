@@ -404,6 +404,7 @@ private fun criteriaFooter(
 ): String? =
     when {
         grade.points == null && prompt.criteria.all { it.points == null } -> stringResource(R.string.essay_no_points_in_notice)
+        grade.points == null && grade.turnedBack -> null
         grade.points == null -> stringResource(R.string.essay_graded_by_level_why)
         prompt.keySource == WritingPromptOutput.KeySource.NOTICE -> stringResource(R.string.essay_criteria_from_notice)
         else -> stringResource(R.string.essay_criteria_from_notice_practice_key)

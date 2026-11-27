@@ -74,6 +74,10 @@ private fun WritingGrade.isComplete(): Boolean =
 val WritingGrade.zeroed: Boolean
     get() = nextStep?.kind == WritingResultOutputOneOfNextStep.Kind.ZERO || points?.zeroReason != null
 
+/** Too short to grade, or zeroed by a rule: its criteria weren't read. */
+val WritingGrade.turnedBack: Boolean
+    get() = zeroed || nextStep?.kind == WritingResultOutputOneOfNextStep.Kind.SHORT
+
 /**
  * The one thing to work on next. "Nothing left" only when every criterion is complete and every
  * line is read; a zeroed answer's step is the rule it broke; text past the limit is the step when
