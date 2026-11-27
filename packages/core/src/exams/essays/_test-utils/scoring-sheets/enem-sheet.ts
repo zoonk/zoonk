@@ -22,8 +22,8 @@ export const ENEM_GRADING: WritingSheet = {
     manual(
       "Na proposta de intervenção, um agente genérico (“alguém”, “todos”) e uma ação sem conteúdo (“medidas devem ser tomadas”) não contam como elementos válidos.",
     ),
-    manual(
-      "Tratar só do assunto amplo é tangenciamento, não fuga ao tema: a nota zero cabe ao texto que ignora o tema e o assunto.",
+    cartilha(
+      "Exemplo da banca: num tema sobre valorizar a herança africana no Brasil, tratar da herança africana sem falar da sua valorização foi tangenciamento; tratar da história ou do preconceito no Brasil sem a herança africana foi fuga ao tema.",
     ),
   ],
   criteria: [
@@ -119,8 +119,8 @@ export const ENEM_GRADING: WritingSheet = {
       criteria: ["c5"],
       max: 80,
     }),
-    manual(
-      "Tangenciamento: o texto ou a proposta trata só do assunto amplo, e não do tema; no máximo 40 pontos em cada uma dessas competências.",
+    cartilha(
+      "Tangenciamento ao tema: o texto trata o tema de forma parcial, só pelo assunto mais amplo a que ele se liga, sem discutir o tema específico; no máximo 40 pontos nas competências 2, 3 e 5.",
       { criteria: ["c2", "c3", "c5"], max: 40 },
     ),
     manual(
@@ -130,7 +130,10 @@ export const ENEM_GRADING: WritingSheet = {
   ],
   rounding: null,
   zeroing: [
-    cartilha("Fuga total ao tema.", { kinds: ["offTopic" as const] }),
+    cartilha(
+      "Fuga total ao tema: o texto não desenvolve nem o tema específico proposto nem o assunto mais amplo a que ele se liga.",
+      { kinds: ["offTopic" as const] },
+    ),
     cartilha("Não obediência ao tipo dissertativo-argumentativo.", {
       kinds: ["wrongForm" as const],
     }),

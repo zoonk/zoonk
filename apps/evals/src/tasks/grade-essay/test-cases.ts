@@ -161,20 +161,7 @@ const IMPACT_BASIS = basis({
   total: 70,
 });
 
-const ENEM_SHEET: Grading = {
-  ...SCORING_SHEET_EXAMPLES.enem.grading,
-  zeroing: [
-    {
-      citation: {
-        passage:
-          "14.7 A banca avaliadora poderá atribuir nota 0 (zero) à redação que: 14.7.1 Não atender à proposta solicitada ou possua outra estrutura textual que não seja a estrutura dissertativo-argumentativa",
-        sourceId: "enem-2026-edital-64",
-      },
-      kinds: ["offTopic", "wrongForm"],
-      text: "Fuga ao tema/não atendimento à estrutura dissertativo-argumentativa",
-    },
-  ],
-};
+const ENEM_SHEET: Grading = SCORING_SHEET_EXAMPLES.enem.grading;
 
 const ENEM_CRITERIA = [
   { id: "c1", name: "Domínio da modalidade escrita formal", points: 200 },
@@ -915,23 +902,6 @@ const OAB_CASES = [
 
 const ENEM_SOURCE = { author: OPENAI_AUTHOR, board: "Inep", reference: INEP_GUIDE };
 
-const ENEM_ZERO_RULES: Grading["zeroing"] = [
-  { kinds: ["blank"], text: "Folha de redação sem texto" },
-  { kinds: ["identification"], text: "Identificação do participante no espaço destinado ao texto" },
-  {
-    kinds: ["copiedSupport"],
-    maxLines: 7,
-    text: "Até sete linhas originais após desconsiderar as linhas copiadas dos textos de apoio",
-  },
-  { kinds: ["tooFewLines"], maxLines: 7, text: "Texto insuficiente: até sete linhas manuscritas" },
-  { kinds: ["offTopic"], text: "Fuga total ao tema" },
-  { kinds: ["wrongForm"], text: "Texto fora do tipo dissertativo-argumentativo" },
-].map((rule): Grading["zeroing"][number] => ({
-  ...rule,
-  citation: { passage: rule.text, sourceId: "inep-cartilha-2025-pp7-8" },
-  kinds: rule.kinds as ZeroKind[],
-}));
-
 function enemZeroCase({
   id,
   text,
@@ -955,7 +925,7 @@ function enemZeroCase({
     id: `enem-${id}-openai`,
     source: ENEM_SOURCE,
     userInput: {
-      basis: { ...task, grading: { ...task.grading, zeroing: ENEM_ZERO_RULES }, lines: 30 },
+      basis: { ...task, lines: 30 },
       context: ENEM_ZERO_ANSWERS.support,
       keyPoints: [],
       language: "pt",

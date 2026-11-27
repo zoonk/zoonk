@@ -47,19 +47,7 @@ const CINEMA_BASIS = basis({
     { id: "c4", name: "Mecanismos linguísticos de coesão", points: 200 },
     { id: "c5", name: "Proposta de intervenção", points: 200 },
   ],
-  grading: {
-    ...SCORING_SHEET_EXAMPLES.enem.grading,
-    zeroing: [
-      {
-        citation: {
-          passage: "4.2. fugir ao tema ou que não atender ao tipo dissertativo-argumentativo.",
-          sourceId: "enem-2019-day-1-yellow",
-        },
-        kinds: ["offTopic", "wrongForm"],
-        text: "Fuga ao tema/não atendimento à estrutura dissertativo-argumentativa",
-      },
-    ],
-  },
+  grading: SCORING_SHEET_EXAMPLES.enem.grading,
   // The original sheets met the handwritten line limit. Typed transcriptions omit those line breaks.
   lines: null,
   taskKey: "enem-redacao",
