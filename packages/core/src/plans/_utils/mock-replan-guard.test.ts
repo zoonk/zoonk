@@ -13,7 +13,9 @@ function plan({
   droppedSkillIds = ["statistics"],
   endDate = "2026-12-01",
   lessonId = "algebra",
+  reviewDays = ["2027-01-02", "2027-01-03"],
   scheduledFor = addDays(today, 2),
+  teachingEnd = "2027-01-01",
 }: {
   coreFits?: boolean;
   coveredRaw?: number;
@@ -21,7 +23,9 @@ function plan({
   droppedSkillIds?: string[];
   endDate?: string;
   lessonId?: string;
+  reviewDays?: string[];
   scheduledFor?: Date;
+  teachingEnd?: string;
 } = {}) {
   const lesson: PlannedItem = {
     chapterId: null,
@@ -38,10 +42,25 @@ function plan({
     titleSnapshot: "Algebra",
   };
 
+  const reviews = reviewDays.map((day): PlannedItem => ({
+    chapterId: null,
+    completedAt: null,
+    id: null,
+    key: `review:${day}`,
+    kind: "review",
+    lessonId: null,
+    minutes: 30,
+    phase: 1,
+    scheduledFor: fromIsoDate(day),
+    skillId: null,
+    status: "todo",
+    titleSnapshot: "Review",
+  }));
+
   return {
     built: {
       droppedSkillIds,
-      items: [lesson],
+      items: [lesson, ...reviews],
       phases: parsePlanPhases([
         { endDate, name: "Base" },
         { endDate: "2027-01-15", name: "Review" },
@@ -64,7 +83,7 @@ function plan({
         ],
         targetDate: "2027-01-15",
       },
-      endDate,
+      endDate: teachingEnd,
     },
   };
 }
@@ -92,6 +111,27 @@ describe(holdsSchedule, () => {
     { coreFits: false },
     { coveredRaw: 36 },
   ])("refuses a change in coverage or whether the core fits (%o)", (change) => {
+    expect(
+      holdsSchedule({ baseline: plan(), computed: plan(change), movableFrom: addDays(today, 1) }),
+    ).toBe(false);
+  });
+
+  it("allows teaching to finish a day sooner, with the review day that frees", () => {
+    const computed = plan({
+      reviewDays: ["2027-01-01", "2027-01-02", "2027-01-03"],
+      teachingEnd: "2026-12-31",
+    });
+
+    expect(holdsSchedule({ baseline: plan(), computed, movableFrom: addDays(today, 1) })).toBe(
+      true,
+    );
+  });
+
+  it.each([
+    { teachingEnd: "2027-01-02" },
+    { reviewDays: ["2027-01-03"] },
+    { reviewDays: ["2027-01-02", "2027-01-04"] },
+  ])("refuses teaching that ends later or a review day it loses (%o)", (change) => {
     expect(
       holdsSchedule({ baseline: plan(), computed: plan(change), movableFrom: addDays(today, 1) }),
     ).toBe(false);
