@@ -40,6 +40,7 @@
       "CODEX_SANDBOX",
       "DATABASE_*",
       "MAIN_CACHE_BYPASS_SECRET",
+      "NODE_EXTRA_CA_CERTS",
       "ZOONK_DEV_LAUNCHER_PID",
       "ZOONK_QUEUE_*",
       "ZOONK_QUERY_LOG"

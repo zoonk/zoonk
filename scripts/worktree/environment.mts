@@ -92,7 +92,7 @@ function databaseEnvironment({ name, source }: { name: string; source: URL }): {
   return { DATABASE_URL: url.href, DATABASE_URL_UNPOOLED: url.href };
 }
 
-function readsDatabase(directory: string): boolean {
+export function readsDatabase(directory: string): boolean {
   const path = join(directory, "package.json");
   const manifest: unknown = existsSync(path) ? JSON.parse(readFileSync(path, "utf8")) : null;
 

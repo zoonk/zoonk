@@ -13,6 +13,7 @@ import { parseEnv } from "node:util";
 import { afterEach, describe, expect, it } from "vitest";
 import { worktreeDatabaseName } from "../../packages/db/src/local-database-names.ts";
 import { getLocalDatabaseUrl } from "../../packages/db/src/local-database.ts";
+import { requireDevelopmentDatabase } from "./databases.mts";
 import { copyEnvironment, ownDevelopmentDatabaseUrl, writeEnvironment } from "./environment.mts";
 
 function checkout(root: string, name: string): string {
@@ -82,6 +83,30 @@ describe(getLocalDatabaseUrl, () => {
     expect(new URL(getLocalDatabaseUrl("dev", primary)).pathname).toBe("/zoonk");
     expect(new URL(getLocalDatabaseUrl("test", primary)).pathname).toBe("/zoonk_test");
     expect(new URL(getLocalDatabaseUrl("e2e", primary)).pathname).toBe("/zoonk_e2e");
+  });
+});
+
+describe(requireDevelopmentDatabase, () => {
+  it("stops an unconfigured linked checkout with the setup command", async () => {
+    const worktree = databaseCheckout();
+    writeFileSync(join(worktree, ".git"), "gitdir: /checkout/.git/worktrees/example\n");
+
+    await expect(requireDevelopmentDatabase(worktree)).rejects.toThrow("pnpm worktree:setup");
+  });
+
+  it("leaves the primary checkout's database alone", async () => {
+    const primary = databaseCheckout();
+    mkdirSync(join(primary, ".git"));
+
+    await expect(requireDevelopmentDatabase(primary)).resolves.toBeNull();
+  });
+
+  it("leaves explicitly configured databases on another server alone", async () => {
+    const worktree = databaseCheckout();
+    writeFileSync(join(worktree, ".git"), "gitdir: /checkout/.git/worktrees/example\n");
+    writeDatabaseUrl({ url: "postgres://user:secret@db.example.test/zoonk", worktree });
+
+    await expect(requireDevelopmentDatabase(worktree)).resolves.toBeNull();
   });
 });
 

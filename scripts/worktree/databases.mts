@@ -3,7 +3,8 @@ import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { type DatabaseMode } from "../../packages/db/src/local-database-names.ts";
-import { ownDevelopmentDatabaseUrl } from "./environment.mts";
+import { isLinkedWorktree } from "../../packages/db/src/local-database.ts";
+import { localSource, ownDevelopmentDatabaseUrl } from "./environment.mts";
 import { readLibrarySource } from "./library-source.mts";
 import {
   postgresEnvironment,
@@ -102,13 +103,11 @@ async function updateLibrary({ url, worktree }: { url: URL; worktree: string }):
  * lock.
  */
 export async function updateDevelopmentDatabase(worktree: string): Promise<void> {
-  const own = ownDevelopmentDatabaseUrl(worktree);
+  const url = await requireDevelopmentDatabase(worktree);
 
-  if (!own) {
+  if (!url) {
     return;
   }
-
-  const url = new URL(own);
 
   await withDatabaseLock({
     action: async () => {
@@ -118,6 +117,23 @@ export async function updateDevelopmentDatabase(worktree: string): Promise<void>
     source: url,
     worktree,
   });
+}
+
+export async function requireDevelopmentDatabase(worktree: string): Promise<URL | null> {
+  if (!isLinkedWorktree(worktree) || !localSource(worktree)) {
+    return null;
+  }
+
+  const configured = ownDevelopmentDatabaseUrl(worktree);
+  const url = configured ? new URL(configured) : null;
+
+  if (!url || !(await hasDatabase(url))) {
+    throw new Error(
+      "This worktree is missing its development database. Run pnpm worktree:setup from its root and try again.",
+    );
+  }
+
+  return url;
 }
 
 /** Each database is managed on its own server; `source` names the primary checkout's database for cleanup. */
@@ -198,7 +214,7 @@ async function prepareDatabase({
   return { ...database, fresh: true, seed: true };
 }
 
-async function hasSourceDatabase(source: URL): Promise<boolean> {
+async function hasDatabase(source: URL): Promise<boolean> {
   const name = sqlLiteral(decodeURIComponent(source.pathname.slice(1)));
   return Boolean(await query({ source, sql: `SELECT 1 FROM pg_database WHERE datname = ${name}` }));
 }
@@ -277,7 +293,7 @@ export async function prepareDatabases({
 
   const development = databases.find((database) => database.mode === "dev");
 
-  if (!development?.fresh || !isolated || !(await hasSourceDatabase(source))) {
+  if (!development?.fresh || !isolated || !(await hasDatabase(source))) {
     return databases;
   }
 

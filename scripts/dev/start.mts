@@ -1,9 +1,18 @@
 import { randomUUID } from "node:crypto";
-import { existsSync, readFileSync, readdirSync, realpathSync } from "node:fs";
-import { homedir } from "node:os";
+import {
+  existsSync,
+  mkdtempSync,
+  readFileSync,
+  readdirSync,
+  realpathSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
+import { homedir, tmpdir } from "node:os";
 import { join } from "node:path";
 import { getCACertificates, setDefaultCACertificates } from "node:tls";
 import { updateDevelopmentDatabase } from "../worktree/databases.mts";
+import { readsDatabase } from "../worktree/environment.mts";
 import { clearProductionBuildOutput } from "./build-output.mts";
 import {
   getMailboxCaptureUrl,
@@ -105,8 +114,25 @@ async function buildForProduction({
   }
 }
 
+function trustLanCertificate(caPath: string): string {
+  const ca = readFileSync(caPath, "utf8");
+  setDefaultCACertificates([...getCACertificates(), ca]);
+
+  const extra = getCACertificates("extra");
+
+  if (extra.length === 0) {
+    return caPath;
+  }
+
+  const directory = mkdtempSync(join(tmpdir(), "zoonk-lan-ca-"));
+  process.once("exit", () => rmSync(directory, { force: true, recursive: true }));
+  const bundle = join(directory, "ca.pem");
+  writeFileSync(bundle, [...extra, ca].join("\n"), { mode: 0o600 });
+  return bundle;
+}
+
 /** Resolves shared service URLs once before Next.js captures public environment variables at startup or build. */
-async function startPortlessDevelopment(): Promise<CommandResult> {
+async function startPortlessDevelopment(startedApps: string[]): Promise<CommandResult> {
   const projectName = getProjectName({ currentDirectory });
   const portlessEnvironment = getPortlessEnvironment({ homeDirectory: homedir(), lanMode });
   const environment = { ...process.env, ...portlessEnvironment };
@@ -120,16 +146,14 @@ async function startPortlessDevelopment(): Promise<CommandResult> {
   const apiUrl = getServiceUrl({ ...service, serviceName: "api" });
   const mailboxUrl = getServiceUrl({ ...service, serviceName: "mailbox" });
 
-  if (lanMode) {
-    const caPath = join(portlessEnvironment.PORTLESS_STATE_DIR, "ca.pem");
-    setDefaultCACertificates([...getCACertificates(), readFileSync(caPath, "utf8")]);
+  const caPath = join(portlessEnvironment.PORTLESS_STATE_DIR, "ca.pem");
+  const lanCertificateBundle = lanMode ? trustLanCertificate(caPath) : undefined;
 
+  if (lanMode) {
     process.stdout.write(
       `For LAN browsers and debug apps, install and trust ${caPath} on the device. See the LAN setup in README.md.\n\n`,
     );
   }
-
-  const startedApps = getStartedApps();
 
   const services: Service[] = sortServices(startedApps).map((name) => ({
     name,
@@ -142,6 +166,7 @@ async function startPortlessDevelopment(): Promise<CommandResult> {
 
   const stackEnvironment = {
     ...environment,
+    ...(lanCertificateBundle && { NODE_EXTRA_CA_CERTS: lanCertificateBundle }),
     ADMIN_APP_URL: adminUrl,
     MAILBOX_URL: getMailboxCaptureUrl(mailboxUrl),
     MAIN_APP_URL: mainUrl,
@@ -176,11 +201,15 @@ async function startPortlessDevelopment(): Promise<CommandResult> {
   }
 }
 
-await updateDevelopmentDatabase(realpathSync(currentDirectory));
+const startedApps = getStartedApps();
+
+if (startedApps.some((name) => readsDatabase(join(currentDirectory, "apps", name)))) {
+  await updateDevelopmentDatabase(realpathSync(currentDirectory));
+}
 
 const result =
   !productionMode && (directMode || process.env.PORTLESS === "0")
     ? await startDirectDevelopment()
-    : await startPortlessDevelopment();
+    : await startPortlessDevelopment(startedApps);
 
 applyCommandExit(result);
