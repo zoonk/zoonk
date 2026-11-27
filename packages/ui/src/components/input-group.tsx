@@ -49,6 +49,7 @@ function InputGroupAddon({
       className={cn(inputGroupAddonVariants({ align }), className)}
       data-align={align}
       data-slot="input-group-addon"
+      // oxlint-disable-next-line zoonk/held-press-control -- Clicking the add-on focuses the adjacent input. A button would add a separate tab stop.
       onClick={(event) => {
         if (event.target instanceof HTMLElement && event.target.closest("button")) {
           return;

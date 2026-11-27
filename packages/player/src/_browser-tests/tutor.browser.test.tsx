@@ -854,7 +854,7 @@ describe("tutor answers", () => {
     const cancel = confirmation.getByRole("button", { name: "Cancel" });
     await expect.element(cancel).toHaveFocus();
     await press("Tab");
-    await expect.element(confirmation.getByRole("link", { name: "Open link" })).toHaveFocus();
+    await expect.element(confirmation.getByRole("button", { name: "Open link" })).toHaveFocus();
     await press("Tab");
     await expect.element(cancel).toHaveFocus();
     await press("Escape");

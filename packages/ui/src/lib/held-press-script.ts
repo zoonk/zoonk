@@ -1,3 +1,5 @@
+import { HELD_PRESS_SELECTOR } from "./held-press-controls";
+
 export const HELD_ATTRIBUTE = "data-held";
 
 /** `data-held-ask="microphone"` on a control whose press asks for the microphone. */
@@ -37,9 +39,16 @@ type Held = {
  * script with the values it had at the press; this marks its button and stops a second send.
  * Serialized with `toString`, so it may use only its argument and globals.
  */
-function holdPressesBeforeReady({ ask, held }: { ask: string; held: string }) {
-  const CONTROLS =
-    "a[href], button, input[type=submit], [role=button], [role=switch], [role=checkbox], [role=radio], [role=tab], [role=menuitem], [role=option]";
+function holdPressesBeforeReady({
+  ask,
+  held,
+  selector,
+}: {
+  ask: string;
+  held: string;
+  selector: string;
+}) {
+  const CONTROLS = `a[href], ${selector}`;
 
   const TOGGLES = "[role=switch], [role=checkbox], [role=radio]";
   const OFF = ':disabled, [aria-disabled="true"]';
@@ -470,7 +479,7 @@ function holdPressesBeforeReady({ ask, held }: { ask: string; held: string }) {
   });
 }
 
-export const HELD_PRESS_SCRIPT = `(${holdPressesBeforeReady.toString()})(${JSON.stringify({ ask: HELD_ASK_ATTRIBUTE, held: HELD_ATTRIBUTE })})`;
+export const HELD_PRESS_SCRIPT = `(${holdPressesBeforeReady.toString()})(${JSON.stringify({ ask: HELD_ASK_ATTRIBUTE, held: HELD_ATTRIBUTE, selector: HELD_PRESS_SELECTOR })})`;
 
 /** The microphone a held press asked for in its tap, taken once; null when none did. */
 export function takeHeldMicrophone(): HeldMicrophone | null {
