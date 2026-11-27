@@ -4,6 +4,7 @@ import { type LessonScreenSuggestion } from "../lesson-questions/contract";
 import { type MissionKind } from "../sessions/missions/catalog";
 import { type OnboardingProgress } from "./onboarding-progress";
 import { type AnalyticsGoalKind, type SharedEventProperties } from "./shared-properties";
+import { type TestEvents } from "./test-event-catalog";
 
 /** Vercel Web Analytics rejects nested property values. */
 type EventPropertyValue = boolean | number | string | null | undefined;
@@ -254,7 +255,8 @@ type AnalyticsEvents = EventCatalog<
     SettingsEvents &
     AccountEvents &
     QualityEvents &
-    OutcomeEvents
+    OutcomeEvents &
+    TestEvents
 >;
 
 export type TrackOptions = {
