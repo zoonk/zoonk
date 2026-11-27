@@ -4,7 +4,7 @@ import {
   type LevelTestResult,
 } from "@zoonk/core/language/level-test/contract";
 import { describe, expect, it } from "vitest";
-import { toLevelTestGroups, toOpenedLevelTestPhase } from "./level-test-phase";
+import { toLevelTestGroups, toListeningOut, toOpenedLevelTestPhase } from "./level-test-phase";
 
 const ATTEMPT_ID = "0198a6c4-2f6e-7c1a-9b1e-3f2d4c5b6a71";
 
@@ -124,5 +124,28 @@ describe(toLevelTestGroups, () => {
   it("covers every question of a test of another size", () => {
     expect(toLevelTestGroups(10)).toStrictEqual([4, 4, 2]);
     expect(toLevelTestGroups(6)).toStrictEqual([4, 2]);
+  });
+});
+
+describe(toListeningOut, () => {
+  it("skips one question for as long as the recording was never delivered", () => {
+    expect(toListeningOut({ audioPending: true, heard: false, playFailed: false })).toBe("skip");
+    expect(toListeningOut({ audioPending: false, heard: false, playFailed: true })).toBe("skip");
+  });
+
+  it("ends the test's listening only for a learner who has a recording to play", () => {
+    expect(toListeningOut({ audioPending: false, heard: false, playFailed: false })).toBe(
+      "cantListen",
+    );
+  });
+
+  it("counts a miss once the message has played to its end", () => {
+    expect(toListeningOut({ audioPending: false, heard: true, playFailed: false })).toBe(
+      "notUnderstood",
+    );
+
+    expect(toListeningOut({ audioPending: true, heard: true, playFailed: false })).toBe(
+      "notUnderstood",
+    );
   });
 });

@@ -112,7 +112,7 @@ export function LanguagePlanTestFlow({
     test.onTestOut(level, button);
   };
 
-  const audioPending = useLevelTestAudio({
+  const audioArriving = useLevelTestAudio({
     onRead: (view) => {
       if (phase.kind === "test") {
         test.onView(phase.attemptId)(view);
@@ -137,7 +137,7 @@ export function LanguagePlanTestFlow({
       case "test":
         return (
           <LevelTestQuestion
-            audioPending={audioPending}
+            audioArriving={audioArriving}
             failures={shown.failures}
             onAnswer={test.onAnswer(shown)}
             onClose={() =>

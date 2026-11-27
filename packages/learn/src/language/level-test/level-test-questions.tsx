@@ -12,7 +12,12 @@ import { PlacementQuestionScreen } from "../../onboarding/steps/placement-questi
 import { useSpokenAudio } from "../../speech/use-spoken-audio";
 import { useSkillName } from "../_utils/use-skill-name";
 import { ListeningMessage } from "./level-test-parts";
-import { type ReadyLevelTest, toLevelTestGroups } from "./level-test-phase";
+import {
+  type ListeningOut,
+  type ReadyLevelTest,
+  toLevelTestGroups,
+  toListeningOut,
+} from "./level-test-phase";
 
 const POLL_MS = 3000;
 
@@ -60,10 +65,9 @@ export function useLevelTestAudio({
   return poll.status === "polling";
 }
 
-const LISTENING_OUTS = ["cantListen", "notUnderstood", "skip"] as const;
+const LISTENING_OUTS = ["cantListen", "notUnderstood", "skip"] as const satisfies ListeningOut[];
 
-/** A listening question's bar: the way around it until the message has played, then the miss. */
-function useListeningOuts(): Record<(typeof LISTENING_OUTS)[number], string> {
+function useListeningOuts(): Record<ListeningOut, string> {
   const t = useExtracted();
 
   return {
@@ -82,7 +86,7 @@ function useListeningOuts(): Record<(typeof LISTENING_OUTS)[number], string> {
 }
 
 function AskedQuestion({
-  audioPending,
+  audioArriving,
   failures,
   onAnswer,
   onClose,
@@ -92,7 +96,8 @@ function AskedQuestion({
   targetLanguage,
   test,
 }: {
-  audioPending: boolean;
+  /** The recording is still being made and this screen is still checking for it. */
+  audioArriving: boolean;
   /** Saves from this question (answers and Stop) that failed in a row. */
   failures: number;
   onAnswer: (input: Omit<LevelTestAnswerInput, "attemptId">) => void;
@@ -110,9 +115,12 @@ function AskedQuestion({
   const speech = useSpokenAudio(targetLanguage);
   const { question } = step;
   const isListening = question.skill === "listening";
-  const noAudio = isListening && (audioPending || speech.state.status === "failed");
-  const heardOut = heard ? "notUnderstood" : "cantListen";
-  const out = noAudio ? "skip" : heardOut;
+
+  const out = toListeningOut({
+    audioPending: question.audioPending,
+    heard,
+    playFailed: speech.state.status === "failed",
+  });
 
   const send = (input: Omit<LevelTestAnswerInput, "attemptId" | "questionId">) =>
     onAnswer({ ...input, questionId: question.id });
@@ -128,7 +136,7 @@ function AskedQuestion({
           <ListeningMessage
             language={targetLanguage}
             onHeard={() => setHeard(true)}
-            pending={audioPending}
+            pending={audioArriving}
             question={question}
             speech={speech}
           />
@@ -141,7 +149,7 @@ function AskedQuestion({
           answerIndex: "selectedIndex" in choice ? choice.selectedIndex : null,
           durationMs,
           ...(answerIndices && { answerIndices }),
-          ...(noAudio && "dontKnow" in choice && { skipped: true }),
+          ...(isListening && out === "skip" && "dontKnow" in choice && { skipped: true }),
         });
       }}
       onClose={onClose}
@@ -168,11 +176,10 @@ function AskedQuestion({
                   shown={LISTENING_OUTS.indexOf(out)}
                 />
               ),
-              // Until the message has played, the way around it ends the test's listening.
               onPress:
-                noAudio || heard
-                  ? undefined
-                  : () => send({ answerIndex: null, audioDeferred: true }),
+                out === "cantListen"
+                  ? () => send({ answerIndex: null, audioDeferred: true })
+                  : undefined,
             }
           : undefined
       }

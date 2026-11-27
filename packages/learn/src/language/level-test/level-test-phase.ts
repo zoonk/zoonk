@@ -21,6 +21,30 @@ export function toLevelTestGroups(total: number): number[] {
   return [reading, listening, total - reading - listening].filter((size) => size > 0);
 }
 
+export type ListeningOut = "cantListen" | "notUnderstood" | "skip";
+
+/**
+ * What a listening question's second button does. "Can't listen now" ends listening for the whole
+ * test, so it's only for a learner who has a recording to play: while the server is still making
+ * it (`audioPending`, whether or not the client still checks for it) or its play failed, the
+ * button skips this one question.
+ */
+export function toListeningOut({
+  audioPending,
+  heard,
+  playFailed,
+}: {
+  audioPending: boolean;
+  heard: boolean;
+  playFailed: boolean;
+}): ListeningOut {
+  if (heard) {
+    return "notUnderstood";
+  }
+
+  return audioPending || playFailed ? "skip" : "cantListen";
+}
+
 /** What the test asks before it starts, from the server. */
 export type LevelTestOffer = { estimatedMinutes: number; total: number };
 
