@@ -238,6 +238,8 @@ class LessonPlayerViewModel(
     private val tapped: Boolean = false,
     /** A host that plays the lesson its own way, as an explanation without its summary, keeps its copy. */
     private val hosted: Boolean = false,
+    /** Called as the run's start is sent: what the run says of its save, or one the server took since. */
+    private val runStarting: (lessonId: String) -> (saved: Boolean) -> Boolean = { { it } },
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<LessonPlayerState?>(null)
     private val mutableEnding = MutableStateFlow(LessonEnding(inSession = studySessionId != null))
@@ -806,6 +808,7 @@ class LessonPlayerViewModel(
                     .filterNot { it.attemptId in queued }
                     .forEach { unsaved.getOrPut(it.stepId) { mutableListOf() } += it }
                 sendUnsent()
+                val shownSaved = runStarting(lessonId)
                 val outcome = start(runId = null)
                 if (outcome !is StartOutcome.Started) reading.cancel()
                 if (outcome == null) return@launch
@@ -828,7 +831,7 @@ class LessonPlayerViewModel(
                         val state = playFrom(lesson, outcome.run)
                         if (sessions.current != owner) return@launch
                         replay = outcome.run.replay
-                        if (!hosted) savedAtStart = outcome.run.saved
+                        if (!hosted) savedAtStart = shownSaved(outcome.run.saved)
                         mutableState.value = state
                         leaveOutUnheardDictations()
                         if (hasHeld) sendUnsent()

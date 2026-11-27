@@ -203,6 +203,7 @@ internal fun PlayingLesson(
                 analytics = app.analytics,
                 saved = createSavedStateHandle(),
                 hosted = endSlot != null,
+                runStarting = { id -> runCatching { UUID.fromString(id) }.getOrNull()?.let(app.savedLessons::runStarting) ?: { it } },
             )
         }
     VisitOf(viewModel.visit)

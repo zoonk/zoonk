@@ -84,7 +84,7 @@ class SavedLessonsScreenshots {
         val session = FakeSession(AuthenticatedSession(ANA, "token", "local"))
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
         val api = FakeSavedLessonsApi(if (empty) emptyList() else lessons(gone))
-        val store = SavedLessonsStore(api, cache, CompletedLessonsStore({ _, _, _ -> error("not read") }, cache, session))
+        val store = SavedLessonsStore(api, cache, CompletedLessonsStore({ _, _, _, _ -> error("not read") }, cache, session))
         rule.setContent {
             ZoonkTheme(darkTheme = dark) {
                 Surface {

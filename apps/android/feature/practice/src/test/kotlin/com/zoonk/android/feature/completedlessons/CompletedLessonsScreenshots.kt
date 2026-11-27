@@ -117,7 +117,7 @@ class CompletedLessonsScreenshots {
     ) {
         val session = FakeSession(AuthenticatedSession(ANA, "token", "local"))
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
-        val store = CompletedLessonsStore({ _, query, _ -> list(empty, query.group) }, cache, session)
+        val store = CompletedLessonsStore({ _, query, _, _ -> list(empty, query.group) }, cache, session)
         val saved = SavedLessonsStore(FakeSavedLessonsApi(), cache, store)
         rule.setContent {
             ZoonkTheme(darkTheme = dark) {

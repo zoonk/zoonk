@@ -1,10 +1,12 @@
 package com.zoonk.android.data
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /** What a save that didn't go through was asked to do, so the screen words its failure. */
 enum class SaveFailure { Save, Remove }
@@ -13,7 +15,8 @@ enum class SaveFailure { Save, Remove }
  * One screen's saves of one kind of thing (a map, a lesson), main's `useSaves`: each tap shows at once and is sent as
  * the state the learner wants, one request at a time for each thing, so quick taps end on the last one. What the
  * server stored wins over what the screen was served until [visit] ends; a save that fails goes back, and the
- * failure is owed to the visit it was asked on. [write] answers whether it's saved now.
+ * failure is owed to the visit it was asked on. A save is sent even once its screen goes, as the learner asked for
+ * it. [write] answers whether it's saved now.
  */
 class Saves<K : Any>(
     private val scope: CoroutineScope,
@@ -51,7 +54,7 @@ class Saves<K : Any>(
             while (true) {
                 val sent = wanted.value[key] ?: break
                 val started = askedOn.getValue(key)
-                val result = write(key, sent)
+                val result = withContext(NonCancellable) { write(key, sent) }
                 if (result is MutationResult.Done) {
                     if (started == visit.number) change { stored.value += key to result.value }
                     if (wanted.value[key] != sent) continue

@@ -61,7 +61,7 @@ class SavedLessonsStore(
 
     /**
      * Saves [lessonId] from [goalId] or removes it, as [saved] says. A lesson is saved once for the learner, so every
-     * completed lessons list kept shows the answer at once, without reading its pages again; the saved lists read again.
+     * completed lessons list kept shows the answer at once; the lists read it again, since a read out then predates it.
      */
     suspend fun save(
         goalId: UUID,
@@ -70,11 +70,23 @@ class SavedLessonsStore(
     ): MutationResult<Boolean> {
         val result = cache.mutate(invalidating = setOf(DataDomain.SavedLessons)) { api.save(it, goalId, lessonId, saved) }
         if (result is MutationResult.Done) {
+            taken[lessonId] = (taken[lessonId] ?: 0) + 1
+            lastTaken[lessonId] = result.value
             completedLessons.lessons.update({ true }) { list ->
                 list.copy(`data` = list.`data`.map { if (it.lessonId == lessonId) it.copy(saved = result.value) else it })
             }
         }
         return result
+    }
+
+    /** How many saves of each lesson the server took, so a run's start sent before one never undoes it. */
+    private val taken = mutableMapOf<UUID, Int>()
+    private val lastTaken = mutableMapOf<UUID, Boolean>()
+
+    /** Call it as the lesson's run start is sent; the call it returns turns what the run says into what to show. */
+    fun runStarting(lessonId: UUID): (saved: Boolean) -> Boolean {
+        val before = taken[lessonId]
+        return { saved -> if (taken[lessonId] == before) saved else lastTaken.getValue(lessonId) }
     }
 
     /** A screen's saves of lessons for [goalId], the goal they're saved from, on its [visit]. */
