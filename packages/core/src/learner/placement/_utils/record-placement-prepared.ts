@@ -1,5 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { lockLearner } from "@zoonk/db/learner-writes";
 import { COURSE_QUESTION_LIMIT } from "../course-search";
 import { readCourseBank } from "./course-placement-bank";
 import { readPlacementAttempt } from "./placement-attempt-record";
@@ -12,7 +13,18 @@ export async function recordPlacementPrepared({
   goalId: string;
   planRunId: string | null;
 }): Promise<void> {
+  const plan = await prisma.plan.findUnique({
+    select: { goal: { select: { userId: true } }, id: true },
+    where: { goalId },
+  });
+
+  if (!plan) {
+    return;
+  }
+
   await prisma.$transaction(async (tx) => {
+    await lockLearner(tx, { lockPlanIds: [plan.id], userId: plan.goal.userId });
+
     const marked = await tx.plan.updateMany({
       data: { placementPreparedAt: new Date() },
       where: { goalId, runId: planRunId },
