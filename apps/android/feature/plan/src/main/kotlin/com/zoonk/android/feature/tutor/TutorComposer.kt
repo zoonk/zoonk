@@ -74,7 +74,8 @@ internal fun TutorComposer(
                 subject = LimitSubject.Messages,
                 onCreateAccount = routes.createAccount,
                 onSubscribe = routes.subscribe,
-                modifier = Modifier.fillMaxWidth().semantics { liveRegion = LiveRegionMode.Polite },
+                // Main's `mb-4`: 16dp to the composer's line, with the column's 8 and the 2dp its 48dp touch target keeps above it.
+                modifier = Modifier.fillMaxWidth().padding(bottom = 6.dp).semantics { liveRegion = LiveRegionMode.Polite },
             )
         }
 
