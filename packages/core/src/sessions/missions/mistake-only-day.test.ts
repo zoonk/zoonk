@@ -4,6 +4,7 @@ import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { pickInMistake } from "../../_test-utils/shown-choice";
 import { answerMistakePractice } from "../../mistakes/answer-mistake-practice";
 import { finishMistakePractice } from "../../mistakes/finish-mistake-practice";
 import { getTodayView } from "../../view-models/today/get-today-view";
@@ -61,7 +62,7 @@ describe("a day with only original mistakes to practice", () => {
 
     const answered = await answerMistakePractice({
       input: {
-        answer: { selectedIndex: 0 },
+        answer: await pickInMistake({ mistakeId: mistake.id, timeZone: "UTC" }),
         durationMs: 5000,
         itemId: item.id,
         run: { answerIds: [], goalId: goal.id },

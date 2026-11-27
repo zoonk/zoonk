@@ -2,6 +2,7 @@ import "server-only";
 import { type Mistake, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { io } from "next/cache";
+import { showStepOptions } from "../lesson-player/_utils/shown-step-options";
 import { type TrueFalseLabels, getTrueFalseLabels } from "../library/exams/true-false-labels";
 import { type ItemSetView } from "../library/items/item-set-view";
 import { loadExamStructure } from "../sessions/_utils/exam-structure";
@@ -18,7 +19,7 @@ import {
   getDrillTimeLimitSeconds,
   selectMistakesToPractice,
 } from "./mistake-drills";
-import { toMistakeQuestion } from "./mistake-item";
+import { getMistakeShowing, toMistakeQuestion } from "./mistake-item";
 import { type MistakeLessonReplay, loadMistakeReplays } from "./mistake-replay";
 import { type MistakeSnapshot, readMistakeSnapshot } from "./mistake-snapshot";
 
@@ -68,7 +69,8 @@ export async function getMistakePractice(
 
   // Next's io boundary keeps the live practice day out of prerendering.
   await io();
-  const today = getDateInTimeZone({ date: new Date(), timeZone });
+  const now = new Date();
+  const today = getDateInTimeZone({ date: now, timeZone });
 
   const skillIds = narrowToSkill({ scopeSkillIds: scope.skillIds, skillId: input.skillId });
 
@@ -113,6 +115,7 @@ export async function getMistakePractice(
     }
 
     const kind = getDrillKind(mistake.cause);
+    const showing = getMistakeShowing({ date: now, mistakeId: mistake.id, timeZone });
 
     return [
       {
@@ -126,9 +129,15 @@ export async function getMistakePractice(
           },
           lessons: drillLessons,
         }),
-        lesson: replay.kind === "lesson" ? replay.lesson : null,
+        lesson:
+          replay.kind === "lesson"
+            ? {
+                ...replay.lesson,
+                step: showStepOptions({ seed: showing, step: replay.lesson.step }),
+              }
+            : null,
         mistakeId: mistake.id,
-        questions: replay.kind === "item" ? [toMistakeQuestion(replay)] : [],
+        questions: replay.kind === "item" ? [toMistakeQuestion({ replay, showing })] : [],
         snapshot: readMistakeSnapshot(mistake.snapshot),
         tutorAvailable: replay.tutorAvailable,
       },

@@ -10,6 +10,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession } from "../_test-utils/mock-session";
+import { pickInBlock } from "../_test-utils/shown-choice";
 import { getReviewHorizon, loadReviewCapsules } from "./_utils/load-review-capsules";
 import { answerStudyQuestion } from "./answer-study-question";
 import { readBlockPayload, toBlockPayload } from "./block-payload";
@@ -128,7 +129,11 @@ async function answerShared(fixture: Awaited<ReturnType<typeof setup>>, correct:
     answerStudyQuestion({
       blockId: fixture.sourceBlock.id,
       input: {
-        answer: { selectedIndex: correct ? 0 : 1 },
+        answer: pickInBlock({
+          blockId: fixture.sourceBlock.id,
+          item: fixture.first,
+          right: correct,
+        }),
         durationMs: 6000,
         itemId: fixture.first.id,
         timeZone: "UTC",
@@ -409,7 +414,11 @@ describe("shared daily skill reviews", () => {
 
     await answerStudyQuestion({
       blockId: fixture.otherBlock.id,
-      input: { answer: { selectedIndex: 0 }, durationMs: 6000, itemId: fixture.first.id },
+      input: {
+        answer: pickInBlock({ blockId: fixture.otherBlock.id, item: fixture.first }),
+        durationMs: 6000,
+        itemId: fixture.first.id,
+      },
       sessionId: fixture.other.id,
     });
 

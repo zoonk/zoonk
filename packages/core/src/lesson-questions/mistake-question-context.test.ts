@@ -6,6 +6,7 @@ import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fix
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { shownMistakeOptions } from "../_test-utils/shown-choice";
 import { parseMathItem } from "../learner/_utils/math-items";
 import { discountMath, discountQuestion } from "../library/items/_test-utils/math-problems";
 import { withRecordedNumbers } from "../library/items/item-math";
@@ -250,8 +251,14 @@ describe("Original notebook questions", () => {
 
     mockSession(user.id);
 
+    const shown = await shownMistakeOptions({ mistakeId: mistake.id });
+
     await answerMistakePractice({
-      input: { answer: { selectedIndex: 1 }, durationMs: 5000, itemId: item.id },
+      input: {
+        answer: { selectedIndex: shown.indexOf("Wrong answer") },
+        durationMs: 5000,
+        itemId: item.id,
+      },
       mistakeId: mistake.id,
     });
 

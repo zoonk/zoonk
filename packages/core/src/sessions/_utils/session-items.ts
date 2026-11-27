@@ -7,6 +7,7 @@ import {
   gradeChoiceAnswer,
   hasMisconceptions,
   parseChoiceItem,
+  showChoiceItem,
   toQuestionView,
 } from "../../learner/_utils/choice-items";
 import {
@@ -122,6 +123,11 @@ function serveInBlock({ blockId, item }: { blockId: string; item: MathItem }) {
   return serveMath({ item, seed: `${blockId}:${item.id}` });
 }
 
+/** Each block shows its own option order, so a question that returns tests its options rather than their places. */
+export function showChoiceInBlock({ blockId, item }: { blockId: string; item: ChoiceItem }) {
+  return showChoiceItem({ item, seed: `${blockId}:${item.id}` });
+}
+
 const NO_EXTRAS = { entry: null, key: null, left: null, right: null, select: null, unit: null };
 
 export function toSessionQuestion({
@@ -150,7 +156,7 @@ export function toSessionQuestion({
       return { ...NO_EXTRAS, ...toTypedQuestionView(item) };
     case "multipleChoice":
     case "trueFalse":
-      return { ...NO_EXTRAS, ...toQuestionView(item) };
+      return { ...NO_EXTRAS, ...toQuestionView(showChoiceInBlock({ blockId, item })) };
     default:
       throw new Error("Unknown session item format.");
   }
@@ -158,9 +164,11 @@ export function toSessionQuestion({
 
 export type SessionQuestion = ReturnType<typeof toSessionQuestion>;
 
-/** A match or order answer is indexes into the order its block showed, so it reads back only there. */
+/** A choice, match or order answer is indexes into the order its block showed, so it reads back only there. */
 export function readsAnswerInBlockOrder(item: SessionItem): boolean {
-  return item.format === "matchPairs" || item.format === "order";
+  return (
+    item.format === "multipleChoice" || item.format === "matchPairs" || item.format === "order"
+  );
 }
 
 export type GradedSessionAnswer = {
@@ -175,16 +183,19 @@ export type GradedSessionAnswer = {
 
 function gradeChoice({
   answer,
+  blockId,
   item,
 }: {
   answer: QuestionAnswer;
+  blockId: string;
   item: ChoiceItem;
 }): GradedSessionAnswer {
   const choice = choiceAnswerSchema.safeParse(answer).data ?? { dontKnow: true as const };
-  const graded = gradeChoiceAnswer({ answer: choice, item });
+  const shown = showChoiceInBlock({ blockId, item });
+  const graded = gradeChoiceAnswer({ answer: choice, item, shown });
 
   return {
-    correctAnswer: getChoiceCorrectAnswer(item),
+    correctAnswer: getChoiceCorrectAnswer(shown),
     explanation: graded.snapshot.explanation ?? null,
     isCorrect: graded.isCorrect,
     recorded: answer,
@@ -239,7 +250,7 @@ export function gradeSessionAnswer({
       return gradeTypedByCode({ answer, item });
     case "multipleChoice":
     case "trueFalse":
-      return gradeChoice({ answer, item });
+      return gradeChoice({ answer, blockId, item });
     default:
       throw new Error("Unknown session item format.");
   }

@@ -1,9 +1,14 @@
 import "server-only";
 import { type ItemScopeContext } from "@zoonk/ai/tasks/lessons/question-context";
 import { prisma } from "@zoonk/db";
+import { getLearnerTimeZone } from "../../learner/_utils/goal-time-zone";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
 import { ITEM_SET_INCLUDE, toItemSetView } from "../../library/items/item-sets";
-import { gradeMistakeItem, toMistakeQuestion } from "../../mistakes/mistake-item";
+import {
+  getMistakeShowing,
+  gradeMistakeItem,
+  toMistakeQuestion,
+} from "../../mistakes/mistake-item";
 import { type MistakeReplay, loadMistakeReplay } from "../../mistakes/mistake-replay";
 import {
   type SessionItem,
@@ -83,7 +88,7 @@ async function describeLatestAnswer({
   }
 
   const { snapshot } = replay
-    ? gradeMistakeItem({ answer, replay })
+    ? gradeMistakeItem({ answer, replay, showing: blockId })
     : gradeSessionAnswer({ answer, blockId, item });
 
   const unshown = !blockId && !replay && readsAnswerInBlockOrder(item);
@@ -117,11 +122,18 @@ async function buildMistakeItemContext({
   }
 
   const { item } = replay;
-  const question = toMistakeQuestion(replay);
+
+  const showing = getMistakeShowing({
+    date: new Date(),
+    mistakeId: mistake.id,
+    timeZone: await getLearnerTimeZone({ userId }),
+  });
+
+  const question = toMistakeQuestion({ replay, showing });
 
   const answer = context.answered
     ? await describeLatestAnswer({
-        blockId: "",
+        blockId: showing,
         item,
         mistakeId: mistake.id,
         replay,

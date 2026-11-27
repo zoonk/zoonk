@@ -26,6 +26,7 @@ import {
   testCallCompletionInput,
 } from "../_test-utils/connect-test-call";
 import { reviewRunsInline } from "../_test-utils/review-runs";
+import { pickInMistake } from "../_test-utils/shown-choice";
 import { completeLanguageConversation } from "../language/conversations/complete-language-conversation";
 import { getLanguageConversation } from "../language/conversations/get-language-conversation";
 import { practiceMistakePattern } from "../language/patterns/practice-mistake-pattern";
@@ -184,7 +185,12 @@ describe("missions completed outside a study block", () => {
     ]);
 
     const answered = await answerMistakePractice({
-      input: { answer: { selectedIndex: 0 }, durationMs: 5000, itemId: item.id, timeZone: "UTC" },
+      input: {
+        answer: await pickInMistake({ mistakeId: mistake.id, timeZone: "UTC" }),
+        durationMs: 5000,
+        itemId: item.id,
+        timeZone: "UTC",
+      },
       mistakeId: mistake.id,
     });
 

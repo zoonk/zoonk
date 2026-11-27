@@ -6,6 +6,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { runDeferredWork } from "../../_test-utils/deferred-work";
 import { mockSession } from "../../_test-utils/mock-session";
+import { pickInPlacement } from "../../_test-utils/shown-choice";
 import { trackServerEvent } from "../../analytics/server";
 import { learnerGoalFixture } from "../_test-utils/learner-goal";
 import { lowGuessTapItems, placementItemBank } from "../_test-utils/placement-tap-items";
@@ -13,8 +14,7 @@ import { getChapterTestOut } from "./get-chapter-test-out";
 import { requestTestOutQuestions } from "./request-test-out-questions";
 import { submitChapterTestOut } from "./submit-chapter-test-out";
 
-const RIGHT = { selectedIndex: 0 };
-const WRONG = { selectedIndex: 1 };
+const pickRight = (itemId: string) => pickInPlacement({ itemId });
 
 async function setup() {
   const user = await userFixture();
@@ -27,15 +27,23 @@ async function setup() {
   return { ...fixture, taps, user };
 }
 
-function chapterAnswers({
+async function chapterAnswers({
   items,
   taps,
 }: Pick<Awaited<ReturnType<typeof setup>>, "items" | "taps">) {
   const quick = items.slice(0, 4);
   const skillIds = new Set(quick.map((item) => item.skillId));
 
+  const quickAnswers = await Promise.all(
+    quick.map(async (item) => ({
+      answer: await pickRight(item.id),
+      durationMs: 8000,
+      itemId: item.id,
+    })),
+  );
+
   return [
-    ...quick.map((item) => ({ answer: RIGHT, durationMs: 8000, itemId: item.id })),
+    ...quickAnswers,
     ...taps
       .filter(({ item }) => skillIds.has(item.skillId))
       .map(({ answer, item }) => ({ answer, durationMs: 8000, itemId: item.id })),
@@ -123,11 +131,13 @@ describe(getChapterTestOut, () => {
       chapterId,
       goalId: goal.id,
       input: {
-        answers: asked.map((question) => ({
-          answer: correct.get(question.itemId) ?? RIGHT,
-          durationMs: 6000,
-          itemId: question.itemId,
-        })),
+        answers: await Promise.all(
+          asked.map(async (question) => ({
+            answer: correct.get(question.itemId) ?? (await pickRight(question.itemId)),
+            durationMs: 6000,
+            itemId: question.itemId,
+          })),
+        ),
         requestId: randomUUID(),
       },
     });
@@ -225,13 +235,15 @@ describe(submitChapterTestOut, () => {
       chapterId,
       goalId: goal.id,
       input: {
-        answers: items
-          .slice(0, 4)
-          .map((item, index) => ({
-            answer: index === 3 ? WRONG : RIGHT,
-            durationMs: index === 3 ? 3_600_000 : 20_000,
-            itemId: item.id,
-          })),
+        answers: await Promise.all(
+          items
+            .slice(0, 4)
+            .map(async (item, index) => ({
+              answer: await pickInPlacement({ itemId: item.id, right: index !== 3 }),
+              durationMs: index === 3 ? 3_600_000 : 20_000,
+              itemId: item.id,
+            })),
+        ),
         requestId: randomUUID(),
       },
     });
@@ -292,12 +304,10 @@ describe(submitChapterTestOut, () => {
       where: { chapters: { some: { chapterId } } },
     });
 
+    const answers = await chapterAnswers({ items, taps });
+
     const submit = () =>
-      submitChapterTestOut({
-        chapterId,
-        goalId: goal.id,
-        input: { answers: chapterAnswers({ items, taps }), requestId },
-      });
+      submitChapterTestOut({ chapterId, goalId: goal.id, input: { answers, requestId } });
 
     const finishedChapter = { chapterId, goalId: goal.id, title: chapters[0]?.title };
 
@@ -325,7 +335,7 @@ describe(submitChapterTestOut, () => {
     const result = await submitChapterTestOut({
       chapterId: chapters[0]?.id ?? "",
       goalId: goal.id,
-      input: { answers: chapterAnswers({ items, taps }), requestId: randomUUID() },
+      input: { answers: await chapterAnswers({ items, taps }), requestId: randomUUID() },
     });
 
     expect(result.status === "ready" && result.outcome).toMatchObject({
@@ -362,7 +372,7 @@ describe(submitChapterTestOut, () => {
     const { chapters, goal, items, taps, user } = await setup();
     const chapterId = chapters[0]?.id ?? "";
 
-    const input = { answers: chapterAnswers({ items, taps }), requestId: randomUUID() };
+    const input = { answers: await chapterAnswers({ items, taps }), requestId: randomUUID() };
 
     const passed = await submitChapterTestOut({ chapterId, goalId: goal.id, input });
     expect(passed).toMatchObject({ outcome: { lessonsSkipped: 4, passed: true }, status: "ready" });
@@ -431,9 +441,15 @@ describe(submitChapterTestOut, () => {
       chapterId: chapters[0]?.id ?? "",
       goalId: goal.id,
       input: {
-        answers: items
-          .slice(0, 4)
-          .map((item) => ({ answer: RIGHT, durationMs: 8000, itemId: item.id })),
+        answers: await Promise.all(
+          items
+            .slice(0, 4)
+            .map(async (item) => ({
+              answer: await pickRight(item.id),
+              durationMs: 8000,
+              itemId: item.id,
+            })),
+        ),
         requestId: randomUUID(),
       },
     });
@@ -456,7 +472,9 @@ describe(submitChapterTestOut, () => {
       chapterId: chapters[0]?.id ?? "",
       goalId: goal.id,
       input: {
-        answers: [{ answer: RIGHT, durationMs: 8000, itemId: asked?.id ?? "" }],
+        answers: [
+          { answer: await pickRight(asked?.id ?? ""), durationMs: 8000, itemId: asked?.id ?? "" },
+        ],
         requestId: randomUUID(),
       },
     });
@@ -502,11 +520,13 @@ describe(submitChapterTestOut, () => {
       chapterId,
       goalId: goal.id,
       input: {
-        answers: questions.map((question) => ({
-          answer: correct.get(question.itemId) ?? RIGHT,
-          durationMs: 8000,
-          itemId: question.itemId,
-        })),
+        answers: await Promise.all(
+          questions.map(async (question) => ({
+            answer: correct.get(question.itemId) ?? (await pickRight(question.itemId)),
+            durationMs: 8000,
+            itemId: question.itemId,
+          })),
+        ),
         requestId: randomUUID(),
       },
     });
@@ -534,7 +554,13 @@ describe(submitChapterTestOut, () => {
       chapterId: chapters[0]?.id ?? "",
       goalId: goal.id,
       input: {
-        answers: [{ answer: RIGHT, durationMs: 8000, itemId: items[5]?.id ?? "" }],
+        answers: [
+          {
+            answer: await pickRight(items[5]?.id ?? ""),
+            durationMs: 8000,
+            itemId: items[5]?.id ?? "",
+          },
+        ],
         requestId: randomUUID(),
       },
     });

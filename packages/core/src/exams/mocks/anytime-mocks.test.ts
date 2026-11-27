@@ -5,6 +5,7 @@ import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sou
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { pickItemInMock } from "../../_test-utils/shown-choice";
 import { analytics } from "../../_test-utils/test-boundaries";
 import { buildExamIdentityKey } from "../../library/exams/exam-identity";
 import { readBlueprintContent, saveExamBlueprint } from "../../library/exams/save-exam-blueprint";
@@ -138,11 +139,15 @@ async function answerSection({ id, rightOn }: { id: string; rightOn: ReadonlySet
   const mock = await readMock(id);
 
   await Promise.all(
-    (mock.current?.questions ?? []).map((question) =>
+    (mock.current?.questions ?? []).map(async (question) =>
       saveMockAnswer({
         blockId: id,
         input: {
-          answer: { selectedIndex: rightOn.has(question.skillId) ? 0 : 1 },
+          answer: await pickItemInMock({
+            itemId: question.itemId,
+            mockId: id,
+            right: rightOn.has(question.skillId),
+          }),
           durationMs: 30_000,
           flagged: false,
           itemId: question.itemId,
@@ -1121,11 +1126,15 @@ describe("an existing mock taken as placement", () => {
     const markedBlank = asked[answered.length];
 
     await Promise.all([
-      ...answered.map((question) =>
+      ...answered.map(async (question) =>
         saveMockAnswer({
           blockId: id,
           input: {
-            answer: { selectedIndex: question.skillId === first?.id ? 0 : 1 },
+            answer: await pickItemInMock({
+              itemId: question.itemId,
+              mockId: id,
+              right: question.skillId === first?.id,
+            }),
             durationMs: 20_000,
             flagged: false,
             itemId: question.itemId,

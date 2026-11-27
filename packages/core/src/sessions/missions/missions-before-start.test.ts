@@ -14,6 +14,7 @@ import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { pickInMistake } from "../../_test-utils/shown-choice";
 import { startLanguageConversation } from "../../language/conversations/start-language-conversation";
 import { practiceMistakePattern } from "../../language/patterns/practice-mistake-pattern";
 import { answerPronunciationReview } from "../../language/pronunciation/answer-pronunciation-review";
@@ -210,7 +211,7 @@ describe("an activity done from Today before the learner starts the day", () => 
 
     const answered = await answerMistakePractice({
       input: {
-        answer: { selectedIndex: 0 },
+        answer: await pickInMistake({ mistakeId: mistake.id, timeZone: TIME_ZONE }),
         durationMs: 5000,
         itemId: mistake.itemId ?? "",
         run: { answerIds: [], goalId: goal.id },

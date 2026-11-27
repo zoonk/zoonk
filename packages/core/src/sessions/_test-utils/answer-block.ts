@@ -1,17 +1,18 @@
+import { pickItemInBlock } from "../../_test-utils/shown-choice";
 import { answerStudyQuestion } from "../answer-study-question";
 import { type StudyAnswerResult } from "../contract";
 import { getStudyBlock } from "../get-study-block";
 
-/** Answers sequentially to preserve scoring order; option zero is correct in session fixtures. */
+/** Answers sequentially to preserve scoring order, tapping the right option or a wrong one where the block shows it. */
 export async function answerBlockInOrder({
   blockId,
   count,
-  optionIndex = 0,
+  right = true,
   sessionId,
 }: {
   blockId: string;
   count?: number;
-  optionIndex?: number;
+  right?: boolean;
   sessionId: string;
 }): Promise<StudyAnswerResult[]> {
   const detail = await getStudyBlock({ blockId, sessionId });
@@ -28,7 +29,7 @@ export async function answerBlockInOrder({
       const result = await answerStudyQuestion({
         blockId,
         input: {
-          answer: { selectedIndex: optionIndex },
+          answer: await pickItemInBlock({ blockId, itemId: question.itemId, right }),
           durationMs: 4000,
           itemId: question.itemId,
         },
