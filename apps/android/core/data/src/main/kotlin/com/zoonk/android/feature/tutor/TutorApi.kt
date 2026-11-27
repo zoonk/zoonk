@@ -90,11 +90,11 @@ internal class LiveTutorApi(
         cursor: String?,
         session: AuthenticatedSession,
     ): BuddyConversationList {
-        val page = perform { api.clients(session).plans.listBuddyConversations(goalId.id, cursor?.id) }
+        val page = perform { api.clients(session).plans.listBuddyConversations(goalId.id, cursor) }
         return BuddyConversationList(
             page.conversations.map { BuddyConversation(it.id.toString(), it.title, it.lastAskedAt) },
             page.currentId?.toString(),
-            page.nextCursor?.toString(),
+            page.nextCursor,
         )
     }
 

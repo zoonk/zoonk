@@ -144,15 +144,46 @@ describe("Buddy conversations", () => {
       title: "Where do I start?",
     });
 
-    expect(firstPage.nextCursor).toBe(earlierIds[28]);
+    const boundary = firstPage.conversations.at(-1);
+
+    if (!boundary || !firstPage.nextCursor) {
+      throw new Error("Expected a boundary conversation and cursor");
+    }
 
     await expect(
-      listBuddyConversations({ cursor: firstPage.nextCursor ?? undefined, goalId: goal.id }),
+      listBuddyConversations({ cursor: firstPage.nextCursor, goalId: goal.id }),
     ).resolves.toMatchObject({
       conversations: [{ id: earlierIds[29] }],
       currentId: latestId,
       nextCursor: null,
     });
+
+    const movedAt = new Date("2030-01-02T07:59:30Z");
+
+    await prisma.lessonQuestionThread.update({
+      data: {
+        questions: {
+          create: {
+            contextKind: "plan",
+            contextSnapshot: {},
+            createdAt: movedAt,
+            question: "Can you give another example?",
+            requestFingerprint: "fixture",
+            requestId: randomUUID(),
+          },
+        },
+        updatedAt: movedAt,
+      },
+      where: { id: boundary.id },
+    });
+
+    await expect(
+      listBuddyConversations({ cursor: firstPage.nextCursor, goalId: goal.id }),
+    ).resolves.toMatchObject({ conversations: [{ id: earlierIds[29] }], nextCursor: null });
+
+    await expect(
+      listBuddyConversations({ cursor: firstPage.nextCursor, goalId: otherGoal.id }),
+    ).resolves.toStrictEqual({ status: "invalidCursor" });
 
     await expect(
       listBuddyConversations({ cursor: otherGoalId, goalId: goal.id }),
