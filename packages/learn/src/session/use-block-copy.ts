@@ -83,7 +83,11 @@ export function useRemedialLine() {
     block: Pick<BlockCopyInput, "patternId" | "returning" | "screen">,
   ): string | null {
     if (block.screen === "mistakesPractice") {
-      return t("Questions you missed before");
+      return t({
+        description:
+          'Under "Fix 3 mistakes", a step of the day that practices questions the learner got wrong.',
+        message: "Questions you missed before",
+      });
     }
 
     if (block.patternId) {
@@ -106,7 +110,13 @@ export function useRemedialLine() {
       });
     }
 
-    return block.returning === "missed" ? t("This one's been tricky") : null;
+    return block.returning === "missed"
+      ? t({
+          description:
+            "Under a short lesson written for an idea that has been hard for the learner.",
+          message: "This one's been tricky",
+        })
+      : null;
   };
 }
 
@@ -144,7 +154,7 @@ export function useBlockTitle() {
     if (block.patternId && block.title) {
       return t({
         description:
-          'A study step that drills one rule the learner keeps getting wrong. {pattern} names the rule, like "Adjective endings after der".',
+          'A study step that drills one rule the learner keeps getting wrong, titled like the day\'s other practice steps ("Practice: Fractions"). {pattern} names the rule, like "Adjective endings after der".',
         message: "Practice: {pattern}",
         values: { pattern: block.title },
       });

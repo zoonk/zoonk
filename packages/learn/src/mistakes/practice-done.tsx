@@ -59,7 +59,13 @@ export function NothingToPractice({ dayBlock, doneHref }: { dayBlock: boolean; d
         <StepCard role="status">
           <StepHeader>
             <h2 className="text-title">
-              {dayBlock ? t("Already fixed") : t("Nothing to practice")}
+              {dayBlock
+                ? t({
+                    description:
+                      "Title when a day's practice of mistakes opens and every one of its mistakes was already fixed elsewhere.",
+                    message: "Already fixed",
+                  })
+                : t("Nothing to practice")}
             </h2>
           </StepHeader>
         </StepCard>
@@ -92,7 +98,11 @@ function DoneBar({
       <TaskActions>
         {again && (
           <Button busy={again.loading} onClick={again.start} size="xl" variant="outline">
-            {t("Practice again")}
+            {t({
+              description:
+                "Beside Done at the end of a practice of mistakes: starts another round right away.",
+              message: "Practice again",
+            })}
           </Button>
         )}
 

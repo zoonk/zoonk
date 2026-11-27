@@ -160,9 +160,29 @@ function PracticeBody({
     return (
       <FailedMoment
         failures={run.state.failures}
-        message={answered ? undefined : t("We couldn't mark it done. Check your connection.")}
+        message={
+          answered
+            ? undefined
+            : t({
+                description:
+                  "Under \"Already fixed\" when marking the day's practice done didn't reach the server.",
+                message: "We couldn't mark it done. Check your connection.",
+              })
+        }
         onRetry={run.end}
-        title={answered ? t("Your practice isn't saved yet") : t("Already fixed")}
+        title={
+          answered
+            ? t({
+                description:
+                  "Title of a practice of mistakes whose end didn't reach the server, so it doesn't count yet.",
+                message: "Your practice isn't saved yet",
+              })
+            : t({
+                description:
+                  "Title when a day's practice of mistakes opens and every one of its mistakes was already fixed elsewhere.",
+                message: "Already fixed",
+              })
+        }
       />
     );
   }

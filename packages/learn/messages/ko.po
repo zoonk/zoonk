@@ -83,6 +83,7 @@ msgstr "건너뜀"
 #: src/language/level-test/level-test-results.tsx
 #: src/language/pattern/language-pattern-screen.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
+#: src/mistakes/practice-done.tsx
 #: src/mock/mock-speaking.tsx
 #: src/placement-test/placement-test-screens.tsx
 #: src/plan/plan-change-applied.tsx
@@ -267,8 +268,10 @@ msgstr "{days, plural, other {약 #일 남았어요}}"
 #: src/language/conversation/speaking-mock-result.tsx
 #: src/language/exam-speaking/exam-speaking-result.tsx
 #: src/language/level-test/level-test-results.tsx
+#: src/language/pattern/language-pattern-screen.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/language/unit/practice-conversation.tsx
+#: src/mistakes/practice-done.tsx
 #: src/mock/mock-entry.tsx
 #: src/mock/mock-result-actions.tsx
 #: src/mock/mock-screen.tsx
@@ -7549,6 +7552,25 @@ msgctxt "z2HeMD"
 msgid "Leave. What you answered counts."
 msgstr "나가기. 지금까지 푼 문제는 반영돼요."
 
+#. Under "Already fixed" when marking the day's practice done didn't reach the server.
+#: src/mistakes/mistake-practice-run.tsx
+msgctxt "tV3pjd"
+msgid "We couldn't mark it done. Check your connection."
+msgstr "완료로 표시하지 못했어요. 인터넷 연결을 확인해 보세요."
+
+#. Title of a practice of mistakes whose end didn't reach the server, so it doesn't count yet.
+#: src/mistakes/mistake-practice-run.tsx
+msgctxt "dHwNew"
+msgid "Your practice isn't saved yet"
+msgstr "아직 연습이 저장되지 않았어요"
+
+#. Title when a day's practice of mistakes opens and every one of its mistakes was already fixed elsewhere.
+#: src/mistakes/mistake-practice-run.tsx
+#: src/mistakes/practice-done.tsx
+msgctxt "Q3nyx6"
+msgid "Already fixed"
+msgstr "이미 모두 고쳤어요"
+
 #: src/mistakes/mistake-practice-run.tsx
 #: src/session/use-block-copy.ts
 msgctxt "HGnX5e"
@@ -7624,29 +7646,15 @@ msgid "{count, plural, one {# mistake fixed} other {# mistakes fixed}}"
 msgstr "{count, plural, other {#문제 고침}}"
 
 #: src/mistakes/practice-done.tsx
-msgctxt "ith1Nx"
-msgid "Nothing to practice yet"
-msgstr "아직 연습할 문제가 없어요"
+msgctxt "qSu8Tu"
+msgid "Nothing to practice"
+msgstr "연습할 문제가 없어요"
 
+#. Beside Done at the end of a practice of mistakes: starts another round right away.
 #: src/mistakes/practice-done.tsx
-msgctxt "IBOhsd"
-msgid "Mistakes come back for practice from the day after you make them."
-msgstr "틀린 문제는 다음 날부터 다시 연습할 수 있어요."
-
-#: src/mistakes/practice-done.tsx
-msgctxt "zaS-g7"
-msgid "The ones you missed come back another day, when they stick better."
-msgstr "틀린 문제는 기억에 더 잘 남도록 다른 날 다시 나와요."
-
-#: src/mistakes/practice-done.tsx
-msgctxt "gMgMMy"
-msgid "The ones you missed come back another day. The rest are still ready to practice."
-msgstr "틀린 문제는 다른 날 다시 나와요. 나머지 문제는 언제든 연습할 수 있어요."
-
-#: src/mistakes/practice-done.tsx
-msgctxt "4bskgW"
-msgid "The rest are still ready to practice."
-msgstr "나머지 문제는 언제든 연습할 수 있어요."
+msgctxt "UCNJdd"
+msgid "Practice again"
+msgstr "다시 연습하기"
 
 #: src/mistakes/practice-step.tsx
 #: src/session/question-block/block-question.tsx
@@ -7659,6 +7667,12 @@ msgstr "잘 모르겠어요"
 msgctxt "HJwk2o"
 msgid "{count, plural, =0 {No mistakes fixed} one {Mistake fixed. It leaves your notebook.} other {# mistakes fixed. They leave your notebook.}}"
 msgstr "{count, plural, =0 {고친 오답 없음} other {오답 #개를 고쳤어요. 오답 노트에서 빠져요.}}"
+
+#. After a right answer to a question the learner missed earlier the same day. A mistake is fixed only by a right answer on a later day.
+#: src/mistakes/practice-step.tsx
+msgctxt "6kBNqI"
+msgid "It comes back another day to make sure."
+msgstr "확실히 익힐 수 있도록 다른 날 다시 나와요."
 
 #: src/mistakes/practice-step.tsx
 #: src/session/question-block/question-feedback.tsx
@@ -8323,6 +8337,12 @@ msgstr "{before}에서 하락"
 msgctxt "U5RRFl"
 msgid "Up from {before}"
 msgstr "{before}에서 상승"
+
+#. On a mock exam's result: the plan moved the topics the learner missed earlier. The topics follow, one per line.
+#: src/mock/mock-result-plan.tsx
+msgctxt "5PMRDS"
+msgid "What you missed now comes sooner"
+msgstr "전에 놓친 주제가 이제 더 일찍 나와요"
 
 #: src/mock/mock-result-plan.tsx
 #: src/mock/mock-result-view.tsx
@@ -12661,6 +12681,35 @@ msgctxt "vrNWq4"
 msgid "Earned today"
 msgstr "오늘 얻은 보상"
 
+#. Under "Fix 3 mistakes", a step of the day that practices questions the learner got wrong.
+#: src/session/use-block-copy.ts
+msgctxt "s1C8zD"
+msgid "Questions you missed before"
+msgstr "전에 틀린 문제"
+
+#: src/session/use-block-copy.ts
+msgctxt "hHRG9b"
+msgid "A pattern in your mistakes"
+msgstr "반복되는 실수 패턴"
+
+#. Under a lesson the learner takes again because its idea has been hard for them.
+#: src/session/use-block-copy.ts
+msgctxt "AYWLbe"
+msgid "Once more: this one's been tricky"
+msgstr "다시 한번: 어려웠던 내용이에요"
+
+#. Under a short lesson that explains, in a new way, an idea the learner keeps missing.
+#: src/session/use-block-copy.ts
+msgctxt "yeSnsN"
+msgid "Another way to see it"
+msgstr "다르게 이해해 보기"
+
+#. Under a short lesson written for an idea that has been hard for the learner.
+#: src/session/use-block-copy.ts
+msgctxt "eqv6T0"
+msgid "This one's been tricky"
+msgstr "어려웠던 내용이에요"
+
 #: src/session/use-block-copy.ts
 msgctxt "z0XIiH"
 msgid "What you already know"
@@ -12670,6 +12719,17 @@ msgstr "이미 아는 내용"
 msgctxt "n1W87b"
 msgid "New lesson"
 msgstr "새 레슨"
+
+#: src/session/use-block-copy.ts
+msgctxt "GYx283"
+msgid "{count, plural, one {Fix # mistake} other {Fix # mistakes}}"
+msgstr "{count, plural, other {실수 #개 고치기}}"
+
+#. A study step that drills one rule the learner keeps getting wrong, titled like the day's other practice steps ("Practice: Fractions"). {pattern} names the rule, like "Adjective endings after der".
+#: src/session/use-block-copy.ts
+msgctxt "HECBTo"
+msgid "Practice: {pattern}"
+msgstr "연습: {pattern}"
 
 #. A block of the day's practice. {topic} names the topic most of its questions are on, like "Calculating discounts".
 #: src/session/use-block-copy.ts

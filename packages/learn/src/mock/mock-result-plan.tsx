@@ -247,7 +247,13 @@ type MovedTopics = MockResult["movedTopics"];
 
 function useMovedTitle() {
   const t = useExtracted();
-  return () => t("What you missed now comes sooner");
+
+  return () =>
+    t({
+      description:
+        "On a mock exam's result: the plan moved the topics the learner missed earlier. The topics follow, one per line.",
+      message: "What you missed now comes sooner",
+    });
 }
 
 /** The plan already moved these earlier when the mock finished: there's nothing to answer. */
