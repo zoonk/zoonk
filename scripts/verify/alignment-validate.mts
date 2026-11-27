@@ -27,6 +27,7 @@ const OPTIONAL = z
     capTop: MEASURE,
     column: z.tuple([z.number(), z.number()]),
     controlParent: z.string(),
+    coversRows: z.array(z.string()),
     current: z.boolean(),
     direction: z.enum(["ltr", "rtl"]),
     disabled: z.boolean(),

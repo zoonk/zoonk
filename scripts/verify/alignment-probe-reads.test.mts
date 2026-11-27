@@ -1,14 +1,16 @@
 // @vitest-environment jsdom
 /* oxlint-disable no-magic-numbers -- The fixtures are measurements in pixels. */
 import assert from "node:assert/strict";
-import { describe, it, test } from "vitest";
-import { read, setUpProbeDom } from "./alignment-probe-dom.mts";
+import { afterEach, beforeEach, describe, it, test, vi } from "vitest";
+import { read, setHit, setHitStack, setUpProbeDom } from "./alignment-probe-dom.mts";
 import { evaluateCapture } from "./alignment.mts";
 
 /**
  * Real page layouts reduced to the markup the probe reads.
  */
 setUpProbeDom();
+beforeEach(() => vi.stubGlobal("innerHeight", 900));
+afterEach(() => vi.unstubAllGlobals());
 
 function rule(name: string) {
   return evaluateCapture(read()).filter((finding) => finding.rule === name);
@@ -101,6 +103,11 @@ function skipInBar(inBar: boolean) {
         <button style="--button-variant: default" data-box="119,784,255,44">Continue</button>
       </div></div></div>`;
 
+  const bar = document.querySelector("[data-slot=bottom-bar]");
+  const row = document.querySelector("[data-slot=button]");
+  assert.ok(bar && row);
+  setHitStack([bar, row]);
+
   return rule("pinned");
 }
 
@@ -140,6 +147,11 @@ function lessonScrolledTo(scrollTop: number) {
     Object.defineProperty(main, property, { configurable: true, value });
   }
 
+  const bar = main.querySelector("[data-slot=bottom-bar]");
+  const row = main.querySelector("[data-slot=button]");
+  assert.ok(bar && row);
+  setHitStack([bar, row]);
+
   return rule("pinned");
 }
 
@@ -150,6 +162,35 @@ describe("a pinned bar in a screen that scrolls inside its own frame (the lesson
 
   it("is judged at that frame's end", () => {
     assert.equal(lessonScrolledTo(81).length, 1);
+  });
+});
+
+describe("a pinned bar on the active surface", () => {
+  it("checks the sheet's own bar without blaming the page bar under it", () => {
+    document.body.innerHTML = `<main>
+      <div data-slot="bottom-bar" style="position: fixed" data-box="0,740,390,80">Page action</div>
+      <div role="dialog" data-slot="drawer-popup" data-box="0,500,390,344">
+        <div data-slot="list-group" data-box="16,720,358,90">
+          <div data-slot="list-row" data-box="16,720,358,90">Sheet row</div>
+        </div>
+        <div data-slot="bottom-bar" style="position: sticky" data-box="0,760,390,84">Sheet action</div>
+      </div>
+    </main>`;
+
+    const sheet = document.querySelector('[role="dialog"]');
+    const row = sheet?.querySelector('[data-slot="list-row"]');
+    const bar = sheet?.querySelector('[data-slot="bottom-bar"]');
+    assert.ok(sheet && row && bar);
+    setHit(bar);
+    setHitStack([bar, row]);
+
+    assert.deepEqual(
+      rule("pinned").map((finding) => finding.detail),
+      ['"Sheet action" covers 50 of "Sheet row"'],
+    );
+
+    setHitStack([sheet, bar, row]);
+    assert.deepEqual(rule("pinned"), []);
   });
 });
 

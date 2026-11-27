@@ -41,7 +41,7 @@ function detailPair({
 
   return [
     { ...page, id, pair: { change: [], placeholder: true, with: `${id}.placeholder` } },
-    { ...page, firstPaint: true, id: `${id}.placeholder` },
+    { ...page, firstPaint: true, id: `${id}.placeholder`, proofWithin: "main" },
   ];
 }
 
@@ -89,9 +89,11 @@ export const STATE_SCENARIOS: Scenario[] = [
   {
     anchors: [],
     app: "playground",
+    evidence: ['[data-slot=lesson-screen] [role=status]:has-text("on time.")'],
     id: "player.rhythm-tapper.after-try",
     prerequisites: { persona: "visitor" },
     proof: "Try again",
+    proofWithin: "[data-slot=lesson-screen]",
     reach: [
       // Its sound setup is skipped, since how well its taps match the clicks varies with load.
       { click: "Skip for now" },
