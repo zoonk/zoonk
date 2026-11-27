@@ -1,6 +1,7 @@
 import "server-only";
 import { isUuid } from "@zoonk/utils/uuid";
 import { readLessonProgressRuns } from "../learner/facts/lesson-progress-runs";
+import { readSavedLessonIds } from "../learner/facts/saved-lessons";
 import { getSession } from "../users/get-session";
 import { type ProgressAttempt, loadProgressAnswers } from "./_utils/lesson-runs";
 import { restoreRunAnswers } from "./_utils/restore-run-answers";
@@ -19,33 +20,30 @@ async function readProgressAttempts({
   return first ? loadProgressAnswers({ lessonId: id, since: first.startedAt, userId }) : [];
 }
 
-/** Empty without an unfinished lesson or session; start returns fresh answers to supersede a stale prefetch. */
-export async function getLessonProgress({
+export async function getLessonVisit({
   lessonId,
 }: {
   lessonId: string;
-}): Promise<LibraryLessonRun["answers"]> {
+}): Promise<{ resume: LibraryLessonRun["answers"]; saved: boolean }> {
   "use cache: private";
 
-  if (!isUuid(lessonId)) {
-    return [];
-  }
-
-  const session = await getSession();
+  const session = isUuid(lessonId) ? await getSession() : null;
 
   if (!session) {
-    return [];
+    return { resume: [], saved: false };
   }
 
   const userId = session.user.id;
 
-  const [attempts, played] = await Promise.all([
+  const [attempts, played, saved] = await Promise.all([
     readProgressAttempts({ lessonId, userId }),
     getPlayableLibraryLesson({ lessonId }),
+    readSavedLessonIds(userId),
   ]);
 
   const lesson = played?.status === "ready" ? played.lesson : null;
-  return restoreRunAnswers({ attempts, lesson, userId });
+  const resume = await restoreRunAnswers({ attempts, lesson, userId });
+  return { resume, saved: saved.has(lessonId.toLowerCase()) };
 }
 
 /** Whether a lesson's public page offers "Continue the lesson": an unfinished sitting with an answer. */

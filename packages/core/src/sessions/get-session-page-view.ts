@@ -3,7 +3,6 @@ import { type GoalKind, prisma } from "@zoonk/db";
 import { findActiveGoalId } from "../goals/_utils/goal-view";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { readLessonStates } from "../learner/facts/lesson-states";
-import { type LessonGenerationState } from "../library/generation/lesson-generation-state";
 import { getSession } from "../users/get-session";
 import { withLessonScreens } from "./_utils/lesson-screens";
 import { readSavedDayView } from "./_utils/read-saved-day-view";
@@ -14,11 +13,10 @@ import { type TodayStudySessionInput } from "./contract";
 import { type DayBlockRef, toDayBlockRef } from "./day-block";
 import { type UnstartedDayView } from "./day-view";
 
-export type NextStopFacts = { ref: DayBlockRef; lessonState: LessonGenerationState | null };
+export type NextStopFacts = { ref: DayBlockRef };
 type SessionPageFields = {
   dayEndsAt: number;
   goal: { id: string; kind: GoalKind };
-  lessonStatus: Record<string, LessonGenerationState["status"]>;
   localDate: Date;
   next: NextStopFacts | null;
   userId: string;
@@ -30,21 +28,9 @@ type SessionPageViewResult =
   | (SessionPageFields & { day: UnstartedDayView; status: "unstarted" })
   | (SessionPageView & { status: "ready" });
 
-function readNextStop({
-  lessons,
-  session,
-}: {
-  lessons: ReadonlyMap<string, LessonGenerationState>;
-  session: StudySessionView | UnstartedDayView;
-}): NextStopFacts | null {
+function readNextStop(session: StudySessionView | UnstartedDayView): NextStopFacts | null {
   const next = session.blocks.find((block) => block.position === session.nextPosition);
-
-  return next
-    ? {
-        lessonState: next.lessonId ? (lessons.get(next.lessonId) ?? null) : null,
-        ref: toDayBlockRef(next),
-      }
-    : null;
+  return next ? { ref: toDayBlockRef(next) } : null;
 }
 
 /** Read-only entry data; never creates session or block ids. */
@@ -113,9 +99,8 @@ export async function getSessionPageView(
   const fields: SessionPageFields = {
     dayEndsAt: session.dayEndsAt,
     goal: goalView,
-    lessonStatus: Object.fromEntries([...lessons].map(([id, state]) => [id, state.status])),
     localDate: session.localDate,
-    next: readNextStop({ lessons, session }),
+    next: readNextStop(session),
     userId,
   };
 

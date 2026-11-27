@@ -1,3 +1,4 @@
+import { MS_PER_DAY, MS_PER_MINUTE } from "@zoonk/utils/date";
 import { describe, expect, it } from "vitest";
 import { type RecentActivity, buildActivitySignals } from "./activity-signals";
 
@@ -5,8 +6,6 @@ type ActivityAttempt = RecentActivity["attempts"][number];
 type ActivityMistake = RecentActivity["mistakes"][number];
 
 const MONDAY = Date.UTC(2026, 8, 21);
-const DAY_MS = 86_400_000;
-const MINUTE_MS = 60_000;
 
 const PERCENTAGES = { id: "skill-percentages", name: "Percentages" };
 const FRACTIONS = { id: "skill-fractions", name: "Fractions" };
@@ -24,13 +23,13 @@ function session({
   results: boolean[];
   skillId?: string;
 }): ActivityAttempt[] {
-  const start = MONDAY + day * DAY_MS + hour * 60 * MINUTE_MS;
+  const start = MONDAY + day * MS_PER_DAY + hour * 60 * MS_PER_MINUTE;
 
   return results.map((isCorrect, index) => ({
-    answeredAt: new Date(start + index * MINUTE_MS),
+    answeredAt: new Date(start + index * MS_PER_MINUTE),
     hour,
     isCorrect,
-    localDate: new Date(MONDAY + day * DAY_MS),
+    localDate: new Date(MONDAY + day * MS_PER_DAY),
     skillId,
     studySessionId: id,
   }));
@@ -144,8 +143,8 @@ describe(buildActivitySignals, () => {
         attempts: session({ day: 0, hour: 20, id: "a", results: [true] }),
         studyDays: [
           { localDate: new Date(MONDAY), seconds: 1200 },
-          { localDate: new Date(MONDAY + DAY_MS), seconds: 600 },
-          { localDate: new Date(MONDAY + 2 * DAY_MS), seconds: 0 },
+          { localDate: new Date(MONDAY + MS_PER_DAY), seconds: 600 },
+          { localDate: new Date(MONDAY + 2 * MS_PER_DAY), seconds: 0 },
         ],
       }),
     );

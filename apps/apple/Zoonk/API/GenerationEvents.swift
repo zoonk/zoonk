@@ -334,6 +334,9 @@ extension APIClientFactory {
       return (events, clockOffset.withLock { $0 })
     case .notFound:
       throw APIError.notFound
+    // 503: the run's state couldn't be read this time, so the stream resumes.
+    case .serviceUnavailable:
+      throw APIError.network
     case .badRequest, .internalServerError, .undocumented:
       throw APIError.unavailable
     }

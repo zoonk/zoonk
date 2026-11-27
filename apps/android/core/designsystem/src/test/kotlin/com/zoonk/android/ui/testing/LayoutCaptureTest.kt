@@ -51,6 +51,7 @@ import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.fadingHorizontalScroll
+import com.zoonk.android.ui.components.layoutNoWords
 import com.zoonk.android.ui.components.listRowDescription
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -268,7 +269,34 @@ class LayoutCaptureTest {
         assertEquals(14 * 0.71, label.getDouble("capBottom") - label.getDouble("capTop"), 0.01)
         assertEquals(label.getDouble("baseline"), label.getDouble("capBottom"), 0.0)
         assertTrue(parts.has("end"))
-        assertEquals(false, parts.part("row").getBoolean("note"))
+        assertFalse(parts.has("note"))
+    }
+
+    @Test
+    fun aBarUnderARowsNameIsANoteReadByItsInk() {
+        val parts =
+            capture {
+                ListRow(
+                    headline = { Text("Basics") },
+                    meta = { Text("50%") },
+                    supporting = {
+                        Box(
+                            Modifier
+                                .fillMaxWidth()
+                                .height(6.dp)
+                                .background(PAGE)
+                                .layoutNoWords()
+                                .clearAndSetSemantics {},
+                        )
+                    },
+                    onClick = {},
+                )
+            }
+
+        val note = parts.part("note")
+        assertTrue(note.get("ink") is JSONArray)
+        listOf("baseline", "capTop", "capBottom", "type").forEach { assertFalse(it, note.has(it)) }
+        assertFalse(parts.has("unmeasured"))
     }
 
     @Test

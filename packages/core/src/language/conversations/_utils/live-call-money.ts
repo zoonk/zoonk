@@ -1,11 +1,10 @@
 import { LIVE_CALL_CREATE_TIMEOUT_MS } from "@zoonk/ai/tasks/language/live-call-creation";
 import { type LiveCallConnection } from "@zoonk/db";
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import {
   LIVE_CALL_CONNECT_WINDOW_SECONDS,
   getLiveCallCostMicros,
 } from "../../../entitlements/limits";
-
-const MS_PER_SECOND = 1000;
 
 /** OpenAI sessions have been observed to expire after about two hours; allow for creation time too. */
 const LONGEST_BILLED_SECONDS = 2 * 60 * 60 + (2 * LIVE_CALL_CREATE_TIMEOUT_MS) / MS_PER_SECOND;

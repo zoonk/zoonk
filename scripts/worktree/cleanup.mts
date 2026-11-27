@@ -1,5 +1,6 @@
 import { existsSync } from "node:fs";
 import { userInfo } from "node:os";
+import { MS_PER_WEEK } from "../../packages/utils/src/date.ts";
 import { postgresEnvironment, query, run, sqlLiteral } from "./postgres.mts";
 
 export async function listRemovedWorktrees(source: URL): Promise<string[]> {
@@ -70,7 +71,6 @@ export async function pruneDatabases({
   source: URL;
   worktree: string;
 }): Promise<string> {
-  const weekMilliseconds = 7 * 24 * 60 * 60 * 1000;
   const listedAt = Date.now();
   const worktrees = await listRemovedWorktrees(source);
   const removed = worktrees.map((path) => sqlLiteral(path));
@@ -99,7 +99,7 @@ WHERE numbackends = 0 AND metadata->>'worktree' <> ${sqlLiteral(worktree)}
   AND ((metadata->>'worktree' = ANY(ARRAY[${removed.join(", ")}]::text[])
       AND observed_at < ${listedAt})
     OR (metadata->>'fingerprint' = fingerprint
-      AND observed_at < extract(epoch FROM clock_timestamp()) * 1000 - ${weekMilliseconds}))
+      AND observed_at < extract(epoch FROM clock_timestamp()) * 1000 - ${MS_PER_WEEK}))
   AND pg_try_advisory_lock(hashtext('zoonk-worktree:' || (metadata->>'worktree')))
 \gexec
 

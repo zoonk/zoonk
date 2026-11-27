@@ -1,6 +1,7 @@
 import { type Browser } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { ensureGuest } from "@zoonk/e2e/fixtures/guests";
+import { expectHydrated } from "@zoonk/e2e/hydration";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
@@ -8,7 +9,7 @@ import { chapterLessonFixture, lessonSkillFixture } from "@zoonk/testing/fixture
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { TEACHING_LESSON_STEPS } from "@zoonk/testing/fixtures/playable-step-contents";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
-import { MS_PER_DAY } from "@zoonk/utils/date";
+import { MS_PER_WEEK } from "@zoonk/utils/date";
 import { captureAnalytics } from "./analytics";
 import { pressAnswerKey } from "./answer-key";
 import { type Page, expect, test } from "./fixtures";
@@ -100,7 +101,7 @@ async function createChapterGuest(browser: Browser) {
     playableLessonFixture({ lesson: { title: "Why the electron doesn't fall" }, steps: ["check"] }),
   ]);
 
-  const nextWeek = new Date(Date.now() + 7 * MS_PER_DAY);
+  const nextWeek = new Date(Date.now() + MS_PER_WEEK);
   const lessons = [first.lesson, second.lesson];
 
   const [
@@ -225,8 +226,8 @@ test.describe("Library lesson player", () => {
       await expect(page).toHaveURL(new RegExp(`/learn/${first.id}$`, "u"));
       await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
 
-      await started;
       await primary(page, /^Continue/u).click();
+      await started;
       await expect(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
 
       await expect
@@ -278,6 +279,12 @@ test.describe("Library lesson player", () => {
     await page.reload();
 
     await expect(page.getByText("Reading it")).toBeVisible();
+
+    expect(
+      await prisma.attempt.count({ where: { stepId: missed, userId: noProgressUser.id } }),
+    ).toBe(0);
+
+    await primary(page, /^Continue/u).click();
     await expect(notSaved).toBeHidden();
 
     await expect
@@ -381,6 +388,9 @@ test.describe("Library lesson player", () => {
 
     await page.goto(`/learn/${lesson.id}`);
 
+    const explanation = page.getByText("A cloud, not a little ball");
+    await expectHydrated(primary(page, /^Continue/u));
+    await explanation.click();
     await expect(page.getByRole("heading", { name: "We couldn't open this lesson" })).toBeVisible();
     expect(guestSignIns).toStrictEqual([]);
 

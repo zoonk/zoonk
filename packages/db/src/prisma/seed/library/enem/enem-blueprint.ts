@@ -4,7 +4,13 @@ import { SEED_LANGUAGES, type SeedLanguage, localizeObject, t } from "../../_uti
 import { SEED_PROVENANCE } from "../../_utils/provenance";
 import { libraryIds } from "../library-ids";
 import { type EnemEdition } from "./enem-edition";
-import { getNoticePassages, pastPaperPassages, writeEnemSources } from "./enem-sources";
+import { buildEnemGrading } from "./enem-grading";
+import {
+  essayScoringSources,
+  getNoticePassages,
+  pastPaperPassages,
+  writeEnemSources,
+} from "./enem-sources";
 
 const NOTICE = libraryIds.source("enem-notice");
 const PAST_PAPERS = libraryIds.source("enem-past-papers");
@@ -24,6 +30,12 @@ const DAY_ONE_MINUTES = 330;
 const DAY_TWO_MINUTES = 300;
 const RECHECK_DAYS = 7;
 const START_TIME = "13:30";
+
+const essayGrading = buildEnemGrading({
+  handbook: essayScoringSources.handbook.id,
+  manual: essayScoringSources.manual.id,
+  notice: NOTICE,
+});
 
 function cite(sourceId: string, passage: string) {
   return { passage, sourceId };
@@ -303,6 +315,27 @@ function buildStructure(notice: ReturnType<typeof getNoticePassages>, now: Date)
           minutes: DAY_ONE_MINUTES,
           name: t("Languages, Humanities and essay", "Linguagens, Ciências Humanas e redação"),
           questions: 90,
+        },
+        {
+          day: 1,
+          kind: "written",
+          minutes: DAY_ONE_MINUTES,
+          name: t("Languages, Humanities and essay", "Linguagens, Ciências Humanas e redação"),
+          questions: null,
+          tasks: [
+            {
+              count: 1,
+              description: t(
+                "An argumentative essay of up to 30 lines",
+                "Redação dissertativo-argumentativa de até 30 linhas",
+              ),
+              grading: essayGrading,
+              handwritten: true,
+              key: "enem-essay",
+              lines: 30,
+              points: 1000,
+            },
+          ],
         },
         {
           day: 2,

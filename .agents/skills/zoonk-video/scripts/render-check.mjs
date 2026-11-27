@@ -69,7 +69,7 @@ async function render(browser, base) {
 
 try {
   await server.listen();
-  const browser = await chromium.launch(process.env.CI ? { channel: "chrome" } : {});
+  const browser = await chromium.launch();
 
   try {
     await render(browser, server.resolvedUrls.local[0]);

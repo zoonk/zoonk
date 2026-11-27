@@ -1,8 +1,9 @@
 import { readFileSync } from "node:fs";
 import { parseArgs } from "node:util";
+import { isJsonObject } from "../../../packages/utils/src/json.ts";
 import { usageError } from "./errors.ts";
 import { commandUsage } from "./help.ts";
-import { isRecord, parseJson } from "./http.ts";
+import { parseJson } from "./http.ts";
 import { type Note, proposalNote, revertNote, withdrawalNote } from "./notes.ts";
 import { type OutputShape } from "./output.ts";
 import { parseFields, parseOrder, parseWhereOptions, parseWholeNumber } from "./query-options.ts";
@@ -34,12 +35,10 @@ type Options = {
   where?: string[];
 };
 
-type OptionName = keyof Options;
-
 type CommandSpec = {
   arguments: number | "any" | "at least one";
   build: (args: string[], options: Options) => Command;
-  options: OptionName[];
+  options: (keyof Options)[];
 };
 
 export const WHOAMI_REQUEST: ApiRequest = { method: "GET", path: "/staff/me" };
@@ -57,7 +56,7 @@ function readText(path: string): string {
 function readJsonObject(path: string): Record<string, unknown> {
   const body = parseJson(readText(path));
 
-  if (!isRecord(body)) {
+  if (!isJsonObject(body)) {
     throw usageError(
       `${path} must hold one JSON object: { reason, feedbackId?, changes } or { reason, fixes: [{ changes }] }.`,
     );

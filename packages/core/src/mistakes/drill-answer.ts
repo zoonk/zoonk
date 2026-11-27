@@ -1,6 +1,5 @@
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { type MistakeDrillKind, isPastTimeLimit } from "./mistake-drills";
-
-const MS_PER_SECOND = 1000;
 
 type DrillRules = { kind: MistakeDrillKind; timeLimitSeconds: number | null };
 

@@ -7,6 +7,7 @@ import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
@@ -15,7 +16,6 @@ import { createGoalPlan } from "../plans/create-goal-plan";
 import { answerBlockInOrder } from "../sessions/_test-utils/answer-block";
 import { getTodayStudySession } from "../sessions/_test-utils/open-today";
 import {
-  DAY_MS,
   SESSION_NOW,
   SESSION_TODAY,
   checkpointItemFixture,
@@ -209,7 +209,7 @@ describe("a phase checkpoint's challenge", () => {
       checkpoint: { result: { passed: false }, retry: "tomorrow" },
     });
 
-    vi.setSystemTime(new Date(SESSION_NOW.getTime() + DAY_MS));
+    vi.setSystemTime(new Date(SESSION_NOW.getTime() + MS_PER_DAY));
 
     await expect(challengeOf(boss.id)).resolves.toMatchObject({ rematch: true, status: "ready" });
 
@@ -265,7 +265,7 @@ describe("a phase checkpoint's challenge", () => {
     const lessonIds = [first?.id ?? "", second?.id ?? ""];
 
     await prisma.planItem.update({
-      data: { scheduledFor: new Date(SESSION_TODAY.getTime() + DAY_MS) },
+      data: { scheduledFor: new Date(SESSION_TODAY.getTime() + MS_PER_DAY) },
       where: { id: boss.id },
     });
 
@@ -291,7 +291,7 @@ describe("a phase checkpoint's challenge", () => {
       where: { id: { in: lessonIds } },
     });
 
-    vi.setSystemTime(new Date(SESSION_NOW.getTime() + DAY_MS));
+    vi.setSystemTime(new Date(SESSION_NOW.getTime() + MS_PER_DAY));
 
     await expect(challengeOf(boss.id)).resolves.toMatchObject({ status: "ready", topics });
   });
@@ -340,7 +340,7 @@ describe("the week's mixed challenge with too few questions", () => {
         .slice(0, 2)
         .map((item) =>
           attemptFixture({
-            answeredAt: new Date(SESSION_NOW.getTime() - 2 * DAY_MS),
+            answeredAt: new Date(SESSION_NOW.getTime() - 2 * MS_PER_DAY),
             itemId: item.id,
             skillId: item.skillId,
             userId: user.id,
@@ -407,7 +407,7 @@ describe("the week's mixed challenge with too few questions", () => {
       }),
       ...studied.map((item) =>
         attemptFixture({
-          answeredAt: new Date(SESSION_NOW.getTime() - 2 * DAY_MS),
+          answeredAt: new Date(SESSION_NOW.getTime() - 2 * MS_PER_DAY),
           itemId: item?.id,
           skillId: item?.skillId,
           userId: user.id,
@@ -723,7 +723,7 @@ describe("the week's mock before its day", () => {
         kind: "mock",
         planId: plan.id,
         position: 10,
-        scheduledFor: new Date(SESSION_TODAY.getTime() + 4 * DAY_MS),
+        scheduledFor: new Date(SESSION_TODAY.getTime() + 4 * MS_PER_DAY),
       }),
       prisma.subscription.create({
         data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
@@ -757,7 +757,7 @@ describe("the week's mock before its day", () => {
       kind: "mock",
       planId: plan.id,
       position: 10,
-      scheduledFor: new Date(SESSION_TODAY.getTime() + 4 * DAY_MS),
+      scheduledFor: new Date(SESSION_TODAY.getTime() + 4 * MS_PER_DAY),
     });
 
     mockSession(user.id);

@@ -155,6 +155,7 @@ fun voiceAnswerModel(
 fun VoiceAnswerButton(
     model: VoiceAnswerModel,
     modifier: Modifier = Modifier,
+    onRecordTap: () -> Unit = {},
     onBlocked: (() -> Unit)? = null,
 ) {
     val tapRecord =
@@ -170,7 +171,16 @@ fun VoiceAnswerButton(
         )
     val status by model.recorder.state.collectAsStateWithLifecycle()
 
-    RecordButton(status = status, onStart = tapRecord, onStop = model.recorder::stop, modifier = modifier, busy = model.checking)
+    RecordButton(
+        status = status,
+        onStart = {
+            onRecordTap()
+            tapRecord()
+        },
+        onStop = model.recorder::stop,
+        modifier = modifier,
+        busy = model.checking,
+    )
 }
 
 /**

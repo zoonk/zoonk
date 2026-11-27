@@ -12511,11 +12511,6 @@ msgid "Review now"
 msgstr "Réviser maintenant"
 
 #: src/session/next-stop-wait.tsx
-msgctxt "UI79fv"
-msgid "Next lesson"
-msgstr "Leçon suivante"
-
-#: src/session/next-stop-wait.tsx
 msgctxt "kY8Exq"
 msgid "Practice now"
 msgstr "S’entraîner maintenant"

@@ -23,11 +23,9 @@ function renderSavingLesson(slots?: LessonPlayerProviderProps["slots"]) {
   const saving = Promise.withResolvers<boolean | null>();
   const saveLesson = vi.fn(() => saving.promise);
 
-  const player = lessonPlayerElement({
-    adapters: buildAdapters(lesson, { saveLesson }),
-    lesson,
-    slots,
-  });
+  const adapters = buildAdapters(lesson, { saveLesson });
+
+  const player = lessonPlayerElement({ adapters, lesson, slots });
 
   const view = render(
     <>
@@ -45,7 +43,7 @@ function renderSavingLesson(slots?: LessonPlayerProviderProps["slots"]) {
       </>,
     );
 
-  return { fail: () => saving.resolve(null), leave };
+  return { fail: () => saving.resolve(null), leave, start: adapters.startLesson };
 }
 
 describe("the lesson's bookmark", () => {
@@ -68,10 +66,11 @@ describe("the lesson's bookmark", () => {
   });
 
   it("keeps quiet about a save that failed after the learner left the lesson", async () => {
-    const { fail, leave } = renderSavingLesson();
+    const { fail, leave, start } = renderSavingLesson();
 
     await page.getByRole("button", { exact: true, name: "Save" }).click();
     leave();
+    expect(start).not.toHaveBeenCalled();
     fail();
 
     await new Promise((resolve) => {

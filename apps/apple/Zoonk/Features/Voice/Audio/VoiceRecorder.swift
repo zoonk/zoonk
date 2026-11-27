@@ -2,6 +2,7 @@ import AVFoundation
 import Observation
 
 struct VoiceRecording: Sendable {
+  let attemptId = UUID().uuidString
   let audio: Data
   let durationMs: Int
 }

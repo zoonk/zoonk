@@ -37,8 +37,8 @@
   "questions_mistake_fixed": "41d3e614911d5e9d21c23e6e18b271a2e00c7fd108aadb92cd2246d91f0361be",
   "questions_mistakes_fixed": "b94fa654949463d15703b017a7392de4f2d8b6c1669f270162c46f62bc640ecd",
   "questions_not_quite": "c7540536989388360d68e20666aca5c6f93f1d228cc9f0edfb80e4cccc559fa5",
-  "questions_pick_all": "4ee5fbce9033f5f84f21c287b53b0af3bf4df9397843430108be7988cd9fd8b0",
-  "questions_pick_count": "3cf7409a0888124d693edbb19f055a81941a1f2ab52f056b900a377c3a87eb69",
+  "questions_pick_all": "e6a9e8849803f03475f76638bac80d04562de14025a9f1e13950cf89c1665e9e",
+  "questions_pick_count": "820283360e9e21414e58aeaa0bf66385f5d7a7f0f3324846c50dcbb3e8d8f7d3",
   "questions_place_right": "340f7233ff2d4031ae9acaeb99bacf1cc48c565c0bb89a5c158c32c2a45d168d",
   "questions_place_wrong": "51e5cf95fb542a3db3665f88e0b8d883db56a0804c09c08be843c88382f600e9",
   "questions_placement_note": "8a1fd72bdc8e970a1d55728a32fb424f6098d27147a4e926459b873307b55912",
@@ -60,10 +60,10 @@
 }
 -->
 <resources>
-    <string name="questions_pick_all">Wähle alle zutreffenden Antworten aus.</string>
+    <string name="questions_pick_all">Wähle alles Zutreffende aus.</string>
     <plurals name="questions_pick_count">
-        <item quantity="one">Wähle %d Antwort aus.</item>
-        <item quantity="other">Wähle %d Antworten aus.</item>
+        <item quantity="one">Wähle %d Option aus.</item>
+        <item quantity="other">Wähle %d Optionen aus.</item>
     </plurals>
     <string name="questions_true">Wahr</string>
     <string name="questions_false">Falsch</string>

@@ -8,6 +8,7 @@ import {
   unnoticedSourceChangeFixture,
 } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY, MS_PER_MINUTE } from "@zoonk/utils/date";
 import { beforeEach, describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import {
@@ -16,9 +17,6 @@ import {
   recordSourceChangeNotice,
 } from "./source-change-notices";
 import { getOwedSourceChange } from "./unnoticed-changes";
-
-const DAY_MS = 86_400_000;
-const MINUTE_MS = 60_000;
 
 describe(listGoalChangeNotices, () => {
   beforeEach(() => {
@@ -40,7 +38,7 @@ describe(listGoalChangeNotices, () => {
     ]);
 
     const goal = await goalFixture({
-      createdAt: new Date(Date.now() - 5 * DAY_MS),
+      createdAt: new Date(Date.now() - 5 * MS_PER_DAY),
       examBlueprintId: blueprint.id,
       kind: "exam",
       userId: user.id,
@@ -55,13 +53,13 @@ describe(listGoalChangeNotices, () => {
 
     const [, examNotice, lawNotice] = await Promise.all([
       sourceChangeNoticeFixture({
-        createdAt: new Date(Date.now() - 6 * DAY_MS),
+        createdAt: new Date(Date.now() - 6 * MS_PER_DAY),
         examBlueprintId: blueprint.id,
         message: "Before the goal started",
         sourceId: source.id,
       }),
       sourceChangeNoticeFixture({
-        createdAt: new Date(Date.now() - DAY_MS),
+        createdAt: new Date(Date.now() - MS_PER_DAY),
         examBlueprintId: blueprint.id,
         sourceId: source.id,
       }),
@@ -97,7 +95,7 @@ describe(listGoalChangeNotices, () => {
     const blueprint = await examBlueprintFixture({ sourceId: source.id });
 
     const goal = await goalFixture({
-      createdAt: new Date(Date.now() - 20 * MINUTE_MS),
+      createdAt: new Date(Date.now() - 20 * MS_PER_MINUTE),
       examBlueprintId: blueprint.id,
       kind: "exam",
       userId: user.id,
@@ -105,18 +103,18 @@ describe(listGoalChangeNotices, () => {
 
     await planFixture({
       goalId: goal.id,
-      noticeWaitEndedAt: new Date(Date.now() - 10 * MINUTE_MS),
+      noticeWaitEndedAt: new Date(Date.now() - 10 * MS_PER_MINUTE),
     });
 
     const [, news] = await Promise.all([
       sourceChangeNoticeFixture({
-        createdAt: new Date(Date.now() - 14 * MINUTE_MS),
+        createdAt: new Date(Date.now() - 14 * MS_PER_MINUTE),
         examBlueprintId: blueprint.id,
         message: "The exam notice changed: the test is now on 17 January.",
         sourceId: source.id,
       }),
       sourceChangeNoticeFixture({
-        createdAt: new Date(Date.now() - MINUTE_MS),
+        createdAt: new Date(Date.now() - MS_PER_MINUTE),
         examBlueprintId: blueprint.id,
         message: "The exam notice changed: the test now has 100 questions.",
         sourceId: source.id,

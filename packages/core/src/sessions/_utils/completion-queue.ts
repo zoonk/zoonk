@@ -1,5 +1,5 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type Plan, prisma } from "@zoonk/db";
 import {
   arePhaseChallengesRequired,
   shouldRefillAfterEntitlementLapse,
@@ -95,7 +95,7 @@ async function areLessonsComing({
   reserved,
   session,
 }: {
-  plan: { graph: unknown } | null;
+  plan: Pick<Plan, "graph" | "lessonsAskedAt"> | null;
   reserved: boolean;
   session: StudySessionRow;
 }): Promise<boolean> {
@@ -103,11 +103,7 @@ async function areLessonsComing({
     return false;
   }
 
-  const outlines = await getDayOutlines({
-    goal: session.goal,
-    graph: plan?.graph,
-    localDate: session.localDate,
-  });
+  const outlines = await getDayOutlines({ goal: session.goal, localDate: session.localDate, plan });
 
   return outlines === "awaiting";
 }

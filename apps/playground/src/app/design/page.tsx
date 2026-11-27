@@ -1,6 +1,5 @@
 import { PRINCIPLES } from "@/design-system/moments";
 import { AnswerOption } from "@zoonk/learn/answer-option";
-import { kindFillClass } from "@zoonk/learn/kind-tile";
 import { StatusMark } from "@zoonk/learn/status-mark";
 import { SURFACE_CLASS } from "@zoonk/learn/surface";
 import { MeterPart, MeterParts } from "@zoonk/ui/components/meter";
@@ -43,7 +42,7 @@ function AtAGlance() {
                 weight={5}
               />
               <MeterPart weight={4} />
-              <MeterPart className={kindFillClass("practice")} weight={3} />
+              <MeterPart weight={3} />
             </MeterParts>
             <AnswerOption marker={1} picked>
               Picked

@@ -22,8 +22,10 @@ import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.Generation
+import com.zoonk.api.models.LessonGenerationStatus
 import com.zoonk.api.models.LessonReadiness
 import com.zoonk.api.models.StudyBlock
+import com.zoonk.api.models.StudyBlockLesson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -73,9 +75,14 @@ class NextStopFoldTest {
                         override suspend fun status(id: String) = Generation.Status.RUNNING
                     }
                 },
-                now = { rule.mainClock.currentTime },
             )
-        val waiting = step(0, screen = StudyBlock.Screen.SESSION, lessonId = LESSON)
+        val waiting =
+            step(
+                0,
+                screen = StudyBlock.Screen.SESSION,
+                lessonId = LESSON,
+                lesson = StudyBlockLesson(setAside = false, status = LessonGenerationStatus.GENERATING),
+            )
         restoration.setContent {
             ZoonkTheme {
                 NextStop(
@@ -83,7 +90,6 @@ class NextStopFoldTest {
                     day = day(steps = listOf(waiting)),
                     step = waiting,
                     goalId = GOAL,
-                    asked = true,
                     notWritten = null,
                     alternative = null,
                     refresh = {},

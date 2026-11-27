@@ -2,9 +2,8 @@ import {
   type LanguageConversationCompletionInput,
   type LanguageConversationView,
 } from "@zoonk/core/language/conversations/contract";
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { type TranscriptTurn, getSpokenMs, toConversationTurns } from "./live-call-transcript";
-
-const MS_PER_SECOND = 1000;
 
 /**
  * What "Call again" hands the next connection, in memory only, once a connection of the call went

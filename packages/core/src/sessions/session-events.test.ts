@@ -1,6 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { runDeferredWork } from "../_test-utils/deferred-work";
 import { mockSession } from "../_test-utils/mock-session";
@@ -14,7 +15,6 @@ import { getStudySession } from "./get-study-session";
 import { startStudyBlock } from "./start-study-block";
 import { stopStudySession } from "./stop-study-session";
 
-const MINUTE_MS = 60_000;
 const LESSON_SECONDS = 240;
 
 async function setup() {
@@ -45,7 +45,7 @@ function sentEvents(name: string) {
 }
 
 function spendMinutes(minutes: number) {
-  vi.setSystemTime(new Date(Date.now() + minutes * MINUTE_MS));
+  vi.setSystemTime(new Date(Date.now() + minutes * MS_PER_MINUTE));
 }
 
 async function playQuestions({ blockId, sessionId }: { blockId: string; sessionId: string }) {

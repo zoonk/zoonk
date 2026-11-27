@@ -109,6 +109,7 @@ internal class LessonPlayerHarness(
                 lessonId = LESSON_ID,
                 studySessionId = null,
                 firstAnswer = null,
+                tapped = true,
                 store = store,
                 cache = cache,
                 sessions = session,
@@ -136,29 +137,27 @@ internal class LessonPlayerHarness(
                     val state by viewModel.state.collectAsState()
                     val ending by viewModel.ending.collectAsState()
                     LaunchedEffect(Unit) { viewModel.open(lesson) }
-                    LearnerInput(viewModel::act) {
-                        LessonPlayer(
-                            lesson,
-                            state,
-                            ending,
-                            viewModel,
-                            exits,
-                            rememberAppNavigator(),
-                            tutor =
-                                if (withTutor) {
-                                    LessonTutor(
-                                        TutorIdentity("Sam", look = null),
-                                        LESSON_SUGGESTIONS,
-                                        canAsk = tutorCanAsk,
-                                    ) { _, open, _, _, onOpenChange ->
-                                        androidx.compose.runtime.SideEffect { tutorOpen = open }
-                                        TextButton(onClick = { onOpenChange(true) }) { Text("Ask buddy") }
-                                    }
-                                } else {
-                                    null
-                                },
-                        )
-                    }
+                    LessonPlayer(
+                        lesson,
+                        state,
+                        ending,
+                        viewModel,
+                        exits,
+                        rememberAppNavigator(),
+                        tutor =
+                            if (withTutor) {
+                                LessonTutor(
+                                    TutorIdentity("Sam", look = null),
+                                    LESSON_SUGGESTIONS,
+                                    canAsk = tutorCanAsk,
+                                ) { _, open, _, _, onOpenChange ->
+                                    androidx.compose.runtime.SideEffect { tutorOpen = open }
+                                    TextButton(onClick = { onOpenChange(true) }) { Text("Ask buddy") }
+                                }
+                            } else {
+                                null
+                            },
+                    )
                 }
             }
         }

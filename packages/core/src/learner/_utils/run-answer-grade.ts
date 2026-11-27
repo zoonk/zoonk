@@ -2,21 +2,22 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { type JsonObject, isJsonObject } from "@zoonk/utils/json";
-import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
+import { unchanged, writeLearnerChange } from "./write-learner-change";
 
 const CLAIM_TTL_MS = 360_000;
 
-/** A grade is cached before answer recording; retries after a recording failure reuse it. */
-export async function runMistakeGrade({
+export async function runAnswerGrade({
   attemptId,
   cacheWithoutModelClaim = false,
   grade,
+  acceptsSaved = () => true,
   questionId,
   userId,
 }: {
   attemptId: string;
   cacheWithoutModelClaim?: boolean;
   grade: () => Promise<JsonObject>;
+  acceptsSaved?: (saved: JsonObject) => boolean;
   questionId: string;
   userId: string;
 }): Promise<{ result: JsonObject; status: "ready" } | { status: "retryable" }> {
@@ -29,7 +30,7 @@ export async function runMistakeGrade({
   >({ userId }, async (tx) => {
     const saved = await tx.modelGrade.findUnique({ where: { id: attemptId } });
 
-    if (saved && isJsonObject(saved.result)) {
+    if (saved && isJsonObject(saved.result) && acceptsSaved(saved.result)) {
       return unchanged({ result: saved.result, status: "saved" as const });
     }
 
@@ -65,7 +66,7 @@ export async function runMistakeGrade({
   }
 
   if (!data) {
-    throw new Error("A mistake grade returned no result");
+    throw new Error("An answer grade returned no result");
   }
 
   return writeLearnerChange({ userId }, async (tx) => {

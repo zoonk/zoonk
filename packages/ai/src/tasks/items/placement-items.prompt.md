@@ -41,7 +41,7 @@ The app skips a skill's lessons only when the learner gets its quick question an
 ## selectAll
 
 - `context`: the situation or support text the question needs, or null when the question stands alone.
-- `question`: asks which options fit ("Which of these expenses can Ana deduct?"). The app tells the learner to select every right one.
+- `question`: asks which options fit ("Which of these expenses can Ana deduct?"). The app tells the learner to select every right one, so the question never says how many to pick or that several are right ("Select all that apply").
 - `options`: 5 or 6 options, at least 2 correct and at least 2 wrong. Each is right or wrong on its own, never by pointing at another ("Both of the above"), and none is "all of the above" or "none of the above". Options are similar in length, specificity and confidence.
 - Every wrong option comes from a specific, realistic mistake a learner makes with this skill. Its `misconception` is a short neutral label of that mistake, and its `reason` tells the learner why it is wrong, naming the mistake. Every correct option has `misconception` null and a `reason` that says why it is right.
 - A `reason` names another option by what it says, never by its place or a letter: the app shuffles the options.

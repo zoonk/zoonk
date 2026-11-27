@@ -2,6 +2,7 @@
 
 import { type SpeakingTaskView } from "@zoonk/core/language/exam-speaking/contract";
 import { Button } from "@zoonk/ui/components/button";
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { useExtracted } from "next-intl";
 import { useRef, useState, useSyncExternalStore } from "react";
 import { formatClock } from "../../_utils/clock";
@@ -9,7 +10,6 @@ import { deviceStorage, subscribeToDeviceStorage } from "../../_utils/device-sto
 import { useFormatDuration } from "../../_utils/time-format";
 import { useTimeLeft } from "../../_utils/use-time-left";
 
-const MS_PER_MINUTE = 60_000;
 const TICK_MS = 500;
 
 const STALE_MINUTES = 360;

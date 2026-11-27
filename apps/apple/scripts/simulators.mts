@@ -1,5 +1,6 @@
 import { spawnSync } from "node:child_process";
 import path from "node:path";
+import { isJsonObject } from "../../../packages/utils/src/json.ts";
 
 export type DeviceFamily = "ipad" | "iphone";
 
@@ -66,12 +67,8 @@ export function readCommand({
   return result.stdout.trim();
 }
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null;
-}
-
 function isSimulator(value: unknown): value is Simulator {
-  if (!isRecord(value)) {
+  if (!isJsonObject(value)) {
     return false;
   }
 
@@ -85,7 +82,7 @@ function isSimulator(value: unknown): value is Simulator {
 }
 
 function isSimulatorCatalog(value: unknown): value is SimulatorCatalog {
-  if (!isRecord(value) || !isRecord(value.devices)) {
+  if (!isJsonObject(value) || !isJsonObject(value.devices)) {
     return false;
   }
 
@@ -110,7 +107,9 @@ export function listSimulators(): SimulatorCatalog {
 }
 
 function isDeviceType(value: unknown): value is { identifier: string; name: string } {
-  return isRecord(value) && typeof value.identifier === "string" && typeof value.name === "string";
+  return (
+    isJsonObject(value) && typeof value.identifier === "string" && typeof value.name === "string"
+  );
 }
 
 /** Xcode names its simulators after their model; other tools, like simlock, name theirs. */
@@ -120,7 +119,7 @@ function listModelNames(): Map<string, string> {
   );
 
   if (
-    !isRecord(list) ||
+    !isJsonObject(list) ||
     !Array.isArray(list.devicetypes) ||
     !list.devicetypes.every((deviceType) => isDeviceType(deviceType))
   ) {

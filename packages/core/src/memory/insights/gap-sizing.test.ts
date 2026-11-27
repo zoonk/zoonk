@@ -10,6 +10,7 @@ import {
 } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture, skillPrerequisiteFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "../../plans/_test-utils/plan-library";
@@ -21,7 +22,6 @@ import { readInsightPayload } from "./_utils/insight-view";
 import { getCurrentMemoryInsight } from "./get-current-memory-insight";
 import { respondToMemoryInsight } from "./respond-to-memory-insight";
 
-const DAY_MS = 86_400_000;
 const NO_PATTERNS: SessionPattern[] = [];
 const ANSWERS_PER_DAY = 7;
 
@@ -58,7 +58,7 @@ async function setup() {
   await Promise.all(
     Array.from({ length: 2 * ANSWERS_PER_DAY }, (_, index) =>
       attemptFixture({
-        answeredAt: new Date(todayNoon - Math.floor(index / ANSWERS_PER_DAY) * DAY_MS - index),
+        answeredAt: new Date(todayNoon - Math.floor(index / ANSWERS_PER_DAY) * MS_PER_DAY - index),
         isCorrect: index % 2 === 0,
         skillId: weak.id,
         userId: user.id,

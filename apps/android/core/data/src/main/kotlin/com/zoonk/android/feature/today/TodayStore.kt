@@ -14,8 +14,10 @@ import com.zoonk.android.feature.session.DayView
 import com.zoonk.android.feature.session.toDayView
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LanguageToday
+import com.zoonk.api.models.LessonReadiness
 import com.zoonk.api.models.MemoryInsight
 import com.zoonk.api.models.MistakeListAvailability
+import com.zoonk.api.models.StudyBlockLesson
 import com.zoonk.api.models.SuggestedGoal
 import com.zoonk.api.models.Today
 import kotlinx.coroutines.CoroutineScope
@@ -75,6 +77,11 @@ interface TodayApi {
         goalId: UUID,
         since: Instant,
     ): Boolean
+
+    suspend fun lessonReadiness(
+        session: AuthenticatedSession,
+        lessonId: UUID,
+    ): LessonReadiness
 
     /** Everything the learner has learned, in points; null before any. */
     suspend fun brainPower(session: AuthenticatedSession): Long?
@@ -172,7 +179,7 @@ class TodayStore(
         }
 
     /**
-     * While lessons are written: asks whether the day changed since it was read, and reads it again
+     * While lessons are outlined: asks whether the day changed since it was read, and reads it again
      * only then, since the server plans again on every read. Any other read, a write's invalidation
      * included, reads the day in full. True when the day was read again since the last poll, by this
      * poll or by anything else.
@@ -185,6 +192,15 @@ class TodayStore(
                 cache.mutate { api.todayChanged(it, shown.today.goal.id, since) } == MutationResult.Done(false)
         if (!unchanged) today.refresh()
         return (reads != polledReads).also { polledReads = reads }
+    }
+
+    suspend fun refreshIfLessonsMoved(shown: Map<UUID, StudyBlockLesson>) {
+        val moved =
+            shown.any { (lessonId, lesson) ->
+                val read = cache.mutate { api.lessonReadiness(it, lessonId) }
+                read is MutationResult.Done && (read.value.status.value != lesson.status.value || read.value.setAside != lesson.setAside)
+            }
+        if (moved) today.refresh()
     }
 
     /** Whether Today shows [goalId]'s day, or no goal's day at all (nothing stale is on screen). */

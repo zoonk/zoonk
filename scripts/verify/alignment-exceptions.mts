@@ -74,26 +74,6 @@ export const EXCEPTIONS: AlignmentException[] = [
     scenario: "plan-language-after-test-dark",
   },
   {
-    configuration: "phone touch",
-    issue: 3268,
-    maxMeasured: 6.31,
-    piece: "list-group",
-    reason:
-      "A Plan row's share centers on its name and bar, which the line check reads as one line, on main too",
-    relation: "line",
-    scenario: "plan-module-taken-out-en",
-  },
-  {
-    configuration: "phone touch pt",
-    issue: 3268,
-    maxMeasured: 6.31,
-    piece: "list-group",
-    reason:
-      "A Plan row's share centers on its name and bar, which the line check reads as one line, on main too",
-    relation: "line",
-    scenario: "plan-module-taken-out-pt",
-  },
-  {
     configuration: "laptop keys",
     issue: 2832,
     maxMeasured: 10,

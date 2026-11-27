@@ -65,6 +65,21 @@ export function getPlanStart({
   return startDate ? fromIsoDate(startDate) : getDateInTimeZone({ date: goal.createdAt, timeZone });
 }
 
+function readSessionPlan({ goalId, selection }: { goalId: string; selection?: SelectedDayPlan }) {
+  return selection
+    ? Promise.resolve({
+        graph: selection.state.graph,
+        items: selection.items,
+        lessonsAskedAt: selection.context.plan.lessonsAskedAt,
+        phases: selection.phases,
+        settings: selection.state.settings,
+      })
+    : prisma.plan.findUnique({
+        include: { items: { orderBy: { position: "asc" } } },
+        where: { goalId },
+      });
+}
+
 /** Excludes learner-removed areas; idle listening skills release their allocation to other subjects. */
 export async function loadDayPlan({
   blueprint,
@@ -76,19 +91,11 @@ export async function loadDayPlan({
   timeZone,
   userId,
 }: SessionDayContext & { selection?: SelectedDayPlan }) {
+  const readPlan = readSessionPlan({ goalId: goal.id, selection });
+
   const [plan, goalPlan, tier, lastStudyDate, previousSession, listeningSkillIds, outlines] =
     await Promise.all([
-      selection
-        ? {
-            graph: selection.state.graph,
-            items: selection.items,
-            phases: selection.phases,
-            settings: selection.state.settings,
-          }
-        : prisma.plan.findUnique({
-            include: { items: { orderBy: { position: "asc" } } },
-            where: { goalId: goal.id },
-          }),
+      readPlan,
       loadGoalPlan(goal.id, selection?.source),
       getLearnerTier(userId, readSubscription),
       loadLastStudyDate({ today: localDate, userId }),
@@ -96,7 +103,7 @@ export async function loadDayPlan({
       selection
         ? loadGoalListeningSkillIds({ blueprint, goal, graph: selection.state.graph })
         : loadListeningSkillIds(goal.id),
-      getDayOutlines({ goal, graph: selection?.state.graph, localDate, now }),
+      readPlan.then((saved) => getDayOutlines({ goal, localDate, now, plan: saved })),
     ]);
 
   const dayMinutes = getGoalDayMinutes({ date: localDate, goal, planSettings: plan?.settings });
@@ -131,6 +138,7 @@ export async function loadDayPlan({
     }),
     lastSessionChallenges: getSessionChallenges(previousSession?.blocks ?? []),
     lastStudyDate,
+    lessonsAskedAt: plan?.lessonsAskedAt ?? null,
     listeningSkillIds,
     outlines,
     phases,

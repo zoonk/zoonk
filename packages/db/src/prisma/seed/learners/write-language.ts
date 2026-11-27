@@ -1,9 +1,8 @@
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { daysFrom } from "../_utils/dates";
 import { SEED_PROVENANCE } from "../_utils/provenance";
 import { seedId } from "../_utils/seed-id";
 import { type LearnerScope } from "./write-goal";
-
-const MS_PER_MINUTE = 60_000;
 
 type LanguageScope = LearnerScope & { goalId: string; language: string };
 

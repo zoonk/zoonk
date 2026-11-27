@@ -1,12 +1,6 @@
 import "server-only";
 import { type GeneratedItem } from "@zoonk/ai/tasks/items/schemas";
-import {
-  type CourseLevel,
-  type ExamBlueprint,
-  type Goal,
-  type ItemFormat,
-  prisma,
-} from "@zoonk/db";
+import { type ExamBlueprint, type Goal, type ItemFormat, prisma } from "@zoonk/db";
 import { toListeningExam } from "../exams/listening/listening-exam";
 import { getListeningSkillIds } from "../exams/listening/listening-skills";
 import {
@@ -28,34 +22,17 @@ import { getWritingSkillIds } from "../learner/writing-skills";
 import { fitsExamChoice, fitsExamOptions } from "../library/exams/exam-choice-format";
 import { readBlueprintContent } from "../library/exams/save-exam-blueprint";
 import { getItemAudienceFilter } from "../library/items/item-field";
+import {
+  ITEM_WRITING_SKILL_SELECT,
+  type ItemWritingSkill,
+} from "../library/items/item-writing-skill";
 import { loadUsedSituations } from "../library/items/used-situations";
 import { loadSkillPrerequisites } from "../library/skills/skill-prerequisites";
 import { parsePlanGraph, parsePlanSettings } from "../plans/planner/plan-state";
 import { type PlacementChoice, type PlacementItemExam, getPickingExam } from "./item-exam";
 
-export const PLACEMENT_ITEM_SKILL_SELECT = {
-  country: true,
-  description: true,
-  id: true,
-  language: true,
-  level: true,
-  name: true,
-  ownerId: true,
-  targetLanguage: true,
-} as const;
-
-export type PlacementItemSkill = {
-  country: string | null;
-  description: string;
+export type PlacementItemSkill = ItemWritingSkill & {
   exam: PlacementItemExam | null;
-  id: string;
-  language: string;
-  level: CourseLevel | null;
-  name: string;
-  /** Set for a private course's skill, whose questions are personal content. */
-  ownerId: string | null;
-  /** The language a language goal's skill practices ("en"); its questions are in it. */
-  targetLanguage: string | null;
   /** Openings of every question the goal's learner can be served for the skill, so new cases do not repeat one under other names. */
   usedSituations: string[];
 };
@@ -288,7 +265,7 @@ export async function pickPlacementItemSkills({
 
   const skills = await prisma.skill.findMany({
     select: {
-      ...PLACEMENT_ITEM_SKILL_SELECT,
+      ...ITEM_WRITING_SKILL_SELECT,
       items: {
         select: { content: true, examBlueprintId: true, format: true },
         where: {

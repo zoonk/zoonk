@@ -1,10 +1,10 @@
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { Prisma, type StudyBlockKind } from "../../../generated/prisma/client";
 import { localTimeFields } from "../_utils/dates";
 import { seedId } from "../_utils/seed-id";
 import { type LearnerScope, scopeDay } from "./write-goal";
 import { type HistoryEvent, type StudyDay, getBrainPower, listStudyDays } from "./write-history";
 
-const MS_PER_SECOND = 1000;
 const SECONDS_PER_MINUTE = 60;
 
 export type PastCheckpoint = {

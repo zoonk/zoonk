@@ -2,11 +2,11 @@ import { checkSentenceOrders } from "@zoonk/ai/tasks/language/check-sentence-ord
 import { generateLanguageSentenceOrders } from "@zoonk/ai/tasks/language/language-sentence-orders";
 import { prisma } from "@zoonk/db";
 import { languageLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it, vi } from "vitest";
 import { taskResult } from "../_test-utils/recorded-outputs";
 import { sentenceOrdersWorkflow } from "./sentence-orders-workflow";
 
-const DAY_MS = 86_400_000;
 const MAX_ATTEMPTS = 8;
 
 type Generated = Awaited<ReturnType<typeof generateLanguageSentenceOrders>>["data"]["sentences"];
@@ -31,7 +31,7 @@ const RENT_REVIEW: Reviewed = [{ sentenceKeep: [false], translationKeep: [true, 
 
 async function owedLessonFixture({ attempts = 0 }: { attempts?: number } = {}) {
   const { lesson, sentence } = await languageLessonFixture();
-  const owedAt = new Date(Date.now() - DAY_MS);
+  const owedAt = new Date(Date.now() - MS_PER_DAY);
 
   await prisma.lesson.update({
     data: { sentenceOrdersAttempts: attempts, updatedAt: owedAt },

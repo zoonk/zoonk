@@ -195,7 +195,7 @@ describe("open answer skip", () => {
     });
 
     setChosenToday(CANT_WRITE_TODAY, true);
-    renderLessonPlayer({ adapters, lesson });
+    renderLessonPlayer({ adapters, lesson, takeNavigationStart: () => true });
 
     await expect.element(page.getByText("A cloud, not a little ball")).toBeVisible();
     await expect.element(writingSkippedNotice()).toBeVisible();

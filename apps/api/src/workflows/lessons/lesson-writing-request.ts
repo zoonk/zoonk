@@ -1,6 +1,6 @@
 import { releaseStaleLessonClaims } from "@zoonk/core/library/generation/state";
 import { type LessonGenerationRequest } from "@zoonk/core/lookahead/request-lesson-generation";
-import { isRunActive } from "../_shared/run-activity";
+import { settleRunActivity } from "../_shared/run-activity";
 
 /** A lesson whose run stopped without ending its claim would otherwise be followed forever. */
 export async function requestLiveLessonWriting({
@@ -12,7 +12,10 @@ export async function requestLiveLessonWriting({
 }): Promise<LessonGenerationRequest> {
   const result = await request();
 
-  if (result.status !== "generating" || (await isRunActive(result.generationId))) {
+  if (
+    result.status !== "generating" ||
+    (await settleRunActivity(result.generationId)) !== "ended"
+  ) {
     return result;
   }
 

@@ -6,11 +6,12 @@ import {
   getPlacementQuickFormat,
 } from "../learner/placement/placement-quick-format";
 import { readBlueprintContent } from "../library/exams/save-exam-blueprint";
+import { ITEM_WRITING_SKILL_SELECT } from "../library/items/item-writing-skill";
 import { listPastQuestionExamples } from "../library/items/past-question-examples";
 import { loadUsedSituations } from "../library/items/used-situations";
 import { getSkillArea } from "../plans/planner/graph-areas";
 import { readItemExamPlan, toItemExam } from "./item-exam";
-import { PLACEMENT_ITEM_SKILL_SELECT, type PlacementItemSkill } from "./placement-item-skills";
+import { type PlacementItemSkill } from "./placement-item-skills";
 
 const SET_AREAS = 2;
 
@@ -53,7 +54,7 @@ export async function pickItemSetTargets({
 
   const [rows, sets] = await Promise.all([
     prisma.skill.findMany({
-      select: PLACEMENT_ITEM_SKILL_SELECT,
+      select: ITEM_WRITING_SKILL_SELECT,
       where: { id: { in: firstSkills.map((skill) => skill.skillId) } },
     }),
     prisma.itemSet.findMany({

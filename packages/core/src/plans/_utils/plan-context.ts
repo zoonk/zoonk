@@ -30,6 +30,7 @@ export type PlanContext = {
     | "estimateHours"
     | "id"
     | "inputsKey"
+    | "lessonsAskedAt"
     | "inputVersion"
     | "noticeWaitUntil"
     | "sourceVersion"
@@ -145,6 +146,7 @@ export async function loadPlanContext({
       id: plan.id,
       inputVersion: plan.inputVersion,
       inputsKey: plan.inputsKey,
+      lessonsAskedAt: plan.lessonsAskedAt,
       noticeWaitUntil: plan.noticeWaitUntil,
       sourceSkillIds: plan.sourceSkillIds,
       sourceVersion: plan.sourceVersion,

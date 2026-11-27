@@ -8,6 +8,7 @@ import {
   unnoticedSourceChangeFixture,
 } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { assert, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getSession } from "../../users/get-session";
@@ -26,8 +27,6 @@ function mockAdminSession(userId: string) {
   );
 }
 
-const DAY_MS = 86_400_000;
-
 const LAW_TEXT = [
   "Art. 13. A posse ocorrerá no prazo de trinta dias contados da publicação do ato de provimento.",
   "Art. 14. A posse em cargo público dependerá de prévia inspeção médica oficial.",
@@ -43,7 +42,7 @@ const PROVENANCE = {
 };
 
 function daysAgo(days: number) {
-  return new Date(Date.now() - days * DAY_MS);
+  return new Date(Date.now() - days * MS_PER_DAY);
 }
 
 async function noticeFor(sourceId: string) {

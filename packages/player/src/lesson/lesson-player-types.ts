@@ -129,6 +129,7 @@ export type LessonPlayerAdapters = {
   explainAnswer?: (input: { answer: string; stepId: string }) => Promise<AnswerExplanationOutcome>;
   /** Grades a recording of a spoken answer. Without it, spoken screens take a typed answer. */
   gradeSpokenAnswer?: (input: {
+    attemptId: string;
     audio: Blob;
     durationMs: number;
     stepId: string;

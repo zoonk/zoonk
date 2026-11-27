@@ -1,3 +1,4 @@
+import { libraryLessonRunSchema } from "@zoonk/core/lesson-player/contract";
 import { type TeachingStepKind } from "@zoonk/core/lesson-player/playable-lesson";
 import { lessonTutorSuggestionSchema } from "@zoonk/core/lesson-questions/contract";
 import { activityExpectedSchema } from "@zoonk/core/library/activities/expected-answer";
@@ -221,6 +222,10 @@ export const playableLibraryLessonResponseSchema = z
           }),
         targetLanguage: z.string().nullable(),
       }),
+      resume: libraryLessonRunSchema.shape.answers
+        .optional()
+        .describe("Saved answers from unfinished sittings, oldest first."),
+      saved: z.boolean().optional().describe("Whether the learner has bookmarked the lesson."),
       status: z.literal("ready"),
       tutorSuggestions: z
         .array(lessonTutorSuggestionSchema)

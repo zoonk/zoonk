@@ -11,6 +11,7 @@ import com.zoonk.api.models.ActivityExpected
 import com.zoonk.api.models.ExplanationLesson
 import com.zoonk.api.models.LessonMap
 import com.zoonk.api.models.LessonTutorSuggestion
+import com.zoonk.api.models.LibraryLessonRunAnswer
 import com.zoonk.api.models.PlayableLibraryLessonResponse
 import com.zoonk.api.models.PlayableLibraryLessonResponseOneOf1Lesson
 import com.zoonk.api.models.PlayableLibraryStep
@@ -72,6 +73,8 @@ data class PlayableLesson(
     val steps: List<LessonStep>,
     val map: LessonMap?,
     val tutorSuggestions: List<LessonTutorSuggestion>,
+    val resume: List<LibraryLessonRunAnswer> = emptyList(),
+    val saved: Boolean? = null,
 )
 
 fun PlayableLibraryLessonResponse.toLessonLoad(): LessonLoad =
@@ -94,6 +97,8 @@ fun PlayableLibraryLessonResponse.toLessonLoad(): LessonLoad =
                     steps = lesson.steps.map(PlayableLibraryStep::toLessonStep),
                     map = lesson.summary.withIdeas(),
                     tutorSuggestions = value.tutorSuggestions,
+                    resume = value.resume.orEmpty(),
+                    saved = value.saved,
                 ),
             )
         }

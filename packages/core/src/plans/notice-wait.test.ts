@@ -1,6 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
@@ -11,7 +12,6 @@ import { claimNoticeLanding, endNoticeWait } from "./notice-wait";
 
 const NOW = new Date("2020-09-28T12:00:00Z");
 const TODAY = "2020-09-28";
-const MINUTE_MS = 60_000;
 
 const citation = { passage: "", sourceId: "notice" };
 
@@ -97,13 +97,13 @@ describe("an exam plan waiting for its notice", () => {
     await expect(readPlan(goal.id)).resolves.toMatchObject({ notice: "reading", ready: true });
 
     await expect(
-      claimNoticeLanding({ goalId: goal.id, now: new Date(NOW.getTime() + 2 * MINUTE_MS) }),
+      claimNoticeLanding({ goalId: goal.id, now: new Date(NOW.getTime() + 2 * MS_PER_MINUTE) }),
     ).resolves.toBe(true);
 
-    setNow(new Date(NOW.getTime() + 4 * MINUTE_MS));
+    setNow(new Date(NOW.getTime() + 4 * MS_PER_MINUTE));
     await expect(readPlan(goal.id)).resolves.toMatchObject({ notice: "reading" });
 
-    const late = new Date(NOW.getTime() + 10 * MINUTE_MS);
+    const late = new Date(NOW.getTime() + 10 * MS_PER_MINUTE);
     setNow(late);
 
     await expect(readPlan(goal.id)).resolves.toMatchObject({ notice: "usual" });

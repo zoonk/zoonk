@@ -1,3 +1,4 @@
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   answerFor,
@@ -324,8 +325,6 @@ describe("learner a tap was made for", () => {
   });
 });
 
-const MINUTE_MS = 60 * 1000;
-
 const SERVER_READ_AT = Date.UTC(2026, 9, 14, 23, 50);
 
 function summaryReadAt({ nextChangeAt, readAt }: { nextChangeAt: number; readAt: number }) {
@@ -365,18 +364,18 @@ describe("learner store timing", () => {
   });
 
   it.each([
-    { clock: "ahead", deviceAhead: 15 * MINUTE_MS },
-    { clock: "behind", deviceAhead: -15 * MINUTE_MS },
+    { clock: "ahead", deviceAhead: 15 * MS_PER_MINUTE },
+    { clock: "behind", deviceAhead: -15 * MS_PER_MINUTE },
   ])(
     "reads the summary again at its next change by the server's clock, a device's $clock",
     async ({ deviceAhead }) => {
       const { reads, store } = await showLearner({
         deviceAhead,
-        nextChangeAt: SERVER_READ_AT + 10 * MINUTE_MS,
+        nextChangeAt: SERVER_READ_AT + 10 * MS_PER_MINUTE,
       });
 
       store.ensureLearnerSummary();
-      vi.advanceTimersByTime(10 * MINUTE_MS - 1);
+      vi.advanceTimersByTime(10 * MS_PER_MINUTE - 1);
       expect(reads).toHaveLength(1);
 
       vi.advanceTimersByTime(1);
@@ -385,7 +384,7 @@ describe("learner store timing", () => {
   );
 
   it("keeps the next change's time when a page hands back the same summary", async () => {
-    const nextChangeAt = SERVER_READ_AT + 2 * MINUTE_MS;
+    const nextChangeAt = SERVER_READ_AT + 2 * MS_PER_MINUTE;
     const { reads, store } = await showLearner({ deviceAhead: 0, nextChangeAt });
 
     vi.advanceTimersByTime(90 * 1000);
@@ -402,7 +401,7 @@ describe("learner store timing", () => {
   it("asks again at most once a minute when the server's answer is already due", async () => {
     const { reads } = await showLearner({ deviceAhead: 0, nextChangeAt: SERVER_READ_AT - 1 });
 
-    vi.advanceTimersByTime(MINUTE_MS - 1);
+    vi.advanceTimersByTime(MS_PER_MINUTE - 1);
     expect(reads).toHaveLength(1);
 
     vi.advanceTimersByTime(1);
@@ -410,13 +409,13 @@ describe("learner store timing", () => {
 
     reads[1]?.resolve(
       answerFor(
-        summaryReadAt({ nextChangeAt: SERVER_READ_AT, readAt: SERVER_READ_AT + MINUTE_MS }),
+        summaryReadAt({ nextChangeAt: SERVER_READ_AT, readAt: SERVER_READ_AT + MS_PER_MINUTE }),
       ),
     );
 
     await settle();
 
-    vi.advanceTimersByTime(MINUTE_MS - 1);
+    vi.advanceTimersByTime(MS_PER_MINUTE - 1);
     expect(reads).toHaveLength(2);
 
     vi.advanceTimersByTime(1);

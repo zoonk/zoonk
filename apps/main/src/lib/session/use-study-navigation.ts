@@ -14,7 +14,6 @@ import { useCallback } from "react";
 import { LESSON_LIMIT_PARAM, toLessonLimitParam } from "./lesson-limit-param";
 import { SESSION_BLOCK_PARAM } from "./session-block-param";
 import { SESSION_GOAL_PARAM } from "./session-goal-param";
-import { SESSION_PREPARING_PARAM } from "./session-preparing-param";
 import { SESSION_STOPPED_HREF, SESSION_STOPPED_PARAM } from "./session-stopped-param";
 import {
   addExtraStudyBlockAction,
@@ -30,7 +29,6 @@ type SessionScreen = {
   generationId?: string;
   goalId?: string;
   limit: LessonLimit | null;
-  preparing?: boolean;
   summary?: boolean;
   reason?: "setAside";
 };
@@ -40,7 +38,6 @@ export function getSessionHref({
   generationId,
   goalId,
   limit,
-  preparing,
   reason,
   summary,
 }: SessionScreen) {
@@ -52,8 +49,6 @@ export function getSessionHref({
     params.set("writing", reason);
   } else if (generationId) {
     params.set(LESSON_GENERATION_PARAM, generationId);
-  } else if (preparing) {
-    params.set(SESSION_PREPARING_PARAM, "1");
   }
 
   if (blockId) {
@@ -115,8 +110,7 @@ function useOpenSession() {
         params.has("summary") ||
         screen.limit ||
         screen.reason ||
-        screen.generationId ||
-        screen.preparing
+        screen.generationId
       ) {
         onAddress?.({ blockId: screen.blockId, href });
         router.replace(href);
@@ -249,11 +243,6 @@ export function useGoToStudyDestination({ refresh }: { refresh?: () => void } = 
         router.push("/today");
       } else if (destination.kind === "changed") {
         reread();
-      } else if (destination.kind === "preparingLesson") {
-        openSession(
-          { blockId: destination.blockId, limit: null, preparing: true },
-          onSessionAddress,
-        );
       } else {
         openSession({ blockId: destination.blockId ?? undefined, limit: null }, onSessionAddress);
       }

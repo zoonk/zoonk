@@ -1,4 +1,5 @@
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
+import { sharesObjectiveClock } from "../../../library/exams/written-tasks";
 import { type ExamDay, type ExamFormatDay } from "../exam-view-contract";
 
 export function getExamFormat({
@@ -19,7 +20,12 @@ export function getExamFormat({
   );
 
   return numbers.map((day) => {
-    const daySections = sections.filter((section) => (section.day ?? 1) === day);
+    const daySections = sections.filter(
+      (section) =>
+        (section.day ?? 1) === day &&
+        !(section.kind === "written" && sharesObjectiveClock({ section, sections })),
+    );
+
     const minutes = daySections.map((section) => section.minutes);
 
     return {

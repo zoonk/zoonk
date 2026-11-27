@@ -1,6 +1,6 @@
 import { noteAppWritesSent } from "@/lib/http/app-write-ledger";
 import { noteRouterTransition } from "@/lib/http/refresh-stale-pages";
-import { trackUserActivation } from "@/lib/lessons/wait-for-user-activation";
+import { noteStudyNavigation, trackUserActivation } from "@/lib/lessons/wait-for-user-activation";
 import { reportRouterTransition, startSentryAfterPageLoad } from "@/lib/sentry/report-error";
 import { noteNavigationStart } from "@/lib/session/tap-answer";
 import { waitForSharedProperties } from "@zoonk/core/analytics/posthog-browser";
@@ -26,6 +26,7 @@ noteAppWritesSent();
 
 export function onRouterTransitionStart(url: string, navigationType: RouterTransitionType) {
   noteNavigationStart();
+  noteStudyNavigation(url, navigationType);
   noteRouterTransition(navigationType);
   reportRouterTransition(url, navigationType);
 }

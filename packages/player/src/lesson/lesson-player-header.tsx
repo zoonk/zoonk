@@ -19,7 +19,6 @@ import {
   PopoverDescription,
   PopoverTrigger,
 } from "@zoonk/ui/components/popover";
-import { cn } from "@zoonk/ui/lib/utils";
 import { CloudOffIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useTutorBuddy } from "../questions/tutor-buddy";
@@ -85,16 +84,18 @@ function UnsavedAnswers() {
   );
 }
 
-/** It holds its place until the run says whether the lesson is saved, so the title never moves. */
 function LessonBookmark({ saves }: { saves: LessonSaves }) {
-  const { lesson } = useLessonPlayerConfig();
+  const { lesson, saved } = useLessonPlayerConfig();
   const { state } = useLessonPlayer();
-  const run = state.run.status === "started" ? state.run : null;
-  const saveState = { saved: run?.saved ?? false, target: lesson.id };
+
+  const saveState = {
+    saved: state.run.status === "started" ? state.run.saved : (saved ?? false),
+    target: lesson.id,
+  };
 
   return (
     <LessonSaveButton
-      className={cn("shrink-0", !run && "invisible")}
+      className="shrink-0"
       labelled={false}
       onToggle={() => saves.toggle(saveState)}
       saved={saves.isSaved(saveState)}

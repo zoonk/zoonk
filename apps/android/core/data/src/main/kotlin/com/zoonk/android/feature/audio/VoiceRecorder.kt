@@ -29,6 +29,8 @@ class VoiceRecording(
     val audio: ByteArray,
     val durationMs: Long,
 ) {
+    val attemptId: UUID = UUID.randomUUID()
+
     fun part(): MultipartBody.Part = MultipartBody.Part.createFormData("audio", "answer.m4a", audio.toRequestBody(MEDIA_TYPE))
 
     private companion object {

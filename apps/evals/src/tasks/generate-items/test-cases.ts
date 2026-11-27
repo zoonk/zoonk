@@ -288,7 +288,7 @@ export const TEST_CASES: TestCase<GenerateItemsExpected, GenerateItemsInput>[] =
     },
   },
   {
-    expectations: `JEE Advanced-style physics items in English on kinematics where one or more options are correct. Each item has 4 options, at least one correct and at least one wrong, every correct option is right on its own (never "both A and C"), wrong options come from real mistakes (sign of acceleration, mixing displacement and distance), and fixedOrder is false. Difficulty matches JEE Advanced's own one-or-more-correct questions, not a textbook's: each item needs several steps that combine at least two ideas (a graph read and then integrated, a relative motion set up and then solved), so no statement follows from one formula or one reading of a given value.`,
+    expectations: `JEE Advanced-style physics items in English on kinematics where one or more options are correct. Each item has 4 options, at least one correct and at least one wrong, every correct option is right on its own (never "both A and C"), wrong options come from real mistakes (sign of acceleration, mixing displacement and distance), and fixedOrder is false. Difficulty matches JEE Advanced's own one-or-more-correct questions, not a textbook's: each item needs several steps that combine at least two ideas (a graph read and then integrated, a relative motion set up and then solved), so no statement follows from one formula or one reading of a given value. No question says how many options to pick or that several are right ("Select all that apply"): the app shows that line.`,
     id: "en-jee-advanced-kinematics-multi-correct",
     userInput: {
       count: ITEMS_PER_CASE,

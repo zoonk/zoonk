@@ -18,10 +18,9 @@ import {
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { areaPracticeResponseSchema } from "../src/lib/openapi/schemas/learn-views";
 import { createAuthenticatedApiContext } from "./helpers/auth";
-
-const DAY_MS = 86_400_000;
 
 async function createCourseGoal({
   createdAt,
@@ -129,7 +128,7 @@ test.describe("Goal maps API", () => {
     });
 
     const { goal, skills } = await createCourseGoal({
-      createdAt: new Date(Date.now() - 30 * DAY_MS),
+      createdAt: new Date(Date.now() - 30 * MS_PER_DAY),
       userId: user.id,
     });
 
@@ -140,7 +139,7 @@ test.describe("Goal maps API", () => {
 
     await learnerSkillFixture({
       difficulty: 5,
-      lastReviewedAt: new Date(Date.now() - 20 * DAY_MS),
+      lastReviewedAt: new Date(Date.now() - 20 * MS_PER_DAY),
       reps: 2,
       skillId: skills[0]?.id ?? "",
       stability: 2,

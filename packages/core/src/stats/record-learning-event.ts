@@ -1,6 +1,6 @@
 import { type LearningEvent, type TransactionClient } from "@zoonk/db";
 import { type JsonObject } from "@zoonk/utils/json";
-import { getDateInTimeZone, getHourInTimeZone } from "@zoonk/utils/time-zone";
+import { getLearnerLocalTime } from "../learner/_utils/local-time";
 
 type LedgerIdentity = Pick<LearningEvent, "kind" | "startedAt" | "titleSnapshot" | "userId"> &
   Partial<Pick<LearningEvent, "brainPower" | "goalId" | "lessonKind">> & {
@@ -16,18 +16,13 @@ type LearningEventOutcome = Pick<
 
 type FinishedLearningEvent = LedgerIdentity & LearningEventOutcome & { endedAt: Date };
 
-export function getLedgerLocalTime({ date, timeZone }: { date: Date; timeZone: string }) {
-  const localDate = getDateInTimeZone({ date, timeZone });
-  return { hour: getHourInTimeZone({ date, timeZone }), localDate, weekday: localDate.getUTCDay() };
-}
-
 /** Pass the same endedAt stored for the activity; local ledger time describes its end and survives content deletion. */
 export function recordLearningEvent(
   tx: TransactionClient,
   { endedAt, timeZone, ...event }: FinishedLearningEvent,
 ) {
   return tx.learningEvent.create({
-    data: { ...event, endedAt, ...getLedgerLocalTime({ date: endedAt, timeZone }) },
+    data: { ...event, endedAt, ...getLearnerLocalTime({ date: endedAt, timeZone }) },
   });
 }
 
@@ -37,7 +32,7 @@ export function startLearningEvent(
   { startedAt, timeZone, ...event }: LedgerIdentity,
 ) {
   return tx.learningEvent.create({
-    data: { ...event, startedAt, ...getLedgerLocalTime({ date: startedAt, timeZone }) },
+    data: { ...event, startedAt, ...getLearnerLocalTime({ date: startedAt, timeZone }) },
   });
 }
 
@@ -59,7 +54,7 @@ export async function finishLearningEvent(
   },
 ): Promise<boolean> {
   const { count } = await tx.learningEvent.updateMany({
-    data: { ...outcome, endedAt, kind, ...getLedgerLocalTime({ date: endedAt, timeZone }) },
+    data: { ...outcome, endedAt, kind, ...getLearnerLocalTime({ date: endedAt, timeZone }) },
     where: { endedAt: null, id: eventId },
   });
 

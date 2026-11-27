@@ -75,6 +75,7 @@ import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.components.Eyebrow
+import com.zoonk.android.ui.components.GenerationFailureNotice
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
@@ -99,7 +100,6 @@ import com.zoonk.api.models.StudyDay
 import com.zoonk.api.models.StudyReminderOffer
 import com.zoonk.api.models.StudySession
 import com.zoonk.api.models.TodayGoal
-import kotlinx.coroutines.delay
 import java.util.UUID
 
 /**
@@ -142,25 +142,7 @@ fun SessionScreen(
         }
 
         shown != null -> {
-            val day = shown.day
-            val step = day.steps.firstOrNull { it.position == day.nextPosition }
-            if (step == null) {
-                LaunchedEffect(Unit) { navigator.closeTask() }
-            } else {
-                NextStop(
-                    viewModel,
-                    day,
-                    step,
-                    day.goalId ?: shown.today.goal.id,
-                    asked = false,
-                    notWritten = null,
-                    alternative = null,
-                    refresh = null,
-                    onStop = null,
-                    navigator = navigator,
-                    warmUps = app.warmUps,
-                )
-            }
+            UnopenedDay(viewModel, shown, { app.today.today.refresh() }, navigator, app.warmUps)
         }
 
         else -> {
@@ -169,6 +151,35 @@ fun SessionScreen(
             SessionLoading(navigator::closeTask)
         }
     }
+}
+
+/** A day Today holds that isn't opened yet: Today's read is its only read, so it's what readiness refreshes. */
+@Composable
+internal fun UnopenedDay(
+    viewModel: SessionViewModel,
+    read: TodayRead.Day,
+    refreshToday: suspend () -> Unit,
+    navigator: AppNavigator,
+    warmUps: WarmUpStore,
+) {
+    val day = read.day
+    val step = day.steps.firstOrNull { it.position == day.nextPosition }
+    if (step == null) {
+        LaunchedEffect(Unit) { navigator.closeTask() }
+        return
+    }
+    NextStop(
+        viewModel = viewModel,
+        day = day,
+        step = step,
+        goalId = day.goalId ?: read.today.goal.id,
+        notWritten = null,
+        alternative = day.steps.firstOrNull { it.position == day.alternativePosition },
+        refresh = refreshToday,
+        onStop = null,
+        navigator = navigator,
+        warmUps = warmUps,
+    )
 }
 
 @Composable
@@ -219,9 +230,8 @@ private fun SavedDay(
                     day = session.toDayView(),
                     step = step.toDayStep(),
                     goalId = session.goalId,
-                    asked = opened != null,
                     notWritten = opened?.let { app.studyOpener.notWritten(it.id) },
-                    alternative = session.alternativeTo(step),
+                    alternative = session.blocks.firstOrNull { it.position == session.alternativePosition }?.toDayStep(),
                     refresh = { app.studySessions.day[sessionId].refresh() },
                     onStop = if (session.sessionBar.completed > 0) ({ viewModel.stop(sessionId) }) else null,
                     navigator = navigator,
@@ -361,14 +371,15 @@ private fun SessionSummaryContent(
 }
 
 /**
- * The day's next step, or the one a tap opened when its lesson isn't made yet. That wait reads the
- * day again until the lesson is there, or only the lesson's readiness while a run writes it, then
- * says it's ready and focuses Start, never opening it on its own: the learner may be reading, or
- * doing the other step it offers. [notWritten] says,
- * in place of Start, why the API wouldn't write the lesson the tap asked for; [alternative] is work
- * to do meanwhile or instead. [refresh] is null on a day not opened yet, which has no lesson to
- * wait for; [onStop] once the session has work done. A goal's first lesson deals its guesses while
- * it's written, and a learner who guessed finishes the card once Start shows.
+ * The day's next step, or the one a tap opened when its lesson isn't written yet. Its first frame
+ * shows the lesson as the day's read has it, so it never offers Start for a lesson being written;
+ * its readiness then says it live. While it's written, or once its writing failed, the wait asks
+ * that readiness until the day has the lesson, then says it's ready and focuses Start, never opening
+ * it on its own: the learner may be reading, or doing the other step it offers. [notWritten] says,
+ * in place of Start, why the API wouldn't write the lesson the tap asked for; [alternative] is
+ * core's pick of work to do meanwhile or instead; [refresh] reads the day again; [onStop] is set
+ * once the session has work done. A goal's first lesson deals
+ * its guesses while it's written, and a learner who guessed finishes the card once Start shows.
  */
 @Composable
 internal fun NextStop(
@@ -376,41 +387,37 @@ internal fun NextStop(
     day: DayView,
     step: DayStep,
     goalId: UUID?,
-    asked: Boolean,
     notWritten: LessonWriting?,
     alternative: DayStep?,
-    refresh: (suspend () -> Unit)?,
+    refresh: suspend () -> Unit,
     onStop: (() -> Unit)?,
     navigator: AppNavigator,
     warmUps: WarmUpStore,
 ) {
     ResultScreen {
         val refused = notWritten?.takeIf { step.isUnwrittenLesson() }
-        val unwritten = refresh != null && refused == null && step.kind == StudyBlock.Kind.LEARN && step.screen != StudyBlock.Screen.LESSON
-        val watched = step.lessonId?.takeIf { unwritten }
-        val picking = unwritten && watched == null && asked
+        val watched =
+            step.lessonId?.takeIf {
+                refused == null && step.kind == StudyBlock.Kind.LEARN && step.screen != StudyBlock.Screen.LESSON
+            }
         val known = viewModel.lesson?.takeIf { it.id == watched }
-        val refusal = refused ?: LessonWriting.SetAside.takeIf { known?.setAside == true }
+        val status = known?.status?.value ?: step.lesson?.status?.value
+        val setAside = known?.setAside ?: step.lesson?.setAside
+        val refusal = refused ?: LessonWriting.SetAside.takeIf { watched != null && setAside == true }
         val lesson =
             when {
-                !unwritten || refusal != null -> null
-                known?.status == LessonReadiness.Status.GENERATING -> NextStopLesson.Writing
-                known?.status == LessonReadiness.Status.FAILED -> NextStopLesson.Failed
-                asked -> NextStopLesson.NotStarted
-                else -> null
+                watched == null || refusal != null -> NextStopLesson.Ready
+                status == LessonReadiness.Status.GENERATING.value -> NextStopLesson.Writing
+                status == LessonReadiness.Status.FAILED.value -> NextStopLesson.Failed
+                status == null -> NextStopLesson.Unknown
+                else -> NextStopLesson.Ready
             }
-        val waiting = lesson != null
+        val waiting = lesson == NextStopLesson.Writing || lesson == NextStopLesson.Failed
         val waitKind = known?.kind ?: GenerationKind.Lesson
         val run by viewModel.run.collectAsStateWithLifecycle()
-        val failure =
-            when {
-                lesson == NextStopLesson.Failed -> GenerationFailure.Generation
-                lesson == null || viewModel.stuckWait != step.position to lesson -> null
-                lesson == NextStopLesson.NotStarted -> GenerationFailure.NotStarted
-                else -> GenerationFailure.Generation
-            }
+        val failed = lesson == NextStopLesson.Failed
         val busy = viewModel.busy != null
-        val ready = !waiting && refusal == null
+        val ready = lesson == NextStopLesson.Ready && refusal == null
         val hold = rememberReadyHold(ready)
         val warmUpId = viewModel.lesson?.takeIf { it.id == step.lessonId && refusal == null && !hold.over }?.warmUpId
         val guessing = if (warmUpId != null) Modifier.watchTouches(hold) else Modifier
@@ -423,7 +430,7 @@ internal fun NextStop(
         var screenFocused by remember { mutableStateOf(false) }
         val reviewStarts = rememberReviewStarts()
         val opening = rememberWaitState(viewModel.busy == SessionAction.Start)
-        val instead = alternative?.takeIf { !ready && goalId != null }
+        val instead = alternative?.takeIf { !ready && lesson != NextStopLesson.Unknown && goalId != null }
 
         LaunchedEffect(step.position, waiting, step.screen) {
             when {
@@ -432,34 +439,20 @@ internal fun NextStop(
             }
         }
         val lifecycle = LocalLifecycleOwner.current.lifecycle
-        LaunchedEffect(picking) {
-            val readDay = refresh?.takeIf { picking } ?: return@LaunchedEffect
-            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                while (true) {
-                    delay(LESSON_CHECK_MILLIS)
-                    readDay()
-                }
-            }
-        }
-        LaunchedEffect(watched, asked) {
+        LaunchedEffect(watched) {
             val lessonId = watched ?: return@LaunchedEffect
-            val readDay = refresh ?: return@LaunchedEffect
-            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) { viewModel.followLesson(lessonId, asked, readDay) }
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) { viewModel.followLesson(lessonId, step.lesson, refresh) }
         }
         val runWrote = run.status == GenerationRun.Status.Ready && lesson == NextStopLesson.Writing
-        LaunchedEffect(runWrote) { if (runWrote) refresh?.invoke() }
-        LaunchedEffect(step.position, lesson) {
-            val after = STUCK_AFTER_MILLIS[lesson] ?: return@LaunchedEffect
-            viewModel.awaitStuck(step.position, lesson ?: return@LaunchedEffect, after)
-        }
+        LaunchedEffect(runWrote) { if (runWrote) refresh() }
         val retry = { goalId?.let { viewModel.start(day, step, it) } }
 
         TaskScaffold(
             onClose = { if (quiz.showingProgress && quiz.hasQuiz) quiz.back() else navigator.closeTask() },
             modifier = Modifier.onFocusChanged { screenFocused = it.hasFocus }.then(guessing),
-            title = { Text(stringResource(R.string.session_summary_eyebrow), maxLines = 1, style = MaterialTheme.typography.titleSmall) },
+            title = { Text(stringResource(R.string.navigation_today), maxLines = 1, style = MaterialTheme.typography.titleSmall) },
             bottomBar =
-                if ((waiting && failure == null && quiz.hasQuiz && (quiz.showingProgress || quiz.hasNext)) || startsFor != null ||
+                if ((waiting && !failed && quiz.hasQuiz && (quiz.showingProgress || quiz.hasNext)) || startsFor != null ||
                     instead != null ||
                     onStop != null ||
                     viewModel.failed != null
@@ -504,7 +497,7 @@ internal fun NextStop(
                                     }
                                 }
                                 // A failed run waits for nothing: Try again and the way back are its only ways on.
-                                if (!ready && failure == null) WaitQuizAction(quiz, hold, modifier = Modifier.taskOption())
+                                if (waiting && !failed) WaitQuizAction(quiz, hold, modifier = Modifier.taskOption())
                                 instead?.let { other ->
                                     Button(
                                         busy = viewModel.busy == SessionAction.Start,
@@ -534,6 +527,7 @@ internal fun NextStop(
                         day,
                         step,
                         Modifier.width(fold.start).padding(horizontal = 16.dp, vertical = 24.dp).semantics { isTraversalGroup = true },
+                        counted = true,
                     )
                 }
                 // What's next keeps its place in the composition, only padded past a fold, so folding keeps a guess on its card.
@@ -556,7 +550,7 @@ internal fun NextStop(
                     ) {
                         Column(Modifier.taskColumn(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             Eyebrow(stringResource(R.string.session_next_eyebrow))
-                            Text(blockTitle(step), Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
+                            Text(blockTitle(step), Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineMedium)
                             blockDetail(step)?.let {
                                 Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
                             }
@@ -584,14 +578,30 @@ internal fun NextStop(
                                     }
                                 }
                             }
-                            if (waiting || hold.holding) {
+                            if (failed) {
+                                GenerationFailureNotice(
+                                    GenerationFailure.Generation,
+                                    onRetry = { retry() },
+                                    modifier = Modifier.padding(top = 16.dp),
+                                )
+                            } else if (waiting || hold.holding) {
+                                // Only the lesson's readiness says whether its writing stopped.
                                 val shown =
-                                    if (ready) {
-                                        GenerationRun(status = GenerationRun.Status.Ready)
-                                    } else if (failure != null) {
-                                        run.copy(status = GenerationRun.Status.Failed, failure = failure)
-                                    } else {
-                                        run
+                                    when {
+                                        ready -> {
+                                            GenerationRun(status = GenerationRun.Status.Ready)
+                                        }
+
+                                        run.status == GenerationRun.Status.Failed -> {
+                                            run.copy(
+                                                status = GenerationRun.Status.Following,
+                                                failure = null,
+                                            )
+                                        }
+
+                                        else -> {
+                                            run
+                                        }
                                     }
                                 quiz.open()
                                 val share =
@@ -614,15 +624,7 @@ internal fun NextStop(
                                     LessonWritingProgress(
                                         waitKind,
                                         shown,
-                                        {
-                                            if (run.failure ==
-                                                GenerationFailure.Connection
-                                            ) {
-                                                viewModel.reconnect()
-                                            } else {
-                                                retry()
-                                            }
-                                        },
+                                        { retry() },
                                         stringResource(R.string.session_next_writing_note).takeUnless { ready },
                                         progressShare = share,
                                     )
@@ -636,19 +638,30 @@ internal fun NextStop(
     }
 }
 
+/**
+ * Main's session header bar. [counted] says how many are done above it, for a pane of its own; over
+ * the next step only TalkBack reads the count, as main's header does.
+ */
 @Composable
 private fun SessionSegments(
     day: DayView,
     step: DayStep,
     modifier: Modifier,
+    counted: Boolean = false,
 ) {
     val parts = dayParts(day.steps, isNext = { it.position == step.position })
     val held = day.heldMinutes > 0
     if (parts.isEmpty() && !held) return
+    val progress = stepsDone(day.sessionBar)
+    val draws = drawsDayProgress(parts.size, held)
 
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(stepsDone(day.sessionBar), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.zoonkType.data)
-        if (drawsDayProgress(parts.size, held)) DayProgress(parts, held)
+    if (counted) {
+        Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(progress, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.zoonkType.data)
+            if (draws) DayProgress(parts, held)
+        }
+    } else if (draws) {
+        DayProgress(parts, held, modifier, contentDescription = progress)
     }
 }
 
@@ -685,14 +698,4 @@ private fun alternativeLabel(step: DayStep): String =
         else -> stringResource(R.string.session_next_practice_now)
     }
 
-/** Main's `findAlternativeStudyBlock`: other work to do while [step]'s lesson waits, never work that waits itself. */
-private fun StudySession.alternativeTo(step: StudyBlock): DayStep? =
-    blocks
-        .firstOrNull {
-            it.id != step.id && it.status == StudyBlock.Status.PENDING && it.kind != StudyBlock.Kind.LEARN && it.waitReason == null
-        }?.toDayStep()
-
 private val OPEN = setOf(StudyBlock.Status.ACTIVE, StudyBlock.Status.PENDING)
-
-/** Main's `STUCK_AFTER_MS`: when a wait that hasn't moved says so, with Try again. */
-private val STUCK_AFTER_MILLIS = mapOf(NextStopLesson.NotStarted to 20_000L, NextStopLesson.Writing to 600_000L)

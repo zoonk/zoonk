@@ -14,6 +14,7 @@ import {
   type TodayHostNotices,
 } from "@repo/packages/learn/src/today/today-context.tsx";
 import { TodayScreen } from "@repo/packages/learn/src/today/today-screen.tsx";
+import { MS_PER_DAY } from "@repo/packages/utils/src/date.ts";
 import { useEffect } from "react";
 import {
   CAREER_GOAL_ID,
@@ -26,7 +27,6 @@ import {
   type ViewProps,
 } from "./common";
 
-const DAY_MS = 86_400_000;
 const utc = (iso: string) => new Date(`${iso}T00:00:00.000Z`);
 
 /** The plan's lessons, in order, with the minutes each takes. */
@@ -65,6 +65,7 @@ function toBlock(spec: BlockSpec, position: number): DayBlockView {
     estimatedBrainPower: 15,
     extra: false,
     fullReview: false,
+    lesson: null,
     mistakesOnly: false,
     netScored: false,
     oftenTested: false,
@@ -88,6 +89,7 @@ function toBlock(spec: BlockSpec, position: number): DayBlockView {
       chapterId: `chapter-${spec.lesson.module}`,
       estimatedMinutes: spec.lesson.minutes,
       kind: "learn",
+      lesson: { setAside: false, status: "ready" },
       lessonId: `lesson-${spec.lesson.index}`,
       planItemId: `item-${spec.lesson.index}`,
       questions: 8,
@@ -187,9 +189,10 @@ function buildToday({
   const unstartedMissions = careerMissions({ blocks, chapter, opens: unstartedOpens });
 
   const day = {
+    alternativePosition: null,
     brainPower: done.reduce((sum, block) => sum + block.brainPower, 0),
     current: true,
-    dayEndsAt: localDate.getTime() + DAY_MS + 3 * 3_600_000,
+    dayEndsAt: localDate.getTime() + MS_PER_DAY + 3 * 3_600_000,
     emptyDay: null,
     examAccess: { includesMockExams: true, trialEnded: false },
     examTomorrow: false,
@@ -238,7 +241,7 @@ function buildToday({
       }
     : { ...day, blocks, catchUp, missions: unstartedMissions, status: "unstarted" };
 
-  const daysLeft = Math.round((target.getTime() - localDate.getTime()) / DAY_MS);
+  const daysLeft = Math.round((target.getTime() - localDate.getTime()) / MS_PER_DAY);
   const lessonsDone = 4 + done.length;
 
   const today: TodayView = {

@@ -1,3 +1,4 @@
+import { isJsonObject } from "../../packages/utils/src/json.ts";
 import { type ChangedFile, type Flag } from "./diff-audit.mts";
 import { catalogRulesBroken } from "./rules/catalog.mts";
 import { type Rule } from "./rules/shared.mts";
@@ -124,17 +125,13 @@ function webStrings(path: string, content: string) {
   return strings;
 }
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
 function unitValues(node: unknown): string[] {
-  if (!isRecord(node)) {
+  if (!isJsonObject(node)) {
     return [];
   }
 
   const unit = node.stringUnit;
-  const own = isRecord(unit) && typeof unit.value === "string" ? [unit.value] : [];
+  const own = isJsonObject(unit) && typeof unit.value === "string" ? [unit.value] : [];
   return [...own, ...Object.values(node).flatMap((child) => unitValues(child))];
 }
 
@@ -148,7 +145,7 @@ function appleStrings(content: string): CatalogString[] {
     }
   })();
 
-  const entries = isRecord(catalog) && isRecord(catalog.strings) ? catalog.strings : {};
+  const entries = isJsonObject(catalog) && isJsonObject(catalog.strings) ? catalog.strings : {};
 
   const sourceLines = new Map(
     content
@@ -161,11 +158,11 @@ function appleStrings(content: string): CatalogString[] {
   );
 
   return Object.entries(entries).flatMap(([key, entry]) => {
-    if (!isRecord(entry) || entry.shouldTranslate === false) {
+    if (!isJsonObject(entry) || entry.shouldTranslate === false) {
       return [];
     }
 
-    const english = isRecord(entry.localizations) ? unitValues(entry.localizations.en) : [];
+    const english = isJsonObject(entry.localizations) ? unitValues(entry.localizations.en) : [];
     const note = typeof entry.comment === "string" ? entry.comment : "";
 
     return [...new Set(english.length > 0 ? english : [key])].map((text) => ({

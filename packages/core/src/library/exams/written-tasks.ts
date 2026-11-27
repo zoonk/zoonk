@@ -171,6 +171,21 @@ function provisional(description: string): Task {
   return { count: 1, description };
 }
 
+export function sharesObjectiveClock({
+  section,
+  sections,
+}: {
+  section: Pick<Section, "day" | "name">;
+  sections: readonly Section[];
+}): boolean {
+  return sections.some(
+    (other) =>
+      other.kind === "objective" &&
+      other.day === section.day &&
+      label(other.name) === label(section.name),
+  );
+}
+
 export function listWrittenTasks({
   day,
   structure,
@@ -188,15 +203,10 @@ export function listWrittenTasks({
       .flatMap((section) => {
         const tasks = section.tasks?.length ? section.tasks : [provisional(section.name)];
 
-        const mixedClock = sections.some(
-          (other) =>
-            other.kind === "objective" &&
-            other.day === section.day &&
-            label(other.name) === label(section.name),
-        );
+        const shared = sharesObjectiveClock({ section, sections });
 
         return tasks.map((task) =>
-          toTask({ section: mixedClock ? { ...section, minutes: null } : section, task }),
+          toTask({ section: shared ? { ...section, minutes: null } : section, task }),
         );
       });
   }

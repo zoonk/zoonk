@@ -15,19 +15,28 @@ export async function oweGoalLessons({
   also = [],
   db,
   goalId,
+  requirePlan = false,
   userId,
 }: {
   also?: readonly FollowUp[];
   db?: TransactionClient;
   goalId: string;
+  requirePlan?: boolean;
   userId: string;
 }): Promise<void> {
   if (!db) {
-    await prisma.$transaction((tx) => oweGoalLessons({ also, db: tx, goalId, userId }));
+    await prisma.$transaction((tx) =>
+      oweGoalLessons({ also, db: tx, goalId, requirePlan, userId }),
+    );
+
     return;
   }
 
   const lessonsAskedAt = await askForLessons({ db, goalId });
+
+  if (requirePlan && lessonsAskedAt === null) {
+    return;
+  }
 
   await oweFollowUps({
     db,
