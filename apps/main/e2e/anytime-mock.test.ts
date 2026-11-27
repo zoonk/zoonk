@@ -196,25 +196,31 @@ test.describe("Mocks whenever the learner wants", () => {
     await page.getByRole("button", { name: "Start" }).click();
     await expect(page.getByRole("timer", { name: "Time left" })).toBeVisible();
 
-    await answerMockQuestions({
-      answers,
-      knows: () => {
-        asked += 1;
-        return asked % 2 === 0;
-      },
-      page,
-    });
+    const knows = () => {
+      asked += 1;
+      return asked % 2 === 0;
+    };
 
-    await page
-      .getByRole("button", { name: /^Hand in/u })
-      .first()
-      .click();
+    const handIn = async () => {
+      await answerMockQuestions({ answers, knows, page });
 
-    await confirmMockHandIn(page);
+      await page
+        .getByRole("button", { name: /^Hand in/u })
+        .first()
+        .click();
+
+      await confirmMockHandIn(page);
+    };
+
+    // The full exam has two sections, each handed in on its own.
+    await handIn();
+    await handIn();
 
     // An anytime mock's address names the mock itself.
     const mockId = /\/mock\/(?<id>[\w-]+)$/u.exec(page.url())?.groups?.id ?? "";
-    const practice = page.getByRole("link", { name: /^Practice mistakes/u });
+    const practice = page
+      .getByRole("link", { name: /^Practice mistakes/u })
+      .filter({ visible: true });
 
     await expect(async () => {
       if (!(await practice.isVisible())) {
