@@ -145,7 +145,7 @@ describe("exact lesson mistake practice", () => {
     await expect.element(page.getByRole("region", { name: "Answer feedback" })).toBeVisible();
     await page.getByRole("button", { name: /^Continue/u }).click();
     await expect.element(page.getByRole("heading", { name: "Practice done" })).toBeVisible();
-    expect(actions.finish).not.toHaveBeenCalled();
+    expect(actions.finish).toHaveBeenCalledExactlyOnceWith({ answerIds: [] });
   });
 
   it("waits on Continue while a lesson's board is played, then names its first wrong try", async () => {
