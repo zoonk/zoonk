@@ -6367,7 +6367,7 @@ msgstr "{lessons, plural, one {# aula que você já conhece foi pulada.} other {
 #: src/language/level-test/level-test-results.tsx
 msgctxt "8txltA"
 msgid "You can take the test again later, from your plan."
-msgstr "Você pode fazer a prova de novo mais tarde, pelo seu plano."
+msgstr "Você pode fazer o teste de novo depois, pelo seu plano."
 
 #: src/language/level-test/level-test-results.tsx
 msgctxt "pdcoIY"
@@ -10251,7 +10251,7 @@ msgstr "Pergunta {number, number} de {total, number}"
 #: src/placement-test/use-test-facts.ts
 msgctxt "HYkp5w"
 msgid "Up to {count, plural, one {# question} other {# questions}}"
-msgstr "Até {count, plural, =0 {# questões} one {# questão} other {# questões}}"
+msgstr "Até {count, plural, one {# pergunta} other {# perguntas}}"
 
 #. {names} are a few of the lessons a plan change affects, as examples; the full count is shown beside them.
 #: src/plan-diff/change-names.ts
