@@ -52,6 +52,7 @@ import {
   type GradeWritingExpected,
   type GradeWritingInput,
   type Grading,
+  type WritingCase,
   publishedCase,
   publishedQuestion,
 } from "./shared";
@@ -866,7 +867,10 @@ const HISTORY_CASES = [
   historyCase(2025, 3, INDEPENDENCE, 3, cacd2025H33, 15.33, 680.43, [2, null, null, null]),
   historyCase(2025, 3, INDEPENDENCE, 4, cacd2025H34, 8.67, null, [1, null, null, null]),
   historyCase(2025, 4, ESTADO_NOVO, 1, cacd2025H41, 20, 698.84),
-  historyCase(2025, 4, ESTADO_NOVO, 2, cacd2025H42, 20, 720.42),
+  doubtful(
+    historyCase(2025, 4, ESTADO_NOVO, 2, cacd2025H42, 20, 720.42),
+    "The guide prints about 1,190 words for 40 written lines (pp. 81–83), twice the other 20/20 answer to it, so the text can't be what fit on the sheet",
+  ),
   historyCase(2025, 4, ESTADO_NOVO, 3, cacd2025H43, 20, 712.82),
 ];
 
@@ -1079,6 +1083,11 @@ const LANGUAGE_CASES = [
     }),
   ),
 ];
+
+/** Kept as a grading case, left out of calibration: the printed text isn't the answer the board read. */
+function doubtful(testCase: WritingCase, reason: string): WritingCase {
+  return { ...testCase, expected: testCase.expected && { ...testCase.expected, doubtful: reason } };
+}
 
 export const CEBRASPE_PUBLISHED_CASES = [
   ...HISTORY_CASES,

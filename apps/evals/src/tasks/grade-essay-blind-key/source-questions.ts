@@ -220,7 +220,7 @@ export const SOURCE_QUESTIONS: SourceQuestion[] = [
     .map((cases) => oabQuestion(cases)),
   ...Map.groupBy(
     CEBRASPE_PUBLISHED_CASES.filter(
-      ({ expected, id }) => expected?.cacd || id.includes("-history-"),
+      ({ expected, id }) => !expected?.doubtful && (expected?.cacd || id.includes("-history-")),
     ),
     ({ id }) => id.replace(/-\d+-pt$/u, ""),
   )
