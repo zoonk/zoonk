@@ -51,17 +51,16 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.saves.BookmarkToggle
 import com.zoonk.android.feature.saves.SaveWords
+import com.zoonk.android.feature.saves.rowBookmarkEdge
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.ActOn
 import com.zoonk.android.ui.VisitOf
-import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.PrivatePictures
-import com.zoonk.android.ui.components.iconButtonEdge
 import com.zoonk.api.models.AllowanceItem
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.MindMapImage
@@ -301,7 +300,7 @@ internal fun MapRowBookmark(
         saved,
         stringResource(if (saved) R.string.mindmaps_saved_named else R.string.mindmaps_save_named, title),
         onToggle,
-        Modifier.iconButtonEdge(ButtonEdge.End),
+        Modifier.rowBookmarkEdge(),
     )
 }
 

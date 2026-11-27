@@ -19,16 +19,19 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.iconButtonEdge
 import com.zoonk.android.ui.components.listRowDescription
 import kotlinx.coroutines.launch
 
@@ -57,6 +60,20 @@ fun BookmarkToggle(
         Icon(painterResource(if (saved) R.drawable.ic_bookmark_filled else R.drawable.ic_bookmark), contentDescription = label)
     }
 }
+
+/**
+ * A row's bookmark, or its empty slot, on the row's end edge: the button gives up its blank room past the glyph, and
+ * the glyph its own room past its ink, so the ink ends where a row's chevron does.
+ */
+fun Modifier.rowBookmarkEdge(): Modifier =
+    iconButtonEdge(ButtonEdge.End).layout { measurable, constraints ->
+        val pull = BOOKMARK_INK.roundToPx()
+        val placeable = measurable.measure(constraints)
+        layout(placeable.width - pull, placeable.height) { placeable.placeRelative(0, 0) }
+    }
+
+/** `ic_bookmark` leaves 5dp blank after its ink. */
+private val BOOKMARK_INK = 5.dp
 
 /** A row's long-press menu: Save, or Remove from saved. */
 @Composable

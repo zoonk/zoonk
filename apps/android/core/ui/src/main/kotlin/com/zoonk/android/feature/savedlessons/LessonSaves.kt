@@ -22,10 +22,9 @@ import com.zoonk.android.feature.saves.BookmarkToggle
 import com.zoonk.android.feature.saves.SaveMenu
 import com.zoonk.android.feature.saves.SaveSwipe
 import com.zoonk.android.feature.saves.SaveWords
+import com.zoonk.android.feature.saves.rowBookmarkEdge
 import com.zoonk.android.ui.ActOn
 import com.zoonk.android.ui.VisitOf
-import com.zoonk.android.ui.components.ButtonEdge
-import com.zoonk.android.ui.components.iconButtonEdge
 import com.zoonk.api.models.SavedLesson
 import kotlinx.coroutines.flow.StateFlow
 import java.util.UUID
@@ -54,14 +53,14 @@ fun LessonRowBookmark(
         saved,
         stringResource(if (saved) R.string.savedlessons_saved_named else R.string.savedlessons_save_named, title),
         onToggle,
-        Modifier.iconButtonEdge(ButtonEdge.End),
+        Modifier.rowBookmarkEdge(),
     )
 }
 
 /** A row bookmark's room, empty, on a row that can't be saved, so its value ends where its neighbors' do. */
 @Composable
 fun LessonRowBookmarkSpace() {
-    Spacer(Modifier.iconButtonEdge(ButtonEdge.End).minimumInteractiveComponentSize())
+    Spacer(Modifier.rowBookmarkEdge().minimumInteractiveComponentSize())
 }
 
 /**
