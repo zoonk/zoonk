@@ -16,7 +16,7 @@ import {
   readManifest,
   registerItems,
 } from "./media.mts";
-import { readCheckoutBuild, sha256File, sha256Text } from "./provenance.mts";
+import { readCheckoutBuild, screenSources, sha256File, sha256Text } from "./provenance.mts";
 
 const run = promisify(execFile);
 
@@ -214,8 +214,7 @@ async function refusal({
       "--format=%ct",
       "HEAD",
       "--",
-      "apps/android",
-      "packages",
+      ...screenSources("android"),
     ])) || (await git(repository, ["log", "-1", "--format=%ct", "HEAD"]));
 
   const since = new Date(Number(changed) * MS_PER_SECOND);

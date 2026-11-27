@@ -37,6 +37,17 @@ runs:
         set -o pipefail
         xcodebuild -version | shasum -a 256 | awk '{ print "version=" $1 }' >> "$GITHUB_OUTPUT"
 
+    # github.com sometimes answers a shared macOS runner's anonymous clones with 401, which fails a
+    # build that has to clone the Swift packages. git retries a 401 with these credentials, and the
+    # Makefile has xcodebuild read them for package downloads.
+    - name: Sign in to github.com for package clones
+      shell: bash
+      env:
+        TOKEN: ${{ github.token }}
+      run: |
+        umask 077
+        printf 'machine github.com login x-access-token password %s\n' "$TOKEN" > "$HOME/.netrc"
+
     # Only main saves these caches. A pull request's own entries serve only its later runs, and in
     # the repository's shared cache storage they evict main's, which every pull request restores.
     - name: Restore Swift packages
