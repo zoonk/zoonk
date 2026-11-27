@@ -82,7 +82,7 @@ describe(getSecondTakeIssues, () => {
       kinds: ["hook", "guess", ...Array.from({ length: 9 }, () => "check" as const), "application"],
     });
 
-    const short = spec({ kinds: ["hook", "guess", "explanation", "application"] });
+    const short = spec({ kinds: ["hook", "guess", "explanation", "check", "application"] });
 
     expect(getSecondTakeIssues({ secondTake: SECOND_TAKE, spec: long })).toStrictEqual([
       expect.objectContaining({ code: "screenCount" }),
@@ -109,6 +109,35 @@ describe(getSecondTakeIssues, () => {
 
     expect(getSecondTakeIssues({ secondTake: SECOND_TAKE, spec: late })).toStrictEqual([
       expect.objectContaining({ code: "opening" }),
+    ]);
+  });
+
+  it("flags an idea taught after the last check, left for the application alone", () => {
+    const late = spec({
+      kinds: [
+        "hook",
+        "guess",
+        "explanation",
+        "check",
+        "workedExample",
+        "check",
+        "explanation",
+        "application",
+      ],
+    });
+
+    expect(getSecondTakeIssues({ secondTake: SECOND_TAKE, spec: late })).toStrictEqual([
+      expect.objectContaining({ code: "uncheckedTeaching" }),
+    ]);
+  });
+
+  it("flags a plan whose only practice is the application", () => {
+    const unchecked = spec({
+      kinds: ["hook", "guess", "explanation", "explanation", "workedExample", "application"],
+    });
+
+    expect(getSecondTakeIssues({ secondTake: SECOND_TAKE, spec: unchecked })).toStrictEqual([
+      expect.objectContaining({ code: "uncheckedTeaching" }),
     ]);
   });
 

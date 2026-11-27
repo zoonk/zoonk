@@ -1,5 +1,5 @@
 import { type LessonMap } from "../lesson-writer/written-lesson-schema";
-import { type LessonSpec } from "./lesson-spec-rules";
+import { type LessonScreenKind, type LessonSpec } from "./lesson-spec-rules";
 
 /** A wrong option one of the skill's questions offers, and why it's wrong. */
 type SecondTakeWrongAnswer = { question: string; answer: string; reason: string };
@@ -16,7 +16,15 @@ export const SECOND_TAKE_SCREENS = { max: 10, min: 6 } as const;
 /** Shorter sentences are facts both lessons may state alike ("Ice floats on water."). */
 const MIN_COPIED_WORDS = 6;
 
-type SecondTakeIssueCode = "copiedSentence" | "opening" | "screenCount" | "wrongAnswer";
+const TEACHING_KINDS: ReadonlySet<LessonScreenKind> = new Set(["explanation", "workedExample"]);
+const CHECK_KINDS: ReadonlySet<LessonScreenKind> = new Set(["activity", "check"]);
+
+type SecondTakeIssueCode =
+  | "copiedSentence"
+  | "opening"
+  | "screenCount"
+  | "uncheckedTeaching"
+  | "wrongAnswer";
 
 export type SecondTakeIssue = { code: SecondTakeIssueCode; detail: string };
 
@@ -53,9 +61,21 @@ function findCopiedSentence({
 }
 
 /**
+ * A learner who keeps missing the skill needs each idea checked while its screen is fresh, so a
+ * miss points at the idea that failed; the application alone can't tell them which one.
+ */
+function hasUncheckedTeaching(spec: LessonSpec): boolean {
+  const kinds = spec.screens.map((screen) => screen.kind);
+  const lastTeaching = kinds.findLastIndex((kind) => TEACHING_KINDS.has(kind));
+
+  return lastTeaching > kinds.findLastIndex((kind) => CHECK_KINDS.has(kind));
+}
+
+/**
  * What code can check of a second take before it's saved: its size, an opening question right
- * after the scene, built on one of the wrong answers it was given, and no sentence of the first
- * lesson's map said again. Whether it really explains the idea another way is for readers.
+ * after the scene, built on one of the wrong answers it was given, a check after its last teaching
+ * screen, and no sentence of the first lesson's map said again. Whether it really explains the idea
+ * another way is for readers.
  */
 export function getSecondTakeIssues({
   language,
@@ -85,6 +105,11 @@ export function getSecondTakeIssues({
         code: "wrongAnswer" as const,
         detail: `Opens on wrong answer ${opensOn}, which isn't one of the ${answers} given.`,
       },
+    hasUncheckedTeaching(spec) && {
+      code: "uncheckedTeaching" as const,
+      detail:
+        "An explanation or worked example comes after the last check; check it before the application.",
+    },
     copied !== undefined && {
       code: "copiedSentence" as const,
       detail: `A brief repeats the first lesson's sentence "${copied}".`,
