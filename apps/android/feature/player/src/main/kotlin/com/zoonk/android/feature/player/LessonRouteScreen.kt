@@ -231,7 +231,7 @@ internal fun PlayingLesson(
 
     LaunchedEffect(load.lesson.id, signedIn) { viewModel.open(load.lesson) }
 
-    val bookmark = lessonBookmark(app, summary.value?.activeGoalId, route.lessonId, viewModel.savedAtStart.takeUnless { endSlot != null })
+    val bookmark = lessonBookmark(app, summary.value?.activeGoalId, route.lessonId, viewModel.lessonSaved.takeUnless { endSlot != null })
 
     val hasChallenge = remember(load.lesson) { load.lesson.steps.any { it.content is StepContent.Challenge } }
     val team =
@@ -275,22 +275,22 @@ internal fun PlayingLesson(
 }
 
 /**
- * The player's bookmark for a lesson of the library whose run started ([savedAtStart] says whether it was saved then),
- * saved from the active goal: none without one, since the save needs it.
+ * The player's bookmark for a lesson of the library whose run started ([served] says whether it's saved, as the run or a
+ * save the server took since says), saved from the active goal: none without one, since the save needs it.
  */
 @Composable
 private fun lessonBookmark(
     app: AppContainer,
     goalId: UUID?,
     lessonId: String,
-    savedAtStart: Boolean?,
+    served: Boolean?,
 ): (@Composable () -> Unit)? {
     val id = remember(lessonId) { runCatching { UUID.fromString(lessonId) }.getOrNull() }
     if (goalId == null || id == null) return null
     val saves = rememberLessonSaves(app.savedLessons, goalId, app.snackbars)
     val states by saves.states.collectAsStateWithLifecycle()
-    savedAtStart ?: return null
-    val saved = states.isSaved(id, savedAtStart)
+    served ?: return null
+    val saved = states.isSaved(id, served)
     return { LessonBookmark(saved) { saves.set(id, !saved) } }
 }
 
