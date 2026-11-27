@@ -162,6 +162,38 @@ describe(withMockWrittenPoints, () => {
     expect(result?.points?.written?.[0]?.range?.high).toBeCloseTo(56, 8);
   });
 
+  it("keeps a written part's minimum with the part, graded or not", () => {
+    const [part] = CONDITIONS.writtenParts ?? [];
+    const minimum = { unit: "points" as const, value: 50 };
+
+    const result = withMockWrittenPoints({
+      conditions: CONDITIONS,
+      essays: [],
+      grades: new Map(),
+      numericBlankItems: new Set(),
+      result: RESULT && {
+        ...RESULT,
+        points: {
+          asked: 0,
+          earned: 0,
+          max: null,
+          met: null,
+          minimum: null,
+          parts: [],
+          projected: null,
+          short: null,
+          unjudged: [
+            { minimum, name: part?.name ?? null },
+            { minimum, name: "Objective test" },
+          ],
+        },
+      },
+    });
+
+    expect(result?.points?.written).toMatchObject([{ name: part?.name, range: null }]);
+    expect(result?.points?.unjudged).toStrictEqual([{ minimum, name: "Objective test" }]);
+  });
+
   it("shows a blank as zero and leaves a part without a grade unmeasured", () => {
     const short = graded({ high: 20, itemId: "short", low: 18, max: 30 });
 

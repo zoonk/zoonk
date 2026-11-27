@@ -121,10 +121,7 @@ export function withMockWrittenPoints({
       ...points,
       unjudged: points.unjudged.filter(
         (minimum) =>
-          !written.some(
-            (part) =>
-              minimum.name !== null && namesMatch(part.name, minimum.name) && part.range !== null,
-          ),
+          !written.some((part) => minimum.name !== null && namesMatch(part.name, minimum.name)),
       ),
       written,
     },
