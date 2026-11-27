@@ -38,7 +38,6 @@
   "tutor_error_invalid": "db7921acc18402e9194fa4e9dd88addc4b814152833236dee579ee88d0880cd7",
   "tutor_error_last_question": "c1073785b784079c8c342a94be279badbfb8b0dfadad698e45a23ae5c59e3bcf",
   "tutor_error_session": "15b8d4770f825f79a39a047a2ed70b1e4a87464645f09a2ab4b1364678395da4",
-  "tutor_error_slow_down": "333997640ebc32a4969b7b3211a0f556279a08726245bda93396c9b9df861432",
   "tutor_error_subscription": "9823862c95663ea050d96b173c1f2331e88a4ebe2604eea5e1f132cc58cdd65e",
   "tutor_get_answer": "c91dfa6abea4d493add7d2176431e4267a4964d91c56483121c8cd24a275550d",
   "tutor_guest_title": "46e28b3f7896fa6d1ccb4bc56ba81e8ab1f44ed451f68d3b63332a726e7621fa",
@@ -173,7 +172,6 @@
     <string name="tutor_error_subscription">Necesitas una suscripción para hacer preguntas</string>
     <string name="tutor_error_gone">Esta lección ya no está disponible.</string>
     <string name="tutor_error_invalid">No pudimos enviar esta pregunta. Inténtalo de nuevo.</string>
-    <string name="tutor_error_slow_down">Descansa un momento y vuelve a preguntar.</string>
     <string name="tutor_error_failed">Algo salió mal. Inténtalo de nuevo.</string>
     <string name="tutor_error_last_question">No pudimos enviar tu última pregunta. Inténtalo de nuevo.</string>
     <string name="tutor_sign_in">Iniciar sesión</string>

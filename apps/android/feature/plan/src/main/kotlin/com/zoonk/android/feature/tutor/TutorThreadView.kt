@@ -418,7 +418,7 @@ private fun Answer(
 
         turn.status == TutorTurn.Status.Failed -> {
             turn.answer?.let { AnswerText(it, linksChecked, routes.open, { id -> vm.openBlock(turn.id, id) }, vm.noticeFor(turn), words) }
-            if (failure?.helpLimit != null || failure == TutorFailure.Unanswered) {
+            if (failure?.refusal != null || failure == TutorFailure.Unanswered) {
                 Text(
                     stringResource(R.string.tutor_not_answered),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -477,7 +477,7 @@ private fun Thinking(words: TextStyle) {
     }
 }
 
-/** Main names the failure itself only when it's about the session, Plus, a gone lesson or a slow-down. */
+/** Main names the failure itself only when it's about the session, Plus or a gone lesson. */
 private val TutorFailure?.isGeneric: Boolean
     get() = this == null || this == TutorFailure.Failed || this == TutorFailure.Invalid
 
@@ -571,7 +571,7 @@ private fun CheckAgain(
     }
 }
 
-/** Main's error action: log in again, subscribe, or try again; a help limit or a gone lesson has none. */
+/** Main's error action: log in again, subscribe, or try again; a limit or a gone lesson has none. */
 @Composable
 internal fun FailureAction(
     failure: TutorFailure?,
@@ -589,7 +589,7 @@ internal fun FailureAction(
             SubscribeButton(routes.subscribe)
         }
 
-        failure?.helpLimit != null || failure == TutorFailure.Gone -> {}
+        failure?.refusal != null || failure == TutorFailure.Gone -> {}
 
         else -> {
             OutlinedButton(onClick = onRetry, modifier = modifier, enabled = enabled) {

@@ -38,7 +38,6 @@
   "tutor_error_invalid": "833a4c3941ee7f85c80e46c39c2d8465bf5106f8d2bb7def9b279bcc12655873",
   "tutor_error_last_question": "a9ded6feb95bba3f3330bdd86bd09e2855220c6726d1c71c4759a184a9ede2be",
   "tutor_error_session": "6003a9014e7edc3f5c518e2c34e58bacc9d7b8101906fb5d923901a84224a84f",
-  "tutor_error_slow_down": "2d2e28a756c3901d43b0dcdc0eddd87066d25b074f75bebdb087249bf0d66a7f",
   "tutor_error_subscription": "1ae943e485d29330d7de0100b199fd073128c45838b333de46ea306078942818",
   "tutor_get_answer": "9a0a259b1e10000ddf989cfdf70b4623e5cad2439b0b2cafa0b157f05ab5eb3a",
   "tutor_guest_title": "9b3c8741b1790f61afb1800a7d33c43c32c83e947f0b32e21318a6257d5ba24e",
@@ -173,7 +172,6 @@
     <string name="tutor_error_subscription">Soru sormak için abonelik gerekiyor</string>
     <string name="tutor_error_gone">Bu ders artık kullanılamıyor.</string>
     <string name="tutor_error_invalid">Bu soruyu gönderemedik. Tekrar dene.</string>
-    <string name="tutor_error_slow_down">Kısa bir ara ver, sonra tekrar sor.</string>
     <string name="tutor_error_failed">Bir sorun oluştu. Tekrar dene.</string>
     <string name="tutor_error_last_question">Son sorunu gönderemedik. Tekrar dene.</string>
     <string name="tutor_sign_in">Giriş yap</string>

@@ -55,7 +55,6 @@
     <string name="tutor_error_subscription">Asking questions needs a subscription</string>
     <string name="tutor_error_gone">This lesson is no longer available.</string>
     <string name="tutor_error_invalid">We couldn\'t send this question. Try again.</string>
-    <string name="tutor_error_slow_down">Take a short break, then ask again.</string>
     <string name="tutor_error_failed">Something went wrong. Try again.</string>
     <string name="tutor_error_last_question">We couldn\'t send your last question. Try again.</string>
     <string name="tutor_sign_in">Log in</string>

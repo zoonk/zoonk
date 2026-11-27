@@ -38,7 +38,6 @@
   "tutor_error_invalid": "161232ccfec7915342193d2527fb7a7596b40c4ae07ab5c8648a9afec65860fc",
   "tutor_error_last_question": "1fe83103d9c4ace65df210c92bfc81ccc30ebc17feb1c16084e2b535afd220bc",
   "tutor_error_session": "9fd4229d2afa4c95ed7fc671f47f8622c7eca00bce0debcc04678aad96bacc17",
-  "tutor_error_slow_down": "b9a97de1b05f2b2cf9f6d53a5d8709672d483ae7264e62403ff617fe831973d4",
   "tutor_error_subscription": "6e4fc65404fc5beda0dfcff8672c7915838610d2823cdb6e92d956db1ffe117e",
   "tutor_get_answer": "582de90affb4469b4d2b61f201cc744efbe03d6c361f0a291703914a1f69b77c",
   "tutor_guest_title": "ba4c47d38426a4f2778e2b68f5075a2416490ea175e18f329f1eb4021a134a8e",
@@ -173,7 +172,6 @@
     <string name="tutor_error_subscription">Um Fragen zu stellen, brauchst du ein Abo</string>
     <string name="tutor_error_gone">Diese Lektion ist nicht mehr verfügbar.</string>
     <string name="tutor_error_invalid">Wir konnten diese Frage nicht senden. Versuch es noch einmal.</string>
-    <string name="tutor_error_slow_down">Mach eine kurze Pause und frag dann noch einmal.</string>
     <string name="tutor_error_failed">Etwas ist schiefgelaufen. Versuch es noch einmal.</string>
     <string name="tutor_error_last_question">Wir konnten deine letzte Frage nicht senden. Versuch es noch einmal.</string>
     <string name="tutor_sign_in">Anmelden</string>

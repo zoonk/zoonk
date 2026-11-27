@@ -642,6 +642,37 @@ internal class TutorViewModelTest : TutorFixture() {
         }
 
     @Test
+    fun anAnswerASlowDownRefusesWaitsUnansweredUntilItsWaitIsOver() =
+        runTest(dispatcher) {
+            val vm = conversation()
+            val details = Json.parseToJsonElement("""{"retryAfterSeconds":30}""")
+            api.answers = { flow { throw ApiException(ApiError.Unavailable, "SLOW_DOWN", 429, details) } }
+            api.question = { id -> turn(id, TutorTurn.Status.Pending, null) }
+
+            vm.draft.setTextAndPlaceCursorAtEnd("Why?")
+            vm.send()
+            advanceTimeBy(29_000)
+
+            val refused = vm.turns.single()
+            assertEquals(TutorTurn.Status.Failed, refused.status)
+            assertEquals(Limit.SlowDown(30), vm.state.value.limit(vm.turns))
+            assertEquals(TutorFailure.Refused(Limit.SlowDown(30)), vm.state.value.answerFailures[refused.id])
+            assertFalse(vm.state.value.canAsk(vm.turns))
+
+            advanceTimeBy(2_000)
+
+            assertNull(vm.state.value.limit(vm.turns))
+            assertEquals(TutorFailure.Unanswered, vm.state.value.answerFailures[refused.id])
+
+            api.answers = { flowOf(TutorAnswerEvent.Text("Because."), TutorAnswerEvent.Finish) }
+            vm.retryAnswer(refused.id)
+            advanceUntilIdle()
+
+            assertEquals(TutorTurn.Status.Completed, vm.turns.single().status)
+            assertTrue(vm.state.value.canAsk(vm.turns))
+        }
+
+    @Test
     fun anAnswerStopsWhenTheSessionChanges() =
         runTest(dispatcher) {
             val vm = conversation()
