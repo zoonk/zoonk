@@ -5,7 +5,7 @@ import { useRender } from "@base-ui/react/use-render";
 import { useScrolled } from "@zoonk/ui/hooks/scrolled";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronLeftIcon } from "lucide-react";
-import { buttonVariants } from "./button";
+import { BusyIcon, buttonVariants } from "./button";
 import { PAGE_HEADER_CLASS } from "./page-header-class";
 
 const BACK_LINK_CLASS = cn(
@@ -41,7 +41,9 @@ function BackLink({
       {
         children: (
           <>
-            <ChevronLeftIcon aria-hidden="true" data-icon="inline-start" />
+            <BusyIcon data-icon="inline-start">
+              <ChevronLeftIcon aria-hidden="true" />
+            </BusyIcon>
             <span className="truncate">{children}</span>
           </>
         ),

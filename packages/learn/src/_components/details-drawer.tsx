@@ -22,7 +22,7 @@ const TRIGGER: Record<Trigger, React.ReactElement> = {
   small: <Button className="shrink-0 self-start" size="sm" variant="outline" />,
   tag: (
     <button
-      className="hit-area text-muted-foreground decoration-faint focus-visible:ring-ring/50 relative self-start justify-self-start rounded-md text-xs underline decoration-dotted underline-offset-2 outline-none focus-visible:ring-[3px]"
+      className="hit-area text-muted-foreground decoration-faint held-pressed:text-foreground held-pressed:decoration-foreground focus-visible:ring-ring/50 relative self-start justify-self-start rounded-md text-xs underline decoration-dotted underline-offset-2 outline-none focus-visible:ring-[3px]"
       type="button"
     />
   ),

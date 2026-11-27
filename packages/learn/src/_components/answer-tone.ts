@@ -14,6 +14,12 @@ export const ANSWER_TONE = {
   wrong: `bg-destructive/9 ring-destructive ring-[1.5px] ring-inset ${FORCED_OUTLINE}`,
 } as const;
 
+/**
+ * A press made before the page hydrates (`data-held`) shows the answer picked at once, or idle when
+ * the press unpicks it.
+ */
+export const ANSWER_HELD_TONE = `data-held:bg-selected-tint data-held:ring-transparent contrast-more:data-held:ring-input forced-colors:data-held:outline-2 forced-colors:data-held:-outline-offset-2 forced-colors:data-held:outline-solid data-[held=unchecked]:bg-transparent! data-[held=unchecked]:ring-input! forced-colors:data-[held=unchecked]:outline-none!`;
+
 export const ANSWER_TAG_TONE: Record<AnswerOptionResult, string> = {
   guess: "text-muted-foreground",
   right: "text-success-text",

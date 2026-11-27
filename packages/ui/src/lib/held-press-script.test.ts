@@ -276,15 +276,17 @@ describe("the keeper of presses made before React owns a control", () => {
 
   it("draws a toggle in the state its press asks for until React shows it", () => {
     const { commit, find, frame, press } = openPage(
-      '<span role="switch" aria-checked="true">Use memory</span><span role="radio" aria-checked="false">Weekly</span>',
+      '<span role="switch" aria-checked="true">Use memory</span><span role="radio" aria-checked="false">Weekly</span><button aria-pressed="false">Cooking</button>',
     );
 
     const toggle = find("[role=switch]");
 
     press(toggle);
     press(find("[role=radio]"));
+    press(find("[aria-pressed]"));
     expect(toggle.dataset.held).toBe("unchecked");
     expect(find("[role=radio]").dataset.held).toBe("checked");
+    expect(find("[aria-pressed]").dataset.held).toBe("checked");
 
     commit();
     own(toggle);

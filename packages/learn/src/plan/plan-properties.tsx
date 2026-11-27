@@ -47,7 +47,7 @@ export function DailyTimeValue({ perDay = false }: { perDay?: boolean }) {
 }
 
 const PROPERTY_ROW_CLASS =
-  "hover:bg-muted focus-visible:ring-ring/50 min-h-control -mx-2 flex w-[calc(100%+1rem)] items-center justify-between gap-3 rounded-md px-2 text-left text-compact transition-colors outline-none focus-visible:ring-[3px]";
+  "hover:bg-muted held-pressed:bg-muted focus-visible:ring-ring/50 min-h-control -mx-2 flex w-[calc(100%+1rem)] items-center justify-between gap-3 rounded-md px-2 text-left text-compact transition-colors outline-none focus-visible:ring-[3px]";
 
 function PropertyRowParts({ children, label }: { children: React.ReactNode; label: string }) {
   return (

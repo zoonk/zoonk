@@ -12,7 +12,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@zoonk/ui/components/alert-dialog";
-import { buttonVariants } from "@zoonk/ui/components/button";
+import { Button } from "@zoonk/ui/components/button";
 import { showErrorToast } from "@zoonk/ui/components/toast";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
@@ -56,7 +56,7 @@ export function CancelPlusButton({
 
   return (
     <AlertDialog onOpenChange={setOpen} open={open}>
-      <AlertDialogTrigger className={buttonVariants({ size: "lg", variant: "outline" })}>
+      <AlertDialogTrigger render={<Button size="lg" variant="outline" />}>
         {t("Cancel Plus")}
       </AlertDialogTrigger>
       <AlertDialogContent>

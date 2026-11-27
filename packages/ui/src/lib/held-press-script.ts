@@ -50,7 +50,7 @@ function holdPressesBeforeReady({
 }) {
   const CONTROLS = `a[href], ${selector}`;
 
-  const TOGGLES = "[role=switch], [role=checkbox], [role=radio]";
+  const TOGGLES = "[role=switch], [role=checkbox], [role=radio], [aria-pressed]";
   const OFF = ':disabled, [aria-disabled="true"]';
 
   // React's form-replay script (react-dom-server) queues a submit only when the form's or its
@@ -95,14 +95,16 @@ function holdPressesBeforeReady({
     event.stopImmediatePropagation();
   };
 
+  const stateOf = (control: Element) =>
+    control.getAttribute("aria-checked") ?? control.getAttribute("aria-pressed");
+
   /** A toggle shows the state the press asks for, so React taking it over changes nothing on screen. */
   const heldLook = (control: Element) => {
     if (!control.matches(TOGGLES)) {
       return "";
     }
 
-    const turnsOff =
-      control.getAttribute("aria-checked") === "true" && !control.matches("[role=radio]");
+    const turnsOff = stateOf(control) === "true" && !control.matches("[role=radio]");
 
     return turnsOff ? "unchecked" : "checked";
   };
@@ -279,7 +281,7 @@ function holdPressesBeforeReady({
       press.settled >= 2 ||
       reactShowsBusy(control) ||
       control.matches(OFF) ||
-      control.getAttribute("aria-checked") !== press.checked
+      stateOf(control) !== press.checked
     );
   };
 
@@ -409,7 +411,7 @@ function holdPressesBeforeReady({
 
       hold({
         asks: askInTap(control),
-        checked: control.getAttribute("aria-checked"),
+        checked: stateOf(control),
         control,
         deliver: () => replayClick(control, event),
         form: null,

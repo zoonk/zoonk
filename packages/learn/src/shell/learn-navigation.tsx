@@ -1,5 +1,6 @@
 "use client";
 
+import { BusyIcon } from "@zoonk/ui/components/button";
 import { SIDEBAR_ITEM_CLASS } from "@zoonk/ui/components/sidebar";
 import { SidebarTooltip } from "@zoonk/ui/components/sidebar-toggle";
 import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
@@ -235,7 +236,9 @@ function TabBarSearch({ onSearch }: { onSearch: () => void }) {
       type="button"
     >
       <span className={BOTTOM_TAB_ICON_CLASS}>
-        <SearchIcon aria-hidden="true" className="size-5" />
+        <BusyIcon>
+          <SearchIcon aria-hidden="true" className="size-5" />
+        </BusyIcon>
       </span>
       <span className={cn(BOTTOM_TAB_TITLE_CLASS, "@max-xs/tabs:sr-only")} data-slot="tab-title">
         {t({
