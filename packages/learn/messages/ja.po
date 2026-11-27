@@ -1726,6 +1726,7 @@ msgid "Copy link"
 msgstr "リンクをコピーする"
 
 #: src/certificates/certificate-details.tsx
+#: src/shell/level-link.tsx
 msgctxt "y1Qr81"
 msgid "Level"
 msgstr "レベル"
@@ -2793,7 +2794,7 @@ msgstr "科目"
 #: src/syllabus/syllabus-section.tsx
 msgctxt "TwcPrx"
 msgid "Modules"
-msgstr "単元"
+msgstr "モジュール"
 
 #: src/completed-lessons/completed-lessons-screen.tsx
 #: src/journey/roadmap-full.tsx
@@ -12966,6 +12967,17 @@ msgctxt "xmcVZ0"
 msgid "Search"
 msgstr "検索"
 
+#: src/shell/level-link.tsx
+msgctxt "bzSrZ6"
+msgid "Level {level}"
+msgstr "レベル{level}"
+
+#. Accessible name of the chip that opens Level. belt is the translated belt name; level is the learner’s level number. Each locale controls their order and punctuation.
+#: src/shell/level-link.tsx
+msgctxt "xjYKLD"
+msgid "{belt}, Level {level}"
+msgstr "{belt}、レベル{level}"
+
 #: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.tFFMkF"
 msgid "Pause"
@@ -13116,6 +13128,12 @@ msgctxt "tDrkTA"
 msgid "{done, number} of {total, number} chapters"
 msgstr "{done, number}章完了（全{total, number}章）"
 
+#. Titles the list of what a subject or module contains, on its page while it's out of the learner's plan, so they can decide whether to add it back. Their plan doesn't teach it, so the title names its contents without promising they'll learn them.
+#: src/syllabus/subject-covers.tsx
+msgctxt "PllRqz"
+msgid "What it covers"
+msgstr "扱う内容"
+
 #: src/syllabus/subject-matrix.tsx
 #: src/syllabus/subject-screen.tsx
 msgctxt "eNbJHf"
@@ -13137,16 +13155,34 @@ msgctxt "MaFsVi"
 msgid "Add it back"
 msgstr "学習計画に戻す"
 
+#. On a module's page, on a plan that isn't for an exam: the learner took this module out of their plan. Followed by a button to add it back.
+#: src/syllabus/subject-not-planned.tsx
+msgctxt "6pJpYl"
+msgid "You took this module out of your plan."
+msgstr "このモジュールを学習計画から外しました。"
+
 #: src/syllabus/subject-not-planned.tsx
 msgctxt "kK7vYa"
 msgid "You took this subject out of your plan."
 msgstr "この科目を学習計画から外しました。"
+
+#. Why a module isn't in the learner's plan, on a plan that isn't for an exam: their study time goes to modules that matter more first. Followed by a link to change the plan.
+#: src/syllabus/subject-not-planned.tsx
+msgctxt "NmEJhW"
+msgid "This module isn't in your plan. Other modules come first."
+msgstr "このモジュールは学習計画に入っていません。ほかのモジュールが優先されています。"
 
 #. Why a subject isn't in the learner's plan: their study time goes to subjects that matter more first. Followed by a link to change the plan.
 #: src/syllabus/subject-not-planned.tsx
 msgctxt "ydjRGM"
 msgid "This subject isn't in your plan. Other subjects come first."
 msgstr "この科目は学習計画に含まれていません。ほかの科目を優先しています。"
+
+#. On a module's page, on a plan that isn't for an exam: no lesson of the plan teaches this module yet.
+#: src/syllabus/subject-not-planned.tsx
+msgctxt "6YC_jf"
+msgid "This module isn't in your plan yet."
+msgstr "このモジュールはまだ学習計画に入っていません。"
 
 #: src/syllabus/subject-not-planned.tsx
 msgctxt "aqUWND"
@@ -13175,9 +13211,19 @@ msgid "{total, plural, one {{done, number} of # topic} other {{done, number} of 
 msgstr "{total, plural, other {{done, number} / #トピック}}"
 
 #: src/syllabus/subject-screen.tsx
+msgctxt "W40WkX"
+msgid "About this module"
+msgstr "このモジュールについて"
+
+#: src/syllabus/subject-screen.tsx
 msgctxt "XHGiOR"
 msgid "About this subject"
 msgstr "この科目について"
+
+#: src/syllabus/subject-screen.tsx
+msgctxt "qsKSNx"
+msgid "Module options"
+msgstr "モジュールのオプション"
 
 #: src/syllabus/subject-screen.tsx
 msgctxt "vx7zl3"
@@ -13340,6 +13386,12 @@ msgstr "{course}（{institution}）では、試験の各パートを同じ比重
 msgctxt "uZd7hU"
 msgid "On the exam"
 msgstr "試験の出題数"
+
+#. Why a module or a step on the path isn't in the learner's plan: they took the module out. Said on a plan that isn't for an exam, whose list is titled "Modules".
+#: src/syllabus/topic-note.tsx
+msgctxt "i2ZFZr"
+msgid "Not in your plan · you took this module out"
+msgstr "学習計画に入っていない · このモジュールを外しました"
 
 #. Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out.
 #: src/syllabus/topic-note.tsx

@@ -8,10 +8,10 @@ export const USAGE = `Usage: pnpm pr:media check <body.md> [--root <dir>] [--man
        pnpm pr:media pending --platform <android|apple> [--to <dir>] <file>...
        pnpm pr:media before --platform <web|android|apple> --source <where> [--to <dir>] <file>...
        pnpm pr:media adopt <before|after> [--to <dir>] <render.json>...
-       pnpm pr:media device --platform <android|apple> --device <udid|serial> --name <shot> [--to <dir>]
+       pnpm pr:media device --platform <android|apple> --device <udid|serial> --name <shot> [--agent-device <command>] [--to <dir>]
        pnpm pr:media device-section <picture>...
 
-Checks that every picture a PR body shows was captured, from which build, and read.
+Checks the pictures a PR body shows and the after captures collected for the PR.
 
   check    fails when a picture in the body has no capture record with its bytes; when an after
            picture's build is unknown, has uncommitted changes, or is older than a later commit to
@@ -24,8 +24,9 @@ Checks that every picture a PR body shows was captured, from which build, and re
            it's nested; the check compares text and doesn't police what else the body says.
            Picture paths are relative to --root (the
            body's folder by default). Each picture's capture.json is looked for in its folder and
-           every folder above it, and anywhere under each --manifests folder, so a
-           picture copied away from its capture needs --manifests. Exits non-zero on any failure.
+           every folder above it. All after captures in those manifests, under tmp/pr-media,
+           and under each --manifests folder are checked even when the body omits them. For
+           other capture roots, pass --manifests. Exits non-zero on any failure.
   tiles    cuts every after picture under <dir> still to read into original-size tiles and writes
            <dir>/read/READ.md, the reader's sheet: a blind pass (pictures, numbers, words), then
            the sort against the before pictures. A retake, whose pixels changed since its read,
@@ -40,7 +41,10 @@ Checks that every picture a PR body shows was captured, from which build, and re
   pending  records native after pictures with neither a capture nor a device record; they keep
            failing the check as pending.
   device   takes an after picture from a booted simulator (--device its udid) or emulator (its
-           adb serial) that no capture can take, such as an Android sheet over its page, with
+           adb serial) that no capture can take, such as an Android sheet over its page. Open
+           the app first with agent-device. The tool captures the active display through that
+           command and refuses invalid PNGs. Pass the bound T3 command path as --agent-device
+           when using T3 Code. Use
            --name saying what it shows (its caption, written as literal words; a caption that
            would hold an @name, a #number, a GH-number or an issue's URL, which GitHub links
            even escaped, is refused, whether from --name, the device's name or the build's

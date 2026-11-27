@@ -1,4 +1,4 @@
-/* oxlint-disable no-console -- This CLI prints the derived routes and artifact table for CI. */
+/* oxlint-disable no-console -- This CLI prints its result for CI. */
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { parseArgs } from "node:util";
@@ -242,9 +242,7 @@ async function checkStatic(): Promise<void> {
     throw new Error("Invalid prerender manifest.");
   }
 
-  console.log(
-    `Derived navigation routes (${required.length}):\n${required.map((route) => `  ${route}`).join("\n")}`,
-  );
+  console.log(`Derived navigation routes (${required.length})`);
 
   const groups = await Promise.all([
     ...required.map((source) =>
@@ -258,21 +256,15 @@ async function checkStatic(): Promise<void> {
   const routes = groups.flat();
   const artifacts = [...routes, ...sharedTagArtifacts(routes.filter(({ tags }) => tags))];
 
-  console.table(
-    artifacts.map(({ artifact, problems, route }) => ({
-      artifact,
-      result: problems.length > 0 ? problems.join(", ") : "PASS",
-      route,
-    })),
-  );
-
   const failures = artifacts
     .filter(({ problems }) => problems.length > 0)
-    .map(({ problems, route }) => `${route}: ${problems.join(", ")}`);
+    .map(({ artifact, problems, route }) => `${route}: ${problems.join(", ")} (${artifact})`);
 
   if (failures.length > 0) {
     throw new Error(failures.join("\n"));
   }
+
+  console.log(`PASS: checked ${artifacts.length} prerender artifacts.`);
 }
 
 try {

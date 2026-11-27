@@ -31,7 +31,17 @@ export const story = {
         { name: "SQL basics", inPlan: true },
         { name: "Statistics for analysts", inPlan: true },
         { name: "Data visualization with Tableau", inPlan: true },
-        { name: "Python for analysts", inPlan: false },
+        {
+          name: "Python for analysts",
+          inPlan: false,
+          covers: [
+            "Write basic Python for data work",
+            "Load a spreadsheet into pandas",
+            "Clean missing and messy values",
+            "Group and summarize data with pandas",
+            "Chart a trend with matplotlib",
+          ],
+        },
         { name: "Portfolio project", inPlan: true },
         { name: "Job search", inPlan: true },
       ],
@@ -108,6 +118,7 @@ export const story = {
         title: '"Ser" and "estar"',
         wrong: "Soy cansado.",
         right: "Estoy cansado.",
+        translation: "I’m tired.",
         rule: "For how you feel right now, use estar.",
         rows: [
           ["ser", "+ what something is", "Soy de Chicago"],
@@ -156,7 +167,17 @@ export const story = {
         { name: "SQL básico", inPlan: true },
         { name: "Estatística para analistas", inPlan: true },
         { name: "Visualização de dados com Power BI", inPlan: true },
-        { name: "Python para analistas", inPlan: false },
+        {
+          name: "Python para analistas",
+          inPlan: false,
+          covers: [
+            "Escrever Python básico para análise de dados",
+            "Carregar uma planilha no pandas",
+            "Limpar valores ausentes e bagunçados",
+            "Agrupar e resumir dados com pandas",
+            "Fazer um gráfico de tendência com matplotlib",
+          ],
+        },
         { name: "Projeto de portfólio", inPlan: true },
         { name: "Busca de emprego", inPlan: true },
       ],
@@ -214,7 +235,7 @@ export const story = {
         ["Qual alternativa explica a função da vírgula no trecho?", "time"],
         ['O termo "efêmero" no poema significa…', "guessed"],
       ],
-      essay: { total: 760, comps: [160, 160, 120, 160, 160] },
+      essay: { title: "Redação", total: 760, comps: [160, 160, 120, 160, 160] },
     },
     language: {
       title: "Falar inglês para morar em Londres",
@@ -251,6 +272,7 @@ export const story = {
         title: "“Since” e “for”",
         wrong: "I live here since 2020.",
         right: "I've lived here since 2020.",
+        translation: "Moro aqui desde 2020.",
         rule: "Começou no passado e continua? Use have + particípio.",
         rows: [
           ["since", "+ quando começou", "since 2020"],

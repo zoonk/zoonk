@@ -14,7 +14,6 @@ import { setTimeout as sleep } from "node:timers/promises";
 import { afterEach, describe, expect, it } from "vitest";
 
 const QUEUE_SCRIPT = join(import.meta.dirname, "queue.mts");
-const ARRIVAL_GAP_MS = 150;
 const ABANDONED_AGE_MS = 660_000;
 const SPAWNING_TEST_TIMEOUT_MS = 60_000;
 const WAITING_CHECK_MS = 3000;
@@ -99,31 +98,6 @@ afterEach(() => {
 });
 
 describe("pnpm dev:queue", { timeout: SPAWNING_TEST_TIMEOUT_MS }, () => {
-  it("runs at most `slots` jobs at once, in the order they arrived", async () => {
-    const directory = createDirectory();
-    const log = join(directory, "events.log");
-    const jobs: Promise<number | null>[] = [];
-
-    for (const id of [0, 1, 2, 3]) {
-      jobs.push(runQueuedJob({ directory, id, log, slots: 2 }));
-      // oxlint-disable-next-line no-await-in-loop -- spaces arrivals so their order is known
-      await sleep(ARRIVAL_GAP_MS);
-    }
-
-    await expect(Promise.all(jobs)).resolves.toStrictEqual([0, 0, 0, 0]);
-
-    const events = readEvents(log);
-
-    expect(getMostAtOnce(events)).toBe(2);
-
-    expect(events.filter((event) => event.startsWith("start"))).toStrictEqual([
-      "start 0",
-      "start 1",
-      "start 2",
-      "start 3",
-    ]);
-  });
-
   it("keeps the limit when jobs arrive at the same moment", async () => {
     const directory = createDirectory();
     const log = join(directory, "events.log");

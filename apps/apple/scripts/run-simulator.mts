@@ -1,6 +1,7 @@
 import { spawnSync } from "node:child_process";
 import path from "node:path";
-import { BOOT_LIMIT, leaseSimulator, releaseLease } from "./leases.mts";
+import { assertDeviceUnclaimed } from "./device-claims.mts";
+import { leaseSimulator, releaseLease } from "./leases.mts";
 import {
   type DeviceFamily,
   type Simulator,
@@ -99,6 +100,7 @@ function showSimulator(device: Simulator) {
 function installAndLaunchApp({ appPath, device }: { appPath: string; device: Simulator }) {
   const bundleIdentifier = getBundleIdentifier(appPath);
 
+  assertDeviceUnclaimed(device.udid);
   runCommand({ arguments: ["simctl", "install", device.udid, appPath], command: "xcrun" });
 
   showSimulator(device);
@@ -114,11 +116,9 @@ async function runSimulator(family: DeviceFamily) {
   const { runtimeIdentifier } = getNewestSimulators({ catalog: listSimulators(), family });
 
   const { lease, turn } = await leaseSimulator({
-    describeWait: (booted) =>
-      `Waiting for a free ${family} simulator, with ${BOOT_LIMIT}. Booted now: ` +
-      `${booted.map(({ name }) => name).join(", ")}.\n`,
-    getCandidates: () => getNewestSimulators({ catalog: listSimulators(), family }).devices,
-    isTestRun: false,
+    getCandidates: () => getNewestSimulators({ catalog: listSimulators(), family }),
+    kind: "launch",
+    label: `a free ${family} simulator`,
   });
 
   const { device } = lease;

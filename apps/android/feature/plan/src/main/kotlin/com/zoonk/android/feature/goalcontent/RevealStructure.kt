@@ -30,7 +30,6 @@ import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.listRowWordsStart
 import com.zoonk.android.ui.theme.layoutEnd
-import com.zoonk.api.models.GoalContentGoal
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanPhase
 import com.zoonk.api.models.Syllabus
@@ -107,7 +106,7 @@ private fun RevealSubjects(
     modifier: Modifier,
 ) {
     val groups = groupSubjects(syllabus.subjects, modules = syllabus.kind == Syllabus.Kind.MODULES)
-    val exam = syllabus.goal.kind == GoalContentGoal.Kind.EXAM
+    val exam = syllabus.isExam
 
     BoxWithConstraints(modifier.fillMaxWidth()) {
         val withQuestions = maxWidth >= QUESTIONS_FROM
@@ -121,7 +120,7 @@ private fun RevealSubjects(
                     }
                     group.subjects.forEachIndexed { index, subject ->
                         if (index > 0) ListDivider()
-                        RevealSubject(subject, withQuestions)
+                        RevealSubject(subject, withQuestions, module = !exam)
                     }
                 }
             }
@@ -134,12 +133,13 @@ private fun RevealSubjects(
 private fun RevealSubject(
     subject: SyllabusSubject,
     withQuestions: Boolean,
+    module: Boolean,
 ) {
     val notPlanned = subject.notPlannedReason != null
     val line =
         when {
             notPlanned -> {
-                planOutsideReason(subject.notPlannedReason)
+                planOutsideReason(subject.notPlannedReason, module)
             }
 
             subject.topics.isNotEmpty() -> {

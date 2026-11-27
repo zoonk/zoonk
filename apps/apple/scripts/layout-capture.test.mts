@@ -221,12 +221,19 @@ describe(saveCapture, () => {
   });
 
   it("keeps the read and the picture a retake with other pixels replaces, for a check of its fixes", async () => {
-    const { item, out } = await readThenRetake(await frame(), await frame({ background: "#eee" }));
+    const first = await frame();
+    const { item, out } = await readThenRetake(first, await frame({ background: "#eee" }));
     const file = "earlier/plan.after.png";
 
     assert.equal(item?.read, undefined);
-    assert.deepEqual(item?.retakes, { file, read: READ });
-    assert.deepEqual(await readFile(path.join(out, file)), await frame());
+
+    assert.deepEqual(item?.retakes, {
+      file,
+      read: READ,
+      sha256: createHash("sha256").update(first).digest("hex"),
+    });
+
+    assert.deepEqual(await readFile(path.join(out, file)), first);
   });
 
   it("refuses an answer that isn't a capture before counting it", async () => {

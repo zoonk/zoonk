@@ -148,7 +148,11 @@ describe("listening recording preparation", () => {
     );
 
     vi.mocked(joinListeningParts).mockImplementationOnce(async () => {
-      await prisma.itemSet.update({ data: { content: listeningContent() }, where: { id: set.id } });
+      await prisma.itemSet.update({
+        data: { content: listeningContent(), updatedAt: new Date(set.updatedAt.getTime() + 1) },
+        where: { id: set.id },
+      });
+
       return { audio: new Uint8Array([4, 5]), durationMs: 48_000, format: "mp3" };
     });
 

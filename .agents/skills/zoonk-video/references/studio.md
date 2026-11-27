@@ -6,12 +6,16 @@ What's in this skill's folder, which `init.mjs` copies into a studio, and how to
 
 Running init again over a studio adds what's missing and never overwrites a file. A studio made before the stage has no `typecheck`, and init stops there: make a fresh folder and copy its `films/` across.
 
+## Checking the template
+
+Run `node .agents/skills/zoonk-video/scripts/check.mjs` from the repository after installing dependencies and generating the Prisma client. It prepares a fresh studio, runs the same type check as init, then opens each default view at phone width in English and Portuguese. It uses the checkout's Playwright Chromium locally and the runner's Chrome in CI. It doesn't install film dependencies or call AI services.
+
 ## Files
 
 Paths are relative to the skill's folder.
 
 - `scripts/`
-  - Setup: `init.mjs` builds a studio; `typecheck.mjs` checks the views; `export-art.mjs` saves the buddy SVGs.
+  - Setup: `init.mjs` builds a studio; `check.mjs` checks the template; `typecheck.mjs` checks the views in an existing studio; `export-art.mjs` saves the buddy SVGs.
   - Captures: `snap.mjs` (stills), `seq.mjs` (interactions), `typing.mjs`, `manifests.py`; `story-clock.mjs` pins their clock to the story's date.
   - Video: `render.mjs` turns a page or a stage scene (`--url`, `--scheme dark`) into an MP4 or stills, failing a stage frame that cuts what it shows; `stills.mjs` renders a set's post images in every size, scheme and language; `cues.mjs` lists a page's sound cues.
   - Audio: `narration.py` (spec, fit and captions); `gen-audio.mjs`, `transcribe.mjs`, `judge-audio.mjs` and `rank-audio.mjs` (AI Gateway); `mix.py` and `sfx.py` (the mix and the UI sounds).

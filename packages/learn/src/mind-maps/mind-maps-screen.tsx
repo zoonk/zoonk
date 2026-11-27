@@ -12,7 +12,7 @@ import {
   DetailLayout,
 } from "../_components/detail-page";
 import { EnterLink } from "../_components/enter-button";
-import { LIST_GROUP_CLASS } from "../_components/list-group";
+import { ListGroup } from "../_components/list-group";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { PageTab, PageTabs, PageTabsGroup } from "../_components/page-tabs";
 import { LearnPageBar } from "../shell/learn-bar";
@@ -155,7 +155,7 @@ function SavedTab({ hrefs, library }: TabProps) {
   return (
     <>
       {open.length > 0 && (
-        <ul aria-label={t("Saved maps")} className={LIST_GROUP_CLASS}>
+        <ListGroup as="ul" aria-label={t("Saved maps")}>
           {open.map((entry) => (
             <li key={toSavedMapKey(entry)}>
               <SavedMapRow
@@ -171,7 +171,7 @@ function SavedTab({ hrefs, library }: TabProps) {
               />
             </li>
           ))}
-        </ul>
+        </ListGroup>
       )}
 
       {gone.length > 0 && (
@@ -179,13 +179,13 @@ function SavedTab({ hrefs, library }: TabProps) {
           <PageSectionHeader>
             <PageSectionTitle id={unavailableId}>{t("No longer available")}</PageSectionTitle>
           </PageSectionHeader>
-          <ul className={LIST_GROUP_CLASS}>
+          <ListGroup as="ul">
             {gone.map((entry) => (
               <li key={toSavedMapKey(entry)}>
                 <UnavailableMapRow onRemove={() => toggle(entry)} saved={entry} />
               </li>
             ))}
-          </ul>
+          </ListGroup>
         </PageSection>
       )}
     </>

@@ -591,8 +591,7 @@ private fun HowItWorks(hasAccount: Boolean) {
                 modifier = Modifier.bleed(LIST_ITEM_INSET),
                 highlighted = index == 0,
                 stateDescription = current.takeIf { index == 0 },
-                leading = { Text((index + 1).toString(), style = MaterialTheme.typography.labelMedium.withTabularFigures()) },
-                leadOnFirstLine = true,
+                lead = { Text((index + 1).toString(), style = MaterialTheme.typography.labelMedium.withTabularFigures()) },
             )
         }
         if (!hasAccount) StartFreeNote()

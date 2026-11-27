@@ -2,12 +2,12 @@ import { globSync } from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";
 import { basename, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import createXcstringsCodec from "@eloqnt/format-apple-xcstrings";
 import createPoCodec from "@eloqnt/format-po";
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { z } from "zod";
 import createAndroidCodec from "../../../../apps/android/.eloqnt/android-xml.ts";
 import { catalogFile, catalogNames } from "../../../../apps/android/scripts/i18n/catalogs.mts";
+import createXcstringsCodec from "../../../../apps/apple/.eloqnt/xcstrings.ts";
 import { type Catalog, PACKAGES, type PackageName, type Reuse } from "./find-reuses.ts";
 
 type Message = {

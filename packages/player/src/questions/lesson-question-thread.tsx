@@ -26,6 +26,7 @@ import {
   ThreadViewportSkeleton,
 } from "./lesson-question-thread-viewport";
 import { EarlierTurns, QuestionTurn, SENDING_TURN_ID, SendingTurn } from "./lesson-question-turn";
+import { useModuleSubject } from "./module-subject";
 import { TutorSuggestions, useOffersSuggestions } from "./tutor-suggestions";
 import { type LessonQuestionController } from "./use-lesson-questions";
 import { useTutorSuggestions } from "./use-tutor-suggestions";
@@ -57,6 +58,7 @@ function ThreadLoadError({
 
 function useThreadLabel(contextKind: LessonQuestionController["state"]["context"]["kind"]) {
   const t = useExtracted();
+  const isModule = useModuleSubject();
 
   switch (contextKind) {
     case "chapter":
@@ -66,7 +68,7 @@ function useThreadLabel(contextKind: LessonQuestionController["state"]["context"
     case "plan":
       return t("Questions about your plan");
     case "subject":
-      return t("Questions about this subject");
+      return isModule ? t("Questions about this module") : t("Questions about this subject");
     case "item":
       return t("Questions about this question");
     case "answer":

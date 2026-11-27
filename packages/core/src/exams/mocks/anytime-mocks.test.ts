@@ -282,10 +282,7 @@ describe("mocks taken any time", () => {
   });
 
   it("writes ahead at most one real exam's worth of questions, whatever the notice claims", async () => {
-    const subjects = Array.from({ length: 40 }, (_, index) => `Subject ${index + 1}`);
-
     const { goal } = await anytimeSetup({
-      areas: subjects,
       itemsPerSkill: 0,
       structure: {
         ...STRUCTURE,
@@ -295,13 +292,7 @@ describe("mocks taken any time", () => {
           timeLimitMinutes: 200,
           totalQuestions: 100,
         },
-        subjects: subjects.map((name) => ({
-          citation: CITATION,
-          name,
-          questions: 50,
-          topics: [],
-          weight: null,
-        })),
+        subjects: STRUCTURE.subjects.map((subject) => ({ ...subject, questions: 600 })),
       },
     });
 
@@ -314,6 +305,12 @@ describe("mocks taken any time", () => {
     expect(papers.map((paper) => paper.key)).toContain(
       mockPaperKey({ area: null, day: null, kind: "full" }),
     );
+
+    expect(
+      papers.filter(({ key }) =>
+        AREAS.some((area) => key === mockPaperKey({ area, day: null, kind: "area" })),
+      ),
+    ).toHaveLength(1);
 
     expect(written.reduce((sum, count) => sum + count, 0)).toBeLessThanOrEqual(1200);
   });

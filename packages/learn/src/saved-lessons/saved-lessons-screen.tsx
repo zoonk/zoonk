@@ -8,8 +8,8 @@ import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { DetailContent, DetailLayout } from "../_components/detail-page";
 import {
-  LIST_GROUP_CLASS,
   LIST_ROW_CLASS,
+  ListGroup,
   ListRowContent,
   ListRowDescription,
   ListRowLinkWithAction,
@@ -98,7 +98,7 @@ function Unavailable({ lessons, saves }: { lessons: readonly SavedLesson[]; save
       <PageSectionHeader>
         <PageSectionTitle id={titleId}>{t("No longer available")}</PageSectionTitle>
       </PageSectionHeader>
-      <ul className={LIST_GROUP_CLASS}>
+      <ListGroup as="ul">
         {lessons.map((lesson) => (
           <li key={lesson.lessonId}>
             <UnavailableLessonRow
@@ -107,7 +107,7 @@ function Unavailable({ lessons, saves }: { lessons: readonly SavedLesson[]; save
             />
           </li>
         ))}
-      </ul>
+      </ListGroup>
     </PageSection>
   );
 }
@@ -165,7 +165,7 @@ export function SavedLessonsScreen({
         )}
 
         {open.length > 0 && (
-          <ul aria-label={t("Saved lessons")} className={LIST_GROUP_CLASS}>
+          <ListGroup aria-label={t("Saved lessons")} as="ul">
             {open.slice(0, shown).map((lesson) => (
               <li key={lesson.lessonId}>
                 <SavedLessonRow
@@ -175,7 +175,7 @@ export function SavedLessonsScreen({
                 />
               </li>
             ))}
-          </ul>
+          </ListGroup>
         )}
 
         {open.length > shown && (

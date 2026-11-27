@@ -90175,6 +90175,13 @@
             },
             "description": "Every chapter of the plan in this subject: the ones done, then in the order the plan studies them next"
           },
+          "covers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "What it would teach, by the names of its skills in the plan's graph, in the graph's order. Set only while it's out of the plan (`notPlannedReason`) and has no `topics` or `chapters`; empty otherwise"
+          },
           "displayWeight": {
             "nullable": true,
             "description": "Normalized display weight among every notice subject, including written subjects not yet taught. Missing stated shares use the average stated subject. All whole percentages sum to 100; an assumed weight is an estimate, not a number the notice states. Null for plan modules or a notice with no positive weight. Original share and planner weights are unchanged.",
@@ -90378,6 +90385,7 @@
         "required": [
           "areas",
           "chapters",
+          "covers",
           "displayWeight",
           "group",
           "imageUrl",

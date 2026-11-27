@@ -269,14 +269,13 @@ private fun PhaseRow(
 
     ListRow(
         headline = { Text(name) },
-        leading = {
+        lead = {
             Text(
                 number.toString(),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.labelLarge.withTabularFigures(),
             )
         },
-        leadOnFirstLine = true,
         supporting = phase.milestone?.let { { Text(it) } },
         // A phase too small to measure shows no size, so nothing ever reads "~0 min".
         meta = if (minutes > 0) ({ Text(stringResource(R.string.planlink_about, formatMinutes(minutes, locale))) }) else null,

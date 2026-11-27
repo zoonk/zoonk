@@ -34,6 +34,7 @@ export const ELEMENT_PARTS = [
   "holder",
   "pinned",
   "row",
+  "section-text",
   "text",
 ] as const;
 
@@ -62,6 +63,8 @@ export type CaptureElement = {
   lines?: number | NotMeasured;
   /** A row's: a supporting line sits under its label. */
   note?: boolean;
+  /** A date lead opens a run of entries whose first line also holds the row's accessories. */
+  role?: "date" | "words";
   type?: string;
   text?: string;
   name?: string;
@@ -82,6 +85,8 @@ export type CaptureElement = {
   variant?: string;
   surface?: string;
   controlParent?: string;
+  /** A pinned bar's: the rows the browser sees under the bar on the active surface. */
+  coversRows?: string[];
   /** Column sides a ghost control hangs over; its content ink must meet those edges. */
   hangEdges?: ("end" | "start")[];
   /** An action's destination, when it is a link: the same words to the same place are one action. */

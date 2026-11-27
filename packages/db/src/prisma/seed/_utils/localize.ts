@@ -22,6 +22,12 @@ export class Localized {
   }
 }
 
+export type SeedText = string | Localized;
+
+export function localizeText(text: SeedText, language: SeedLanguage): string {
+  return text instanceof Localized ? text.in(language) : text;
+}
+
 export function t(english: string, portuguese: string): Localized {
   return new Localized({ en: english, pt: portuguese });
 }

@@ -1,7 +1,6 @@
 import { type MemoryFactText } from "@zoonk/ai/tasks/memory/facts";
-import { localizeObject } from "@zoonk/db/seed/localize";
+import { localizeObject, localizeText } from "@zoonk/db/seed/localize";
 import { listSeedPersonas } from "@zoonk/db/seed/personas";
-import { isJsonObject } from "@zoonk/utils/json";
 
 /**
  * Evals read the seed learners on one fixed Monday, so their dates (Ana's exam, Marcos's move)
@@ -57,7 +56,10 @@ function getAreas({ goal, language }: { goal: SeedGoal; language: SeedLanguage }
     chapter.area ? [chapter.area.in(language)] : [],
   );
 
-  const areas = chapterAreas.length > 0 ? chapterAreas : goal.plan.phases.map(({ name }) => name);
+  const areas =
+    chapterAreas.length > 0
+      ? chapterAreas
+      : goal.plan.phases.map(({ name }) => localizeText(name, language));
 
   return [...new Set(areas)];
 }
@@ -69,7 +71,7 @@ function toGoal({ goal, language }: { goal: SeedGoal; language: SeedLanguage }):
     kind: goal.kind,
     prompt: goal.prompt,
     targetDate: goal.targetDate?.toISOString().slice(0, SEED_LEARNERS_TODAY.length) ?? null,
-    title: goal.title,
+    title: localizeText(goal.title, language),
   };
 }
 
@@ -122,14 +124,20 @@ function getRecentAccuracy({ attempts, skill }: { attempts: SeedAttempt[]; skill
 function toMistake({
   attempt,
   attempts,
+  language,
 }: {
   attempt: SeedAttempt;
   attempts: SeedAttempt[];
+  language: SeedLanguage;
 }): EvalLearnerMistake[] {
-  const snapshot = attempt.mistake?.snapshot;
-  const question = isJsonObject(snapshot) ? readText(snapshot.question) : null;
+  if (!attempt.mistake) {
+    return [];
+  }
 
-  if (!attempt.mistake || !isJsonObject(snapshot) || !question) {
+  const snapshot = localizeObject(attempt.mistake.snapshot, language);
+  const question = readText(snapshot.question);
+
+  if (!question) {
     return [];
   }
 
@@ -155,7 +163,7 @@ function toEvalLearner(learner: SeedLearner): EvalLearner {
     language,
     lessons: getLessons({ goal, language }),
     mistakes: learner.attempts.flatMap((attempt) =>
-      toMistake({ attempt, attempts: learner.attempts }),
+      toMistake({ attempt, attempts: learner.attempts, language }),
     ),
   };
 }

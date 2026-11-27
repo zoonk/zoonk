@@ -1350,9 +1350,6 @@ importers:
       '@eloqnt/cli':
         specifier: 'catalog:'
         version: 0.8.0(@swc/helpers@0.5.24)(ai@7.0.179(zod@4.6.7))
-      '@eloqnt/format-apple-xcstrings':
-        specifier: 'catalog:'
-        version: 0.0.10
       '@eloqnt/format-po':
         specifier: 0.1.2
         version: 0.1.2

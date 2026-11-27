@@ -28,6 +28,7 @@
 - “Get Plus”: “Plusに登録する”; the “Subscribe” button: “登録する”; “subscription”: “サブスクリプション”; to “cancel” it: “解約する”
 - “session” (study): “学習” (“今日の学習”), not “セッション”, which is the sign-in session
 - “subject” (of an exam or a plan): “科目”
+- “module” (a part of a plan that isn't for an exam): “モジュール”, never “単元”
 - “topic”: “トピック”
 - “area” (a weighted part of an exam or a goal): “分野”
 - “material” (the learner's own files and notes): “資料”

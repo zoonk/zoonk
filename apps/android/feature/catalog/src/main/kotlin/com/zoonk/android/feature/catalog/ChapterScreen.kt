@@ -512,13 +512,12 @@ internal fun ChapterLessonRows(
                         { navigator.open(AppRoute.CatalogLesson(lessonId, chapter.id.toString(), courseId)) }
                     },
                 highlighted = isCurrent,
-                leading = {
+                lead = {
                     Text(
                         formatNumber((index + 1).toDouble(), locale),
                         style = MaterialTheme.typography.bodyMedium.withTabularFigures(),
                     )
                 },
-                leadOnFirstLine = true,
                 meta = { Text(formatMinutes(lesson.estimatedMinutes.toInt(), locale)) },
                 chevronSpace = true,
             )

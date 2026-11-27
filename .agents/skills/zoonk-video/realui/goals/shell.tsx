@@ -10,20 +10,12 @@ import {
   type LearnTab,
 } from "@repo/packages/learn/src/shell/learn-navigation.tsx";
 import {
-  FRAME_COLUMN_CLASS,
   LearnShell,
   LearnShellContent,
   LearnShellMain,
 } from "@repo/packages/learn/src/shell/learn-shell.tsx";
-import { Avatar, AvatarFallback } from "@repo/packages/ui/src/components/avatar.tsx";
-import { BeltIndicator } from "@repo/packages/ui/src/components/belt-indicator.tsx";
-import { Button } from "@repo/packages/ui/src/components/button.tsx";
-import { PageTopBar } from "@repo/packages/ui/src/components/page-top.tsx";
-import { type BeltColor } from "@repo/packages/utils/src/belt-level.ts";
-import { SearchIcon, User } from "lucide-react";
-import { useExtracted } from "next-intl";
 import { type ComponentProps } from "react";
-import { ADAPTERS } from "../learn/common";
+import { ADAPTERS, StudioTabBar } from "../learn/common";
 import { story, type Lang } from "../story";
 
 export const NOOP = () => {};
@@ -94,60 +86,26 @@ export const DEFAULT_BUDDY_VIEW = {
   studiedToday: true,
 } as const;
 
-function BarLevel({ color, level }: { color: BeltColor; level: number }) {
-  return (
-    <span className="text-muted-foreground relative flex h-9 shrink-0 items-center gap-1.5 rounded-lg px-2 font-mono text-[0.8125rem] tabular-nums">
-      <BeltIndicator aria-hidden="true" className="size-2.5" color={color} label="" />
-      <span aria-hidden="true">{level}</span>
-    </span>
-  );
-}
-
-/** Under `lg` the bar's icon opens the command palette. */
-function Search() {
-  const t = useExtracted();
-  return (
-    <Button className="text-muted-foreground" onClick={NOOP} size="icon-bar" variant="ghost">
-      <SearchIcon aria-hidden="true" />
-      <span className="sr-only">{t("Search")}</span>
-    </Button>
-  );
-}
-
-/** The tab root's top bar on phones: goal switcher, then search, belt and level, avatar. */
 export function TopBar({ goal, lang }: { goal: GoalKey; lang: Lang }) {
   return (
-    <div className={FRAME_COLUMN_CLASS}>
-      <PageTopBar
-        actions={
-          <>
-            <Search />
-            <BarLevel color="yellow" level={4} />
-            <span className="relative size-7 shrink-0 rounded-full">
-              <Avatar className="size-full">
-                <AvatarFallback>
-                  <User size={16} />
-                </AvatarFallback>
-              </Avatar>
-            </span>
-          </>
-        }
-        back={
-          <GoalSwitcher
-            activeGoalId={goal}
-            explanationHref="/explain"
-            exploreHref="/courses"
-            goals={switcherGoals(lang)}
-            hasAccount
-            newGoalHref="/start"
-            onSelect={async () => true}
-            onStartWaiting={async () => true}
-            placement="bar"
-            waitingGoals={[]}
-          />
-        }
-      />
-    </div>
+    <StudioTabBar
+      color="yellow"
+      level={4}
+      switcher={
+        <GoalSwitcher
+          activeGoalId={goal}
+          explanationHref="/explain"
+          exploreHref="/courses"
+          goals={switcherGoals(lang)}
+          hasAccount
+          newGoalHref="/start"
+          onSelect={async () => true}
+          onStartWaiting={async () => true}
+          placement="bar"
+          waitingGoals={[]}
+        />
+      }
+    />
   );
 }
 
