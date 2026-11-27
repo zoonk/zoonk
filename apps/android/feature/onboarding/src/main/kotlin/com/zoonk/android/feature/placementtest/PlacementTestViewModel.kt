@@ -22,7 +22,6 @@ import com.zoonk.api.models.Placement
 import com.zoonk.api.models.PlacementAttempt
 import com.zoonk.api.models.PlacementLength
 import kotlinx.coroutines.launch
-import kotlinx.serialization.Serializable
 
 /**
  * A course's test, in onboarding and from the plan (main's `usePlacementTest`). Opening it only reads; starting a part,
@@ -57,12 +56,9 @@ internal class PlacementTestViewModel(
     /** The length of the test the learner asked for, which opens once its questions are written. */
     val askedLength get() = PlacementLength.entries.firstOrNull { it.value == wanted } ?: PlacementLength.QUICK
 
-    /** What a part closed in this visit did, shown until the learner moves on, after a reclaimed process too. */
+    /** What a part closed in this visit did, kept after a reclaimed process too; [phase] shows it while the read agrees. */
     private var closed by mutableStateOf(
-        savedClosed
-            .takeIf {
-                it.isNotEmpty()
-            }?.let { ApiJson.decodeFromString(ClosedPart.serializer(), it).phase },
+        savedClosed.takeIf { it.isNotEmpty() }?.let { ApiJson.decodeFromString(ClosedPart.serializer(), it) },
     )
 
     var pressed by mutableStateOf<Pressed?>(null)
@@ -171,14 +167,17 @@ internal class PlacementTestViewModel(
             }
         }
 
-    /** Closing a part applies what it skipped; another device that closed it first wins, and the read says where the test is. */
+    /**
+     * Closing a part applies what it skipped; another device that closed it first, or answered past a stop's [answered],
+     * wins, and the read says where the test is.
+     */
     private suspend fun close(
         attempt: PlacementAttempt,
         answered: Long? = null,
     ): Boolean {
         val finished = store.finishPlacement(goalId, fromScratch = false, attempt = attempt.part(), answered = answered)
         if (finished is WriteOutcome.Done) {
-            show(finished.value.phase(attempt))
+            show(finished.value.closed(attempt))
             return true
         }
         if (finished == WriteOutcome.Obsolete) return true
@@ -187,12 +186,17 @@ internal class PlacementTestViewModel(
         val now =
             placements.state.value.value
                 ?.attempt
-        return now == null || now.id != attempt.id || now.part != attempt.part || now.partComplete || now.resume != null
+        return now == null ||
+            now.id != attempt.id ||
+            now.part != attempt.part ||
+            now.partComplete ||
+            now.resume != null ||
+            (answered != null && now.answered != answered)
     }
 
-    private fun show(part: PlacementTestPhase?) {
+    private fun show(part: ClosedPart?) {
         closed = part
-        savedClosed = part?.let { ApiJson.encodeToString(ClosedPart.serializer(), ClosedPart.of(it)) }.orEmpty()
+        savedClosed = part?.let { ApiJson.encodeToString(ClosedPart.serializer(), it) }.orEmpty()
     }
 
     /** [action] gets the visit it was asked on, and says whether it saved. */
@@ -208,25 +212,6 @@ internal class PlacementTestViewModel(
             if (!action(asked)) failure.send(asked, Unit)
             pressed = null
         }
-    }
-}
-
-/** What a closed part shows, as a reclaimed process restores it. */
-@Serializable
-private data class ClosedPart(
-    val done: PlacementTestPhase.PartDone? = null,
-    val stopped: PlacementTestPhase.PartStopped? = null,
-    val result: PlacementTestPhase.Result? = null,
-) {
-    val phase: PlacementTestPhase? get() = done ?: stopped ?: result
-
-    companion object {
-        fun of(phase: PlacementTestPhase) =
-            ClosedPart(
-                done = phase as? PlacementTestPhase.PartDone,
-                stopped = phase as? PlacementTestPhase.PartStopped,
-                result = phase as? PlacementTestPhase.Result,
-            )
     }
 }
 

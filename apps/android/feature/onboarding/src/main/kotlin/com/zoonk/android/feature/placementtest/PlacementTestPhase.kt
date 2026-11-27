@@ -105,23 +105,49 @@ internal sealed interface PlacementTestPhase {
 }
 
 /**
+ * What closing a part showed, and where the close left the test: [part] of [attemptId] with [answered] answers, or
+ * [answered] null when it ended the test.
+ */
+@Serializable
+internal data class ClosedPart(
+    @Contextual val attemptId: UUID,
+    val part: Long,
+    val answered: Long?,
+    val done: PlacementTestPhase.PartDone? = null,
+    val stopped: PlacementTestPhase.PartStopped? = null,
+    val result: PlacementTestPhase.Result? = null,
+) {
+    val phase: PlacementTestPhase? get() = done ?: stopped ?: result
+
+    /**
+     * The [read] still has the test where the close left it, or at that part from just before the close. Another device
+     * that went on, stopped further on or finished the test since wins.
+     */
+    fun standsIn(read: Placement): Boolean {
+        val now = read.attempt ?: return answered == null && read.result?.attemptId == attemptId
+        return now.id == attemptId && now.part == part && (answered == null || now.answered <= answered)
+    }
+}
+
+/**
  * With no test open, the offer, or the wait for its questions once the learner [asked] for it; an open one goes on where
  * it stopped, once its questions are written. A part closed in this visit ([closed]) shows what it did until the learner
- * moves on, and a quick test that ended shows its result. [finished] shows a test that's over with its result instead of
- * a new offer, as onboarding does. [awaiting]: the learner's start came back before the course had questions.
+ * moves on, while the read has the test where it closed, and a quick test that ended shows its result. [finished] shows
+ * a test that's over with its result instead of a new offer, as onboarding does. [awaiting]: the learner's start came
+ * back before the course had questions.
  */
 internal fun placementTestPhase(
     placement: LoadState<Placement>,
-    closed: PlacementTestPhase?,
+    closed: ClosedPart?,
     finished: Boolean = false,
     asked: Boolean = false,
     awaiting: Boolean = false,
 ): PlacementTestPhase {
-    if (closed != null) return closed
     if (placement.isPending) return PlacementTestPhase.Loading
     if (placement is LoadState.Failed) return PlacementTestPhase.LoadFailed
 
     val read = placement.value ?: return PlacementTestPhase.Choose
+    closed?.takeIf { it.standsIn(read) }?.phase?.let { return it }
     val attempt = read.attempt
     val result = read.result
 
@@ -212,8 +238,22 @@ internal fun PlacementResult.phase(attempt: PlacementAttempt?) =
         minutesLeft = attempt?.minutesLeft ?: 0,
     )
 
+/** What closing [attempt]'s part showed, and where it left the test. */
+internal fun PlacementCompletion.closed(attempt: PlacementAttempt): ClosedPart {
+    val shown = phase(attempt)
+    val left = this.attempt
+    return ClosedPart(
+        attemptId = attempt.id,
+        part = left?.part ?: attempt.part,
+        answered = left?.answered,
+        done = shown as? PlacementTestPhase.PartDone,
+        stopped = shown as? PlacementTestPhase.PartStopped,
+        result = shown as? PlacementTestPhase.Result,
+    )
+}
+
 /** What closing [attempt]'s part did: a full test's part done or stopped with parts left, else the test's result. */
-internal fun PlacementCompletion.phase(attempt: PlacementAttempt): PlacementTestPhase {
+private fun PlacementCompletion.phase(attempt: PlacementAttempt): PlacementTestPhase {
     val next = this.attempt
     val partSkipped = (partLessonsSkipped ?: lessonsSkipped).toInt()
     val changeId = changeId.takeIf { partSkipped > 0 }

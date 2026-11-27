@@ -334,22 +334,16 @@ private fun ColumnScope.TestOutFlow(
     val poll = rememberPoll(active = preparing) { vm.checkTestOut() }
     val hold = rememberReadyHold(ready = !preparing)
     val next = test?.next?.takeIf { hold.over }
-    LaunchedEffect(next?.itemId, test?.total) {
-        onSitting(
-            test?.takeIf { next != null && it.total > 0 }?.let {
-                sitting(
-                    TestContext(
-                        goalId,
-                        TestContext.Kind.LevelTestOut,
-                        TestContext.Surface.Plan,
-                        questions = it.total,
-                        attemptId = attemptId.toString(),
-                    ),
-                    it.answered,
-                    it.total,
-                )
-            },
+    val context =
+        TestContext(
+            goalId,
+            TestContext.Kind.LevelTestOut,
+            TestContext.Surface.Plan,
+            questions = test?.total,
+            attemptId = attemptId.toString(),
         )
+    LaunchedEffect(next?.itemId, test?.total) {
+        onSitting(test?.takeIf { next != null && it.total > 0 }?.let { sitting(context, it.answered, it.total) })
     }
 
     when {
@@ -374,6 +368,7 @@ private fun ColumnScope.TestOutFlow(
         }
 
         next != null -> {
+            TrackFirstQuestion(vm.sitting, context, test.answered + 1, attemptId.toString())
             SetupContent {
                 key(next.itemId) {
                     val question = next.recode<LanguageLevelTestOutNext, Question>()
