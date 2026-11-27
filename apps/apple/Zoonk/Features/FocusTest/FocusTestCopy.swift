@@ -20,9 +20,7 @@ enum FocusTestCopy {
     findsFocus
       ? LocalizedStringResource(
         "A test shows what you already know, so more of your time goes to what you need most.",
-        table: "FocusTest",
-        comment: "What the Focus test is and why, for an exam with a date and more than one subject"
-      )
+        table: "FocusTest")
       : LocalizedStringResource(
         "This test shows what you already know, so your plan can skip it.", table: "FocusTest",
         comment: "What the Focus test is and why, for an exam without a date or with one subject")

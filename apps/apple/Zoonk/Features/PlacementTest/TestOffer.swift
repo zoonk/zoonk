@@ -103,8 +103,7 @@ enum TestCopy {
     "Continue", table: "Onboarding", comment: "Saves an onboarding answer")
 
   static let whereToStart = LocalizedStringResource(
-    "Where would you like to start?", table: "Onboarding",
-    comment: "Title of onboarding's offer: the first lesson, or a short test first")
+    "Where would you like to start?", table: "Onboarding")
 
   static let findsSkips = LocalizedStringResource(
     "A test finds the lessons you can skip.", table: "Onboarding",
@@ -115,13 +114,10 @@ enum TestCopy {
     comment: "Title of the test offer on the plan")
 
   static let firstLesson = LocalizedStringResource(
-    "First lesson", table: "Onboarding",
-    comment: "Onboarding's offer: start with the first lesson instead of a test")
+    "First lesson", table: "Onboarding")
 
   static let startsAtLevel = LocalizedStringResource(
-    "Starts at the level you gave", table: "Onboarding",
-    comment:
-      "Under \"First lesson\" on onboarding's offer: lessons start at the level the learner chose")
+    "Starts at the level you gave", table: "Onboarding")
 
   static let quickTest = LocalizedStringResource(
     "Quick test", table: "Onboarding",
@@ -150,8 +146,7 @@ enum TestCopy {
     comment: "Button after the short test: goes on to test the rest of the course, in parts.")
 
   static let startLesson = LocalizedStringResource(
-    "Start lesson", table: "Onboarding",
-    comment: "Opens the plan's next lesson from a test's result")
+    "Start lesson", table: "Onboarding")
 
   static let done = LocalizedStringResource(
     "Done", table: "Onboarding", comment: "Leaves a test's result")
@@ -170,17 +165,15 @@ enum TestCopy {
   )
 
   static let listeningLater = LocalizedStringResource(
-    "You can test your listening later, from your plan.", table: "Onboarding",
-    comment: "Under a level test's result when listening wasn't tested")
+    "You can test your listening later, from your plan.", table: "Onboarding")
 
   static let notTested = LocalizedStringResource(
-    "Not tested yet", table: "Onboarding",
-    comment: "A language skill the level test didn't finish, in place of its level")
+    "Not tested yet", table: "Onboarding")
 
   static func questions(_ count: Int) -> String {
     String(
       localized: "\(count) questions", table: "Onboarding", locale: .appLanguage,
-      comment: "How many questions a test asks, such as \"12 questions\"")
+      comment: "The number of questions in an exam's written test.")
   }
 
   static func about(minutes: Int) -> String {
@@ -191,32 +184,33 @@ enum TestCopy {
 
   static func aboutLeft(minutes: Int) -> String {
     String(
-      localized: "About \(studyDuration(minutes: minutes)) left", table: "Onboarding",
-      comment: "How long the rest of a full test takes, such as \"About 1 hr 6 min left\"")
+      localized: "About \(studyDuration(minutes: minutes)) left", table: "Onboarding")
   }
 
   static func aboutEach(minutes: Int) -> String {
     String(
       localized: "About \(studyDuration(minutes: minutes)) each", table: "Onboarding",
-      comment: "How long each part of the full test left takes, such as \"About 6 min each\"")
+      comment:
+        "{time} is a duration with its unit, such as “6 min”: how long each part of a test takes.")
   }
 
   static func parts(_ count: Int) -> String {
     String(
       localized: "\(count) parts, any day you like", table: "Onboarding", locale: .appLanguage,
-      comment: "How many parts the full test has; they can be taken on different days")
+      comment:
+        "How many parts the long test has. The learner can take each part on a different day.")
   }
 
   static func partsLeft(_ count: Int) -> String {
     String(
       localized: "\(count) parts left", table: "Onboarding", locale: .appLanguage,
-      comment: "How many parts of the full test are left")
+      comment: "How many parts of a test the learner still has to take.")
   }
 
   static func part(_ part: Int, of parts: Int) -> String {
     String(
       localized: "Part \(part) of \(parts)", table: "Onboarding",
-      comment: "Which part of the full test this is, such as \"Part 3 of 14\"")
+      comment: "Where the learner is in a test split into parts, such as “Part 3 of 14”.")
   }
 
   static func question(_ number: Int, of total: Int) -> String {
@@ -228,7 +222,7 @@ enum TestCopy {
   static func partDone(_ part: Int, of parts: Int) -> String {
     String(
       localized: "Part \(part) of \(parts) done", table: "Onboarding",
-      comment: "Title after a part of the full test, such as \"Part 3 of 14 done\"")
+      comment: "The title after one part of a test split into parts, such as “Part 3 of 14 done”.")
   }
 
   /// "This part skipped 2 lessons you already know."
@@ -236,18 +230,20 @@ enum TestCopy {
     count == 0
       ? String(
         localized: "No lessons skipped in this part.", table: "Onboarding",
-        comment: "After a part of the full test that skipped no lesson")
+        comment:
+          "After one part of a test: how many lessons that part took out of the learner's plan.")
       : String(
         localized: "This part skipped \(count) lessons you already know.", table: "Onboarding",
         locale: .appLanguage,
-        comment: "After a part of the full test: how many lessons it took out of the plan")
+        comment:
+          "After one part of a test: how many lessons that part took out of the learner's plan.")
   }
 
   static func nextTime(part: Int, of parts: Int, question: Int) -> String {
     String(
       localized: "Next time: part \(part) of \(parts), question \(question)", table: "Onboarding",
       comment:
-        "Where a full test the learner stopped midway goes on, such as \"part 5 of 14, question 4\""
+        "Where a learner who stopped a test picks it up: the part of the test and the question in it."
     )
   }
 

@@ -27,8 +27,7 @@ struct PlacementWaitScreen: View {
 
   /// Under onboarding's Skip: where the test waits.
   static let laterNote = LocalizedStringResource(
-    "You can take the test later, from your plan.", table: "Onboarding",
-    comment: "Under Skip while a test's questions are written")
+    "You can take the test later, from your plan.", table: "Onboarding")
 
   static let questionsReady = LocalizedStringResource(
     "Your test is ready", table: "Onboarding",

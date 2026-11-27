@@ -125,9 +125,7 @@
         }
       }
     },
-    "A test shows what you already know, so more of your time goes to what you need most." : {
-      "comment" : "What the Focus test is and why, for an exam with a date and more than one subject"
-    },
+    "A test shows what you already know, so more of your time goes to what you need most." : {},
     "Already know some of this?" : {
       "localizations" : {
         "de" : {

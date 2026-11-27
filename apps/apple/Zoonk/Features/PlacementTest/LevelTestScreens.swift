@@ -118,8 +118,7 @@ struct LanguageTestResultView: View {
     if lessons > 0 {
       return String(
         localized: "Skipped \(lessons) lessons you already know.", table: "Onboarding",
-        locale: .appLanguage,
-        comment: "Under a level test's result: how many lessons it took out of the plan")
+        locale: .appLanguage)
     }
 
     if result?.ranges?[LevelTest.Skill.reading.rawValue] != nil, result?.listeningUntested == true {
