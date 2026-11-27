@@ -3,8 +3,10 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { loadPlacementPlan } from "../_utils/goal-skill-graph";
 import { findOwnedGoal, getAnswerTimeZone } from "../_utils/owned-goal";
 import { completePlacement } from "./_utils/complete-placement";
+import { finishPlacementAttempt } from "./_utils/finish-placement-attempt";
 import { type PlacementState, loadPlacementWithSummary } from "./_utils/load-placement-state";
 import { openPlacementAttempt } from "./_utils/placement-attempt";
+import { readPlacementAttempt } from "./_utils/placement-attempt-record";
 import { openTestSitting, saveTestSummary } from "./_utils/test-sitting";
 import { type PlacementSittingInput } from "./focus-test-contract";
 
@@ -44,7 +46,12 @@ export async function startPlacementSitting({
   const today = getDateInTimeZone({ date: now, timeZone });
 
   if (goal.kind === "learn") {
-    await openPlacementAttempt({ goalId, length: input.length ?? "quick", userId });
+    const previous = readPlacementAttempt(goal).attempt;
+    if (previous && !previous.search) {
+      await finishPlacementAttempt({ attemptId: previous.id, part: previous.part, goal, timeZone });
+    } else {
+      await openPlacementAttempt({ goalId, userId });
+    }
 
     const plan = await loadPlacementPlan(goalId);
 

@@ -161,6 +161,29 @@ export async function loadPlacementWithSummary({
     return loadAttemptState({ attempt, facts, goalId, plan, tx });
   }
 
+  if (!ignoreAttempt && facts.exam.goalKind === "learn") {
+    return {
+      focusTest: null,
+      state: {
+        answered: 0,
+        areas: [],
+        attempt: null,
+        complete: false,
+        dayBudgetSpent: 0,
+        dayBudgetUsed: false,
+        focusTest: null,
+        knownSkillIds: [],
+        needsItems: [],
+        next: null,
+        phases: [],
+        result: await readPlacementResult({ goalId, placement: facts.exam.placement, tx }),
+        started: false,
+        status: "unavailable",
+        trueFalseLabels: facts.exam.trueFalseLabels,
+      },
+    };
+  }
+
   const read = await loadLegacyPlacement({ checkReadiness, facts, plan, timeZone, today, tx });
   read.state.result = await readPlacementResult({ goalId, placement: facts.exam.placement, tx });
   return read;

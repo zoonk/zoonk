@@ -24,66 +24,28 @@ export const placementAttemptViewSchema = z
   .object({
     answered: z.int().nonnegative(),
     chapter: z.string().nullable(),
-    estimatedMinutes: z
-      .int()
-      .nonnegative()
-      .meta({ description: "Estimated minutes for the current part" }),
+    estimatedMinutes: z.int().positive(),
     id: uuidSchema(),
-    length: placementLengthSchema,
-    nextPart: z
-      .int()
-      .positive()
-      .nullable()
-      .meta({ description: "Number of the next part with topics remaining" }),
-    part: z.number().int().positive(),
-    partComplete: z.boolean(),
-    parts: z
-      .int()
-      .positive()
-      .meta({ description: "Total when the current part opened, updated when it closes" }),
-    partsLeft: z
-      .int()
-      .nonnegative()
-      .meta({
-        description: "Parts with questions remaining, including the current part if unfinished",
-      }),
-    partsRemoved: z
-      .int()
-      .nonnegative()
-      .meta({ description: "Parts removed during the current part, zero until it closes" }),
+    length: z.literal("quick"),
+    part: z.literal(1),
+    partComplete: z.literal(false),
     questions: z
       .int()
       .positive()
-      .meta({ description: "Fixed question ceiling for the current part" }),
-    remainingEstimatedMinutes: z
-      .int()
-      .nonnegative()
-      .meta({
-        description:
-          "Estimated minutes for the unanswered questions in this attempt's remaining parts",
-      }),
-    resume: z.object({ part: z.int().positive(), question: z.int().positive() }).nullable(),
-    totalEstimatedMinutes: z
-      .int()
-      .nonnegative()
-      .meta({
-        description: "Estimated minutes for the current, completed and retained future parts",
-      }),
+      .meta({ description: "Question ceiling fixed when the test starts" }),
   })
   .meta({ id: "PlacementAttempt" });
 
 export const placementFinishSchema = z.object({
   answered: z.int().nonnegative(),
-  end: z.enum(["stopped", "question_cap", "material_exhausted", "unknown_streak"]),
+  end: z.enum(["stopped", "question_cap", "material_exhausted", "unknown_streak", "found"]),
   lessonsSkipped: z.int().nonnegative(),
-  partsLeft: z.int().nonnegative(),
   unknowns: z.int().nonnegative(),
 });
 
 export const coursePlacementOfferSchema = z.object({
   estimatedMinutes: z.int().positive(),
   questions: z.int().positive(),
-  wholeCourse: z.object({ estimatedMinutes: z.int().positive(), parts: z.int().min(2) }).nullable(),
 });
 
 export const placementResultSchema = z
@@ -100,14 +62,27 @@ export const placementResultSchema = z
           "Fresh answers met the skip rule on a topic whose skip was undone on the same local day",
       }),
     lessonsSkipped: z.number().int().nonnegative(),
-    nextLesson: z.object({ id: uuidSchema(), title: z.string() }).nullable().optional(),
-    part: z.int().positive().optional(),
-    partLessonsSkipped: z.int().nonnegative().optional(),
-    partsRemoved: z
-      .int()
-      .nonnegative()
-      .optional()
-      .meta({ description: "Parts removed during the part recorded by this result" }),
+    chapter: z.string().nullable(),
+    course: z
+      .object({
+        lessons: z.int().nonnegative(),
+        chapters: z.array(
+          z.object({
+            lessons: z.int().nonnegative(),
+            skipped: z.int().nonnegative(),
+            start: z.boolean(),
+          }),
+        ),
+      })
+      .nullable(),
+    nextLesson: z
+      .object({
+        id: uuidSchema(),
+        title: z.string(),
+        estimatedMinutes: z.int().positive(),
+        chapter: z.string().nullable(),
+      })
+      .nullable(),
   })
   .meta({ id: "PlacementResult" });
 

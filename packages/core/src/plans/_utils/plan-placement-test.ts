@@ -72,18 +72,11 @@ async function readCourseRow({
 
   return {
     attempt: attemptView,
-    estimatedMinutes:
-      attemptView?.remainingEstimatedMinutes ??
-      offer?.wholeCourse?.estimatedMinutes ??
-      offer?.estimatedMinutes ??
-      0,
+    estimatedMinutes: attemptView?.estimatedMinutes ?? offer?.estimatedMinutes ?? 0,
     kind: "learn",
     offer,
     result,
-    state:
-      attemptView && (!attemptView.partComplete || attemptView.partsLeft > 0)
-        ? "continue"
-        : idleState,
+    state: attemptView ? "continue" : idleState,
   };
 }
 

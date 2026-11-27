@@ -60,7 +60,7 @@ async function declinePlacement(goal: Goal) {
         ...testEventContext(declined, {
           attemptId: attempt?.id,
           part: attempt?.part,
-          parts: attempt ? getAttemptParts(attempt).length : (offer?.wholeCourse?.parts ?? 1),
+          parts: attempt ? getAttemptParts(attempt).length : 1,
           questions: offer?.questions ?? null,
           test: "course",
         }),
