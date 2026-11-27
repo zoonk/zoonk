@@ -32,7 +32,7 @@
   "tutor_description_plan": "9c85be46aa358ef6a2f6372ed5f33ea2659f739786ac3c05a2350d12e62d3ecf",
   "tutor_description_step": "f14dfa2263de4ee649e803c3d3db852747f25370f251615b3c696e14de162fde",
   "tutor_description_subject": "76ad7a3baf6c197b8a1f9e911e6fc1285f9b61c6944c41f524ad944412ab8b8e",
-  "tutor_empty_ai": "af0331f9913be9bd556270c00de80b54893bb0a933ceb12de6d37dbc7f9309b9",
+  "tutor_empty_ai": "e715521189754034e84cc16832bdf092a75b656a3447e0880a055dcdd6d38f35",
   "tutor_error_failed": "b480e6f5248106b81e3593db9b4464bab571cb91ffcd077be5b9b06b8620eb08",
   "tutor_error_gone": "1830f85b70f725b98b6652001ef68877a2c574315b73544714459e5e5db424d3",
   "tutor_error_invalid": "23285c6a210c34ab3c6b2c1f899cea3a10743c5ff8c014465ccf95afc7472ee1",
@@ -157,7 +157,7 @@
     <string name="tutor_about_module">이 모듈 정보</string>
     <string name="tutor_about_question">이 문제에 대해</string>
     <!-- The buddy says it's an AI where every conversation opens (EU AI Act art. 50). -->
-    <string name="tutor_empty_ai">%1$s은(는) AI 공부 짝꿍이라 실수할 수 있어요.</string>
+    <string name="tutor_empty_ai">AI 공부 짝꿍 %1$s도 실수할 수 있어요.</string>
     <string name="tutor_guest_title">무료 계정 만들고 질문하기</string>
     <!-- Loading the written chat with the learner's buddy. Not a speaking call. -->
     <string name="tutor_loading">대화를 불러오고 있어요…</string>
