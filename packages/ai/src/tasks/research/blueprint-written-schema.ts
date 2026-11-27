@@ -19,36 +19,60 @@ const awardSchema = writtenRuleSchema.extend({
   count: z
     .int()
     .nullable()
-    .describe("How many distinct counted parts an answer needs to earn this award"),
-  points: z.number().nullable(),
+    .describe(
+      "How many of the criterion's counted elements an answer needs for this level, when the level is defined by that count",
+    ),
+  points: z
+    .number()
+    .nullable()
+    .describe("The points this level earns; null when the documents give the level no points"),
   pointsHigh: z
     .number()
     .nullable()
-    .describe("The top of the award's span when the documents give a band of several marks"),
+    .describe("The top of the level's span when the documents give a band of several marks"),
 });
 
 const criterionSchema = writtenRuleSchema.extend({
   awards: z
     .array(awardSchema)
-    .describe("The documents' own scale for this criterion, lowest award first"),
+    .describe(
+      "The documents' own scale for this criterion, one level per row, lowest first, each with its descriptor as `text`; empty when they state no scale",
+    ),
   id: z.string(),
-  parts: z.array(writtenRuleSchema.extend({ id: z.string() })),
+  parts: z
+    .array(writtenRuleSchema.extend({ id: z.string() }))
+    .describe("The named elements the documents count toward this criterion's levels"),
   points: z.number().nullable(),
-  weight: z.number().nullable(),
+  weight: z
+    .number()
+    .nullable()
+    .describe("Its weight when the criteria combine by a weighted mean; null otherwise"),
 });
 
-const writtenGradingSchema = z.object({
+export const writtenGradingSchema = z.object({
   combination: writtenRuleSchema
     .extend({
-      method: z.enum(["sum", "mean"]),
+      method: z
+        .enum(["sum", "mean", "other"])
+        .describe(
+          "`sum` adds the criteria's marks, `mean` averages them (weighted when they have weights), `other` for any other way",
+        ),
       step: z
         .number()
         .nullable()
         .describe("The unit the combined mark is reported in, such as half a band"),
     })
-    .nullable(),
-  conventions: z.array(writtenRuleSchema),
+    .nullable()
+    .describe("How the criteria's marks become the answer's mark, when the documents say"),
+  conventions: z
+    .array(writtenRuleSchema)
+    .describe("The documents' own rules on what earns or loses credit in an answer"),
   criteria: z.array(criterionSchema),
+  deductions: z
+    .array(writtenRuleSchema)
+    .describe(
+      "Every other rule that takes a stated number of marks off the answer and no other field holds, such as a mark taken off a criterion per factual error",
+    ),
   language: writtenRuleSchema
     .extend({
       factor: z.number().nullable(),
@@ -56,12 +80,22 @@ const writtenGradingSchema = z.object({
       method: z.enum(["perError", "errorsPerLine", "other"]),
     })
     .nullable(),
-  limits: z.array(writtenRuleSchema.extend({ criteria: z.array(z.string()), max: z.number() })),
+  limits: z
+    .array(
+      writtenRuleSchema.extend({
+        criteria: z.array(z.string()).describe("The ids of the criteria the cap applies to"),
+        max: z.number(),
+      }),
+    )
+    .describe("Each case in which the documents cap criteria at fewer marks than their maximum"),
   rounding: writtenRuleSchema
     .extend({
       mode: z.enum(["nearest", "down", "up"]).nullable(),
-      stage: z.enum(["criterion", "total"]).nullable(),
-      step: z.number().nullable(),
+      stage: z
+        .enum(["criterion", "total"])
+        .nullable()
+        .describe("Whether each criterion's mark is rounded or only the answer's mark"),
+      step: z.number().nullable().describe("The unit marks are rounded to, such as 0.01"),
     })
     .nullable(),
   zeroing: z.array(
@@ -86,7 +120,6 @@ export const writtenTaskSchema = z.object({
   ...citedMany,
   count: z.number().int(),
   description: z.string(),
-  grading: writtenGradingSchema.nullable(),
   handwritten: z.boolean().nullable(),
   lines: z.int().nullable(),
   officialIdentifier: z.string().nullable(),
@@ -95,13 +128,13 @@ export const writtenTaskSchema = z.object({
 });
 
 type StoredRule = { citation: { passage: string; sourceId: string }; text: string };
-type ReadGrading = z.infer<typeof writtenGradingSchema>;
+export type ReadGrading = z.infer<typeof writtenGradingSchema>;
 type ReadRule = "document" | "passage" | "text";
 
 type StoredAward = StoredRule & { count?: number; points: number | null; pointsHigh?: number };
 
 type StoredWritingGrading = {
-  combination?: (StoredRule & Omit<NonNullable<ReadGrading["combination"]>, ReadRule>) | null;
+  combination?: (StoredRule & { method: "sum" | "mean"; step: number | null }) | null;
   conventions?: StoredRule[];
   criteria: (StoredRule & {
     awards?: StoredAward[];

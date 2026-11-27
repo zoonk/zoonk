@@ -102,6 +102,7 @@ export const boundaries = {
   "@zoonk/ai/tasks/research/find-written-task-subjects": { findWrittenTaskSubjects: vi.fn() },
   "@zoonk/ai/tasks/research/plan": { generateExamResearchPlan: vi.fn() },
   "@zoonk/ai/tasks/research/read-product-pages": { readProductPages: vi.fn() },
+  "@zoonk/ai/tasks/research/read-written-grading": { readWrittenGrading: vi.fn() },
   "@zoonk/ai/tasks/research/source-change-notice": { generateSourceChangeNotice: vi.fn() },
   "@zoonk/ai/tasks/research/source-plan": { generateSourceResearchPlan: vi.fn() },
   "@zoonk/ai/tasks/research/translate-pass-marks": { translatePassMarks: vi.fn() },
