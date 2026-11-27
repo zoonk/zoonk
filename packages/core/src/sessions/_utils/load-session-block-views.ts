@@ -7,7 +7,7 @@ import { type SavedPlan, readSavedPlan } from "../../learner/facts/saved-plan";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
 import { loadPendingBlockMistakes } from "../../mistakes/_utils/practice-block";
 import { getReplayMinutes } from "../../mistakes/mistake-practice-eligibility";
-import { readBlockPayload } from "../block-payload";
+import { getUnservedMistakeIds, readBlockPayload } from "../block-payload";
 import { loadBlockSubjects } from "./block-subjects";
 import { isCurrentSession } from "./current-session";
 import { loadExtraWritingAvailability } from "./extra-writing-availability";
@@ -84,7 +84,7 @@ export async function loadSessionBlockViews({
         ...new Set(
           session.blocks.flatMap((block) =>
             block.status === "active" || block.status === "pending"
-              ? readBlockPayload(block).mistakeIds
+              ? getUnservedMistakeIds(readBlockPayload(block))
               : [],
           ),
         ),

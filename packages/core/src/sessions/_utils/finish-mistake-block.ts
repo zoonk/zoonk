@@ -4,7 +4,7 @@ import { canStartUsage } from "../../entitlements/_utils/check-usage";
 import { getEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { loadPendingBlockMistakes } from "../../mistakes/_utils/practice-block";
-import { type BlockPayload, readBlockPayload } from "../block-payload";
+import { type BlockPayload, getUnservedMistakeIds, readBlockPayload } from "../block-payload";
 import { type FinishStudyBlockResult } from "../finish-study-block";
 import { oweDaySettlement } from "../settle-owed-session-day";
 import { completeBlockMoment } from "./block-completion";
@@ -36,7 +36,7 @@ export async function finishMistakeBlock({
 
   if (block.status !== "completed") {
     const { replays } = await loadPendingBlockMistakes({
-      mistakeIds: payload.mistakeIds,
+      mistakeIds: getUnservedMistakeIds(payload),
       now: new Date(),
       timeZone,
       userId,

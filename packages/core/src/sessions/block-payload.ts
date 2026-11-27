@@ -118,6 +118,8 @@ const blockPayloadSchema = z.object({
   title: z.string().nullable().default(null),
   /** A practice block's topics as its plan names them, most asked first: what its row says it practises. */
   topics: z.array(z.string()).default([]),
+  /** Mistakes a run served today that couldn't be checked (no model grade left): served, never answered. */
+  uncheckedMistakeIds: z.array(z.string()).default([]),
   /** Nothing is due; use weak studied topics rather than leaving the day empty. */
   weakest: z.boolean().default(false),
   writing: writingBlockSchema.optional(),
@@ -135,6 +137,14 @@ export function isRemedialPractice({
   patternId,
 }: Pick<BlockPayload, "mistakeIds" | "patternId">): boolean {
   return mistakeIds.length > 0 || patternId !== null;
+}
+
+/** The block's mistakes a run still has to serve today. */
+export function getUnservedMistakeIds({
+  mistakeIds,
+  uncheckedMistakeIds,
+}: Pick<BlockPayload, "mistakeIds" | "uncheckedMistakeIds">): string[] {
+  return mistakeIds.filter((id) => !uncheckedMistakeIds.includes(id));
 }
 
 export function hasWritingProgress({ writing }: BlockPayload): boolean {

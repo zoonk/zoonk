@@ -4,6 +4,10 @@ import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture, stepVariantFixture } from "@zoonk/testing/fixtures/library-steps";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
+import {
+  studySessionBlockFixture,
+  studySessionFixture,
+} from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
@@ -12,6 +16,7 @@ import { gradeChoiceAnswer, parseChoiceItem } from "../learner/_utils/choice-ite
 import { recordLearnerAnswer } from "../learner/record-learner-answer";
 import { typedGrade } from "../lesson-player/_test-utils/typed-grade";
 import { answerMistakePractice } from "./answer-mistake-practice";
+import { finishMistakePractice } from "./finish-mistake-practice";
 import { getMistakePractice } from "./get-mistake-practice";
 
 const YESTERDAY = new Date(Date.now() - 86_400_000);
@@ -433,6 +438,52 @@ describe("exact-question practice", () => {
     expect(gradeTypedAnswer).not.toHaveBeenCalled();
     await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(0);
     await expect(prisma.learningEvent.count({ where: { userId: user.id } })).resolves.toBe(0);
+  });
+
+  it("completes a day's block whose over-cap typed answer couldn't be checked, without fixing or counting it", async () => {
+    const { input, mistake, step, user } = await typedSetup();
+    const userId = user.id;
+    const session = await studySessionFixture({ startedAt: new Date(), status: "active", userId });
+
+    const block = await studySessionBlockFixture({
+      kind: "review",
+      payload: { mistakeIds: [mistake.id] },
+      sessionId: session.id,
+      status: "active",
+    });
+
+    await prisma.modelGrade.createMany({
+      data: Array.from({ length: 5 }, () => ({ questionId: step.id, userId })),
+    });
+
+    await expect(
+      answerMistakePractice({
+        input: { ...input, run: { answerIds: [], blockId: block.id }, timeZone: "UTC" },
+        mistakeId: mistake.id,
+      }),
+    ).resolves.toMatchObject({
+      feedback: { answerId: null, lessonResult: { checked: false } },
+      status: "ready",
+    });
+
+    await expect(
+      finishMistakePractice({ answerIds: [], blockId: block.id, ended: true, timeZone: "UTC" }),
+    ).resolves.toMatchObject({ status: "ready" });
+
+    await expect(
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } }),
+    ).resolves.toMatchObject({ status: "completed" });
+
+    await expect(getMistakePractice({ blockId: block.id, timeZone: "UTC" })).resolves.toMatchObject(
+      { practice: [] },
+    );
+
+    await expect(
+      prisma.mistake.findUniqueOrThrow({ where: { id: mistake.id } }),
+    ).resolves.toMatchObject({ fixedAt: null, status: "open" });
+
+    await expect(prisma.attempt.count({ where: { userId } })).resolves.toBe(0);
+    await expect(prisma.learnerSkill.count({ where: { userId } })).resolves.toBe(0);
   });
 
   it("does not fix a preserved original through a rewritten question with the same source id", async () => {

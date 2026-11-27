@@ -7,6 +7,7 @@ import { type TrueFalseLabels, getTrueFalseLabels } from "../library/exams/true-
 import { type ItemSetView } from "../library/items/item-set-view";
 import { loadExamStructure } from "../sessions/_utils/exam-structure";
 import { type SessionQuestion } from "../sessions/_utils/session-items";
+import { getUnservedMistakeIds, readBlockPayload } from "../sessions/block-payload";
 import { getSession } from "../users/get-session";
 import { narrowToSkill } from "./_utils/mistake-scope";
 import { findPracticeMock } from "./_utils/mock-practice";
@@ -157,7 +158,9 @@ async function loadRunMistakes({
 
   if (block) {
     const { mistakes, replays } = await loadPendingBlockMistakes({
-      mistakeIds: ["completed", "skipped"].includes(block.block.status) ? [] : block.mistakeIds,
+      mistakeIds: ["completed", "skipped"].includes(block.block.status)
+        ? []
+        : getUnservedMistakeIds(readBlockPayload(block.block)),
       now,
       timeZone,
       userId,

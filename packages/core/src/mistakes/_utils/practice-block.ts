@@ -3,6 +3,7 @@ import { type Mistake, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { isUuid } from "@zoonk/utils/uuid";
 import { getStartOfLocalDay } from "../../learner/_utils/local-time";
+import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { readBlockPayload } from "../../sessions/block-payload";
 import { loadMistakeReplays } from "../mistake-replay";
 import { readPracticeMistakeId } from "./practice-claim";
@@ -24,6 +25,43 @@ export async function findPracticeBlock({ blockId, userId }: { blockId: string; 
 
   const { mistakeIds } = readBlockPayload(block);
   return mistakeIds.length > 0 ? { block, mistakeIds, session: block.session } : null;
+}
+
+/**
+ * An answer that couldn't be checked saves no attempt, so the block records that its run served the
+ * mistake; it never fixes the mistake or counts as an answer.
+ */
+export async function markUncheckedBlockMistake({
+  blockId,
+  mistakeId,
+  userId,
+}: {
+  blockId: string;
+  mistakeId: string;
+  userId: string;
+}): Promise<void> {
+  await writeLearnerChange({ userId }, async (tx) => {
+    const block = await tx.studySessionBlock.findFirst({
+      where: { id: blockId, session: { userId }, status: { in: ["active", "pending"] } },
+    });
+
+    const payload = block ? readBlockPayload(block) : null;
+
+    if (
+      !block ||
+      !payload?.mistakeIds.includes(mistakeId) ||
+      payload.uncheckedMistakeIds.includes(mistakeId)
+    ) {
+      return unchanged(null);
+    }
+
+    await tx.studySessionBlock.update({
+      data: {
+        payload: { ...payload, uncheckedMistakeIds: [...payload.uncheckedMistakeIds, mistakeId] },
+      },
+      where: { id: block.id },
+    });
+  });
 }
 
 export async function loadPendingBlockMistakes({
