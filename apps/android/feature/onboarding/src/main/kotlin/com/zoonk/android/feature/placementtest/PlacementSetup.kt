@@ -39,6 +39,8 @@ internal fun ColumnScope.PlacementSetup(
     language: String,
     targetLanguage: String?,
     placement: OnboardingPlacement?,
+    /** The learner said where they stand on the level question, which "First lesson" starts from. */
+    levelGiven: Boolean,
     store: OnboardingStore,
     plans: PlanStore,
     navigator: AppNavigator,
@@ -52,6 +54,7 @@ internal fun ColumnScope.PlacementSetup(
             language,
             targetLanguage,
             placement?.mode,
+            levelGiven,
             store,
             plans,
             navigator,
@@ -60,7 +63,7 @@ internal fun ColumnScope.PlacementSetup(
             onReportSaveFailure,
         )
     } else {
-        CourseSetup(goalId, subject, placement, store, plans, navigator, end, onSitting)
+        CourseSetup(goalId, subject, placement, levelGiven, store, plans, navigator, end, onSitting)
     }
 }
 
@@ -69,6 +72,7 @@ private fun ColumnScope.CourseSetup(
     goalId: UUID,
     subject: String,
     placement: OnboardingPlacement?,
+    levelGiven: Boolean,
     store: OnboardingStore,
     plans: PlanStore,
     navigator: AppNavigator,
@@ -99,7 +103,7 @@ private fun ColumnScope.CourseSetup(
         sentence = stringResource(R.string.placementtest_choose_description),
         rows =
             listOfNotNull(
-                firstLessonRow(),
+                firstLessonRow(levelGiven),
                 OfferRow(TestRow.Quick, stringResource(R.string.placementtest_quick), quick.factsLine()),
                 whole?.let {
                     OfferRow(
@@ -129,6 +133,7 @@ private fun ColumnScope.LanguageSetup(
     language: String,
     targetLanguage: String,
     mode: OnboardingPlacement.Mode?,
+    levelGiven: Boolean,
     store: OnboardingStore,
     plans: PlanStore,
     navigator: AppNavigator,
@@ -190,7 +195,11 @@ private fun ColumnScope.LanguageSetup(
     TestOffer(
         title = stringResource(R.string.placementtest_where_to_start),
         sentence = stringResource(R.string.placementtest_choose_description),
-        rows = listOf(firstLessonRow(), OfferRow(TestRow.Quick, stringResource(R.string.placementtest_level_title), facts.factsLine())),
+        rows =
+            listOf(
+                firstLessonRow(levelGiven),
+                OfferRow(TestRow.Quick, stringResource(R.string.placementtest_level_title), facts.factsLine()),
+            ),
         initial = TestRow.Quick,
         pressed = vm.pressed ?: Pressed.Main.takeIf { end.saving },
         failed = vm.failed,

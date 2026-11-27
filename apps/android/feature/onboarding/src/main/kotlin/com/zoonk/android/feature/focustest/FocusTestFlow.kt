@@ -50,7 +50,8 @@ internal class OnPlan(
  * An exam goal's Focus test, the same in onboarding's placement step and opened from the plan.
  * Leaving it saves [handBack] (onboarding's step), then [onLeft] goes on (a plan goes back to it).
  * [plan] is set when the plan is already the learner's. [asked]: the learner asked for the test on
- * the level question, so it starts without its offer.
+ * the level question, so it starts without its offer. [levelGiven]: the learner said where they stand on it, which
+ * onboarding's "First lesson" starts from.
  */
 @Composable
 internal fun ColumnScope.FocusTestFlow(
@@ -64,6 +65,7 @@ internal fun ColumnScope.FocusTestFlow(
     handBack: LeaveTest = { WriteOutcome.Done(Unit) },
     plan: OnPlan? = null,
     asked: Boolean = false,
+    levelGiven: Boolean = false,
     onReportSaveFailure: () -> Unit = {},
     onLeft: () -> Unit = {},
 ) {
@@ -133,6 +135,7 @@ internal fun ColumnScope.FocusTestFlow(
                 test = shown.test,
                 minutes = shown.minutes,
                 onPlan = !onboarding,
+                levelGiven = levelGiven,
                 pressed = vm.pressed,
                 failed = vm.failed,
                 onStart = vm::start,

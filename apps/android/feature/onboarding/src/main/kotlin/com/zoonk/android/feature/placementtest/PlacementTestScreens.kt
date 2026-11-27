@@ -43,30 +43,33 @@ import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.scaffold.BarError
 
-/** One of the offer's rows: what it starts ([id]), its name and its facts. */
+/** One of the offer's rows: what it starts ([id]), its name and its facts, if it has any. */
 internal data class OfferRow(
     val id: TestRow,
     val label: String,
-    val line: String,
+    val line: String?,
 )
 
-/** "First lesson": onboarding's way to decline, which says where declining goes. */
+/**
+ * "First lesson": onboarding's way to decline. It says where declining starts only when the learner gave a level
+ * ([levelGiven]); a learner who wasn't sure has none to start from.
+ */
 @Composable
-internal fun firstLessonRow() =
+internal fun firstLessonRow(levelGiven: Boolean) =
     OfferRow(
         TestRow.FirstLesson,
         stringResource(R.string.placementtest_first_lesson),
-        stringResource(R.string.placementtest_first_lesson_line),
+        stringResource(R.string.placementtest_first_lesson_line).takeIf { levelGiven },
     )
 
-/** A test's facts: its questions and about how long they take. */
+/** A test's facts before it starts: the most questions it asks (it can end sooner) and about how long they take. */
 @Composable
 internal fun testFacts(
     questions: Int,
     minutes: Int,
 ): List<String> =
     listOf(
-        pluralStringResource(R.plurals.placementtest_questions, questions, questions),
+        pluralStringResource(R.plurals.placementtest_up_to_questions, questions, questions),
         stringResource(R.string.placementtest_about, formatMinutes(minutes, currentLocale())),
     )
 

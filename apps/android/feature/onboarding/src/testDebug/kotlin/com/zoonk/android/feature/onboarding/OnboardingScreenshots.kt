@@ -759,7 +759,7 @@ class OnboardingScreenshots {
             }
         compose.setContent { ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) { Surface { LevelTest(api) } } }
         compose.onNodeWithText("Start").performClick()
-        compose.onNodeWithText("Preparing your level test").assertIsDisplayed()
+        compose.onNodeWithText("Getting your test ready").assertIsDisplayed()
         write("level-test-waiting-$name", compose.onRoot().captureRender().asAndroidBitmap())
 
         api.levelTest = preparingTestOf(startedAt = "2026-10-29T10:00:03Z", attemptId = ATTEMPT)
@@ -1256,6 +1256,7 @@ class OnboardingScreenshots {
                     language = "en",
                     targetLanguage = null,
                     placement = ApiJson.decodeFromString(COURSE_OFFER),
+                    levelGiven = true,
                     store = store,
                     plans = rememberPlans(FakePlanApi()),
                     navigator = rememberAppNavigator(),
@@ -1345,9 +1346,9 @@ private const val INSTRUMENT = """{"status":"instrument","instrument":"guitar"}"
 private const val UNSAFE = """{"status":"unsafe"}"""
 
 private const val FOCUS_NOT_STARTED =
-    """{"state":"notStarted","offer":{"minutes":15},"sessionQuestions":"off","suggestsFocus":true}"""
+    """{"state":"notStarted","offer":{"minutes":15,"questions":12},"sessionQuestions":"off","suggestsFocus":true}"""
 private const val FOCUS_CHECKED =
-    """{"state":"checked","offer":{"minutes":10},"sessionQuestions":"on","suggestsFocus":true}"""
+    """{"state":"checked","offer":{"minutes":10,"questions":12},"sessionQuestions":"on","suggestsFocus":true}"""
 
 /** A short exam plan whose first three subjects get more time when [focused]. */
 private fun focusedPlan(

@@ -87,9 +87,28 @@ class PlacementTestScreenshots(
                 sentence = "A test finds the lessons you can skip.",
                 rows =
                     listOf(
-                        firstLessonRow(),
+                        firstLessonRow(levelGiven = true),
                         OfferRow(TestRow.Quick, "Quick test", testFacts(12, 6).factsLine()),
                         OfferRow(TestRow.WholeCourse, "Full test", fullTestFacts(14, 85).factsLine()),
+                    ),
+                initial = TestRow.Quick,
+                pressed = null,
+                failed = false,
+                onChoose = {},
+                test = TEST,
+            )
+        }
+
+    @Test
+    fun courseOfferOnboardingNotSure() =
+        shoot("course-offer-onboarding-not-sure") {
+            TestOffer(
+                title = "Where would you like to start?",
+                sentence = "A test finds the lessons you can skip.",
+                rows =
+                    listOf(
+                        firstLessonRow(levelGiven = false),
+                        OfferRow(TestRow.Quick, "Quick test", testFacts(12, 6).factsLine()),
                     ),
                 initial = TestRow.Quick,
                 pressed = null,
