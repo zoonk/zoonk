@@ -581,7 +581,15 @@ private struct SavedRow: View {
         }
       }
 
-      RowSaveToggle(isSaved: isSaved, save: MindMapSaveWords.save, saved: MindMapSaveWords.saved) {
+      RowSaveToggle(
+        isSaved: isSaved,
+        save: Text("Save \(save.title)", tableName: "MindMaps"),
+        saved: Text(
+          "Saved \(save.title)", tableName: "MindMaps",
+          comment:
+            "Read aloud for the bookmark on a saved mind map's row, which removes it: says the map {title} is saved."
+        )
+      ) {
         toggle(isSaved)
       }
     }
