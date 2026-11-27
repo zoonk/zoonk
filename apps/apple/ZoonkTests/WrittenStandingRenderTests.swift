@@ -65,6 +65,36 @@ final class WrittenStandingRenderTests: XCTestCase {
       try await write(
         ZoonkList { MockPointsSection(points: points) },
         height: 360, to: folder.appending(path: "ios-mock-\(state.name).png"))
+
+      let subject = try decode(
+        GoalPlan.WrittenPractice.Subject.self,
+        #"{"answers":[],"trend":[],"decimals":0,"scale":"points","points":\#(part)}"#)
+      try await write(
+        ZoonkList { SubjectWrittenSections(written: subject) }.environment(AppRouter()),
+        height: 420, to: folder.appending(path: "ios-subject-\(state.name).png"))
+    }
+
+    let cguPrompt = try decode(
+      WritingPrompt.self,
+      Self.prompt.replacingOccurrences(of: #""points":100"#, with: #""points":70"#))
+    for (name, zeroReason, total) in [
+      ("points", "null", 48.01),
+      ("zero", #""An answer that is off topic or blank scores zero""#, 0),
+    ] {
+      let grade = try decode(
+        WritingResult.self,
+        """
+        {"kind":"points","criteria":[{"comment":"Mentions both.","id":"c1","level":"partial",\
+        "name":"Argument","quote":null}],"errors":[],"ignoredFrom":null,"nextStep":null,\
+        "progress":null,"content":{"high":\(total),"low":\(total)},"deduction":{"high":0,"low":0},\
+        "max":70,"decimals":0,"rows":[{"earned":\(total == 0 ? 0 : 14.67),"id":"c1","max":22,"decimals":0}],\
+        "total":{"high":\(total),"low":\(total)},"zeroReason":\(zeroReason)}
+        """)
+      try await write(
+        ZoonkList {
+          WritingResultSections(grade: grade, prompt: cguPrompt, text: "Transparency matters.")
+        },
+        height: 900, to: folder.appending(path: "ios-result-\(name).png"))
     }
 
     let levels = try decode(
