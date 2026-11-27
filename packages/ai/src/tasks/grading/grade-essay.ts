@@ -8,7 +8,6 @@ import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { NEUTRAL_ADDRESS_PROMPT } from "../_utils/address-form";
 import { getPromptLanguageName } from "../_utils/prompt-language";
-import { selectPromptVariants } from "../_utils/prompt-variants";
 import regionalFormsPrompt from "../_utils/regional-forms.prompt.md";
 import promptTemplate from "./grade-essay.prompt.md";
 
@@ -24,34 +23,27 @@ const defaultModel = "meta/muse-ember";
 const defaultReasoning: Reasoning = "high";
 const fallbackModels = ["anthropic/claude-haiku-5.5", "google/gemini-3.8-flash"] as const;
 
-const interventionElementsSchema = z.object({
-  action: z.boolean(),
-  agent: z.boolean(),
-  detail: z.boolean(),
-  effect: z.boolean(),
-  means: z.boolean(),
-});
-
-const evidenceCriterion = z.object({
-  comment: z.string(),
-  example: z.string().nullable(),
-  id: z.string(),
-  level: z.enum(["missing", "partial", "strong", "complete"]),
-  quote: z.string().nullable(),
-});
-
 const writingEvidenceSchema = z.object({
-  aspects: z.array(
+  awards: z.array(
     z.object({
-      aspectIndex: z.int().nonnegative(),
-      criterionId: z.string(),
-      earned: z.boolean(),
+      award: z.int().nonnegative(),
+      quote: z.string().nullable(),
+      row: z.int().nonnegative(),
+    }),
+  ),
+  criteria: z.array(
+    z.object({
+      comment: z.string(),
+      example: z.string().nullable(),
+      id: z.string(),
       quote: z.string().nullable(),
     }),
   ),
-  criteria: z.array(evidenceCriterion),
+  elements: z.array(
+    z.object({ part: z.string().nullable(), quote: z.string(), row: z.int().nonnegative() }),
+  ),
   errors: z.array(z.object({ correction: z.string(), kind: z.string(), quote: z.string() })),
-  interventionElements: interventionElementsSchema.nullable().optional(),
+  limits: z.array(z.object({ limit: z.int().nonnegative(), quote: z.string() })),
   nextStep: z
     .object({
       criterionId: z.string(),
@@ -67,7 +59,6 @@ const writingEvidenceSchema = z.object({
     .describe(
       "Any exact passage that addresses the theme or its broad subject. Check the whole answer before proposing an off-topic zero. Null if the answer contains no such passage.",
     ),
-  proposalLimit: z.enum(["conditional", "tangent", "invalid"]).nullable().optional(),
   zeroKind: z
     .enum(["copiedSupport", "identification", "offTopic", "wrongForm"])
     .nullable()
@@ -85,13 +76,23 @@ const writingEvidenceSchema = z.object({
 
 export type WritingEvidence = z.infer<typeof writingEvidenceSchema>;
 
+export type WritingRow = {
+  awards: readonly { count?: number; points: number | null; pointsHigh?: number; text: string }[];
+  criterionId: string;
+  parts?: readonly { id: string; text: string }[];
+  text: string;
+};
+
 type WritingEvidenceParams = {
   language: string;
   question: string;
   context: string | null;
   text: string;
-  scoringBasis: { kind: "enem" | "oab" | "points" | "levels"; [key: string]: unknown };
-  aspects: readonly { criterionId: string; description: string; points: number | null }[];
+  criteria: readonly { id: string; text: string }[];
+  rows: readonly WritingRow[];
+  limits: readonly { criteria: readonly string[]; max: number; text: string }[];
+  conventions: readonly string[];
+  zeroing: readonly { kinds?: readonly string[]; maxLines?: number | null; text: string }[];
   keyPoints: readonly string[];
   model?: string;
   reasoning?: Reasoning;
@@ -99,25 +100,18 @@ type WritingEvidenceParams = {
   analytics?: AiGenerationContext;
 };
 
-function getWritingSystemPrompt(kind: WritingEvidenceParams["scoringBasis"]["kind"]) {
-  const rubricPrompt = selectPromptVariants({
-    template: promptTemplate,
-    variants: {
-      enem: kind === "enem",
-      levels: kind === "levels",
-      oab: kind === "oab",
-      points: kind === "points" || kind === "oab",
-    },
-  });
+const systemPrompt = `${promptTemplate}\n${regionalFormsPrompt}\n${NEUTRAL_ADDRESS_PROMPT}`;
 
-  return `${rubricPrompt}\n${regionalFormsPrompt}\n${NEUTRAL_ADDRESS_PROMPT}`;
+export function getWritingGrader() {
+  return { model: defaultModel, promptVersion: getPromptVersion({ systemPrompt }) };
 }
 
-export function getWritingGrader(kind: WritingEvidenceParams["scoringBasis"]["kind"]) {
-  return {
-    model: defaultModel,
-    promptVersion: getPromptVersion({ systemPrompt: getWritingSystemPrompt(kind) }),
-  };
+function numberRows(rows: readonly WritingRow[]) {
+  return rows.map(({ awards, ...row }, index) => ({
+    row: index,
+    ...row,
+    awards: awards.map((award, position) => ({ award: position, ...award })),
+  }));
 }
 
 export async function gradeWritingEvidence(params: WritingEvidenceParams) {
@@ -128,27 +122,18 @@ export async function gradeWritingEvidence(params: WritingEvidenceParams) {
     useFallback = true,
   } = params;
 
-  const kind = params.scoringBasis.kind;
-  const systemPrompt = getWritingSystemPrompt(kind);
-
-  const schema =
-    kind === "enem"
-      ? writingEvidenceSchema.extend({
-          interventionElements: interventionElementsSchema.nullable(),
-          proposalLimit: z.enum(["conditional", "tangent", "invalid"]).nullable(),
-        })
-      : writingEvidenceSchema.omit({ interventionElements: true, proposalLimit: true });
-
   const prompt = [
     `LANGUAGE: ${getPromptLanguageName({ language: params.language })}`,
-    `RUBRIC: ${kind}`,
     formatUntrustedInput({
-      ASPECTS: JSON.stringify(params.aspects),
       CONTEXT: params.context ?? "",
+      CONVENTIONS: JSON.stringify(params.conventions),
+      CRITERIA: JSON.stringify(params.criteria),
       ESSAY: params.text,
       KEY_POINTS: JSON.stringify(params.keyPoints),
+      LIMITS: JSON.stringify(params.limits),
       PROMPT: params.question,
-      SCORING_BASIS: JSON.stringify(params.scoringBasis),
+      ROWS: JSON.stringify(numberRows(params.rows)),
+      ZEROING: JSON.stringify(params.zeroing),
     }),
   ].join("\n\n");
 
@@ -160,7 +145,7 @@ export async function gradeWritingEvidence(params: WritingEvidenceParams) {
       generateText({
         instructions: systemPrompt,
         model,
-        output: Output.object({ schema }),
+        output: Output.object({ schema: writingEvidenceSchema }),
         prompt,
         providerOptions,
         reasoning,
