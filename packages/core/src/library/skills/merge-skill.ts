@@ -59,9 +59,22 @@ async function moveLearnerSkills(tx: TransactionClient, { duplicate, survivor }:
     return existing && !keepsDuplicateRow({ duplicate: row, survivor: existing });
   });
 
-  await tx.learnerSkill.deleteMany({
-    where: { id: { in: [...replaced, ...dropped].map((row) => row.id) } },
-  });
+  const removedIds = [...replaced, ...dropped].map((row) => row.id);
+
+  if (removedIds.length > 0) {
+    await tx.$executeRaw`
+      UPDATE learner_skills kept SET helped_at = removed.helped_at
+      FROM learner_skills removed
+      WHERE removed.id = ANY(${removedIds}::uuid[])
+        AND kept.user_id = removed.user_id
+        AND kept.skill_id IN (${duplicate.id}::uuid, ${survivor.id}::uuid)
+        AND kept.id <> removed.id
+        AND removed.helped_at IS NOT NULL
+        AND (kept.helped_at IS NULL OR kept.helped_at < removed.helped_at)
+    `;
+  }
+
+  await tx.learnerSkill.deleteMany({ where: { id: { in: removedIds } } });
 
   await tx.learnerSkill.updateMany({
     data: { skillId: survivor.id },

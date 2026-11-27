@@ -263,6 +263,7 @@ describe(answerPronunciationReview, () => {
     expect(attempt).toMatchObject({
       answer: { kind: "spoken", pronunciationReviewId: review.id, roundId, transcript: word.word },
       durationMs: 1200,
+      evidence: null,
       isCorrect: true,
       targetLanguage: "en",
     });

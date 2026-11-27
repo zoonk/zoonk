@@ -251,7 +251,10 @@ describe("an exam goal's Focus test", () => {
     ]);
 
     expect(repeated.focusTest?.sitting).toMatchObject({ answered: 1, minutes: 11 });
-    await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(1);
+
+    await expect(prisma.attempt.findMany({ where: { userId: user.id } })).resolves.toMatchObject([
+      { cause: null, evidence: null },
+    ]);
   });
 
   it("keeps all concurrent answers in the plan summary and settles their time once", async () => {

@@ -369,7 +369,17 @@ describe(finishMock, () => {
     ]);
 
     expect(attempts).toHaveLength(9);
+
+    expect(
+      attempts.filter((attempt) => attempt.isCorrect).map(({ evidence }) => evidence),
+    ).toStrictEqual(["independent", "independent", "independent"]);
+
     expect(attempts.filter((attempt) => !attempt.isCorrect)).toHaveLength(6);
+
+    expect(
+      attempts.filter((attempt) => !attempt.isCorrect).every(({ evidence }) => evidence === null),
+    ).toBe(true);
+
     expect(mistakes).toBe(0);
   });
 

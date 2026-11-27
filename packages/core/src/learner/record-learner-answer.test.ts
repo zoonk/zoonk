@@ -68,6 +68,13 @@ describe(recordLearnerAnswer, () => {
     await expect(
       prisma.attempt.findUniqueOrThrow({ where: { id: recorded.attempt.id } }),
     ).resolves.toMatchObject({ answer: { fixedMistakeIds: [mistake.id] } });
+
+    const repeated = await recordLearnerAnswer(
+      answer({ evidence: "independent", itemId: item.id, skillId: skill.id, userId: user.id }),
+    );
+
+    expect(repeated.attempt.evidence).toBe("replay");
+    expect(repeated.fixedMistakeIds).toStrictEqual([]);
   });
 
   it("records the attempt on the learner's local day and reviews the skill", async () => {
@@ -96,6 +103,7 @@ describe(recordLearnerAnswer, () => {
       wrong({ itemId: item.id, purpose: "diagnostic", skillId: skill.id, userId: user.id }),
     );
 
+    expect(recorded.attempt).toMatchObject({ cause: null, evidence: null });
     expect(recorded.learnerSkill).toBeNull();
     expect(recorded.mistake).toBeNull();
     await expect(prisma.learnerSkill.count({ where: { userId: user.id } })).resolves.toBe(0);
@@ -118,6 +126,8 @@ describe(recordLearnerAnswer, () => {
     const recorded = await recordLearnerAnswer(
       wrong({ itemId: item.id, skillId: skill.id, userId: user.id }),
     );
+
+    expect(recorded.attempt.cause).toBe("gap");
 
     expect(recorded.mistake).toMatchObject({
       attemptId: recorded.attempt.id,
@@ -180,6 +190,29 @@ describe(recordLearnerAnswer, () => {
         kind: "classifyMistakeCause",
       },
     ]);
+  });
+
+  it("keeps a replay's cause separate from the original cause", async () => {
+    const { item, skill, user } = await setup();
+
+    const first = await recordLearnerAnswer(
+      wrong({ evidence: "independent", itemId: item.id, skillId: skill.id, userId: user.id }),
+    );
+
+    const replay = await recordLearnerAnswer(
+      wrong({
+        graded: { durationMs: 15_000, isCorrect: false },
+        itemId: item.id,
+        mistake: { questionText: SNAPSHOT.question, snapshot: SNAPSHOT, timeLimitMs: 10_000 },
+        practicedMistakeId: first.mistake?.id,
+        skillId: skill.id,
+        userId: user.id,
+      }),
+    );
+
+    expect(first.attempt).toMatchObject({ cause: "gap", evidence: "independent" });
+    expect(replay.attempt).toMatchObject({ cause: "time", evidence: "replay" });
+    expect(replay.mistake).toMatchObject({ cause: "gap", id: first.mistake?.id });
   });
 
   it("keeps one open entry per question", async () => {

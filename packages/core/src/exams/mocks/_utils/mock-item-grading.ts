@@ -9,7 +9,7 @@ import { getPickCredit } from "../../scoring/partial-credit";
 import { type MockAnswer, mockAnswerSchema, mockChoiceSchema } from "../mock-answer-contract";
 import { type MockItem, serveMockMath, toMockQuestionView } from "./mock-items";
 
-const BLANK = { dontKnow: true } as const;
+export const MOCK_BLANK_ANSWER = { dontKnow: true } as const;
 
 export type MockItemGrade = {
   answered: boolean;
@@ -29,7 +29,7 @@ function gradeChoice({
   partialCredit: PartialCreditRule;
 }): MockItemGrade {
   const choice = mockChoiceSchema.safeParse(answer).data ?? null;
-  const graded = gradeChoiceAnswer({ answer: choice ?? BLANK, item });
+  const graded = gradeChoiceAnswer({ answer: choice ?? MOCK_BLANK_ANSWER, item });
   const several = item.format === "multipleChoice" && choice && "selectedIndexes" in choice;
 
   const credit = several
@@ -46,7 +46,7 @@ function gradeChoice({
     answered: choice !== null,
     credit,
     isCorrect: graded.isCorrect,
-    recorded: choice ?? BLANK,
+    recorded: choice ?? MOCK_BLANK_ANSWER,
     snapshot: graded.snapshot,
   };
 }
@@ -71,7 +71,7 @@ function gradeMockAnswer({
       answered: number !== null,
       credit: Number(graded.isCorrect),
       isCorrect: graded.isCorrect,
-      recorded: number === null ? BLANK : graded.recorded,
+      recorded: number === null ? MOCK_BLANK_ANSWER : graded.recorded,
       snapshot: graded.snapshot,
     };
   }
@@ -84,7 +84,7 @@ function gradeMockAnswer({
       answered: text !== null,
       credit: Number(isCorrect),
       isCorrect,
-      recorded: text === null ? BLANK : { text },
+      recorded: text === null ? MOCK_BLANK_ANSWER : { text },
       snapshot: toTypedSnapshot({ explanation: null, item, text }),
     };
   }

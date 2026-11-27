@@ -24,12 +24,24 @@ export async function resolveMistakeCause({
   });
 
   const saved = await writeLearnerChange({ userId }, async (tx) => {
-    const { count } = await tx.mistake.updateMany({
+    const [mistake] = await tx.mistake.updateManyAndReturn({
       data: { cause: data.cause },
-      where: { cause: null, id: mistakeId },
+      select: { attemptId: true },
+      where: { cause: null, id: mistakeId, userId },
     });
 
-    return count > 0 ? data.cause : unchanged(null);
+    if (!mistake) {
+      return unchanged(null);
+    }
+
+    if (mistake.attemptId) {
+      await tx.attempt.updateMany({
+        data: { cause: data.cause },
+        where: { cause: null, id: mistake.attemptId, userId },
+      });
+    }
+
+    return data.cause;
   });
 
   if (saved) {

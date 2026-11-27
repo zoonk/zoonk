@@ -9,7 +9,9 @@ import {
   getUserProgressCacheTag,
 } from "../../cache/tags";
 import { finishExplanations } from "../../goals/_utils/finish-explanations";
+import { loadSkillSurvivors } from "../../learner/_utils/update-learner-skill";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
+import { getSecondTakeSkillId } from "../../library/second-takes/second-take-identity";
 import { finishLessonChapters } from "../../mind-maps/finished-chapters";
 import { clampEnergy } from "../../progress/energy";
 import { completeLessonPlanItems, scheduleLessonCanDos } from "../../sessions/_utils/plan-items";
@@ -45,30 +47,71 @@ async function refitAfterMainBlock(
   await refitSessionLessons(tx, { completedBlockId: block.id, sessionId: block.sessionId });
 }
 
-/** Replays are reviews in the ledger and must not increment lessons completed. */
-export async function finishLessonRun({
-  answerPoints,
-  answeredCount,
-  answers,
-  lessonId,
-  planSkillIds,
-  run,
-  skippedWritingStepIds,
-  tally,
-  timeZone,
+async function markTeachingBoundary({
+  completedAt,
+  refresh,
+  skillIds,
+  tx,
   userId,
 }: {
+  completedAt: Date;
+  refresh: boolean;
+  skillIds: readonly string[];
+  tx: TransactionClient;
+  userId: string;
+}) {
+  if (skillIds.length === 0) {
+    return;
+  }
+
+  const survivor = await loadSkillSurvivors(skillIds, tx);
+  const skills = [...new Set(skillIds.map((skillId) => survivor(skillId)))];
+
+  await tx.learnerSkill.createMany({
+    data: skills.map((skillId) => ({ helpedAt: completedAt, skillId, userId })),
+    skipDuplicates: true,
+  });
+
+  await tx.learnerSkill.updateMany({
+    data: { helpedAt: completedAt },
+    where: {
+      OR: [{ helpedAt: null }, ...(refresh ? [{ helpedAt: { lt: completedAt } }] : [])],
+      skillId: { in: skills },
+      userId,
+    },
+  });
+}
+
+type FinishLessonRunInput = {
   answerPoints: number;
   answeredCount: number;
   answers: Parameters<typeof reviewLessonPlanSkills>[0]["answers"];
+  identityKey: string;
   lessonId: string;
   planSkillIds: readonly string[];
   run: LearningEvent;
   skippedWritingStepIds: string[];
   tally: LessonRunTally;
+  teachingSkillIds: readonly string[];
   timeZone: string;
   userId: string;
-}) {
+};
+
+/** Replays are reviews in the ledger and must not increment lessons completed. */
+export async function finishLessonRun({
+  answerPoints,
+  answeredCount,
+  answers,
+  identityKey,
+  lessonId,
+  planSkillIds,
+  run,
+  skippedWritingStepIds,
+  tally,
+  teachingSkillIds,
+  timeZone,
+  userId,
+}: FinishLessonRunInput) {
   return writeLearnerChange({ planInputs: true, userId }, async (tx) => {
     const { completedAt, completionDate, currentEnergy } = await getCompletionEnergyContext({
       timeZone,
@@ -119,6 +162,16 @@ export async function finishLessonRun({
       return unchanged(null);
     }
 
+    const secondTakeSkillId = getSecondTakeSkillId(identityKey);
+
+    await markTeachingBoundary({
+      completedAt,
+      refresh: isReplay || secondTakeSkillId !== null,
+      skillIds: secondTakeSkillId ? [secondTakeSkillId] : teachingSkillIds,
+      tx,
+      userId,
+    });
+
     await recordSkippedWritingSteps({ run: currentRun, skippedWritingStepIds, tx });
 
     const clampedEnergy = clampEnergy(currentEnergy + score.energyDelta);
@@ -137,7 +190,7 @@ export async function finishLessonRun({
       date: completionDate,
       durationSeconds: seconds,
       field: answeredCount > 0 ? "interactiveCompleted" : "staticCompleted",
-      lessonsCompleted: isReplay ? 0 : 1,
+      lessonsCompleted: isReplay || secondTakeSkillId ? 0 : 1,
       score: {
         brainPower: score.brainPower,
         correctCount: tally.correctCount,

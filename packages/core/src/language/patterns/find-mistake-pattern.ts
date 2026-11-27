@@ -115,7 +115,27 @@ export async function checkMistakePattern({ language, userId }: LearnerLanguage)
     ...toProvenanceData(provenance),
   };
 
-  await writeLearnerChange({ userId }, (tx) => tx.mistakePattern.create({ data: pattern }));
+  await writeLearnerChange({ userId }, async (tx) => {
+    await tx.mistakePattern.create({ data: pattern });
+
+    if (pattern.kind !== "typos") {
+      await tx.attempt.updateMany({
+        data: { cause: "gap" },
+        where: {
+          isCorrect: false,
+          mistakes: {
+            some: {
+              id: { in: pattern.mistakeIds },
+              snapshot: { equals: "typedAnswer", path: ["format"] },
+              userId,
+            },
+          },
+          targetLanguage: language,
+          userId,
+        },
+      });
+    }
+  });
 
   revalidateCacheTags([getUserProgressCacheTag(userId)]);
 

@@ -171,9 +171,10 @@ export async function gradeSpokenAnswer({
     return usage;
   }
 
-  const [grade, studySessionId] = await Promise.all([
+  const [grade, studySessionId, run] = await Promise.all([
     gradeSpokenRecording({ audio, step, userId }),
     findOwnStudySessionId({ studySessionId: fields.studySessionId, userId }),
+    findOpenLessonRun({ lessonId: step.lessonId, userId }),
   ]);
 
   if (!grade) {
@@ -199,6 +200,7 @@ export async function gradeSpokenAnswer({
   const outcome = await recordAnswerOnce({
     answer: {
       answer: { kind: "spoken", transcript: grade.transcript },
+      answeredAt: receivedAt,
       graded: { durationMs: fields.durationMs, isCorrect: grade.isCorrect, score: grade.score },
       language: step.learnerLanguage,
       mistake: {
@@ -212,6 +214,9 @@ export async function gradeSpokenAnswer({
           replay: step.replay,
         },
       },
+      ...(run
+        ? { lessonRun: { lessonId: step.lessonId, startedAt: run.startedAt } }
+        : { evidence: "guided" }),
       purpose: "learning",
       skillId: step.skillId,
       stepId: step.id,

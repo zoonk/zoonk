@@ -454,7 +454,9 @@ describe(answerMistakePractice, () => {
     expect(first).toMatchObject({ feedback: { fixed: true, mistakeStatus: "fixed" } });
     expect(next).toStrictEqual(first);
 
-    await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(1);
+    await expect(prisma.attempt.findMany({ where: { userId: user.id } })).resolves.toMatchObject([
+      { cause: null, evidence: "replay", isCorrect: true },
+    ]);
   });
 
   it("records one answer when the same mistake is answered at once from two screens", async () => {
