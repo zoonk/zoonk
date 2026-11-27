@@ -294,7 +294,7 @@ export function readPanel({
       focused instanceof HTMLElement &&
       panel?.contains(focused) &&
       !bound.includes(focused) &&
-      focused.matches("a[href], button:not([role=radio]), [role=button], [role=checkbox]")
+      focused.matches("a[href], button:not([role=radio], [role=checkbox]), [role=button]")
         ? name(focused)
         : null;
 
