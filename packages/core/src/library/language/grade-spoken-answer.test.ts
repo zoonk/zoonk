@@ -790,7 +790,8 @@ describe(gradeSpokenAnswer, () => {
   });
 
   it("links the attempt to the learner's own study session only", async () => {
-    const [step, learner, other] = await Promise.all([
+    const [ownStep, foreignStep, learner, other] = await Promise.all([
+      createSpokenStep(),
       createSpokenStep(),
       userFixture(),
       userFixture(),
@@ -808,13 +809,13 @@ describe(gradeSpokenAnswer, () => {
     const own = await gradeSpokenAnswer({
       audio: AUDIO,
       fields: { ...FIELDS, studySessionId: ownSession.id },
-      stepId: step.id,
+      stepId: ownStep.id,
     });
 
     const foreign = await gradeSpokenAnswer({
       audio: AUDIO,
       fields: { ...FIELDS, studySessionId: otherSession.id },
-      stepId: step.id,
+      stepId: foreignStep.id,
     });
 
     const attempts = await prisma.attempt.findMany({

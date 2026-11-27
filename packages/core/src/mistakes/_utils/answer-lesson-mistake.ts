@@ -17,6 +17,7 @@ import { type MistakePracticeAnswerResult } from "../answer-mistake-practice";
 import { type MistakePracticeAnswerInput } from "../contract";
 import { applyDrillRules } from "../drill-answer";
 import { type MistakeDrillKind } from "../mistake-drills";
+import { getPracticeAnswerKeys } from "../mistake-item";
 import { type MistakeReplay } from "../mistake-replay";
 import { readMistakeSnapshot } from "../mistake-snapshot";
 import { cachedGradeDuration } from "./cached-grade-duration";
@@ -191,7 +192,7 @@ export async function answerLessonMistake({
     ? { saved, status: "saved" as const }
     : await recordAnswerOnce({
         answer: {
-          answer: { ...canonicalAnswer, practiceFeedback: feedback, practiceMistakeId: mistake.id },
+          answer: { ...canonicalAnswer, ...getPracticeAnswerKeys({ feedback, mistake }) },
           attemptId,
           graded: { durationMs, isCorrect: drilled.isCorrect, score: verdict.score },
           language: lesson.language,

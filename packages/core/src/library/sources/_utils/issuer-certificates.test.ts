@@ -116,7 +116,8 @@ function issueCertificate({
 }): TestCertificate {
   const privateKey = key ?? generateKeyPairSync("ec", { namedCurve: "prime256v1" }).privateKey;
   const algorithm = sequence(oid(OID.ecdsaWithSha256));
-  const now = Date.now();
+  // The native TLS verifier uses the real clock even when Vitest moves Date.
+  const now = vi.getRealSystemTime();
 
   const extensions = [
     extension({

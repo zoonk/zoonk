@@ -34980,6 +34980,14 @@
             "exclusiveMinimum": true,
             "maximum": 9007199254740991
           },
+          "maxCharactersPerLine": {
+            "default": 160,
+            "description": "The densest handwriting a board read in full; text past `lines` even at this width is not graded",
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991
+          },
           "minimumWords": {
             "type": "integer",
             "minimum": 0,
@@ -105777,6 +105785,14 @@
             "exclusiveMinimum": true,
             "maximum": 9007199254740991
           },
+          "maxCharactersPerLine": {
+            "default": 160,
+            "description": "The densest handwriting a board read in full; text past `lines` even at this width is not graded",
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991
+          },
           "minimumWords": {
             "type": "integer",
             "minimum": 0,
@@ -105848,6 +105864,7 @@
           "criteria",
           "keySource",
           "lines",
+          "maxCharactersPerLine",
           "minimumWords",
           "points",
           "taskKey",

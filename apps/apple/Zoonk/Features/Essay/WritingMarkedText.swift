@@ -75,7 +75,7 @@ enum WritingMarks {
       }
     }
     let ignoredFrom =
-      grade.ignoredFrom.map { snap(wordStart(text, min(max($0, 0), length)), edges, up: false) }
+      grade.ignoredFrom.map { snap(min(max($0, 0), length), edges, up: false) }
       ?? length
     let errors = grade.errors.map { error -> (start: Int, end: Int)? in
       let end = error.start + error.quote.utf16.count
@@ -103,20 +103,6 @@ enum WritingMarks {
         ignored: start >= ignoredFrom,
         step: step.map { start >= $0.start && start < $0.end } ?? false)
     }
-  }
-
-  /// A line limit falls inside a word as often as not; the word it splits is shown as past it,
-  /// whole. A limit on the space after a word leaves that word read.
-  static func wordStart(_ text: String, _ offset: Int) -> Int {
-    let units = Array(text.utf16)
-    let isWordUnit = { (unit: UInt16) in
-      Unicode.Scalar(unit).map { !$0.properties.isWhitespace } ?? true
-    }
-
-    guard offset > 0, offset < units.count, isWordUnit(units[offset]) else { return offset }
-
-    let splitWord = units[..<offset].reversed().prefix(while: isWordUnit)
-    return offset - splitWord.count
   }
 
   /// Where each character of `text` starts, in UTF-16 code units, and where the text ends.

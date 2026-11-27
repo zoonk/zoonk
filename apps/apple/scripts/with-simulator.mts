@@ -2,14 +2,23 @@ import { spawnSync } from "node:child_process";
 import path from "node:path";
 import { findSimulatorAppCrashes } from "../../../scripts/dev/crash-reports.mts";
 import { applyCommandExit, runForegroundCommand } from "../../../scripts/dev/process.mts";
-import { BOOT_LIMIT, type Lease, POLL_MS, leaseSimulator, releaseLease } from "./leases.mts";
-import { type Simulator, getNewestSimulators, listSimulators } from "./simulators.mts";
+import { assertDeviceUnclaimed, deviceClaims } from "./device-claims.mts";
+import { type Lease, leaseSimulator, releaseLease } from "./leases.mts";
+import {
+  type Simulator,
+  getNewestSimulators,
+  getTestDestination,
+  getTestSimulators,
+  listSimulators,
+} from "./simulators.mts";
 import { swiftPackagesArguments } from "./swift-packages.mts";
 
 const CLOSE_CRASH_ALERTS_SCRIPT = path.resolve(
   import.meta.dirname,
   "../../../scripts/dev/close-device-crash-alerts.mts",
 );
+
+const MAX_HOLD_SECONDS = 2_147_483;
 
 function getNewestIphones() {
   return getNewestSimulators({ catalog: listSimulators(), family: "iphone" }).devices;
@@ -19,11 +28,11 @@ function listNames(simulators: Simulator[]) {
   return simulators.map(({ name }) => name).join(", ");
 }
 
-function cleanUpAfterAppCrashes({ device, reportsBefore }: Lease) {
+function cleanUpAfterAppCrashes({ device, reportsBefore, temporary }: Lease) {
   const crashes = findSimulatorAppCrashes({ reportsBefore, udid: device.udid });
 
   // Damaged simulator data can crash one of its iOS apps on every boot, each crash opening an alert.
-  if (crashes.some(({ isSystemApp }) => isSystemApp)) {
+  if (!temporary && crashes.some(({ isSystemApp }) => isSystemApp)) {
     process.stdout.write(
       `One of iOS's own apps crashed on ${device.name}. Erasing it so the crash doesn't repeat on ` +
         `its next boot.\n`,
@@ -37,23 +46,35 @@ function cleanUpAfterAppCrashes({ device, reportsBefore }: Lease) {
   }
 }
 
-async function test({ args, command }: { args: string[]; command: string }) {
+async function test({
+  args,
+  command,
+  destination,
+}: {
+  args: string[];
+  command: string;
+  destination?: string;
+}) {
+  if (args.some((arg) => arg === "-destination" || arg.startsWith("-destination="))) {
+    throw new Error("Use TEST_DESTINATION to select a simulator through the lease.");
+  }
+
   const { lease, turn } = await leaseSimulator({
-    describeWait: (booted) =>
-      `Waiting for a simulator. Each test run boots a shut-down iPhone of its own, with ` +
-      `${BOOT_LIMIT}, and booted now: ${listNames(booted)}. Shut down one you're done with, or ` +
-      `set TEST_DESTINATION='platform=iOS Simulator,id=<udid>' to test on yours.\n`,
-    // iPhone 17 last: `pnpm iphone` and older checkouts' `make test` pick it by name.
-    getCandidates: () => getNewestIphones().toReversed(),
-    isTestRun: true,
+    automatic: destination === undefined,
+    getCandidates: destination ? () => getTestDestination(destination) : getTestSimulators,
+    kind: "test",
+    label: destination ?? "an iPhone test simulator",
   });
 
   process.stdout.write(`Testing on ${lease.device.name} (${lease.device.udid}).\n`);
 
   try {
+    const packages = process.env.CI ? [] : swiftPackagesArguments();
+    assertDeviceUnclaimed(lease.device.udid);
+
     applyCommandExit(
       await runForegroundCommand({
-        args: [...args, ...swiftPackagesArguments(), "-destination", `id=${lease.device.udid}`],
+        args: [...args, ...packages, "-destination", `id=${lease.device.udid}`],
         command,
         currentDirectory: process.cwd(),
         environment: { ...process.env, ...turn?.environment },
@@ -62,10 +83,20 @@ async function test({ args, command }: { args: string[]; command: string }) {
       }),
     );
   } finally {
-    spawnSync("xcrun", ["simctl", "shutdown", lease.device.udid], { stdio: "inherit" });
-    cleanUpAfterAppCrashes(lease);
-    releaseLease(lease);
-    turn?.release();
+    try {
+      if (lease.shutDownAfter && !deviceClaims().has(lease.device.udid)) {
+        spawnSync("xcrun", ["simctl", "shutdown", lease.device.udid], { stdio: "inherit" });
+
+        if (lease.temporary) {
+          spawnSync("xcrun", ["simctl", "delete", lease.device.udid], { stdio: "inherit" });
+        }
+
+        cleanUpAfterAppCrashes(lease);
+      }
+    } finally {
+      releaseLease(lease);
+      turn?.release();
+    }
   }
 }
 
@@ -82,35 +113,60 @@ function getNamedIphone(named: string) {
 
 /** For a simulator someone drives by hand, such as in a walk. It stays booted once released. */
 async function hold(named: string) {
+  const seconds = Number(process.env.ZOONK_SIMULATOR_HOLD_SECONDS ?? 3600);
+
+  if (!Number.isFinite(seconds) || seconds <= 0 || seconds > MAX_HOLD_SECONDS) {
+    throw new Error("ZOONK_SIMULATOR_HOLD_SECONDS must be between 0 and 2147483 seconds.");
+  }
+
   const { lease, turn } = await leaseSimulator({
-    describeWait: (booted) =>
-      `Waiting for ${named} while a test run or another hold has it, or until it can boot with ` +
-      `${BOOT_LIMIT}. Booted now: ${listNames(booted)}.\n`,
-    getCandidates: () => getNamedIphone(named),
-    isTestRun: false,
+    getCandidates: () => ({ devices: getNamedIphone(named) }),
+    kind: "hold",
+    label: named,
   });
 
   turn?.release();
-  process.stdout.write(`Holding ${lease.device.name} (${lease.device.udid}) until stopped.\n`);
-  // oxlint-disable-next-line no-empty-function -- a timer keeps Node running; signal listeners don't
-  const keepAlive = setInterval(() => {}, POLL_MS);
 
-  await new Promise((resolve) => {
-    for (const signal of ["SIGHUP", "SIGINT", "SIGTERM"]) {
-      process.once(signal, resolve);
-    }
-  });
+  process.stdout.write(
+    `Holding ${lease.device.name} (${lease.device.udid}) for up to ${seconds}s.\n`,
+  );
 
-  clearInterval(keepAlive);
-  releaseLease(lease);
+  try {
+    await new Promise<void>((resolve) => {
+      const signals = ["SIGHUP", "SIGINT", "SIGTERM"] as const;
+
+      const timer = setTimeout(() => {
+        process.stderr.write(`Hold on ${lease.device.name} expired after ${seconds}s.\n`);
+        finish();
+      }, seconds * 1000);
+
+      function finish() {
+        clearTimeout(timer);
+
+        for (const signal of signals) {
+          process.off(signal, finish);
+        }
+
+        resolve();
+      }
+
+      for (const signal of signals) {
+        process.once(signal, finish);
+      }
+    });
+  } finally {
+    releaseLease(lease);
+  }
 }
 
-const [command, ...commandArguments] = process.argv.slice(2);
+const args = process.argv.slice(2);
+const destination = args[0] === "--destination" ? args.splice(0, 2)[1] : undefined;
+const [command, ...commandArguments] = args;
 
 if (command === "--hold" && commandArguments[0]) {
   await hold(commandArguments[0]);
 } else if (command && command !== "--hold") {
-  await test({ args: commandArguments, command });
+  await test({ args: commandArguments, command, ...(destination ? { destination } : {}) });
 } else {
   throw new Error(
     "Usage: with-simulator.mts <xcodebuild command> | --hold <simulator name or udid>",

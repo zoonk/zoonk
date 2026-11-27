@@ -3,6 +3,7 @@ import { z } from "zod";
 import { pointsMinimumSchema } from "../../library/exams/blueprint-contract";
 import { writingZeroKindSchema, writtenGradingSchema } from "../../library/exams/written-grading";
 import { withSavedNextStep } from "./_utils/writing-next-step";
+import { WRITING_MAX_CHARACTERS_PER_LINE } from "./writing-lines";
 
 export const MAX_ESSAY_CHARACTERS = 48_000;
 
@@ -32,6 +33,13 @@ export const writingPromptSchema = z
     criteria: z.array(z.object({ id: z.string(), name: z.string(), points })),
     keySource: z.enum(["notice", "publishedStandard", "practiceKey"]),
     lines,
+    maxCharactersPerLine: z
+      .int()
+      .positive()
+      .default(WRITING_MAX_CHARACTERS_PER_LINE)
+      .describe(
+        "The densest handwriting a board read in full; text past `lines` even at this width is not graded",
+      ),
     minimumWords: z.int().nonnegative(),
     partMinimum: z
       .object({ max: z.number().positive().nullable(), minimum: pointsMinimumSchema })
@@ -46,7 +54,7 @@ export const writingPromptSchema = z
   })
   .meta({ id: "WritingPrompt" });
 
-export const writtenItemSchema = writingPromptSchema.extend({
+export const writtenItemSchema = writingPromptSchema.omit({ maxCharactersPerLine: true }).extend({
   aspects: z.array(z.object({ criterionId: z.string(), description: z.string(), points })),
   assessedSkillIds: z.array(uuidSchema()).min(1),
   /** The learner's options it was written for; only learners with the same options get it. */

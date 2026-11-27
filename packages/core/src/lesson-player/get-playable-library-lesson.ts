@@ -6,6 +6,7 @@ import { getLibraryLessonCacheTag, getMediaAssetCacheTag } from "../cache/tags";
 import { filterSkippedSteps } from "../language/activities/language-activities";
 import { loadSkippedActivities } from "../language/activities/skipped-activities";
 import { readActiveGoal } from "../learner/facts/learning-profile";
+import { readLastLessonFinish } from "../learner/facts/lesson-progress-runs";
 import { getLearnerLessonPlanCacheTags } from "../library/_utils/learner-lesson-plan";
 import { canViewLibraryRow } from "../library/_utils/library-visibility";
 import { getDefaultLessonMinutes } from "../library/lessons/lesson-minutes";
@@ -15,6 +16,7 @@ import { withLearnerLessonVersions } from "./_utils/learner-lesson-versions";
 import { withLessonMarks } from "./_utils/lesson-marks";
 import { playableStepInclude } from "./_utils/lesson-rows";
 import { loadPlayableSteps } from "./_utils/load-playable-steps";
+import { getLessonSitting, showStepOptions } from "./_utils/shown-step-options";
 import { type PlayableLibraryLesson } from "./playable-lesson";
 
 type LessonOutline = Pick<
@@ -205,18 +207,20 @@ export async function getPlayableLibraryLesson({
   }
 
   if (cached.result.status === "ready" && session) {
-    cacheTag(...getLearnerLessonPlanCacheTags(session.user.id));
+    const userId = session.user.id;
+    cacheTag(...getLearnerLessonPlanCacheTags(userId));
 
-    const [lesson, skippedActivities] = await Promise.all([
-      withLearnerLessonVersions({ lesson: cached.result.lesson, userId: session.user.id }),
-      loadLessonSkippedActivities({ lesson: cached.result.lesson, userId: session.user.id }),
+    const [lesson, skippedActivities, finishedAt] = await Promise.all([
+      withLearnerLessonVersions({ lesson: cached.result.lesson, userId }),
+      loadLessonSkippedActivities({ lesson: cached.result.lesson, userId }),
+      readLastLessonFinish(userId, cached.result.lesson.id),
     ]);
 
+    const sitting = getLessonSitting({ finishedAt, lessonId: lesson.id, userId });
+    const steps = filterSkippedSteps({ activities: skippedActivities ?? [], steps: lesson.steps });
+
     return {
-      lesson: {
-        ...lesson,
-        steps: filterSkippedSteps({ activities: skippedActivities ?? [], steps: lesson.steps }),
-      },
+      lesson: { ...lesson, steps: steps.map((step) => showStepOptions({ seed: sitting, step })) },
       status: "ready",
     };
   }

@@ -1,3 +1,4 @@
+import { t } from "../../_utils/localize";
 import { stockMarketCourse } from "../../library/stock-market/stock-market-course";
 import { type SeedLearner } from "../types";
 
@@ -20,12 +21,20 @@ export const pedroStocks: SeedLearner = {
       mistake: {
         cause: "gap",
         snapshot: {
-          answer: "Eles são pagos primeiro",
-          correctAnswer: "Eles são os últimos da fila e muitas vezes não recebem nada",
-          explanation:
+          answer: t("They're paid back first", "Eles são pagos primeiro"),
+          correctAnswer: t(
+            "They're last in line and often get nothing",
+            "Eles são os últimos da fila e muitas vezes não recebem nada",
+          ),
+          explanation: t(
+            "Lenders, workers and taxes come first. Shareholders are last in line.",
             "Credores, trabalhadores e impostos vêm antes. Os acionistas são os últimos da fila.",
+          ),
           format: "check",
-          question: "A rede de padarias vai à falência. O que acontece com os acionistas?",
+          question: t(
+            "The bakery chain goes bankrupt. What happens to its shareholders?",
+            "A rede de padarias vai à falência. O que acontece com os acionistas?",
+          ),
         },
         status: "open",
       },
@@ -59,15 +68,15 @@ export const pedroStocks: SeedLearner = {
         { chapter: "long-run", kind: "chapter", phase: 3, status: "todo" },
       ],
       phases: [
-        { name: "O que é uma ação" },
-        { name: "Como funcionam as negociações" },
-        { name: "Por que os preços se mexem" },
-        { name: "Investir no longo prazo" },
+        { name: t("What a share is", "O que é uma ação") },
+        { name: t("How trading works", "Como funcionam as negociações") },
+        { name: t("Why prices move", "Por que os preços se mexem") },
+        { name: t("Investing for the long run", "Investir no longo prazo") },
       ],
     },
     prompt: "quero entender como funciona a bolsa de valores",
     studyTime: "16:00",
-    title: "Entender a bolsa de valores",
+    title: t("Understand the stock market", "Entender a bolsa de valores"),
   },
   history: { accuracy: 0.75, days: 6, energy: 40, minutesPerDay: 14, skipChance: 0.2 },
   key: "pedro",

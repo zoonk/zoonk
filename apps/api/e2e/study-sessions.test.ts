@@ -28,6 +28,7 @@ import {
 } from "../src/lib/openapi/schemas/study-sessions";
 import { todayResponseSchema } from "../src/lib/openapi/schemas/today";
 import { createBearerLearner } from "./helpers/bearer";
+import { tapOption } from "./helpers/choices";
 import { openStudyDay } from "./helpers/open-study-day";
 import { readBody } from "./helpers/response";
 
@@ -184,7 +185,7 @@ async function playBlock({
 
     await readBody({
       response: await api.post(`${blockPath}/answers`, {
-        data: { answer: { selectedIndex: 0 }, durationMs: 4000, itemId: question.itemId },
+        data: { answer: tapOption(question.options), durationMs: 4000, itemId: question.itemId },
       }),
       schema: studyAnswerFeedbackResponseSchema,
     });

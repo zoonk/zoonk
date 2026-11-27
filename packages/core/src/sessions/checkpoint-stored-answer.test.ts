@@ -8,6 +8,7 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { pickInBlock } from "../_test-utils/shown-choice";
 import { answerStudyQuestion } from "./answer-study-question";
 import { toBlockPayload } from "./block-payload";
 import { studyAnswerInputSchema } from "./contract";
@@ -50,7 +51,8 @@ describe("checkpoint stored correction evidence", () => {
 
     mockSession(user.id);
 
-    const input = { answer: { selectedIndex: 0 }, durationMs: 1000, itemId: item.id };
+    const right = pickInBlock({ blockId: block.id, item });
+    const input = { answer: right, durationMs: 1000, itemId: item.id };
 
     expect(
       studyAnswerInputSchema.safeParse({
@@ -67,7 +69,7 @@ describe("checkpoint stored correction evidence", () => {
       where: { itemId: item.id, studySessionId: session.id, userId: user.id },
     });
 
-    expect(attempt.answer).toStrictEqual({ fixedMistakeIds: [mistake.id], selectedIndex: 0 });
+    expect(attempt.answer).toStrictEqual({ fixedMistakeIds: [mistake.id], ...right });
 
     await expect(
       prisma.mistake.findUniqueOrThrow({ where: { id: mistake.id } }),
@@ -80,7 +82,7 @@ describe("checkpoint stored correction evidence", () => {
         checkpoint: {
           answers: [
             {
-              correctAnswer: { selectedIndex: 0 },
+              correctAnswer: right,
               explanation: "It follows the rule.",
               isCorrect: true,
               itemId: item.id,

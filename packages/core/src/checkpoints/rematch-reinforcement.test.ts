@@ -3,6 +3,7 @@ import { layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { pickInBlock } from "../_test-utils/shown-choice";
 import { getTodayStudySession } from "../sessions/_test-utils/open-today";
 import {
   DAY_MS,
@@ -83,9 +84,17 @@ describe("a lost duel's actual reinforcement lessons", () => {
     const feedback = await missed.reduce<Promise<unknown>>(async (previous, item) => {
       await previous;
 
+      if (!item) {
+        throw new Error("Expected a missed question");
+      }
+
       return answerStudyQuestion({
         blockId: block.id,
-        input: { answer: { selectedIndex: 1 }, durationMs: 4000, itemId: item?.id ?? "" },
+        input: {
+          answer: pickInBlock({ blockId: block.id, item, right: false }),
+          durationMs: 4000,
+          itemId: item.id,
+        },
         sessionId: today.session.id,
       });
     }, Promise.resolve(null));

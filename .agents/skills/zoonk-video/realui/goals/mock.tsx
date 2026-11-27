@@ -126,11 +126,13 @@ function runningSection(lang: Lang): NonNullable<Mock["current"]> {
   const minutesLeft = lang === "pt" ? 151 : 26;
 
   return {
+    changedItemIds: [],
     changesLeft: null,
     deadline: new Date(Date.now() + minutesLeft * 60_000 + 42_000).toISOString(),
     drafts,
     kind: null,
     plays: [],
+    questionTotal: questions.length,
     questions,
     resume: at,
     section: lang === "pt" ? 0 : 1,

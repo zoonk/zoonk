@@ -5,6 +5,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { runDeferredWork } from "../_test-utils/deferred-work";
 import { mockSession } from "../_test-utils/mock-session";
+import { pickInMistake } from "../_test-utils/shown-choice";
 import { analytics } from "../_test-utils/test-boundaries";
 import { answerMistakePractice } from "../mistakes/answer-mistake-practice";
 import { finishMistakePractice } from "../mistakes/finish-mistake-practice";
@@ -112,7 +113,7 @@ async function playNotebook({
 }) {
   const answer = await answerMistakePractice({
     input: {
-      answer: { selectedIndex: 0 },
+      answer: await pickInMistake({ mistakeId }),
       durationMs: 2000,
       itemId,
       run: { answerIds: [], blockId },

@@ -98,6 +98,8 @@ const blockPayloadSchema = z.object({
   reinforcement: z.boolean().default(false),
   replacedOnlyLesson: z.literal(true).optional(),
   returning: returningLessonSchema.nullable().default(null),
+  /** Lays out its questions' options in an order of its own. Unset on blocks made before that, whose answers point into the stored order. */
+  shufflesOptions: z.literal(true).optional(),
   skillIds: z.array(z.string()).default([]),
   /** Focused time survives switching blocks; only the most recently opened clock runs. */
   timing: z
@@ -142,7 +144,7 @@ export function hasWritingProgress({ writing }: BlockPayload): boolean {
 const EMPTY_BLOCK_PAYLOAD: BlockPayload = blockPayloadSchema.parse({});
 
 export function toBlockPayload(fields: Partial<BlockPayload>): BlockPayload {
-  return { ...EMPTY_BLOCK_PAYLOAD, ...fields };
+  return { ...EMPTY_BLOCK_PAYLOAD, shufflesOptions: true, ...fields };
 }
 
 /** Logs invalid stored payloads and returns an empty payload rather than interrupting the day. */

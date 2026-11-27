@@ -439,8 +439,7 @@ private fun TaskRow(
         modifier = Modifier.bringIntoViewRequester(requester).bleed(LIST_ITEM_INSET),
         onClick = { open = !open },
         expanded = open,
-        leading = { Text(formatNumber(index + 1.0, locale), style = MaterialTheme.zoonkType.data) },
-        leadOnFirstLine = true,
+        lead = { Text(formatNumber(index + 1.0, locale), style = MaterialTheme.zoonkType.data) },
         supporting = {
             Text(facts)
             lastTry?.let { Text(it) }

@@ -116,9 +116,7 @@ private struct WritingPointsSection: View {
   private var lineCount: String {
     let lines =
       self.lines
-      ?? WritingLines.count(
-        text, charactersPerLine: prompt.charactersPerLine, limit: prompt.lines
-      ).estimatedLines
+      ?? WritingLines.estimate(text, charactersPerLine: prompt.charactersPerLine)
 
     guard let limit = prompt.lines else {
       return String(

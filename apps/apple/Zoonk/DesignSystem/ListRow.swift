@@ -10,12 +10,13 @@ struct ListRow<Leading: View, Trailing: View>: View {
   var description: Text?
   var descriptionFacts: [String]
   var alignment = VerticalAlignment.center
+  var stackedLeadingSpacing: CGFloat?
   @ViewBuilder let leading: Leading
   @ViewBuilder let trailing: Trailing
 
   init(
     _ title: Text, number: Int? = nil, description: Text? = nil, descriptionFacts: [String] = [],
-    alignment: VerticalAlignment = .center,
+    alignment: VerticalAlignment = .center, stackedLeadingSpacing: CGFloat? = nil,
     @ViewBuilder leading: () -> Leading, @ViewBuilder trailing: () -> Trailing
   ) {
     self.title = title
@@ -23,12 +24,16 @@ struct ListRow<Leading: View, Trailing: View>: View {
     self.description = description
     self.descriptionFacts = descriptionFacts
     self.alignment = alignment
+    self.stackedLeadingSpacing = stackedLeadingSpacing
     self.leading = leading()
     self.trailing = trailing()
   }
 
   var body: some View {
-    RowLayout(alignment: alignment, hasMark: Leading.self != EmptyView.self) {
+    RowLayout(
+      alignment: alignment, hasMark: Leading.self != EmptyView.self,
+      stackedMarkSpacing: stackedLeadingSpacing
+    ) {
       leading
         .foregroundStyle(.mutedForeground)
     } words: {
@@ -90,14 +95,22 @@ struct RowLayout<Mark: View, Words: View, Value: View>: View {
   /// A row without a mark starts its words on the list's edge. `ListRow` says so itself: its
   /// mark is styled, and a styled `EmptyView` is another type.
   var hasMark = Mark.self != EmptyView.self
+  var stackedMarkSpacing: CGFloat?
   var piece = LayoutPiece.listGroup
   @ViewBuilder let mark: Mark
   @ViewBuilder let words: Words
   @ViewBuilder let value: Value
 
   var body: some View {
+    let markAndWords =
+      if isStacked, let stackedMarkSpacing {
+        AnyLayout(VStackLayout(alignment: .leading, spacing: stackedMarkSpacing))
+      } else {
+        AnyLayout(HStackLayout(alignment: alignment, spacing: 12))
+      }
+
     HStack(spacing: 12) {
-      HStack(alignment: alignment, spacing: 12) {
+      markAndWords {
         if hasMark {
           mark
             .markColumn()
@@ -141,10 +154,13 @@ struct RowLayout<Mark: View, Words: View, Value: View>: View {
 extension ListRow where Trailing == EmptyView {
   init(
     _ title: Text, description: Text? = nil, descriptionFacts: [String] = [],
+    stackedLeadingSpacing: CGFloat? = nil,
     @ViewBuilder leading: () -> Leading
   ) {
-    self.init(title, description: description, descriptionFacts: descriptionFacts, leading: leading)
-    { EmptyView() }
+    self.init(
+      title, description: description, descriptionFacts: descriptionFacts,
+      stackedLeadingSpacing: stackedLeadingSpacing, leading: leading
+    ) { EmptyView() }
   }
 }
 

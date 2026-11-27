@@ -1,4 +1,5 @@
 import { homedir } from "node:os";
+import { join } from "node:path";
 import { getPortlessEnvironment, getProjectName, getServiceName } from "./config.mts";
 import {
   applyCommandExit,
@@ -6,6 +7,7 @@ import {
   getStopWithLauncherEnvironment,
   runForegroundCommand,
 } from "./process.mts";
+import { SERVICE_HOST, claimServicePort } from "./service-port.mts";
 
 const [serviceName, appScript = "dev:app"] = process.argv
   .slice(2)
@@ -35,22 +37,32 @@ const pnpmCommand = getPnpmCommand(environment);
 const projectName = getProjectName({ currentDirectory, environment });
 const name = getServiceName({ projectName, serviceName });
 
-const result = await runForegroundCommand({
-  args: [
-    ...pnpmCommand.args,
-    "exec",
-    "portless",
-    "run",
-    "--name",
-    name,
-    pnpmCommand.command,
-    ...pnpmCommand.args,
-    "run",
-    appScript,
-  ],
-  command: pnpmCommand.command,
-  currentDirectory,
-  environment,
+const claim = await claimServicePort({
+  fixedPort: process.env.PORTLESS_APP_PORT,
+  stateDirectory: join(homedir(), ".portless-zoonk", "app-ports"),
 });
 
-applyCommandExit(result);
+try {
+  const result = await runForegroundCommand({
+    args: [
+      ...pnpmCommand.args,
+      "exec",
+      "portless",
+      "run",
+      "--name",
+      name,
+      pnpmCommand.command,
+      ...pnpmCommand.args,
+      "run",
+      appScript,
+      ...(serviceName === "mailbox" ? [] : ["--hostname", SERVICE_HOST]),
+    ],
+    command: pnpmCommand.command,
+    currentDirectory,
+    environment: { ...environment, PORTLESS_APP_PORT: String(claim.port) },
+  });
+
+  applyCommandExit(result);
+} finally {
+  claim.release();
+}

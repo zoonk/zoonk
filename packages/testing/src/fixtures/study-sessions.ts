@@ -36,7 +36,10 @@ export async function studySessionFixture(
   });
 }
 
-/** Tests that add several blocks in parallel should pass positions. */
+/**
+ * A block as the product makes it now, laying out its own option order unless the payload says
+ * `shufflesOptions: undefined`. Tests that add several blocks in parallel should pass positions.
+ */
 export async function studySessionBlockFixture(
   attrs: FixtureAttrs<StudySessionBlock, "payload"> & Pick<StudySessionBlock, "sessionId">,
 ) {
@@ -44,7 +47,19 @@ export async function studySessionBlockFixture(
     attrs.position ??
     (await prisma.studySessionBlock.count({ where: { sessionId: attrs.sessionId } }));
 
-  return prisma.studySessionBlock.create({ data: { kind: "learn", ...attrs, position } });
+  const { payload = {} } = attrs;
+
+  const madeNow =
+    typeof payload === "object" &&
+    payload !== null &&
+    !Array.isArray(payload) &&
+    !("shufflesOptions" in payload)
+      ? { ...payload, shufflesOptions: true }
+      : payload;
+
+  return prisma.studySessionBlock.create({
+    data: { kind: "learn", ...attrs, payload: madeNow, position },
+  });
 }
 
 /** Leaves the plan for `layOutPlanFixture` to lay out. */

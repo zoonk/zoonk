@@ -10,6 +10,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { runDeferredWork } from "../_test-utils/deferred-work";
 import { mockSession } from "../_test-utils/mock-session";
+import { pickItemInBlock } from "../_test-utils/shown-choice";
 import { analytics } from "../_test-utils/test-boundaries";
 import { submitFeedback } from "../feedback/submit-feedback";
 import { deleteMemoryFact } from "../memory/delete-memory-fact";
@@ -191,10 +192,14 @@ describe("write outcome analytics", () => {
       status: "active",
     });
 
-    const answer = (itemId: string) =>
+    const answer = async (itemId: string) =>
       answerStudyQuestion({
         blockId: block.id,
-        input: { answer: { selectedIndex: 0 }, durationMs: 1000, itemId },
+        input: {
+          answer: await pickItemInBlock({ blockId: block.id, itemId }),
+          durationMs: 1000,
+          itemId,
+        },
         sessionId: session.id,
       });
 

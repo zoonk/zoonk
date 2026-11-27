@@ -23,14 +23,7 @@ import { type NavigationReport, measureNavigations } from "./navigations.mts";
 import { pageTopComparisons } from "./page-top-comparisons.mts";
 import { PAGE_OPTIONS, USAGE } from "./pages-usage.mts";
 import { PRESS_VIEWPORTS, launchPressBrowser, pressSection } from "./press-report.mts";
-import {
-  type RenderReport,
-  findUnindexed,
-  measureRender,
-  queryFindings,
-  renderRows,
-  summarizeStatements,
-} from "./queries.mts";
+import { type RenderReport, measureRender, renderRows } from "./queries.mts";
 import { readableSection } from "./readable.mts";
 import { renderReport } from "./report.mts";
 import { redactQuery, savedRequest } from "./requests.mts";
@@ -207,18 +200,16 @@ try {
   }
 
   for (const path of queries ? paths : []) {
-    const summary = summarizeStatements(
-      await measureRender({ baseUrl, file: queries ?? "", path, storageState }),
-    );
-
-    const production = loads.every((load) => load.production);
-    const unindexed = await findUnindexed(served, { production, reads: summary.reads });
-
-    renders.push({
-      findings: [...queryFindings(summary), ...unindexed],
-      path: redactQuery(path),
-      summary,
+    const render = await measureRender({
+      baseUrl,
+      file: queries ?? "",
+      path,
+      production: loads.every((load) => load.production),
+      repository: served,
+      storageState,
     });
+
+    renders.push({ ...render, path: redactQuery(path) });
   }
 
   if (laps > 0) {

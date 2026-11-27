@@ -10,6 +10,7 @@ import {
   waitForBlockedStatement,
 } from "../../_test-utils/learner-lock";
 import { mockSession } from "../../_test-utils/mock-session";
+import { pickInPlacement } from "../../_test-utils/shown-choice";
 import { analytics } from "../../_test-utils/test-boundaries";
 import { isGoalInPlacementWeek } from "../../lookahead/placement-week";
 import { changeGoalPlan } from "../../plans/change-goal-plan";
@@ -29,7 +30,8 @@ import { getGoalPlacement } from "./get-goal-placement";
 import { startPlacementSitting } from "./start-placement-sitting";
 
 const DONT_KNOW = { dontKnow: true } as const;
-const RIGHT = { selectedIndex: 0 };
+/** The right option, wherever placement shows it. */
+const RIGHT = "right" as const;
 
 const THREE_SUBJECTS = [
   { name: "Português", questions: 8 },
@@ -63,9 +65,12 @@ async function answer({
   goalId: string;
   placement: TestPlacement;
 }): Promise<TestPlacement> {
+  const itemId = placement.next?.itemId ?? "";
+  const picked = given === RIGHT ? await pickInPlacement({ itemId }) : given;
+
   const result = await answerPlacementQuestion({
     goalId,
-    input: { answer: given, durationMs: 30_000, itemId: placement.next?.itemId ?? "" },
+    input: { answer: picked, durationMs: 30_000, itemId },
   });
 
   if (result.status !== "ready") {

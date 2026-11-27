@@ -6,6 +6,7 @@ import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sou
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { pickItemInMock } from "../../_test-utils/shown-choice";
 import { analytics } from "../../_test-utils/test-boundaries";
 import { buildExamIdentityKey } from "../../library/exams/exam-identity";
 import { readBlueprintContent, saveExamBlueprint } from "../../library/exams/save-exam-blueprint";
@@ -139,11 +140,15 @@ async function answerSection({ id, rightOn }: { id: string; rightOn: ReadonlySet
   const mock = await readMock(id);
 
   await Promise.all(
-    (mock.current?.questions ?? []).map((question) =>
+    (mock.current?.questions ?? []).map(async (question) =>
       saveMockAnswer({
         blockId: id,
         input: {
-          answer: { selectedIndex: rightOn.has(question.skillId) ? 0 : 1 },
+          answer: await pickItemInMock({
+            itemId: question.itemId,
+            mockId: id,
+            right: rightOn.has(question.skillId),
+          }),
           durationMs: 30_000,
           flagged: false,
           itemId: question.itemId,
@@ -283,10 +288,7 @@ describe("mocks taken any time", () => {
   });
 
   it("writes ahead at most one real exam's worth of questions, whatever the notice claims", async () => {
-    const subjects = Array.from({ length: 40 }, (_, index) => `Subject ${index + 1}`);
-
     const { goal } = await anytimeSetup({
-      areas: subjects,
       itemsPerSkill: 0,
       structure: {
         ...STRUCTURE,
@@ -296,13 +298,7 @@ describe("mocks taken any time", () => {
           timeLimitMinutes: 200,
           totalQuestions: 100,
         },
-        subjects: subjects.map((name) => ({
-          citation: CITATION,
-          name,
-          questions: 50,
-          topics: [],
-          weight: null,
-        })),
+        subjects: STRUCTURE.subjects.map((subject) => ({ ...subject, questions: 600 })),
       },
     });
 
@@ -315,6 +311,12 @@ describe("mocks taken any time", () => {
     expect(papers.map((paper) => paper.key)).toContain(
       mockPaperKey({ area: null, day: null, kind: "full" }),
     );
+
+    expect(
+      papers.filter(({ key }) =>
+        AREAS.some((area) => key === mockPaperKey({ area, day: null, kind: "area" })),
+      ),
+    ).toHaveLength(1);
 
     expect(written.reduce((sum, count) => sum + count, 0)).toBeLessThanOrEqual(1200);
   });
@@ -1134,11 +1136,15 @@ describe("an existing mock taken as placement", () => {
     const markedBlank = asked[answered.length];
 
     await Promise.all([
-      ...answered.map((question) =>
+      ...answered.map(async (question) =>
         saveMockAnswer({
           blockId: id,
           input: {
-            answer: { selectedIndex: question.skillId === first?.id ? 0 : 1 },
+            answer: await pickItemInMock({
+              itemId: question.itemId,
+              mockId: id,
+              right: question.skillId === first?.id,
+            }),
             durationMs: 20_000,
             flagged: false,
             itemId: question.itemId,

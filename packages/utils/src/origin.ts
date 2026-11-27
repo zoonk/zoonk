@@ -36,6 +36,10 @@ export function getBaseUrl(): string {
   );
 }
 
+export function getAppProtocol(): "http" | "https" {
+  return isLocalhostSupported() && !getBaseUrl().startsWith("https:") ? "http" : "https";
+}
+
 /** @public */
 export const AUTH_LOGIN_EXPIRED_ERROR = "expired";
 

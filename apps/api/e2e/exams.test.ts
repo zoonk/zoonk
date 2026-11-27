@@ -14,6 +14,7 @@ import {
   mockPlanOfferResultSchema,
 } from "../src/lib/openapi/schemas/mocks";
 import { createBearerLearner } from "./helpers/bearer";
+import { tapOption } from "./helpers/choices";
 import { FORMATS_QUESTIONS, createFormatsExamGoal } from "./helpers/exam-formats";
 import {
   BREAK_SECTION_QUESTIONS,
@@ -107,7 +108,7 @@ test.describe("Exams API", () => {
 
       const response = await api.put(`${path}/answers`, {
         data: {
-          answer: index === 0 ? null : { selectedIndex: 0 },
+          answer: index === 0 ? null : tapOption(question.options),
           durationMs: 5000,
           flagged: index < 2,
           itemId: question.itemId,
@@ -226,7 +227,7 @@ test.describe("Exams API", () => {
     const saved = [
       await api.put(`${path}/answers`, {
         data: {
-          answer: { selectedIndex: 0 },
+          answer: tapOption(right?.options),
           durationMs: 5000,
           flagged: false,
           itemId: right?.itemId,
@@ -234,7 +235,7 @@ test.describe("Exams API", () => {
       }),
       await api.put(`${path}/answers`, {
         data: {
-          answer: { selectedIndex: 1 },
+          answer: tapOption(wrong?.options, { right: false }),
           durationMs: 5000,
           flagged: false,
           itemId: wrong?.itemId,
@@ -359,7 +360,7 @@ test.describe("Exams API", () => {
 
       await api.put(`${path}/answers`, {
         data: {
-          answer: { selectedIndex: 0 },
+          answer: tapOption(question.options),
           durationMs: 5000,
           flagged: false,
           itemId: question.itemId,
