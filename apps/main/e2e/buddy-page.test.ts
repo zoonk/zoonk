@@ -164,6 +164,70 @@ test.describe("Buddy tab", () => {
     });
   });
 
+  test("a question that saves after the learner left for Today leaves the next new conversation blank", async ({
+    browser,
+  }) => {
+    await asPersona(browser, { persona: "buddy" }, async ({ page, user }) => {
+      await stubBuddy({
+        answers: [{ answer: "Light spreads like a wave." }, { answer: "Through measurement." }],
+        page,
+      });
+
+      const { promise: held, resolve: release } = Promise.withResolvers<null>();
+      const { promise: sent, resolve: arrived } = Promise.withResolvers<null>();
+      let holdNext = true;
+
+      await page.route("**/v1/goals/*/buddy/conversations/*/questions", async (route) => {
+        if (route.request().method() === "POST" && holdNext) {
+          holdNext = false;
+          arrived(null);
+          await held;
+        }
+
+        await route.continue();
+      });
+
+      const countConversations = () =>
+        prisma.lessonQuestionThread.count({
+          where: { goalId: user.goalId, kind: "plan", userId: user.id },
+        });
+
+      await page.goto("/buddy/new");
+
+      const conversation = page.getByRole("region", { name: "Conversation with Otto" });
+      const composer = conversation.getByRole("textbox", { name: "Message Otto" });
+      const tabs = page.getByRole("navigation", { name: "Learning tabs" });
+
+      await expectHydrated(composer);
+      await composer.fill("Why is light a wave?");
+      await composer.press("Enter");
+      await sent;
+
+      await tabs.getByRole("link", { exact: true, name: "Today" }).click();
+      await expect(page).toHaveURL(/\/today$/u);
+      release(null);
+      await expect.poll(countConversations).toBe(1);
+
+      await tabs.getByRole("link", { name: /Otto/u }).click();
+      await expect(page).toHaveURL(/\/buddy$/u);
+      await expect(conversation.getByText("Light spreads like a wave.")).toBeVisible();
+
+      await page
+        .getByRole("complementary", { name: "Conversations" })
+        .getByRole("link", { name: "New conversation" })
+        .click();
+
+      await expect(page).toHaveURL(/\/buddy\/new$/u);
+      await expect(conversation.getByText("Why is light a wave?")).toBeHidden();
+      await expect(conversation.getByRole("article")).toHaveCount(0);
+
+      await composer.fill("How do you read one?");
+      await composer.press("Enter");
+      await expect(conversation.getByText("Through measurement.")).toBeVisible();
+      await expect.poll(countConversations).toBe(2);
+    });
+  });
+
   test("a follow-up in a conversation older than the list's first page keeps its first question as its title", async ({
     browser,
   }) => {

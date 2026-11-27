@@ -177,8 +177,9 @@ export function useBuddyConversations({
       return;
     }
 
-    // A blank one the learner already left has no page to rename, only its id to retire.
-    if (named === null) {
+    // A blank one the learner already left, for another conversation or another tab, has no page to
+    // rename, only its id to retire.
+    if (BLANK_PAGE.test(globalThis.location.pathname)) {
       nameConversationInUrl(conversationId);
     } else {
       startAnother();
