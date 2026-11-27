@@ -1455,6 +1455,9 @@
         }
       }
     },
+    "Couldn't remove this map. Try again." : {
+      "comment" : "Taking a map out of the saved maps didn't work, so it's still saved"
+    },
     "Couldn't save this map. Try again." : {
       "comment" : "Saving a map didn't work, so its bookmark is back as it was",
       "localizations" : {
