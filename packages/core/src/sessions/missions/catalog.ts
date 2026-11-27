@@ -9,8 +9,6 @@ export const MISSION_KINDS = [
   "mock",
   "essay",
   "practice",
-  "fixMistake",
-  "pattern",
   "pronunciation",
   "call",
   "askBuddy",
@@ -20,8 +18,6 @@ export const MISSION_KINDS = [
 export const FIRST_STEP_KINDS = [
   "somethingNew",
   "review",
-  "fixMistake",
-  "pattern",
   "askBuddy",
   "essay",
   "call",
@@ -29,21 +25,19 @@ export const FIRST_STEP_KINDS = [
   "challenge",
 ] as const;
 
+/** Days saved before the plan took over missed questions may hold these; reads leave them out. */
+const RETIRED_MISSION_KINDS = ["fixMistake", "pattern"] as const;
+
 export type MissionKind = (typeof MISSION_KINDS)[number];
 export type FirstStepKind = (typeof FIRST_STEP_KINDS)[number];
 
-export const MISSION_RULES = {
-  mistakePileSize: 5,
-  roomyDayMinutes: 30,
-  shortDayMinutes: 15,
-} as const;
+export const MISSION_RULES = { roomyDayMinutes: 30, shortDayMinutes: 15 } as const;
 
 const missionAnchorSchema = z.object({
   areaId: z.string().optional(),
   blockKind: z.enum(["review", "learn", "practice", "produce", "checkpoint"]).optional(),
   chapterId: z.string().optional(),
   lessonIds: z.array(z.string()).optional(),
-  patternId: z.string().optional(),
   planItemId: z.string().optional(),
   planItemIds: z.array(z.string()).optional(),
   /** Selected checkpoint identity survives the POST assigning its saved UUID. */
@@ -56,15 +50,12 @@ const missionDetailSchema = z.object({
   chapterTitle: z.string().optional(),
   count: z.int().nonnegative().optional(),
   minutes: z.number().nonnegative().optional(),
-  patternTitle: z.string().optional(),
   rematch: z.boolean().optional(),
   title: z.string().optional(),
 });
 
 const missionOpensSchema = z.discriminatedUnion("kind", [
   z.object({ blockId: z.string(), kind: z.literal("block") }),
-  z.object({ kind: z.literal("mistakesPractice") }),
-  z.object({ kind: z.literal("pattern"), patternId: z.string() }),
   z.object({ kind: z.literal("pronunciation") }),
   z.object({ chapterId: z.string(), kind: z.literal("call") }),
   z.object({ kind: z.literal("buddy") }),
@@ -89,6 +80,29 @@ const missionDocumentSchema = z.object({
   version: z.literal(1),
 });
 
+const savedKindSchema = z.enum([...MISSION_KINDS, ...RETIRED_MISSION_KINDS]);
+
+const retiredOpensSchema = z.discriminatedUnion("kind", [
+  z.object({ kind: z.literal("mistakesPractice") }),
+  z.object({ kind: z.literal("pattern"), patternId: z.string() }),
+]);
+
+const savedPickSchema = missionPickSchema.extend({
+  kind: savedKindSchema,
+  opens: z.union([missionOpensSchema, retiredOpensSchema]).optional(),
+});
+
+const savedDocumentSchema = missionDocumentSchema.extend({ picks: z.array(savedPickSchema) });
+
+function isMissionKind(kind: string): kind is MissionKind {
+  return MISSION_KINDS.some((current) => current === kind);
+}
+
+/** What a finished block did to missions, as saved; a retired kind is no longer a mission. */
+export const savedMissionKindsSchema = z
+  .array(savedKindSchema)
+  .transform((kinds) => kinds.filter((kind) => isMissionKind(kind)));
+
 export type MissionDetail = z.infer<typeof missionDetailSchema>;
 export type MissionOpens = z.infer<typeof missionOpensSchema>;
 export type MissionPick = z.infer<typeof missionPickSchema>;
@@ -96,5 +110,14 @@ export type MissionDocument = z.infer<typeof missionDocumentSchema>;
 
 /** Corrupt or future documents fail closed. */
 export function readMissionDocument(value: unknown): MissionDocument | null {
-  return missionDocumentSchema.safeParse(value).data ?? null;
+  const saved = savedDocumentSchema.safeParse(value).data;
+
+  if (!saved) {
+    return null;
+  }
+
+  return {
+    ...saved,
+    picks: saved.picks.flatMap((pick) => missionPickSchema.safeParse(pick).data ?? []),
+  };
 }

@@ -6,10 +6,10 @@ import { mistakePatternContentSchema } from "./pattern-contract";
 const FRESH_DAYS = 7;
 
 /**
- * A pattern belongs to the goal that noticed it, so one drill completes one goal's mission; once
- * that goal is paused, finished or removed, another goal of its language may offer it.
+ * A pattern belongs to the goal that noticed it; once that goal is paused, finished or removed,
+ * another goal of its language may offer it.
  */
-export function offeredToGoal(goalId: string) {
+function offeredToGoal(goalId: string) {
   return { OR: [{ goalId }, { goalId: null }, { goal: { status: { not: "active" as const } } }] };
 }
 
@@ -47,14 +47,14 @@ function findFreshPatternRow({
   });
 }
 
-type PatternQuery = Omit<Parameters<typeof findFreshPatternRow>[0], "withDrill">;
+type PatternQuery = Omit<Parameters<typeof findFreshPatternRow>[0], "kind" | "withDrill">;
 
 export async function findFreshMistakePattern(input: PatternQuery) {
   const pattern = await findFreshPatternRow(input);
   return pattern ? { id: pattern.id, kind: pattern.kind, title: pattern.title } : null;
 }
 
-export async function findFreshMistakePatternWithDrill(input: Omit<PatternQuery, "kind">) {
+export async function findFreshMistakePatternWithDrill(input: PatternQuery) {
   const pattern = await findFreshPatternRow({ ...input, kind: "pattern", withDrill: true });
   return pattern && mistakePatternContentSchema.safeParse(pattern.content).success ? pattern : null;
 }

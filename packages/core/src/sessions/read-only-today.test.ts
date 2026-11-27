@@ -1,9 +1,10 @@
 import { prisma } from "@zoonk/db";
-import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
-import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
+import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { pronunciationReviewFixture } from "@zoonk/testing/fixtures/pronunciation-reviews";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
@@ -31,35 +32,23 @@ async function readLearnerState({ goalId, userId }: { goalId: string; userId: st
   return { activity, changes, goal, plan, progress, sessions };
 }
 
-function createPattern({
-  daysAgo = 1,
-  drill = true,
-  goalId,
-  userId,
-}: {
-  daysAgo?: number;
-  drill?: boolean;
-  goalId: string;
-  userId: string;
-}) {
+function createPattern({ goalId, userId }: { goalId: string; userId: string }) {
   return prisma.mistakePattern.create({
     data: {
       content: {
         contrast: [],
-        drill: drill
-          ? [
-              {
-                answer: "for",
-                feedback: "Use for with a length of time.",
-                options: ["for", "since"],
-                sentence: "I've lived here ___ two years.",
-              },
-            ]
-          : [],
+        drill: [
+          {
+            answer: "for",
+            feedback: "Use for with a length of time.",
+            options: ["for", "since"],
+            sentence: "I've lived here ___ two years.",
+          },
+        ],
         examples: [],
         rule: "Use for with durations.",
       },
-      createdAt: new Date(SESSION_NOW.getTime() - daysAgo * MS_PER_DAY),
+      createdAt: new Date(SESSION_NOW.getTime() - MS_PER_DAY),
       goalId,
       kind: "pattern",
       language: "en",
@@ -99,7 +88,7 @@ describe("Today reads without learner actions", () => {
     await expect(readLearnerState(input)).resolves.toStrictEqual(before);
   });
 
-  it("reads a language goal's Today, its pattern and its sidebar without opening or extending today's session", async () => {
+  it("reads a language goal's Today and its sidebar without opening or extending today's session", async () => {
     const { goal, items, user } = await languageGoalFixture();
     mockSession(user.id);
 
@@ -136,59 +125,29 @@ describe("Today reads without learner actions", () => {
     await expect(readLearnerState(input)).resolves.toStrictEqual(before);
   });
 
-  it.each([false, true])(
-    "offers a pattern once beside the unopened day that picked its drill (another goal earned its bonus: %s)",
-    async (earnedElsewhere) => {
-      const { goal, user } = await languageGoalFixture();
-      mockSession(user.id);
+  it("shows a language learner's fresh pattern in no notice or mission, and words to say again in its notice", async () => {
+    const { goal, user } = await languageGoalFixture();
+    mockSession(user.id);
+    await createPattern({ goalId: goal.id, userId: user.id });
 
-      const pattern = await createPattern({ goalId: goal.id, userId: user.id });
-
-      if (earnedElsewhere) {
-        const otherGoal = await goalFixture({ userId: user.id });
-
-        await studySessionFixture({
-          fullMealAt: new Date(),
-          goalId: otherGoal.id,
-          userId: user.id,
-        });
-      }
-
+    const read = async () => {
       const result = await getTodayView({ goalId: goal.id, timeZone: "UTC" });
 
       if (result.status !== "ready") {
         throw new Error(`Expected Today, got ${result.status}`);
       }
 
-      expect(result.today.session.status).toBe("unstarted");
+      return result.today;
+    };
 
-      expect(result.today.session.missions).toContainEqual(
-        expect.objectContaining({ opens: { kind: "pattern", patternId: pattern.id } }),
-      );
+    const quiet = await read();
+    expect(quiet.notice).toBeNull();
+    expect(quiet.session.missions.map((mission) => mission.kind)).not.toContain("pattern");
 
-      expect(result.today.pattern).toBeNull();
-    },
-  );
+    const organization = await organizationFixture();
+    const word = await wordFixture({ organizationId: organization.id, targetLanguage: "en" });
+    await pronunciationReviewFixture({ dueAt: SESSION_NOW, userId: user.id, wordId: word.id });
 
-  it("keeps the card for a newer pattern the unopened day's missions don't offer", async () => {
-    const { goal, user } = await languageGoalFixture();
-    mockSession(user.id);
-
-    const [drilled, newer] = await Promise.all([
-      createPattern({ daysAgo: 2, goalId: goal.id, userId: user.id }),
-      createPattern({ drill: false, goalId: goal.id, userId: user.id }),
-    ]);
-
-    const result = await getTodayView({ goalId: goal.id, timeZone: "UTC" });
-
-    if (result.status !== "ready") {
-      throw new Error(`Expected Today, got ${result.status}`);
-    }
-
-    expect(result.today.session.missions).toContainEqual(
-      expect.objectContaining({ opens: { kind: "pattern", patternId: drilled.id } }),
-    );
-
-    expect(result.today.pattern).toMatchObject({ id: newer.id });
+    await expect(read()).resolves.toMatchObject({ notice: "practice" });
   });
 });

@@ -3,8 +3,6 @@ import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it, vi } from "vitest";
-import { adaptPlanFromMock } from "../../exams/mocks/adapt-plan-from-mock";
-import { mockConditionsSchema } from "../../exams/mocks/mock-contract";
 import { seenQuote } from "../../plans/_test-utils/seen-quote";
 import {
   parsePlanChangePayload,
@@ -60,67 +58,22 @@ async function setup(
       trackAnalytics: false,
     });
   } else if (source === "mock") {
-    const conditions = mockConditionsSchema.parse({
-      day: null,
-      examQuestions: null,
-      fullLength: true,
-      partialCredit: "allOrNothing",
-      purpose: "practice",
-      reused: 0,
-      scoring: "raw",
-      sections: [],
-      shape: null,
-      startTime: null,
-      timeZone: "UTC",
-      timedOutSections: [],
-      wrongPenalty: 0,
+    // Mocks offered a focus before plans followed their misses: such a change is still saved.
+    const accepted = await changeGoalPlan({
+      goalId: goal.id,
+      input: { operations: [{ areas, kind: "focusAreas" }] },
+      trackAnalytics: false,
     });
 
-    const mock = await prisma.mockExam.create({
+    const changeId = accepted.status === "applied" ? accepted.change?.id : undefined;
+    const saved = await prisma.planChange.findUniqueOrThrow({ where: { id: changeId } });
+
+    await prisma.planChange.update({
       data: {
-        conditions,
-        finishedAt: new Date(),
-        goalId: goal.id,
-        result: {
-          areas: ["Direito", "Português", "Informática", "Raciocínio", "Atualidades", "Ética"].map(
-            (name) => ({
-              correct: name === "Direito" ? 0 : 6,
-              name,
-              score: null,
-              secondsPerQuestion: 60,
-              targetSecondsPerQuestion: null,
-              total: 6,
-            }),
-          ),
-          blank: 0,
-          calibration: null,
-          coherence: null,
-          correct: 30,
-          irt: null,
-          minutesUsed: 36,
-          net: null,
-          plannedMinutes: 36,
-          preparation: null,
-          previous: null,
-          scoring: "raw",
-          topics: [],
-          total: 36,
-          unansweredAtTimeout: 0,
-        },
-        sectionStartedAt: new Date(),
-        status: "finished",
-        userId: user.id,
+        payload: toPlanChangePayload({ ...parsePlanChangePayload(saved.payload), source: "mock" }),
       },
+      where: { id: saved.id },
     });
-
-    const accepted = await adaptPlanFromMock({
-      blockId: mock.id,
-      input: { offer: "focus", timeZone: "UTC" },
-    });
-
-    if (accepted.status !== "applied") {
-      throw new Error("The mock focus was not accepted");
-    }
   }
 
   await expect(

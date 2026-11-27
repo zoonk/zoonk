@@ -50,21 +50,6 @@ fun missionName(
             stringResource(R.string.missions_practice)
         }
 
-        Kind.FIX_MISTAKE -> {
-            val count = mission.total.toInt()
-            if (count ==
-                1
-            ) {
-                stringResource(R.string.missions_fix_a_mistake)
-            } else {
-                pluralStringResource(R.plurals.missions_fix_mistakes, count, count)
-            }
-        }
-
-        Kind.PATTERN -> {
-            stringResource(R.string.missions_pattern)
-        }
-
         Kind.PRONUNCIATION -> {
             stringResource(R.string.missions_pronunciation)
         }
@@ -129,14 +114,6 @@ fun missionOpenLabel(
             stringResource(R.string.missions_open_practice)
         }
 
-        Kind.FIX_MISTAKE -> {
-            stringResource(R.string.missions_open_mistakes)
-        }
-
-        Kind.PATTERN -> {
-            stringResource(R.string.missions_open_pattern)
-        }
-
         Kind.PRONUNCIATION -> {
             stringResource(R.string.missions_open_pronunciation)
         }
@@ -172,7 +149,6 @@ val Kind.learnKind: LearnKind
             Kind.CHALLENGE, Kind.WEEKLY_CHALLENGE -> LearnKind.Challenge
             Kind.ESSAY -> LearnKind.Essay
             Kind.FINISH_CHAPTER, Kind.SOMETHING_NEW -> LearnKind.Lesson
-            Kind.FIX_MISTAKE, Kind.PATTERN -> LearnKind.Mistakes
             Kind.MOCK -> LearnKind.Mock
             Kind.PRACTICE, Kind.WEAK_SPOT -> LearnKind.Practice
             Kind.PRONUNCIATION, Kind.REVIEW -> LearnKind.Review

@@ -21,6 +21,7 @@ import {
 import { getSettledSkillIds } from "./settled-skills";
 import {
   FOCUS_WEIGHT_FACTOR,
+  type MockMiss,
   type SkillReadiness,
   getExamValue,
   inheritValues,
@@ -42,6 +43,7 @@ type QueueInput = {
   >[];
   lessons: readonly PlannerLesson[];
   missedSkillIds?: ReadonlySet<string>;
+  mockMisses?: ReadonlyMap<string, MockMiss>;
   paceFactor: number;
   prerequisites: ReadonlyMap<string, readonly string[]>;
   readiness: ReadonlyMap<string, SkillReadiness>;
@@ -166,9 +168,11 @@ function rankSkills(input: QueueInput): RankedSkill[] {
     const reduced = !focused && input.settings.reducedAreas.includes(area);
 
     const readiness = input.readiness.get(skill.skillId);
-    const baseValue = getExamValue({ readiness, weight: skill.weight ?? 1 });
+    const mockMiss = input.mockMisses?.get(skill.skillId);
+    const baseValue = getExamValue({ mockMiss, readiness, weight: skill.weight ?? 1 });
 
     const value = getExamValue({
+      mockMiss,
       readiness,
       weight: (skill.weight ?? 1) * getSteerFactor({ focused, reduced }),
     });

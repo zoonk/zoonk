@@ -2,7 +2,7 @@ import { withApiErrorBoundary } from "@/lib/api-handler";
 import { languageError } from "@/lib/language-errors";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readPathParams } from "@/lib/request-input";
-import { getTodayPattern } from "@zoonk/core/language/patterns/today";
+import { getNoticedPattern } from "@zoonk/core/language/patterns/noticed";
 import { NextResponse } from "next/server";
 
 async function getGoalMistakePattern(
@@ -11,7 +11,7 @@ async function getGoalMistakePattern(
 ) {
   const path = await readPathParams(context, goalPathParamsSchema);
 
-  const result = await getTodayPattern({ goalId: path.goalId });
+  const result = await getNoticedPattern({ goalId: path.goalId });
 
   if (result.status === "notLanguage" || result.status === "noGoal") {
     return NextResponse.json({ pattern: null });

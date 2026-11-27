@@ -51,6 +51,7 @@ describe("a day with only original mistakes to practice", () => {
       today: {
         session: {
           blocks: [{ questions: 1, screen: "mistakesPractice", status: "pending" }],
+          missions: [{ kind: "askBuddy", minutes: 2 }],
           status: "unstarted",
         },
       },

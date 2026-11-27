@@ -14,9 +14,7 @@
   "buddy_page_first_challenge": "1e8521b9295cb95cab92d8330a75675f01fae973528de4abcad5315c7b7949ea",
   "buddy_page_first_essay": "d5cc256f0e344d08ff669a6327aadbdcffcb965ccfb1b80e0e4bf64b8d79a6f8",
   "buddy_page_first_lesson": "cc810cab4c1fbf003f65e51d8eeb7e7d1c42d9f0b229b07cb3c9dd0b776eb2b6",
-  "buddy_page_first_mistake": "ef024efa6c8a376498b2c1f8fc83d0a6ff72af719b6d439220bfdc50ea219f67",
   "buddy_page_first_mock": "375db7eb41f9db02eb6958a9ae7d1943244fa5a93fa3b94e05d1d88b0184504b",
-  "buddy_page_first_pattern": "e8938bf6c15312b067b8d49522a22328d7ec4ccddde912eb286e96ec8a4b2511",
   "buddy_page_first_review": "3e259b5b03c644a1ace144fe5ea4bf44b200895f76633c46be32848165b5b6d7",
   "buddy_page_first_steps": "33316f40225704abf2faa843477c1975fbb17b7d9f9f27919bbfdcfedce538a4",
   "buddy_page_first_steps_done": "bd49a2c09763627c860b99b8844bc678909fd041a759b01b39d784e1e66cb54f",
@@ -45,9 +43,7 @@
   "buddy_page_when_challenge_on": "1dc93f94eaddcc22cac7e2a275084d1ed76fadeca3f53e3b0874b7e7689d19e5",
   "buddy_page_when_essay": "8611a7825e494c1b76daac55378b4dea37eb0bb2fe1dec6df3b577b4373765a0",
   "buddy_page_when_lesson": "e2340de083358b769da01a43308d3f8e193af1956093d5f81d3a0838457d486e",
-  "buddy_page_when_mistake": "8020e178b3a04843f3f9a8acdc432c165817aa96737b73b533283035c4e89bf4",
   "buddy_page_when_mock": "bfeed159710324ede8451c4db668199e642c389efb3cab254d5384245af670f7",
-  "buddy_page_when_pattern": "3e5e3addddbd265a30bd4de7a77fee394586b643665b91a57835cb07d27651a5",
   "buddy_page_when_review": "ed50b86b602632ad30c6f510447d6e09361dffeddf9f9dbf08507052fb622c3a"
 }
 -->
@@ -90,9 +86,6 @@
     <string name="buddy_page_first_steps_done">계획에 있는 활동을 모두 해 봤어요.</string>
     <string name="buddy_page_first_lesson">첫 레슨 끝내기</string>
     <string name="buddy_page_first_review">첫 복습하기</string>
-    <string name="buddy_page_first_mistake">첫 오답 고치기</string>
-    <!-- A first-steps mission: practice a kind of mistake the learner keeps making. -->
-    <string name="buddy_page_first_pattern">실수 패턴 연습하기</string>
     <!-- A first-steps mission. %1$s is the learner's buddy's name. -->
     <string name="buddy_page_first_ask">%1$s에게 물어보기</string>
     <string name="buddy_page_first_essay">첫 에세이 쓰기</string>
@@ -106,9 +99,7 @@
     <string name="buddy_page_when_challenge_on">%1$s 첫 챌린지 때</string>
     <string name="buddy_page_when_challenge">첫 챌린지 때</string>
     <string name="buddy_page_when_essay">첫 에세이를 쓰는 날</string>
-    <string name="buddy_page_when_mistake">처음 틀린 다음 날</string>
     <string name="buddy_page_when_review">첫 복습 날짜가 되면</string>
-    <string name="buddy_page_when_pattern">실수 패턴이 보이면</string>
     <string name="buddy_page_when_call">대화 시간이 다시 생기면</string>
     <string name="buddy_page_when_buddy">다시 질문할 수 있게 되면</string>
     <string name="buddy_page_when_lesson">다음 레슨이 있는 날</string>

@@ -33,7 +33,7 @@ import { preparePlanWork } from "./plan-work";
 import { type BossPlanFacts, settlePlannedBosses } from "./planned-bosses";
 import { resolvePlannedMocks, settlePlannedMocks } from "./planned-mocks";
 import { getSkillMinutes } from "./skill-minutes";
-import { type SkillReadiness } from "./skill-order";
+import { type MockMiss, type SkillReadiness } from "./skill-order";
 import { joinStandIns } from "./stand-in-parts";
 import { listDroppedSkills, summarizePlan } from "./summarize-plan";
 import { getLastKeptDay, listStillSetAside, withTestOutsAhead } from "./this-week-items";
@@ -71,6 +71,8 @@ export type BuildPlanInput = {
   missedSkillIds?: ReadonlySet<string>;
   mockClocks?: readonly MockClock[];
   mockMinutes: number;
+  /** The topics the latest mock missed, while the plan follows that mock (`settings.mockReplan`). */
+  mockMisses?: ReadonlyMap<string, MockMiss>;
   movesPhaseEnds?: boolean;
   noticeAreas?: ReadonlySet<string> | null;
   mode: PlanningMode;

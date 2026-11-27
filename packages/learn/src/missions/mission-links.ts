@@ -20,9 +20,7 @@ export type MissionLinks = {
     areaPractice: (areaId: string) => string;
     buddy: string;
     call: (chapterId: string) => string;
-    mistakesPractice: string;
     mockChooser: string;
-    pattern: (patternId: string) => string;
     pronunciation: string;
   };
   openBlock: (blockId: string) => Promise<boolean>;
@@ -33,9 +31,8 @@ export type MissionLinks = {
   openStep?: (ref: DayBlockRef) => Promise<boolean>;
 };
 
-/** A page that picks something when opened (the notebook's practice) isn't prefetched. */
 type MissionOpen =
-  | { href: string; onOpen?: () => void; prefetch: boolean }
+  | { href: string; onOpen?: () => void }
   | { failed: boolean; open: () => void; pending: boolean };
 
 function getBlockOpen({
@@ -63,7 +60,7 @@ export function useMissionOpen({
   const [pending, startTransition] = useTransition();
   const [failed, setFailed] = useState(false);
   const { askBuddy, hrefs } = links;
-  const page = (href: string, prefetch = true) => ({ href, onOpen: links.openPage, prefetch });
+  const page = (href: string) => ({ href, onOpen: links.openPage });
 
   if (!opens) {
     return null;
@@ -94,12 +91,8 @@ export function useMissionOpen({
       return page(hrefs.areaPractice(opens.areaId));
     case "call":
       return page(hrefs.call(opens.chapterId));
-    case "mistakesPractice":
-      return page(hrefs.mistakesPractice, false);
     case "mockChooser":
       return page(hrefs.mockChooser);
-    case "pattern":
-      return page(hrefs.pattern(opens.patternId));
     case "pronunciation":
       return page(hrefs.pronunciation);
     default:

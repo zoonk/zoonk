@@ -6323,7 +6323,7 @@
         "tags": [
           "Language"
         ],
-        "description": "What Today adds for a language goal: the level across skills with the target (shown instead of preparation), the mispronounced words due to be said again, and the speaking tasks of the exam the goal names in its language, if any. The pattern noticed in recent mistakes comes with the day, in GET /v1/today.",
+        "description": "What Today adds for a language goal: the level across skills with the target (shown instead of preparation), the mispronounced words due to be said again, and the speaking tasks of the exam the goal names in its language, if any.",
         "operationId": "getLanguageToday",
         "summary": "Get Today's language cards",
         "parameters": [
@@ -21809,7 +21809,7 @@
     },
     "/mocks/{blockId}/plan-changes": {
       "post": {
-        "description": "The learner's yes to what a finished mock offers (`adapt` on GET /mocks/{blockId}), never applied without it: `skip` tests out the plan's lessons on the topics the mock showed they know (every question on them right, at least two), as a change with an undo; `focus` gives the area that went worst more of the plan's time, as their own focus. `unchanged` when nothing moved, with why for a focus.",
+        "description": "The learner's yes to what a finished mock offers (`adapt` on GET /mocks/{blockId}), never applied without it: `skip` tests out the plan's lessons on the topics the mock showed they know (every question on them right, at least three), as a change with an undo. `unchanged` when nothing moved.",
         "operationId": "adaptPlanFromMock",
         "security": [
           {
@@ -26847,7 +26847,7 @@
     },
     "/today": {
       "get": {
-        "description": "Today, the screen learners open every day, for a goal (the active goal by default): the goal and its countdown, the status line (plan status and preparation), the saved day or an unopened preview without persisted IDs (status unstarted), the week, the week's checkpoint, at most one insight and, for a language goal, the pattern noticed in recent mistakes that it offers beside the day. With `timeZone`, the read uses the device's local day without changing the goal or planning. Start follows the device zone and settles the plan. No study session is created or changed: the learner opens the day through POST /v1/goals/{goalId}/study-sessions.",
+        "description": "Today, the screen learners open every day, for a goal (the active goal by default): the goal and its countdown, the status line (plan status and preparation), the saved day or an unopened preview without persisted IDs (status unstarted), the week, the week's checkpoint, and at most one insight. With `timeZone`, the read uses the device's local day without changing the goal or planning. Start follows the device zone and settles the plan. No study session is created or changed: the learner opens the day through POST /v1/goals/{goalId}/study-sessions.",
         "operationId": "getToday",
         "security": [
           {
@@ -33021,10 +33021,9 @@
           "offer": {
             "type": "string",
             "enum": [
-              "skip",
-              "focus"
+              "skip"
             ],
-            "description": "`skip`: the plan skips the lessons of the topics the mock showed the learner knows (`adapt.skip`), with an undo. `focus`: the area that went worst gets more of the plan's time (`adapt.focus`)"
+            "description": "`skip`: the plan skips the lessons of the topics the mock showed the learner knows (`adapt.skip`), with an undo"
           },
           "timeZone": {
             "description": "The device's IANA timezone. The learner's day follows the goal's stored timezone; this one is used only when the goal has none, then UTC",
@@ -45032,7 +45031,7 @@
           },
           "kind": {
             "type": "string",
-            "description": "edited, testedOut, missedDays, estimateUpdated (automatic re-estimates from pace data or written lessons changed the net seen lesson count by more than one, so the plan allows for the time its lessons need), resumed, noticeChanged (the plan followed its official exam notice and removed areas or skills), relearn (a miss in practice brought back the lessons of a topic taken as known; `effect.topicsAdded` names it) or coverageChanged (placement answers changed which topics fit by the date; `effect.topicsLeftOut` and `effect.topicsAdded` name them); keep unknown kinds"
+            "description": "edited, testedOut, missedDays, estimateUpdated (automatic re-estimates from pace data or written lessons changed the net seen lesson count by more than one, so the plan allows for the time its lessons need), resumed, noticeChanged (the plan followed its official exam notice and removed areas or skills), relearn (a miss in practice brought back the lessons of a topic taken as known; `effect.topicsAdded` names it), mockReordered (a finished mock moved the topics it missed, not yet taught, earlier in the plan) or coverageChanged (placement answers changed which topics fit by the date; `effect.topicsLeftOut` and `effect.topicsAdded` name them); keep unknown kinds"
           },
           "lessonsSkipped": {
             "type": "integer",
@@ -47273,7 +47272,7 @@
         "properties": {
           "pattern": {
             "nullable": true,
-            "description": "A language goal's pattern noticed in recent mistakes, not practiced or dismissed yet; open it with GET /v1/mistake-patterns/{patternId}. Null for any other goal, and when one of the day's missions already opens it",
+            "description": "A language goal's pattern noticed in recent mistakes, not practiced or dismissed yet; open it with GET /v1/mistake-patterns/{patternId}. Null for any other goal",
             "type": "object",
             "properties": {
               "id": {
@@ -49175,8 +49174,6 @@
                 "mock",
                 "essay",
                 "practice",
-                "fixMistake",
-                "pattern",
                 "pronunciation",
                 "call",
                 "askBuddy",
@@ -49249,8 +49246,6 @@
               "mock",
               "essay",
               "practice",
-              "fixMistake",
-              "pattern",
               "pronunciation",
               "call",
               "askBuddy",
@@ -49317,9 +49312,6 @@
             "type": "number",
             "minimum": 0
           },
-          "patternTitle": {
-            "type": "string"
-          },
           "rematch": {
             "type": "boolean"
           },
@@ -49350,42 +49342,6 @@
             "required": [
               "blockId",
               "kind"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "properties": {
-              "kind": {
-                "type": "string",
-                "enum": [
-                  "mistakesPractice"
-                ]
-              }
-            },
-            "required": [
-              "kind"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "properties": {
-              "kind": {
-                "type": "string",
-                "enum": [
-                  "pattern"
-                ]
-              },
-              "patternId": {
-                "type": "string",
-                "format": "uuid",
-                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-              }
-            },
-            "required": [
-              "kind",
-              "patternId"
             ],
             "additionalProperties": false
           },
@@ -82371,8 +82327,6 @@
                 "mock",
                 "essay",
                 "practice",
-                "fixMistake",
-                "pattern",
                 "pronunciation",
                 "call",
                 "askBuddy",
@@ -94002,8 +93956,6 @@
                   "enum": [
                     "somethingNew",
                     "review",
-                    "fixMistake",
-                    "pattern",
                     "askBuddy",
                     "essay",
                     "call",
@@ -94085,9 +94037,7 @@
                         "kind": {
                           "type": "string",
                           "enum": [
-                            "mistake",
                             "review",
-                            "pattern",
                             "call",
                             "buddy",
                             "lesson",
@@ -97552,36 +97502,10 @@
       },
       "MockAdapt": {
         "nullable": true,
-        "description": "What the finished mock offers to change in the plan, each applied only once the learner says so (POST /v1/mocks/{blockId}/plan-changes); null before it's over and for a placement mock",
+        "description": "What the finished mock offers to change in the plan, applied only once the learner says so (POST /v1/mocks/{blockId}/plan-changes); null when it offers nothing, before it's over and for a placement mock",
         "type": "object",
         "properties": {
-          "focus": {
-            "nullable": true,
-            "description": "The area that went worst, to give more of the plan's time",
-            "type": "object",
-            "properties": {
-              "area": {
-                "type": "string"
-              },
-              "correct": {
-                "type": "number"
-              },
-              "total": {
-                "type": "integer",
-                "minimum": -9007199254740991,
-                "maximum": 9007199254740991
-              }
-            },
-            "required": [
-              "area",
-              "correct",
-              "total"
-            ],
-            "additionalProperties": false
-          },
           "skip": {
-            "nullable": true,
-            "description": "The lessons of the topics the mock showed the learner knows (every question right), to skip",
             "type": "object",
             "properties": {
               "lessons": {
@@ -97600,11 +97524,11 @@
               "lessons",
               "topics"
             ],
-            "additionalProperties": false
+            "additionalProperties": false,
+            "description": "The lessons of the topics the mock showed the learner knows (every question right), to skip"
           }
         },
         "required": [
-          "focus",
           "skip"
         ],
         "additionalProperties": false
@@ -97828,6 +97752,14 @@
           },
           "minutesUsed": {
             "type": "number"
+          },
+          "movedTopics": {
+            "description": "Up to three topics this mock missed that the plan hadn't taught yet and moved earlier when it finished, soonest first; absent when nothing moved",
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "net": {
             "nullable": true,
@@ -98580,15 +98512,6 @@
             "minimum": 0,
             "maximum": 9007199254740991
           },
-          "reason": {
-            "nullable": true,
-            "description": "Why a focus left the plan as it is: every lesson of the area is in already (`alreadyIn`), or it starts as early as what it builds on allows (`cantMove`)",
-            "type": "string",
-            "enum": [
-              "alreadyIn",
-              "cantMove"
-            ]
-          },
           "status": {
             "type": "string",
             "enum": [
@@ -98600,7 +98523,6 @@
         "required": [
           "changeId",
           "lessonsSkipped",
-          "reason",
           "status"
         ],
         "additionalProperties": false
@@ -100926,8 +100848,6 @@
                     "mock",
                     "essay",
                     "practice",
-                    "fixMistake",
-                    "pattern",
                     "pronunciation",
                     "call",
                     "askBuddy",
@@ -101187,42 +101107,6 @@
                       "required": [
                         "kind",
                         "ref"
-                      ],
-                      "additionalProperties": false
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "kind": {
-                          "type": "string",
-                          "enum": [
-                            "mistakesPractice"
-                          ]
-                        }
-                      },
-                      "required": [
-                        "kind"
-                      ],
-                      "additionalProperties": false
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "kind": {
-                          "type": "string",
-                          "enum": [
-                            "pattern"
-                          ]
-                        },
-                        "patternId": {
-                          "type": "string",
-                          "format": "uuid",
-                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                        }
-                      },
-                      "required": [
-                        "kind",
-                        "patternId"
                       ],
                       "additionalProperties": false
                     },
@@ -105025,7 +104909,7 @@
           },
           "notice": {
             "default": null,
-            "description": "Today's one notice, the most pressing first: `exam` (its days and how it went), `planChange`, `insight`, `sourceChange`, `uploadRequest`, `examChoice`, `practice` (a language goal's noticed pattern or words to say again, from its Today view), `focusTest` or `suggestedGoal`; null when none applies",
+            "description": "Today's one notice, the most pressing first: `exam` (its days and how it went), `planChange`, `insight`, `sourceChange`, `uploadRequest`, `examChoice`, `practice` (a language goal's words to say again, from its Today view), `focusTest` or `suggestedGoal`; null when none applies",
             "nullable": true,
             "type": "string",
             "enum": [
@@ -105039,34 +104923,6 @@
               "suggestedGoal",
               "uploadRequest"
             ]
-          },
-          "pattern": {
-            "nullable": true,
-            "description": "A language goal's rule noticed in recent mistakes (never a finding of typos, which leaves nothing to do), not practiced or dismissed yet, offered beside the day; open it with GET /v1/mistake-patterns/{patternId}. Null for any other goal, without one, and when one of the day's missions already opens it",
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string",
-                "format": "uuid",
-                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-              },
-              "kind": {
-                "type": "string",
-                "enum": [
-                  "pattern",
-                  "typos"
-                ]
-              },
-              "title": {
-                "type": "string"
-              }
-            },
-            "required": [
-              "id",
-              "kind",
-              "title"
-            ],
-            "additionalProperties": false
           },
           "planChange": {
             "nullable": true,
@@ -105381,7 +105237,6 @@
           "lessonStatus",
           "mockFunding",
           "notice",
-          "pattern",
           "planChange",
           "progress",
           "session",

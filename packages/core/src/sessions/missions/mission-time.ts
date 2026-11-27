@@ -2,14 +2,9 @@ import { type StudySessionBlock } from "@zoonk/db";
 import { readBlockPayload } from "../block-payload";
 import { type MissionKind } from "./catalog";
 
-const MINUTES_PER_FIX = 2;
-
-const OUTSIDE_MINUTES = {
-  askBuddy: 2,
-  call: 2,
-  pattern: 3,
-  pronunciation: 3,
-} as const satisfies Partial<Record<MissionKind, number>>;
+const OUTSIDE_MINUTES = { askBuddy: 2, call: 2, pronunciation: 3 } as const satisfies Partial<
+  Record<MissionKind, number>
+>;
 
 function isOutsideKind(kind: MissionKind): kind is keyof typeof OUTSIDE_MINUTES {
   return kind in OUTSIDE_MINUTES;
@@ -43,10 +38,6 @@ export function getMissionMinutes({
 
   if (left === 0) {
     return 0;
-  }
-
-  if (kind === "fixMistake") {
-    return left * MINUTES_PER_FIX;
   }
 
   if (isOutsideKind(kind)) {

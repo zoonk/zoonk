@@ -199,7 +199,7 @@ export const mockPaths = {
   "/mocks/{blockId}/plan-changes": {
     post: {
       description:
-        "The learner's yes to what a finished mock offers (`adapt` on GET /mocks/{blockId}), never applied without it: `skip` tests out the plan's lessons on the topics the mock showed they know (every question on them right, at least two), as a change with an undo; `focus` gives the area that went worst more of the plan's time, as their own focus. `unchanged` when nothing moved, with why for a focus.",
+        "The learner's yes to what a finished mock offers (`adapt` on GET /mocks/{blockId}), never applied without it: `skip` tests out the plan's lessons on the topics the mock showed they know (every question on them right, at least three), as a change with an undo. `unchanged` when nothing moved.",
       operationId: "adaptPlanFromMock",
       requestBody: {
         content: { "application/json": { schema: mockPlanOfferInputSchema } },

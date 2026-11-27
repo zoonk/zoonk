@@ -18,7 +18,6 @@
   "mock_result_by_test": "6028c30b93ddd1bc5ed2281f4141ca465fa985f1a042f9d75d617efb41a48306",
   "mock_result_by_topic": "b167547ee7e403e241f71210e168e19b9f604b9f1c2935e7fc21d0ab5556fa01",
   "mock_result_calibration_detail": "4a0d0acb526e110ef3d10faaeda3017478cb24953217a7ea74a64d08cd73ffa7",
-  "mock_result_change_plan": "8a9c161a6030ce9bfb176529d53c4feddfb25d302986968aa5527fe3f1c57fe7",
   "mock_result_continue": "dea0a900ca68a5d372c02ee77fd61736a8dd9e0425d99c06ef31a10151b46520",
   "mock_result_details": "4e380786bcae42dbc4d8a43868bb46e26506d83c9be04e18e0cc16935d9f59ad",
   "mock_result_down": "abfba58f77bf767f98d0d3165953ae2cabb586a7f188b4687552b390939a06db",
@@ -29,9 +28,6 @@
   "mock_result_estimated_exam_score": "1693f54c1a57aad476d62b8f1ca02d1d4a443d9a93392fccd91b54fe32430d31",
   "mock_result_estimated_score": "848fa890b0884bc20d537aaa5e2e8ecd8b757f5e1c7e154f2bfa7131832e7758",
   "mock_result_every_minimum": "2fdf151efab5e37973728e780677407f6b50d2c172e68e2fc8213d42f8f6c9f8",
-  "mock_result_focus_done": "f04f0fb49b1948edb7995410ac94d3f0724d4e496e4916af7149724fc2b02537",
-  "mock_result_focus_line": "af014d30d881a2972fe04caf8511d47296feff2d99ee744a3a6ec3e0022138a9",
-  "mock_result_focus_title": "477cf4100f31c314235a86c249ecfcab9657b5c264cf639770f31947b035c5fa",
   "mock_result_grade_it": "ebae1a9a9a40e1504fd644ca4808010ca63fe57866ffa8e8eafba5fd648a8ed8",
   "mock_result_grading": "104f5e27c793ef6ca44386bab83847b30e4f639f90f855eef32974fe45fb6b6d",
   "mock_result_grading_failed": "df26acce102c5671190e098a228a9db51f5f77387cd0526c8c715bccee6ced92",
@@ -58,7 +54,6 @@
   "mock_result_not_done": "d3c959351ff4b67dec7102cfe59946100479827e6e05223ea51490937c1ffecb",
   "mock_result_not_every_task": "aa43fba7730bddac5594447b422fc93c943538a095115a7683992684bb6dce75",
   "mock_result_not_graded": "a212fca80c361ae8ac4ebba884badc88d647b30c1785b63c4e4d1ce481d4f852",
-  "mock_result_not_now": "414e792975119f144e6365762486ce9887f3656ccdda2e89cfe9eae0210cb118",
   "mock_result_notice_scoring": "71c850d28a8e8dbf5b706c3193a51cd1733bb9045a800e542e5510fff86f8fa4",
   "mock_result_of": "c428b4003657274b38cef73123c241e325aa726c698dc98c7659682537216e70",
   "mock_result_partly_right": "9f50cb39878e55e5e44e67cf60d900474377ed2d9665a7800f812eeae7051618",
@@ -366,8 +361,6 @@
         <item quantity="many">Pominąć %d lekcji z materiałem, który już znasz?</item>
         <item quantity="other">Pominąć %d lekcji z materiałem, który już znasz?</item>
     </plurals>
-    <!-- %1$s is a subject, such as "Mathematics". -->
-    <string name="mock_result_focus_title">Poświęcić więcej uwagi przedmiotowi: %1$s?</string>
     <!-- %1$s lists the topics, such as "Fractions, Ratios and 2 more topics". -->
     <string name="mock_result_skip_line">W tych tematach masz komplet poprawnych odpowiedzi: %1$s.</string>
     <!-- %1$s names three topics; %2$d counts the rest: "Fractions, Ratios, Areas and 2 more topics". -->
@@ -377,16 +370,8 @@
         <item quantity="many">%1$s i jeszcze %2$d tematów</item>
         <item quantity="other">%1$s i jeszcze %2$d tematów</item>
     </plurals>
-    <!-- %1$s can be a decimal, since some questions give partial credit: "You got 4.5 of 10 right there." -->
-    <plurals name="mock_result_focus_line">
-        <item quantity="one">Twój wynik tutaj to %1$s z %2$d.</item>
-        <item quantity="few">Twój wynik tutaj to %1$s z %2$d.</item>
-        <item quantity="many">Twój wynik tutaj to %1$s z %2$d.</item>
-        <item quantity="other">Twój wynik tutaj to %1$s z %2$d.</item>
-    </plurals>
     <string name="mock_result_skip_them">Pomiń je</string>
     <string name="mock_result_keep_them">Zostaw je</string>
-    <string name="mock_result_change_plan">Zmień mój plan</string>
     <!-- The share the learner is prepared rose since the last mock exam: "Up from 12%". -->
     <string name="mock_result_up_from">Wzrost z %1$s</string>
     <!-- The share the learner is prepared fell since the last mock exam: "Down from 15%". -->
@@ -399,9 +384,6 @@
         <item quantity="many">Pominięto %d lekcji.</item>
         <item quantity="other">Pominięto %d lekcji.</item>
     </plurals>
-    <!-- %1$s is a subject, such as "Mathematics". -->
-    <string name="mock_result_focus_done">W twoim planie jest więcej czasu na przedmiot: %1$s.</string>
     <string name="mock_result_after">Po tym egzaminie próbnym</string>
     <string name="mock_result_continue">Kontynuuj</string>
-    <string name="mock_result_not_now">Nie teraz</string>
 </resources>
