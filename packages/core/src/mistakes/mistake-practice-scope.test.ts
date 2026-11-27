@@ -10,6 +10,7 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { pickInMistake } from "../_test-utils/shown-choice";
 import { getMock } from "../exams/mocks/get-mock";
 import { mockConditionsSchema } from "../exams/mocks/mock-contract";
 import { gradeChoiceAnswer, parseChoiceItem } from "../learner/_utils/choice-items";
@@ -66,10 +67,10 @@ describe("Scoped mistake practice", () => {
       result.status === "ready" && result.practice.map((entry) => entry.mistakeId),
     ).toStrictEqual([last!.mistake.id, first!.mistake.id]);
 
-    const answer = ({ item, mistake }: (typeof assigned)[number]) =>
+    const answer = async ({ item, mistake }: (typeof assigned)[number]) =>
       answerMistakePractice({
         input: {
-          answer: { selectedIndex: 0 },
+          answer: await pickInMistake({ mistakeId: mistake.id }),
           attemptId: randomUUID(),
           durationMs: 4000,
           itemId: item.id,
@@ -129,9 +130,14 @@ describe("Scoped mistake practice", () => {
 
     mockSession(user.id);
 
-    const fix = ({ item, mistake }: (typeof assigned)[number]) =>
+    const fix = async ({ item, mistake }: (typeof assigned)[number]) =>
       answerMistakePractice({
-        input: { answer: { selectedIndex: 0 }, durationMs: 4000, itemId: item.id, timeZone: "UTC" },
+        input: {
+          answer: await pickInMistake({ mistakeId: mistake.id }),
+          durationMs: 4000,
+          itemId: item.id,
+          timeZone: "UTC",
+        },
         mistakeId: mistake.id,
       });
 
@@ -285,7 +291,7 @@ describe("Scoped mistake practice", () => {
 
     const answered = await answerMistakePractice({
       input: {
-        answer: { selectedIndex: 0 },
+        answer: await pickInMistake({ mistakeId: earlier.mistake!.id }),
         durationMs: 4000,
         itemId: item.id,
         run: { answerIds: [], mockId: mock.id },
@@ -341,7 +347,7 @@ describe("Scoped mistake practice", () => {
 
       const answered = await answerMistakePractice({
         input: {
-          answer: { selectedIndex: 0 },
+          answer: await pickInMistake({ mistakeId: first!.mistake.id }),
           durationMs: 4000,
           itemId: first!.item.id,
           timeZone: "UTC",
@@ -418,4 +424,5 @@ describe("Scoped mistake practice", () => {
       status: "notFound",
     });
   });
+
 });

@@ -12,6 +12,7 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { pickInMistake } from "../_test-utils/shown-choice";
 import { FREE_LESSON_LIMIT } from "../entitlements/limits";
 import { completeLibraryLesson } from "../lesson-player/complete-library-lesson";
 import { startLibraryLesson } from "../lesson-player/start-library-lesson";
@@ -201,7 +202,7 @@ describe("adaptive study days", () => {
     await expect(
       answerMistakePractice({
         input: {
-          answer: { selectedIndex: 0 },
+          answer: await pickInMistake({ mistakeId: mistake.id }),
           durationMs: 4000,
           itemId: first.id,
           run: { answerIds: [], goalId: goal.id },

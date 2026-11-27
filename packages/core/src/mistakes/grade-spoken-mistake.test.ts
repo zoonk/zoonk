@@ -13,6 +13,7 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { pickInMistake } from "../_test-utils/shown-choice";
 import { getUsageRule } from "../entitlements/limits";
 import { gradeSpokenAnswer } from "../library/language/grade-spoken-answer";
 import { answerMistakePractice } from "./answer-mistake-practice";
@@ -279,7 +280,7 @@ describe("Original notebook questions", () => {
     await expect(
       answerMistakePractice({
         input: {
-          answer: { selectedIndex: 0 },
+          answer: await pickInMistake({ mistakeId: choice.id }),
           durationMs: 2000,
           itemId: item.id,
           run: { answerIds: [], blockId: block.id },

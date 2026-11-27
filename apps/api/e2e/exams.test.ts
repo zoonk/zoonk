@@ -423,7 +423,7 @@ test.describe("Exams API", () => {
 
       await api.put(`${path}/answers`, {
         data: {
-          answer: { selectedIndex: 1 },
+          answer: tapOption(question.options, { right: false }),
           durationMs: 5000,
           flagged: false,
           itemId: question.itemId,

@@ -178,6 +178,7 @@ test.describe("Mistake practice API", () => {
       });
 
       expect(scoped.practice.map((entry) => entry.mistakeId)).toStrictEqual([today.id]);
+      const shown = scoped.practice[0]?.questions[0]?.options;
 
       const completion = { answerIds: [], blockId: block.id, ended: true, timeZone: "UTC" };
       const foreignCompletion = await stranger.api.post(completionPath, { data: completion });
@@ -191,7 +192,7 @@ test.describe("Mistake practice API", () => {
       ).resolves.toMatchObject({ status: "active" });
 
       const input = {
-        answer: { selectedIndex: 0 },
+        answer: tapOption(shown),
         attemptId: randomUUID(),
         durationMs: 4000,
         itemId: today.itemId,
@@ -213,7 +214,9 @@ test.describe("Mistake practice API", () => {
       expect(feedback).toMatchObject({ fixed: false, isCorrect: true, requiresLaterDay: true });
 
       const retry = await readBody({
-        response: await api.post(answerPath, { data: { ...input, answer: { selectedIndex: 1 } } }),
+        response: await api.post(answerPath, {
+          data: { ...input, answer: tapOption(shown, { right: false }) },
+        }),
         schema: mistakePracticeFeedbackSchema,
       });
 
@@ -221,7 +224,12 @@ test.describe("Mistake practice API", () => {
 
       const repeat = await readBody({
         response: await api.post(answerPath, {
-          data: { ...input, answer: { selectedIndex: 1 }, attemptId: randomUUID(), run: undefined },
+          data: {
+            ...input,
+            answer: tapOption(shown, { right: false }),
+            attemptId: randomUUID(),
+            run: undefined,
+          },
         }),
         schema: mistakePracticeFeedbackSchema,
       });
