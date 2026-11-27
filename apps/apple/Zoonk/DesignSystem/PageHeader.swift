@@ -6,7 +6,8 @@ import SwiftUI
 /// through `barTitleAfterHero(_:)`, so Back, VoiceOver and the iPad and iPhone Duo bars name it,
 /// and its bar shows the name only once this title scrolls under it. A page about someone, as the
 /// buddy's is, leads its title with their `mark` and puts their status `beside` it; at
-/// accessibility sizes the three stack.
+/// accessibility sizes the mark and the trailing share the first line, as a `MarkedRow`'s do, over
+/// the title and its status.
 struct PageHeader<Mark: View, Beside: View, Trailing: View>: View {
   let title: Text
   var chip: Chip?
@@ -61,26 +62,24 @@ struct PageHeader<Mark: View, Beside: View, Trailing: View>: View {
           .padding(.bottom, 8)
       }
 
-      AccessibilityStack(alignment: .firstTextBaseline, spacing: 12) {
-        AccessibilityStack(alignment: .firstTextBaseline, spacing: 12, stackedSpacing: 4) {
+      if Mark.self == EmptyView.self {
+        AccessibilityStack(alignment: .firstTextBaseline, spacing: 12) {
+          titled(titleCapHeight)
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+          trailing
+            .centeredOnCaps(titleCapHeight)
+        }
+      } else {
+        MarkedRow(alignment: .firstTextBaseline, stackedSpacing: 4) {
           mark
             .centeredOnCaps(titleCapHeight)
-
-          AccessibilityStack(alignment: .firstTextBaseline, spacing: 10, stackedSpacing: 0) {
-            title
-              .typeStyle(.pageTitle)
-              .foregroundStyle(Color(.foreground))
-              .accessibilityAddTraits(.isHeader)
-              .heroTitle()
-
-            beside
-              .centeredOnCaps(titleCapHeight)
-          }
+        } content: {
+          titled(titleCapHeight)
+        } end: {
+          trailing
+            .centeredOnCaps(titleCapHeight)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-
-        trailing
-          .centeredOnCaps(titleCapHeight)
       }
 
       if !facts.isEmpty {
@@ -95,6 +94,19 @@ struct PageHeader<Mark: View, Beside: View, Trailing: View>: View {
     }
     .padding(.bottom, 8)
     .listRowSeparator(.hidden)
+  }
+
+  private func titled(_ capHeight: Double) -> some View {
+    AccessibilityStack(alignment: .firstTextBaseline, spacing: 10, stackedSpacing: 0) {
+      title
+        .typeStyle(.pageTitle)
+        .foregroundStyle(Color(.foreground))
+        .accessibilityAddTraits(.isHeader)
+        .heroTitle()
+
+      beside
+        .centeredOnCaps(capHeight)
+    }
   }
 }
 
