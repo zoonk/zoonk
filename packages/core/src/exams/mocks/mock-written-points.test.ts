@@ -5,11 +5,12 @@ import { type MockConditions } from "./mock-contract";
 import { type MockEssayView } from "./mock-view-contract";
 import { snapshotMockWriting, withMockWrittenPoints } from "./mock-written-points";
 
-const RESIDUALS = {
-  over: Array.from({ length: 19 }, () => 0.02),
-  overFloor: 0,
-  under: Array.from({ length: 19 }, () => 0),
-  underFloor: 0,
+const CALIBRATION = {
+  residuals: {
+    over: Array.from({ length: 40 }, () => 0.02),
+    under: Array.from({ length: 40 }, () => 0),
+  },
+  verdicts: { above: true, below: true },
 };
 
 const ESSAYS = [
@@ -138,8 +139,14 @@ describe(withMockWrittenPoints, () => {
       conditions: CONDITIONS,
       essays: [short, long],
       grades: new Map([
-        ["short", { kind: "points", max: 30, residuals: RESIDUALS, total: { high: 20, low: 18 } }],
-        ["long", { kind: "points", max: 70, residuals: RESIDUALS, total: { high: 36, low: 33 } }],
+        [
+          "short",
+          { calibration: CALIBRATION, kind: "points", max: 30, total: { high: 20, low: 18 } },
+        ],
+        [
+          "long",
+          { calibration: CALIBRATION, kind: "points", max: 70, total: { high: 36, low: 33 } },
+        ],
       ]),
       numericBlankItems: new Set(),
       result: RESULT,

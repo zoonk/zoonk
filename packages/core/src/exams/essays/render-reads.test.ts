@@ -57,7 +57,7 @@ describe("essay render reads", () => {
           assessedSkillIds: [skills[0]!.id],
           charactersPerLine: 55,
           criteria: [{ id: "claim", name: "Claim", points: null }],
-          grading: { criteria: [], kind: "enem", language: null, rounding: null, zeroing: [] },
+          grading: { criteria: [], language: null, rounding: null, zeroing: [] },
           keySource: "practiceKey",
           lines: 30,
           minimumWords: 30,
@@ -98,6 +98,10 @@ describe("essay render reads", () => {
     mockSession(user.id);
     const counts = await countDatabaseStatements(() => getEssay({ blockId: block.id }));
     expect(counts.writes).toBe(0);
-    expect(counts.result).toMatchObject({ essay: { drafts: [], rubric: "enem" }, status: "ready" });
+
+    expect(counts.result).toMatchObject({
+      essay: { drafts: [], rubric: "levels" },
+      status: "ready",
+    });
   });
 });

@@ -15,11 +15,12 @@ import {
   writtenAnswerSchema,
 } from "../writing-contract";
 import { countWritingLines } from "../writing-lines";
-import { type WritingGrader, getWritingArithmetic } from "../writing-rubric-policy";
+import { type WritingGrader, isNumericWritingRubric } from "../writing-rubric-policy";
 import { type EssayContent, readEssayContent } from "./essay-content";
 import { endEssayGradeClaim } from "./essay-grade-claims";
 import { getWritingAttemptId } from "./writing-attempt-id";
 import { applyWritingArithmetic, buildWritingFeedback } from "./writing-feedback";
+import { getWritingGraderSheet } from "./writing-sheet";
 import { indexWritingTasks } from "./writing-task-positions";
 
 const GOOD_SHARE = 0.6;
@@ -49,9 +50,11 @@ export async function gradeWriting({
 
   if (countWords(eligible) < basis.minimumWords || eligible.trim().length === 0) {
     const evidence: WritingEvidence = {
-      aspects: [],
+      awards: [],
       criteria: [],
+      elements: [],
       errors: [],
+      limits: [],
       nextStep: null,
       onTopicQuote: null,
       zeroKind: null,
@@ -68,7 +71,6 @@ export async function gradeWriting({
     });
 
     const result = applyWritingArithmetic({
-      arithmetic: getWritingArithmetic(basis),
       basis,
       belowWordFloor: true,
       context: content.context,
@@ -76,6 +78,7 @@ export async function gradeWriting({
       estimatedLines,
       evidence,
       feedback,
+      numeric: isNumericWritingRubric(basis),
     });
 
     return { ...result, estimatedLines };
@@ -83,17 +86,11 @@ export async function gradeWriting({
 
   const { data: evidence, provenance } = await gradeWritingEvidence({
     analytics,
-    aspects: basis.aspects,
     context: content.context,
     keyPoints: content.keyPoints,
     language,
     question: content.question,
-    scoringBasis: {
-      ...basis.grading,
-      criteria: basis.grading.criteria.length > 0 ? basis.grading.criteria : basis.criteria,
-      lines: basis.lines,
-      points: basis.points,
-    },
+    ...getWritingGraderSheet(basis),
     text: eligible,
   });
 
@@ -106,13 +103,13 @@ export async function gradeWriting({
   });
 
   const grade = applyWritingArithmetic({
-    arithmetic: provenance ? getWritingArithmetic(basis, provenance) : null,
     basis,
     context: content.context,
     eligible,
     estimatedLines,
     evidence,
     feedback,
+    numeric: provenance ? isNumericWritingRubric(basis, provenance) : false,
   });
 
   const grader = provenance && { model: provenance.model, promptVersion: provenance.promptVersion };
@@ -212,7 +209,7 @@ export async function recordEssayGrade(
   const attemptId = getWritingAttemptId({ admissionId: conditions.admissionId, itemId: item.id });
   const basis = readEssayContent(item)?.writing;
 
-  if (!basis || (grade.kind === "points" && !getWritingArithmetic(basis, grader))) {
+  if (!basis || (grade.kind === "points" && !isNumericWritingRubric(basis, grader))) {
     throw new Error("The writing grade is incompatible with its scoring basis.");
   }
 

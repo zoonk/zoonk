@@ -13,6 +13,12 @@ export const OAB_GRADING: WritingSheet = {
     oabStandard(
       "O examinando deve fundamentar suas respostas. A mera citação ou transcrição do dispositivo legal não confere pontuação.",
     ),
+    oabStandard(
+      "A resposta à pergunta do caso e o seu fundamento legal pontuam em separado: a resposta correta sem o dispositivo perde só os pontos do dispositivo.",
+    ),
+    oabNotice(
+      "Dados pessoais ficam como reticências (“Advogado...”, “OAB...”) e nunca são inventados.",
+    ),
   ],
   criteria: [
     oabStandard("Item A", { id: "a", points: 0.85 }),

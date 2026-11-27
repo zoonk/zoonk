@@ -5,19 +5,27 @@ import {
 } from "./calibrated-written-standing";
 
 const PART = { max: 100, minimum: { unit: "points", value: 50 } } as const;
+const BOTH = { above: true, below: true };
+
+/** Forty residuals rank a one-answer part at the 39th and a two-answer part at the 40th. */
+const RESIDUALS = {
+  over: [...Array.from({ length: 38 }, () => 0.01), 0.02, 0.04],
+  under: [...Array.from({ length: 38 }, () => 0.01), 0.03, 0.03],
+};
+
+const UNMEASURED = { over: [], under: [] };
 
 function grade(low: number, high: number, max = 100): CalibratedWritingGrade {
   return {
+    calibration: { residuals: RESIDUALS, verdicts: BOTH },
     kind: "points",
     max,
-    residuals: {
-      over: [...Array.from({ length: 18 }, () => 0.01), 0.02, 0.04],
-      overFloor: 0,
-      under: Array.from({ length: 20 }, () => 0.01),
-      underFloor: 0.03,
-    },
     total: { high, low },
   };
+}
+
+function switched(answer: CalibratedWritingGrade, verdicts: typeof BOTH) {
+  return { ...answer, calibration: { ...answer.calibration, verdicts } };
 }
 
 describe(calibratedWrittenStanding, () => {
@@ -26,7 +34,7 @@ describe(calibratedWrittenStanding, () => {
     { first: grade(30, 30, 50), second: grade(24, 24, 50), standing: "met" },
     { first: grade(28, 29, 50), second: grade(15, 17, 50), standing: "below" },
   ])(
-    "widens each item at the two-item rank and reports $standing",
+    "widens each answer at the two-answer rank and reports $standing",
     ({ first, second, standing }) => {
       expect(calibratedWrittenStanding({ grades: [first, second], part: PART })).toBe(standing);
     },
@@ -36,20 +44,56 @@ describe(calibratedWrittenStanding, () => {
     { answer: grade(52, 52), standing: "met" },
     { answer: grade(41, 46), standing: "below" },
     { answer: grade(41, 47), standing: "overlaps" },
-  ])("uses the one-item rank and the conservative floor for $standing", ({ answer, standing }) => {
+  ])("uses each side's own margin at the one-answer rank for $standing", ({ answer, standing }) => {
     expect(calibratedWrittenStanding({ grades: [answer], part: PART })).toBe(standing);
   });
 
-  it("abstains when either direction runs out of measured residuals at the higher rank", () => {
+  it("makes no call on a side whose verdict the calibration switches off", () => {
+    const pass = grade(80, 80);
+    const fail = grade(20, 20);
+    const onlyBelow = { above: false, below: true };
+    const onlyAbove = { above: true, below: false };
+
+    expect(calibratedWrittenStanding({ grades: [switched(pass, onlyBelow)], part: PART })).toBe(
+      "unmeasured",
+    );
+
+    expect(calibratedWrittenStanding({ grades: [switched(fail, onlyBelow)], part: PART })).toBe(
+      "below",
+    );
+
+    expect(calibratedWrittenStanding({ grades: [switched(pass, onlyAbove)], part: PART })).toBe(
+      "met",
+    );
+
+    expect(calibratedWrittenStanding({ grades: [switched(fail, onlyAbove)], part: PART })).toBe(
+      "unmeasured",
+    );
+  });
+
+  it("makes no call on a side that runs out of measured residuals at the part's rank", () => {
     const answer = grade(56, 56);
 
     const limited = {
       ...answer,
-      residuals: { ...answer.residuals, under: Array.from({ length: 9 }, () => 0.01) },
+      calibration: {
+        residuals: { ...RESIDUALS, under: Array.from({ length: 9 }, () => 0.01) },
+        verdicts: BOTH,
+      },
     };
 
+    const three = [answer, answer, answer];
+
     expect(calibratedWrittenStanding({ grades: [limited], part: PART })).toBe("met");
-    expect(calibratedWrittenStanding({ grades: [limited, answer], part: PART })).toBe("unmeasured");
+
+    expect(
+      calibratedWrittenStanding({
+        grades: [{ ...limited, total: { high: 20, low: 20 } }],
+        part: PART,
+      }),
+    ).toBe("unmeasured");
+
+    expect(calibratedWrittenStanding({ grades: three, part: PART })).toBe("unmeasured");
     expect(calibratedWrittenStanding({ grades: [answer, null], part: PART })).toBe("unmeasured");
   });
 
@@ -58,7 +102,7 @@ describe(calibratedWrittenStanding, () => {
     (zeroKind) => {
       const zero = {
         ...grade(0, 0),
-        residuals: { over: [], overFloor: 0, under: [], underFloor: 0 },
+        calibration: { residuals: UNMEASURED, verdicts: { above: false, below: false } },
         zeroKind,
       };
 
@@ -71,12 +115,7 @@ describe(calibratedWrittenStanding, () => {
     "widens a %s zero, which a model judged, like any other grade",
     (zeroKind) => {
       const zero = { ...grade(0, 0), zeroKind };
-
-      const unmeasured = {
-        ...zero,
-        residuals: { over: [], overFloor: 0, under: [], underFloor: 0 },
-      };
-
+      const unmeasured = { ...zero, calibration: { residuals: UNMEASURED, verdicts: BOTH } };
       const strict = { max: 100, minimum: { unit: "points", value: 60 } } as const;
       const low = { max: 100, minimum: { unit: "points", value: 2 } } as const;
 

@@ -1,6 +1,4 @@
-import { type z } from "zod";
-import { type writtenGradingSchema } from "../../../library/exams/written-grading";
-import { getWritingRounding } from "./writing-task-basis";
+import { type WritingSheet } from "../../../library/exams/written-grading";
 
 const SMALL_SCALE_MAX = 10;
 const POINTS_PRECISION = 15;
@@ -15,21 +13,23 @@ function fractionPlaces(value: number) {
 
 export function getWritingDecimals(
   max: number | null,
-  grading: readonly z.infer<typeof writtenGradingSchema>[] = [],
+  grading: readonly WritingSheet[] = [],
   increments: readonly number[] = [],
 ) {
   if (max === null || max >= SMALL_SCALE_MAX) {
     return max === null ? 0 : fractionPlaces(max);
   }
 
-  const noticePlaces = grading.flatMap(({ criteria, rounding }) => {
-    const rule = getWritingRounding(rounding);
-
-    return [
-      ...criteria.map(({ points }) => fractionPlaces(points ?? 0)),
-      typeof rule === "object" ? (rule?.places ?? 0) : 0,
-    ];
-  });
+  const noticePlaces = grading.flatMap(({ combination, criteria, rounding }) =>
+    [
+      ...criteria.flatMap(({ awards, points }) => [
+        points,
+        ...(awards ?? []).flatMap((award) => [award.points, award.pointsHigh]),
+      ]),
+      rounding?.step,
+      combination?.step,
+    ].map((value) => fractionPlaces(value ?? 0)),
+  );
 
   return Math.min(
     POINTS_PRECISION,

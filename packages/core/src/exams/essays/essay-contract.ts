@@ -57,7 +57,7 @@ export type EssayView = {
   gradesLeft: number;
   pacing: WritingPacing;
   question: string;
-  rubric: "enem" | "oab" | "points" | "levels";
+  rubric: "points" | "levels";
   sessionId: string;
   status: StudySessionBlock["status"];
   writing: WritingPrompt;

@@ -158,7 +158,6 @@ describe(parseItemContent, () => {
             text: criterion.name,
           },
         ],
-        kind: "points",
         language: null,
         rounding: null,
         zeroing: [],

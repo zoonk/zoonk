@@ -1,65 +1,45 @@
-import { normalizeString } from "@zoonk/utils/string";
 import { writtenGradingSchema } from "../../../library/exams/written-grading";
 import { type listWrittenTasks } from "../../../library/exams/written-tasks";
 
 type Basis = Pick<ReturnType<typeof listWrittenTasks>[number], "grading" | "lines" | "points">;
 
-const DECIMAL_PLACES =
-  /\b(?<places>\d+|one|two|three|four|zero|uma|duas|tres|quatro)\s+(?:decimal(?:s| places?)?|places?|casas? decimais?)\b/u;
-
-const PLACE_WORDS: Readonly<Record<string, number>> = {
-  duas: 2,
-  four: 4,
-  one: 1,
-  quatro: 4,
-  three: 3,
-  tres: 3,
-  two: 2,
-  uma: 1,
-  zero: 0,
-};
-
-export function getWritingRounding(rule: Basis["grading"]["rounding"]) {
-  if (!rule) {
-    return null;
-  }
-
-  const words = normalizeString(rule.citation.passage || rule.text);
-
-  if (/\b(?:no rounding|without rounding|sem arredondamento)\b/u.test(words)) {
-    return { mode: "none" as const };
-  }
-
-  const place = DECIMAL_PLACES.exec(words)?.groups?.places;
-  const places = place === undefined ? Number.NaN : (PLACE_WORDS[place] ?? Number(place));
-
-  if (!Number.isSafeInteger(places) || places < 0) {
-    return "unknown" as const;
-  }
-
-  if (/\b(?:truncate|truncamento|truncar|round down|arredondamento para baixo)\b/u.test(words)) {
-    return { mode: "down" as const, places };
-  }
-
-  return /\b(?:round|rounded|arredondamento|arredondar|arredondada|arredondado)\b/u.test(words)
-    ? { mode: "nearest" as const, places }
-    : ("unknown" as const);
+function readsAsNumbers(rounding: Basis["grading"]["rounding"]) {
+  return rounding && { mode: rounding.mode, stage: rounding.stage, step: rounding.step };
 }
 
-function getWritingGradingFacts({ criteria, kind, language, rounding, zeroing }: Basis["grading"]) {
+/**
+ * The facts that change a mark. Fields a sheet states only when it has them are left out when
+ * absent, so a sheet without them keeps the basis it was issued with.
+ */
+function getWritingGradingFacts(grading: Basis["grading"]) {
+  const { combination, criteria, language, limits, rounding, totalSuppressed, zeroing } = grading;
+
+  const scales = criteria.flatMap(({ awards, id, weight }) =>
+    awards ? [{ awards, id, weight }] : [],
+  );
+
   return {
     criteria: criteria.map(({ points }) => points).toSorted((a, b) => (a ?? -1) - (b ?? -1)),
-    kind,
     language: language && {
       factor: language.factor,
       formula: language.formula?.replaceAll(/\s+/gu, ""),
       method: language.method,
     },
-    rounding: getWritingRounding(rounding),
+    rounding: readsAsNumbers(rounding),
     zeroing: zeroing.map(({ kinds, maxLines }) => ({
       kinds: [...(kinds ?? [])].toSorted(),
       maxLines: maxLines ?? null,
     })),
+    ...(combination && { combination: { method: combination.method, step: combination.step } }),
+    ...(limits?.length && { limits: limits.map(({ criteria: ids, max }) => ({ ids, max })) }),
+    ...(scales.length > 0 && {
+      scales: scales.map(({ awards, id, weight }) => ({
+        awards: awards.map(({ count, points, pointsHigh }) => [points, pointsHigh, count]),
+        id,
+        weight,
+      })),
+    }),
+    ...(totalSuppressed && { totalSuppressed }),
   };
 }
 
@@ -73,6 +53,38 @@ function readTaskBasis(saved: string): unknown {
   } catch {
     return null;
   }
+}
+
+function hasPointedCriterion(facts: object): boolean {
+  return (
+    "criteria" in facts &&
+    Array.isArray(facts.criteria) &&
+    facts.criteria.some((points: unknown) => typeof points === "number")
+  );
+}
+
+/** A basis issued while sheets carried a `kind` reads as the same sheet without it. */
+function withoutStoredKind(saved: string): string | null {
+  const value = readTaskBasis(saved);
+
+  if (!Array.isArray(value)) {
+    return null;
+  }
+
+  const [lines, points, grading] = value as unknown[];
+
+  if (typeof grading !== "object" || grading === null || !("kind" in grading)) {
+    return null;
+  }
+
+  const { kind, ...facts } = grading;
+  const suppressed = kind === "levels" && hasPointedCriterion(facts);
+
+  return JSON.stringify([
+    lines,
+    points,
+    { ...facts, ...(suppressed && { totalSuppressed: true }) },
+  ]);
 }
 
 function legacyTaskBasis(saved: string): string | null {
@@ -130,5 +142,9 @@ export function matchesWritingTaskBasis({
     return getWritingTaskBasis(prompt) === taskBasis;
   }
 
-  return prompt.taskBasis === taskBasis || legacyTaskBasis(prompt.taskBasis) === taskBasis;
+  return [
+    prompt.taskBasis,
+    withoutStoredKind(prompt.taskBasis),
+    legacyTaskBasis(prompt.taskBasis),
+  ].includes(taskBasis);
 }

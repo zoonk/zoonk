@@ -28,9 +28,9 @@ function equalPoints(first: number, second: number): boolean {
 }
 
 function projectTask(task: WrittenTask, samples: readonly WrittenSample[]): WritingRange | null {
-  const { points, grading } = task;
+  const { points } = task;
 
-  if (points === null || !grading || grading.kind === "levels") {
+  if (points === null) {
     return null;
   }
 
@@ -272,12 +272,8 @@ export function projectWritten({
       ? scaleWritingRange(objective, objectiveMax / 100)
       : objective && { high: objective.high, low: objective.low };
 
-  const writtenOnlyScale = listWrittenTasks({ structure }).some(
-    (task) => task.grading?.kind === "enem",
-  );
-
   const overall =
-    writtenOnlyScale || (objective !== null && objective.scale !== "percent")
+    objective !== null && objective.scale !== "percent"
       ? { combined: null, max: null }
       : combine({
           objective: objectiveMax === null ? null : objectiveRange,

@@ -4,7 +4,6 @@ const CITATION = { passage: "Synthetic notice fixture", sourceId: "notice" };
 
 export const CGU_WRITTEN_GRADING = {
   criteria: [{ citation: CITATION, id: "case", points: 1, text: "Apply the notice's rule." }],
-  kind: "points",
   language: null,
   rounding: null,
   zeroing: [],

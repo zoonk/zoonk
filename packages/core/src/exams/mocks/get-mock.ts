@@ -13,7 +13,7 @@ import { NO_RESULT_MOMENTS, loadResultMoments } from "../../milestones/load-cere
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { BRAIN_POWER_BONUS } from "../../sessions/brain-power";
 import { NOTHING_REACHED, reachedSchema } from "../../sessions/reached";
-import { getNamedEssayRubric } from "../essays/essay-rubric";
+import { getWritingRubric } from "../essays/writing-rubric-policy";
 import { getExamDocument } from "../exam-document";
 import { getScoreNotes } from "../scoring/mock-scoring";
 import { loadMockPlanOffers } from "./_utils/mock-adapt";
@@ -147,12 +147,9 @@ function describeOwner({
 }) {
   const asksEssays = getEssayItemIds(conditions).length > 0;
 
-  const kinds = listWrittenTasks({
-    day: conditions.day ?? undefined,
-    structure: owned.structure,
-  }).map(({ grading }) => grading.kind);
+  const tasks = listWrittenTasks({ day: conditions.day ?? undefined, structure: owned.structure });
 
-  const rubric = kinds.find((kind) => kind !== "levels") ?? getNamedEssayRubric(owned.blueprint);
+  const rubric = tasks.map((task) => getWritingRubric(task)).find((own) => own === "points");
 
   return {
     date: toIsoDate(owned.sessionDate),

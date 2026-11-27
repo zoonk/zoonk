@@ -1,17 +1,13 @@
-export type WritingResiduals = {
-  over: readonly number[];
-  overFloor: number;
-  under: readonly number[];
-  underFloor: number;
-};
-
-type Calibration<Kind extends string> = WritingResiduals & {
-  grader: { model: string; promptRevision: Readonly<Record<Kind, string>> };
-  keyWriter: { model: string; promptRevision: string };
+/**
+ * What the eval script measured for one revision of the pipeline that reads, keys and grades
+ * written answers. Residuals are per answer, as shares of the answer's maximum, sorted ascending:
+ * `over` is how far our mark sat above the board's, `under` how far below.
+ */
+export type WritingCalibration = {
+  grader: { model: string; promptVersion: string };
   points: boolean;
+  residuals: { over: readonly number[]; under: readonly number[] };
+  verdicts: { above: boolean; below: boolean };
 };
 
-export const writingCalibration: Readonly<{
-  keyed: Calibration<"points" | "oab"> | null;
-  enem: Calibration<"enem"> | null;
-}> = { enem: null, keyed: null };
+export const writingCalibration: WritingCalibration | null = null;

@@ -1,10 +1,11 @@
-import { type WritingResiduals } from "../essays/_utils/writing-calibration";
+import { type WritingCalibration } from "../essays/_utils/writing-calibration";
 import { isTextVerifiedWritingZero } from "../essays/_utils/writing-zero";
 import { type WritingResult } from "../essays/writing-contract";
 import { getWritingCalibration } from "../essays/writing-rubric-policy";
-import { sumRanges, writtenStanding } from "./written-points";
+import { type WritingRange, writtenStanding } from "./written-points";
 
 const PART_ERROR_RATE = 0.1;
+const TAILS = 2;
 
 type NumericGrade = Extract<WritingResult, { kind: "points" }>;
 
@@ -12,7 +13,9 @@ type PointGrade = Pick<NumericGrade, "kind" | "max" | "total"> & {
   zeroKind?: NumericGrade["zeroKind"] | null;
 };
 
-export type CalibratedWritingGrade = PointGrade & { residuals: WritingResiduals };
+export type CalibratedWritingGrade = PointGrade & {
+  calibration: Pick<WritingCalibration, "residuals" | "verdicts">;
+};
 
 export function getCalibratedWritingGrade({
   basis,
@@ -25,40 +28,65 @@ export function getCalibratedWritingGrade({
     return null;
   }
 
-  const residuals = getWritingCalibration({ basis, observed });
+  const calibration = getWritingCalibration({ basis, observed });
   const { kind, max, total, zeroKind } = grade;
-  return residuals ? { kind, max, residuals, total, zeroKind } : null;
+  return calibration ? { calibration, kind, max, total, zeroKind } : null;
 }
 
-function margin(residuals: readonly number[], floor: number, level: number): number | null {
-  const ranked = residuals[Math.ceil((residuals.length + 1) * level) - 1];
-  return ranked === undefined ? null : Math.max(ranked, floor);
+function margin(residuals: readonly number[], level: number): number | null {
+  return residuals[Math.ceil((residuals.length + 1) * level) - 1] ?? null;
 }
 
-function widen({ grade, level }: { grade: CalibratedWritingGrade | null; level: number }) {
+function isVerifiedZero({ total, zeroKind }: CalibratedWritingGrade) {
+  return isTextVerifiedWritingZero(zeroKind) && total.low === 0 && total.high === 0;
+}
+
+function bound({
+  grade,
+  level,
+  side,
+}: {
+  grade: CalibratedWritingGrade | null;
+  level: number;
+  side: "above" | "below";
+}): number | null {
   if (!grade) {
     return null;
   }
 
-  if (
-    isTextVerifiedWritingZero(grade.zeroKind) &&
-    grade.total.low === 0 &&
-    grade.total.high === 0
-  ) {
-    return grade.total;
+  if (isVerifiedZero(grade)) {
+    return 0;
   }
 
-  const { over, overFloor, under, underFloor } = grade.residuals;
-  const lower = margin(over, overFloor, level);
-  const upper = margin(under, underFloor, level);
+  const { residuals, verdicts } = grade.calibration;
 
-  return lower === null || upper === null
+  if (!verdicts[side]) {
+    return null;
+  }
+
+  const ranked = margin(side === "above" ? residuals.over : residuals.under, level);
+
+  if (ranked === null) {
+    return null;
+  }
+
+  return side === "above"
+    ? grade.total.low - ranked * grade.max
+    : grade.total.high + ranked * grade.max;
+}
+
+function sumBounds(bounds: readonly (number | null)[]): number | null {
+  return bounds.length === 0 || bounds.some((value) => value === null)
     ? null
-    : { high: grade.total.high + upper * grade.max, low: grade.total.low - lower * grade.max };
+    : bounds.reduce<number>((sum, value) => sum + (value ?? 0), 0);
 }
 
 type PartMinimum = Pick<Parameters<typeof writtenStanding>[0], "max" | "minimum">;
 
+/**
+ * Each side is called only when the calibration switches its verdict on and has a residual at the
+ * part's rank; a part with one side missing is never reported as overlapping the minimum.
+ */
 export function calibratedWrittenStanding({
   grades,
   part,
@@ -66,7 +94,19 @@ export function calibratedWrittenStanding({
   grades: readonly (CalibratedWritingGrade | null)[];
   part: PartMinimum;
 }) {
-  const level = 1 - PART_ERROR_RATE / grades.length;
-  const range = sumRanges(grades.map((grade) => widen({ grade, level })));
-  return writtenStanding({ ...part, range });
+  const level = 1 - PART_ERROR_RATE / (TAILS * grades.length);
+  const low = sumBounds(grades.map((grade) => bound({ grade, level, side: "above" })));
+  const high = sumBounds(grades.map((grade) => bound({ grade, level, side: "below" })));
+
+  if (low === null && high === null) {
+    return writtenStanding({ ...part, range: null });
+  }
+
+  const range: WritingRange = {
+    high: high ?? Number.POSITIVE_INFINITY,
+    low: low ?? Number.NEGATIVE_INFINITY,
+  };
+
+  const standing = writtenStanding({ ...part, range });
+  return standing === "overlaps" && (low === null || high === null) ? "unmeasured" : standing;
 }

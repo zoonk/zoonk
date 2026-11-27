@@ -102,11 +102,22 @@ export function toWrittenGrading({
 
   const complete = scoringRules(grading).every(({ key }) => kept.has(`${id}.grading.${key}`));
 
+  const unverified =
+    grading.combination !== null ||
+    grading.conventions.length > 0 ||
+    grading.limits.length > 0 ||
+    grading.criteria.some(
+      ({ awards, parts, weight }) => awards.length + parts.length > 0 || weight,
+    );
+
   return writtenGradingSchema.safeParse({
-    criteria: grading.criteria.flatMap((rule, index) => cite(rule, `criteria.${index}`) ?? []),
-    kind: complete ? grading.kind : "levels",
+    criteria: grading.criteria.flatMap(
+      ({ awards: _awards, parts: _parts, weight: _weight, ...rule }, index) =>
+        cite(rule, `criteria.${index}`) ?? [],
+    ),
     language: grading.language ? cite(grading.language, "language") : null,
     rounding: grading.rounding ? cite(grading.rounding, "rounding") : null,
+    ...((!complete || unverified) && { totalSuppressed: true }),
     zeroing: grading.zeroing.flatMap((rule, index) => {
       const kinds = rule.kinds.filter((kind) => kind !== "other");
       const cited = cite(rule, `zeroing.${index}`);

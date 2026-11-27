@@ -14,8 +14,9 @@ import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { listWrittenTasks } from "../../library/exams/written-tasks";
 import { SESSION_NOW, SESSION_TODAY } from "../../sessions/_test-utils/session-goal";
 import { getSyllabusView } from "../../view-models/syllabus/get-syllabus-view";
+import { calibrationFixture } from "../essays/_test-utils/writing-calibration";
 import { readEssayContent } from "../essays/_utils/essay-content";
-import { writingCalibration } from "../essays/_utils/writing-calibration";
+import { type WritingCalibration } from "../essays/_utils/writing-calibration";
 import { getWritingAttempt } from "../essays/get-writing-attempt";
 import { loadGoalWrittenProjection } from "../estimates/load-goal-written-projection";
 import { loadWrittenProjection } from "../estimates/written-projection";
@@ -36,8 +37,12 @@ import { submitMockSection } from "./submit-mock-section";
 // Stub the model provider to keep mock grading off the network.
 vi.mock("@zoonk/ai/tasks/grading/grade-essay", () => ({ gradeWritingEvidence: vi.fn() }));
 
+const calibration = vi.hoisted(() => ({ current: null as WritingCalibration | null }));
+
 vi.mock("../essays/_utils/writing-calibration", () => ({
-  writingCalibration: { enem: null, keyed: null },
+  get writingCalibration() {
+    return calibration.current;
+  },
 }));
 
 const FULL = { area: null, day: null, kind: "full" } as const;
@@ -47,9 +52,11 @@ const UTC = { timeZone: "UTC" };
 const SESSION_LENGTH_MS = 210 * 60_000;
 
 const EVIDENCE = {
-  aspects: [],
+  awards: [],
   criteria: [],
+  elements: [],
   errors: [],
+  limits: [],
   nextStep: null,
   onTopicQuote: null,
   zeroKind: null,
@@ -237,7 +244,7 @@ describe("written mock sittings", () => {
     vi.useRealTimers();
     vi.mocked(gradeWritingEvidence).mockReset();
 
-    Object.assign(writingCalibration, { keyed: null });
+    calibration.current = null;
   });
 
   it("keeps a newer device's written answer when an offline edit arrives later", async () => {
@@ -555,15 +562,8 @@ describe("written mock sittings", () => {
     vi.mocked(gradeWritingEvidence, { partial: true }).mockResolvedValueOnce({
       data: {
         ...EVIDENCE,
-        criteria: [
-          {
-            comment: "Applies the rule",
-            example: null,
-            id: "rule",
-            level: "complete",
-            quote: null,
-          },
-        ],
+        awards: [{ award: 3, quote: null, row: 0 }],
+        criteria: [{ comment: "Applies the rule", example: null, id: "rule", quote: null }],
       },
     });
 
@@ -919,18 +919,11 @@ describe("written mock sittings", () => {
       task.grading = grading;
     }
 
-    Object.assign(writingCalibration, {
-      keyed: {
-        grader: {
-          model: provenance.model,
-          promptRevision: { oab: provenance.promptVersion, points: provenance.promptVersion },
-        },
-        keyWriter: { model: "fixture/model", promptRevision: "fixture" },
-        over: Array.from({ length: 19 }, () => 0),
-        overFloor: 0,
-        points: true,
-        under: Array.from({ length: 19 }, () => 0),
-        underFloor: 0,
+    calibration.current = calibrationFixture({
+      grader: { model: provenance.model, promptVersion: provenance.promptVersion },
+      residuals: {
+        over: Array.from({ length: 40 }, () => 0),
+        under: Array.from({ length: 40 }, () => 0),
       },
     });
 
@@ -940,7 +933,10 @@ describe("written mock sittings", () => {
     vi.mocked(gradeWritingEvidence, { partial: true }).mockResolvedValue({
       data: {
         ...EVIDENCE,
-        aspects: [{ aspectIndex: 0, criterionId: "case", earned: true, quote: text }],
+        awards: [
+          { award: 1, quote: text, row: 0 },
+          { award: 1, quote: text, row: 1 },
+        ],
       },
       provenance,
     });

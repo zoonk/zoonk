@@ -1,26 +1,18 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { type WrittenSample } from "../../learner/facts/written-samples";
 import { type EstimatedScore } from "../../preparation/estimated-score";
-import { writingCalibration } from "../essays/_utils/writing-calibration";
+import { calibrationFixture } from "../essays/_test-utils/writing-calibration";
+import { type WritingCalibration } from "../essays/_utils/writing-calibration";
 import { CGU as CGU_NOTICE, CGU_WRITTEN_GRADING } from "../mocks/_test-utils/cgu-written";
 import { projectWritten } from "./written-projection";
 
-vi.mock("../essays/_utils/writing-calibration", () => ({
-  writingCalibration: { enem: null, keyed: null },
-}));
+const calibration = vi.hoisted(() => ({ current: null as WritingCalibration | null }));
 
-const CALIBRATION = {
-  grader: {
-    model: "fixture/model",
-    promptRevision: { oab: "fixture-revision", points: "fixture-revision" },
+vi.mock("../essays/_utils/writing-calibration", () => ({
+  get writingCalibration() {
+    return calibration.current;
   },
-  keyWriter: { model: "fixture/model", promptRevision: "fixture-revision" },
-  over: [],
-  overFloor: 0,
-  points: true,
-  under: [],
-  underFloor: 0,
-};
+}));
 
 const CGU = structuredClone(CGU_NOTICE);
 
@@ -108,7 +100,7 @@ function sample({
 
 describe(projectWritten, () => {
   beforeEach(() => {
-    Object.assign(writingCalibration, { keyed: CALIBRATION });
+    calibration.current = calibrationFixture();
   });
 
   it("retains the objective and measured question while naming the missing written task", () => {
@@ -231,7 +223,7 @@ describe(projectWritten, () => {
   });
 
   it("reports levels for written tasks without a passed evaluation", () => {
-    Object.assign(writingCalibration, { keyed: null });
+    calibration.current = null;
 
     const samples = [
       sample({ high: 20, key: "short", low: 15 }),

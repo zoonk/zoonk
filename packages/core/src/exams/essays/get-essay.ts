@@ -11,6 +11,7 @@ import { getWritingAttemptId } from "./_utils/writing-attempt-id";
 import { type EssayView } from "./essay-contract";
 import { countWritingExtrasLeft } from "./writing-admission";
 import { writingPromptSchema } from "./writing-contract";
+import { getWritingRubric } from "./writing-rubric-policy";
 
 export type EssayViewResult =
   | { essay: EssayView; status: "ready" }
@@ -60,7 +61,7 @@ export async function getEssay({
       gradesLeft,
       pacing: { minutes: block.estimatedMinutes ?? 1, source: writingPacing ?? "practice" },
       question: content.question,
-      rubric: content.writing.grading.kind,
+      rubric: getWritingRubric(content.writing),
       sessionId,
       status: block.status,
       writing: writingPromptSchema.parse(content.writing),

@@ -136,19 +136,18 @@ function useModelFixtures(skillId: string) {
 
   vi.mocked(gradeWritingEvidence, { partial: true }).mockResolvedValue({
     data: {
-      aspects: [
-        { aspectIndex: 0, criterionId: "case", earned: true, quote: "which control failed" },
-      ],
+      awards: [{ award: 1, quote: "which control failed", row: 0 }],
       criteria: [
         {
           comment: "The recommendation addresses the cause.",
           example: null,
           id: "case",
-          level: "strong",
           quote: null,
         },
       ],
+      elements: [],
       errors: [],
+      limits: [],
       nextStep: null,
       onTopicQuote: null,
       zeroKind: null,
@@ -512,7 +511,7 @@ describe("CGU written exam preparation", () => {
 
     await expect(submitEssay({ blockId: block.id, input })).resolves.toMatchObject({
       grade: {
-        criteria: [{ id: "case", level: "strong" }],
+        criteria: [{ id: "case", level: "complete" }],
         estimatedLines: 22,
         ignoredFrom: null,
         kind: "levels",
@@ -542,7 +541,7 @@ describe("CGU written exam preparation", () => {
         writtenPractice: {
           subjects: [
             {
-              answers: [{ attemptId: first.id, criteria: { complete: 0, total: 1 }, range: null }],
+              answers: [{ attemptId: first.id, criteria: { complete: 1, total: 1 }, range: null }],
               decimals: 0,
               scale: "levels",
             },
