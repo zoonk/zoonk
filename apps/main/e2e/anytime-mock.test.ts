@@ -179,7 +179,7 @@ test.describe("Mocks whenever the learner wants", () => {
     await expect(page.getByText("Back the thesis with the law.")).toBeVisible();
   });
 
-  test("a finished mock's Practice mistakes opens a run of that mock's mistakes at once", async ({
+  test("a finished mock's Practice mistakes opens a run of that mock's mistakes at once and leads back to its result", async ({
     browser,
   }) => {
     const { answers, user } = await createAnytimeMockLearner({ plus: true });
@@ -218,6 +218,7 @@ test.describe("Mocks whenever the learner wants", () => {
 
     // An anytime mock's address names the mock itself.
     const mockId = /\/mock\/(?<id>[\w-]+)$/u.exec(page.url())?.groups?.id ?? "";
+
     const practice = page
       .getByRole("link", { name: /^Practice mistakes/u })
       .filter({ visible: true });
@@ -231,8 +232,12 @@ test.describe("Mocks whenever the learner wants", () => {
     }).toPass();
 
     await practice.click();
-    await expect(page).toHaveURL(`/mistakes/practice?mockId=${mockId}`);
+    await expect(page).toHaveURL(`/mistakes/practice?mockId=${mockId}&mockPage=${mockId}`);
     await expect(page.getByRole("radio").first()).toBeVisible();
+
+    // The run goes back where it was opened from.
+    await page.getByRole("link", { name: "Leave" }).click();
+    await expect(page).toHaveURL(`/mock/${mockId}`);
 
     await page.context().close();
   });

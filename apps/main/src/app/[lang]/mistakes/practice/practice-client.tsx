@@ -20,12 +20,14 @@ type RunProps = ComponentProps<typeof MistakePracticeRun>;
  * day's block (`blockId`) plays the mistakes it holds and ends back on Today.
  */
 export function MistakePracticeClient({
+  backHref,
   blockId,
   goalId,
   practice,
   trueFalseLabels,
   tutor,
 }: {
+  backHref: string;
   blockId?: string;
   goalId: string;
   practice: RunProps["practice"];
@@ -92,7 +94,7 @@ export function MistakePracticeClient({
             : { status: "failed" };
         },
       }}
-      backHref={blockId ? "/today" : "/mistakes"}
+      backHref={backHref}
       buddy={tutor.buddy}
       key={bfcacheId}
       lessonHref={lessonHref}

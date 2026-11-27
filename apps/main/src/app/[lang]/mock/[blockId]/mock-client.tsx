@@ -55,7 +55,8 @@ export function MockClient({
       again: againHref,
       continue: continueHref,
       exit,
-      mistakes: (mockId: string) => `/mistakes/practice?mockId=${mockId}`,
+      mistakes: (mockId: string) =>
+        `/mistakes/practice?${new URLSearchParams({ mockId, mockPage: blockId })}`,
       speakingTask: (conversationId: string) => `/conversation/${conversationId}?mock=${blockId}`,
     }),
     [againHref, blockId, continueHref, exit],
