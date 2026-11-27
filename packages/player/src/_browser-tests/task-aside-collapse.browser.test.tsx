@@ -64,12 +64,12 @@ function renderEssay() {
           gradesLeft: 3,
           pacing: { minutes: 70, source: "estimated" },
           question: "Should cities charge cars to enter the center?",
-          rubric: "levels",
           sessionId: "session",
           status: "pending",
           writing: {
             charactersPerLine: 55,
             criteria: [{ id: "a1", name: "Argument", points: null }],
+            denseCharactersPerLine: 98,
             keySource: "practiceKey",
             lines: 30,
             minimumWords: 30,
