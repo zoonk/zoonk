@@ -49,7 +49,6 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
-import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
@@ -241,9 +240,10 @@ fun BuddyPage(
             val unsent = threadRead?.value?.turns.isNullOrEmpty() && !sending && it.conversations.none { row -> row.id == conversationId }
             BuddyConversationRows(it, openId = conversationId.takeUnless { unsent }, vm.loadingMore, vm.moreFailed)
         }
-    // A linked conversation this learner can't read here (another goal's, or not theirs) gives way to what a visit opens.
-    val unreadable = asks && (threadRead as? LoadState.Failed)?.error == ApiError.NotFound
-    LaunchedEffect(unreadable, conversationId, list) { if (unreadable) vm.unreadable(goalId, conversationId, list) }
+    val unreadable = asks && vm.isUnreadable(goalId, route.conversationId, threadRead)
+    LaunchedEffect(unreadable, goalId, conversationId, list) {
+        if (unreadable && conversationId != null) vm.unreadable(goalId, conversationId, list)
+    }
     val conversationTaps =
         BuddyConversationTaps(
             open = { vm.show(goalId, it) },
@@ -284,7 +284,7 @@ fun BuddyPage(
                     },
                 )
                 when {
-                    tutor != null -> {
+                    tutor != null && !unreadable -> {
                         key(conversationId) {
                             TutorPanel(tutor, access, TutorIdentity(name, look), routes, Modifier.weight(1f), page = page)
                         }

@@ -6,15 +6,19 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LearningProfileStore
+import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.Visit
 import com.zoonk.android.data.VisitOutcome
+import com.zoonk.android.data.value
 import com.zoonk.android.feature.session.MissionOpens
 import com.zoonk.android.feature.session.StudyOpener
 import com.zoonk.android.feature.session.page
 import com.zoonk.android.feature.tutor.BuddyConversationList
 import com.zoonk.android.feature.tutor.TutorStore
+import com.zoonk.android.feature.tutor.TutorThread
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.characters.BuddyGlasses
 import com.zoonk.android.ui.characters.BuddyKind
@@ -41,6 +45,14 @@ class BuddyViewModel internal constructor(
     /** The open conversation of [goalId]'s, or none while it's still to be chosen, as after a switch to another goal. */
     fun openConversation(goalId: String): String? = open?.takeIf { it.goalId == goalId }?.id
 
+    internal fun isUnreadable(
+        goalId: String,
+        linkedId: String?,
+        thread: LoadState<TutorThread>?,
+    ): Boolean =
+        thread == LoadState.Failed(ApiError.NotFound) ||
+            (linkedId != null && linkedId == openConversation(goalId) && thread?.value == TutorThread.Empty)
+
     /**
      * A link or search opens its conversation once, as the tab keeps its route. Otherwise a visit with
      * none open opens the [list]'s current one once it's read, or a new one when there's none today.
@@ -66,7 +78,7 @@ class BuddyViewModel internal constructor(
     }
 
     /**
-     * [conversationId] answered not found (a link to another goal's conversation, or someone else's):
+     * [conversationId] has no readable thread:
      * the page opens what a visit opens instead, once the [list] is read.
      */
     fun unreadable(
@@ -75,6 +87,7 @@ class BuddyViewModel internal constructor(
         list: BuddyConversationList?,
     ) {
         if (openConversation(goalId) != conversationId) return
+        if (list?.currentId == conversationId) return startNew(goalId)
         open = null
         saved.remove<String>(OPEN_GOAL)
         saved.remove<String>(OPEN_ID)
