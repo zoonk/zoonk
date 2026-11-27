@@ -5,12 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.KeptRows
-import com.zoonk.android.data.MutationResult
-import com.zoonk.android.data.Saves
 import com.zoonk.android.data.Visit
 import com.zoonk.android.feature.goalcontent.ChapterKey
 import com.zoonk.api.models.SavedMindMap
-import com.zoonk.api.models.SavedMindMapState
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -70,13 +67,12 @@ class MindMapViewModel(
     /** The chapter each map's save reads again: a lesson map's lives in its chapter's lesson maps. */
     private val chapterOf = mutableMapOf<MindMapTarget, UUID?>()
 
-    private val mapSaves =
-        Saves<MindMapTarget>(viewModelScope, visit) { target, saved -> store.save(goalId, target, chapterOf[target], saved).saved() }
+    private val mapSaves = store.saves(visit, goalId) { chapterOf[it] }
 
     /** A map's save that didn't, which the screen says in the app's snackbars. */
     val saveFailed get() = mapSaves.failed
 
-    /** Each map the learner saved or removed on this visit, as it shows now; the reads say the rest. */
+    /** Each map that shows otherwise than the reads: a tap on its way, or one saved or removed on this visit. */
     val saves: StateFlow<Map<MindMapTarget, Boolean>> = mapSaves.states
 
     /** Shows [saved] at once and sends it; quick taps end on the last one, and a failure shows the reads again and says so. */
@@ -189,10 +185,3 @@ class MindMapViewModel(
         const val MAX_MISSES = 3
     }
 }
-
-private fun MutationResult<SavedMindMapState>.saved(): MutationResult<Boolean> =
-    when (this) {
-        is MutationResult.Done -> MutationResult.Done(value.saved)
-        is MutationResult.Failed -> this
-        MutationResult.Obsolete -> MutationResult.Obsolete
-    }

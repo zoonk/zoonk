@@ -11,7 +11,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppSnackbars
@@ -94,10 +93,10 @@ class LessonSavesViewModel(
 ) : ViewModel() {
     private val kept = KeptRows<SavedLesson, UUID> { it.lessonId }
     val visit = Visit(onEnd = kept::clear)
-    private val saves = store.saves(viewModelScope, visit, goalId)
+    private val saves = store.saves(visit, goalId)
     val failed get() = saves.failed
 
-    /** Each lesson the learner changed on this visit, as it shows now. */
+    /** Each lesson that shows otherwise than the screen was served: a tap on its way, or one changed on this visit. */
     val states: StateFlow<Map<UUID, Boolean>> = saves.states
 
     fun set(

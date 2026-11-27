@@ -11,7 +11,7 @@ import kotlin.time.TimeSource
 /** Call it on the main thread; [scope] is the app scope on `Dispatchers.Main.immediate`. */
 class AppCache(
     val session: SessionSource,
-    private val scope: CoroutineScope,
+    internal val scope: CoroutineScope,
     private val timeSource: TimeSource = TimeSource.Monotonic,
 ) {
     private val resources = mutableListOf<WeakReference<Resource<*>>>()
