@@ -16,7 +16,7 @@ import { withLearnerLessonVersions } from "./_utils/learner-lesson-versions";
 import { withLessonMarks } from "./_utils/lesson-marks";
 import { playableStepInclude } from "./_utils/lesson-rows";
 import { loadPlayableSteps } from "./_utils/load-playable-steps";
-import { showStepOptions } from "./_utils/shown-step-options";
+import { getLessonSitting, showStepOptions } from "./_utils/shown-step-options";
 import { type PlayableLibraryLesson } from "./playable-lesson";
 
 type LessonOutline = Pick<
@@ -216,7 +216,7 @@ export async function getPlayableLibraryLesson({
       readLastLessonFinish(userId, cached.result.lesson.id),
     ]);
 
-    const sitting = `lesson:${userId}:${lesson.id}:${finishedAt?.getTime() ?? "first"}`;
+    const sitting = getLessonSitting({ finishedAt, lessonId: lesson.id, userId });
     const steps = filterSkippedSteps({ activities: skippedActivities ?? [], steps: lesson.steps });
 
     return {

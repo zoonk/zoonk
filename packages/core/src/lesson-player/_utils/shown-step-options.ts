@@ -99,6 +99,19 @@ function showScreen({ seed, step }: { seed: string; step: PlayableLibraryStep })
   return step;
 }
 
+/** One sitting of a lesson runs until the learner's next finish, so a replay after finishing gets new orders. */
+export function getLessonSitting({
+  finishedAt,
+  lessonId,
+  userId,
+}: {
+  finishedAt: Date | null;
+  lessonId: string;
+  userId: string;
+}): string {
+  return `lesson:${userId}:${lessonId}:${finishedAt?.getTime() ?? "first"}`;
+}
+
 /**
  * Lays out what a screen offers to pick from in the order one sitting shows it. Answers name an
  * option or a word, never a place, so a sitting can move them and a replay tests what they say.

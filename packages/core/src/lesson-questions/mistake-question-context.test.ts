@@ -11,6 +11,7 @@ import { parseMathItem } from "../learner/_utils/math-items";
 import { discountMath, discountQuestion } from "../library/items/_test-utils/math-problems";
 import { withRecordedNumbers } from "../library/items/item-math";
 import { answerMistakePractice } from "../mistakes/answer-mistake-practice";
+import { getMistakePractice } from "../mistakes/get-mistake-practice";
 import { loadMistakeReplay } from "../mistakes/mistake-replay";
 import { buildItemContextSnapshot } from "./_utils/item-context-snapshot";
 import { claimLessonQuestionAnswer } from "./answer-lifecycle";
@@ -44,6 +45,35 @@ async function setup() {
 }
 
 describe("Original notebook questions", () => {
+  it("shows the tutor a notebook question's options in the order its practice shows them", async () => {
+    const { lesson, step, mistake } = await setup();
+    await prisma.mistake.update({ data: { missedAt: YESTERDAY }, where: { id: mistake.id } });
+
+    const practice = await getMistakePractice({ includeAllFormats: true, timeZone: "UTC" });
+    const practiced = practice.status === "ready" ? practice.practice[0]?.lesson?.step : null;
+    const shown = practiced?.kind === "check" ? practiced.content.options.map(({ id }) => id) : [];
+
+    const created = await createLessonQuestion({
+      input: {
+        context: { kind: "step", mistakeId: mistake.id, stepId: step.id, stepNumber: 1 },
+        question: "Please explain this question.",
+        requestId: crypto.randomUUID(),
+      },
+      target: { kind: "lesson", lessonId: lesson.id },
+    });
+
+    const saved =
+      created.status === "created"
+        ? await prisma.lessonQuestion.findUniqueOrThrow({ where: { id: created.question.id } })
+        : null;
+
+    expect(shown).not.toStrictEqual(playableStepContent.check.options.map(({ id }) => id));
+
+    expect(saved?.contextSnapshot).toMatchObject({
+      step: { content: { options: shown.map((id) => ({ id })) } },
+    });
+  });
+
   it("keeps tutor context and history on the original notebook question after its step is deleted", async () => {
     const { lesson, step, mistake } = await setup();
     await prisma.step.delete({ where: { id: step.id } });
