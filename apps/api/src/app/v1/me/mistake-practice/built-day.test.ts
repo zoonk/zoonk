@@ -147,6 +147,11 @@ describe("mistake practice from a built study day", () => {
       expect(reply.status).toBe(200);
       const feedback = mistakePracticeFeedbackSchema.parse(await reply.json());
       expect(feedback.fixed).toBe(true);
+
+      if (!feedback.answerId) {
+        throw new Error("The fixed mistake must have a saved answer");
+      }
+
       return feedback.answerId;
     };
 

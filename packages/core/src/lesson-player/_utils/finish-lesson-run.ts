@@ -97,10 +97,14 @@ function lessonAccounting({
   isReplay: boolean;
 }) {
   const payload = block ? readBlockPayload(block) : null;
-  const isReview = isReplay || Boolean(payload?.returning);
   const secondTakeSkillId = getSecondTakeSkillId(identityKey);
+  const returning = Boolean(payload?.returning);
+
+  const isFirstCompletion = !isReplay && (!returning || secondTakeSkillId !== null);
+  const isReview = isReplay || returning || secondTakeSkillId !== null;
 
   return {
+    isFirstCompletion,
     isReview,
     planCompletion: !(payload && isOutsidePlanLesson(payload)) && !secondTakeSkillId,
     secondTakeSkillId,
@@ -161,13 +165,13 @@ export async function finishLessonRun({
       userId,
     });
 
-    const { isReview, planCompletion, secondTakeSkillId } = lessonAccounting({
+    const { isFirstCompletion, isReview, planCompletion, secondTakeSkillId } = lessonAccounting({
       block,
       identityKey,
       isReplay,
     });
 
-    const score = scoreLibraryLesson({ ...tally, answerPoints, isFirstCompletion: !isReview });
+    const score = scoreLibraryLesson({ ...tally, answerPoints, isFirstCompletion });
 
     const seconds = await getLessonCompletionSeconds({
       block,
@@ -196,7 +200,7 @@ export async function finishLessonRun({
 
     await markTeachingBoundary({
       completedAt,
-      refresh: isReview || secondTakeSkillId !== null,
+      refresh: isReview,
       skillIds: secondTakeSkillId ? [secondTakeSkillId] : teachingSkillIds,
       tx,
       userId,
@@ -220,7 +224,7 @@ export async function finishLessonRun({
       date: completionDate,
       durationSeconds: seconds,
       field: answeredCount > 0 ? "interactiveCompleted" : "staticCompleted",
-      lessonsCompleted: Number(!isReview && !secondTakeSkillId),
+      lessonsCompleted: Number(!isReview),
       score: {
         brainPower: score.brainPower,
         correctCount: tally.correctCount,
@@ -277,7 +281,7 @@ export async function finishLessonRun({
         ...score,
         correctCount: tally.correctCount,
         incorrectCount: tally.incorrectCount,
-        isFirstCompletion: !isReview,
+        isFirstCompletion,
         seconds,
         totalBrainPower: Number(progress.totalBrainPower),
       },

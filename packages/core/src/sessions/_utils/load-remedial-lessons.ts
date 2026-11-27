@@ -10,6 +10,7 @@ import { NOT_A_CAPSULE } from "../../lesson-player/_utils/lesson-runs";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
 import { CURRENT_STEPS } from "../../library/lessons/lesson-versions";
 import { isQuickLessonIdentityKey } from "../../library/quick-lessons/quick-lesson-identity";
+import { findSecondTakes } from "../../library/second-takes/find-second-takes";
 import {
   getSecondTakeIdentityKey,
   isSecondTakeIdentityKey,
@@ -66,7 +67,7 @@ function loadTeachingMaterial({ signals, userId }: { signals: Signals; userId: s
 type TeachingLesson = Awaited<ReturnType<typeof loadTeachingMaterial>>[number];
 
 function toTeachingBlock(
-  lesson: TeachingLesson,
+  lesson: Pick<TeachingLesson, "canDo" | "estimatedMinutes" | "id" | "skills" | "title">,
   returning: "again" | "anotherWay" | "missed",
 ): PlannedBlock {
   return {
@@ -132,11 +133,15 @@ export async function loadTeaching({
     return { followUps: [], teaching: [] };
   }
 
-  const [lessons, skills] = await Promise.all([
+  const [lessons, skills, secondTakes] = await Promise.all([
     loadTeachingMaterial({ signals, userId }),
     prisma.skill.findMany({
       select: { id: true, ownerId: true, visibility: true },
       where: { ...libraryRowsVisibleTo(userId), id: { in: ranked.map(([id]) => id) } },
+    }),
+    findSecondTakes({
+      skillIds: ranked.flatMap(([id, signal]) => (signal.dueSecondTake ? [id] : [])),
+      userId,
     }),
   ]);
 
@@ -182,7 +187,16 @@ export async function loadTeaching({
 
     return [
       {
-        ...chooseRemedialLesson({ finished, lessons, ownerId, signal, skillId, startable, userId }),
+        ...chooseRemedialLesson({
+          finished,
+          lessons,
+          ownerId,
+          secondTakes,
+          signal,
+          skillId,
+          startable,
+          userId,
+        }),
         missedAt: signal.latestMiss?.answeredAt.getTime() ?? 0,
         weight: weights.get(skillId) ?? 0,
       },
@@ -213,6 +227,7 @@ function chooseRemedialLesson({
   finished,
   lessons,
   ownerId,
+  secondTakes,
   signal,
   skillId,
   startable,
@@ -221,6 +236,7 @@ function chooseRemedialLesson({
   finished: ReadonlySet<string>;
   lessons: readonly TeachingLesson[];
   ownerId: string | null;
+  secondTakes: Awaited<ReturnType<typeof findSecondTakes>>;
   signal: SkillMistakeSignal;
   skillId: string;
   startable: (lessonId: string) => boolean;
@@ -239,15 +255,35 @@ function chooseRemedialLesson({
       (lesson) => !isQuickLessonIdentityKey(lesson.identityKey) && !finished.has(lesson.id),
     );
 
-    const identity = getSecondTakeIdentityKey({ ownerId, skillId });
-    const retake = forSkill.find((lesson) => lesson.identityKey === identity);
-    const chosen = alternatives.find((lesson) => lesson.contentStatus === "completed") ?? retake;
+    const alternative = alternatives.find((lesson) => isWritten(lesson));
 
-    if (isWritten(chosen) && startable(chosen.id)) {
-      return { block: toTeachingBlock(chosen, "anotherWay") };
+    if (alternative) {
+      return startable(alternative.id) ? { block: toTeachingBlock(alternative, "anotherWay") } : {};
     }
 
-    return alternatives.length === 0 && needsSecondTakeWriting(retake)
+    const ready = secondTakes.get(skillId);
+
+    if (ready) {
+      return startable(ready.lessonId)
+        ? {
+            block: toTeachingBlock(
+              {
+                canDo: null,
+                estimatedMinutes: ready.estimatedMinutes,
+                id: ready.lessonId,
+                skills: [{ skillId }],
+                title: ready.title,
+              },
+              "anotherWay",
+            ),
+          }
+        : {};
+    }
+
+    const identity = getSecondTakeIdentityKey({ ownerId, skillId });
+    const writing = forSkill.find((lesson) => lesson.identityKey === identity);
+
+    return alternatives.length === 0 && needsSecondTakeWriting(writing)
       ? { followUp: { input: { skillId, userId }, kind: "writeSecondTake" } }
       : {};
   }
