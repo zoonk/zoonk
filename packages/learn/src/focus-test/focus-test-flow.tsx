@@ -66,6 +66,7 @@ export function FocusTestFlow({
   asked = false,
   goalId,
   host,
+  levelGiven = false,
   onDone,
   plan = null,
   readWarmUp,
@@ -77,6 +78,8 @@ export function FocusTestFlow({
   asked?: boolean;
   goalId: string;
   host: FocusTestHost;
+  /** Onboarding: the learner told us their level, so the first lesson starts there. */
+  levelGiven?: boolean;
   /** Leaves the test: onboarding saves its step, a plan goes back to it. False when it didn't. */
   onDone: () => Promise<boolean>;
   plan?: FocusTestPlanActions | null;
@@ -140,6 +143,7 @@ export function FocusTestFlow({
         <FocusTestInvitation
           failed={failed}
           host={host}
+          levelGiven={levelGiven}
           next={phase.next}
           onShown={() =>
             analytics.offered({

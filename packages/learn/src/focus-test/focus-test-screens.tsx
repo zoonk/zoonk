@@ -15,6 +15,7 @@ type OfferChoice = "firstLesson" | "focusTest";
 export function FocusTestInvitation({
   failed,
   host,
+  levelGiven,
   next,
   onShown,
   onSkip,
@@ -24,6 +25,7 @@ export function FocusTestInvitation({
 }: {
   failed: boolean;
   host: FocusTestHost;
+  levelGiven: boolean;
   next: FocusTestOffer;
   onShown: () => void;
   onSkip: () => void;
@@ -37,7 +39,7 @@ export function FocusTestInvitation({
   const facts = useTestFacts();
   const texts = useTestOfferTexts();
   const name = t("Focus test");
-  const testFacts = [facts.questions(next.questions), facts.about(next.minutes)];
+  const testFacts = [facts.upToQuestions(next.questions), facts.about(next.minutes)];
 
   if (host === "plan") {
     return (
@@ -64,7 +66,7 @@ export function FocusTestInvitation({
       onShown={onShown}
       onStart={(choice) => (choice === "firstLesson" ? onSkip() : onStart())}
       pressed={pressed}
-      rows={[texts.firstLesson, { facts: testFacts, label: name, value: "focusTest" }]}
+      rows={[texts.firstLesson(levelGiven), { facts: testFacts, label: name, value: "focusTest" }]}
       title={texts.startTitle}
     />
   );

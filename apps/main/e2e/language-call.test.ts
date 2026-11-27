@@ -415,7 +415,7 @@ test.describe("Language practice in the plan", () => {
     await expect(page.getByRole("heading", { name: "Your English level" })).toBeVisible();
 
     await expect(
-      page.getByText("You can test your listening later, from your plan."),
+      page.getByText("You can take the test again later, from your plan."),
     ).toBeVisible();
 
     await expect(page.getByRole("button", { exact: true, name: "Continue" })).toBeEnabled();
