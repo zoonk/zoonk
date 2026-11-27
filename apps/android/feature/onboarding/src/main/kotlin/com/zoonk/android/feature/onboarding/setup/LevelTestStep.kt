@@ -31,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -39,6 +40,7 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -289,7 +291,7 @@ private fun ColumnScope.TestQuestion(
         onReportSaveFailure = onReportSaveFailure,
         onAnswer = { answer, durationMs -> vm.answer(question.id, answer, durationMs, skipped = noAudio && answer == Answer.DontKnow) },
         onStop = vm::stop,
-        canStop = shown.number > 1,
+        canStop = shown.canStop,
         dontKnowLabel =
             stringResource(
                 when {
@@ -409,10 +411,11 @@ private fun ListeningMessage(
     }
 }
 
-/** A skill's row: its name, its level's bar and its level. */
+/** A skill's row: its name, its level's bar and its level, [muted] when the skill wasn't tested. */
 internal class LevelRow(
     val name: String,
     val label: String,
+    val muted: Boolean = false,
     val bar: @Composable (Modifier) -> Unit,
 )
 
@@ -440,7 +443,13 @@ internal fun LevelRows(levels: List<LevelRow>) {
                 ) {
                     Text(names[index], modifier = Modifier.width(nameColumn), style = nameStyle)
                     level.bar(Modifier.weight(1f))
-                    Text(labels[index], modifier = Modifier.width(labelWidth), style = labelStyle, textAlign = layoutEnd())
+                    Text(
+                        labels[index],
+                        modifier = Modifier.width(labelWidth),
+                        color = if (level.muted) MaterialTheme.colorScheme.onSurfaceVariant else Color.Unspecified,
+                        style = if (level.muted) labelStyle.copy(fontWeight = FontWeight.Normal) else labelStyle,
+                        textAlign = layoutEnd(),
+                    )
                 }
             }
         }

@@ -288,7 +288,7 @@ internal fun ColumnScope.LevelResult(
                     com.zoonk.android.feature.onboarding.setup
                         .skillName(skill)
                 if (range == null) {
-                    LevelRow(name, stringResource(R.string.placementtest_not_tested)) { LevelRangeBar(-1, -1, it) }
+                    LevelRow(name, stringResource(R.string.placementtest_not_tested), muted = true) { LevelRangeBar(-1, -1, it) }
                 } else {
                     LevelRow(name, levelRange(range)) {
                         LevelRangeBar(CEFR_LEVELS.indexOf(range.low.value), CEFR_LEVELS.indexOf(range.high.value), it)

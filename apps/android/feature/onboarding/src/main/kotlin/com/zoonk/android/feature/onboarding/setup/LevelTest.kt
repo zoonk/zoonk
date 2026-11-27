@@ -17,7 +17,10 @@ internal sealed interface LevelTestPhase {
 
     data object Waiting : LevelTestPhase
 
-    /** [confirmation]: a level's check, where every right option is picked so a guess rarely passes. */
+    /**
+     * [confirmation]: a level's check, where every right option is picked so a guess rarely passes. [canStop]: stopping
+     * now would save a level, so "Stop and use my answers" shows.
+     */
     data class Question(
         val question: LevelTestQuestion,
         /** 0 to 1. */
@@ -25,6 +28,7 @@ internal sealed interface LevelTestPhase {
         val number: Int = 1,
         val total: Int = 1,
         val confirmation: Boolean = false,
+        val canStop: Boolean = false,
     ) : LevelTestPhase
 
     data object Done : LevelTestPhase
@@ -46,22 +50,22 @@ internal fun levelTestPhase(
     }
 }
 
-internal val LanguageLevelTest.showAlphabetNote: Boolean
-    get() =
-        when (this) {
-            is LanguageLevelTest.LanguageLevelTestOneOfValue -> value.showAlphabetNote
-            is LanguageLevelTest.LanguageLevelTestOneOf1Value -> value.showAlphabetNote
-        }
-
 private fun LanguageLevelTestOneOf1.phase(): LevelTestPhase {
     val progress = answered.toFloat() / total.coerceAtLeast(1)
     return when (val next = next) {
         is LanguageLevelTestOneOf1Next.LanguageLevelTestOneOf1NextOneOfValue -> {
-            LevelTestPhase.Question(next.value.question, progress, (answered + 1).toInt(), total.toInt())
+            LevelTestPhase.Question(next.value.question, progress, (answered + 1).toInt(), total.toInt(), canStop = canStop)
         }
 
         is LanguageLevelTestOneOf1Next.LanguageLevelTestOneOf1NextOneOf1Value -> {
-            LevelTestPhase.Question(next.value.question, progress, (answered + 1).toInt(), total.toInt(), confirmation = true)
+            LevelTestPhase.Question(
+                next.value.question,
+                progress,
+                (answered + 1).toInt(),
+                total.toInt(),
+                confirmation = true,
+                canStop = canStop,
+            )
         }
 
         // An older test's spoken sentence isn't asked anymore: its levels come from reading and listening.

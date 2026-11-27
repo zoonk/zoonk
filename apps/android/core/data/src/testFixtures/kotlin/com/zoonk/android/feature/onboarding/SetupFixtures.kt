@@ -296,17 +296,18 @@ fun skillLevelOf(
     score: Double,
 ) = """{"label":"$label","score":$score,"skill":"$skill"}"""
 
-/** [attemptId] is an open test's: a start answers with it, and a read of a test left open. */
+/** [attemptId] is an open test's: a start answers with it, and a read of a test left open. [canStop]: stopping would save a level. */
 fun levelTestOf(
     next: String = readingQuestion(),
     answered: Int = 0,
     total: Int = 12,
     levels: List<String> = emptyList(),
     attemptId: String? = null,
+    canStop: Boolean = false,
 ): LanguageLevelTest =
     ApiJson.decodeFromString(
         """
-        {"answered":$answered,"canStop":false,"lastCorrect":null,"levels":[${levels.joinToString(",")}],"next":$next,"status":"ready",
+        {"answered":$answered,"canStop":$canStop,"lastCorrect":null,"levels":[${levels.joinToString(",")}],"next":$next,"status":"ready",
          "showAlphabetNote":false,"targetLanguage":"it","total":$total,"estimatedMinutes":6${attemptJson(attemptId)}}
         """.trimIndent(),
     )

@@ -336,7 +336,7 @@ class LevelTestStepFlowTest {
 
     @Test
     fun stoppingThatFailedSaysSoOnTheQuestionThenShowsTheRanges() {
-        api.levelTestAnswered = { levelTestOf(next = listeningQuestion(), answered = 1, attemptId = ATTEMPT) }
+        api.levelTestAnswered = { levelTestOf(next = listeningQuestion(), answered = 4, attemptId = ATTEMPT, canStop = true) }
         show()
         tap("Start")
         tap("Every Saturday")
