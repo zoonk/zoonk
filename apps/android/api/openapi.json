@@ -102130,7 +102130,7 @@
                                             "minLength": 1
                                           },
                                           "count": {
-                                            "description": "How many distinct counted parts an answer must show to earn this award",
+                                            "description": "How many distinct counted parts an answer needs to earn this award",
                                             "type": "integer",
                                             "minimum": 0,
                                             "exclusiveMinimum": true,

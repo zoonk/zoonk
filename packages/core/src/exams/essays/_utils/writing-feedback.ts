@@ -56,7 +56,6 @@ function aspectStanding(marks: readonly RowMark[]) {
   );
 }
 
-/** A criterion's level is where its award sits on its scale, or the share of its aspects earned. */
 function criterionLevel(id: string, marks: readonly RowMark[]): Level {
   const own = marks.filter(({ row }) => row.criterionId === id);
   const scale = own.find(({ row }) => row.kind !== "aspect");
@@ -157,7 +156,6 @@ function getDeduction({
   };
 }
 
-/** `numeric` is false whenever points are off for this answer: the result then stays on levels. */
 export function applyWritingArithmetic({
   basis,
   context,

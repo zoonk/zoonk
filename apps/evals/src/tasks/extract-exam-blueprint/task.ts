@@ -482,9 +482,13 @@ function hasLanguageRule(fact: WrittenTaskFact, grading: WrittenGrading | null |
   return language?.method === fact.language.method && language.factor === fact.language.factor;
 }
 
-const SHEET_OF_KIND = { enem: "scale", levels: "levels", oab: "points", points: "points" } as const;
+const SHEET_OF_EXPECTED_KIND = {
+  enem: "scale",
+  levels: "levels",
+  oab: "points",
+  points: "points",
+} as const;
 
-/** Cases still name the kinds a sheet used to carry: each reads as the sheet that replaced it. */
 function readSheet(grading: WrittenGrading | null | undefined) {
   if (!grading) {
     return null;
@@ -507,7 +511,7 @@ function hasGrading(fact: WrittenTaskFact, grading: WrittenGrading | null | unde
     (fact.grading === undefined ||
       (fact.grading === null
         ? kind === null || kind === "levels"
-        : kind === SHEET_OF_KIND[fact.grading])) &&
+        : kind === SHEET_OF_EXPECTED_KIND[fact.grading])) &&
     (fact.criterionPoints === undefined ||
       JSON.stringify(points) === JSON.stringify(fact.criterionPoints)) &&
     hasLanguageRule(fact, grading) &&

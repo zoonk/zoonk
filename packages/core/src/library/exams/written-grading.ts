@@ -21,7 +21,7 @@ const awardSchema = citedRuleSchema.extend({
     .int()
     .positive()
     .optional()
-    .describe("How many distinct counted parts an answer must show to earn this award"),
+    .describe("How many distinct counted parts an answer needs to earn this award"),
   points: awardPoints.nullable(),
   pointsHigh: awardPoints
     .optional()

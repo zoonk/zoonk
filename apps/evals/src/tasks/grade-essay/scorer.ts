@@ -140,7 +140,6 @@ function errorChecks({
   ];
 }
 
-/** Marked on the board's own scale, where aspects describe the answer and earn no points. */
 function hasBoardScale({ basis }: GradeWritingInput) {
   return basis.grading.criteria.some(({ awards }) => awards);
 }

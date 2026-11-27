@@ -15,7 +15,6 @@ export type GradeWritingInput = {
   text: string;
   keyPoints: string[];
   basis: Basis;
-  /** Whether the grade is worked out in points, as a passed calibration would switch it on. */
   numeric: boolean;
 };
 

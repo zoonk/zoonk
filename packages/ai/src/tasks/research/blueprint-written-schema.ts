@@ -19,7 +19,7 @@ const awardSchema = writtenRuleSchema.extend({
   count: z
     .int()
     .nullable()
-    .describe("How many distinct counted parts an answer must show to earn this award"),
+    .describe("How many distinct counted parts an answer needs to earn this award"),
   points: z.number().nullable(),
   pointsHigh: z
     .number()

@@ -74,7 +74,6 @@ function readsRounding({ rounding }: Pick<WritingSheet, "rounding">): boolean {
   return !rounding || Boolean(rounding.mode && rounding.stage && rounding.step);
 }
 
-/** Whether code can turn awards into the board's mark with nothing left out that changes it. */
 export function isComputableSheet({
   grading,
   points,
@@ -147,7 +146,6 @@ export function listWritingRows(basis: SheetBasis): SheetRow[] {
   return [...criteria, ...aspects];
 }
 
-/** What the grader reads: the sheet's own text, with nothing that names how the app marks it. */
 export function getWritingGraderSheet(basis: SheetBasis) {
   const { conventions = [], limits = [], zeroing } = basis.grading;
 

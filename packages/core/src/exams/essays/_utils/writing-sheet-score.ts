@@ -9,12 +9,7 @@ type Criterion = WritingSheet["criteria"][number];
 type Rounding = NonNullable<WritingSheet["rounding"]>;
 type CriterionScore = { id: string; max: number; range: WritingRange };
 
-const SCORE_PRECISION = 15;
 const SNAP = { down: Math.floor, nearest: Math.round, up: Math.ceil } as const;
-
-function exact(value: number): number {
-  return Number(value.toPrecision(SCORE_PRECISION));
-}
 
 function snapToStep({
   mode = "nearest",
@@ -25,7 +20,7 @@ function snapToStep({
   step: number;
   value: number;
 }): number {
-  return exact(SNAP[mode](exact(value / step)) * step);
+  return addWritingPoints(SNAP[mode](addWritingPoints(value / step, 0)) * step, 0);
 }
 
 export function roundWritingRange({
@@ -129,7 +124,7 @@ function combine(sheet: WritingSheet, scores: readonly CriterionScore[]): Writin
       0,
     );
 
-    return exact(total / weights.reduce((sum, weight) => sum + weight, 0));
+    return addWritingPoints(total / weights.reduce((sum, weight) => sum + weight, 0), 0);
   };
 
   const combined =

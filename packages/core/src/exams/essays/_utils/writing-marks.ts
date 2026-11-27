@@ -2,13 +2,7 @@ import { type WritingEvidence } from "@zoonk/ai/tasks/grading/grade-essay";
 import { type WritingQuoteLookup, createWritingQuoteLookup } from "./writing-quotes";
 import { type SheetBasis, type SheetRow, listWritingRows } from "./writing-sheet";
 
-export type RowMark = {
-  /** The award the grader chose: the level a learner sees never waits on a quote. */
-  reported: number;
-  row: SheetRow;
-  /** The award its evidence supports; null when a row of the board's scale could not be checked. */
-  verified: number | null;
-};
+export type RowMark = { reported: number; row: SheetRow; verified: number | null };
 
 function countDistinctPassages(
   quotes: readonly (string | null)[],
@@ -66,7 +60,7 @@ function highestCountedAward({
 /**
  * A key's aspect above its lowest award without a passage found in the answer earns the lowest.
  * A row of the board's scale with no such passage stays unverified, since its lowest award would
- * be a mark the grader never gave.
+ * be a mark the grader never gave. The level a learner sees reads the reported award either way.
  */
 export function markWritingRows({
   basis,
