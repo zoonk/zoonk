@@ -289,9 +289,13 @@ class LessonPlayerViewModel(
     var hasUnsent by mutableStateOf(false)
         private set
 
-    /** Whether the learner had saved the lesson when its run started; null until a lesson of the library starts. */
-    var savedAtStart by mutableStateOf<Boolean?>(null)
-        private set
+    private var runSaved by mutableStateOf<(() -> Boolean)?>(null)
+
+    /**
+     * Whether the lesson is saved, as its run said or as the server took a save since, which outlasts the save visit
+     * a covering screen ends; null until a lesson of the library starts.
+     */
+    val lessonSaved: Boolean? get() = runSaved?.invoke()
     private var exampleLinesWrite: Job? = null
     private var writingExampleLines by mutableStateOf(false)
     private var sceneRecorded = false
@@ -831,7 +835,7 @@ class LessonPlayerViewModel(
                         val state = playFrom(lesson, outcome.run)
                         if (sessions.current != owner) return@launch
                         replay = outcome.run.replay
-                        if (!hosted) savedAtStart = shownSaved(outcome.run.saved)
+                        if (!hosted) runSaved = { shownSaved(outcome.run.saved) }
                         mutableState.value = state
                         leaveOutUnheardDictations()
                         if (hasHeld) sendUnsent()
