@@ -145,7 +145,7 @@ test.describe("Saved lessons", () => {
     }
   });
 
-  test("a save removed on Saved lessons keeps its row to save again, one that can't open leaves at once, and a lesson opened there closes back to it", async ({
+  test("Today opens Saved lessons, where a save removed keeps its row to save again, one that can't open leaves at once, and a lesson opened there closes back to it", async ({
     browser,
   }) => {
     const { chapter, finished, goal, unfinished, user } = await createLearner();
@@ -160,9 +160,17 @@ test.describe("Saved lessons", () => {
     });
 
     const page = await openAs(browser, user);
+    await page.setViewportSize({ height: 844, width: 390 });
 
     try {
-      await page.goto("/saved-lessons");
+      await page.goto("/today");
+
+      await page
+        .getByRole("region", { name: "Practice anytime" })
+        .getByRole("link", { name: /^Saved lessons/u })
+        .click();
+
+      await expect(page).toHaveURL(/\/saved-lessons$/u);
 
       const list = page.getByRole("list", { name: "Saved lessons" });
       const row = list.getByRole("link", { name: new RegExp(finished.title, "u") });
