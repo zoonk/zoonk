@@ -2,38 +2,11 @@
 
 import { useState } from "react";
 import { usePoll } from "../_utils/use-poll";
-import { type NextStopActions, type NextStopLesson } from "./next-stop";
+import { type NextStopActions } from "./next-stop";
 import { type LessonReadiness } from "./session-types";
+import { type ShownLesson, getShownLesson } from "./shown-lesson";
 
 const READINESS_CHECK_MS = 5000;
-
-type Shown = { generationId: string | null; lesson: NextStopLesson };
-
-function toShown({
-  generationId,
-  lesson,
-  read,
-  runStopped,
-}: Shown & { read: LessonReadiness | null; runStopped: boolean }): Shown {
-  if (!read) {
-    return { generationId, lesson };
-  }
-
-  if (read.status === "ready") {
-    return { generationId: null, lesson: "ready" };
-  }
-
-  if (read.status === "generating") {
-    return { generationId: read.generationId ?? generationId, lesson: "writing" };
-  }
-
-  // Until the run the learner asked for stops, nothing writing the lesson means it hasn't taken it yet.
-  if (lesson === "notStarted") {
-    return { generationId, lesson: runStopped ? "failed" : "notStarted" };
-  }
-
-  return { generationId: null, lesson: read.status === "failed" ? "failed" : "ready" };
-}
 
 export function useLessonReadiness({
   actions,
@@ -41,7 +14,7 @@ export function useLessonReadiness({
   generationId,
   lesson,
   lessonId,
-}: Shown & {
+}: ShownLesson & {
   actions: Pick<NextStopActions, "readLesson" | "refresh">;
   enabled: boolean;
   lessonId: string | null;
@@ -51,7 +24,7 @@ export function useLessonReadiness({
   const [stopped, setStopped] = useState<{ key: string; runId: string | null } | null>(null);
   const read = answer?.key === key ? answer.read : null;
   const runStopped = stopped?.key === key && stopped.runId === generationId;
-  const shown = toShown({ generationId, lesson, read, runStopped });
+  const shown = getShownLesson({ generationId, lesson, read, runStopped });
   const readLesson = actions.readLesson;
 
   const poll = usePoll({
@@ -69,7 +42,7 @@ export function useLessonReadiness({
         return;
       }
 
-      const after = toShown({ generationId, lesson, read: next, runStopped });
+      const after = getShownLesson({ generationId, lesson, read: next, runStopped });
       setAnswer({ key, read: next });
 
       // A new run to follow changes nothing the day shows, and a written lesson moves on through the
