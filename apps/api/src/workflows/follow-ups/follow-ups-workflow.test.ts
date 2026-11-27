@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { FREE_LESSON_LIMIT } from "@zoonk/core/entitlements/limits";
 import { PlanConflictError } from "@zoonk/core/plans/conflict";
 import { refreshPlanSuggestion } from "@zoonk/core/plans/refresh-suggestion";
+import { catchUpMockReplan } from "@zoonk/core/plans/replan-after-mock";
 import { refreshOwedStudyDay } from "@zoonk/core/sessions/refresh-owed-day";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
@@ -35,6 +36,7 @@ import { followUpsWorkflow } from "./follow-ups-workflow";
 // Force a competing plan write after core's quick retry without timing real database writers.
 vi.mock("@zoonk/core/sessions/refresh-owed-day", () => ({ refreshOwedStudyDay: vi.fn() }));
 vi.mock("@zoonk/core/plans/refresh-suggestion", () => ({ refreshPlanSuggestion: vi.fn() }));
+vi.mock("@zoonk/core/plans/replan-after-mock", () => ({ catchUpMockReplan: vi.fn() }));
 
 const CAUSE = {
   correctAnswer: "since",
@@ -399,6 +401,26 @@ describe(followUpsWorkflow, () => {
 
     expect(refreshPlanSuggestion).toHaveBeenCalledTimes(2);
     expect(refreshPlanSuggestion).toHaveBeenLastCalledWith({ goalId: goal.id, userId: user.id });
+    await expect(prisma.followUp.count({ where: { userId: user.id } })).resolves.toBe(0);
+  });
+
+  it("runs and acknowledges the mock re-plan an opened day owes after a plan conflict", async () => {
+    const user = await userFixture();
+    const goal = await goalFixture({ kind: "exam", userId: user.id });
+    const input = { goalId: goal.id, timeZone: "America/Sao_Paulo" };
+
+    await prisma.followUp.create({
+      data: { input, key: goal.id, kind: "catchUpMockReplan", userId: user.id },
+    });
+
+    vi.mocked(catchUpMockReplan)
+      .mockRejectedValueOnce(new PlanConflictError())
+      .mockResolvedValueOnce();
+
+    await followUpsWorkflow({ userId: user.id });
+
+    expect(catchUpMockReplan).toHaveBeenCalledTimes(2);
+    expect(catchUpMockReplan).toHaveBeenLastCalledWith({ ...input, userId: user.id });
     await expect(prisma.followUp.count({ where: { userId: user.id } })).resolves.toBe(0);
   });
 

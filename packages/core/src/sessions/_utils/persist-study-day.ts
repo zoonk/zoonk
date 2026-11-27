@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { markLearnerChanged, markPlansChanged } from "../../learner/_utils/mark-learner-changed";
 import { PlanConflictError } from "../../plans/plan-conflict";
 import { getItemKey } from "../../plans/planner/plan-items";
+import { oweMockCatchUp } from "../../plans/replan-after-mock";
 import { type PlannedStudyDay, getPlanAllocationBlocks } from "./plan-study-day";
 import { prepareSelectedPlanSave, saveSelectedPlan } from "./save-selected-plan";
 import { type SelectedDayPlan } from "./selected-day-plan";
@@ -111,6 +112,7 @@ export async function persistStudyDay({
         }),
       });
 
+      await oweMockCatchUp({ goal: day.goal, now: day.now, timeZone: day.timeZone, tx });
       return { sessionId: session.id, status: "created" };
     });
   } catch (error) {

@@ -1,5 +1,6 @@
 import "server-only";
-import { type Goal, prisma } from "@zoonk/db";
+import { type Goal, type TransactionClient, prisma } from "@zoonk/db";
+import { oweFollowUps } from "../follow-ups/owe-follow-ups";
 import { loadSkillsToRelearn } from "../learner/_utils/load-skill-claims";
 import { readBlockPayload } from "../sessions/block-payload";
 import { isPlanReady } from "./_utils/apply-plan-change";
@@ -276,30 +277,76 @@ export async function replanAfterMock({
 }
 
 /**
- * Opening a new day applies the latest mock the plan hasn't re-planned for: one finished before
- * plans followed mocks, or one whose move was refused when it finished. Once per mock.
+ * The latest mock the plan hasn't re-planned for: one finished before plans followed mocks, or one
+ * whose move was refused when it finished.
  */
-export async function catchUpMockReplan({
+async function findMockToCatchUp({
+  db = prisma,
   goal,
   now,
-  timeZone,
 }: {
+  db?: TransactionClient;
   goal: Pick<Goal, "id" | "kind">;
   now: Date;
-  timeZone: string;
-}): Promise<void> {
+}): Promise<{ id: string } | null> {
   if (goal.kind !== "exam") {
-    return;
+    return null;
   }
 
   const [plan, latest] = await Promise.all([
-    prisma.plan.findUnique({ select: { settings: true }, where: { goalId: goal.id } }),
-    findMockToFollow({ goalId: goal.id, now }),
+    db.plan.findUnique({ select: { settings: true }, where: { goalId: goal.id } }),
+    findMockToFollow({ db, goalId: goal.id, now }),
   ]);
 
-  if (!plan || !latest || parsePlanSettings(plan.settings).mockReplan?.mockId === latest.id) {
-    return;
-  }
+  return plan && latest && parsePlanSettings(plan.settings).mockReplan?.mockId !== latest.id
+    ? latest
+    : null;
+}
 
-  await replanAfterMock({ catchUp: true, goalId: goal.id, mockId: latest.id, now, timeZone });
+/**
+ * Opening a new day owes the re-plan for a mock the plan hasn't followed yet, so the learner never
+ * waits for it: the follow-up runs `catchUpMockReplan` once the day is saved as shown.
+ */
+export async function oweMockCatchUp({
+  goal,
+  now,
+  timeZone,
+  tx,
+}: {
+  goal: Pick<Goal, "id" | "kind" | "userId">;
+  now: Date;
+  timeZone: string;
+  tx: TransactionClient;
+}): Promise<void> {
+  if (await findMockToCatchUp({ db: tx, goal, now })) {
+    await oweFollowUps({
+      db: tx,
+      followUps: [{ input: { goalId: goal.id, timeZone }, kind: "catchUpMockReplan" }],
+      userId: goal.userId,
+    });
+  }
+}
+
+/** Applies the mock `oweMockCatchUp` found, once per mock. */
+export async function catchUpMockReplan({
+  goalId,
+  now = new Date(),
+  timeZone,
+  userId,
+}: {
+  goalId: string;
+  now?: Date;
+  timeZone: string;
+  userId: string;
+}): Promise<void> {
+  const goal = await prisma.goal.findFirst({
+    select: { id: true, kind: true },
+    where: { id: goalId, userId },
+  });
+
+  const latest = goal && (await findMockToCatchUp({ goal, now }));
+
+  if (latest) {
+    await replanAfterMock({ catchUp: true, goalId, mockId: latest.id, now, timeZone });
+  }
 }

@@ -429,7 +429,11 @@ describe(replanAfterMock, () => {
     expect(refused.version).toBe(before.version);
     expect(refused.settings.mockReplan).toBeUndefined();
 
-    await catchUpMockReplan({ goal: fixture.goal, now: new Date(), timeZone: UTC });
+    await catchUpMockReplan({
+      goalId: fixture.goal.id,
+      timeZone: UTC,
+      userId: fixture.goal.userId,
+    });
 
     const caughtUp = await readPlan(fixture.plan.id);
 
@@ -448,10 +452,29 @@ describe(replanAfterMock, () => {
 
     expect(holds).toHaveBeenCalledTimes(2);
 
-    await catchUpMockReplan({ goal: fixture.goal, now: new Date(), timeZone: UTC });
+    await catchUpMockReplan({
+      goalId: fixture.goal.id,
+      timeZone: UTC,
+      userId: fixture.goal.userId,
+    });
+
     expect(holds).toHaveBeenCalledTimes(2);
   });
 });
+
+/** Opens today's day and runs the mock re-plan it owes, as the follow-ups workflow does. */
+async function openToday({ id: goalId, userId }: { id: string; userId: string }) {
+  await getTodayStudySession({ goalId, timeZone: UTC });
+
+  const owed = await prisma.followUp.findMany({ where: { kind: "catchUpMockReplan", userId } });
+  await prisma.followUp.deleteMany({ where: { id: { in: owed.map(({ id }) => id) } } });
+
+  if (owed.length > 0) {
+    await catchUpMockReplan({ goalId, timeZone: UTC, userId });
+  }
+
+  return owed.map(({ input }) => input);
+}
 
 async function readToday(goalId: string) {
   const view = await getTodayView({ goalId, timeZone: UTC });
@@ -512,7 +535,9 @@ describe(catchUpMockReplan, () => {
         .filter((item) => item.scheduledFor?.getTime() === before.items[0]?.scheduledFor?.getTime())
         .map((item) => item.id);
 
-    await getTodayStudySession({ goalId: fixture.goal.id, timeZone: UTC });
+    await expect(openToday(fixture.goal)).resolves.toStrictEqual([
+      { goalId: fixture.goal.id, timeZone: UTC },
+    ]);
 
     const opened = await readPlan(fixture.plan.id);
     const reordered = opened.changes.filter((change) => change.kind === "mockReordered");
@@ -522,7 +547,7 @@ describe(catchUpMockReplan, () => {
     expect(reordered).toHaveLength(1);
     expect(opened.firstDay(missed)).toBeLessThan(before.firstDay(missed));
 
-    await getTodayStudySession({ goalId: fixture.goal.id, timeZone: UTC });
+    await expect(openToday(fixture.goal)).resolves.toStrictEqual([]);
 
     await expect(readToday(fixture.goal.id)).resolves.toStrictEqual(preview);
     await expect(readPlan(fixture.plan.id)).resolves.toMatchObject({ version: opened.version });
@@ -565,7 +590,11 @@ describe(catchUpMockReplan, () => {
       fixture,
     });
 
-    await catchUpMockReplan({ goal: fixture.goal, now: new Date(), timeZone: UTC });
+    await catchUpMockReplan({
+      goalId: fixture.goal.id,
+      timeZone: UTC,
+      userId: fixture.goal.userId,
+    });
 
     const plan = await readPlan(fixture.plan.id);
     const shown = [second, first, ...lessons.slice(2)].map((block) => block.lessonId);
@@ -583,7 +612,7 @@ describe(catchUpMockReplan, () => {
     const { fixture, missed, mock, taught } = await relearnSetup();
     const before = await readPlan(fixture.plan.id);
 
-    await getTodayStudySession({ goalId: fixture.goal.id, timeZone: UTC });
+    await openToday(fixture.goal);
 
     const opened = await readPlan(fixture.plan.id);
     const added = opened.changes.slice(before.changes.length).map((change) => change.kind);
@@ -599,7 +628,12 @@ describe(catchUpMockReplan, () => {
     expect(relearnedStatuses({ after: opened, taught })).toStrictEqual(["todo", "todo"]);
     expect(opened.firstDay(missed)).toBeLessThan(before.firstDay(missed));
 
-    await catchUpMockReplan({ goal: fixture.goal, now: new Date(), timeZone: UTC });
+    await catchUpMockReplan({
+      goalId: fixture.goal.id,
+      timeZone: UTC,
+      userId: fixture.goal.userId,
+    });
+
     await expect(readPlan(fixture.plan.id)).resolves.toMatchObject({ version: opened.version });
   });
 
@@ -617,7 +651,7 @@ describe(catchUpMockReplan, () => {
     await getTodayView({ goalId: fixture.goal.id, timeZone: UTC });
     await expect(readPlan(fixture.plan.id)).resolves.toMatchObject({ version: before.version });
 
-    await getTodayStudySession({ goalId: fixture.goal.id, timeZone: UTC });
+    await openToday(fixture.goal);
 
     const opened = await readPlan(fixture.plan.id);
 
@@ -627,7 +661,12 @@ describe(catchUpMockReplan, () => {
     expect(reordered(opened)).toHaveLength(1);
     expect(opened.firstDay(missed)).toBeLessThan(before.firstDay(missed));
 
-    await catchUpMockReplan({ goal: fixture.goal, now: new Date(), timeZone: UTC });
+    await catchUpMockReplan({
+      goalId: fixture.goal.id,
+      timeZone: UTC,
+      userId: fixture.goal.userId,
+    });
+
     expect(reordered(await readPlan(fixture.plan.id))).toHaveLength(1);
   });
 });

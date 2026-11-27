@@ -16,6 +16,7 @@ function getFollowUpKey(followUp: FollowUp): string {
       return followUp.input.blockId ?? followUp.input.removalId ?? followUp.input.sessionId;
     case "prepareMockSupply":
     case "refreshPlanSuggestion":
+    case "catchUpMockReplan":
     case "rebuildGoalCurriculum":
     case "rememberOnboarding":
       return followUp.input.goalId;

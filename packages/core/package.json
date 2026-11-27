@@ -618,6 +618,7 @@
     "./plans/preview": "./src/plans/preview-plan-change.ts",
     "./plans/preview-contract": "./src/plans/plan-preview-contract.ts",
     "./plans/refresh-suggestion": "./src/plans/refresh-plan-suggestion.ts",
+    "./plans/replan-after-mock": "./src/plans/replan-after-mock.ts",
     "./plans/refresh-tested-out-plan": "./src/plans/refresh-tested-out-plan.ts",
     "./plans/resume-preview": "./src/plans/get-goal-resume-preview.ts",
     "./plans/setup": "./src/plans/plan-setup.ts",

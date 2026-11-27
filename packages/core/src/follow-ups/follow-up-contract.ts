@@ -47,6 +47,10 @@ export const followUpSchema = z.discriminatedUnion("kind", [
     kind: z.literal("refreshStudyDay"),
   }),
   z.object({ input: z.object({ goalId: uuidSchema() }), kind: z.literal("refreshPlanSuggestion") }),
+  z.object({
+    input: z.object({ goalId: uuidSchema(), timeZone: z.string() }),
+    kind: z.literal("catchUpMockReplan"),
+  }),
   z.object({ input: z.object({ sessionId: uuidSchema() }), kind: z.literal("prepareSession") }),
   z.object({
     input: z.object({

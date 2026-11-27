@@ -1,6 +1,5 @@
 import "server-only";
 import { refreshGoalTestSummary } from "../../learner/placement/_utils/test-sitting";
-import { catchUpMockReplan } from "../../plans/replan-after-mock";
 import { persistEntitlementLapseRefill } from "./entitlement-lapse-refill";
 import { hasSameGoalInputs } from "./goal-input-snapshot";
 import { persistStudyDay } from "./persist-study-day";
@@ -68,11 +67,6 @@ export async function openPlannedDay(
 
   if (!session) {
     return { status: "stale" };
-  }
-
-  // After the day is saved, so the day the learner was shown opens as shown.
-  if (written.status === "created") {
-    await catchUpMockReplan({ goal, now, timeZone });
   }
 
   return {

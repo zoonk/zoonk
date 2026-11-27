@@ -1,5 +1,5 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type TransactionClient, prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { readMockAnswer } from "../../exams/mocks/_utils/mock-answers";
 import { listShortParts } from "../../exams/mocks/mock-adapt-rules";
@@ -12,13 +12,15 @@ import { type MockMiss } from "../planner/skill-order";
 const MOCK_MISSES_DAYS = 28;
 
 export async function findLatestFinishedMock({
+  db = prisma,
   goalId,
   since,
 }: {
+  db?: TransactionClient;
   goalId: string;
   since: Date;
 }): Promise<{ id: string } | null> {
-  return prisma.mockExam.findFirst({
+  return db.mockExam.findFirst({
     orderBy: [{ finishedAt: "desc" }, { id: "desc" }],
     select: { id: true },
     where: {
@@ -30,8 +32,17 @@ export async function findLatestFinishedMock({
   });
 }
 
-export function findMockToFollow({ goalId, now }: { goalId: string; now: Date }) {
+export function findMockToFollow({
+  db,
+  goalId,
+  now,
+}: {
+  db?: TransactionClient;
+  goalId: string;
+  now: Date;
+}) {
   return findLatestFinishedMock({
+    db,
     goalId,
     since: new Date(now.getTime() - MOCK_MISSES_DAYS * MS_PER_DAY),
   });

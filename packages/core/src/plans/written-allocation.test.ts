@@ -357,7 +357,7 @@ describe("an opened day without an essay", () => {
     const shown = await readOpenedDay({ goalId: goal.id, sessionId: session.id });
 
     await finishMockMissing({ goal, skillId: writingSkill ?? "" });
-    await catchUpMockReplan({ goal, now: new Date(), timeZone: "UTC" });
+    await catchUpMockReplan({ goalId: goal.id, timeZone: "UTC", userId: goal.userId });
     await refreshOwedStudyDay({ sessionId: session.id, timeZone: "UTC", userId: goal.userId });
 
     const [day, plan, dates] = await Promise.all([

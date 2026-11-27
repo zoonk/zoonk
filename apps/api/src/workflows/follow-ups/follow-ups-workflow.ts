@@ -27,6 +27,7 @@ import { sourceVisibilityWorkflow } from "../research/source-visibility-workflow
 import { waitForMaterialReading } from "../research/wait-for-material-reading";
 import { sessionPreparationWorkflow } from "../sessions/session-preparation-workflow";
 import { backgroundTaskWorkflow, getBackgroundTaskToken } from "./background-task-workflow";
+import { catchUpMockReplanStep } from "./steps/catch-up-mock-replan-step";
 import {
   endFollowUpStep,
   listFollowUpsStep,
@@ -80,6 +81,9 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
       return;
     case "refreshPlanSuggestion":
       await retryPlanConflicts(refreshPlanSuggestionStep, { ...followUp.input, userId });
+      return;
+    case "catchUpMockReplan":
+      await retryPlanConflicts(catchUpMockReplanStep, { ...followUp.input, userId });
       return;
     case "settleSessionPlan":
       await settleSessionPlanStep({ ...followUp.input, userId });
