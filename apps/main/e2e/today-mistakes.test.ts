@@ -91,7 +91,7 @@ async function createPatternDay() {
 }
 
 test.describe("Today's mistakes", () => {
-  test("a day's mistakes row opens their practice and ends back on Today with the row done", async ({
+  test("a day's mistakes row opens their practice and goes on to the day's next stop with the row done", async ({
     browser,
   }) => {
     const { user } = await createMistakesDay();
@@ -102,7 +102,7 @@ test.describe("Today's mistakes", () => {
     await expect(mistakesRow.getByText("Questions you missed before")).toBeVisible();
 
     const returningRow = page.getByRole("listitem").filter({ hasText: "Percent off, again" });
-    await expect(returningRow.getByText("Again: you keep missing this")).toBeVisible();
+    await expect(returningRow.getByText("Once more: this one's been tricky")).toBeVisible();
 
     await mistakesRow.getByRole("button", { name: "Fix 1 mistake" }).click();
     await expect(page.getByRole("heading", { name: MISSED_QUESTION })).toBeVisible();
@@ -117,10 +117,14 @@ test.describe("Today's mistakes", () => {
 
     await page.getByRole("button", { name: /^Continue/u }).click();
     await expect(page.getByRole("heading", { name: "Practice done" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Practice again" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: /^Practice again/u })).toHaveCount(0);
 
-    await page.getByRole("link", { name: "Done" }).click();
-    await expect(page).toHaveURL(/\/today$/u);
+    // The day goes on to its next stop, as its other blocks do.
+    await page.getByRole("link", { name: /^Continue/u }).click();
+    await expect(page).toHaveURL(/\/session$/u);
+    await expect(page.getByText("Up next")).toBeVisible();
+
+    await page.goto("/today");
     await page.getByRole("button", { name: "2 done" }).click();
 
     await expect(
@@ -130,7 +134,7 @@ test.describe("Today's mistakes", () => {
     await page.context().close();
   });
 
-  test("a day's pattern row opens its drill and ends back on Today with the row done", async ({
+  test("a day's pattern row opens its drill and goes on to the day's next stop with the row done", async ({
     browser,
   }) => {
     const { user } = await createPatternDay();
@@ -147,8 +151,11 @@ test.describe("Today's mistakes", () => {
     await page.getByRole("button", { name: /^See result/u }).click();
     await expect(page.getByRole("heading", { name: "Practice done" })).toBeVisible();
 
-    await page.getByRole("link", { name: "Done" }).click();
-    await expect(page).toHaveURL(/\/today$/u);
+    await page.getByRole("link", { name: /^Continue/u }).click();
+    await expect(page).toHaveURL(/\/session$/u);
+    await expect(page.getByText("Up next")).toBeVisible();
+
+    await page.goto("/today");
     await page.getByRole("button", { name: "2 done" }).click();
 
     await expect(
