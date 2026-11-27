@@ -3709,11 +3709,6 @@ msgid "We couldn't send this question. Try again."
 msgstr "この質問を送信できませんでした。もう一度お試しください。"
 
 #: src/questions/lesson-question-errors.tsx
-msgctxt "-xjsCZ"
-msgid "Take a short break, then ask again."
-msgstr "少し時間をおいてから、もう一度質問してください。"
-
-#: src/questions/lesson-question-errors.tsx
 msgctxt "3kJE8G"
 msgid "Something went wrong. Try again."
 msgstr "問題が発生しました。もう一度お試しください。"

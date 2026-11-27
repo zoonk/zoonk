@@ -3709,11 +3709,6 @@ msgid "We couldn't send this question. Try again."
 msgstr "이 질문을 보내지 못했어요. 다시 시도해 보세요."
 
 #: src/questions/lesson-question-errors.tsx
-msgctxt "-xjsCZ"
-msgid "Take a short break, then ask again."
-msgstr "잠시 쉬었다가 다시 질문해 보세요."
-
-#: src/questions/lesson-question-errors.tsx
 msgctxt "3kJE8G"
 msgid "Something went wrong. Try again."
 msgstr "문제가 생겼어요. 다시 시도해 보세요."

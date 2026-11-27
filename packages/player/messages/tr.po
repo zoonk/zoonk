@@ -3709,11 +3709,6 @@ msgid "We couldn't send this question. Try again."
 msgstr "Bu soruyu gönderemedik. Tekrar dene."
 
 #: src/questions/lesson-question-errors.tsx
-msgctxt "-xjsCZ"
-msgid "Take a short break, then ask again."
-msgstr "Kısa bir ara ver, sonra tekrar sor."
-
-#: src/questions/lesson-question-errors.tsx
 msgctxt "3kJE8G"
 msgid "Something went wrong. Try again."
 msgstr "Bir sorun oluştu. Tekrar dene."
