@@ -150,8 +150,9 @@ export function LanguagePlanTestFlow({
     case "test":
       return (
         <LevelTestQuestion
-          answer={(input) => actions.answer({ ...input, attemptId: phase.attemptId })}
           audioPending={audioPending}
+          failures={phase.failures}
+          onAnswer={test.onAnswer(phase)}
           onClose={() =>
             analytics.left({
               attemptId: phase.attemptId,
@@ -160,7 +161,7 @@ export function LanguagePlanTestFlow({
             })
           }
           onStop={() => test.onStop(phase.attemptId)}
-          onView={test.onView(phase.attemptId)}
+          pending={test.isPending}
           targetLanguage={targetLanguage}
           test={phase.test}
         />

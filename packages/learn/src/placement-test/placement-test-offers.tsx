@@ -4,7 +4,7 @@ import { useExtracted } from "next-intl";
 import { type PlacementAttemptView } from "../onboarding/onboarding-actions";
 import { type PlacementLength } from "./placement-test-actions";
 import { TestInvitation, TestOffer, type TestOfferRow, type TestPressed } from "./test-offer";
-import { type TestRowId } from "./use-test-analytics";
+import { type TestFactsNow, type TestRowId } from "./use-test-analytics";
 import { useTestFacts } from "./use-test-facts";
 
 /** What the course's test asks before it starts; null for a row with nothing to say. */
@@ -16,8 +16,11 @@ export type CourseTestOffer = {
 
 type OfferChoice = PlacementLength | "firstLesson";
 
-/** The rows an offer put on screen, by their stable ids, and the one that came picked. */
-export type OfferedRows = { preselected: TestRowId; rows: readonly TestRowId[] };
+/** The rows an offer put on screen, by their stable ids, the one that came picked and their counts. */
+export type OfferedRows = Pick<TestFactsNow, "parts" | "questions"> & {
+  preselected: TestRowId;
+  rows: readonly TestRowId[];
+};
 
 const COURSE_ROW_IDS: Record<PlacementLength, TestRowId> = {
   quick: "quick",
@@ -46,6 +49,11 @@ export function useFullTestLabel(): string {
     description: "The long test: it checks every topic still ahead, in parts.",
     message: "Full test",
   });
+}
+
+/** The counts the course's rows show; null where the server has none. */
+function toOfferCounts(offer: CourseTestOffer): Pick<TestFactsNow, "parts" | "questions"> {
+  return { parts: offer?.wholeCourse?.parts ?? null, questions: offer?.questions ?? null };
 }
 
 function useCourseRows(offer: CourseTestOffer): TestOfferRow<PlacementLength>[] {
@@ -105,6 +113,7 @@ export function CourseStartOffer({
       mainLabel={(choice) => (choice === "firstLesson" ? t("Continue") : t("Start"))}
       onShown={() =>
         onShown({
+          ...toOfferCounts(offer),
           preselected: "quick",
           rows: ["first_lesson", ...rows.map((row) => COURSE_ROW_IDS[row.value])],
         })
@@ -139,7 +148,11 @@ export function CoursePlanOffer({
   const other = { label: t("Not now"), onPress: onNotNow };
 
   const shown = () =>
-    onShown({ preselected: "quick", rows: rows.map((row) => COURSE_ROW_IDS[row.value]) });
+    onShown({
+      ...toOfferCounts(offer),
+      preselected: "quick",
+      rows: rows.map((row) => COURSE_ROW_IDS[row.value]),
+    });
 
   if (rows.length > 1) {
     return (

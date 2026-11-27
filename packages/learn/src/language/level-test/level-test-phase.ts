@@ -21,13 +21,14 @@ export type LevelTestPhase =
   | { attemptId: string; kind: "waiting" }
   /** The test asks nothing more and isn't closed yet: closing it is the next save. */
   | { attemptId: string; kind: "finish" }
-  | { attemptId: string; kind: "test"; test: ReadyLevelTest }
+  /** `failures`: saves from this question (answers and Stop) that failed in a row. */
+  | { attemptId: string; failures: number; kind: "test"; test: ReadyLevelTest }
   | { kind: "result"; nextTestOutLevel: string | null; result: LevelTestResult | null }
   | { failures: number; kind: "testOut"; question: TestOutTapQuestion; view: TestOutView }
   | { attemptId: string; kind: "testOutFinish" }
   | { kind: "testOutResult"; view: TestOutView }
-  /** A test-out whose questions are still being written. */
-  | { attemptId: string; kind: "testOutWaiting" };
+  /** A test-out whose questions are still being written; `arrived` once they are, until the wait moves on. */
+  | { arrived?: TestOutView; attemptId: string; kind: "testOutWaiting" };
 
 /**
  * Where a read of the test leaves the learner: an open test goes on at its next question. A
@@ -63,7 +64,7 @@ export function toOpenedLevelTestPhase({
     return { attemptId: view.attemptId, kind: "finish" };
   }
 
-  return { attemptId: view.attemptId, kind: "test", test: view };
+  return { attemptId: view.attemptId, failures: 0, kind: "test", test: view };
 }
 
 const TAP_FORMATS: readonly PlacementQuestion["format"][] = [

@@ -6,6 +6,7 @@ import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { RENTING_SCENARIO } from "@zoonk/testing/fixtures/language";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { expect, test } from "./fixtures";
+import { holdActionAnswer } from "./held-action";
 import { createLanguageLearner } from "./language-learner";
 import {
   CHARACTER_CHECK_IN,
@@ -454,5 +455,46 @@ test.describe("Language practice in the plan", () => {
     const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
     expect(saved.details).not.toHaveProperty("skillLevels.listening");
     expect(saved.details).not.toHaveProperty("skillLevels.speaking");
+  });
+
+  test("the level test's question waits while Stop saves", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    const [goal] = await Promise.all([
+      onboardingGoal({
+        details: { reason: "Trabalho" },
+        language: "pt",
+        prompt: "quero melhorar meu inglês",
+        targetLanguage: "en",
+        title: "Inglês para o trabalho",
+        userId: noProgressUser.id,
+      }),
+      ensureLevelTestBank(),
+    ]);
+
+    await page.goto(`/start/${goal.id}`);
+    await page.getByRole("button", { exact: true, name: "Start" }).click();
+
+    for (const number of [1, 2, 3, 4]) {
+      // oxlint-disable-next-line no-await-in-loop -- Questions come one at a time.
+      await expect(page.getByText(`Question ${number} of 12`, { exact: true })).toBeVisible();
+      // oxlint-disable-next-line no-await-in-loop -- Questions come one at a time.
+      await page.getByRole("radio", { name: /^Right [ABC][12]$/u }).click();
+      // oxlint-disable-next-line no-await-in-loop -- Questions come one at a time.
+      await page.getByRole("button", { name: "Confirm" }).click();
+    }
+
+    await expect(page.getByText("Question 5 of 12", { exact: true })).toBeVisible();
+    const stopping = await holdActionAnswer(page, `/start/${goal.id}`);
+    await page.getByRole("button", { name: "Stop and use my answers" }).click();
+    await stopping.held;
+
+    await expect(page.getByRole("button", { name: "Stop and use my answers" })).toBeDisabled();
+    await expect(page.getByRole("button", { name: "Can't listen now" })).toBeDisabled();
+    await expect(page.getByRole("radio", { name: /^Right [ABC][12]$/u })).toBeDisabled();
+
+    await stopping.release();
+    await expect(page.getByRole("heading", { name: "Your English level" })).toBeVisible();
   });
 });

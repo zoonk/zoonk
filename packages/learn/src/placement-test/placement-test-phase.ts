@@ -47,6 +47,29 @@ export type PlacementTestPhase =
   | { attempt: PlacementAttemptView; kind: "continue" }
   | PlacementResultPhase;
 
+const FAILED: PlacementOutcome = { status: "failed" };
+
+/**
+ * Where an answer leaves the test, or null when it didn't save. Core refuses an answer to a question
+ * it no longer asks, such as one another device moved past, so a read says whether the test moved on:
+ * a read that still asks the question means the answer didn't save.
+ */
+export async function answerOrRead({
+  answer,
+  question,
+  read,
+}: {
+  answer: () => Promise<PlacementOutcome>;
+  question: PlacementQuestion;
+  read: () => Promise<PlacementOutcome>;
+}): Promise<PlacementOutcome | null> {
+  const answered = await answer().catch(() => FAILED);
+  const now = answered.status === "failed" ? await read().catch(() => FAILED) : answered;
+  const stillAsked = now.status === "ready" && now.next?.itemId === question.itemId;
+
+  return now.status === "failed" || stillAsked ? null : now;
+}
+
 /** A part that's closed, or one the learner stopped: either way it asks nothing until it's started again. */
 function isResting(attempt: PlacementAttemptView): boolean {
   return attempt.partComplete || attempt.resume !== null;
