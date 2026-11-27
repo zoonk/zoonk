@@ -89,7 +89,7 @@ class MindMapViewModel(
         mapSaves.set(target, saved)
     }
 
-    /** The saved maps that open, as [served] lists them now, with each one saved or removed on this visit where it showed. */
+    /** The saved maps as [served] lists them now, with each one saved or removed on this visit where it showed. */
     fun savedShown(
         served: List<SavedMindMap>,
         states: Map<MindMapTarget, Boolean>,

@@ -107,6 +107,24 @@ class SavesTest {
     }
 
     @Test
+    fun aKeptRowThatCanNoLongerOpenShowsOnlyAmongTheGoneOnes() {
+        data class Row(
+            val key: String,
+            val available: Boolean,
+        )
+
+        val kept = KeptRows<Row, String> { it.key }
+        kept.arrange(listOf(Row("a", true), Row("b", true)), { false })
+
+        // Removed and saved again here, then the lesson stopped opening: the newest read says so.
+        val rows = kept.arrange(listOf(Row("a", false), Row("b", true)), { it == "a" })
+        val sections = rows.saveSections({ it.available }) { true }
+
+        assertEquals(listOf("b"), sections.opens.map { it.key })
+        assertEquals(listOf("a"), sections.gone.map { it.key })
+    }
+
+    @Test
     fun theNextVisitShowsTheListAsRead() {
         val kept = KeptRows<String, String> { it }
         kept.arrange(listOf("a", "b"), { false })
