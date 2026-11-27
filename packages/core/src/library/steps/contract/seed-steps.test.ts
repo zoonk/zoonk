@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { localizeObject } from "../../../../../db/src/prisma/seed/_utils/localize";
+import { itemLessonKeys } from "../../../../../db/src/prisma/seed/learners/plan-graph";
+import { listSeedPersonas } from "../../../../../db/src/prisma/seed/learners/seed-personas";
 import { enemCourse } from "../../../../../db/src/prisma/seed/library/enem/enem-course";
 import { englishCourse } from "../../../../../db/src/prisma/seed/library/english/english-course";
 import { physicsCourse } from "../../../../../db/src/prisma/seed/library/physics/physics-course";
@@ -21,6 +23,22 @@ const seededSteps = courses.flatMap((course) =>
 );
 
 describe("seeded lesson steps", () => {
+  it("give every lesson finished in a persona's plan screens to replay", () => {
+    const missing = listSeedPersonas({ now: new Date("2026-10-16") }).flatMap(({ goal }) => {
+      const lessons = [
+        ...goal.course.chapters.flatMap((chapter) => chapter.lessons),
+        ...(goal.course.explanations ?? []),
+      ];
+
+      return goal.plan.items
+        .filter((item) => item.status === "done")
+        .flatMap((item) => itemLessonKeys(goal.course, item))
+        .filter((key) => !lessons.find((lesson) => lesson.key === key)?.steps?.length);
+    });
+
+    expect(missing).toStrictEqual([]);
+  });
+
   it("follow the step contract, which the player needs to show them", () => {
     const issues = seededSteps.flatMap(({ content, kind, name }) => {
       const result = safeParseStepContent(kind, content);

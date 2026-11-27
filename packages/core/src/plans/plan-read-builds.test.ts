@@ -58,7 +58,7 @@ describe("plans laid out per read", () => {
     const turn = await countBuilds(() =>
       createLessonQuestion({
         input: { context: { kind: "plan" }, question: "What's next?", requestId: randomUUID() },
-        target: { goalId: user.goalId, kind: "plan" },
+        target: { conversationId: null, goalId: user.goalId, kind: "plan" },
       }),
     );
 

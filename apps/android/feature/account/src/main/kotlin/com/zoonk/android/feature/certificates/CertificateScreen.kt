@@ -413,8 +413,8 @@ private fun certificateFacts(certificate: OwnedCertificate): List<CertificateFac
     fun number(value: Long) = formatNumber(value.toDouble(), locale)
 
     return listOfNotNull(
-        certificate.courseLevel?.let {
-            CertificateFact(stringResource(R.string.certificates_detail_level), courseLevelName(it.value), mono = false)
+        certificate.courseLevel?.let { courseLevelName(it.value) }?.let {
+            CertificateFact(stringResource(R.string.certificates_detail_level), it, mono = false)
         },
         CertificateFact(
             stringResource(R.string.certificates_detail_completed),

@@ -5,6 +5,7 @@ import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixture
 import { itemFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { pickItemInBlock } from "../_test-utils/shown-choice";
@@ -14,7 +15,6 @@ import { type SavedItemFacts } from "../plans/_utils/selected-item-contract";
 import { answerBlockInOrder } from "../sessions/_test-utils/answer-block";
 import { getTodayStudySession } from "../sessions/_test-utils/open-today";
 import {
-  DAY_MS,
   SESSION_NOW,
   SESSION_TODAY,
   checkpointItemFixture,
@@ -295,7 +295,7 @@ describe("phase checkpoint (boss)", () => {
       prisma.learningEvent.findFirst({ where: { kind: "checkpoint", userId: user.id } }),
     ).resolves.toMatchObject({ correctAnswers: 0, incorrectAnswers: 2, lessonKind: "boss" });
 
-    vi.setSystemTime(new Date(SESSION_NOW.getTime() + DAY_MS));
+    vi.setSystemTime(new Date(SESSION_NOW.getTime() + MS_PER_DAY));
     const tomorrow = await getTodayStudySession({ goalId: goal.id });
 
     if (tomorrow.status !== "ready") {
@@ -448,7 +448,7 @@ describe("phase checkpoint (boss)", () => {
       prisma.planItem.findUniqueOrThrow({ where: { id: boss.id } }),
     ).resolves.toMatchObject({ status: "todo" });
 
-    vi.setSystemTime(new Date(SESSION_NOW.getTime() + DAY_MS));
+    vi.setSystemTime(new Date(SESSION_NOW.getTime() + MS_PER_DAY));
     const tomorrow = await getTodayStudySession({ goalId: goal.id });
 
     if (tomorrow.status !== "ready") {
@@ -470,7 +470,9 @@ describe("phase checkpoint (boss)", () => {
       tomorrow.session.blocks.find((candidate) => candidate.checkpoint?.rematch),
     ).toMatchObject({ checkpoint: { kind: "boss", rematch: true }, kind: "checkpoint" });
 
-    expect(tomorrow.session.localDate).toStrictEqual(new Date(SESSION_TODAY.getTime() + DAY_MS));
+    expect(tomorrow.session.localDate).toStrictEqual(
+      new Date(SESSION_TODAY.getTime() + MS_PER_DAY),
+    );
 
     const next = await prisma.planItem.findFirstOrThrow({ where: { lessonId: lessons[2]?.id } });
     expect(next.status).toBe("todo");
@@ -548,7 +550,7 @@ describe("phase checkpoint (boss)", () => {
   it("offers a phase with no lessons of its own after its preceding teaching, before its estimate", async () => {
     const user = await userFixture();
     const { goal, plan } = await sessionGoalFixture({ lessons: 2, userId: user.id });
-    const day = new Date(SESSION_TODAY.getTime() + 2 * DAY_MS);
+    const day = new Date(SESSION_TODAY.getTime() + 2 * MS_PER_DAY);
 
     await checkpointItemFixture({
       kind: "boss",
@@ -570,7 +572,7 @@ describe("phase checkpoint (boss)", () => {
     expect(today.session.blocks.map((block) => block.kind)).toContain("checkpoint");
     expect(today.session.blocks.map((block) => block.kind)).toContain("learn");
 
-    vi.setSystemTime(new Date(SESSION_NOW.getTime() + 2 * DAY_MS));
+    vi.setSystemTime(new Date(SESSION_NOW.getTime() + 2 * MS_PER_DAY));
     const onItsDay = await getTodayStudySession({ goalId: goal.id });
 
     if (onItsDay.status !== "ready") {
@@ -599,7 +601,7 @@ describe("phase checkpoint (boss)", () => {
     });
 
     await prisma.planItem.update({
-      data: { phase: 1, position: 6, scheduledFor: new Date(SESSION_TODAY.getTime() + DAY_MS) },
+      data: { phase: 1, position: 6, scheduledFor: new Date(SESSION_TODAY.getTime() + MS_PER_DAY) },
       where: { id: fourth?.id },
     });
 
@@ -865,7 +867,7 @@ describe(getWeeklyChallenge, () => {
       kind: "checkpoint",
       planId: plan.id,
       position: 10,
-      scheduledFor: new Date(SESSION_TODAY.getTime() + 3 * DAY_MS),
+      scheduledFor: new Date(SESSION_TODAY.getTime() + 3 * MS_PER_DAY),
     });
 
     mockSession(user.id);

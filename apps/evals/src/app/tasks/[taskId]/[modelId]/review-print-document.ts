@@ -6,6 +6,7 @@ import {
   getCaseHref,
 } from "@/lib/eval-summary";
 import { type ReviewExportEntry } from "@/lib/review-export";
+import { isJsonObject } from "@zoonk/utils/json";
 
 const PRINT_STYLES = `
   @page {
@@ -99,10 +100,6 @@ function formatPrimitive(value: unknown): string {
   return "None";
 }
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
 function getReadableEntries(value: Record<string, unknown>): [string, unknown][] {
   return Object.entries(value).toSorted(([firstKey], [secondKey]) => {
     if (firstKey === "title") {
@@ -140,7 +137,7 @@ function formatReadableValue(value: unknown): string {
       .join("\n\n");
   }
 
-  if (isRecord(value)) {
+  if (isJsonObject(value)) {
     return getReadableEntries(value)
       .map(([label, nestedValue]) => formatReadableField({ label, value: nestedValue }))
       .join("\n\n");

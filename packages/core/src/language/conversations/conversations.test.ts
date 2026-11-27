@@ -15,6 +15,7 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   cleanupTestCalls,
@@ -84,7 +85,6 @@ const COMPLETION = {
 
 const FREE_CALL_SECONDS = 120;
 const PRACTICE_SECONDS = 120;
-const DAY_MS = 86_400_000;
 
 function objectivesAnswer(labels: string[], { goodbye = false } = {}) {
   return {
@@ -411,7 +411,7 @@ describe("language conversations", () => {
     const conversationId = await startPractice(renting.id);
 
     await prisma.languageConversation.update({
-      data: { createdAt: new Date(Date.now() - DAY_MS) },
+      data: { createdAt: new Date(Date.now() - MS_PER_DAY) },
       where: { id: conversationId },
     });
 

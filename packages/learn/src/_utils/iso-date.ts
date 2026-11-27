@@ -132,6 +132,15 @@ export function useFormatMomentDate() {
     });
 }
 
+/** An instant's time of day ("2:32 PM"), in the zone it's drawn in. */
+export function useFormatMomentTime() {
+  const format = useFormatter();
+  const timeZone = useDrawingTimeZone();
+
+  return (moment: Date | string): string =>
+    format.dateTime(new Date(moment), { hour: "numeric", minute: "2-digit", timeZone });
+}
+
 /**
  * Messages `select` on `dateKind`, since a month and a day take different words around them. The
  * date keeps its words on one line, so a sentence never breaks between a day and its year.

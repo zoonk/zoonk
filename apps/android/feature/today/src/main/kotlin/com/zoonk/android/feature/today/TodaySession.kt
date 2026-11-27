@@ -456,7 +456,7 @@ private fun TodayDayStatus(
             )
         }
 
-        StudySession.State.UNDERWAY -> {
+        StudySession.State.UNDERWAY, StudySession.State.UNKNOWN_DEFAULT_OPEN_API -> {
             return
         }
     }

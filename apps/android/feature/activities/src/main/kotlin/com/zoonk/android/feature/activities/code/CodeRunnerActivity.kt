@@ -74,13 +74,6 @@ val codeRunnerRenderer =
         canvas = { CodeRunnerActivity(it) },
     )
 
-private val PlayableLibraryStepAnyOfContentOneOf16Fields.codeLanguage
-    get() =
-        when (language) {
-            PlayableLibraryStepAnyOfContentOneOf16Fields.Language.JAVASCRIPT -> CodeLanguage.JavaScript
-            PlayableLibraryStepAnyOfContentOneOf16Fields.Language.PYTHON -> CodeLanguage.Python
-        }
-
 private val CodeLanguage.runtimeName
     get() =
         when (this) {
@@ -102,7 +95,7 @@ private val RunSaver = jsonSaver(sandboxJson, ProgramRun.serializer())
 @Composable
 private fun CodeRunnerActivity(props: ActivityProps) {
     val fields = (props.content as CodeRunnerContent).value.fields
-    val language = fields.codeLanguage
+    val language = fields.codeLanguage ?: return
     val sandbox = LocalCodeSandbox.current
     val runtime = rememberSandboxRuntime(sandbox, language)
     val editorRun = rememberEditorRun()

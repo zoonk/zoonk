@@ -67,12 +67,9 @@ function RevealActions({
         {t("Adjust plan")}
       </OnboardingSecondaryButton>
 
-      {/* A submit, so a press before the page hydrates starts once it does. */}
-      <form action={() => onStart()} className="contents">
-        <OnboardingPrimaryButton busy={pending} type="submit">
-          {started ? t("Continue") : t("Start")}
-        </OnboardingPrimaryButton>
-      </form>
+      <OnboardingPrimaryButton busy={pending} onClick={onStart}>
+        {started ? t("Continue") : t("Start")}
+      </OnboardingPrimaryButton>
     </OnboardingActions>
   );
 }

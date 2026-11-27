@@ -3,7 +3,6 @@ import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { ensureGuest } from "@zoonk/e2e/fixtures/guests";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
-import { expectHydrated } from "@zoonk/e2e/hydration";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
@@ -283,7 +282,6 @@ test("a learner who starts another goal from Today lands on it, never on the goa
   await expect(page.getByRole("main").getByText(previousLesson).first()).toBeVisible();
 
   const switcher = page.getByRole("button", { name: /^Learn chemistry.*Switch goal$/u });
-  await expectHydrated(switcher);
   await switcher.click();
   await page.getByRole("menuitem", { name: "New goal" }).click();
 
@@ -345,7 +343,6 @@ test("a learner who starts another goal from Today lands on it, never on the goa
   await expect(newSwitcher).toBeVisible();
   await expect(page.locator("html")).not.toHaveAttribute("data-saw-previous");
 
-  await expectHydrated(newSwitcher);
   await newSwitcher.click();
   await page.getByRole("menuitem", { name: "New goal" }).click();
   await expect(page.getByRole("textbox", { name: "I want to" })).toHaveValue("");
@@ -369,7 +366,6 @@ test("a goal a link filled in doesn't fill the box again once it's made, on Back
   await page.goto(`/start?goal=${encodeURIComponent(words)}`);
 
   const send = page.getByRole("button", { name: "Build my plan" });
-  await expectHydrated(send);
   await send.click();
   await page.getByRole("button", { name: "Looks right" }).click();
   await expect(page).toHaveURL(GOAL_URL);
@@ -382,7 +378,6 @@ test("a goal a link filled in doesn't fill the box again once it's made, on Back
   await expect(page).toHaveURL(GOAL_URL);
 
   const switcher = page.getByRole("button", { name: /^Quantum physics.*Switch goal$/u });
-  await expectHydrated(switcher);
   await switcher.click();
   await page.getByRole("menuitem", { name: "New goal" }).click();
   await expect(page).toHaveURL(/\/start$/u);

@@ -40,10 +40,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.text
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -127,7 +130,7 @@ internal fun TutorThreadView(
             thread is LoadState.Loaded -> {
                 val turns = thread.value.turns
                 if (state.isEmpty(thread.value)) {
-                    EmptyThread(identity, suggestions.takeIf { state.offersSuggestions(turns) }.orEmpty(), state.canAsk(turns), vm::send)
+                    EmptyThread(identity, suggestions.takeIf { state.offersSuggestions }.orEmpty(), state.canAsk(turns), vm::send)
                 } else {
                     Turns(vm, thread.value, state, identity, routes)
                 }
@@ -242,7 +245,7 @@ private fun Turns(
 
 private fun StudyMissionMoment.facts() =
     MissionMomentFacts(
-        missions = missions.map { it.toDayMission() },
+        missions = missions.mapNotNull { it.toDayMission() },
         completed = completed.map { done -> StudyMission.Kind.entries.first { it.value == done.value } },
         bonus = fullMeal.bonus,
         bonusPaid = fullMeal.paid,
@@ -260,17 +263,21 @@ private fun DayLabel(
     day: LocalDate,
     today: LocalDate,
 ) {
+    val locale = currentLocale()
+    val label =
+        when (day) {
+            today -> stringResource(R.string.tutor_today)
+            today.minusDays(1) -> stringResource(R.string.tutor_yesterday)
+            else -> formatDate(day, locale, DateStyle.WeekdayDay, today)
+        }
+
+    // Main's `text-label`: uppercase for the eye, as written for TalkBack.
     Text(
-        text =
-            when (day) {
-                today -> stringResource(R.string.tutor_today)
-                today.minusDays(1) -> stringResource(R.string.tutor_yesterday)
-                else -> formatDate(day, currentLocale(), DateStyle.WeekdayDay, today)
-            },
-        modifier = Modifier.fillMaxWidth(),
+        text = label.uppercase(locale),
+        modifier = Modifier.fillMaxWidth().clearAndSetSemantics { text = AnnotatedString(label) },
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         textAlign = TextAlign.Center,
-        style = MaterialTheme.typography.labelMedium,
+        style = MaterialTheme.zoonkType.label,
     )
 }
 
@@ -418,7 +425,7 @@ private fun Answer(
 
         turn.status == TutorTurn.Status.Failed -> {
             turn.answer?.let { AnswerText(it, linksChecked, routes.open, { id -> vm.openBlock(turn.id, id) }, vm.noticeFor(turn), words) }
-            if (failure?.helpLimit != null || failure == TutorFailure.Unanswered) {
+            if (failure?.refusal != null || failure == TutorFailure.Unanswered) {
                 Text(
                     stringResource(R.string.tutor_not_answered),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -477,7 +484,7 @@ private fun Thinking(words: TextStyle) {
     }
 }
 
-/** Main names the failure itself only when it's about the session, Plus, a gone lesson or a slow-down. */
+/** Main names the failure itself only when it's about the session, Plus or a gone lesson. */
 private val TutorFailure?.isGeneric: Boolean
     get() = this == null || this == TutorFailure.Failed || this == TutorFailure.Invalid
 
@@ -571,7 +578,7 @@ private fun CheckAgain(
     }
 }
 
-/** Main's error action: log in again, subscribe, or try again; a help limit or a gone lesson has none. */
+/** Main's error action: log in again, subscribe, or try again; a limit or a gone lesson has none. */
 @Composable
 internal fun FailureAction(
     failure: TutorFailure?,
@@ -589,7 +596,7 @@ internal fun FailureAction(
             SubscribeButton(routes.subscribe)
         }
 
-        failure?.helpLimit != null || failure == TutorFailure.Gone -> {}
+        failure?.refusal != null || failure == TutorFailure.Gone -> {}
 
         else -> {
             OutlinedButton(onClick = onRetry, modifier = modifier, enabled = enabled) {
@@ -607,18 +614,21 @@ internal fun EmptyThread(
     canAsk: Boolean,
     onSelect: (TutorSuggestion) -> Unit,
 ) {
-    CenteredState {
-        identity.look?.let { StandingBuddy(it, EMPTY_BUDDY_HEIGHT) }
-        Text(stringResource(R.string.tutor_empty_title), textAlign = TextAlign.Center, style = MaterialTheme.typography.titleMedium)
-        Text(
-            stringResource(R.string.tutor_empty_ai, identity.name),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyMedium,
-        )
+    Column(
+        Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 24.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            identity.look?.let { StandingBuddy(it, EMPTY_BUDDY_HEIGHT) }
+            Text(
+                stringResource(R.string.tutor_empty_ai, identity.name),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
         if (suggestions.isNotEmpty()) {
             FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 suggestions.forEach { suggestion ->

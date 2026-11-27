@@ -1,3 +1,4 @@
+import { apportion } from "@zoonk/utils/apportion";
 import { getSubjectShareFallback } from "../../../exams/_utils/subject-share-fallback";
 import { type SyllabusSubject } from "../syllabus-contract";
 
@@ -19,21 +20,13 @@ export function getDisplayWeights(
     return subjects.map(() => null);
   }
 
-  const exact = raw.map((share) => (share * 100) / total);
-  const whole = exact.map((percent) => Math.floor(percent));
-  const remaining = 100 - whole.reduce((sum, percent) => sum + percent, 0);
-
-  const order = exact
-    .map((percent, index) => ({ index, remainder: percent - (whole[index] ?? 0) }))
-    .toSorted((a, b) => b.remainder - a.remainder || a.index - b.index);
-
-  const raised = new Set(order.slice(0, remaining).map((entry) => entry.index));
+  const percentages = apportion({ total: 100, weights: raw });
 
   return subjects.map((subject, index) =>
     subject.source === "notice"
       ? {
           basis: subject.share === null ? "assumed" : "stated",
-          percent: (whole[index] ?? 0) + (raised.has(index) ? 1 : 0),
+          percent: percentages[index] ?? 0,
           share: (raw[index] ?? 0) / total,
         }
       : null,

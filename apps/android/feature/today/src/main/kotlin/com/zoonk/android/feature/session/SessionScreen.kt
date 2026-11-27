@@ -258,10 +258,8 @@ private fun SavedDay(
 
 private fun StudyDay.saved(): StudySession? =
     when (this) {
-        is StudyDay.ActiveWrapper -> value
-        is StudyDay.CompletedWrapper -> value
-        is StudyDay.PlannedWrapper -> value
-        is StudyDay.UnstartedWrapper -> null
+        is StudyDay.StudySessionValue -> value
+        is StudyDay.UnstartedStudyDayValue -> null
     }
 
 private fun StudySession.opened(blockId: String?): StudyBlock? = blocks.firstOrNull { it.id.toString() == blockId && it.status in OPEN }

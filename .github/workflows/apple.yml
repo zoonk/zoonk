@@ -107,19 +107,22 @@ jobs:
     needs: changes
     if: github.event_name == 'push' && needs.changes.outputs.changed == 'true'
     runs-on: xcode-27
-    timeout-minutes: 35
+    timeout-minutes: 25
     steps:
       - name: Check out code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      # The simulator build compiles differently from the build job's device build, so it keeps its
-      # own saved build.
+      # The Mac build compiles differently from the build job's device build, so it keeps its own
+      # saved build.
       - name: Restore the last build
         id: last
         uses: ./.github/actions/apple-last-build
         with:
-          build: simulator
+          build: mac
 
+      # On Mac, as `pnpm apple:check` runs them: this runner takes several minutes to boot an iPhone
+      # simulator before a test can start. The few tests that need an iPhone skip themselves here
+      # and run from apple-tests.yml.
       - name: Run unit tests
         env:
           XCODEBUILD_ARGUMENTS: >-
@@ -129,11 +132,7 @@ jobs:
             -resultBundlePath ${{ runner.temp }}/apple-unit-tests.xcresult
             COMPILER_INDEX_STORE_ENABLE=NO
             GCC_GENERATE_DEBUGGING_SYMBOLS=NO
-        # The newest runtime the image installs, which can trail Xcode's SDK while a new image rolls out
-        # (xcodebuild's default OS is the SDK's).
-        run: |
-          udid=$(xcrun simctl list devices available --json | jq -r '[.devices | to_entries | sort_by(.key) | .[].value[] | select(.name == "iPhone 17")] | last | .udid')
-          make -C apps/apple test TEST_DESTINATION="platform=iOS Simulator,id=$udid"
+        run: make -C apps/apple test-mac
 
       - name: Report unit test results
         if: always()

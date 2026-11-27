@@ -100,7 +100,7 @@ function useDayLine() {
  * Its own namespace (`limits`), which apps ship on every page, so a goal refused on a public page
  * says when more comes back in the same words as every other cap.
  */
-function useLines() {
+export function useLines() {
   const t = useExtracted("limits");
 
   const subscribe: DayLines = {

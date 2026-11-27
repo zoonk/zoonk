@@ -135,6 +135,10 @@ private fun pastEditionLine(source: MockSizeSourcePastEdition): AnnotatedString 
 private fun leftOutLine(leftOut: MockLeftOut): String? {
     val name = leftOut.name
     return when (leftOut.part) {
+        MockLeftOut.Part.UNKNOWN_DEFAULT_OPEN_API -> {
+            null
+        }
+
         MockLeftOut.Part.LISTENING -> {
             name?.let { stringResource(R.string.mock_result_left_out_named, it) } ?: stringResource(R.string.mock_result_left_out_listening)
         }

@@ -1,11 +1,10 @@
 "use client";
 
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { useExtracted } from "next-intl";
 import { useEffect } from "react";
 import { EnterButton } from "../_components/enter-button";
 import { formatClock } from "../_utils/clock";
-
-const MS_PER_SECOND = 1000;
 
 /**
  * Recording as a screen's main action, wherever a learner answers out loud: "Record", then "Stop"

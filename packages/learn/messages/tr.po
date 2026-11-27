@@ -386,11 +386,6 @@ msgid "You finish around {month}."
 msgstr "Yaklaşık {month} ayında bitirirsin."
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "X6_KO5"
-msgid "Take a short break, then try again."
-msgstr "Kısa bir ara ver, sonra tekrar dene."
-
-#: src/_components/help-limit-notice.tsx
 #: src/speech/record-note.tsx
 #: src/writing/writing-start.tsx
 msgctxt "8vWw5H"
@@ -741,6 +736,18 @@ msgstr "Kapat"
 msgctxt "IIe6nO"
 msgid "To review"
 msgstr "Tekrar edilecek"
+
+#. The line of a notice that the learner sent too many requests in a short time, such as questions to their study buddy, and must wait before the next one. It counts down every second until they can try again.
+#: src/_components/slow-down-words.ts
+msgctxt "limits.1flNDY"
+msgid "Take a short break. You can try again in {seconds, plural, one {# second} other {# seconds}}."
+msgstr "Kısa bir mola ver. {seconds, plural, other {# saniye}} sonra tekrar deneyebilirsin."
+
+#. The line of a notice that the learner sent too many requests in a short time, such as questions to their study buddy, and must wait before the next one. It counts down every minute until they can try again.
+#: src/_components/slow-down-words.ts
+msgctxt "limits.m_DHa2"
+msgid "Take a short break. You can try again in {minutes, plural, one {# minute} other {# minutes}}."
+msgstr "Kısa bir mola ver. {minutes, plural, other {# dakika}} sonra tekrar deneyebilirsin."
 
 #: src/_components/sortable-list.tsx
 msgctxt "TkDZ5b"
@@ -1322,6 +1329,7 @@ msgid "Change"
 msgstr "Değiştir"
 
 #: src/appearance/buddy-settings.tsx
+#: src/buddies/buddy-menu.tsx
 #: src/buddies/buddy-screen.tsx
 #: src/onboarding/steps/buddy-step.tsx
 msgctxt "DWD-Vm"
@@ -1354,6 +1362,34 @@ msgctxt "y0ef9b"
 msgid "App language"
 msgstr "Uygulama dili"
 
+#. The first row of the conversations list: starts a conversation with no questions yet.
+#: src/buddies/buddy-conversations.tsx
+msgctxt "PQ8A3I"
+msgid "New conversation"
+msgstr "Yeni yazışma"
+
+#: src/buddies/buddy-conversations.tsx
+msgctxt "sf91oU"
+msgid "Couldn't load more conversations. Try again."
+msgstr "Daha fazla yazışma yüklenemedi. Tekrar dene."
+
+#. A button under a list that loads more of its rows.
+#: src/buddies/buddy-conversations.tsx
+#: src/completed-lessons/completed-lessons-screen.tsx
+#: src/mistakes/mistakes-notebook.tsx
+#: src/saved-lessons/saved-lessons-screen.tsx
+msgctxt "aWpBzj"
+msgid "Show more"
+msgstr "Daha fazla göster"
+
+#. The list of the learner's separate conversations with their buddy, and the button that opens it.
+#: src/buddies/buddy-conversations.tsx
+#: src/buddies/buddy-screen-skeleton.tsx
+#: src/buddies/buddy-screen.tsx
+msgctxt "1udzha"
+msgid "Conversations"
+msgstr "Yazışmalar"
+
 #: src/buddies/buddy-day-parts.tsx
 msgctxt "6YRolu"
 msgid "Fully grown"
@@ -1384,38 +1420,6 @@ msgstr "{buddy} için Enerji"
 msgctxt "Q88QPu"
 msgid "It starts with your first lesson."
 msgstr "İlk dersinle başlar."
-
-#: src/buddies/buddy-day.tsx
-msgctxt "16z6WC"
-msgid "What {buddy} remembers"
-msgstr "{buddy} neler hatırlıyor"
-
-#. Names the glasses the learner has collected for their study buddy, as a row and a menu item that opens them; {buddy} is the buddy's name. A name, not an action.
-#: src/buddies/buddy-day.tsx
-#: src/buddies/buddy-screen.tsx
-msgctxt "86EPQq"
-msgid "{buddy}'s glasses"
-msgstr "{buddy} için topladığın gözlükler"
-
-#: src/buddies/buddy-day.tsx
-#: src/buddies/buddy-screen.tsx
-#: src/journey/schedule-details.tsx
-msgctxt "ca-yU-"
-msgid "Weekly summary"
-msgstr "Haftalık özet"
-
-#: src/buddies/buddy-day.tsx
-msgctxt "cVpmV7"
-msgid "Energy"
-msgstr "Enerji"
-
-#: src/buddies/buddy-day.tsx
-#: src/buddies/buddy-today.tsx
-#: src/missions/missions-card.tsx
-#: src/session/summary/summary-rewards.tsx
-msgctxt "IFviMa"
-msgid "Today's missions"
-msgstr "Bugünkü görevler"
 
 #. {target} is 7, so a noun that counts it stays plural in every form.
 #: src/buddies/buddy-glasses-picker.tsx
@@ -1532,6 +1536,33 @@ msgctxt "QRnLkX"
 msgid "Comes with your buddy"
 msgstr "Arkadaşınla birlikte gelir"
 
+#: src/buddies/buddy-menu.tsx
+msgctxt "T3IH3o"
+msgid "More about {buddy}"
+msgstr "{buddy} hakkında daha fazla bilgi al"
+
+#: src/buddies/buddy-menu.tsx
+msgctxt "wjFAMp"
+msgid "Change {buddy}"
+msgstr "{buddy} yerine başka bir arkadaş seç"
+
+#. Names the glasses the learner has collected for their study buddy, as a row and a menu item that opens them; {buddy} is the buddy's name. A name, not an action.
+#: src/buddies/buddy-menu.tsx
+msgctxt "86EPQq"
+msgid "{buddy}'s glasses"
+msgstr "{buddy} için topladığın gözlükler"
+
+#: src/buddies/buddy-menu.tsx
+msgctxt "16z6WC"
+msgid "What {buddy} remembers"
+msgstr "{buddy} neler hatırlıyor"
+
+#: src/buddies/buddy-menu.tsx
+#: src/journey/schedule-details.tsx
+msgctxt "ca-yU-"
+msgid "Weekly summary"
+msgstr "Haftalık özet"
+
 #: src/buddies/buddy-picker.tsx
 #: src/shell/learn-bar.tsx
 #: src/shell/learn-navigation.tsx
@@ -1544,17 +1575,6 @@ msgctxt "HAlOn1"
 msgid "Name"
 msgstr "Ad"
 
-#: src/buddies/buddy-screen.tsx
-msgctxt "T3IH3o"
-msgid "More about {buddy}"
-msgstr "{buddy} hakkında daha fazla bilgi al"
-
-#: src/buddies/buddy-screen.tsx
-msgctxt "wjFAMp"
-msgid "Change {buddy}"
-msgstr "{buddy} yerine başka bir arkadaş seç"
-
-#: src/buddies/buddy-screen.tsx
 #: src/buddies/buddy-today.tsx
 msgctxt "xVM8pQ"
 msgid "{buddy} today"
@@ -1565,6 +1585,13 @@ msgstr "Bugün {buddy} ile"
 msgctxt "lO7wKc"
 msgid "Not yet"
 msgstr "Henüz değil"
+
+#: src/buddies/buddy-today.tsx
+#: src/missions/missions-card.tsx
+#: src/session/summary/summary-rewards.tsx
+msgctxt "IFviMa"
+msgid "Today's missions"
+msgstr "Bugünkü görevler"
 
 #: src/buddies/use-buddy-name.ts
 msgctxt "buddyNames.WsAzWR"
@@ -2807,13 +2834,6 @@ msgstr "Aşamalar"
 msgctxt "completedLessonsAll"
 msgid "All"
 msgstr "Tümü"
-
-#: src/completed-lessons/completed-lessons-screen.tsx
-#: src/mistakes/mistakes-notebook.tsx
-#: src/saved-lessons/saved-lessons-screen.tsx
-msgctxt "aWpBzj"
-msgid "Show more"
-msgstr "Daha fazla göster"
 
 #: src/completed-lessons/completed-lessons-screen.tsx
 msgctxt "qckJsw"
@@ -6934,7 +6954,7 @@ msgstr "Bize anlattın"
 #: src/memory/memory-labels.tsx
 msgctxt "KX7Rbl"
 msgid "From a chat"
-msgstr "Bir sohbetten"
+msgstr "Bir yazışmadan"
 
 #: src/memory/memory-labels.tsx
 msgctxt "5yxABH"

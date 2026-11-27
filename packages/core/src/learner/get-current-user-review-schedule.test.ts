@@ -1,18 +1,17 @@
 import { prisma } from "@zoonk/db";
 import { learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { learnerGoalFixture } from "./_test-utils/learner-goal";
 import { getCurrentUserReviewSchedule } from "./get-current-user-review-schedule";
 
-const DAY_MS = 86_400_000;
-
 function overdue(daysAgo: number) {
   return {
     difficulty: 5,
-    due: new Date(Date.now() - daysAgo * DAY_MS),
-    lastReviewedAt: new Date(Date.now() - (daysAgo + 3) * DAY_MS),
+    due: new Date(Date.now() - daysAgo * MS_PER_DAY),
+    lastReviewedAt: new Date(Date.now() - (daysAgo + 3) * MS_PER_DAY),
     reps: 2,
     stability: 3,
     state: "learning" as const,

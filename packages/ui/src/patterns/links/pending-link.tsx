@@ -31,8 +31,13 @@ function markPendingLinks(attribute: string) {
     { capture: true },
   );
 
-  // Going back restores the page as it was left, busy included.
-  globalThis.addEventListener("pageshow", () => {
+  // Going back restores the page as it was left, busy included. The first `pageshow` comes at
+  // `load`, when the tapped link's page may still be on its way.
+  globalThis.addEventListener("pageshow", (event) => {
+    if (!event.persisted) {
+      return;
+    }
+
     for (const link of document.querySelectorAll(`a[${attribute}][aria-busy]`)) {
       link.removeAttribute("aria-busy");
     }

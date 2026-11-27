@@ -1,10 +1,9 @@
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { getRun } from "workflow/api";
 import { getWorld } from "workflow/runtime";
 import { mockLastRunEvent, resetWorkflowRuntimeMock } from "../../../mocks/workflow-runtime";
 import { isRunActive, readClientRunStatus, settleRunActivity } from "./run-activity";
-
-const MINUTE_MS = 60 * 1000;
 
 function fakeRun(status: string, cancel = vi.fn(() => Promise.resolve())) {
   vi.mocked(getRun).mockReturnValue({
@@ -25,7 +24,7 @@ describe("run activity", () => {
     fakeRun("running");
 
     mockLastRunEvent("run-1", {
-      createdAt: new Date(Date.now() - 5 * MINUTE_MS),
+      createdAt: new Date(Date.now() - 5 * MS_PER_MINUTE),
       eventType: "step_started",
     });
   });
@@ -71,7 +70,7 @@ describe("run activity", () => {
     const cancel = fakeRun("running");
 
     mockLastRunEvent("run-1", {
-      createdAt: new Date(Date.now() - 31 * MINUTE_MS),
+      createdAt: new Date(Date.now() - 31 * MS_PER_MINUTE),
       eventType: "step_started",
     });
 
@@ -86,7 +85,7 @@ describe("run activity", () => {
     );
 
     mockLastRunEvent("run-1", {
-      createdAt: new Date(Date.now() - 31 * MINUTE_MS),
+      createdAt: new Date(Date.now() - 31 * MS_PER_MINUTE),
       eventType: "step_started",
     });
 
@@ -95,8 +94,8 @@ describe("run activity", () => {
 
   it("allows the scheduled resume time before counting quiet time", async () => {
     mockLastRunEvent("run-1", {
-      createdAt: new Date(Date.now() - 31 * MINUTE_MS),
-      eventData: { resumeAt: new Date(Date.now() + MINUTE_MS) },
+      createdAt: new Date(Date.now() - 31 * MS_PER_MINUTE),
+      eventData: { resumeAt: new Date(Date.now() + MS_PER_MINUTE) },
       eventType: "wait_created",
     });
 
@@ -105,7 +104,7 @@ describe("run activity", () => {
 
   it("sees a dev server's run from before its restart as stalled, so it starts again", async () => {
     vi.stubEnv("NODE_ENV", "development");
-    serverStartedAgo(MINUTE_MS);
+    serverStartedAgo(MS_PER_MINUTE);
 
     await expect(isRunActive("run-1")).resolves.toBe(false);
     await expect(readClientRunStatus("run-1")).resolves.toBe("failed");
@@ -113,14 +112,14 @@ describe("run activity", () => {
 
   it("keeps following a dev server's run that recorded something since it started", async () => {
     vi.stubEnv("NODE_ENV", "development");
-    serverStartedAgo(10 * MINUTE_MS);
+    serverStartedAgo(10 * MS_PER_MINUTE);
 
     await expect(isRunActive("run-1")).resolves.toBe(true);
   });
 
   it("waits the whole stall time outside a dev server", async () => {
     vi.stubEnv("NODE_ENV", "production");
-    serverStartedAgo(MINUTE_MS);
+    serverStartedAgo(MS_PER_MINUTE);
 
     await expect(isRunActive("run-1")).resolves.toBe(true);
     await expect(readClientRunStatus("run-1")).resolves.toBe("running");

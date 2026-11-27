@@ -261,6 +261,29 @@ describe(updateLessonClock, () => {
     });
   });
 
+  it("does not resume a paused clock after another block opens", async () => {
+    const { finish, session, timing, transition } = await setup();
+
+    const other = await studySessionBlockFixture({
+      kind: "practice",
+      position: 1,
+      sessionId: session.id,
+    });
+
+    at(2);
+    await transition("paused", 1);
+    at(3);
+    await startStudyBlock({ blockId: other.id, input: { timeZone: "UTC" }, sessionId: session.id });
+    at(8);
+    await expect(transition("running", 2)).resolves.toStrictEqual({ status: "ignored" });
+    await expect(timing()).resolves.toMatchObject({ activeAt: null, clock: null });
+
+    await expect(finish()).resolves.toMatchObject({
+      completion: { seconds: 120 },
+      status: "completed",
+    });
+  });
+
   it("binds the currently opened block when a lesson appears twice", async () => {
     const { block, input, lesson, session } = await setup();
 

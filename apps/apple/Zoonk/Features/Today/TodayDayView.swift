@@ -564,8 +564,8 @@ struct TodayDayView: View {
   private func countNotice() {
     switch shownNotice {
     case .insight:
-      if let insight = view.insight {
-        UsageAnalytics.track(.insightShown(.init(insight)))
+      if let insight = view.insight.flatMap(AnalyticsEvent.Insight.init) {
+        UsageAnalytics.track(.insightShown(insight))
       }
     default:
       break

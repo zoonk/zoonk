@@ -11,9 +11,8 @@ import {
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { describe, it } from "vitest";
+import { MS_PER_MINUTE } from "../../packages/utils/src/date.ts";
 import { bindBuild, readCheckoutBuild, servedBuildId } from "./provenance.mts";
-
-const MINUTE = 60_000;
 
 /** The repository's own file marking what never reaches a screen. */
 const ATTRIBUTES = resolve(import.meta.dirname, "../../.gitattributes");
@@ -53,7 +52,7 @@ function makeBuiltCheckout() {
 
   const buildId = join(repository, "apps/main/.next/BUILD_ID");
   writeFileSync(buildId, "abc123\n");
-  const built = new Date(WRITTEN + MINUTE);
+  const built = new Date(WRITTEN + MS_PER_MINUTE);
   utimesSync(buildId, built, built);
   return { built, repository };
 }
@@ -96,7 +95,7 @@ describe("the build a web picture shows", () => {
     assert.equal(checkout.current, "abc123");
     assert.equal(checkout.changes, undefined);
 
-    const later = new Date(built.getTime() + MINUTE);
+    const later = new Date(built.getTime() + MS_PER_MINUTE);
     utimesSync(join(repository, "packages/ui/row.txt"), later, later);
     const outdated = await readCheckoutBuild({ app: "main", repository });
 
@@ -127,7 +126,7 @@ describe("the build a web picture shows", () => {
 
   it("keeps the build current and clean while only tests change", async () => {
     const { built, repository } = makeBuiltCheckout();
-    const later = new Date(built.getTime() + MINUTE);
+    const later = new Date(built.getTime() + MS_PER_MINUTE);
 
     for (const test of ["apps/main/e2e/plan.test.ts", "packages/ui/row.test.tsx"]) {
       mkdirSync(join(repository, test, ".."), { recursive: true });

@@ -45,6 +45,7 @@ function LanguageLinks({ pathname }: { pathname: string }) {
                 rememberLocale(locale);
               }
             }}
+            // oxlint-disable-next-line zoonk/held-press-control -- The link keeps native navigation, including modified clicks and opening in a new tab.
             onClick={() => rememberLocale(locale)}
           >
             {LOCALE_LABELS[locale]}

@@ -4,12 +4,12 @@ import { Button } from "@zoonk/ui/components/button";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { Meter, MeterFill } from "@zoonk/ui/components/meter";
 import { cn } from "@zoonk/ui/lib/utils";
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { HeadphonesIcon, PauseIcon, PlayIcon, RotateCcwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { SURFACE_CLASS } from "../_components/surface";
 
-const MS_PER_SECOND = 1000;
 const SECONDS_PER_MINUTE = 60;
 
 type Status = "failed" | "idle" | "loading" | "playing";

@@ -126,7 +126,7 @@ struct TodaySessionSection: View {
       tagsExtra: true, isBusy: busy == .block(block.position),
       failed: failed == .block(block.position))
 
-    if block.waitReason == nil && !block.preparing {
+    if block.screen != .unknown && block.waitReason == nil && !block.preparing {
       Button {
         open(block, false)
       } label: {
@@ -208,7 +208,7 @@ struct TodaySessionAction: View {
     // A started day asks from its list's row for the lessons to come.
     case .prepare: return view.session.blocks.isEmpty
     case .ahead, .rest: return view.session.extraTime.available
-    case .waiting: return false
+    case .waiting, .unrecognized: return false
     }
   }
 
@@ -302,7 +302,7 @@ struct TodaySessionAction: View {
       return TodayMainAction(
         kind: .practice(minutes: session.extraTime.minutes), isBusy: busy == .keepLearning,
         failed: failed == .keepLearning, action: keepLearning)
-    case .waiting:
+    case .waiting, .unrecognized:
       return nil
     }
   }
@@ -771,7 +771,7 @@ struct TodayDayStatus: View {
         sentence = String(
           localized: "You're all caught up.", table: "Today", comment: "Nothing new today")
       }
-    case .underway:
+    case .underway, .unrecognized:
       return nil
     }
   }

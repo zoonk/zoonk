@@ -8,6 +8,7 @@ import {
 } from "../exams/mocks/mock-format-mix";
 import { readBlueprintContent } from "../library/exams/save-exam-blueprint";
 import { ANY_NUMBER } from "../library/items/_utils/numeric-entry";
+import { ITEM_WRITING_SKILL_SELECT } from "../library/items/item-writing-skill";
 import { takesNumericAnswers } from "../library/items/numeric-skills";
 import { listPastQuestionExamples } from "../library/items/past-question-examples";
 import { loadUsedSituations } from "../library/items/used-situations";
@@ -117,19 +118,12 @@ export async function pickExamFormatSkills({
 
   const rows = await prisma.skill.findMany({
     select: {
-      country: true,
-      description: true,
-      id: true,
+      ...ITEM_WRITING_SKILL_SELECT,
       isQuantitative: true,
       items: {
         select: { content: true, examBlueprintId: true, format: true },
         where: { format: { in: ["multipleChoice", "numeric"] }, mockOnly: false },
       },
-      language: true,
-      level: true,
-      name: true,
-      ownerId: true,
-      targetLanguage: true,
     },
     where: { id: { in: ranked } },
   });

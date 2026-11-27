@@ -208,6 +208,10 @@ private fun scoringRule(scoring: ExamViewScoring): Pair<String, String>? {
     val locale = currentLocale()
     val penalty = scoring.wrongPenalty
     return when (scoring.rule) {
+        ExamViewScoring.Rule.UNKNOWN_DEFAULT_OPEN_API -> {
+            null
+        }
+
         ExamViewScoring.Rule.NET -> {
             val title =
                 if (penalty == 1.0) {
@@ -249,6 +253,7 @@ private fun Calibration(calibration: NetCalibration) {
     )
     when (calibration.advice) {
         NetCalibration.Advice.BLANK_UNSURE -> Line(stringResource(R.string.exam_calibration_blank_unsure))
+        NetCalibration.Advice.UNKNOWN_DEFAULT_OPEN_API -> Unit
         NetCalibration.Advice.KEEP_ANSWERING -> Line(stringResource(R.string.exam_calibration_keep_answering))
         null -> Unit
     }

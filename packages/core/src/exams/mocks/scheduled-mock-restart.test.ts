@@ -1,11 +1,12 @@
 import { prisma } from "@zoonk/db";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { SESSION_NOW } from "../../sessions/_test-utils/session-goal";
 import { getBlockElapsedMs } from "../../sessions/_utils/block-timing";
 import { readBlockPayload } from "../../sessions/block-payload";
 import { startStudyBlock } from "../../sessions/start-study-block";
-import { MINUTE_MS, answerRight, scheduledMockSetup } from "./_test-utils/scheduled-mock";
+import { answerRight, scheduledMockSetup } from "./_test-utils/scheduled-mock";
 import { finishMock } from "./finish-mock";
 import { mockConditionsSchema } from "./mock-contract";
 import { startMock } from "./start-mock";
@@ -27,12 +28,12 @@ describe("starting a persisted scheduled mock", () => {
       where: { examBlueprintId: goal.examBlueprintId, mockOnly: true },
     });
 
-    vi.setSystemTime(SESSION_NOW.getTime() + 90 * MINUTE_MS);
+    vi.setSystemTime(SESSION_NOW.getTime() + 90 * MS_PER_MINUTE);
     await expect(startMock({ blockId, input: {} })).resolves.toMatchObject({ status: "preparing" });
 
     const block = await prisma.studySessionBlock.findUniqueOrThrow({ where: { id: blockId } });
     expect.soft(block).toMatchObject({ startedAt: null, status: "pending" });
-    expect.soft(getBlockElapsedMs({ block, now: new Date(Date.now() + MINUTE_MS) })).toBe(0);
+    expect.soft(getBlockElapsedMs({ block, now: new Date(Date.now() + MS_PER_MINUTE) })).toBe(0);
 
     await expect(
       startStudyBlock({ blockId, input: {}, sessionId: block.sessionId }),

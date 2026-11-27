@@ -1,5 +1,6 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { type TTSVoice, getBaseLanguage } from "@zoonk/utils/languages";
 import { logError } from "@zoonk/utils/logger";
@@ -21,7 +22,6 @@ import { buildSpeechProvenance } from "./speech-provenance";
 import { generateSpeechWithProvider } from "./speech-provider";
 
 const TASK = "listening-audio";
-const MS_PER_SECOND = 1000;
 
 /**
  * Flash Lite was as intelligible as Flash and nearly as natural at two thirds the price (10 Oct

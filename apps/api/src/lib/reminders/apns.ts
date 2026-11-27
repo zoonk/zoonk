@@ -1,5 +1,6 @@
 import { sign } from "node:crypto";
 import { connect } from "node:http2";
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { getEnvironment } from "@zoonk/utils/environment";
 import { safeAsync } from "@zoonk/utils/error";
 import { getString } from "@zoonk/utils/json";
@@ -9,7 +10,6 @@ import { type ReminderText } from "./reminder-copy";
 
 const PRODUCTION_HOST = "https://api.push.apple.com";
 const SANDBOX_HOST = "https://api.sandbox.push.apple.com";
-const MS_PER_SECOND = 1000;
 const REQUEST_TIMEOUT_MS = 10_000;
 
 /** Apple refuses a provider token refreshed more often than every 20 minutes or older than an hour. */

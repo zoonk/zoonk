@@ -92,7 +92,6 @@ export function openPractice(
           onNavigate: _onNavigate,
           prefetch: _prefetch,
           scroll: _scroll,
-          unstable_dynamicOnHover: _dynamicOnHover,
           ...props
         }) => (
           <a href={href} {...props}>

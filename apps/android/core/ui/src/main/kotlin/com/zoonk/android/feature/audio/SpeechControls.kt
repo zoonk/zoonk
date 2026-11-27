@@ -34,6 +34,7 @@ import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.subscription.saidAs
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.ButtonIcon
@@ -170,9 +171,12 @@ fun SpeechFailedNote(
     ) {
         // Once the day a cap gave comes, the note is the plain failure with its Try again.
         val refusal = limit?.takeUnless { limitLifted(it) }
-        val reason = refusal?.let { limitWords(it, LimitSubject.Help).run { title ?: line } } ?: stringResource(R.string.audio_did_not_play)
+        val words = refusal?.let { limitWords(it, LimitSubject.Help) }
+        val reason = words?.run { title ?: line } ?: stringResource(R.string.audio_did_not_play)
+        val said = words?.takeIf { it.title == null }?.said
         Text(
             text = if (text == null) reason else stringResource(R.string.audio_here_is_what_it_says, reason),
+            modifier = Modifier.saidAs(said?.let { if (text == null) it else stringResource(R.string.audio_here_is_what_it_says, it) }),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyMedium,
         )

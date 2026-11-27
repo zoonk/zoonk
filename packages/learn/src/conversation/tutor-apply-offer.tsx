@@ -18,7 +18,7 @@ export function FlagTile({ fallback, flag }: { fallback: React.ReactNode; flag: 
 /**
  * A card that saves one setting. Nothing is saved before the tap. `saved` is the setting having
  * this card's value, so a later card's value takes over, and `onApply` resolves once the setting
- * says it. Apply is a form, so React sends a tap made before the page hydrates once it does.
+ * says it.
  */
 export function ApplyOfferCard({
   applyLabel,
@@ -68,11 +68,11 @@ export function ApplyOfferCard({
       title={title}
     >
       {!saved && (
-        <form action={apply}>
-          <OfferButton busy={isPending} type="submit">
+        <div>
+          <OfferButton busy={isPending} onClick={apply}>
             {applyLabel}
           </OfferButton>
-        </form>
+        </div>
       )}
 
       {failed && <ChangeSaveError />}

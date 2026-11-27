@@ -40,7 +40,8 @@
   "limit_quick_explanations_used": "a605adf281c9a55eedea8a23c42d10f172f3073980ebf3fc45f8b39d0d1c5d64",
   "limit_sentence": "5fd26f9aa7e0ea78d9143b785486913fc5d07b377db3cb7cb543fa7fb607d3d5",
   "limit_sign_up_required": "380ea1d458c19ef266d201f0bc690c12d166998961627695661ad94c610b0a3f",
-  "limit_slow_down": "bf92e6eb7b9fe6611ac472e3ac915b02d71c851513813ab20ca4c9bcd0c6028c",
+  "limit_slow_down_minutes": "195e0856090fbf7564d0a1ec011b129222be3f5c113c1ac6eb4c52f75ac2f04b",
+  "limit_slow_down_seconds": "920c06309800d85fcce17741c1665fcd1aaabe46966e03ee4e57dd82cb73d0b3",
   "limit_still_review": "58b515cb33c1199f351ad28894e9ed3e68f7700bc3081e2528efd03ae3c0adff",
   "limit_try_again_now": "f04792d00fdf904c5d1946cbc20a860aba0cbe170a4f96cf597ccb7ac8d5ed91",
   "limit_uploads_day": "3486a926490160852e4f88396fb14b521d2f27a88003f44efbad6bc73a0514dc",
@@ -49,7 +50,18 @@
 -->
 <resources>
     <string name="limit_create_account">Crear una cuenta gratis</string>
-    <string name="limit_slow_down">Descansa un momento y vuelve a intentarlo.</string>
+    <!-- The line of a notice that the learner sent too many requests in a short time, such as questions to their study buddy, and must wait before the next one. It counts down every second until they can try again. -->
+    <plurals name="limit_slow_down_seconds">
+        <item quantity="one">Tómate un breve descanso. Puedes volver a intentarlo en %1$s segundo.</item>
+        <item quantity="many">Tómate un breve descanso. Puedes volver a intentarlo en %1$s segundos.</item>
+        <item quantity="other">Tómate un breve descanso. Puedes volver a intentarlo en %1$s segundos.</item>
+    </plurals>
+    <!-- The line of a notice that the learner sent too many requests in a short time, such as questions to their study buddy, and must wait before the next one. It counts down every minute until they can try again. -->
+    <plurals name="limit_slow_down_minutes">
+        <item quantity="one">Tómate un breve descanso. Puedes volver a intentarlo en %1$s minuto.</item>
+        <item quantity="many">Tómate un breve descanso. Puedes volver a intentarlo en %1$s minutos.</item>
+        <item quantity="other">Tómate un breve descanso. Puedes volver a intentarlo en %1$s minutos.</item>
+    </plurals>
     <string name="limit_sign_up_required">Necesitas una cuenta gratis para esto</string>
     <string name="limit_more_tomorrow">Mañana habrá más.</string>
     <string name="limit_more_tomorrow_or_subscribe">Tendrás más mañana o puedes suscribirte para seguir.</string>

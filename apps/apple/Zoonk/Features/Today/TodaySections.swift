@@ -163,7 +163,7 @@ struct TodayMoreSection: View {
       view.session.extraTime.available || view.session.catchUp?.later.offered == true
     case .underway:
       view.session.catchUp?.later.offered == true
-    case .prepare, .rest, .waiting:
+    case .prepare, .rest, .waiting, .unrecognized:
       false
     }
   }
@@ -492,7 +492,6 @@ struct TodayPlanChangeSection: View {
     let choices = MissedDaysChoices(
       canFocus: behind.canFocus, isReturn: view.session.freshStart == .welcomeBack)
 
-    // Sharing a row with the main action, which takes the room they leave, their words stay whole.
     PlanOtherOptions {
       ForEach(choices.others, id: \.self) { option in
         Button {
@@ -503,7 +502,6 @@ struct TodayPlanChangeSection: View {
       }
     }
     .buttonStyle(.outline)
-    .layoutPriority(1)
 
     Button {
       answer(.seen)
@@ -514,7 +512,6 @@ struct TodayPlanChangeSection: View {
     }
     .buttonStyle(.outline)
     .disabled(isSaving)
-    .layoutPriority(1)
 
     if let lead = choices.lead {
       Button {

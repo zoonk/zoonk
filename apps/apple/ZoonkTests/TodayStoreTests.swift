@@ -5,6 +5,43 @@ import XCTest
 
 @MainActor
 final class TodayStoreTests: XCTestCase {
+  func testFutureDayStateKeepsTheRestOfTodayReadable() throws {
+    let session = dayJSON(
+      blocks: [], nextPosition: nil, id: nil, emptyDay: nil, localDate: "2026-10-28",
+      goalID: "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d00", state: "future",
+      missions:
+        #"[{"done":0,"kind":"future","status":"todo","opens":{"kind":"listening"},"total":1},{"done":0,"kind":"review","status":"todo","opens":{"kind":"listening"},"total":1}]"#
+    )
+    let futureSession = session.replacingOccurrences(
+      of: #""status":"unstarted""#, with: #""status":"archived""#)
+    let wire: Components.Schemas.Today = try decode(
+      """
+      {"earlierWork":[],"goal":{"dateEstimated":false,"displayName":"Goal","id":"5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d00","kind":"learn","title":"Goal"},
+      "lessonStatus":{},"progress":{"measure":"mastery"},"session":\(futureSession),"studiedToday":false,"userId":"5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d00"}
+      """)
+    let today: TodayView = try StudyJSON.recode(wire)
+
+    XCTAssertEqual(today.session.state, .unrecognized)
+    XCTAssertEqual(today.session.status, .unrecognized)
+    XCTAssertNil(today.progress)
+    XCTAssertNil(today.session.missions.first?.opens)
+    XCTAssertEqual(today.session.localDate, "2026-10-28")
+    XCTAssertEqual(today.session.missions.map(\.kind), [.review])
+  }
+
+  func testMalformedKnownMissionStillFailsDecoding() {
+    let session = dayJSON(
+      blocks: [], nextPosition: nil, id: nil, emptyDay: nil, localDate: "2026-10-28",
+      goalID: "goal", state: "underway",
+      missions: #"[{"done":0,"kind":"review","status":"todo","total":"invalid"}]"#)
+    XCTAssertThrowsError(try decode(session) as StudyDay) { error in
+      guard case DecodingError.typeMismatch(_, let context) = error else {
+        return XCTFail("Expected a type mismatch for the mission total")
+      }
+      XCTAssertEqual(context.codingPath.last?.stringValue, "total")
+    }
+  }
+
   func testReservedLessonTimeUsesTheServersRemainingMinutes() throws {
     let session = try timedDay(left: 240, coming: true, estimates: [61])
 
@@ -986,7 +1023,7 @@ private func block(
 
 private func dayJSON(
   blocks: [StudyBlock], nextPosition: Int?, id: String?, emptyDay: String?, localDate: String,
-  goalID: String, state: String
+  goalID: String, state: String, missions: String = "[]"
 ) -> String {
   let blockList = blocks.map {
     blockJSON(
@@ -1000,10 +1037,10 @@ private func dayJSON(
     "dayEndsAt":1793242800000,"emptyDay":\(json(emptyDay)),
     "examAccess":{"includesMockExams":true},"examTomorrow":false,
     "extraTime":{"available":false,"lessons":[],"minutes":10,"reason":null},"freshStart":null,
-    "fullMeal":{"bonus":50,"earned":false,"ready":false},"goalId":"\(goalID)",
+    "hyperdrive":{"level":1,"streak":0},"fullMeal":{"bonus":50,"earned":false,"ready":false},"goalId":"\(goalID)",
     "lessonsComing":false,"lessonsToPrepare":false,
     "localDate":"\(localDate)","minutes":{"dailyGoal":15,"done":0,"left":15,"planned":15},
-    "missions":[],"nextPosition":\(nextPosition.map(String.init) ?? "null"),
+    "missions":\(missions),"nextPosition":\(nextPosition.map(String.init) ?? "null"),
     "pauseSuggested":false,"sessionBar":{"completed":0,"total":1},"state":"\(state)",
     "week":{"days":[],"nextStudyDate":null},
     "status":"\(id == nil ? "unstarted" : "active")"\(id.map { ",\"id\":\"\($0)\"" } ?? "")}
@@ -1126,8 +1163,9 @@ final class BuddyMissionTapTests: XCTestCase {
     let tap = BuddyMissionTap()
     var opened = 0
     let places = TutorPlaces { _ in opened += 1 }
+    let row = BuddyMissionTap.Row(blockID: "b1", isFirstStep: false)
 
-    tap.open("b1", today: today, places: places) {}
+    tap.open(row, today: today, places: places) {}
     try await api.waitForHeldCall()
     tap.cancel()
     let cleared = tap.opening == nil
@@ -1137,13 +1175,13 @@ final class BuddyMissionTapTests: XCTestCase {
       return
     }
 
-    tap.open("b1", today: today, places: places) {}
+    tap.open(row, today: today, places: places) {}
     try await api.waitForHeldCall(count: 2)
     await api.releaseHeldCall()
     try await waitForTestCondition("The first opening did not finish") {
       await api.completedOpenings == 1 && consumed.isInvalidated
     }
-    XCTAssertEqual(tap.opening, "b1", "The next visit's tap is still opening")
+    XCTAssertEqual(tap.opening, row, "The next visit's tap is still opening")
     XCTAssertEqual(opened, 0, "The first visit's tap opens nothing")
 
     await api.releaseHeldCall()

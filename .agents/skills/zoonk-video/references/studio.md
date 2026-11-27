@@ -8,7 +8,7 @@ Running init again over a studio adds what's missing and never overwrites a file
 
 ## Checking the template
 
-Run `node .agents/skills/zoonk-video/scripts/check.mjs` from the repository after installing dependencies and generating the Prisma client. It prepares a fresh studio, runs the same type check as init, then opens each default view at phone width in English and Portuguese. It uses the checkout's Playwright Chromium locally and the runner's Chrome in CI. It doesn't install film dependencies or call AI services.
+Run `node .agents/skills/zoonk-video/scripts/check.mjs` from the repository after installing dependencies and generating the Prisma client. It prepares a fresh studio, runs the same type check as init, then opens each default view at phone width in English and Portuguese with the checkout's Playwright Chromium. It doesn't install film dependencies or call AI services. CI doesn't run it, so run it at the start of every video and fix what app changes broke.
 
 ## Files
 

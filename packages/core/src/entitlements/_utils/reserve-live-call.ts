@@ -1,4 +1,5 @@
 import { type LanguageConversation, type TransactionClient, sql } from "@zoonk/db";
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import {
   getEndingCharge,
   getTalkEndsAt,
@@ -18,7 +19,6 @@ import { claimUsageInTransaction } from "./claim-usage-in-transaction";
 import { type EntitlementViewer } from "./entitlement-viewer";
 import { getUsagePeriodStarts } from "./usage-periods";
 
-const MS_PER_SECOND = 1000;
 const SECONDS_PER_MINUTE = 60;
 
 type RequestedCall = { reconnect: boolean; seconds: number };

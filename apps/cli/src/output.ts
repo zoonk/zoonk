@@ -1,12 +1,12 @@
+import { isJsonObject } from "../../../packages/utils/src/json.ts";
 import { CliError, EXIT_CODES } from "./errors.ts";
-import { isRecord } from "./http.ts";
 
 export type OutputShape =
   | { fields: string[]; kind: "fields" }
   | { kind: "models"; names: string[] };
 
 function pickFields(record: unknown, fields: string[]): unknown {
-  if (!isRecord(record)) {
+  if (!isJsonObject(record)) {
     return record;
   }
 
@@ -32,7 +32,9 @@ function shapeRecords(body: Record<string, unknown>, fields: string[]) {
 }
 
 function shapeModels(body: Record<string, unknown>, names: string[]) {
-  const models = Array.isArray(body.models) ? body.models.filter((model) => isRecord(model)) : [];
+  const models = Array.isArray(body.models)
+    ? body.models.filter((model) => isJsonObject(model))
+    : [];
 
   if (names.length === 0) {
     return {
@@ -50,7 +52,9 @@ function shapeModels(body: Record<string, unknown>, names: string[]) {
     );
   }
 
-  return { models: models.filter((model) => names.includes(String(model.name))) };
+  return {
+    models: models.filter((model) => typeof model.name === "string" && names.includes(model.name)),
+  };
 }
 
 export function shapeOutput({

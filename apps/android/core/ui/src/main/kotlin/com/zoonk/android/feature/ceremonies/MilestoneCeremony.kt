@@ -75,11 +75,12 @@ fun MilestoneCeremony(
     onWearGlasses: (suspend (BuddyGlasses) -> Boolean)? = null,
     timeSource: TimeSource = TimeSource.Monotonic,
 ) {
+    val skipsCeremony = milestone.kind == Milestone.Kind.BADGE || milestone.kind == Milestone.Kind.UNKNOWN_DEFAULT_OPEN_API
     LaunchedEffect(milestone.id) {
         onShown(milestone.id)
-        if (milestone.kind == Milestone.Kind.BADGE) onClose()
+        if (skipsCeremony) onClose()
     }
-    if (milestone.kind == Milestone.Kind.BADGE) return
+    if (skipsCeremony) return
     key(milestone.id) { TrackShown(AnalyticsEvent.CeremonyShown(milestone.kind)) }
 
     val belt =
@@ -245,7 +246,7 @@ private fun ceremonyTitle(
             stringResource(glassesCopy(glasses).first)
         }
 
-        Milestone.Kind.BADGE -> {
+        Milestone.Kind.BADGE, Milestone.Kind.UNKNOWN_DEFAULT_OPEN_API -> {
             ""
         }
     }
@@ -276,7 +277,7 @@ private fun ceremonyDetail(
             stringResource(glassesCopy(glasses).second)
         }
 
-        Milestone.Kind.BADGE -> {
+        Milestone.Kind.BADGE, Milestone.Kind.UNKNOWN_DEFAULT_OPEN_API -> {
             ""
         }
     }

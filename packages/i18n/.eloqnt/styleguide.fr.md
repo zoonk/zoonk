@@ -40,6 +40,7 @@
 ## Feature names and states
 
 - “Buddy”: “Binôme”, the partner students pair up with; “your buddy”: “ton binôme”; “study buddy”: “binôme d’étude”; “AI study buddy”: “binôme d’étude IA”. Never “compagnon”, which reads as a romantic partner
+- a “conversation” with the buddy (a written chat on the buddy page): “discussion” (“Nouvelle discussion”, “Discussions”), never “conversation”, which is the speaking practice
 - Mission names (missions list, first steps): infinitive: “Terminer ta première leçon”; “Practice” / “Review”: “S’entraîner” / “Réviser”
 - “essay”: “rédaction”, not “dissertation”
 - “Mistakes notebook”: “Carnet d’erreurs”

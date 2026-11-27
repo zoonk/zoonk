@@ -1,5 +1,6 @@
 "use client";
 
+import { RadioInput } from "@zoonk/ui/components/radio-input";
 import { SidewaysScroll } from "@zoonk/ui/components/sideways-scroll";
 import { cn } from "@zoonk/ui/lib/utils";
 import { X } from "lucide-react";
@@ -86,13 +87,12 @@ function StringPicker({
             )}
             key={fret ?? "muted"}
           >
-            <input
+            <RadioInput
               aria-label={positionLabel(fret, midi)}
               checked={isChecked}
               className="absolute inset-0 z-10 m-0 cursor-pointer opacity-0"
               name={name}
               onChange={() => onChange(stringIndex, fret)}
-              type="radio"
             />
 
             {column > 1 && (

@@ -1,9 +1,10 @@
 /* eslint-disable max-lines -- Keep this standalone developer workflow in one dependency-free script. */
 import { type ChildProcess, type SpawnSyncReturns, spawn, spawnSync } from "node:child_process";
 import { accessSync, constants } from "node:fs";
-import { homedir, platform } from "node:os";
+import { platform } from "node:os";
 import path from "node:path";
 import { waitForTurn } from "../../../scripts/dev/queue.mts";
+import { getAndroidSdkDirectory, markEmulatorUsed, parseConnectedEmulator } from "./emulators.mts";
 
 type DeviceFamily = "phone" | "tablet";
 
@@ -160,31 +161,6 @@ function parseCliOptions(arguments_: readonly string[]): CliOptions {
   return { avdName, family: getDeviceFamily(normalizedArguments[0]) };
 }
 
-function getAndroidSdkDirectory() {
-  const androidHome = process.env.ANDROID_HOME?.trim();
-
-  if (androidHome) {
-    return path.resolve(androidHome);
-  }
-
-  const androidSdkRoot = process.env.ANDROID_SDK_ROOT?.trim();
-
-  if (androidSdkRoot) {
-    return path.resolve(androidSdkRoot);
-  }
-
-  if (platform() === "win32") {
-    const localAppData =
-      process.env.LOCALAPPDATA?.trim() || path.join(homedir(), "AppData", "Local");
-
-    return path.join(localAppData, "Android", "Sdk");
-  }
-
-  return platform() === "darwin"
-    ? path.join(homedir(), "Library", "Android", "sdk")
-    : path.join(homedir(), "Android", "Sdk");
-}
-
 function assertExecutable({
   filePath,
   hint,
@@ -281,11 +257,6 @@ function matchesFamily({ avdName, family }: { avdName: string; family: DeviceFam
   }
 
   return !isTablet && FAMILY_TOKENS.phone.some((token) => normalizedName.includes(token));
-}
-
-function parseConnectedEmulator(line: string): ConnectedEmulator[] {
-  const [serial] = line.trim().split(/\s+/u);
-  return serial?.startsWith("emulator-") ? [{ serial }] : [];
 }
 
 function listConnectedEmulators({
@@ -591,6 +562,7 @@ async function runAndroidApp(options: CliOptions) {
     serial,
   });
 
+  markEmulatorUsed({ adb: toolchain.adbPath, serial });
   const turn = await waitForTurn();
 
   try {

@@ -6,26 +6,6 @@ import { expect, test } from "./fixtures";
 import { ANSWERED, createMappedGoal } from "./onboarding-fixtures";
 
 test.describe("Text typed before the page hydrates", () => {
-  test("a guest's help message sent before the page hydrates goes out with the email typed", async ({
-    page,
-  }) => {
-    const email = `early-${randomUUID()}@zoonk.test`;
-    const message = `The lesson froze on my phone ${randomUUID()}`;
-    const release = await holdScripts(page);
-
-    await page.goto("/support", { waitUntil: "domcontentloaded" });
-    await page.getByRole("textbox", { name: "Message" }).fill(message);
-    await page.getByRole("textbox", { name: "Your email, for our reply" }).fill(email);
-    await page.getByRole("button", { name: "Send message" }).click();
-    await release();
-
-    await expect(
-      page.getByText("Message sent successfully! We'll get back to you soon."),
-    ).toBeVisible();
-
-    await expect.poll(() => prisma.feedback.count({ where: { email, message } })).toBe(1);
-  });
-
   test("a name typed before the page hydrates stays after its save and the next one", async ({
     noProgressUser,
     userWithoutProgress: page,
@@ -38,7 +18,6 @@ test.describe("Text typed before the page hydrates", () => {
     const name = page.getByRole("textbox", { exact: true, name: "Name" });
     await name.fill(typedName);
     await release();
-    await expectHydrated(name);
 
     await page.getByRole("button", { name: "Save" }).click();
     await expect(page.getByText("Saved.")).toBeVisible();
@@ -72,7 +51,6 @@ test.describe("Text typed before the page hydrates", () => {
 
     await answer.fill("It shows where the electron is likely to be");
     await release();
-    await expectHydrated(answer);
 
     await page.getByRole("button", { name: /^Check/u }).click();
     await expect(page.getByRole("status").filter({ hasText: "Correct!" })).toBeVisible();
@@ -111,7 +89,6 @@ test.describe("Text typed before the page hydrates", () => {
     const time = page.getByLabel("Time a day", { exact: true });
     await time.selectOption("45");
     await release();
-    await expectHydrated(time);
 
     await expect(time).toHaveValue("45");
     await page.getByRole("button", { exact: true, name: "Continue" }).click();

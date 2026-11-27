@@ -37,3 +37,40 @@ export function bankOption(
 ) {
   return { isCorrect: misconception === null, misconception, reason, text };
 }
+
+export function withPractice(
+  lesson: SeedLesson,
+  {
+    answer,
+    correction,
+    distractor,
+    example,
+    question,
+    reason,
+    takeaway,
+  }: {
+    answer: Localized;
+    correction: Localized;
+    distractor: Localized;
+    example: Localized;
+    question: Localized;
+    reason: Localized;
+    takeaway: Localized;
+  },
+): SeedLesson {
+  return {
+    ...lesson,
+    steps: [
+      { content: { text: example }, kind: "explanation" },
+      {
+        content: {
+          basis: null,
+          options: [option("a", answer, reason, true), option("b", distractor, correction)],
+          question,
+        },
+        kind: "check",
+      },
+      { content: { ideas: [{ text: takeaway }] }, kind: "summary" },
+    ],
+  };
+}

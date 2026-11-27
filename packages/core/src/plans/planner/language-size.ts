@@ -1,4 +1,5 @@
 import { type CourseLevel, type GoalKind } from "@zoonk/db";
+import { apportion } from "@zoonk/utils/apportion";
 import { CEFR_LEVELS, type CefrLevel, parseCefrScore } from "@zoonk/utils/cefr";
 import { isJsonObject } from "@zoonk/utils/json";
 import { getCefrHours, getStartHours } from "../../language/aims/language-aims";
@@ -27,23 +28,6 @@ const AIM_BANDS: Readonly<Record<CefrLevel, CourseLevel>> = {
 function getLessonCount(hours: number): number {
   const lessonShare = getLearningShare({ phaseKind: "learn", practiceBias: "balanced" });
   return Math.round((hours * MINUTES_PER_HOUR * lessonShare) / DEFAULT_LESSON_MINUTES);
-}
-
-function scaleSizes({ sizes, total }: { sizes: readonly number[]; total: number }): number[] {
-  const sum = sizes.reduce((acc, size) => acc + size, 0);
-  const exact = sizes.map((size) => (sum > 0 ? (total * size) / sum : total / sizes.length));
-  const whole = exact.map((share) => Math.floor(share));
-  const left = total - whole.reduce((acc, count) => acc + count, 0);
-
-  const extra = new Set(
-    exact
-      .map((share, index) => ({ index, remainder: share - (whole[index] ?? 0) }))
-      .toSorted((a, b) => b.remainder - a.remainder || a.index - b.index)
-      .slice(0, left)
-      .map((entry) => entry.index),
-  );
-
-  return whole.map((count, index) => Math.max(1, count + (extra.has(index) ? 1 : 0)));
 }
 
 const BAND_ORDER = [...new Set(Object.values(AIM_BANDS))];
@@ -114,7 +98,7 @@ function listLeftOut({
 }
 
 /**
- * Each band's open situations share the lessons left after its settled situations. A band that
+ * Each band's open situations share the lessons left after its settled situations, with at least one per situation. A band that
  * gets none of the hours keeps its situations' sizes.
  */
 function resize({
@@ -152,9 +136,10 @@ function resize({
         0,
       );
 
-      const sizes = scaleSizes({
-        sizes: open.map((skill) => skill.lessons),
-        total: Math.max(0, total - settled),
+      const sizes = apportion({
+        minimumOneIfPossible: true,
+        total: Math.max(open.length, total - settled),
+        weights: open.map((skill) => skill.lessons),
       });
 
       return open.map((skill, index) => [skill.skillId, sizes[index] ?? 1] as const);

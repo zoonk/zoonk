@@ -1,9 +1,10 @@
 import { randomUUID } from "node:crypto";
+import { instant } from "@next/playwright";
 import { type Response } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
-import { expectHydrated } from "@zoonk/e2e/hydration";
+import { expectHydrated, holdScripts } from "@zoonk/e2e/hydration";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
@@ -80,6 +81,13 @@ async function createLearner({ chapters = 2 }: { chapters?: number } = {}) {
   return { first, goal, second, third, user };
 }
 
+function isMapStart(request: { method: () => string; url: () => string }) {
+  return (
+    request.method() === "POST" &&
+    /\/chapters\/[^/]+\/mind-map\/generations$/u.test(new URL(request.url()).pathname)
+  );
+}
+
 /** The Mind maps page's own read of its list, which the page makes after a Create. */
 function isListRead(response: Response) {
   return (
@@ -133,7 +141,6 @@ test.describe("Mind maps", () => {
       await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
 
       const next = page.getByRole("button", { name: /^Continue/u });
-      await expectHydrated(next);
       await next.click();
 
       await expect(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
@@ -176,11 +183,34 @@ test.describe("Mind maps", () => {
 
     try {
       await page.goto("/mind-maps");
-      await page.getByRole("link", { name: new RegExp(second.chapter.title, "u") }).click();
+      const row = page.getByRole("link", { name: new RegExp(second.chapter.title, "u") });
+      await expectHydrated(row);
 
-      await expect(
-        page.getByRole("heading", { level: 1, name: second.chapter.title }),
-      ).toBeVisible();
+      const prefetched = page.waitForResponse(async (response) => {
+        const url = new URL(response.url());
+
+        if (
+          url.pathname !== "/mind-maps/study" ||
+          url.searchParams.get("at") !== second.chapter.id ||
+          !response.ok()
+        ) {
+          return false;
+        }
+
+        const content = await response.text();
+        return content.includes(STRUCTURE.summary);
+      });
+
+      await row.hover();
+      await prefetched;
+
+      await instant(page, async () => {
+        await row.click();
+
+        await expect(
+          page.getByRole("heading", { level: 1, name: second.chapter.title }),
+        ).toBeVisible();
+      });
 
       await page.getByRole("button", { exact: true, name: "Save" }).click();
       await expect(page.getByRole("button", { exact: true, name: "Saved" })).toBeVisible();
@@ -292,7 +322,6 @@ test.describe("Mind maps", () => {
       const savedMap = saved.getByRole("link", { name: new RegExp(first.chapter.title, "u") });
       const remove = saved.getByRole("button", { name: `Saved ${first.chapter.title}` });
 
-      await expectHydrated(remove);
       await remove.click();
       await expect.poll(savedCount).toBe(0);
       await expect(savedMap).toBeVisible();
@@ -442,6 +471,41 @@ test.describe("Mind maps", () => {
       await expect(heading(second.chapter.title)).toBeVisible();
       await expect(asText).toHaveAttribute("aria-selected", "true");
       await expect(summary).toBeVisible();
+    } finally {
+      await page.context().close();
+    }
+  });
+
+  test("a Create tapped twice before the page hydrates shows at once and starts one map", async ({
+    browser,
+  }) => {
+    const { second, user } = await createLearner();
+    const page = await openAs(browser, user);
+    const starts: string[] = [];
+    const row = page.getByRole("listitem").filter({ hasText: second.chapter.title });
+    const create = row.getByRole("button", { name: "Create" });
+
+    page.on("request", (request) => {
+      if (isMapStart(request)) {
+        starts.push(request.url());
+      }
+    });
+
+    try {
+      const release = await holdScripts(page);
+      await page.goto("/mind-maps", { waitUntil: "domcontentloaded" });
+
+      await create.click();
+      await expect(create).toHaveAttribute("aria-busy", "true");
+      await create.click();
+      await release();
+
+      await expect(row.getByText("Drawing the mind map…")).toBeVisible();
+      expect(starts).toHaveLength(1);
+
+      await page.reload();
+      await expect(row.getByText("Drawing the mind map…")).toBeVisible();
+      expect(starts).toHaveLength(1);
     } finally {
       await page.context().close();
     }
@@ -678,7 +742,6 @@ test.describe("Mind maps", () => {
         .getByRole("list", { name: "Your path" })
         .getByRole("link", { name: new RegExp(chapter.title, "u") });
 
-      await expectHydrated(chapterLink);
       await chapterLink.click();
       await map.getByRole("button", { name: "Create" }).click();
       await expect(map.getByText("Drawing the mind map…")).toBeVisible();
@@ -738,7 +801,6 @@ test.describe("Mind maps", () => {
 
     try {
       await page.goto("/plan");
-      await expectHydrated(chapterLink);
       await chapterLink.click();
       await expect(page.getByRole("heading", { level: 1, name: chapter.title })).toBeVisible();
 

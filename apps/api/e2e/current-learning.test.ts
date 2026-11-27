@@ -5,13 +5,13 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { catalogCourseFixture } from "@zoonk/testing/fixtures/library-courses";
+import { MS_PER_HOUR } from "@zoonk/utils/date";
 import { createAuthenticatedApiContext } from "./helpers/auth";
 
 const baseURL = process.env.E2E_BASE_URL ?? "";
-const HOUR_MS = 3_600_000;
 
 function hoursAgo(hours: number) {
-  return new Date(Date.now() - hours * HOUR_MS);
+  return new Date(Date.now() - hours * MS_PER_HOUR);
 }
 
 function startedLessonFixture({

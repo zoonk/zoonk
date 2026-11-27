@@ -29,7 +29,8 @@ A Zoonk video shows the real product, says only what the code backs, and ships i
 3. **Studio.** Run `node .agents/skills/zoonk-video/scripts/init.mjs <work-dir> [--port 5199]`.
    - Use a scratch folder outside the repo and a free port; nothing a video produces is committed.
    - It copies the engine, the harness, the scripts and the examples (`films/zoonk-2/`, `films/launch/`), installs GSAP, Lucide and Geist, links the repo's React, Vite, AI SDK and Playwright, and builds the icon and font files.
-   - It ends with `npm run typecheck`: every view against the app's current contracts. Fix a drifted view before filming, since it draws wrong numbers. Run it again after pulling.
+   - Before init, run `node .agents/skills/zoonk-video/scripts/check.mjs` from the repository: CI doesn't check the studio, so app changes since the last video may have broken views. It type-checks every view and renders each one in both languages. Fix what broke in this skill's folder, so the next video starts from a working template, and commit it with the video work.
+   - Init ends with `npm run typecheck`: every view against the app's current contracts. Fix a drifted view before filming, since it draws wrong numbers. Run it again after pulling.
    - [The studio](references/studio.md) maps what init copies (each script, the engine, the harness and the examples) and says how to bring an older studio up to date.
    - It needs FFmpeg, Python 3 with NumPy, and the Chromium the repo's E2E tests use (`pnpm exec playwright install chromium`); it stops early if FFmpeg or NumPy is missing.
    - Then, in the studio: `npm run harness` (keep it running), and `node scripts/export-art.mjs` for the buddy and Trickster SVGs.

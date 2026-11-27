@@ -1,3 +1,4 @@
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { isInAnotherYear } from "./calendar-day";
 import { getFormattingLocale } from "./locale";
 
@@ -128,7 +129,6 @@ export function getIsoDateParts({
 }
 
 const REFERENCE_SUNDAY = Date.parse("2023-01-01T00:00:00Z");
-const MS_PER_DAY = 86_400_000;
 
 /** A weekday's name from its number, Sunday 0: "Tuesday" or "Tue". */
 export function formatWeekdayName({

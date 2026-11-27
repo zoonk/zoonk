@@ -1,5 +1,4 @@
 import { prisma } from "@zoonk/db";
-import { expectHydrated } from "@zoonk/e2e/hydration";
 import { expect, test } from "./fixtures";
 
 test.describe("Account data", () => {
@@ -10,7 +9,6 @@ test.describe("Account data", () => {
     await page.goto("/settings/privacy");
 
     const remove = page.getByRole("button", { name: "Delete account" });
-    await expectHydrated(remove);
     await remove.click();
 
     const dialog = page.getByRole("alertdialog", { name: "Delete your account?" });

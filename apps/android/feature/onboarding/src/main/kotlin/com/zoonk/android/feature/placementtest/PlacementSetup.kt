@@ -140,6 +140,7 @@ internal fun ColumnScope.PlacementSetup(
 private val LanguageLevelTest.openAttemptId: UUID?
     get() =
         when (this) {
+            is LanguageLevelTest.LanguageLevelTestOneOf2Value -> null
             is LanguageLevelTest.LanguageLevelTestOneOfValue -> value.attemptId.takeIf { value.length != null }
             is LanguageLevelTest.LanguageLevelTestOneOf1Value -> value.attemptId.takeIf { value.length != null }
         }

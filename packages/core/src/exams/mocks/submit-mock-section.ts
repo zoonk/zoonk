@@ -1,4 +1,5 @@
 import "server-only";
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { isStillAsked } from "../../library/items/item-image";
@@ -81,8 +82,6 @@ function advanceConditions({
     ),
   };
 }
-
-const MS_PER_MINUTE = 60_000;
 
 function refuseHandIn({
   mock,

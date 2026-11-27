@@ -175,7 +175,7 @@ class GenerationFollower(
                     when (readStatus(id)) {
                         Generation.Status.COMPLETED -> return state.update { it.copy(ended = true, status = GenerationRun.Status.Ready) }
                         Generation.Status.FAILED, Generation.Status.CANCELLED -> return fail(GenerationFailure.Generation)
-                        null -> return fail(GenerationFailure.Connection)
+                        Generation.Status.UNKNOWN_DEFAULT_OPEN_API, null -> return fail(GenerationFailure.Connection)
                         Generation.Status.PENDING, Generation.Status.RUNNING -> delay(REOPEN_DELAY)
                     }
                 }

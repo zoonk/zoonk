@@ -1,4 +1,5 @@
 import { formatDayRange } from "@/lib/format";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import {
   type HistoryPeriod,
   calculateDateRanges,
@@ -7,7 +8,6 @@ import {
 import { validateOffset } from "@zoonk/utils/number";
 
 const CUSTOM_PERIOD_MAX_DAILY_DAYS = 62;
-const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
 const END_OF_DAY_HOURS = 23;
 const END_OF_DAY_MINUTES = 59;
 const END_OF_DAY_SECONDS = 59;
@@ -80,7 +80,7 @@ function getCustomDateRanges({ end, start }: { end: Date; start: Date }) {
 }
 
 function getCustomChartPeriod({ end, start }: { end: Date; start: Date }): HistoryPeriod {
-  const durationDays = Math.floor((end.getTime() - start.getTime()) / MILLISECONDS_PER_DAY) + 1;
+  const durationDays = Math.floor((end.getTime() - start.getTime()) / MS_PER_DAY) + 1;
   return durationDays <= CUSTOM_PERIOD_MAX_DAILY_DAYS ? "month" : "year";
 }
 

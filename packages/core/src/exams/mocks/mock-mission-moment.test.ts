@@ -4,6 +4,7 @@ import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { calculateBeltLevel } from "@zoonk/utils/belt-level";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { SESSION_NOW } from "../../sessions/_test-utils/session-goal";
@@ -12,8 +13,6 @@ import { answerRight, scheduledMockSetup } from "./_test-utils/scheduled-mock";
 import { finishMock } from "./finish-mock";
 import { getMock } from "./get-mock";
 import { startMock } from "./start-mock";
-
-const DAY_MS = 86_400_000;
 
 async function setDayMissions({
   others = [],
@@ -91,7 +90,7 @@ describe("a mock's mission moment", () => {
       prisma.userProgress.findUniqueOrThrow({ where: { userId: user.id } }),
     ).resolves.toMatchObject({ totalBrainPower: progress.totalBrainPower });
 
-    vi.setSystemTime(new Date(SESSION_NOW.getTime() + 2 * DAY_MS));
+    vi.setSystemTime(new Date(SESSION_NOW.getTime() + 2 * MS_PER_DAY));
     await expect(readMoment(blockId)).resolves.toBeNull();
   });
 

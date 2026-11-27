@@ -90,6 +90,7 @@ fun PlanTimeToCover.answer(): TimeToCoverAnswer =
     suggested?.let {
         when (it.kind) {
             PlanTimeToCoverSuggested.Kind.EVERYTHING -> TimeToCoverAnswer.Covers(it.minutes.toInt())
+            PlanTimeToCoverSuggested.Kind.UNKNOWN_DEFAULT_OPEN_API -> TimeToCoverAnswer.None
             PlanTimeToCoverSuggested.Kind.FOCUS -> TimeToCoverAnswer.Focus(it.minutes.toInt())
         }
     } ?: TimeToCoverAnswer.None

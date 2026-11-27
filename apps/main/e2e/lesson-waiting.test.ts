@@ -3,7 +3,6 @@ import { type Page } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
-import { expectHydrated } from "@zoonk/e2e/hydration";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
@@ -115,7 +114,6 @@ test("loading an unwritten lesson asks for nothing, and it opens once another ap
   await expect(start).toBeVisible();
   expect(asked).toStrictEqual([]);
 
-  await expectHydrated(start);
   await start.click();
   await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();
 
@@ -228,7 +226,6 @@ test.describe("A lesson still being written", () => {
 
     await page.goto(`/learn/${unwritten.id}`);
     const start = page.getByRole("button", { name: "Prepare" });
-    await expectHydrated(start);
     await start.click();
 
     const stopped = page.getByRole("heading", {
@@ -282,7 +279,6 @@ test.describe("A lesson still being written", () => {
     expect(await before.json()).toBeNull();
     expect(writeRequests).toStrictEqual([]);
 
-    await expectHydrated(start);
     await start.click();
 
     await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();

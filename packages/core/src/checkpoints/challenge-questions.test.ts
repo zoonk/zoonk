@@ -2,10 +2,10 @@ import { prisma } from "@zoonk/db";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import {
-  DAY_MS,
   SESSION_NOW,
   SESSION_TODAY,
   checkpointItemFixture,
@@ -129,7 +129,7 @@ describe(requestUpcomingChallengeQuestionsFor, () => {
   it("writes a challenge's questions in the background days before it, and none for one further away", async () => {
     const soon = await thinChallengeSetup({
       done: false,
-      scheduledFor: new Date(SESSION_TODAY.getTime() + 3 * DAY_MS),
+      scheduledFor: new Date(SESSION_TODAY.getTime() + 3 * MS_PER_DAY),
     });
 
     await expect(
@@ -141,7 +141,7 @@ describe(requestUpcomingChallengeQuestionsFor, () => {
 
     const far = await thinChallengeSetup({
       done: false,
-      scheduledFor: new Date(SESSION_TODAY.getTime() + 20 * DAY_MS),
+      scheduledFor: new Date(SESSION_TODAY.getTime() + 20 * MS_PER_DAY),
     });
 
     await expect(
@@ -152,7 +152,7 @@ describe(requestUpcomingChallengeQuestionsFor, () => {
   it("writes the week's mixed challenge the day before, on the skills the week studied", async () => {
     const { goal, items, plan, skills, user } = await thinChallengeSetup({
       done: false,
-      scheduledFor: new Date(SESSION_TODAY.getTime() + 20 * DAY_MS),
+      scheduledFor: new Date(SESSION_TODAY.getTime() + 20 * MS_PER_DAY),
     });
 
     await Promise.all(
@@ -160,7 +160,7 @@ describe(requestUpcomingChallengeQuestionsFor, () => {
         .slice(0, 2)
         .map((item) =>
           attemptFixture({
-            answeredAt: new Date(SESSION_NOW.getTime() - DAY_MS),
+            answeredAt: new Date(SESSION_NOW.getTime() - MS_PER_DAY),
             itemId: item.id,
             skillId: item.skillId,
             userId: user.id,
@@ -172,7 +172,7 @@ describe(requestUpcomingChallengeQuestionsFor, () => {
       kind: "checkpoint",
       planId: plan.id,
       position: 10,
-      scheduledFor: new Date(SESSION_TODAY.getTime() + DAY_MS),
+      scheduledFor: new Date(SESSION_TODAY.getTime() + MS_PER_DAY),
     });
 
     const request = await requestUpcomingChallengeQuestionsFor({

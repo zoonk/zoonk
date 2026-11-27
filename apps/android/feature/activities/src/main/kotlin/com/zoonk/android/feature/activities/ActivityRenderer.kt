@@ -67,5 +67,3 @@ class ActivityRenderer(
     val keyPick: ((ActivityStepContent, Int) -> ActivityAnswer?)? = null,
     val feedback: (@Composable (ActivityStepContent, ActivityAnswer?) -> Unit)? = null,
 )
-
-internal fun canvasOwnsAnswer(template: String): Boolean = template == "guessReveal"

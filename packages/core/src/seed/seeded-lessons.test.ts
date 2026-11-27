@@ -62,8 +62,25 @@ describe("seeded lessons", () => {
 
     await writeLibraryCourse({ course, organizationId: organization.id, prisma });
 
+    const retiredAt = new Date();
+    const generatedId = randomUUID();
+
     await prisma.$transaction([
-      prisma.step.updateMany({ data: { retiredAt: new Date() }, where: { lessonId } }),
+      prisma.step.updateMany({ data: { retiredAt }, where: { lessonId } }),
+      prisma.step.create({
+        data: {
+          content: { text: "An earlier explanation" },
+          id: generatedId,
+          kind: "explanation",
+          lessonId,
+          model: "test",
+          position: 0,
+          promptVersion: "test",
+          retiredAt,
+          runId: randomUUID(),
+          version: 2,
+        },
+      }),
       prisma.lesson.update({
         data: { contentStatus: "pending", specStatus: "pending" },
         where: { id: lessonId },
@@ -78,5 +95,9 @@ describe("seeded lessons", () => {
         where: { id: lessonId },
       }),
     ).resolves.toStrictEqual({ _count: { steps: 2 }, contentStatus: "completed" });
+
+    await expect(
+      prisma.step.findUniqueOrThrow({ where: { id: generatedId } }),
+    ).resolves.toMatchObject({ retiredAt, version: 2 });
   });
 });
