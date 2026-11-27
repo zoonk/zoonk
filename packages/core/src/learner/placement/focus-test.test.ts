@@ -354,19 +354,27 @@ describe("an exam goal's Focus test", () => {
 
     expect(analytics.trackServerEvent).toHaveBeenCalledWith(
       expect.objectContaining({
-        name: "Focus Test Sitting Finished",
-        properties: {
+        name: "Test Finished",
+        properties: expect.objectContaining({
           answered: 4,
-          dont_know: 0,
           duration_ms: 120_000,
-          kind: "first",
+          end: "question_cap",
+          goal_id: goal.id,
           questions: 4,
-        },
+          test: "focus",
+          unknowns: 0,
+        }),
       }),
     );
 
     // The plan was already shown, so the sitting counts as study, once however often it's finished.
+    const flushRetry = runDeferredWork();
     await finish(goal.id);
+    await flushRetry();
+
+    expect(
+      analytics.trackServerEvent.mock.calls.filter(([event]) => event.name === "Test Finished"),
+    ).toHaveLength(1);
 
     await expect(
       prisma.learningEvent.findMany({

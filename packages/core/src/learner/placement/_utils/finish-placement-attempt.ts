@@ -1,6 +1,7 @@
 import "server-only";
 import { type Goal, type TransactionClient } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { testEventContext, trackTestEvents } from "../../../analytics/test-events";
 import { revalidateCacheTags } from "../../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag } from "../../../cache/tags";
 import { owePlanStartLessons } from "../../../follow-ups/owe-goal-lessons";
@@ -136,7 +137,7 @@ async function savePart({
   const last = receipts.at(-1);
 
   if (attempt?.part !== part || attempt.partComplete) {
-    return unchanged(last ?? null);
+    return unchanged({ event: null, receipt: last ?? null });
   }
 
   const plan = await loadPlacementPlan(goalId, tx);
@@ -161,7 +162,7 @@ async function savePart({
   });
 
   if (previous) {
-    return unchanged(previous);
+    return unchanged({ event: null, receipt: previous });
   }
 
   if (answered !== undefined && answered !== attemptQuestions.answered) {
@@ -246,7 +247,28 @@ async function savePart({
 
   await owePlanStartLessons({ db: tx, goalId, userId });
 
-  return receipt;
+  return {
+    event: {
+      name: "Test Finished" as const,
+      properties: {
+        ...testEventContext(current, {
+          attemptId,
+          part,
+          parts: attemptQuestions.parts,
+          questions: attemptQuestions.questions,
+          test: "course",
+        }),
+        answered: finish.answered,
+        duration_ms: attemptQuestions.durationMs,
+        end: finish.end,
+        lessons_skipped: finish.lessonsSkipped,
+        levels_skipped: 0,
+        parts_left: finish.partsLeft,
+        unknowns: finish.unknowns,
+      },
+    },
+    receipt,
+  };
 }
 
 export async function finishPlacementAttempt({
@@ -266,12 +288,18 @@ export async function finishPlacementAttempt({
   const now = new Date();
   const today = getDateInTimeZone({ date: now, timeZone });
 
-  const saved = await writeLearnerChange({ planInputs: true, userId }, (tx) =>
+  const finished = await writeLearnerChange({ planInputs: true, userId }, (tx) =>
     savePart({ answered, attemptId, goal, now, part, timeZone, today, tx }),
   );
 
-  if (!saved) {
+  if (!finished?.receipt) {
     return null;
+  }
+
+  const { event, receipt: saved } = finished;
+
+  if (event) {
+    trackTestEvents(goal, [event]);
   }
 
   revalidateCacheTags([getGoalsCacheTag(userId)]);

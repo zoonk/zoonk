@@ -1,6 +1,7 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { testEventContext, trackTestEvents } from "../../analytics/test-events";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import {
   getGoalsCacheTag,
@@ -73,13 +74,31 @@ export async function updateFocusTest({
   const timeZone = getAnswerTimeZone({ goal, timeZone: input.timeZone });
   const today = getDateInTimeZone({ date: now, timeZone });
 
-  await writeLearnerChange({ userId }, async (tx) => {
-    await changeFocusTestRecord({
+  const dismissed = await writeLearnerChange({ userId }, async (tx) => {
+    const { after, before } = await changeFocusTestRecord({
       change: (record) => withControls({ input, now, record, today }),
       goalId,
       tx,
     });
+
+    return before.dismissedAt === after.dismissedAt ? null : before;
   });
+
+  if (dismissed) {
+    trackTestEvents(goal, [
+      {
+        name: "Test Skipped",
+        properties: {
+          ...testEventContext(goal, {
+            attemptId: dismissed.sitting?.id,
+            questions: dismissed.sitting?.questions ?? dismissed.summary?.offerQuestions ?? null,
+            test: "focus",
+          }),
+          row: "not_now",
+        },
+      },
+    ]);
+  }
 
   if (input.sessionQuestions === "paused" || input.sessionQuestions === "skippedToday") {
     await dropSessionTestQuestions({ goalId, localDate: today, userId });

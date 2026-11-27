@@ -4,7 +4,9 @@ import { mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
 import { listeningSetFixture } from "@zoonk/testing/fixtures/listening";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { describe, expect, it } from "vitest";
+import { runDeferredWork } from "../../_test-utils/deferred-work";
 import { mockSession } from "../../_test-utils/mock-session";
+import { analytics } from "../../_test-utils/test-boundaries";
 import { loadTodayPlanChange } from "../../plans/_utils/today-plan-change";
 import { decidePlanChange } from "../../plans/decide-plan-change";
 import { getGoalPlan } from "../../plans/get-goal-plan";
@@ -289,6 +291,7 @@ describe("a language level test-out", () => {
     ]);
 
     mockSession(user.id);
+    const flush = runDeferredWork();
     const started = await startLanguageLevelTestOut({ goalId: goal.id, level: "C2" });
 
     if (started.status !== "ready") {
@@ -350,6 +353,24 @@ describe("a language level test-out", () => {
     await expect(
       decidePlanChange({ changeId, goalId: goal.id, input: { status: "undone" } }),
     ).resolves.toMatchObject({ status: "updated" });
+
+    await flush();
+
+    const events = analytics.trackServerEvent.mock.calls.flat();
+
+    expect(events.filter((event) => event.name === "Test Started")).toMatchObject([
+      { properties: { attempt_id: input.attemptId, level: "C2", test: "level_test_out" } },
+    ]);
+
+    expect(events.filter((event) => event.name === "Test Answered")).toHaveLength(8);
+
+    expect(events.filter((event) => event.name === "Test Finished")).toMatchObject([
+      { properties: { answered: 8, end: "check_passed", lessons_skipped: 2, levels_skipped: 1 } },
+    ]);
+
+    expect(events.filter((event) => event.name === "Test Result Undone")).toMatchObject([
+      { properties: { attempt_id: input.attemptId, change_id: changeId, lessons_restored: 2 } },
+    ]);
 
     await expect(finishLanguageLevelTestOut(input)).resolves.toMatchObject({
       test: { result: { changeId: null, lessonsSkipped: 0, topicsSkipped: [] } },
