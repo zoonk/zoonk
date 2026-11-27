@@ -98,12 +98,13 @@ internal fun MockResult(
     val speaking = view.speaking
     val preparation = result?.preparation?.takeIf { it.hasMoved() }
     val offered = planOffers(view.adapt)
+    val movedTopics = result?.movedTopics?.takeIf { it.isNotEmpty() }
     val has =
         buildSet {
             if (result != null && (result.total > 0 || (essays.isEmpty() && speaking == null))) add(MockResultPart.Score)
             if (essays.isNotEmpty()) add(MockResultPart.Essays)
             if (speaking != null) add(MockResultPart.Speaking)
-            if (preparation != null || offered.isNotEmpty()) add(MockResultPart.Plan)
+            if (preparation != null || offered.isNotEmpty() || movedTopics != null) add(MockResultPart.Plan)
         }
     val about = result?.let { mockAboutLines(view) }.orEmpty()
     // A result opened again was celebrated then; one just finished shows its milestone's ceremony before its steps.
@@ -207,7 +208,7 @@ internal fun MockResult(
                         MockResultPart.Plan -> {
                             listOf(
                                 ResultStep(PLAN, part.beside) {
-                                    PlanStep(view.adapt, preparation, offers)
+                                    PlanStep(view.adapt, preparation, movedTopics, offers)
                                 },
                             )
                         }
@@ -327,9 +328,10 @@ internal fun MockResult(
                                         },
                                     preparation,
                                 ) {
-                                    if (offered.isNotEmpty()) {
-                                        view.adapt?.let { adapt ->
-                                            AsideSection(stringResource(R.string.mock_result_your_plan)) {
+                                    if (offered.isNotEmpty() || movedTopics != null) {
+                                        AsideSection(stringResource(R.string.mock_result_your_plan)) {
+                                            movedTopics?.let { MovedTopics(it) }
+                                            view.adapt?.takeIf { offered.isNotEmpty() }?.let { adapt ->
                                                 PlanChange(adapt, offers, true) { offer ->
                                                     InlinePlanAnswers(
                                                         adapt,
@@ -377,7 +379,7 @@ private fun MainAction(
 
 /**
  * Main's `continueHref`: onboarding's plan after a placement mock, the session it was played in,
- * else Today. Practice brings mistakes back only from tomorrow, so they're reviewed in the notebook.
+ * else Today.
  */
 private fun AppNavigator.continueAfter(
     view: MockExam,

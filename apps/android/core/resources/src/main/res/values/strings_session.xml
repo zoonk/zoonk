@@ -27,7 +27,7 @@
     <string name="session_block_mistakes_line">Questions you missed before</string>
     <!-- A block of the day that drills one pattern in the learner's language mistakes. %1$s is the pattern's name, like "Gender of nouns". -->
     <string name="session_block_practice_pattern">Practice: %1$s</string>
-    <string name="session_block_pattern_line">A pattern in your recent mistakes</string>
+    <string name="session_block_pattern_line">A pattern in your mistakes</string>
     <!-- Under a lesson the learner already did, back in the day because they keep missing what it teaches. -->
     <string name="session_block_returning_again">Again: you keep missing this</string>
     <!-- Under a new lesson that explains, in a different way, something the learner keeps missing. -->
