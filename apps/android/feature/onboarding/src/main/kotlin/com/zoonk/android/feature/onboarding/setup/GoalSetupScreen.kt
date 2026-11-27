@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -49,7 +50,6 @@ import com.zoonk.android.data.withRead
 import com.zoonk.android.feature.activities.ActivityAnnouncement
 import com.zoonk.android.feature.feedback.rememberSaveFailureReport
 import com.zoonk.android.feature.focustest.FocusTestFlow
-import com.zoonk.android.feature.language.parseCefrScore
 import com.zoonk.android.feature.onboarding.LocalOnboardingAnnounce
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.Refusal
@@ -57,6 +57,11 @@ import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.start.text
 import com.zoonk.android.feature.placementtest.PlacementSetup
 import com.zoonk.android.feature.placementtest.PlacementSetupEnd
+import com.zoonk.android.feature.placementtest.TestSegments
+import com.zoonk.android.feature.placementtest.TestTitle
+import com.zoonk.android.feature.placementtest.TestWaysOut
+import com.zoonk.android.feature.placementtest.closeTest
+import com.zoonk.android.feature.placementtest.rememberWaysOut
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.profile.profileQuestion
 import com.zoonk.android.feature.session.DayStep
@@ -205,10 +210,12 @@ fun GoalSetupScreen(
     // step back, and Start over waits until it ends.
     val tracker = LocalEventTracker.current
     val leave = {
-        testing?.let { tracker.track(it.left) }
+        testing?.asking?.let { tracker.track(it.left) }
         navigator.showRoot(AppTab.Today)
     }
-    BackHandler(enabled = back != null || testing != null) { if (testing != null) leave() else back?.invoke() }
+    val waysOut = rememberWaysOut()
+    val close = { closeTest(testing, waysOut, leave) }
+    BackHandler(enabled = back != null || testing != null) { if (testing != null) close() else back?.invoke() }
 
     PageScaffold(
         onBack = {
@@ -218,7 +225,7 @@ fun GoalSetupScreen(
         middle = {
             when {
                 testing != null -> {
-                    TestProgress(testing.share)
+                    ProvideTextStyle(MaterialTheme.typography.titleSmall) { TestTitle(testing) }
                 }
 
                 else -> {
@@ -279,6 +286,7 @@ fun GoalSetupScreen(
                     ),
             ) {
                 Column(Modifier.fillMaxSize()) {
+                    TestSegments(testing)
                     when (val shown = state) {
                         is LoadState.Loaded -> {
                             step?.let {
@@ -319,6 +327,7 @@ fun GoalSetupScreen(
             ActivityAnnouncement(announced)
         }
     }
+    TestWaysOut(testing, waysOut, leave)
 }
 
 @Composable
@@ -533,7 +542,7 @@ private fun ColumnScope.QuestionStep(
                     onSitting = { vm.placementProgress = it },
                     handBack = { placed()?.await() ?: WriteOutcome.Obsolete },
                     asked = view.placement?.mode == OnboardingPlacement.Mode.DIRECT,
-                    levelGiven = view.goal.levelGiven(),
+                    firstLesson = view.firstLesson?.title,
                     onReportSaveFailure = onReportPlacement,
                 )
             } else {
@@ -546,7 +555,7 @@ private fun ColumnScope.QuestionStep(
                             ?.takeIf(String::isNotBlank) ?: view.goal.language,
                     targetLanguage = view.goal.targetLanguage.takeIf { view.goal.kind == Goal.Kind.LANGUAGE },
                     placement = view.placement,
-                    levelGiven = view.goal.levelGiven(),
+                    firstLesson = view.firstLesson?.title,
                     store = store,
                     plans = plans,
                     navigator = navigator,
@@ -688,17 +697,6 @@ private fun Goal.levelChoice(): LevelChoice? {
     if (level != null) return LevelChoice.Own(level)
     val answered = (details["answered"] as? JsonArray)?.any { (it as? JsonPrimitive)?.contentOrNull == "level" } == true
     return LevelChoice.QuickTest.takeIf { answered }
-}
-
-/**
- * The learner said where they stand on the level question: a level of their own, a language level or the subjects
- * they know. "Not sure, give me a short test" saves none of them.
- */
-private fun Goal.levelGiven(): Boolean {
-    val level = details.text("level")
-    return levelChoice() is LevelChoice.Own ||
-        (level != null && parseCefrScore(level) != null) ||
-        details.texts("knownSubjects").isNotEmpty()
 }
 
 private fun Map<String, kotlinx.serialization.json.JsonElement>.texts(key: String): List<String> =

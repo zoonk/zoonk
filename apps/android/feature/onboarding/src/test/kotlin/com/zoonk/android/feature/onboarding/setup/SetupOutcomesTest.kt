@@ -16,7 +16,6 @@ import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.OnboardingApi
 import com.zoonk.android.feature.onboarding.OnboardingStore
-import com.zoonk.android.feature.onboarding.PlacementPart
 import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.completionOf
 import com.zoonk.android.feature.placementtest.PlacementTestViewModel
@@ -82,7 +81,7 @@ class SetupOutcomesTest {
                         session: AuthenticatedSession,
                         goalId: String,
                         fromScratch: Boolean,
-                        attempt: PlacementPart?,
+                        attemptId: java.util.UUID?,
                         answered: Long?,
                     ): PlacementCompletion {
                         gate.await()

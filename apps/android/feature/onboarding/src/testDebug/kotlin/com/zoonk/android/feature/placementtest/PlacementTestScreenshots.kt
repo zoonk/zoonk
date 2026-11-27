@@ -2,6 +2,7 @@ package com.zoonk.android.feature.placementtest
 
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,6 +14,7 @@ import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onLast
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.zoonk.android.data.AppCache
@@ -23,18 +25,18 @@ import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.TestContext
 import com.zoonk.android.data.TestRow
 import com.zoonk.android.feature.onboarding.GOAL_ID
+import com.zoonk.android.feature.onboarding.placementResultOf
 import com.zoonk.android.feature.onboarding.setup.PlacementDone
 import com.zoonk.android.feature.onboarding.setup.PlacementQuestion
 import com.zoonk.android.feature.onboarding.setup.PlacementWaiting
 import com.zoonk.android.feature.onboarding.setup.SetupColumn
-import com.zoonk.android.feature.onboarding.setup.TestProgress
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.questions.Question
 import com.zoonk.android.feature.questions.QuestionFormat
 import com.zoonk.android.feature.questions.Select
 import com.zoonk.android.feature.warmup.rememberReadyHold
-import com.zoonk.android.ui.format.factsLine
+import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.testing.writeRender
@@ -42,6 +44,8 @@ import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LanguageLevelTestOut
 import com.zoonk.api.models.LanguageLevelTestResult
+import com.zoonk.api.models.PlacementResultCourse
+import com.zoonk.api.models.PlacementResultCourseChaptersInner
 import com.zoonk.api.models.TrueFalseLabels
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -86,31 +90,7 @@ class PlacementTestScreenshots(
             TestOffer(
                 title = "Where would you like to start?",
                 sentence = "A test finds the lessons you can skip.",
-                rows =
-                    listOf(
-                        firstLessonRow(levelGiven = true),
-                        OfferRow(TestRow.Quick, "Quick test", testFacts(12, 6).factsLine()),
-                        OfferRow(TestRow.WholeCourse, "Full test", fullTestFacts(14, 85).factsLine()),
-                    ),
-                initial = TestRow.Quick,
-                pressed = null,
-                failed = false,
-                onChoose = {},
-                test = TEST,
-            )
-        }
-
-    @Test
-    fun courseOfferOnboardingNotSure() =
-        shoot("course-offer-onboarding-not-sure") {
-            TestOffer(
-                title = "Where would you like to start?",
-                sentence = "A test finds the lessons you can skip.",
-                rows =
-                    listOf(
-                        firstLessonRow(levelGiven = false),
-                        OfferRow(TestRow.Quick, "Quick test", testFacts(12, 6).factsLine()),
-                    ),
+                cards = listOf(testCard(TestRow.Quick, "Test", 8, 4), firstLessonCard("Why companies sell shares")),
                 initial = TestRow.Quick,
                 pressed = null,
                 failed = false,
@@ -125,34 +105,12 @@ class PlacementTestScreenshots(
             TestOffer(
                 title = "Skip what you already know",
                 sentence = "A test finds the lessons you can skip.",
-                rows =
-                    listOf(
-                        OfferRow(TestRow.Quick, "Quick test", testFacts(12, 6).factsLine()),
-                        OfferRow(TestRow.WholeCourse, "Full test", fullTestFacts(14, 85).factsLine()),
-                    ),
+                cards = listOf(testCard(TestRow.Quick, "Test", 8, 4)),
                 initial = TestRow.Quick,
                 pressed = null,
                 failed = false,
                 onChoose = {},
                 test = TEST,
-                onNotNow = {},
-            )
-        }
-
-    @Test
-    fun courseOfferPlanOneTest() =
-        shoot("course-offer-plan-one-test") {
-            TestOffer(
-                title = "Skip what you already know",
-                sentence = "A test finds the lessons you can skip.",
-                rows = listOf(OfferRow(TestRow.Quick, "Quick test", "")),
-                initial = TestRow.Quick,
-                pressed = null,
-                failed = false,
-                onChoose = {},
-                test = TEST,
-                chip = "Test what you know",
-                facts = testFacts(12, 6),
                 onNotNow = {},
             )
         }
@@ -163,10 +121,10 @@ class PlacementTestScreenshots(
             TestOffer(
                 title = "Skip what you already know",
                 sentence = "A test finds the lessons you can skip.",
-                rows =
+                cards =
                     listOf(
-                        OfferRow(TestRow.Quick, "Level test", testFacts(12, 6).factsLine()),
-                        OfferRow(TestRow.TestOut, "Test out of B2", "Skip B2 if you already know it"),
+                        testCard(TestRow.Quick, "Level test", 12, 6),
+                        OfferCard(TestRow.TestOut, "Test out of B2", LearnKind.Mock, line = "Skip B2 if you already know it"),
                     ),
                 initial = TestRow.TestOut,
                 pressed = null,
@@ -178,56 +136,33 @@ class PlacementTestScreenshots(
         }
 
     @Test
-    fun continueBetweenParts() =
-        shoot("course-continue-between-parts") {
-            ContinueTest(listOf("Part 4 of 14", "About 1 hr 6 min left"), null, false, {}, {})
+    fun question() =
+        shoot("course-question", sitting = asking(answered = 1)) {
+            Ask(
+                QuestionFormat.MultipleChoice,
+                "What's the main difference?",
+                options =
+                    listOf(
+                        "A share pays a fixed amount every month",
+                        "A share makes you a part-owner, with no guaranteed return",
+                        "A share is a loan the company pays back with interest",
+                    ),
+            )
         }
 
-    @Test
-    fun continueStopped() =
-        shoot("course-continue-stopped") {
-            ContinueTest(listOf("Part 5 of 14", "Question 4 of 12"), null, false, {}, {})
-        }
-
-    @Test
-    fun questionFullTest() =
-        shoot("course-question-full", progress = 4 / 12f) {
-            Ask(QuestionFormat.Order, "Put a civil case's stages in order.", options = listOf("Complaint", "Answer", "Discovery", "Trial"))
-        }
-
-    /** A topic too long to share the chip's row with the position. */
+    /** A topic too long for the bar's one line. */
     @Test
     fun questionLongTopic() =
-        shoot("course-question-long-topic", progress = 4 / 12f) {
-            Ask(
-                QuestionFormat.Order,
-                "Put a civil case's stages in order.",
-                options = listOf("Complaint", "Answer", "Discovery", "Trial"),
-                subject = "Investing for the long run",
-            )
-        }
-
-    /** A topic whose chip needs two rows on a phone. */
-    @Test
-    fun questionTwoRowTopic() =
-        shoot("course-question-two-row-topic", progress = 4 / 12f) {
-            Ask(
-                QuestionFormat.Order,
-                "Put a civil case's stages in order.",
-                options = listOf("Complaint", "Answer", "Discovery", "Trial"),
-                subject = "Constitutional limits on the taxing power of states and municipalities",
-            )
-        }
-
-    @Test
-    fun questionOrder() =
-        shoot("question-order", progress = 4 / 12f) {
+        shoot(
+            "course-question-long-topic",
+            sitting = asking(answered = 2, title = "Constitutional limits on the taxing power of states and municipalities"),
+        ) {
             Ask(QuestionFormat.Order, "Put a civil case's stages in order.", options = listOf("Complaint", "Answer", "Discovery", "Trial"))
         }
 
     @Test
     fun questionMatch() =
-        shoot("question-match", progress = 4 / 12f) {
+        shoot("question-match", sitting = asking(answered = 4)) {
             Ask(
                 QuestionFormat.MatchPairs,
                 "Match each term to what it means.",
@@ -238,7 +173,7 @@ class PlacementTestScreenshots(
 
     @Test
     fun questionSelectAll() =
-        shoot("question-select-all", progress = 4 / 12f) {
+        shoot("question-select-all", sitting = asking(answered = 4)) {
             Ask(
                 QuestionFormat.MultipleChoice,
                 "Which of these can end a contract?",
@@ -247,89 +182,105 @@ class PlacementTestScreenshots(
             )
         }
 
+    /** The language test's bar: its reading, listening and check drawn apart. */
     @Test
-    fun partOver() = shoot("part-over") { PlacementDone(pending = false, failed = false, onContinue = {}) }
-
-    @Test
-    fun partDone() =
-        shoot("course-checkpoint", captureUndo = true, undone = "Part 3 of 14 done") {
-            PartDone(3, 14, 2, heldUntilTomorrow = false, partsLeft = 11, minutesLeft = 66, partsRemoved = 0, null, false, {}, {}, undo())
+    fun languageQuestion() =
+        shoot("language-question", sitting = asking(answered = 5, title = "Listening", total = 12, groups = listOf(4, 4, 4))) {
+            Ask(QuestionFormat.MultipleChoice, "Qual é a principal mensagem de Dan?", options = listOf("Vai chegar amanhã", "Vai cancelar"))
         }
 
+    /** ✕ once stopping gives a result: the two ways out. */
     @Test
-    fun partDoneGotShorter() =
-        shoot("course-checkpoint-got-shorter") {
-            PartDone(
-                1,
-                3,
-                0,
-                heldUntilTomorrow = false,
-                partsLeft = 2,
-                minutesLeft = 12,
-                partsRemoved = 1,
-                null,
-                false,
-                {},
-                {},
-                undo = null,
+    fun waysOut() =
+        shoot("course-ways-out", sitting = asking(answered = 1, stop = TestStop {}), waysOut = true) {
+            Ask(
+                QuestionFormat.MultipleChoice,
+                "What's the main difference?",
+                options = listOf("A loan", "Part ownership", "A fixed payment"),
             )
         }
 
+    /** The Focus test's ways out carry its hint for a learner who hasn't studied most of it yet. */
     @Test
-    fun partDoneNothingSkipped() =
-        shoot("course-checkpoint-none-skipped") {
-            PartDone(
-                3,
-                14,
-                0,
-                heldUntilTomorrow = false,
-                partsLeft = 1,
-                minutesLeft = 6,
-                partsRemoved = 0,
-                null,
-                false,
-                {},
-                {},
-                undo = null,
-            )
+    fun waysOutWithHint() =
+        shoot(
+            "focus-ways-out-hint",
+            sitting =
+                asking(
+                    answered = 6,
+                    title = "Administrative law",
+                    stop = TestStop("Haven't studied most of this yet? That's fine. You can stop here and start learning.") {},
+                ),
+            waysOut = true,
+        ) {
+            Ask(QuestionFormat.MultipleChoice, "Which act can a public agent revoke?", options = listOf("Its own", "A court's", "None"))
         }
 
     @Test
-    fun partStopped() =
-        shoot("course-stopped") {
-            PartStopped(5, 14, 4, lessonsSkipped = 1, action = "Done", onAction = {}, busy = false, undo = undo())
-        }
+    fun over() = shoot("course-over", sitting = Sitting()) { PlacementDone(pending = false, failed = false, onContinue = {}) }
 
     @Test
-    fun resultQuick() =
-        shoot("course-result-quick", captureUndo = true) {
-            PlacementResult(
-                lessonsSkipped = 5,
-                nextLesson = "Loops with for",
-                action = "Start lesson",
-                onAction = {},
-                undo = undo(),
-                rest = testTheRestFacts(13, 78),
-                onTestTheRest = {},
-            )
+    fun result() =
+        shoot("course-result", captureUndo = true, sitting = Sitting()) {
+            PlacementResult(result = placementResultOf().phase(), action = "Start lesson", onAction = {}, undo = undo())
         }
 
     @Test
     fun resultNothingSkipped() =
-        shoot("course-result-none-skipped") {
-            PlacementResult(lessonsSkipped = 0, nextLesson = "Loops with for", action = "Continue", onAction = {})
+        shoot("course-result-none-skipped", sitting = Sitting()) {
+            val course =
+                PlacementResultCourse(
+                    lessons = 9,
+                    chapters =
+                        listOf(
+                            PlacementResultCourseChaptersInner(lessons = 3, skipped = 0, start = true),
+                            PlacementResultCourseChaptersInner(lessons = 3, skipped = 0, start = false),
+                            PlacementResultCourseChaptersInner(lessons = 3, skipped = 0, start = false),
+                        ),
+                )
+            PlacementResult(
+                result = placementResultOf(lessonsSkipped = 0, chapter = "How trading works", course = course, changeId = null).phase(),
+                action = "Start lesson",
+                onAction = {},
+            )
         }
 
+    /** A course with several areas: the skips aren't one run, and the start sits before chapters with skipped lessons. */
     @Test
-    fun resultGotShorter() =
-        shoot("course-result-full-got-shorter") {
-            PlacementResult(lessonsSkipped = 4, nextLesson = "Loops with for", action = "Start lesson", onAction = {}, partsRemoved = 11)
+    fun resultAreasInterleaved() =
+        shoot("course-result-areas", sitting = Sitting()) {
+            val course =
+                PlacementResultCourse(
+                    lessons = 14,
+                    chapters =
+                        listOf(
+                            PlacementResultCourseChaptersInner(lessons = 3, skipped = 3, start = false),
+                            PlacementResultCourseChaptersInner(lessons = 3, skipped = 0, start = true),
+                            PlacementResultCourseChaptersInner(lessons = 2, skipped = 2, start = false),
+                            PlacementResultCourseChaptersInner(lessons = 3, skipped = 1, start = false),
+                            PlacementResultCourseChaptersInner(lessons = 3, skipped = 0, start = false),
+                        ),
+                )
+            PlacementResult(
+                result = placementResultOf(lessonsSkipped = 6, course = course).phase(),
+                action = "Start lesson",
+                onAction = {},
+                undo = undo(),
+            )
+        }
+
+    /** A result from before the plan existed: where the learner starts, and the way on. */
+    @Test
+    fun resultWithoutCourse() =
+        shoot("course-result-without-course", sitting = Sitting()) {
+            PlacementResult(result = placementResultOf(course = null, changeId = null).phase(), action = "Continue", onAction = {})
         }
 
     @Test
     fun resultHeldUntilTomorrow() =
-        shoot("course-result-retake-tomorrow") {
-            PlacementResult(lessonsSkipped = 0, nextLesson = null, action = "Done", onAction = {}, heldUntilTomorrow = true)
+        shoot("course-result-retake-tomorrow", sitting = Sitting()) {
+            val held = placementResultOf(lessonsSkipped = 0, changeId = null).phase().copy(heldUntilTomorrow = true, chapter = null)
+            PlacementResult(result = held, action = "Done", onAction = {})
         }
 
     @Test
@@ -433,25 +384,13 @@ class PlacementTestScreenshots(
     @Test
     fun questionAtTwiceTheFontSize() {
         RuntimeEnvironment.setFontScale(2f)
-        questionFullTest()
-    }
-
-    @Test
-    fun checkpointAtTwiceTheFontSize() {
-        RuntimeEnvironment.setFontScale(2f)
-        partDone()
+        question()
     }
 
     @Test
     fun resultAtTwiceTheFontSize() {
         RuntimeEnvironment.setFontScale(2f)
-        resultQuick()
-    }
-
-    @Test
-    fun continueAtTwiceTheFontSize() {
-        RuntimeEnvironment.setFontScale(2f)
-        continueBetweenParts()
+        result()
     }
 
     @Composable
@@ -462,18 +401,21 @@ class PlacementTestScreenshots(
         left: List<String>? = null,
         right: List<String>? = null,
         select: Select? = null,
-        subject: String = "Contract law",
     ) = PlacementQuestion(
         item = Question("item-1", format, question, options = options, select = select, left = left, right = right),
-        subject = subject,
-        position = "Part 3 of 14 · Question 5 of 12",
         labels = TrueFalseLabels.TRUE_FALSE,
         pending = false,
         saveFailures = 0,
         onAnswer = { _, _ -> },
-        onStop = {},
-        canStop = true,
     )
+
+    private fun asking(
+        answered: Long,
+        title: String = "When ownership is diluted",
+        total: Long = 8,
+        groups: List<Int> = emptyList(),
+        stop: TestStop? = null,
+    ) = asking(TEST, title, answered, total, groups, stop)
 
     @Composable
     private fun undo(): PlacementUndoViewModel? {
@@ -489,16 +431,23 @@ class PlacementTestScreenshots(
         name: String,
         captureUndo: Boolean = false,
         undone: String = "No lessons skipped",
-        progress: Float? = null,
+        sitting: Sitting? = null,
+        waysOut: Boolean = false,
         content: @Composable ColumnScope.() -> Unit,
     ) {
         compose.setContent {
             ZoonkTheme(darkTheme = theme == "dark") {
-                TaskScaffold(onClose = {}, title = { progress?.let { TestProgress(it) } }) { padding ->
-                    Box(Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding)) { SetupColumn(content = content) }
+                val open = rememberWaysOut()
+                TaskScaffold(onClose = { closeTest(sitting, open) {} }, title = { TestTitle(sitting) }) { padding ->
+                    Column(Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding)) {
+                        TestSegments(sitting)
+                        Box(Modifier.weight(1f)) { SetupColumn(content = content) }
+                    }
                 }
+                TestWaysOut(sitting, open) {}
             }
         }
+        if (waysOut) compose.onNodeWithContentDescription("Leave").performClick()
         capture(name)
         if (captureUndo) {
             compose.onNodeWithText("Undo").performClick()

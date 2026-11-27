@@ -45,7 +45,6 @@ import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
-import com.zoonk.android.feature.onboarding.start.OnboardingSubject
 import com.zoonk.android.feature.player.steps.StepPart
 import com.zoonk.android.feature.practice.SaveErrorText
 import com.zoonk.android.feature.questions.Answer
@@ -62,11 +61,9 @@ import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.GenerationWait
-import com.zoonk.android.ui.components.LinkButton
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TaskActions
-import com.zoonk.api.models.PlacementLength
 import com.zoonk.api.models.TrueFalseLabels
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -141,29 +138,34 @@ internal fun ColumnScope.PlacementWaiting(
     }
 }
 
-private enum class PlacementSender { Confirm, DontKnow, Stop }
+private enum class PlacementSender { Confirm, DontKnow }
 
 /**
- * Shared with the Focus test, the plan's tests and the language level test. Every format takes
- * practice's question and controls, so a test looks and answers like the lessons it places.
+ * The bar's second button where it does more than "I don't know yet": its [label] now, every label it can change to
+ * ([labels], so it holds the widest one's width), and what it does instead of answering ([onClick]).
+ */
+internal class SecondAction(
+    val label: String,
+    val labels: List<String> = emptyList(),
+    val busy: Boolean = false,
+    val onClick: (() -> Unit)? = null,
+)
+
+/**
+ * Shared with the Focus test, the plan's tests and the language level test. Every format takes practice's question and
+ * controls, so a test looks and answers like the lessons it places. What it tests and where the learner is are the
+ * test's top; a save that's out for the question ([pending]) with no button of its own, such as a stop, shows on
+ * Confirm.
  */
 @Composable
 internal fun ColumnScope.PlacementQuestion(
     item: Question,
-    subject: String?,
     labels: TrueFalseLabels,
     pending: Boolean,
     saveFailures: Int,
     onAnswer: (Answer, Long) -> Unit,
-    onStop: () -> Unit,
-    canStop: Boolean,
     onReportSaveFailure: () -> Unit = {},
-    dontKnowLabel: String = stringResource(R.string.onboarding_placement_dont_know),
-    stopLabel: String = stringResource(R.string.onboarding_placement_stop),
-    /** Said right above Stop, when stopping is worth suggesting. */
-    stopHint: String? = null,
-    /** Where the question sits, under [subject], such as "Question 2 of 12" or the full test's part too. */
-    position: String? = null,
+    second: SecondAction = SecondAction(stringResource(R.string.onboarding_placement_dont_know)),
     media: @Composable () -> Unit = {},
 ) {
     var draftJson by rememberSaveable { mutableStateOf<String?>(null) }
@@ -195,36 +197,13 @@ internal fun ColumnScope.PlacementQuestion(
     QuestionPages(
         questionId = item.itemId,
         read = {
-            subject?.let { OnboardingSubject(it, position) }
             media()
             ItemSupport(item)
             if (item.format != QuestionFormat.TrueFalse) QuestionTitle(item.question)
             // Across an open book's fold a statement's card stays on the page before it, as in practice.
             if (LocalSetupPage.current?.fold != null) ask(StepPart.Screen)
         },
-        answer = {
-            ask(if (LocalSetupPage.current?.fold != null) StepPart.Turn else StepPart.Whole)
-            if (canStop) {
-                stopHint?.let {
-                    Text(
-                        text = it,
-                        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                }
-                LinkButton(
-                    text = stopLabel,
-                    onClick = {
-                        sender = PlacementSender.Stop
-                        onStop()
-                    },
-                    busy = pending && sender == PlacementSender.Stop,
-                    enabled = !pending,
-                    focusableWhenDisabled = pending,
-                )
-            }
-        },
+        answer = { ask(if (LocalSetupPage.current?.fold != null) StepPart.Turn else StepPart.Whole) },
     ) {
         if (saveFailures > 0 && !pending) {
             SaveErrorText(
@@ -235,17 +214,18 @@ internal fun ColumnScope.PlacementQuestion(
         }
         TaskActions { main ->
             NotSureButton(
-                onClick = { send(Answer.DontKnow, PlacementSender.DontKnow) },
-                busy = pending && sender == PlacementSender.DontKnow,
-                enabled = !pending,
-                focusableWhenDisabled = pending,
-                label = dontKnowLabel,
+                onClick = { second.onClick?.invoke() ?: send(Answer.DontKnow, PlacementSender.DontKnow) },
+                busy = second.busy || (pending && sender == PlacementSender.DontKnow),
+                enabled = !pending && !second.busy,
+                focusableWhenDisabled = pending || second.busy,
+                label = second.label,
+                labels = second.labels,
             )
             Button(
                 onClick = { confirm() },
-                busy = pending && sender == PlacementSender.Confirm,
+                busy = pending && sender != PlacementSender.DontKnow && !second.busy,
                 modifier = main,
-                enabled = answer != null && !pending,
+                enabled = answer != null && !pending && !second.busy,
                 focusableWhenDisabled = pending,
             ) {
                 Text(stringResource(R.string.onboarding_placement_confirm))

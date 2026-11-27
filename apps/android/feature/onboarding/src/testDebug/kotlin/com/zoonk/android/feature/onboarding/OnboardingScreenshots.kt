@@ -61,6 +61,7 @@ import com.zoonk.android.feature.catalog.CatalogStore
 import com.zoonk.android.feature.catalog.FakeCatalogApi
 import com.zoonk.android.feature.onboarding.course.CourseStartScreen
 import com.zoonk.android.feature.onboarding.noAllowance
+import com.zoonk.android.feature.onboarding.placementAttemptOf
 import com.zoonk.android.feature.onboarding.setup.GoalSetupScreen
 import com.zoonk.android.feature.onboarding.setup.LocalSetupSpeech
 import com.zoonk.android.feature.onboarding.setup.PlanRevealStep
@@ -92,8 +93,6 @@ import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.LanguageLevelTestOneOfResult
 import com.zoonk.api.models.LanguageLevelTestResult
 import com.zoonk.api.models.OnboardingDraft
-import com.zoonk.api.models.PlacementAttempt
-import com.zoonk.api.models.PlacementLength
 import com.zoonk.api.models.SourceReadStatus
 import com.zoonk.api.models.TodayUploadRequest
 import kotlinx.coroutines.CoroutineScope
@@ -170,7 +169,7 @@ class OnboardingScreenshots {
         val api =
             FakeOnboardingApi().apply {
                 placement = placementOf(status = "done", next = null)
-                sitting = { placementOf(status = "waitingForQuestions", next = null).copy(attempt = QUICK_ATTEMPT) }
+                sitting = { placementOf(status = "waitingForQuestions", next = null).copy(attempt = placementAttemptOf()) }
             }
         compose.setContent { ZoonkTheme { Surface { Placement(api) } } }
         compose.onNodeWithText("Start").performClick()
@@ -903,10 +902,15 @@ class OnboardingScreenshots {
                     Placement(FakeOnboardingApi().apply { placement = placementOf(status = "done", next = null) })
                 },
                 "placement-question" to {
-                    Placement(FakeOnboardingApi().apply { placement = placementOf().copy(attempt = QUICK_ATTEMPT.copy(answered = 2)) })
+                    Placement(FakeOnboardingApi().apply { placement = placementOf().copy(attempt = placementAttemptOf(answered = 2)) })
                 },
                 "placement-order" to {
-                    Placement(FakeOnboardingApi().apply { placement = placementOf(next = orderQuestion()).copy(attempt = QUICK_ATTEMPT) })
+                    Placement(
+                        FakeOnboardingApi().apply {
+                            placement =
+                                placementOf(next = orderQuestion()).copy(attempt = placementAttemptOf())
+                        },
+                    )
                 },
                 "reveal" to {
                     Reveal(
@@ -1256,7 +1260,7 @@ class OnboardingScreenshots {
                     language = "en",
                     targetLanguage = null,
                     placement = ApiJson.decodeFromString(COURSE_OFFER),
-                    levelGiven = true,
+                    firstLesson = "Filing a civil claim",
                     store = store,
                     plans = rememberPlans(FakePlanApi()),
                     navigator = rememberAppNavigator(),
@@ -1267,27 +1271,8 @@ class OnboardingScreenshots {
             }
         }
 
-        val QUICK_ATTEMPT =
-            PlacementAttempt(
-                answered = 0,
-                chapter = "Civil procedure",
-                estimatedMinutes = 6,
-                id = UUID.fromString("0a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d"),
-                length = PlacementLength.QUICK,
-                nextPart = null,
-                part = 1,
-                partComplete = false,
-                parts = 14,
-                partsLeft = 14,
-                partsRemoved = 0,
-                questions = 12,
-                remainingEstimatedMinutes = 85,
-                resume = null,
-                totalEstimatedMinutes = 85,
-            )
-
         const val COURSE_OFFER =
-            """{"mode":"offer","test":{"kind":"course","offer":{"estimatedMinutes":6,"questions":12,"wholeCourse":{"estimatedMinutes":85,"parts":14}}}}"""
+            """{"mode":"offer","test":{"kind":"course","offer":{"estimatedMinutes":4,"questions":8}}}"""
 
         @Composable
         private fun Reveal(

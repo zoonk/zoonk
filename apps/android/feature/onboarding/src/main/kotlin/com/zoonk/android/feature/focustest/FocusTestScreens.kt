@@ -22,16 +22,14 @@ import com.zoonk.android.feature.onboarding.setup.SetupContent
 import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
 import com.zoonk.android.feature.onboarding.start.OnboardingSubject
-import com.zoonk.android.feature.placementtest.OfferRow
 import com.zoonk.android.feature.placementtest.TestOffer
-import com.zoonk.android.feature.placementtest.firstLessonRow
-import com.zoonk.android.feature.placementtest.testFacts
+import com.zoonk.android.feature.placementtest.firstLessonCard
+import com.zoonk.android.feature.placementtest.testCard
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.api.models.FocusTest
 
@@ -62,15 +60,16 @@ internal fun Note(
 }
 
 /**
- * The Focus test's offer: in onboarding, "First lesson" or the test; on the plan, the test with its facts and "Not now".
- * [onPlan]: the plan is already the learner's, so leaving it doesn't skip a step. [levelGiven]: see [firstLessonRow].
+ * The Focus test's offer: in onboarding, the test or the first lesson; on the plan, the test's card and "Not now".
+ * [onPlan]: the plan is already the learner's, so leaving it doesn't skip a step. [firstLesson]: onboarding's first
+ * lesson by its name, where it's known.
  */
 @Composable
 internal fun ColumnScope.FocusTestOffer(
     test: FocusTest,
     minutes: Int,
     onPlan: Boolean,
-    levelGiven: Boolean,
+    firstLesson: String?,
     pressed: Pressed?,
     failed: Boolean,
     onStart: () -> Unit,
@@ -78,8 +77,7 @@ internal fun ColumnScope.FocusTestOffer(
     analytics: TestContext,
 ) {
     val focus = test.suggestsFocus
-    val facts = testFacts(test.offer?.questions?.toInt() ?: 0, minutes)
-    val testRow = OfferRow(TestRow.Quick, stringResource(R.string.focustest_title), facts.factsLine())
+    val card = testCard(TestRow.Quick, stringResource(R.string.focustest_title), test.offer?.questions?.toInt(), minutes)
     TestOffer(
         title =
             when {
@@ -88,14 +86,12 @@ internal fun ColumnScope.FocusTestOffer(
                 else -> stringResource(R.string.focustest_find_start)
             },
         sentence = stringResource(if (focus) R.string.focustest_offer_sentence else R.string.focustest_offer_line),
-        rows = if (onPlan) listOf(testRow) else listOf(firstLessonRow(levelGiven), testRow),
+        cards = if (onPlan) listOf(card) else listOf(card, firstLessonCard(firstLesson)),
         initial = TestRow.Quick,
         pressed = pressed,
         failed = failed,
         onChoose = { if (it == TestRow.FirstLesson) onSkip() else onStart() },
         test = analytics,
-        chip = stringResource(R.string.focustest_title),
-        facts = facts,
         onNotNow = onSkip.takeIf { onPlan },
     )
 }

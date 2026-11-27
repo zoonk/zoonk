@@ -218,7 +218,6 @@
     <!-- Shown while the learner waits for their first questions to be prepared. “This” is the wait. -->
     <string name="onboarding_placement_waiting_time">This takes a minute or two.</string>
     <string name="onboarding_placement_ready">Your test is ready</string>
-    <string name="onboarding_placement_progress">Questions answered</string>
     <string name="onboarding_placement_dont_know">I don\'t know yet</string>
     <string name="onboarding_placement_confirm">Confirm</string>
     <string name="onboarding_placement_stop">Stop and use my answers</string>
@@ -226,15 +225,14 @@
     <string name="onboarding_placement_unavailable_title">We\'ll see what you know in your first few days</string>
 
     <string name="onboarding_language_test_use_app_in">Use the app in %1$s</string>
-    <string name="onboarding_language_test_did_not_understand">I didn\'t understand the audio</string>
+    <!-- Button on a listening question, after the learner played the message: they heard it and didn't understand it. -->
+    <string name="onboarding_language_test_did_not_understand">I didn\'t understand</string>
     <string name="onboarding_language_test_skip_question">Skip this question</string>
     <!-- Button on a listening question for a learner who can't play sound right now, such as on a bus. It ends the listening questions for this test. -->
     <string name="onboarding_language_test_cant_listen">Can\'t listen now</string>
     <string name="onboarding_language_test_audio_on_its_way">The voice message is on its way…</string>
     <string name="onboarding_language_test_play">Play the message</string>
     <string name="onboarding_language_test_play_again">Play the message again</string>
-    <string name="onboarding_language_test_message_loading">Getting the message ready. The first time can take a few seconds.</string>
-    <string name="onboarding_language_test_message">You got a voice message. Listen and answer.</string>
     <string name="onboarding_language_test_reading">Reading</string>
     <string name="onboarding_language_test_listening">Listening</string>
     <string name="onboarding_language_test_speaking">Speaking</string>
