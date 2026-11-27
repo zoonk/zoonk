@@ -8,12 +8,12 @@ import { MomentHeader } from "./moment-header";
 
 export function FailedMoment({
   failures,
-  kept,
+  message,
   onRetry,
   title,
 }: {
   failures: number;
-  kept?: boolean;
+  message?: string;
   onRetry: () => void;
   title?: string;
 }) {
@@ -23,7 +23,7 @@ export function FailedMoment({
     <>
       <TaskBody data-slot="failed-moment">
         <MomentHeader title={title ?? t("Your lesson isn't saved yet")}>
-          <AnswersSaveError failures={failures} kept={kept} />
+          <AnswersSaveError failures={failures} message={message} />
         </MomentHeader>
       </TaskBody>
 

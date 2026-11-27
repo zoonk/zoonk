@@ -260,18 +260,19 @@ export function practiceReducer(state: PracticeState, action: PracticeAction): P
 }
 
 /**
- * A run played to its end can start a fresh batch while this one left something unfixed or the
- * server holds more. One the learner left early ends there.
+ * Practicing again can fix something today only while an entry missed on an earlier day is still
+ * open in the run's scope, which the finish says (`hasMorePractice`).
  */
 export function canPracticeAgain(state: PracticeState): boolean {
-  if (state.phase.kind !== "ended" || state.index < state.steps.length) {
-    return false;
-  }
+  return state.phase.kind === "ended" && Boolean(state.phase.summary?.hasMorePractice);
+}
 
-  const fixed = new Set(state.fixedIds);
-  const unfixed = state.steps.some(({ entry }) => !fixed.has(entry.mistakeId));
-
-  return unfixed || Boolean(state.phase.summary?.hasMorePractice);
+/** The run's own score, from its answers: a batch whose answers earn nothing new still has one. */
+export function getPracticeScore(state: PracticeState): { answered: number; correct: number } {
+  return {
+    answered: state.answerIds.length,
+    correct: state.verdicts.filter((verdict) => verdict === "right").length,
+  };
 }
 
 export function getPracticeSegments(state: PracticeState): TaskSegment[] {

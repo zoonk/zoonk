@@ -118,6 +118,7 @@ async function PracticeBody({ searchParams }: Pick<Props, "searchParams">) {
       <DrawnMath content={result.practice}>
         <MistakePracticeClient
           backHref={getBackHref(scope)}
+          doneHref={scope.blockId ? "/session" : undefined}
           goalId={goal.id}
           practice={result.practice}
           scope={{ blockId: scope.blockId, mockId: scope.mockId, skillId: scope.skillId }}

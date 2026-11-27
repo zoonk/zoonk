@@ -183,7 +183,7 @@ test.describe("Mistakes notebook", () => {
     await page.context().close();
   });
 
-  test("a mistake made today is practiced at once, stays open after a right answer, and a finished run plays it again", async ({
+  test("a mistake made today is practiced at once, stays open after a right answer, and the run ends on Done with its score", async ({
     browser,
   }) => {
     const { drills, user } = await createMistakeLearner({ causes: ["trap"] });
@@ -205,14 +205,13 @@ test.describe("Mistakes notebook", () => {
     await page.getByRole("radio", { name: "Right answer" }).click();
     await page.getByRole("button", { name: /^Check/u }).click();
     await expect(feedback.getByText("Correct!")).toBeVisible();
-    await expect(feedback.getByText("Get it right again another day to fix it.")).toBeVisible();
+    await expect(feedback.getByText("It comes back another day to make sure.")).toBeVisible();
 
     await page.getByRole("button", { name: /^Continue/u }).click();
     await expect(page.getByRole("heading", { name: "Practice done" })).toBeVisible();
     await expect(page.getByText(/mistakes? fixed/u)).toHaveCount(0);
-
-    await page.getByRole("button", { name: "Practice again" }).click();
-    await expect(question).toBeVisible();
+    await expect(page.getByText(/of 1 right/u)).toBeVisible();
+    await expect(page.getByRole("link", { name: /^Done/u })).toBeVisible();
 
     await expect
       .poll(() =>

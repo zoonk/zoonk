@@ -26,6 +26,7 @@ import { type LessonHref } from "./drill/drill-types";
 import {
   type PracticeEntry,
   canPracticeAgain,
+  getPracticeScore,
   getPracticeSegments,
 } from "./mistake-practice-state";
 import { NothingToPractice, PracticeDone, PracticeSaving } from "./practice-done";
@@ -129,7 +130,7 @@ function getScreen(kind: Run["state"]["phase"]["kind"]) {
 
 function PracticeBody({
   askButton,
-  backHref,
+  doneHref,
   buddy,
   dayBlock,
   lessonHref,
@@ -139,7 +140,7 @@ function PracticeBody({
   trueFalseLabels,
 }: {
   askButton: React.ReactNode;
-  backHref: string;
+  doneHref: string;
   buddy?: LearnBuddy | null;
   dayBlock: boolean;
   lessonHref: LessonHref | null;
@@ -159,9 +160,9 @@ function PracticeBody({
     return (
       <FailedMoment
         failures={run.state.failures}
-        kept={answered}
+        message={answered ? undefined : t("We couldn't mark it done. Check your connection.")}
         onRetry={run.end}
-        title={answered ? t("Your practice isn't saved yet") : t("Nothing to practice")}
+        title={answered ? t("Your practice isn't saved yet") : t("Already fixed")}
       />
     );
   }
@@ -171,18 +172,20 @@ function PracticeBody({
   }
 
   if (run.steps.length === 0) {
-    return <NothingToPractice backHref={backHref} />;
+    return <NothingToPractice dayBlock={dayBlock} doneHref={doneHref} />;
   }
 
   if (phase.kind === "ended" || !run.step) {
     return (
       <PracticeDone
         again={!dayBlock && canPracticeAgain(run.state) ? run.again : null}
-        backHref={backHref}
         buddy={buddy}
+        dayBlock={dayBlock}
+        doneHref={doneHref}
         fixed={run.state.fixedIds.length}
         reached={run.state.reached}
         renderCeremony={renderCeremony}
+        score={getPracticeScore(run.state)}
         summary={phase.kind === "ended" ? phase.summary : null}
       />
     );
@@ -208,14 +211,15 @@ function PracticeBody({
 
 /**
  * A day's block run (`dayBlock`) waits for its completion before it's over and offers no Practice
- * again, since the day goes on from Today.
+ * again: it goes on to the day's next stop.
  */
 export function MistakePracticeRun({
   actions,
   backHref,
   buddy,
-  lessonHref,
   dayBlock = false,
+  doneHref,
+  lessonHref,
   practice,
   renderCeremony,
   renderLesson,
@@ -225,8 +229,10 @@ export function MistakePracticeRun({
   actions: MistakePracticeActions;
   backHref: string;
   buddy?: LearnBuddy | null;
-  lessonHref: LessonHref | null;
   dayBlock?: boolean;
+  /** Where the done screen's main action goes; a day's block goes on to the day's next stop. */
+  doneHref?: string;
+  lessonHref: LessonHref | null;
   practice: PracticeEntry[];
   renderCeremony?: MomentCeremony;
   renderLesson: LessonPracticeRenderer;
@@ -257,7 +263,7 @@ export function MistakePracticeRun({
 
       <PracticeBody
         askButton={tutor?.button}
-        backHref={backHref}
+        doneHref={doneHref ?? backHref}
         buddy={buddy}
         dayBlock={dayBlock}
         lessonHref={lessonHref}

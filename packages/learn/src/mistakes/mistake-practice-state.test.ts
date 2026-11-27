@@ -5,6 +5,7 @@ import {
   type PracticeEntry,
   canPracticeAgain,
   createPracticeState,
+  getPracticeScore,
   getPracticeSegments,
   practiceReducer,
 } from "./mistake-practice-state";
@@ -377,21 +378,17 @@ describe(canPracticeAgain, () => {
       { summary: { ...SUMMARY, hasMorePractice }, type: "ended" },
     );
 
-  it("offers a played run again while this batch left something unfixed", () => {
-    expect(
-      canPracticeAgain(end(false, ...answered("first", true), ...answered("second", false))),
-    ).toBe(true);
+  it("offers a fresh batch only while the finish says an earlier miss is still open", () => {
+    const unfixed = [...answered("first", true), ...answered("second", false)];
+
+    expect(canPracticeAgain(end(true, ...unfixed))).toBe(true);
+    expect(canPracticeAgain(end(false, ...unfixed))).toBe(false);
   });
 
-  it("offers it again when every entry was fixed but the server holds more", () => {
-    const allFixed = [...answered("first", true), ...answered("second", true)];
+  it("scores the run from its own answers, whatever the finish counted", () => {
+    const ended = end(false, ...answered("first", true), ...answered("second", false));
 
-    expect(canPracticeAgain(end(true, ...allFixed))).toBe(true);
-    expect(canPracticeAgain(end(false, ...allFixed))).toBe(false);
-  });
-
-  it("ends a run the learner left early", () => {
-    expect(canPracticeAgain(end(true, ...answered("first", false)))).toBe(false);
+    expect(getPracticeScore(ended)).toStrictEqual({ answered: 2, correct: 2 });
   });
 
   it("starts the fresh batch it's given", () => {

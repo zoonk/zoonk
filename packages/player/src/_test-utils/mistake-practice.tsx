@@ -86,7 +86,7 @@ export function openPractice(
   overrides: Partial<Actions> = {},
   question?: ComponentProps<typeof MistakePracticeRun>["practice"][number]["questions"][number],
   drill: PracticeDrill = RETRY_DRILL,
-  { dayBlock = false }: { dayBlock?: boolean } = {},
+  { dayBlock = false, doneHref }: { dayBlock?: boolean; doneHref?: string } = {},
 ) {
   const again = vi.fn<Actions["again"]>().mockResolvedValue(null);
   const answer = vi.fn<Actions["answer"]>().mockResolvedValue(practiceFeedback());
@@ -130,6 +130,7 @@ export function openPractice(
               actions={actions}
               backHref="/mistakes"
               dayBlock={dayBlock}
+              doneHref={doneHref}
               lessonHref={null}
               practice={practice}
               renderLesson={(props) => <LessonPracticeStep {...props} />}

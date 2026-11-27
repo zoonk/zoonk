@@ -1,6 +1,7 @@
 "use client";
 
 import { type Reached } from "@zoonk/core/sessions/reached";
+import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { MomentReadouts } from "../_components/moment-readouts";
 import { AnswersSaveError } from "../_components/save-error";
@@ -11,26 +12,27 @@ import { DayMoment } from "../session/day-moment";
 import { MomentAfterCeremony, type MomentCeremony } from "../session/moment-ceremony";
 import { MomentHeader } from "../session/moment-header";
 import { PendingMoment } from "../session/pending-moment";
-import { TaskMainButton, TaskMainLink } from "../shell/task-frame";
+import { TaskMainLink } from "../shell/task-frame";
 import { type MistakePracticeSummary } from "./mistake-practice-state";
 
-function BackBar({ backHref }: { backHref: string }) {
-  const t = useExtracted();
-
+function EndBar({ href, label }: { href: string; label: string }) {
   return (
     <TaskActionBar>
       <TaskActions>
-        <TaskMainLink href={backHref}>{t("Back")}</TaskMainLink>
+        <TaskMainLink href={href}>{label}</TaskMainLink>
       </TaskActions>
     </TaskActionBar>
   );
 }
 
+/** The score is the run's own answers: a same-day repeat batch earns nothing new but still scored. */
 function PracticeEarned({
   fixed,
+  score,
   summary,
 }: {
   fixed: number;
+  score: { answered: number; correct: number };
   summary: MistakePracticeSummary | null;
 }) {
   const t = useExtracted();
@@ -42,12 +44,13 @@ function PracticeEarned({
         fixed > 0 &&
           t("{count, plural, one {# mistake fixed} other {# mistakes fixed}}", { count: fixed }),
       ]}
-      score={summary && { answered: summary.total, correct: summary.correct }}
+      score={score.answered > 0 ? score : null}
     />
   );
 }
 
-export function NothingToPractice({ backHref }: { backHref: string }) {
+/** A day's block whose mistakes were fixed elsewhere: nothing went wrong, and the day goes on. */
+export function NothingToPractice({ dayBlock, doneHref }: { dayBlock: boolean; doneHref: string }) {
   const t = useExtracted();
 
   return (
@@ -55,33 +58,45 @@ export function NothingToPractice({ backHref }: { backHref: string }) {
       <TaskBody>
         <StepCard role="status">
           <StepHeader>
-            <h2 className="text-title">{t("Nothing to practice")}</h2>
+            <h2 className="text-title">
+              {dayBlock ? t("Already fixed") : t("Nothing to practice")}
+            </h2>
           </StepHeader>
         </StepCard>
       </TaskBody>
 
-      <BackBar backHref={backHref} />
+      <EndBar href={doneHref} label={dayBlock ? t("Done") : t("Back")} />
     </>
   );
 }
 
 export type PracticeAgain = { failed: boolean; loading: boolean; start: () => void };
 
-/** Practicing again loads a fresh batch; with nothing left, the learner is done. */
-function DoneBar({ again, backHref }: { again: PracticeAgain | null; backHref: string }) {
+/**
+ * The way forward leads: Done back where the run came from, or Continue into a day's next stop.
+ * Practicing again is the second action, only while it can still fix something today.
+ */
+function DoneBar({
+  again,
+  dayBlock,
+  doneHref,
+}: {
+  again: PracticeAgain | null;
+  dayBlock: boolean;
+  doneHref: string;
+}) {
   const t = useExtracted();
 
   return (
-    <TaskActionBar>
-      {again?.failed && <AnswersSaveError failures={1} />}
+    <TaskActionBar note={again?.failed && <AnswersSaveError failures={1} />}>
       <TaskActions>
-        {again ? (
-          <TaskMainButton busy={again.loading} onClick={again.start}>
+        {again && (
+          <Button busy={again.loading} onClick={again.start} size="xl" variant="outline">
             {t("Practice again")}
-          </TaskMainButton>
-        ) : (
-          <TaskMainLink href={backHref}>{t("Done")}</TaskMainLink>
+          </Button>
         )}
+
+        <TaskMainLink href={doneHref}>{dayBlock ? t("Continue") : t("Done")}</TaskMainLink>
       </TaskActions>
     </TaskActionBar>
   );
@@ -89,19 +104,23 @@ function DoneBar({ again, backHref }: { again: PracticeAgain | null; backHref: s
 
 export function PracticeDone({
   again,
-  backHref,
   buddy,
+  dayBlock,
+  doneHref,
   fixed,
   reached,
   renderCeremony,
+  score,
   summary,
 }: {
   again: PracticeAgain | null;
-  backHref: string;
   buddy?: LearnBuddy | null;
+  dayBlock: boolean;
+  doneHref: string;
   fixed: number;
   reached: Reached;
   renderCeremony?: MomentCeremony;
+  score: { answered: number; correct: number };
   summary: MistakePracticeSummary | null;
 }) {
   const t = useExtracted();
@@ -111,7 +130,7 @@ export function PracticeDone({
     <MomentAfterCeremony moments={summary} render={renderCeremony}>
       <TaskBody>
         <MomentHeader title={t("Practice done")}>
-          <PracticeEarned fixed={fixed} summary={summary} />
+          <PracticeEarned fixed={fixed} score={score} summary={summary} />
         </MomentHeader>
 
         <DayMoment
@@ -122,7 +141,7 @@ export function PracticeDone({
         />
       </TaskBody>
 
-      <DoneBar again={again} backHref={backHref} />
+      <DoneBar again={again} dayBlock={dayBlock} doneHref={doneHref} />
     </MomentAfterCeremony>
   );
 }

@@ -24,6 +24,7 @@ type PracticeScope = { blockId?: string; mockId?: string; skillId?: string };
  */
 export function MistakePracticeClient({
   backHref,
+  doneHref,
   goalId,
   practice,
   scope,
@@ -31,6 +32,8 @@ export function MistakePracticeClient({
   tutor,
 }: {
   backHref: string;
+  /** A day's block goes on to the session's next stop, as the day's other blocks do. */
+  doneHref?: string;
   goalId: string;
   practice: RunProps["practice"];
   scope: PracticeScope;
@@ -97,6 +100,7 @@ export function MistakePracticeClient({
       backHref={backHref}
       buddy={tutor.buddy}
       dayBlock={Boolean(blockId)}
+      doneHref={doneHref}
       key={bfcacheId}
       lessonHref={lessonHref}
       practice={practice}
