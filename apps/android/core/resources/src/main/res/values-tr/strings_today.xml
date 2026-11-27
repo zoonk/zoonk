@@ -50,8 +50,6 @@
   "today_mistakes_notebook": "c3276dd08db2994543e26630c8e509f767662dd9a0658336c03ac72a040f6361",
   "today_mistakes_ready": "7f0d2c8989e90d40ff14a4526a9630f937433ce6a3cf2cb9b7495378fdda1eae",
   "today_mistakes_redo": "678b2660fbc744168efae51c4f50f0c6ce47214a32c48bfe16ba8d1d50aec6e2",
-  "today_mistakes_return_tomorrow": "7a7255241974cfdb05eefc7cda3cf15344358391c9dac7f7921406f6890bf825",
-  "today_mistakes_tomorrow": "be94e6e949de7b000c04c8e946d4cccc32398dd8608c2bf6d46f046ed97de9b7",
   "today_more_count": "0454355e54667c44608e31fb2fa9a0b4e17ee22b24fe17ddee6b0740afbcba8a",
   "today_more_lessons": "c181cd128cfefd4ddc5f720dc02625d2ba7742cc897f8c2713e615a82f0c910e",
   "today_more_time_a_day": "ea486e0b25beddb5edb349aeeacf5544398e102da6c8c241a64bbb53a2391e90",
@@ -278,14 +276,9 @@
     <string name="today_mistakes_redo">Yanlış yaptığın soruları tekrar çöz</string>
     <!-- The line under Completed lessons in Practice anytime. -->
     <string name="today_completed_lessons_line">Bir dersi yeniden çalış</string>
-    <string name="today_mistakes_return_tomorrow">Bugünkü yanlışların yarın tekrar karşına çıkar</string>
     <plurals name="today_mistakes_ready">
         <item quantity="one">%d yanlış üzerinde çalışabilirsin</item>
         <item quantity="other">%d yanlış üzerinde çalışabilirsin</item>
-    </plurals>
-    <plurals name="today_mistakes_tomorrow">
-        <item quantity="one">Yarın %d yanlış üzerinde çalışabilirsin</item>
-        <item quantity="other">Yarın %d yanlış üzerinde çalışabilirsin</item>
     </plurals>
     <string name="today_take_mock">Deneme sınavına gir</string>
     <string name="today_take_mock_detail">İstediğin zaman: tam gün veya yarım gün</string>
