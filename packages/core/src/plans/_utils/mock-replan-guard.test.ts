@@ -8,6 +8,7 @@ const today = fromIsoDate("2026-11-01");
 
 function plan({
   coreFits = true,
+  coveredRaw = 40,
   coveredShare = 0.9,
   droppedSkillIds = ["statistics"],
   endDate = "2026-12-01",
@@ -15,6 +16,7 @@ function plan({
   scheduledFor = addDays(today, 2),
 }: {
   coreFits?: boolean;
+  coveredRaw?: number;
   coveredShare?: number;
   droppedSkillIds?: string[];
   endDate?: string;
@@ -49,13 +51,20 @@ function plan({
     },
     feasibility: { coreFits, coveredShare, fits: false, timeCovers: false },
     selected: {
-      coverage: null,
-      endDate,
-      forecast: {
-        basis: "estimated" as const,
-        dailyNeed: { basis: "estimated" as const, minutes: 20 },
-        finish: { date: endDate },
+      coverage: {
+        basis: "selected" as const,
+        coreFits,
+        coveredShare,
+        deadline: "2027-01-01",
+        fits: false,
+        measure: "exam" as const,
+        shortLessons: [],
+        skills: [
+          { coveredRaw, requiredRaw: 120, skillId: "math", state: "measured" as const, worth: 0.5 },
+        ],
+        targetDate: "2027-01-15",
       },
+      endDate,
     },
   };
 }
@@ -69,14 +78,24 @@ describe(holdsSchedule, () => {
     );
   });
 
-  it.each([{ coveredShare: 0.85 }, { coveredShare: 0.95 }, { coreFits: false }])(
-    "refuses a change in coverage or whether the core fits (%o)",
-    (change) => {
-      expect(
-        holdsSchedule({ baseline: plan(), computed: plan(change), movableFrom: addDays(today, 1) }),
-      ).toBe(false);
-    },
-  );
+  it("allows a topic's coverage summed from a different split of the same minutes", () => {
+    const computed = plan({ coveredRaw: 40 - 6e-14 });
+
+    expect(holdsSchedule({ baseline: plan(), computed, movableFrom: addDays(today, 1) })).toBe(
+      true,
+    );
+  });
+
+  it.each([
+    { coveredShare: 0.85 },
+    { coveredShare: 0.95 },
+    { coreFits: false },
+    { coveredRaw: 36 },
+  ])("refuses a change in coverage or whether the core fits (%o)", (change) => {
+    expect(
+      holdsSchedule({ baseline: plan(), computed: plan(change), movableFrom: addDays(today, 1) }),
+    ).toBe(false);
+  });
 
   it("refuses to substitute a different lesson on the same topic", () => {
     const computed = plan({ lessonId: "geometry" });

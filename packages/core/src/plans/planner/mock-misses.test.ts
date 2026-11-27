@@ -4,6 +4,7 @@ import { findPlanSuggestion } from "../_utils/suggested-time";
 import { type BuildPlanInput, buildPlan } from "./build-plan";
 import { addDays, fromIsoDate, toIsoDate } from "./plan-calendar";
 import { getPlanFeasibility } from "./plan-feasibility";
+import { type ExistingPlanItem } from "./plan-items";
 import { parsePlanSettings } from "./plan-state";
 import { summarizeSelectedPlan } from "./selected-plan-summary";
 import { type MockMiss, getExamValue } from "./skill-order";
@@ -50,6 +51,107 @@ function topicOrder(input: BuildPlanInput): string[] {
     });
 
   return [...first].toSorted(([, a], [, b]) => a - b).map(([skillId]) => skillId);
+}
+
+type BuiltPlan = ReturnType<typeof buildPlan>;
+
+function savePlan(input: BuildPlanInput): ExistingPlanItem[] {
+  return buildPlan(input).items.map((item, position) => ({
+    ...item,
+    id: item.id ?? `saved-${position}`,
+    position,
+  }));
+}
+
+function lessonsOf(plan: BuiltPlan) {
+  return plan.items.filter((item) => item.kind === "lesson");
+}
+
+function lessonKeys(plan: BuiltPlan): Set<string> {
+  return new Set(lessonsOf(plan).map(({ key }) => key));
+}
+
+function firstLessonAt({ plan, skillId }: { plan: BuiltPlan; skillId: string }): number {
+  return Math.min(
+    ...lessonsOf(plan).flatMap((item) =>
+      item.skillId === skillId && item.scheduledFor ? [item.scheduledFor.getTime()] : [],
+    ),
+  );
+}
+
+function studyDays(plan: BuiltPlan): number[] {
+  const days = lessonsOf(plan).flatMap((item) =>
+    item.status === "todo" && item.scheduledFor && item.scheduledFor > TODAY
+      ? [item.scheduledFor.getTime()]
+      : [],
+  );
+
+  return [...new Set(days)].toSorted((a, b) => a - b);
+}
+
+function countBehind({ input, plan }: { input: BuildPlanInput; plan: BuiltPlan }): number {
+  const carried = new Set(input.items.map((item) => item.id));
+
+  const behind = lessonsOf(plan).filter(
+    ({ id, status }) => id && carried.has(id) && status === "todo",
+  );
+
+  return behind.length;
+}
+
+function bySkill<TEntry extends { skillId: string }>(entries: readonly TEntry[]) {
+  return entries.toSorted((a, b) => a.skillId.localeCompare(b.skillId));
+}
+
+/** A mock only reorders: the same work is kept and left out, and nothing the learner sees moves. */
+function expectOnlyReordered({
+  input,
+  missed,
+}: {
+  input: BuildPlanInput;
+  missed: readonly string[];
+}) {
+  const withMock = { ...input, mockMisses: new Map(missed.map((id) => [id, "missed"] as const)) };
+  const baseline = buildPlan(input);
+  const reordered = buildPlan(withMock);
+  const before = getPlanFeasibility({ input, planned: baseline });
+  const after = getPlanFeasibility({ input: withMock, planned: reordered });
+
+  expect(lessonKeys(reordered)).toStrictEqual(lessonKeys(baseline));
+  expect(reordered.droppedSkillIds.toSorted()).toStrictEqual(baseline.droppedSkillIds.toSorted());
+  expect(bySkill(reordered.skillMinutes)).toStrictEqual(bySkill(baseline.skillMinutes));
+  expect(countBehind({ input, plan: reordered })).toBe(countBehind({ input, plan: baseline }));
+
+  expect(reordered.phases.map(({ endDate }) => endDate)).toStrictEqual(
+    baseline.phases.map(({ endDate }) => endDate),
+  );
+
+  expect(after.coreFits).toBe(before.coreFits);
+  expect(after.coveredShare).toBeCloseTo(before.coveredShare, 9);
+
+  expect(
+    findPlanSuggestion({ dailyMinutes: input.goal.dailyMinutes, feasibility: after }),
+  ).toStrictEqual(
+    findPlanSuggestion({ dailyMinutes: input.goal.dailyMinutes, feasibility: before }),
+  );
+
+  expect(
+    holdsSchedule({
+      baseline: {
+        built: baseline,
+        feasibility: before,
+        selected: summarizeSelectedPlan({ built: baseline, examSubjects: null, input }),
+      },
+      computed: {
+        built: reordered,
+        feasibility: after,
+        selected: summarizeSelectedPlan({ built: reordered, examSubjects: null, input: withMock }),
+      },
+      movableFrom: addDays(TODAY, 1),
+    }),
+  ).toBe(true);
+
+  return { baseline, reordered };
 }
 
 describe("an exam plan after a mock", () => {
@@ -140,85 +242,54 @@ describe("an exam plan after a mock", () => {
     } satisfies BuildPlanInput;
 
     const keptMisses = ["topic-2", "topic-3", "topic-8", "topic-9"];
-    const missed = [...keptMisses, "topic-10"];
-    const withMock = { ...input, mockMisses: new Map(missed.map((id) => [id, "missed"] as const)) };
-    const baseline = buildPlan(input);
-    const reordered = buildPlan(withMock);
 
-    const scheduled = (plan: typeof baseline) =>
-      plan.items.filter((item) => item.kind === "lesson");
+    const { baseline, reordered } = expectOnlyReordered({
+      input,
+      missed: [...keptMisses, "topic-10"],
+    });
 
-    const identities = (plan: typeof baseline) =>
-      new Set(scheduled(plan).flatMap(({ lessonId }) => lessonId ?? []));
+    expect(baseline.droppedSkillIds).toContain("topic-10");
+    expect(countBehind({ input, plan: reordered })).toBe(1);
 
-    const leftOut = (plan: typeof baseline) => {
-      const kept = identities(plan);
-      return lessons.map(({ lessonId }) => lessonId).filter((id) => !kept.has(id));
-    };
+    for (const skillId of keptMisses) {
+      expect(firstLessonAt({ plan: reordered, skillId })).toBeLessThan(
+        firstLessonAt({ plan: baseline, skillId }),
+      );
+    }
+  });
 
-    expect(leftOut(baseline)).toStrictEqual(
-      expect.arrayContaining(
-        lessons
-          .filter(({ skillIds }) => skillIds.includes("topic-10"))
-          .map(({ lessonId }) => lessonId),
-      ),
-    );
+  it("leads the next study day with kept misses in a plan whose core doesn't fit", () => {
+    const input = examInput();
+    const areas = ["Math", "Languages", "Science", "Humanities", "Writing"];
 
-    expect(identities(reordered)).toStrictEqual(identities(baseline));
-    expect(leftOut(reordered)).toStrictEqual(leftOut(baseline));
+    const skills = Array.from({ length: 200 }, (_, index) => ({
+      area: areas[index % areas.length]!,
+      lessons: 8,
+      name: `Topic ${index}`,
+      phase: 0,
+      skillId: `topic-${index}`,
+      weight: 2 + (index % 5),
+    }));
 
-    expect(
-      reordered.skillMinutes.toSorted((a, b) => a.skillId.localeCompare(b.skillId)),
-    ).toStrictEqual(baseline.skillMinutes.toSorted((a, b) => a.skillId.localeCompare(b.skillId)));
+    const unsaved = {
+      ...input,
+      goal: { ...input.goal, dailyMinutes: 37, targetDate: addDays(TODAY, 150) },
+      graph: { ...input.graph, skills },
+      openedKeys: [],
+      todayShown: true,
+    } satisfies BuildPlanInput;
 
-    expect(reordered.phases.map(({ endDate }) => endDate)).toStrictEqual(
-      baseline.phases.map(({ endDate }) => endDate),
-    );
+    const exam = { ...unsaved, items: savePlan(unsaved) };
+    const missed = ["topic-197", "topic-198"];
+    const { baseline, reordered } = expectOnlyReordered({ input: exam, missed });
 
-    const behind = (plan: typeof baseline) =>
-      scheduled(plan).filter(({ id, status }) => id === "carried" && status === "todo").length;
+    expect(getPlanFeasibility({ input: exam, planned: baseline }).coreFits).toBe(false);
 
-    expect(behind(baseline)).toBe(1);
-    expect(behind(reordered)).toBe(behind(baseline));
+    const [nextDay] = studyDays(reordered);
 
-    const before = getPlanFeasibility({ input, planned: baseline });
-    const after = getPlanFeasibility({ input: withMock, planned: reordered });
-    expect(after.coreFits).toBe(before.coreFits);
-    expect(after.coveredShare).toBe(before.coveredShare);
-
-    expect(
-      findPlanSuggestion({ dailyMinutes: input.goal.dailyMinutes, feasibility: after }),
-    ).toStrictEqual(
-      findPlanSuggestion({ dailyMinutes: input.goal.dailyMinutes, feasibility: before }),
-    );
-
-    expect(
-      holdsSchedule({
-        baseline: {
-          built: baseline,
-          feasibility: before,
-          selected: summarizeSelectedPlan({ built: baseline, examSubjects: null, input }),
-        },
-        computed: {
-          built: reordered,
-          feasibility: after,
-          selected: summarizeSelectedPlan({
-            built: reordered,
-            examSubjects: null,
-            input: withMock,
-          }),
-        },
-        movableFrom: addDays(TODAY, 1),
-      }),
-    ).toBe(true);
-
-    for (const id of keptMisses) {
-      const first = (plan: typeof baseline) =>
-        scheduled(plan)
-          .find(({ skillId }) => skillId === id)
-          ?.scheduledFor?.getTime();
-
-      expect(first(reordered)).toBeLessThan(first(baseline)!);
+    for (const skillId of missed) {
+      expect(firstLessonAt({ plan: baseline, skillId })).toBeGreaterThan(nextDay!);
+      expect(firstLessonAt({ plan: reordered, skillId })).toBe(nextDay);
     }
   });
 
