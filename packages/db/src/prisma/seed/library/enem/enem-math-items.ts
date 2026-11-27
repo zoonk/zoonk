@@ -353,4 +353,130 @@ export const enemMathItems: SeedItem[] = [
     key: "fund-gain-loss",
     skill: "successive-percent",
   },
+  {
+    content: {
+      context: t(
+        "A recipe uses 4 cups of flour for 24 cookies.",
+        "Uma receita usa 4 xícaras de farinha para 24 biscoitos.",
+      ),
+      options: [
+        bankOption(
+          t("6 cups", "6 xícaras"),
+          t(
+            "More cookies need more flour: 4 × 36 ÷ 24 = 6.",
+            "Mais biscoitos pedem mais farinha: 4 × 36 ÷ 24 = 6.",
+          ),
+        ),
+        bankOption(
+          t("About 2.7 cups", "Cerca de 2,7 xícaras"),
+          t(
+            "More cookies can't need less flour: the proportion was set up upside down.",
+            "Mais biscoitos não podem pedir menos farinha: a proporção foi montada invertida.",
+          ),
+          t("Set up the proportion upside down", "Montou a proporção invertida"),
+        ),
+        bankOption(
+          t("16 cups", "16 xícaras"),
+          t(
+            "12 more cookies don't mean 12 more cups: each cup makes 6 cookies.",
+            "12 biscoitos a mais não significam 12 xícaras a mais: cada xícara rende 6 biscoitos.",
+          ),
+          t(
+            "Added the difference instead of scaling",
+            "Somou a diferença em vez de manter a proporção",
+          ),
+        ),
+      ],
+      question: t(
+        "How many cups of flour make 36 cookies?",
+        "Quantas xícaras de farinha rendem 36 biscoitos?",
+      ),
+    },
+    difficulty: -1,
+    format: "multipleChoice",
+    key: "rule-of-three-cookies",
+    skill: "rule-of-three",
+  },
+  {
+    content: {
+      context: t(
+        "An office printer prints 60 pages in 4 minutes.",
+        "A impressora de um escritório imprime 60 páginas em 4 minutos.",
+      ),
+      options: [
+        bankOption(
+          t("10 minutes", "10 minutos"),
+          t(
+            "Pages and time grow together: 4 × 150 ÷ 60 = 10.",
+            "Páginas e tempo crescem juntos: 4 × 150 ÷ 60 = 10.",
+          ),
+        ),
+        bankOption(
+          t("1.6 minutes", "1,6 minuto"),
+          t(
+            "More pages can't take less time: the proportion was set up upside down.",
+            "Mais páginas não podem levar menos tempo: a proporção foi montada invertida.",
+          ),
+          t("Set up the proportion upside down", "Montou a proporção invertida"),
+        ),
+        bankOption(
+          t("2.5 minutes", "2,5 minutos"),
+          t(
+            "150 ÷ 60 = 2.5 says how many times more pages there are, not how long they take.",
+            "150 ÷ 60 = 2,5 diz quantas vezes mais páginas há, não quanto tempo levam.",
+          ),
+          t("Answered with the ratio instead of the time", "Respondeu com a razão em vez do tempo"),
+        ),
+      ],
+      question: t(
+        "How long does it take to print 150 pages?",
+        "Quanto tempo leva para imprimir 150 páginas?",
+      ),
+    },
+    difficulty: 0,
+    format: "multipleChoice",
+    key: "rule-of-three-printer",
+    skill: "rule-of-three",
+  },
+  {
+    content: {
+      context: t(
+        "A juice stand squeezes 6 oranges for every 2 glasses of juice.",
+        "Uma barraca de suco espreme 6 laranjas a cada 2 copos de suco.",
+      ),
+      options: [
+        bankOption(
+          t("15 oranges", "15 laranjas"),
+          t(
+            "Each glass takes 3 oranges, so 5 glasses take 15.",
+            "Cada copo leva 3 laranjas, então 5 copos levam 15.",
+          ),
+        ),
+        bankOption(
+          t("2.4 oranges", "2,4 laranjas"),
+          t(
+            "More glasses can't take fewer oranges: the proportion was set up upside down.",
+            "Mais copos não podem levar menos laranjas: a proporção foi montada invertida.",
+          ),
+          t("Set up the proportion upside down", "Montou a proporção invertida"),
+        ),
+        bankOption(
+          t("9 oranges", "9 laranjas"),
+          t(
+            "3 more glasses don't take 3 more oranges: each glass takes 3.",
+            "3 copos a mais não levam 3 laranjas a mais: cada copo leva 3.",
+          ),
+          t(
+            "Added the difference instead of scaling",
+            "Somou a diferença em vez de manter a proporção",
+          ),
+        ),
+      ],
+      question: t("How many oranges make 5 glasses?", "Quantas laranjas rendem 5 copos?"),
+    },
+    difficulty: -1,
+    format: "multipleChoice",
+    key: "rule-of-three-juice",
+    skill: "rule-of-three",
+  },
 ];
