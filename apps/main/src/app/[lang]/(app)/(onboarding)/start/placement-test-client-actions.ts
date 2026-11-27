@@ -14,9 +14,7 @@ export function getPlacementTestActions(goalId: string): PlacementTestActions {
     finish: (input) =>
       finishPlacementTestAction({ ...input, goalId, timeZone: getLocalTimeZone() }),
     get: () => getPlacementAction({ goalId, timeZone: getLocalTimeZone() }),
-    // A `length` says the start is the course's test, not an exam goal's sitting.
-    start: () =>
-      startPlacementSittingAction({ goalId, length: "quick", timeZone: getLocalTimeZone() }),
+    start: () => startPlacementSittingAction({ goalId, timeZone: getLocalTimeZone() }),
     undo: (changeId) => decidePlanChangeAction(goalId, { changeId, status: "undone" }),
   };
 }

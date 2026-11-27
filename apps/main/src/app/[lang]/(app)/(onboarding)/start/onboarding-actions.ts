@@ -132,15 +132,14 @@ export async function getPlacementAction({
 }
 
 /**
- * Opens an exam goal's next sitting, or with a `length` the course's test; asked again, it answers
- * with the one already open.
+ * Opens an exam goal's next sitting, or a course's test; asked again, it answers with the one
+ * already open.
  */
 export async function startPlacementSittingAction({
   goalId,
   ...input
 }: {
   goalId: string;
-  length?: "quick" | "wholeCourse";
   timeZone: string;
 }): Promise<PlacementOutcome> {
   const parsed = placementSittingInputSchema.safeParse(input);
