@@ -1,5 +1,5 @@
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { isInAnotherYear } from "./calendar-day";
-import { MS_PER_DAY } from "./date.ts";
 import { getFormattingLocale } from "./locale";
 
 /**
