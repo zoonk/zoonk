@@ -3,7 +3,7 @@ SET cause = mistake.cause
 FROM mistakes AS mistake
 WHERE mistake.attempt_id = attempt.id AND mistake.cause IS NOT NULL;
 
-WITH drill_questions AS (
+WITH drill_questions AS MATERIALIZED (
   SELECT DISTINCT block.session_id, question.item_id
   FROM study_session_blocks AS block
   CROSS JOIN LATERAL jsonb_array_elements(
@@ -12,6 +12,7 @@ WITH drill_questions AS (
   CROSS JOIN LATERAL jsonb_array_elements_text(
     CASE WHEN jsonb_typeof(drill.data->'itemIds') = 'array' THEN drill.data->'itemIds' ELSE '[]'::jsonb END
   ) AS question(item_id)
+  WHERE block.payload ? 'drills'
 ), notebook_questions AS (
   SELECT mistake.user_id, question.item_id,
     MIN(COALESCE(source.answered_at, mistake.created_at)) AS first_miss
@@ -24,6 +25,8 @@ WITH drill_questions AS (
   SELECT attempt.id
   FROM attempts AS attempt
   LEFT JOIN mock_exams AS mock ON mock.id = attempt.mock_exam_id
+  LEFT JOIN drill_questions AS drill
+    ON drill.session_id = attempt.study_session_id AND drill.item_id = attempt.item_id::text
   LEFT JOIN notebook_questions AS notebook
     ON notebook.user_id = attempt.user_id AND notebook.item_id = attempt.item_id::text
   WHERE NOT attempt.is_placement
@@ -37,10 +40,7 @@ WITH drill_questions AS (
     AND COALESCE(attempt.answer->'number', '0'::jsonb) <> 'null'::jsonb
     AND (notebook.first_miss IS NULL OR notebook.first_miss >= attempt.answered_at)
     AND (
-      (attempt.mock_exam_id IS NULL AND attempt.study_session_id IS NOT NULL AND NOT EXISTS (
-        SELECT 1 FROM drill_questions AS drill
-        WHERE drill.session_id = attempt.study_session_id AND drill.item_id = attempt.item_id::text
-      ))
+      (attempt.mock_exam_id IS NULL AND attempt.study_session_id IS NOT NULL AND drill.session_id IS NULL)
       OR (mock.status = 'finished' AND mock.finished_at IS NOT NULL
         AND mock.conditions->>'purpose' IN ('planned', 'practice'))
     )
