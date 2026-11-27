@@ -2,7 +2,6 @@
 
 import { isNameChangeTooLong } from "@zoonk/auth/name-rules";
 import { Button } from "@zoonk/ui/components/button";
-import { EnterButton } from "../_components/enter-button";
 import {
   Drawer,
   DrawerContent,
@@ -16,6 +15,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
 import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
+import { EnterButton } from "../_components/enter-button";
 import { NameHint } from "../_components/name-hint";
 import { useChangeSaveErrorMessage } from "../_components/save-error";
 import { SheetHeader } from "../_components/sheet-header";

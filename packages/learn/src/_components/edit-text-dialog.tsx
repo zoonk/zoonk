@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
-import { EnterButton } from "./enter-button";
 import {
   Drawer,
   DrawerContent,
@@ -15,6 +14,7 @@ import { Textarea } from "@zoonk/ui/components/textarea";
 import { safeAsync } from "@zoonk/utils/error";
 import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
+import { EnterButton } from "./enter-button";
 import { useChangeSaveFailed } from "./save-error";
 import { SheetHeader } from "./sheet-header";
 

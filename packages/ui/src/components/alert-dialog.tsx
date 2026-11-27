@@ -144,10 +144,7 @@ function AlertDialogAction({
   variant,
   ...props
 }: ButtonProps &
-  (
-    | { enter?: "bound"; variant?: never }
-    | { enter: "off"; variant?: "default" | "destructive" }
-  )) {
+  ({ enter?: "bound"; variant?: never } | { enter: "off"; variant?: "default" | "destructive" })) {
   if (enter === "off") {
     return (
       <Button

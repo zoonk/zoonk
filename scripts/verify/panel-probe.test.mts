@@ -58,7 +58,12 @@ test("reads which control Enter presses in a panel, and what takes it first", ()
     <div data-slot="alert-dialog-footer"><button>Cancel</button><button data-enter="bound">Archive</button><a href="/x" style="--button-variant: default">Open LinkedIn</a><button data-enter="off" style="--button-variant: default">Delete</button></div></div>`;
 
   element("[role=alertdialog]").focus();
-  assert.deepEqual(read().enter, { bound: ["Archive"], takenBy: null, unmarked: ["Open LinkedIn"] });
+
+  assert.deepEqual(read().enter, {
+    bound: ["Archive"],
+    takenBy: null,
+    unmarked: ["Open LinkedIn"],
+  });
 
   element("button").focus();
   assert.equal(read().enter?.takenBy, "Cancel");

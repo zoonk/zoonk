@@ -45,7 +45,12 @@ function panelEnterFindings({ enter, label }: PanelFacts): Finding[] {
       ),
     ),
     ...(enter.takenBy
-      ? [behavior("Enter", `${label} opens on ${enter.takenBy}, so Enter presses that instead of ${main}`)]
+      ? [
+          behavior(
+            "Enter",
+            `${label} opens on ${enter.takenBy}, so Enter presses that instead of ${main}`,
+          ),
+        ]
       : []),
     ...(enter.bound.length > 1
       ? [behavior("Enter", `two main actions answer Enter in ${label}: ${main}`)]
