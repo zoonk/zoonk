@@ -7,7 +7,6 @@ import {
 import { isPassageInDocument } from "@zoonk/core/library/exams/passage-check";
 import { type EvalDocument, loadDocument } from "../extract-exam-blueprint/generate";
 
-/** `tasks` as the exam's reading found them. */
 export type WrittenGradingEvalInput = {
   documents: EvalDocument[];
   exam: string;

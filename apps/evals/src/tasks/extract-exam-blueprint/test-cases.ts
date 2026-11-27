@@ -17,13 +17,12 @@ const UPSC_CSE_2026_NOTICE = {
   url: "https://www.upsc.gov.in/sites/default/files/Notif-CSP-2026-Engl-060226Rev.pdf",
 };
 
-/** Inep's guide to the redação: its five scales with their descriptors and its zero rules. */
 const ENEM_WRITING_GUIDE = {
   title: "A redação no Enem 2025: cartilha do participante",
   url: "https://download.inep.gov.br/publicacoes/institucionais/avaliacoes_e_exames_da_educacao_basica/a_redacao_no_enem_2025_cartilha_do_participante.pdf",
 };
 
-const ENEM_SCALE = [0, 40, 80, 120, 160, 200];
+export const ENEM_SCALE = [0, 40, 80, 120, 160, 200];
 
 /** An invented notice whose written test states its lines but no scale or grading rule. */
 const NO_SCALE_NOTICE = `PREFEITURA MUNICIPAL DE VALE ALTO

@@ -1084,7 +1084,6 @@ const LANGUAGE_CASES = [
   ),
 ];
 
-/** Kept as a grading case, left out of calibration: the printed text isn't the answer the board read. */
 function doubtful(testCase: WritingCase, reason: string): WritingCase {
   return { ...testCase, expected: testCase.expected && { ...testCase.expected, doubtful: reason } };
 }

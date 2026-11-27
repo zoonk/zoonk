@@ -1,11 +1,10 @@
 import { type TestCase } from "@/lib/types";
-import { TEST_CASES as EXTRACTION_CASES } from "../extract-exam-blueprint/test-cases";
+import { ENEM_SCALE, TEST_CASES as EXTRACTION_CASES } from "../extract-exam-blueprint/test-cases";
 import { type WrittenGradingEvalInput } from "./generate";
 import { type WrittenGradingExpected } from "./task";
 
 type WrittenGradingCase = TestCase<WrittenGradingExpected, WrittenGradingEvalInput>;
 
-/** The documents and exam of the blueprint case this reading follows. */
 function readingOf(id: string): Pick<WrittenGradingEvalInput, "documents" | "exam"> {
   const found = EXTRACTION_CASES.find((testCase) => testCase.id === id);
 
@@ -15,8 +14,6 @@ function readingOf(id: string): Pick<WrittenGradingEvalInput, "documents" | "exa
 
   return { documents: found.userInput.documents, exam: found.userInput.exam };
 }
-
-const ENEM_SCALE = [0, 40, 80, 120, 160, 200];
 
 /** An invented mark scheme: two banded criteria added up, a cap and zero rules, no language deduction. */
 const MARK_SCHEME = `NORTHFIELD SCHOOL-LEAVING CERTIFICATE 2027

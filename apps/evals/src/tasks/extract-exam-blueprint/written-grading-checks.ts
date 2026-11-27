@@ -141,7 +141,6 @@ function hasSheetShape(fact: WrittenTaskFact, grading: WrittenGrading | null | u
 
 const POINT_TOLERANCE = 0.001;
 
-/** Whether a task's read marking matches every grading field the fact states. */
 export function hasGrading(
   fact: WrittenTaskFact,
   task: { grading?: WrittenGrading | null; points?: number | null },

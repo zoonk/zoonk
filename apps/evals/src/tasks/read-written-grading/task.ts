@@ -8,7 +8,6 @@ import {
 } from "./generate";
 import { TEST_CASES } from "./test-cases";
 
-/** Each task id's marking as the documents state it; a field left out isn't checked. */
 export type WrittenGradingExpected = Record<string, Omit<WrittenTaskFact, "kind">>;
 
 const MIN_SCORE = 2;
