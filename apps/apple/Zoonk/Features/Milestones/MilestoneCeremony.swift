@@ -71,7 +71,9 @@ struct MilestoneCeremony: View {
   /// Main's task actions: "Not now" beside the main action, stacking when they don't fit.
   private var buttons: some View {
     PracticeActionRow {
-      if let glasses = newGlasses, let summary = learner.summary.value {
+      if let glasses = newGlasses, let summary = learner.summary.value,
+        summary.buddy.kind != .unrecognized
+      {
         PracticeSecondaryButton(
           title: LocalizedStringResource(
             "Not now", table: "Session",

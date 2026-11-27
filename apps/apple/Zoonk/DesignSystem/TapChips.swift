@@ -1,15 +1,15 @@
 import SwiftUI
 
-/// One-tap answers over a field, such as example goals or questions for the buddy: outline chips
-/// that wrap, in rows far enough apart that each keeps its whole 44pt touch height.
+/// One-tap answers over a field, such as example goals or questions for the buddy: main's outline
+/// buttons at a touch control's full 44pt, wrapping 8pt apart each way.
 struct TapChips<Chips: View>: View {
   @ViewBuilder let chips: Chips
 
   var body: some View {
-    FlowLayout(spacing: 8, rowSpacing: 14) {
+    FlowLayout(spacing: 8) {
       chips
     }
     .buttonStyle(.outline)
-    .controlSize(.small)
+    .controlSize(.large)
   }
 }

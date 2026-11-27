@@ -160,6 +160,7 @@ internal val TodayProgress.status: PlanStatus?
         when (this) {
             is TodayProgress.TodayProgressOneOfValue -> value.status
             is TodayProgress.TodayProgressOneOf1Value -> value.status
+            is TodayProgress.TodayProgressOneOf2Value -> null
         }
 
 /** The lessons left once the goal's date passed; null before it. */

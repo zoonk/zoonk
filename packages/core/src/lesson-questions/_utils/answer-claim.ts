@@ -1,6 +1,6 @@
 import { type LessonQuestionPriorTurn } from "@zoonk/ai/tasks/lessons/question";
 import "server-only";
-import { type TransactionClient, type TutorSharedAnswer } from "@zoonk/db";
+import { type LessonQuestion, type TransactionClient, type TutorSharedAnswer } from "@zoonk/db";
 import { aboutCheckedAnswerWhere, findAboutCheckedAnswer } from "./about-checked-answer";
 import { parseLessonQuestionContextSnapshot } from "./context-snapshot-schema";
 import { getQuestionMistakeId, mistakeQuestionWhere } from "./mistake-scope";
@@ -126,6 +126,92 @@ async function hasBlockingQuestion({
   return Boolean(earlierUnfinishedQuestion || otherRunningQuestion);
 }
 
+type AnsweredQuestion = Pick<
+  LessonQuestion,
+  | "contextKind"
+  | "contextSnapshot"
+  | "createdAt"
+  | "id"
+  | "libraryStepId"
+  | "suggestion"
+  | "threadId"
+>;
+
+/** Shared answers go only to a first-turn screen suggestion from a learner whose answer isn't personal. */
+async function readAnswerInputs({
+  question,
+  transaction,
+  userId,
+}: {
+  question: AnsweredQuestion;
+  transaction: TransactionClient;
+  userId: string;
+}) {
+  const priorTurns = await getPriorTurns({ question, transaction });
+  const contextSnapshot = parseLessonQuestionContextSnapshot(question.contextSnapshot);
+
+  const tutor = await getTutorNeeds({
+    client: transaction,
+    task: contextSnapshot.scope.kind === "plan" ? "goal" : "lesson",
+    userId,
+  });
+
+  const sharedKey = tutor.personal
+    ? null
+    : getSharedAnswerKey({ hasPriorTurns: priorTurns.length > 0, question });
+
+  const shared = sharedKey
+    ? await transaction.tutorSharedAnswer.findUnique({ where: { stepSuggestion: sharedKey } })
+    : null;
+
+  return { contextSnapshot, priorTurns, shared, sharedKey, tutor };
+}
+
+function getSharedAnswerData(shared: TutorSharedAnswer) {
+  return {
+    answer: shared.answer,
+    finishReason: null,
+    generatedAt: shared.generatedAt,
+    generationRevision: { increment: 1 },
+    model: shared.model,
+    promptVersion: shared.promptVersion,
+    provider: null,
+    requestedModel: null,
+    runId: shared.runId,
+    sharedAnswerId: shared.id,
+    status: "completed" as const,
+  };
+}
+
+/**
+ * Completes a question just asked with the shared answer the answer claim would serve it, in the
+ * write that saves it, so it uses no allowance and nothing the learner changes later can fail it.
+ * Null when it has none.
+ */
+export async function completeFromSharedAnswer({
+  question,
+  transaction,
+  userId,
+}: {
+  question: AnsweredQuestion;
+  transaction: TransactionClient;
+  userId: string;
+}) {
+  if (!getSharedAnswerKey({ hasPriorTurns: false, question })) {
+    return null;
+  }
+
+  const { shared } = await readAnswerInputs({ question, transaction, userId });
+
+  return shared
+    ? transaction.lessonQuestion.update({
+        data: getSharedAnswerData(shared),
+        omit: lessonQuestionResourceOmit,
+        where: { id: question.id },
+      })
+    : null;
+}
+
 function getClaimWhere({
   now,
   question,
@@ -146,37 +232,32 @@ function getClaimWhere({
   };
 }
 
+/** A question charged when it was asked gets its message back, since no answer is written for it. */
 async function completeWithSharedAnswer({
   question,
   shared,
   transaction,
+  userId,
   where,
 }: {
   question: { id: string };
   shared: TutorSharedAnswer;
   transaction: TransactionClient;
+  userId: string;
   where: ReturnType<typeof getClaimWhere>;
 }) {
   const completed = await transaction.lessonQuestion.updateMany({
-    data: {
-      answer: shared.answer,
-      finishReason: null,
-      generatedAt: shared.generatedAt,
-      generationRevision: { increment: 1 },
-      model: shared.model,
-      promptVersion: shared.promptVersion,
-      provider: null,
-      requestedModel: null,
-      runId: shared.runId,
-      sharedAnswerId: shared.id,
-      status: "completed",
-    },
+    data: getSharedAnswerData(shared),
     where,
   });
 
   if (completed.count === 0) {
     return { status: "conflict" as const };
   }
+
+  await transaction.usageRecord.deleteMany({
+    where: { kind: "tutorMessage", targetId: question.id, userId },
+  });
 
   return { answer: shared.answer, questionId: question.id, status: "shared" as const };
 }
@@ -215,32 +296,17 @@ export async function claimAnswerInTransaction({
     return { status: "conflict" as const };
   }
 
-  const priorTurns = await getPriorTurns({ question, transaction });
-
-  const contextSnapshot = parseLessonQuestionContextSnapshot(question.contextSnapshot);
-
-  const {
-    addressForm,
-    needs: learnerNeeds,
-    personal,
-  } = await getTutorNeeds({
-    client: transaction,
-    task: contextSnapshot.scope.kind === "plan" ? "goal" : "lesson",
+  const { contextSnapshot, priorTurns, shared, sharedKey, tutor } = await readAnswerInputs({
+    question,
+    transaction,
     userId,
   });
 
-  const sharedKey = personal
-    ? null
-    : getSharedAnswerKey({ hasPriorTurns: priorTurns.length > 0, question });
-
+  const { addressForm, needs: learnerNeeds } = tutor;
   const claimWhere = getClaimWhere({ now, question, userId });
 
-  const shared = sharedKey
-    ? await transaction.tutorSharedAnswer.findUnique({ where: { stepSuggestion: sharedKey } })
-    : null;
-
   if (shared) {
-    return completeWithSharedAnswer({ question, shared, transaction, where: claimWhere });
+    return completeWithSharedAnswer({ question, shared, transaction, userId, where: claimWhere });
   }
 
   const shareAnswer = sharedKey !== null;

@@ -120,6 +120,7 @@ extension SentGoal {
   init(draft: OnboardingDraft) {
     let intent: MaterialIntent? =
       switch draft.materialIntent {
+      case .unrecognized: nil
       case .exam: .exam
       case .understand: .understand
       case nil: nil

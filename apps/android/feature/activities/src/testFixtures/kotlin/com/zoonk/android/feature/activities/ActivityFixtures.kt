@@ -53,25 +53,29 @@ object ActivityFixtures {
     /** The learner's answer that reaches the expected end state: where both are written alike, a pattern template's solution, a pitch-class answer's notes, or a complete molecule with the expected atoms. */
     fun rightAnswer(name: String): ActivityAnswer? =
         when (val expected = expected(name)) {
-            is ActivityExpected.ChoiceWrapper -> {
+            is ActivityExpected.ActivityExpectedOneOfValue -> {
+                null
+            }
+
+            is ActivityExpected.ActivityExpectedChoiceValue -> {
                 choiceAnswer(expected.value.optionId)
             }
 
-            is ActivityExpected.NumericWrapper -> {
+            is ActivityExpected.ActivityExpectedNumericValue -> {
                 numericAnswer(expected.value.`value`)
             }
 
-            is ActivityExpected.InteractionWrapper -> {
+            is ActivityExpected.ActivityExpectedInteractionValue -> {
                 when (val answer = expected.value.answer) {
-                    is ActivityExpectedAnswer.RegexWrapper, is ActivityExpectedAnswer.FormulaWrapper -> {
+                    is ActivityExpectedAnswer.ActivityExpectedRegexValue, is ActivityExpectedAnswer.ActivityExpectedFormulaValue -> {
                         patternAnswer(fields(name).getValue("solution").jsonPrimitive.content)
                     }
 
-                    is ActivityExpectedAnswer.PitchclassesWrapper -> {
+                    is ActivityExpectedAnswer.ActivityExpectedPitchClassesValue -> {
                         notesAnswer(KeyboardFretboard.notes(answer.value.pitchClasses.map { it.toInt() }))
                     }
 
-                    is ActivityExpectedAnswer.MoleculeWrapper -> {
+                    is ActivityExpectedAnswer.ActivityExpectedMoleculeValue -> {
                         expected.moleculeElements?.let(Molecule::findStructure)?.let(::moleculeAnswer)
                     }
 

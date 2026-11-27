@@ -68,7 +68,7 @@ fun certificateUpNext(goals: List<Goal>): List<CertificateUpNext> =
                         ?.let { CertificateUpNext(goal, it.lessonsDone.toDouble() / it.lessonsTotal) }
                 }
 
-                Goal.Kind.EXPLAIN -> {
+                Goal.Kind.EXPLAIN, Goal.Kind.UNKNOWN_DEFAULT_OPEN_API -> {
                     null
                 }
             }

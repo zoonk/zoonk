@@ -4,10 +4,8 @@ extension ActivityRenderer {
   static let argumentBuilder = ActivityRenderer(
     template: "argumentBuilder",
     grade: ActivityExpectedAnswer.grader(ArgumentFields.self) { .selection($0.strongIds) }
-  ) { context in
-    if let fields = try? context.fields(as: ArgumentFields.self) {
-      ArgumentBuilderCanvas(fields: fields, context: context)
-    }
+  ) { context, fields in
+    ArgumentBuilderCanvas(fields: fields, context: context)
   }
 }
 

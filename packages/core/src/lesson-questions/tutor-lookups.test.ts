@@ -50,7 +50,7 @@ async function learnerWithEmptyPlan() {
 async function answering(goalId: string) {
   const created = await createLessonQuestion({
     input: { context: { kind: "plan" }, question: "How am I doing?", requestId: randomUUID() },
-    target: { goalId, kind: "plan" },
+    target: { conversationId: null, goalId, kind: "plan" },
   });
 
   if (created.status !== "created") {
@@ -562,7 +562,7 @@ describe("the exam's question counts the buddy reads", () => {
         question: "A Ética cai quanto?",
         requestId: randomUUID(),
       },
-      target: { goalId: goal.id, kind: "plan" },
+      target: { conversationId: null, goalId: goal.id, kind: "plan" },
     });
 
     if (created.status !== "created") {

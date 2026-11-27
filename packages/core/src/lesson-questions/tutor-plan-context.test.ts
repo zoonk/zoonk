@@ -55,7 +55,7 @@ async function askAboutPlan({ goalId, userId }: { goalId: string; userId: string
       question: "Why am I behind? Which lesson first?",
       requestId: randomUUID(),
     },
-    target: { goalId, kind: "plan" },
+    target: { conversationId: null, goalId, kind: "plan" },
   });
 
   if (created.status !== "created") {

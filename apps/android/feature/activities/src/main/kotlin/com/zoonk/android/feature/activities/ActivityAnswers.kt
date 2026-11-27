@@ -47,19 +47,28 @@ val ActivityAnswer?.gridCells: List<String>? get() = (this as? GridAnswerValue)?
 fun assignmentAnswer(pairs: Map<String, String>): ActivityAnswer =
     AssignmentAnswerValue(LessonStepAnswerOneOf3AnswerOneOf(LessonStepAnswerOneOf3AnswerOneOf.Kind.ASSIGNMENT, pairs))
 
-val ActivityExpected?.numericValue: Double? get() = (this as? ActivityExpected.NumericWrapper)?.value?.`value`
+val ActivityExpected?.numericValue: Double? get() = (this as? ActivityExpected.ActivityExpectedNumericValue)?.value?.`value`
 
-val ActivityExpected?.interaction: ActivityExpectedAnswer? get() = (this as? ActivityExpected.InteractionWrapper)?.value?.answer
+val ActivityExpected?.interaction: ActivityExpectedAnswer? get() =
+    (this as? ActivityExpected.ActivityExpectedInteractionValue)
+        ?.value
+        ?.answer
 
-val ActivityExpected?.orderIds: List<String>? get() = (interaction as? ActivityExpectedAnswer.OrderWrapper)?.value?.ids
+val ActivityExpected?.orderIds: List<String>? get() = (interaction as? ActivityExpectedAnswer.ActivityExpectedOrderValue)?.value?.ids
 
-val ActivityExpected?.selectionIds: List<String>? get() = (interaction as? ActivityExpectedAnswer.SelectionWrapper)?.value?.ids
+val ActivityExpected?.selectionIds: List<String>? get() =
+    (interaction as? ActivityExpectedAnswer.ActivityExpectedSelectionValue)
+        ?.value
+        ?.ids
 
-val ActivityExpected?.gridCells: List<String>? get() = (interaction as? ActivityExpectedAnswer.GridWrapper)?.value?.cells
+val ActivityExpected?.gridCells: List<String>? get() = (interaction as? ActivityExpectedAnswer.ActivityExpectedGridValue)?.value?.cells
 
 val ActivityAnswer?.assignmentPairs: Map<String, String>? get() = (this as? AssignmentAnswerValue)?.value?.pairs
 
-val ActivityExpected?.assignmentPairs: Map<String, String>? get() = (interaction as? ActivityExpectedAnswer.AssignmentWrapper)?.value?.pairs
+val ActivityExpected?.assignmentPairs: Map<String, String>? get() =
+    (interaction as? ActivityExpectedAnswer.ActivityExpectedAssignmentValue)
+        ?.value
+        ?.pairs
 
 /** Links as cause-to-effect pairs, in the order the learner made them. */
 fun linksAnswer(links: List<Pair<String, String>>): ActivityAnswer =

@@ -104,6 +104,7 @@ private fun SpokenPracticeWord.spoken() = SpokenText(text, recording = audioUrl)
 @Composable
 private fun wordDescription(word: SpokenWordResult): String =
     when (word.status) {
+        SpokenWordResult.Status.UNKNOWN_DEFAULT_OPEN_API -> word.text
         SpokenWordResult.Status.CORRECT -> word.text
         SpokenWordResult.Status.MISSED -> stringResource(R.string.player_word_not_heard, word.text)
         SpokenWordResult.Status.DIFFERENT -> stringResource(R.string.player_word_heard_as, word.text, word.heard.orEmpty())
@@ -121,6 +122,7 @@ private fun HeardWord(
         modifier = Modifier.clearAndSetSemantics { contentDescription = description },
         color =
             when (word.status) {
+                SpokenWordResult.Status.UNKNOWN_DEFAULT_OPEN_API -> MaterialTheme.colorScheme.onSurface
                 SpokenWordResult.Status.CORRECT -> MaterialTheme.colorScheme.tertiary
                 SpokenWordResult.Status.DIFFERENT -> MaterialTheme.colorScheme.error
                 SpokenWordResult.Status.MISSED -> MaterialTheme.colorScheme.onSurfaceVariant
@@ -130,6 +132,7 @@ private fun HeardWord(
                 localeList = LocaleList(language),
                 textDecoration =
                     when (word.status) {
+                        SpokenWordResult.Status.UNKNOWN_DEFAULT_OPEN_API -> null
                         SpokenWordResult.Status.CORRECT -> null
                         SpokenWordResult.Status.DIFFERENT -> TextDecoration.Underline
                         SpokenWordResult.Status.MISSED -> TextDecoration.LineThrough

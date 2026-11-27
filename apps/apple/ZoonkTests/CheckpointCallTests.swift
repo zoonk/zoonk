@@ -18,14 +18,14 @@ final class CheckpointCallTests: XCTestCase {
 
     let first = voice.checkpointCall(blockId: Self.blockId)
     await first.show()
-    guard case .earlierFirst? = first.value else {
+    guard case .LanguageCheckpointCallEarlierFirst? = first.value else {
       return XCTFail("the first open didn't read earlier blocks first")
     }
 
     let reopened = voice.checkpointCall(blockId: Self.blockId)
     XCTAssertNil(reopened.value, "the reopened call had the last open's status to act on")
     await reopened.show()
-    guard case .preparing(let preparing)? = reopened.value else {
+    guard case .LanguageCheckpointCallPreparing(let preparing)? = reopened.value else {
       return XCTFail("the reopened call didn't show the server's status")
     }
     XCTAssertEqual(preparing.unitTitle, "At the café")

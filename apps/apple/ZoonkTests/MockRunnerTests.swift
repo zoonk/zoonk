@@ -362,6 +362,19 @@ final class MockRunKeptAnswersTests: XCTestCase {
     XCTAssertEqual(unsent.read().map(\.itemId), [Self.itemTwo, Self.itemOne])
   }
 
+  func testAnUnsupportedRequiredQuestionKeepsTheWholeMockOutOfTheRunner() async {
+    let transport = MockTransport(
+      itemIds: [Self.itemOne, Self.itemTwo], lastFormat: "futureFormat")
+    let store = makeStore(transport, session: .preview(account: .keptAnswersFixture))
+    let read = store.mock(blockId: Self.blockId)
+    await read.load()
+
+    guard case .failed = read.state else {
+      return XCTFail("A mock with an unsupported required question must fail to open")
+    }
+    XCTAssertNil(read.value)
+  }
+
   func testAnAnswerKeptWhenClosingOfflineGoesOutWhenTheMockOpensAgain() async throws {
     let transport = MockTransport(itemIds: [Self.itemOne, Self.itemTwo])
     let store = makeStore(transport, session: .preview(account: .keptAnswersFixture))
@@ -576,6 +589,7 @@ private actor MockTransport: ClientTransport {
   private let review: (allowed: Int, changed: [String])?
   private let status: String
   private let format: String
+  private let lastFormat: String?
   private var offline = false
   private var sessionEnded = false
   private(set) var saved: [MockDraft] = []
@@ -583,13 +597,14 @@ private actor MockTransport: ClientTransport {
 
   init(
     itemIds: [String], drafts: [MockDraft] = [], review: (allowed: Int, changed: [String])? = nil,
-    status: String = "running", format: String = "multipleChoice"
+    status: String = "running", format: String = "multipleChoice", lastFormat: String? = nil
   ) {
     self.itemIds = itemIds
     self.storedDrafts = drafts
     self.review = review
     self.status = status
     self.format = format
+    self.lastFormat = lastFormat
   }
 
   func setOffline(_ value: Bool) {
@@ -647,9 +662,10 @@ private actor MockTransport: ClientTransport {
       } ?? "null"
     let resume = review == nil ? 0 : itemIds.count - 1
     let questions = itemIds.enumerated().map { index, id in
-      """
-      {"area":null,"context":null,"entry":null,"format":"\(format)","image":null,"itemId":"\(id)","number":\(index + 1),"options":["Alpha","Beta"],"question":"Question \(index + 1)","select":null,"set":null,"skillId":"33333333-3333-4333-8333-333333333333","unit":null,"visual":null}
-      """
+      let format = id == itemIds.last ? (lastFormat ?? self.format) : self.format
+      return """
+        {"area":null,"context":null,"entry":null,"format":"\(format)","image":null,"itemId":"\(id)","number":\(index + 1),"options":["Alpha","Beta"],"question":"Question \(index + 1)","select":null,"set":null,"skillId":"33333333-3333-4333-8333-333333333333","unit":null,"visual":null}
+        """
     }.joined(separator: ",")
     let currentJSON =
       status == "running"

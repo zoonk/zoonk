@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalDensity
@@ -218,7 +219,8 @@ fun DestructiveButton(
 /**
  * Material draws outlined buttons' borders in `outlineVariant`, our hairline `border`, which nearly
  * vanishes in dark theme, and their labels in a muted grey. Main's outline buttons use `--input`,
- * our `outline`, with ink labels, so these take both.
+ * our `outline`, with ink labels, so these take both. Disabled, main dims the whole button to half
+ * (`opacity-50`), where Material would leave its words at 38%, so these dim their words and line to half.
  */
 @Composable
 fun OutlinedButton(
@@ -245,7 +247,7 @@ fun OutlinedButton(
             modifier = modifier.action(LayoutPart.Variant.Outline).sized(size).busy(held),
             enabled = enabled || held,
             shape = shape,
-            colors = colors.disabledWhen(held && !busy),
+            colors = colors.dimmedWhenDisabled().disabledWhen(held && !busy),
             elevation = elevation,
             border = border,
             contentPadding = NO_PADDING,
@@ -332,7 +334,7 @@ fun OutlinedIconButton(
             ).action(LayoutPart.Variant.Outline).busy(busy),
         enabled = enabled || busy,
         shape = shape,
-        colors = colors,
+        colors = colors.dimmedWhenDisabled(),
         border = border,
         interactionSource = interactionSource,
         content = { BusyContent(busy, content) },
@@ -477,10 +479,19 @@ private fun outlinedBorder(
     material: BorderStroke,
 ): BorderStroke {
     val outline = MaterialTheme.colorScheme.outline
-    return BorderStroke(material.width, if (enabled) outline else outline.copy(alpha = outline.alpha * DISABLED_ALPHA))
+    return BorderStroke(material.width, if (enabled) outline else outline.dimmed())
 }
 
 private const val DISABLED_ALPHA = 0.5f
+
+private fun Color.dimmed(): Color = copy(alpha = alpha * DISABLED_ALPHA)
+
+/** Main's disabled outline button: its fill and words at half, as `opacity-50` draws them. */
+private fun ButtonColors.dimmedWhenDisabled(): ButtonColors =
+    copy(disabledContainerColor = containerColor.dimmed(), disabledContentColor = contentColor.dimmed())
+
+private fun IconButtonColors.dimmedWhenDisabled(): IconButtonColors =
+    copy(disabledContainerColor = containerColor.dimmed(), disabledContentColor = contentColor.dimmed())
 
 private val NO_PADDING = PaddingValues()
 

@@ -83,7 +83,7 @@ async function answering({ goalId, userId }: { goalId: string; userId: string })
 
   const created = await createLessonQuestion({
     input: { context: { kind: "plan" }, question: "What's ahead?", requestId: randomUUID() },
-    target: { goalId, kind: "plan" },
+    target: { conversationId: null, goalId, kind: "plan" },
   });
 
   if (created.status !== "created") {

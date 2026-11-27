@@ -32,14 +32,12 @@
   "tutor_description_plan": "e157dffc2ffed16d985d2aae478ef26f6a57f5b0a873fd48ef52432f41b6412d",
   "tutor_description_step": "5045a7905738275de620d517aee0210f0c154b2e453dbbc493b56f337f955833",
   "tutor_description_subject": "c99bde65ac88362911ea8ee3fcc69fee514795a0ec59cde53d20607c98c54eba",
-  "tutor_empty_ai": "94ce938d86b2112c1e96192a30c3b4b945649e8f4a376a7970ce97b1d4ec7a0f",
-  "tutor_empty_title": "e0c0e134ab6002b4f8e68095f20261ba5b666b3e9e5c3156587cc549133c1cf3",
+  "tutor_empty_ai": "65aec097fcabc83241c5858becd9f46651486ceabca65a85bb58032fd2d70684",
   "tutor_error_failed": "87fbceef28ff7986b49908dcfa77c339131a662aad8f2cf497d36b77c7453f64",
   "tutor_error_gone": "774782b61397e8e3c2949f5bbd048490e4d2366ce161757f19d257af18e22095",
   "tutor_error_invalid": "3549dd9b4d5022fb1c6fdd29554805841de56a446213180c12954acd4aaf508f",
   "tutor_error_last_question": "873b8c33422c542959402231f11c49b2ebdaa963b117732dc04754227d1c1b46",
   "tutor_error_session": "abe564d207e73095255270bbe91718590949a975c9cacb6fe4d494d1f8aa6c4b",
-  "tutor_error_slow_down": "af04c2803fcf5cf0e3cafe5f69cb34d486614e258f07f3b2edfc5251cad5ec2c",
   "tutor_error_subscription": "64c2a4b8525e9218fb5f60959a96014aaf99c9395923dd487d378826779c34fb",
   "tutor_get_answer": "f30580c11fdd15976b808f7b3ff21ea28ecec91037f297f31fe9e1fbd5d4d9e8",
   "tutor_guest_title": "6c75adce9fb14dbf9e279a7aeb3941e78f100a79083c32117eeac215c549a39c",
@@ -157,9 +155,8 @@
     <string name="tutor_about_subject">O tym przedmiocie</string>
     <string name="tutor_about_module">Informacje o module</string>
     <string name="tutor_about_question">O tym pytaniu</string>
-    <string name="tutor_empty_title">W czym ci pomóc?</string>
     <!-- The buddy says it's an AI where every conversation opens (EU AI Act art. 50). -->
-    <string name="tutor_empty_ai">%1$s to kumpel do nauki oparty na AI i może się mylić.</string>
+    <string name="tutor_empty_ai">%1$s to kumpel do nauki z AI i może popełniać błędy.</string>
     <string name="tutor_guest_title">Załóż bezpłatne konto, aby zadawać pytania</string>
     <!-- Loading the written chat with the learner's buddy. Not a speaking call. -->
     <string name="tutor_loading">Wczytujemy rozmowę…</string>
@@ -175,7 +172,6 @@
     <string name="tutor_error_subscription">Zadawanie pytań wymaga subskrypcji</string>
     <string name="tutor_error_gone">Ta lekcja nie jest już dostępna.</string>
     <string name="tutor_error_invalid">Nie udało się wysłać tego pytania. Spróbuj ponownie.</string>
-    <string name="tutor_error_slow_down">Zrób krótką przerwę, a potem zapytaj ponownie.</string>
     <string name="tutor_error_failed">Coś poszło nie tak. Spróbuj ponownie.</string>
     <string name="tutor_error_last_question">Nie udało się wysłać twojego ostatniego pytania. Spróbuj ponownie.</string>
     <string name="tutor_sign_in">Zaloguj się</string>

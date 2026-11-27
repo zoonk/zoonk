@@ -97,6 +97,7 @@ private fun statusLine(
     live: Boolean,
 ): String? =
     when (change.status) {
+        PlanChange.Status.UNKNOWN_DEFAULT_OPEN_API -> null
         PlanChange.Status.APPLIED -> planChangeAppliedLine(change.todaySession)
         PlanChange.Status.DECLINED -> stringResource(R.string.tutor_plan_change_declined)
         PlanChange.Status.UNDONE -> stringResource(R.string.plan_change_undone)

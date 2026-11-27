@@ -60,17 +60,12 @@ internal fun aboutLabel(
 }
 
 @Composable
-internal fun failureMessage(failure: TutorFailure?): String {
-    failure?.helpLimit?.let { return limitWords(it, LimitSubject.Messages).run { title ?: line.orEmpty() } }
-
-    return stringResource(
-        when (failure) {
-            TutorFailure.SignedOut -> R.string.tutor_error_session
-            TutorFailure.PlusRequired -> R.string.tutor_error_subscription
-            TutorFailure.Gone -> R.string.tutor_error_gone
-            TutorFailure.Invalid -> R.string.tutor_error_invalid
-            is TutorFailure.Refused -> R.string.tutor_error_slow_down
-            TutorFailure.Failed, TutorFailure.Unanswered, null -> R.string.tutor_error_failed
-        },
-    )
-}
+internal fun failureMessage(failure: TutorFailure?): String =
+    when (failure) {
+        is TutorFailure.Refused -> limitWords(failure.limit, LimitSubject.Messages).run { title ?: line.orEmpty() }
+        TutorFailure.SignedOut -> stringResource(R.string.tutor_error_session)
+        TutorFailure.PlusRequired -> stringResource(R.string.tutor_error_subscription)
+        TutorFailure.Gone -> stringResource(R.string.tutor_error_gone)
+        TutorFailure.Invalid -> stringResource(R.string.tutor_error_invalid)
+        TutorFailure.Failed, TutorFailure.Unanswered, null -> stringResource(R.string.tutor_error_failed)
+    }

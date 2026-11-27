@@ -70,6 +70,8 @@ const REASONS: Record<string, string> = {
   "feature/plan PlanViewModel.update(transform)": "Private: the view model's own state change.",
   "feature/plan TutorViewModel.applyOffer(write, saved)":
     "Private: the view model's own write and the state it records once saved.",
+  "feature/plan TutorViewModel.lift(lifts)":
+    "Private: the view model's own test of which refusals lift, called before anything suspends.",
   "feature/plan TutorViewModel.update(change)": "Private: the view model's own state change.",
   "feature/player LessonWritingViewModel.launchWork(block)":
     "Private: the view model's own work on its scope.",

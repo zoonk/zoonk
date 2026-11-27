@@ -90,16 +90,17 @@ internal fun PracticeChooser(
     val failed by viewModel.failed.collectAsStateWithLifecycle()
     // Nothing is picked as the page opens, so a first tap on Start can't begin an hours-long exam.
     var picked by rememberSaveable { mutableStateOf<String?>(null) }
-    val option = view.options.firstOrNull { it.key == picked }
-    val severalDays = view.options.count { it.kind == MockOption.Kind.FULL } > 1
+    val options = view.options.filterNot { it.kind == MockOption.Kind.UNKNOWN_DEFAULT_OPEN_API }
+    val option = options.firstOrNull { it.key == picked }
+    val severalDays = options.count { it.kind == MockOption.Kind.FULL } > 1
     val open = view.access == MockOptions.Access.OPEN
     // An exam of several tests lists each test and all of them first, then the shorter, objective-only options.
-    val tests = if (severalDays) 0 else examTests(view.options)
+    val tests = if (severalDays) 0 else examTests(options)
     val leads = { it: MockOption ->
         if (tests > 1) it.kind != MockOption.Kind.HALF && it.kind != MockOption.Kind.AREA else it.kind != MockOption.Kind.AREA
     }
-    val examChoices = practiceChoices(view.options.filter(leads), severalDays, tests, refusal = refusal)
-    val subjectChoices = practiceChoices(view.options.filterNot(leads), severalDays, tests, objectiveTitled = tests > 1, refusal = refusal)
+    val examChoices = practiceChoices(options.filter(leads), severalDays, tests, refusal = refusal)
+    val subjectChoices = practiceChoices(options.filterNot(leads), severalDays, tests, objectiveTitled = tests > 1, refusal = refusal)
     val blocked = option?.hasWrittenTest() == true && refusal is MockStartOutcome.GradesUsed
     val pickedChoice = option?.let { pendingChoice(it, refusal) }
     val examTitle =

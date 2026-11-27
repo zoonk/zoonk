@@ -20,7 +20,8 @@ struct TutorPanel: View {
     } else {
       NavigationStack {
         thread
-          .navigationTitle(title)
+          .navigationTitle(Text(verbatim: name))
+          .navigationSubtitle(scope.panelDescription)
           .navigationBarTitleDisplayMode(.inline)
           .sheetClose { dismiss() }
       }
@@ -38,55 +39,68 @@ struct TutorPanel: View {
   }
 
   private var thread: some View {
-    TutorThreadView(scope: scope, draft: draft) {
-      VStack(alignment: .leading, spacing: 8) {
-        if showsBuddy {
-          BuddyFigure(look: summary.summary.value?.buddy ?? BuddyLook())
-            .padding(.bottom, 4)
-            .accessibilityHidden(true)
-        }
-
-        if isPane {
+    // In a sheet the suggestions open the conversation, as main's do; beside a lesson they wait by
+    // the composer, as main's side panel does.
+    TutorThreadView(scope: scope, suggestions: isPane ? nil : [], draft: draft) {
+      if isPane {
+        VStack(alignment: .leading, spacing: 8) {
           title
             .typeStyle(.body.weight(.semibold))
             .accessibilityAddTraits(.isHeader)
-        }
 
-        scope.panelDescription
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
-
-        if let quote {
-          let question = LessonRichText.typeset(quote)
-
-          quoteLine(question.quoted(spoken: false, legibility: legibilityWeight))
+          scope.panelDescription
             .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
-            .lineLimit(3)
-            .accessibilityLabel(
-              quoteLine(question.quoted(spoken: true, legibility: legibilityWeight))
-            )
-            .padding(.leading, 10)
-            .overlay(alignment: .leading) {
-              Rectangle()
-                .fill(.border)
-                .frame(width: 2)
-            }
         }
+      }
+
+      if let quote {
+        let question = LessonRichText.typeset(quote)
+
+        quoteLine(question.quoted(spoken: false, legibility: legibilityWeight))
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
+          .lineLimit(3)
+          .accessibilityLabel(
+            quoteLine(question.quoted(spoken: true, legibility: legibilityWeight))
+          )
+          .padding(.leading, 10)
+          .overlay(alignment: .leading) {
+            Rectangle()
+              .fill(.border)
+              .frame(width: 2)
+          }
+      }
+
+      if conversation.turns.isEmpty, conversation.asking == nil {
+        intro
       }
     }
   }
 
-  private var name: String {
-    summary.buddyDisplayName
+  private var intro: some View {
+    VStack(alignment: .leading, spacing: 16) {
+      VStack(alignment: .leading, spacing: 12) {
+        BuddyFigure(look: summary.summary.value?.buddy ?? BuddyLook())
+          .accessibilityHidden(true)
+
+        Text("\(name) is an AI study buddy and can make mistakes.", tableName: "Tutor")
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
+      }
+
+      if !isPane {
+        TutorSuggestionChips(conversation: conversation, suggestions: scope.suggestions)
+      }
+    }
   }
 
-  /// Inside a lesson, the whole buddy greets an empty conversation.
-  private var showsBuddy: Bool {
-    switch scope {
-    case .step, .lesson: tutor.conversation(scope).turns.isEmpty
-    default: false
-    }
+  private var conversation: TutorConversation {
+    tutor.conversation(scope)
+  }
+
+  private var name: String {
+    summary.buddyDisplayName
   }
 
   private func quoteLine(_ question: Text) -> Text {

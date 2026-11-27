@@ -194,24 +194,30 @@ internal fun CheckpointCallContent(
 
         is LoadState.Loaded -> {
             when (val call = state.value) {
-                is LanguageCheckpointCall.ReadyWrapper -> {
+                is LanguageCheckpointCall.LanguageCheckpointCallOneOfValue -> {
+                    otherwise()
+                }
+
+                is LanguageCheckpointCall.LanguageCheckpointCallReadyValue -> {
                     conversation(call.value.conversationId, null)
                 }
 
-                is LanguageCheckpointCall.NotstartedWrapper -> {
+                is LanguageCheckpointCall.LanguageCheckpointCallIntroValue -> {
                     CheckpointIntro(call.value, model, exits, onToday)
                 }
 
-                is LanguageCheckpointCall.PreparingWrapper -> {
+                is LanguageCheckpointCall.LanguageCheckpointCallPreparingValue -> {
                     CheckpointPreparing(call.value.unitTitle, model, exits)
                 }
 
                 // Main sends the learner to Today, where the blocks before this one are.
-                is LanguageCheckpointCall.EarlierfirstWrapper -> {
+                is LanguageCheckpointCall.LanguageCheckpointCallEarlierFirstValue -> {
                     LaunchedEffect(Unit) { onToday() }
                 }
 
-                is LanguageCheckpointCall.NotlanguageWrapper, is LanguageCheckpointCall.PlusrequiredWrapper -> {
+                is LanguageCheckpointCall.LanguageCheckpointCallNotLanguageValue,
+                is LanguageCheckpointCall.LanguageCheckpointCallPlusRequiredValue,
+                -> {
                     otherwise()
                 }
             }

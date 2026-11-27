@@ -184,7 +184,11 @@ struct StudyAPI: StudyAPIClient {
         path: .init(sessionId: sessionID), body: .json(try StudyJSON.recode(body)))
       {
       case .created(let response):
-        return try StudyJSON.recode(try response.body.json, as: StudyBlock.self)
+        do {
+          return try StudyJSON.recode(try response.body.json, as: StudyBlock.self)
+        } catch is UnsupportedAPIEnum {
+          return nil
+        }
       case .conflict(let response):
         let problem = try StudyJSON.recode(try response.body.json, as: ExtraTimeProblem.self)
 

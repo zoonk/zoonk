@@ -88,7 +88,7 @@ fun planChangeAppliedLine(todaySession: PlanChange.TodaySession?): String =
         when (todaySession) {
             PlanChange.TodaySession.CHANGED -> R.string.plan_change_today_changed
             PlanChange.TodaySession.UNCHANGED -> R.string.plan_change_today_unchanged
-            null -> R.string.plan_change_from_now_on
+            PlanChange.TodaySession.UNKNOWN_DEFAULT_OPEN_API, null -> R.string.plan_change_from_now_on
         },
     )
 

@@ -60,7 +60,7 @@ final class TutorConversationTests: XCTestCase {
     XCTAssertEqual(conversation.turns.first?.linksVerified, true)
   }
 
-  func testRefusedAnswerTakesTheComposersPlace() async {
+  func testRefusedAnswerHoldsSending() async {
     let limit = TutorFailure.limit(.limitReached(period: .day, tier: .free))
     let api = TutorAPIStub(answers: [], answerFailure: limit)
     let conversation = makeConversation(api: api)
@@ -70,6 +70,52 @@ final class TutorConversationTests: XCTestCase {
     await conversation.send()
 
     XCTAssertEqual(conversation.turns.first?.status, .failed)
+    XCTAssertEqual(conversation.limit, limit)
+    XCTAssertFalse(conversation.canAsk)
+  }
+
+  /// A question the limit refuses isn't saved: its words wait in the composer, and Send is back
+  /// once a short break is over.
+  func testARefusedQuestionWaitsInTheComposerUntilTheLimitLifts() async {
+    let over = Date(timeIntervalSince1970: 1_795_339_800)
+    let slowDown = TutorFailure.slowDown(until: over)
+    let api = TutorAPIStub(askFailures: [slowDown], answers: [[.finish]])
+    let conversation = makeConversation(api: api)
+    conversation.now = { over.addingTimeInterval(-30) }
+    await conversation.thread.load()
+
+    conversation.draft = "Why does it fall?"
+    await conversation.send()
+
+    XCTAssertTrue(conversation.turns.isEmpty)
+    XCTAssertEqual(conversation.draft, "Why does it fall?")
+    XCTAssertEqual(conversation.limit, slowDown)
+    XCTAssertEqual(
+      slowDown.words(now: over.addingTimeInterval(-30)).said,
+      "Take a short break. You can try again in 30 seconds.")
+    XCTAssertFalse(conversation.canSendDraft)
+    XCTAssertFalse(conversation.isShortBreakOver)
+
+    conversation.now = { over }
+
+    XCTAssertNil(conversation.limit)
+    XCTAssertTrue(conversation.canSendDraft)
+    XCTAssertTrue(conversation.isShortBreakOver, "the composer says sending is back")
+    await conversation.send()
+
+    XCTAssertEqual(conversation.turns.map(\.question), ["Why does it fall?"])
+    XCTAssertFalse(conversation.isShortBreakOver)
+  }
+
+  func testARefusedSuggestionLeavesTheComposerEmpty() async {
+    let limit = TutorFailure.limit(.limitReached(period: .day, tier: .free))
+    let api = TutorAPIStub(askFailures: [limit])
+    let conversation = makeConversation(api: api)
+    await conversation.thread.load()
+
+    await conversation.send(TutorSuggestion(id: "simpler", label: "Explain it more simply"))
+
+    XCTAssertEqual(conversation.draft, "")
     XCTAssertEqual(conversation.limit, limit)
     XCTAssertFalse(conversation.canAsk)
   }
@@ -148,7 +194,7 @@ final class TutorConversationTests: XCTestCase {
     let api = TutorAPIStub(answers: [[.text("See [Plan](https://evil.example)")]])
     api.questionStatus = .running
     let conversation = TutorStore(api: api, cache: AppCache(session: session))
-      .conversation(.plan(goalId: "goal"))
+      .conversation(.plan(goalId: "goal", conversationId: "conversation"))
     await conversation.thread.load()
 
     conversation.draft = "Where is my plan?"
@@ -220,6 +266,44 @@ final class TutorConversationTests: XCTestCase {
     XCTAssertEqual(api.requestIDs.count, 2)
     XCTAssertEqual(api.requestIDs[0], api.requestIDs[1])
     XCTAssertEqual(conversation.turns.first?.answer, "Yes.")
+  }
+
+  func testANewBuddyConversationReadsNothingAndKeepsItsIDsThroughARetry() async {
+    let api = TutorAPIStub(askFailures: [APIError.network], answers: [[.text("Yes."), .finish]])
+    let store = TutorStore(
+      api: api, cache: AppCache(session: .preview(account: .tutorTestAccount)))
+    let scope = TutorScope.plan(goalId: "goal", conversationId: "new")
+    let conversation = store.conversation(scope, isNew: true)
+    await conversation.thread.load()
+
+    XCTAssertEqual(api.threadReads, 0, "a conversation the app just named has nothing to read")
+    XCTAssertTrue(conversation.canAsk)
+
+    conversation.draft = "Where do I start?"
+    await conversation.send()
+    await conversation.send()
+
+    XCTAssertEqual(api.askedScopes, [scope, scope])
+    XCTAssertEqual(api.requestIDs.count, 2)
+    XCTAssertEqual(api.requestIDs[0], api.requestIDs[1])
+    XCTAssertFalse(conversation.isNew)
+    XCTAssertEqual(conversation.turns.first?.answer, "Yes.")
+  }
+
+  func testABuddySendRefreshesTheGoalsConversations() async {
+    let cache = AppCache(session: .preview(account: .tutorTestAccount))
+    let list: Resource<Int> = cache.resource(
+      audience: .signedIn, domains: [.buddyConversations]
+    ) { _ in 1 }
+    await list.load()
+    let conversation = TutorStore(api: TutorAPIStub(answers: [[.finish]]), cache: cache)
+      .conversation(.plan(goalId: "goal", conversationId: "new"), isNew: true)
+    await conversation.thread.load()
+
+    conversation.draft = "What's next?"
+    await conversation.send()
+
+    XCTAssertTrue(list.isInvalidated)
   }
 
   func testAnOfferKeepsWhatTheLearnerTypedWhileTheThreadLoaded() async {
@@ -443,7 +527,7 @@ final class TutorConversationTests: XCTestCase {
       }
     }
     let conversation = TutorStore(api: api, cache: AppCache(session: session))
-      .conversation(.plan(goalId: "goal"))
+      .conversation(.plan(goalId: "goal", conversationId: "conversation"))
     await conversation.thread.load()
 
     conversation.draft = "Hi"
@@ -473,7 +557,7 @@ final class TutorConversationTests: XCTestCase {
     let api = TutorAPIStub(thread: TutorThreadPage(turns: [turn], hasMore: false, nextCursor: nil))
     api.decideFailure = APIError.unauthorized
     let conversation = TutorStore(api: api, cache: AppCache(session: session))
-      .conversation(.plan(goalId: "goal"))
+      .conversation(.plan(goalId: "goal", conversationId: "conversation"))
     await conversation.thread.load()
 
     let result = await conversation.decide(.fixture(id: "change"), in: "turn", decision: .applied)
@@ -558,6 +642,12 @@ final class TutorConversationTests: XCTestCase {
 
     XCTAssertTrue(unchecked === checked)
     XCTAssertFalse(store.conversation(.chapter(chapterId: "c")) === checked)
+
+    let first = store.conversation(.plan(goalId: "goal", conversationId: "a"))
+    first.draft = "About a"
+
+    XCTAssertEqual(store.conversation(.plan(goalId: "goal", conversationId: "b")).draft, "")
+    XCTAssertTrue(store.conversation(.plan(goalId: "goal", conversationId: "a")) === first)
   }
 
   func testQuestionsAboutACheckedAnswerShowWhileItsInView() async {
@@ -647,7 +737,7 @@ final class TutorConversationTests: XCTestCase {
 
   private func makeConversation(api: TutorAPIStub) -> TutorConversation {
     TutorStore(api: api, cache: AppCache(session: .preview(account: .tutorTestAccount)))
-      .conversation(.plan(goalId: "goal"))
+      .conversation(.plan(goalId: "goal", conversationId: "conversation"))
   }
 }
 
@@ -664,7 +754,7 @@ final class TutorOfferStepTests: XCTestCase {
     let simpler = TutorSuggestion(
       id: "simpler", label: "Explain it more simply", lessonSuggestionID: "simpler")
     let step = Step(
-      scope: .plan(goalId: "step-a"),
+      scope: .plan(goalId: "step-a", conversationId: "conversation"),
       draft: TutorDraft(suggestion: simpler, offer: UUID(), sendsAtOnce: true))
     let clients = APIClientFactory.live(baseURL: AppConfiguration.current.apiBaseURL)
 
@@ -680,7 +770,7 @@ final class TutorOfferStepTests: XCTestCase {
         .zoonkStyles())
     try await held.waitUntilHeld()
 
-    step.scope = .plan(goalId: "step-b")
+    step.scope = .plan(goalId: "step-b", conversationId: "conversation")
     step.draft = nil
     try await waitForTestCondition("The next step did not render") {
       step.renderedScope == step.scope
@@ -769,6 +859,8 @@ private final class TutorAPIStub: TutorAPIClient, @unchecked Sendable {
   var undoResults: [Result<Bool, Error>] = []
   private(set) var undoCount = 0
   private(set) var requestIDs: [String] = []
+  private(set) var askedScopes: [TutorScope] = []
+  private(set) var threadReads = 0
   private(set) var suggestions: [String?] = []
   private(set) var undoneChanges: [[TutorMemoryChange]] = []
   private var asked = 0
@@ -785,6 +877,7 @@ private final class TutorAPIStub: TutorAPIClient, @unchecked Sendable {
   }
 
   func thread(_ scope: TutorScope, cursor: String?, token: String) async throws -> TutorThreadPage {
+    threadReads += 1
     await beforeThread?()
     return cursor == nil ? thread : earlier
   }
@@ -793,6 +886,7 @@ private final class TutorAPIStub: TutorAPIClient, @unchecked Sendable {
     _ scope: TutorScope, question: String, suggestion: String?, requestId: String, token: String
   ) async throws -> TutorAskedQuestion {
     requestIDs.append(requestId)
+    askedScopes.append(scope)
     suggestions.append(suggestion)
     await beforeAsk?()
 

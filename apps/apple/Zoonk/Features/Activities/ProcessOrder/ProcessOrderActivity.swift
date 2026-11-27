@@ -4,10 +4,8 @@ extension ActivityRenderer {
   static let processOrder = ActivityRenderer(
     template: "processOrder",
     grade: ActivityExpectedAnswer.grader(ProcessOrderFields.self) { .order($0.steps.map(\.id)) }
-  ) { context in
-    if let fields = try? context.fields(as: ProcessOrderFields.self) {
-      ProcessOrderCanvas(fields: fields, context: context)
-    }
+  ) { context, fields in
+    ProcessOrderCanvas(fields: fields, context: context)
   }
 }
 

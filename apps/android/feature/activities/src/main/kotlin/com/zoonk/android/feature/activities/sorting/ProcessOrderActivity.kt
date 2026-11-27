@@ -179,9 +179,9 @@ private fun StepMarks(
                         .copy(fontWeight = FontWeight.SemiBold),
             )
         }
-        icon?.let {
+        icon?.let(::processIcon)?.let {
             Icon(
-                painterResource(processIcon(it)),
+                painterResource(it),
                 contentDescription = null,
                 modifier = Modifier.size(18.dp),
                 tint = colors.onSurfaceVariant,

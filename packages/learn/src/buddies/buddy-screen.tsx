@@ -3,17 +3,9 @@
 import { type ResolvedBuddy } from "@zoonk/core/profile/default-buddy";
 import { type ActorHandle, type BuddyActName } from "@zoonk/ui/components/buddy-actor";
 import { Button } from "@zoonk/ui/components/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@zoonk/ui/components/dropdown-menu";
 import { showErrorToast } from "@zoonk/ui/components/toast";
 import { getBuddyEnergyState } from "@zoonk/utils/buddy";
 import { safeAsync } from "@zoonk/utils/error";
-import { CalendarDaysIcon, EllipsisIcon, GlassesIcon, PencilIcon, SmileIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import {
   createContext,
@@ -34,18 +26,23 @@ import {
 } from "../conversation/tutor-conversation-content";
 import { type DecideTutorPlanChange } from "../conversation/tutor-plan-change";
 import { type TutorToolActions } from "../conversation/tutor-tool-offer";
-import { LearnLink } from "../learn-link";
 import { type MissionLinks } from "../missions/mission-links";
 import { PageWithAside } from "../shell/learn-shell";
-import { BuddyDay, type BuddyDayHrefs } from "./buddy-day";
+import {
+  type BuddyConversationList,
+  BuddyConversations,
+  BuddyConversationsSheet,
+} from "./buddy-conversations";
 import { BuddyGlassesSheet } from "./buddy-glasses-sheet";
 import { BUDDY_COLUMN_CLASS, BuddyHeader } from "./buddy-header";
+import { type BuddyHrefs, BuddyMenu } from "./buddy-menu";
 import { type BuddyStatusView, toLearnBuddy } from "./buddy-status-view";
 import { BuddyToday } from "./buddy-today";
 import { type LearnBuddy } from "./use-buddy-name";
 
-export { type BuddyDayHrefs, BuddyDaySkeleton } from "./buddy-day";
-export { BUDDY_COLUMN_CLASS } from "./buddy-header";
+export { type BuddyConversation, type BuddyConversationList } from "./buddy-conversations";
+export { BuddyScreenSkeleton } from "./buddy-screen-skeleton";
+export type { BuddyHrefs } from "./buddy-menu";
 export { BuddyGoalStart } from "./buddy-goal-start";
 export type { MissionLinks } from "../missions/mission-links";
 export type { BuddyStatusView } from "./buddy-status-view";
@@ -104,70 +101,20 @@ function useBuddyChanges({
 }
 
 /** Only with a fine pointer: on a phone, focus would raise the keyboard over the conversation. */
+function focusComposerOnPointer(column: HTMLElement | null) {
+  if (globalThis.matchMedia("(pointer: fine)").matches) {
+    column?.querySelector("textarea")?.focus({ preventScroll: true });
+  }
+}
+
 function useFocusComposerOnPointer() {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (globalThis.matchMedia("(pointer: fine)").matches) {
-      ref.current?.querySelector("textarea")?.focus({ preventScroll: true });
-    }
+    focusComposerOnPointer(ref.current);
   }, []);
 
   return ref;
-}
-
-function BuddyMenu({
-  buddy,
-  glassesCount,
-  hrefs,
-  name,
-  onEdit,
-  onGlasses,
-}: {
-  buddy: ResolvedBuddy;
-  glassesCount: string;
-  hrefs: BuddyDayHrefs;
-  name: string;
-  onEdit: () => void;
-  onGlasses: () => void;
-}) {
-  const t = useExtracted();
-
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger render={<Button edge="end" size="icon-sm" variant="ghost" />}>
-        <EllipsisIcon aria-hidden="true" />
-        <span className="sr-only">{t("More about {buddy}", { buddy: name })}</span>
-      </DropdownMenuTrigger>
-
-      <DropdownMenuContent align="end" className="w-60">
-        <DropdownMenuItem onClick={onEdit}>
-          {buddy.picked ? <PencilIcon aria-hidden="true" /> : <SmileIcon aria-hidden="true" />}
-          {buddy.picked ? t("Change {buddy}", { buddy: name }) : t("Choose your buddy")}
-        </DropdownMenuItem>
-
-        <DropdownMenuItem onClick={onGlasses}>
-          <GlassesIcon aria-hidden="true" />
-          <span className="flex-1">
-            {t({
-              description:
-                "Names the glasses the learner has collected for their study buddy, as a row and a menu item that opens them; {buddy} is the buddy's name. A name, not an action.",
-              message: "{buddy}'s glasses",
-              values: { buddy: name },
-            })}
-          </span>
-          <span className="text-muted-foreground text-xs tabular-nums">{glassesCount}</span>
-        </DropdownMenuItem>
-
-        <DropdownMenuSeparator />
-
-        <DropdownMenuItem render={<LearnLink href={hrefs.logbook} />}>
-          <CalendarDaysIcon aria-hidden="true" />
-          {t("Weekly summary")}
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
 }
 
 function PickBuddyButton({ onPick }: { onPick: () => void }) {
@@ -205,15 +152,16 @@ function useGlassesCount(status: BuddyStatusView): string {
 export function BuddyScreen({
   actions,
   children,
+  conversations,
   hrefs,
-  memoryCount,
   situation,
   status,
 }: {
   actions: BuddyScreenActions;
   children: React.ReactNode;
-  hrefs: BuddyDayHrefs;
-  memoryCount?: number;
+  /** Null for a guest, who can't ask and so has none. */
+  conversations: BuddyConversationList | null;
+  hrefs: BuddyHrefs;
   situation: TutorSituation;
   status: BuddyStatusView;
 }) {
@@ -257,18 +205,15 @@ export function BuddyScreen({
   return (
     <PageWithAside
       aside={
-        <BuddyDay
-          buddy={buddy}
-          hrefs={hrefs}
-          memoryCount={memoryCount}
-          missionLinks={missionLinks}
-          name={name}
-          onGlasses={() => setWearing(true)}
-          status={status}
-        />
+        conversations && (
+          <BuddyConversations
+            list={conversations}
+            onOpen={() => focusComposerOnPointer(columnRef.current)}
+          />
+        )
       }
       asideClassName="hidden"
-      asideLabel={t("{buddy} today", { buddy: name })}
+      asideLabel={t("Conversations")}
       className="flex-1"
     >
       <div className={BUDDY_COLUMN_CLASS} data-slot="buddy-screen" ref={columnRef}>
@@ -276,20 +221,24 @@ export function BuddyScreen({
           buddy={buddy}
           faceRef={chatFace.face}
           menu={
-            <BuddyMenu
-              buddy={current}
-              glassesCount={glassesCount}
-              hrefs={hrefs}
-              name={name}
-              onEdit={() => setEditing(true)}
-              onGlasses={() => setWearing(true)}
-            />
+            <div className="flex items-center gap-4">
+              {conversations && (
+                <BuddyConversationsSheet className="min-[72rem]:hidden" list={conversations} />
+              )}
+              <BuddyMenu
+                buddy={current}
+                glassesCount={glassesCount}
+                hrefs={hrefs}
+                name={name}
+                onEdit={() => setEditing(true)}
+                onGlasses={() => setWearing(true)}
+              />
+            </div>
           }
           name={name}
         >
           <BuddyToday
             buddy={buddy}
-            className="min-[72rem]:hidden"
             energyHref={hrefs.energy}
             missionLinks={missionLinks}
             name={name}

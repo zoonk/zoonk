@@ -19,6 +19,12 @@ import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.PlanSteering
 import com.zoonk.api.models.WrittenPractice
 
+internal val planActivities =
+    PlanSteering.SkippedActivities.entries.filterNot {
+        it ==
+            PlanSteering.SkippedActivities.UNKNOWN_DEFAULT_OPEN_API
+    }
+
 @Composable
 internal fun PlanActivities(
     page: PlanPageState,
@@ -34,7 +40,7 @@ internal fun PlanActivities(
     Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
         SectionLabel(stringResource(R.string.plan_what_you_practice))
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            PlanSteering.SkippedActivities.entries.forEach { activity ->
+            planActivities.forEach { activity ->
                 val isOn = activity !in skipped
                 SelectionChip(
                     text = activityName(activity),
@@ -79,7 +85,11 @@ internal fun WrittenCadenceChoice(
     modifier: Modifier = Modifier,
 ) {
     val shown = asked ?: practice.cadence
-    val cadences = WrittenPractice.Cadence.entries.filter { it != WrittenPractice.Cadence.FINAL_WEEKS || practice.finalWeeksFrom != null }
+    val cadences =
+        WrittenPractice.Cadence.entries.filter {
+            it != WrittenPractice.Cadence.UNKNOWN_DEFAULT_OPEN_API &&
+                (it != WrittenPractice.Cadence.FINAL_WEEKS || practice.finalWeeksFrom != null)
+        }
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         MenuSelect(
@@ -104,14 +114,16 @@ internal fun WrittenCadenceChoice(
 }
 
 @Composable
-private fun cadenceLabel(cadence: WrittenPractice.Cadence) =
-    stringResource(
+private fun cadenceLabel(cadence: WrittenPractice.Cadence): String {
+    return stringResource(
         when (cadence) {
+            WrittenPractice.Cadence.UNKNOWN_DEFAULT_OPEN_API -> return ""
             WrittenPractice.Cadence.WEEKLY -> R.string.plan_cadence_weekly
             WrittenPractice.Cadence.BIWEEKLY -> R.string.plan_cadence_biweekly
             WrittenPractice.Cadence.FINAL_WEEKS -> R.string.plan_cadence_final_weeks
         },
     )
+}
 
 /** Whether a change saving turns [activity] on or off; null while none asks about it. */
 private fun askedOn(
