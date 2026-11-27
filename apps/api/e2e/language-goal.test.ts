@@ -410,7 +410,7 @@ test.describe("Language goal API", () => {
       prefix: "language-level",
     });
 
-    const { goal } = await languageGoalFixture({ userId: user.id });
+    const { goal, lessons, plan } = await languageGoalFixture({ userId: user.id });
 
     const previousListening = await prisma.languageSkillLevel.create({
       data: { language: "en", score: 2, skill: "listening", startScore: 2, userId: user.id },
@@ -469,6 +469,7 @@ test.describe("Language goal API", () => {
         attemptId: null,
         end: "audio_deferred",
         levelsSkipped: [],
+        nextLesson: { id: lessons[0]!.id, title: lessons[0]!.title },
         ranges: { reading: expect.any(Object) },
       },
     });
@@ -494,6 +495,17 @@ test.describe("Language goal API", () => {
     const loaded = await apiContext.get(path, { params: { attemptId: open.attemptId } });
     expect(await loaded.json()).toStrictEqual(open);
 
+    const firstRetakeAnswer = await apiContext.post(`${path}/answers`, {
+      data: { answerIndex: 0, attemptId: open.attemptId, questionId: open.next.question.id },
+    });
+
+    expect(firstRetakeAnswer.status()).toBe(200);
+    const row = await apiContext.get(`/v1/goals/${goal.id}/plan`);
+
+    expect(await row.json()).toMatchObject({
+      placementTest: { answered: 1, kind: "language", state: "continue", total: 12 },
+    });
+
     const staleAttempt = await apiContext.post(`${path}/completions`, {
       data: { attemptId: randomUUID() },
     });
@@ -509,6 +521,42 @@ test.describe("Language goal API", () => {
       result: { attemptId: open.attemptId, levelsSkipped: [], ranges: {} },
     });
 
+    const legacyResult = {
+      attemptId: open.attemptId,
+      finishedAt: new Date().toISOString(),
+      levelsSkipped: [],
+      ranges: { reading: { high: "B2", low: "A2" } },
+      wholeCourseReady: true,
+    };
+
+    await prisma.goal.update({
+      data: {
+        details: {
+          levelTest: {
+            attempt: { attemptId: open.attemptId, length: "wholeCourse", result: legacyResult },
+            lastResult: legacyResult,
+          },
+        },
+      },
+      where: { id: goal.id },
+    });
+
+    await prisma.planItem.updateMany({
+      data: { status: "done" },
+      where: { kind: "lesson", planId: plan.id },
+    });
+
+    const returning = await apiContext.get(path);
+    const restored = await returning.json();
+
+    expect(restored).toMatchObject({
+      attemptId: open.attemptId,
+      next: { kind: "done" },
+      result: { attemptId: open.attemptId, ranges: legacyResult.ranges },
+    });
+
+    expect(restored.result).not.toHaveProperty("nextLesson");
+    expect(restored.result).not.toHaveProperty("wholeCourseReady");
     await apiContext.dispose();
   });
 
