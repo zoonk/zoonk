@@ -13,6 +13,7 @@ import com.zoonk.android.data.Visit
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.setup.refreshed
+import com.zoonk.android.feature.placementtest.AskedStart
 import com.zoonk.android.feature.placementtest.TestVisit
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.questions.Answer
@@ -59,9 +60,9 @@ internal class FocusTestViewModel(
 
     private val failure = visit.outcome<Unit>()
     private val saveFailure = visit.outcome<Int>()
+    private val askedStart = AskedStart(visit)
 
     private var savedEntered by handle.saved { false }
-    private var autoStarted by handle.saved { false }
 
     /** The learner started a sitting in this visit, so its wait shows instead of the offer or the last result. */
     private var entered by mutableStateOf(savedEntered)
@@ -135,11 +136,9 @@ internal class FocusTestViewModel(
             started !is WriteOutcome.Failed && started !is WriteOutcome.Refused
         }
 
-    /** A learner who asked for the test on the level question, or pressed Today's "Start the test", goes straight in, once. */
+    /** A learner who asked for the test on the level question, or pressed Today's "Start the test", goes straight in. */
     fun startAsked() {
-        if (autoStarted) return
-        autoStarted = true
-        start()
+        if (askedStart.take(busy)) start()
     }
 
     fun answer(

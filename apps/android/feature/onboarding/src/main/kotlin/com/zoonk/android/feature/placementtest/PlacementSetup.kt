@@ -90,7 +90,7 @@ private fun ColumnScope.CourseSetup(
     }
 
     if (placement?.mode == OnboardingPlacement.Mode.DIRECT && !vm.failed) {
-        LaunchedEffect(Unit) { vm.startAsked() }
+        LaunchedEffect(vm.busy) { vm.startAsked() }
         StepLoading()
         return
     }
@@ -186,7 +186,7 @@ private fun ColumnScope.LanguageSetup(
     }
 
     if (opened.isPending || (mode == OnboardingPlacement.Mode.DIRECT && !vm.failed)) {
-        if (mode == OnboardingPlacement.Mode.DIRECT) LaunchedEffect(Unit) { vm.startAsked() }
+        if (mode == OnboardingPlacement.Mode.DIRECT) LaunchedEffect(vm.busy) { vm.startAsked() }
         StepLoading()
         return
     }

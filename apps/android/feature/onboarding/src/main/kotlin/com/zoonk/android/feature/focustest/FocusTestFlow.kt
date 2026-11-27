@@ -97,7 +97,7 @@ internal fun ColumnScope.FocusTestFlow(
     // Today's "Start the test" and the level question's "short test" already made the offer; until the start answers,
     // the offer waits behind a spinner.
     val starting = (plan?.startOnOpen == true || asked) && shown is FocusTestPhase.Offer && !vm.failed
-    if (starting) LaunchedEffect(Unit) { vm.startAsked() }
+    if (starting) LaunchedEffect(vm.busy) { vm.startAsked() }
 
     when {
         shown == FocusTestPhase.Loading || starting -> {

@@ -148,6 +148,40 @@ class FocusTestViewModelTest {
         }
 
     @Test
+    fun anAskedStartThatFailedStartsAgainWhenTheAppComesBackFromProcessDeath() =
+        askedStartFailed { api, _, handle ->
+            models.clear()
+            viewModel(api, SavedStateHandle.createHandle(handle.savedStateProvider().saveState(), null))
+        }
+
+    @Test
+    fun anAskedStartThatFailedStartsAgainWhenTheLearnerComesBack() = askedStartFailed { _, vm, _ -> vm.also { it.visit.end() } }
+
+    /** A learner who asked for the test, on the level question or Today, never comes back to a spinner with nothing on its way. */
+    private fun askedStartFailed(comeBack: TestScope.(FakeOnboardingApi, FocusTestViewModel, SavedStateHandle) -> FocusTestViewModel) =
+        runTest {
+            Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+            val api =
+                FakeOnboardingApi().apply {
+                    placement = placementOf(next = null, focusTest = focusTestOf())
+                    writeFailure = ApiException(ApiError.Network)
+                }
+            val handle = SavedStateHandle()
+            val first = viewModel(api, handle)
+            first.startAsked()
+            runCurrent()
+            assertTrue(first.failed)
+
+            api.writeFailure = null
+            val back = comeBack(api, first, handle)
+            back.startAsked()
+            runCurrent()
+
+            assertEquals(2, api.sittingsStarted)
+            assertFalse(back.failed)
+        }
+
+    @Test
     fun aDecisionThatFailsAfterTheLearnerLeftSaysNothingOnReturn() = decisionFailure(leaveFirst = true)
 
     @Test

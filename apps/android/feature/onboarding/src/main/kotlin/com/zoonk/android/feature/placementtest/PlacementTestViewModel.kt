@@ -43,9 +43,9 @@ internal class PlacementTestViewModel(
 
     private val failure = visit.outcome<Unit>()
     private val saveFailure = visit.outcome<Int>()
+    private val askedStart = AskedStart(visit)
 
     private var savedClosed by handle.saved { "" }
-    private var autoStarted by handle.saved { false }
 
     /** The length of the learner's last start the server accepted in this visit; empty until one is. */
     private var wanted by handle.saved { "" }
@@ -92,11 +92,9 @@ internal class PlacementTestViewModel(
         open(length)
     }
 
-    /** A learner who asked for the test on the level question goes straight in, once. */
+    /** A learner who asked for the test on the level question goes straight in. */
     fun startAsked() {
-        if (autoStarted) return
-        autoStarted = true
-        start(PlacementLength.QUICK)
+        if (askedStart.take(busy)) start(PlacementLength.QUICK)
     }
 
     /** Onboarding's "First lesson": every phase starts at its beginning. */

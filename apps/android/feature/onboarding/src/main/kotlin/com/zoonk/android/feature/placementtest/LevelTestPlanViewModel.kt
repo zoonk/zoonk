@@ -39,10 +39,10 @@ internal class LevelTestPlanViewModel(
 
     private val failure = visit.outcome<Unit>()
     private val saveFailure = visit.outcome<Int>()
+    private val askedStart = AskedStart(visit)
 
     private var savedAttempt by handle.saved { "" }
     private var savedTestOut by handle.saved { "" }
-    private var autoStarted by handle.saved { false }
 
     /** The level test the learner opened, which its steps read. */
     var attemptId by mutableStateOf(savedAttempt.toUuid())
@@ -75,11 +75,9 @@ internal class LevelTestPlanViewModel(
             }
         }
 
-    /** A learner who asked for the test on the level question goes straight in, once. */
+    /** A learner who asked for the test on the level question goes straight in. */
     fun startAsked() {
-        if (autoStarted) return
-        autoStarted = true
-        start()
+        if (askedStart.take(busy)) start()
     }
 
     /** Goes on with the test read without an attempt, which onboarding opened earlier. */

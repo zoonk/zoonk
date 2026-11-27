@@ -21,6 +21,7 @@ import com.zoonk.api.ApiJson
 import com.zoonk.api.models.Placement
 import com.zoonk.api.models.PlacementCompletion
 import com.zoonk.api.models.PlacementLength
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -132,6 +133,73 @@ class PlacementTestViewModelTest {
             vm.start(PlacementLength.QUICK)
             assertTrue(shown(vm, store) is PlacementTestPhase.Question)
             assertFalse(vm.failed)
+        }
+
+    @Test
+    fun anAskedStartThatFailedStartsAgainWhenTheAppComesBackFromProcessDeath() =
+        askedStartFailed { _, handle, store ->
+            PlacementTestViewModel(GOAL_ID, store, SavedStateHandle.createHandle(handle.savedStateProvider().saveState(), null))
+        }
+
+    @Test
+    fun anAskedStartThatFailedStartsAgainWhenTheLearnerComesBack() = askedStartFailed { vm, _, _ -> vm.also { it.visit.end() } }
+
+    /** A learner who asked for the test on the level question never comes back to a spinner with nothing on its way. */
+    private fun askedStartFailed(comeBack: (PlacementTestViewModel, SavedStateHandle, OnboardingStore) -> PlacementTestViewModel) =
+        runTest {
+            val api =
+                FakeOnboardingApi().apply {
+                    placement = placement(attempt = null)
+                    writeFailure = ApiException(ApiError.Network)
+                }
+            val handle = SavedStateHandle()
+            val (vm, store) = viewModel(api, handle)
+            store.placements[GOAL_ID].load()
+            vm.startAsked()
+            assertEquals(PlacementTestPhase.Choose, shown(vm, store))
+            assertTrue(vm.failed)
+
+            api.writeFailure = null
+            api.sitting = { placement(QUICK) }
+            val back = comeBack(vm, handle, store)
+            back.startAsked()
+
+            assertTrue(shown(back, store) is PlacementTestPhase.Question)
+            assertEquals(2, api.sittingsStarted)
+        }
+
+    @Test
+    fun anAskedStartStillOnItsWayWhenTheLearnerCameBackStartsAgainOnceItFails() =
+        runTest {
+            val fake = FakeOnboardingApi().apply { placement = placement(attempt = null) }
+            val answer = CompletableDeferred<Unit>()
+            val api =
+                object : OnboardingApi by fake {
+                    override suspend fun startPlacementSitting(
+                        session: AuthenticatedSession,
+                        goalId: String,
+                        length: PlacementLength?,
+                    ): Placement {
+                        answer.await()
+                        return fake.startPlacementSitting(session, goalId, length)
+                    }
+                }
+            val (vm, store) = viewModel(api)
+            store.placements[GOAL_ID].load()
+            vm.startAsked()
+            runCurrent()
+
+            vm.visit.end()
+            vm.startAsked()
+            fake.writeFailure = ApiException(ApiError.Network)
+            answer.complete(Unit)
+            assertEquals(PlacementTestPhase.Choose, shown(vm, store))
+            assertFalse(vm.failed)
+
+            fake.writeFailure = null
+            fake.sitting = { placement(QUICK) }
+            vm.startAsked()
+            assertTrue(shown(vm, store) is PlacementTestPhase.Question)
         }
 
     @Test
