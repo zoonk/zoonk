@@ -714,6 +714,24 @@ describe("the keeper of presses made before React owns a control", () => {
     expect(marked).toStrictEqual(["today"]);
   });
 
+  it("clears a stopped load's mark once the learner opens another page through React", () => {
+    const { commit, find, page, press, wait } = openPage(
+      '<a href="https://zoonk.test/plan" id="plan">Plan</a><a href="https://zoonk.test/buddy" id="buddy">Buddy</a>',
+    );
+
+    press(find("#plan"));
+    wait();
+    expect(find("#plan").dataset.held).toBe("");
+
+    commit();
+    own(find("#plan"), find("#buddy"));
+    page.document.addEventListener("click", (event) => event.preventDefault());
+    press(find("#buddy"));
+    wait();
+
+    expect(page.document.querySelectorAll("[data-held], [aria-busy]")).toHaveLength(0);
+  });
+
   it("leaves unmarked a link whose press the page takes over, as a client-side link does", () => {
     const { commit, find, page, press, wait } = openPage(
       '<a href="https://zoonk.test/plan" id="owned">Plan</a><a href="https://zoonk.test/today" id="hydrating">Today</a>',

@@ -497,14 +497,11 @@ function holdPressesBeforeReady({
    * The browser follows a link pressed before React owns it, and the page shows nothing until the
    * next one paints, so the link shows it's on its way. A link the page takes over, as a client-side
    * link does, cancels the click; once React owns the link, a press is its own and clears the mark a
-   * stopped load left.
+   * stopped load left, on whichever link it was.
    */
   const pressLink = (event: MouseEvent, link: Element) => {
     if (isReacts(link)) {
-      if (following?.link === link) {
-        follow(null);
-      }
-
+      follow(null);
       unmark(link);
       return;
     }
