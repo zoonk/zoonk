@@ -58,8 +58,8 @@ const BUSY_HIDDEN_WITHOUT_KEYS =
 const BUSY_CONTENT_CLASS =
   "[display:inherit] min-w-0 [flex-direction:inherit] [flex-wrap:inherit] [place-content:inherit] [place-items:inherit] gap-[inherit]";
 
-/** Alone in the control, it fills it and lays its children out as the control would. */
-const BUSY_ALONE_CLASS = "grow self-stretch *:data-[slot=shortcut-kbd]:order-last";
+/** A keycap passed as a child goes last, as it would in the control itself. */
+const BUSY_ALONE_CLASS = "*:data-[slot=shortcut-kbd]:order-last";
 
 function BusySpinner({ className, iconClassName }: { className?: string; iconClassName?: string }) {
   return (
