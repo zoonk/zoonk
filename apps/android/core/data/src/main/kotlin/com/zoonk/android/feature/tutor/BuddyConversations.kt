@@ -21,14 +21,14 @@ data class BuddyConversationList(
     val currentId: String?,
     val nextCursor: String?,
 ) {
-    /** A question asked in [id] makes it the latest; a first one adds its row, titled by it. */
+    /** A question asked in [id] makes it the latest and the current one; a first one adds its row, titled by it. */
     fun asked(
         id: String,
         question: String,
         at: Instant,
     ): BuddyConversationList {
         val row = conversations.firstOrNull { it.id == id }?.copy(lastAskedAt = at) ?: BuddyConversation(id, question, at)
-        return copy(conversations = listOf(row) + conversations.filterNot { it.id == id })
+        return copy(conversations = listOf(row) + conversations.filterNot { it.id == id }, currentId = id)
     }
 
     /** The [next] page after these rows; a row that moved up since this one was read is listed once. */

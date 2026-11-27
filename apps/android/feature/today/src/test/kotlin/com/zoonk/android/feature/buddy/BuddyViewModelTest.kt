@@ -19,9 +19,12 @@ import com.zoonk.android.feature.session.opening
 import com.zoonk.android.feature.tutor.BuddyConversation
 import com.zoonk.android.feature.tutor.BuddyConversationList
 import com.zoonk.android.feature.tutor.FakeTutorApi
+import com.zoonk.android.feature.tutor.TutorScope
 import com.zoonk.android.feature.tutor.TutorStore
 import com.zoonk.android.feature.tutor.TutorThread
 import com.zoonk.android.feature.tutor.TutorThreadKey
+import com.zoonk.android.feature.tutor.TutorTurn
+import com.zoonk.android.feature.tutor.turn
 import com.zoonk.android.feature.tutor.tutorStore
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.characters.BuddyGlasses
@@ -157,6 +160,26 @@ class BuddyViewModelTest {
             val restored = buddy(tutor = tutor, saved = saved)
             assertEquals(draftId, restored.openConversation(GOAL))
             assertFalse(restored.isUnreadable(GOAL, route.conversationId, draftThread.state.value))
+        }
+
+    /** Asked from search, then opened from Today before the list is read again: the page returns to the conversation asked in. */
+    @Test
+    fun theConversationAskedInIsTheOneTheNextVisitOpens() =
+        runTest(dispatcher) {
+            val api = FakeTutorApi()
+            api.conversationPages = mapOf(null to conversations(current = EARLIER))
+            val tutor = tutorStore(api, AppCache(session, CoroutineScope(SupervisorJob() + dispatcher)), session)
+            val list = tutor.conversations[GOAL]
+            list.load()
+
+            val searched = buddy(tutor = tutor)
+            searched.choose(GOAL, AppRoute.Buddy(ask = "Why osmosis?"), list.state.value.value)
+            val asked = requireNotNull(searched.openConversation(GOAL))
+            tutor.asked(TutorScope.Plan(GOAL, asked), turn("osmosis", TutorTurn.Status.Pending, answer = null, "Why osmosis?"))
+
+            val fromToday = buddy(tutor = tutor)
+            fromToday.choose(GOAL, AppRoute.Buddy(), list.state.value.value)
+            assertEquals(asked, fromToday.openConversation(GOAL))
         }
 
     @Test
