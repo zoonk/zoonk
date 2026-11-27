@@ -12,7 +12,7 @@ export function BeltLevel({
 }: {
   belt: string;
   color: BeltColor;
-  level: ReactNode;
+  level: string;
 }) {
   return (
     <>
@@ -22,31 +22,20 @@ export function BeltLevel({
   );
 }
 
-/** Under `lg` the bar is a phone's or a tablet's, with room for the number only. */
-function LevelWords({ level }: { level: string }) {
-  const t = useExtracted();
-
-  return (
-    <>
-      <span className="lg:hidden">{level}</span>
-      <span className="max-lg:hidden">{t("Level {level}", { level })}</span>
-    </>
-  );
-}
-
 const LEVEL_BOX_CLASS = "text-compact -ms-2 h-9 shrink-0 items-center px-2 whitespace-nowrap";
 
 /**
- * The level's room: as wide as the highest level's words, so the bar's end sits in one place for
- * every level and while the learner loads. The mark and its words (`children`) end where the room
- * does.
+ * The level's room: as wide as the highest level, so the bar's end sits in one place for every
+ * level and while the learner loads. The bar shows only under `lg`, where there's no room for the
+ * word "Level"; its title and spoken name say it. The mark and its number (`children`) end where
+ * the room does.
  */
 function LevelRoom({ children }: { children?: ReactNode }) {
   return (
     <span className="grid tabular-nums *:col-start-1 *:row-start-1 *:flex *:items-center *:gap-1.5">
       <span aria-hidden="true" className="invisible">
         <span className="size-2.5" />
-        <LevelWords level={String(LEVELS_PER_COLOR)} />
+        {LEVELS_PER_COLOR}
       </span>
 
       {children && <span className="justify-self-end">{children}</span>}
@@ -85,7 +74,7 @@ export function LearnLevelLink({
       title={t("Level")}
     >
       <LevelRoom>
-        <BeltLevel belt={belt} color={level.color} level={<LevelWords level={levelNumber} />} />
+        <BeltLevel belt={belt} color={level.color} level={levelNumber} />
       </LevelRoom>
       <span className="sr-only">
         {t({
