@@ -161,17 +161,15 @@ private struct PlanFocusSection: View {
         }
 
         ForEach(choices) { area in
-          Toggle(
-            area.name,
-            isOn: Binding(
-              get: { selection.contains(area.name) },
-              set: { on in
-                var next = selection
-                if on { next.insert(area.name) } else { next.remove(area.name) }
-                picked = next
-              })
-          )
-          .tint(.success)
+          let isPicked = selection.contains(area.name)
+
+          ChoiceRow(picks: .several, isPicked: isPicked) {
+            var next = selection
+            if isPicked { next.remove(area.name) } else { next.insert(area.name) }
+            picked = next
+          } words: {
+            areaWords(area, isPicked: isPicked)
+          }
         }
 
         Button {
@@ -199,6 +197,17 @@ private struct PlanFocusSection: View {
     }
   }
 
+  /// What the area holds, and once it's picked, the part of it the learner named.
+  private func areaWords(_ area: GoalPlan.Area, isPicked: Bool) -> ChoiceWords {
+    let parts = plan.areas.filter { !$0.skipped && $0.partOf == area.name }.map(\.name)
+
+    return ChoiceWords(
+      title: Text(verbatim: area.name),
+      detail: parts.isEmpty
+        ? nil : Text("Includes \(parts.formatted(.list(type: .and)))", tableName: "Plan"),
+      note: isPicked ? area.focusPart.map { Text("Only \($0)", tableName: "Plan") } : nil)
+  }
+
   private func focus(on selection: Set<String>, choices: [GoalPlan.Area]) async {
     let areas = choices.map(\.name).filter { selection.contains($0) }
 
@@ -215,24 +224,22 @@ private struct PlanActivitiesSection: View {
     let skipped = Set(plan.steering.skippedActivities)
 
     Section {
-      ForEach(Self.activities, id: \.self) { activity in
-        Toggle(
-          isOn: Binding(
-            get: { !skipped.contains(activity) },
-            set: { on in
-              // A plan practices at least one activity.
-              guard on || skipped.count < Self.activities.count - 1 else {
-                return
-              }
+      FlowLayout(spacing: 8) {
+        ForEach(Self.activities, id: \.self) { activity in
+          let isOn = !skipped.contains(activity)
 
-              editor.run {
-                await editor.change([
-                  on ? .restoreActivities([activity]) : .skipActivities([activity])
-                ])
-              }
-            })
-        ) {
-          Text(planActivityName(activity))
+          ToggleChip(Text(planActivityName(activity)), isOn: isOn) {
+            // A plan practices at least one activity.
+            guard !isOn || skipped.count < Self.activities.count - 1 else {
+              return
+            }
+
+            editor.run {
+              await editor.change([
+                isOn ? .skipActivities([activity]) : .restoreActivities([activity])
+              ])
+            }
+          }
         }
       }
     } header: {
@@ -241,7 +248,6 @@ private struct PlanActivitiesSection: View {
           "What you practice", tableName: "Plan", comment: "Section of a language plan's activities"
         ))
     }
-    .tint(.success)
   }
 
   private static let activities = planActivities
@@ -475,44 +481,36 @@ private struct PlanToolChoiceSheet: View {
   @ViewBuilder
   private var choices: some View {
     Section {
-      Picker(selection: $choice) {
-        option(
-          Text("I have it", tableName: "Plan"),
-          Text("You'll practice on your own device.", tableName: "Plan")
-        ).tag(ToolChoice.have)
-        option(
-          Text("I'll set it up", tableName: "Plan"),
-          Text("A short lesson shows how, right before you need it.", tableName: "Plan")
-        ).tag(ToolChoice.setup)
-        option(
-          Text("I won't use it", tableName: "Plan"),
-          Text("You'll practice with examples instead.", tableName: "Plan")
-        ).tag(ToolChoice.none)
-      } label: {
-        Text(tool.name)
-      }
-      .pickerStyle(.inline)
+      option(
+        .have, Text("I have it", tableName: "Plan"),
+        Text("You'll practice on your own device.", tableName: "Plan"))
+      option(
+        .setup, Text("I'll set it up", tableName: "Plan"),
+        Text("A short lesson shows how, right before you need it.", tableName: "Plan"))
+      option(
+        .none, Text("I won't use it", tableName: "Plan"),
+        Text("You'll practice with examples instead.", tableName: "Plan"))
     }
 
     if choice == .setup {
       Section {
-        Picker(selection: $system) {
+        FlowLayout(spacing: 8) {
           ForEach(["windows", "macos", "linux", "chromebook", "phone"], id: \.self) { system in
-            Text(planSystemName(system)).tag(system)
+            ToggleChip(Text(planSystemName(system)), isOn: self.system == system) {
+              self.system = system
+            }
           }
-        } label: {
-          Text("Your device", tableName: "Plan", comment: "The device a setup lesson is for")
         }
+      } header: {
+        SectionTitle(
+          Text("Your device", tableName: "Plan", comment: "The device a setup lesson is for"))
       }
     }
   }
 
-  private func option(_ title: Text, _ detail: Text) -> some View {
-    VStack(alignment: .leading, spacing: 2) {
-      title
-      detail
-        .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
+  private func option(_ value: ToolChoice, _ title: Text, _ detail: Text) -> some View {
+    ChoiceRow(title, detail: detail, isPicked: choice == value) {
+      choice = value
     }
   }
 

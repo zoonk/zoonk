@@ -68,11 +68,11 @@ struct ChoiceRowLabel<Words: View>: View {
   }
 }
 
-/// A choice's name over at most one line about it.
+/// A choice's name over a line or two about it.
 struct ChoiceWords: View {
   let title: Text
   var detail: Text?
-  /// Why the choice can't be taken now, under its detail.
+  /// A second line under its detail, such as why the choice can't be taken now.
   var note: Text?
 
   var body: some View {
