@@ -7,7 +7,10 @@ import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
-import { chapterLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import {
+  chapterLessonFixture,
+  libraryLessonFixture,
+} from "@zoonk/testing/fixtures/library-lessons";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { type Page, expect, test } from "./fixtures";
 import { openAs, waitForLessonStart } from "./study-day";
@@ -112,10 +115,20 @@ test.describe("Saved lessons", () => {
     }
   });
 
-  test("a finished lesson's bookmark on Completed lessons saves it without opening it", async ({
+  test("a finished lesson's bookmark on Completed lessons saves it without opening it, and one that can no longer open has neither", async ({
     browser,
   }) => {
-    const { finished, user } = await createLearner();
+    const { finished, goal, user } = await createLearner();
+    const gone = await libraryLessonFixture({ title: `A lesson taken down ${randomUUID()}` });
+
+    await learningEventFixture({
+      contentIds: { lessonId: gone.id },
+      endedAt: new Date(),
+      goalId: goal.id,
+      lessonKind: "library",
+      userId: user.id,
+    });
+
     const page = await openAs(browser, user);
 
     try {
@@ -123,6 +136,13 @@ test.describe("Saved lessons", () => {
 
       const save = page.getByRole("button", { name: `Save ${finished.title}` });
       await expectHydrated(save);
+
+      const main = page.getByRole("main");
+      await expect(main.getByText(gone.title)).toBeVisible();
+      await expect(main.getByRole("link", { name: gone.title })).toHaveCount(0);
+      await expect(main.getByRole("button", { name: `Save ${gone.title}` })).toHaveCount(0);
+      await expect(main.getByRole("link", { name: finished.title })).toBeVisible();
+
       await expect(save).toHaveAttribute("aria-pressed", "false");
       await save.click();
 
