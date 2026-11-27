@@ -35,7 +35,7 @@ struct TodayView: Decodable, Equatable, Sendable {
     let title: String
   }
 
-  struct Progress: Decodable, Equatable, Sendable {
+  struct Progress: OmittableAPIContent, Equatable, Sendable {
     struct Lessons: Decodable, Equatable, Sendable {
       let done: Int
       let today: Int
@@ -49,7 +49,7 @@ struct TodayView: Decodable, Equatable, Sendable {
     let weekGain: Double?
   }
 
-  struct PlanStatus: Decodable, Equatable, Sendable {
+  struct PlanStatus: OmittableAPIContent, Equatable, Sendable {
     let challenges: Int?
     let days: Int?
     let kind: String
@@ -57,7 +57,7 @@ struct TodayView: Decodable, Equatable, Sendable {
   }
 
   /// Core picks the one notice Today shows, the most pressing first.
-  enum Notice: String, Decodable, Sendable {
+  enum Notice: String, OmittableAPIContent, Sendable {
     case exam
     case examChoice
     case focusTest
@@ -70,7 +70,7 @@ struct TodayView: Decodable, Equatable, Sendable {
   }
 
   /// One of the exam's choices the learner hasn't picked yet; the plan studies none of its options.
-  struct ExamChoice: Decodable, Equatable, Sendable {
+  struct ExamChoice: OmittableAPIContent, Equatable, Sendable {
     let group: String
     let leftOut: ExamChoiceLeftOut
     let options: [GoalPlan.ExamChoice.Option]
@@ -82,7 +82,7 @@ struct TodayView: Decodable, Equatable, Sendable {
     let mockDate: String
   }
 
-  struct PlanChange: Decodable, Equatable, Sendable {
+  struct PlanChange: OmittableAPIContent, Equatable, Sendable {
     /// Set when missed days put the goal's date at risk.
     struct Behind: Decodable, Equatable, Sendable {
       let canFocus: Bool
@@ -140,7 +140,7 @@ struct TodayView: Decodable, Equatable, Sendable {
   }
 
   /// The document research couldn't read, asked of the learner until they upload or dismiss it.
-  struct UploadRequest: Decodable, Equatable, Sendable {
+  struct UploadRequest: OmittableAPIContent, Equatable, Sendable {
     enum Reason: String, Decodable, Sendable {
       case classMaterial
       case noOfficialSource

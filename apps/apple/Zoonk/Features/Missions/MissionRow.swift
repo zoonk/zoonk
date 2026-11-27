@@ -1,7 +1,7 @@
 import SwiftUI
 
-struct StudyMission: Decodable, Hashable, Sendable {
-  enum Kind: String, Decodable, Sendable {
+struct StudyMission: OmittableAPIContent, Hashable, Sendable {
+  enum Kind: String, OmittableAPIContent, Sendable {
     case askBuddy
     case call
     case challenge
@@ -27,7 +27,7 @@ struct StudyMission: Decodable, Hashable, Sendable {
   }
 
   /// A block by id, or by its place on a day not opened yet.
-  struct Opens: Decodable, Hashable, Sendable {
+  struct Opens: OmittableAPIContent, Hashable, Sendable {
     struct Ref: Decodable, Hashable, Sendable {
       let position: Int
     }

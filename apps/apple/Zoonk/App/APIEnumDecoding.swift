@@ -9,6 +9,9 @@ extension UnknownAPIValue {
   }
 }
 
+/// A display row or optional detail that can be omitted when the server adds a new variant.
+protocol OmittableAPIContent: Decodable {}
+
 extension KeyedDecodingContainer {
   func decode(_ type: String.Type, forKey key: Key) throws -> String {
     let value = try decodeScalar(type, forKey: key)
@@ -21,7 +24,7 @@ extension KeyedDecodingContainer {
   }
 
   /// Skip only a row that this version cannot interpret. Missing data and malformed rows still fail.
-  func decode<Row: Decodable>(_ type: [Row].Type, forKey key: Key) throws -> [Row] {
+  func decode<Row: OmittableAPIContent>(_ type: [Row].Type, forKey key: Key) throws -> [Row] {
     var items = try nestedUnkeyedContainer(forKey: key)
     var rows: [Row] = []
     while !items.isAtEnd {
@@ -34,11 +37,15 @@ extension KeyedDecodingContainer {
     return rows
   }
 
-  func decodeIfPresent<Value: Decodable>(_ type: Value.Type, forKey key: Key) throws -> Value? {
+  func decodeIfPresent<Value: OmittableAPIContent>(_ type: Value.Type, forKey key: Key) throws
+    -> Value?
+  {
     try supportedValue(forKey: key) { try decode(type, forKey: key) }
   }
 
-  func decodeIfPresent<Row: Decodable>(_ type: [Row].Type, forKey key: Key) throws -> [Row]? {
+  func decodeIfPresent<Row: OmittableAPIContent>(_ type: [Row].Type, forKey key: Key) throws
+    -> [Row]?
+  {
     try supportedValue(forKey: key) { try decode(type, forKey: key) }
   }
 

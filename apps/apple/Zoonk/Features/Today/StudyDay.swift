@@ -9,13 +9,13 @@ struct StudyDay: Decodable, Equatable, Sendable {
     case unstarted
   }
 
-  enum EmptyDay: String, Decodable, Sendable {
+  enum EmptyDay: String, OmittableAPIContent, Sendable {
     case lessonsComing
     case lessonsToPrepare
     case nothingNew
   }
 
-  enum FreshStart: String, Decodable, Sendable {
+  enum FreshStart: String, OmittableAPIContent, Sendable {
     case newPhase
     case newWeek
     case welcomeBack
@@ -252,7 +252,7 @@ enum DayState: String, UnknownAPIValue, Sendable {
   case waiting
 }
 
-struct StudyBlock: Decodable, Hashable, Sendable {
+struct StudyBlock: OmittableAPIContent, Hashable, Sendable {
   enum Kind: String, Decodable, Encodable, Sendable {
     case checkpoint
     case learn
@@ -285,7 +285,7 @@ struct StudyBlock: Decodable, Hashable, Sendable {
   }
 
   /// Whether the exam that leaves the optional study out has an official guide.
-  enum SubjectExtra: String, Decodable, Hashable, Sendable {
+  enum SubjectExtra: String, OmittableAPIContent, Hashable, Sendable {
     case notice
     case optional
   }
@@ -402,7 +402,7 @@ struct StudyBlock: Decodable, Hashable, Sendable {
   }
 }
 
-enum WritingAvailability: Decodable, Hashable, Sendable {
+enum WritingAvailability: OmittableAPIContent, Hashable, Sendable {
   case available
   case `continue`
   case tomorrow(returnsOn: String)
@@ -435,7 +435,7 @@ enum WritingAvailability: Decodable, Hashable, Sendable {
 
 struct StudyWeek: Decodable, Equatable, Sendable {
   /// Core's `StudyWeekDay`, which Today's week and the Plan's draw with `WeekDayRing`.
-  struct Day: Decodable, Equatable, Sendable {
+  struct Day: OmittableAPIContent, Equatable, Sendable {
     /// Day blocks done and not skipped; extra work isn't counted.
     let completed: Int
     let date: String
