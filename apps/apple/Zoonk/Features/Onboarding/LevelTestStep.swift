@@ -125,7 +125,9 @@ struct LevelTestQuestionScreen: View {
   static let skipQuestion = LocalizedStringResource("Skip this question", table: "Onboarding")
   static let didntUnderstand = LocalizedStringResource(
     "I didn't understand", table: "Onboarding",
-    comment: "Answers a listening question after hearing its message without understanding it")
+    comment:
+      "Button on a listening question, after the learner played the message: they heard it and didn't understand it."
+  )
   static let listeningLabels = [TestCopy.cantListen, didntUnderstand, skipQuestion]
 
   static func listeningLabel(skips: Bool, heard: Bool) -> LocalizedStringResource {
