@@ -14370,9 +14370,9 @@ msgid "Past line {lines} even in small handwriting: not read"
 msgstr ""
 
 #: src/writing/writing-text.tsx
-msgctxt "ecaPI4"
-msgid "Past the limit: graders stop reading here"
-msgstr "Hinter dem Limit: Bewertende lesen hier nicht weiter"
+msgctxt "A2kY2e"
+msgid "Past the limit even in small handwriting: not read"
+msgstr ""
 
 #: src/writing/writing-text.tsx
 msgctxt "agrPL7"

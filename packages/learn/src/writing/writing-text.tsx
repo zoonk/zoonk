@@ -103,7 +103,7 @@ export function WritingMarkedText({
                     ? t("Past line {lines} even in small handwriting: not read", {
                         lines: String(lines),
                       })
-                    : t("Past the limit: graders stop reading here")}
+                    : t("Past the limit even in small handwriting: not read")}
                 </span>
               )}
               <span
