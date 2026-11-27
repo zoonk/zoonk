@@ -522,10 +522,10 @@ private struct BuddyContent: View {
       comment: "The buddy's Energy; the argument is its name")
   }
 
-  /// Main's Energy on the buddy's row: its value, or a dash before the first lesson.
+  /// Main's Energy on the buddy's row: its value, or a faint dash before the first lesson.
   private var energyValue: Text {
     guard let current = status.energy.current else {
-      return Text(verbatim: "–")
+      return Text(verbatim: "–").foregroundStyle(.faint)
     }
 
     return Text(
@@ -552,7 +552,9 @@ private struct BuddyContent: View {
     .buttonStyle(.plain)
     .accessibilityLabel(energyTitle)
     .accessibilityValue(
-      status.energy.current == nil ? Text(verbatim: "") : energyValue
+      status.energy.current == nil
+        ? Text("Not yet", tableName: "Progress", comment: "A stat without a value yet")
+        : energyValue
     )
     .accessibilityHint(
       Text(
