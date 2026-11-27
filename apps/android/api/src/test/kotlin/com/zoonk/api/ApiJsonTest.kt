@@ -5,9 +5,11 @@ import com.zoonk.api.models.AnytimeMockInputShape
 import com.zoonk.api.models.AnytimeMockInputShapeAnyOf
 import com.zoonk.api.models.MatchAnswer
 import com.zoonk.api.models.MistakePracticePracticeInnerQuestionsInner
+import com.zoonk.api.models.StudyMissionOpens
 import com.zoonk.api.models.WrittenTestShape
 import kotlinx.serialization.Serializable
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ApiJsonTest {
@@ -15,6 +17,12 @@ class ApiJsonTest {
     private data class OlderResponse(
         val studied: Boolean,
     )
+
+    @Test
+    fun aMissionStillOpensPronunciationWhenOtherKindsHaveTheSameShape() {
+        val opens = ApiJson.decodeFromString<StudyMissionOpens>("""{"kind":"pronunciation"}""")
+        assertTrue(opens is StudyMissionOpens.StudyMissionOpensOneOf3Value)
+    }
 
     @Test
     fun anOlderResponseModelIgnoresFieldsAddedByTheServer() {
