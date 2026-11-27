@@ -7,6 +7,7 @@ import { cn, mergeRefs } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useLayoutEffect, useRef } from "react";
 import { SpokenMath } from "../rich-text/spoken-math";
+import { PickMark, getPickMark } from "./answer-pick-mark";
 import {
   ANSWER_HELD_TONE,
   ANSWER_OPTION_CLASS,
@@ -139,20 +140,22 @@ function AnswerTag({ className, ...props }: React.ComponentProps<"span">) {
 }
 
 /**
- * A number is the row's key, so a touch screen gives up its room (craft E1, B2). A picked row's key
- * turns ink, the row's mark as a radio's dot is. Once checked or disabled the key does nothing, so
- * it hides in its room and the answer stays put.
+ * A number is the row's key, so a touch screen gives up its room (craft E1, B2). On a row without a
+ * pick mark, the picked row's key turns ink, as a radio's dot does. Once checked or disabled the key
+ * does nothing, so it hides in its room and the answer stays put.
  */
 export function OptionMarker({
   isChecked,
   layout,
   marker,
   picked,
+  showsPick = true,
 }: {
   isChecked: boolean;
   layout: "row" | "stacked";
   marker: React.ReactNode;
   picked: boolean;
+  showsPick?: boolean;
 }) {
   const isKey = typeof marker === "number";
 
@@ -167,8 +170,10 @@ export function OptionMarker({
     >
       <Kbd
         className={cn(
-          "in-data-held:bg-selected in-data-held:text-selected-foreground in-data-[held=unchecked]:bg-foreground/4! in-data-[held=unchecked]:text-muted-foreground! in-data-held:ring-0 in-data-[held=unchecked]:ring-1! [&_svg]:size-3",
-          picked && "bg-selected text-selected-foreground ring-0",
+          "[&_svg]:size-3",
+          showsPick &&
+            "in-data-held:bg-selected in-data-held:text-selected-foreground in-data-[held=unchecked]:bg-foreground/4! in-data-[held=unchecked]:text-muted-foreground! in-data-held:ring-0 in-data-[held=unchecked]:ring-1!",
+          showsPick && picked && "bg-selected text-selected-foreground ring-0",
         )}
       >
         {marker}
@@ -203,6 +208,7 @@ export function AnswerOption({
 
   const answerTag = useAnswerTag({ guessed, picked, result });
   const shownTag = tag === undefined ? answerTag : tag;
+  const mark = getPickMark({ hasAction: Boolean(props.onClick), picks, role: props.role });
 
   return (
     <button
@@ -237,11 +243,14 @@ export function AnswerOption({
         layout={layout}
         marker={marker}
         picked={picked && !result}
+        showsPick={!mark}
       />
 
       <TagBesideOrUnder layout={layout} tag={shownTag}>
         <SpokenMath>{children}</SpokenMath>
       </TagBesideOrUnder>
+
+      {mark && <PickMark kind={mark} layout={layout} picked={picked} />}
     </button>
   );
 }
