@@ -313,7 +313,6 @@ struct MockPoints: Hashable, Decodable, Sendable {
     return tests.filter { $0.met == false } + tests.filter { $0.met != false }
   }
 
-  /// The written parts with something to say here: an estimate, or a minimum still to reach.
   var writtenRows: [WrittenPartPoints] {
     (written ?? []).filter { $0.range != nil || $0.minimum != nil }
   }

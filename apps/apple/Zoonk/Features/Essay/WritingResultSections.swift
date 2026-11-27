@@ -466,7 +466,6 @@ private struct WritingCriteriaSection: View {
         table: "Essay")
     }
 
-    // An answer on a sheet with points can still come back by level, even after one with points.
     guard grade.points != nil else {
       return String(
         localized: "Graded by level: we can't yet estimate this answer's points closely enough.",

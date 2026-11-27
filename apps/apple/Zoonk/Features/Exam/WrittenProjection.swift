@@ -275,7 +275,6 @@ private struct ScoreRow<Detail: View>: View {
 /// can't tell.
 struct WrittenStandingLine: View {
   let part: WrittenPartPoints
-  /// The decimals its range is said in, when the page shows another than the part's own.
   var decimals: Int?
 
   var body: some View {

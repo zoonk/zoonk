@@ -55,7 +55,6 @@ struct MockPointsSection: View {
   }
 }
 
-/// A written part beside the tests: its estimate and where it stands, or why it has none.
 private struct MockWrittenRow: View {
   let part: WrittenPartPoints
 
@@ -85,7 +84,6 @@ private struct MockWrittenRow: View {
 }
 
 extension PointsMinimum {
-  /// What a test still to judge needs: "Needs 50 points", or its share of the points.
   var needs: String {
     switch unit {
     case .percent:

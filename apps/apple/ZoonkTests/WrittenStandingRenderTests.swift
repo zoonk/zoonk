@@ -3,10 +3,8 @@ import XCTest
 
 @testable import Zoonk
 
-/// Review renders of where a written estimate stands (the score sheet and a mock's result), an
-/// answer graded by level, the line counter and the marker past the line limit, written only on
-/// demand: `TEST_RUNNER_ZOONK_SHOTS=<folder> make -C apps/apple test-mac
-/// ONLY_TESTING=ZoonkTests/WrittenStandingRenderTests`.
+/// Review renders of written estimates and answers, written only on demand:
+/// `TEST_RUNNER_ZOONK_SHOTS=<folder> make -C apps/apple test-mac ONLY_TESTING=ZoonkTests/WrittenStandingRenderTests`.
 @MainActor
 final class WrittenStandingRenderTests: XCTestCase {
   private static let states: [(name: String, standing: String, range: String)] = [
