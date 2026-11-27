@@ -11,7 +11,7 @@ function useLabels(title: string | undefined) {
       save: t("Save {title}", { title }),
       saved: t({
         description:
-          "Read aloud for the bookmark on a saved lesson's row, which removes it; {title} is the lesson's name.",
+          "Read aloud for the bookmark on a saved lesson's row, which removes it: says the lesson {title} is saved.",
         id: "lessonSavedTitle",
         message: "Saved {title}",
         values: { title },
@@ -22,7 +22,7 @@ function useLabels(title: string | undefined) {
   return {
     save: t("Save"),
     saved: t({
-      description: "A lesson the learner saved to do again later: the bookmark's state.",
+      description: "Says the lesson is saved to do again later: the bookmark's state.",
       id: "lessonSaved",
       message: "Saved",
     }),

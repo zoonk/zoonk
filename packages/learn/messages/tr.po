@@ -7162,13 +7162,13 @@ msgstr "Kaydedildi"
 #: src/saved-lessons/lesson-save-button.tsx
 msgctxt "eIjk1v"
 msgid "Save {title}"
-msgstr ""
+msgstr "Kaydet: {title}"
 
-#. Read aloud for the bookmark on a saved mind map's row, which removes it; {title} is the map's name.
+#. Read aloud for the bookmark on a saved mind map's row, which removes it: says the map {title} is saved.
 #: src/mind-maps/mind-map-save-button.tsx
 msgctxt "mindMapSavedTitle"
 msgid "Saved {title}"
-msgstr ""
+msgstr "{title} kaydedildi"
 
 #: src/mind-maps/mind-map-viewer.tsx
 msgctxt "_UnJ3S"
@@ -12362,44 +12362,44 @@ msgctxt "WIPDp7"
 msgid "vector {base}"
 msgstr "{base} vektörü"
 
-#. Read aloud for the bookmark on a saved lesson's row, which removes it; {title} is the lesson's name.
+#. Read aloud for the bookmark on a saved lesson's row, which removes it: says the lesson {title} is saved.
 #: src/saved-lessons/lesson-save-button.tsx
 msgctxt "lessonSavedTitle"
 msgid "Saved {title}"
-msgstr ""
+msgstr "{title} kaydedildi"
 
-#. A lesson the learner saved to do again later: the bookmark's state.
+#. Says the lesson is saved to do again later: the bookmark's state.
 #: src/saved-lessons/lesson-save-button.tsx
 msgctxt "lessonSaved"
 msgid "Saved"
-msgstr ""
+msgstr "Kaydedildi"
 
 #: src/saved-lessons/saved-lessons-row.tsx
 #: src/saved-lessons/saved-lessons-screen.tsx
 msgctxt "BwmLVN"
 msgid "Saved lessons"
-msgstr ""
+msgstr "Kaydedilen dersler"
 
 #. The line under Saved lessons in Practice anytime.
 #: src/saved-lessons/saved-lessons-row.tsx
 msgctxt "u7HPS5"
 msgid "Lessons you want to do again"
-msgstr ""
+msgstr "Yeniden çalışmak istediğin dersler"
 
 #: src/saved-lessons/saved-lessons-screen.tsx
 msgctxt "t7w-Fo"
 msgid "Nothing saved yet. Tap the bookmark on a lesson to keep it here."
-msgstr ""
+msgstr "Henüz kaydedilen bir şey yok. Bir dersi burada tutmak için dersin yer imi simgesine dokun."
 
 #: src/saved-lessons/use-lesson-saves.ts
 msgctxt "BcKHqn"
 msgid "Couldn't remove this lesson. Try again."
-msgstr ""
+msgstr "Bu ders kaldırılamadı. Tekrar dene."
 
 #: src/saved-lessons/use-lesson-saves.ts
 msgctxt "JBnz9z"
 msgid "Couldn't save this lesson. Try again."
-msgstr ""
+msgstr "Bu ders kaydedilemedi. Tekrar dene."
 
 #: src/session/action-failed.tsx
 #: src/session/open-next-step.tsx

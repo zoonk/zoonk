@@ -23,7 +23,7 @@ function useRowLabels(title: string) {
     save: t("Save {title}", { title }),
     saved: t({
       description:
-        "Read aloud for the bookmark on a saved mind map's row, which removes it; {title} is the map's name.",
+        "Read aloud for the bookmark on a saved mind map's row, which removes it: says the map {title} is saved.",
       id: "mindMapSavedTitle",
       message: "Saved {title}",
       values: { title },

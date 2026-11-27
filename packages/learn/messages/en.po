@@ -7164,7 +7164,7 @@ msgctxt "eIjk1v"
 msgid "Save {title}"
 msgstr "Save {title}"
 
-#. Read aloud for the bookmark on a saved mind map's row, which removes it; {title} is the map's name.
+#. Read aloud for the bookmark on a saved mind map's row, which removes it: says the map {title} is saved.
 #: src/mind-maps/mind-map-save-button.tsx
 msgctxt "mindMapSavedTitle"
 msgid "Saved {title}"
@@ -12362,13 +12362,13 @@ msgctxt "WIPDp7"
 msgid "vector {base}"
 msgstr "vector {base}"
 
-#. Read aloud for the bookmark on a saved lesson's row, which removes it; {title} is the lesson's name.
+#. Read aloud for the bookmark on a saved lesson's row, which removes it: says the lesson {title} is saved.
 #: src/saved-lessons/lesson-save-button.tsx
 msgctxt "lessonSavedTitle"
 msgid "Saved {title}"
 msgstr "Saved {title}"
 
-#. A lesson the learner saved to do again later: the bookmark's state.
+#. Says the lesson is saved to do again later: the bookmark's state.
 #: src/saved-lessons/lesson-save-button.tsx
 msgctxt "lessonSaved"
 msgid "Saved"
