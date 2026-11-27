@@ -151,10 +151,10 @@ async function recordLevelTestResult({
         levelTest: {
           ...details.levelTest,
           lastResult: result,
+          ...(planningStart !== null && { planningStart }),
           usedConfirmations: [...usedConfirmations, ...checksUsed.map(({ id }) => id)],
         },
         ...(planningStart !== null && {
-          languagePlanningStart: planningStart,
           skillLevels: { ...readPreviousSkillLevels(current), ...toLevelLabels(scores) },
         }),
       },
