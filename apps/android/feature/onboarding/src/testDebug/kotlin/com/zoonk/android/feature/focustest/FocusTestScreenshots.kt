@@ -31,6 +31,8 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.data.ApiError
+import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
@@ -131,6 +133,18 @@ class FocusTestScreenshots(
 
     @Test
     fun waiting() = shoot("waiting", FakeOnboardingApi().apply { placement = placementOf(status = "waitingForQuestions", next = null) })
+
+    /** The learner asked for the test on the level question, and its start didn't go through. */
+    @Test
+    fun startFailed() =
+        shoot(
+            "start-failed",
+            FakeOnboardingApi().apply {
+                placement = NOT_STARTED
+                writeFailure = ApiException(ApiError.Network)
+            },
+            asked = true,
+        )
 
     @Test
     fun unavailable() = shoot("unavailable", FakeOnboardingApi().apply { placement = placementOf(status = "unavailable", next = null) })
@@ -244,6 +258,7 @@ class FocusTestScreenshots(
         name: String,
         api: FakeOnboardingApi,
         onPlan: Boolean = false,
+        asked: Boolean = false,
         steps: () -> Unit = {},
     ) {
         compose.setContent {
@@ -263,6 +278,7 @@ class FocusTestScreenshots(
                             onRetryRun = null,
                             onSitting = {},
                             plan = if (onPlan) OnPlan(onChangeFocus = {}, questions = questions, startOnOpen = false) else null,
+                            asked = asked,
                         )
                     }
                 }

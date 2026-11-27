@@ -22,6 +22,12 @@ internal sealed interface FocusTestPhase {
         val answered: Boolean,
     ) : FocusTestPhase
 
+    /** The learner already asked for the test, so its offer is answered: the start they asked for is on its way. */
+    data object Starting : FocusTestPhase
+
+    /** The start the learner asked for didn't go through: the wait's failure, whose Try again starts it again. */
+    data object StartFailed : FocusTestPhase
+
     /** [minutes]: about how long the sitting it starts takes. */
     data class Offer(
         val test: FocusTest,

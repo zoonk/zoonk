@@ -40,13 +40,15 @@ internal typealias LeaveTest = suspend () -> WriteOutcome<*>
 /**
  * An exam goal's Focus test, in onboarding or opened from the plan. Starting, answering and closing
  * are POSTs from the learner's taps; opening it only reads. Leaving saves [hostSave], then publishes
- * [left] for the host's screen to act on.
+ * [left] for the host's screen to act on. [askedFor]: the learner already asked for the test (the level
+ * question, Today's "Start the test"), so its offer starts on its own.
  */
 internal class FocusTestViewModel(
     private val goalId: String,
     private val store: OnboardingStore,
     private val plans: PlanStore,
     handle: SavedStateHandle,
+    private val askedFor: Boolean = false,
     private val hostSave: LeaveTest = { WriteOutcome.Done(Unit) },
 ) : ViewModel() {
     /** This visit to the test: leaving it, and a save that fails, show only on it. */
@@ -58,7 +60,8 @@ internal class FocusTestViewModel(
     /** When this visit began and whether it opened a sitting, for the first question's analytics. */
     val sitting = TestVisit()
 
-    private val failure = visit.outcome<Unit>()
+    /** The button whose save failed on this visit. */
+    private val failure = visit.outcome<Pressed>()
     private val saveFailure = visit.outcome<Int>()
     private val askedStart = AskedStart(visit)
 
@@ -79,6 +82,8 @@ internal class FocusTestViewModel(
         private set
 
     val failed get() = failure.value != null
+
+    fun failedOn(button: Pressed) = failure.value == button
 
     var answering by mutableStateOf(false)
         private set
@@ -103,7 +108,14 @@ internal class FocusTestViewModel(
 
     val busy get() = pressed != null || answering
 
-    fun phase(placement: LoadState<Placement>): FocusTestPhase = focusTestPhase(placement, entered, closed)
+    fun phase(placement: LoadState<Placement>): FocusTestPhase {
+        val phase = focusTestPhase(placement, entered, closed)
+        return when {
+            !askedFor || phase !is FocusTestPhase.Offer -> phase
+            failed -> FocusTestPhase.StartFailed
+            else -> FocusTestPhase.Starting
+        }
+    }
 
     /** One of the wait's reads: true when it came back. */
     suspend fun check(): Boolean = store.placements[goalId].refreshed()
@@ -156,7 +168,7 @@ internal class FocusTestViewModel(
                 is WriteOutcome.Done -> {
                     saveFailure.clear()
                     // A sitting that's over closes in the same save; if that fails, its screen holds the retry.
-                    if (sent.value.placement.sittingOver() != null && !close(asked)) failure.send(asked, Unit)
+                    if (sent.value.placement.sittingOver() != null && !close(asked)) failure.send(asked, Pressed.Main)
                 }
 
                 WriteOutcome.Obsolete -> {}
@@ -258,7 +270,7 @@ internal class FocusTestViewModel(
         failure.clear()
         val asked = visit.number
         viewModelScope.launch {
-            if (!action(asked)) failure.send(asked, Unit)
+            if (!action(asked)) failure.send(asked, button)
             pressed = null
         }
     }

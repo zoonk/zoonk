@@ -12,6 +12,7 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.data.AnalyticsEvent
+import com.zoonk.android.data.GenerationFailure
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.LocalEventTracker
 import com.zoonk.android.data.TestContext
@@ -69,7 +70,10 @@ internal fun ColumnScope.FocusTestFlow(
     onReportSaveFailure: () -> Unit = {},
     onLeft: () -> Unit = {},
 ) {
-    val vm = viewModel(key = "focus-test:$goalId") { FocusTestViewModel(goalId, store, plans, createSavedStateHandle(), handBack) }
+    val vm =
+        viewModel(key = "focus-test:$goalId") {
+            FocusTestViewModel(goalId, store, plans, createSavedStateHandle(), askedFor = plan?.startOnOpen == true || asked, handBack)
+        }
     VisitOf(vm.visit)
     ActOn(vm.left) { onLeft() }
     val resource = store.placements[goalId]
@@ -94,13 +98,10 @@ internal fun ColumnScope.FocusTestFlow(
     }
     DisposableEffect(Unit) { onDispose { onSitting(null) } }
     val tracker = LocalEventTracker.current
-    // Today's "Start the test" and the level question's "short test" already made the offer; until the start answers,
-    // the offer waits behind a spinner.
-    val starting = (plan?.startOnOpen == true || asked) && shown is FocusTestPhase.Offer && !vm.failed
-    if (starting) LaunchedEffect(vm.busy) { vm.startAsked() }
+    if (shown == FocusTestPhase.Starting) LaunchedEffect(vm.busy) { vm.startAsked() }
 
     when {
-        shown == FocusTestPhase.Loading || starting -> {
+        shown == FocusTestPhase.Loading || shown == FocusTestPhase.Starting -> {
             StepLoading()
         }
 
@@ -118,6 +119,18 @@ internal fun ColumnScope.FocusTestFlow(
                 onSkip = { vm.leave(closes = shown.answered || onboarding) },
                 onboarding = onboarding,
                 skipLabel = stringResource(R.string.focustest_see_my_result).takeIf { shown.answered },
+            )
+        }
+
+        shown == FocusTestPhase.StartFailed -> {
+            PlacementWaiting(
+                run = GenerationRun(GenerationRun.Status.Failed, GenerationFailure.Generation),
+                onRetry = vm::start,
+                hold = hold,
+                pending = vm.busy,
+                failed = vm.failedOn(Pressed.Other),
+                onSkip = { vm.leave(closes = onboarding) },
+                onboarding = onboarding,
             )
         }
 
