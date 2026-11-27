@@ -180,7 +180,7 @@ const learnerSummarySchema = z
           .min(0)
           .meta({
             description:
-              "How many of the active goal's notebook mistakes are ready to practice: a mistake becomes ready at the local midnight after it was made",
+              "How many of the active goal's open notebook mistakes have practice material",
           }),
         speaking: z.boolean(),
       })

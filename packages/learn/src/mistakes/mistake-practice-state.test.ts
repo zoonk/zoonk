@@ -54,6 +54,7 @@ function graded(answerId: string, fixed = false) {
     lessonResult: null,
     mistakeStatus: fixed ? ("fixed" as const) : ("open" as const),
     reached: NOTHING_REACHED,
+    requiresLaterDay: false,
     trap: null,
     workedSteps: [],
   };

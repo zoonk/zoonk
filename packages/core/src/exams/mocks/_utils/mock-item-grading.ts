@@ -1,5 +1,5 @@
 import { type PartialCreditRule } from "@zoonk/ai/tasks/research/partial-credit";
-import { type JsonObject } from "@zoonk/utils/json";
+import { type JsonObject, isJsonObject } from "@zoonk/utils/json";
 import { type ChoiceItem, gradeChoiceAnswer } from "../../../learner/_utils/choice-items";
 import { gradeMathAnswer, readRecordedMath } from "../../../learner/_utils/math-items";
 import { matchesAcceptedAnswer, toTypedSnapshot } from "../../../learner/_utils/typed-items";
@@ -106,7 +106,11 @@ export function gradeMockItem(input: Parameters<typeof gradeMockAnswer>[0]): Moc
 }
 
 export function readRecordedMockAnswer(value: unknown): MockAnswer | null {
-  const parsed = mockAnswerSchema.safeParse(value);
+  const answer = isJsonObject(value)
+    ? Object.fromEntries(Object.entries(value).filter(([key]) => key !== "mockMistakeId"))
+    : value;
+
+  const parsed = mockAnswerSchema.safeParse(answer);
 
   if (parsed.success) {
     return parsed.data;

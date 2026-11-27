@@ -1,4 +1,5 @@
-import { type TransactionClient, prisma } from "@zoonk/db";
+import { type Attempt, type TransactionClient, prisma } from "@zoonk/db";
+import { type JsonObject } from "@zoonk/utils/json";
 import { type LearnerAnswer } from "../record-learner-answer";
 import { getLocalAnswerTime } from "./local-time";
 
@@ -32,5 +33,37 @@ export function createLearnerAttempt({
       userId: input.userId,
       ...getLocalAnswerTime({ date: answeredAt, timeZone: input.timeZone }),
     },
+  });
+}
+
+/** Record server-derived links to notebook entries on the attempt. */
+export function saveAnswerAttribution({
+  answer,
+  attempt,
+  fixedMistakeIds,
+  mockMistakeId,
+  transaction,
+}: {
+  answer: JsonObject;
+  attempt: Attempt;
+  fixedMistakeIds: string[];
+  mockMistakeId: string | undefined;
+  transaction: TransactionClient;
+}) {
+  const recordsFix = fixedMistakeIds.length > 0 || "fixedMistakeIds" in answer;
+
+  if (!recordsFix && !mockMistakeId) {
+    return attempt;
+  }
+
+  return transaction.attempt.update({
+    data: {
+      answer: {
+        ...answer,
+        ...(recordsFix && { fixedMistakeIds }),
+        ...(mockMistakeId && { mockMistakeId }),
+      },
+    },
+    where: { id: attempt.id },
   });
 }

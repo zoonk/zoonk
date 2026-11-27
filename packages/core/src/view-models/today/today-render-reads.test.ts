@@ -315,7 +315,7 @@ describe("Today's render reads", () => {
     const [today, mistakes, summary] = reads.result;
 
     expect(today.status).toBe("ready");
-    expect(mistakes).toMatchObject({ availability: { ready: skills.length, tomorrow: 0 } });
+    expect(mistakes).toMatchObject({ availability: { ready: skills.length } });
     expect(summary?.places.readyMistakes).toBe(skills.length);
     expect(reads.rows).toBe(skills.length);
   });

@@ -1,6 +1,6 @@
 import { type Mistake, type TransactionClient, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { readyMistakeWhere } from "./mistake-availability";
+import { getStartOfLocalDay } from "../learner/_utils/local-time";
 import { type MistakeReplay, loadMistakeReplays, readMistakeReplay } from "./mistake-replay";
 import { isSameMistakeQuestion } from "./mistake-replay-identity";
 import { readMistakeSnapshot } from "./mistake-snapshot";
@@ -54,11 +54,14 @@ export async function fixMistakesAnsweredRight(
   const candidates = await transaction.mistake.findMany({
     where: {
       ...(practicedMistakeId ? { id: practicedMistakeId } : {}),
-      ...readyMistakeWhere({
-        localDate: getDateInTimeZone({ date: answeredAt, timeZone }),
-        timeZone,
-      }),
       OR: targets,
+      missedAt: {
+        lt: getStartOfLocalDay({
+          localDate: getDateInTimeZone({ date: answeredAt, timeZone }),
+          timeZone,
+        }),
+      },
+      status: "open",
       userId,
     },
   });

@@ -80,6 +80,7 @@ const blockPayloadSchema = z.object({
     .object({ completed: z.array(z.enum(MISSION_KINDS)), fullMealPaid: z.boolean() })
     .nullable()
     .default(null),
+  mistakeIds: z.array(z.string()).default([]),
   mockPreparationReview: z.literal(true).optional(),
   /** Wrong answers cancel right ones and blanks are allowed; swipe capsules score net separately. */
   netScored: z.boolean().default(false),
