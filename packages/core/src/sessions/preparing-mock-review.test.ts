@@ -2,11 +2,28 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { findMockToFollow } from "../plans/_utils/mock-misses";
+import { parsePlanSettings } from "../plans/planner/plan-state";
 import { seedPersonaCopy } from "../seed/seed";
 import { getTodayView } from "../view-models/today/get-today-view";
 import { addExtraStudyBlock } from "./add-extra-study-block";
 import { toDayBlockRef } from "./day-block";
 import { openStudyDay } from "./open-study-day";
+
+/** As when that mock finished: the plan already follows it, so opening the day re-plans nothing. */
+async function followLatestMock(goalId: string) {
+  const [plan, latest] = await Promise.all([
+    prisma.plan.findUniqueOrThrow({ where: { goalId } }),
+    findMockToFollow({ goalId, now: new Date() }),
+  ]);
+
+  const mockReplan = latest && { applied: true, mockId: latest.id };
+
+  await prisma.plan.update({
+    data: { settings: { ...parsePlanSettings(plan.settings), ...(mockReplan && { mockReplan }) } },
+    where: { goalId },
+  });
+}
 
 describe("Today on a preparing mock day", () => {
   afterEach(() => vi.useRealTimers());
@@ -24,6 +41,7 @@ describe("Today on a preparing mock day", () => {
     });
 
     mockSession(userId);
+    await followLatestMock(goalId);
 
     await prisma.subscription.create({
       data: { plan: "plus", provider: "zoonk", referenceId: userId, status: "active" },
@@ -82,6 +100,7 @@ describe("Today on a preparing mock day", () => {
     });
 
     mockSession(userId);
+    await followLatestMock(goalId);
 
     await prisma.subscription.create({
       data: { plan: "plus", provider: "zoonk", referenceId: userId, status: "active" },

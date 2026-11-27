@@ -1,5 +1,6 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
+import { readBlockPayload } from "../sessions/block-payload";
 import { isPlanReady } from "./_utils/apply-plan-change";
 import { commitPlan } from "./_utils/commit-plan";
 import { findMockToFollow, loadMockMisses } from "./_utils/mock-misses";
@@ -105,6 +106,22 @@ async function listMovedTopics({
   return moved.flatMap(([skillId]) => names.get(skillId) ?? []).slice(0, MOVED_TOPICS_NAMED);
 }
 
+/** The plan items of the day the learner opened, so the re-plan starts from the next one. */
+async function loadOpenedKeys(context: PlanContext): Promise<string[] | undefined> {
+  const opened = await prisma.studySession.findUnique({
+    select: { blocks: true },
+    where: {
+      userGoalDate: {
+        goalId: context.goal.id,
+        localDate: context.today,
+        userId: context.goal.userId,
+      },
+    },
+  });
+
+  return opened?.blocks.flatMap((block) => readBlockPayload(block).planItemKey ?? []);
+}
+
 function getReorderChange(computed: ComputedPlan): PlanChangeRecord {
   return {
     kind: "mockReordered",
@@ -192,9 +209,10 @@ export async function replanAfterMock({
 
     const missed = withoutSkippedAreas({ skillIds: relearnSkillIds, state: context.state });
 
-    const [ids, misses] = await Promise.all([
+    const [ids, misses, openedKeys] = await Promise.all([
       findTestedOutItemIds({ context, skillIds: new Set(missed) }),
       loadMockMisses(mockId),
+      loadOpenedKeys(context),
     ]);
 
     const applied = { applied: true, mockId };
@@ -205,7 +223,13 @@ export async function replanAfterMock({
     if (misses.size === 0) {
       const planned =
         ids.size > 0
-          ? await planRelearn({ context, ids, now, state: withMockReplan(context.state, applied) })
+          ? await planRelearn({
+              context,
+              ids,
+              now,
+              openedKeys,
+              state: withMockReplan(context.state, applied),
+            })
           : null;
 
       if (planned && planned.restoredIds.size > 0) {
@@ -224,9 +248,10 @@ export async function replanAfterMock({
         context,
         ids,
         now,
+        openedKeys,
         state: catchUp ? withMockReplan(context.state, refused) : context.state,
       }),
-      planRelearn({ context, ids, now, state: withMockReplan(context.state, applied) }),
+      planRelearn({ context, ids, now, openedKeys, state: withMockReplan(context.state, applied) }),
     ]);
 
     if (holdsSchedule({ baseline: baseline.computed, computed: reordered.computed })) {

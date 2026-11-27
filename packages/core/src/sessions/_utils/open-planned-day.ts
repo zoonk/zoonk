@@ -35,8 +35,6 @@ export async function openPlannedDay(
     return { created: false, session, status: "opened" };
   }
 
-  await catchUpMockReplan({ goal, now, timeZone });
-
   const planDay = (selection: SelectedDayPlan) => planStudyDay({ ...context, selection });
   const selection = await selectDayPlan({ goal, now, planDay, timeZone });
 
@@ -70,6 +68,11 @@ export async function openPlannedDay(
 
   if (!session) {
     return { status: "stale" };
+  }
+
+  // After the day is saved, so the day the learner was shown opens as shown.
+  if (written.status === "created") {
+    await catchUpMockReplan({ goal, now, timeZone });
   }
 
   return {

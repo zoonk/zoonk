@@ -64,11 +64,13 @@ async function planWithRestored({
   context,
   ids,
   now,
+  openedKeys,
   state,
 }: {
   context: PlanContext;
   ids: ReadonlySet<string>;
   now: Date;
+  openedKeys?: readonly string[];
   state: PlanState;
 }): Promise<{ computed: ComputedPlan; restored: PlanContext }> {
   const items = context.items.map((item) =>
@@ -82,6 +84,7 @@ async function planWithRestored({
     keepPhaseDates: true,
     mode: "forced",
     now,
+    ...(openedKeys && { openedKeys, todayShown: true }),
     state,
   });
 
@@ -102,26 +105,29 @@ function getPlannedIds({
 
 /**
  * A forced re-plan from today, keeping the phase dates, with the tested-out items `ids` back to
- * do. An item the plan has no room for stays tested out.
+ * do. An item the plan has no room for stays tested out. `openedKeys`, the plan items of the day
+ * the learner opened, stay whole on today.
  */
 export async function planRelearn({
   context,
   ids,
   now,
+  openedKeys,
   state = context.state,
 }: {
   context: PlanContext;
   ids: ReadonlySet<string>;
   now: Date;
+  openedKeys?: readonly string[];
   state?: PlanState;
 }): Promise<{ computed: ComputedPlan; restored: PlanContext; restoredIds: Set<string> }> {
-  const first = await planWithRestored({ context, ids, now, state });
+  const first = await planWithRestored({ context, ids, now, openedKeys, state });
   const plannedIds = getPlannedIds({ computed: first.computed, ids });
 
   const { computed, restored } =
     plannedIds.size === ids.size
       ? first
-      : await planWithRestored({ context, ids: plannedIds, now, state });
+      : await planWithRestored({ context, ids: plannedIds, now, openedKeys, state });
 
   return { computed, restored, restoredIds: getPlannedIds({ computed, ids: plannedIds }) };
 }

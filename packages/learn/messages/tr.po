@@ -1592,7 +1592,6 @@ msgstr "Zu"
 #: src/focus-test/focus-test-screens.tsx
 #: src/language/level-test/level-test-flow.tsx
 #: src/language/level-test/level-test-preparing.tsx
-#: src/mock/mock-result-plan.tsx
 #: src/placement-test/placement-test-flow.tsx
 #: src/plan/plan-fit-suggestion.tsx
 #: src/plan/plan-offer-preview.tsx
@@ -3051,7 +3050,6 @@ msgstr "Tarihimi kullan"
 
 #: src/conversation/tutor-plan-change.tsx
 #: src/focus-test/focus-test-proposal.tsx
-#: src/mock/mock-result-plan.tsx
 #: src/plan/plan-offer-preview.tsx
 #: src/today/today-plan-change.tsx
 msgctxt "ZPLfTK"
@@ -8351,11 +8349,6 @@ msgid "{count, plural, one {# lesson} other {# lessons}} skipped."
 msgstr "{count, plural, other {# ders}} atlandı."
 
 #: src/mock/mock-result-plan.tsx
-msgctxt "DRJEUg"
-msgid "Your plan gives {area} more time."
-msgstr "Planın {area} için daha fazla süre ayırıyor."
-
-#: src/mock/mock-result-plan.tsx
 #: src/plan-diff/change-names.ts
 #: src/plan/use-short-list.ts
 msgctxt "v5V1P2"
@@ -8381,16 +8374,6 @@ msgstr "{topics} ile ilgili tüm soruları doğru cevapladın."
 msgctxt "SvO1ek"
 msgid "Skip {count, plural, one {# lesson} other {# lessons}} you already know?"
 msgstr "Zaten bildiğin {count, plural, other {# dersi}} atlayalım mı?"
-
-#: src/mock/mock-result-plan.tsx
-msgctxt "b4G-y7"
-msgid "You got {correct, plural, =0 {# of {total} right} one {# of {total} right} other {# of {total} right}} there."
-msgstr "Bu alanda {correct, plural, =0 {# / {total} doğru} other {# / {total} doğru}} yaptın."
-
-#: src/mock/mock-result-plan.tsx
-msgctxt "1-4FCE"
-msgid "Focus more on {area}?"
-msgstr "{area} için daha fazla zaman ayıralım mı?"
 
 #: src/mock/mock-result-plan.tsx
 msgctxt "iaHiP_"
