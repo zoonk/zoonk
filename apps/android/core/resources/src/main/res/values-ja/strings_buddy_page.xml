@@ -3,6 +3,8 @@
 {
   "buddy_page_change": "b10ddacb48cf33d505ccc5288a76c18046d36658a41a66235144a90033ac99f5",
   "buddy_page_choose": "1a4adae2d3b347e9baeb2df0bf0bd7454cf55b098b6322119c73d51ca695a8eb",
+  "buddy_page_conversations": "3b914f935eccc79f25ad0acff5565c82e1474f8c027cedb5873861fcef786489",
+  "buddy_page_conversations_more_failed": "59b3dbb421f39adf378321862f8e4f8bd27d34bc8174c3c39576312485d1b05c",
   "buddy_page_count": "a1c5f65da1861afbac70eb8331988bacde12af5788d4ca05b62f0f3212655d35",
   "buddy_page_energy_named": "b9f9be4aaf2e83b17be0ed46897063b317da7c83f8a0c074e43eaba7d2ce9071",
   "buddy_page_energy_napping": "fe3204f45a79c764d4d65c7bd504a378b09b00ac5f2091c4a6154bcad5b4fce6",
@@ -30,9 +32,11 @@
   "buddy_page_grows": "0e149fc8735ae968cb89af2a20b4a03b900f942d59c77253b9216d48ecae213b",
   "buddy_page_missions_count": "9ffb449aab0a5f1debbcc156c91b0ac482daf9c4c5bc06659ec87ea6f84ca1da",
   "buddy_page_more": "ddb7a357aa832bee724d295bdb8c2cef3ff99cedff101c033ff356d3aafa0edb",
+  "buddy_page_new_conversation": "a2a0ef6fb1fa991f9ec2dec76e29ccc399765bec6f2ceff0a21c0278c5266949",
   "buddy_page_placeholder": "a6d797519a04770772242d8ff4a2d742ccf4f29184064773f41c2e1e341f6fd4",
   "buddy_page_remembers": "9ed368023fa7d2ae9afc289cb90b462afeca767ce23e95d616618ad10fa8ca03",
   "buddy_page_save_failed": "8f30e08077eb54582b6db1ff9a7c8ba53a028fa19b8a1257b03c8f189c1d8bb9",
+  "buddy_page_show_more": "758522051a3e94a123c189eaf077dcc92c179255268da3121ac90bf30dfb9a3f",
   "buddy_page_suggest_focus": "3b43cd7a162f7e34957dce8505736d50a8fdf10f7f59c21ba3f70fbc2868854a",
   "buddy_page_suggest_lighter": "b80b217c11cd18203cc50b5dae4dcfc7c9f18c5888dd8154537543638fb159d8",
   "buddy_page_suggest_mistake": "bc24fe38824e5e08dfe4ad1ed6be12c334961ddde7390f341e6ab8763b6c46a6",
@@ -69,6 +73,13 @@
     <string name="buddy_page_suggest_lighter">今週は学習量を減らしたい</string>
     <string name="buddy_page_suggest_mistake">直前の間違いを説明してほしい</string>
     <string name="buddy_page_suggest_focus">まず取り組むことは？</string>
+    <!-- The list of the learner's separate conversations with their buddy, and the button that opens it. -->
+    <string name="buddy_page_conversations">チャット</string>
+    <!-- The first row of the conversations list: starts a conversation with no questions yet. -->
+    <string name="buddy_page_new_conversation">新しいチャット</string>
+    <!-- Loads the next page of older conversations. -->
+    <string name="buddy_page_show_more">もっと見る</string>
+    <string name="buddy_page_conversations_more_failed">さらにチャットを読み込めませんでした。もう一度お試しください。</string>
     <string name="buddy_page_today">今日の%1$s</string>
     <!-- The title of the buddy's Energy meter; %1$s is the buddy's name. -->
     <string name="buddy_page_energy_named">%1$sのエネルギー</string>

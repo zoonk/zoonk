@@ -3,6 +3,8 @@
 {
   "buddy_page_change": "ce16b780eb2d849fa040daa5290f19e8c15071a27f95ad804e7b70611a346250",
   "buddy_page_choose": "7c3727894bac0d9c80ffa9e6ffccb5fef0a9203ffdb5d88a70ce0a35a846a0fb",
+  "buddy_page_conversations": "8f18cda11a5c17a6ce2f80b2591b1c8c199acd8d35dff8d8b62a2d1dda227b2c",
+  "buddy_page_conversations_more_failed": "7c9ff56e8209329ea3533d955944e0938d6c2fc71691b2aeaa6de15dc996a642",
   "buddy_page_count": "7667921acb46e446c9332dd169c1a8684badfa9390152db5999ebdf98013e56d",
   "buddy_page_energy_named": "2587fde7c2e8329f9c32e8d19d826a5909c607efc0e05bc89d3b4eca3c3a365f",
   "buddy_page_energy_napping": "c9b604dd0d38d711cf2b21df594e3d6641adf92bde861a22b38d93f0d5c9114c",
@@ -30,9 +32,11 @@
   "buddy_page_grows": "0b5caa30fefd5c720337a9a4b3b14e50a1e2ceeacc6444c22dbbdece5b83acbb",
   "buddy_page_missions_count": "cfa985439727c6b899af1b9a1c3258e7b50c87bc127e6b815ae2cda80e778c26",
   "buddy_page_more": "89a7b2a9941e449cfcaa649a8aeddc7554681ebc4d46355dbf61bbc19ef215fa",
+  "buddy_page_new_conversation": "03347a94db120f3e6ef625f6d81933d29ce92b449c248c213c69e7bea0269e3c",
   "buddy_page_placeholder": "1f55601784ea0086c12ef541b582debbd703cd1aaad3737bdff2488b7fbf69f5",
   "buddy_page_remembers": "3a7662edf1d41bcc5313f083af80ba7a04ec6b5ebc93ccc646f371116658de01",
   "buddy_page_save_failed": "b3e9f99b160d3427891fe875be3e6f89dbd65c71e3f4a3a75e911eaf221b19de",
+  "buddy_page_show_more": "c0e9f848784ed03db4ad70d9866458926cc41e11c61d91be4aab2f2a8fcf3b80",
   "buddy_page_suggest_focus": "4fcce5f59be60ecf2259b6ba0e5d020c798070f252abe92e22a81b7e3aabf12b",
   "buddy_page_suggest_lighter": "c29e5a61ef5fb9b66f78a1aef914b1311e4d2b64aef288d551c0abc2484c8a35",
   "buddy_page_suggest_mistake": "8b8b8334bd5cea750bef0f55b15731e84a51d227107978e7c6ee9cc571319f6f",
@@ -69,6 +73,13 @@
     <string name="buddy_page_suggest_lighter">Quiero estudiar menos esta semana</string>
     <string name="buddy_page_suggest_mistake">Explicar mi último error</string>
     <string name="buddy_page_suggest_focus">¿En qué debería enfocarme primero?</string>
+    <!-- The list of the learner's separate conversations with their buddy, and the button that opens it. -->
+    <string name="buddy_page_conversations">Chats</string>
+    <!-- The first row of the conversations list: starts a conversation with no questions yet. -->
+    <string name="buddy_page_new_conversation">Nuevo chat</string>
+    <!-- Loads the next page of older conversations. -->
+    <string name="buddy_page_show_more">Mostrar más</string>
+    <string name="buddy_page_conversations_more_failed">No se pudieron cargar más chats. Inténtalo de nuevo.</string>
     <string name="buddy_page_today">%1$s hoy</string>
     <!-- The title of the buddy's Energy meter; %1$s is the buddy's name. -->
     <string name="buddy_page_energy_named">Energía de %1$s</string>

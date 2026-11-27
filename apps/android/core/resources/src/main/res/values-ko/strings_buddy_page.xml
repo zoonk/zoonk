@@ -3,6 +3,8 @@
 {
   "buddy_page_change": "bf2dc722d813971f58875eeb2376eff150aad372f88ec0e0479bd18055c77a91",
   "buddy_page_choose": "332e2f8788c6bc4a3d5df9af0d5d8e381cf1d30ff0cba7bb6e20eb2e560ab0f9",
+  "buddy_page_conversations": "b2796fb0392e1f29d6ee13254e4daf3f5ba20c50a5ea09ac3d1f1f67011ea8b7",
+  "buddy_page_conversations_more_failed": "83d0eecbeeec8ee4b839b6420c8937c40a4c5e3feca3d8f0c9c10127f786e0ba",
   "buddy_page_count": "450a4de9b653ab8a54a489687a6c778da17df6621274a8cbc2bc508219325c91",
   "buddy_page_energy_named": "6943ef5652b55f6a87e5283d5cacbeb697d02111373ac17781361cd20c98cf9f",
   "buddy_page_energy_napping": "11bfb22d9eaea27a48939684c5c61fe7a077aa66e9814f68cc2747a8c55788b6",
@@ -30,9 +32,11 @@
   "buddy_page_grows": "1e3831dd07bfb40dcc3a523b9c761cd29ea7fee3945d8c2021132b3e222e8f6f",
   "buddy_page_missions_count": "be6acb394ae6e7741c36b89b1dc7552a09d99bc3e0361d22c46c1c29c99badcf",
   "buddy_page_more": "97ed9e9460c35f1b5d691bd6a51a3ad41071e7a60270c28dc5856217d09b0f59",
+  "buddy_page_new_conversation": "ed23d73cc7dfc80b8a3ae950582c4c604daa20f48f03885f824397dd4b5e6e1b",
   "buddy_page_placeholder": "9d7c4d53a0fc88d844fe8f2728dfffd75e71c4bad809740f4b81e7b8d46a5672",
   "buddy_page_remembers": "d09e1f99e35e8870b6fffedc2514aeabbf111b96249bed6e127002c01b23e6bf",
   "buddy_page_save_failed": "da96c6c1c1a3c2a5618882c626aa1f8552550013539c2b1eec617cb81f6011b8",
+  "buddy_page_show_more": "f8813f437298e9b35ea0b8c3b3a8988337d1fab3d55d78e79962706b0febef4e",
   "buddy_page_suggest_focus": "896190e8ddb19c5dc86ef0719dda08b6a1d671d342d45d57f89c17dbe78f8634",
   "buddy_page_suggest_lighter": "ba135607c6ad1704dda24efd2712e06ec3b2faba76e034a09e80c3f10c649779",
   "buddy_page_suggest_mistake": "86c64347542c3f641c2b530a5da3f0272ed610762b4ea04037e1035d3efe1b20",
@@ -69,6 +73,13 @@
     <string name="buddy_page_suggest_lighter">이번 주에는 공부량을 줄이고 싶어요</string>
     <string name="buddy_page_suggest_mistake">마지막으로 틀린 부분을 설명해 주세요</string>
     <string name="buddy_page_suggest_focus">무엇부터 집중해서 공부하면 좋을까요?</string>
+    <!-- The list of the learner's separate conversations with their buddy, and the button that opens it. -->
+    <string name="buddy_page_conversations">채팅</string>
+    <!-- The first row of the conversations list: starts a conversation with no questions yet. -->
+    <string name="buddy_page_new_conversation">새 채팅</string>
+    <!-- Loads the next page of older conversations. -->
+    <string name="buddy_page_show_more">더 보기</string>
+    <string name="buddy_page_conversations_more_failed">채팅을 더 불러오지 못했어요. 다시 시도해 보세요.</string>
     <string name="buddy_page_today">오늘의 %1$s</string>
     <!-- The title of the buddy's Energy meter; %1$s is the buddy's name. -->
     <string name="buddy_page_energy_named">%1$s의 에너지</string>

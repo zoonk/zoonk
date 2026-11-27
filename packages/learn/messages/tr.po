@@ -1357,12 +1357,12 @@ msgstr "Uygulama dili"
 #: src/buddies/buddy-conversations.tsx
 msgctxt "PQ8A3I"
 msgid "New conversation"
-msgstr ""
+msgstr "Yeni yazışma"
 
 #: src/buddies/buddy-conversations.tsx
 msgctxt "sf91oU"
 msgid "Couldn't load more conversations. Try again."
-msgstr ""
+msgstr "Daha fazla yazışma yüklenemedi. Tekrar dene."
 
 #: src/buddies/buddy-conversations.tsx
 #: src/completed-lessons/completed-lessons-screen.tsx
@@ -1376,7 +1376,7 @@ msgstr "Daha fazla göster"
 #: src/buddies/buddy-screen.tsx
 msgctxt "1udzha"
 msgid "Conversations"
-msgstr ""
+msgstr "Yazışmalar"
 
 #: src/buddies/buddy-day-parts.tsx
 msgctxt "6YRolu"

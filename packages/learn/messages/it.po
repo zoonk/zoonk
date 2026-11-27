@@ -1357,12 +1357,12 @@ msgstr "Lingua dell’app"
 #: src/buddies/buddy-conversations.tsx
 msgctxt "PQ8A3I"
 msgid "New conversation"
-msgstr ""
+msgstr "Nuova chat"
 
 #: src/buddies/buddy-conversations.tsx
 msgctxt "sf91oU"
 msgid "Couldn't load more conversations. Try again."
-msgstr ""
+msgstr "Non è stato possibile caricare altre chat. Riprova."
 
 #: src/buddies/buddy-conversations.tsx
 #: src/completed-lessons/completed-lessons-screen.tsx
@@ -1376,7 +1376,7 @@ msgstr "Mostra altro"
 #: src/buddies/buddy-screen.tsx
 msgctxt "1udzha"
 msgid "Conversations"
-msgstr ""
+msgstr "Chat"
 
 #: src/buddies/buddy-day-parts.tsx
 msgctxt "6YRolu"
@@ -1543,7 +1543,7 @@ msgstr "Gli occhiali di {buddy}"
 #: src/buddies/buddy-menu.tsx
 msgctxt "16z6WC"
 msgid "What {buddy} remembers"
-msgstr "Scopri cosa ricorda {buddy}"
+msgstr "Cosa ricorda {buddy}"
 
 #: src/buddies/buddy-menu.tsx
 #: src/journey/schedule-details.tsx

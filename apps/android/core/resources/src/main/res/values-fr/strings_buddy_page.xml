@@ -3,6 +3,8 @@
 {
   "buddy_page_change": "e6cd1d9edd3e1a658b9c30ca70f4fdb2d40328b0309d8f2a87c620bd6ca876e5",
   "buddy_page_choose": "8cc628f3e6164234c9912c1368142bbc9677bfea007e2d5e5b2b54a0ffef20ba",
+  "buddy_page_conversations": "a6cbde901f8427eee10793ae5e77c67b03f79e927dc2b61c56ac6a73dfdb8f4a",
+  "buddy_page_conversations_more_failed": "70addeab400d77f303b1542105afa1539754fe61913a0b192754e208702bf69f",
   "buddy_page_count": "5ac3e0c230c1b9be26e53bc7dfe0ae128a9259898b7c5657938a4c8ace700fdc",
   "buddy_page_energy_named": "f86cabaaf800cd83fb5e4836cf6baa9039e09dcce2b2d1a0a96b760e9fc9336a",
   "buddy_page_energy_napping": "f73d45019ba8947ceb814d403ee908a9c59c147202fa1d5c9798fa901d3ee528",
@@ -30,9 +32,11 @@
   "buddy_page_grows": "9c36da5d77248b6cea1c6694cef62bde46e01415b927688950acbab7e3ff0451",
   "buddy_page_missions_count": "23497ac4a22e38f3a1b6bf9059d6c8537f291147430e8c5a714eda598c88b8c1",
   "buddy_page_more": "d2e2efbe8b325c0e96c19db10f02fd7ac1940a54d670b9f3e5c8c71c0b86ef6a",
+  "buddy_page_new_conversation": "c6e04d772a49a8613b6e1f1ebfe202e4bb62a23e389bb36250b904ccde625f14",
   "buddy_page_placeholder": "29ac2f7fa059256a1540af53f90099b32d9cb7bbc521cece44f3b71663a308cc",
-  "buddy_page_remembers": "7b78494209f08566a61bd1aa290c3c37d3c92599bd991518a555807f3523d52c",
+  "buddy_page_remembers": "3fc6846f4881fe8378a083c5abf4150553735442b81c3649d94e51c7b621b8c3",
   "buddy_page_save_failed": "0ad54fbc0b82bd698b3439de229e5ae88c9e2307d00a4eb2c99a73e086de2d70",
+  "buddy_page_show_more": "0ee90a15558124bb917c88af351e13e49512c7bc98e26a554950c55213023068",
   "buddy_page_suggest_focus": "b1ca95904c808a42f79388f61bf30450d40e0c63f7c025aedfbed5708caeafdd",
   "buddy_page_suggest_lighter": "917ed30caaf4c5324955725858e64fa3c464402ed9c545edadb496f710a7a12a",
   "buddy_page_suggest_mistake": "79f43d3493cd44e29974463b3701f376ccfd132f6defc444ea42736a28d4a878",
@@ -69,6 +73,13 @@
     <string name="buddy_page_suggest_lighter">Je veux étudier moins cette semaine</string>
     <string name="buddy_page_suggest_mistake">Explique-moi ma dernière erreur</string>
     <string name="buddy_page_suggest_focus">Sur quoi devrais-je me concentrer en premier ?</string>
+    <!-- The list of the learner's separate conversations with their buddy, and the button that opens it. -->
+    <string name="buddy_page_conversations">Discussions</string>
+    <!-- The first row of the conversations list: starts a conversation with no questions yet. -->
+    <string name="buddy_page_new_conversation">Nouvelle discussion</string>
+    <!-- Loads the next page of older conversations. -->
+    <string name="buddy_page_show_more">Afficher plus</string>
+    <string name="buddy_page_conversations_more_failed">Impossible de charger plus de discussions. Réessaie.</string>
     <string name="buddy_page_today">%1$s aujourd’hui</string>
     <!-- The title of the buddy's Energy meter; %1$s is the buddy's name. -->
     <string name="buddy_page_energy_named">Énergie de %1$s</string>
@@ -85,7 +96,7 @@
     <string name="buddy_page_fully_grown">Croissance terminée</string>
     <!-- %1$s is a belt, like "Orange belt". -->
     <string name="buddy_page_grows">Grandit quand tu atteins le niveau %1$s</string>
-    <string name="buddy_page_remembers">Ce que %1$s retient</string>
+    <string name="buddy_page_remembers">Ce dont %1$s se souvient</string>
     <!-- Under the buddy's glasses: the learner picks a pair they've earned, and the buddy wears it. -->
     <string name="buddy_page_glasses_description">Choisis une paire que tu as gagnée.</string>
     <string name="buddy_page_first_steps">Premiers pas</string>

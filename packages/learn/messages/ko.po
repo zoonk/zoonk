@@ -1357,12 +1357,12 @@ msgstr "앱 언어"
 #: src/buddies/buddy-conversations.tsx
 msgctxt "PQ8A3I"
 msgid "New conversation"
-msgstr ""
+msgstr "새 채팅"
 
 #: src/buddies/buddy-conversations.tsx
 msgctxt "sf91oU"
 msgid "Couldn't load more conversations. Try again."
-msgstr ""
+msgstr "채팅을 더 불러오지 못했어요. 다시 시도해 보세요."
 
 #: src/buddies/buddy-conversations.tsx
 #: src/completed-lessons/completed-lessons-screen.tsx
@@ -1376,7 +1376,7 @@ msgstr "더 보기"
 #: src/buddies/buddy-screen.tsx
 msgctxt "1udzha"
 msgid "Conversations"
-msgstr ""
+msgstr "채팅"
 
 #: src/buddies/buddy-day-parts.tsx
 msgctxt "6YRolu"

@@ -51,6 +51,7 @@
 - “Content”: “Inhalte”
 - Mission names and unlock conditions (missions list, first steps, rewards): infinitive: “Deine erste Lektion abschließen”
 - “call” (speaking practice): “Gespräch”, not “Anruf”
+- a “conversation” with the buddy (a written chat on the buddy page): “Chat” (“Neuer Chat”, “Chats”), never “Gespräch”, which is the call
 - “Mistakes notebook”: “Fehlerheft”
 - “To fix” / “Fixed” (notebook tabs): “Noch offen” / “Korrigiert”
 - “New” / “Learning” / “Solid” / “Mastered” (mastery): “Neu” / “Im Aufbau” / “Sicher” / “Gemeistert”

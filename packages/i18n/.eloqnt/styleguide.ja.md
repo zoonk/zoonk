@@ -70,6 +70,7 @@
 - “BP” (Brain Power's short form after an amount, “+50 BP”): “脳力” (the name is already short, so it stays whole)
 - “mission”: “ミッション”
 - “call” (speaking practice): “会話”, not “電話”; the verb: “会話練習をする”
+- a “conversation” with the buddy (a written chat on the buddy page): “チャット” (“新しいチャット”), never “会話”, which is the call
 - “Mistakes notebook”: “間違いノート”
 - “Saved to your mistakes”: “間違いノートに保存しました”, in every line that starts with it
 - “To fix” / “Fixed” (notebook tabs): “未克服” / “克服済み”

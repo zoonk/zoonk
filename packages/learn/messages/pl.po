@@ -1357,12 +1357,12 @@ msgstr "Język aplikacji"
 #: src/buddies/buddy-conversations.tsx
 msgctxt "PQ8A3I"
 msgid "New conversation"
-msgstr ""
+msgstr "Nowy czat"
 
 #: src/buddies/buddy-conversations.tsx
 msgctxt "sf91oU"
 msgid "Couldn't load more conversations. Try again."
-msgstr ""
+msgstr "Nie udało się wczytać kolejnych czatów. Spróbuj ponownie."
 
 #: src/buddies/buddy-conversations.tsx
 #: src/completed-lessons/completed-lessons-screen.tsx
@@ -1376,7 +1376,7 @@ msgstr "Pokaż więcej"
 #: src/buddies/buddy-screen.tsx
 msgctxt "1udzha"
 msgid "Conversations"
-msgstr ""
+msgstr "Czaty"
 
 #: src/buddies/buddy-day-parts.tsx
 msgctxt "6YRolu"

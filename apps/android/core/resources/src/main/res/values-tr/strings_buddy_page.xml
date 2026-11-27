@@ -3,6 +3,8 @@
 {
   "buddy_page_change": "e7102548ef84bd8fc6455607c4f431623a55efde2dd9383c512db41282109915",
   "buddy_page_choose": "4b127f99ac33b207aa816ec6754a41fc64a93878dfbdf59e41b4488aa3c1dd39",
+  "buddy_page_conversations": "0f06fb5bb629f94a83f8ee69353b9b337fdec6abd59b369ec273133b9defe06d",
+  "buddy_page_conversations_more_failed": "f1e1d6505e96c17b87d039076408fd121b355ede202797b1e668f86fadd64835",
   "buddy_page_count": "b9da057eedcc2b33efafe103cd6bf7e9ebea86df20e523b0724b3d459851acfb",
   "buddy_page_energy_named": "f105751a5de19889bc6b2a19fe39dfb28fed7e00201bdf66b37c14d62fe08bc7",
   "buddy_page_energy_napping": "e6cc71a49be6914f7384642d7c6a611b68af90d6c21f7436d0f94ba8eae13cf9",
@@ -30,9 +32,11 @@
   "buddy_page_grows": "dd9d9861f7d5878f1482f5c346a983a45cb087cb15e1a66360caef3921c8c4b8",
   "buddy_page_missions_count": "6c101c5c3c3ca9d46f24817d1e9b4b106e4d955037196da9bbf09041d44024d8",
   "buddy_page_more": "28e280f3ddccf335f0cbadbc2a6cf053e7f37d83cd38b189f96063e550362c8a",
+  "buddy_page_new_conversation": "f55c57ed3cc62f5285c11643429903aef242ab1729272a1bb6cfcaa983ead469",
   "buddy_page_placeholder": "01f1dd536ef0424dca1d0c0ade7c85d3c1a83e80a74e8ece4f7f40ed726426a9",
   "buddy_page_remembers": "e2fc572bb233ad191a4a725dbfa3083846c1ba7fe561ae07c97ef87a3fb6cecb",
   "buddy_page_save_failed": "53ad0f143bab00d950a2aeabd46b9e8629922a75ef5109dba6452bcefddb218a",
+  "buddy_page_show_more": "399b53b5374d43406d8e8963bfcc171ba46d2eb66e2bd6f56350bae31dfca255",
   "buddy_page_suggest_focus": "ea0193b34cfc12a872b39c701329a9588680a91032c0adeb2eb8156d217809b0",
   "buddy_page_suggest_lighter": "8aebb38ad8d8f857218ef09a9d55a1157124f337fb2de9968d0fba081ad2c668",
   "buddy_page_suggest_mistake": "42095af45cb070bab7faccc2960bbba8cb703911887539b6e95d05c2c234fc4c",
@@ -69,6 +73,13 @@
     <string name="buddy_page_suggest_lighter">Bu hafta daha az çalışmak istiyorum</string>
     <string name="buddy_page_suggest_mistake">Son hatamı açıkla</string>
     <string name="buddy_page_suggest_focus">Önce neye odaklanmalıyım?</string>
+    <!-- The list of the learner's separate conversations with their buddy, and the button that opens it. -->
+    <string name="buddy_page_conversations">Yazışmalar</string>
+    <!-- The first row of the conversations list: starts a conversation with no questions yet. -->
+    <string name="buddy_page_new_conversation">Yeni yazışma</string>
+    <!-- Loads the next page of older conversations. -->
+    <string name="buddy_page_show_more">Daha fazla göster</string>
+    <string name="buddy_page_conversations_more_failed">Daha fazla yazışma yüklenemedi. Tekrar dene.</string>
     <string name="buddy_page_today">Bugün %1$s ile</string>
     <!-- The title of the buddy's Energy meter; %1$s is the buddy's name. -->
     <string name="buddy_page_energy_named">%1$s · Enerji</string>
