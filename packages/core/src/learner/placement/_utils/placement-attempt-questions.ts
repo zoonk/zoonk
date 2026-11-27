@@ -62,6 +62,54 @@ function didPreparationFail({
   );
 }
 
+type RemainingPart = { ids: string[]; part: number };
+
+function getRemainingParts({
+  attempt,
+  complete,
+  current,
+  parts,
+  remaining,
+}: {
+  attempt: PlacementAttempt;
+  complete: boolean;
+  current: string[];
+  parts: string[][];
+  remaining: ReadonlySet<string>;
+}): RemainingPart[] {
+  return parts.flatMap((ids, index) => {
+    const part = index + 1;
+
+    if (part < attempt.part || (part === attempt.part && (complete || attempt.partComplete))) {
+      return [];
+    }
+
+    const topics = (part === attempt.part ? current : ids).filter((id) => remaining.has(id));
+    return topics.length > 0 ? [{ ids: topics, part }] : [];
+  });
+}
+
+function getRemainingQuestions({
+  bySkill,
+  currentAllowance,
+  currentPart,
+  remainingParts,
+}: {
+  bySkill: ReadonlyMap<string, readonly PlacementEvidence[]>;
+  currentAllowance: number;
+  currentPart: number;
+  remainingParts: RemainingPart[];
+}) {
+  return remainingParts.reduce((count, { ids, part }) => {
+    const questions = ids.reduce(
+      (sum, id) => sum + Math.max(0, QUESTIONS_PER_TOPIC - (bySkill.get(id)?.length ?? 0)),
+      0,
+    );
+
+    return count + (part === currentPart ? Math.min(questions, currentAllowance) : questions);
+  }, 0);
+}
+
 export function readAttemptQuestions({
   attempt,
   attempts,
@@ -126,15 +174,15 @@ export function readAttemptQuestions({
     waiting,
   });
 
-  const remainingParts = parts
-    .map((ids, index) => ({ ids: ids.filter((id) => remaining.has(id)), part: index + 1 }))
-    .filter(
-      ({ ids, part }) =>
-        ids.length > 0 &&
-        (part > attempt.part || (part === attempt.part && !complete && !attempt.partComplete)),
-    );
-
+  const remainingParts = getRemainingParts({ attempt, complete, current, parts, remaining });
   const nextPart = remainingParts.find(({ part }) => part > attempt.part);
+
+  const remainingQuestions = getRemainingQuestions({
+    bySkill,
+    currentAllowance: Math.max(0, questions - partAnswers.length),
+    currentPart: attempt.part,
+    remainingParts,
+  });
 
   return {
     answered: partAnswers.length,
@@ -152,6 +200,7 @@ export function readAttemptQuestions({
     partsLeft: remainingParts.length,
     preparationFailed,
     questions,
+    remainingEstimatedMinutes: getCourseMinutes(remainingQuestions),
     remainingTopics,
     totalEstimatedMinutes: getCourseMinutes(parts.flat().length * QUESTIONS_PER_TOPIC),
     unknowns: partAnswers.filter((row) => toPlacementEvidence(row)?.outcome === "dontKnow").length,

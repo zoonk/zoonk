@@ -66,6 +66,7 @@ describe("learn placement attempts", () => {
       parts: 2,
       partsLeft: 2,
       questions: 12,
+      remainingEstimatedMinutes: 9,
       totalEstimatedMinutes: 9,
     });
 
@@ -104,7 +105,12 @@ describe("learn placement attempts", () => {
 
     expect(stopped).toMatchObject({
       completion: {
-        attempt: { partComplete: false, questions: 12, resume: { part: 1, question: 6 } },
+        attempt: {
+          partComplete: false,
+          questions: 12,
+          remainingEstimatedMinutes: 6,
+          resume: { part: 1, question: 6 },
+        },
         finish: { answered: 5, end: "stopped", lessonsSkipped: 1, partsLeft: 2, unknowns: 0 },
         result: { lessonsSkipped: 1, nextLesson: { id: planItems[1]!.lessonId } },
       },
@@ -135,7 +141,13 @@ describe("learn placement attempts", () => {
       finishGoalPlacement({ goalId: goal.id, input: { answered: 12, attemptId } }),
     ).resolves.toMatchObject({
       completion: {
-        attempt: { id: attemptId, nextPart: 2, partComplete: true, partsLeft: 1 },
+        attempt: {
+          id: attemptId,
+          nextPart: 2,
+          partComplete: true,
+          partsLeft: 1,
+          remainingEstimatedMinutes: 2,
+        },
         finish: { end: "question_cap", lessonsSkipped: 2 },
         result: { lessonsSkipped: 3 },
       },
@@ -191,7 +203,14 @@ describe("learn placement attempts", () => {
       finishGoalPlacement({ goalId: goal.id, input: { attemptId } }),
     ).resolves.toMatchObject({
       completion: {
-        attempt: { nextPart: 3, part: 1, partComplete: true, parts: 3, partsLeft: 1 },
+        attempt: {
+          nextPart: 3,
+          part: 1,
+          partComplete: true,
+          parts: 3,
+          partsLeft: 1,
+          remainingEstimatedMinutes: 2,
+        },
         finish: { answered: 1, end: "material_exhausted", lessonsSkipped: 0, unknowns: 1 },
       },
     });

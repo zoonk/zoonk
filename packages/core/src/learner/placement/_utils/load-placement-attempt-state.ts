@@ -61,6 +61,7 @@ export async function loadAttemptState({
         parts: questions.parts,
         partsLeft: questions.partsLeft,
         questions: questions.questions,
+        remainingEstimatedMinutes: questions.remainingEstimatedMinutes,
         resume:
           attempt.paused && !questions.complete
             ? { part: attempt.part, question: questions.answered + 1 }

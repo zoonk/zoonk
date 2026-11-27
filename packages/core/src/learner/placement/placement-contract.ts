@@ -48,6 +48,13 @@ export const placementAttemptViewSchema = z
       .int()
       .positive()
       .meta({ description: "Fixed question ceiling for the current part" }),
+    remainingEstimatedMinutes: z
+      .int()
+      .nonnegative()
+      .meta({
+        description:
+          "Estimated minutes for the unanswered questions in this attempt's remaining parts",
+      }),
     resume: z.object({ part: z.int().positive(), question: z.int().positive() }).nullable(),
     totalEstimatedMinutes: z
       .int()

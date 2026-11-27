@@ -88155,6 +88155,12 @@
             "maximum": 9007199254740991,
             "description": "Fixed question ceiling for the current part"
           },
+          "remainingEstimatedMinutes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Estimated minutes for the unanswered questions in this attempt's remaining parts"
+          },
           "resume": {
             "nullable": true,
             "type": "object",
@@ -88197,6 +88203,7 @@
           "parts",
           "partsLeft",
           "questions",
+          "remainingEstimatedMinutes",
           "resume",
           "totalEstimatedMinutes"
         ],
@@ -88690,6 +88697,28 @@
           "sessionQuestions": {
             "$ref": "#/components/schemas/FocusTestSessionQuestions"
           },
+          "sitting": {
+            "nullable": true,
+            "description": "Accepted answers and the fixed question ceiling of the open sitting",
+            "type": "object",
+            "properties": {
+              "answered": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "questions": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "answered",
+              "questions"
+            ],
+            "additionalProperties": false
+          },
           "state": {
             "type": "string",
             "enum": [
@@ -88707,6 +88736,7 @@
         "required": [
           "offer",
           "sessionQuestions",
+          "sitting",
           "state",
           "suggestsFocus"
         ],
