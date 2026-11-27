@@ -51,6 +51,7 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.BuddyStatus
 import com.zoonk.api.models.BuddyStatusEnergy
 import com.zoonk.api.models.BuddyStatusNextStage
@@ -215,7 +216,7 @@ private fun BuddyEnergy(
 
     if (current == null) {
         Column(Modifier.clickable(onClick = onOpen), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(title, Modifier.semantics { heading() }, style = MaterialTheme.typography.titleSmall)
+            Text(title, Modifier.semantics { heading() }, style = MaterialTheme.zoonkType.sectionTitle)
             Text(
                 stringResource(R.string.buddy_page_energy_starts),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -241,7 +242,7 @@ private fun BuddyEnergy(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(title, Modifier.weight(1f).semantics { heading() }, style = MaterialTheme.typography.titleSmall)
+            Text(title, Modifier.weight(1f).semantics { heading() }, style = MaterialTheme.zoonkType.sectionTitle)
             Text(formatPercent(current / PERCENT, currentLocale()), style = MaterialTheme.typography.labelLarge.withTabularFigures())
             ListRowChevron()
         }

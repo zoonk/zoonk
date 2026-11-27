@@ -86,6 +86,8 @@ import com.zoonk.android.ui.components.MoreButton
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.rememberExpandedBottomSheetState
+import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.TabRootScaffold
 import com.zoonk.api.models.BuddyStatus
@@ -525,8 +527,9 @@ private fun BuddyMenu(
 
 @Composable
 internal fun GlassesCount(status: BuddyStatus) {
-    val earned = status.glasses.count { it.earned }.toString()
-    val total = status.glasses.size.toString()
+    val locale = currentLocale()
+    val earned = formatNumber(status.glasses.count { it.earned }.toDouble(), locale)
+    val total = formatNumber(status.glasses.size.toDouble(), locale)
 
     Text(
         stringResource(R.string.buddy_page_count, earned, total),
