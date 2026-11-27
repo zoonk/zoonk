@@ -107,6 +107,16 @@ describe(toPlacementTestPhase, () => {
     expect(toPlacementTestPhase({ outcome, surface: "onboarding" })).toStrictEqual(RESULT_PHASE);
   });
 
+  it("offers no start from the Plan when the course has no test to start", () => {
+    expect(
+      toPlacementTestPhase({
+        canStart: false,
+        outcome: { attempt: null, result: RESULT, status: "unavailable" },
+        surface: "plan",
+      }),
+    ).toStrictEqual({ kind: "unavailable" });
+  });
+
   it("shows onboarding a test's result read with nothing to ask", () => {
     const outcome: PlacementOutcome = { attempt: null, result: RESULT, status: "unavailable" };
 

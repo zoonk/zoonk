@@ -90,16 +90,17 @@ function toResultPhase({
   };
 }
 
-/** With no test open, one the learner asked for waits for the course's questions; otherwise it's offered. */
 function toUnopenedPhase({
   asked,
+  canStart,
   outcome,
 }: {
   asked: boolean;
+  canStart: boolean;
   outcome: Exclude<PlacementOutcome, { status: "failed" }>;
 }): PlacementTestPhase {
   if (!asked) {
-    return { kind: "offer" };
+    return canStart ? { kind: "offer" } : { kind: "unavailable" };
   }
 
   if (outcome.status === "notReady") {
@@ -112,16 +113,17 @@ function toUnopenedPhase({
 }
 
 /**
- * Where a read of the test leaves the learner: an open test goes on at its next question. With
- * nothing open, onboarding shows the result of the test it ran; otherwise the test is offered, or
- * waited for when the learner already `asked` for it.
+ * `asked`: the learner already chose the test, so it's waited for instead of offered again.
+ * `canStart`: false when the course has nothing a test could skip, so the Plan offers no start.
  */
 export function toPlacementTestPhase({
   asked = false,
+  canStart = true,
   outcome,
   surface,
 }: {
   asked?: boolean;
+  canStart?: boolean;
   outcome: PlacementOutcome;
   surface: "onboarding" | "plan";
 }): PlacementTestPhase {
@@ -139,7 +141,7 @@ export function toPlacementTestPhase({
           heldUntilTomorrow: result.heldUntilTomorrow === true,
           result,
         })
-      : toUnopenedPhase({ asked, outcome });
+      : toUnopenedPhase({ asked, canStart, outcome });
   }
 
   if (outcome.status === "generationFailed") {

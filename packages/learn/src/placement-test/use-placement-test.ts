@@ -49,12 +49,14 @@ type OpenAttempt = { id: string };
 export function usePlacementTest({
   actions,
   analytics,
+  canStart,
   host,
   onLeave,
   run: build,
 }: {
   actions: PlacementTestActions;
   analytics: Pick<TestAnalytics, "markOpened" | "markStarted">;
+  canStart: boolean;
   host: PlacementTestHost;
   /** Leaves the test: onboarding goes on with setup, the Plan is read again. False when it didn't. */
   onLeave: (attemptId?: string) => Promise<boolean>;
@@ -91,7 +93,7 @@ export function usePlacementTest({
 
   /** A test that's over closes in the same save; if that fails, its screen holds the retry. */
   const show = async (outcome: PlacementOutcome, asked: boolean): Promise<boolean> => {
-    const next = toPlacementTestPhase({ asked, outcome, surface });
+    const next = toPlacementTestPhase({ asked, canStart, outcome, surface });
 
     if (next.kind !== "over") {
       setPhase(next);
@@ -114,7 +116,7 @@ export function usePlacementTest({
   };
 
   const open = async (outcome: PlacementOutcome) => {
-    const next = toPlacementTestPhase({ outcome, surface });
+    const next = toPlacementTestPhase({ canStart, outcome, surface });
 
     if (next.kind !== "offer" || !direct) {
       await show(outcome, false).catch(() => setPhase(next));

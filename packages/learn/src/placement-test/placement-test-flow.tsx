@@ -157,9 +157,18 @@ export function PlacementTestFlow({
   subject: string;
 }) {
   const analytics = useTestAnalytics({ goalId, surface: host.surface, test: "course" });
-  const test = usePlacementTest({ actions, analytics, host, onLeave, run });
-  const { failed, phase, pressed } = test;
   const onboarding = host.surface === "onboarding";
+
+  const test = usePlacementTest({
+    actions,
+    analytics,
+    canStart: onboarding || offer !== null,
+    host,
+    onLeave,
+    run,
+  });
+
+  const { failed, phase, pressed } = test;
   const asked = phase.kind === "question" ? phase.attempt : null;
 
   useFirstQuestionShown({
