@@ -117,6 +117,8 @@ struct MissionRow: View {
 
   let mission: StudyMission
   let buddyName: String
+  /// What the row is called when it isn't the mission's own name, as a first step's.
+  var name: String?
   /// Its place among the missions a result just completed, which stamp in one after another.
   var justDone: Int?
   var isBusy = false
@@ -157,7 +159,7 @@ struct MissionRow: View {
 
   private var text: some View {
     VStack(alignment: .leading, spacing: 2) {
-      Text(mission.name(buddy: buddyName))
+      Text(name ?? mission.name(buddy: buddyName))
         .foregroundStyle((mission.isDone && justDone == nil) || waits ? .mutedForeground : .primary)
 
       if failed {

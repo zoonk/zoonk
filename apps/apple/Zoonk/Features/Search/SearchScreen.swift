@@ -4,7 +4,6 @@ import SwiftUI
 /// catalog search.
 struct SearchScreen: View {
   @Environment(AppRouter.self) private var router
-  @Environment(BuddyStore.self) private var buddy
   @Environment(CourseCatalogStore.self) private var catalog
   @Environment(ExamStore.self) private var exams
   @Environment(LearnerSummaryStore.self) private var learner
@@ -222,8 +221,7 @@ struct SearchScreen: View {
   private func perform(_ action: SearchItem.Action) {
     switch action {
     case .ask(let question):
-      buddy.broughtQuestion = question
-      router.showRoot(of: .buddy)
+      router.openBuddy(.new(ask: question))
     case .open(let route):
       router.open(route)
     case .select(let tab):

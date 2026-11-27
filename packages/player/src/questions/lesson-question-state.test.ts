@@ -642,7 +642,10 @@ describe("plan changes in the buddy's conversation", () => {
     });
 
     const loaded = lessonQuestionReducer(
-      { ...INITIAL_LESSON_QUESTION_STATE, context: { kind: "plan" } },
+      {
+        ...INITIAL_LESSON_QUESTION_STATE,
+        context: { conversationId: "0198ca70-9c50-7000-8000-0000000000c1", kind: "plan" },
+      },
       { hasMore: false, nextCursor: null, questions: [earlier, latest], type: "threadLoaded" },
     );
 

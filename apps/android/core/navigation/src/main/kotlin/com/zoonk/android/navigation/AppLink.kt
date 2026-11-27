@@ -7,6 +7,7 @@ import kotlinx.serialization.json.put
 import java.net.URI
 import java.net.URISyntaxException
 import java.net.URLDecoder
+import java.util.UUID
 
 /** Main's URLs as routes: App Links, and the paths the app's own content links (a buddy answer's `/session?block=…`). */
 object AppLink {
@@ -278,7 +279,7 @@ object AppLink {
                     }
 
                     "buddy" -> {
-                        if (second == "earlier-questions") AppRoute.Buddy() else null
+                        buddyPage(second, ask = query["ask"])
                     }
 
                     "mock" -> {
@@ -375,6 +376,17 @@ object AppLink {
             }
         }
     }
+
+    /** Earlier questions were one page of the buddy's single conversation, which is now the tab. */
+    private fun buddyPage(
+        page: String,
+        ask: String?,
+    ): AppRoute? =
+        when (page) {
+            "earlier-questions" -> AppRoute.Buddy()
+            "new" -> AppRoute.Buddy(ask = ask, startsNew = true)
+            else -> runCatching { UUID.fromString(page) }.getOrNull()?.let { AppRoute.Buddy(conversationId = page) }
+        }
 
     private fun settingsPage(page: String): AppRoute? =
         when (page) {

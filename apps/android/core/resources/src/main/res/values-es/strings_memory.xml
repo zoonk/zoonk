@@ -22,7 +22,7 @@
   "memory_save_failed": "70d14e88cd2dc39731fe880eca698cb0e0dbfaef3a96a2069cfcb7fe74d2f9ef",
   "memory_sensitive_note": "1f61173af6480b821550c3a40291eda706328c20ace7d24c33eb8c098b459aee",
   "memory_source_call": "f5dc6f5cc0d2ce8b69c1e252962e0672fe4fabfff0bd80a73422f62048c298c9",
-  "memory_source_chat": "ea2f906603d77cfcc5539276deea456379e479cd4711dcae4f8616a5b9c64c54",
+  "memory_source_chat": "ed6415b7192e9c1a025f46e0cb1d1daf98279fa42c6c5fa888acaf9d94a6a818",
   "memory_source_noticed": "cc13c67f6685d46ed32bcd5fd42933c5d464c9577bac8b5f3fe4b996badc607a",
   "memory_source_session": "374808b272dcbc2ab91536ebcb17a57108b007a11882330977d127741473214a",
   "memory_source_you": "524090f7d573d37ee80f0fb53b6f10ef2e5adbc891e24f0d0ef15f2c229d28df",
@@ -51,7 +51,7 @@
     <string name="memory_source_you">Nos lo contaste</string>
     <!-- Where a remembered fact came from: a live practice call. Use the word the app uses for these calls, and keep it apart from “From a chat”, a typed chat with the tutor. -->
     <string name="memory_source_call">De una llamada</string>
-    <string name="memory_source_chat">De una conversación</string>
+    <string name="memory_source_chat">De un chat</string>
     <string name="memory_source_session">De tus lecciones</string>
     <!-- %1$s is where the fact came from ("From a chat") and %2$s the day it was noted. -->
     <string name="memory_fact_source">%1$s · %2$s</string>

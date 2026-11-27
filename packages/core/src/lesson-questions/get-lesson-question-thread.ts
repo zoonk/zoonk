@@ -9,20 +9,18 @@ import {
   markItemTurnsAnswered,
   toLessonQuestionThreadResource,
 } from "./_utils/question-resource";
-import { findTutorSubject, getSubjectThreadColumn } from "./_utils/tutor-subject";
+import { findTutorSubject, findTutorThread } from "./_utils/tutor-subject";
 import {
   type GetLessonQuestionThreadInput,
   MAX_LESSON_QUESTION_THREAD_TURNS,
   type TutorTarget,
 } from "./contract";
 
-type ThreadWhere = ReturnType<typeof getSubjectThreadColumn> & { userId: string };
-
 type QuestionScope = {
   contextKind: GetLessonQuestionThreadInput["contextKind"];
   stepId: string | undefined;
   mistakeId: string | undefined;
-  thread: ThreadWhere;
+  thread: { id: string; userId: string };
 };
 
 function getScopeWhere({ contextKind, mistakeId, stepId, thread }: QuestionScope) {
@@ -108,25 +106,35 @@ export async function getLessonQuestionThread({
     return { status: "invalidCursor" as const };
   }
 
-  const thread = { ...getSubjectThreadColumn(access.subject), userId: session.user.id };
+  const userId = session.user.id;
+  const found = await findTutorThread({ subject: access.subject, userId });
 
-  const [found, page] = await Promise.all([
-    prisma.lessonQuestionThread.findFirst({ where: thread }),
-    getQuestionPage({ contextKind, cursor, mistakeId, stepId, thread }),
-  ]);
+  if (found.status !== "ready") {
+    return found;
+  }
+
+  if (!found.thread) {
+    return cursor
+      ? { status: "invalidCursor" as const }
+      : { status: "ready" as const, thread: null };
+  }
+
+  const page = await getQuestionPage({
+    contextKind,
+    cursor,
+    mistakeId,
+    stepId,
+    thread: { id: found.thread.id, userId },
+  });
 
   if (page.status !== "ready") {
     return page;
   }
 
-  if (!found) {
-    return { status: "ready" as const, thread: null };
-  }
-
   const resource = await toLessonQuestionThreadResource({
     hasMore: page.hasMore,
     nextCursor: page.nextCursor,
-    thread: { ...found, questions: page.questions },
+    thread: { ...found.thread, questions: page.questions },
   });
 
   return {

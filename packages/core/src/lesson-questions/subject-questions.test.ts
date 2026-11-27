@@ -102,7 +102,7 @@ describe("asking the buddy about a subject", () => {
     ).resolves.toStrictEqual({ status: "ready", thread: null });
 
     await expect(
-      getLessonQuestionThread({ target: { goalId: goal.id, kind: "plan" } }),
+      getLessonQuestionThread({ target: { conversationId: null, goalId: goal.id, kind: "plan" } }),
     ).resolves.toStrictEqual({ status: "ready", thread: null });
 
     await expect(getLessonQuestion({ questionId })).resolves.toMatchObject({

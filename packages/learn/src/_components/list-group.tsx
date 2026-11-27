@@ -72,6 +72,7 @@ export function ListRowLink({
   children,
   className,
   current,
+  end,
   href,
   lessonWritten,
   onClick,
@@ -81,6 +82,7 @@ export function ListRowLink({
   className?: string;
   /** The page it opens is the one showing beside the list. */
   current?: boolean;
+  end?: React.ReactNode;
   href: string;
   lessonWritten?: boolean;
   onClick?: LearnLinkComponentProps["onClick"];
@@ -96,9 +98,7 @@ export function ListRowLink({
       prefetch={prefetch}
     >
       {children}
-      <BusyIcon className="text-muted-foreground self-center">
-        <RowChevron />
-      </BusyIcon>
+      <BusyIcon className="text-muted-foreground self-center">{end ?? <RowChevron />}</BusyIcon>
     </LearnLink>
   );
 }

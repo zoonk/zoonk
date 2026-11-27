@@ -50,7 +50,7 @@ async function questionWithNeeds(task: "goal" | "lesson") {
 
   const created = await createLessonQuestion({
     input: { context: { kind: "plan" }, question: "What comes next?", requestId: randomUUID() },
-    target: { goalId: goal.id, kind: "plan" },
+    target: { conversationId: null, goalId: goal.id, kind: "plan" },
   });
 
   if (created.status !== "created") {

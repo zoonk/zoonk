@@ -3618,11 +3618,6 @@ msgid "Ask {name} about this mock exam"
 msgstr "Zapytaj o ten egzamin próbny. Odpowie {name}"
 
 #: src/questions/ask-tutor.tsx
-msgctxt "tLlk0f"
-msgid "Ask {name} about your plan"
-msgstr "Zapytaj o swój plan. Odpowie {name}"
-
-#: src/questions/ask-tutor.tsx
 msgctxt "VgQdYo"
 msgid "Ask {name} about this module"
 msgstr "Zapytaj o ten moduł. Odpowie {name}"

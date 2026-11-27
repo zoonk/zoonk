@@ -5,6 +5,7 @@ enum AppLink: Equatable {
   case route(AppRoute)
   case block(blockId: String)
   case sheet(AppSheet)
+  case buddy(BuddyRequest)
 
   /// Mirrors `SUPPORTED_LOCALES` in `@zoonk/utils/locale`, which main prefixes its paths with.
   private static let localePrefixes: Set<String> = [
@@ -43,7 +44,7 @@ enum AppLink: Equatable {
     switch (path.count, paddedPath[0], paddedPath[1], paddedPath[2]) {
     case (1, "today", _, _): return .tab(.today)
     case (1, "plan", _, _): return .tab(.plan)
-    case (1, "buddy", _, _): return .tab(.buddy)
+    case (1, "buddy", _, _): return value("ask").map { .buddy(.new(ask: $0)) } ?? .tab(.buddy)
     case (1, "stats", _, _): return .route(.statistics())
     case (1, "courses", _, _): return .route(.catalog)
     case (1, "mind-maps", _, _): return .route(.mindMaps())
@@ -53,6 +54,9 @@ enum AppLink: Equatable {
     case (1, "saved-lessons", _, _): return .route(.savedLessons)
     case (1, "speaking", _, _): return .route(.speaking)
     case (2, "buddy", "earlier-questions", _): return .tab(.buddy)
+    case (2, "buddy", "new", _): return .buddy(.new(ask: value("ask")))
+    case (2, "buddy", let conversationId, _):
+      return UUID(uuidString: conversationId).map { _ in .buddy(.conversation(id: conversationId)) }
     case (2, "mock", "new", _): return .route(.mockChooser)
     case (2, "plan", let subjectKey, _): return .route(.subject(subjectKey: subjectKey))
     case (3, "content", "chapters", let chapterId): return .route(.chapter(chapterId: chapterId))
