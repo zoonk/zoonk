@@ -360,6 +360,7 @@ msgstr "Annuler"
 #: src/plan/plan-focus.tsx
 #: src/plan/plan-tool-sheet.tsx
 #: src/profile-questions/about-you-question-screen.tsx
+#: src/saved-lessons/lesson-save-button.tsx
 msgctxt "jvo0vs"
 msgid "Save"
 msgstr "Enregistrer"
@@ -2809,6 +2810,7 @@ msgstr "Toutes"
 
 #: src/completed-lessons/completed-lessons-screen.tsx
 #: src/mistakes/mistakes-notebook.tsx
+#: src/saved-lessons/saved-lessons-screen.tsx
 msgctxt "aWpBzj"
 msgid "Show more"
 msgstr "Afficher plus"
@@ -5014,6 +5016,13 @@ msgid "More"
 msgstr "Plus"
 
 #: src/journey/plan-sections.tsx
+#: src/saved-lessons/saved-lessons-row.tsx
+#: src/saved-lessons/saved-lessons-screen.tsx
+msgctxt "BwmLVN"
+msgid "Saved lessons"
+msgstr "Leçons enregistrées"
+
+#: src/journey/plan-sections.tsx
 #: src/mind-maps/mind-maps-screen.tsx
 #: src/syllabus/subject-chapters.tsx
 msgctxt "Z9Sg5E"
@@ -7135,7 +7144,14 @@ msgctxt "Oku1XG"
 msgid "Lesson map"
 msgstr "Carte mentale de la leçon"
 
+#. What screen readers say for Remove, naming the map.
 #: src/mind-maps/mind-map-index-rows.tsx
+msgctxt "-S6z5P"
+msgid "Remove {title} from saved maps"
+msgstr "Retirer {title} des cartes mentales enregistrées"
+
+#: src/mind-maps/mind-map-index-rows.tsx
+#: src/saved-lessons/saved-lessons-screen.tsx
 msgctxt "G_yZLu"
 msgid "Remove"
 msgstr "Retirer"
@@ -7155,6 +7171,18 @@ msgstr "En bref :"
 msgctxt "mindMapSaved"
 msgid "Saved"
 msgstr "Enregistrée"
+
+#: src/mind-maps/mind-map-save-button.tsx
+#: src/saved-lessons/lesson-save-button.tsx
+msgctxt "eIjk1v"
+msgid "Save {title}"
+msgstr "Enregistrer {title}"
+
+#. Read aloud for the bookmark on a saved mind map's row, which removes it: says the map {title} is saved.
+#: src/mind-maps/mind-map-save-button.tsx
+msgctxt "mindMapSavedTitle"
+msgid "Saved {title}"
+msgstr "Enregistrée : {title}"
 
 #: src/mind-maps/mind-map-viewer.tsx
 msgctxt "_UnJ3S"
@@ -7219,6 +7247,7 @@ msgid "Saved maps"
 msgstr "Cartes mentales enregistrées"
 
 #: src/mind-maps/mind-maps-screen.tsx
+#: src/saved-lessons/saved-lessons-screen.tsx
 msgctxt "g41uEF"
 msgid "No longer available"
 msgstr "Plus disponible"
@@ -7267,14 +7296,14 @@ msgid "Create all"
 msgstr "Tout créer"
 
 #: src/mind-maps/use-mind-map-saves.ts
-msgctxt "U0yWHz"
-msgid "Couldn't save this map. Try again."
-msgstr "Impossible d’enregistrer cette carte mentale. Réessaie."
-
-#: src/mind-maps/use-mind-map-saves.ts
 msgctxt "w16BF2"
 msgid "Couldn't remove this map. Try again."
 msgstr "Impossible de retirer cette carte mentale. Réessaie."
+
+#: src/mind-maps/use-mind-map-saves.ts
+msgctxt "U0yWHz"
+msgid "Couldn't save this map. Try again."
+msgstr "Impossible d’enregistrer cette carte mentale. Réessaie."
 
 #: src/missions/first-step-copy.tsx
 msgctxt "missions.0TTPFv"
@@ -8249,7 +8278,6 @@ msgid "Show less"
 msgstr "Afficher moins"
 
 #: src/mock/mock-result-breakdown.tsx
-#: src/today/use-row-label.ts
 msgctxt "SjSDDA"
 msgid "{count, plural, one {# more topic} other {# more topics}}"
 msgstr "{count, plural, one {# sujet de plus} other {# sujets de plus}}"
@@ -12347,6 +12375,46 @@ msgctxt "WIPDp7"
 msgid "vector {base}"
 msgstr "vecteur {base}"
 
+#. Read aloud for the bookmark on a saved lesson's row, which removes it: says the lesson {title} is saved.
+#: src/saved-lessons/lesson-save-button.tsx
+msgctxt "lessonSavedTitle"
+msgid "Saved {title}"
+msgstr "Enregistrée : {title}"
+
+#. Says the lesson is saved to do again later: the bookmark's state.
+#: src/saved-lessons/lesson-save-button.tsx
+msgctxt "lessonSaved"
+msgid "Saved"
+msgstr "Enregistrée"
+
+#. The line under Saved lessons in Practice anytime.
+#: src/saved-lessons/saved-lessons-row.tsx
+msgctxt "u7HPS5"
+msgid "Lessons you want to do again"
+msgstr "Leçons à refaire"
+
+#. What screen readers say for Remove, naming the lesson.
+#: src/saved-lessons/saved-lessons-screen.tsx
+msgctxt "mezuKn"
+msgid "Remove {title} from saved lessons"
+msgstr "Retirer {title} des leçons enregistrées"
+
+#: src/saved-lessons/saved-lessons-screen.tsx
+msgctxt "t7w-Fo"
+msgid "Nothing saved yet. Tap the bookmark on a lesson to keep it here."
+msgstr "Rien d’enregistré pour le moment. Appuie sur le marque-page d’une leçon pour la retrouver ici."
+
+#. Taking the lesson out of the saved lessons didn't work, so it's still saved.
+#: src/saved-lessons/use-lesson-saves.ts
+msgctxt "BcKHqn"
+msgid "Couldn't remove this lesson. Try again."
+msgstr "Impossible de retirer cette leçon. Réessaie."
+
+#: src/saved-lessons/use-lesson-saves.ts
+msgctxt "JBnz9z"
+msgid "Couldn't save this lesson. Try again."
+msgstr "Impossible d’enregistrer cette leçon. Réessaie."
+
 #: src/session/action-failed.tsx
 #: src/session/open-next-step.tsx
 #: src/today/today-action.tsx
@@ -12750,22 +12818,23 @@ msgctxt "n1W87b"
 msgid "New lesson"
 msgstr "Nouvelle leçon"
 
-#. A block of the day's practice. {topic} names the topic most of its questions are on, like "Calculating discounts".
+#. A block practising one subject the learner chose. {subject} names it, like "Percentages".
 #: src/session/use-block-copy.ts
-msgctxt "YGPuF7"
-msgid "Practice: {topic}"
-msgstr "Entraînement : {topic}"
+msgctxt "kjsfD5"
+msgid "Practice: {subject}"
+msgstr "Entraînement : {subject}"
 
-#. A block of the day's practice. {areas} names the one or two subjects most of its questions are on, like "Math and Languages".
+#. One of the day's practice blocks, numbered in the order the day lists them, like "Practice 2".
 #: src/session/use-block-copy.ts
-msgctxt "I85zr9"
-msgid "Practice: {areas}"
-msgstr "Entraînement : {areas}"
+msgctxt "5-NTPa"
+msgid "Practice {number, number}"
+msgstr "Entraînement {number, number}"
 
+#. A block of the day's practice questions, when it's the day's only one
 #: src/session/use-block-copy.ts
-msgctxt "MbAJ4_"
-msgid "Mixed practice"
-msgstr "Entraînement varié"
+msgctxt "practiceBlock.KV-O0y"
+msgid "Practice"
+msgstr "Entraînement"
 
 #: src/session/use-block-copy.ts
 msgctxt "87izcS"
@@ -13809,6 +13878,12 @@ msgstr "Durée prévue : {time}"
 msgctxt "-FZPmK"
 msgid "Not studied"
 msgstr "Pas de séance"
+
+#. Today's line under a practice: how many topics it mixes, then the one it asks most, like "3 topics · Calculating discounts".
+#: src/today/use-row-label.ts
+msgctxt "AX3sJq"
+msgid "{count, plural, one {# topic} other {# topics}} · {topic}"
+msgstr "{count, plural, one {# sujet} other {# sujets}} · {topic}"
 
 #: src/today/use-row-label.ts
 msgctxt "OUc_Xr"

@@ -209,6 +209,7 @@ filter:
     - listInstrumentWaitlist
     - listMocks
     - listPronunciationReviews
+    - listSavedLessons
     - listSourceChangeNotices
     - markCertificateShown
     - markPlanRevealed
@@ -230,6 +231,7 @@ filter:
     - requestSpeechClip
     - resumeStripeSubscription
     - reviseGoalUnderstanding
+    - saveLesson
     - saveMindMap
     - saveMockAnswer
     - saveWritingDraft

@@ -59,6 +59,8 @@ struct LessonRunStart: Hashable, Sendable {
   let answers: [LessonRunAnswer]
   let hyperdrive: LessonHyperdriveStart
   let optionalStepIds: [String]
+  /// The learner saved the lesson to do again.
+  var saved = false
 }
 
 struct LessonFit: Hashable, Sendable {
@@ -194,7 +196,7 @@ struct LessonPlayerAPI: Sendable {
           },
           hyperdrive: LessonHyperdriveStart(
             knownStepIds: Set(run.hyperdrive.knownStepIds), streak: run.hyperdrive.streak),
-          optionalStepIds: run.optionalStepIds ?? []))
+          optionalStepIds: run.optionalStepIds ?? [], saved: run.saved))
     case .unauthorized:
       throw APIError.unauthorized
     case .notFound:

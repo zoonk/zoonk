@@ -19,6 +19,7 @@ import { type DayBlockInput, toDayBlockView } from "./day-block-view";
 import { inDayOrder } from "./day-order";
 import { planEntitlementLapseRefill } from "./entitlement-lapse-refill";
 import { loadStudySessionView } from "./load-session-view";
+import { getPracticeNumber } from "./practice-number";
 import { planSavedMockReview } from "./saved-mock-review";
 import { getSessionBar } from "./session-view";
 import { type StudySessionRow } from "./study-session-access";
@@ -126,7 +127,7 @@ export async function readSavedDayView({
 
       if (saved) {
         const { id: _id, ...fields } = saved;
-        return fields;
+        return { ...fields, practiceNumber: getPracticeNumber({ block, blocks: refill.blocks }) };
       }
 
       return toDayBlockView({

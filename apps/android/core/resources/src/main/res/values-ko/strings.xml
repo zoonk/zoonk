@@ -58,6 +58,7 @@
   "navigation_mind_maps": "b1055fb3d20c40e9279c9fa8b6ea86e4c107efe0898763f966e76ce32ec0fa8b",
   "navigation_mistakes": "1f57824caf03c70d707a0fc8563eb96d89bd6c5f2d89f591bfccad8fba00a818",
   "navigation_plan": "2d96bcc0f5c7d720e9743a360f9059afc1a05ebd06c2c905b23725a0c521881a",
+  "navigation_saved_lessons": "f83dd61afe6d5d48c443a19086b7e0eddf0b9a18f1e4c2702c2cf0b9c9392228",
   "navigation_speaking": "3748dc876f90eac9e94c9d3398b10c6b63a9f1c1119d519bfa8b126fbfeac634",
   "navigation_statistics": "50e605bd81c1591010e99f38018ca36a3dfab09a4b2e82af64e80061839b5968",
   "navigation_study": "bbc4c3383534af356e5029461ac65fed0b60433a84719cdaec1ece97cf16af40",
@@ -86,6 +87,7 @@
     <string name="navigation_buddy">짝꿍</string>
     <string name="navigation_study">학습</string>
     <string name="navigation_mistakes">오답 노트</string>
+    <string name="navigation_saved_lessons">저장한 레슨</string>
     <!-- A place name, like "Mistakes notebook": the page listing the lessons the learner finished, to do them again. -->
     <string name="navigation_completed_lessons">완료한 레슨</string>
     <string name="navigation_exam">내 시험</string>

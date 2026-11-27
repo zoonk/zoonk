@@ -4,12 +4,12 @@
   "session_belt_step": "0543f6e3ab9b408327dbfe078f29f690d50072261ab79560fb17472a42c58ea8",
   "session_block_call": "7d00940da9d0a472dca137d102f64b7b667e518cf769fac984dd45dfdeebb4e4",
   "session_block_full_review_questions": "c8d6a72f6ebb16724b9bdc167ef883cfb53698d5843ecaad9c69fa0fda797080",
-  "session_block_mixed_practice": "2d286e8c58747b942d78450048a1ded1e1aa421532554835732b50be00951702",
   "session_block_mock_exam": "15ed4b33b136261cfd0247f453b6dee198d5cb4129a6b4b0b3fe6c3bcbc81a43",
   "session_block_new_lesson": "012b8afe3e4a820f645bcb0a1ebab3593ffeda29900cfb7ffba72a9256259e8e",
-  "session_block_practice_areas": "cacb3d3f817713d3559abce36554daddb74d8a09595fd6fadc7776c341d08805",
+  "session_block_practice": "b97901a6e8fdaca33b4d504289b3e8c02778ad6294fa19cb65a79572e5942e18",
   "session_block_practice_mistakes": "39fb8deac9f6d72514ca750630c57498c745c4196e28844245e9495a1c76de58",
-  "session_block_practice_topic": "edab2b6b1bd3419acd03d097eafebcbcbaa5401da733e77123e1350bed8ac448",
+  "session_block_practice_number": "a777e3a18deeabc4a3435371b128b0c90f8d419f5d3258215ece76f0c0a90fbc",
+  "session_block_practice_subject": "5c29f3325dbd41c3ae887f815d062fb5deca23bd2966914f0bc3f27afaec4eac",
   "session_block_questions": "19a794b7faf89c0a67ea3d017cea54e88034da483af3d7094e6b714b872e9340",
   "session_block_rematch": "c04e54d8410d7e10fcd1fd427d2db969a52b710e578fd5945a90bc9d31a2f0ef",
   "session_block_rematch_lesson": "eb631647b8056ee099a86527f811c375a903bd3e705aa4a23968e856f1b8b655",
@@ -83,7 +83,8 @@
   "session_summary_streak": "8bea2177058aa03cdb6f6454b16477c49ca3a68c720ae27c6d6d219608e1ae31",
   "session_summary_tomorrow": "5845b56f33287f1a6d377cbf843784306ecf5b646d544d6e6cc69a203c040956",
   "session_summary_up_from": "67e35b1a324a9ff3903ddb5ff01b71f2abb91f0cd932bbc3d264a18178282507",
-  "session_topics_and_more": "fbffcf62379f9f6c97343928b6eec9f4e12cad49e4deb4ad6931de2242b49e6f"
+  "session_topics_and_more": "fbffcf62379f9f6c97343928b6eec9f4e12cad49e4deb4ad6931de2242b49e6f",
+  "today_step_practice_topics": "6558a8a0c08ca1752b2845adfeb277c3de590240163d7e21b039cf84cb31f466"
 }
 -->
 <resources>
@@ -99,11 +100,12 @@
     <string name="session_block_new_lesson">새 레슨</string>
     <string name="session_block_writing_draft_saved">초안이 저장됐어요</string>
     <string name="session_block_practice_mistakes">틀린 문제 연습</string>
-    <string name="session_block_mixed_practice">섞어서 연습하기</string>
-    <!-- A block of the day's practice. %1$s names the one or two subjects most of its questions are on, like "Math and Languages". -->
-    <string name="session_block_practice_areas">연습: %1$s</string>
-    <!-- A block of the day's practice. {topic} names the topic most of its questions are on, like "Calculating discounts". -->
-    <string name="session_block_practice_topic">연습: %1$s</string>
+    <!-- A block of the day's practice questions, when it's the day's only one -->
+    <string name="session_block_practice">연습</string>
+    <!-- One of the day's practice blocks, numbered in the order the day lists them, like "Practice 2". -->
+    <string name="session_block_practice_number">연습 %1$d</string>
+    <!-- A block practising one subject the learner chose. {subject} names it, like "Percentages". -->
+    <string name="session_block_practice_subject">%1$s 연습</string>
     <string name="session_block_rematch_lesson">재도전 전 짧은 레슨</string>
     <plurals name="session_block_questions">
         <item quantity="other">%d문제</item>
@@ -120,6 +122,10 @@
         <item quantity="other">모든 주제를 다루는 문제 %d개</item>
     </plurals>
     <!-- %1$s names the first topics; %2$d counts the rest. -->
+    <!-- Today's line under a practice: how many topics it mixes, then the one it asks most, like "3 topics · Calculating discounts". -->
+    <plurals name="today_step_practice_topics">
+        <item quantity="other">%1$d개 주제 · %2$s</item>
+    </plurals>
     <plurals name="session_topics_and_more">
         <item quantity="other">%1$s 외 %2$d개 주제</item>
     </plurals>

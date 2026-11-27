@@ -34,7 +34,7 @@ class LessonStartApiTest {
                         .addHeader("Content-Type", "application/json")
                         .body(
                             """{"answers":[],"hyperdrive":{"knownStepIds":[],"streak":0},"optionalStepIds":[],
-                    "runId":"$id","sessionId":"$id","replay":false,"startedAt":"2026-10-28T10:00:00Z","support":null}
+                    "runId":"$id","sessionId":"$id","replay":false,"saved":false,"startedAt":"2026-10-28T10:00:00Z","support":null}
                 """,
                         ).build(),
                 )
