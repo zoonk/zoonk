@@ -5,16 +5,13 @@ import { settleWithConcurrency } from "@/lib/concurrency";
 import { getCallsCost } from "@/lib/cost";
 import { getMeteredCalls, meterModelCalls } from "@/lib/spend-meter";
 import {
-  BLIND_KEYS_FILE,
   BLIND_KEY_INSTRUCTIONS,
   type BlindKey,
   type BlindKeyFile,
-} from "@/tasks/grade-essay-blind-key/blind-keys";
-import {
-  SOURCE_QUESTIONS,
-  type SourceQuestion,
-} from "@/tasks/grade-essay-blind-key/source-questions";
+} from "@/tasks/grade-essay/blind-keys";
+import { CALIBRATION_KEYS_PATH } from "@/tasks/grade-essay/calibration-cases";
 import { SAF_KEY_SOURCES } from "@/tasks/grade-essay/cases/saf";
+import { SOURCE_QUESTIONS, type SourceQuestion } from "@/tasks/grade-essay/cases/source-questions";
 import { zoonkDefaultProvider } from "@zoonk/ai/gateway";
 import { GATEWAY_PRICES } from "@zoonk/ai/pricing/call-cost";
 import {
@@ -27,11 +24,9 @@ function print(line = "") {
   process.stdout.write(`${line}\n`);
 }
 
-/** The writer sees only the notice's task and grading, never a candidate's answer or the board's standard, aspects or marks. */
 async function writeKey(
   source: Pick<SourceQuestion, "context" | "id" | "question" | "writerInput">,
   draw: number,
-  calibration: boolean,
 ): Promise<BlindKey> {
   const input: WritingPromptInput & { givenContext: string | null; givenQuestion: string } = {
     ...source.writerInput,
@@ -43,7 +38,7 @@ async function writeKey(
     appendedInstructions: BLIND_KEY_INSTRUCTIONS,
     input,
     shared: true,
-    useFallback: !calibration,
+    useFallback: false,
     wait: "soon",
   });
 
@@ -74,9 +69,8 @@ async function main() {
   const { positionals, values } = parseArgs({
     allowPositionals: true,
     options: {
-      calibration: { default: false, type: "boolean" },
       draw: { default: "1", type: "string" },
-      output: { default: BLIND_KEYS_FILE, type: "string" },
+      output: { default: CALIBRATION_KEYS_PATH, type: "string" },
     },
   });
 
@@ -86,9 +80,7 @@ async function main() {
     throw new Error(`--draw takes a whole number from 1: ${values.draw}`);
   }
 
-  const available = values.calibration
-    ? [...SOURCE_QUESTIONS, ...SAF_KEY_SOURCES]
-    : SOURCE_QUESTIONS;
+  const available = [...SOURCE_QUESTIONS, ...SAF_KEY_SOURCES];
 
   const sources = available.filter(
     ({ id }) => positionals.length === 0 || positionals.includes(id),
@@ -99,7 +91,7 @@ async function main() {
   const settled = await settleWithConcurrency({
     concurrency: 6,
     items: sources,
-    run: (source) => writeKey(source, draw, values.calibration),
+    run: (source) => writeKey(source, draw),
   });
 
   const keys = settled.flatMap((result, index) => {

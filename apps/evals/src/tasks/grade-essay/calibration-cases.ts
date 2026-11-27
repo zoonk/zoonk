@@ -1,12 +1,12 @@
 import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { type WritingRowKind } from "@zoonk/core/exams/essays/writing-contract";
-import { type BlindKeyFile, blindKeyInput } from "../grade-essay-blind-key/blind-keys";
-import { SOURCE_QUESTIONS } from "../grade-essay-blind-key/source-questions";
+import { type BlindKeyFile, blindKeyInput } from "./blind-keys";
 import { ENEM_CALIBRATION_MARKS, loadEnemCalibrationCases } from "./cases/enem-calibration";
 import { ELLIPSE_CASES, asapCases } from "./cases/published-scales";
 import { SAF_CASES, SAF_KEY_SOURCES } from "./cases/saf";
 import { type GradeWritingInput, type WritingCase } from "./cases/shared";
+import { SOURCE_QUESTIONS } from "./cases/source-questions";
 
 export type CalibrationAnswer = {
   answer: string;

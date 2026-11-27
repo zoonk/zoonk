@@ -1,10 +1,9 @@
 import { type WritingPromptInput } from "@zoonk/ai/tasks/items/write-writing-prompt";
-import { CEBRASPE_PUBLISHED_CASES } from "../grade-essay/cases/cebraspe-published";
-import { type CacdTechnicalSubject } from "../grade-essay/cases/cebraspe-technical";
-import { FGV_PUBLISHED_CASES } from "../grade-essay/cases/fgv-published";
-import { type Grading, type WritingCase } from "../grade-essay/cases/shared";
+import { CEBRASPE_PUBLISHED_CASES } from "./cebraspe-published";
+import { type CacdTechnicalSubject } from "./cebraspe-technical";
+import { FGV_PUBLISHED_CASES } from "./fgv-published";
+import { type Grading, type WritingCase } from "./shared";
 
-/** A real question a board set, as the writer may see it: the notice's rules, never its key. */
 export type SourceQuestion = {
   id: string;
   board: "FGV/OAB" | "Cebraspe";
@@ -41,7 +40,6 @@ const CACD_CUTOFF = { share: 0.6, source: "CACD notice 6.8.10: 480.00 of 800.00 
 
 const CACD_SUBJECTS = { economics: "Economia", history: "História do Brasil", law: "Direito" };
 
-/** The grading the writer and the grader see cite the notice, never the board's standard. */
 function noticeGrading(grading: Grading, notice: string, passage: string): Grading {
   return {
     ...grading,

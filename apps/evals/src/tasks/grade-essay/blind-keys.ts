@@ -1,9 +1,7 @@
 import { type WritingPromptOutput } from "@zoonk/ai/tasks/items/write-writing-prompt";
 import { keyAspects } from "@zoonk/core/library/items/write-writing-item";
-import { type GradeWritingInput } from "../grade-essay/cases/shared";
-import { type SourceQuestion } from "./source-questions";
-
-export const BLIND_KEYS_FILE = "eval-results/blind-keys/keys.json";
+import { type GradeWritingInput } from "./cases/shared";
+import { type SourceQuestion } from "./cases/source-questions";
 
 export const BLIND_KEY_INSTRUCTIONS = `## A question the board already set
 
@@ -13,7 +11,6 @@ export type BlindKey = {
   questionId: string;
   draw: number;
   model: string;
-  /** The writer's template revision, as core pins it in `getWritingKeyWriter()`. */
   promptRevision: string;
   copiedQuestion: boolean;
   costUsd: number | null;
@@ -30,11 +27,7 @@ export type BlindKeyFile = {
   keys: BlindKey[];
 };
 
-/**
- * The basis production saves from the writer's key (`promptContent` in core): the notice's
- * criteria and grading, the writer's aspects and key points, keyed as a practice key. The grader
- * reads the real question, since that is what the candidate answered.
- */
+/** Mirrors the basis core saves from a written key (`promptContent`), so calibration grades what production grades. */
 export function blindKeyInput({
   key,
   source,
