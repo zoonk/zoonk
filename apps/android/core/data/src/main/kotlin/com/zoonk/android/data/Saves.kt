@@ -1,6 +1,5 @@
 package com.zoonk.android.data
 
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,11 +13,17 @@ enum class SaveFailure { Save, Remove }
  * The app's saves of one kind of thing (a map, a lesson), main's tab saves: each tap shows on every screen at once and
  * is sent as the state the learner wants, one request at a time for each thing whichever screen it was made on, so
  * quick taps end on the last one and what the server took last is what every screen shows. A save is sent even once
- * its screen goes, as the learner asked for it. [scope] is the app's.
+ * its screen goes, as the learner asked for it. Each learner's taps are theirs: a session's answer that comes back
+ * once another is signed in changes nothing for the next one.
  */
 class Saves<K : Any>(
-    private val scope: CoroutineScope,
+    private val cache: AppCache,
 ) {
+    private data class Pending<K>(
+        val session: AuthenticatedSession,
+        val key: K,
+    )
+
     private class Tap(
         val saved: Boolean,
         val asker: SaveVisit<*>,
@@ -27,10 +32,10 @@ class Saves<K : Any>(
     )
 
     /** Each thing's newest tap while a request for it is out. */
-    private val taps = mutableMapOf<K, Tap>()
+    private val taps = mutableMapOf<Pending<K>, Tap>()
 
     /** What the server took last for each thing, until a save of it fails. */
-    private val stored = mutableMapOf<K, Boolean>()
+    private val stored = mutableMapOf<Pending<K>, Boolean>()
 
     private val visits = mutableListOf<WeakReference<SaveVisit<K>>>()
 
@@ -47,25 +52,31 @@ class Saves<K : Any>(
         visit: Int,
         write: suspend (saved: Boolean) -> MutationResult<Boolean>,
     ) {
-        val sending = key in taps
-        taps[key] = Tap(saved, asker, visit, write)
+        val pending = Pending(cache.session.current ?: return, key)
+        val sending = pending in taps
+        taps[pending] = Tap(saved, asker, visit, write)
         show()
-        if (!sending) scope.launch { send(key) }
+        if (!sending) cache.scope.launch { send(pending) }
     }
 
-    /** What [touched] shows of these saves: every tap on its way, and what the server took for the rest. */
-    internal fun shown(touched: Set<K>): Map<K, Boolean> = stored.filterKeys { it in touched } + taps.mapValues { it.value.saved }
+    /** What [touched] shows of the current learner's saves: every tap on its way, and what the server took for the rest. */
+    internal fun shown(touched: Set<K>): Map<K, Boolean> {
+        val session = cache.session.current
+        val stored = stored.filterKeys { it.session == session && it.key in touched }
+        val taps = taps.filterKeys { it.session == session }.mapValues { it.value.saved }
+        return (stored + taps).mapKeys { it.key.key }
+    }
 
-    private suspend fun send(key: K) {
+    private suspend fun send(pending: Pending<K>) {
         while (true) {
-            val tap = taps.getValue(key)
+            val tap = taps.getValue(pending)
             val result = tap.write(tap.saved)
             if (result is MutationResult.Done) {
-                stored[key] = result.value
-                if (taps.getValue(key).saved != tap.saved) continue
+                stored[pending] = result.value
+                if (taps.getValue(pending).saved != tap.saved) continue
             } else {
-                stored -= key
-                val newest = taps.getValue(key)
+                stored -= pending
+                val newest = taps.getValue(pending)
                 if (result is MutationResult.Failed) {
                     newest.asker.failed.send(
                         newest.visit,
@@ -75,7 +86,7 @@ class Saves<K : Any>(
             }
             break
         }
-        taps -= key
+        taps -= pending
         show()
     }
 

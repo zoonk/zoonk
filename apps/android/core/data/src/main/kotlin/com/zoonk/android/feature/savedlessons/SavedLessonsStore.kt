@@ -88,7 +88,7 @@ class SavedLessonsStore(
         return { saved -> if (taken[lessonId] == before) saved else lastTaken.getValue(lessonId) }
     }
 
-    private val queue = Saves<UUID>(cache.scope)
+    private val queue = Saves<UUID>(cache)
 
     /** A screen's [visit] to the lesson saves, saving them from [goalId]. */
     fun saves(

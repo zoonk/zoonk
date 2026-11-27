@@ -214,7 +214,7 @@ class MindMapStore(
         return result
     }
 
-    private val queue = Saves<MindMapTarget>(cache.scope)
+    private val queue = Saves<MindMapTarget>(cache)
 
     /** A screen's [visit] to the map saves, saving them from [goalId]; [chapterOf] is the chapter each one's save reads again. */
     fun saves(
