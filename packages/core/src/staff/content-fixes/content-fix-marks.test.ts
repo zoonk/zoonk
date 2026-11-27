@@ -203,6 +203,28 @@ describe("marks on screens a fix rewrites", () => {
     });
   });
 
+  it("keeps a kept screen's example box when marking it again frames nothing", async () => {
+    const { check, lesson, reading } = await markedLesson();
+    await signInProposer();
+
+    const fix = await proposeFix({
+      changes: [
+        {
+          id: lesson.id,
+          model: "Lesson",
+          setScreens: { screens: [{ id: reading.id, remark: true }, { id: check.id }], version: 1 },
+        },
+      ],
+      reason: "Frame the whole case",
+    });
+
+    markedAs({ example: null, underline: null });
+    await prepareMarks(fix.id);
+    await approveFix(fix.id);
+
+    await expect(explanationMarks(lesson.id)).resolves.toStrictEqual({ marks: savedMarks });
+  });
+
   it("keeps a kept screen's example box when marking it again fails", async () => {
     const { check, lesson, reading } = await markedLesson();
     await signInProposer();
