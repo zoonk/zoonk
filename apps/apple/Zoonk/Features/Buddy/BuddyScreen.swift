@@ -344,21 +344,13 @@ private struct BuddyContent: View {
   private func thread(listsBeside: Bool) -> some View {
     conversationView
       .safeAreaBar(edge: .top) {
-        MarkedRow(alignment: .center, stackedSpacing: 4) {
+        PageHeader(Text(name)) {
           face
-        } content: {
+        } beside: {
           // Beside the name it reads as the buddy's status, not as one of the row's buttons.
-          AccessibilityStack(spacing: 10, stackedSpacing: 0) {
-            Text(name)
-              .typeStyle(.pageTitle)
-              .foregroundStyle(Color(.foreground))
-              .accessibilityAddTraits(.isHeader)
-              .heroTitle()
-
-            energyButton
-              .fixedSize()
-          }
-        } end: {
+          energyButton
+            .fixedSize()
+        } trailing: {
           if !listsBeside, list?.value != nil {
             Button {
               isListShown = true
@@ -381,7 +373,7 @@ private struct BuddyContent: View {
         .listRowEdges()
         // A list's first row sits this far under the bar, so the title is where every page's is.
         .padding(.top, 12)
-        .padding(.bottom, 16)
+        .padding(.bottom, 8)
       }
       .pageColumn()
   }
