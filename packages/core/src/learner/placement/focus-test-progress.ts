@@ -105,7 +105,7 @@ export function getTestProgress({
  * The plan areas to ask now: subjects with no answer first, then the heaviest, then the notice's
  * order, leaving out what quick questions can't check and a subject asked four times this sitting.
  */
-export function getAreaOrder(subjects: readonly SubjectProgress[]): string[] {
+export function getAreaOrder(subjects: readonly SubjectProgress[], firstSitting = false): string[] {
   return subjects
     .map((subject, index) => ({ index, subject }))
     .filter(
@@ -113,6 +113,7 @@ export function getAreaOrder(subjects: readonly SubjectProgress[]): string[] {
     )
     .toSorted(
       (a, b) =>
+        (firstSitting ? a.subject.sittingAnswers - b.subject.sittingAnswers : 0) ||
         Math.min(a.subject.asked, 1) - Math.min(b.subject.asked, 1) ||
         b.subject.share - a.subject.share ||
         a.index - b.index,

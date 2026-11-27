@@ -265,6 +265,7 @@ async function loadLegacyPlacement({
       skills: turn?.skills ?? skills,
       statuses: questionStatuses,
     },
+    firstSitting: turn?.progress.sitting?.kind === "first",
     items,
     preparingSkillIds: build.preparingSkillIds,
     quickFormat,
