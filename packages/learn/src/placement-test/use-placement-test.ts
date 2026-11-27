@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { usePoll } from "../_utils/use-poll";
 import { type PlacementAnswer, type PlacementOutcome } from "../onboarding/onboarding-actions";
+import { usePlacementQuestionPoll } from "../onboarding/steps/use-placement-question-poll";
 import { useReadOnOpen } from "../onboarding/steps/use-read-on-open";
 import { type PlacementLength, type PlacementTestActions } from "./placement-test-actions";
 import {
@@ -11,8 +11,6 @@ import {
   toFinishedPhase,
   toPlacementTestPhase,
 } from "./placement-test-phase";
-
-const POLL_MS = 3000;
 
 const FAILED: PlacementOutcome = { status: "failed" };
 
@@ -60,8 +58,7 @@ export function usePlacementTest({
   const [failed, setFailed] = useState(false);
   const [pressed, setPressed] = useState<PlacementPressed>(null);
   const [isPending, startTransition] = useTransition();
-  // Questions that arrived while the learner waited show once the wait moves on.
-  const [arrived, setArrived] = useState<PlacementOutcome | null>(null);
+  const waiting = phase.kind === "waiting" ? phase : null;
 
   /** Closing a part applies what it skipped; another device that closed it first wins. */
   const close = async (attempt: { id: string; length: PlacementLength; part: number }) => {
@@ -126,21 +123,7 @@ export function usePlacementTest({
     read: actions.get,
   });
 
-  const poll = usePoll({
-    active: phase.kind === "waiting" && arrived === null,
-    intervalMs: POLL_MS,
-    onPoll: async () => {
-      const outcome = await actions.get();
-
-      if (outcome.status === "failed") {
-        throw new Error("The test couldn't be read");
-      }
-
-      if (outcome.status === "ready") {
-        setArrived(outcome);
-      }
-    },
-  });
+  const poll = usePlacementQuestionPoll({ read: actions.get, setPhase, waiting });
 
   const save = (button: PlacementPressed, action: () => Promise<boolean>) => {
     setPressed(button);
@@ -185,8 +168,9 @@ export function usePlacementTest({
   return {
     answer,
     continueWait: () => {
+      const arrived = waiting?.arrived;
+
       if (arrived) {
-        setArrived(null);
         save(null, () => show(arrived));
       }
     },
@@ -204,7 +188,7 @@ export function usePlacementTest({
     phase,
     poll,
     pressed,
-    questionsReady: arrived !== null,
+    questionsReady: Boolean(waiting?.arrived),
     reopen,
     stop: (from: PlacementQuestionPhase) =>
       startTransition(async () => {

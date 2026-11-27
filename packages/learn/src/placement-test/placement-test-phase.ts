@@ -4,6 +4,7 @@ import {
   type PlacementOutcome,
   type PlacementQuestion,
 } from "../onboarding/onboarding-actions";
+import { type PlacementQuestionWait } from "../onboarding/steps/use-placement-question-poll";
 import { type PlacementPartOutcome } from "./placement-test-actions";
 
 export type PlacementQuestionPhase = {
@@ -22,7 +23,8 @@ type Finished = Extract<PlacementPartOutcome, { status: "finished" }>;
 export type PlacementTestPhase =
   | PlacementQuestionPhase
   /** `waiting`: the open test's questions are still being written. */
-  | { kind: "choose" | "loadFailed" | "loading" | "waiting" }
+  | PlacementQuestionWait
+  | { kind: "choose" | "loadFailed" | "loading" }
   /** This part asks nothing more and isn't closed yet: closing it is the next save. */
   | { attempt: PlacementAttemptView; kind: "partOver" }
   /**

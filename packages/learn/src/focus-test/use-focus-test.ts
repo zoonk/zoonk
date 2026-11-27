@@ -1,15 +1,13 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { usePoll } from "../_utils/use-poll";
 import { type GenerationRun } from "../generation/generation-run";
 import { type PlacementAnswer, type PlacementOutcome } from "../onboarding/onboarding-actions";
+import { usePlacementQuestionPoll } from "../onboarding/steps/use-placement-question-poll";
 import { useReadOnOpen } from "../onboarding/steps/use-read-on-open";
 import { isRunStopped } from "../onboarding/steps/wait-run";
 import { type FocusTestActions } from "./focus-test-actions";
 import { type FocusTestPhase, type QuestionPhase, toFocusTestPhase } from "./focus-test-phase";
-
-const POLL_MS = 3000;
 
 /** The button a save started from, which shows it's busy while the other waits. */
 export type Pressed = "main" | "other" | null;
@@ -39,9 +37,7 @@ function useTestState({
   started: boolean;
 }) {
   const [phase, setPhase] = useState<FocusTestPhase>({ kind: "loading" });
-  const [buildFailed, setBuildFailed] = useState(false);
-  // Questions that arrived while the learner waited show once the wait moves on.
-  const [arrived, setArrived] = useState<PlacementOutcome | null>(null);
+  const waiting = phase.kind === "waiting" ? phase : null;
 
   const reopen = useReadOnOpen({
     onRead: (outcome) =>
@@ -49,30 +45,18 @@ function useTestState({
     read: actions.get,
   });
 
-  const hear = (outcome: PlacementOutcome) => {
-    if (outcome.status === "failed") {
-      throw new Error("The test couldn't be read");
-    }
-
-    setBuildFailed(outcome.status === "generationFailed");
-
-    if (outcome.status === "unavailable") {
-      setPhase({ kind: "unavailable" });
-    }
-
-    if (outcome.status === "ready") {
-      setArrived(outcome);
-    }
-  };
-
-  // A run that failed or never started pauses checking until its "Try again" starts it over.
-  const poll = usePoll({
-    active: phase.kind === "waiting" && arrived === null && !isRunStopped(run),
-    intervalMs: POLL_MS,
-    onPoll: async () => hear(await actions.get()),
+  const poll = usePlacementQuestionPoll<FocusTestPhase>({
+    onProgress: (wait, outcome) =>
+      outcome.status === "unavailable"
+        ? { kind: "unavailable" }
+        : { ...wait, buildFailed: outcome.status === "generationFailed" },
+    paused: isRunStopped(run),
+    read: actions.get,
+    setPhase,
+    waiting,
   });
 
-  return { arrived, buildFailed, phase, poll, reopen, setArrived, setPhase };
+  return { phase, poll, reopen, setPhase, waiting };
 }
 
 export function useFocusTest({
@@ -86,16 +70,13 @@ export function useFocusTest({
   run: GenerationRun | null;
   started: boolean;
 }) {
-  const { arrived, buildFailed, phase, poll, reopen, setArrived, setPhase } = useTestState({
-    actions,
-    run,
-    started,
-  });
+  const { phase, poll, reopen, setPhase, waiting } = useTestState({ actions, run, started });
 
   const [failed, setFailed] = useState(false);
   const [pressed, setPressed] = useState<Pressed>(null);
   const [isPending, startTransition] = useTransition();
   const leave = () => onDone().catch(() => false);
+  const arrived = waiting?.arrived;
 
   /** Closing applies the answers; a test that still has none is only skipped, and the host moves on. */
   const close = async (): Promise<boolean> => {
@@ -173,10 +154,9 @@ export function useFocusTest({
 
   return {
     answer,
-    buildFailed,
+    buildFailed: Boolean(waiting?.buildFailed && !arrived),
     continueWait: () => {
       if (arrived) {
-        setArrived(null);
         save(null, () => show(arrived));
       }
     },
@@ -191,7 +171,7 @@ export function useFocusTest({
     phase,
     poll,
     pressed,
-    questionsReady: arrived !== null,
+    questionsReady: Boolean(arrived),
     reopen,
     resume: (question: QuestionPhase) => setPhase(question),
     stop,
