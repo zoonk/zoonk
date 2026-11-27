@@ -268,3 +268,9 @@ export function usePlanScreen(): PlanScreenContextValue {
 
   return value;
 }
+
+/** What fits is measured over the subjects the plan kept, so "everything" means only those. */
+export function useSubjectsTakenOut(): boolean {
+  const { plan } = usePlanScreen();
+  return plan.areas.some((area) => area.skipped);
+}

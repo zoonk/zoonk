@@ -38,14 +38,14 @@ Look at the sketch as a picture before anyone builds or briefs it. `pnpm design:
 
 ## The scan
 
-Asked of every new or changed screen, on its phone picture, before any other question and before any ruler. The builder asks it of the sketch; a reader who built none of it asks it again of the built screen ([the first-glance test](../SKILL.md#the-first-glance-test)), on the squint copy first, where body text can't be read (`pnpm design:sketch --squint <picture>` makes one from any screenshot).
+Asked of every new or changed screen, on its phone picture, before any other question and before any ruler. The builder asks it of the sketch; a reader who built none of it asks it again of the built screen ([the first-glance test](checks.md#the-first-glance-test)), on the squint copy first, where body text can't be read (`pnpm design:sketch --squint <picture>` makes one from any screenshot).
 
 1. What do you see first, second and third, named as shapes (a big number, a bar, a row of marks, a button, a block of gray lines)? Is the first one the one thing?
 2. How many free lines are there between the title and the main action?
 3. For each piece of text, and each thing drawn: would the learner do anything differently without it? Could something drawn say it, or does something already say it?
 4. Is there anything on it worth looking at, or is it only tidy?
 
-Each answer that falls short is a finding against one of the rules below, and on a screen the change drew it is fixed like any named rule's ([the craft read](../SKILL.md#the-craft-read)).
+Each answer that falls short is a finding against one of the rules below, and on a screen the change drew it is fixed like any named rule's ([the craft read](checks.md#the-craft-read)).
 
 ### V1. One thing first
 
@@ -58,7 +58,7 @@ One thing stands out before any word is read, and it is what matters most on the
 
 A count, a position, a duration, a share, a state (done, saved, next, locked) and a kind each have a mark, a number or a meter, and are written only as that piece's label.
 
-- **Check.** Each piece of text outside the content: name the carrier above it in the order that would have worked. A fact both drawn and written, or written beside the control whose label says it, is a finding too ([once](../SKILL.md#words)), and so is one the learner doesn't need on this screen, drawn or written.
+- **Check.** Each piece of text outside the content: name the carrier above it in the order that would have worked. A fact both drawn and written, or written beside the control whose label says it, is a finding too ([once](words.md)), and so is one the learner doesn't need on this screen, drawn or written.
 - **Usual break.** A bar and, beside it, a line that says the same position. A sentence that reports a state a mark shows everywhere else in the app.
 
 ### V3. One free line
@@ -70,7 +70,7 @@ Between the title and the main action, one line at most belongs to nothing drawn
 
 ## When a finding asks for more
 
-A finding that a learner can't tell something is one fact back at the top of the carrier order, which is what [the fix order](../SKILL.md#words) walks: remove what needs explaining, rename it, let something already there say it or draw it, move it to the moment it matters. A sentence is the last answer, and it takes another one out. A screen that gained a line to answer a finding gets the scan again before the finding closes, since each line was asked for by someone and the pile is nobody's.
+A finding that a learner can't tell something is one fact back at the top of the carrier order, which is what [the fix order](words.md) walks: remove what needs explaining, rename it, let something already there say it or draw it, move it to the moment it matters. A sentence is the last answer, and it takes another one out. A screen that gained a line to answer a finding gets the scan again before the finding closes, since each line was asked for by someone and the pile is nobody's.
 
 ## The sketch tool
 

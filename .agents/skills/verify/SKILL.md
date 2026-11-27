@@ -1,10 +1,10 @@
 ---
 name: verify
-description: Verify finished work before calling it done, committing, or opening or updating a PR. Sizes the checks to the change, then routes to each step (automated checks, using the change in the running app, measuring pages, reviews, a learner walk, reading every touched screen) and says what evidence to report.
+description: Use when work is finished, before calling it done, committing, or opening or updating a PR.
 license: MIT
 metadata:
   author: zoonk
-  version: "2.1.0"
+  version: "2.2.0"
 ---
 
 # Verify

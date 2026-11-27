@@ -1,10 +1,10 @@
 ---
 name: zoonk-model-check
-description: Check whether a new AI model or a changed prompt should replace what a Zoonk task runs today. Triage which tasks are worth checking, forecast the cost, run the comparison against the current model with blind readers from several model families, verify what would decide, and write a decision that weighs quality against cost and latency by the task's priorities. Use when a new model comes out, a price changes, a prompt changes, or someone asks whether a task should switch models.
+description: Use when a new AI model comes out, a price or a prompt changes, or someone asks whether a Zoonk AI task should switch models.
 license: MIT
 metadata:
   author: zoonk
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Model check

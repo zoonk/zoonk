@@ -5,6 +5,7 @@ import { type PartialCreditRule } from "@zoonk/ai/tasks/research/partial-credit"
 import { isUsableBlueprint } from "@zoonk/core/library/exams/blueprint-content";
 import { getFormatShares } from "@zoonk/core/library/exams/format-shares";
 import { getMarkingPenalty } from "@zoonk/core/library/exams/marking-penalty";
+import { toMaterialTopicName } from "@zoonk/core/library/exams/material-topics";
 import { findTaskSubjects } from "@zoonk/core/library/exams/written-task-subjects";
 import { normalizeString } from "@zoonk/utils/string";
 import {
@@ -22,7 +23,7 @@ type ExpectedFact =
   | { kind: "subject"; name: string; questions?: number }
   /** Without `subject`, any subject may hold the topic. */
   | { kind: "topic"; subject?: string; topic: string }
-  /** Learner material: every topic names an idea, never a copied line of notes. */
+  /** Learner material: every topic names an idea, never a copied line of notes or the subject's own title. */
   | { kind: "shortTopics" }
   | { kind: "group"; subject: string; group: string }
   | { kind: "groupedSubjects"; groups: string[] }
@@ -550,6 +551,9 @@ const COPIED_LINE = /[$\\=]|^ex(?:emplo)?\b|:\s*\S/iu;
 
 const isCopiedLine = (topic: string) => COPIED_LINE.test(topic);
 
+const isTitleOf = ({ name, topic }: { name: string; topic: string }) =>
+  normalizeString(toMaterialTopicName(topic)) === normalizeString(toMaterialTopicName(name));
+
 function isFactFound({ fact, reading }: { fact: ExpectedFact; reading: Reading }): boolean {
   if (isMockFact(fact)) {
     return isMockFactFound({ fact, reading });
@@ -575,7 +579,12 @@ function isFactFound({ fact, reading }: { fact: ExpectedFact; reading: Reading }
         .flatMap((subject) => subject?.topics ?? [])
         .some((topic) => normalizeString(topic) === normalizeString(fact.topic));
     case "shortTopics":
-      return reading.subjects.every((subject) => !subject.topics.some(isCopiedLine));
+      return reading.subjects.every(
+        (subject) =>
+          !subject.topics.some(
+            (topic) => isCopiedLine(topic) || isTitleOf({ name: subject.name, topic }),
+          ),
+      );
     case "group":
       return normalizeString(findSubject({ name: fact.subject, reading })?.group ?? "").includes(
         normalizeString(fact.group),
@@ -642,7 +651,12 @@ const scoreExtraction: TaskScorer<ExtractionExpected> = ({ output, testCase }) =
   const missing = (reading: Reading) => facts.filter((fact) => !isFactFound({ fact, reading }));
   const dropped = missing(fromKept(parsed));
   const unread = missing(fromExtraction(parsed));
-  const isUsable = isUsableBlueprint({ content: parsed.kept, shared: true });
+
+  const isUsable = isUsableBlueprint({
+    content: parsed.kept,
+    shared: !testCase.userInput.material,
+  });
+
   const usableWrong = usable !== undefined && isUsable !== usable;
   const expectedCount = facts.length + (usable === undefined ? 0 : 1);
   const right = expectedCount - dropped.length - (usableWrong ? 1 : 0);

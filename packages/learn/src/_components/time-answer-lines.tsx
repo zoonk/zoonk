@@ -25,10 +25,12 @@ function SuggestionWords({
   date,
   exam,
   line,
+  subjectsTakenOut,
 }: {
   date: GoalDate;
   exam: boolean;
   line: Extract<TimeLine, { kind: "suggestion" }>;
+  subjectsTakenOut: boolean;
 }) {
   const t = useExtracted();
   const goalDate = useGoalDateValues();
@@ -55,6 +57,16 @@ function SuggestionWords({
 
   const values = { ...goalDate(date), time };
 
+  if (subjectsTakenOut) {
+    return t({
+      description:
+        'When the learner took a subject out of their plan. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {time} is a daily study time, like "2 h".',
+      message:
+        "{dateKind, select, month {We suggest {time} a day to cover everything in your plan by {date}.} other {We suggest {time} a day to cover everything in your plan by {date}.}}",
+      values,
+    });
+  }
+
   return exam
     ? t({
         description:
@@ -72,13 +84,25 @@ function SuggestionWords({
       });
 }
 
-function DatedWords({ date, exam, line }: { date: GoalDate; exam: boolean; line: DatedLine }) {
+function DatedWords({
+  date,
+  exam,
+  line,
+  subjectsTakenOut,
+}: {
+  date: GoalDate;
+  exam: boolean;
+  line: DatedLine;
+  subjectsTakenOut: boolean;
+}) {
   const t = useExtracted();
   const goalDate = useGoalDateValues();
 
   switch (line.kind) {
     case "suggestion":
-      return <SuggestionWords date={date} exam={exam} line={line} />;
+      return (
+        <SuggestionWords date={date} exam={exam} line={line} subjectsTakenOut={subjectsTakenOut} />
+      );
     case "pastDate":
       return t({
         description:
@@ -140,15 +164,19 @@ export function LineWords({
   exam,
   line,
   minutes,
+  subjectsTakenOut,
 }: {
   aim?: string | null;
   date: GoalDate | null;
   exam: boolean;
   line: TimeLine;
   minutes: number | null;
+  subjectsTakenOut: boolean;
 }) {
   if (isDatedLine(line)) {
-    return date && <DatedWords date={date} exam={exam} line={line} />;
+    return (
+      date && <DatedWords date={date} exam={exam} line={line} subjectsTakenOut={subjectsTakenOut} />
+    );
   }
 
   if (isFinishLine(line)) {

@@ -1706,6 +1706,52 @@ describe(researchWorkflow, () => {
     });
   });
 
+  it("plans from a learner's notes whose subjects the fact check refuses", async () => {
+    const { goal, user } = await examGoal();
+    const { extraction, plan } = await replayTcdfResearch();
+    const material = await readFixture("tcdf-2026-notice.txt");
+    const contentHash = `hash-${randomUUID()}`;
+
+    vi.mocked(generateExamResearchPlan).mockResolvedValue({
+      ...TASK_RESULT,
+      data: { ...plan, classTest: true },
+    });
+
+    vi.mocked(checkCitedFacts).mockResolvedValue({ ...TASK_RESULT, data: { supportedIds: [] } });
+
+    const notes = await sourceFixture({
+      contentHash,
+      extractedText: material,
+      identityKey: `private:${user.id}:upload:${contentHash}`,
+      kind: "upload",
+      language: "pt",
+      mimeType: "text/plain",
+      ownerId: user.id,
+      url: null,
+      visibility: "private",
+    });
+
+    await learnerSourceFixture({ goalId: goal.id, sourceId: notes.id, userId: user.id });
+
+    await expect(researchWorkflow({ goalId: goal.id, sourceIds: [] })).resolves.toMatchObject({
+      status: "ready",
+    });
+
+    const { examBlueprintId } = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+
+    const blueprint = await prisma.examBlueprint.findUniqueOrThrow({
+      where: { id: examBlueprintId! },
+    });
+
+    const structure = examStructureSchema.parse(blueprint.structure);
+
+    expect(structure.subjects.map((subject) => subject.name)).toStrictEqual(
+      extraction.subjects.map((subject) => subject.name),
+    );
+
+    expect(structure.subjects.every((subject) => subject.questions === null)).toBe(true);
+  });
+
   it("searches the notice as the learner's own when the plan read their own words", async () => {
     const { goal } = await examGoal();
     await replayTcdfResearch();

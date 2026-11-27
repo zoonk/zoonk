@@ -299,6 +299,8 @@ describe(saveProductReleases, () => {
       productId: saved.product.id,
     });
 
+    const pid = await approval.pid;
+
     const refresh = saveProductReleases({
       productId: saved.product.id,
       reading: {
@@ -311,7 +313,7 @@ describe(saveProductReleases, () => {
       },
     });
 
-    await waitForBlockedStatement(await approval.pid, /\bproducts\b/u);
+    await waitForBlockedStatement(pid, /\bproducts\b/u);
     approval.release();
 
     await expect(Promise.all([approval.done, refresh])).resolves.toHaveLength(2);

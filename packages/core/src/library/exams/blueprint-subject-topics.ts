@@ -1,7 +1,6 @@
 import { type BlueprintExtraction } from "@zoonk/ai/tasks/research/extract-exam-blueprint";
 import { type ExamStructure } from "./blueprint-contract";
-import { findStatedTopics } from "./blueprint-facts";
-import { type ExtractionDocument } from "./blueprint-passages";
+import { type ExtractionDocument, findStatedTopics } from "./blueprint-passages";
 import { type TopicGroup, groupTopicsByHeading } from "./topic-groups";
 
 type ExtractionSubject = BlueprintExtraction["subjects"][number];

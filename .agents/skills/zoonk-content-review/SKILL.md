@@ -1,10 +1,10 @@
 ---
 name: zoonk-content-review
-description: Review the content Zoonk generated in production over a window (plans, exam blueprints, skill graphs, courses, lessons, items, words), as the learner who got it would, against the sources it came from. Propose content fixes for what's wrong and start a fix thread for each cause in our code. Use for the weekly content review, or when asked to audit recent production content.
+description: Use for the weekly content review, or when asked to audit the plans, courses, lessons or exams Zoonk generated in production over a period.
 license: MIT
 metadata:
   author: zoonk
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # Review production content

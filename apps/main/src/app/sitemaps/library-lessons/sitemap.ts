@@ -1,5 +1,5 @@
 import { listSitemapLibraryLessons } from "@/data/sitemaps/library-lessons";
-import { getSitemapPageIds } from "@/data/sitemaps/sitemap-pages";
+import { getSitemapPageIds } from "@/data/sitemaps/sitemap-page-ids";
 import { getLocalizedUrl } from "@/lib/metadata/localized-url";
 import { getLessonHref } from "@/lib/public/public-hrefs";
 import { type MetadataRoute } from "next";

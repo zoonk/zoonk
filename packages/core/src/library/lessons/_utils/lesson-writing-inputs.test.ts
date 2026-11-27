@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -125,5 +126,40 @@ describe(loadPublishedLessonInputs, () => {
 
     expect(shortAnswer && toWritingContext(shortAnswer).shortAnswers).toBe(true);
     expect(hobby && toWritingContext(hobby).shortAnswers).toBe(false);
+  });
+
+  it("never lists the lesson's own questions as cases to avoid, only other lessons' and the bank's", async () => {
+    const [lesson, otherLesson, skill] = await Promise.all([
+      libraryLessonFixture({ spec: temperatureSpec() }),
+      libraryLessonFixture({ spec: temperatureSpec() }),
+      skillFixture(),
+    ]);
+
+    const [own, other] = await Promise.all([
+      itemFixture({
+        content: choiceItemContent("Which glass of ice melts first?"),
+        skillId: skill.id,
+      }),
+      itemFixture({ content: choiceItemContent("Which puddle freezes first?"), skillId: skill.id }),
+      itemFixture({ content: choiceItemContent("Which pond thaws first?"), skillId: skill.id }),
+      lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id }),
+    ]);
+
+    await Promise.all([
+      libraryStepFixture({ itemId: own.id, kind: "check", lessonId: lesson.id, skillId: skill.id }),
+      libraryStepFixture({
+        itemId: other.id,
+        kind: "check",
+        lessonId: otherLesson.id,
+        skillId: skill.id,
+      }),
+    ]);
+
+    const inputs = await loadPublishedLessonInputs(lesson.id);
+    const situations = new Set(inputs ? toWritingContext(inputs).usedSituations : []);
+
+    expect(situations).toStrictEqual(
+      new Set(["Which puddle freezes first?", "Which pond thaws first?"]),
+    );
   });
 });

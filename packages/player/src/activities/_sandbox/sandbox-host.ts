@@ -46,6 +46,8 @@ const SOURCES: Record<SandboxKind, { module: boolean; reused: boolean; source: s
   sql: { module: false, reused: true, source: SQL_WORKER_SOURCE },
 };
 
+const LOAD_TIMEOUT_MS = 180_000;
+
 const hosts = new Map<SandboxKind, Host>();
 const runIds = { next: 1 };
 
@@ -57,17 +59,31 @@ function createHost(kind: SandboxKind): Host {
   const worker = new Worker(url, { name: `zoonk-${kind}`, type: module ? "module" : "classic" });
 
   const ready = new Promise<boolean>((resolve) => {
-    function handleMessage(event: MessageEvent<SandboxMessage>) {
-      if (event.data.type !== "ready" && event.data.type !== "loadError") {
-        return;
+    function finish(isReady: boolean) {
+      clearTimeout(timer);
+      worker.removeEventListener("message", handleMessage);
+      worker.removeEventListener("error", fail);
+
+      if (!isReady) {
+        discardHost(kind, worker);
       }
 
-      worker.removeEventListener("message", handleMessage);
-      resolve(event.data.type === "ready");
+      resolve(isReady);
     }
 
+    function fail() {
+      finish(false);
+    }
+
+    function handleMessage(event: MessageEvent<SandboxMessage>) {
+      if (event.data.type === "ready" || event.data.type === "loadError") {
+        finish(event.data.type === "ready");
+      }
+    }
+
+    const timer = setTimeout(fail, LOAD_TIMEOUT_MS);
     worker.addEventListener("message", handleMessage);
-    worker.addEventListener("error", () => resolve(false), { once: true });
+    worker.addEventListener("error", fail);
   });
 
   return { ready, worker };
@@ -89,10 +105,10 @@ function getHost(kind: SandboxKind): Host {
   return host;
 }
 
-function discardHost(kind: SandboxKind, host: Host) {
-  host.worker.terminate();
+function discardHost(kind: SandboxKind, worker: Worker) {
+  worker.terminate();
 
-  if (hosts.get(kind) === host) {
+  if (hosts.get(kind)?.worker === worker) {
     hosts.delete(kind);
   }
 }
@@ -102,14 +118,7 @@ export async function warmUpSandbox(kind: ProgramKind): Promise<boolean> {
     return true;
   }
 
-  const host = getHost(kind);
-  const isReady = await host.ready;
-
-  if (!isReady) {
-    discardHost(kind, host);
-  }
-
-  return isReady;
+  return getHost(kind).ready;
 }
 
 type RunRequest = {
@@ -127,7 +136,6 @@ export async function runInSandbox({
   const host = getHost(kind);
 
   if (!(await host.ready)) {
-    discardHost(kind, host);
     return { status: "unavailable" };
   }
 
@@ -140,7 +148,7 @@ export async function runInSandbox({
       host.worker.removeEventListener("message", handleMessage);
 
       if (!keepWorker || !SOURCES[kind].reused) {
-        discardHost(kind, host);
+        discardHost(kind, host.worker);
       }
 
       resolve(outcome);

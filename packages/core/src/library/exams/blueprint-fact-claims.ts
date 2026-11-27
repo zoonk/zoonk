@@ -19,14 +19,20 @@ export function describePoints(points: number): string {
   return `${points} ${points === 1 ? "point" : "points"}`;
 }
 
-export type FactEntry = { citations: Citation[]; found: boolean; id: string; statement: string };
+/**
+ * A settled claim is kept once its passage is found, without the cited-fact check: a learner's own
+ * notes cover the subjects they name, and a rare refusal would leave them without a plan.
+ */
+type Claim = { id: string; settled?: boolean; statement: string };
 
-type Claim = { id: string; statement: string };
+export type FactEntry = Claim & { citations: Citation[]; found: boolean };
 
 export type FactSource = {
   documents: ExtractionDocument[];
   extraction: BlueprintExtraction;
   found: Passage[];
+  /** The learner's own material (notes, slides, an old exam) rather than an exam's notice. */
+  material?: boolean;
 };
 
 export function toFacts({

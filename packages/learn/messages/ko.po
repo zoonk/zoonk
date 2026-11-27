@@ -909,6 +909,12 @@ msgctxt "cOD9je"
 msgid "We suggest {time} a day. Your plan starts with what matters most for your goal."
 msgstr "하루 {time} 학습을 권장해요. 계획은 목표에 가장 중요한 내용부터 다뤄요."
 
+#. When the learner took a subject out of their plan. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {time} is a daily study time, like "2 h".
+#: src/_components/time-answer-lines.tsx
+msgctxt "5ZCekJ"
+msgid "{dateKind, select, month {We suggest {time} a day to cover everything in your plan by {date}.} other {We suggest {time} a day to cover everything in your plan by {date}.}}"
+msgstr "{dateKind, select, month {계획에 있는 내용을 {date}까지 모두 학습할 수 있도록 하루에 {time}씩 학습하는 것을 추천해요.} other {계획에 있는 내용을 {date}까지 모두 학습할 수 있도록 하루에 {time}씩 학습하는 것을 추천해요.}}"
+
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {time} is a daily study time, like "2 h".
 #: src/_components/time-answer-lines.tsx
 msgctxt "aL9GHA"
@@ -958,6 +964,12 @@ msgstr "언제 마칠지 계산하고 있어요…"
 msgctxt "-TVG-n"
 msgid "We couldn't work out when you'd finish."
 msgstr "언제 마칠지 계산하지 못했어요."
+
+#. Said under "We suggest {time} a day" when the learner took a subject out of their plan. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#: src/_components/time-answer-texts.ts
+msgctxt "zbyuSM"
+msgid "{dateKind, select, month {That's enough to cover everything in your plan by {date}.} other {That's enough to cover everything in your plan by {date}.}}"
+msgstr "{dateKind, select, month {계획에 있는 내용을 {date}까지 모두 학습하기에 충분해요.} other {계획에 있는 내용을 {date}까지 모두 학습하기에 충분해요.}}"
 
 #. Said under "We suggest {time} a day". In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/_components/time-answer-texts.ts
@@ -10552,15 +10564,19 @@ msgid "The Focus test shows what to study most."
 msgstr "집중 진단으로 공부가 가장 필요한 과목을 알 수 있어요."
 
 #: src/plan/plan-coverage.tsx
-msgctxt "0YytO3"
-msgid "Move your date to {date}"
-msgstr "날짜를 {date}로 변경하기"
+msgctxt "Cb15Rz"
+msgid "Move your date to cover everything in your plan"
+msgstr "계획을 모두 마치도록 날짜 변경"
 
 #: src/plan/plan-coverage.tsx
-#: src/plan/plan-offer-preview.tsx
 msgctxt "hzzrUH"
 msgid "Move your date to cover everything"
 msgstr "전체 내용을 공부할 수 있게 날짜 변경하기"
+
+#: src/plan/plan-coverage.tsx
+msgctxt "0YytO3"
+msgid "Move your date to {date}"
+msgstr "날짜를 {date}로 변경하기"
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/plan/plan-date-text.tsx
@@ -10678,6 +10694,12 @@ msgstr "‘오늘’에 먼저 나와요."
 msgctxt "XVhC0H"
 msgid "{days, plural, one {Study {minutes, number} more min a day for # day to be up to date.} other {Study {minutes, number} more min a day for # days to be up to date.}}"
 msgstr "{days, plural, other {하루에 {minutes, number}분씩 #일 동안 더 공부하면 계획을 따라잡을 수 있어요.}}"
+
+#. When the learner took a part of their goal out of their plan. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#: src/plan/plan-offer-preview.tsx
+msgctxt "zRlPAp"
+msgid "{dateKind, select, month {Your time covers everything in your plan by {date}} other {Your time covers everything in your plan by {date}}}"
+msgstr "{dateKind, select, month {현재 학습 시간으로 계획에 있는 내용을 {date}까지 모두 학습할 수 있어요} other {현재 학습 시간으로 계획에 있는 내용을 {date}까지 모두 학습할 수 있어요}}"
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/plan/plan-offer-preview.tsx
@@ -10984,9 +11006,19 @@ msgid "You'll use"
 msgstr "사용할 도구"
 
 #: src/plan/study-everything.tsx
+msgctxt "WCKfwD"
+msgid "You study every topic in your plan. What doesn't fit before the exam comes after it."
+msgstr "계획의 모든 주제를 공부해요. 시험 전까지 다루지 못한 내용은 시험 후에 공부해요."
+
+#: src/plan/study-everything.tsx
 msgctxt "f0hmbu"
 msgid "You study every topic. What doesn't fit before the exam comes after it."
 msgstr "모든 주제를 공부해요. 시험 전 일정에 다 넣지 못한 내용은 시험 후에 공부해요."
+
+#: src/plan/study-everything.tsx
+msgctxt "YCt9Qf"
+msgid "Every part of your plan, with no end date."
+msgstr "계획의 모든 내용을 공부해요. 종료일은 없어요."
 
 #: src/plan/study-everything.tsx
 msgctxt "x7ZSzV"

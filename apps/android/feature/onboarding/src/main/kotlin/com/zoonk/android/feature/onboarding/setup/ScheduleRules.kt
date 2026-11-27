@@ -4,7 +4,6 @@ import androidx.compose.runtime.saveable.Saver
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.feature.plan.DaySplit
 import com.zoonk.android.feature.plan.TimeLine
-import com.zoonk.android.feature.plan.coversEverything
 import com.zoonk.android.feature.plan.isBusy
 import com.zoonk.android.feature.plan.suggestedMinutes
 import com.zoonk.android.ui.components.missingDays
@@ -30,7 +29,6 @@ internal data class ScheduleChoice(
     val weekendOn: Boolean = false,
     val weekendPicked: Int? = null,
     val picked: Int? = null,
-    val fullCourse: Boolean = false,
 ) {
     val weekend: Int? get() = weekendPicked.takeIf { weekendOn && missingDays(days) == null }
 }
@@ -38,7 +36,6 @@ internal data class ScheduleChoice(
 internal data class StudyWeek(
     val studyDays: List<Int>,
     val weekendMinutes: Int? = null,
-    val fullCourse: Boolean = false,
 )
 
 internal val DaySplitSaver =
@@ -71,15 +68,13 @@ internal fun studyWeek(
     days: List<Int>,
     minutes: Int,
     weekend: Int?,
-    fullCourse: Boolean = false,
-) = StudyWeek(days, weekend?.takeIf { it != minutes }, fullCourse)
+) = StudyWeek(days, weekend?.takeIf { it != minutes })
 
 internal fun StudyWeek.adviceInput(minutes: Int) =
     PlanTimeAdviceInput(
         studyDays = studyDays.map(Int::toLong),
         weekendMinutes = weekendMinutes?.toLong(),
         dailyMinutes = minutes.toLong(),
-        fullCourse = fullCourse.takeIf { it },
     )
 
 internal fun StudyWeek.coverInput() =
@@ -159,25 +154,10 @@ internal fun shownAnswer(
 }
 
 /**
- * The time picked needs the plan's own answer for when an undated goal finishes, and for when studying everything
- * finishes; a dated goal's line is about the suggestion, which the plan's first answer already has.
+ * The time picked needs the plan's own answer for when an undated goal finishes; a dated goal's line is about the
+ * suggestion, which the plan's first answer already has.
  */
 internal fun asksAboutTime(
     dated: Boolean,
-    found: PlanTimeToCover?,
-    fullCourse: Boolean,
     minutes: Int?,
-): Boolean =
-    when {
-        minutes == null -> false
-        !dated -> true
-        found == null || found.pastDate -> false
-        else -> fullCourse
-    }
-
-/** An exam's choice to study everything holds until the time picked is known to cover it all. */
-internal fun keepsFullCourse(
-    checked: Boolean,
-    found: PlanTimeToCover?,
-    minutes: Int?,
-): Boolean = checked && !coversEverything(found, minutes)
+): Boolean = minutes != null && !dated

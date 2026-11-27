@@ -1,7 +1,7 @@
 PROJECT := Zoonk.xcodeproj
 APP_SCHEME := Zoonk
 UNIT_TEST_SCHEME := ZoonkUnitTests
-SWIFT_SOURCES := Zoonk ZoonkAPI/Package.swift ZoonkAPI/Sources ZoonkTests ZoonkUITests
+SWIFT_SOURCES := Zoonk ZoonkAPI/Package.swift ZoonkAPI/Plugins ZoonkAPI/Sources ZoonkTests ZoonkUITests
 CONFIGURATION ?= Debug
 XCODEBUILD_ARGUMENTS ?=
 # The WebRTC package is a binary download; with the default Keychain credential lookup, xcodebuild

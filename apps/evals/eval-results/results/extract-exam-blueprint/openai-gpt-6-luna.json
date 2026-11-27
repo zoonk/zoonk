@@ -685,19 +685,100 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 20/22 (read 20). passages found 143/143. problems left 0. missing: {\"kind\":\"totalMinimum\",\"minimum\":{\"unit\":\"points\",\"value\":120}}; {\"count\":1,\"kind\":\"writtenTask\",\"language\":{\"factor\":0.5,\"method\":\"perError\"},\"lines\":70,\"points\":70}",
+          "conclusion": "Facts kept 2/5 (read 2). passages found 65/65. problems left 1. missing: {\"count\":1,\"criterionPoints\":[5],\"handwritten\":true,\"kind\":\"writtenTask\",\"language\":null,\"lines\":null,\"points\":5,\"rounding\":false,\"scales\":[null],\"total\":true}; {\"kind\":\"writtenTask\",\"points\":5,\"zeroKinds\":[\"blank\",\"offTopic\",\"wrongForm\"],\"zeroing\":true}; {\"count\":4,\"criterionPoints\":[1.25],\"handwritten\":true,\"kind\":\"writtenTask\",\"lines\":30,\"points\":1.25,\"total\":true}",
           "kind": "majorErrors",
-          "score": 9.709090909090909
+          "score": 8.08
         },
         {
-          "conclusion": "Facts kept 20/22 (read 20). passages found 143/143. problems left 0. missing: {\"kind\":\"totalMinimum\",\"minimum\":{\"unit\":\"points\",\"value\":120}}; {\"count\":1,\"kind\":\"writtenTask\",\"language\":{\"factor\":0.5,\"method\":\"perError\"},\"lines\":70,\"points\":70}",
+          "conclusion": "Facts kept 2/5 (read 2). passages found 65/65. problems left 1. missing: {\"count\":1,\"criterionPoints\":[5],\"handwritten\":true,\"kind\":\"writtenTask\",\"language\":null,\"lines\":null,\"points\":5,\"rounding\":false,\"scales\":[null],\"total\":true}; {\"kind\":\"writtenTask\",\"points\":5,\"zeroKinds\":[\"blank\",\"offTopic\",\"wrongForm\"],\"zeroing\":true}; {\"count\":4,\"criterionPoints\":[1.25],\"handwritten\":true,\"kind\":\"writtenTask\",\"lines\":30,\"points\":1.25,\"total\":true}",
           "kind": "minorErrors",
-          "score": 9.709090909090909
+          "score": 8.08
         },
         {
-          "conclusion": "Facts kept 20/22 (read 20). passages found 143/143. problems left 0. missing: {\"kind\":\"totalMinimum\",\"minimum\":{\"unit\":\"points\",\"value\":120}}; {\"count\":1,\"kind\":\"writtenTask\",\"language\":{\"factor\":0.5,\"method\":\"perError\"},\"lines\":70,\"points\":70}",
+          "conclusion": "Facts kept 2/5 (read 2). passages found 65/65. problems left 1. missing: {\"count\":1,\"criterionPoints\":[5],\"handwritten\":true,\"kind\":\"writtenTask\",\"language\":null,\"lines\":null,\"points\":5,\"rounding\":false,\"scales\":[null],\"total\":true}; {\"kind\":\"writtenTask\",\"points\":5,\"zeroKinds\":[\"blank\",\"offTopic\",\"wrongForm\"],\"zeroing\":true}; {\"count\":4,\"criterionPoints\":[1.25],\"handwritten\":true,\"kind\":\"writtenTask\",\"lines\":30,\"points\":1.25,\"total\":true}",
           "kind": "potentialImprovements",
-          "score": 9.709090909090909
+          "score": 8.08
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "section",
+              "minutes": 300
+            },
+            {
+              "kind": "session",
+              "mentions": "13"
+            },
+            {
+              "count": 1,
+              "criterionPoints": [
+                5
+              ],
+              "handwritten": true,
+              "kind": "writtenTask",
+              "language": null,
+              "lines": null,
+              "points": 5,
+              "rounding": false,
+              "scales": [
+                null
+              ],
+              "total": true
+            },
+            {
+              "kind": "writtenTask",
+              "points": 5,
+              "zeroKinds": [
+                "blank",
+                "offTopic",
+                "wrongForm"
+              ],
+              "zeroing": true
+            },
+            {
+              "count": 4,
+              "criterionPoints": [
+                1.25
+              ],
+              "handwritten": true,
+              "kind": "writtenTask",
+              "lines": 30,
+              "points": 1.25,
+              "total": true
+            }
+          ]
+        },
+        "id": "oab-47-2a-fase-written-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital de abertura do 47º Exame de Ordem Unificado",
+              "url": "https://s.oab.org.br/arquivos/2026/05/3578986c-fb9e-42ed-b68b-9a5131c86c9a.pdf"
+            }
+          ],
+          "exam": "47º Exame de Ordem Unificado (OAB), 2ª fase: prova prático-profissional"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 9/17 (read 10). passages found 75/75. problems left 0. missing: {\"kind\":\"subject\",\"name\":\"Linguagens\",\"questions\":45}; {\"kind\":\"subject\",\"name\":\"Matemática\",\"questions\":45}; {\"kind\":\"choice\",\"options\":[\"Inglês\",\"Espanhol\"],\"partOf\":\"Linguagens\"}; {\"kind\":\"timeLimit\",\"minutes\":330}; {\"kind\":\"sharedClock\"}; {\"count\":1,\"kind\":\"writtenTask\",\"lines\":30,\"points\":1000,\"total\":true}; {\"kind\":\"writtenTask\",\"points\":1000,\"scales\":[[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200]]}; {\"kind\":\"writtenTask\",\"points\":1000,\"zeroKinds\":[\"blank\",\"offTopic\",\"tooFewLines\",\"wrongForm\"]}",
+          "kind": "majorErrors",
+          "score": 8.494117647058824
+        },
+        {
+          "conclusion": "Facts kept 9/17 (read 10). passages found 75/75. problems left 0. missing: {\"kind\":\"subject\",\"name\":\"Linguagens\",\"questions\":45}; {\"kind\":\"subject\",\"name\":\"Matemática\",\"questions\":45}; {\"kind\":\"choice\",\"options\":[\"Inglês\",\"Espanhol\"],\"partOf\":\"Linguagens\"}; {\"kind\":\"timeLimit\",\"minutes\":330}; {\"kind\":\"sharedClock\"}; {\"count\":1,\"kind\":\"writtenTask\",\"lines\":30,\"points\":1000,\"total\":true}; {\"kind\":\"writtenTask\",\"points\":1000,\"scales\":[[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200]]}; {\"kind\":\"writtenTask\",\"points\":1000,\"zeroKinds\":[\"blank\",\"offTopic\",\"tooFewLines\",\"wrongForm\"]}",
+          "kind": "minorErrors",
+          "score": 8.494117647058824
+        },
+        {
+          "conclusion": "Facts kept 9/17 (read 10). passages found 75/75. problems left 0. missing: {\"kind\":\"subject\",\"name\":\"Linguagens\",\"questions\":45}; {\"kind\":\"subject\",\"name\":\"Matemática\",\"questions\":45}; {\"kind\":\"choice\",\"options\":[\"Inglês\",\"Espanhol\"],\"partOf\":\"Linguagens\"}; {\"kind\":\"timeLimit\",\"minutes\":330}; {\"kind\":\"sharedClock\"}; {\"count\":1,\"kind\":\"writtenTask\",\"lines\":30,\"points\":1000,\"total\":true}; {\"kind\":\"writtenTask\",\"points\":1000,\"scales\":[[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200]]}; {\"kind\":\"writtenTask\",\"points\":1000,\"zeroKinds\":[\"blank\",\"offTopic\",\"tooFewLines\",\"wrongForm\"]}",
+          "kind": "potentialImprovements",
+          "score": 8.494117647058824
         }
       ],
       "testCase": {
@@ -705,141 +786,147 @@
           "facts": [
             {
               "kind": "questionCount",
-              "value": 240
+              "value": 180
             },
             {
-              "format": "trueFalse",
+              "date": "2026-11-08",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2026-11-15",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2026-06-05",
+              "dateKind": "registrationEnd",
+              "kind": "date"
+            },
+            {
+              "kind": "subject",
+              "name": "Linguagens",
+              "questions": 45
+            },
+            {
+              "kind": "subject",
+              "name": "Matemática",
+              "questions": 45
+            },
+            {
+              "kind": "choice",
+              "options": [
+                "Inglês",
+                "Espanhol"
+              ],
+              "partOf": "Linguagens"
+            },
+            {
+              "format": "multipleChoice",
               "kind": "format"
             },
             {
-              "kind": "wrongPenalty",
-              "value": 0.25
+              "format": "essay",
+              "kind": "format"
             },
             {
-              "kind": "totalMinimum",
-              "minimum": {
-                "unit": "points",
-                "value": 120
-              }
+              "kind": "scoring",
+              "method": "itemResponseTheory"
             },
             {
-              "date": "2026-03-29",
-              "dateKind": "exam",
-              "kind": "date"
+              "kind": "timeLimit",
+              "minutes": 330
             },
             {
-              "date": "2026-04-25",
-              "dateKind": "exam",
-              "kind": "date"
+              "kind": "timeLimit",
+              "minutes": 300
             },
             {
-              "date": "2026-04-26",
-              "dateKind": "exam",
-              "kind": "date"
+              "kind": "testedLanguage",
+              "language": null
             },
             {
-              "date": "2026-05-02",
-              "dateKind": "exam",
-              "kind": "date"
-            },
-            {
-              "date": "2026-05-03",
-              "dateKind": "exam",
-              "kind": "date"
-            },
-            {
-              "day": 1,
-              "kind": "section",
-              "minutes": 210
-            },
-            {
-              "day": 2,
-              "kind": "section",
-              "minutes": 240,
-              "name": "Língua Portuguesa"
-            },
-            {
-              "day": 2,
-              "kind": "section",
-              "minutes": 300,
-              "name": "História do Brasil"
-            },
-            {
-              "day": 3,
-              "kind": "section",
-              "minutes": 240,
-              "name": "Língua Inglesa"
-            },
-            {
-              "day": 3,
-              "kind": "section",
-              "minutes": 300,
-              "name": "Geografia"
-            },
-            {
-              "day": 4,
-              "kind": "section",
-              "minutes": 300,
-              "name": "Política Internacional"
-            },
-            {
-              "day": 4,
-              "kind": "section",
-              "minutes": 300,
-              "name": "Economia"
-            },
-            {
-              "day": 5,
-              "kind": "section",
-              "minutes": 300,
-              "name": "Direito"
-            },
-            {
-              "count": 1,
-              "kind": "writtenTask",
-              "language": {
-                "factor": 0.5,
-                "method": "perError"
-              },
-              "lines": 70,
-              "points": 70
+              "kind": "sharedClock"
             },
             {
               "count": 1,
               "kind": "writtenTask",
               "lines": 30,
-              "points": 30
+              "points": 1000,
+              "total": true
             },
             {
-              "count": 2,
               "kind": "writtenTask",
-              "lines": 60,
-              "points": 30
+              "points": 1000,
+              "scales": [
+                [
+                  0,
+                  40,
+                  80,
+                  120,
+                  160,
+                  200
+                ],
+                [
+                  0,
+                  40,
+                  80,
+                  120,
+                  160,
+                  200
+                ],
+                [
+                  0,
+                  40,
+                  80,
+                  120,
+                  160,
+                  200
+                ],
+                [
+                  0,
+                  40,
+                  80,
+                  120,
+                  160,
+                  200
+                ],
+                [
+                  0,
+                  40,
+                  80,
+                  120,
+                  160,
+                  200
+                ]
+              ]
             },
             {
-              "count": 2,
               "kind": "writtenTask",
-              "lines": 40,
-              "points": 20
-            },
-            {
-              "count": 1,
-              "kind": "writtenTask",
-              "lines": 60,
-              "points": 50
+              "points": 1000,
+              "zeroKinds": [
+                "blank",
+                "offTopic",
+                "tooFewLines",
+                "wrongForm"
+              ]
             }
           ]
         },
-        "id": "cacd-2026-full-notice-1",
+        "id": "enem-2026-1",
         "language": "pt",
         "userInput": {
           "documents": [
             {
-              "title": "Edital nº 1, de 28 de janeiro de 2026 (CACD 2026, Instituto Rio Branco)",
-              "url": "https://cdn.cebraspe.org.br/concursos/irbr_26_diplomacia/arquivos/7FA89C5320E2811FDD1A8276DD6526120704864996EA8C6DED7A6DDB5D0987D7.pdf"
+              "title": "Edital Inep nº 64, de 21 de maio de 2026 (Enem 2026)",
+              "url": "http://www.abmes.org.br/arquivos/legislacoes/Edital-inep-064-2026-05-21.pdf"
+            },
+            {
+              "title": "A redação no Enem 2025: cartilha do participante",
+              "url": "https://download.inep.gov.br/publicacoes/institucionais/avaliacoes_e_exames_da_educacao_basica/a_redacao_no_enem_2025_cartilha_do_participante.pdf"
             }
           ],
-          "exam": "Concurso de Admissão à Carreira de Diplomata (CACD)"
+          "exam": "ENEM"
         }
       }
     },
@@ -1058,254 +1145,6 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 9/17 (read 10). passages found 75/75. problems left 0. missing: {\"kind\":\"subject\",\"name\":\"Linguagens\",\"questions\":45}; {\"kind\":\"subject\",\"name\":\"Matemática\",\"questions\":45}; {\"kind\":\"choice\",\"options\":[\"Inglês\",\"Espanhol\"],\"partOf\":\"Linguagens\"}; {\"kind\":\"timeLimit\",\"minutes\":330}; {\"kind\":\"sharedClock\"}; {\"count\":1,\"kind\":\"writtenTask\",\"lines\":30,\"points\":1000,\"total\":true}; {\"kind\":\"writtenTask\",\"points\":1000,\"scales\":[[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200]]}; {\"kind\":\"writtenTask\",\"points\":1000,\"zeroKinds\":[\"blank\",\"offTopic\",\"tooFewLines\",\"wrongForm\"]}",
-          "kind": "majorErrors",
-          "score": 8.494117647058824
-        },
-        {
-          "conclusion": "Facts kept 9/17 (read 10). passages found 75/75. problems left 0. missing: {\"kind\":\"subject\",\"name\":\"Linguagens\",\"questions\":45}; {\"kind\":\"subject\",\"name\":\"Matemática\",\"questions\":45}; {\"kind\":\"choice\",\"options\":[\"Inglês\",\"Espanhol\"],\"partOf\":\"Linguagens\"}; {\"kind\":\"timeLimit\",\"minutes\":330}; {\"kind\":\"sharedClock\"}; {\"count\":1,\"kind\":\"writtenTask\",\"lines\":30,\"points\":1000,\"total\":true}; {\"kind\":\"writtenTask\",\"points\":1000,\"scales\":[[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200]]}; {\"kind\":\"writtenTask\",\"points\":1000,\"zeroKinds\":[\"blank\",\"offTopic\",\"tooFewLines\",\"wrongForm\"]}",
-          "kind": "minorErrors",
-          "score": 8.494117647058824
-        },
-        {
-          "conclusion": "Facts kept 9/17 (read 10). passages found 75/75. problems left 0. missing: {\"kind\":\"subject\",\"name\":\"Linguagens\",\"questions\":45}; {\"kind\":\"subject\",\"name\":\"Matemática\",\"questions\":45}; {\"kind\":\"choice\",\"options\":[\"Inglês\",\"Espanhol\"],\"partOf\":\"Linguagens\"}; {\"kind\":\"timeLimit\",\"minutes\":330}; {\"kind\":\"sharedClock\"}; {\"count\":1,\"kind\":\"writtenTask\",\"lines\":30,\"points\":1000,\"total\":true}; {\"kind\":\"writtenTask\",\"points\":1000,\"scales\":[[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200]]}; {\"kind\":\"writtenTask\",\"points\":1000,\"zeroKinds\":[\"blank\",\"offTopic\",\"tooFewLines\",\"wrongForm\"]}",
-          "kind": "potentialImprovements",
-          "score": 8.494117647058824
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "facts": [
-            {
-              "kind": "questionCount",
-              "value": 180
-            },
-            {
-              "date": "2026-11-08",
-              "dateKind": "exam",
-              "kind": "date"
-            },
-            {
-              "date": "2026-11-15",
-              "dateKind": "exam",
-              "kind": "date"
-            },
-            {
-              "date": "2026-06-05",
-              "dateKind": "registrationEnd",
-              "kind": "date"
-            },
-            {
-              "kind": "subject",
-              "name": "Linguagens",
-              "questions": 45
-            },
-            {
-              "kind": "subject",
-              "name": "Matemática",
-              "questions": 45
-            },
-            {
-              "kind": "choice",
-              "options": [
-                "Inglês",
-                "Espanhol"
-              ],
-              "partOf": "Linguagens"
-            },
-            {
-              "format": "multipleChoice",
-              "kind": "format"
-            },
-            {
-              "format": "essay",
-              "kind": "format"
-            },
-            {
-              "kind": "scoring",
-              "method": "itemResponseTheory"
-            },
-            {
-              "kind": "timeLimit",
-              "minutes": 330
-            },
-            {
-              "kind": "timeLimit",
-              "minutes": 300
-            },
-            {
-              "kind": "testedLanguage",
-              "language": null
-            },
-            {
-              "kind": "sharedClock"
-            },
-            {
-              "count": 1,
-              "kind": "writtenTask",
-              "lines": 30,
-              "points": 1000,
-              "total": true
-            },
-            {
-              "kind": "writtenTask",
-              "points": 1000,
-              "scales": [
-                [
-                  0,
-                  40,
-                  80,
-                  120,
-                  160,
-                  200
-                ],
-                [
-                  0,
-                  40,
-                  80,
-                  120,
-                  160,
-                  200
-                ],
-                [
-                  0,
-                  40,
-                  80,
-                  120,
-                  160,
-                  200
-                ],
-                [
-                  0,
-                  40,
-                  80,
-                  120,
-                  160,
-                  200
-                ],
-                [
-                  0,
-                  40,
-                  80,
-                  120,
-                  160,
-                  200
-                ]
-              ]
-            },
-            {
-              "kind": "writtenTask",
-              "points": 1000,
-              "zeroKinds": [
-                "blank",
-                "offTopic",
-                "tooFewLines",
-                "wrongForm"
-              ]
-            }
-          ]
-        },
-        "id": "enem-2026-1",
-        "language": "pt",
-        "userInput": {
-          "documents": [
-            {
-              "title": "Edital Inep nº 64, de 21 de maio de 2026 (Enem 2026)",
-              "url": "http://www.abmes.org.br/arquivos/legislacoes/Edital-inep-064-2026-05-21.pdf"
-            },
-            {
-              "title": "A redação no Enem 2025: cartilha do participante",
-              "url": "https://download.inep.gov.br/publicacoes/institucionais/avaliacoes_e_exames_da_educacao_basica/a_redacao_no_enem_2025_cartilha_do_participante.pdf"
-            }
-          ],
-          "exam": "ENEM"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "Facts kept 2/5 (read 2). passages found 65/65. problems left 1. missing: {\"count\":1,\"criterionPoints\":[5],\"handwritten\":true,\"kind\":\"writtenTask\",\"language\":null,\"lines\":null,\"points\":5,\"rounding\":false,\"scales\":[null],\"total\":true}; {\"kind\":\"writtenTask\",\"points\":5,\"zeroKinds\":[\"blank\",\"offTopic\",\"wrongForm\"],\"zeroing\":true}; {\"count\":4,\"criterionPoints\":[1.25],\"handwritten\":true,\"kind\":\"writtenTask\",\"lines\":30,\"points\":1.25,\"total\":true}",
-          "kind": "majorErrors",
-          "score": 8.08
-        },
-        {
-          "conclusion": "Facts kept 2/5 (read 2). passages found 65/65. problems left 1. missing: {\"count\":1,\"criterionPoints\":[5],\"handwritten\":true,\"kind\":\"writtenTask\",\"language\":null,\"lines\":null,\"points\":5,\"rounding\":false,\"scales\":[null],\"total\":true}; {\"kind\":\"writtenTask\",\"points\":5,\"zeroKinds\":[\"blank\",\"offTopic\",\"wrongForm\"],\"zeroing\":true}; {\"count\":4,\"criterionPoints\":[1.25],\"handwritten\":true,\"kind\":\"writtenTask\",\"lines\":30,\"points\":1.25,\"total\":true}",
-          "kind": "minorErrors",
-          "score": 8.08
-        },
-        {
-          "conclusion": "Facts kept 2/5 (read 2). passages found 65/65. problems left 1. missing: {\"count\":1,\"criterionPoints\":[5],\"handwritten\":true,\"kind\":\"writtenTask\",\"language\":null,\"lines\":null,\"points\":5,\"rounding\":false,\"scales\":[null],\"total\":true}; {\"kind\":\"writtenTask\",\"points\":5,\"zeroKinds\":[\"blank\",\"offTopic\",\"wrongForm\"],\"zeroing\":true}; {\"count\":4,\"criterionPoints\":[1.25],\"handwritten\":true,\"kind\":\"writtenTask\",\"lines\":30,\"points\":1.25,\"total\":true}",
-          "kind": "potentialImprovements",
-          "score": 8.08
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "facts": [
-            {
-              "kind": "section",
-              "minutes": 300
-            },
-            {
-              "kind": "session",
-              "mentions": "13"
-            },
-            {
-              "count": 1,
-              "criterionPoints": [
-                5
-              ],
-              "handwritten": true,
-              "kind": "writtenTask",
-              "language": null,
-              "lines": null,
-              "points": 5,
-              "rounding": false,
-              "scales": [
-                null
-              ],
-              "total": true
-            },
-            {
-              "kind": "writtenTask",
-              "points": 5,
-              "zeroKinds": [
-                "blank",
-                "offTopic",
-                "wrongForm"
-              ],
-              "zeroing": true
-            },
-            {
-              "count": 4,
-              "criterionPoints": [
-                1.25
-              ],
-              "handwritten": true,
-              "kind": "writtenTask",
-              "lines": 30,
-              "points": 1.25,
-              "total": true
-            }
-          ]
-        },
-        "id": "oab-47-2a-fase-written-1",
-        "language": "pt",
-        "userInput": {
-          "documents": [
-            {
-              "title": "Edital de abertura do 47º Exame de Ordem Unificado",
-              "url": "https://s.oab.org.br/arquivos/2026/05/3578986c-fb9e-42ed-b68b-9a5131c86c9a.pdf"
-            }
-          ],
-          "exam": "47º Exame de Ordem Unificado (OAB), 2ª fase: prova prático-profissional"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
           "conclusion": "Facts kept 0/3 (read 3). passages found 22/22. problems left 0. missing: {\"count\":1,\"criterionPoints\":[],\"drawsOn\":null,\"handwritten\":null,\"kind\":\"writtenTask\",\"language\":null,\"lines\":30,\"points\":null,\"total\":false}; {\"kind\":\"section\",\"minutes\":240,\"questions\":40}; {\"kind\":\"sharedClock\"}",
           "kind": "majorErrors",
           "score": 6.8
@@ -1355,6 +1194,705 @@
             }
           ],
           "exam": "Concurso da Prefeitura de Vale Alto, Assistente Administrativo"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 20/22 (read 20). passages found 143/143. problems left 0. missing: {\"kind\":\"totalMinimum\",\"minimum\":{\"unit\":\"points\",\"value\":120}}; {\"count\":1,\"kind\":\"writtenTask\",\"language\":{\"factor\":0.5,\"method\":\"perError\"},\"lines\":70,\"points\":70}",
+          "kind": "majorErrors",
+          "score": 9.709090909090909
+        },
+        {
+          "conclusion": "Facts kept 20/22 (read 20). passages found 143/143. problems left 0. missing: {\"kind\":\"totalMinimum\",\"minimum\":{\"unit\":\"points\",\"value\":120}}; {\"count\":1,\"kind\":\"writtenTask\",\"language\":{\"factor\":0.5,\"method\":\"perError\"},\"lines\":70,\"points\":70}",
+          "kind": "minorErrors",
+          "score": 9.709090909090909
+        },
+        {
+          "conclusion": "Facts kept 20/22 (read 20). passages found 143/143. problems left 0. missing: {\"kind\":\"totalMinimum\",\"minimum\":{\"unit\":\"points\",\"value\":120}}; {\"count\":1,\"kind\":\"writtenTask\",\"language\":{\"factor\":0.5,\"method\":\"perError\"},\"lines\":70,\"points\":70}",
+          "kind": "potentialImprovements",
+          "score": 9.709090909090909
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "questionCount",
+              "value": 240
+            },
+            {
+              "format": "trueFalse",
+              "kind": "format"
+            },
+            {
+              "kind": "wrongPenalty",
+              "value": 0.25
+            },
+            {
+              "kind": "totalMinimum",
+              "minimum": {
+                "unit": "points",
+                "value": 120
+              }
+            },
+            {
+              "date": "2026-03-29",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2026-04-25",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2026-04-26",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2026-05-02",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2026-05-03",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "day": 1,
+              "kind": "section",
+              "minutes": 210
+            },
+            {
+              "day": 2,
+              "kind": "section",
+              "minutes": 240,
+              "name": "Língua Portuguesa"
+            },
+            {
+              "day": 2,
+              "kind": "section",
+              "minutes": 300,
+              "name": "História do Brasil"
+            },
+            {
+              "day": 3,
+              "kind": "section",
+              "minutes": 240,
+              "name": "Língua Inglesa"
+            },
+            {
+              "day": 3,
+              "kind": "section",
+              "minutes": 300,
+              "name": "Geografia"
+            },
+            {
+              "day": 4,
+              "kind": "section",
+              "minutes": 300,
+              "name": "Política Internacional"
+            },
+            {
+              "day": 4,
+              "kind": "section",
+              "minutes": 300,
+              "name": "Economia"
+            },
+            {
+              "day": 5,
+              "kind": "section",
+              "minutes": 300,
+              "name": "Direito"
+            },
+            {
+              "count": 1,
+              "kind": "writtenTask",
+              "language": {
+                "factor": 0.5,
+                "method": "perError"
+              },
+              "lines": 70,
+              "points": 70
+            },
+            {
+              "count": 1,
+              "kind": "writtenTask",
+              "lines": 30,
+              "points": 30
+            },
+            {
+              "count": 2,
+              "kind": "writtenTask",
+              "lines": 60,
+              "points": 30
+            },
+            {
+              "count": 2,
+              "kind": "writtenTask",
+              "lines": 40,
+              "points": 20
+            },
+            {
+              "count": 1,
+              "kind": "writtenTask",
+              "lines": 60,
+              "points": 50
+            }
+          ]
+        },
+        "id": "cacd-2026-full-notice-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital nº 1, de 28 de janeiro de 2026 (CACD 2026, Instituto Rio Branco)",
+              "url": "https://cdn.cebraspe.org.br/concursos/irbr_26_diplomacia/arquivos/7FA89C5320E2811FDD1A8276DD6526120704864996EA8C6DED7A6DDB5D0987D7.pdf"
+            }
+          ],
+          "exam": "Concurso de Admissão à Carreira de Diplomata (CACD)"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 3/3 (read 3). passages found 10/10. problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 3/3 (read 3). passages found 10/10. problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 3/3 (read 3). passages found 10/10. problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "format": "shortAnswer",
+              "kind": "format"
+            },
+            {
+              "format": "essay",
+              "kind": "format"
+            },
+            {
+              "kind": "shortTopics"
+            }
+          ],
+          "usable": true
+        },
+        "id": "pt-class-notes-biologia-celular-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "text": "BIOLOGIA - 1º ANO B - Prof.ª Juliana\nResumo pra prova de sexta (9/10): A CÉLULA\n\n1) Teoria celular\n- Todo ser vivo é formado por células (exceto vírus!)\n- A célula é a menor unidade da vida\n- Toda célula vem de outra célula (Virchow)\n- Hooke viu as \"celas\" na cortiça (1665)\n\n2) Procarionte x eucarionte\n- Procarionte: sem núcleo (DNA solto no citoplasma = nucleoide), sem organelas membranosas. Ex: bactérias\n- Eucarionte: núcleo com carioteca + organelas. Ex: animais, plantas, fungos, protozoários\n- As duas têm: membrana plasmática, citoplasma, ribossomos, DNA\n\n3) Membrana plasmática\n- Bicamada de fosfolipídios + proteínas (mosaico fluido)\n- Permeabilidade seletiva\n- Transporte passivo (sem gasto de ATP): difusão simples, difusão facilitada, osmose\n- Osmose: água vai do meio hipotônico (menos concentrado) para o hipertônico (mais concentrado)\n- Hemácia em água pura incha e estoura (hemólise); em solução muito salgada murcha\n- Transporte ativo: gasta ATP, contra o gradiente. Ex: bomba de sódio e potássio\n- Endocitose (fagocitose e pinocitose) e exocitose\n\n4) Organelas (CAI MUITO!!)\n- Mitocôndria: respiração celular, produz ATP\n- Cloroplasto: fotossíntese (só em plantas e algas)\n- Ribossomos: síntese de proteínas\n- RE rugoso: tem ribossomos, faz proteínas / RE liso: lipídios, desintoxicação\n- Complexo golgiense: modifica, empacota e secreta\n- Lisossomo: digestão intracelular\n- Vacúolo: grande na célula vegetal\n- Parede celular: célula vegetal (celulose)\n\n5) Núcleo\n- Carioteca (envoltório nuclear com poros)\n- Cromatina = DNA + proteínas\n- Nucléolo: produz ribossomos\n\n6) Vírus\n- Acelulares, só se reproduzem dentro de células (parasitas intracelulares obrigatórios)\n- Capsídeo de proteína + material genético (DNA ou RNA)\n- Antibiótico NÃO funciona contra vírus\n\nA prof disse: vai ter questão de completar a tabela das organelas e uma dissertativa sobre osmose!",
+              "title": "Resumo pra prova de biologia"
+            }
+          ],
+          "exam": "Prova de biologia (1º ano), a célula",
+          "material": true
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 3/3 (read 3). passages found 10/10. problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 3/3 (read 3). passages found 10/10. problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 3/3 (read 3). passages found 10/10. problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "format": "shortAnswer",
+              "kind": "format"
+            },
+            {
+              "format": "essay",
+              "kind": "format"
+            },
+            {
+              "kind": "shortTopics"
+            }
+          ],
+          "usable": true
+        },
+        "id": "pt-class-notes-biologia-celular-2",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "text": "BIOLOGIA - 1º ANO B - Prof.ª Juliana\nResumo pra prova de sexta (9/10): A CÉLULA\n\n1) Teoria celular\n- Todo ser vivo é formado por células (exceto vírus!)\n- A célula é a menor unidade da vida\n- Toda célula vem de outra célula (Virchow)\n- Hooke viu as \"celas\" na cortiça (1665)\n\n2) Procarionte x eucarionte\n- Procarionte: sem núcleo (DNA solto no citoplasma = nucleoide), sem organelas membranosas. Ex: bactérias\n- Eucarionte: núcleo com carioteca + organelas. Ex: animais, plantas, fungos, protozoários\n- As duas têm: membrana plasmática, citoplasma, ribossomos, DNA\n\n3) Membrana plasmática\n- Bicamada de fosfolipídios + proteínas (mosaico fluido)\n- Permeabilidade seletiva\n- Transporte passivo (sem gasto de ATP): difusão simples, difusão facilitada, osmose\n- Osmose: água vai do meio hipotônico (menos concentrado) para o hipertônico (mais concentrado)\n- Hemácia em água pura incha e estoura (hemólise); em solução muito salgada murcha\n- Transporte ativo: gasta ATP, contra o gradiente. Ex: bomba de sódio e potássio\n- Endocitose (fagocitose e pinocitose) e exocitose\n\n4) Organelas (CAI MUITO!!)\n- Mitocôndria: respiração celular, produz ATP\n- Cloroplasto: fotossíntese (só em plantas e algas)\n- Ribossomos: síntese de proteínas\n- RE rugoso: tem ribossomos, faz proteínas / RE liso: lipídios, desintoxicação\n- Complexo golgiense: modifica, empacota e secreta\n- Lisossomo: digestão intracelular\n- Vacúolo: grande na célula vegetal\n- Parede celular: célula vegetal (celulose)\n\n5) Núcleo\n- Carioteca (envoltório nuclear com poros)\n- Cromatina = DNA + proteínas\n- Nucléolo: produz ribossomos\n\n6) Vírus\n- Acelulares, só se reproduzem dentro de células (parasitas intracelulares obrigatórios)\n- Capsídeo de proteína + material genético (DNA ou RNA)\n- Antibiótico NÃO funciona contra vírus\n\nA prof disse: vai ter questão de completar a tabela das organelas e uma dissertativa sobre osmose!",
+              "title": "Resumo pra prova de biologia"
+            }
+          ],
+          "exam": "Prova de biologia (1º ano), a célula",
+          "material": true
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 3/3 (read 3). passages found 18/18. problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 3/3 (read 3). passages found 18/18. problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 3/3 (read 3). passages found 18/18. problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "format": "multipleChoice",
+              "kind": "format"
+            },
+            {
+              "format": "essay",
+              "kind": "format"
+            },
+            {
+              "kind": "shortTopics"
+            }
+          ],
+          "usable": true
+        },
+        "id": "en-class-notes-ap-biology-unit-2-1",
+        "language": "en",
+        "userInput": {
+          "documents": [
+            {
+              "text": "AP Biology - Mr. Daniels - Unit 2 review (test on Thursday)\n\n1. Cell size and surface area-to-volume ratio\n- Smaller cells exchange materials faster: higher SA:V\n- Calculate SA:V for a cube (side 1 cm vs 3 cm)\n\n2. Membrane structure\n- Phospholipid bilayer, fluid mosaic model\n- Cholesterol keeps the membrane fluid at low temperatures\n\n3. Membrane transport\n- Passive: simple diffusion, facilitated diffusion, osmosis\n- Tonicity: hypotonic, isotonic, hypertonic solutions\n- Active transport uses ATP (sodium-potassium pump)\n\n4. Compartmentalization\n- Endomembrane system: ER, Golgi, lysosomes\n- Endosymbiotic theory (mitochondria and chloroplasts)\n\nTest format: 20 multiple choice questions (four choices each) plus one free-response essay where you design an experiment on osmosis in potato cores. Calculators allowed.",
+              "title": "Unit 2 review"
+            }
+          ],
+          "exam": "AP Biology unit 2 test",
+          "material": true
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 3/3 (read 3). passages found 13/13. problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 3/3 (read 3). passages found 13/13. problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 3/3 (read 3). passages found 13/13. problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "format": "multipleChoice",
+              "kind": "format"
+            },
+            {
+              "format": "essay",
+              "kind": "format"
+            },
+            {
+              "kind": "shortTopics"
+            }
+          ],
+          "usable": true
+        },
+        "id": "en-class-notes-ap-biology-unit-2-2",
+        "language": "en",
+        "userInput": {
+          "documents": [
+            {
+              "text": "AP Biology - Mr. Daniels - Unit 2 review (test on Thursday)\n\n1. Cell size and surface area-to-volume ratio\n- Smaller cells exchange materials faster: higher SA:V\n- Calculate SA:V for a cube (side 1 cm vs 3 cm)\n\n2. Membrane structure\n- Phospholipid bilayer, fluid mosaic model\n- Cholesterol keeps the membrane fluid at low temperatures\n\n3. Membrane transport\n- Passive: simple diffusion, facilitated diffusion, osmosis\n- Tonicity: hypotonic, isotonic, hypertonic solutions\n- Active transport uses ATP (sodium-potassium pump)\n\n4. Compartmentalization\n- Endomembrane system: ER, Golgi, lysosomes\n- Endosymbiotic theory (mitochondria and chloroplasts)\n\nTest format: 20 multiple choice questions (four choices each) plus one free-response essay where you design an experiment on osmosis in potato cores. Calculators allowed.",
+              "title": "Unit 2 review"
+            }
+          ],
+          "exam": "AP Biology unit 2 test",
+          "material": true
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 7/7. problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 7/7. problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 7/7. problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "topic",
+              "topic": "Velocidade média"
+            },
+            {
+              "kind": "topic",
+              "topic": "Aceleração"
+            },
+            {
+              "kind": "topic",
+              "topic": "Função horária"
+            },
+            {
+              "kind": "shortTopics"
+            }
+          ],
+          "usable": true
+        },
+        "id": "pt-photo-notes-transcript-with-latex-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "text": "# Cinemática - MUV\n\nVelocidade média: $v_m = \\Delta s / \\Delta t$\n\nAceleração: $a = \\Delta v / \\Delta t$ (unidade: $m/s^2$)\n\nFunção horária: $s = s_0 + v_0 \\cdot t + a \\cdot t^2 / 2$\n\nEx.: $s = 12 - 3,5 \\cdot t$ → $v_0 = -3,5$ m/s\n\n(movimento retrógrado)\n\nFreando: $a = -2,5$ m/s² (sinal contrário ao de v)\n\nMov. uniformemente variado: $a$ constante $\\neq 0$\n\nExercício 4: um carro a 20 m/s freia com $a = -2,5$ m/s². Em quanto tempo ele para?",
+              "title": "Foto das anotações de física"
+            }
+          ],
+          "exam": "Prova de física (1º ano), cinemática",
+          "material": true
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 6/6. problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 6/6. problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 6/6. problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "topic",
+              "topic": "Velocidade média"
+            },
+            {
+              "kind": "topic",
+              "topic": "Aceleração"
+            },
+            {
+              "kind": "topic",
+              "topic": "Função horária"
+            },
+            {
+              "kind": "shortTopics"
+            }
+          ],
+          "usable": true
+        },
+        "id": "pt-photo-notes-transcript-with-latex-2",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "text": "# Cinemática - MUV\n\nVelocidade média: $v_m = \\Delta s / \\Delta t$\n\nAceleração: $a = \\Delta v / \\Delta t$ (unidade: $m/s^2$)\n\nFunção horária: $s = s_0 + v_0 \\cdot t + a \\cdot t^2 / 2$\n\nEx.: $s = 12 - 3,5 \\cdot t$ → $v_0 = -3,5$ m/s\n\n(movimento retrógrado)\n\nFreando: $a = -2,5$ m/s² (sinal contrário ao de v)\n\nMov. uniformemente variado: $a$ constante $\\neq 0$\n\nExercício 4: um carro a 20 m/s freia com $a = -2,5$ m/s². Em quanto tempo ele para?",
+              "title": "Foto das anotações de física"
+            }
+          ],
+          "exam": "Prova de física (1º ano), cinemática",
+          "material": true
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 6/6 (read 6). passages found 6/6. problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 6/6 (read 6). passages found 6/6. problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 6/6 (read 6). passages found 6/6. problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "subject",
+              "name": "Electricity"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Current"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Ohm's law"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Power"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Series circuit"
+            },
+            {
+              "kind": "shortTopics"
+            }
+          ],
+          "usable": true
+        },
+        "id": "en-photo-notes-under-one-title-1",
+        "language": "en",
+        "userInput": {
+          "documents": [
+            {
+              "text": "# Electricity - circuits\n\nCurrent: $I = Q / t$ (unit: ampere)\n\nOhm's law: $V = I \\cdot R$\n\nEx.: $R = 6\\,\\Omega$, $I = 2$ A → $V = 12$ V\n\nPower: $P = V \\cdot I$\n\nSeries circuit: same current through every resistor, $R_{total} = R_1 + R_2$\n\nQ3: a 9 V battery drives 0.5 A. What is the resistance?",
+              "title": "Photo of physics notes"
+            }
+          ],
+          "exam": "Physics test on circuits",
+          "material": true
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 6/6 (read 6). passages found 5/5. problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 6/6 (read 6). passages found 5/5. problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 6/6 (read 6). passages found 5/5. problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "subject",
+              "name": "Electricity"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Current"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Ohm's law"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Power"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Series circuit"
+            },
+            {
+              "kind": "shortTopics"
+            }
+          ],
+          "usable": true
+        },
+        "id": "en-photo-notes-under-one-title-2",
+        "language": "en",
+        "userInput": {
+          "documents": [
+            {
+              "text": "# Electricity - circuits\n\nCurrent: $I = Q / t$ (unit: ampere)\n\nOhm's law: $V = I \\cdot R$\n\nEx.: $R = 6\\,\\Omega$, $I = 2$ A → $V = 12$ V\n\nPower: $P = V \\cdot I$\n\nSeries circuit: same current through every resistor, $R_{total} = R_1 + R_2$\n\nQ3: a 9 V battery drives 0.5 A. What is the resistance?",
+              "title": "Photo of physics notes"
+            }
+          ],
+          "exam": "Physics test on circuits",
+          "material": true
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 1/4 (read 4). passages found 4/5. problems left 0. missing: {\"kind\":\"topic\",\"topic\":\"Boyle's law\"}; {\"kind\":\"topic\",\"topic\":\"Charles's law\"}; {\"kind\":\"topic\",\"topic\":\"Ideal gas law\"}. research would not store it as the exam's blueprint",
+          "kind": "majorErrors",
+          "score": 7.28
+        },
+        {
+          "conclusion": "Facts kept 1/4 (read 4). passages found 4/5. problems left 0. missing: {\"kind\":\"topic\",\"topic\":\"Boyle's law\"}; {\"kind\":\"topic\",\"topic\":\"Charles's law\"}; {\"kind\":\"topic\",\"topic\":\"Ideal gas law\"}. research would not store it as the exam's blueprint",
+          "kind": "minorErrors",
+          "score": 7.28
+        },
+        {
+          "conclusion": "Facts kept 1/4 (read 4). passages found 4/5. problems left 0. missing: {\"kind\":\"topic\",\"topic\":\"Boyle's law\"}; {\"kind\":\"topic\",\"topic\":\"Charles's law\"}; {\"kind\":\"topic\",\"topic\":\"Ideal gas law\"}. research would not store it as the exam's blueprint",
+          "kind": "potentialImprovements",
+          "score": 7.28
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "topic",
+              "topic": "Boyle's law"
+            },
+            {
+              "kind": "topic",
+              "topic": "Charles's law"
+            },
+            {
+              "kind": "topic",
+              "topic": "Ideal gas law"
+            },
+            {
+              "kind": "shortTopics"
+            }
+          ],
+          "usable": true
+        },
+        "id": "en-typed-notes-with-formulas-and-a-worked-example-1",
+        "language": "en",
+        "userInput": {
+          "documents": [
+            {
+              "text": "Chem quiz Friday - gas laws\n\nBoyle's law: P1V1 = P2V2 (constant T)\nCharles's law: V1/T1 = V2/T2, T in kelvin!\nIdeal gas law: PV = nRT, R = 0.0821 L·atm/(mol·K)\nEx: 2.0 mol at 300 K in 10 L -> P = (2.0)(0.0821)(300)/10 = 4.9 atm\nSTP: 0 °C and 1 atm, 1 mol of gas = 22.4 L\nPractice 3: a balloon goes from 2.0 L at 25 °C to 50 °C. New volume?",
+              "title": "Gas laws notes"
+            }
+          ],
+          "exam": "Chemistry quiz on gas laws",
+          "material": true
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 5/5. problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 5/5. problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 5/5. problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "topic",
+              "topic": "Boyle's law"
+            },
+            {
+              "kind": "topic",
+              "topic": "Charles's law"
+            },
+            {
+              "kind": "topic",
+              "topic": "Ideal gas law"
+            },
+            {
+              "kind": "shortTopics"
+            }
+          ],
+          "usable": true
+        },
+        "id": "en-typed-notes-with-formulas-and-a-worked-example-2",
+        "language": "en",
+        "userInput": {
+          "documents": [
+            {
+              "text": "Chem quiz Friday - gas laws\n\nBoyle's law: P1V1 = P2V2 (constant T)\nCharles's law: V1/T1 = V2/T2, T in kelvin!\nIdeal gas law: PV = nRT, R = 0.0821 L·atm/(mol·K)\nEx: 2.0 mol at 300 K in 10 L -> P = (2.0)(0.0821)(300)/10 = 4.9 atm\nSTP: 0 °C and 1 atm, 1 mol of gas = 22.4 L\nPractice 3: a balloon goes from 2.0 L at 25 °C to 50 °C. New volume?",
+              "title": "Gas laws notes"
+            }
+          ],
+          "exam": "Chemistry quiz on gas laws",
+          "material": true
         }
       }
     }

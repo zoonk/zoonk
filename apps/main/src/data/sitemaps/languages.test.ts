@@ -6,7 +6,7 @@ import { describe, expect, it } from "vitest";
 import { listSitemapCourses } from "./courses";
 import { listSitemapLibraryChapters } from "./library-chapters";
 import { listSitemapLibraryLessons } from "./library-lessons";
-import { type SitemapResource, getSitemapPageIds } from "./sitemap-pages";
+import { type SitemapResource, getSitemapPageIds } from "./sitemap-page-ids";
 
 async function listSitemapPages<T>({
   list,

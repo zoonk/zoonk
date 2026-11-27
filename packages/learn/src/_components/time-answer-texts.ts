@@ -11,22 +11,43 @@ export function useTimeAnswerTexts() {
 
   return {
     /** Where the time suggested studies everything by the date: the line under its title. */
-    enoughBy: ({ date, exam }: { date: GoalDate; exam: boolean }) =>
-      exam
+    enoughBy: ({
+      date,
+      exam,
+      subjectsTakenOut = false,
+    }: {
+      date: GoalDate;
+      exam: boolean;
+      subjectsTakenOut?: boolean;
+    }) => {
+      const values = goalDate(date);
+
+      if (subjectsTakenOut) {
+        return t({
+          description:
+            'Said under "We suggest {time} a day" when the learner took a subject out of their plan. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
+          message:
+            "{dateKind, select, month {That's enough to cover everything in your plan by {date}.} other {That's enough to cover everything in your plan by {date}.}}",
+          values,
+        });
+      }
+
+      return exam
         ? t({
             description:
               'Said under "We suggest {time} a day". In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
             message:
               "{dateKind, select, month {That's enough to be ready for your exam by {date}.} other {That's enough to be ready for your exam by {date}.}}",
-            values: goalDate(date),
+            values,
           })
         : t({
             description:
               'Said under "We suggest {time} a day". In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
             message:
               "{dateKind, select, month {That's enough to reach your goal by {date}.} other {That's enough to reach your goal by {date}.}}",
-            values: goalDate(date),
-          }),
+            values,
+          });
+    },
     /** Where the plan's time doesn't study everything by the date, said without a share. */
     startsWithMost: (exam: boolean) =>
       exam
