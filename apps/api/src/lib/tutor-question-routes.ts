@@ -1,5 +1,6 @@
 import { accessError, errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
+import { usageDecisionError } from "@/lib/lesson-player-errors";
 import { readBody, readPathParams, readQueryParams } from "@/lib/request-input";
 import {
   type TutorTarget,
@@ -39,7 +40,7 @@ export function tutorQuestionRoutes<TPath>({
     return NextResponse.json(result.thread);
   }
 
-  /** Saved before generation, so a disconnect can't lose the learner's turn. */
+  /** Saved before generation, so a disconnect can't lose the learner's turn; a question the allowance refuses isn't saved. */
   async function postQuestion(request: NextRequest, context: QuestionsRouteContext) {
     const [body, path] = await Promise.all([
       readBody(request, createLessonQuestionInputSchema),
@@ -58,6 +59,10 @@ export function tutorQuestionRoutes<TPath>({
 
     if (result.status === "conflict") {
       return errors.conflict("Question conflicts with an existing request or unfinished turn");
+    }
+
+    if (result.status === "usageRefused") {
+      return usageDecisionError(result.decision);
     }
 
     if (result.status !== "created") {

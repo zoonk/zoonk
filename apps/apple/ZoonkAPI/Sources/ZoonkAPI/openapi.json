@@ -10982,7 +10982,7 @@
         }
       },
       "post": {
-        "description": "Asks the tutor about a Library chapter. `context` is `{ kind: \"chapter\" }`: the tutor sees the chapter's objectives and its lessons, with the ones the learner finished. Answer it with `POST /v1/questions/{questionId}/answers`.",
+        "description": "Asks the tutor about a Library chapter. `context` is `{ kind: \"chapter\" }`: the tutor sees the chapter's objectives and its lessons, with the ones the learner finished. The question counts against the learner's tutor allowance when it's asked, and its answer doesn't count again; a question the allowance refuses isn't saved (403 asks a guest to sign up, 402 a free learner to subscribe, 429 to slow down or come back after the limit resets, with `SIGN_UP_REQUIRED`, `SLOW_DOWN` or `USAGE_LIMIT_REACHED` and details), so the learner can send it again once the allowance is back. A first question about a lesson screen that someone already asked there doesn't count. Answer it with `POST /v1/questions/{questionId}/answers`.",
         "operationId": "createChapterQuestion",
         "security": [
           {
@@ -11051,6 +11051,16 @@
               }
             }
           },
+          "402": {
+            "description": "Subscription required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "403": {
             "description": "Request forbidden",
             "content": {
@@ -11083,6 +11093,16 @@
           },
           "422": {
             "description": "The request is valid but cannot be applied to the resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "The tutor allowance asks the learner to slow down or come back after the limit resets",
             "content": {
               "application/json": {
                 "schema": {
@@ -11348,7 +11368,7 @@
         }
       },
       "post": {
-        "description": "Asks the tutor about a Buddy conversation for one of the learner's goals. The first send creates a conversation at the supplied ID. `context` is `{ kind: \"plan\" }`: the buddy answers doubts about what the learner studies for the goal and questions about their plan (\"Why am I studying this today?\"), seeing the plan's status, current phase, today's items with the reason each one is there, what comes next, how the learner shaped the plan, their latest open mistakes and the outline of the course the plan is built from. When the learner asks to change the plan (\"1 hour a day\", \"no studying on Saturdays\", \"the exam moved\"), the answer proposes the change: the question's `planChange` holds it with its effect, waiting for `POST /v1/goals/{goalId}/plan/changes/{changeId}` (applied or declined); nothing changes before that. Only the latest proposal of the conversation waits: an earlier one still unanswered is declined. While the plan is still being written, the buddy answers doubts and says the plan is not ready for changes yet. Answer it with `POST /v1/questions/{questionId}/answers`.",
+        "description": "Asks the tutor about a Buddy conversation for one of the learner's goals. The first send creates a conversation at the supplied ID. `context` is `{ kind: \"plan\" }`: the buddy answers doubts about what the learner studies for the goal and questions about their plan (\"Why am I studying this today?\"), seeing the plan's status, current phase, today's items with the reason each one is there, what comes next, how the learner shaped the plan, their latest open mistakes and the outline of the course the plan is built from. When the learner asks to change the plan (\"1 hour a day\", \"no studying on Saturdays\", \"the exam moved\"), the answer proposes the change: the question's `planChange` holds it with its effect, waiting for `POST /v1/goals/{goalId}/plan/changes/{changeId}` (applied or declined); nothing changes before that. Only the latest proposal of the conversation waits: an earlier one still unanswered is declined. While the plan is still being written, the buddy answers doubts and says the plan is not ready for changes yet. The question counts against the learner's tutor allowance when it's asked, and its answer doesn't count again; a question the allowance refuses isn't saved (403 asks a guest to sign up, 402 a free learner to subscribe, 429 to slow down or come back after the limit resets, with `SIGN_UP_REQUIRED`, `SLOW_DOWN` or `USAGE_LIMIT_REACHED` and details), so the learner can send it again once the allowance is back. A first question about a lesson screen that someone already asked there doesn't count. Answer it with `POST /v1/questions/{questionId}/answers`.",
         "operationId": "createBuddyConversationQuestion",
         "security": [
           {
@@ -11429,6 +11449,16 @@
               }
             }
           },
+          "402": {
+            "description": "Subscription required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "403": {
             "description": "Request forbidden",
             "content": {
@@ -11461,6 +11491,16 @@
           },
           "422": {
             "description": "The request is valid but cannot be applied to the resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "The tutor allowance asks the learner to slow down or come back after the limit resets",
             "content": {
               "application/json": {
                 "schema": {
@@ -11621,7 +11661,7 @@
         }
       },
       "post": {
-        "description": "Asks the tutor about the earliest conversation for one of the learner's goals. `context` is `{ kind: \"plan\" }`: the buddy answers doubts about what the learner studies for the goal and questions about their plan (\"Why am I studying this today?\"), seeing the plan's status, current phase, today's items with the reason each one is there, what comes next, how the learner shaped the plan, their latest open mistakes and the outline of the course the plan is built from. When the learner asks to change the plan (\"1 hour a day\", \"no studying on Saturdays\", \"the exam moved\"), the answer proposes the change: the question's `planChange` holds it with its effect, waiting for `POST /v1/goals/{goalId}/plan/changes/{changeId}` (applied or declined); nothing changes before that. Only the latest proposal of the conversation waits: an earlier one still unanswered is declined. While the plan is still being written, the buddy answers doubts and says the plan is not ready for changes yet. Answer it with `POST /v1/questions/{questionId}/answers`.",
+        "description": "Asks the tutor about the earliest conversation for one of the learner's goals. `context` is `{ kind: \"plan\" }`: the buddy answers doubts about what the learner studies for the goal and questions about their plan (\"Why am I studying this today?\"), seeing the plan's status, current phase, today's items with the reason each one is there, what comes next, how the learner shaped the plan, their latest open mistakes and the outline of the course the plan is built from. When the learner asks to change the plan (\"1 hour a day\", \"no studying on Saturdays\", \"the exam moved\"), the answer proposes the change: the question's `planChange` holds it with its effect, waiting for `POST /v1/goals/{goalId}/plan/changes/{changeId}` (applied or declined); nothing changes before that. Only the latest proposal of the conversation waits: an earlier one still unanswered is declined. While the plan is still being written, the buddy answers doubts and says the plan is not ready for changes yet. The question counts against the learner's tutor allowance when it's asked, and its answer doesn't count again; a question the allowance refuses isn't saved (403 asks a guest to sign up, 402 a free learner to subscribe, 429 to slow down or come back after the limit resets, with `SIGN_UP_REQUIRED`, `SLOW_DOWN` or `USAGE_LIMIT_REACHED` and details), so the learner can send it again once the allowance is back. A first question about a lesson screen that someone already asked there doesn't count. Answer it with `POST /v1/questions/{questionId}/answers`.",
         "operationId": "createPlanQuestion",
         "security": [
           {
@@ -11690,6 +11730,16 @@
               }
             }
           },
+          "402": {
+            "description": "Subscription required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "403": {
             "description": "Request forbidden",
             "content": {
@@ -11722,6 +11772,16 @@
           },
           "422": {
             "description": "The request is valid but cannot be applied to the resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "The tutor allowance asks the learner to slow down or come back after the limit resets",
             "content": {
               "application/json": {
                 "schema": {
@@ -11894,7 +11954,7 @@
         }
       },
       "post": {
-        "description": "Asks the tutor about a subject of one of the learner's goals (a subject of the exam's notice, or a module). `context` is `{ kind: \"subject\" }`: the buddy sees the subject as the syllabus shows it (its topics with their status, its chapters with their progress and next day, the lessons studied, skipped because known, and in all) beside the goal's plan, which it can propose changes to as in the plan's conversation. A key the goal's syllabus doesn't have is 404. Answer it with `POST /v1/questions/{questionId}/answers`.",
+        "description": "Asks the tutor about a subject of one of the learner's goals (a subject of the exam's notice, or a module). `context` is `{ kind: \"subject\" }`: the buddy sees the subject as the syllabus shows it (its topics with their status, its chapters with their progress and next day, the lessons studied, skipped because known, and in all) beside the goal's plan, which it can propose changes to as in the plan's conversation. A key the goal's syllabus doesn't have is 404. The question counts against the learner's tutor allowance when it's asked, and its answer doesn't count again; a question the allowance refuses isn't saved (403 asks a guest to sign up, 402 a free learner to subscribe, 429 to slow down or come back after the limit resets, with `SIGN_UP_REQUIRED`, `SLOW_DOWN` or `USAGE_LIMIT_REACHED` and details), so the learner can send it again once the allowance is back. A first question about a lesson screen that someone already asked there doesn't count. Answer it with `POST /v1/questions/{questionId}/answers`.",
         "operationId": "createSubjectQuestion",
         "security": [
           {
@@ -11975,6 +12035,16 @@
               }
             }
           },
+          "402": {
+            "description": "Subscription required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "403": {
             "description": "Request forbidden",
             "content": {
@@ -12007,6 +12077,16 @@
           },
           "422": {
             "description": "The request is valid but cannot be applied to the resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "The tutor allowance asks the learner to slow down or come back after the limit resets",
             "content": {
               "application/json": {
                 "schema": {
@@ -12167,7 +12247,7 @@
         }
       },
       "post": {
-        "description": "Asks the tutor about a question of the learner's study session or mistakes practice. `context` is `{ kind: \"item\", answered, blockId? }`: the buddy sees the question as it was asked (with the numbers its session block served, `blockId`, absent in mistakes practice) beside the goal's plan. Before the check (`answered: false`) it never sees the answer and gives hints; after it (`answered: true`) it also sees the learner's latest answer to the question from their own record, the right one and why. Another owner's private item or a question on a mock or checkpoint the learner is still taking is 404. A block that isn't theirs or doesn't ask it is 422. Without a block, the learner must have their own recorded attempt at the item or a saved mistake on its skill; otherwise the context is 422. Answer it with `POST /v1/questions/{questionId}/answers`.",
+        "description": "Asks the tutor about a question of the learner's study session or mistakes practice. `context` is `{ kind: \"item\", answered, blockId? }`: the buddy sees the question as it was asked (with the numbers its session block served, `blockId`, absent in mistakes practice) beside the goal's plan. Before the check (`answered: false`) it never sees the answer and gives hints; after it (`answered: true`) it also sees the learner's latest answer to the question from their own record, the right one and why. Another owner's private item or a question on a mock or checkpoint the learner is still taking is 404. A block that isn't theirs or doesn't ask it is 422. Without a block, the learner must have their own recorded attempt at the item or a saved mistake on its skill; otherwise the context is 422. The question counts against the learner's tutor allowance when it's asked, and its answer doesn't count again; a question the allowance refuses isn't saved (403 asks a guest to sign up, 402 a free learner to subscribe, 429 to slow down or come back after the limit resets, with `SIGN_UP_REQUIRED`, `SLOW_DOWN` or `USAGE_LIMIT_REACHED` and details), so the learner can send it again once the allowance is back. A first question about a lesson screen that someone already asked there doesn't count. Answer it with `POST /v1/questions/{questionId}/answers`.",
         "operationId": "createItemQuestion",
         "security": [
           {
@@ -12236,6 +12316,16 @@
               }
             }
           },
+          "402": {
+            "description": "Subscription required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "403": {
             "description": "Request forbidden",
             "content": {
@@ -12268,6 +12358,16 @@
           },
           "422": {
             "description": "The request is valid but cannot be applied to the resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "The tutor allowance asks the learner to slow down or come back after the limit resets",
             "content": {
               "application/json": {
                 "schema": {
@@ -12428,7 +12528,7 @@
         }
       },
       "post": {
-        "description": "Asks the tutor about a Library lesson. `context` is the whole lesson (`lesson`, with the step ids in the order the learner saw them), one screen (`step`) or an answer given on a screen (`answer`). When the learner taps one of the tutor's suggestions, send its `suggestion`: the server words the question itself, and a screen's first suggestion that someone already tapped there is answered with the shared answer. Anything the learner types is answered for them alone. Answer it with `POST /v1/questions/{questionId}/answers`.",
+        "description": "Asks the tutor about a Library lesson. `context` is the whole lesson (`lesson`, with the step ids in the order the learner saw them), one screen (`step`) or an answer given on a screen (`answer`). When the learner taps one of the tutor's suggestions, send its `suggestion`: the server words the question itself, and a screen's first suggestion that someone already tapped there is answered with the shared answer. Anything the learner types is answered for them alone. The question counts against the learner's tutor allowance when it's asked, and its answer doesn't count again; a question the allowance refuses isn't saved (403 asks a guest to sign up, 402 a free learner to subscribe, 429 to slow down or come back after the limit resets, with `SIGN_UP_REQUIRED`, `SLOW_DOWN` or `USAGE_LIMIT_REACHED` and details), so the learner can send it again once the allowance is back. A first question about a lesson screen that someone already asked there doesn't count. Answer it with `POST /v1/questions/{questionId}/answers`.",
         "operationId": "createLessonQuestion",
         "security": [
           {
@@ -12497,6 +12597,16 @@
               }
             }
           },
+          "402": {
+            "description": "Subscription required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "403": {
             "description": "Request forbidden",
             "content": {
@@ -12529,6 +12639,16 @@
           },
           "422": {
             "description": "The request is valid but cannot be applied to the resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "The tutor allowance asks the learner to slow down or come back after the limit resets",
             "content": {
               "application/json": {
                 "schema": {
@@ -12762,7 +12882,7 @@
         }
       },
       "post": {
-        "description": "Asks the tutor about one of the learner's mock exams. `context` is `{ kind: \"mock\" }`: the tutor sees the mock's result, areas and the questions missed with their skills. Only finished mocks can be asked about; a running mock is 404. Answer it with `POST /v1/questions/{questionId}/answers`.",
+        "description": "Asks the tutor about one of the learner's mock exams. `context` is `{ kind: \"mock\" }`: the tutor sees the mock's result, areas and the questions missed with their skills. Only finished mocks can be asked about; a running mock is 404. The question counts against the learner's tutor allowance when it's asked, and its answer doesn't count again; a question the allowance refuses isn't saved (403 asks a guest to sign up, 402 a free learner to subscribe, 429 to slow down or come back after the limit resets, with `SIGN_UP_REQUIRED`, `SLOW_DOWN` or `USAGE_LIMIT_REACHED` and details), so the learner can send it again once the allowance is back. A first question about a lesson screen that someone already asked there doesn't count. Answer it with `POST /v1/questions/{questionId}/answers`.",
         "operationId": "createMockQuestion",
         "security": [
           {
@@ -12831,6 +12951,16 @@
               }
             }
           },
+          "402": {
+            "description": "Subscription required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "403": {
             "description": "Request forbidden",
             "content": {
@@ -12863,6 +12993,16 @@
           },
           "422": {
             "description": "The request is valid but cannot be applied to the resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "The tutor allowance asks the learner to slow down or come back after the limit resets",
             "content": {
               "application/json": {
                 "schema": {
@@ -12969,7 +13109,7 @@
     },
     "/questions/{questionId}/answers": {
       "post": {
-        "description": "Claims a pending or failed question and returns one grounded answer as an AI SDK UI message stream, whatever the question is about (a lesson, chapter, plan or mock). `lessonId` in the question routes is a Library lesson. A first question about a lesson screen that someone already asked there streams the saved shared answer right away, without counting against the allowance or reading memory. Otherwise the answer counts against the learner's tutor allowance (403 asks a guest to sign up, 402 a free learner to subscribe, 429 to slow down or come back after the limit resets, with `SLOW_DOWN` or `USAGE_LIMIT_REACHED` and details), and reads the learner's memory. Its `finish` event comes once the answer is saved, so the answer is done and the learner can ask again; a `data-memory` part may follow with what the exchange changed in memory (each change's `action`, `fact` and `previous` with `id` and `statement`), which `POST /v1/me/memory/change-reversals` undoes. In a goal's conversation with the buddy, a `data-plan-change` part carries the plan change the answer proposed (a `PlanChange` waiting for the learner's OK) as soon as it's saved; the question's `planChange` holds it too. A `data-plan-changes-replaced` part follows it with the `ids` of earlier proposals it replaced because it changes the same thing (their status is now `replaced`). When the buddy only acted (a plan change or an app tool) and wrote nothing, the answer is a short confirmation of what it put under it. The streamed text is provisional: right before `finish`, a `data-saved-answer` part carries the answer as it was saved (`answer`), its links checked, and replaces it. Only that text and answers read back from the questions routes link anything: a buddy answer links only the in-app paths of the web app it was given (pages such as `/today` or `/plan`, `/session?block={id}` for one of today's blocks, `/challenge/{planItemId}`), and the lesson tutor's only web addresses. Links in the streamed text are unchecked.",
+        "description": "Claims a pending or failed question and returns one grounded answer as an AI SDK UI message stream, whatever the question is about (a lesson, chapter, plan or mock). `lessonId` in the question routes is a Library lesson. A first question about a lesson screen that someone already asked there streams the saved shared answer right away, without counting against the allowance or reading memory. Otherwise the answer counts against the learner's tutor allowance once per question, so a question the allowance admitted when it was asked doesn't count again (403 asks a guest to sign up, 402 a free learner to subscribe, 429 to slow down or come back after the limit resets, with `SLOW_DOWN` or `USAGE_LIMIT_REACHED` and details), and reads the learner's memory. Its `finish` event comes once the answer is saved, so the answer is done and the learner can ask again; a `data-memory` part may follow with what the exchange changed in memory (each change's `action`, `fact` and `previous` with `id` and `statement`), which `POST /v1/me/memory/change-reversals` undoes. In a goal's conversation with the buddy, a `data-plan-change` part carries the plan change the answer proposed (a `PlanChange` waiting for the learner's OK) as soon as it's saved; the question's `planChange` holds it too. A `data-plan-changes-replaced` part follows it with the `ids` of earlier proposals it replaced because it changes the same thing (their status is now `replaced`). When the buddy only acted (a plan change or an app tool) and wrote nothing, the answer is a short confirmation of what it put under it. The streamed text is provisional: right before `finish`, a `data-saved-answer` part carries the answer as it was saved (`answer`), its links checked, and replaces it. Only that text and answers read back from the questions routes link anything: a buddy answer links only the in-app paths of the web app it was given (pages such as `/today` or `/plan`, `/session?block={id}` for one of today's blocks, `/challenge/{planItemId}`), and the lesson tutor's only web addresses. Links in the streamed text are unchecked.",
         "operationId": "createLessonQuestionAnswer",
         "security": [
           {

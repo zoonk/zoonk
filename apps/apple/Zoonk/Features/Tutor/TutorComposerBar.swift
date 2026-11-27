@@ -12,8 +12,8 @@ struct TutorComposerBar: View {
   @FocusState private var isFocused: Bool
 
   var body: some View {
-    // Draws again when a limit's day comes, which gives the composer back.
-    OpeningClock(availableAt: conversation.limit?.helpLimit?.availableAt) { _ in
+    // Draws again when a limit lifts, which enables Send.
+    OpeningClock(availableAt: conversation.limit?.liftsAt) { _ in
       content
     }
   }
@@ -22,31 +22,36 @@ struct TutorComposerBar: View {
     VStack(alignment: .leading, spacing: 10) {
       if !canTalk {
         signUpPrompt
-      } else if let limit = conversation.limit {
-        TutorLimitNotice(failure: limit)
       } else {
-        if conversation.thread.value?.turns.isEmpty == true, !conversation.hasUnsentQuestion,
-          !suggestions.isEmpty
-        {
-          suggestionChips
-        }
+        TutorSuggestionChips(conversation: conversation, suggestions: suggestions)
 
-        if let failure = conversation.askFailure, !failure.isLimit {
-          FailureLine(
-            message: failure == .failed
-              ? String(
-                localized: "We couldn't send your last question. Try again.", table: "Tutor",
-                comment: "Sending a question to the buddy failed")
-              : failure.message
-          )
-          .typeStyle(.note)
-        }
+        VStack(alignment: .leading, spacing: 0) {
+          if let limit = conversation.limit {
+            TutorLimitNotice(failure: limit)
+              .padding(.bottom, 16)
+          }
 
-        composer
+          composer
+
+          if conversation.limit == nil, let failure = conversation.askFailure, !failure.isLimit {
+            FailureLine(
+              message: failure == .failed
+                ? String(
+                  localized: "We couldn't send your last question. Try again.", table: "Tutor",
+                  comment: "Sending a question to the buddy failed")
+                : failure.message
+            )
+            .typeStyle(.note)
+            .padding(.top, 8)
+          }
+        }
       }
     }
     .listRowEdges()
     .padding(.vertical, 8)
+    // The notice leaves as a short break ends, so the bar, which stays, says that sending is back.
+    .announcesStatus(
+      conversation.isShortBreakOver ? String(localized: HelpLimit.tryAgainNow) : nil)
   }
 
   private var composer: some View {
@@ -93,23 +98,6 @@ struct TutorComposerBar: View {
     .inputPanel(isFocused: isFocused, softFocus: true)
   }
 
-  private var suggestionChips: some View {
-    TapChips {
-      ForEach(suggestions) { suggestion in
-        Button {
-          Task { await conversation.send(suggestion) }
-        } label: {
-          Text(suggestion.label)
-            .multilineTextAlignment(.leading)
-        }
-        .disabled(!conversation.canAsk)
-      }
-    }
-    .accessibilityElement(children: .contain)
-    .accessibilityLabel(
-      Text("Suggestions", tableName: "Tutor", comment: "Questions to the buddy sent with one tap"))
-  }
-
   private var signUpPrompt: some View {
     VStack(alignment: .leading, spacing: 10) {
       Text(
@@ -133,6 +121,33 @@ struct TutorComposerBar: View {
   }
 }
 
+struct TutorSuggestionChips: View {
+  let conversation: TutorConversation
+  let suggestions: [TutorSuggestion]
+
+  var body: some View {
+    if conversation.thread.value?.turns.isEmpty == true, !conversation.hasUnsentQuestion,
+      !suggestions.isEmpty
+    {
+      TapChips {
+        ForEach(suggestions) { suggestion in
+          Button {
+            Task { await conversation.send(suggestion) }
+          } label: {
+            Text(suggestion.label)
+              .multilineTextAlignment(.leading)
+          }
+          .disabled(!conversation.canAsk)
+        }
+      }
+      .accessibilityElement(children: .contain)
+      .accessibilityLabel(
+        Text("Suggestions", tableName: "Tutor", comment: "Questions to the buddy sent with one tap")
+      )
+    }
+  }
+}
+
 enum TutorComposerKeys {
   /// Return sends, as on main; Shift-Return starts a new line.
   static func returnSends(modifiers: EventModifiers) -> Bool {
@@ -144,15 +159,18 @@ struct TutorLimitNotice: View {
   let failure: TutorFailure
 
   var body: some View {
-    OpeningClock(availableAt: failure.helpLimit?.availableAt) { now in
+    LimitClock(limit: failure.helpLimit) { now in
       notice(failure.words(now: now))
+    }
+    // Said once as it shows, not again each time a short break's wait counts down.
+    .onChange(of: failure, initial: true) {
+      AccessibilityNotification.Announcement(failure.words().said).post()
     }
   }
 
   private func notice(_ words: LimitWords) -> some View {
     VStack(alignment: .leading, spacing: 8) {
       GateWords(title: words.title.map(Text.init), line: words.line.map(Text.init))
-        .announcesAlert(words.said)
 
       TutorRemedyButton(failure: failure, retry: {})
         .controlSize(.small)

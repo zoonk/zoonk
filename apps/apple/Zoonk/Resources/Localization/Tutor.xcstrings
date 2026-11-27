@@ -60,6 +60,64 @@
         }
       }
     },
+    "%@ is an AI study buddy and can make mistakes." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ ist ein KI-Lernbuddy und kann Fehler machen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ es tu compa de estudio con IA y puede cometer errores."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ est un binôme d’étude doté d’une IA et peut faire des erreurs."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ è il tuo socio di studio con l’IA e può sbagliare."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@は学習の相棒となるAIです。間違えることもあります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 공부 짝꿍 %@도 실수할 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ to kumpel do nauki z AI i może popełniać błędy."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ é seu colega de estudos com IA e pode cometer erros."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ yapay zekâ destekli bir ders arkadaşıdır ve hata yapabilir."
+          }
+        }
+      }
+    },
     "%lld mistakes to fix, with practice that brings each one back." : {
       "comment" : "What the mistakes notebook holds",
       "localizations" : {

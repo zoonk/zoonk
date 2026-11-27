@@ -500,7 +500,7 @@ struct LessonUnavailableView: View {
   let retry: () -> Void
 
   var body: some View {
-    OpeningClock(availableAt: refusal.limit?.availableAt) { now in
+    LimitClock(limit: refusal.limit) { now in
       LessonUnavailableBody(refusal: refusal, isNotice: isNotice, now: now, retry: retry)
     }
   }
@@ -570,8 +570,8 @@ private struct LessonUnavailableBody: View {
       }
       .task(id: refusal) {
         // Main's `LessonSlowDown`: the lesson opens on its own once the break is over.
-        if case .slowDown(let seconds) = refusal,
-          (try? await Task.sleep(for: .seconds(seconds))) != nil
+        if case .slowDown(let until) = refusal,
+          (try? await Task.sleep(for: .seconds(max(until.timeIntervalSinceNow, 0)))) != nil
         {
           retry()
         }
@@ -649,10 +649,11 @@ private struct LessonUnavailableBody: View {
     switch refusal {
     case .failed, .notFound:
       return nil
-    case .slowDown(let seconds):
+    case .slowDown(let until):
+      let left = max(Int(until.timeIntervalSince(now).rounded(.up)), 0)
       return String(
         localized:
-          "You opened a lot of lessons quickly. This one opens on its own in \(progressLearningTime(seconds)).",
+          "You opened a lot of lessons quickly. This one opens on its own in \(progressLearningTime(left)).",
         table: "Player", comment: "How long until the next lesson opens; the argument is a duration"
       )
     case .limitReached where isReady:
@@ -753,8 +754,8 @@ extension LessonRunRefusal {
   /// The refusal as the limit every limit notice reads; a lesson that failed or is gone has none.
   var limit: HelpLimit? {
     switch self {
-    case .slowDown(let seconds):
-      .slowDown(retryAfterSeconds: seconds)
+    case .slowDown(let until):
+      .slowDown(until: until)
     case .limitReached(let tier, .last30Days(let availableAt)):
       .usedUp(tier: tier.learnerTier, availableAt: availableAt)
     case .limitReached(let tier, let period):

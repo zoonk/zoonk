@@ -36,7 +36,6 @@
     <string name="tutor_about_module">About this module</string>
     <string name="tutor_about_question">About this question</string>
 
-    <string name="tutor_empty_title">What would you like help with?</string>
     <!-- The buddy says it's an AI where every conversation opens (EU AI Act art. 50). -->
     <string name="tutor_empty_ai">%1$s is an AI study buddy and can make mistakes.</string>
     <string name="tutor_guest_title">Create a free account to ask questions</string>
@@ -56,7 +55,6 @@
     <string name="tutor_error_subscription">Asking questions needs a subscription</string>
     <string name="tutor_error_gone">This lesson is no longer available.</string>
     <string name="tutor_error_invalid">We couldn\'t send this question. Try again.</string>
-    <string name="tutor_error_slow_down">Take a short break, then ask again.</string>
     <string name="tutor_error_failed">Something went wrong. Try again.</string>
     <string name="tutor_error_last_question">We couldn\'t send your last question. Try again.</string>
     <string name="tutor_sign_in">Log in</string>
