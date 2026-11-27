@@ -166,7 +166,7 @@ const BOTTOM_TAB_TITLE_CLASS =
 
 const SIDE_TAB_ITEM_CLASS = cn(
   SIDEBAR_ITEM_CLASS,
-  "has-data-link-pending:bg-muted has-data-link-pending:text-foreground",
+  "has-data-link-pending:bg-muted has-data-link-pending:text-foreground data-held:bg-muted data-held:text-foreground",
 );
 
 const PENDING_NAVIGATION_CLASS =
