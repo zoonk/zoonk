@@ -30,6 +30,11 @@ export function formatPointsRange({
   if (kind === "deduction") {
     const zero = number(0, options);
     const signed = (end: string) => (end === zero ? end : `${MINUS}${end}`);
+
+    if (to === zero) {
+      return number(0, fixedDecimals(0));
+    }
+
     return from === to ? signed(from) : joinDeduction(signed(from), signed(to));
   }
 
