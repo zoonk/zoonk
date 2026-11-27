@@ -196,36 +196,31 @@ class MockResultScreenshots {
     @Test
     @Config(qualifiers = "w411dp-h1600dp-xxhdpi")
     fun phoneWrittenMet() {
-        show(finishedMock(result = result(extra = writtenPoints("met", """{"low":58,"high":64}"""))))
-        capture("result-phone-written-met")
+        writtenDetails("met", """{"low":58,"high":64}""", "result-details-written-met")
     }
 
     @Test
     @Config(qualifiers = "w411dp-h1600dp-xxhdpi")
     fun phoneWrittenBelow() {
-        show(finishedMock(result = result(extra = writtenPoints("below", """{"low":38,"high":44}"""))))
-        capture("result-phone-written-below")
+        writtenDetails("below", """{"low":38,"high":44}""", "result-details-written-below")
     }
 
     @Test
     @Config(qualifiers = "w411dp-h1600dp-xxhdpi")
     fun phoneWrittenOverlaps() {
-        show(finishedMock(result = result(extra = writtenPoints("overlaps", """{"low":47,"high":55}"""))))
-        capture("result-phone-written-overlaps")
+        writtenDetails("overlaps", """{"low":47,"high":55}""", "result-details-written-overlaps")
     }
 
     @Test
     @Config(qualifiers = "w411dp-h1600dp-xxhdpi")
     fun phoneWrittenUnmeasured() {
-        show(finishedMock(result = result(extra = writtenPoints("unmeasured", """{"low":58,"high":64}"""))))
-        capture("result-phone-written-unmeasured")
+        writtenDetails("unmeasured", """{"low":58,"high":64}""", "result-details-written-unmeasured")
     }
 
     @Test
     @Config(qualifiers = "w411dp-h1600dp-xxhdpi")
     fun phoneWrittenNoEstimate() {
-        show(finishedMock(result = result(extra = writtenPoints("unmeasured", """null"""))))
-        capture("result-phone-written-no-estimate")
+        writtenDetails("unmeasured", """null""", "result-details-written-no-estimate")
     }
 
     @Test
@@ -495,6 +490,25 @@ class MockResultScreenshots {
                 """"examName":"Cebraspe","scoring":"net","trueFalseLabels":"rightWrong","review":[$STATEMENT],
                 "passMarks":{"language":"pt","texts":["Será eliminado o candidato que obtiver nota inferior a 10 pontos."]}""",
         )
+
+    /** The details sheet's points by test, with the written test standing [standing] at [range]. */
+    private fun writtenDetails(
+        standing: String,
+        range: String,
+        name: String,
+    ) {
+        show(finishedMock(result = result(extra = writtenPoints(standing, range))))
+        compose.onNodeWithText("Details").performClick()
+        compose.waitForIdle()
+        write(
+            name,
+            compose
+                .onAllNodes(isRoot())
+                .onLast()
+                .captureRender()
+                .asAndroidBitmap(),
+        )
+    }
 
     private fun essaysOnly(vararg essays: String) =
         finishedMock(
