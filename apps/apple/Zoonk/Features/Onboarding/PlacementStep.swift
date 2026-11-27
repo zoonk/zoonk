@@ -250,19 +250,23 @@ struct PlacementQuestionScreen<Media: View>: View {
     PracticeTaskLayout {
       ChipRow(chip: Chip(Text(verbatim: subject)), position: Text(verbatim: position))
 
-      media()
-
-      // Under the voice message, where it's needed, as main's link.
+      // Under the voice message it belongs to, closer to it than to the question, as main's link.
       if let defersAudio {
-        BusyButton(isBusy: isSaving && submission == .deferAudio) {
-          submission = .deferAudio
-          defersAudio()
-        } label: {
-          Text(TestCopy.cantListen)
-            .underline()
+        VStack(alignment: .leading, spacing: 8) {
+          media()
+
+          BusyButton(isBusy: isSaving && submission == .deferAudio) {
+            submission = .deferAudio
+            defersAudio()
+          } label: {
+            Text(TestCopy.cantListen)
+              .underline()
+          }
+          .buttonStyle(.borderless)
+          .disabled(isSaving && submission != .deferAudio)
         }
-        .buttonStyle(.borderless)
-        .disabled(isSaving && submission != .deferAudio)
+      } else {
+        media()
       }
 
       asked.stimulus

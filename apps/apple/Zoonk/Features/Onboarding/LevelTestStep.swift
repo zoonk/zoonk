@@ -179,15 +179,15 @@ private struct ListeningMessage: View {
         ListeningFailedNote(limit: limit, play: play)
       }
     }
-    .padding(.vertical)
+    .padding(16)
     .frame(maxWidth: .infinity, alignment: .leading)
     .background {
       if isWaiting {
         MediaPendingFill()
       }
     }
-    .background(.background, in: .rect(cornerRadius: 16))
-    .clipShape(.rect(cornerRadius: 16))
+    .clipShape(.rect(cornerRadius: Radius.xl, style: .continuous))
+    .panel()
     .announcesStatus(failure(state))
     .onDisappear { voice.player.stop(owner: owner) }
   }
