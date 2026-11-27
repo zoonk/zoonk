@@ -101,7 +101,7 @@ internal fun WritingResultView(
             WritingNextStep(step, prompt.lines?.toInt(), headingFirst = grade.points == null)
         }
         WritingCriteria(grade, prompt)
-        WritingMarkedText(grade, (step as? NextStep.Criterion)?.quote, prompt.lines?.toInt(), text)
+        WritingMarkedText(grade, (step as? NextStep.Criterion)?.quote, prompt, text)
     }
 }
 
@@ -114,7 +114,7 @@ private fun PointsHeader(
     text: String,
 ) {
     val errorCount = grade.errors.size
-    val lines = grade.estimatedLines ?: countWritingLines(text, prompt.charactersPerLine.toInt(), prompt.lines?.toInt()).estimated
+    val lines = grade.estimatedLines ?: estimateWritingLines(text, prompt.charactersPerLine.toInt())
     val part = prompt.partMinimum
     val partMax = part?.max
     val percent = part?.minimum?.unit?.value == "percent"
@@ -260,9 +260,10 @@ private fun WritingNextStep(
 
             NextStep.Limit -> {
                 if (lines != null) {
-                    pluralStringResource(R.plurals.essay_limit_title, lines, lines) to stringResource(R.string.essay_limit_text, lines)
+                    pluralStringResource(R.plurals.essay_limit_title, lines, lines) to
+                        stringResource(R.string.essay_limit_past_sheet, lines)
                 } else {
-                    stringResource(R.string.essay_limit_title_any) to stringResource(R.string.essay_limit_text_any)
+                    stringResource(R.string.essay_limit_title_any) to stringResource(R.string.essay_limit_past_sheet_any)
                 }
             }
 
@@ -490,14 +491,18 @@ private fun WritingCriteria(
     }
 }
 
-/** The learner's text as sent, each language error marked and numbered, and what graders wouldn't read set apart. */
+/**
+ * The learner's text as sent, each language error marked and numbered, and what graders wouldn't read
+ * set apart. A text that fits its sheet only in small handwriting says so under it.
+ */
 @Composable
 private fun WritingMarkedText(
     grade: WritingGrade,
     stepQuote: String?,
-    lines: Int?,
+    prompt: WritingPromptOutput,
     text: String,
 ) {
+    val lines = prompt.lines?.toInt()
     val errors = grade.errors.size
     val errorStyle =
         SpanStyle(
@@ -528,11 +533,24 @@ private fun WritingMarkedText(
         Text(readable, style = MaterialTheme.typography.bodyLarge)
         ignoredFrom?.let {
             Text(
-                if (lines != null) stringResource(R.string.essay_past_line, lines) else stringResource(R.string.essay_past_limit),
+                if (lines != null) {
+                    stringResource(R.string.essay_past_line_small_hand, lines)
+                } else {
+                    stringResource(R.string.essay_past_limit_small_hand)
+                },
                 color = MaterialTheme.zoonk.warningText,
                 style = MaterialTheme.typography.labelMedium,
             )
             Text(marked.subSequence(marked.offsetOf(it), marked.length), style = MaterialTheme.typography.bodyLarge)
+        }
+        // Graded in full, but it fits the sheet only written small.
+        val fit = remember(text, prompt) { writingFit(text, prompt) }
+        if (ignoredFrom == null && lines != null && fit?.second == WritingFit.SmallHandwriting) {
+            Text(
+                writingLinesLabel(fit.first.estimated, lines, WritingFit.SmallHandwriting),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.zoonkType.data,
+            )
         }
         if (errors > 0) {
             Column {

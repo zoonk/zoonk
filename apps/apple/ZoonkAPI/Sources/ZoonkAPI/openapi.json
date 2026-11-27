@@ -34751,7 +34751,8 @@
             "type": "integer",
             "minimum": 0,
             "exclusiveMinimum": true,
-            "maximum": 9007199254740991
+            "maximum": 9007199254740991,
+            "description": "Characters a line in a typical hand on this sheet, as the estimated line count uses"
           },
           "criteria": {
             "type": "array",
@@ -34855,6 +34856,13 @@
               "drill",
               "answer"
             ]
+          },
+          "denseCharactersPerLine": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991,
+            "description": "Characters a line in the densest real handwriting on this sheet; graders read an answer up to where it passes `lines` at this width"
           }
         },
         "required": [
@@ -34866,7 +34874,8 @@
           "points",
           "taskKey",
           "title",
-          "unit"
+          "unit",
+          "denseCharactersPerLine"
         ]
       },
       "WritingTask": {
@@ -105734,7 +105743,8 @@
             "type": "integer",
             "minimum": 0,
             "exclusiveMinimum": true,
-            "maximum": 9007199254740991
+            "maximum": 9007199254740991,
+            "description": "Characters a line in a typical hand on this sheet, as the estimated line count uses"
           },
           "criteria": {
             "type": "array",
@@ -105841,6 +105851,13 @@
               "drill",
               "answer"
             ]
+          },
+          "denseCharactersPerLine": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991,
+            "description": "Characters a line in the densest real handwriting on this sheet; graders read an answer up to where it passes `lines` at this width"
           }
         },
         "required": [
@@ -105852,7 +105869,8 @@
           "points",
           "taskKey",
           "title",
-          "unit"
+          "unit",
+          "denseCharactersPerLine"
         ],
         "additionalProperties": false
       },

@@ -3207,7 +3207,7 @@ msgid "Not saved yet. It's kept on this device."
 msgstr "まだ保存されていません。この端末に保存されています。"
 
 #: src/essay/essay-word-count.tsx
-#: src/writing/writing-editor.tsx
+#: src/writing/writing-line-count.tsx
 msgctxt "-8LNI4"
 msgid "{count, plural, one {# word} other {# words}}"
 msgstr "{count, plural, other {#語}}"
@@ -13177,7 +13177,7 @@ msgid "{count, plural, one {about # line} other {about # lines}}"
 msgstr "{count, plural, other {約#行}}"
 
 #: src/syllabus/subject-written-score.tsx
-#: src/writing/writing-editor.tsx
+#: src/writing/writing-line-count.tsx
 #: src/writing/writing-points-header.tsx
 msgctxt "sKcJTn"
 msgid "about {used} of {lines} lines"
@@ -13994,17 +13994,6 @@ msgid "Keep this one"
 msgstr "この内容を残す"
 
 #: src/writing/writing-editor.tsx
-msgctxt "a2NxUG"
-msgid "0 of {lines} lines"
-msgstr "0/{lines}行"
-
-#. The approximate line count of a written answer past its limit; the lines past it are ones the exam's graders won't read.
-#: src/writing/writing-editor.tsx
-msgctxt "6omgAR"
-msgid "about {used} of {lines} lines · {over} won't be read"
-msgstr "約{used}/{lines}行 · 超過した{over}行は読まれません"
-
-#: src/writing/writing-editor.tsx
 msgctxt "F6UFzM"
 msgid "This answer is {count} characters too long. Shorten it to save and grade it."
 msgstr "文字数が{count}字超過しています。保存して採点するには、短くしてください。"
@@ -14101,6 +14090,23 @@ msgstr "明日また利用できます：今日はこれ以上採点できませ
 msgctxt "cvptXL"
 msgid "Back on {date}: no more grading today"
 msgstr "{date}にまた利用できます：今日はこれ以上採点できません"
+
+#: src/writing/writing-line-count.tsx
+msgctxt "a2NxUG"
+msgid "0 of {lines} lines"
+msgstr "0/{lines}行"
+
+#. The approximate line count of a written answer past its limit at a typical hand; it fits the exam's answer sheet only if the learner writes small.
+#: src/writing/writing-line-count.tsx
+msgctxt "B33WO_"
+msgid "about {used} of {lines} lines · fits if written small"
+msgstr ""
+
+#. The approximate line count of a written answer that won't fit the exam's answer sheet even in small handwriting; graders stop reading at the last line.
+#: src/writing/writing-line-count.tsx
+msgctxt "O21PBU"
+msgid "about {used} of {lines} lines · the end won't be read"
+msgstr ""
 
 #: src/writing/writing-next-step.tsx
 msgctxt "BQrBD9"
@@ -14208,14 +14214,14 @@ msgid "Write a longer answer"
 msgstr "もっと長い回答を書く"
 
 #: src/writing/writing-result.tsx
-msgctxt "QYZhu-"
-msgid "Graders stop at line {lines}, so the rest isn't read."
-msgstr "採点者は{lines}行目で読むのをやめるため、その先は読まれません。"
+msgctxt "2TSlUm"
+msgid "Even in small handwriting, it runs past line {lines}, where graders stop."
+msgstr ""
 
 #: src/writing/writing-result.tsx
-msgctxt "UIwidi"
-msgid "Graders stop at the line limit, so the rest isn't read."
-msgstr "採点者は行数の上限で読むのをやめるため、その先は読まれません。"
+msgctxt "0sJLK2"
+msgid "Even in small handwriting, it runs past the line limit, where graders stop."
+msgstr ""
 
 #: src/writing/writing-result.tsx
 msgctxt "rxvcLB"
@@ -14359,14 +14365,14 @@ msgid "With one, we write your question and grade what you write."
 msgstr "利用すると、問題を作成し、書いた内容を採点します。"
 
 #: src/writing/writing-text.tsx
-msgctxt "-QTlEJ"
-msgid "Past line {lines}: graders stop reading here"
-msgstr "{lines}行目以降は採点者は読みません"
+msgctxt "h4IHcs"
+msgid "Past line {lines} even in small handwriting: not read"
+msgstr ""
 
 #: src/writing/writing-text.tsx
-msgctxt "ecaPI4"
-msgid "Past the limit: graders stop reading here"
-msgstr "上限を超えた部分は採点者は読みません"
+msgctxt "A2kY2e"
+msgid "Past the limit even in small handwriting: not read"
+msgstr ""
 
 #: src/writing/writing-text.tsx
 msgctxt "agrPL7"

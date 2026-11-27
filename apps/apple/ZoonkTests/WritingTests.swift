@@ -20,53 +20,32 @@ final class WrittenTrendTests: XCTestCase {
 final class WritingLinesTests: XCTestCase {
   /// Core's shared cases (`packages/core/src/exams/essays/_test-utils/writing-lines.json`).
   func testMatchesCoresSharedCases() {
-    let cases: [(text: String, perLine: Int, limit: Int?, lines: Int, ignoredFrom: Int?)] = [
-      ("e\u{301}🙂\r\n\r\nnext", 2, 2, 4, 8),
-      ("aaaaaaaaaa\n", 10, 1, 1, nil),
-      ("aaaaaaaaaa\r\n", 10, 1, 1, nil),
-      ("aaaaaaaaaa\r", 10, 1, 1, nil),
-      ("aaaaaaaaaa\u{2028}", 10, 1, 1, nil),
-      ("aaaaaaaaaa\u{2029}", 10, 1, 1, nil),
-      ("aaaaaaaaaa\r\n\r\n", 10, 1, 2, 12),
-      ("", 10, 1, 0, nil),
-    ]
+    let cases:
+      [(text: String, perLine: Int, dense: Int, limit: Int?, lines: Int, ignoredFrom: Int?)] = [
+        ("e\u{301}🙂\r\n\r\nnext", 2, 2, 2, 3, 10),
+        ("aaaaaaaaaa\n", 10, 10, 1, 1, nil),
+        ("aaaaaaaaaa\r\n", 10, 10, 1, 1, nil),
+        ("aaaaaaaaaa\r", 10, 10, 1, 1, nil),
+        ("aaaaaaaaaa\u{2028}", 10, 10, 1, 1, nil),
+        ("aaaaaaaaaa\u{2029}", 10, 10, 1, 1, nil),
+        ("aaaaaaaaaa\r\n\r\n", 10, 10, 1, 1, nil),
+        ("ab\n\ncd", 5, 5, 1, 2, 4),
+        ("\n\nab\n \t\u{a0}\r\n\u{2029}cd\n\n", 5, 5, 2, 2, nil),
+        ("abcdefgh", 4, 6, 2, 2, nil),
+        ("abcdefghij", 4, 6, 2, 3, nil),
+        ("abcdefghijklm", 4, 6, 2, 4, 12),
+        ("abcdefghijklm", 4, 6, nil, 4, nil),
+        ("👍🏽👨\u{200d}👩\u{200d}👧e\u{301}x", 2, 2, 1, 2, 12),
+        ("", 10, 10, 1, 0, nil),
+      ]
 
     for item in cases {
-      let count = WritingLines.count(item.text, charactersPerLine: item.perLine, limit: item.limit)
+      let count = WritingLines.count(
+        item.text, charactersPerLine: item.perLine, denseCharactersPerLine: item.dense,
+        limit: item.limit)
       XCTAssertEqual(count.estimatedLines, item.lines, "lines of \(item.text.debugDescription)")
       XCTAssertEqual(count.ignoredFrom, item.ignoredFrom, "limit of \(item.text.debugDescription)")
     }
-  }
-
-  func testCountsLinesAsCoreDoes() {
-    let cases: [(text: String, perLine: Int, limit: Int?, lines: Int, ignoredFrom: Int?)] = [
-      ("", 5, 3, 0, nil),
-      ("abc", 5, 3, 1, nil),
-      ("abcde", 5, 3, 1, nil),
-      ("abcdef", 5, 3, 2, nil),
-      ("ab\ncd", 5, 3, 2, nil),
-      ("ab\r\ncd", 5, 1, 2, 4),
-      ("abcde\nf", 5, 3, 2, nil),
-      ("a\n\n\nb", 5, 2, 4, 3),
-      ("👍🏽👨‍👩‍👧e\u{301}x", 2, 1, 2, 12),
-      ("line\u{2028}two\u{2029}three", 10, nil, 3, nil),
-      ("\n", 5, nil, 1, nil),
-      ("abcdefghijkl", 3, 2, 4, 6),
-    ]
-
-    for item in cases {
-      let count = WritingLines.count(item.text, charactersPerLine: item.perLine, limit: item.limit)
-      XCTAssertEqual(count.estimatedLines, item.lines, "lines of \(item.text.debugDescription)")
-      XCTAssertEqual(count.ignoredFrom, item.ignoredFrom, "limit of \(item.text.debugDescription)")
-    }
-  }
-
-  func testTheFirstCharacterPastTheLimitIsWhereTheBoardStopsReading() {
-    let text = String(repeating: "a", count: 55 * 30) + "b"
-
-    let count = WritingLines.count(text, charactersPerLine: 55, limit: 30)
-
-    XCTAssertEqual(count, .init(estimatedLines: 31, ignoredFrom: 1650))
   }
 
   func testTheWordALimitSplitsIsMarkedPastItWhole() throws {
@@ -154,7 +133,9 @@ final class WritingLinesTests: XCTestCase {
     XCTAssertEqual(WritingMarks.wordStart("abc defghij", 6), 4)
     XCTAssertEqual(WritingMarks.wordStart("abc\ndef", 4), 4)
 
-    let cut = WritingLines.count("abc def", charactersPerLine: 3, limit: 1).ignoredFrom
+    let cut = WritingLines.count(
+      "abc def", charactersPerLine: 3, denseCharactersPerLine: 3, limit: 1
+    ).ignoredFrom
     XCTAssertEqual(cut.map { WritingMarks.wordStart("abc def", $0) }, 3)
   }
 
@@ -779,7 +760,7 @@ final class WritingDraftTests: XCTestCase {
     {"blockId":"\(blockId)","context":null,"drafts":\(drafts),"draft":\(draft),\
     "gradesLeft":6,"pacing":{"minutes":70,"source":"estimated"},"question":"Write it.",\
     "rubric":"points","sessionId":"01a1fac7-1f46-7548-a88d-e54152b01cad","status":"active",\
-    "writing":{"charactersPerLine":55,"criteria":[{"id":"c1","name":"Content","points":null}],\
+    "writing":{"charactersPerLine":55,"denseCharactersPerLine":85,"criteria":[{"id":"c1","name":"Content","points":null}],\
     "keySource":"practiceKey","lines":30,"minimumWords":30,"points":30,"taskKey":"short",\
     "title":"Internal and external control","unit":"answer"}}
     """
