@@ -235,7 +235,7 @@ function WrittenRowItem({ part }: { part: WrittenPart }) {
                     value: round(part.minimum.value),
                   },
                 ),
-              t("No points estimate in this mock exam"),
+              t("No points estimate yet"),
             ]
               .filter(Boolean)
               .join(FACT_SEPARATOR)}

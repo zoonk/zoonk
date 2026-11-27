@@ -31,7 +31,7 @@
   "essay_grade_answer": "4988e34c7c56aa06eaeb8a33eb79844643c96c7cdd0ce61cf4ebd277939e87c2",
   "essay_grade_rewrite": "0b710543e2d850970cbe522dad34ebee0be32b8655e089301989502e08dc2aaf",
   "essay_graded_by_level": "b036cd3e341d2f5a4b08261f3636c414bd6f3d9e15eab404cb07e65113227233",
-  "essay_graded_by_level_why": "8ca310f5c0b799c9eb5a407172900c11d54ea6c4089cdf66a1e13b04680c5326",
+  "essay_graded_by_level_why": "dffa878dce2b8c55e45ce8f669210c6b710cc7bcce6ceb1e0daddaf93cb3fbdc",
   "essay_graded_earlier_version": "bc8da60776665224bbf235480219df8bded06edad299af08468c07e5d589815b",
   "essay_grading": "6e3d5ae237b8798a518f76cae53ba54bcf272b0c7eef87f528a55a1b6fb25d04",
   "essay_grading_criteria": "cc1caf1e3e648ebbf10f0e1d6f8553c08fa04cb3a2beff8f07b1230bfae3b9ad",
@@ -293,7 +293,7 @@
     <string name="essay_no_points_in_notice">試験要項には、各採点基準の配点が記載されていません。</string>
     <string name="essay_criteria_from_notice">採点基準と配点は試験要項に記載されています。</string>
     <string name="essay_criteria_from_notice_practice_key">採点基準と配点は試験要項に記載されています。解答例は練習用にこちらで用意しています。</string>
-    <string name="essay_graded_by_level_why">レベルで評価：この回答の得点は、まだ十分な精度で推定できません。</string>
+    <string name="essay_graded_by_level_why">レベル別に評価されています。この回答のポイントはまだ推定できません。</string>
     <string name="essay_see_comments">コメントを見る</string>
     <string name="essay_comments">コメント</string>
     <string name="essay_your_text">テキスト</string>

@@ -118,7 +118,7 @@
   "mock_result_up": "a225152442f7fbec8ae038a2e1af4473046d79de799fd2058280433f508c73be",
   "mock_result_up_from": "95123abb046e19bc596d7527fb64b08f431d20b6dbe04a6014f74930b28d73a5",
   "mock_result_work_on": "e347bdf249fa53f1b4046973169ea423dc2ce4a1e00288326a4b1032a82199ab",
-  "mock_result_written_no_estimate": "e651668e47b6b0e755fe84f8136d321b34e436f92d3bdf5ef9b46dd2f4a2fe7c",
+  "mock_result_written_no_estimate": "47065d1a1bab99588053c7ecd44389dfd4416deea9835d42a506884563b1902c",
   "mock_result_wrong": "2affdb1d6f109f4fd27463247028f42de068e3507efa12bbdccbaa7783e04c8e",
   "mock_result_your_plan": "cd921a342de57c9ed74e07594e166851732a4138f49c60b07ce9c4193f6c5237",
   "mock_result_your_preparation": "516b4f2c121d19c56c1248a7b3c97dca0254e95decea2ab5031e4608c5c666bb"
@@ -227,7 +227,7 @@
     <string name="mock_result_reached_points_decimal">Minimum von %1$s Punkten erreicht</string>
     <!-- Under a test whose minimum this mock can't judge. %1$s is the percent of its points it needs, such as "40%". -->
     <string name="mock_result_needs_percent">Braucht %1$s der möglichen Punkte</string>
-    <string name="mock_result_written_no_estimate">Für diese Probeprüfung gibt es keine Punktschätzung</string>
+    <string name="mock_result_written_no_estimate">Noch keine Punktschätzung</string>
     <!-- Under a test whose minimum this mock can't judge. %1$s is the points it needs, possibly a decimal. -->
     <plurals name="mock_result_needs_points">
         <item quantity="one">Braucht %1$s Punkt</item>

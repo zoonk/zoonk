@@ -172,7 +172,7 @@
     <string name="essay_no_points_in_notice">The exam notice doesn\'t say how many points each criterion is worth.</string>
     <string name="essay_criteria_from_notice">Criteria and points from the exam notice.</string>
     <string name="essay_criteria_from_notice_practice_key">Criteria and points from the exam notice. The answer key is ours, for practice.</string>
-    <string name="essay_graded_by_level_why">Graded by level: we can\'t yet estimate this answer\'s points closely enough.</string>
+    <string name="essay_graded_by_level_why">Graded by level. A points estimate isn\'t available for this answer yet.</string>
     <string name="essay_see_comments">See comments</string>
     <string name="essay_comments">Comments</string>
     <string name="essay_your_text">Your text</string>

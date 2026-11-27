@@ -8452,9 +8452,9 @@ msgid "{name} needs {unit, select, percent {{minimum} of its points} other {{val
 msgstr "{name}에서는 {unit, select, percent {총점의 {minimum}} other {{value, plural, other {#점}}}} 이상을 받아야 하지만, 이번 모의고사에는 포함되어 있지 않아요."
 
 #: src/mock/mock-result-points.tsx
-msgctxt "o4fVUK"
-msgid "No points estimate in this mock exam"
-msgstr "이 모의고사의 점수 예상치가 없어요"
+msgctxt "DLtMyQ"
+msgid "No points estimate yet"
+msgstr "아직 점수 예상치가 없어요"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "JOdrmN"
@@ -14328,9 +14328,9 @@ msgid "The exam notice doesn't say how many points each criterion is worth."
 msgstr "시험 공고에 각 기준의 배점이 나와 있지 않아요."
 
 #: src/writing/writing-result.tsx
-msgctxt "0LHFOC"
-msgid "Graded by level: we can't yet estimate this answer's points closely enough."
-msgstr "수준별로 채점했어요: 아직 이 답변의 점수를 충분히 정확하게 예상하기 어려워요."
+msgctxt "pU5Oul"
+msgid "Graded by level. A points estimate isn't available for this answer yet."
+msgstr "등급으로 채점했어요. 이 답변의 점수 예상치는 아직 제공되지 않아요."
 
 #: src/writing/writing-result.tsx
 msgctxt "JrF1rx"

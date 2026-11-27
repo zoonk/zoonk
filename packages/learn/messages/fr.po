@@ -8452,9 +8452,9 @@ msgid "{name} needs {unit, select, percent {{minimum} of its points} other {{val
 msgstr "Pour {name}, il faut {unit, select, percent {{minimum} des points possibles} other {{value, plural, one {# point} other {# points}}}}, mais cette partie ne figure pas dans cet examen blanc."
 
 #: src/mock/mock-result-points.tsx
-msgctxt "o4fVUK"
-msgid "No points estimate in this mock exam"
-msgstr "Aucune estimation des points pour cet examen blanc"
+msgctxt "DLtMyQ"
+msgid "No points estimate yet"
+msgstr "Pas encore d’estimation en points"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "JOdrmN"
@@ -14328,9 +14328,9 @@ msgid "The exam notice doesn't say how many points each criterion is worth."
 msgstr "L’avis d’examen ne précise pas le nombre de points attribués à chaque critère."
 
 #: src/writing/writing-result.tsx
-msgctxt "0LHFOC"
-msgid "Graded by level: we can't yet estimate this answer's points closely enough."
-msgstr "Évaluée par niveau : nous ne pouvons pas encore estimer assez précisément les points de cette réponse."
+msgctxt "pU5Oul"
+msgid "Graded by level. A points estimate isn't available for this answer yet."
+msgstr "Évaluation par niveau. Aucune estimation en points n’est encore disponible pour cette réponse."
 
 #: src/writing/writing-result.tsx
 msgctxt "JrF1rx"

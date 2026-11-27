@@ -118,7 +118,7 @@
   "mock_result_up": "0ad3c8cbbcf6be5b187ddfb317889e6efddcf13122a28d45e40e96d627e6199d",
   "mock_result_up_from": "33a7de792f4342e7c3b0c59a0586d3138f285adecb2c5fe58d87a0c8d232e2d2",
   "mock_result_work_on": "56e115e9d0735d3dddda239e2e0c5888e1f772b379add4d3714ba738a5a6115c",
-  "mock_result_written_no_estimate": "d8c7e8c1fca68ca7c5fd1e3338ffed4897a4de345be09984927ae4269af0b5e3",
+  "mock_result_written_no_estimate": "a1dc8cc084626da447238c913f14fccfe551bb14baacbf28927769898ec6f21e",
   "mock_result_wrong": "1bd7a6cbaf4af81b3f1dd94e955dbd89dfa29d10495d21a7b8f769cc5df10d88",
   "mock_result_your_plan": "bde7ec63472d415fcc146d077bd104df1b50866c9e14bbe0486a7aa0bd05f278",
   "mock_result_your_preparation": "da4302c70cb95512d75a5a32f9bb67d0e70dc117865cb7e8c6bb534fd0e42b2b"
@@ -221,7 +221,7 @@
     <string name="mock_result_reached_points_decimal">최소 기준인 %1$s점에 도달했어요</string>
     <!-- Under a test whose minimum this mock can't judge. %1$s is the percent of its points it needs, such as "40%". -->
     <string name="mock_result_needs_percent">배점의 %1$s 이상 필요</string>
-    <string name="mock_result_written_no_estimate">이 모의고사의 점수 예상치가 없어요</string>
+    <string name="mock_result_written_no_estimate">아직 점수 예상치가 없어요</string>
     <!-- Under a test whose minimum this mock can't judge. %1$s is the points it needs, possibly a decimal. -->
     <plurals name="mock_result_needs_points">
         <item quantity="other">최소 %1$s점 필요</item>

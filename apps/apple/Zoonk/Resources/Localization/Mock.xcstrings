@@ -8981,60 +8981,60 @@
         }
       }
     },
-    "No points estimate in this mock exam" : {
+    "No points estimate yet" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Für diese Probeprüfung gibt es keine Punktschätzung"
+            "value" : "Noch keine Punktschätzung"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hay una estimación del puntaje en este simulacro"
+            "value" : "Aún no hay una estimación del puntaje"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aucune estimation des points pour cet examen blanc"
+            "value" : "Pas encore d’estimation en points"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nessuna stima dei punti in questa simulazione"
+            "value" : "Stima del punteggio non ancora disponibile"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "この模試では得点を推定できません"
+            "value" : "ポイントの推定はまだありません"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이 모의고사의 점수 예상치가 없어요"
+            "value" : "아직 점수 예상치가 없어요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Brak szacunku punktów w tym egzaminie próbnym"
+            "value" : "Szacunkowa liczba punktów jeszcze niedostępna"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sem estimativa de pontuação neste simulado"
+            "value" : "Sem estimativa de pontuação ainda"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bu deneme sınavı için puan tahmini yok"
+            "value" : "Henüz puan tahmini yok"
           }
         }
       }

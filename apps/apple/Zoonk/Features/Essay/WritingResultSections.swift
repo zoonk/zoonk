@@ -474,7 +474,7 @@ private struct WritingCriteriaSection: View {
       }
 
       return String(
-        localized: "Graded by level: we can't yet estimate this answer's points closely enough.",
+        localized: "Graded by level. A points estimate isn't available for this answer yet.",
         table: "Essay")
     }
 

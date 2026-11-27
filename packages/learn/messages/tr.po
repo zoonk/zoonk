@@ -8452,9 +8452,9 @@ msgid "{name} needs {unit, select, percent {{minimum} of its points} other {{val
 msgstr "{name} için en az {unit, select, percent {{minimum} başarı} other {{value, plural, other {# puan}}}} gerekiyor, ancak bu deneme sınavında yer almıyor."
 
 #: src/mock/mock-result-points.tsx
-msgctxt "o4fVUK"
-msgid "No points estimate in this mock exam"
-msgstr "Bu deneme sınavı için puan tahmini yok"
+msgctxt "DLtMyQ"
+msgid "No points estimate yet"
+msgstr "Henüz puan tahmini yok"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "JOdrmN"
@@ -14328,9 +14328,9 @@ msgid "The exam notice doesn't say how many points each criterion is worth."
 msgstr "Sınav ilanında her ölçütün kaç puan değerinde olduğu belirtilmiyor."
 
 #: src/writing/writing-result.tsx
-msgctxt "0LHFOC"
-msgid "Graded by level: we can't yet estimate this answer's points closely enough."
-msgstr "Düzeye göre puanlandı: Bu cevabın puanını henüz yeterince doğru tahmin edemiyoruz."
+msgctxt "pU5Oul"
+msgid "Graded by level. A points estimate isn't available for this answer yet."
+msgstr "Düzeye göre değerlendirildi. Bu cevap için henüz puan tahmini yapılamıyor."
 
 #: src/writing/writing-result.tsx
 msgctxt "JrF1rx"

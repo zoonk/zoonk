@@ -8452,9 +8452,9 @@ msgid "{name} needs {unit, select, percent {{minimum} of its points} other {{val
 msgstr "Il minimo per {name} è {unit, select, percent {il {minimum} dei punti disponibili} other {{value, plural, one {# punto} other {# punti}}}}, ma questa parte non è inclusa nella simulazione."
 
 #: src/mock/mock-result-points.tsx
-msgctxt "o4fVUK"
-msgid "No points estimate in this mock exam"
-msgstr "Nessuna stima dei punti in questa simulazione"
+msgctxt "DLtMyQ"
+msgid "No points estimate yet"
+msgstr "Stima del punteggio non ancora disponibile"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "JOdrmN"
@@ -14328,9 +14328,9 @@ msgid "The exam notice doesn't say how many points each criterion is worth."
 msgstr "Il bando d’esame non specifica quanti punti vale ogni criterio."
 
 #: src/writing/writing-result.tsx
-msgctxt "0LHFOC"
-msgid "Graded by level: we can't yet estimate this answer's points closely enough."
-msgstr "Valutato per livello: non riusciamo ancora a stimare con sufficiente precisione i punti di questa risposta."
+msgctxt "pU5Oul"
+msgid "Graded by level. A points estimate isn't available for this answer yet."
+msgstr "Valutazione per livello. Per questa risposta non è ancora disponibile una stima del punteggio."
 
 #: src/writing/writing-result.tsx
 msgctxt "JrF1rx"

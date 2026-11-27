@@ -31,7 +31,7 @@
   "essay_grade_answer": "79b97ae3ad140764c6ecbe569cf7719042facae05265966df58127911db6a534",
   "essay_grade_rewrite": "197c9e42c140fd0df3f25f1e71ae491758f69a9b8d8aacfe5f7fdf905ddd8bd2",
   "essay_graded_by_level": "7966600dbddaf005e41f9bc34d8c8fdb72996baabb38778c3b19de9ba8192b4d",
-  "essay_graded_by_level_why": "59ed20088faf351e9a52da5c4aa724e8193784905744953b53d9fcda02919208",
+  "essay_graded_by_level_why": "56d04b6caa3ab15f1cd47a33a361b706044863c287c77da559568660c8c7eec8",
   "essay_graded_earlier_version": "9a6c32cc3f778f85a8242a14e5ec1b45d2dbb10db77ef94246c4832d76b7ae2c",
   "essay_grading": "8f508b2435c60fdf31516cbfe4bf06ef611fe62392452239d1a5b86929de9c37",
   "essay_grading_criteria": "7015b66392cb3ca677dda9dd6a568b429cbdc78f445c48e6303e09e362f8ec69",
@@ -313,7 +313,7 @@
     <string name="essay_no_points_in_notice">L’avis d’examen ne précise pas le nombre de points attribués à chaque critère.</string>
     <string name="essay_criteria_from_notice">Critères et points indiqués dans l’avis d’examen.</string>
     <string name="essay_criteria_from_notice_practice_key">Critères et points indiqués dans l’avis d’examen. Nous avons préparé le corrigé pour t’entraîner.</string>
-    <string name="essay_graded_by_level_why">Évaluée par niveau : nous ne pouvons pas encore estimer assez précisément les points de cette réponse.</string>
+    <string name="essay_graded_by_level_why">Évaluation par niveau. Aucune estimation en points n’est encore disponible pour cette réponse.</string>
     <string name="essay_see_comments">Voir les commentaires</string>
     <string name="essay_comments">Commentaires</string>
     <string name="essay_your_text">Ton texte</string>

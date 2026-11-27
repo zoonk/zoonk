@@ -189,7 +189,7 @@ function useCriteriaFooter(prompt: WritingPrompt, grade: WritingResult): string 
 
     return turnedBack
       ? null
-      : t("Graded by level: we can't yet estimate this answer's points closely enough.");
+      : t("Graded by level. A points estimate isn't available for this answer yet.");
   }
 
   return prompt.keySource === "notice"

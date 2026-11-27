@@ -8452,9 +8452,9 @@ msgid "{name} needs {unit, select, percent {{minimum} of its points} other {{val
 msgstr "Für {name} brauchst du {unit, select, percent {{minimum} der möglichen Punkte} other {{value, plural, one {# Punkt} other {# Punkte}}}}. Dieser Teil fehlt in dieser Probeprüfung."
 
 #: src/mock/mock-result-points.tsx
-msgctxt "o4fVUK"
-msgid "No points estimate in this mock exam"
-msgstr "Für diese Probeprüfung gibt es keine Punktschätzung"
+msgctxt "DLtMyQ"
+msgid "No points estimate yet"
+msgstr "Noch keine Punktschätzung"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "JOdrmN"
@@ -14328,9 +14328,9 @@ msgid "The exam notice doesn't say how many points each criterion is worth."
 msgstr "In der Prüfungsbeschreibung steht nicht, wie viele Punkte die einzelnen Kriterien wert sind."
 
 #: src/writing/writing-result.tsx
-msgctxt "0LHFOC"
-msgid "Graded by level: we can't yet estimate this answer's points closely enough."
-msgstr "Bewertung nach Level: Wir können die Punkte für diese Antwort noch nicht genau genug schätzen."
+msgctxt "pU5Oul"
+msgid "Graded by level. A points estimate isn't available for this answer yet."
+msgstr "Nach Level bewertet. Für diese Antwort gibt es noch keine Punktschätzung."
 
 #: src/writing/writing-result.tsx
 msgctxt "JrF1rx"
