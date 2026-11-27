@@ -45,11 +45,12 @@ struct BuddyDayView: View {
   /// count, and the ones that open later are one line, since a row nobody can press only says when
   /// the plan gets to it.
   private func firstStepsSection(_ firstSteps: Components.Schemas.BuddyFirstSteps) -> some View {
-    let later = firstSteps.steps.filter { $0.status == .later }.count
+    let steps = firstSteps.steps.filter { $0.kind != .unrecognized }
+    let later = steps.filter { $0.status == .later }.count
 
     return PageSection {
       ForEach(
-        firstSteps.steps.filter { $0.status == .today || $0.status == .available }, id: \.kind
+        steps.filter { $0.status == .today || $0.status == .available }, id: \.kind
       ) { step in
         if let row = StudyMission(step) {
           missionRow(

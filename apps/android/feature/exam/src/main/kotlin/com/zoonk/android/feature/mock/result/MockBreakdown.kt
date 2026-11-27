@@ -279,6 +279,10 @@ private fun CalibrationInsight(result: MockResult) {
                 pluralStringResource(R.plurals.mock_result_right_of, unsure.right.toInt(), unsure.right.toInt(), unsure.answered.toInt()),
             ),
             when (calibration.advice) {
+                NetCalibration.Advice.UNKNOWN_DEFAULT_OPEN_API -> {
+                    null
+                }
+
                 NetCalibration.Advice.BLANK_UNSURE -> {
                     pluralStringResource(R.plurals.mock_result_blank_gain, floor(gain).toInt(), formatNumber(gain, currentLocale()))
                 }

@@ -404,6 +404,8 @@ private fun ColumnScope.QuestionStep(
     onReportLevelTest: () -> Unit,
 ) {
     when (step) {
+        OnboardingStep.UNKNOWN_DEFAULT_OPEN_API -> {}
+
         OnboardingStep.ADDRESS_FORM,
         OnboardingStep.WORK,
         OnboardingStep.TOOLS,

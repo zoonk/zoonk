@@ -40,7 +40,8 @@
   "limit_quick_explanations_used": "d19b9456b360c5d4e85d44786f338aa1880ad5a6d0c776430907b4e567b45e2a",
   "limit_sentence": "80406619a4b014f9f5aeebf41a9616ffb200a05163747b5f44b9d2f7801c289d",
   "limit_sign_up_required": "0305a5bf981d5190b586c115b076db9f7c5f6d10abd3aa54204e93f10de85433",
-  "limit_slow_down": "0b916baa542b56e4c7f48b082275700757352993aa19155fa8a6975226bca236",
+  "limit_slow_down_minutes": "1e15706d86ce12ade581d548ef17650be9f0144877d0d857687c041db03fcebd",
+  "limit_slow_down_seconds": "6d5a5529a4255f5ca0510c9ce32b52cd490021a6efa9a07a91ba0536122998ee",
   "limit_still_review": "14d1703f06ebe41f6efafd16b438c54f5d6f60f49a7b1cb0524b61ff4e32d95d",
   "limit_try_again_now": "9538a179fb175d014e88ffcaf1411c0fc36861c1c495507eb9919d33c0970d76",
   "limit_uploads_day": "1ce1222dc728668f069b935bd81b43b6f9dbaf0313a7e0408704434a92d11fae",
@@ -49,7 +50,14 @@
 -->
 <resources>
     <string name="limit_create_account">無料アカウントを作成する</string>
-    <string name="limit_slow_down">少し休んでから、もう一度お試しください。</string>
+    <!-- The line of a notice that the learner sent too many requests in a short time, such as questions to their study buddy, and must wait before the next one. It counts down every second until they can try again. -->
+    <plurals name="limit_slow_down_seconds">
+        <item quantity="other">少し休憩してください。%1$s秒後にもう一度試せます。</item>
+    </plurals>
+    <!-- The line of a notice that the learner sent too many requests in a short time, such as questions to their study buddy, and must wait before the next one. It counts down every minute until they can try again. -->
+    <plurals name="limit_slow_down_minutes">
+        <item quantity="other">少し休憩してください。%1$s分後にもう一度試せます。</item>
+    </plurals>
     <string name="limit_sign_up_required">無料アカウントが必要です</string>
     <string name="limit_more_tomorrow">明日また利用できます。</string>
     <string name="limit_more_tomorrow_or_subscribe">明日また利用できます。有料プランに登録すると、今すぐ続けられます。</string>

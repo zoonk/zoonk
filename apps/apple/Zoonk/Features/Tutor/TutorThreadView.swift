@@ -74,7 +74,7 @@ private struct TutorConversationView<Header: View>: View {
       .scrollTargetLayout()
     }
     .scrollPosition($position)
-    .defaultScrollAnchor(.bottom, for: .initialOffset)
+    .defaultScrollAnchor(conversation.turns.isEmpty ? .top : .bottom, for: .initialOffset)
     .scrollDismissesKeyboard(.interactively)
     .safeAreaBar(edge: .bottom) {
       TutorComposerBar(

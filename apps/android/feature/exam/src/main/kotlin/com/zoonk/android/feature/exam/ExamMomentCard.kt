@@ -101,6 +101,7 @@ fun ExamMomentCard(
 @Composable
 fun examMomentTitle(moment: ExamMoment): String =
     when (moment.stage) {
+        ExamMoment.Stage.UNKNOWN_DEFAULT_OPEN_API -> moment.examName
         ExamMoment.Stage.FINAL_STRETCH -> stringResource(R.string.exam_final_stretch)
         ExamMoment.Stage.DAY_BEFORE -> stringResource(R.string.exam_tomorrow, moment.examName)
         ExamMoment.Stage.EXAM_DAY -> stringResource(R.string.exam_today, moment.examName)
@@ -111,6 +112,7 @@ fun examMomentTitle(moment: ExamMoment): String =
 val ExamMoment.Stage.icon: Int
     get() =
         when (this) {
+            ExamMoment.Stage.UNKNOWN_DEFAULT_OPEN_API -> R.drawable.ic_flag
             ExamMoment.Stage.FINAL_STRETCH -> R.drawable.ic_flag
             ExamMoment.Stage.DAY_BEFORE -> R.drawable.ic_bedtime
             ExamMoment.Stage.EXAM_DAY -> R.drawable.ic_event_upcoming
@@ -144,6 +146,7 @@ fun examMomentWords(moment: ExamMoment): AnnotatedString? {
 @Composable
 private fun momentBody(moment: ExamMoment): String? =
     when (moment.stage) {
+        ExamMoment.Stage.UNKNOWN_DEFAULT_OPEN_API -> null
         ExamMoment.Stage.FINAL_STRETCH -> stringResource(R.string.exam_final_stretch_detail)
         ExamMoment.Stage.DAY_BEFORE, ExamMoment.Stage.EXAM_DAY -> workLine(moment)
         ExamMoment.Stage.AFTER_EXAM -> if (moment.resultReported) null else stringResource(R.string.exam_add_result_detail)
@@ -171,7 +174,8 @@ fun ExamChecklist(
     items: List<ExamMoment.Checklist>,
     tools: List<String>,
 ) {
-    if (items.isEmpty()) return
+    val supported = items.filterNot { it == ExamMoment.Checklist.UNKNOWN_DEFAULT_OPEN_API }
+    if (supported.isEmpty()) return
     var done by remember(items) { mutableStateOf(emptySet<ExamMoment.Checklist>()) }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -182,7 +186,7 @@ fun ExamChecklist(
                 style = MaterialTheme.typography.titleSmall,
             )
             Text(
-                text = stringResource(R.string.exam_checklist_count, done.size, items.size),
+                text = stringResource(R.string.exam_checklist_count, done.size, supported.size),
                 modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.labelMedium.withTabularFigures(),
@@ -190,7 +194,7 @@ fun ExamChecklist(
         }
 
         Column {
-            items.forEachIndexed { index, item ->
+            supported.forEachIndexed { index, item ->
                 if (index > 0) HorizontalDivider()
                 val checked = item in done
                 Row(
@@ -226,9 +230,10 @@ fun ExamChecklist(
 }
 
 @Composable
-private fun checklistLabel(item: ExamMoment.Checklist): String =
-    stringResource(
+private fun checklistLabel(item: ExamMoment.Checklist): String {
+    return stringResource(
         when (item) {
+            ExamMoment.Checklist.UNKNOWN_DEFAULT_OPEN_API -> return ""
             ExamMoment.Checklist.DOCUMENTS -> R.string.exam_checklist_documents
             ExamMoment.Checklist.BLACK_PEN -> R.string.exam_checklist_black_pen
             ExamMoment.Checklist.ROUTE -> R.string.exam_checklist_route
@@ -237,5 +242,6 @@ private fun checklistLabel(item: ExamMoment.Checklist): String =
             ExamMoment.Checklist.MATERIALS -> R.string.exam_checklist_materials
         },
     )
+}
 
 private val MARK_SLOT = 24.dp

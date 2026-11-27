@@ -542,7 +542,7 @@ test.describe("Tutor threads beyond lessons", () => {
     await api.dispose();
   });
 
-  test("streams the shared answer to a tutor's suggestion on a screen without a new generation", async () => {
+  test("answers a tutor's suggestion on a screen from its shared answer when it's asked, without a new generation", async () => {
     const [{ api, userId }, { lesson, steps }] = await Promise.all([
       createBearerLearner({ baseURL, prefix: "tutor-shared" }),
       playableLessonFixture({ steps: ["explanation", "check"] }),
@@ -576,15 +576,7 @@ test.describe("Tutor threads beyond lessons", () => {
       }),
     );
 
-    const answer = await api.post(`/v1/questions/${question.id}/answers`);
-
-    expect(answer.status()).toBe(200);
-    expect(answer.headers()["x-vercel-ai-ui-message-stream"]).toBe("v1");
-
-    const body = await answer.text();
-
-    expect(body).toContain('"delta":"A simpler take on this screen."');
-    expect(body).toContain("data: [DONE]");
+    expect(question).toMatchObject({ answer: shared.answer, status: "completed" });
 
     const [stored, usage] = await Promise.all([
       prisma.lessonQuestion.findUniqueOrThrow({ where: { id: question.id } }),

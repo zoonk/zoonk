@@ -188,6 +188,8 @@ private fun Standing(part: WrittenPartPoints) {
     val decimals = part.decimals?.toInt() ?: 0
 
     when (part.standing) {
+        WrittenPartPoints.Standing.UNKNOWN_DEFAULT_OPEN_API -> {}
+
         WrittenPartPoints.Standing.MET -> {
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
                 Icon(painterResource(R.drawable.ic_check), null, Modifier.size(14.dp), tint = MaterialTheme.colorScheme.tertiary)

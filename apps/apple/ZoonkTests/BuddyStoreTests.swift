@@ -7,6 +7,12 @@ import XCTest
 
 @MainActor
 final class BuddyStoreTests: XCTestCase {
+  func testAnUnrecognizedBuddyCannotBeSentAsAChoice() {
+    XCTAssertNil(BuddyChoice(kind: .unrecognized, name: "Octo", glasses: .round).input)
+    XCTAssertNil(BuddyChoice(kind: .otto, name: nil, glasses: .unrecognized).input)
+    XCTAssertEqual(BuddyChoice(kind: .otto, name: "Octo", glasses: .round).input?.kind, .otto)
+  }
+
   func testPickedBuddyShowsAtOnceAndStaysWhenSaved() async {
     let api = BuddyAPIStub()
     let store = BuddyStore(api: api, cache: AppCache(session: .preview(account: .buddyTestAccount)))
@@ -295,7 +301,7 @@ final class BuddyDayOpeningTests: XCTestCase {
   }
 
   private func showDay(in window: UIWindow) async throws {
-    try await activate("0 of 1 mission", in: window)
+    try await activate("Today's missions, 0 of 1", in: window)
     try await waitForTestCondition("The day sheet did not appear") {
       window.rootViewController?.presentedViewController != nil
     }

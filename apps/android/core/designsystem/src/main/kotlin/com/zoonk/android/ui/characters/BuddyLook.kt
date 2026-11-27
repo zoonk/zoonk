@@ -14,7 +14,7 @@ enum class BuddyKind(
     ;
 
     companion object {
-        fun of(key: String): BuddyKind = entries.first { it.key == key }
+        fun of(key: String): BuddyKind = entries.firstOrNull { it.key == key } ?: Zu
     }
 }
 
@@ -30,7 +30,7 @@ enum class BuddyGlasses(
     ;
 
     companion object {
-        fun of(key: String): BuddyGlasses = entries.first { it.key == key }
+        fun of(key: String): BuddyGlasses = entries.firstOrNull { it.key == key } ?: Round
     }
 }
 
@@ -98,7 +98,7 @@ fun LearnerSummaryBuddy.look(): BuddyLook =
     BuddyLook(
         kind = BuddyKind.of(kind.value),
         glasses = BuddyGlasses.of(glasses.value),
-        belt = Belt.entries.first { it.name.equals(beltColor.value, ignoreCase = true) },
+        belt = Belt.fromKey(beltColor.value) ?: Belt.White,
         energy = energy,
         studiedToday = studiedToday,
     )

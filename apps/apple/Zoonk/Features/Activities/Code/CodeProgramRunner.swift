@@ -1,10 +1,7 @@
 import Foundation
 import WebKit
 
-/// Time limits are core's `PROGRAM_TIME_LIMIT_MS`.
-enum CodeLanguage: String, Decodable, Sendable {
-  case javascript, python
-
+extension CodeLanguage {
   var runtimeName: String {
     switch self {
     case .javascript: "JavaScript"

@@ -69,7 +69,7 @@ function tutorQuestionPaths<TPath extends z.ZodObject>({
       tags: [tag],
     },
     post: {
-      description: `Asks the tutor about ${about}. ${context} Answer it with \`POST /v1/questions/{questionId}/answers\`.`,
+      description: `Asks the tutor about ${about}. ${context} The question counts against the learner's tutor allowance when it's asked, and its answer doesn't count again; a question the allowance refuses isn't saved (403 asks a guest to sign up, 402 a free learner to subscribe, 429 to slow down or come back after the limit resets, with \`SIGN_UP_REQUIRED\`, \`SLOW_DOWN\` or \`USAGE_LIMIT_REACHED\` and details), so the learner can send it again once the allowance is back. A first question about a lesson screen that someone already asked there doesn't count. Answer it with \`POST /v1/questions/{questionId}/answers\`.`,
       operationId: `create${operation}Question`,
       requestBody: {
         content: { "application/json": { schema: createLessonQuestionRequestSchema } },
@@ -83,10 +83,16 @@ function tutorQuestionPaths<TPath extends z.ZodObject>({
         },
         "400": validationErrorResponse,
         "401": unauthorizedResponse,
+        "402": paymentRequiredResponse,
         "403": forbiddenResponse,
         "404": notFoundResponse,
         "409": conflictResponse,
         "422": unprocessableEntityResponse,
+        "429": {
+          ...tooManyRequestsResponse,
+          description:
+            "The tutor allowance asks the learner to slow down or come back after the limit resets",
+        },
       },
       security: AUTHENTICATED_SECURITY,
       summary: `Ask a question about ${about}`,
@@ -217,7 +223,7 @@ export const lessonQuestionPaths = {
   "/questions/{questionId}/answers": {
     post: {
       description:
-        "Claims a pending or failed question and returns one grounded answer as an AI SDK UI message stream, whatever the question is about (a lesson, chapter, plan or mock). `lessonId` in the question routes is a Library lesson. A first question about a lesson screen that someone already asked there streams the saved shared answer right away, without counting against the allowance or reading memory. Otherwise the answer counts against the learner's tutor allowance (403 asks a guest to sign up, 402 a free learner to subscribe, 429 to slow down or come back after the limit resets, with `SLOW_DOWN` or `USAGE_LIMIT_REACHED` and details), and reads the learner's memory. Its `finish` event comes once the answer is saved, so the answer is done and the learner can ask again; a `data-memory` part may follow with what the exchange changed in memory (each change's `action`, `fact` and `previous` with `id` and `statement`), which `POST /v1/me/memory/change-reversals` undoes. In a goal's conversation with the buddy, a `data-plan-change` part carries the plan change the answer proposed (a `PlanChange` waiting for the learner's OK) as soon as it's saved; the question's `planChange` holds it too. A `data-plan-changes-replaced` part follows it with the `ids` of earlier proposals it replaced because it changes the same thing (their status is now `replaced`). When the buddy only acted (a plan change or an app tool) and wrote nothing, the answer is a short confirmation of what it put under it. The streamed text is provisional: right before `finish`, a `data-saved-answer` part carries the answer as it was saved (`answer`), its links checked, and replaces it. Only that text and answers read back from the questions routes link anything: a buddy answer links only the in-app paths of the web app it was given (pages such as `/today` or `/plan`, `/session?block={id}` for one of today's blocks, `/challenge/{planItemId}`), and the lesson tutor's only web addresses. Links in the streamed text are unchecked.",
+        "Claims a pending or failed question and returns one grounded answer as an AI SDK UI message stream, whatever the question is about (a lesson, chapter, plan or mock). `lessonId` in the question routes is a Library lesson. A first question about a lesson screen that someone already asked there streams the saved shared answer right away, without counting against the allowance or reading memory. Otherwise the answer counts against the learner's tutor allowance once per question, so a question the allowance admitted when it was asked doesn't count again (403 asks a guest to sign up, 402 a free learner to subscribe, 429 to slow down or come back after the limit resets, with `SLOW_DOWN` or `USAGE_LIMIT_REACHED` and details), and reads the learner's memory. Its `finish` event comes once the answer is saved, so the answer is done and the learner can ask again; a `data-memory` part may follow with what the exchange changed in memory (each change's `action`, `fact` and `previous` with `id` and `statement`), which `POST /v1/me/memory/change-reversals` undoes. In a goal's conversation with the buddy, a `data-plan-change` part carries the plan change the answer proposed (a `PlanChange` waiting for the learner's OK) as soon as it's saved; the question's `planChange` holds it too. A `data-plan-changes-replaced` part follows it with the `ids` of earlier proposals it replaced because it changes the same thing (their status is now `replaced`). When the buddy only acted (a plan change or an app tool) and wrote nothing, the answer is a short confirmation of what it put under it. The streamed text is provisional: right before `finish`, a `data-saved-answer` part carries the answer as it was saved (`answer`), its links checked, and replaces it. Only that text and answers read back from the questions routes link anything: a buddy answer links only the in-app paths of the web app it was given (pages such as `/today` or `/plan`, `/session?block={id}` for one of today's blocks, `/challenge/{planItemId}`), and the lesson tutor's only web addresses. Links in the streamed text are unchecked.",
       operationId: "createLessonQuestionAnswer",
       requestParams: { path: lessonQuestionPathParamsSchema },
       responses: {

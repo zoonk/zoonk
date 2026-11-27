@@ -4,6 +4,8 @@ import { type LessonQuestionAnswerCompletion } from "@zoonk/ai/tasks/lessons/que
 import { prisma } from "@zoonk/db";
 import { replaceEmDashes } from "@zoonk/utils/string";
 import { isUuid } from "@zoonk/utils/uuid";
+import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
+import { getAllowanceCacheTag } from "../cache/tags";
 import { claimUsage } from "../entitlements/claim-usage";
 import { type UsageDecision } from "../entitlements/contract";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
@@ -130,7 +132,7 @@ function getAnswerAnalytics({
   return goalId ? { distinctId: userId, goalId } : { distinctId: userId };
 }
 
-/** Requires the owner session; an existing shared answer completes immediately without allowance or memory reads. */
+/** Requires the owner session; an existing shared answer completes immediately without allowance or memory reads, giving back a message charged when it was asked. */
 export async function claimLessonQuestionAnswer(input: { questionId: string }) {
   const session = await getSession();
 
@@ -158,6 +160,10 @@ export async function claimLessonQuestionAnswer(input: { questionId: string }) {
       ? unchanged(result)
       : result;
   });
+
+  if (claimed.status === "shared") {
+    revalidateCacheTags([getAllowanceCacheTag(userId)]);
+  }
 
   if (claimed.status !== "ready") {
     return claimed;
