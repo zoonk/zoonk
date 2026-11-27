@@ -217,6 +217,28 @@ function scheduleWith({
   return { ...cut, ...again, dropped: [...cut.dropped, ...again.dropped] };
 }
 
+/** A missed lesson moves up with the earlier lessons of its shared run, so the run keeps its order. */
+function liftSharedRuns(
+  units: readonly QueueUnit[],
+  priorityOf: (unit: QueueUnit) => number,
+): Map<string, number> {
+  const highest = new Map<string, number>();
+
+  return new Map(
+    units.toReversed().map((unit) => {
+      const own = priorityOf(unit);
+
+      if (!unit.sharedRun) {
+        return [unit.key, own];
+      }
+
+      const priority = Math.max(own, highest.get(unit.sharedRun) ?? 0);
+      highest.set(unit.sharedRun, priority);
+      return [unit.key, priority];
+    }),
+  );
+}
+
 function prioritizeKeptMisses({
   cadenced,
   input,
@@ -245,7 +267,9 @@ function prioritizeKeptMisses({
     phase: teachingPhases.get(unit.key) ?? unit.phase,
   }));
 
-  const compareMisses = (a: QueueUnit, b: QueueUnit) => priorityOf(b) - priorityOf(a);
+  const lifted = liftSharedRuns(kept, priorityOf);
+  const liftedOf = (unit: QueueUnit) => lifted.get(unit.key) ?? priorityOf(unit);
+  const compareMisses = (a: QueueUnit, b: QueueUnit) => liftedOf(b) - liftedOf(a);
 
   const units = splitIntoParts(kept).flatMap((part) =>
     part.toSorted(

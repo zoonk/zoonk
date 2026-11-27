@@ -324,6 +324,41 @@ describe(replanAfterMock, () => {
     ).resolves.toBeNull();
   });
 
+  it("moves a missed topic's lesson up with the earlier lesson of the chapter run it shares", async () => {
+    const fixture = await setup();
+    const first = fixture.library.skills[TOPICS_PER_AREA - 2]!;
+    const missed = lastTopic(fixture, "Direito");
+    // Each topic has two lessons: the first topic's second and the missed topic's first teach both.
+    const earlier = fixture.library.lessons[(TOPICS_PER_AREA - 2) * 2 + 1]!;
+    const later = fixture.library.lessons[(TOPICS_PER_AREA - 1) * 2]!;
+
+    await prisma.lessonSkill.createMany({
+      data: [
+        { lessonId: earlier.id, skillId: missed.id },
+        { lessonId: later.id, skillId: first.id },
+      ],
+    });
+
+    const before = await readPlan(fixture.plan.id);
+    const mock = await finishedMock({ answers: [{ outcome: "wrong", skill: missed }], fixture });
+
+    await replanAfterMock({
+      goalId: fixture.goal.id,
+      mockId: mock.id,
+      now: new Date(),
+      timeZone: UTC,
+    });
+
+    const after = await readPlan(fixture.plan.id);
+    const was = before.items.findIndex((item) => item.lessonId === later.id);
+
+    const position = (lessonId: string) =>
+      after.items.findIndex((item) => item.lessonId === lessonId);
+
+    expect(position(later.id)).toBeLessThan(was);
+    expect(position(earlier.id)).toBeLessThan(position(later.id));
+  });
+
   it("commits an earlier lesson position on the same date", async () => {
     const fixture = await setup({ dailyMinutes: 90 });
     const missed = lastTopic(fixture, "Direito");
