@@ -507,6 +507,9 @@ private struct BuddyContent: View {
       .frame(width: 32, height: 32)
   }
 
+  /// Both marks take one width, so the two labels start on one edge when the line stacks.
+  @ScaledMetric(relativeTo: .footnote) private var dayLineIconWidth: CGFloat = 18
+
   private var energyButton: some View {
     Button {
       places.open(.energy)
@@ -525,6 +528,7 @@ private struct BuddyContent: View {
       } icon: {
         Image(systemName: "bolt.fill")
           .foregroundStyle(.energy)
+          .frame(width: dayLineIconWidth)
       }
       .frame(minHeight: 44)
       .contentShape(.rect)
@@ -545,6 +549,7 @@ private struct BuddyContent: View {
           }
         } icon: {
           Image(systemName: "checklist")
+            .frame(width: dayLineIconWidth)
         }
         .frame(minHeight: 44)
         .contentShape(.rect)
@@ -578,7 +583,7 @@ private struct BuddyContent: View {
           energyButton
           missionsButton
         }
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: 0) {
           energyButton
           missionsButton
         }
