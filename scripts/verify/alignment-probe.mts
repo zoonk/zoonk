@@ -580,7 +580,6 @@ export function readAlignment({
       }, 0);
 
     const rowInk = inkOf(row);
-    const { note } = read.piece.parts;
 
     return [
       {
@@ -597,7 +596,6 @@ export function readAlignment({
         ],
         middle: rowMiddle(row, read.piece.group) + scrollY,
         name: name(row),
-        note: note ? [...row.querySelectorAll(note)].some((element) => shown(element)) : false,
         // The row the learner is on (current, picked, highlighted) may set its words apart.
         ...(row.matches("[aria-current], [data-highlighted], [aria-selected=true]") ||
         row.querySelector("[aria-current]")

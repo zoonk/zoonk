@@ -5,6 +5,7 @@ import {
   type Context,
   EDGE,
   type Group,
+  box,
   drawn,
   finding,
   glyphsOnly,
@@ -111,13 +112,14 @@ function misses(context: Context, row: CaptureElement, own: CaptureElement[]): M
   }
 
   // A title counts as one line however it wraps; each line under it is another (E5): a
-  // description, or a line with no words such as a progress bar. A wide row that puts one beside
-  // the title, across its first baseline, keeps one line.
+  // description, or a line with no words such as a progress bar. A wide row that lays one out
+  // beside the title, across its first baseline, keeps one line. Where a capture saw no ink (an
+  // empty bar's faint track), its box still holds the line the row makes room for.
   const baseline = measured(label.capBottom);
 
   const notes = own.filter((element) => {
-    const ink = element.part === "note" ? drawn(element) : null;
-    return ink && baseline !== null && ink.top >= baseline;
+    const place = element.part === "note" ? (drawn(element) ?? box(element.bounds)) : null;
+    return place && place.bottom > place.top && baseline !== null && place.top >= baseline;
   }).length;
 
   const lines = measured(label.lines, 1);

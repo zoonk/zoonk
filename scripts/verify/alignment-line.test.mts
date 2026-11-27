@@ -299,14 +299,21 @@ describe("line's tolerance", () => {
   });
 });
 
-/** The row with a progress bar, a note with no words, at `barTop` and `barLeft`. */
-function barred(capture: Capture, barTop: number, barLeft = 28): Capture {
+/**
+ * The row with a progress bar, a note with no words, at `barTop` and `barLeft`; `ink: null` for an
+ * empty bar whose faint track a capture can't tell from the page.
+ */
+function barred(
+  capture: Capture,
+  barTop: number,
+  barLeft = 28,
+  ink: Bounds | null = [barLeft, barTop, 200, 6],
+): Capture {
+  const bounds: Bounds = [barLeft, barTop, 200, 6];
+
   return {
     ...capture,
-    elements: [
-      ...capture.elements,
-      element({ id: "bar", ink: [barLeft, barTop, 200, 6], part: "note", row: "r0" }),
-    ],
+    elements: [...capture.elements, element({ bounds, id: "bar", ink, part: "note", row: "r0" })],
   };
 }
 
@@ -314,6 +321,7 @@ describe("a progress bar under a row's name", () => {
   it("is the row's second line: its value and end glyph go on the row's center", () => {
     assert.deepEqual(line(barred(lineRow("value", 30, 0), 28)), []);
     assert.deepEqual(line(barred(lineRow("end", 30, 0), 28)), []);
+    assert.deepEqual(line(barred(lineRow("value", 30, 0), 28, 28, null)), []);
 
     assert.match(
       lineMiss(barred(lineRow("value", 15, 0), 28)),

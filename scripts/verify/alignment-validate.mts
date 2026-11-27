@@ -44,7 +44,6 @@ const OPTIONAL = z
     margins: z.tuple([z.number(), z.number()]),
     middle: MEASURE,
     name: z.string(),
-    note: z.boolean(),
     overflow: z.tuple([z.number(), z.number()]),
     pinnedIn: z.string(),
     reason: z.string(),

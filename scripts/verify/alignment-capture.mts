@@ -60,8 +60,6 @@ export type CaptureElement = {
   disabled?: boolean;
   /** A text's: how many lines it runs to. */
   lines?: number | NotMeasured;
-  /** A row's: a supporting line sits under its label. */
-  note?: boolean;
   type?: string;
   text?: string;
   name?: string;
