@@ -262,6 +262,7 @@ final class LessonPlayerStore {
 
     // Another session's answers are never sent with this one's.
     if identity != self.identity {
+      if self.identity != nil { activated = false }
       held = []
       heldOnDevice = nil
       clock = nil
@@ -316,6 +317,7 @@ final class LessonPlayerStore {
         var state = LessonPlayerState(
           lessonId: lesson.id, steps: lesson.steps, hasMap: lesson.summary != nil)
         leaveOutUnplayable(&state)
+        state.resume(from: lesson.resume)
         self.state = state
         works = [:]
         acted = false
@@ -323,7 +325,7 @@ final class LessonPlayerStore {
         openedAt = .now
         // Written content can paint before admission; server actions await the run.
         screen = .playing
-        if opening == nil || activated {
+        if activated {
           beginStart()
           await starting?.value
         }
@@ -337,7 +339,12 @@ final class LessonPlayerStore {
     }
   }
 
-  func cancelStart() { starting?.cancel() }
+  func leave() {
+    starting?.cancel()
+    if state?.runId != nil {
+      lessonResource.invalidate(rereadsWhileShown: false)
+    }
+  }
 
   @discardableResult
   func setVisible(_ visible: Bool) -> Task<Void, Never>? {

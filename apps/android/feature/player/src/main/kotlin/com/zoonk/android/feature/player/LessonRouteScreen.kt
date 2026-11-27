@@ -229,9 +229,13 @@ internal fun PlayingLesson(
             }
         }
 
-    LaunchedEffect(load.lesson.id, signedIn) { viewModel.open(load.lesson) }
+    LaunchedEffect(load.lesson.id, signedIn) {
+        val current = if (endSlot == null) app.lessonPlayer.lesson(route.lessonId) else null
+        current?.load()
+        viewModel.open((current?.state?.value?.value as? LessonLoad.Ready)?.lesson ?: load.lesson)
+    }
 
-    val bookmark = lessonBookmark(app, summary.value?.activeGoalId, route.lessonId, viewModel.lessonSaved.takeUnless { endSlot != null })
+    val bookmark = lessonBookmark(app, summary.value?.activeGoalId, route.lessonId, (viewModel.lessonSaved ?: load.lesson.saved).takeUnless { endSlot != null })
 
     val hasChallenge = remember(load.lesson) { load.lesson.steps.any { it.content is StepContent.Challenge } }
     val team =

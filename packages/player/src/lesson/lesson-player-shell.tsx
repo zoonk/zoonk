@@ -212,7 +212,6 @@ function LessonPlayerFrame() {
       data-slot="lesson-player"
       onClickCapture={actions.engage}
       onKeyDownCapture={actions.engage}
-      onPointerDownCapture={actions.engage}
     >
       <LessonHeader />
       <LessonSounds />

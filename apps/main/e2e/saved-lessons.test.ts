@@ -100,11 +100,11 @@ test.describe("Saved lessons", () => {
 
       const started = waitForLessonStart(page, unfinished.id);
       await page.goto(`/learn/${unfinished.id}`);
-      await started;
 
       const save = page.getByRole("button", { exact: true, name: "Save" });
       await expect(save).toHaveAttribute("aria-pressed", "false");
       await save.click();
+      await started;
 
       const saved = page.getByRole("button", { exact: true, name: "Saved" });
       await expect(saved).toHaveAttribute("aria-pressed", "true");
@@ -203,11 +203,11 @@ test.describe("Saved lessons", () => {
 
       const started = waitForLessonStart(page, finished.id);
       await page.getByRole("main").getByRole("link", { name: finished.title }).click();
-      await started;
 
       const saved = page.getByRole("button", { exact: true, name: "Saved" });
       await expect(saved).toHaveAttribute("aria-pressed", "true");
       await saved.click();
+      await started;
       await expect.poll(() => savedCount(user.id)).toBe(0);
 
       await page.getByRole("link", { name: "Leave" }).click();
@@ -279,10 +279,8 @@ test.describe("Saved lessons", () => {
       await expect(gone).toBeHidden();
       await expect.poll(() => savedCount(user.id)).toBe(2);
 
-      const started = waitForLessonStart(page, unfinished.id);
       await list.getByRole("link", { name: new RegExp(unfinished.title, "u") }).click();
       await expect(page).toHaveURL(/from=%2Fsaved-lessons/u);
-      await started;
 
       await page.getByRole("link", { name: "Leave" }).click();
       await expect(page).toHaveURL(/\/saved-lessons$/u);

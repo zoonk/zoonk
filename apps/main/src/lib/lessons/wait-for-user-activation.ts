@@ -27,9 +27,13 @@ export function trackUserActivation(): void {
   }
 }
 
+export function hasUserActivation(): boolean {
+  return globalThis.navigator?.userActivation?.hasBeenActive ?? documentActivation.seen;
+}
+
 /** A study URL must not owe preparation merely because a document loaded; every automatic start waits here too. */
 export async function waitForUserActivation(): Promise<void> {
-  if (navigator.userActivation ? navigator.userActivation.hasBeenActive : documentActivation.seen) {
+  if (hasUserActivation()) {
     return;
   }
 

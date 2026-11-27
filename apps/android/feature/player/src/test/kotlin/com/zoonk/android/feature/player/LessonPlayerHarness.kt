@@ -109,6 +109,7 @@ internal class LessonPlayerHarness(
                 lessonId = LESSON_ID,
                 studySessionId = null,
                 firstAnswer = null,
+                tapped = true,
                 store = store,
                 cache = cache,
                 sessions = session,

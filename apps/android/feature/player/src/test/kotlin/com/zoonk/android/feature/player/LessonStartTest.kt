@@ -754,6 +754,20 @@ class LessonStartTest {
             }
         }
 
+    @Test fun standaloneLessonWaitsForInputBeforeStarting() =
+        runTest(dispatcher) {
+            val vm = player(null, tapped = false)
+            vm.open(lesson)
+            runCurrent()
+            assertNotNull(vm.state.value?.currentStep)
+            assertTrue(api.startOpenings.isEmpty())
+            vm.act()
+            vm.act()
+            advanceUntilIdle()
+            assertEquals(1, api.startOpenings.size)
+            assertTrue(vm.state.value?.run is LessonRun.Started)
+        }
+
     @Test fun restoredStartWaitsAndOpenedReturnsToToday() =
         runTest(dispatcher) {
             val opening = """{"target":{"kind":"block","blockId":"00000000-0000-0000-0000-000000000001"}}"""

@@ -1,6 +1,7 @@
 import "server-only";
 import { isUuid } from "@zoonk/utils/uuid";
 import { readLessonProgressRuns } from "../learner/facts/lesson-progress-runs";
+import { readSavedLessonIds } from "../learner/facts/saved-lessons";
 import { getSession } from "../users/get-session";
 import { type ProgressAttempt, loadProgressAnswers } from "./_utils/lesson-runs";
 import { restoreRunAnswers } from "./_utils/restore-run-answers";
@@ -46,6 +47,21 @@ export async function getLessonProgress({
 
   const lesson = played?.status === "ready" ? played.lesson : null;
   return restoreRunAnswers({ attempts, lesson, userId });
+}
+
+export async function getLessonVisit({ lessonId }: { lessonId: string }) {
+  const session = await getSession();
+
+  if (!session) {
+    return { resume: [], saved: false };
+  }
+
+  const [resume, saved] = await Promise.all([
+    getLessonProgress({ lessonId }),
+    readSavedLessonIds(session.user.id),
+  ]);
+
+  return { resume, saved: saved.has(lessonId.toLowerCase()) };
 }
 
 /** Whether a lesson's public page offers "Continue the lesson": an unfinished sitting with an answer. */

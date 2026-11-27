@@ -163,6 +163,7 @@ describe("coming back to a lesson", () => {
       renderLessonPlayer({ adapters, lesson, resume: [] });
 
       await expect.element(page.getByRole("button", { name: /^Continue/u })).toBeVisible();
+      expect(startLesson).not.toHaveBeenCalled();
       await activate();
 
       start.resolve(
@@ -404,6 +405,7 @@ describe("coming back to a lesson", () => {
           ),
       }),
       lesson,
+      startOnNavigation: true,
     });
 
     await expect.element(page.getByText("Reading it")).toBeVisible();

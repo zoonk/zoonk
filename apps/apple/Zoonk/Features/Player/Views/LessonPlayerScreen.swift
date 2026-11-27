@@ -239,7 +239,7 @@ private struct LessonPlayerContent: View {
     }
     .onDisappear {
       store.setVisible(false)
-      store.cancelStart()
+      store.leave()
       store.reportAbandonment()
     }
   }
@@ -490,7 +490,7 @@ private struct LessonPlayerContent: View {
 
     return (
       LessonSaveTarget(lessonId: lesson.id, title: lesson.title, chapterTitle: lesson.chapterTitle),
-      goalId, savedLessons?.runSaved(lessonId: lesson.id)
+      goalId, savedLessons?.runSaved(lessonId: lesson.id) ?? lesson.saved
     )
   }
 

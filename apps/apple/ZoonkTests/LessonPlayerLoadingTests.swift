@@ -356,6 +356,23 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertTrue(inputs[0].contains("block"))
   }
 
+  func testStandaloneLessonResumesWithoutStartingUntilInput() async throws {
+    let transport = OpeningStartTransport(holds: false)
+    let cache = AppCache(session: SessionStore.preview(account: .lessonLoadingTestAccount))
+    var lesson = try checkLesson(["one", "two"])
+    lesson.resume = [heldAnswer("one", attemptId: UUID().uuidString, isCorrect: true).runAnswer]
+    let ready = lesson
+    let content: Resource<LessonLoad> = cache.resource(audience: .viewer) { _ in .ready(ready) }
+    let store = player(cache: cache, content: content, transport: transport, activated: false)
+    await store.load()
+    XCTAssertEqual(store.state?.currentStep?.id, "two")
+    let before = await transport.count
+    XCTAssertEqual(before, 0)
+    store.act()
+    let started = await store.ensureRun()
+    XCTAssertTrue(started)
+  }
+
   func testRestoredOpeningWaitsForActionAndFollowsOpenedOnce() async throws {
     let transport = OpeningStartTransport(holds: false, opensElsewhere: true)
     let cache = AppCache(session: SessionStore.preview(account: .lessonLoadingTestAccount))
@@ -365,7 +382,7 @@ final class LessonPlayerLoadingTests: XCTestCase {
     var destinations: [StudyBlockOpening] = []
     let store = player(
       cache: cache, content: content, transport: transport,
-      opening: .block("block"), onOpened: { destinations.append($0) })
+      opening: .block("block"), activated: false, onOpened: { destinations.append($0) })
     await store.load()
     let before = await transport.count
     XCTAssertEqual(before, 0)
@@ -1311,7 +1328,7 @@ final class LessonPlayerLoadingTests: XCTestCase {
   private func player(
     cache: AppCache, content: Resource<LessonLoad>,
     transport: any ClientTransport = UnexpectedLessonTransport(),
-    defaults: UserDefaults = .standard, opening: LessonOpening? = nil, activated: Bool = false,
+    defaults: UserDefaults = .standard, opening: LessonOpening? = nil, activated: Bool = true,
     choices: LessonTodayChoices = .standard,
     onOpened: @escaping @MainActor (StudyBlockOpening) -> Void = { _ in },
     sessionStarted: @escaping @MainActor (String) -> Void = { _ in }

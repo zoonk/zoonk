@@ -228,8 +228,8 @@ test.describe("Library lesson player", () => {
       await expect(page).toHaveURL(new RegExp(`/learn/${first.id}$`, "u"));
       await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
 
-      await started;
       await primary(page, /^Continue/u).click();
+      await started;
       await expect(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
 
       await expect
