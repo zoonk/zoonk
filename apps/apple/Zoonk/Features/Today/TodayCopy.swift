@@ -156,7 +156,7 @@ extension StudyBlock: NamedBlock {
     case .mistakesPractice:
       return String(localized: "Questions you missed before", table: "Today")
     case .pattern:
-      return String(localized: "A pattern in your recent mistakes", table: "Today")
+      return String(localized: "A pattern in your mistakes", table: "Today")
     case .challenge, .essay, .lesson, .session, .unknown:
       break
     }

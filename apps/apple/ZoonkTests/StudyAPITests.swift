@@ -68,7 +68,7 @@ final class StudyAPITests: XCTestCase {
       ),
       (
         ["kind": "practice", "screen": "pattern", "patternId": "p1", "title": "Ser or estar"],
-        "Practice: Ser or estar", "A pattern in your recent mistakes"
+        "Practice: Ser or estar", "A pattern in your mistakes"
       ),
     ]
 
