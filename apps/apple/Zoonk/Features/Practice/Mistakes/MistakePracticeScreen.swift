@@ -45,7 +45,7 @@ struct MistakePracticeScreen: View {
         case .failed(let error):
           PracticeLoadFailureView(error: error) { Task { await read() } }
         case .loaded(let set) where set.entries.isEmpty && state.phase != .ending:
-          nothingToPractice
+          if scope.blockId == nil { nothingToPractice } else { alreadyFixed }
         case .loaded:
           run
         }
@@ -113,9 +113,9 @@ struct MistakePracticeScreen: View {
       ProgressView().frame(maxWidth: .infinity, maxHeight: .infinity)
     case .ended(let summary):
       PracticeDoneView(
-        summary: summary, fixed: state.fixedIds.count, reached: state.reached,
-        canPracticeAgain: state.offersAgain(
-          scope: scope, hasMorePractice: summary?.hasMorePractice == true),
+        summary: summary, answered: state.answerIds.count, right: state.rightAnswers,
+        fixed: state.fixedIds.count, reached: state.reached, inDay: scope.blockId != nil,
+        canPracticeAgain: scope.offersPracticeAgain(hasMorePractice: summary?.hasMorePractice),
         isLoadingAgain: again.isRunning, againFailed: again.outcome != nil,
         again: practiceAgain
       ) {
@@ -349,7 +349,7 @@ struct MistakePracticeScreen: View {
         label: LocalizedStringResource(
           "Leave", table: "Practice",
           comment: "VoiceOver label: leaves mistake practice.")
-      ) { dismiss() }
+      ) { leave() }
     } else {
       PracticeCloseButton(
         label: LocalizedStringResource(
@@ -359,6 +359,34 @@ struct MistakePracticeScreen: View {
       .disabled(checking != nil || state.phase == .lessonChecking)
     }
   }
+
+  /// A day's step is left for Today, not on into the day, which its own Continue does.
+  private func leave() {
+    if scope.blockId == nil {
+      dismiss()
+    } else {
+      hooks.navigate(.today)
+    }
+  }
+
+  /// A day's block whose mistakes were fixed elsewhere, once its completion got through: it goes on
+  /// into the day like any finished step.
+  private var alreadyFixed: some View {
+    PracticeTaskLayout(isResult: true) {
+      PracticeResultTitle(title: Self.alreadyFixedTitle, detail: nil)
+    } actions: {
+      PracticeMainButton(
+        title: LocalizedStringResource(
+          "Done", table: "Practice", comment: "Leaves a finished screen.")
+      ) {
+        dismiss()
+      }
+    }
+  }
+
+  private static let alreadyFixedTitle = LocalizedStringResource(
+    "Already fixed", table: "Practice",
+    comment: "A day's step of mistakes to fix, opened after they were all fixed elsewhere")
 
   private var nothingToPractice: some View {
     StateMessage {
@@ -385,17 +413,12 @@ struct MistakePracticeScreen: View {
   @ViewBuilder
   private var unsavedEnd: some View {
     if state.answerIds.isEmpty {
-      PracticeResultTitle(
-        title: LocalizedStringResource(
-          "Nothing to practice", table: "Practice",
-          comment: "Title when no mistake is ready to practice."),
-        detail: nil)
+      PracticeResultTitle(title: Self.alreadyFixedTitle, detail: nil)
       SaveFailureNotice(
         failures: finishFailures,
         firstMessage: LocalizedStringResource(
-          "That didn't go through.", table: "Practice",
-          comment:
-            "A day's step with nothing left to ask couldn't be marked done; Try again follows")
+          "We couldn't mark it done. Check your connection.", table: "Practice",
+          comment: "A day's step whose mistakes were already fixed couldn't be marked done")
       ) { showsSaveReport = true }
     } else {
       PracticeResultTitle(
@@ -581,8 +604,13 @@ struct MistakePracticeScreen: View {
 /// A run ends on what it earned, and offers to go again on what it didn't fix.
 private struct PracticeDoneView: View {
   let summary: Components.Schemas.MistakePracticeCompletion?
+  /// The run's own answers, known here, so every batch ends on its score.
+  let answered: Int
+  let right: Int
   let fixed: Int
   let reached: PracticeReached
+  /// A day's step goes on into the day; any other run goes back where it came from.
+  let inDay: Bool
   let canPracticeAgain: Bool
   let isLoadingAgain: Bool
   let againFailed: Bool
@@ -596,7 +624,8 @@ private struct PracticeDoneView: View {
           "Practice done", table: "Practice", comment: "End of a practice run."),
         detail: nil)
       PracticeResultNumbers(
-        correct: summary?.correct, total: summary?.total, brainPower: summary?.brainPower ?? 0,
+        correct: answered > 0 ? right : nil, total: answered,
+        brainPower: summary?.brainPower ?? 0,
         facts: fixed > 0
           ? [
             String(
@@ -605,20 +634,26 @@ private struct PracticeDoneView: View {
           ] : [],
         day: day)
     } actions: {
-      if canPracticeAgain {
-        if againFailed {
-          SaveFailureNotice(failures: 1) {}
+      if againFailed {
+        SaveFailureNotice(failures: 1) {}
+      }
+
+      PracticeActionRow {
+        if canPracticeAgain {
+          PracticeSecondaryButton(
+            title: LocalizedStringResource(
+              "Practice again", table: "Practice",
+              comment: "Starts another mistakes practice run after one ends."),
+            icon: nil, isBusy: isLoadingAgain, action: again)
         }
 
         PracticeMainButton(
-          title: LocalizedStringResource(
-            "Practice again", table: "Practice",
-            comment: "Starts another mistakes practice run after one ends."),
-          isBusy: isLoadingAgain, action: again)
-      } else {
-        PracticeMainButton(
-          title: LocalizedStringResource(
-            "Done", table: "Practice", comment: "Leaves a finished screen."), action: close)
+          title: inDay
+            ? LocalizedStringResource(
+              "Continue", table: "Practice", comment: "Moves on after a grade.")
+            : LocalizedStringResource(
+              "Done", table: "Practice", comment: "Leaves a finished screen."),
+          action: close)
       }
     }
   }

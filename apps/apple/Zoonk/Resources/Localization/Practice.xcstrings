@@ -60,6 +60,20 @@
         }
       }
     },
+    "%@ of %lld right" : {
+      "comment" : "A task's score: right answers, the first number shown large, out of all asked.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ of %2$lld right"
+          }
+        }
+      }
+    },
+    "%@ right" : {
+      "comment" : "How many answers the learner got right in a challenge, shown large."
+    },
     "%lld mistakes fixed" : {
       "comment" : "How many mistakes a run fixed.",
       "localizations" : {
@@ -2776,6 +2790,9 @@
         }
       }
     },
+    "Already fixed" : {
+      "comment" : "A day's step of mistakes to fix, opened after they were all fixed elsewhere"
+    },
     "Already know this?" : {
       "comment" : "Title of a chapter test-out's start.",
       "localizations" : {
@@ -4607,9 +4624,6 @@
         }
       }
     },
-    "Get it right again another day to fix it." : {
-      "comment" : "After a right answer to a question the learner missed earlier the same day. A mistake is fixed only by a right answer on a later day."
-    },
     "Getting your challenge ready" : {
       "comment" : "While a challenge's questions are written.",
       "localizations" : {
@@ -5372,6 +5386,9 @@
           }
         }
       }
+    },
+    "It comes back another day to make sure." : {
+      "comment" : "After a right answer to a question the learner missed earlier the same day. A mistake is fixed only by a right answer on a later day."
     },
     "It starts here when it's ready." : {
       "comment" : "A challenge waits for its questions.",
@@ -9693,7 +9710,7 @@
       }
     },
     "Right" : {
-      "comment" : "Judging an exam statement as right (Cebraspe style).\nReadout label: right answers out of the total.",
+      "comment" : "Judging an exam statement as right (Cebraspe style).",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -11035,9 +11052,6 @@
           }
         }
       }
-    },
-    "That didn't go through." : {
-      "comment" : "A day's step with nothing left to ask couldn't be marked done; Try again follows"
     },
     "That didn't go through. Try again in a moment." : {
       "comment" : "A challenge's start or move failed.",
@@ -12991,6 +13005,9 @@
           }
         }
       }
+    },
+    "We couldn't mark it done. Check your connection." : {
+      "comment" : "A day's step whose mistakes were already fixed couldn't be marked done"
     },
     "We couldn't put the lessons back. Try again." : {
       "comment" : "Undoing a test-out's skip failed.",

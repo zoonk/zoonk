@@ -3455,9 +3455,6 @@
         }
       }
     },
-    "Again: you keep missing this" : {
-      "comment" : "Under a lesson the learner takes again because they keep missing its idea."
-    },
     "Already know the next chapter?" : {
       "localizations" : {
         "de" : {
@@ -7969,6 +7966,9 @@
         }
       }
     },
+    "Once more: this one's been tricky" : {
+      "comment" : "Under a lesson the learner takes again because they keep missing its idea."
+    },
     "Out of your plan: %@" : {
       "comment" : "Lists every subject or topic the plan no longer holds, like \"Portuguese, Logic and English\".",
       "localizations" : {
@@ -11178,6 +11178,9 @@
         }
       }
     },
+    "This one's been tricky" : {
+      "comment" : "Under a lesson written for an idea the learner keeps missing."
+    },
     "This week" : {
       "comment" : "The week's header",
       "localizations" : {
@@ -13918,7 +13921,6 @@
         }
       }
     },
-    "You keep missing this" : {},
     "You missed a few days" : {
       "comment" : "Title after missed study days",
       "localizations" : {

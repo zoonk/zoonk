@@ -133,10 +133,10 @@ final class AppNavigationTests: XCTestCase {
     XCTAssertNil(second.playback.playingBlockID)
   }
 
-  /// A day's mistakes and pattern open over the screen that tapped them, so closing one goes back
-  /// to Today with its row done.
+  /// A day's mistakes and pattern open over the session, as the day's other steps do, so going on
+  /// from one shows the day's next stop.
   @MainActor
-  func testADaysMistakesAndPatternOpenTheirOwnScreens() throws {
+  func testADaysMistakesAndPatternOpenOverTheSession() async throws {
     func destination(_ json: String) throws -> StudyDestination {
       StudyDestination(try JSONDecoder().decode(StudyBlockOpening.self, from: Data(json.utf8)))
     }
@@ -144,12 +144,14 @@ final class AppNavigationTests: XCTestCase {
     let mistakes = AppRouter()
     mistakes.openStudy(
       try destination(#"{"kind":"mistakesPractice","blockId":"b1","sessionId":"s1"}"#))
-    XCTAssertEqual(mistakes.tasks, [.mistakePractice(.block("b1"))])
+    try await waitForTestCondition("Opened") { mistakes.tasks.count == 2 }
+    XCTAssertEqual(mistakes.tasks, [.session, .mistakePractice(.block("b1"))])
 
     let pattern = AppRouter()
     pattern.openStudy(
       try destination(#"{"kind":"pattern","blockId":"b2","patternId":"p1","sessionId":"s1"}"#))
-    XCTAssertEqual(pattern.tasks, [.pattern(patternId: "p1")])
+    try await waitForTestCondition("Opened") { pattern.tasks.count == 2 }
+    XCTAssertEqual(pattern.tasks, [.session, .pattern(patternId: "p1", inDay: true)])
   }
 
   @MainActor
