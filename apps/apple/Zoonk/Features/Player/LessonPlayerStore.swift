@@ -104,7 +104,7 @@ final class LessonPlayerStore {
       choices.setChosenToday(.cantListen, cantListenToday)
 
       if cantListenToday, var state {
-        leaveOutUnplayable(&state)
+        leaveOutDictation(&state)
         self.state = state
       }
     }
@@ -311,11 +311,12 @@ final class LessonPlayerStore {
             LessonOutline(id: lesson.id, title: lesson.title, description: "", estimatedMinutes: 0))
           return
         }
+        guard !lesson.steps.contains(where: isUnplayable) else { throw APIError.unavailable }
         self.lesson = lesson
         heldForRun = []
         var state = LessonPlayerState(
           lessonId: lesson.id, steps: lesson.steps, hasMap: lesson.summary != nil)
-        leaveOutUnplayable(&state)
+        leaveOutDictation(&state)
         self.state = state
         works = [:]
         acted = false
@@ -516,7 +517,7 @@ final class LessonPlayerStore {
     }
     guard var state = self.state else { return }
 
-    leaveOutUnplayable(&state)
+    leaveOutDictation(&state)
 
     // "Skip writing questions today" lasts the rest of the learner's day on this device.
     if choices.isChosenToday(.cantWrite) {
@@ -582,16 +583,14 @@ final class LessonPlayerStore {
     exampleLines[stepId] = line
   }
 
-  /// Interactions without a renderer can't be answered here, so they're left out of the run.
+  /// Required interactions need a renderer before a run can start.
   var isUnplayable: (LessonStep) -> Bool = { _ in false }
 
   /// A listening sentence that is its own answer can't be read instead without giving the answer
   /// away, so while the learner can't listen it's left out too, as core leaves out one with no sound.
-  private func leaveOutUnplayable(_ state: inout LessonPlayerState) {
-    state.skipSteps(
-      state.queue.filter { id in
-        state.steps[id].map { isUnplayable($0) || (cantListenToday && $0.isDictation) } ?? false
-      })
+  private func leaveOutDictation(_ state: inout LessonPlayerState) {
+    guard cantListenToday else { return }
+    state.skipSteps(state.queue.filter { state.steps[$0]?.isDictation == true })
   }
 
   private func showWaiting(_ outline: LessonOutline, identity: AuthenticatedSession?) async {

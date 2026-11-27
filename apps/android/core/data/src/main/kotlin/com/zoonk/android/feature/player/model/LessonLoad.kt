@@ -4,6 +4,7 @@ import androidx.compose.runtime.Immutable
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.recode
+import com.zoonk.android.feature.activities.code.codeLanguage
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.ActivityBaseMap
 import com.zoonk.api.models.ActivityExpected
@@ -30,6 +31,7 @@ import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.put
+import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf16Value as CodeRunnerContent
 
 /** What `/learn/{lessonId}` opens to: its screens, its outline waiting to be written, or a visitor's gate. */
 @Immutable
@@ -377,6 +379,7 @@ private val NOTHING_TO_ASK =
     )
 
 private fun activityFrame(content: ActivityStepContent): ActivityFrame? {
+    if (content is CodeRunnerContent && content.value.fields.codeLanguage == null) return null
     val payload = ApiJson.encodeToJsonElement(ActivityStepContent.serializer(), content)
     if (payload.containsUnsupportedVariant()) return null
     return ApiJson.decodeFromJsonElement(ActivityFrame.serializer(), payload)

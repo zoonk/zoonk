@@ -14,11 +14,27 @@ import org.junit.Test
 class LessonLoadTest {
     @Test
     fun aLessonWithAnUnsupportedStepCannotStartWithAnIncompleteQueue() {
+        assertLessonUnavailable("""{"kind":"futureQuestion"}""")
+    }
+
+    @Test
+    fun aCodeRunnerInAnUnsupportedLanguageCannotStart() {
+        assertLessonUnavailable(
+            """
+            {"id":"00000000-0000-4000-8000-000000000002","position":1,"imagePending":false,"kind":"activity",
+             "content":{"template":"codeRunner","prompt":"Run","check":{"kind":"interaction","explanation":"Output"},
+             "fields":{"language":"futureLanguage","editableLines":[1],"expectedOutput":"1","mistakes":[],
+             "starterCode":"print(0)","solution":"print(1)"}}}
+            """.trimIndent(),
+        )
+    }
+
+    private fun assertLessonUnavailable(unsupported: String) {
         val check = fixture("mistake-practice-lesson-entry").getValue("lesson").jsonObject.getValue("step")
         val lesson =
             """
             {"id":"00000000-0000-4000-8000-000000000001","description":"","estimatedMinutes":1,
-             "language":"en","title":"Test","level":"beginner","skills":[],"steps":[$check,{"kind":"futureQuestion"}]}
+             "language":"en","title":"Test","level":"beginner","skills":[],"steps":[$check,$unsupported]}
             """.trimIndent()
         val library =
             ApiJson.decodeFromString<PlayableLibraryLessonResponse>(

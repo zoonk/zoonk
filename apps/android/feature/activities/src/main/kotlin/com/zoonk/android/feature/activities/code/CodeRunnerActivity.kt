@@ -74,14 +74,6 @@ val codeRunnerRenderer =
         canvas = { CodeRunnerActivity(it) },
     )
 
-private val PlayableLibraryStepAnyOfContentOneOf16Fields.codeLanguage
-    get() =
-        when (language) {
-            PlayableLibraryStepAnyOfContentOneOf16Fields.Language.UNKNOWN_DEFAULT_OPEN_API -> null
-            PlayableLibraryStepAnyOfContentOneOf16Fields.Language.JAVASCRIPT -> CodeLanguage.JavaScript
-            PlayableLibraryStepAnyOfContentOneOf16Fields.Language.PYTHON -> CodeLanguage.Python
-        }
-
 private val CodeLanguage.runtimeName
     get() =
         when (this) {
