@@ -1788,13 +1788,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "De una conversación"
+            "value" : "De un chat"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "D’après une conversation"
+            "value" : "D’une discussion"
           }
         },
         "it" : {
@@ -1824,13 +1824,13 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "De uma conversa"
+            "value" : "De um chat"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bir sohbetten"
+            "value" : "Bir yazışmadan"
           }
         }
       }
