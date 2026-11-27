@@ -37,22 +37,41 @@ struct Chip: View {
 }
 
 /// Main's `OnboardingSubject`: where the learner is sits at the chip's row's end, never inside it.
+/// When both don't fit on one line, as at a large text size, the position goes under the chip and
+/// wraps there, so the row never runs past the column's edge.
 struct ChipRow: View {
   let chip: Chip
   var position: Text?
 
   var body: some View {
-    HStack(spacing: 12) {
+    if let position {
+      ViewThatFits(in: .horizontal) {
+        HStack(spacing: 12) {
+          chip
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+          styled(position)
+            .fixedSize()
+        }
+
+        VStack(alignment: .leading, spacing: 4) {
+          chip
+
+          styled(position)
+            .fixedSize(horizontal: false, vertical: true)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+      }
+    } else {
       chip
         .frame(maxWidth: .infinity, alignment: .leading)
-
-      if let position {
-        position
-          .typeStyle(.data)
-          .foregroundStyle(.mutedForeground)
-          .fixedSize()
-      }
     }
+  }
+
+  private func styled(_ position: Text) -> some View {
+    position
+      .typeStyle(.data)
+      .foregroundStyle(.mutedForeground)
   }
 }
 

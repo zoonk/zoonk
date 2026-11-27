@@ -561,7 +561,8 @@ final class OnboardingStore {
       durationMs: Int(duration.components.seconds * 1000), questionId: questionID,
       skipped: skipped ? true : nil)
 
-    return try await cache.onboardingWrite { [api] identity in
+    // The plan's row says where the open test stands.
+    return try await cache.onboardingWrite(invalidating: [.goals]) { [api] identity in
       try await api.answerLevelTest(input, goalID: goalID, token: identity.bearerToken)
     }
   }
