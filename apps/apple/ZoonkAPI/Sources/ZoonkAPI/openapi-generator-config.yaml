@@ -40,6 +40,7 @@ filter:
     - createAppleSession
     - createAppleSubscription
     - createAreaPractice
+    - createBuddyConversationQuestion
     - createChallengeGeneration
     - createChapterMindMapGeneration
     - createChapterQuestion
@@ -74,7 +75,6 @@ filter:
     - createPlanBasesAdvice
     - createPlanChange
     - createPlanExamChoice
-    - createPlanQuestion
     - createPlanToolChoice
     - createResearch
     - createSkillOutlineGeneration
@@ -107,6 +107,7 @@ filter:
     - finishLanguageLevelTest
     - finishLanguageLevelTestOut
     - finishMock
+    - getBuddyConversationQuestionThread
     - getCatalogLesson
     - getChallenge
     - getChallengeTeam
@@ -176,7 +177,6 @@ filter:
     - getOnboardingResume
     - getPlanChangedSince
     - getPlanLink
-    - getPlanQuestionThread
     - getPlanTimeAdvice
     - getSkillOutline
     - getSource
@@ -195,6 +195,7 @@ filter:
     - joinInstrumentWaitlist
     - leaveInstrumentWaitlist
     - listCertificates
+    - listBuddyConversations
     - listChapterLessonMaps
     - listChapterLessons
     - listCountries

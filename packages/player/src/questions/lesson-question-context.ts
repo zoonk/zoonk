@@ -9,7 +9,8 @@ type LessonQuestionAnswerInput = Extract<LessonQuestionContextInput, { kind: "an
 export type LessonQuestionContext = (
   | { kind: "lesson" }
   | { answered: boolean; blockId: string | null; itemId: string; kind: "item" }
-  | { kind: LessonQuestionScreenKind }
+  | { kind: Exclude<LessonQuestionScreenKind, "plan"> }
+  | { conversationId: string; kind: "plan" }
   | { kind: "step"; step: { id: string }; stepIndex: number }
   | {
       kind: "answer";

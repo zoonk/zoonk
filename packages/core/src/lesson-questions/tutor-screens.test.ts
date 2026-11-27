@@ -195,7 +195,7 @@ describe("the tutor beyond lessons", () => {
 
       await getTodayStudySession({ goalId: goal.id });
 
-      const target = { goalId: goal.id, kind: "plan" } as const;
+      const target = { conversationId: null, goalId: goal.id, kind: "plan" } as const;
 
       const question = await askCreated({
         context: { kind: "plan" },
@@ -251,7 +251,7 @@ describe("the tutor beyond lessons", () => {
         const question = await askCreated({
           context: { kind: "plan" },
           question: "What's coming this week?",
-          target: { goalId: goal.id, kind: "plan" },
+          target: { conversationId: null, goalId: goal.id, kind: "plan" },
         });
 
         const snapshot = await storedSnapshot(question.id);

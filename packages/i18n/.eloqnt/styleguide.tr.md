@@ -68,6 +68,7 @@
 - “BP” (Brain Power's short form after an amount, “+50 BP”): “BG”
 - “mission”: “görev”
 - “call” (speaking practice): “sohbet”, not “arama”
+- a “conversation” with the buddy (a written chat on the buddy page): “yazışma” (“Yeni yazışma”, “Yazışmalar”), never “sohbet”, which is the call
 - “Mistakes notebook”: “Yanlış defteri”
 - “Saved to your mistakes”: “Yanlış defterine kaydedildi”, in every line that starts with it
 - “To fix” / “Fixed” (notebook tabs): “Düzeltilecekler” / “Düzeltilenler”

@@ -1,4 +1,8 @@
-import { MAX_LESSON_QUESTION_THREAD_TURNS } from "@zoonk/core/lesson-questions/contract";
+import {
+  MAX_LESSON_QUESTION_THREAD_TURNS,
+  buddyConversationsQuerySchema,
+  buddyConversationsSchema,
+} from "@zoonk/core/lesson-questions/contract";
 import { type z } from "zod";
 import {
   createLessonQuestionRequestSchema,
@@ -12,6 +16,7 @@ import {
 } from "../schemas/lesson-questions";
 import {
   chapterPathParamsSchema,
+  goalBuddyConversationPathParamsSchema,
   goalPathParamsSchema,
   goalSubjectPathParamsSchema,
   itemPathParamsSchema,
@@ -90,6 +95,9 @@ function tutorQuestionPaths<TPath extends z.ZodObject>({
   };
 }
 
+const PLAN_QUESTION_CONTEXT =
+  '`context` is `{ kind: "plan" }`: the buddy answers doubts about what the learner studies for the goal and questions about their plan ("Why am I studying this today?"), seeing the plan\'s status, current phase, today\'s items with the reason each one is there, what comes next, how the learner shaped the plan, their latest open mistakes and the outline of the course the plan is built from. When the learner asks to change the plan ("1 hour a day", "no studying on Saturdays", "the exam moved"), the answer proposes the change: the question\'s `planChange` holds it with its effect, waiting for `POST /v1/goals/{goalId}/plan/changes/{changeId}` (applied or declined); nothing changes before that. Only the latest proposal of the conversation waits: an earlier one still unanswered is declined. While the plan is still being written, the buddy answers doubts and says the plan is not ready for changes yet.';
+
 export const lessonQuestionPaths = {
   "/chapters/{chapterId}/questions": tutorQuestionPaths({
     about: "a Library chapter",
@@ -99,11 +107,40 @@ export const lessonQuestionPaths = {
     pathSchema: chapterPathParamsSchema,
     tag: "Chapters",
   }),
+  "/goals/{goalId}/buddy/conversations": {
+    get: {
+      description:
+        "The learner's Buddy conversations for the goal, most recently asked in first, up to 30 per page. Each title is the conversation's first question with whitespace collapsed. The current id is the most recent conversation if its last question was asked on the goal's local date today, or null.",
+      operationId: "listBuddyConversations",
+      requestParams: { path: goalPathParamsSchema, query: buddyConversationsQuerySchema },
+      responses: {
+        "200": {
+          content: {
+            "application/json": {
+              schema: buddyConversationsSchema.meta({ id: "BuddyConversations" }),
+            },
+          },
+          description: "A page of Buddy conversations, with the current id and next-page cursor",
+        },
+        "400": badRequestResponse,
+        "401": unauthorizedResponse,
+        "404": notFoundResponse,
+      },
+      security: AUTHENTICATED_SECURITY,
+      summary: "List Buddy conversations for a goal",
+      tags: ["Plans"],
+    },
+  },
+  "/goals/{goalId}/buddy/conversations/{conversationId}/questions": tutorQuestionPaths({
+    about: "a Buddy conversation for one of the learner's goals",
+    context: `The first send creates a conversation at the supplied ID. ${PLAN_QUESTION_CONTEXT}`,
+    operation: "BuddyConversation",
+    pathSchema: goalBuddyConversationPathParamsSchema,
+    tag: "Plans",
+  }),
   "/goals/{goalId}/plan/questions": tutorQuestionPaths({
-    about:
-      "one of the learner's goals: the conversation with their buddy, their tutor for the goal",
-    context:
-      '`context` is `{ kind: "plan" }`: the buddy answers doubts about what the learner studies for the goal and questions about their plan ("Why am I studying this today?"), seeing the plan\'s status, current phase, today\'s items with the reason each one is there, what comes next, how the learner shaped the plan, their latest open mistakes and the outline of the course the plan is built from. When the learner asks to change the plan ("1 hour a day", "no studying on Saturdays", "the exam moved"), the answer proposes the change: the question\'s `planChange` holds it with its effect, waiting for `POST /v1/goals/{goalId}/plan/changes/{changeId}` (applied or declined); nothing changes before that. Only the latest proposal of the conversation waits: an earlier one still unanswered is declined. While the plan is still being written, the buddy answers doubts and says the plan is not ready for changes yet.',
+    about: "the earliest conversation for one of the learner's goals",
+    context: PLAN_QUESTION_CONTEXT,
     operation: "Plan",
     pathSchema: goalPathParamsSchema,
     tag: "Plans",
