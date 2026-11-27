@@ -243,6 +243,7 @@
   "plan_estimated_score": "00ea4b92cc768f8cf84ef9c5e6a016641daf37dcb8db005fc4c3a6c772f6a2bf",
   "plan_every_day": "7b0616256cd2d2a7a3ba3ac2fc38f80686583f7a2b0235be2bfe8ad01d36b471",
   "plan_everything": "d53477af5909b41801dc4f8b988b5d3996d05b4df7c56e0837ffdd52b8c9b524",
+  "plan_exam_choice_not_set": "087a07a0e4c108c06af1189a80c96bb38bfc4d672f790f74f0079f441235696a",
   "plan_exam_choice_question": "b51c17807e98c19eba6148d13138988c3e3ea375abce943e607c3878ed377f25",
   "plan_exam_choice_question_several": "f07119237429b78751effd08f18b2fa0e38a6bcea9acc2c408afcb6735fb55cb",
   "plan_exam_date": "be27cc6bbb76f7ac14aed161fbca88c6b68999909d958fe448bbf55a46b01ed9",
@@ -948,6 +949,7 @@
     <string name="plan_exam_choice_question">%1$s: 어떤 과목으로 시험을 볼 건가요?</string>
     <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->
     <string name="plan_exam_choice_question_several">%1$s: 어떤 항목을 선택할까요?</string>
+    <string name="plan_exam_choice_not_set">설정 안 됨</string>
     <string name="plan_prerequisites">사전 지식</string>
     <string name="plan_prerequisites_description">주제의 바탕이 되는 내용이에요. 학습량을 선택하세요.</string>
     <plurals name="plan_bases_mixed">

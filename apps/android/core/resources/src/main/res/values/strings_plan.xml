@@ -485,6 +485,7 @@
     <string name="plan_exam_choice_question">%1$s: which one will you take?</string>
     <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->
     <string name="plan_exam_choice_question_several">%1$s: which ones will you take?</string>
+    <string name="plan_exam_choice_not_set">Not set</string>
     <string name="plan_prerequisites">Prerequisites</string>
     <string name="plan_prerequisites_description">What your topics build on. Choose how much to study.</string>
     <plurals name="plan_bases_mixed">

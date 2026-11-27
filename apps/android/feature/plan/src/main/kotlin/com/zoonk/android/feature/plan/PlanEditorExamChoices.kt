@@ -2,7 +2,6 @@ package com.zoonk.android.feature.plan
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -13,16 +12,16 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.onboarding.CheckList
+import com.zoonk.android.feature.onboarding.Choice
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.MenuSelect
-import com.zoonk.android.ui.components.SelectionChip
 import com.zoonk.android.ui.components.Suggestion
 import com.zoonk.android.ui.components.SuggestionAction
 import com.zoonk.android.ui.components.SuggestionActions
@@ -76,6 +75,7 @@ private fun ExamChoiceOptions(
             optionLabel = { it.shortName ?: it.name },
             onPick = { if (it.name !in shown) edits.chooseExamOption(choice.group, listOf(it.name), null) },
             enabled = !pending,
+            placeholder = stringResource(R.string.plan_exam_choice_not_set),
         )
     }
 }
@@ -103,23 +103,17 @@ fun ExamChoicePicks(
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            choice.options.forEach { option ->
-                val picked = option.name in draft
-                SelectionChip(
-                    text = option.shortName ?: option.name,
-                    selected = picked,
-                    onClick = { draft = choice.toggled(draft, option.name) },
-                    role = Role.Checkbox,
-                    enabled = enabled && !saving && (picked || !choice.isFull(draft)),
-                )
-            }
-        }
+        CheckList(
+            choices = choice.options.map { Choice(it.name, it.shortName ?: it.name) },
+            value = draft,
+            label = choice.group,
+            onToggle = { draft = choice.toggled(draft, it) },
+            max = choice.take.toInt(),
+            readOnly = !enabled || saving,
+        )
         save({ onSave(draft) }, enabled && choice.canSave(draft))
     }
 }
-
-internal fun ExamChoice.isFull(picked: List<String>) = picked.size >= take
 
 /** [picked] with [option] ticked or unticked, in the notice's order. */
 fun ExamChoice.toggled(
@@ -128,7 +122,7 @@ fun ExamChoice.toggled(
 ): List<String> =
     when {
         option in picked -> picked - option
-        isFull(picked) -> picked
+        picked.size >= take -> picked
         else -> options.map { it.name }.filter { it in picked || it == option }
     }
 

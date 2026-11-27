@@ -243,6 +243,7 @@
   "plan_estimated_score": "a5f3493f456525da369d4b4ade74873f15b5c397c33b9e8537c95c1ec18cff83",
   "plan_every_day": "3d707b01ec095a3e9f24cb968bd9077bd2e99f66edee0206181c3a2a6f5d9680",
   "plan_everything": "26ed160262085274d04f313ef9d7e3c5bd491e46e86de339562ec0457d2e356c",
+  "plan_exam_choice_not_set": "95193b4ab87a63c909d34ebf22679ef6444f26beb45881507ea39886282d44a9",
   "plan_exam_choice_question": "03cbd5046cb339ecf0e88853217b27a77fd8e57e1b2c8b3266a5f5f9b84426df",
   "plan_exam_choice_question_several": "e266b6a492a2e03e75f912c17792f202c9dcd11c0fd98d6c6a4e227f58174f85",
   "plan_exam_date": "ed3689d91523a58c006e259378c0425952e8ea3fd9373a6ea21b0ac555fb2519",
@@ -1040,6 +1041,7 @@
     <string name="plan_exam_choice_question">%1$s: quale sosterrai?</string>
     <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->
     <string name="plan_exam_choice_question_several">%1$s: quali sceglierai?</string>
+    <string name="plan_exam_choice_not_set">Non impostato</string>
     <string name="plan_prerequisites">Prerequisiti</string>
     <string name="plan_prerequisites_description">Su cosa si basano i tuoi argomenti. Scegli quanto studiare.</string>
     <plurals name="plan_bases_mixed">

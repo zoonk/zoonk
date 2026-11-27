@@ -243,6 +243,7 @@
   "plan_estimated_score": "41e09ef965330d4d179bd902b8b980b051904fe3bd7990dc691097721347cef6",
   "plan_every_day": "b902c43428c856c4ffd4dbde80b5be1a9bf462864418a649c6862b89588464ff",
   "plan_everything": "020e3d2b1215025c0f75a09789731213b3f5aac74890df408257f4795ffccbf6",
+  "plan_exam_choice_not_set": "dd62ab2072aa927f72305fa5c29615c8137ad867b11f8f055402023298458851",
   "plan_exam_choice_question": "5e92a161dc0b636007d121e9da390d2c31b776156156e809c5ac83fbc6bbd323",
   "plan_exam_choice_question_several": "f3d2e851620c6fa034804d7d57a21a63a7885c1e90a23cde85403f6e2c066f77",
   "plan_exam_date": "a0a39f1220465490a59bb9abcf23f3f4d0497a51b4250ed1919d38d807d29a6f",
@@ -948,6 +949,7 @@
     <string name="plan_exam_choice_question">%1$sはどの科目を受験しますか？</string>
     <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->
     <string name="plan_exam_choice_question_several">%1$s：どれを受験しますか？</string>
+    <string name="plan_exam_choice_not_set">未設定</string>
     <string name="plan_prerequisites">前提知識</string>
     <string name="plan_prerequisites_description">トピックの土台となる内容です。学習量を選べます。</string>
     <plurals name="plan_bases_mixed">

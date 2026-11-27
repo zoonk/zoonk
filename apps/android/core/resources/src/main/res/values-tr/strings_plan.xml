@@ -243,6 +243,7 @@
   "plan_estimated_score": "277d72459e85d2a1150feb3c32e851e46fc94cdb4e2834d801d11ae08feae49d",
   "plan_every_day": "884871734e12a40320ad81f42481bde981c746fd0906ecfb1a6541470bbbb8c2",
   "plan_everything": "b2fc82a21f2dba978d723814cc517f38796edac30cb941c9bb6b095ca65e1dca",
+  "plan_exam_choice_not_set": "83174b7ce9e553a974f04511cb68e211f3fb06bb8e08323f0e7acac3e772a4a5",
   "plan_exam_choice_question": "8f39718d8501399865a3f1fc05e258758f87606d03dca05379d270f151ad4834",
   "plan_exam_choice_question_several": "4ca7f1ca4eb35a0feafbcf7a1df80159f02cd083e77145f8c8476cad5d62a514",
   "plan_exam_date": "af134b505098e9b769b7b9cbd7821f28aba1207d248ba0a0465c5114588b575f",
@@ -994,6 +995,7 @@
     <string name="plan_exam_choice_question">%1$s: hangisine gireceksin?</string>
     <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->
     <string name="plan_exam_choice_question_several">%1$s: Hangilerini seçeceksin?</string>
+    <string name="plan_exam_choice_not_set">Belirtilmedi</string>
     <string name="plan_prerequisites">Ön bilgiler</string>
     <string name="plan_prerequisites_description">Konularının temel aldığı şeyler. Ne kadar çalışacağını seç.</string>
     <plurals name="plan_bases_mixed">

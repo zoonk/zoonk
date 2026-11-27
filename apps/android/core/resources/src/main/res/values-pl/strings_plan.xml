@@ -243,6 +243,7 @@
   "plan_estimated_score": "f90fb5ba50c8f45f8991e390e36776ef59a920eb9690eb92a1ccff97659f94e9",
   "plan_every_day": "c23e7c3fe92da6e8043c7c59c08f7ea4f82da8e59b7b130e17eb5532437d32e2",
   "plan_everything": "af6d5629a938b51737b4b97a78fcf7e42d68d376309eecfcbc971d49d47cff10",
+  "plan_exam_choice_not_set": "cba83599284f5caada97583b4065288b31d7aba0247685bf0389d826f17a3b9f",
   "plan_exam_choice_question": "5bf0d612f41c6edee011d9f92f0e56670c461ef6b4a1219ded876924709d184e",
   "plan_exam_choice_question_several": "ac44007e387bc1e9941b9641aa774e747d29336d9fc59c7f69d9ce85c405e551",
   "plan_exam_date": "c5711827dcfe7af649409c795ba6f776b9fb376b0594db29bf5e393671bf8ac7",
@@ -1086,6 +1087,7 @@
     <string name="plan_exam_choice_question">%1$s: który przedmiot będziesz zdawać?</string>
     <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->
     <string name="plan_exam_choice_question_several">%1$s: które opcje wybierzesz?</string>
+    <string name="plan_exam_choice_not_set">Nie ustawiono</string>
     <string name="plan_prerequisites">Podstawy</string>
     <string name="plan_prerequisites_description">Co jest podstawą tych tematów. Wybierz, ile chcesz się uczyć.</string>
     <plurals name="plan_bases_mixed">
