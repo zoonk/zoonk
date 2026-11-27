@@ -21,7 +21,7 @@
   "buddy_page_first_review": "031b59c4ce59cf400b5af5825dff19c7cd5eda3035f1b111db0ab1bddaa1c375",
   "buddy_page_first_steps": "30e30456c782eed8f06682d678998a5e8b1e65280bcebe9da5dafc0377e44553",
   "buddy_page_first_steps_done": "31179dcf4c210a84ebc5ab3ab98520ae848e0cbf1b046a697936cea992a0d576",
-  "buddy_page_first_steps_later": "75349ee392e391f4b63fddece57e939f00ae92e93bc5f01f26c49c579a46b29d",
+  "buddy_page_first_steps_later": "184d011ff4f3552c95756e9c101298cc7b42c642c2a8a900c17d790207a2bf0e",
   "buddy_page_fully_grown": "6141f17d4f000fa38cc0832ef0b388ce678f807d05a6006cd4f7e5ff66741620",
   "buddy_page_glasses_description": "6ef1ec78e5cce6d3127ffbadbb532827d2f8d24b64ad491f8e65663486d4ecfa",
   "buddy_page_goal_greeting": "c567eecf4397a6da372a33b829b8c709643b13c025520b2d3eea8993b770fab1",
@@ -81,10 +81,10 @@
     <string name="buddy_page_glasses_description">Wybierz jedną ze zdobytych par.</string>
     <string name="buddy_page_first_steps">Pierwsze kroki</string>
     <plurals name="buddy_page_first_steps_later">
-        <item quantity="one">W miarę postępów odblokuje się jeszcze %1$d element</item>
-        <item quantity="few">W miarę postępów odblokują się jeszcze %1$d elementy</item>
-        <item quantity="many">W miarę postępów odblokuje się jeszcze %1$d elementów</item>
-        <item quantity="other">W miarę postępów odblokuje się jeszcze %1$d elementu</item>
+        <item quantity="one">W miarę postępów odblokujesz jeszcze %1$d misję</item>
+        <item quantity="few">W miarę postępów odblokujesz jeszcze %1$d misje</item>
+        <item quantity="many">W miarę postępów odblokujesz jeszcze %1$d misji</item>
+        <item quantity="other">W miarę postępów odblokujesz jeszcze %1$d misji</item>
     </plurals>
     <string name="buddy_page_first_steps_done">Wszystko już wypróbowane.</string>
     <string name="buddy_page_first_lesson">Ukończ pierwszą lekcję</string>

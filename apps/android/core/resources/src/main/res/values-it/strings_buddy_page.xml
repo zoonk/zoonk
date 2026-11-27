@@ -21,7 +21,7 @@
   "buddy_page_first_review": "e60c035bab6a20996dc705d2b848938817b71eeb04090734b3952a48781ea897",
   "buddy_page_first_steps": "17bccaeb6e5e5e29c97a8c4bdc93a2b722f35697a3ee622de3d6bf9902473a2b",
   "buddy_page_first_steps_done": "b859ecd27699f5e99099225aca193ddb94a96fb604ef0d750d349f2732fc91e8",
-  "buddy_page_first_steps_later": "e9419e8ebae82754d306a3d45572cece3f975b191fd458ce58284f3d9869cdc1",
+  "buddy_page_first_steps_later": "6725eb09857df04febceb664ea261187c4b5fb5ed5bfe6af0f18bd5c06082ce6",
   "buddy_page_fully_grown": "41611ef1ac28d2574eae15d718f207e60e79a0c475426e79ec02c1850fc1c0cf",
   "buddy_page_glasses_description": "bc91e045ba5e1964f51d08528be27508c8ec3eedd1ffdff028c62077751d0afd",
   "buddy_page_goal_greeting": "5f2454576532bda43989fc3067004c1a793cdc62d60a3d34325b3f1687669b67",
@@ -81,9 +81,9 @@
     <string name="buddy_page_glasses_description">Scegli un paio che hai conquistato.</string>
     <string name="buddy_page_first_steps">Primi passi</string>
     <plurals name="buddy_page_first_steps_later">
-        <item quantity="one">%1$d si sblocca man mano che vai avanti</item>
-        <item quantity="many">%1$d si sbloccano man mano che vai avanti</item>
-        <item quantity="other">%1$d si sbloccano man mano che vai avanti</item>
+        <item quantity="one">Proseguendo sblocchi %1$d altra missione</item>
+        <item quantity="many">Proseguendo sblocchi %1$d altre missioni</item>
+        <item quantity="other">Proseguendo sblocchi %1$d altre missioni</item>
     </plurals>
     <string name="buddy_page_first_steps_done">Hai provato tutto.</string>
     <string name="buddy_page_first_lesson">Completa la tua prima lezione</string>

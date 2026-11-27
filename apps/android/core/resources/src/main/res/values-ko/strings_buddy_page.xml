@@ -21,7 +21,7 @@
   "buddy_page_first_review": "3e259b5b03c644a1ace144fe5ea4bf44b200895f76633c46be32848165b5b6d7",
   "buddy_page_first_steps": "33316f40225704abf2faa843477c1975fbb17b7d9f9f27919bbfdcfedce538a4",
   "buddy_page_first_steps_done": "c9c744c4e8440658fe2bb3f0e81c2d1bc4566cc1fa129e5c0d98b15b73c7dac2",
-  "buddy_page_first_steps_later": "413285a171dbdc457801f3d6a772fec85c3d7a441215f5a424e385fe33610dd0",
+  "buddy_page_first_steps_later": "d5a5a5b750cd4010addc49da756842fbc81448a9e1cf162c2c52459a80a4206b",
   "buddy_page_fully_grown": "56fd252f516edafe6446cf8704079bded2eb987f3e8167f0df4ee531d96da4e6",
   "buddy_page_glasses_description": "b89bad04225b147cd6b13183d1834d26f1bea4519e9a15fed4152e3435eb052e",
   "buddy_page_goal_greeting": "7576fa5c84cd0439c940b887a98d64d694a15e135679baf95143c2c2b3b6c467",
@@ -81,7 +81,7 @@
     <string name="buddy_page_glasses_description">얻은 안경 중에서 하나를 골라 보세요.</string>
     <string name="buddy_page_first_steps">첫걸음</string>
     <plurals name="buddy_page_first_steps_later">
-        <item quantity="other">%1$d개 더 열려요</item>
+        <item quantity="other">학습을 이어 가면 %1$d개가 더 열려요</item>
     </plurals>
     <string name="buddy_page_first_steps_done">모든 활동을 해 봤어요.</string>
     <string name="buddy_page_first_lesson">첫 레슨 끝내기</string>

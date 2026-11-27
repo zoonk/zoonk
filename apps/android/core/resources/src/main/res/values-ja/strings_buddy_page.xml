@@ -21,7 +21,7 @@
   "buddy_page_first_review": "df48d0d3913d1b1e12299d69b3ec641fed414b30cfc59c3b1e34174028c96e82",
   "buddy_page_first_steps": "bd84885e1b02741baf1b2ec2cf684f0d162b524debf409fb7fb8bee4102999bb",
   "buddy_page_first_steps_done": "f8e1331a283569d2dd0a0a94b6b112efdfc41975dfc8d4288aa14e923f810f8e",
-  "buddy_page_first_steps_later": "efbfcad97234a62af029491bc11660d0a9d0abd9d71ef81baecd00c3d15dc7a5",
+  "buddy_page_first_steps_later": "7e9a4dcd4a9bbcefc7ff4218039f814fa5226ee388ace847538ec0b607b4297f",
   "buddy_page_fully_grown": "fd79defc214ef10438c17c2ea6efa54ab1a26883c0c780dc211697abbee5c953",
   "buddy_page_glasses_description": "1b4ac3c13805ec1d07eae70fa513f81ef06b06ffb533c16413eed959e9b22edb",
   "buddy_page_goal_greeting": "9c90efb93c484d4a20c1bed3003c3d3c7b28bed3028af28b6f63ebfef9f4fd4e",
@@ -81,7 +81,7 @@
     <string name="buddy_page_glasses_description">獲得したメガネから選んでください。</string>
     <string name="buddy_page_first_steps">はじめの一歩</string>
     <plurals name="buddy_page_first_steps_later">
-        <item quantity="other">進めていくと、さらに%1$d個が開放されます</item>
+        <item quantity="other">学習を進めると、さらに%1$d個のミッションに挑戦できます</item>
     </plurals>
     <string name="buddy_page_first_steps_done">すべて試しました。</string>
     <string name="buddy_page_first_lesson">最初のレッスンを終える</string>

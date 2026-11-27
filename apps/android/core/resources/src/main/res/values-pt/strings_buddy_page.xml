@@ -21,7 +21,7 @@
   "buddy_page_first_review": "91e8ec038b506aa1cce756b425a8a1b1e5e77063e4a1a11309e98e78c8f79ead",
   "buddy_page_first_steps": "5001e463b2574b7f266903cce1b441a21f488a55dcd2056760bf76a8a951aaba",
   "buddy_page_first_steps_done": "eff9d7f3f737868dadce7d1f0131c817adba9350282ea90d5bd15a883dbdb4de",
-  "buddy_page_first_steps_later": "ba3f0a961a91c0ee92749396716804aa3586d190e65331835e9f9a0d3a6fd21b",
+  "buddy_page_first_steps_later": "c12295c64dedee2f4108c33808518edadd61a95cdcbf49486a6cb3964c818622",
   "buddy_page_fully_grown": "1e6cbf3c4f381f55c21852ea2ee41aff538204177bdaef44e7db803f97cf1a54",
   "buddy_page_glasses_description": "7d8d9b797a68b02e95be885888f5a010174b007910710b1882a88805d6ba4cc0",
   "buddy_page_goal_greeting": "4c362c40d94887ce99b6cfe9396d9fe1f03cdff54201d3b25bfa6d3ba6cbc0a9",
@@ -81,9 +81,9 @@
     <string name="buddy_page_glasses_description">Escolha um par que você já ganhou.</string>
     <string name="buddy_page_first_steps">Primeiros passos</string>
     <plurals name="buddy_page_first_steps_later">
-        <item quantity="one">%1$d a mais fica disponível conforme você avança</item>
-        <item quantity="many">%1$d a mais ficam disponíveis conforme você avança</item>
-        <item quantity="other">%1$d a mais ficam disponíveis conforme você avança</item>
+        <item quantity="one">Mais %1$d fica disponível conforme você avança</item>
+        <item quantity="many">Mais %1$d ficam disponíveis conforme você avança</item>
+        <item quantity="other">Mais %1$d ficam disponíveis conforme você avança</item>
     </plurals>
     <string name="buddy_page_first_steps_done">Você já experimentou tudo.</string>
     <string name="buddy_page_first_lesson">Concluir sua primeira aula</string>

@@ -21,7 +21,7 @@
   "buddy_page_first_review": "37d4ea755bd96d75377153145f7ccb468396f187024944dade05925115bad0e9",
   "buddy_page_first_steps": "b6b88bd28187a70d23cb94a018dd09a5ec281aebbd8734bc7dbbdb22f292a894",
   "buddy_page_first_steps_done": "699098a4371d46b930c2dc6735939bc11c12bf3f312757c85ded12b5512747a8",
-  "buddy_page_first_steps_later": "b8ec7228dc74a9ec96f5154bb8f93f4969cb67c601b2b67dfbf3f55d167704b3",
+  "buddy_page_first_steps_later": "1331455133325bb7f4ac7f8e543cc237c81f186f15aa1c2897ad4658c5d95a32",
   "buddy_page_fully_grown": "59d37ed5cb33d9e398e87064c3d552c8f2ede0a8d0b6fc151a62371f0045e7aa",
   "buddy_page_glasses_description": "5dca1f714c1889820871381dee7c9e4dd70fffe1da42602844455c70b13e7b41",
   "buddy_page_goal_greeting": "8218087f86b872ba9dbb36b5a9b7a41c2fdcb503e8d31d6b4c3557c3d5568cb7",
@@ -81,8 +81,8 @@
     <string name="buddy_page_glasses_description">Wähl eine Brille aus, die du dir verdient hast.</string>
     <string name="buddy_page_first_steps">Erste Schritte</string>
     <plurals name="buddy_page_first_steps_later">
-        <item quantity="one">Noch %1$d wird nach und nach freigeschaltet</item>
-        <item quantity="other">Noch %1$d werden nach und nach freigeschaltet</item>
+        <item quantity="one">Beim Lernen schaltest du %1$d weitere Aufgabe frei</item>
+        <item quantity="other">Beim Lernen schaltest du %1$d weitere Aufgaben frei</item>
     </plurals>
     <string name="buddy_page_first_steps_done">Du hast alles ausprobiert.</string>
     <string name="buddy_page_first_lesson">Deine erste Lektion abschließen</string>

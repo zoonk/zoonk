@@ -21,7 +21,7 @@
   "buddy_page_first_review": "6ddaf3c5adb06357f4575269b1b28e94a11aff0f38f6540b4a652258ecce322c",
   "buddy_page_first_steps": "9390a97334515cc339b7f805da0f98d1f235ed64185a892239dc1473acace12a",
   "buddy_page_first_steps_done": "9fce66cb725292cd5fd6585d827f7deb0d50313c099530830d2b258bec2db633",
-  "buddy_page_first_steps_later": "c1ef62978c8d97a8691c0e284962f443bdba04d22d20d7f584840b8756da73a0",
+  "buddy_page_first_steps_later": "3363521f791ca17896b76910a48cc0c68a8110f70c8df70fdfa34ae0a5d01402",
   "buddy_page_fully_grown": "c2a3c35a20c85e2023b83e775f0f34d09350f6d801ff90ab89dce77a6f535ae1",
   "buddy_page_glasses_description": "578433c15626a8ac5da87c8def47bca2640d5c39abf92859fc88635a75c8198e",
   "buddy_page_goal_greeting": "3c91b2fdeef67122a0b4659f37579d09f8ae786bae06ea0ef8732928177a94ee",
@@ -81,8 +81,8 @@
     <string name="buddy_page_glasses_description">Kazandığın gözlüklerden birini seç.</string>
     <string name="buddy_page_first_steps">İlk adımlar</string>
     <plurals name="buddy_page_first_steps_later">
-        <item quantity="one">İlerledikçe %1$d yenisi açılıyor</item>
-        <item quantity="other">İlerledikçe %1$d yenileri açılıyor</item>
+        <item quantity="one">İlerledikçe %1$d görev daha açılır</item>
+        <item quantity="other">İlerledikçe %1$d görev daha açılır</item>
     </plurals>
     <string name="buddy_page_first_steps_done">Her şeyi denedin.</string>
     <string name="buddy_page_first_lesson">İlk dersini bitir</string>
