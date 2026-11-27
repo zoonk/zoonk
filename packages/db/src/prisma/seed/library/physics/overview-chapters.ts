@@ -1,5 +1,5 @@
 import { t } from "../../_utils/localize";
-import { outlineLesson } from "../content";
+import { outlineLesson, withPractice } from "../content";
 import { type SeedChapter } from "../types";
 import { electronCloudLesson } from "./lessons/electron-cloud";
 import { whyColorsExistLesson } from "./lessons/why-colors-exist";
@@ -12,31 +12,67 @@ export const overviewChapters: SeedChapter[] = [
     ),
     key: "very-small-world",
     lessons: [
-      outlineLesson(
-        "how-small-is-an-atom",
+      withPractice(
+        outlineLesson(
+          "how-small-is-an-atom",
+          {
+            description: t(
+              "Millions of atoms fit in the period at the end of this sentence.",
+              "Milhões de átomos cabem no ponto final desta frase.",
+            ),
+            title: t("How small is an atom?", "Quão pequeno é um átomo?"),
+          },
+          ["atom-scale"],
+        ),
         {
-          description: t(
-            "Millions of atoms fit in the period at the end of this sentence.",
-            "Milhões de átomos cabem no ponto final desta frase.",
+          answer: t("20", "20"),
+          distractor: t("2", "2"),
+          example: t(
+            "A typical atom spans about a tenth of a nanometer. Ten of them laid side by side span about one nanometer.",
+            "Um átomo típico mede cerca de um décimo de nanômetro. Dez átomos lado a lado ocupam cerca de um nanômetro.",
           ),
-          title: t("How small is an atom?", "Quão pequeno é um átomo?"),
+          question: t(
+            "About how many fit across 2 nanometers?",
+            "Quantos cabem em cerca de 2 nanômetros?",
+          ),
+          reason: t(
+            "Each nanometer holds about ten, so two hold about twenty.",
+            "Cada nanômetro comporta cerca de dez, então em dois cabem cerca de vinte.",
+          ),
         },
-        ["atom-scale"],
       ),
-      outlineLesson(
-        "rules-change-when-small",
+      withPractice(
+        outlineLesson(
+          "rules-change-when-small",
+          {
+            description: t(
+              "Why a ball and an electron can't be described the same way.",
+              "Por que uma bola e um elétron não podem ser descritos do mesmo jeito.",
+            ),
+            title: t(
+              "Why small things follow other rules",
+              "Por que coisas pequenas seguem outras regras",
+            ),
+          },
+          ["quantum-rules"],
+          5,
+        ),
         {
-          description: t(
-            "Why a ball and an electron can't be described the same way.",
-            "Por que uma bola e um elétron não podem ser descritos do mesmo jeito.",
+          answer: t("The distribution of landing spots", "A distribuição dos pontos de chegada"),
+          distractor: t("The exact spot for each electron", "O ponto exato de cada elétron"),
+          example: t(
+            "A rolling marble follows a path. For an electron prepared in the same way many times, quantum theory predicts how often each landing spot will occur.",
+            "Uma bolinha de gude segue uma trajetória. Para um elétron preparado da mesma forma várias vezes, a teoria quântica prevê com que frequência ele chega a cada região.",
           ),
-          title: t(
-            "Why small things follow other rules",
-            "Por que coisas pequenas seguem outras regras",
+          question: t(
+            "What can you predict for many such electrons?",
+            "O que dá para prever para muitos elétrons assim?",
+          ),
+          reason: t(
+            "Individual arrivals can vary while their frequencies follow a pattern.",
+            "Os pontos de chegada variam, mas suas frequências seguem um padrão.",
           ),
         },
-        ["quantum-rules"],
-        5,
       ),
     ],
     level: "overview",
@@ -53,40 +89,94 @@ export const overviewChapters: SeedChapter[] = [
     ),
     key: "light-wave-or-particle",
     lessons: [
-      outlineLesson(
-        "light-as-wave",
+      withPractice(
+        outlineLesson(
+          "light-as-wave",
+          {
+            description: t(
+              "Color is the distance between the crests of a light wave.",
+              "A cor é a distância entre as cristas de uma onda de luz.",
+            ),
+            title: t("Light behaves like a wave", "A luz se comporta como onda"),
+          },
+          ["light-wave"],
+        ),
         {
-          description: t(
-            "Color is the distance between the crests of a light wave.",
-            "A cor é a distância entre as cristas de uma onda de luz.",
+          answer: t("The spot darkens", "O ponto escurece"),
+          distractor: t("The spot brightens", "O ponto clareia"),
+          example: t(
+            "Two light waves reach the same spot. When the crest of one meets the crest of the other, their amplitudes add and the spot looks brighter.",
+            "Duas ondas de luz chegam ao mesmo ponto. Quando duas cristas se encontram, suas amplitudes se somam e o ponto fica mais claro.",
           ),
-          title: t("Light behaves like a wave", "A luz se comporta como onda"),
+          question: t(
+            "What happens when a crest meets an equal trough?",
+            "O que acontece quando uma crista encontra um vale de mesma amplitude?",
+          ),
+          reason: t(
+            "Opposite displacements cancel. This is destructive interference.",
+            "Deslocamentos opostos se cancelam. É a interferência destrutiva.",
+          ),
         },
-        ["light-wave"],
       ),
-      outlineLesson(
-        "light-comes-in-packets",
+      withPractice(
+        outlineLesson(
+          "light-comes-in-packets",
+          {
+            description: t(
+              "Why a dim violet light can do what a bright red one can't.",
+              "Por que uma luz violeta fraca consegue o que uma vermelha forte não consegue.",
+            ),
+            title: t("Light comes in packets", "A luz vem em pacotes"),
+          },
+          ["photon"],
+          5,
+        ),
         {
-          description: t(
-            "Why a dim violet light can do what a bright red one can't.",
-            "Por que uma luz violeta fraca consegue o que uma vermelha forte não consegue.",
+          answer: t("More photons per second", "Mais fótons por segundo"),
+          distractor: t("More energy per photon", "Mais energia por fóton"),
+          example: t(
+            "A detector registers light one photon at a time. At a fixed frequency, each photon carries the same energy.",
+            "Um detector registra a luz um fóton por vez. Para uma frequência fixa, cada fóton carrega a mesma energia.",
           ),
-          title: t("Light comes in packets", "A luz vem em pacotes"),
+          question: t(
+            "A red lamp gets brighter without changing color. What reaches the detector?",
+            "Uma lâmpada vermelha fica mais brilhante sem mudar de cor. O que chega ao detector?",
+          ),
+          reason: t(
+            "The color fixes the frequency and the energy per photon. Brightness can rise through the number arriving.",
+            "A cor determina a frequência e a energia por fóton. O brilho pode aumentar com a quantidade de fótons que chegam.",
+          ),
         },
-        ["photon"],
-        5,
       ),
-      outlineLesson(
-        "double-slit",
+      withPractice(
+        outlineLesson(
+          "double-slit",
+          {
+            description: t(
+              "One experiment where light is a wave and a particle at the same time.",
+              "Um experimento em que a luz é onda e partícula ao mesmo tempo.",
+            ),
+            title: t("The double-slit experiment", "O experimento da fenda dupla"),
+          },
+          ["duality"],
+          5,
+        ),
         {
-          description: t(
-            "One experiment where light is a wave and a particle at the same time.",
-            "Um experimento em que a luz é onda e partícula ao mesmo tempo.",
+          answer: t("After many detections", "Depois de muitas detecções"),
+          distractor: t("In the mark of one photon", "Na marca de um único fóton"),
+          example: t(
+            "Send photons one at a time toward two open slits. Each marks a single spot on the screen. After many arrivals, bright and dark bands emerge.",
+            "Envie fótons um por vez em direção a duas fendas abertas. Cada um marca um ponto na tela. Depois de muitas chegadas, aparecem faixas claras e escuras.",
           ),
-          title: t("The double-slit experiment", "O experimento da fenda dupla"),
+          question: t(
+            "When does the band pattern become visible?",
+            "Quando o padrão de faixas fica visível?",
+          ),
+          reason: t(
+            "Each arrival makes one dot. The interference pattern is in the distribution of many dots.",
+            "Cada chegada produz um ponto. O padrão de interferência está na distribuição de muitos pontos.",
+          ),
         },
-        ["duality"],
-        5,
       ),
     ],
     level: "overview",
@@ -106,17 +196,35 @@ export const overviewChapters: SeedChapter[] = [
     ),
     key: "inside-the-atom",
     lessons: [
-      outlineLesson(
-        "almost-empty-atom",
+      withPractice(
+        outlineLesson(
+          "almost-empty-atom",
+          {
+            description: t(
+              "If an atom were a stadium, its nucleus would be a marble.",
+              "Se um átomo fosse um estádio, o núcleo seria uma bolinha de gude.",
+            ),
+            title: t("An almost empty atom", "Um átomo quase vazio"),
+          },
+          ["atom-structure"],
+          5,
+        ),
         {
-          description: t(
-            "If an atom were a stadium, its nucleus would be a marble.",
-            "Se um átomo fosse um estádio, o núcleo seria uma bolinha de gude.",
+          answer: t("The region around the nucleus", "A região em volta do núcleo"),
+          distractor: t("The nucleus itself", "O próprio núcleo"),
+          example: t(
+            "Imagine enlarging an atom until its nucleus is a bead at the center of a stadium. The electrons occupy the surrounding region, while almost all the mass sits in the bead.",
+            "Imagine ampliar um átomo até que o núcleo seja uma miçanga no centro de um estádio. Os elétrons ocupam a região em volta, mas quase toda a massa está na miçanga.",
           ),
-          title: t("An almost empty atom", "Um átomo quase vazio"),
+          question: t(
+            "Which part accounts for most of the atom’s volume?",
+            "Qual parte ocupa a maior parte do volume do átomo?",
+          ),
+          reason: t(
+            "The nucleus contains most of the mass in a tiny fraction of the volume.",
+            "O núcleo concentra quase toda a massa em uma fração minúscula do volume.",
+          ),
         },
-        ["atom-structure"],
-        5,
       ),
       electronCloudLesson,
       outlineLesson(

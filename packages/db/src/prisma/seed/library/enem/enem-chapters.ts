@@ -1,5 +1,5 @@
 import { t } from "../../_utils/localize";
-import { outlineLesson } from "../content";
+import { outlineLesson, withPractice } from "../content";
 import { type SeedChapter } from "../types";
 import { foodChainEnergyLesson } from "./lessons/food-chain-energy";
 import { percentDiscountLesson } from "./lessons/percent-discount";
@@ -28,17 +28,32 @@ export const enemMathChapters: SeedChapter[] = [
     ),
     key: "percentages",
     lessons: [
-      outlineLesson(
-        "what-a-percent-is",
+      withPractice(
+        outlineLesson(
+          "what-a-percent-is",
+          {
+            description: t(
+              "A percent is a fraction of 100, and that's all you need.",
+              "Porcentagem é uma fração de 100, e isso é tudo de que você precisa.",
+            ),
+            title: t("What a percent is", "O que é porcentagem"),
+          },
+          ["percent-basics"],
+          3,
+        ),
         {
-          description: t(
-            "A percent is a fraction of 100, and that's all you need.",
-            "Porcentagem é uma fração de 100, e isso é tudo de que você precisa.",
+          answer: t("20", "20"),
+          distractor: t("25", "25"),
+          example: t(
+            "A class fills 25 of the 100 seats in a hall. It occupies 25%, or one quarter, of the seats.",
+            "Uma turma ocupa 25 dos 100 lugares de um auditório. Ela ocupa 25%, ou um quarto, dos lugares.",
           ),
-          title: t("What a percent is", "O que é porcentagem"),
+          question: t("How many of 80 seats is 25%?", "Quantos lugares correspondem a 25% de 80?"),
+          reason: t(
+            "Take one quarter of 80. The percentage stays the same even when the total changes.",
+            "Calcule um quarto de 80. A porcentagem é a mesma, mesmo quando o total muda.",
+          ),
         },
-        ["percent-basics"],
-        3,
       ),
       percentDiscountLesson,
       raiseThenDiscountLesson,
@@ -89,16 +104,34 @@ export const enemMathChapters: SeedChapter[] = [
     ),
     key: "ratio-proportion",
     lessons: [
-      outlineLesson(
-        "rule-of-three",
+      withPractice(
+        outlineLesson(
+          "rule-of-three",
+          {
+            description: t(
+              "Find the missing value when two quantities grow together.",
+              "Ache o valor que falta quando duas grandezas crescem juntas.",
+            ),
+            title: t("The rule of three", "Regra de três"),
+          },
+          ["rule-of-three"],
+        ),
         {
-          description: t(
-            "Find the missing value when two quantities grow together.",
-            "Ache o valor que falta quando duas grandezas crescem juntas.",
+          answer: t("28 reais", "28 reais"),
+          distractor: t("16 reais", "16 reais"),
+          example: t(
+            "At a fixed price per notebook, 3 notebooks cost 12 reais. One costs 4 reais, so 5 cost 20 reais.",
+            "Com preço fixo por caderno, 3 cadernos custam 12 reais. Um custa 4 reais, então 5 custam 20 reais.",
           ),
-          title: t("The rule of three", "Regra de três"),
+          question: t(
+            "At that price, what do 7 notebooks cost?",
+            "Nesse preço, quanto custam 7 cadernos?",
+          ),
+          reason: t(
+            "Multiply the unit price of 4 reais by the quantity, 7.",
+            "Multiplique o preço unitário de 4 reais pela quantidade, 7.",
+          ),
         },
-        ["rule-of-three"],
       ),
       outlineLesson(
         "map-scales",
@@ -288,17 +321,41 @@ export const enemAreaChapters: SeedChapter[] = [
     ),
     key: "republic",
     lessons: [
-      outlineLesson(
-        "first-republic",
+      withPractice(
+        outlineLesson(
+          "first-republic",
+          {
+            description: t(
+              "How São Paulo and Minas Gerais ran the country.",
+              "Como São Paulo e Minas Gerais comandaram o país.",
+            ),
+            title: t("The First Republic", "A Primeira República"),
+          },
+          ["coffee-with-milk"],
+          5,
+        ),
         {
-          description: t(
-            "How São Paulo and Minas Gerais ran the country.",
-            "Como São Paulo e Minas Gerais comandaram o país.",
+          answer: t(
+            "Political alliances among state elites",
+            "Alianças políticas entre as elites estaduais",
           ),
-          title: t("The First Republic", "A Primeira República"),
+          distractor: t(
+            "A constitutional rule reserving the office",
+            "Uma regra constitucional que reservava o cargo",
+          ),
+          example: t(
+            "In Brazil’s First Republic, state political elites built alliances to influence presidential succession. São Paulo and Minas Gerais were especially influential.",
+            "Na Primeira República brasileira, elites políticas estaduais formavam alianças para influenciar a sucessão presidencial. São Paulo e Minas Gerais tinham forte influência.",
+          ),
+          question: t(
+            "What gave these states influence over the presidency?",
+            "O que dava a esses estados influência sobre a presidência?",
+          ),
+          reason: t(
+            "Their influence depended on political arrangements. The Constitution did not reserve the presidency for those states.",
+            "A influência dependia de acordos políticos. A Constituição não reservava a presidência a esses estados.",
+          ),
         },
-        ["coffee-with-milk"],
-        5,
       ),
       outlineLesson(
         "vargas-era",
@@ -331,16 +388,37 @@ export const enemAreaChapters: SeedChapter[] = [
     ),
     key: "reading",
     lessons: [
-      outlineLesson(
-        "main-idea",
+      withPractice(
+        outlineLesson(
+          "main-idea",
+          {
+            description: t(
+              "Find what every paragraph serves before reading the options.",
+              "Ache aquilo a que todo parágrafo serve antes de ler as alternativas.",
+            ),
+            title: t("The main idea", "A ideia central"),
+          },
+          ["main-idea"],
+        ),
         {
-          description: t(
-            "Find what every paragraph serves before reading the options.",
-            "Ache aquilo a que todo parágrafo serve antes de ler as alternativas.",
+          answer: t(
+            "Street trees help keep neighborhoods cool",
+            "As árvores de rua ajudam a refrescar os bairros",
           ),
-          title: t("The main idea", "A ideia central"),
+          distractor: t("One street has twelve trees", "Uma rua tem doze árvores"),
+          example: t(
+            "A paragraph describes three ways street trees cool a neighborhood. The examples differ, but each supports the same idea about temperature.",
+            "Um parágrafo descreve três maneiras pelas quais as árvores de rua refrescam um bairro. Os exemplos variam, mas todos sustentam a mesma ideia sobre a temperatura.",
+          ),
+          question: t(
+            "Which sentence captures the main idea?",
+            "Qual frase resume a ideia principal?",
+          ),
+          reason: t(
+            "The main idea connects the examples. A count from one street covers only a detail.",
+            "A ideia principal conecta os exemplos. A contagem de uma rua cobre apenas um detalhe.",
+          ),
         },
-        ["main-idea"],
       ),
       outlineLesson(
         "what-a-text-implies",
