@@ -60,8 +60,13 @@ describe("POST /v1/steps/{stepId}/spoken-answers", () => {
   });
 
   it("passes the recording and its fields to grading and returns the grade", async () => {
+    const attemptId = crypto.randomUUID();
+
     const response = await post(
-      spokenAnswerRequest({ durationMs: "2400", timeZone: "America/Sao_Paulo" }, recording()),
+      spokenAnswerRequest(
+        { attemptId, durationMs: "2400", timeZone: "America/Sao_Paulo" },
+        recording(),
+      ),
     );
 
     expect(response.status).toBe(200);
@@ -69,7 +74,7 @@ describe("POST /v1/steps/{stepId}/spoken-answers", () => {
 
     expect(gradeSpokenAnswer).toHaveBeenCalledWith({
       audio: { bytes: new Uint8Array([1, 2, 3]), mediaType: "audio/webm" },
-      fields: { durationMs: 2400, timeZone: "America/Sao_Paulo" },
+      fields: { attemptId, durationMs: 2400, timeZone: "America/Sao_Paulo" },
       stepId: STEP_ID,
     });
   });

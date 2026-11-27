@@ -3,6 +3,7 @@ import { type Attempt, type Mistake } from "@zoonk/db";
 import { z } from "zod";
 import { recordAnswerOnce } from "../../learner/_utils/answer-once";
 import { claimModelGrade } from "../../learner/_utils/model-grading";
+import { runAnswerGrade } from "../../learner/_utils/run-answer-grade";
 import { toCheckResult } from "../../lesson-player/_utils/check-results";
 import {
   type LessonAnswerVerdict,
@@ -21,7 +22,6 @@ import { getPracticeAnswerKeys } from "../mistake-item";
 import { type MistakeReplay } from "../mistake-replay";
 import { readMistakeSnapshot } from "../mistake-snapshot";
 import { cachedGradeDuration } from "./cached-grade-duration";
-import { runMistakeGrade } from "./mistake-grade";
 import { refuseAnsweredMistake } from "./practice-claim";
 import { finishPracticeAnswer } from "./practice-feedback";
 import { readSavedPracticeAnswer } from "./saved-practice-answer";
@@ -107,7 +107,7 @@ export async function answerLessonMistake({
   const model = usesModel({ answer, step: lesson.step });
 
   const graded = model
-    ? await runMistakeGrade({
+    ? await runAnswerGrade({
         attemptId,
         grade: async () => ({
           durationMs: input.durationMs,
