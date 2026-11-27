@@ -194,7 +194,6 @@ function mockView(lang: Lang, state: "running" | "finished"): Mock {
     current: running ? runningSection(lang) : null,
     date: "2026-11-03",
     day: lang === "pt" ? 2 : null,
-    essayRubric: null,
     leftOut: [],
     essays: [],
     examDocument: "notice",
