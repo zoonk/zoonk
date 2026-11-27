@@ -48,8 +48,8 @@
   "essay_limit_title": "e65109bc2f62995a35be2ff571781e07eb5bde0a42d60c633486e267e841223d",
   "essay_limit_title_any": "e47f312e69b34e5595be8791a4f6c0e4a3545c4224cd0aef9acd0cde30c53b9d",
   "essay_lines_empty": "a87e184165e2b6706ae5163d43a1ef9f84617de83255314fa78ea03841ac0307",
-  "essay_lines_end_unread": "3fa4e757ece84e07969690fb39b64e9d749ff46a18f779d2851510b7fe1407d9",
-  "essay_lines_may_not_fit": "df96c0c0bdafca5f0a01bd57d06b46814422f2d5c87dd74cfd705fada1f57ea8",
+  "essay_lines_end_unread": "d5ae8a33eb09f6ea01b22462448cc543d541496b1447b39fac1a81b30d09add0",
+  "essay_lines_may_not_fit": "2638ac90cbdf769f68f9c5ab66113cdfc6b35be61b25067194a52f187423b2b4",
   "essay_lines_question": "7b484b9419b561d62ca10d9fa3e345e853ff0f8999c1f8383a78188389a4385c",
   "essay_lines_used": "515543acb7eaf85227dae1f8e404f35bfb3bb55461a8cdfae073b5b12d7ba423",
   "essay_minus": "ee0f5375ee112a6ea1f3ef7b35535eedf10321801f4cfeba36479709752e8856",
@@ -195,9 +195,13 @@
         <item quantity="other">%1$d行中0行</item>
     </plurals>
     <!-- The approximate line count of a written answer past its limit at a typical handwriting size; it's still graded in full, since small handwriting could fit it. -->
-    <string name="essay_lines_may_not_fit">約%1$d行／%2$d行 · 紙に収まらない可能性があります</string>
+    <plurals name="essay_lines_may_not_fit">
+        <item quantity="other">約%1$d行／%2$d行 · 紙に収まらない可能性があります</item>
+    </plurals>
     <!-- The approximate line count of a written answer so far past its limit that no handwriting would fit it; the exam's graders won't read its end. -->
-    <string name="essay_lines_end_unread">約%1$d行／%2$d行 · 末尾は読まれません</string>
+    <plurals name="essay_lines_end_unread">
+        <item quantity="other">約%1$d行／%2$d行 · 末尾は読まれません</item>
+    </plurals>
     <string name="essay_conflict_title">別の端末で答案が変更されました</string>
     <string name="essay_conflict_body">ここで書いている内容を残すか、別の端末の内容に切り替えられます。</string>
     <!-- A choice between two versions of one written answer: keep what's typed on this device and save it over the other. -->

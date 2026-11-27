@@ -1,3 +1,4 @@
+import { WRITING_MAX_CHARACTERS_PER_LINE } from "@repo/packages/core/src/exams/essays/writing-lines.ts";
 import { WritingScreen } from "@repo/packages/learn/src/writing/writing-screen.tsx";
 import { type ComponentProps } from "react";
 import { story } from "../story";
@@ -65,7 +66,7 @@ function essayView(q: URLSearchParams): Props["essay"] {
       criteria: rows.map(({ id, max: points }, index) => ({ id, name: `C${index + 1}`, points })),
       keySource: "publishedStandard",
       lines: 30,
-      maxCharactersPerLine: 160,
+      maxCharactersPerLine: WRITING_MAX_CHARACTERS_PER_LINE,
       minimumWords: 0,
       points: max,
       taskKey: "essay",
