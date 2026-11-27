@@ -1,7 +1,7 @@
 "use client";
 
 import { type NoGlyph } from "@zoonk/ui/components/enter-button";
-import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
+import { HELD_ASK_ATTRIBUTE } from "@zoonk/ui/lib/held-press-script";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useRef } from "react";
 import { EnterButton, EnterLink } from "../_components/enter-button";
@@ -159,26 +159,28 @@ export function TaskFrame({
   );
 }
 
+/** `asks`: its press asks for the microphone, so a press made before the page hydrates asks in the tap. */
 export function TaskMainButton({
+  asks,
   busy = false,
   children,
   className,
   disabled = false,
   onClick,
 }: NoGlyph & {
+  asks?: "microphone";
   busy?: boolean;
   children: React.ReactNode;
   className?: string;
   disabled?: boolean;
   onClick: () => void;
 }) {
-  const mounted = useIsMounted();
-
   return (
     <EnterButton
       busy={busy}
       className={className}
-      disabled={disabled || !mounted}
+      {...{ [HELD_ASK_ATTRIBUTE]: asks }}
+      disabled={disabled}
       onClick={onClick}
     >
       {children}

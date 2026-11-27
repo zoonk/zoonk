@@ -5,6 +5,7 @@ import {
   getMicrophoneProblem,
   stopTracks,
 } from "@zoonk/ui/hooks/voice-recorder";
+import { takeHeldMicrophone } from "@zoonk/ui/lib/held-press-script";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { type SpeechSample, sampleSpeech } from "./speech-activity";
 
@@ -25,14 +26,16 @@ export type CallAudio = {
 
 /**
  * Call it in a tap: Safari on iOS asks for the microphone, and starts the context that hears the
- * learner, only during one.
+ * learner, only during one. A tap made before the page hydrated already asked, from a control
+ * marked `data-held-ask="microphone"`, so this takes what that tap opened.
  */
 export async function openCallAudio(): Promise<CallAudio | MicrophoneProblem> {
-  const context = new AudioContext();
+  const asked = takeHeldMicrophone();
+  const context = asked?.context ?? new AudioContext();
   void context.resume().catch(() => null);
 
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const stream = await (asked?.stream ?? navigator.mediaDevices.getUserMedia({ audio: true }));
     const hearing: (() => void)[] = [];
 
     return {
