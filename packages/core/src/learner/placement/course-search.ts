@@ -1,8 +1,9 @@
 import { type OwnLevel } from "./placement-steps";
 
-const SEARCH_SPLIT = { aboveRight: 0.3, belowMiss: 0.65 };
-const OPENING_POSITION = { advanced: 0.75, basic: 0.3, intermediate: 0.5, none: 0, unsure: 0.45 };
+const SEARCH_SPLIT = { aboveRight: 0.2, belowMiss: 0.6 };
+const OPENING_POSITION = { advanced: 0.75, basic: 0.25, intermediate: 0.5, none: 0, unsure: 0.45 };
 export const COURSE_QUESTION_LIMIT = 8;
+const EARLY_PROBE_POSITION = 0.2;
 const MAX_PROBES = 16;
 
 export type CourseSearchTopic = {
@@ -25,6 +26,10 @@ export function courseProbePositions(count: number, limit = MAX_PROBES): number[
   }
 
   const positions = count === 1 ? [0] : [0, count - 1];
+
+  if (count > MAX_PROBES) {
+    positions.push(Math.round((count - 1) * EARLY_PROBE_POSITION));
+  }
 
   while (positions.length < Math.min(count, limit)) {
     const ordered = positions.toSorted((a, b) => a - b);
@@ -75,7 +80,11 @@ function searchBounds(probes: ReturnType<typeof readProbes>) {
 
   const candidates = probes.filter(
     (probe) =>
-      probe.index > low && probe.index < miss && probe.topic.askable && probe.itemIds.length >= 2,
+      (boundary < 0 || boundary < probes.length - 2) &&
+      probe.index > low &&
+      probe.index < miss &&
+      probe.topic.askable &&
+      probe.itemIds.length >= 2,
   );
 
   const confirm = high && high.answers.length === 1 ? high.itemIds[1] : undefined;

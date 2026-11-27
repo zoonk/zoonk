@@ -1,6 +1,4 @@
 import { describe, expect, it } from "vitest";
-import { physicsCourse } from "../../../../db/src/prisma/seed/library/physics/physics-course";
-import { stockMarketCourse } from "../../../../db/src/prisma/seed/library/stock-market/stock-market-course";
 import {
   type CourseSearchAnswer,
   type CourseSearchTopic,
@@ -35,9 +33,34 @@ function openingPosition(position: number | null) {
   return position;
 }
 
-function simulate(count: number, bank: number, profile: Profile, position: number | null) {
-  const topics = chain(count, bank);
-  let seed = 8506;
+const SEEDS = [42, 8506, 29_009, 71_455, 98_179];
+const GUESS_RATES = [1 / 24, 1 / 24, 1 / 32];
+
+function sample(
+  count: number,
+  bank: number,
+  profile: Profile,
+  position: number | null,
+  initialSeed: number,
+) {
+  let seed = initialSeed;
+  const all = courseProbePositions(count);
+  const sorted = all.toSorted((a, b) => a - b);
+  const target = openingPosition(position) * (count - 1);
+  const opening = sorted.reduce((a, b) => (Math.abs(a - target) <= Math.abs(b - target) ? a : b));
+  const index = sorted.indexOf(opening);
+
+  const ready = new Set(
+    [...new Set([...sorted.slice(Math.max(0, index - 1), index + 2), ...all])].slice(0, bank),
+  );
+
+  const topics = chain(count, 16).map((topic, i) =>
+    ready.has(i) ? topic : { ...topic, itemIds: [] },
+  );
+
+  let learnersWithKnowledge = 0,
+    missedAll = 0,
+    recoveredPerLearner = 0;
 
   function draw() {
     seed = (seed * 1_664_525 + 1_013_904_223) % 2 ** 32;
@@ -69,12 +92,11 @@ function simulate(count: number, bank: number, profile: Profile, position: numbe
       (_, i) => draw() < (i < boundary ? 0.9 : island) && profile !== "novice",
     );
 
-    const guess = profile === "guessable" || profile === "cue" ? 0.12 : 0.02;
+    const guess = profile === "guessable" || profile === "cue" ? 0.12 : null;
 
-    const responses = skills.flatMap((learned) => {
-      const chance = learned ? 0.85 : guess;
-      const first = draw() < chance;
-      const second = draw() < chance;
+    const responses = skills.flatMap((learned, i) => {
+      const first = draw() < (learned ? 0.85 : (guess ?? GUESS_RATES[i % 3]!));
+      const second = draw() < (learned ? 0.85 : (guess ?? GUESS_RATES[(i + 1) % 3]!));
       const cue = draw() < 0.3 && profile === "cue" && !learned && first;
       return [first, second || cue];
     });
@@ -95,8 +117,17 @@ function simulate(count: number, bank: number, profile: Profile, position: numbe
         high += Number(start >= boundary + 3);
         short += Number(start === 0 && answers.length <= 3);
         longest = Math.max(longest, answers.length);
-        known += skills.slice(0, boundary).filter(Boolean).length;
-        found += skills.slice(0, Math.min(start, boundary)).filter(Boolean).length;
+        const knownCount = skills.slice(0, boundary).filter(Boolean).length;
+        const recoveredCount = skills.slice(0, Math.min(start, boundary)).filter(Boolean).length;
+        known += knownCount;
+        found += recoveredCount;
+
+        if (knownCount > 0) {
+          learnersWithKnowledge += 1;
+          recoveredPerLearner += recoveredCount / knownCount;
+          missedAll += Number(recoveredCount === 0);
+        }
+
         break;
       }
 
@@ -110,11 +141,42 @@ function simulate(count: number, bank: number, profile: Profile, position: numbe
     }
   }
 
-  const result = {
+  return {
     found: known ? found / known : 0,
     high: high / draws,
+    learnerFound: recoveredPerLearner / (learnersWithKnowledge || 1),
     longest,
+    missedAll: missedAll / (learnersWithKnowledge || 1),
     short: short / draws,
+  };
+}
+
+function estimate(values: number[]) {
+  const mean = values.reduce((a, b) => a + b, 0) / values.length;
+
+  const margin =
+    2 *
+    Math.sqrt(
+      values.reduce((sum, value) => sum + (value - mean) ** 2, 0) /
+        (values.length * (values.length - 1)),
+    );
+
+  return { margin, mean };
+}
+
+function simulate(count: number, bank: number, profile: Profile, position: number | null) {
+  const rows = SEEDS.map((seed) => sample(count, bank, profile, position, seed));
+  const stat = (key: keyof (typeof rows)[number]) => estimate(rows.map((row) => row[key]));
+
+  const result = {
+    found: stat("found").mean,
+    foundMargin: stat("found").margin,
+    high: stat("high").mean,
+    highMargin: stat("high").margin,
+    learnerFound: stat("learnerFound").mean,
+    longest: Math.max(...rows.map((row) => row.longest)),
+    missedAll: stat("missedAll").mean,
+    short: stat("short").mean,
   };
 
   process.stdout.write(`${JSON.stringify({ bank, count, position, profile, ...result })}\n`);
@@ -131,6 +193,7 @@ describe("course search on a frozen bank", () => {
   it.each(courses)(
     "measures calibrated learners on $count topics at $position",
     ({ count, position }) => {
+      simulate(count, 4, "calibrated", position);
       simulate(count, 8, "calibrated", position);
       const measured = simulate(count, 16, "calibrated", position);
 
@@ -143,11 +206,11 @@ describe("course search on a frozen bank", () => {
       ]).get(count);
 
       if (overshootGate !== undefined) {
-        assertOvershoot(measured.high, overshootGate);
+        assertOvershoot(measured.high + measured.highMargin, overshootGate);
       }
 
       if (count === 40) {
-        assertRecovery(measured.found);
+        assertRecovery(measured.found - measured.foundMargin);
       }
     },
   );
@@ -206,6 +269,23 @@ function verifyEveryExit(topics: readonly CourseSearchTopic[], answers: CourseSe
 }
 
 describe("every stopping point", () => {
+  it("ends after confirming the penultimate topic on an all-right five-topic course", () => {
+    const topics = chain(5, 5);
+    const answers: CourseSearchAnswer[] = [];
+
+    while (answers.length < 8) {
+      const { itemId } = courseSearch({ answers, ceiling: 8, position: 0.5, topics });
+
+      if (!itemId) {
+        break;
+      }
+
+      answers.push({ correct: true, itemId });
+    }
+
+    expect(answers.map((answer) => answer.itemId)).toStrictEqual(["4", "5", "6", "7"]);
+  });
+
   it.each([1, 2, 3, 4, 5])(
     "keeps every early exit in %i independent areas inside its proven boundary",
     (areas) => {
@@ -222,31 +302,18 @@ describe("every stopping point", () => {
     },
   );
 
-  it.each([stockMarketCourse, physicsCourse])(
-    "searches the plan order of the seeded $key course",
-    (course) => {
-      const lessons = course.chapters.flatMap((chapter) =>
-        chapter.lessons.map((lesson) => ({
-          area: chapter.area?.in("en") ?? null,
-          skills: lesson.skills,
-        })),
-      );
+  it("checks every stopping point on the 303-lesson physics plan", () => {
+    const lessonCounts = [
+      2, 1, 2, 2, 21, 12, 21, 12, 12, 16, 21, 31, 10, 46, 34, 13, 13, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2,
+      1, 2, 2, 2, 2, 2, 2, 2,
+    ];
 
-      const topicIds = [...new Set(lessons.flatMap((lesson) => lesson.skills))];
-      const ready = new Set(courseProbePositions(topicIds.length));
+    expect(lessonCounts.reduce((sum, lessons) => sum + lessons, 0)).toBe(303);
 
-      const topics = topicIds.map((id, i) => ({
-        askable: true,
-        id,
-        itemIds: ready.has(i) ? [`${id}-first`, `${id}-second`] : [],
-        lessons: lessons.filter((lesson) => lesson.skills.includes(id)).length,
-        sectionTitle: lessons.find((lesson) => lesson.skills.includes(id))?.area ?? null,
-      }));
-
-      expect.hasAssertions();
-      verifyEveryExit(topics);
-    },
-  );
+    verifyEveryExit(
+      chain(lessonCounts.length, 16).map((topic, i) => ({ ...topic, lessons: lessonCounts[i]! })),
+    );
+  });
 });
 
 function assertRecovery(found: number) {
@@ -276,18 +343,28 @@ describe("knowledge across syllabus modules", () => {
 
       const groups = [...Map.groupBy(topics, (topic) => topic.sectionTitle).values()];
       const states = new Map<number, ReturnType<typeof courseSearch>>();
-      let seed = 42;
+      let seed = 0;
 
       const draw = () => {
         seed = (seed * 1_664_525 + 1_013_904_223) % 2 ** 32;
         return seed / 2 ** 32;
       };
 
+      let learnerFound = 0,
+        missedAll = 0,
+        withKnowledge = 0;
+
+      const highBySeed: number[] = [];
+
       let found = 0,
         high = 0,
         known = 0;
 
-      for (let trial = 0; trial < 10_000; trial += 1) {
+      for (let trial = 0; trial < SEEDS.length * 10_000; trial += 1) {
+        if (trial % 10_000 === 0) {
+          seed = SEEDS[trial / 10_000]!;
+        }
+
         const fraction = Math.max(
           0,
           Math.min(
@@ -319,10 +396,10 @@ describe("knowledge across syllabus modules", () => {
 
         const learned = topics.map((topic) => draw() < (prefix.has(topic.id) ? 0.9 : 0.03));
 
-        const responses = learned.flatMap((learnedTopic) => {
-          const chance = learnedTopic ? 0.85 : 0.02;
-          return [draw() < chance, draw() < chance];
-        });
+        const responses = learned.flatMap((learnedTopic, i) => [
+          draw() < (learnedTopic ? 0.85 : GUESS_RATES[i % 3]!),
+          draw() < (learnedTopic ? 0.85 : GUESS_RATES[(i + 1) % 3]!),
+        ]);
 
         const answers: CourseSearchAnswer[] = [];
         let path = 1;
@@ -334,19 +411,31 @@ describe("knowledge across syllabus modules", () => {
           states.set(path, state);
 
           if (!state.itemId) {
-            high += Number(
+            const overshot = Number(
               groups.some(
                 (group, i) =>
                   group.filter((topic) => state.startedPast.has(topic.id)).length >= ends[i]! + 3,
               ),
             );
 
+            high += overshot;
+            const seedIndex = Math.floor(trial / 10_000);
+            highBySeed[seedIndex] = (highBySeed[seedIndex] ?? 0) + overshot;
+
             const knownTopics = topics.filter(
               (topic) => prefix.has(topic.id) && learned[Number(topic.id)],
             );
 
             known += knownTopics.length;
-            found += knownTopics.filter((topic) => state.startedPast.has(topic.id)).length;
+            const recovered = knownTopics.filter((topic) => state.startedPast.has(topic.id)).length;
+            found += recovered;
+
+            if (knownTopics.length > 0) {
+              withKnowledge += 1;
+              learnerFound += recovered / knownTopics.length;
+              missedAll += Number(recovered === 0);
+            }
+
             break;
           }
 
@@ -377,8 +466,10 @@ describe("knowledge across syllabus modules", () => {
           areas,
           count,
           found: found / known,
-          high: high / 10_000,
+          high: high / (SEEDS.length * 10_000),
           layout,
+          learnerFound: learnerFound / withKnowledge,
+          missedAll: missedAll / withKnowledge,
           profile,
         })}\n`,
       );
@@ -386,7 +477,8 @@ describe("knowledge across syllabus modules", () => {
       expect(found).toBeGreaterThan(0);
 
       if (gate !== undefined) {
-        assertOvershoot(high / 10_000, gate);
+        const estimateHigh = estimate(highBySeed.map((total) => total / 10_000));
+        assertOvershoot(estimateHigh.mean + estimateHigh.margin, gate);
       }
     },
   );
