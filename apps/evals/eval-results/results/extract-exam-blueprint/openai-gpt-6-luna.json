@@ -1241,6 +1241,500 @@
           "exam": "Concurso de Admissão à Carreira de Diplomata (CACD)"
         }
       }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 3/3 (read 3). passages found 9/9. problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 3/3 (read 3). passages found 9/9. problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 3/3 (read 3). passages found 9/9. problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "format": "shortAnswer",
+              "kind": "format"
+            },
+            {
+              "format": "essay",
+              "kind": "format"
+            },
+            {
+              "kind": "shortTopics"
+            }
+          ]
+        },
+        "id": "pt-class-notes-biologia-celular-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "text": "BIOLOGIA - 1º ANO B - Prof.ª Juliana\nResumo pra prova de sexta (9/10): A CÉLULA\n\n1) Teoria celular\n- Todo ser vivo é formado por células (exceto vírus!)\n- A célula é a menor unidade da vida\n- Toda célula vem de outra célula (Virchow)\n- Hooke viu as \"celas\" na cortiça (1665)\n\n2) Procarionte x eucarionte\n- Procarionte: sem núcleo (DNA solto no citoplasma = nucleoide), sem organelas membranosas. Ex: bactérias\n- Eucarionte: núcleo com carioteca + organelas. Ex: animais, plantas, fungos, protozoários\n- As duas têm: membrana plasmática, citoplasma, ribossomos, DNA\n\n3) Membrana plasmática\n- Bicamada de fosfolipídios + proteínas (mosaico fluido)\n- Permeabilidade seletiva\n- Transporte passivo (sem gasto de ATP): difusão simples, difusão facilitada, osmose\n- Osmose: água vai do meio hipotônico (menos concentrado) para o hipertônico (mais concentrado)\n- Hemácia em água pura incha e estoura (hemólise); em solução muito salgada murcha\n- Transporte ativo: gasta ATP, contra o gradiente. Ex: bomba de sódio e potássio\n- Endocitose (fagocitose e pinocitose) e exocitose\n\n4) Organelas (CAI MUITO!!)\n- Mitocôndria: respiração celular, produz ATP\n- Cloroplasto: fotossíntese (só em plantas e algas)\n- Ribossomos: síntese de proteínas\n- RE rugoso: tem ribossomos, faz proteínas / RE liso: lipídios, desintoxicação\n- Complexo golgiense: modifica, empacota e secreta\n- Lisossomo: digestão intracelular\n- Vacúolo: grande na célula vegetal\n- Parede celular: célula vegetal (celulose)\n\n5) Núcleo\n- Carioteca (envoltório nuclear com poros)\n- Cromatina = DNA + proteínas\n- Nucléolo: produz ribossomos\n\n6) Vírus\n- Acelulares, só se reproduzem dentro de células (parasitas intracelulares obrigatórios)\n- Capsídeo de proteína + material genético (DNA ou RNA)\n- Antibiótico NÃO funciona contra vírus\n\nA prof disse: vai ter questão de completar a tabela das organelas e uma dissertativa sobre osmose!",
+              "title": "Resumo pra prova de biologia"
+            }
+          ],
+          "exam": "Prova de biologia (1º ano), a célula"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 3/3 (read 3). passages found 10/10. problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 3/3 (read 3). passages found 10/10. problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 3/3 (read 3). passages found 10/10. problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "format": "shortAnswer",
+              "kind": "format"
+            },
+            {
+              "format": "essay",
+              "kind": "format"
+            },
+            {
+              "kind": "shortTopics"
+            }
+          ]
+        },
+        "id": "pt-class-notes-biologia-celular-2",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "text": "BIOLOGIA - 1º ANO B - Prof.ª Juliana\nResumo pra prova de sexta (9/10): A CÉLULA\n\n1) Teoria celular\n- Todo ser vivo é formado por células (exceto vírus!)\n- A célula é a menor unidade da vida\n- Toda célula vem de outra célula (Virchow)\n- Hooke viu as \"celas\" na cortiça (1665)\n\n2) Procarionte x eucarionte\n- Procarionte: sem núcleo (DNA solto no citoplasma = nucleoide), sem organelas membranosas. Ex: bactérias\n- Eucarionte: núcleo com carioteca + organelas. Ex: animais, plantas, fungos, protozoários\n- As duas têm: membrana plasmática, citoplasma, ribossomos, DNA\n\n3) Membrana plasmática\n- Bicamada de fosfolipídios + proteínas (mosaico fluido)\n- Permeabilidade seletiva\n- Transporte passivo (sem gasto de ATP): difusão simples, difusão facilitada, osmose\n- Osmose: água vai do meio hipotônico (menos concentrado) para o hipertônico (mais concentrado)\n- Hemácia em água pura incha e estoura (hemólise); em solução muito salgada murcha\n- Transporte ativo: gasta ATP, contra o gradiente. Ex: bomba de sódio e potássio\n- Endocitose (fagocitose e pinocitose) e exocitose\n\n4) Organelas (CAI MUITO!!)\n- Mitocôndria: respiração celular, produz ATP\n- Cloroplasto: fotossíntese (só em plantas e algas)\n- Ribossomos: síntese de proteínas\n- RE rugoso: tem ribossomos, faz proteínas / RE liso: lipídios, desintoxicação\n- Complexo golgiense: modifica, empacota e secreta\n- Lisossomo: digestão intracelular\n- Vacúolo: grande na célula vegetal\n- Parede celular: célula vegetal (celulose)\n\n5) Núcleo\n- Carioteca (envoltório nuclear com poros)\n- Cromatina = DNA + proteínas\n- Nucléolo: produz ribossomos\n\n6) Vírus\n- Acelulares, só se reproduzem dentro de células (parasitas intracelulares obrigatórios)\n- Capsídeo de proteína + material genético (DNA ou RNA)\n- Antibiótico NÃO funciona contra vírus\n\nA prof disse: vai ter questão de completar a tabela das organelas e uma dissertativa sobre osmose!",
+              "title": "Resumo pra prova de biologia"
+            }
+          ],
+          "exam": "Prova de biologia (1º ano), a célula"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 3/3 (read 3). passages found 14/14. problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 3/3 (read 3). passages found 14/14. problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 3/3 (read 3). passages found 14/14. problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "format": "multipleChoice",
+              "kind": "format"
+            },
+            {
+              "format": "essay",
+              "kind": "format"
+            },
+            {
+              "kind": "shortTopics"
+            }
+          ]
+        },
+        "id": "en-class-notes-ap-biology-unit-2-1",
+        "language": "en",
+        "userInput": {
+          "documents": [
+            {
+              "text": "AP Biology - Mr. Daniels - Unit 2 review (test on Thursday)\n\n1. Cell size and surface area-to-volume ratio\n- Smaller cells exchange materials faster: higher SA:V\n- Calculate SA:V for a cube (side 1 cm vs 3 cm)\n\n2. Membrane structure\n- Phospholipid bilayer, fluid mosaic model\n- Cholesterol keeps the membrane fluid at low temperatures\n\n3. Membrane transport\n- Passive: simple diffusion, facilitated diffusion, osmosis\n- Tonicity: hypotonic, isotonic, hypertonic solutions\n- Active transport uses ATP (sodium-potassium pump)\n\n4. Compartmentalization\n- Endomembrane system: ER, Golgi, lysosomes\n- Endosymbiotic theory (mitochondria and chloroplasts)\n\nTest format: 20 multiple choice questions (four choices each) plus one free-response essay where you design an experiment on osmosis in potato cores. Calculators allowed.",
+              "title": "Unit 2 review"
+            }
+          ],
+          "exam": "AP Biology unit 2 test"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 3/3 (read 3). passages found 13/13. problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 3/3 (read 3). passages found 13/13. problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 3/3 (read 3). passages found 13/13. problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "format": "multipleChoice",
+              "kind": "format"
+            },
+            {
+              "format": "essay",
+              "kind": "format"
+            },
+            {
+              "kind": "shortTopics"
+            }
+          ]
+        },
+        "id": "en-class-notes-ap-biology-unit-2-2",
+        "language": "en",
+        "userInput": {
+          "documents": [
+            {
+              "text": "AP Biology - Mr. Daniels - Unit 2 review (test on Thursday)\n\n1. Cell size and surface area-to-volume ratio\n- Smaller cells exchange materials faster: higher SA:V\n- Calculate SA:V for a cube (side 1 cm vs 3 cm)\n\n2. Membrane structure\n- Phospholipid bilayer, fluid mosaic model\n- Cholesterol keeps the membrane fluid at low temperatures\n\n3. Membrane transport\n- Passive: simple diffusion, facilitated diffusion, osmosis\n- Tonicity: hypotonic, isotonic, hypertonic solutions\n- Active transport uses ATP (sodium-potassium pump)\n\n4. Compartmentalization\n- Endomembrane system: ER, Golgi, lysosomes\n- Endosymbiotic theory (mitochondria and chloroplasts)\n\nTest format: 20 multiple choice questions (four choices each) plus one free-response essay where you design an experiment on osmosis in potato cores. Calculators allowed.",
+              "title": "Unit 2 review"
+            }
+          ],
+          "exam": "AP Biology unit 2 test"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 6/6. problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 6/6. problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 6/6. problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "topic",
+              "topic": "Velocidade média"
+            },
+            {
+              "kind": "topic",
+              "topic": "Aceleração"
+            },
+            {
+              "kind": "topic",
+              "topic": "Função horária"
+            },
+            {
+              "kind": "shortTopics"
+            }
+          ]
+        },
+        "id": "pt-photo-notes-transcript-with-latex-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "text": "# Cinemática - MUV\n\nVelocidade média: $v_m = \\Delta s / \\Delta t$\n\nAceleração: $a = \\Delta v / \\Delta t$ (unidade: $m/s^2$)\n\nFunção horária: $s = s_0 + v_0 \\cdot t + a \\cdot t^2 / 2$\n\nEx.: $s = 12 - 3,5 \\cdot t$ → $v_0 = -3,5$ m/s\n\n(movimento retrógrado)\n\nFreando: $a = -2,5$ m/s² (sinal contrário ao de v)\n\nMov. uniformemente variado: $a$ constante $\\neq 0$\n\nExercício 4: um carro a 20 m/s freia com $a = -2,5$ m/s². Em quanto tempo ele para?",
+              "title": "Foto das anotações de física"
+            }
+          ],
+          "exam": "Prova de física (1º ano), cinemática"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 6/6. problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 6/6. problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 6/6. problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "topic",
+              "topic": "Velocidade média"
+            },
+            {
+              "kind": "topic",
+              "topic": "Aceleração"
+            },
+            {
+              "kind": "topic",
+              "topic": "Função horária"
+            },
+            {
+              "kind": "shortTopics"
+            }
+          ]
+        },
+        "id": "pt-photo-notes-transcript-with-latex-2",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "text": "# Cinemática - MUV\n\nVelocidade média: $v_m = \\Delta s / \\Delta t$\n\nAceleração: $a = \\Delta v / \\Delta t$ (unidade: $m/s^2$)\n\nFunção horária: $s = s_0 + v_0 \\cdot t + a \\cdot t^2 / 2$\n\nEx.: $s = 12 - 3,5 \\cdot t$ → $v_0 = -3,5$ m/s\n\n(movimento retrógrado)\n\nFreando: $a = -2,5$ m/s² (sinal contrário ao de v)\n\nMov. uniformemente variado: $a$ constante $\\neq 0$\n\nExercício 4: um carro a 20 m/s freia com $a = -2,5$ m/s². Em quanto tempo ele para?",
+              "title": "Foto das anotações de física"
+            }
+          ],
+          "exam": "Prova de física (1º ano), cinemática"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 5/5. problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 5/5. problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 5/5. problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "topic",
+              "topic": "Current"
+            },
+            {
+              "kind": "topic",
+              "topic": "Ohm's law"
+            },
+            {
+              "kind": "topic",
+              "topic": "Power"
+            },
+            {
+              "kind": "shortTopics"
+            }
+          ]
+        },
+        "id": "en-photo-notes-under-one-title-1",
+        "language": "en",
+        "userInput": {
+          "documents": [
+            {
+              "text": "# Electricity - circuits\n\nCurrent: $I = Q / t$ (unit: ampere)\n\nOhm's law: $V = I \\cdot R$\n\nEx.: $R = 6\\,\\Omega$, $I = 2$ A → $V = 12$ V\n\nPower: $P = V \\cdot I$\n\nSeries circuit: same current through every resistor, $R_{total} = R_1 + R_2$\n\nQ3: a 9 V battery drives 0.5 A. What is the resistance?",
+              "title": "Photo of physics notes"
+            }
+          ],
+          "exam": "Physics test on circuits"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 5/5. problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 5/5. problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 5/5. problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "topic",
+              "topic": "Current"
+            },
+            {
+              "kind": "topic",
+              "topic": "Ohm's law"
+            },
+            {
+              "kind": "topic",
+              "topic": "Power"
+            },
+            {
+              "kind": "shortTopics"
+            }
+          ]
+        },
+        "id": "en-photo-notes-under-one-title-2",
+        "language": "en",
+        "userInput": {
+          "documents": [
+            {
+              "text": "# Electricity - circuits\n\nCurrent: $I = Q / t$ (unit: ampere)\n\nOhm's law: $V = I \\cdot R$\n\nEx.: $R = 6\\,\\Omega$, $I = 2$ A → $V = 12$ V\n\nPower: $P = V \\cdot I$\n\nSeries circuit: same current through every resistor, $R_{total} = R_1 + R_2$\n\nQ3: a 9 V battery drives 0.5 A. What is the resistance?",
+              "title": "Photo of physics notes"
+            }
+          ],
+          "exam": "Physics test on circuits"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 1/4 (read 4). passages found 5/6. problems left 0. missing: {\"kind\":\"topic\",\"topic\":\"Boyle's law\"}; {\"kind\":\"topic\",\"topic\":\"Charles's law\"}; {\"kind\":\"topic\",\"topic\":\"Ideal gas law\"}",
+          "kind": "majorErrors",
+          "score": 7.466666666666667
+        },
+        {
+          "conclusion": "Facts kept 1/4 (read 4). passages found 5/6. problems left 0. missing: {\"kind\":\"topic\",\"topic\":\"Boyle's law\"}; {\"kind\":\"topic\",\"topic\":\"Charles's law\"}; {\"kind\":\"topic\",\"topic\":\"Ideal gas law\"}",
+          "kind": "minorErrors",
+          "score": 7.466666666666667
+        },
+        {
+          "conclusion": "Facts kept 1/4 (read 4). passages found 5/6. problems left 0. missing: {\"kind\":\"topic\",\"topic\":\"Boyle's law\"}; {\"kind\":\"topic\",\"topic\":\"Charles's law\"}; {\"kind\":\"topic\",\"topic\":\"Ideal gas law\"}",
+          "kind": "potentialImprovements",
+          "score": 7.466666666666667
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "topic",
+              "topic": "Boyle's law"
+            },
+            {
+              "kind": "topic",
+              "topic": "Charles's law"
+            },
+            {
+              "kind": "topic",
+              "topic": "Ideal gas law"
+            },
+            {
+              "kind": "shortTopics"
+            }
+          ]
+        },
+        "id": "en-typed-notes-with-formulas-and-a-worked-example-1",
+        "language": "en",
+        "userInput": {
+          "documents": [
+            {
+              "text": "Chem quiz Friday - gas laws\n\nBoyle's law: P1V1 = P2V2 (constant T)\nCharles's law: V1/T1 = V2/T2, T in kelvin!\nIdeal gas law: PV = nRT, R = 0.0821 L·atm/(mol·K)\nEx: 2.0 mol at 300 K in 10 L -> P = (2.0)(0.0821)(300)/10 = 4.9 atm\nSTP: 0 °C and 1 atm, 1 mol of gas = 22.4 L\nPractice 3: a balloon goes from 2.0 L at 25 °C to 50 °C. New volume?",
+              "title": "Gas laws notes"
+            }
+          ],
+          "exam": "Chemistry quiz on gas laws"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 5/5. problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 5/5. problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 5/5. problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "topic",
+              "topic": "Boyle's law"
+            },
+            {
+              "kind": "topic",
+              "topic": "Charles's law"
+            },
+            {
+              "kind": "topic",
+              "topic": "Ideal gas law"
+            },
+            {
+              "kind": "shortTopics"
+            }
+          ]
+        },
+        "id": "en-typed-notes-with-formulas-and-a-worked-example-2",
+        "language": "en",
+        "userInput": {
+          "documents": [
+            {
+              "text": "Chem quiz Friday - gas laws\n\nBoyle's law: P1V1 = P2V2 (constant T)\nCharles's law: V1/T1 = V2/T2, T in kelvin!\nIdeal gas law: PV = nRT, R = 0.0821 L·atm/(mol·K)\nEx: 2.0 mol at 300 K in 10 L -> P = (2.0)(0.0821)(300)/10 = 4.9 atm\nSTP: 0 °C and 1 atm, 1 mol of gas = 22.4 L\nPractice 3: a balloon goes from 2.0 L at 25 °C to 50 °C. New volume?",
+              "title": "Gas laws notes"
+            }
+          ],
+          "exam": "Chemistry quiz on gas laws"
+        }
+      }
     }
   ],
   "taskId": "extract-exam-blueprint"
