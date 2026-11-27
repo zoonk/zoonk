@@ -179,6 +179,20 @@ msgctxt "u82Vi2"
 msgid "Continue today's session"
 msgstr "Continua la sessione di oggi"
 
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+#: src/app/[lang]/(app)/(learn)/saved-lessons/page.tsx
+msgctxt "BwmLVN"
+msgid "Saved lessons"
+msgstr "Lezioni salvate"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+#: src/app/[lang]/(app)/(learn)/completed-lessons/page.tsx
+msgctxt "odE1Ih"
+msgid "Completed lessons"
+msgstr "Lezioni completate"
+
 #. The sizes of mock exam the learner can take: the full exam, half of it, or one subject.
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 msgctxt "Zu-MTq"
@@ -241,13 +255,6 @@ msgstr "Socio"
 msgctxt "g3GlDw"
 msgid "Mistakes notebook"
 msgstr "Quaderno degli errori"
-
-#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
-#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
-#: src/app/[lang]/(app)/(learn)/completed-lessons/page.tsx
-msgctxt "odE1Ih"
-msgid "Completed lessons"
-msgstr "Lezioni completate"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
@@ -802,21 +809,16 @@ msgctxt "1JgBls"
 msgid "Expand sidebar"
 msgstr "Espandi la barra laterale"
 
-#: src/app/[lang]/(app)/(learn)/buddy/page.tsx
+#: src/app/[lang]/(app)/(learn)/buddy/layout.tsx
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 msgctxt "FRwDt3"
 msgid "Your buddy"
 msgstr "Il tuo socio"
 
-#: src/app/[lang]/(app)/(learn)/buddy/page.tsx
+#: src/app/[lang]/(app)/(learn)/buddy/layout.tsx
 msgctxt "6YPtag"
 msgid "Your buddy answers your questions and adjusts your plan."
 msgstr "Il tuo socio risponde alle tue domande e adatta il tuo piano."
-
-#: src/app/[lang]/(app)/(learn)/buddy/page.tsx
-msgctxt "BV0cQk"
-msgid "Your day"
-msgstr "La tua giornata"
 
 #: src/app/[lang]/(app)/(learn)/certificates/page.tsx
 msgctxt "xQ7ze5"
@@ -894,6 +896,11 @@ msgstr "Crea il mio piano"
 msgctxt "wRaHK-"
 msgid "Your plan at a glance"
 msgstr "Il tuo piano in breve"
+
+#: src/app/[lang]/(app)/(learn)/saved-lessons/page.tsx
+msgctxt "FH8mtx"
+msgid "The lessons you save, ready to do again anytime."
+msgstr "Le lezioni che salvi, pronte da rifare quando vuoi."
 
 #: src/app/[lang]/(app)/(learn)/speaking/page.tsx
 msgctxt "LdUCtG"

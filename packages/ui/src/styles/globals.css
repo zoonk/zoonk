@@ -50,6 +50,14 @@
   padding-inline-start: var(--row-indent);
 }
 
+/* A control holding a press made before the page hydrated (`HELD_PRESS_SCRIPT` marks it `data-held`) with no glyph that turns into the spinner: it keeps its pressed look until the press reaches it. */
+@custom-variant held-pressed (&[data-held]:not(:has([data-slot=busy-spinner])));
+
+/* Inside a busy `group/busy` or a held control, where a glyph gives way to the spinner. A menu's trigger holding a press keeps its glyph and draws its menu open instead (`held-menu`), as a menu does once the page is ready. */
+@custom-variant in-busy (&:where(.group\/busy[aria-busy=true]:not([data-held][aria-haspopup=menu]) *));
+@custom-variant in-held (&:where([data-held]:not([aria-haspopup=menu]) *));
+@custom-variant held-menu (&[data-held][aria-haspopup=menu]);
+
 /* `SidebarStateScript` marks `<html>` before the first paint. */
 @custom-variant sidebar-collapsed (&:where([data-sidebar-collapsed] [data-slot=sidebar], [data-sidebar-collapsed] [data-slot=sidebar] *));
 
@@ -927,6 +935,10 @@
 
   &:has(.lucide-check) {
     --glyph-blank: 3;
+  }
+
+  &:has(.lucide-bookmark) {
+    --glyph-blank: 4;
   }
 
   &:has(.lucide-lightbulb) {

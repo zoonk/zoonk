@@ -1,0 +1,15 @@
+/// A lesson the learner saved to do again. Learner data: `lessonId` and `goalId` are plain ids, so
+/// a save outlives the content and goal it came from and still shows its `title`.
+model SavedLesson {
+  id        String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lessonId  String   @map("lesson_id") @db.Uuid
+  title     String
+  /// The goal it was saved from.
+  goalId    String   @map("goal_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([userId, lessonId], name: "userLesson")
+  @@map("saved_lessons")
+}

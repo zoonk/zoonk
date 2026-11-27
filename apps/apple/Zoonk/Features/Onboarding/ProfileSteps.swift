@@ -39,6 +39,7 @@ struct ProfileQuestionSections: View {
 
     Group {
       switch view.id {
+      case .unrecognized: EmptyView()
       case .addressForm:
         addressForm
       case .work:
@@ -438,6 +439,7 @@ private struct ProfileRow: View {
 enum ProfileCopy {
   static func title(_ question: ProfileQuestion) -> Text {
     switch question {
+    case .unrecognized: Text(verbatim: "")
     case .addressForm:
       Text(
         "How should we address you?", tableName: "AboutYou",
@@ -476,6 +478,7 @@ enum ProfileCopy {
   /// Shown before the learner has met their buddy, so it says "we".
   static func description(_ question: ProfileQuestion, inSettings: Bool) -> Text? {
     switch question {
+    case .unrecognized: nil
     case .addressForm, .tools, .watch, .listen, .play, .read, .activities:
       nil
     case .work:

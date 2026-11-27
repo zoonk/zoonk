@@ -4,10 +4,8 @@ extension ActivityRenderer {
   static let categorize = ActivityRenderer(
     template: "categorize",
     grade: ActivityExpectedAnswer.grader(CategorizeFields.self) { $0.expected }
-  ) { context in
-    if let fields = try? context.fields(as: CategorizeFields.self) {
-      CategorizeCanvas(fields: fields, context: context)
-    }
+  ) { context, fields in
+    CategorizeCanvas(fields: fields, context: context)
   }
 }
 

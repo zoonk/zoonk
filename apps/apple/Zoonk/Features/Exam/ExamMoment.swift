@@ -2,7 +2,7 @@ import SwiftUI
 
 /// Main's `ExamMomentView`: the exam's last days and "How did it go?", for the Exam screen and
 /// Today.
-struct ExamMoment: Hashable, Decodable, Sendable {
+struct ExamMoment: Hashable, OmittableAPIContent, Sendable {
   var checklist: [ExamView.ChecklistItem]
   var day: ExamView.Day?
   var examName: String

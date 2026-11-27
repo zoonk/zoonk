@@ -105,7 +105,7 @@ export function ChapterMapSlide({
         <button
           aria-describedby={descriptionId}
           aria-haspopup="dialog"
-          className="focus-visible:ring-ring/50 w-full cursor-zoom-in rounded-xl outline-none focus-visible:ring-[3px]"
+          className="focus-visible:ring-ring/50 held-pressed:brightness-90 dark:held-pressed:brightness-125 w-full cursor-zoom-in rounded-xl outline-none focus-visible:ring-[3px]"
           onClick={() => setIsZoomed(true)}
           type="button"
           {...SWIPE_THROUGH}

@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { getLearnerSummary } from "@zoonk/core/learner/summary";
 import { getSession } from "@zoonk/core/users/session";
 import { prisma } from "@zoonk/db";
-import { writeSeed, writeSeedPersonaCopy } from "@zoonk/db/seed";
+import { seedPlus, writeSeed, writeSeedPersonaCopy } from "@zoonk/db/seed";
 import { listSeedPersonas } from "@zoonk/db/seed/personas";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
@@ -552,6 +552,39 @@ describe("persona command", () => {
       );
 
       await expect(clonePersona({ from: "nobody@zoonk.test" })).rejects.toThrow(/no learner/u);
+    });
+
+    it("keeps the source's Plus or Free by the app's rule unless asked otherwise", async () => {
+      const [plusSource, lapsedSource] = await Promise.all([createSource(), createSource()]);
+
+      await Promise.all([
+        seedPlus(prisma, { now: new Date(), userId: plusSource.userId }),
+        prisma.subscription.create({
+          data: {
+            periodEnd: new Date(Date.now() - MS_PER_DAY),
+            plan: "plus",
+            provider: "apple",
+            providerSubscriptionId: randomUUID(),
+            referenceId: lapsedSource.userId,
+            status: "active",
+            userId: lapsedSource.userId,
+          },
+        }),
+      ]);
+
+      const [plus, lapsed, free] = await Promise.all([
+        clonePersona({ from: plusSource.email }),
+        clonePersona({ from: lapsedSource.email }),
+        clonePersona({ from: plusSource.email, plus: false }),
+      ]);
+
+      const counts = await Promise.all(
+        [plus, lapsed, free].map(({ userId }) =>
+          prisma.subscription.count({ where: { referenceId: userId } }),
+        ),
+      );
+
+      expect(counts).toStrictEqual([1, 0, 0]);
     });
 
     it("gives a copy the plan and time zone asked for, at the same local times", async () => {

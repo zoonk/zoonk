@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "savedlessons_empty": "f624d447f90a83b44d1e885443a7b62b7bc53b61b1097a66362d006d73fe877c",
+  "savedlessons_no_longer_available": "22572b55d4926969ba9d80681e4a91b9c51a9f6d8acc690019c2465f966a5b6c",
+  "savedlessons_remove": "5ad0faf6062c33f3febaf54a406870cf67d86938b233cfd75370d52e70cd602a",
+  "savedlessons_remove_failed": "3a144dd7d7e3b288f3a0a5842911e892aac42dd06657818fc5be962dd0f8d5fb",
+  "savedlessons_remove_spoken": "05bc1a965b1761db2089cb83c722c36500dd288a42a208060dff430f1bfd3cbc",
+  "savedlessons_save": "a45150943521b621de309865bc8eb3334737749b9fba038ea4d4511bd676f737",
+  "savedlessons_save_failed": "1db3ff80b864599f759f8e960270a79ca46616d99e6f8dae3f29b742cfcd4453",
+  "savedlessons_save_named": "30b8f2475437e78704efc7784fce7ec1419eea0f8fa0b11c8ed7854e4f523063",
+  "savedlessons_saved": "93fc1ffbe0751f686f4e2f0c775671923854c7cbb9c18dfd8fc58657dd45df7e",
+  "savedlessons_saved_named": "4729f6d4924a8a72ebd43b4464ca5415005180435532fb83da0862e52e308045",
+  "savedlessons_show_more": "3209bb276cac921467722446e4d241cc39e47d0ae486ae30db43fd634f242334",
+  "savedlessons_unsave": "36ac1ea3d15ff0dcb1fd1de530dbb54f677dcdb3a6846987f8ba790d0aab0567"
+}
+-->
+<resources>
+    <string name="savedlessons_save">Guardar</string>
+    <!-- Says the lesson is saved to do again later: the bookmark's state. -->
+    <string name="savedlessons_saved">Guardada</string>
+    <string name="savedlessons_save_named">Guardar %1$s</string>
+    <!-- Read aloud for the bookmark on a saved lesson's row, which removes it: says the lesson {title} is saved. -->
+    <string name="savedlessons_saved_named">%1$s, guardada</string>
+    <!-- Takes a lesson out of the saved lessons, from its row's menu or swipe -->
+    <string name="savedlessons_unsave">Quitar de los guardados</string>
+    <string name="savedlessons_empty">Aún no guardaste nada. Toca el marcador de una lección para guardarla aquí.</string>
+    <string name="savedlessons_no_longer_available">Ya no está disponible</string>
+    <string name="savedlessons_remove">Quitar</string>
+    <!-- What screen readers say for Remove, naming the lesson. -->
+    <string name="savedlessons_remove_spoken">Quitar %1$s de las lecciones guardadas</string>
+    <string name="savedlessons_show_more">Mostrar más</string>
+    <string name="savedlessons_save_failed">No se pudo guardar esta lección. Inténtalo de nuevo.</string>
+    <!-- Taking the lesson out of the saved lessons didn't work, so it's still saved. -->
+    <string name="savedlessons_remove_failed">No se pudo quitar esta lección. Inténtalo de nuevo.</string>
+</resources>

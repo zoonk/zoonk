@@ -41,7 +41,7 @@ enum FocusTestPhase: Equatable {
     labels: PracticeTrueFalseLabels, answered: Int, opening: Bool
   ) {
     switch status {
-    case .unavailable, .failed:
+    case .unavailable, .failed, .unrecognized:
       self = .unavailable
     case .preparing, .waitingForQuestions:
       let resting = opening && focusTest?.sitting == nil ? focusTest.flatMap(Self.resting) : nil

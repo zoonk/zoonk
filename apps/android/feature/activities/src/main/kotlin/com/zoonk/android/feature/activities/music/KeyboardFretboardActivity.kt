@@ -62,9 +62,9 @@ private fun fields(content: ActivityStepContent) = (content as KeyboardFretboard
 /** What both boards read from the step: the answer, graded by pitch class; with a choice check the instrument is free to explore. */
 private class Board(
     props: ActivityProps,
+    val target: NoteTarget,
 ) {
     private val fields = fields(props.content)
-    val target = NoteTarget.of(fields.target)
     val start = fields.start?.let(NoteTarget::of)
     val byEar = fields.byEar == true
     val showsGuitar = PlayableLibraryStepAnyOfContentOneOf30Fields.Instruments.GUITAR in fields.instruments
@@ -83,7 +83,7 @@ private class Board(
 
 @Composable
 private fun KeyboardFretboardActivity(props: ActivityProps) {
-    val board = Board(props)
+    val board = Board(props, NoteTarget.of(fields(props.content).target) ?: return)
     val audio = rememberMusicAudio()
     val labels = rememberMusicLabels()
 

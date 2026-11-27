@@ -312,11 +312,9 @@ export function AlternativeButton({
   const other = useSessionAction({ action: () => actions.start(alternative), enterKey: true });
 
   return (
-    <form action={() => void other.run()} className="contents">
-      <EnterButton busy={other.isPending} enter="host" type="submit">
-        {label(alternative)}
-      </EnterButton>
-    </form>
+    <EnterButton busy={other.isPending} enter="host" onClick={other.run}>
+      {label(alternative)}
+    </EnterButton>
   );
 }
 

@@ -1,8 +1,8 @@
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { cpSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { dirname, join } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { afterAll, onTestFinished } from "vitest";
 import { checkPictures } from "./check.mts";
 import { type CaptureItem, type ManifestItem, type Read } from "./media.mts";
@@ -51,6 +51,8 @@ function commitHistory() {
   git(repository, "init", "-q");
   git(repository, "config", "user.email", "agent@example.com");
   git(repository, "config", "user.name", "Agent");
+  const attributes = readFileSync(resolve(import.meta.dirname, "../../.gitattributes"), "utf8");
+  commitFile(repository, ".gitattributes", attributes, FIRST_COMMIT - MINUTE);
   const older = commitFile(repository, "apps/main/page.txt", "one", FIRST_COMMIT);
   const current = commitFile(repository, "packages/ui/row.txt", "two", FIRST_COMMIT + MINUTE);
   commitFile(repository, "docs/notes.md", "unrelated", FIRST_COMMIT + 2 * MINUTE);
@@ -67,7 +69,8 @@ removeAfterUse(history.repository);
 /**
  * A repository where `apps/main` changed after `older` and only docs changed after `current`,
  * with captures written into it: each picture's bytes are its own name. `changedAt` is when its
- * code last changed (`packages/`, at `current`), from the fixture's own dates.
+ * code last changed (`packages/`, at `current`), from the fixture's own dates. It marks files with
+ * the repository's own `.gitattributes`, and `commit` adds a later commit of one file.
  */
 export function checkFixture() {
   const { current, older } = history;
@@ -119,7 +122,10 @@ export function checkFixture() {
     };
   }
 
-  return { capture, changedAt, current, older, repository, shot };
+  const commit = (path: string) =>
+    commitFile(repository, path, "changed", FIRST_COMMIT + 3 * MINUTE);
+
+  return { capture, changedAt, commit, current, older, repository, shot };
 }
 
 export function kinds(result: Awaited<ReturnType<typeof checkPictures>>): string[] {

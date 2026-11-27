@@ -35,12 +35,14 @@ enum class Audience {
 /** Mirrors the per-learner cache tags in `packages/core/src/cache/tags.ts`. */
 enum class DataDomain {
     Allowance,
+    BuddyConversations,
     Certificates,
     Goals,
     InstrumentWaitlist,
     LearnerModel,
     LearningProfile,
     Memory,
+    SavedLessons,
     SavedMindMaps,
     StudyReminder,
     UserProgress,

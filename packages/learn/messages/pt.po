@@ -360,6 +360,7 @@ msgstr "Cancelar"
 #: src/plan/plan-focus.tsx
 #: src/plan/plan-tool-sheet.tsx
 #: src/profile-questions/about-you-question-screen.tsx
+#: src/saved-lessons/lesson-save-button.tsx
 msgctxt "jvo0vs"
 msgid "Save"
 msgstr "Salvar"
@@ -383,11 +384,6 @@ msgstr "Com {time} por dia, você chega ao nível {level} por volta de {month}."
 msgctxt "6Due7K"
 msgid "You finish around {month}."
 msgstr "Você termina por volta de {month}."
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "X6_KO5"
-msgid "Take a short break, then try again."
-msgstr "Faça uma pausa rápida e tente de novo."
 
 #: src/_components/help-limit-notice.tsx
 #: src/speech/record-note.tsx
@@ -740,6 +736,18 @@ msgstr "Fechar"
 msgctxt "IIe6nO"
 msgid "To review"
 msgstr "Para revisar"
+
+#. The line of a notice that the learner sent too many requests in a short time, such as questions to their study buddy, and must wait before the next one. It counts down every second until they can try again.
+#: src/_components/slow-down-words.ts
+msgctxt "limits.1flNDY"
+msgid "Take a short break. You can try again in {seconds, plural, one {# second} other {# seconds}}."
+msgstr "Faça uma pausa rápida. Você pode tentar de novo em {seconds, plural, one {# segundo} other {# segundos}}."
+
+#. The line of a notice that the learner sent too many requests in a short time, such as questions to their study buddy, and must wait before the next one. It counts down every minute until they can try again.
+#: src/_components/slow-down-words.ts
+msgctxt "limits.m_DHa2"
+msgid "Take a short break. You can try again in {minutes, plural, one {# minute} other {# minutes}}."
+msgstr "Faça uma pausa rápida. Você pode tentar de novo em {minutes, plural, one {# minuto} other {# minutos}}."
 
 #: src/_components/sortable-list.tsx
 msgctxt "TkDZ5b"
@@ -1321,6 +1329,7 @@ msgid "Change"
 msgstr "Alterar"
 
 #: src/appearance/buddy-settings.tsx
+#: src/buddies/buddy-menu.tsx
 #: src/buddies/buddy-screen.tsx
 #: src/onboarding/steps/buddy-step.tsx
 msgctxt "DWD-Vm"
@@ -1353,6 +1362,34 @@ msgctxt "y0ef9b"
 msgid "App language"
 msgstr "Idioma do app"
 
+#. The first row of the conversations list: starts a conversation with no questions yet.
+#: src/buddies/buddy-conversations.tsx
+msgctxt "PQ8A3I"
+msgid "New conversation"
+msgstr "Novo chat"
+
+#: src/buddies/buddy-conversations.tsx
+msgctxt "sf91oU"
+msgid "Couldn't load more conversations. Try again."
+msgstr "Não foi possível carregar mais chats. Tente de novo."
+
+#. A button under a list that loads more of its rows.
+#: src/buddies/buddy-conversations.tsx
+#: src/completed-lessons/completed-lessons-screen.tsx
+#: src/mistakes/mistakes-notebook.tsx
+#: src/saved-lessons/saved-lessons-screen.tsx
+msgctxt "aWpBzj"
+msgid "Show more"
+msgstr "Mostrar mais"
+
+#. The list of the learner's separate conversations with their buddy, and the button that opens it.
+#: src/buddies/buddy-conversations.tsx
+#: src/buddies/buddy-screen-skeleton.tsx
+#: src/buddies/buddy-screen.tsx
+msgctxt "1udzha"
+msgid "Conversations"
+msgstr "Chats"
+
 #: src/buddies/buddy-day-parts.tsx
 msgctxt "6YRolu"
 msgid "Fully grown"
@@ -1383,38 +1420,6 @@ msgstr "Energia de {buddy}"
 msgctxt "Q88QPu"
 msgid "It starts with your first lesson."
 msgstr "Começa com sua primeira aula."
-
-#: src/buddies/buddy-day.tsx
-msgctxt "16z6WC"
-msgid "What {buddy} remembers"
-msgstr "O que {buddy} lembra"
-
-#. Names the glasses the learner has collected for their study buddy, as a row and a menu item that opens them; {buddy} is the buddy's name. A name, not an action.
-#: src/buddies/buddy-day.tsx
-#: src/buddies/buddy-screen.tsx
-msgctxt "86EPQq"
-msgid "{buddy}'s glasses"
-msgstr "Óculos de {buddy}"
-
-#: src/buddies/buddy-day.tsx
-#: src/buddies/buddy-screen.tsx
-#: src/journey/schedule-details.tsx
-msgctxt "ca-yU-"
-msgid "Weekly summary"
-msgstr "Resumo semanal"
-
-#: src/buddies/buddy-day.tsx
-msgctxt "cVpmV7"
-msgid "Energy"
-msgstr "Energia"
-
-#: src/buddies/buddy-day.tsx
-#: src/buddies/buddy-today.tsx
-#: src/missions/missions-card.tsx
-#: src/session/summary/summary-rewards.tsx
-msgctxt "IFviMa"
-msgid "Today's missions"
-msgstr "Missões de hoje"
 
 #. {target} is 7, so a noun that counts it stays plural in every form.
 #: src/buddies/buddy-glasses-picker.tsx
@@ -1531,6 +1536,33 @@ msgctxt "QRnLkX"
 msgid "Comes with your buddy"
 msgstr "Vêm com seu colega"
 
+#: src/buddies/buddy-menu.tsx
+msgctxt "T3IH3o"
+msgid "More about {buddy}"
+msgstr "Mais sobre {buddy}"
+
+#: src/buddies/buddy-menu.tsx
+msgctxt "wjFAMp"
+msgid "Change {buddy}"
+msgstr "Trocar {buddy}"
+
+#. Names the glasses the learner has collected for their study buddy, as a row and a menu item that opens them; {buddy} is the buddy's name. A name, not an action.
+#: src/buddies/buddy-menu.tsx
+msgctxt "86EPQq"
+msgid "{buddy}'s glasses"
+msgstr "Óculos de {buddy}"
+
+#: src/buddies/buddy-menu.tsx
+msgctxt "16z6WC"
+msgid "What {buddy} remembers"
+msgstr "O que {buddy} lembra"
+
+#: src/buddies/buddy-menu.tsx
+#: src/journey/schedule-details.tsx
+msgctxt "ca-yU-"
+msgid "Weekly summary"
+msgstr "Resumo semanal"
+
 #: src/buddies/buddy-picker.tsx
 #: src/shell/learn-bar.tsx
 #: src/shell/learn-navigation.tsx
@@ -1543,17 +1575,6 @@ msgctxt "HAlOn1"
 msgid "Name"
 msgstr "Nome"
 
-#: src/buddies/buddy-screen.tsx
-msgctxt "T3IH3o"
-msgid "More about {buddy}"
-msgstr "Mais sobre {buddy}"
-
-#: src/buddies/buddy-screen.tsx
-msgctxt "wjFAMp"
-msgid "Change {buddy}"
-msgstr "Trocar {buddy}"
-
-#: src/buddies/buddy-screen.tsx
 #: src/buddies/buddy-today.tsx
 msgctxt "xVM8pQ"
 msgid "{buddy} today"
@@ -1564,6 +1585,13 @@ msgstr "{buddy} hoje"
 msgctxt "lO7wKc"
 msgid "Not yet"
 msgstr "Ainda não"
+
+#: src/buddies/buddy-today.tsx
+#: src/missions/missions-card.tsx
+#: src/session/summary/summary-rewards.tsx
+msgctxt "IFviMa"
+msgid "Today's missions"
+msgstr "Missões de hoje"
 
 #: src/buddies/use-buddy-name.ts
 msgctxt "buddyNames.WsAzWR"
@@ -2806,12 +2834,6 @@ msgstr "Fases"
 msgctxt "completedLessonsAll"
 msgid "All"
 msgstr "Todas"
-
-#: src/completed-lessons/completed-lessons-screen.tsx
-#: src/mistakes/mistakes-notebook.tsx
-msgctxt "aWpBzj"
-msgid "Show more"
-msgstr "Mostrar mais"
 
 #: src/completed-lessons/completed-lessons-screen.tsx
 msgctxt "qckJsw"
@@ -5014,6 +5036,13 @@ msgid "More"
 msgstr "Mais"
 
 #: src/journey/plan-sections.tsx
+#: src/saved-lessons/saved-lessons-row.tsx
+#: src/saved-lessons/saved-lessons-screen.tsx
+msgctxt "BwmLVN"
+msgid "Saved lessons"
+msgstr "Aulas salvas"
+
+#: src/journey/plan-sections.tsx
 #: src/mind-maps/mind-maps-screen.tsx
 #: src/syllabus/subject-chapters.tsx
 msgctxt "Z9Sg5E"
@@ -6925,7 +6954,7 @@ msgstr "Você contou para a gente"
 #: src/memory/memory-labels.tsx
 msgctxt "KX7Rbl"
 msgid "From a chat"
-msgstr "De uma conversa"
+msgstr "De um chat"
 
 #: src/memory/memory-labels.tsx
 msgctxt "5yxABH"
@@ -7135,7 +7164,14 @@ msgctxt "Oku1XG"
 msgid "Lesson map"
 msgstr "Mapa de aula"
 
+#. What screen readers say for Remove, naming the map.
 #: src/mind-maps/mind-map-index-rows.tsx
+msgctxt "-S6z5P"
+msgid "Remove {title} from saved maps"
+msgstr "Remover {title} dos mapas salvos"
+
+#: src/mind-maps/mind-map-index-rows.tsx
+#: src/saved-lessons/saved-lessons-screen.tsx
 msgctxt "G_yZLu"
 msgid "Remove"
 msgstr "Remover"
@@ -7155,6 +7191,18 @@ msgstr "Em resumo:"
 msgctxt "mindMapSaved"
 msgid "Saved"
 msgstr "Salvo"
+
+#: src/mind-maps/mind-map-save-button.tsx
+#: src/saved-lessons/lesson-save-button.tsx
+msgctxt "eIjk1v"
+msgid "Save {title}"
+msgstr "Salvar {title}"
+
+#. Read aloud for the bookmark on a saved mind map's row, which removes it: says the map {title} is saved.
+#: src/mind-maps/mind-map-save-button.tsx
+msgctxt "mindMapSavedTitle"
+msgid "Saved {title}"
+msgstr "Mapa mental {title} salvo"
 
 #: src/mind-maps/mind-map-viewer.tsx
 msgctxt "_UnJ3S"
@@ -7219,6 +7267,7 @@ msgid "Saved maps"
 msgstr "Mapas salvos"
 
 #: src/mind-maps/mind-maps-screen.tsx
+#: src/saved-lessons/saved-lessons-screen.tsx
 msgctxt "g41uEF"
 msgid "No longer available"
 msgstr "Não está mais disponível"
@@ -7267,14 +7316,14 @@ msgid "Create all"
 msgstr "Criar todos"
 
 #: src/mind-maps/use-mind-map-saves.ts
-msgctxt "U0yWHz"
-msgid "Couldn't save this map. Try again."
-msgstr "Não deu para salvar este mapa. Tente de novo."
-
-#: src/mind-maps/use-mind-map-saves.ts
 msgctxt "w16BF2"
 msgid "Couldn't remove this map. Try again."
 msgstr "Não deu para remover esse mapa. Tente de novo."
+
+#: src/mind-maps/use-mind-map-saves.ts
+msgctxt "U0yWHz"
+msgid "Couldn't save this map. Try again."
+msgstr "Não deu para salvar este mapa. Tente de novo."
 
 #: src/missions/first-step-copy.tsx
 msgctxt "missions.0TTPFv"
@@ -8249,7 +8298,6 @@ msgid "Show less"
 msgstr "Mostrar menos"
 
 #: src/mock/mock-result-breakdown.tsx
-#: src/today/use-row-label.ts
 msgctxt "SjSDDA"
 msgid "{count, plural, one {# more topic} other {# more topics}}"
 msgstr "{count, plural, one {Mais # tópico} other {Mais # tópicos}}"
@@ -12347,6 +12395,46 @@ msgctxt "WIPDp7"
 msgid "vector {base}"
 msgstr "vetor {base}"
 
+#. Read aloud for the bookmark on a saved lesson's row, which removes it: says the lesson {title} is saved.
+#: src/saved-lessons/lesson-save-button.tsx
+msgctxt "lessonSavedTitle"
+msgid "Saved {title}"
+msgstr "Aula {title} salva"
+
+#. Says the lesson is saved to do again later: the bookmark's state.
+#: src/saved-lessons/lesson-save-button.tsx
+msgctxt "lessonSaved"
+msgid "Saved"
+msgstr "Salva"
+
+#. The line under Saved lessons in Practice anytime.
+#: src/saved-lessons/saved-lessons-row.tsx
+msgctxt "u7HPS5"
+msgid "Lessons you want to do again"
+msgstr "Aulas que você quer fazer de novo"
+
+#. What screen readers say for Remove, naming the lesson.
+#: src/saved-lessons/saved-lessons-screen.tsx
+msgctxt "mezuKn"
+msgid "Remove {title} from saved lessons"
+msgstr "Remover {title} das aulas salvas"
+
+#: src/saved-lessons/saved-lessons-screen.tsx
+msgctxt "t7w-Fo"
+msgid "Nothing saved yet. Tap the bookmark on a lesson to keep it here."
+msgstr "Nada salvo ainda. Toque no ícone de salvar de uma aula para ela ficar aqui."
+
+#. Taking the lesson out of the saved lessons didn't work, so it's still saved.
+#: src/saved-lessons/use-lesson-saves.ts
+msgctxt "BcKHqn"
+msgid "Couldn't remove this lesson. Try again."
+msgstr "Não foi possível remover esta aula. Tente de novo."
+
+#: src/saved-lessons/use-lesson-saves.ts
+msgctxt "JBnz9z"
+msgid "Couldn't save this lesson. Try again."
+msgstr "Não foi possível salvar esta aula. Tente de novo."
+
 #: src/session/action-failed.tsx
 #: src/session/open-next-step.tsx
 #: src/today/today-action.tsx
@@ -12750,22 +12838,23 @@ msgctxt "n1W87b"
 msgid "New lesson"
 msgstr "Nova aula"
 
-#. A block of the day's practice. {topic} names the topic most of its questions are on, like "Calculating discounts".
+#. A block practising one subject the learner chose. {subject} names it, like "Percentages".
 #: src/session/use-block-copy.ts
-msgctxt "YGPuF7"
-msgid "Practice: {topic}"
-msgstr "Prática: {topic}"
+msgctxt "kjsfD5"
+msgid "Practice: {subject}"
+msgstr "Prática: {subject}"
 
-#. A block of the day's practice. {areas} names the one or two subjects most of its questions are on, like "Math and Languages".
+#. One of the day's practice blocks, numbered in the order the day lists them, like "Practice 2".
 #: src/session/use-block-copy.ts
-msgctxt "I85zr9"
-msgid "Practice: {areas}"
-msgstr "Prática: {areas}"
+msgctxt "5-NTPa"
+msgid "Practice {number, number}"
+msgstr "Prática {number, number}"
 
+#. A block of the day's practice questions, when it's the day's only one
 #: src/session/use-block-copy.ts
-msgctxt "MbAJ4_"
-msgid "Mixed practice"
-msgstr "Prática variada"
+msgctxt "practiceBlock.KV-O0y"
+msgid "Practice"
+msgstr "Prática"
 
 #: src/session/use-block-copy.ts
 msgctxt "87izcS"
@@ -13809,6 +13898,12 @@ msgstr "Planejado: {time}"
 msgctxt "-FZPmK"
 msgid "Not studied"
 msgstr "Não estudou"
+
+#. Today's line under a practice: how many topics it mixes, then the one it asks most, like "3 topics · Calculating discounts".
+#: src/today/use-row-label.ts
+msgctxt "AX3sJq"
+msgid "{count, plural, one {# topic} other {# topics}} · {topic}"
+msgstr "{count, plural, one {# tópico} other {# tópicos}} · {topic}"
 
 #: src/today/use-row-label.ts
 msgctxt "OUc_Xr"

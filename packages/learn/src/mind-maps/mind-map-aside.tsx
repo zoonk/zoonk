@@ -50,7 +50,7 @@ function MindMapPicture({
       <button
         aria-haspopup="dialog"
         aria-describedby={descriptionId}
-        className="focus-visible:ring-ring/50 block w-full outline-none focus-visible:ring-[3px] focus-visible:ring-inset"
+        className="focus-visible:ring-ring/50 held-pressed:brightness-90 dark:held-pressed:brightness-125 block w-full outline-none focus-visible:ring-[3px] focus-visible:ring-inset"
         onClick={() => setOpen(true)}
         type="button"
       >

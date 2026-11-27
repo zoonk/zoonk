@@ -53,10 +53,14 @@ fun BuddyEditor(
     saveFailed: Boolean,
     onClose: () -> Unit,
     onSave: (BuddyKind, BuddyGlasses, String) -> Unit,
+    knownKind: Boolean,
+    knownGlasses: Boolean,
     earnedGlasses: Set<BuddyGlasses>? = null,
 ) {
     var kind by rememberSaveable { mutableStateOf(look.kind) }
     var glasses by rememberSaveable { mutableStateOf(look.glasses) }
+    var selectedKind by rememberSaveable { mutableStateOf(knownKind) }
+    var selectedGlasses by rememberSaveable { mutableStateOf(knownGlasses) }
     val typed = rememberTextFieldState(name)
 
     ModalBottomSheet(onDismissRequest = onClose, sheetState = rememberExpandedBottomSheetState()) {
@@ -73,7 +77,10 @@ fun BuddyEditor(
                 BuddyPicker(
                     kind = kind,
                     name = typed,
-                    onSelect = { kind = it },
+                    onSelect = {
+                        kind = it
+                        selectedKind = true
+                    },
                     glasses = glasses,
                     look = look,
                 )
@@ -83,7 +90,10 @@ fun BuddyEditor(
                         look = look.copy(kind = kind),
                         earned = earnedGlasses,
                         selected = glasses,
-                        onSelect = { glasses = it },
+                        onSelect = {
+                            glasses = it
+                            selectedGlasses = true
+                        },
                     )
                 }
             }
@@ -104,7 +114,11 @@ fun BuddyEditor(
                     Spacer(Modifier.weight(1f))
                 }
                 TextButton(onClick = onClose) { Text(stringResource(R.string.settings_cancel)) }
-                Button(busy = isSaving, onClick = { onSave(kind, glasses, typed.text.toString()) }) {
+                Button(
+                    busy = isSaving,
+                    enabled = selectedKind && selectedGlasses,
+                    onClick = { onSave(kind, glasses, typed.text.toString()) },
+                ) {
                     Text(stringResource(R.string.settings_save))
                 }
             }

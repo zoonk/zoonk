@@ -47,6 +47,7 @@ import com.zoonk.android.feature.player.model.StepImage
 import com.zoonk.android.feature.player.model.StepVisual
 import com.zoonk.android.feature.player.model.toStepResult
 import com.zoonk.android.feature.player.steps.LocalChallengeTeam
+import com.zoonk.android.feature.savedlessons.LessonBookmark
 import com.zoonk.android.feature.tutor.TutorIdentity
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
@@ -294,7 +295,21 @@ class LessonPlayerScreenshots {
                 )
             },
             "free-limit" to { at(LessonAction.RunRefused(LessonRefusal.Limited(Limit.Reached(LimitTier.Free, LimitPeriod.Day)))) },
-            "slow-down" to { at(LessonAction.RunRefused(LessonRefusal.Limited(Limit.SlowDown(30)))) },
+            "slow-down" to
+                {
+                    at(
+                        LessonAction.RunRefused(
+                            LessonRefusal.Limited(
+                                Limit.SlowDown(
+                                    30,
+                                    java.time.Instant
+                                        .now()
+                                        .plusSeconds(30),
+                                ),
+                            ),
+                        ),
+                    )
+                },
             "not-found" to { at(LessonAction.RunRefused(LessonRefusal.NotFound)) },
             "finish-ready" to { LessonPlayerState.initial(LESSON_ID, emptyList(), now = 0) },
             "completed" to { completed(COMPLETION) },
@@ -407,6 +422,7 @@ class LessonPlayerScreenshots {
                             exits,
                             rememberAppNavigator(),
                             tutor = tutor,
+                            bookmark = { LessonBookmark(saved = index % 2 == 1) {} },
                         )
                     }
                 }

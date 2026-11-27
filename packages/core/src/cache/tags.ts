@@ -75,6 +75,10 @@ export function getMemoryCacheTag(userId: string): string {
   return `memory:${userId}`;
 }
 
+export function getBuddyConversationsCacheTag(userId: string, goalId: string): string {
+  return `buddy-conversations:${userId}:${goalId}`;
+}
+
 export function getGoalsCacheTag(userId: string): string {
   return `goals:${userId}`;
 }
@@ -93,6 +97,10 @@ export function getCertificatesCacheTag(userId: string): string {
 
 export function getSavedMindMapsCacheTag(userId: string): string {
   return `saved-mind-maps:${userId}`;
+}
+
+export function getSavedLessonsCacheTag(userId: string): string {
+  return `saved-lessons:${userId}`;
 }
 
 export function getSourceCacheTag(sourceId: string): string {

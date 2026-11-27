@@ -58,6 +58,7 @@ export type JourneyLinks = JourneyPathLinks & {
   logbook: string | null;
   placementTest: string;
   mindMaps: string | null;
+  savedLessons: string | null;
   subject: (key: string) => string;
 };
 

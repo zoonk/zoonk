@@ -22,6 +22,7 @@ export const EXCEPTIONS: AlignmentException[] = [
   {
     configuration: "phone touch en-US",
     issue: 3315,
+    maxMeasured: 1489,
     piece: "page",
     reason: "Android's answer field scrolls a long answer with no sign it continues, on main too",
     relation: "cut",
@@ -30,6 +31,7 @@ export const EXCEPTIONS: AlignmentException[] = [
   {
     configuration: "phone touch en-US",
     issue: 3315,
+    maxMeasured: 2977,
     piece: "page",
     reason: "Android's answer field scrolls a long answer with no sign it continues, on main too",
     relation: "cut",

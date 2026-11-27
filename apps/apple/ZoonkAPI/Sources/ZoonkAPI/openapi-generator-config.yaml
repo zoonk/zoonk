@@ -3,6 +3,8 @@ generate:
   - client
 accessModifier: public
 namingStrategy: idiomatic
+nameOverrides:
+  __unknown_api_value__: unrecognized
 # The lesson player decodes screens and answers into its own types: the generated unions of every
 # screen kind and activity template are index-named and far larger than what it reads.
 typeOverrides:
@@ -40,6 +42,7 @@ filter:
     - createAppleSession
     - createAppleSubscription
     - createAreaPractice
+    - createBuddyConversationQuestion
     - createChallengeGeneration
     - createChapterMindMapGeneration
     - createChapterQuestion
@@ -74,7 +77,6 @@ filter:
     - createPlanBasesAdvice
     - createPlanChange
     - createPlanExamChoice
-    - createPlanQuestion
     - createPlanToolChoice
     - createResearch
     - createSkillOutlineGeneration
@@ -107,6 +109,7 @@ filter:
     - finishLanguageLevelTest
     - finishLanguageLevelTestOut
     - finishMock
+    - getBuddyConversationQuestionThread
     - getCatalogLesson
     - getChallenge
     - getChallengeTeam
@@ -176,7 +179,6 @@ filter:
     - getOnboardingResume
     - getPlanChangedSince
     - getPlanLink
-    - getPlanQuestionThread
     - getPlanTimeAdvice
     - getSkillOutline
     - getSource
@@ -195,6 +197,7 @@ filter:
     - joinInstrumentWaitlist
     - leaveInstrumentWaitlist
     - listCertificates
+    - listBuddyConversations
     - listChapterLessonMaps
     - listChapterLessons
     - listCountries
@@ -209,6 +212,7 @@ filter:
     - listInstrumentWaitlist
     - listMocks
     - listPronunciationReviews
+    - listSavedLessons
     - listSourceChangeNotices
     - markCertificateShown
     - markPlanRevealed
@@ -230,6 +234,7 @@ filter:
     - requestSpeechClip
     - resumeStripeSubscription
     - reviseGoalUnderstanding
+    - saveLesson
     - saveMindMap
     - saveMockAnswer
     - saveWritingDraft

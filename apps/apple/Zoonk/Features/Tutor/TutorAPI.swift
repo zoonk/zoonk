@@ -68,9 +68,16 @@ struct TutorAPI: TutorAPIClient {
       suggestion: suggestion.flatMap(
         Components.Schemas.CreateLessonQuestionRequest.SuggestionPayload.init))
 
+    // `perform` reads anything but a transport error as the API being down, so a refusal leaves it
+    // as a value.
     let created = try await clients.perform(token: token) { client in
-      try await createQuestion(scope, request: request, client: client)
-    }
+      do {
+        return Result<Components.Schemas.CreatedLessonQuestion, TutorFailure>.success(
+          try await createQuestion(scope, request: request, client: client))
+      } catch let failure as TutorFailure {
+        return .failure(failure)
+      }
+    }.get()
 
     return TutorAskedQuestion(
       turn: TutorTurn(created), missionMoment: created.missionMoment?.value1)
@@ -89,11 +96,11 @@ struct TutorAPI: TutorAPIClient {
           case .ok(let response):
             body = try response.body.textEventStream
           case .code402(let response):
-            throw TutorFailure(refusal: try? response.body.json, fallback: .plusRequired)
+            throw TutorFailure(refused: 402, error: try? response.body.json)
           case .forbidden(let response):
-            throw TutorFailure(refusal: try? response.body.json, fallback: .failed)
+            throw TutorFailure(refused: 403, error: try? response.body.json)
           case .tooManyRequests(let response):
-            throw TutorFailure(refusal: try? response.body.json, fallback: .slowDown)
+            throw TutorFailure(refused: 429, error: try? response.body.json)
           case .unauthorized:
             throw APIError.unauthorized
           case .notFound:
@@ -184,9 +191,10 @@ private func readThread(
   _ scope: TutorScope, cursor: String?, client: Client
 ) async throws -> Components.Schemas.LessonQuestionThread? {
   switch scope {
-  case .plan(let goalId):
-    let output = try await client.getPlanQuestionThread(
-      path: .init(goalId: goalId), query: .init(contextKind: .plan, cursor: cursor))
+  case .plan(let goalId, let conversationId):
+    let output = try await client.getBuddyConversationQuestionThread(
+      path: .init(goalId: goalId, conversationId: conversationId),
+      query: .init(contextKind: .plan, cursor: cursor))
 
     switch output {
     case .ok(let response): return try response.body.json?.value1
@@ -256,9 +264,10 @@ private func createQuestion(
   _ scope: TutorScope, request: Components.Schemas.CreateLessonQuestionRequest, client: Client
 ) async throws -> Components.Schemas.CreatedLessonQuestion {
   switch scope {
-  case .plan(let goalId):
+  case .plan(let goalId, let conversationId):
     return try createdQuestion(
-      try await client.createPlanQuestion(path: .init(goalId: goalId), body: .json(request)))
+      try await client.createBuddyConversationQuestion(
+        path: .init(goalId: goalId, conversationId: conversationId), body: .json(request)))
   case .subject(let goalId, let subjectKey, _):
     return try createdQuestion(
       try await client.createSubjectQuestion(
@@ -290,31 +299,33 @@ private func createdQuestion(_ output: some CreatedQuestionOutput) throws
   try output.createdQuestion
 }
 
-private func createFailure(
-  status: Int, error: Components.Schemas._Error?
-) -> Error {
+private func createFailure(status: Int) -> Error {
   switch status {
   case 401: APIError.unauthorized
-  case 403: TutorFailure(refusal: error, fallback: .signUpRequired)
   case 404: TutorFailure.gone
   case 400, 422: TutorFailure.invalid
-  default: TutorFailure.failed
+  // The question may have been saved before the error, so it's asked again with the same id.
+  default: APIError.unavailable
   }
 }
 
-extension Operations.CreatePlanQuestion.Output: CreatedQuestionOutput {
+extension Operations.CreateBuddyConversationQuestion.Output: CreatedQuestionOutput {
   var createdQuestion: Components.Schemas.CreatedLessonQuestion {
     get throws {
       switch self {
       case .created(let response): try response.body.json
-      case .badRequest: throw createFailure(status: 400, error: nil)
-      case .unauthorized: throw createFailure(status: 401, error: nil)
+      case .badRequest: throw createFailure(status: 400)
+      case .unauthorized: throw createFailure(status: 401)
+      case .code402(let response):
+        throw TutorFailure(refused: 402, error: try? response.body.json)
       case .forbidden(let response):
-        throw createFailure(status: 403, error: try? response.body.json)
-      case .notFound: throw createFailure(status: 404, error: nil)
+        throw TutorFailure(refused: 403, error: try? response.body.json)
+      case .tooManyRequests(let response):
+        throw TutorFailure(refused: 429, error: try? response.body.json)
+      case .notFound: throw createFailure(status: 404)
       case .conflict: throw TutorFailure.conflict
-      case .unprocessableContent: throw createFailure(status: 422, error: nil)
-      case .internalServerError, .undocumented: throw createFailure(status: 500, error: nil)
+      case .unprocessableContent: throw createFailure(status: 422)
+      case .internalServerError, .undocumented: throw createFailure(status: 500)
       }
     }
   }
@@ -325,14 +336,18 @@ extension Operations.CreateSubjectQuestion.Output: CreatedQuestionOutput {
     get throws {
       switch self {
       case .created(let response): try response.body.json
-      case .badRequest: throw createFailure(status: 400, error: nil)
-      case .unauthorized: throw createFailure(status: 401, error: nil)
+      case .badRequest: throw createFailure(status: 400)
+      case .unauthorized: throw createFailure(status: 401)
+      case .code402(let response):
+        throw TutorFailure(refused: 402, error: try? response.body.json)
       case .forbidden(let response):
-        throw createFailure(status: 403, error: try? response.body.json)
-      case .notFound: throw createFailure(status: 404, error: nil)
+        throw TutorFailure(refused: 403, error: try? response.body.json)
+      case .tooManyRequests(let response):
+        throw TutorFailure(refused: 429, error: try? response.body.json)
+      case .notFound: throw createFailure(status: 404)
       case .conflict: throw TutorFailure.conflict
-      case .unprocessableContent: throw createFailure(status: 422, error: nil)
-      case .internalServerError, .undocumented: throw createFailure(status: 500, error: nil)
+      case .unprocessableContent: throw createFailure(status: 422)
+      case .internalServerError, .undocumented: throw createFailure(status: 500)
       }
     }
   }
@@ -343,14 +358,18 @@ extension Operations.CreateChapterQuestion.Output: CreatedQuestionOutput {
     get throws {
       switch self {
       case .created(let response): try response.body.json
-      case .badRequest: throw createFailure(status: 400, error: nil)
-      case .unauthorized: throw createFailure(status: 401, error: nil)
+      case .badRequest: throw createFailure(status: 400)
+      case .unauthorized: throw createFailure(status: 401)
+      case .code402(let response):
+        throw TutorFailure(refused: 402, error: try? response.body.json)
       case .forbidden(let response):
-        throw createFailure(status: 403, error: try? response.body.json)
-      case .notFound: throw createFailure(status: 404, error: nil)
+        throw TutorFailure(refused: 403, error: try? response.body.json)
+      case .tooManyRequests(let response):
+        throw TutorFailure(refused: 429, error: try? response.body.json)
+      case .notFound: throw createFailure(status: 404)
       case .conflict: throw TutorFailure.conflict
-      case .unprocessableContent: throw createFailure(status: 422, error: nil)
-      case .internalServerError, .undocumented: throw createFailure(status: 500, error: nil)
+      case .unprocessableContent: throw createFailure(status: 422)
+      case .internalServerError, .undocumented: throw createFailure(status: 500)
       }
     }
   }
@@ -361,14 +380,18 @@ extension Operations.CreateMockQuestion.Output: CreatedQuestionOutput {
     get throws {
       switch self {
       case .created(let response): try response.body.json
-      case .badRequest: throw createFailure(status: 400, error: nil)
-      case .unauthorized: throw createFailure(status: 401, error: nil)
+      case .badRequest: throw createFailure(status: 400)
+      case .unauthorized: throw createFailure(status: 401)
+      case .code402(let response):
+        throw TutorFailure(refused: 402, error: try? response.body.json)
       case .forbidden(let response):
-        throw createFailure(status: 403, error: try? response.body.json)
-      case .notFound: throw createFailure(status: 404, error: nil)
+        throw TutorFailure(refused: 403, error: try? response.body.json)
+      case .tooManyRequests(let response):
+        throw TutorFailure(refused: 429, error: try? response.body.json)
+      case .notFound: throw createFailure(status: 404)
       case .conflict: throw TutorFailure.conflict
-      case .unprocessableContent: throw createFailure(status: 422, error: nil)
-      case .internalServerError, .undocumented: throw createFailure(status: 500, error: nil)
+      case .unprocessableContent: throw createFailure(status: 422)
+      case .internalServerError, .undocumented: throw createFailure(status: 500)
       }
     }
   }
@@ -379,14 +402,18 @@ extension Operations.CreateLessonQuestion.Output: CreatedQuestionOutput {
     get throws {
       switch self {
       case .created(let response): try response.body.json
-      case .badRequest: throw createFailure(status: 400, error: nil)
-      case .unauthorized: throw createFailure(status: 401, error: nil)
+      case .badRequest: throw createFailure(status: 400)
+      case .unauthorized: throw createFailure(status: 401)
+      case .code402(let response):
+        throw TutorFailure(refused: 402, error: try? response.body.json)
       case .forbidden(let response):
-        throw createFailure(status: 403, error: try? response.body.json)
-      case .notFound: throw createFailure(status: 404, error: nil)
+        throw TutorFailure(refused: 403, error: try? response.body.json)
+      case .tooManyRequests(let response):
+        throw TutorFailure(refused: 429, error: try? response.body.json)
+      case .notFound: throw createFailure(status: 404)
       case .conflict: throw TutorFailure.conflict
-      case .unprocessableContent: throw createFailure(status: 422, error: nil)
-      case .internalServerError, .undocumented: throw createFailure(status: 500, error: nil)
+      case .unprocessableContent: throw createFailure(status: 422)
+      case .internalServerError, .undocumented: throw createFailure(status: 500)
       }
     }
   }
@@ -397,14 +424,18 @@ extension Operations.CreateItemQuestion.Output: CreatedQuestionOutput {
     get throws {
       switch self {
       case .created(let response): try response.body.json
-      case .badRequest: throw createFailure(status: 400, error: nil)
-      case .unauthorized: throw createFailure(status: 401, error: nil)
+      case .badRequest: throw createFailure(status: 400)
+      case .unauthorized: throw createFailure(status: 401)
+      case .code402(let response):
+        throw TutorFailure(refused: 402, error: try? response.body.json)
       case .forbidden(let response):
-        throw createFailure(status: 403, error: try? response.body.json)
-      case .notFound: throw createFailure(status: 404, error: nil)
+        throw TutorFailure(refused: 403, error: try? response.body.json)
+      case .tooManyRequests(let response):
+        throw TutorFailure(refused: 429, error: try? response.body.json)
+      case .notFound: throw createFailure(status: 404)
       case .conflict: throw TutorFailure.conflict
-      case .unprocessableContent: throw createFailure(status: 422, error: nil)
-      case .internalServerError, .undocumented: throw createFailure(status: 500, error: nil)
+      case .unprocessableContent: throw createFailure(status: 422)
+      case .internalServerError, .undocumented: throw createFailure(status: 500)
       }
     }
   }
@@ -478,7 +509,7 @@ extension TutorTurn.Step {
     switch context {
     case .case4(let step): self.init(id: step.stepId, number: step.stepNumber)
     case .case5(let answer): self.init(id: answer.stepId, number: answer.stepNumber)
-    case .case1, .case2, .case3: return nil
+    case .case1, .case2, .case3, .case6: return nil
     }
   }
 
@@ -486,7 +517,7 @@ extension TutorTurn.Step {
     switch context {
     case .case4(let step): self.init(id: step.stepId, number: step.stepNumber)
     case .case5(let answer): self.init(id: answer.stepId, number: answer.stepNumber)
-    case .case1, .case2, .case3: return nil
+    case .case1, .case2, .case3, .case6: return nil
     }
   }
 }
@@ -494,7 +525,7 @@ extension TutorTurn.Step {
 extension TutorTurn.About {
   fileprivate init(_ context: Components.Schemas.LessonQuestion.ContextPayload) {
     switch context {
-    case .case1: self = .lesson
+    case .case1, .case6: self = .lesson
     case .case2(let item): self = item.answered ? .answer : .item
     case .case3(let whole): self = Self(whole.kind.rawValue)
     case .case4: self = .step
@@ -504,7 +535,7 @@ extension TutorTurn.About {
 
   fileprivate init(_ context: Components.Schemas.CreatedLessonQuestion.ContextPayload) {
     switch context {
-    case .case1: self = .lesson
+    case .case1, .case6: self = .lesson
     case .case2(let item): self = item.answered ? .answer : .item
     case .case3(let whole): self = Self(whole.kind.rawValue)
     case .case4: self = .step
@@ -529,50 +560,28 @@ extension TutorMemoryChange {
 }
 
 extension TutorFailure {
-  /// `fallback` when the error body names no allowance.
-  init(
-    refusal error: Components.Schemas._Error?, fallback: TutorFailure, receivedAt: Date = .now
-  ) {
-    switch error?.error.code {
-    case "SIGN_UP_REQUIRED":
+  /// A refused question or answer, read as main's `readRefusedLimit` reads it: 403 asks a guest to
+  /// sign up, 402 a free learner to subscribe or come back, 429 to take a short break or come back.
+  init(refused status: Int, error: Components.Schemas._Error?, receivedAt: Date = .now) {
+    if error?.error.code == "PLUS_REQUIRED" {
+      self = .plusRequired
+      return
+    }
+
+    let refusal = VoiceRefusal(
+      status: status, code: error?.error.code ?? "", details: error?.error.details,
+      receivedAt: receivedAt)
+
+    switch refusal.limit {
+    case .signUpRequired:
       self = .signUpRequired
-    case "SLOW_DOWN":
-      self = .slowDown
-    case "USAGE_LIMIT_REACHED":
-      guard let limit = error?.error.details.flatMap(UsageLimitDetails.init)?.limit,
-        let tier = LearnerTier(rawValue: limit.tier)
-      else {
-        self = fallback
-        return
-      }
-
-      self = .limit(
-        .reached(
-          period: limit.period, tier: tier,
-          availableAt: Date(opening: limit.availableAt, receivedAt: receivedAt)))
-    default:
-      self = fallback
+    case .slowDown(let until):
+      self = .slowDown(until: until)
+    case let limit?:
+      self = .limit(limit)
+    case nil:
+      self = .failed
     }
-  }
-}
-
-private struct UsageLimitDetails: Decodable {
-  struct Limit: Decodable {
-    let period: String
-    let tier: String
-    let availableAt: String?
-  }
-
-  let limit: Limit
-
-  init?(_ container: OpenAPIValueContainer) {
-    guard let data = try? JSONEncoder().encode(container),
-      let details = try? JSONDecoder().decode(Self.self, from: data)
-    else {
-      return nil
-    }
-
-    self = details
   }
 }
 

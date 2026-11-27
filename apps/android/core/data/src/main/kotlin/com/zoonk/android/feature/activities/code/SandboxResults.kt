@@ -1,9 +1,18 @@
 package com.zoonk.android.feature.activities.code
 
+import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf16Fields
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf18FieldsTablesInner
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonPrimitive
+
+val PlayableLibraryStepAnyOfContentOneOf16Fields.codeLanguage
+    get() =
+        when (language) {
+            PlayableLibraryStepAnyOfContentOneOf16Fields.Language.UNKNOWN_DEFAULT_OPEN_API -> null
+            PlayableLibraryStepAnyOfContentOneOf16Fields.Language.JAVASCRIPT -> CodeLanguage.JavaScript
+            PlayableLibraryStepAnyOfContentOneOf16Fields.Language.PYTHON -> CodeLanguage.Python
+        }
 
 @Serializable
 enum class CodeLanguage {

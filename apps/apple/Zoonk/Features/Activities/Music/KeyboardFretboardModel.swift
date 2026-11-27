@@ -11,12 +11,16 @@ enum NoteTarget: Decodable, Hashable, Sendable {
   init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
 
-    if try container.decode(String.self, forKey: .kind) == "chord" {
+    switch try container.decode(String.self, forKey: .kind) {
+    case "chord":
       self = .chord(
         root: try container.decode(String.self, forKey: .root),
         quality: try container.decode(ChordQuality.self, forKey: .quality))
-    } else {
+    case "notes":
       self = .notes(try container.decode([String].self, forKey: .notes))
+    default:
+      throw DecodingError.dataCorruptedError(
+        forKey: .kind, in: container, debugDescription: "Unknown note target")
     }
   }
 
@@ -46,6 +50,7 @@ struct KeyboardFretboardFields: Decodable, Hashable, Sendable {
   let start: NoteTarget?
   let target: NoteTarget
 
+  var hasPlayableInstrument: Bool { showsPiano || showsGuitar }
   var isByEar: Bool { byEar == true }
   var showsPiano: Bool { instruments.contains("piano") }
   var showsGuitar: Bool { instruments.contains("guitar") }

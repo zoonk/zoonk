@@ -3,7 +3,6 @@ import {
   type gradeTypedAnswer,
 } from "@zoonk/ai/tasks/grading/grade-typed-answer";
 import { checkLikeTheKeys } from "@zoonk/ai/tasks/language/level-test-bank-fixture";
-import { type shuffle } from "@zoonk/utils/shuffle";
 import { vi } from "vitest";
 import { type getRequestProgressDateContext } from "../progress/get-request-date-context";
 
@@ -25,10 +24,6 @@ export const session = { getSession: vi.fn() };
 export const dateContext = { getRequestProgressDateContext: vi.fn() };
 
 export const analytics = { trackServerEvent: vi.fn(), trackSystemEvent: vi.fn() };
-
-const { shuffle: realShuffle } = await vi.importActual<{ shuffle: typeof shuffle }>(
-  "@zoonk/utils/shuffle",
-);
 
 async function gradeForReal(params: GradeTypedAnswerParams) {
   const actual = await vi.importActual<{ gradeTypedAnswer: typeof gradeTypedAnswer }>(
@@ -128,7 +123,6 @@ export const boundaries = {
   "@zoonk/ai/tasks/warm-up/write-warm-up-cards": { generateWarmUpCards: vi.fn() },
   "@zoonk/mailer": { sendEmail: vi.fn() },
   "@zoonk/utils/logger": { logError: vi.fn(), logInfo: vi.fn() },
-  "@zoonk/utils/shuffle": { shuffle: vi.fn(realShuffle) },
   "posthog-node": { PostHog: vi.fn() },
   undici: { fetch: vi.fn() },
 };

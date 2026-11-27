@@ -106,7 +106,7 @@ fun rhythmAnswer(
 private val ActivityAnswer?.rhythm: LessonStepAnswerOneOf3AnswerOneOf11? get() = (this as? RhythmAnswerValue)?.value
 
 private val ActivityExpected?.rhythmTapTimes: List<Double>? get() =
-    (interaction as? ActivityExpectedAnswer.RhythmWrapper)
+    (interaction as? ActivityExpectedAnswer.ActivityExpectedRhythmValue)
         ?.value
         ?.tapTimesMs
 

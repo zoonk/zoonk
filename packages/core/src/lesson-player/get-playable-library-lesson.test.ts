@@ -86,6 +86,40 @@ describe(getPlayableLibraryLesson, () => {
     mockSession(randomUUID());
   });
 
+  it("keeps the same reading tiles across lesson reads when more than four distractors are stored", async () => {
+    const { lesson, sentence } = await languageLessonFixture();
+    const distractors = ["are", "many", "cost", "pay", "house", "flat"];
+
+    await prisma.lessonSentence.update({
+      data: { distractors },
+      where: { lessonId_sentenceId: { lessonId: lesson.id, sentenceId: sentence.id } },
+    });
+
+    async function readTiles() {
+      const result = await getPlayableLibraryLesson({ lessonId: lesson.id });
+
+      const reading =
+        result?.status === "ready" && result.lesson.steps.find((step) => step.kind === "reading");
+
+      if (!reading || !("exercise" in reading)) {
+        throw new Error("Expected a reading step");
+      }
+
+      return reading.exercise.wordBankOptions.map((option) => option.word);
+    }
+
+    const first = await readTiles();
+
+    expect(first.filter((word) => distractors.includes(word)).toSorted()).toStrictEqual([
+      "are",
+      "cost",
+      "many",
+      "pay",
+    ]);
+
+    await expect(readTiles()).resolves.toStrictEqual(first);
+  });
+
   it("lays a check's options out in one order for a sitting, a new one once the lesson is finished, and grades the option tapped", async () => {
     const { lesson, steps } = await setupPlayableLesson({
       steps: [{ content: FIVE_OPTION_CHECK, kind: "check" }, "summary"],

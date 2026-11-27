@@ -1,7 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { DbNull, prisma } from "@zoonk/db";
 import { ensureGuest } from "@zoonk/e2e/fixtures/guests";
-import { expectHydrated } from "@zoonk/e2e/hydration";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
 import { type Page, expect, test } from "./fixtures";
 import { stopRuns } from "./generation-run";
@@ -100,7 +99,6 @@ test.describe("Sending a goal from another page", () => {
     const box = page.getByRole("textbox", { name: "I want to" });
     // Words typed before hydration become the box's text, which Next keeps in the hidden /courses:
     // https://nextjs.org/docs/app/guides/preserving-ui-state#testing
-    await expectHydrated(box);
     await box.fill(goal);
     await page.getByRole("button", { name: "Build my plan" }).click();
 

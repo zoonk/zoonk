@@ -10,7 +10,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { PanelLeftIcon, PanelRightIcon, SearchIcon } from "lucide-react";
 import { useEffect, useRef, useSyncExternalStore } from "react";
 import { POPUP_SELECTOR } from "../hooks/_utils/screen-shortcut";
-import { Button, buttonVariants } from "./button";
+import { BusyIcon, Button, buttonVariants } from "./button";
 import {
   SIDEBAR_ICON_ONLY_CLASS,
   SIDEBAR_ITEM_CLASS,
@@ -222,7 +222,9 @@ export function SidebarToggle({
         ref={ref}
         type="button"
       >
-        <Icon aria-hidden="true" />
+        <BusyIcon>
+          <Icon aria-hidden="true" className="size-4" />
+        </BusyIcon>
         <span className="sr-only">{label}</span>
       </button>
     </ShortcutTooltip>
@@ -285,7 +287,9 @@ export function SidebarSearch({
         }}
         type="button"
       >
-        <SearchIcon aria-hidden="true" className="size-4 shrink-0" />
+        <BusyIcon className="shrink-0">
+          <SearchIcon aria-hidden="true" className="size-4" />
+        </BusyIcon>
         <span className="flex-1 truncate text-left">{label}</span>
         <ShortcutKbd shortcut="search" />
       </button>

@@ -1,5 +1,5 @@
 import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
-import { received } from "@zoonk/learn/help-limit";
+import { received, slowDownEnd } from "@zoonk/learn/help-limit";
 import { safeAsync } from "@zoonk/utils/error";
 import { z } from "zod";
 import { type LessonQuestionApiError } from "./lesson-question-api";
@@ -34,7 +34,12 @@ const usageErrorSchema = z.object({
 
 export type LessonQuestionUsageRefusal =
   | { kind: "signUpRequired" }
-  | { kind: "slowDown"; retryAfterSeconds: number }
+  | {
+      /** When asking opens again: the server's wait, counted from when this device received it. */
+      availableAt?: string;
+      kind: "slowDown";
+      retryAfterSeconds: number;
+    }
   | ({ kind: "usageLimit"; receivedAt?: number } & z.infer<typeof usageLimitSchema>);
 
 export function getUsageRefusal(body: unknown): LessonQuestionUsageRefusal | null {
@@ -69,6 +74,11 @@ export async function getRefusalError(response: Response): Promise<LessonQuestio
     return received(usage);
   }
 
+  if (usage?.kind === "slowDown") {
+    const opens = slowDownEnd(Date.now(), usage.retryAfterSeconds);
+    return { ...usage, availableAt: new Date(opens).toISOString() };
+  }
+
   if (usage) {
     return usage;
   }
@@ -76,6 +86,14 @@ export async function getRefusalError(response: Response): Promise<LessonQuestio
   return response.status === HTTP_STATUS_PAYMENT_REQUIRED
     ? { kind: "subscription" }
     : { kind: "unknown" };
+}
+
+const USAGE_REFUSAL_KINDS = new Set(["signUpRequired", "slowDown", "usageLimit"]);
+
+export function isUsageRefusal(
+  error: LessonQuestionApiError | null | undefined,
+): error is LessonQuestionUsageRefusal {
+  return Boolean(error && USAGE_REFUSAL_KINDS.has(error.kind));
 }
 
 export function isRefusal(response: Response): boolean {

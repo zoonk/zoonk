@@ -78,17 +78,18 @@ function renderConversation({
   const conversation = (
     <TutorConversation
       composerLabel="Message Zu"
+      conversationId="01a11014-0000-7000-8000-0000000000c1"
       draft={draft}
       goalId="01a11014-0000-7000-8000-00000000000a"
       greeting="Hi! I'm Zu."
       identity={{ avatar: null, figure: null, name: "Zu" }}
-      initialThread={initialThread}
       onAnswered={onAnswered}
       onAsked={onAsked}
       placeholder="Message Zu"
       renderPlanChange={({ change }) => <p data-status={change.status}>Card: {change.reason}</p>}
       renderToolOffer={(offer) => <p>Tool: {offer.kind}</p>}
       suggestions={[]}
+      thread={initialThread ?? null}
       tutor={buildTutor(openBlock ? { appLinks: { openBlock } } : {})}
     />
   );

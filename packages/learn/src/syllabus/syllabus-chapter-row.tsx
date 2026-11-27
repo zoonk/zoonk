@@ -107,7 +107,7 @@ export function SyllabusChapterRow({
         nextDate={chapter.nextDate}
         skillId={chapter.skillId}
         title={chapter.title}
-        trigger={<ListRowButton className={className} type="submit" />}
+        trigger={<ListRowButton className={className} />}
       >
         {content}
       </FarTopicSheet>

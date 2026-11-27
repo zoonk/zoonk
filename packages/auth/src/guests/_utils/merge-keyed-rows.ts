@@ -179,6 +179,21 @@ async function moveSavedMindMaps({ guestUserId, transaction, userId }: GuestLink
   `;
 }
 
+async function moveSavedLessons({ guestUserId, transaction, userId }: GuestLinkContext) {
+  await transaction.$executeRaw`
+    WITH guest_rows AS (
+      DELETE FROM saved_lessons
+      WHERE user_id = ${guestUserId}::uuid
+      RETURNING *
+    )
+    INSERT INTO saved_lessons (id, user_id, lesson_id, title, goal_id, created_at)
+    SELECT id, ${userId}::uuid, lesson_id, title, goal_id, created_at
+    FROM guest_rows
+    ORDER BY lesson_id
+    ON CONFLICT (user_id, lesson_id) DO NOTHING
+  `;
+}
+
 async function moveStudySummaryVisits({ guestUserId, transaction, userId }: GuestLinkContext) {
   await transaction.$executeRaw`
     WITH guest_rows AS (
@@ -206,5 +221,6 @@ export async function moveKeyedRows(context: GuestLinkContext) {
   await movePronunciationReviews(context);
   await moveStepExampleLines(context);
   await moveSavedMindMaps(context);
+  await moveSavedLessons(context);
   await moveStudySummaryVisits(context);
 }

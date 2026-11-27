@@ -19,12 +19,12 @@ internal val TutorMemoryChange.shown: MemoryChangeShown
 
 @Immutable
 sealed interface TutorFailure {
-    /** A help limit takes the composer's place; a slow-down only asks to wait. */
+    /** Nothing can be asked until it lifts: its notice sits above the composer, and a question it refused waits unanswered. */
     data class Refused(
         val limit: Limit,
     ) : TutorFailure
 
-    /** A question a help limit refused, once the day it gave has come: still unanswered, and Try again asks the server again. */
+    /** A question a limit refused, once it lifted (its day came, or a slow-down's wait is over): still unanswered, and Try again asks the server again. */
     data object Unanswered : TutorFailure
 
     data object PlusRequired : TutorFailure
@@ -38,8 +38,8 @@ sealed interface TutorFailure {
     data object Failed : TutorFailure
 }
 
-internal val TutorFailure.helpLimit: Limit?
-    get() = (this as? TutorFailure.Refused)?.limit?.takeUnless { it is Limit.SlowDown }
+internal val TutorFailure.refusal: Limit?
+    get() = (this as? TutorFailure.Refused)?.limit
 
 internal fun ApiException.toTutorFailure(receivedAt: java.time.Instant): TutorFailure = failure(Limit.of(this, receivedAt), error, status)
 

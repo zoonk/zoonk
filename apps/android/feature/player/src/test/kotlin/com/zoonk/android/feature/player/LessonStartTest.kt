@@ -62,6 +62,7 @@ class LessonStartTest {
         tapped: Boolean,
         saved: SavedStateHandle = SavedStateHandle(),
         draftStore: DraftStore? = null,
+        runStarting: (lessonId: String) -> (saved: Boolean) -> Boolean = { { it } },
     ): LessonPlayerViewModel {
         val cache = AppCache(session, backgroundScope)
         val drafts = draftStore ?: DraftStore(folder.newFolder(), backgroundScope, dispatcher)
@@ -78,8 +79,22 @@ class LessonStartTest {
             choices = TodayChoices(drafts),
             drafts = drafts,
             saved = saved,
+            runStarting = runStarting,
         )
     }
+
+    @Test fun aSaveTheServerTookAfterTheRunStartedWinsOverWhatTheRunSaid() =
+        runTest(dispatcher) {
+            var takenSince: Boolean? = null
+            val vm = player(null, tapped = true, runStarting = { { saved -> takenSince ?: saved } })
+            vm.open(lesson)
+            advanceUntilIdle()
+            assertEquals(false, vm.lessonSaved)
+
+            takenSince = true
+
+            assertEquals(true, vm.lessonSaved)
+        }
 
     @Test fun aResentPersistedAnswerStillShowsAsAnswered() =
         runTest(dispatcher) {

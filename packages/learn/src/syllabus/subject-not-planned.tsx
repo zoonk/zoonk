@@ -36,8 +36,11 @@ function RestoreButton({
 
   return (
     <div className="flex flex-col items-start gap-1.5">
-      <form
-        action={() =>
+      <Button
+        busy={isPending}
+        icon={<ListPlusIcon aria-hidden="true" />}
+        size="sm"
+        onClick={() =>
           startTransition(async () => {
             const { data: restored } = await safeAsync(() => restore(areas));
 
@@ -46,18 +49,10 @@ function RestoreButton({
             }
           })
         }
-        className="contents"
+        variant="outline"
       >
-        <Button
-          busy={isPending}
-          icon={<ListPlusIcon aria-hidden="true" />}
-          size="sm"
-          type="submit"
-          variant="outline"
-        >
-          {t("Add it back")}
-        </Button>
-      </form>
+        {t("Add it back")}
+      </Button>
     </div>
   );
 }

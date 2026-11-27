@@ -228,6 +228,10 @@ private fun leadLine(
     val locale = currentLocale()
     val (number, sentence) =
         when (lead) {
+            StudyDayProgress.Lead.UNKNOWN_DEFAULT_OPEN_API -> {
+                return AnnotatedString("")
+            }
+
             StudyDayProgress.Lead.LEFT -> {
                 val left = total - completed
                 left to pluralStringResource(R.plurals.session_day_left, left, MARK)

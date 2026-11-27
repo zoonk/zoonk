@@ -100,6 +100,15 @@ class TutorScreenshots {
         captureMessagesUsed("phone-font200")
     }
 
+    /** A question asked too soon after the last: the short break's wait over the composer, which keeps the question. */
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun slowedDown() = captureSlowedDown("phone", dark = false)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun slowedDownDark() = captureSlowedDown("phone-dark", dark = true)
+
     /** The composer at rest, then focused with a question typed, as main draws it on the same page. */
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
@@ -169,6 +178,22 @@ class TutorScreenshots {
                 ),
         )
     }
+
+    private fun captureSlowedDown(
+        size: String,
+        dark: Boolean,
+    ) = capture(
+        "tutor-slowed-down-$size",
+        dark = dark,
+        turns = listOf(turn("t0", TutorTurn.Status.Completed, "Black holes bend light around them.", "What do black holes do?")),
+        refusal =
+            ApiException(
+                ApiError.Unavailable,
+                "SLOW_DOWN",
+                status = 429,
+                details = Json.parseToJsonElement("""{"retryAfterSeconds":90}"""),
+            ),
+    )
 
     private fun planChangeTurns() =
         listOf(
@@ -245,7 +270,7 @@ class TutorScreenshots {
         val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main))
         return TutorViewModel(
-            TutorScope.Plan("goal"),
+            TutorScope.Plan("goal", "conversation"),
             TutorStore(api, cache, session, {
                 MutationResult.Done(Unit)
             }, { _, _ ->

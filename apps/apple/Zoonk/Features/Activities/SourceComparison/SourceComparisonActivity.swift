@@ -4,10 +4,8 @@ extension ActivityRenderer {
   static let sourceComparison = ActivityRenderer(
     template: "sourceComparison",
     grade: ActivityExpectedAnswer.grader(SourceComparisonFields.self) { $0.expected }
-  ) { context in
-    if let fields = try? context.fields(as: SourceComparisonFields.self) {
-      SourceComparisonCanvas(fields: fields, context: context)
-    }
+  ) { context, fields in
+    SourceComparisonCanvas(fields: fields, context: context)
   }
 }
 

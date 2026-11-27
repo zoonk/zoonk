@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "savedlessons_empty": "1c13627840298e81ce330810a62dadb3db02ccdd97f294b62996764dd7a2aabc",
+  "savedlessons_no_longer_available": "9ae3ba95bab4a8e293173153cca245335e817fbb2d79f8e636d4602c724971c9",
+  "savedlessons_remove": "8e86423fad8c9f1f7b2958e55f582f634ddff0dc99aac84f5649ff43275e31d7",
+  "savedlessons_remove_failed": "8f34851505fb58b3c450c29b1f87c22164badd403b9cf7e4ab4a7e09aa9c1584",
+  "savedlessons_remove_spoken": "aeaa3d4328de47ab5180505904cab4ebc07f01893ea4ada5551bb3a8f9e33efc",
+  "savedlessons_save": "ca8f243c9a03ed6f87b6e1a151c93c25d333b285ab9c6179daa33fb25a6bdead",
+  "savedlessons_save_failed": "984111403afe5c4e92207e5f57c2b83acae5abe502bd4bfb68ca2b18df3c5611",
+  "savedlessons_save_named": "1d8435e7c2e15a93ed9cd832341e4147b8879db4cfd34b31fc0391adf0c45266",
+  "savedlessons_saved": "45c6b89cc04b8876a2af2b2ad2f9f80eae1dc0e33f6d91f0a665eb87f4edda9d",
+  "savedlessons_saved_named": "45206e8c03dad6d108848b0c23692526a26b799c3c2560518fb7608c4b90f02d",
+  "savedlessons_show_more": "e618d8c95ec3861be0b03abe77ceb85ca482853a844f96e39b89f773fce72b8e",
+  "savedlessons_unsave": "36221d4264d371e7a7a8a246117696575230e91c6c714558336a497f4453db07"
+}
+-->
+<resources>
+    <string name="savedlessons_save">Kaydet</string>
+    <!-- Says the lesson is saved to do again later: the bookmark's state. -->
+    <string name="savedlessons_saved">Kaydedildi</string>
+    <string name="savedlessons_save_named">Kaydet: %1$s</string>
+    <!-- Read aloud for the bookmark on a saved lesson's row, which removes it: says the lesson {title} is saved. -->
+    <string name="savedlessons_saved_named">%1$s kaydedildi</string>
+    <!-- Takes a lesson out of the saved lessons, from its row's menu or swipe -->
+    <string name="savedlessons_unsave">Kaydedilenlerden kaldır</string>
+    <string name="savedlessons_empty">Henüz kaydedilen bir şey yok. Bir dersi burada tutmak için dersin yer imi simgesine dokun.</string>
+    <string name="savedlessons_no_longer_available">Artık kullanılamıyor</string>
+    <string name="savedlessons_remove">Kaldır</string>
+    <!-- What screen readers say for Remove, naming the lesson. -->
+    <string name="savedlessons_remove_spoken">%1$s adlı dersi kaydedilen derslerden kaldır</string>
+    <string name="savedlessons_show_more">Daha fazla göster</string>
+    <string name="savedlessons_save_failed">Bu ders kaydedilemedi. Tekrar dene.</string>
+    <!-- Taking the lesson out of the saved lessons didn't work, so it's still saved. -->
+    <string name="savedlessons_remove_failed">Bu ders kaldırılamadı. Tekrar dene.</string>
+</resources>

@@ -4,7 +4,6 @@ import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { ensureGuest } from "@zoonk/e2e/fixtures/guests";
 import { type E2EUser, createE2EUser } from "@zoonk/e2e/fixtures/users";
-import { expectHydrated } from "@zoonk/e2e/hydration";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
@@ -233,7 +232,6 @@ test.describe("Goals typed together beyond the goals the free plan follows at on
     await page.goto("/today");
 
     const switcher = page.getByRole("button", { name: /^Learn English.*Switch goal$/u });
-    await expectHydrated(switcher);
     await switcher.click();
 
     await expect(
@@ -245,7 +243,6 @@ test.describe("Goals typed together beyond the goals the free plan follows at on
     });
 
     await page.reload();
-    await expectHydrated(switcher);
     await switcher.click();
     await page.getByRole("menuitem", { name: `${STATISTICS.subject} Ready to start` }).click();
 
@@ -269,7 +266,6 @@ test.describe("Goals typed together beyond the goals the free plan follows at on
     await page.goto("/today");
 
     const switcher = page.getByRole("button", { name: /^Learn English.*Switch goal$/u });
-    await expectHydrated(switcher);
     await switcher.click();
 
     await page

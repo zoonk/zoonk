@@ -651,6 +651,8 @@ private fun PreparationParts(
         retention.value?.let { DetailRow(stringResource(R.string.plan_remembered), formatPercent(it, locale), mono = true) }
         if (taken > 0) {
             when (mocks.kind) {
+                PreparationComponentsMocks.Kind.UNKNOWN_DEFAULT_OPEN_API -> {}
+
                 PreparationComponentsMocks.Kind.FULL_REVIEWS -> {
                     DetailRow(
                         stringResource(R.string.plan_reviews_of_every_topic),
@@ -743,6 +745,10 @@ private fun NextSteps(
         }
     val test =
         when (mocks.kind) {
+            PreparationComponentsMocks.Kind.UNKNOWN_DEFAULT_OPEN_API -> {
+                null
+            }
+
             PreparationComponentsMocks.Kind.FULL_REVIEWS -> {
                 NextStep(LearnKind.Practice, stringResource(R.string.plan_next_review_every_topic), testDetail)
             }

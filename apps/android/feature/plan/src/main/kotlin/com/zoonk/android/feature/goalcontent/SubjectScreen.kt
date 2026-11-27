@@ -396,17 +396,18 @@ internal fun knownLine(subject: SyllabusSubject): String? {
 }
 
 /** A write action's state, whichever variant the server sent. */
-private val WrittenPracticeSubjectsInnerWriteActionsInner.status: String
+private val WrittenPracticeSubjectsInnerWriteActionsInner.status: String?
     get() =
         when (val availability = availability) {
+            is WriteAvailability.WrittenPracticeSubjectsInnerWriteActionsInnerAvailabilityOneOf1Value -> null
             is WriteAvailability.StudyBlockWritingAvailabilityOneOfValue -> availability.value.status.value
             is WriteAvailability.StudyBlockWritingAvailabilityOneOf1Value -> availability.value.status.value
-            is WriteAvailability.WrittenPracticeSubjectsInnerAvailabilityValue -> availability.value.status.value
+            is WriteAvailability.WrittenPracticeSubjectsInnerWriteActionsInnerAvailabilityOneOfValue -> availability.value.status.value
         }
 
 private val WrittenPracticeSubjectsInnerWriteActionsInner.choiceGroups: List<String>
     get() =
-        (availability as? WriteAvailability.WrittenPracticeSubjectsInnerAvailabilityValue)
+        (availability as? WriteAvailability.WrittenPracticeSubjectsInnerWriteActionsInnerAvailabilityOneOfValue)
             ?.value
             ?.choiceGroups
             .orEmpty()

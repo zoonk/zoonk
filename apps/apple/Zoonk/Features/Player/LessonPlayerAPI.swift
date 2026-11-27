@@ -59,6 +59,8 @@ struct LessonRunStart: Hashable, Sendable {
   let answers: [LessonRunAnswer]
   let hyperdrive: LessonHyperdriveStart
   let optionalStepIds: [String]
+  /// The learner saved the lesson to do again.
+  var saved = false
 }
 
 struct LessonFit: Hashable, Sendable {
@@ -123,6 +125,7 @@ struct LessonPlayerAPI: Sendable {
     switch output {
     case .ok(let response):
       switch try response.body.json {
+      case .case4: throw APIError.unavailable
       case .case1(let ready):
         let lesson = ready.lesson
         return .ready(
@@ -194,7 +197,7 @@ struct LessonPlayerAPI: Sendable {
           },
           hyperdrive: LessonHyperdriveStart(
             knownStepIds: Set(run.hyperdrive.knownStepIds), streak: run.hyperdrive.streak),
-          optionalStepIds: run.optionalStepIds ?? []))
+          optionalStepIds: run.optionalStepIds ?? [], saved: run.saved))
     case .unauthorized:
       throw APIError.unauthorized
     case .notFound:
@@ -299,7 +302,15 @@ struct LessonPlayerAPI: Sendable {
             PlanRevealLead(goalID: $0.goalId, goalTitle: $0.goalTitle, planReady: $0.planReady)
           },
           placementOffer: completion.placementOffer.flatMap {
-            try? PracticeJSON.recode($0, as: LevelCheckOffer.self)
+            switch $0 {
+            case .case1(let offer):
+              LevelCheckOffer(goalId: offer.goalId, kind: .quick)
+            case .case2(let offer) where offer.level != .unrecognized:
+              LevelCheckOffer(
+                goalId: offer.goalId, kind: .levelTestOut, level: offer.level.rawValue)
+            case .case2, .case3:
+              nil
+            }
           }))
     case .unprocessableContent:
       return .incomplete
@@ -527,7 +538,7 @@ struct LessonPlayerAPI: Sendable {
     switch code {
     case "SLOW_DOWN":
       let seconds = (details?["retryAfterSeconds"] ?? nil) as? Int ?? 30
-      return .slowDown(retryAfterSeconds: seconds)
+      return .slowDown(until: .now.addingTimeInterval(TimeInterval(seconds)))
     case "SIGN_UP_REQUIRED":
       return .limitReached(tier: .guest, period: .day)
     default:

@@ -8,6 +8,7 @@ extension ProfileQuestion {
   /// The questions about the learner's life, which become memory and need it on.
   var isBiography: Bool {
     switch self {
+    case .unrecognized: false
     case .addressForm, .conditions, .learningSupport: false
     case .work, .tools, .studies, .watch, .listen, .play, .read, .activities: true
     }
@@ -16,7 +17,7 @@ extension ProfileQuestion {
 
 extension Components.Schemas.OnboardingStep {
   var profileQuestion: ProfileQuestion? {
-    ProfileQuestion(rawValue: rawValue)
+    self == .unrecognized ? nil : ProfileQuestion(rawValue: rawValue)
   }
 }
 
@@ -284,6 +285,7 @@ struct ProfileDraft: Equatable {
     let text = declined ? "" : trimmed(text)
 
     switch question {
+    case .unrecognized: return [:]
     case .work:
       return [
         "declined": declined,

@@ -8,16 +8,20 @@ import {
   isRollingCap,
   receivedAtOf,
   useComesBackLine,
+  useLines,
   useMapLessonsWords,
   useOpeningDay,
 } from "./comes-back-words";
 import { CreateAccountLink } from "./create-account-link";
+import { useSlowDownWords } from "./slow-down-words";
 import {
   GateWords,
   SignUpMainAction,
   SubscribeAction,
   SubscribeMainAction,
 } from "./subscribe-gate";
+
+export { slowDownEnd } from "./slow-down-words";
 
 /**
  * A refusal as it arrives in answer to a request this screen just made, stamped with that moment so
@@ -40,7 +44,30 @@ export function useLiveLimit<Limit extends object>(limit: Limit | null): Limit |
 
 type SignUpRequired = { status: "signUpRequired" };
 
-type SlowDown = { retryAfterSeconds: number; status: "slowDown" };
+/**
+ * A short break, over `retryAfterSeconds` after the refusal: at `availableAt` when the screen knows
+ * that instant, else counted from `receivedAt`, else from when its notice first shows.
+ */
+export type SlowDown = {
+  availableAt?: string;
+  receivedAt?: number;
+  retryAfterSeconds: number;
+  status: "slowDown";
+};
+
+/**
+ * Said once to a screen reader, from a place that stays when the notice goes, that a short break is
+ * over and the learner can try again.
+ */
+export function WaitOverStatus({ over }: { over: boolean }) {
+  const { ready } = useLines();
+
+  return (
+    <p className="sr-only" role="status">
+      {over ? ready() : null}
+    </p>
+  );
+}
 
 /**
  * A cap counted over the last 30 days, the rule for every monthly cap: each use comes back 30 days
@@ -93,9 +120,16 @@ type LimitNoticeProps = {
 
 /**
  * `opened`: the cap's day has come, so nothing ran out any more: no title says it did and nothing is
- * offered to buy; only `line` (or the lesson's ready title) is said.
+ * offered to buy; only `line` (or the lesson's ready title) is said. `said`: what a screen reader
+ * hears in place of a `line` that counts down, so it isn't read again every second.
  */
-export type LimitWords = { line?: string; opened?: boolean; provisional?: boolean; title?: string };
+export type LimitWords = {
+  line?: string;
+  opened?: boolean;
+  provisional?: boolean;
+  said?: string;
+  title?: string;
+};
 
 /** What the learner asked for when the help ran out; without it the notice names no kind. */
 export type HelpKind = "explanations" | "messages" | "questions" | "uploads";
@@ -138,7 +172,12 @@ function LimitNoticeBody({
 
   return (
     <div className={cn("flex flex-col items-start gap-2", className)}>
-      <GateWords line={words.line} provisional={words.provisional} title={words.title} />
+      <GateWords
+        line={words.line}
+        provisional={words.provisional}
+        said={words.said}
+        title={words.title}
+      />
 
       {(wayOn || action) && (
         <div className="flex flex-wrap gap-2">
@@ -170,9 +209,10 @@ type CapTitles = { day: string; guest: string; rolling: string };
 function useCapWords(limit: HelpLimit, titles: CapTitles): LimitWords {
   const t = useExtracted();
   const comesBack = useComesBackLine(limit);
+  const slowDown = useSlowDownWords(limit.status === "slowDown" ? limit : null);
 
   if (limit.status === "slowDown") {
-    return { line: t("Take a short break, then try again.") };
+    return slowDown ?? {};
   }
 
   if (limit.status === "signUpRequired") {

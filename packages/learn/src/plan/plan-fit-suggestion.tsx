@@ -112,7 +112,7 @@ function OfferSuggestion({
 
           <SuggestionActions
             main={
-              <SuggestionAction action={accept} busy={isPending}>
+              <SuggestionAction onClick={accept} busy={isPending}>
                 {t("Add to plan")}
               </SuggestionAction>
             }

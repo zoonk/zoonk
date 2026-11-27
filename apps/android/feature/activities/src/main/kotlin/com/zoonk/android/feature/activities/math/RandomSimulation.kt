@@ -99,6 +99,10 @@ private fun simulateRun(
             val birthdays = List(model.value.people.toInt()) { floor(random() * model.value.days).toInt() }
             if (birthdays.toSet().size < birthdays.size) 1 else 0
         }
+
+        else -> {
+            0
+        }
     }
 
 internal fun isHit(
@@ -109,6 +113,7 @@ internal fun isHit(
         is BinomialModel -> model.value.hit.matches(outcome)
         is DiceSumModel -> model.value.hit.matches(outcome)
         is SharedBirthdayModel -> outcome == 1
+        else -> false
     }
 
 internal fun hitProbability(model: ChanceModel): Double =
@@ -128,6 +133,10 @@ internal fun hitProbability(model: ChanceModel): Double =
         is SharedBirthdayModel -> {
             val (days, people) = model.value.days.toInt() to model.value.people.toInt()
             if (people > days) 1.0 else 1 - (0 until people).fold(1.0) { product, index -> product * ((days - index).toDouble() / days) }
+        }
+
+        else -> {
+            Double.NaN
         }
     }
 
@@ -152,6 +161,7 @@ internal fun truthOf(population: Population): Double =
     when (population) {
         is ProportionPopulation -> population.value.proportion
         is MeanPopulation -> population.value.mean
+        else -> Double.NaN
     }
 
 internal fun standardError(
@@ -163,6 +173,7 @@ private fun spreadOf(population: Population): Double =
     when (population) {
         is ProportionPopulation -> population.value.proportion.let { sqrt(it * (1 - it)) }
         is MeanPopulation -> population.value.sd
+        else -> Double.NaN
     }
 
 internal fun simulateSamples(
@@ -186,6 +197,10 @@ internal fun simulateSamples(
                 } else {
                     clamp(jsRound(size * (proportion + error * standardNormal(random))), 0.0, size.toDouble()) / size
                 }
+            }
+
+            else -> {
+                return emptyList()
             }
         }
     }
@@ -235,6 +250,7 @@ internal fun valueDigits(
 
 private fun PlayableLibraryStepAnyOfContentOneOf8FieldsOneOfModelOneOfHit.matches(outcome: Int): Boolean =
     when (comparison) {
+        Comparison.UNKNOWN_DEFAULT_OPEN_API -> false
         Comparison.AT_LEAST -> outcome >= `value`
         Comparison.AT_MOST -> outcome <= `value`
         Comparison.EXACTLY -> outcome.toLong() == `value`

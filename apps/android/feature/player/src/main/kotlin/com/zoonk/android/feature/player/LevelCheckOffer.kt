@@ -21,20 +21,29 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SuggestionSaveError
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.api.models.LibraryLessonCompletionPlacementOffer
+import com.zoonk.api.models.LibraryLessonCompletionPlacementOfferOneOf1
 
 /** A level test-out names its level; the quick test takes none. */
 private val LibraryLessonCompletionPlacementOffer.level: String?
     get() = (this as? LibraryLessonCompletionPlacementOffer.LibraryLessonCompletionPlacementOfferOneOf1Value)?.value?.level?.value
 
 /** Where the offer opens: the test of what the learner knows, or a level's test-out with that choice picked. */
-internal fun LibraryLessonCompletionPlacementOffer.route(): AppRoute =
+internal fun LibraryLessonCompletionPlacementOffer.route(): AppRoute? =
     when (this) {
         is LibraryLessonCompletionPlacementOffer.LibraryLessonCompletionPlacementOfferOneOfValue -> {
             AppRoute.PlacementTest(value.goalId.toString())
         }
 
         is LibraryLessonCompletionPlacementOffer.LibraryLessonCompletionPlacementOfferOneOf1Value -> {
-            AppRoute.LevelTest(value.goalId.toString(), testOut = true)
+            if (value.level == LibraryLessonCompletionPlacementOfferOneOf1.Level.UNKNOWN_DEFAULT_OPEN_API) {
+                null
+            } else {
+                AppRoute.LevelTest(value.goalId.toString(), testOut = true)
+            }
+        }
+
+        is LibraryLessonCompletionPlacementOffer.LibraryLessonCompletionPlacementOfferOneOf2Value -> {
+            null
         }
     }
 
@@ -50,6 +59,7 @@ internal fun LevelCheckOffer(
     onOpen: (AppRoute) -> Unit,
     onDismiss: () -> Unit,
 ) {
+    val route = offer.route() ?: return
     val level = offer.level
     OutlinedCard(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -71,7 +81,7 @@ internal fun LevelCheckOffer(
                 )
             }
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedButton(onClick = { onOpen(offer.route()) }, enabled = !dismissing) {
+                OutlinedButton(onClick = { onOpen(route) }, enabled = !dismissing) {
                     Text(
                         if (level != null) {
                             stringResource(R.string.placementtest_test_out, level)

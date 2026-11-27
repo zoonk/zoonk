@@ -36,6 +36,7 @@ export function TestLink({
       aria-keyshortcuts={keyShortcuts}
       className={className}
       href={href}
+      // oxlint-disable-next-line zoonk/held-press-control -- This browser-test adapter replaces navigation while rendering the player directly.
       onClick={(event) => {
         onClick?.(event);
         event.preventDefault();
@@ -91,6 +92,7 @@ export function startedRun({
   optionalStepIds,
   replay = false,
   runId = crypto.randomUUID(),
+  saved = false,
   startedAt = new Date().toISOString(),
 }: Partial<Extract<LessonStartOutcome, { reason: "started" }>> = {}) {
   return {
@@ -102,6 +104,7 @@ export function startedRun({
     reason: "started" as const,
     replay,
     runId,
+    saved,
     startedAt,
   };
 }

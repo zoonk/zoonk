@@ -1,5 +1,6 @@
 "use client";
 
+import { BusyIcon } from "@zoonk/ui/components/button";
 import { SIDEBAR_ITEM_CLASS } from "@zoonk/ui/components/sidebar";
 import { SidebarTooltip } from "@zoonk/ui/components/sidebar-toggle";
 import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
@@ -143,11 +144,11 @@ function NavigationRoot({ ...props }: React.ComponentProps<"nav">) {
 }
 
 /**
- * A tapped tab whose page is still on its way (its link marked `data-link-pending`) takes the mark
- * at once.
+ * A tapped tab whose page is still on its way (its link marked `data-link-pending`, or `data-held`
+ * when tapped before the page hydrates) takes the mark at once.
  */
 const TAB_ITEM_CLASS =
-  "focus-visible:ring-ring/50 text-muted-foreground hover:bg-foreground/5 hover:text-foreground aria-[current=page]:bg-muted aria-[current=page]:text-foreground has-data-link-pending:bg-muted has-data-link-pending:text-foreground press font-medium outline-none focus-visible:ring-[3px]";
+  "focus-visible:ring-ring/50 text-muted-foreground hover:bg-foreground/5 hover:text-foreground aria-[current=page]:bg-muted aria-[current=page]:text-foreground has-data-link-pending:bg-muted has-data-link-pending:text-foreground data-held:bg-muted data-held:text-foreground press font-medium outline-none focus-visible:ring-[3px]";
 
 /**
  * Every item shares the bar's rows (room above, icon, title, room below), so the icons stay on one
@@ -169,7 +170,7 @@ const SIDE_TAB_ITEM_CLASS = cn(
 );
 
 const PENDING_NAVIGATION_CLASS =
-  "[&:has([data-link-pending])_[aria-current=page]]:bg-transparent [&:has([data-link-pending])_[aria-current=page]]:text-muted-foreground";
+  "[&:has([data-link-pending])_[aria-current=page]]:bg-transparent [&:has([data-link-pending])_[aria-current=page]]:text-muted-foreground [&:has(a[data-held])_[aria-current=page]:not([data-held])]:bg-transparent [&:has(a[data-held])_[aria-current=page]:not([data-held])]:text-muted-foreground";
 
 function SideTab({
   activeTab,
@@ -235,7 +236,9 @@ function TabBarSearch({ onSearch }: { onSearch: () => void }) {
       type="button"
     >
       <span className={BOTTOM_TAB_ICON_CLASS}>
-        <SearchIcon aria-hidden="true" className="size-5" />
+        <BusyIcon>
+          <SearchIcon aria-hidden="true" className="size-5" />
+        </BusyIcon>
       </span>
       <span className={cn(BOTTOM_TAB_TITLE_CLASS, "@max-xs/tabs:sr-only")} data-slot="tab-title">
         {t({

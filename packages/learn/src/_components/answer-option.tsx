@@ -8,6 +8,7 @@ import { useExtracted } from "next-intl";
 import { useLayoutEffect, useRef } from "react";
 import { SpokenMath } from "../rich-text/spoken-math";
 import {
+  ANSWER_HELD_TONE,
   ANSWER_OPTION_CLASS,
   ANSWER_TAG_CLASS,
   ANSWER_TAG_TONE,
@@ -165,7 +166,10 @@ export function OptionMarker({
       )}
     >
       <Kbd
-        className={cn("[&_svg]:size-3", picked && "bg-selected text-selected-foreground ring-0")}
+        className={cn(
+          "in-data-held:bg-selected in-data-held:text-selected-foreground in-data-[held=unchecked]:bg-foreground/4! in-data-[held=unchecked]:text-muted-foreground! in-data-held:ring-0 in-data-[held=unchecked]:ring-1! [&_svg]:size-3",
+          picked && "bg-selected text-selected-foreground ring-0",
+        )}
       >
         {marker}
       </Kbd>
@@ -207,6 +211,7 @@ export function AnswerOption({
         ANSWER_OPTION_CLASS,
         "focus-visible:outline-ring/50 enabled:hover:bg-muted/60 press outline-none select-none [--press-scale:0.99] focus-visible:outline-3 focus-visible:outline-solid disabled:cursor-default",
         ANSWER_TONE.idle,
+        ANSWER_HELD_TONE,
         layout === "row" && "flex-wrap",
         layout === "stacked" && "flex-col items-stretch p-2",
         picked && !result && cn(ANSWER_TONE.picked, "enabled:hover:bg-selected-tint"),
@@ -222,6 +227,8 @@ export function AnswerOption({
         onKeyDown?.(event);
       }}
       role={picks ? "radio" : undefined}
+      // A press made before the page hydrates marks it held, drawn as picked.
+      suppressHydrationWarning
       type={picks ? "button" : "submit"}
       {...props}
     >

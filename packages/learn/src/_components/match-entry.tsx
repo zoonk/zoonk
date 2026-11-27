@@ -6,7 +6,7 @@ import { ignoreHeldEnter } from "@zoonk/ui/hooks/keyboard";
 import { pickKey, shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { XIcon } from "lucide-react";
-import { ANSWER_BOX_CLASS, ANSWER_TONE } from "./answer-tone";
+import { ANSWER_BOX_CLASS, ANSWER_HELD_TONE, ANSWER_TONE } from "./answer-tone";
 import { DoneMark } from "./status-mark";
 
 /**
@@ -150,6 +150,7 @@ export function MatchEntry({
         "h-full px-3",
         "focus-visible:outline-ring/50 press outline-none select-none [--press-scale:0.99] focus-visible:outline-3 focus-visible:outline-solid disabled:cursor-default",
         ENTRY_TONE[state],
+        ANSWER_HELD_TONE,
         className,
       )}
       data-slot="match-entry"

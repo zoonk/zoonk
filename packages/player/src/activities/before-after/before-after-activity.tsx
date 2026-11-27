@@ -3,6 +3,7 @@
 import { useFormatNumber } from "@zoonk/learn/format-number";
 import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { useSpokenText } from "@zoonk/learn/rich-text/speech";
+import { BusyIcon } from "@zoonk/ui/components/button";
 import { ArrowDown, Eye } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
@@ -84,7 +85,9 @@ export function BeforeAfterActivity({ content, labelId, phase }: BeforeAfterProp
           onClick={() => setIsRevealed(true)}
           type="button"
         >
-          <Eye aria-hidden="true" className="size-4" />
+          <BusyIcon>
+            <Eye aria-hidden="true" className="size-4" />
+          </BusyIcon>
           {t("Show after: {label}", { label: fields.after.label })}
         </button>
       )}

@@ -2,6 +2,7 @@ package com.zoonk.android.feature.mindmaps
 
 import com.zoonk.api.models.GoalMindMap
 import com.zoonk.api.models.GoalMindMaps
+import com.zoonk.api.models.SavedMindMap
 import com.zoonk.api.models.SavedMindMapKind
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -81,11 +82,20 @@ fun GoalMindMaps.deck(tab: StudyTab): List<DeckSlot> =
             saved.filter { it.available }.mapNotNull { entry ->
                 val chapterId = entry.chapterId?.toString() ?: return@mapNotNull null
                 when (entry.kind) {
+                    SavedMindMapKind.UNKNOWN_DEFAULT_OPEN_API -> null
                     SavedMindMapKind.CHAPTER -> DeckSlot.Chapter(chapterId)
                     SavedMindMapKind.LESSON -> DeckSlot.Lesson(chapterId, entry.targetId.toString())
                 }
             }
         }
+    }
+
+/** The deck a saved map's row opens it in: Saved, or its kind's once the learner removed it there, since Saved no longer holds it. */
+fun SavedMindMap.deckTab(saved: Boolean): StudyTab =
+    when {
+        saved -> StudyTab.Saved
+        kind == SavedMindMapKind.LESSON -> StudyTab.Lessons
+        else -> StudyTab.Chapters
     }
 
 /** A chapter map ready to read. */

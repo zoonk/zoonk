@@ -46,6 +46,7 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.zoonk.android.R
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.balanced
@@ -265,6 +266,12 @@ fun ListRowChevron() {
     EndGlyph(R.drawable.ic_row_chevron, MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f))
 }
 
+/** Main's plus at a row's end: the row starts something new where its neighbors open a page, in the chevron's slot and ink. */
+@Composable
+fun ListRowPlus() {
+    EndGlyph(R.drawable.ic_row_plus, MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f))
+}
+
 /** Main's `ListRowChevronSpace`: the chevron's empty slot, so a header's words end where the rows' values do. */
 @Composable
 fun ListRowChevronSpace() {
@@ -325,8 +332,9 @@ fun MarkedLine(
 
 /**
  * A row's mark, title, value and descriptions, placed as E5 and E6 say. The value sits at the end, past
- * [VALUE_GAP], or moves under the title when the title would get too little room (half the width, or what
- * it needs) or the words beside it would stand taller than with it under them. Beside one or two lines (the title however it wraps, a value moved under it, each description)
+ * [VALUE_GAP], so a list's values keep one column however its titles wrap, and moves under the title only
+ * when the title would get less than [TITLE_BASIS] (or what it needs) or the words are narrower than
+ * [STACKED_WIDTH], as main's title row wraps. Beside one or two lines (the title however it wraps, a value moved under it, each description)
  * the mark is centered on the words; beside three or more, or as a text lead ([leadingOnFirstLine]), it is
  * centered on the first line, a line as tall as [firstLine]'s at this text size. A value beside the words
  * sits on the row's center.
@@ -357,14 +365,11 @@ private fun RowContent(
         val titleMeasurable = titles.first()
         val room = width - (valuePlaceable?.let { it.width + VALUE_GAP.roundToPx() } ?: 0)
         val notesMeasurable = notes.firstOrNull()
-        val wordsHeightAt = { textWidth: Int ->
-            titleMeasurable.minIntrinsicHeight(textWidth) + (notesMeasurable?.minIntrinsicHeight(textWidth) ?: 0)
-        }
         val beside =
             valuePlaceable == null ||
                 (
-                    room >= minOf(titleMeasurable.maxIntrinsicWidth(Constraints.Infinity), width / 2) &&
-                        wordsHeightAt(room) <= wordsHeightAt(width) + valuePlaceable.height
+                    width >= STACKED_WIDTH.roundToPx() &&
+                        room >= minOf(titleMeasurable.maxIntrinsicWidth(Constraints.Infinity), TITLE_BASIS.roundToPx())
                 )
         val textWidth = if (beside) room.coerceAtLeast(0) else width
         val titlePlaceable = titleMeasurable.measure(Constraints(maxWidth = textWidth))
@@ -471,6 +476,10 @@ private val END_SLOT = 16.dp
 
 /** Main's `gap-3` between a row's title and the value at its end. */
 private val VALUE_GAP = 12.dp
+
+/** Main's title row: the title keeps 6rem beside a value, and words narrower than 11rem stack. */
+private val TITLE_BASIS = 96.sp
+private val STACKED_WIDTH = 176.sp
 
 /** E5: beside three lines or more, a row's mark goes with the first. */
 private const val THREE_LINES = 3

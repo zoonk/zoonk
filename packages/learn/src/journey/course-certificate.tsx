@@ -67,7 +67,7 @@ function ClaimAction({
 
   return (
     <SuggestionAction
-      action={claim}
+      onClick={claim}
       busy={isPending}
       icon={<AwardIcon aria-hidden="true" />}
       variant={variant}
