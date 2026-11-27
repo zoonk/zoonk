@@ -91,10 +91,11 @@ class FocusTestOutcomesTest {
                         goalId: String,
                         fromScratch: Boolean,
                         attempt: PlacementPart?,
+                        answered: Long?,
                     ): PlacementCompletion {
                         gate.await()
                         if (fails) throw ApiException(ApiError.Network)
-                        return fake.finishPlacement(session, goalId, fromScratch, attempt)
+                        return fake.finishPlacement(session, goalId, fromScratch, attempt, answered)
                     }
                 }
             val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
@@ -126,13 +127,11 @@ class FocusTestOutcomesTest {
         return times
     }
 
-    /** A question of an open sitting, as the screen shows it once the learner is in it. */
-    private fun FocusTestViewModel.question(): FocusTestPhase.Question {
-        resume()
-        return phase(
+    /** A question of an open sitting, as the screen shows it. */
+    private fun FocusTestViewModel.question(): FocusTestPhase.Question =
+        phase(
             LoadState.Loaded(placementOf(focusTest = focusTestOf(sitting = focusSittingOf(questions = 2)))),
         ) as FocusTestPhase.Question
-    }
 
     private val picked = Answer.Choice(0)
 

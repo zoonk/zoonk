@@ -13,6 +13,7 @@ import com.zoonk.android.data.Visit
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.setup.refreshed
+import com.zoonk.android.feature.placementtest.TestVisit
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.tap
@@ -53,18 +54,25 @@ internal class FocusTestViewModel(
     /** The learner left the test and the host saved it: the host goes on. */
     val left = visit.outcome<Unit>()
 
+    /** When this visit began and whether it opened a sitting, for the first question's analytics. */
+    val sitting = TestVisit()
+
     private val failure = visit.outcome<Unit>()
     private val saveFailure = visit.outcome<Int>()
 
     private var savedEntered by handle.saved { false }
+    private var autoStarted by handle.saved { false }
 
-    /** The learner started or resumed a sitting in this visit, so its questions show instead of its resume screen. */
+    /** The learner started a sitting in this visit, so its wait shows instead of the offer or the last result. */
     private var entered by mutableStateOf(savedEntered)
 
     private var closed by mutableStateOf<FocusTest?>(null)
 
     /** Sittings entered in this visit: a proposal's answer belongs to the result before the next one. */
     private var sittings = 0
+
+    /** Which sitting of this visit is open, for its first question's analytics. */
+    val sittingsEntered get() = sittings
 
     var pressed by mutableStateOf<Pressed?>(null)
         private set
@@ -101,6 +109,7 @@ internal class FocusTestViewModel(
 
     fun start() =
         save(Pressed.Main) { asked ->
+            sitting.started()
             when (val started = store.startPlacementSitting(goalId)) {
                 is WriteOutcome.Done -> {
                     enter()
@@ -120,12 +129,18 @@ internal class FocusTestViewModel(
     /** The result's "Answer more questions": the same start, from its other button. */
     fun continueTest() =
         save(Pressed.Other) {
+            sitting.started()
             val started = store.startPlacementSitting(goalId)
             if (started is WriteOutcome.Done) enter()
             started !is WriteOutcome.Failed && started !is WriteOutcome.Refused
         }
 
-    fun resume() = enter()
+    /** A learner who asked for the test on the level question, or pressed Today's "Start the test", goes straight in, once. */
+    fun startAsked() {
+        if (autoStarted) return
+        autoStarted = true
+        start()
+    }
 
     fun answer(
         question: FocusTestPhase.Question,

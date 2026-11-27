@@ -1202,14 +1202,18 @@ class PlanScreenshots {
     }
 
     private companion object {
-        const val LEARN_TEST_START = """{"kind":"learn","state":"start","estimatedMinutes":40,"attempt":null,"result":null}"""
+        const val LEARN_TEST_START =
+            """{"kind":"learn","state":"start","estimatedMinutes":85,"attempt":null,"result":null,
+             "offer":{"estimatedMinutes":6,"questions":12,"wholeCourse":{"estimatedMinutes":85,"parts":14}}}"""
 
         const val LEARN_TEST_CONTINUE =
-            """{"kind":"learn","state":"continue","estimatedMinutes":25,"result":null,
-             "attempt":{"id":"0a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d","length":"wholeCourse","part":2,"partComplete":false,"estimatedMinutes":25}}"""
+            """{"kind":"learn","state":"continue","estimatedMinutes":85,"result":null,"offer":null,
+             "attempt":{"id":"0a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d","length":"wholeCourse","part":3,"partComplete":true,"estimatedMinutes":6,
+              "answered":12,"chapter":null,"nextPart":4,"parts":14,"partsLeft":11,"questions":12,"remainingEstimatedMinutes":66,"resume":null,
+              "totalEstimatedMinutes":85}}"""
 
         const val LEARN_TEST_RESULT =
-            """{"kind":"learn","state":"result","estimatedMinutes":30,"attempt":null,
+            """{"kind":"learn","state":"result","estimatedMinutes":30,"attempt":null,"offer":null,
              "result":{"attemptId":"0a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d","finishedAt":"2026-11-18T14:00:00Z","lessonsSkipped":6}}"""
 
         const val LANGUAGE_TEST_RESULT =
@@ -1265,11 +1269,11 @@ class PlanScreenshots {
 }
 
 private const val NOT_STARTED =
-    """{"state":"notStarted","offer":{"minutes":15},"sessionQuestions":"off","suggestsFocus":true}"""
+    """{"state":"notStarted","offer":{"minutes":6,"questions":6},"sessionQuestions":"off","suggestsFocus":true}"""
 private const val SITTING =
-    """{"state":"sitting","offer":{"minutes":9},"sessionQuestions":"off","suggestsFocus":true}"""
+    """{"state":"sitting","offer":{"minutes":3,"questions":3},"sitting":{"answered":2,"questions":6},"sessionQuestions":"off","suggestsFocus":true}"""
 private const val CHECKED =
-    """{"state":"checked","offer":{"minutes":10},"sessionQuestions":"on","suggestsFocus":true}"""
+    """{"state":"checked","offer":{"minutes":6,"questions":6},"sessionQuestions":"on","suggestsFocus":true}"""
 
 private val PAUSED = CHECKED.replace(""""sessionQuestions":"on"""", """"sessionQuestions":"paused"""")
 

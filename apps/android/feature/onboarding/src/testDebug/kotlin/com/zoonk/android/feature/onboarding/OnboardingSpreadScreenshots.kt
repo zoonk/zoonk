@@ -152,7 +152,7 @@ class OnboardingSpreadScreenshots {
                 val plans = FakePlanApi()
                 val placement =
                     ApiJson.decodeFromString<PlanPlacementTest>(
-                        """{"kind":"learn","state":"start","estimatedMinutes":36,"attempt":null,"result":null}""",
+                        """{"kind":"learn","state":"start","estimatedMinutes":36,"attempt":null,"result":null,"offer":null}""",
                     )
                 plans.shownPlan = plans.shownPlan.copy(placementTest = placement)
                 PlanStore(plans, cache)

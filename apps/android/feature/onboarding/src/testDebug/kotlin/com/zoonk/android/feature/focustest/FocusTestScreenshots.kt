@@ -103,16 +103,16 @@ class FocusTestScreenshots(
         )
 
     @Test
-    fun question() = shoot("question", startable(focusSittingOf(answered = 3))) { tap("Start the test") }
+    fun question() = shoot("question", startable(focusSittingOf(answered = 3))) { tap("Start") }
 
     @Test
     fun questionManyUnknown() =
         shoot("question-many-unknown", startable(focusSittingOf(answered = 5, hint = "manyUnknown"))) {
-            tap("Start the test")
+            tap("Start")
         }
 
     @Test
-    fun resume() = shoot("resume", FakeOnboardingApi().apply { placement = RESUMING })
+    fun resume() = shoot("question-resumed", FakeOnboardingApi().apply { placement = RESUMING })
 
     @Test
     fun ended() =
@@ -261,7 +261,7 @@ class FocusTestScreenshots(
                             plans,
                             GenerationRun(),
                             onRetryRun = null,
-                            onProgress = {},
+                            onSitting = {},
                             plan = if (onPlan) OnPlan(onChangeFocus = {}, questions = questions, startOnOpen = false) else null,
                         )
                     }
@@ -312,8 +312,8 @@ class FocusTestScreenshots(
 
         private val SESSION = AuthenticatedSession("ana", "token-a", "local-a")
 
-        /** The resume screen's way to the result. */
-        private const val SEE_RESULT = "See my result"
+        /** An open sitting's way to the result. */
+        private const val SEE_RESULT = "Stop and use my answers"
 
         private const val QUESTION =
             """
@@ -335,7 +335,7 @@ class FocusTestScreenshots(
                     { placementOf(next = QUESTION.trimIndent(), focusTest = focusTestOf(asked = 3, sitting = sitting, offer = null)) }
             }
 
-        /** The resume screen's way out closes the sitting with [focus] as its result. */
+        /** Stopping the open sitting closes it with [focus] as its result. */
         private fun closing(
             focus: String?,
             lessonsSkipped: Int = 14,

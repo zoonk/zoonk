@@ -41,14 +41,17 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
+import com.zoonk.android.data.TestContext
 import com.zoonk.android.data.TrackVisibleWait
 import com.zoonk.android.data.collectShown
+import com.zoonk.android.data.recode
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.audio.SpeechFailedNote
 import com.zoonk.android.feature.audio.SpeechPlayer
@@ -63,12 +66,17 @@ import com.zoonk.android.feature.audio.withoutFailure
 import com.zoonk.android.feature.focustest.Note
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
+import com.zoonk.android.feature.placementtest.Sitting
+import com.zoonk.android.feature.placementtest.TestVisit
+import com.zoonk.android.feature.placementtest.TrackFirstQuestion
+import com.zoonk.android.feature.placementtest.sitting
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.Question
 import com.zoonk.android.feature.questions.QuestionFormat
 import com.zoonk.android.feature.questions.Select
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.ui.VisitOf
+import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.FilledIconButton
 import com.zoonk.android.ui.components.GenerationWait
@@ -101,6 +109,8 @@ internal class PlanAttempt(
     val onLeave: () -> Unit,
     val leaving: Boolean,
     val onboarding: Boolean = false,
+    /** The test's visit, held by its view model, so its first question is counted once. */
+    val visit: TestVisit,
     val finished: @Composable ColumnScope.(LanguageLevelTestResult) -> Unit,
 )
 
@@ -111,7 +121,7 @@ internal fun ColumnScope.LevelTestSteps(
     targetLanguage: String,
     store: OnboardingStore,
     navigator: AppNavigator,
-    onProgress: (Float?) -> Unit,
+    onSitting: (Sitting?) -> Unit,
     plan: PlanAttempt,
     onReportSaveFailure: () -> Unit = {},
 ) {
@@ -122,13 +132,17 @@ internal fun ColumnScope.LevelTestSteps(
     val poll = rememberPoll(active = phase == LevelTestPhase.Waiting && !vm.bank.isStopped) { vm.check() }
     val audioQuestion = (phase as? LevelTestPhase.Question)?.question?.takeIf { it.audioPending }?.id
     val audioPoll = rememberPoll(active = audioQuestion != null, key = audioQuestion) { vm.check() }
-    val progress =
-        when (phase) {
-            is LevelTestPhase.Question -> phase.progress
-            else -> null
-        }
-    LaunchedEffect(progress) { onProgress(progress) }
-    DisposableEffect(Unit) { onDispose { onProgress(null) } }
+    val context =
+        TestContext(
+            goalId = goalId,
+            test = TestContext.Kind.Language,
+            surface = if (plan.onboarding) TestContext.Surface.Onboarding else TestContext.Surface.Plan,
+            questions = (phase as? LevelTestPhase.Question)?.total?.toLong(),
+            attemptId = plan.attemptId.toString(),
+        )
+    val question = phase as? LevelTestPhase.Question
+    LaunchedEffect(question?.number) { onSitting(question?.let { sitting(context, it.number - 1L, it.total.toLong()) }) }
+    DisposableEffect(Unit) { onDispose { onSitting(null) } }
 
     when (phase) {
         LevelTestPhase.Loading -> {
@@ -138,7 +152,6 @@ internal fun ColumnScope.LevelTestSteps(
         LevelTestPhase.Waiting -> {
             val run = vm.bank.run().withPoll(poll.stopped)
             LevelTestWaiting(
-                targetLanguage = targetLanguage,
                 run = run,
                 onRetry =
                     when {
@@ -148,12 +161,12 @@ internal fun ColumnScope.LevelTestSteps(
                     },
                 pending = plan.leaving,
                 onSkip = plan.onLeave,
-                skipLabel = stringResource(if (plan.onboarding) R.string.onboarding_language_test_skip else R.string.focustest_not_now),
-                skipNote = stringResource(R.string.onboarding_language_test_skip_note).takeIf { plan.onboarding },
+                onboarding = plan.onboarding,
             )
         }
 
         is LevelTestPhase.Question -> {
+            TrackFirstQuestion(plan.visit, context, phase.number.toLong(), plan.attemptId.toString())
             SetupContent {
                 FinishFailed(vm.finishFailed)
                 key(phase.question.id) {
@@ -188,32 +201,12 @@ internal fun ColumnScope.LevelTestSteps(
 private fun LanguageLevelTest.savedResult(attemptId: UUID): LanguageLevelTestResult? {
     val test = (this as? LanguageLevelTest.LanguageLevelTestOneOf1Value)?.value ?: return null
     val saved = test.result?.takeIf { it.attemptId == attemptId } ?: return null
-    return LanguageLevelTestResult(
-        levels = test.levels,
-        result =
-            LanguageLevelTestResultResult(
-                attemptId = saved.attemptId,
-                changeId = saved.changeId,
-                finishedAt = saved.finishedAt,
-                lessonsSkipped = saved.lessonsSkipped,
-                levelsSkipped = saved.levelsSkipped.map { LanguageLevelTestResultResult.LevelsSkipped.valueOf(it.name) },
-                ranges = saved.ranges,
-            ),
-    )
-}
-
-@Composable
-internal fun LevelTestLanguageNotes(
-    language: String,
-    showAlphabetNote: Boolean,
-) {
-    if (showAlphabetNote) Note(stringResource(R.string.onboarding_language_test_new_alphabet))
-    InterfaceOffer(language)
+    return LanguageLevelTestResult(levels = test.levels, result = saved.recode())
 }
 
 /** Main switches the app to the learner's own language when it isn't showing in it; Android keeps an app's language from API 33. */
 @Composable
-private fun InterfaceOffer(language: String) {
+internal fun InterfaceOffer(language: String) {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
     val context = LocalContext.current
     val own = formattingLocale(language)
@@ -221,44 +214,36 @@ private fun InterfaceOffer(language: String) {
     val translated = supported != null && (0 until supported.size()).any { supported[it].language == own.language }
     if (!translated || own.language == currentLocale().language) return
 
-    TextButton(
-        onClick = { context.getSystemService(LocaleManager::class.java).applicationLocales = LocaleList(own) },
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Text(stringResource(R.string.onboarding_language_test_use_app_in, languageName(language, own)))
+    TextButton(onClick = {
+        context.getSystemService(LocaleManager::class.java).applicationLocales = LocaleList(own)
+    }, edge = ButtonEdge.Start) {
+        Text(
+            stringResource(R.string.onboarding_language_test_use_app_in, languageName(language, own)),
+            textDecoration = TextDecoration.Underline,
+        )
     }
 }
 
 @Composable
 private fun ColumnScope.LevelTestWaiting(
-    targetLanguage: String,
     run: GenerationRun,
     onRetry: (() -> Unit)?,
     pending: Boolean,
     onSkip: () -> Unit,
-    skipLabel: String,
-    skipNote: String?,
+    onboarding: Boolean,
 ) {
     TrackVisibleWait(AnalyticsEvent.WarmUpSurface.PlacementWait.value, "curriculum", LocalSetupWait.current.goalId)
     SetupContent {
         GenerationWait(GenerationKind.LevelTestBank, run, onRetry) {
-            OnboardingHeading(
-                stringResource(R.string.onboarding_language_test_preparing_title),
-                stringResource(R.string.onboarding_language_test_preparing_description, languageName(targetLanguage, currentLocale())),
-            )
+            OnboardingHeading(stringResource(R.string.generation_placement), stringResource(R.string.onboarding_placement_waiting_time))
         }
         PageActions {
-            OutlinedButton(
-                busy = pending,
-                onClick = onSkip,
-                modifier = Modifier.fillMaxWidth(),
-                leadingIcon = if (skipNote != null) ({ ButtonIcon(R.drawable.ic_skip_next) }) else null,
-            ) {
-                Text(skipLabel)
+            OutlinedButton(busy = pending, onClick = onSkip, modifier = Modifier.fillMaxWidth()) {
+                Text(stringResource(if (onboarding) R.string.onboarding_skip else R.string.placementtest_not_now))
             }
-            skipNote?.let {
+            if (onboarding) {
                 Text(
-                    text = it,
+                    text = stringResource(R.string.focustest_skip_note),
                     modifier = Modifier.fillMaxWidth(),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
@@ -296,7 +281,8 @@ private fun ColumnScope.TestQuestion(
                 select = Select.All.takeIf { shown.confirmation },
                 context = question.passage.takeUnless { listening },
             ),
-        subject = null,
+        subject = stringResource(if (listening) R.string.onboarding_language_test_listening else R.string.onboarding_language_test_reading),
+        position = stringResource(R.string.onboarding_test_question_progress, shown.number, shown.total),
         labels = TrueFalseLabels.TRUE_FALSE,
         pending = vm.isSaving,
         saveFailures = vm.saveFailures,
@@ -312,7 +298,20 @@ private fun ColumnScope.TestQuestion(
                     else -> R.string.onboarding_placement_dont_know
                 },
             ),
-        media = { if (listening) ListeningMessage(question, targetLanguage, audioPending, audio, navigator) },
+        media = {
+            if (listening) {
+                ListeningMessage(question, targetLanguage, audioPending, audio, navigator)
+                TextButton(
+                    onClick = { vm.deferAudio(question.id) },
+                    busy = vm.deferring,
+                    enabled = !vm.isSaving,
+                    focusableWhenDisabled = vm.isSaving,
+                    edge = ButtonEdge.Start,
+                ) {
+                    Text(stringResource(R.string.onboarding_language_test_cant_listen), textDecoration = TextDecoration.Underline)
+                }
+            }
+        },
     )
 }
 

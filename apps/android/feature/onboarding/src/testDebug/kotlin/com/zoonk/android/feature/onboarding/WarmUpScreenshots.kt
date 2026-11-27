@@ -31,14 +31,13 @@ import com.zoonk.android.data.StepTimes
 import com.zoonk.android.feature.onboarding.setup.LocalSetupWait
 import com.zoonk.android.feature.onboarding.setup.LocalSetupWarmUp
 import com.zoonk.android.feature.onboarding.setup.NoticeReading
-import com.zoonk.android.feature.onboarding.setup.PlacementStep
+import com.zoonk.android.feature.onboarding.setup.PlacementWaiting
 import com.zoonk.android.feature.onboarding.setup.PlanBuilding
 import com.zoonk.android.feature.onboarding.setup.PlanNext
 import com.zoonk.android.feature.onboarding.setup.PlanRevealStep
 import com.zoonk.android.feature.onboarding.setup.PlanSoFar
 import com.zoonk.android.feature.onboarding.setup.SetupColumn
 import com.zoonk.android.feature.onboarding.setup.SetupWaitContext
-import com.zoonk.android.feature.placementtest.SetupTestChoice
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.warmup.WARM_UP_ID
@@ -145,11 +144,10 @@ class WarmUpScreenshots {
         val plans = PlanStore(planApi, cache)
         val readingPlanApi = FakePlanApi().apply { shownPlan = planOf(notice = "reading") }
         val readingPlans = PlanStore(readingPlanApi, cache)
-        val onboardingApi = FakeOnboardingApi().apply { placement = placementOf(status = "preparing", next = null) }
-        val onboarding = OnboardingStore(onboardingApi, cache, session) { SignInResult.SignedIn }
         var scene by mutableIntStateOf(0)
         var scheduleReady by mutableStateOf(false)
         var noticeRead by mutableStateOf(false)
+        var placementReady by mutableStateOf(false)
 
         kotlinx.coroutines.runBlocking {
             warmUps.decks[WARM_UP_ID].prepare()
@@ -207,15 +205,14 @@ class WarmUpScreenshots {
                                     }
 
                                     else -> {
-                                        PlacementStep(
-                                            GOAL_ID,
-                                            "beekeeping",
-                                            MAPPING,
-                                            onRetryRun = {},
-                                            onboarding,
-                                            onProgress = {},
-                                            onDone = { WriteOutcome.Done(Unit) },
-                                            lengthChoice = SetupTestChoice(0, null, false) {},
+                                        PlacementWaiting(
+                                            run = MAPPING,
+                                            onRetry = {},
+                                            hold = rememberReadyHold(placementReady),
+                                            pending = false,
+                                            failed = false,
+                                            onSkip = {},
+                                            onboarding = true,
                                         )
                                     }
                                 }
@@ -267,11 +264,9 @@ class WarmUpScreenshots {
 
         scene = 4
         compose.waitForIdle()
-        compose.onNodeWithText("Start").performClick()
-        compose.waitForIdle()
         write("placement-wait-$name")
         compose.onNodeWithText("A summer worker").performScrollTo().performClick()
-        onboardingApi.placement = placementOf(started = true)
+        placementReady = true
         compose.mainClock.advanceTimeBy(3_500)
         compose.waitForIdle()
         write("placement-wait-ready-$name")

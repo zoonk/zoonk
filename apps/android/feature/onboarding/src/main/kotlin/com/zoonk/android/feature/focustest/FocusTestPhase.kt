@@ -28,12 +28,6 @@ internal sealed interface FocusTestPhase {
         val minutes: Int,
     ) : FocusTestPhase
 
-    /** [answered]: every answer the learner saved, earlier sittings included. */
-    data class Resume(
-        val question: Question,
-        val answered: Long,
-    ) : FocusTestPhase
-
     data class Question(
         val item: com.zoonk.android.feature.questions.Question,
         val sitting: FocusTestSitting,
@@ -55,10 +49,10 @@ private fun resting(test: FocusTest): FocusTestPhase? {
 }
 
 /**
- * Until the learner [entered] the test in this visit, opening it never drops them into a question:
- * a sitting with answers shows its resume screen, and one without is offered again. A test
- * [closed] in this visit shows its result until the learner moves on. A test with no result and nothing to ask is unavailable.
- * A read that never came back is [FocusTestPhase.LoadFailed], never the questions' wait.
+ * An open sitting goes on at its next question. Without one, the test's result or its offer shows, even while the next
+ * sitting's questions are written, until the learner [entered] one in this visit. A test [closed] in this visit shows
+ * its result until the learner moves on. A test with no result and nothing to ask is unavailable. A read that never
+ * came back is [FocusTestPhase.LoadFailed], never the questions' wait.
  */
 internal fun focusTestPhase(
     placement: LoadState<Placement>,
@@ -81,13 +75,7 @@ internal fun focusTestPhase(
     test ?: return FocusTestPhase.Unavailable
     val sitting = test.sitting ?: return resting(test) ?: FocusTestPhase.Unavailable
     val next = read.next ?: return FocusTestPhase.Ended
-    val question = FocusTestPhase.Question(next.item(), sitting, read.trueFalseLabels)
-
-    return when {
-        entered -> question
-        sitting.answered > 0 -> FocusTestPhase.Resume(question, read.answered)
-        else -> resting(test) ?: question
-    }
+    return FocusTestPhase.Question(next.item(), sitting, read.trueFalseLabels)
 }
 
 /** A read whose open sitting has nothing more to ask, which completion closes. */

@@ -11,7 +11,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
+import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.GenerationRun
+import com.zoonk.android.data.LocalEventTracker
+import com.zoonk.android.data.TestContext
 import com.zoonk.android.data.TrackOnboardingQuestion
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.onboarding.OnboardingStore
@@ -24,6 +27,10 @@ import com.zoonk.android.feature.onboarding.setup.StepLoading
 import com.zoonk.android.feature.onboarding.setup.isStopped
 import com.zoonk.android.feature.onboarding.setup.rememberPoll
 import com.zoonk.android.feature.onboarding.setup.withPoll
+import com.zoonk.android.feature.placementtest.Sitting
+import com.zoonk.android.feature.placementtest.TrackFirstQuestion
+import com.zoonk.android.feature.placementtest.questionPosition
+import com.zoonk.android.feature.placementtest.sitting
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.warmup.rememberReadyHold
 import com.zoonk.android.ui.ActOn
@@ -42,7 +49,8 @@ internal class OnPlan(
 /**
  * An exam goal's Focus test, the same in onboarding's placement step and opened from the plan.
  * Leaving it saves [handBack] (onboarding's step), then [onLeft] goes on (a plan goes back to it).
- * [plan] is set when the plan is already the learner's.
+ * [plan] is set when the plan is already the learner's. [asked]: the learner asked for the test on
+ * the level question, so it starts without its offer.
  */
 @Composable
 internal fun ColumnScope.FocusTestFlow(
@@ -52,9 +60,10 @@ internal fun ColumnScope.FocusTestFlow(
     plans: PlanStore,
     run: GenerationRun,
     onRetryRun: (() -> Unit)?,
-    onProgress: (Float?) -> Unit,
+    onSitting: (Sitting?) -> Unit,
     handBack: LeaveTest = { WriteOutcome.Done(Unit) },
     plan: OnPlan? = null,
+    asked: Boolean = false,
     onReportSaveFailure: () -> Unit = {},
     onLeft: () -> Unit = {},
 ) {
@@ -69,15 +78,24 @@ internal fun ColumnScope.FocusTestFlow(
     val poll = rememberPoll(active = waiting && !run.isStopped) { vm.check() }
     val hold = rememberReadyHold(ready = !waiting)
     val shown = if (hold.over) phase else FocusTestPhase.Waiting(answered = (phase as? FocusTestPhase.Waiting)?.answered ?: false)
-    val question = shown as? FocusTestPhase.Question
-    val progress = question?.sitting?.let { if (it.questions > 0) it.answered.toFloat() / it.questions else 0f }
-    LaunchedEffect(progress) { onProgress(progress) }
-    DisposableEffect(Unit) { onDispose { onProgress(null) } }
     val onboarding = plan == null
-    // Today's "Start the test" already made the offer; until the start answers, the offer waits behind a spinner.
-    // A start the app was closed during runs again when the test comes back: the API answers it with the open sitting.
-    val starting = plan?.startOnOpen == true && shown is FocusTestPhase.Offer && !vm.failed
-    if (starting) LaunchedEffect(Unit) { vm.start() }
+    val question = shown as? FocusTestPhase.Question
+    val test =
+        TestContext(
+            goalId = goalId,
+            test = TestContext.Kind.Focus,
+            surface = if (onboarding) TestContext.Surface.Onboarding else TestContext.Surface.Plan,
+            questions = question?.sitting?.questions ?: (shown as? FocusTestPhase.Offer)?.test?.offer?.questions,
+        )
+    LaunchedEffect(question?.sitting?.answered, question?.sitting?.questions) {
+        onSitting(question?.sitting?.let { sitting(test, it.answered, it.questions) })
+    }
+    DisposableEffect(Unit) { onDispose { onSitting(null) } }
+    val tracker = LocalEventTracker.current
+    // Today's "Start the test" and the level question's "short test" already made the offer; until the start answers,
+    // the offer waits behind a spinner.
+    val starting = (plan?.startOnOpen == true || asked) && shown is FocusTestPhase.Offer && !vm.failed
+    if (starting) LaunchedEffect(Unit) { vm.startAsked() }
 
     when {
         shown == FocusTestPhase.Loading || starting -> {
@@ -89,22 +107,15 @@ internal fun ColumnScope.FocusTestFlow(
         }
 
         shown is FocusTestPhase.Waiting -> {
-            val skip =
-                when {
-                    shown.answered -> stringResource(R.string.focustest_see_my_result)
-                    onboarding -> stringResource(R.string.onboarding_skip)
-                    else -> stringResource(R.string.focustest_not_now)
-                }
             PlacementWaiting(
-                existingPlan = !onboarding,
                 run = run.withPoll(poll.stopped),
                 onRetry = if (poll.stopped) poll::restart else onRetryRun,
                 hold = hold,
                 pending = vm.busy,
                 failed = vm.failed,
                 onSkip = { vm.leave(closes = shown.answered || onboarding) },
-                skipLabel = skip,
-                skipNote = stringResource(R.string.focustest_skip_note).takeIf { !shown.answered && onboarding },
+                onboarding = onboarding,
+                skipLabel = stringResource(R.string.focustest_see_my_result).takeIf { shown.answered },
             )
         }
 
@@ -125,22 +136,16 @@ internal fun ColumnScope.FocusTestFlow(
                 pressed = vm.pressed,
                 failed = vm.failed,
                 onStart = vm::start,
-                onSkip = { vm.leave(closes = onboarding) },
-            )
-        }
-
-        shown is FocusTestPhase.Resume -> {
-            FocusTestResume(
-                sitting = shown.question.sitting,
-                answered = shown.answered.toInt(),
-                pressed = vm.pressed,
-                failed = vm.failed,
-                onContinue = vm::resume,
-                onSeeResult = { vm.leave(closes = true) },
+                onSkip = {
+                    if (!onboarding) tracker.track(AnalyticsEvent.TestSkipped(test))
+                    vm.leave(closes = onboarding)
+                },
+                analytics = test,
             )
         }
 
         shown is FocusTestPhase.Question -> {
+            TrackFirstQuestion(vm.sitting, test, shown.sitting.answered + 1, "focus:${vm.sittingsEntered}")
             TestQuestion(goalId, shown, subject, vm, onReportSaveFailure)
         }
 
@@ -189,7 +194,7 @@ private fun ColumnScope.TestQuestion(
             PlacementQuestion(
                 item = question.item,
                 subject = name,
-                position = stringResource(R.string.focustest_question_number, sitting.answered.toInt() + 1, sitting.questions.toInt()),
+                position = questionPosition(sitting.answered.toInt() + 1, sitting.questions.toInt()),
                 labels = question.labels,
                 pending = vm.answering,
                 saveFailures = vm.saveFailures,

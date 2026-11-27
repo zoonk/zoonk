@@ -2,26 +2,17 @@
 <resources>
     <!-- The optional test of an exam goal: quick questions that find where the learner starts and where their study time should go. -->
     <string name="focustest_title">Focus test</string>
-    <!-- {time} is a duration with its unit, such as “9 min”. -->
-    <string name="focustest_time_left">%1$s left</string>
     <!-- The test's headline for an exam with a date and several subjects: it shows which subjects need the most study time. -->
     <string name="focustest_find_focus">Find what to study most</string>
     <!-- The test's headline for an exam without a date, or with one subject: it shows where the learner's level starts. -->
     <string name="focustest_find_start">Already know some of this?</string>
-    <string name="focustest_offer_line_focus">This test shows what you already know, so more of your time goes to what you need most. It never removes a subject.</string>
+    <string name="focustest_offer_sentence">A test shows what you already know, so more of your time goes to what you need most.</string>
     <string name="focustest_offer_line">This test shows what you already know, so your plan can skip it.</string>
     <string name="focustest_start">Start the test</string>
     <string name="focustest_skip_note">You can take the test later, from your plan.</string>
     <string name="focustest_not_now">Not now</string>
-    <string name="focustest_resume_title">Continue your test</string>
-    <plurals name="focustest_answers_saved_line">
-        <item quantity="one">Your %d answer is saved.</item>
-        <item quantity="other">Your %d answers are saved.</item>
-    </plurals>
     <string name="focustest_continue">Continue</string>
     <string name="focustest_see_my_result">See my result</string>
-    <!-- Over a test question: its number and the count promised when the sitting started. -->
-    <string name="focustest_question_number">Question %1$d of %2$d</string>
     <string name="focustest_stop">Stop and use my answers</string>
     <!-- Shown after several "I don't know yet" answers in a row. -->
     <string name="focustest_many_unknown">Haven\'t studied most of this yet? That\'s fine. You can stop here and start learning.</string>

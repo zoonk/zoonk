@@ -68,7 +68,7 @@ class PlacementTestViewModelTest {
     }
 
     @Test
-    fun anOpenAttemptGoesOnAtItsQuestionAndOneClosedOnAnotherDeviceWaitsBetweenParts() {
+    fun anOpenAttemptGoesOnAtItsQuestionAndAFullTestBetweenPartsAsksToContinue() {
         assertEquals(PlacementTestPhase.Choose, placementTestPhase(LoadState.Loaded(placement(attempt = null)), closed = null))
         assertTrue(placementTestPhase(LoadState.Loaded(placement(PART_ONE)), closed = null) is PlacementTestPhase.Question)
         assertEquals(
@@ -76,24 +76,43 @@ class PlacementTestViewModelTest {
             placementTestPhase(LoadState.Loaded(placement(PART_ONE, status = "waitingForQuestions")), closed = null),
         )
         assertTrue(placementTestPhase(LoadState.Loaded(placement(PART_ONE, next = null)), closed = null) is PlacementTestPhase.PartOver)
-        val between = placementTestPhase(LoadState.Loaded(placement(PART_ONE_CLOSED)), closed = null)
-        assertEquals(null, (between as PlacementTestPhase.Between).lessonsSkipped)
+        assertTrue(placementTestPhase(LoadState.Loaded(placement(PART_ONE_CLOSED)), closed = null) is PlacementTestPhase.Continue)
     }
 
     @Test
-    fun anOpenPartWithNoAvailableQuestionsCanFinish() {
+    fun anOpenPartWhoseNextQuestionCannotBeHadSaysTheFirstDaysPlaceTheLearner() {
         val read = placement(PART_ONE, next = null, status = "unavailable")
-        assertTrue(placementTestPhase(LoadState.Loaded(read), closed = null) is PlacementTestPhase.PartOver)
+        assertEquals(PlacementTestPhase.Unavailable, placementTestPhase(LoadState.Loaded(read), closed = null))
+        assertEquals(null, read.partOver())
     }
 
     @Test
-    fun theLastAnswerOfAPartClosesThatPartAndSaysWhatItSkipped() =
+    fun aPartWhoseQuestionsFailedKeepsTheWaitOpen() {
+        val read = placement(PART_ONE, next = null, status = "failed")
+        assertTrue(placementTestPhase(LoadState.Loaded(read), closed = null) is PlacementTestPhase.PreparationFailed)
+        assertEquals(null, read.partOver())
+    }
+
+    @Test
+    fun theFullTestSaysItsPartFromTheFirstQuestionAndTheQuickTestDoesNot() {
+        val full = placementTestPhase(LoadState.Loaded(placement(PART_TWO)), closed = null) as PlacementTestPhase.Question
+        val quick = placementTestPhase(LoadState.Loaded(placement(QUICK)), closed = null) as PlacementTestPhase.Question
+
+        assertTrue(full.wholeCourse)
+        assertEquals(2L, full.attempt.part)
+        assertEquals(1, full.number)
+        assertFalse(quick.wholeCourse)
+    }
+
+    @Test
+    fun theLastAnswerOfAPartSaysItIsDoneAndKeepGoingOpensTheNextPartAtItsFirstQuestion() =
         runTest {
             val api =
                 FakeOnboardingApi().apply {
                     placement = placement(PART_ONE)
                     answered = { placement(PART_ONE, next = null) }
-                    completion = completion(attempt = PART_TWO, skipped = 6, heldUntilTomorrow = true)
+                    completion = completion(attempt = PART_ONE_CLOSED, skipped = 6, heldUntilTomorrow = true)
+                    sitting = { placement(PART_TWO) }
                 }
             val (vm, store) = viewModel(api)
             val question = shown(vm, store.also { it.placements[GOAL_ID].load() }) as PlacementTestPhase.Question
@@ -103,11 +122,52 @@ class PlacementTestViewModelTest {
 
             assertEquals(PlacementPart(ATTEMPT, 1), api.placementAnswers.single().let { PlacementPart(it.attemptId!!, it.part!!) })
             assertEquals(listOf(PlacementPart(ATTEMPT, 1)), api.finishedParts)
-            val between = vm.phase(store.placements[GOAL_ID].state.value) as PlacementTestPhase.Between
-            assertEquals(6, between.lessonsSkipped)
-            assertEquals(2L, between.attempt.part)
-            assertTrue(between.heldUntilTomorrow)
+            val done = vm.phase(store.placements[GOAL_ID].state.value) as PlacementTestPhase.PartDone
+            assertEquals(
+                PlacementTestPhase.PartDone(ATTEMPT, 1, 3, 6, partsLeft = 2, minutesLeft = 12, heldUntilTomorrow = true),
+                done.copy(changeId = null),
+            )
+
+            vm.start(PlacementLength.WHOLE_COURSE)
+            runCurrent()
+
+            val next = vm.phase(store.placements[GOAL_ID].state.value) as PlacementTestPhase.Question
+            assertEquals(listOf<PlacementLength?>(PlacementLength.WHOLE_COURSE), api.sittingLengths)
+            assertEquals(2L, next.attempt.part)
+            assertEquals(1, next.number)
             assertFalse(vm.failed)
+        }
+
+    @Test
+    fun stoppingMidPartSaysWhereTheTestPicksUpAndComingBackContinuesThere() =
+        runTest {
+            val api =
+                FakeOnboardingApi().apply {
+                    placement = placement(PART_TWO_FOURTH)
+                    completion = completion(attempt = PART_TWO_STOPPED, skipped = 1)
+                    sitting = { placement(PART_TWO_FOURTH) }
+                }
+            val (vm, store) = viewModel(api)
+            val question = shown(vm, store.also { it.placements[GOAL_ID].load() }) as PlacementTestPhase.Question
+
+            vm.stop(question)
+            runCurrent()
+
+            assertEquals(listOf(3L), api.finishedAnswered)
+            assertEquals(
+                PlacementTestPhase.PartStopped(ATTEMPT, part = 2, parts = 3, question = 4, lessonsSkipped = 1),
+                (vm.phase(store.placements[GOAL_ID].state.value) as PlacementTestPhase.PartStopped).copy(changeId = null),
+            )
+
+            val later = PlacementTestViewModel(GOAL_ID, store, SavedStateHandle())
+            val back = later.phase(LoadState.Loaded(placement(PART_TWO_STOPPED, next = null, status = "done")))
+            assertTrue(back is PlacementTestPhase.Continue)
+
+            later.start(PlacementLength.WHOLE_COURSE)
+            runCurrent()
+            val resumed = later.phase(store.placements[GOAL_ID].state.value) as PlacementTestPhase.Question
+            assertEquals(4, resumed.number)
+            assertEquals(2L, resumed.attempt.part)
         }
 
     @Test
@@ -126,7 +186,7 @@ class PlacementTestViewModelTest {
             runCurrent()
 
             assertFalse(vm.failed)
-            assertTrue(vm.phase(store.placements[GOAL_ID].state.value) is PlacementTestPhase.Between)
+            assertTrue(vm.phase(store.placements[GOAL_ID].state.value) is PlacementTestPhase.Continue)
         }
 
     @Test
@@ -147,26 +207,30 @@ class PlacementTestViewModelTest {
         }
 
     @Test
-    fun aQuickTestThatClosesShowsItsResultWhileThePlanReadsAgain() =
+    fun aQuickTestThatEndsWithPartsLeftShowsItsResultAndCanTestTheRest() =
         runTest {
             val api =
                 FakeOnboardingApi().apply {
                     placement = placement(attempt = null)
                     sitting = { placement(QUICK, next = null) }
-                    completion = completion(attempt = null, skipped = 3, result = true, heldUntilTomorrow = true)
+                    completion = completion(attempt = QUICK_DONE, skipped = 3, result = true, heldUntilTomorrow = true)
                 }
             val (vm, store) = viewModel(api)
             store.placements[GOAL_ID].load()
 
             vm.start(PlacementLength.QUICK)
             runCurrent()
-            api.placement = placement(attempt = null)
 
             assertEquals(listOf<PlacementLength?>(PlacementLength.QUICK), api.sittingLengths)
-            assertEquals(
-                PlacementTestPhase.Result(PlacementLength.QUICK, 3, attemptId = ATTEMPT, heldUntilTomorrow = true),
-                vm.phase(store.placements[GOAL_ID].state.value),
-            )
+            val result = vm.phase(store.placements[GOAL_ID].state.value) as PlacementTestPhase.Result
+            assertEquals(3, result.lessonsSkipped)
+            assertEquals(2, result.partsLeft)
+            assertTrue(result.heldUntilTomorrow)
+            assertEquals("Loops with for", result.nextLesson)
+            // Coming back to the quick test that ended shows its result too, never "in progress".
+            val back =
+                placementTestPhase(LoadState.Loaded(placement(QUICK_DONE, next = null, status = "done", result = true)), closed = null)
+            assertEquals(2, (back as PlacementTestPhase.Result).partsLeft)
         }
 
     @Test
@@ -188,7 +252,8 @@ class PlacementTestViewModelTest {
             val restored =
                 PlacementTestViewModel(GOAL_ID, store, SavedStateHandle.createHandle(handle.savedStateProvider().saveState(), null))
 
-            assertEquals(PlacementTestPhase.Result(PlacementLength.WHOLE_COURSE, 7, attemptId = ATTEMPT), shown)
+            assertEquals(7, (shown as PlacementTestPhase.Result).lessonsSkipped)
+            assertEquals(0, shown.partsLeft)
             assertEquals(shown, restored.phase(LoadState.Loaded(placement(attempt = null))))
         }
 
@@ -199,26 +264,40 @@ class PlacementTestViewModelTest {
             length: String,
             part: Int,
             complete: Boolean,
-        ) = """{"id":"$ATTEMPT","length":"$length","part":$part,"partComplete":$complete,"estimatedMinutes":20,"answered":0,"chapter":null,"nextPart":null,"parts":2,"partsLeft":1,"questions":12,"remainingEstimatedMinutes":6,"resume":null,"totalEstimatedMinutes":25}"""
+            answered: Int = 0,
+            resume: Int? = null,
+        ) = """{"id":"$ATTEMPT","length":"$length","part":$part,"partComplete":$complete,"estimatedMinutes":6,"answered":$answered,
+            |"chapter":"Loops","nextPart":${if (complete) part + 1 else "null"},"parts":3,"partsLeft":${if (complete) 2 else 3 - part + 1},
+            |"questions":12,"remainingEstimatedMinutes":12,"resume":${resume?.let { """{"part":$part,"question":$it}""" } ?: "null"},
+            |"totalEstimatedMinutes":18}
+            """.trimMargin()
 
         val PART_ONE = attemptOf("wholeCourse", 1, complete = false)
         val PART_ONE_CLOSED = attemptOf("wholeCourse", 1, complete = true)
         val PART_TWO = attemptOf("wholeCourse", 2, complete = false)
+        val PART_TWO_FOURTH = attemptOf("wholeCourse", 2, complete = false, answered = 3)
+        val PART_TWO_STOPPED = attemptOf("wholeCourse", 2, complete = false, answered = 3, resume = 4)
         val QUICK = attemptOf("quick", 1, complete = false)
+        val QUICK_DONE = attemptOf("quick", 1, complete = true)
 
         fun placement(
             attempt: String?,
             next: String? = orderQuestion(),
             status: String = "asking",
+            result: Boolean = false,
         ): Placement =
             ApiJson.decodeFromString(
                 Placement.serializer(),
                 """
                 {"answered":0,"areas":[],"complete":false,"dayBudgetSpent":0.2,"dayBudgetUsed":false,"knownSkillIds":[],"needsItems":[],
                  "next":${next ?: "null"},"phases":[],"started":true,"status":"$status","trueFalseLabels":"trueFalse","focusTest":null,
-                 "attempt":${attempt ?: "null"}}
+                 "attempt":${attempt ?: "null"},"result":${if (result) RESULT_OF_3 else "null"}}
                 """.trimIndent(),
             )
+
+        const val RESULT_OF_3 =
+            """{"attemptId":"0a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d","finishedAt":"2026-11-21T14:00:00Z","lessonsSkipped":3,
+            "nextLesson":{"id":"1a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d","title":"Loops with for"}}"""
 
         fun completion(
             attempt: String?,
@@ -234,7 +313,8 @@ class PlacementTestViewModelTest {
                  ${if (heldUntilTomorrow && !result) """"heldUntilTomorrow":true,""" else ""}
                  "result":${if (result) {
                     val held = if (heldUntilTomorrow) ""","heldUntilTomorrow":true""" else ""
-                    """{"attemptId":"$ATTEMPT","finishedAt":"2026-11-21T14:00:00Z","lessonsSkipped":$skipped$held}"""
+                    """{"attemptId":"$ATTEMPT","finishedAt":"2026-11-21T14:00:00Z","lessonsSkipped":$skipped$held,
+                    "nextLesson":{"id":"1a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d","title":"Loops with for"}}"""
                 } else {
                     "null"
                 }}}

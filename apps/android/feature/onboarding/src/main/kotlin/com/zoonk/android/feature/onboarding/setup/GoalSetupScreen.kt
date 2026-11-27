@@ -38,6 +38,7 @@ import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.GenerationFailure
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.LocalEventTracker
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.TrackDeckReceived
@@ -86,6 +87,7 @@ import com.zoonk.api.models.Goal
 import com.zoonk.api.models.Onboarding
 import com.zoonk.api.models.OnboardingAnswerInput.OnboardingAnswerInputOneOf10Value
 import com.zoonk.api.models.OnboardingAnswerInputOneOf10
+import com.zoonk.api.models.OnboardingPlacement
 import com.zoonk.api.models.OnboardingStep
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.serialization.json.JsonArray
@@ -198,19 +200,24 @@ fun GoalSetupScreen(
         }
     }
 
-    // A test's answers are final and saved: its Back leaves the setup as Finish later does, never a
+    // A test's answers are final and saved: its ✕ and Back leave the setup as Finish later does, never a
     // step back, and Start over waits until it ends.
-    val leave = { navigator.showRoot(AppTab.Today) }
+    val tracker = LocalEventTracker.current
+    val leave = {
+        testing?.let { tracker.track(it.left) }
+        navigator.showRoot(AppTab.Today)
+    }
     BackHandler(enabled = back != null || testing != null) { if (testing != null) leave() else back?.invoke() }
 
     PageScaffold(
         onBack = {
             if (backDispatcher?.hasEnabledCallbacks() == true) backDispatcher.onBackPressed() else navigator.back()
         },
+        closes = testing != null,
         middle = {
             when {
                 testing != null -> {
-                    TestProgress(testing)
+                    TestProgress(testing.share)
                 }
 
                 else -> {
@@ -522,8 +529,9 @@ private fun ColumnScope.QuestionStep(
                     plans = plans,
                     run = run,
                     onRetryRun = onRetryRun,
-                    onProgress = { vm.placementProgress = it },
+                    onSitting = { vm.placementProgress = it },
                     handBack = { placed()?.await() ?: WriteOutcome.Obsolete },
+                    asked = view.placement?.mode == OnboardingPlacement.Mode.DIRECT,
                     onReportSaveFailure = onReportPlacement,
                 )
             } else {
@@ -535,8 +543,7 @@ private fun ColumnScope.QuestionStep(
                             .text("nativeLanguage")
                             ?.takeIf(String::isNotBlank) ?: view.goal.language,
                     targetLanguage = view.goal.targetLanguage.takeIf { view.goal.kind == Goal.Kind.LANGUAGE },
-                    run = run,
-                    onRetryRun = onRetryRun,
+                    placement = view.placement,
                     store = store,
                     plans = plans,
                     navigator = navigator,
@@ -545,8 +552,7 @@ private fun ColumnScope.QuestionStep(
                             saving = pending,
                             continueWith = { vm.answer(placementAnswer(it), from = OnboardingStep.PLACEMENT) },
                         ),
-                    onProgress = { vm.placementProgress = it },
-                    onQuickDone = placed,
+                    onSitting = { vm.placementProgress = it },
                     onReportSaveFailure = if (view.goal.kind == Goal.Kind.LANGUAGE) onReportLevelTest else onReportPlacement,
                 )
             }

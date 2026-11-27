@@ -236,12 +236,16 @@ interface OnboardingApi {
         length: PlacementLength? = null,
     ): Placement
 
-    /** [attempt] closes that part of the test taken from the plan; without it, onboarding's or the Focus test's. */
+    /**
+     * [attempt] closes that part of a course's test; without it, the Focus test's. [answered] is the answers the learner
+     * saw when they stopped, so a stop sent again after more answers changes nothing.
+     */
     suspend fun finishPlacement(
         session: AuthenticatedSession,
         goalId: String,
         fromScratch: Boolean,
         attempt: PlacementPart? = null,
+        answered: Long? = null,
     ): PlacementCompletion
 
     /** Reading it never starts writing the language pair's questions. Without [attemptId], onboarding's test. */
@@ -251,11 +255,10 @@ interface OnboardingApi {
         attemptId: UUID? = null,
     ): LanguageLevelTest
 
-    /** Opens a level test of this length from the plan, or answers with the one already open. */
+    /** Opens the level test, or answers with the one already open. */
     suspend fun startLevelTest(
         session: AuthenticatedSession,
         goalId: String,
-        length: StartLanguageLevelTestInput.Length,
     ): LanguageLevelTest
 
     /** Starts writing the pair's questions, or joins the run already writing them. */
@@ -559,12 +562,14 @@ class LiveOnboardingApi(
         goalId: String,
         fromScratch: Boolean,
         attempt: PlacementPart?,
+        answered: Long?,
     ) = perform {
         api.clients(session).learner.completeGoalPlacement(
             UUID.fromString(goalId),
             PlacementCompletionInput(
                 attemptId = attempt?.attemptId,
                 part = attempt?.part,
+                answered = answered,
                 fromScratch = fromScratch,
                 timeZone = TimeZone.getDefault().id,
             ),
@@ -580,8 +585,7 @@ class LiveOnboardingApi(
     override suspend fun startLevelTest(
         session: AuthenticatedSession,
         goalId: String,
-        length: StartLanguageLevelTestInput.Length,
-    ) = perform { api.clients(session).language.startLanguageLevelTest(UUID.fromString(goalId), StartLanguageLevelTestInput(length)) }
+    ) = perform { api.clients(session).language.startLanguageLevelTest(UUID.fromString(goalId), StartLanguageLevelTestInput()) }
 
     override suspend fun prepareLevelTest(
         session: AuthenticatedSession,

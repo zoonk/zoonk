@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- The plan's row and the screen's name for the test of what the learner already knows in a course. -->
     <string name="placementtest_title">Test what you know</string>
     <string name="placementtest_skip_lessons">Skip lessons you already know</string>
@@ -7,8 +7,6 @@
     <string name="placementtest_level_title">Level test</string>
     <string name="placementtest_find_level">Find your level and skip what you know</string>
     <string name="placementtest_in_progress">In progress</string>
-    <!-- What's left of a test the learner started; %1$s is a duration, such as "13 min". -->
-    <string name="placementtest_time_left">%1$s left</string>
     <!-- A fact on the plan's test row, and the title after a test: how many lessons it took out of the plan. -->
     <string name="placementtest_no_lessons_skipped">No lessons skipped</string>
     <plurals name="placementtest_lessons_skipped">
@@ -23,28 +21,16 @@
     <string name="placementtest_level_range" translatable="false">%1$s–%2$s</string>
     <string name="placementtest_start_title">Skip what you already know</string>
     <string name="placementtest_choose_description">A test finds the lessons you can skip.</string>
-    <string name="placementtest_quick_only_description">A quick test finds the lessons you can skip. It takes about %1$s.</string>
-    <string name="placementtest_choose_title">Choose a test</string>
-    <!-- The short placement test: about four minutes of questions. -->
+    <!-- The short test: about six minutes of questions. -->
     <string name="placementtest_quick">Quick test</string>
     <!-- %1$s is a duration with its unit, such as "4 min". -->
     <string name="placementtest_about">About %1$s</string>
-    <!-- The long placement test: it checks every topic still ahead in the course. -->
-    <string name="placementtest_whole_course">Whole course</string>
-    <!-- %1$s is a duration with its unit, such as "30 min". The test is split into parts the learner can take on different days. -->
-    <string name="placementtest_about_in_parts">About %1$s, in parts</string>
     <!-- A short test of one language level, such as "Test out of B2". -->
     <string name="placementtest_test_out">Test out of %1$s</string>
     <!-- %1$s is a language level, such as "B2". -->
     <string name="placementtest_test_out_description">Skip %1$s if you already know it</string>
     <string name="placementtest_start">Start</string>
-    <!-- A whole-course test is split into parts; %1$d is the part's number. -->
-    <string name="placementtest_part">Part %1$d</string>
     <string name="placementtest_continue_title">Continue your test</string>
-    <!-- %1$s is a duration with its unit, such as "15 min". -->
-    <string name="placementtest_left_saved">About %1$s left. Your answers are saved.</string>
-    <string name="placementtest_continue_from_plan">You can finish the test from Plan.</string>
-    <string name="placementtest_finish_for_today">Finish for today</string>
     <string name="placementtest_keep_going">Keep going</string>
     <!-- After a test: "it" or "them" is the lessons the test skipped. They stay in the learner's practice reviews. -->
     <string name="placementtest_known_one">You already know it. It stays in your practice.</string>
@@ -58,11 +44,6 @@
     <string name="placementtest_not_now">Not now</string>
     <!-- %1$s is a language's name, such as "Italian". -->
     <string name="placementtest_your_level">Your %1$s level</string>
-    <!-- %2$s is a list of language levels, such as "A1, A2". The plan no longer has their lessons. -->
-    <plurals name="placementtest_levels_skipped">
-        <item quantity="one">We skipped %2$s: %1$d lesson.</item>
-        <item quantity="other">We skipped %2$s: %1$d lessons.</item>
-    </plurals>
     <string name="placementtest_keeps_adjusting">Your lessons keep adjusting as you answer.</string>
     <!-- After a level test-out that skipped nothing; %1$s is a language level, such as "B2". -->
     <string name="placementtest_level_stays">%1$s stays in your plan</string>
@@ -73,4 +54,47 @@
     <string name="placementtest_offer_quick">A quick test can skip lessons you already know.</string>
     <!-- %1$s is a language level, such as "B2". -->
     <string name="placementtest_offer_level">A short test can skip %1$s if you already know it.</string>
+    <string name="placementtest_where_to_start">Where would you like to start?</string>
+    <string name="placementtest_first_lesson">First lesson</string>
+    <string name="placementtest_first_lesson_line">Starts at the level you gave</string>
+    <!-- The long test: it checks every topic still ahead, in parts. -->
+    <string name="placementtest_full_test">Full test</string>
+    <!-- How many parts the long test has. The learner can take each part on a different day. -->
+    <plurals name="placementtest_parts_any_day">
+        <item quantity="one">%d part, any day you like</item>
+        <item quantity="other">%d parts, any day you like</item>
+    </plurals>
+    <plurals name="placementtest_questions">
+        <item quantity="one">%d question</item>
+        <item quantity="other">%d questions</item>
+    </plurals>
+    <!-- Where the learner is in a test split into parts, such as “Part 3 of 14”. -->
+    <string name="placementtest_part_of">Part %1$d of %2$d</string>
+    <!-- The title after one part of a test split into parts, such as “Part 3 of 14 done”. -->
+    <string name="placementtest_part_done" tools:ignore="PluralsCandidate">Part %1$d of %2$d done</string>
+    <!-- After one part of a test: how many lessons that part took out of the learner's plan. -->
+    <string name="placementtest_part_skipped_none">No lessons skipped in this part.</string>
+    <!-- After one part of a test: how many lessons that part took out of the learner's plan. -->
+    <plurals name="placementtest_part_skipped">
+        <item quantity="one">This part skipped %d lesson you already know.</item>
+        <item quantity="other">This part skipped %d lessons you already know.</item>
+    </plurals>
+    <!-- How many parts of a test the learner still has to take. -->
+    <plurals name="placementtest_parts_left">
+        <item quantity="one">%d part left</item>
+        <item quantity="other">%d parts left</item>
+    </plurals>
+    <string name="placementtest_finish_later">Finish later</string>
+    <!-- Where a learner who stopped a test picks it up: the part of the test and the question in it. -->
+    <string name="placementtest_next_time">Next time: part %1$d of %2$d, question %3$d</string>
+    <string name="placementtest_start_lesson">Start lesson</string>
+    <!-- Button after the short test: goes on to test the rest of the course, in parts. -->
+    <string name="placementtest_test_the_rest">Test the rest</string>
+    <plurals name="placementtest_lessons_you_know">
+        <item quantity="one">Skipped %d lesson you already know.</item>
+        <item quantity="other">Skipped %d lessons you already know.</item>
+    </plurals>
+    <string name="placementtest_listening_later">You can test your listening later, from your plan.</string>
+    <string name="placementtest_not_tested">Not tested yet</string>
+    <string name="placementtest_about_left">About %1$s left</string>
 </resources>

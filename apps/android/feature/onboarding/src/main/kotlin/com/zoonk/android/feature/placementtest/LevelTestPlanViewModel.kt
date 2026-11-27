@@ -17,18 +17,15 @@ import com.zoonk.android.feature.onboarding.setup.refreshed
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.tap
 import com.zoonk.api.models.LanguageLevelTestOutAnswerInputAnswer
-import com.zoonk.api.models.PlacementLength
-import com.zoonk.api.models.StartLanguageLevelTestInput
 import com.zoonk.api.models.StartLanguageLevelTestOutInput
 import com.zoonk.api.models.TapAnswer
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.launch
 import java.util.UUID
 
 /**
- * A language course's level test from its plan (main's `useLanguagePlanTest`): the learner picks a
- * length or a level's test-out, and the test opened keeps its attempt across a recreation. Opening
- * it only reads; starting, answering and finishing are POSTs from the learner's taps.
+ * A language course's level test, in onboarding and from its plan (main's `useLanguagePlanTest`): the learner starts
+ * the test or a level's test-out, and the test opened keeps its attempt across a recreation. Opening it only reads;
+ * starting, answering and finishing are POSTs from the learner's taps.
  */
 internal class LevelTestPlanViewModel(
     private val goalId: String,
@@ -37,16 +34,15 @@ internal class LevelTestPlanViewModel(
 ) : ViewModel() {
     val visit = Visit()
 
-    /** The whole-course test's walk through the course's topics opened: the frame goes on to it. */
-    val walking = visit.outcome<Unit>()
-
-    val skipped = visit.outcome<Unit>()
+    /** When this visit began and whether it opened the test, for the first question's analytics. */
+    val sitting = TestVisit()
 
     private val failure = visit.outcome<Unit>()
     private val saveFailure = visit.outcome<Int>()
 
     private var savedAttempt by handle.saved { "" }
     private var savedTestOut by handle.saved { "" }
+    private var autoStarted by handle.saved { false }
 
     /** The level test the learner opened, which its steps read. */
     var attemptId by mutableStateOf(savedAttempt.toUuid())
@@ -56,9 +52,8 @@ internal class LevelTestPlanViewModel(
     var testOutId by mutableStateOf(savedTestOut.toUuid())
         private set
 
-    private var saving by mutableStateOf<Pressed?>(null)
-
-    val pressed get() = saving ?: Pressed.Other.takeIf { skipped.value != null }
+    var pressed by mutableStateOf<Pressed?>(null)
+        private set
 
     var answering by mutableStateOf(false)
         private set
@@ -69,22 +64,28 @@ internal class LevelTestPlanViewModel(
 
     val busy get() = pressed != null || answering
 
-    fun start(length: PlacementLength) =
+    /** The accepted start: it opens the test, or answers with the one already open. */
+    fun start() =
         save(Pressed.Main) {
-            val asked =
-                if (length ==
-                    PlacementLength.WHOLE_COURSE
-                ) {
-                    StartLanguageLevelTestInput.Length.WHOLE_COURSE
-                } else {
-                    StartLanguageLevelTestInput.Length.QUICK
-                }
-            when (val started = store.startLevelTest(goalId, asked)) {
+            sitting.started()
+            when (val started = store.startLevelTest(goalId)) {
                 is WriteOutcome.Done -> started.value.attemptId?.let(::openAttempt) != null
                 WriteOutcome.Obsolete -> true
                 else -> false
             }
         }
+
+    /** A learner who asked for the test on the level question goes straight in, once. */
+    fun startAsked() {
+        if (autoStarted) return
+        autoStarted = true
+        start()
+    }
+
+    /** Goes on with the test read without an attempt, which onboarding opened earlier. */
+    fun resume(id: UUID) {
+        if (attemptId == null) openAttempt(id)
+    }
 
     /** [button] is the one the learner pressed: the length screen's Start, or the level result's other action. */
     fun testOut(
@@ -108,30 +109,6 @@ internal class LevelTestPlanViewModel(
             }
         }
     }
-
-    fun skip() =
-        save(Pressed.Other) { asked ->
-            val finished = store.finishLevelTest(goalId)
-            if (finished is WriteOutcome.Done) skipped.send(asked, Unit)
-            finished is WriteOutcome.Done || finished == WriteOutcome.Obsolete
-        }
-
-    fun completeSkip(answer: Deferred<WriteOutcome<*>>?) {
-        skipped.clear()
-        if (answer == null) return
-        save(Pressed.Other) {
-            val saved = answer.await()
-            saved is WriteOutcome.Done || saved == WriteOutcome.Obsolete
-        }
-    }
-
-    /** After a whole-course level test, opens its walk through the course's topics. */
-    fun walkTopics() =
-        save(Pressed.Main) { asked ->
-            val opened = store.startPlacementSitting(goalId, PlacementLength.WHOLE_COURSE)
-            if (opened is WriteOutcome.Done) walking.send(asked, Unit)
-            opened is WriteOutcome.Done || opened == WriteOutcome.Obsolete
-        }
 
     /** One of the test-out wait's reads: true when it came back. */
     suspend fun checkTestOut(): Boolean = testOutId?.let { store.levelTestOuts[LevelTestAttempt(goalId, it)].refreshed() } ?: false
@@ -194,12 +171,12 @@ internal class LevelTestPlanViewModel(
         action: suspend (asked: Int) -> Boolean,
     ) {
         if (busy) return
-        saving = button
+        pressed = button
         failure.clear()
         val asked = visit.number
         viewModelScope.launch {
             if (!action(asked)) failure.send(asked, Unit)
-            saving = null
+            pressed = null
         }
     }
 }

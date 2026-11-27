@@ -45,7 +45,6 @@ import com.zoonk.api.models.PlanTimeToCoverInput
 import com.zoonk.api.models.PlanTimeToCoverSuggested
 import com.zoonk.api.models.Source
 import com.zoonk.api.models.SourceReadStatus
-import com.zoonk.api.models.StartLanguageLevelTestInput
 import com.zoonk.api.models.StartLanguageLevelTestOutInput
 import com.zoonk.api.models.TodayUploadRequest
 import kotlinx.coroutines.CompletableDeferred
@@ -135,11 +134,12 @@ fun setupView(
     warmUp: String = "null",
     planRevealed: Boolean = false,
     languageAim: String = if (kind == "language") languageAimOf(targetLanguage = targetLanguage) else "null",
+    placement: String = "null",
 ): Onboarding =
     ApiJson.decodeFromString(
         """
         {"contentCountry":{"defaultCountry":{"code":"US","name":"United States"},"suggested":[]},"dateProblem":null,"examChoices":$examChoices,"examDays":null,"examSubjects":[],"followUps":[],"generationId":null,"goalIds":["$goalId"],
-         "warmUp":$warmUp,"languageAim":$languageAim,"firstLesson":$firstLesson,"planRevealed":$planRevealed,"libraryCourse":null,"profile":{"memoryEnabled":true,"questions":[]},"planReadiness":{"readingNotice":false,"ready":$planReady},"quickTestMinutes":2,"recommendedMinutes":30,"startsOnRecommended":$startsOnRecommended,"steps":[${steps.joinToString(
+         "warmUp":$warmUp,"placement":$placement,"languageAim":$languageAim,"firstLesson":$firstLesson,"planRevealed":$planRevealed,"libraryCourse":null,"profile":{"memoryEnabled":true,"questions":[]},"planReadiness":{"readingNotice":false,"ready":$planReady},"quickTestMinutes":2,"recommendedMinutes":30,"startsOnRecommended":$startsOnRecommended,"steps":[${steps.joinToString(
             ",",
         ) { "\"$it\"" }}],
          "timeChoices":[${DAILY_TIMES.joinToString(",") { "{\"minutes\":$it,\"split\":null}" }}],
@@ -489,13 +489,18 @@ class FakeOnboardingApi : OnboardingApi {
     var completion: PlacementCompletion = completionOf()
     val finishedParts = mutableListOf<PlacementPart?>()
 
+    /** The answers each stop said the learner saw; null for a close that wasn't a stop. */
+    val finishedAnswered = mutableListOf<Long?>()
+
     override suspend fun finishPlacement(
         session: AuthenticatedSession,
         goalId: String,
         fromScratch: Boolean,
         attempt: PlacementPart?,
+        answered: Long?,
     ): PlacementCompletion {
         finishedParts += attempt
+        finishedAnswered += answered
         placementFinishGate?.await()
         writeFailure?.let { throw it }
         return completion
@@ -543,7 +548,7 @@ class FakeOnboardingApi : OnboardingApi {
         return levelTest
     }
 
-    val levelTestLengths = mutableListOf<StartLanguageLevelTestInput.Length>()
+    var levelTestStarts = 0
 
     /** What a start answers: the test it opened. */
     var startedLevelTest: () -> LanguageLevelTest = { levelTest }
@@ -551,9 +556,8 @@ class FakeOnboardingApi : OnboardingApi {
     override suspend fun startLevelTest(
         session: AuthenticatedSession,
         goalId: String,
-        length: StartLanguageLevelTestInput.Length,
     ): LanguageLevelTest {
-        levelTestLengths += length
+        levelTestStarts++
         writeFailure?.let { throw it }
         return startedLevelTest()
     }

@@ -4,7 +4,9 @@ import com.zoonk.api.ApiJson
 import com.zoonk.api.models.Goal
 import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.Placement
+import com.zoonk.api.models.PlacementAttempt
 import com.zoonk.api.models.PlacementCompletion
+import com.zoonk.api.models.PlacementLength
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.Syllabus
 import java.time.LocalDate
@@ -106,7 +108,34 @@ fun focusSittingOf(
      "subject":${subject?.let(::subjectRef) ?: "null"},"hint":${hint?.let { "\"$it\"" } ?: "null"}}
     """.trimIndent()
 
-fun focusOfferOf(minutes: Int = 15) = """{"minutes":$minutes}"""
+/** A course test's open attempt, the quick test's by default. */
+fun placementAttemptOf(
+    length: PlacementLength = PlacementLength.QUICK,
+    answered: Long = 0,
+    part: Long = 1,
+    parts: Long = 2,
+): PlacementAttempt =
+    PlacementAttempt(
+        answered = answered,
+        chapter = "Civil procedure",
+        estimatedMinutes = 6,
+        id = java.util.UUID.fromString("0a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d"),
+        length = length,
+        nextPart = null,
+        part = part,
+        partComplete = false,
+        parts = parts,
+        partsLeft = parts - part + 1,
+        questions = 12,
+        remainingEstimatedMinutes = 6 * (parts - part + 1),
+        resume = null,
+        totalEstimatedMinutes = 6 * parts,
+    )
+
+fun focusOfferOf(
+    minutes: Int = 6,
+    questions: Int = 6,
+) = """{"minutes":$minutes,"questions":$questions}"""
 
 /** Suggested focus rows, the most needed first. */
 fun focusOf(
@@ -278,7 +307,7 @@ fun levelTestOf(
     ApiJson.decodeFromString(
         """
         {"answered":$answered,"lastCorrect":null,"levels":[${levels.joinToString(",")}],"next":$next,"status":"ready",
-         "showAlphabetNote":false,"targetLanguage":"it","total":$total${attemptJson(attemptId)}}
+         "showAlphabetNote":false,"targetLanguage":"it","total":$total,"estimatedMinutes":6${attemptJson(attemptId)}}
         """.trimIndent(),
     )
 
@@ -289,10 +318,10 @@ fun preparingTestOf(
     ApiJson.decodeFromString(
         """{"expectedSeconds":120,"showAlphabetNote":false,"startedAt":${startedAt?.let {
             "\"$it\""
-        } ?: "null"},"status":"preparing"${attemptJson(attemptId)}}""",
+        } ?: "null"},"status":"preparing","total":12,"estimatedMinutes":6${attemptJson(attemptId)}}""",
     )
 
-private fun attemptJson(attemptId: String?) = attemptId?.let { ""","attemptId":"$it","length":"quick"""" }.orEmpty()
+private fun attemptJson(attemptId: String?) = attemptId?.let { ""","attemptId":"$it"""" }.orEmpty()
 
 /** CGU 2026's specialty choice, with [subject] the option the plan follows or null until the learner picks. */
 fun specialtyChoice(subject: String? = null) =
