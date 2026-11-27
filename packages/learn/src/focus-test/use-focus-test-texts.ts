@@ -6,6 +6,7 @@ import {
 } from "@zoonk/core/learner/placement/focus-test-contract";
 import { useExtracted } from "next-intl";
 import { useFormatDuration } from "../_utils/time-format";
+import { useTestFacts } from "../placement-test/use-test-facts";
 
 export function useSubjectStateText() {
   const t = useExtracted();
@@ -57,7 +58,7 @@ export function useFocusTestTitle() {
 }
 
 /**
- * What the test is and why, wherever it's offered. "It never removes a subject" is exact: focusing
+ * What the test is and why. In Today's suggestion, "It never removes a subject" is exact: focusing
  * gives some subjects more time and takes none out, though too little time can still leave one out.
  */
 export function useFocusTestLine() {
@@ -67,9 +68,7 @@ export function useFocusTestLine() {
   return {
     offer: (suggestsFocus: boolean): string =>
       suggestsFocus
-        ? t(
-            "This test shows what you already know, so more of your time goes to what you need most. It never removes a subject.",
-          )
+        ? t("A test shows what you already know, so more of your time goes to what you need most.")
         : t("This test shows what you already know, so your plan can skip it."),
     timed: (minutes: number): string =>
       t({
@@ -78,21 +77,6 @@ export function useFocusTestLine() {
           "A {time} test shows what you already know, so more of your time goes to what you need most. It never removes a subject.",
         values: { time: formatDuration(minutes) },
       }),
-  };
-}
-
-export function useTestTime() {
-  const t = useExtracted();
-  const formatDuration = useFormatDuration();
-
-  return {
-    left: (minutes: number): string =>
-      t({
-        description: "{time} is a duration with its unit, such as “9 min”.",
-        message: "{time} left",
-        values: { time: formatDuration(minutes) },
-      }),
-    whole: (minutes: number): string => formatDuration(minutes),
   };
 }
 
@@ -109,17 +93,20 @@ export function useSeeResultLabel(): string {
 export function useFocusTestRowFacts() {
   const t = useExtracted();
   const title = useFocusTestTitle();
-  const time = useTestTime();
+  const facts = useTestFacts();
 
-  return ({ offer, state, suggestsFocus }: FocusTestSummary): string[] => {
+  return ({ offer, sitting, state, suggestsFocus }: FocusTestSummary) => {
     if (state === "notStarted") {
-      return [title(suggestsFocus), ...(offer ? [time.whole(offer.minutes)] : [])];
+      return [title(suggestsFocus), offer && facts.about(offer.minutes)];
     }
 
-    if (state === "sitting") {
-      return [t("In progress"), ...(offer ? [time.left(offer.minutes)] : [])];
+    if (state !== "sitting") {
+      return [t("See your result")];
     }
 
-    return [t("See your result")];
+    return [
+      t("In progress"),
+      sitting && facts.question({ number: sitting.answered + 1, total: sitting.questions }),
+    ];
   };
 }

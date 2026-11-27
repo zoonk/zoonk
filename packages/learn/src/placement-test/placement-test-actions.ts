@@ -8,8 +8,9 @@ import {
 export type PlacementLength = PlacementAttemptView["length"];
 
 /**
- * A part that closed: what it skipped, and either the next part waiting (`attempt`) or the test's
- * `result`. `stale` when another device already closed it or started a newer test.
+ * A finish that saved: `lessonsSkipped` is what this finish skipped and `partLessonsSkipped` what
+ * its part has skipped so far. `attempt` is the test while it has parts left, `result` the test's
+ * result so far. `stale` when another device already closed the part or started a newer test.
  */
 export type PlacementPartOutcome =
   | {
@@ -17,8 +18,7 @@ export type PlacementPartOutcome =
       changeId: string | null;
       heldUntilTomorrow?: true;
       lessonsSkipped: number;
-      /** The topic the plan goes on with; null when none is left. */
-      nextTopic: string | null;
+      partLessonsSkipped: number;
       result: PlacementResult | null;
       status: "finished";
     }
@@ -36,7 +36,11 @@ export type PlacementTestActions = {
   }) => Promise<PlacementOutcome>;
   finish: (input: { attemptId: string; part: number }) => Promise<PlacementPartOutcome>;
   get: () => Promise<PlacementOutcome>;
-  /** Opens a test of this length, or the next part of the open one; asked again, it returns it. */
+  /**
+   * Opens a test of this length, the open test's next part, or the part the learner stopped in.
+   * `wholeCourse` on a short test goes on to the rest of the course. Asked again, it returns the
+   * open sitting.
+   */
   start: (length: PlacementLength) => Promise<PlacementOutcome>;
   undo: (changeId: string) => Promise<boolean>;
 };

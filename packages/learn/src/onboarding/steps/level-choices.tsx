@@ -10,8 +10,11 @@ const QUICK_TEST = "test";
 
 export type LevelChoice = OnboardingOwnLevel | typeof QUICK_TEST;
 
-export function toLevelAnswer(choice: LevelChoice): OnboardingOwnLevel | null {
-  return choice === QUICK_TEST ? null : choice;
+/** A learner who isn't sure asks for the test, so it opens without being offered again. */
+export function toLevelAnswer(
+  choice: LevelChoice,
+): { level: OnboardingOwnLevel } | { level: null; requestPlacement: true } {
+  return choice === QUICK_TEST ? { level: null, requestPlacement: true } : { level: choice };
 }
 
 export function readLevelChoice(details: Record<string, unknown>): LevelChoice | null {

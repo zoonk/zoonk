@@ -3,72 +3,161 @@ import {
   type PlacementAttemptView,
   type PlacementOutcome,
   type PlacementQuestion,
+  type PlacementResult,
 } from "../onboarding/onboarding-actions";
+import { type PlacementQuestionWait } from "../onboarding/steps/use-placement-question-poll";
 import { type PlacementPartOutcome } from "./placement-test-actions";
 
 export type PlacementQuestionPhase = {
-  answered: number;
   attempt: PlacementAttemptView;
   failures: number;
   kind: "question";
-  /** 0 to 1, of this part. */
-  progress: number;
   question: PlacementQuestion;
   trueFalseLabels: TrueFalseLabels;
 };
 
 type Finished = Extract<PlacementPartOutcome, { status: "finished" }>;
 
+/** What a finish skipped. `changeId` is null when Undo wouldn't restore what the screen counts. */
+type Skips = { changeId: string | null; heldUntilTomorrow: boolean; lessonsSkipped: number };
+
+export type PlacementResultPhase = Skips & {
+  /** The short test's attempt while the course has parts left to test; null once nothing is left. */
+  attempt: PlacementAttemptView | null;
+  attemptId: string;
+  kind: "result";
+  nextLesson: PlacementResult["nextLesson"];
+};
+
 export type PlacementTestPhase =
   | PlacementQuestionPhase
-  /** `waiting`: the open test's questions are still being written. */
-  | { kind: "choose" | "loadFailed" | "loading" | "waiting" }
+  /**
+   * `failedAttempt`: this part's questions couldn't be written, so the wait offers "Try again".
+   * `buildFailed`: the course itself is still being built and that stopped.
+   */
+  | (PlacementQuestionWait & { buildFailed?: true; failedAttempt?: PlacementAttemptView })
+  | { kind: "loadFailed" | "loading" | "offer" | "unavailable" }
   /** This part asks nothing more and isn't closed yet: closing it is the next save. */
   | { attempt: PlacementAttemptView; kind: "partOver" }
-  /**
-   * A whole-course test between two parts. `lessonsSkipped` is the part that just closed, or null
-   * when the learner came back to a test whose part closed earlier.
-   */
-  | {
-      attempt: PlacementAttemptView;
-      changeId: string | null;
-      heldUntilTomorrow?: true;
-      kind: "between";
-      lessonsSkipped: number | null;
-    }
-  | {
-      attemptId: string;
-      changeId: string | null;
-      heldUntilTomorrow?: true;
-      kind: "result";
-      length: PlacementAttemptView["length"];
-      lessonsSkipped: number;
-      nextTopic: string | null;
-    };
+  /** A full test's part just ended with parts left. */
+  | (Skips & { attempt: PlacementAttemptView; kind: "checkpoint" })
+  /** A full test the learner just stopped midway through a part. */
+  | (Skips & { attempt: PlacementAttemptView; kind: "stopped" })
+  /** Back at a full test that has parts left. */
+  | { attempt: PlacementAttemptView; kind: "continue" }
+  | PlacementResultPhase;
 
-function readAttempt(outcome: PlacementOutcome): PlacementAttemptView | null {
-  return outcome.status === "ready" || outcome.status === "notReady"
-    ? (outcome.attempt ?? null)
-    : null;
+/** A part that's closed, or one the learner stopped: either way it asks nothing until it's started again. */
+function isResting(attempt: PlacementAttemptView): boolean {
+  return attempt.partComplete || attempt.resume !== null;
+}
+
+/** Undo restores one finish's lessons, so it shows only when they are all the screen counts. */
+function undoableChange({
+  changeId,
+  counted,
+  restored,
+}: {
+  changeId: string | null | undefined;
+  counted: number;
+  restored: number | undefined;
+}): string | null {
+  return changeId && restored === counted ? changeId : null;
+}
+
+function toSavedResult({
+  attempt,
+  result,
+}: {
+  attempt: PlacementAttemptView | null;
+  result: PlacementResult;
+}): PlacementResultPhase {
+  return {
+    attempt,
+    attemptId: result.attemptId,
+    changeId: undoableChange({
+      changeId: result.changeId,
+      counted: result.lessonsSkipped,
+      restored: result.partLessonsSkipped,
+    }),
+    heldUntilTomorrow: result.heldUntilTomorrow === true,
+    kind: "result",
+    lessonsSkipped: result.lessonsSkipped,
+    nextLesson: result.nextLesson ?? null,
+  };
+}
+
+function toRestingPhase({
+  attempt,
+  result,
+}: {
+  attempt: PlacementAttemptView;
+  result: PlacementResult | null;
+}): PlacementTestPhase {
+  return attempt.length === "quick" && result
+    ? toSavedResult({ attempt, result })
+    : { attempt, kind: "continue" };
+}
+
+/** With no test open, one the learner asked for waits for the course's questions; otherwise it's offered. */
+function toUnopenedPhase({
+  asked,
+  outcome,
+}: {
+  asked: boolean;
+  outcome: Exclude<PlacementOutcome, { status: "failed" }>;
+}): PlacementTestPhase {
+  if (!asked) {
+    return { kind: "offer" };
+  }
+
+  if (outcome.status === "notReady") {
+    return { kind: "waiting" };
+  }
+
+  return outcome.status === "generationFailed"
+    ? { buildFailed: true, kind: "waiting" }
+    : { kind: "unavailable" };
 }
 
 /**
- * Where a read of the test leaves the learner. With no test open, they choose how much to check;
- * an open one goes on where it stopped, after its questions are written.
+ * Where a read of the test leaves the learner. A sitting goes on at its next question; a short test
+ * that ended shows its result, and a full test with parts left says where it stands. With nothing
+ * open, onboarding shows the result of the test it ran; otherwise the test is offered, or waited
+ * for when the learner already `asked` for it.
  */
-export function toPlacementTestPhase(outcome: PlacementOutcome): PlacementTestPhase {
+export function toPlacementTestPhase({
+  asked = false,
+  outcome,
+  surface,
+}: {
+  asked?: boolean;
+  outcome: PlacementOutcome;
+  surface: "onboarding" | "plan";
+}): PlacementTestPhase {
   if (outcome.status === "failed") {
     return { kind: "loadFailed" };
   }
 
-  const attempt = readAttempt(outcome);
+  const attempt = ("attempt" in outcome && outcome.attempt) || null;
+  const result = outcome.status === "ready" ? outcome.result : null;
 
   if (!attempt) {
-    return { kind: "choose" };
+    return surface === "onboarding" && result
+      ? toSavedResult({ attempt: null, result })
+      : toUnopenedPhase({ asked, outcome });
   }
 
-  if (attempt.partComplete) {
-    return { attempt, changeId: null, kind: "between", lessonsSkipped: null };
+  if (isResting(attempt)) {
+    return toRestingPhase({ attempt, result });
+  }
+
+  if (outcome.status === "generationFailed") {
+    return { failedAttempt: attempt, kind: "waiting" };
+  }
+
+  if (outcome.status === "unavailable") {
+    return { kind: "unavailable" };
   }
 
   if (outcome.status !== "ready") {
@@ -80,45 +169,57 @@ export function toPlacementTestPhase(outcome: PlacementOutcome): PlacementTestPh
   }
 
   return {
-    answered: outcome.answered,
     attempt,
     failures: 0,
     kind: "question",
-    progress: outcome.dayBudgetSpent,
     question: outcome.next,
     trueFalseLabels: outcome.trueFalseLabels,
   };
 }
 
-/** A closed part goes on to the next one when the test has more; otherwise it's the result. */
+/**
+ * Where a finish leaves the learner. The short test always ends at its result. A full test with
+ * parts left goes to its checkpoint, or says where it resumes when the learner stopped midway.
+ */
 export function toFinishedPhase({
   attemptId,
   finished,
-  length,
 }: {
   attemptId: string;
   finished: Finished;
-  length: PlacementAttemptView["length"];
 }): PlacementTestPhase {
-  if (finished.attempt) {
+  const { attempt, result } = finished;
+  const heldUntilTomorrow = (result?.heldUntilTomorrow ?? finished.heldUntilTomorrow) === true;
+
+  if (attempt && attempt.length === "wholeCourse") {
+    const lessonsSkipped = finished.partLessonsSkipped;
+
     return {
-      attempt: finished.attempt,
-      changeId: finished.changeId,
-      ...(finished.heldUntilTomorrow && { heldUntilTomorrow: finished.heldUntilTomorrow }),
-      kind: "between",
-      lessonsSkipped: finished.lessonsSkipped,
+      attempt,
+      changeId: undoableChange({
+        changeId: finished.changeId,
+        counted: lessonsSkipped,
+        restored: finished.lessonsSkipped,
+      }),
+      heldUntilTomorrow,
+      kind: attempt.partComplete ? "checkpoint" : "stopped",
+      lessonsSkipped,
     };
   }
 
-  const heldUntilTomorrow = finished.result?.heldUntilTomorrow ?? finished.heldUntilTomorrow;
+  const lessonsSkipped = result?.lessonsSkipped ?? finished.lessonsSkipped;
 
   return {
+    attempt,
     attemptId,
-    changeId: finished.changeId,
-    ...(heldUntilTomorrow && { heldUntilTomorrow }),
+    changeId: undoableChange({
+      changeId: finished.changeId,
+      counted: lessonsSkipped,
+      restored: finished.lessonsSkipped,
+    }),
+    heldUntilTomorrow,
     kind: "result",
-    length,
-    lessonsSkipped: finished.result?.lessonsSkipped ?? finished.lessonsSkipped,
-    nextTopic: finished.nextTopic,
+    lessonsSkipped,
+    nextLesson: result?.nextLesson ?? null,
   };
 }

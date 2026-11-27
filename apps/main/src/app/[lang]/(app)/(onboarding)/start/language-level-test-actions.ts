@@ -6,8 +6,6 @@ import {
   type LanguageLevelTestView,
   levelTestAnswerInputSchema,
 } from "@zoonk/core/language/level-test/contract";
-import { finishLanguageLevelTest } from "@zoonk/core/language/level-test/finish";
-import { gradeLevelTestSpeech } from "@zoonk/core/language/level-test/speech";
 import { isUuid } from "@zoonk/utils/uuid";
 
 /** Only from the learner's tap to begin or try again, never from showing the test. */
@@ -35,31 +33,4 @@ export async function answerLevelTestAction(
 
   const result = await answerLanguageLevelTest({ goalId, input: parsed.data });
   return result.status === "ready" ? result.test : null;
-}
-
-export async function speakLevelTestAction(
-  goalId: string,
-  form: FormData,
-): Promise<LanguageLevelTestView | "noSpeech" | "signUpRequired" | null> {
-  const audio = form.get("audio");
-
-  if (!(audio instanceof Blob)) {
-    return null;
-  }
-
-  const result = await gradeLevelTestSpeech({
-    audio: { bytes: new Uint8Array(await audio.arrayBuffer()), mediaType: audio.type },
-    goalId,
-  });
-
-  if (result.status === "noSpeech" || result.status === "signUpRequired") {
-    return result.status;
-  }
-
-  return result.status === "ready" ? result.test : null;
-}
-
-export async function finishLevelTestAction(goalId: string): Promise<boolean> {
-  const result = await finishLanguageLevelTest(goalId);
-  return result.status === "ready";
 }

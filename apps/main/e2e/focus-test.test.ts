@@ -20,7 +20,7 @@ const AT_THE_TEST = [...PROFILE_QUESTIONS, "target", "targetDate", "level", "bud
 /**
  * `seen`: past its setup, on a plan the learner has seen whose time doesn't cover everything, so
  * the test proposes its focus instead of setting it. `writingRunId`: its questions are still being
- * written by that run, so the test waits for them.
+ * written by that run, and the learner asked for the test, so it opens on its wait.
  */
 async function createExamGoalAtFocusTest(
   userId: string,
@@ -51,6 +51,7 @@ async function createExamGoalAtFocusTest(
       details: {
         answered: seen ? [...AT_THE_TEST, "placement", "schedule"] : AT_THE_TEST,
         examName: blueprint.name,
+        ...(writingRunId && { placementRequested: true }),
       },
       examBlueprintId: blueprint.id,
       generationRunId: writingRunId,
@@ -167,7 +168,8 @@ test.describe("An exam's Focus test in onboarding", () => {
     await dropFirstAnswerResponse(page);
 
     await page.goto(`/start/${goal.id}`);
-    await page.getByRole("button", { exact: true, name: "Start the test" }).click();
+    await expect(page.getByRole("radio", { name: /Focus test/u })).toBeChecked();
+    await page.getByRole("button", { exact: true, name: "Start" }).click();
     await expect(question(page, 1)).toBeVisible();
 
     const dontKnow = page.getByRole("button", { name: "I don't know yet" });
@@ -178,9 +180,6 @@ test.describe("An exam's Focus test in onboarding", () => {
     await expect(question(page, 2)).toBeVisible();
 
     await page.reload();
-    await expect(page.getByRole("heading", { name: "Continue your test" })).toBeVisible();
-    await expect(page.getByText("Your 1 answer is saved.")).toBeVisible();
-    await page.getByRole("button", { exact: true, name: "Continue" }).click();
     await expect(question(page, 2)).toBeVisible();
 
     await page.getByRole("radio", { name: "Right answer" }).click();
@@ -200,14 +199,15 @@ test.describe("An exam's Focus test in onboarding", () => {
     expect(saved.details).toMatchObject({ answered: expect.arrayContaining(["placement"]) });
   });
 
-  test("skipping it goes straight to the daily time and saves no answer", async ({
+  test("choosing the first lesson goes straight to the daily time and saves no answer", async ({
     noProgressUser,
     userWithoutProgress: page,
   }) => {
     const goal = await createExamGoalAtFocusTest(noProgressUser.id);
 
     await page.goto(`/start/${goal.id}`);
-    await page.getByRole("button", { exact: true, name: "Skip" }).click();
+    await page.getByRole("radio", { name: /First lesson/u }).click();
+    await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
     await expect(
       page.getByRole("heading", { name: "How much time can you study each day?" }),
@@ -226,7 +226,7 @@ test("a focus proposed on a plan already seen applies on the learner's tap, and 
   const goal = await createExamGoalAtFocusTest(noProgressUser.id, { seen: true });
 
   await page.goto(`/focus-test?goal=${goal.id}`);
-  await page.getByRole("button", { exact: true, name: "Start the test" }).click();
+  await page.getByRole("button", { exact: true, name: "Start" }).click();
   await expect(question(page, 1)).toBeVisible();
   await page.getByRole("button", { name: "I don't know yet" }).click();
   await expect(question(page, 2)).toBeVisible();
@@ -270,7 +270,6 @@ test("a skip that doesn't save says so on the wait for questions, and the same b
 
   const allowCompletion = await rejectCompletion(page);
   await page.goto(`/start/${goal.id}`);
-  await page.getByRole("button", { exact: true, name: "Start the test" }).click();
 
   await expect(
     page.getByRole("alert").filter({ hasText: "Something went wrong on our side" }),

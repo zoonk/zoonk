@@ -119,10 +119,12 @@ function LevelRows({ children }: { children: React.ReactNode }) {
 function LevelRow({
   bar,
   label,
+  muted = false,
   skill,
 }: {
   bar: React.ReactNode;
   label: string;
+  muted?: boolean;
   skill: LevelView["skill"];
 }) {
   const skillName = useSkillName();
@@ -131,7 +133,14 @@ function LevelRow({
     <li className="border-border col-span-3 grid min-h-11 grid-cols-subgrid items-center border-t py-2.5 first:border-t-0">
       <span className="text-sm font-medium">{skillName(skill)}</span>
       {bar}
-      <span className="text-end text-xs font-medium whitespace-nowrap tabular-nums">{label}</span>
+      <span
+        className={cn(
+          "text-end text-xs whitespace-nowrap tabular-nums",
+          muted ? "text-muted-foreground" : "font-medium",
+        )}
+      >
+        {label}
+      </span>
     </li>
   );
 }
@@ -168,28 +177,33 @@ export function useLevelRangeFacts() {
 
 const RANGE_SKILLS = ["reading", "listening"] as const;
 
+const NO_BANDS = { high: -1, low: -1 };
+
+/** Both skills, always: one the test didn't finish says so instead of showing a level. */
 export function LevelRanges({ ranges }: { ranges: LevelTestRanges }) {
+  const t = useExtracted();
+
   return (
     <LevelRows>
       {RANGE_SKILLS.map((skill) => {
         const range = ranges[skill];
 
         return (
-          range && (
-            <LevelRow
-              bar={
-                <LevelBar
-                  range={{
-                    high: CEFR_LEVELS.indexOf(range.high),
-                    low: CEFR_LEVELS.indexOf(range.low),
-                  }}
-                />
-              }
-              key={skill}
-              label={formatLevelRange(range)}
-              skill={skill}
-            />
-          )
+          <LevelRow
+            bar={
+              <LevelBar
+                range={
+                  range
+                    ? { high: CEFR_LEVELS.indexOf(range.high), low: CEFR_LEVELS.indexOf(range.low) }
+                    : NO_BANDS
+                }
+              />
+            }
+            key={skill}
+            label={range ? formatLevelRange(range) : t("Not tested yet")}
+            muted={!range}
+            skill={skill}
+          />
         );
       })}
     </LevelRows>

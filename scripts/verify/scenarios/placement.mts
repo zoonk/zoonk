@@ -7,47 +7,71 @@ const ANA: Prerequisites["persona"] = { flags: ["--locale", "en"], name: "ana" }
 const SELECT_ALL = "[data-slot=answer-option-group][role=group]";
 const SELECT_ONE = "[data-slot=answer-option-group][role=radiogroup]";
 const MATCH = "[data-slot=match-board]";
-const ORDER = "[data-slot=activity-sortable-list]";
 
 /** A test's question, written by the seed, in the page that asks it; each start saves a sitting. */
 function question(scenario: Omit<Scenario, "anchors" | "sizes" | "writes">): Scenario {
   return { ...scenario, anchors: [PINNED_ACTION], sizes: PHONE_AND_LAPTOP, writes: true };
 }
 
+/** A test's offer or what a sitting ends on: nothing is saved until the learner presses its action. */
+function screen(scenario: Omit<Scenario, "anchors" | "sizes">): Scenario {
+  return { ...scenario, anchors: [PINNED_ACTION], sizes: PHONE_AND_LAPTOP };
+}
+
 /**
- * Each placement test at a question, one per format, from the seed's questions with no model call:
- * the order the seed's answers and item ids give is the same on every run.
+ * Each placement test at its offer and at a question, one per format, from the seed's questions
+ * with no model call: the order the seed's answers and item ids give is the same on every run.
  */
 export const PLACEMENT_SCENARIOS: Scenario[] = [
-  question({
-    evidence: [SELECT_ALL],
-    id: "placement.level-check.select-all",
+  screen({
+    id: "placement.offer",
     prerequisites: { persona: PEDRO, state: "placement" },
-    proof: "Question 1",
+    proof: "Where would you like to start?",
+    reach: [{ click: "Continue" }],
+    screen: "/today",
+  }),
+  screen({
+    id: "placement-test.offer",
+    prerequisites: { persona: PEDRO },
+    proof: "Full test",
+    reach: [],
+    screen: "/placement-test",
+  }),
+  question({
+    evidence: [SELECT_ONE],
+    id: "placement.level-check.choice",
+    prerequisites: { persona: PEDRO, state: "placement" },
+    proof: "Question 1 of 12",
     reach: [{ click: "Continue" }, { click: "Start" }],
     screen: "/today",
   }),
   question({
-    evidence: [ORDER],
-    id: "placement.level-check.order",
+    evidence: [MATCH],
+    id: "placement.level-check.match",
     prerequisites: { persona: PEDRO, state: "placement" },
-    proof: "Drag the steps into order.",
-    reach: [
-      { click: "Continue" },
-      { click: "Start" },
-      { click: "You own a small piece of the company" },
-      { click: "Your piece is worth more if the company grows" },
-      { click: "You own part of its future profits" },
-      { click: "Confirm" },
-    ],
+    proof: "Question 2 of 12",
+    reach: [{ click: "Continue" }, { click: "Start" }, { click: "$20.12" }, { click: "Confirm" }],
     screen: "/today",
   }),
   question({
     evidence: [SELECT_ONE],
     id: "placement-test.question",
     prerequisites: { persona: PEDRO },
-    proof: "Part 1",
-    reach: [{ click: "Whole course" }, { click: "Start" }],
+    proof: "Part 1 of 4",
+    reach: [{ click: "Full test" }, { click: "Start" }],
+    screen: "/placement-test",
+  }),
+  question({
+    id: "placement-test.checkpoint",
+    prerequisites: { persona: PEDRO },
+    proof: "Part 1 of 4 done",
+    reach: [
+      { click: "Full test" },
+      { click: "Start" },
+      { click: "I don't know yet" },
+      { click: "I don't know yet" },
+      { click: "I don't know yet" },
+    ],
     screen: "/placement-test",
   }),
   question({

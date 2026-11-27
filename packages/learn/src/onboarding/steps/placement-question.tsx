@@ -112,6 +112,7 @@ export function PlacementQuestionScreen({
   media,
   number,
   onAnswer,
+  onClose,
   onStop,
   pending,
   position,
@@ -119,28 +120,29 @@ export function PlacementQuestionScreen({
   question,
   stopHint,
   subject,
-  total,
   trueFalseLabels = "trueFalse",
 }: {
   dontKnowLabel?: string;
   /** Saves from this screen (answers and Stop) that failed in a row. */
   failures: number;
   media?: React.ReactNode;
-  number?: number;
+  /** This question's number in the sitting, from 1: the way out shows from the second. */
+  number: number;
   onAnswer: (answer: PlacementAnswer, durationMs: number) => void;
+  /** The learner pressed ✕ on this question. */
+  onClose?: () => void;
   onStop: () => void;
   pending: boolean;
-  /** Where the question sits, over its title; "Question n of m" by default. */
-  position?: string;
+  /** Where the question sits in the test, at the end of the chip's row. */
+  position: readonly string[];
   /** 0 to 1. */
   progress: number;
   question: PlacementQuestion;
   stopHint?: string;
-  subject?: string;
-  total?: number;
+  /** What the question tests: a skill, a chapter, a subject. */
+  subject: string;
   trueFalseLabels?: TrueFalseLabels;
 }) {
-  const t = useExtracted();
   const [value, setValue] = useState<PlacementAnswer | null>(() => initialOrderAnswer(question));
   // oxlint-disable-next-line react/hook-use-state -- Read once as the question opens, never updated.
   const [shownAt] = useState(() => Date.now());
@@ -181,7 +183,7 @@ export function PlacementQuestionScreen({
   };
 
   return (
-    <OnboardingTestQuestion progress={progress}>
+    <OnboardingTestQuestion onClose={onClose} progress={progress}>
       <OnboardingScreenTop />
       <OnboardingColumn
         bar={
@@ -199,18 +201,7 @@ export function PlacementQuestionScreen({
         className="gap-5"
       >
         <OnboardingHeading>
-          {subject && number !== undefined && (
-            <OnboardingSubject
-              position={
-                position ??
-                (total === undefined
-                  ? t("Question {number, number}", { number })
-                  : t("Question {number, number} of {total, number}", { number, total }))
-              }
-            >
-              {subject}
-            </OnboardingSubject>
-          )}
+          <OnboardingSubject position={position}>{subject}</OnboardingSubject>
 
           <div className="flex flex-col gap-5 pb-4 not-first:pt-4 empty:hidden">
             {media}
@@ -247,7 +238,7 @@ export function PlacementQuestionScreen({
           trueFalseLabels={trueFalseLabels}
         />
 
-        {(number === undefined ? progress > 0 : number > 1) && (
+        {number > 1 && (
           <PlacementStop
             busy={pending && pressed === "stop"}
             hint={stopHint}

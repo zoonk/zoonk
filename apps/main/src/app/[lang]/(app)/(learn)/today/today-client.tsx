@@ -9,7 +9,6 @@ import { getFocusTestActions } from "@/app/[lang]/(app)/(onboarding)/start/focus
 import { UploadRequestClient } from "@/components/learn/upload-request-client";
 import { useRouter } from "@/i18n/navigation";
 import { updateFocusTestAction } from "@/lib/focus-test/focus-test-controls";
-import { STARTED_FOCUS_TEST_HREF } from "@/lib/focus-test/focus-test-href";
 import { useAnswerSuggestedGoal } from "@/lib/goals/use-answer-suggested-goal";
 import { useFollowTimeZone } from "@/lib/goals/use-follow-time-zone";
 import { toStudyDayDate } from "@/lib/learn/tab-missions";
@@ -142,7 +141,7 @@ function useFocusTestSuggestionActions(goalId: string) {
         return false;
       }
 
-      router.push(STARTED_FOCUS_TEST_HREF);
+      router.push("/focus-test");
       return true;
     },
   };

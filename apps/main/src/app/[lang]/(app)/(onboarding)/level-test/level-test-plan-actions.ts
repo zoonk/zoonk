@@ -5,7 +5,6 @@ import {
   type LanguageLevelTestView,
   type LevelTestResult,
   levelTestOutLevelSchema,
-  startLanguageLevelTestInputSchema,
 } from "@zoonk/core/language/level-test/contract";
 import { finishLanguageLevelTest } from "@zoonk/core/language/level-test/finish";
 import { getLanguageLevelTest } from "@zoonk/core/language/level-test/get";
@@ -20,7 +19,6 @@ import {
 } from "@zoonk/core/language/level-test/test-out";
 import { levelTestOutAnswerSchema } from "@zoonk/core/language/level-test/test-out-contract";
 import { finishLanguageLevelTestOut } from "@zoonk/core/language/level-test/test-out-finish";
-import { startPlacementSitting } from "@zoonk/core/learner/placement/sitting";
 import { isUuid } from "@zoonk/utils/uuid";
 
 type TestOutView = Extract<LanguageLevelTestOutResult, { status: "ready" }>["test"];
@@ -29,18 +27,15 @@ function toTestOutView(result: LanguageLevelTestOutResult): TestOutView | null {
   return result.status === "ready" ? result.test : null;
 }
 
-/** Opens a level test of this length, or answers with the one already open. */
+/** Opens a level test, or answers with the one already open. */
 export async function startLevelTestAttemptAction(
   goalId: string,
-  length: unknown,
 ): Promise<LanguageLevelTestView | null> {
-  const parsed = startLanguageLevelTestInputSchema.safeParse({ length });
-
-  if (!parsed.success || !isUuid(goalId)) {
+  if (!isUuid(goalId)) {
     return null;
   }
 
-  const result = await startLanguageLevelTest({ goalId, length: parsed.data.length });
+  const result = await startLanguageLevelTest({ goalId });
   return result.status === "ready" ? result.test : null;
 }
 
@@ -130,18 +125,4 @@ export async function finishLevelTestOutAction(
   }
 
   return toTestOutView(await finishLanguageLevelTestOut({ attemptId, goalId }));
-}
-
-/** After a whole-course level test, opens its walk through the course's topics. */
-export async function walkLevelTestTopicsAction(goalId: string, timeZone: string) {
-  if (!isUuid(goalId)) {
-    return false;
-  }
-
-  const result = await startPlacementSitting({
-    goalId,
-    input: { length: "wholeCourse", timeZone },
-  });
-
-  return result.status === "ready";
 }

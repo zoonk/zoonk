@@ -1,35 +1,22 @@
 "use client";
 
-import {
-  type FocusTestOffer,
-  type FocusTestSitting,
-} from "@zoonk/core/learner/placement/focus-test-contract";
-import { SkipForwardIcon } from "lucide-react";
+import { type FocusTestOffer } from "@zoonk/core/learner/placement/focus-test-contract";
 import { useExtracted } from "next-intl";
-import {
-  OnboardingActions,
-  OnboardingColumn,
-  OnboardingDescription,
-  OnboardingHeading,
-  OnboardingPrimaryButton,
-  OnboardingSecondaryButton,
-  OnboardingSubject,
-  OnboardingTitle,
-} from "../onboarding/onboarding-frame";
 import { TestOutcome } from "../onboarding/test-outcome";
+import { useTestOfferTexts } from "../placement-test/placement-test-offers";
+import { TestInvitation, TestOffer, type TestPressed } from "../placement-test/test-offer";
+import { useTestFacts } from "../placement-test/use-test-facts";
 import { type FocusTestHost } from "./focus-test-result";
-import { type Pressed } from "./use-focus-test";
-import {
-  useFocusTestLine,
-  useFocusTestTitle,
-  useSeeResultLabel,
-  useTestTime,
-} from "./use-focus-test-texts";
+import { useFocusTestLine, useFocusTestTitle, useSeeResultLabel } from "./use-focus-test-texts";
 
+type OfferChoice = "firstLesson" | "focusTest";
+
+/** Onboarding offers the test beside a first lesson; the Plan offers the test alone. */
 export function FocusTestInvitation({
   failed,
   host,
   next,
+  onShown,
   onSkip,
   onStart,
   pressed,
@@ -38,95 +25,48 @@ export function FocusTestInvitation({
   failed: boolean;
   host: FocusTestHost;
   next: FocusTestOffer;
+  onShown: () => void;
   onSkip: () => void;
   onStart: () => void;
-  pressed: Pressed;
+  pressed: TestPressed;
   suggestsFocus: boolean;
 }) {
   const t = useExtracted();
   const title = useFocusTestTitle();
   const line = useFocusTestLine();
-  const time = useTestTime();
+  const facts = useTestFacts();
+  const texts = useTestOfferTexts();
+  const name = t("Focus test");
+  const testFacts = [facts.questions(next.questions), facts.about(next.minutes)];
+
+  if (host === "plan") {
+    return (
+      <TestInvitation
+        chip={name}
+        description={line.offer(suggestsFocus)}
+        facts={testFacts}
+        failed={failed}
+        onShown={onShown}
+        onStart={onStart}
+        other={{ label: t("Not now"), onPress: onSkip }}
+        pressed={pressed}
+        title={title(suggestsFocus)}
+      />
+    );
+  }
 
   return (
-    <OnboardingColumn
-      bar={
-        <OnboardingActions failed={failed}>
-          <OnboardingSecondaryButton
-            busy={pressed === "other"}
-            disabled={pressed === "main"}
-            icon={host === "onboarding" ? <SkipForwardIcon aria-hidden="true" /> : undefined}
-            onClick={onSkip}
-          >
-            {host === "onboarding" ? t("Skip") : t("Not now")}
-          </OnboardingSecondaryButton>
-          <OnboardingPrimaryButton
-            busy={pressed === "main"}
-            disabled={pressed === "other"}
-            onClick={onStart}
-          >
-            {t("Start the test")}
-          </OnboardingPrimaryButton>
-        </OnboardingActions>
-      }
-    >
-      <OnboardingHeading>
-        <OnboardingSubject position={time.whole(next.minutes)}>{t("Focus test")}</OnboardingSubject>
-        <OnboardingTitle>{title(suggestsFocus)}</OnboardingTitle>
-        <OnboardingDescription>{line.offer(suggestsFocus)}</OnboardingDescription>
-      </OnboardingHeading>
-    </OnboardingColumn>
-  );
-}
-
-export function FocusTestResume({
-  answered,
-  failed,
-  onContinue,
-  onSeeResult,
-  pressed,
-  sitting,
-}: {
-  answered: number;
-  failed: boolean;
-  onContinue: () => void;
-  onSeeResult: () => void;
-  pressed: Pressed;
-  sitting: FocusTestSitting;
-}) {
-  const t = useExtracted();
-  const time = useTestTime();
-  const seeResult = useSeeResultLabel();
-
-  return (
-    <OnboardingColumn
-      bar={
-        <OnboardingActions failed={failed}>
-          <OnboardingSecondaryButton busy={pressed === "other"} onClick={onSeeResult}>
-            {seeResult}
-          </OnboardingSecondaryButton>
-          <OnboardingPrimaryButton autoFocus disabled={pressed === "other"} onClick={onContinue}>
-            {t("Continue")}
-          </OnboardingPrimaryButton>
-        </OnboardingActions>
-      }
-    >
-      <OnboardingHeading>
-        <OnboardingSubject position={time.left(sitting.minutes)}>
-          {t("Focus test")}
-        </OnboardingSubject>
-        <OnboardingTitle>{t("Continue your test")}</OnboardingTitle>
-        <OnboardingDescription>
-          {t({
-            description:
-              "Shown when the learner comes back to a Focus test they left halfway: the answers they already gave are kept.",
-            message:
-              "{count, plural, one {Your # answer is saved.} other {Your # answers are saved.}}",
-            values: { count: answered },
-          })}
-        </OnboardingDescription>
-      </OnboardingHeading>
-    </OnboardingColumn>
+    <TestOffer<OfferChoice>
+      description={line.offer(suggestsFocus)}
+      failed={failed}
+      initial="focusTest"
+      mainLabel={(choice) => (choice === "firstLesson" ? t("Continue") : t("Start"))}
+      onShown={onShown}
+      onStart={(choice) => (choice === "firstLesson" ? onSkip() : onStart())}
+      pressed={pressed}
+      rows={[texts.firstLesson, { facts: testFacts, label: name, value: "focusTest" }]}
+      title={texts.startTitle}
+    />
   );
 }
 

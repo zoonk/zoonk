@@ -14,12 +14,10 @@ import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 export function FocusTestClient({
   backHref,
   goalId,
-  started,
   subject,
 }: {
   backHref: "/plan" | `/start/${string}`;
   goalId: string;
-  started: boolean;
   subject: string;
 }) {
   const router = useRouter();
@@ -36,6 +34,7 @@ export function FocusTestClient({
       <OnboardingFrame>
         <FocusTestFlow
           actions={getFocusTestActions(goalId)}
+          goalId={goalId}
           host="plan"
           onDone={leave}
           plan={{
@@ -46,7 +45,6 @@ export function FocusTestClient({
           }}
           readWarmUp={readWarmUp}
           run={null}
-          started={started}
           subject={subject}
         />
       </OnboardingFrame>

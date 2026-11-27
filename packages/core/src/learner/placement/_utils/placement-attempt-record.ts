@@ -130,7 +130,7 @@ export function getCourseOffer(topics: number): z.infer<typeof coursePlacementOf
 }
 
 /** A topic is still ahead while one of its lessons is to do, or before it has any. */
-export function isTopicAhead(lessons: readonly { status: string }[] | undefined): boolean {
+function isTopicAhead(lessons: readonly { status: string }[] | undefined): boolean {
   return lessons?.some((lesson) => lesson.status === "todo") ?? true;
 }
 

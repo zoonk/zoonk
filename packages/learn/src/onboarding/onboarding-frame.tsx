@@ -9,6 +9,7 @@ import { Eyebrow } from "../_components/eyebrow";
 import { CLEAR_OF_PINNED_ACTIONS_CLASS } from "../_components/pinned-actions";
 import { ChangeSaveError } from "../_components/save-error";
 import { TASK_WRAPPING_ACTION_CLASS, TaskActions } from "../_components/task-layout";
+import { FactSegments } from "../_components/task-meta";
 import { OnboardingBarRow } from "./onboarding-bar";
 import {
   NO_BAR,
@@ -195,15 +196,21 @@ export function OnboardingSubject({
 }: {
   children: string;
   /** Where the learner is, such as "Question 2 of 8" or the time left: at the row's end, not in the chip. */
-  position?: string;
+  position?: string | readonly string[];
 }) {
+  const facts = typeof position === "string" ? [position] : (position ?? []);
+
   return (
     <div
-      className="text-muted-foreground flex items-center justify-between gap-3"
+      className="text-muted-foreground flex flex-wrap items-center justify-between gap-x-3 gap-y-2"
       data-slot="onboarding-subject"
     >
       <Eyebrow className="min-w-0 wrap-break-word">{children}</Eyebrow>
-      {position && <p className="shrink-0 font-mono text-xs tabular-nums">{position}</p>}
+      {facts.length > 0 && (
+        <p className="font-mono text-xs tabular-nums">
+          <FactSegments facts={facts} />
+        </p>
+      )}
     </div>
   );
 }

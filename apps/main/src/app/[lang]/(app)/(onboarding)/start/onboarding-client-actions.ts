@@ -22,15 +22,11 @@ import { isValidLocale } from "@zoonk/utils/locale";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useMemo } from "react";
 import { getFocusTestActions } from "./focus-test-client-actions";
-import { finishLevelTestAction } from "./language-level-test-actions";
 import { getLanguagePlanTestActions } from "./language-plan-test-client-actions";
 import {
   answerOnboardingAction,
-  answerPlacementAction,
   createOnboardingGoalsAction,
   finishPlacementAction,
-  getPlacementAction,
-  getPlacementMinutesAction,
   getPlanAction,
   joinWaitlistAction,
   startOverAction,
@@ -59,7 +55,6 @@ async function createAsGuest(
  */
 export const WEB_ONBOARDING_ACTIONS: OnboardingActions = {
   answer: ({ goalId, input }) => answerOnboardingAction(goalId, input, getPageLanguage()),
-  answerPlacement: (input) => answerPlacementAction({ ...input, timeZone: getLocalTimeZone() }),
   askMaterial: askMaterialQuestion,
   attach: {
     file: attachGoalFile,
@@ -73,25 +68,20 @@ export const WEB_ONBOARDING_ACTIONS: OnboardingActions = {
   finishPlacement: async (input) =>
     (await finishPlacementAction({ ...input, timeZone: getLocalTimeZone() })) !== null,
   focusTest: getFocusTestActions,
-  getPlacement: (goalId) => getPlacementAction({ goalId, timeZone: getLocalTimeZone() }),
-  getPlacementMinutes: getPlacementMinutesAction,
   getPlan: getPlanAction,
   getTimeAdvice: getGoalTimeAdvice,
   joinWaitlist: joinWaitlistAction,
-  languageLevelTest: (goalId) => ({
-    finish: () => finishLevelTestAction(goalId),
-    switchLanguage: (language) => {
-      if (isValidLocale(language)) {
-        void switchLanguage({ href: `/start/${goalId}`, locale: language });
-      }
-    },
-  }),
   languagePlanTest: getLanguagePlanTestActions,
   markPlanRevealed: markPlanRevealedAction,
   placementTest: getPlacementTestActions,
   readFirstLesson: readFirstLessonAction,
   readWarmUp,
   startOver: startOverAction,
+  switchAppLanguage: ({ goalId, language }) => {
+    if (isValidLocale(language)) {
+      void switchLanguage({ href: `/start/${goalId}`, locale: language });
+    }
+  },
   understanding: WEB_UNDERSTANDING_ACTIONS,
 };
 

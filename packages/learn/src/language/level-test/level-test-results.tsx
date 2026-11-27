@@ -1,27 +1,56 @@
 "use client";
 
-import {
-  type LevelTestLength,
-  type LevelTestResult,
-} from "@zoonk/core/language/level-test/contract";
+import { type LevelTestResult } from "@zoonk/core/language/level-test/contract";
 import { Button } from "@zoonk/ui/components/button";
+import { getLanguageNameInSentence } from "@zoonk/utils/languages";
+import { isValidLocale } from "@zoonk/utils/locale";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
+import { useAppLocale } from "../../_utils/locale";
 import { useLanguageNameInSentence } from "../../_utils/use-language-name";
 import { OnboardingDescription } from "../../onboarding/onboarding-frame";
 import { TestOutcome } from "../../onboarding/test-outcome";
-import { type PlacementPressed } from "../../placement-test/use-placement-test";
+import { UpNextLesson, useResultAction } from "../../placement-test/placement-test-screens";
+import { type TestPressed } from "../../placement-test/test-offer";
 import { useSkippedLessonsSentences } from "../../plan/use-skipped-lessons-sentences";
 import { useResultUndo } from "../../questions/undo-button";
 import { LevelRanges } from "./level-test-parts";
-import { type TestOutView } from "./use-language-plan-test";
+import { type TestOutView } from "./level-test-phase";
+
+export type OwnLanguage = { language: string; onSwitch: (language: string) => void };
+
+/** Offered once the learner has seen their level, only where the app isn't in their language yet. */
+function InterfaceOffer({ language, onSwitch }: OwnLanguage) {
+  const t = useExtracted();
+  const locale = useAppLocale();
+
+  if (language === locale || !isValidLocale(language)) {
+    return null;
+  }
+
+  return (
+    <Button
+      className="self-start"
+      lang={language}
+      onClick={() => onSwitch(language)}
+      type="button"
+      variant="link"
+    >
+      {t("Use the app in {language}", {
+        language: getLanguageNameInSentence({ targetLanguage: language, userLanguage: language }),
+      })}
+    </Button>
+  );
+}
 
 export function LevelResult({
   failed,
   onDone,
+  onStartLesson,
   onTestOut,
   onUndo,
-  onboarding = false,
+  onboarding,
+  ownLanguage,
   pressed,
   rail,
   result,
@@ -29,13 +58,13 @@ export function LevelResult({
   testOutLevel,
 }: {
   failed: boolean;
-  length: LevelTestLength;
   onDone: () => void;
+  onStartLesson: (lessonId: string) => void;
   onTestOut: (level: string) => void;
   onUndo: (changeId: string) => Promise<boolean>;
-  onboarding?: boolean;
-  onWalkTopics: () => void;
-  pressed: PlacementPressed;
+  onboarding: boolean;
+  ownLanguage?: OwnLanguage;
+  pressed: TestPressed;
   rail?: ReactNode;
   result: LevelTestResult | null;
   targetLanguage: string;
@@ -44,19 +73,19 @@ export function LevelResult({
   const t = useExtracted();
   const languageName = useLanguageNameInSentence();
   const { skipped } = useSkippedLessonsSentences();
-
   const { button, pending, undone } = useResultUndo({ changeId: result?.changeId, onUndo });
-
-  const doneLabel = onboarding ? t("Continue") : t("Done");
+  const nextLesson = undone ? null : result?.nextLesson;
+  const action = useResultAction({ nextLesson, onboarding });
+  const { lessonId } = action;
 
   return (
     <TestOutcome
       busy={pressed === "main"}
-      continueLabel={doneLabel}
+      continueLabel={action.label}
       disabled={pending || pressed === "other"}
       failed={failed}
       lead={<LevelResultLead result={result} undone={undone} />}
-      onContinue={onDone}
+      onContinue={lessonId ? () => onStartLesson(lessonId) : onDone}
       other={button(pressed !== null)}
       rail={rail}
       title={
@@ -64,6 +93,7 @@ export function LevelResult({
       }
     >
       {result && <LevelRanges ranges={result.ranges} />}
+      {nextLesson && <UpNextLesson title={nextLesson.title} />}
       {testOutLevel && (
         <Button
           busy={pressed === "other"}
@@ -76,29 +106,37 @@ export function LevelResult({
           {t("Test out of {level}", { level: testOutLevel })}
         </Button>
       )}
+      {ownLanguage && <InterfaceOffer {...ownLanguage} />}
     </TestOutcome>
   );
 }
 
-function LevelResultLead({ result, undone }: { result: LevelTestResult | null; undone: boolean }) {
+function useLevelResultSentence() {
   const t = useExtracted();
+
+  return (result: LevelTestResult | null): string => {
+    const lessons = result?.lessonsSkipped ?? 0;
+
+    if (lessons > 0) {
+      return t(
+        "{lessons, plural, one {Skipped # lesson you already know.} other {Skipped # lessons you already know.}}",
+        { lessons },
+      );
+    }
+
+    return result?.ranges.reading && !result.ranges.listening
+      ? t("You can test your listening later, from your plan.")
+      : t("Your lessons keep adjusting as you answer.");
+  };
+}
+
+function LevelResultLead({ result, undone }: { result: LevelTestResult | null; undone: boolean }) {
   const { back } = useSkippedLessonsSentences();
-  const skipped = result?.levelsSkipped ?? [];
-  const lessons = result?.lessonsSkipped ?? 0;
+  const sentence = useLevelResultSentence();
 
   return (
     <OnboardingDescription role="status">
-      {undone && back(lessons)}
-      {!undone &&
-        (skipped.length > 0
-          ? t({
-              description:
-                "{levels} is a list of language levels, such as “A1 and A2”. The plan no longer has their lessons.",
-              message:
-                "{count, plural, one {We skipped {levels}: # lesson.} other {We skipped {levels}: # lessons.}}",
-              values: { count: lessons, levels: skipped.join(", ") },
-            })
-          : t("Your lessons keep adjusting as you answer."))}
+      {undone ? back(result?.lessonsSkipped ?? 0) : sentence(result)}
     </OnboardingDescription>
   );
 }
@@ -111,7 +149,7 @@ export function TestOutResult({
 }: {
   onDone: () => void;
   onUndo: (changeId: string) => Promise<boolean>;
-  pressed: PlacementPressed;
+  pressed: TestPressed;
   view: TestOutView;
 }) {
   const t = useExtracted();

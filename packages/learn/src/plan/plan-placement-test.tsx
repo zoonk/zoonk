@@ -10,32 +10,65 @@ import {
 } from "../_components/list-group";
 import { FactSegments } from "../_components/task-meta";
 import { useFormatMomentDate } from "../_utils/iso-date";
-import { useTestTime } from "../focus-test/use-focus-test-texts";
+import { useTestFacts } from "../placement-test/use-test-facts";
 import { usePlanScreen } from "./plan-context";
 import { useSkippedLessonsSentences } from "./use-skipped-lessons-sentences";
 
 type PlacementTestRow = NonNullable<PlanView["placementTest"]>;
+type CourseRow = Extract<PlacementTestRow, { kind: "learn" }>;
 
 function useRowFacts() {
   const t = useExtracted();
-  const time = useTestTime();
+  const facts = useTestFacts();
   const formatDate = useFormatMomentDate();
   const { skipped } = useSkippedLessonsSentences();
 
-  return (test: PlacementTestRow): string[] => {
-    if (test.state === "continue") {
-      return [t("In progress"), time.left(test.estimatedMinutes)];
+  const result = (test: PlacementTestRow, invitation: string, minutes: number | undefined) =>
+    test.result
+      ? [skipped(test.result.lessonsSkipped), formatDate(test.result.finishedAt)]
+      : [invitation, minutes ? facts.about(minutes) : null];
+
+  /** A short test that ended shows its result; a full test with parts left says where it stands. */
+  const course = (test: CourseRow) => {
+    const { attempt } = test;
+    const resting = attempt && (attempt.partComplete || attempt.resume !== null);
+
+    if (!attempt || (attempt.length === "quick" && resting)) {
+      return result(test, t("Skip lessons you already know"), test.offer?.estimatedMinutes);
     }
 
-    if (test.state === "start" || !test.result) {
-      return [
-        test.kind === "language"
-          ? t("Find your level and skip what you know")
-          : t("Skip lessons you already know"),
-      ];
+    const question = facts.question({
+      number: attempt.resume?.question ?? attempt.answered + 1,
+      total: attempt.questions,
+    });
+
+    if (attempt.length === "quick") {
+      return [t("In progress"), question];
     }
 
-    return [skipped(test.result.lessonsSkipped), formatDate(test.result.finishedAt)];
+    return attempt.partComplete
+      ? [
+          facts.part({ part: attempt.nextPart ?? attempt.part, parts: attempt.parts }),
+          facts.aboutLeft(attempt.remainingEstimatedMinutes),
+        ]
+      : [facts.part({ part: attempt.part, parts: attempt.parts }), question];
+  };
+
+  return (test: PlacementTestRow) => {
+    if (test.kind === "learn") {
+      return course(test);
+    }
+
+    if (test.state !== "continue") {
+      return result(test, t("Find your level and skip what you know"), test.estimatedMinutes);
+    }
+
+    return [
+      t("In progress"),
+      test.answered !== undefined &&
+        test.total !== undefined &&
+        facts.question({ number: test.answered + 1, total: test.total }),
+    ];
   };
 }
 
