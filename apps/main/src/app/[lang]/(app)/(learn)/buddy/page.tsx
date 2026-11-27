@@ -1,6 +1,6 @@
 import { listBuddyConversations } from "@zoonk/core/lesson-questions/list-buddy-conversations";
 import { canAskBuddy, findBuddyGoal, readBuddyConversation } from "./buddy-goal";
-import { BuddyLog } from "./buddy-log";
+import { ProvideBuddyThread } from "./buddy-threads";
 
 /** Today's conversation when the learner already asked something today, and a blank one otherwise. */
 async function readCurrentConversation() {
@@ -24,5 +24,5 @@ async function readCurrentConversation() {
 export default async function BuddyPage() {
   const current = await readCurrentConversation();
 
-  return current ? <BuddyLog conversationId={current.id} thread={current.thread} /> : <BuddyLog />;
+  return <ProvideBuddyThread conversationId={current?.id} thread={current?.thread} />;
 }

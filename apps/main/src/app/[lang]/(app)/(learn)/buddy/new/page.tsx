@@ -1,5 +1,5 @@
-import { BuddyLog } from "../buddy-log";
+import { ProvideBuddyThread } from "../buddy-threads";
 
 export default function NewBuddyConversationPage() {
-  return <BuddyLog />;
+  return <ProvideBuddyThread />;
 }

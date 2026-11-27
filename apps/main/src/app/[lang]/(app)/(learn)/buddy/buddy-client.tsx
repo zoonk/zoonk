@@ -18,8 +18,9 @@ import {
   type TutorSituation,
   useBuddyTutor,
 } from "@zoonk/learn/buddy";
-import { TutorConversationHost } from "@zoonk/player/tutor/conversation";
+import { TutorConversation } from "@zoonk/player/tutor/conversation";
 import { useSearchParams } from "next/navigation";
+import { useBuddyThread } from "./buddy-threads";
 import { useBuddyConversations } from "./use-buddy-conversations";
 
 const HREFS: BuddyHrefs = { energy: "/energy", logbook: "/logbook", memory: "/settings/memory" };
@@ -29,13 +30,11 @@ type OpenConversation = { blank: boolean; id: string };
 /** A question from search (`?ask=`) waits in the composer: only the learner's own send asks it. */
 function BuddyConversation({
   canAsk,
-  children,
   conversation,
   goalId,
   onQuestionSaved,
 }: {
   canAsk: boolean;
-  children: React.ReactNode;
   conversation: OpenConversation;
   goalId: string;
   onQuestionSaved: (saved: { conversationId: string; question: LessonQuestionResource }) => void;
@@ -47,30 +46,24 @@ function BuddyConversation({
   const tutor = useTutorConfig({ appLinks, buddy: null, canAsk });
 
   const question = useSearchParams().get("ask") ?? undefined;
+  const thread = useBuddyThread(conversation);
 
   return (
-    <TutorConversationHost
-      composerLabel={content.composerLabel}
-      conversation={conversation}
+    <TutorConversation
+      conversationId={conversation.id}
       draft={question}
       goalId={goalId}
-      identity={content.identity}
-      onAnswered={content.onAnswered}
-      onAsked={content.onAsked}
       onMissionMoment={() => router.refresh()}
       onQuestionSaved={onQuestionSaved}
-      placeholder={content.placeholder}
-      suggestions={content.suggestions}
+      thread={thread}
       tutor={tutor}
-    >
-      {children}
-    </TutorConversationHost>
+      {...content}
+    />
   );
 }
 
 export function BuddyClient({
   canAsk,
-  children,
   conversations,
   goalId,
   readAt,
@@ -79,7 +72,6 @@ export function BuddyClient({
   viewerId,
 }: {
   canAsk: boolean;
-  children: React.ReactNode;
   /** Null for a guest, who can't ask and so has none. */
   conversations: BuddyConversations | null;
   goalId: string;
@@ -131,9 +123,7 @@ export function BuddyClient({
         conversation={open}
         goalId={goalId}
         onQuestionSaved={questionSaved}
-      >
-        {children}
-      </BuddyConversation>
+      />
     </BuddyScreen>
   );
 }

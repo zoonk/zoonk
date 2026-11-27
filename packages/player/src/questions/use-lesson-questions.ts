@@ -27,6 +27,8 @@ import { useSendLessonQuestion } from "./use-send-lesson-question";
 export type LessonQuestionHost = {
   activeContext: LessonQuestionContext;
   canAskQuestions: boolean;
+  /** The active context's thread as the page read it, there from the first render. */
+  initialThread?: LessonQuestionThreadPage | null;
   lessonStepIds: readonly string[];
   onMissionMoment?: (moment: MissionMomentView | null) => void;
   /** The server saved a question the learner sent in `context`. */
@@ -77,6 +79,7 @@ export function useLessonQuestions({
   activeContext,
   canAskQuestions,
   connection,
+  initialThread = null,
   lessonStepIds,
   onMissionMoment,
   onQuestionSaved,
@@ -87,6 +90,7 @@ export function useLessonQuestions({
 }: UseLessonQuestionsInput): LessonQuestionController {
   const { state, dispatch, dispatchToContext, getState } = useLessonQuestionSessions({
     activeContext,
+    initialThread,
   });
 
   const { load, loadEarlier, loadThread, reconcileLatestThread } = useLessonQuestionThread({

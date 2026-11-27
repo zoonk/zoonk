@@ -3,7 +3,6 @@
 import { type LessonQuestionResource } from "@zoonk/core/lesson-questions/contract";
 import { type MissionMomentView } from "@zoonk/core/sessions/completion-contract";
 import { TUTOR_COMPOSER_FRAME_CLASS } from "@zoonk/learn/tutor-composer";
-import { type TutorIdentity } from "@zoonk/learn/tutor-identity";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
@@ -15,22 +14,22 @@ import {
   useLessonQuestionNavigation,
 } from "./lesson-question-navigation";
 import {
+  LessonQuestionControllerProvider,
   LessonQuestionHostProvider,
   useLessonQuestionController,
 } from "./lesson-question-provider";
-import { ConversationHostContext, type OpenConversation } from "./tutor-conversation-host";
+import { lessonQuestionReducer } from "./lesson-question-state";
+import { ConversationLog, type ConversationLogProps } from "./tutor-conversation-log";
 import { useConversationMissionMoment } from "./tutor-mission-moment";
 import { TutorSuggestions, useOffersSuggestions } from "./tutor-suggestions";
+import { type LessonQuestionThreadPage } from "./use-lesson-question-sessions";
 import { type LessonQuestionHost } from "./use-lesson-questions";
 import { useTurnSignals } from "./use-turn-signals";
 
-export { TutorConversationLog } from "./tutor-conversation-log";
-
-type ConversationFrameProps = {
+type TutorConversationProps = ConversationLogProps & {
   composerLabel: string;
   /** Only seeds the composer; the learner must send it explicitly. */
   draft?: string;
-  identity: TutorIdentity;
   onAnswered?: () => void;
   onAsked?: () => void;
   placeholder: string;
@@ -75,22 +74,25 @@ function useBroughtQuestion({
   }, [changeDraft, draft]);
 }
 
-function ConversationFrame({
-  blank,
-  children,
+function ConversationBody({
   composerLabel,
   draft,
+  greeting,
+  greetingAction,
   identity,
+  missionMoment,
   onAnswered,
   onAsked,
   placeholder,
+  renderPlanChange,
+  renderToolOffer,
   suggestions,
-}: ConversationFrameProps & { blank: boolean; children: React.ReactNode }) {
+}: TutorConversationProps & { missionMoment: MissionMomentView | null }) {
   const t = useExtracted();
   const controller = useLessonQuestionController();
   const { canAskQuestions, state } = controller;
   const ready = state.loadStatus === "ready" && state.error !== "load";
-  const empty = (blank || ready) && state.questions.length === 0;
+  const empty = ready && state.questions.length === 0;
   const offersSuggestions = useOffersSuggestions();
 
   useBroughtQuestion({ changeDraft: controller.changeDraft, draft });
@@ -101,7 +103,14 @@ function ConversationFrame({
       aria-label={t("Conversation with {name}", { name: identity.name })}
       className="flex flex-1 flex-col"
     >
-      {children}
+      <ConversationLog
+        greeting={greeting}
+        greetingAction={greetingAction}
+        identity={identity}
+        missionMoment={missionMoment}
+        renderPlanChange={renderPlanChange}
+        renderToolOffer={renderToolOffer}
+      />
 
       <div className={cn(COMPOSER_POSITION, "flex flex-col gap-2.5")}>
         {empty && canAskQuestions && offersSuggestions && (
@@ -127,40 +136,79 @@ function ConversationFrame({
 }
 
 /**
- * One goal's conversations with the buddy: it keeps each one's turns, draft, answer on its way and
- * unsent question apart, by conversation, and draws the composer for the open one. `children` is
- * that conversation's `TutorConversationLog`.
+ * A conversation opened after the first one shows what its page read (`thread`) at once, then
+ * keeps it; one no page read loads itself.
  */
-export function TutorConversationHost({
+function ShownConversation({
   children,
-  conversation,
+  thread,
+}: {
+  children: React.ReactNode;
+  thread: LessonQuestionThreadPage | null;
+}) {
+  const controller = useLessonQuestionController();
+  const { canAskQuestions, load, showThread, state } = controller;
+  const waiting = canAskQuestions && state.loadStatus === "idle" && state.error !== "load";
+
+  useEffect(() => {
+    if (!waiting) {
+      return;
+    }
+
+    if (thread) {
+      showThread(thread);
+    } else {
+      void load();
+    }
+  }, [load, showThread, thread, waiting]);
+
+  const shown = useMemo(
+    () =>
+      waiting && thread
+        ? {
+            ...controller,
+            state: lessonQuestionReducer(state, { ...thread, type: "threadLoaded" }),
+          }
+        : controller,
+    [controller, state, thread, waiting],
+  );
+
+  return (
+    <LessonQuestionControllerProvider controller={shown}>
+      {children}
+    </LessonQuestionControllerProvider>
+  );
+}
+
+/**
+ * One goal's conversations with the buddy, showing the one `conversationId` names. Each keeps its
+ * own turns, draft, answer on its way and unsent question, so opening another never moves them
+ * across, and coming back finds them. `thread` is what the page read of the open one: the first is
+ * there from the first paint, with nothing arriving after it.
+ */
+export function TutorConversation({
+  conversationId,
   goalId,
   onMissionMoment,
   onQuestionSaved,
+  thread,
   tutor,
   ...props
-}: ConversationFrameProps & {
-  children: React.ReactNode;
-  conversation: OpenConversation;
+}: TutorConversationProps & {
+  conversationId: string;
   goalId: string;
   onMissionMoment?: (moment: MissionMomentView) => void;
   onQuestionSaved?: (saved: { conversationId: string; question: LessonQuestionResource }) => void;
+  thread: LessonQuestionThreadPage | null;
   tutor: LessonTutorConfig;
 }) {
-  const { blank, id } = conversation;
-
   const target = useMemo(
-    () => ({ conversationId: id, goalId, kind: "plan" as const }),
-    [goalId, id],
+    () => ({ conversationId, goalId, kind: "plan" as const }),
+    [conversationId, goalId],
   );
 
-  const context = useMemo(() => ({ conversationId: id, kind: "plan" as const }), [id]);
-
-  const missionMoment = useConversationMissionMoment({
-    conversationId: id,
-    onMoment: onMissionMoment,
-  });
-
+  const context = useMemo(() => ({ conversationId, kind: "plan" as const }), [conversationId]);
+  const missionMoment = useConversationMissionMoment({ conversationId, onMoment: onMissionMoment });
   const onSaved = useRef(onQuestionSaved);
 
   useEffect(() => {
@@ -180,18 +228,14 @@ export function TutorConversationHost({
     () => ({
       activeContext: context,
       canAskQuestions: tutor.canAsk,
+      initialThread: thread,
       lessonStepIds: [],
       onMissionMoment: missionMoment.receive,
       onQuestionSaved: reportSaved,
       page: true,
       preload: false,
     }),
-    [context, missionMoment.receive, reportSaved, tutor.canAsk],
-  );
-
-  const open = useMemo(
-    () => ({ blank, id, missionMoment: missionMoment.moment }),
-    [blank, id, missionMoment.moment],
+    [context, missionMoment.receive, reportSaved, thread, tutor.canAsk],
   );
 
   return (
@@ -202,11 +246,9 @@ export function TutorConversationHost({
         key={goalId}
         target={target}
       >
-        <ConversationHostContext value={open}>
-          <ConversationFrame {...props} blank={blank}>
-            {children}
-          </ConversationFrame>
-        </ConversationHostContext>
+        <ShownConversation thread={thread}>
+          <ConversationBody {...props} missionMoment={missionMoment.moment} />
+        </ShownConversation>
       </LessonQuestionHostProvider>
     </LessonQuestionNavigationContext>
   );

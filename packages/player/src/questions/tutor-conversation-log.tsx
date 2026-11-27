@@ -1,13 +1,13 @@
 "use client";
 
+import { type MissionMomentView } from "@zoonk/core/sessions/completion-contract";
 import { useLiveLimit } from "@zoonk/learn/help-limit";
 import { type TutorCards } from "@zoonk/learn/tutor-cards";
 import { type TutorIdentity, TutorMessage } from "@zoonk/learn/tutor-identity";
 import { OpenPageHere } from "@zoonk/ui/components/open-page-here";
 import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
-import { useIsPageShown } from "@zoonk/ui/hooks/is-page-shown";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
-import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { useReducedMotion } from "../activities/_utils/use-reduced-motion";
 import {
   QuestionErrorAction,
@@ -15,20 +15,14 @@ import {
   RequestErrorMessage,
   toHelpLimit,
 } from "./lesson-question-errors";
-import {
-  LessonQuestionControllerProvider,
-  useLessonQuestionController,
-} from "./lesson-question-provider";
-import { lessonQuestionReducer } from "./lesson-question-state";
+import { useLessonQuestionController } from "./lesson-question-provider";
 import { isLessonQuestionAnswerInProgress } from "./lesson-question-status";
 import { EarlierTurns, QuestionTurn, SENDING_TURN_ID, SendingTurn } from "./lesson-question-turn";
-import { useConversationHost } from "./tutor-conversation-host";
 import { ConversationSkeleton, FirstDay, TurnDay } from "./tutor-conversation-parts";
 import { ConversationMissionMoment } from "./tutor-mission-moment";
-import { type LessonQuestionThreadPage } from "./use-lesson-question-sessions";
 import { WaitForFirstShow } from "./wait-for-first-show";
 
-type ConversationLogProps = TutorCards & {
+export type ConversationLogProps = TutorCards & {
   greeting: string;
   greetingAction?: React.ReactNode;
   identity: TutorIdentity;
@@ -168,15 +162,15 @@ function ConversationTurns({
   );
 }
 
-function ConversationLog({
+export function ConversationLog({
   greeting,
   greetingAction,
   identity,
+  missionMoment,
   renderPlanChange,
   renderToolOffer,
-}: ConversationLogProps) {
+}: ConversationLogProps & { missionMoment: MissionMomentView | null }) {
   const { canAskQuestions, state } = useLessonQuestionController();
-  const { missionMoment } = useConversationHost();
   const ready = state.loadStatus === "ready" && state.error !== "load";
   const answering = state.questions.some((question) => isLessonQuestionAnswerInProgress(question));
 
@@ -205,60 +199,5 @@ function ConversationLog({
 
       <ConversationMissionMoment moment={missionMoment} />
     </div>
-  );
-}
-
-/**
- * The open conversation's turns, drawn by the page its URL names, inside `TutorConversationHost`.
- * `thread` is what that page read on the server, shown from the first paint and handed to the host,
- * which then keeps the conversation: a page drawn again later finds it already there. A page that
- * names no conversation (`conversationId` left out) draws the blank one.
- */
-export function TutorConversationLog({
-  conversationId = null,
-  thread,
-  ...props
-}: ConversationLogProps & {
-  conversationId?: string | null;
-  thread: LessonQuestionThreadPage | null;
-}) {
-  const controller = useLessonQuestionController();
-  const host = useConversationHost();
-  const isPageShown = useIsPageShown();
-  const { canAskQuestions, load, showThread, state } = controller;
-  const isOpen = conversationId === null ? host.blank : conversationId === host.id;
-  const read = isOpen ? thread : null;
-  const waiting = canAskQuestions && state.loadStatus === "idle" && state.error !== "load";
-
-  useEffect(() => {
-    if (!waiting) {
-      return;
-    }
-
-    if (read) {
-      showThread(read);
-    } else {
-      void load();
-    }
-  }, [load, read, showThread, waiting]);
-
-  const shown = useMemo(
-    () =>
-      waiting && read
-        ? { ...controller, state: lessonQuestionReducer(state, { ...read, type: "threadLoaded" }) }
-        : controller,
-    [controller, read, state, waiting],
-  );
-
-  // Every page the router keeps hidden is inside the one host: only the page in view draws the
-  // open conversation, or each kept page would draw its own copy of the turns.
-  if (!isPageShown) {
-    return null;
-  }
-
-  return (
-    <LessonQuestionControllerProvider controller={shown}>
-      <ConversationLog {...props} />
-    </LessonQuestionControllerProvider>
   );
 }

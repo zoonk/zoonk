@@ -4,7 +4,7 @@ import { getBuddyConversationGoalId } from "@zoonk/core/lesson-questions/get-bud
 import { getFormattingLocale } from "@zoonk/utils/locale";
 import { notFound } from "next/navigation";
 import { findBuddyGoal, readBuddyConversation } from "../buddy-goal";
-import { BuddyLog } from "../buddy-log";
+import { ProvideBuddyThread } from "../buddy-threads";
 
 export default async function BuddyConversationPage({
   params,
@@ -30,5 +30,5 @@ export default async function BuddyConversationPage({
 
   const thread = await readBuddyConversation({ conversationId, goalId });
 
-  return <BuddyLog conversationId={conversationId} thread={thread} />;
+  return <ProvideBuddyThread conversationId={conversationId} thread={thread} />;
 }

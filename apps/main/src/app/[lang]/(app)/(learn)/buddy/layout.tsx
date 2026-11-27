@@ -11,6 +11,7 @@ import { Suspense } from "react";
 import { BuddyClient } from "./buddy-client";
 import { findBuddyGoal } from "./buddy-goal";
 import { BuddyGoalStartClient } from "./buddy-goal-start-client";
+import { BuddyThreads } from "./buddy-threads";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
@@ -38,9 +39,9 @@ async function readConversations({ canAsk, goalId }: { canAsk: boolean; goalId: 
 }
 
 /**
- * The page draws only the open conversation's turns. Everything around them is here, so opening
- * another conversation, or a new one getting its own address, swaps the turns alone: the list, the
- * composer and an answer on its way stay as they are.
+ * The whole screen is drawn here, and the page under it only hands over the conversation its URL
+ * names (`ProvideBuddyThread`). So opening another conversation, or a new one getting its own
+ * address, changes the turns alone: the list, the composer and an answer on its way stay as they are.
  */
 async function BuddyContent({ children }: { children: React.ReactNode }) {
   const [readAt, result, goal, session] = await Promise.all([
@@ -74,18 +75,22 @@ async function BuddyContent({ children }: { children: React.ReactNode }) {
   ]);
 
   return (
-    <BuddyClient
-      canAsk={canAsk}
-      conversations={conversations}
-      goalId={goal.id}
-      key={goal.id}
-      readAt={readAt}
-      situation={{ hasMistake, hasToday: Boolean(result.buddy.today) }}
-      status={result.buddy}
-      viewerId={session.user.id}
-    >
+    <BuddyThreads>
       {children}
-    </BuddyClient>
+
+      <Suspense fallback={<BuddyScreenSkeleton />}>
+        <BuddyClient
+          canAsk={canAsk}
+          conversations={conversations}
+          goalId={goal.id}
+          key={goal.id}
+          readAt={readAt}
+          situation={{ hasMistake, hasToday: Boolean(result.buddy.today) }}
+          status={result.buddy}
+          viewerId={session.user.id}
+        />
+      </Suspense>
+    </BuddyThreads>
   );
 }
 
