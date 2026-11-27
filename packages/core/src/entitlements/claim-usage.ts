@@ -68,7 +68,8 @@ export function claimAssist(): Promise<UsageDecision> {
 
 /**
  * Claims inside the caller's learner write, after the write's own checks, so it's charged only if
- * that write commits. The caller expires the allowance tag once it commits.
+ * that write commits. `recorded` says the claim wrote a row the write must keep. The caller expires
+ * the allowance tag once it commits.
  */
 export async function claimUsageInWrite({
   kind,
@@ -80,10 +81,10 @@ export async function claimUsageInWrite({
   targetId: string;
   transaction: TransactionClient;
   viewer: EntitlementViewer;
-}): Promise<UsageDecision> {
+}): Promise<{ decision: UsageDecision; recorded: boolean }> {
   await lockUsageForViewer({ transaction, userId: viewer.userId });
 
-  const { decision } = await claimUsageInTransaction({
+  return claimUsageInTransaction({
     generated: false,
     kind,
     now: new Date(),
@@ -91,17 +92,22 @@ export async function claimUsageInWrite({
     transaction,
     viewer,
   });
-
-  return decision;
 }
 
 /** Claims a small AI call inside the caller's learner write, as `claimUsageInWrite` does. */
-export function claimAssistInWrite({
+export async function claimAssistInWrite({
   transaction,
   viewer,
 }: {
   transaction: TransactionClient;
   viewer: EntitlementViewer;
 }): Promise<UsageDecision> {
-  return claimUsageInWrite({ kind: "assist", targetId: randomUUID(), transaction, viewer });
+  const { decision } = await claimUsageInWrite({
+    kind: "assist",
+    targetId: randomUUID(),
+    transaction,
+    viewer,
+  });
+
+  return decision;
 }

@@ -114,6 +114,46 @@ describe("session focus time", () => {
     await expect(seconds()).resolves.toBe(420);
   });
 
+  it("pauses running clocks and leaves blocks stopped on earlier days as they were", async () => {
+    const { start, user } = await setup();
+
+    const earlier = await studySessionFixture({
+      localDate: new Date("2026-10-01"),
+      userId: user.id,
+    });
+
+    const [stopped, untimed] = await Promise.all([
+      studySessionBlockFixture({
+        kind: "practice",
+        payload: { timing: { activeAt: null, clock: null, elapsedMs: 5 * MINUTE } },
+        position: 0,
+        sessionId: earlier.id,
+        startedAt: new Date("2026-10-01T09:00:00Z"),
+        status: "active",
+      }),
+      studySessionBlockFixture({
+        kind: "practice",
+        position: 1,
+        sessionId: earlier.id,
+        startedAt: new Date(NOW.getTime() - 3 * MINUTE),
+        status: "active",
+      }),
+    ]);
+
+    at(4);
+    await start(0);
+
+    await expect(
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: stopped.id } }),
+    ).resolves.toStrictEqual(stopped);
+
+    expect(
+      readBlockPayload(
+        await prisma.studySessionBlock.findUniqueOrThrow({ where: { id: untimed.id } }),
+      ).timing,
+    ).toMatchObject({ activeAt: null, elapsedMs: 7 * MINUTE });
+  });
+
   it("pauses the earlier clock across different owned sessions", async () => {
     const { blocks, finish, seconds, session, start, user } = await setup();
     const other = await studySessionFixture({ userId: user.id });
