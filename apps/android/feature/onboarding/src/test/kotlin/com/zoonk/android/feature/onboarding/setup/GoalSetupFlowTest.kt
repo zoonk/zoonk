@@ -217,11 +217,11 @@ class GoalSetupFlowTest {
 
         rule.onNodeWithContentDescription("Friday").performScrollTo().performClick()
         rule.mainClock.advanceTimeBy(1_000)
-        rule.onNodeWithText("See plan").assertIsNotEnabled()
+        rule.onNodeWithText("Continue").assertIsNotEnabled()
 
         rule.mainClock.advanceTimeBy(45_000)
         rule.onNodeWithText("We couldn't work out the time your goal needs.").performScrollTo().assertIsDisplayed()
-        rule.onNodeWithText("See plan").performClick()
+        rule.onNodeWithText("Continue").performClick()
         rule.waitForIdle()
 
         assertEquals(45L, (api.answers.single().second as OnboardingAnswerInput.OnboardingAnswerInputOneOf9Value).value.dailyMinutes)

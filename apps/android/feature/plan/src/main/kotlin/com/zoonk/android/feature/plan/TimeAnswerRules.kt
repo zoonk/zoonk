@@ -43,15 +43,6 @@ val TimeLine.isBusy: Boolean get() = this == TimeLine.Asking || this == TimeLine
 
 fun suggestedMinutes(found: PlanTimeToCover?): Int? = found?.suggested?.minutes?.toInt()
 
-/** Whether [minutes] a day covers everything by the date; false while that isn't known. */
-fun coversEverything(
-    found: PlanTimeToCover?,
-    minutes: Int?,
-): Boolean {
-    val full = found?.recommendedMinutes ?: return false
-    return minutes != null && minutes >= full
-}
-
 /** The suggested time, offered while a shorter one is picked; a longer one is the learner's and offers nothing. */
 fun timeOffer(
     line: TimeLine,

@@ -1,10 +1,10 @@
 ---
 name: zoonk-code-review
-description: Review Zoonk diffs or assess supplied review comments against actual product behavior and repository constraints.
+description: Use when asked to review a Zoonk diff, branch or pull request, or to judge review comments someone supplied.
 license: MIT
 metadata:
   author: zoonk
-  version: "2.3.0"
+  version: "2.4.0"
 ---
 
 # Zoonk code review

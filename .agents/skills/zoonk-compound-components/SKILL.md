@@ -1,10 +1,10 @@
 ---
 name: zoonk-compound-components
-description: Create or refactor reusable Zoonk React UI primitives using flat compound components.
+description: Use when creating or refactoring a reusable Zoonk React UI component, such as one in packages/ui.
 license: MIT
 metadata:
   author: zoonk
-  version: "2.0.0"
+  version: "2.1.0"
 ---
 
 # Compound components
@@ -34,4 +34,4 @@ Use small composable primitives when callers need to arrange content or share st
 
 Pure visual composition does not need a provider. Use context when siblings must share state/actions or controls outside the main frame need access to them. For those cases, consult [Vercel composition patterns](../vercel-composition-patterns/SKILL.md), retaining Zoonk's flat naming. Do not add a provider solely to pass static content.
 
-Cover an interaction with E2E only when it clears the repository's [E2E bar](../zoonk-testing/SKILL.md#the-e2e-bar); do not add isolated React component tests for these primitives.
+Cover an interaction with E2E only when it clears the repository's [E2E bar](../zoonk-testing/references/e2e.md#the-e2e-bar); do not add isolated React component tests for these primitives.

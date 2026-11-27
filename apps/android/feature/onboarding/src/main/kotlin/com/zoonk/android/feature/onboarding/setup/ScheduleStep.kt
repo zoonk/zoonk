@@ -3,14 +3,6 @@ package com.zoonk.android.feature.onboarding.setup
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.selection.toggleable
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -21,15 +13,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
@@ -41,7 +27,6 @@ import com.zoonk.android.feature.onboarding.start.text
 import com.zoonk.android.feature.plan.DaySplit
 import com.zoonk.android.feature.plan.GoalDate
 import com.zoonk.android.feature.plan.TimeAnswer
-import com.zoonk.android.feature.plan.coversEverything
 import com.zoonk.android.feature.plan.lineAdvice
 import com.zoonk.android.feature.plan.suggestedMinutes
 import com.zoonk.android.feature.plan.timeLine
@@ -50,17 +35,10 @@ import com.zoonk.android.feature.warmup.rememberReadyHold
 import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.DailyTimePicker
 import com.zoonk.android.ui.components.ForwardIcon
-import com.zoonk.android.ui.components.Switch
 import com.zoonk.android.ui.components.TextButton
-import com.zoonk.android.ui.components.TimeSelect
 import com.zoonk.android.ui.components.WeekdayPicker
 import com.zoonk.android.ui.components.WeekendTime
 import com.zoonk.android.ui.components.missingDays
-import com.zoonk.android.ui.format.DateStyle
-import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.formatDate
-import com.zoonk.android.ui.format.formatMinutes
-import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.api.models.ExamDocument
 import com.zoonk.api.models.Goal
 import com.zoonk.api.models.OnboardingAnswerInput
@@ -83,7 +61,6 @@ internal fun ColumnScope.ScheduleStep(
     store: OnboardingStore,
     vm: GoalSetupViewModel,
     pending: Boolean,
-    factsBeside: Boolean,
     startsOnRecommended: Boolean,
 ) {
     var choice by rememberSaveable(stateSaver = jsonSaver(ScheduleChoice.serializer())) {
@@ -100,7 +77,6 @@ internal fun ColumnScope.ScheduleStep(
             store,
             vm,
             pending,
-            factsBeside,
             choice,
             startsOnRecommended,
         ) {
@@ -136,7 +112,6 @@ private fun ColumnScope.ScheduleTime(
     store: OnboardingStore,
     vm: GoalSetupViewModel,
     pending: Boolean,
-    factsBeside: Boolean,
     choice: ScheduleChoice,
     startsOnRecommended: Boolean,
     onChoiceChange: (ScheduleChoice) -> Unit,
@@ -144,7 +119,6 @@ private fun ColumnScope.ScheduleTime(
     val exam = goal.kind == Goal.Kind.EXAM
     val picked = choice.picked
     var pickedSplit by rememberSaveable(stateSaver = DaySplitSaver) { mutableStateOf<DaySplit?>(null) }
-    val fullCourse = choice.fullCourse
     val days = choice.days
     val weekend = choice.weekend
     val hasDays = days.isNotEmpty()
@@ -176,8 +150,7 @@ private fun ColumnScope.ScheduleTime(
             settled = !dated || findFailed,
             startsOnRecommended = startsOnRecommended,
         )
-    val studiesEverything = exam && fullCourse
-    val asked = studyWeek(days, minutes ?: recommendedMinutes, weekend, studiesEverything)
+    val asked = studyWeek(days, minutes ?: recommendedMinutes, weekend)
 
     val aim =
         LocalSetupAim.current.aim
@@ -196,7 +169,7 @@ private fun ColumnScope.ScheduleTime(
                         },
                 ),
             ),
-            enabled = hasDays && asksAboutTime(dated, found, studiesEverything, minutes),
+            enabled = hasDays && asksAboutTime(dated, minutes),
             paused = paused,
             planMade = run.planMade,
             querySerializer = AdviceQuery.serializer(),
@@ -273,8 +246,6 @@ private fun ColumnScope.ScheduleTime(
         .TrackOnboardingQuestion(goal.id.toString(), "schedule", goal.details.text("onboardingId"))
     StepForm(
         title = stringResource(R.string.onboarding_schedule_title),
-        chips = if (factsBeside) emptyList() else planFactChips(goal),
-        continueLabel = stringResource(R.string.onboarding_see_plan),
         canContinue = hasDays && minutes != null,
         pending = pending || waitsToSave(line, picked),
         onContinue = {
@@ -284,7 +255,6 @@ private fun ColumnScope.ScheduleTime(
                     OnboardingAnswerInputOneOf9(
                         dailyMinutes = time.toLong(),
                         question = OnboardingAnswerInputOneOf9.Question.SCHEDULE,
-                        fullCourse = if (exam) keepsFullCourse(fullCourse, found, minutes) else null,
                         studyDays = days.takeIf { it.size < EVERY_DAY.size }?.map(Int::toLong),
                         timeZone = TimeZone.getDefault().id,
                         weekendMinutes = weekend?.toLong(),
@@ -323,15 +293,7 @@ private fun ColumnScope.ScheduleTime(
 
         ScheduleAim(advice?.endDate?.toJavaLocalDate(), minutes, goal, store, asked.adviceInput(minutes ?: recommendedMinutes))
 
-        DateLink(dated = dated, enabled = !pending, onClick = vm::changeDate)
-
-        // It shows only under a time that doesn't cover everything, so it comes after every other input: showing it
-        // moves only the answer under it.
-        val short = shown.found != null && !coversEverything(shown.found, minutes)
-        if (exam && date != null && (short || keepsFullCourse(fullCourse, shown.found, minutes))) {
-            val end = minutes?.let { time -> advice?.fullCourseEndDate?.let { ExamFinish(time, it, date) } }
-            FullCourseToggle(fullCourse, end, onCheckedChange = { onChoiceChange(choice.copy(fullCourse = it)) })
-        }
+        DateLink(dated = dated, exam = exam, enabled = !pending, onClick = vm::changeDate)
 
         // What the time and days get changes length as they change, so it comes last, with nothing to tap under it.
         TimeAnswer(
@@ -368,50 +330,19 @@ private fun ColumnScope.ScheduleTime(
 @Composable
 private fun DateLink(
     dated: Boolean,
+    exam: Boolean,
     enabled: Boolean,
     onClick: () -> Unit,
 ) {
-    TextButton(onClick = onClick, enabled = enabled, trailingIcon = ForwardIcon, edge = ButtonEdge.Start) {
-        Text(stringResource(if (dated) R.string.onboarding_change_date else R.string.onboarding_choose_date))
-    }
-}
-
-private data class ExamFinish(
-    val minutes: Int,
-    val end: LocalDate,
-    val exam: GoalDate,
-)
-
-@Composable
-private fun FullCourseToggle(
-    checked: Boolean,
-    end: ExamFinish?,
-    onCheckedChange: (Boolean) -> Unit,
-) {
-    val locale = currentLocale()
-    val description =
+    val words =
         when {
-            !checked -> {
-                null
-            }
-
-            end != null -> {
-                joinSentences(
-                    stringResource(
-                        if (end.exam.namedMonth) R.string.onboarding_full_course_finish_month else R.string.onboarding_full_course_finish,
-                        formatMinutes(end.minutes, locale),
-                        formatDate(end.end.toJavaLocalDate(), locale, DateStyle.Month),
-                        goalDate(end.exam.date, end.exam.namedMonth, DateStyle.LongYear),
-                    ),
-                    stringResource(R.string.onboarding_full_course_until_exam),
-                )
-            }
-
-            else -> {
-                stringResource(R.string.onboarding_full_course_rule)
-            }
+            exam -> R.string.onboarding_change_exam_date
+            dated -> R.string.onboarding_change_end_date
+            else -> R.string.onboarding_set_end_date
         }
-    SwitchRow(stringResource(R.string.onboarding_full_course), checked, onCheckedChange, description)
+    TextButton(onClick = onClick, enabled = enabled, trailingIcon = ForwardIcon, edge = ButtonEdge.Start) {
+        Text(stringResource(words))
+    }
 }
 
 @Composable
@@ -425,42 +356,5 @@ private fun WeekdayToggles(
             isOn = { it in days },
             onToggle = { day, on -> onChange(if (on) (days + day).sorted() else days - day) },
         )
-    }
-}
-
-@Composable
-private fun planFactChips(goal: Goal): List<String> =
-    planFacts(goal).filter { it.chip }.flatMap { listOfNotNull(it.count ?: it.value, it.note) }
-
-/** A goal's date as the learner gave it: a named month reads as the month, not its first day. */
-@Composable
-internal fun goalDate(
-    date: LocalDate,
-    namedMonth: Boolean,
-    style: DateStyle = DateStyle.Day,
-): String = formatDate(date.toJavaLocalDate(), currentLocale(), if (namedMonth) DateStyle.Month else style)
-
-/** The whole row toggles, its description read with it, at least a touch target tall. */
-@Composable
-private fun SwitchRow(
-    title: String,
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
-    description: String? = null,
-) {
-    Row(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .heightIn(min = 48.dp)
-                .toggleable(checked, role = Role.Switch, onValueChange = onCheckedChange),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(title, fontWeight = FontWeight.Medium)
-            description?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium) }
-        }
-        Switch(checked = checked, onCheckedChange = null)
     }
 }

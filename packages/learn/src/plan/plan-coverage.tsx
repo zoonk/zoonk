@@ -7,7 +7,7 @@ import { useState } from "react";
 import { useChangeSaveFailed } from "../_components/save-error";
 import { TIME_ANSWER_BUTTON_CLASS } from "../_components/time-answer";
 import { useFormatIsoDate } from "../_utils/iso-date";
-import { usePlanScreen } from "./plan-context";
+import { usePlanScreen, useSubjectsTakenOut } from "./plan-context";
 import { findSectionControl } from "./plan-editor-sections";
 import { usePlanChange } from "./use-plan-change";
 import { useTimeToCover, useTimeToCoverTexts } from "./use-time-to-cover";
@@ -98,13 +98,22 @@ function useMoveDate({
   return { date, move, outcome, pending: finding || isPending };
 }
 
+export function useMoveDateToCoverLabel(): string {
+  const t = useExtracted();
+
+  return useSubjectsTakenOut()
+    ? t("Move your date to cover everything in your plan")
+    : t("Move your date to cover everything");
+}
+
 function MoveDateLabel({ move }: { move: ReturnType<typeof useMoveDate> }) {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
+  const coverLabel = useMoveDateToCoverLabel();
 
   return move.date
     ? t("Move your date to {date}", { date: formatDate(move.date, "sentence") })
-    : t("Move your date to cover everything");
+    : coverLabel;
 }
 
 /** `live={false}` inside a block that's a live region already, so it's said once. */

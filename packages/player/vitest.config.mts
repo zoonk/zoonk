@@ -1,10 +1,11 @@
+import { basename } from "node:path";
 import { fileURLToPath } from "node:url";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { playwright } from "@vitest/browser-playwright";
 import { assertBrowserLaunchAllowed } from "@zoonk/testing/browser-preflight";
 import { stalledRunReporter } from "@zoonk/testing/stalled-run-reporter";
-import { type CDPSession, type Page, type Route } from "playwright";
+import { type BrowserContext, type CDPSession, type Page, type Route } from "playwright";
 import { configDefaults, defineConfig } from "vitest/config";
 import { type BrowserCommand } from "vitest/node";
 
@@ -27,6 +28,33 @@ const nextImageShim = fileURLToPath(
 const webHapticsShim = fileURLToPath(
   new URL("src/_test-utils/shims/web-haptics-react.ts", import.meta.url),
 );
+
+const runtimeRoutes = new WeakMap<BrowserContext, Promise<void>>();
+
+const serveLocalRuntimes: BrowserCommand<[]> = ({ context }) => {
+  const installed = runtimeRoutes.get(context);
+
+  if (installed) {
+    return installed;
+  }
+
+  const routes = context.route(
+    /^https:\/\/cdn\.jsdelivr\.net\/(?:pyodide\/v[^/]+\/full|npm\/sql\.js@[^/]+\/dist)\/[^/]+$/u,
+    (route) => {
+      const { pathname } = new URL(route.request().url());
+      const directory = pathname.startsWith("/pyodide/") ? "pyodide" : "sql.js/dist";
+
+      const path = fileURLToPath(
+        new URL(`../core/node_modules/${directory}/${basename(pathname)}`, import.meta.url),
+      );
+
+      return route.fulfill({ headers: { "access-control-allow-origin": "*" }, path });
+    },
+  );
+
+  runtimeRoutes.set(context, routes);
+  return routes;
+};
 
 const emulateMedia: BrowserCommand<[Parameters<Page["emulateMedia"]>[0]]> = async (
   { page },
@@ -144,7 +172,7 @@ export default defineConfig({
         extends: true,
         test: {
           browser: {
-            commands: { answerPicture, emulateMedia, holdPictures, tap, touch },
+            commands: { answerPicture, emulateMedia, holdPictures, serveLocalRuntimes, tap, touch },
             connectTimeout: process.env.CI ? CI_BROWSER_CONNECT_TIMEOUT_MS : undefined,
             enabled: true,
             headless: true,

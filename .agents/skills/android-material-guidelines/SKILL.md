@@ -1,10 +1,10 @@
 ---
 name: android-material-guidelines
-description: Use when designing, reviewing, or implementing Android UI or features for phones, tablets, foldables, ChromeOS, desktop windowing, Wear OS, Android TV, Android for Cars, Android XR, widgets, Jetpack Compose, Material 3, Material Design, adaptive layouts, dynamic color, icons, dark theme, edge-to-edge UI, accessibility, or when porting web or iOS features to Android. Ensures the app uses Material 3 and Android components and behavior (theme roles, Material Symbols, components, adaptive layouts) styled with Zoonk's design system (its colors, Geist type and shapes), following current official Android Developers and Material Design guidance.
+description: Use when designing, reviewing or building Android UI or features (Jetpack Compose, Material 3, adaptive layouts, Wear OS, TV, cars, XR, widgets), or porting a web or iOS feature to Android.
 license: MIT
 metadata:
   author: zoonk
-  version: "3.2.1"
+  version: "3.3.0"
 ---
 
 # Android Material Guidelines

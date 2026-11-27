@@ -1395,6 +1395,21 @@ export const TEST_CASES: GoalTutorCase[] = [
   goalCase({
     context: {
       ...ENEM_WITH_SETUP,
+      setup: {
+        ...ENEM_WITH_SETUP.setup,
+        areas: ENEM_WITH_SETUP.setup.areas.map((area) =>
+          area.name === "Ciências Humanas" ? { ...area, skipped: true } : area,
+        ),
+      },
+    },
+    expectations: `${LOOKUP_EXPECTATIONS} A question about how much to study after the learner took Ciências Humanas out of the plan (skipped). Recommends, from the timeToCover lookup, 95 minutes a day, and says that covers everything in their plan by the exam, without Ciências Humanas, which they took out. Saying that time or the plan covers every topic, all of the exam or the whole exam, or that it gets them ready for the whole exam, is a major error (cap 5.0), and so is a number not taken from the lookup (cap 5.0). Proposing to add Ciências Humanas back without being asked is a minor error. Writes only Portuguese. Never promises a score. proposedChange is null unless the learner asked to change their time.`,
+    id: "pt-enem-time-subject-taken-out",
+    lookUps: ENEM_TIME_TO_COVER,
+    question: "quantas horas por dia eu preciso estudar para cobrir tudo?",
+  }),
+  goalCase({
+    context: {
+      ...ENEM_WITH_SETUP,
       setup: { ...ENEM_WITH_SETUP.setup, coverage: { coreFits: false, fits: false } },
     },
     expectations: `${LOOKUP_EXPECTATIONS} A question about how much to study, with the exam close. Recommends, from the timeToCover lookup, 4 hours a day and says the plan starts with what matters most for the exam (kind is focus). Suggesting more than 4 hours a day, giving a percentage or fraction of the exam that time covers, or saying the time isn't enough to cover everything is a major error (cap 5.0), and so is a number not taken from the lookup (cap 5.0). Writes only Portuguese: a word in another language or script is a major error (cap 6.0). Never promises a score. proposedChange is null or sets 4 hours a day.`,

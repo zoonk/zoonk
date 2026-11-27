@@ -70,7 +70,7 @@ struct PlanTimeSection: View {
         line: ScheduleTime.line(
           advice: nil, askFailed: false, dated: true, findFailed: Self.failed(time),
           found: found, hasDays: true, minutes: minutes),
-        minutes: minutes, updating: editor.isSaving
+        minutes: minutes, updating: editor.isSaving, subjectsTakenOut: plan.subjectsTakenOut
       ) {
         Task { await time.refresh() }
       } onUseOffer: { minutes in
@@ -164,9 +164,14 @@ struct PlanFullCourseSection: View {
           button: Text(
             "Keep studying", tableName: "Plan",
             comment: "Keeps studying what's left after the exam"),
-          what: String(
-            localized: "You study every topic. What doesn't fit before the exam comes after it.",
-            table: "Plan", comment: "What studying after the exam does"),
+          what: plan.subjectsTakenOut
+            ? String(
+              localized:
+                "You study every topic in your plan. What doesn't fit before the exam comes after it.",
+              table: "Plan")
+            : String(
+              localized: "You study every topic. What doesn't fit before the exam comes after it.",
+              table: "Plan", comment: "What studying after the exam does"),
           asksOnAppear: asks && !on
         ) { isPreviewing, ask in
           Toggle(
@@ -203,26 +208,4 @@ struct PlanFullCourseSection: View {
       }
     }
   }
-}
-
-/// Nil for a plan without a date.
-func planCoversEverythingText(_ plan: GoalPlan) -> Text? {
-  let schedule = plan.schedule
-
-  guard let targetDate = schedule.targetDate else {
-    return nil
-  }
-
-  let date = PlanDate.text(targetDate, today: plan.today, month: schedule.targetDateNamedMonth)
-
-  return schedule.targetDateNamedMonth
-    ? Text(
-      "Your time covers everything by the start of \(date)", tableName: "Plan",
-      comment:
-        "The learner's own time a day covers the whole goal; the argument is the month the learner named, like 'May 2027'"
-    )
-    : Text(
-      "Your time covers everything by \(date)", tableName: "Plan",
-      comment:
-        "The learner's own time a day covers the whole goal; the argument is a date like 'May 5'")
 }
