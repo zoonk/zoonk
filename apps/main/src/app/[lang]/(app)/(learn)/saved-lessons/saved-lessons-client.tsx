@@ -2,10 +2,11 @@
 
 import { readLearnerSummaryAgain } from "@/lib/learner/learner-store";
 import { getLessonAgainHref } from "@/lib/public/public-hrefs";
+import { placesReadOnLeave } from "@/lib/saved-lessons/places-read-on-leave";
 import { saveLessonIn } from "@/lib/saved-lessons/save-lesson";
 import { type SavedLesson } from "@zoonk/core/saved-lessons/contract";
 import { type SavedLessonsHrefs, SavedLessonsScreen } from "@zoonk/learn/saved-lessons";
-import { useLayoutEffect, useMemo, useRef } from "react";
+import { useLayoutEffect, useMemo, useState } from "react";
 
 const PAGE = "/saved-lessons";
 
@@ -14,26 +15,17 @@ const HREFS: SavedLessonsHrefs = {
   lesson: (lessonId) => getLessonAgainHref({ lessonId, origin: PAGE }),
 };
 
-/**
- * The sidebar keeps listing this page while the learner is on it, as its bar does, so removing the
- * last save here takes the place away only once they leave (when Next hides the page).
- */
+/** The last save removed here takes the place away once the learner leaves. */
 function usePlacesReadOnLeave() {
-  const saved = useRef(false);
+  // oxlint-disable-next-line react/hook-use-state -- Made once and never replaced, so there is no setter.
+  const [places] = useState(() => placesReadOnLeave(readLearnerSummaryAgain));
 
-  useLayoutEffect(
-    () => () => {
-      if (saved.current) {
-        saved.current = false;
-        readLearnerSummaryAgain();
-      }
-    },
-    [],
-  );
+  useLayoutEffect(() => {
+    places.show();
+    return places.leave;
+  }, [places]);
 
-  return () => {
-    saved.current = true;
-  };
+  return places.saved;
 }
 
 export function SavedLessonsClient({
