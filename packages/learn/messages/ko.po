@@ -3934,7 +3934,7 @@ msgstr "이미 아는 내용이 있나요?"
 #: src/focus-test/use-focus-test-texts.ts
 msgctxt "EZeMmG"
 msgid "A test shows what you already know, so more of your time goes to what you need most."
-msgstr ""
+msgstr "테스트를 보면 이미 아는 내용을 확인할 수 있어, 꼭 필요한 내용에 더 많은 시간을 쓸 수 있어요."
 
 #: src/focus-test/use-focus-test-texts.ts
 msgctxt "lcq8ee"
@@ -6351,12 +6351,12 @@ msgstr "무슨 말인지 못 알아들었어요"
 #: src/language/level-test/level-test-questions.tsx
 msgctxt "KjCRMy"
 msgid "Can't listen now"
-msgstr ""
+msgstr "지금은 듣지 않기"
 
 #: src/language/level-test/level-test-results.tsx
 msgctxt "H4wCrn"
 msgid "Use the app in {language}"
-msgstr ""
+msgstr "앱 언어를 {language}(으)로 바꾸기"
 
 #: src/language/level-test/level-test-results.tsx
 #: src/plan/use-system-change-sentence.ts
@@ -6367,7 +6367,7 @@ msgstr "{lessons, plural, other {이미 아는 레슨 #개 건너뜀}}"
 #: src/language/level-test/level-test-results.tsx
 msgctxt "C__1Cb"
 msgid "You can test your listening later, from your plan."
-msgstr ""
+msgstr "계획에서 나중에 듣기 테스트를 볼 수 있어요."
 
 #: src/language/level-test/level-test-results.tsx
 msgctxt "pdcoIY"
@@ -10145,12 +10145,12 @@ msgstr "이유"
 #: src/placement-test/placement-test-offers.tsx
 msgctxt "C8qBZz"
 msgid "Starts at the level you gave"
-msgstr ""
+msgstr "입력한 레벨부터 시작"
 
 #: src/placement-test/placement-test-offers.tsx
 msgctxt "mvfEjE"
 msgid "First lesson"
-msgstr ""
+msgstr "첫 레슨"
 
 #: src/placement-test/placement-test-offers.tsx
 msgctxt "ym8dgr"
@@ -10165,13 +10165,13 @@ msgstr "이미 아는 내용 건너뛰기"
 #: src/placement-test/placement-test-offers.tsx
 msgctxt "jZ8hrg"
 msgid "Where would you like to start?"
-msgstr ""
+msgstr "어디서 시작할까요?"
 
 #. The long test: it checks every topic still ahead, in parts.
 #: src/placement-test/placement-test-offers.tsx
 msgctxt "MVOTf7"
 msgid "Full test"
-msgstr ""
+msgstr "전체 테스트"
 
 #. The short test: about six minutes of questions.
 #: src/placement-test/placement-test-offers.tsx
@@ -10199,48 +10199,48 @@ msgstr "오늘 이 레슨들의 건너뛰기를 취소했어요. 내일 다시 �
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "jPv5OK"
 msgid "{count, plural, =0 {No lessons skipped in this part.} one {This part skipped # lesson you already know.} other {This part skipped # lessons you already know.}}"
-msgstr ""
+msgstr "{count, plural, =0 {이 파트에서 건너뛴 레슨이 없어요.} other {이 파트에서 이미 아는 레슨 #개를 건너뛰었어요.}}"
 
 #. The title after one part of a test split into parts, such as “Part 3 of 14 done”.
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "dpLv4V"
 msgid "Part {part, number} of {parts, number} done"
-msgstr ""
+msgstr "{parts, number}개 파트 중 {part, number}개 완료"
 
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "eBoUdl"
 msgid "Start lesson"
-msgstr ""
+msgstr "레슨 시작하기"
 
 #. Button after the short test: goes on to test the rest of the course, in parts.
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "T8fqdI"
 msgid "Test the rest"
-msgstr ""
+msgstr "나머지 테스트하기"
 
 #. Where a learner who stopped a test picks it up: the part of the test and the question in it.
 #: src/placement-test/use-test-facts.ts
 msgctxt "XiCeiq"
 msgid "Next time: part {part, number} of {parts, number}, question {number, number}"
-msgstr ""
+msgstr "다음에 이어서: {part, number}/{parts, number} 파트, {number, number}번 문제"
 
 #. Where the learner is in a test split into parts, such as “Part 3 of 14”.
 #: src/placement-test/use-test-facts.ts
 msgctxt "0UGVVt"
 msgid "Part {part, number} of {parts, number}"
-msgstr ""
+msgstr "{parts, number}개 파트 중 {part, number}개"
 
 #. How many parts the long test has. The learner can take each part on a different day.
 #: src/placement-test/use-test-facts.ts
 msgctxt "CTgGII"
 msgid "{count, plural, one {# part, any day you like} other {# parts, any day you like}}"
-msgstr ""
+msgstr "{count, plural, other {#개 파트, 원하는 날에}}"
 
 #. How many parts of a test the learner still has to take.
 #: src/placement-test/use-test-facts.ts
 msgctxt "91hHI1"
 msgid "{count, plural, one {# part left} other {# parts left}}"
-msgstr ""
+msgstr "{count, plural, other {남은 파트 #개}}"
 
 #: src/placement-test/use-test-facts.ts
 msgctxt "HUvYmi"

@@ -3934,7 +3934,7 @@ msgstr "すでに知っていることはありますか？"
 #: src/focus-test/use-focus-test-texts.ts
 msgctxt "EZeMmG"
 msgid "A test shows what you already know, so more of your time goes to what you need most."
-msgstr ""
+msgstr "テストで知っていることがわかるので、必要なことにもっと時間を使えます。"
 
 #: src/focus-test/use-focus-test-texts.ts
 msgctxt "lcq8ee"
@@ -6351,12 +6351,12 @@ msgstr "音声の内容がわからない"
 #: src/language/level-test/level-test-questions.tsx
 msgctxt "KjCRMy"
 msgid "Can't listen now"
-msgstr ""
+msgstr "今は音声を聞けない"
 
 #: src/language/level-test/level-test-results.tsx
 msgctxt "H4wCrn"
 msgid "Use the app in {language}"
-msgstr ""
+msgstr "アプリを{language}で使う"
 
 #: src/language/level-test/level-test-results.tsx
 #: src/plan/use-system-change-sentence.ts
@@ -6367,7 +6367,7 @@ msgstr "{lessons, plural, other {すでに知っている#レッスンをスキ�
 #: src/language/level-test/level-test-results.tsx
 msgctxt "C__1Cb"
 msgid "You can test your listening later, from your plan."
-msgstr ""
+msgstr "リスニングはあとで学習計画からテストできます。"
 
 #: src/language/level-test/level-test-results.tsx
 msgctxt "pdcoIY"
@@ -10145,12 +10145,12 @@ msgstr "理由"
 #: src/placement-test/placement-test-offers.tsx
 msgctxt "C8qBZz"
 msgid "Starts at the level you gave"
-msgstr ""
+msgstr "申告したレベルから始める"
 
 #: src/placement-test/placement-test-offers.tsx
 msgctxt "mvfEjE"
 msgid "First lesson"
-msgstr ""
+msgstr "最初のレッスン"
 
 #: src/placement-test/placement-test-offers.tsx
 msgctxt "ym8dgr"
@@ -10165,13 +10165,13 @@ msgstr "すでに知っている内容をスキップする"
 #: src/placement-test/placement-test-offers.tsx
 msgctxt "jZ8hrg"
 msgid "Where would you like to start?"
-msgstr ""
+msgstr "どこから始めますか？"
 
 #. The long test: it checks every topic still ahead, in parts.
 #: src/placement-test/placement-test-offers.tsx
 msgctxt "MVOTf7"
 msgid "Full test"
-msgstr ""
+msgstr "全範囲テスト"
 
 #. The short test: about six minutes of questions.
 #: src/placement-test/placement-test-offers.tsx
@@ -10199,48 +10199,48 @@ msgstr "今日スキップを取り消したレッスンは、明日もう一度
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "jPv5OK"
 msgid "{count, plural, =0 {No lessons skipped in this part.} one {This part skipped # lesson you already know.} other {This part skipped # lessons you already know.}}"
-msgstr ""
+msgstr "{count, plural, =0 {このパートでスキップしたレッスンはありません。} other {このパートで、すでに知っている#レッスンをスキップしました。}}"
 
 #. The title after one part of a test split into parts, such as “Part 3 of 14 done”.
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "dpLv4V"
 msgid "Part {part, number} of {parts, number} done"
-msgstr ""
+msgstr "全{parts, number}パート中{part, number}パート完了"
 
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "eBoUdl"
 msgid "Start lesson"
-msgstr ""
+msgstr "レッスンを始める"
 
 #. Button after the short test: goes on to test the rest of the course, in parts.
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "T8fqdI"
 msgid "Test the rest"
-msgstr ""
+msgstr "残りをテストする"
 
 #. Where a learner who stopped a test picks it up: the part of the test and the question in it.
 #: src/placement-test/use-test-facts.ts
 msgctxt "XiCeiq"
 msgid "Next time: part {part, number} of {parts, number}, question {number, number}"
-msgstr ""
+msgstr "次回：{parts, number}パート中{part, number}パートの{number, number}問目"
 
 #. Where the learner is in a test split into parts, such as “Part 3 of 14”.
 #: src/placement-test/use-test-facts.ts
 msgctxt "0UGVVt"
 msgid "Part {part, number} of {parts, number}"
-msgstr ""
+msgstr "全{parts, number}パート中{part, number}パート"
 
 #. How many parts the long test has. The learner can take each part on a different day.
 #: src/placement-test/use-test-facts.ts
 msgctxt "CTgGII"
 msgid "{count, plural, one {# part, any day you like} other {# parts, any day you like}}"
-msgstr ""
+msgstr "{count, plural, other {好きな日に受けられる#パート}}"
 
 #. How many parts of a test the learner still has to take.
 #: src/placement-test/use-test-facts.ts
 msgctxt "91hHI1"
 msgid "{count, plural, one {# part left} other {# parts left}}"
-msgstr ""
+msgstr "{count, plural, other {残り#パート}}"
 
 #: src/placement-test/use-test-facts.ts
 msgctxt "HUvYmi"

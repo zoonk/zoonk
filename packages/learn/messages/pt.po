@@ -3934,7 +3934,7 @@ msgstr "Já sabe um pouco disso?"
 #: src/focus-test/use-focus-test-texts.ts
 msgctxt "EZeMmG"
 msgid "A test shows what you already know, so more of your time goes to what you need most."
-msgstr ""
+msgstr "Um teste mostra o que você já sabe, para você dedicar mais tempo ao que mais precisa."
 
 #: src/focus-test/use-focus-test-texts.ts
 msgctxt "lcq8ee"
@@ -6351,12 +6351,12 @@ msgstr "Não entendi o áudio"
 #: src/language/level-test/level-test-questions.tsx
 msgctxt "KjCRMy"
 msgid "Can't listen now"
-msgstr ""
+msgstr "Não posso escutar agora"
 
 #: src/language/level-test/level-test-results.tsx
 msgctxt "H4wCrn"
 msgid "Use the app in {language}"
-msgstr ""
+msgstr "Usar o app em {language}"
 
 #: src/language/level-test/level-test-results.tsx
 #: src/plan/use-system-change-sentence.ts
@@ -6367,7 +6367,7 @@ msgstr "{lessons, plural, one {# aula que você já conhece foi pulada.} other {
 #: src/language/level-test/level-test-results.tsx
 msgctxt "C__1Cb"
 msgid "You can test your listening later, from your plan."
-msgstr ""
+msgstr "Você pode fazer o teste de escuta mais tarde, pela sua trilha."
 
 #: src/language/level-test/level-test-results.tsx
 msgctxt "pdcoIY"
@@ -10145,12 +10145,12 @@ msgstr "Motivo"
 #: src/placement-test/placement-test-offers.tsx
 msgctxt "C8qBZz"
 msgid "Starts at the level you gave"
-msgstr ""
+msgstr "Começa no nível que você informou"
 
 #: src/placement-test/placement-test-offers.tsx
 msgctxt "mvfEjE"
 msgid "First lesson"
-msgstr ""
+msgstr "Primeira aula"
 
 #: src/placement-test/placement-test-offers.tsx
 msgctxt "ym8dgr"
@@ -10165,13 +10165,13 @@ msgstr "Pule o que você já sabe"
 #: src/placement-test/placement-test-offers.tsx
 msgctxt "jZ8hrg"
 msgid "Where would you like to start?"
-msgstr ""
+msgstr "Por onde você quer começar?"
 
 #. The long test: it checks every topic still ahead, in parts.
 #: src/placement-test/placement-test-offers.tsx
 msgctxt "MVOTf7"
 msgid "Full test"
-msgstr ""
+msgstr "Teste completo"
 
 #. The short test: about six minutes of questions.
 #: src/placement-test/placement-test-offers.tsx
@@ -10199,48 +10199,48 @@ msgstr "Você desfez isso hoje. Responda de novo amanhã para pular essas aulas.
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "jPv5OK"
 msgid "{count, plural, =0 {No lessons skipped in this part.} one {This part skipped # lesson you already know.} other {This part skipped # lessons you already know.}}"
-msgstr ""
+msgstr "{count, plural, =0 {Nenhuma aula pulada nesta parte.} one {Esta parte pulou # aula que você já sabia.} other {Esta parte pulou # aulas que você já sabia.}}"
 
 #. The title after one part of a test split into parts, such as “Part 3 of 14 done”.
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "dpLv4V"
 msgid "Part {part, number} of {parts, number} done"
-msgstr ""
+msgstr "Parte {part, number} de {parts, number} concluída"
 
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "eBoUdl"
 msgid "Start lesson"
-msgstr ""
+msgstr "Começar aula"
 
 #. Button after the short test: goes on to test the rest of the course, in parts.
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "T8fqdI"
 msgid "Test the rest"
-msgstr ""
+msgstr "Testar o restante"
 
 #. Where a learner who stopped a test picks it up: the part of the test and the question in it.
 #: src/placement-test/use-test-facts.ts
 msgctxt "XiCeiq"
 msgid "Next time: part {part, number} of {parts, number}, question {number, number}"
-msgstr ""
+msgstr "Da próxima vez: parte {part, number} de {parts, number}, questão {number, number}"
 
 #. Where the learner is in a test split into parts, such as “Part 3 of 14”.
 #: src/placement-test/use-test-facts.ts
 msgctxt "0UGVVt"
 msgid "Part {part, number} of {parts, number}"
-msgstr ""
+msgstr "Parte {part, number} de {parts, number}"
 
 #. How many parts the long test has. The learner can take each part on a different day.
 #: src/placement-test/use-test-facts.ts
 msgctxt "CTgGII"
 msgid "{count, plural, one {# part, any day you like} other {# parts, any day you like}}"
-msgstr ""
+msgstr "{count, plural, =0 {# partes, em qualquer dia que você quiser} one {# parte, em qualquer dia que você quiser} other {# partes, em qualquer dia que você quiser}}"
 
 #. How many parts of a test the learner still has to take.
 #: src/placement-test/use-test-facts.ts
 msgctxt "91hHI1"
 msgid "{count, plural, one {# part left} other {# parts left}}"
-msgstr ""
+msgstr "{count, plural, one {# parte restante} other {# partes restantes}}"
 
 #: src/placement-test/use-test-facts.ts
 msgctxt "HUvYmi"
