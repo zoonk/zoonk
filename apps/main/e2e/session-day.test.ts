@@ -61,6 +61,8 @@ async function createFirstWeekDay() {
 
 /** Today opens a question block on its intro, which waits for the learner's Start. */
 async function startFromIntro(page: Page) {
+  await expect(page).toHaveURL((url) => url.pathname === "/session");
+
   // Enter is a page shortcut, whose listener attaches only after the page hydrates.
   await pressUntil(
     () => page.keyboard.press("Enter"),
