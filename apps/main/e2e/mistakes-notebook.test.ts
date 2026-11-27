@@ -216,7 +216,10 @@ test.describe("Mistakes notebook", () => {
 
     await expect
       .poll(() =>
-        prisma.mistake.findUnique({ select: { status: true }, where: { id: drills[0]!.mistake.id } }),
+        prisma.mistake.findUnique({
+          select: { status: true },
+          where: { id: drills[0]!.mistake.id },
+        }),
       )
       .toStrictEqual({ status: "open" });
 

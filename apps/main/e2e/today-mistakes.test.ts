@@ -67,9 +67,9 @@ test.describe("Today's mistakes", () => {
     await page.getByRole("button", { name: /^Check/u }).click();
 
     await expect(
-      page.getByRole("region", { name: "Answer feedback" }).getByText("Mistake fixed", {
-        exact: false,
-      }),
+      page
+        .getByRole("region", { name: "Answer feedback" })
+        .getByText("Mistake fixed", { exact: false }),
     ).toBeVisible();
 
     await page.getByRole("button", { name: /^Continue/u }).click();
@@ -78,7 +78,11 @@ test.describe("Today's mistakes", () => {
 
     await page.getByRole("link", { name: "Done" }).click();
     await expect(page).toHaveURL(/\/today$/u);
-    await expect(page.getByRole("listitem").filter({ hasText: "Fix 1 mistake, done" })).toBeVisible();
+    await page.getByRole("button", { name: "2 done" }).click();
+
+    await expect(
+      page.getByRole("listitem").filter({ hasText: "Fix 1 mistake, done" }),
+    ).toBeVisible();
 
     await page.context().close();
   });

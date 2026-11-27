@@ -153,9 +153,7 @@ function PracticeBody({
   if (phase.kind === "ended" || !run.step) {
     return (
       <PracticeDone
-        again={
-          practiceAgain && getEntriesToPracticeAgain(run.state).length > 0 ? run.again : null
-        }
+        again={practiceAgain && getEntriesToPracticeAgain(run.state).length > 0 ? run.again : null}
         backHref={backHref}
         buddy={buddy}
         fixed={run.state.fixedIds.length}
