@@ -130,6 +130,7 @@ function usePressedDontKnow(on: boolean) {
 
 function DiagnosticView({ lang, state, q }: ViewProps) {
   const c = S(lang).career;
+  const number = Number(q.get("number") ?? 3);
   usePressedDontKnow(state === "picked");
 
   return (
@@ -142,10 +143,11 @@ function DiagnosticView({ lang, state, q }: ViewProps) {
       >
         <PlacementQuestionScreen
           failures={0}
-          number={Number(q.get("number") ?? 3)}
+          number={number}
           onAnswer={noop}
           onStop={noop}
           pending={false}
+          position={[lang === "pt" ? `Questão ${number} de 12` : `Question ${number} of 12`]}
           progress={Number(q.get("progress") ?? 0.3)}
           question={{
             context: null,
