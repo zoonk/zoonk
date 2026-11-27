@@ -24,6 +24,7 @@ export type CompletedLessonListInput = z.infer<typeof completedLessonListInputSc
 
 export const completedLessonSchema = z
   .object({
+    available: z.boolean().meta({ description: "The lesson is available to start again" }),
     chapterTitle: z
       .string()
       .nullable()

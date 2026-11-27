@@ -290,18 +290,42 @@ private fun LessonRow(
 ) {
     Column(Modifier.bleed(LIST_ITEM_INSET)) {
         if (!first) ListDivider()
-        LessonSaveRow(saved, onToggle) { longPressLabel, onLongPress ->
-            ListRow(
-                headline = { Text(lesson.title) },
-                supporting = listRowDescription(lesson.chapterTitle),
-                meta = { Text(formatDate(lesson.finishedOn.toJavaLocalDate(), currentLocale(), DateStyle.Day, today)) },
-                onClick = { onOpen(lesson.lessonId) },
-                onLongClickLabel = longPressLabel,
-                onLongClick = onLongPress,
-                trailing = { LessonRowBookmark(lesson.title, saved, onToggle) },
-            )
+        if (lesson.available) {
+            LessonSaveRow(saved, onToggle) { longPressLabel, onLongPress ->
+                LessonRowContent(
+                    lesson,
+                    today,
+                    onClick = { onOpen(lesson.lessonId) },
+                    onLongClickLabel = longPressLabel,
+                    onLongClick = onLongPress,
+                    trailing = { LessonRowBookmark(lesson.title, saved, onToggle) },
+                )
+            }
+        } else {
+            LessonRowContent(lesson, today)
         }
     }
+}
+
+@Composable
+private fun LessonRowContent(
+    lesson: CompletedLesson,
+    today: LocalDate,
+    onClick: (() -> Unit)? = null,
+    onLongClickLabel: String? = null,
+    onLongClick: (() -> Unit)? = null,
+    trailing: (@Composable () -> Unit)? = null,
+) {
+    ListRow(
+        headline = { Text(lesson.title) },
+        supporting = listRowDescription(lesson.chapterTitle),
+        meta = { Text(formatDate(lesson.finishedOn.toJavaLocalDate(), currentLocale(), DateStyle.Day, today)) },
+        onClick = onClick,
+        onLongClickLabel = onLongClickLabel,
+        onLongClick = onLongClick,
+        trailing = trailing,
+        chevronSpace = !lesson.available,
+    )
 }
 
 /** While another group's lessons load, their place keeps part of the screen, so the filter over it stays put. */

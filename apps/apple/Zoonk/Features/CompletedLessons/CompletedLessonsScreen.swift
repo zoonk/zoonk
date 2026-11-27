@@ -265,31 +265,39 @@ private struct CompletedLessonRow: View {
   let today: String
 
   var body: some View {
-    Button {
-      router.open(.lesson(lessonId: lesson.lessonId))
-    } label: {
-      HStack(spacing: 12) {
-        VStack(alignment: .leading, spacing: 2) {
-          Text(lesson.title)
-            .foregroundStyle(.primary)
-
-          if let chapterTitle = lesson.chapterTitle {
-            Text(chapterTitle)
-              .typeStyle(.note)
-              .foregroundStyle(.mutedForeground)
-          }
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-
-        Text(PlanDate.format(lesson.finishedOn, today: today))
-          .typeStyle(.data)
-          .foregroundStyle(.mutedForeground)
+    if lesson.available {
+      Button {
+        router.open(.lesson(lessonId: lesson.lessonId))
+      } label: {
+        row
       }
+      .savesLesson(
+        LessonSaveTarget(
+          lessonId: lesson.lessonId, title: lesson.title, chapterTitle: lesson.chapterTitle),
+        goalId: goalId, server: lesson.saved)
+    } else {
+      row.accessibilityElement(children: .combine)
     }
-    .savesLesson(
-      LessonSaveTarget(
-        lessonId: lesson.lessonId, title: lesson.title, chapterTitle: lesson.chapterTitle),
-      goalId: goalId, server: lesson.saved)
+  }
+
+  private var row: some View {
+    HStack(spacing: 12) {
+      VStack(alignment: .leading, spacing: 2) {
+        Text(lesson.title)
+          .foregroundStyle(.primary)
+
+        if let chapterTitle = lesson.chapterTitle {
+          Text(chapterTitle)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
+        }
+      }
+      .frame(maxWidth: .infinity, alignment: .leading)
+
+      Text(PlanDate.format(lesson.finishedOn, today: today))
+        .typeStyle(.data)
+        .foregroundStyle(.mutedForeground)
+    }
   }
 }
 

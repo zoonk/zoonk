@@ -1,13 +1,17 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
+import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockAccountSession, mockSession } from "../_test-utils/mock-session";
+import { completedLessonListInputSchema } from "../completed-lessons/contract";
+import { listCurrentUserCompletedLessons } from "../completed-lessons/list-current-user-completed-lessons";
 import { getLearnerSummary } from "../learner/summary/get-learner-summary";
+import { startLibraryLesson } from "../lesson-player/start-library-lesson";
 import { listCurrentUserSavedLessons } from "./list-saved-lessons";
 import { saveLesson } from "./save-lesson";
 
@@ -19,6 +23,62 @@ async function signedInLearner() {
 }
 
 describe("Saved lessons", () => {
+  it("agrees with replay and Completed lessons when a lesson loses its published steps", async () => {
+    const [{ goal, user }, { lesson }] = await Promise.all([
+      signedInLearner(),
+      playableLessonFixture({ steps: ["check"] }),
+    ]);
+
+    await learningEventFixture({
+      contentIds: { lessonId: lesson.id },
+      endedAt: new Date(),
+      goalId: goal.id,
+      lessonKind: "library",
+      userId: user.id,
+    });
+
+    const input = { goalId: goal.id, lessonId: lesson.id };
+
+    const completed = () =>
+      listCurrentUserCompletedLessons(completedLessonListInputSchema.parse({ goalId: goal.id }));
+
+    const replay = () => startLibraryLesson({ input: { timeZone: "UTC" }, lessonId: lesson.id });
+
+    await expect(saveLesson({ ...input, saved: true })).resolves.toStrictEqual({
+      saved: true,
+      status: "ready",
+    });
+
+    await expect(replay()).resolves.toMatchObject({ run: { replay: true }, status: "started" });
+
+    await expect(listCurrentUserSavedLessons(input)).resolves.toMatchObject({
+      lessons: [{ available: true, lessonId: lesson.id }],
+    });
+
+    await expect(completed()).resolves.toMatchObject({
+      lessons: [{ available: true, lessonId: lesson.id, saved: true }],
+    });
+
+    await prisma.step.updateMany({
+      data: { retiredAt: new Date() },
+      where: { lessonId: lesson.id },
+    });
+
+    await expect(saveLesson({ ...input, saved: true })).resolves.toStrictEqual({
+      status: "notFound",
+    });
+
+    await expect(replay()).resolves.toStrictEqual({ status: "notFound" });
+
+    await expect(listCurrentUserSavedLessons(input)).resolves.toMatchObject({
+      lessons: [{ available: false, lessonId: lesson.id }],
+    });
+
+    await expect(completed()).resolves.toMatchObject({
+      lessons: [{ available: false, lessonId: lesson.id, saved: true }],
+    });
+  });
+
   it("applies the desired state and keeps the first save when requests repeat", async () => {
     const [{ goal, user }, { lesson }] = await Promise.all([
       signedInLearner(),

@@ -127,6 +127,7 @@ describe(listCurrentUserCompletedLessons, () => {
       hasMore: false,
       lessons: [
         {
+          available: false,
           chapterTitle: "Waves",
           finishedOn: "2026-10-29",
           group: null,
@@ -135,6 +136,7 @@ describe(listCurrentUserCompletedLessons, () => {
           title: "Interference",
         },
         {
+          available: false,
           chapterTitle: null,
           finishedOn: "2026-10-25",
           group: null,

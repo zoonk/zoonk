@@ -78,7 +78,7 @@ test.describe("Saved lessons API", () => {
 
     await expect(
       readBody({ response: completed, schema: completedLessonListResponseSchema }),
-    ).resolves.toMatchObject({ data: [{ lessonId: lesson.id, saved: true }] });
+    ).resolves.toMatchObject({ data: [{ available: true, lessonId: lesson.id, saved: true }] });
 
     await expect(
       readBody({ response: run, schema: libraryLessonRunSchema, status: 201 }),

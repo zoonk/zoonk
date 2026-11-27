@@ -57,7 +57,8 @@ final class CompletedLessonsTests: XCTestCase {
     CompletedLessonsPage(
       lessons: ids.map {
         CompletedLesson(
-          lessonId: $0, title: $0, chapterTitle: nil, finishedOn: "2026-11-01", saved: false)
+          lessonId: $0, title: $0, chapterTitle: nil, finishedOn: "2026-11-01", available: true,
+          saved: false)
       },
       nextCursor: next)
   }

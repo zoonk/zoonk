@@ -12,7 +12,9 @@ import { useState } from "react";
 import { DetailAsideSection, DetailContent, DetailLayout } from "../_components/detail-page";
 import {
   LIST_GROUP_CLASS,
+  ListRow,
   ListRowBody,
+  ListRowChevronSpace,
   ListRowContent,
   ListRowDescription,
   ListRowLink,
@@ -52,16 +54,25 @@ function useGroupsTitle(kind: CompletedLessonFilter["kind"]): string {
 function LessonRow({ href, lesson }: { href: string; lesson: CompletedLesson }) {
   const formatDate = useFormatIsoDate();
 
-  return (
+  const body = (
+    <ListRowBody>
+      <ListRowContent>
+        <ListRowTitle>{lesson.title}</ListRowTitle>
+        {lesson.chapterTitle && <ListRowDescription>{lesson.chapterTitle}</ListRowDescription>}
+      </ListRowContent>
+      <ListRowTrailing>{formatDate(lesson.finishedOn)}</ListRowTrailing>
+    </ListRowBody>
+  );
+
+  return lesson.available ? (
     <ListRowLink href={href} lessonWritten prefetch="intent">
-      <ListRowBody>
-        <ListRowContent>
-          <ListRowTitle>{lesson.title}</ListRowTitle>
-          {lesson.chapterTitle && <ListRowDescription>{lesson.chapterTitle}</ListRowDescription>}
-        </ListRowContent>
-        <ListRowTrailing>{formatDate(lesson.finishedOn)}</ListRowTrailing>
-      </ListRowBody>
+      {body}
     </ListRowLink>
+  ) : (
+    <ListRow>
+      {body}
+      <ListRowChevronSpace />
+    </ListRow>
   );
 }
 
