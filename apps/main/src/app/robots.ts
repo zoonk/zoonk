@@ -1,4 +1,4 @@
-import { type SitemapResource, getSitemapPageIds } from "@/data/sitemaps/sitemap-pages";
+import { type SitemapResource, getSitemapPageIds } from "@/data/sitemaps/sitemap-page-ids";
 import { SITE_URL } from "@zoonk/utils/url";
 import { type MetadataRoute } from "next";
 

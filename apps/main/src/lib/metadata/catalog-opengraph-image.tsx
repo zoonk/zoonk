@@ -1,7 +1,7 @@
 import "server-only";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { FONT_WEIGHTS, getShareCardFonts } from "@/lib/certificates/certificate-fonts";
+import { FONT_WEIGHTS } from "@/lib/certificates/certificate-fonts";
 import { optimizeImage } from "@zoonk/core/images/optimize";
 import { safeAsync } from "@zoonk/utils/error";
 import { ImageResponse } from "next/og";
@@ -11,6 +11,7 @@ import {
 } from "./catalog-opengraph-description";
 import { OpenGraphBrand, getOpenGraphLogo } from "./open-graph-brand";
 import { getOpenGraphWordBreak } from "./open-graph-word-break";
+import { shareCardFonts } from "./share-card-fonts";
 
 const ROOT_OPEN_GRAPH_IMAGE_PATH = "src/app/icon.svg";
 const DESCRIPTION_LINE_COUNT = 5;
@@ -41,18 +42,14 @@ type CatalogImageSource =
   | { kind: "root" };
 
 export async function createCatalogOpenGraphImage(params: CatalogOpenGraphImageParams) {
-  const [imageSrc, logoSrc, fonts] = await Promise.all([
-    getRenderableImageSrc({
-      fallbackImagePath: params.fallbackImagePath,
-      imageUrl: params.imageUrl,
-    }),
-    getOpenGraphLogo("light"),
-    getShareCardFonts(),
-  ]);
+  const imageSrc = await getRenderableImageSrc({
+    fallbackImagePath: params.fallbackImagePath,
+    imageUrl: params.imageUrl,
+  });
 
   return new ImageResponse(
-    <CatalogOpenGraphImage imageSrc={imageSrc} logoSrc={logoSrc} {...params} />,
-    { ...catalogOpenGraphImageSize, fonts },
+    <CatalogOpenGraphImage imageSrc={imageSrc} logoSrc={getOpenGraphLogo("light")} {...params} />,
+    { ...catalogOpenGraphImageSize, fonts: shareCardFonts },
   );
 }
 

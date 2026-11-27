@@ -2,7 +2,8 @@ import "server-only";
 import { QUICK_LESSON_KEY_WHERE } from "@zoonk/core/library/quick-lessons/identity";
 import { prisma } from "@zoonk/db";
 import { getSitemapCourseWhere } from "./course-where";
-import { getSitemapPageRowIds, isSitemapPage, warnIfSitemapPageIsFull } from "./sitemap-pages";
+import { isSitemapPage } from "./sitemap-page-ids";
+import { getSitemapPageRowIds, warnIfSitemapPageIsFull } from "./sitemap-pages";
 
 /**
  * A shared lesson is listed once, at its home placement, which is also its canonical URL. A skill's
