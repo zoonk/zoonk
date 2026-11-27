@@ -25,6 +25,7 @@ import com.zoonk.android.feature.session.WritingRow
 import com.zoonk.android.feature.session.blockDetail
 import com.zoonk.android.feature.session.blockTitle
 import com.zoonk.android.feature.session.practisesTopics
+import com.zoonk.android.feature.session.remedialLine
 import com.zoonk.android.feature.session.shortTopicList
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
@@ -132,26 +133,55 @@ private fun StepLines(
 ) {
     val count = step.questions.toInt()
     val extra = step.subjectExtra
+    val subject =
+        if (extra !=
+            null
+        ) {
+            optionalStudyLabel(hasNotice = extra == StudyBlock.SubjectExtra.NOTICE, document = examDocument)
+        } else {
+            step.subject
+        }
+    val remedial = remedialLine(step)
     val line =
         when {
-            step.isGettingReady(lessonStatus, writingStalled) -> stringResource(R.string.today_step_being_written)
+            step.isGettingReady(lessonStatus, writingStalled) -> {
+                stringResource(R.string.today_step_being_written)
+            }
 
-            step.writing == WritingRow.Tomorrow -> blockDetail(step)
+            step.writing == WritingRow.Tomorrow -> {
+                blockDetail(step)
+            }
 
-            step.waitReason != null -> stringResource(R.string.today_step_after_lessons)
+            step.waitReason != null -> {
+                stringResource(R.string.today_step_after_lessons)
+            }
+
+            // Why it's back says more than its subject, which stays above it as on every lesson row.
+            remedial != null -> {
+                subject?.let { SubLine(it) }
+                remedial
+            }
 
             // A written task says when it waits for tomorrow, that its draft is kept, or what a drill is for, over its subject.
-            step.kind == StudyBlock.Kind.PRODUCE && (step.writing != null || step.drill) -> blockDetail(step)
+            step.kind == StudyBlock.Kind.PRODUCE && (step.writing != null || step.drill) -> {
+                blockDetail(step)
+            }
 
-            step.practisesTopics -> shortTopicList(step.topics, named = 1)
+            step.practisesTopics -> {
+                shortTopicList(step.topics, named = 1)
+            }
 
-            step.checkpoint != null -> if (count > 0) pluralStringResource(R.plurals.session_block_questions, count, count) else null
+            step.checkpoint != null -> {
+                if (count > 0) pluralStringResource(R.plurals.session_block_questions, count, count) else null
+            }
 
-            step.fullReview -> stringResource(R.string.today_step_every_topic)
+            step.fullReview -> {
+                stringResource(R.string.today_step_every_topic)
+            }
 
-            extra != null -> optionalStudyLabel(hasNotice = extra == StudyBlock.SubjectExtra.NOTICE, document = examDocument)
-
-            else -> step.subject
+            else -> {
+                subject
+            }
         }
 
     if (line != null) SubLine(line)

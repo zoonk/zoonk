@@ -26,9 +26,12 @@ import kotlinx.serialization.json.put
 import kotlinx.serialization.json.putJsonArray
 import java.util.UUID
 
+/** A run's scope: the goal's notebook, narrowed to a skill, a day's block or a finished mock. */
 data class PracticeKey(
     val goalId: UUID?,
-    val skillId: UUID?,
+    val skillId: UUID? = null,
+    val blockId: UUID? = null,
+    val mockId: UUID? = null,
 )
 
 interface MistakesApi {
@@ -50,7 +53,7 @@ interface MistakesApi {
         stepId: UUID,
         recording: VoiceRecording,
         attemptId: UUID,
-        goalId: UUID?,
+        key: PracticeKey,
         answerIds: List<UUID>,
         timeZone: String,
         practiceDurationMs: Long,
@@ -75,7 +78,9 @@ class LiveMistakesApi(
                 session,
             ).mistakes
             .getCurrentUserMistakePractice(
+                blockId = key.blockId,
                 goalId = key.goalId,
+                mockId = key.mockId,
                 skillId = key.skillId,
                 timeZone = timeZone,
                 includeAllFormats =
@@ -95,7 +100,7 @@ class LiveMistakesApi(
         stepId: UUID,
         recording: VoiceRecording,
         attemptId: UUID,
-        goalId: UUID?,
+        key: PracticeKey,
         answerIds: List<UUID>,
         timeZone: String,
         practiceDurationMs: Long,
@@ -108,7 +113,8 @@ class LiveMistakesApi(
             practiceDurationMs = practiceDurationMs.coerceAtMost(3_600_000),
             mistakeId = mistakeId,
             attemptId = attemptId,
-            goalId = goalId,
+            blockId = key.blockId,
+            goalId = key.goalId,
             answerIds =
                 ApiJson.encodeToString(
                     kotlinx.serialization.builtins.ListSerializer(kotlinx.serialization.serializer<String>()),
@@ -196,7 +202,7 @@ class MistakesStore(
                 UUID.fromString(stepId),
                 recording,
                 attemptId,
-                key.goalId,
+                key,
                 answerIds,
                 timeZone(),
                 practiceDurationMs,
@@ -223,19 +229,23 @@ class MistakesStore(
                     "run",
                     buildJsonObject {
                         putJsonArray("answerIds") { runAnswerIds.forEach { add(it.toString()) } }
+                        key.blockId?.let { put("blockId", it.toString()) }
                         key.goalId?.let { put("goalId", it.toString()) }
                     },
                 )
             },
         )
 
-    /** Each answer was counted as it came, so this adds only what's new and marks the end. */
+    /** Each answer was counted as it came, so this adds only what's new and marks the end; a day's block completes with it, answered or not. */
     suspend fun finish(
         key: PracticeKey,
         answerIds: List<UUID>,
     ): MutationResult<MistakePracticeCompletion> =
         cache.mutate(invalidating = PRACTICED) { session ->
-            api.finish(session, MistakePracticeFinishInput(answerIds, ended = true, goalId = key.goalId, timeZone = timeZone()))
+            api.finish(
+                session,
+                MistakePracticeFinishInput(answerIds, blockId = key.blockId, ended = true, goalId = key.goalId, timeZone = timeZone()),
+            )
         }
 
     private companion object {

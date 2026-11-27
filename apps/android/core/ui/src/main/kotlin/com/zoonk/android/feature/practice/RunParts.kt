@@ -173,6 +173,7 @@ fun RunFinished(
     detail: String? = null,
     headerTitle: String? = null,
     actions: (@Composable () -> Unit)? = null,
+    onAction: () -> Unit = onClose,
     content: @Composable () -> Unit,
 ) {
     ResultScreen {
@@ -187,7 +188,7 @@ fun RunFinished(
                         TaskActions { width ->
                             Button(
                                 busy = saving,
-                                onClick = onClose,
+                                onClick = onAction,
                                 modifier = width,
                             ) { Text(action) }
                         }

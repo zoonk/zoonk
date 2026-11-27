@@ -308,7 +308,7 @@ fun StudyBlockOpening.route(): AppRoute? =
         }
 
         is StudyBlockOpening.MistakespracticeWrapper -> {
-            null
+            AppRoute.MistakePractice(blockId = value.blockId.toString())
         }
 
         is StudyBlockOpening.PatternWrapper -> {
@@ -384,10 +384,19 @@ private fun DayStep.shown() =
                 refresh,
                 reinforcement,
                 weakest,
+                mistakesPractice = screen == StudyBlock.Screen.MISTAKES_PRACTICE,
                 mockPreparationReview = true.takeIf { mockPreparationReview },
+                returning =
+                    returning?.let { shown ->
+                        OpenStudyDayRequestTargetOneOfShownFlags.Returning.entries.first {
+                            it.value ==
+                                shown.value
+                        }
+                    },
             ),
         kind = OpenStudyDayRequestTargetOneOfShown.Kind.valueOf(kind.name),
         lessonId = lessonId,
         planItemKey = planItemKey,
         position = position,
+        patternId = patternId,
     )

@@ -71,8 +71,7 @@ class MistakesNotebookScreenshots {
         val lesson = if (hasLesson) """{"id":"00000000-0000-4000-8000-0000000000c$id","title":"Lesson"}""" else "null"
         return """{"cause":${cause?.let { "\"$it\"" } ?: "null"},"createdAt":"2026-10-2${id}T12:00:00Z","fixedAt":null,
         "id":"00000000-0000-4000-8000-00000000000$id","itemId":null,
-        "lesson":$lesson,"practiceAvailable":${id != 3},
-        "practiceAvailableTomorrow":${id == 3},
+        "lesson":$lesson,"practiceAvailable":true,
         "skill":${skill?.let {
             """{"id":"00000000-0000-4000-8000-0000000000${if (it.startsWith(
                     "P",
@@ -94,7 +93,7 @@ class MistakesNotebookScreenshots {
     private val notebook: MistakeList =
         ApiJson.decodeFromString(
             MistakeList.serializer(),
-            """{"availability":{"ready":2,"tomorrow":1},"counts":{"byCause":{"gap":1,"guess":0,"misread":1,"time":0,"trap":1,"unsorted":0},
+            """{"availability":{"ready":3},"counts":{"byCause":{"gap":1,"guess":0,"misread":1,"time":0,"trap":1,"unsorted":0},
             "fixed":4,"open":3},"data":[
               ${mistake(
                 1,
@@ -115,7 +114,7 @@ class MistakesNotebookScreenshots {
     private val mathNotebook: MistakeList =
         ApiJson.decodeFromString(
             MistakeList.serializer(),
-            """{"availability":{"ready":5,"tomorrow":0},"counts":{"byCause":{"gap":2,"guess":0,"misread":1,"time":0,"trap":2,"unsorted":0},
+            """{"availability":{"ready":5},"counts":{"byCause":{"gap":2,"guess":0,"misread":1,"time":0,"trap":2,"unsorted":0},
             "fixed":0,"open":5},"data":[
               ${mistake(
                 1,

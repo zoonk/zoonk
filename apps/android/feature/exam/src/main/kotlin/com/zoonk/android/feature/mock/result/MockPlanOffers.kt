@@ -116,20 +116,39 @@ internal fun MockResultPreparation.hasMoved(): Boolean = (before * PERCENT).roun
 internal fun PlanStep(
     adapt: MockAdapt?,
     preparation: MockResultPreparation?,
+    movedTopics: List<String>?,
     offers: PlanOffers,
 ) {
     val question = offers.open(adapt) ?: planOffers(adapt).firstOrNull()
+    val movedIsTitle = preparation == null && movedTopics != null
 
     Column(Modifier.semantics(mergeDescendants = true) { heading() }.stepHeading(), verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Eyebrow(stringResource(if (preparation != null) R.string.mock_result_your_preparation else R.string.mock_result_your_plan))
-        if (preparation != null) {
-            PreparationReadout(preparation, MaterialTheme.typography.displayMedium)
-        } else {
-            question?.let { StepTitle(offerTitle(it, adapt)) }
+        when {
+            preparation != null -> PreparationReadout(preparation, MaterialTheme.typography.displayMedium)
+            movedIsTitle -> StepTitle(stringResource(R.string.mock_result_plan_moved))
+            else -> question?.let { StepTitle(offerTitle(it, adapt)) }
         }
     }
     preparation?.let { PreparationMeter(it) }
-    if (adapt != null && planOffers(adapt).isNotEmpty()) PlanChange(adapt, offers, showTitle = preparation != null)
+    movedTopics?.let { MovedTopics(it, showTitle = !movedIsTitle) }
+    if (adapt != null && planOffers(adapt).isNotEmpty()) PlanChange(adapt, offers, showTitle = preparation != null || movedTopics != null)
+}
+
+/** The plan already moved these earlier when the mock finished: there's nothing to answer. */
+@Composable
+internal fun MovedTopics(
+    topics: List<String>,
+    showTitle: Boolean = true,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        if (showTitle) Text(stringResource(R.string.mock_result_plan_moved), style = MaterialTheme.typography.bodyMedium)
+        Text(
+            formatList(topics.take(TOPICS_NAMED), currentLocale()),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyMedium,
+        )
+    }
 }
 
 /** "14%", with where it came from under it: "Up from 12%". */

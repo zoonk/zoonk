@@ -59,9 +59,15 @@ fun MistakePracticeScreen(
         RunLoading(navigator::closeTask)
         return
     }
-    val key = PracticeKey(learner.activeGoalId, route.skillId?.let { runCatching { UUID.fromString(it) }.getOrNull() })
+    val key =
+        PracticeKey(
+            goalId = learner.activeGoalId,
+            skillId = route.skillId?.toUuid(),
+            blockId = route.blockId?.toUuid(),
+            mockId = route.mockId?.toUuid(),
+        )
     val viewModel =
-        viewModel(key = "mistake-practice:${route.skillId}:${runAccount(app)}") {
+        viewModel(key = "mistake-practice:${route.skillId}:${route.blockId}:${route.mockId}:${runAccount(app)}") {
             MistakePracticeViewModel(key, app.mistakes, app.todayChoices, app.sessions, saved = createSavedStateHandle())
         }
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -99,7 +105,12 @@ private fun PracticeRead(
         }
 
         LoadState.Empty -> {
-            NothingToPractice(onClose)
+            if (viewModel.practicesAgain) {
+                NothingToPractice(onClose)
+            } else {
+                LaunchedEffect(Unit) { viewModel.beginEmpty() }
+                RunLoading(onClose)
+            }
         }
 
         is LoadState.Failed -> {
@@ -130,7 +141,12 @@ internal fun PracticeRun(
     BackHandler(onBack = viewModel::leave)
 
     if (ending) {
-        PracticeDone(state, app, onClose = viewModel::leave) { navigator.open(AppRoute.Subscription) }
+        PracticeDone(
+            state,
+            app,
+            onClose = viewModel::leave,
+            onAgain = viewModel::practiceAgain.takeIf { viewModel.practicesAgain && state.toPracticeAgain.isNotEmpty() },
+        ) { navigator.open(AppRoute.Subscription) }
         return
     }
 
@@ -201,27 +217,20 @@ private fun PracticeDone(
     state: PracticeState,
     app: AppContainer,
     onClose: () -> Unit,
+    onAgain: (() -> Unit)?,
     onSeePlus: () -> Unit,
 ) {
     val end = state.end
     val summary = end?.summary
     val fixed = state.fixedIds.size
 
-    val note =
-        when (state.endNote) {
-            PracticeEndNote.Missed -> R.string.mistakes_practice_comes_back
-            PracticeEndNote.MissedAndUnreached -> R.string.mistakes_practice_missed_and_unreached
-            PracticeEndNote.Unreached -> R.string.mistakes_practice_unreached
-            null -> null
-        }
-
     MomentAfterCeremony(app, summary?.ceremony, summary?.certificates.orEmpty().map { it.naming }, onSeePlus) { buddy ->
         RunFinished(
             title = stringResource(R.string.practice_done_title),
-            action = stringResource(R.string.navigation_back),
+            action = stringResource(if (onAgain != null) R.string.mistakes_practice_again else R.string.mistakes_practice_done),
             saving = end == null,
             onClose = onClose,
-            detail = if (end != null && note != null) stringResource(note) else null,
+            onAction = onAgain ?: onClose,
         ) {
             MomentReadouts(
                 brainPower = summary?.brainPower ?: 0,
@@ -246,6 +255,7 @@ internal fun NothingToPractice(onClose: () -> Unit) {
         action = stringResource(R.string.navigation_back),
         saving = false,
         onClose = onClose,
-        detail = stringResource(R.string.mistakes_nothing_description),
     ) {}
 }
+
+private fun String.toUuid(): UUID? = runCatching { UUID.fromString(this) }.getOrNull()

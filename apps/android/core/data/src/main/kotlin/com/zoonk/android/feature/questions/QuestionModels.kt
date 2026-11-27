@@ -283,6 +283,8 @@ data class AnswerFeedback(
     val mistakeFixed: Boolean = false,
     /** Every mistake a mistakes-practice answer fixed, this one's and others' on the same skill. */
     val fixedMistakeIds: List<String> = emptyList(),
+    /** A mistakes-practice answer right on the day of the miss: only a later day's right answer fixes it. */
+    val requiresLaterDay: Boolean = false,
     val savedToNotebook: Boolean = false,
     val transcript: List<TranscriptLine>? = null,
     /** A few misses in a row: the runner suggests a break. */

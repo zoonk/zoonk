@@ -50,8 +50,6 @@
   "today_mistakes_notebook": "536f561cc0979f2b969c6ff8b749d4d8d047f6c6bec7976d43d5c946be14994f",
   "today_mistakes_ready": "4c0de7ee5f72a8d51f12e0f9d8ef952fbd5fc02c8ca78413f89ec2453e72f0d7",
   "today_mistakes_redo": "9f7c05dd728dc64dccf6e080d3b82fee98b584a2fc51667c335695d818310ba0",
-  "today_mistakes_return_tomorrow": "5fb4083ee78404cab4de04a6487b262d6301597199a1cc62574b3c40a4c172ff",
-  "today_mistakes_tomorrow": "74feaf763021995454bd57a1c5c918694aa5473770f2c6f37fcadaab74547a1b",
   "today_more_count": "764cbee4d69eae882ce3823318ed70a1b6876995eeb51482f430a7ad27a14fa4",
   "today_more_lessons": "59aa67f7a8d2991d4a05862945daf611f833347b1733f5ab38017b86a929acc0",
   "today_more_time_a_day": "e769c6378f106b2d281baf8d9568718531d33cdfa207adfb76f933c499b4ef78",
@@ -278,14 +276,9 @@
     <string name="today_mistakes_redo">Übe, was du falsch beantwortet hast</string>
     <!-- The line under Completed lessons in Practice anytime. -->
     <string name="today_completed_lessons_line">Lektion noch einmal machen</string>
-    <string name="today_mistakes_return_tomorrow">Die heutigen Fehler kommen morgen wieder</string>
     <plurals name="today_mistakes_ready">
         <item quantity="one">%d zum Üben bereit</item>
         <item quantity="other">%d zum Üben bereit</item>
-    </plurals>
-    <plurals name="today_mistakes_tomorrow">
-        <item quantity="one">%d ab morgen verfügbar</item>
-        <item quantity="other">%d ab morgen verfügbar</item>
     </plurals>
     <string name="today_take_mock">Probeprüfung ablegen</string>
     <string name="today_take_mock_detail">Wann du möchtest: ein ganzer Prüfungstag oder ein halber Tag</string>

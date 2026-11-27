@@ -67,6 +67,7 @@ internal fun practiceFeedback(
     fixed: Boolean = false,
     fixedMistakeIds: List<String> = emptyList(),
     answerId: String = UUID.randomUUID().toString(),
+    requiresLaterDay: Boolean = false,
 ): MistakePracticeFeedback =
     decodeFixture(
         "mistake-practice-feedback",
@@ -75,6 +76,7 @@ internal fun practiceFeedback(
         "fixed" to fixed,
         "fixedMistakeIds" to JsonArray(fixedMistakeIds.map(::JsonPrimitive)),
         "mistakeStatus" to if (fixed) "fixed" else "open",
+        "requiresLaterDay" to requiresLaterDay,
     )
 
 internal fun completion(
@@ -112,7 +114,7 @@ internal class FakeMistakesApi(
         stepId: UUID,
         recording: com.zoonk.android.feature.audio.VoiceRecording,
         attemptId: UUID,
-        goalId: UUID?,
+        key: PracticeKey,
         answerIds: List<UUID>,
         timeZone: String,
         practiceDurationMs: Long,
@@ -134,9 +136,10 @@ internal fun practiceViewModel(
     saved: androidx.lifecycle.SavedStateHandle = androidx.lifecycle.SavedStateHandle(),
     choices: TodayChoices = noChoices(),
     sessions: SessionSource = FakeSession(null),
+    key: PracticeKey = PracticeKey(goalId = null),
 ): MistakePracticeViewModel {
     val store = MistakesStore(api, cache) { "UTC" }
-    return MistakePracticeViewModel(PracticeKey(goalId = null, skillId = null), store, choices, sessions, saved, clock)
+    return MistakePracticeViewModel(key, store, choices, sessions, saved, clock)
 }
 
 /** A learner who hasn't chosen anything for the day; drafts that no account opened are never read from disk. */

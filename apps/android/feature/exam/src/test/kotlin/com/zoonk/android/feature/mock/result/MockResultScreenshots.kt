@@ -83,6 +83,27 @@ class MockResultScreenshots {
         capture("result-phone-2-plan", continues = 1)
     }
 
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phonePlanMoved() {
+        show(enem(moved = true))
+        capture("result-phone-2-plan-moved", continues = 1)
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phonePlanMovedOnly() {
+        show(enem(moved = true, preparation = false))
+        capture("result-phone-2-plan-moved-only", continues = 1)
+    }
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun expandedPlanMoved() {
+        show(enem(moved = true))
+        capture("result-expanded-plan-moved")
+    }
+
     /** Opens every question to review, each row in place. */
     private fun openQuestions() {
         val rows = compose.onAllNodesWithText("Question ", substring = true)
@@ -433,19 +454,22 @@ class MockResultScreenshots {
     private fun speakingOnly() =
         finishedMock(result = result(extra = """"total":0,"correct":0,"areas":[],"topics":[]"""), extra = """"speaking":$SPEAKING""")
 
-    private fun enem() =
-        finishedMock(
-            result =
-                result(
-                    scoring = "irt",
-                    extra =
-                        """$IRT,"blank":1,"coherence":{"easyWrong":2,"hardRight":1,"isCoherent":false},
-                        "preparation":{"after":0.48,"before":0.41}""",
-                ),
-            extra =
-                """"review":[$MISSED,$STATEMENT],"adapt":{"skip":{"lessons":3,"topics":["Addition","Fractions"]}},
+    private fun enem(
+        moved: Boolean = false,
+        preparation: Boolean = true,
+    ) = finishedMock(
+        result =
+            result(
+                scoring = "irt",
+                extra =
+                    """$IRT,"blank":1,"coherence":{"easyWrong":2,"hardRight":1,"isCoherent":false}""" +
+                        ""","preparation":{"after":0.48,"before":0.41}""".takeIf { preparation }.orEmpty() +
+                        ""","movedTopics":["Percentages","Ratios and proportions","Probability"]""".takeIf { moved }.orEmpty(),
+            ),
+        extra =
+            """"review":[$MISSED,$STATEMENT],"adapt":{"skip":{"lessons":3,"topics":["Addition","Fractions"]}},
                 "scoreNotes":{"noticeScoring":null,"relative":false,"scale":{"max":1000,"min":0,"name":"ENEM","passScore":null,"score":null}}""",
-        )
+    )
 
     private fun cebraspe() =
         finishedMock(
