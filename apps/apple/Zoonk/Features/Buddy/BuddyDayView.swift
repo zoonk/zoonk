@@ -9,39 +9,87 @@ struct BuddyDayView: View {
   let name: String
   /// The page's, so a tap goes on as the sheet is drawn again.
   let tap: BuddyMissionTap
+  /// Asking happens in the page's own composer, so the sheet hands it back.
+  let ask: () -> Void
 
   var body: some View {
     ZoonkList {
       energy
 
       if let today = status.today, !today.missions.isEmpty {
-        let earned = today.fullMeal.earned
-
-        Section {
+        // Today's missions card, as Today draws it.
+        PageSection(isPanel: true) {
           MissionsSummary(
             missions: today.missions.compactMap(StudyMission.init), bonus: today.fullMeal.bonus,
-            earned: earned, collapsesWhenWon: false
+            earned: today.fullMeal.earned, collapsesWhenWon: false
           )
-          .listRowSeparator(.hidden, edges: .bottom)
+          .rowSeparatorHiddenBelow()
 
           ForEach(Array(today.missions.enumerated()), id: \.offset) { _, mission in
             if let row = StudyMission(mission) {
-              let blockID = mission.opens?.value1.blockID
-
-              MissionRow(
-                mission: row, buddyName: name, isBusy: blockID != nil && tap.opening == blockID,
-                failed: blockID != nil && tap.failed == blockID
-              ) {
-                if let opens = mission.opens?.value1 {
-                  open(opens)
-                }
-              }
-              .disabled(tap.opening != nil && tap.opening != blockID)
+              missionRow(row, opens: mission.opens?.value1)
             }
           }
+        } header: {
+          EmptyView()
         }
       }
+
+      if let firstSteps = status.firstSteps?.value1 {
+        firstStepsSection(firstSteps)
+      }
     }
+  }
+
+  /// Main's first steps: only the ones a learner can do now are rows. The ones done are in the
+  /// count, and the ones that open later are one line, since a row nobody can press only says when
+  /// the plan gets to it.
+  private func firstStepsSection(_ firstSteps: Components.Schemas.BuddyFirstSteps) -> some View {
+    let later = firstSteps.steps.filter { $0.status == .later }.count
+
+    return PageSection {
+      ForEach(
+        firstSteps.steps.filter { $0.status == .today || $0.status == .available }, id: \.kind
+      ) { step in
+        if let row = StudyMission(step) {
+          missionRow(
+            row, opens: step.opens?.value1, name: step.kind.name(buddy: name), isFirstStep: true)
+        }
+      }
+
+      if later > 0 {
+        Text("\(later) more open as you go", tableName: "Buddy")
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
+      }
+
+      if firstSteps.completedOn != nil {
+        Text("You've tried everything.", tableName: "Buddy")
+          .typeStyle(.note.weight(.medium))
+          .foregroundStyle(.successText)
+      }
+    } header: {
+      SectionTitle(Text("First steps", tableName: "Buddy")) {
+        Text("\(firstSteps.done) of \(firstSteps.total)", tableName: "Buddy")
+      }
+    }
+  }
+
+  private func missionRow(
+    _ mission: StudyMission, opens: Components.Schemas.StudyMissionOpens?,
+    name rowName: String? = nil, isFirstStep: Bool = false
+  ) -> some View {
+    let key = opens?.blockID.map { BuddyMissionTap.Row(blockID: $0, isFirstStep: isFirstStep) }
+
+    return MissionRow(
+      mission: mission, buddyName: name, name: rowName, isBusy: key != nil && tap.opening == key,
+      failed: key != nil && tap.failed == key
+    ) {
+      if let opens {
+        open(opens, isFirstStep: isFirstStep)
+      }
+    }
+    .disabled(tap.opening != nil && tap.opening != key)
   }
 
   var title: Text {
@@ -61,13 +109,21 @@ struct BuddyDayView: View {
       comment: "The buddy's Energy; the argument is its name")
   }
 
-  private func open(_ opens: Components.Schemas.StudyMissionOpens) {
+  private func open(_ opens: Components.Schemas.StudyMissionOpens, isFirstStep: Bool) {
+    if case .case6 = opens {
+      ask()
+      return
+    }
+
     guard let blockID = opens.blockID else {
       places.open(.mission(opens))
       return
     }
 
-    tap.open(blockID, today: todayStore, places: places) {
+    tap.open(
+      BuddyMissionTap.Row(blockID: blockID, isFirstStep: isFirstStep), today: todayStore,
+      places: places
+    ) {
       await buddy.status.refresh()
     }
   }
@@ -140,25 +196,32 @@ extension Components.Schemas.StudyMissionOpens {
 @MainActor
 @Observable
 final class BuddyMissionTap {
-  /// The block a mission tap is opening, and the one that didn't open, as Today keeps its rows'.
-  private(set) var opening: String?
-  private(set) var failed: String?
+  /// A row that opens a block. A first step and a mission can open the same one, and only the row
+  /// tapped shows it opening.
+  struct Row: Equatable {
+    let blockID: String
+    let isFirstStep: Bool
+  }
+
+  /// The row a tap is opening, and the one that didn't open, as Today keeps its rows'.
+  private(set) var opening: Row?
+  private(set) var failed: Row?
   @ObservationIgnored private var task: Task<Void, Never>?
 
   /// `refreshDay` reads the day again when the open changed it rather than opening a screen.
   func open(
-    _ blockID: String, today: TodayStore, places: TutorPlaces,
+    _ row: Row, today: TodayStore, places: TutorPlaces,
     refreshDay: @escaping @MainActor () async -> Void
   ) {
     guard opening == nil else {
       return
     }
 
-    opening = blockID
+    opening = row
     failed = nil
 
     task = Task {
-      let result = await today.open(blockID: blockID)
+      let result = await today.open(blockID: row.blockID)
 
       guard !Task.isCancelled else {
         return
@@ -175,7 +238,7 @@ final class BuddyMissionTap {
       case .done(let destination):
         places.open(.missionStep(destination))
       case .failed:
-        failed = blockID
+        failed = row
       case .obsolete:
         break
       }

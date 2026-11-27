@@ -84,6 +84,9 @@ private struct BuddyContent: View {
   @State private var goalDraft = ""
   @State private var faceCue: ActCue<BuddyAct>?
   @State private var missionTap = BuddyMissionTap()
+  /// Asking from the day waits for its sheet to close, then puts the cursor in the composer.
+  @State private var asksAfterDay = false
+  @State private var composerFocus = 0
   /// Says the editor's save failed, while the learner is on the page.
   @State private var saving = VisitRequest<Bool>()
 
@@ -154,8 +157,11 @@ private struct BuddyContent: View {
       menuItems
     }
     .modifier(LoadsList(list: list))
-    .sheet(isPresented: $isDayShown) {
-      let day = BuddyDayView(status: status, name: name, tap: missionTap)
+    .sheet(isPresented: $isDayShown, onDismiss: focusComposerAfterDay) {
+      let day = BuddyDayView(status: status, name: name, tap: missionTap) {
+        asksAfterDay = true
+        isDayShown = false
+      }
 
       NavigationStack {
         day
@@ -239,6 +245,13 @@ private struct BuddyContent: View {
       if isMissing {
         router.buddyConversation = nil
       }
+    }
+  }
+
+  private func focusComposerAfterDay() {
+    if asksAfterDay {
+      asksAfterDay = false
+      composerFocus += 1
     }
   }
 
@@ -371,7 +384,8 @@ private struct BuddyContent: View {
           placeholder: Text(
             "Ask anything", tableName: "Buddy",
             comment: "Placeholder of the buddy's composer: it answers and changes the plan"),
-          isPage: true
+          isPage: true,
+          composerFocus: composerFocus
         ) {
           greeting
         }
