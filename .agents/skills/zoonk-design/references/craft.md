@@ -315,7 +315,7 @@ A control has a rest, hover, pressed, keyboard-focus, disabled and busy look. A 
 
 ### X2. A state is drawn one way
 
-A pick is a soft tile: its fill (`selected-tint`, as light as `muted`) in its line's place, with the piece's own mark in ink (a radio's dot, a check, an answer's key and "Your answer", a chip's label, quiet while off), never a ring or a darker gray. The line returns with more contrast. The current item in navigation is the `muted` fill; on a mock's answer sheet an answered question is that tile, the open one has a short bar under its number, a flagged one an amber tint. What's inspected or played (a calendar's day, a rhythm's step) takes the focus ring. The current tab has one look in every app, the navigation's `muted` fill (`TAB_CLASS`).
+A pick is a soft tile: its fill (`selected-tint`, as light as `muted`) in its line's place, with the piece's own mark in ink (a radio's dot, a check, an answer's radio or checkbox, a chip's label, quiet while off), never a ring or a darker gray. The line returns with more contrast. The current item in navigation is the `muted` fill; on a mock's answer sheet an answered question is that tile, the open one has a short bar under its number, a flagged one an amber tint. What's inspected or played (a calendar's day, a rhythm's step) takes the focus ring. The current tab has one look in every app, the navigation's `muted` fill (`TAB_CLASS`).
 
 - **Check.** No two kinds of "selected" on one screen drawn differently.
 - **Usual break.** A dark ring or outline marking a pick or the current item.
