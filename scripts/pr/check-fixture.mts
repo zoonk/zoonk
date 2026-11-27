@@ -122,7 +122,8 @@ export function checkFixture() {
     };
   }
 
-  const commit = (path: string) => commitFile(repository, path, "changed", FIRST_COMMIT + 3 * MINUTE);
+  const commit = (path: string) =>
+    commitFile(repository, path, "changed", FIRST_COMMIT + 3 * MINUTE);
 
   return { capture, changedAt, commit, current, older, repository, shot };
 }
