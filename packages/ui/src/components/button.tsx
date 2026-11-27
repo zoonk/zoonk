@@ -50,10 +50,10 @@ const buttonVariants = cva(
 );
 
 const BUSY_HIDDEN =
-  "group-aria-busy/busy:opacity-0 group-data-held/busy:opacity-0 group-has-data-busy/busy:opacity-0";
+  "group-aria-busy/busy:opacity-0 in-data-held:opacity-0 group-has-data-busy/busy:opacity-0";
 
 const BUSY_HIDDEN_WITHOUT_KEYS =
-  "not-pointer-fine:group-aria-busy/busy:opacity-0 not-pointer-fine:group-data-held/busy:opacity-0 not-pointer-fine:group-has-data-busy/busy:opacity-0";
+  "not-pointer-fine:group-aria-busy/busy:opacity-0 not-pointer-fine:in-data-held:opacity-0 not-pointer-fine:group-has-data-busy/busy:opacity-0";
 
 const BUSY_CONTENT_CLASS =
   "[display:inherit] min-w-0 [flex-direction:inherit] [flex-wrap:inherit] [place-content:inherit] [place-items:inherit] gap-[inherit]";
@@ -66,14 +66,14 @@ function BusySpinner({ className, iconClassName }: { className?: string; iconCla
     <span
       aria-hidden="true"
       className={cn(
-        "pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 group-has-data-busy/busy:opacity-100 group-aria-busy/busy:opacity-100 group-data-held/busy:opacity-100",
+        "pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 group-has-data-busy/busy:opacity-100 group-aria-busy/busy:opacity-100 in-data-held:opacity-100",
         className,
       )}
       data-slot="busy-spinner"
     >
       <Loader2Icon
         className={cn(
-          "group-has-data-busy/busy:animate-spin group-aria-busy/busy:animate-spin group-data-held/busy:animate-spin",
+          "group-has-data-busy/busy:animate-spin group-aria-busy/busy:animate-spin in-data-held:animate-spin",
           iconClassName,
         )}
       />
@@ -81,11 +81,14 @@ function BusySpinner({ className, iconClassName }: { className?: string; iconCla
   );
 }
 
-/** An icon that gives way to the spinner, in its own box, while the `group/busy` around it is busy. */
+/**
+ * An icon that gives way to the spinner, in its own box, while the `group/busy` around it is busy or
+ * the control around it holds a press (`data-held`).
+ */
 function BusyIcon({ children, className, ...props }: React.ComponentProps<"span">) {
   return (
     <span className={cn("relative inline-flex", className)} {...props}>
-      <span className={cn("inline-flex", BUSY_HIDDEN)}>{children}</span>
+      <span className={cn("inline-flex size-full", BUSY_HIDDEN)}>{children}</span>
       <BusySpinner iconClassName="size-full" />
     </span>
   );
@@ -112,9 +115,9 @@ const FORWARD_ICON = {
 } as const satisfies GlyphProps;
 
 /**
- * For a control that carries `group/busy relative` and is busy while it's `aria-busy`, holds a
- * `data-busy` mark (a link that learns it's pending inside, as main's `LearningLink` does) or a
- * `data-held` one (a press `HELD_PRESS_SCRIPT` holds until the page hydrates). CSS draws it, so it
+ * For a control that carries `group/busy relative` and is busy while it's `aria-busy` or holds a
+ * `data-busy` mark (a link that learns it's pending inside, as main's `LearningLink` does), and for
+ * any control `HELD_PRESS_SCRIPT` marks `data-held` until the page hydrates. CSS draws it, so it
  * works before the page hydrates. The spinner takes the glyph's place (the `icon`,
  * or the `keyHint` where it shows); with no glyph on screen, the content turns invisible under a
  * centered spinner, keeping its place and still read. Either way nothing changes size.
