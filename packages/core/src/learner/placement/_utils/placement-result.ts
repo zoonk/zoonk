@@ -1,5 +1,6 @@
 import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
+import { parsePlanChangePayload } from "../../../plans/_utils/plan-change-payload";
 import { readTestOutChange } from "../../../plans/_utils/read-test-out-change";
 import { countItemLessons } from "../../../plans/_utils/stand-in-lessons";
 import { placementPartReceipt } from "../../../plans/_utils/test-out-receipt";
@@ -76,7 +77,9 @@ export async function readPlacementCourse(
   ].map((group) => ({
     lessons: group.reduce((total, row) => total + countItemLessons(row), 0),
     skipped: group.reduce(
-      (total, row) => total + (startedPastItems.has(row.id) ? countItemLessons(row) : 0),
+      (total, row) =>
+        total +
+        (row.status === "testedOut" && startedPastItems.has(row.id) ? countItemLessons(row) : 0),
       0,
     ),
     start: next !== undefined && group.includes(next),
@@ -101,16 +104,16 @@ export async function readPlacementResult({
     return null;
   }
 
+  if (result.courseStart) {
+    return readCourseResult(goalId, result, tx ?? prisma);
+  }
+
   const saved = result.nextLesson;
 
-  let nextLesson = null;
-
-  if (!result.startedPastSkillIds || result.course) {
-    nextLesson =
-      saved && saved.estimatedMinutes !== undefined
-        ? { ...saved, chapter: saved.chapter ?? null, estimatedMinutes: saved.estimatedMinutes }
-        : await readPlacementNextLesson(goalId, tx ?? prisma);
-  }
+  const nextLesson =
+    saved && saved.estimatedMinutes !== undefined
+      ? { ...saved, chapter: saved.chapter ?? null, estimatedMinutes: saved.estimatedMinutes }
+      : await readPlacementNextLesson(goalId, tx ?? prisma);
 
   const view = {
     attemptId: result.attemptId,
@@ -132,9 +135,39 @@ export async function readPlacementResult({
   const receipt = placementPartReceipt(result.attemptId, latest.part, stoppedAt);
 
   const change =
-    result.lessonsSkipped > 0 || result.startedPastSkillIds?.length
-      ? await readTestOutChange({ db: tx, goalId, receipt })
-      : null;
+    result.lessonsSkipped > 0 ? await readTestOutChange({ db: tx, goalId, receipt }) : null;
 
   return { ...view, changeId: change?.id ?? null };
+}
+
+async function readCourseResult(
+  goalId: string,
+  result: NonNullable<PlacementRecord["result"]>,
+  db: TransactionClient,
+) {
+  const receipt = placementPartReceipt(
+    result.attemptId,
+    1,
+    result.finish?.end === "stopped" ? result.finish.answered : undefined,
+  );
+
+  const change = await readTestOutChange({ db, goalId, receipt });
+  const payload = parsePlanChangePayload(change?.payload);
+  const course = await readPlacementCourse(goalId, new Set(payload.planItemIds), db);
+  const nextLesson = course ? await readPlacementNextLesson(goalId, db) : null;
+
+  const lessonsSkipped =
+    course?.chapters.reduce((total, chapter) => total + chapter.skipped, 0) ?? 0;
+
+  return {
+    attemptId: result.attemptId,
+    changeId: change?.id ?? null,
+    chapter: nextLesson?.chapter ?? result.chapter,
+    course,
+    finish: result.finish,
+    finishedAt: result.finishedAt,
+    heldUntilTomorrow: result.heldUntilTomorrow,
+    lessonsSkipped,
+    nextLesson,
+  };
 }

@@ -113,6 +113,11 @@ export function isInvalidGoalAnswer({
 
   if (input.question === "placement" && input.attemptId) {
     const { attempt, finishedParts, result } = readPlacementAttempt(current);
+
+    if (!attempt && result?.courseStart) {
+      return result.attemptId !== input.attemptId;
+    }
+
     return (attempt?.id ?? result?.attemptId) !== input.attemptId || finishedParts.length === 0;
   }
 
