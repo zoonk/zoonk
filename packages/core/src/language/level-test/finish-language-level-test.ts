@@ -2,7 +2,7 @@ import { type LanguageSkill, type TransactionClient } from "@zoonk/db";
 import { CEFR_LEVELS } from "@zoonk/utils/cefr";
 import "server-only";
 import { isJsonObject } from "@zoonk/utils/json";
-import { trackLearnerEvents } from "../../analytics/track-learner-event";
+import { testEventContext, trackTestEvents } from "../../analytics/test-events";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import {
   getGoalsCacheTag,
@@ -30,6 +30,7 @@ import {
 } from "./_utils/level-test-state";
 import { recordLevelTestActivity } from "./_utils/record-level-test-activity";
 import {
+  LANGUAGE_LEVEL_TEST_OFFER,
   type LevelTestBank,
   type LevelTestProgress,
   type LevelTestResult,
@@ -151,10 +152,10 @@ async function recordLevelTestResult({
         levelTest: {
           ...details.levelTest,
           lastResult: result,
+          ...(planningStart !== null && { planningStart }),
           usedConfirmations: [...usedConfirmations, ...checksUsed.map(({ id }) => id)],
         },
         ...(planningStart !== null && {
-          languagePlanningStart: planningStart,
           skillLevels: { ...readPreviousSkillLevels(current), ...toLevelLabels(scores) },
         }),
       },
@@ -281,16 +282,31 @@ export async function finishLanguageLevelTest(
       getUserProgressCacheTag(userId),
     ]);
 
-    await trackLearnerEvents({
-      events: [
+    const { result } = progress;
+
+    if (result?.end) {
+      const answers = progress.answers.filter((answer) => !answer.skipped && !answer.audioDeferred);
+
+      trackTestEvents(goal, [
         {
-          name: "Level Test Finished",
-          properties: { answered: progress.answers.length, target_language: goal.targetLanguage },
+          name: "Test Finished",
+          properties: {
+            ...testEventContext(goal, {
+              attemptId: result.attemptId,
+              questions: LANGUAGE_LEVEL_TEST_OFFER.total,
+              test: "language",
+            }),
+            answered: answers.length,
+            duration_ms: answers.reduce((total, answer) => total + answer.durationMs, 0),
+            end: result.end,
+            lessons_skipped: result.lessonsSkipped,
+            levels_skipped: result.levelsSkipped.length,
+            parts_left: 0,
+            unknowns: answers.filter((answer) => answer.correct === null).length,
+          },
         },
-      ],
-      goalId,
-      userId,
-    });
+      ]);
+    }
   }
 
   const { result } = progress;

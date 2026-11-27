@@ -9,6 +9,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { CEFR_LEVELS } from "@zoonk/utils/cefr";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it, vi } from "vitest";
+import { runDeferredWork } from "../../_test-utils/deferred-work";
 import { listOwed } from "../../_test-utils/follow-ups";
 import {
   LEARNER_LOCK,
@@ -16,6 +17,7 @@ import {
   waitForBlockedStatement,
 } from "../../_test-utils/learner-lock";
 import { mockSession } from "../../_test-utils/mock-session";
+import { analytics } from "../../_test-utils/test-boundaries";
 import * as ownedGoalFact from "../../learner/facts/owned-goal";
 import { decidePlanChange } from "../../plans/decide-plan-change";
 import { skipAlphabetIntro } from "../alphabet/skip-alphabet-intro";
@@ -172,7 +174,7 @@ describe("language level test", () => {
       levelTest: { lastResult: { end: "stopped", ranges: { reading: expect.any(Object) } } },
     });
 
-    expect(saved.details).not.toHaveProperty("languagePlanningStart");
+    expect(saved.details).not.toHaveProperty("levelTest.planningStart");
     expect(saved.details).toHaveProperty("level", "A2");
     expect(saved.details).not.toHaveProperty("skillLevels.speaking");
     expect(saved.details).not.toHaveProperty("skillLevels.writing");
@@ -258,6 +260,47 @@ describe("language level test", () => {
     expect(events).toHaveLength(1);
     expect(events[0]).toMatchObject({ correctAnswers: 1, incorrectAnswers: 1, seconds: 60 });
     expect(progress.reduce((sum, day) => sum + day.timeSpentSeconds, 0)).toBe(60);
+  });
+
+  it("records audio deferral as a separate event without scoring a fifth answer", async () => {
+    await saveBank();
+    const { goal, user } = await languageGoalFixture();
+    mockSession(user.id);
+
+    const flush = runDeferredWork();
+
+    await answerNextQuestion(goal.id);
+    await answerNextQuestion(goal.id);
+    await answerNextQuestion(goal.id);
+    await answerNextQuestion(goal.id);
+
+    const defer = () =>
+      answerLanguageLevelTest({
+        goalId: goal.id,
+        input: { answerIndex: null, audioDeferred: true, questionId: "listening-A2-0" },
+      });
+
+    await expect(defer()).resolves.toMatchObject({
+      status: "ready",
+      test: { next: { kind: "done" } },
+    });
+
+    await defer();
+    await finishLanguageLevelTest(goal.id);
+    await finishLanguageLevelTest(goal.id);
+    await flush();
+
+    const events = analytics.trackServerEvent.mock.calls.flat();
+
+    expect(events.filter((event) => event.name === "Test Answered")).toHaveLength(4);
+
+    expect(events.filter((event) => event.name === "Test Audio Deferred")).toMatchObject([
+      { properties: { kind: "listening", question_number: 5, test: "language" } },
+    ]);
+
+    expect(events.filter((event) => event.name === "Test Finished")).toMatchObject([
+      { properties: { answered: 4, end: "audio_deferred", test: "language", unknowns: 0 } },
+    ]);
   });
 
   it("lets a listening question whose audio couldn't be made be skipped, without counting it", async () => {
@@ -536,6 +579,8 @@ describe("a post-start level test", () => {
 
     mockSession(user.id);
 
+    const flush = runDeferredWork();
+
     const [started, resumed] = await Promise.all([
       startLanguageLevelTest({ goalId: goal.id, length: "quick" }),
       startLanguageLevelTest({ goalId: goal.id, length: "quick" }),
@@ -561,6 +606,33 @@ describe("a post-start level test", () => {
         input: { answerIndex: 1, attemptId, questionId: next.question.id },
       }),
     ).resolves.toMatchObject({ status: "ready", test: { answered: 1 } });
+
+    await expect(
+      answerLanguageLevelTest({
+        goalId: goal.id,
+        input: { answerIndex: 1, attemptId, questionId: next.question.id },
+      }),
+    ).resolves.toMatchObject({ status: "ready", test: { answered: 1 } });
+
+    await flush();
+
+    const events = analytics.trackServerEvent.mock.calls.flat();
+
+    expect(events.filter((event) => event.name === "Test Started")).toMatchObject([
+      { properties: { attempt_id: attemptId, resumed: false, test: "language" } },
+    ]);
+
+    expect(events.filter((event) => event.name === "Test Answered")).toMatchObject([
+      {
+        properties: {
+          answer: "correct",
+          attempt_id: attemptId,
+          kind: "reading",
+          level: "A1",
+          question_number: 1,
+        },
+      },
+    ]);
 
     await completeCurrentTapTest(goal.id, attemptId);
     const previous = await finishLanguageLevelTest(goal.id, attemptId);

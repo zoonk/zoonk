@@ -1,9 +1,8 @@
 import "server-only";
 import { type Goal } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { after } from "next/server";
 import { type z } from "zod";
-import { trackLearnerEvents } from "../../../analytics/track-learner-event";
+import { testEventContext, trackTestEvents } from "../../../analytics/test-events";
 import { owePlanStartLessons } from "../../../follow-ups/owe-goal-lessons";
 import { replanAfterPlacement } from "../../../plans/replan-after-placement";
 import { type GoalPlan } from "../../_utils/goal-skill-graph";
@@ -16,7 +15,7 @@ import { applyPlacement } from "./apply-placement";
 import { type PlacementState } from "./load-placement-state";
 import { type PlacementAttemptView, type PlacementResult } from "./placement-attempt-record";
 import { settleFocusTest } from "./settle-focus-test";
-import { type ClosedSitting, closeTestSitting } from "./test-sitting";
+import { closeTestSitting } from "./test-sitting";
 
 export type PlacementCompletion = {
   areas: AreaStart[];
@@ -35,31 +34,6 @@ export type PlacementCompletion = {
   result?: PlacementResult | null;
   testedOutPlanItemIds: string[];
 };
-
-function trackSittingFinished({ closed, goal }: { closed: ClosedSitting | null; goal: Goal }) {
-  if (!closed) {
-    return;
-  }
-
-  after(() =>
-    trackLearnerEvents({
-      events: [
-        {
-          name: "Focus Test Sitting Finished",
-          properties: {
-            answered: closed.answered,
-            dont_know: closed.dontKnow,
-            duration_ms: closed.durationMs,
-            kind: closed.kind,
-            questions: closed.questions,
-          },
-        },
-      ],
-      goalId: goal.id,
-      userId: goal.userId,
-    }),
-  );
-}
 
 /**
  * Applies every answer so far to where the plan starts. An exam goal's open sitting closes first,
@@ -86,9 +60,29 @@ export async function completePlacement({
   const tested = goal.kind === "exam";
 
   const closed = tested ? await closeTestSitting({ goal, sittingId, timeZone }) : null;
-  trackSittingFinished({ closed, goal });
-
   const applied = await applyPlacement({ goalId, now, plan, timeZone, userId });
+
+  if (closed) {
+    trackTestEvents(goal, [
+      {
+        name: "Test Finished",
+        properties: {
+          ...testEventContext(goal, {
+            attemptId: closed.id,
+            questions: closed.questions,
+            test: "focus",
+          }),
+          answered: closed.answered,
+          duration_ms: closed.durationMs,
+          end: closed.end,
+          lessons_skipped: applied.lessonsSkipped,
+          levels_skipped: 0,
+          parts_left: 0,
+          unknowns: closed.dontKnow,
+        },
+      },
+    ]);
+  }
 
   if (!applied.changeId && (!goal.planRevealedAt || tested)) {
     await replanAfterPlacement({ goalId, now, timeZone });

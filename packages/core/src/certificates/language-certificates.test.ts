@@ -1219,7 +1219,7 @@ const BANK: LevelTestBank = {
 type StoredAnswer = { answerIndex: number; correct: boolean; id: string };
 
 function answers(skill: "listening" | "reading"): StoredAnswer[] {
-  return ["A2", "B1", "B2"].map((level, index) => ({
+  return ["A2", "B1", "B2", "A1"].map((level, index) => ({
     answerIndex: 1,
     correct: true,
     id: `${skill}-${level}-${index % 2}`,

@@ -4,6 +4,7 @@ import { type LessonScreenSuggestion } from "../lesson-questions/contract";
 import { type MissionKind } from "../sessions/missions/catalog";
 import { type OnboardingProgress } from "./onboarding-progress";
 import { type AnalyticsGoalKind, type SharedEventProperties } from "./shared-properties";
+import { type TestEvents } from "./test-event-catalog";
 
 /** Vercel Web Analytics rejects nested property values. */
 type EventPropertyValue = boolean | number | string | null | undefined;
@@ -57,19 +58,6 @@ type OnboardingEvents = {
   "Goal Typed": { has_attachment: boolean; attempt_id?: string; submitted_at?: number };
   "Onboarding Progressed": OnboardingProgress;
   "Buddy Chosen": { buddy: BuddyKind; renamed: boolean };
-  "Focus Test Sitting Finished": {
-    answered: number;
-    dont_know: number;
-    duration_ms: number;
-    kind: "continuation" | "first";
-    questions: number;
-  };
-  "Placement Answered": {
-    answer: "correct" | "dont_know" | "incorrect";
-    duration_ms: number;
-    question_number: number;
-    skill_id: string;
-  };
   "Plan Created": {
     estimate_hours: number | null;
     from_plan_link: boolean;
@@ -157,7 +145,6 @@ type LearningEvents = {
     spoken_seconds: number;
     target_language: string;
   };
-  "Level Test Finished": { answered: number; target_language: string };
   "Mistake Pattern Found": { pattern_kind: "pattern" | "typos"; target_language: string };
   "Mistake Pattern Practiced": { correct: number; questions: number };
   "Review Completed": {
@@ -254,7 +241,8 @@ type AnalyticsEvents = EventCatalog<
     SettingsEvents &
     AccountEvents &
     QualityEvents &
-    OutcomeEvents
+    OutcomeEvents &
+    TestEvents
 >;
 
 export type TrackOptions = {

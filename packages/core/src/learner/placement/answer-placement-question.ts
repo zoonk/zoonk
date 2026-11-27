@@ -1,8 +1,7 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type Goal, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { after } from "next/server";
-import { trackLearnerEvents } from "../../analytics/track-learner-event";
+import { gradedTestAnswer, testEventContext, trackTestEvents } from "../../analytics/test-events";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
 import { getAskedItemFilter } from "../../library/items/item-field";
 import { ITEM_IMAGE_INCLUDE } from "../../library/items/item-image";
@@ -17,14 +16,14 @@ import {
 import { loadWritingSkillIds } from "../writing-skills";
 import { type PlacementState, loadPlacementWithSummary } from "./_utils/load-placement-state";
 import { SITTING_ANSWER_FILTER } from "./_utils/placement-answers";
-import { readPlacementAttempt } from "./_utils/placement-attempt-record";
+import { type PlacementAttempt, readPlacementAttempt } from "./_utils/placement-attempt-record";
 import {
   type PlacementItem,
   gradePlacementAnswer,
   parsePlacementItem,
 } from "./_utils/placement-items";
 import { saveTestSummary } from "./_utils/test-sitting";
-import { readFocusTestRecord } from "./focus-test-state";
+import { type FocusTestRecord, readFocusTestRecord } from "./focus-test-state";
 import { type PlacementAnswerInput, getOwnLevel } from "./placement-contract";
 
 export type PlacementAnswerResult =
@@ -42,7 +41,7 @@ async function findGoalItem({
   examBlueprintId: string | null;
   itemId: string;
   userId: string;
-}): Promise<PlacementItem | null> {
+}): Promise<(PlacementItem & { difficulty: number | null }) | null> {
   const item = await prisma.item.findFirst({
     include: ITEM_IMAGE_INCLUDE,
     where: {
@@ -52,10 +51,11 @@ async function findGoalItem({
     },
   });
 
-  return item ? parsePlacementItem(item) : null;
+  const parsed = item ? parsePlacementItem(item) : null;
+  return item && parsed ? { ...parsed, difficulty: item.difficulty } : null;
 }
 
-async function canAnswerCourseQuestion({
+async function readCourseQuestionState({
   goalId,
   input,
   tx,
@@ -74,7 +74,55 @@ async function canAnswerCourseQuestion({
     userId: input.userId,
   });
 
-  return state.next?.itemId === input.itemId;
+  return state.next?.itemId === input.itemId ? state : null;
+}
+
+function answerEventContext({
+  course,
+  goal,
+  sitting,
+  sittingAnswers,
+}: {
+  course: PlacementState | null;
+  goal: Goal;
+  sitting: FocusTestRecord["sitting"] | undefined;
+  sittingAnswers: number;
+}) {
+  if (course?.attempt) {
+    const { id, part, parts, questions } = course.attempt;
+
+    return {
+      ...testEventContext(goal, { attemptId: id, part, parts, questions, test: "course" }),
+      question_number: course.answered + 1,
+    };
+  }
+
+  return sitting
+    ? {
+        ...testEventContext(goal, {
+          attemptId: sitting.id,
+          questions: sitting.questions,
+          test: "focus",
+        }),
+        question_number: sittingAnswers + 1,
+      }
+    : null;
+}
+
+function matchesAttempt({
+  attempt,
+  attemptId,
+  part,
+}: {
+  attempt: PlacementAttempt | null;
+  attemptId?: string;
+  part?: number;
+}): boolean {
+  if (!attemptId) {
+    return true;
+  }
+
+  return attempt?.id === attemptId && !attempt.partComplete && (part ?? 1) === attempt.part;
 }
 
 /**
@@ -91,7 +139,7 @@ async function recordPlacementAnswer({
   goalId: string;
   input: LearnerAnswer;
   part?: number;
-}): Promise<{ recorded: boolean; isCorrect: boolean } | null> {
+}) {
   const { itemId, userId } = input;
 
   const saved = await writeLearnerChange({ planInputs: true, userId }, async (tx) => {
@@ -100,10 +148,7 @@ async function recordPlacementAnswer({
     const sitting = readFocusTestRecord(goal)?.sitting;
     const focusTestId = sitting?.id ?? null;
 
-    if (
-      attemptId &&
-      (!attempt || attempt.id !== attemptId || attempt.partComplete || (part ?? 1) !== attempt.part)
-    ) {
+    if (!matchesAttempt({ attempt, attemptId, part })) {
       return unchanged(null);
     }
 
@@ -118,22 +163,26 @@ async function recordPlacementAnswer({
     });
 
     if (answered) {
-      return unchanged({ events: null, isCorrect: answered.isCorrect });
+      return unchanged({ analytics: null, events: null, isCorrect: answered.isCorrect });
     }
 
-    if (sitting) {
-      const total = await tx.attempt.count({
-        where: { ...SITTING_ANSWER_FILTER, focusTestId: sitting.id, userId },
-      });
+    const sittingAnswers = sitting
+      ? await tx.attempt.count({
+          where: { ...SITTING_ANSWER_FILTER, focusTestId: sitting.id, userId },
+        })
+      : 0;
 
-      if (total >= sitting.questions) {
-        return unchanged(null);
-      }
-    }
-
-    if (attempt && (!attemptId || !(await canAnswerCourseQuestion({ goalId, input, tx })))) {
+    if (sitting && sittingAnswers >= sitting.questions) {
       return unchanged(null);
     }
+
+    const course = attemptId ? await readCourseQuestionState({ goalId, input, tx }) : null;
+
+    if (attempt && !course) {
+      return unchanged(null);
+    }
+
+    const analytics = answerEventContext({ course, goal, sitting, sittingAnswers });
 
     const { events } = await persistLearnerAnswer({
       input: {
@@ -144,14 +193,16 @@ async function recordPlacementAnswer({
       transaction: tx,
     });
 
-    return { events, isCorrect: input.graded.isCorrect };
+    return { analytics, events, isCorrect: input.graded.isCorrect };
   });
 
   if (saved?.events) {
     publishLearnerAnswer({ events: saved.events, userId });
   }
 
-  return saved ? { isCorrect: saved.isCorrect, recorded: saved.events !== null } : null;
+  return saved
+    ? { analytics: saved.analytics, isCorrect: saved.isCorrect, recorded: saved.events !== null }
+    : null;
 }
 
 /** Records diagnostics without adding notebook mistakes; dontKnow is a valid answer. */
@@ -223,26 +274,27 @@ export async function answerPlacementQuestion({
     ? await loadPlacementWithSummary({ ...read, plan })
     : await saveTestSummary(read);
 
-  const answer = isCorrect ? "correct" : "incorrect";
-
   if (recorded) {
-    after(() =>
-      trackLearnerEvents({
-        events: [
-          {
-            name: "Placement Answered",
-            properties: {
-              answer: "dontKnow" in input.answer ? "dont_know" : answer,
-              duration_ms: input.durationMs,
-              question_number: placement.answered,
-              skill_id: item.skillId,
-            },
-          },
-        ],
-        goalId,
-        userId: owned.userId,
-      }),
-    );
+    const test = owned.goal.kind === "exam" ? "focus" : "course";
+
+    const properties = saved.analytics ?? {
+      ...testEventContext(owned.goal, { questions: null, test }),
+      question_number: placement.answered,
+    };
+
+    trackTestEvents(owned.goal, [
+      {
+        name: "Test Answered",
+        properties: {
+          ...properties,
+          answer: gradedTestAnswer({ correct: isCorrect, unknown: "dontKnow" in input.answer }),
+          difficulty: item.difficulty,
+          duration_ms: input.durationMs,
+          kind: test,
+          skill_id: item.skillId,
+        },
+      },
+    ]);
   }
 
   return { isCorrect, placement, status: "ready" };

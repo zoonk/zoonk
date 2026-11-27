@@ -1,6 +1,7 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
+import { gradedTestAnswer, testEventContext, trackTestEvents } from "../../analytics/test-events";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag } from "../../cache/tags";
 import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
@@ -102,7 +103,7 @@ export async function startLanguageLevelTestOut({
     return { status: "notLanguage" };
   }
 
-  const id = await writeLearnerChange({ userId }, async (tx) => {
+  const opened = await writeLearnerChange({ userId }, async (tx) => {
     const current = await tx.goal.findUniqueOrThrow({ where: { id: goalId, userId } });
     const { attempt, testOut } = readLevelTestAttempts(current);
 
@@ -111,7 +112,7 @@ export async function startLanguageLevelTestOut({
     }
 
     if (testOut && isOpenLevelTestOut(testOut)) {
-      return unchanged(testOut.id);
+      return unchanged({ id: testOut.id, started: false as const });
     }
 
     const skillIds = await listTestOutSkillIds({
@@ -129,7 +130,7 @@ export async function startLanguageLevelTestOut({
       !testOut.preparingUntil &&
       !testOut.result
     ) {
-      return unchanged(testOut.id);
+      return unchanged({ id: testOut.id, started: false as const });
     }
 
     const { questions } =
@@ -150,15 +151,38 @@ export async function startLanguageLevelTestOut({
     }
 
     await saveTestOut({ goal: current, progress, tx });
-    return progress.id;
+
+    return {
+      id: progress.id,
+      questions: questions.length,
+      started: questions.length > 0 || skillIds.length > 0,
+    };
   });
 
-  if (!id) {
+  if (!opened) {
     return { status: "invalid" };
   }
 
+  if (opened.started) {
+    trackTestEvents(goal, [
+      {
+        name: "Test Started",
+        properties: {
+          ...testEventContext(goal, {
+            attemptId: opened.id,
+            questions: opened.questions || null,
+            test: "level_test_out",
+          }),
+          level,
+          resumed: false,
+          row: "test_out",
+        },
+      },
+    ]);
+  }
+
   revalidateCacheTags([getGoalsCacheTag(userId)]);
-  return getLanguageLevelTestOut({ attemptId: id, goalId });
+  return getLanguageLevelTestOut({ attemptId: opened.id, goalId });
 }
 
 export async function answerLanguageLevelTestOut({
@@ -180,7 +204,7 @@ export async function answerLanguageLevelTestOut({
     return { status: "notLanguage" };
   }
 
-  await writeLearnerChange({ userId }, async (tx) => {
+  const properties = await writeLearnerChange({ userId }, async (tx) => {
     const current = await tx.goal.findUniqueOrThrow({ where: { id: goalId, userId } });
     const { testOut } = readLevelTestAttempts(current);
 
@@ -226,8 +250,24 @@ export async function answerLanguageLevelTestOut({
       transaction: tx,
     });
 
-    return null;
+    return {
+      ...testEventContext(current, {
+        attemptId: testOut.id,
+        questions: testOut.questions.length,
+        test: "level_test_out",
+      }),
+      answer: gradedTestAnswer({ correct: graded.isCorrect, unknown: "dontKnow" in input.answer }),
+      duration_ms: input.durationMs,
+      kind: next.question.skill,
+      level: testOut.level,
+      question_number: answers.length + 1,
+      skill_id: item.skillId,
+    };
   });
+
+  if (properties) {
+    trackTestEvents(goal, [{ name: "Test Answered", properties }]);
+  }
 
   return getLanguageLevelTestOut({ attemptId: input.attemptId, goalId });
 }

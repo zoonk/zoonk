@@ -2,7 +2,9 @@ import { prisma } from "@zoonk/db";
 import { itemFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
+import { runDeferredWork } from "../../_test-utils/deferred-work";
 import { mockSession } from "../../_test-utils/mock-session";
+import { analytics } from "../../_test-utils/test-boundaries";
 import { recordPlacementPrepared } from "../../lookahead/placement-item-skills";
 import { learnerGoalFixture } from "../_test-utils/learner-goal";
 import { finishGoalPlacement } from "./finish-goal-placement";
@@ -32,6 +34,7 @@ describe("Whole-course question preparation", () => {
       const start = () => startPlacementSitting({ goalId: goal.id, input: { length } });
 
       const read = () => getGoalPlacement({ goalId: goal.id });
+      const flush = runDeferredWork();
       const opened = await start();
 
       if (opened.status !== "ready" || !opened.placement.attempt) {
@@ -72,6 +75,14 @@ describe("Whole-course question preparation", () => {
       await expect(start()).resolves.toMatchObject({
         placement: { attempt, status: "waitingForQuestions" },
       });
+
+      await flush();
+
+      expect(
+        analytics.trackServerEvent.mock.calls
+          .flat()
+          .filter((event) => event.name === "Test Started"),
+      ).toMatchObject([{ properties: { attempt_id: attemptId, part: 1, resumed: false } }]);
 
       await expect(
         prisma.followUp.findMany({ where: { kind: "preparePlacementItems", userId: user.id } }),

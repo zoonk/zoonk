@@ -1,4 +1,5 @@
 import "server-only";
+import { gradedTestAnswer, testEventContext, trackTestEvents } from "../../analytics/test-events";
 import { matchesExpectedAnswer } from "../../library/activities/templates/_utils/grade-interaction";
 import {
   canWriteLevelTest,
@@ -8,6 +9,7 @@ import {
   toLevelTestView,
 } from "./_utils/level-test-state";
 import {
+  LANGUAGE_LEVEL_TEST_OFFER,
   type LanguageLevelTestView,
   type LevelTestAnswerInput,
   type LevelTestConfirmation,
@@ -91,6 +93,53 @@ async function gradeCurrentQuestion({
   };
 }
 
+function trackAcceptedAnswer({
+  answer,
+  check,
+  goal,
+  progress,
+  question,
+  questionNumber,
+}: {
+  answer: Awaited<ReturnType<typeof gradeCurrentQuestion>>;
+  check: boolean;
+  goal: ReadyContext["owned"]["goal"];
+  progress: ReadyContext["progress"];
+  question: Answer["question"];
+  questionNumber: number;
+}) {
+  const properties = {
+    ...testEventContext(goal, {
+      attemptId: progress.attemptId,
+      questions: LANGUAGE_LEVEL_TEST_OFFER.total,
+      test: "language",
+    }),
+    level: question.level,
+    question_number: questionNumber,
+  };
+
+  if (answer.audioDeferred) {
+    trackTestEvents(goal, [
+      {
+        name: "Test Audio Deferred",
+        properties: { ...properties, kind: check ? "check" : "listening" },
+      },
+    ]);
+  } else if (!answer.skipped) {
+    trackTestEvents(goal, [
+      {
+        name: "Test Answered",
+        properties: {
+          ...properties,
+          answer: gradedTestAnswer({ correct: answer.correct }),
+          duration_ms: answer.durationMs,
+          kind: check ? "check" : question.skill,
+        },
+      },
+    ]);
+  }
+}
+
 export async function answerLanguageLevelTest({
   goalId,
   input,
@@ -167,6 +216,15 @@ export async function answerLanguageLevelTest({
   if (!saved) {
     return { status: "invalid" };
   }
+
+  trackAcceptedAnswer({
+    answer,
+    check: step.kind === "confirmation",
+    goal: owned.goal,
+    progress,
+    question: step.question,
+    questionNumber: next.answers.length,
+  });
 
   return {
     status: "ready",

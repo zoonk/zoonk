@@ -127,6 +127,7 @@ function toCourseGoalDraft({
     details: {
       ...(answered.length > 0 && { answered }),
       ...(input.level && { level: input.level }),
+      ...(input.level === null && { placementRequested: true }),
     },
     displayName: course.title,
     examBlueprintId: decision.kind === "learnerLanguage" ? undefined : examBlueprintId,

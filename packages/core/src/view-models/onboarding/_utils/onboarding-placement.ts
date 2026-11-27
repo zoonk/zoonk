@@ -1,7 +1,10 @@
 import "server-only";
 import { type Goal } from "@zoonk/db";
 import { getLanguageLevelTest } from "../../../language/level-test/get-language-level-test";
-import { getQuickTestMinutes } from "../../../language/level-test/level-test-contract";
+import {
+  LANGUAGE_LEVEL_TEST_OFFER,
+  getQuickTestMinutes,
+} from "../../../language/level-test/level-test-contract";
 import { loadPlacementPlan } from "../../../learner/_utils/goal-skill-graph";
 import { readCoursePlacementOffer } from "../../../learner/placement/_utils/course-placement-offer";
 import { loadPlacementWithSummary } from "../../../learner/placement/_utils/load-placement-state";
@@ -16,13 +19,18 @@ import {
 type PlacementStep = NonNullable<OnboardingView["placement"]>;
 type OfferMode = "direct" | "offer";
 
+type PlacementOffer =
+  | { placement: PlacementStep }
+  | { cold: { parts: number; questions: number; test: PlacementStep["test"]["kind"] } }
+  | null;
+
 async function readLanguage({
   goal,
   mode,
 }: {
   goal: Goal;
   mode: OfferMode;
-}): Promise<PlacementStep | null> {
+}): Promise<PlacementOffer> {
   const read = await getLanguageLevelTest(goal.id);
   const test = { kind: "language" as const };
 
@@ -31,21 +39,19 @@ async function readLanguage({
   }
 
   if ("attemptId" in read.test && read.test.attemptId) {
-    return { mode: "resume", test };
+    return { placement: { mode: "resume", test } };
   }
 
-  return mode === "direct" || (read.test.status === "ready" && read.test.next.kind === "question")
-    ? { mode, test }
+  if (mode === "direct" || (read.test.status === "ready" && read.test.next.kind === "question")) {
+    return { placement: { mode, test } };
+  }
+
+  return read.test.status === "preparing"
+    ? { cold: { parts: 1, questions: LANGUAGE_LEVEL_TEST_OFFER.total, test: "language" } }
     : null;
 }
 
-async function readFocus({
-  goal,
-  mode,
-}: {
-  goal: Goal;
-  mode: OfferMode;
-}): Promise<PlacementStep | null> {
+async function readFocus({ goal, mode }: { goal: Goal; mode: OfferMode }): Promise<PlacementOffer> {
   const record = readFocusTestRecord(goal);
 
   const { firstQuestionReady, state } = await loadPlacementWithSummary({
@@ -59,10 +65,14 @@ async function readFocus({
   const test = { kind: "focus" as const, offer };
 
   if (record?.sitting || state.focusTest?.checkpoint) {
-    return { mode: "resume", test };
+    return { placement: { mode: "resume", test } };
   }
 
-  return mode === "direct" || (firstQuestionReady && offer) ? { mode, test } : null;
+  if (mode === "direct" || (firstQuestionReady && offer)) {
+    return { placement: { mode, test } };
+  }
+
+  return offer ? { cold: { parts: 1, questions: offer.questions, test: "focus" } } : null;
 }
 
 async function readCourse({
@@ -71,15 +81,22 @@ async function readCourse({
 }: {
   goal: Goal;
   mode: OfferMode;
-}): Promise<PlacementStep | null> {
+}): Promise<PlacementOffer> {
   const { attempt, result } = readPlacementAttempt(goal);
 
   if (attempt || result) {
-    return { mode: "resume", test: { kind: "course", offer: null } };
+    return { placement: { mode: "resume", test: { kind: "course", offer: null } } };
   }
 
-  const { offer, ready } = await readCoursePlacementOffer({ checkReadiness: true, goal });
-  return mode === "direct" || ready ? { mode, test: { kind: "course", offer } } : null;
+  const { offer, ready } = await readCoursePlacementOffer(goal);
+
+  if (mode === "direct" || ready) {
+    return { placement: { mode, test: { kind: "course", offer } } };
+  }
+
+  return offer
+    ? { cold: { parts: offer.wholeCourse?.parts ?? 1, questions: offer.questions, test: "course" } }
+    : null;
 }
 
 const SUBJECT_QUESTIONS = new Set<OnboardingStep>(
@@ -88,6 +105,18 @@ const SUBJECT_QUESTIONS = new Set<OnboardingStep>(
 
 export function hasSubjectQuestions(steps: OnboardingStep[]): boolean {
   return steps.some((step) => SUBJECT_QUESTIONS.has(step));
+}
+
+export function readOnboardingPlacementOffer(goal: Goal, mode: OfferMode): Promise<PlacementOffer> {
+  if (goal.kind === "language") {
+    return readLanguage({ goal, mode });
+  }
+
+  if (goal.kind === "exam") {
+    return readFocus({ goal, mode });
+  }
+
+  return goal.kind === "learn" ? readCourse({ goal, mode }) : Promise.resolve(null);
 }
 
 export async function readOnboardingPlacement({
@@ -105,17 +134,8 @@ export async function readOnboardingPlacement({
     return null;
   }
 
-  const mode = requested ? "direct" : "offer";
-
-  if (goal.kind === "language") {
-    return readLanguage({ goal, mode });
-  }
-
-  if (goal.kind === "exam") {
-    return readFocus({ goal, mode });
-  }
-
-  return goal.kind === "learn" ? readCourse({ goal, mode }) : null;
+  const outcome = await readOnboardingPlacementOffer(goal, requested ? "direct" : "offer");
+  return outcome && "placement" in outcome ? outcome.placement : null;
 }
 
 export function readQuickTestMinutes({
