@@ -111,7 +111,7 @@ function BehindChoices({
       }
     >
       <SuggestionAction
-        action={keep}
+        onClick={keep}
         busy={isPending}
         disabled={superseded}
         key="keep"

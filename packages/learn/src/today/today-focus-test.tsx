@@ -89,7 +89,7 @@ function FocusTestNotice({
             <SuggestionActions
               main={
                 <SuggestionAction
-                  action={start}
+                  onClick={start}
                   busy={starting}
                   disabled={busy}
                   variant={mainVariant}
@@ -98,7 +98,7 @@ function FocusTestNotice({
                 </SuggestionAction>
               }
             >
-              <SuggestionAction action={dismiss} disabled={busy} variant="outline">
+              <SuggestionAction onClick={dismiss} disabled={busy} variant="outline">
                 {t("Not now")}
               </SuggestionAction>
             </SuggestionActions>

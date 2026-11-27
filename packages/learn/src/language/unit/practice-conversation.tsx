@@ -286,24 +286,21 @@ export function PracticeConversation({
     );
   }
 
-  // A submit, so a tap before the page hydrates opens the call's setup once it does.
   return (
     <>
-      <form action={() => setOpen(true)} className="contents">
-        <ListRowButton aria-haspopup="dialog" type="submit">
-          <ListRowLeading>
-            <KindDot kind="conversation" />
-          </ListRowLeading>
-          <ListRowContent>
-            <ListRowTitle>{t("Practice a conversation")}</ListRowTitle>
-            {character && (
-              <ListRowDescription>
-                {t("with {name} · {role}", { name: character.name, role: character.role })}
-              </ListRowDescription>
-            )}
-          </ListRowContent>
-        </ListRowButton>
-      </form>
+      <ListRowButton aria-haspopup="dialog" onClick={() => setOpen(true)}>
+        <ListRowLeading>
+          <KindDot kind="conversation" />
+        </ListRowLeading>
+        <ListRowContent>
+          <ListRowTitle>{t("Practice a conversation")}</ListRowTitle>
+          {character && (
+            <ListRowDescription>
+              {t("with {name} · {role}", { name: character.name, role: character.role })}
+            </ListRowDescription>
+          )}
+        </ListRowContent>
+      </ListRowButton>
 
       <PracticeCallSheet
         conversation={conversation}

@@ -55,7 +55,7 @@ function TopicChapterLink({
           nextDate={chapter.nextDate}
           skillId={chapter.skillId}
           title={chapter.title}
-          trigger={<button className={cn(TOPIC_CHAPTER_CLASS, "text-left")} type="submit" />}
+          trigger={<button className={cn(TOPIC_CHAPTER_CLASS, "text-left")} type="button" />}
         >
           {content}
           {line}

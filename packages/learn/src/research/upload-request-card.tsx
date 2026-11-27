@@ -234,7 +234,7 @@ export function UploadRequestCard({
             </SuggestionAction>
           }
         >
-          <SuggestionAction action={dismiss} busy={isPending} variant="outline">
+          <SuggestionAction onClick={dismiss} busy={isPending} variant="outline">
             {t("Not now")}
           </SuggestionAction>
         </SuggestionActions>

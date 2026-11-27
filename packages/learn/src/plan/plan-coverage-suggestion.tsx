@@ -106,12 +106,12 @@ function CoverageBody({
       main={
         // One key for the main action in every state, so the button pressed keeps the keyboard.
         retry ? (
-          <SuggestionAction action={ask} key="find">
+          <SuggestionAction onClick={ask} key="find">
             {texts.tryAgain}
           </SuggestionAction>
         ) : (
           offer && (
-            <SuggestionAction action={() => void requestPreview(offer.operations)} key="find">
+            <SuggestionAction onClick={() => void requestPreview(offer.operations)} key="find">
               {texts.seeChanges}
             </SuggestionAction>
           )
