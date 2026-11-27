@@ -8,7 +8,7 @@ import { SCORING_SHEET_EXAMPLES, type ScoringSheetExample } from "./_test-utils/
 import { applyWritingArithmetic, buildWritingFeedback } from "./_utils/writing-feedback";
 import { isComputableSheet, listWritingRows } from "./_utils/writing-sheet";
 import { matchesWritingTaskBasis } from "./_utils/writing-task-basis";
-import { writtenItemSchema } from "./writing-contract";
+import { writtenAnswerSchema, writtenItemSchema } from "./writing-contract";
 
 type Evidence = Pick<WritingEvidence, "awards"> &
   Partial<Pick<WritingEvidence, "elements" | "errors" | "limits">>;
@@ -368,6 +368,112 @@ describe("independent rows, one with a count condition", () => {
     });
 
     expect(grade).toMatchObject({ total: { high: 2, low: 2 } });
+  });
+});
+
+describe("criterion score precision", () => {
+  const answer = "The answer explains each item and follows the requested structure.";
+
+  const citation = {
+    passage: "Each item is worth 22 points and presentation is worth four.",
+    sourceId: "notice",
+  };
+
+  const criteria = ["a", "b", "c", "presentation"].map((id) => ({
+    citation,
+    id,
+    points: id === "presentation" ? 4 : 22,
+    text: id,
+  }));
+
+  const basis = issue({
+    aspects: criteria.map(({ id, points, text }) => ({
+      awards: [
+        { points: 0, text: "Missing" },
+        ...(id === "presentation" ? [] : [{ points: 14.67, text: "Mostly complete" }]),
+        { points, text: "Full credit" },
+      ],
+      criterionId: id,
+      description: text,
+      points,
+    })),
+    grading: { criteria, language: null, rounding: null, zeroing: [] },
+    handwritten: true,
+    keySource: "practiceKey",
+    lines: null,
+    points: 70,
+  });
+
+  const earned = () =>
+    mark({
+      basis,
+      evidence: { awards: awards(...criteria.map((): [number, string] => [1, answer])) },
+      text: answer,
+    });
+
+  it("keeps the fractional item marks visible and the whole marks whole", () => {
+    const grade = earned();
+
+    expect(grade).toMatchObject({
+      content: { high: 48.01, low: 48.01 },
+      decimals: 0,
+      deduction: { high: 0, low: 0 },
+      kind: "points",
+      rows: [
+        { decimals: 1, earned: 14.67, max: 22 },
+        { decimals: 1, earned: 14.67, max: 22 },
+        { decimals: 1, earned: 14.67, max: 22 },
+        { decimals: 0, earned: 4, max: 4 },
+      ],
+      total: { high: 48.01, low: 48.01 },
+    });
+  });
+
+  it("refreshes the row precision of a saved result without regrading", () => {
+    const grade = earned();
+
+    if (grade.kind !== "points") {
+      throw new Error("Expected a points grade");
+    }
+
+    const saved = { ...grade, rows: grade.rows.map((row) => ({ ...row, decimals: 0 })) };
+
+    expect(writtenAnswerSchema.shape.grade.parse(saved)).toMatchObject({
+      rows: [{ decimals: 1 }, { decimals: 1 }, { decimals: 1 }, { decimals: 0 }],
+      total: grade.total,
+    });
+  });
+
+  it.each([
+    { decimals: 2, high: 9.99, low: 9, max: 22 },
+    { decimals: 2, high: 0.03, low: 0.03, max: 22 },
+    { decimals: 1, high: 0, low: 0, max: 9.5 },
+  ])("uses $decimals decimal places for $low–$high of $max", ({ decimals, high, low, max }) => {
+    const banded = issue({
+      ...SCORING_SHEET_EXAMPLES.holistic,
+      grading: {
+        criteria: [
+          {
+            awards: [
+              { citation, points: low, pointsHigh: high, text: "First band" },
+              { citation, points: max, text: "Full credit" },
+            ],
+            citation,
+            id: "band",
+            points: max,
+            text: "Band",
+          },
+        ],
+        language: null,
+        rounding: null,
+        zeroing: [],
+      },
+      points: max,
+    });
+
+    expect(
+      mark({ basis: banded, evidence: { awards: awards([0, null]) }, text: answer }),
+    ).toMatchObject({ kind: "points", rows: [{ decimals, earned: low, max }] });
   });
 });
 

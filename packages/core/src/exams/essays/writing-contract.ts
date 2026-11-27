@@ -2,6 +2,7 @@ import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { pointsMinimumSchema } from "../../library/exams/blueprint-contract";
 import { writingZeroKindSchema, writtenGradingSchema } from "../../library/exams/written-grading";
+import { getWritingRowDecimals } from "./_utils/writing-decimals";
 import { withSavedNextStep } from "./_utils/writing-next-step";
 import { WRITING_CHARACTERS_PER_LINE, WRITING_MAX_CHARACTERS_PER_LINE } from "./writing-lines";
 
@@ -262,7 +263,16 @@ export const writingResultSchema = z
 export const writtenAnswerSchema = z.object({
   conditions: writingConditionsSchema,
   examBlueprintId: uuidSchema().nullable(),
-  grade: writingResultSchema.transform(withSavedNextStep),
+  grade: writingResultSchema.transform(withSavedNextStep).transform((grade): WritingResult => {
+    if (grade.kind !== "points") {
+      return grade;
+    }
+
+    return {
+      ...grade,
+      rows: grade.rows.map((row) => ({ ...row, decimals: getWritingRowDecimals(row) })),
+    };
+  }),
   grader: z.object({ model: z.string(), promptVersion: z.string() }).optional(),
   itemId: uuidSchema(),
   mockPrompt: z

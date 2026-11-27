@@ -1,7 +1,7 @@
 import { type WritingEvidence } from "@zoonk/ai/tasks/grading/grade-essay";
 import { type z } from "zod";
 import { type WritingResult, type writtenItemSchema } from "../writing-contract";
-import { getWritingDecimals } from "./writing-decimals";
+import { getWritingDecimals, getWritingRowDecimals } from "./writing-decimals";
 import { verifyWritingErrors } from "./writing-errors";
 import { type RowMark, markWritingRows } from "./writing-marks";
 import { selectNextStep, writingRuleNextStep } from "./writing-next-step";
@@ -207,7 +207,7 @@ export function applyWritingArithmetic({
   }
 
   const rows = score.scores.map(({ id, max, range }) => ({
-    decimals: getWritingDecimals(max),
+    decimals: getWritingRowDecimals({ earned: range.low, max, range }),
     earned: range.low,
     id,
     max,
