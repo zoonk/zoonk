@@ -8,6 +8,7 @@ import { useIsoToday } from "../_utils/iso-date";
 import { usePlanScreen } from "../plan/plan-context";
 import { useFormatPlanDate } from "../plan/plan-date-text";
 import { usePhaseName } from "../plan/use-phase-name";
+import { namesModules } from "../syllabus/names-modules";
 import { ReasonText } from "../syllabus/topic-note";
 import { CurrentPhaseMark } from "./current-phase-mark";
 
@@ -68,7 +69,7 @@ function PhaseLeftOut({ phase }: { phase: PlanPhaseView }) {
   const { goal } = usePlanScreen();
 
   if (phase.state === "leftOut") {
-    return <ReasonText reason={phase.notPlannedReason} />;
+    return <ReasonText isModule={namesModules(goal.kind)} reason={phase.notPlannedReason} />;
   }
 
   if (phase.state === "unfinished" && lessons > 0) {

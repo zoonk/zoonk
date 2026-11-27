@@ -10,9 +10,11 @@ sealed interface TutorScope {
         val goalId: String,
     ) : TutorScope
 
+    /** A [module] is a part of a plan that isn't an exam, which its pages and the buddy call a module, not a subject. */
     data class Subject(
         val goalId: String,
         val subjectKey: String,
+        val module: Boolean,
     ) : TutorScope
 
     data class Chapter(
