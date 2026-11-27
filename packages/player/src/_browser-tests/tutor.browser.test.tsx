@@ -105,8 +105,15 @@ async function ask(sheet: Locator, question: string) {
   await sendButton(sheet).click();
 }
 
+/** A short break's notice, as it shows `left` of its wait. */
+function showsWait(left: string) {
+  return new RegExp(`^Take a short break\\. You can try again in ${left}\\.`, "u");
+}
+
 function freezeClock() {
-  vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout", "Date"] });
+  vi.useFakeTimers({
+    toFake: ["setTimeout", "clearTimeout", "setInterval", "clearInterval", "Date"],
+  });
 
   onTestFinished(() => {
     vi.useRealTimers();
@@ -435,7 +442,7 @@ describe("asking the tutor", () => {
   it("keeps a question the limit refuses in the composer, and sends it once the short wait is over", async () => {
     freezeClock();
     const { api, lesson } = lessonWithTutor();
-    const waitSeconds = 30;
+    const waitSeconds = 90;
 
     api.next("create", () =>
       Promise.resolve(
@@ -458,10 +465,12 @@ describe("asking the tutor", () => {
     await composer(sheet).fill(question);
     await pressKeepingClock(sendButton(sheet));
 
-    await expect
-      .element(sheet.getByRole("alert"))
-      .toHaveTextContent("Take a short break, then try again.");
+    // The notice shows the wait left, and a screen reader hears it as it was first given, once.
+    const wait = sheet.getByRole("alert");
+    const said = /Take a short break\. You can try again in 2 minutes\.$/u;
 
+    await expect.element(wait).toMatchTextContent(showsWait("2 minutes"));
+    await expect.element(wait).toMatchTextContent(said);
     await expect.element(composer(sheet)).toHaveValue(question);
     await expect.element(sendButton(sheet)).toBeDisabled();
     expect(api.questions).toHaveLength(0);
@@ -469,7 +478,15 @@ describe("asking the tutor", () => {
     await composer(sheet).fill(`${question} Or purple?`);
     await expect.element(sendButton(sheet)).toBeDisabled();
 
-    await vi.advanceTimersByTimeAsync(waitSeconds * 1000);
+    await vi.advanceTimersByTimeAsync(30 * 1000);
+    await expect.element(wait).toMatchTextContent(showsWait("1 minute"));
+
+    await vi.advanceTimersByTimeAsync(1000);
+    await expect.element(wait).toMatchTextContent(showsWait("59 seconds"));
+    await expect.element(wait).toMatchTextContent(said);
+    await expect.element(sendButton(sheet)).toBeDisabled();
+
+    await vi.advanceTimersByTimeAsync(59 * 1000);
 
     await expect.element(sheet.getByRole("alert")).not.toBeInTheDocument();
     await expect.element(sendButton(sheet)).toBeEnabled();
@@ -2051,7 +2068,7 @@ describe("docked beside the lesson", () => {
 
     await expect
       .element(lessonAside().getByRole("alert"))
-      .toHaveTextContent("Take a short break, then try again.");
+      .toMatchTextContent(/Take a short break\. You can try again in 30 seconds\.$/u);
 
     await expect.element(dockedConversation()).not.toBeInTheDocument();
     await expect.element(asideComposer()).toHaveValue(question);

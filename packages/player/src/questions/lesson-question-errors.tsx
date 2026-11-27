@@ -6,6 +6,7 @@ import {
   useHelpLimitWords,
   useLiveLimit,
 } from "@zoonk/learn/help-limit";
+import { SaidLine } from "@zoonk/learn/subscribe-gate";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { RotateCcwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -20,7 +21,11 @@ export function toHelpLimit(error: LessonQuestionApiError | null): HelpLimit | n
   }
 
   if (error?.kind === "slowDown") {
-    return { retryAfterSeconds: error.retryAfterSeconds, status: "slowDown" };
+    return {
+      availableAt: error.availableAt,
+      retryAfterSeconds: error.retryAfterSeconds,
+      status: "slowDown",
+    };
   }
 
   if (error?.kind === "usageLimit") {
@@ -93,8 +98,8 @@ export function RequestErrorMessage({ error }: { error: LessonQuestionApiError |
 }
 
 function HelpLimitMessage({ limit }: { limit: HelpLimit }) {
-  const { line, title } = useHelpLimitWords(limit, "messages");
-  return title ?? line;
+  const { line, said, title } = useHelpLimitWords(limit, "messages");
+  return title ?? <SaidLine line={line} said={said} />;
 }
 
 export function QuestionErrorAction({
