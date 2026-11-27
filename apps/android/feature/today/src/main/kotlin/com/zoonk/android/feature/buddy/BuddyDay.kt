@@ -123,7 +123,7 @@ internal fun BuddyTodayLine(
                         formatNumber(done.toDouble(), locale),
                         formatNumber(total.toDouble(), locale),
                     )
-                Text("${stringResource(R.string.missions_title)} $count", color = muted, style = number)
+                Text("${stringResource(R.string.missions_title)}\u2002$count", color = muted, style = number)
             } else {
                 Text(stringResource(R.string.buddy_page_today, name), color = muted, style = number)
             }
