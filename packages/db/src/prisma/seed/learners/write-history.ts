@@ -1,3 +1,4 @@
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { type LearningEventKind, type Prisma } from "../../../generated/prisma/client";
 import { localTimeFields } from "../_utils/dates";
 import { localizeText } from "../_utils/localize";
@@ -9,8 +10,6 @@ import { type SeedLearner } from "./types";
 import { type LearnerScope, planItemId } from "./write-goal";
 import { studyMoment } from "./write-learning";
 import { type FinishedBlock } from "./write-session";
-
-const MS_PER_SECOND = 1000;
 
 const ALL_RIGHT = 1;
 const SECONDS_PER_MINUTE = 60;

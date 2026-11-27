@@ -4,6 +4,7 @@ import {
   type Group,
   drawn,
   finding,
+  glyphsOnly,
   measured,
   notMeasured,
   rowName,
@@ -42,7 +43,8 @@ export function helperLeads(context: Context, read: Group): AlignmentFinding[] {
   return read.rows.flatMap((row) => {
     const own = read.parts.filter((part) => part.row === row.id && drawn(part));
     const title = own.find((part) => part.part === "label");
-    const helpers = own.filter((part) => part.part === "note");
+    // A note with no words (a progress bar) has no size to compare.
+    const helpers = own.filter((part) => part.part === "note" && !glyphsOnly(part));
 
     if (!title || helpers.length === 0) {
       return [];

@@ -26,10 +26,12 @@ test("audits branch and working tree changes without changes from the base branc
     const write = (name: string, content: string) => writeFileSync(join(root, name), content);
 
     cpSync(import.meta.dirname, join(root, "scripts/verify"), { recursive: true });
+    const json = "packages/utils/src/json.ts";
+    cpSync(resolve(import.meta.dirname, "../..", json), join(root, json));
     symlinkSync(resolve(import.meta.dirname, "../../node_modules"), join(root, "node_modules"));
 
     git("init", "-q", "-b", "main");
-    write(".gitignore", "/scripts/\n/node_modules\n");
+    write(".gitignore", "/scripts/\n/packages/\n/node_modules\n");
     write("main.txt", "shared base\n");
     write("working.txt", "shared base\n");
     git("add", ".gitignore", "main.txt", "working.txt");

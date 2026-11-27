@@ -1,11 +1,11 @@
+import { MS_PER_SECOND } from "@zoonk/utils/date";
+
 export type PushOutcome =
   | { status: "gone" }
   | { retryAfterMs: number; status: "retry" }
   | { status: "sent" }
   | { status: "skipped" }
   | { status: "unknown" };
-
-const MS_PER_SECOND = 1000;
 
 /** FCM asks for at least a minute before retrying a quota rejection. */
 const DEFAULT_RETRY_MS = 60 * MS_PER_SECOND;

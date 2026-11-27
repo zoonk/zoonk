@@ -9,6 +9,7 @@ import {
   sourceFixture,
 } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it } from "vitest";
 import { PAGE_BREAK, PDF_CONTENT_TYPE, PPTX_CONTENT_TYPE } from "../../sources/source-contract";
 import { loadLessonDocuments } from "./lesson-sources";
@@ -27,8 +28,6 @@ const LAW_ARTICLES = [
   "Article 21. A servant who passes the probationary period gains tenure.",
   "Article 41. Salary tables are published every year by the ministry.",
 ];
-
-const DAY_MS = 86_400_000;
 
 function statute(attrs: Parameters<typeof sourceFixture>[0] = {}) {
   return sourceFixture({
@@ -210,7 +209,7 @@ describe(loadLessonDocuments, () => {
 
     const [law, ...notices] = await Promise.all([
       statute({
-        fetchedAt: new Date(Date.now() - DAY_MS),
+        fetchedAt: new Date(Date.now() - MS_PER_DAY),
         structure: { images: 0, pages: 3, topic: "regulation" },
       }),
       ...Array.from({ length: 6 }, (_, index) =>
@@ -251,7 +250,7 @@ describe(loadLessonDocuments, () => {
     const [law, ...newer] = await Promise.all([
       sourceFixture({
         extractedText: LAW_ARTICLES.join("\n"),
-        fetchedAt: new Date(Date.now() - DAY_MS),
+        fetchedAt: new Date(Date.now() - MS_PER_DAY),
         structure: { images: 0, pages: null, topic: "regulation" },
         title: "Law 8,112 of 1990",
       }),

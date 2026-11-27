@@ -7,7 +7,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
 import { usePlayerInteractionState } from "../../player-context";
-import { ACTIVITY_BOX_CLASS } from "../_components/activity-canvas";
+import { ACTIVITY_BOX_CLASS, ACTIVITY_HELD_CLASS } from "../_components/activity-canvas";
 import { ActivityCheckQuestion } from "../_components/activity-check-question";
 import { useCanvasNumberKeys } from "../_utils/canvas-question";
 import { CellValue, type GridTraits, Trait } from "./grid-parts";
@@ -65,6 +65,7 @@ export function GridPalette({
             aria-keyshortcuts={isDisabled ? undefined : shortcutKeys("pick", index)}
             className={cn(
               ACTIVITY_BOX_CLASS,
+              ACTIVITY_HELD_CLASS,
               "focus-visible:ring-ring/50 relative flex min-h-14 flex-col items-center justify-center gap-0.5 outline-none select-none focus-visible:ring-[3px]",
               isDisabled ? "opacity-60" : "hover:bg-accent",
             )}

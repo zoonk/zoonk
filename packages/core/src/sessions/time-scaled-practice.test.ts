@@ -2,10 +2,11 @@ import { prisma } from "@zoonk/db";
 import { learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { getTodayStudySession } from "./_test-utils/open-today";
-import { DAY_MS, SESSION_NOW, daysAgo, sessionGoalFixture } from "./_test-utils/session-goal";
+import { SESSION_NOW, daysAgo, sessionGoalFixture } from "./_test-utils/session-goal";
 import { addExtraStudyBlock } from "./add-extra-study-block";
 
 async function lessonsDoneLearner(dailyMinutes: number) {
@@ -27,7 +28,7 @@ async function lessonsDoneLearner(dailyMinutes: number) {
     ...skills.map((skill) =>
       learnerSkillFixture({
         difficulty: 5,
-        due: new Date(SESSION_NOW.getTime() + 5 * DAY_MS),
+        due: new Date(SESSION_NOW.getTime() + 5 * MS_PER_DAY),
         lastReviewedAt: daysAgo(3),
         reps: 2,
         skillId: skill.id,

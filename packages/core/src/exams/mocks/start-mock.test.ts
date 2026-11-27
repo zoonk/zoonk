@@ -1,11 +1,12 @@
 import { prisma } from "@zoonk/db";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { studySessionBlockFixture } from "@zoonk/testing/fixtures/study-sessions";
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { SESSION_NOW } from "../../sessions/_test-utils/session-goal";
 import { readBlockPayload } from "../../sessions/block-payload";
 import { startStudyBlock } from "../../sessions/start-study-block";
-import { MINUTE_MS, scheduledMockSetup } from "./_test-utils/scheduled-mock";
+import { scheduledMockSetup } from "./_test-utils/scheduled-mock";
 import { completeMock } from "./_utils/complete-mock";
 import { getAskedItemIds } from "./_utils/mock-sections";
 import { findOwnedMock } from "./_utils/owned-mock";
@@ -38,17 +39,17 @@ describe("scheduled mock focus", () => {
 
     const sitting = await prisma.mockExam.findUniqueOrThrow({ where: { blockId } });
 
-    vi.setSystemTime(new Date(SESSION_NOW.getTime() + 2 * MINUTE_MS));
+    vi.setSystemTime(new Date(SESSION_NOW.getTime() + 2 * MS_PER_MINUTE));
     const other = await openOtherBlock(blockId);
     const paused = await prisma.studySessionBlock.findUniqueOrThrow({ where: { id: blockId } });
 
     expect(readBlockPayload(paused).timing).toStrictEqual({
       activeAt: null,
       clock: null,
-      elapsedMs: 2 * MINUTE_MS,
+      elapsedMs: 2 * MS_PER_MINUTE,
     });
 
-    const resumedAt = new Date(SESSION_NOW.getTime() + 6 * MINUTE_MS);
+    const resumedAt = new Date(SESSION_NOW.getTime() + 6 * MS_PER_MINUTE);
     vi.setSystemTime(resumedAt);
 
     await expect(startMock({ blockId, input: {} })).resolves.toStrictEqual({ status: "ready" });
@@ -61,13 +62,13 @@ describe("scheduled mock focus", () => {
     expect(readBlockPayload(resumed).timing).toStrictEqual({
       activeAt: resumedAt.toISOString(),
       clock: null,
-      elapsedMs: 2 * MINUTE_MS,
+      elapsedMs: 2 * MS_PER_MINUTE,
     });
 
     expect(readBlockPayload(left).timing).toStrictEqual({
       activeAt: null,
       clock: null,
-      elapsedMs: 4 * MINUTE_MS,
+      elapsedMs: 4 * MS_PER_MINUTE,
     });
 
     await expect(prisma.mockExam.findUniqueOrThrow({ where: { blockId } })).resolves.toStrictEqual(
@@ -97,9 +98,9 @@ describe("scheduled mock focus", () => {
       throw new Error("Expected the running scheduled mock");
     }
 
-    vi.setSystemTime(new Date(SESSION_NOW.getTime() + 2 * MINUTE_MS));
+    vi.setSystemTime(new Date(SESSION_NOW.getTime() + 2 * MS_PER_MINUTE));
     await openOtherBlock(blockId);
-    vi.setSystemTime(new Date(SESSION_NOW.getTime() + 6 * MINUTE_MS));
+    vi.setSystemTime(new Date(SESSION_NOW.getTime() + 6 * MS_PER_MINUTE));
 
     await completeMock({ mock: found.owned.mock, owned: found.owned, timeZone: "UTC" });
 
@@ -112,6 +113,10 @@ describe("scheduled mock focus", () => {
       getAskedItemIds(found.owned.mock.conditions).map((entry) => entry.itemId),
     );
 
-    expect(kept.timing).toStrictEqual({ activeAt: null, clock: null, elapsedMs: 2 * MINUTE_MS });
+    expect(kept.timing).toStrictEqual({
+      activeAt: null,
+      clock: null,
+      elapsedMs: 2 * MS_PER_MINUTE,
+    });
   });
 });

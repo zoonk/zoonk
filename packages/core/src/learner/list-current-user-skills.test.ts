@@ -1,12 +1,11 @@
 import { learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { learnerGoalFixture } from "./_test-utils/learner-goal";
 import { listCurrentUserSkills } from "./list-current-user-skills";
-
-const DAY_MS = 86_400_000;
 
 function memory({
   daysAgo,
@@ -17,11 +16,11 @@ function memory({
   recallDays?: number;
   stability: number;
 }) {
-  const lastReviewedAt = new Date(Date.now() - daysAgo * DAY_MS);
+  const lastReviewedAt = new Date(Date.now() - daysAgo * MS_PER_DAY);
 
   return {
     difficulty: 5,
-    due: new Date(lastReviewedAt.getTime() + stability * DAY_MS),
+    due: new Date(lastReviewedAt.getTime() + stability * MS_PER_DAY),
     lastReviewedAt,
     recallDays,
     reps: recallDays + 1,

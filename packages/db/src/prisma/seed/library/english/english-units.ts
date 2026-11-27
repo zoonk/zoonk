@@ -1,5 +1,5 @@
 import { pt } from "../../_utils/localize";
-import { outlineLesson } from "../content";
+import { outlineLesson, withPractice } from "../content";
 import { type SeedChapter } from "../types";
 import { howMuchIsTheRentLesson } from "./lessons/how-much-is-the-rent";
 import { thereIsThereAreLesson } from "./lessons/there-is-there-are";
@@ -37,17 +37,55 @@ export const englishUnits: SeedChapter[] = [
     },
     "beginner",
     [
-      lesson(
-        "at-immigration",
-        "Na imigração",
-        "As perguntas do agente e respostas curtas e claras.",
-        ["explain-visit"],
+      withPractice(
+        lesson(
+          "at-immigration",
+          "Na imigração",
+          "As perguntas do agente e respostas curtas e claras.",
+          ["explain-visit"],
+        ),
+        {
+          answer: pt("For two weeks."),
+          correction: pt(
+            "“To visit my family” explica o motivo da viagem. O agente perguntou a duração.",
+          ),
+          distractor: pt("To visit my family."),
+          example: pt(
+            "Na imigração, “What brings you to Canada?” pergunta o motivo da viagem. Para visitar parentes, diga “I’m here to visit my family.”",
+          ),
+          question: pt(
+            "O agente pergunta “How long are you staying?” Qual resposta informa a duração?",
+          ),
+          reason: pt(
+            "“How long” pergunta por quanto tempo. “For two weeks” informa que a estadia dura duas semanas.",
+          ),
+          takeaway: pt("Na imigração, responda a “why” com o motivo e a “how long” com a duração."),
+        },
       ),
-      lesson(
-        "finding-your-way",
-        "Achando o caminho",
-        "Onde fica a esteira, o táxi e o trem para a cidade.",
-        ["airport-directions"],
+      withPractice(
+        lesson(
+          "finding-your-way",
+          "Achando o caminho",
+          "Onde fica a esteira, o táxi e o trem para a cidade.",
+          ["airport-directions"],
+        ),
+        {
+          answer: pt("À direita, depois da saída"),
+          correction: pt(
+            "Para indicar a esquerda antes da saída, a funcionária diria “left before the exit”.",
+          ),
+          distractor: pt("À esquerda, antes da saída"),
+          example: pt(
+            "Para perguntar onde ficam as malas, diga “Where is baggage claim?” Se ouvir “Go straight and turn left”, siga em frente e vire à esquerda.",
+          ),
+          question: pt("Uma funcionária diz “Turn right after the exit.” Para onde você vira?"),
+          reason: pt(
+            "“Right” indica direita e “after the exit” indica que você passa pela saída antes de virar.",
+          ),
+          takeaway: pt(
+            "Em instruções de caminho, identifique tanto a direção quanto o ponto de referência.",
+          ),
+        },
       ),
     ],
   ),

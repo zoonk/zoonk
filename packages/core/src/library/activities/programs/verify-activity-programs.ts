@@ -1,4 +1,5 @@
 import "server-only";
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { checkActivityAnswer } from "../activity-answers";
 import { type ActivityStepContent } from "../activity-templates";
 import { type ActivityIssue } from "../define-activity-template";
@@ -15,7 +16,6 @@ import { type ProgramJob, runPrograms } from "./run-programs";
 import { sqlSetupStatements } from "./sql-setup";
 import { findTraceMismatch } from "./trace-match";
 
-const MS_PER_SECOND = 1000;
 const PREVIEW_LENGTH = 300;
 const PREVIEW_ROWS = 10;
 

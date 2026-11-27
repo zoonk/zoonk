@@ -2,17 +2,17 @@ import { type PlanItem } from "@zoonk/db";
 import { goalFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
 import { studySessionPlanFixture } from "@zoonk/testing/fixtures/study-sessions";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { finishChallengesFixture } from "../../plans/_test-utils/finish-challenges";
 
 /** Avoid accidental Monday fresh-start rules in session fixtures. */
 export const SESSION_NOW = new Date("2026-09-30T12:00:00Z");
 export const SESSION_TODAY = new Date("2026-09-30T00:00:00Z");
-export const DAY_MS = 86_400_000;
 
 const LAST_REVIEW_DAYS_AGO = 4;
 
 export function daysAgo(days: number): Date {
-  return new Date(SESSION_NOW.getTime() - days * DAY_MS);
+  return new Date(SESSION_NOW.getTime() - days * MS_PER_DAY);
 }
 
 export async function sessionGoalFixture({

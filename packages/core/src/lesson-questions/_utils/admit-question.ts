@@ -31,14 +31,14 @@ export async function admitQuestion({
     return { question: answered, status: "admitted" };
   }
 
-  const usage = await claimUsageInWrite({
+  const { decision } = await claimUsageInWrite({
     kind: "tutorMessage",
     targetId: question.id,
     transaction,
     viewer,
   });
 
-  return usage.status === "allowed"
+  return decision.status === "allowed"
     ? { question, status: "admitted" }
-    : { decision: usage, status: "usageRefused" };
+    : { decision, status: "usageRefused" };
 }

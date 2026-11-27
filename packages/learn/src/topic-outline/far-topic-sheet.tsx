@@ -173,9 +173,7 @@ function FarTopicPanel({
 
 /**
  * The page is read again only when the sheet closes after the lessons landed: read while open, the
- * plan could take away the row the sheet opened from. `trigger` is a submit button: opening reads
- * the topic's lessons, so the form keeps a press made before the page hydrates and opens it once it
- * does.
+ * plan could take away the row the sheet opened from.
  */
 export function FarTopicSheet({
   actions,
@@ -210,9 +208,7 @@ export function FarTopicSheet({
 
   return (
     <Drawer onOpenChange={changeOpen} open={open}>
-      <form action={() => changeOpen(true)} className="contents">
-        <DrawerTrigger render={trigger}>{children}</DrawerTrigger>
-      </form>
+      <DrawerTrigger render={trigger}>{children}</DrawerTrigger>
 
       <DrawerPopup>
         <FarTopicPanel

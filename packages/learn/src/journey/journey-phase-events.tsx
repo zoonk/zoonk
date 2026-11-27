@@ -17,7 +17,7 @@ import { PlanDateText } from "../plan/plan-date-text";
 import { type JourneyPathLinks } from "./journey-links";
 
 export const PATH_ROW_CLASS =
-  "row-bleed data-highlighted:bg-muted data-highlighted:hover:bg-muted flex min-h-11 items-center gap-3 rounded-lg py-1.5 text-left text-sm transition-colors outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50";
+  "row-bleed data-highlighted:bg-muted data-highlighted:hover:bg-muted held-pressed:bg-muted flex min-h-11 items-center gap-3 rounded-lg py-1.5 text-left text-sm transition-colors outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50";
 
 export const PATH_ROW_LEADING_CLASS = "flex size-4 shrink-0 items-center justify-center";
 

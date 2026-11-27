@@ -6,6 +6,7 @@ import {
 } from "@zoonk/ai/tasks/language/live-call-session";
 import { recordLiveConversationUsage } from "@zoonk/ai/tasks/language/live-conversation-usage";
 import { type LiveCallConnection, type LiveCallEndReason, prisma } from "@zoonk/db";
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
@@ -14,8 +15,6 @@ import { lockUsageForViewer } from "../../entitlements/_utils/usage-lock";
 import { LIVE_CALL_INITIALIZATION_SECONDS } from "../../entitlements/limits";
 import { getEndingCharge } from "./_utils/live-call-money";
 import { settleLiveCall } from "./_utils/settle-live-call";
-
-const MS_PER_SECOND = 1000;
 
 const CREATION_SETTLED_MS = 2 * LIVE_CALL_CREATE_TIMEOUT_MS;
 

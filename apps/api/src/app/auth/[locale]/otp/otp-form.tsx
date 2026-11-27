@@ -4,7 +4,7 @@ import { AuthForm, AuthStatus, AuthSubmit } from "@/components/auth-form";
 import { OTPActions, OTPInput, OTPLinks, OTP_LENGTH, OTP_LINK_CLASS } from "@/components/otp";
 import { authClient } from "@zoonk/auth/client";
 import { DISPOSABLE_EMAIL_ERROR_CODE } from "@zoonk/auth/email-signup-contract";
-import { Button } from "@zoonk/ui/components/button";
+import { BusyContent, Button } from "@zoonk/ui/components/button";
 import { safeAsync } from "@zoonk/utils/error";
 import { parseFormField } from "@zoonk/utils/form";
 import { SendIcon } from "lucide-react";
@@ -270,12 +270,13 @@ export function OTPForm({
             {t("Didn't get it?")}
             {/* Not while a code is checked: its answer would land on the new code's empty box. */}
             <button
+              aria-busy={resendCode.status === "sending" || undefined}
               aria-disabled={!canResend || undefined}
               className={OTP_LINK_CLASS}
               onClick={canResend ? sendNewCode : undefined}
               type="button"
             >
-              {t("Send again")}
+              <BusyContent>{t("Send again")}</BusyContent>
             </button>
             <span aria-hidden="true">{" · "}</span>
           </>

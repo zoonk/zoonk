@@ -5,6 +5,23 @@ import XCTest
 @testable import Zoonk
 
 final class StudyAPITests: XCTestCase {
+  func testResendingARecordingKeepsItsAttemptID() async throws {
+    let transport = StudyRecordingTransport()
+    let api = VoiceAPI(clients: APIClientFactory(baseURL: Self.baseURL, transport: transport))
+    let take = VoiceRecording(audio: Data([1]), durationMs: 800)
+    let next = VoiceRecording(audio: Data([1]), durationMs: 800)
+    let stepId = UUID().uuidString
+    for recording in [take, take, next] {
+      _ = try? await api.answerSpokenStep(
+        stepId: stepId, studySessionId: nil, recording: recording, token: "token")
+    }
+    XCTAssertNotEqual(take.attemptId, next.attemptId)
+    XCTAssertEqual(transport.sent.value.count, 3)
+    for (sent, id) in zip(transport.sent.value, [take.attemptId, take.attemptId, next.attemptId]) {
+      XCTAssertTrue(String(decoding: sent.body, as: UTF8.self).contains(id))
+    }
+  }
+
   func testReviewMatchDecodesItsKeyAndKeepsTheOrderOfMisses() throws {
     let question = #"""
       {"answered":null,"capsuleKey":"review","citation":null,"context":null,"drill":null,

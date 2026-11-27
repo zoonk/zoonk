@@ -73,7 +73,7 @@ function MissionsTitle({ fold, won }: { fold: RowsFold | null; won: boolean }) {
         type="button"
       >
         {title}
-        <FoldChevron className="text-muted-foreground ms-1 inline-block align-[-3px]" inline />
+        <FoldChevron className="text-muted-foreground ms-1 align-[-3px]" inline />
       </button>
     </>
   );

@@ -1,7 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { BIOGRAPHY_QUESTIONS } from "@zoonk/core/profile/questions/contract";
 import { prisma } from "@zoonk/db";
-import { expectHydrated } from "@zoonk/e2e/hydration";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { expect, test } from "./fixtures";
@@ -47,7 +46,6 @@ test("questions about the learner lead to the plan; a skipped one isn't asked ag
   await expect(page.getByRole("heading", { name: "What do you do now?" })).toBeVisible();
 
   const work = page.getByRole("radio", { exact: true, name: "I work" });
-  await expectHydrated(work);
   await work.click();
   await page.getByLabel("Your job (optional)").fill("nurse");
   await page.getByRole("button", { name: "Continue" }).press("Enter");
@@ -109,7 +107,6 @@ test("the tools question comes last with the learner's own list, takes any numbe
   const tasy = page.getByRole("button", { exact: true, name: "Tasy" });
   await expect(title).toBeVisible();
   await expect(page.getByText("Pick up to 3.")).toBeHidden();
-  await expectHydrated(tasy);
 
   for (const name of ["Tasy", "MV Soul", "UpToDate", "Whitebook"]) {
     const chip = page.getByRole("button", { exact: true, name });
@@ -177,7 +174,6 @@ test("picked conditions are saved with Something else's words, and the next scre
   await expect(page.getByRole("checkbox", { name: "I'd rather not say" })).toBeHidden();
 
   const adhd = page.getByRole("checkbox", { name: "ADHD" });
-  await expectHydrated(adhd);
   await adhd.click();
   await page.getByRole("checkbox", { name: /^Something else/u }).click();
 
@@ -215,7 +211,6 @@ test("skipping conditions declines them, so the next goal doesn't ask again", as
   await page.goto(`/start/${goal.id}`);
 
   const skip = page.getByRole("button", { exact: true, name: "Skip" });
-  await expectHydrated(skip);
   await skip.click();
 
   await expect(page.getByRole("heading", { name: "What helps you learn?" })).toBeVisible();

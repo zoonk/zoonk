@@ -346,6 +346,16 @@
       "files": ["apps/main/**/*.tsx", "apps/api/**/*.tsx"],
       "rules": { "zoonk/no-hardcoded-aria-label": "error" }
     },
+    {
+      "files": [
+        "apps/main/**",
+        "apps/api/**",
+        "packages/learn/**",
+        "packages/player/**",
+        "packages/ui/**"
+      ],
+      "rules": { "zoonk/held-press-control": "error" }
+    },
     { "files": ["packages/ui/src/**"], "rules": { "zoonk/no-page-top-spacing": "off" } },
     {
       "files": [

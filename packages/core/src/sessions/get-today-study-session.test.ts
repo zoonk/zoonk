@@ -6,12 +6,12 @@ import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profile
 import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { toIsoDate } from "../plans/planner/plan-calendar";
 import { getTodayStudySession } from "./_test-utils/open-today";
 import {
-  DAY_MS,
   SESSION_NOW,
   SESSION_TODAY,
   daysAgo,
@@ -54,7 +54,7 @@ async function setup() {
 async function examReviewTitles(examInDays: number) {
   const user = await userFixture();
 
-  const targetDate = new Date(SESSION_TODAY.getTime() + examInDays * DAY_MS);
+  const targetDate = new Date(SESSION_TODAY.getTime() + examInDays * MS_PER_DAY);
 
   const { goal, plan, skills } = await sessionGoalFixture({
     challengesDone: true,
@@ -63,9 +63,9 @@ async function examReviewTitles(examInDays: number) {
   });
 
   const finalStretch = {
-    endDate: toIsoDate(new Date(targetDate.getTime() - DAY_MS)),
+    endDate: toIsoDate(new Date(targetDate.getTime() - MS_PER_DAY)),
     kind: "finalStretch",
-    startDate: toIsoDate(new Date(targetDate.getTime() - 14 * DAY_MS)),
+    startDate: toIsoDate(new Date(targetDate.getTime() - 14 * MS_PER_DAY)),
   };
 
   await Promise.all([

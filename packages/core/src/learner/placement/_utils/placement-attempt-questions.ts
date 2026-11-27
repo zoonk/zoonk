@@ -1,3 +1,4 @@
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { isJsonObject } from "@zoonk/utils/json";
 import { type GoalPlan } from "../../_utils/goal-skill-graph";
 import {
@@ -14,8 +15,7 @@ import { getWholeCourseMinutes, type readPlacementAttempt } from "./placement-at
 import { type loadEvidence, toPlacementEvidence } from "./placement-evidence";
 import { type loadPlanBuild } from "./placement-plan-build";
 
-const MINUTE_MS = 60_000;
-const PART_MS = 10 * MINUTE_MS;
+const PART_MS = 10 * MS_PER_MINUTE;
 const PART_ANSWERS = 30;
 const MIN_PACED_ANSWERS = 5;
 
@@ -41,7 +41,7 @@ function estimateRemaining({
   const timed = given.filter(({ answer, durationMs }) => durationMs > 0 && !isDontKnow(answer));
 
   const elapsed = timed.reduce(
-    (total, answer) => total + Math.min(answer.durationMs, MINUTE_MS),
+    (total, answer) => total + Math.min(answer.durationMs, MS_PER_MINUTE),
     0,
   );
 
@@ -111,7 +111,10 @@ export function readAttemptQuestions({
   const skills = plan.skills.filter((skill) => skillIds.has(skill.id) && !skill.removed);
   const whole = attempt.length === "wholeCourse";
 
-  const elapsed = part.reduce((total, answer) => total + Math.min(answer.durationMs, MINUTE_MS), 0);
+  const elapsed = part.reduce(
+    (total, answer) => total + Math.min(answer.durationMs, MS_PER_MINUTE),
+    0,
+  );
 
   const spent = whole
     ? Math.min(1, Math.max(elapsed / PART_MS, part.length / PART_ANSWERS))

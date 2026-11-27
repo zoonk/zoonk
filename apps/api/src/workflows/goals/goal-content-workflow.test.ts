@@ -56,6 +56,7 @@ import {
   sourceFixture,
 } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import * as logger from "@zoonk/utils/logger";
 import { beforeAll, beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { getWritable, sleep } from "workflow";
@@ -371,8 +372,6 @@ function runOutlinesInline() {
   });
 }
 
-const DAY_MS = 24 * 60 * 60 * 1000;
-
 const WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 /** Noon (UTC) on the next `weekday`, near the database's own clock. */
@@ -408,7 +407,7 @@ function researchEndsWhenAsked(work: () => Promise<void>) {
 }
 
 function inDays(days: number): string {
-  return new Date(Date.now() + days * DAY_MS).toISOString().slice(0, 10);
+  return new Date(Date.now() + days * MS_PER_DAY).toISOString().slice(0, 10);
 }
 
 function examDayEdition(date: string) {
@@ -1285,7 +1284,7 @@ describe(goalContentWorkflow, () => {
       },
     });
 
-    expect(laterFirst.scheduledFor?.getTime()).toBeGreaterThan(Date.now() + 14 * DAY_MS);
+    expect(laterFirst.scheduledFor?.getTime()).toBeGreaterThan(Date.now() + 14 * MS_PER_DAY);
 
     const outlined = getStartMock().mock.calls.flatMap(([workflow, args]) =>
       workflow === courseOutlineWorkflow
@@ -2419,7 +2418,7 @@ describe(goalContentWorkflow, () => {
       kind: "exam",
     });
 
-    const examDay = new Date(Date.now() + 120 * DAY_MS).toISOString().slice(0, 10);
+    const examDay = new Date(Date.now() + 120 * MS_PER_DAY).toISOString().slice(0, 10);
 
     const blueprint = await examBlueprintFixture({
       edition: {
@@ -2620,7 +2619,7 @@ describe(goalContentWorkflow, () => {
       kind: "exam",
     });
 
-    const examDay = new Date(Date.now() + 120 * DAY_MS).toISOString().slice(0, 10);
+    const examDay = new Date(Date.now() + 120 * MS_PER_DAY).toISOString().slice(0, 10);
 
     const blueprint = await examBlueprintFixture({
       edition: {
@@ -2791,7 +2790,7 @@ describe(goalContentWorkflow, () => {
       kind: "exam",
     });
 
-    const examDay = new Date(Date.now() + 120 * DAY_MS).toISOString().slice(0, 10);
+    const examDay = new Date(Date.now() + 120 * MS_PER_DAY).toISOString().slice(0, 10);
 
     const blueprint = await examBlueprintFixture({
       edition: {
@@ -3106,7 +3105,7 @@ describe(goalContentWorkflow, () => {
 
   it("keeps waiting, less often, for research that reads a slow notice, then plans to its exam day", async () => {
     const { goal } = await newGoal({ details: { examName: "Slow board exam" }, kind: "exam" });
-    const examDay = new Date(Date.now() + 90 * DAY_MS).toISOString().slice(0, 10);
+    const examDay = new Date(Date.now() + 90 * MS_PER_DAY).toISOString().slice(0, 10);
 
     const blueprint = await examBlueprintFixture({
       edition: {
@@ -3155,7 +3154,7 @@ describe(goalContentWorkflow, () => {
 
   it("builds an exam's graph at once from its last edition, then checks the plan against the new notice research reads", async () => {
     const blueprint = await examBlueprintFixture({
-      examDate: new Date(Date.now() - 30 * DAY_MS),
+      examDate: new Date(Date.now() - 30 * MS_PER_DAY),
       name: "Immunology board exam",
       structure: examStructure(["Vaccines"]),
     });

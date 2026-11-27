@@ -4,13 +4,12 @@ import { PROGRAM_TIME_LIMIT_MS } from "@zoonk/core/library/activities/program-li
 import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { SidewaysScroll } from "@zoonk/ui/components/sideways-scroll";
 import { cn } from "@zoonk/ui/lib/utils";
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { CircleX } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { NotQuiteLead } from "../../components/not-quite-lead";
 import { ACTIVITY_BOX_CLASS } from "../_components/activity-canvas";
 import { type ProgramRun } from "../_sandbox/run-program";
-
-const MS_PER_SECOND = 1000;
 
 function OutputCell({
   children,

@@ -1,7 +1,8 @@
 import { prisma } from "@zoonk/db";
+import { MS_PER_DAY, MS_PER_MINUTE } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { DAY_MS, SESSION_NOW } from "../../sessions/_test-utils/session-goal";
-import { MINUTE_MS, answerRight, scheduledMockSetup } from "../mocks/_test-utils/scheduled-mock";
+import { SESSION_NOW } from "../../sessions/_test-utils/session-goal";
+import { answerRight, scheduledMockSetup } from "../mocks/_test-utils/scheduled-mock";
 import { getMockOptions } from "../mocks/get-mock-options";
 import { mockConditionsSchema } from "../mocks/mock-contract";
 import { startAnytimeMock } from "../mocks/start-anytime-mock";
@@ -89,7 +90,7 @@ describe("the exam's running mock", () => {
     const { blockId, goal } = await scheduledMockSetup();
     const { id } = await startAnytime(goal.id);
 
-    vi.setSystemTime(new Date(SESSION_NOW.getTime() + MINUTE_MS));
+    vi.setSystemTime(new Date(SESSION_NOW.getTime() + MS_PER_MINUTE));
     await expect(startMock({ blockId, input: {} })).resolves.toStrictEqual({ status: "ready" });
 
     await expect(examOf(goal.id)).resolves.toMatchObject({
@@ -119,7 +120,7 @@ describe("the exam's running mock", () => {
     const { id } = await startAnytime(goal.id);
     await answerRight({ blockId: id, count: 1 });
 
-    vi.setSystemTime(new Date(SESSION_NOW.getTime() + 3 * DAY_MS));
+    vi.setSystemTime(new Date(SESSION_NOW.getTime() + 3 * MS_PER_DAY));
 
     await expect(examOf(goal.id)).resolves.toMatchObject({ runningMocks: [] });
   });

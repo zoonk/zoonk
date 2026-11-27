@@ -68,7 +68,7 @@ function SuggestedGoalCard({
         <SuggestionActions
           main={
             <SuggestionAction
-              action={() => answer("accepted")}
+              onClick={() => answer("accepted")}
               disabled={isPending}
               variant={mainVariant}
             >
@@ -77,7 +77,7 @@ function SuggestedGoalCard({
           }
         >
           <SuggestionAction
-            action={() => answer("dismissed")}
+            onClick={() => answer("dismissed")}
             disabled={isPending}
             variant="outline"
           >

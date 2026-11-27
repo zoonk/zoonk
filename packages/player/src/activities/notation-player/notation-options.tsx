@@ -1,6 +1,7 @@
 "use client";
 
 import { NativeSelect, NativeSelectOption } from "@zoonk/ui/components/native-select";
+import { RadioInput } from "@zoonk/ui/components/radio-input";
 import { TAB_CLASS, TAB_LIST_CLASS } from "@zoonk/ui/components/tab-class";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
@@ -37,12 +38,11 @@ export function ViewToggle({
     >
       {views.map((option) => (
         <label className={cn(TAB_CLASS, "cursor-pointer")} key={option.value}>
-          <input
+          <RadioInput
             checked={view === option.value}
             className="absolute top-1/2 left-1/2 m-0 size-full min-h-11 min-w-11 -translate-1/2 cursor-pointer opacity-0"
             name={name}
             onChange={() => onChange(option.value)}
-            type="radio"
           />
           {option.label}
         </label>

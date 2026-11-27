@@ -9,6 +9,7 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockAccountSession, mockSession } from "../_test-utils/mock-session";
@@ -26,7 +27,6 @@ import {
 
 const TODAY = new Date("2026-10-07T00:00:00Z");
 const AT_SEVEN_TEN = new Date("2026-10-07T19:10:00Z");
-const MINUTE_MS = 60_000;
 const GOAL_CREATED_AT = new Date("2026-10-01T12:00:00Z");
 
 /** Today's claim for a 19:00 reminder in UTC. */
@@ -60,7 +60,7 @@ async function learnerWithReminder({
     prisma.studyReminder.create({
       data: {
         emailOn: true,
-        enabledAt: new Date(AT_SEVEN_TEN.getTime() - 24 * 60 * MINUTE_MS),
+        enabledAt: new Date(AT_SEVEN_TEN.getTime() - 24 * 60 * MS_PER_MINUTE),
         locale: "pt",
         ...(pushToken && {
           pushLabel: "Phone",
@@ -178,7 +178,7 @@ describe("claiming a study reminder", () => {
     await studySessionBlockFixture({
       estimatedMinutes: 10,
       sessionId: session.id,
-      startedAt: new Date(AT_SEVEN_TEN.getTime() - 10 * MINUTE_MS),
+      startedAt: new Date(AT_SEVEN_TEN.getTime() - 10 * MS_PER_MINUTE),
     });
 
     await expect(claimStudyReminder({ now: AT_SEVEN_TEN, userId: user.id })).resolves.toMatchObject(
@@ -404,7 +404,7 @@ describe("reading a study reminder's delivery", () => {
     await studySessionBlockFixture({
       estimatedMinutes: 10,
       sessionId: session.id,
-      startedAt: new Date(AT_SEVEN_TEN.getTime() - MINUTE_MS),
+      startedAt: new Date(AT_SEVEN_TEN.getTime() - MS_PER_MINUTE),
     });
 
     await expect(
@@ -477,7 +477,7 @@ describe("a day holding time for lessons not written yet", () => {
 
   it("still reminds with the time Today shows left", async () => {
     const now = new Date("2026-09-30T12:10:00Z");
-    const anHourAgo = new Date(now.getTime() - 60 * MINUTE_MS);
+    const anHourAgo = new Date(now.getTime() - 60 * MS_PER_MINUTE);
     freezeClock();
     vi.setSystemTime(now);
     await keepPaceOwn();

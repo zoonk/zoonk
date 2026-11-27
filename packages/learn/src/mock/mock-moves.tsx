@@ -1,13 +1,12 @@
 "use client";
 
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { RotateCcwIcon, StepForwardIcon, TimerIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { formatClock } from "../_utils/clock";
 import { useTimeLeft } from "../_utils/use-time-left";
 import { useMockScreen } from "./mock-context";
-
-const MS_PER_SECOND = 1000;
 
 export function MovesNote() {
   const t = useExtracted();

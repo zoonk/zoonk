@@ -11,7 +11,6 @@ test("a section's first page has no way back: the sidebar and the tab bar lead o
   await expect(page.getByRole("heading", { name: "Certificates" })).toBeVisible();
 
   const accountMenu = page.getByRole("button", { name: /User menu/u });
-  await expectHydrated(accountMenu);
   await accountMenu.click();
   await page.getByRole("menuitem", { exact: true, name: "Settings" }).click();
   await expect(page).toHaveURL(/\/settings$/u);
@@ -58,7 +57,6 @@ test("on a tablet a Settings tab has no way back: the section's tabs lead betwee
 
   const tabs = page.getByRole("navigation", { name: "Settings" });
   const reminders = tabs.getByRole("link", { exact: true, name: "Reminders" });
-  await expectHydrated(reminders);
   await reminders.click();
   await expect(page).toHaveURL(/\/settings\/reminders$/u);
   await expect(page.getByRole("link", { name: /^Back to /u })).toBeHidden();
@@ -175,7 +173,6 @@ test("the buddy editor is open beside Preferences' rows on a wide screen and a d
   const editor = page.getByRole("region", { name: "Your buddy" });
   const noodle = editor.getByRole("radio", { name: /^Noodle/u });
   const save = editor.getByRole("button", { exact: true, name: "Save" });
-  await expectHydrated(noodle);
   await expect(page.getByRole("button", { name: "Choose your buddy" })).toBeHidden();
 
   await noodle.click();
@@ -214,7 +211,6 @@ test("the buddy dialog and the wide pane edit one buddy: a save or an unsaved ed
   await page.goto("/settings/appearance");
 
   const choose = page.getByRole("button", { name: "Choose your buddy" });
-  await expectHydrated(choose);
   await choose.click();
 
   const dialog = page.getByRole("dialog", { name: "Your buddy" });

@@ -203,6 +203,7 @@ class LiveLessonPlayerApi(
             stepId = UUID.fromString(stepId),
             durationMs = recording.durationMs,
             audio = recording.part(),
+            attemptId = recording.attemptId,
             studySessionId = studySessionId?.let(UUID::fromString),
             timeZone = timeZone(),
         )

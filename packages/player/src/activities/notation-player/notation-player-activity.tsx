@@ -1,6 +1,7 @@
 "use client";
 
 import { useSentenceSpace } from "@zoonk/learn/locale";
+import { BusyIcon } from "@zoonk/ui/components/button";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { Play, Square } from "lucide-react";
@@ -87,11 +88,13 @@ export function NotationPlayerActivity({ content, labelId }: NotationPlayerProps
           onKeyDown={keepArrowKeys}
           type="button"
         >
-          {playback.isPlaying ? (
-            <Square aria-hidden="true" className="size-4 fill-current" />
-          ) : (
-            <Play aria-hidden="true" className="size-5 translate-x-px fill-current" />
-          )}
+          <BusyIcon>
+            {playback.isPlaying ? (
+              <Square aria-hidden="true" className="size-4 fill-current" />
+            ) : (
+              <Play aria-hidden="true" className="size-5 translate-x-px fill-current" />
+            )}
+          </BusyIcon>
         </button>
 
         <div className="flex flex-1 flex-col gap-1.5">

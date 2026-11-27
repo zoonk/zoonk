@@ -131,7 +131,7 @@ export function BuddyToday({
         aria-haspopup="dialog"
         // Right after the name, as its own reading: its padding hangs into the name's gap, and the
         // free room goes after it instead of between them.
-        className="hit-area text-muted-foreground hover:text-foreground relative -ms-2 me-auto flex min-h-7 items-center gap-1 rounded-md px-2 py-1 text-xs tabular-nums"
+        className="hit-area text-muted-foreground hover:text-foreground held-pressed:bg-muted held-pressed:text-foreground relative -ms-2 me-auto flex min-h-7 items-center gap-1 rounded-md px-2 py-1 text-xs tabular-nums"
         data-slot="buddy-today"
         onClick={() => {
           setAsked(false);

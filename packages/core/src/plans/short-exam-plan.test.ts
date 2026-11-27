@@ -5,6 +5,7 @@ import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fix
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { runningMock } from "../exams/mocks/_test-utils/scheduled-mock";
@@ -22,10 +23,9 @@ import { getGoalPlan } from "./get-goal-plan";
 import { parsePlanGraph, parsePlanSettings } from "./planner/plan-state";
 
 const TODAY = new Date("2026-09-30T00:00:00Z");
-const DAY_MS = 86_400_000;
 
 function day(offset: number): Date {
-  return new Date(TODAY.getTime() + offset * DAY_MS);
+  return new Date(TODAY.getTime() + offset * MS_PER_DAY);
 }
 
 function isoDay(offset: number): string {

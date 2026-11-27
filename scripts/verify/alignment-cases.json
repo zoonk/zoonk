@@ -23,7 +23,6 @@
         "ink": [16, 172, 330, 16],
         "margins": [0, 0],
         "name": "\"Phase 1 of 5 · The math physics \"",
-        "note": false,
         "part": "row",
         "piece": "plan-roadmap",
         "row": null
@@ -93,7 +92,6 @@
         "ink": [16, 172, 358, 16],
         "margins": [0, 0],
         "name": "\"Phase 1 of 5 · The math physics \"",
-        "note": false,
         "part": "row",
         "piece": "plan-roadmap",
         "row": null
@@ -153,7 +151,6 @@
         "ink": [16, 178, 357.7, 16],
         "margins": [0, 0],
         "name": "\"Phase 1 of 4 · Foundations Feb 2\"",
-        "note": false,
         "part": "row",
         "piece": "plan-roadmap",
         "row": null
@@ -292,7 +289,6 @@
         "ink": [20.7, 825.3, 116.2, 17],
         "margins": [0, 0],
         "name": "\"Send feedback\"",
-        "note": false,
         "part": "row",
         "piece": "sidebar-stack",
         "row": null
@@ -307,7 +303,6 @@
         "ink": [12, 852, 215, 36],
         "margins": [0, 0],
         "name": "\"Log in\"",
-        "note": false,
         "part": "row",
         "piece": "sidebar-stack",
         "row": null
@@ -353,7 +348,6 @@
         "ink": [20.7, 823.3, 14.7, 14],
         "margins": [0, 0],
         "name": "\"Send feedback\"",
-        "note": false,
         "part": "row",
         "piece": "sidebar-stack",
         "row": null
@@ -368,7 +362,6 @@
         "ink": [12, 852, 32, 32],
         "margins": [4, 4],
         "name": "\"Log in\"",
-        "note": false,
         "part": "row",
         "piece": "sidebar-stack",
         "row": null
@@ -414,7 +407,6 @@
         "ink": [16, 219.4, 358, 18],
         "margins": [0, 0],
         "name": "\"ADHD\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -453,7 +445,6 @@
         "ink": [16, 264.4, 358, 18],
         "margins": [0, 0],
         "name": "\"Autism\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -492,7 +483,6 @@
         "ink": [16, 309.4, 358, 18],
         "margins": [0, 0],
         "name": "\"Dyslexia\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -531,7 +521,6 @@
         "ink": [16, 354.4, 358, 18],
         "margins": [0, 0],
         "name": "\"Dyscalculia\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -570,7 +559,6 @@
         "ink": [16, 399.4, 358, 18],
         "margins": [0, 0],
         "name": "\"Blind or low vision\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -609,7 +597,6 @@
         "ink": [16, 444.4, 358, 18],
         "margins": [0, 0],
         "name": "\"Color blindness\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -648,7 +635,6 @@
         "ink": [16, 489.4, 358, 18],
         "margins": [0, 0],
         "name": "\"Deaf or hard of hearing\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -687,7 +673,6 @@
         "ink": [16, 534.4, 358, 18],
         "margins": [0, 0],
         "name": "\"Stutter or other speech differen\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -726,7 +711,6 @@
         "ink": [16, 579.4, 358, 18],
         "margins": [0, 0],
         "name": "\"Limited movement or dexterity\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -765,7 +749,6 @@
         "ink": [48, 624.4, 326, 18],
         "margins": [0, 0],
         "name": "\"Anxiety\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -824,7 +807,6 @@
         "ink": [48, 668, 326, 36.3],
         "margins": [0, 0],
         "name": "\"Something else Tell us in your o\"",
-        "note": true,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -928,7 +910,6 @@
         "ink": [280, 293, 720, 20],
         "margins": [0, 0],
         "name": "\"1 ADHD\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -977,7 +958,6 @@
         "ink": [280, 338, 720, 20],
         "margins": [0, 0],
         "name": "\"2 Autism\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -1026,7 +1006,6 @@
         "ink": [280, 383, 720, 20],
         "margins": [0, 0],
         "name": "\"3 Dyslexia\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -1075,7 +1054,6 @@
         "ink": [280, 428, 720, 20],
         "margins": [0, 0],
         "name": "\"4 Dyscalculia\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -1124,7 +1102,6 @@
         "ink": [280, 473, 720, 20],
         "margins": [0, 0],
         "name": "\"5 Blind or low vision\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -1173,7 +1150,6 @@
         "ink": [280, 518, 720, 20],
         "margins": [0, 0],
         "name": "\"6 Color blindness\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -1222,7 +1198,6 @@
         "ink": [280, 563, 720, 20],
         "margins": [0, 0],
         "name": "\"7 Deaf or hard of hearing\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -1271,7 +1246,6 @@
         "ink": [280, 608, 720, 20],
         "margins": [0, 0],
         "name": "\"8 Stutter or other speech differ\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -1320,7 +1294,6 @@
         "ink": [280, 653, 720, 20],
         "margins": [0, 0],
         "name": "\"9 Limited movement or dexterity\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -1369,7 +1342,6 @@
         "ink": [312, 698.4, 688, 18],
         "margins": [0, 0],
         "name": "\"Anxiety\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -1428,7 +1400,6 @@
         "ink": [312, 742, 688, 36.3],
         "margins": [0, 0],
         "name": "\"Something else Tell us in your o\"",
-        "note": true,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -1532,7 +1503,6 @@
         "ink": [280, 293, 720, 20],
         "margins": [0, 0],
         "name": "\"1 ADHD\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -1581,7 +1551,6 @@
         "ink": [280, 338, 720, 20],
         "margins": [0, 0],
         "name": "\"2 Autism\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -1630,7 +1599,6 @@
         "ink": [280, 383, 720, 20],
         "margins": [0, 0],
         "name": "\"3 Dyslexia\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -1679,7 +1647,6 @@
         "ink": [280, 428, 720, 20],
         "margins": [0, 0],
         "name": "\"4 Dyscalculia\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -1728,7 +1695,6 @@
         "ink": [280, 473, 720, 20],
         "margins": [0, 0],
         "name": "\"5 Blind or low vision\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -1777,7 +1743,6 @@
         "ink": [280, 518, 720, 20],
         "margins": [0, 0],
         "name": "\"6 Color blindness\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -1826,7 +1791,6 @@
         "ink": [280, 563, 720, 20],
         "margins": [0, 0],
         "name": "\"7 Deaf or hard of hearing\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -1875,7 +1839,6 @@
         "ink": [280, 608, 720, 20],
         "margins": [0, 0],
         "name": "\"8 Stutter or other speech differ\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -1924,7 +1887,6 @@
         "ink": [280, 653, 720, 20],
         "margins": [0, 0],
         "name": "\"9 Limited movement or dexterity\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -1973,7 +1935,6 @@
         "ink": [280, 698.4, 720, 18],
         "margins": [0, 0],
         "name": "\"Anxiety\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -2012,7 +1973,6 @@
         "ink": [280, 742, 720, 36.3],
         "margins": [0, 0],
         "name": "\"Something else Tell us in your o\"",
-        "note": true,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -2096,7 +2056,6 @@
         "ink": [16, 219.4, 358, 18],
         "margins": [0, 0],
         "name": "\"ADHD\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -2135,7 +2094,6 @@
         "ink": [16, 264.4, 358, 18],
         "margins": [0, 0],
         "name": "\"Autism\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -2174,7 +2132,6 @@
         "ink": [16, 309.4, 358, 18],
         "margins": [0, 0],
         "name": "\"Dyslexia\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -2213,7 +2170,6 @@
         "ink": [16, 354.4, 358, 18],
         "margins": [0, 0],
         "name": "\"Dyscalculia\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -2252,7 +2208,6 @@
         "ink": [16, 399.4, 358, 18],
         "margins": [0, 0],
         "name": "\"Blind or low vision\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -2291,7 +2246,6 @@
         "ink": [16, 444.4, 358, 18],
         "margins": [0, 0],
         "name": "\"Color blindness\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -2330,7 +2284,6 @@
         "ink": [16, 489.4, 358, 18],
         "margins": [0, 0],
         "name": "\"Deaf or hard of hearing\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -2369,7 +2322,6 @@
         "ink": [16, 534.4, 358, 18],
         "margins": [0, 0],
         "name": "\"Stutter or other speech differen\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -2408,7 +2360,6 @@
         "ink": [16, 579.4, 358, 18],
         "margins": [0, 0],
         "name": "\"Limited movement or dexterity\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -2447,7 +2398,6 @@
         "ink": [16, 624.4, 358, 18],
         "margins": [0, 0],
         "name": "\"Anxiety\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -2486,7 +2436,6 @@
         "ink": [16, 668, 358, 36.3],
         "margins": [0, 0],
         "name": "\"Something else Tell us in your o\"",
-        "note": true,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -2570,7 +2519,6 @@
         "ink": [280, 293, 720, 20],
         "margins": [0, 0],
         "name": "\"1 ADHD\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -2619,7 +2567,6 @@
         "ink": [280, 338, 720, 20],
         "margins": [0, 0],
         "name": "\"2 Autism\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -2668,7 +2615,6 @@
         "ink": [280, 383, 720, 20],
         "margins": [0, 0],
         "name": "\"3 Dyslexia\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -2717,7 +2663,6 @@
         "ink": [280, 428, 720, 20],
         "margins": [0, 0],
         "name": "\"4 Dyscalculia\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -2766,7 +2711,6 @@
         "ink": [280, 473, 720, 20],
         "margins": [0, 0],
         "name": "\"5 Blind or low vision\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -2815,7 +2759,6 @@
         "ink": [280, 518, 720, 20],
         "margins": [0, 0],
         "name": "\"6 Color blindness\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -2864,7 +2807,6 @@
         "ink": [280, 563, 720, 20],
         "margins": [0, 0],
         "name": "\"7 Deaf or hard of hearing\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -2913,7 +2855,6 @@
         "ink": [280, 608, 720, 20],
         "margins": [0, 0],
         "name": "\"8 Stutter or other speech differ\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -2962,7 +2903,6 @@
         "ink": [280, 653, 720, 20],
         "margins": [0, 0],
         "name": "\"9 Limited movement or dexterity\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -3011,7 +2951,6 @@
         "ink": [312, 698.4, 688, 18],
         "margins": [0, 0],
         "name": "\"Anxiety\"",
-        "note": false,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -3070,7 +3009,6 @@
         "ink": [312, 742, 688, 36.3],
         "margins": [0, 0],
         "name": "\"Something else Tell us in your o\"",
-        "note": true,
         "part": "row",
         "piece": "choice-list",
         "row": null
@@ -3174,7 +3112,6 @@
         "ink": [46.5, 455.5, 194, 18],
         "margins": [0, 0],
         "name": "\"3 topics you already know\"",
-        "note": false,
         "part": "row",
         "piece": "journey-path",
         "row": null
@@ -3216,7 +3153,6 @@
         "ink": [34, 486.5, 350, 44],
         "margins": [0, 0],
         "name": "\"Functions and graphs\"",
-        "note": false,
         "part": "row",
         "piece": "journey-path",
         "row": null
@@ -3268,7 +3204,6 @@
         "ink": [48, 537.5, 325.7, 38],
         "margins": [0, 0],
         "name": "\"Inputs and outputs in quantum ex\"",
-        "note": false,
         "part": "row",
         "piece": "journey-path",
         "row": null
@@ -3320,7 +3255,6 @@
         "ink": [48, 595.5, 325.7, 18],
         "margins": [0, 0],
         "name": "\"Calibration and response functio\"",
-        "note": false,
         "part": "row",
         "piece": "journey-path",
         "row": null
@@ -3372,7 +3306,6 @@
         "ink": [47.3, 639.5, 131.2, 18],
         "margins": [0, 0],
         "name": "\"17 more chapters\"",
-        "note": false,
         "part": "row",
         "piece": "journey-path",
         "row": null
@@ -3397,7 +3330,6 @@
         "ink": [44, 677.5, 329.7, 35],
         "margins": [0, 0],
         "name": "\"The Trickster ~Dec 13 About Dec \"",
-        "note": true,
         "part": "row",
         "piece": "journey-path",
         "row": null
@@ -3527,8 +3459,7 @@
         "row": null,
         "bounds": [16, 185.33, 379, 168],
         "ink": [16, 188.67, 378.67, 162],
-        "margins": [0, 0],
-        "note": false
+        "margins": [0, 0]
       },
       {
         "id": "e2",
@@ -3627,8 +3558,7 @@
         "row": null,
         "bounds": [16, 185.33, 379, 204],
         "ink": [16, 190.33, 378.67, 196.33],
-        "margins": [0, 0],
-        "note": false
+        "margins": [0, 0]
       },
       {
         "id": "e2",
@@ -3777,8 +3707,7 @@
         "row": null,
         "bounds": [0, 727, 411, 75],
         "ink": [24, 743, 365.33, 46],
-        "margins": [0, 0],
-        "note": true
+        "margins": [0, 0]
       },
       {
         "id": "e18",
@@ -3837,7 +3766,6 @@
         "bounds": [0, 803, 411, 59],
         "ink": "not measured",
         "margins": [0, 0],
-        "note": true,
         "clipped": true
       },
       {
@@ -3901,7 +3829,6 @@
         "bounds": [0, 863, 411, 59],
         "ink": "not measured",
         "margins": [0, 0],
-        "note": true,
         "clipped": true
       },
       {
@@ -3981,7 +3908,6 @@
         "bounds": [0, 923, 411, 48],
         "ink": "not measured",
         "margins": [0, 0],
-        "note": false,
         "clipped": true
       },
       {
@@ -4060,8 +3986,7 @@
         "row": null,
         "bounds": [0, 1125, 411, 59.5],
         "ink": [28, 1145.5, 361, 22.5],
-        "margins": [0, 0],
-        "note": false
+        "margins": [0, 0]
       },
       {
         "id": "e31",
@@ -4119,8 +4044,7 @@
         "row": null,
         "bounds": [0, 1185.5, 411, 59.5],
         "ink": [28, 1205.5, 134.5, 23],
-        "margins": [0, 0],
-        "note": false
+        "margins": [0, 0]
       },
       {
         "id": "e36",
@@ -4154,8 +4078,7 @@
         "row": null,
         "bounds": [0, 1246, 411, 91.5],
         "ink": [27, 1266.5, 208, 56.5],
-        "margins": [0, 0],
-        "note": false
+        "margins": [0, 0]
       },
       {
         "id": "e39",
@@ -4204,8 +4127,7 @@
         "row": null,
         "bounds": [0, 1407, 411, 59.5],
         "ink": [23.5, 1426.5, 365.5, 21],
-        "margins": [0, 0],
-        "note": false
+        "margins": [0, 0]
       },
       {
         "id": "e43",
@@ -4248,8 +4170,7 @@
         "row": null,
         "bounds": [0, 1466.5, 411, 188.5],
         "ink": [22.5, 1486.5, 370.5, 150.5],
-        "margins": [0, 0],
-        "note": true
+        "margins": [0, 0]
       },
       {
         "id": "e47",
@@ -4313,8 +4234,7 @@
         "row": null,
         "bounds": [0, 1655, 411, 91.5],
         "ink": [27, 1675.5, 208, 56.5],
-        "margins": [0, 0],
-        "note": false
+        "margins": [0, 0]
       },
       {
         "id": "e52",
@@ -4882,7 +4802,6 @@
         "margins": [0, 0],
         "middle": 1209,
         "name": "\"Mind maps\"",
-        "note": false,
         "part": "row",
         "piece": "list-group",
         "row": null
@@ -4946,7 +4865,6 @@
         "margins": [0, 0],
         "middle": 180,
         "name": "\"Phase 1 of 5 · The math physics \"",
-        "note": false,
         "part": "row",
         "piece": "plan-roadmap",
         "row": null
@@ -4990,7 +4908,6 @@
         "margins": [0, 0],
         "middle": 525,
         "name": "\"The math physics uses , you are \"",
-        "note": false,
         "part": "row",
         "piece": "journey-path",
         "row": null
@@ -5060,7 +4977,6 @@
         "margins": [0, 0],
         "middle": 850,
         "name": "\"Calculus and linear algebra ~Jan\"",
-        "note": false,
         "part": "row",
         "piece": "journey-path",
         "row": null
@@ -5130,7 +5046,6 @@
         "margins": [0, 0],
         "middle": 899,
         "name": "\"Classical physics ~Mar 2027 Ends\"",
-        "note": false,
         "part": "row",
         "piece": "journey-path",
         "row": null
@@ -5200,7 +5115,6 @@
         "margins": [0, 0],
         "middle": 948,
         "name": "\"Quantum mechanics ~Jun 2027 Ends\"",
-        "note": false,
         "part": "row",
         "piece": "journey-path",
         "row": null
@@ -5270,7 +5184,6 @@
         "margins": [0, 0],
         "middle": 997,
         "name": "\"Advanced quantum physics\"",
-        "note": false,
         "part": "row",
         "piece": "journey-path",
         "row": null
@@ -5323,7 +5236,6 @@
         "margins": [0, 0],
         "middle": 1048,
         "name": "\"Master quantum physics, from scr\"",
-        "note": false,
         "part": "row",
         "piece": "journey-path",
         "row": null
@@ -5404,7 +5316,6 @@
         "margins": [0, 0],
         "middle": 571,
         "name": "\"3 topics you already know\"",
-        "note": false,
         "part": "row",
         "piece": "journey-path",
         "row": null
@@ -5447,7 +5358,6 @@
         "margins": [0, 0],
         "middle": 615,
         "name": "\"Functions and graphs\"",
-        "note": false,
         "part": "row",
         "piece": "journey-path",
         "row": null
@@ -5500,7 +5410,6 @@
         "margins": [0, 0],
         "middle": 663,
         "name": "\"Inputs and outputs in quantum ex\"",
-        "note": false,
         "part": "row",
         "piece": "journey-path",
         "row": null
@@ -5553,7 +5462,6 @@
         "margins": [0, 0],
         "middle": 711,
         "name": "\"Calibration and response functio\"",
-        "note": false,
         "part": "row",
         "piece": "journey-path",
         "row": null
@@ -5606,7 +5514,6 @@
         "margins": [0, 0],
         "middle": 755,
         "name": "\"17 more chapters\"",
-        "note": false,
         "part": "row",
         "piece": "journey-path",
         "row": null
@@ -5649,7 +5556,6 @@
         "margins": [0, 0],
         "middle": 801,
         "name": "\"The Trickster Questions on this \"",
-        "note": true,
         "part": "row",
         "piece": "journey-path",
         "row": null
@@ -6058,7 +5964,6 @@
         "margins": [0, 0],
         "middle": 38,
         "name": "\"One line Second line Third line \"",
-        "note": false,
         "part": "row",
         "piece": "list-group",
         "row": null
@@ -6407,8 +6312,7 @@
         "bounds": [24, 24, 363, 108],
         "ink": [24, 27.33, 362.67, 102.67],
         "margins": [0, 0],
-        "endEdge": "not measured",
-        "note": false
+        "endEdge": "not measured"
       },
       {
         "id": "e1",
@@ -6491,8 +6395,7 @@
         "bounds": [24, 263.33, 363, 78],
         "ink": [43.67, 280.33, 325.67, 48],
         "margins": [0, 0],
-        "endEdge": 371,
-        "note": true
+        "endEdge": 371
       },
       {
         "id": "e1",
@@ -6563,8 +6466,7 @@
         "bounds": [24, 341.33, 363, 59],
         "ink": [44.67, 357.33, 324.67, 30],
         "margins": [0, 0],
-        "endEdge": 371,
-        "note": true
+        "endEdge": 371
       },
       {
         "id": "e6",
@@ -6635,8 +6537,7 @@
         "bounds": [24, 401.33, 363, 48],
         "ink": [45, 417, 324.33, 16],
         "margins": [0, 0],
-        "endEdge": 371,
-        "note": true
+        "endEdge": 371
       },
       {
         "id": "e11",
@@ -6708,7 +6609,6 @@
         "ink": [40.67, 511, 158, 12.67],
         "margins": [0, 0],
         "endEdge": 371,
-        "note": false,
         "aligned": "first-line"
       },
       {
@@ -6747,7 +6647,6 @@
         "ink": [40.67, 560.33, 201, 12.33],
         "margins": [0, 0],
         "endEdge": 371,
-        "note": false,
         "aligned": "first-line"
       },
       {
@@ -6786,7 +6685,6 @@
         "ink": [40.67, 609.33, 192, 36.33],
         "margins": [0, 0],
         "endEdge": 371,
-        "note": false,
         "aligned": "first-line"
       },
       {
@@ -6825,7 +6723,6 @@
         "ink": [40.67, 680.33, 111.67, 12.33],
         "margins": [0, 0],
         "endEdge": 371,
-        "note": false,
         "aligned": "first-line"
       },
       {
@@ -6864,7 +6761,6 @@
         "ink": [40.67, 729, 152.33, 10.67],
         "margins": [0, 0],
         "endEdge": 371,
-        "note": false,
         "aligned": "first-line"
       },
       {
@@ -6903,7 +6799,6 @@
         "ink": [40.67, 778.33, 171.67, 12.33],
         "margins": [0, 0],
         "endEdge": 371,
-        "note": false,
         "aligned": "first-line"
       },
       {
@@ -7068,8 +6963,7 @@
         "row": null,
         "bounds": [0, 199, 411, 70],
         "ink": [15.67, 209.67, 103, 48.67],
-        "margins": [0, 0],
-        "note": false
+        "margins": [0, 0]
       },
       {
         "id": "e1",
@@ -7103,8 +6997,7 @@
         "row": null,
         "bounds": [0, 270, 411, 70],
         "ink": [15.67, 280.67, 92.67, 48.67],
-        "margins": [0, 0],
-        "note": false
+        "margins": [0, 0]
       },
       {
         "id": "e4",
@@ -7138,8 +7031,7 @@
         "row": null,
         "bounds": [0, 458, 411, 48],
         "ink": [16.33, 476.67, 372.67, 12.67],
-        "margins": [0, 0],
-        "note": false
+        "margins": [0, 0]
       },
       {
         "id": "e7",
@@ -7267,7 +7159,6 @@
         "id": "g0.r1",
         "ink": [20, 818.33, 358, 30.33],
         "margins": [0, 0],
-        "note": false,
         "part": "row",
         "piece": "list-group",
         "row": null
@@ -7281,7 +7172,6 @@
         "id": "g0.r2",
         "ink": [20, 764, 358, 30.33],
         "margins": [0, 0],
-        "note": false,
         "part": "row",
         "piece": "list-group",
         "row": null
@@ -7295,7 +7185,6 @@
         "id": "g0.r3",
         "ink": [20, 709.67, 358, 30.33],
         "margins": [0, 0],
-        "note": false,
         "part": "row",
         "piece": "list-group",
         "row": null
@@ -7309,7 +7198,6 @@
         "id": "g0.r4",
         "ink": [20, 606.67, 356, 35],
         "margins": [0, 0],
-        "note": true,
         "part": "row",
         "piece": "list-group",
         "row": null
@@ -7334,7 +7222,6 @@
         "id": "g1.r6",
         "ink": [20, 244, 356, 15.67],
         "margins": [0, 0],
-        "note": false,
         "part": "row",
         "piece": "list-group",
         "row": null
@@ -7348,7 +7235,6 @@
         "id": "g0.r7",
         "ink": [20, 872.67, 358, 30.33],
         "margins": [0, 0],
-        "note": false,
         "part": "row",
         "piece": "list-group",
         "row": null
@@ -7676,7 +7562,6 @@
         "ink": "not measured",
         "margins": [0, 0],
         "name": "a list row no shared piece reports",
-        "note": false,
         "part": "row",
         "piece": "list-group",
         "row": null

@@ -1,6 +1,5 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
-import { expectHydrated } from "@zoonk/e2e/hydration";
 import { expect, test } from "./fixtures";
 import { stopRuns } from "./generation-run";
 
@@ -47,7 +46,6 @@ test.describe("A goal sent with the learner's material", () => {
       await page.getByRole("button", { name: "Add text" }).click();
     };
 
-    await expectHydrated(attach);
     await addNotes();
     await page.getByRole("radio", { name: /^Prepare for an exam/u }).click();
     await goalBox.fill(words);

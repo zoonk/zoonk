@@ -49,7 +49,7 @@ export function ActivitySelectGridItem({
     <button
       aria-pressed={isSelected}
       className={cn(
-        "focus-visible:border-ring focus-visible:ring-ring/50 flex min-h-11 items-center justify-center gap-1.5 rounded-xl border px-3 py-2 text-center text-sm tabular-nums transition-colors outline-none select-none focus-visible:ring-[3px]",
+        "focus-visible:border-ring focus-visible:ring-ring/50 data-[held=checked]:bg-selected-tint contrast-more:data-[held=checked]:border-border data-[held=unchecked]:border-border! flex min-h-11 items-center justify-center gap-1.5 rounded-xl border px-3 py-2 text-center text-sm tabular-nums transition-colors outline-none select-none focus-visible:ring-[3px] data-[held=checked]:border-transparent data-[held=unchecked]:bg-transparent!",
         !resultState && !isSelected && "border-border hover:bg-accent",
         !resultState &&
           isSelected &&

@@ -1,3 +1,4 @@
+import { MS_PER_HOUR } from "@zoonk/utils/date";
 import { describe, expect, it } from "vitest";
 import {
   getDateInTimeZone,
@@ -48,12 +49,10 @@ describe(getHourInTimeZone, () => {
 });
 
 describe(getTimeZoneOffsetMs, () => {
-  const HOUR = 3_600_000;
-
   it.each([
-    { expected: -3 * HOUR, now: "2026-07-12T12:00:00.000Z", timeZone: "America/Sao_Paulo" },
-    { expected: 9 * HOUR, now: "2026-07-12T12:00:00.000Z", timeZone: "Asia/Tokyo" },
-    { expected: HOUR, now: "2026-07-12T12:00:00.000Z", timeZone: "Europe/Lisbon" },
+    { expected: -3 * MS_PER_HOUR, now: "2026-07-12T12:00:00.000Z", timeZone: "America/Sao_Paulo" },
+    { expected: 9 * MS_PER_HOUR, now: "2026-07-12T12:00:00.000Z", timeZone: "Asia/Tokyo" },
+    { expected: MS_PER_HOUR, now: "2026-07-12T12:00:00.000Z", timeZone: "Europe/Lisbon" },
     { expected: 0, now: "2026-01-12T12:00:00.000Z", timeZone: "Europe/Lisbon" },
   ])("reads how far $timeZone is ahead of UTC on $now", ({ expected, now, timeZone }) => {
     expect(getTimeZoneOffsetMs({ date: new Date(now), timeZone })).toBe(expected);

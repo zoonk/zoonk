@@ -1,5 +1,6 @@
 "use client";
 
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { QuestionDontKnow, QuestionMainAction } from "../../_components/question-actions";
@@ -31,7 +32,6 @@ import { QuestionView, drawsOwnTitle } from "./question-view";
 import { QuotedSource } from "./quoted-source";
 import { type useQuestionBlock } from "./use-question-block";
 
-const MS_PER_SECOND = 1000;
 const NOT_SURE = { dontKnow: true } as const;
 
 type Run = ReturnType<typeof useQuestionBlock>;

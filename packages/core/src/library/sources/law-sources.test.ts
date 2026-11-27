@@ -1,13 +1,12 @@
 import { decideLibraryIdentity } from "@zoonk/ai/tasks/identity/decision";
 import { prisma } from "@zoonk/db";
 import { sourceFixture } from "@zoonk/testing/fixtures/sources";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockDecision, uniqueWord } from "../identity/_test-utils/identity-mocks";
 import { canLookUpLaw, getLawLookupToken, isOfficialSite } from "./law-identity";
 import { findStoredLawSource, isLawSource, readLawLookup, recordLawLookup } from "./law-sources";
 import { SOURCE_READ_VERSION } from "./source-contract";
-
-const DAY_MS = 86_400_000;
 
 const LAW_OPENING =
   "LEI Nº 12.813, DE 16 DE MAIO DE 2013. Dispõe sobre o conflito de interesses no exercício de cargo ou emprego do Poder Executivo federal.";
@@ -38,7 +37,7 @@ function storedLaw({
     structure: { images: 0, pages: null, topic: "regulation" },
     title: `Lei nº 12.813 ${word}`,
     url: `https://${host}/ccivil_03/lei/${word}.htm`,
-    validUntil: new Date(Date.now() + 10 * DAY_MS),
+    validUntil: new Date(Date.now() + 10 * MS_PER_DAY),
     ...attrs,
   });
 }
@@ -61,7 +60,7 @@ describe(readLawLookup, () => {
     await expect(readLawLookup(law)).resolves.toStrictEqual({ sourceId: source.id });
 
     await prisma.lawLookup.updateMany({
-      data: { checkedAt: new Date(Date.now() - 31 * DAY_MS) },
+      data: { checkedAt: new Date(Date.now() - 31 * MS_PER_DAY) },
       where: { sourceId: source.id },
     });
 
