@@ -1,30 +1,23 @@
 "use client";
 
 import { showErrorToast } from "@zoonk/ui/components/toast";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { usePageVisit } from "../_utils/use-page-visit";
-import { storeSave, useStoredSaves } from "./stored-saves";
-
-type States = ReadonlyMap<string, boolean>;
+import { toggleSave, useTabSaves } from "./tab-saves";
 
 /** What the learner changed on one visit to the page. */
 type Touched = { keys: ReadonlySet<string>; visit: number };
 
 const UNTOUCHED: Touched = { keys: new Set(), visit: 0 };
 
-function without(states: States, key: string): States {
-  return new Map([...states].filter(([other]) => other !== key));
-}
-
 /** `saved` is what the page was served. */
 export type SaveState<Target> = { saved: boolean; target: Target };
 
 /**
- * Shows the learner's choice at once and sends it as the state they want, one request at a time
- * for each thing, so quick taps end on the last one. A save that fails goes back, and says so if
- * the learner is still on the visit of their last tap.
- * What the server last stored for a save made in this tab, on any page, wins over what the page
- * was served, a copy the router kept from before the tap included.
+ * Shows the learner's choice at once, on every page in this tab, and sends it as the state they
+ * want ([toggleSave]). A save that fails goes back, and says so if the learner is still on the
+ * visit of their last tap. What the server last stored for a save made in this tab wins over what
+ * the page was served, a copy the router kept from before the tap included.
  */
 export function useSaves<Target>({
   failed,
@@ -38,67 +31,35 @@ export function useSaves<Target>({
   /** Resolves to whether it's saved now, or null when it couldn't be stored. */
   save: (target: Target, saved: boolean) => Promise<boolean | null>;
 }) {
-  const [wanted, setWanted] = useState<States>(new Map());
-  const stored = useStoredSaves();
+  const { stored, wanted } = useTabSaves();
   const [touched, setTouched] = useState(UNTOUCHED);
-  /** Each thing's state on its way, and the visit of the tap that asked for it. */
-  const sending = useRef(new Map<string, { saved: boolean; visit: number }>());
   const { isCurrent, visit } = usePageVisit();
 
-  const settle = (key: string) => {
-    sending.current.delete(key);
-    setWanted((current) => without(current, key));
-  };
-
-  const send = async ({ last, target }: { last: boolean; target: Target }) => {
-    const key = keyOf(target);
-    const next = sending.current.get(key);
-
-    if (next === undefined || next.saved === last) {
-      settle(key);
-      return;
-    }
-
-    const result = await save(target, next.saved).catch(() => null);
-
-    if (result === null) {
-      settle(key);
-
-      if (isCurrent(next.visit)) {
-        showErrorToast(next.saved ? failed.save : failed.remove);
-      }
-
-      return;
-    }
-
-    storeSave(key, result);
-    onSaved?.(target, result);
-    await send({ last: result, target });
-  };
-
-  const current = ({ saved, target }: SaveState<Target>) => stored.get(keyOf(target)) ?? saved;
-
   return {
-    isSaved: (state: SaveState<Target>) => wanted.get(keyOf(state.target)) ?? current(state),
+    isSaved: ({ saved, target }: SaveState<Target>) => {
+      const key = keyOf(target);
+      return wanted.get(key) ?? stored.get(key) ?? saved;
+    },
     /** The learner changed it on this visit, so a list keeps its row until they leave. */
     isTouched: (target: Target) => touched.visit === visit && touched.keys.has(keyOf(target)),
-    toggle: (state: SaveState<Target>) => {
-      const key = keyOf(state.target);
+    toggle: ({ saved, target }: SaveState<Target>) => {
+      const key = keyOf(target);
 
       setTouched((earlier) => ({
         keys: new Set(earlier.visit === visit ? earlier.keys : []).add(key),
         visit,
       }));
 
-      const isSending = sending.current.has(key);
-      const next = !(sending.current.get(key)?.saved ?? current(state));
-
-      sending.current.set(key, { saved: next, visit });
-      setWanted((states) => new Map(states).set(key, next));
-
-      if (!isSending) {
-        void send({ last: current(state), target: state.target });
-      }
+      toggleSave(key, {
+        onFailed: (asked) => {
+          if (isCurrent(visit)) {
+            showErrorToast(asked ? failed.save : failed.remove);
+          }
+        },
+        onStored: (result) => onSaved?.(target, result),
+        send: (asked) => save(target, asked),
+        served: saved,
+      });
     },
   };
 }
