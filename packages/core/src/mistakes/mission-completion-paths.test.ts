@@ -874,8 +874,8 @@ describe("missions completed outside a study block", () => {
     ).resolves.toBe(1);
 
     await expect(
-      prisma.usageRecord.count({ where: { kind: "tutorMessage", userId: user.id } }),
-    ).resolves.toBe(0);
+      prisma.usageRecord.findMany({ where: { kind: "tutorMessage", userId: user.id } }),
+    ).resolves.toMatchObject([{ targetId: created.status === "created" && created.question.id }]);
 
     await expect(
       prisma.userProgress.findUniqueOrThrow({ where: { userId: user.id } }),
