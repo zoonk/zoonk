@@ -1,5 +1,5 @@
 import { realpathSync, statSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { dirname, join } from "node:path";
 import {
   type DatabaseMode,
   LOCAL_DATABASE_NAMES,
@@ -23,10 +23,21 @@ const CONNECTION_TARGET_PARAMETERS = new Set([
 
 const DEVELOPMENT_DATABASE_NAME = /^zoonk(?:_wt_[a-f0-9]{12}_dev)?$/u;
 
+function findCheckout(directory: string): string {
+  const parent = dirname(directory);
+
+  if (parent === directory || statSync(join(directory, ".git"), { throwIfNoEntry: false })) {
+    return directory;
+  }
+
+  return findCheckout(parent);
+}
+
 /** `scripts/cloud/setup.sh` gives Debian's `postgres` role this password. */
 export function getLocalDatabaseUrl(
   mode: DatabaseMode = "dev",
-  checkout = resolve(import.meta.dirname, "../../.."),
+  // Turbopack leaves out import.meta.dirname in the bundled server.
+  checkout = findCheckout(import.meta.dirname ?? process.cwd()),
 ): string {
   const name = statSync(join(checkout, ".git"), { throwIfNoEntry: false })?.isFile()
     ? worktreeDatabaseName({ mode, worktree: realpathSync(checkout) })
