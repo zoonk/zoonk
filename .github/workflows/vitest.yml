@@ -32,7 +32,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        clock: ${{ fromJSON(github.event_name == 'pull_request' && '["Wednesday 01:30", "Sunday 16:00"]' || '[""]') }}
+        clock: ${{ fromJSON(github.event_name == 'pull_request' && '["", "Wednesday 01:30", "Sunday 16:00"]' || '[""]') }}
         part: [core and api 1 of 2, core and api 2 of 2]
         include:
           - part: core and api 1 of 2
@@ -70,6 +70,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: ${{ inputs.ref || github.sha }}
+          fetch-depth: ${{ matrix.clock && 2 || 1 }}
 
       # Node comes from the runner's tool cache: pnpm/setup would download it from nodejs.org,
       # whose slow downloads time jobs out.
@@ -99,17 +100,21 @@ jobs:
           docker logs db
           exit 1
 
-      - name: Set the test clock
+      - name: Run Vitest
+        if: ${{ !matrix.clock }}
+        run: pnpm turbo run ${{ matrix.task }} ${{ matrix.filter }} --concurrency=2 ${{ matrix.args }}
+
+      # The first parent is the main commit the runner actually merged into, even if main has advanced.
+      - name: Run affected tests at ${{ matrix.clock }} UTC
         if: matrix.clock
         env:
           TEST_CLOCK: ${{ matrix.clock }}
         run: |
-          instant=$(date -u --date="next $TEST_CLOCK" +%FT%TZ)
-          echo "ZOONK_TEST_NOW=$instant" >> "$GITHUB_ENV"
-          echo "Run with ZOONK_TEST_NOW=$instant to reproduce this instant."
-
-      - name: Run Vitest
-        run: pnpm turbo run ${{ matrix.task }} ${{ matrix.filter }} --concurrency=2 ${{ matrix.args }}
+          ZOONK_TEST_NOW=$(date -u --date="next $TEST_CLOCK" +%FT%TZ)
+          export ZOONK_TEST_NOW
+          echo "Run with ZOONK_TEST_NOW=$ZOONK_TEST_NOW to reproduce this instant."
+          pnpm turbo run test ${{ matrix.filter }} --concurrency=2 --cache=local:,remote: \
+            ${{ matrix.args }} --changed=HEAD^1 --passWithNoTests --maxWorkers=2
 
   # The one check branch protection requires: it passes only when every part passed.
   vitest:
