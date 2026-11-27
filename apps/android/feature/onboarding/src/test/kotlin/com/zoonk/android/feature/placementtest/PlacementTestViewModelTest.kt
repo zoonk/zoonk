@@ -80,6 +80,47 @@ class PlacementTestViewModelTest {
     }
 
     @Test
+    fun aTestTheLearnerAskedForWaitsWhileTheCourseIsBuiltThenOpensAtItsFirstQuestion() =
+        runTest {
+            val cold = placement(attempt = null, next = null, status = "preparing")
+            val api =
+                FakeOnboardingApi().apply {
+                    placement = cold
+                    sitting = { placement }
+                }
+            val (vm, store) = viewModel(api)
+            store.placements[GOAL_ID].load()
+            assertEquals(PlacementTestPhase.Choose, shown(vm, store))
+
+            vm.start(PlacementLength.WHOLE_COURSE)
+            assertEquals(PlacementTestPhase.Waiting, shown(vm, store))
+
+            api.placement = placement(attempt = null)
+            store.placements[GOAL_ID].refresh()
+            assertEquals(PlacementTestPhase.Arrived, shown(vm, store))
+
+            api.sitting = { placement(PART_ONE) }
+            vm.start(vm.askedLength)
+            runCurrent()
+            assertEquals(PlacementLength.WHOLE_COURSE, vm.askedLength)
+            assertTrue(shown(vm, store) is PlacementTestPhase.Question)
+        }
+
+    @Test
+    fun aTestTheLearnerAskedForSaysWhenItsCourseCouldNotBeBuiltOrHasNothingToTest() =
+        runTest {
+            val api = FakeOnboardingApi().apply { placement = placement(attempt = null, next = null, status = "failed") }
+            val (vm, store) = viewModel(api)
+            store.placements[GOAL_ID].load()
+            vm.start(PlacementLength.QUICK)
+            assertEquals(PlacementTestPhase.PreparationFailed(attempt = null), shown(vm, store))
+
+            api.placement = placement(attempt = null, next = null, status = "done")
+            vm.start(PlacementLength.QUICK)
+            assertEquals(PlacementTestPhase.Unavailable, shown(vm, store))
+        }
+
+    @Test
     fun anOpenPartWhoseNextQuestionCannotBeHadSaysTheFirstDaysPlaceTheLearner() {
         val read = placement(PART_ONE, next = null, status = "unavailable")
         assertEquals(PlacementTestPhase.Unavailable, placementTestPhase(LoadState.Loaded(read), closed = null))

@@ -79,6 +79,15 @@ class LevelTestTest {
     }
 
     @Test
+    fun stoppingIsOfferedOnlyOnceTheServerSaysItWouldSaveALevel() {
+        val early = phase(LoadState.Loaded(levelTestOf(answered = 3))) as LevelTestPhase.Question
+        val later = phase(LoadState.Loaded(levelTestOf(answered = 4, canStop = true))) as LevelTestPhase.Question
+
+        assertFalse(early.canStop)
+        assertTrue(later.canStop)
+    }
+
+    @Test
     fun anOpenTestWaitsUntilItsQuestionsArrive() {
         assertEquals(LevelTestPhase.Waiting, phase(LoadState.Loaded(preparingTestOf())))
         assertEquals(LevelTestPhase.Waiting, phase(LoadState.Loaded(preparingTestOf("2026-09-28T10:00:03Z"))))

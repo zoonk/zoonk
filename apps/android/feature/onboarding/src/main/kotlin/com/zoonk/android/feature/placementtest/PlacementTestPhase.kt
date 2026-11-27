@@ -31,10 +31,16 @@ internal sealed interface PlacementTestPhase {
     /** The open part's next question can't be had and nothing is writing it: the first days place the learner instead. */
     data object Unavailable : PlacementTestPhase
 
-    /** Writing the open part's questions failed: starting it again retries them. */
+    /**
+     * Writing the open part's questions failed: starting it again retries them. With no [attempt], the course a test was
+     * asked for couldn't be built, and starting again asks once more.
+     */
     data class PreparationFailed(
-        val attempt: PlacementAttempt,
+        val attempt: PlacementAttempt?,
     ) : PlacementTestPhase
+
+    /** The questions of a test the learner asked for before it could open are written: the start they asked for opens it now. */
+    data object Arrived : PlacementTestPhase
 
     data class Question(
         val item: ItemQuestion,
@@ -99,14 +105,17 @@ internal sealed interface PlacementTestPhase {
 }
 
 /**
- * With no test open, the offer; an open one goes on where it stopped, once its questions are written. A part closed in
- * this visit ([closed]) shows what it did until the learner moves on, and a quick test that ended shows its result.
- * [finished] shows a test that's over with its result instead of a new offer, as onboarding does.
+ * With no test open, the offer, or the wait for its questions once the learner [asked] for it; an open one goes on where
+ * it stopped, once its questions are written. A part closed in this visit ([closed]) shows what it did until the learner
+ * moves on, and a quick test that ended shows its result. [finished] shows a test that's over with its result instead of
+ * a new offer, as onboarding does. [awaiting]: the learner's start came back before the course had questions.
  */
 internal fun placementTestPhase(
     placement: LoadState<Placement>,
     closed: PlacementTestPhase?,
     finished: Boolean = false,
+    asked: Boolean = false,
+    awaiting: Boolean = false,
 ): PlacementTestPhase {
     if (closed != null) return closed
     if (placement.isPending) return PlacementTestPhase.Loading
@@ -118,7 +127,11 @@ internal fun placementTestPhase(
 
     return when {
         attempt == null -> {
-            if (finished && result != null) result.phase(attempt = null) else PlacementTestPhase.Choose
+            when {
+                finished && result != null -> result.phase(attempt = null)
+                asked -> read.unopened(awaiting)
+                else -> PlacementTestPhase.Choose
+            }
         }
 
         attempt.isStopped && attempt.length == PlacementLength.QUICK && result != null -> {
@@ -148,10 +161,22 @@ internal fun placementTestPhase(
     }
 }
 
+/**
+ * No test is open after the learner asked for one: it waits while the course and its questions are written, and opens
+ * once they are if the start was [awaiting] them. Otherwise there's nothing to test.
+ */
+private fun Placement.unopened(awaiting: Boolean) =
+    when (status) {
+        PlacementStatus.PREPARING, PlacementStatus.WAITING_FOR_QUESTIONS -> PlacementTestPhase.Waiting
+        PlacementStatus.FAILED -> PlacementTestPhase.PreparationFailed(attempt = null)
+        PlacementStatus.UNAVAILABLE -> PlacementTestPhase.Unavailable
+        else -> if (awaiting) PlacementTestPhase.Arrived else PlacementTestPhase.Unavailable
+    }
+
 /** Its part is done, or the learner stopped it midway: it waits for them to go on. */
 private val PlacementAttempt.isStopped get() = partComplete || resume != null
 
-private val Placement.isReady
+internal val Placement.isReady
     get() = status == PlacementStatus.ASKING || status == PlacementStatus.DONE
 
 /** An open part with nothing more to ask, which closing applies. */
@@ -211,7 +236,7 @@ internal fun PlacementCompletion.phase(attempt: PlacementAttempt): PlacementTest
         next != null && next.length == PlacementLength.WHOLE_COURSE -> {
             PlacementTestPhase.PartDone(
                 attemptId = attempt.id,
-                part = attempt.part.toInt(),
+                part = next.part.toInt(),
                 parts = next.parts.toInt(),
                 lessonsSkipped = partSkipped,
                 partsLeft = next.partsLeft.toInt(),
