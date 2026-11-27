@@ -2,12 +2,14 @@ import "server-only";
 import { type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
 import { type CourseLevel, type TransactionClient, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
+import { normalizeString } from "@zoonk/utils/string";
 import { revalidateCourseContent } from "../../cache/revalidate-course-content";
 import { getLibraryLessonCacheTag } from "../../cache/tags";
 import { type LibraryProvenance } from "../_utils/library-rows";
 import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
 import { getChapterCacheTags, getLessonOutlineCacheTags } from "../chapters/chapter-cache-tags";
 import { type IdentityCourse } from "../identity/_utils/identity-requests";
+import { isSecondTakeIdentityKey } from "../second-takes/second-take-identity";
 import { type CurriculumAnalytics, type CurriculumScope } from "./curriculum-scope";
 import { resolveScopeLessons } from "./resolve-lesson-skills";
 
@@ -42,6 +44,21 @@ function toSpecData(spec: LessonSpec) {
     estimatedMinutes: spec.estimatedMinutes,
     spec: { ...spec, [SOURCED_PLAN_KEY]: true, plannedAt: new Date().toISOString() },
   };
+}
+
+/**
+ * A second take is created under its first lesson's name, and its plan names it from its own
+ * angle, so learners don't see the lesson they already did twice under the same title.
+ */
+function toLessonData({ identityKey, spec }: { identityKey: string; spec: LessonSpec }) {
+  return isSecondTakeIdentityKey(identityKey)
+    ? {
+        ...toSpecData(spec),
+        description: spec.description,
+        normalizedTitle: normalizeString(spec.title),
+        title: spec.title,
+      }
+    : toSpecData(spec);
 }
 
 async function saveSplitLessons({
@@ -143,6 +160,7 @@ export async function saveLessonSpecs({
   const lesson = await prisma.lesson.findUnique({
     select: {
       homeChapter: { select: { homeCourse: { select: { id: true, title: true } } } },
+      identityKey: true,
       level: true,
     },
     where: { id: lessonId },
@@ -201,7 +219,10 @@ export async function saveLessonSpecs({
       }
 
       const updated = await tx.lesson.updateMany({
-        data: { ...toSpecData(first), specStatus: "completed" },
+        data: {
+          ...toLessonData({ identityKey: lesson.identityKey, spec: first }),
+          specStatus: "completed",
+        },
         where: claim,
       });
 
