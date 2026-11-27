@@ -515,7 +515,6 @@
   "plan_written_not_measured_half": "2000c264a82db56a2053c7a32537d03d0c8a6701147e62ce383b325ec2fa982c",
   "plan_written_not_measured_share": "05ebba53a7a7affe2bfff69b7c741953bcf20951cb213b1562edeba429081d5a",
   "plan_written_objective": "182a782d79767d8cd6128e6cc0a835467e6bbd4e32dcca2667e75f17e1ed16b1",
-  "plan_written_points_below": "b9400339a388c183032c81160c9b741db055b5e1461480d4b43e9e479c28ec10",
   "plan_you_are_here_suffix": "9d64cf09d078f7cc2626d1755e49e5bbeeb464fb8fd7dd14dd3f55a7841310f0",
   "plan_your_level": "370a93f94cfec369c1e3c38e31c6e412346647f0f6d45c7f20aa1be027a9c771",
   "plan_your_pace": "50c353ac1cfcac0d6f9964d4205d74f3a5e1e48f45e0a9d1dbb4dcf4ab9fdc58",
@@ -1424,7 +1423,6 @@
     <string name="plan_written_not_measured_share">Le résultat de %1$s (%2$s de ton Score final) n’est pas encore mesuré.</string>
     <string name="plan_written_objective">Épreuve objective</string>
     <string name="plan_written_above_minimum">Probablement au-dessus des %1$s points requis</string>
-    <string name="plan_written_points_below">Probablement à %1$s points des %2$s requis</string>
     <string name="plan_written_likely_below">Probablement en dessous des %1$s points requis</string>
     <string name="plan_written_close_to_minimum">Il est possible d’être d’un côté comme de l’autre des %1$s points requis</string>
     <string name="plan_written_cant_say">Impossible de dire pour le moment si cette réponse atteint les %1$s points requis</string>

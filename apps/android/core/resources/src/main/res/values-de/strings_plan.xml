@@ -515,7 +515,6 @@
   "plan_written_not_measured_half": "815e4db0aedbbf608cee2ebd1a6faeef4fd467e39d299e74489456c9b8c4dd56",
   "plan_written_not_measured_share": "06ad2d63475c0adabc5a00b526c17bb52ef12d3d6ac2da7fc6dce043a0c93e55",
   "plan_written_objective": "ae4ce54b153d5337216fa665c770969c8b9b4ad6257a51d4d9e74f38b39152a9",
-  "plan_written_points_below": "b8ed9ead73a04f70a4943a78cc35914e82e90bbe403a2bd9d9f407df418f1762",
   "plan_you_are_here_suffix": "e684aeae685654ec93b7579a2c61dd59d8fd0d657e6f108c416fa0932fce3402",
   "plan_your_level": "8638f4b2cdfc8f8c7c9acaeb033f2a1c51db01a47e0f2f4c50bd4d5649bcf0df",
   "plan_your_pace": "84cf20d28a7d5542b675bf888be5f7a06cb229ec3c93fce19bcddc66831e0709",
@@ -1357,7 +1356,6 @@
     <string name="plan_written_not_measured_share">%1$s macht %2$s deiner Gesamtpunktzahl aus und wurde noch nicht ermittelt.</string>
     <string name="plan_written_objective">Objektiver Test</string>
     <string name="plan_written_above_minimum">Wahrscheinlich mehr als die benötigten %1$s Punkte</string>
-    <string name="plan_written_points_below">Wahrscheinlich %1$s Punkte unter den benötigten %2$s Punkten</string>
     <string name="plan_written_likely_below">Wahrscheinlich unter den benötigten %1$s Punkten</string>
     <string name="plan_written_close_to_minimum">Die Punktzahl könnte über oder unter den benötigten %1$s Punkten liegen</string>
     <string name="plan_written_cant_say">Es lässt sich noch nicht sagen, ob die benötigten %1$s Punkte erreicht werden</string>

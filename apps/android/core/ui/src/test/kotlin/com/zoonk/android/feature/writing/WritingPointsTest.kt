@@ -29,6 +29,11 @@ class WritingPointsTest {
     }
 
     @Test
+    fun oneGradeReadsAsOneNumberRoundedLikeItsParts() {
+        assertEquals("48" to "48", rangeEnds(48.01, 48.01, 0, Locale.ENGLISH, headline = true))
+    }
+
+    @Test
     fun deductionsRoundToOneDecimalWithoutNegativeZero() {
         compose.setContent {
             Column {

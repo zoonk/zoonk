@@ -515,7 +515,6 @@
   "plan_written_not_measured_half": "994680cf6b10bc5c92746f131540c6288a94fb4965551f7078c695e2778ffac7",
   "plan_written_not_measured_share": "bba9430898072fc64134d0f6456a94ac88d0c2c742e18aaa95f87222930cd634",
   "plan_written_objective": "93b9d7e8954c96d4328524b35ef214b60f19752a0ad844defdd9ba64d8d146ce",
-  "plan_written_points_below": "fcb530dfde30c7a986377858c42fdf925fb0d2629846845dc2e14ad5c21e8094",
   "plan_you_are_here_suffix": "a1d5f649b8a32699abe62b3940107c03d22a0a2860fe6de4515ea928ec7f2d60",
   "plan_your_level": "a03f9c757029d9c9d51c38580bf1e548a6968184257b2889f4abd356f197cdd5",
   "plan_your_pace": "8dd25b8068a1b8882d61ec30c37593d6b661970a100c0075cacb1c1362f305c1",
@@ -1424,7 +1423,6 @@
     <string name="plan_written_not_measured_share">%1$s, que representa el %2$s de tu puntaje final, aún no se mide.</string>
     <string name="plan_written_objective">Prueba objetiva</string>
     <string name="plan_written_above_minimum">Probablemente supera el mínimo de %1$s puntos</string>
-    <string name="plan_written_points_below">Probablemente le faltan %1$s puntos para llegar al mínimo de %2$s</string>
     <string name="plan_written_likely_below">Probablemente no alcanza el mínimo de %1$s puntos</string>
     <string name="plan_written_close_to_minimum">Podría quedar por encima o por debajo del mínimo de %1$s puntos</string>
     <string name="plan_written_cant_say">Aún no podemos saber si alcanza el mínimo de %1$s puntos</string>

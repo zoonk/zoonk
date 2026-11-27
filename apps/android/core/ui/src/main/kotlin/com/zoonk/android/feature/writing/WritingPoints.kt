@@ -35,6 +35,7 @@ import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonkType
 import java.util.Locale
+import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.pow
@@ -80,7 +81,10 @@ internal fun rangeEnds(
     locale: Locale,
     headline: Boolean,
 ): Pair<String, String> {
-    if (!headline) return formatPoints(low, locale, decimals) to formatPoints(high, locale, decimals)
+    // One grade isn't a range: the number format rounds it as it rounds the parts beside it, so 48.01 reads "48".
+    if (!headline || abs(high - low) < FLOAT_SLACK) {
+        return formatPoints(low, locale, decimals) to formatPoints(high, locale, decimals)
+    }
     val step = 10.0.pow(decimals)
     // 0.3 × 10 is 3.0000000000000004 in floating point, which must still round to 3; zero stays zero, never "−0".
     val shownLow = floor(low * step + FLOAT_SLACK) / step + 0.0

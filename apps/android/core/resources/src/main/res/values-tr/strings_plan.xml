@@ -515,7 +515,6 @@
   "plan_written_not_measured_half": "3d960db870809932a654a0f7e9aa0498d2ca55549bc0add75799a9b4e204e7a5",
   "plan_written_not_measured_share": "fa666f939823fbae65119eed5151bd9e0869c53de7c80308b4637b0e3b3c60c7",
   "plan_written_objective": "f14560237fd88c6164e71c40bc1f6769270a0fd38b296e78e060c46fecb01baa",
-  "plan_written_points_below": "3e50db8ded8e2501696016b38e5abfb9f77b9dd68859c57c503888e34b9ddc1f",
   "plan_you_are_here_suffix": "b4bbc92b5333ed7afb16dbcafb380f29a355a161149af3547aaab24f2a60868c",
   "plan_your_level": "8bf9296150c876aeda940092bd996f58382add41a83f18421e5b4d0a0b662ed3",
   "plan_your_pace": "a9ccda368ec84a95b8680e4218b59fd99b13000ed53850abfeaae67d2ecdae60",
@@ -1357,7 +1356,6 @@
     <string name="plan_written_not_measured_share">Nihai puanının %2$s kadarını oluşturan %1$s henüz ölçülmedi.</string>
     <string name="plan_written_objective">Objektif test</string>
     <string name="plan_written_above_minimum">Gereken %1$s puanın üstünde görünüyor</string>
-    <string name="plan_written_points_below">Gereken %2$s puana ulaşmak için muhtemelen %1$s puan eksik</string>
     <string name="plan_written_likely_below">Gereken %1$s puanın altında görünüyor</string>
     <string name="plan_written_close_to_minimum">Gereken %1$s puan sınırının altında da üstünde de olabilir</string>
     <string name="plan_written_cant_say">Henüz gereken %1$s puana ulaşıp ulaşmadığını söyleyemiyoruz</string>

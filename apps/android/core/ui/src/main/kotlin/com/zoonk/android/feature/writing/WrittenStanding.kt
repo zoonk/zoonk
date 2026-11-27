@@ -20,23 +20,25 @@ import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.WrittenPartPoints
 import com.zoonk.api.models.WrittenPartPointsMinimum
 
+/** The part's minimum, unless its unit is one this version can't place: then it reads as having none. */
+fun WrittenPartPoints.readableMinimum(): WrittenPartPointsMinimum? =
+    minimum?.takeIf { it.unit != WrittenPartPointsMinimum.Unit.UNKNOWN_DEFAULT_OPEN_API }
+
 fun WrittenPartPoints.minimumPoints(): Double? {
-    val minimum = minimum ?: return null
+    val minimum = readableMinimum() ?: return null
     if (minimum.unit != WrittenPartPointsMinimum.Unit.PERCENT) return minimum.value
     return max?.let { minimum.value / PERCENT * it }
 }
 
 /**
  * A written part's estimate against its own minimum, as Main's `WrittenStandingLine` says it. Each verdict is
- * "likely": it comes from how closely graders' marks match the board's, never a promise. Without one, an estimate
- * beside a minimum would read as a pass, so the line says it can't tell.
+ * "likely": it comes from how closely graders' marks match the board's, never a promise, so it never says by how
+ * much; the estimate beside it shows the gap. Without one, an estimate beside a minimum would read as a pass, so the
+ * line says it can't tell.
  */
 @Composable
-fun WrittenStandingLine(
-    part: WrittenPartPoints,
-    decimals: Int = part.decimals?.toInt() ?: 0,
-) {
-    val range = part.range ?: return
+fun WrittenStandingLine(part: WrittenPartPoints) {
+    if (part.range == null) return
     val minimum = part.minimumPoints() ?: return
     val points = formatPoints(minimum, currentLocale())
     val muted = MaterialTheme.colorScheme.onSurfaceVariant
@@ -52,16 +54,8 @@ fun WrittenStandingLine(
         }
 
         WrittenPartPoints.Standing.BELOW -> {
-            // The verdict can come from the last mock while the estimate averages later answers.
-            val short = minimum - range.high
-            val text =
-                if (short > 0) {
-                    stringResource(R.string.plan_written_points_below, pointsRange(short, minimum - range.low, decimals), points)
-                } else {
-                    stringResource(R.string.plan_written_likely_below, points)
-                }
             val error = MaterialTheme.colorScheme.error
-            StandingLine(text, error, R.drawable.ic_close, error)
+            StandingLine(stringResource(R.string.plan_written_likely_below, points), error, R.drawable.ic_close, error)
         }
 
         WrittenPartPoints.Standing.OVERLAPS -> {

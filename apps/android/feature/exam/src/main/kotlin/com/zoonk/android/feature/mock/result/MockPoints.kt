@@ -216,7 +216,7 @@ private fun WrittenRowItem(part: WrittenPartPoints) {
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text(part.name, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
             if (range != null && max != null) {
-                WrittenStandingLine(part, decimals)
+                WrittenStandingLine(part)
             } else {
                 Text(
                     listOfNotNull(

@@ -847,7 +847,6 @@
     <string name="plan_written_not_measured_share">%1$s, %2$s of your final score, isn\'t measured yet.</string>
     <string name="plan_written_objective">Objective test</string>
     <string name="plan_written_above_minimum">Likely above the %1$s points needed</string>
-    <string name="plan_written_points_below">Likely %1$s points short of the %2$s needed</string>
     <string name="plan_written_likely_below">Likely below the %1$s points needed</string>
     <string name="plan_written_close_to_minimum">Could be either side of the %1$s points needed</string>
     <string name="plan_written_cant_say">Can\'t say yet whether this reaches the %1$s points needed</string>

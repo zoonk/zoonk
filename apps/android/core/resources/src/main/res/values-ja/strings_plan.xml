@@ -515,7 +515,6 @@
   "plan_written_not_measured_half": "70f9d2ac9e701221dcc007a387d8207ac1c63e5d88f47a6f5208390a877e27d7",
   "plan_written_not_measured_share": "efd1d19fb0e539e4a6c573d0bea81fee8f237e7ac04e7036dbd615409fed3406",
   "plan_written_objective": "c9ec7f11ca2c94d404a352535a20770366eb23add507187759469a7dd5b63a82",
-  "plan_written_points_below": "1e3a73c7de487db8ccaf688768b938114fea7b0a9b76c335d3271e0da314cd12",
   "plan_you_are_here_suffix": "322e11b13faa1b0a66abc5fc83c0934f5d2d365b2a5191aa4ed36e88dbd56c6c",
   "plan_your_level": "35dd06b441fe0339368a4db98ce18196288602e9200e8100588844cf2ab0d32b",
   "plan_your_pace": "068099c5aef3b057080c748eb6b014d2e554424889423b50db56db23df9cc9c0",
@@ -1290,7 +1289,6 @@
     <string name="plan_written_not_measured_share">%1$sは最終スコアの%2$sを占めますが、まだ測定されていません。</string>
     <string name="plan_written_objective">選択式テスト</string>
     <string name="plan_written_above_minimum">必要な%1$s点を上回る可能性が高い</string>
-    <string name="plan_written_points_below">必要な%2$s点に%1$s点足りない可能性が高い</string>
     <string name="plan_written_likely_below">必要な%1$s点に届かない可能性が高い</string>
     <string name="plan_written_close_to_minimum">必要な%1$s点を上回る可能性も下回る可能性もあります</string>
     <string name="plan_written_cant_say">必要な%1$s点に届くかどうかは、まだ判断できません</string>

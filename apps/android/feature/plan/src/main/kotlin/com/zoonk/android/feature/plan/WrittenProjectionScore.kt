@@ -22,6 +22,7 @@ import com.zoonk.android.feature.writing.RangeMeter
 import com.zoonk.android.feature.writing.WrittenStandingLine
 import com.zoonk.android.feature.writing.formatPoints
 import com.zoonk.android.feature.writing.minimumShare
+import com.zoonk.android.feature.writing.readableMinimum
 import com.zoonk.android.feature.writing.toName
 import com.zoonk.android.feature.writing.writingTaskName
 import com.zoonk.android.ui.components.Button
@@ -60,7 +61,7 @@ internal fun WrittenProjectionScore(
             when {
                 below != null -> {
                     Text(stringResource(R.string.plan_written_below_minimum), style = MaterialTheme.typography.titleLarge)
-                    below.minimum?.let {
+                    below.readableMinimum()?.let {
                         val locale = currentLocale()
                         MetaLine(
                             if (it.unit == WrittenPartPointsMinimum.Unit.PERCENT) {
@@ -92,7 +93,14 @@ internal fun WrittenProjectionScore(
                     part.name,
                     part.range,
                     part.max,
-                    minimumShare = part.minimum?.let { minimumShare(it.unit == WrittenPartPointsMinimum.Unit.PERCENT, it.value, part.max) },
+                    minimumShare =
+                        part.readableMinimum()?.let {
+                            minimumShare(
+                                it.unit == WrittenPartPointsMinimum.Unit.PERCENT,
+                                it.value,
+                                part.max,
+                            )
+                        },
                     decimals = part.decimals?.toInt() ?: 0,
                     levels = !part.inPoints(),
                     written = true,
@@ -112,8 +120,13 @@ internal fun WrittenProjectionScore(
     }
 }
 
-/** A server from before `scale` says a part is in points by having measured it in points. */
-private fun WrittenPartPoints.inPoints(): Boolean = scale?.let { it == WrittenPartPoints.Scale.POINTS } ?: (range != null)
+/** A server from before `scale`, or a scale this version doesn't know, says a part is in points by having measured it. */
+private fun WrittenPartPoints.inPoints(): Boolean =
+    when (scale) {
+        WrittenPartPoints.Scale.POINTS -> true
+        WrittenPartPoints.Scale.LEVELS -> false
+        else -> range != null
+    }
 
 /** The part still to measure, with its share of the final score when the projection knows it. */
 @Composable

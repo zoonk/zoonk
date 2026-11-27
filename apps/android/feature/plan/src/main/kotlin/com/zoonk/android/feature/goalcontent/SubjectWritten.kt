@@ -33,6 +33,7 @@ import com.zoonk.android.feature.writing.WrittenStandingLine
 import com.zoonk.android.feature.writing.formatPoints
 import com.zoonk.android.feature.writing.minimumShare
 import com.zoonk.android.feature.writing.pointsRange
+import com.zoonk.android.feature.writing.readableMinimum
 import com.zoonk.android.feature.writing.toName
 import com.zoonk.android.feature.writing.writingTaskName
 import com.zoonk.android.ui.components.ListRow
@@ -167,12 +168,19 @@ internal fun LazyListScope.subjectWritten(
  * measured something in points; otherwise answers are graded by level.
  */
 private fun WrittenPracticeSubjectsInner.inPoints(): Boolean =
-    scale?.let { it == WrittenPracticeSubjectsInner.Scale.POINTS } ?: (points.range != null || answers.any { it.range != null })
+    when (scale) {
+        WrittenPracticeSubjectsInner.Scale.POINTS -> true
+
+        WrittenPracticeSubjectsInner.Scale.LEVELS -> false
+
+        // A server from before `scale`, or a scale this version doesn't know.
+        else -> points.range != null || answers.any { it.range != null }
+    }
 
 /** "Minimum to pass: 50 of 100", or its share of the points. */
 @Composable
 private fun minimumLine(points: WrittenPartPoints): String? {
-    val minimum = points.minimum ?: return null
+    val minimum = points.readableMinimum() ?: return null
     val locale = currentLocale()
     val max = points.max
     return when {
@@ -217,7 +225,7 @@ internal fun WrittenStanding(written: WrittenPracticeSubjectsInner) {
     val max = points.max
     val range = points.range
     val decimals = (points.decimals ?: written.decimals)?.toInt() ?: 0
-    val share = points.minimum?.let { minimumShare(it.unit == WrittenPartPointsMinimum.Unit.PERCENT, it.value, max) }
+    val share = points.readableMinimum()?.let { minimumShare(it.unit == WrittenPartPointsMinimum.Unit.PERCENT, it.value, max) }
 
     Column(
         Modifier.padding(horizontal = PAGE_PADDING).padding(top = 20.dp),
@@ -236,7 +244,7 @@ internal fun WrittenStanding(written: WrittenPracticeSubjectsInner) {
             }
             max?.let { RangeMeter(range?.low, range?.high, it, minimumShare = share) }
             minimumLine?.let { MinimumLegend(it) }
-            WrittenStandingLine(points, decimals)
+            WrittenStandingLine(points)
         }
         Column {
             points.tasks.forEachIndexed { index, task ->
