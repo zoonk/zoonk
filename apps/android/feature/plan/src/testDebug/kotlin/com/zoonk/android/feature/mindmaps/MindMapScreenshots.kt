@@ -175,7 +175,7 @@ class MindMapScreenshots {
         val FREE_CAP = Limit.Reached(LimitTier.Free, LimitPeriod.Day)
         val NO_ACTIONS = MindMapsActions({}, {}, {}, {})
         val ROW_ACTIONS = MindMapRowActions({}, {}, {})
-        val STUDY_ACTIONS = StudyActions({}, { _, _, _ -> }, {}, {})
+        val STUDY_ACTIONS = StudyActions({}, { _, _ -> }, {}, {})
         val ALL = offer(needLessons = 0, startable = 5)
         val PART = offer(needLessons = 2, startable = 3, stop = stop("limitReached", "\"mindMap\"", "\"day\""))
         val PLUS_ROLLING = offer(needLessons = 0, startable = 0, stop = stop("limitReached", "\"mindMap\"", "\"rolling30Days\""))
