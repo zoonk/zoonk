@@ -31,6 +31,13 @@ export function getRowClass({ isNext }: { isNext: boolean }): string {
   );
 }
 
+/**
+ * A row's mark is centered beside a title and one line, and sits on the title's line once two or
+ * more lines are under it (craft E5); the time stays on the row's center.
+ */
+export const ROW_MARK_CLASS =
+  "flex h-5 w-4 shrink-0 items-center justify-center group-has-[[data-slot=today-row-lines]>:nth-child(3)]/row:self-start";
+
 /** The row's own open replaces its time with a spinner, leaving the test offer independent. */
 function RowTime({ minutes }: { minutes: number }) {
   const formatDuration = useFormatDuration();
@@ -206,7 +213,7 @@ export function BlockRow({
       )}
       data-slot={isNext ? "today-next" : undefined}
     >
-      <span className="flex h-5 w-4 shrink-0 items-center justify-center">
+      <span className={ROW_MARK_CLASS}>
         <BlockMark block={block} />
       </span>
 
@@ -262,7 +269,7 @@ export function PlanLessonRow({
       aria-current={current ? "step" : undefined}
       className={cn(getRowClass({ isNext: current }), onOpen && disabled && !busy && "opacity-50")}
     >
-      <span className="flex h-5 w-4 shrink-0 items-center justify-center">
+      <span className={ROW_MARK_CLASS}>
         <KindMark kind="lesson" />
       </span>
 
