@@ -15,8 +15,13 @@ struct PlacementCheckpoint: View {
 
     TestOutcome(
       title: Text(verbatim: TestCopy.partDone(attempt.part, of: attempt.parts)),
-      description: undo?.restored ?? Text(verbatim: PlacementTestCopy.partLine(stop)),
+      description: Text(
+        verbatim: [
+          undo?.announcement ?? PlacementTestCopy.partLine(stop),
+          String(localized: TestCopy.answersSavedLine),
+        ].joined(separator: " ")),
       facts: PlacementTestCopy.partsLeftFacts(attempt),
+      footnote: attempt.partsRemoved > 0 ? PlacementTestCopy.testGotShorter : nil,
       continueLabel: Text(TestCopy.keepGoing),
       secondary: .init(label: Text(TestCopy.finishLater), action: onFinishLater),
       undo: undo, isSaving: pressed != nil || undo?.request.isRunning == true, failed: failed,
@@ -73,6 +78,7 @@ struct PlacementTestResultView: View {
         [String(localized: TestCopy.fullTest)] + PlacementTestCopy.partsLeftFacts($0)
       }
         ?? [],
+      footnote: end.partsRemoved > 0 ? PlacementTestCopy.testGotShorter : nil,
       continueLabel: onboarding
         ? nil
         : end.nextLesson == nil || restored ? Text(TestCopy.done) : Text(TestCopy.startLesson),

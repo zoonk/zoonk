@@ -32,6 +32,9 @@ struct PlacementAttempt: Decodable, Equatable, Sendable {
   let parts: Int
   /// Parts with questions left, the current one included while it has some.
   let partsLeft: Int
+  /// Parts the current part removed because they build on topics the learner doesn't know yet;
+  /// 0 until it closes.
+  let partsRemoved: Int
   /// The current part's ceiling, fixed when it opened.
   let questions: Int
   /// Set once the learner stopped this part midway.
@@ -86,6 +89,8 @@ struct PlacementTestResult: Decodable, Equatable, Sendable {
   /// A course's last closed part, and what that part skipped.
   var part: Int?
   var partLessonsSkipped: Int?
+  /// The parts that part removed, as the attempt's `partsRemoved`.
+  var partsRemoved: Int?
   var ranges: [String: LevelRange]?
 
   init(finishedAt: Date, lessonsSkipped: Int) {
@@ -104,12 +109,13 @@ struct PlacementTestResult: Decodable, Equatable, Sendable {
     nextLesson = try container.decodeIfPresent(NextLesson.self, forKey: .nextLesson)
     part = try container.decodeIfPresent(Int.self, forKey: .part)
     partLessonsSkipped = try container.decodeIfPresent(Int.self, forKey: .partLessonsSkipped)
+    partsRemoved = try container.decodeIfPresent(Int.self, forKey: .partsRemoved)
     ranges = try container.decodeIfPresent([String: LevelRange].self, forKey: .ranges)
   }
 
   private enum CodingKeys: String, CodingKey {
     case attemptId, changeId, finishedAt, heldUntilTomorrow, lessonsSkipped, levelsSkipped,
-      nextLesson, part, partLessonsSkipped, ranges
+      nextLesson, part, partLessonsSkipped, partsRemoved, ranges
   }
 
   struct SkillRange: Hashable, Sendable {

@@ -55,6 +55,15 @@ enum PlacementTestCopy {
       ? String(localized: retakeTomorrow) : TestCopy.partSkipped(stop.partLessonsSkipped)
   }
 
+  /// Under what's left of a full test once a part removed later parts, on its checkpoint and its
+  /// result.
+  static let testGotShorter = LocalizedStringResource(
+    "The test got shorter: topics that build on ones you don't know yet aren't tested.",
+    table: "Onboarding",
+    comment:
+      "After a part of a course's test, when later parts were removed because the learner didn't know topics they depend on."
+  )
+
   /// "11 parts left · About 1 hr 6 min": the parts still to take and how long they take together,
   /// since parts shrink as topics close.
   static func partsLeftFacts(_ attempt: PlacementAttempt) -> [String] {

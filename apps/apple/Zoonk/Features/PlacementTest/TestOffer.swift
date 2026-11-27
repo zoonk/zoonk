@@ -153,6 +153,10 @@ enum TestCopy {
   static let answersSaved = LocalizedStringResource(
     "Your answers are saved", table: "Onboarding")
 
+  /// The sentence that ends a line where the learner can stop, as a full test's checkpoint.
+  static let answersSavedLine = LocalizedStringResource(
+    "Your answers are saved.", table: "Onboarding")
+
   static let upNext = LocalizedStringResource(
     "Up next", table: "Onboarding", comment: "Over the lesson the plan goes on with")
 

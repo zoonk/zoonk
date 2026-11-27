@@ -129,6 +129,8 @@ struct TestOutcome<Lead: View>: View {
   let title: Text
   var description: Text?
   var facts: [String] = []
+  /// A quiet line under the facts, such as why a test has fewer parts than it said.
+  var footnote: LocalizedStringResource?
   var continueLabel: Text?
   var secondary: Secondary?
   var undo: PlacementResultUndo?
@@ -143,12 +145,21 @@ struct TestOutcome<Lead: View>: View {
       StepHeader(subject: subject, title: title, description: description)
 
       // Main's facts are what the test found, under the heading rather than in it.
-      if !facts.isEmpty {
-        FactSegments(facts)
-          .typeStyle(.data)
-          .foregroundStyle(.mutedForeground)
-          .listRowBackground(Color.clear)
-          .listRowSeparator(.hidden)
+      if !facts.isEmpty || footnote != nil {
+        VStack(alignment: .leading, spacing: 4) {
+          if !facts.isEmpty {
+            FactSegments(facts)
+              .typeStyle(.data)
+          }
+
+          if let footnote {
+            Text(footnote)
+              .typeStyle(.meta)
+          }
+        }
+        .foregroundStyle(.mutedForeground)
+        .listRowBackground(Color.clear)
+        .listRowSeparator(.hidden)
       }
 
       lead()
@@ -170,13 +181,14 @@ struct TestOutcome<Lead: View>: View {
 extension TestOutcome where Lead == EmptyView {
   init(
     subject: String? = nil, title: Text, description: Text? = nil, facts: [String] = [],
-    continueLabel: Text? = nil, secondary: Secondary? = nil, undo: PlacementResultUndo? = nil,
+    footnote: LocalizedStringResource? = nil, continueLabel: Text? = nil,
+    secondary: Secondary? = nil, undo: PlacementResultUndo? = nil,
     failureMessage: LocalizedStringResource? = nil, isSaving: Bool, failed: Bool,
     onContinue: @escaping () -> Void
   ) {
     self.init(
       subject: subject, title: title, description: description, facts: facts,
-      continueLabel: continueLabel, secondary: secondary, undo: undo,
+      footnote: footnote, continueLabel: continueLabel, secondary: secondary, undo: undo,
       failureMessage: failureMessage, isSaving: isSaving, failed: failed,
       onContinue: onContinue, lead: { EmptyView() })
   }

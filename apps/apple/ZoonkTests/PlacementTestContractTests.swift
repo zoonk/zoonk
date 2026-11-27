@@ -14,10 +14,12 @@ final class PlacementTestContractTests: XCTestCase {
       #"""
       {"attempt":null,"estimatedMinutes":27,"kind":"learn","state":"result",
        "result":{"attemptId":"c367d72f-4d87-408a-ba10-6bbcddca31ba",
-                 "finishedAt":"2026-11-21T16:23:39Z","lessonsSkipped":3}}
+                 "finishedAt":"2026-11-21T16:23:39Z","lessonsSkipped":3,"part":4,
+                 "partsRemoved":2}}
       """#)
 
     XCTAssertEqual(test.result?.lessonsSkipped, 3)
+    XCTAssertEqual(test.result?.partsRemoved, 2)
     XCTAssertEqual(test.result?.finishedAt, finishedAt)
   }
 
@@ -61,12 +63,13 @@ final class PlacementTestContractTests: XCTestCase {
       {"estimatedMinutes":85,"kind":"learn","offer":null,"result":null,"state":"continue",
        "attempt":{"answered":3,"chapter":null,"estimatedMinutes":6,
                   "id":"c367d72f-4d87-408a-ba10-6bbcddca31ba","length":"wholeCourse",
-                  "nextPart":5,"part":5,"partComplete":false,"parts":14,"partsLeft":10,"partsRemoved":0,
+                  "nextPart":5,"part":5,"partComplete":false,"parts":14,"partsLeft":10,"partsRemoved":2,
                   "questions":12,"resume":{"part":5,"question":4},"totalEstimatedMinutes":85,
                   "remainingEstimatedMinutes":60}}
       """#)
 
     let attempt = try XCTUnwrap(test.attempt)
+    XCTAssertEqual(attempt.partsRemoved, 2)
     XCTAssertTrue(test.continuesInParts)
     XCTAssertEqual(attempt.resume, .init(part: 5, question: 4))
     XCTAssertEqual(
@@ -142,6 +145,7 @@ final class PlacementTestContractTests: XCTestCase {
     let attempt = PlacementAttempt(
       answered: 3, chapter: nil, estimatedMinutes: 6, id: "c367d72f-4d87-408a-ba10-6bbcddca31ba",
       length: .wholeCourse, nextPart: nil, part: 2, partComplete: false, parts: 4, partsLeft: 3,
+      partsRemoved: 0,
       questions: 12, resume: nil, totalEstimatedMinutes: 24, remainingEstimatedMinutes: 18)
 
     let outcome = try await dependencies.onboardingStore.finishPlacementPart(
