@@ -26,6 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -145,6 +146,7 @@ private fun LazyListScope.conversationRows(
     item(key = "new", contentType = "new") {
         ListRow(
             headline = { Text(stringResource(R.string.buddy_page_new_conversation)) },
+            modifier = Modifier.semantics { if (rows.openId == null) selected = true },
             onClick = taps.startNew,
             highlighted = rows.openId == null,
         )
@@ -180,6 +182,8 @@ private fun ConversationRow(
 ) {
     ListRow(
         headline = { Text(conversation.title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+        // Main's aria-current: TalkBack says which conversation is the open one.
+        modifier = Modifier.semantics { if (open) selected = true },
         onClick = onOpen,
         highlighted = open,
         supporting = {
