@@ -13,6 +13,7 @@ type OfferChoice = "firstLesson" | "levelTest" | "testOut";
 /** Onboarding offers the test beside a first lesson; the Plan offers it alone or beside a test-out. */
 export function LevelTestOfferStep({
   analytics,
+  levelGiven,
   offer,
   onStartTestOut,
   onboarding,
@@ -21,6 +22,7 @@ export function LevelTestOfferStep({
   testOutLevel,
 }: {
   analytics: TestAnalytics;
+  levelGiven: boolean;
   offer: LevelTestOffer;
   onStartTestOut: (level: string) => void;
   onboarding: boolean;
@@ -37,7 +39,7 @@ export function LevelTestOfferStep({
     analytics.offered({ preselected, questions: offer.total, rows });
 
   const levelTest = {
-    facts: [facts.questions(offer.total), facts.about(offer.estimatedMinutes)],
+    facts: [facts.upToQuestions(offer.total), facts.about(offer.estimatedMinutes)],
     label: t("Level test"),
     value: "levelTest",
   } as const;
@@ -52,7 +54,7 @@ export function LevelTestOfferStep({
         onShown={() => shown(["first_lesson", "quick"])}
         onStart={(choice) => (choice === "firstLesson" ? test.onLeave("main") : test.onStart())}
         pressed={pressed}
-        rows={[texts.firstLesson, levelTest]}
+        rows={[texts.firstLesson(levelGiven), levelTest]}
         title={texts.startTitle}
       />
     );

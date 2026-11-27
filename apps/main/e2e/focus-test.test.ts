@@ -204,6 +204,10 @@ test.describe("An exam's Focus test in onboarding", () => {
     const goal = await createExamGoalAtFocusTest(noProgressUser.id);
 
     await page.goto(`/start/${goal.id}`);
+
+    await expect(page.getByRole("radio", { name: /Up to \d+ questions/u })).toBeVisible();
+    await expect(page.getByText("Starts at the level you gave")).toBeHidden();
+
     await page.getByRole("radio", { name: /First lesson/u }).click();
     await page.getByRole("button", { exact: true, name: "Continue" }).click();
 

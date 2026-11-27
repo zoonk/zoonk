@@ -40,7 +40,11 @@ export function useTestFacts() {
       }),
     question: ({ number, total }: { number: number; total: number }): string =>
       t("Question {number, number} of {total, number}", { number, total }),
-    questions: (count: number): string =>
-      t("{count, plural, one {# question} other {# questions}}", { count }),
+    upToQuestions: (count: number): string =>
+      t({
+        description: "The most questions a test asks. It can end sooner.",
+        message: "Up to {count, plural, one {# question} other {# questions}}",
+        values: { count },
+      }),
   };
 }

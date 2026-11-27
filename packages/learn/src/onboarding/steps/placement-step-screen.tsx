@@ -6,6 +6,7 @@ import { type GenerationRun } from "../../generation/generation-run";
 import { LanguagePlanTestFlow } from "../../language/level-test/level-test-flow";
 import { PlacementTestFlow } from "../../placement-test/placement-test-flow";
 import { getNativeLanguage } from "../_utils/onboarding-view-reads";
+import { readSetupLevel } from "../_utils/setup-level";
 import { type OnboardingActions } from "../onboarding-actions";
 
 /** Each kind of goal finds where the learner starts its own way; an exam's is its Focus test. */
@@ -27,6 +28,7 @@ export function PlacementStepScreen({
   // The server decides: a test the learner asked for opens at once, an offered one waits for a pick.
   const mode = placement?.mode ?? "resume";
   const test = placement?.test;
+  const levelGiven = readSetupLevel(goal.details) !== null;
 
   if (goal.kind === "exam") {
     return (
@@ -35,6 +37,7 @@ export function PlacementStepScreen({
         asked={mode === "direct"}
         goalId={goal.id}
         host="onboarding"
+        levelGiven={levelGiven}
         onDone={onDone}
         readWarmUp={actions.readWarmUp}
         run={run}
@@ -49,7 +52,7 @@ export function PlacementStepScreen({
         actions={actions.languagePlanTest(goal.id)}
         goal={goal}
         goalId={goal.id}
-        host={{ mode, surface: "onboarding" }}
+        host={{ levelGiven, mode, surface: "onboarding" }}
         onLeave={() => onDone()}
         ownLanguage={{
           language: getNativeLanguage(view),
@@ -69,6 +72,7 @@ export function PlacementStepScreen({
       goalId={goal.id}
       host={{
         decline: () => actions.finishPlacement({ fromScratch: true, goalId: goal.id }),
+        levelGiven,
         mode,
         surface: "onboarding",
       }}

@@ -130,6 +130,7 @@ export function LanguagePlanTestFlow({
       return (
         <LevelTestOfferStep
           analytics={analytics}
+          levelGiven={host.surface === "onboarding" && host.levelGiven}
           offer={phase.offer}
           onStartTestOut={(level) => startTestOut(level, "main")}
           onboarding={onboarding}
