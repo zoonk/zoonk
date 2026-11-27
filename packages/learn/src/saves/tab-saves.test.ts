@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { toggleSave } from "./tab-saves";
 
 const settled = () =>
@@ -31,18 +31,27 @@ function server() {
   };
 }
 
-/** A tap on a page that was served `served`, and what that page is told of how it ended. */
+/** A tap in `tab` on a page that was served `served`, and what that page is told of how it ended. */
 function tap({
   key,
   send,
   served,
+  tab = { toggleSave },
 }: {
   key: string;
   send: (saved: boolean) => Promise<boolean | null>;
   served: boolean;
+  tab?: { toggleSave: typeof toggleSave };
 }) {
   const failed: boolean[] = [];
-  toggleSave(key, { onFailed: (saved) => failed.push(saved), onStored: () => {}, send, served });
+
+  tab.toggleSave(key, {
+    onFailed: (saved) => failed.push(saved),
+    onStored: () => {},
+    send,
+    served,
+  });
+
   return { failed };
 }
 
@@ -73,5 +82,22 @@ describe(toggleSave, () => {
 
     expect(completed.failed).toStrictEqual([]);
     expect(player.failed).toStrictEqual([false]);
+  });
+
+  it("takes another tab's removal of a save made here, so the next tap saves it again", async () => {
+    const key = randomUUID();
+    const api = server();
+    vi.resetModules();
+    const otherTab = await import("./tab-saves");
+
+    tap({ key, send: api.send, served: false });
+    await api.answerNewest();
+
+    tap({ key, send: api.send, served: true, tab: otherTab });
+    await api.answerNewest();
+
+    tap({ key, send: api.send, served: false });
+
+    expect(api.sent).toStrictEqual([true, false, true]);
   });
 });

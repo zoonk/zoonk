@@ -24,14 +24,43 @@ const taps = new Map<string, Tap>();
 
 const listeners = new Set<() => void>();
 
-function subscribe(onChange: () => void) {
-  listeners.add(onChange);
-  return () => listeners.delete(onChange);
-}
+/** Tells the browser's other tabs what the server stored; a channel never hears its own messages. */
+let channel: BroadcastChannel | null | undefined;
 
 function change(next: Partial<TabSaves>) {
   saves = { ...saves, ...next };
   listeners.forEach((notify) => notify());
+}
+
+function isStoredSave(data: unknown): data is { key: string; saved: boolean } {
+  return (
+    typeof data === "object" &&
+    data !== null &&
+    "key" in data &&
+    typeof data.key === "string" &&
+    "saved" in data &&
+    typeof data.saved === "boolean"
+  );
+}
+
+function getChannel(): BroadcastChannel | null {
+  if (channel === undefined) {
+    channel = "BroadcastChannel" in globalThis ? new BroadcastChannel("zoonk-saves") : null;
+
+    // Only for saves made here: the rest come from pages read after the write, the phone's included.
+    channel?.addEventListener("message", ({ data }: MessageEvent<unknown>) => {
+      if (isStoredSave(data) && saves.stored.has(data.key)) {
+        change({ stored: new Map(saves.stored).set(data.key, data.saved) });
+      }
+    });
+  }
+
+  return channel;
+}
+
+function subscribe(onChange: () => void) {
+  listeners.add(onChange);
+  return () => listeners.delete(onChange);
 }
 
 function without(states: States, key: string): States {
@@ -61,6 +90,8 @@ async function send(key: string, last: boolean): Promise<void> {
   }
 
   change({ stored: new Map(saves.stored).set(key, result) });
+  // oxlint-disable-next-line unicorn/require-post-message-target-origin -- A BroadcastChannel has no target origin.
+  getChannel()?.postMessage({ key, saved: result });
   tap.onStored(result);
   await send(key, result);
 }
@@ -88,8 +119,9 @@ export function toggleSave(
 }
 
 /**
- * What every page in this tab shows for the saves made in it: newer than a copy of a page the
- * router kept from before them. Signing out reloads the page, which forgets them.
+ * What every page in this tab shows for the saves made in it, kept current by the other tabs: newer
+ * than a copy of a page the router kept from before them. Signing out reloads the page, which
+ * forgets them.
  */
 export function useTabSaves(): TabSaves {
   return useSyncExternalStore(
