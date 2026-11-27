@@ -1119,92 +1119,6 @@
       "categoryScores": [
         {
           "categoryId": "correctness",
-          "reasoning": "Independent calculation confirms the keyed set is the first two options in every item. For the ball, return time is 4 s, velocity at 3 s is −10 m/s, maximum height is 20 m, and acceleration remains downward. The graph gives displacement 24 + 48 + 24 = 96 m, initial acceleration 3 m/s², and average velocity 8 m/s. The car brakes for 5 s over 75 m and travels another 15 m during reaction. Each option is independently assessable, with no ambiguous correct set.",
-          "score": 10,
-          "label": "Correctness",
-          "weight": 30
-        },
-        {
-          "categoryId": "misconceptionsAndFeedback",
-          "reasoning": "Every distractor represents a specific realistic mistake, and its label and explanation match it. Omitting the factor of two produces the stated 40 m; using peak velocity produces 12 m/s; including or omitting reaction distance produces the stated 90 m or 75 m. The conceptual traps accurately address confusion between zero velocity and zero acceleration. Feedback explains the mistakes rather than merely supplying answers.",
-          "score": 10,
-          "label": "Misconceptions & feedback",
-          "weight": 25
-        },
-        {
-          "categoryId": "realism",
-          "reasoning": "The four-option, multiple-correct structure, independent statements, SI units, and fixedOrder=false satisfy the requested format. However, the questions read as introductory textbook exercises rather than JEE Advanced one-or-more-correct items. Multiple statements require only one substitution or direct graph reading, explicitly contrary to the requested difficulty. The out-of-place-in-the-named-exam cap of 7 applies.",
-          "score": 6,
-          "label": "Exam and setting realism",
-          "weight": 25
-        },
-        {
-          "categoryId": "skillFit",
-          "reasoning": "The set is entirely in English and stays within one-dimensional kinematics, covering vertical motion, velocity-time graphs, and reaction-plus-braking motion. Most options require application rather than recall, and the three questions use distinct situations and methods. However, the reasoning remains shallow for the advanced target, and the graph never requires distinguishing signed displacement from distance.",
-          "score": 8,
-          "label": "Skill fit & variety",
-          "weight": 20
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 3 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 3472,
-          "outputTokens": 1009,
-          "reasoningTokens": 334
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "The set does not meet the explicitly required JEE Advanced difficulty. Item 1 consists of standard projectile-motion substitutions and a basic conceptual check. Item 2 includes a direct slope calculation and a direct reading of constant velocity. Item 3's braking duration follows from one formula. Although some options require adding areas or distances, none of the items consistently requires the stipulated multistep combination of ideas.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Broaden the reasoning tested by including a velocity-time graph that crosses zero, requiring separate calculations of displacement and distance, or a relative-motion problem with a delayed start. Retain the specific misconception labels and explanatory feedback.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "JEE Advanced-style physics items in English on kinematics where one or more options are correct. Each item has 4 options, at least one correct and at least one wrong, every correct option is right on its own (never \"both A and C\"), wrong options come from real mistakes (sign of acceleration, mixing displacement and distance), and fixedOrder is false. Difficulty matches JEE Advanced's own one-or-more-correct questions, not a textbook's: each item needs several steps that combine at least two ideas (a graph read and then integrated, a relative motion set up and then solved), so no statement follows from one formula or one reading of a given value.",
-        "id": "en-jee-advanced-kinematics-multi-correct-1",
-        "userInput": {
-          "count": 3,
-          "examFormat": {
-            "name": "JEE Advanced",
-            "optionCount": 4,
-            "style": "Physics, chemistry and mathematics problems for engineering admission in India: multiple-choice questions with four options where one or more may be correct (full marks only when every correct option is chosen and no wrong one), and numerical-answer questions entered as a number; concise, rigorous wording with SI units.",
-            "select": "all"
-          },
-          "format": "multipleChoice",
-          "language": "en",
-          "level": "advanced",
-          "skill": {
-            "description": "Use the equations of motion for constant acceleration, including motion under gravity, and read velocity-time graphs.",
-            "name": "Kinematics in one dimension"
-          }
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "correctness",
           "reasoning": "Independent calculation gives 135 m, 23 m/s, and 21 m, matching all three keys and their solution expressions. All allowed parameter combinations produce non-negative integers: accelerations are even, the second item's time interval is always positive, and the first item's minimum final velocity is 4 m/s, consistent with never stopping. The mathematical expressions use bare variable names, and no question requests rounding.",
           "score": 10,
           "label": "Correctness",
@@ -2360,6 +2274,94 @@
           "skill": {
             "description": "Compare and order negative numbers, such as temperatures below zero.",
             "name": "Ordering negative numbers"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "A and B are the unique correct set in each item. The ball returns at 4 s, has velocity −10 m/s at 3 s, peaks at 20 m and retains downward acceleration. The robot's graph gives 24 + 48 + 24 = 96 m, an initial slope of 3 m/s², a mean velocity of 8 m/s and a nonzero plateau velocity. The car reacts over 15 m and brakes over 75 m in 5 s, for 90 m overall.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Each distractor has a specific, reproducible error and feedback that distinguishes it from the correct reasoning. For example, omitting the factor of one-half gives exactly 40 m, using the graph maximum as the mean gives exactly 12 m/s, and omitting reaction travel gives exactly 75 m. The zero-acceleration traps also explain the distinction between velocity and acceleration.",
+          "score": 10,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The four independently judgeable statements, SI units and absence of a stated selection count fit the format. The reasoning level does not fit the named exam: even the graph item marked hard includes a direct plateau read and a single-segment slope. The set reads like introductory practice rather than JEE Advanced one-or-more-correct problems.",
+          "score": 6,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The English-language set exercises three relevant applications: vertical motion, velocity–time graph interpretation and two-phase stopping. Learners do calculate and interpret rather than merely recall, but many statements isolate a single operation, and the stopping item repeatedly tests the same phase distinction instead of extending the reasoning.",
+          "score": 7,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "itemsScored": 3,
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 4008,
+          "inputTokens": 4011,
+          "outputTokens": 729,
+          "reasoningTokens": 0
+        }
+      },
+      "keyFlaws": [],
+      "steps": [
+        {
+          "conclusion": "The keys are correct, but none of the three items meets the required JEE Advanced reasoning level throughout. In items[0], even the return time follows from a single displacement equation. In items[1], the acceleration needs just one slope calculation, and the rest claim can be rejected by reading the plateau. In items[2], the braking duration is a single division. The multistep stopping-distance option does not make the other options multistep.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Three options in items[2] turn on the same distinction between 75 m of braking and 90 m of total travel. Once a learner computes those two distances, the remaining comparisons add little assessment value.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use a delayed second launch so the learner must establish both trajectories before comparing velocities at an encounter. For the graph, include a reversal and ask when the robot regains an earlier position, requiring signed areas across intervals. For the car, give the obstacle distance and ask about speed at the obstacle, so the learner must account for the reaction phase before applying the braking equation.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "JEE Advanced-style physics items in English on kinematics where one or more options are correct. Each item has 4 options, at least one correct and at least one wrong, every correct option is right on its own (never \"both A and C\"), wrong options come from real mistakes (sign of acceleration, mixing displacement and distance), and fixedOrder is false. Difficulty matches JEE Advanced's own one-or-more-correct questions, not a textbook's: each item needs several steps that combine at least two ideas (a graph read and then integrated, a relative motion set up and then solved), so no statement follows from one formula or one reading of a given value. No question says how many options to pick or that several are right (\"Select all that apply\"): the app shows that line.",
+        "id": "en-jee-advanced-kinematics-multi-correct-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "JEE Advanced",
+            "optionCount": 4,
+            "style": "Physics, chemistry and mathematics problems for engineering admission in India: multiple-choice questions with four options where one or more may be correct (full marks only when every correct option is chosen and no wrong one), and numerical-answer questions entered as a number; concise, rigorous wording with SI units.",
+            "select": "all"
+          },
+          "format": "multipleChoice",
+          "language": "en",
+          "level": "advanced",
+          "skill": {
+            "description": "Use the equations of motion for constant acceleration, including motion under gravity, and read velocity-time graphs.",
+            "name": "Kinematics in one dimension"
           }
         }
       }
