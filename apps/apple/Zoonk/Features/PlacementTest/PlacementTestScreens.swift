@@ -101,17 +101,22 @@ struct UpNextLessonRow: View {
   let lesson: PlacementTestResult.NextLesson
 
   var body: some View {
-    ListRow(Text(verbatim: lesson.title), description: Text(TestCopy.upNext)) {
-      StatusMark(status: .next)
-    } trailing: {
-      if let minutes = lesson.estimatedMinutes {
-        Text(verbatim: studyDuration(minutes: minutes))
-          .typeStyle(.data)
-          .foregroundStyle(.mutedForeground)
+    // A group of its own, as Main's `UpNextLesson` is, never sharing one with what's around it.
+    Section {
+      ListRow(Text(verbatim: lesson.title), description: Text(TestCopy.upNext)) {
+        StatusMark(status: .next)
+      } trailing: {
+        if let minutes = lesson.estimatedMinutes {
+          Text(verbatim: studyDuration(minutes: minutes))
+            .typeStyle(.data)
+            .foregroundStyle(.mutedForeground)
+        }
       }
+      .currentRow()
+      .listRowBackground(Color.clear)
     }
-    .currentRow()
-    .listRowBackground(Color.clear)
+    // A row's room from what's around it, as when it shared their section.
+    .listSectionSpacing(0)
   }
 }
 
