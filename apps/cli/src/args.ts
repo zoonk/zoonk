@@ -1,7 +1,8 @@
 import { readFileSync } from "node:fs";
 import { parseArgs } from "node:util";
 import { isJsonObject } from "../../../packages/utils/src/json.ts";
-import { usageError } from "./errors.ts";
+import { auditClipsCommand } from "./audit-clips.ts";
+import { describeParseError, usageError } from "./errors.ts";
 import { commandUsage } from "./help.ts";
 import { parseJson } from "./http.ts";
 import { type Note, proposalNote, revertNote, withdrawalNote } from "./notes.ts";
@@ -32,6 +33,7 @@ type Options = {
   order?: string;
   reason?: string;
   "repair-writing"?: boolean;
+  "voiced-before"?: string;
   where?: string[];
 };
 
@@ -121,6 +123,10 @@ const COMMANDS = new Map<string, CommandSpec>([
   [
     "staff repair-writing",
     { arguments: 1, build: writingRepairCommand, options: ["after", "apply"] },
+  ],
+  [
+    "staff audit-clips",
+    { arguments: 1, build: auditClipsCommand, options: ["after", "limit", "voiced-before"] },
   ],
   [
     "staff models",
@@ -286,18 +292,6 @@ function checkOptions({
   }
 }
 
-/** Node's parse errors add advice (about positional arguments, or `--x=-XYZ`) no command here needs. */
-function describeParseError(error: unknown): string {
-  const message = error instanceof Error ? error.message : String(error);
-  const unknown = /^Unknown option '[^']+'\./u.exec(message)?.[0];
-
-  const missing =
-    /^Option '(?<option>--[a-z]+)(?: <value>)?' argument (?:missing|is ambiguous)/u.exec(message)
-      ?.groups?.option;
-
-  return unknown ?? (missing ? `${missing} needs a value.` : message);
-}
-
 function parseCommandLine(argv: string[]) {
   try {
     return parseArgs({
@@ -316,6 +310,7 @@ function parseCommandLine(argv: string[]) {
         order: { type: "string" },
         reason: { type: "string" },
         "repair-writing": { type: "boolean" },
+        "voiced-before": { type: "string" },
         where: { multiple: true, type: "string" },
       },
     });

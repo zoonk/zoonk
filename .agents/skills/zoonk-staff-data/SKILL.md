@@ -61,6 +61,12 @@ When shared Library content is wrong (a lesson, screen, question, word, sentence
 - **A lesson** (its plan, screens, words, sentences or map ideas): [fix a lesson](references/fix-a-lesson.md).
 - **Any other model**, and a single screen's words or answer key: [fix operations](references/operations.md).
 
+### Audit shared clips
+
+Use `pnpm zoonk staff audit-clips <words|sentences|speech> --limit 10 --voiced-before <release time in ISO format>` to sample older clips for extra speech or sounds. Continue one page at a time with `--after <next>` and the same cutoff until `next` is null. The default page is 100 clips and the maximum is 250. A page spends AI to listen, and a possible addition gets a second listen. `unchecked` counts clips whose download or listen failed.
+
+Collect the `fixes` entries from word and sentence pages into `{ "reason": "…", "fixes": [...] }` files of at most 250 entries. Check and propose each batch with the [usual content-fix commands](references/propose-a-fix.md). Speech pages report findings for staff to review.
+
 ## Local development
 
 `--api <url>` or `ZOONK_API_URL` points the CLI at another API, such as your checkout's local API URL from `pnpm dev`. Each API keeps its own login. Log in there as a seeded admin such as `owner@zoonk.test`, with the code from the local mailbox ([development guide](../../guides/local-app.md#sign-in)).

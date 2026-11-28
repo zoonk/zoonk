@@ -26,6 +26,11 @@ Written exam preparation repair
                                            Preview one page. --apply starts notice rereads
                                            or reopens unsupported writing claims.
 
+Shared clip audit
+  staff audit-clips <words|sentences|speech> [--after <cursor>] [--limit <n>] [--voiced-before <ISO date>]
+                                           Listen for added speech or sounds in one page of clips.
+                                           Default 100, at most 250. Use the same cutoff on each page.
+
 Content fixes (proposed here, approved by a staff person in Admin with a passkey)
   staff fixes propose [--check] <file.json>  Propose the fix or batch in the file, and print its review
                                            link and each fix's changes and effects. Nothing changes
