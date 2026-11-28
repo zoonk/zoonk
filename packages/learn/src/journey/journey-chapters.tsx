@@ -60,6 +60,16 @@ function isWritingAhead(chapter: PlanChapterView): boolean {
   return chapter.writing && !chapter.far && chapter.skills.length === 0;
 }
 
+function FoldedNames({ names }: { names: readonly string[] }) {
+  return (
+    <ul className="text-muted-foreground flex list-disc flex-col gap-1 pb-2 pl-7 text-sm">
+      {names.map((name) => (
+        <li key={name}>{name}</li>
+      ))}
+    </ul>
+  );
+}
+
 /** Whether the list would name any chapter: lessons being written right now aren't rows yet. */
 export function hasListedChapters(chapters: readonly PlanChapterView[]): boolean {
   return chapters.some((chapter) => !isWritingAhead(chapter));
@@ -143,11 +153,7 @@ function ChapterRow({
           <FoldChevron />
         </CollapsibleTrigger>
         <CollapsibleContent>
-          <ul className="text-muted-foreground flex list-disc flex-col gap-1 pb-2 pl-7 text-sm">
-            {chapter.skills.map((skill) => (
-              <li key={skill}>{skill}</li>
-            ))}
-          </ul>
+          <FoldedNames names={chapter.skills} />
         </CollapsibleContent>
       </Collapsible>
     );
@@ -205,11 +211,7 @@ export function LeftOutTopicsRow({ names }: { names: readonly string[] }) {
         <FoldChevron />
       </CollapsibleTrigger>
       <CollapsibleContent>
-        <ul className="text-muted-foreground flex list-disc flex-col gap-1 pb-2 pl-7 text-sm">
-          {names.map((name) => (
-            <li key={name}>{name}</li>
-          ))}
-        </ul>
+        <FoldedNames names={names} />
       </CollapsibleContent>
     </Collapsible>
   );
