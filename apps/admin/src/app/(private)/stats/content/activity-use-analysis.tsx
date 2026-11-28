@@ -156,7 +156,7 @@ function ActivityUseTiles({ before, now }: { before?: ActivityUseRow; now: Activ
             <ShareDetail share={shares.kept} unit={["planned activity", "planned activities"]} />
           )
         }
-        help="Activities a lesson's plan asked for that its screens show, with the template the plan named. A drop here means the writer lost them, not the planner."
+        help="Activities the lesson's current plan asks for that its screens show, with the template the plan named. A drop usually means writing or fixing lost them; a staff plan change also counts until the lesson is rewritten."
         icon={<ListChecksIcon />}
         title="Planned activities kept"
         value={formatShare(shares.kept.percent)}
