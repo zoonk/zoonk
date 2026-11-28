@@ -28,6 +28,129 @@
           "goals": [
             {
               "contentCountry": null,
+              "countryDependent": false,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-exam-is-never-waiting-for-a-country-1",
+        "userInput": {
+          "goal": "Pass the UK driving theory test",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": null,
+              "countryDependent": false,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-exam-is-never-waiting-for-a-country-2",
+        "userInput": {
+          "goal": "Pass the UK driving theory test",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": null,
+              "countryDependent": false,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-exam-is-never-waiting-for-a-country-3",
+        "userInput": {
+          "goal": "Pass the UK driving theory test",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": null,
               "countryDependent": true,
               "kind": "learn"
             }
@@ -765,14 +888,14 @@
         "expected": {
           "goals": [
             {
-              "contentCountry": null,
-              "countryDependent": false,
+              "contentCountry": "GB",
+              "countryDependent": true,
               "kind": "exam"
             }
           ],
           "route": "goals"
         },
-        "id": "en-exam-is-never-waiting-for-a-country-1",
+        "id": "en-exam-named-with-its-country-1",
         "userInput": {
           "goal": "Pass the UK driving theory test",
           "language": "en",
@@ -806,14 +929,14 @@
         "expected": {
           "goals": [
             {
-              "contentCountry": null,
-              "countryDependent": false,
+              "contentCountry": "GB",
+              "countryDependent": true,
               "kind": "exam"
             }
           ],
           "route": "goals"
         },
-        "id": "en-exam-is-never-waiting-for-a-country-2",
+        "id": "en-exam-named-with-its-country-2",
         "userInput": {
           "goal": "Pass the UK driving theory test",
           "language": "en",
@@ -847,16 +970,1624 @@
         "expected": {
           "goals": [
             {
-              "contentCountry": null,
-              "countryDependent": false,
+              "contentCountry": "GB",
+              "countryDependent": true,
               "kind": "exam"
             }
           ],
           "route": "goals"
         },
-        "id": "en-exam-is-never-waiting-for-a-country-3",
+        "id": "en-exam-named-with-its-country-3",
         "userInput": {
           "goal": "Pass the UK driving theory test",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": "CA",
+              "countryDependent": true,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-pilot-licence-names-its-country-1",
+        "userInput": {
+          "goal": "Get my private pilot licence in Canada",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": "CA",
+              "countryDependent": true,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-pilot-licence-names-its-country-2",
+        "userInput": {
+          "goal": "Get my private pilot licence in Canada",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": "CA",
+              "countryDependent": true,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-pilot-licence-names-its-country-3",
+        "userInput": {
+          "goal": "Get my private pilot licence in Canada",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": null,
+              "countryDependent": true,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-pilot-licence-without-a-country-waits-for-one-1",
+        "userInput": {
+          "goal": "I want to get my private pilot licence this year",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": null,
+              "countryDependent": true,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-pilot-licence-without-a-country-waits-for-one-2",
+        "userInput": {
+          "goal": "I want to get my private pilot licence this year",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": null,
+              "countryDependent": true,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-pilot-licence-without-a-country-waits-for-one-3",
+        "userInput": {
+          "goal": "I want to get my private pilot licence this year",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": "CA",
+              "countryDependent": true,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-cpa-in-canada-is-canadas-exam-1",
+        "userInput": {
+          "goal": "Pass the CPA in Canada",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": "CA",
+              "countryDependent": true,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-cpa-in-canada-is-canadas-exam-2",
+        "userInput": {
+          "goal": "Pass the CPA in Canada",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": "CA",
+              "countryDependent": true,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-cpa-in-canada-is-canadas-exam-3",
+        "userInput": {
+          "goal": "Pass the CPA in Canada",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": null,
+              "countryDependent": false,
+              "examName": {},
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-sat-in-another-country-keeps-no-country-1",
+        "userInput": {
+          "goal": "I'm taking the SAT in Kenya in March",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": null,
+              "countryDependent": false,
+              "examName": {},
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-sat-in-another-country-keeps-no-country-2",
+        "userInput": {
+          "goal": "I'm taking the SAT in Kenya in March",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": null,
+              "countryDependent": false,
+              "examName": {},
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-sat-in-another-country-keeps-no-country-3",
+        "userInput": {
+          "goal": "I'm taking the SAT in Kenya in March",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": null,
+              "countryDependent": false,
+              "examName": {},
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-ielts-where-they-sit-it-keeps-no-country-1",
+        "userInput": {
+          "goal": "Band 7 on IELTS Academic, I'll take it in Toronto",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": null,
+              "countryDependent": false,
+              "examName": {},
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-ielts-where-they-sit-it-keeps-no-country-2",
+        "userInput": {
+          "goal": "Band 7 on IELTS Academic, I'll take it in Toronto",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": null,
+              "countryDependent": false,
+              "examName": {},
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-ielts-where-they-sit-it-keeps-no-country-3",
+        "userInput": {
+          "goal": "Band 7 on IELTS Academic, I'll take it in Toronto",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountryNot": "CA",
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-faa-certificate-is-never-the-nationalitys-1",
+        "userInput": {
+          "goal": "I'm Canadian and I want to get an FAA private pilot certificate",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountryNot": "CA",
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-faa-certificate-is-never-the-nationalitys-2",
+        "userInput": {
+          "goal": "I'm Canadian and I want to get an FAA private pilot certificate",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountryNot": "CA",
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-faa-certificate-is-never-the-nationalitys-3",
+        "userInput": {
+          "goal": "I'm Canadian and I want to get an FAA private pilot certificate",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": null,
+              "countryDependent": true,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-nationality-is-not-an-exams-country-1",
+        "userInput": {
+          "goal": "Sou português e quero passar no exame de condução",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": null,
+              "countryDependent": true,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-nationality-is-not-an-exams-country-2",
+        "userInput": {
+          "goal": "Sou português e quero passar no exame de condução",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": null,
+              "countryDependent": true,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-nationality-is-not-an-exams-country-3",
+        "userInput": {
+          "goal": "Sou português e quero passar no exame de condução",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": null,
+              "countryDependent": true,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-nationality-is-not-an-exams-country-1",
+        "userInput": {
+          "goal": "I'm Nigerian and I want to pass the bar exam next year",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": null,
+              "countryDependent": true,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-nationality-is-not-an-exams-country-2",
+        "userInput": {
+          "goal": "I'm Nigerian and I want to pass the bar exam next year",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": null,
+              "countryDependent": true,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-nationality-is-not-an-exams-country-3",
+        "userInput": {
+          "goal": "I'm Nigerian and I want to pass the bar exam next year",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examName": {},
+              "examOption": {},
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-fe-discipline-stated-as-theirs-1",
+        "userInput": {
+          "goal": "Pass the FE Mechanical exam",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examName": {},
+              "examOption": {},
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-fe-discipline-stated-as-theirs-2",
+        "userInput": {
+          "goal": "Pass the FE Mechanical exam",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examName": {},
+              "examOption": {},
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-fe-discipline-stated-as-theirs-3",
+        "userInput": {
+          "goal": "Pass the FE Mechanical exam",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examName": {},
+              "examOption": null,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-fe-discipline-with-a-hedge-is-not-settled-1",
+        "userInput": {
+          "goal": "Pass the FE exam, maybe mechanical",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examName": {},
+              "examOption": null,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-fe-discipline-with-a-hedge-is-not-settled-2",
+        "userInput": {
+          "goal": "Pass the FE exam, maybe mechanical",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examName": {},
+              "examOption": null,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-fe-discipline-with-a-hedge-is-not-settled-3",
+        "userInput": {
+          "goal": "Pass the FE exam, maybe mechanical",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examName": {},
+              "examOption": null,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-fe-two-disciplines-are-not-settled-1",
+        "userInput": {
+          "goal": "Pass the FE exam, mechanical or civil, still deciding",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examName": {},
+              "examOption": null,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-fe-two-disciplines-are-not-settled-2",
+        "userInput": {
+          "goal": "Pass the FE exam, mechanical or civil, still deciding",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examName": {},
+              "examOption": null,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-fe-two-disciplines-are-not-settled-3",
+        "userInput": {
+          "goal": "Pass the FE exam, mechanical or civil, still deciding",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examDay": "booked",
+              "examNotBooked": true,
+              "hasTargetDate": false,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-booked-test-not-booked-yet-1",
+        "userInput": {
+          "goal": "Prepare for the GRE, I haven't booked a test date yet",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examDay": "booked",
+              "examNotBooked": true,
+              "hasTargetDate": false,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-booked-test-not-booked-yet-2",
+        "userInput": {
+          "goal": "Prepare for the GRE, I haven't booked a test date yet",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examDay": "booked",
+              "examNotBooked": true,
+              "hasTargetDate": false,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-booked-test-not-booked-yet-3",
+        "userInput": {
+          "goal": "Prepare for the GRE, I haven't booked a test date yet",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examDay": "booked",
+              "examNotBooked": false,
+              "hasTargetDate": true,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-booked-test-with-its-day-1",
+        "userInput": {
+          "goal": "My TOEFL is booked for December 12",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examDay": "booked",
+              "examNotBooked": false,
+              "hasTargetDate": true,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-booked-test-with-its-day-2",
+        "userInput": {
+          "goal": "My TOEFL is booked for December 12",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examDay": "booked",
+              "examNotBooked": false,
+              "hasTargetDate": true,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-booked-test-with-its-day-3",
+        "userInput": {
+          "goal": "My TOEFL is booked for December 12",
           "language": "en",
           "today": "2026-09-26"
         }
@@ -1001,19 +2732,19 @@
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "1 goals; missing language goal",
           "kind": "majorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "None",
+          "conclusion": "1 goals; missing language goal",
           "kind": "minorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "None",
+          "conclusion": "1 goals; missing language goal",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 6
         }
       ],
       "testCase": {
@@ -1089,19 +2820,19 @@
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "1 goals; missing language goal",
           "kind": "majorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "None",
+          "conclusion": "1 goals; missing language goal",
           "kind": "minorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "None",
+          "conclusion": "1 goals; missing language goal",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 6
         }
       ],
       "testCase": {
@@ -1133,19 +2864,19 @@
       },
       "steps": [
         {
-          "conclusion": "title \"Use Docker Desktop better\"",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "title \"Use Docker Desktop better\"",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "title \"Use Docker Desktop better\"",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
@@ -1373,19 +3104,19 @@
       },
       "steps": [
         {
-          "conclusion": "title \"Dominar o módulo de compras do Protheus\"",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "title \"Dominar o módulo de compras do Protheus\"",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "title \"Dominar o módulo de compras do Protheus\"",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
@@ -1453,19 +3184,19 @@
       },
       "steps": [
         {
-          "conclusion": "title \"Dominar o módulo de compras do Protheus\"",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "title \"Dominar o módulo de compras do Protheus\"",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "title \"Dominar o módulo de compras do Protheus\"",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
@@ -2284,19 +4015,19 @@
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "country undefined",
           "kind": "majorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "country undefined",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "country undefined",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 8
         }
       ],
       "testCase": {
@@ -3473,19 +5204,19 @@
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "target score \"A2\"",
           "kind": "majorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "target score \"A2\"",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "target score \"A2\"",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 8
         }
       ],
       "testCase": {
@@ -3514,19 +5245,19 @@
       },
       "steps": [
         {
-          "conclusion": "target score \"A2\"",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "target score \"A2\"",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "target score \"A2\"",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
@@ -3555,19 +5286,19 @@
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "target score \"A2\"",
           "kind": "majorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "target score \"A2\"",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "target score \"A2\"",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 8
         }
       ],
       "testCase": {
@@ -3596,19 +5327,19 @@
       },
       "steps": [
         {
-          "conclusion": "title repeats targetCourse",
+          "conclusion": "title repeats targetCourse; title repeats targetScore",
           "kind": "majorErrors",
-          "score": 8
+          "score": 6
         },
         {
-          "conclusion": "title repeats targetCourse",
+          "conclusion": "title repeats targetCourse; title repeats targetScore",
           "kind": "minorErrors",
-          "score": 8
+          "score": 6
         },
         {
-          "conclusion": "title repeats targetCourse",
+          "conclusion": "title repeats targetCourse; title repeats targetScore",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 6
         }
       ],
       "testCase": {
@@ -3642,19 +5373,19 @@
       },
       "steps": [
         {
-          "conclusion": "title repeats targetCourse",
+          "conclusion": "title repeats targetCourse; title repeats targetScore",
           "kind": "majorErrors",
-          "score": 8
+          "score": 6
         },
         {
-          "conclusion": "title repeats targetCourse",
+          "conclusion": "title repeats targetCourse; title repeats targetScore",
           "kind": "minorErrors",
-          "score": 8
+          "score": 6
         },
         {
-          "conclusion": "title repeats targetCourse",
+          "conclusion": "title repeats targetCourse; title repeats targetScore",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 6
         }
       ],
       "testCase": {
@@ -3688,19 +5419,19 @@
       },
       "steps": [
         {
-          "conclusion": "title repeats targetCourse",
+          "conclusion": "title repeats targetCourse; title repeats targetScore",
           "kind": "majorErrors",
-          "score": 8
+          "score": 6
         },
         {
-          "conclusion": "title repeats targetCourse",
+          "conclusion": "title repeats targetCourse; title repeats targetScore",
           "kind": "minorErrors",
-          "score": 8
+          "score": 6
         },
         {
-          "conclusion": "title repeats targetCourse",
+          "conclusion": "title repeats targetCourse; title repeats targetScore",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 6
         }
       ],
       "testCase": {
@@ -4859,7 +6590,7 @@
           ],
           "route": "goals"
         },
-        "id": "en-exam-ielts-band-3",
+        "id": "en-exam-ielts-band-2",
         "userInput": {
           "goal": "get band 7 on the IELTS by March",
           "language": "en",
@@ -4896,6 +6627,51 @@
               "examDay": "booked",
               "examName": {},
               "examTarget": "score",
+              "hasTarget": true,
+              "kind": "exam",
+              "month": "2027-03",
+              "targetLanguage": "en"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-exam-ielts-band-3",
+        "userInput": {
+          "goal": "get band 7 on the IELTS by March",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "title repeats targetScore",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "title repeats targetScore",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "title repeats targetScore",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examDay": "booked",
+              "examName": {},
+              "examTarget": "score",
               "hasTargetDate": false,
               "kind": "exam",
               "title": {}
@@ -4918,19 +6694,19 @@
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "title repeats targetScore",
           "kind": "majorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "title repeats targetScore",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "title repeats targetScore",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 8
         }
       ],
       "testCase": {
@@ -4962,19 +6738,19 @@
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "title repeats targetScore",
           "kind": "majorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "title repeats targetScore",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "title repeats targetScore",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 8
         }
       ],
       "testCase": {
@@ -8117,19 +9893,19 @@
       },
       "steps": [
         {
-          "conclusion": "position \"Auditoria\" names what it should leave out",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "position \"Auditoria\" names what it should leave out",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "position \"Auditoria\" names what it should leave out",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
@@ -8157,19 +9933,19 @@
       },
       "steps": [
         {
-          "conclusion": "position \"Auditoria\" names what it should leave out",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "position \"Auditoria\" names what it should leave out",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "position \"Auditoria\" names what it should leave out",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
@@ -8197,19 +9973,19 @@
       },
       "steps": [
         {
-          "conclusion": "position \"Auditoria\" names what it should leave out",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "position \"Auditoria\" names what it should leave out",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "position \"Auditoria\" names what it should leave out",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
@@ -8529,19 +10305,19 @@
       },
       "steps": [
         {
-          "conclusion": "title \"大学入学共通テストの対策\"",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "title \"大学入学共通テストの対策\"",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "title \"大学入学共通テストの対策\"",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
@@ -9357,23 +11133,23 @@
     {
       "classification": {
         "expected": "goals",
-        "predicted": "goals"
+        "predicted": "unclear"
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "majorErrors",
-          "score": 10
+          "score": 1
         },
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "minorErrors",
-          "score": 10
+          "score": 1
         },
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 1
         }
       ],
       "testCase": {
@@ -9400,23 +11176,23 @@
     {
       "classification": {
         "expected": "goals",
-        "predicted": "unclear"
+        "predicted": "goals"
       },
       "steps": [
         {
-          "conclusion": "Route \"unclear\"",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 1
+          "score": 10
         },
         {
-          "conclusion": "Route \"unclear\"",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 1
+          "score": 10
         },
         {
-          "conclusion": "Route \"unclear\"",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 1
+          "score": 10
         }
       ],
       "testCase": {
@@ -9442,23 +11218,23 @@
     {
       "classification": {
         "expected": "goals",
-        "predicted": "unclear"
+        "predicted": "goals"
       },
       "steps": [
         {
-          "conclusion": "Route \"unclear\"",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 1
+          "score": 10
         },
         {
-          "conclusion": "Route \"unclear\"",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 1
+          "score": 10
         },
         {
-          "conclusion": "Route \"unclear\"",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 1
+          "score": 10
         }
       ],
       "testCase": {
@@ -9484,23 +11260,23 @@
     {
       "classification": {
         "expected": "goals",
-        "predicted": "unclear"
+        "predicted": "goals"
       },
       "steps": [
         {
-          "conclusion": "Route \"unclear\"",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 1
+          "score": 10
         },
         {
-          "conclusion": "Route \"unclear\"",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 1
+          "score": 10
         },
         {
-          "conclusion": "Route \"unclear\"",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 1
+          "score": 10
         }
       ],
       "testCase": {
@@ -9698,19 +11474,19 @@
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "title repeats targetScore",
           "kind": "majorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "title repeats targetScore",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "title repeats targetScore",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 8
         }
       ],
       "testCase": {
@@ -9951,19 +11727,19 @@
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "title repeats targetScore",
           "kind": "majorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "title repeats targetScore",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "title repeats targetScore",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 8
         }
       ],
       "testCase": {
@@ -10037,53 +11813,6 @@
       },
       "steps": [
         {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "followUp": null,
-          "goals": [
-            {
-              "examName": null,
-              "examSubjects": [
-                {},
-                {},
-                {}
-              ],
-              "kind": "exam",
-              "targetScore": {}
-            }
-          ],
-          "route": "goals"
-        },
-        "id": "ko-term-finals-naming-its-subjects-asks-nothing-1",
-        "userInput": {
-          "goal": "기말고사 국어, 수학, 영어 평균 90점",
-          "language": "ko",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
           "conclusion": "title repeats targetScore",
           "kind": "majorErrors",
           "score": 8
@@ -10131,19 +11860,19 @@
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "title repeats targetScore",
           "kind": "majorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "title repeats targetScore",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "title repeats targetScore",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 8
         }
       ],
       "testCase": {
@@ -10174,23 +11903,23 @@
     {
       "classification": {
         "expected": "goals",
-        "predicted": "unclear"
+        "predicted": "goals"
       },
       "steps": [
         {
-          "conclusion": "Route \"unclear\"",
+          "conclusion": "exam \"기말고사\"; follow-ups [\"수학 기말고사에 어떤 단원이 포함되나요?\"]",
           "kind": "majorErrors",
-          "score": 1
+          "score": 6
         },
         {
-          "conclusion": "Route \"unclear\"",
+          "conclusion": "exam \"기말고사\"; follow-ups [\"수학 기말고사에 어떤 단원이 포함되나요?\"]",
           "kind": "minorErrors",
-          "score": 1
+          "score": 6
         },
         {
-          "conclusion": "Route \"unclear\"",
+          "conclusion": "exam \"기말고사\"; follow-ups [\"수학 기말고사에 어떤 단원이 포함되나요?\"]",
           "kind": "potentialImprovements",
-          "score": 1
+          "score": 6
         }
       ],
       "testCase": {
@@ -10215,23 +11944,23 @@
     {
       "classification": {
         "expected": "goals",
-        "predicted": "unclear"
+        "predicted": "goals"
       },
       "steps": [
         {
-          "conclusion": "Route \"unclear\"",
+          "conclusion": "exam \"기말고사\"",
           "kind": "majorErrors",
-          "score": 1
+          "score": 8
         },
         {
-          "conclusion": "Route \"unclear\"",
+          "conclusion": "exam \"기말고사\"",
           "kind": "minorErrors",
-          "score": 1
+          "score": 8
         },
         {
-          "conclusion": "Route \"unclear\"",
+          "conclusion": "exam \"기말고사\"",
           "kind": "potentialImprovements",
-          "score": 1
+          "score": 8
         }
       ],
       "testCase": {
@@ -10256,23 +11985,23 @@
     {
       "classification": {
         "expected": "goals",
-        "predicted": "unclear"
+        "predicted": "goals"
       },
       "steps": [
         {
-          "conclusion": "Route \"unclear\"",
+          "conclusion": "exam \"기말고사\"; follow-ups [\"수학 기말고사에서 어떤 단원이 나오나요?\"]",
           "kind": "majorErrors",
-          "score": 1
+          "score": 6
         },
         {
-          "conclusion": "Route \"unclear\"",
+          "conclusion": "exam \"기말고사\"; follow-ups [\"수학 기말고사에서 어떤 단원이 나오나요?\"]",
           "kind": "minorErrors",
-          "score": 1
+          "score": 6
         },
         {
-          "conclusion": "Route \"unclear\"",
+          "conclusion": "exam \"기말고사\"; follow-ups [\"수학 기말고사에서 어떤 단원이 나오나요?\"]",
           "kind": "potentialImprovements",
-          "score": 1
+          "score": 6
         }
       ],
       "testCase": {
@@ -10346,19 +12075,19 @@
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "follow-ups [\"Which subjects do your finals cover?\"]",
           "kind": "majorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "follow-ups [\"Which subjects do your finals cover?\"]",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "follow-ups [\"Which subjects do your finals cover?\"]",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 8
         }
       ],
       "testCase": {
@@ -10436,19 +12165,19 @@
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "follow-ups [\"Which subjects does this final period cover?\"]",
           "kind": "majorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "follow-ups [\"Which subjects does this final period cover?\"]",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "follow-ups [\"Which subjects does this final period cover?\"]",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 8
         }
       ],
       "testCase": {
@@ -10518,19 +12247,19 @@
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "follow-ups [\"Which subjects does this final exam period cover?\"]",
           "kind": "majorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "follow-ups [\"Which subjects does this final exam period cover?\"]",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "follow-ups [\"Which subjects does this final exam period cover?\"]",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 8
         }
       ],
       "testCase": {
@@ -11581,23 +13310,23 @@
     {
       "classification": {
         "expected": "goals",
-        "predicted": "goals"
+        "predicted": "unclear"
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "majorErrors",
-          "score": 10
+          "score": 1
         },
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "minorErrors",
-          "score": 10
+          "score": 1
         },
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 1
         }
       ],
       "testCase": {
@@ -11632,23 +13361,23 @@
     {
       "classification": {
         "expected": "goals",
-        "predicted": "goals"
+        "predicted": "unclear"
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "majorErrors",
-          "score": 10
+          "score": 1
         },
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "minorErrors",
-          "score": 10
+          "score": 1
         },
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 1
         }
       ],
       "testCase": {
@@ -11683,23 +13412,23 @@
     {
       "classification": {
         "expected": "goals",
-        "predicted": "goals"
+        "predicted": "unclear"
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "majorErrors",
-          "score": 10
+          "score": 1
         },
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "minorErrors",
-          "score": 10
+          "score": 1
         },
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 1
         }
       ],
       "testCase": {
@@ -12453,19 +14182,19 @@
       },
       "steps": [
         {
-          "conclusion": "title \"Pass the acids and bases quiz\"",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "title \"Pass the acids and bases quiz\"",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "title \"Pass the acids and bases quiz\"",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
@@ -12503,19 +14232,19 @@
       },
       "steps": [
         {
-          "conclusion": "date \"2026-11-03\"; title \"Pass the HIST 210 midterm\"",
+          "conclusion": "title \"Prepare for the HIST 210 exam\"",
           "kind": "majorErrors",
-          "score": 6
+          "score": 8
         },
         {
-          "conclusion": "date \"2026-11-03\"; title \"Pass the HIST 210 midterm\"",
+          "conclusion": "title \"Prepare for the HIST 210 exam\"",
           "kind": "minorErrors",
-          "score": 6
+          "score": 8
         },
         {
-          "conclusion": "date \"2026-11-03\"; title \"Pass the HIST 210 midterm\"",
+          "conclusion": "title \"Prepare for the HIST 210 exam\"",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 8
         }
       ],
       "testCase": {
@@ -12607,19 +14336,19 @@
       },
       "steps": [
         {
-          "conclusion": "date \"2026-11-03\"; title \"Pass the HIST 210 midterm\"",
+          "conclusion": "title \"Prepare for the HIST 210 exam\"",
           "kind": "majorErrors",
-          "score": 6
+          "score": 8
         },
         {
-          "conclusion": "date \"2026-11-03\"; title \"Pass the HIST 210 midterm\"",
+          "conclusion": "title \"Prepare for the HIST 210 exam\"",
           "kind": "minorErrors",
-          "score": 6
+          "score": 8
         },
         {
-          "conclusion": "date \"2026-11-03\"; title \"Pass the HIST 210 midterm\"",
+          "conclusion": "title \"Prepare for the HIST 210 exam\"",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 8
         }
       ],
       "testCase": {
@@ -12708,19 +14437,19 @@
       },
       "steps": [
         {
-          "conclusion": "kind \"learn\" instead of exam; exam undefined",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "kind \"learn\" instead of exam; exam undefined",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "kind \"learn\" instead of exam; exam undefined",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
@@ -14155,23 +15884,23 @@
     {
       "classification": {
         "expected": "goals",
-        "predicted": "goals"
+        "predicted": "unclear"
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "majorErrors",
-          "score": 10
+          "score": 1
         },
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "minorErrors",
-          "score": 10
+          "score": 1
         },
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 1
         }
       ],
       "testCase": {
