@@ -1,0 +1,13 @@
+{
+  "caseId": "pt-ielts-part-1-from-notice",
+  "challenger": {
+    "costUsd": 0.01911575,
+    "durationMs": 41306.50679100002,
+    "hash": "d736dcd483dfe44096c4f0689ec2800a6290cb2e36b0dc9ae361de5b2f35798e",
+    "systemPromptHash": "ccf3b8af560cc5970811bb768c9f403f59fe5ec556d1ecbb1011b7b662b4d84a",
+    "userPromptHash": "9d73dbc3c17936bd060df1033972ac2d9746d4b3df7fda5fc17c21c8e005b6c7"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 1
+}

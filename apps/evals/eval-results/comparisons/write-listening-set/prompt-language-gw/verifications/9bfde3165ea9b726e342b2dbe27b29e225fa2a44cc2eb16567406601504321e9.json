@@ -1,0 +1,283 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "pt-ielts-part-1-from-notice",
+        "claimId": "46af9997bbfbc907",
+        "criterion": "keys",
+        "observationId": "526f05540ed62d0aa6d1f54d1e407e98092881f58c2505c22adaec15bfdd3d54.first.05f3b4f7-2468-4646-8b3a-be5e2336001d.0",
+        "run": 2,
+        "side": "incumbent"
+      },
+      {
+        "caseId": "pt-ielts-part-1-from-notice",
+        "claimId": "fbcd9d2aafa6d5aa",
+        "criterion": "examRealism",
+        "observationId": "526f05540ed62d0aa6d1f54d1e407e98092881f58c2505c22adaec15bfdd3d54.first.05f3b4f7-2468-4646-8b3a-be5e2336001d.1",
+        "run": 2,
+        "side": "incumbent"
+      },
+      {
+        "caseId": "pt-ielts-part-1-from-notice",
+        "claimId": "21373bed718b9d1c",
+        "criterion": "naturalSpeech",
+        "observationId": "526f05540ed62d0aa6d1f54d1e407e98092881f58c2505c22adaec15bfdd3d54.first.05f3b4f7-2468-4646-8b3a-be5e2336001d.2",
+        "run": 2,
+        "side": "incumbent"
+      },
+      {
+        "caseId": "pt-ielts-part-1-from-notice",
+        "claimId": "0af144818241361e",
+        "criterion": "keys",
+        "observationId": "526f05540ed62d0aa6d1f54d1e407e98092881f58c2505c22adaec15bfdd3d54.first.05f3b4f7-2468-4646-8b3a-be5e2336001d.3",
+        "run": 2,
+        "side": "challenger"
+      },
+      {
+        "caseId": "pt-ielts-part-1-from-notice",
+        "claimId": "b4b81b48a68699d3",
+        "criterion": "examRealism",
+        "observationId": "526f05540ed62d0aa6d1f54d1e407e98092881f58c2505c22adaec15bfdd3d54.first.05f3b4f7-2468-4646-8b3a-be5e2336001d.4",
+        "run": 2,
+        "side": "challenger"
+      },
+      {
+        "caseId": "pt-ielts-part-1-from-notice",
+        "claimId": "438b842c77f7fb34",
+        "criterion": "keys",
+        "observationId": "6809034f39b59b5333a11ee8b7b905f6a98e8bd7c7132d1d3757cad83768d191.first.24e767ca-a823-4a02-9c71-8ecdd323539b.0",
+        "run": 2,
+        "side": "challenger"
+      },
+      {
+        "caseId": "pt-ielts-part-1-from-notice",
+        "claimId": "d3ede63ce1c3b6a9",
+        "criterion": "naturalSpeech",
+        "observationId": "6809034f39b59b5333a11ee8b7b905f6a98e8bd7c7132d1d3757cad83768d191.first.24e767ca-a823-4a02-9c71-8ecdd323539b.1",
+        "run": 2,
+        "side": "incumbent"
+      },
+      {
+        "caseId": "pt-ielts-part-1-from-notice",
+        "claimId": "fd4491605ea2c4bc",
+        "criterion": "keys",
+        "observationId": "6809034f39b59b5333a11ee8b7b905f6a98e8bd7c7132d1d3757cad83768d191.first.24e767ca-a823-4a02-9c71-8ecdd323539b.2",
+        "run": 2,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.00523796,
+    "id": "9bfde3165ea9b726e342b2dbe27b29e225fa2a44cc2eb16567406601504321e9",
+    "packet": [
+      {
+        "A": {
+          "blob": "daeabc0bdcdb777b049cf3acd7140c1d948290635275e4e0ea0690b4551dbf22",
+          "format": "text"
+        },
+        "B": {
+          "blob": "99252cbe5a307530cf8a0f21dc9cebdf307255404b4ff16eade35c918371a135",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "The sample answers for numerical questions use words even though the prompts require a number: for example, “three,” “quarter past eight,” and “forty-eight pounds.” These do not follow the stated answer limits.",
+            "claimId": "46af9997bbfbc907",
+            "criterion": "keys",
+            "location": {
+              "detail": "Sample answers for questions 2, 3, 4 and 8",
+              "kind": "range"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "The output supplies speaker accents and question difficulty levels even though the expectation explicitly says to provide no accents and no level.",
+            "claimId": "fbcd9d2aafa6d5aa",
+            "criterion": "examRealism",
+            "location": {
+              "detail": "Speaker metadata and difficulty fields throughout",
+              "kind": "whole"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "The key points are in English rather than Brazilian Portuguese.",
+            "claimId": "21373bed718b9d1c",
+            "criterion": "naturalSpeech",
+            "location": {
+              "detail": "Key points for all ten questions",
+              "kind": "whole"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "The sample answers for numerical questions use words even though the prompts require a number: for example, “three,” “quarter past nine,” “forty-eight pounds,” “twenty-four,” and the phone number spelled out in words.",
+            "claimId": "0af144818241361e",
+            "criterion": "keys",
+            "location": {
+              "detail": "Sample answers for questions 3, 4, 5, 7 and 10",
+              "kind": "range"
+            },
+            "output": "B"
+          },
+          {
+            "claim": "The output supplies speaker accents and question difficulty levels even though the expectation explicitly says to provide no accents and no level.",
+            "claimId": "b4b81b48a68699d3",
+            "criterion": "examRealism",
+            "location": {
+              "detail": "Speaker metadata and difficulty fields throughout",
+              "kind": "whole"
+            },
+            "output": "B"
+          },
+          {
+            "claim": "As respostas-modelo de perguntas com a instrução “ONE NUMBER” estão escritas por extenso, em vez de usar números como dígitos; isso afeta as questões 3, 4, 5, 7 e 10.",
+            "claimId": "438b842c77f7fb34",
+            "criterion": "keys",
+            "location": {
+              "detail": "Campos sampleAnswer das questões 3, 4, 5, 7 e 10.",
+              "kind": "range"
+            },
+            "output": "B"
+          },
+          {
+            "claim": "Os pontos-chave estão em inglês, não em português brasileiro.",
+            "claimId": "d3ede63ce1c3b6a9",
+            "criterion": "naturalSpeech",
+            "location": {
+              "detail": "Campo keyPoints das dez questões.",
+              "kind": "range"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "As respostas-modelo de perguntas com a instrução “ONE NUMBER” estão escritas por extenso, em vez de usar números como dígitos; isso afeta as questões 2, 4 e 8.",
+            "claimId": "fd4491605ea2c4bc",
+            "criterion": "keys",
+            "location": {
+              "detail": "Campos sampleAnswer das questões 2, 4 e 8.",
+              "kind": "range"
+            },
+            "output": "A"
+          }
+        ],
+        "expectations": {
+          "blob": "0f4c4d97030993b206aceb130e0ef788768ca6d4392c4a79b2b2cec72ba26480",
+          "format": "text"
+        },
+        "input": {
+          "blob": "446cabb2aba2ebbdd2871df5d412c13a6750e665850c54a6820967cef79a4eb5",
+          "format": "json"
+        },
+        "relatedObservations": [
+          {
+            "claim": "All keyPoints are written in English, but the expectations require key points in Brazilian Portuguese.",
+            "output": "A"
+          }
+        ]
+      },
+      {
+        "A": {
+          "blob": "d3b9359462f322946a931853d88087de4957f6aaff4d0046ab36e6a59e841030",
+          "format": "text"
+        },
+        "B": {
+          "blob": "e28a3cc207cb8b10ae277130dc394190bf4e98980b307e534ce367d7cbdd66dc",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "Every reason and misconception of the second question is written in Spanish instead of Brazilian Portuguese, so the learner gets the explanation of that answer in the language they are being tested on.",
+            "claimId": "a9458ec2afaa06a7",
+            "criterion": "naturalSpeech",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "The questions and options are written in Brazilian Portuguese instead of Spanish.",
+            "claimId": "a9b067b822f4d94b",
+            "criterion": "naturalSpeech",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "B"
+          }
+        ],
+        "expectations": {
+          "blob": "09803fc2d24b1de2ec9718d3917bc9d25aa51ccbce6f0146f303ab854bf1a987",
+          "format": "text"
+        },
+        "input": {
+          "blob": "d5c8e6c07ff797238a5ddb72546bb373e495f0b5e46b22bf3601b5b8892bcdc2",
+          "format": "json"
+        }
+      }
+    ],
+    "passed": true,
+    "plantedDefectPassed": true,
+    "protocolHash": "ed018fd13c57b447f6f3cbfd3fcf01e6b506c0102da6f1fa19dac5ce44b4d919",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "46af9997bbfbc907",
+          "finding": "holds for both",
+          "reason": "As respostas-modelo 'three', 'quarter past eight' e 'forty-eight pounds' estão por extenso nas questões 2, 4 e 8, que pedem número (ONE NUMBER), e a expectativa exige dígitos. A questão 3 ('library') não é numérica, então a localização citada está errada, mas B tem o mesmo problema."
+        },
+        {
+          "claimId": "fbcd9d2aafa6d5aa",
+          "finding": "holds for both",
+          "reason": "Os dois resultados incluem 'British English' nos speakers e campos 'difficulty' nas questões, enquanto a expectativa pede nenhum sotaque e nenhum nível."
+        },
+        {
+          "claimId": "21373bed718b9d1c",
+          "finding": "holds",
+          "reason": "Os keyPoints das dez questões de A estão em inglês, por exemplo 'The surname must be Mercer.', e a expectativa pede português brasileiro. Os de B estão em português."
+        },
+        {
+          "claimId": "0af144818241361e",
+          "finding": "holds for both",
+          "reason": "Em B, as respostas-modelo 'three', 'quarter past nine', 'forty-eight pounds', 'twenty-four' e o telefone por extenso estão nas questões 3, 4, 5, 7 e 10, que pedem número. A também tem respostas por extenso nas questões numéricas, então o problema é compartilhado."
+        },
+        {
+          "claimId": "b4b81b48a68699d3",
+          "finding": "holds for both",
+          "reason": "Os dois resultados trazem 'British English' nos speakers e 'difficulty' nas questões, contrariando a expectativa de nenhum sotaque e nenhum nível."
+        },
+        {
+          "claimId": "438b842c77f7fb34",
+          "finding": "holds for both",
+          "reason": "Em B, as respostas-modelo das questões 3, 4, 5, 7 e 10 com 'ONE NUMBER' estão por extenso, como 'three' e 'quarter past nine', em vez de dígitos. A também tem respostas por extenso em campos numéricos."
+        },
+        {
+          "claimId": "d3ede63ce1c3b6a9",
+          "finding": "holds",
+          "reason": "Os keyPoints de A estão todos em inglês, enquanto a expectativa pede português brasileiro. Os de B estão em português, então o problema é só de A."
+        },
+        {
+          "claimId": "fd4491605ea2c4bc",
+          "finding": "holds for both",
+          "reason": "Em A, as respostas-modelo das questões 2, 4 e 8 com 'ONE NUMBER' estão por extenso: 'three', 'quarter past eight' e 'forty-eight pounds'. B tem o mesmo tipo de problema em campos numéricos, como 'quarter past nine'."
+        },
+        {
+          "claimId": "a9458ec2afaa06a7",
+          "finding": "holds",
+          "reason": "Em A, todas as reasons e misconceptions da segunda questão estão em espanhol, como 'Oyes que aceptan objetos usados...' e 'Interpreta el requisito...'. As demais questões de A estão em português, e B está em português nessa questão."
+        },
+        {
+          "claimId": "a9b067b822f4d94b",
+          "finding": "doesn't hold",
+          "reason": "As perguntas e opções de B estão em espanhol, por exemplo '¿Qué motivó principalmente la creación de la biblioteca de objetos?'. A afirmação de que estariam em português brasileiro é falsa; só as explicações estão em português."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

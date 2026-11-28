@@ -1,0 +1,149 @@
+{
+  "attempt": "first",
+  "costUsd": 0.005762389999999999,
+  "failures": [],
+  "packetId": "c87276e5cedc37592258ef7f09ca43bb8efde3981a263aa44f656552971d29fe",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, and every key matches the recording: streetlight, red filter, insect numbers, bridge, heavy rain and recordings.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both are identical: a single British speaker, six sentence-completion gaps with two-word limits and a monologue of plausible length for Part 2.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both are identical, with conversational first-person speech and no stage directions. The phrasing is somewhat written in places, but it is the same in both.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical, so neither serves its reader better."
+        },
+        "pairId": "3f1de404-a8c0-4f7a-b173-dc292904a03c"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Every key shared by both outputs is correct against the script, and neither has a key error.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "A",
+            "reason": "A has five questions covering the whole monologue, while B stops at four and drops the closing plans question.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "A",
+            "reason": "A's learner-facing reasons and misconceptions are in Brazilian Portuguese throughout, whereas B writes several of them in Spanish, which the Portuguese-speaking learner cannot read.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Reason for a wrong option is written in Spanish, not Brazilian Portuguese, so the learner cannot read the feedback.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "A Brazilian learner gets feedback on a wrong answer they cannot read, so they cannot learn why it was wrong.",
+            "location": {
+              "detail": "Question 2, option 'Aceptar únicamente artículos nuevos.'",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "Reason for a correct option is written in Spanish, not Brazilian Portuguese.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "The learner cannot read the explanation for why the correct option is right.",
+            "location": {
+              "detail": "Question 2, option 'Seleccionar artículos que pudieran utilizarse sin grandes arreglos.'",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "Misconception notes for several wrong options are written in Spanish rather than Brazilian Portuguese (for example Question 1 'Confunde un problema mencionado con la motivación principal.' and Question 2 'Interpreta el requisito de buen estado como exigencia de producto nuevo.').",
+            "criterion": "naturalSpeech",
+            "learnerCost": "The learner cannot read the misconception labels that explain their mistake, so the feedback does not train them.",
+            "location": {
+              "detail": "Misconception fields of Questions 1 and 2 in several options",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "B has only four questions; the fifth question about planned workshops is missing, though the script covers it.",
+            "criterion": "examRealism",
+            "learnerCost": "The learner practises less of the recording and never checks the closing plans section.",
+            "location": {
+              "detail": "Whole set: question list ends at the fourth question",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A has a complete set of five questions with feedback in Portuguese, while B drops a question and writes several reasons and misconceptions in Spanish, which the Portuguese-speaking reader cannot read."
+        },
+        "pairId": "ab5652fb-1333-41f1-a58a-6ce40ee8781e"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets have six questions whose keys match the script (railway station, photographs, wooden boxes, rainwater, confidence, podcast) and mention no wrong option that could also be right.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both sets fit the Part 2 format of a single British speaker, six sentence-completion gaps and a monologue of a suitable length.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "A",
+            "reason": "A's monologue includes natural asides such as 'to put it politely' and short reactions, which read more like speech than B's more formal sentences.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The question stem 'A neighbour provided old ______' adds the word 'old', which the script never says; the photographs were found in an attic but the speaker does not call them old.",
+            "criterion": "keys",
+            "learnerCost": "A learner might think the answer depends on wording not in the recording, which makes the question slightly unfair.",
+            "location": {
+              "detail": "Question 2 stem",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "Both sets are valid Part 2 practice with correct keys; A's slightly more natural speech is offset by a small wording issue in one stem, so neither clearly serves the learner better."
+        },
+        "pairId": "fa61ffb1-3f9c-45ca-bdfa-d6b7267b758c"
+      }
+    ]
+  }
+}

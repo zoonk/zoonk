@@ -1,0 +1,97 @@
+{
+  "attempt": "first",
+  "costUsd": 0.0059892899999999995,
+  "failureCodes": [
+    "failed_controls"
+  ],
+  "failures": [
+    "Missed the control bank defect."
+  ],
+  "packetId": "8ac34a554c7e5e5f76123c103e3354d9ea52d29afba1c7cf1fc0cc8876a54a31",
+  "passed": false,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, and their keys match the script: the Freitag, Park and Band statements are false and the Salat, Geld and Sonntag statements are true.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, with six richtig/falsch statements in the order of the conversation, two speakers and a Goethe B1 Teil 3 style.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, with natural everyday German and reasons in Brazilian Portuguese.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are the same set, so neither serves its reader better."
+        },
+        "pairId": "0a471b58-60e1-458d-9610-ead8939d2ab7"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, and every key matches the monologue: the motive, the admission criterion, the early users, the highlighted result and the future workshops.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, with five multiple-choice questions in the order of a Castilian monologue, paraphrased options and a DELE B2 style.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, with a natural Castilian monologue and reasons in Brazilian Portuguese.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are the same set, so neither serves its reader better."
+        },
+        "pairId": "440d080f-d197-4e34-93fe-be554cc2773c"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets have correct keys: A's corrections (Park to Turnhalle, neun to zehn Uhr, Kuchen from Clara, Plakate gestalten) and B's corrections (Freitag to Samstag, Park to Innenhof, Band rejected) all match the script.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both sets are six richtig/falsch items on a two-person everyday conversation, with heard-detail changes in the false statements, which fits the Goethe B1 Teil 3 format.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both scripts read as natural spoken German with reactions and short turns, and both reasons are in Brazilian Portuguese.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "Both sets are sound and similar in difficulty and realism, so neither serves the learner noticeably better."
+        },
+        "pairId": "79062e0e-7276-4aa2-8ee1-9b5375eb2931"
+      }
+    ]
+  }
+}

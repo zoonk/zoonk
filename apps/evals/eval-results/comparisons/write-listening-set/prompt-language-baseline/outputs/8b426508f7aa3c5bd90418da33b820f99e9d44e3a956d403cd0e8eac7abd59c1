@@ -1,0 +1,160 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "we actually met at the footbridge",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": null,
+        "question": "Write NO MORE THAN TWO WORDS. On Hannah's first morning, the volunteers gathered at the ____.",
+        "keyPoints": [
+          "The footbridge."
+        ],
+        "acceptedAnswers": [
+          "footbridge"
+        ],
+        "sampleAnswer": "footbridge"
+      },
+      {
+        "evidence": "it was old photographs that showed them exactly where the river used to flow",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": null,
+        "question": "Write NO MORE THAN TWO WORDS. The team used ____ to find the river's former route.",
+        "keyPoints": [
+          "Photographs from the past."
+        ],
+        "acceptedAnswers": [
+          "old photographs",
+          "photographs"
+        ],
+        "sampleAnswer": "old photographs"
+      },
+      {
+        "evidence": "I recorded the water level at the same spot every week",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": null,
+        "question": "Write NO MORE THAN TWO WORDS. Each week, Hannah measured the river's ____ at one particular place.",
+        "keyPoints": [
+          "The water level."
+        ],
+        "acceptedAnswers": [
+          "water level",
+          "level"
+        ],
+        "sampleAnswer": "water level"
+      },
+      {
+        "evidence": "local schools asked if they could bring groups to visit the site",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": null,
+        "question": "Write NO MORE THAN TWO WORDS. The project received requests for group visits from ____.",
+        "keyPoints": [
+          "Local schools."
+        ],
+        "acceptedAnswers": [
+          "local schools",
+          "schools"
+        ],
+        "sampleAnswer": "local schools"
+      },
+      {
+        "evidence": "volunteers built wooden benches",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "hard",
+        "context": null,
+        "question": "Write NO MORE THAN TWO WORDS. To make the riverside more inviting, the volunteers made ____.",
+        "keyPoints": [
+          "Benches made of wood."
+        ],
+        "acceptedAnswers": [
+          "wooden benches",
+          "benches"
+        ],
+        "sampleAnswer": "wooden benches"
+      },
+      {
+        "evidence": "the team plans its biggest clean-up in winter",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": null,
+        "question": "Write NO MORE THAN TWO WORDS. The largest cleaning operation is planned for ____.",
+        "keyPoints": [
+          "Winter."
+        ],
+        "acceptedAnswers": [
+          "winter",
+          "the winter"
+        ],
+        "sampleAnswer": "winter"
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Hannah",
+        "gender": "female",
+        "accent": "British English"
+      }
+    ],
+    "title": "A river brought back to life",
+    "turns": [
+      {
+        "speaker": "Hannah",
+        "text": "Hello. I'm Hannah, and today I'm going to tell you about a community project to improve a river near my home. I joined because I wanted to spend more time outdoors, but I ended up learning much more than I expected. On my first morning, I thought everyone was meeting at the car park. That was where we'd been asked to leave our bikes, but we actually met at the footbridge. From there, our group leader showed us the stretch of river we'd be working on."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "The river looked quite ordinary to me, and I couldn't immediately see what was wrong with it. Our leader explained that, years ago, part of it had been made straighter to make room for a road. The faster water had carried soil away, leaving fewer places for plants and animals to live. Before deciding what to change, the team had looked at some old maps. These were useful, but it was old photographs that showed them exactly where the river used to flow. Some had been taken by local families, who were pleased to see them being used."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "My first job was collecting information. A few volunteers tested the water for chemicals, and I'd imagined I'd be doing that too. Instead, I recorded the water level at the same spot every week. It was important to do this even when it hadn't rained, because the team needed to understand the river in all kinds of weather. I wrote the results in a notebook at first, then entered them on a computer at home. It wasn't difficult, but I did have to be careful."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Once work began, people passing by often stopped to ask questions. Some were worried that the riverside path would be closed permanently, so we put up signs explaining what was happening. Then local schools asked if they could bring groups to visit the site. We hadn't expected that much interest from children. The team arranged short walks, and the pupils helped us identify plants. Their teachers said it made a change from looking at pictures in a classroom."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "As the river improved, we wanted to make the area more welcoming. We'd talked about putting up a shelter, but there wasn't enough space beside the path. In the end, volunteers built wooden benches, using materials donated by a nearby business. People began to stay longer instead of just walking through. I've seen neighbours chatting there who'd never spoken to each other before, which is something the project leader is particularly proud of."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Of course, the work isn't finished. Spring is a busy time for planting, and in summer we check that the young plants have enough water. But the team plans its biggest clean-up in winter, when there are fewer plants to damage along the banks. I'll definitely be there. I used to think looking after a river was a job for experts, but now I know there's plenty that ordinary people can do. If there's a similar project near you, I'd really recommend giving it a try."
+      }
+    ]
+  }
+}

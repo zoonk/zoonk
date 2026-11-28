@@ -1,0 +1,138 @@
+{
+  "attempt": "first",
+  "costUsd": 0.007772589999999999,
+  "failures": [],
+  "packetId": "02de3c669ce610c32a18ed9b78beb6c1672d2b8266232828a4b41b1fa269f1a5",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "Both keys are supported by the script, but B's first-session item depends on which group's start date applies after Ryan switches to Thursday, so A's keys are cleaner.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both follow the IELTS Part 1 format: a two-speaker booking call, ten typed items with word limits, and similar distractors.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both scripts read as natural British English speech with contractions, self-corrections and natural openings and closings.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The first-session item is ambiguous after Ryan switches groups: the key says 18 September, but the stated 16 September start belongs to the Tuesday group he has just left, so the learner has to infer which date applies.",
+            "criterion": "keys",
+            "learnerCost": "A learner who hears the Tuesday start date may pick 16 September or doubt a correct answer.",
+            "location": {
+              "detail": "Lucy's line about the start dates",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A has cleaner keys and no ambiguous items, while B's strengths are otherwise similar, so A serves the learner slightly better."
+        },
+        "pairId": "8add9a4b-e23e-49e5-b6d8-bcc581ff7cfe"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The keys are identical in both outputs and match the script.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two sets are identical in structure, questions, options and format, so exam realism is the same.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "B",
+            "reason": "A writes several reasons and a misconception in Spanish, while B writes them in Brazilian Portuguese as the expectations require.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The reason for the first option of question 2 is written in Spanish, not Brazilian Portuguese as the expectations require.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "A Brazilian learner cannot read this feedback, so they cannot learn why the option is wrong.",
+            "location": {
+              "detail": "Reason of the first option in question 2",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The reason for the second option of question 2 is written in Spanish, not Brazilian Portuguese.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "The learner cannot read the explanation of why this proposal was rejected.",
+            "location": {
+              "detail": "Reason of the second option in question 2",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The reason for the correct option of question 2 is written in Spanish, not Brazilian Portuguese.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "The learner cannot read the explanation that confirms the correct answer.",
+            "location": {
+              "detail": "Reason of the correct option in question 2",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "Keys and realism match, but A breaks the Portuguese reason requirement in question 2, which leaves the learner unable to read the feedback there."
+        },
+        "pairId": "941c3ff9-9641-43f1-ab63-44eae3930e27"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, with the same correct keys.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical in format, length and distractors.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical and read as natural speech.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical, so neither serves the learner better."
+        },
+        "pairId": "a7133216-ca7f-4ee4-982f-da88f84b6600"
+      }
+    ]
+  }
+}

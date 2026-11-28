@@ -1,0 +1,148 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "We booked the library hall, moved to the courtyard, considered the sports centre, and finally settled on the museum atrium.",
+        "skill": 1,
+        "format": "order",
+        "difficulty": "easy",
+        "question": "Put the venue plans in the order the colleagues considered or chose them.",
+        "steps": [
+          "Book the library hall",
+          "Move the event to the courtyard",
+          "Consider the sports centre",
+          "Choose the museum atrium"
+        ],
+        "reason": "You hear Darius trace the venue search from the library booking to the final choice of the museum."
+      },
+      {
+        "evidence": "it was the council's concern about amplified music disturbing the flats next door.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "medium",
+        "context": null,
+        "question": "Why did the colleagues abandon the courtyard plan?",
+        "options": [
+          {
+            "text": "A forecast of bad weather",
+            "isCorrect": false,
+            "reason": "You hear Rosa suggest the forecast, but she immediately corrects herself.",
+            "misconception": "Picks the explanation before the correction"
+          },
+          {
+            "text": "A concern about noise for residents",
+            "isCorrect": true,
+            "reason": "You hear Rosa correct herself and explain that the council was concerned about music disturbing nearby flats.",
+            "misconception": null
+          },
+          {
+            "text": "A shortage of space for visitors",
+            "isCorrect": false,
+            "reason": "You hear Rosa say the courtyard was big enough, not that space was the problem.",
+            "misconception": "Treats a checked requirement as the reason for rejection"
+          }
+        ]
+      },
+      {
+        "evidence": "We planned talks followed by workshops, then put the workshops first, then slipped the talks between them, and eventually replaced the talks with roaming conversations.",
+        "skill": 1,
+        "format": "order",
+        "difficulty": "hard",
+        "question": "How did the proposed programme develop? Put the versions in order.",
+        "steps": [
+          "Talks take place before workshops",
+          "Workshops take place before talks",
+          "Talks are placed between workshops",
+          "Conversations replace the talks"
+        ],
+        "reason": "You hear Darius describe three arrangements of talks and workshops before the talks were replaced altogether."
+      },
+      {
+        "evidence": "We made posters our main publicity, then switched to emails to local groups, then relied on volunteers handing out cards, and finally made community radio clips our main route.",
+        "skill": 1,
+        "format": "order",
+        "difficulty": "medium",
+        "question": "Put the main publicity methods in the order the team relied on them.",
+        "steps": [
+          "Displaying posters",
+          "Emailing local groups",
+          "Having volunteers distribute cards",
+          "Broadcasting short radio clips"
+        ],
+        "reason": "You hear Darius list each main method in sequence. He adds that the team continued to use the earlier methods to a lesser extent."
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Darius",
+        "gender": "male",
+        "accent": "British English"
+      },
+      {
+        "name": "Rosa",
+        "gender": "female",
+        "accent": "British English"
+      }
+    ],
+    "title": "How the community event plans changed",
+    "turns": [
+      {
+        "speaker": "Rosa",
+        "text": "Hi, Darius. Have you got a minute? I'm writing up what we learned from the community event in Richmond, and I can't quite remember how we ended up at the museum."
+      },
+      {
+        "speaker": "Darius",
+        "text": "Of course. It took a few attempts. We booked the library hall, moved to the courtyard, considered the sports centre, and finally settled on the museum atrium. The library had to close for repairs, which started the whole search."
+      },
+      {
+        "speaker": "Rosa",
+        "text": "Right, and the courtyard was big enough, wasn't it? I thought the forecast had put us off. No, sorry, it was the council's concern about amplified music disturbing the flats next door."
+      },
+      {
+        "speaker": "Darius",
+        "text": "Exactly. And the sports centre wanted us out by three, so the museum was a relief. The staff even offered to move a few exhibits to give us more room."
+      },
+      {
+        "speaker": "Rosa",
+        "text": "I'd forgotten that. The programme changed almost as much as the venue. Can you remind me what happened there?"
+      },
+      {
+        "speaker": "Darius",
+        "text": "We planned talks followed by workshops, then put the workshops first, then slipped the talks between them, and eventually replaced the talks with roaming conversations. That last idea came from Leah, I think."
+      },
+      {
+        "speaker": "Rosa",
+        "text": "It did. She said people might feel awkward asking questions in front of an audience. At first I worried that the conversations would be too informal, but people ended up staying longer than we'd expected."
+      },
+      {
+        "speaker": "Darius",
+        "text": "Yes, and the volunteers could introduce visitors to one another. That worked better than asking everyone to sit down and listen. We should keep a note of that for next year."
+      },
+      {
+        "speaker": "Rosa",
+        "text": "Agreed. Now, publicity. We tried several things there too, didn't we?"
+      },
+      {
+        "speaker": "Darius",
+        "text": "We made posters our main publicity, then switched to emails to local groups, then relied on volunteers handing out cards, and finally made community radio clips our main route. We didn't stop using the other methods entirely, but each became less important."
+      },
+      {
+        "speaker": "Rosa",
+        "text": "The radio clips were Kevin's suggestion. I was doubtful because they were so short, but they reached people who weren't already on our mailing lists."
+      },
+      {
+        "speaker": "Darius",
+        "text": "And quite a few visitors said they'd heard one while travelling to work. Next time, though, we should record them earlier. We nearly missed the station's deadline."
+      },
+      {
+        "speaker": "Rosa",
+        "text": "I'll put that in the report. Thanks for helping me piece it all together."
+      },
+      {
+        "speaker": "Darius",
+        "text": "No problem. Send me a draft when you're ready, and I'll check I haven't missed anything."
+      }
+    ]
+  }
+}

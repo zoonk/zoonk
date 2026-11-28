@@ -1,0 +1,97 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00546039,
+  "failureCodes": [
+    "failed_controls"
+  ],
+  "failures": [
+    "Missed the control bank defect."
+  ],
+  "packetId": "401186f5a33f09943cc682465ecc3015eb932491481ec039adee9879bf466213",
+  "passed": false,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, and every key matches the script with no defensible wrong option.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, with the same three-option multiple-choice format, Spanish monologue and length for DELE B2.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs have identical scripts and reasons in Brazilian Portuguese, and both read somewhat like written prose in the same way.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are the same set, so neither serves its learner better."
+        },
+        "pairId": "c7a9cf08-35fe-45d9-88ae-98059a0b3906"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets have accurate keys, grammatical accepted answers that fit their gaps, and answers stated directly in the transcript.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both are six-question Cambridge B2 First sentence-completion sets with a realistic monologue, as the input asked for.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both scripts use contractions and conversational phrasing in British English and are similarly natural.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "Both sets are accurate and equally fit for the exam task, with no major problems in either."
+        },
+        "pairId": "ec35e7f3-f377-49b5-b382-ce52dbd68922"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, and every key and accepted answer is correct and grammatical in its gap.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical and fit the Cambridge B2 First sentence-completion task.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs have identical, natural British English scripts.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are the same set, so neither serves its learner better."
+        },
+        "pairId": "f382ef14-ec71-48a7-94fc-8fe175cfe202"
+      }
+    ]
+  }
+}

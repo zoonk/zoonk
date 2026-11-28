@@ -1,0 +1,268 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "It's called Bracken Centre, that's B-R-A-C-K-E-N.",
+        "skill": 2,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Community centre information\nWrite ONE WORD ONLY.\nName: ______ Centre",
+        "question": "Complete the name of the centre.",
+        "keyPoints": [
+          "The name is Bracken."
+        ],
+        "acceptedAnswers": [
+          "Bracken"
+        ],
+        "sampleAnswer": "Bracken"
+      },
+      {
+        "evidence": "It's the number twenty-eight now.",
+        "skill": 2,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 0
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Getting to the centre\nWrite ONE NUMBER ONLY.\nBus number: ______",
+        "question": "Complete the bus number.",
+        "keyPoints": [
+          "The current bus number is 28."
+        ],
+        "acceptedAnswers": [
+          "28"
+        ],
+        "sampleAnswer": "twenty-eight"
+      },
+      {
+        "evidence": "these days we open at half past nine.",
+        "skill": 2,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 0
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Centre opening hours\nWrite ONE NUMBER ONLY.\nThe doors open at: ______",
+        "question": "Complete the current opening time.",
+        "keyPoints": [
+          "The centre opens at 9:30."
+        ],
+        "acceptedAnswers": [
+          "9:30",
+          "9.30"
+        ],
+        "sampleAnswer": "half past nine"
+      },
+      {
+        "evidence": "local people said they needed somewhere peaceful to work. So the new room will give visitors a quiet place to study.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "medium",
+        "context": null,
+        "question": "Why is the centre adding a new room?",
+        "options": [
+          {
+            "text": "To provide a peaceful space for learning",
+            "isCorrect": true,
+            "reason": "Hannah diz que os moradores pediram um lugar tranquilo para trabalhar e que a nova sala será usada para estudar.",
+            "misconception": null
+          },
+          {
+            "text": "To make the main hall more spacious",
+            "isCorrect": false,
+            "reason": "Você ouviu que a ampliação do salão foi considerada, mas a opção escolhida foi criar uma sala de estudos.",
+            "misconception": "Confunde um plano considerado com a decisão final."
+          },
+          {
+            "text": "To offer more evening group activities",
+            "isCorrect": false,
+            "reason": "Você ouviu que alguns grupos se reúnem à noite, mas Hannah não apresenta isso como motivo para a nova sala.",
+            "misconception": "Associa uma informação sobre horários à finalidade da obra."
+          }
+        ]
+      },
+      {
+        "evidence": "Just bring a towel, and wear something comfortable.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Tuesday exercise class\nWrite ONE WORD ONLY.\nParticipants should bring a ______.",
+        "question": "Complete the note.",
+        "keyPoints": [
+          "Participants should bring a towel."
+        ],
+        "acceptedAnswers": [
+          "towel"
+        ],
+        "sampleAnswer": "towel"
+      },
+      {
+        "evidence": "we chose to teach people how to repair small electrical items, such as lamps.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "medium",
+        "context": null,
+        "question": "What do participants learn to repair in the Wednesday workshop?",
+        "options": [
+          {
+            "text": "Small electrical devices",
+            "isCorrect": true,
+            "reason": "Hannah explica que a oficina ensina a consertar pequenos objetos elétricos, como luminárias.",
+            "misconception": null
+          },
+          {
+            "text": "Items of clothing",
+            "isCorrect": false,
+            "reason": "Você ouviu a sugestão de consertar roupas, mas ela não foi a atividade escolhida.",
+            "misconception": "Escolhe uma sugestão que não foi adotada."
+          },
+          {
+            "text": "Bicycles and their parts",
+            "isCorrect": false,
+            "reason": "Você ouviu que consertar bicicletas foi uma sugestão inicial, mas a oficina trata de objetos elétricos.",
+            "misconception": "Confunde uma alternativa sugerida com o conteúdo da oficina."
+          }
+        ]
+      },
+      {
+        "evidence": "Garden members collect the vegetable waste and turn it into compost for the beds.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Shared garden\nWrite ONE WORD ONLY.\nVegetable waste is used to make ______ for the beds.",
+        "question": "Complete the note.",
+        "keyPoints": [
+          "The vegetable waste is made into compost."
+        ],
+        "acceptedAnswers": [
+          "compost"
+        ],
+        "sampleAnswer": "compost"
+      },
+      {
+        "evidence": "Membership of the garden costs twelve pounds a year.",
+        "skill": 2,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 0
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Shared garden membership\nWrite ONE NUMBER ONLY.\nAnnual cost: £______",
+        "question": "Complete the annual membership cost.",
+        "keyPoints": [
+          "Annual garden membership costs £12."
+        ],
+        "acceptedAnswers": [
+          "12"
+        ],
+        "sampleAnswer": "twelve pounds"
+      },
+      {
+        "evidence": "if you want to reserve anything, you need to phone us.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "hard",
+        "context": null,
+        "question": "How can garden members reserve tools?",
+        "options": [
+          {
+            "text": "By calling the centre",
+            "isCorrect": true,
+            "reason": "Hannah diz que você precisa telefonar para reservar as ferramentas.",
+            "misconception": null
+          },
+          {
+            "text": "By using the centre's website",
+            "isCorrect": false,
+            "reason": "Você pode consultar a lista de ferramentas no site, mas deve telefonar para fazer uma reserva.",
+            "misconception": "Confunde consultar a disponibilidade com fazer a reserva."
+          },
+          {
+            "text": "By asking at the reception desk",
+            "isCorrect": false,
+            "reason": "Hannah explica que a recepção dá informações sobre a associação, mas não cuida das reservas de ferramentas.",
+            "misconception": "Atribui à recepção um serviço que ela não oferece."
+          }
+        ]
+      },
+      {
+        "evidence": "What we really want is for neighbours who haven't met before to get to know one another.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "hard",
+        "context": null,
+        "question": "What is the main aim of the garden afternoon?",
+        "options": [
+          {
+            "text": "To help local residents make connections",
+            "isCorrect": true,
+            "reason": "Hannah diz que o objetivo é permitir que vizinhos que ainda não se conhecem se aproximem.",
+            "misconception": null
+          },
+          {
+            "text": "To collect money for the garden",
+            "isCorrect": false,
+            "reason": "Você ouviu que algumas pessoas perguntaram se o evento arrecadaria fundos, mas Hannah diz que não.",
+            "misconception": "Escolhe uma finalidade que a palestrante rejeita."
+          },
+          {
+            "text": "To encourage everyone to exchange plants",
+            "isCorrect": false,
+            "reason": "Haverá troca de plantas, mas você não precisa levar uma. A finalidade principal é aproximar os vizinhos.",
+            "misconception": "Confunde uma atividade do evento com seu objetivo principal."
+          }
+        ]
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Hannah",
+        "gender": "female",
+        "accent": "British English"
+      }
+    ],
+    "title": "",
+    "turns": [
+      {
+        "speaker": "Hannah",
+        "text": "Good morning, everyone, and welcome to our neighbourhood. I'm Hannah, and I've come to tell you about the community centre and some of the things you can do there. It's called Bracken Centre, that's B-R-A-C-K-E-N. People sometimes confuse it with the sports centre near the station, but we're on Mill Road, opposite the library. There's a small car park behind the building, though it fills up quickly on Saturdays. If you're coming by bus from the town centre, take the number eighteen, no, sorry, that's the old route. It's the number twenty-eight now. The stop is just outside our front gate, so you won't have far to walk."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "The centre's open six days a week, from Monday to Saturday. We used to unlock the doors at nine, but these days we open at half past nine. Closing time varies because some groups meet in the evening, so it's worth checking before you come. You may have noticed some building work at the side. We thought about extending the main hall, but local people said they needed somewhere peaceful to work. So the new room will give visitors a quiet place to study. It'll have desks and free internet, and we hope it'll be ready by September. The main hall will stay open during the work."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "There are plenty of activities in the hall. The gentle exercise class on Tuesday mornings is especially popular with people who haven't done much exercise for a while. You don't need to buy any special equipment: we provide the mats. Just bring a towel, and wear something comfortable. There's also a dance group on Thursdays, although that one is for people with some experience. Both groups are friendly, and you're welcome to come and watch before deciding whether to join. Ask at reception if you'd like to know about the other classes, including the ones for children during the school holidays."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "On Wednesday afternoons, we run a practical workshop. When we first planned it, people suggested sessions on mending clothes or fixing bicycles. In the end, though, we chose to teach people how to repair small electrical items, such as lamps. The idea is to help people keep useful things rather than throw them away. You don't need any experience, and the volunteers will check that each item is safe before you begin. Places are limited, so please contact us before turning up. We can't accept every type of electrical item, but we'll explain what you can bring when you book."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Behind the centre there's a shared garden. Some beds are used for flowers, while others are for vegetables. Garden members collect the vegetable waste and turn it into compost for the beds. You can join in even if you've never grown anything before, and there are experienced gardeners there most weekends to give advice. Membership of the garden costs twelve pounds a year. That covers seeds and shared equipment. There was a proposal to charge twenty pounds, but we managed to keep the cost down. If you'd prefer just to visit, the garden is open to everyone on Saturday afternoons, and there's no charge to look around."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Garden members can also borrow tools from our little shed. You can see a list of what's available on our website, but if you want to reserve anything, you need to phone us. The reception desk can tell you about membership, but it doesn't handle tool reservations. Finally, we're holding a garden afternoon next month. There'll be a plant swap and some food, and people have asked whether it's a fundraising event. It isn't. What we really want is for neighbours who haven't met before to get to know one another. You don't need to bring a plant to take part, so do come along. Thanks for listening, and I hope to see you at the centre soon."
+      }
+    ]
+  }
+}

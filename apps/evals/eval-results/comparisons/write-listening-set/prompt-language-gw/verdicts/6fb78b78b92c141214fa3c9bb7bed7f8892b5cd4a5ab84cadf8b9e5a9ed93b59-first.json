@@ -1,0 +1,238 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00428224,
+  "failures": [],
+  "packetId": "6fb78b78b92c141214fa3c9bb7bed7f8892b5cd4a5ab84cadf8b9e5a9ed93b59",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As duas versões são idênticas: as dez respostas aceitas correspondem ao roteiro e dependem de ouvi-lo.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas têm o mesmo roteiro e o mesmo formato; ambas ficam bem abaixo dos 600 palavras exigidos para uma gravação de 4 a 5 minutos.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "O diálogo soa natural nas duas versões, mas os pontos-chave estão em inglês, não em português brasileiro, como a tarefa exige.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "O roteiro tem menos de 600 palavras, abaixo do mínimo exigido para uma gravação de 4 a 5 minutos.",
+            "criterion": "examRealism",
+            "learnerCost": "A gravação seria curta demais para preparar o aprendiz para a duração esperada da Parte 1.",
+            "location": {
+              "detail": "Roteiro inteiro",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "Os pontos-chave estão em inglês, embora a tarefa exija que estejam em português brasileiro.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "O aprendiz brasileiro pode não conseguir ler as explicações de apoio.",
+            "location": {
+              "detail": "Todos os pontos-chave das questões",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "A resposta-modelo “quarter past nine” tem três palavras e não respeita o limite de ONE WORD AND/OR A NUMBER.",
+            "criterion": "keys",
+            "learnerCost": "O aprendiz pode imitar uma resposta que excede o limite e perder o ponto.",
+            "location": {
+              "detail": "sampleAnswer da questão 4",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "O roteiro tem menos de 600 palavras, abaixo do mínimo exigido para uma gravação de 4 a 5 minutos.",
+            "criterion": "examRealism",
+            "learnerCost": "A gravação seria curta demais para preparar o aprendiz para a duração esperada da Parte 1.",
+            "location": {
+              "detail": "Roteiro inteiro",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "Os pontos-chave estão em inglês, embora a tarefa exija que estejam em português brasileiro.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "O aprendiz brasileiro pode não conseguir ler as explicações de apoio.",
+            "location": {
+              "detail": "Todos os pontos-chave das questões",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "A resposta-modelo “quarter past nine” tem três palavras e não respeita o limite de ONE WORD AND/OR A NUMBER.",
+            "criterion": "keys",
+            "learnerCost": "O aprendiz pode imitar uma resposta que excede o limite e perder o ponto.",
+            "location": {
+              "detail": "sampleAnswer da questão 4",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "As versões são idênticas e compartilham os mesmos problemas: o roteiro é curto demais, os pontos-chave estão no idioma errado e a resposta-modelo da questão 4 excede o limite."
+        },
+        "pairId": "4f3504b5-ba29-4655-ab67-d76f394306dd"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As respostas corretas estão de acordo com o monólogo nas duas versões; as diferenças de redação nas explicações não mudam as chaves.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas versões usam o mesmo monólogo e as mesmas cinco questões de múltipla escolha, sem diferença relevante de adequação ao formato informado.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "A",
+            "reason": "As explicações de A estão em português brasileiro. Em B, algumas explicações e uma concepção equivocada da questão 2 estão em espanhol.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "A explicação da primeira alternativa e a concepção equivocada da segunda alternativa da questão 2 estão em espanhol, não em português brasileiro.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "O aprendiz brasileiro pode não entender essas explicações ou identificá-las como apoio em seu idioma.",
+            "location": {
+              "detail": "Explicação da opção 1 e misconception da opção 2 da questão 2",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A mantém todas as explicações no idioma pedido; B mistura espanhol nas explicações e na concepção equivocada da questão 2."
+        },
+        "pairId": "7e59d494-db21-47b4-825f-228e7531f666"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As respostas avaliadas estão sustentadas pelos respectivos roteiros. As duas versões também contêm respostas-modelo que excedem o limite de palavras.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "A",
+            "reason": "A aproxima-se mais da duração solicitada, embora também fique abaixo de 600 palavras; B reutiliza o roteiro mais curto da conversa sobre o passeio de bicicleta.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os dois roteiros soam como conversas naturais, mas os pontos-chave estão em inglês, não em português brasileiro, como a tarefa exige.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "O roteiro tem menos de 600 palavras, abaixo do mínimo exigido para uma gravação de 4 a 5 minutos.",
+            "criterion": "examRealism",
+            "learnerCost": "A gravação seria curta demais para preparar o aprendiz para a duração esperada da Parte 1.",
+            "location": {
+              "detail": "Roteiro inteiro",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "Os pontos-chave estão em inglês, embora a tarefa exija que estejam em português brasileiro.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "O aprendiz brasileiro pode não conseguir ler as explicações de apoio.",
+            "location": {
+              "detail": "Todos os pontos-chave das questões",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "As respostas-modelo das questões 2, 4, 5 e 6 excedem o limite ONE WORD AND/OR A NUMBER; por exemplo, “the eighteenth of September” tem mais de uma palavra e um número.",
+            "criterion": "keys",
+            "learnerCost": "O aprendiz pode imitar respostas-modelo que excedem o limite e perder pontos.",
+            "location": {
+              "detail": "sampleAnswers das questões 2, 4, 5 e 6",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "O roteiro tem menos de 600 palavras, abaixo do mínimo exigido para uma gravação de 4 a 5 minutos.",
+            "criterion": "examRealism",
+            "learnerCost": "A gravação seria curta demais para preparar o aprendiz para a duração esperada da Parte 1.",
+            "location": {
+              "detail": "Roteiro inteiro",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "Os pontos-chave estão em inglês, embora a tarefa exija que estejam em português brasileiro.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "O aprendiz brasileiro pode não conseguir ler as explicações de apoio.",
+            "location": {
+              "detail": "Todos os pontos-chave das questões",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "A resposta-modelo “quarter past nine” tem três palavras e não respeita o limite de ONE WORD AND/OR A NUMBER.",
+            "criterion": "keys",
+            "learnerCost": "O aprendiz pode imitar uma resposta que excede o limite e perder o ponto.",
+            "location": {
+              "detail": "sampleAnswer da questão 4",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A oferece um roteiro mais longo e mais próximo da duração pedida. Ainda assim, ambas ficam abaixo do mínimo de 600 palavras e têm pontos-chave em inglês."
+        },
+        "pairId": "89178836-0611-4bf3-98dc-c3e08a357fbb"
+      }
+    ]
+  }
+}

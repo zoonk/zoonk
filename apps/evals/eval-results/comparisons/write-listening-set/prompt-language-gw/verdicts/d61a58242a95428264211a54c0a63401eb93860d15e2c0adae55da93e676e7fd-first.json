@@ -1,0 +1,104 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00286114,
+  "failures": [],
+  "packetId": "d61a58242a95428264211a54c0a63401eb93860d15e2c0adae55da93e676e7fd",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As duas versões apresentam cinco perguntas de múltipla escolha com três opções, todas respondíveis a partir do monólogo; nenhuma diferença entre elas afeta esse critério.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os dois conjuntos usam o mesmo monólogo em espanhol e o mesmo formato de perguntas, sem diferença de adequação ao exame entre A e B.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "A",
+            "reason": "A mantém as razões e as misconceptions em português brasileiro. B passa ao espanhol nas explicações da questão 2, contrariando o idioma solicitado para esses campos.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "As razões e as misconceptions da questão 2 estão em espanhol, embora o caso exija esses campos em português brasileiro.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "A pessoa pode ter dificuldade para entender as explicações e recebe feedback em um idioma diferente do solicitado.",
+            "location": {
+              "detail": "Campos de reason e misconception das opções da questão 2",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "As versões são iguais, exceto pelas explicações da questão 2 em B, que estão em espanhol em vez de português brasileiro. A cumpre o requisito de idioma para o feedback."
+        },
+        "pairId": "3d75dd49-a5c4-413a-b7d2-dcda1252db0a"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As respostas corretas correspondem ao que os falantes dizem, e as perguntas exigem informações específicas da conversa em ambas as versões.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas versões apresentam uma conversa no campus entre estudante e professor, quatro perguntas com quatro opções e um diálogo com extensão compatível com a faixa indicada.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas conversas soam plausíveis em inglês norte-americano, e as razões e misconceptions estão em português brasileiro.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "As versões são igualmente adequadas: ambas têm perguntas justas e um diálogo de campus natural, no formato e na extensão solicitados."
+        },
+        "pairId": "6aa4bfe6-f1fd-44c3-98ae-90abdb2f70fa"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As respostas corretas correspondem ao que os falantes dizem, e as perguntas exigem informações específicas da conversa em ambas as versões.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas versões apresentam uma conversa no campus entre estudante e professor, quatro perguntas com quatro opções e um diálogo com extensão compatível com a faixa indicada.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas conversas soam plausíveis em inglês norte-americano, e as razões e misconceptions estão em português brasileiro.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "As versões são igualmente adequadas: ambas têm perguntas justas e um diálogo de campus natural, no formato e na extensão solicitados."
+        },
+        "pairId": "df523954-c540-4e46-9f07-4cdb084cbd3b"
+      }
+    ]
+  }
+}

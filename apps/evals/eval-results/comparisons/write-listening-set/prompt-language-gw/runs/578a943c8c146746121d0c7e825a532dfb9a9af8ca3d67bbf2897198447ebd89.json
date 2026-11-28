@@ -1,0 +1,19 @@
+{
+  "caseId": "en-c1-test-out-order",
+  "challenger": {
+    "costUsd": 0.011386750000000001,
+    "durationMs": 23141.959999999963,
+    "hash": "0593cf1ec98fa047a2375338e48cee5e1a57bc1d5666b1c5e5625dd2347b7316",
+    "systemPromptHash": "87a14d1efaf45d697f2df5d4ade00b513f9ac978d2e8daabde8550bc7c46ce06",
+    "userPromptHash": "28fbba226475baa78375e43db1bfa648c23b7701473fcb22237ecbaf454d6389"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.013008,
+    "durationMs": 26820.837625000044,
+    "hash": "8c244899aad1ad43601e0e98f889697691973b777a459970e45c2b0670f8fc77",
+    "systemPromptHash": "d642c43eabb8b70d11c1f6c30a824d92974c681b9226320a5e43c6457e4804a2",
+    "userPromptHash": "28fbba226475baa78375e43db1bfa648c23b7701473fcb22237ecbaf454d6389"
+  },
+  "run": 1
+}

@@ -1,0 +1,13 @@
+{
+  "caseId": "en-cambridge-accepted-article-regression",
+  "challenger": {
+    "costUsd": 0.01145185,
+    "durationMs": 30237.83387500007,
+    "hash": "93660cfcbec734440fba712b2bca4e9a5fbdb380a6796cf1002827ad2d3028fb",
+    "systemPromptHash": "117d340fe2a1c62be76cebf960837203150f79679cc827feba15a86d2c8d6849",
+    "userPromptHash": "7c1c7c099138d8b0799ba24f5f9467c6822872ce526a663ed8b74cfc1578a3f6"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 1
+}

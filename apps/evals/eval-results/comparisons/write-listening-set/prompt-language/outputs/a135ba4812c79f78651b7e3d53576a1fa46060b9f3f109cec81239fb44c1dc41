@@ -1,0 +1,125 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "The L gives you a long listing, and the A includes names that an ordinary listing leaves out.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "easy",
+        "context": null,
+        "question": "What does the A option add to the listing?",
+        "options": [
+          {
+            "text": "Names that are normally omitted",
+            "isCorrect": true,
+            "reason": "You hear that A includes names an ordinary listing leaves out.",
+            "misconception": null
+          },
+          {
+            "text": "Extra information in columns",
+            "isCorrect": false,
+            "reason": "You hear that L, rather than A, gives you a long listing.",
+            "misconception": "Confuses the two command options"
+          },
+          {
+            "text": "Changes made to the files",
+            "isCorrect": false,
+            "reason": "You hear that the command displays information and does not alter the files.",
+            "misconception": "Mistakes a display command for an editing command"
+          }
+        ]
+      },
+      {
+        "evidence": "So leave out directories, including the two special entries named dot and dot dot.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "medium",
+        "context": null,
+        "question": "What should the listener exclude when counting files?",
+        "options": [
+          {
+            "text": "All names beginning with a dot",
+            "isCorrect": false,
+            "reason": "You need to count hidden regular files, even though their names begin with a dot.",
+            "misconception": "Excludes all hidden entries"
+          },
+          {
+            "text": "Directories and the special dot entries",
+            "isCorrect": true,
+            "reason": "You hear that directories, including dot and dot dot, should be left out.",
+            "misconception": null
+          },
+          {
+            "text": "Regular files in the current directory",
+            "isCorrect": false,
+            "reason": "You hear that regular files are the entries being counted.",
+            "misconception": "Excludes the entries the calculation requires"
+          }
+        ]
+      },
+      {
+        "evidence": "Here that's four divided by eight, which is one half. So yes, half of the files are hidden.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "hard",
+        "context": null,
+        "question": "What conclusion does the lecturer draw from the example?",
+        "options": [
+          {
+            "text": "Half the regular files are hidden.",
+            "isCorrect": true,
+            "reason": "You hear that four hidden files divided by eight regular files equals one half.",
+            "misconception": null
+          },
+          {
+            "text": "Half the directories are hidden.",
+            "isCorrect": false,
+            "reason": "You hear that one of the two directories is hidden, but the calculation concerns regular files.",
+            "misconception": "Applies the conclusion to directories rather than files"
+          },
+          {
+            "text": "Half the entries in the listing are hidden.",
+            "isCorrect": false,
+            "reason": "You hear that the calculation excludes directories and the special dot entries.",
+            "misconception": "Treats every listed entry as a file"
+          }
+        ]
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Lecturer",
+        "gender": "female",
+        "accent": "American English"
+      }
+    ],
+    "title": "Finding Hidden Files in a Directory",
+    "turns": [
+      {
+        "speaker": "Lecturer",
+        "text": "Today we're going to check whether half the files in a directory are hidden. On a Unix-like system, a hidden name starts with a dot. You can do this in a terminal, and you don't need to change or open any of the files."
+      },
+      {
+        "speaker": "Lecturer",
+        "text": "First, move into the directory you want to examine. Then type lowercase L S, a space, a dash, and lowercase L A, with no space between those last two letters. Press Enter. The L gives you a long listing, and the A includes names that an ordinary listing leaves out. The command displays information about the entries. It doesn't alter them."
+      },
+      {
+        "speaker": "Lecturer",
+        "text": "You'll see several columns. The first column tells you what kind of entry you're looking at and what permissions it has. A dash at the beginning means it's a regular file. A D means it's a directory. The name is at the end of the line. So, for example, if the name begins with a dot, it's hidden."
+      },
+      {
+        "speaker": "Lecturer",
+        "text": "Now, you might think you can count every line that has a name on it. But we want the proportion of files, not the proportion of all entries. So leave out directories, including the two special entries named dot and dot dot. Dot represents the current directory, and dot dot represents its parent. They appear in this listing, but they aren't files to include in our calculation."
+      },
+      {
+        "speaker": "Lecturer",
+        "text": "Let's try an example. Suppose the listing shows eight regular files, two directories, and those special dot and dot dot entries. Of the eight files, four have names beginning with a dot. One of the directories has a dot at the start of its name too, but remember, we're counting files only."
+      },
+      {
+        "speaker": "Lecturer",
+        "text": "Divide the number of hidden regular files by the total number of regular files. Here that's four divided by eight, which is one half. So yes, half of the files are hidden. If you'd counted the hidden directory as well, you'd have been answering a different question. Check the entry types first, then do the division."
+      }
+    ]
+  }
+}

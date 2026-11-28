@@ -1,0 +1,159 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "a thermometer was much more useful",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "The group decided that a ______ was more useful than the equipment they had first considered.",
+        "keyPoints": [
+          "thermometer"
+        ],
+        "acceptedAnswers": [
+          "thermometer"
+        ],
+        "sampleAnswer": "thermometer"
+      },
+      {
+        "evidence": "we found that orange peel worked better",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "To measure the speed of the water, the volunteers finally chose to use ______.",
+        "keyPoints": [
+          "orange peel"
+        ],
+        "acceptedAnswers": [
+          "orange peel"
+        ],
+        "sampleAnswer": "orange peel"
+      },
+      {
+        "evidence": "It was aerial photographs that helped us see how the shape of the river had changed",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "The volunteers used ______ to study changes in the river's shape over the years.",
+        "keyPoints": [
+          "aerial photographs"
+        ],
+        "acceptedAnswers": [
+          "aerial photographs"
+        ],
+        "sampleAnswer": "aerial photographs"
+      },
+      {
+        "evidence": "the council discovered that road salt was getting into the river during the winter",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "hard",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "The council identified ______ as the cause of a seasonal change in the river water.",
+        "keyPoints": [
+          "road salt"
+        ],
+        "acceptedAnswers": [
+          "road salt"
+        ],
+        "sampleAnswer": "road salt"
+      },
+      {
+        "evidence": "we put everything on an interactive map",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "The group's findings are now available through an ______.",
+        "keyPoints": [
+          "interactive map"
+        ],
+        "acceptedAnswers": [
+          "interactive map"
+        ],
+        "sampleAnswer": "interactive map"
+      },
+      {
+        "evidence": "Several volunteers told me they'd gained confidence from taking part",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "hard",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "Hannah was surprised that some volunteers had developed greater ______ as a result of joining the project.",
+        "keyPoints": [
+          "confidence"
+        ],
+        "acceptedAnswers": [
+          "confidence"
+        ],
+        "sampleAnswer": "confidence"
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Hannah",
+        "gender": "female",
+        "accent": "British English"
+      }
+    ],
+    "title": "Looking after a local river",
+    "turns": [
+      {
+        "speaker": "Hannah",
+        "text": "Hello, everyone. I'm Hannah, and I help run a project called River Watch in my town. We're a group of volunteers who collect information about a small river that flows through the centre. Today I'll tell you how we started, what we do, and what we've learned along the way. You don't need to be a scientist to join us, which is something I'll come back to later."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "The project began when a few of us noticed that the water looked different from one week to the next. We wondered whether the changes mattered to the plants and animals living there. At first, we thought we'd need binoculars for our regular checks, but we soon realised that a thermometer was much more useful. Now we take one with us every time, because the temperature of the water can tell us a lot about its condition."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "We also wanted to find out how quickly the river was flowing. We didn't have money for special equipment, so one volunteer suggested using a leaf. The trouble was, leaves kept getting caught at the edge. In the end, we found that orange peel worked better. We'd drop a piece in the water, time how long it took to travel between two points, and then fish it out again. It was simple, and it gave us results we could compare."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Before long, we became curious about what the river had been like in the past. We expected the library's old maps to give us all the answers, but they showed surprisingly little detail. It was aerial photographs that helped us see how the shape of the river had changed as the town grew. Looking at them, we could identify places where buildings had replaced fields, and spots where the river had been moved slightly to make space for roads."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Of course, collecting information is only worthwhile if someone can use it. So we met with staff from the local council and showed them our records. We thought a change in the water might have been caused by fertiliser from nearby gardens. However, after looking at our results, the council discovered that road salt was getting into the river during the winter. They then changed the way they treated a bridge near one of our testing points."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "We used to send our results to members in a monthly email, but that wasn't ideal if someone wanted to look up a particular place. So we put everything on an interactive map. You can select a point along the river and see what we've found there over time. Schools have started using it too, and we're hoping they'll add observations of their own."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "What surprised me most wasn't the amount of data we collected, though. Several volunteers told me they'd gained confidence from taking part. Some had never imagined they could contribute to a scientific project, and now they're happy to explain our methods to visitors. If you're interested, come and talk to me afterwards. We're always pleased to welcome new people, whether you can help every week or just once in a while."
+      }
+    ]
+  }
+}

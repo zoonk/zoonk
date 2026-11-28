@@ -1,0 +1,177 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00759319,
+  "failureCodes": [
+    "failed_controls"
+  ],
+  "failures": [
+    "Preferred one of two identical outputs."
+  ],
+  "packetId": "37dd79bc946cd954addb64265cbffdb71deda4b7f4387f9d7af9f442489bda87",
+  "passed": false,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets have correct keys that match the recording, and neither has a wrong or defensible alternative option. Both use the same IELTS-style questions with the same corrections and distractors.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "A",
+            "reason": "Output A adds more of what IELTS Part 1 tests: a letter-by-letter spelled surname, an 11-digit mobile number, and a date self-correction, with more distractors, including the 12 bus and the reception desk.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both scripts sound like two British English speakers on the phone, with contractions, natural openings and closings, and reasons in Brazilian Portuguese.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The sampleAnswer 'quarter past nine' is three words, but the question's limit is ONE NUMBER, so the model answer breaks the limit it is meant to model.",
+            "criterion": "examRealism",
+            "learnerCost": "A learner may take the model answer as an example of an acceptable response and learn the wrong limit.",
+            "location": {
+              "detail": "sampleAnswer of the arrival time question",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The sampleAnswer 'forty-eight pounds' for the total price, under ONE NUMBER, is two words, so the model answer breaks the stated limit.",
+            "criterion": "examRealism",
+            "learnerCost": "A learner may think spelled-out number phrases are fine under a ONE NUMBER limit.",
+            "location": {
+              "detail": "sampleAnswer of the total price question",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The sampleAnswer 'quarter past eight' under ONE NUMBER is three words, so the model answer breaks the stated limit.",
+            "criterion": "examRealism",
+            "learnerCost": "A learner may think a spelled-out time is an acceptable answer under a ONE NUMBER limit.",
+            "location": {
+              "detail": "sampleAnswer of the coach departure question",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "Output A is closer to the real IELTS Part 1 with spelled names, a long number, and corrections, and its keys are as sound as B's. Its sample-answer slips are minor."
+        },
+        "pairId": "5138e9b1-cde2-4cd1-94f3-40fc455a09f4"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets have identical questions, options and keys, all matching the monologue, with no defensible wrong option.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both sets have the same five multiple-choice questions on the same monologue, with the same distractor design.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "A",
+            "reason": "Output A writes its reasons and misconceptions in Brazilian Portuguese, as the expectations require. Output B writes them in Spanish, which the learner cannot read.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "All reasons and misconceptions in B are written in Spanish, not Brazilian Portuguese, against the written expectation for this case.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "The Brazilian learner cannot read the feedback on each option, so they cannot learn why an answer was wrong.",
+            "location": {
+              "detail": "reason and misconception fields of all options across all five questions",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "The content and keys are identical, but B's feedback is in Spanish, which breaks the written expectation and leaves the Brazilian reader unable to use the reasons. A is the better set for its reader."
+        },
+        "pairId": "b115826f-4898-45e2-88f9-381cc9a2be55"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets have correct keys that match the recording, and neither has a wrong or defensible alternative option. Both use the same IELTS-style questions with the same corrections and distractors.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "A",
+            "reason": "Output A adds more of what IELTS Part 1 tests: a letter-by-letter spelled surname, an 11-digit mobile number, and a date self-correction, with more distractors, including the 12 bus and the reception desk.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both scripts sound like two British English speakers on the phone, with contractions, natural openings and closings, and reasons in Brazilian Portuguese.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The sampleAnswer 'quarter past nine' is three words, but the question's limit is ONE NUMBER, so the model answer breaks the limit it is meant to model.",
+            "criterion": "examRealism",
+            "learnerCost": "A learner may take the model answer as an example of an acceptable response and learn the wrong limit.",
+            "location": {
+              "detail": "sampleAnswer of the arrival time question",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The sampleAnswer 'forty-eight pounds' for the total price, under ONE NUMBER, is two words, so the model answer breaks the stated limit.",
+            "criterion": "examRealism",
+            "learnerCost": "A learner may think spelled-out number phrases are fine under a ONE NUMBER limit.",
+            "location": {
+              "detail": "sampleAnswer of the total price question",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The sampleAnswer 'quarter past eight' under ONE NUMBER is three words, so the model answer breaks the stated limit.",
+            "criterion": "examRealism",
+            "learnerCost": "A learner may think a spelled-out time is an acceptable answer under a ONE NUMBER limit.",
+            "location": {
+              "detail": "sampleAnswer of the coach departure question",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "Output A is closer to the real IELTS Part 1 with spelled names, a long number, and corrections, and its keys are as sound as B's. Its sample-answer slips are minor."
+        },
+        "pairId": "d682e5bc-3910-49f0-ab28-cf47c54b759d"
+      }
+    ]
+  }
+}

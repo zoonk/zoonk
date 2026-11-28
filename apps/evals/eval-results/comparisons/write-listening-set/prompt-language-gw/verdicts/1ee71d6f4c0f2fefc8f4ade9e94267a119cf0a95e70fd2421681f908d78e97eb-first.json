@@ -1,0 +1,143 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00670899,
+  "failureCodes": [
+    "failed_controls"
+  ],
+  "failures": [
+    "Missed the control bank defect."
+  ],
+  "packetId": "1ee71d6f4c0f2fefc8f4ade9e94267a119cf0a95e70fd2421681f908d78e97eb",
+  "passed": false,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, so neither has a key advantage.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, so neither matches the DELE listening format better.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, so neither reads more naturally.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are identical and both give sound Spanish keys with Portuguese reasons that a learner can follow."
+        },
+        "pairId": "2ae8f5f0-3c76-4636-a18b-a289555f9f5b"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical; the only lenient accepted answer ('flowers') appears in both.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, so neither is more like the Cambridge Part 2 task.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical and read as natural spoken English.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The accepted answer 'flowers' is too loose for the gap 'planted ______ near the water'; a learner who hears only 'flowers' and misses 'wild' is marked right.",
+            "criterion": "keys",
+            "learnerCost": "The learner gets credit for an incomplete answer, so the item does not test the listening point it is meant to test.",
+            "location": {
+              "detail": "acceptedAnswers includes 'flowers'",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The accepted answer 'flowers' is too loose for the gap 'planted ______ near the water'; a learner who hears only 'flowers' and misses 'wild' is marked right.",
+            "criterion": "keys",
+            "learnerCost": "The learner gets credit for an incomplete answer, so the item does not test the listening point it is meant to test.",
+            "location": {
+              "detail": "acceptedAnswers includes 'flowers'",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are identical, with the same small lenient-key weakness in both."
+        },
+        "pairId": "2af51fc4-7733-44d7-ab13-0528cef13943"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "Output A accepts only the exact key for each gap, while Output B accepts 'flowers' for 'wild flowers', so B can award credit for an incomplete answer.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both are six-turn monologues with six sentence-completion items in a format close to Cambridge Part 2, so neither matches the exam better.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both scripts sound like natural spoken English with contractions and fillers, so neither reads more naturally.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Question 6 repeats the transcript's exact wording ('public speaking'), so the item tests word matching more than listening.",
+            "criterion": "examRealism",
+            "learnerCost": "The learner can match the words without really following the speaker, which gives little listening practice.",
+            "location": {
+              "detail": "question 6 stem 'developing her ______ skills'",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "The accepted answer 'flowers' is too loose for the gap 'planted ______ near the water'; a learner who writes only 'flowers' is marked right although the speaker says 'wild flowers'.",
+            "criterion": "keys",
+            "learnerCost": "The learner gets credit for an incomplete answer, so the item does not test the listening point it is meant to test.",
+            "location": {
+              "detail": "acceptedAnswers includes 'flowers'",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "Output A has stricter, correctly matched keys and paraphrases more of its items, so it tests listening more reliably than Output B."
+        },
+        "pairId": "7ce13ad4-e416-450a-b0b0-41715d88f2dc"
+      }
+    ]
+  }
+}

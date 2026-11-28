@@ -1,0 +1,14 @@
+{
+  "caseId": "en-cambridge-first-part-2-sentence-completion",
+  "costUsd": 0.034256,
+  "name": "answer keys",
+  "passed": 3,
+  "problems": [
+    "{\"itemLocator\":\"set.questions[1]\",\"keyedAnswer\":\"stone bridge\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"“Bridge” also fits: Hannah mentions only one bridge, so “going past the bridge” identifies the landmark. The stem also mislabels the grassy bag-drop area as the meeting area; the volunteers meet outside the café.\"}",
+    "{\"itemLocator\":\"set.questions[4]\",\"keyedAnswer\":\"waterproof notebook\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"“Notebook” is also sufficient. The stem asks what Hannah uses, not what makes it practical, and “a notebook” distinguishes it from her phone.\"}",
+    "{\"itemLocator\":\"set.questions[5]\",\"keyedAnswer\":\"butterfly garden\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"“Garden” is also heard and completes the sentence accurately. The stem does not require the learner to identify the type of garden.\"}"
+  ],
+  "run": 2,
+  "side": "incumbent",
+  "total": 6
+}

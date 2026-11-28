@@ -1,0 +1,19 @@
+{
+  "caseId": "pt-toefl-campus-conversation",
+  "challenger": {
+    "costUsd": 0.013939250000000002,
+    "durationMs": 27643.409249999997,
+    "hash": "bc722262ee2d5c6836d486e3c6797af049842a59c05393ba00d3dcce4c7ad85b",
+    "systemPromptHash": "05b47f1b7d747c4dfe2f58b451ff6947c6bcffdb69d7e3fd68a90cb15ffdff32",
+    "userPromptHash": "39bb2ad5518bd876299e22dbb3c6cf4a288905a910ac83b42a53cf361fa94d09"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.0152055,
+    "durationMs": 32020.344624999998,
+    "hash": "04ffb32c0c011b46767d238b6ac06070297bab42c18d0dddf0e2b96c6f0bbb23",
+    "systemPromptHash": "166fabea522ca02bf45a03804b4b9c4bb79d265834759a6f90687101d818eca1",
+    "userPromptHash": "39bb2ad5518bd876299e22dbb3c6cf4a288905a910ac83b42a53cf361fa94d09"
+  },
+  "run": 1
+}

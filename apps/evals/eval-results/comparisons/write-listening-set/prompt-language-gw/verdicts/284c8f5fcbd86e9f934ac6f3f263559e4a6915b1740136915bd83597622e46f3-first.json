@@ -1,0 +1,161 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00782079,
+  "failures": [],
+  "packetId": "284c8f5fcbd86e9f934ac6f3f263559e4a6915b1740136915bd83597622e46f3",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are the same TOEFL set, so the keys are identical and equally fair.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both are the same four-question TOEFL conversation with identical format and difficulty.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "The script and reasons are identical in both outputs.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The option says a scanner is in the media lab, but the script never places a scanner there. The lab is mentioned only for the camera. The distractor is still wrong, but the option adds a detail the recording does not support.",
+            "criterion": "keys",
+            "learnerCost": "A learner may think the recording states where the scanner is kept, which it does not.",
+            "location": {
+              "detail": "A scanner in the media lab",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The option says a scanner is in the media lab, but the script never places a scanner there. The lab is mentioned only for the camera. The distractor is still wrong, but the option adds a detail the recording does not support.",
+            "criterion": "keys",
+            "learnerCost": "A learner may think the recording states where the scanner is kept, which it does not.",
+            "location": {
+              "detail": "A scanner in the media lab",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "Both outputs are identical, so neither serves its reader better."
+        },
+        "pairId": "0cc709e4-df80-4526-bc23-b1a3e137915a"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "The garden set's keys are supported by the script, and its implied-meaning question has a clear key. The photo set's distractor about the scanner location is not supported by the script.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "A",
+            "reason": "The garden conversation is a natural campus exchange that fits the TOEFL conversation format, and its questions cover purpose, details and implied meaning.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both scripts read as natural spoken English with Portuguese reasons, so neither is clearly better here.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The option says Maya visits to observe insects, but the study is about which flowers attract bees. Insects are mentioned in the script, so the key is defensible but imprecise.",
+            "criterion": "keys",
+            "learnerCost": "A learner may take insect observation as the purpose and miss that the study focuses on flowers and bees.",
+            "location": {
+              "detail": "To ask about observing insects in the campus garden",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The option says a scanner is in the media lab, but the script never places a scanner there. The lab is mentioned only for the camera.",
+            "criterion": "keys",
+            "learnerCost": "A learner may think the recording states where the scanner is kept, which it does not.",
+            "location": {
+              "detail": "A scanner in the media lab",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "The garden set has better-supported keys and an implied-meaning question that matches the task, so it serves the learner better."
+        },
+        "pairId": "423f9740-d800-46c9-bc72-b2c562edb4c9"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The four shared questions have the same supported keys, and A's extra question also has a defensible key.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "A",
+            "reason": "A has five questions, including one on the planned workshops, which is closer to a full monologue task. B drops that question.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "A",
+            "reason": "A's reasons and misconceptions are in Brazilian Portuguese. B's reasons and misconceptions are in Spanish, which the learner cannot read.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Several reasons and misconceptions are written in Spanish, not Brazilian Portuguese. The reason for the first option of question 2 is one example.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "A Brazilian learner cannot read the explanation of why an option is wrong, so the feedback fails them.",
+            "location": {
+              "detail": "Oyes que aceptan objetos usados e incluso algunos que necesitan un pequeño arreglo.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The set has only four questions. It omits the question on what the speakers plan to do next, which is a key detail in the monologue.",
+            "criterion": "examRealism",
+            "learnerCost": "A learner gets less practice on the final part of the monologue and does not test the closing details.",
+            "location": {
+              "detail": "questions list: four questions, no question on the planned workshops",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A has the same supported keys plus a fifth question, and its feedback is in Portuguese, which the learner can read. B's Spanish feedback would fail the reader."
+        },
+        "pairId": "ebac12bf-00b1-4b22-a65d-e98d3c3f7057"
+      }
+    ]
+  }
+}

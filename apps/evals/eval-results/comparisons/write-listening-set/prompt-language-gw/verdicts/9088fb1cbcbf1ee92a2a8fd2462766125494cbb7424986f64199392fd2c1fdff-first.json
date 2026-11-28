@@ -1,0 +1,104 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00311334,
+  "failures": [],
+  "packetId": "9088fb1cbcbf1ee92a2a8fd2462766125494cbb7424986f64199392fd2c1fdff",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As duas versões trazem as mesmas questões e gabaritos, todos apoiados pelo roteiro.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas mantêm um monólogo em espanhol e questões de múltipla escolha compatíveis com a tarefa descrita.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "B",
+            "reason": "O roteiro é igual, mas B mantém as razões em português brasileiro; A inclui uma frase em espanhol em uma delas.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "A razão começa em espanhol («Oyes que aceptan objetos usados»), apesar da exigência de que todas as razões estejam em português brasileiro.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "A mistura de idiomas pode dificultar a leitura da explicação para quem usa o português como língua de apoio.",
+            "location": {
+              "detail": "Oyes que aceptan objetos usados e incluso algunos que necesitan un pequeño arreglo.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "As questões e o roteiro são equivalentes, mas B cumpre a exigência de manter todas as razões em português brasileiro."
+        },
+        "pairId": "29a3f447-255b-4789-8029-723715ec352e"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As respostas aceitas em ambas as versões aparecem no roteiro e completam as frases de forma gramatical.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Ambas apresentam um monólogo de duração plausível e seis questões de completar frases, conforme a quantidade solicitada.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os dois roteiros soam como monólogos orais, com linguagem acessível e detalhes concretos.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "As duas versões parecem igualmente utilizáveis: têm respostas válidas, questões claras e roteiros plausíveis para a tarefa."
+        },
+        "pairId": "99298e63-0fb2-43db-ad2e-f1a8104d5093"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As versões são idênticas e as respostas aceitas completam as frases de forma gramatical com conteúdo do roteiro.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "As versões são idênticas e apresentam o formato de monólogo com completar frases solicitado.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "As versões são idênticas; o roteiro usa linguagem oral e acessível.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "As duas versões são iguais e não apresentam um problema claro que prejudique o aprendiz."
+        },
+        "pairId": "f648e713-3fa3-413d-aeb9-932f27e08bb7"
+      }
+    ]
+  }
+}

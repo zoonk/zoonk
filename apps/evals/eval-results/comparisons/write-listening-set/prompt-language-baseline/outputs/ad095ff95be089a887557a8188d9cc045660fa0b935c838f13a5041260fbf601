@@ -1,0 +1,160 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "Deshalb findet er jetzt in der Turnhalle der Schule statt.",
+        "skill": 1,
+        "format": "trueFalse",
+        "difficulty": "easy",
+        "context": null,
+        "statement": "Der Flohmarkt findet im Park statt.",
+        "isTrue": false,
+        "reason": "Você ouve que o local foi mudado para o ginásio da escola.",
+        "misconception": "Você pode confundir o plano inicial no parque com o local escolhido no final."
+      },
+      {
+        "evidence": "Diesmal sammeln wir doch für den Musikunterricht für Kinder, oder?",
+        "skill": 1,
+        "format": "trueFalse",
+        "difficulty": "medium",
+        "context": null,
+        "statement": "Das Geld vom Flohmarkt soll Kindern helfen, Musikunterricht zu bekommen.",
+        "isTrue": true,
+        "reason": "Você ouve Clara dizer que, desta vez, eles arrecadam dinheiro para aulas de música para crianças. Tobias confirma a decisão.",
+        "misconception": null
+      },
+      {
+        "evidence": "Ich dachte, du wolltest die Plakate gestalten. Ich kann sie dann in den Geschäften aufhängen.",
+        "skill": 1,
+        "format": "trueFalse",
+        "difficulty": "hard",
+        "context": null,
+        "statement": "Tobias will die Plakate selbst entwerfen.",
+        "isTrue": false,
+        "reason": "Você ouve Tobias lembrar Clara de que ela faria os cartazes. Ele se oferece para colocá-los nas lojas.",
+        "misconception": "Você pode confundir pendurar os cartazes com criá-los."
+      },
+      {
+        "evidence": "Der Flohmarkt beginnt deshalb erst um zehn Uhr und dauert bis vier.",
+        "skill": 1,
+        "format": "trueFalse",
+        "difficulty": "medium",
+        "context": null,
+        "statement": "Die Besucher können ab zehn Uhr zum Flohmarkt kommen.",
+        "isTrue": true,
+        "reason": "Você ouve que o horário inicial mudou e que o evento começa às dez.",
+        "misconception": null
+      },
+      {
+        "evidence": "Ich kümmere mich um die Getränke und bringe Wasser und Saft mit.",
+        "skill": 1,
+        "format": "trueFalse",
+        "difficulty": "easy",
+        "context": null,
+        "statement": "Tobias bringt Kuchen für die Gäste mit.",
+        "isTrue": false,
+        "reason": "Você ouve que Tobias levará água e suco. Clara é quem se oferece para fazer um bolo.",
+        "misconception": "Você pode atribuir a Tobias a oferta de Clara de fazer um bolo."
+      },
+      {
+        "evidence": "Wir empfehlen den Besuchern, mit dem Bus zu kommen.",
+        "skill": 1,
+        "format": "trueFalse",
+        "difficulty": "hard",
+        "context": null,
+        "statement": "Tobias möchte den Gästen raten, öffentliche Verkehrsmittel zu benutzen.",
+        "isTrue": true,
+        "reason": "Você ouve Tobias recomendar o ônibus, pois há poucas vagas de estacionamento na escola.",
+        "misconception": null
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Clara",
+        "gender": "female",
+        "accent": "Standard German"
+      },
+      {
+        "name": "Tobias",
+        "gender": "male",
+        "accent": "Standard German"
+      }
+    ],
+    "title": "Ein Flohmarkt im Viertel",
+    "turns": [
+      {
+        "speaker": "Clara",
+        "text": "Hallo Tobias, hast du kurz Zeit? Wir wollten doch noch über den Flohmarkt am Samstag sprechen."
+      },
+      {
+        "speaker": "Tobias",
+        "text": "Ja, klar. Ich habe gestern mit Frau Berger vom Nachbarschaftsverein telefoniert. Erst wollten wir den Flohmarkt ja im Park machen, aber dort ist es bei Regen schwierig. Deshalb findet er jetzt in der Turnhalle der Schule statt."
+      },
+      {
+        "speaker": "Clara",
+        "text": "Das ist praktisch. Dann brauchen wir uns wegen des Wetters keine Sorgen zu machen. Und die Schule ist ja auch nicht weit vom Park entfernt."
+      },
+      {
+        "speaker": "Tobias",
+        "text": "Genau. Frau Berger hat auch gefragt, wofür wir das Geld ausgeben wollen. Letztes Jahr haben wir damit neue Bücher für die Stadtteilbibliothek gekauft."
+      },
+      {
+        "speaker": "Clara",
+        "text": "Diesmal sammeln wir doch für den Musikunterricht für Kinder, oder? Ich finde das gut. Nicht alle Eltern können ein Instrument und den Unterricht bezahlen."
+      },
+      {
+        "speaker": "Tobias",
+        "text": "Ja, das steht fest. Die Musikschule im Viertel hilft uns dabei. Einige Kinder möchten beim Flohmarkt sogar etwas vorspielen."
+      },
+      {
+        "speaker": "Clara",
+        "text": "Schön! Aber wir müssen noch mehr Leute auf die Veranstaltung aufmerksam machen. Hast du die Plakate schon vorbereitet?"
+      },
+      {
+        "speaker": "Tobias",
+        "text": "Ich dachte, du wolltest die Plakate gestalten. Ich kann sie dann in den Geschäften aufhängen. Die Besitzer kennen mich schon."
+      },
+      {
+        "speaker": "Clara",
+        "text": "Stimmt, das hatte ich dir versprochen. Ich mache sie heute Abend fertig und bringe sie dir morgen vorbei. Wie spät soll ich eigentlich auf das Plakat schreiben?"
+      },
+      {
+        "speaker": "Tobias",
+        "text": "Zuerst war neun Uhr geplant. Aber die Schule braucht morgens mehr Zeit zum Saubermachen. Der Flohmarkt beginnt deshalb erst um zehn Uhr und dauert bis vier."
+      },
+      {
+        "speaker": "Clara",
+        "text": "Gut, dann schreiben wir zehn Uhr. Wir sollten aber früher da sein, damit wir die Tische aufstellen können. Ich könnte gegen halb neun kommen."
+      },
+      {
+        "speaker": "Tobias",
+        "text": "Ich auch. Vielleicht kann mein Bruder uns helfen. Er hat ein großes Auto und kann die Sachen aus dem Vereinsraum mitbringen."
+      },
+      {
+        "speaker": "Clara",
+        "text": "Frag ihn doch mal. Und was machen wir mit Essen und Trinken? Ich backe gerne einen Kuchen. Oder brauchen wir lieber belegte Brote?"
+      },
+      {
+        "speaker": "Tobias",
+        "text": "Kuchen ist eine gute Idee. Ein paar andere Leute backen auch etwas. Ich kümmere mich um die Getränke und bringe Wasser und Saft mit."
+      },
+      {
+        "speaker": "Clara",
+        "text": "Super. Noch eine Frage: Sollen wir auf dem Plakat schreiben, wo man parken kann?"
+      },
+      {
+        "speaker": "Tobias",
+        "text": "Lieber nicht. An der Schule gibt es nur wenige Parkplätze. Wir empfehlen den Besuchern, mit dem Bus zu kommen. Die Haltestelle ist direkt vor der Turnhalle."
+      },
+      {
+        "speaker": "Clara",
+        "text": "Stimmt, das ist viel einfacher. Dann mache ich mich heute Abend an die Plakate. Bis morgen!"
+      },
+      {
+        "speaker": "Tobias",
+        "text": "Bis morgen, Clara. Und danke für deine Hilfe!"
+      }
+    ]
+  }
+}

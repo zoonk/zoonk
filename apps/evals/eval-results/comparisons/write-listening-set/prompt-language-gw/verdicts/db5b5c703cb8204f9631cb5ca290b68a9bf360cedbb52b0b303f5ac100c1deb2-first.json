@@ -1,0 +1,139 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00757939,
+  "failures": [],
+  "packetId": "db5b5c703cb8204f9631cb5ca290b68a9bf360cedbb52b0b303f5ac100c1deb2",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, so neither serves the learner better on keys.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, so neither is more like the IELTS Part 1 listening section.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, so the script and reasons read the same.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The 'First session' key is 18 September, but that date is given for the Tuesday group, which Ryan has just rejected in favour of the Thursday group. The script gives no date for Ryan's Thursday group, so the key is wrong for him and cannot be derived from the recording.",
+            "criterion": "keys",
+            "learnerCost": "A learner who listens carefully and writes the date Ryan actually hears for his own group is marked wrong.",
+            "location": {
+              "detail": "The Tuesday group begins on the sixteenth of September, and your first session will be on the eighteenth of September.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The 'First session' key is 18 September, but that date is given for the Tuesday group, which Ryan has just rejected in favour of the Thursday group. The script gives no date for Ryan's Thursday group, so the key is wrong for him and cannot be derived from the recording.",
+            "criterion": "keys",
+            "learnerCost": "A learner who listens carefully and writes the date Ryan actually hears for his own group is marked wrong.",
+            "location": {
+              "detail": "The Tuesday group begins on the sixteenth of September, and your first session will be on the eighteenth of September.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical and both carry the same wrong date key for Ryan's group, so neither is better."
+        },
+        "pairId": "caf67e82-05eb-4e94-badd-aaa91804f5aa"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both give the same keys, with the same options and correct answers, so the keys are equally sound.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use the same monologue, five questions and three-option format, so they match the DELE task equally well.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "A",
+            "reason": "A gives every reason and misconception in Brazilian Portuguese, while B gives some in Spanish, which the learner cannot read.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The reasons and misconception notes for the question about the admission criterion are written in Spanish, not Brazilian Portuguese, even though the packet asks for reasons in the learner's language. The same mix appears in the other notes for this question.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "A Brazilian learner who checks an answer cannot read the explanation, so they cannot learn why the option was wrong.",
+            "location": {
+              "detail": "Oyes que aceptan objetos usados e incluso algunos que necesitan un pequeño arreglo.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A has the same keys and format as B, but its explanations are in Brazilian Portuguese, so the learner can read why each option is right or wrong."
+        },
+        "pairId": "e2d7a5bc-77ba-4d6f-be15-7bea14589ddf"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "B",
+            "reason": "A's key for the first session is the date of the Tuesday group, which Ryan has rejected, so the answer is wrong for him; B's keys all match what the recording says.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both are ten-question IELTS Part 1 booking sets with a similar form format and speakers, so they are equally realistic.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both scripts read as natural spoken English with contractions and self-corrections, so neither is clearly better.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The 'First session' key is 18 September, but that date is given for the Tuesday group, which Ryan has just rejected in favour of the Thursday group. The script gives no date for Ryan's Thursday group, so the key is wrong for him and cannot be derived from the recording.",
+            "criterion": "keys",
+            "learnerCost": "A learner who listens carefully and writes the date Ryan actually hears for his own group is marked wrong.",
+            "location": {
+              "detail": "The Tuesday group begins on the sixteenth of September, and your first session will be on the eighteenth of September.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B's keys match the recording, including the correction to the bike price, while A's first-session key is wrong for Ryan's group."
+        },
+        "pairId": "f8570fe5-2c20-4e2f-b3fe-d10628fee117"
+      }
+    ]
+  }
+}

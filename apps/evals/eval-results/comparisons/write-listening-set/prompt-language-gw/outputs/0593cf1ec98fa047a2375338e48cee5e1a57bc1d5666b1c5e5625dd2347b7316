@@ -1,0 +1,140 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "We started with the library hall, then booked the school courtyard, after that moved to the sports centre, and finally settled on the community garden.",
+        "skill": 1,
+        "format": "order",
+        "difficulty": "easy",
+        "question": "In what order did the colleagues choose locations for the event?",
+        "steps": [
+          "They began with the library hall.",
+          "They booked the school courtyard.",
+          "They moved the event to the sports centre.",
+          "They settled on the community garden."
+        ],
+        "reason": "You hear Rosa trace the locations from the library through to the garden."
+      },
+      {
+        "evidence": "No, we dropped that idea and put them at the entrance to guide visitors.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "medium",
+        "context": null,
+        "question": "What did the colleagues decide the volunteers should do?",
+        "options": [
+          {
+            "text": "Direct people arriving at the garden",
+            "isCorrect": true,
+            "reason": "You hear Rosa reject extra ticket checks and say the volunteers will guide visitors at the entrance.",
+            "misconception": null
+          },
+          {
+            "text": "Provide extra checks on tickets",
+            "isCorrect": false,
+            "reason": "You hear Darius suggest ticket checks, but Rosa says they dropped that idea.",
+            "misconception": "Chooses a rejected plan"
+          },
+          {
+            "text": "Give the caterer help with food",
+            "isCorrect": false,
+            "reason": "You hear Darius mention helping with food, but the caterer had enough staff.",
+            "misconception": "Chooses an earlier suggestion"
+          }
+        ]
+      },
+      {
+        "evidence": "We initially put the local choir first, then moved the children's workshop to the opening slot, next gave that slot to the welcome talk, and eventually chose the drumming group to start the day.",
+        "skill": 1,
+        "format": "order",
+        "difficulty": "medium",
+        "question": "How did the choice of opening activity change?",
+        "steps": [
+          "The local choir was chosen to open.",
+          "The children's workshop was moved to the opening slot.",
+          "The welcome talk was given the opening slot.",
+          "The drumming group was selected to start the day."
+        ],
+        "reason": "You hear Darius describe each replacement, ending with the drumming group."
+      },
+      {
+        "evidence": "We first planned a newspaper advert, switched to printed flyers, then relied on messages through local groups, and in the end added a short announcement on community radio.",
+        "skill": 1,
+        "format": "order",
+        "difficulty": "hard",
+        "question": "In what order did the colleagues develop their publicity plans?",
+        "steps": [
+          "They planned to advertise in a newspaper.",
+          "They switched to printed flyers.",
+          "They relied on messages through local groups.",
+          "They added a community radio announcement."
+        ],
+        "reason": "You hear Rosa explain the changes from the newspaper plan to the radio announcement, which was added at the end."
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Darius",
+        "gender": "male",
+        "accent": "British English"
+      },
+      {
+        "name": "Rosa",
+        "gender": "female",
+        "accent": "British English"
+      }
+    ],
+    "title": "How the community event plans changed",
+    "turns": [
+      {
+        "speaker": "Darius",
+        "text": "Hi, Rosa. Have you got a minute? Fatima wants a record of how we ended up with the plans for Saturday's community event. Apparently, the next team would rather not repeat all our last minute decisions."
+      },
+      {
+        "speaker": "Rosa",
+        "text": "I don't blame them. The venue alone changed four times. We started with the library hall, then booked the school courtyard, after that moved to the sports centre, and finally settled on the community garden. It sounds much simpler when you say it quickly."
+      },
+      {
+        "speaker": "Darius",
+        "text": "It does. The library was too small once the local groups got involved, and the school needed its courtyard for repairs. We thought the sports centre would be safer if it rained."
+      },
+      {
+        "speaker": "Rosa",
+        "text": "Yes, but it was so expensive. Then the garden reopened earlier than expected, and they offered us their covered area as well as the lawn. That gave us a backup without stretching the budget."
+      },
+      {
+        "speaker": "Darius",
+        "text": "Right. Now, what happened with the volunteers? I remember suggesting they help the food team, but the caterer brought enough staff. Didn't we decide to use the volunteers for extra ticket checks instead?"
+      },
+      {
+        "speaker": "Rosa",
+        "text": "No, we dropped that idea and put them at the entrance to guide visitors. Most tickets are being checked online anyway. The garden has two gates, and we didn't want people walking all the way round to the wrong one."
+      },
+      {
+        "speaker": "Darius",
+        "text": "That's right. And the programme changed almost as much as the venue. We initially put the local choir first, then moved the children's workshop to the opening slot, next gave that slot to the welcome talk, and eventually chose the drumming group to start the day. The choir was very gracious about it."
+      },
+      {
+        "speaker": "Rosa",
+        "text": "They were. We moved the workshop because the materials wouldn't arrive in time. The welcome talk seemed sensible, but Leah pointed out that people would still be coming through the gates, so the drummers were a better way to catch their attention."
+      },
+      {
+        "speaker": "Darius",
+        "text": "I'm glad we asked her. What about getting the word out? I know we didn't have much money for that."
+      },
+      {
+        "speaker": "Rosa",
+        "text": "Not much at all. We first planned a newspaper advert, switched to printed flyers, then relied on messages through local groups, and in the end added a short announcement on community radio. The newspaper price surprised us, and we couldn't print enough flyers to reach everyone."
+      },
+      {
+        "speaker": "Darius",
+        "text": "And the radio spot came about because Malik knew someone there, didn't it? That was useful, especially for people who aren't in those online groups. I'll write all this up and send it to Fatima."
+      },
+      {
+        "speaker": "Rosa",
+        "text": "Great. Include the reasons as well as the final decisions. Otherwise, next year's team might wonder why we kept changing our minds."
+      }
+    ]
+  }
+}

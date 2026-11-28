@@ -1,0 +1,13 @@
+{
+  "caseId": "en-cambridge-first-part-2-sentence-completion",
+  "costUsd": 0.035112,
+  "name": "answer keys",
+  "passed": 4,
+  "problems": [
+    "{\"itemLocator\":\"set.questions[0]\",\"keyedAnswer\":\"railway station\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"“Station” also completes “at a former station” and identifies the site rather than the proposed school playground. The stem does not ask what type of station it was.\"}",
+    "{\"itemLocator\":\"set.questions[2]\",\"keyedAnswer\":\"wooden boxes\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"“Boxes” also completes “planted in boxes donated by a shop.” It is heard in the recording and distinguishes the actual containers from the suggested pots; the stem does not require their material.\"}"
+  ],
+  "run": 1,
+  "side": "challenger",
+  "total": 6
+}

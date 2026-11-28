@@ -1,0 +1,827 @@
+{
+  "cases": [
+    {
+      "caseId": "en-computing-lecture-spoken-notation",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {
+        "anthropic": "split",
+        "openai": "incumbent"
+      }
+    },
+    {
+      "caseId": "en-ielts-part-1-form-completion",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {
+        "anthropic": "split",
+        "openai": "split"
+      }
+    },
+    {
+      "caseId": "pt-toefl-campus-conversation",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {
+        "anthropic": "split",
+        "openai": "challenger"
+      }
+    },
+    {
+      "caseId": "pt-dele-b2-tarea-5-monologue",
+      "language": "pt",
+      "owner": null,
+      "result": "challenger",
+      "votes": {
+        "anthropic": "challenger",
+        "openai": "challenger"
+      }
+    },
+    {
+      "caseId": "en-cambridge-first-part-2-sentence-completion",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {
+        "anthropic": "tie",
+        "openai": "split"
+      }
+    },
+    {
+      "caseId": "pt-goethe-b1-horen-teil-3",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {
+        "openai": "challenger"
+      }
+    },
+    {
+      "caseId": "pt-ielts-part-1-from-notice",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {
+        "anthropic": "split",
+        "openai": "split"
+      }
+    },
+    {
+      "caseId": "pt-ielts-part-2-from-notice",
+      "language": "pt",
+      "owner": null,
+      "result": "challenger",
+      "votes": {
+        "anthropic": "challenger",
+        "openai": "challenger"
+      }
+    },
+    {
+      "caseId": "en-cambridge-accepted-article-regression",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {
+        "anthropic": "tie",
+        "openai": "challenger"
+      }
+    },
+    {
+      "caseId": "pt-cambridge-accepted-article-regression",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {
+        "anthropic": "challenger",
+        "openai": "incumbent"
+      }
+    },
+    {
+      "caseId": "en-c1-test-out-order",
+      "language": "en",
+      "owner": null,
+      "result": "incumbent",
+      "votes": {
+        "anthropic": "incumbent",
+        "openai": "incumbent"
+      }
+    }
+  ],
+  "outcome": "insufficient evidence",
+  "preferences": [
+    {
+      "families": [
+        {
+          "challenger": 10,
+          "incumbent": 7,
+          "tie": 11,
+          "family": "anthropic"
+        },
+        {
+          "challenger": 14,
+          "incumbent": 6,
+          "tie": 14,
+          "family": "openai"
+        }
+      ],
+      "lean": "challenger",
+      "total": {
+        "challenger": 24,
+        "incumbent": 13,
+        "tie": 25
+      },
+      "byLanguage": [
+        {
+          "families": [
+            {
+              "challenger": 2,
+              "incumbent": 4,
+              "tie": 7,
+              "family": "anthropic"
+            },
+            {
+              "challenger": 4,
+              "incumbent": 4,
+              "tie": 7,
+              "family": "openai"
+            }
+          ],
+          "lean": null,
+          "total": {
+            "challenger": 6,
+            "incumbent": 8,
+            "tie": 14
+          },
+          "language": "en"
+        },
+        {
+          "families": [
+            {
+              "challenger": 8,
+              "incumbent": 3,
+              "tie": 4,
+              "family": "anthropic"
+            },
+            {
+              "challenger": 10,
+              "incumbent": 2,
+              "tie": 7,
+              "family": "openai"
+            }
+          ],
+          "lean": "challenger",
+          "total": {
+            "challenger": 18,
+            "incumbent": 5,
+            "tie": 11
+          },
+          "language": "pt"
+        }
+      ],
+      "criterion": null,
+      "label": "Overall"
+    },
+    {
+      "families": [
+        {
+          "challenger": 3,
+          "incumbent": 3,
+          "tie": 22,
+          "family": "anthropic"
+        },
+        {
+          "challenger": 4,
+          "incumbent": 4,
+          "tie": 26,
+          "family": "openai"
+        }
+      ],
+      "lean": null,
+      "total": {
+        "challenger": 7,
+        "incumbent": 7,
+        "tie": 48
+      },
+      "byLanguage": [
+        {
+          "families": [
+            {
+              "challenger": 2,
+              "incumbent": 0,
+              "tie": 11,
+              "family": "anthropic"
+            },
+            {
+              "challenger": 3,
+              "incumbent": 1,
+              "tie": 11,
+              "family": "openai"
+            }
+          ],
+          "lean": "challenger",
+          "total": {
+            "challenger": 5,
+            "incumbent": 1,
+            "tie": 22
+          },
+          "language": "en"
+        },
+        {
+          "families": [
+            {
+              "challenger": 1,
+              "incumbent": 3,
+              "tie": 11,
+              "family": "anthropic"
+            },
+            {
+              "challenger": 1,
+              "incumbent": 3,
+              "tie": 15,
+              "family": "openai"
+            }
+          ],
+          "lean": "incumbent",
+          "total": {
+            "challenger": 2,
+            "incumbent": 6,
+            "tie": 26
+          },
+          "language": "pt"
+        }
+      ],
+      "criterion": "keys",
+      "label": "Right, fair keys"
+    },
+    {
+      "families": [
+        {
+          "challenger": 5,
+          "incumbent": 4,
+          "tie": 19,
+          "family": "anthropic"
+        },
+        {
+          "challenger": 9,
+          "incumbent": 7,
+          "tie": 18,
+          "family": "openai"
+        }
+      ],
+      "lean": "challenger",
+      "total": {
+        "challenger": 14,
+        "incumbent": 11,
+        "tie": 37
+      },
+      "byLanguage": [
+        {
+          "families": [
+            {
+              "challenger": 0,
+              "incumbent": 3,
+              "tie": 10,
+              "family": "anthropic"
+            },
+            {
+              "challenger": 1,
+              "incumbent": 4,
+              "tie": 10,
+              "family": "openai"
+            }
+          ],
+          "lean": "incumbent",
+          "total": {
+            "challenger": 1,
+            "incumbent": 7,
+            "tie": 20
+          },
+          "language": "en"
+        },
+        {
+          "families": [
+            {
+              "challenger": 5,
+              "incumbent": 1,
+              "tie": 9,
+              "family": "anthropic"
+            },
+            {
+              "challenger": 8,
+              "incumbent": 3,
+              "tie": 8,
+              "family": "openai"
+            }
+          ],
+          "lean": "challenger",
+          "total": {
+            "challenger": 13,
+            "incumbent": 4,
+            "tie": 17
+          },
+          "language": "pt"
+        }
+      ],
+      "criterion": "examRealism",
+      "label": "Exam realism"
+    },
+    {
+      "families": [
+        {
+          "challenger": 6,
+          "incumbent": 5,
+          "tie": 17,
+          "family": "anthropic"
+        },
+        {
+          "challenger": 7,
+          "incumbent": 2,
+          "tie": 25,
+          "family": "openai"
+        }
+      ],
+      "lean": "challenger",
+      "total": {
+        "challenger": 13,
+        "incumbent": 7,
+        "tie": 42
+      },
+      "byLanguage": [
+        {
+          "families": [
+            {
+              "challenger": 2,
+              "incumbent": 2,
+              "tie": 9,
+              "family": "anthropic"
+            },
+            {
+              "challenger": 2,
+              "incumbent": 2,
+              "tie": 11,
+              "family": "openai"
+            }
+          ],
+          "lean": null,
+          "total": {
+            "challenger": 4,
+            "incumbent": 4,
+            "tie": 20
+          },
+          "language": "en"
+        },
+        {
+          "families": [
+            {
+              "challenger": 4,
+              "incumbent": 3,
+              "tie": 8,
+              "family": "anthropic"
+            },
+            {
+              "challenger": 5,
+              "incumbent": 0,
+              "tie": 14,
+              "family": "openai"
+            }
+          ],
+          "lean": "challenger",
+          "total": {
+            "challenger": 9,
+            "incumbent": 3,
+            "tie": 22
+          },
+          "language": "pt"
+        }
+      ],
+      "criterion": "naturalSpeech",
+      "label": "Natural speech & language"
+    }
+  ],
+  "readers": [
+    {
+      "failedPackets": 10,
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    },
+    {
+      "failedPackets": 4,
+      "family": "openai",
+      "model": "openai/gpt-6-luna",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    },
+    {
+      "failedPackets": 0,
+      "family": "owner",
+      "model": "owner",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    }
+  ],
+  "reason": "Some unresolved cases are awaiting qualified model reads.",
+  "rows": [
+    {
+      "attempted": 22,
+      "casesByLanguage": {
+        "en": 5,
+        "pt": 6
+      },
+      "costPer1000": 12.832572727272726,
+      "date": "2026-11-28T15:09:05.468Z",
+      "deliveryByLanguage": {
+        "en": {
+          "costPer1000": 11.47806,
+          "p50": 26.28811262499998,
+          "p95": 30.23783387500007,
+          "successful": 10
+        },
+        "pt": {
+          "costPer1000": 13.961333333333336,
+          "p50": 30.66811283299999,
+          "p95": 45.06252354199998,
+          "successful": 12
+        }
+      },
+      "losses": 2,
+      "missingMatches": 0,
+      "p50": 27.192070332999922,
+      "p95": 43.08094812499999,
+      "quality": [
+        {
+          "affected": [
+            {
+              "caseId": "en-computing-lecture-spoken-notation",
+              "run": 1
+            },
+            {
+              "caseId": "en-computing-lecture-spoken-notation",
+              "run": 2
+            },
+            {
+              "caseId": "en-ielts-part-1-form-completion",
+              "run": 2
+            }
+          ],
+          "both": [
+            {
+              "caseId": "en-computing-lecture-spoken-notation",
+              "run": 1
+            },
+            {
+              "caseId": "en-computing-lecture-spoken-notation",
+              "run": 2
+            }
+          ],
+          "criterion": "keys",
+          "language": "en",
+          "weight": 3
+        },
+        {
+          "affected": [
+            {
+              "caseId": "en-ielts-part-1-form-completion",
+              "run": 1
+            },
+            {
+              "caseId": "en-ielts-part-1-form-completion",
+              "run": 2
+            }
+          ],
+          "both": [
+            {
+              "caseId": "en-ielts-part-1-form-completion",
+              "run": 1
+            },
+            {
+              "caseId": "en-ielts-part-1-form-completion",
+              "run": 2
+            }
+          ],
+          "criterion": "examRealism",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "naturalSpeech",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [
+            {
+              "caseId": "en-cambridge-first-part-2-sentence-completion",
+              "run": 2
+            },
+            {
+              "caseId": "en-cambridge-first-part-2-sentence-completion",
+              "run": 1
+            },
+            {
+              "caseId": "en-cambridge-accepted-article-regression",
+              "run": 2
+            },
+            {
+              "caseId": "en-cambridge-accepted-article-regression",
+              "run": 1
+            }
+          ],
+          "both": [
+            {
+              "caseId": "en-cambridge-first-part-2-sentence-completion",
+              "run": 2
+            },
+            {
+              "caseId": "en-cambridge-first-part-2-sentence-completion",
+              "run": 1
+            }
+          ],
+          "check": true,
+          "criterion": "keys",
+          "language": "en",
+          "weight": 3
+        },
+        {
+          "affected": [
+            {
+              "caseId": "pt-ielts-part-1-from-notice",
+              "run": 2
+            }
+          ],
+          "both": [
+            {
+              "caseId": "pt-ielts-part-1-from-notice",
+              "run": 2
+            }
+          ],
+          "criterion": "keys",
+          "language": "pt",
+          "weight": 3
+        },
+        {
+          "affected": [
+            {
+              "caseId": "pt-ielts-part-1-from-notice",
+              "run": 2
+            }
+          ],
+          "both": [
+            {
+              "caseId": "pt-ielts-part-1-from-notice",
+              "run": 2
+            }
+          ],
+          "criterion": "examRealism",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [
+            {
+              "caseId": "pt-ielts-part-1-from-notice",
+              "run": 2
+            }
+          ],
+          "both": [],
+          "criterion": "naturalSpeech",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [
+            {
+              "caseId": "pt-ielts-part-1-from-notice",
+              "run": 1
+            },
+            {
+              "caseId": "pt-ielts-part-2-from-notice",
+              "run": 2
+            }
+          ],
+          "both": [
+            {
+              "caseId": "pt-ielts-part-1-from-notice",
+              "run": 1
+            }
+          ],
+          "check": true,
+          "criterion": "keys",
+          "language": "pt",
+          "weight": 3
+        }
+      ],
+      "side": "incumbent",
+      "status": "eligible",
+      "succeeded": 22,
+      "ties": 0,
+      "unresolved": 8,
+      "weightedMajorsByLanguage": {
+        "en": 22,
+        "pt": 9
+      },
+      "wins": 1
+    },
+    {
+      "attempted": 22,
+      "casesByLanguage": {
+        "en": 5,
+        "pt": 6
+      },
+      "costPer1000": 12.64164090909091,
+      "date": "2026-11-28T15:09:05.468Z",
+      "deliveryByLanguage": {
+        "en": {
+          "costPer1000": 10.843530000000001,
+          "p50": 26.32121370799991,
+          "p95": 29.312217500000028,
+          "successful": 10
+        },
+        "pt": {
+          "costPer1000": 14.14006666666667,
+          "p50": 30.883828084000008,
+          "p95": 41.17055341699999,
+          "successful": 12
+        }
+      },
+      "losses": 1,
+      "missingMatches": 0,
+      "p50": 27.643409249999998,
+      "p95": 38.52628850000002,
+      "quality": [
+        {
+          "affected": [
+            {
+              "caseId": "en-computing-lecture-spoken-notation",
+              "run": 1
+            },
+            {
+              "caseId": "en-computing-lecture-spoken-notation",
+              "run": 2
+            }
+          ],
+          "both": [
+            {
+              "caseId": "en-computing-lecture-spoken-notation",
+              "run": 1
+            },
+            {
+              "caseId": "en-computing-lecture-spoken-notation",
+              "run": 2
+            }
+          ],
+          "criterion": "keys",
+          "language": "en",
+          "weight": 3
+        },
+        {
+          "affected": [
+            {
+              "caseId": "en-ielts-part-1-form-completion",
+              "run": 1
+            },
+            {
+              "caseId": "en-ielts-part-1-form-completion",
+              "run": 2
+            }
+          ],
+          "both": [
+            {
+              "caseId": "en-ielts-part-1-form-completion",
+              "run": 1
+            },
+            {
+              "caseId": "en-ielts-part-1-form-completion",
+              "run": 2
+            }
+          ],
+          "criterion": "examRealism",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "naturalSpeech",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [
+            {
+              "caseId": "en-cambridge-first-part-2-sentence-completion",
+              "run": 1
+            },
+            {
+              "caseId": "en-ielts-part-1-form-completion",
+              "run": 2
+            },
+            {
+              "caseId": "en-c1-test-out-order",
+              "run": 1
+            },
+            {
+              "caseId": "en-cambridge-first-part-2-sentence-completion",
+              "run": 2
+            }
+          ],
+          "both": [
+            {
+              "caseId": "en-cambridge-first-part-2-sentence-completion",
+              "run": 1
+            },
+            {
+              "caseId": "en-cambridge-first-part-2-sentence-completion",
+              "run": 2
+            }
+          ],
+          "check": true,
+          "criterion": "keys",
+          "language": "en",
+          "weight": 3
+        },
+        {
+          "affected": [
+            {
+              "caseId": "pt-ielts-part-1-from-notice",
+              "run": 2
+            }
+          ],
+          "both": [
+            {
+              "caseId": "pt-ielts-part-1-from-notice",
+              "run": 2
+            }
+          ],
+          "criterion": "keys",
+          "language": "pt",
+          "weight": 3
+        },
+        {
+          "affected": [
+            {
+              "caseId": "pt-ielts-part-1-from-notice",
+              "run": 2
+            }
+          ],
+          "both": [
+            {
+              "caseId": "pt-ielts-part-1-from-notice",
+              "run": 2
+            }
+          ],
+          "criterion": "examRealism",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "naturalSpeech",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [
+            {
+              "caseId": "pt-ielts-part-1-from-notice",
+              "run": 1
+            }
+          ],
+          "both": [
+            {
+              "caseId": "pt-ielts-part-1-from-notice",
+              "run": 1
+            }
+          ],
+          "check": true,
+          "criterion": "keys",
+          "language": "pt",
+          "weight": 3
+        }
+      ],
+      "side": "challenger",
+      "status": "eligible",
+      "succeeded": 22,
+      "ties": 0,
+      "unresolved": 8,
+      "weightedMajorsByLanguage": {
+        "en": 19,
+        "pt": 6
+      },
+      "wins": 2
+    }
+  ]
+}

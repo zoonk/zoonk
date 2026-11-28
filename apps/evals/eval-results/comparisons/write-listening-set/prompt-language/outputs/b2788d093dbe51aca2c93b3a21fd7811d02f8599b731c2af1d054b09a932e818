@@ -1,0 +1,177 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "Al principio pensamos en organizar un mercado para venderlas, pero pronto vimos un problema: quien necesitara una escalera por una tarde tendría que comprarla. Así que decidimos crear un servicio de préstamo, para que esos objetos circularan entre los vecinos.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "easy",
+        "context": null,
+        "question": "¿Qué decidieron hacer los vecinos con los objetos?",
+        "options": [
+          {
+            "text": "Ponerlos a disposición de la comunidad temporalmente.",
+            "isCorrect": true,
+            "reason": "Você ouve que decidiram criar um serviço de empréstimo para que os objetos circulassem entre os vizinhos.",
+            "misconception": null
+          },
+          {
+            "text": "Venderlos en un mercado organizado por el barrio.",
+            "isCorrect": false,
+            "reason": "Você ouve essa proposta inicial, mas ela foi descartada em favor do empréstimo.",
+            "misconception": "Escolhe a primeira proposta, depois rejeitada."
+          },
+          {
+            "text": "Ofrecerlos a las tiendas para que los revendieran.",
+            "isCorrect": false,
+            "reason": "Você ouve uma referência às lojas do bairro, mas Mariana não diz que elas receberiam os objetos.",
+            "misconception": "Confunde a menção às lojas com o plano escolhido."
+          }
+        ]
+      },
+      {
+        "evidence": "Finalmente, una asociación cultural nos cedió un espacio dentro de su centro comunitario, y eso nos permitió abrir también por las tardes.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "medium",
+        "context": null,
+        "question": "¿Por qué les resultó adecuado el lugar elegido para la biblioteca?",
+        "options": [
+          {
+            "text": "Porque podían atender fuera del horario de mañana.",
+            "isCorrect": true,
+            "reason": "Você ouve que o espaço no centro comunitário permitiu abrir também à tarde.",
+            "misconception": null
+          },
+          {
+            "text": "Porque estaba situado al lado del mercado.",
+            "isCorrect": false,
+            "reason": "Você ouve que o local junto ao mercado foi considerado, mas a renda era alta demais.",
+            "misconception": "Escolhe um local que foi descartado."
+          },
+          {
+            "text": "Porque contaba con personal para preparar los estantes.",
+            "isCorrect": false,
+            "reason": "Você ouve que os próprios participantes prepararam o espaço e que ninguém cobrou por essas tarefas.",
+            "misconception": "Supõe que o centro forneceu pessoal."
+          }
+        ]
+      },
+      {
+        "evidence": "Ahora comprobamos que cada objeto funcione y que realmente haya interés en pedirlo prestado.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "medium",
+        "context": null,
+        "question": "¿Qué criterio siguen ahora para admitir donaciones?",
+        "options": [
+          {
+            "text": "Que los objetos estén en buen estado y tengan posibles usuarios.",
+            "isCorrect": true,
+            "reason": "Você ouve que agora verificam se cada objeto funciona e se há interesse em pegá-lo emprestado.",
+            "misconception": null
+          },
+          {
+            "text": "Que los objetos puedan desmontarse y repararse en el centro.",
+            "isCorrect": false,
+            "reason": "Você ouve que antes recebiam aparelhos que ninguém sabia consertar, mas esse não é o critério atual.",
+            "misconception": "Confunde um problema anterior com uma condição de admissão."
+          },
+          {
+            "text": "Que los objetos sean grandes y sirvan para hacer ejercicio.",
+            "isCorrect": false,
+            "reason": "Você ouve o exemplo de uma bicicleta ergométrica para mostrar que um objeto volumoso pode ser pouco solicitado.",
+            "misconception": "Interpreta um exemplo pouco conveniente como preferência."
+          }
+        ]
+      },
+      {
+        "evidence": "Sin embargo, para mí lo más valioso es que la gente empieza a conocerse y a pedir ayuda sin vergüenza.",
+        "skill": 2,
+        "format": "multipleChoice",
+        "difficulty": "hard",
+        "context": null,
+        "question": "¿Qué destaca Mariana como la mayor aportación del proyecto?",
+        "options": [
+          {
+            "text": "La creación de vínculos y apoyo entre vecinos.",
+            "isCorrect": true,
+            "reason": "Você ouve que, para Mariana, o mais valioso é que as pessoas se conheçam e peçam ajuda sem vergonha.",
+            "misconception": null
+          },
+          {
+            "text": "La reducción de los gastos de las familias.",
+            "isCorrect": false,
+            "reason": "Você ouve que a economia importa, mas Mariana considera outro benefício ainda mais valioso.",
+            "misconception": "Confunde um benefício reconhecido com o principal para a falante."
+          },
+          {
+            "text": "La puesta en marcha del plan previsto inicialmente.",
+            "isCorrect": false,
+            "reason": "Você ouve que as novas relações entre vizinhos nem sequer faziam parte do plano inicial.",
+            "misconception": "Supõe que a execução do plano é o benefício destacado."
+          }
+        ]
+      },
+      {
+        "evidence": "Por ahora vamos a organizar jornadas de reparación en distintos barrios, llevando herramientas y compartiendo lo que hemos aprendido.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "medium",
+        "context": null,
+        "question": "¿Qué harán próximamente para llegar a otros vecinos?",
+        "options": [
+          {
+            "text": "Realizar actividades de reparación en varios barrios.",
+            "isCorrect": true,
+            "reason": "Você ouve que eles vão organizar jornadas de reparo em diferentes bairros e levar ferramentas.",
+            "misconception": null
+          },
+          {
+            "text": "Abrir de inmediato una segunda sede permanente.",
+            "isCorrect": false,
+            "reason": "Você ouve que a proposta de outra sede os anima, mas ainda não há voluntários suficientes para abri-la.",
+            "misconception": "Confunde uma possibilidade futura com o plano imediato."
+          },
+          {
+            "text": "Contratar personal estable para el centro actual.",
+            "isCorrect": false,
+            "reason": "Você ouve uma menção à necessidade de uma equipe estável no outro bairro, não a um plano de contratação para o centro atual.",
+            "misconception": "Interpreta a necessidade futura de uma equipe como contratação imediata."
+          }
+        ]
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Mariana",
+        "gender": "female",
+        "accent": "Mexican Spanish"
+      }
+    ],
+    "title": "Una biblioteca de objetos en Morelia",
+    "turns": [
+      {
+        "speaker": "Mariana",
+        "text": "Hola, soy Mariana y hoy quiero contarles cómo nació la biblioteca de objetos de nuestro barrio, aquí en Morelia. La idea surgió en una reunión de vecinos, cuando varias personas comentaron que tenían herramientas guardadas que apenas usaban. Al principio pensamos en organizar un mercado para venderlas, pero pronto vimos un problema: quien necesitara una escalera por una tarde tendría que comprarla. Así que decidimos crear un servicio de préstamo, para que esos objetos circularan entre los vecinos. No queríamos sustituir las tiendas del barrio, sino ofrecer otra opción para necesidades ocasionales."
+      },
+      {
+        "speaker": "Mariana",
+        "text": "Encontrar un lugar no fue tan sencillo. Nos ofrecieron una habitación en una escuela, pero solo podíamos entrar por las mañanas, cuando muchos vecinos trabajan. También pensamos en un local junto al mercado, aunque la renta era demasiado alta. Finalmente, una asociación cultural nos cedió un espacio dentro de su centro comunitario, y eso nos permitió abrir también por las tardes. Entre todos pintamos las paredes, instalamos estantes y preparamos una lista de los primeros objetos disponibles. Nadie cobró por esas tareas y, aun así, el arranque fue más lento de lo previsto."
+      },
+      {
+        "speaker": "Mariana",
+        "text": "A menudo me preguntan si aceptamos cualquier cosa que nos donen. Al comienzo sí, porque nos daba pena rechazar la generosidad de la gente. Pero acabamos con aparatos que nadie sabía reparar y cajas de piezas incompletas. Ahora comprobamos que cada objeto funcione y que realmente haya interés en pedirlo prestado. Esto ha reducido el tamaño de la colección, pero ha hecho más fácil mantenerla. Una bicicleta estática, por ejemplo, puede ser útil, claro, pero ocupa mucho espacio y casi nadie la solicita. Preferimos tener menos cosas y poder responder bien cuando alguien las necesita."
+      },
+      {
+        "speaker": "Mariana",
+        "text": "Algunas personas creen que el principal beneficio del proyecto es ahorrar dinero. Y sí, eso cuenta, sobre todo para familias que no pueden comprar herramientas caras. Sin embargo, para mí lo más valioso es que la gente empieza a conocerse y a pedir ayuda sin vergüenza. Una vecina viene por una máquina de coser y termina enseñándole a otra a usarla. A veces esas conversaciones continúan fuera del centro, y surgen pequeños proyectos entre personas que antes solo se saludaban de lejos. Eso no apareció en nuestro plan inicial, pero ahora intentamos darle espacio."
+      },
+      {
+        "speaker": "Mariana",
+        "text": "De cara al futuro, nos han propuesto abrir otra sede en un barrio cercano. La propuesta nos entusiasma, aunque todavía no tenemos suficientes voluntarios para atender dos lugares. Por ahora vamos a organizar jornadas de reparación en distintos barrios, llevando herramientas y compartiendo lo que hemos aprendido. Así podremos conocer a más vecinos sin asumir de golpe los gastos de un segundo local. Y si más adelante se forma un equipo estable allí, entonces sí podremos considerar una nueva sede. Gracias por escucharme, y ojalá esta experiencia les dé ideas para sus propias comunidades."
+      }
+    ]
+  }
+}

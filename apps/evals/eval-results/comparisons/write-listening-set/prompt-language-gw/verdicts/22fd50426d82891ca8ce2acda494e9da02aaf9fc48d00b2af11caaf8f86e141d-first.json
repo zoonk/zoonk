@@ -1,0 +1,104 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00304484,
+  "failures": [],
+  "packetId": "22fd50426d82891ca8ce2acda494e9da02aaf9fc48d00b2af11caaf8f86e141d",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As duas versões têm gabaritos sustentados pelo monólogo, com perguntas na ordem da gravação e sem alternativas que pareçam igualmente defensáveis.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas apresentam um monólogo em espanhol com cinco questões de múltipla escolha e alternativas plausíveis para a tarefa indicada.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "A",
+            "reason": "A mantém as explicações e os misconceptions em português brasileiro; B usa espanhol em todos os campos de explicação da questão 2.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Na questão 2, os campos de reason e misconception das três opções estão em espanhol, em vez de português brasileiro.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "O leitor brasileiro recebe explicações fora do idioma solicitado, o que pode dificultar a compreensão do feedback.",
+            "location": {
+              "detail": "Questão 2: campos reason e misconception das três opções",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "As duas versões são equivalentes quanto às perguntas e ao formato, mas A cumpre o requisito de manter as explicações em português brasileiro."
+        },
+        "pairId": "0c1378bc-266f-4dda-9009-1751de003cf7"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As seis afirmações de cada versão correspondem ao que é dito, e as falsas alteram detalhes do diálogo sem tornar a resposta ambígua.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas oferecem uma conversa cotidiana em alemão entre duas pessoas, seis afirmações de certo ou errado em ordem e uma proporção equilibrada de respostas verdadeiras e falsas.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Ambos os diálogos soam como conversas de planejamento, e as explicações estão em português brasileiro.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "As duas versões atendem de forma semelhante ao formato, ao conteúdo e ao público previsto."
+        },
+        "pairId": "516af9ba-46c6-49d5-a92e-b18acb55dc35"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As afirmações de ambas as versões têm gabaritos corretos e verificáveis no diálogo.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas versões usam uma conversa cotidiana entre duas pessoas e seis afirmações de certo ou errado, como solicitado.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os diálogos e as explicações em português brasileiro são iguais nas duas versões.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "As duas saídas são idênticas e atendem igualmente aos requisitos."
+        },
+        "pairId": "b4655afa-cfc3-43b6-9f81-d297cfd94d91"
+      }
+    ]
+  }
+}

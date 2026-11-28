@@ -1,0 +1,19 @@
+{
+  "caseId": "en-computing-lecture-spoken-notation",
+  "challenger": {
+    "costUsd": 0.009673750000000002,
+    "durationMs": 19010.902167,
+    "hash": "f49dbb6458d2b325a2a48cd04ad7e4fb8c0224ede34507ddfe9d5da1b90b7dd2",
+    "systemPromptHash": "e3b82cc26c31f7e91f014a83c3ba13fcbd6ab625853f42fa6c306b40e94bd292",
+    "userPromptHash": "de5ae5777160fe421716aeac080f4002f5ab77d1826209a213c81ac24866d5ab"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.011005000000000001,
+    "durationMs": 21437.797292000003,
+    "hash": "d9116b7b7119273e9f747117efd5113f76d4966cdc26a01c67be49c9f77c0425",
+    "systemPromptHash": "166fabea522ca02bf45a03804b4b9c4bb79d265834759a6f90687101d818eca1",
+    "userPromptHash": "de5ae5777160fe421716aeac080f4002f5ab77d1826209a213c81ac24866d5ab"
+  },
+  "run": 1
+}

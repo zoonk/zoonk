@@ -1,0 +1,321 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "It's Naomi Fenwick. That's F-E-N-W-I-C-K.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Cycle trip booking\nWrite ONE WORD AND/OR A NUMBER.",
+        "question": "Customer's surname: ______",
+        "keyPoints": [
+          "The surname must be spelled Fenwick."
+        ],
+        "acceptedAnswers": [
+          "Fenwick"
+        ],
+        "sampleAnswer": "Fenwick"
+      },
+      {
+        "evidence": "Could we do the eighteenth of May instead?",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Cycle trip booking\nWrite ONE WORD AND/OR A NUMBER.",
+        "question": "Date of ride: May ______",
+        "keyPoints": [
+          "The ride is on the eighteenth of May."
+        ],
+        "acceptedAnswers": [
+          "18",
+          "18th",
+          "eighteenth"
+        ],
+        "sampleAnswer": "eighteenth"
+      },
+      {
+        "evidence": "The guide will be waiting outside the station.",
+        "skill": 2,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Cycle trip booking\nWrite ONE WORD AND/OR A NUMBER.",
+        "question": "Meeting point: outside the ______",
+        "keyPoints": [
+          "The group will meet outside the station."
+        ],
+        "acceptedAnswers": [
+          "station"
+        ],
+        "sampleAnswer": "station"
+      },
+      {
+        "evidence": "The ride sets off at half past nine, so please arrive by quarter past nine.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "hard",
+        "context": "Cycle trip booking\nWrite ONE WORD AND/OR A NUMBER.",
+        "question": "Arrival time: ______",
+        "keyPoints": [
+          "The group should arrive at 9:15."
+        ],
+        "acceptedAnswers": [
+          "9:15",
+          "9.15",
+          "9:15 am",
+          "9.15 am",
+          "9:15 a.m.",
+          "9.15 a.m."
+        ],
+        "sampleAnswer": "quarter past nine"
+      },
+      {
+        "evidence": "There'll be three of us, and we'll all need to hire bikes.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Cycle trip booking\nWrite ONE WORD AND/OR A NUMBER.",
+        "question": "Number of bikes needed: ______",
+        "keyPoints": [
+          "Three bikes are needed."
+        ],
+        "acceptedAnswers": [
+          "3",
+          "three"
+        ],
+        "sampleAnswer": "three"
+      },
+      {
+        "evidence": "I think electric bikes would be best for all three of us.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Cycle trip booking\nWrite ONE WORD AND/OR A NUMBER.",
+        "question": "Type of bikes chosen: ______",
+        "keyPoints": [
+          "Naomi chooses electric bikes."
+        ],
+        "acceptedAnswers": [
+          "electric"
+        ],
+        "sampleAnswer": "electric"
+      },
+      {
+        "evidence": "It's forty-eight pounds altogether.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "hard",
+        "context": "Cycle trip booking\nWrite ONE WORD AND/OR A NUMBER.",
+        "question": "Total cost for the group: £______",
+        "keyPoints": [
+          "The total price is 48 pounds."
+        ],
+        "acceptedAnswers": [
+          "48",
+          "forty-eight"
+        ],
+        "sampleAnswer": "forty-eight"
+      },
+      {
+        "evidence": "I'd recommend gloves.",
+        "skill": 2,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Cycle trip booking\nWrite ONE WORD AND/OR A NUMBER.",
+        "question": "Recommended item to bring for comfort: ______",
+        "keyPoints": [
+          "Ryan recommends bringing gloves."
+        ],
+        "acceptedAnswers": [
+          "gloves"
+        ],
+        "sampleAnswer": "gloves"
+      },
+      {
+        "evidence": "Now we stop at the museum, where there's a café and a garden.",
+        "skill": 2,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Cycle trip booking\nWrite ONE WORD AND/OR A NUMBER.",
+        "question": "Lunch stop: the ______",
+        "keyPoints": [
+          "The group now stops at the museum."
+        ],
+        "acceptedAnswers": [
+          "museum"
+        ],
+        "sampleAnswer": "museum"
+      },
+      {
+        "evidence": "Yes, just let us know by Tuesday before your ride.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "hard",
+        "context": "Cycle trip booking\nWrite ONE WORD AND/OR A NUMBER.",
+        "question": "Last day to cancel without a possible charge: ______",
+        "keyPoints": [
+          "Naomi should cancel by Tuesday."
+        ],
+        "acceptedAnswers": [
+          "Tuesday"
+        ],
+        "sampleAnswer": "Tuesday"
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Ryan",
+        "gender": "male",
+        "accent": "British English"
+      },
+      {
+        "name": "Naomi",
+        "gender": "female",
+        "accent": "British English"
+      }
+    ],
+    "title": "Booking a cycle trip",
+    "turns": [
+      {
+        "speaker": "Ryan",
+        "text": "Good morning, Riverside Cycle Centre. Ryan speaking. How can I help?"
+      },
+      {
+        "speaker": "Naomi",
+        "text": "Hello. I'm planning a day out with a couple of friends, and I saw that you hire bikes as well as organising guided rides. Could I book a guided ride, please?"
+      },
+      {
+        "speaker": "Ryan",
+        "text": "Of course. We have a few routes, and they're suitable for people who haven't cycled for a while. Can I take your name first?"
+      },
+      {
+        "speaker": "Naomi",
+        "text": "It's Naomi Fenwick. That's F-E-N-W-I-C-K."
+      },
+      {
+        "speaker": "Ryan",
+        "text": "Thanks, Naomi. And do you know when you'd like to come? The rides start again in April."
+      },
+      {
+        "speaker": "Naomi",
+        "text": "We were thinking about the eleventh of May, but one of my friends is away then. Could we do the eighteenth of May instead?"
+      },
+      {
+        "speaker": "Ryan",
+        "text": "Let me check. Yes, there's space on the morning ride that day. It takes about four hours, including a stop, and you don't need to be particularly fit."
+      },
+      {
+        "speaker": "Naomi",
+        "text": "That sounds good. Where do we join the group? Is it at your shop?"
+      },
+      {
+        "speaker": "Ryan",
+        "text": "People used to meet there, but it's a bit crowded now. The guide will be waiting outside the station. It's easy to find, and there's a car park across the road."
+      },
+      {
+        "speaker": "Naomi",
+        "text": "Great. We're coming by train anyway. What time should we be there?"
+      },
+      {
+        "speaker": "Ryan",
+        "text": "The ride sets off at half past nine, so please arrive by quarter past nine. That gives us time to adjust the bikes and explain the route."
+      },
+      {
+        "speaker": "Naomi",
+        "text": "Right, I'll check the train times. There'll be three of us, and we'll all need to hire bikes. Do you have different kinds?"
+      },
+      {
+        "speaker": "Ryan",
+        "text": "Yes. We have standard bikes and electric ones. The standard bikes are lighter, but the electric ones are helpful on the hills."
+      },
+      {
+        "speaker": "Naomi",
+        "text": "I think electric bikes would be best for all three of us. My friend Lucy's a bit worried about keeping up."
+      },
+      {
+        "speaker": "Ryan",
+        "text": "That's fine. The guide makes sure nobody gets left behind. Now, the price for the three bikes and the guide comes to forty-five pounds, no, sorry, that's the old price. It's forty-eight pounds altogether."
+      },
+      {
+        "speaker": "Naomi",
+        "text": "That's reasonable. Do we pay when we arrive, or do you need the money now?"
+      },
+      {
+        "speaker": "Ryan",
+        "text": "You can pay on the day, either by card or cash. We provide helmets, and there's a small bag on each bike for a water bottle and a jacket."
+      },
+      {
+        "speaker": "Naomi",
+        "text": "Good. Is there anything else we should bring?"
+      },
+      {
+        "speaker": "Ryan",
+        "text": "I'd recommend gloves. Your hands can get uncomfortable after a couple of hours, even when the weather's warm. And wear shoes that won't slip off the pedals."
+      },
+      {
+        "speaker": "Naomi",
+        "text": "We'll do that. You mentioned a stop. Is there somewhere to buy lunch?"
+      },
+      {
+        "speaker": "Ryan",
+        "text": "Yes. We used to stop at a farm, but its café is closed this year. Now we stop at the museum, where there's a café and a garden. You're welcome to take your own food too."
+      },
+      {
+        "speaker": "Naomi",
+        "text": "Lovely. One last thing. If the weather forecast is terrible, can we cancel?"
+      },
+      {
+        "speaker": "Ryan",
+        "text": "Yes, just let us know by Tuesday before your ride. After that, we may have to charge you because we'll have reserved the bikes. If we cancel because it's unsafe, of course, there's no charge."
+      },
+      {
+        "speaker": "Naomi",
+        "text": "OK, I'll let the others know. Thanks for your help, Ryan."
+      },
+      {
+        "speaker": "Ryan",
+        "text": "You're welcome. We'll look forward to seeing you all."
+      }
+    ]
+  }
+}

@@ -1,0 +1,181 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "En realidad, la idea nació al ver que muchas personas compraban herramientas que solo utilizaban una o dos veces.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "easy",
+        "context": null,
+        "question": "¿Qué motivó inicialmente la creación del servicio?",
+        "options": [
+          {
+            "text": "El escaso uso que se daba a algunos objetos comprados.",
+            "isCorrect": true,
+            "reason": "Você ouve que a ideia surgiu ao perceberem que muitas ferramentas eram usadas apenas uma ou duas vezes.",
+            "misconception": null
+          },
+          {
+            "text": "La falta de comercios especializados en el barrio.",
+            "isCorrect": false,
+            "reason": "Você ouve falar do comércio do bairro, mas Andrea não diz que faltavam lojas especializadas.",
+            "misconception": "Confunde uma ideia mencionada com a motivação real."
+          },
+          {
+            "text": "La necesidad de renovar la colección de películas.",
+            "isCorrect": false,
+            "reason": "Você ouve que a biblioteca empresta filmes, mas isso não é apresentado como motivo para o novo serviço.",
+            "misconception": "Toma um serviço existente como causa do projeto."
+          }
+        ]
+      },
+      {
+        "evidence": "Sin embargo, decidimos comenzar con herramientas de reparación, que eran las más solicitadas en una encuesta entre vecinos.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "medium",
+        "context": null,
+        "question": "¿Por qué eligieron los primeros objetos que ofrecieron?",
+        "options": [
+          {
+            "text": "Porque resultaban fáciles de compartir.",
+            "isCorrect": false,
+            "reason": "Você ouve esse argumento para os aparelhos de cozinha, mas Andrea explica que começaram com outra categoria.",
+            "misconception": "Escolhe a sugestão rejeitada."
+          },
+          {
+            "text": "Porque eran los preferidos por los vecinos consultados.",
+            "isCorrect": true,
+            "reason": "Você ouve que as ferramentas de reparo foram as mais solicitadas numa pesquisa com os moradores.",
+            "misconception": null
+          },
+          {
+            "text": "Porque el personal ya sabía revisarlos.",
+            "isCorrect": false,
+            "reason": "Você ouve que foi necessário treinar os funcionários para verificar os objetos devolvidos.",
+            "misconception": "Supõe que o pessoal já tinha a formação necessária."
+          }
+        ]
+      },
+      {
+        "evidence": "Temíamos que vieran el proyecto como una amenaza, pero dos de ellas se ofrecieron a enseñarnos a mantener las herramientas.",
+        "skill": 2,
+        "format": "multipleChoice",
+        "difficulty": "hard",
+        "context": null,
+        "question": "¿Qué destaca Andrea de la respuesta de algunas tiendas?",
+        "options": [
+          {
+            "text": "Que colaboraron a pesar de las dudas iniciales del equipo.",
+            "isCorrect": true,
+            "reason": "Você ouve que a equipe temia a reação das lojas, mas duas se ofereceram para ensinar a manter as ferramentas.",
+            "misconception": null
+          },
+          {
+            "text": "Que se opusieron a que se prestaran herramientas.",
+            "isCorrect": false,
+            "reason": "Você ouve que a equipe temia essa reação, não que as lojas tenham se oposto.",
+            "misconception": "Confunde um receio com o que realmente aconteceu."
+          },
+          {
+            "text": "Que obtuvieron todas el mismo beneficio económico.",
+            "isCorrect": false,
+            "reason": "Você ouve Andrea dizer que nem todas as lojas se beneficiaram igualmente.",
+            "misconception": "Generaliza o resultado para todas as lojas."
+          }
+        ]
+      },
+      {
+        "evidence": "Lo más interesante es que, mientras aprenden a arreglar algo, muchos terminan conociendo a personas con las que nunca habían hablado, aunque vivan en la misma calle.",
+        "skill": 2,
+        "format": "multipleChoice",
+        "difficulty": "medium",
+        "context": null,
+        "question": "¿Qué aspecto de los talleres le parece especialmente interesante a Andrea?",
+        "options": [
+          {
+            "text": "Que permiten establecer relaciones entre vecinos.",
+            "isCorrect": true,
+            "reason": "Você ouve que, para Andrea, o mais interessante é que as pessoas acabam conhecendo vizinhos com quem nunca tinham conversado.",
+            "misconception": null
+          },
+          {
+            "text": "Que eliminan la necesidad de instrucciones impresas.",
+            "isCorrect": false,
+            "reason": "Você ouve que as instruções impressas não bastavam, mas Andrea destaca outro resultado dos talleres.",
+            "misconception": "Confunde o problema inicial com o resultado destacado."
+          },
+          {
+            "text": "Que todos los imparten técnicos contratados.",
+            "isCorrect": false,
+            "reason": "Você ouve que agora também participam moradores experientes, e esse não é o aspecto que Andrea mais destaca.",
+            "misconception": "Atribui à situação atual uma característica dos primeiros talleres."
+          }
+        ]
+      },
+      {
+        "evidence": "De momento, preferimos ayudar a cada barrio a descubrir qué necesita antes de copiar nuestro modelo.",
+        "skill": 2,
+        "format": "multipleChoice",
+        "difficulty": "hard",
+        "context": null,
+        "question": "¿Qué plantea Andrea para el futuro de la iniciativa?",
+        "options": [
+          {
+            "text": "Financiarla únicamente mediante donaciones.",
+            "isCorrect": false,
+            "reason": "Você ouve Andrea rejeitar a ideia de que o serviço possa se manter sozinho com doações.",
+            "misconception": "Confunde uma crença criticada com o plano da equipe."
+          },
+          {
+            "text": "Adaptar las propuestas a las necesidades de cada zona.",
+            "isCorrect": true,
+            "reason": "Você ouve que a equipe prefere descobrir o que cada bairro precisa antes de copiar o modelo.",
+            "misconception": null
+          },
+          {
+            "text": "Abrir bibliotecas idénticas en todos los distritos.",
+            "isCorrect": false,
+            "reason": "Você ouve que, por enquanto, Andrea prefere não copiar o mesmo modelo em cada distrito.",
+            "misconception": "Escolhe a expansão uniforme que a palestrante não propõe."
+          }
+        ]
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Andrea",
+        "gender": "female",
+        "accent": "Castilian Spanish"
+      }
+    ],
+    "title": "Una biblioteca de objetos",
+    "turns": [
+      {
+        "speaker": "Andrea",
+        "text": "Buenos días. Hoy quiero hablaros de una iniciativa que empezó hace cuatro años en mi barrio de Madrid. En la biblioteca municipal, además de novelas y películas, ahora se pueden llevar prestados objetos: desde una máquina de coser hasta un taladro. Al principio, algunos vecinos pensaban que el objetivo era sustituir el comercio del barrio. En realidad, la idea nació al ver que muchas personas compraban herramientas que solo utilizaban una o dos veces. Queríamos que esos objetos no acabaran guardados durante años en un armario."
+      },
+      {
+        "speaker": "Andrea",
+        "text": "La propuesta no fue recibida con entusiasmo por todo el mundo. Hubo quien sugirió empezar con aparatos de cocina, porque parecían fáciles de compartir. Sin embargo, decidimos comenzar con herramientas de reparación, que eran las más solicitadas en una encuesta entre vecinos. La biblioteca ya tenía un sistema de préstamos, así que no hubo que construir una plataforma desde cero. Eso sí, fue necesario adaptar el espacio y formar al personal para revisar cada objeto cuando volvía."
+      },
+      {
+        "speaker": "Andrea",
+        "text": "Una pregunta que nos hacen mucho es de dónde salen los objetos. Algunos los compró el ayuntamiento y otros los donaron particulares. También hablamos con varias tiendas del barrio. Temíamos que vieran el proyecto como una amenaza, pero dos de ellas se ofrecieron a enseñarnos a mantener las herramientas. No solo eso: ahora reciben visitas de usuarios que necesitan comprar piezas pequeñas para sus reparaciones. No diría que todas las tiendas se hayan beneficiado igual, pero la relación ha sido mejor de lo que esperábamos."
+      },
+      {
+        "speaker": "Andrea",
+        "text": "Los primeros meses cometimos errores. Pensábamos que bastaría con entregar instrucciones impresas, pero algunas personas devolvían los aparatos sin haber logrado utilizarlos. Por eso organizamos talleres breves los sábados. Al principio los dirigían técnicos contratados; ahora también participan vecinos con experiencia. Lo más interesante es que, mientras aprenden a arreglar algo, muchos terminan conociendo a personas con las que nunca habían hablado, aunque vivan en la misma calle."
+      },
+      {
+        "speaker": "Andrea",
+        "text": "¿Y qué pasa con el coste? Hay quien cree que una biblioteca de objetos se mantiene sola gracias a las donaciones. No es así. Revisar el material y reemplazar lo que se estropea cuesta dinero, y sería irresponsable prometer que el servicio no necesita financiación pública. Aun así, el gasto debe compararse con sus beneficios: no solo se aprovechan mejor los recursos, también se aprende a reparar en lugar de tirar."
+      },
+      {
+        "speaker": "Andrea",
+        "text": "A menudo nos preguntan si queremos abrir una biblioteca igual en cada distrito. De momento, preferimos ayudar a cada barrio a descubrir qué necesita antes de copiar nuestro modelo. En una zona quizá hagan falta herramientas; en otra, material para actividades infantiles. La experiencia nos ha enseñado que compartir funciona mejor cuando se escucha primero a quienes van a participar. Muchas gracias."
+      }
+    ]
+  }
+}

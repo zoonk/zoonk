@@ -1,0 +1,178 @@
+{
+ "questions": [
+  {
+   "evidence": "lo que realmente nos animó fue ver cuántos objetos útiles pasaban meses sin que nadie los tocara.",
+   "skill": 1,
+   "format": "multipleChoice",
+   "difficulty": "easy",
+   "context": null,
+   "question": "¿Qué motivó principalmente la creación de la biblioteca de objetos?",
+   "options": [
+    {
+     "text": "La falta de espacio para guardar cosas en las viviendas.",
+     "isCorrect": false,
+     "reason": "Você ouve que a falta de espaço também existe, mas Nerea diz que não foi o motivo principal.",
+     "misconception": "Confunde um problema mencionado com a motivação principal."
+    },
+    {
+     "text": "La existencia de productos que apenas se utilizaban.",
+     "isCorrect": true,
+     "reason": "Nerea explica que o projeto surgiu ao perceberem quantos objetos úteis ficavam meses sem uso.",
+     "misconception": null
+    },
+    {
+     "text": "La necesidad de conseguir un local para los vecinos.",
+     "isCorrect": false,
+     "reason": "Você ouve que encontraram um local, mas ele foi necessário para o projeto, não a razão de criá-lo.",
+     "misconception": "Confunde um recurso do projeto com sua motivação."
+    }
+   ]
+  },
+  {
+   "evidence": "Así que decidimos admitir solo lo que estuviera en buen estado o necesitara una reparación sencilla.",
+   "skill": 2,
+   "format": "multipleChoice",
+   "difficulty": "medium",
+   "context": null,
+   "question": "¿Qué criterio adoptaron para recibir objetos?",
+   "options": [
+    {
+     "text": "Aceptar únicamente artículos nuevos.",
+     "isCorrect": false,
+     "reason": "Você ouve que eles aceitam objetos usados e até alguns que precisam de um pequeno conserto.",
+     "misconception": "Interpreta a exigência de bom estado como exigência de produto novo."
+    },
+    {
+     "text": "Recoger todos los artículos que ofrecieran los vecinos.",
+     "isCorrect": false,
+     "reason": "Nerea menciona essa proposta, mas explica que a rejeitaram porque não podiam consertar tudo.",
+     "misconception": "Toma uma proposta rejeitada pela decisão final."
+    },
+    {
+     "text": "Seleccionar artículos que pudieran utilizarse sin grandes arreglos.",
+     "isCorrect": true,
+     "reason": "Você ouve que eles aceitaram objetos em bom estado ou que precisassem apenas de um conserto simples.",
+     "misconception": null
+    }
+   ]
+  },
+  {
+   "evidence": "la mayoría de los primeros usuarios fueron familias que necesitaban algo para una ocasión concreta",
+   "skill": 1,
+   "format": "multipleChoice",
+   "difficulty": "easy",
+   "context": null,
+   "question": "¿Quiénes utilizaron más la biblioteca al principio?",
+   "options": [
+    {
+     "text": "Los estudiantes recién llegados al barrio.",
+     "isCorrect": false,
+     "reason": "Nerea esperava receber principalmente estudantes, mas diz que eles não foram a maioria.",
+     "misconception": "Confunde uma expectativa com o resultado."
+    },
+    {
+     "text": "Las familias que buscaban objetos para usos puntuales.",
+     "isCorrect": true,
+     "reason": "Você ouve que a maioria dos primeiros usuários eram famílias que precisavam de algo para uma ocasião específica.",
+     "misconception": null
+    },
+    {
+     "text": "Los vecinos mayores que donaban herramientas.",
+     "isCorrect": false,
+     "reason": "Nerea diz que moradores mais velhos começaram a aparecer depois, alguns para fazer doações.",
+     "misconception": "Confunde visitantes posteriores com os primeiros usuários mais frequentes."
+    }
+   ]
+  },
+  {
+   "evidence": "para mí lo más interesante fue otra cosa: muchas personas nos dijeron que habían conocido a vecinos con los que nunca habían hablado.",
+   "skill": 2,
+   "format": "multipleChoice",
+   "difficulty": "hard",
+   "context": null,
+   "question": "¿Qué resultado del proyecto destaca especialmente Nerea?",
+   "options": [
+    {
+     "text": "El ahorro económico conseguido por los usuarios.",
+     "isCorrect": false,
+     "reason": "Você ouve que calcularam a possível economia, mas Nerea destaca outro resultado como o mais interessante.",
+     "misconception": "Escolhe um dado calculado em vez do resultado valorizado pela falante."
+    },
+    {
+     "text": "El aumento del número de objetos disponibles.",
+     "isCorrect": false,
+     "reason": "Nerea menciona os objetos e os empréstimos, mas ressalta sobretudo as relações criadas entre vizinhos.",
+     "misconception": "Dá prioridade a um resultado material em vez do social."
+    },
+    {
+     "text": "La creación de vínculos entre personas del barrio.",
+     "isCorrect": true,
+     "reason": "Nerea considera especialmente interessante que pessoas tenham conhecido vizinhos com quem nunca haviam conversado.",
+     "misconception": null
+    }
+   ]
+  },
+  {
+   "evidence": "De momento, en vez de abrir otra sede, vamos a organizar talleres para que la gente aprenda a mantener y reparar las cosas que ya tiene.",
+   "skill": 1,
+   "format": "multipleChoice",
+   "difficulty": "medium",
+   "context": null,
+   "question": "¿Qué tienen previsto hacer próximamente?",
+   "options": [
+    {
+     "text": "Poner en marcha actividades de mantenimiento y reparación.",
+     "isCorrect": true,
+     "reason": "Você ouve que vão organizar oficinas para ensinar as pessoas a cuidar e consertar o que já possuem.",
+     "misconception": null
+    },
+    {
+     "text": "Abrir una nueva sede en otro barrio.",
+     "isCorrect": false,
+     "reason": "Nerea menciona a possibilidade de chegar a outros bairros, mas diz que, por enquanto, não abrirão outra sede.",
+     "misconception": "Confunde uma possibilidade futura com o plano imediato."
+    },
+    {
+     "text": "Ampliar el horario de atención del local.",
+     "isCorrect": false,
+     "reason": "Você ouve que gostariam de abrir por mais horas, mas isso depende da disponibilidade dos voluntários.",
+     "misconception": "Confunde um desejo condicionado com uma decisão tomada."
+    }
+   ]
+  }
+ ],
+ "speakers": [
+  {
+   "name": "Nerea",
+   "gender": "female",
+   "accent": "Castilian Spanish"
+  }
+ ],
+ "title": "Una biblioteca de objetos en Zaragoza",
+ "turns": [
+  {
+   "speaker": "Nerea",
+   "text": "Buenos días. Hoy quiero hablaros de una experiencia que pusimos en marcha hace dos años en un barrio de Zaragoza: una biblioteca de objetos. La idea es sencilla. En lugar de comprar cosas que usamos muy pocas veces, los vecinos podemos tomarlas prestadas durante unos días. Hay herramientas, material de acampada y hasta máquinas de coser. Al principio, algunas personas pensaron que habíamos creado el servicio porque en las casas faltaba espacio para guardar tantas cosas. Eso también sucede, claro, pero lo que realmente nos animó fue ver cuántos objetos útiles pasaban meses sin que nadie los tocara."
+  },
+  {
+   "speaker": "Nerea",
+   "text": "Encontramos un local pequeño junto al centro cívico y pedimos a los vecinos que donaran lo que ya no necesitaran. Los primeros días recibimos tantas ofertas que nos preocupó no poder revisarlo todo. Porque no basta con poner una estantería y esperar a que la gente entre: hay que comprobar que cada aparato funciona y explicar cómo se usa. Por eso, varios voluntarios se turnan para recibir los objetos y hacer pequeñas reparaciones."
+  },
+  {
+   "speaker": "Nerea",
+   "text": "Cuando presentamos el proyecto, hubo quien propuso aceptar cualquier objeto, incluso aunque estuviera estropeado, para evitar que acabara en la basura. La intención era buena, pero no teníamos ni el tiempo ni los conocimientos para arreglarlo todo. Así que decidimos admitir solo lo que estuviera en buen estado o necesitara una reparación sencilla. Preferimos empezar con menos cosas y poder ofrecer un servicio fiable. Más adelante, si encontramos colaboradores especializados, quizá podamos ampliar esa norma."
+  },
+  {
+   "speaker": "Nerea",
+   "text": "También nos sorprendió quiénes empezaron a venir. Esperábamos sobre todo a estudiantes que acababan de instalarse en el barrio. Vinieron algunos, por supuesto, pero la mayoría de los primeros usuarios fueron familias que necesitaban algo para una ocasión concreta, como una escalera para pintar una habitación o una tienda de campaña para un fin de semana. Después empezaron a acercarse vecinos mayores, a veces para donar herramientas y otras simplemente para preguntar qué hacíamos allí."
+  },
+  {
+   "speaker": "Nerea",
+   "text": "Al cabo de un año, el ayuntamiento nos pidió datos para valorar el proyecto. Contamos los préstamos y calculamos cuánto dinero podían haberse ahorrado los usuarios. Sin embargo, para mí lo más interesante fue otra cosa: muchas personas nos dijeron que habían conocido a vecinos con los que nunca habían hablado. Algunos incluso comenzaron a ayudarse fuera de la biblioteca. Eso es más difícil de medir que el número de objetos prestados, pero creo que es una parte esencial de lo que estamos consiguiendo."
+  },
+  {
+   "speaker": "Nerea",
+   "text": "De cara al futuro, nos gustaría abrir más horas, aunque ahora dependemos de la disponibilidad de los voluntarios. También hemos pensado en llevar una selección de objetos a otros barrios. De momento, en vez de abrir otra sede, vamos a organizar talleres para que la gente aprenda a mantener y reparar las cosas que ya tiene. Así esperamos que el proyecto no se limite al préstamo. Y, bueno, si alguna vez pasáis por el centro cívico, entrad a conocernos. Muchas gracias."
+  }
+ ]
+}

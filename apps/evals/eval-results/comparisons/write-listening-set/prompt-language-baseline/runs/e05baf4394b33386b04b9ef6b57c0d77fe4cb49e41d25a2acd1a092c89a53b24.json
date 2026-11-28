@@ -1,0 +1,13 @@
+{
+  "caseId": "pt-toefl-campus-conversation",
+  "challenger": {
+    "costUsd": 0.0152055,
+    "durationMs": 32020.344624999998,
+    "hash": "04ffb32c0c011b46767d238b6ac06070297bab42c18d0dddf0e2b96c6f0bbb23",
+    "systemPromptHash": "166fabea522ca02bf45a03804b4b9c4bb79d265834759a6f90687101d818eca1",
+    "userPromptHash": "39bb2ad5518bd876299e22dbb3c6cf4a288905a910ac83b42a53cf361fa94d09"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 1
+}

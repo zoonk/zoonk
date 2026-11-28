@@ -1,0 +1,13 @@
+{
+  "caseId": "en-cambridge-first-part-2-sentence-completion",
+  "costUsd": 0.035792,
+  "name": "answer keys",
+  "passed": 4,
+  "problems": [
+    "{\"itemLocator\":\"set.questions[0]\",\"keyedAnswer\":\"railway station\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"Both “railway station” and “station” fit “at a former ___”. Hannah says both, and “station” identifies the chosen site rather than the rejected playground.\"}",
+    "{\"itemLocator\":\"set.questions[2]\",\"keyedAnswer\":\"wooden boxes\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"“Boxes” also completes the sentence: the shop donated boxes, and the volunteers planted herbs in them. The stem does not ask what the boxes were made of.\"}"
+  ],
+  "run": 1,
+  "side": "challenger",
+  "total": 6
+}

@@ -1,0 +1,126 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "pt-ielts-part-1-from-notice",
+        "claimId": "a564f63f74aa06d5",
+        "criterion": "naturalSpeech",
+        "observationId": "e9c45fbc6238346fc4a52894d01e279d9e50b9dc6c3597e3144575f566e07bff.first.095c55c1-2730-4e85-858e-c2961a3d575c.0",
+        "run": 2,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.0014448,
+    "id": "32dd8160ec404c7a2084c6dbe7882fd7a4926d6705bf4cb591f10ad536ef081d",
+    "packet": [
+      {
+        "A": {
+          "blob": "d3b9359462f322946a931853d88087de4957f6aaff4d0046ab36e6a59e841030",
+          "format": "text"
+        },
+        "B": {
+          "blob": "e28a3cc207cb8b10ae277130dc394190bf4e98980b307e534ce367d7cbdd66dc",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "Every reason and misconception of the second question is written in Spanish instead of Brazilian Portuguese, so the learner gets the explanation of that answer in the language they are being tested on.",
+            "claimId": "160ac7c04cec49c2",
+            "criterion": "naturalSpeech",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "The questions and options are written in Brazilian Portuguese instead of Spanish.",
+            "claimId": "f93c4b7f2a872dc4",
+            "criterion": "naturalSpeech",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "B"
+          }
+        ],
+        "expectations": {
+          "blob": "09803fc2d24b1de2ec9718d3917bc9d25aa51ccbce6f0146f303ab854bf1a987",
+          "format": "text"
+        },
+        "input": {
+          "blob": "d5c8e6c07ff797238a5ddb72546bb373e495f0b5e46b22bf3601b5b8892bcdc2",
+          "format": "json"
+        }
+      },
+      {
+        "A": {
+          "blob": "daeabc0bdcdb777b049cf3acd7140c1d948290635275e4e0ea0690b4551dbf22",
+          "format": "text"
+        },
+        "B": {
+          "blob": "99252cbe5a307530cf8a0f21dc9cebdf307255404b4ff16eade35c918371a135",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "All keyPoints are written in English, but the expectations require key points in Brazilian Portuguese.",
+            "claimId": "a564f63f74aa06d5",
+            "criterion": "naturalSpeech",
+            "location": {
+              "detail": "keyPoints of the first question",
+              "kind": "quote"
+            },
+            "output": "A"
+          }
+        ],
+        "expectations": {
+          "blob": "0f4c4d97030993b206aceb130e0ef788768ca6d4392c4a79b2b2cec72ba26480",
+          "format": "text"
+        },
+        "input": {
+          "blob": "446cabb2aba2ebbdd2871df5d412c13a6750e665850c54a6820967cef79a4eb5",
+          "format": "json"
+        },
+        "relatedObservations": [
+          {
+            "claim": "The key points are in English rather than Brazilian Portuguese.",
+            "output": "A"
+          },
+          {
+            "claim": "Os pontos-chave estão em inglês, não em português brasileiro.",
+            "output": "A"
+          }
+        ]
+      }
+    ],
+    "passed": true,
+    "plantedDefectPassed": true,
+    "protocolHash": "ed018fd13c57b447f6f3cbfd3fcf01e6b506c0102da6f1fa19dac5ce44b4d919",
+    "reader": {
+      "channel": "gateway",
+      "family": "openai",
+      "model": "openai/gpt-6-luna"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "160ac7c04cec49c2",
+          "finding": "holds",
+          "reason": "Na segunda questão de A, as razões (“Oyes que aceptan objetos usados…” e “Nerea menciona esa propuesta…”) e as duas misconceptions estão em espanhol. Em B, as explicações correspondentes estão em português brasileiro."
+        },
+        {
+          "claimId": "f93c4b7f2a872dc4",
+          "finding": "doesn't hold",
+          "reason": "As perguntas e opções de B estão em espanhol, não em português brasileiro, conforme a expectativa para o roteiro e as perguntas."
+        },
+        {
+          "claimId": "a564f63f74aa06d5",
+          "finding": "holds",
+          "reason": "Os keyPoints de A, inclusive o da primeira questão (“The surname must be Mercer”), estão em inglês, embora a expectativa peça português brasileiro. Os keyPoints correspondentes de B estão em português brasileiro."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

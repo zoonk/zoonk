@@ -1,0 +1,12 @@
+{
+  "caseId": "en-ielts-part-1-form-completion",
+  "costUsd": 0.032472,
+  "name": "answer keys",
+  "passed": 4,
+  "problems": [
+    "{\"itemLocator\":\"set.questions[4]\",\"keyedAnswer\":\"Sample: forty-eight pounds; accepted: 48, forty-eight\",\"kind\":\"wrongKey\",\"workedAnswer\":\"Enter 48. Kevin says the current fee is forty-eight pounds, and the form already supplies £. The sample repeats the currency unit, producing “£forty-eight pounds” rather than “£48”.\"}"
+  ],
+  "run": 2,
+  "side": "challenger",
+  "total": 5
+}

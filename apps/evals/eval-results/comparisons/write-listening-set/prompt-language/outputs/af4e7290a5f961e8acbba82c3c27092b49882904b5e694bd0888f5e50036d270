@@ -1,0 +1,230 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "My professor mentioned that the archives have some old maps, and I wanted to find out how I could use them for my project.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "easy",
+        "context": null,
+        "question": "Why does Maya speak with Andre?",
+        "options": [
+          {
+            "text": "To learn how to use archive materials for a class assignment",
+            "isCorrect": true,
+            "reason": "Maya diz que quer saber como usar os mapas antigos dos arquivos em seu projeto.",
+            "misconception": null
+          },
+          {
+            "text": "To ask where she can find recent aerial photographs",
+            "isCorrect": false,
+            "reason": "Você ouve que Maya já encontrou fotografias aéreas recentes na internet.",
+            "misconception": "Confunde material já encontrado com o objetivo da visita."
+          },
+          {
+            "text": "To offer the archives some maps from her professor",
+            "isCorrect": false,
+            "reason": "Você ouve que o professor mencionou os mapas, mas Maya não oferece mapas aos arquivos.",
+            "misconception": "Confunde a indicação do professor com uma doação."
+          },
+          {
+            "text": "To arrange a meeting with the university's map specialist",
+            "isCorrect": false,
+            "reason": "Andre menciona o especialista mais tarde, mas Maya procura informações sobre como usar os mapas.",
+            "misconception": "Escolhe um detalhe posterior como motivo principal."
+          }
+        ]
+      },
+      {
+        "evidence": "But you can scan the maps and take the digital copies home.",
+        "skill": 2,
+        "format": "multipleChoice",
+        "difficulty": "easy",
+        "context": null,
+        "question": "What does Andre suggest Maya do so she can study the maps at home?",
+        "options": [
+          {
+            "text": "Borrow the original maps for a short period",
+            "isCorrect": false,
+            "reason": "Você ouve que Maya pede para levar os originais, mas Andre explica que eles precisam ficar ali.",
+            "misconception": "Aceita o pedido rejeitado da estudante."
+          },
+          {
+            "text": "Make electronic copies of the maps",
+            "isCorrect": true,
+            "reason": "Andre diz que Maya pode digitalizar os mapas e levar as cópias digitais para casa.",
+            "misconception": null
+          },
+          {
+            "text": "Download photographs from the catalogue",
+            "isCorrect": false,
+            "reason": "Você ouve que o catálogo não tem imagens de todos os mapas. Andre recomenda digitalizar os mapas.",
+            "misconception": "Confunde o catálogo com a solução oferecida."
+          },
+          {
+            "text": "Ask her professor to photograph the maps",
+            "isCorrect": false,
+            "reason": "Andre oferece ajuda para fotografar mapas frágeis, mas não sugere pedir isso ao professor.",
+            "misconception": "Atribui a tarefa à pessoa errada."
+          }
+        ]
+      },
+      {
+        "evidence": "I don't want to discourage you. It's just easier to check now than to remove images from a website later.",
+        "skill": 3,
+        "format": "multipleChoice",
+        "difficulty": "hard",
+        "context": null,
+        "question": "What does Andre imply about Maya's idea of putting map images online?",
+        "options": [
+          {
+            "text": "It may be possible after ownership is checked",
+            "isCorrect": true,
+            "reason": "Andre diz que não quer desanimar Maya, mas que é melhor verificar os direitos antes de publicar as imagens.",
+            "misconception": null
+          },
+          {
+            "text": "It is unlikely to interest people outside her class",
+            "isCorrect": false,
+            "reason": "Você ouve que Andre está preocupado com os direitos sobre os mapas, não com o interesse do público.",
+            "misconception": "Confunde uma questão de direitos com interesse do público."
+          },
+          {
+            "text": "It will require her professor to remove other images",
+            "isCorrect": false,
+            "reason": "Andre fala em evitar a remoção futura das imagens dos mapas, não em retirar outras imagens do professor.",
+            "misconception": "Interpreta uma possível consequência futura como uma exigência atual."
+          },
+          {
+            "text": "It cannot be done with any materials from the archives",
+            "isCorrect": false,
+            "reason": "Andre diz que a publicação é possível, mas que é preciso verificar os direitos de cada mapa.",
+            "misconception": "Interpreta uma cautela como proibição total."
+          }
+        ]
+      },
+      {
+        "evidence": "Send me your list by Friday, and we'll check the maps and have them ready early next week.",
+        "skill": 2,
+        "format": "multipleChoice",
+        "difficulty": "medium",
+        "context": null,
+        "question": "When should Maya send Andre her selection of maps?",
+        "options": [
+          {
+            "text": "By Wednesday",
+            "isCorrect": false,
+            "reason": "Andre menciona quarta-feira primeiro, mas muda o prazo porque o especialista só estará disponível depois.",
+            "misconception": "Escolhe o primeiro dia mencionado, antes da correção."
+          },
+          {
+            "text": "By Thursday",
+            "isCorrect": false,
+            "reason": "Você ouve que quinta-feira é quando o especialista volta, não o prazo para enviar a lista.",
+            "misconception": "Confunde a volta do especialista com o prazo."
+          },
+          {
+            "text": "By Friday",
+            "isCorrect": true,
+            "reason": "Depois de corrigir a primeira data, Andre pede que Maya envie a lista até sexta-feira.",
+            "misconception": null
+          },
+          {
+            "text": "By early next week",
+            "isCorrect": false,
+            "reason": "Andre diz que os mapas devem estar prontos no início da semana seguinte, não que esse seja o prazo da lista.",
+            "misconception": "Confunde a preparação dos mapas com o envio da lista."
+          }
+        ]
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Maya",
+        "gender": "female",
+        "accent": "American English"
+      },
+      {
+        "name": "Andre",
+        "gender": "male",
+        "accent": "American English"
+      }
+    ],
+    "title": "Using historic campus maps",
+    "turns": [
+      {
+        "speaker": "Maya",
+        "text": "Hi, are you Andre? The librarian at the front desk said you work with the university archives."
+      },
+      {
+        "speaker": "Andre",
+        "text": "That's right. What can I help you with?"
+      },
+      {
+        "speaker": "Maya",
+        "text": "I'm Maya. I'm doing a project for my environmental history class about how the campus has changed. My professor mentioned that the archives have some old maps, and I wanted to find out how I could use them for my project."
+      },
+      {
+        "speaker": "Andre",
+        "text": "You've come to the right place. We have maps going back to the university's first buildings. Are you interested in a particular period?"
+      },
+      {
+        "speaker": "Maya",
+        "text": "Mostly the nineteen sixties and seventies. I'm comparing the amount of green space then with what's here now. I found some recent aerial photographs online, but they don't show what was here before the parking lots."
+      },
+      {
+        "speaker": "Andre",
+        "text": "The maps should be useful, then. Some show trees and gardens, as well as buildings. They're stored in the reading room, and we can bring out a few at a time for you."
+      },
+      {
+        "speaker": "Maya",
+        "text": "Great. Could I borrow a couple and take them home? I was hoping to look at them alongside the photographs."
+      },
+      {
+        "speaker": "Andre",
+        "text": "I'm afraid the originals have to stay here. But you can scan the maps and take the digital copies home. There's a scanner in the reading room, and it's free for students."
+      },
+      {
+        "speaker": "Maya",
+        "text": "That actually sounds better. I could put the scans next to the photographs on my laptop. Are all the maps in good enough condition to scan?"
+      },
+      {
+        "speaker": "Andre",
+        "text": "Most are, although a few are fragile. If one can't go on the scanner, we'll help you photograph it instead. We just need to check it first."
+      },
+      {
+        "speaker": "Maya",
+        "text": "I see. My professor also suggested putting some of the images on a public website with our final projects. Would that be all right?"
+      },
+      {
+        "speaker": "Andre",
+        "text": "Possibly, but we'd need to check who owns the rights to each map. I don't want to discourage you. It's just easier to check now than to remove images from a website later."
+      },
+      {
+        "speaker": "Maya",
+        "text": "That makes sense. I haven't chosen the maps yet, though."
+      },
+      {
+        "speaker": "Andre",
+        "text": "That's fine. Start by looking through our online catalogue. It gives the date and a short description of each map, though it doesn't have pictures of all of them."
+      },
+      {
+        "speaker": "Maya",
+        "text": "And should I send you a list once I've picked some?"
+      },
+      {
+        "speaker": "Andre",
+        "text": "Yes. I was going to say Wednesday, but our map specialist won't be in until Thursday. Send me your list by Friday, and we'll check the maps and have them ready early next week."
+      },
+      {
+        "speaker": "Maya",
+        "text": "Perfect. I'll look at the catalogue tonight. Thanks for explaining everything."
+      },
+      {
+        "speaker": "Andre",
+        "text": "You're welcome. Let me know if you have trouble finding the catalogue."
+      }
+    ]
+  }
+}

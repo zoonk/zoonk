@@ -1,0 +1,243 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00400954,
+  "failureCodes": [
+    "failed_controls"
+  ],
+  "failures": [
+    "Missed the control bank defect."
+  ],
+  "packetId": "458a5a764fa5ac5b9db581cad602802553da9d57cb1b29ca405739fd78792618",
+  "passed": false,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Todas as respostas corretas são sustentadas pelo monólogo, e as perguntas exigem detalhes que não se resolvem apenas pela pergunta ou pelo senso comum.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os dois outputs apresentam o mesmo monólogo em espanhol e as mesmas cinco questões de múltipla escolha, em ordem e com opções plausíveis.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "B",
+            "reason": "As explicações de B estão em português brasileiro. Em A, algumas explicações ainda usam frases em espanhol, como “Oyes que aceptan objetos usados...”.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Algumas explicações estão em espanhol, embora a expectativa peça todas as razões e os misconception em português brasileiro.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "A pessoa pode ter dificuldade para entender a explicação do erro na língua em que deveria recebê-la.",
+            "location": {
+              "detail": "Padrão em algumas explicações; por exemplo, “Oyes que aceptan objetos usados e incluso algunos que necesitan un pequeño arreglo.”",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "As perguntas e o monólogo são iguais, mas B mantém todas as explicações em português brasileiro, como pede a tarefa."
+        },
+        "pairId": "58cfb355-c8f1-465b-9c02-03f451fa194f"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As respostas indicadas estão corretas e dependem de informações ditas na conversa; nenhum dos dois outputs apresenta uma chave errada.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "A",
+            "reason": "A inclui uma correção explícita de data, como pede a tarefa. B não inclui correção e usa várias respostas que não são nomes soletrados, números, datas, preços ou endereços, como “medium” e “watering can”.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas conversas soam naturais e adequadas ao contexto cotidiano, mas ambas usam apenas falantes com sotaque britânico, apesar da exigência de misturar britânico e australiano.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Os dois falantes estão identificados com sotaque britânico; não há nenhum falante com o sotaque australiano pedido.",
+            "criterion": "examRealism",
+            "learnerCost": "A prática não expõe o aluno à mistura de sotaques prevista para esta parte do exame.",
+            "location": {
+              "detail": "Todos os falantes e turnos da conversa",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "“Greenhouse” e “apron” são respostas de lugar e item, não nomes soletrados, números, datas, preços ou endereços, as categorias de resposta especificadas.",
+            "criterion": "examRealism",
+            "learnerCost": "O aluno pratica tipos de resposta que não correspondem ao formato definido para esta tarefa.",
+            "location": {
+              "detail": "Questões 3 e 4",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "O sampleAnswer da questão da data, “the eighteenth of May”, tem mais de duas palavras, contrariando o limite indicado para as respostas.",
+            "criterion": "examRealism",
+            "learnerCost": "O aluno pode copiar uma resposta-modelo que excederia o limite de palavras do exercício.",
+            "location": {
+              "detail": "Questão 2, campo sampleAnswer",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Os dois falantes estão identificados com sotaque britânico; não há nenhum falante com o sotaque australiano pedido.",
+            "criterion": "examRealism",
+            "learnerCost": "A prática não expõe o aluno à mistura de sotaques prevista para esta parte do exame.",
+            "location": {
+              "detail": "Todos os falantes e turnos da conversa",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "“Medium” e “watering can” são respostas de tamanho de terreno e item, não nomes soletrados, números, datas, preços ou endereços, as categorias de resposta especificadas.",
+            "criterion": "examRealism",
+            "learnerCost": "O aluno pratica tipos de resposta que não correspondem ao formato definido para esta tarefa.",
+            "location": {
+              "detail": "Questões 2 e 4",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "A conversa não contém uma correção de informação pelo falante, embora a tarefa peça uma ou duas respostas logo após uma autocorreção.",
+            "criterion": "examRealism",
+            "learnerCost": "O aluno não pratica acompanhar uma correção e escolher a informação final correta.",
+            "location": {
+              "detail": "Toda a conversa; não há autocorreção",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "Os dois outputs têm problemas importantes de sotaque e de tipos de resposta, mas A ao menos inclui uma correção explícita de data, enquanto B não pratica nenhuma autocorreção e inclui mais respostas fora das categorias pedidas."
+        },
+        "pairId": "8f2035e5-d13d-4066-9584-87e4d9718796"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Os outputs são idênticos: as respostas corretas correspondem à gravação e exigem ouvir detalhes específicos.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os outputs são idênticos. Ambos incluem uma correção de data, mas também têm respostas fora das categorias especificadas e usam apenas sotaque britânico, não a mistura solicitada.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os textos são idênticos e a conversa soa natural, embora os falantes não representem a mistura de sotaques pedida.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Os dois falantes estão identificados com sotaque britânico; não há nenhum falante com o sotaque australiano pedido.",
+            "criterion": "examRealism",
+            "learnerCost": "A prática não expõe o aluno à mistura de sotaques prevista para esta parte do exame.",
+            "location": {
+              "detail": "Todos os falantes e turnos da conversa",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "“Greenhouse” e “apron” são respostas de lugar e item, não nomes soletrados, números, datas, preços ou endereços, as categorias de resposta especificadas.",
+            "criterion": "examRealism",
+            "learnerCost": "O aluno pratica tipos de resposta que não correspondem ao formato definido para esta tarefa.",
+            "location": {
+              "detail": "Questões 3 e 4",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "O sampleAnswer da questão da data, “the eighteenth of May”, tem mais de duas palavras, contrariando o limite indicado para as respostas.",
+            "criterion": "examRealism",
+            "learnerCost": "O aluno pode copiar uma resposta-modelo que excederia o limite de palavras do exercício.",
+            "location": {
+              "detail": "Questão 2, campo sampleAnswer",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Os dois falantes estão identificados com sotaque britânico; não há nenhum falante com o sotaque australiano pedido.",
+            "criterion": "examRealism",
+            "learnerCost": "A prática não expõe o aluno à mistura de sotaques prevista para esta parte do exame.",
+            "location": {
+              "detail": "Todos os falantes e turnos da conversa",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "“Greenhouse” e “apron” são respostas de lugar e item, não nomes soletrados, números, datas, preços ou endereços, as categorias de resposta especificadas.",
+            "criterion": "examRealism",
+            "learnerCost": "O aluno pratica tipos de resposta que não correspondem ao formato definido para esta tarefa.",
+            "location": {
+              "detail": "Questões 3 e 4",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "O sampleAnswer da questão da data, “the eighteenth of May”, tem mais de duas palavras, contrariando o limite indicado para as respostas.",
+            "criterion": "examRealism",
+            "learnerCost": "O aluno pode copiar uma resposta-modelo que excederia o limite de palavras do exercício.",
+            "location": {
+              "detail": "Questão 2, campo sampleAnswer",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "A e B são idênticos, então nenhum serve melhor que o outro. Ambos têm problemas de conformidade com os sotaques pedidos, com os tipos de resposta e com o limite de palavras do exemplo da data."
+        },
+        "pairId": "b9fbe2ee-a237-451e-94d2-873d668c4d54"
+      }
+    ]
+  }
+}

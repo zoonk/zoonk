@@ -1,0 +1,12 @@
+{
+  "caseId": "en-c1-test-out-order",
+  "costUsd": 0.028496,
+  "name": "answer keys",
+  "passed": 3,
+  "problems": [
+    "{\"itemLocator\":\"set.questions[0]\",\"keyedAnswer\":\"Library hall → school courtyard → sports centre → community garden\",\"kind\":\"factualError\",\"workedAnswer\":\"The keyed order is correct, but Rosa says the venue “changed four times.” The library hall was the initial choice, so the moves to the courtyard, sports centre and garden total three changes, not four.\"}"
+  ],
+  "run": 1,
+  "side": "challenger",
+  "total": 4
+}

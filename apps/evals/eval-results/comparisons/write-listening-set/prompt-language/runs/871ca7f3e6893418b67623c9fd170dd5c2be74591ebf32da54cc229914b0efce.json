@@ -1,0 +1,19 @@
+{
+  "caseId": "pt-dele-b2-tarea-5-monologue",
+  "challenger": {
+    "costUsd": 0.013163000000000001,
+    "durationMs": 30883.828084000008,
+    "hash": "75afa1eb61305c86d633fdce20d64c8b7e403780719308986ee4071ebe389a87",
+    "systemPromptHash": "92210eb8f9016680720d3a94ef95fe699fcf49daf95e8994d2028412ca2d5585",
+    "userPromptHash": "a742ec06f0d6369081c0e56657878e684ff8c01da846aea64a0ba8e6511a539f"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.013484250000000001,
+    "durationMs": 30668.112832999992,
+    "hash": "aac68574bbfae942d0ea369b832ebd8f2e02d6be14a1cd6b924e92b2c00dbefd",
+    "systemPromptHash": "166fabea522ca02bf45a03804b4b9c4bb79d265834759a6f90687101d818eca1",
+    "userPromptHash": "a742ec06f0d6369081c0e56657878e684ff8c01da846aea64a0ba8e6511a539f"
+  },
+  "run": 1
+}

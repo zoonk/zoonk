@@ -1,0 +1,13 @@
+{
+  "caseId": "en-c1-test-out-order",
+  "challenger": {
+    "costUsd": 0.0104702,
+    "durationMs": 26104.366124999942,
+    "hash": "43102c242e8ec4e7dcb3ee5c34ab69f8fd2b4a5094020f4296d307a7711ad01a",
+    "systemPromptHash": "d642c43eabb8b70d11c1f6c30a824d92974c681b9226320a5e43c6457e4804a2",
+    "userPromptHash": "28fbba226475baa78375e43db1bfa648c23b7701473fcb22237ecbaf454d6389"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 2
+}

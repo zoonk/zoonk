@@ -1,0 +1,231 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "That's Fenwick, F-E-N-W-I-C-K.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Gardening workshop booking\nWrite NO MORE THAN TWO WORDS AND/OR A NUMBER.\nFirst name: Hannah",
+        "question": "Surname: ______",
+        "keyPoints": [
+          "The surname must be spelled Fenwick."
+        ],
+        "acceptedAnswers": [
+          "Fenwick"
+        ],
+        "sampleAnswer": "Fenwick"
+      },
+      {
+        "evidence": "The beginners' workshop is on the eighteenth of May.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Gardening workshop booking\nWrite NO MORE THAN TWO WORDS AND/OR A NUMBER.",
+        "question": "Date of beginners' workshop: ______",
+        "keyPoints": [
+          "The date is 18 May, not 11 May."
+        ],
+        "acceptedAnswers": [
+          "18 May",
+          "18th May",
+          "May 18",
+          "May 18th",
+          "May eighteenth"
+        ],
+        "sampleAnswer": "the eighteenth of May"
+      },
+      {
+        "evidence": "for this workshop we're meeting in the greenhouse",
+        "skill": 2,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Gardening workshop booking\nWrite NO MORE THAN TWO WORDS AND/OR A NUMBER.",
+        "question": "Meeting place: the ______",
+        "keyPoints": [
+          "The group will meet in the greenhouse."
+        ],
+        "acceptedAnswers": [
+          "greenhouse"
+        ],
+        "sampleAnswer": "greenhouse"
+      },
+      {
+        "evidence": "please bring an apron",
+        "skill": 2,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "hard",
+        "context": "Gardening workshop booking\nWrite NO MORE THAN TWO WORDS AND/OR A NUMBER.",
+        "question": "Hannah should bring an ______ to protect her clothes.",
+        "keyPoints": [
+          "She should bring an apron, not gloves."
+        ],
+        "acceptedAnswers": [
+          "apron"
+        ],
+        "sampleAnswer": "apron"
+      },
+      {
+        "evidence": "it's fourteen pounds per person",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Gardening workshop booking\nWrite NO MORE THAN TWO WORDS AND/OR A NUMBER.",
+        "question": "Cost per person: ______",
+        "keyPoints": [
+          "The current price is £14."
+        ],
+        "acceptedAnswers": [
+          "£14",
+          "14 pounds",
+          "fourteen pounds"
+        ],
+        "sampleAnswer": "fourteen pounds"
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Leah",
+        "gender": "female",
+        "accent": "British English"
+      },
+      {
+        "name": "Hannah",
+        "gender": "female",
+        "accent": "British English"
+      }
+    ],
+    "title": "Booking a gardening workshop",
+    "turns": [
+      {
+        "speaker": "Leah",
+        "text": "Good morning, Riverside Community Centre. Leah speaking. How can I help?"
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Hello. I saw a notice about your weekend gardening workshops. I'd like to book a place, if there are any left."
+      },
+      {
+        "speaker": "Leah",
+        "text": "Yes, we still have a few. I'll just take some details. Can I start with your name?"
+      },
+      {
+        "speaker": "Hannah",
+        "text": "It's Hannah Fenwick. That's Fenwick, F-E-N-W-I-C-K."
+      },
+      {
+        "speaker": "Leah",
+        "text": "Thanks, Hannah. Have you been to one of our workshops before?"
+      },
+      {
+        "speaker": "Hannah",
+        "text": "No, but my neighbour went last year and really enjoyed it. I've just moved into a flat with a small balcony, so I thought I could learn what to grow in pots."
+      },
+      {
+        "speaker": "Leah",
+        "text": "Then the beginners' workshop should be ideal. It covers choosing plants and looking after them in small spaces. There's also an advanced one, but that focuses on growing vegetables all year round."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "I'll stick with the beginners' one, then. When is it?"
+      },
+      {
+        "speaker": "Leah",
+        "text": "Let me check. I think it's the eleventh of May. No, sorry, that's the advanced workshop. The beginners' workshop is on the eighteenth of May. It runs in the morning, from ten until about one."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "That's fine. I'm away the following weekend, so I wanted to make sure. Do I need to arrive early?"
+      },
+      {
+        "speaker": "Leah",
+        "text": "About fifteen minutes before we start would be useful. That gives you time to sign in and have a cup of tea. There'll be around twelve people in the group, so the tutor will have time to answer everyone's questions."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Oh, good. And where exactly should I go? I know the centre has a room next to the library."
+      },
+      {
+        "speaker": "Leah",
+        "text": "We sometimes use the library room for talks, but for this workshop we're meeting in the greenhouse. It's behind the main building, through the little gate beside the car park."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Right, the greenhouse. Is there somewhere I can leave my bike?"
+      },
+      {
+        "speaker": "Leah",
+        "text": "Yes, there are bike stands just outside the main entrance. If you're coming by bus, the number six stops at the end of the road, about five minutes' walk away."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "I'll probably cycle, unless it's raining heavily. What sort of things will we actually do during the morning?"
+      },
+      {
+        "speaker": "Leah",
+        "text": "You'll start by looking at different types of soil. Then everyone chooses a plant and puts it into a pot to take home. The tutor brings several kinds, so you can pick something that suits your balcony."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "That sounds useful. Should I bring gardening gloves? I have some, although they're a bit old."
+      },
+      {
+        "speaker": "Leah",
+        "text": "You won't need those, we'll provide gloves for everyone. But please bring an apron, because the soil can make your clothes rather messy."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "An apron, yes, I've got one in the kitchen. Do I need to bring a pot as well?"
+      },
+      {
+        "speaker": "Leah",
+        "text": "No, that's included. Wear comfortable shoes, though, because you'll be standing for some of the time. We do have chairs if anyone needs a rest."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "That's good to know. One more thing, how much is the workshop? My neighbour thought she'd paid eighteen pounds."
+      },
+      {
+        "speaker": "Leah",
+        "text": "That was the price with lunch included. This year we're only offering the morning session, so it's fourteen pounds per person. Tea and coffee are included, but not food."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "That's fine. Can I pay when I arrive, or do you need the money now?"
+      },
+      {
+        "speaker": "Leah",
+        "text": "You can pay on the day, by card or cash. I'll put your name on the list and send you an email with the directions and a reminder of what to bring."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Lovely. Thanks very much for your help."
+      },
+      {
+        "speaker": "Leah",
+        "text": "You're welcome. We look forward to seeing you."
+      }
+    ]
+  }
+}
