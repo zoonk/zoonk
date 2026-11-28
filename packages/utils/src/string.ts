@@ -18,12 +18,17 @@ export function normalizeString(str: string): string {
   return removeAccents(str).toLowerCase().replaceAll(/\s+/gu, " ").trim();
 }
 
+/** "C", "C++" and "C#" name different languages, and "C" and "C#" different notes. */
+export function spellOutSymbols(str: string): string {
+  return str.replaceAll("+", " plus ").replaceAll(/(?<=[\p{L}\p{N}])#/gu, " sharp ");
+}
+
 export function toSlug(str: string): string {
-  return removeAccents(str.trim())
-    .normalize("NFC")
-    .replaceAll(/(?<prefix>^|\s)\.(?=\p{L})/gu, "$<prefix>dot ")
-    .replaceAll("+", " plus ")
-    .replaceAll(/(?<=[\p{L}\p{N}])#/gu, " sharp ")
+  return spellOutSymbols(
+    removeAccents(str.trim())
+      .normalize("NFC")
+      .replaceAll(/(?<prefix>^|\s)\.(?=\p{L})/gu, "$<prefix>dot "),
+  )
     .toLowerCase()
     .replaceAll(/[^\p{L}\p{N}\p{M}\s-]/gu, "")
     .replaceAll(/\s+/gu, "-")
