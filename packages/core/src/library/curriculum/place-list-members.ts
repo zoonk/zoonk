@@ -1,5 +1,5 @@
 /** A member of a complete list, in the list's order, with the graph skills that teach it. */
-export type ListedMember<T> = { item: T; skills: readonly string[] };
+type ListedMember<T> = { item: T; skills: readonly string[] };
 
 export type MemberPlacement<T> = {
   item: T;
@@ -62,7 +62,7 @@ function placeRun<T>({ forward, run }: { forward: boolean; run: Run<T> }): Membe
 /**
  * Where each member no skill in `order` teaches goes, in teaching order: next to its nearest covered
  * neighbor in the list, on the side the graph teaches the list in. With no member covered, the
- * members go after the last skill in the list's order.
+ * members go after the last skill in the list's order. @internal
  */
 export function placeUncoveredMembers<T>({
   members,

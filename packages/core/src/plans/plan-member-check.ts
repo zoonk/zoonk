@@ -17,7 +17,7 @@ const OWED_PLANS_PER_SWEEP = 200;
 
 const DEFAULT_LEVEL: CourseLevel = "beginner";
 
-/** Says the change came from checking the plan against the complete list its goal names. */
+/** Says the change came from checking the plan against the complete list its goal names. @internal */
 export const MEMBER_CHECK_SOURCE = "memberCheck";
 
 type GraphSkill = PlanGraph["skills"][number];

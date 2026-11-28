@@ -7,13 +7,14 @@ import {
   toMemberSkillsStep,
 } from "./steps/member-check-steps";
 
+/** @internal */
 export function getMemberCheckToken(planId: string): string {
   return `member-check:${planId}`;
 }
 
 /**
  * Checks a saved plan against the complete list its goal names and asks the learner to add the
- * members it leaves out. The claim comes first, so a dismissed offer is never made again.
+ * members it leaves out. The claim comes first, so a dismissed offer is never made again. @internal
  */
 export async function memberCheckWorkflow({ planId }: { planId: string }): Promise<number> {
   "use workflow";

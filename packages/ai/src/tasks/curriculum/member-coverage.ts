@@ -110,6 +110,7 @@ function toUncovered({
   });
 }
 
+/** @internal */
 export function normalizeMemberCoverage({
   output,
   skills,
