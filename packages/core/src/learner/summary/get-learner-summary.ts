@@ -1,5 +1,6 @@
 import "server-only";
 import { type Goal, type Subscription, prisma } from "@zoonk/db";
+import { daysBetweenIsoDays, getIsoDay } from "@zoonk/utils/calendar-day";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { getDateInTimeZone, isValidTimeZone } from "@zoonk/utils/time-zone";
 import { cacheTag } from "next/cache";
@@ -59,15 +60,35 @@ function findActiveGoal({
   return goals.find((goal) => goal.status === "active") ?? null;
 }
 
+function getDaysLeft({
+  goal,
+  now,
+  targetDate,
+}: {
+  goal: Goal;
+  now: Date;
+  targetDate: string | null;
+}): number | null {
+  if (!targetDate) {
+    return null;
+  }
+
+  const timeZone = getAnswerTimeZone({ goal });
+  const daysLeft = daysBetweenIsoDays({ from: getIsoDay({ now, timeZone }), to: targetDate });
+  return daysLeft >= 0 ? daysLeft : null;
+}
+
 async function toSummaryGoals({
   activeGoalId,
   countries,
+  now,
   phaseFacts,
   courseStarts,
 }: {
   courseStarts: Map<string, string>;
   activeGoalId: string | null;
   countries: Awaited<ReturnType<typeof loadGoalCountryViews>>;
+  now: Date;
   phaseFacts: readonly PlanPhaseFacts[];
 }): Promise<LearnerSummaryGoal[]> {
   const blueprintIds = [
@@ -101,12 +122,15 @@ async function toSummaryGoals({
           goal.examBlueprintId ? (byId.get(goal.examBlueprintId) ?? null) : null,
         );
 
+        const targetDate = goal.targetDate ? toIsoDate(goal.targetDate) : null;
+
         return {
           ...countryView,
           courseChapterId: next?.nextChapterId ?? null,
           courseId: followsCourse(goal) ? goal.primaryCourseId : null,
           courseLevel: next?.nextLevel ?? null,
           dailyMinutes: goal.dailyMinutes,
+          daysLeft: getDaysLeft({ goal, now, targetDate }),
           displayName: goal.displayName,
           id: goal.id,
           isActive: goal.id === activeGoalId,
@@ -119,7 +143,7 @@ async function toSummaryGoals({
             .filter(([, goalId]) => goalId === goal.id)
             .map(([id]) => id),
           status: goal.status,
-          targetDate: goal.targetDate ? toIsoDate(goal.targetDate) : null,
+          targetDate,
           targetDateEstimated: dateKind.estimated,
           targetLanguage: goal.targetLanguage,
           targetRegion: goal.targetRegion,
@@ -232,7 +256,7 @@ export async function getLearnerSummary(): Promise<LearnerSummary | null> {
   const timeZone = getAnswerTimeZone({ goal: activeGoal });
   const localDate = getDateInTimeZone({ date: now, timeZone });
   const countries = await loadGoalCountryViews({ goals, profile, readRecentCountries });
-  const listed = await toSummaryGoals({ activeGoalId, countries, courseStarts, phaseFacts });
+  const listed = await toSummaryGoals({ activeGoalId, countries, courseStarts, now, phaseFacts });
   const current = listed.find((goal) => goal.isActive) ?? null;
   const phaseChallengesRequired = activeGoal?.kind !== "language" || subscription !== null;
   const tier = getTier({ isAnonymous, subscription });
@@ -274,6 +298,9 @@ export async function getLearnerSummary(): Promise<LearnerSummary | null> {
     missions: goalDay.missions,
     nextChangeAt: getNextChangeAt({
       carriedUntil: goalDay.carriedUntil,
+      deadlineTimeZones: goals
+        .filter((goal) => listed.some(({ daysLeft, id }) => id === goal.id && daysLeft !== null))
+        .map((goal) => getAnswerTimeZone({ goal })),
       localDate,
       now,
       sessionExpiresAt: session.session.expiresAt,

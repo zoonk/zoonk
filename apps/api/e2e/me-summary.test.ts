@@ -32,7 +32,7 @@ test.describe("Learner summary API", () => {
     await expect(response.json()).resolves.toMatchObject({
       summary: {
         activeGoalId: goal.id,
-        goals: [{ id: goal.id, isActive: true, title: "Bake sourdough bread" }],
+        goals: [{ daysLeft: null, id: goal.id, isActive: true, title: "Bake sourdough bread" }],
         identity: { isAnonymous: false, userId },
         tier: "free",
         timeZone: "UTC",

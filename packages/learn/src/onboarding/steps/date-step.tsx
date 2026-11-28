@@ -8,11 +8,10 @@ import {
 } from "@zoonk/core/view-models/onboarding/contract";
 import { Input, InputError } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
-import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { CalendarIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
-import { getTodayInZone, useFormatIsoDate } from "../../_utils/iso-date";
+import { useFormatIsoDate, useTodayInZone } from "../../_utils/iso-date";
 import { useSentenceSpace } from "../../_utils/locale";
 import { NoSittingWords } from "../../plan/notice-day";
 import { StepForm } from "./step-form";
@@ -76,7 +75,7 @@ export function DateStep({
 }) {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
-  const today = getTodayInZone({ now: useMountTime(), timeZone });
+  const today = useTodayInZone(timeZone);
   const gone = dateProblem?.kind === "passed" || dateProblem?.kind === "today";
   const kept = gone ? null : initialDate;
 

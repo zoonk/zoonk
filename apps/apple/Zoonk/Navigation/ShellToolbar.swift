@@ -549,7 +549,7 @@ private func goalLine(_ goal: LearnerGoal) -> String {
       localized: "\(time) a day", table: "Navigation",
       comment: "How long the learner studies a goal each day, such as 45 min a day")
 
-    guard let days = daysLeft(until: goal.targetDate) else {
+    guard let days = goal.daysLeft else {
       return perDay
     }
 
@@ -564,15 +564,6 @@ private func goalLine(_ goal: LearnerGoal) -> String {
 
     return "\(perDay)\u{00A0}· \(left)"
   }
-}
-
-private func daysLeft(until targetDate: String?) -> Int? {
-  guard let targetDate else {
-    return nil
-  }
-
-  let days = PlanDate.days(from: PlanDate.today(), to: targetDate)
-  return days >= 0 ? days : nil
 }
 
 extension EnvironmentValues {
