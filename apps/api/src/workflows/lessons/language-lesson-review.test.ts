@@ -54,6 +54,21 @@ function withDistractors(lesson: LanguageLessonContent, index: number, distracto
   };
 }
 
+function withDepositOf({ amount, valor }: { amount: string; valor: string }) {
+  return {
+    ...DRAFT,
+    sentences: DRAFT.sentences.map((sentence, index) =>
+      index === 1
+        ? {
+            ...sentence,
+            sentence: `The deposit is ${amount} dollars`,
+            translation: `A caução é de ${valor} dólares`,
+          }
+        : sentence,
+    ),
+  };
+}
+
 async function writeLanguageLesson(
   drafts: Awaited<ReturnType<typeof generateLanguageLesson>>[] = [],
   { specStatus = "completed" }: { specStatus?: "completed" | "pending" } = {},
@@ -253,6 +268,56 @@ describe("a language lesson's review", () => {
     const saved = await readLesson(lessonId);
 
     expect(saved.words[0]?.distractors).toStrictEqual(["the salary", "the fee", "the bill"]);
+  });
+
+  it("has the writer spell out a number in a sentence the learner builds from tiles", async () => {
+    vi.mocked(checkLanguageLesson).mockResolvedValue(review([]));
+
+    fixWith(() => withDepositOf({ amount: "five hundred", valor: "quinhentos" }));
+
+    const { lessonId, result } = await writeLanguageLesson([
+      taskResult(withDepositOf({ amount: "500", valor: "500" }), "openai/gpt-6.1-terra"),
+    ]);
+
+    expect(result).toStrictEqual({ lessonId, status: "ready" });
+
+    expect(fixLanguageLesson).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        problems: expect.arrayContaining([
+          expect.objectContaining({
+            problem: expect.stringContaining("The deposit is 500 dollars"),
+            source: "check",
+          }),
+        ]),
+      }),
+    );
+
+    await expect(
+      prisma.sentence.findFirst({ where: { sentence: "The deposit is five hundred dollars" } }),
+    ).resolves.not.toBeNull();
+  });
+
+  it("publishes a fix that rewrites the screen but keeps its number in digits", async () => {
+    vi.mocked(checkLanguageLesson).mockResolvedValue(review([]));
+
+    fixWith(() => {
+      const kept = withDepositOf({ amount: "500", valor: "500" });
+
+      return {
+        ...kept,
+        sentences: kept.sentences.map((sentence, index) =>
+          index === 1 ? { ...sentence, explanation: "“Deposit” é a caução." } : sentence,
+        ),
+      };
+    });
+
+    const { lessonId, result } = await writeLanguageLesson([
+      taskResult(withDepositOf({ amount: "500", valor: "500" }), "openai/gpt-6.1-terra"),
+    ]);
+
+    expect(result).toStrictEqual({ lessonId, status: "ready" });
+    expect(fixLanguageLesson).toHaveBeenCalledOnce();
+    expect(generateLanguageLesson).toHaveBeenCalledOnce();
   });
 
   it("holds the lesson back when the fix still has an error on a screen it changed", async () => {

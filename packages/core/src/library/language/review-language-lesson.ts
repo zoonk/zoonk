@@ -10,7 +10,7 @@ import { checkLanguageLesson } from "@zoonk/ai/tasks/language/language-lesson-ch
 import { holdBackLessonDraft } from "../generation/hold-back-lesson";
 import { recordLessonQualityDecision } from "../quality/lesson-quality-decision";
 import { toReviewProblems } from "../quality/lesson-review-problems";
-import { listLanguageReviewScreens } from "./_utils/language-review-screens";
+import { listDigitTileScreens, listLanguageReviewScreens } from "./_utils/language-review-screens";
 import {
   type LanguageLessonDraft,
   cleanWrittenLanguageLesson,
@@ -46,6 +46,18 @@ function listScreens({
   });
 }
 
+function findDigitTiles({ inputs, lesson }: LanguageLessonDraft): LessonProblem[] {
+  return listDigitTileScreens({
+    content: lesson,
+    learnerLanguage: inputs.learnerLanguage,
+    targetLanguage: inputs.targetLanguage,
+  }).map(({ screen, sentence }) => ({
+    problem: `"${sentence}" or its translation writes a number in digits, which look the same in both languages, so the learner picks that tile by sight. Fix: write the number in words in both.`,
+    screen,
+    source: "check",
+  }));
+}
+
 /** Internal workflow bridge: the errors in a written lesson, before anyone sees it. */
 export async function reviewLanguageLessonDraft(
   context: ReviewContext & { lessonId?: string },
@@ -60,11 +72,14 @@ export async function reviewLanguageLessonDraft(
     writerModel: draft.provenance.model,
   });
 
-  const problems = toReviewProblems(data.issues);
+  const problems = [...findDigitTiles(draft), ...toReviewProblems(data.issues)];
 
   if (context.lessonId) {
     await recordLessonQualityDecision({
-      blocking: problems,
+      blocking: problems.map((problem) => ({
+        ...problem,
+        source: problem.source === "check" ? "code" : "review",
+      })),
       lessonId: context.lessonId,
       phase: "firstReview",
       reviewerRunId: provenance.runId,
@@ -111,6 +126,8 @@ export async function fixLanguageLessonDraft({
 /**
  * Internal workflow bridge: what still blocks the fixed lesson. A finding the writer saw on a screen
  * it left unchanged is final, matched by screen, not wording; a lesson-wide finding always blocks.
+ * A digit in a tile sentence only makes the exercise easier, so its automatic check asks the writer
+ * once and never holds a lesson back.
  */
 export async function reviewLanguageLessonFix({
   fixed,
@@ -124,10 +141,11 @@ export async function reviewLanguageLessonFix({
   const problems = await reviewLanguageLessonDraft({ ...context, draft: fixed });
 
   return problems.filter(
-    ({ screen }) =>
-      screen === null ||
-      !flaggedScreens.includes(screen) ||
-      !isDeepStrictEqual(before[screen], after[screen]),
+    ({ screen, source }) =>
+      source !== "check" &&
+      (screen === null ||
+        !flaggedScreens.includes(screen) ||
+        !isDeepStrictEqual(before[screen], after[screen])),
   );
 }
 

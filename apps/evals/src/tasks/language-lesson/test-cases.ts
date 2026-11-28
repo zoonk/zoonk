@@ -199,6 +199,21 @@ export const TEST_CASES: TestCase<unknown, LanguageLessonInput>[] = [
     },
   },
   {
+    expectations: `Brazilian Portuguese speaker learning Italian, A1, saying where they live and their phone number ("Abito in via Roma, numero dodici", "Il mio numero è..."). Every number in a sentence and its translation is written in words ("numero dodici" and "número doze"), never in digits: a "12" tile in both languages is picked by sight, so a sentence with digits scores at most 5 for practice design.`,
+    id: "pt-it-a1-address-numbers",
+    userInput: {
+      knownWords: ["io", "la via", "Roma"],
+      learnerLanguage: "pt",
+      lessonCanDo: "Dizer onde mora e o número de telefone",
+      lessonDescription: "Diga seu endereço e seu telefone para preencher um cadastro",
+      lessonTitle: "Endereço residencial",
+      level: "A1",
+      targetLanguage: "it",
+      unitCanDos: ["Apresentar-se", "Dar seus dados pessoais"],
+      unitTitle: "Dados pessoais",
+    },
+  },
+  {
     expectations: `US English speaker learning Polish, A2, answering a doctor's questions about symptoms. The doctor and the patient don't know each other, so the doctor is polite: "Pan" or "Pani" ("Co Panu dolega?", "Czy przyjmuje Pani jakieś leki?") or an impersonal question ("Od kiedy boli głowa?"), never "ty" ("Co cię boli?", "Czy bierzesz leki?"), in the sentences, tip examples, practice and writing answers.`,
     id: "en-pl-a2-doctor",
     userInput: {
