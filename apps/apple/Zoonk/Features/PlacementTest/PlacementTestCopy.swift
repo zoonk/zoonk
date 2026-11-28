@@ -104,8 +104,11 @@ enum PlacementTestCopy {
         nil
       }
 
+    // A question is named only while there's one to ask: at the ceiling the test is still open
+    // until it's finished.
     if let open {
-      return [inProgress, TestCopy.question(open.answered + 1, of: open.total)]
+      return open.answered < open.total
+        ? [inProgress, TestCopy.question(open.answered + 1, of: open.total)] : [inProgress]
     }
 
     if test.kind == .language, test.state == .continue {

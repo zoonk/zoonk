@@ -97,6 +97,38 @@ enum PlacementTestPhase: Equatable {
     }
   }
 
+  /// Where a read leaves a question whose answer core refused: nil while the test still asks it,
+  /// so the answer just didn't save. Otherwise the test moved on without it, as when another device
+  /// stopped it: that test's result when it's the one this question was in, else wherever the read
+  /// stands.
+  init?(
+    refused asked: PlacementTestQuestion, attempt: PlacementAttempt?,
+    result: PlacementTestResult?, status: Components.Schemas.PlacementStatus,
+    next: PracticeQuestion?, labels: PracticeTrueFalseLabels, onboarding: Bool
+  ) {
+    if attempt?.id == asked.attempt.id, next?.itemId == asked.question.itemId {
+      return nil
+    }
+
+    if attempt == nil, let result, result.attemptId == asked.attempt.id {
+      self = .result(PlacementTestEnd(read: result))
+      return
+    }
+
+    self.init(
+      attempt: attempt, result: result, status: status, next: next, labels: labels,
+      onboarding: onboarding, asked: true)
+  }
+
+  init?(refused asked: PlacementTestQuestion, _ placement: GoalPlacement, onboarding: Bool) {
+    self.init(
+      refused: asked, attempt: placement.activeTestAttempt, result: placement.savedTestResult,
+      status: placement.status,
+      next: placement.next.flatMap { try? PracticeJSON.recode($0, as: PracticeQuestion.self) },
+      labels: placement.trueFalseLabels == .rightWrong ? .rightWrong : .trueFalse,
+      onboarding: onboarding)
+  }
+
   /// No test opened after the learner asked for one: it waits while the course and its questions
   /// are written; otherwise there's nothing to test. Questions that came while it waited open the
   /// start the learner asked for (`PlacementTestFlow`).

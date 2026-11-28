@@ -316,6 +316,13 @@ struct LevelTest: Decodable, Equatable, Sendable {
     let audio: Audio?
     /// The bank's run may still be voicing the message.
     var audioPending: Bool
+    /// The wait for the message's clip stopped hearing back, so nothing said whether one is coming:
+    /// the play button asks for the message, and skipping still skips this question only.
+    var audioUnconfirmed = false
+
+    private enum CodingKeys: String, CodingKey {
+      case id, options, passage, question, skill, audio, audioPending
+    }
   }
 
   struct Next: Decodable, Equatable, Sendable {
