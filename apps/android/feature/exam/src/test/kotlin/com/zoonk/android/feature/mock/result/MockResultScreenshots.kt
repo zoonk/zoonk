@@ -230,6 +230,36 @@ class MockResultScreenshots {
 
     @Test
     @Config(qualifiers = "w411dp-h1600dp-xxhdpi")
+    fun phoneWrittenMet() {
+        writtenDetails("met", """{"low":58,"high":64}""", "result-details-written-met")
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1600dp-xxhdpi")
+    fun phoneWrittenBelow() {
+        writtenDetails("below", """{"low":38,"high":44}""", "result-details-written-below")
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1600dp-xxhdpi")
+    fun phoneWrittenOverlaps() {
+        writtenDetails("overlaps", """{"low":47,"high":55}""", "result-details-written-overlaps")
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1600dp-xxhdpi")
+    fun phoneWrittenUnmeasured() {
+        writtenDetails("unmeasured", """{"low":58,"high":64}""", "result-details-written-unmeasured")
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1600dp-xxhdpi")
+    fun phoneWrittenNoEstimate() {
+        writtenDetails("unmeasured", """null""", "result-details-written-no-estimate")
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1600dp-xxhdpi")
     fun phoneHalfPoints() {
         show(finishedMock(result = result(extra = HALF_POINTS), extra = HALF_SHAPE))
         capture("result-phone-points-half")
@@ -501,10 +531,28 @@ class MockResultScreenshots {
                 "passMarks":{"language":"pt","texts":["Será eliminado o candidato que obtiver nota inferior a 10 pontos."]}""",
         )
 
+    private fun writtenDetails(
+        standing: String,
+        range: String,
+        name: String,
+    ) {
+        show(finishedMock(result = result(extra = writtenPoints(standing, range))))
+        compose.onNodeWithText("Details").performClick()
+        compose.waitForIdle()
+        write(
+            name,
+            compose
+                .onAllNodes(isRoot())
+                .onLast()
+                .captureRender()
+                .asAndroidBitmap(),
+        )
+    }
+
     private fun essaysOnly(vararg essays: String) =
         finishedMock(
             result = result(extra = """"total":0,"correct":0,"areas":[],"topics":[]"""),
-            extra = """"essayRubric":"enem","essays":[${essays.joinToString(",")}]""",
+            extra = """"essays":[${essays.joinToString(",")}]""",
         )
 
     private fun show(

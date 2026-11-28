@@ -29,7 +29,6 @@ msgid "Your answer and the right one"
 msgstr "Cevabın ve doğru cevap"
 
 #: src/_components/answer-pair.tsx
-#: src/essay/essay-labels.tsx
 #: src/mock/mock-question.tsx
 #: src/onboarding/steps/question-steps.tsx
 #: src/questions/numeric-answer-field.tsx
@@ -3239,11 +3238,6 @@ msgctxt "3Rx6Qo"
 msgid "Advanced"
 msgstr "İleri seviye"
 
-#: src/essay/essay-labels.tsx
-msgctxt "EWD_9X"
-msgid "Your essay"
-msgstr "Kompozisyonun"
-
 #: src/essay/essay-skip-button.tsx
 #: src/focus-test/focus-test-flow.tsx
 #: src/focus-test/focus-test-screens.tsx
@@ -5197,6 +5191,7 @@ msgstr "İlk haftalık meydan okumana katıl"
 
 #: src/journey/preparation/written-projection.tsx
 #: src/language/exam-speaking/exam-speaking-labels.ts
+#: src/mock/mock-result-points.tsx
 #: src/syllabus/subject-written-standing.tsx
 msgctxt "st8F-L"
 msgid "{range} of {max}"
@@ -5214,21 +5209,6 @@ msgid "Not measured yet"
 msgstr "Henüz ölçülmedi"
 
 #: src/journey/preparation/written-projection.tsx
-msgctxt "uOG8dr"
-msgid "Above the {minimum} points needed"
-msgstr "Gerekli {minimum} puanın üzerinde"
-
-#: src/journey/preparation/written-projection.tsx
-msgctxt "qjfXcf"
-msgid "{points} points short of the {minimum} needed"
-msgstr "Gerekli {minimum} puana ulaşmak için {points} puan eksiğin var"
-
-#: src/journey/preparation/written-projection.tsx
-msgctxt "vUZHcz"
-msgid "Close to the {minimum} points needed"
-msgstr "Gerekli {minimum} puana yakın"
-
-#: src/journey/preparation/written-projection.tsx
 msgctxt "iPMJIn"
 msgid "{part} needs {share} of its points, whatever your other scores."
 msgstr "Diğer puanların ne olursa olsun, {part} puanlarının {share} kadarını almalı."
@@ -5239,9 +5219,9 @@ msgid "{part} needs {minimum} points, whatever your other scores."
 msgstr "Diğer puanların ne olursa olsun, {part} {minimum} puan almalı."
 
 #: src/journey/preparation/written-projection.tsx
-msgctxt "doYQpO"
-msgid "Below the minimum to pass"
-msgstr "Geçmek için gereken minimum puanın altında"
+msgctxt "IDmbkm"
+msgid "Likely below the minimum to pass"
+msgstr "Geçmek için gereken minimum puanın altında görünüyor"
 
 #: src/journey/preparation/written-projection.tsx
 msgctxt "P8eo6O"
@@ -8478,6 +8458,11 @@ msgstr "Testlerde toplamda en az {unit, select, percent {{minimum} başarı} oth
 msgctxt "Z_itEC"
 msgid "{name} needs {unit, select, percent {{minimum} of its points} other {{value, plural, one {# point} other {# points}}}} and isn't in this mock exam."
 msgstr "{name} için en az {unit, select, percent {{minimum} başarı} other {{value, plural, other {# puan}}}} gerekiyor, ancak bu deneme sınavında yer almıyor."
+
+#: src/mock/mock-result-points.tsx
+msgctxt "DLtMyQ"
+msgid "No points estimate yet"
+msgstr "Henüz puan tahmini yok"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "JOdrmN"
@@ -14457,6 +14442,11 @@ msgid "The exam notice doesn't say how many points each criterion is worth."
 msgstr "Sınav ilanında her ölçütün kaç puan değerinde olduğu belirtilmiyor."
 
 #: src/writing/writing-result.tsx
+msgctxt "pU5Oul"
+msgid "Graded by level. A points estimate isn't available for this answer yet."
+msgstr "Düzeye göre değerlendirildi. Bu cevap için henüz puan tahmini yapılamıyor."
+
+#: src/writing/writing-result.tsx
 msgctxt "JrF1rx"
 msgid "Criteria and points from the exam notice."
 msgstr "Sınav ilanındaki ölçütler ve puanlar."
@@ -14663,3 +14653,23 @@ msgstr "Cevabın parçası olmayan adları, imzaları ve işaretleri kaldır."
 msgctxt "DsBKHH"
 msgid "Leave out anything that identifies you"
 msgstr "Seni tanıtabilecek şeyleri çıkar"
+
+#: src/writing/written-standing.tsx
+msgctxt "S2T3vo"
+msgid "Likely above the {minimum} points needed"
+msgstr "Gereken {minimum} puanın üstünde görünüyor"
+
+#: src/writing/written-standing.tsx
+msgctxt "sUornn"
+msgid "Likely below the {minimum} points needed"
+msgstr "Gereken {minimum} puanın altında görünüyor"
+
+#: src/writing/written-standing.tsx
+msgctxt "8vhDfM"
+msgid "Could be either side of the {minimum} points needed"
+msgstr "Gereken {minimum} puan sınırının altında da üstünde de olabilir"
+
+#: src/writing/written-standing.tsx
+msgctxt "bNTvU0"
+msgid "Can't say yet whether this reaches the {minimum} points needed"
+msgstr "Henüz gereken {minimum} puana ulaşıp ulaşmadığını söyleyemiyoruz"

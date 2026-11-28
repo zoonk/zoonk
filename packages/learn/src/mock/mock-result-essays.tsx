@@ -8,7 +8,6 @@ import { useExtracted } from "next-intl";
 import { Eyebrow } from "../_components/eyebrow";
 import { StepCard, StepDetail, StepHeader, StepTitle } from "../_components/step-card";
 import { type StepsItem } from "../_components/steps";
-import { useWritingName } from "../essay/essay-labels";
 import { WritingResultView } from "../writing/writing-result";
 import { useMockScreen } from "./mock-context";
 import { UnsureFact } from "./mock-labels";
@@ -48,16 +47,12 @@ function PendingState() {
 
 function UngradedEssayStep({ essay, eyebrow }: { essay: MockEssayView; eyebrow: string | null }) {
   const t = useExtracted();
-  const { runner } = useMockScreen();
-  const writingName = useWritingName();
 
   return (
     <StepCard>
       <StepHeader>
         {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
-        <StepTitle>
-          {essay.writing?.title ?? writingName(runner.view.essayRubric ?? "custom")}
-        </StepTitle>
+        <StepTitle>{essay.writing.title}</StepTitle>
         {essay.status === "blank" && <StepDetail>{t("You left it blank.")}</StepDetail>}
         {essay.unsure && <UnsureFact className="text-sm" />}
       </StepHeader>
@@ -83,7 +78,7 @@ export function useEssayItems(): StepsItem[] {
     const id = `essay-${essay.itemId}`;
     const { grade } = essay;
 
-    if (!grade || !essay.writing) {
+    if (!grade) {
       return [{ content: <UngradedEssayStep essay={essay} eyebrow={eyebrow} />, id }];
     }
 

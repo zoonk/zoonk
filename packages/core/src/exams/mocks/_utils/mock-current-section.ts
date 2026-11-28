@@ -1,6 +1,6 @@
 import "server-only";
 import { isStillAsked } from "../../../library/items/item-image";
-import { writingPromptSchema } from "../../essays/writing-contract";
+import { readWritingPrompt } from "../../essays/writing-contract";
 import { isMockAnswerPresent } from "../mock-answer-presence";
 import { type MockView } from "../mock-contract";
 import { type MockQuestion } from "../mock-view-contract";
@@ -46,7 +46,7 @@ export async function loadCurrentSection({
 
   const written = section.essays.flatMap((itemId): Omit<MockQuestion, "number">[] => {
     const essay = essays.get(itemId);
-    const writing = essay ? writingPromptSchema.parse(essay.content.writing) : null;
+    const writing = essay ? readWritingPrompt(essay.content.writing) : null;
 
     return essay
       ? [

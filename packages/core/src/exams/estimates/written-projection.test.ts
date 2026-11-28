@@ -1,25 +1,37 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { type WrittenSample } from "../../learner/facts/written-samples";
 import { type EstimatedScore } from "../../preparation/estimated-score";
-import { passedWritingEvaluations } from "../essays/_utils/writing-rubric-evaluations";
-import { getWritingRubricFingerprint } from "../essays/_utils/writing-task-basis";
-import { CGU, CGU_WRITTEN_GRADING } from "../mocks/_test-utils/cgu-written";
+import {
+  calibrationFixture,
+  rowCalibrationFixture,
+  weightedResiduals,
+} from "../essays/_test-utils/writing-calibration";
+import { type WritingCalibration } from "../essays/_utils/writing-calibration";
+import { CGU as CGU_NOTICE, CGU_WRITTEN_GRADING } from "../mocks/_test-utils/cgu-written";
+import { snapshotMockWriting } from "../mocks/mock-written-points";
 import { projectWritten } from "./written-projection";
 
-vi.mock("../essays/_utils/writing-rubric-evaluations", () => ({ passedWritingEvaluations: {} }));
+const calibration = vi.hoisted(() => ({ current: null as WritingCalibration | null }));
 
-function allowWritingPoints(points: number) {
-  const basis = { grading: CGU_WRITTEN_GRADING, points };
+vi.mock(import("../essays/_utils/writing-calibration"), async (importOriginal) => ({
+  ...(await importOriginal()),
+  get writingCalibration() {
+    return calibration.current;
+  },
+}));
 
-  Object.assign(passedWritingEvaluations, {
-    [getWritingRubricFingerprint(basis)]: {
-      arithmetic: { rounding: null, zeroRules: [] },
-      corpus: "fixture",
-      kind: "points",
-      model: "fixture/model",
-      promptRevision: "fixture-revision",
-    },
-  });
+const CGU = structuredClone(CGU_NOTICE);
+
+for (const section of CGU.mock?.sections ?? []) {
+  for (const task of section.tasks ?? []) {
+    task.grading = {
+      ...CGU_WRITTEN_GRADING,
+      criteria: CGU_WRITTEN_GRADING.criteria.map((criterion) => ({
+        ...criterion,
+        points: task.points ?? null,
+      })),
+    };
+  }
 }
 
 const OBJECTIVE: EstimatedScore = {
@@ -77,7 +89,10 @@ function sample({
     prompt: {
       assessedSkillIds: ["skill"],
       criteria: [],
-      grading: CGU_WRITTEN_GRADING,
+      grading: {
+        ...CGU_WRITTEN_GRADING,
+        criteria: CGU_WRITTEN_GRADING.criteria.map((criterion) => ({ ...criterion, points })),
+      },
       lines,
       part: "Written test",
       points,
@@ -90,10 +105,8 @@ function sample({
 }
 
 describe(projectWritten, () => {
-  const evaluatedPoints = [30, 70];
-
   beforeEach(() => {
-    evaluatedPoints.forEach((points) => allowWritingPoints(points));
+    calibration.current = calibrationFixture();
   });
 
   it("retains the objective and measured question while naming the missing written task", () => {
@@ -128,24 +141,21 @@ describe(projectWritten, () => {
     {
       combined: { high: 131, low: 118 },
       long: { high: 44, low: 39 },
-      standing: "met",
       written: { high: 63, low: 56 },
     },
     {
       combined: { high: 122, low: 107 },
       long: { high: 35, low: 28 },
-      standing: "overlaps",
       written: { high: 54, low: 45 },
     },
     {
       combined: { high: 115, low: 103 },
       long: { high: 28, low: 24 },
-      standing: "below",
       written: { high: 47, low: 41 },
     },
   ])(
-    "judges CGU on both questions together ($standing)",
-    ({ combined, long, standing, written }) => {
+    "estimates CGU points from both questions without a minimum call",
+    ({ combined, long, written }) => {
       const projection = projectWritten({
         objective: OBJECTIVE,
         samples: [sample({ high: 19, key: "short", low: 17 }), sample({ key: "long", ...long })],
@@ -154,7 +164,7 @@ describe(projectWritten, () => {
 
       expect(projection?.parts[0]?.range?.low).toBeCloseTo(written.low, 8);
       expect(projection?.parts[0]?.range?.high).toBeCloseTo(written.high, 8);
-      expect(projection?.parts[0]?.standing).toBe(standing);
+      expect(projection?.parts[0]?.standing).toBe("unmeasured");
       expect(projection?.combined?.low).toBeCloseTo(combined.low, 8);
       expect(projection?.combined?.high).toBeCloseTo(combined.high, 8);
     },
@@ -172,7 +182,13 @@ describe(projectWritten, () => {
     ];
 
     const result = projectWritten({ objective: null, samples, structure: CGU });
-    expect(result).toMatchObject({ combined: null, objective: null, parts: [{ standing: "met" }] });
+
+    expect(result).toMatchObject({
+      combined: null,
+      objective: null,
+      parts: [{ standing: "unmeasured" }],
+    });
+
     expect(result?.parts[0]?.range?.low).toBeCloseTo(53, 8);
     expect(result?.parts[0]?.range?.high).toBeCloseTo(70, 8);
   });
@@ -212,13 +228,8 @@ describe(projectWritten, () => {
     });
   });
 
-  it("reports levels for written tasks without a passed evaluation", () => {
-    for (const points of evaluatedPoints) {
-      Reflect.deleteProperty(
-        passedWritingEvaluations,
-        getWritingRubricFingerprint({ grading: CGU_WRITTEN_GRADING, points }),
-      );
-    }
+  it("reports levels for written tasks without measured row kinds", () => {
+    calibration.current = null;
 
     const samples = [
       sample({ high: 20, key: "short", low: 15 }),
@@ -238,4 +249,153 @@ describe(projectWritten, () => {
       ],
     });
   });
+});
+
+describe("a verdict from the latest mock exam beside an estimate from practice", () => {
+  const GRADER = { model: "fixture/model", promptVersion: "fixture-revision" };
+
+  const [part] =
+    snapshotMockWriting({
+      day: null,
+      essays: [
+        { itemId: "mock-short", taskKey: "short" },
+        { itemId: "mock-long", taskKey: "long" },
+      ],
+      structure: CGU,
+    }).writtenParts ?? [];
+
+  function sat(answer: Parameters<typeof sample>[0]): WrittenSample {
+    const taken = sample({ ...answer, id: `mock-${answer.key}` });
+    return { ...taken, answer: { ...taken.answer, grader: GRADER }, mockExamId: "mock" };
+  }
+
+  const sitting = [
+    sat({ high: 28, key: "short", low: 28 }),
+    sat({ high: 62, key: "long", low: 62 }),
+  ];
+
+  function standing(samples: WrittenSample[]) {
+    return projectWritten({
+      mocks: part ? [{ id: "mock", part }] : [],
+      objective: OBJECTIVE,
+      samples,
+      structure: CGU,
+    })?.parts[0];
+  }
+
+  beforeEach(() => {
+    calibration.current = calibrationFixture({
+      rows: {
+        definitePoint: rowCalibrationFixture({
+          residuals: {
+            over: weightedResiduals([0.02, 0.02, 0.02, 0.02]),
+            under: weightedResiduals([0, 0, 0, 0]),
+          },
+        }),
+      },
+    });
+  });
+
+  it("shows the mock's verdict while the estimate agrees or straddles the minimum", () => {
+    expect(standing(sitting)).toMatchObject({ range: { low: 90 }, standing: "met" });
+  });
+
+  it("keeps the practice verdict when the last mock's answers can't be judged", () => {
+    const unjudged = sitting.map(({ answer, ...taken }) => ({
+      ...taken,
+      answer: { conditions: answer.conditions, grade: answer.grade },
+      numericEligible: false,
+    }));
+
+    const practice = [
+      sample({ high: 28, id: "short-practice", key: "short", low: 28 }),
+      sample({ high: 62, id: "long-practice", key: "long", low: 62 }),
+    ].map((taken) => ({ ...taken, answer: { ...taken.answer, grader: GRADER } }));
+
+    expect(standing([...practice, ...unjudged])?.standing).toBe("met");
+  });
+
+  it("gives no verdict from a mock whose answers were marked by rules the task has since changed", () => {
+    const structure = structuredClone(CGU);
+    const written = structure.mock?.sections.find(({ kind }) => kind === "written");
+    const task = written?.tasks?.find(({ key }) => key === "long");
+    const [criterion] = task?.grading?.criteria ?? [];
+
+    if (!task?.grading || !criterion) {
+      throw new Error("Expected the long CGU task criterion");
+    }
+
+    task.grading = {
+      ...task.grading,
+      criteria: [
+        { ...criterion, id: "case", points: 35 },
+        { ...criterion, id: "argument", points: 35 },
+      ],
+    };
+
+    expect(
+      projectWritten({
+        mocks: part ? [{ id: "mock", part }] : [],
+        objective: OBJECTIVE,
+        samples: sitting,
+        structure,
+      })?.parts[0],
+    ).toMatchObject({ range: null, standing: "unmeasured" });
+  });
+
+  it("gives no verdict when later practice puts the whole estimate on the other side", () => {
+    const later = Array.from({ length: 6 }, (_, index) => [
+      sample({ high: 6, id: `short-${index}`, key: "short", low: 6 }),
+      sample({ high: 12, id: `long-${index}`, key: "long", low: 12 }),
+    ]).flat();
+
+    const projected = standing([...sitting, ...later]);
+
+    expect(projected?.range?.high).toBeLessThan(50);
+    expect(projected?.standing).toBe("unmeasured");
+  });
+});
+
+describe("a verdict from practice answers alone", () => {
+  const GRADER = { model: "fixture/model", promptVersion: "fixture-revision" };
+
+  function graded(answer: Parameters<typeof sample>[0]): WrittenSample {
+    const taken = sample(answer);
+    return { ...taken, answer: { ...taken.answer, grader: GRADER } };
+  }
+
+  function standing(short: number, long: number) {
+    return projectWritten({
+      objective: OBJECTIVE,
+      samples: [
+        graded({ high: short, key: "short", low: short }),
+        graded({ high: long, key: "long", low: long }),
+      ],
+      structure: CGU,
+    })?.parts[0]?.standing;
+  }
+
+  beforeEach(() => {
+    calibration.current = calibrationFixture({
+      rows: {
+        definitePoint: rowCalibrationFixture({
+          residuals: {
+            over: weightedResiduals([0.1, 0.1, 0.1, 0.1]),
+            under: weightedResiduals([0.1, 0.1, 0.1, 0.1]),
+          },
+        }),
+      },
+    });
+  });
+
+  it.each([
+    { long: 62, short: 28, verdict: "met" },
+    { long: 28, short: 20, verdict: "overlaps" },
+    { long: 12, short: 6, verdict: "below" },
+  ])(
+    "calls $short + $long against the minimum of 50 as $verdict, by the grader's measured error",
+    ({ long, short, verdict }) => {
+      expect(standing(short, long)).toBe(verdict);
+    },
+  );
 });

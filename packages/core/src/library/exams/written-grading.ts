@@ -14,11 +14,63 @@ export const writingZeroKindSchema = z.enum([
   "identification",
 ]);
 
-export const writtenGradingSchema = z.object({
-  criteria: z.array(
-    citedRuleSchema.extend({ id: z.string().min(1), points: z.number().positive().nullable() }),
-  ),
-  kind: z.enum(["enem", "oab", "points", "levels"]),
+const awardPoints = z.number().nonnegative();
+
+const awardSchema = citedRuleSchema.extend({
+  count: z
+    .int()
+    .positive()
+    .optional()
+    .describe("How many distinct counted parts an answer needs to earn this award"),
+  points: awardPoints.nullable(),
+  pointsHigh: awardPoints
+    .optional()
+    .describe("The top of the award's span when the board states a band of several marks"),
+});
+
+const criterionSchema = citedRuleSchema.extend({
+  awards: z
+    .array(awardSchema)
+    .min(2)
+    .optional()
+    .describe(
+      "The board's own scale for this criterion, lowest award first; only one applies to an answer. Absent when the board states a maximum and no scale.",
+    ),
+  id: z.string().min(1),
+  parts: z
+    .array(citedRuleSchema.extend({ id: z.string().min(1) }))
+    .optional()
+    .describe("The named elements the board counts toward this criterion's awards"),
+  points: z.number().positive().nullable(),
+  weight: z.number().positive().optional().describe("Its weight in a weighted mean; 1 when absent"),
+});
+
+const roundingSchema = citedRuleSchema.extend({
+  mode: z.enum(["nearest", "down", "up"]).nullish(),
+  stage: z
+    .enum(["criterion", "total"])
+    .nullish()
+    .describe("Whether each criterion's mark is rounded or only the final mark"),
+  step: z.number().positive().nullish().describe("The unit marks are rounded to, such as 0.01"),
+});
+
+const sheetSchema = z.object({
+  combination: citedRuleSchema
+    .extend({
+      method: z.enum(["sum", "mean"]),
+      step: z
+        .number()
+        .positive()
+        .nullable()
+        .describe("The unit the combined mark is reported in, such as half a band"),
+    })
+    .nullish()
+    .describe("How the criteria's marks become the answer's mark; a sum when absent"),
+  conventions: z
+    .array(citedRuleSchema)
+    .optional()
+    .describe("The board's own rules on what earns or loses credit, as it words them"),
+  criteria: z.array(criterionSchema),
   language: citedRuleSchema
     .extend({
       factor: z.number().nonnegative().nullable(),
@@ -26,7 +78,22 @@ export const writtenGradingSchema = z.object({
       method: z.enum(["perError", "errorsPerLine", "other"]),
     })
     .nullable(),
-  rounding: citedRuleSchema.nullable(),
+  limits: z
+    .array(
+      citedRuleSchema.extend({
+        criteria: z.array(z.string().min(1)).min(1),
+        max: z.number().nonnegative(),
+      }),
+    )
+    .optional()
+    .describe("Cases in which the board caps the named criteria at fewer marks"),
+  rounding: roundingSchema.nullable(),
+  totalSuppressed: z
+    .boolean()
+    .optional()
+    .describe(
+      "True when a rule that changes the mark could not be read or verified, so no total is worked out",
+    ),
   zeroing: z.array(
     citedRuleSchema.extend({
       kinds: z.array(writingZeroKindSchema).optional(),
@@ -34,6 +101,36 @@ export const writtenGradingSchema = z.object({
     }),
   ),
 });
+
+function hasPoints(criterion: unknown): boolean {
+  return (
+    typeof criterion === "object" &&
+    criterion !== null &&
+    "points" in criterion &&
+    typeof criterion.points === "number"
+  );
+}
+
+/**
+ * Sheets stored before awards existed carry a `kind`; on one with pointed criteria, `levels`
+ * recorded that a rule was dropped.
+ */
+function readStoredSheet(stored: unknown): unknown {
+  if (typeof stored !== "object" || stored === null || !("kind" in stored)) {
+    return stored;
+  }
+
+  const { kind, ...sheet } = stored;
+  const criteria = "criteria" in sheet && Array.isArray(sheet.criteria) ? sheet.criteria : [];
+
+  return kind === "levels" && criteria.some((criterion) => hasPoints(criterion))
+    ? { ...sheet, totalSuppressed: true }
+    : sheet;
+}
+
+export const writtenGradingSchema = z.preprocess(readStoredSheet, sheetSchema);
+
+export type WritingSheet = z.infer<typeof writtenGradingSchema>;
 
 export const sectionTaskSchema = z.object({
   count: z.number().int().min(1),

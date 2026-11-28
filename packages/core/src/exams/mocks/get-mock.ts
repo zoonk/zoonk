@@ -8,7 +8,6 @@ import { EXAM_DAY_CHECKLIST } from "../../checkpoints/weekly-challenge-rules";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { type PassMarks, getPassMarks } from "../../library/exams/pass-marks";
 import { getTrueFalseLabels } from "../../library/exams/true-false-labels";
-import { listWrittenTasks } from "../../library/exams/written-tasks";
 import { NO_RESULT_MOMENTS, loadResultMoments } from "../../milestones/load-ceremony";
 import { loadPracticeEntries } from "../../mistakes/_utils/practice-entries";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
@@ -24,7 +23,7 @@ import { loadMockEssayViews } from "./_utils/mock-essays";
 import { loadMockMissionMoment } from "./_utils/mock-mission-moment";
 import { countFinishedMocksBefore } from "./_utils/mock-number";
 import { loadMockReview } from "./_utils/mock-review";
-import { getAskedItemIds, getEssayItemIds, toSectionViews } from "./_utils/mock-sections";
+import { getAskedItemIds, toSectionViews } from "./_utils/mock-sections";
 import { loadMockSpeaking } from "./_utils/mock-speaking";
 import { loadAskedTypedParts } from "./_utils/mock-typed-parts";
 import { type MockSitting, type OwnedMock, findOwnedMock } from "./_utils/owned-mock";
@@ -101,17 +100,18 @@ async function loadFinished({
   const result = mockResultSchema.safeParse(owned.mock.result).data ?? null;
   const reached = keptReachedSchema.safeParse(owned.mock.result).data?.reached ?? NOTHING_REACHED;
 
-  const [review, offers, { numericBlankItems, views: essays }, practice] = await Promise.all([
-    loadMockReview({ areas, mock: owned.mock, userId: owned.userId }),
-    loadMockPlanOffers({
-      blueprint: owned.blueprint,
-      goal: owned.goal,
-      purpose: conditions.purpose,
-      result,
-    }),
-    loadMockEssayViews({ areas, mock: owned.mock }),
-    loadPracticeEntries({ mockId: owned.mock.id, skillIds: null, userId: owned.userId }),
-  ]);
+  const [review, offers, { grades, numericBlankItems, views: essays }, practice] =
+    await Promise.all([
+      loadMockReview({ areas, mock: owned.mock, userId: owned.userId }),
+      loadMockPlanOffers({
+        blueprint: owned.blueprint,
+        goal: owned.goal,
+        purpose: conditions.purpose,
+        result,
+      }),
+      loadMockEssayViews({ areas, mock: owned.mock }),
+      loadPracticeEntries({ mockId: owned.mock.id, skillIds: null, userId: owned.userId }),
+    ]);
 
   return {
     ...review,
@@ -119,7 +119,7 @@ async function loadFinished({
     essays,
     practiceAvailable: practice.length > 0,
     reached,
-    result: withMockWrittenPoints({ conditions, essays, numericBlankItems, result }),
+    result: withMockWrittenPoints({ conditions, grades, numericBlankItems, result }),
   };
 }
 
@@ -153,18 +153,8 @@ function describeOwner({
   result: MockView["result"];
   typed: readonly MockTypedPart[];
 }) {
-  const asksEssays = getEssayItemIds(conditions).length > 0;
-
-  const kinds = listWrittenTasks({
-    day: conditions.day ?? undefined,
-    structure: owned.structure,
-  }).map(({ grading }) => grading.kind);
-
-  const rubric = kinds.find((kind) => kind !== "levels") ?? ("levels" as const);
-
   return {
     date: toIsoDate(owned.sessionDate),
-    essayRubric: asksEssays ? rubric : null,
     examDocument: owned.goal ? getExamDocument(owned.goal) : "notice",
     examName: owned.blueprint?.name ?? owned.goal?.title ?? null,
     goalId: owned.goal?.id ?? null,

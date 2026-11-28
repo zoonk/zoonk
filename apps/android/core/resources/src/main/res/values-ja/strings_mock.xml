@@ -12,8 +12,6 @@
   "mock_cell_unsure": "1d24ccb1bcb6ce992d7262c7e085fddad8b4c50f4cdcd43b75e9c7f7bd025760",
   "mock_continue": "d1eed4bd1214e1028b8fa6e5ca751d7782d93a8ff8c852df2f0960293f592731",
   "mock_continue_section": "b756f1009d5558f0fa38b9c2972ed8a7e14d8ad928bfcd6e9e1dd126af55be97",
-  "mock_essay_blank": "c8766822cc7ca0a22fee1e791dc4f12ba6f55b7ea56f73ad48cd8b187f9b7633",
-  "mock_essays_blank": "4af0a1ca99d713efd5e40b61ea38b00b8671e85cc37d6091b1c418be0bfbd795",
   "mock_every_answered": "8bcdc71e7406b5b1b75248772891005be0b24493905662c5b70b7e268d89c2a1",
   "mock_expired_detail": "af960480653996ed80878272c5bb900843d2e72be16e93515c07a4228901aed8",
   "mock_expired_title": "dad5cf48ea29fc3e73f5662afa64853e264ab62eefe4e0e322bb65c071101533",
@@ -106,8 +104,7 @@
   "mock_written_part_area": "337fbbf983416ff5144c8222f88c81faeace47bd06ff4828643b0a8fa61ca82c",
   "mock_written_question_blank": "4ecefd1cb1d19a50803d95ef1c249c6a4e13d7c83cddd8f13e6b9fee3e6a6e15",
   "mock_written_question_place": "b363a6303676967553cf7b55a20a208322716d7ccf0b4e96f068e32f8fd29588",
-  "mock_written_questions_blank": "4496f0276e56fb2115ed0036e3410e5861ee65adf920d38d7e2ee8b463571dea",
-  "mock_your_essay": "53b6addc1fe5640bb2fcd2b088e75d202b7f2f4cf3002305d83716a894bdb69e"
+  "mock_written_questions_blank": "4496f0276e56fb2115ed0036e3410e5861ee65adf920d38d7e2ee8b463571dea"
 }
 -->
 <resources>
@@ -180,15 +177,11 @@
         <item quantity="other">%d問に自信なしを付けています。</item>
     </plurals>
     <string name="mock_every_answered">すべての問題に答えました。</string>
-    <string name="mock_essay_blank">小論文が白紙です。</string>
     <!-- Before handing in a mock exam with objective and written questions: how many written answers are blank. -->
     <string name="mock_written_question_blank">記述式の問題が未回答です。</string>
     <!-- Before handing in a mock exam with objective and written questions: how many written answers are blank. -->
     <plurals name="mock_written_questions_blank">
         <item quantity="other">記述式の問題が%d問未回答です。</item>
-    </plurals>
-    <plurals name="mock_essays_blank">
-        <item quantity="other">%d本の小論文が白紙です。</item>
     </plurals>
     <string name="mock_hand_in_final">提出後は回答を変更できません。</string>
     <string name="mock_keep_answering">解答を続ける</string>
@@ -237,7 +230,6 @@
     <string name="mock_expired_title">中断している間に制限時間が過ぎました</string>
     <string name="mock_expired_detail">この模試はカウントされません。</string>
     <string name="mock_take_another">別の模試を受ける</string>
-    <string name="mock_your_essay">小論文</string>
     <plurals name="mock_words">
         <item quantity="other">%d語</item>
     </plurals>

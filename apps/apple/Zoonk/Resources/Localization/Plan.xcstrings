@@ -1993,70 +1993,6 @@
         }
       }
     },
-    "%@ points short of the %@ needed" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Es fehlen %1$@ Punkte bis zu den erforderlichen %2$@"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ points short of the %2$@ needed"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A %1$@ puntos de alcanzar los %2$@ necesarios"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il te manque %1$@ points pour atteindre le minimum de %2$@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ punti sotto la soglia minima di %2$@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "必要な%2$@点まであと%1$@点です"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "필요 점수 %2$@점에 %1$@점 모자라요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Brakuje %1$@ pkt do wymaganego minimum %2$@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Faltam %1$@ pontos para atingir o mínimo necessário de %2$@"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gerekli %2$@ puana ulaşmak için %1$@ puan eksiğin var"
-          }
-        }
-      }
-    },
     "%@ start from the basics." : {
       "comment" : "Says several subjects start from their basics",
       "localizations" : {
@@ -13198,64 +13134,6 @@
         }
       }
     },
-    "Above the %@ points needed" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Über den erforderlichen %@ Punkten"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Por encima de los %@ puntos necesarios"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Au-dessus des %@ points requis"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sopra la soglia minima di %@ punti"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "必要な%@点を上回っています"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "필요한 최소 점수인 %@점보다 높아요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Powyżej wymaganego minimum %@ pkt"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Acima dos %@ pontos necessários"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gerekli %@ puanın üzerinde"
-          }
-        }
-      }
-    },
     "Add %@ back to your plan?" : {
       "comment" : "Asks to bring subjects the learner took out back into the plan",
       "localizations" : {
@@ -15023,64 +14901,6 @@
         }
       }
     },
-    "Below the minimum to pass" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Unter dem Mindestwert zum Bestehen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Por debajo del mínimo para aprobar"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "En dessous du minimum requis pour réussir"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Al di sotto della soglia minima per superare la prova"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "合格に必要な最低点を下回っています"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "합격 최소 점수 미달"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Poniżej progu zaliczenia"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Abaixo do mínimo para passar"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Geçmek için gereken minimum puanın altında"
-          }
-        }
-      }
-    },
     "Bring %@ back to your lessons?" : {
       "comment" : "Asks to bring practice activities back to the lessons, such as Listening",
       "localizations" : {
@@ -15431,6 +15251,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sohbetlere ara verildi"
+          }
+        }
+      }
+    },
+    "Can't say yet whether this reaches the %@ points needed" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Es lässt sich noch nicht sagen, ob die benötigten %@ Punkte erreicht werden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aún no podemos saber si alcanza el mínimo de %@ puntos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de dire pour le moment si cette réponse atteint les %@ points requis"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non è ancora possibile dire se raggiunge i %@ punti necessari"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "必要な%@点に届くかどうかは、まだ判断できません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "필요한 %@점에 도달할지 아직 알 수 없어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie można jeszcze stwierdzić, czy wynik osiągnie wymagane minimum %@ pkt"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ainda não dá para dizer se alcança a pontuação mínima de %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Henüz gereken %@ puana ulaşıp ulaşmadığını söyleyemiyoruz"
           }
         }
       }
@@ -16765,64 +16643,6 @@
         }
       }
     },
-    "Close to the %@ points needed" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Knapp an den erforderlichen %@ Punkten"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cerca de los %@ puntos necesarios"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Presque au minimum de %@ points"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quasi alla soglia minima di %@ punti"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "必要な%@点に近い状態です"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "필요한 최소 점수 %@점에 가까워요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Blisko wymaganego minimum %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Perto do mínimo necessário de %@ pontos"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gerekli %@ puana yakın"
-          }
-        }
-      }
-    },
     "Coming up" : {
       "comment" : "Spoken state of a later lesson",
       "localizations" : {
@@ -17232,6 +17052,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bugün devam ediyor"
+          }
+        }
+      }
+    },
+    "Could be either side of the %@ points needed" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Punktzahl könnte über oder unter den benötigten %@ Punkten liegen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Podría quedar por encima o por debajo del mínimo de %@ puntos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il est possible d’être d’un côté comme de l’autre des %@ points requis"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Potrebbe essere sopra o sotto i %@ punti necessari"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "必要な%@点を上回る可能性も下回る可能性もあります"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "필요한 %@점보다 높을 수도 낮을 수도 있어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wynik może być powyżej lub poniżej wymaganego minimum %@ pkt"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pode ficar acima ou abaixo da pontuação mínima de %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gereken %@ puan sınırının altında da üstünde de olabilir"
           }
         }
       }
@@ -23749,6 +23627,180 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Planını kalan süreye göre ayarlayalım. Her gün daha uzun çalış ya da daha ileri bir tarih seç."
+          }
+        }
+      }
+    },
+    "Likely above the %@ points needed" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wahrscheinlich mehr als die benötigten %@ Punkte"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Probablemente supera el mínimo de %@ puntos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Probablement au-dessus des %@ points requis"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Probabilmente sopra i %@ punti necessari"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "必要な%@点を上回る可能性が高い"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "필요한 %@점보다 높을 가능성이 높아요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prawdopodobnie powyżej wymaganego minimum %@ pkt"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Provavelmente acima da pontuação mínima de %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gereken %@ puanın üstünde görünüyor"
+          }
+        }
+      }
+    },
+    "Likely below the %@ points needed" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wahrscheinlich unter den benötigten %@ Punkten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Probablemente no alcanza el mínimo de %@ puntos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Probablement en dessous des %@ points requis"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Probabilmente sotto i %@ punti necessari"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "必要な%@点に届かない可能性が高い"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "필요한 %@점에 못 미칠 가능성이 높아요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prawdopodobnie poniżej wymaganego minimum %@ pkt"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Provavelmente abaixo da pontuação mínima de %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gereken %@ puanın altında görünüyor"
+          }
+        }
+      }
+    },
+    "Likely below the minimum to pass" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wahrscheinlich unter der Mindestpunktzahl zum Bestehen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Probablemente no alcanza el puntaje mínimo para aprobar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Probablement en dessous du minimum requis pour réussir"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Probabilmente sotto la soglia minima per superare l’esame"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "合格最低点に届かない可能性が高い"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "합격선에 못 미칠 가능성이 높아요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prawdopodobnie poniżej minimum wymaganego do zdania"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Provavelmente abaixo do mínimo para passar"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geçmek için gereken minimum puanın altında görünüyor"
           }
         }
       }

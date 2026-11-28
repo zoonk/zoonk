@@ -12,8 +12,6 @@
   "mock_cell_unsure": "519cc892e500fd82654cbe44eacaf0d28c811639e34f367ee4571d51fb55b6f3",
   "mock_continue": "8070e48e065069e0eea5e6091113ae8af12721bd7b3de437712a0c01fb68c95c",
   "mock_continue_section": "f4c54908fdc13388c7c72283863cdbbcc07d605292dda053a726bb0e1553a721",
-  "mock_essay_blank": "4a5f860ee5cb5a10194f32b2a4d495e96ad5f31a098e3b3095f5782ea7bd241c",
-  "mock_essays_blank": "c34a2a8597eea9e5a013b76add6723d76e815882023a477129aed3c1464b7176",
   "mock_every_answered": "e1e118db165191d00883314a79ffda807dc90b8d8a260afbe54d625c3be2b254",
   "mock_expired_detail": "f375b0d65761a801a23d90717b1c73ed5e40e3a87dbf34c81432588f2c4747aa",
   "mock_expired_title": "d48c5403e49f7e90586679c83af168cf899f4ba8bba91350b92eae6f4b6c78c0",
@@ -106,8 +104,7 @@
   "mock_written_part_area": "1cca1b0572584c071b81d022d16b3f0d29da31a22a25a485686f4fd3b7566579",
   "mock_written_question_blank": "da04a85f1c69fdb58257bf55fd8af4f65e39618e4f1c59fa5af7824a4508bc4c",
   "mock_written_question_place": "8b091522dc0dddeb1c12d5c7dc931bda29507955796ffadb2d75c9e79979e54f",
-  "mock_written_questions_blank": "ca6b2715a8fa9bc7fe76c913db0e46b8a3203f4d5aad3e39321def9425f19777",
-  "mock_your_essay": "6cd68e94105f7c6bc61c283eb8baca2180134c9e05f7e8a08eafdfd9fc99cdb6"
+  "mock_written_questions_blank": "ca6b2715a8fa9bc7fe76c913db0e46b8a3203f4d5aad3e39321def9425f19777"
 }
 -->
 <resources>
@@ -187,17 +184,12 @@
         <item quantity="other">Du bist dir bei %d Antworten nicht sicher.</item>
     </plurals>
     <string name="mock_every_answered">Alle Fragen sind beantwortet.</string>
-    <string name="mock_essay_blank">Der Aufsatz ist leer.</string>
     <!-- Before handing in a mock exam with objective and written questions: how many written answers are blank. -->
     <string name="mock_written_question_blank">Die schriftliche Aufgabe ist unbeantwortet.</string>
     <!-- Before handing in a mock exam with objective and written questions: how many written answers are blank. -->
     <plurals name="mock_written_questions_blank">
         <item quantity="one">%d schriftliche Antwort ist leer.</item>
         <item quantity="other">%d schriftliche Aufgaben sind unbeantwortet.</item>
-    </plurals>
-    <plurals name="mock_essays_blank">
-        <item quantity="one">%d Aufsatz ist leer.</item>
-        <item quantity="other">%d Aufsätze sind leer.</item>
     </plurals>
     <string name="mock_hand_in_final">Danach kannst du deine Antworten nicht mehr ändern.</string>
     <string name="mock_keep_answering">Weiter beantworten</string>
@@ -248,7 +240,6 @@
     <string name="mock_expired_title">Die Zeit ist abgelaufen, während du weg warst</string>
     <string name="mock_expired_detail">Diese Probeprüfung zählt nicht.</string>
     <string name="mock_take_another">Weitere Probeprüfung starten</string>
-    <string name="mock_your_essay">Dein Aufsatz</string>
     <plurals name="mock_words">
         <item quantity="one">%d Wort</item>
         <item quantity="other">%d Wörter</item>

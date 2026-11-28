@@ -130,7 +130,7 @@ internal fun essay(
         """{"admissionId":"$ADMISSION","blockId":"$ESSAY_BLOCK","sessionId":"$ESSAY_SESSION","context":$context,"draft":$saved,
         "drafts":[${drafts.joinToString(",")}],"gradesLeft":3,"pacing":{"minutes":70,"source":"estimated"},
         "question":"Explain the difference between internal and external control of public administration, and the role of the TCU.",
-        "rubric":"points","status":"$status","writing":$WRITING}""",
+        "status":"$status","writing":$WRITING}""",
     )
 }
 

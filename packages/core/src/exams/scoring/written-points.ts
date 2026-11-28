@@ -6,8 +6,13 @@ import { type WrittenProjection } from "./written-points-contract";
 type Part = WrittenProjection["parts"][number];
 export type WritingRange = NonNullable<Part["range"]>;
 const POINTS_TOLERANCE = 1e-6;
+const SCORE_PRECISION = 15;
 
 export type WrittenTask = ReturnType<typeof listWrittenTasks>[number];
+
+export function addWritingPoints(first: number, second: number): number {
+  return Number((first + second).toPrecision(SCORE_PRECISION));
+}
 
 export function sumRanges(ranges: readonly (WritingRange | null)[]): WritingRange | null {
   if (ranges.length === 0 || ranges.some((range) => range === null)) {
@@ -81,7 +86,7 @@ export function scoreWrittenParts({
       minimum,
       name,
       range,
-      standing: writtenStanding({ max, minimum, range }),
+      standing: writtenStanding({ max, minimum, range: null }),
       tasks: scored,
     };
   });

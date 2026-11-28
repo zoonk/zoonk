@@ -12,8 +12,6 @@
   "mock_cell_unsure": "c8fe9eb46ad328e78c950bef1ad9e5cff000b05b6bfc956b2c9e3d92dacf053d",
   "mock_continue": "cb8e76efe8f9b23401880463ef9f50e993998a3160387527bb307fd8db64fad9",
   "mock_continue_section": "083f7983129b6f1e9a8b4b8ee0dd5f8ece3efbd544a363a83c872a4595f90a6e",
-  "mock_essay_blank": "591133e1d1682e3db5cf7803672e3c9a0e3ac0107a1f406c076661e6d0a4a1bb",
-  "mock_essays_blank": "2bfc9d98877bd2c7218ce59f45ca71df27efdd7dbd1f223fc3ff559497650e26",
   "mock_every_answered": "5475446ac8498b987139bf1fcbece7737d00a97d09a26feee8b247458c7ef96c",
   "mock_expired_detail": "f43a3e596c2a0608ba58c8d975bdd6f7480e7e9594ceceb91538e5c995a772fa",
   "mock_expired_title": "69d7993225bed29175a7ee26bb3b37aac13f5442807f45d75868b919d0de653d",
@@ -106,8 +104,7 @@
   "mock_written_part_area": "721469c5d441abe7b0a7c07990677b60714863180a911f4348e00080a360b18e",
   "mock_written_question_blank": "fde1e73510bb94c417dd371a28ea0741a2ca7a307008fe17e7d65da50867c455",
   "mock_written_question_place": "478a7889b3a0224f923a677fb35455bfd9ef8b16671fbf57c15216a48d33143e",
-  "mock_written_questions_blank": "de4fd82dc364f7e1265eaaa6f24cb31b0ef7619700ffc864ac4c4a370559bea4",
-  "mock_your_essay": "3af4ecd25f9befcafe647b9e38cd8fae99f54e80f3004c16c760d089e99d0e4f"
+  "mock_written_questions_blank": "de4fd82dc364f7e1265eaaa6f24cb31b0ef7619700ffc864ac4c4a370559bea4"
 }
 -->
 <resources>
@@ -194,7 +191,6 @@
         <item quantity="other">Hai %d risposte in dubbio.</item>
     </plurals>
     <string name="mock_every_answered">Hai risposto a tutte le domande.</string>
-    <string name="mock_essay_blank">Il tema è in bianco.</string>
     <!-- Before handing in a mock exam with objective and written questions: how many written answers are blank. -->
     <string name="mock_written_question_blank">La risposta scritta è vuota.</string>
     <!-- Before handing in a mock exam with objective and written questions: how many written answers are blank. -->
@@ -202,11 +198,6 @@
         <item quantity="one">%d domanda aperta è senza risposta.</item>
         <item quantity="many">%d risposte scritte sono vuote.</item>
         <item quantity="other">%d risposte scritte sono vuote.</item>
-    </plurals>
-    <plurals name="mock_essays_blank">
-        <item quantity="one">%d tema è in bianco.</item>
-        <item quantity="many">%d temi sono in bianco.</item>
-        <item quantity="other">%d temi sono in bianco.</item>
     </plurals>
     <string name="mock_hand_in_final">Dopo la consegna non potrai più modificare le risposte.</string>
     <string name="mock_keep_answering">Continua a rispondere</string>
@@ -259,7 +250,6 @@
     <string name="mock_expired_title">Il tempo è scaduto mentre eri via</string>
     <string name="mock_expired_detail">Questa non conta.</string>
     <string name="mock_take_another">Fanne un’altra</string>
-    <string name="mock_your_essay">Il tuo tema</string>
     <plurals name="mock_words">
         <item quantity="one">%d parola</item>
         <item quantity="many">%d parole</item>

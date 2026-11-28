@@ -250,6 +250,10 @@ class GoalContentScreenshots {
                     },
             )
 
+        /** Estimated in points, before the first answer. */
+        private fun notMeasured(written: WrittenPracticeSubjectsInner) =
+            gradedByLevel(written).copy(scale = WrittenPracticeSubjectsInner.Scale.POINTS, answers = emptyList(), trend = emptyList())
+
         private fun waitingForAChoice(written: WrittenPracticeSubjectsInner) =
             gradedByLevel(written).copy(
                 writeActions =
@@ -344,6 +348,7 @@ class GoalContentScreenshots {
                     { PlanSyllabusSection(modulesWithDataOut("skipped"), {}, Modifier.padding(vertical = 16.dp)) },
                 "reveal-module-taken-out" to { RevealStructure(plan(), modulesWithDataOut("skipped"), Modifier.padding(16.dp)) },
                 "subject-written-levels" to { WrittenSubject(::gradedByLevel) },
+                "subject-written-unmeasured" to { WrittenSubject(::notMeasured) },
                 "subject-written-needs-choice" to { WrittenSubject(::waitingForAChoice) },
                 "subject-module" to { Subject("basics") },
                 "chapter" to { Chapter() },

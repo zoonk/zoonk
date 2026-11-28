@@ -511,16 +511,17 @@
   "plan_why_phase_dates_later": "25cc217193fa536a3a98cb055971330199a831a820123a3ccde63f5906c073c2",
   "plan_why_phase_end_later": "ea3566b09f0ba12d24184749ecad50d0523f4a0102a728368de78c64f19e4156",
   "plan_why_phase_end_off_rest": "9e2db39b53ce6dee1ea2616e14289438475c882c4261febb6a5d2ba93b0e55dd",
-  "plan_written_above_minimum": "54cbe721f76e78bd1907d3ed87e76f7616b357e6f066d76f73a61dbd3c46d46f",
+  "plan_written_above_minimum": "7f56ef5fe4f3db54eef38db077dd1a55894d45f49ac402fda482adfcb80cecea",
   "plan_written_asks_for": "28011ab17fb6fe35696681cabd5560399391fb6bb21d24350510a35ee3bb568d",
   "plan_written_asks_for_share": "48e5bfc721044f2fee365cff0b07294616235c2c578de34354824ae309418008",
-  "plan_written_below_minimum": "f5b0b520a7713dde69d0ab1fcd1259601f90178c1ee2412751bbbb22e9b64cfa",
-  "plan_written_close_to_minimum": "699aba1b886587344036d0264576d60e4f285f71832a6b29bdcbdd506ada765c",
+  "plan_written_below_minimum": "12a30bb1f2feb26a0f0bd0f4efca7844acd967da99df647ac6fa8c050136588e",
+  "plan_written_cant_say": "b4c22cf1f02d8536b0c4255afbe81a72de210183750ed2c41621f46c76bc5b19",
+  "plan_written_close_to_minimum": "941aa2855dc82ea4043883d1111abd9cefb633f62d6ef5bd2b1e554988b087f9",
+  "plan_written_likely_below": "cfcca55d512d72457bdbedf31b2fcae321dc0f31ae266c5934aacd311397e1e8",
   "plan_written_not_measured": "4774b0a8cc21bfbefe5c0302fe54ae2720db966a64eca64aa84d10043a6bba09",
   "plan_written_not_measured_half": "2000c264a82db56a2053c7a32537d03d0c8a6701147e62ce383b325ec2fa982c",
   "plan_written_not_measured_share": "05ebba53a7a7affe2bfff69b7c741953bcf20951cb213b1562edeba429081d5a",
   "plan_written_objective": "182a782d79767d8cd6128e6cc0a835467e6bbd4e32dcca2667e75f17e1ed16b1",
-  "plan_written_points_below": "f6d1b969692c3ff8c51e0c6f113e4ffaf08f6dc68f79ba567f2a05a3573ea204",
   "plan_you_are_here_suffix": "9d64cf09d078f7cc2626d1755e49e5bbeeb464fb8fd7dd14dd3f55a7841310f0",
   "plan_your_level": "370a93f94cfec369c1e3c38e31c6e412346647f0f6d45c7f20aa1be027a9c771",
   "plan_your_pace": "50c353ac1cfcac0d6f9964d4205d74f3a5e1e48f45e0a9d1dbb4dcf4ab9fdc58",
@@ -1431,14 +1432,15 @@
     <string name="plan_call_not_in_plan">L’appel n’est pas prévu dans ton plan</string>
     <string name="plan_outside_past_basics">Sauté · tu connais déjà les bases</string>
     <string name="plan_outside_skipped_base">Sauté · à ta demande</string>
-    <string name="plan_written_below_minimum">En dessous du minimum requis pour réussir</string>
+    <string name="plan_written_below_minimum">Probablement en dessous du minimum requis pour réussir</string>
     <string name="plan_written_asks_for">Il faut obtenir %2$s points dans %1$s, quels que soient tes autres scores.</string>
     <string name="plan_written_asks_for_share">Il faut obtenir %2$s des points de %1$s, quels que soient tes autres scores.</string>
     <string name="plan_written_not_measured">Le résultat de %1$s n’est pas encore mesuré.</string>
     <string name="plan_written_not_measured_half">La mesure de %1$s, qui compte pour la moitié de ton Score final, n’est pas encore disponible.</string>
     <string name="plan_written_not_measured_share">Le résultat de %1$s (%2$s de ton Score final) n’est pas encore mesuré.</string>
     <string name="plan_written_objective">Épreuve objective</string>
-    <string name="plan_written_above_minimum">Au-dessus des %1$s points requis</string>
-    <string name="plan_written_points_below">Il te manque %1$s points pour atteindre le minimum de %2$s</string>
-    <string name="plan_written_close_to_minimum">Presque au minimum de %1$s points</string>
+    <string name="plan_written_above_minimum">Probablement au-dessus des %1$s points requis</string>
+    <string name="plan_written_likely_below">Probablement en dessous des %1$s points requis</string>
+    <string name="plan_written_close_to_minimum">Il est possible d’être d’un côté comme de l’autre des %1$s points requis</string>
+    <string name="plan_written_cant_say">Impossible de dire pour le moment si cette réponse atteint les %1$s points requis</string>
 </resources>

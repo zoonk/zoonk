@@ -64,7 +64,6 @@ function renderEssay() {
           gradesLeft: 3,
           pacing: { minutes: 70, source: "estimated" },
           question: "Should cities charge cars to enter the center?",
-          rubric: "levels",
           sessionId: "session",
           status: "pending",
           writing: {

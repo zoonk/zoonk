@@ -33,7 +33,7 @@ export const examPaths = {
   "/essays/{blockId}": {
     get: {
       description:
-        "A writing block of the learner's session (produce): an exam's essay prompt, the rubric it's graded with (ENEM's five competencies, OAB's brief section by section, or the item's criteria) and the graded drafts so far, latest first, with how many grades are left today.",
+        "A writing block of the learner's session (produce): an exam's written question with the criteria its notice grades it by, and the graded drafts so far, latest first, with how many grades are left today.",
       operationId: "getEssay",
       requestParams: { path: essayPathParamsSchema, query: studySessionTimeZoneInputSchema },
       responses: {

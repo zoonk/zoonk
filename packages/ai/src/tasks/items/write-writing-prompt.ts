@@ -1,4 +1,5 @@
 import "server-only";
+import { getPromptVersion } from "@zoonk/utils/prompt-version";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
@@ -18,7 +19,26 @@ const fallbackModels = ["anthropic/claude-opus-5.5"] as const;
 const points = z.number().positive().nullable();
 
 const schema = z.object({
-  aspects: z.array(z.object({ criterionId: z.string(), description: z.string(), points })).min(1),
+  aspects: z
+    .array(
+      z.object({
+        criterionId: z.string(),
+        description: z.string(),
+        kind: z
+          .enum(["definitePoint", "judgedScale"])
+          .describe(
+            "A definite point has specific expected content; a judged scale rates how deeply or well the answer treats an item.",
+          ),
+        points,
+        steps: z
+          .array(z.string())
+          .nullable()
+          .describe(
+            "Its steps of credit, lowest first; null when it is earned whole or not at all",
+          ),
+      }),
+    )
+    .min(1),
   assessedSkillIds: z.array(z.string()).min(1),
   context: z.string().nullable(),
   criteria: z.array(z.object({ id: z.string(), name: z.string(), points })).min(1),
@@ -42,8 +62,17 @@ export type WritingPromptInput = {
   usedTitles: string[];
 };
 
+/** Calibration tracks the template shared across learner languages. */
+export function getWritingKeyWriter() {
+  return {
+    model: defaultModel,
+    promptVersion: getPromptVersion({ systemPrompt: taskPrompt, version: "row-kind" }),
+  };
+}
+
 export async function writeWritingPrompt({
   analytics,
+  appendedInstructions,
   input,
   model = defaultModel,
   reasoning,
@@ -52,6 +81,8 @@ export async function writeWritingPrompt({
   wait,
 }: {
   analytics?: AiGenerationContext;
+  /** Evals append a rule here to have this prompt key a question a board already set. */
+  appendedInstructions?: string;
   input: WritingPromptInput;
   model?: string;
   reasoning?: Reasoning;
@@ -61,7 +92,7 @@ export async function writeWritingPrompt({
 }) {
   const systemPrompt = fillPromptLanguages({
     learnerLanguage: input.language,
-    template: taskPrompt,
+    template: appendedInstructions ? `${taskPrompt}\n${appendedInstructions}` : taskPrompt,
   });
 
   const userPrompt = JSON.stringify(input);

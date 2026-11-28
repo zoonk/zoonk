@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatPointsRange } from "./format-points-range";
+import { formatFixedPoints, formatPointsRange } from "./format-points-range";
 
 const number = (value: number, options: Intl.NumberFormatOptions) =>
   new Intl.NumberFormat("en-US", options).format(value);
@@ -28,19 +28,40 @@ describe(formatPointsRange, () => {
     expect(format(range, { decimals: 2 })).toBe("8.30–12.41");
   });
 
+  it("rounds one grade to the nearest step, as its detail rows are", () => {
+    expect(format({ high: 48.01, low: 48.01 }, { kind: "estimate" })).toBe("48");
+
+    expect(format({ high: 20.5, low: 20.5 }, { kind: "estimate" })).toBe(
+      format({ high: 20.5, low: 20.5 }),
+    );
+  });
+
   it("shows a zero and collapses equal ends", () => {
     expect(format({ high: 0, low: 0 }, { kind: "estimate" })).toBe("0");
     expect(format({ high: 12.34, low: 12.34 }, { decimals: 2, kind: "estimate" })).toBe("12.34");
     expect(format({ high: 12.404, low: 12.401 }, { decimals: 2 })).toBe("12.40");
   });
 
-  it("keeps one decimal for deductions and drops the minus when a deduction rounds to zero", () => {
+  it('keeps one decimal for deductions and reads "0" when nothing is taken', () => {
     expect(format({ high: 0.6, low: 0.3 }, { decimals: 2, kind: "deduction" })).toBe(
       "−0.3 to −0.6",
     );
 
-    expect(format({ high: 0.04, low: 0 }, { kind: "deduction" })).toBe("0.0");
+    expect(format({ high: 0, low: 0 }, { kind: "deduction" })).toBe("0");
+    expect(format({ high: 0.04, low: 0 }, { kind: "deduction" })).toBe("0");
     expect(format({ high: 0.35, low: 0.02 }, { kind: "deduction" })).toBe("0.0 to −0.4");
     expect(format({ high: 0.6, low: 0.6 }, { kind: "deduction" })).toBe("−0.6");
+  });
+});
+
+describe(formatFixedPoints, () => {
+  it("writes a maximum as it is, never padded to its mark's decimals", () => {
+    expect(formatFixedPoints(22, number)).toBe("22");
+    expect(formatFixedPoints(9.5, number)).toBe("9.5");
+    expect(formatFixedPoints(1.25, number)).toBe("1.25");
+
+    expect(
+      `${format({ high: 14.67, low: 14.67 }, { decimals: 1 })} of ${formatFixedPoints(22, number)}`,
+    ).toBe("14.7 of 22");
   });
 });

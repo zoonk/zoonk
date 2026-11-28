@@ -3,7 +3,8 @@ import SwiftUI
 /// A written part's points: its range against its own minimum, and each task's. Ranges are nil
 /// until that task has an independent first draft with a numeric grade.
 struct WrittenPartPoints: Hashable, Decodable, Sendable {
-  enum Standing: String, Decodable, Sendable {
+  enum Standing: String, UnknownAPIValue, Sendable {
+    case unrecognized
     case below
     case met
     case overlaps
@@ -41,8 +42,9 @@ struct WrittenPartPoints: Hashable, Decodable, Sendable {
   }
 }
 
-/// Whether a written part can be estimated in points yet, or its answers are graded by level.
-enum WritingScale: String, Decodable, Sendable {
+/// Whether a written part can be estimated in points yet, or its answers are graded by level. A
+/// scale this version doesn't know reads as not said, so the part falls back on its range.
+enum WritingScale: String, OmittableAPIContent, Sendable {
   case levels
   case points
 }
@@ -61,15 +63,14 @@ struct WrittenProjection: Hashable, Decodable, Sendable {
     case unmeasured(WrittenPartPoints)
   }
 
-  /// A part graded by level has no points to wait for, so the headline never says it's waiting.
+  /// A part graded by level has no points to wait for, and one with an estimate says on its own row
+  /// whether it reaches its minimum, so the headline names only a part with no estimate yet.
   var headline: Headline? {
     if let below = parts.first(where: { $0.standing == .below }) {
       return .below(below)
     }
 
-    if let unmeasured = parts.first(where: {
-      $0.shownScale == .points && ($0.standing == .unmeasured || $0.range == nil)
-    }) {
+    if let unmeasured = parts.first(where: { $0.shownScale == .points && $0.range == nil }) {
       return .unmeasured(unmeasured)
     }
 
@@ -100,7 +101,7 @@ struct WrittenProjectionSections: View {
         case .below(let part):
           // A part's name comes from the notice, so it opens a sentence rather than sitting inside one.
           Text(
-            "Below the minimum to pass", tableName: "Plan"
+            "Likely below the minimum to pass", tableName: "Plan"
           )
           .typeStyle(.stepHeading)
           if let minimum = part.minimum {
@@ -159,7 +160,11 @@ struct WrittenProjectionSections: View {
               }
             }
           }
-          PartStanding(part: part)
+          // The headline already says this part is likely below its minimum.
+          if projection.headline != .below(part) {
+            WrittenStandingLine(part: part)
+              .typeStyle(.note)
+          }
         }
       }
     } footer: {
@@ -201,7 +206,7 @@ struct PointsReadout: View {
         .typeStyle(.momentReadout)
         .monospacedDigit()
       Text(
-        "of \(WritingLabels.points(max, decimals: decimals))", tableName: "Essay"
+        "of \(WritingLabels.partPoints(max))", tableName: "Essay"
       )
       .typeStyle(.body)
       .foregroundStyle(.mutedForeground)
@@ -215,7 +220,7 @@ private struct ScoreRow<Detail: View>: View {
   let range: WritingRange?
   let max: Double?
   var decimals: Int?
-  /// Graded by level: no points to wait for, so no meter holds their place.
+  /// Graded by level: no points to wait for.
   var levels: Bool
   var minimum: Double?
   var written: Bool
@@ -256,12 +261,8 @@ private struct ScoreRow<Detail: View>: View {
         name.typeStyle(.rowTitle)
       }
 
-      if let max, !(levels && range == nil) {
-        if let range {
-          RangeBar(range: range, max: max, minimum: minimum)
-        } else {
-          UnmeasuredBar()
-        }
+      if let max {
+        RangeBar(range: range, max: max, minimum: minimum)
       }
 
       detail
@@ -270,45 +271,49 @@ private struct ScoreRow<Detail: View>: View {
   }
 }
 
-/// Said against the part's own minimum, never the objective's: 50 of 100 on the sum of its answers.
-private struct PartStanding: View {
+/// A written part's estimate against its own minimum, as main's `WrittenStandingLine` says it.
+/// Each verdict is "likely": it comes from how closely graders' marks match the board's, never a
+/// promise, so it never says by how much; the estimate beside it shows the gap. Without one, an
+/// estimate beside a minimum would read as a pass, so the line says it can't tell. Its type comes
+/// from where it sits, so in a mock's "By test" it reads like the objective tests' lines beside it.
+struct WrittenStandingLine: View {
   let part: WrittenPartPoints
 
   var body: some View {
-    if let minimum = part.minimumPoints, let range = part.range {
+    if let minimum = part.minimumPoints, part.range != nil {
       let points = WritingLabels.points(minimum)
 
       switch part.standing {
       case .met:
-        Label {
-          Text("Above the \(points) points needed", tableName: "Plan")
-        } icon: {
-          Image(systemName: "checkmark").foregroundStyle(.successText)
-        }
-        .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
+        line(
+          Text("Likely above the \(points) points needed", tableName: "Plan"),
+          mark: Image(systemName: "checkmark"),
+          style: .mutedForeground)
       case .below:
-        Label {
-          Text(
-            "\(WritingLabels.range(.init(high: minimum - range.low, low: minimum - range.high), decimals: part.decimals)) points short of the \(points) needed",
-            tableName: "Plan")
-        } icon: {
-          Image(systemName: "xmark")
-        }
-        .typeStyle(.note)
-        .foregroundStyle(.destructiveText)
+        line(
+          Text("Likely below the \(points) points needed", tableName: "Plan"),
+          mark: Image(systemName: "xmark"), style: .destructiveText)
       case .overlaps:
-        Label {
-          Text("Close to the \(points) points needed", tableName: "Plan")
-        } icon: {
-          Image(systemName: "exclamationmark.triangle")
-        }
-        .typeStyle(.note)
-        .foregroundStyle(.warningText)
-      case .unmeasured, nil:
+        line(
+          Text("Could be either side of the \(points) points needed", tableName: "Plan"),
+          mark: Image(systemName: "exclamationmark.triangle"), style: .warningText)
+      case .unmeasured:
+        Text("Can't say yet whether this reaches the \(points) points needed", tableName: "Plan")
+          .foregroundStyle(.mutedForeground)
+      case .unrecognized, nil:
         EmptyView()
       }
     }
+  }
+
+  /// A `Label` inside a `LabeledContent`'s label splits into two lines of it, so the mark sits on
+  /// the words' first baseline here instead.
+  private func line(_ words: Text, mark: some View, style: some ShapeStyle) -> some View {
+    HStack(alignment: .firstTextBaseline, spacing: 4) {
+      mark.accessibilityHidden(true)
+      words
+    }
+    .foregroundStyle(style)
   }
 }
 

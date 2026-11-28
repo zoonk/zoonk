@@ -1,14 +1,11 @@
 import { type TestCase } from "@/lib/types";
 import { type writtenItemSchema } from "@zoonk/core/exams/essays/writing-contract";
-import { type applyWritingArithmetic } from "@zoonk/core/exams/essays/writing-feedback";
-import { WRITING_CHARACTERS_PER_LINE } from "@zoonk/core/exams/essays/writing-lines";
 import { type z } from "zod";
 
 export type Basis = z.infer<typeof writtenItemSchema>;
 export type Grading = Basis["grading"];
 export type WritingCase = TestCase<GradeWritingExpected, GradeWritingInput>;
 export type ZeroKind = NonNullable<Grading["zeroing"][number]["kinds"]>[number];
-export type Arithmetic = Parameters<typeof applyWritingArithmetic>[0]["arithmetic"];
 
 export type GradeWritingInput = {
   language: string;
@@ -17,8 +14,7 @@ export type GradeWritingInput = {
   text: string;
   keyPoints: string[];
   basis: Basis;
-  /** The arithmetic a numeric enablement would pin for this basis; null grades in levels. */
-  arithmetic: Arithmetic;
+  numeric: boolean;
 };
 
 /**
@@ -39,6 +35,15 @@ export type GradeWritingExpected = {
   officialTotal?: number;
   officialContent?: number;
   officialCompetences?: Record<string, number>;
+  cacd?: {
+    comparative: boolean;
+    /** Null when the guide gives only the total. An empty list means every item earned full credit. */
+    itemsBelowMaximum: number[] | null;
+    questionReference: string;
+    subject: "economics" | "law";
+    writtenLines: number | null;
+    year: number;
+  };
   passBoundary?: { sectionMinimum: number; otherAnswers: number };
   source?: {
     board: string;
@@ -48,7 +53,9 @@ export type GradeWritingExpected = {
     scoreReference?: string;
   };
   zeroKind?: ZeroKind;
-  feedbackLanguage: "en" | "pt";
+  /** Why a published answer is left out of calibration, such as a transcription that can't be what the board read. */
+  doubtful?: string;
+  feedbackLanguage: "de" | "en" | "pt";
 };
 
 const ANCHOR_SKILL = "0195f1d2-7c4a-7d3e-9a10-4b5c6d7e8f90";
@@ -79,7 +86,6 @@ export function basis({
   return {
     aspects,
     assessedSkillIds: [ANCHOR_SKILL],
-    charactersPerLine: WRITING_CHARACTERS_PER_LINE,
     criteria,
     grading,
     keySource: "publishedStandard",
@@ -114,7 +120,7 @@ export function publishedCase({
 export function publishedQuestion({
   title,
   taskKey,
-  kind,
+  conventions,
   lines,
   sections,
   citation,
@@ -123,7 +129,7 @@ export function publishedQuestion({
 }: {
   title: string;
   taskKey: string;
-  kind: "points" | "oab";
+  conventions?: Grading["conventions"];
   lines: number;
   sections: { id: string; name: string; aspects: [string, number][] }[];
   citation: { passage: string; sourceId: string };
@@ -141,7 +147,6 @@ export function publishedQuestion({
   const total = Number(criteria.reduce((sum, criterion) => sum + criterion.points, 0).toFixed(2));
 
   return {
-    arithmetic: { rounding: null, zeroRules: [] },
     basis: basis({
       aspects,
       criteria,
@@ -152,7 +157,7 @@ export function publishedQuestion({
           points: value,
           text: name,
         })),
-        kind,
+        ...(conventions && { conventions }),
         language: null,
         rounding: null,
         zeroing: [],
@@ -165,6 +170,7 @@ export function publishedQuestion({
     context: null,
     keyPoints: aspects.map((aspect) => aspect.description),
     language: "pt",
+    numeric: true,
     question,
     text,
   };

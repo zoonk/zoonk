@@ -849,14 +849,15 @@
     <string name="plan_call_not_in_plan">The call isn\'t in your plan</string>
     <string name="plan_outside_past_basics">Skipped · you already know the basics</string>
     <string name="plan_outside_skipped_base">Skipped · your choice</string>
-    <string name="plan_written_below_minimum">Below the minimum to pass</string>
+    <string name="plan_written_below_minimum">Likely below the minimum to pass</string>
     <string name="plan_written_asks_for">%1$s needs %2$s points, whatever your other scores.</string>
     <string name="plan_written_asks_for_share">%1$s needs %2$s of its points, whatever your other scores.</string>
     <string name="plan_written_not_measured">%1$s isn\'t measured yet.</string>
     <string name="plan_written_not_measured_half">%1$s, half your final score, isn\'t measured yet.</string>
     <string name="plan_written_not_measured_share">%1$s, %2$s of your final score, isn\'t measured yet.</string>
     <string name="plan_written_objective">Objective test</string>
-    <string name="plan_written_above_minimum">Above the %1$s points needed</string>
-    <string name="plan_written_points_below">%1$s points short of the %2$s needed</string>
-    <string name="plan_written_close_to_minimum">Close to the %1$s points needed</string>
+    <string name="plan_written_above_minimum">Likely above the %1$s points needed</string>
+    <string name="plan_written_likely_below">Likely below the %1$s points needed</string>
+    <string name="plan_written_close_to_minimum">Could be either side of the %1$s points needed</string>
+    <string name="plan_written_cant_say">Can\'t say yet whether this reaches the %1$s points needed</string>
 </resources>

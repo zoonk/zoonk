@@ -12,8 +12,6 @@
   "mock_cell_unsure": "5b312c911096770b9436ccaf6b0f122a90eadb80a52cbe4fe6944e50dec415d3",
   "mock_continue": "2a7098259a73269bb884816eb4adcfbc1ece8fd1af6549e4435956b7a2dc2e4e",
   "mock_continue_section": "93c7b30b6aba3f902322f5b9d4c6bee2033e66908d0162d59768667951c95d34",
-  "mock_essay_blank": "e244166fe30fa485574cfc1053bb84d28abbe7df1450c56858bae83aaa152d06",
-  "mock_essays_blank": "0d3cfd781d88d04886f154683c732d7a917703112b7545cc8e0f9a62743ef154",
   "mock_every_answered": "bc9e0437de945f924331a608560efd9d849047818a0f876951a26ba4e39121d8",
   "mock_expired_detail": "fe6b6dee87f2ed9fe26fdb5a010c7d06b539c92f734bcc343bbad0b4838209fd",
   "mock_expired_title": "8c51ab7393289707b9a8555e0b22ce01785ceb7e89e487c3703bac3c6cf0ebb7",
@@ -106,8 +104,7 @@
   "mock_written_part_area": "b4c5eb14dc3eb6f16939d3e7502cd46324d4c403273a4d4c66d0f0ef4bba9a0e",
   "mock_written_question_blank": "1fd27ca83a706c5bdf23a47007bcd8edeb35a3ea87adafa2e3536ff8b72da644",
   "mock_written_question_place": "805971326723949e79bf1c8a135401310bc121dd9b9a494e0df740f470868391",
-  "mock_written_questions_blank": "2ab373658982da2555b4cce347b3b7f53351dc5bce955e287d597bb2ef23540d",
-  "mock_your_essay": "555c798e197e77cc8d5908bd1b1d0dfa0f153456d3c72b603a79fd11d519e750"
+  "mock_written_questions_blank": "2ab373658982da2555b4cce347b3b7f53351dc5bce955e287d597bb2ef23540d"
 }
 -->
 <resources>
@@ -194,7 +191,6 @@
         <item quantity="other">Tienes dudas sobre %d respuestas.</item>
     </plurals>
     <string name="mock_every_answered">Respondiste todas las preguntas.</string>
-    <string name="mock_essay_blank">La redacción está en blanco.</string>
     <!-- Before handing in a mock exam with objective and written questions: how many written answers are blank. -->
     <string name="mock_written_question_blank">La respuesta escrita está en blanco.</string>
     <!-- Before handing in a mock exam with objective and written questions: how many written answers are blank. -->
@@ -202,11 +198,6 @@
         <item quantity="one">Hay %d pregunta escrita en blanco.</item>
         <item quantity="many">Hay %d respuestas escritas en blanco.</item>
         <item quantity="other">Hay %d respuestas escritas en blanco.</item>
-    </plurals>
-    <plurals name="mock_essays_blank">
-        <item quantity="one">Hay %d redacción en blanco.</item>
-        <item quantity="many">Hay %d redacciones en blanco.</item>
-        <item quantity="other">Hay %d redacciones en blanco.</item>
     </plurals>
     <string name="mock_hand_in_final">Después, no podrás cambiar tus respuestas.</string>
     <string name="mock_keep_answering">Seguir respondiendo</string>
@@ -259,7 +250,6 @@
     <string name="mock_expired_title">Se acabó el tiempo mientras no estabas</string>
     <string name="mock_expired_detail">Este no cuenta.</string>
     <string name="mock_take_another">Hacer otro</string>
-    <string name="mock_your_essay">Tu redacción</string>
     <plurals name="mock_words">
         <item quantity="one">%d palabra</item>
         <item quantity="many">%d palabras</item>
