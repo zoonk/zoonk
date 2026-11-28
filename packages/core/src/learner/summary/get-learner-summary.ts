@@ -1,5 +1,6 @@
 import "server-only";
 import { type Goal, type Subscription, prisma } from "@zoonk/db";
+import { daysBetweenIsoDays, getIsoDay } from "@zoonk/utils/calendar-day";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { getDateInTimeZone, isValidTimeZone } from "@zoonk/utils/time-zone";
 import { cacheTag } from "next/cache";
@@ -45,6 +46,8 @@ import {
   type LearnerTier,
 } from "./learner-summary-contract";
 
+type ListedGoal = { summary: LearnerSummaryGoal; deadlineTimeZone: string | null };
+
 function findActiveGoal({
   activeGoalId,
   goals,
@@ -59,17 +62,37 @@ function findActiveGoal({
   return goals.find((goal) => goal.status === "active") ?? null;
 }
 
+function getGoalDeadline({
+  goal,
+  now,
+  targetDate,
+}: {
+  goal: Goal;
+  now: Date;
+  targetDate: string | null;
+}): { daysLeft: number; timeZone: string } | null {
+  if (!targetDate) {
+    return null;
+  }
+
+  const timeZone = getAnswerTimeZone({ goal });
+  const daysLeft = daysBetweenIsoDays({ from: getIsoDay({ now, timeZone }), to: targetDate });
+  return daysLeft >= 0 ? { daysLeft, timeZone } : null;
+}
+
 async function toSummaryGoals({
   activeGoalId,
   countries,
+  now,
   phaseFacts,
   courseStarts,
 }: {
   courseStarts: Map<string, string>;
   activeGoalId: string | null;
   countries: Awaited<ReturnType<typeof loadGoalCountryViews>>;
+  now: Date;
   phaseFacts: readonly PlanPhaseFacts[];
-}): Promise<LearnerSummaryGoal[]> {
+}): Promise<ListedGoal[]> {
   const blueprintIds = [
     ...new Set(
       countries.flatMap(({ goal }) =>
@@ -101,12 +124,16 @@ async function toSummaryGoals({
           goal.examBlueprintId ? (byId.get(goal.examBlueprintId) ?? null) : null,
         );
 
-        return {
+        const targetDate = goal.targetDate ? toIsoDate(goal.targetDate) : null;
+        const deadline = getGoalDeadline({ goal, now, targetDate });
+
+        const summary: LearnerSummaryGoal = {
           ...countryView,
           courseChapterId: next?.nextChapterId ?? null,
           courseId: followsCourse(goal) ? goal.primaryCourseId : null,
           courseLevel: next?.nextLevel ?? null,
           dailyMinutes: goal.dailyMinutes,
+          daysLeft: deadline?.daysLeft ?? null,
           displayName: goal.displayName,
           id: goal.id,
           isActive: goal.id === activeGoalId,
@@ -119,12 +146,14 @@ async function toSummaryGoals({
             .filter(([, goalId]) => goalId === goal.id)
             .map(([id]) => id),
           status: goal.status,
-          targetDate: goal.targetDate ? toIsoDate(goal.targetDate) : null,
+          targetDate,
           targetDateEstimated: dateKind.estimated,
           targetLanguage: goal.targetLanguage,
           targetRegion: goal.targetRegion,
           title: goal.title,
         };
+
+        return { deadlineTimeZone: deadline?.timeZone ?? null, summary };
       }),
   );
 }
@@ -232,8 +261,8 @@ export async function getLearnerSummary(): Promise<LearnerSummary | null> {
   const timeZone = getAnswerTimeZone({ goal: activeGoal });
   const localDate = getDateInTimeZone({ date: now, timeZone });
   const countries = await loadGoalCountryViews({ goals, profile, readRecentCountries });
-  const listed = await toSummaryGoals({ activeGoalId, countries, courseStarts, phaseFacts });
-  const current = listed.find((goal) => goal.isActive) ?? null;
+  const listed = await toSummaryGoals({ activeGoalId, countries, courseStarts, now, phaseFacts });
+  const current = listed.find(({ summary }) => summary.isActive)?.summary ?? null;
   const phaseChallengesRequired = activeGoal?.kind !== "language" || subscription !== null;
   const tier = getTier({ isAnonymous, subscription });
 
@@ -265,7 +294,7 @@ export async function getLearnerSummary(): Promise<LearnerSummary | null> {
     },
     ...getSummaryProgress({ facts, localDate, profile, timeZone }),
     day: activeGoal ? { goalId: activeGoal.id, localDate: toIsoDate(goalDay.dayDate) } : null,
-    goals: listed,
+    goals: listed.map(({ summary }) => summary),
     homeCountry: profile?.homeCountry ?? null,
     identity: {
       expiresAt: session.session.expiresAt.getTime(),
@@ -276,6 +305,9 @@ export async function getLearnerSummary(): Promise<LearnerSummary | null> {
     missions: goalDay.missions,
     nextChangeAt: getNextChangeAt({
       carriedUntil: goalDay.carriedUntil,
+      deadlineTimeZones: listed.flatMap(({ deadlineTimeZone }) =>
+        deadlineTimeZone === null ? [] : [deadlineTimeZone],
+      ),
       localDate,
       now,
       sessionExpiresAt: session.session.expiresAt,

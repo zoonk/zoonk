@@ -508,6 +508,54 @@ describe(getLearnerSummary, () => {
     });
   });
 
+  it.each([
+    { daysLeft: 1, targetDate: TODAY },
+    { daysLeft: 0, targetDate: YESTERDAY },
+    { daysLeft: null, targetDate: new Date("2026-03-08T00:00:00.000Z") },
+    { daysLeft: null, targetDate: null },
+  ])(
+    "returns $daysLeft days left for target date $targetDate in the goal's zone",
+    async ({ daysLeft, targetDate }) => {
+      vi.setSystemTime(new Date("2026-03-10T01:30:00.000Z"));
+      const { goal } = await learnerWithGoal({ targetDate, timezone: "America/Sao_Paulo" });
+
+      await expect(getLearnerSummary()).resolves.toMatchObject({
+        goals: [{ daysLeft, id: goal.id }],
+      });
+    },
+  );
+
+  it("refreshes at an inactive goal's midnight until its deadline passes", async () => {
+    const { goal: activeGoal, user } = await learnerWithGoal();
+
+    const inactiveGoal = await goalFixture({
+      status: "paused",
+      targetDate: TODAY,
+      timezone: "Asia/Tokyo",
+      userId: user.id,
+    });
+
+    const inactiveMidnight = new Date("2026-03-10T15:00:00.000Z");
+
+    await expect(getLearnerSummary()).resolves.toMatchObject({
+      goals: [
+        { daysLeft: null, id: activeGoal.id },
+        { daysLeft: 0, id: inactiveGoal.id },
+      ],
+      nextChangeAt: inactiveMidnight.getTime(),
+    });
+
+    vi.setSystemTime(inactiveMidnight);
+
+    await expect(getLearnerSummary()).resolves.toMatchObject({
+      goals: [
+        { daysLeft: null, id: activeGoal.id },
+        { daysLeft: null, id: inactiveGoal.id },
+      ],
+      nextChangeAt: new Date("2026-03-11T00:00:00.000Z").getTime(),
+    });
+  });
+
   it.each(["paused", "completed", "archived"] as const)(
     "has no day for a %s goal",
     async (status) => {

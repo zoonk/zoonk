@@ -32,6 +32,14 @@ const learnerSummaryGoalSchema = z
           "The level of the goal's next lesson in `courseId`'s course, so that course's page opens its outline there instead of at its first level; null when `courseId` is null or the goal has no lesson left",
       }),
     dailyMinutes: z.int(),
+    daysLeft: z
+      .int()
+      .nonnegative()
+      .nullable()
+      .meta({
+        description:
+          "Calendar days until the target date in the goal's time zone. Zero on the date, null once past or without a date.",
+      }),
     displayName: z.string(),
     id: uuidSchema(),
     isActive: z.boolean().meta({ description: "The goal the tabs show" }),
@@ -152,7 +160,7 @@ const learnerSummarySchema = z
       .meta({ description: "Today's missions, or null on a day without any" }),
     nextChangeAt: millisecondsSchema.meta({
       description:
-        "When the summary changes without a write: the next local or UTC midnight (when the allowance starts over), the end of a day carried over from the night before, the subscription's next change or the session's end",
+        "When the summary changes without a write: the active goal's next local midnight, a midnight that changes a goal's days left, the UTC allowance reset, the end of a day carried over from the night before, the subscription's next change or the session's end",
     }),
     places: z
       .object({
