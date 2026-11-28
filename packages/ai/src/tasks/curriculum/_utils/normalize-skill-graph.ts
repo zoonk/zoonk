@@ -7,6 +7,7 @@ import { toExamWeight } from "./exam-weight";
 import { fitLessonBudget } from "./lesson-budget";
 import { orderSkillGraph } from "./order-skill-graph";
 import { toSkillIdentityKey, toSkillNameKey } from "./skill-graph-checks";
+import { toSkillLessons } from "./skill-lessons";
 
 type RawSkillGraphSkill = {
   area: string;
@@ -92,7 +93,6 @@ export type SkillGraph = {
 /** A 3-minute lesson plus its share of practice and reviews, so 420 hours is about 4,200 lessons. */
 const STUDY_MINUTES_PER_LESSON = 6;
 const MINUTES_PER_HOUR = 60;
-const MAX_SKILL_LESSONS = 60;
 
 function clamp({ max, min, value }: { max: number; min: number; value: number }): number {
   return Math.min(max, Math.max(min, Math.round(value)));
@@ -256,7 +256,7 @@ function toGraphSkill({
     ...placed,
     course,
     description: toPlainLine(skill.description),
-    estimatedLessons: clamp({ max: MAX_SKILL_LESSONS, min: 1, value: skill.estimatedLessons }),
+    estimatedLessons: toSkillLessons(skill.estimatedLessons),
     examWeight: toExamWeight(skill.examWeight),
     key: skill.key,
     level: skill.level,

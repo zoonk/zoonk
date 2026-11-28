@@ -1593,6 +1593,7 @@ async function graphRepairCase(): Promise<WriterCase> {
       missing: [ENGLISH, SPANISH].map((area) => ({
         area,
         description: `Read short texts in ${area}`,
+        estimatedLessons: 4,
         examWeight: 2,
         name: `Ler textos em ${area} ${word}`,
         prerequisites: [reading.id],

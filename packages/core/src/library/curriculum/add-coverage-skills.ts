@@ -7,17 +7,23 @@ import {
 } from "@zoonk/ai/tasks/curriculum/exam-outline";
 import { matchNoticeAreas } from "../../exams/_utils/match-areas";
 import { type GoalSkillGraph } from "./save-goal-skills";
+import { getTopicLessons, toTopicSkillName } from "./uncovered-topic-skill";
 
 type Coverage = Awaited<ReturnType<typeof checkCoverage>>["data"];
 
 type MissingSkill = Pick<
   Coverage["missing"][number],
-  "area" | "course" | "description" | "examWeight" | "name" | "prerequisites" | "topics"
+  | "area"
+  | "course"
+  | "description"
+  | "estimatedLessons"
+  | "examWeight"
+  | "name"
+  | "prerequisites"
+  | "topics"
 >;
 
 type GraphSkill = GoalSkillGraph["skills"][number];
-
-const COVERAGE_SKILL_LESSONS = 2;
 
 const DEFAULT_TOPIC_WEIGHT = 3;
 
@@ -142,7 +148,7 @@ function toGraphSkill({
       area: missing.area ?? neighbor?.area ?? "",
       course: named?.key ?? neighbor?.course ?? graph.courses[0]?.key ?? "",
       description: missing.description,
-      estimatedLessons: COVERAGE_SKILL_LESSONS,
+      estimatedLessons: missing.estimatedLessons,
       examWeight: missing.examWeight,
       key,
       level: neighbor?.level ?? "beginner",
@@ -269,9 +275,11 @@ function getSubjectWeight({ graph, subject }: { graph: GoalSkillGraph; subject: 
 function coverRemainingTopics({
   graph,
   outline,
+  sized,
 }: {
   graph: GoalSkillGraph;
   outline: ExamOutline;
+  sized: GoalSkillGraph;
 }): GoalSkillGraph {
   const uncovered = findUncoveredTopics({ outline, skills: graph.skills });
 
@@ -280,8 +288,9 @@ function coverRemainingTopics({
     missing: uncovered.map(({ subject, topic }) => ({
       area: subject,
       description: topic,
+      estimatedLessons: getTopicLessons({ sized, subject }),
       examWeight: getSubjectWeight({ graph, subject }),
-      name: topic,
+      name: toTopicSkillName(topic),
       prerequisites: [],
       topics: [topic],
     })),
@@ -310,7 +319,10 @@ export function applyGraphCoverage({
     outline,
   });
 
-  const covered = outline ? coverRemainingTopics({ graph: checked, outline }) : checked;
+  const covered = outline
+    ? coverRemainingTopics({ graph: checked, outline, sized: graph })
+    : checked;
+
   const moved = examWeights.length > 0 || missing.length > 0 || placements.length > 0;
 
   return { changed: moved || covered !== checked, graph: covered };

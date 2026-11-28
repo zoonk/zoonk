@@ -42,6 +42,7 @@ const schema = z.object({
     z.object({
       course: z.string(),
       description: z.string(),
+      estimatedLessons: z.number(),
       name: z.string(),
       prerequisites: z.array(z.string()),
       syllabusLine: z.string(),
@@ -55,6 +56,7 @@ const examSchema = z.object({
     z.object({
       course: z.string(),
       description: z.string(),
+      estimatedLessons: z.number(),
       examWeight: z.number().nullable(),
       name: z.string(),
       prerequisites: z.array(z.string()),
@@ -70,6 +72,7 @@ const noticeSchema = z.object({
       area: z.string(),
       course: z.string(),
       description: z.string(),
+      estimatedLessons: z.number(),
       examWeight: z.number().nullable(),
       name: z.string(),
       prerequisites: z.array(z.string()),
@@ -86,6 +89,7 @@ type RawCoverage = {
     area?: string;
     course: string;
     description: string;
+    estimatedLessons: number;
     examWeight?: number | null;
     name: string;
     prerequisites: string[];
@@ -99,6 +103,8 @@ type CoverageSkill = {
   key: string;
   name: string;
   description: string;
+  /** The graph's own sizes, so a missing skill is sized like its neighbors. */
+  estimatedLessons?: number;
   examWeight?: number | null;
   area?: string | null;
   topics?: string[];
@@ -139,10 +145,12 @@ function formatPlace({ outline, skill }: { outline: ExamOutline; skill: Coverage
 
 function formatSkill({ outline, skill }: { outline?: ExamOutline; skill: CoverageSkill }): string {
   const line = `- ${skill.key}: ${skill.name}. ${skill.description}`;
+  const lessons = skill.estimatedLessons;
+  const size = typeof lessons === "number" ? ` (${lessons} lessons)` : "";
   const place = outline ? formatPlace({ outline, skill }) : "";
   const weight = typeof skill.examWeight === "number" ? ` (exam weight ${skill.examWeight})` : "";
 
-  return `${line}${place}${weight}`;
+  return `${line}${size}${place}${weight}`;
 }
 
 function getNoticeOutline(params: CoverageCheckParams): ExamOutline | undefined {

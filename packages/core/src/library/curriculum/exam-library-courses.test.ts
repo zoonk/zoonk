@@ -156,6 +156,7 @@ describe("an exam's Library courses and prerequisites", () => {
             area,
             course: "criminal",
             description: "Reconhecer os crimes contra a fé pública em documentos.",
+            estimatedLessons: 6,
             examWeight: 3,
             name: "Identificar crimes de falsidade documental",
             prerequisites: [],

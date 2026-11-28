@@ -2,6 +2,7 @@ import { type ExamOutline } from "@zoonk/ai/tasks/curriculum/exam-outline";
 import { describe, expect, it } from "vitest";
 import { applyGraphCoverage, needsCoverageCheck } from "./add-coverage-skills";
 import { type GoalSkillGraph } from "./save-goal-skills";
+import { toTopicSkillName } from "./uncovered-topic-skill";
 
 function skill(overrides: Partial<GoalSkillGraph["skills"][number]> & { key: string }) {
   return {
@@ -45,6 +46,7 @@ function missing(overrides: {
   return {
     area: null,
     description: `Idea of ${overrides.name}`,
+    estimatedLessons: 7,
     examWeight: null,
     reference: "Syllabus",
     syllabusLine: `Line about ${overrides.name}`,
@@ -100,7 +102,7 @@ describe("adding the skills a check found missing", () => {
     expect(addCoverageSkills({ graph, missing: [] })).toBe(graph);
   });
 
-  it("places each missing skill right after its last prerequisite, in its course, band and phase", () => {
+  it("places each missing skill after its last prerequisite, in its course, band, phase and the check's size", () => {
     const result = addCoverageSkills({
       graph,
       missing: [missing({ name: "Mitosis", prerequisites: ["cell", "dna"] })],
@@ -117,7 +119,7 @@ describe("adding the skills a check found missing", () => {
       area: "Biology",
       course: "bio",
       description: "Idea of Mitosis",
-      estimatedLessons: 2,
+      estimatedLessons: 7,
       examWeight: null,
       key: "coverage-1",
       level: "intermediate",
@@ -244,6 +246,7 @@ describe(applyGraphCoverage, () => {
           {
             area: "Ciência Política",
             description: "Comparar sistemas eleitorais",
+            estimatedLessons: 4,
             examWeight: 2,
             name: "Comparar sistemas eleitorais",
             prerequisites: [],
@@ -279,7 +282,7 @@ describe(applyGraphCoverage, () => {
 
     expect(covered.skills.find((item) => item.key === "coverage-3")).toMatchObject({
       examWeight: 4,
-      name: "3 Crase",
+      name: "Crase",
     });
 
     expect(needsCoverageCheck({ graph: covered, outline: OUTLINE, references: [] })).toBe(false);
@@ -373,5 +376,100 @@ describe(applyGraphCoverage, () => {
     expect(needsCoverageCheck({ graph: examGraph, outline: OUTLINE, references: [] })).toBe(true);
     expect(needsCoverageCheck({ graph, references: [] })).toBe(false);
     expect(needsCoverageCheck({ graph, references: [{ text: "x", title: "y" }] })).toBe(true);
+  });
+});
+
+describe("sizing a notice topic no skill teaches", () => {
+  const sizedOutline: ExamOutline = {
+    ...OUTLINE,
+    subjects: [
+      {
+        group: null,
+        name: "Língua Portuguesa",
+        questions: null,
+        topics: ["1 Leitura", "2 Crase", "3 Concordância", "4 Regência", "5 Pontuação"],
+        weight: null,
+      },
+      {
+        group: null,
+        name: "Física",
+        questions: null,
+        topics: ["A. Leis da termodinâmica (e.g., entropia e calor)"],
+        weight: null,
+      },
+    ],
+  };
+
+  const sizedGraph: GoalSkillGraph = {
+    ...graph,
+    skills: [
+      skill({
+        area: "Língua Portuguesa",
+        estimatedLessons: 12,
+        key: "reading",
+        topics: ["1 Leitura", "2 Crase"],
+      }),
+      skill({
+        area: "Língua Portuguesa",
+        estimatedLessons: 9,
+        key: "agreement",
+        topics: ["3 Concordância"],
+      }),
+      skill({
+        area: "Língua Portuguesa",
+        estimatedLessons: 4,
+        key: "verbs",
+        topics: ["4 Regência"],
+      }),
+      skill({ area: "Matemática", estimatedLessons: 20, key: "algebra", topics: [] }),
+    ],
+  };
+
+  function coverTopics(coverage: Parameters<typeof applyGraphCoverage>[0]["coverage"]["missing"]) {
+    return applyGraphCoverage({
+      coverage: { examWeights: [], missing: coverage, placements: [] },
+      graph: sizedGraph,
+      outline: sizedOutline,
+    }).graph.skills;
+  }
+
+  it("gives it the median lessons per topic of its subject's own skills, not the ones coverage added", () => {
+    const skills = coverTopics([
+      missing({
+        area: "Língua Portuguesa",
+        name: "Usar a crase",
+        prerequisites: [],
+        topics: ["2 Crase"],
+      }),
+    ]);
+
+    expect(skills.find((item) => item.topics.includes("5 Pontuação"))).toMatchObject({
+      area: "Língua Portuguesa",
+      estimatedLessons: 6,
+      name: "Pontuação",
+    });
+  });
+
+  it("falls back to the whole graph's median when its subject has no skill yet", () => {
+    const skills = coverTopics([]);
+
+    expect(
+      skills.find((item) =>
+        item.topics.includes("A. Leis da termodinâmica (e.g., entropia e calor)"),
+      ),
+    ).toMatchObject({ area: "Física", estimatedLessons: 8, name: "Leis da termodinâmica" });
+  });
+});
+
+describe(toTopicSkillName, () => {
+  it.each([
+    ["1.2 Estado, governo e administração", "Estado, governo e administração"],
+    ["A. Thermodynamic laws (e.g., the first law)", "Thermodynamic laws"],
+    ["b) Funções afins (por exemplo: tarifas de táxi)", "Funções afins"],
+    ["IV - Controle externo", "Controle externo"],
+    ["A Constituição de 1988", "A Constituição de 1988"],
+    ["7", "7"],
+  ])("names %j as %j", (topic, name) => {
+    expect(toTopicSkillName(topic)).toBe(name);
   });
 });

@@ -102,6 +102,7 @@ function mockMissingOptions({ readingId, word }: { readingId: string; word: stri
   const missing = [ENGLISH, SPANISH].map((area) => ({
     area,
     description: `Read short texts in ${area}`,
+    estimatedLessons: 4,
     examWeight: 2,
     name: `Ler textos em ${area} ${word}`,
     prerequisites: [readingId],
@@ -292,6 +293,7 @@ describe(saveReconciledExamGraph, () => {
           {
             area: MATH,
             description: "Solve the restored math questions",
+            estimatedLessons: 6,
             examWeight: 5,
             name: `Resolver questões de matemática ${uniqueWord()}`,
             prerequisites: [],

@@ -362,6 +362,71 @@ export const TEST_CASES: TestCase<CoverageCheckExpected, CoverageCheckParams>[] 
   },
   {
     expected: {
+      gapLessons: [
+        { max: 20, min: 6 },
+        { max: 4, min: 1 },
+      ],
+      gaps: [
+        "3 Engenharia de software: processos de desenvolvimento, requisitos, testes, manutenção e qualidade",
+        "4 Notação assintótica (Big O)",
+      ],
+    },
+    id: "pt-notice-gap-sized-like-neighbors",
+    userInput: {
+      courses: [{ key: "computacao", title: "Ciência da Computação" }],
+      examOutline: {
+        name: "CGU, Auditor Federal de Finanças e Controle - Tecnologia da Informação (Cebraspe)",
+        notes: [],
+        subjects: [
+          {
+            group: "Conhecimentos específicos (P3)",
+            name: "Desenvolvimento de Sistemas",
+            questions: 90,
+            topics: [
+              "1 Lógica de programação: algoritmos, estruturas de controle, funções e recursão",
+              "2 Estruturas de dados: listas, pilhas, filas, árvores, grafos e tabelas hash",
+              "3 Engenharia de software: processos de desenvolvimento, requisitos, testes, manutenção e qualidade",
+              "4 Notação assintótica (Big O)",
+            ],
+            weight: null,
+          },
+        ],
+        topicFrequency: [],
+      },
+      goal: "Passar no concurso da CGU na área de TI",
+      goalKind: "exam",
+      language: "pt",
+      references: [],
+      skills: [
+        {
+          ...placed({
+            area: "Desenvolvimento de Sistemas",
+            examWeight: 5,
+            key: "logica",
+            name: "Escrever algoritmos com funções e recursão",
+            topics: [
+              "1 Lógica de programação: algoritmos, estruturas de controle, funções e recursão",
+            ],
+          }),
+          estimatedLessons: 12,
+        },
+        {
+          ...placed({
+            area: "Desenvolvimento de Sistemas",
+            examWeight: 5,
+            key: "estruturas",
+            name: "Escolher a estrutura de dados para um problema",
+            topics: [
+              "2 Estruturas de dados: listas, pilhas, filas, árvores, grafos e tabelas hash",
+            ],
+          }),
+          estimatedLessons: 14,
+        },
+      ],
+    },
+  },
+  {
+    expected: {
       gapCourses: ["penal", "administrativo"],
       gaps: ["1 Crimes de falsidade documental", "4 Improbidade administrativa"],
     },
