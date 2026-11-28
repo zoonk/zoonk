@@ -5,7 +5,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { useCanRecord, useVoiceRecorder } from "@zoonk/ui/hooks/voice-recorder";
 import { SnailIcon, Volume2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { type ReactNode, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { ItemLine } from "../../questions/item-text";
 import { SpeechFailedNote, SpeechStatusIcon, withoutFailure } from "../../speech/speech-parts";
 import { useSpokenAudio } from "../../speech/use-spoken-audio";
@@ -16,13 +16,29 @@ type Pace = "normal" | "slow";
 
 const SLOW_RATE = 0.7;
 
-function WordListenButtons({ language, word }: { language: string; word: ReviewWord }) {
+function WordListenButtons({
+  disabled,
+  language,
+  word,
+}: {
+  disabled: boolean;
+  language: string;
+  word: ReviewWord;
+}) {
   const t = useExtracted();
   const speech = useSpokenAudio(language);
   const [pace, setPace] = useState<Pace>("normal");
   const buttonState = withoutFailure(speech.state);
   const { status } = buttonState;
   const isBusy = status === "loading" || status === "playing";
+  const { cancel } = speech;
+
+  // A clip still loading when Record is pressed would otherwise play into the take.
+  useEffect(() => {
+    if (disabled) {
+      cancel();
+    }
+  }, [cancel, disabled]);
 
   const play = (next: Pace) => {
     setPace(next);
@@ -45,6 +61,7 @@ function WordListenButtons({ language, word }: { language: string; word: ReviewW
       <div className="flex flex-wrap gap-2">
         <Button
           aria-busy={pace === "normal" && status === "loading"}
+          disabled={disabled}
           onClick={() => (isBusy && pace === "normal" ? speech.cancel() : play("normal"))}
           size="sm"
           type="button"
@@ -55,6 +72,7 @@ function WordListenButtons({ language, word }: { language: string; word: ReviewW
         </Button>
         <Button
           aria-busy={pace === "slow" && status === "loading"}
+          disabled={disabled}
           onClick={() => (isBusy && pace === "slow" ? speech.cancel() : play("slow"))}
           size="sm"
           type="button"
@@ -76,7 +94,21 @@ function WordListenButtons({ language, word }: { language: string; word: ReviewW
   );
 }
 
-export function PronunciationWord({ language, word }: { language: string; word: ReviewWord }) {
+/**
+ * `cue` goes right under the word and its Listen buttons, which wait while a take is getting ready
+ * or recording (`recording`), so the example never plays into it.
+ */
+export function PronunciationWord({
+  cue,
+  language,
+  recording = false,
+  word,
+}: {
+  cue?: ReactNode;
+  language: string;
+  recording?: boolean;
+  word: ReviewWord;
+}) {
   const t = useExtracted();
 
   return (
@@ -96,7 +128,9 @@ export function PronunciationWord({ language, word }: { language: string; word: 
         )}
       </div>
 
-      <WordListenButtons language={language} word={word} />
+      <WordListenButtons disabled={recording} language={language} word={word} />
+
+      {cue}
 
       {word.tip && (
         <p className="text-muted-foreground text-compact leading-snug">

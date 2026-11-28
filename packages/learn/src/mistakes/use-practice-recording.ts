@@ -9,9 +9,11 @@ import {
   type PracticeStep,
 } from "./mistake-practice-state";
 
-type RecordingInput = { audio: Blob; durationMs: number };
+/** `micStartupMs`: from the press on Record to the microphone going live, when measured. */
+type RecordingInput = { audio: Blob; durationMs: number; micStartupMs?: number };
 
 type RecordingIssue =
+  | { status: "missedStart" }
   | { status: "noSpeech" }
   | Extract<HelpLimit, { status: "limitReached" }>
   | { status: "signUpRequired" }
@@ -53,6 +55,9 @@ export function usePracticeRecording({
     (RecordingInput & { attemptId: string; index: number; practiceDurationMs: number }) | null
   >(null);
 
+  // The take right after a missed start goes unmeasured, so it's never called missed twice.
+  const missedStartAt = useRef<number | null>(null);
+
   const sendRecording = async (input: NonNullable<typeof recording.current>) => {
     if (!step?.lesson || !record) {
       return;
@@ -79,6 +84,10 @@ export function usePracticeRecording({
     if (outcome.status !== "failed") {
       setRecordIssue(outcome);
 
+      if (outcome.status === "missedStart") {
+        missedStartAt.current = input.index;
+      }
+
       if (outcome.status === "slowDown") {
         dispatch({ type: "answerFailed" });
       } else {
@@ -94,9 +103,13 @@ export function usePracticeRecording({
 
   return {
     record: record
-      ? (input: RecordingInput) => {
+      ? ({ micStartupMs, ...input }: RecordingInput) => {
+          const measured = micStartupMs !== undefined && missedStartAt.current !== index;
+          missedStartAt.current = null;
+
           const pending = {
             ...input,
+            ...(measured && { micStartupMs }),
             attemptId: crypto.randomUUID(),
             index,
             practiceDurationMs: elapsedMs(),
@@ -117,6 +130,7 @@ export function usePracticeRecording({
       : undefined,
     recordIssue,
     reset: () => {
+      missedStartAt.current = null;
       recording.current = null;
       setRecordIssue(null);
     },

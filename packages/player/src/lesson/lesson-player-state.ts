@@ -14,7 +14,7 @@ import {
 /** `map`: every screen is done and the lesson map shows, before the lesson is saved. */
 type LessonPlayerPhase = "checking" | "completed" | "feedback" | "map" | "playing";
 
-type CheckIssue = HelpLimit | { status: "noSpeech" };
+type CheckIssue = HelpLimit | { status: "missedStart" } | { status: "noSpeech" };
 
 type LessonPlayerRun =
   | { refusal: LessonRunRefusal; status: "refused" }

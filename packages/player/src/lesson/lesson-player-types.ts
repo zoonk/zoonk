@@ -98,6 +98,7 @@ export type SpokenAnswerOutcome =
   | { grade: SpokenAnswerGrade; status: "graded" }
   | { status: "failed" }
   | HelpLimitOutcome
+  | { status: "missedStart" }
   | { status: "noSpeech" }
   | { retryAfterSeconds: number; status: "slowDown" };
 
@@ -127,11 +128,15 @@ export type LessonPlayerAdapters = {
   /** Omit `stepIds` to read every screen's pictures. */
   getLessonPictures?: (stepIds?: string[]) => Promise<LessonPicture[]>;
   explainAnswer?: (input: { answer: string; stepId: string }) => Promise<AnswerExplanationOutcome>;
-  /** Grades a recording of a spoken answer. Without it, spoken screens take a typed answer. */
+  /**
+   * Grades a recording of a spoken answer. Without it, spoken screens take a typed answer.
+   * `micStartupMs`: from the press on Record to the microphone going live, when measured.
+   */
   gradeSpokenAnswer?: (input: {
     attemptId: string;
     audio: Blob;
     durationMs: number;
+    micStartupMs?: number;
     stepId: string;
   }) => Promise<SpokenAnswerOutcome>;
   /** Saves the lesson for later, or stops keeping it; without it, the player has no bookmark. */

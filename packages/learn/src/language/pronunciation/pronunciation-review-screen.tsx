@@ -21,7 +21,8 @@ import { MomentAfterCeremony, type MomentCeremony } from "../../session/moment-c
 import { MomentHeader } from "../../session/moment-header";
 import { TaskFrame, TaskMainButton, TaskMainLink } from "../../shell/task-frame";
 import { RecordButton } from "../../speech/record-button";
-import { useRecordNote } from "../../speech/record-note";
+import { RecordCue } from "../../speech/record-cue";
+import { type RecordProblem, useRecordNote } from "../../speech/record-note";
 import { PronunciationWord, useWordRecorder } from "./pronunciation-word-card";
 import { type PronunciationRoundActions, usePronunciationRound } from "./use-pronunciation-round";
 
@@ -91,6 +92,34 @@ function WordMenu({ disabled, onSkip }: { disabled: boolean; onSkip: () => void 
   );
 }
 
+/** While a word waits for a take: the cue under it and the bar's note. */
+function useWordTake({
+  mic,
+  pending,
+  ready,
+}: {
+  mic: ReturnType<typeof useWordRecorder>;
+  pending: boolean;
+  ready: { notice: RecordProblem | null } | null;
+}) {
+  const t = useExtracted();
+  const on = mic.recorder.status === "acquiring" || mic.recorder.status === "recording";
+
+  const note = useRecordNote({
+    checking: pending,
+    problem: ready?.notice,
+    recording: on,
+    unavailable: mic.available
+      ? null
+      : t("The microphone isn't available here. You can skip this word."),
+  });
+
+  const cue =
+    ready && mic.available ? <RecordCue checking={pending} recorder={mic.recorder} /> : null;
+
+  return { cue, note, on };
+}
+
 export function PronunciationReviewScreen({
   actions,
   buddy,
@@ -111,16 +140,7 @@ export function PronunciationReviewScreen({
   const total = round.segments.length;
   const recording = mic.recorder.status === "recording";
   const ready = step.kind === "word" && step.word.kind === "ready" ? step.word : null;
-
-  const note = useRecordNote({
-    acquiring: mic.recorder.status === "acquiring",
-    checking: round.isPending,
-    problem: ready?.notice,
-    recording,
-    unavailable: mic.available
-      ? null
-      : t("The microphone isn't available here. You can skip this word."),
-  });
+  const take = useWordTake({ mic, pending: round.isPending, ready });
 
   if (step.kind === "result" || !current) {
     const result = step.kind === "result" ? step.result : null;
@@ -182,7 +202,7 @@ export function PronunciationReviewScreen({
           />
         </>
       }
-      footerNote={ready && note}
+      footerNote={ready && take.note}
       headerEnd={
         !graded &&
         mic.available && <WordMenu disabled={round.isPending || recording} onSkip={round.next} />
@@ -194,7 +214,13 @@ export function PronunciationReviewScreen({
         value: ((round.index + (graded ? 1 : 0)) / total) * PERCENT,
       }}
     >
-      <PronunciationWord key={current.id} language={reviews.language} word={current} />
+      <PronunciationWord
+        cue={take.cue}
+        key={current.id}
+        language={reviews.language}
+        recording={take.on}
+        word={current}
+      />
       {graded && <GradeNote grade={graded} />}
     </TaskFrame>
   );
@@ -249,7 +275,6 @@ function WordActions({
         elapsedMs={mic.elapsedMs}
         onStart={() => void mic.start()}
         onStop={mic.stop}
-        preparation={mic}
         recording={mic.status === "recording"}
       />
     </TaskActions>

@@ -35,6 +35,10 @@ function barNote() {
   return document.querySelector("[data-slot=bottom-bar-note]");
 }
 
+function cue() {
+  return document.querySelector("[data-slot=record-cue]");
+}
+
 function hang<T>(): Promise<T> {
   return new Promise<T>(() => {});
 }
@@ -68,24 +72,47 @@ describe("spoken answers", () => {
     await expect.element(page.getByRole("button", { name: /^Record/u })).toHaveFocus();
   });
 
-  it("says over Record what to do, keeping the listening line out of what a screen reader announces", async () => {
+  it("cues when to talk under the sentence, out of what a screen reader announces", async () => {
     allowMicrophone();
     openSpokenLesson({ gradeSpokenAnswer: vi.fn<GradeSpokenAnswer>(() => hang()) });
 
-    await expect.poll(() => barNote()?.textContent).toBe("Tap Record and say it out loud");
+    await expect.poll(() => cue()?.textContent).toBe("Say it after “Speak now”");
+    expect(cue()?.getAttribute("aria-hidden")).toBe("true");
+    expect(barNote()?.textContent).toBe("");
     await page.getByRole("button", { name: "Record" }).click();
 
-    await expect
-      .poll(() => barNote()?.querySelector("[aria-hidden=true]")?.textContent)
-      .toBe("Listening… Tap Stop to check.");
-
+    await expect.poll(() => cue()?.textContent).toBe("Speak now");
+    await expect.element(page.getByRole("button", { name: /^Stop/u })).toBeVisible();
     await page.getByRole("button", { name: /^Stop/u }).click();
 
     await expect
       .element(page.getByRole("button", { name: /^Check/u }))
       .toHaveAttribute("aria-busy", "true");
 
-    expect(barNote()?.textContent).toBe("");
+    expect(cue()).toBeNull();
+  });
+
+  it("sends how long the microphone took to start, and asks again without it after a missed start", async () => {
+    allowMicrophone();
+
+    const gradeSpokenAnswer = vi
+      .fn<GradeSpokenAnswer>(() => hang())
+      .mockResolvedValueOnce({ status: "missedStart" });
+
+    openSpokenLesson({ gradeSpokenAnswer });
+    await sayIt();
+
+    const note = page.getByText("We may have missed the start. Say it again.");
+    await expect.element(note).toBeVisible();
+    await expect.element(note).not.toHaveClass("text-destructive-text");
+    await expect.element(page.getByRole("button", { name: "Record" })).toBeVisible();
+    expect(cue()?.textContent).toBe("Say it after “Speak now”");
+    expect(gradeSpokenAnswer.mock.calls[0]?.[0].micStartupMs).toBeGreaterThanOrEqual(0);
+
+    await sayIt();
+    await expect.poll(() => gradeSpokenAnswer.mock.calls).toHaveLength(2);
+    expect(gradeSpokenAnswer.mock.calls[1]?.[0]).not.toHaveProperty("micStartupMs");
+    await expect.element(note).not.toBeInTheDocument();
   });
 
   it("keeps the way back in place, turned off, while a recording is checked", async () => {
@@ -262,7 +289,7 @@ describe("spoken answers", () => {
     await expect.element(failed).toBeVisible();
 
     await page.getByRole("button", { name: "Record" }).click();
-    await expect.element(page.getByText("Listening… Tap Stop to check.")).toBeVisible();
+    await expect.element(page.getByRole("button", { name: /^Stop/u })).toBeVisible();
     await expect.element(failed).not.toBeInTheDocument();
   });
 
