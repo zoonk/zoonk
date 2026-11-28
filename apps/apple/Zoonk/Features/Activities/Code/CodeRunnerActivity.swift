@@ -200,15 +200,18 @@ private struct CodeRunnerCanvas: View {
       ForEach(Array(lines.enumerated()), id: \.offset) { index, line in
         let number = index + 1
 
-        let isEditable = fields.editableLines.contains(number) && !isChecked
+        let isYours = fields.editableLines.contains(number)
+        let isEditable = isYours && !isChecked
 
         CodeLine(
           number: number, digits: digits,
           tone: errorLine == number ? .error : isEditable ? .editable : .plain,
           spoken: isEditable ? nil : SpokenCode.line(line, number: number)
         ) {
-          if isEditable {
+          if isYours {
             // Wraps as main's does, and as the lines around it do; Return runs the program.
+            // Checked, it stays a field that can't change: as text, a line is a fraction shorter,
+            // and everything under it would move up.
             MultilineTextField(
               text: Binding(get: { line }, set: { edit(number, $0) }),
               label: Text(

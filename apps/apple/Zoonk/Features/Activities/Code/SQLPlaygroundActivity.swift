@@ -194,29 +194,20 @@ private struct SQLPlaygroundCanvas: View {
         .foregroundStyle(.mutedForeground)
         .accessibilityHidden(true)
 
-      // A checked query stays as it was run, read-only.
-      if isChecked {
-        Text(CodeHighlight.colored(query, language: "sql"))
-          .typeStyle(.body.monospaced())
-          .textSelection(.enabled)
-          .frame(maxWidth: .infinity, alignment: .leading)
-          .fieldBorder()
-          .accessibilityLabel(editorLabel)
-          .accessibilityValue(Text(verbatim: query))
-      } else {
-        MultilineTextField(
-          text: $query, selection: $selection, prompt: Text(verbatim: "SELECT"), label: editorLabel
-        )
-        .codeColors(query, language: "sql")
-        .lineLimit(3...)
-        .typeStyle(.body.monospaced())
-        .textFieldStyle(.plain)
-        .focused($isEditorFocused)
-        .fieldBorder(isFocused: isEditorFocused)
-        .textInputAutocapitalization(.never)
-        .autocorrectionDisabled()
-        .keyboardType(.asciiCapable)
-      }
+      // A checked query stays as it was run, in the same field, as main's does, so nothing moves.
+      MultilineTextField(
+        text: $query, selection: $selection, prompt: Text(verbatim: "SELECT"), label: editorLabel
+      )
+      .codeColors(query, language: "sql")
+      .lineLimit(3...)
+      .typeStyle(.body.monospaced())
+      .textFieldStyle(.plain)
+      .focused($isEditorFocused)
+      .fieldBorder(isFocused: isEditorFocused)
+      .textInputAutocapitalization(.never)
+      .autocorrectionDisabled()
+      .keyboardType(.asciiCapable)
+      .disabled(isChecked)
 
       CodeSnippetBar(
         snippets: fields.snippets,
