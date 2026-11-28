@@ -93,6 +93,10 @@ class RecordNoteScreenshots {
 
     @Test
     @Config(qualifiers = PHONE)
+    fun spokenRefusedPhone() = spoken("lesson-spoken-refused-phone") { refuseOnce() }
+
+    @Test
+    @Config(qualifiers = PHONE)
     fun spokenFailedPhone() = spoken("lesson-spoken-failed-phone") { takeChecked() }
 
     @Test
@@ -125,6 +129,10 @@ class RecordNoteScreenshots {
     @Test
     @Config(qualifiers = PHONE)
     fun pronunciationRecordingPhone() = pronunciation("pronunciation-recording-phone") { record() }
+
+    @Test
+    @Config(qualifiers = PHONE)
+    fun pronunciationRefusedPhone() = pronunciation("pronunciation-refused-phone") { refuseOnce() }
 
     @Test
     @Config(qualifiers = PHONE)
@@ -218,6 +226,17 @@ class RecordNoteScreenshots {
         shadowOf(rule.activity.application).grantPermissions(Manifest.permission.RECORD_AUDIO)
         rule.onNodeWithText("Record").performClick()
         rule.onNodeWithText("Stop").fetchSemanticsNode()
+    }
+
+    /** The learner says no to the microphone the first time, so Android will ask again on Record. */
+    private fun refuseOnce() {
+        shadowOf(rule.activity.application).denyPermissions(Manifest.permission.RECORD_AUDIO)
+        rule.onNodeWithText("Record").performClick()
+        rule.runOnIdle {
+            shadowOf(rule.activity.packageManager).setShouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO, true)
+            val request = shadowOf(rule.activity).lastRequestedPermission
+            rule.activity.activityResultRegistry.dispatchResult(request.requestCode, false)
+        }
     }
 
     private fun takeChecked() {

@@ -79,7 +79,7 @@ class VoiceAnswerRecorderTest {
     @Test
     fun aRefusalAndroidAsksAboutAgainKeepsRecordAndSaysToAllowTheMicrophone() {
         refuse(asksAgain = true)
-        rule.onNodeWithText("Tap Record and allow the microphone to answer out loud.").assertIsDisplayed()
+        rule.onNodeWithText("Tap Record and allow the microphone.").assertIsDisplayed()
         rule.onNodeWithText("Record").assertIsDisplayed()
     }
 
@@ -87,7 +87,7 @@ class VoiceAnswerRecorderTest {
     fun aLastingRefusalPointsToSettings() {
         refuse(asksAgain = false)
         rule.onNodeWithText("The microphone is off").assertIsDisplayed()
-        rule.onNodeWithText("Tap Record and allow the microphone to answer out loud.").assertDoesNotExist()
+        rule.onNodeWithText("Tap Record and allow the microphone.").assertDoesNotExist()
     }
 
     private fun refuse(asksAgain: Boolean) {
