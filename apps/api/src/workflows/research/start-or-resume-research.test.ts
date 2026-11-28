@@ -1,3 +1,6 @@
+import { prisma } from "@zoonk/db";
+import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { getRun, resumeHook } from "workflow/api";
 import { HookConflictError, HookNotFoundError } from "workflow/errors";
@@ -6,7 +9,7 @@ import { getStartMock } from "../_test-utils/start-mock";
 import { researchWorkflow } from "./research-workflow";
 import { startOrResumeResearch } from "./start-or-resume-research";
 
-const GOAL_ID = "goal-1";
+const GOAL_ID = "00000000-0000-4000-8000-000000000001";
 const TOKEN = `research-goal:${GOAL_ID}`;
 const COUNTRY_TOKEN = `research-country:${GOAL_ID}`;
 
@@ -56,11 +59,20 @@ describe(startOrResumeResearch, () => {
   });
 
   it("starts the research again once a run that read the goal before the answer ends", async () => {
-    olderHolder(["running", "running", "completed"]);
+    const user = await userFixture();
+    const goal = await goalFixture({ kind: "exam", userId: user.id });
+    const token = `research-goal:${goal.id}`;
 
-    vi.mocked(resumeHook).mockImplementation(async (token) => {
-      if (token === COUNTRY_TOKEN) {
-        throw new HookNotFoundError(COUNTRY_TOKEN);
+    holdingRun({
+      createdAt: new Date(Date.now() - 60_000),
+      statuses: ["running", "running", "completed"],
+    });
+
+    getStartMock().mockRejectedValueOnce(new HookConflictError(token, "holder"));
+
+    vi.mocked(resumeHook).mockImplementation(async (woken) => {
+      if (woken === `research-country:${goal.id}`) {
+        throw new HookNotFoundError(woken);
       }
 
       return { runId: "holder" } as never;
@@ -68,12 +80,16 @@ describe(startOrResumeResearch, () => {
 
     getStartMock().mockResolvedValueOnce({ runId: "new-run" } as never);
 
-    await startOrResumeResearch(GOAL_ID);
+    await startOrResumeResearch(goal.id);
 
     expect(getStartMock()).toHaveBeenCalledTimes(2);
 
-    expect(getStartMock()).toHaveBeenLastCalledWith(researchWorkflow, [{ goalId: GOAL_ID }], {
-      experimental_hook: { token: TOKEN },
+    expect(getStartMock()).toHaveBeenLastCalledWith(researchWorkflow, [{ goalId: goal.id }], {
+      experimental_hook: { token },
     });
+
+    await expect(
+      prisma.goal.findUniqueOrThrow({ select: { researchRunId: true }, where: { id: goal.id } }),
+    ).resolves.toStrictEqual({ researchRunId: "new-run" });
   });
 });

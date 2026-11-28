@@ -2,6 +2,7 @@ import { getRun, resumeHook } from "workflow/api";
 import { HookNotFoundError } from "workflow/errors";
 import { startOnce, waitForRun } from "../_shared/run-token";
 import { getExamCountryToken, getGoalResearchToken, researchWorkflow } from "./research-workflow";
+import { recordResearchRunStep } from "./steps/record-research-run-step";
 
 async function nowStep(): Promise<number> {
   "use step";
@@ -32,24 +33,26 @@ async function wakeCountryWaitStep(goalId: string): Promise<boolean> {
   }
 }
 
-/**
- * Researches the goal as the learner just answered it. A run that started after the answer, or was
- * waiting for its country, reads it itself; one already researching read the goal before it, so a
- * new run follows once that one ends.
- */
-export async function startOrResumeResearch(goalId: string): Promise<void> {
+async function findAnsweringRun(goalId: string): Promise<string> {
   const token = getGoalResearchToken(goalId);
   const since = await nowStep();
   const holder = await startOnce(researchWorkflow, [{ goalId }], token);
 
-  if (await isStartedSinceStep({ runId: holder, since })) {
-    return;
-  }
-
-  if (await wakeCountryWaitStep(goalId)) {
-    return;
+  if ((await isStartedSinceStep({ runId: holder, since })) || (await wakeCountryWaitStep(goalId))) {
+    return holder;
   }
 
   await waitForRun(holder);
-  await startOnce(researchWorkflow, [{ goalId }], token);
+  return startOnce(researchWorkflow, [{ goalId }], token);
+}
+
+/**
+ * Researches the goal as the learner just answered it. A run that started after the answer, or was
+ * waiting for its country, reads it itself; one already researching read the goal before it, so a
+ * new run follows once that one ends. The run is recorded before this ask ends, so a rebuild owed
+ * with it always finds research to wait for.
+ */
+export async function startOrResumeResearch(goalId: string): Promise<void> {
+  const runId = await findAnsweringRun(goalId);
+  await recordResearchRunStep({ goalId, runId });
 }
