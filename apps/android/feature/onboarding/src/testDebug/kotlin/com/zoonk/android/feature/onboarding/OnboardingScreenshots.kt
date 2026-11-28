@@ -164,6 +164,32 @@ class OnboardingScreenshots {
     @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
     fun tablet() = capture("tablet")
 
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun revealWritingChapters() {
+        val today = LocalDate.now()
+        val end = today.plusDays(30)
+        val plan =
+            planOf(
+                targetDate = null,
+                endDate = end,
+                phases = listOf(phaseOf(0, "learn", "current", today, end, "[${chapterOf("Variables")}]")),
+            )
+        val phase = plan.phases.single()
+        val writingPhase =
+            phase.copy(
+                milestone = "Write small Python programs",
+                chapters = phase.chapters.map { it.copy(writing = true) },
+            )
+        val api = setupPlanApi().apply { shownPlan = plan.copy(phases = listOf(writingPhase)) }
+        val scenario = "reveal-writing-chapters"
+
+        compose.setContent {
+            ZoonkTheme { Surface { Reveal(api, goal = learnGoal()) } }
+        }
+        write("$scenario-phone-screen", compose.onRoot().captureRender(scenario = scenario).asAndroidBitmap())
+    }
+
     /** Questions still being written wait for the learner's Start, so it's tapped first. */
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")

@@ -52,21 +52,25 @@ fun RevealStructure(
     }
 }
 
-/** A plan of one phase has nothing to group, so its chapters are the list. */
 @Composable
 private fun RevealPath(
     plan: Plan,
     modifier: Modifier,
 ) {
     val phases = plan.phases
-    val only = phases.singleOrNull()
     if (phases.isEmpty()) return
+    val chapters =
+        phases
+            .singleOrNull()
+            ?.chapters
+            .orEmpty()
+            .filterNot { it.isWritingAhead }
 
     Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SectionHeader(stringResource(R.string.plan_your_path))
         Column(Modifier.bleed(LIST_ITEM_INSET)) {
-            if (only != null) {
-                only.chapters.filterNot { it.isWritingAhead }.forEach { ChapterRow(it, links = null, indent = 0.dp) }
+            if (chapters.isNotEmpty()) {
+                chapters.forEach { ChapterRow(it, links = null, indent = 0.dp) }
             } else {
                 phases.forEachIndexed { index, phase ->
                     if (index > 0) ListDivider()
