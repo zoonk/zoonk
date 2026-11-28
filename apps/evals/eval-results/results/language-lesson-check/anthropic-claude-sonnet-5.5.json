@@ -2300,17 +2300,17 @@
       },
       "steps": [
         {
-          "conclusion": "[screen 1] The respelling \"buon-DJÔR-no\" writes a closed \"Ô\" in the stressed syllable. Italian \"giorno\" has an open /ɔ/, so a Brazilian reader would say the wrong vowel.",
+          "conclusion": "[screen 1] The respelling \"buon-DJÔR-no\" writes a closed vowel (Ô) in the stressed syllable. In Italian \"giorno\" is [ˈdʒɔrno], with an open /ɔ/. A Brazilian reader would say a closed \"ô\", which teaches the wrong vowel.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "[screen 1] The respelling \"buon-DJÔR-no\" writes a closed \"Ô\" in the stressed syllable. Italian \"giorno\" has an open /ɔ/, so a Brazilian reader would say the wrong vowel.",
+          "conclusion": "[screen 1] The respelling \"buon-DJÔR-no\" writes a closed vowel (Ô) in the stressed syllable. In Italian \"giorno\" is [ˈdʒɔrno], with an open /ɔ/. A Brazilian reader would say a closed \"ô\", which teaches the wrong vowel.",
           "kind": "minorErrors",
           "score": 6
         },
         {
-          "conclusion": "[screen 1] The respelling \"buon-DJÔR-no\" writes a closed \"Ô\" in the stressed syllable. Italian \"giorno\" has an open /ɔ/, so a Brazilian reader would say the wrong vowel.",
+          "conclusion": "[screen 1] The respelling \"buon-DJÔR-no\" writes a closed vowel (Ô) in the stressed syllable. In Italian \"giorno\" is [ˈdʒɔrno], with an open /ɔ/. A Brazilian reader would say a closed \"ô\", which teaches the wrong vowel.",
           "kind": "potentialImprovements",
           "score": 6
         }
@@ -3362,23 +3362,23 @@
     {
       "classification": {
         "expected": "pass",
-        "predicted": "pass"
+        "predicted": "fail"
       },
       "steps": [
         {
-          "conclusion": "No blocking issues.",
+          "conclusion": "[screen 2] The respelling \"fa-TCHÊ-va FRÊD-do\" writes \"freddo\" with a closed vowel (\"FRÊD\"). In Italian \"freddo\" has an open è /ˈfrɛddo/, so a Brazilian reader would say the wrong vowel.",
           "kind": "majorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "No blocking issues.",
+          "conclusion": "[screen 2] The respelling \"fa-TCHÊ-va FRÊD-do\" writes \"freddo\" with a closed vowel (\"FRÊD\"). In Italian \"freddo\" has an open è /ˈfrɛddo/, so a Brazilian reader would say the wrong vowel.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "No blocking issues.",
+          "conclusion": "[screen 2] The respelling \"fa-TCHÊ-va FRÊD-do\" writes \"freddo\" with a closed vowel (\"FRÊD\"). In Italian \"freddo\" has an open è /ˈfrɛddo/, so a Brazilian reader would say the wrong vowel.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 6
         }
       ],
       "testCase": {
@@ -3539,23 +3539,23 @@
     {
       "classification": {
         "expected": "pass",
-        "predicted": "pass"
+        "predicted": "fail"
       },
       "steps": [
         {
-          "conclusion": "No blocking issues.",
+          "conclusion": "[screen 2] The respelling \"FRÊD-do\" gives \"freddo\" a closed vowel. Italian \"freddo\" has an open stressed /ɛ/ (/ˈfreddo/), which a Brazilian reader would read as \"ê\" here.",
           "kind": "majorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "No blocking issues.",
+          "conclusion": "[screen 2] The respelling \"FRÊD-do\" gives \"freddo\" a closed vowel. Italian \"freddo\" has an open stressed /ɛ/ (/ˈfreddo/), which a Brazilian reader would read as \"ê\" here.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "No blocking issues.",
+          "conclusion": "[screen 2] The respelling \"FRÊD-do\" gives \"freddo\" a closed vowel. Italian \"freddo\" has an open stressed /ɛ/ (/ˈfreddo/), which a Brazilian reader would read as \"ê\" here.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 6
         }
       ],
       "testCase": {
@@ -3720,17 +3720,17 @@
       },
       "steps": [
         {
-          "conclusion": "[screen 4] The prompt \"boa noite\" also translates as \"buonanotte\", which is marked wrong. In Portuguese \"boa noite\" works both as a greeting and as a farewell before sleep, so the screen alone doesn't rule \"buonanotte\" out.",
+          "conclusion": "[screen 1] The respelling \"buon-DJÔR-no\" writes a closed \"Ô\" in the stressed syllable. Italian \"giorno\" has an open /ɔ/, so a Brazilian reader would say the wrong vowel. [screen 4] The prompt \"boa noite\" has two valid answers. \"buonanotte\" is also \"boa noite\" in Portuguese, and the lesson itself glosses it as the goodbye before sleeping. It is marked wrong.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "[screen 4] The prompt \"boa noite\" also translates as \"buonanotte\", which is marked wrong. In Portuguese \"boa noite\" works both as a greeting and as a farewell before sleep, so the screen alone doesn't rule \"buonanotte\" out.",
+          "conclusion": "[screen 1] The respelling \"buon-DJÔR-no\" writes a closed \"Ô\" in the stressed syllable. Italian \"giorno\" has an open /ɔ/, so a Brazilian reader would say the wrong vowel. [screen 4] The prompt \"boa noite\" has two valid answers. \"buonanotte\" is also \"boa noite\" in Portuguese, and the lesson itself glosses it as the goodbye before sleeping. It is marked wrong.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "[screen 4] The prompt \"boa noite\" also translates as \"buonanotte\", which is marked wrong. In Portuguese \"boa noite\" works both as a greeting and as a farewell before sleep, so the screen alone doesn't rule \"buonanotte\" out.",
+          "conclusion": "[screen 1] The respelling \"buon-DJÔR-no\" writes a closed \"Ô\" in the stressed syllable. Italian \"giorno\" has an open /ɔ/, so a Brazilian reader would say the wrong vowel. [screen 4] The prompt \"boa noite\" has two valid answers. \"buonanotte\" is also \"boa noite\" in Portuguese, and the lesson itself glosses it as the goodbye before sleeping. It is marked wrong.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -3898,17 +3898,17 @@
       },
       "steps": [
         {
-          "conclusion": "[screen 4] The prompt \"boa noite\" accepts only \"buonasera\" and marks \"buonanotte\" wrong. \"Buonanotte\" is also a correct translation of \"boa noite\", and screen 2's own note says to use it when saying goodnight before sleep.",
+          "conclusion": "[screen 1] The respelling \"buon-DJÔR-no\" writes a closed \"Ô\", but the \"o\" in the stressed syllable of Italian \"giorno\" is open (/ˈdʒɔrno/). A Brazilian reader would learn the wrong vowel. [screen 4] For the prompt \"boa noite\", the option \"buonanotte\" is marked wrong, but \"buonanotte\" also translates to \"boa noite\". The screen gives no context to rule it out, so a learner who picks it is marked wrong for a right answer.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "[screen 4] The prompt \"boa noite\" accepts only \"buonasera\" and marks \"buonanotte\" wrong. \"Buonanotte\" is also a correct translation of \"boa noite\", and screen 2's own note says to use it when saying goodnight before sleep.",
+          "conclusion": "[screen 1] The respelling \"buon-DJÔR-no\" writes a closed \"Ô\", but the \"o\" in the stressed syllable of Italian \"giorno\" is open (/ˈdʒɔrno/). A Brazilian reader would learn the wrong vowel. [screen 4] For the prompt \"boa noite\", the option \"buonanotte\" is marked wrong, but \"buonanotte\" also translates to \"boa noite\". The screen gives no context to rule it out, so a learner who picks it is marked wrong for a right answer.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "[screen 4] The prompt \"boa noite\" accepts only \"buonasera\" and marks \"buonanotte\" wrong. \"Buonanotte\" is also a correct translation of \"boa noite\", and screen 2's own note says to use it when saying goodnight before sleep.",
+          "conclusion": "[screen 1] The respelling \"buon-DJÔR-no\" writes a closed \"Ô\", but the \"o\" in the stressed syllable of Italian \"giorno\" is open (/ˈdʒɔrno/). A Brazilian reader would learn the wrong vowel. [screen 4] For the prompt \"boa noite\", the option \"buonanotte\" is marked wrong, but \"buonanotte\" also translates to \"boa noite\". The screen gives no context to rule it out, so a learner who picks it is marked wrong for a right answer.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -4076,17 +4076,17 @@
       },
       "steps": [
         {
-          "conclusion": "[screen 2] The respelling \"buo-na-SÉ-ra\" writes the stressed vowel of \"sera\" as open \"É\". In Italian \"sera\" has a closed /e/, so a Brazilian reader would pronounce it wrongly.",
+          "conclusion": "[screen 2] The respelling \"buo-na-SÉ-ra\" writes the stressed vowel of \"sera\" as open (É). In Italian \"buonasera\" the stressed e is closed, [e], so a Brazilian reader would learn the wrong vowel.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "[screen 2] The respelling \"buo-na-SÉ-ra\" writes the stressed vowel of \"sera\" as open \"É\". In Italian \"sera\" has a closed /e/, so a Brazilian reader would pronounce it wrongly.",
+          "conclusion": "[screen 2] The respelling \"buo-na-SÉ-ra\" writes the stressed vowel of \"sera\" as open (É). In Italian \"buonasera\" the stressed e is closed, [e], so a Brazilian reader would learn the wrong vowel.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "[screen 2] The respelling \"buo-na-SÉ-ra\" writes the stressed vowel of \"sera\" as open \"É\". In Italian \"sera\" has a closed /e/, so a Brazilian reader would pronounce it wrongly.",
+          "conclusion": "[screen 2] The respelling \"buo-na-SÉ-ra\" writes the stressed vowel of \"sera\" as open (É). In Italian \"buonasera\" the stressed e is closed, [e], so a Brazilian reader would learn the wrong vowel.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -4254,17 +4254,17 @@
       },
       "steps": [
         {
-          "conclusion": "[screen 1] The respelling \"buon-DJÔR-no\" writes the stressed vowel of \"giorno\" as a closed o (ô). In Italian it is an open o, /ˈdʒɔrno/. [screen 2] The respelling \"buo-na-SÉ-ra\" writes the stressed vowel of \"sera\" as an open e (é). In Italian it is a closed e, /ˈsera/.",
+          "conclusion": "[screen 2] The respelling \"buo-na-SÉ-ra\" shows an open vowel in the stressed syllable. Italian \"sera\" has a closed /e/, so a Brazilian reader would say it wrongly.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "[screen 1] The respelling \"buon-DJÔR-no\" writes the stressed vowel of \"giorno\" as a closed o (ô). In Italian it is an open o, /ˈdʒɔrno/. [screen 2] The respelling \"buo-na-SÉ-ra\" writes the stressed vowel of \"sera\" as an open e (é). In Italian it is a closed e, /ˈsera/.",
+          "conclusion": "[screen 2] The respelling \"buo-na-SÉ-ra\" shows an open vowel in the stressed syllable. Italian \"sera\" has a closed /e/, so a Brazilian reader would say it wrongly.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "[screen 1] The respelling \"buon-DJÔR-no\" writes the stressed vowel of \"giorno\" as a closed o (ô). In Italian it is an open o, /ˈdʒɔrno/. [screen 2] The respelling \"buo-na-SÉ-ra\" writes the stressed vowel of \"sera\" as an open e (é). In Italian it is a closed e, /ˈsera/.",
+          "conclusion": "[screen 2] The respelling \"buo-na-SÉ-ra\" shows an open vowel in the stressed syllable. Italian \"sera\" has a closed /e/, so a Brazilian reader would say it wrongly.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -4432,17 +4432,17 @@
       },
       "steps": [
         {
-          "conclusion": "[screen 12] Typo in the Portuguese prompt: \"Cumpri mente a senhora Rossi de manhã.\" The verb \"cumprimente\" is split into two words.",
+          "conclusion": "[screen 12] Typo in the Portuguese prompt: \"Cumpri mente a senhora Rossi de manhã.\" The verb \"Cumprimente\" is split into two words.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "[screen 12] Typo in the Portuguese prompt: \"Cumpri mente a senhora Rossi de manhã.\" The verb \"cumprimente\" is split into two words.",
+          "conclusion": "[screen 12] Typo in the Portuguese prompt: \"Cumpri mente a senhora Rossi de manhã.\" The verb \"Cumprimente\" is split into two words.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "[screen 12] Typo in the Portuguese prompt: \"Cumpri mente a senhora Rossi de manhã.\" The verb \"cumprimente\" is split into two words.",
+          "conclusion": "[screen 12] Typo in the Portuguese prompt: \"Cumpri mente a senhora Rossi de manhã.\" The verb \"Cumprimente\" is split into two words.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -4610,17 +4610,17 @@
       },
       "steps": [
         {
-          "conclusion": "[screen 12] Typo in the Portuguese prompt: \"Cumpri mente a senhora Rossi de manhã.\" The verb is split into two words.",
+          "conclusion": "[screen 12] Typo in the Português Brasileiro prompt: \"Cumpri mente a senhora Rossi de manhã.\" The verb \"Cumprimente\" is split into two words.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "[screen 12] Typo in the Portuguese prompt: \"Cumpri mente a senhora Rossi de manhã.\" The verb is split into two words.",
+          "conclusion": "[screen 12] Typo in the Português Brasileiro prompt: \"Cumpri mente a senhora Rossi de manhã.\" The verb \"Cumprimente\" is split into two words.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "[screen 12] Typo in the Portuguese prompt: \"Cumpri mente a senhora Rossi de manhã.\" The verb is split into two words.",
+          "conclusion": "[screen 12] Typo in the Português Brasileiro prompt: \"Cumpri mente a senhora Rossi de manhã.\" The verb \"Cumprimente\" is split into two words.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -4788,17 +4788,17 @@
       },
       "steps": [
         {
-          "conclusion": "[screen 10] The prompt \"Can you speak more slowly, please?\" doesn't say who is being addressed. The extra tile \"Puedes\" builds \"¿Puedes hablar más despacio, por favor?\", which is also correct for an informal \"you\", but only the \"Puede\" order is accepted. The explanation, \"“Puede” is the polite form you use with someone you don't know\", doesn't fit the prompt either, since the prompt never says the listener is a stranger.",
+          "conclusion": "[screen 10] The prompt \"Can you speak more slowly, please?\" doesn't say who is being addressed, but the tile \"Puedes\" is treated as wrong. \"¿Puedes hablar más despacio, por favor?\" is a correct translation when speaking to a friend or someone familiar. The explanation also assumes \"someone you don't know\", which the learner never sees on this screen.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "[screen 10] The prompt \"Can you speak more slowly, please?\" doesn't say who is being addressed. The extra tile \"Puedes\" builds \"¿Puedes hablar más despacio, por favor?\", which is also correct for an informal \"you\", but only the \"Puede\" order is accepted. The explanation, \"“Puede” is the polite form you use with someone you don't know\", doesn't fit the prompt either, since the prompt never says the listener is a stranger.",
+          "conclusion": "[screen 10] The prompt \"Can you speak more slowly, please?\" doesn't say who is being addressed, but the tile \"Puedes\" is treated as wrong. \"¿Puedes hablar más despacio, por favor?\" is a correct translation when speaking to a friend or someone familiar. The explanation also assumes \"someone you don't know\", which the learner never sees on this screen.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "[screen 10] The prompt \"Can you speak more slowly, please?\" doesn't say who is being addressed. The extra tile \"Puedes\" builds \"¿Puedes hablar más despacio, por favor?\", which is also correct for an informal \"you\", but only the \"Puede\" order is accepted. The explanation, \"“Puede” is the polite form you use with someone you don't know\", doesn't fit the prompt either, since the prompt never says the listener is a stranger.",
+          "conclusion": "[screen 10] The prompt \"Can you speak more slowly, please?\" doesn't say who is being addressed, but the tile \"Puedes\" is treated as wrong. \"¿Puedes hablar más despacio, por favor?\" is a correct translation when speaking to a friend or someone familiar. The explanation also assumes \"someone you don't know\", which the learner never sees on this screen.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -4966,17 +4966,17 @@
       },
       "steps": [
         {
-          "conclusion": "[screen 10] The prompt \"Can you speak more slowly, please?\" doesn't say who is being addressed, so informal \"¿Puedes hablar más despacio, por favor?\" is also correct. The extra tile \"Puedes\" makes that valid answer impossible, and only the \"Puede\" version is accepted. The explanation claims \"Puede\" is required.",
+          "conclusion": "[screen 10] The prompt \"Can you speak more slowly, please?\" doesn't say whether the listener is formal or informal. The extra tile \"Puedes\" would build \"¿Puedes hablar más despacio, por favor?\", which is correct Mexican Spanish, but it is marked wrong. The explanation also claims \"Puede\" is the only form.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "[screen 10] The prompt \"Can you speak more slowly, please?\" doesn't say who is being addressed, so informal \"¿Puedes hablar más despacio, por favor?\" is also correct. The extra tile \"Puedes\" makes that valid answer impossible, and only the \"Puede\" version is accepted. The explanation claims \"Puede\" is required.",
+          "conclusion": "[screen 10] The prompt \"Can you speak more slowly, please?\" doesn't say whether the listener is formal or informal. The extra tile \"Puedes\" would build \"¿Puedes hablar más despacio, por favor?\", which is correct Mexican Spanish, but it is marked wrong. The explanation also claims \"Puede\" is the only form.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "[screen 10] The prompt \"Can you speak more slowly, please?\" doesn't say who is being addressed, so informal \"¿Puedes hablar más despacio, por favor?\" is also correct. The extra tile \"Puedes\" makes that valid answer impossible, and only the \"Puede\" version is accepted. The explanation claims \"Puede\" is required.",
+          "conclusion": "[screen 10] The prompt \"Can you speak more slowly, please?\" doesn't say whether the listener is formal or informal. The extra tile \"Puedes\" would build \"¿Puedes hablar más despacio, por favor?\", which is correct Mexican Spanish, but it is marked wrong. The explanation also claims \"Puede\" is the only form.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -5144,17 +5144,17 @@
       },
       "steps": [
         {
-          "conclusion": "[screen 3] The respelling \"OH-trah VEHS\" still starts the second word with \"V\", while the tip says to \"Say the v like a soft English b.\" In Mexican Spanish the v is pronounced like b, so the respelling contradicts the tip and teaches an English v sound.",
+          "conclusion": "[screen 3] The tip says to say the v like a soft English b, but the respelling \"OH-trah VEHS\" still starts the second word with a V. A US English reader will say an English v, which is the sound the tip says to change.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "[screen 3] The respelling \"OH-trah VEHS\" still starts the second word with \"V\", while the tip says to \"Say the v like a soft English b.\" In Mexican Spanish the v is pronounced like b, so the respelling contradicts the tip and teaches an English v sound.",
+          "conclusion": "[screen 3] The tip says to say the v like a soft English b, but the respelling \"OH-trah VEHS\" still starts the second word with a V. A US English reader will say an English v, which is the sound the tip says to change.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "[screen 3] The respelling \"OH-trah VEHS\" still starts the second word with \"V\", while the tip says to \"Say the v like a soft English b.\" In Mexican Spanish the v is pronounced like b, so the respelling contradicts the tip and teaches an English v sound.",
+          "conclusion": "[screen 3] The tip says to say the v like a soft English b, but the respelling \"OH-trah VEHS\" still starts the second word with a V. A US English reader will say an English v, which is the sound the tip says to change.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -5322,17 +5322,17 @@
       },
       "steps": [
         {
-          "conclusion": "[screen 3] The tip says to \"Say the v like a soft English b\", but the respelling \"OH-trah VEHS\" still starts the second word with a \"V\", so US readers will say an English v. In Mexican Spanish, \"vez\" is pronounced with a b-type sound.",
+          "conclusion": "[screen 3] The tip says to \"Say the v like a soft English b\", but the respelling \"OH-trah VEHS\" still starts the second word with a V. A US reader will say an English v, which is not the Mexican Spanish sound.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "[screen 3] The tip says to \"Say the v like a soft English b\", but the respelling \"OH-trah VEHS\" still starts the second word with a \"V\", so US readers will say an English v. In Mexican Spanish, \"vez\" is pronounced with a b-type sound.",
+          "conclusion": "[screen 3] The tip says to \"Say the v like a soft English b\", but the respelling \"OH-trah VEHS\" still starts the second word with a V. A US reader will say an English v, which is not the Mexican Spanish sound.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "[screen 3] The tip says to \"Say the v like a soft English b\", but the respelling \"OH-trah VEHS\" still starts the second word with a \"V\", so US readers will say an English v. In Mexican Spanish, \"vez\" is pronounced with a b-type sound.",
+          "conclusion": "[screen 3] The tip says to \"Say the v like a soft English b\", but the respelling \"OH-trah VEHS\" still starts the second word with a V. A US reader will say an English v, which is not the Mexican Spanish sound.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -5500,17 +5500,17 @@
       },
       "steps": [
         {
-          "conclusion": "[screen 12] The prompt \"Apresente-se usando seu nome.\" asks learners to use their own name, but only the fixed target \"My name is Ana\" is accepted. A learner who says their real name would be marked wrong.",
+          "conclusion": "[screen 12] The prompt \"Apresente-se usando seu nome.\" asks learners to use their own name, but only \"My name is Ana\" is accepted. A learner who says their real name is marked wrong.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "[screen 12] The prompt \"Apresente-se usando seu nome.\" asks learners to use their own name, but only the fixed target \"My name is Ana\" is accepted. A learner who says their real name would be marked wrong.",
+          "conclusion": "[screen 12] The prompt \"Apresente-se usando seu nome.\" asks learners to use their own name, but only \"My name is Ana\" is accepted. A learner who says their real name is marked wrong.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "[screen 12] The prompt \"Apresente-se usando seu nome.\" asks learners to use their own name, but only the fixed target \"My name is Ana\" is accepted. A learner who says their real name would be marked wrong.",
+          "conclusion": "[screen 12] The prompt \"Apresente-se usando seu nome.\" asks learners to use their own name, but only \"My name is Ana\" is accepted. A learner who says their real name is marked wrong.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -5680,17 +5680,17 @@
       },
       "steps": [
         {
-          "conclusion": "[screen 12] The prompt \"Apresente-se usando seu nome.\" tells learners to use their own name, but only \"My name is Ana\" is accepted. A learner who says their real name will be marked wrong.",
+          "conclusion": "[screen 12] The prompt \"Apresente-se usando seu nome.\" asks learners to use their own name, but the only accepted answer is the fixed \"My name is Ana\". A learner who says their real name is marked wrong.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "[screen 12] The prompt \"Apresente-se usando seu nome.\" tells learners to use their own name, but only \"My name is Ana\" is accepted. A learner who says their real name will be marked wrong.",
+          "conclusion": "[screen 12] The prompt \"Apresente-se usando seu nome.\" asks learners to use their own name, but the only accepted answer is the fixed \"My name is Ana\". A learner who says their real name is marked wrong.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "[screen 12] The prompt \"Apresente-se usando seu nome.\" tells learners to use their own name, but only \"My name is Ana\" is accepted. A learner who says their real name will be marked wrong.",
+          "conclusion": "[screen 12] The prompt \"Apresente-se usando seu nome.\" asks learners to use their own name, but the only accepted answer is the fixed \"My name is Ana\". A learner who says their real name is marked wrong.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -5860,17 +5860,17 @@
       },
       "steps": [
         {
-          "conclusion": "[screen 6] The prompt \"a letra A\" is answered by sight: only the option \"A\" matches the letter named, so a learner gets it right without knowing any English. The options are A, B, C and D.",
+          "conclusion": "[screen 6] The prompt \"a letra A\" already shows the answer. Only the option \"A\" matches it by sight among A, B, C and D, so a learner can answer without knowing anything about English.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "[screen 6] The prompt \"a letra A\" is answered by sight: only the option \"A\" matches the letter named, so a learner gets it right without knowing any English. The options are A, B, C and D.",
+          "conclusion": "[screen 6] The prompt \"a letra A\" already shows the answer. Only the option \"A\" matches it by sight among A, B, C and D, so a learner can answer without knowing anything about English.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "[screen 6] The prompt \"a letra A\" is answered by sight: only the option \"A\" matches the letter named, so a learner gets it right without knowing any English. The options are A, B, C and D.",
+          "conclusion": "[screen 6] The prompt \"a letra A\" already shows the answer. Only the option \"A\" matches it by sight among A, B, C and D, so a learner can answer without knowing anything about English.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -6040,17 +6040,17 @@
       },
       "steps": [
         {
-          "conclusion": "[screen 6] The prompt \"a letra A\" with options \"A\", \"B\", \"C\", \"D\" gives the answer away. Only the option \"A\" matches the prompt by sight, so a learner can get it right without knowing any English.",
+          "conclusion": "[screen 6] The prompt \"a letra A\" has only one matching option, the single letter \"A\" among \"B\", \"C\" and \"D\". A learner can pick it by sight without knowing anything about English.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "[screen 6] The prompt \"a letra A\" with options \"A\", \"B\", \"C\", \"D\" gives the answer away. Only the option \"A\" matches the prompt by sight, so a learner can get it right without knowing any English.",
+          "conclusion": "[screen 6] The prompt \"a letra A\" has only one matching option, the single letter \"A\" among \"B\", \"C\" and \"D\". A learner can pick it by sight without knowing anything about English.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "[screen 6] The prompt \"a letra A\" with options \"A\", \"B\", \"C\", \"D\" gives the answer away. Only the option \"A\" matches the prompt by sight, so a learner can get it right without knowing any English.",
+          "conclusion": "[screen 6] The prompt \"a letra A\" has only one matching option, the single letter \"A\" among \"B\", \"C\" and \"D\". A learner can pick it by sight without knowing anything about English.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -6400,17 +6400,17 @@
       },
       "steps": [
         {
-          "conclusion": "[screen 8] Typo in the Portuguese instruction: \"Comple te para dizer que você é do Brasil.\" The verb is split into two words.",
+          "conclusion": "[screen 8] Typo in the Português Brasileiro instruction: \"Comple te para dizer que você é do Brasil.\" The verb is split into two words.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "[screen 8] Typo in the Portuguese instruction: \"Comple te para dizer que você é do Brasil.\" The verb is split into two words.",
+          "conclusion": "[screen 8] Typo in the Português Brasileiro instruction: \"Comple te para dizer que você é do Brasil.\" The verb is split into two words.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "[screen 8] Typo in the Portuguese instruction: \"Comple te para dizer que você é do Brasil.\" The verb is split into two words.",
+          "conclusion": "[screen 8] Typo in the Português Brasileiro instruction: \"Comple te para dizer que você é do Brasil.\" The verb is split into two words.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -6580,17 +6580,17 @@
       },
       "steps": [
         {
-          "conclusion": "[screen 8] The option \"grand inava\" is a word split in two, not a real Italian form (it looks like a broken \"grandinava\"). It is an invalid distractor. [screen 2] The respelling \"FRÊD-do\" gives \"freddo\" a closed e. In Italian the stressed e of \"freddo\" is open (/ˈfreddo/).",
+          "conclusion": "[screen 2] The respelling \"FRÊD-do\" teaches a closed vowel. The Italian \"e\" in \"freddo\" is open /ɛ/, so a Brazilian reader would say a closed \"ê\". [screen 8] The option \"grand inava\" is a word split in two, not a real word or form. It is also a nonsense distractor, since \"grandinava\" is the real form.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "[screen 8] The option \"grand inava\" is a word split in two, not a real Italian form (it looks like a broken \"grandinava\"). It is an invalid distractor. [screen 2] The respelling \"FRÊD-do\" gives \"freddo\" a closed e. In Italian the stressed e of \"freddo\" is open (/ˈfreddo/).",
+          "conclusion": "[screen 2] The respelling \"FRÊD-do\" teaches a closed vowel. The Italian \"e\" in \"freddo\" is open /ɛ/, so a Brazilian reader would say a closed \"ê\". [screen 8] The option \"grand inava\" is a word split in two, not a real word or form. It is also a nonsense distractor, since \"grandinava\" is the real form.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "[screen 8] The option \"grand inava\" is a word split in two, not a real Italian form (it looks like a broken \"grandinava\"). It is an invalid distractor. [screen 2] The respelling \"FRÊD-do\" gives \"freddo\" a closed e. In Italian the stressed e of \"freddo\" is open (/ˈfreddo/).",
+          "conclusion": "[screen 2] The respelling \"FRÊD-do\" teaches a closed vowel. The Italian \"e\" in \"freddo\" is open /ɛ/, so a Brazilian reader would say a closed \"ê\". [screen 8] The option \"grand inava\" is a word split in two, not a real word or form. It is also a nonsense distractor, since \"grandinava\" is the real form.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -6758,17 +6758,17 @@
       },
       "steps": [
         {
-          "conclusion": "[screen 8] The option \"grand inava\" is a word split in two, not a real form. The correct form is \"grandinava\".",
+          "conclusion": "[screen 8] The option \"grand inava\" is a word split in two, so it is not a real form. The imperfect of \"grandinare\" is \"grandinava\".",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "[screen 8] The option \"grand inava\" is a word split in two, not a real form. The correct form is \"grandinava\".",
+          "conclusion": "[screen 8] The option \"grand inava\" is a word split in two, so it is not a real form. The imperfect of \"grandinare\" is \"grandinava\".",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "[screen 8] The option \"grand inava\" is a word split in two, not a real form. The correct form is \"grandinava\".",
+          "conclusion": "[screen 8] The option \"grand inava\" is a word split in two, so it is not a real form. The imperfect of \"grandinare\" is \"grandinava\".",
           "kind": "potentialImprovements",
           "score": 10
         }
