@@ -14,7 +14,7 @@ describe(splitBandName, () => {
     ]);
   });
 
-  it("never ends the first line on a short word or leaves one word alone when another cut exists", () => {
+  it("dodges a short word ending the first line or one word alone on the second in a short name", () => {
     expect(splitBandName("Médico e farmácia")).toStrictEqual(["Médico", "e farmácia"]);
 
     expect(splitBandName("Funções do primeiro grau")).toStrictEqual([
@@ -30,6 +30,13 @@ describe(splitBandName, () => {
 
   it("takes the cut that reads badly in fewer ways when every cut reads badly", () => {
     expect(splitBandName("Art and architecture")).toStrictEqual(["Art", "and architecture"]);
+  });
+
+  it("keeps a long name balanced rather than dodging a short word with a lopsided cut", () => {
+    expect(splitBandName("The atom and the Schrödinger equation")).toStrictEqual([
+      "The atom and the",
+      "Schrödinger equation",
+    ]);
   });
 
   it("takes the balanced cut when every cut leaves one word alone", () => {

@@ -436,24 +436,23 @@ private fun bandName(
 }
 
 /**
- * Main's `splitBandName`: a short name is one part; a longer one is cut between words, never leaving a short
- * word ("e", "of") at the first line's end or one word alone on the second when another cut avoids it, then
- * where its longer part is shortest.
+ * Main's `splitBandName`: a short name is one part; a longer one is cut between words where its longer part is
+ * shortest. Each thing that reads badly, a short word ("e", "of") at the first line's end or one word alone on the
+ * second, makes a cut cost as if that part were longer, so a short name dodges them and a long one stays balanced.
  */
 internal fun bandNameParts(name: String): List<String> {
     val words = name.split(" ")
     if (name.length <= ONE_LINE_NAME_LENGTH || words.size == 1) return listOf(name)
     val cut =
-        (1 until words.size).minWith(
-            compareBy(
-                { cut -> listOf(words[cut - 1].count(Char::isLetter) <= SHORT_WORD_LETTERS, cut == words.lastIndex).count { it } },
-                { cut -> maxOf(words.take(cut).joinToString(" ").length, words.drop(cut).joinToString(" ").length) },
-            ),
-        )
+        (1 until words.size).minBy { cut ->
+            val faults = listOf(words[cut - 1].count(Char::isLetter) <= SHORT_WORD_LETTERS, cut == words.lastIndex).count { it }
+            maxOf(words.take(cut).joinToString(" ").length, words.drop(cut).joinToString(" ").length) + faults * FAULT_LETTERS
+        }
     return listOf(words.take(cut).joinToString(" "), words.drop(cut).joinToString(" "))
 }
 
 private const val SHORT_WORD_LETTERS = 3
+private const val FAULT_LETTERS = 6
 
 private const val ONE_LINE_NAME_LENGTH = 16
 private const val NO_BREAK_SPACE = '\u00A0'

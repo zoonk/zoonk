@@ -86,6 +86,9 @@ const ONE_LINE_NAME_LENGTH = 16;
 
 const SHORT_WORD_LENGTH = 3;
 
+/** How many letters of the longer line a cut that reads badly costs. */
+const FAULT_LETTERS = 6;
+
 const LETTER = /\p{L}/gu;
 
 function countLetters(word: string): number {
@@ -93,9 +96,10 @@ function countLetters(word: string): number {
 }
 
 /**
- * A short name is one part; a longer one is cut between words. A cut is worse for each thing that
- * reads badly: a short word at the end of the first line ("Médico e") and one word alone on the
- * second. The cut with the fewest wins; among those, the one whose longer part is shortest.
+ * A short name is one part; a longer one is cut between words where its longer part is shortest.
+ * Each thing that reads badly makes a cut cost as if that part were longer: a short word at the
+ * end of the first line ("Médico e") and one word alone on the second. A short name dodges them,
+ * and a long one stays balanced rather than leaving "The atom" over the rest.
  */
 export function splitBandName(name: string): [string, string | null] {
   const words = name.split(" ");
@@ -109,19 +113,13 @@ export function splitBandName(name: string): [string, string | null] {
     const second = words.slice(index + 1);
     const endsShort = countLetters(words[index] ?? "") <= SHORT_WORD_LENGTH;
 
-    return {
-      faults: Number(endsShort) + Number(second.length === 1),
-      first,
-      longest: Math.max(first.length, second.join(" ").length),
-      second: second.join(" "),
-    };
+    const faults = Number(endsShort) + Number(second.length === 1);
+    const longest = Math.max(first.length, second.join(" ").length);
+
+    return { cost: longest + faults * FAULT_LETTERS, first, second: second.join(" ") };
   });
 
-  const best = cuts.reduce((chosen, cut) =>
-    cut.faults < chosen.faults || (cut.faults === chosen.faults && cut.longest < chosen.longest)
-      ? cut
-      : chosen,
-  );
+  const best = cuts.reduce((chosen, cut) => (cut.cost < chosen.cost ? cut : chosen));
 
   return [best.first, best.second];
 }
