@@ -20,6 +20,8 @@ export type SpokenAnswerMatch = {
 };
 
 const MAX_WORDS_TO_EXPLAIN = 2;
+// The shortest observed mic startup that clipped the opening on Safari with AirPods was 400 ms.
+const MISSED_START_MIN_MIC_STARTUP_MS = 400;
 const LONE_LETTER = /^\p{L}\p{M}*$/u;
 const DIGIT_GROUP = /^\p{Nd}+$/u;
 
@@ -203,4 +205,19 @@ export function pickWordsToExplain(words: readonly SpokenWordResult[]): SpokenWo
   const missed = words.filter((word) => word.status === "missed");
 
   return [...different, ...missed].slice(0, MAX_WORDS_TO_EXPLAIN);
+}
+
+export function hasMissedStart({
+  micStartupMs,
+  words,
+}: {
+  micStartupMs?: number;
+  words: readonly SpokenWordResult[];
+}): boolean {
+  if (micStartupMs === undefined || micStartupMs < MISSED_START_MIN_MIC_STARTUP_MS) {
+    return false;
+  }
+
+  const firstCorrect = words.findIndex((word) => word.status === "correct");
+  return firstCorrect > 0 && words.slice(firstCorrect).every((word) => word.status === "correct");
 }

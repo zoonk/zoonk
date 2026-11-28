@@ -64,7 +64,7 @@ describe("POST /v1/steps/{stepId}/spoken-answers", () => {
 
     const response = await post(
       spokenAnswerRequest(
-        { attemptId, durationMs: "2400", timeZone: "America/Sao_Paulo" },
+        { attemptId, durationMs: "2400", micStartupMs: "400", timeZone: "America/Sao_Paulo" },
         recording(),
       ),
     );
@@ -74,10 +74,22 @@ describe("POST /v1/steps/{stepId}/spoken-answers", () => {
 
     expect(gradeSpokenAnswer).toHaveBeenCalledWith({
       audio: { bytes: new Uint8Array([1, 2, 3]), mediaType: "audio/webm" },
-      fields: { attemptId, durationMs: 2400, timeZone: "America/Sao_Paulo" },
+      fields: { attemptId, durationMs: 2400, micStartupMs: 400, timeZone: "America/Sao_Paulo" },
       stepId: STEP_ID,
     });
   });
+
+  it.each(["", "-1", "2.5", "60001", "long"])(
+    "rejects mic startup timing %j before grading",
+    async (micStartupMs) => {
+      const response = await post(
+        spokenAnswerRequest({ durationMs: "2400", micStartupMs }, recording()),
+      );
+
+      expect(response.status).toBe(400);
+      expect(gradeSpokenAnswer).not.toHaveBeenCalled();
+    },
+  );
 
   it.each([
     ["no recording", spokenAnswerRequest({ durationMs: "1800" })],
@@ -109,6 +121,7 @@ describe("POST /v1/steps/{stepId}/spoken-answers", () => {
     [{ status: "unauthorized" as const }, 401, "UNAUTHORIZED"],
     [{ status: "notFound" as const }, 404, "NOT_FOUND"],
     [{ status: "invalidAudio" as const }, 400, "INVALID_AUDIO"],
+    [{ status: "missedStart" as const }, 422, "MISSED_START"],
     [{ status: "noSpeech" as const }, 422, "NO_SPEECH"],
     [{ retryAfterSeconds: 60, status: "slowDown" as const }, 429, "SLOW_DOWN"],
     [limitReached({ resource: "assist", tier: "guest" }), 403, "USAGE_LIMIT_REACHED"],
