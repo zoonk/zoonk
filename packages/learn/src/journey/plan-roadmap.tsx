@@ -49,6 +49,8 @@ function RoadmapCompact({
   const t = useExtracted();
   const { phases } = useRoadmapPhases();
   const position = useRoadmapPosition();
+  // One phase has no place to say under the bar, so the way to its path ends the bar.
+  const single = phases.length === 1;
 
   const content = (
     <>
@@ -75,6 +77,7 @@ function RoadmapCompact({
           ))}
         </MeterParts>
         <CompactFinish />
+        {single && onOpen && <RowChevron />}
       </span>
 
       {position && (
@@ -93,7 +96,7 @@ function RoadmapCompact({
         </span>
       )}
 
-      {!position && onOpen && (
+      {!position && !single && onOpen && (
         <span className="text-muted-foreground flex w-full items-center justify-between gap-3 text-xs">
           <span className="min-w-0 truncate">
             {t("{done, number} of {total, plural, one {# phase} other {# phases}} done", {
@@ -144,7 +147,7 @@ export function PlanRoadmap({
 }) {
   const { phases } = useRoadmapPhases();
 
-  if (phases.length < 2) {
+  if (phases.length === 0) {
     return null;
   }
 

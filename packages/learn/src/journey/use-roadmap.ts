@@ -87,21 +87,34 @@ export function useRoadmapOverrun(): { phaseIndex: number; share: number } | nul
   return phase && share !== null ? { phaseIndex: phase.index, share } : null;
 }
 
+/**
+ * Where the learner is among the phases the roadmap draws. One phase is the whole plan, so it has
+ * no place to name.
+ */
+export function getRoadmapPlace<Phase extends Pick<PlanPhaseView, "state">>(
+  phases: readonly Phase[],
+): { number: number; phase: Phase; total: number } | null {
+  const index = phases.findIndex((phase) => phase.state === "current");
+  const phase = phases[index];
+
+  return phase && phases.length > 1 ? { number: index + 1, phase, total: phases.length } : null;
+}
+
 /** Where the learner is: the row under it already names the phase. */
 export function useRoadmapPosition() {
   const t = useExtracted();
-  const { currentIndex, phases } = useRoadmapPhases();
-  const current = phases[currentIndex];
+  const { phases } = useRoadmapPhases();
+  const place = getRoadmapPlace(phases);
 
-  if (!current) {
+  if (!place) {
     return null;
   }
 
   return {
-    phase: current,
+    phase: place.phase,
     place: t("Phase {number, number} of {total, number}", {
-      number: currentIndex + 1,
-      total: phases.length,
+      number: place.number,
+      total: place.total,
     }),
   };
 }
