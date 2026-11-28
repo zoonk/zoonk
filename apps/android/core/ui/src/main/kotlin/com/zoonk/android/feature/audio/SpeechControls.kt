@@ -88,7 +88,7 @@ fun rememberSpokenAudio(
  * Plays [segments] on tap and stops them on the next one. A screen that shows [SpeechFailedNote]
  * passes `audio.state.withoutFailure()` as [state], so the note's Try again is the only retry.
  * Two buttons with their own [SpokenAudio] (normal and slow) stop each other, since one sound
- * plays at a time.
+ * plays at a time. Not [enabled] while the learner records, so the example doesn't play into their take.
  */
 @Composable
 fun ListenButton(
@@ -99,11 +99,13 @@ fun ListenButton(
     state: SpeechState = audio.state,
     rate: Float = 1f,
     @DrawableRes icon: Int = R.drawable.ic_volume_up,
+    enabled: Boolean = true,
 ) {
     val description = if (state == SpeechState.Idle) null else speechActionLabel(state, label)
     OutlinedButton(
         onClick = { if (audio.isBusy) audio.cancel() else audio.speak(segments, rate) },
         modifier = modifier.semantics { description?.let { stateDescription = it } },
+        enabled = enabled,
     ) {
         SpeechStatusIcon(state) { Icon(painterResource(icon), contentDescription = null, modifier = Modifier.size(buttonIconSize())) }
         Spacer(Modifier.size(ButtonDefaults.IconSpacing))

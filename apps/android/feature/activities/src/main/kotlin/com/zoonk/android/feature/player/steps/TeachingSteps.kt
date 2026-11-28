@@ -69,6 +69,7 @@ import com.zoonk.android.data.Resource
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.activities.ActivityAnnouncement
+import com.zoonk.android.feature.audio.SpeakCue
 import com.zoonk.android.feature.audio.VoiceAnswerButton
 import com.zoonk.android.feature.audio.VoiceAnswerLimit
 import com.zoonk.android.feature.audio.VoiceAnswerModel
@@ -703,7 +704,14 @@ internal fun SpokenAnswerView(
     }
 
     QuestionScene {
-        if (part.showsScreen) TargetText(spoken)
+        if (part.showsScreen) {
+            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                TargetText(spoken)
+                if (!types && (!locked || state.phase == LessonPhase.Checking)) {
+                    SpeakCue(voice.recorder, checking = voice.checking || state.phase == LessonPhase.Checking)
+                }
+            }
+        }
 
         if (part.showsTurn) {
             when {

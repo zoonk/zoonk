@@ -10,6 +10,9 @@ sealed interface GradeOutcome<out T> {
 
     data object NoSpeech : GradeOutcome<Nothing>
 
+    /** The microphone started late and only the opening words were missed, so the take wasn't graded. */
+    data object MissedStart : GradeOutcome<Nothing>
+
     data class Limited(
         val limit: Limit,
     ) : GradeOutcome<Nothing>
@@ -30,6 +33,7 @@ fun <T> MutationResult<T>.toGradeOutcome(): GradeOutcome<T> =
             val limit = Limit.of(this)
             when {
                 code == NO_SPEECH -> GradeOutcome.NoSpeech
+                code == MISSED_START -> GradeOutcome.MissedStart
                 limit != null -> GradeOutcome.Limited(limit)
                 else -> GradeOutcome.Failed
             }
@@ -41,3 +45,5 @@ fun <T> MutationResult<T>.toGradeOutcome(): GradeOutcome<T> =
     }
 
 private const val NO_SPEECH = "NO_SPEECH"
+
+private const val MISSED_START = "MISSED_START"

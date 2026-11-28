@@ -54,6 +54,7 @@ import com.zoonk.android.app.ZoonkApplication
 import com.zoonk.android.feature.audio.ListenButton
 import com.zoonk.android.feature.audio.MicrophoneOff
 import com.zoonk.android.feature.audio.RecordButton
+import com.zoonk.android.feature.audio.SpeakCue
 import com.zoonk.android.feature.audio.SpeechFailedNote
 import com.zoonk.android.feature.audio.SpeechState
 import com.zoonk.android.feature.audio.SpeechStatusIcon
@@ -913,13 +914,24 @@ private fun Audio() {
         }
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             RecordButton(VoiceRecorder.Status.Idle, onStart = {}, onStop = {})
+            RecordButton(VoiceRecorder.Status.Acquiring, onStart = {}, onStop = {})
             RecordButton(VoiceRecorder.Status.Recording(SystemClock.elapsedRealtime() - 7_000), onStart = {}, onStop = {})
+        }
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            SpeakCue(VoiceRecorder.Status.Idle, checking = false, levels = { emptyList() })
+            SpeakCue(VoiceRecorder.Status.Acquiring, checking = false, levels = { emptyList() })
+            SpeakCue(VoiceRecorder.Status.Recording(0), checking = false, levels = { emptyList() })
+            SpeakCue(VoiceRecorder.Status.Recording(0), checking = false, levels = { GALLERY_VOICE })
         }
         SpeechFailedNote(language = "it", limit = null, onRetry = {}, navigator = navigator, text = "Vorrei un caffè, per favore.")
         SpeechFailedNote(language = "it", limit = Limit.SignUpRequired, onRetry = {}, navigator = navigator)
         MicrophoneOff(stringResource(R.string.pronunciation_microphone_off))
     }
 }
+
+/** A short phrase's loudness, for the cue's bars. */
+private val GALLERY_VOICE =
+    listOf(0f, 0.1f, 0.3f, 0.7f, 0.9f, 0.5f, 0.8f, 0.4f, 0.2f, 0.6f, 1f, 0.8f, 0.4f, 0.2f, 0f, 0.2f, 0.5f, 0.7f, 0.9f, 0.6f, 0.3f)
 
 @Preview(name = "Light", heightDp = 2400)
 @Composable

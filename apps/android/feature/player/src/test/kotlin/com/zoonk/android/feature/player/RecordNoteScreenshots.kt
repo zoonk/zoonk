@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
@@ -52,8 +53,8 @@ import org.robolectric.annotation.GraphicsMode
 import java.io.File
 
 /**
- * Review screenshots of the line over Record on the lesson's spoken screen and the pronunciation review, and of a lesson's
- * check line, written only on demand:
+ * Review screenshots of the cue under what the learner says and the line over Record on the lesson's spoken screen and the
+ * pronunciation review, and of a lesson's check line, written only on demand:
  * `./gradlew :feature:player:testDebugUnitTest --tests '*RecordNoteScreenshots*' --rerun -Pzoonk.shots=<folder>`.
  */
 @RunWith(AndroidJUnit4::class)
@@ -93,6 +94,17 @@ class RecordNoteScreenshots {
 
     @Test
     @Config(qualifiers = PHONE)
+    fun spokenGettingReadyPhone() = spoken("lesson-spoken-getting-ready-phone") { askForMicrophone() }
+
+    @Test
+    @Config(qualifiers = PHONE)
+    fun spokenMissedStartPhone() =
+        spoken("lesson-spoken-missed-start-phone", { spokenGrade = { throw ApiException(ApiError.Unavailable, "MISSED_START", 422) } }) {
+            takeChecked()
+        }
+
+    @Test
+    @Config(qualifiers = PHONE)
     fun spokenFailedPhone() = spoken("lesson-spoken-failed-phone") { takeChecked() }
 
     @Test
@@ -125,6 +137,10 @@ class RecordNoteScreenshots {
     @Test
     @Config(qualifiers = PHONE)
     fun pronunciationRecordingPhone() = pronunciation("pronunciation-recording-phone") { record() }
+
+    @Test
+    @Config(qualifiers = PHONE)
+    fun pronunciationGettingReadyPhone() = pronunciation("pronunciation-getting-ready-phone") { askForMicrophone() }
 
     @Test
     @Config(qualifiers = PHONE)
@@ -217,7 +233,13 @@ class RecordNoteScreenshots {
     private fun record() {
         shadowOf(rule.activity.application).grantPermissions(Manifest.permission.RECORD_AUDIO)
         rule.onNodeWithText("Record").performClick()
-        rule.onNodeWithText("Stop").fetchSemanticsNode()
+        rule.waitUntilExactlyOneExists(hasText("Stop"))
+    }
+
+    /** Record while Android asks for the microphone: the take is getting ready until the learner answers. */
+    private fun askForMicrophone() {
+        shadowOf(rule.activity.application).denyPermissions(Manifest.permission.RECORD_AUDIO)
+        rule.onNodeWithText("Record").performClick()
     }
 
     private fun takeChecked() {

@@ -73,6 +73,7 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.audio.ListenButton
 import com.zoonk.android.feature.audio.MicrophoneOff
 import com.zoonk.android.feature.audio.RecordButton
+import com.zoonk.android.feature.audio.SpeakCue
 import com.zoonk.android.feature.audio.SpeechFailedNote
 import com.zoonk.android.feature.audio.SpeechPlayer
 import com.zoonk.android.feature.audio.SpeechState
@@ -306,7 +307,13 @@ private fun WordStep(
             WordPages(
                 Modifier.fillMaxSize().padding(padding),
                 meter = { RoundMeter(round) },
-                word = { key(word.id) { WordCard(word, round.language, normal, slow, navigator) } },
+                word = {
+                    key(word.id) {
+                        WordCard(word, round.language, normal, slow, navigator, listens = status == VoiceRecorder.Status.Idle) {
+                            if (step.grade == null && !model.microphoneOff) SpeakCue(model.recorder, checking = round.pending)
+                        }
+                    }
+                },
             ) {
                 step.grade?.let { GradeNote(it) }
             }
@@ -413,6 +420,8 @@ private fun WordCard(
     normal: SpokenAudio,
     slow: SpokenAudio,
     navigator: AppNavigator,
+    listens: Boolean,
+    cue: @Composable () -> Unit,
 ) {
     val segments = listOf(SpokenText(word.word, recording = word.audioUrl, personal = false))
     // One sound plays at a time, so at most one of them failed.
@@ -442,7 +451,13 @@ private fun WordCard(
         }
 
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            ListenButton(normal, segments, stringResource(R.string.pronunciation_listen), state = normal.state.withoutFailure())
+            ListenButton(
+                normal,
+                segments,
+                stringResource(R.string.pronunciation_listen),
+                state = normal.state.withoutFailure(),
+                enabled = listens,
+            )
             ListenButton(
                 slow,
                 segments,
@@ -450,8 +465,11 @@ private fun WordCard(
                 state = slow.state.withoutFailure(),
                 rate = SpeechPlayer.SLOW_RATE,
                 icon = R.drawable.ic_slow_motion_video,
+                enabled = listens,
             )
         }
+
+        cue()
 
         failed?.let { (audio, rate) ->
             SpeechFailedNote(
