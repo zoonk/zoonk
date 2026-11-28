@@ -40,6 +40,10 @@ export function withoutFailure(state: SpokenAudioState): SpokenAudioState {
   return state.status === "failed" ? { status: "idle" } : state;
 }
 
+export function canRetrySpeech(limit: HelpLimit | null): boolean {
+  return !limit || limit.status === "slowDown";
+}
+
 export function useSpeechActionLabel(state: SpokenAudioState, idle: string): string {
   const t = useExtracted();
 
@@ -69,11 +73,12 @@ export function SpeechFailedNote({
   className?: string;
   language: string;
   limit: HelpLimit | null;
-  onRetry: () => void;
+  /** Absent where the screen's own play control is the retry. */
+  onRetry?: () => void;
   text?: string;
 }) {
   const t = useExtracted();
-  const canRetry = !limit || limit.status === "slowDown";
+  const canRetry = canRetrySpeech(limit);
   const space = useSentenceSpace();
 
   return (
@@ -94,7 +99,7 @@ export function SpeechFailedNote({
         </p>
       )}
 
-      {canRetry && (
+      {canRetry && onRetry && (
         <Button onClick={onRetry} size="sm" type="button" variant="outline">
           <RotateCcwIcon aria-hidden="true" />
           {t("Try again")}

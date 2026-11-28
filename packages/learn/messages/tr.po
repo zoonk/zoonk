@@ -2521,7 +2521,6 @@ msgstr "{number, number}. ünite"
 
 #: src/chapter/chapter-header.tsx
 #: src/language/unit/unit-header.tsx
-#: src/placement-test/placement-test-screens.tsx
 #: src/plan-diff/use-change-rows.ts
 #: src/plan/plan-fit-suggestion.tsx
 #: src/syllabus/subject-aside.tsx
@@ -10174,6 +10173,12 @@ msgstr "Bugün bunları geri aldın. Atlamak için yarın yeniden cevapla."
 msgctxt "SGu5bG"
 msgid "You start here"
 msgstr "Buradan başlıyorsun"
+
+#. A quiet action on the result of a placement test opened again from the plan: it offers a new test.
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "p9JOZc"
+msgid "Take the test again"
+msgstr ""
 
 #: src/placement-test/use-test-facts.ts
 msgctxt "HUvYmi"

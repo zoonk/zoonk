@@ -143,17 +143,16 @@ function toClosedPhase({
     return shown;
   }
 
-  const nothingToStart = !asked && !canStart;
-
-  return nothingToStart ? { ...shown, saved: true } : toUnopenedPhase({ asked, canStart, outcome });
+  return asked ? toUnopenedPhase({ asked, canStart, outcome }) : { ...shown, saved: true };
 }
 
 /**
+ * On the Plan, a learner who took a test and hasn't asked for another opens its result, where a
+ * new test is offered while one can start.
  * `asked`: the learner already chose the test, so it's waited for instead of offered again.
  * `attemptId`: the test the learner was in. A read that finds it closed, such as after another
- * device stopped it, shows its result on the Plan too.
- * `canStart`: false when the course has nothing a test could skip. The Plan then offers no start
- * and opens the last test's result instead, when one was taken.
+ * device stopped it, shows its result as just ended.
+ * `canStart`: false when the course has nothing a test could skip, so no start is offered.
  */
 export function toPlacementTestPhase({
   asked = false,

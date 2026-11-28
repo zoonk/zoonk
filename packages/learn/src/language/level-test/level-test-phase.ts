@@ -4,6 +4,7 @@ import {
   type LevelTestResult,
 } from "@zoonk/core/language/level-test/contract";
 import { type LanguageLevelTestOutResult } from "@zoonk/core/language/level-test/test-out";
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { type PlacementQuestion } from "../../onboarding/onboarding-actions";
 
 export type ReadyLevelTest = Extract<LanguageLevelTestView, { status: "ready" }>;
@@ -19,6 +20,17 @@ export function toLevelTestGroups(total: number): number[] {
   const check = total - reading - listening;
 
   return [reading, listening, check].filter((size) => size > 0);
+}
+
+/** Slower than normal, so a level test isn't a test of catching fast speech. */
+export const LISTENING_RATE = 0.9;
+
+/**
+ * A message's length as the learner hears it. A length rounds to the nearest second, so it reads
+ * the same before, during and after a play.
+ */
+export function toHeardLengthMs(clipMs: number): number {
+  return Math.round(clipMs / LISTENING_RATE / MS_PER_SECOND) * MS_PER_SECOND;
 }
 
 export type ListeningOut = "cantListen" | "notUnderstood" | "skip";

@@ -99,10 +99,13 @@ describe(toPlacementTestPhase, () => {
     }
   });
 
-  it("offers the test again from the Plan after one ended, and shows onboarding the result of the test it ran", () => {
+  it("opens the last test's result from the Plan, also when a new test could start", () => {
     const outcome = ready({ result: RESULT });
 
-    expect(toPlacementTestPhase({ outcome, surface: "plan" })).toStrictEqual({ kind: "offer" });
+    expect(toPlacementTestPhase({ outcome, surface: "plan" })).toStrictEqual({
+      ...RESULT_PHASE,
+      saved: true,
+    });
 
     expect(toPlacementTestPhase({ outcome, surface: "onboarding" })).toStrictEqual(RESULT_PHASE);
   });
@@ -147,7 +150,11 @@ describe(toPlacementTestPhase, () => {
     const outcome: PlacementOutcome = { attempt: null, result: RESULT, status: "unavailable" };
 
     expect(toPlacementTestPhase({ outcome, surface: "onboarding" })).toStrictEqual(RESULT_PHASE);
-    expect(toPlacementTestPhase({ outcome, surface: "plan" })).toStrictEqual({ kind: "offer" });
+
+    expect(toPlacementTestPhase({ outcome, surface: "plan" })).toStrictEqual({
+      ...RESULT_PHASE,
+      saved: true,
+    });
   });
 
   it("waits for a test the learner asked for while the course's questions aren't there yet", () => {
