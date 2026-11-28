@@ -148,6 +148,10 @@ internal data class PlanEdits(
     ) = hasFailed(part) && opening in sheetAnswers && sheetAnswers[opening] == null
 
     fun asked(part: PlanPart): List<PlanOp> = asked[part].orEmpty()
+
+    /** The options [group]'s save is asking for, while it saves. */
+    fun askedExamChoice(group: String): PlanOp.ExamChoice? =
+        asked(PlanPart.ExamChoices).filterIsInstance<PlanOp.ExamChoice>().firstOrNull { it.group == group }
 }
 
 /** What the editor shows that isn't saved, kept above its sheet or panel, which turning a phone swaps. */

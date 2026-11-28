@@ -69,6 +69,18 @@
           GallerySection(id: "waits", title: "Waits") { Waits() }
           GallerySection(id: "marks", title: "Marks, kinds and belts") { Marks() }
           GallerySection(id: "options", title: "Answer options") { Options() }
+          GallerySection(id: "shownAnswers", title: "Answers shown after the fact") {
+            ShownAnswers()
+          }
+          GallerySection(id: "choices", title: "Choice list") { Choices() }
+          GallerySection(id: "checks", title: "Check list") { Choices(picks: .several) }
+          GallerySection(id: "checksSaving", title: "Check list saving") {
+            Choices(picks: .several).disabled(true)
+          }
+          GallerySection(id: "cards", title: "Card rows") { CardRows() }
+          GallerySection(id: "cardsSaving", title: "Card rows saving") {
+            CardRows().disabled(true)
+          }
           GallerySection(id: "match", title: "Match cards") { MatchCards() }
           GallerySection(id: "questionBar", title: "Question bar") { QuestionBar() }
           GallerySection(id: "code", title: "Code") { Code() }
@@ -485,6 +497,14 @@
 
         Text(verbatim: "A sentence in a chip, such as a lesson screen's eyebrow, takes more lines")
           .chip(wraps: true)
+
+        FlowLayout(spacing: 8) {
+          ToggleChip(Text(verbatim: "Listening"), isOn: true) {}
+          ToggleChip(Text(verbatim: "Speaking"), isOn: false) {}
+          ToggleChip(Text(verbatim: "New words"), isOn: true) {}.disabled(true)
+          ToggleChip(Text(verbatim: "I learn best with examples"), isOn: false, words: .answer) {}
+          ToggleChip(Text(verbatim: "Short lessons"), isOn: true, words: .answer) {}
+        }
       }
       .padding(.vertical, 8)
     }
@@ -1171,10 +1191,100 @@
           marker: 4, isPicked: true, result: .wrong, isLocked: true,
           text: RichInline(text: AttributedString("Checked wrong")), action: {})
         AnswerOption(
-          marker: 5, isPicked: true, result: .guess, isLocked: true,
+          marker: 5, isPicked: true, isGuessed: true,
+          text: RichInline(text: AttributedString("A guess, picked")), action: {})
+        AnswerOption(
+          marker: 6, isPicked: true, result: .guess, isLocked: true,
           text: RichInline(text: AttributedString("A guess, checked")), action: {})
+        AnswerOption(
+          marker: 7, picks: .several,
+          text: RichInline(text: AttributedString("One of several at rest")), action: {})
+        AnswerOption(
+          marker: 8, picks: .several, isPicked: true,
+          text: RichInline(text: AttributedString("One of several, picked")), action: {})
+
+        // Pictures that never came, so each is described; the long one keeps clear of its marks.
+        LessonOptionList(
+          options: [
+            LessonOption(id: "A red apple", text: "A red apple", pictureAlt: "A red apple"),
+            LessonOption(
+              id: "A green pear", text: "A green pear",
+              pictureAlt:
+                "A green pear cut in half on a wooden board, beside a small knife and a folded napkin"
+            ),
+          ],
+          selectedId: "A green pear", isChecked: false, isLocked: false, select: { _ in })
+
+        LessonOptionList(
+          options: [
+            LessonOption(
+              id: "A red apple", text: "A red apple", isCorrect: true, pictureAlt: "A red apple"),
+            LessonOption(
+              id: "A green pear", text: "A green pear", isCorrect: false,
+              pictureAlt: "A green pear"),
+          ],
+          selectedId: "A green pear", isChecked: true, isLocked: true, select: { _ in })
       }
       .padding(.vertical, 8)
+    }
+  }
+
+  /// Main's `AnswerPair`, as the mistakes notebook and a mock's review show it, then a checkpoint's
+  /// answers as its review shows them.
+  private struct ShownAnswers: View {
+    var body: some View {
+      VStack(spacing: 10) {
+        MistakeAnswerRow(text: "What the learner answered", isRight: false, isLiteral: true)
+        MistakeAnswerRow(text: "The right answer", isRight: true, isLiteral: true)
+      }
+      .padding(.vertical, 8)
+
+      ChoiceItemView(
+        options: ["The right one they missed", "Their wrong pick", "Another option"],
+        select: .one,
+        result: PracticeItemResult(answer: .choice(1), correctAnswer: .choice(0), isCorrect: false),
+        isLocked: true, draft: .constant(nil), isReview: true
+      )
+      .padding(.vertical, 8)
+    }
+  }
+
+  /// Main's card rows, as its plan's Focus sheet draws them: a link, then a check list.
+  private struct CardRows: View {
+    var body: some View {
+      Button {
+      } label: {
+        ListRow(Text(verbatim: "Focus test"), description: Text(verbatim: "See your result")) {
+          Image(systemName: "scope")
+        }
+        .disclosureChevron()
+      }
+      .buttonStyle(CardRowStyle())
+      .cardRowInList()
+
+      ChoiceRow(picks: .several, isPicked: true, isCard: true) {
+      } words: {
+        ChoiceWords(title: Text(verbatim: "Natural sciences"))
+      }
+      ChoiceRow(picks: .several, isPicked: false, isCard: true) {
+      } words: {
+        ChoiceWords(
+          title: Text(verbatim: "Languages"), detail: Text(verbatim: "Includes English"))
+      }
+    }
+  }
+
+  /// Main's `ChoiceList`, or its `CheckList`, with the first choice picked.
+  private struct Choices: View {
+    var picks: ChoiceMark.Kind = .one
+
+    var body: some View {
+      ChoiceRow(Text(verbatim: "Biology"), picks: picks, isPicked: true) {}
+      ChoiceRow(
+        Text(verbatim: "Law"), detail: Text(verbatim: "With a line about it"), picks: picks,
+        isPicked: false
+      ) {}
+      ChoiceRow(Text(verbatim: "Health sciences"), picks: picks, isPicked: false) {}
     }
   }
 

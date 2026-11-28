@@ -113,14 +113,43 @@ final class PlanStoreTests: XCTestCase {
     let api = PlanAPIStub()
     let editor = PlanEditor(goalId: "goal", store: makeStore(api: api))
 
-    await api.setChangeOutcome(.unchanged)
+    await api.setChangeOutcome(.unchanged(nil))
     await editor.change([.dailyMinutes(20)], sentence: "")
-    XCTAssertEqual(editor.latest, .unchanged)
+    XCTAssertEqual(editor.latest, .unchanged(sentence: nil, edits: [.dailyMinutes(20)]))
+
+    await api.setChangeOutcome(.unchanged(.cantMove))
+    await editor.change([.focusAreas(["Math"])], unchanged: { "Nothing changed: \($0)" })
+    XCTAssertEqual(
+      editor.latest,
+      .unchanged(sentence: "Nothing changed: cantMove", edits: [.focusAreas(["Math"])]))
 
     await api.setChangeOutcome(.invalid)
     await editor.change([.targetDate("2020-01-01")], sentence: "")
     XCTAssertEqual(editor.latest, .invalid)
     XCTAssertFalse(editor.failed)
+  }
+
+  func testAFocusThatChangedNothingWaitsForTheLearnerToChangeSomething() async {
+    let api = PlanAPIStub()
+    let editor = PlanEditor(goalId: "goal", store: makeStore(api: api))
+    let math: [PlanEdit] = [.focusAreas(["Math"])]
+
+    await api.setChangeOutcome(.unchanged(.cantMove))
+    await editor.change(math, unchanged: { "Nothing changed: \($0)" })
+    XCTAssertTrue(editor.changedNothing(math))
+    XCTAssertFalse(editor.changedNothing([.focusAreas(["Math", "Physics"])]))
+
+    await api.setChangeOutcome(.applied(.stub))
+    await editor.change([.dailyMinutes(60)], sentence: "Daily time changed.")
+    XCTAssertFalse(editor.changedNothing(math), "more time a day may make room for it")
+
+    editor.forgetUnchanged()
+    XCTAssertEqual(editor.latest, .applied(.stub, sentence: "Daily time changed."))
+
+    await api.setChangeOutcome(.unchanged(.cantMove))
+    await editor.change(math, unchanged: { "Nothing changed: \($0)" })
+    editor.forgetUnchanged()
+    XCTAssertNil(editor.latest, "another pick drops why the last one changed nothing")
   }
 
   func testUndoneChangeSaysSoAndRevalidatesThePlan() async {
@@ -959,11 +988,11 @@ actor PlanAPIStub: PlanAPIClient {
   }
   func chooseExamOption(token: String, goalId: String, group: String, subjects: [String])
     async throws -> PlanChangeOutcome
-  { .unchanged }
+  { .unchanged(nil) }
   func chooseTools(
     token: String, goalId: String, tools: [String], choice: ToolChoice, system: String?,
     whileWriting: @escaping @MainActor () -> Void
-  ) async throws -> PlanChangeOutcome { .unchanged }
+  ) async throws -> PlanChangeOutcome { .unchanged(nil) }
   func timeToCover(token: String, goalId: String) async throws -> TimeToCover {
     calls.timeToCover += 1
     defer { completed[.timeToCover, default: 0] += 1 }

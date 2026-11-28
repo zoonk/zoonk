@@ -245,6 +245,7 @@
   "plan_estimated_score": "f90fb5ba50c8f45f8991e390e36776ef59a920eb9690eb92a1ccff97659f94e9",
   "plan_every_day": "c23e7c3fe92da6e8043c7c59c08f7ea4f82da8e59b7b130e17eb5532437d32e2",
   "plan_everything": "af6d5629a938b51737b4b97a78fcf7e42d68d376309eecfcbc971d49d47cff10",
+  "plan_exam_choice_not_set": "cba83599284f5caada97583b4065288b31d7aba0247685bf0389d826f17a3b9f",
   "plan_exam_choice_question": "5bf0d612f41c6edee011d9f92f0e56670c461ef6b4a1219ded876924709d184e",
   "plan_exam_choice_question_several": "ac44007e387bc1e9941b9641aa774e747d29336d9fc59c7f69d9ce85c405e551",
   "plan_exam_date": "c5711827dcfe7af649409c795ba6f776b9fb376b0594db29bf5e393671bf8ac7",
@@ -270,9 +271,8 @@
   "plan_finished_title": "8ee8c0b2a699933e8a9d6814cf8cb93dd0dcb3a0179bf618fb81ffaddcb7fc28",
   "plan_fit_time_left": "bf9beb7e5e9048849c05f40d9ddfec3806c9548f91c94d1c57a4a54a79ce3dae",
   "plan_focus_already_in": "258eb1c316e5f0ee002511264d97a56d54c47ca98056b3216b62433f41d4e107",
-  "plan_focus_cant_move": "afc0521101bb71bc2916e6792554e80082b1e0664e6c3b704096695030584ef0",
+  "plan_focus_cant_move": "63a3c94d2e2121f3af1525bb21c09ccd7a6a4bb78119ebb063210ec68d913f4a",
   "plan_focus_includes": "0052da0f824012c9a3c7aaf8ad1a7c0a0551914cc893b48cdde4001f6a29a3ad",
-  "plan_focus_on_these": "74c2bfce914eaf2d73ea5e3af7493ff02222c4753892c6f7ed76ff66838f79c9",
   "plan_focus_only": "3bac35c55477ced8995343974cd95f7ce0d1c10f1c2864ad4aca9b455da02ec8",
   "plan_fridays": "b119b7b07df1aff0d1cdc1f1060f3ac260cd94da1d380e23931ce285e06d38e0",
   "plan_full_course": "822024d11469ba6763c6b86c1aed7430ea0f8740f4223782e6d3bcb40c7931ae",
@@ -508,7 +508,7 @@
   "plan_what_you_practice": "83617eadfd979b65e06ad23b2406b1017ba971662ed1acc34af1a3da544f2238",
   "plan_when_to_practice_writing": "520767303dd423defa8df368bec33ba7abef49481559873201c8318ccaa50a0c",
   "plan_where_to_focus": "02deaceab401250ba5bf9eba11773b69effede3044d4dd14af603111152f7aec",
-  "plan_where_to_focus_description": "30dff9fd993634cb49ba687e6aab72c24ad97582e2d1668c3fc19fbcec82a962",
+  "plan_where_to_focus_description": "af4325513bd3c60d84a7bf8a6b453d84941569c8bef174dca3949b9901b66fb8",
   "plan_why_phase_dates_later": "536f87f85afd59b401051d6952f61d08378b935ad68e774b80f11a9d42631054",
   "plan_why_phase_end_later": "2d2b7df762253ae7b6bb84ca9a04de346ceb440c5817524a2f0500c2b01d4bae",
   "plan_why_phase_end_off_rest": "278c315959452326cfe9e69cc1928664b2b4b3efc6ac003d23e43956191d4451",
@@ -1096,6 +1096,7 @@
     <string name="plan_exam_choice_question">%1$s: który przedmiot będziesz zdawać?</string>
     <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->
     <string name="plan_exam_choice_question_several">%1$s: które opcje wybierzesz?</string>
+    <string name="plan_exam_choice_not_set">Nie ustawiono</string>
     <string name="plan_prerequisites">Podstawy</string>
     <string name="plan_prerequisites_description">Co jest podstawą tych tematów. Wybierz, ile chcesz się uczyć.</string>
     <plurals name="plan_bases_mixed">
@@ -1247,14 +1248,12 @@
     <string name="plan_choose_focus">Wybierz, na czym się skupić</string>
     <!-- Title of the sheet where the learner picks the subjects that come first and get more depth. -->
     <string name="plan_where_to_focus">Na czym się skupić</string>
-    <string name="plan_where_to_focus_description">Wybrane przedmioty mają pierwszeństwo i poznajesz je dokładniej.</string>
+    <string name="plan_where_to_focus_description">Wybranym przedmiotom poświęcasz więcej czasu.</string>
     <string name="plan_choose_focus_yourself">Lub wybierz je samodzielnie</string>
     <string name="plan_focus_includes">Obejmuje: %1$s</string>
     <string name="plan_focus_only">Tylko: %1$s</string>
     <string name="plan_focus_already_in">Nic się nie zmieniło. Lekcje ze wszystkich tych obszarów są już w planie: %1$s.</string>
-    <string name="plan_focus_cant_move">Bez zmian w obszarach: %1$s. Ich lekcje zaczynają się już najwcześniej, jak to możliwe po opanowaniu potrzebnych podstaw, a na więcej nie starcza czasu. Więcej czasu dziennie to więcej lekcji w planie.</string>
-    <!-- Button that saves the subjects the learner picked to come first and get more depth. -->
-    <string name="plan_focus_on_these">Skup się na wybranych</string>
+    <string name="plan_focus_cant_move">Nic się nie zmieniło. Żeby zmieścić więcej lekcji z obszarów: %1$s, ucz się dłużej każdego dnia.</string>
     <!-- The focus sheet's button with no subject ticked: the plan stops giving any subject more time. -->
     <string name="plan_remove_focus">Usuń priorytety</string>
     <string name="plan_couldnt_check_changes">Nie udało się sprawdzić, co się zmieni.</string>

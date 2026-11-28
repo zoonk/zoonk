@@ -14,6 +14,7 @@ const AI_TASK_DESCRIPTIONS: Record<string, string> = {
   "challenge-review": "Reviews a challenge for errors",
   "changing-facts": "Spots goals that depend on facts that change",
   "check-cited-facts": "Rejects exam facts their quoted passage doesn't support",
+  "check-clip-ending": "Hears whether a clip says more than its text",
   "check-exam-reading": "Finds what a reading of an exam's notice left out",
   "check-level-test-questions": "Answers placement questions to catch wrong keys",
   "check-recall-overlap": "Finds new mock questions a learner could answer from memory",

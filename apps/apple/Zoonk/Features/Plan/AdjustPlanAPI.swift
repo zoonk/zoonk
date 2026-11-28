@@ -237,9 +237,15 @@ enum PlanChangeOutcome: Equatable, Sendable {
   /// Saved without moving a lesson (a focus taken back): the plan is read again.
   case saved
   case invalid
-  case unchanged
+  case unchanged(UnchangedReason?)
   /// It set back by hand what the latest change set, so core undid that change (`undoSetBack`).
   case undone
+}
+
+/// Why a change left the plan as it is: what it asks is in already, or nothing can move earlier.
+enum UnchangedReason: String, Decodable, Sendable {
+  case alreadyIn
+  case cantMove
 }
 
 struct PlanBasesAdvice: Decodable, Equatable, Sendable {

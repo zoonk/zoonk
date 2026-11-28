@@ -245,6 +245,7 @@
   "plan_estimated_score": "a8cbf5fdca146797a99c46f3302182465d8b00243c205418ce49a36498d9059a",
   "plan_every_day": "3a6a23cf2b886c2d43df42fd6d80cc199282ba434c4edf54efd17f39a70f8d27",
   "plan_everything": "84296d609352bdca5218055435b98e485440b1efc94b9b45e9d70c6b03419195",
+  "plan_exam_choice_not_set": "d43dad13ae2d70e94e8161e814379a004a5921812989032cffbd18ddb43fb9f4",
   "plan_exam_choice_question": "93528fc11425860b3258bba5210ac893a297e486cbc0b55516ecacff92daf529",
   "plan_exam_choice_question_several": "bf89c27ea4b60fd0c55a4d601ff7234d84dbc5f4e54559dacfb1c30daea8d4a7",
   "plan_exam_date": "a059a0212363e0ca4e2aafd54ec1f5d95893b0b8de07b3902d5b5ac58ce33317",
@@ -270,9 +271,8 @@
   "plan_finished_title": "b8b302b08b796c27cba3f6a468d3a1443c3c860423e6383cccb7552521b148e6",
   "plan_fit_time_left": "19bb6b9493b847595ac0a081273782413f8550e6ddabb546cbab5b0583de1fae",
   "plan_focus_already_in": "1a792b824003db1268c5dd95d8e6645af2d7eb3521ccef9635819db2efc302a6",
-  "plan_focus_cant_move": "7c1167876834b70fc7c43b3226c4368d95b43ba023804b26c05958143090636f",
+  "plan_focus_cant_move": "dabd2ded5a693df218fb2e6fc912b56ae602f56c96ae00c8f9c489e7673120bf",
   "plan_focus_includes": "6aa8972ef920ccbf73e7aab2940bef14f949f9d8899c5a09b41cb24082a0ada2",
-  "plan_focus_on_these": "cd321946881d566c287f03a344eaf0090ebb981897b0f521f5346d9b8cdc9801",
   "plan_focus_only": "5fefa1bf8577518b89fd8ee26b163611f7597dd49161a982afa71b7577fc6d92",
   "plan_fridays": "9031e94a99af12a5b5ca568f0967808a5b39dfc5019a97d6e62ab6932e1bcda1",
   "plan_full_course": "f17cc996d2d2d708bdd47add7da72e74410087dd8797f26e7f549e3b8bfb8672",
@@ -508,7 +508,7 @@
   "plan_what_you_practice": "d6d07e5be32c24e3c4f219ebcb2f02cd7672350f985e68b693515debc13b09f7",
   "plan_when_to_practice_writing": "e868d168f78ce889f4b39ecb33e57bf53aaee601dfc74cad92e1a84432f52c93",
   "plan_where_to_focus": "6716f12efed39187c1c3ae4fcae043328fc4a1294406b8fbeb14027ac05d2819",
-  "plan_where_to_focus_description": "0b76a0a4417a8309c22eab2468d4f956771494766a2629d6de860c8df452bacf",
+  "plan_where_to_focus_description": "2c5d1153fca7359a945b81e10e05a7a3b7288c805882188d4e6993e3bc27270a",
   "plan_why_phase_dates_later": "601537df74e76ae6daccf08ba67e2f16309e357c10b4e71cd89845ef83030ddc",
   "plan_why_phase_end_later": "f8f52ff3857fba0eba821e42417e28c03155e14e440621adde2957ed9b11a137",
   "plan_why_phase_end_off_rest": "06fbdd2a5688a9359e7affab32dc13ea267baf74ca6aba31930f156796410c10",
@@ -1050,6 +1050,7 @@
     <string name="plan_exam_choice_question">%1$s: ¿cuál vas a presentar?</string>
     <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->
     <string name="plan_exam_choice_question_several">%1$s: ¿cuáles vas a elegir?</string>
+    <string name="plan_exam_choice_not_set">Sin definir</string>
     <string name="plan_prerequisites">Requisitos previos</string>
     <string name="plan_prerequisites_description">En qué se basan tus temas. Elige cuánto estudiar.</string>
     <plurals name="plan_bases_mixed">
@@ -1195,14 +1196,12 @@
     <string name="plan_choose_focus">Elegir en qué enfocarte</string>
     <!-- Title of the sheet where the learner picks the subjects that come first and get more depth. -->
     <string name="plan_where_to_focus">En qué enfocarte</string>
-    <string name="plan_where_to_focus_description">Las materias que eliges van primero y se estudian más a fondo.</string>
+    <string name="plan_where_to_focus_description">Tu plan dedica más tiempo a las materias que eliges.</string>
     <string name="plan_choose_focus_yourself">O elígelas tú</string>
     <string name="plan_focus_includes">Incluye %1$s</string>
     <string name="plan_focus_only">Solo %1$s</string>
     <string name="plan_focus_already_in">No hubo cambios. Todas las lecciones de %1$s ya están en tu plan.</string>
-    <string name="plan_focus_cant_move">No hubo cambios: las lecciones de %1$s ya empiezan en cuanto lo permiten sus requisitos previos y no caben más con tu tiempo de estudio. Al dedicar más tiempo al día, caben más lecciones.</string>
-    <!-- Button that saves the subjects the learner picked to come first and get more depth. -->
-    <string name="plan_focus_on_these">Enfocarme en estas</string>
+    <string name="plan_focus_cant_move">No hubo cambios. Para incluir más de %1$s, estudia más tiempo cada día.</string>
     <!-- The focus sheet's button with no subject ticked: the plan stops giving any subject more time. -->
     <string name="plan_remove_focus">Dejar de priorizar materias</string>
     <string name="plan_couldnt_check_changes">No pudimos revisar los cambios.</string>

@@ -1,6 +1,17 @@
 const MAX_SCORE = 10;
 const MIN_SCORE = 1;
 
+/** Flagged like a word, so speech added around the text needs two providers to confirm it too. */
+export const ADDED_SPEECH = "(added speech)";
+
+function getStatus({ isAdded, readRight }: { isAdded: boolean; readRight: boolean }): string {
+  if (isAdded) {
+    return "Confirmed added speech";
+  }
+
+  return readRight ? "Read right" : "Confirmed misread";
+}
+
 export function listeningVerdict({
   flags,
   language,
@@ -30,6 +41,7 @@ export function listeningVerdict({
     .map(([word]) => word);
 
   const readRight = confirmed.length === 0;
+  const isAdded = confirmed.some(([word]) => word === ADDED_SPEECH);
 
   if (readRight && unconfirmed.length > 0) {
     return { score: null, status: "Needs a listen", unconfirmed };
@@ -40,8 +52,11 @@ export function listeningVerdict({
       ? Number(readRight)
       : (wordCount - Math.min(confirmed.length, wordCount)) / wordCount;
 
-  const score = Math.max(MIN_SCORE, Math.round(MAX_SCORE * heardRight * 10) / 10);
-  const status = readRight ? "Read right" : "Confirmed misread";
+  const score = isAdded
+    ? MIN_SCORE
+    : Math.max(MIN_SCORE, Math.round(MAX_SCORE * heardRight * 10) / 10);
+
+  const status = getStatus({ isAdded, readRight });
 
   return { readRight, score, status, unconfirmed };
 }

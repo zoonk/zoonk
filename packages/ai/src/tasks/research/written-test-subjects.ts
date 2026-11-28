@@ -25,6 +25,7 @@ function toSubject(section: Section): Subject {
     group: section.name,
     matrix: [],
     name: section.name,
+    otherGroups: [],
     partOf: null,
     passages: section.passages,
     questions: null,
