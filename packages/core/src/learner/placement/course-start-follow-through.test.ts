@@ -173,6 +173,11 @@ describe("course placement after completion", () => {
     const { finish, goalId, plan, planItems, user } = await setup([2, 5]);
     const { bosses } = await layOutPlanFixture(plan.id);
 
+    await prisma.planItem.update({
+      data: { chapterId: planItems[0]!.chapterId },
+      where: { id: planItems[2]!.id },
+    });
+
     const study = (index: number) =>
       prisma.$transaction((tx) =>
         completeLessonPlanItems(tx, {
@@ -192,6 +197,7 @@ describe("course placement after completion", () => {
     const firstChapter = { done: 2, lessons: 2, skipped: 0, start: false };
 
     const result = (done: number, skipped: number) => ({
+      chapter: "Phase 2",
       course: { chapters: [firstChapter, { done, lessons: 5, skipped, start: true }], lessons: 7 },
       lessonsSkipped: skipped,
       nextLesson: { id: planItems[6]!.lessonId },

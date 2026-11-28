@@ -39,7 +39,7 @@ describe("a course start before lessons are laid out", () => {
     }
 
     expect(result.completion.result).toMatchObject({
-      chapter: expect.any(String),
+      chapter: "Phase 1",
       course: null,
       nextLesson: null,
     });

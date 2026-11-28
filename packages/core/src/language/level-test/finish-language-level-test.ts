@@ -14,7 +14,10 @@ import { owePlanStartLessons } from "../../follow-ups/owe-goal-lessons";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { levelTestReceipt } from "../../plans/_utils/test-out-receipt";
+import { withPlanRetry } from "../../plans/plan-conflict";
 import { recordTestOutChange } from "../../plans/record-test-out-change";
+import { refreshTestedOutPlan } from "../../plans/refresh-tested-out-plan";
+import { replanAfterPlacement } from "../../plans/replan-after-placement";
 import { getCompletionEnergyContext } from "../../stats/completion-energy";
 import { readGoalDetails } from "../_utils/language-goal";
 import { getLevelTestEnd } from "./_utils/level-test-end";
@@ -310,6 +313,15 @@ export async function finishLanguageLevelTest(
   }
 
   const { result } = progress;
+
+  if (result?.ranges.reading && result.ranges.listening) {
+    if (result.lessonsSkipped > 0) {
+      await refreshTestedOutPlan({ goalId, userId });
+    } else {
+      const now = new Date();
+      await withPlanRetry(() => replanAfterPlacement({ goalId, now, timeZone }));
+    }
+  }
 
   return {
     levels: listLevelTestLevels(progress.scores ?? {}),

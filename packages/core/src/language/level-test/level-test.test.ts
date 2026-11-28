@@ -1,6 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
-import { lessonSkillFixture } from "@zoonk/testing/fixtures/library-lessons";
+import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import {
   studySessionBlockFixture,
   studySessionFixture,
@@ -21,6 +21,8 @@ import { tapInLevelTest } from "../../_test-utils/shown-choice";
 import { analytics } from "../../_test-utils/test-boundaries";
 import * as ownedGoalFact from "../../learner/facts/owned-goal";
 import { decidePlanChange } from "../../plans/decide-plan-change";
+import { refreshGoalPlan } from "../../plans/refresh-goal-plan";
+import { seedPersonaCopy } from "../../seed/seed";
 import { skipAlphabetIntro } from "../alphabet/skip-alphabet-intro";
 import { showLevelTestOptions } from "./_utils/level-test-shown-order";
 import { readLevelTestProgress } from "./_utils/level-test-state";
@@ -49,6 +51,38 @@ const BANK: LevelTestBank = {
   ),
   speaking: TEST_LEVELS.map((level) => ({ level, sentence: `Say ${level}`, translation: "Diga" })),
 };
+
+const CONFIRMATIONS = CEFR_LEVELS.flatMap((level) =>
+  (["reading", "listening"] as const).flatMap((skill) =>
+    [0, 1].map((index) => ({
+      answerIndices: [0, 2],
+      id: `confirm-${skill}-${level}-${index}`,
+      level,
+      options: ["a", "b", "c", "d", "e"],
+      passage: `${skill} ${level} ${index}`,
+      question: "What does it say?",
+      skill,
+    })),
+  ),
+);
+
+async function finishWithRightAnswers(goalId: string) {
+  const started = await startLanguageLevelTest({ goalId });
+
+  if (started.status !== "ready" || !started.test.attemptId) {
+    throw new Error("Expected a test attempt");
+  }
+
+  const { attemptId } = started.test;
+  await completeTapTest({ attemptId, goalId, test: started.test });
+  const finished = await finishLanguageLevelTest(goalId, attemptId);
+
+  if (finished.status !== "ready" || !finished.result) {
+    throw new Error("Expected a finished test");
+  }
+
+  return { attemptId, result: finished.result };
+}
 
 async function saveBank({
   bank = BANK,
@@ -781,8 +815,13 @@ describe("level test on a non-Latin script", () => {
     await completeCurrentTapTest(goal.id);
     await expect(finishLanguageLevelTest(goal.id)).resolves.toMatchObject({ status: "ready" });
 
+    const applied = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+    expect(applied.inputVersion).toBeGreaterThan(plan.inputVersion);
+    await finishLanguageLevelTest(goal.id);
+
     await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
-      inputVersion: plan.inputVersion + 1,
+      inputVersion: applied.inputVersion,
+      version: applied.version,
     });
 
     const lessons = await prisma.languageSkillLevel.update({
@@ -1000,26 +1039,12 @@ describe("a post-start level test", () => {
     const { goal, skills, user } = await languageGoalFixture();
     const pair = { language: `x${crypto.randomUUID().slice(0, 8)}`, targetLanguage: "ja" };
 
-    const confirmations = CEFR_LEVELS.flatMap((level) =>
-      (["reading", "listening"] as const).flatMap((skill) =>
-        [0, 1].map((index) => ({
-          answerIndices: [0, 2],
-          id: `confirm-${skill}-${level}-${index}`,
-          level,
-          options: ["a", "b", "c", "d", "e"],
-          passage: `${skill} ${level} ${index}`,
-          question: "What does it say?",
-          skill,
-        })),
-      ),
-    );
-
     await Promise.all([
       prisma.goal.update({ data: { ...pair, details: { level: "C2" } }, where: { id: goal.id } }),
       prisma.languageLevelTest.create({
         data: {
           ...pair,
-          content: { ...BANK, confirmations },
+          content: { ...BANK, confirmations: CONFIRMATIONS },
           model: "test",
           promptVersion: "test",
           runId: "test",
@@ -1080,9 +1105,9 @@ describe("a post-start level test", () => {
 
     await expect(readLevelTestCheckShortage(replenishment)).resolves.toHaveLength(4);
 
-    const newQuestions = confirmations
-      .filter(({ level }) => level === "B2")
-      .map(({ passage, ...item }) => ({ ...item, passage: `A new example for ${passage}` }));
+    const newQuestions = CONFIRMATIONS.filter(({ level }) => level === "B2").map(
+      ({ passage, ...item }) => ({ ...item, passage: `A new example for ${passage}` }),
+    );
 
     const saved = { batchId: "test-refill", confirmations: newQuestions, pair };
     const written = await appendLevelTestChecks(saved);
@@ -1121,24 +1146,103 @@ describe("a post-start level test", () => {
     }
   });
 
+  it("compares Marcos's measured start and first teaching lesson with his rebuilt Plan", async () => {
+    const copyKey = crypto.randomUUID();
+
+    const { userId, goalId } = await seedPersonaCopy({
+      copyKey,
+      email: `marcos-${copyKey}@zoonk.test`,
+      language: "pt",
+      persona: "language",
+      state: "placement",
+      timeZone: "UTC",
+    });
+
+    mockSession(userId);
+    await saveBank({ bank: { ...BANK, confirmations: CONFIRMATIONS } });
+    const { attemptId, result } = await finishWithRightAnswers(goalId);
+    const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
+    const rebuilt = await refreshGoalPlan({ goalId, mode: "forced", settleMissedDays: false });
+
+    const next = await prisma.planItem.findFirstOrThrow({
+      orderBy: [{ position: "asc" }, { id: "asc" }],
+      select: { id: true, lesson: { select: { id: true, title: true } }, titleSnapshot: true },
+      where: { kind: "lesson", plan: { goalId }, status: "todo" },
+    });
+
+    expect(["unchanged", "refreshed"]).toContain(rebuilt.status);
+
+    expect(result).toMatchObject({
+      end: "check_passed",
+      lessonsSkipped: 0,
+      ranges: { listening: { high: "C2", low: "B1" }, reading: { high: "C2", low: "B1" } },
+    });
+
+    expect(next).toMatchObject({ lesson: null, titleSnapshot: "Usar as palavras do aluguel" });
+    expect(saved.details).toMatchObject({ level: "A2", levelTest: { planningStart: 2 } });
+    expect(result).not.toHaveProperty("nextLesson");
+
+    const lesson = await libraryLessonFixture({
+      language: "pt",
+      targetLanguage: "en",
+      title: "Entender o depósito do aluguel",
+    });
+
+    await prisma.planItem.update({ data: { lessonId: lesson.id }, where: { id: next.id } });
+
+    await expect(getLanguageLevelTest(goalId, attemptId)).resolves.toMatchObject({
+      test: { result: { nextLesson: { id: lesson.id, title: lesson.title } } },
+    });
+  });
+
+  it("names the written intermediate lesson on the rebuilt Plan when both skills place there", async () => {
+    const { goal, lessons, skills, user } = await languageGoalFixture();
+
+    await prisma.goal.update({
+      data: {
+        details: {
+          level: "A2",
+          skillLevels: { listening: "B1", reading: "B1" },
+          targetScore: "B1+",
+        },
+      },
+      where: { id: goal.id },
+    });
+
+    mockSession(user.id);
+    await saveBank({ bank: { ...BANK, confirmations: CONFIRMATIONS } });
+
+    await prisma.skill.updateMany({
+      data: { level: "beginner" },
+      where: { id: { in: skills.slice(0, 2).map(({ id }) => id) } },
+    });
+
+    await prisma.skill.updateMany({
+      data: { level: "intermediate" },
+      where: { id: { in: skills.slice(2).map(({ id }) => id) } },
+    });
+
+    const { result } = await finishWithRightAnswers(goal.id);
+
+    const first = await prisma.planItem.findFirstOrThrow({
+      orderBy: { position: "asc" },
+      select: { lesson: { select: { id: true, title: true } } },
+      where: { kind: "lesson", plan: { goalId: goal.id }, status: "todo" },
+    });
+
+    expect(lessons.slice(2).map(({ id }) => id)).toContain(first.lesson?.id);
+
+    expect(result).toMatchObject({
+      lessonsSkipped: 0,
+      nextLesson: first.lesson,
+      ranges: { listening: { low: "B1" }, reading: { low: "B1" } },
+    });
+  });
+
   it("skips only fully tagged lessons and keeps both shown session blocks and Undo", async () => {
     const { goal, items, lessons, skills, user } = await languageGoalFixture();
 
     const pair = { language: `x${crypto.randomUUID().slice(0, 8)}`, targetLanguage: "ja" };
-
-    const confirmations = CEFR_LEVELS.flatMap((level) =>
-      (["reading", "listening"] as const).flatMap((skill) =>
-        [0, 1].map((index) => ({
-          answerIndices: [0, 2],
-          id: `confirm-${skill}-${level}-${index}`,
-          level,
-          options: ["a", "b", "c", "d", "e"],
-          passage: `${skill} ${level}`,
-          question: "What does it say?",
-          skill,
-        })),
-      ),
-    );
 
     const [low, mixed, high] = skills;
     const [lowLesson, mixedLesson] = lessons;
@@ -1153,7 +1257,7 @@ describe("a post-start level test", () => {
       prisma.languageLevelTest.create({
         data: {
           ...pair,
-          content: { ...BANK, confirmations },
+          content: { ...BANK, confirmations: CONFIRMATIONS },
           model: "test",
           promptVersion: "test",
           runId: "test",
@@ -1202,6 +1306,7 @@ describe("a post-start level test", () => {
         changeId: expect.any(String),
         lessonsSkipped: 1,
         levelsSkipped: expect.arrayContaining(["A1"]),
+        nextLesson: { id: mixedLesson.id, title: mixedLesson.title },
       },
       status: "ready",
     });

@@ -4,8 +4,8 @@ import { isPlanReady } from "./_utils/apply-plan-change";
 import { commitPlan } from "./_utils/commit-plan";
 import { getCoverageChange } from "./_utils/coverage-change";
 import { loadPlanAtToken } from "./_utils/plan-token";
+import { isPlanUnchanged } from "./_utils/plan-unchanged";
 import { computePlan } from "./_utils/replan";
-import { unlessPlanConflict } from "./plan-conflict";
 
 export async function replanAfterPlacement({
   goalId,
@@ -16,25 +16,29 @@ export async function replanAfterPlacement({
   now: Date;
   timeZone: string;
 }): Promise<void> {
-  await unlessPlanConflict(async () => {
-    const context = await loadPlanAtToken(goalId, { now, timeZone });
+  const context = await loadPlanAtToken(goalId, { now, timeZone });
 
-    if (!context || !isPlanReady(context)) {
-      return;
-    }
+  if (!context || !isPlanReady(context)) {
+    return;
+  }
 
-    const computed = await computePlan({ context, mode: "forced", now });
+  const computed = await computePlan({ context, mode: "forced", now });
 
-    if (computed.inputsKey === context.plan.inputsKey) {
-      return;
-    }
+  const languageStart = context.goal.kind === "language";
 
-    await commitPlan({
-      change: getCoverageChange(computed),
-      computed,
-      context,
-      extraWrites: (tx) =>
-        keepOpenSessionSelection(tx, { goalId, planVersion: context.plan.version + 1 }),
-    });
+  if (
+    computed.inputsKey === context.plan.inputsKey &&
+    (!languageStart || isPlanUnchanged({ computed, context }))
+  ) {
+    return;
+  }
+
+  await commitPlan({
+    change: getCoverageChange(computed),
+    computed,
+    context,
+    extraWrites: (tx) =>
+      keepOpenSessionSelection(tx, { goalId, planVersion: context.plan.version + 1 }),
+    keepsOpenUndo: languageStart,
   });
 }
