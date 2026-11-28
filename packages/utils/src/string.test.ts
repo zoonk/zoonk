@@ -367,10 +367,10 @@ describe(replaceEmDashes, () => {
   );
 
   it.each([
-    ["| Fee | — waived | paid — |", "| Fee | waived | paid |"],
     ["| Fee | 12 — 14 |", "| Fee | 12, 14 |"],
+    ["No || — basta um true", "No ||, basta um true"],
     [String.raw`Type a \| — then stop.`, String.raw`Type a \|, then stop.`],
-  ])("reads each table cell's dashes as a line's: %j", (text, expected) => {
+  ])("reads any other dash beside a pipe as prose: %j", (text, expected) => {
     expect(replaceEmDashes(text)).toBe(expected);
   });
 
