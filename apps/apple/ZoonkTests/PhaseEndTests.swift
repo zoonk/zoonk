@@ -200,6 +200,24 @@ final class PhaseEndTests: XCTestCase {
     XCTAssert(plan.roadmapFinish(isExam: false)! == ("2031-03-01", true, .year))
   }
 
+  func testTheFinishIsDatedAsCoreForecastsIt() throws {
+    let near = try goalPlanFixture(estimateEnd: "2027-02-10", precision: "month")
+
+    XCTAssert(near.roadmapFinish(isExam: false)! == ("2027-02-10", true, .month))
+  }
+
+  func testThePhaseUnderWayKeepsItsDayUnlessItEndsWhereThePlanFinishes() throws {
+    let phases = [
+      phase(0, kind: "learn", state: "current", end: "2027-02-22", challenge: "2027-02-23")
+    ]
+    let own = try goalPlanFixture(phases: phases, estimateEnd: "2027-06-01", precision: "month")
+    let finishing = try goalPlanFixture(
+      phases: phases, estimateEnd: "2027-02-23", precision: "month")
+
+    XCTAssertEqual(own.phaseEnd(own.phases[0])?.shown, "~Feb 23")
+    XCTAssertEqual(finishing.phaseEnd(finishing.phases[0])?.shown, "~Feb")
+  }
+
   func testAPlanFinishingPastTheYearsItLaysOutEndsOpen() throws {
     let plan = try goalPlanFixture(estimateEnd: nil, finishReason: "beyondHorizon")
 

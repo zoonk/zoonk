@@ -124,7 +124,7 @@ struct RoadmapPhaseRow: View {
 
 }
 
-/// Main's line under the roadmap: "Phase 1 of 4 · Foundations", then the phase's end.
+/// Main's line under the roadmap: "Phase 1 of 4", then the phase's end.
 private struct RoadmapCompact: View {
   @Environment(\.legibilityWeight) private var legibilityWeight
 
@@ -157,7 +157,7 @@ private struct RoadmapCompact: View {
         // Main's `plan-roadmap`: its value and chevron end on the edge; it has no row's label.
         RowLayout(piece: .planRoadmap) {
         } words: {
-          position(phase: phase, number: currentIndex + 1, count: phases.count)
+          position(number: currentIndex + 1, count: phases.count)
         } value: {
           if !context.isPaused, let end = context.plan.phaseEnd(phase) {
             Text(verbatim: end.line)
@@ -184,26 +184,14 @@ private struct RoadmapCompact: View {
     .typeStyle(.meta)
   }
 
-  private func position(phase: PlanPhase, number: Int, count: Int) -> Text {
-    // Main's: the place leads, in the text's color; the phase's own name follows, muted.
-    let place = Text(
+  /// Where the learner is: the row under it already names the phase.
+  private func position(number: Int, count: Int) -> Text {
+    Text(
       "Phase \(number) of \(count)", tableName: "Plan",
       comment: "The learner's phase of the plan's phases, under the roadmap"
     )
     .typeWeight(.medium, legibility: legibilityWeight)
     .foregroundStyle(Color(.foreground))
-
-    guard phase.hasOwnName else {
-      return place
-    }
-
-    let title = Text(phase.title)
-
-    return Text(
-      "\(place)\u{00A0}· \(title)", tableName: "Plan",
-      comment: "The learner's phase under the roadmap: its number of the phases, then its name"
-    )
-    .foregroundStyle(.mutedForeground)
   }
 }
 
@@ -324,9 +312,7 @@ extension GoalPlan {
         return nil
       }
 
-      return PhaseEnd(
-        endDate, estimate: true, grain: grain(endDate, precision: estimate.precision),
-        today: today)
+      return PhaseEnd(endDate, estimate: true, grain: finishGrain(endDate), today: today)
     }
 
     let learns = phase.kind == .learn || phase.kind == .afterExam
@@ -338,9 +324,7 @@ extension GoalPlan {
 
     return PhaseEnd(
       lastDay, estimate: isEstimate,
-      grain: isEstimate && (ahead || phase.precision == .year)
-        ? grain(lastDay, precision: phase.precision) : .day,
-      today: today)
+      grain: phaseGrain(lastDay, phase: phase, estimate: isEstimate), today: today)
   }
 
   /// When the plan finished, or the goal's date or estimated end while it's under way.
@@ -359,12 +343,39 @@ extension GoalPlan {
       return nil
     }
 
-    return (endDate, true, grain(endDate, precision: estimate.precision))
+    return (endDate, true, finishGrain(endDate))
   }
 
   /// A plan without a date whose work goes past the years it lays out: its path ends open.
   var finishesLater: Bool {
     end == nil && schedule.targetDate == nil && estimate.forecast == .beyond
+  }
+
+  /// Main's `getPhaseEndPrecision`: a phase ending where a plan without a date finishes is dated as
+  /// the finish is; one ahead by how near it is; the one under way keeps its day unless core dates
+  /// it by its year.
+  private func phaseGrain(_ isoDate: String, phase: PlanPhase, estimate isEstimate: Bool)
+    -> DateGrain
+  {
+    guard isEstimate else {
+      return .day
+    }
+
+    if schedule.targetDate == nil, isoDate == estimate.endDate, estimate.precision != nil {
+      return finishGrain(isoDate)
+    }
+
+    return phase.state == .upcoming || phase.precision == .year
+      ? grain(isoDate, precision: phase.precision) : .day
+  }
+
+  /// The finish is dated as core forecasts it, by how near it is when an older plan doesn't say.
+  private func finishGrain(_ isoDate: String) -> DateGrain {
+    switch estimate.precision {
+    case .year: .year
+    case .month: .month
+    case nil: grain(isoDate, precision: nil)
+    }
   }
 
   /// An estimate past six weeks from this week's start names only its month, and one core says is
@@ -374,7 +385,7 @@ extension GoalPlan {
       return .year
     }
 
-    return PlanDate.days(from: week.startDate, to: isoDate) > 42 ? .month : .day
+    return PlanDate.isNear(isoDate, to: week.startDate) ? .day : .month
   }
 }
 
@@ -382,11 +393,6 @@ extension PlanPhase {
   /// Its row on the path says what the learner can do once it's done, where the plan names that.
   var label: String {
     milestone ?? title
-  }
-
-  /// A phase named "Phase 2" has no name of its own to say beside its number.
-  var hasOwnName: Bool {
-    kind != .learn || !(name ?? "").isEmpty
   }
 
   /// The day the phase is behind you: it ends with its challenge, which can come the day after its

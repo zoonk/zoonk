@@ -49,4 +49,41 @@ final class PlanChangeEffectTests: XCTestCase {
   func testSaysNoLessonChangeWhenAsManyComeAsGo() throws {
     XCTAssertNil(try consequence(added: 5, removed: 5))
   }
+
+  private func endMove(
+    after: String, before: String, precision: (after: String, before: String) = ("month", "month")
+  ) throws -> String? {
+    let effect = try JSONDecoder().decode(
+      PlanEffect.self,
+      from: Data(
+        #"""
+        {"areaEnds":null,"areaLessons":null,"endDateAfter":"\#(after)",
+        "endDateBefore":"\#(before)","endPrecisionAfter":"\#(precision.after)",
+        "endPrecisionBefore":"\#(precision.before)","lessonsAdded":0,
+        "lessonsAddedEstimated":null,"lessonsLeftOut":null,"lessonsRemoved":0,"nextMock":null,
+        "phaseEnds":null,"topicsAdded":null,"topicsLeftOut":null,"unwrittenLeftOut":null,
+        "weeklyEvents":null}
+        """#.utf8))
+
+    return PlanChangeEffect.consequence(effect, exam, today: "2027-01-04")?.text
+  }
+
+  func testSaysTheEndsDaysOnlyWhileBothAreNear() throws {
+    XCTAssertEqual(
+      try endMove(after: "2027-01-20", before: "2027-01-30"),
+      "Your plan will end on January 20, 2027 instead of January 30, 2027.")
+    XCTAssertEqual(
+      try endMove(after: "2027-06-10", before: "2027-01-30"),
+      "Your plan will end around June 2027 instead of January 2027.")
+  }
+
+  func testSaysAFarEndByTheYearCoreDatesItBy() throws {
+    XCTAssertEqual(
+      try endMove(after: "2031-03-02", before: "2027-09-01", precision: ("year", "month")),
+      "Your plan will end around 2031 instead of September 2027.")
+  }
+
+  func testSaysNothingWhenTheEndStaysInTheSameMonth() throws {
+    XCTAssertNil(try endMove(after: "2027-06-10", before: "2027-06-20"))
+  }
 }

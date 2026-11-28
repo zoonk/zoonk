@@ -180,12 +180,14 @@ struct PlanFullCourseSection: View {
           .disabled(isPreviewing)
         }
       } footer: {
-        if on, let end = plan.estimate.endDate {
+        if on, let end = plan.estimate.fullCourseEndDate {
           SectionFooter {
             Text(
-              "You finish around \(PlanDate.text(end, today: plan.today, month: true)).",
+              "You finish around \(PlanDate.finishText(end, grain: plan.estimate.precision == .year ? .year : .month)).",
               tableName: "Plan",
-              comment: "When the plan finishes, as a month and year")
+              comment:
+                "When the plan finishes, as a month and year, like \"January 2027\", or a year, like \"2031\""
+            )
           }
         }
       }

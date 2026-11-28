@@ -178,6 +178,8 @@ struct PlanEffect: Decodable, Equatable, Sendable {
   var areaStarts: [AreaStart]?
   let endDateAfter: String?
   let endDateBefore: String?
+  var endPrecisionAfter: PlanForecast.Precision?
+  var endPrecisionBefore: PlanForecast.Precision?
   /// For `coverageChanged`: the learner's placement answers made it.
   var fromPlacement: Bool?
   let lessonsAdded: Int

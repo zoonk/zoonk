@@ -75,18 +75,16 @@ struct FinishReadout: View {
 
   var body: some View {
     Readout(label: label, alignment: alignment) {
-      if let aim {
+      switch (forecast, aim) {
+      case (.beyond, _):
+        BigQuantity(PlanForecast.beyondText)
+      case (_, .some(let aim)):
         Text(verbatim: aim).typeStyle(.readout).monospaced()
-      } else {
-        switch forecast {
-        case .month(let isoDate):
-          MonthYear(isoDate: isoDate)
-        case .year(let isoDate):
-          Text(verbatim: PlanDate.text(isoDate, today: isoDate, grain: .year))
-            .typeStyle(.readout)
-        case .beyond:
-          BigQuantity(PlanForecast.beyondText)
-        }
+      case (.month(let isoDate), nil):
+        MonthYear(isoDate: isoDate)
+      case (.year(let isoDate), nil):
+        Text(verbatim: PlanDate.text(isoDate, today: isoDate, grain: .year))
+          .typeStyle(.readout)
       }
     }
   }
@@ -94,45 +92,40 @@ struct FinishReadout: View {
   /// What a change of it says aloud.
   var spoken: String {
     let value =
-      switch (aim, forecast) {
-      case (.some(let aim), _): aim
-      case (nil, .beyond): PlanForecast.beyondText
-      case (nil, .month(let isoDate)): PlanDate.longText(isoDate, month: true)
-      case (nil, .year(let isoDate)): PlanDate.text(isoDate, today: isoDate, grain: .year)
+      switch (forecast, aim) {
+      case (.beyond, _): PlanForecast.beyondText
+      case (_, .some(let aim)): aim
+      case (.month(let isoDate), nil): PlanDate.finishText(isoDate, grain: .month)
+      case (.year(let isoDate), nil): PlanDate.finishText(isoDate, grain: .year)
       }
 
     return [value, label].joinedFacts()
   }
 
+  /// Past the years a plan lays out, a language aim's too, it says how long rather than when.
   private var label: String {
-    switch (aim != nil, forecast) {
-    case (true, .month(let isoDate)):
-      String(
-        localized: "by \(PlanDate.longText(isoDate, month: true))", table: "Onboarding",
-        comment: "Under the level a language plan reaches, as in 'B1 by Nov 2027'")
-    case (true, .year(let isoDate)):
-      String(
-        localized: LocalizedStringResource(
-          "aimByYear", defaultValue: "by \(PlanDate.text(isoDate, today: isoDate, grain: .year))",
-          table: "Onboarding",
-          comment:
-            "Under the level a language plan reaches when it's years away, as in 'B2 by 2031'"
-        ))
-    case (true, .beyond):
-      String(
-        localized: "in 10+ years", table: "Onboarding",
-        comment:
-          "Under the level a language plan reaches, when reaching it takes more than ten years at the time picked."
-      )
-    case (false, .beyond):
+    switch (forecast, aim) {
+    case (.beyond, _):
       String(
         localized: "to finish", table: "Onboarding",
         comment: "Under '10+ years': how long a plan without a date takes at this pace")
-    case (false, .month), (false, .year):
+    case (.month(let isoDate), .some):
+      aimBy(PlanDate.finishText(isoDate, grain: .month))
+    case (.year(let isoDate), .some):
+      aimBy(PlanDate.finishText(isoDate, grain: .year))
+    case (.month, nil), (.year, nil):
       String(
         localized: "estimated finish", table: "Onboarding",
         comment: "Under the month a plan without a date ends at this pace")
     }
+  }
+
+  private func aimBy(_ date: String) -> String {
+    String(
+      localized: "by \(date)", table: "Onboarding",
+      comment:
+        "Under the level a language plan reaches, as in 'B1 by Nov 2027', or by a year alone when it's far, as in 'B2 by 2031'"
+    )
   }
 }
 

@@ -141,7 +141,7 @@ final class ScheduleTimeTests: XCTestCase {
     XCTAssertEqual(line("2027-03-01", .month, nil), .finish(.month("2027-03-01")))
     XCTAssertEqual(line("2031-06-01", .year, nil), .finish(.year("2031-06-01")))
     XCTAssertEqual(line(nil, nil, .beyondHorizon), .finish(.beyond))
-    XCTAssertEqual(line(nil, nil, .noStudyDays), .noDays)
+    XCTAssertEqual(line(nil, nil, .noStudyDays), .quiet)
     XCTAssertEqual(line(nil, nil, .nothingLeft), .quiet)
   }
 

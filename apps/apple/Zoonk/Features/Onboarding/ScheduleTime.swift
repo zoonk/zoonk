@@ -182,11 +182,7 @@ enum ScheduleTime {
         return askFailed ? .askFailed : .asking
       }
 
-      if let forecast = advice.forecast {
-        return .finish(forecast)
-      }
-
-      return advice.finishReason == .noStudyDays ? .noDays : .quiet
+      return advice.forecast.map { .finish($0) } ?? .quiet
     }
 
     if found?.pastDate == true {

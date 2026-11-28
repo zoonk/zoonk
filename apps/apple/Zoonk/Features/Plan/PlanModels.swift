@@ -1064,6 +1064,21 @@ enum PlanDate {
     format(isoDate, month ? .sentenceMonth : .sentence, today: isoDate, year: .always)
   }
 
+  /// Main's `useFormatFinishDate`: when a plan finishes, in a sentence: "May 5, 2027",
+  /// "May 2027" or "2031".
+  static func finishText(_ isoDate: String, grain: DateGrain) -> String {
+    switch grain {
+    case .day: longText(isoDate)
+    case .month: longText(isoDate, month: true)
+    case .year: text(isoDate, today: isoDate, grain: .year)
+    }
+  }
+
+  /// An estimate within six weeks of `today` can name its day; a farther one only its month.
+  static func isNear(_ isoDate: String, to today: String) -> Bool {
+    abs(days(from: today, to: isoDate)) <= 42
+  }
+
   /// Main's `useGoalDateValues`: a goal's date in a sentence, kept on one line and marked "~" when
   /// it's estimated.
   static func goalText(_ isoDate: String, month: Bool, estimated: Bool) -> String {
