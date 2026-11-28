@@ -182,6 +182,20 @@ fun modulesSyllabus(): Syllabus =
         """.trimIndent(),
     )
 
+fun modulesWithTopicsLeftOut(): Syllabus {
+    val syllabus = modulesSyllabus()
+    return syllabus.copy(
+        subjects =
+            syllabus.subjects.map { subject ->
+                if (subject.key == "data") {
+                    subject.copy(leftOut = listOf("Reading and writing CSV files", "Cleaning messy data"))
+                } else {
+                    subject
+                }
+            },
+    )
+}
+
 internal fun lesson(
     position: Int,
     title: String,

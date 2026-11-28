@@ -34,10 +34,14 @@ private struct RevealPath: View {
           ForEach(only.chapters.filter { !$0.isWritingAhead }) { chapter in
             PlanChapterRow(context: context, chapter: chapter, opens: false)
           }
+
+          LeftOutTopicsRows(
+            names: only.leftOutTopics, isUnfolded: $open.contains("leftOut:\(only.index)"))
         } else {
           ForEach(phases) { phase in
             RevealPhaseRow(
-              context: context, phase: phase, isExpanded: $open.contains("phase:\(phase.index)"))
+              context: context, phase: phase, isExpanded: $open.contains("phase:\(phase.index)"),
+              showsLeftOut: $open.contains("leftOut:\(phase.index)"))
           }
         }
       } header: {
@@ -49,27 +53,37 @@ private struct RevealPath: View {
   }
 }
 
-/// Every chapter of the phase, with no fold and no challenge: the Plan says when each comes.
+/// Every chapter of the phase, then the topics the plan's date leaves out, with no challenge: the
+/// Plan says when each comes.
 private struct RevealPhaseRow: View {
   let context: PlanContext
   let phase: PlanPhase
   @Binding var isExpanded: Bool
+  @Binding var showsLeftOut: Bool
 
   var body: some View {
     let chapters = phase.chapters.filter { !$0.isWritingAhead }
-    let label = PlanPhaseLabel(context: context, phase: phase)
+    let label = PlanPhaseLabel(context: context, phase: phase, description: line)
 
-    if chapters.isEmpty {
+    if chapters.isEmpty && phase.leftOutTopics.isEmpty {
       label
     } else {
       DisclosureGroup(isExpanded: $isExpanded) {
         ForEach(chapters) { chapter in
           PlanChapterRow(context: context, chapter: chapter, opens: false)
         }
+
+        LeftOutTopicsRows(names: phase.leftOutTopics, isUnfolded: $showsLeftOut)
       } label: {
         label
       }
     }
+  }
+
+  /// How many topics the plan's date leaves out, under its name; open, the fold among its rows says
+  /// it.
+  private var line: Text? {
+    phase.leftOutTopics.isEmpty || isExpanded ? nil : leftOutTopicsLine(phase.leftOutTopics.count)
   }
 }
 
@@ -117,7 +131,7 @@ private struct RevealSubjectRow: View {
   @Environment(\.horizontalSizeClass) private var sizeClass
 
   var body: some View {
-    if subject.topics.isEmpty && subject.chapters.isEmpty {
+    if subject.topics.isEmpty && subject.chapters.isEmpty && subject.leftOutTopics.isEmpty {
       label
     } else {
       DisclosureGroup(isExpanded: $open.contains("subject:\(subject.key)")) {
@@ -143,6 +157,9 @@ private struct RevealSubjectRow: View {
             }
           }
         }
+
+        LeftOutTopicsRows(
+          names: subject.leftOutTopics, isUnfolded: $open.contains("leftOut:\(subject.key)"))
       } label: {
         label
       }
@@ -153,7 +170,11 @@ private struct RevealSubjectRow: View {
     ListRow(
       Text(subject.shortName)
         .foregroundStyle(subject.notPlannedReason == nil ? Color(.foreground) : .mutedForeground),
-      description: line
+      description: stackedLines(
+        line,
+        // Open, the fold among its rows says it.
+        subject.leftOutTopics.isEmpty || open.contains("subject:\(subject.key)")
+          ? nil : leftOutTopicsLine(subject.leftOutTopics.count))
     ) {
     } trailing: {
       if sizeClass == .regular, let questions = subject.questions, questions > 0 {
@@ -192,5 +213,14 @@ private struct RevealSubjectRow: View {
         runs.append((topic.heading, [topic]))
       }
     }
+  }
+}
+
+/// Two lines of a row's description, one over the other, either of them absent.
+private func stackedLines(_ first: Text?, _ second: Text?) -> Text? {
+  switch (first, second) {
+  case (let first?, let second?): Text("\(first)\(Text(verbatim: "\n"))\(second)")
+  case (let line?, nil), (nil, let line?): line
+  case (nil, nil): nil
   }
 }

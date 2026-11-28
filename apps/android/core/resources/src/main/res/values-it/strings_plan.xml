@@ -17,7 +17,7 @@
   "plan_archive_goal": "78df9344b5e7281b3a59736c93bb78c2a478f4de0fb429547120eafde7729beb",
   "plan_archive_goal_short": "413ff37f47994cc58487ce9e6279c9790dfe3be51dba0778b34fc2416bc9c72d",
   "plan_archive_title": "ab4ffde48c0117bdad791e57c6d4d5197cc9ed4628b2be86b7744fa2d220a719",
-  "plan_ask_add_topics": "655f6cd9103f8d47b39010a0374dc440846e46a474586c58248f7ea2c84a3bca",
+  "plan_ask_add_topics": "862510eebd05f37dd031d503ddcfb0252dbf7583d45704e715d7d871af819b9a",
   "plan_ask_aim": "ee87baae119a8e1ad4d5f3dc23f62b1ccb156919e3b30beb8a5cef8bcd0cbc29",
   "plan_ask_change": "7ab0f56f12991b56db06381c2df6740d7011f23f0ab377a9e926b87de86a9592",
   "plan_ask_daily_time": "ff16a2a2a66bba1321bd2a4869e8a67e30931e610d6267818c78b3817f81b95b",
@@ -283,6 +283,7 @@
   "plan_how_calculated": "a485439a26eb8c1743e9703fad1e9d41ae602c74099bf0b98b2ca98be11b0149",
   "plan_keep_studying": "32260f5cb903766c4a408e7616dfb96099799ffffd1116f0929b32d359996a23",
   "plan_later": "3b9843e1baab7b80a9108c81957c60915b73de203dae15e8b5f97c6b5baea53d",
+  "plan_left_out_topics": "f613fd1f2e4357689329416532c4f9960b7fc70bfbde46da07ec74c1b48efd17",
   "plan_legend_phase_questions": "ddc49ea081917f844627864253db1cf8cb2bea1cdbb4880fd2db36936bc0fccf",
   "plan_lessons": "a3dea9772a49b7321133098db86caebe5e3e7e915c264727e296fdde3fb04712",
   "plan_lessons_done_of": "bb42f59dd67f83b8cc046a194e51de243a6124bf8158ea6b9c25f969bdd7feb3",
@@ -627,6 +628,12 @@
         <item quantity="other">%1$d lezioni completate su %2$d</item>
     </plurals>
     <string name="plan_not_in_your_plan">Non è nel tuo piano</string>
+    <!-- Under a module or a phase of the learner's plan, and on the row that lists them: how many of its topics the plan leaves out because they don't fit before the plan's date. -->
+    <plurals name="plan_left_out_topics">
+        <item quantity="one">%d argomento non previsto nel tuo piano</item>
+        <item quantity="many">%d argomenti non previsti nel tuo piano</item>
+        <item quantity="other">%d argomenti non previsti nel tuo piano</item>
+    </plurals>
     <plurals name="plan_lessons_not_studied">
         <item quantity="one">%d lezione non studiata</item>
         <item quantity="many">%d lezioni non studiate</item>
@@ -1371,7 +1378,8 @@
     <string name="plan_change_areas_from_basics">Per %1$s si parte dalle basi.</string>
     <string name="plan_change_exam_date">Data dell’esame: %1$s.</string>
     <string name="plan_change_end_date">Data di fine: %1$s.</string>
-    <string name="plan_ask_add_topics">Aggiungere %1$s al tuo piano?</string>
+    <!-- Asks whether to add topics to the learner's plan. {topics} lists their names, which are often actions themselves, such as “Memorize An-Nahl”, so they stay after the colon rather than inside the sentence. -->
+    <string name="plan_ask_add_topics">Aggiungere al tuo piano: %1$s?</string>
     <string name="plan_ask_focus">Dare priorità a %1$s?</string>
     <string name="plan_ask_remove_focus">Togliere la priorità alle materie scelte?</string>
     <string name="plan_ask_less_time">Meno tempo per %1$s?</string>

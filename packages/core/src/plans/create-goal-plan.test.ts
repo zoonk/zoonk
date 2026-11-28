@@ -470,6 +470,45 @@ describe(createGoalPlan, () => {
     expect(changed.version).toBe(before.version + 1);
   });
 
+  it("records a rebuild's member check when planning again changes nothing", async () => {
+    const { goal, library, plan } = await setup();
+
+    await createGoalPlan({ goalId: goal.id, graph: library.graph, membersCheckedAt: null });
+
+    await expect(
+      createGoalPlan({ goalId: goal.id, graph: library.graph, membersCheckedAt: NOW }),
+    ).resolves.toMatchObject({ status: "unchanged" });
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+      membersCheckedAt: NOW,
+    });
+  });
+
+  it("leaves a graph another build saved meanwhile unchecked when planning again changes nothing", async () => {
+    const { goal, library, plan } = await setup();
+    const other = await planLibraryFixture({ skills: [{ lessons: 2 }] });
+
+    await createGoalPlan({ goalId: goal.id, graph: library.graph, membersCheckedAt: null });
+
+    const updateMany = prisma.plan.updateMany.bind(prisma.plan);
+
+    vi.spyOn(prisma.plan, "updateMany").mockImplementationOnce(
+      (args) =>
+        createGoalPlan({ goalId: goal.id, graph: other.graph, membersCheckedAt: null }).then(() =>
+          updateMany(args),
+        ) as ReturnType<typeof updateMany>,
+    );
+
+    await expect(
+      createGoalPlan({ goalId: goal.id, graph: library.graph, membersCheckedAt: NOW }),
+    ).resolves.toMatchObject({ status: "unchanged" });
+
+    const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+
+    expect(saved.membersCheckedAt).toBeNull();
+    expect(saved.graph).toMatchObject({ skills: [{ skillId: other.skills[0]?.id }] });
+  });
+
   it("keeps this week's lessons when planning again finds only a later week out of course order", async () => {
     const user = await userFixture();
     const library = await planLibraryFixture({ skills: [{ lessons: 12 }, { lessons: 12 }] });

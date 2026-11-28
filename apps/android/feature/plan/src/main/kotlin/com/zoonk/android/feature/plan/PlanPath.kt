@@ -9,13 +9,16 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -27,6 +30,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -50,6 +54,7 @@ import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.components.glyphScale
 import com.zoonk.android.ui.components.listRowDescription
 import com.zoonk.android.ui.components.listRowWordsStart
 import com.zoonk.android.ui.components.markSize
@@ -133,12 +138,14 @@ private fun PhaseItem(
             PhaseRow(
                 page.plan,
                 phase,
-                phaseMeta(page, phase, open),
+                // The left-out row under it says what this phase's line would.
+                phaseMeta(page, phase.copy(leftOut = emptyList()), open),
                 paused = page.isPaused,
                 onClick = { links.chapter(chapterId) },
                 highlighted = isNext,
                 nextChapter = own.takeIf { isNext },
             )
+            LeftOutTopicsRow(phase.leftOut, indent = nested)
             if (open) {
                 phase.mocks.nextDate?.let { MockRow(page, it.toJavaLocalDate(), links, phase.mocks.nextPlanItemId) }
                 phase.checkpoint?.let { CheckpointRow(page, phase, it, links, indent = nested, brief = brief) }
@@ -147,7 +154,8 @@ private fun PhaseItem(
         return
     }
 
-    val hasContent = phase.chapters.isNotEmpty() || phase.checkpoint != null || phase.mocks.nextDate != null
+    val hasContent =
+        phase.chapters.isNotEmpty() || phase.leftOut.isNotEmpty() || phase.checkpoint != null || phase.mocks.nextDate != null
     if (!hasContent) {
         PhaseRow(page.plan, phase, phaseMeta(page, phase, open), paused = page.isPaused)
         return
@@ -165,6 +173,7 @@ private fun PhaseItem(
             paused = page.isPaused,
             onClick = { expanded = !expanded },
             expanded = expanded,
+            leftOutTopics = leftOutLine(phase),
             // The current phase keeps its name open, as main's does.
             byPlace = byPlace && expanded && phase.state != PlanPhase.State.CURRENT,
         )
@@ -187,6 +196,7 @@ internal fun PhaseRow(
     byPlace: Boolean = false,
     nextChapter: PlanPhaseChaptersInner? = null,
     paused: Boolean = false,
+    leftOutTopics: Int = 0,
 ) {
     // A paused plan's phases end when the learner resumes, so no date says otherwise, as main's `usePhaseEnd`.
     val date = if (paused) null else phaseEnd(plan, phase, plan.today)
@@ -212,12 +222,28 @@ internal fun PhaseRow(
         highlighted = highlighted,
         expanded = expanded,
         leading = { if (nextChapter != null) ChapterMark(nextChapter, isNext = true) else PhaseMark(phase) },
-        supporting = line?.let { { Text(it.text, Modifier.semantics { contentDescription = it.spoken }) } },
+        // Open, the fold under it names what the left-out line counts.
+        supporting =
+            if (line == null && (leftOutTopics == 0 || expanded == true)) {
+                null
+            } else {
+                {
+                    line?.let { Text(it.text, Modifier.semantics { contentDescription = it.spoken }) }
+                    if (expanded != true) LeftOutTopicsLine(leftOutTopics)
+                }
+            },
         meta = date?.let { { TrailingText(it) } },
         // Main's PathRowBody gives its titles 9rem. Scale the base size before multiplying because Android scales text nonlinearly.
         headlineBasis = with(LocalDensity.current) { 16.sp.toDp() * 9 },
     )
 }
+
+/** How many of a phase's topics its row's line says the plan's date leaves out: none when another reason speaks for it, as main's `PhaseLeftOut`. */
+internal fun leftOutLine(phase: PlanPhase): Int =
+    when {
+        phase.state == PlanPhase.State.LEFT_OUT || phase.state == PlanPhase.State.UNFINISHED || phase.challengeLeftOut -> 0
+        else -> phase.leftOut.size
+    }
 
 /** Main's `usePhaseEnd`: when a phase ends ([phaseEnd]'s rule), the same wherever it shows: a short plan's days or its end ("~Nov 10", "~Jan"). */
 @Composable
@@ -303,6 +329,8 @@ private fun phaseMeta(
         )
     }
     if (phase.challengeLeftOut) return sameWords(challengeNotInPlan(page))
+    // Its left-out line says so, drawn with the fold's mark ([LeftOutTopicsLine]).
+    if (phase.leftOut.isNotEmpty()) return null
     // Main's `PhaseResume`: nothing continues while the goal is paused.
     if (phase.state != PlanPhase.State.CURRENT || open || page.isPaused) return null
 
@@ -448,9 +476,89 @@ internal fun PhaseChapters(
                 indent = indent,
             ) { showAll = !showAll }
         }
+        LeftOutTopicsRow(phase.leftOut, indent)
         phase.checkpoint?.let { CheckpointRow(page, phase, it, links, indent, brief) }
     }
 }
+
+/** Main's left-out row: the topics the plan's date leaves out of a phase or a module, folded under one row that names them. */
+@Composable
+internal fun LeftOutTopicsRow(
+    names: List<String>,
+    indent: Dp,
+) {
+    if (names.isEmpty()) return
+    var open by rememberSaveable { mutableStateOf(false) }
+    val muted = MaterialTheme.colorScheme.onSurfaceVariant
+
+    Column {
+        ListRow(
+            headline = { Text(pluralStringResource(R.plurals.plan_left_out_topics, names.size, names.size), color = muted) },
+            onClick = { open = !open },
+            indent = indent,
+            expanded = open,
+            leading = { LeftOutMark(FOLD_MARK) },
+        )
+        if (open) FoldedNames(names, indent)
+    }
+}
+
+/**
+ * Main's `LeftOutTopicsLine`: under a module's or a phase's name, how many of its topics the plan's date leaves out,
+ * after the fold's mark so it reads as a different line from what the row holds.
+ */
+@Composable
+internal fun LeftOutTopicsLine(count: Int) {
+    if (count == 0) return
+    Row(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
+        LeftOutMark(LINE_MARK)
+        Text(
+            pluralStringResource(R.plurals.plan_left_out_topics, count, count),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodySmall,
+        )
+    }
+}
+
+/** Main's `CircleMinusIcon` at 70% of the muted ink, as a topic left out of the plan is marked. */
+@Composable
+private fun LeftOutMark(size: Dp) {
+    Icon(
+        painterResource(R.drawable.ic_do_not_disturb_on),
+        contentDescription = null,
+        modifier = Modifier.size(size * glyphScale()),
+        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+    )
+}
+
+/** The glyph's ink is 20/24 of its box: 16dp draws main's 13dp list mark, 12dp its 10dp line mark. */
+private val FOLD_MARK = 16.dp
+private val LINE_MARK = 12.dp
+
+/** Main's `FoldedNames`: names a fold opens to, which open nothing themselves, as one quiet list of bullets hanging off the rows' title edge. */
+@Composable
+private fun FoldedNames(
+    names: List<String>,
+    indent: Dp,
+) {
+    val style = MaterialTheme.typography.bodyMedium
+    Column(
+        Modifier.padding(start = indent + listRowWordsStart() - BULLET_WIDTH - BULLET_GAP, end = LIST_ITEM_INSET, bottom = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurfaceVariant) {
+            names.forEach { name ->
+                Row(horizontalArrangement = Arrangement.spacedBy(BULLET_GAP)) {
+                    Text("•", Modifier.width(BULLET_WIDTH).clearAndSetSemantics {}, style = style)
+                    Text(name, style = style)
+                }
+            }
+        }
+    }
+}
+
+private val BULLET_WIDTH = 8.dp
+private val BULLET_GAP = 6.dp
 
 /** Without [links] the row only says what's there, and opens nothing. */
 @Composable

@@ -738,6 +738,89 @@ describe(buildSyllabus, () => {
     ]);
   });
 
+  it("names the skills of a module in the plan that its date leaves out, never ones known, past or chosen away", () => {
+    const syllabus = buildSyllabus({
+      areaCourses: new Map(),
+      chapterTitles: new Map(),
+      items: [lesson({ chapterId: "ch-64", skillId: "s-64" })],
+      knownSkillIds: new Set(["s-known"]),
+      notice: null,
+      pastBasicsSkillIds: new Set(["s-basics"]),
+      skills: [
+        { area: "Long surahs", name: "Memorize Surahs 64–66", skillId: "s-64", topics: [] },
+        { area: "Long surahs", name: "Memorize Surahs 56–58", skillId: "s-56", topics: [] },
+        { area: "Long surahs", name: "Memorize Al-Waqi'ah", skillId: "s-known", topics: [] },
+        { area: "Long surahs", name: "Recite with tajwid", skillId: "s-basics", topics: [] },
+        { area: "Long surahs", name: "Review by ear", skillId: "s-base", topics: [] },
+        { area: "Long surahs", name: "Memorize Al-Hadid", skillId: "s-57", topics: [] },
+        { area: "Al-Baqarah", name: "Memorize Al-Baqarah", skillId: "s-2", topics: [] },
+      ],
+      skippedAreas: [],
+      skippedBaseIds: new Set(["s-base"]),
+    });
+
+    expect(
+      syllabus.subjects.map((subject) => [subject.name, subject.leftOut, subject.covers]),
+    ).toStrictEqual([
+      ["Long surahs", ["Memorize Surahs 56–58", "Memorize Al-Hadid"], []],
+      ["Al-Baqarah", [], ["Memorize Al-Baqarah"]],
+    ]);
+  });
+
+  it("names what an exam subject's date leaves out only when it lists no topics", () => {
+    const input = oldGraphInput();
+
+    const syllabus = buildSyllabus({
+      ...input,
+      notice: input.notice && {
+        ...input.notice,
+        subjects: input.notice.subjects.map((subject) => ({ ...subject, topics: [] })),
+      },
+      skills: [
+        ...input.skills,
+        { area: PT, name: "Reconhecer tempos verbais", skillId: "s-verbs", topics: [] },
+      ],
+    });
+
+    const withTopics = buildSyllabus({
+      ...input,
+      skills: [
+        ...input.skills,
+        {
+          area: PT,
+          name: "Reconhecer tempos verbais",
+          skillId: "s-verbs",
+          topics: ["Tempos verbais"],
+        },
+      ],
+    });
+
+    expect(syllabus.subjects[0]?.leftOut).toStrictEqual(["Reconhecer tempos verbais"]);
+    expect(withTopics.subjects[0]?.leftOut).toStrictEqual([]);
+  });
+
+  it("names a skill whose every lesson was set aside as left out", () => {
+    const input = oldGraphInput();
+
+    const syllabus = buildSyllabus({
+      ...input,
+      items: [
+        ...input.items,
+        lesson({ chapterId: "ch-verbs", skillId: "s-verbs", status: "skipped" }),
+      ],
+      notice: input.notice && {
+        ...input.notice,
+        subjects: input.notice.subjects.map((subject) => ({ ...subject, topics: [] })),
+      },
+      skills: [
+        ...input.skills,
+        { area: PT, name: "Reconhecer tempos verbais", skillId: "s-verbs", topics: [] },
+      ],
+    });
+
+    expect(syllabus.subjects[0]?.leftOut).toStrictEqual(["Reconhecer tempos verbais"]);
+  });
+
   it("leaves what an exam subject out of the plan covers to its topics", () => {
     const input = oldGraphInput();
 

@@ -11,6 +11,7 @@ import { DoneMark } from "../_components/status-mark";
 import { LearnLink } from "../learn-link";
 import { usePlanScreen } from "../plan/plan-context";
 import { PlanDateText } from "../plan/plan-date-text";
+import { LeftOutTopicsLine } from "../syllabus/left-out-topics";
 import { namesModules } from "../syllabus/names-modules";
 import { ReasonText } from "../syllabus/topic-note";
 import { CurrentPhaseMark } from "./current-phase-mark";
@@ -87,6 +88,7 @@ function PhaseTitle({ note, phase }: { note?: string | null; phase: PlanPhaseVie
           })}
         </span>
       )}
+      <LeftOutTopicsLine count={phase.leftOut.length} />
       {note && <span className="text-muted-foreground text-xs">{note}</span>}
     </PathRowBody>
   );

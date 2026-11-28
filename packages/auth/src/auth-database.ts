@@ -2,18 +2,6 @@ import { stripeRowsOnly } from "./stripe/stripe-rows-only";
 
 export const authDatabase = stripeRowsOnly.$extends({
   query: {
-    deviceCode: {
-      /**
-       * Better Auth's device authorization saves `resources: null` for a login that names no
-       * resource, and Prisma refuses null for a list column, so that write leaves the list empty
-       * instead. Remove once a release has https://github.com/better-auth/better-auth/issues/11933
-       * fixed.
-       */
-      create({ args, query }) {
-        const { resources, ...data } = args.data;
-        return query({ ...args, data: resources === null ? data : args.data });
-      },
-    },
     oauthRefreshToken: {
       /**
        * Revoking a refresh token deletes only the access tokens issued with it, so one issued before

@@ -45858,6 +45858,11 @@
                           "name": {
                             "type": "string"
                           },
+                          "phase": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
                           "skillId": {
                             "type": "string"
                           }
@@ -93093,6 +93098,14 @@
             "type": "string",
             "description": "Stable within the goal's syllabus, URL-safe: the subject's page"
           },
+          "leftOut": {
+            "default": [],
+            "description": "The skills of a subject in the plan that the plan leaves out because they don't fit before its date (`notPlannedReason` `time` for each), by their names in the plan's graph, in the graph's order. A later date or more study time brings them back. Empty when the subject has `topics` (each topic carries its own status), when it's out of the plan as a whole (`covers` lists it then), and when everything fits",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "lessonsDone": {
             "type": "integer",
             "minimum": 0,
@@ -93254,6 +93267,7 @@
           "group",
           "imageUrl",
           "key",
+          "leftOut",
           "lessonsDone",
           "lessonsKnown",
           "lessonsTotal",
@@ -95168,6 +95182,14 @@
             "description": "True when some or all of this phase's work remains owed and has no placement date. Its start and end dates are null.",
             "type": "boolean"
           },
+          "leftOut": {
+            "default": [],
+            "description": "A `learn` phase the plan holds part of: the skills of it the plan leaves out because they don't fit before its date, by their names in the plan's graph, in the graph's order. A later date or more study time brings them back. Empty for other kinds, for a phase that's `leftOut` as a whole (`notPlannedReason` says why) and when everything fits",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "lessonsDone": {
             "type": "integer",
             "minimum": 0,
@@ -95281,6 +95303,7 @@
           "hours",
           "index",
           "kind",
+          "leftOut",
           "lessonsDone",
           "lessonsTotal",
           "milestone",

@@ -6,6 +6,7 @@ import {
   streamCourseOutline,
 } from "@zoonk/ai/tasks/curriculum/course-outline";
 import { checkCoverage } from "@zoonk/ai/tasks/curriculum/coverage-check";
+import { checkMemberCoverage } from "@zoonk/ai/tasks/curriculum/member-coverage";
 import {
   generateSkillGraphFrame,
   generateSkillGraphSection,
@@ -480,6 +481,32 @@ function setChoice(question: string, evidence: string, [right, ...wrong]: string
     question: `${question} ${crypto.randomUUID()}`,
     skill: 1,
   };
+}
+
+/** Members 1 and 3 are the graph's first two skills; member 2 has none. */
+function listMissingSecond() {
+  vi.mocked(checkMemberCoverage).mockResolvedValue(
+    taskResult(
+      {
+        members: [
+          { name: "First", number: 1, skills: ["identify-pathogens"] },
+          { name: "Second", number: 2, skills: [] },
+          { name: "Third", number: 3, skills: ["recognize-antigens"] },
+        ],
+        reason: "Your plan left out the second.",
+        set: "Immune steps",
+        uncovered: [
+          {
+            description: "Explain the second step.",
+            member: "Second",
+            name: `Explain the second step ${crypto.randomUUID().slice(0, 8)}`,
+            number: 2,
+          },
+        ],
+      },
+      "anthropic/claude-haiku-5.5",
+    ),
+  );
 }
 
 describe(goalContentWorkflow, () => {
@@ -1006,6 +1033,113 @@ describe(goalContentWorkflow, () => {
 
     expect(plan.placementPreparedAt).toBeInstanceOf(Date);
     expect(plan.buildFailedAt).toBeNull();
+  });
+
+  describe("a goal that names a complete list", () => {
+    const planNamesSchema = z.object({ skills: z.array(z.object({ name: z.string() })) });
+
+    async function loadPlanNames(goalId: string) {
+      const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId } });
+      return { names: planNamesSchema.parse(plan.graph).skills.map((skill) => skill.name), plan };
+    }
+
+    it("adds the member its graph leaves out between its neighbors and marks the plan checked", async () => {
+      const { goal } = await newGoal();
+      listMissingSecond();
+
+      await expect(goalContentWorkflow({ goalId: goal.id })).resolves.toMatchObject({
+        status: "built",
+      });
+
+      expect(checkCoverage).not.toHaveBeenCalled();
+
+      expect(checkMemberCoverage).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({
+          serviceTier: "priority",
+          skills: graph.skills.map(({ key, name }) => ({ key, name })),
+        }),
+      );
+
+      const { names, plan } = await loadPlanNames(goal.id);
+      const [first, third] = graph.skills.map((skill) => skill.name);
+      const at = names.findIndex((name) => name.startsWith("Explain the second step"));
+
+      expect(names).toHaveLength(graph.skills.length + 1);
+      expect(names.slice(at - 1, at + 2)).toStrictEqual([first, names[at], third]);
+      expect(plan.membersCheckedAt).toBeInstanceOf(Date);
+    });
+
+    it("checks the members after the reference check, on the graph it covered", async () => {
+      const { goal, user } = await newGoal();
+      const syllabus = await sourceFixture({ extractedText: "1. Antigens", title: "Syllabus" });
+
+      await learnerSourceFixture({
+        goalId: goal.id,
+        origin: "research",
+        sourceId: syllabus.id,
+        userId: user.id,
+      });
+
+      const added = `Explain how adjuvants help ${crypto.randomUUID().slice(0, 8)}`;
+
+      vi.mocked(checkCoverage).mockResolvedValue(
+        taskResult({
+          examWeights: [],
+          missing: [
+            {
+              area: null,
+              description: "Adjuvants.",
+              examWeight: null,
+              name: added,
+              prerequisites: [],
+              reference: "Syllabus",
+              syllabusLine: "1. Antigens",
+              topics: [],
+            },
+          ],
+          placements: [],
+        }),
+      );
+
+      await goalContentWorkflow({ goalId: goal.id });
+
+      const [coverage] = vi.mocked(checkCoverage).mock.invocationCallOrder;
+      const [members] = vi.mocked(checkMemberCoverage).mock.invocationCallOrder;
+
+      expect(coverage).toBeLessThan(members ?? 0);
+
+      expect(vi.mocked(checkMemberCoverage).mock.calls[0]?.[0].skills).toContainEqual(
+        expect.objectContaining({ name: added }),
+      );
+    });
+
+    it("keeps the learner's plan when the check fails, leaving the check owed", async () => {
+      const { goal } = await newGoal();
+      vi.mocked(checkMemberCoverage).mockRejectedValue(new Error("Provider unavailable"));
+
+      await expect(goalContentWorkflow({ goalId: goal.id })).resolves.toMatchObject({
+        status: "built",
+      });
+
+      const { names, plan } = await loadPlanNames(goal.id);
+
+      expect(names).toHaveLength(graph.skills.length);
+      expect(plan.membersCheckedAt).toBeNull();
+    });
+
+    it("owes no check for a goal built from the learner's own material", async () => {
+      const { goal, user } = await newGoal();
+      const notes = await sourceFixture({ extractedText: "Slide 1: Antigens", title: "Slides" });
+      await learnerSourceFixture({ goalId: goal.id, sourceId: notes.id, userId: user.id });
+
+      await goalContentWorkflow({ goalId: goal.id });
+
+      expect(checkMemberCoverage).not.toHaveBeenCalled();
+
+      await expect(loadPlanNames(goal.id)).resolves.toMatchObject({
+        plan: { membersCheckedAt: expect.any(Date) },
+      });
+    });
   });
 
   it("starts placement's questions from all saved skills after committing the initial plan", async () => {
@@ -1999,6 +2133,8 @@ describe(goalContentWorkflow, () => {
     expect(generateWholeSkillGraph).not.toHaveBeenCalled();
     expect(planSkillIdsOf(laterPlan)).toStrictEqual(planSkillIdsOf(firstPlan));
     expect(skillLevelRuns()).toHaveLength(1);
+    expect(checkMemberCoverage).not.toHaveBeenCalled();
+    expect(laterPlan.membersCheckedAt).toBeInstanceOf(Date);
   });
 
   it("plans two learners who answered the same at once from one graph", async () => {
@@ -2273,6 +2409,7 @@ describe(goalContentWorkflow, () => {
     expect(getStreamedEvents().some((event) => event.step === "readExamNotice")).toBe(false);
 
     expect(checkCoverage).not.toHaveBeenCalled();
+    expect(checkMemberCoverage).not.toHaveBeenCalled();
   });
 
   it("plans a later learner of the same notice from the exam's graph, whatever prompt wrote it and after its first learner left, without writing one", async () => {

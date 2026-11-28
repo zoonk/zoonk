@@ -1,4 +1,5 @@
 import { type GoalRebuildFollowUp } from "@zoonk/core/goals/rebuild-follow-up";
+import { needsMemberCheck } from "@zoonk/core/library/curriculum/add-member-skills";
 import {
   pinGraphToCourse,
   toStartedCourseIds,
@@ -112,6 +113,7 @@ async function createPlanAndOutlines({
     graph,
     idsByKey,
     initialCourseStart,
+    membersChecked: built.membersChecked ?? !needsMemberCheck(inputs),
     platform: context.analytics.platform ?? null,
     provenance,
     waitsForNotice,

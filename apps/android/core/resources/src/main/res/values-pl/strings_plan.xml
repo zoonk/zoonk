@@ -17,7 +17,7 @@
   "plan_archive_goal": "cf121b53c7079a15eba4c6ff05afd913d83dc8e5436a880e52c35f8540fdd4ea",
   "plan_archive_goal_short": "127e841705d33ac35adcad9aa11caad7e2649d9e84c2d1fbb6c5027978a707cd",
   "plan_archive_title": "24c1c78648124319e5dc10ed0f82ce542b99265d6869f2641677c95e41bda5ee",
-  "plan_ask_add_topics": "b3faa101d0575e09020536ef1399bf4b55b3745cc411238bf81fed0266fb4e1f",
+  "plan_ask_add_topics": "ccd8fb9152d9ccee19eca16969f00a85d8ade3979c0c5d2a6e0eeec0e3d8fd13",
   "plan_ask_aim": "d37954f4573c493b09d3526168ceca8fae70161cf98e1ea7b38c561165801cf6",
   "plan_ask_change": "22b48367d67a88073f2eaa43e6df2121ab1edee606beafbfbb765fdf0a12fb15",
   "plan_ask_daily_time": "a6ece6165f3087a6b5c0cf42d78478b0ce6a8bc7d303358e22a1a6dce2a73955",
@@ -283,6 +283,7 @@
   "plan_how_calculated": "81dd1ef57ddba8cefbed7bb3a15c5938912255ec77a1c9a3fcd4dec46562a7a4",
   "plan_keep_studying": "8472263ee8b0944d8959927aeda18f99380ddd8c9ccb6fd724fac14ee7941e3b",
   "plan_later": "67bf1eaa86f0560c3bce5d8e1748e4f03e593b1e36cd4cc1366f0d315ab90e54",
+  "plan_left_out_topics": "19be885f969ca3e6b67306fa1e3ce1e86f43105c5eeaded65121e9f2ade83a62",
   "plan_legend_phase_questions": "33dc4b9cb9e8a459d54a7d00d4b49fc8b874aec94cdae254f779933c2df6866d",
   "plan_lessons": "399b9b30b38d7aa4df256a358ad172dd4ef14a0ce6fd5dfe8cdc308fb442665f",
   "plan_lessons_done_of": "f4c84491ff5aa95e5196c96cc7fa5d6d112bb1ddefe2dafe4097845afa0bea06",
@@ -632,6 +633,13 @@
         <item quantity="other">Ukończono %1$d z %2$d lekcji</item>
     </plurals>
     <string name="plan_not_in_your_plan">Poza twoim planem</string>
+    <!-- Under a module or a phase of the learner's plan, and on the row that lists them: how many of its topics the plan leaves out because they don't fit before the plan's date. -->
+    <plurals name="plan_left_out_topics">
+        <item quantity="one">%d temat poza planem</item>
+        <item quantity="few">%d tematy poza planem</item>
+        <item quantity="many">%d tematów poza planem</item>
+        <item quantity="other">%d tematu poza planem</item>
+    </plurals>
     <plurals name="plan_lessons_not_studied">
         <item quantity="one">%d nieprzerobiona lekcja</item>
         <item quantity="few">%d nieprzerobione lekcje</item>
@@ -1437,7 +1445,8 @@
     <string name="plan_change_areas_from_basics">Zaczynasz od podstaw: %1$s.</string>
     <string name="plan_change_exam_date">Data egzaminu: %1$s.</string>
     <string name="plan_change_end_date">Data zakończenia: %1$s.</string>
-    <string name="plan_ask_add_topics">Dodać do planu: %1$s?</string>
+    <!-- Asks whether to add topics to the learner's plan. {topics} lists their names, which are often actions themselves, such as “Memorize An-Nahl”, so they stay after the colon rather than inside the sentence. -->
+    <string name="plan_ask_add_topics">Dodać do twojego planu: %1$s?</string>
     <string name="plan_ask_focus">Skupić się na przedmiotach: %1$s?</string>
     <string name="plan_ask_remove_focus">Usunąć priorytety?</string>
     <string name="plan_ask_less_time">Mniej czasu na przedmioty: %1$s?</string>

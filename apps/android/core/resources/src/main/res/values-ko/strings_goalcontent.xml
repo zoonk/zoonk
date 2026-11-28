@@ -24,6 +24,7 @@
   "goalcontent_from_material": "b68779814e0f5657b309c7306d0e9ec4d098763fba055e32e3e01ed7977e176a",
   "goalcontent_known": "47fd4be583d447c18bd6710df060a072fa9ea7a3d03e90ec9c374a5f3ff45bb6",
   "goalcontent_known_before": "b36c5ea3d2284bd2f4211f7a94c3d00b8da071318b8c572cadc4e5ca1c965f30",
+  "goalcontent_left_out_why": "7fa4f5ab99745146e480d4b57d794207902833d0f2d82ab7b521f07543fc025f",
   "goalcontent_lesson_count": "bad8eee69773b7ebd2083c1513a17512c30259ed8e85693d27f4d7cd23e2f815",
   "goalcontent_lessons_done": "0e97c75ad35da324c0862435ab3447ac568707bd8e78e0481d81e00dd3d8c3cf",
   "goalcontent_lessons_known_skipped": "8623be7d001854c0e2aa92d3dde122260b31c2587f00a00203f9eccfd1883ff1",
@@ -202,6 +203,8 @@
     <!-- Titles the list of what a subject or module contains, on its page while it's out of the learner's plan, so they can decide whether to add it back. Their plan doesn't teach it, so the title names its contents without promising they'll learn them. -->
     <string name="goalcontent_covers">다루는 내용</string>
     <string name="goalcontent_adjust_plan">계획 조정하기</string>
+    <!-- Under the folded list of a module's or a subject's topics that the learner's plan leaves out: they don't fit in the study time before the date the learner set. Followed by a button to change the plan. -->
+    <string name="goalcontent_left_out_why">설정한 날짜 전까지 공부할 시간이 부족해요.</string>
     <string name="goalcontent_add_back">다시 추가하기</string>
     <string name="goalcontent_save_failed">저장하지 못했어요. 다시 시도해 보세요.</string>
     <plurals name="goalcontent_chapters_done">

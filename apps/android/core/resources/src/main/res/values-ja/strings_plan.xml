@@ -17,7 +17,7 @@
   "plan_archive_goal": "7a96b6365867020917560bd8027dd4d21659c4d3b1cf367d7e1bd139c183cda4",
   "plan_archive_goal_short": "87123c31f5fd1632a2043bd0ab1df9342e146585498ec7ed393cc76d8a7754a6",
   "plan_archive_title": "3828fac534dd40cf568f7986005f80447dd9c78b56b6bc69ddb93a7bcc3018b2",
-  "plan_ask_add_topics": "df574d7e93383f5981067e2af8cd14fbdf23def778a2c7504625308b1fa0a703",
+  "plan_ask_add_topics": "6887a25ccb6ae1257428c69967d080031167a1cae2e0c3cf53e5728c6f145d07",
   "plan_ask_aim": "6d3cb5849f6c667571091fe976db8be0d8fa52fcf1edc8833b030a09f1c80f87",
   "plan_ask_change": "1a232361dece93902cf83eaca2c764d67468e3109174ea77c605e468439edcbb",
   "plan_ask_daily_time": "81c076b86066d08eedae8ffe0f8280c071efb989877e5f1b8457717ad975b507",
@@ -283,6 +283,7 @@
   "plan_how_calculated": "25827d5969869d99dfe361df9fc4b07849612b7a6ebfa656275201902691f853",
   "plan_keep_studying": "716930c38be9bec15a782e37c666f8fcec348cc911d62a9d833bc6c04bc5c032",
   "plan_later": "051e478ee9131c5dc4b61cf7df736c4ccc576af052244586d2526665b59d86c0",
+  "plan_left_out_topics": "dbc58e03ca10e9ef953a7dd1d982f5b58df6ae7da3fc8ff050b8c1b80d79beb7",
   "plan_legend_phase_questions": "4a95dc0e9f7a890f0981fe4094474a318eb7b60face9465b979c121fc20f255d",
   "plan_lessons": "65b934f8502d6bae30024110402ab5c46f99ce9fed92f06c648472609e95628f",
   "plan_lessons_done_of": "c7f221d32f4f021ec452747cc7279169daec5bc7cf62bd844598a18f274f403a",
@@ -617,6 +618,10 @@
         <item quantity="other">%1$d / %2$dレッスン完了</item>
     </plurals>
     <string name="plan_not_in_your_plan">学習計画に含まれていません</string>
+    <!-- Under a module or a phase of the learner's plan, and on the row that lists them: how many of its topics the plan leaves out because they don't fit before the plan's date. -->
+    <plurals name="plan_left_out_topics">
+        <item quantity="other">%dトピックが学習計画に入っていません</item>
+    </plurals>
     <plurals name="plan_lessons_not_studied">
         <item quantity="other">%dレッスンが未学習</item>
     </plurals>
@@ -1239,7 +1244,8 @@
     <string name="plan_change_areas_from_basics">%1$sは基礎から始めます。</string>
     <string name="plan_change_exam_date">試験日：%1$s。</string>
     <string name="plan_change_end_date">終了日：%1$s。</string>
-    <string name="plan_ask_add_topics">%1$sを学習計画に追加しますか？</string>
+    <!-- Asks whether to add topics to the learner's plan. {topics} lists their names, which are often actions themselves, such as “Memorize An-Nahl”, so they stay after the colon rather than inside the sentence. -->
+    <string name="plan_ask_add_topics">学習計画に追加：%1$s？</string>
     <string name="plan_ask_focus">%1$sを重点的に学びますか？</string>
     <string name="plan_ask_remove_focus">重点的に学ぶ科目の指定を解除しますか？</string>
     <string name="plan_ask_less_time">%1$sの学習時間を減らしますか？</string>

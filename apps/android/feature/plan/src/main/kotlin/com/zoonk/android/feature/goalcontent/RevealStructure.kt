@@ -18,6 +18,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.plan.ChapterRow
+import com.zoonk.android.feature.plan.LeftOutTopicsLine
+import com.zoonk.android.feature.plan.LeftOutTopicsRow
 import com.zoonk.android.feature.plan.PhaseRow
 import com.zoonk.android.feature.plan.isWritingAhead
 import com.zoonk.android.feature.plan.optionalStudyLabel
@@ -59,18 +61,15 @@ private fun RevealPath(
 ) {
     val phases = plan.phases
     if (phases.isEmpty()) return
-    val chapters =
-        phases
-            .singleOrNull()
-            ?.chapters
-            .orEmpty()
-            .filterNot { it.isWritingAhead }
+    val only = phases.singleOrNull()
+    val chapters = only?.chapters.orEmpty().filterNot { it.isWritingAhead }
 
     Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SectionHeader(stringResource(R.string.plan_your_path))
         Column(Modifier.bleed(LIST_ITEM_INSET)) {
-            if (chapters.isNotEmpty()) {
+            if (only != null && chapters.isNotEmpty()) {
                 chapters.forEach { ChapterRow(it, links = null, indent = 0.dp) }
+                LeftOutTopicsRow(only.leftOut, indent = 0.dp)
             } else {
                 phases.forEachIndexed { index, phase ->
                     if (index > 0) ListDivider()
@@ -81,23 +80,25 @@ private fun RevealPath(
     }
 }
 
-/** Every chapter of the phase, with no fold and no challenge: the Plan says when each comes. */
+/** Every chapter of the phase, then the topics the plan's date leaves out, with no challenge: the Plan says when each comes. */
 @Composable
 private fun RevealPhase(
     plan: Plan,
     phase: PlanPhase,
 ) {
     val chapters = phase.chapters.filterNot { it.isWritingAhead }
-    if (chapters.isEmpty()) {
+    if (chapters.isEmpty() && phase.leftOut.isEmpty()) {
         PhaseRow(plan, phase, line = null)
         return
     }
 
     var expanded by rememberSaveable(phase.index) { mutableStateOf(false) }
+    val nested = listRowWordsStart() - LIST_ITEM_INSET
     Column {
-        PhaseRow(plan, phase, line = null, onClick = { expanded = !expanded }, expanded = expanded)
+        PhaseRow(plan, phase, line = null, onClick = { expanded = !expanded }, expanded = expanded, leftOutTopics = phase.leftOut.size)
         if (expanded) {
-            chapters.forEach { ChapterRow(it, links = null, indent = listRowWordsStart() - LIST_ITEM_INSET) }
+            chapters.forEach { ChapterRow(it, links = null, indent = nested) }
+            LeftOutTopicsRow(phase.leftOut, indent = nested)
         }
     }
 }
@@ -161,7 +162,7 @@ private fun RevealSubject(
             }
         }
     val questions = subject.questions?.toInt()?.takeIf { it > 0 && withQuestions }
-    val opens = subject.topics.isNotEmpty() || subject.chapters.isNotEmpty()
+    val opens = subject.topics.isNotEmpty() || subject.chapters.isNotEmpty() || subject.leftOut.isNotEmpty()
     var expanded by rememberSaveable(subject.key) { mutableStateOf(false) }
 
     Column {
@@ -174,7 +175,16 @@ private fun RevealSubject(
             },
             onClick = if (opens) ({ expanded = !expanded }) else null,
             expanded = if (opens) expanded else null,
-            supporting = line?.let { { Text(it) } },
+            // Open, the fold under it names what the left-out line counts.
+            supporting =
+                if (line == null && (subject.leftOut.isEmpty() || expanded)) {
+                    null
+                } else {
+                    {
+                        line?.let { Text(it) }
+                        if (!expanded) LeftOutTopicsLine(subject.leftOut.size)
+                    }
+                },
             meta =
                 questions?.let {
                     {
@@ -188,7 +198,10 @@ private fun RevealSubject(
                 },
             chevronSpace = true,
         )
-        if (opens && expanded) SubjectContents(subject)
+        if (opens && expanded) {
+            SubjectContents(subject)
+            LeftOutTopicsRow(subject.leftOut, indent = 0.dp)
+        }
     }
 }
 

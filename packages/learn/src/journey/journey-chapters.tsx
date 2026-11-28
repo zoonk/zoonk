@@ -14,6 +14,8 @@ import { useId, useState } from "react";
 import { ChapterMark } from "../_components/chapter-mark";
 import { LearnLink } from "../learn-link";
 import { usePlanScreen } from "../plan/plan-context";
+import { useLeftOutTopicsLabel } from "../syllabus/left-out-topics";
+import { TopicMark } from "../syllabus/topic-mark";
 import { FoldRow } from "../today/today-fold-row";
 import { FarTopicSheet } from "../topic-outline/far-topic-sheet";
 import { useTopicOutlineActions } from "../topic-outline/topic-outline-actions";
@@ -53,6 +55,16 @@ function isSkipped(chapter: PlanChapterView): boolean {
 
 function isWritingAhead(chapter: PlanChapterView): boolean {
   return chapter.writing && !chapter.far && chapter.skills.length === 0;
+}
+
+function FoldedNames({ names }: { names: readonly string[] }) {
+  return (
+    <ul className="text-muted-foreground flex list-disc flex-col gap-1 pb-2 pl-7 text-sm">
+      {names.map((name) => (
+        <li key={name}>{name}</li>
+      ))}
+    </ul>
+  );
 }
 
 /** Whether the list would name any chapter: lessons being written right now aren't rows yet. */
@@ -138,11 +150,7 @@ function ChapterRow({
           <FoldChevron />
         </CollapsibleTrigger>
         <CollapsibleContent>
-          <ul className="text-muted-foreground flex list-disc flex-col gap-1 pb-2 pl-7 text-sm">
-            {chapter.skills.map((skill) => (
-              <li key={skill}>{skill}</li>
-            ))}
-          </ul>
+          <FoldedNames names={chapter.skills} />
         </CollapsibleContent>
       </Collapsible>
     );
@@ -185,15 +193,51 @@ function useShowMoreLabel({ hidden, showAll }: { hidden: number; showAll: boolea
 }
 
 /**
+ * The topics the plan's date leaves out of a phase or a module, folded under one row that names
+ * them. Under a list's rows rather than the path's, it takes their height (`min-h-control`).
+ */
+export function LeftOutTopicsRow({
+  className,
+  names,
+}: {
+  className?: string;
+  names: readonly string[];
+}) {
+  const label = useLeftOutTopicsLabel();
+
+  return (
+    <Collapsible>
+      <CollapsibleTrigger
+        className={cn(PATH_ROW_CLASS, "hover:bg-muted/70", className)}
+        data-slot="path-row"
+      >
+        <span className={PATH_ROW_LEADING_CLASS} data-slot="path-row-mark">
+          <TopicMark mark={{ kind: "notPlanned" }} />
+        </span>
+        <PathRowBody>
+          <span className="text-muted-foreground font-medium">{label(names.length)}</span>
+        </PathRowBody>
+        <FoldChevron />
+      </CollapsibleTrigger>
+      <CollapsibleContent>
+        <FoldedNames names={names} />
+      </CollapsibleContent>
+    </Collapsible>
+  );
+}
+
+/**
  * Without `links` the rows only say what's there, every one of them, and none opens anything. With
  * them, the `phase`'s challenge ends the list.
  */
 export function JourneyChapters({
   chapters,
+  leftOut,
   links,
   phase,
 }: {
   chapters: PlanChapterView[];
+  leftOut?: readonly string[];
   links: JourneyPathLinks | null;
   phase: PlanPhaseView | null;
 }) {
@@ -226,6 +270,12 @@ export function JourneyChapters({
             onToggle={() => setShowAll((open) => !open)}
             open={showAll}
           />
+        </li>
+      )}
+
+      {leftOut && leftOut.length > 0 && (
+        <li>
+          <LeftOutTopicsRow names={leftOut} />
         </li>
       )}
 

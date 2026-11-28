@@ -1373,7 +1373,8 @@
           return [
             "id": "\(group).s\(index)", "piece": LayoutPiece.listGroup.rawValue,
             "part": "section-text", "group": group, "row": NSNull(),
-            "bounds": Self.bounds(cell.frame), "ink": "not measured",
+            "bounds": Self.bounds(cell.frame),
+            "ink": picture.ink(in: cell.frame).map(Self.bounds) ?? NSNull(),
             "flow": cell.section, "gapBefore": 0, "margins": [0, 0], "name": "section text",
           ]
         }

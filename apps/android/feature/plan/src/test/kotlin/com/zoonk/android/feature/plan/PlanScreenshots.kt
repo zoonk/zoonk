@@ -15,10 +15,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.hasScrollAction
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollToNode
+import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -31,6 +37,7 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.feature.conversation.callStarter
 import com.zoonk.android.feature.goalcontent.examSyllabus
+import com.zoonk.android.feature.goalcontent.modulesWithTopicsLeftOut
 import com.zoonk.android.feature.language.languageProgress
 import com.zoonk.android.feature.onboarding.DAILY_TIMES
 import com.zoonk.android.navigation.rememberAppNavigator
@@ -1146,6 +1153,34 @@ class PlanScreenshots {
     @Test
     @Config(qualifiers = "w411dp-h1900dp-xxhdpi")
     fun callsOutOfTimePathPhone() = captureCallsPath("calls-time-path-phone", "time")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun partlyPlannedModulesPhone() {
+        show(structure = modulesWithTopicsLeftOut())
+        compose.onNode(hasScrollAction()).performScrollToNode(hasText("2 topics not in your plan"))
+        write("plan-modules-partly-left-out-phone", compose.onRoot().captureRender().asAndroidBitmap())
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun topicsLeftOutOfPathPhone() {
+        val original = page()
+        val phases =
+            original.plan.phases.map { phase ->
+                if (phase.state == PlanPhase.State.CURRENT) {
+                    phase.copy(leftOut = listOf("Reading and writing CSV files", "Cleaning messy data"))
+                } else {
+                    phase
+                }
+            }
+        show(exam = original.copy(plan = original.plan.copy(phases = phases)))
+        val omittedTopics = hasText("2 topics not in your plan") and SemanticsMatcher.keyIsDefined(SemanticsActions.Expand)
+        // Opened through its expand action, as TalkBack does, so the render shows the row at rest, without a tap's ripple.
+        compose.onNode(omittedTopics).performSemanticsAction(SemanticsActions.Expand)
+        compose.onNodeWithText("Cleaning messy data").assertExists()
+        write("path-left-out-open-phone", compose.onRoot().captureRender().asAndroidBitmap())
+    }
 
     private fun captureCallsPath(
         name: String,

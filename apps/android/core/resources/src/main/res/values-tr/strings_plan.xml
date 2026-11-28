@@ -17,7 +17,7 @@
   "plan_archive_goal": "5641c8e85b0924c50ecfd1a63e15cf7099acd7f7243633ae35c684c2fcd74b15",
   "plan_archive_goal_short": "6ad498b1a532b820a297efc9dbdca3a7a763f41c8c7c25423fd9b8f2d5755015",
   "plan_archive_title": "b9fa61423c0203de5a7270ba0a23495831d56eded75d415d97323ad456ca3d75",
-  "plan_ask_add_topics": "4e6809bcb57e0afd2962d0888bb1fdc09f8e45713349520aa6f365a3c327ecce",
+  "plan_ask_add_topics": "f92137d0699b00292a633eded974013297ad467dce4c007f8894cd5fe9d067a6",
   "plan_ask_aim": "799c8de7309b843b3e3735b7fca2ab13fef563c79223803f3d887fcbf2e913c8",
   "plan_ask_change": "20a57dcab8bb23aecfbe3c0a3aeeb5c186b099efc8aebaa45e5c9eb0ae8ac8a9",
   "plan_ask_daily_time": "86d071171d3e79441680a2ffb778dcc022292fa300aeb6635412690dd8ebf80e",
@@ -283,6 +283,7 @@
   "plan_how_calculated": "a7883158c74e8d82bf53ae3ebbda9c3460dc06097cb136e16b3ca038162bb012",
   "plan_keep_studying": "92981b39491ef5320d97f9d110c6f5f05a77389626abda9207090300a4662580",
   "plan_later": "f3f8905acb2a47ff558e68470aa68d5cdc19a40df36a3b1fa0a4f193949f35bd",
+  "plan_left_out_topics": "42e3a97dd4caf978d9cf35715c112af83713035d308508a8bb75c84ec1e20a8d",
   "plan_legend_phase_questions": "42094716d7adb46c7ab4d1a5b29085fde8a62420c5fa66195133b6b80d59ae82",
   "plan_lessons": "56bedeaeea4bc07e669e164401573bfd11ca76dad04f68ec64e4f57c0d1b661b",
   "plan_lessons_done_of": "225a776889f0cc67b5844f74a028524fca70ba9d4830e9138aa5c3f059bc277c",
@@ -622,6 +623,11 @@
         <item quantity="other">%1$d / %2$d ders tamamlandı</item>
     </plurals>
     <string name="plan_not_in_your_plan">Planında yok</string>
+    <!-- Under a module or a phase of the learner's plan, and on the row that lists them: how many of its topics the plan leaves out because they don't fit before the plan's date. -->
+    <plurals name="plan_left_out_topics">
+        <item quantity="one">%d konu planında yok</item>
+        <item quantity="other">%d konu planında yok</item>
+    </plurals>
     <plurals name="plan_lessons_not_studied">
         <item quantity="one">%d ders çalışılmadı</item>
         <item quantity="other">%d ders çalışılmadı</item>
@@ -1305,7 +1311,8 @@
     <string name="plan_change_areas_from_basics">%1$s için temelden başlanıyor.</string>
     <string name="plan_change_exam_date">Sınav tarihi: %1$s.</string>
     <string name="plan_change_end_date">Bitiş tarihi: %1$s.</string>
-    <string name="plan_ask_add_topics">Planına %1$s eklensin mi?</string>
+    <!-- Asks whether to add topics to the learner's plan. {topics} lists their names, which are often actions themselves, such as “Memorize An-Nahl”, so they stay after the colon rather than inside the sentence. -->
+    <string name="plan_ask_add_topics">Planına eklensin mi: %1$s?</string>
     <string name="plan_ask_focus">%1$s öncelikli olsun mu?</string>
     <string name="plan_ask_remove_focus">Öncelikleri kaldıralım mı?</string>
     <string name="plan_ask_less_time">%1$s için daha az zaman ayıralım mı?</string>

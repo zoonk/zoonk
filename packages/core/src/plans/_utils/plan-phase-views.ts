@@ -283,7 +283,7 @@ export function buildPhaseViews({
   today?: Date | null;
   todayItemKeys?: ReadonlySet<string>;
   upNextItemId: string | null;
-}): PlanPhaseView[] {
+}): Omit<PlanPhaseView, "leftOut">[] {
   const deadline = hasPlanDeadline({ studiesPastTarget, targetDate });
   const items = withinLessonScope({ deadline, items: planItems });
 

@@ -17,7 +17,7 @@ import { LearnLink } from "../learn-link";
 import { usePlanScreen } from "../plan/plan-context";
 import { PlanDateText } from "../plan/plan-date-text";
 import { usePhaseName } from "../plan/use-phase-name";
-import { JourneyChapters } from "./journey-chapters";
+import { JourneyChapters, LeftOutTopicsRow } from "./journey-chapters";
 import { type JourneyPathLinks } from "./journey-links";
 import {
   CheckpointRow,
@@ -86,9 +86,20 @@ function ChapterPhase({
         data-slot="path-row"
         href={links.chapter(chapter.chapterId)}
       >
-        <PhaseColumns nextChapter={isNext ? chapter : undefined} open={open} phase={phase} />
+        {/* The left-out row under it says what this phase's line would. */}
+        <PhaseColumns
+          nextChapter={isNext ? chapter : undefined}
+          open={open}
+          phase={{ ...phase, leftOut: [] }}
+        />
         <RowChevron />
       </LearnLink>
+
+      {phase.leftOut.length > 0 && (
+        <div className={NESTED_CLASS} data-slot="path-nested">
+          <LeftOutTopicsRow names={phase.leftOut} />
+        </div>
+      )}
 
       {open && <OpenPhaseEvents links={links} phase={phase} />}
     </li>
@@ -106,7 +117,8 @@ function ChaptersPhase({
   open: boolean;
   phase: PlanPhaseView;
 }) {
-  const hasContent = phase.chapters.length > 0 || phase.checkpoint !== null;
+  const hasContent =
+    phase.chapters.length > 0 || phase.leftOut.length > 0 || phase.checkpoint !== null;
 
   const header = <PhaseColumns byPlace={byPlace} open={open} phase={phase} />;
 
@@ -136,7 +148,12 @@ function ChaptersPhase({
 
         <CollapsibleContent className={ROW_FOLD_CLASS}>
           <div className={NESTED_CLASS} data-slot="path-nested">
-            <JourneyChapters chapters={phase.chapters} links={links} phase={phase} />
+            <JourneyChapters
+              chapters={phase.chapters}
+              leftOut={phase.leftOut}
+              links={links}
+              phase={phase}
+            />
           </div>
         </CollapsibleContent>
       </Collapsible>

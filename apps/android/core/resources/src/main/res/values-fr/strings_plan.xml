@@ -17,7 +17,7 @@
   "plan_archive_goal": "ccad28572c32f3dc94730decc25947c53479c2572d96a02a313bbe232cbd4a39",
   "plan_archive_goal_short": "f521d7c0995438433bf7129c1e8474d654fb1ecca3d92d2e5ab5180c1a8ecbf6",
   "plan_archive_title": "9bb11f97610298c215730cb9eec44af647d40fdcd8f665cd3134adfb0aad9173",
-  "plan_ask_add_topics": "3d76c949dc00445b693f34642b6a916d2a159bbab4b22847f13849431246b9d3",
+  "plan_ask_add_topics": "30088ee44c247e76025700aa8fd571c615b09b2faba3ce6b7afa9ffac7c1c8df",
   "plan_ask_aim": "5f5239ec178dbf6b80731b3e6514447a86267598c6ae100067704f0713cacc25",
   "plan_ask_change": "bf8255a194e7a8e896f1ca400a1930963f5838b288660473e74971a57d26f081",
   "plan_ask_daily_time": "8b6b18f10c1886970bb42095b0254fb1f3e233e4aed01afd5e5167981e43a39b",
@@ -283,6 +283,7 @@
   "plan_how_calculated": "0880c12af5fdcc42e274e375bf2b3876e5359a485cc6624140e26777c1acb024",
   "plan_keep_studying": "a59b335a5ec5be65d9685ae49ecbaafbddd6053a4d7caa5aae9f2d8d9e046a97",
   "plan_later": "f37d2a0078814b7d12d61ca4e83e1aaa257b2f93ac8902e8bb692a94d2579915",
+  "plan_left_out_topics": "acd2c348a841f311942123d0c3d5f76d818549d2183c73fc638b0daee195a66e",
   "plan_legend_phase_questions": "614cfcac1d2815b16b0bf337c04f4f9a6a1d2a80038dac87f8b59b431402fa6c",
   "plan_lessons": "63c0acb5b3d2f359f95b7aa8d09f734d7e48b83840725cf6407dbd321eaf2091",
   "plan_lessons_done_of": "69ea51b7ecde8458e740aef0c9d78f18f48f5f4a28a13e5faf0c48677046614c",
@@ -627,6 +628,12 @@
         <item quantity="other">%1$d leçons terminées sur %2$d</item>
     </plurals>
     <string name="plan_not_in_your_plan">Pas dans ton plan</string>
+    <!-- Under a module or a phase of the learner's plan, and on the row that lists them: how many of its topics the plan leaves out because they don't fit before the plan's date. -->
+    <plurals name="plan_left_out_topics">
+        <item quantity="one">%d sujet pas dans ton plan</item>
+        <item quantity="many">%d sujets pas dans ton plan</item>
+        <item quantity="other">%d sujets pas dans ton plan</item>
+    </plurals>
     <plurals name="plan_lessons_not_studied">
         <item quantity="one">%d leçon non étudiée</item>
         <item quantity="many">%d leçons non étudiées</item>
@@ -1371,7 +1378,8 @@
     <string name="plan_change_areas_from_basics">Pour %1$s, tu commences par les bases.</string>
     <string name="plan_change_exam_date">Date de l’examen : %1$s.</string>
     <string name="plan_change_end_date">Date de fin : %1$s.</string>
-    <string name="plan_ask_add_topics">Ajouter %1$s à ton plan ?</string>
+    <!-- Asks whether to add topics to the learner's plan. {topics} lists their names, which are often actions themselves, such as “Memorize An-Nahl”, so they stay after the colon rather than inside the sentence. -->
+    <string name="plan_ask_add_topics">Ajouter à ton plan : %1$s ?</string>
     <string name="plan_ask_focus">Donner la priorité à %1$s ?</string>
     <string name="plan_ask_remove_focus">Ne plus privilégier de matières ?</string>
     <string name="plan_ask_less_time">Moins de temps pour %1$s ?</string>

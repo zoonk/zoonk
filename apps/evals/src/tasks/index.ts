@@ -71,6 +71,7 @@ import { levelTestConfirmationsTask } from "./level-test-confirmations/task";
 import { libraryIdentityDecisionTask } from "./library-identity-decision/task";
 import { librarySearchTermsTask } from "./library-search-terms/task";
 import { liveConversationTask } from "./live-conversation/task";
+import { memberCoverageTask } from "./member-coverage/task";
 import { memoryExtractionTask } from "./memory-extraction/task";
 import { memoryGateTask } from "./memory-gate/task";
 import { memoryInsightTask } from "./memory-insight/task";
@@ -128,6 +129,7 @@ export const TASK_GROUPS: readonly { name: string; tasks: readonly RegisteredTas
       skillGraphTask,
       skillLevelsTask,
       coverageCheckTask,
+      memberCoverageTask,
       topicSkillNamesTask,
       planEditIntentTask,
       planRoutineFitTask,

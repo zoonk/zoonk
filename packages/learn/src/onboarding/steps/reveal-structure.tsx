@@ -24,7 +24,11 @@ import {
 } from "../../_components/list-group";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../../_components/page";
 import { useExamQuestionCount } from "../../exam/use-exam-question-count";
-import { JourneyChapters, hasListedChapters } from "../../journey/journey-chapters";
+import {
+  JourneyChapters,
+  LeftOutTopicsRow,
+  hasListedChapters,
+} from "../../journey/journey-chapters";
 import {
   PATH_ROW_CLASS,
   PATH_ROW_LEADING_CLASS,
@@ -33,6 +37,7 @@ import {
 import { PHASE_END_CLASS, PhaseMark, usePhaseRowName } from "../../journey/path-phase-row";
 import { PhaseWhen } from "../../journey/phase-when";
 import { usePlanScreen } from "../../plan/plan-context";
+import { LeftOutTopicsLine } from "../../syllabus/left-out-topics";
 import { namesModules } from "../../syllabus/names-modules";
 import { SubjectGroups } from "../../syllabus/subject-groups";
 import { TopicChapters } from "../../syllabus/subject-topic-chapters";
@@ -50,11 +55,12 @@ function PhaseRow({ alignChevron, phase }: { alignChevron: boolean; phase: PlanP
       </span>
       <PathRowBody value={<PhaseWhen className={PHASE_END_CLASS} phase={phase} />}>
         <span className="font-medium">{phaseRowName(phase)}</span>
+        <LeftOutTopicsLine count={phase.leftOut.length} />
       </PathRowBody>
     </>
   );
 
-  if (!hasListedChapters(phase.chapters)) {
+  if (!hasListedChapters(phase.chapters) && phase.leftOut.length === 0) {
     return (
       <div className={PATH_ROW_CLASS} data-slot="path-row">
         {row}
@@ -72,7 +78,12 @@ function PhaseRow({ alignChevron, phase }: { alignChevron: boolean; phase: PlanP
 
       <CollapsibleContent className={ROW_FOLD_CLASS}>
         <div className="nested-rows flex flex-col pb-2" data-slot="path-nested">
-          <JourneyChapters chapters={phase.chapters} links={null} phase={null} />
+          <JourneyChapters
+            chapters={phase.chapters}
+            leftOut={phase.leftOut}
+            links={null}
+            phase={null}
+          />
         </div>
       </CollapsibleContent>
     </Collapsible>
@@ -96,7 +107,12 @@ function RevealPath() {
       </PageSectionHeader>
 
       {rest.length === 0 && hasListedChapters(only.chapters) ? (
-        <JourneyChapters chapters={only.chapters} links={null} phase={null} />
+        <JourneyChapters
+          chapters={only.chapters}
+          leftOut={only.leftOut}
+          links={null}
+          phase={null}
+        />
       ) : (
         <ol className="flex flex-col [&>li+li]:border-t" data-slot="journey-path-list">
           {plan.phases.map((phase) => (
@@ -145,6 +161,7 @@ function SubjectRow({ isModule, subject }: { isModule: boolean; subject: Syllabu
           {subject.shortName}
         </ListRowTitle>
         {line && <ListRowDescription>{line}</ListRowDescription>}
+        <LeftOutTopicsLine count={subject.leftOut.length} />
       </ListRowContent>
       <ListRowTrailing className="hidden empty:hidden @lg/structure:flex">
         {subject.questions !== null && subject.questions > 0 && questionCount(subject.questions)}
@@ -152,7 +169,11 @@ function SubjectRow({ isModule, subject }: { isModule: boolean; subject: Syllabu
     </ListRowBody>
   );
 
-  if (subject.topics.length === 0 && subject.chapters.length === 0) {
+  if (
+    subject.topics.length === 0 &&
+    subject.chapters.length === 0 &&
+    subject.leftOut.length === 0
+  ) {
     return (
       <ListRow>
         {row}
@@ -174,6 +195,9 @@ function SubjectRow({ isModule, subject }: { isModule: boolean; subject: Syllabu
             <SubjectTopics chapterHref={null} labelledBy={titleId} topics={subject.topics} />
           ) : (
             <TopicChapters chapterHref={null} chapters={subject.chapters} />
+          )}
+          {subject.leftOut.length > 0 && (
+            <LeftOutTopicsRow className="min-h-control" names={subject.leftOut} />
           )}
         </div>
       </CollapsibleContent>

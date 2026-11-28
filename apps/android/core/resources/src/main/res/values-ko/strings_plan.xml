@@ -17,7 +17,7 @@
   "plan_archive_goal": "b85039bdd7e18d65713c882c9a418e0f5408f381728a9664cda94ad52c4938cd",
   "plan_archive_goal_short": "a6649e28ca455621e7078842b597d9b0b43c272eaf52f2c94b0be1cffad0577c",
   "plan_archive_title": "e095fcfa43fc484503e2ebd01fb007b29f699429f3d8270408a70bb91d079b35",
-  "plan_ask_add_topics": "886744af7f624da052f744ebff3f8d51f4b0c9fd538c2c04f3f399e7fc58c414",
+  "plan_ask_add_topics": "bf12921f5971d9ceca5ceb6f194fc163c1e1996b5f2d0000b9887904fdd01ab2",
   "plan_ask_aim": "3276395e15a1ede42949d8e96b6b657168def9e4dd6852a2e4f70bd0fd8db3b4",
   "plan_ask_change": "22d241436dc4d39ea83fb12e0070dd1f6134e24f9069b44f454ad3b54098e377",
   "plan_ask_daily_time": "b1aa8d6b08fb47cc833422fd2a981da7ae7dbae5362d24328cb5d88d100de8f0",
@@ -283,6 +283,7 @@
   "plan_how_calculated": "7ce829a1b2d889ac1956707e436377b146de370982785cede27a5adbbbb3e66f",
   "plan_keep_studying": "8886bf31b84c648c8f910574f29889d9af073db71149bf9f6a844f8da699118f",
   "plan_later": "badbf0faa30e9b8ff7b132ececa3997873f449147e46114c821ac5ef4da9da86",
+  "plan_left_out_topics": "30bd560df920e8db20c26b9d51b226ef60eb0ef0f15577a5cd5636f505f1aa17",
   "plan_legend_phase_questions": "a4071ec348b9cd094daae737e3a1b5900ffd94717315afec62596eb41eb7eb1d",
   "plan_lessons": "b3c5878d231409800298e7e37dfcb5f2c3a3b8df01b0308493b8666f4192ef08",
   "plan_lessons_done_of": "38b1e5994bd4b0dca6e1deda3c6018affe74764aa6eb94edadf1f2dadf2a4494",
@@ -617,6 +618,10 @@
         <item quantity="other">레슨 %1$d개 완료(총 %2$d개)</item>
     </plurals>
     <string name="plan_not_in_your_plan">계획에 없어요</string>
+    <!-- Under a module or a phase of the learner's plan, and on the row that lists them: how many of its topics the plan leaves out because they don't fit before the plan's date. -->
+    <plurals name="plan_left_out_topics">
+        <item quantity="other">계획에 없는 주제 %d개</item>
+    </plurals>
     <plurals name="plan_lessons_not_studied">
         <item quantity="other">공부하지 않은 레슨 %d개</item>
     </plurals>
@@ -1239,7 +1244,8 @@
     <string name="plan_change_areas_from_basics">%1$s 과목은 기초부터 시작해요.</string>
     <string name="plan_change_exam_date">시험일: %1$s.</string>
     <string name="plan_change_end_date">종료일: %1$s.</string>
-    <string name="plan_ask_add_topics">계획에 %1$s을(를) 추가할까요?</string>
+    <!-- Asks whether to add topics to the learner's plan. {topics} lists their names, which are often actions themselves, such as “Memorize An-Nahl”, so they stay after the colon rather than inside the sentence. -->
+    <string name="plan_ask_add_topics">내 계획에 추가할까요: %1$s?</string>
     <string name="plan_ask_focus">%1$s에 집중할까요?</string>
     <string name="plan_ask_remove_focus">집중 학습 설정을 해제할까요?</string>
     <string name="plan_ask_less_time">%1$s 공부 시간을 줄일까요?</string>
