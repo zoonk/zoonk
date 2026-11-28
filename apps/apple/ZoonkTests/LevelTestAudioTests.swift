@@ -75,6 +75,12 @@ final class LevelTestAudioTests: XCTestCase {
     XCTAssertEqual(reads.calls, 3)
   }
 
+  func testAMessageShowsTheTimeItTakesToHearRoundedToTheSecond() {
+    XCTAssertEqual(heardSeconds(clip: 8.5), 9)
+    XCTAssertEqual(heardSeconds(clip: 8.0), 9)
+    XCTAssertEqual(heardSeconds(clip: 3.0), 3)
+  }
+
   func testAMessageNotConfirmedYetIsSkippedOnlyUntilItsHeard() {
     var unconfirmed = question()
     unconfirmed.audioUnconfirmed = true

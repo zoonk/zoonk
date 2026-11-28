@@ -14,7 +14,13 @@ final class PlacementTestPhaseTests: XCTestCase {
     result.course = course
 
     XCTAssertEqual(phase(attempt: nil, .asking, next: question), .offer)
-    XCTAssertEqual(phase(attempt: nil, .done, result: result), .offer)
+    XCTAssertEqual(
+      phase(attempt: nil, .done, result: result),
+      .result(
+        PlacementTestEnd(
+          lessonsSkipped: 5, chapter: "Why prices move", course: course, attemptId: "a1",
+          revisited: true)),
+      "The plan's row opens its last result")
     XCTAssertEqual(
       phase(attempt: nil, .done, result: result, onboarding: true),
       .result(
@@ -109,21 +115,21 @@ final class PlacementTestPhaseTests: XCTestCase {
       .unavailable, "Another test's result isn't this one's")
   }
 
-  func testAPlanWithNoTestToStartOpensItsLastResultWithDone() {
+  func testThePlansRowOpensItsLastResultAlsoWhenANewTestCouldStart() {
     var result = PlacementTestResult(finishedAt: .now, lessonsSkipped: 4)
     result.attemptId = "a1"
     result.changeId = "c"
     var revisited = PlacementTestEnd(read: result)
     revisited.revisited = true
 
+    for status in [Components.Schemas.PlacementStatus.unavailable, .asking] {
+      XCTAssertEqual(
+        phase(attempt: nil, status, result: result), .result(revisited),
+        "Never the offer while a result is on record")
+    }
     XCTAssertEqual(
-      phase(attempt: nil, .unavailable, result: result, canStart: false), .result(revisited))
-    XCTAssertEqual(
-      phase(attempt: nil, .asking, result: result, canStart: true), .offer,
-      "With a test to start, the plan offers it as before")
-    XCTAssertEqual(
-      phase(attempt: nil, .unavailable, canStart: false), .offer,
-      "Neither: the flow's nothing-to-test screen, though the row doesn't show")
+      phase(attempt: nil, .unavailable), .offer,
+      "No result: the offer, or the flow's nothing-to-test screen, though the row doesn't show")
     XCTAssertEqual(revisited.changeId, "c", "Undo while the result still carries its change")
   }
 
@@ -265,11 +271,11 @@ final class PlacementTestPhaseTests: XCTestCase {
   private func phase(
     attempt: PlacementAttempt?, _ status: Components.Schemas.PlacementStatus,
     next: PracticeQuestion? = nil, result: PlacementTestResult? = nil, onboarding: Bool = false,
-    asked: Bool = false, attemptID: String? = nil, canStart: Bool = true
+    asked: Bool = false, attemptID: String? = nil
   ) -> PlacementTestPhase {
     PlacementTestPhase(
       attempt: attempt, result: result, status: status, next: next, labels: .trueFalse,
-      onboarding: onboarding, asked: asked, attemptID: attemptID, canStart: canStart)
+      onboarding: onboarding, asked: asked, attemptID: attemptID)
   }
 }
 

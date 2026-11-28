@@ -85,9 +85,7 @@ struct PlacementTestFlow: View {
   private func phase(
     for placement: GoalPlacement, asked: Bool = true, attemptID: String? = nil
   ) -> PlacementTestPhase {
-    PlacementTestPhase(
-      placement, onboarding: isOnboarding, asked: asked, attemptID: attemptID,
-      canStart: isOnboarding || offer != nil)
+    PlacementTestPhase(placement, onboarding: isOnboarding, asked: asked, attemptID: attemptID)
   }
 
   private func openOnAppear() {
@@ -177,6 +175,8 @@ struct PlacementTestFlow: View {
       PlacementTestResultView(
         end: end, onboarding: isOnboarding, pressed: pressed, failed: failed,
         undo: undo(changeId: end.changeId, lessons: end.undoLessons),
+        // The plan's last result takes a new test from its offer, when one can start.
+        onRetake: end.revisited && offer != nil ? { reached = .offer } : nil,
         onDone: { goOn(from: end) })
     }
   }

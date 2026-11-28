@@ -11,10 +11,13 @@ struct PlacementTestResultView: View {
   let pressed: FocusTestPress?
   let failed: Bool
   var undo: PlacementResultUndo?
+  /// The plan's last result, when a new test can start: its offer, in place.
+  var onRetake: (() -> Void)?
   let onDone: () -> Void
 
   var body: some View {
     let restored = undo?.restored != nil
+    let isSaving = pressed != nil || undo?.request.isRunning == true
     // Undone, the start is back at the course's first lesson, which the result doesn't name.
     let place = restored ? nil : end.chapter
 
@@ -29,8 +32,7 @@ struct PlacementTestResultView: View {
         ? nil
         : end.nextLesson == nil || end.revisited || restored
           ? Text(TestCopy.done) : Text(TestCopy.startLesson),
-      undo: undo, isSaving: pressed != nil || undo?.request.isRunning == true, failed: failed,
-      onContinue: onDone
+      undo: undo, isSaving: isSaving, failed: failed, onContinue: onDone
     ) {
       if let course = end.course, !restored {
         PlacementCourseLine(course: course, lessonsSkipped: end.lessonsSkipped)
@@ -38,6 +40,16 @@ struct PlacementTestResultView: View {
         if let nextLesson = end.nextLesson {
           UpNextLessonRow(lesson: nextLesson)
         }
+      }
+
+      if let onRetake {
+        Button(action: onRetake) {
+          Text(PlacementTestCopy.takeTestAgain)
+            .underline()
+        }
+        .buttonStyle(.borderless)
+        .listRowSeparator(.hidden)
+        .disabled(isSaving)
       }
     }
     .announcesStatus(undo?.announcement)
@@ -69,13 +81,12 @@ struct PlacementCourseLine: View {
         },
         height: 6, gap: 3)
 
-      Text(
-        lessonsSkipped > 0
-          ? PlacementTestCopy.lessonsSkipped(lessonsSkipped, of: course.lessons)
-          : PlacementTestCopy.lessons(course.lessons)
-      )
-      .typeStyle(.data)
-      .foregroundStyle(.mutedForeground)
+      // A result that skipped nothing says so by its line alone.
+      if lessonsSkipped > 0 {
+        Text(PlacementTestCopy.lessonsSkipped(lessonsSkipped, of: course.lessons))
+          .typeStyle(.data)
+          .foregroundStyle(.mutedForeground)
+      }
     }
     .padding(.vertical, 4)
     .accessibilityElement(children: .combine)

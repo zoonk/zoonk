@@ -216,6 +216,17 @@ final class PlacementTestShots: XCTestCase {
             onboarding: false, pressed: nil, failed: false, onDone: {}))
       ),
       (
+        "10e-result-from-plan-take-again", true,
+        AnyView(
+          PlacementTestResultView(
+            end: {
+              var end = PlacementTestRenderTests.startedPast
+              end.revisited = true
+              return end
+            }(), onboarding: false, pressed: nil, failed: false, undo: undo, onRetake: {},
+            onDone: {}))
+      ),
+      (
         "11-result-no-course", false,
         AnyView(
           PlacementTestResultView(
