@@ -1,11 +1,13 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
+import { planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { getBudgetForGoal, getDaySplit } from "../goals/daily-budget";
 import { updateGoal } from "../goals/update-goal";
+import { finishGoalPlacement } from "../learner/placement/finish-goal-placement";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
 import { openStudyDay } from "../sessions/open-study-day";
 import { answerOnboardingQuestion } from "../view-models/onboarding/answer-onboarding-question";
@@ -245,6 +247,64 @@ describe(getPlanTimeAdvice, () => {
     });
 
     expect(long).toMatchObject({ advice: { finishReason: null, precision: "month" } });
+  });
+
+  it("keeps the quoted finish when saving the same onboarding schedule", async () => {
+    vi.setSystemTime(new Date("2026-11-28T14:00:00Z"));
+
+    const [user, library] = await Promise.all([
+      userFixture(),
+      planLibraryFixture({
+        skills: Array.from({ length: 5 }, (_, index) => ({
+          builds: index === 0 ? undefined : index - 1,
+          lessons: 0,
+        })),
+      }),
+    ]);
+
+    const { goal, plan } = await unplannedGoalFixture({
+      dailyMinutes: 15,
+      planRevealedAt: null,
+      timezone: "UTC",
+      userId: user.id,
+    });
+
+    mockSession(user.id);
+
+    await prisma.plan.update({
+      data: { graph: library.graph, phases: library.graph.phases },
+      where: { id: plan.id },
+    });
+
+    await Promise.all(
+      library.skills.map(({ id }, position) =>
+        planItemFixture({ planId: plan.id, position, skillId: id }),
+      ),
+    );
+
+    await expect(
+      finishGoalPlacement({ goalId: goal.id, input: { fromScratch: false, timeZone: "UTC" } }),
+    ).resolves.toMatchObject({ status: "ready" });
+
+    await expect(
+      answerOnboardingQuestion({ goalId: goal.id, input: { question: "placement" } }),
+    ).resolves.toMatchObject({ status: "saved" });
+
+    const schedule = { dailyMinutes: 15, studyDays: WEEKDAYS };
+    const advice = await readCoverage(goal.id, WEEKDAYS, schedule);
+    expect(advice.endDate).toBe("2026-12-01");
+
+    await expect(
+      answerOnboardingQuestion({
+        goalId: goal.id,
+        input: { ...schedule, question: "schedule", timeZone: "UTC" },
+      }),
+    ).resolves.toMatchObject({ status: "saved" });
+
+    await expect(getGoalPlan(goal.id)).resolves.toMatchObject({
+      plan: { estimate: { endDate: advice.endDate, precision: advice.precision } },
+      status: "ready",
+    });
   });
 
   it("has no finish date when an undated plan cannot schedule the whole curriculum", async () => {

@@ -28,13 +28,16 @@ struct MeterParts: View {
   /// Where each part sits across a bar this wide.
   private func spans(width: Double) -> [(x: Double, width: Double)] {
     let totalWeight = parts.reduce(0) { $0 + max($1.weight, 0) }
-    let fixedWidth = Double(parts.count) * minimumWidth + Double(max(parts.count - 1, 0)) * gap
-    let sharedWidth = max(width - fixedWidth, 0)
+    let count = Double(parts.count)
+    let gap = min(gap, width / max(count * 2, 1))
+    let available = width - max(count - 1, 0) * gap
+    let minimum = min(minimumWidth, available / max(count, 1))
+    let sharedWidth = available - count * minimum
     var x = 0.0
 
     return parts.map { part in
       let share = totalWeight > 0 ? max(part.weight, 0) / totalWeight : 0
-      let span = (x: x, width: minimumWidth + sharedWidth * share)
+      let span = (x: x, width: minimum + sharedWidth * share)
       x += span.width + gap
       return span
     }
