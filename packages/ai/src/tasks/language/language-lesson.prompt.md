@@ -102,43 +102,43 @@ When the lesson is about hearing or saying sounds, a question never asks about a
 
 # Pattern table
 
-When the tip is about a set of forms that differ by their endings (a verb's endings for each person, a noun's or adjective's endings for number, gender or case), the learner sees the whole set on one word, then completes it for another word that follows it, like `hablar` to `trabajar`. Otherwise `patternTable` is `null`: for word order, a fixed phrase, politeness, or forms that change inside the word or irregularly ("sing", "sang"), choosing an ending practices nothing.
+When the tip is about a set of forms that differ by their endings (a verb's endings for each person, a noun's or adjective's endings for number, gender or case), the learner sees the whole set on one word, then completes it for another word that follows it (in Spanish, `hablar` to `trabajar`). Otherwise `patternTable` is `null`: for word order, a fixed phrase, politeness, or forms that change inside the word or irregularly ("sing", "sang"), choosing an ending practices nothing.
 
-- `prompt`: a short instruction in `LEARNER_LANGUAGE` ("Use the pattern from hablar to finish trabajar").
+- `prompt`: a short instruction in {{LEARNER_LANGUAGE}} ("Use the pattern from hablar to finish trabajar", written in {{LEARNER_LANGUAGE}}).
 - `modelWord`: the word whose full set is shown, in its dictionary form.
 - `newWord`: another word from the lesson's situation that follows exactly the same pattern.
 {{#bilingual}}
-- `modelMeaning` and `newMeaning`: each word's meaning in `LEARNER_LANGUAGE` ("to speak").
+- `modelMeaning` and `newMeaning`: each word's meaning in {{LEARNER_LANGUAGE}} ("to speak", written in {{LEARNER_LANGUAGE}}).
 {{/bilingual}}
 {{#sameLanguage}}
 - `modelMeaning` and `newMeaning`: `null`.
 {{/sameLanguage}}
-- `rows`: 4 to 8 rows, one per form. `label` names the form in `TARGET_LANGUAGE` ("yo", "tú", "plural"), `model` is `modelWord`'s form and `answer` is `newWord`'s. `blank` is `true` on the 2 or 3 rows the learner completes and `false` on the rows shown filled in.
+- `rows`: 4 to 8 rows, one per form. `label` names the form in {{TARGET_LANGUAGE}} (in Spanish, "yo", "tú"), `model` is `modelWord`'s form and `answer` is `newWord`'s. `blank` is `true` on the 2 or 3 rows the learner completes and `false` on the rows shown filled in.
 {{#bilingual}}
-- `labelMeaning`: the label in `LEARNER_LANGUAGE` ("I", "you"), or `null` when the label is the same in both.
+- `labelMeaning`: the label in {{LEARNER_LANGUAGE}} ("I", "you", written in {{LEARNER_LANGUAGE}}), or `null` when the label is the same in both.
 {{/bilingual}}
 {{#sameLanguage}}
 - `labelMeaning`: `null`.
 {{/sameLanguage}}
 - `choices`: 4 to 6 endings, written without a hyphen ("éis"). Each blank's answer ends with one of them, never the whole answer. The app takes the longest choice an answer ends with as its ending, so that one must be right. The others are endings of the same set or a close one that a learner would wrongly pick.
-- `explanation`: one sentence in `LEARNER_LANGUAGE` on how `newWord` follows `modelWord`.
+- `explanation`: one sentence in {{LEARNER_LANGUAGE}} on how `newWord` follows `modelWord`.
 
 # Dialogue
 
 When the lesson's situation is a conversation the learner takes part in (asking, ordering, greeting, explaining), the learner reads its start and picks what to say next. Otherwise `dialogue` is `null` (reading a sign, filling in a form), and so is a lesson about hearing or saying sounds, whose written lines would show the word they test.
 
-- `scene`: where it happens and who the other person is, in a few words of `LEARNER_LANGUAGE` ("A pharmacy in Madrid").
-- `lines`: 2 to 5 lines of the conversation so far, in `TARGET_LANGUAGE` at `LEVEL`, using the lesson's words and sentences. `speaker` is `them` for the other person and `you` for the learner's earlier lines. The last line is theirs, and it's what the learner answers.
-- `prompt`: in `LEARNER_LANGUAGE`, the moment the learner answers ("The landlord asks if you have questions. What do you say?").
-- `replies`: 3 or 4 `TARGET_LANGUAGE` replies, each one an answer to the last line. Exactly one has `isBest` `true`: it answers naturally, uses what this lesson teaches and fits the register. Every other reply is wrong for one clear reason a learner would fall for (the wrong form from the tip, the wrong register, a false friend), and never also a fine thing to say there.
+- `scene`: where it happens and who the other person is, in a few words of {{LEARNER_LANGUAGE}} ("A pharmacy in Madrid", written in {{LEARNER_LANGUAGE}}).
+- `lines`: 2 to 5 lines of the conversation so far, in {{TARGET_LANGUAGE}} at `LEVEL`, using the lesson's words and sentences. `speaker` is `them` for the other person and `you` for the learner's earlier lines. The last line is theirs, and it's what the learner answers.
+- `prompt`: in {{LEARNER_LANGUAGE}}, the moment the learner answers ("The landlord asks if you have questions. What do you say?", written in {{LEARNER_LANGUAGE}}).
+- `replies`: 3 or 4 {{TARGET_LANGUAGE}} replies, each one an answer to the last line. Exactly one has `isBest` `true`: it answers naturally, uses what this lesson teaches and fits the register. Every other reply is wrong for one clear reason a learner would fall for (the wrong form from the tip, the wrong register, a false friend), and never also a fine thing to say there.
 {{#bilingual}}
-- `translation` (on every line and reply): natural `LEARNER_LANGUAGE` with the same meaning.
+- `translation` (on every line and reply): natural {{LEARNER_LANGUAGE}} with the same meaning.
 {{/bilingual}}
 {{#sameLanguage}}
 - `translation` (on every line and reply): the same meaning in plainer words.
 {{/sameLanguage}}
-- `why`: one sentence in `LEARNER_LANGUAGE` on why this reply is best, or what makes it wrong.
-- `explanation`: one sentence in `LEARNER_LANGUAGE` with what to remember for the next conversation like this one ("To give a time, say at: at 3 p.m."). The app shows it under every reply's `why`, so it never repeats the best reply's `why`.
+- `why`: one sentence in {{LEARNER_LANGUAGE}} on why this reply is best, or what makes it wrong.
+- `explanation`: one sentence in {{LEARNER_LANGUAGE}} with what to remember for the next conversation like this one ("To give a time, say at: at 3 p.m.", written in {{LEARNER_LANGUAGE}}). The app shows it under every reply's `why`, so it never repeats the best reply's `why`.
 
 # Shared lessons
 

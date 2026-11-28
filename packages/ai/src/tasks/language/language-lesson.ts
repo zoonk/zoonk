@@ -11,7 +11,7 @@ import {
   buildProviderOptions,
 } from "../../provider-options";
 import { formatLocalContext } from "../_utils/language-context";
-import { getLanguagePromptContext } from "../_utils/prompt-language";
+import { fillPromptLanguages, getLanguagePromptContext } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import { type LessonProblem, formatLessonProblems } from "../lesson-writer/format-lesson-plan";
 import fixPrompt from "./language-lesson-fix.prompt.md";
@@ -47,10 +47,14 @@ function getSystemPrompt({
   const respelling = RESPELLING_RULES[learnerLanguage] ?? "";
   const sameLanguage = isSameLanguage({ learnerLanguage, targetLanguage });
 
-  return selectPromptVariants({
-    template: basePrompt,
-    variants: { bilingual: !sameLanguage, sameLanguage },
-  }).replace("{{READER_RESPELLING}}\n", () => respelling);
+  return fillPromptLanguages({
+    learnerLanguage,
+    targetLanguage,
+    template: selectPromptVariants({
+      template: basePrompt,
+      variants: { bilingual: !sameLanguage, sameLanguage },
+    }).replace("{{READER_RESPELLING}}\n", () => respelling),
+  });
 }
 
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: words come before the sentences that use them, and the tip before its practice and pattern. */
