@@ -1,7 +1,8 @@
 import { createErrorResponse, httpStatus } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { usageDecisionError } from "@/lib/lesson-player-errors";
-import { readBody } from "@/lib/request-input";
+import { parseInput, readBody } from "@/lib/request-input";
+import { MAX_CODE_BYTES, isCodeTooLong } from "@zoonk/core/library/activities/program-languages";
 import { runLearnerProgram } from "@zoonk/core/library/activities/run-learner-program";
 import {
   type CodeRunPhase,
@@ -9,6 +10,7 @@ import {
   codeRunInputSchema,
 } from "@zoonk/core/library/activities/sandbox-contract";
 import { after } from "next/server";
+import { z } from "zod";
 
 type RunAdmission = Awaited<ReturnType<typeof runLearnerProgram>>;
 
@@ -48,7 +50,19 @@ function streamRun(admission: Extract<RunAdmission, { status: "replay" | "start"
 }
 
 async function startCodeRun(request: Request) {
-  const input = await readBody(request, codeRunInputSchema);
+  const body = await readBody(request, z.unknown());
+  const code = z.object({ code: z.string() }).safeParse(body).data?.code;
+
+  if (code !== undefined && isCodeTooLong(code)) {
+    return createErrorResponse({
+      code: "CODE_TOO_LONG",
+      details: { maxBytes: MAX_CODE_BYTES },
+      message: "The program is longer than the largest one that runs",
+      status: httpStatus.badRequest,
+    });
+  }
+
+  const input = parseInput(codeRunInputSchema, body);
   const admission = await runLearnerProgram(input);
 
   if (admission.status === "alreadyRunning") {

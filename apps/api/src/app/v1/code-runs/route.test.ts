@@ -111,13 +111,21 @@ describe("POST /v1/code-runs", () => {
     });
   });
 
-  it.each([{ language: "javascript" }, { code: "é".repeat(32_769) }])(
-    "refuses invalid requests before admission",
-    async (input) => {
-      const response = await postCodeRun(request(input));
-      expect(response.status).toBe(400);
-      await expect(response.json()).resolves.toMatchObject({ error: { code: "VALIDATION_ERROR" } });
-      expect(runLearnerProgram).not.toHaveBeenCalled();
-    },
-  );
+  it("refuses an invalid request before admission", async () => {
+    const response = await postCodeRun(request({ language: "javascript" }));
+    expect(response.status).toBe(400);
+    await expect(response.json()).resolves.toMatchObject({ error: { code: "VALIDATION_ERROR" } });
+    expect(runLearnerProgram).not.toHaveBeenCalled();
+  });
+
+  it("refuses a program over the size limit with its own code", async () => {
+    const response = await postCodeRun(request({ code: "é".repeat(32_769) }));
+    expect(response.status).toBe(400);
+
+    await expect(response.json()).resolves.toMatchObject({
+      error: { code: "CODE_TOO_LONG", details: { maxBytes: 65_536 } },
+    });
+
+    expect(runLearnerProgram).not.toHaveBeenCalled();
+  });
 });

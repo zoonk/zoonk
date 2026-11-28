@@ -2872,7 +2872,7 @@
             }
           },
           "400": {
-            "description": "Validation error",
+            "description": "The request is invalid (`VALIDATION_ERROR`), or the source is longer than the largest program that runs (`CODE_TOO_LONG`, with `details.maxBytes`, that limit in UTF-8 bytes)",
             "content": {
               "application/json": {
                 "schema": {

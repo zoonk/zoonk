@@ -1,6 +1,6 @@
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
-import { MAX_CODE_BYTES, SANDBOX_LANGUAGE_IDS } from "./program-languages";
+import { MAX_CODE_BYTES, SANDBOX_LANGUAGE_IDS, isCodeTooLong } from "./program-languages";
 
 export const sandboxLanguageSchema = z.enum(SANDBOX_LANGUAGE_IDS);
 
@@ -9,10 +9,7 @@ export const codeRunInputSchema = z
     code: z
       .string()
       .max(MAX_CODE_BYTES)
-      .refine(
-        (code) => new TextEncoder().encode(code).length <= MAX_CODE_BYTES,
-        "Source exceeds 64 KiB in UTF-8",
-      ),
+      .refine((code) => !isCodeTooLong(code), "Source exceeds 64 KiB in UTF-8"),
     language: sandboxLanguageSchema,
     requestId: uuidSchema(),
   })

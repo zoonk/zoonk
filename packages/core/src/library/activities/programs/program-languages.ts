@@ -3,6 +3,10 @@ type Language = { convention: string; fileName: string; name: string; runs: "dev
 /** The largest program, in UTF-8 bytes, that our servers run. */
 export const MAX_CODE_BYTES = 65_536;
 
+export function isCodeTooLong(code: string) {
+  return new TextEncoder().encode(code).length > MAX_CODE_BYTES;
+}
+
 export const PROGRAM_LANGUAGES = {
   cpp: { convention: "Use int main().", fileName: "main.cpp", name: "C++", runs: "sandbox" },
   csharp: {

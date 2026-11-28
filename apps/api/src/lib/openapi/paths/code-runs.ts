@@ -26,7 +26,11 @@ export const codeRunPaths = {
           description:
             "Zero or more `phase` events with JSON `{ phase }` (`starting`, `compiling` or `running`), then one `result` event with JSON `{ runId, stop, output, errorOutput, error }`. Stops are `done`, `error`, `timeout`, `tooMuchOutput` or `unavailable`. The error is null or `{ line, message }`; the line is one-based or null. The run ID identifies its measured stdout when checking the activity answer.",
         },
-        "400": validationErrorResponse,
+        "400": {
+          ...validationErrorResponse,
+          description:
+            "The request is invalid (`VALIDATION_ERROR`), or the source is longer than the largest program that runs (`CODE_TOO_LONG`, with `details.maxBytes`, that limit in UTF-8 bytes)",
+        },
         "401": unauthorizedResponse,
         "402": {
           ...paymentRequiredResponse,
