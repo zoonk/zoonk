@@ -119,11 +119,12 @@ async function ensureLevelTestBank() {
 const CLIP_URL = "https://audio.e2e.zoonk.test/listening.wav";
 const CLIP_SAMPLE_RATE = 8000;
 const CLIP_SAMPLES = 2400;
+const LONG_CLIP_SAMPLES = CLIP_SAMPLE_RATE * 8;
 
-function clipAudio(): Buffer {
+function clipAudio(samples = CLIP_SAMPLES): Buffer {
   const header = Buffer.alloc(44);
   header.write("RIFF", 0);
-  header.writeUInt32LE(36 + CLIP_SAMPLES, 4);
+  header.writeUInt32LE(36 + samples, 4);
   header.write("WAVEfmt ", 8);
   header.writeUInt32LE(16, 16);
   header.writeUInt16LE(1, 20);
@@ -133,12 +134,15 @@ function clipAudio(): Buffer {
   header.writeUInt16LE(1, 32);
   header.writeUInt16LE(8, 34);
   header.write("data", 36);
-  header.writeUInt32LE(CLIP_SAMPLES, 40);
+  header.writeUInt32LE(samples, 40);
 
-  return Buffer.concat([header, Buffer.alloc(CLIP_SAMPLES, 128)]);
+  return Buffer.concat([header, Buffer.alloc(samples, 128)]);
 }
 
-async function routeSpeechClips(page: Page, { file = CLIP_URL, url = CLIP_URL } = {}) {
+async function routeSpeechClips(
+  page: Page,
+  { file = CLIP_URL, samples = CLIP_SAMPLES, url = CLIP_URL } = {},
+) {
   const requests: unknown[] = [];
   let fileLoaded = false;
 
@@ -150,7 +154,7 @@ async function routeSpeechClips(page: Page, { file = CLIP_URL, url = CLIP_URL } 
 
   await page.route(file, async (route) => {
     fileLoaded = true;
-    await route.fulfill({ body: clipAudio(), contentType: "audio/wav" });
+    await route.fulfill({ body: clipAudio(samples), contentType: "audio/wav" });
   });
 
   return { fileLoaded: () => fileLoaded, requests };
@@ -418,7 +422,17 @@ test.describe("Language practice in the plan", () => {
 
     await page.getByRole("button", { name: "I didn't understand" }).click();
     await expect(testQuestion(page, 6, 12)).toBeVisible();
-    await page.getByRole("button", { name: "Can't listen now" }).click();
+
+    // "Can't listen now" silences a message that is still playing, before its answer is saved.
+    await routeSpeechClips(page, { samples: LONG_CLIP_SAMPLES });
+    await page.getByRole("button", { name: "Play the message" }).click();
+    const stopAudio = page.getByRole("button", { name: "Stop the audio" });
+    await expect(stopAudio).toBeVisible();
+
+    await holdActionAnswer(page, `/start/${goal.id}`, {
+      start: () => page.getByRole("button", { name: "Can't listen now" }).click(),
+      whileHeld: () => expect(stopAudio).toBeHidden(),
+    });
 
     await expect(page.getByRole("heading", { name: "Your English level" })).toBeVisible();
 

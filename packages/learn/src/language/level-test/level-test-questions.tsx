@@ -122,8 +122,11 @@ function AskedQuestion({
     playFailed: speech.state.status === "failed",
   });
 
-  const send = (input: Omit<LevelTestAnswerInput, "attemptId" | "questionId">) =>
+  // An answer, a skip or a stop ends the question, so a message still playing stops with it.
+  const send = (input: Omit<LevelTestAnswerInput, "attemptId" | "questionId">) => {
+    speech.cancel();
     onAnswer({ ...input, questionId: question.id });
+  };
 
   return (
     <PlacementQuestionScreen
@@ -153,7 +156,10 @@ function AskedQuestion({
         });
       }}
       onClose={onClose}
-      onStop={onStop}
+      onStop={() => {
+        speech.cancel();
+        onStop();
+      }}
       pending={pending}
       question={{
         context: isListening ? null : question.passage,
