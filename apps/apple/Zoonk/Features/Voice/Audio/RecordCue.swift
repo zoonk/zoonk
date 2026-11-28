@@ -61,7 +61,7 @@ struct RecordCue: View {
     ZStack(alignment: .leading) {
       Text(
         "Say it after “Speak now”", tableName: "Voice",
-        comment: "Before recording: wait for the “Speak now” cue, then say the sentence"
+        comment: "Before recording. “Speak now” must match the cue shown when the microphone is on."
       )
       .foregroundStyle(.mutedForeground)
       .opacity(phase == .before ? 1 : 0)
@@ -76,7 +76,7 @@ struct RecordCue: View {
       track(
         label: Text(
           "Speak now", tableName: "Voice",
-          comment: "Shown once the microphone is on: the learner says the sentence now"
+          comment: "Shown the moment the microphone is on, telling the learner to start talking."
         )
         .fontWeight(.medium),
         levels: phase == .live && !reduceMotion ? levels : [],

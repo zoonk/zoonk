@@ -11797,7 +11797,62 @@
       }
     },
     "We can't use your microphone, so type what you'd say." : {
-
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir können dein Mikrofon nicht nutzen, also schreib auf, was du sagen würdest."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No podemos usar tu micrófono, así que escribe lo que dirías."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On ne peut pas utiliser ton micro, alors écris ce que tu dirais."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non riusciamo a usare il tuo microfono, quindi scrivi quello che diresti."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "マイクが使えないため、話す内容を文字で入力してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "마이크를 사용할 수 없어요. 말하려던 내용을 글로 입력하세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie możemy skorzystać z twojego mikrofonu, więc napisz to, co chcesz powiedzieć."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A gente não consegue usar seu microfone, então digite o que você falaria."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mikrofonunu kullanamıyoruz, bu yüzden söyleyeceklerini yaz."
+          }
+        }
+      }
     },
     "We couldn't check your answer this time. Try again." : {
       "comment" : "The server couldn't grade a written or spoken answer",

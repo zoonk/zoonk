@@ -83,8 +83,7 @@ enum RecordNote: Equatable {
     case .missedStart:
       BarNote(
         LocalizedStringResource(
-          "We may have missed the start. Say it again.", table: "Voice",
-          comment: "A recording likely lost its first words while the microphone started"),
+          "We may have missed the start. Say it again.", table: "Voice"),
         tone: .status)
     case .noSpeech:
       BarNote(
