@@ -240,15 +240,12 @@ struct PhaseEnd: Equatable {
   var isDate = true
 
   static let later = PhaseEnd(
-    shown: String(
-      localized: "Later", table: "Plan",
-      comment: "At the end of a phase's row: its work has no day in the plan yet"),
+    shown: String(localized: "Later", table: "Plan"),
     line: endsLater, spoken: endsLater, isDate: false)
 
   private static var endsLater: String {
     String(
-      localized: "Ends later", table: "Plan",
-      comment: "When a phase whose work has no day in the plan yet ends, under the phase bar")
+      localized: "Ends later", table: "Plan")
   }
 
   private init(shown: String, line: String, spoken: String, isDate: Bool) {

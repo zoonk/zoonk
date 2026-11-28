@@ -13198,6 +13198,72 @@
         }
       }
     },
+    "aboutYear" : {
+      "comment" : "An estimated year, read aloud; the argument is a year like '2031'",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Etwa %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "About %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alrededor de %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vers %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intorno al %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ごろ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@쯤"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Orientacyjnie: %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por volta de %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ civarında"
+          }
+        }
+      }
+    },
     "Above the %@ points needed" : {
       "localizations" : {
         "de" : {
@@ -19200,6 +19266,64 @@
         }
       }
     },
+    "Ends later" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Endet später"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Termina más adelante"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se termine plus tard"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Termina più avanti"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "それ以降に終了"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "나중에 종료"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kończy się później"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Termina mais tarde"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Daha sonra sona eriyor"
+          }
+        }
+      }
+    },
     "endsAboutMonth" : {
       "comment" : "When a phase of the plan ends, about, read aloud; the argument is a month like 'Jan' or 'Jan 2028'",
       "extractionState" : "extracted_with_value",
@@ -19328,6 +19452,138 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "~%@ tarihinde biter"
+          }
+        }
+      }
+    },
+    "endsAboutYear" : {
+      "comment" : "When a phase of the plan ends, about, read aloud; the argument is a year like '2030'",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Endet ungefähr um %@ herum"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Ends around %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Termina hacia %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se termine vers %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finisce intorno al %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "終了は%@ごろ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@쯤 끝나요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kończy się mniej więcej: %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Termina por volta de %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ civarında bitiyor"
+          }
+        }
+      }
+    },
+    "endsAboutYearShown" : {
+      "comment" : "Under the plan's phase bar: when the current phase ends, about; the argument is a year like '2030'",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Endet ca. %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Ends ~%@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Termina ~%@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fin vers %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fine ~%@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "終了：約%@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@쯤 끝남"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Koniec ~%@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Termina ~%@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yaklaşık %@"
           }
         }
       }
@@ -22985,6 +23241,64 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "Later" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Später"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Más adelante"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus tard"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Più avanti"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "その後"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "나중에"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Później"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mais tarde"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Daha sonra"
           }
         }
       }
@@ -39160,13 +39474,72 @@
         }
       }
     },
-    "You finish around %@." : {
-      "comment" : "When the plan finishes, as a month and year, like \"January 2027\", or a year, like \"2031\"",
+    "You finish" : {
+      "comment" : "Names the day the plan works out it finishes when the learner set no end date: beside the flag in the roadmap's legend, and as the label of that date in the plan's settings.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du bist etwa im %@ fertig."
+            "value" : "Du bist fertig"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terminas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu termines"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fine del piano"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完了予定日"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계획 완료"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ukończenie planu"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você termina"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bitiş"
+          }
+        }
+      }
+    },
+    "You finish around %@." : {
+      "comment" : "{date} is a month and year, like \"January 2027\", or a year, like \"2031\".",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du schließt ungefähr um %@ herum ab."
           }
         },
         "es" : {
@@ -39178,31 +39551,31 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu termineras vers %@."
+            "value" : "Tu termines vers %@."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Finirai verso %@."
+            "value" : "Fine prevista: %@."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ごろに完了する予定です。"
+            "value" : "学習計画は%@ごろに完了します。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@쯤에 계획을 마쳐요."
+            "value" : "계획을 %@쯤 마쳐요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Przewidywany koniec planu: %@."
+            "value" : "Plan zakończysz mniej więcej: %@."
           }
         },
         "pt" : {
@@ -39214,7 +39587,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Planını %@ civarında bitirirsin."
+            "value" : "Planın yaklaşık %@ civarında tamamlanıyor."
           }
         }
       }
@@ -43895,6 +44268,71 @@
         }
       }
     },
+    "Your plan will end around %@ instead of %@." : {
+      "comment" : "{after} and {before} are a month and year, like \"May 2027\", or a year, like \"2031\".",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Plan endet ungefähr um %1$@ herum statt um %2$@ herum."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Your plan will end around %1$@ instead of %2$@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu plan terminará aproximadamente en %1$@ en lugar de en %2$@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan se terminera vers %1$@ au lieu de %2$@."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fine prevista del piano: %1$@ anziché %2$@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習計画は%2$@ごろではなく、%1$@ごろに終了します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계획은 %2$@쯤이 아니라 %1$@쯤 끝날 거예요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plan zakończy się mniej więcej: %1$@, a nie %2$@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano termina por volta de %1$@, em vez de %2$@."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planın %2$@ yerine %1$@ civarında sona erecek."
+          }
+        }
+      }
+    },
     "Your plan will end on %@ instead of %@." : {
       "comment" : "A plan change's consequence: the plan's end moves; the arguments are days like \"May 5\"",
       "localizations" : {
@@ -44545,62 +44983,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Haftalık meydan okuman %@ günleri yapılıyor."
-          }
-        }
-      }
-    },
-    "Ends later" : {
-      "comment" : "When a phase whose work has no day in the plan yet ends, under the phase bar"
-    },
-    "Later" : {
-      "comment" : "At the end of a phase's row: its work has no day in the plan yet"
-    },
-    "You finish" : {
-      "comment" : "Names the day the plan works out it finishes when the learner set no end date: beside the flag in the roadmap's legend, and as the label of that date in the plan's settings."
-    },
-    "Your plan will end around %@ instead of %@." : {
-      "comment" : "A plan change's consequence: the plan's end moves; the arguments are a month and year, like \"May 2027\", or a year, like \"2031\"",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Your plan will end around %1$@ instead of %2$@."
-          }
-        }
-      }
-    },
-    "aboutYear" : {
-      "comment" : "An estimated year, read aloud; the argument is a year like '2031'",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "About %@"
-          }
-        }
-      }
-    },
-    "endsAboutYear" : {
-      "comment" : "When a phase of the plan ends, about, read aloud; the argument is a year like '2030'",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Ends around %@"
-          }
-        }
-      }
-    },
-    "endsAboutYearShown" : {
-      "comment" : "Under the plan's phase bar: when the current phase ends, about; the argument is a year like '2030'",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Ends ~%@"
           }
         }
       }

@@ -262,7 +262,7 @@ enum PlanChangeEffect {
           localized: "Your plan will end around \(end.after) instead of \(end.before).",
           table: "Plan",
           comment:
-            "A plan change's consequence: the plan's end moves; the arguments are a month and year, like \"May 2027\", or a year, like \"2031\""
+            "{after} and {before} are a month and year, like \"May 2027\", or a year, like \"2031\"."
         ),
       whole: true)
   }

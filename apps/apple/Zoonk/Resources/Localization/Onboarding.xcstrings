@@ -1254,6 +1254,65 @@
         }
       }
     },
+    "10+ years" : {
+      "comment" : "How long finishing the plan takes at the time picked, when it's more than ten years.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Über 10 Jahre"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Más de 10 años"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "plus de 10 ans"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Più di 10 anni"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10年以上"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10년 이상"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ponad 10 lat"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10+ anos"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10+ yıl"
+          }
+        }
+      }
+    },
     "A course on this is ready now" : {
       "comment" : "Under a Library course offered while the learner's plan is built",
       "localizations" : {
@@ -2183,6 +2242,72 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Materyalini ekliyoruz…"
+          }
+        }
+      }
+    },
+    "aimAroundYear" : {
+      "comment" : "When a language level is reached. {year} is a year, like \"2031\".",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ungefähr %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Around %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alrededor de %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vers %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intorno al %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ごろ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@쯤"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mniej więcej: %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por volta de %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yaklaşık %@"
           }
         }
       }
@@ -8783,6 +8908,64 @@
         }
       }
     },
+    "I want a quick look at the big ideas" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ich möchte einen kurzen Überblick über das Wichtigste"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quiero echar un vistazo rápido a las ideas principales"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je veux un aperçu des notions clés"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voglio una rapida panoramica dei concetti principali"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "主なポイントをざっと知りたいです"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "핵심 개념을 빠르게 훑어보고 싶어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chcę szybko poznać najważniejsze zagadnienia"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quero uma visão geral das ideias principais"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Temel kavramlara kısaca göz atmak istiyorum"
+          }
+        }
+      }
+    },
     "I want to" : {
       "comment" : "The goal box's label, before the learner's words",
       "localizations" : {
@@ -8838,6 +9021,239 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yapmak istediğim"
+          }
+        }
+      }
+    },
+    "I want to get back to the level I had" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ich möchte wieder mein früheres Level erreichen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quiero recuperar el nivel que tenía"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je veux retrouver mon ancien niveau"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voglio tornare al livello di prima"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "以前の実力を取り戻したいです"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "예전 실력을 되찾고 싶어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chcę wrócić do dawnego poziomu"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quero voltar ao nível que eu tinha"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eski seviyeme dönmek istiyorum"
+          }
+        }
+      }
+    },
+    "I want to go deeper, one level at a time" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ich möchte Schritt für Schritt tiefer einsteigen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quiero profundizar, nivel por nivel"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je veux approfondir, niveau après niveau"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voglio approfondire, un livello alla volta"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "段階を追って、少しずつ深く学びたい"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "한 단계씩 더 깊이 배우고 싶어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chcę zgłębiać temat, przechodząc poziom po poziomie"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quero me aprofundar, um nível de cada vez"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Her seferinde bir seviye daha derine inmek istiyorum"
+          }
+        }
+      }
+    },
+    "I want to learn what I need for a new role and build a portfolio" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ich möchte lernen, was ich für eine neue Stelle brauche, und ein Portfolio aufbauen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quiero aprender lo que necesito para un nuevo puesto y crear un portafolio"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je veux apprendre ce qu’il me faut pour un nouveau poste et constituer un portfolio"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voglio imparare quello che mi serve per un nuovo ruolo e creare un portfolio"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しい仕事に必要なことを学び、ポートフォリオを作りたいです"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "새로운 직무에 필요한 내용을 배우고 포트폴리오를 만들고 싶어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chcę nauczyć się tego, co będzie mi potrzebne na nowym stanowisku, i stworzyć portfolio"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quero aprender o que preciso para uma nova função e montar um portfólio"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yeni bir pozisyon için gerekenleri öğrenip portfolyo hazırlamak istiyorum"
+          }
+        }
+      }
+    },
+    "In 10+ years" : {
+      "comment" : "Under a language level to aim for, when reaching it takes more than ten years at the learner's time.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In über 10 Jahren"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En más de 10 años"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dans plus de 10 ans"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tra più di 10 anni"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10年以上先"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10년 이상 후"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Za ponad 10 lat"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Em mais de 10 anos"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10+ yıl içinde"
           }
         }
       }
@@ -19089,6 +19505,65 @@
         }
       }
     },
+    "to finish" : {
+      "comment" : "Under '10+ years': how long finishing the plan takes at the time picked.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bis zum Abschluss"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "para terminar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "pour terminer"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "per finire"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完了まで"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "완료까지"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "do ukończenia"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "para concluir"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tamamlanma süresi"
+          }
+        }
+      }
+    },
     "Today" : {
       "comment" : "Leaves the start flow for Today",
       "localizations" : {
@@ -27079,31 +27554,6 @@
           }
         }
       }
-    },
-    "10+ years" : {
-      "comment" : "How long finishing the plan takes at the time picked, when it's more than ten years."
-    },
-    "I want a quick look at the big ideas" : {},
-    "I want to get back to the level I had" : {},
-    "I want to go deeper, one level at a time" : {},
-    "I want to learn what I need for a new role and build a portfolio" : {},
-    "In 10+ years" : {
-      "comment" : "Under a language level to aim for, when reaching it takes more than ten years at the learner's time"
-    },
-    "aimAroundYear" : {
-      "comment" : "Under a language level to aim for: when the learner reaches it, years away; the argument is a year, like '2031'",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Around %@"
-          }
-        }
-      }
-    },
-    "to finish" : {
-      "comment" : "Under '10+ years': how long a plan without a date takes at this pace"
     }
   },
   "version" : "1.0"

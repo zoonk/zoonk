@@ -89,13 +89,13 @@ func aimChoiceDetail(end: PlanForecast?) -> String? {
         defaultValue: "Around \(PlanDate.text(isoDate, today: isoDate, grain: .year))",
         table: "Onboarding",
         comment:
-          "Under a language level to aim for: when the learner reaches it, years away; the argument is a year, like '2031'"
+          "When a language level is reached. {year} is a year, like \"2031\"."
       ))
   case .beyond:
     String(
       localized: "In 10+ years", table: "Onboarding",
       comment:
-        "Under a language level to aim for, when reaching it takes more than ten years at the learner's time"
+        "Under a language level to aim for, when reaching it takes more than ten years at the learner's time."
     )
   case nil:
     nil

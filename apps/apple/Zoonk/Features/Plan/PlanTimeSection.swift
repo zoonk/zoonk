@@ -186,7 +186,7 @@ struct PlanFullCourseSection: View {
               "You finish around \(PlanDate.finishText(end, grain: plan.estimate.precision == .year ? .year : .month)).",
               tableName: "Plan",
               comment:
-                "When the plan finishes, as a month and year, like \"January 2027\", or a year, like \"2031\""
+                "{date} is a month and year, like \"January 2027\", or a year, like \"2031\"."
             )
           }
         }

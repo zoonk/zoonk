@@ -108,7 +108,7 @@ struct FinishReadout: View {
     case (.beyond, _):
       String(
         localized: "to finish", table: "Onboarding",
-        comment: "Under '10+ years': how long a plan without a date takes at this pace")
+        comment: "Under '10+ years': how long finishing the plan takes at the time picked.")
     case (.month(let isoDate), .some):
       aimBy(PlanDate.finishText(isoDate, grain: .month))
     case (.year(let isoDate), .some):
