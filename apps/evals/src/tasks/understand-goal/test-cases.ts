@@ -66,12 +66,122 @@ export const TEST_CASES: UnderstandGoalCase[] = [
     goal: "I'm Nigerian and I want to learn Python for data analysis",
     language: "en",
   }),
-  testCase("en-exam-is-never-waiting-for-a-country", {
+  testCase("en-exam-named-with-its-country", {
     expected: {
-      goals: [{ contentCountry: null, countryDependent: false, kind: "exam" }],
+      goals: [{ contentCountry: "GB", countryDependent: true, kind: "exam" }],
       route: "goals",
     },
     goal: "Pass the UK driving theory test",
+    language: "en",
+  }),
+  testCase("en-pilot-licence-names-its-country", {
+    expected: {
+      goals: [{ contentCountry: "CA", countryDependent: true, kind: "exam" }],
+      route: "goals",
+    },
+    goal: "Get my private pilot licence in Canada",
+    language: "en",
+  }),
+  testCase("en-pilot-licence-without-a-country-waits-for-one", {
+    expected: {
+      goals: [{ contentCountry: null, countryDependent: true, kind: "exam" }],
+      route: "goals",
+    },
+    goal: "I want to get my private pilot licence this year",
+    language: "en",
+  }),
+  testCase("en-cpa-in-canada-is-canadas-exam", {
+    expected: {
+      goals: [{ contentCountry: "CA", countryDependent: true, kind: "exam" }],
+      route: "goals",
+    },
+    goal: "Pass the CPA in Canada",
+    language: "en",
+  }),
+  testCase("en-sat-in-another-country-keeps-no-country", {
+    expected: {
+      goals: [
+        { contentCountry: null, countryDependent: false, examName: /SAT/u, kind: "exam" },
+      ],
+      route: "goals",
+    },
+    goal: "I'm taking the SAT in Kenya in March",
+    language: "en",
+  }),
+  testCase("en-ielts-where-they-sit-it-keeps-no-country", {
+    expected: {
+      goals: [
+        { contentCountry: null, countryDependent: false, examName: /IELTS/u, kind: "exam" },
+      ],
+      route: "goals",
+    },
+    goal: "Band 7 on IELTS Academic, I'll take it in Toronto",
+    language: "en",
+  }),
+  testCase("en-faa-certificate-is-never-the-nationalitys", {
+    expected: {
+      goals: [{ contentCountryNot: "CA", kind: "exam" }],
+      route: "goals",
+    },
+    goal: "I'm Canadian and I want to get an FAA private pilot certificate",
+    language: "en",
+  }),
+  testCase("pt-nationality-is-not-an-exams-country", {
+    expected: {
+      goals: [{ contentCountry: null, countryDependent: true, kind: "exam" }],
+      route: "goals",
+    },
+    goal: "Sou português e quero passar no exame de condução",
+    language: "pt",
+  }),
+  testCase("en-nationality-is-not-an-exams-country", {
+    expected: {
+      goals: [{ contentCountry: null, countryDependent: true, kind: "exam" }],
+      route: "goals",
+    },
+    goal: "I'm Nigerian and I want to pass the bar exam next year",
+    language: "en",
+  }),
+  testCase("en-fe-discipline-stated-as-theirs", {
+    expected: {
+      goals: [{ examName: /FE/u, examOption: /^mechanical$/iu, kind: "exam" }],
+      route: "goals",
+    },
+    goal: "Pass the FE Mechanical exam",
+    language: "en",
+  }),
+  testCase("en-fe-discipline-with-a-hedge-is-not-settled", {
+    expected: {
+      goals: [{ examName: /FE/u, examOption: null, kind: "exam" }],
+      route: "goals",
+    },
+    goal: "Pass the FE exam, maybe mechanical",
+    language: "en",
+  }),
+  testCase("en-fe-two-disciplines-are-not-settled", {
+    expected: {
+      goals: [{ examName: /FE/u, examOption: null, kind: "exam" }],
+      route: "goals",
+    },
+    goal: "Pass the FE exam, mechanical or civil, still deciding",
+    language: "en",
+  }),
+  testCase("en-booked-test-not-booked-yet", {
+    expected: {
+      goals: [
+        { examDay: "booked", examNotBooked: true, hasTargetDate: false, kind: "exam" },
+      ],
+      route: "goals",
+    },
+    goal: "Prepare for the GRE, I haven't booked a test date yet",
+    language: "en",
+  }),
+  testCase("en-booked-test-with-its-day", {
+    expected: {
+      goals: [{ examDay: "booked", examNotBooked: false, hasTargetDate: true, kind: "exam" }],
+      route: "goals",
+    },
+    goal: "My TOEFL is booked for December 12",
     language: "en",
   }),
   testCase("pt-display-names-distinguish-public-exams", {

@@ -31,6 +31,8 @@ type RawUnderstoodGoal = {
   examDay: UnderstoodExamDay | null;
   examMonth: number | null;
   examName: string | null;
+  examNotBooked: boolean;
+  examOption: string | null;
   examSubjects: string[] | null;
   examTarget: UnderstoodExamTarget | null;
   examYear: number | null;
@@ -65,11 +67,16 @@ export type RawGoalUnderstanding = {
 
 /** Fields the text didn't give are undefined, never null. */
 export type UnderstoodGoal = {
-  /** A learn goal's country, only when the learner's words named it or a place in it. */
+  /**
+   * A learn goal's country, only when the learner's words named it or a place in it. An exam's, only
+   * when their words name the country whose exam it is, or a body that implies it; never a place
+   * they only sit it.
+   */
   contentCountry?: string;
   /**
-   * A learn goal whose subject changes by country. Exams take their country from the exam and
-   * languages from their variety, so theirs is always false.
+   * A learn goal whose subject changes by country, or an exam each country runs its own version of
+   * that its name doesn't place. Languages take their country from their variety, so theirs is
+   * always false.
    */
   countryDependent: boolean;
   displayName?: string;
@@ -77,6 +84,13 @@ export type UnderstoodGoal = {
   /** 1 to 12, for an exam named without its day ("in March"). */
   examMonth?: number;
   examName?: string;
+  /** A test the learner books themselves and said they haven't booked yet. */
+  examNotBooked?: true;
+  /**
+   * The version, discipline or specialty of the exam the learner states as theirs, in their words
+   * ("Mechanical"); undefined when they doubt it, reject it or name several.
+   */
+  examOption?: string;
   /** The exam's subjects the learner prepares, in their words; undefined for the whole exam. */
   examSubjects?: string[];
   examTarget?: UnderstoodExamTarget;
@@ -210,6 +224,28 @@ function cleanYear(year: number | null): number | undefined {
     : undefined;
 }
 
+/**
+ * An exam one organizer runs everywhere has no country of the learner's: a country named with it
+ * ("the SAT in Kenya") is only where they sit it.
+ */
+function hasOwnCountry(goal: RawUnderstoodGoal): boolean {
+  return goal.kind === "learn" || (goal.kind === "exam" && goal.countryDependent);
+}
+
+/** A date the learner gave says they booked, whatever else the reading says. */
+function isNotBooked({
+  goal,
+  targetDate,
+}: {
+  goal: RawUnderstoodGoal;
+  targetDate: string | undefined;
+}): true | undefined {
+  return (
+    (goal.kind === "exam" && goal.examDay === "booked" && goal.examNotBooked && !targetDate) ||
+    undefined
+  );
+}
+
 function normalizeGoal({
   goal,
   today,
@@ -228,15 +264,17 @@ function normalizeGoal({
     return null;
   }
 
-  const learn = goal.kind === "learn";
+  const targetDate = cleanTargetDate({ date: goal.targetDate, today });
 
   return {
-    contentCountry: learn ? cleanCountry(goal.contentCountry) : undefined,
-    countryDependent: learn && goal.countryDependent,
+    contentCountry: hasOwnCountry(goal) ? cleanCountry(goal.contentCountry) : undefined,
+    countryDependent: (goal.kind === "learn" || goal.kind === "exam") && goal.countryDependent,
     displayName: cleanText(goal.displayName ?? null),
     examDay: goal.kind === "exam" ? (goal.examDay ?? undefined) : undefined,
     examMonth: goal.kind === "exam" ? cleanMonth(goal.examMonth) : undefined,
     examName: goal.kind === "exam" ? cleanText(goal.examName) : undefined,
+    examNotBooked: isNotBooked({ goal, targetDate }),
+    examOption: goal.kind === "exam" ? cleanText(goal.examOption) : undefined,
     examSubjects: goal.kind === "exam" ? cleanTexts(goal.examSubjects) : undefined,
     examTarget: goal.kind === "exam" ? (goal.examTarget ?? undefined) : undefined,
     examYear: goal.kind === "exam" ? cleanYear(goal.examYear) : undefined,
@@ -250,7 +288,7 @@ function normalizeGoal({
     role: cleanText(goal.role),
     subject: cleanText(goal.subject) ?? title,
     targetCourse: cleanCourseName(goal.targetCourse),
-    targetDate: cleanTargetDate({ date: goal.targetDate, today }),
+    targetDate,
     targetLanguage,
     targetPosition: cleanText(goal.targetPosition),
     targetRegion,

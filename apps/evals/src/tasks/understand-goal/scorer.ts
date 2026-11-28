@@ -9,10 +9,16 @@ const MISS_PENALTY = 2;
 type ExpectedGoal = {
   /** Null when the words name no country the content is for. */
   contentCountry?: string | null;
+  /** A country the content must not be for, such as the learner's nationality. */
+  contentCountryNot?: string;
   countryDependent?: boolean;
   displayName?: RegExp;
   examDay?: "booked" | "official" | null;
   examMonth?: number;
+  /** True when the learner says they haven't booked the test's day yet. */
+  examNotBooked?: boolean;
+  /** Null when the words state no version of the exam as settled: none, a doubted or rejected one, or several. */
+  examOption?: RegExp | null;
   /** Null when the goal must name no public exam: a test on the learner's own material. */
   examName?: RegExp | null;
   examSubjects?: RegExp[] | null;
@@ -127,6 +133,17 @@ function getExamChecks({
       expected.examDay === undefined || (goal.examDay ?? null) === expected.examDay,
       `exam day ${show(goal.examDay)}`,
     ],
+    [
+      expected.examOption === null
+        ? !goal.examOption
+        : matchesText({ pattern: expected.examOption, value: goal.examOption }),
+      `exam option ${show(goal.examOption)}`,
+    ],
+    [
+      expected.examNotBooked === undefined ||
+        Boolean(goal.examNotBooked) === expected.examNotBooked,
+      `not booked ${show(goal.examNotBooked)}`,
+    ],
   ];
 }
 
@@ -165,6 +182,10 @@ function checkGoal({ expected, goal }: { expected: ExpectedGoal; goal: unknown }
     [
       expected.contentCountry === undefined ||
         (goal.contentCountry ?? null) === expected.contentCountry,
+      `content country ${show(goal.contentCountry)}`,
+    ],
+    [
+      expected.contentCountryNot === undefined || goal.contentCountry !== expected.contentCountryNot,
       `content country ${show(goal.contentCountry)}`,
     ],
     [
