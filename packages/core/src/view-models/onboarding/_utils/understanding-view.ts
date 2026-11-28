@@ -160,8 +160,8 @@ async function toGoalView({
     contentCountry: goal.countryDependent
       ? toContentCountryView({
           code: contentCountry,
-          editable: true,
-          kind: "content",
+          editable: goal.kind !== "exam",
+          kind: goal.kind === "exam" ? "exam" : "content",
           language,
           source,
         })
