@@ -23,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -213,8 +214,8 @@ internal fun PhaseRow(
         leading = { if (nextChapter != null) ChapterMark(nextChapter, isNext = true) else PhaseMark(phase) },
         supporting = line?.let { { Text(it.text, Modifier.semantics { contentDescription = it.spoken }) } },
         meta = date?.let { { TrailingText(it) } },
-        // Main's PathRowBody gives its milestone titles a 9rem basis.
-        headlineBasis = 144.sp,
+        // Main's PathRowBody gives its titles 9rem. Scale the base size before multiplying because Android scales text nonlinearly.
+        headlineBasis = with(LocalDensity.current) { 16.sp.toDp() * 9 },
     )
 }
 

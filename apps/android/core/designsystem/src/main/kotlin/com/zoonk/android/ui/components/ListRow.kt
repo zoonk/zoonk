@@ -45,7 +45,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zoonk.android.R
@@ -98,7 +97,7 @@ fun ListRow(
     trailing: (@Composable () -> Unit)? = null,
     chevron: Boolean = onClick != null && expanded == null && trailing == null,
     chevronSpace: Boolean = false,
-    headlineBasis: TextUnit = TITLE_BASIS,
+    headlineBasis: Dp? = null,
 ) {
     require(leading == null || lead == null)
     val openWords = expanded?.let { stringResource(if (it) R.string.disclosure_expanded else R.string.disclosure_collapsed) }
@@ -352,7 +351,7 @@ private fun RowContent(
     title: @Composable () -> Unit,
     value: (@Composable () -> Unit)? = null,
     descriptions: (@Composable () -> Unit)? = null,
-    headlineBasis: TextUnit = TITLE_BASIS,
+    headlineBasis: Dp? = null,
 ) {
     val measurer = rememberTextMeasurer()
     // As the words' own style lays a line out at this text size, nonlinear scaling included.
@@ -369,13 +368,14 @@ private fun RowContent(
         val titleMeasurable = titles.first()
         val room = width - (valuePlaceable?.let { it.width + VALUE_GAP.roundToPx() } ?: 0)
         val notesMeasurable = notes.firstOrNull()
+        val basis = headlineBasis?.roundToPx() ?: TITLE_BASIS.roundToPx()
         val beside =
             valuePlaceable == null ||
                 (
                     width >= STACKED_WIDTH.roundToPx() &&
                         room >= titleMeasurable.minIntrinsicWidth(Constraints.Infinity) &&
                         room >= (notesMeasurable?.minIntrinsicWidth(Constraints.Infinity) ?: 0) &&
-                        room >= minOf(titleMeasurable.maxIntrinsicWidth(Constraints.Infinity), headlineBasis.roundToPx())
+                        room >= minOf(titleMeasurable.maxIntrinsicWidth(Constraints.Infinity), basis)
                 )
         val textWidth = if (beside) room.coerceAtLeast(0) else width
         val titlePlaceable = titleMeasurable.measure(Constraints(maxWidth = textWidth))
