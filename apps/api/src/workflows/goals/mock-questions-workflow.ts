@@ -156,8 +156,16 @@ async function writePaper({
   const [left] = data?.papers ?? [];
   const asked = countQuestions(supply);
 
-  // Writing that doesn't shorten a paper would be paid for again on every later pass.
-  if (questions.data?.written && left && asked > 0 && countQuestions(left) >= asked) {
+  // Writing that doesn't shorten a paper would be paid for again on every later pass. A paper a
+  // learner waits on is written before the scheduled papers the planner reserves first, which can
+  // take what was just written for it, so only papers written ahead are measured this way.
+  if (
+    supply.later &&
+    questions.data?.written &&
+    left &&
+    asked > 0 &&
+    countQuestions(left) >= asked
+  ) {
     await reportMockSupplyFailureStep({
       error: new Error(`Mock paper ${supply.key} is as short after its questions were written`),
       workflowRunId,

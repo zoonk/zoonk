@@ -370,23 +370,30 @@ describe(mockSupplyWorkflow, () => {
   });
 
   it.each([
-    { left: 2, reported: true },
-    { left: 1, reported: false },
+    { left: 2, reported: true, waited: false },
+    { left: 1, reported: false, waited: false },
+    { left: 2, reported: false, waited: true },
   ])(
-    "reports a paper still missing $left of 2 questions after writing them: $reported",
-    async ({ left, reported }) => {
-      const short = paper(SCHEDULED, { writes: [QUESTIONS] });
-      const after = paper(SCHEDULED, { writes: [{ ...QUESTIONS, questionsPerSkill: left }] });
+    "reports a paper still missing $left of 2 questions after writing them: $reported (waited: $waited)",
+    async ({ left, reported, waited }) => {
+      const key = waited ? DAY_1 : SCHEDULED;
+      const short = paper(key, { later: !waited, writes: [QUESTIONS] });
+
+      const after = paper(key, {
+        later: !waited,
+        writes: [{ ...QUESTIONS, questionsPerSkill: left }],
+      });
+
       vi.mocked(listExamSupplyGoalsStep).mockResolvedValueOnce([GOAL_ID]);
       vi.mocked(writeMockQuestions).mockResolvedValue({ failed: 0, written: 1 });
       plan([short], [after]);
 
-      await mockSupplyWorkflow({ examBlueprintId: null, goalId: GOAL_ID, later: true });
+      await mockSupplyWorkflow(
+        waited ? waitedRequest() : { examBlueprintId: null, goalId: GOAL_ID, later: true },
+      );
 
       expect(vi.mocked(captureException).mock.calls.map(([error]) => String(error))).toStrictEqual(
-        reported
-          ? [`Error: Mock paper ${SCHEDULED} is as short after its questions were written`]
-          : [],
+        reported ? [`Error: Mock paper ${key} is as short after its questions were written`] : [],
       );
     },
   );
