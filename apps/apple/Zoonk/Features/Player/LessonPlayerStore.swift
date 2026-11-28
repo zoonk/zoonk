@@ -111,7 +111,7 @@ final class LessonPlayerStore {
   }
   /// The microphone was off when a spoken screen tried it, so spoken screens are typed until the
   /// learner asks to speak again. Kept here, since both halves of a spread show it.
-  var isMicBlocked = false
+  var microphoneProblem: MicrophoneProblem?
   /// The screen and answer round whose "From the lesson" is open, so a fold keeps it open and the
   /// screen's next round starts it folded.
   var openRecap: String?

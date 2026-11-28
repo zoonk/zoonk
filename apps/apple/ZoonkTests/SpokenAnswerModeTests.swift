@@ -19,8 +19,13 @@ final class SpokenAnswerModeTests: XCTestCase {
   }
 
   func testABlockedMicrophoneTypesTheSentence() {
-    XCTAssertEqual(mode(micBlocked: true), .type)
-    XCTAssertEqual(mode(canListen: true, micBlocked: true), .type)
+    XCTAssertEqual(mode(microphoneProblem: .denied), .type)
+    XCTAssertEqual(mode(canListen: true, microphoneProblem: .denied), .type)
+  }
+
+  func testAnUnavailableMicrophoneTypesTheSentence() {
+    XCTAssertEqual(mode(microphoneProblem: .unavailable), .type)
+    XCTAssertEqual(mode(canListen: true, microphoneProblem: .unavailable), .type)
   }
 
   func testNoRecorderStillLeavesAWayToAnswer() {
@@ -39,11 +44,11 @@ final class SpokenAnswerModeTests: XCTestCase {
 
   private func mode(
     canListen: Bool = false, canSpeak: Bool = true, cantTalk: Bool = false,
-    cantListen: Bool = false, micBlocked: Bool = false,
+    cantListen: Bool = false, microphoneProblem: MicrophoneProblem? = nil,
     lockedAnswer: LessonAnswer? = nil, heard: SpokenHeard? = nil
   ) -> SpokenAnswerMode {
     SpokenAnswerMode(
       canListen: canListen, canSpeak: canSpeak, cantTalk: cantTalk, cantListen: cantListen,
-      micBlocked: micBlocked, lockedAnswer: lockedAnswer, heard: heard)
+      microphoneProblem: microphoneProblem, lockedAnswer: lockedAnswer, heard: heard)
   }
 }

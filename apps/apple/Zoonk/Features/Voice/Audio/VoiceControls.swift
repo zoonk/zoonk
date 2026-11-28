@@ -73,6 +73,7 @@ enum RecordNote: Equatable {
   case missedStart
   case failed
   case slow
+  case microphoneUnavailable
   /// The microphone is off where skipping is the other way on: how to turn it back on.
   case microphoneOff(String)
 
@@ -100,6 +101,11 @@ enum RecordNote: Equatable {
         LocalizedStringResource(
           "Still checking. This is taking longer than usual.", table: "Voice",
           comment: "Grading a spoken answer is taking longer than usual"), tone: .status)
+    case .microphoneUnavailable:
+      BarNote(
+        LocalizedStringResource(
+          "The microphone isn't available here. You can skip this word.", table: "Voice"),
+        tone: .status)
     case .microphoneOff(let line):
       BarNote(
         line, tone: .status,
