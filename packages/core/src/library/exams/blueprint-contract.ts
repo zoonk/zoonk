@@ -28,6 +28,35 @@ const EXAM_DATE_KINDS = [
   "other",
 ] as const;
 
+const TOPIC_SHARE_BASES = ["marks", "questions"] as const;
+
+const topicGroupSchema = z.object({
+  basis: z
+    .enum(TOPIC_SHARE_BASES)
+    .optional()
+    .meta({ description: "Whether `share` counts the subject's marks or its questions" }),
+  citation: citationSchema
+    .optional()
+    .meta({ description: "The official passage that states this heading's share" }),
+  name: z.string(),
+  questions: z
+    .object({ max: z.number().int().min(0), min: z.number().int().min(0) })
+    .optional()
+    .meta({ description: "The official range of the subject's questions on this heading" }),
+  share: z
+    .number()
+    .min(0)
+    .max(1)
+    .optional()
+    .meta({
+      description:
+        "Its official part of the subject; set on every heading of the subject or on none, adding up to 1",
+    }),
+  topics: z.array(z.string()),
+});
+
+export type BlueprintTopicGroup = z.infer<typeof topicGroupSchema>;
+
 const blueprintSubjectSchema = z.object({
   choiceGroup: z.string().nullable().optional(),
   citation: citationSchema,
@@ -37,15 +66,7 @@ const blueprintSubjectSchema = z.object({
   partOf: z.string().nullable().optional(),
   questions: z.number().int().nullable(),
   shortName: z.string().nullable().optional(),
-  topicGroups: z
-    .array(
-      z.object({
-        name: z.string(),
-        share: z.number().min(0).max(1).optional(),
-        topics: z.array(z.string()),
-      }),
-    )
-    .optional(),
+  topicGroups: z.array(topicGroupSchema).optional(),
   topics: z.array(z.string()),
   weight: z.number().nullable(),
 });
