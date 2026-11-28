@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { removeAccents } from "./string";
+import { removeAccents, spellOutSymbols } from "./string";
 
 /** Keys stay well under Postgres' btree row limit; longer ones are replaced by their hash. */
 const MAX_IDENTITY_KEY_LENGTH = 200;
@@ -21,7 +21,7 @@ function boundIdentityKey(key: string): string {
 }
 
 export function normalizeIdentityText(value: string): string {
-  return (removeAccents(value).toLowerCase().match(WORD_PATTERN) ?? []).join("-");
+  return (spellOutSymbols(removeAccents(value)).toLowerCase().match(WORD_PATTERN) ?? []).join("-");
 }
 
 function joinKeyParts(parts: (string | null | undefined)[]): string {

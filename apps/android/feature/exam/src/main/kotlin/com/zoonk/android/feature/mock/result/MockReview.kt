@@ -1,7 +1,5 @@
 package com.zoonk.android.feature.mock.result
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,11 +10,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,7 +23,6 @@ import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.LayoutCoordinates
@@ -36,11 +31,9 @@ import androidx.compose.ui.layout.findRootCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.layout.positionInWindow
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.SpanStyle
@@ -65,22 +58,17 @@ import com.zoonk.android.feature.questions.ItemSetText
 import com.zoonk.android.feature.questions.ItemText
 import com.zoonk.android.feature.questions.TrueFalseWords
 import com.zoonk.android.feature.questions.trueFalseLabel
-import com.zoonk.android.ui.components.AnswerResult
-import com.zoonk.android.ui.components.AnswerTag
 import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.MistakeAnswer
 import com.zoonk.android.ui.components.SectionHeader
-import com.zoonk.android.ui.components.TagBesideOrUnder
-import com.zoonk.android.ui.components.answerTone
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.iconButtonEdge
 import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatNumber
-import com.zoonk.android.ui.theme.ZoonkRadius
-import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.FeedbackSubmissionContext
 import com.zoonk.api.models.MockExam
@@ -187,7 +175,6 @@ private fun ReviewList(
                 sectionTitle = section?.let { mockSectionTitle(it) },
                 open = key in opened,
                 onToggle = { onToggle(key) },
-                numbered = view.scoring != MockExam.Scoring.NET,
                 words,
                 app,
                 Modifier.bringIntoViewRequester(requesters[index]).onPlaced { coordinates ->
@@ -273,7 +260,6 @@ private fun ReviewEntry(
     sectionTitle: String?,
     open: Boolean,
     onToggle: () -> Unit,
-    numbered: Boolean,
     words: TrueFalseWords,
     app: AppContainer,
     modifier: Modifier,
@@ -293,7 +279,7 @@ private fun ReviewEntry(
                 // A row opens on its own, so a passage shared with the question before it shows whole.
                 entry.set?.let { ItemSetText(it.recode<_, ItemSet>(), continued = false) }
                 entry.context?.let { ItemText(it, style = muted) }
-                ReviewAnswers(entry, numbered, words)
+                ReviewAnswers(entry, words)
                 entry.explanation?.let { ItemText(it, style = MaterialTheme.typography.bodyMedium) }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Box(Modifier.weight(1f)) { entry.citation?.let { ItemCitationNote(it.recode<_, Citation>()) } }
@@ -306,87 +292,44 @@ private fun ReviewEntry(
     }
 }
 
+/**
+ * Main's review answers: a right answer shows once, as the learner gave it, since a typed question can accept more
+ * than one; any other shows theirs over the right one.
+ */
 @Composable
 private fun ReviewAnswers(
     entry: MockExamReviewInner,
-    numbered: Boolean,
     words: TrueFalseWords,
 ) {
-    val yours = entry.learnerAnswer
-    val right = entry.correctAnswer
+    val isRight = entry.outcome == MockExamReviewInner.Outcome.RIGHT
+    val yours = entry.learnerAnswer.takeUnless { isRight }
+    val right = if (isRight) entry.learnerAnswer ?: entry.correctAnswer else entry.correctAnswer
 
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        if (entry.outcome == MockExamReviewInner.Outcome.RIGHT) {
-            // The learner's answer is the right one, so it shows once, as theirs.
-            (yours ?: right)?.let { ReviewAnswer(it, entry, AnswerResult.Right, picked = true, numbered, words) }
-        } else {
-            yours?.let { ReviewAnswer(it, entry, AnswerResult.Wrong, picked = true, numbered, words) }
-            right?.let { ReviewAnswer(it, entry, AnswerResult.Right, picked = false, numbered, words) }
-        }
+        yours?.let { MistakeAnswer(right = false) { ReviewLine(it, entry, words) } }
+        right?.let { MistakeAnswer(right = true) { ReviewLine(it, entry, words) } }
     }
 }
 
-/**
- * The review has a pick's words but not its number, so a statement's verdict shows its own mark
- * (its number where the runner numbered them) and any other answer shows how it went.
- */
+/** A statement's verdict in the exam's words, a typed answer as plain text so `__init__` keeps its underscores. */
 @Composable
-private fun ReviewAnswer(
+private fun ReviewLine(
     answer: String,
     entry: MockExamReviewInner,
-    result: AnswerResult,
-    picked: Boolean,
-    numbered: Boolean,
     words: TrueFalseWords,
 ) {
-    val right = result == AnswerResult.Right
-    val tone = answerTone(picked = picked, result = result)
-    val shape = RoundedCornerShape(ZoonkRadius.option)
-    val statement = entry.format == MockExamReviewInner.Format.TRUE_FALSE && (answer == "true" || answer == "false")
-    val isTrue = answer == "true"
-    // Its mark is unspoken, so a screen reader hears whose answer it is.
-    val yours = stringResource(R.string.answer_tag_your_answer)
-
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .clip(shape)
-            .background(tone.container)
-            .border(tone.border, shape)
-            .padding(horizontal = 14.dp, vertical = 14.dp)
-            .semantics(mergeDescendants = true) { if (!right) stateDescription = yours },
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        when {
-            statement && numbered -> {
-                Text(if (isTrue) "1" else "2", style = MaterialTheme.typography.labelLarge.withTabularFigures())
-            }
-
-            else -> {
-                val check = if (statement) isTrue else right
-                Icon(
-                    painterResource(if (check) R.drawable.ic_check else R.drawable.ic_close),
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp),
-                    tint = if (right) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.error,
-                )
-            }
+    when {
+        entry.format == MockExamReviewInner.Format.TRUE_FALSE && (answer == "true" || answer == "false") -> {
+            ItemLine(trueFalseLabel(answer == "true", words))
         }
-        TagBesideOrUnder(
-            modifier = Modifier.weight(1f),
-            content = {
-                when {
-                    statement -> ItemLine(trueFalseLabel(isTrue, words))
 
-                    // A typed answer is plain text, so `__init__` keeps its underscores.
-                    entry.format == MockExamReviewInner.Format.TYPED -> Text(answer)
+        entry.format == MockExamReviewInner.Format.TYPED -> {
+            Text(answer)
+        }
 
-                    else -> ItemLine(answer)
-                }
-            },
-            tag = { AnswerTag(picked = !right, result = result) },
-        )
+        else -> {
+            ItemLine(answer)
+        }
     }
 }
 

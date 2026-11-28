@@ -1,5 +1,5 @@
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
-import { findSubjectSections, getObjectiveSectionNames } from "./exam-parts";
+import { listAreaSections } from "./exam-parts";
 import { type MockOptionView } from "./mock-contract";
 import { estimateMockMinutes } from "./mock-estimate";
 import { type MockTypedPart, listCoveredSections, listMockLeftOut } from "./mock-left-out";
@@ -40,13 +40,12 @@ function getDayAreas({
 }): string[] {
   const objective = getDayObjectiveSections({ day, structure });
   const named = objective.map((section) => section.name).filter((name) => name.trim().length > 0);
-  const sections = getObjectiveSectionNames(structure);
 
   const isOnDay = (subject: Subject) =>
-    findSubjectSections({ sections, structure, subject }).some((name) => named.includes(name));
+    listAreaSections({ area: subject.name, structure }).some((name) => named.includes(name));
 
   const asked =
-    getMockDays(structure).length > 1 && named.length > 0
+    getMockDays(structure).length > 1 && (named.length > 0 || objective.length === 0)
       ? subjects.filter((subject) => isOnDay(subject))
       : subjects;
 

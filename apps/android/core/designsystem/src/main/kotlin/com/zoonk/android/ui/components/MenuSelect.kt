@@ -16,7 +16,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 
-/** Main's `NativeSelect`: one of [options], the picked one showing in a field named [label]. */
+/** Main's `NativeSelect`: one of [options], the picked one showing in a field named [label], or [placeholder] while none is. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun <T> MenuSelect(
@@ -27,6 +27,7 @@ fun <T> MenuSelect(
     onPick: (T) -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    placeholder: String? = null,
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
 
@@ -37,6 +38,7 @@ fun <T> MenuSelect(
             enabled = enabled,
             readOnly = true,
             label = label,
+            placeholder = placeholder?.let { { Text(it) } },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
             lineLimits = TextFieldLineLimits.SingleLine,
         )

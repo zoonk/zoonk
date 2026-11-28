@@ -53,6 +53,7 @@
     "./locale": "./src/locale.ts",
     "./locale-request": "./src/locale-request.ts",
     "./localized-number": "./src/localized-number.ts",
+    "./exam-groups": "./src/exam-groups.ts",
     "./name-words": "./src/name-words.ts",
     "./markdown-links": "./src/markdown-links.ts",
     "./markdown-table": "./src/markdown-table.ts",

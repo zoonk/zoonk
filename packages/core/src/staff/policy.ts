@@ -10,6 +10,7 @@ const excludedModels = [
   "OauthClientAssertion",
   "DeviceCode",
   "Passkey",
+  "ClipEndingAudit",
 ];
 
 const strippedFields: Readonly<Record<string, readonly string[]>> = {

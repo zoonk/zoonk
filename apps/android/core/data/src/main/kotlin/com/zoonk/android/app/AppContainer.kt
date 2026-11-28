@@ -205,11 +205,21 @@ class AppContainer private constructor(
     val cache = AppCache(sessions, scope, timeSource)
 
     val writingWaits = WritingWaits { kind, scope -> ContentWritingWait(kind, scope, sessions) { LiveGenerationSource(api, it) } }
+    private val isForeground =
+        if (preview == null) {
+            ProcessLifecycleOwner
+                .get()
+                .lifecycle.currentStateFlow
+                .map { it.isAtLeast(Lifecycle.State.STARTED) }
+        } else {
+            flowOf(false)
+        }
     val learnerSummary =
         LearnerSummaryStore(
             api = { session -> perform { api.clients(session).account.getCurrentUserSummary() }.summary },
             cache = cache,
             scope = scope,
+            isForeground = isForeground,
         )
     val learningProfile = LearningProfileStore(LiveLearningProfileApi(api), cache)
     val push = FirebasePush(context)
@@ -246,15 +256,7 @@ class AppContainer private constructor(
             sessions = sessions,
             cache = cache,
             scope = scope,
-            isForeground =
-                if (preview == null) {
-                    ProcessLifecycleOwner
-                        .get()
-                        .lifecycle.currentStateFlow
-                        .map { it.isAtLeast(Lifecycle.State.STARTED) }
-                } else {
-                    flowOf(false)
-                },
+            isForeground = isForeground,
         )
 
     val tutor =
@@ -353,7 +355,7 @@ class AppContainer private constructor(
     val focusTests = FocusTestStore(LiveFocusTestApi(api), cache, studySessions, learnerSummary.summary, timeZone)
     val essays = EssayStore(LiveEssayApi(api), cache, drafts, timeZone)
 
-    val buddy = BuddyStore(LiveBuddyApi(api), cache, timeZone, learnerSummary.summary, scope)
+    val buddy = BuddyStore(LiveBuddyApi(api), cache, timeZone, learnerSummary.summary, scope, isForeground)
 
     /** Who the shell shows screens to, which its gates read. */
     val learnerAccess: StateFlow<LearnerAccess> =

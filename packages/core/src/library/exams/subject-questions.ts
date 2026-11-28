@@ -1,8 +1,9 @@
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { normalizeString } from "@zoonk/utils/string";
 import { listCountedSubjects } from "../../exams/choices/choice-groups";
-import { isWrittenSubject } from "../../exams/mocks/written-subject";
+import { getQuestionGroup, isWrittenOnly } from "../../exams/mocks/written-subject";
 import { type ExamStructure } from "./blueprint-contract";
+import { getPartQuestions } from "./part-questions";
 
 type Subject = ExamStructure["subjects"][number];
 
@@ -53,30 +54,9 @@ export function getSubjectQuestions({
     return subject.questions;
   }
 
-  return isWrittenSubject({ structure, subject })
+  return isWrittenOnly({ structure, subject })
     ? null
     : (findPastCount({ structure, subject })?.questions ?? null);
-}
-
-export function getPartQuestions({
-  name,
-  structure,
-}: {
-  name: string;
-  structure: ExamStructure;
-}): number | null {
-  const scoring = structure.mock?.scoring;
-  const stated = scoring?.parts?.find((part) => part.name === name)?.questions;
-
-  if (stated) {
-    return stated;
-  }
-
-  const rows = (scoring?.marking ?? []).filter((row) => row.part === name);
-
-  return rows.length > 0 && rows.every((row) => row.questions !== null)
-    ? rows.reduce((sum, row) => sum + (row.questions ?? 0), 0)
-    : null;
 }
 
 function getNoticeQuestions({
@@ -101,12 +81,12 @@ function splitPartQuestions({
   structure: ExamStructure;
   subject: Subject;
 }): number | null {
-  const { group } = subject;
+  const group = getQuestionGroup({ structure, subject });
   const total = group ? getPartQuestions({ name: group, structure }) : null;
 
   if (
     total === null ||
-    isWrittenSubject({ structure, subject }) ||
+    isWrittenOnly({ structure, subject }) ||
     isInsideAnother({ structure, subject })
   ) {
     return null;
@@ -114,8 +94,8 @@ function splitPartQuestions({
 
   const siblings = structure.subjects.filter(
     (item) =>
-      item.group === group &&
-      !isWrittenSubject({ structure, subject: item }) &&
+      getQuestionGroup({ structure, subject: item }) === group &&
+      !isWrittenOnly({ structure, subject: item }) &&
       !isInsideAnother({ structure, subject: item }),
   );
 

@@ -22,7 +22,7 @@ async function generateAudio({
   const { data, error } = await generateLanguageAudio({ language: targetLanguage, orgSlug, text });
 
   if (error) {
-    logError(`Error generating audio for "${text}":`, error);
+    logError("Error generating language audio:", error.name, error.message);
     return null;
   }
 

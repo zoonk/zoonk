@@ -44,7 +44,7 @@ Judge against the source, not your memory: the official notice, law or document 
 
 ## Find the cause
 
-For each finding, find why it happened before deciding anything. Read the code that made it on `origin/main`: the task and its prompt, its checks and the pipeline around them ([AI package](../../../packages/ai/AGENTS.md), [core](../../../packages/core/AGENTS.md)). The row's `AiCall` (by `runId` or `goalId`) gives the task and prompt version, and its `traceId` finds the model's own output in PostHog's AI traces: whether the model got it wrong, or got it right and our code dropped or changed it, decides where the fix goes.
+For each finding, find why it happened before deciding anything. Read the code that made it on `origin/main`: the task and its prompt, its checks and the pipeline around them ([AI package](../../../packages/ai/AGENTS.md), [core](../../../packages/core/AGENTS.md)). The row's `AiCall` (by `runId` or `goalId`) gives the task, the prompt version and, by its `traceId`, the other calls of the same run. Whether the model got it wrong, or got it right and our code dropped or changed it, decides where the fix goes.
 
 Then sort it:
 

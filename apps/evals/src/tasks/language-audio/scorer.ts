@@ -1,6 +1,7 @@
 import { readEvalAudio } from "@/lib/audio-files";
 import { createFixedScore } from "@/lib/score";
 import { type TaskScorer, type TokenUsage, toTokenUsage } from "@/lib/types";
+import { checkClipEnding } from "@zoonk/ai/tasks/audio/check-clip-ending";
 import { assessPronunciation } from "@zoonk/ai/tasks/language/assess-pronunciation";
 import {
   type WordPronunciationCheck,
@@ -8,7 +9,7 @@ import {
 } from "@zoonk/ai/tasks/language/check-word-pronunciation";
 import { transcribeSpeech } from "@zoonk/ai/tasks/language/transcribe-speech";
 import { matchSpokenAnswer } from "@zoonk/core/library/language/spoken-answer-match";
-import { listeningVerdict } from "./listening-verdict";
+import { ADDED_SPEECH, listeningVerdict } from "./listening-verdict";
 import { type LanguageAudioInput, type LookAlike } from "./test-cases";
 
 export type LanguageAudioOutput = { audioPath: string; costUsd: number | null; durationMs: number };
@@ -40,15 +41,22 @@ async function judgeLookAlike({
   return { usage: toTokenUsage(usage), verdict: data };
 }
 
-function addUsage(left: TokenUsage, right?: TokenUsage): TokenUsage {
-  if (!right) {
-    return left;
-  }
+function addUsage(left: TokenUsage, ...others: (TokenUsage | undefined)[]): TokenUsage {
+  return others.reduce<TokenUsage>(
+    (total, other) =>
+      other
+        ? {
+            inputTokens: total.inputTokens + other.inputTokens,
+            outputTokens: total.outputTokens + other.outputTokens,
+          }
+        : total,
+    left,
+  );
+}
 
-  return {
-    inputTokens: left.inputTokens + right.inputTokens,
-    outputTokens: left.outputTokens + right.outputTokens,
-  };
+function countWords({ language, text }: { language: string; text: string }): number {
+  const segmenter = new Intl.Segmenter(language, { granularity: "word" });
+  return [...segmenter.segment(text)].filter((segment) => segment.isWordLike).length;
 }
 
 export const scoreLanguageAudio: TaskScorer = async ({ output, testCase }) => {
@@ -56,7 +64,7 @@ export const scoreLanguageAudio: TaskScorer = async ({ output, testCase }) => {
   const { audioPath } = JSON.parse(output) as LanguageAudioOutput;
   const audio = await readEvalAudio(audioPath);
 
-  const [transcript, pronunciation, lookAlike] = await Promise.all([
+  const [transcript, pronunciation, ending, lookAlike] = await Promise.all([
     transcribeSpeech({ audio, language: input.language, model: TRANSCRIPTION_MODEL }),
     assessPronunciation({
       audio,
@@ -64,6 +72,13 @@ export const scoreLanguageAudio: TaskScorer = async ({ output, testCase }) => {
       language: input.language,
       mediaType: "audio/mpeg",
       model: PRONUNCIATION_MODEL,
+    }),
+    checkClipEnding({
+      audio,
+      language: input.language,
+      mediaType: "audio/mpeg",
+      model: PRONUNCIATION_MODEL,
+      text: input.text,
     }),
     input.lookAlike
       ? judgeLookAlike({
@@ -87,6 +102,10 @@ export const scoreLanguageAudio: TaskScorer = async ({ output, testCase }) => {
     .filter((word) => word.status !== "correct")
     .map((word) => word.text);
 
+  const transcriptAdded =
+    countWords({ language: input.language, text: transcript.data.text }) >
+    countWords({ language: input.language, text: input.text });
+
   const { readRight, score, status, unconfirmed } = listeningVerdict({
     flags: [
       { model: TRANSCRIPTION_MODEL, words: misheard },
@@ -95,6 +114,8 @@ export const scoreLanguageAudio: TaskScorer = async ({ output, testCase }) => {
         model: PRONUNCIATION_MODEL,
         words: lookAlike?.verdict.soundsNative === false ? [input.text] : [],
       },
+      { model: TRANSCRIPTION_MODEL, words: transcriptAdded ? [ADDED_SPEECH] : [] },
+      { model: PRONUNCIATION_MODEL, words: ending.data.added === "none" ? [] : [ADDED_SPEECH] },
     ],
     language: input.language,
     wordCount: match.words.length,
@@ -108,11 +129,15 @@ export const scoreLanguageAudio: TaskScorer = async ({ output, testCase }) => {
     ? ` As a look-alike it sounded ${lookAlike.verdict.soundsNative ? "native" : "english"} (called ${lookAlike.verdict.pronunciation}, /${lookAlike.verdict.heard}/).`
     : "";
 
-  const conclusion = `${listening} Read "${input.text}". gpt-transcribe heard "${transcript.data.text}" (misheard ${JSON.stringify(misheard)}); the pronunciation check heard "${pronunciation.data.transcript}" (unclear ${JSON.stringify(unclear)}).${lookAlikeConclusion}`;
+  const conclusion = `${listening} Read "${input.text}". gpt-transcribe heard "${transcript.data.text}" (misheard ${JSON.stringify(misheard)}); the pronunciation check heard "${pronunciation.data.transcript}" (unclear ${JSON.stringify(unclear)}); the ending check heard "${ending.data.heard}" (added: ${ending.data.added}).${lookAlikeConclusion}`;
 
   const judge = {
     modelId: PRONUNCIATION_MODEL,
-    usage: addUsage(toTokenUsage(pronunciation.usage), lookAlike?.usage),
+    usage: addUsage(
+      toTokenUsage(pronunciation.usage),
+      toTokenUsage(ending.usage),
+      lookAlike?.usage,
+    ),
   };
 
   if (score === null) {

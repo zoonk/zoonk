@@ -3,14 +3,13 @@
 import { getTargetDateBounds } from "@zoonk/core/plans/target-date-range";
 import { Button } from "@zoonk/ui/components/button";
 import { Input } from "@zoonk/ui/components/input";
-import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
 import { PencilIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
 import { ChangeSaveError } from "../../_components/save-error";
-import { getTodayInZone, useFormatIsoDate } from "../../_utils/iso-date";
+import { useFormatIsoDate, useTodayInZone } from "../../_utils/iso-date";
 import { CountryField } from "../../language-variety/country-field";
 import { UseDateButton } from "../../plan/notice-day";
 import { AimRowPicker } from "./understood-aim-picker";
@@ -25,7 +24,7 @@ const OWN_PICKER_KINDS = new Set<EditorType>(["aim", "contentCountry"]);
 
 /** The deadlines a fix can save, counted from when the editor or button appeared. */
 function useDateBounds(timeZone: string) {
-  return getTargetDateBounds(getTodayInZone({ now: useMountTime(), timeZone }));
+  return getTargetDateBounds(useTodayInZone(timeZone));
 }
 
 function isWithin({ bounds, date }: { bounds: { max: string; min: string }; date: string }) {

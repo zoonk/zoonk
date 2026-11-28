@@ -1405,7 +1405,7 @@ msgid "Plus ends right away, and you won't be charged again."
 msgstr "Plus hemen sona erer ve senden bir daha ücret alınmaz."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
-#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/plan-date-line.tsx
 msgctxt "MUSFX9"
 msgid "You have Plus until <mono>{date}</mono>."
 msgstr "Plus paketin <mono>{date}</mono> tarihine kadar geçerli."
@@ -1420,16 +1420,6 @@ msgstr "Ödemesini yaptığın dönem bitene kadar Plus’ı kullanmaya devam ed
 msgctxt "KLKQ8N"
 msgid "Keep Plus"
 msgstr "Plus’ı koru"
-
-#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
-msgctxt "YrbiTE"
-msgid "Plus ends on <mono>{date}</mono>."
-msgstr "Plus <mono>{date}</mono> tarihinde sona erer."
-
-#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
-msgctxt "AucmVG"
-msgid "Renews on <mono>{date}</mono>."
-msgstr "<mono>{date}</mono> tarihinde yenilenecek."
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 #: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
@@ -1507,6 +1497,16 @@ msgstr "Zoonk hesabına Plus ekledi. Değiştirmek için bize yaz."
 msgctxt "2OvvJx"
 msgid "Write to us"
 msgstr "Bize yaz"
+
+#: src/app/[lang]/(app)/(settings)/subscription/plan-date-line.tsx
+msgctxt "YrbiTE"
+msgid "Plus ends on <mono>{date}</mono>."
+msgstr "Plus <mono>{date}</mono> tarihinde sona erer."
+
+#: src/app/[lang]/(app)/(settings)/subscription/plan-date-line.tsx
+msgctxt "AucmVG"
+msgid "Renews on <mono>{date}</mono>."
+msgstr "<mono>{date}</mono> tarihinde yenilenecek."
 
 #: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
 msgctxt "kRo_Bd"

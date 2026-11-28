@@ -105,6 +105,7 @@ class TodayMockReadsTest {
                 courseId = null,
                 courseLevel = null,
                 dailyMinutes = 20,
+                daysLeft = null,
                 id = GOAL,
                 isActive = true,
                 isSettingUp = false,
