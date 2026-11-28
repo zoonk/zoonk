@@ -2,8 +2,9 @@ import { randomUUID } from "node:crypto";
 import { type Page } from "@playwright/test";
 import { PROFILE_QUESTIONS } from "@zoonk/core/profile/questions/contract";
 import { prisma } from "@zoonk/db";
-import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { RENTING_SCENARIO } from "@zoonk/testing/fixtures/language";
+import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { expect, test } from "./fixtures";
 import { holdActionAnswer } from "./held-action";
@@ -486,11 +487,13 @@ test.describe("Language practice in the plan", () => {
     expect(saved.details).not.toHaveProperty("skillLevels.speaking");
   });
 
-  test("the level test's question waits while Stop saves", async ({
+  test("the level test's question waits while Stop saves, and its result shows the plan's next lesson", async ({
     noProgressUser,
     userWithoutProgress: page,
   }) => {
-    const [goal] = await Promise.all([
+    const lessonTitle = `Ordering at a cafe ${randomUUID().slice(0, 6)}`;
+
+    const [goal, { lesson }] = await Promise.all([
       onboardingGoal({
         details: { reason: "Trabalho" },
         language: "pt",
@@ -499,8 +502,11 @@ test.describe("Language practice in the plan", () => {
         title: "Inglês para o trabalho",
         userId: noProgressUser.id,
       }),
+      playableLessonFixture({ lesson: { title: lessonTitle }, steps: ["check"] }),
       ensureLevelTestBank(),
     ]);
+
+    await planFixture({ goalId: goal.id, items: [{ lessonId: lesson.id }] });
 
     await page.goto(`/start/${goal.id}`);
     await page.getByRole("button", { exact: true, name: "Start" }).click();
@@ -525,5 +531,14 @@ test.describe("Language practice in the plan", () => {
     });
 
     await expect(page.getByRole("heading", { name: "Your English level" })).toBeVisible();
+
+    // The course result's row: the title, then "Up next", and no length, which this result doesn't have.
+    await expect(
+      page
+        .getByRole("main")
+        .locator("div")
+        .filter({ hasText: new RegExp(`^${lessonTitle}Up next$`, "u") })
+        .first(),
+    ).toBeVisible();
   });
 });
