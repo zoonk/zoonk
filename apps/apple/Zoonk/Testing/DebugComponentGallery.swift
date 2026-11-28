@@ -74,6 +74,10 @@
           }
           GallerySection(id: "choices", title: "Choice list") { Choices() }
           GallerySection(id: "checks", title: "Check list") { Choices(picks: .several) }
+          GallerySection(id: "cards", title: "Card rows") { CardRows() }
+          GallerySection(id: "cardsSaving", title: "Card rows saving") {
+            CardRows().disabled(true)
+          }
           GallerySection(id: "checksSaving", title: "Check list saving") {
             Choices(picks: .several).disabled(true)
           }
@@ -1232,6 +1236,31 @@
         isLocked: true, draft: .constant(nil), isReview: true
       )
       .padding(.vertical, 8)
+    }
+  }
+
+  /// Main's card rows, as its plan's Focus sheet draws them: a link, then a check list.
+  private struct CardRows: View {
+    var body: some View {
+      Button {
+      } label: {
+        ListRow(Text(verbatim: "Focus test"), description: Text(verbatim: "See your result")) {
+          Image(systemName: "scope")
+        }
+        .disclosureChevron()
+      }
+      .buttonStyle(CardRowStyle())
+      .cardRowInList()
+
+      ChoiceRow(picks: .several, isPicked: true, isCard: true) {
+      } words: {
+        ChoiceWords(title: Text(verbatim: "Natural sciences"))
+      }
+      ChoiceRow(picks: .several, isPicked: false, isCard: true) {
+      } words: {
+        ChoiceWords(
+          title: Text(verbatim: "Languages"), detail: Text(verbatim: "Includes English"))
+      }
     }
   }
 

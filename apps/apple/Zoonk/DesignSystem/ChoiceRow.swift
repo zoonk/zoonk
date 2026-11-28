@@ -12,21 +12,30 @@ struct ChoiceRow<Words: View>: View {
   /// A choice that can't be picked now, such as one past its list's limit, dims, as main's
   /// `CheckList` rows do.
   var canPick = true
+  /// On a card of its own (`CardRowStyle`), as main's plan Focus areas are.
+  var isCard = false
   let action: () -> Void
   @ViewBuilder let words: Words
 
   @Environment(\.isEnabled) private var isEnabled
 
   var body: some View {
-    Button(action: action) {
+    let button = Button(action: action) {
       ChoiceRowLabel(picks: picks, isPicked: isPicked, isLocked: isLocked) {
         words
       }
-      .opacity(dims ? 0.5 : 1)
+      .opacity(dims && !isCard ? 0.5 : 1)
     }
     .disabled(isLocked || !canPick)
-    .pickedRow(isPicked)
     .choiceTraits(picks, isPicked: isPicked)
+
+    if isCard {
+      button
+        .buttonStyle(CardRowStyle(isPicked: isPicked))
+        .cardRowInList()
+    } else {
+      button.pickedRow(isPicked)
+    }
   }
 
   /// Main's `CheckList` also dims every row while its list can't change, as while it saves; a

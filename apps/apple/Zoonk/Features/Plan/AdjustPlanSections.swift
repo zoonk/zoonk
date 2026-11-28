@@ -151,6 +151,8 @@ private struct PlanFocusSection: View {
             }
             .disclosureChevron()
           }
+          .buttonStyle(CardRowStyle())
+          .cardRowInList()
         } header: {
           title
         }
@@ -201,7 +203,7 @@ private struct PlanFocusSection: View {
     ForEach(choices) { area in
       let isPicked = selection.contains(area.name)
 
-      ChoiceRow(picks: .several, isPicked: isPicked) {
+      ChoiceRow(picks: .several, isPicked: isPicked, isCard: true) {
         var next = selection
         if isPicked { next.remove(area.name) } else { next.insert(area.name) }
         picked = next
