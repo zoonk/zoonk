@@ -1,7 +1,7 @@
 import { ONE_SECOND_RECORDING } from "@zoonk/testing/fixtures/recordings";
 
-/** @public Next's E2E alias for transcription keeps the real model's name. */
-export { NO_SPEECH_CHECK_MODEL } from "../../ai/src/tasks/language/transcribe-speech";
+/** @public Next's E2E alias for transcription names its no-speech check; the fake answers every model alike. */
+export const NO_SPEECH_CHECK_MODEL = "e2e/no-speech-check";
 
 export const PRONUNCIATION_RECORDING = ONE_SECOND_RECORDING;
 
