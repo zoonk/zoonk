@@ -9,6 +9,7 @@ import { SessionCeremony } from "@/components/learn/session-ceremony";
 import { useSignUpHref } from "@/components/learn/use-sign-up-href";
 import { useLessonSessionSlots } from "@/components/session/use-lesson-session-slots";
 import { redirect, useRouter } from "@/i18n/navigation";
+import { requestCodeRun } from "@/lib/code-runs/code-run-request";
 import { useTutorConfig } from "@/lib/learn/tutor-config";
 import { useTutorCards } from "@/lib/learn/use-tutor-cards";
 import { sendLessonClock } from "@/lib/lessons/lesson-clock-request";
@@ -95,6 +96,7 @@ function createAdapters({
     getLessonPictures: (stepIds) => getLessonPicturesAction(lessonId, stepIds),
     gradeSpokenAnswer: (input) => requestSpokenGrade({ ...input, studySessionId: visit.sessionId }),
     requestExampleLine,
+    runCode: requestCodeRun,
     ...(goalId && { saveLesson: saveLessonIn(goalId) }),
     startLesson: (input) =>
       startLibraryLesson({
