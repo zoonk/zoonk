@@ -96,11 +96,12 @@ describe("POST /v1/code-runs", () => {
   );
 
   it.each([
-    ["free", 402],
-    ["guest", 403],
-    ["plus", 429],
-  ] as const)("returns the %s plan limit and its resource", async (tier, status) => {
-    const limit = { limit: 15, period: "day", resource: "codeRun", tier } as const;
+    ["free", "codeRun", 429],
+    ["plus", "codeRun", 429],
+    ["guest", "codeRun", 403],
+    ["free", "aiSpend", 402],
+  ] as const)("returns the %s learner's %s limit with %i", async (tier, resource, status) => {
+    const limit = { limit: 300, period: "day", resource, tier } as const;
     vi.mocked(runLearnerProgram).mockResolvedValueOnce({ limit, status: "limitReached" });
     const response = await postCodeRun(request());
     expect(response.status).toBe(status);

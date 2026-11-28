@@ -2,7 +2,9 @@ import { codeRunInputSchema } from "@zoonk/core/library/activities/sandbox-contr
 import { z } from "zod";
 import {
   conflictResponse,
-  smallAiHelpRefusalResponses,
+  guestRefusalResponse,
+  paymentRequiredResponse,
+  tooManyRequestsResponse,
   unauthorizedResponse,
   validationErrorResponse,
 } from "../schemas/responses";
@@ -26,8 +28,18 @@ export const codeRunPaths = {
         },
         "400": validationErrorResponse,
         "401": unauthorizedResponse,
-        ...smallAiHelpRefusalResponses,
+        "402": {
+          ...paymentRequiredResponse,
+          description:
+            "A free learner reached today's AI budget (`USAGE_LIMIT_REACHED` with resource `aiSpend`)",
+        },
+        "403": guestRefusalResponse,
         "409": { ...conflictResponse, description: "A run is already active (`ALREADY_RUNNING`)" },
+        "429": {
+          ...tooManyRequestsResponse,
+          description:
+            "`SLOW_DOWN`: try again after `Retry-After`; or `USAGE_LIMIT_REACHED`, back tomorrow: the learner reached the day's run ceiling, the same for every account (resource `codeRun`), or a Plus learner reached today's AI budget (resource `aiSpend`)",
+        },
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Run code",
