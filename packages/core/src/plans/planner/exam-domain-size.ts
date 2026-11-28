@@ -38,6 +38,25 @@ export function readExamDomains(structure: ExamStructure | null): { examDomains?
 
 type SizedSkill = { estimate: number; fixed: boolean; floor: number; skill: PlanGraphSkill };
 
+function findBestDomains({
+  groups,
+  skill,
+}: {
+  groups: readonly Domain[];
+  skill: PlanGraphSkill;
+}): Domain[] {
+  const matches = groups.map(
+    (group) => skill.topics?.filter((topic) => group.topics.includes(topic)).length ?? 0,
+  );
+
+  const most = Math.max(...matches);
+  return most > 0 ? groups.filter((_, index) => matches[index] === most) : [];
+}
+
+/**
+ * Each skill goes to the heading most of its topics are under. A skill tied between headings goes
+ * to the one with the fewest skills so far, so a heading only such a skill covers still has one.
+ */
 function assignDomains({
   groups,
   skills,
@@ -45,16 +64,35 @@ function assignDomains({
   groups: readonly Domain[];
   skills: readonly SizedSkill[];
 }) {
-  const topics = groups.map((group) => new Set(group.topics));
+  const best = new Map(
+    skills.map((sized) => [sized, findBestDomains({ groups, skill: sized.skill })]),
+  );
 
-  return Map.groupBy(skills, ({ skill }) => {
-    const matches = topics.map(
-      (group) => skill.topics?.filter((topic) => group.has(topic)).length ?? 0,
-    );
+  const counts = new Map(groups.map((group) => [group, 0]));
+  const chosen = new Map<SizedSkill, Domain>();
 
-    const most = Math.max(...matches);
-    return most > 0 ? groups[matches.indexOf(most)] : undefined;
+  const choose = (sized: SizedSkill, group: Domain) => {
+    chosen.set(sized, group);
+    counts.set(group, (counts.get(group) ?? 0) + 1);
+  };
+
+  best.forEach(([only, ...others], sized) => {
+    if (only && others.length === 0) {
+      choose(sized, only);
+    }
   });
+
+  best.forEach((tied, sized) => {
+    const fewest = tied.toSorted(
+      (first, second) => (counts.get(first) ?? 0) - (counts.get(second) ?? 0),
+    )[0];
+
+    if (fewest && tied.length > 1) {
+      choose(sized, fewest);
+    }
+  });
+
+  return Map.groupBy(skills, (sized) => chosen.get(sized));
 }
 
 function sizeSubject({

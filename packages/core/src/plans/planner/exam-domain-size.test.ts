@@ -122,4 +122,23 @@ describe("an exam plan with official domain shares", () => {
     const incomplete = { ...graph, skills: graph.skills.slice(0, 3) };
     expect(sizeExamDomains({ ...sizing, graph: incomplete })).toStrictEqual(incomplete);
   });
+
+  it("gives a skill that spans two headings to the one no other skill covers", () => {
+    const [equations, nonlinear] = [graph.skills[0]!, graph.skills[3]!];
+
+    const spanning = {
+      ...graph,
+      skills: [
+        { ...nonlinear, lessons: 1, topics: [algebraTopics[1]!, advancedTopics[0]!] },
+        { ...equations, lessons: 19 },
+      ],
+    };
+
+    const sized = sizeExamDomains({ ...sizing, graph: spanning, lessons: [] });
+
+    expect(sized.skills.map((skill) => [skill.skillId, skill.domain?.name])).toStrictEqual([
+      ["nonlinear", ADVANCED],
+      ["equations", ALGEBRA],
+    ]);
+  });
 });
