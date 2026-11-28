@@ -8,6 +8,7 @@ vi.mock("server-only", () => ({}));
 vi.mock("./language-lesson-check.prompt.md", () => ({ default: "Find errors." }));
 vi.mock("./language-lesson.prompt.md", () => ({ default: "Write a lesson." }));
 vi.mock("./language-lesson-fix.prompt.md", () => ({ default: "Fix it." }));
+vi.mock("./language-lesson-activities.prompt.md", () => ({ default: "Add activities." }));
 vi.mock("./language-lesson-respelling-pt.prompt.md", () => ({ default: "" }));
 vi.mock("./language-lesson-respelling-es.prompt.md", () => ({ default: "" }));
 vi.mock("./language-lesson-respelling-en.prompt.md", () => ({ default: "" }));

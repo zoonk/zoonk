@@ -1,9 +1,9 @@
-import { type LanguageLessonContent } from "@zoonk/ai/tasks/language/language-lesson";
+import { type LanguageLessonActivities } from "@zoonk/ai/tasks/language/language-lesson";
 import { type ActivityStepContent } from "../../activities/activity-templates";
 import { validateActivity } from "../../activities/validate-activity";
 
-type PatternTable = NonNullable<LanguageLessonContent["patternTable"]>;
-type Dialogue = NonNullable<LanguageLessonContent["dialogue"]>;
+type PatternTable = NonNullable<LanguageLessonActivities["patternTable"]>;
+type Dialogue = NonNullable<LanguageLessonActivities["dialogue"]>;
 
 /** A rejected activity leaves its lesson without it; its issues say why. */
 type BuiltActivity = { content: ActivityStepContent | null; issues: string[] };
@@ -72,7 +72,7 @@ export function buildLanguageActivities({
   content,
   targetLanguage,
 }: {
-  content: LanguageLessonContent;
+  content: LanguageLessonActivities;
   targetLanguage: string;
 }) {
   return {

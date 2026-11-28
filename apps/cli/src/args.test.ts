@@ -70,6 +70,14 @@ describe(parseInvocation, () => {
     });
   });
 
+  it("drafts the activities of the published language lessons it names", () => {
+    expect(sentRequest(["staff", "language-activities", "lesson-1", "lesson-2"])).toStrictEqual({
+      body: { lessonIds: ["lesson-1", "lesson-2"] },
+      method: "POST",
+      path: "/staff/language-activities",
+    });
+  });
+
   it("rejects an unknown clip kind and nonnumeric limit before making a request", () => {
     expect(() => sentRequest(["staff", "audit-clips", "speech"])).toThrow(
       /Choose "words" or "sentences"/u,

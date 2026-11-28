@@ -14,6 +14,7 @@ import { formatLocalContext } from "../_utils/language-context";
 import { fillPromptLanguages, getLanguagePromptContext } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import { type LessonProblem, formatLessonProblems } from "../lesson-writer/format-lesson-plan";
+import activitiesPrompt from "./language-lesson-activities.prompt.md";
 import fixPrompt from "./language-lesson-fix.prompt.md";
 import respellingForEnglish from "./language-lesson-respelling-en.prompt.md";
 import respellingForSpanish from "./language-lesson-respelling-es.prompt.md";
@@ -154,7 +155,10 @@ const schema = z.object({
 });
 /* oxlint-enable eslint/sort-keys */
 
+const activitiesSchema = schema.pick({ dialogue: true, patternTable: true });
+
 export type LanguageLessonContent = z.infer<typeof schema>;
+export type LanguageLessonActivities = z.infer<typeof activitiesSchema>;
 
 export type LanguageLessonInputs = {
   learnerLanguage: string;
@@ -206,13 +210,15 @@ ${formatList(params.knownWords)}
   `;
 }
 
-async function runLanguageLessonTask({
+async function runLanguageLessonTask<TOutput>({
   instructions,
+  output,
   params,
   task,
   userPrompt,
 }: {
   instructions: string;
+  output: z.ZodType<TOutput>;
   params: LanguageLessonParams;
   task: string;
   userPrompt: string;
@@ -240,7 +246,7 @@ async function runLanguageLessonTask({
       generateText({
         instructions,
         model,
-        output: Output.object({ schema }),
+        output: Output.object({ schema: output }),
         prompt: userPrompt,
         providerOptions,
         reasoning,
@@ -266,6 +272,7 @@ async function runLanguageLessonTask({
 export async function generateLanguageLesson(params: LanguageLessonParams) {
   return runLanguageLessonTask({
     instructions: getSystemPrompt(params),
+    output: schema,
     params,
     task: "language-lesson",
     userPrompt: formatLanguageLessonInputs(params),
@@ -297,8 +304,35 @@ ${formatLessonProblems(params.problems)}
 
   return runLanguageLessonTask({
     instructions: `${getSystemPrompt(params)}\n${fixPrompt}`,
+    output: schema,
     params,
     task: "language-lesson-fix",
+    userPrompt,
+  });
+}
+
+type PublishedLanguageLesson = {
+  words: { word: string; translation: string }[];
+  sentences: { sentence: string; translation: string }[];
+  tip: { title: string; text: string };
+};
+
+export type LanguageLessonActivitiesParams = LanguageLessonParams & {
+  lesson: PublishedLanguageLesson;
+};
+
+/** A published lesson's missing pattern table and dialogue, each null where it doesn't fit. */
+export async function generateLanguageLessonActivities(params: LanguageLessonActivitiesParams) {
+  const userPrompt = `${formatLanguageLessonInputs(params)}
+LESSON:
+${JSON.stringify(params.lesson, null, 1)}
+`;
+
+  return runLanguageLessonTask({
+    instructions: `${getSystemPrompt(params)}\n${activitiesPrompt}`,
+    output: activitiesSchema,
+    params,
+    task: "language-lesson-activities",
     userPrompt,
   });
 }
