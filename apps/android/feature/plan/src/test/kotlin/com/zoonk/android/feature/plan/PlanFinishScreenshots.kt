@@ -13,7 +13,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onLast
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -65,6 +68,54 @@ class PlanFinishScreenshots {
     fun phoneAtTwiceTheFontSize() {
         RuntimeEnvironment.setFontScale(2f)
         capture("phone-font200")
+    }
+
+    @Test
+    @Config(qualifiers = "w700dp-h1900dp-xhdpi")
+    fun medium() = capture("medium")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun aimPicker() = aimSheet("phone")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun aimPickerDark() = aimSheet("phone-dark", dark = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h1600dp-xhdpi")
+    fun aimPickerAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        aimSheet("phone-font200")
+    }
+
+    /** The aim picker over French at B1: when each aim is reached at the learner's time, a year once far off, or past ten years. */
+    private fun aimSheet(
+        name: String,
+        dark: Boolean = false,
+    ) {
+        val aim = ApiJson.decodeFromString(LanguageAim.serializer(), languageAimOf("B1", targetLanguage = "fr"))
+        compose.setContent {
+            ZoonkTheme(darkTheme = dark) {
+                Surface {
+                    LanguageAimSheet(
+                        "B1",
+                        aim.choices,
+                        onDismiss = {},
+                        onPick = {},
+                        endDate = PlanForecast.On(java.time.LocalDate.of(2027, 11, 6), year = false),
+                        endDates =
+                            mapOf(
+                                "A2" to PlanForecast.On(java.time.LocalDate.of(2027, 4, 20), year = false),
+                                "B2" to PlanForecast.On(java.time.LocalDate.of(2030, 6, 1), year = true),
+                                "C1" to PlanForecast.Beyond,
+                            ),
+                    )
+                }
+            }
+        }
+        compose.waitUntilAtLeastOneExists(hasText("In 10+ years"))
+        write("aim-picker-$name", compose.onAllNodes(isRoot()).onLast().captureRender().asAndroidBitmap())
     }
 
     @Test
