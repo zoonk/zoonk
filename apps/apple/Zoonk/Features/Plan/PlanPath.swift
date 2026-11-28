@@ -219,7 +219,7 @@ private struct PlanPhaseRow: View {
     }
     if let checkpoint = phase.checkpoint {
       PlanCheckpointRow(
-        checkpoint: checkpoint, isLanguage: context.goal.kind == .language,
+        checkpoint: checkpoint, phase: phase, isLanguage: context.goal.kind == .language,
         isPaused: context.isPaused, plan: context.plan)
     }
   }
@@ -458,6 +458,7 @@ struct PlanChapterRow: View {
 
 private struct PlanCheckpointRow: View {
   let checkpoint: PlanPhase.Checkpoint
+  let phase: PlanPhase
   let isLanguage: Bool
   let isPaused: Bool
   let plan: GoalPlan
@@ -481,15 +482,15 @@ private struct PlanCheckpointRow: View {
     }
 
     // A paused plan has nothing planned until the learner resumes, as its phases' ends.
-    return isPaused ? nil : checkpoint.when(in: plan)
+    return isPaused ? nil : checkpoint.when(in: plan, phase: phase)
   }
 }
 
 extension PlanPhase.Checkpoint {
   /// When it comes. Dated today, the next session is today's, which may already be under way. One
-  /// whose phase's work has no day yet comes later, and a day months or years away is said by its
-  /// month or year, as its phase's end is.
-  func when(in plan: GoalPlan) -> PlanWhen? {
+  /// whose phase's work has no day yet comes later, and its day is said as its phase's end is, by
+  /// its month or year once that's all the plan knows.
+  func when(in plan: GoalPlan, phase: PlanPhase) -> PlanWhen? {
     if later == true {
       return .words(Text(verbatim: PhaseEnd.later.shown))
     }
@@ -505,8 +506,9 @@ extension PlanPhase.Checkpoint {
       )
     case .date, .queued:
       return date.map { date in
-        let grain = precision.map { plan.estimateGrain(date, precision: $0) } ?? .day
-        return .date(PlanDate.estimateText(date, today: plan.today, grain: grain))
+        .date(
+          PlanDate.estimateText(
+            date, today: plan.today, grain: plan.phaseGrain(date, phase: phase)))
       }
     }
   }

@@ -466,8 +466,6 @@ struct PlanPhase: Decodable, Equatable, Identifiable, Sendable {
     let locked: Bool
     /// Nil before its plan item exists: it has no page yet.
     let planItemId: String?
-    /// How finely its day is known, as its phase's end.
-    let precision: PlanForecast.Precision?
     let state: State
     let when: When
   }

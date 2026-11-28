@@ -180,8 +180,7 @@ private struct RoadmapCompact: View {
       .foregroundStyle(.mutedForeground)
       .fixedSize()
       .accessibilityElement(children: .ignore)
-      .accessibilityLabel(planFinishLabel(context))
-      .accessibilityValue(Text(verbatim: date.spoken))
+      .accessibilityLabel(Text(verbatim: "\(planFinishLabel(context)), \(date.spoken)"))
     }
   }
 
@@ -389,7 +388,7 @@ extension GoalPlan {
   /// Main's `getPhaseEndPrecision`: a phase ending where a plan without a date finishes is dated as
   /// the finish is; one ahead by how near it is; the one under way keeps its day unless core dates
   /// it by its year.
-  private func phaseGrain(_ isoDate: String, phase: PlanPhase, estimate isEstimate: Bool)
+  func phaseGrain(_ isoDate: String, phase: PlanPhase, estimate isEstimate: Bool = true)
     -> DateGrain
   {
     guard isEstimate else {
@@ -415,7 +414,7 @@ extension GoalPlan {
 
   /// An estimate past six weeks from this week's start names only its month, and one core says is
   /// years away only its year.
-  func estimateGrain(_ isoDate: String, precision: PlanForecast.Precision?) -> DateGrain {
+  private func estimateGrain(_ isoDate: String, precision: PlanForecast.Precision?) -> DateGrain {
     if precision == .year {
       return .year
     }
@@ -696,18 +695,18 @@ func planFinish(_ context: PlanContext) -> PlanWhen? {
 
 /// Main's `useFinishLabel`: what the flag at the plan's finish stands for, the goal's date, or with
 /// none the finish the plan works out.
-func planFinishLabel(_ context: PlanContext) -> Text {
+func planFinishLabel(_ context: PlanContext) -> String {
   if context.goal.kind == .exam {
-    return Text("Exam date", tableName: "Plan", comment: "Setting: the exam's date")
+    return String(localized: "Exam date", table: "Plan", comment: "Setting: the exam's date")
   }
 
   return context.plan.schedule.targetDate == nil
-    ? Text(
-      "You finish", tableName: "Plan",
+    ? String(
+      localized: "You finish", table: "Plan",
       comment:
         "Names the day the plan works out it finishes when the learner set no end date: beside the flag in the roadmap's legend, and as the label of that date in the plan's settings."
     )
-    : Text("End date", tableName: "Plan", comment: "Setting: the goal's end date")
+    : String(localized: "End date", table: "Plan", comment: "Setting: the goal's end date")
 }
 
 /// The places a phone lists nowhere else: the lessons done, the mind maps and the exam's page.
@@ -941,7 +940,7 @@ struct PlanSettingsSection: View {
   /// that.
   private var dateLabel: Text {
     if estimatedFinish != nil {
-      return planFinishLabel(context)
+      return Text(verbatim: planFinishLabel(context))
     }
 
     return context.goal.kind == .exam
