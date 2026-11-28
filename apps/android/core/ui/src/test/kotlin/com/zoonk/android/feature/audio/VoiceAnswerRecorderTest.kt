@@ -75,6 +75,34 @@ class VoiceAnswerRecorderTest {
         rule.onNodeWithText("Tap Record and say it out loud").assertIsDisplayed()
     }
 
+    /** A first refusal, which Android asks about again on Record, keeps Record and says to allow the microphone. */
+    @Test
+    fun aRefusalAndroidAsksAboutAgainKeepsRecordAndSaysToAllowTheMicrophone() {
+        refuse(asksAgain = true)
+        rule.onNodeWithText("Tap Record and allow the microphone to answer out loud.").assertIsDisplayed()
+        rule.onNodeWithText("Record").assertIsDisplayed()
+    }
+
+    @Test
+    fun aLastingRefusalPointsToSettings() {
+        refuse(asksAgain = false)
+        rule.onNodeWithText("The microphone is off").assertIsDisplayed()
+        rule.onNodeWithText("Tap Record and allow the microphone to answer out loud.").assertDoesNotExist()
+    }
+
+    private fun refuse(asksAgain: Boolean) {
+        shadowOf(rule.activity.application).denyPermissions(Manifest.permission.RECORD_AUDIO)
+        rule.setContent {
+            ZoonkTheme { Recorder(voiceAnswerModel(KEY) { GradeOutcome.Failed }, rememberAppNavigator()) }
+        }
+        rule.onNodeWithText("Record").performClick()
+        rule.runOnIdle {
+            shadowOf(rule.activity.packageManager).setShouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO, asksAgain)
+            val request = shadowOf(rule.activity).lastRequestedPermission
+            rule.activity.activityResultRegistry.dispatchResult(request.requestCode, false)
+        }
+    }
+
     /** The microphone turned off for good shows how to turn it on; back from Settings with it on, Record returns. */
     @Test
     fun theMicrophoneTurnedOnInSettingsBringsRecordBack() {

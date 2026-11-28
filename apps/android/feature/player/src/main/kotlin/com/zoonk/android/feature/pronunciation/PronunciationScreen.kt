@@ -256,7 +256,7 @@ private fun WordStep(
         rememberRecordTap(
             recorder = model.recorder,
             onAllowed = { model.microphoneOff = false },
-            onRefused = { lasting -> if (lasting) model.microphoneOff = true },
+            onRefused = model::refused,
             record = {
                 normal.cancel()
                 slow.cancel()

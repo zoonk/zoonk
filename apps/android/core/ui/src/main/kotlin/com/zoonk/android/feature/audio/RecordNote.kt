@@ -52,6 +52,7 @@ fun recordNote(
         checking || issue == VoiceIssue.Failed -> check
         issue == VoiceIssue.NoSpeech -> ({ NoteLine(stringResource(R.string.audio_no_speech), wrong = true) })
         issue == VoiceIssue.Unavailable -> ({ NoteLine(stringResource(R.string.audio_microphone_unavailable), wrong = true) })
+        issue == VoiceIssue.Refused -> ({ NoteLine(stringResource(R.string.audio_microphone_ask_again)) })
         issue is VoiceIssue.Limited -> navigator?.let { ({ LimitNote(issue, it) }) }
         else -> ({ NoteLine(stringResource(R.string.audio_say_it)) })
     }

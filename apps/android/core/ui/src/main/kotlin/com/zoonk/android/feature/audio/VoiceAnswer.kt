@@ -86,6 +86,11 @@ class VoiceAnswerModel(
         if (!recorder.start(::check)) issue.send(visit.number, VoiceIssue.Unavailable)
     }
 
+    /** The learner said no to the microphone: for now ([lasting] false, Android asks again on Record) or until Settings. */
+    internal fun refused(lasting: Boolean) {
+        if (lasting) microphoneOff = true else issue.send(visit.number, VoiceIssue.Refused)
+    }
+
     internal fun check(recording: VoiceRecording) {
         checking = true
         val started = visit.number
@@ -115,6 +120,9 @@ sealed interface VoiceIssue {
 
     /** The microphone couldn't start: there's none, or something else holds it. */
     data object Unavailable : VoiceIssue
+
+    /** The learner said no to the microphone this time; Record asks again. */
+    data object Refused : VoiceIssue
 
     data class Limited(
         val limit: Limit,
@@ -153,7 +161,7 @@ fun VoiceAnswerButton(
     val tapRecord =
         rememberRecordTap(
             recorder = model.recorder,
-            onRefused = { lasting -> if (lasting) model.microphoneOff = true },
+            onRefused = model::refused,
             record = model::record,
         )
     val status by model.recorder.state.collectAsStateWithLifecycle()
