@@ -100,9 +100,7 @@ export const TEST_CASES: UnderstandGoalCase[] = [
   }),
   testCase("en-sat-in-another-country-keeps-no-country", {
     expected: {
-      goals: [
-        { contentCountry: null, countryDependent: false, examName: /SAT/u, kind: "exam" },
-      ],
+      goals: [{ contentCountry: null, countryDependent: false, examName: /SAT/u, kind: "exam" }],
       route: "goals",
     },
     goal: "I'm taking the SAT in Kenya in March",
@@ -110,19 +108,14 @@ export const TEST_CASES: UnderstandGoalCase[] = [
   }),
   testCase("en-ielts-where-they-sit-it-keeps-no-country", {
     expected: {
-      goals: [
-        { contentCountry: null, countryDependent: false, examName: /IELTS/u, kind: "exam" },
-      ],
+      goals: [{ contentCountry: null, countryDependent: false, examName: /IELTS/u, kind: "exam" }],
       route: "goals",
     },
     goal: "Band 7 on IELTS Academic, I'll take it in Toronto",
     language: "en",
   }),
   testCase("en-faa-certificate-is-never-the-nationalitys", {
-    expected: {
-      goals: [{ contentCountryNot: "CA", kind: "exam" }],
-      route: "goals",
-    },
+    expected: { goals: [{ contentCountryNot: "CA", kind: "exam" }], route: "goals" },
     goal: "I'm Canadian and I want to get an FAA private pilot certificate",
     language: "en",
   }),
@@ -151,26 +144,18 @@ export const TEST_CASES: UnderstandGoalCase[] = [
     language: "en",
   }),
   testCase("en-fe-discipline-with-a-hedge-is-not-settled", {
-    expected: {
-      goals: [{ examName: /FE/u, examOption: null, kind: "exam" }],
-      route: "goals",
-    },
+    expected: { goals: [{ examName: /FE/u, examOption: null, kind: "exam" }], route: "goals" },
     goal: "Pass the FE exam, maybe mechanical",
     language: "en",
   }),
   testCase("en-fe-two-disciplines-are-not-settled", {
-    expected: {
-      goals: [{ examName: /FE/u, examOption: null, kind: "exam" }],
-      route: "goals",
-    },
+    expected: { goals: [{ examName: /FE/u, examOption: null, kind: "exam" }], route: "goals" },
     goal: "Pass the FE exam, mechanical or civil, still deciding",
     language: "en",
   }),
   testCase("en-booked-test-not-booked-yet", {
     expected: {
-      goals: [
-        { examDay: "booked", examNotBooked: true, hasTargetDate: false, kind: "exam" },
-      ],
+      goals: [{ examDay: "booked", examNotBooked: true, hasTargetDate: false, kind: "exam" }],
       route: "goals",
     },
     goal: "Prepare for the GRE, I haven't booked a test date yet",
