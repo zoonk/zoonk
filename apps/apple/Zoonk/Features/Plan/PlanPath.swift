@@ -280,7 +280,8 @@ private struct PlanPhaseRow: View {
         "\(count) lessons not studied", tableName: "Plan",
         comment: "A phase the date passed with lessons not studied")
     case .topics(let count):
-      return leftOutTopicsText(count)
+      // Open, the fold among its rows says it.
+      return isExpanded ? nil : leftOutTopicsLine(count)
     case .challenge, .noTimeForChallenge:
       return context.goal.kind == .language
         ? Text(
@@ -979,7 +980,7 @@ struct SyllabusSubjectRow: View {
       }
 
       if !subject.leftOutTopics.isEmpty {
-        leftOutTopicsText(subject.leftOutTopics.count)
+        leftOutTopicsLine(subject.leftOutTopics.count)
           .typeStyle(.meta)
           .foregroundStyle(.mutedForeground)
           .layoutPart(.note)
@@ -1163,6 +1164,14 @@ func examExtraLabel(hasNotice: Bool, document: ExamDocument) -> String {
 /// How many topics of a module or a phase the plan's date leaves out, wherever the plan says it.
 func leftOutTopicsText(_ count: Int) -> Text {
   Text(verbatim: leftOutTopicsWords(count))
+}
+
+/// Main's `LeftOutTopicsLine`: the fold's mark, then the count, under a row's name.
+func leftOutTopicsLine(_ count: Int) -> Text {
+  let mark = Text(Image(systemName: "minus.circle")).foregroundStyle(.mutedForeground.opacity(0.7))
+
+  return Text("\(mark)\(Text(verbatim: " " + leftOutTopicsWords(count)))")
+    .accessibilityLabel(leftOutTopicsWords(count))
 }
 
 func leftOutTopicsWords(_ count: Int) -> String {

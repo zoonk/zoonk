@@ -108,6 +108,7 @@ private struct SubjectContent: View {
   // Above the panes, so a fold or a resize that rebuilds them keeps what the learner opened.
   @State private var showsAllChapters = false
   @State private var showsDoneChapters = false
+  @State private var showsLeftOut = false
   @State private var openTopics: Set<SyllabusSubject.Topic.ID> = []
   @State private var restoring = VisitRequest<Bool>()
   @State private var writeFailed = false
@@ -120,10 +121,8 @@ private struct SubjectContent: View {
     PaneSplit(primaryShare: 0.55) {
       ZoonkList {
         header
-        notice
         coversSection
         chaptersSection
-        leftOutSection
       }
     } secondary: {
       // As on the web, only the side pane names the questions and the next date.
@@ -136,10 +135,8 @@ private struct SubjectContent: View {
       ZoonkList {
         header
         numbers(titled: false)
-        notice
         coversSection
         chaptersSection
-        leftOutSection
         topics
       }
     }
@@ -315,16 +312,7 @@ private struct SubjectContent: View {
           .listRowSeparator(.hidden)
       }
 
-    }
-  }
-
-  /// Main's `NotPlannedCallout`, under the subject's numbers as main's aside has it.
-  @ViewBuilder
-  private var notice: some View {
-    if let reason = subject.notPlannedReason.flatMap(SubjectNotPlannedNotice.Reason.init)
-      ?? (subject.leftOutTopics.isEmpty ? nil : .partTime)
-    {
-      Section {
+      if let reason = subject.notPlannedReason.flatMap(SubjectNotPlannedNotice.Reason.init) {
         SubjectNotPlannedNotice(
           goalId: goal.id, reason: reason, areas: subject.areas, module: goal.kind != .exam,
           restoring: restoring
@@ -362,25 +350,18 @@ private struct SubjectContent: View {
   @ViewBuilder
   private var coversSection: some View {
     if !subject.covers.isEmpty {
-      SkillNamesSection(
-        names: subject.covers,
-        title: Text(
-          "What it covers", tableName: "Plan",
-          comment:
-            "Titles the list of what a subject or module contains, on its page while it's out of the learner's plan, so they can decide whether to add it back. Their plan doesn't teach it, so the title names its contents without promising they'll learn them."
-        ))
-    }
-  }
-
-  /// The topics of a subject in the plan that its date leaves out, after the chapters it keeps.
-  @ViewBuilder
-  private var leftOutSection: some View {
-    let names = subject.leftOutTopics
-
-    if !names.isEmpty {
-      SkillNamesSection(
-        names: names, title: Text("Not in your plan", tableName: "Plan"),
-        detail: Text(names.count, format: .number))
+      Section {
+        ForEach(Array(subject.covers.enumerated()), id: \.offset) { _, name in
+          ListRow(Text(name))
+        }
+      } header: {
+        SectionTitle(
+          Text(
+            "What it covers", tableName: "Plan",
+            comment:
+              "Titles the list of what a subject or module contains, on its page while it's out of the learner's plan, so they can decide whether to add it back. Their plan doesn't teach it, so the title names its contents without promising they'll learn them."
+          ))
+      }
     }
   }
 
@@ -409,6 +390,12 @@ private struct SubjectContent: View {
               "\(hidden) more chapters", tableName: "Plan",
               comment: "Shows the phase's chapters left out around the next one"),
             isUnfolded: $showsAllChapters)
+        }
+
+        LeftOutTopicsRows(names: subject.leftOutTopics, isUnfolded: $showsLeftOut)
+
+        if !subject.leftOutTopics.isEmpty {
+          LeftOutWhy()
         }
       } header: {
         SectionTitle(
@@ -817,6 +804,32 @@ struct SubjectTopicRow: View {
   }
 }
 
+/// Main's `LeftOutWhy`: why the fold above leaves topics out, and the way to fit them in.
+private struct LeftOutWhy: View {
+  @Environment(AppRouter.self) private var router
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 12) {
+      Text(
+        "They don't fit before your date.", tableName: "Plan",
+        comment:
+          "Under the folded list of a module's or a subject's topics that the learner's plan leaves out: they don't fit in the study time before the date the learner set. Followed by a button to change the plan."
+      )
+      .typeStyle(.note)
+      .foregroundStyle(.mutedForeground)
+
+      Button {
+        router.showRoot(of: .plan)
+      } label: {
+        Text("Adjust plan", tableName: "Plan", comment: "Opens the plan's settings to change them")
+      }
+      .buttonStyle(.outline)
+    }
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .listRowSeparator(.hidden)
+  }
+}
+
 /// Main's `NotPlannedCallout`: a notice card saying why the subject isn't in the plan, with the way
 /// back main offers for each reason.
 private struct SubjectNotPlannedNotice: View {
@@ -825,8 +838,6 @@ private struct SubjectNotPlannedNotice: View {
 
   enum Reason: String {
     case skipped, time, missing
-    /// The plan teaches some of it; the rest doesn't fit before the plan's date.
-    case partTime
   }
 
   let goalId: String
@@ -837,7 +848,12 @@ private struct SubjectNotPlannedNotice: View {
   let restoring: VisitRequest<Bool>
 
   var body: some View {
-    Label {
+    // On the first line's baseline, as main's notice sets its mark, where a label centers it.
+    HStack(alignment: .firstTextBaseline, spacing: 12) {
+      Image(systemName: "minus.circle")
+        .foregroundStyle(.mutedForeground)
+        .accessibilityHidden(true)
+
       VStack(alignment: .leading, spacing: 10) {
         switch reason {
         case .skipped:
@@ -860,7 +876,7 @@ private struct SubjectNotPlannedNotice: View {
           }
           .buttonStyle(.outline)
           .controlSize(.small)
-        case .time, .partTime:
+        case .time:
           Button {
             router.showRoot(of: .plan)
           } label: {
@@ -891,9 +907,6 @@ private struct SubjectNotPlannedNotice: View {
         }
       }
       .foregroundStyle(Color(.foreground))
-    } icon: {
-      Image(systemName: "minus.circle")
-        .foregroundStyle(.mutedForeground)
     }
     .typeStyle(.note)
     .frame(maxWidth: .infinity, alignment: .leading)
@@ -905,40 +918,22 @@ private struct SubjectNotPlannedNotice: View {
   /// The reason, then "Adjust plan" in ink and underlined, as two sentences sit.
   private var timeLine: AttributedString {
     let reason =
-      reason == .partTime
-      ? partTimeReason
-      : module
-        ? String(
-          localized: "This module isn't in your plan. Other modules come first.", table: "Plan",
-          comment:
-            "Why a module isn't in the learner's plan, on a plan that isn't for an exam: their study time goes to modules that matter more first. Followed by a link to change the plan."
-        )
-        : String(
-          localized: "This subject isn't in your plan. Other subjects come first.", table: "Plan",
-          comment:
-            "Why a subject isn't in the learner's plan: their study time goes to subjects that matter more first. Followed by a link to change the plan."
-        )
+      module
+      ? String(
+        localized: "This module isn't in your plan. Other modules come first.", table: "Plan",
+        comment:
+          "Why a module isn't in the learner's plan, on a plan that isn't for an exam: their study time goes to modules that matter more first. Followed by a link to change the plan."
+      )
+      : String(
+        localized: "This subject isn't in your plan. Other subjects come first.", table: "Plan",
+        comment:
+          "Why a subject isn't in the learner's plan: their study time goes to subjects that matter more first. Followed by a link to change the plan."
+      )
     var link = AttributedString(
       localized: "Adjust plan", table: "Plan", comment: "Opens the plan's settings to change them")
     link.underlineStyle = .single
 
     return AttributedString([reason, ""].joinedSentences()) + link
-  }
-
-  private var partTimeReason: String {
-    module
-      ? String(
-        localized: "Part of this module isn't in your plan. Other topics come first.",
-        table: "Plan",
-        comment:
-          "On a module's page, on a plan that isn't for an exam: the plan teaches some of the module, but the rest of its topics don't fit before the plan's date. Followed by a link to change the plan."
-      )
-      : String(
-        localized: "Part of this subject isn't in your plan. Other topics come first.",
-        table: "Plan",
-        comment:
-          "On a subject's page: the plan teaches some of the subject, but the rest of its topics don't fit before the plan's date. Followed by a link to change the plan."
-      )
   }
 
   private func restore() {
@@ -947,27 +942,6 @@ private struct SubjectNotPlannedNotice: View {
       case .done(.invalid), .failed: return false
       case .done: return true
       case .obsolete: return nil
-      }
-    }
-  }
-}
-
-/// Skills listed by name under a section title, such as what a subject out of the plan covers.
-private struct SkillNamesSection: View {
-  let names: [String]
-  let title: Text
-  var detail: Text?
-
-  var body: some View {
-    Section {
-      ForEach(Array(names.enumerated()), id: \.offset) { _, name in
-        ListRow(Text(name).foregroundStyle(.mutedForeground))
-      }
-    } header: {
-      SectionTitle(title) {
-        if let detail {
-          detail
-        }
       }
     }
   }

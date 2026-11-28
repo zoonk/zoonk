@@ -81,14 +81,15 @@ private struct RevealPhaseRow: View {
     }
   }
 
-  /// Its milestone over how many topics the plan's date leaves out, as main's two lines.
+  /// Its milestone over how many topics the plan's date leaves out, as main's two lines; open, the
+  /// fold among its rows says the second.
   private var line: Text? {
-    let lines = [
-      phase.milestone,
-      phase.leftOutTopics.isEmpty ? nil : leftOutTopicsWords(phase.leftOutTopics.count),
-    ].compactMap(\.self)
+    let milestone = phase.milestone.map { Text(verbatim: $0) }
+    let leftOut =
+      phase.leftOutTopics.isEmpty || isExpanded
+      ? nil : leftOutTopicsLine(phase.leftOutTopics.count)
 
-    return lines.isEmpty ? nil : Text(verbatim: lines.joined(separator: "\n"))
+    return stackedLines(milestone, leftOut)
   }
 }
 
@@ -175,9 +176,11 @@ private struct RevealSubjectRow: View {
     ListRow(
       Text(subject.shortName)
         .foregroundStyle(subject.notPlannedReason == nil ? Color(.foreground) : .mutedForeground),
-      description: line,
-      descriptionFacts: subject.leftOutTopics.isEmpty
-        ? [] : [leftOutTopicsWords(subject.leftOutTopics.count)]
+      description: stackedLines(
+        line,
+        // Open, the fold among its rows says it.
+        subject.leftOutTopics.isEmpty || open.contains("subject:\(subject.key)")
+          ? nil : leftOutTopicsLine(subject.leftOutTopics.count))
     ) {
     } trailing: {
       if sizeClass == .regular, let questions = subject.questions, questions > 0 {
@@ -216,5 +219,14 @@ private struct RevealSubjectRow: View {
         runs.append((topic.heading, [topic]))
       }
     }
+  }
+}
+
+/// Two lines of a row's description, one over the other, either of them absent.
+private func stackedLines(_ first: Text?, _ second: Text?) -> Text? {
+  switch (first, second) {
+  case (let first?, let second?): Text("\(first)\(Text(verbatim: "\n"))\(second)")
+  case (let line?, nil), (nil, let line?): line
+  case (nil, nil): nil
   }
 }
