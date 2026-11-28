@@ -143,26 +143,49 @@ async function claimRun({
   return { reuseName, row, status: "ready" };
 }
 
-async function execute({
+type Attempt = { result: CodeRunResult; sandboxName: string } | { started: boolean };
+
+/** `started` once the sandbox holds the program and begins compiling or running it. */
+async function attemptRun({
   input,
   onPhase,
+  open,
   runId,
-  sandbox,
+  sandboxName,
 }: {
   input: CodeRunInput;
   onPhase: (phase: CodeRunPhase) => void;
+  open: () => Promise<ProgramSandbox>;
   runId: string;
-  sandbox: ProgramSandbox;
-}) {
-  const outcome = await safeAsync(() =>
-    executeSandboxProgram({ ...input, onPhase, runId, sandbox }),
-  );
+  sandboxName: string;
+}): Promise<Attempt> {
+  const opened = await safeAsync(open);
 
-  if (outcome.error) {
-    await safeAsync(() => sandbox.stop());
+  if (!opened.data) {
+    return { started: false };
   }
 
-  return outcome.data;
+  const sandbox = opened.data;
+  let started = false;
+
+  const executed = await safeAsync(() =>
+    executeSandboxProgram({
+      ...input,
+      onPhase: (phase) => {
+        started = true;
+        onPhase(phase);
+      },
+      runId,
+      sandbox,
+    }),
+  );
+
+  if (executed.error) {
+    await safeAsync(() => sandbox.stop());
+    return { started };
+  }
+
+  return { result: executed.data, sandboxName };
 }
 
 async function runClaimedProgram({
@@ -187,37 +210,41 @@ async function runClaimedProgram({
 
   onPhase("starting");
 
-  const reused = reuseName
-    ? await safeAsync(() => sandboxDriver.reuse({ deadline, name: reuseName, timeoutMs }))
-    : null;
+  const reused: Attempt = reuseName
+    ? await attemptRun({
+        input,
+        onPhase,
+        open: () => sandboxDriver.reuse({ deadline, name: reuseName, timeoutMs }),
+        runId,
+        sandboxName: reuseName,
+      })
+    : { started: false };
 
-  const reusedResult = reused?.data
-    ? await execute({ input, onPhase, runId, sandbox: reused.data })
-    : null;
+  const attempt =
+    "result" in reused || reused.started
+      ? reused
+      : await attemptRun({
+          input,
+          onPhase,
+          open: () =>
+            sandboxDriver.fork({
+              deadline,
+              language: input.language,
+              name: row.sandboxName,
+              timeoutMs,
+            }),
+          runId,
+          sandboxName: row.sandboxName,
+        });
 
-  const fork = reusedResult
-    ? null
-    : await safeAsync(() =>
-        sandboxDriver.fork({
-          deadline,
-          language: input.language,
-          name: row.sandboxName,
-          timeoutMs,
-        }),
-      );
-
-  const freshResult = fork?.data
-    ? await execute({ input, onPhase, runId, sandbox: fork.data })
-    : null;
-
-  const result = reusedResult ?? freshResult ?? unavailable(runId);
+  const result = "result" in attempt ? attempt.result : unavailable(runId);
 
   await prisma.codeRun.update({
     data: {
       errorOutput: result.errorOutput,
       finishedAt: new Date(),
       output: result.output,
-      sandboxName: (reusedResult && reuseName) || row.sandboxName,
+      sandboxName: "result" in attempt ? attempt.sandboxName : row.sandboxName,
       stop: result.stop,
     },
     where: { id: row.id },

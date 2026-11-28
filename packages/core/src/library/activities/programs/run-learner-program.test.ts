@@ -91,6 +91,32 @@ describe("learner code run admission", () => {
     expect(sandboxDriver.reuse).toHaveBeenCalledTimes(2);
   });
 
+  it("keeps the charge for a program that started and runs it only once", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+    vi.mocked(sandboxDriver.fork).mockResolvedValueOnce(scriptedSandbox());
+    await finish(await runLearnerProgram(program()));
+
+    const failing = scriptedSandbox();
+
+    failing.run.mockImplementation(({ args: [phase] }) =>
+      phase === "run" ? Promise.reject(new Error("Session ended")) : Promise.resolve(0),
+    );
+
+    vi.mocked(sandboxDriver.reuse).mockResolvedValueOnce(failing);
+
+    await expect(finish(await runLearnerProgram(program()))).resolves.toMatchObject({
+      stop: "unavailable",
+    });
+
+    expect(failing.stop).toHaveBeenCalledOnce();
+    expect(sandboxDriver.fork).toHaveBeenCalledOnce();
+
+    await expect(
+      prisma.usageRecord.count({ where: { kind: "codeRun", userId: user.id } }),
+    ).resolves.toBe(2);
+  });
+
   it("forks fresh after a run that timed out", async () => {
     const user = await userFixture();
     mockSession(user.id);
