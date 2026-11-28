@@ -139,6 +139,17 @@ private fun Source.attached() = AttachedSource(id.toString(), title, readStatus)
 /** Questions are left before the plan (`plan` alone: it's being built), so no plan is coming yet. */
 val Onboarding.questionsLeft: Boolean get() = steps.any { it != OnboardingStep.PLAN && it.profileQuestion == null }
 
+/** What a goal still owes before Today shows its day (main's `readOnboardingLeft`). */
+enum class OnboardingLeft { Questions, Reveal }
+
+/** Its questions first: a test half done can leave a plan already made, which isn't shown until they're answered. */
+fun Onboarding.left(): OnboardingLeft? =
+    when {
+        questionsLeft -> OnboardingLeft.Questions
+        planReadiness.ready && !planRevealed -> OnboardingLeft.Reveal
+        else -> null
+    }
+
 /** A visitor's first write starts a guest session, as an anonymous sign-in does. */
 class OnboardingStore(
     private val api: OnboardingApi,
@@ -583,7 +594,8 @@ class OnboardingStore(
 
     /**
      * [answerIndices] answers a level's confirmation, where every right option is picked. [audioDeferred] is "Can't listen
-     * now" on a listening question: it ends the test's listening without scoring the question.
+     * now" on a listening question: it ends the test's listening without scoring the question. The plan's row counts the
+     * answer, so the plan reads again once it shows.
      */
     suspend fun answerLevelTest(
         goalId: String,
@@ -594,7 +606,7 @@ class OnboardingStore(
         attemptId: UUID? = null,
         answerIndices: List<Long>? = null,
         audioDeferred: Boolean = false,
-    ) = write(replacing = { listOf(levelTest(goalId, attemptId).replacing(it)) }) {
+    ) = write(setOf(DataDomain.LearnerModel), replacing = { listOf(levelTest(goalId, attemptId).replacing(it)) }) {
         api.answerLevelTest(
             it,
             goalId,

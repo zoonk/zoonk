@@ -76,18 +76,19 @@ class TestTopScreenshots(
     }
 
     @Test
-    fun courseQuestion() = course("course-question", placementAttemptOf(answered = 1, chapter = "When ownership is diluted"))
+    fun courseQuestion() = course("course-question", placementAttemptOf(answered = 1, chapter = "When ownership is diluted"), DILUTION)
 
     @Test
     fun courseQuestionLongTopic() =
         course(
             "course-question-long-topic",
-            placementAttemptOf(answered = 2, chapter = "Constitutional limits on the taxing power of states and municipalities"),
+            placementAttemptOf(answered = 2, chapter = "Civil procedure, from the complaint to the final judgment and its appeals"),
+            orderQuestion(),
         )
 
     @Test
     fun courseWaysOut() =
-        course("course-ways-out", placementAttemptOf(answered = 1, chapter = "When ownership is diluted")) {
+        course("course-ways-out", placementAttemptOf(answered = 1, chapter = "When ownership is diluted"), DILUTION) {
             compose.onNodeWithContentDescription("Leave").performClick()
         }
 
@@ -124,6 +125,7 @@ class TestTopScreenshots(
     private fun course(
         name: String,
         attempt: com.zoonk.api.models.PlacementAttempt,
+        question: String,
         act: () -> Unit = {},
     ) {
         val api =
@@ -134,7 +136,7 @@ class TestTopScreenshots(
                         placement = """{"mode":"resume","test":{"kind":"course","offer":{"estimatedMinutes":4,"questions":8}}}""",
                     )
                 }
-                placement = placementOf(next = orderQuestion()).copy(attempt = attempt)
+                placement = placementOf(next = question).copy(attempt = attempt)
             }
         capture(name, api, act)
     }
@@ -246,6 +248,13 @@ class TestTopScreenshots(
 
     companion object {
         const val ATTEMPT = "6f1c2e2a-6d1b-4c8e-9a51-2f4b8f0c7a11"
+
+        /** A question that belongs to the stocks course's topic it's asked under. */
+        val DILUTION =
+            orderQuestion(
+                "Put what happens to your stake in order.",
+                listOf("The company issues new shares", "More shares exist in total", "Your share of the company shrinks"),
+            )
         const val CLIP = "https://clips.test/level-test/stazione.mp3"
         const val DURATION = 8_000L
         const val PLAYED_MS = 3_000L

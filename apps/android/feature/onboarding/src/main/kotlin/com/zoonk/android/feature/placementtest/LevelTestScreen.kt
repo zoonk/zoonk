@@ -228,13 +228,17 @@ internal val LanguageLevelTest.openAttemptId: UUID?
             is LanguageLevelTest.LanguageLevelTestOneOf1Value -> value.attemptId
         }
 
+/** The read's latest sitting has its own result; a retake's read still carries the earlier test's until it ends. */
 internal val LanguageLevelTest.isFinished: Boolean
-    get() =
-        when (this) {
-            is LanguageLevelTest.LanguageLevelTestOneOf2Value -> false
-            is LanguageLevelTest.LanguageLevelTestOneOfValue -> value.result != null
-            is LanguageLevelTest.LanguageLevelTestOneOf1Value -> value.result != null
-        }
+    get() {
+        val result =
+            when (this) {
+                is LanguageLevelTest.LanguageLevelTestOneOf2Value -> null
+                is LanguageLevelTest.LanguageLevelTestOneOfValue -> value.result
+                is LanguageLevelTest.LanguageLevelTestOneOf1Value -> value.result
+            }
+        return result != null && result.attemptId == openAttemptId
+    }
 
 internal val LanguageLevelTest.total: Long
     get() =
