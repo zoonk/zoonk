@@ -1,0 +1,19 @@
+{
+  "caseId": "en-es-perro-pero",
+  "challenger": {
+    "costUsd": 0.00011984,
+    "durationMs": 2458.527915999999,
+    "hash": "e8421997c7ff5aef98c12446c1f2146f556f0e9da43b0670d06466e4d48541f7",
+    "systemPromptHash": "590411d60330e1ae98968590a70246ca862e6915f4d4e8787beaf77711534cd1",
+    "userPromptHash": "917f1de020ca194336c963b76d7a3cb7f241575e2819b3e2341e182f00e74b8d"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.00010752,
+    "durationMs": 2313.9725000000035,
+    "hash": "e06ac22f2e0c6973bcdd6b72df6492371908504a5ecfeab4bbc3e3ead55609ae",
+    "systemPromptHash": "c1648f39e7a60ae9b93cd92822c385dc403be619aacb56af32feb314cb89fd84",
+    "userPromptHash": "917f1de020ca194336c963b76d7a3cb7f241575e2819b3e2341e182f00e74b8d"
+  },
+  "run": 2
+}

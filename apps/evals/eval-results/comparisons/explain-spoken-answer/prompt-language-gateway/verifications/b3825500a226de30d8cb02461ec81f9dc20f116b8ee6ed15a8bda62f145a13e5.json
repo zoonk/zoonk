@@ -1,0 +1,139 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "pt-en-rent-hent",
+        "claimId": "57a1bc6d77f379e6",
+        "criterion": "helpfulness",
+        "observationId": "d3a8e551f6c846e702745096db584d3582aa3f54e996ab39fa37435bc02d7071.first.a799b3c2-bc8f-433c-838c-f4eebd9e9f8e.0",
+        "run": 2,
+        "side": "incumbent"
+      },
+      {
+        "caseId": "pt-en-rent-hent",
+        "claimId": "e22b1e3b6497cf0a",
+        "criterion": "helpfulness",
+        "observationId": "d3a8e551f6c846e702745096db584d3582aa3f54e996ab39fa37435bc02d7071.first.a799b3c2-bc8f-433c-838c-f4eebd9e9f8e.1",
+        "run": 2,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.00093326,
+    "id": "b3825500a226de30d8cb02461ec81f9dc20f116b8ee6ed15a8bda62f145a13e5",
+    "packet": [
+      {
+        "A": {
+          "blob": "4d25be7d3b22690771bbf6fc8491fdfd9e164c1707a0ba8b774e7c698dda8a70",
+          "format": "text"
+        },
+        "B": {
+          "blob": "c3a7beaeb4b755a1642288ec490a6a5db6e36283f2d3d7dee34f065b9b145dd2",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "The instruction says to move the tongue back, but does not say to curl it back as the expectation requests.",
+            "claimId": "57a1bc6d77f379e6",
+            "criterion": "helpfulness",
+            "location": {
+              "detail": "\"recue a língua sem tocar o céu da boca\"",
+              "kind": "quote"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "The instruction says to keep the tongue from touching the roof of the mouth, but does not tell the learner to move or curl it back as the expectation requests.",
+            "claimId": "e22b1e3b6497cf0a",
+            "criterion": "helpfulness",
+            "location": {
+              "detail": "\"mantenha a língua sem tocar o céu da boca\"",
+              "kind": "quote"
+            },
+            "output": "B"
+          }
+        ],
+        "expectations": {
+          "blob": "c38b4ce8cd180715590ec2db2f331df19c66730c7819369c0df4ed88e6c10788",
+          "format": "text"
+        },
+        "input": {
+          "blob": "3587679ed2a8ac007df352f9a96b11abc35ff50b2a0d6412e809f9e07a6057a9",
+          "format": "json"
+        }
+      },
+      {
+        "A": {
+          "blob": "927bb633d64e15a775cf86f74d48b8cc0dd5e2bf348291a19dabc1572cea0235",
+          "format": "text"
+        },
+        "B": {
+          "blob": "282c4aae1af763691be0bc098965c8b2d08b778e52259a66f46a4e56105aa4b0",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "The explanation for a Brazilian Portuguese reader is written entirely in English instead of Portuguese.",
+            "claimId": "aa358ace54edb549",
+            "criterion": "style",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "The clean explanation is written in English instead of Portuguese.",
+            "claimId": "bcf9c5129d4a3138",
+            "criterion": "style",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "B"
+          }
+        ],
+        "expectations": {
+          "blob": "c38b4ce8cd180715590ec2db2f331df19c66730c7819369c0df4ed88e6c10788",
+          "format": "text"
+        },
+        "input": {
+          "blob": "3587679ed2a8ac007df352f9a96b11abc35ff50b2a0d6412e809f9e07a6057a9",
+          "format": "json"
+        }
+      }
+    ],
+    "passed": true,
+    "plantedDefectPassed": true,
+    "protocolHash": "ed018fd13c57b447f6f3cbfd3fcf01e6b506c0102da6f1fa19dac5ce44b4d919",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "57a1bc6d77f379e6",
+          "finding": "holds for both",
+          "reason": "A says \"recue a língua\" (move the tongue back) but never says to curl it. B says only \"mantenha a língua sem tocar o céu da boca\" and never says to move or curl it back. Both omit the curl the expectation requires."
+        },
+        {
+          "claimId": "e22b1e3b6497cf0a",
+          "finding": "holds for both",
+          "reason": "B says to keep the tongue from touching the roof of the mouth but never tells the learner to move or curl it back. A also omits the curl, as its \"recue\" wording shows, so the shared omission applies to both."
+        },
+        {
+          "claimId": "aa358ace54edb549",
+          "finding": "holds",
+          "reason": "A's whole explanation is in English (\"In “rent”, we heard “hent”…\"), while the learner's language is Portuguese (pt). B is in Portuguese, so the problem is only in A."
+        },
+        {
+          "claimId": "bcf9c5129d4a3138",
+          "finding": "doesn't hold",
+          "reason": "B, the clean Portuguese explanation (\"Em “rent”, ouvimos “hent”…\"), is written in Portuguese, not English. The English-language problem is in A only."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

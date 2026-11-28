@@ -1,0 +1,1049 @@
+{
+  "cases": [
+    {
+      "caseId": "pt-en-rent-hent",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {
+        "anthropic": "challenger",
+        "openai": "split"
+      }
+    },
+    {
+      "caseId": "pt-en-lived-live",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {
+        "anthropic": "split",
+        "openai": "challenger"
+      }
+    },
+    {
+      "caseId": "es-en-ship-sheep",
+      "language": "es",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {
+        "anthropic": "split",
+        "openai": "split"
+      }
+    },
+    {
+      "caseId": "en-pt-esta",
+      "language": "en",
+      "owner": null,
+      "result": "incumbent",
+      "votes": {
+        "anthropic": "incumbent",
+        "openai": "incumbent"
+      }
+    },
+    {
+      "caseId": "en-es-perro-pero",
+      "language": "en",
+      "owner": null,
+      "result": "incumbent",
+      "votes": {
+        "anthropic": "incumbent",
+        "openai": "incumbent"
+      }
+    },
+    {
+      "caseId": "pt-en-missed-word",
+      "language": "pt",
+      "owner": null,
+      "result": "incumbent",
+      "votes": {
+        "anthropic": "incumbent",
+        "openai": "incumbent"
+      }
+    },
+    {
+      "caseId": "pt-en-spoke-own-language",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {
+        "anthropic": "split",
+        "openai": "incumbent"
+      }
+    }
+  ],
+  "outcome": "insufficient evidence",
+  "preferences": [
+    {
+      "families": [
+        {
+          "challenger": 7,
+          "incumbent": 14,
+          "tie": 1,
+          "family": "anthropic"
+        },
+        {
+          "challenger": 6,
+          "incumbent": 12,
+          "tie": 3,
+          "family": "openai"
+        }
+      ],
+      "lean": "incumbent",
+      "total": {
+        "challenger": 13,
+        "incumbent": 26,
+        "tie": 4
+      },
+      "byLanguage": [
+        {
+          "families": [
+            {
+              "challenger": 6,
+              "incumbent": 8,
+              "tie": 0,
+              "family": "anthropic"
+            },
+            {
+              "challenger": 4,
+              "incumbent": 7,
+              "tie": 2,
+              "family": "openai"
+            }
+          ],
+          "lean": "incumbent",
+          "total": {
+            "challenger": 10,
+            "incumbent": 15,
+            "tie": 2
+          },
+          "language": "pt"
+        },
+        {
+          "families": [
+            {
+              "challenger": 1,
+              "incumbent": 2,
+              "tie": 1,
+              "family": "anthropic"
+            },
+            {
+              "challenger": 2,
+              "incumbent": 2,
+              "tie": 0,
+              "family": "openai"
+            }
+          ],
+          "lean": null,
+          "total": {
+            "challenger": 3,
+            "incumbent": 4,
+            "tie": 1
+          },
+          "language": "es"
+        },
+        {
+          "families": [
+            {
+              "challenger": 0,
+              "incumbent": 4,
+              "tie": 0,
+              "family": "anthropic"
+            },
+            {
+              "challenger": 0,
+              "incumbent": 3,
+              "tie": 1,
+              "family": "openai"
+            }
+          ],
+          "lean": "incumbent",
+          "total": {
+            "challenger": 0,
+            "incumbent": 7,
+            "tie": 1
+          },
+          "language": "en"
+        }
+      ],
+      "criterion": null,
+      "label": "Overall"
+    },
+    {
+      "families": [
+        {
+          "challenger": 1,
+          "incumbent": 5,
+          "tie": 16,
+          "family": "anthropic"
+        },
+        {
+          "challenger": 1,
+          "incumbent": 3,
+          "tie": 17,
+          "family": "openai"
+        }
+      ],
+      "lean": "incumbent",
+      "total": {
+        "challenger": 2,
+        "incumbent": 8,
+        "tie": 33
+      },
+      "byLanguage": [
+        {
+          "families": [
+            {
+              "challenger": 1,
+              "incumbent": 4,
+              "tie": 9,
+              "family": "anthropic"
+            },
+            {
+              "challenger": 1,
+              "incumbent": 2,
+              "tie": 10,
+              "family": "openai"
+            }
+          ],
+          "lean": "incumbent",
+          "total": {
+            "challenger": 2,
+            "incumbent": 6,
+            "tie": 19
+          },
+          "language": "pt"
+        },
+        {
+          "families": [
+            {
+              "challenger": 0,
+              "incumbent": 0,
+              "tie": 4,
+              "family": "anthropic"
+            },
+            {
+              "challenger": 0,
+              "incumbent": 0,
+              "tie": 4,
+              "family": "openai"
+            }
+          ],
+          "lean": null,
+          "total": {
+            "challenger": 0,
+            "incumbent": 0,
+            "tie": 8
+          },
+          "language": "es"
+        },
+        {
+          "families": [
+            {
+              "challenger": 0,
+              "incumbent": 1,
+              "tie": 3,
+              "family": "anthropic"
+            },
+            {
+              "challenger": 0,
+              "incumbent": 1,
+              "tie": 3,
+              "family": "openai"
+            }
+          ],
+          "lean": "incumbent",
+          "total": {
+            "challenger": 0,
+            "incumbent": 2,
+            "tie": 6
+          },
+          "language": "en"
+        }
+      ],
+      "criterion": "accuracy",
+      "label": "Accurate and honest"
+    },
+    {
+      "families": [
+        {
+          "challenger": 7,
+          "incumbent": 13,
+          "tie": 2,
+          "family": "anthropic"
+        },
+        {
+          "challenger": 6,
+          "incumbent": 11,
+          "tie": 4,
+          "family": "openai"
+        }
+      ],
+      "lean": "incumbent",
+      "total": {
+        "challenger": 13,
+        "incumbent": 24,
+        "tie": 6
+      },
+      "byLanguage": [
+        {
+          "families": [
+            {
+              "challenger": 6,
+              "incumbent": 6,
+              "tie": 2,
+              "family": "anthropic"
+            },
+            {
+              "challenger": 4,
+              "incumbent": 6,
+              "tie": 3,
+              "family": "openai"
+            }
+          ],
+          "lean": null,
+          "total": {
+            "challenger": 10,
+            "incumbent": 12,
+            "tie": 5
+          },
+          "language": "pt"
+        },
+        {
+          "families": [
+            {
+              "challenger": 1,
+              "incumbent": 3,
+              "tie": 0,
+              "family": "anthropic"
+            },
+            {
+              "challenger": 2,
+              "incumbent": 2,
+              "tie": 0,
+              "family": "openai"
+            }
+          ],
+          "lean": null,
+          "total": {
+            "challenger": 3,
+            "incumbent": 5,
+            "tie": 0
+          },
+          "language": "es"
+        },
+        {
+          "families": [
+            {
+              "challenger": 0,
+              "incumbent": 4,
+              "tie": 0,
+              "family": "anthropic"
+            },
+            {
+              "challenger": 0,
+              "incumbent": 3,
+              "tie": 1,
+              "family": "openai"
+            }
+          ],
+          "lean": "incumbent",
+          "total": {
+            "challenger": 0,
+            "incumbent": 7,
+            "tie": 1
+          },
+          "language": "en"
+        }
+      ],
+      "criterion": "helpfulness",
+      "label": "Useful for this learner"
+    },
+    {
+      "families": [
+        {
+          "challenger": 0,
+          "incumbent": 2,
+          "tie": 20,
+          "family": "anthropic"
+        },
+        {
+          "challenger": 1,
+          "incumbent": 3,
+          "tie": 17,
+          "family": "openai"
+        }
+      ],
+      "lean": "incumbent",
+      "total": {
+        "challenger": 1,
+        "incumbent": 5,
+        "tie": 37
+      },
+      "byLanguage": [
+        {
+          "families": [
+            {
+              "challenger": 0,
+              "incumbent": 2,
+              "tie": 12,
+              "family": "anthropic"
+            },
+            {
+              "challenger": 0,
+              "incumbent": 3,
+              "tie": 10,
+              "family": "openai"
+            }
+          ],
+          "lean": "incumbent",
+          "total": {
+            "challenger": 0,
+            "incumbent": 5,
+            "tie": 22
+          },
+          "language": "pt"
+        },
+        {
+          "families": [
+            {
+              "challenger": 0,
+              "incumbent": 0,
+              "tie": 4,
+              "family": "anthropic"
+            },
+            {
+              "challenger": 1,
+              "incumbent": 0,
+              "tie": 3,
+              "family": "openai"
+            }
+          ],
+          "lean": null,
+          "total": {
+            "challenger": 1,
+            "incumbent": 0,
+            "tie": 7
+          },
+          "language": "es"
+        },
+        {
+          "families": [
+            {
+              "challenger": 0,
+              "incumbent": 0,
+              "tie": 4,
+              "family": "anthropic"
+            },
+            {
+              "challenger": 0,
+              "incumbent": 0,
+              "tie": 4,
+              "family": "openai"
+            }
+          ],
+          "lean": null,
+          "total": {
+            "challenger": 0,
+            "incumbent": 0,
+            "tie": 8
+          },
+          "language": "en"
+        }
+      ],
+      "criterion": "style",
+      "label": "Short, kind and in the right language"
+    },
+    {
+      "families": [
+        {
+          "challenger": 5,
+          "incumbent": 7,
+          "tie": 10,
+          "family": "anthropic"
+        },
+        {
+          "challenger": 4,
+          "incumbent": 3,
+          "tie": 14,
+          "family": "openai"
+        }
+      ],
+      "lean": null,
+      "total": {
+        "challenger": 9,
+        "incumbent": 10,
+        "tie": 24
+      },
+      "byLanguage": [
+        {
+          "families": [
+            {
+              "challenger": 4,
+              "incumbent": 5,
+              "tie": 5,
+              "family": "anthropic"
+            },
+            {
+              "challenger": 2,
+              "incumbent": 3,
+              "tie": 8,
+              "family": "openai"
+            }
+          ],
+          "lean": "incumbent",
+          "total": {
+            "challenger": 6,
+            "incumbent": 8,
+            "tie": 13
+          },
+          "language": "pt"
+        },
+        {
+          "families": [
+            {
+              "challenger": 1,
+              "incumbent": 0,
+              "tie": 3,
+              "family": "anthropic"
+            },
+            {
+              "challenger": 2,
+              "incumbent": 0,
+              "tie": 2,
+              "family": "openai"
+            }
+          ],
+          "lean": "challenger",
+          "total": {
+            "challenger": 3,
+            "incumbent": 0,
+            "tie": 5
+          },
+          "language": "es"
+        },
+        {
+          "families": [
+            {
+              "challenger": 0,
+              "incumbent": 2,
+              "tie": 2,
+              "family": "anthropic"
+            },
+            {
+              "challenger": 0,
+              "incumbent": 0,
+              "tie": 4,
+              "family": "openai"
+            }
+          ],
+          "lean": null,
+          "total": {
+            "challenger": 0,
+            "incumbent": 2,
+            "tie": 6
+          },
+          "language": "en"
+        }
+      ],
+      "criterion": "plainLanguage",
+      "label": "Easy to follow"
+    },
+    {
+      "families": [
+        {
+          "challenger": 0,
+          "incumbent": 0,
+          "tie": 22,
+          "family": "anthropic"
+        },
+        {
+          "challenger": 0,
+          "incumbent": 0,
+          "tie": 21,
+          "family": "openai"
+        }
+      ],
+      "lean": null,
+      "total": {
+        "challenger": 0,
+        "incumbent": 0,
+        "tie": 43
+      },
+      "byLanguage": [
+        {
+          "families": [
+            {
+              "challenger": 0,
+              "incumbent": 0,
+              "tie": 14,
+              "family": "anthropic"
+            },
+            {
+              "challenger": 0,
+              "incumbent": 0,
+              "tie": 13,
+              "family": "openai"
+            }
+          ],
+          "lean": null,
+          "total": {
+            "challenger": 0,
+            "incumbent": 0,
+            "tie": 27
+          },
+          "language": "pt"
+        },
+        {
+          "families": [
+            {
+              "challenger": 0,
+              "incumbent": 0,
+              "tie": 4,
+              "family": "anthropic"
+            },
+            {
+              "challenger": 0,
+              "incumbent": 0,
+              "tie": 4,
+              "family": "openai"
+            }
+          ],
+          "lean": null,
+          "total": {
+            "challenger": 0,
+            "incumbent": 0,
+            "tie": 8
+          },
+          "language": "es"
+        },
+        {
+          "families": [
+            {
+              "challenger": 0,
+              "incumbent": 0,
+              "tie": 4,
+              "family": "anthropic"
+            },
+            {
+              "challenger": 0,
+              "incumbent": 0,
+              "tie": 4,
+              "family": "openai"
+            }
+          ],
+          "lean": null,
+          "total": {
+            "challenger": 0,
+            "incumbent": 0,
+            "tie": 8
+          },
+          "language": "en"
+        }
+      ],
+      "criterion": "learnerInstructions",
+      "label": "Ignores instructions in the learner’s words"
+    }
+  ],
+  "readers": [
+    {
+      "failedPackets": 0,
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    },
+    {
+      "failedPackets": 1,
+      "family": "openai",
+      "model": "openai/gpt-6-luna",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    },
+    {
+      "failedPackets": 0,
+      "family": "owner",
+      "model": "owner",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    }
+  ],
+  "reason": "Your blind read can settle the unresolved cases.",
+  "reasonCode": "owner_blind_read_required",
+  "rows": [
+    {
+      "attempted": 14,
+      "casesByLanguage": {
+        "pt": 4,
+        "es": 1,
+        "en": 2
+      },
+      "costPer1000": 0.15557928571428575,
+      "date": "2026-11-28T13:42:52.994Z",
+      "deliveryByLanguage": {
+        "pt": {
+          "costPer1000": 0.16474875,
+          "p50": 2.8353767080000036,
+          "p95": 4.534452500000003,
+          "successful": 8
+        },
+        "es": {
+          "costPer1000": 0.13846999999999998,
+          "p50": 2.4303907499999986,
+          "p95": 3.3729093749999994,
+          "successful": 2
+        },
+        "en": {
+          "costPer1000": 0.145795,
+          "p50": 2.945388457999998,
+          "p95": 3.7589293340000003,
+          "successful": 4
+        }
+      },
+      "losses": 0,
+      "missingMatches": 0,
+      "p50": 2.945388457999998,
+      "p95": 4.534452500000003,
+      "quality": [
+        {
+          "affected": [
+            {
+              "caseId": "pt-en-lived-live",
+              "run": 1
+            }
+          ],
+          "both": [],
+          "criterion": "accuracy",
+          "language": "pt",
+          "weight": 3
+        },
+        {
+          "affected": [
+            {
+              "caseId": "pt-en-rent-hent",
+              "run": 1
+            },
+            {
+              "caseId": "pt-en-rent-hent",
+              "run": 2
+            },
+            {
+              "caseId": "pt-en-lived-live",
+              "run": 1
+            }
+          ],
+          "both": [
+            {
+              "caseId": "pt-en-rent-hent",
+              "run": 2
+            },
+            {
+              "caseId": "pt-en-lived-live",
+              "run": 1
+            }
+          ],
+          "criterion": "helpfulness",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "style",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "plainLanguage",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "learnerInstructions",
+          "language": "pt",
+          "weight": null
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "accuracy",
+          "language": "es",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "helpfulness",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "style",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "plainLanguage",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "learnerInstructions",
+          "language": "es",
+          "weight": null
+        },
+        {
+          "affected": [
+            {
+              "caseId": "en-es-perro-pero",
+              "run": 2
+            }
+          ],
+          "both": [
+            {
+              "caseId": "en-es-perro-pero",
+              "run": 2
+            }
+          ],
+          "criterion": "accuracy",
+          "language": "en",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "helpfulness",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "style",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "plainLanguage",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "learnerInstructions",
+          "language": "en",
+          "weight": null
+        }
+      ],
+      "side": "incumbent",
+      "status": "eligible",
+      "succeeded": 14,
+      "ties": 0,
+      "unresolved": 4,
+      "weightedMajorsByLanguage": {
+        "pt": 5,
+        "es": 0,
+        "en": 3
+      },
+      "wins": 3
+    },
+    {
+      "attempted": 14,
+      "casesByLanguage": {
+        "pt": 4,
+        "es": 1,
+        "en": 2
+      },
+      "costPer1000": 0.14119857142857142,
+      "date": "2026-11-28T13:42:52.994Z",
+      "deliveryByLanguage": {
+        "pt": {
+          "costPer1000": 0.14163,
+          "p50": 2.1393817500000005,
+          "p95": 4.4314469579999995,
+          "successful": 8
+        },
+        "es": {
+          "costPer1000": 0.16468,
+          "p50": 3.1209444999999976,
+          "p95": 3.2969933749999982,
+          "successful": 2
+        },
+        "en": {
+          "costPer1000": 0.12859500000000001,
+          "p50": 2.759115749999997,
+          "p95": 3.2385829169999996,
+          "successful": 4
+        }
+      },
+      "losses": 3,
+      "missingMatches": 0,
+      "p50": 2.8656204579999995,
+      "p95": 4.4314469579999995,
+      "quality": [
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "accuracy",
+          "language": "pt",
+          "weight": 3
+        },
+        {
+          "affected": [
+            {
+              "caseId": "pt-en-rent-hent",
+              "run": 2
+            },
+            {
+              "caseId": "pt-en-lived-live",
+              "run": 1
+            }
+          ],
+          "both": [
+            {
+              "caseId": "pt-en-rent-hent",
+              "run": 2
+            },
+            {
+              "caseId": "pt-en-lived-live",
+              "run": 1
+            }
+          ],
+          "criterion": "helpfulness",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "style",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "plainLanguage",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "learnerInstructions",
+          "language": "pt",
+          "weight": null
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "accuracy",
+          "language": "es",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "helpfulness",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "style",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "plainLanguage",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "learnerInstructions",
+          "language": "es",
+          "weight": null
+        },
+        {
+          "affected": [
+            {
+              "caseId": "en-es-perro-pero",
+              "run": 2
+            }
+          ],
+          "both": [
+            {
+              "caseId": "en-es-perro-pero",
+              "run": 2
+            }
+          ],
+          "criterion": "accuracy",
+          "language": "en",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "helpfulness",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "style",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "plainLanguage",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "learnerInstructions",
+          "language": "en",
+          "weight": null
+        }
+      ],
+      "side": "challenger",
+      "status": "eligible",
+      "succeeded": 14,
+      "ties": 0,
+      "unresolved": 4,
+      "weightedMajorsByLanguage": {
+        "pt": 2,
+        "es": 0,
+        "en": 3
+      },
+      "wins": 0
+    }
+  ]
+}

@@ -6,11 +6,11 @@ import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { NEUTRAL_ADDRESS_PROMPT } from "../_utils/address-form";
-import { getLanguagePromptContext } from "../_utils/prompt-language";
+import { fillPromptLanguages, getLanguagePromptContext } from "../_utils/prompt-language";
 import regionalFormsPrompt from "../_utils/regional-forms.prompt.md";
 import taskPrompt from "./explain-spoken-answer.prompt.md";
 
-const systemPrompt = `${taskPrompt}\n${regionalFormsPrompt}\n${NEUTRAL_ADDRESS_PROMPT}`;
+const systemPromptTemplate = `${taskPrompt}\n${regionalFormsPrompt}\n${NEUTRAL_ADDRESS_PROMPT}`;
 
 /**
  * Stored and reused for everyone who says the same thing: Luna scored 8.90 at 2.9s p50 (Sep 2026).
@@ -57,6 +57,12 @@ export async function explainSpokenAnswer({
   useFallback = true,
   words,
 }: ExplainSpokenAnswerParams) {
+  const systemPrompt = fillPromptLanguages({
+    learnerLanguage,
+    targetLanguage,
+    template: systemPromptTemplate,
+  });
+
   const languages = getLanguagePromptContext({ targetLanguage, userLanguage: learnerLanguage });
 
   const userPrompt = `

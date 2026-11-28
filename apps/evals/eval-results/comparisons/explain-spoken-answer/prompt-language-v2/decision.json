@@ -1,0 +1,391 @@
+{
+  "cases": [
+    {
+      "caseId": "pt-en-rent-hent",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "pt-en-lived-live",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "es-en-ship-sheep",
+      "language": "es",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "en-pt-esta",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "en-es-perro-pero",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "pt-en-missed-word",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "pt-en-spoke-own-language",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    }
+  ],
+  "outcome": "retain",
+  "preferences": [],
+  "readers": [
+    {
+      "failedPackets": 0,
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    },
+    {
+      "failedPackets": 0,
+      "family": "openai",
+      "model": "openai/gpt-6-luna",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    },
+    {
+      "failedPackets": 0,
+      "family": "owner",
+      "model": "owner",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    }
+  ],
+  "reason": "A pricier challenger needs owner judgment.",
+  "rows": [
+    {
+      "attempted": 14,
+      "casesByLanguage": {
+        "pt": 4,
+        "es": 1,
+        "en": 2
+      },
+      "costPer1000": 0.15557928571428575,
+      "date": "2026-11-28T13:56:59.938Z",
+      "deliveryByLanguage": {
+        "pt": {
+          "costPer1000": 0.16474875,
+          "p50": 2.8353767080000036,
+          "p95": 4.534452500000003,
+          "successful": 8
+        },
+        "es": {
+          "costPer1000": 0.13846999999999998,
+          "p50": 2.4303907499999986,
+          "p95": 3.3729093749999994,
+          "successful": 2
+        },
+        "en": {
+          "costPer1000": 0.145795,
+          "p50": 2.945388457999998,
+          "p95": 3.7589293340000003,
+          "successful": 4
+        }
+      },
+      "losses": 0,
+      "missingMatches": 0,
+      "p50": 2.945388457999998,
+      "p95": 4.534452500000003,
+      "quality": [
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "accuracy",
+          "language": "pt",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "helpfulness",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "style",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "plainLanguage",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "learnerInstructions",
+          "language": "pt",
+          "weight": null
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "accuracy",
+          "language": "es",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "helpfulness",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "style",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "plainLanguage",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "learnerInstructions",
+          "language": "es",
+          "weight": null
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "accuracy",
+          "language": "en",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "helpfulness",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "style",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "plainLanguage",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "learnerInstructions",
+          "language": "en",
+          "weight": null
+        }
+      ],
+      "side": "incumbent",
+      "status": "eligible",
+      "succeeded": 14,
+      "ties": 0,
+      "unresolved": 7,
+      "weightedMajorsByLanguage": {
+        "pt": 0,
+        "es": 0,
+        "en": 0
+      },
+      "wins": 0
+    },
+    {
+      "attempted": 14,
+      "casesByLanguage": {
+        "pt": 4,
+        "es": 1,
+        "en": 2
+      },
+      "costPer1000": 0.17016535714285713,
+      "date": "2026-11-28T13:56:59.938Z",
+      "deliveryByLanguage": {
+        "pt": {
+          "costPer1000": 0.161025,
+          "p50": 2.2437747089999975,
+          "p95": 4.952508541999998,
+          "successful": 8
+        },
+        "es": {
+          "costPer1000": 0.18818749999999998,
+          "p50": 2.7171097499999997,
+          "p95": 2.873992333000002,
+          "successful": 2
+        },
+        "en": {
+          "costPer1000": 0.17943499999999998,
+          "p50": 2.516931292000001,
+          "p95": 3.075639000000003,
+          "successful": 4
+        }
+      },
+      "losses": 0,
+      "missingMatches": 0,
+      "p50": 2.7171097499999997,
+      "p95": 4.952508541999998,
+      "quality": [
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "accuracy",
+          "language": "pt",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "helpfulness",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "style",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "plainLanguage",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "learnerInstructions",
+          "language": "pt",
+          "weight": null
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "accuracy",
+          "language": "es",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "helpfulness",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "style",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "plainLanguage",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "learnerInstructions",
+          "language": "es",
+          "weight": null
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "accuracy",
+          "language": "en",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "helpfulness",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "style",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "plainLanguage",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "learnerInstructions",
+          "language": "en",
+          "weight": null
+        }
+      ],
+      "side": "challenger",
+      "status": "dominated",
+      "succeeded": 14,
+      "ties": 0,
+      "unresolved": 7,
+      "weightedMajorsByLanguage": {
+        "pt": 0,
+        "es": 0,
+        "en": 0
+      },
+      "wins": 0
+    }
+  ]
+}

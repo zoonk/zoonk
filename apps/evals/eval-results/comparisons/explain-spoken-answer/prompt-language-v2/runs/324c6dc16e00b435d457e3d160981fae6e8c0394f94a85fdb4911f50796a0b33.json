@@ -1,0 +1,19 @@
+{
+  "caseId": "pt-en-lived-live",
+  "challenger": {
+    "costUsd": 0.0002875,
+    "durationMs": 4952.508541999998,
+    "hash": "71542141ae29e2f9da5605651ab925f0ebf063961ec72636babe7b07e4f7d3b6",
+    "systemPromptHash": "a99c6bef839c7815137643bfd8344eb2030ea796776364f91b85aab2d38d7bc5",
+    "userPromptHash": "6548f006d8bef01b81b4fa262b935941b2650434be1f30dce4b5f1eac7d093fc"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.00018471999999999998,
+    "durationMs": 3845.7054590000007,
+    "hash": "9a3e12ec72011658cd9e0ebcca74c1f1da360f51472b22ba0003667a8057fc95",
+    "systemPromptHash": "c1648f39e7a60ae9b93cd92822c385dc403be619aacb56af32feb314cb89fd84",
+    "userPromptHash": "6548f006d8bef01b81b4fa262b935941b2650434be1f30dce4b5f1eac7d093fc"
+  },
+  "run": 2
+}

@@ -1,0 +1,139 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "en-es-perro-pero",
+        "claimId": "63f6094a5c7a22dc",
+        "criterion": "accuracy",
+        "observationId": "a790da7cf262a50d9a5ced8f427b06f8d7534b41e3a39dda007e7de3cb09aed0.first.0b8a334d-c344-4f41-9a8a-19e674bf22d2.0",
+        "run": 2,
+        "side": "incumbent"
+      },
+      {
+        "caseId": "en-es-perro-pero",
+        "claimId": "a4bd6bab463be619",
+        "criterion": "accuracy",
+        "observationId": "a790da7cf262a50d9a5ced8f427b06f8d7534b41e3a39dda007e7de3cb09aed0.first.0b8a334d-c344-4f41-9a8a-19e674bf22d2.1",
+        "run": 2,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.00055936,
+    "id": "51311963174132868a4fafe7a03048a08f40012526862dc16f8daab4a966a2b4",
+    "packet": [
+      {
+        "A": {
+          "blob": "282c4aae1af763691be0bc098965c8b2d08b778e52259a66f46a4e56105aa4b0",
+          "format": "text"
+        },
+        "B": {
+          "blob": "927bb633d64e15a775cf86f74d48b8cc0dd5e2bf348291a19dabc1572cea0235",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "The explanation for a Brazilian Portuguese reader is written entirely in English instead of Portuguese.",
+            "claimId": "4d6125446ac7a6c0",
+            "criterion": "style",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "B"
+          },
+          {
+            "claim": "The clean explanation is written in English instead of Portuguese.",
+            "claimId": "d2de373677062c50",
+            "criterion": "style",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "A"
+          }
+        ],
+        "expectations": {
+          "blob": "c38b4ce8cd180715590ec2db2f331df19c66730c7819369c0df4ed88e6c10788",
+          "format": "text"
+        },
+        "input": {
+          "blob": "3587679ed2a8ac007df352f9a96b11abc35ff50b2a0d6412e809f9e07a6057a9",
+          "format": "json"
+        }
+      },
+      {
+        "A": {
+          "blob": "e06ac22f2e0c6973bcdd6b72df6492371908504a5ecfeab4bbc3e3ead55609ae",
+          "format": "text"
+        },
+        "B": {
+          "blob": "29fd8d00a46a2fab9eaf9fffc102637575338d4bf4d87c97bb1992d90451db5f",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "It does not explain that saying “pero” instead of “perro” changes the meaning, as the case requires.",
+            "claimId": "63f6094a5c7a22dc",
+            "criterion": "accuracy",
+            "location": {
+              "detail": "whole",
+              "kind": "whole"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "It does not explain that saying “pero” instead of “perro” changes the meaning, as the case requires.",
+            "claimId": "a4bd6bab463be619",
+            "criterion": "accuracy",
+            "location": {
+              "detail": "whole",
+              "kind": "whole"
+            },
+            "output": "B"
+          }
+        ],
+        "expectations": {
+          "blob": "b1cca89e4e122f758a1d00fc3ba37795e5b2972f529393e9f0fb58fd6d391c8b",
+          "format": "text"
+        },
+        "input": {
+          "blob": "e32db89c5eb4823ba9c6d83fe529b3c5326119686086657633695f1071cad0f3",
+          "format": "json"
+        }
+      }
+    ],
+    "passed": true,
+    "plantedDefectPassed": true,
+    "protocolHash": "ed018fd13c57b447f6f3cbfd3fcf01e6b506c0102da6f1fa19dac5ce44b4d919",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "4d6125446ac7a6c0",
+          "finding": "holds",
+          "reason": "Output B is written entirely in English, while the learner is Brazilian Portuguese and the expectation is a Portuguese explanation. Output A is in Portuguese, so the problem is only in B."
+        },
+        {
+          "claimId": "d2de373677062c50",
+          "finding": "doesn't hold",
+          "reason": "The claim targets output A, but A is written in Portuguese, as the case requires. The English-language problem is in B, not A."
+        },
+        {
+          "claimId": "63f6094a5c7a22dc",
+          "finding": "holds for both",
+          "reason": "Neither output says that saying \"pero\" instead of \"perro\" changes the meaning. Output A only mentions the tap and the rolled rr, so the omission is shared."
+        },
+        {
+          "claimId": "a4bd6bab463be619",
+          "finding": "holds for both",
+          "reason": "Output B also never says that \"pero\" versus \"perro\" changes the meaning; it only describes the tongue tap and the stronger rr. The omission is shared with A."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}
