@@ -473,6 +473,8 @@ struct PlanPhase: Decodable, Equatable, Identifiable, Sendable {
   let endDate: String?
   let index: Int
   let kind: Kind
+  /// The names of its topics the plan's date leaves out while it holds the rest of the phase.
+  var leftOut: [String]?
   let lessonsDone: Int
   let lessonsTotal: Int
   /// What the learner can do once the phase is done, as a new plan's path names it.
@@ -485,21 +487,30 @@ struct PlanPhase: Decodable, Equatable, Identifiable, Sendable {
 
   var id: Int { index }
 
-  enum LeftOut: Equatable {
+  enum OutOfPlan: Equatable {
     case challenge
     case lessons(Int)
     case noTimeForChallenge
     case notInPlan
+    case topics(Int)
   }
 
-  var leftOut: LeftOut? {
+  var leftOutTopics: [String] { leftOut ?? [] }
+
+  var outOfPlan: OutOfPlan? {
     switch state {
     case .leftOut:
       .notInPlan
     case .unfinished:
       lessonsTotal > lessonsDone ? .lessons(lessonsTotal - lessonsDone) : .challenge
     case .current, .done, .upcoming:
-      challengeLeftOut ? .noTimeForChallenge : nil
+      if challengeLeftOut {
+        .noTimeForChallenge
+      } else if !leftOutTopics.isEmpty {
+        .topics(leftOutTopics.count)
+      } else {
+        nil
+      }
     }
   }
 
@@ -825,6 +836,9 @@ struct SyllabusSubject: Decodable, Equatable, Identifiable, Sendable {
   /// chapters to say it; empty otherwise.
   let covers: [String]
   let displayWeight: DisplayWeight?
+  /// The names of its topics the plan's date leaves out while it teaches the rest; empty when it
+  /// lists topics or is out of the plan as a whole.
+  var leftOut: [String]?
   /// Set on the exam's optional study, such as its strategy, which the exam doesn't test.
   let extra: Bool?
   /// The notice's group the subject is listed under, if it groups them.
@@ -857,6 +871,8 @@ struct SyllabusSubject: Decodable, Equatable, Identifiable, Sendable {
   var lessonShare: Double {
     lessonsTotal > 0 ? Double(lessonsDone + lessonsKnown) / Double(lessonsTotal) : 0
   }
+
+  var leftOutTopics: [String] { leftOut ?? [] }
 
   /// Main's `getCoverage`: its lessons studied, those the learner already knew and the new ones.
   var coverage: CoverageLegend.Shares {

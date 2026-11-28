@@ -122,6 +122,7 @@ private struct SubjectContent: View {
         header
         coversSection
         chaptersSection
+        leftOutSection
       }
     } secondary: {
       // As on the web, only the side pane names the questions and the next date.
@@ -136,6 +137,7 @@ private struct SubjectContent: View {
         numbers(titled: false)
         coversSection
         chaptersSection
+        leftOutSection
         topics
       }
     }
@@ -311,7 +313,9 @@ private struct SubjectContent: View {
           .listRowSeparator(.hidden)
       }
 
-      if let reason = subject.notPlannedReason.flatMap(SubjectNotPlannedNotice.Reason.init) {
+      if let reason = subject.notPlannedReason.flatMap(SubjectNotPlannedNotice.Reason.init)
+        ?? (subject.leftOutTopics.isEmpty ? nil : .partTime)
+      {
         SubjectNotPlannedNotice(
           goalId: goal.id, reason: reason, areas: subject.areas, module: goal.kind != .exam,
           restoring: restoring
@@ -349,18 +353,25 @@ private struct SubjectContent: View {
   @ViewBuilder
   private var coversSection: some View {
     if !subject.covers.isEmpty {
-      Section {
-        ForEach(Array(subject.covers.enumerated()), id: \.offset) { _, name in
-          ListRow(Text(name))
-        }
-      } header: {
-        SectionTitle(
-          Text(
-            "What it covers", tableName: "Plan",
-            comment:
-              "Titles the list of what a subject or module contains, on its page while it's out of the learner's plan, so they can decide whether to add it back. Their plan doesn't teach it, so the title names its contents without promising they'll learn them."
-          ))
-      }
+      SkillNamesSection(
+        names: subject.covers,
+        title: Text(
+          "What it covers", tableName: "Plan",
+          comment:
+            "Titles the list of what a subject or module contains, on its page while it's out of the learner's plan, so they can decide whether to add it back. Their plan doesn't teach it, so the title names its contents without promising they'll learn them."
+        ))
+    }
+  }
+
+  /// The topics of a subject in the plan that its date leaves out, after the chapters it keeps.
+  @ViewBuilder
+  private var leftOutSection: some View {
+    let names = subject.leftOutTopics
+
+    if !names.isEmpty {
+      SkillNamesSection(
+        names: names, title: Text("Not in your plan", tableName: "Plan"),
+        detail: Text(names.count, format: .number))
     }
   }
 
@@ -805,6 +816,8 @@ private struct SubjectNotPlannedNotice: View {
 
   enum Reason: String {
     case skipped, time, missing
+    /// The plan teaches some of it; the rest doesn't fit before the plan's date.
+    case partTime
   }
 
   let goalId: String
@@ -838,7 +851,7 @@ private struct SubjectNotPlannedNotice: View {
           }
           .buttonStyle(.outline)
           .controlSize(.small)
-        case .time:
+        case .time, .partTime:
           Button {
             router.showRoot(of: .plan)
           } label: {
@@ -883,22 +896,40 @@ private struct SubjectNotPlannedNotice: View {
   /// The reason, then "Adjust plan" in ink and underlined, as two sentences sit.
   private var timeLine: AttributedString {
     let reason =
-      module
-      ? String(
-        localized: "This module isn't in your plan. Other modules come first.", table: "Plan",
-        comment:
-          "Why a module isn't in the learner's plan, on a plan that isn't for an exam: their study time goes to modules that matter more first. Followed by a link to change the plan."
-      )
-      : String(
-        localized: "This subject isn't in your plan. Other subjects come first.", table: "Plan",
-        comment:
-          "Why a subject isn't in the learner's plan: their study time goes to subjects that matter more first. Followed by a link to change the plan."
-      )
+      reason == .partTime
+      ? partTimeReason
+      : module
+        ? String(
+          localized: "This module isn't in your plan. Other modules come first.", table: "Plan",
+          comment:
+            "Why a module isn't in the learner's plan, on a plan that isn't for an exam: their study time goes to modules that matter more first. Followed by a link to change the plan."
+        )
+        : String(
+          localized: "This subject isn't in your plan. Other subjects come first.", table: "Plan",
+          comment:
+            "Why a subject isn't in the learner's plan: their study time goes to subjects that matter more first. Followed by a link to change the plan."
+        )
     var link = AttributedString(
       localized: "Adjust plan", table: "Plan", comment: "Opens the plan's settings to change them")
     link.underlineStyle = .single
 
     return AttributedString([reason, ""].joinedSentences()) + link
+  }
+
+  private var partTimeReason: String {
+    module
+      ? String(
+        localized: "Part of this module isn't in your plan. Other topics come first.",
+        table: "Plan",
+        comment:
+          "On a module's page, on a plan that isn't for an exam: the plan teaches some of the module, but the rest of its topics don't fit before the plan's date. Followed by a link to change the plan."
+      )
+      : String(
+        localized: "Part of this subject isn't in your plan. Other topics come first.",
+        table: "Plan",
+        comment:
+          "On a subject's page: the plan teaches some of the subject, but the rest of its topics don't fit before the plan's date. Followed by a link to change the plan."
+      )
   }
 
   private func restore() {
@@ -907,6 +938,27 @@ private struct SubjectNotPlannedNotice: View {
       case .done(.invalid), .failed: return false
       case .done: return true
       case .obsolete: return nil
+      }
+    }
+  }
+}
+
+/// Skills listed by name under a section title, such as what a subject out of the plan covers.
+private struct SkillNamesSection: View {
+  let names: [String]
+  let title: Text
+  var detail: Text?
+
+  var body: some View {
+    Section {
+      ForEach(Array(names.enumerated()), id: \.offset) { _, name in
+        ListRow(Text(name).foregroundStyle(.mutedForeground))
+      }
+    } header: {
+      SectionTitle(title) {
+        if let detail {
+          detail
+        }
       }
     }
   }

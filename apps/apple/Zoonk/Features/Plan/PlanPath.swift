@@ -129,11 +129,14 @@ private struct PlanPhaseRow: View {
       if isOpen {
         events
       }
-    } else if phase.chapters.isEmpty && phase.checkpoint == nil && phase.mocks.nextDate == nil {
+    } else if phase.chapters.isEmpty && phase.leftOutTopics.isEmpty && phase.checkpoint == nil
+      && phase.mocks.nextDate == nil
+    {
       header(next: false)
     } else {
       DisclosureGroup(isExpanded: expansion) {
         chapterRows
+        leftOutRows
         events
       } label: {
         // Open, a phase named like one of its chapters goes by its place, so the two rows don't read
@@ -169,6 +172,38 @@ private struct PlanPhaseRow: View {
             $0.showsAllChapters = shows
           }
         })
+    }
+  }
+
+  /// Main's left-out row: the topics the plan's date leaves out of the phase, folded under one row
+  /// that names them.
+  @ViewBuilder
+  private var leftOutRows: some View {
+    let names = phase.leftOutTopics
+
+    if !names.isEmpty {
+      FoldRow(
+        isUnfolded: Binding {
+          disclosure.showsLeftOut
+        } set: { shows in
+          store.setPhaseDisclosure(goalId: context.goal.id, phase: phase.index) {
+            $0.showsLeftOut = shows
+          }
+        }
+      ) {
+        ListRow(leftOutTopicsText(names.count).foregroundStyle(.mutedForeground)) {
+          Image(systemName: "minus.circle")
+            .foregroundStyle(.mutedForeground)
+        }
+      }
+
+      if disclosure.showsLeftOut {
+        ForEach(Array(names.enumerated()), id: \.offset) { _, name in
+          ListRow(Text(name).foregroundStyle(.mutedForeground)) {
+            Color.clear.frame(width: 0, height: 0)
+          }
+        }
+      }
     }
   }
 
@@ -249,13 +284,15 @@ private struct PlanPhaseRow: View {
   }
 
   private var meta: Text? {
-    switch phase.leftOut {
+    switch phase.outOfPlan {
     case .notInPlan:
       return planOutsideReason(phase.notPlannedReason, module: context.goal.kind != .exam)
     case .lessons(let count):
       return Text(
         "\(count) lessons not studied", tableName: "Plan",
         comment: "A phase the date passed with lessons not studied")
+    case .topics(let count):
+      return leftOutTopicsText(count)
     case .challenge, .noTimeForChallenge:
       return context.goal.kind == .language
         ? Text(
@@ -952,6 +989,13 @@ struct SyllabusSubjectRow: View {
           .foregroundStyle(.mutedForeground)
           .layoutPart(.note)
       }
+
+      if !subject.leftOutTopics.isEmpty {
+        leftOutTopicsText(subject.leftOutTopics.count)
+          .typeStyle(.meta)
+          .foregroundStyle(.mutedForeground)
+          .layoutPart(.note)
+      }
     }
   }
 
@@ -1126,4 +1170,13 @@ func examExtraLabel(hasNotice: Bool, document: ExamDocument) -> String {
         "Labels a language certificate's optional study, such as its strategy, which its official guide doesn't list"
     )
   }
+}
+
+/// How many topics of a module or a phase the plan's date leaves out, wherever the plan says it.
+func leftOutTopicsText(_ count: Int) -> Text {
+  Text(
+    "\(count) topics not in your plan", tableName: "Plan",
+    comment:
+      "Under a module or a phase of the learner's plan, and on the row that lists them: how many of its topics the plan leaves out because they don't fit before the plan's date."
+  )
 }
