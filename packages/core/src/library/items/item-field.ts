@@ -1,3 +1,4 @@
+import { type OptionSelect } from "@zoonk/ai/tasks/items/schemas";
 import { type WorkField, isWorkField } from "@zoonk/ai/tasks/items/work-fields";
 import { getString, isJsonObject } from "@zoonk/utils/json";
 
@@ -47,6 +48,8 @@ type ItemAudience = {
   field?: string | null;
   inSets?: boolean;
   includeMockReserve?: boolean;
+  /** Practice's picks (`getPracticePicks`); a test leaves it out to ask every pick its questions have. */
+  picks?: readonly OptionSelect[];
   userId?: string | null;
   keepIds?: readonly string[];
 };
@@ -97,8 +100,19 @@ export function getAskedItemFilter({
   };
 }
 
-export function getItemAudienceFilter(audience: ItemAudience) {
-  return { AND: [...getAskedItemFilter(audience).AND, IN_BANK] };
+export function getPickFilter(picks: readonly OptionSelect[]) {
+  return {
+    OR: [
+      { format: { not: "multipleChoice" as const } },
+      ...picks.map((select) => ({ content: { equals: select, path: ["select"] } })),
+    ],
+  };
+}
+
+export function getItemAudienceFilter({ picks, ...audience }: ItemAudience) {
+  return {
+    AND: [...getAskedItemFilter(audience).AND, IN_BANK, ...(picks ? [getPickFilter(picks)] : [])],
+  };
 }
 
 export function getFieldRank({

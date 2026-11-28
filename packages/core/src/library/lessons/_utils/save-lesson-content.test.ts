@@ -91,6 +91,7 @@ async function listAskable({ skillId, userId }: { skillId: string; userId: strin
       field: null,
       maxMinutes: 45,
       now: new Date(),
+      picks: [1],
       skillIds: [skillId],
       typed: true,
       userId,

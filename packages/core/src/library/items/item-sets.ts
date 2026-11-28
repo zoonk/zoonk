@@ -1,7 +1,13 @@
+import { type OptionSelect } from "@zoonk/ai/tasks/items/schemas";
 import { type ItemSet, type ItemSetKind, type MediaAsset, prisma } from "@zoonk/db";
 import { logError } from "@zoonk/utils/logger";
 import { toListeningSetView } from "../listening/listening-set-view";
-import { getItemAudienceFilter, getPublicItemFilter, getPublicMaterialFilters } from "./item-field";
+import {
+  getItemAudienceFilter,
+  getPickFilter,
+  getPublicItemFilter,
+  getPublicMaterialFilters,
+} from "./item-field";
 import { parseItemSetContent } from "./item-set-content";
 import { type ItemSetView } from "./item-set-view";
 
@@ -16,10 +22,12 @@ export type ItemSetPick = {
 
 export async function listItemSetsForSkills({
   examBlueprintId,
+  picks,
   skillIds,
   userId,
 }: {
   examBlueprintId: string | null;
+  picks?: readonly OptionSelect[];
   skillIds: readonly string[];
   userId: string | null;
 }): Promise<ItemSetPick[]> {
@@ -42,10 +50,14 @@ export async function listItemSetsForSkills({
     },
     orderBy: { id: "asc" },
     where: {
+      AND: [
+        { items: { some: { skillId: { in: [...skillIds] } } } },
+        // A set is asked whole, so one member it can't ask leaves out the set, never the member.
+        ...(picks ? [{ items: { every: getPickFilter(picks) } }] : []),
+        ...(userId ? [] : getPublicMaterialFilters()),
+      ],
       NOT: { kind: "audio", mediaAssetId: null },
       OR: [{ examBlueprintId: null }, ...(examBlueprintId ? [{ examBlueprintId }] : [])],
-      items: { some: { skillId: { in: [...skillIds] } } },
-      ...(userId ? {} : { AND: getPublicMaterialFilters() }),
     },
   });
 

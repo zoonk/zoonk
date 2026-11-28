@@ -4,6 +4,7 @@ import { isNetScored } from "../../checkpoints/weekly-challenge-rules";
 import { loadListeningSkillIds } from "../../exams/listening/listening-skills";
 import { loadGoalSkillIds } from "../../learner/_utils/goal-skill-graph";
 import { markLearnerChanged, markPlansChanged } from "../../learner/_utils/mark-learner-changed";
+import { getPracticePicks } from "../../library/exams/practice-picks";
 import { practicesShortAnswers } from "../../library/exams/short-answers";
 import { getGoalField } from "../../library/items/item-field";
 import { getSkillAreaShares } from "../../plans/_utils/exam-subject-shares";
@@ -75,6 +76,7 @@ export async function buildExtraPractice({
     listeningSkillIds,
     maxMinutes: minutes,
     now: new Date(),
+    picks: getPracticePicks({ goal: session.goal, structure }),
     skillAreaShares: getSkillAreaShares({ graph, structure }),
     skillIds,
     typed: session.goal ? practicesShortAnswers({ goal: session.goal, structure }) : false,

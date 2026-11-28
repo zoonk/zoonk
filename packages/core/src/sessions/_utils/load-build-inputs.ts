@@ -1,9 +1,7 @@
 import "server-only";
 import { loadSessionWeeklyChallenge } from "../../checkpoints/_utils/load-weekly-challenge";
 import { isNetScored } from "../../checkpoints/weekly-challenge-rules";
-import { getDaysToExam } from "../../exams/final-stretch/final-stretch-rules";
 import { getMockPaperSkillIds } from "../../exams/mocks/_utils/plan-weekly-mock";
-import { practicesShortAnswers } from "../../library/exams/short-answers";
 import { getGoalField } from "../../library/items/item-field";
 import {
   type AlphabetIntro,
@@ -22,19 +20,18 @@ import {
   getDayUnwrittenTime,
   getPlanTestSkillIds,
 } from "./day-plan-facts";
+import { toDayPracticeQuery, toReviewInput } from "./day-queries";
 import { findPlannedReview, listReviewExtraItems } from "./day-review";
 import { listFittingLessons } from "./day-stretch";
-import { type DayPracticeQuery, type DayWork, loadDayWork, loadHeldDayInput } from "./day-work";
+import { type DayWork, loadDayWork, loadHeldDayInput } from "./day-work";
 import { loadDayWriting } from "./day-writing";
 import { getExamPrepAccess } from "./exam-access";
 import { loadLivingPlanSignals } from "./living-plan-session";
 import { loadDayRemediation } from "./load-day-remediation";
 import { loadDayPlanLessons } from "./load-plan-lessons";
-import { getReviewHorizon, loadReviewCapsules } from "./load-review-capsules";
+import { loadReviewCapsules } from "./load-review-capsules";
 import { getPlanTopics } from "./practice-blocks";
 import { loadPracticeClaims } from "./practice-claims";
-import { getPracticeDifficulty } from "./practice-difficulty";
-import { getPracticeWeights } from "./review-skills";
 import { type SelectedDayPlan } from "./selected-day-plan";
 import { type SessionDayContext } from "./session-placement";
 
@@ -58,37 +55,6 @@ function toAlphabetLessons(alphabet: AlphabetIntro | null): PlannedLesson[] {
       title: alphabet.title,
     },
   ];
-}
-
-export function toReviewInput({
-  context: { goal, localDate, timeZone, userId },
-  field,
-  netScored,
-  plan,
-}: {
-  context: Pick<BuildContext, "goal" | "localDate" | "timeZone" | "userId">;
-  field: string | null;
-  netScored: boolean;
-  plan: Awaited<ReturnType<typeof loadDayPlan>>;
-}): Parameters<typeof loadReviewCapsules>[0] {
-  return {
-    dailyMinutes: goal.dailyMinutes,
-    examBlueprintId: goal.examBlueprintId,
-    field,
-    horizon: getReviewHorizon({
-      finalStretchStart: plan.finalStretchStart,
-      goal,
-      localDate,
-      timeZone,
-    }),
-    listeningSkillIds: plan.listeningSkillIds,
-    netScoring: netScored,
-    planLessons: plan.items.flatMap((item) =>
-      item.lessonId ? [{ ...item, lessonId: item.lessonId }] : [],
-    ),
-    skillIds: plan.skills.map((skill) => skill.id),
-    userId,
-  };
 }
 
 /** Weakest-topic review fills otherwise empty days, but cannot invent review material for a learner who studied nothing. */
@@ -129,46 +95,6 @@ type SessionBuildContext = BuildContext & {
   selection?: SelectedDayPlan;
   dayPlan?: Awaited<ReturnType<typeof loadDayPlan>> | ReturnType<typeof loadDayPlan>;
 };
-
-function toDayPracticeQuery({
-  claims,
-  context: { goal, localDate, now, userId },
-  field,
-  fullReview,
-  heldSkillIds,
-  isReviewDay,
-  lessonsLeft,
-  plan,
-  skillIds,
-}: Pick<DayPracticeQuery, "claims" | "field" | "skillIds"> & {
-  context: SessionBuildContext;
-  fullReview: boolean;
-  heldSkillIds: DayPracticeQuery["firstSkillIds"];
-  isReviewDay: boolean;
-  lessonsLeft: boolean;
-  plan: Awaited<ReturnType<typeof loadDayPlan>>;
-}): DayPracticeQuery {
-  return {
-    claims,
-    difficultyBias: getPracticeDifficulty({
-      daysToExam: getDaysToExam({ targetDate: goal.targetDate, today: localDate }),
-      hasLessonsLeft: lessonsLeft,
-      settings: plan.settings,
-    }),
-    everySkill: fullReview,
-    examBlueprintId: goal.examBlueprintId,
-    field,
-    firstSkillIds: heldSkillIds,
-    ...getPracticeWeights({ ...plan, isReviewDay }),
-    listeningSkillIds: plan.listeningSkillIds,
-    maxMinutes: plan.dayMinutes,
-    now,
-    repeatOnlyMissed: isReviewDay,
-    skillIds,
-    typed: practicesShortAnswers({ goal, structure: plan.structure }),
-    userId,
-  };
-}
 
 /** Loads day inputs without persisting a session; selected plans and supplied facts must remain the caller's chosen state. */
 export async function loadSessionBuildInput(
