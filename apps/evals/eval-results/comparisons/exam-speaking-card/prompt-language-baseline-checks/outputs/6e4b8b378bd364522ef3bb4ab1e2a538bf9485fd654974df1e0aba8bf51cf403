@@ -1,0 +1,35 @@
+{
+  "instructions": [
+    "Describa la fotografía durante uno o dos minutos.",
+    "Después, converse con el examinador sobre el tema de la fotografía."
+  ],
+  "prompts": [
+    "¿Cómo son las personas y qué hacen?",
+    "¿Dónde están y qué objetos hay?",
+    "¿Qué relación cree que tienen?",
+    "¿De qué cree que están hablando?"
+  ],
+  "text": null,
+  "table": null,
+  "photos": [
+    {
+      "scene": "A realistic photograph of three neighbours tending a small shared garden between apartment buildings. A woman in her thirties wearing a green T-shirt holds a watering can, an older man in a checked shirt kneels beside a planter, and a teenage boy in a grey sweatshirt holds a small plant. They are smiling and looking at one another. There are pots, gardening gloves and a wooden bench nearby. Soft morning sunlight. No text, signs, logos or screens.",
+      "alt": "Three people tend plants together in a shared garden between apartment buildings."
+    }
+  ],
+  "summary": "Describe a photograph, then talk with the examiner about how its theme relates to your own life.",
+  "character": {
+    "name": "Rosa",
+    "role": "examiner",
+    "place": "Sala de examen"
+  },
+  "characterBrief": "You are the examiner. This task is not prepared. Begin with: «Describa la fotografía durante uno o dos minutos. Después, hablaremos sobre este tema. Puede empezar cuando quiera». Listen without interrupting during the description. Then ask, in order, allowing time for each answer: «¿Cómo es el barrio donde vive?», «¿Qué relación tiene con sus vecinos?» and «¿Qué actividades le gustaría hacer con otras personas de su barrio?». If an answer is short, use one or two of these follow-ups as appropriate: «¿Puede contarme algo más?» and «¿Por qué?». Keep the whole task to about three minutes. Do not correct, praise or grade the candidate.",
+  "openingLine": "Describa la fotografía durante uno o dos minutos. Después, hablaremos sobre este tema. Puede empezar cuando quiera.",
+  "hints": [
+    "En la fotografía puedo ver a varias personas.",
+    "Creo que están allí porque quieren pasar tiempo juntos.",
+    "Es posible que se conozcan desde hace tiempo.",
+    "En mi opinión, esto es importante porque ayuda a las personas.",
+    "Déjeme pensar un momento."
+  ]
+}

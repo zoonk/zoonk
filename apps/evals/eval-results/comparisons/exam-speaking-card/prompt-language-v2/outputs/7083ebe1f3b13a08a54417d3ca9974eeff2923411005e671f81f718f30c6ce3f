@@ -1,0 +1,30 @@
+{
+  "instructions": [
+    "Ein Freund von Ihnen hat bald Geburtstag. Sie möchten zusammen ein Picknick für ihn organisieren.",
+    "Planen Sie gemeinsam, was Sie machen möchten. Sie haben etwa drei Minuten Zeit."
+  ],
+  "prompts": [
+    "Wann?",
+    "Wo?",
+    "Essen und Getränke?",
+    "Wen einladen und wie informieren?"
+  ],
+  "text": null,
+  "table": null,
+  "photos": [],
+  "summary": "Planeje um piquenique de aniversário com outra candidata. Façam sugestões, reajam às ideias uma da outra e cheguem a um acordo.",
+  "character": {
+    "name": "Nora",
+    "role": "outra candidata",
+    "place": "Prüfungsraum"
+  },
+  "characterBrief": "You are the other candidate, not the examiner. Plan the birthday picnic together in about three minutes. Speak about half the time in turns of one to three sentences. React to the candidate's ideas, ask for their opinion, and do not correct them. Use these ideas flexibly, adapting to what the candidate says: «Am Samstag hätte ich ab dem Nachmittag Zeit. Passt dir das auch?» «Ich fände einen Platz am See schön. Dort könnten wir auch spazieren gehen.» «Vielleicht kann jede Person etwas Kleines zu essen mitbringen. Dann müssen wir nicht alles allein vorbereiten.» «Ich würde nur ein paar enge Freunde einladen und ihnen eine Nachricht schicken. Was meinst du?» If you disagree, say, for example: «Ich bin nicht ganz sicher, ob das praktisch ist. Wie wäre es stattdessen mit deinem anderen Vorschlag?» Help the candidate agree on all four points and finish with a brief shared summary, for example: «Gut, dann haben wir einen Plan. Ich freue mich schon darauf.»",
+  "openingLine": "Also, wir wollen ein Picknick zum Geburtstag organisieren. Wann hast du Zeit?",
+  "hints": [
+    "Lass mich kurz überlegen.",
+    "Ich finde diese Idee gut, weil das für alle praktisch ist.",
+    "Da bin ich nicht ganz sicher. Wie wäre es mit einer anderen Möglichkeit?",
+    "Was hältst du davon?",
+    "Gut, dann machen wir das so."
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "instructions": [
+    "Sie möchten mit den anderen Teilnehmern Ihres Deutschkurses einen Nachmittag in einem Café verbringen.",
+    "Planen Sie gemeinsam. Machen Sie Vorschläge und reagieren Sie auf die Vorschläge Ihres Partners oder Ihrer Partnerin.",
+    "Sie haben etwa drei Minuten Zeit."
+  ],
+  "prompts": [
+    "Wann?",
+    "Welches Café?",
+    "Tisch reservieren?",
+    "Wie die anderen informieren?"
+  ],
+  "text": null,
+  "table": null,
+  "photos": [],
+  "summary": "Você vai planejar uma visita a um café com sua parceira de prova. Façam sugestões, conversem sobre elas e cheguem a um acordo.",
+  "character": {
+    "name": "Nora",
+    "role": "outra candidata",
+    "place": "Prüfungsraum"
+  },
+  "characterBrief": "You are the other candidate, not the examiner. Plan the café visit together for about three minutes. Speak about half the time in turns of one to three sentences, ask for the learner's opinion, and react naturally to their suggestions. Do not correct the learner. Bring in these ideas as appropriate, rather than giving them all at once: 'Am Freitag nach dem Kurs hätten vielleicht viele Zeit. Oder wäre Samstag für dich besser?' 'Ich kenne ein ruhiges Café in der Nähe des Bahnhofs. Dort können wir uns gut unterhalten.' 'Für eine größere Gruppe würde ich lieber vorher anrufen. Ich kann das übernehmen.' 'Wir könnten eine Nachricht in die Kursgruppe schicken und um eine kurze Antwort bitten.' If you disagree, explain politely: 'Da bin ich nicht ganz sicher. Können wir auch eine andere Möglichkeit überlegen?' Help reach a decision on each point and briefly confirm the plan: 'Gut, dann machen wir das so. Sind wir uns bei allem einig?'",
+  "openingLine": "Also, wir möchten zusammen mit unserem Kurs in ein Café gehen. Wann hättest du denn Zeit?",
+  "hints": [
+    "Lass mich kurz überlegen.",
+    "Ich finde das gut, weil es für alle praktisch ist.",
+    "Was hältst du von diesem Vorschlag?",
+    "Da bin ich anderer Meinung. Wäre eine andere Möglichkeit besser?",
+    "Gut, dann machen wir das so."
+  ]
+}

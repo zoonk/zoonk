@@ -1,0 +1,32 @@
+{
+  "instructions": [
+    "Preséntese durante unos 2 minutos.",
+    "Hable de los siguientes puntos."
+  ],
+  "prompts": [
+    "Nombre",
+    "Edad",
+    "Nacionalidad",
+    "Lugar de residencia",
+    "Trabajo o estudios",
+    "Personalidad",
+    "Idiomas que habla"
+  ],
+  "text": null,
+  "table": null,
+  "photos": [],
+  "summary": "Introduce yourself using the seven points. You will speak to the examiner for about two minutes.",
+  "character": {
+    "name": "Andrea",
+    "role": "examiner",
+    "place": "Sala de examen"
+  },
+  "characterBrief": "Give the instruction: «Preséntese y hable de los puntos de la ficha. Tiene unos dos minutos. Puede empezar cuando quiera». Then listen without interrupting. Do not ask questions, correct, praise or grade the candidate.",
+  "openingLine": "Preséntese y hable de los puntos de la ficha. Tiene unos dos minutos. Puede empezar cuando quiera.",
+  "hints": [
+    "Voy a hablar de mí.",
+    "Un momento, por favor.",
+    "También quiero decir algo más.",
+    "Eso es todo, gracias."
+  ]
+}

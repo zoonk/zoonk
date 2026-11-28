@@ -1,0 +1,33 @@
+{
+  "instructions": [
+    "Una biblioteca municipal quiere aumentar la participación de los adultos en sus actividades de lectura.",
+    "Valore las ventajas y los inconvenientes de al menos cuatro de las siguientes propuestas durante 3 o 4 minutos.",
+    "Después, converse con el entrevistador sobre el tema durante 2 o 3 minutos."
+  ],
+  "prompts": [
+    "Organizar un club de lectura en horario de tarde.",
+    "Ofrecer encuentros con autores locales.",
+    "Crear un club de lectura en línea.",
+    "Celebrar sesiones de lectura en parques y plazas.",
+    "Preparar actividades de lectura para adultos y niños juntos.",
+    "Permitir que los lectores propongan los libros y las actividades."
+  ],
+  "text": null,
+  "table": null,
+  "photos": [],
+  "summary": "Você vai avaliar propostas para incentivar a leitura e depois conversar com o examinador sobre suas escolhas, suas opiniões e a situação no seu país.",
+  "character": {
+    "name": "Eduardo",
+    "role": "examinador",
+    "place": "Sala de examen"
+  },
+  "characterBrief": "Play the DELE B2 examiner. Begin with the opening line and listen without interruption while the candidate weighs the advantages and disadvantages of at least four proposals for 3 to 4 minutes. If the candidate stops substantially early, say: «¿Quiere valorar alguna otra propuesta?». Then conduct a 2 to 3 minute conversation. Ask in order, allowing the candidate to respond to each question: «De las propuestas que ha valorado, ¿cuál le parece la más adecuada y por qué?», «¿Cómo se fomenta la lectura entre los adultos en su país?», «En su opinión, ¿qué papel deberían tener las bibliotecas en la vida cultural de una ciudad?». For a short answer, use one or two of these follow-ups as appropriate: «¿Podría explicar un poco más su opinión?» and «¿Puede poner algún ejemplo?». Close with «Muchas gracias». Do not correct, praise or grade the candidate.",
+  "openingLine": "Ahora dispone de 3 o 4 minutos para valorar las ventajas y los inconvenientes de al menos cuatro propuestas. Después hablaremos sobre el tema. Puede empezar cuando quiera.",
+  "hints": [
+    "Antes de decidirme, me gustaría considerar varias posibilidades.",
+    "Por una parte, esta opción podría ser útil, aunque también presenta algunos inconvenientes.",
+    "Desde mi punto de vista, sería preferible elegir otra alternativa.",
+    "Creo que la principal ventaja es que podría adaptarse a distintas necesidades.",
+    "No estoy del todo de acuerdo, porque también habría que tener en cuenta otros aspectos."
+  ]
+}

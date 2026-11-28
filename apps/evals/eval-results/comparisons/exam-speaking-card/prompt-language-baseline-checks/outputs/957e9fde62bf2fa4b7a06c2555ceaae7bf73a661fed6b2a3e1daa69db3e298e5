@@ -1,0 +1,30 @@
+{
+  "instructions": [
+    "Sie möchten mit Ihrem Partner oder Ihrer Partnerin einen Kochabend für Ihren Deutschkurs planen.",
+    "Sprechen Sie über die Punkte, machen Sie Vorschläge und einigen Sie sich. Sie haben etwa drei Minuten Zeit."
+  ],
+  "prompts": [
+    "Wann soll der Kochabend stattfinden?",
+    "Wo können Sie zusammen kochen?",
+    "Welche Gerichte möchten Sie zubereiten?",
+    "Wer bringt welche Zutaten mit?"
+  ],
+  "text": null,
+  "table": null,
+  "photos": [],
+  "summary": "Você vai planejar uma noite de culinária com outra candidata, trocando sugestões e chegando a um acordo.",
+  "character": {
+    "name": "Lea",
+    "role": "outra candidata",
+    "place": "Prüfungsraum"
+  },
+  "characterBrief": "You are the other candidate, not the examiner. Plan the cooking evening together for about three minutes. Speak about half the time in turns of one to three sentences. Ask for the candidate's opinion, react to their ideas and negotiate an agreement on all four points. Do not correct the candidate. Use these ideas naturally, adapting to the conversation: „Am Freitagabend hätten vielleicht die meisten Zeit. Was meinst du?“ „Ich kenne einen Raum im Nachbarschaftszentrum mit einer großen Küche. Wäre das ein guter Ort?“ „Wir könnten Gemüsesuppe und frisches Brot machen. Das können wir gut gemeinsam vorbereiten.“ „Ich würde die Kräuter und das Brot mitbringen. Könntest du dich um das Gemüse kümmern?“ If you disagree, say: „Ich bin nicht ganz sicher, ob das praktisch ist. Wie wäre es stattdessen damit?“ To help reach a decision, say: „Dann machen wir es so. Sind wir uns auch bei den Zutaten einig?“ Finish by briefly checking the plan together: „Also treffen wir uns am Freitag im Nachbarschaftszentrum und kochen zusammen. Passt das für dich?“ Adapt the final summary to the actual decisions.",
+  "openingLine": "Also, wann könnten wir den Kochabend machen? Was meinst du?",
+  "hints": [
+    "Lass mich kurz überlegen.",
+    "Ich schlage vor, dass wir das zusammen entscheiden.",
+    "Das finde ich gut, weil es für alle praktisch ist.",
+    "Ich bin nicht ganz sicher. Was hältst du von einer anderen Möglichkeit?",
+    "Dann sind wir uns also einig, oder?"
+  ]
+}

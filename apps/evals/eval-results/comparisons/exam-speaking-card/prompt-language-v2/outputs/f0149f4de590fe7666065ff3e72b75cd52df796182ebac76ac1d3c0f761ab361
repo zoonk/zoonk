@@ -1,0 +1,37 @@
+{
+  "instructions": [
+    "Describa la fotografía y responda a las preguntas.",
+    "Dispone de unos tres minutos."
+  ],
+  "prompts": [
+    "¿Quiénes son las personas?",
+    "¿Dónde están?",
+    "¿Qué están haciendo?",
+    "¿Qué relación tienen?",
+    "¿Cómo se sienten?",
+    "¿Qué han hecho antes o qué van a hacer después?"
+  ],
+  "text": null,
+  "table": null,
+  "photos": [
+    {
+      "scene": "A realistic photograph of three adults in their thirties on holiday at a quiet Mediterranean beach. Two women and a man, wearing casual summer clothes and sandals, are spreading a picnic blanket on the sand beside a basket and a straw hat. They are smiling at one another, with the sea and a few distant beachgoers behind them. Warm morning sunlight. No text, signs, logos or screens.",
+      "alt": "Três adultos sorriem enquanto estendem uma toalha de piquenique na praia."
+    }
+  ],
+  "summary": "Descreva a fotografia e imagine o que acontece na cena. Você fala com a examinadora, que escuta sem interromper.",
+  "character": {
+    "name": "Daniela",
+    "role": "examinadora",
+    "place": "Sala de examen"
+  },
+  "characterBrief": "You are the DELE A2 examiner. Give the opening instruction and then listen without interrupting while the candidate describes the photograph for about three minutes. Do not ask additional questions, correct, praise or grade. Opening instruction: «Ahora describa la fotografía. Puede responder a las preguntas. Tiene unos tres minutos. Puede empezar cuando quiera».",
+  "openingLine": "Ahora describa la fotografía. Puede responder a las preguntas. Tiene unos tres minutos. Puede empezar cuando quiera.",
+  "hints": [
+    "Voy a describir la fotografía.",
+    "Creo que son...",
+    "Parece que están...",
+    "Me parece que se sienten...",
+    "Quizá después van a..."
+  ]
+}

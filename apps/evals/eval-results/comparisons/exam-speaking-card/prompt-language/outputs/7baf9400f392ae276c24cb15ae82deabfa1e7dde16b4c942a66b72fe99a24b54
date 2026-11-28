@@ -1,0 +1,33 @@
+{
+  "instructions": [
+    "Dégagez le problème soulevé par le document.",
+    "Présentez votre point de vue de manière argumentée pendant environ 7 minutes."
+  ],
+  "prompts": [
+    "Quelle question le document soulève-t-il ?",
+    "Annoncez le plan de votre exposé.",
+    "Développez votre point de vue et illustrez-le par des exemples.",
+    "Concluez votre présentation."
+  ],
+  "text": {
+    "title": "Des musées ouverts en soirée",
+    "body": "Pour attirer de nouveaux visiteurs, plusieurs musées proposent désormais des ouvertures en soirée. À Rennes, un établissement a ainsi prolongé ses horaires un jeudi par mois. Les visiteurs peuvent découvrir les collections après le travail, assister à une courte présentation ou simplement se promener dans les salles.\n\nSelon la responsable du musée, ces rendez-vous permettent de toucher des personnes qui ne viennent pas habituellement. « Certains découvrent le lieu pour la première fois, d’autres apprécient une visite plus calme en fin de journée », explique-t-elle. Des étudiants et des groupes d’amis profitent également de ces horaires pour organiser une sortie culturelle.\n\nCette formule ne fait toutefois pas l’unanimité. Pour une médiatrice culturelle, ouvrir plus tard ne suffit pas à rendre un musée accueillant : il faut aussi proposer des activités variées et des informations accessibles à tous. Elle rappelle que certains habitants préfèrent venir le week-end, notamment en famille.\n\nL’organisation de ces soirées demande par ailleurs une adaptation des équipes, de l’accueil à la surveillance des salles. Des professionnels estiment qu’il faut trouver un rythme qui convienne à la fois aux visiteurs et au personnel. Le musée rennais prévoit donc de consulter ses équipes et son public avant de décider s’il renouvellera l’expérience."
+  },
+  "table": null,
+  "photos": [],
+  "summary": "Você vai apresentar e defender seu ponto de vista sobre o problema levantado pelo documento. A examinadora ouvirá sua exposição sem interromper.",
+  "character": {
+    "name": "Élise",
+    "role": "examinadora",
+    "place": "Salle d’examen"
+  },
+  "characterBrief": "You are the DELF B2 examiner. Begin with the exact opening line. Listen to the candidate's individual presentation for approximately seven minutes without interrupting. Do not ask questions, correct, praise or grade. When the candidate has finished, say nothing further.",
+  "openingLine": "Présentez le problème soulevé par le document et défendez votre point de vue de manière argumentée. Vous disposez d’environ sept minutes. Vous pouvez commencer.",
+  "hints": [
+    "Je vais d’abord présenter la question, puis développer mon point de vue.",
+    "À mon avis, il est important de prendre en compte plusieurs aspects.",
+    "Je pense cela parce que plusieurs raisons peuvent l’expliquer.",
+    "On pourrait également envisager la situation sous un autre angle.",
+    "Pour conclure, je dirais que la question mérite une réflexion approfondie."
+  ]
+}

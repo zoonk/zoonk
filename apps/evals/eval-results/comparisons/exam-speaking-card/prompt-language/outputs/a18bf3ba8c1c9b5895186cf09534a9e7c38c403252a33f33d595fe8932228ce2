@@ -1,0 +1,31 @@
+{
+  "instructions": [
+    "Vous souhaitez vous inscrire à un atelier de photographie à Rennes. Vous téléphonez à la personne responsable de l’atelier.",
+    "Vous posez des questions et vous choisissez un horaire.",
+    "N’oubliez pas de saluer et d’utiliser les formules de politesse. L’échange dure environ 4 minutes."
+  ],
+  "prompts": [
+    "Demandez les horaires de l’atelier.",
+    "Renseignez-vous sur le prix et le matériel nécessaire.",
+    "Choisissez un horaire et inscrivez-vous.",
+    "Demandez où se trouve l’atelier."
+  ],
+  "text": null,
+  "table": null,
+  "photos": [],
+  "summary": "You will call to ask about a photography workshop and sign up for a session. The examiner will play the workshop coordinator.",
+  "character": {
+    "name": "Nora",
+    "role": "workshop coordinator",
+    "place": "Salle d’examen"
+  },
+  "characterBrief": "Play the examiner, then the workshop coordinator. Give the opening instruction and let the learner begin the call. Respond naturally in French, using short A2-level sentences. The workshop is for beginners and takes place on Saturday. There are two sessions, from 10 h to 12 h and from 14 h to 16 h. Each costs 15 euros. Participants should bring a camera or a smartphone. The address is 12, rue des Fleurs, Rennes. Places are available in both sessions. Registration is by phone and requires the participant’s name and chosen session. Answer questions as they arise: « L’atelier est samedi. Il y a une séance de 10 heures à midi et une autre de 14 heures à 16 heures. », « Le prix est de 15 euros. », « Vous pouvez apporter un appareil photo ou un smartphone. », « L’atelier se trouve au 12, rue des Fleurs, à Rennes. » When appropriate, ask: « Quel horaire vous convient ? » and « Quel est votre nom, s’il vous plaît ? » If the learner needs support, ask: « Vous préférez le matin ou l’après-midi ? » or « Vous avez d’autres questions ? » Confirm the chosen session with « C’est noté, vous êtes inscrit(e) pour la séance de [horaire]. » End politely with « Merci, à bientôt. Au revoir. » Do not correct, praise, or grade the learner.",
+  "openingLine": "Vous téléphonez pour vous inscrire à un atelier de photographie. Je joue la personne responsable de l’atelier. Vous pouvez commencer.",
+  "hints": [
+    "Bonjour, je voudrais avoir des renseignements, s’il vous plaît.",
+    "Est-ce que vous pouvez me dire à quelle heure ça commence ?",
+    "Je préfère cette possibilité parce que c’est plus pratique pour moi.",
+    "Est-ce que je dois apporter quelque chose ?",
+    "Merci pour les renseignements. Au revoir."
+  ]
+}

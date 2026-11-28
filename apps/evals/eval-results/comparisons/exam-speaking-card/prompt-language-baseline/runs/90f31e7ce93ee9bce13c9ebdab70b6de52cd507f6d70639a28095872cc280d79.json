@@ -1,0 +1,13 @@
+{
+  "caseId": "pt-en-cambridge-b2-long-turn-photos",
+  "challenger": {
+    "costUsd": 0.00361405,
+    "durationMs": 10608.34825000001,
+    "hash": "d6485ab05bcb7a11b96076c75e1e17f3833e262fb24a105dc5bda875c4a6f812",
+    "systemPromptHash": "32bc05f25b5d39c2c58be2ddb199c3c48c003c3740a9711d511f67708c0b96cb",
+    "userPromptHash": "4b944eb7a2a225d096c30726f0d964c091f26ed99777bb7bc2ba327900c7af49"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 2
+}

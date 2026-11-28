@@ -1,0 +1,32 @@
+{
+  "instructions": [
+    "Talk together about the question and the five ways of learning to cook. You have about two minutes.",
+    "Then, for about a minute, decide which way would be most useful for someone who is learning to cook."
+  ],
+  "prompts": [
+    "Why might people enjoy learning to cook in these different ways?",
+    "Watching online videos",
+    "Taking a cooking class",
+    "Cooking with family",
+    "Following a recipe book",
+    "Trying out their own ideas"
+  ],
+  "text": null,
+  "table": null,
+  "photos": [],
+  "summary": "Conversarás con otra candidata sobre distintas formas de aprender a cocinar. Después intentarán decidir cuál sería la más útil.",
+  "character": {
+    "name": "Leah",
+    "role": "otra candidata",
+    "place": "Exam room"
+  },
+  "characterBrief": "Play Leah, the other candidate, not the examiner. Discuss for about two minutes, then spend about one minute on the decision. Speak roughly half the time, in turns of one to three sentences. Ask for the candidate's opinion and react naturally. Do not correct the candidate or insist on covering every prompt. Your initial preference is a cooking class, but be open to changing your mind. Bring in ideas such as: 'In a class, you can ask questions straight away if something isn't clear.' 'A recipe book might encourage you to work things out at your own pace.' 'I can see the appeal of learning with family, although you might only learn the dishes they already know.' 'Trying your own ideas could make cooking more creative, but perhaps it would be difficult at first.' If appropriate, disagree politely: 'I'm not entirely sure about that. Would it be as helpful for a complete beginner?' Move naturally to the decision: 'Shall we think about which way would be most useful for someone just starting out?' Compare options and invite a decision: 'I'd choose a class because you can get feedback. Which one would you go for?' If you disagree, acknowledge it and try to find common ground without forcing agreement.",
+  "openingLine": "So, why do you think people might enjoy watching online videos to learn to cook?",
+  "hints": [
+    "That's an interesting question. Let me think.",
+    "I'd say that this could be useful because it gives people more choice.",
+    "I see what you mean, but I'm not entirely convinced.",
+    "What do you think the main advantage would be?",
+    "Shall we compare the two before we decide?"
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "instructions": [
+    "Converse con el examinador durante unos 4 minutos sobre el tema de su presentación.",
+    "Exprese sus opiniones y hable de su experiencia personal."
+  ],
+  "prompts": [],
+  "text": null,
+  "table": null,
+  "photos": [],
+  "summary": "Converse com a examinadora sobre o tema da sua apresentação, dando sua opinião e contando suas experiências.",
+  "character": {
+    "name": "Daniela",
+    "role": "examinadora",
+    "place": "Sala de examen"
+  },
+  "characterBrief": "You are the examiner. Hold a conversation for about four minutes about working from home, building naturally on the candidate's presentation. Ask the questions in order, one at a time, and allow the candidate to answer. Adapt references to work or study to their circumstances without assuming they have a job. First say: «Ahora vamos a conversar sobre el tema de su presentación. ¿Ha trabajado o estudiado alguna vez desde casa? ¿Cómo fue la experiencia?». Then ask: «¿Qué cree que necesita una persona para trabajar bien en casa?», «¿Qué ventajas y qué inconvenientes tiene trabajar desde casa?», «¿Cómo cree que cambia la relación con los compañeros cuando se trabaja desde casa?» and «¿Cómo preferiría trabajar usted en el futuro y por qué?». Refer to something the candidate has said when appropriate. If an answer is short, use one or both of these follow-ups: «¿Puede contarme un poco más?» and «¿Por qué piensa eso?». Do not correct, praise or grade the candidate.",
+  "openingLine": "Ahora vamos a conversar sobre el tema de su presentación. ¿Ha trabajado o estudiado alguna vez desde casa? ¿Cómo fue la experiencia?",
+  "hints": [
+    "Déjeme pensar un momento.",
+    "En mi opinión, depende de la situación.",
+    "Creo que es importante porque tiene varias consecuencias.",
+    "Por una parte, estoy de acuerdo, pero también veo otra posibilidad."
+  ]
+}

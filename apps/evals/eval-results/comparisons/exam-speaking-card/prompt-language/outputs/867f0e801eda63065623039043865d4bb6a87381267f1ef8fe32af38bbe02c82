@@ -1,0 +1,37 @@
+{
+  "instructions": [
+    "Describa la fotografía durante unos tres minutos.",
+    "Puede utilizar estas preguntas para preparar su descripción."
+  ],
+  "prompts": [
+    "¿Quiénes son las personas?",
+    "¿Dónde están?",
+    "¿Qué están haciendo?",
+    "¿Qué relación cree que tienen?",
+    "¿Cómo cree que se sienten?",
+    "¿Qué cree que han hecho antes o qué van a hacer después?"
+  ],
+  "text": null,
+  "table": null,
+  "photos": [
+    {
+      "scene": "A realistic photograph inside a small café in Spain on a sunny morning. Two women in their thirties, one wearing a blue cardigan and the other a white shirt, sit at a wooden table. They are smiling and talking over two cups of coffee and a plate of pastries. Warm daylight comes through a window. No text, signs, logos or visible screens.",
+      "alt": "Duas mulheres conversam e sorriem em uma cafeteria, diante de xícaras de café e um prato de doces."
+    }
+  ],
+  "summary": "Descreva a fotografia em voz alta, usando as perguntas como apoio. A examinadora vai ouvir sem interromper.",
+  "character": {
+    "name": "Andrea",
+    "role": "examinadora",
+    "place": "Sala de examen"
+  },
+  "characterBrief": "You are the DELE A2 examiner. Give the instruction exactly as written in the opening line. Then listen without interrupting while the candidate describes the photograph for about three minutes. Do not ask questions, correct, praise or grade. When the candidate has finished, say: «Gracias. La tarea ha terminado».",
+  "openingLine": "Describa la fotografía durante unos tres minutos. Puede utilizar las preguntas para preparar su descripción. Puede empezar cuando quiera.",
+  "hints": [
+    "Voy a hablar de la fotografía.",
+    "Creo que estas personas se conocen porque están juntas.",
+    "Me parece que están contentas.",
+    "No estoy seguro, pero creo que es posible.",
+    "Después, quizás van a hacer otra cosa."
+  ]
+}

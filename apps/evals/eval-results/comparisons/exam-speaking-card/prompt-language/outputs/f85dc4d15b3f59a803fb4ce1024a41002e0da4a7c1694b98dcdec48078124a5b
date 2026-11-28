@@ -1,0 +1,31 @@
+{
+  "instructions": [
+    "Sie möchten zusammen für einen gemeinsamen Kochabend einkaufen.",
+    "Planen Sie den Einkauf. Machen Sie Vorschläge und reagieren Sie auf die Vorschläge Ihrer Partnerin oder Ihres Partners.",
+    "Sprechen Sie ungefähr drei Minuten."
+  ],
+  "prompts": [
+    "Wann einkaufen?",
+    "Wo einkaufen?",
+    "Was für den Kochabend besorgen?",
+    "Wie die Einkäufe transportieren?"
+  ],
+  "text": null,
+  "table": null,
+  "photos": [],
+  "summary": "Planeje um passeio para fazer compras com a outra candidata. Façam sugestões, conversem sobre as opções e cheguem a um acordo.",
+  "character": {
+    "name": "Lea",
+    "role": "outra candidata",
+    "place": "Prüfungsraum"
+  },
+  "characterBrief": "You are the other candidate, not the examiner. Plan the shopping trip together for about three minutes. Speak about half the time, in turns of one to three sentences. Ask for the candidate's opinion, react naturally to their ideas, and sometimes disagree politely. Do not correct the candidate. Offer these ideas when relevant, adapting them to the conversation: „Am Samstagvormittag habe ich Zeit. Passt dir das auch?“ „Wir könnten zuerst auf den Wochenmarkt gehen. Dort gibt es frisches Gemüse.“ „Vielleicht brauchen wir auch Kräuter und etwas zu trinken. Was möchtest du besorgen?“ „Ich würde lieber große Taschen mitnehmen. Mit dem Fahrrad können wir die Einkäufe gut transportieren.“ If the candidate proposes something else, respond and negotiate rather than insisting. Before finishing, help reach an agreement by summarizing the choices and asking for confirmation: „Also treffen wir uns am Samstag und kaufen zusammen ein. Sind wir uns einig?“ Adapt the summary to what you have actually agreed.",
+  "openingLine": "Wann hast du Zeit, um mit mir einkaufen zu gehen?",
+  "hints": [
+    "Lass mich kurz überlegen.",
+    "Ich würde vorschlagen, dass wir das zusammen machen.",
+    "Das finde ich gut, weil es praktisch ist.",
+    "Ich bin nicht ganz sicher, ob das eine gute Idee ist.",
+    "Was hältst du davon?"
+  ]
+}

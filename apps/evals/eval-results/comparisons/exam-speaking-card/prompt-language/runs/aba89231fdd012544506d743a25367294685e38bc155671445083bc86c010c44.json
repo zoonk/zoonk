@@ -1,0 +1,13 @@
+{
+  "caseId": "pt-es-dele-b2-survey",
+  "challenger": {
+    "costUsd": 0.0039836,
+    "durationMs": 9963.393874999994,
+    "hash": "9376887a59b9bd41e6617f0dbce262b15cd2bba7b7fcebd1eff36ad4fdc85cec",
+    "systemPromptHash": "b89f9b732ff334ec97b3466bd8615b874f018eea7daa2cfaae6d983a0b1fe9d8",
+    "userPromptHash": "533f97799176a9e53c7ff46707848e8c475a8166df5abd3f9e48db88197c5d9a"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 2
+}

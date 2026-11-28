@@ -1,0 +1,30 @@
+{
+  "instructions": [
+    "Vous voulez vous inscrire à un cours de photographie dans un centre culturel à Nancy. Vous parlez avec la personne à l’accueil.",
+    "Vous posez des questions et vous choisissez un cours. N’oubliez pas de saluer et d’utiliser les formules de politesse.",
+    "Vous avez 3 à 4 minutes."
+  ],
+  "prompts": [
+    "Demandez les horaires et le prix.",
+    "Demandez des informations sur le matériel.",
+    "Choisissez un cours et inscrivez-vous."
+  ],
+  "text": null,
+  "table": null,
+  "photos": [],
+  "summary": "You will arrange to join a photography course in a simulated conversation with the examiner, who plays the receptionist.",
+  "character": {
+    "name": "Nora",
+    "role": "receptionist",
+    "place": "Centre culturel de Nancy"
+  },
+  "characterBrief": "Play the receptionist at a cultural centre in Nancy. Begin with the opening line, then conduct a natural interaction for about four minutes. Let the candidate lead and answer the questions they ask. The photography course is for beginners and costs 65 euros for six sessions. The candidate can choose Monday at 6 p.m. or Saturday at 10 a.m. Each session lasts an hour and a half. The centre can lend a camera at no extra cost. Both groups have places available. If asked about these details, say: « Le cours coûte 65 euros pour six séances. », « Il y a un cours le lundi à 18 heures et un autre le samedi à 10 heures. », « Chaque séance dure une heure et demie. », « Nous pouvons vous prêter un appareil photo gratuitement. » and « Oui, il reste des places dans les deux groupes. » As needed, ask: « Quel jour préférez-vous ? », « Est-ce que vous avez un appareil photo ? » and « Vous pouvez me donner votre nom, s’il vous plaît ? » If the candidate gives a short answer, follow up with « Vous préférez le lundi ou le samedi ? » or « Vous souhaitez emprunter un appareil ? » Once they have chosen and given a name, confirm: « Très bien, je vous inscris. Au revoir et à bientôt. » Do not correct, praise or grade.",
+  "openingLine": "Vous voulez vous inscrire à un cours de photographie. Je suis la personne à l’accueil du centre culturel. Vous pouvez commencer.",
+  "hints": [
+    "Bonjour, je voudrais des renseignements, s’il vous plaît.",
+    "Est-ce que vous pouvez me donner plus d’informations ?",
+    "Je préfère cette possibilité parce que c’est plus pratique pour moi.",
+    "Je vais réfléchir un instant.",
+    "Merci pour votre aide. Au revoir."
+  ]
+}

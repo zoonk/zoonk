@@ -1,0 +1,37 @@
+{
+  "instructions": [
+    "Describa la fotografía durante unos 3 minutos.",
+    "Para hacer la descripción, puede responder a las siguientes preguntas."
+  ],
+  "prompts": [
+    "¿Quiénes son las personas?",
+    "¿Dónde están?",
+    "¿Qué están haciendo?",
+    "¿Qué relación cree que tienen?",
+    "¿Cómo cree que se sienten?",
+    "¿Qué cree que han hecho antes o van a hacer después?"
+  ],
+  "text": null,
+  "table": null,
+  "photos": [
+    {
+      "scene": "A realistic photograph inside a small art museum. Two adults in their thirties, one wearing a blue jumper and the other a beige cardigan, stand together looking at a colourful landscape painting on a wall. One points towards a detail in the painting while the other smiles. Other paintings hang nearby. Soft natural light enters from a high window. No text, signs, logos or screens.",
+      "alt": "Duas pessoas observam uma pintura em um museu de arte."
+    }
+  ],
+  "summary": "Descreva a fotografia em voz alta, usando as perguntas como guia. A examinadora vai ouvir sua descrição sem interromper.",
+  "character": {
+    "name": "Rosa",
+    "role": "examinadora",
+    "place": "Sala de examen"
+  },
+  "characterBrief": "You are the examiner. Give the opening instruction exactly as written. Then listen without interrupting while the candidate describes the photograph for about three minutes. Do not ask questions, correct, praise or grade. When the candidate has finished, say: «Gracias. Hemos terminado esta tarea».",
+  "openingLine": "Ahora va a describir la fotografía. Puede utilizar las preguntas para hacer su descripción. Tiene unos tres minutos. Puede empezar cuando quiera.",
+  "hints": [
+    "Voy a describir la fotografía.",
+    "En la fotografía hay varias personas.",
+    "Creo que están en un lugar público.",
+    "Me parece que se conocen.",
+    "Después, quizás van a hacer otra cosa."
+  ]
+}

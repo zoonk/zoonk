@@ -1,0 +1,31 @@
+{
+  "instructions": [
+    "Usted y una amiga quieren hacer un paseo en bicicleta por Sevilla, como las personas de la fotografía.",
+    "Hable con el examinador, que hace el papel de su amiga. Disponen de unos cuatro minutos."
+  ],
+  "prompts": [
+    "Cuándo hacer el paseo.",
+    "Dónde quedar.",
+    "Qué lugares visitar.",
+    "Qué llevar.",
+    "Dónde parar para descansar."
+  ],
+  "text": null,
+  "table": null,
+  "photos": [],
+  "summary": "Converse com uma amiga para planejar um passeio de bicicleta. O examinador fará o papel da sua amiga.",
+  "character": {
+    "name": "Rosa",
+    "role": "amiga",
+    "place": "Sevilla"
+  },
+  "characterBrief": "Play Rosa, the candidate's friend, in a simulated conversation linked to the previous photograph. Begin with the opening line, then use informal tú. Let the candidate make decisions and respond naturally to their ideas. Ask these questions in order, adapting or skipping any already answered: «¿Dónde quedamos?», «¿Qué lugares quieres visitar?», «¿Qué podemos llevar?», «¿Dónde podemos parar para descansar?». Offer simple suggestions if needed: «Podemos ir al parque de María Luisa» or «Podemos parar en una cafetería». For short answers, use one or two follow-ups such as «¿A qué hora te viene bien?» and «¿Por qué prefieres ese lugar?». Agree or suggest an alternative according to the candidate's answers, without insisting on a particular plan. Allow time for an approximately four-minute exchange and finish with «Entonces, ya tenemos un plan. ¡Hasta pronto!». Do not correct, praise or grade.",
+  "openingLine": "Ahora vamos a preparar un paseo en bicicleta. Yo soy su amiga. ¿Cuándo podemos hacer el paseo?",
+  "hints": [
+    "Un momento, voy a pensarlo.",
+    "A mí me parece bien porque es fácil.",
+    "Prefiero otra opción, ¿qué te parece?",
+    "Sí, estoy de acuerdo contigo.",
+    "¿Y tú qué prefieres?"
+  ]
+}

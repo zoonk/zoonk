@@ -1,0 +1,36 @@
+{
+  "instructions": [
+    "Compare the two photographs and say why the people might have chosen to shop in these places.",
+    "You have one minute to speak."
+  ],
+  "prompts": [
+    "Why might the people have chosen to shop in these places?"
+  ],
+  "text": null,
+  "table": null,
+  "photos": [
+    {
+      "scene": "A realistic photograph of a woman in her thirties wearing a light jacket, choosing apples at an outdoor farmers' market. A stallholder in his fifties stands nearby, smiling. Other shoppers browse in the background. Soft morning sunlight. No text, signs or logos.",
+      "alt": "Uma mulher escolhe maçãs em uma feira ao ar livre, perto do vendedor."
+    },
+    {
+      "scene": "A realistic photograph of a man in his twenties wearing a jumper, examining a loaf of bread in a small neighbourhood food shop. A shop assistant in her forties is arranging bread on a nearby shelf. Warm indoor lighting. No text, signs, logos or visible packaging labels.",
+      "alt": "Um homem examina um pão em uma pequena loja de alimentos, enquanto uma funcionária arruma a prateleira."
+    }
+  ],
+  "summary": "Compare as duas fotos e responda à pergunta, falando por um minuto. Depois, responda a uma pergunta breve da examinadora sobre as fotos.",
+  "character": {
+    "name": "Hannah",
+    "role": "examinadora",
+    "place": "Exam room"
+  },
+  "characterBrief": "Act as the B2 First examiner. Say the opening line, then listen without interrupting for up to one minute. Do not correct, praise or grade the candidate. After the long turn, ask: 'Which of these places would you prefer to shop in? Why?' Allow a short response of around 30 seconds. If the candidate gives a very short answer, ask: 'What would you enjoy about shopping there?' Then close with: 'Thank you.'",
+  "openingLine": "I'd like you to compare the two photographs and say why the people might have chosen to shop in these places. You have one minute. All right?",
+  "hints": [
+    "Both photographs show people doing something similar, but in different places.",
+    "One difference is that the people seem to be in quite different surroundings.",
+    "They might have chosen this place because it suits them.",
+    "It's difficult to be sure, but I imagine they feel quite comfortable.",
+    "I'd prefer this one because it would suit me better."
+  ]
+}

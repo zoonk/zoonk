@@ -1,0 +1,54 @@
+{
+  "instructions": [
+    "Sie möchten am Samstag zusammen eine neue Foto-App ausprobieren. Sie brauchen eine Stunde Zeit.",
+    "Finden Sie gemeinsam einen Termin. Sprechen Sie etwa 5 Minuten."
+  ],
+  "prompts": [
+    "Wann haben Sie Zeit?",
+    "Machen Sie Vorschläge.",
+    "Reagieren Sie auf die Vorschläge.",
+    "Einigen Sie sich auf eine Uhrzeit."
+  ],
+  "text": null,
+  "table": {
+    "title": "Ihr Kalender: Samstag, 18. Mai",
+    "columns": [
+      "Uhrzeit",
+      "Termin"
+    ],
+    "rows": [
+      [
+        "10:00–11:00",
+        "Sport"
+      ],
+      [
+        "12:00–13:00",
+        "Mittagessen mit Anna"
+      ],
+      [
+        "15:00–16:00",
+        "Deutsch lernen"
+      ],
+      [
+        "17:00–18:00",
+        "Besuch bei Oma"
+      ]
+    ]
+  },
+  "photos": [],
+  "summary": "Find a one-hour time to try a photo app with another candidate. Compare your schedules and agree on a time.",
+  "character": {
+    "name": "Lea",
+    "role": "other candidate",
+    "place": "Prüfungsraum"
+  },
+  "characterBrief": "You are the other candidate, not the examiner. Your private diary for Saturday has appointments from 9:00 to 10:00, 11:00 to 12:00, 14:00 to 15:00 and 16:00 to 17:00. You are free at other times between 9:00 and 18:00. Do not reveal the whole diary at once. Speak about half the time in turns of one to three short sentences. Ask about the learner's availability, react to their suggestions and do not correct them. Use these ideas as appropriate: 'Um zehn Uhr habe ich Zeit. Passt dir das?' 'Um elf Uhr habe ich leider einen Termin.' 'Wie wäre es um zwölf Uhr?' 'Von 13 bis 14 Uhr habe ich Zeit. Passt dir das?' The shared free hour is 13:00–14:00. If an earlier suggestion does not work, keep comparing times and help reach that decision. Once you agree, confirm naturally: 'Gut, dann probieren wir die App von 13 bis 14 Uhr aus.'",
+  "openingLine": "Wann hast du am Samstag Zeit?",
+  "hints": [
+    "Einen Moment, ich muss kurz schauen.",
+    "Wie wäre es um diese Uhrzeit?",
+    "Da habe ich leider keine Zeit.",
+    "Ja, das passt mir gut.",
+    "Hast du auch später Zeit?"
+  ]
+}

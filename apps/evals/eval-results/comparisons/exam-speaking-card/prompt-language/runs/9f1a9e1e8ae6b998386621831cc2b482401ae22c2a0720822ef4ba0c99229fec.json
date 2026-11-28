@@ -1,0 +1,13 @@
+{
+  "caseId": "es-en-cambridge-b2-collaborative",
+  "challenger": {
+    "costUsd": 0.00382195,
+    "durationMs": 10587.634791999997,
+    "hash": "c7479ce90da8af51f3b1646072b90d0ac54dcc96c34a507f2bc0725567ecbc95",
+    "systemPromptHash": "b0264686b7e003f223c08041972d2baf0d17bce389eda63377d312ca4a9479e0",
+    "userPromptHash": "9d1a840727d1991541c6e51c5ea8020c43072048a390e85af6a60e8784b06234"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 1
+}

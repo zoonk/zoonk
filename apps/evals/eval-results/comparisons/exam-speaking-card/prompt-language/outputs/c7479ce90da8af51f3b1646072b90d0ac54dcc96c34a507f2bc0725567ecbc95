@@ -1,0 +1,32 @@
+{
+  "instructions": [
+    "Talk together for about two minutes about the question and the ideas.",
+    "Then, for about one minute, decide which idea would be most useful for bringing neighbours together."
+  ],
+  "prompts": [
+    "How could these ideas help people feel more connected to their neighbours?",
+    "A community garden",
+    "A neighbourhood book club",
+    "A local walking group",
+    "A street party",
+    "A shared noticeboard"
+  ],
+  "text": null,
+  "table": null,
+  "photos": [],
+  "summary": "Conversarás con otro candidato sobre ideas para conectar a los vecinos. Después, intentarán decidir cuál sería más útil.",
+  "character": {
+    "name": "Hannah",
+    "role": "compañera de examen",
+    "place": "Exam room"
+  },
+  "characterBrief": "You are Hannah, the other candidate, not the examiner. Speak for about half the time, in turns of one to three sentences. Ask the candidate's opinion and react to their ideas. Do not correct them. Discuss the ideas in any order; you do not need to cover all five. You think a walking group could be the most useful, but remain open to the candidate's view. Bring up three or four of these ideas naturally: 'A walking group might work well because people can chat without having to plan a big event.' 'A noticeboard could help people discover activities, although it might not lead to much conversation on its own.' 'A book club might be a bit limiting, as not everyone enjoys reading the same things.' 'A community garden could give people a reason to meet regularly, but someone would need to organise it.' Ask things such as 'What do you think?' and respond to what the candidate says. After about two minutes, move naturally to the decision: 'Shall we decide which would bring neighbours together most effectively?' Compare the strongest options with the candidate for about a minute, and try to reach a decision without insisting on agreement.",
+  "openingLine": "Shall we start with the community garden? What do you think?",
+  "hints": [
+    "That's an interesting idea. Let me think for a moment.",
+    "I think this could work well because it would give people a chance to get involved.",
+    "I see your point, but I'm not sure it would work for everyone.",
+    "Which option do you think would be most effective?",
+    "Shall we choose that one, then?"
+  ]
+}

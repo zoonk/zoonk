@@ -1,0 +1,58 @@
+{
+  "instructions": [
+    "Va a conversar con el examinador sobre los resultados de una encuesta acerca de la jardinería.",
+    "Indique qué habría respondido usted, compare su respuesta con los resultados y dé su opinión.",
+    "La conversación durará unos 4 minutos y no necesita preparación."
+  ],
+  "prompts": [
+    "¿Qué habría respondido usted a la encuesta?",
+    "¿En qué coincide o discrepa con los resultados?",
+    "¿A qué cree que se deben las preferencias de los encuestados?",
+    "¿Qué opina de la jardinería como actividad de tiempo libre?"
+  ],
+  "text": null,
+  "table": {
+    "title": "¿Qué actividad de jardinería prefiere realizar en su tiempo libre? Encuesta municipal de Zaragoza, 2024, datos ficticios",
+    "columns": [
+      "Respuesta",
+      "Porcentaje"
+    ],
+    "rows": [
+      [
+        "Cultivar hortalizas",
+        "30 %"
+      ],
+      [
+        "Cuidar plantas de interior",
+        "25 %"
+      ],
+      [
+        "Plantar flores",
+        "20 %"
+      ],
+      [
+        "Podar plantas",
+        "10 %"
+      ],
+      [
+        "Ninguna",
+        "15 %"
+      ]
+    ]
+  },
+  "photos": [],
+  "summary": "Você vai conversar com o examinador sobre os resultados de uma pesquisa, comparar sua resposta com os dados e dar sua opinião. Não há tempo de preparação.",
+  "character": {
+    "name": "Javier",
+    "role": "examinador",
+    "place": "Sala de examen"
+  },
+  "characterBrief": "Conduct an informal conversation lasting about four minutes. Address the candidate as usted. Start with the opening line and let the candidate answer. Then ask, in order: «¿En qué coincide o discrepa su respuesta con los resultados de la encuesta?», «¿Por qué cree que cultivar hortalizas es la opción más elegida?», «¿Qué opina de la jardinería como actividad de tiempo libre?» and «¿Cree que el interés por la jardinería cambiará en el futuro? ¿Por qué?». Use natural follow-up questions to develop the candidate's answers. If an answer is short, use one or two backups: «¿Podría explicar un poco más su respuesta?» and «¿Puede poner algún ejemplo?». Do not correct, praise or grade the candidate.",
+  "openingLine": "Vamos a conversar sobre los resultados de esta encuesta. ¿Qué habría respondido usted y por qué?",
+  "hints": [
+    "Déjeme pensar un momento.",
+    "En mi opinión, hay varias razones para ello.",
+    "Por una parte, estoy de acuerdo, pero por otra, tengo mis dudas.",
+    "Creo que esto se debe, sobre todo, a que las personas tienen intereses diferentes."
+  ]
+}

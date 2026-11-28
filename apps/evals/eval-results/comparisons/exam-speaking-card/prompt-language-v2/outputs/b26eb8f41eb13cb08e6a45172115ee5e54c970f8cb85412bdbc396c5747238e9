@@ -1,0 +1,33 @@
+{
+  "instructions": [
+    "Vous dégagerez le problème soulevé par le document et présenterez votre opinion sur le sujet.",
+    "Vous construirez un exposé argumenté et illustré d’exemples. Vous disposez d’environ 7 minutes."
+  ],
+  "prompts": [
+    "Présentez le sujet et formulez la question à laquelle vous répondrez.",
+    "Annoncez le plan de votre exposé.",
+    "Développez votre point de vue à l’aide d’arguments et d’exemples.",
+    "Terminez par une conclusion."
+  ],
+  "text": {
+    "title": "Le bureau partagé, un espace pour travailler ensemble ?",
+    "body": "Dans de nombreuses entreprises, les bureaux fermés ont laissé place à des espaces ouverts. L’objectif est souvent de faciliter les échanges entre collègues et de permettre aux équipes de travailler plus facilement ensemble. Avec le développement du télétravail, certains employeurs souhaitent aussi faire du bureau un lieu où l’on vient avant tout pour se rencontrer.\n\nÀ Rennes, une entreprise de communication a récemment réorganisé ses locaux. Les salariés ne disposent plus tous d’une place fixe : ils choisissent leur bureau en arrivant. Des salles sont réservées aux réunions et quelques petits espaces permettent de téléphoner ou de s’isoler. Pour la direction, cette organisation rend les locaux plus agréables et encourage les discussions entre des personnes qui ne travaillent pas habituellement ensemble.\n\nLes réactions sont toutefois partagées. Plusieurs employés apprécient de pouvoir changer de place et de retrouver leurs collègues plus facilement. D’autres regrettent de ne pas avoir d’espace personnel et disent avoir du mal à se concentrer lorsque les conversations se multiplient. Certains aimeraient également savoir à l’avance où leur équipe sera installée.\n\nPour répondre à ces remarques, l’entreprise envisage de réserver certaines zones au travail calme et d’autres aux échanges. Elle prévoit aussi de consulter régulièrement les salariés sur leurs besoins. Mais une question demeure : comment créer un espace commun qui favorise à la fois la coopération et la concentration ?"
+  },
+  "table": null,
+  "photos": [],
+  "summary": "Você fará uma apresentação argumentada a partir do documento, formulando o problema e defendendo seu ponto de vista. A examinadora ouvirá sem interromper.",
+  "character": {
+    "name": "Élise",
+    "role": "examinadora",
+    "place": "Salle d’examen à Rennes"
+  },
+  "characterBrief": "You are the examiner for the uninterrupted monologue. Begin with: « Vous allez présenter le problème soulevé par ce document et défendre votre point de vue en l’illustrant par des exemples. Vous disposez d’environ sept minutes. Vous pouvez commencer. » Listen without interrupting or asking questions. When the candidate has finished, say: « Merci. Cette partie est terminée. » Do not correct, praise or grade.",
+  "openingLine": "Vous allez présenter le problème soulevé par ce document et défendre votre point de vue en l’illustrant par des exemples. Vous disposez d’environ sept minutes. Vous pouvez commencer.",
+  "hints": [
+    "La question que je me pose est la suivante.",
+    "Pour répondre à cette question, je présenterai d’abord plusieurs arguments, puis j’examinerai leurs limites.",
+    "À mon avis, cette question mérite d’être examinée sous plusieurs angles.",
+    "On pourrait objecter que ce point de vue ne tient pas compte de toutes les situations.",
+    "Pour conclure, je dirais qu’il faut avant tout trouver un équilibre."
+  ]
+}

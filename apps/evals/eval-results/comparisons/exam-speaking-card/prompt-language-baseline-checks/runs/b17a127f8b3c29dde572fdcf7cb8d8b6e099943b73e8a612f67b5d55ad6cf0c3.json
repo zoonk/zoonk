@@ -1,0 +1,13 @@
+{
+  "caseId": "en-fr-delf-a2-role-play",
+  "challenger": {
+    "costUsd": 0.00409855,
+    "durationMs": 10099.163707999978,
+    "hash": "5777a8992b90410a5c71c2006179dcdb06b4579b4c7f1d89353350cb2f95153b",
+    "systemPromptHash": "e690f285a37a4ba043cca841992264a1339fd92668aefe0ea73e44314940c172",
+    "userPromptHash": "dd7f370b6ebf5dd56f4e2a299912e1c99bf4908ad3d579f265d8c892ad95c358"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 1
+}

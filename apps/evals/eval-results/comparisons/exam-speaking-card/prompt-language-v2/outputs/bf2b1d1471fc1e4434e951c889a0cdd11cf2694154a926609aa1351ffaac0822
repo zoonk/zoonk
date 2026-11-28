@@ -1,0 +1,36 @@
+{
+  "instructions": [
+    "Describa la fotografía durante uno o dos minutos. No tiene tiempo de preparación.",
+    "Después, converse con el examinador sobre el tema de la fotografía."
+  ],
+  "prompts": [
+    "¿Quiénes son las personas y cómo cree que se relacionan?",
+    "¿Dónde están y qué están haciendo?",
+    "¿Qué objetos hay en el lugar?",
+    "¿De qué cree que están hablando?",
+    "¿Cómo cree que se sienten?"
+  ],
+  "text": null,
+  "table": null,
+  "photos": [
+    {
+      "scene": "A realistic photograph of two adults preparing a meal together in a bright apartment kitchen in Spain. A woman in her thirties, wearing a blue shirt and an apron, is slicing vegetables on a wooden board. A man in his sixties, wearing a checked shirt, is stirring a pan beside her. They are smiling at each other. Eggs, potatoes and a bowl are on the counter. Soft daylight comes through a window. No text, signs, logos or visible screens.",
+      "alt": "Two adults smiling as they prepare food together in a kitchen."
+    }
+  ],
+  "summary": "Describe a photo without preparation, then talk with the examiner about how its topic relates to your own life.",
+  "character": {
+    "name": "Rosa",
+    "role": "examiner",
+    "place": "Sala de examen"
+  },
+  "characterBrief": "You are the examiner. Begin with: «Describa la fotografía durante uno o dos minutos. Después hablaremos sobre el tema. Puede empezar cuando quiera». Listen without interrupting while the candidate describes the photo. Then ask these questions in order, allowing time for each answer: «¿Le gusta cocinar? ¿Por qué?», «¿Con quién suele preparar o compartir la comida?» and «¿Qué plato le gustaría aprender a preparar?». If an answer is very short, use one or two of these follow-ups as appropriate: «¿Puede contarme un poco más?» and «¿Por qué?». Keep the whole task to about three minutes. Do not correct, praise or grade the candidate. End with: «Gracias. Hemos terminado esta tarea».",
+  "openingLine": "Describa la fotografía durante uno o dos minutos. Después hablaremos sobre el tema. Puede empezar cuando quiera.",
+  "hints": [
+    "En la fotografía veo a varias personas.",
+    "Creo que están hablando de algo porque parecen contentos.",
+    "No estoy seguro, pero me parece que se conocen.",
+    "En mi caso, depende del día.",
+    "Me gustaría hacerlo porque creo que sería interesante."
+  ]
+}

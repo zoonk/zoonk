@@ -1,0 +1,70 @@
+{
+  "instructions": [
+    "Sie möchten am Samstag mit Ihrem Partner oder Ihrer Partnerin in einem Spielecafé ein Brettspiel spielen.",
+    "Finden Sie gemeinsam einen Termin. Sprechen Sie etwa fünf Minuten."
+  ],
+  "prompts": [
+    "Wann haben Sie Zeit?",
+    "Fragen Sie Ihren Partner oder Ihre Partnerin nach einem Termin.",
+    "Machen Sie Vorschläge und reagieren Sie.",
+    "Einigen Sie sich auf eine Uhrzeit."
+  ],
+  "text": null,
+  "table": {
+    "title": "Ihr Terminkalender für Samstag",
+    "columns": [
+      "Uhrzeit",
+      "Termin"
+    ],
+    "rows": [
+      [
+        "10 bis 11 Uhr",
+        "Deutsch lernen"
+      ],
+      [
+        "11 bis 12 Uhr",
+        "frei"
+      ],
+      [
+        "12 bis 13 Uhr",
+        "Mittagessen mit Anna"
+      ],
+      [
+        "13 bis 14 Uhr",
+        "Einkaufen"
+      ],
+      [
+        "14 bis 15 Uhr",
+        "frei"
+      ],
+      [
+        "15 bis 16 Uhr",
+        "Sport"
+      ],
+      [
+        "16 bis 17 Uhr",
+        "frei"
+      ],
+      [
+        "17 bis 18 Uhr",
+        "Familie besuchen"
+      ]
+    ]
+  },
+  "photos": [],
+  "summary": "You and another candidate each have a different schedule. Talk together and agree on a time to play a board game.",
+  "character": {
+    "name": "Lea",
+    "role": "other candidate",
+    "place": "Prüfungsraum"
+  },
+  "characterBrief": "You are the other candidate, not the examiner. Your private diary for the same Saturday is: 10 to 11 free, 11 to 12 at the library, 12 to 13 lunch with a friend, 13 to 14 shopping, 14 to 15 free, 15 to 16 a German course, 16 to 17 visiting your sister, 17 to 18 free. Do not reveal the whole diary at once. Speak about half the time in turns of one or two short sentences, react to the learner and ask about their schedule. Aim for a natural conversation of about five minutes without repeating yourself. Use these ideas as appropriate: 'Um zehn Uhr habe ich Zeit. Passt dir das?', 'Um elf Uhr bin ich leider in der Bibliothek.', 'Am Nachmittag kann ich um vierzehn Uhr. Hast du dann Zeit?', 'Um siebzehn Uhr wäre es für mich auch möglich.' If the learner proposes a time when you are busy, say so and suggest another. The shared free hour is 14 to 15. When you find it, agree and confirm: 'Gut, dann spielen wir am Samstag von vierzehn bis fünfzehn Uhr im Spielecafé.' Never correct the learner.",
+  "openingLine": "Hallo! Wann hast du am Samstag Zeit für das Spielecafé?",
+  "hints": [
+    "Einen Moment, ich muss kurz nachsehen.",
+    "Um diese Uhrzeit habe ich Zeit.",
+    "Da kann ich leider nicht.",
+    "Wie wäre es um diese Uhrzeit?",
+    "Ja, das passt mir gut."
+  ]
+}

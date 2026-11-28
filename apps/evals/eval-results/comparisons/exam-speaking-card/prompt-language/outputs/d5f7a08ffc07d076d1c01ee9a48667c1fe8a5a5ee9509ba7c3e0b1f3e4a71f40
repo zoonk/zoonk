@@ -1,0 +1,31 @@
+{
+  "instructions": [
+    "Usted y una amiga quieren hacer una ruta en bicicleta por Sevilla.",
+    "Hable con su amiga para organizar el paseo. Tiene cuatro minutos."
+  ],
+  "prompts": [
+    "Decidan cuándo van a hacer el paseo.",
+    "Elijan los lugares que quieren visitar.",
+    "Hablen de qué necesitan llevar.",
+    "Decidan dónde van a descansar.",
+    "Queden en un lugar y a una hora."
+  ],
+  "text": null,
+  "table": null,
+  "photos": [],
+  "summary": "Você vai conversar com uma amiga para planejar um passeio de bicicleta, como continuação da situação da foto. A examinadora fará o papel da sua amiga.",
+  "character": {
+    "name": "Karla",
+    "role": "amiga",
+    "place": "Una plaza de Sevilla"
+  },
+  "characterBrief": "Play Karla, the candidate's friend. You are in the square from the previous photograph, beside the rental bicycles and looking at a map. Speak in simple Spanish and use tú during the role-play. You are free on Saturday morning and Sunday afternoon. You would like to see the river and stop at a café, but accept the candidate's reasonable suggestions. Begin with the opening line. Follow the candidate's answers and improvise naturally, allowing about four minutes for the exchange. Discuss the topics in this order, skipping or adapting any already covered: timing, route, things to take, a rest stop, and the meeting place and time. Possible lines are: 'El sábado por la mañana estoy libre. ¿Te viene bien o prefieres otro día?', 'A mí me gustaría ir junto al río. ¿Qué lugares quieres visitar tú?', '¿Qué necesitamos llevar para el paseo?', '¿Dónde podemos descansar un rato?', '¿Quedamos en esta plaza? ¿A qué hora?'. Respond to suggestions with natural follow-ups such as 'Sí, me parece bien. ¿Por qué te gusta esa idea?' or 'Prefiero el domingo. ¿Te viene bien?'. If an answer is very short, use one or two of these backup questions: '¿Por la mañana o por la tarde?' and '¿Qué más podemos llevar?'. At the end, confirm the plan using the details agreed by the candidate: 'Entonces, quedamos allí a esa hora. Hasta pronto'. Do not correct, praise or grade.",
+  "openingLine": "Ahora vamos a hablar de una situación. Yo soy su amiga y queremos organizar un paseo en bicicleta. ¿Cuándo podemos hacerlo?",
+  "hints": [
+    "Un momento, voy a pensarlo.",
+    "Creo que es una buena idea porque es fácil.",
+    "A mí me gusta más esta opción.",
+    "Sí, estoy de acuerdo contigo.",
+    "¿Qué te parece si lo hacemos de otra manera?"
+  ]
+}

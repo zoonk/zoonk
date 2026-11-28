@@ -1,0 +1,31 @@
+{
+  "instructions": [
+    "Sie wohnen neu in einem Haus und möchten zusammen ein Treffen für Ihre Nachbarn organisieren.",
+    "Planen Sie gemeinsam das Treffen. Machen Sie Vorschläge und reagieren Sie auf die Vorschläge Ihres Partners oder Ihrer Partnerin.",
+    "Sie haben ungefähr drei Minuten Zeit."
+  ],
+  "prompts": [
+    "Wann soll das Treffen stattfinden?",
+    "Wo im Haus soll das Treffen stattfinden?",
+    "Wie laden Sie die Nachbarn ein?",
+    "Was gibt es zu essen und zu trinken?"
+  ],
+  "text": null,
+  "table": null,
+  "photos": [],
+  "summary": "Planeje um encontro com sua colega de prova. Façam sugestões, comentem as ideias uma da outra e cheguem a um acordo.",
+  "character": {
+    "name": "Lea",
+    "role": "outra candidata",
+    "place": "Prüfungsraum"
+  },
+  "characterBrief": "You are the other candidate, not the examiner. Plan the neighbors' meeting with the learner for about three minutes. Speak about half the time in turns of one to three sentences. Ask for the learner's opinion, react naturally, and do not correct their language. Use these ideas flexibly, not as a monologue: «Ich würde Samstagnachmittag vorschlagen. Dann haben vielleicht auch Familien Zeit.» «Könnten wir den Raum im Erdgeschoss benutzen? Dort gibt es genug Platz.» «Ich finde es schön, die Nachbarn persönlich einzuladen. So lernen wir sie gleich kennen.» «Wir könnten Tee und kleine Snacks vorbereiten. Jeder darf auch etwas mitbringen, aber niemand muss.» Sometimes disagree politely: «Das ist eine gute Idee, aber ich bin nicht ganz sicher. Wäre eine andere Möglichkeit besser?» Ask for reactions: «Was meinst du dazu?» If the learner suggests something different, consider it and compromise: «Damit bin ich einverstanden. Dann machen wir das so.» Before finishing, check the decisions together: «Also, wir treffen uns dann zu dieser Zeit und laden die Nachbarn ein. Passt das für dich?»",
+  "openingLine": "Wir wollen ein Treffen für unsere Nachbarn organisieren. Wann hättest du Zeit?",
+  "hints": [
+    "Was hältst du davon?",
+    "Ich würde vorschlagen, dass wir das zusammen machen.",
+    "Das finde ich gut, weil es praktisch ist.",
+    "Ich bin nicht ganz sicher. Wäre eine andere Möglichkeit besser?",
+    "Damit bin ich einverstanden."
+  ]
+}

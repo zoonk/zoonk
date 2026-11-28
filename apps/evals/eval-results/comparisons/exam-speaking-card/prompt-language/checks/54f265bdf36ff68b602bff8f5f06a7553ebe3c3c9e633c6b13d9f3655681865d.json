@@ -1,0 +1,11 @@
+{
+  "caseId": "pt-fr-delf-b2-document",
+  "costUsd": 0,
+  "criteria": [],
+  "name": "code checks",
+  "passed": 4,
+  "problems": [],
+  "run": 2,
+  "side": "challenger",
+  "total": 4
+}

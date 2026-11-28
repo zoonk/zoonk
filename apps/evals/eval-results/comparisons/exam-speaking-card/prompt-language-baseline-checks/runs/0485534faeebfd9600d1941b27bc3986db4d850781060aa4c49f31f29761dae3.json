@@ -1,0 +1,13 @@
+{
+  "caseId": "pt-es-dele-b1-continues-presentation",
+  "challenger": {
+    "costUsd": 0.00321015,
+    "durationMs": 8815.295416999987,
+    "hash": "ee1f7985ca7aa4e4c18ce9154dd6e4f06c3177b27858cd3610ec888ae5b48023",
+    "systemPromptHash": "41c5a9399f5671bf56df4031f6fd57b21a0393fbc47e4f1bdd2b171bcb4dc623",
+    "userPromptHash": "fc5212ac687535bca3038f554e77432ad9dfc7540353bc125e6385ed33e4dd7a"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 2
+}
