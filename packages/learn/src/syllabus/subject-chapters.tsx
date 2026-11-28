@@ -207,15 +207,14 @@ export function SubjectChapters({
             />
           </li>
         )}
-
-        {leftOut.length > 0 && (
-          <li>
-            <LeftOutTopicsRow inList names={leftOut} />
-          </li>
-        )}
       </ListGroup>
 
-      {leftOut.length > 0 && <LeftOutWhy adjustHref={adjustHref} />}
+      {leftOut.length > 0 && (
+        <div className="flex flex-col">
+          <LeftOutTopicsRow names={leftOut} />
+          <LeftOutWhy adjustHref={adjustHref} />
+        </div>
+      )}
     </PageSection>
   );
 }
