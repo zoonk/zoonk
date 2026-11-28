@@ -199,10 +199,7 @@ export async function understandGoal(params: UnderstandGoalParams) {
 
 /** Only the route: evaluation models can pick one but can't fill goals, dates or titles. */
 export const goalRouteClassifier = {
-  instructions: selectPromptVariants({
-    template,
-    variants: { material: false, unreadMaterial: false },
-  }),
+  instructions: getSystemPrompt({ language: "en", material: null }),
   labels: {
     explain: "A one-off question about how or why something works or what something means.",
     goals: "Something to study for: an exam, a language, a subject, a skill or a project.",
