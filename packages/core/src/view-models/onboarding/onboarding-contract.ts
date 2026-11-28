@@ -244,8 +244,8 @@ export type OnboardingView = {
   planReadiness: PlanReadiness;
   /** The learner pressed the reveal's action. Until then resume brings the reveal back, and a reveal an action opened plays its moment. */
   planRevealed: boolean;
-  /** How long the level question's quick test takes: a language goal's is its level test. */
   placement: OnboardingPlacement | null;
+  /** How long the level question's quick test takes: a language goal's is its level test. */
   quickTestMinutes: number;
   /** Initial choice only; preserve course-page selections and never imply the recommendation guarantees plan coverage. */
   recommendedMinutes: number;
