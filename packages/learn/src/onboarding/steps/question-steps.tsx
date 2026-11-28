@@ -28,7 +28,7 @@ export function PurposeStep({ onAnswer, pending, subject }: StepProps) {
       value: "overview",
     },
     {
-      description: t("I want to go from the basics to advanced topics"),
+      description: t("I want to go deeper, one level at a time"),
       label: t("Understand it well"),
       value: "deep",
     },
