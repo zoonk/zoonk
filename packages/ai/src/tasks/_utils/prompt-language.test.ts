@@ -59,19 +59,6 @@ describe(fillPromptLanguages, () => {
 
 const TASKS_DIR = path.join(import.meta.dirname, "..");
 
-/** Converted by hand; each leaves this list once it names its languages. */
-const NOT_YET_CONVERTED = new Set([
-  "courses/course-details.prompt.md",
-  "curriculum/skill-graph.prompt.md",
-  "goals/understand-goal.prompt.md",
-  "grading/grade-typed-answer-language-practice.prompt.md",
-  "grading/grade-typed-answer.prompt.md",
-  "items/item-rules/language-goals.prompt.md",
-  "listening/write-listening-set.prompt.md",
-  "memory/memory-extraction.prompt.md",
-  "warm-up/write-warm-up-cards.prompt.md",
-]);
-
 const SECOND_LANGUAGE =
   /\{\{(?:TARGET|LEARNER)_LANGUAGE\}\}|`(?:TARGET|PRACTICED|SCRIPT|LEARNER|FEEDBACK)_LANGUAGE`/u;
 
@@ -90,9 +77,6 @@ function promptsPointingAtALanguageInput(): string[] {
 
 describe("prompts with two languages", () => {
   it("name each language instead of pointing at a language input", () => {
-    const pointing = promptsPointingAtALanguageInput();
-
-    expect(pointing.filter((file) => !NOT_YET_CONVERTED.has(file))).toStrictEqual([]);
-    expect([...NOT_YET_CONVERTED].filter((file) => !pointing.includes(file))).toStrictEqual([]);
+    expect(promptsPointingAtALanguageInput()).toStrictEqual([]);
   });
 });
