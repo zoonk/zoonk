@@ -79,7 +79,7 @@ struct LessonOptionList: View {
           }
           .overlay(alignment: .topTrailing) {
             ChoiceMark(kind: .one, isPicked: option.id == selectedId)
-              .padding(3)
+              .padding(4)
               .background(.boxBackground, in: .circle)
               .padding(6)
               .dynamicTypeSize(...Self.cornerMarkSize)
