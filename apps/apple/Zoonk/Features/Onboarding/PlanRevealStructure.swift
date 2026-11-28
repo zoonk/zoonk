@@ -21,7 +21,6 @@ struct RevealStructure: View {
   }
 }
 
-/// A plan of one phase has nothing to group, so its chapters are the list.
 private struct RevealPath: View {
   let context: PlanContext
   @Binding var open: Set<String>
@@ -31,7 +30,7 @@ private struct RevealPath: View {
 
     if let only = phases.first {
       PageSection {
-        if phases.count == 1 {
+        if phases.count == 1, only.chapters.contains(where: { !$0.isWritingAhead }) {
           ForEach(only.chapters.filter { !$0.isWritingAhead }) { chapter in
             PlanChapterRow(context: context, chapter: chapter, opens: false)
           }

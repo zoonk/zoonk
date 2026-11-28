@@ -79,7 +79,6 @@ function PhaseRow({ phase }: { phase: PlanPhaseView }) {
   );
 }
 
-/** A plan of one phase has nothing to group, so its chapters are the list. */
 function RevealPath() {
   const t = useExtracted();
   const titleId = useId();
@@ -96,7 +95,7 @@ function RevealPath() {
         <PageSectionTitle id={titleId}>{t("Your path")}</PageSectionTitle>
       </PageSectionHeader>
 
-      {rest.length === 0 ? (
+      {rest.length === 0 && hasListedChapters(only.chapters) ? (
         <JourneyChapters chapters={only.chapters} links={null} phase={null} />
       ) : (
         <ol className="flex flex-col [&>li+li]:border-t" data-slot="journey-path-list">
