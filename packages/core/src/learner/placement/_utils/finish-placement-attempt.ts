@@ -6,7 +6,6 @@ import { revalidateCacheTags } from "../../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag } from "../../../cache/tags";
 import { owePlanStartLessons } from "../../../follow-ups/owe-goal-lessons";
 import { parsePlanChangePayload } from "../../../plans/_utils/plan-change-payload";
-import { readTestOutChange } from "../../../plans/_utils/read-test-out-change";
 import { placementPartReceipt } from "../../../plans/_utils/test-out-receipt";
 import { recordTestOutChange } from "../../../plans/record-test-out-change";
 import { loadPlacementPlan } from "../../_utils/goal-skill-graph";
@@ -18,6 +17,7 @@ import { applyCourseStart } from "./course-start-items";
 import { loadPlacementWithSummary } from "./load-placement-state";
 import { savePlacementAttempt } from "./placement-attempt";
 import { type PlacementRecord, readPlacementAttempt } from "./placement-attempt-record";
+import { readPlacementChange } from "./placement-result";
 
 function findAppliedReceipt({
   answered,
@@ -42,22 +42,6 @@ function isFinishedLegacyPart(attempt: PlacementRecord["attempt"]) {
   return attempt && !attempt.search && attempt.partComplete;
 }
 
-function readReceiptChange(
-  goalId: string,
-  attemptId: string,
-  part: number,
-  finish: PlacementRecord["finishedParts"][number]["finish"],
-  db?: TransactionClient,
-) {
-  const stoppedAt = finish?.end === "stopped" ? finish.answered : undefined;
-
-  return readTestOutChange({
-    db,
-    goalId,
-    receipt: placementPartReceipt(attemptId, part, stoppedAt),
-  });
-}
-
 async function readCompletedCourseReceipt({
   goalId,
   part,
@@ -75,7 +59,7 @@ async function readCompletedCourseReceipt({
     return null;
   }
 
-  const change = await readReceiptChange(goalId, attemptId, part, finish, tx);
+  const change = await readPlacementChange({ attemptId, db: tx, finish, goalId, part });
   const active = parsePlanChangePayload(change?.payload);
 
   const receipt: PlacementRecord["finishedParts"][number] = {
@@ -298,7 +282,9 @@ export async function finishPlacementAttempt({
   revalidateCacheTags([getGoalsCacheTag(userId)]);
 
   const [legacyChange, { state }] = await Promise.all([
-    courseStart ? null : readReceiptChange(goalId, attemptId, saved.part, saved.finish),
+    courseStart
+      ? null
+      : readPlacementChange({ attemptId, finish: saved.finish, goalId, part: saved.part }),
     loadPlacementWithSummary({ goalId, timeZone, today, userId }),
   ]);
 

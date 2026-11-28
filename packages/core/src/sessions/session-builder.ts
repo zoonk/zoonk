@@ -1,15 +1,10 @@
 import { type StudyFreshStart, type StudySessionBlock } from "@zoonk/db";
-import { type ChallengeReachItem, isPhaseChallenge } from "../checkpoints/_utils/challenge-reach";
+import { type ChallengeReachItem } from "../checkpoints/_utils/challenge-reach";
 import { type PlannedProduce, toProduceBlock } from "../exams/essays/produce-block";
 import { MINUTES_PER_REVIEW, REVIEW_SHARE_OF_DAY } from "../learner/review-load";
-import {
-  fundLeadingChallenges,
-  getLeadingChallenges,
-  listDayStretch,
-  placePutOffChallenges,
-} from "./_utils/day-stretch";
+import { listDayStretch, placePutOffChallenges } from "./_utils/day-stretch";
 import { fillRemainingLessonTime, getWritingMinutes } from "./_utils/fill-session-time";
-import { canHoldPhaseChallenges } from "./_utils/phase-challenge-day";
+import { fundSessionChallenges } from "./_utils/phase-challenge-day";
 import { buildCheckpointBlock, buildMockDay } from "./_utils/planned-checkpoint-block";
 import { type PracticeTopic, buildPracticeBlocks } from "./_utils/practice-blocks";
 import { type RemedialWork, fundRemedialBlocks } from "./_utils/remedial-blocks";
@@ -17,7 +12,7 @@ import {
   getLessonMinutes,
   getNewLessons,
   getPracticeMinutes,
-  isSessionReviewDay,
+  reserveCourseOpeningLesson,
   takeLessons,
   toLessonBlock,
 } from "./_utils/session-lessons";
@@ -97,6 +92,7 @@ export type SessionBuildInput = {
   fullReviewSkillIds?: readonly string[] | null;
   /** The scheduled practice that uses the rest of a review day. */
   reviewPlanItemId: string | null;
+  courseOpeningLessonId?: string | null;
   remedial?: RemedialWork;
   /** A selected review is identified before Open assigns its persisted row ID. */
   reviewPlanItemKey?: string | null;
@@ -180,32 +176,29 @@ function fillReview({
   return blocks.map((block) => (review && block.kind === "review" ? review : block));
 }
 
-function fundSessionChallenges(input: SessionBuildInput, budget: number) {
-  const planItems = input.planItems ?? [];
-
-  const available = canHoldPhaseChallenges({
-    mockOnlyDay: false,
-    reviewDay: isSessionReviewDay(input),
-  })
-    ? input.checkpoints.filter((checkpoint) => isPhaseChallenge(checkpoint))
-    : [];
-
-  const leading = fundLeadingChallenges({
-    budget,
-    checkpoints: getLeadingChallenges({ checkpoints: available, items: planItems }),
-    overflow: !input.usedMinutes,
-  });
-
-  const calendar = input.checkpoints.filter((checkpoint) => !isPhaseChallenge(checkpoint));
-  return { available, calendar, checkpoints: [...leading, ...calendar], leading, planItems };
-}
-
 /** Full reviews cover every skill and welcome-back days otherwise stay lighter. */
 export function buildSessionBlocks(day: SessionBuildInput): {
   blocks: PlannedBlock[];
   plannedMinutes: number;
   remedialGeneration?: ReturnType<typeof fundRemedialBlocks>["remedialGeneration"];
 } {
+  const opening = reserveCourseOpeningLesson(day);
+
+  if (!opening) {
+    return buildDayBlocks(day);
+  }
+
+  const { block, remaining } = opening;
+  const rest = buildDayBlocks(remaining);
+
+  return {
+    ...rest,
+    blocks: [block, ...rest.blocks],
+    plannedMinutes: block.estimatedMinutes + rest.plannedMinutes,
+  };
+}
+
+function buildDayBlocks(day: SessionBuildInput) {
   const input = {
     ...day,
     checkpoints: placePutOffChallenges({

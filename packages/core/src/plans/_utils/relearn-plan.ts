@@ -2,6 +2,7 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { once } from "@zoonk/utils/once";
 import { getSkillArea } from "../planner/graph-areas";
+import { LEARN_KINDS } from "../planner/plan-item-rules";
 import { type PlanState } from "../planner/plan-state";
 import { type MockMiss } from "../planner/skill-order";
 import { type PlanContext } from "./plan-context";
@@ -53,15 +54,15 @@ export async function findTestedOutItemIds({
 
   const teaching = new Set(taught.map((row) => row.lessonId));
 
-  return new Set(
-    testedOut
-      .filter(
-        (item) =>
-          (item.skillId !== null && skillIds.has(item.skillId)) ||
-          (item.lessonId !== null && teaching.has(item.lessonId)),
-      )
-      .map((item) => item.id),
+  const lessons = testedOut.filter(
+    (item) =>
+      (item.skillId !== null && skillIds.has(item.skillId)) ||
+      (item.lessonId !== null && teaching.has(item.lessonId)),
   );
+
+  const phases = new Set(lessons.map((item) => item.phase));
+  const challenges = testedOut.filter((item) => item.kind === "boss" && phases.has(item.phase));
+  return new Set([...lessons, ...challenges].map((item) => item.id));
 }
 
 function restorePlanItems({
@@ -115,8 +116,16 @@ function getPlannedIds({
   computed: ComputedPlan;
   ids: ReadonlySet<string>;
 }): Set<string> {
+  const planned = computed.built.items.filter((item) => item.id && ids.has(item.id));
+
+  const phases = new Set(
+    planned.filter((item) => LEARN_KINDS.has(item.kind)).map((item) => item.phase),
+  );
+
   return new Set(
-    computed.built.items.flatMap((item) => (item.id && ids.has(item.id) ? [item.id] : [])),
+    planned.flatMap((item) =>
+      item.id && (item.kind !== "boss" || phases.has(item.phase)) ? [item.id] : [],
+    ),
   );
 }
 

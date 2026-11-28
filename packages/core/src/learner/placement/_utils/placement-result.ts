@@ -7,6 +7,28 @@ import { placementPartReceipt } from "../../../plans/_utils/test-out-receipt";
 import { isWorkFinished } from "../../../plans/_utils/work-progress";
 import { type PlacementRecord } from "./placement-attempt-record";
 
+export function readPlacementChange({
+  attemptId,
+  db,
+  finish,
+  goalId,
+  part = 1,
+}: {
+  attemptId: string;
+  db?: TransactionClient;
+  finish: PlacementRecord["finishedParts"][number]["finish"];
+  goalId: string;
+  part?: number;
+}) {
+  const stoppedAt = finish?.end === "stopped" ? finish.answered : undefined;
+
+  return readTestOutChange({
+    db,
+    goalId,
+    receipt: placementPartReceipt(attemptId, part, stoppedAt),
+  });
+}
+
 export async function readPlacementNextLesson(goalId: string, tx: TransactionClient) {
   const item = await tx.planItem.findFirst({
     orderBy: [{ position: "asc" }, { id: "asc" }],
@@ -136,11 +158,16 @@ export async function readPlacementResult({
     return view;
   }
 
-  const stoppedAt = latest.finish?.end === "stopped" ? latest.finish.answered : undefined;
-  const receipt = placementPartReceipt(result.attemptId, latest.part, stoppedAt);
-
   const change =
-    result.lessonsSkipped > 0 ? await readTestOutChange({ db: tx, goalId, receipt }) : null;
+    result.lessonsSkipped > 0
+      ? await readPlacementChange({
+          attemptId: result.attemptId,
+          db: tx,
+          finish: latest.finish,
+          goalId,
+          part: latest.part,
+        })
+      : null;
 
   return { ...view, changeId: change?.id ?? null };
 }
@@ -150,13 +177,13 @@ async function readCourseResult(
   result: NonNullable<PlacementRecord["result"]>,
   db: TransactionClient,
 ) {
-  const receipt = placementPartReceipt(
-    result.attemptId,
-    1,
-    result.finish?.end === "stopped" ? result.finish.answered : undefined,
-  );
+  const change = await readPlacementChange({
+    attemptId: result.attemptId,
+    db,
+    finish: result.finish,
+    goalId,
+  });
 
-  const change = await readTestOutChange({ db, goalId, receipt });
   const payload = parsePlanChangePayload(change?.payload);
   const course = await readPlacementCourse(goalId, new Set(payload.planItemIds), db);
   const nextLesson = course ? await readPlacementNextLesson(goalId, db) : null;

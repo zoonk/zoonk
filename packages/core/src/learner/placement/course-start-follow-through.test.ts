@@ -96,8 +96,11 @@ async function prepareCoursePractice(dailyMinutes: number) {
 
 describe("course placement after completion", () => {
   it("returns the lessons on the first practice miss", async () => {
-    const { finish, goalId, plan, planItems, skills, user } = await setup();
+    const { finish, goalId, plan, planItems, skills, user } = await setup([2, 3]);
+    const { bosses } = await layOutPlanFixture(plan.id);
+    const checkpoint = () => prisma.planItem.findUniqueOrThrow({ where: { id: bosses[0]!.id } });
     await finish();
+    await expect(checkpoint()).resolves.toMatchObject({ status: "testedOut" });
     const skillId = skills[0]!.id;
     const where = { kind: "lesson" as const, planId: plan.id, skillId };
 
@@ -126,10 +129,17 @@ describe("course placement after completion", () => {
       status: "todo",
     });
 
+    await expect(checkpoint()).resolves.toMatchObject({ status: "todo" });
+
     await expect(getGoalPlacement({ goalId })).resolves.toMatchObject({
       placement: {
         result: {
-          course: { chapters: [{ skipped: 3, start: true }] },
+          course: {
+            chapters: [
+              { skipped: 1, start: true },
+              { skipped: 2, start: false },
+            ],
+          },
           lessonsSkipped: 3,
           nextLesson: { id: planItems[0]!.lessonId },
         },
@@ -160,7 +170,8 @@ describe("course placement after completion", () => {
   });
 
   it("separates completed lessons from this start when finishing and reopening the result", async () => {
-    const { finish, goalId, planItems, user } = await setup([2, 5]);
+    const { finish, goalId, plan, planItems, user } = await setup([2, 5]);
+    const { bosses } = await layOutPlanFixture(plan.id);
 
     const study = (index: number) =>
       prisma.$transaction((tx) =>
@@ -193,6 +204,10 @@ describe("course placement after completion", () => {
     await expect(getGoalPlacement({ goalId })).resolves.toMatchObject({
       placement: { result: result(0, 4) },
     });
+
+    await expect(
+      prisma.planItem.findUniqueOrThrow({ where: { id: bosses[0]!.id } }),
+    ).resolves.toMatchObject({ status: "testedOut" });
 
     await study(2);
 

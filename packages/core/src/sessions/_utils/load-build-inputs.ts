@@ -38,8 +38,6 @@ import { getPracticeWeights } from "./review-skills";
 import { type SelectedDayPlan } from "./selected-day-plan";
 import { type SessionDayContext } from "./session-placement";
 
-type BuildContext = SessionDayContext;
-
 /** A new script's alphabet is outside the plan and stays first until finished, skipped, or demonstrated known. */
 function toAlphabetLessons(alphabet: AlphabetIntro | null): PlannedLesson[] {
   if (!alphabet?.pending) {
@@ -66,7 +64,7 @@ export function toReviewInput({
   netScored,
   plan,
 }: {
-  context: Pick<BuildContext, "goal" | "localDate" | "timeZone" | "userId">;
+  context: Pick<SessionDayContext, "goal" | "localDate" | "timeZone" | "userId">;
   field: string | null;
   netScored: boolean;
   plan: Awaited<ReturnType<typeof loadDayPlan>>;
@@ -117,7 +115,8 @@ async function finalizeBuildInput({
   return capsules.length > 0 ? { ...ready, capsules, weakestReview: true } : ready;
 }
 
-type SessionBuildContext = BuildContext & {
+type SessionBuildContext = SessionDayContext & {
+  courseOpeningLessonId?: string | null;
   /** Saved days retain their remedial allocation while other blocks are refilled. */
   savedDay?: boolean;
   /** A day retaining blocks is not empty and must not get a weakest-topic fallback review. */
@@ -179,7 +178,6 @@ export async function loadSessionBuildInput(
   const plan = await (context.dayPlan ?? loadDayPlan(context));
   const awaitingOutlines = plan.outlines === "awaiting";
 
-  const { dayMinutes, textSkillIds } = plan;
   const skillIds = plan.skills.map((skill) => skill.id);
   const field = getGoalField(goal.details);
   const netScored = isNetScored(plan.structure);
@@ -199,7 +197,6 @@ export async function loadSessionBuildInput(
   });
 
   const testSkillIds = getPlanTestSkillIds(plan);
-
   const access = getExamPrepAccess({ examPrep: plan.examPrep, goal });
 
   const signals = await loadLivingPlanSignals({
@@ -210,7 +207,7 @@ export async function loadSessionBuildInput(
   });
 
   const dayLessons = loadDayPlanLessons({
-    dayMinutes,
+    dayMinutes: plan.dayMinutes,
     fillItems,
     keptLessonIds,
     learnItems,
@@ -235,7 +232,7 @@ export async function loadSessionBuildInput(
           ahead: listFittingLessons({
             items: plan.items,
             lessons: [...loaded.lessons, ...loaded.fillLessons],
-            minutes: dayMinutes,
+            minutes: plan.dayMinutes,
           }),
           context,
           plan,
@@ -251,7 +248,7 @@ export async function loadSessionBuildInput(
           skillIds: plan.goalPlan.skills.map((skill) => skill.id),
         }),
         now,
-        skillIds: textSkillIds,
+        skillIds: plan.textSkillIds,
         structure: plan.structure,
         today: localDate,
         userId,
@@ -293,7 +290,8 @@ export async function loadSessionBuildInput(
   const base: Omit<SessionBuildInput, keyof DayWork> = {
     allowsReviewLessons,
     checkpoints,
-    dailyMinutes: dayMinutes,
+    courseOpeningLessonId: context.courseOpeningLessonId,
+    dailyMinutes: plan.dayMinutes,
     fillLessons: fillLessons.map((lesson) => writing.reserveDrill(lesson)),
     freshStart: getDayFreshStart({ plan, today: localDate }),
     fullReviewSkillIds: fullReview ? testSkillIds : null,
