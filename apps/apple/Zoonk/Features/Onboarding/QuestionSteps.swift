@@ -1024,7 +1024,8 @@ private struct DateQuestion: View {
     } buttons: {
       StepButtons(
         skipLabel: Text(
-          "Another date", tableName: "Onboarding", comment: "Picks another date than the exam's")
+          "Another date", tableName: "Onboarding", comment: "Picks another date than the exam's"),
+        skipIcon: .calendar
       ) {
         onAnswer(["question": "targetDate", "targetDate": first])
       } onSkip: {

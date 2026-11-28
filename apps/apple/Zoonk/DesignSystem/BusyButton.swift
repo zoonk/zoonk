@@ -67,6 +67,7 @@ private struct BusyButtonLabel<Title: View>: View {
 enum ActionIcon: String {
   case addLessons = "text.badge.plus"
   case archive = "archivebox"
+  case calendar = "calendar"
   case certificate = "rosette"
   /// Commits what the learner entered or picked: check, confirm, save, apply.
   case check = "checkmark"
