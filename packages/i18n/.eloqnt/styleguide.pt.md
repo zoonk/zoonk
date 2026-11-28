@@ -52,6 +52,7 @@
 - “hello@zoonk.com”: “contato@zoonk.com”
 - “Send feedback” (to Zoonk): “Enviar feedback”, not “Enviar comentários”
 - “You've reached today's study time”: “Você usou todo o seu tempo de estudo de hoje”, in every line that starts with it
+- Daily-limit titles: “No more {things} today”: “Sem mais {coisas} por hoje”; “You've used your {things}”: “Você atingiu o limite de {coisas}”
 - “Keep Plus” (turns a stopped renewal back on): “Manter o Plus”
 
 ## Feature names and states
