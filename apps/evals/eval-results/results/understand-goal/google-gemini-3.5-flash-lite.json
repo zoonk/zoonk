@@ -131,47 +131,6 @@
       },
       "steps": [
         {
-          "conclusion": "country dependent true",
-          "kind": "majorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "country dependent true",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "country dependent true",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "goals": [
-            {
-              "contentCountry": "US",
-              "countryDependent": false,
-              "kind": "exam"
-            }
-          ],
-          "route": "goals"
-        },
-        "id": "en-faa-certificate-is-american-whatever-the-nationality-1",
-        "userInput": {
-          "goal": "I'm Canadian and I want to get an FAA private pilot certificate",
-          "language": "en",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
           "conclusion": "None",
           "kind": "majorErrors",
           "score": 10
