@@ -20,6 +20,7 @@ import {
   offerMemberSkills,
   toMemberSkills,
 } from "./plan-member-check";
+import { parsePlanGraph } from "./planner/plan-state";
 
 const NOW = new Date("2020-09-28T12:00:00Z");
 
@@ -305,6 +306,45 @@ describe(offerMemberSkills, () => {
     await offerMemberSkills(found);
 
     await expect(countOffers(plan.id)).resolves.toBe(0);
+  });
+
+  it("owes the check again when an edit to the graph since the check stops its offer", async () => {
+    const { plan } = await plannedGoal();
+    mockCoverage(listMissingSecond(`Do the second step ${uniqueWord()}`));
+
+    const found = await findMembers(await claim(plan.id));
+    const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+    const graph = parsePlanGraph(saved.graph);
+    const setup = { ...found.claimed.skills[0], name: "Set up the tool", skillId: "setup" };
+
+    await prisma.plan.update({
+      data: { graph: { ...graph, skills: [setup, ...graph.skills] } },
+      where: { id: plan.id },
+    });
+
+    await offerMemberSkills(found);
+
+    await expect(countOffers(plan.id)).resolves.toBe(0);
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+      membersCheckedAt: null,
+    });
+  });
+
+  it("keeps a rebuild's own mark when the rebuild stops the offer", async () => {
+    const { goal, plan } = await plannedGoal();
+    mockCoverage(listMissingSecond(`Do the second step ${uniqueWord()}`));
+
+    const found = await findMembers(await claim(plan.id));
+    const rebuilt = await planLibraryFixture({ skills: [{ lessons: 2 }, { lessons: 3 }] });
+    const rebuiltAt = new Date(NOW.getTime() + 60_000);
+    await createGoalPlan({ goalId: goal.id, graph: rebuilt.graph, membersCheckedAt: rebuiltAt });
+
+    await offerMemberSkills(found);
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+      membersCheckedAt: rebuiltAt,
+    });
   });
 
   it("offers nothing when the plan's graph is rebuilt while the offer is being saved", async () => {

@@ -290,7 +290,7 @@ export async function offerMemberSkills({
     return;
   }
 
-  await proposePlanChange({
+  const result = await proposePlanChange({
     approval: "always",
     goalId: claimed.goalId,
     isDue: (context) => hasClaimedGraph({ claimed, context }),
@@ -299,5 +299,21 @@ export async function offerMemberSkills({
     // With no reason, the learner still sees which skills it adds.
     reason: check.coverage.reason ?? "",
     source: MEMBER_CHECK_SOURCE,
+  });
+
+  if (result.status === "notDue") {
+    await oweCheckAgain(claimed);
+  }
+}
+
+/**
+ * An edit that added skills without a rebuild (a tool's setup, foundations for a lower level)
+ * leaves the checked graph behind, so the next sweep checks the new one. A rebuild marks the plan
+ * itself, and its mark stays.
+ */
+async function oweCheckAgain(claimed: ClaimedMemberCheck) {
+  await prisma.plan.updateMany({
+    data: { membersCheckedAt: null },
+    where: { id: claimed.planId, membersCheckedAt: claimed.checkedAt },
   });
 }
