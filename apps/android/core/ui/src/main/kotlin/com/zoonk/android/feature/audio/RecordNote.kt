@@ -43,6 +43,7 @@ fun recordNote(
 ): (@Composable () -> Unit)? {
     val check = checkNote(checking, failed = status == VoiceRecorder.Status.Idle && issue == VoiceIssue.Failed)
     return when {
+        status == VoiceRecorder.Status.Unavailable -> ({ NoteLine(stringResource(R.string.audio_microphone_unavailable)) })
         status != VoiceRecorder.Status.Idle -> null
         checking || issue == VoiceIssue.Failed -> check
         issue == VoiceIssue.NoSpeech -> ({ NoteLine(stringResource(R.string.audio_no_speech), wrong = true) })

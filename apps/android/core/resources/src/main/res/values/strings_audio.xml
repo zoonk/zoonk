@@ -22,5 +22,6 @@
     <!-- The microphone started late and the first words weren't recorded, so the learner records again. Not their mistake. -->
     <string name="audio_missed_start">We may have missed the start. Say it again.</string>
     <string name="audio_microphone_off_title">The microphone is off</string>
+    <string name="audio_microphone_unavailable">We can\'t use your microphone.</string>
     <string name="audio_open_settings">Open Settings</string>
 </resources>

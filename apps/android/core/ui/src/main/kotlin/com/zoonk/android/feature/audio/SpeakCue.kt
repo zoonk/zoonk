@@ -3,6 +3,7 @@ package com.zoonk.android.feature.audio
 import android.provider.Settings
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,6 +20,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -62,29 +64,52 @@ fun SpeakCue(
     modifier: Modifier = Modifier,
 ) {
     val recording = status as? VoiceRecorder.Status.Recording
+    val acquiring = status == VoiceRecorder.Status.Acquiring
+    val live = recording != null
+    val still = animationsOff()
     LiveTap(recording?.startedAt)
 
-    Row(
+    Box(
         modifier.fillMaxWidth().heightIn(min = TRACK_HEIGHT).clearAndSetSemantics {},
+        contentAlignment = Alignment.CenterStart,
+    ) {
+        CueLabel(
+            stringResource(R.string.audio_say_after_cue),
+            MaterialTheme.colorScheme.onSurfaceVariant,
+            visible = !live && !acquiring && !checking,
+        )
+        CueTrack(
+            stringResource(R.string.audio_microphone_getting_ready),
+            MaterialTheme.colorScheme.onSurfaceVariant,
+            MaterialTheme.colorScheme.outlineVariant,
+            visible = acquiring,
+        ) { emptyList() }
+        CueTrack(
+            stringResource(R.string.audio_speak_now),
+            MaterialTheme.colorScheme.onSurface,
+            MaterialTheme.colorScheme.onSurface,
+            visible = live,
+            weight = FontWeight.Medium,
+        ) { if (live && !still) levels() else emptyList() }
+    }
+}
+
+@Composable
+private fun CueTrack(
+    label: String,
+    labelColor: Color,
+    trackColor: Color,
+    visible: Boolean,
+    weight: FontWeight? = null,
+    levels: () -> List<Float>,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth().alpha(if (visible) 1f else 0f),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        when {
-            recording != null -> {
-                CueLabel(stringResource(R.string.audio_speak_now), MaterialTheme.colorScheme.onSurface, FontWeight.Medium)
-                val still = animationsOff()
-                Track(MaterialTheme.colorScheme.onSurface, if (still) ({ emptyList() }) else levels)
-            }
-
-            status == VoiceRecorder.Status.Acquiring -> {
-                CueLabel(stringResource(R.string.audio_microphone_getting_ready), MaterialTheme.colorScheme.onSurfaceVariant)
-                Track(MaterialTheme.colorScheme.outlineVariant) { emptyList() }
-            }
-
-            !checking -> {
-                CueLabel(stringResource(R.string.audio_say_after_cue), MaterialTheme.colorScheme.onSurfaceVariant)
-            }
-        }
+        CueLabel(label, labelColor, visible, weight)
+        Track(trackColor, levels)
     }
 }
 
@@ -92,9 +117,11 @@ fun SpeakCue(
 private fun CueLabel(
     text: String,
     color: Color,
+    visible: Boolean,
     weight: FontWeight? = null,
 ) {
-    Text(text, color = color, fontWeight = weight, style = MaterialTheme.typography.bodyMedium)
+    val modifier = if (visible) Modifier else Modifier.alpha(0f).clearAndSetSemantics {}
+    Text(text, modifier = modifier, color = color, fontWeight = weight, style = MaterialTheme.typography.bodyMedium)
 }
 
 /** As many bars as fit, each a dot at rest and as tall as the row at full voice; quiet slots before the first sample. */

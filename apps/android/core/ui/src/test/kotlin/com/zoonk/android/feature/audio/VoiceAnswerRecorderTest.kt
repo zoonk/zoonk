@@ -129,25 +129,39 @@ class VoiceAnswerRecorderTest {
 
     /** After the server says a take missed its start, the screen's next takes are graded as heard, so it says it once. */
     @Test
-    fun aTakeAfterAMissedStartGoesWithoutItsStartupTime() {
-        val sent = mutableListOf<Long?>()
+    fun takesOnTheSameVisitOmitStartupAfterAMissedStart() {
+        val sent = mutableListOf<VoiceRecording>()
+        var shown by mutableStateOf(true)
         lateinit var model: VoiceAnswerModel
         rule.setContent {
             ZoonkTheme {
-                model =
-                    voiceAnswerModel(KEY) { recording ->
-                        sent += recording.micStartupMs
-                        GradeOutcome.MissedStart
-                    }
-                Recorder(model, rememberAppNavigator())
+                if (shown) {
+                    model =
+                        voiceAnswerModel(KEY) { recording ->
+                            sent += recording
+                            GradeOutcome.MissedStart
+                        }
+                    Recorder(model, rememberAppNavigator())
+                }
             }
         }
-        rule.runOnIdle { model.check(VoiceRecording(ByteArray(8), 1_200, micStartupMs = 900)) }
+        val first = VoiceRecording(ByteArray(8), 1_200, micStartupMs = 900)
+        val retry = VoiceRecording(ByteArray(8), 1_200, micStartupMs = 900)
+        rule.runOnIdle { model.check(first) }
         rule.onNodeWithText("We may have missed the start. Say it again.").assertIsDisplayed()
-        rule.runOnIdle { model.check(VoiceRecording(ByteArray(8), 1_200, micStartupMs = 900)) }
+        rule.runOnIdle { model.check(retry) }
         rule.waitForIdle()
 
-        assertEquals(listOf(900L, null), sent)
+        shown = false
+        rule.waitForIdle()
+        shown = true
+        rule.waitForIdle()
+        val returned = VoiceRecording(ByteArray(8), 1_200, micStartupMs = 900)
+        rule.runOnIdle { model.check(returned) }
+        rule.waitForIdle()
+
+        assertEquals(listOf(900L, null, 900L), sent.map { it.micStartupMs })
+        assertEquals(listOf(first.attemptId, retry.attemptId, returned.attemptId), sent.map { it.attemptId })
     }
 
     /** The recorder leaves (another screen over it, the step left) while its take is graded, its view model kept. */

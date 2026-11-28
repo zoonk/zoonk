@@ -253,6 +253,8 @@ private fun WordStep(
     val normal = key(word.id) { rememberSpokenAudio(speech, round.language) }
     val slow = key(word.id) { rememberSpokenAudio(speech, round.language) }
     val status by model.recorder.state.collectAsStateWithLifecycle()
+    val micUnavailable = model.microphoneOff || status == VoiceRecorder.Status.Unavailable
+    val listens = status != VoiceRecorder.Status.Acquiring && status !is VoiceRecorder.Status.Recording
     val tapRecord =
         rememberRecordTap(
             recorder = model.recorder,
@@ -284,7 +286,7 @@ private fun WordStep(
                 Modifier.taskKeys(onEnter = { if (step.grade != null && !round.pending) model.next() }, onEscape = navigator::closeTask),
             title = { Text(stringResource(R.string.pronunciation_title)) },
             actions = {
-                if (step.grade == null && !model.microphoneOff) {
+                if (step.grade == null && !micUnavailable) {
                     WordMenu(enabled = !round.pending && status == VoiceRecorder.Status.Idle, onSkip = model::next)
                 }
             },
@@ -309,8 +311,8 @@ private fun WordStep(
                 meter = { RoundMeter(round) },
                 word = {
                     key(word.id) {
-                        WordCard(word, round.language, normal, slow, navigator, listens = status == VoiceRecorder.Status.Idle) {
-                            if (step.grade == null && !model.microphoneOff) SpeakCue(model.recorder, checking = round.pending)
+                        WordCard(word, round.language, normal, slow, navigator, listens = listens) {
+                            if (step.grade == null && !micUnavailable) SpeakCue(model.recorder, checking = round.pending)
                         }
                     }
                 },
@@ -471,7 +473,7 @@ private fun WordCard(
 
         cue()
 
-        failed?.let { (audio, rate) ->
+        failed?.takeIf { listens }?.let { (audio, rate) ->
             SpeechFailedNote(
                 language = language,
                 limit = (audio.state as? SpeechState.Failed)?.limit,
@@ -583,7 +585,7 @@ private fun WordActions(
             }
         }
 
-        model.microphoneOff -> {
+        model.microphoneOff || status == VoiceRecorder.Status.Unavailable -> {
             TaskActions { width ->
                 Button(
                     busy = round.pending,

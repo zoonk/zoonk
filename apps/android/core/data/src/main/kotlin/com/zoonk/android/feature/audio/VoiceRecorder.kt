@@ -11,6 +11,7 @@ import android.os.SystemClock
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
@@ -36,11 +37,10 @@ class VoiceRecording(
     val audio: ByteArray,
     val durationMs: Long,
     val micStartupMs: Long? = null,
+    val attemptId: UUID = UUID.randomUUID(),
 ) {
-    val attemptId: UUID = UUID.randomUUID()
-
     /** The same take sent without its startup time, so the server grades the words as heard. */
-    fun withoutMicStartup(): VoiceRecording = VoiceRecording(audio, durationMs)
+    fun withoutMicStartup(): VoiceRecording = VoiceRecording(audio, durationMs, attemptId = attemptId)
 
     fun part(): MultipartBody.Part = MultipartBody.Part.createFormData("audio", "answer.m4a", audio.toRequestBody(MEDIA_TYPE))
 
@@ -65,6 +65,8 @@ class VoiceRecorder(
         data object Idle : Status
 
         data object Acquiring : Status
+
+        data object Unavailable : Status
 
         /** [startedAt] is on [SystemClock.elapsedRealtime]. */
         data class Recording(
@@ -104,13 +106,18 @@ class VoiceRecorder(
         status.compareAndSet(Status.Acquiring, Status.Idle)
     }
 
+    fun clearStartFailure() {
+        status.compareAndSet(Status.Unavailable, Status.Idle)
+    }
+
     /**
-     * Opens the microphone for a take; [state] says when it's live, or goes back to [Status.Idle] when it couldn't start.
-     * False without the microphone permission or while another take is open.
+     * Opens the microphone for a take; [state] says when it's live or unavailable.
+     * False when acquisition cannot begin.
      */
     fun start(onRecorded: (VoiceRecording) -> Unit): Boolean {
-        if (status.value != Status.Idle || !hasPermission) return false
+        if (status.value != Status.Idle || !scope.isActive || !hasPermission) return false
         val pressedAt = SystemClock.elapsedRealtime()
+        val attempt = ++opening
         val focus =
             AudioFocusRequest
                 .Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE)
@@ -120,21 +127,26 @@ class VoiceRecorder(
                         .setUsage(AudioAttributes.USAGE_MEDIA)
                         .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
                         .build(),
-                ).setOnAudioFocusChangeListener { change -> if (change < 0) cancel() }
+                ).setOnAudioFocusChangeListener { change -> if (attempt == opening && change < 0) cancel() }
                 .build()
-        if (audio.requestAudioFocus(focus) != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) return false
-        val attempt = ++opening
+        if (audio.requestAudioFocus(focus) != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+            status.value = Status.Unavailable
+            return false
+        }
         status.value = Status.Acquiring
         recentLevels.value = emptyList()
-        scope.launch {
+        scope.launch(start = CoroutineStart.UNDISPATCHED) {
             val file = File(context.cacheDir, "voice-${UUID.randomUUID()}.m4a")
             var recorder: MediaRecorder? = null
+            var startedAt = pressedAt
             try {
                 // Opening can't be interrupted halfway, so a cancel while it runs closes the microphone once it returns.
-                withContext(NonCancellable + opener) { recorder = open(file) }
+                withContext(NonCancellable + opener) {
+                    recorder = open(file, attempt)
+                    startedAt = SystemClock.elapsedRealtime()
+                }
             } finally {
                 val opened = recorder
-                val startedAt = SystemClock.elapsedRealtime()
                 if (opened != null && attempt == opening && isActive) {
                     take = Take(opened, file, focus, onRecorded, startedAt - pressedAt, meter(opened))
                     status.value = Status.Recording(startedAt)
@@ -142,7 +154,7 @@ class VoiceRecorder(
                     opened?.release()
                     file.delete()
                     audio.abandonAudioFocusRequest(focus)
-                    if (attempt == opening) status.value = Status.Idle
+                    if (attempt == opening) status.value = if (isActive) Status.Unavailable else Status.Idle
                 }
             }
         }
@@ -162,18 +174,21 @@ class VoiceRecorder(
     }
 
     /** The prepared and started recorder, or null when the microphone couldn't start. */
-    private fun open(file: File): MediaRecorder? {
-        // The Context constructor is API 31; this one records the same on every version.
-        @Suppress("DEPRECATION")
-        val recorder = MediaRecorder()
+    private fun open(
+        file: File,
+        attempt: Int,
+    ): MediaRecorder? {
+        var recorder: MediaRecorder? = null
         return try {
-            recorder.configure(file)
-            recorder.prepare()
-            recorder.start()
-            recorder
-        } catch (e: Exception) {
-            recorder.release()
-            file.delete()
+            // The Context constructor is API 31; this one records the same on every version.
+            @Suppress("DEPRECATION")
+            val current = MediaRecorder().also { recorder = it }
+            current.configure(file, attempt)
+            current.prepare()
+            current.start()
+            current
+        } catch (_: Exception) {
+            recorder?.release()
             null
         }
     }
@@ -188,7 +203,10 @@ class VoiceRecorder(
             }
         }
 
-    private fun MediaRecorder.configure(file: File) {
+    private fun MediaRecorder.configure(
+        file: File,
+        attempt: Int,
+    ) {
         setAudioSource(MediaRecorder.AudioSource.MIC)
         setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
         setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
@@ -198,14 +216,17 @@ class VoiceRecorder(
         setMaxDuration(MAX_DURATION_MS.toInt())
         setOutputFile(file.path)
         setOnInfoListener { _, what, _ ->
-            if (what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED) scope.launch { stop() }
+            if (what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED) {
+                scope.launch { if (attempt == opening) stop() }
+            }
         }
-        setOnErrorListener { _, _, _ -> scope.launch { cancel() } }
+        setOnErrorListener { _, _, _ -> scope.launch { if (attempt == opening) cancel() } }
     }
 
     private fun finish(deliver: Boolean) {
         val take = take ?: return
         this.take = null
+        opening++
         take.meter.cancel()
         val started = (status.value as? Status.Recording)?.startedAt ?: SystemClock.elapsedRealtime()
         val durationMs = (SystemClock.elapsedRealtime() - started).coerceAtMost(MAX_DURATION_MS)

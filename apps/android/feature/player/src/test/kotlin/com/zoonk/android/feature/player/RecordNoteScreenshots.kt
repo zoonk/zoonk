@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.player
 
 import android.Manifest
+import android.media.AudioManager
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.CompositionLocalProvider
@@ -47,6 +48,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
+import org.robolectric.RuntimeEnvironment
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
@@ -97,10 +99,32 @@ class RecordNoteScreenshots {
     fun spokenGettingReadyPhone() = spoken("lesson-spoken-getting-ready-phone") { askForMicrophone() }
 
     @Test
+    @Config(qualifiers = NARROW)
+    fun spokenIdleLargeText() {
+        RuntimeEnvironment.setFontScale(2f)
+        spoken("lesson-spoken-idle-large-text")
+    }
+
+    @Test
+    @Config(qualifiers = NARROW)
+    fun spokenGettingReadyLargeText() {
+        RuntimeEnvironment.setFontScale(2f)
+        spoken("lesson-spoken-getting-ready-large-text") { askForMicrophone() }
+    }
+
+    @Test
     @Config(qualifiers = PHONE)
     fun spokenMissedStartPhone() =
         spoken("lesson-spoken-missed-start-phone", { spokenGrade = { throw ApiException(ApiError.Unavailable, "MISSED_START", 422) } }) {
             takeChecked()
+        }
+
+    @Test
+    @Config(qualifiers = PHONE)
+    fun spokenMicrophoneUnavailablePhone() =
+        spoken("lesson-spoken-mic-unavailable-phone") {
+            failToOpenMicrophone()
+            rule.waitUntilExactlyOneExists(hasText("Your answer"))
         }
 
     @Test
@@ -141,6 +165,14 @@ class RecordNoteScreenshots {
     @Test
     @Config(qualifiers = PHONE)
     fun pronunciationGettingReadyPhone() = pronunciation("pronunciation-getting-ready-phone") { askForMicrophone() }
+
+    @Test
+    @Config(qualifiers = PHONE)
+    fun pronunciationMicrophoneUnavailablePhone() =
+        pronunciation("pronunciation-mic-unavailable-phone") {
+            failToOpenMicrophone()
+            rule.waitUntilExactlyOneExists(hasText("Skip"))
+        }
 
     @Test
     @Config(qualifiers = PHONE)
@@ -236,6 +268,13 @@ class RecordNoteScreenshots {
         rule.waitUntilExactlyOneExists(hasText("Stop"))
     }
 
+    private fun failToOpenMicrophone() {
+        shadowOf(rule.activity.application).grantPermissions(Manifest.permission.RECORD_AUDIO)
+        val audio = rule.activity.application.getSystemService(AudioManager::class.java)
+        shadowOf(audio).setNextFocusRequestResponse(AudioManager.AUDIOFOCUS_REQUEST_FAILED)
+        rule.onNodeWithText("Record").performClick()
+    }
+
     /** Record while Android asks for the microphone: the take is getting ready until the learner answers. */
     private fun askForMicrophone() {
         shadowOf(rule.activity.application).denyPermissions(Manifest.permission.RECORD_AUDIO)
@@ -266,6 +305,7 @@ class RecordNoteScreenshots {
     }
 
     private companion object {
+        const val NARROW = "w320dp-h760dp-xxhdpi"
         const val PHONE = "w411dp-h891dp-xxhdpi"
         const val MEDIUM = "w700dp-h1000dp-xhdpi"
         const val WIDE = "w1280dp-h800dp-land-xhdpi"

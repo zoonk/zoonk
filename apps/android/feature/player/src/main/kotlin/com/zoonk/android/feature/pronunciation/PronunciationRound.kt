@@ -214,7 +214,12 @@ class PronunciationViewModel(
     }
 
     fun next() {
-        viewModelScope.launch { round?.next() }
+        viewModelScope.launch {
+            val round = round ?: return@launch
+            val previous = round.step
+            round.next()
+            if (round.step != previous) recorder.clearStartFailure()
+        }
     }
 
     fun finish() {
