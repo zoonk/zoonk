@@ -168,6 +168,7 @@ class GoalContentScreenshots {
             mapOf(
                 "subject-exam" to listOf("1 chapter done, 1 you already know", "1. Mechanics"),
                 "chapter" to listOf("Chapter summary"),
+                "reveal-module-partly-left-out" to listOf("Working with data", "2 topics not in your plan"),
             )
 
         val MISSING_CHAPTER =
@@ -228,6 +229,20 @@ class GoalContentScreenshots {
             val syllabus = modulesWithDataOut(reason)
             val (menu, ask) = tools(TutorScope.Subject(GOAL, "data", module = true))
             SubjectPage(syllabus, syllabus.subjects.first { it.key == "data" }, SubjectWrites(), NO_ACTIONS, TODAY, menu, ask)
+        }
+
+        fun modulesWithTopicsLeftOut(): Syllabus {
+            val syllabus = modulesSyllabus()
+            return syllabus.copy(
+                subjects =
+                    syllabus.subjects.map { subject ->
+                        if (subject.key == "data") {
+                            subject.copy(leftOut = listOf("Reading and writing CSV files", "Cleaning messy data"))
+                        } else {
+                            subject
+                        }
+                    },
+            )
         }
 
         /** The written subject as [edit] changes it: graded by level, or waiting for an exam choice. */
@@ -343,6 +358,15 @@ class GoalContentScreenshots {
                 "plan-section-module-taken-out" to
                     { PlanSyllabusSection(modulesWithDataOut("skipped"), {}, Modifier.padding(vertical = 16.dp)) },
                 "reveal-module-taken-out" to { RevealStructure(plan(), modulesWithDataOut("skipped"), Modifier.padding(16.dp)) },
+                "subject-module-partly-left-out" to {
+                    val syllabus = modulesWithTopicsLeftOut()
+                    val (menu, ask) = tools(TutorScope.Subject(GOAL, "data", module = true))
+                    SubjectPage(syllabus, syllabus.subjects.first { it.key == "data" }, SubjectWrites(), NO_ACTIONS, TODAY, menu, ask)
+                },
+                "plan-section-module-partly-left-out" to
+                    { PlanSyllabusSection(modulesWithTopicsLeftOut(), {}, Modifier.padding(vertical = 16.dp)) },
+                "reveal-module-partly-left-out" to
+                    { RevealStructure(plan(), modulesWithTopicsLeftOut(), Modifier.padding(16.dp)) },
                 "subject-written-levels" to { WrittenSubject(::gradedByLevel) },
                 "subject-written-needs-choice" to { WrittenSubject(::waitingForAChoice) },
                 "subject-module" to { Subject("basics") },

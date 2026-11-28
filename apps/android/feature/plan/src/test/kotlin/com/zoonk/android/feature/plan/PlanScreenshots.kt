@@ -1112,6 +1112,24 @@ class PlanScreenshots {
     @Config(qualifiers = "w411dp-h1900dp-xxhdpi")
     fun callsOutOfTimePathPhone() = captureCallsPath("calls-time-path-phone", "time")
 
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun topicsLeftOutOfPathPhone() {
+        val original = page()
+        val phases =
+            original.plan.phases.map { phase ->
+                if (phase.state == PlanPhase.State.CURRENT) {
+                    phase.copy(leftOut = listOf("Reading and writing CSV files", "Cleaning messy data"))
+                } else {
+                    phase
+                }
+            }
+        show(exam = original.copy(plan = original.plan.copy(phases = phases)))
+        compose.onNodeWithText("2 topics not in your plan").performClick()
+        compose.onNodeWithText("Cleaning messy data").assertExists()
+        write("path-left-out-open-phone", compose.onRoot().captureRender().asAndroidBitmap())
+    }
+
     private fun captureCallsPath(
         name: String,
         outsideReason: String = "skippedBase",

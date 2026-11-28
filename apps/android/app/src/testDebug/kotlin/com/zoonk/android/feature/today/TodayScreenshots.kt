@@ -512,6 +512,28 @@ class TodayScreenshots {
                                     ),
                             ),
                     ),
+                "notice-missing-member" to
+                    day(
+                        blocks = lessons(3),
+                        next = 0,
+                        today =
+                            mapOf(
+                                "notice" to "planChange",
+                                "planChange" to
+                                    fixture(
+                                        "plan-change",
+                                        "status" to "proposed",
+                                        "canApply" to true,
+                                        "source" to "memberCheck",
+                                        "operations" to
+                                            ApiJson.parseToJsonElement(
+                                                """[{"kind":"addSkills","skills":[{"area":"Long surahs","beforeSkillId":null,"lessons":1,
+                                                    "name":"Memorize An-Nahl","skillId":"00000000-0000-0000-0000-000000000001"}]}]""",
+                                            ),
+                                        "reason" to "Your plan covered every surah of the Quran except An-Nahl.",
+                                    ),
+                            ),
+                    ),
                 "notice-behind" to
                     day(
                         blocks = lessons(3),
