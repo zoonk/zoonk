@@ -1,3 +1,4 @@
+import { finishPrecisionSchema } from "@zoonk/core/plans/finish-contract";
 import { notPlannedReasonSchema } from "@zoonk/core/view-models/syllabus/contract";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
@@ -123,6 +124,13 @@ export const planPhaseSchema = z
     kind: phaseKindSchema.meta({
       description: "Exam phases have no name; clients name them by kind",
     }),
+    later: z
+      .boolean()
+      .optional()
+      .meta({
+        description:
+          "True when some or all of this phase's work remains owed and has no placement date. Its start and end dates are null.",
+      }),
     lessonsDone: z.int().min(0).meta({ description: "Its lessons the learner studied" }),
     lessonsTotal: z
       .int()
@@ -143,6 +151,9 @@ export const planPhaseSchema = z
       .meta({ description: "The phase's mock exams" }),
     name: z.string(),
     notPlannedReason: notPlannedReasonSchema,
+    precision: finishPrecisionSchema
+      .nullish()
+      .meta({ description: "The precision of the phase's end date when it is available" }),
     short: shortPhaseSchema,
     startDate: isoDateSchema.nullable(),
     state: z

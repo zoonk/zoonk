@@ -1,9 +1,10 @@
 import { readScheduledAnswers } from "../../learner/facts/scheduled-answers";
 import { type PlanView } from "../plan-view-contract";
-import { toIsoDate } from "../planner/plan-calendar";
+import { fromIsoDate, toIsoDate } from "../planner/plan-calendar";
 import { type WritingWork, listRemainingWriting } from "../planner/writing-schedule";
+import { getFinishDisplay, getFinishPrecision } from "./course-finish";
 import { type PlanReadContext } from "./plan-read-projection";
-import { readPlanSummary } from "./plan-summary";
+import { type PlanSummary } from "./plan-summary";
 
 export const MINUTES_PER_HOUR = 60;
 
@@ -42,13 +43,28 @@ export async function loadPlanWritingWork({ goal, state, today }: PlanReadContex
 
 export function buildEstimateView({
   context,
+  summary,
   writing,
 }: {
   context: PlanReadContext;
+  summary: PlanSummary | null;
   writing: readonly WritingWork[];
 }): PlanView["estimate"] {
   const pace = context.state.settings.pace;
-  const endDate = getShownEnd(context);
+  const dated = context.goal.targetDate !== null;
+  const forecast = dated ? null : (summary?.selected.forecast.finish ?? null);
+  const endDate = dated ? getShownEnd(context) : (forecast?.date ?? null);
+  const display = getFinishDisplay(forecast);
+
+  const precision =
+    display.precision ??
+    (forecast?.date && summary
+      ? getFinishPrecision({
+          date: fromIsoDate(forecast.date),
+          today: fromIsoDate(summary.basis.layoutStudyDay),
+        })
+      : null);
+
   const fullCourse = context.goal.kind === "exam" && context.state.settings.fullCourse;
   const { items } = context;
   const totalHours = context.plan.estimateHours ?? 0;
@@ -60,14 +76,11 @@ export function buildEstimateView({
   const remainingWriting = writing.reduce((sum, entry) => sum + entry.minutes, 0);
 
   return {
+    ...display,
     endDate,
-    fullCourseEndDate: fullCourse
-      ? (readPlanSummary({
-          plan: { ...context.plan, userId: context.goal.userId },
-          value: context.plan.summary,
-        })?.advice.fullCourseEndDate ?? null)
-      : null,
+    fullCourseEndDate: fullCourse ? (summary?.advice.fullCourseEndDate ?? null) : null,
     pace: pace ? { factor: pace.factor, source: pace.source } : null,
+    precision,
     remainingHours: toHours(remainingMinutes + remainingWriting),
     totalHours: Math.round(totalHours * 10) / 10,
   };

@@ -195,6 +195,7 @@ const planPhaseSchema = z.object({
   challengeLeftOut: z.boolean().optional(),
   endDate: isoDateSchema.nullable().default(null),
   kind: z.enum(PLAN_PHASE_KINDS).default("learn"),
+  later: z.literal(true).optional(),
   milestone: z.string().nullable().default(null),
   minutes: z.number().min(0).default(0),
   name: z.string().default(""),

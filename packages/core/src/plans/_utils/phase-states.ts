@@ -93,7 +93,7 @@ export function getPhaseStates({
   currentPhase: number | null;
   goalKind: Goal["kind"];
   items: readonly StateItem[];
-  phases: readonly Pick<PlanPhase, "challengeLeftOut" | "kind">[];
+  phases: readonly Pick<PlanPhase, "challengeLeftOut" | "kind" | "later">[];
   studiesPastTarget?: boolean;
   targetDate?: Date | null;
   today?: Date | null;
@@ -125,6 +125,10 @@ export function getPhaseStates({
 
     const leftOut = phaseChallengesRequired && phase.challengeLeftOut === true;
 
-    return getProgressState({ current, finished: !leftOut && isPhaseFinished(required), index });
+    return getProgressState({
+      current,
+      finished: !phase.later && !leftOut && isPhaseFinished(required),
+      index,
+    });
   });
 }

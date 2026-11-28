@@ -153,8 +153,13 @@ export function isPlanUnchanged({
       withoutPlannedLessons(context.state.graph),
     ) &&
     isDeepStrictEqual(state.settings, context.state.settings) &&
+    isDeepStrictEqual(listLaterPhases(context.phases), listLaterPhases(computed.built.phases)) &&
     hasSameWorkload({ computed, context }) &&
     isDeepStrictEqual(listWork(computed.built.items), listWork(toKeyedItems(context))) &&
     (computed.mode !== "automatic" || !restoresCourseOrder({ computed, context }))
   );
+}
+
+function listLaterPhases(phases: PlanContext["phases"]): number[] {
+  return phases.flatMap((phase, index) => (phase.later ? [index] : []));
 }

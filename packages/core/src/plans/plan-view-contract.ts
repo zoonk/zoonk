@@ -19,6 +19,7 @@ import { type PlanStatus } from "../preparation/plan-status";
 import { type WeeklyStudyTime } from "../progress/weekly-study-time-contract";
 import { type WeekDay } from "../sessions/daily-goal";
 import { type NotPlannedReason } from "../view-models/syllabus/syllabus-contract";
+import { type FinishPrecision, type FinishReason } from "./finish-contract";
 import { type MockFundingView } from "./mock-funding-contract";
 import { type PlanNumbers } from "./numbers-contract";
 import { type LearnerPlanOperation, type PlanOperation } from "./plan-contract";
@@ -135,12 +136,14 @@ export type PlanPhaseView = {
   hours: number;
   index: number;
   kind: PlanPhaseKind;
+  later?: boolean;
   lessonsDone: number;
   lessonsTotal: number;
   milestone: string | null;
   mocks: { count: number; nextDate: string | null; nextPlanItemId?: string };
   /** Empty for exam phases, which the apps name by kind. */
   name: string;
+  precision?: FinishPrecision | null;
   short: ShortPhaseView | null;
   startDate: string | null;
   state: "current" | "done" | "leftOut" | "unfinished" | "upcoming";
@@ -227,8 +230,10 @@ export type PlanView = {
   currentPhase: number | null;
   estimate: {
     endDate: string | null;
+    finishReason?: FinishReason | null;
     fullCourseEndDate: string | null;
     pace: { factor: number; source: PaceSource } | null;
+    precision?: FinishPrecision | null;
     remainingHours: number;
     totalHours: number;
   };

@@ -4,7 +4,7 @@ import { getBudgetForGoal, getDaySplit, getGoalShare } from "../goals/daily-budg
 import { findOwnedGoal } from "../learner/_utils/owned-goal";
 import { readFocusSubjects } from "../learner/placement/focus-test-summary";
 import { findOnboardingGoalIds } from "../view-models/onboarding/_utils/onboarding-goals";
-import { getCourseFinish } from "./_utils/course-finish";
+import { getCourseFinish, getFinishDisplay } from "./_utils/course-finish";
 import { applyChangeOperations } from "./_utils/part-areas";
 import { type PlanContext } from "./_utils/plan-context";
 import { toShownShare } from "./_utils/plan-feasibility-view";
@@ -152,6 +152,7 @@ export async function getPlanTimeAdvice({
       advice: {
         coveredShare: null,
         endDate: null,
+        ...getFinishDisplay(null),
         focusSubjects: [],
         fullCourseEndDate: null,
         measure: "goal",
@@ -191,12 +192,14 @@ export async function getPlanTimeAdvice({
 
   const { feasibility } = computed;
   const end = computed.built.estimate.endDate;
+  const finish = getCourseFinish(computed);
   const targetDate = context.goal.targetDate ? toIsoDate(context.goal.targetDate) : null;
 
   return {
     advice: {
       coveredShare: feasibility.deadline ? toShownShare(feasibility) : null,
-      endDate: getCourseFinish(computed),
+      endDate: finish?.date ?? null,
+      ...getFinishDisplay(finish),
       focusSubjects:
         feasibility.deadline !== null && !feasibility.fits ? readFocusSubjects(context.goal) : [],
       fullCourseEndDate: fullCourse

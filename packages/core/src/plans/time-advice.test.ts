@@ -21,6 +21,7 @@ import { findPlanTimeToCover, getPlanTimeAdvice } from "./get-time-advice";
 import { endNoticeWait } from "./notice-wait";
 import { runPlanSetupTask } from "./plan-setup";
 import { parsePlanSettings } from "./planner/plan-state";
+import { previewPlanChange } from "./preview-plan-change";
 import { refreshPlanSuggestion } from "./refresh-plan-suggestion";
 import { type PlanTimeAdviceInput } from "./time-advice-contract";
 
@@ -211,13 +212,29 @@ describe(getPlanTimeAdvice, () => {
       targetDate: null,
     });
 
+    await expect(
+      previewPlanChange({
+        goalId: goal.id,
+        input: { operations: [{ kind: "setDailyMinutes", minutes: 30 }], timeZone: "UTC" },
+      }),
+    ).resolves.toMatchObject({
+      preview: { finishDate: end(long), finishReason: null, precision: "month" },
+      status: "ready",
+    });
+
     await updateGoal({
       goalId: goal.id,
       input: { dailyMinutes: 30, studyDays: EVERY_DAY, timeZone: "UTC" },
     });
 
     const saved = await getGoalPlan(goal.id);
-    expect(saved.status === "ready" && saved.plan.estimate.endDate).toBe(end(long));
+
+    expect(saved).toMatchObject({
+      plan: { estimate: { endDate: end(long), finishReason: null, precision: "month" } },
+      status: "ready",
+    });
+
+    expect(long).toMatchObject({ advice: { finishReason: null, precision: "month" } });
   });
 
   it("has no finish date when an undated plan cannot schedule the whole curriculum", async () => {
@@ -233,7 +250,24 @@ describe(getPlanTimeAdvice, () => {
 
     await expect(
       getPlanTimeAdvice({ goalId: goal.id, input: { dailyMinutes: 5, studyDays: [0] } }),
-    ).resolves.toMatchObject({ advice: { endDate: null, ready: true }, status: "ready" });
+    ).resolves.toMatchObject({
+      advice: { endDate: null, finishReason: "beyondHorizon", precision: null, ready: true },
+      status: "ready",
+    });
+
+    await updateGoal({
+      goalId: goal.id,
+      input: { dailyMinutes: 5, studyDays: [0], timeZone: "UTC" },
+    });
+
+    await expect(getGoalPlan(goal.id)).resolves.toMatchObject({
+      plan: {
+        end: null,
+        estimate: { endDate: null, finishReason: "beyondHorizon", precision: null },
+        phases: expect.arrayContaining([expect.objectContaining({ endDate: null, later: true })]),
+      },
+      status: "ready",
+    });
   });
 
   it("recommends the least fitting accepted time when more time adds an exam mock", async () => {

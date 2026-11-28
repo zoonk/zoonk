@@ -1,5 +1,7 @@
+import { getFinishPrecision } from "../_utils/course-finish";
 import { type DailyNeed, type SelectedSummary } from "../_utils/selected-summary-contract";
 import { MINUTES_PER_DAY } from "../daily-minutes";
+import { MAX_PLAN_DAYS } from "../target-date-range";
 import { type BuildPlanInput, type BuiltPlan } from "./build-plan";
 import { withDailyMinutes } from "./daily-time-plans";
 import { findDayMock, getSpendable } from "./mock-day";
@@ -7,8 +9,6 @@ import { addDays, getStudyMinutes, toIsoDate } from "./plan-calendar";
 import { PLAN_EPSILON } from "./plan-precision";
 import { createDays, getCalendar, getPlanStart } from "./plan-run-days";
 import { type DayShape, type PlanDay, getLessonCapacity } from "./schedule-units";
-
-const FINISH_HORIZON_DAYS = 1100;
 
 type Finish = SelectedSummary["forecast"]["finish"];
 
@@ -193,41 +193,30 @@ export function estimateFinish({
   remaining: number;
 }): Finish {
   if (remaining <= PLAN_EPSILON) {
-    return { date: null, reason: "nothingLeft" };
+    return { date: null, precision: null, reason: "nothingLeft" };
   }
 
-  const today = toIsoDate(input.today);
   const calendar = getCalendar(input);
-  const ahead = built.planDays.filter((day) => toIsoDate(day.date) >= today);
-  const laidOut = new Map(ahead.map((day) => [toIsoDate(day.date), day]));
-  const share = ahead.findLast((day) => day.shape.open)?.shape.share ?? 1;
+  const share = built.planDays.findLast((day) => day.shape.open)?.shape.share ?? 1;
 
-  const capacityOn = (date: Date) => {
-    const day = laidOut.get(toIsoDate(date));
+  const capacities = { total: 0 };
 
-    return day?.shape.open ? getLessonCapacity(day) : getStudyMinutes({ calendar, date }) * share;
-  };
+  for (let offset = 0; offset < MAX_PLAN_DAYS; offset += 1) {
+    const day = built.planDays[offset];
+    const date = day?.date ?? addDays(input.today, offset);
 
-  const days = Array.from({ length: FINISH_HORIZON_DAYS }, (_, offset) =>
-    addDays(input.today, offset),
-  );
+    capacities.total += day?.shape.open
+      ? getLessonCapacity(day)
+      : getStudyMinutes({ calendar, date }) * share;
 
-  const capacities = days.map((date) => capacityOn(date));
-
-  const sums = capacities.reduce<number[]>((totals, capacity) => {
-    totals.push((totals.at(-1) ?? 0) + capacity);
-    return totals;
-  }, []);
-
-  const at = sums.findIndex((sum) => sum >= remaining - PLAN_EPSILON);
-  const date = days[at];
-
-  if (date) {
-    return { date: toIsoDate(date) };
+    if (capacities.total >= remaining - PLAN_EPSILON) {
+      return { date: toIsoDate(date), precision: getFinishPrecision({ date, today: input.today }) };
+    }
   }
 
   return {
     date: null,
-    reason: (sums.at(-1) ?? 0) <= PLAN_EPSILON ? "noStudyDays" : "beyondHorizon",
+    precision: null,
+    reason: capacities.total <= PLAN_EPSILON ? "noStudyDays" : "beyondHorizon",
   };
 }

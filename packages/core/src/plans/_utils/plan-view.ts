@@ -263,7 +263,7 @@ export async function buildPlanView({
       timeZone: context.timeZone,
       today: context.today,
     }),
-    estimate: buildEstimateView({ context, writing }),
+    estimate: buildEstimateView({ context, summary, writing }),
     examChoices,
     examDocument: getExamDocument(goal),
     feasibility,

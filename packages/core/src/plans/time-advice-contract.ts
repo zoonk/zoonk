@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { type LanguageAim } from "../language/aims/language-aims";
 import { MAX_SUGGESTED_DAILY_MINUTES } from "./daily-minutes";
+import { finishDisplayFields } from "./finish-contract";
 import { planNumbersSchema } from "./numbers-contract";
 
 const isoDateSchema = z.iso.date();
@@ -104,8 +105,9 @@ export const planTimeAdviceSchema = z
       .nullable()
       .default(null)
       .describe(
-        "Estimated finish date for an undated goal at the requested daily time and study week, including practice and milestones. Null for dated goals, while not ready, or when the schedule cannot hold the whole selected curriculum. This estimate does not set a deadline.",
+        "Estimated finish date for an undated goal at the requested daily time and study week. Null for dated goals, while not ready, or when there is no forecast date (see finishReason).",
       ),
+    ...finishDisplayFields,
     focusSubjects: z
       .array(z.object({ name: z.string(), shortName: z.string().nullable() }))
       .default([])

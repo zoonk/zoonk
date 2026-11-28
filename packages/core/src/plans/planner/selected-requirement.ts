@@ -47,7 +47,13 @@ function linkRequirement({
   teach: (lessons: readonly PlannerLesson[]) => Teach;
 }): Map<string, SkillRequirement> {
   const chosen = withBaseChoices({ choices: getKeptBaseChoices(input), input });
-  const standIns = getStandInLessons({ lessons: chosen.lessons, skills: chosen.graph.skills });
+
+  const standIns = getStandInLessons({
+    includeShortRemainder: input.goal.targetDate === null,
+    lessons: chosen.lessons,
+    skills: chosen.graph.skills,
+  });
+
   const taught = teach(chosen.lessons);
 
   const linked = Map.groupBy(

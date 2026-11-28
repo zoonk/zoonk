@@ -4,10 +4,12 @@ const MIN_STAND_IN_LESSONS = 4;
 export const CHAPTER_LESSONS = 10;
 
 export function countStandInLessons({
+  includeShortRemainder = false,
   lessons,
   outlined = false,
   taught,
 }: {
+  includeShortRemainder?: boolean;
   lessons: number;
   outlined?: boolean;
   taught: number;
@@ -21,5 +23,5 @@ export function countStandInLessons({
   }
 
   const missing = lessons - taught;
-  return missing >= MIN_STAND_IN_LESSONS ? missing : 0;
+  return includeShortRemainder || missing >= MIN_STAND_IN_LESSONS ? Math.max(0, missing) : 0;
 }

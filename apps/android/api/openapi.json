@@ -94212,9 +94212,28 @@
             "properties": {
               "endDate": {
                 "nullable": true,
+                "description": "The saved finish forecast for an undated plan, or the last planned date for a dated plan. Null when unavailable (see finishReason).",
                 "type": "string",
                 "format": "date",
                 "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+              },
+              "finishReason": {
+                "description": "Why an undated forecast has no finish date, when a forecast is available",
+                "nullable": true,
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PlanFinishReason"
+                  }
+                ]
+              },
+              "precision": {
+                "description": "The precision of the estimated finish date when it is available",
+                "nullable": true,
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PlanFinishPrecision"
+                  }
+                ]
               },
               "fullCourseEndDate": {
                 "nullable": true,
@@ -95048,6 +95067,21 @@
         ],
         "additionalProperties": false
       },
+      "PlanFinishReason": {
+        "type": "string",
+        "enum": [
+          "nothingLeft",
+          "noStudyDays",
+          "beyondHorizon"
+        ]
+      },
+      "PlanFinishPrecision": {
+        "type": "string",
+        "enum": [
+          "month",
+          "year"
+        ]
+      },
       "ExamChoice": {
         "type": "object",
         "properties": {
@@ -95388,6 +95422,10 @@
             ],
             "description": "Exam phases have no name; clients name them by kind"
           },
+          "later": {
+            "description": "True when some or all of this phase's work remains owed and has no placement date. Its start and end dates are null.",
+            "type": "boolean"
+          },
           "lessonsDone": {
             "type": "integer",
             "minimum": 0,
@@ -95437,6 +95475,15 @@
           },
           "notPlannedReason": {
             "$ref": "#/components/schemas/NotPlannedReason"
+          },
+          "precision": {
+            "description": "The precision of the phase's end date when it is available",
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlanFinishPrecision"
+              }
+            ]
           },
           "short": {
             "nullable": true,
@@ -96330,11 +96377,29 @@
           },
           "endDate": {
             "default": null,
-            "description": "Estimated finish date for an undated goal at the requested daily time and study week, including practice and milestones. Null for dated goals, while not ready, or when the schedule cannot hold the whole selected curriculum. This estimate does not set a deadline.",
+            "description": "Estimated finish date for an undated goal at the requested daily time and study week. Null for dated goals, while not ready, or when there is no forecast date (see finishReason).",
             "nullable": true,
             "type": "string",
             "format": "date",
             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+          },
+          "finishReason": {
+            "description": "Why an undated forecast has no finish date, when a forecast is available",
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlanFinishReason"
+              }
+            ]
+          },
+          "precision": {
+            "description": "The precision of the estimated finish date when it is available",
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlanFinishPrecision"
+              }
+            ]
           },
           "focusSubjects": {
             "default": [],
@@ -96631,10 +96696,28 @@
           },
           "finishDate": {
             "nullable": true,
-            "description": "When the plan would finish its whole course after the change: null while it's being built, for a plan with a date (it ends on that date whatever it covers), and when the course doesn't fit in the days a plan lays out. Date a language aim's choice by this, as the time advice's `endDate` does",
+            "description": "Estimated finish date for an undated plan after the change, as in time advice. Null while the plan is being built, for dated plans, or when there is no forecast date (see finishReason)",
             "type": "string",
             "format": "date",
             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+          },
+          "finishReason": {
+            "description": "Why an undated forecast has no finish date, when a forecast is available",
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlanFinishReason"
+              }
+            ]
+          },
+          "precision": {
+            "description": "The precision of the estimated finish date when it is available",
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlanFinishPrecision"
+              }
+            ]
           },
           "ready": {
             "type": "boolean",

@@ -71,6 +71,30 @@ describe(buildPhaseViews, () => {
     expect(views.map((view) => view.notPlannedReason)).toStrictEqual([null, "time", "skipped"]);
   });
 
+  it("has no milestone date for work that stays owed outside placement", () => {
+    const [started, upcoming] = buildPhaseViews({
+      chapterTitles: new Map(),
+      currentPhase: 0,
+      goalKind: "learn",
+      items: [lesson(0, 0)],
+      phases: [phase({ later: true, startDate: "2026-09-28" }), phase({ later: true })],
+      skillAreas: new Map(),
+      upNextItemId: null,
+    });
+
+    expect(started).toMatchObject({
+      endDate: null,
+      later: true,
+      lessonsTotal: 1,
+      notPlannedReason: null,
+      precision: null,
+      startDate: null,
+      state: "current",
+    });
+
+    expect(upcoming).toMatchObject({ endDate: null, later: true, notPlannedReason: null });
+  });
+
   it("uses the planner's minutes for each phase", () => {
     const views = buildPhaseViews({
       chapterTitles: new Map(),

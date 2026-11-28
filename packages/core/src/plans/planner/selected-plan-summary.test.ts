@@ -1,12 +1,13 @@
 import { describe, expect, it } from "vitest";
+import { isPlanFinished } from "../_utils/plan-end";
 import { chooseBases } from "./base-choices";
 import { type BuildPlanInput, buildPlan } from "./build-plan";
-import { type FixedDays, estimateDailyNeed } from "./daily-need";
-import { fromIsoDate, toIsoDate } from "./plan-calendar";
+import { type FixedDays, estimateDailyNeed, estimateFinish } from "./daily-need";
+import { addDays, fromIsoDate, toIsoDate } from "./plan-calendar";
 import { type ExistingPlanItem } from "./plan-items";
 import { type PlanGraphSkill, parsePlanSettings } from "./plan-state";
 import { DEFAULT_LESSON_MINUTES, type PlannerLesson } from "./plan-units";
-import { type DayShape, type FixedEvent } from "./schedule-units";
+import { type DayShape, type FixedEvent, getCumulativeCapacity } from "./schedule-units";
 import { summarizeSelectedPlan } from "./selected-plan-summary";
 
 const TODAY = fromIsoDate("2026-09-28");
@@ -439,8 +440,91 @@ describe(summarizeSelectedPlan, () => {
 
     expect(summarize(finished).forecast.finish).toStrictEqual({
       date: null,
+      precision: null,
       reason: "nothingLeft",
     });
+  });
+
+  it("uses month precision through 548 days and year precision for farther finishes", () => {
+    const input = learnInput({ goal: { dailyMinutes: 30, kind: "learn", targetDate: null } });
+    const built = buildPlan(input);
+    const capacity = getCumulativeCapacity(built.planDays);
+
+    const finishAt = (dayOffset: number) =>
+      estimateFinish({ built, input, remaining: capacity[dayOffset] ?? 0 });
+
+    expect(finishAt(548)).toStrictEqual({ date: "2028-03-29", precision: "month" });
+    expect(finishAt(549)).toStrictEqual({ date: "2028-03-30", precision: "year" });
+    expect(finishAt(3649)).toStrictEqual({ date: "2036-09-24", precision: "year" });
+
+    expect(estimateFinish({ built, input, remaining: (capacity.at(-1) ?? 0) + 1 })).toMatchObject({
+      date: null,
+      reason: "beyondHorizon",
+    });
+  });
+
+  it("keeps work outside the placement window owed until a later plan can fit it", () => {
+    const input = learnInput({
+      goal: { dailyMinutes: 15, kind: "learn", targetDate: null },
+      graph: {
+        phases: [
+          { milestone: null, name: "First" },
+          { milestone: null, name: "Next" },
+        ],
+        skills: Array.from({ length: 30 }, (_, index) =>
+          skill(`s${index}`, { lessons: 200, phase: index < 20 ? 0 : 1 }),
+        ),
+      },
+      lessons: [],
+      settings: parsePlanSettings({
+        startDate: "2026-09-28",
+        weekdayMinutes: [0, 15, 15, 15, 15, 15, 0],
+      }),
+    });
+
+    const built = buildPlan(input);
+    const summary = summarizeSelectedPlan({ built, examSubjects: null, input });
+
+    expect(summary.forecast.finish).toMatchObject({ date: null, reason: "beyondHorizon" });
+    expect(summary.requirement.remainingRaw).toBe(30 * 200 * DEFAULT_LESSON_MINUTES);
+    expect(built.droppedSkillIds).toContain("s29");
+    expect(built.phases[0]).toMatchObject({ endDate: null, later: true });
+    expect(built.phases[1]).toMatchObject({ endDate: null, later: true });
+
+    const items = built.items.map((item, position) => ({
+      ...item,
+      id: item.key,
+      position,
+      status: "done" as const,
+    }));
+
+    const today = addDays(built.planDays.at(-1)?.date ?? input.today, 1);
+
+    expect(
+      isPlanFinished({ goalKind: "learn", items, phases: built.phases, targetDate: null, today }),
+    ).toBe(false);
+
+    const next = buildPlan({ ...input, items, mode: "automatic", today });
+
+    expect(next.droppedSkillIds).toStrictEqual([]);
+    expect(next.phases[1]).toMatchObject({ endDate: expect.any(String) });
+    expect(next.phases[1]?.later).toBeUndefined();
+  });
+
+  it("counts a partly outlined skill's short remainder until the outline is complete", () => {
+    const partlyWritten = learnInput({
+      goal: { dailyMinutes: 15, kind: "learn", targetDate: null },
+      graph: { phases: [], skills: [skill("s1", { lessons: 4 })] },
+      lessons: [lesson("l1", ["s1"], 6)],
+    });
+
+    const outlined = {
+      ...partlyWritten,
+      graph: { phases: [], skills: [skill("s1", { lessons: 4, outlined: true })] },
+    };
+
+    expect(summarize(partlyWritten).requirement.remainingRaw).toBe(6 + 3 * DEFAULT_LESSON_MINUTES);
+    expect(summarize(outlined).requirement.remainingRaw).toBe(6);
   });
 
   it("raises the phase-dates card only for a build that kept dates that cost something", () => {

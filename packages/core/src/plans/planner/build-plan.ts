@@ -26,6 +26,7 @@ import { type PlanBase } from "./plan-bases";
 import { getLastLessonDate, scheduleRunEvents } from "./plan-events";
 import { type ExistingPlanItem, fromUnit, mergePlanItems } from "./plan-items";
 import { type ExamWindow } from "./plan-phases";
+import { PLAN_EPSILON } from "./plan-precision";
 import { getPlanStart } from "./plan-run-days";
 import { type PlanGraph, type PlanSettings } from "./plan-state";
 import { type PlannerLesson } from "./plan-units";
@@ -105,11 +106,42 @@ export function buildPlan(given: BuildPlanInput) {
 
   const built = settlePlannedBosses({ build: buildWithBosses, input });
 
-  return appendExamExtras({
+  const planned = appendExamExtras({
     built: withoutUntestableChallenges({ built, input }),
     input,
     requested: given,
   });
+
+  return given.goal.targetDate ? planned : markLaterPhases({ built: planned, graph: input.graph });
+}
+
+function markLaterPhases<Plan extends BuiltPlan>({
+  built,
+  graph,
+}: {
+  built: Plan;
+  graph: PlanGraph;
+}): Plan {
+  const waiting = new Set(
+    built.skillMinutes
+      .filter(({ covered, total }) => covered < total - PLAN_EPSILON)
+      .map(({ skillId }) => skillId),
+  );
+
+  if (waiting.size === 0) {
+    return built;
+  }
+
+  const later = new Set(
+    graph.skills.filter(({ skillId }) => waiting.has(skillId)).map(({ phase }) => phase),
+  );
+
+  return {
+    ...built,
+    phases: built.phases.map((phase, index) =>
+      later.has(index) ? { ...phase, endDate: null, later: true } : phase,
+    ),
+  };
 }
 
 function buildWithBosses(input: BuildPlanInput): BuiltPlan {

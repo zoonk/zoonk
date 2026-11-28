@@ -5,6 +5,7 @@ import { type PlanChapterView, type PlanPhaseView } from "../plan-view-contract"
 import { toIsoDate } from "../planner/plan-calendar";
 import { isWritingItem } from "../planner/plan-item-rules";
 import { type PlanPhase } from "../planner/plan-state";
+import { getPhaseMilestoneDates } from "./course-finish";
 import { buildCheckpoint } from "./phase-checkpoint";
 import { getPhaseStates } from "./phase-states";
 import { hasPlanDeadline, withinLessonScope } from "./plan-end";
@@ -327,17 +328,17 @@ export function buildPhaseViews({
         upNextItemId,
       }),
       checkpoint: buildCheckpoint({ items: inPhase, locked: !challengesOpen, timings }),
-      endDate: phase.endDate,
+      ...getPhaseMilestoneDates({ phase, today }),
       hours: Math.round((minutes / MINUTES_PER_HOUR) * 10) / 10,
       index,
       kind: phase.kind,
+      ...(phase.later && { later: true }),
       ...countLessonProgress(lessons),
       milestone: phase.milestone,
       mocks: buildMocks({ items: inPhase, mocksRequirePlus, today }),
       name: phase.name,
-      notPlannedReason: states[index] === "leftOut" ? reason : null,
+      notPlannedReason: states[index] === "leftOut" && !phase.later ? reason : null,
       short: toShortPhaseView({ phase, shape: shortPlan }),
-      startDate: phase.startDate,
       state: states[index] ?? "upcoming",
     };
   });
