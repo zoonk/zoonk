@@ -5,7 +5,7 @@ import { formatUntrustedInput } from "../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
-import { fillPromptLanguages } from "../_utils/prompt-language";
+import { fillPromptLanguages, getLanguagePromptContext } from "../_utils/prompt-language";
 import {
   type ConversationTurn,
   formatConversationTranscript,
@@ -56,6 +56,12 @@ function buildSchema(labels: [string, ...string[]]) {
 export type CheckConversationObjectivesSchema = z.infer<ReturnType<typeof buildSchema>>;
 
 function buildUserPrompt(params: CheckConversationObjectivesParams): string {
+  const languages = getLanguagePromptContext({
+    targetLanguage: params.targetLanguage,
+    targetRegion: params.targetRegion,
+    userLanguage: params.learnerLanguage,
+  });
+
   const objectives = params.objectives
     .map((objective) => `- "${objective.label}": ${objective.description}`)
     .join("\n");
@@ -66,6 +72,7 @@ function buildUserPrompt(params: CheckConversationObjectivesParams): string {
   });
 
   return `
+    TARGET_LANGUAGE: ${languages.targetLanguageName}
     SITUATION: ${params.situation}
     CHARACTER_NOTES: ${params.characterNotes}
     OBJECTIVES:

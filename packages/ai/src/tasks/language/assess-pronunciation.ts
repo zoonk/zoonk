@@ -4,7 +4,7 @@ import { z } from "zod";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
-import { fillPromptLanguages } from "../_utils/prompt-language";
+import { fillPromptLanguages, getPromptLanguageName } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import regionalFormsPrompt from "../_utils/regional-forms.prompt.md";
 import {
@@ -86,18 +86,27 @@ function buildSystemPrompt({
 function buildUserPrompt({
   expectedWords,
   expectedText,
+  language,
+  learnerLanguage,
   romanization,
   transcriberHeard,
 }: {
   expectedWords: readonly string[];
   expectedText: string;
+  language: string;
+  learnerLanguage?: string;
   romanization?: string | null;
   transcriberHeard?: string;
 }): string {
+  const learnerLine = learnerLanguage
+    ? `LEARNER_LANGUAGE: ${getPromptLanguageName({ language: learnerLanguage })}\n`
+    : "";
+
   const reading = romanization ? `\nEXPECTED_PRONUNCIATION: ${romanization}` : "";
   const transcriber = transcriberHeard ? `\nTRANSCRIBER_HEARD: ${transcriberHeard}` : "";
 
-  return `EXPECTED_SENTENCE: ${expectedText}${reading}${transcriber}
+  return `LANGUAGE: ${getPromptLanguageName({ language })}
+${learnerLine}EXPECTED_SENTENCE: ${expectedText}${reading}${transcriber}
 WORDS:
 ${expectedWords.map((word, index) => `${index + 1}. ${word}`).join("\n")}`;
 }
@@ -125,6 +134,8 @@ export async function assessPronunciation({
   const userPrompt = buildUserPrompt({
     expectedText,
     expectedWords,
+    language,
+    learnerLanguage,
     romanization,
     transcriberHeard,
   });
