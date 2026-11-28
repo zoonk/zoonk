@@ -6,6 +6,8 @@ export type ExtractionDocument = { sourceId: string; text: string | null };
 
 export type Passage = { document: number; passage: string };
 
+type BlueprintSubject = BlueprintExtraction["subjects"][number];
+
 const WORD_PATTERN = /[\p{L}\p{N}]+/gu;
 
 function resolvePassage({
@@ -26,6 +28,33 @@ function resolvePassage({
     : true;
 
   return { citation: { passage: passage.passage, sourceId: document.sourceId }, found };
+}
+
+/** The name is in the document's own text, inside a passage quoted from it. */
+function isNameQuoted({
+  documents,
+  name,
+  passages,
+}: {
+  documents: ExtractionDocument[];
+  name: string;
+  passages: Passage[];
+}): boolean {
+  const names = [name];
+
+  return passages.some(({ document, passage }) => {
+    const text = documents[document - 1]?.text;
+
+    if (!text) {
+      return false;
+    }
+
+    return (
+      isPassageInDocument({ passage, text }) &&
+      findNamesInDocument({ names, text: passage }).size > 0 &&
+      findNamesInDocument({ names, text }).size > 0
+    );
+  });
 }
 
 export function toClaimSource({
@@ -144,4 +173,54 @@ export function toPartPassages({
     ...own,
     ...found.filter((passage) => namesPart({ name, passage: passage.passage })),
   ]);
+}
+
+/** Without searchable document text, topics rely on the model's reading. */
+export function findStatedTopics({
+  documents,
+  subject,
+}: {
+  documents: ExtractionDocument[];
+  subject: BlueprintSubject;
+}): string[] {
+  const numbers = new Set(subject.passages.map((passage) => passage.document));
+  const cited = [...numbers].flatMap((number) => documents[number - 1] ?? []);
+
+  if (cited.some((document) => !document.text)) {
+    return subject.topics;
+  }
+
+  const stated = new Set(
+    cited.flatMap((document) =>
+      document.text ? [...findNamesInDocument({ names: subject.topics, text: document.text })] : [],
+    ),
+  );
+
+  return subject.topics.filter((topic) => stated.has(topic));
+}
+
+function hasStatedTopic({
+  documents,
+  subject,
+}: {
+  documents: ExtractionDocument[];
+  subject: BlueprintSubject;
+}) {
+  const cited = subject.passages.flatMap(({ document }) => documents[document - 1] ?? []);
+
+  return (
+    cited.length > 0 &&
+    cited.every((document) => document.text) &&
+    findStatedTopics({ documents, subject }).length > 0
+  );
+}
+
+export function isInLearnerNotes({
+  documents,
+  subject,
+}: {
+  documents: ExtractionDocument[];
+  subject: BlueprintSubject;
+}) {
+  return isNameQuoted({ documents, ...subject }) || hasStatedTopic({ documents, subject });
 }

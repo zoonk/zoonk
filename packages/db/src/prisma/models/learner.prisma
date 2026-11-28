@@ -56,41 +56,40 @@ model LearnerSkill {
 /// `focusTestId` is the Focus test sitting it was answered in (kept on the goal, not a table), so
 /// only that sitting rewards it.
 model Attempt {
-  id             String        @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  userId         String        @map("user_id") @db.Uuid
-  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  stepId         String?       @map("step_id") @db.Uuid
-  step           Step?         @relation(fields: [stepId], references: [id], onDelete: SetNull)
-  itemId         String?       @map("item_id") @db.Uuid
-  item           Item?         @relation(fields: [itemId], references: [id], onDelete: SetNull)
-  skillId        String?       @map("skill_id") @db.Uuid
-  skill          Skill?        @relation(fields: [skillId], references: [id], onDelete: SetNull)
-  studySessionId String?       @map("study_session_id") @db.Uuid
-  studySession   StudySession? @relation(fields: [studySessionId], references: [id], onDelete: SetNull)
-  mockExamId     String?       @map("mock_exam_id") @db.Uuid
-  mockExam       MockExam?     @relation(fields: [mockExamId], references: [id], onDelete: SetNull)
-  focusTestId    String?       @map("focus_test_id") @db.Uuid
+  id             String           @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId         String           @map("user_id") @db.Uuid
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stepId         String?          @map("step_id") @db.Uuid
+  step           Step?            @relation(fields: [stepId], references: [id], onDelete: SetNull)
+  itemId         String?          @map("item_id") @db.Uuid
+  item           Item?            @relation(fields: [itemId], references: [id], onDelete: SetNull)
+  skillId        String?          @map("skill_id") @db.Uuid
+  skill          Skill?           @relation(fields: [skillId], references: [id], onDelete: SetNull)
+  studySessionId String?          @map("study_session_id") @db.Uuid
+  studySession   StudySession?    @relation(fields: [studySessionId], references: [id], onDelete: SetNull)
+  mockExamId     String?          @map("mock_exam_id") @db.Uuid
+  mockExam       MockExam?        @relation(fields: [mockExamId], references: [id], onDelete: SetNull)
+  focusTestId    String?          @map("focus_test_id") @db.Uuid
   answer         Json
-  targetLanguage String?       @map("target_language") @db.VarChar(10)
-  isCorrect      Boolean       @map("is_correct")
-  /// Lesson origin survives deletion of the step. Older writes can still be identified by stepId.
-  /// Required once released.
-  fromLesson     Boolean?      @map("from_lesson")
+  targetLanguage String?          @map("target_language") @db.VarChar(10)
+  isCorrect      Boolean          @map("is_correct")
+  /// Lesson origin survives deletion of the step.
+  fromLesson     Boolean          @map("from_lesson")
   evidence       AttemptEvidence?
   cause          MistakeCause?
-  isPlacement    Boolean       @default(false) @map("is_placement")
+  isPlacement    Boolean          @default(false) @map("is_placement")
   score          Float?
-  durationMs     Int           @map("duration_ms")
-  answeredAt     DateTime      @default(now()) @map("answered_at")
-  localDate      DateTime      @map("local_date") @db.Date
-  hour           Int           @db.SmallInt
-  weekday        Int           @db.SmallInt
+  durationMs     Int              @map("duration_ms")
+  answeredAt     DateTime         @default(now()) @map("answered_at")
+  localDate      DateTime         @map("local_date") @db.Date
+  hour           Int              @db.SmallInt
+  weekday        Int              @db.SmallInt
   mistakes       Mistake[]
 
   @@unique([mockExamId, itemId], name: "mockAttempt")
   @@index([userId, answeredAt])
   @@index([userId, skillId])
-  @@index([userId, skillId], map: "attempts_test_answers_user_id_skill_id_idx", where: raw("((mock_exam_id IS NULL) AND (is_placement OR ((item_id IS NOT NULL) AND (from_lesson IS NOT TRUE) AND (step_id IS NULL) AND (study_session_id IS NULL))))"))
+  @@index([userId, skillId], map: "attempts_test_answers_user_id_skill_id_idx", where: raw("((mock_exam_id IS NULL) AND (is_placement OR ((item_id IS NOT NULL) AND (NOT from_lesson) AND (study_session_id IS NULL))))"))
   @@index([stepId])
   @@index([itemId])
   @@index([skillId])

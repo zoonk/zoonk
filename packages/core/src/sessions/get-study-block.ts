@@ -1,6 +1,5 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { NOT_LESSON_ANSWER_FILTER } from "@zoonk/db/lesson-answer";
 import { io } from "next/cache";
 import {
   getCheckpointQuestionCount,
@@ -120,11 +119,11 @@ export async function loadStudyBlock(
       orderBy: [{ answeredAt: "asc" }, { id: "asc" }],
       select: { answer: true, id: true, isCorrect: true, itemId: true },
       where: {
-        AND: NOT_LESSON_ANSWER_FILTER,
         OR: [
           { itemId: { in: storedItemIds } },
           { id: { in: storedPayload.checkpointAnswers.map((answer) => answer.attemptId) } },
         ],
+        fromLesson: false,
         studySessionId: sessionId,
         userId: owned.userId,
       },

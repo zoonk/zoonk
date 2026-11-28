@@ -9,7 +9,6 @@ import {
   prisma,
   sql,
 } from "@zoonk/db";
-import { LESSON_ANSWER_FILTER, NOT_LESSON_ANSWER_SQL } from "@zoonk/db/lesson-answer";
 import { findActiveSubscription } from "../../auth/subscription";
 import { CHECKPOINT_LEDGER_KINDS } from "../../checkpoints/_utils/checkpoint-results";
 import { getExamPrepAccess as getTierExamPrep } from "../../entitlements/limits";
@@ -44,7 +43,7 @@ async function loadUnseenAnswers({
     Pick<Attempt, "answeredAt" | "isCorrect" | "skillId"> & { isCold: boolean }
   >({
     columns: sql`answered_at AS "answeredAt", is_correct AS "isCorrect", skill_id AS "skillId",
-      (${NOT_LESSON_ANSWER_SQL}) AS "isCold"`,
+      NOT from_lesson AS "isCold"`,
     order: "first",
     userId,
     where: sql`skill_id = ANY(${skillIds}::uuid[]) AND answer <> ${JSON.stringify(DONT_KNOW)}::jsonb`,
@@ -59,7 +58,7 @@ async function loadUnseenAnswers({
 const SHOWING_ANSWER = {
   OR: [
     { itemId: null },
-    LESSON_ANSWER_FILTER,
+    { fromLesson: true },
     { isCorrect: true, isPlacement: false, studySessionId: { not: null } },
   ],
 };

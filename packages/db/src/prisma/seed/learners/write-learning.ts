@@ -95,6 +95,7 @@ async function writeAttempt(
     cause: attempt.isCorrect ? null : (attempt.mistake?.cause ?? null),
     durationMs: attempt.seconds * MS_PER_SECOND,
     evidence: getSeedAnswerEvidence(learner.attempts, attempt),
+    fromLesson: stepId !== null,
     isCorrect: attempt.isCorrect,
     itemId,
     skillId,

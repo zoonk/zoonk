@@ -201,6 +201,7 @@ function toBlockAttempts(
         answeredAt,
         durationMs: Math.round(step),
         evidence,
+        fromLesson: false,
         isCorrect: true,
         isPlacement,
         itemId,

@@ -21,6 +21,7 @@ export async function attemptFixture(
     data: {
       answer: { selectedIndex: 0 },
       durationMs: DEFAULT_ATTEMPT_DURATION_MS,
+      fromLesson: Boolean(attrs.stepId),
       hour: answeredAt.getUTCHours(),
       isCorrect: true,
       localDate: toUTCMidnight(answeredAt),
