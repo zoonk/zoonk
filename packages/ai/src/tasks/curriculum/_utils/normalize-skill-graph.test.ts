@@ -473,6 +473,59 @@ describe(normalizeSkillGraph, () => {
     ]);
   });
 
+  it("binds topicless writing to its task's exact option and keeps common writing independent", () => {
+    const french = "French";
+    const spanish = "Spanish";
+
+    const outline = {
+      name: "Language exam",
+      notes: [],
+      subjects: [choiceOption(french, "French reading"), choiceOption(spanish, "Spanish reading")],
+      topicFrequency: [],
+      writtenTasks: [
+        { description: "Write an argument", section: "Writing", subjects: [french, spanish] },
+        { description: "Write a letter", section: "Writing", subjects: [french] },
+      ],
+    };
+
+    const graph = normalizeSkillGraph(
+      rawGraph([
+        rawSkill({ area: french, key: "reading", topics: ["S1.1"] }),
+        rawSkill({
+          area: "Write an argument",
+          key: "spanish",
+          name: "Write a response",
+          subject: spanish,
+        }),
+        rawSkill({
+          area: "Write a letter",
+          key: "french",
+          name: "Write a response",
+          prerequisites: ["reading"],
+          subject: french,
+        }),
+        rawSkill({ area: "Write a letter", key: "invalid", subject: spanish }),
+        rawSkill({ area: "Writing", key: "common", prerequisites: ["spanish", "french"] }),
+      ]),
+      outline,
+    );
+
+    expect(
+      graph.skills.map(({ area, key, name, prerequisites, subject }) => [
+        key,
+        area,
+        name,
+        subject,
+        prerequisites,
+      ]),
+    ).toStrictEqual([
+      ["reading", french, "Use reading", undefined, []],
+      ["spanish", "Writing", "Write a response (Spanish)", spanish, []],
+      ["french", "Writing", "Write a response (French)", french, ["reading"]],
+      ["common", "Writing", "Use common", undefined, []],
+    ]);
+  });
+
   it("rejects a graph without courses, phases or skills", () => {
     expect(() => normalizeSkillGraph(rawGraph([rawSkill({ key: "a" })], { phases: [] }))).toThrow();
 

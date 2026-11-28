@@ -144,3 +144,26 @@ export async function finishGoalRebuild({
     revalidateCacheTags([getGoalsCacheTag(row.userId), getLearnerModelCacheTag(row.userId)]);
   }
 }
+
+/**
+ * Internal: the research a rebuild should read first, while its start is still owed or its run is
+ * the goal's latest. `runId` is null when only the start is owed.
+ */
+export async function findGoalResearch(
+  goalId: string,
+): Promise<{ owed: boolean; runId: string | null }> {
+  const goal = await prisma.goal.findUnique({
+    select: { researchRunId: true, userId: true },
+    where: { id: goalId },
+  });
+
+  if (!goal) {
+    return { owed: false, runId: null };
+  }
+
+  const owed = await prisma.followUp.count({
+    where: { failedAt: null, key: goalId, kind: "researchGoal", userId: goal.userId },
+  });
+
+  return { owed: owed > 0, runId: goal.researchRunId };
+}

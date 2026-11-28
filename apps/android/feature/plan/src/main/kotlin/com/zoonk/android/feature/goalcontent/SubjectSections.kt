@@ -44,6 +44,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.plan.ChapterMark
+import com.zoonk.android.feature.plan.LeftOutTopicsRow
 import com.zoonk.android.feature.plan.MoreChaptersRow
 import com.zoonk.android.feature.plan.WrittenCadenceChoice
 import com.zoonk.android.feature.plan.farTopicLine
@@ -388,7 +389,28 @@ internal fun LazyListScope.subjectChapters(
                 ListDivider()
                 MoreChaptersRow(pluralStringResource(R.plurals.goalcontent_more_chapters, hidden, hidden)) { showAll = true }
             }
+            if (subject.leftOut.isNotEmpty()) {
+                ListDivider()
+                LeftOutTopicsRow(subject.leftOut, indent = 0.dp)
+            }
         }
+    }
+
+    if (subject.leftOut.isNotEmpty()) {
+        item(key = "left-out-why", contentType = "left-out-why") { LeftOutWhy(actions.adjustPlan) }
+    }
+}
+
+/** Main's `LeftOutWhy`: why the fold above leaves topics out, and the way to fit them in. */
+@Composable
+private fun LeftOutWhy(adjustPlan: () -> Unit) {
+    Column(Modifier.padding(start = PAGE_PADDING, end = PAGE_PADDING, top = 8.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Text(
+            stringResource(R.string.goalcontent_left_out_why),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        OutlinedButton(onClick = adjustPlan) { Text(stringResource(R.string.goalcontent_adjust_plan)) }
     }
 }
 

@@ -73,8 +73,12 @@ export function formatTimeOfDay(time: string): string {
   });
 }
 
-export function formatPercent(value: number | null): string {
-  return value === null ? "—" : `${Math.round(value)}%`;
+export function formatPercent(
+  value: number | null,
+  { decimals = 0 }: { decimals?: number } = {},
+): string {
+  const factor = 10 ** decimals;
+  return value === null ? "—" : `${Math.round(value * factor) / factor}%`;
 }
 
 export function formatCount(count: number, one: string, many = `${one}s`): string {

@@ -60,16 +60,21 @@ private struct SubjectWrittenPoints: View {
         if let max = points.max {
           let minimum = points.minimum.flatMap { minimumShare($0, max: max) }.map { $0 * max }
 
-          if let range = points.range {
-            RangeBar(range: range, max: max, minimum: minimum)
-          } else {
-            UnmeasuredBar()
-          }
+          RangeBar(range: points.range, max: max, minimum: minimum)
         }
 
         if let minimum = points.minimum {
-          MinimumLegend(minimumText(minimum, max: points.max))
+          let text = minimumText(minimum, max: points.max)
+
+          if points.range != nil {
+            MinimumLegend(text)
+          } else {
+            text.typeStyle(.note).foregroundStyle(.mutedForeground)
+          }
         }
+
+        WrittenStandingLine(part: points)
+          .typeStyle(.note)
       }
       .padding(.vertical, 4)
 
@@ -111,7 +116,7 @@ private func minimumText(_ minimum: PointsMinimum, max: Double?) -> Text {
   }
 
   return Text(
-    "Minimum to pass: \(WritingLabels.points(minimum.value)) of \(WritingLabels.points(max))",
+    "Minimum to pass: \(WritingLabels.points(minimum.value)) of \(WritingLabels.partPoints(max))",
     tableName: "Plan")
 }
 

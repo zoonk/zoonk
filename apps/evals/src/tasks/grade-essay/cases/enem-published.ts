@@ -1,3 +1,4 @@
+import { SCORING_SHEET_EXAMPLES } from "@zoonk/core/exams/essays/scoring-sheet-examples";
 import { ENEM_ANSWERS, ENEM_RESEARCH_ANSWERS, ENEM_RESEARCH_DATASET } from "./enem-answers";
 import { type WritingCase, basis, publishedCase } from "./shared";
 
@@ -40,28 +41,13 @@ const CINEMA_BASIS = basis({
     },
   ],
   criteria: [
-    { id: "c1", name: "Domínio da modalidade escrita formal", points: null },
-    { id: "c2", name: "Compreensão da proposta e repertório", points: null },
-    { id: "c3", name: "Seleção e organização de argumentos", points: null },
-    { id: "c4", name: "Mecanismos linguísticos de coesão", points: null },
-    { id: "c5", name: "Proposta de intervenção", points: null },
+    { id: "c1", name: "Domínio da modalidade escrita formal", points: 200 },
+    { id: "c2", name: "Compreensão da proposta e repertório", points: 200 },
+    { id: "c3", name: "Seleção e organização de argumentos", points: 200 },
+    { id: "c4", name: "Mecanismos linguísticos de coesão", points: 200 },
+    { id: "c5", name: "Proposta de intervenção", points: 200 },
   ],
-  grading: {
-    criteria: [],
-    kind: "enem",
-    language: null,
-    rounding: null,
-    zeroing: [
-      {
-        citation: {
-          passage: "4.2. fugir ao tema ou que não atender ao tipo dissertativo-argumentativo.",
-          sourceId: "enem-2019-day-1-yellow",
-        },
-        kinds: ["offTopic", "wrongForm"],
-        text: "Fuga ao tema/não atendimento à estrutura dissertativo-argumentativa",
-      },
-    ],
-  },
+  grading: SCORING_SHEET_EXAMPLES.enem.grading,
   // The original sheets met the handwritten line limit. Typed transcriptions omit those line breaks.
   lines: null,
   taskKey: "enem-redacao",
@@ -71,11 +57,11 @@ const CINEMA_BASIS = basis({
 
 function cinemaInput(text: string) {
   return {
-    arithmetic: { rounding: null, zeroRules: [0] },
     basis: CINEMA_BASIS,
     context: CONTEXT,
     keyPoints: [],
     language: "pt",
+    numeric: true,
     question: QUESTION,
     text,
   };

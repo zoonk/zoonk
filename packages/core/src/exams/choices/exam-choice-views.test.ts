@@ -5,6 +5,7 @@ import {
   BIOLOGY,
   CHEMISTRY,
   EXANI_STRUCTURE,
+  FE_STRUCTURE,
   MODULES,
   PREMED,
 } from "./_test-utils/choice-blueprint";
@@ -55,6 +56,18 @@ describe(listExamChoiceViews, () => {
       listExamChoiceViews({ picks: { examChoices: [], examSubjects: [] }, structure: enem })[0]
         ?.subjects,
     ).toStrictEqual([]);
+  });
+
+  it("marks a choice whose options are the whole exam as required, and one beside other subjects as not", () => {
+    const picks = { examChoices: [], examSubjects: [] };
+
+    expect(
+      listExamChoiceViews({ picks, structure: FE_STRUCTURE }).map((view) => view.required),
+    ).toStrictEqual([true]);
+
+    expect(
+      listExamChoiceViews({ picks, structure: enem }).map((view) => view.required),
+    ).toStrictEqual([false]);
   });
 
   it("names options by their full names when two share a short name", () => {

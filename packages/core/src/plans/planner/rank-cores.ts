@@ -1,3 +1,4 @@
+import { getDomainLessonPasses } from "./exam-domain-size";
 import { type QueueUnit } from "./plan-units";
 import { type ScoredTopic } from "./topic-weights";
 
@@ -330,4 +331,25 @@ export function rankShortAreas({
 
     return rankCores({ budget: total - minutes, covered, skills, worth });
   });
+}
+
+export function rankDomainLessons({
+  areas,
+  domains,
+  units,
+}: Parameters<typeof getDomainLessonPasses>[0] & { areas: ReadonlySet<string> }): QueueUnit[] {
+  const passes = getDomainLessonPasses({
+    domains,
+    units: units.filter(({ area }) => areas.has(area)),
+  });
+
+  const ranked = [...passes.keys()].toSorted((a, b) => (passes.get(a) ?? 0) - (passes.get(b) ?? 0));
+
+  const areasInOrder = new Map(
+    [...Map.groupBy(ranked, ({ area }) => area)].map(([area, own]) => [area, own.values()]),
+  );
+
+  return units.map((unit) =>
+    passes.has(unit) ? (areasInOrder.get(unit.area)?.next().value ?? unit) : unit,
+  );
 }

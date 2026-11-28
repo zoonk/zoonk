@@ -74,6 +74,10 @@ async function findStoredExam(input: { language: string; lookup: ExamLookup }) {
   return search.stored;
 }
 
+function placed(country: string) {
+  return { contentCountry: country, countryDependent: true };
+}
+
 function searchFor(lookup: ExamLookup, stored: StoredExam | null) {
   return searchExamDates({ lookup, stored, userId: randomUUID() });
 }
@@ -147,6 +151,33 @@ describe(listExamLookups, () => {
     expect(lookupFor({ examName: "ENEM", targetDate: "2027-11-07" }).lookUpDate).toBe(false);
   });
 
+  it("waits for the country of an exam each country runs its own way, and carries the one the learner gave", () => {
+    expect(
+      listExamLookups({
+        language: "en",
+        today: TODAY,
+        understanding: {
+          followUps: [],
+          goals: [
+            {
+              countryDependent: true,
+              examName: "Private pilot licence",
+              kind: "exam",
+              subject: "flying",
+              title: "Fly",
+            },
+          ],
+          route: "goals",
+        },
+        words: "get my private pilot licence",
+      }),
+    ).toStrictEqual([null]);
+
+    expect(
+      lookupFor({ contentCountry: "CA", countryDependent: true, examName: "PPL" }).exam.country,
+    ).toBe("CA");
+  });
+
   it("has nothing to look up for goals that name no exam", () => {
     expect(
       listExamLookups({
@@ -218,6 +249,18 @@ describe(searchStoredExam, () => {
 
     expect(named).toStrictEqual(expected);
     expect(unnamed).toStrictEqual(expected);
+  });
+
+  it("finds only the notice of the country the learner gave for their exam", async () => {
+    const { blueprint, examName } = await storedExam({ days: ["2026-11-14"], year: 2026 });
+
+    const [elsewhere, theirs] = await Promise.all([
+      findStoredExam({ language: "en", lookup: lookupFor({ examName, ...placed("PT") }) }),
+      findStoredExam({ language: "en", lookup: lookupFor({ examName, ...placed("BR") }) }),
+    ]);
+
+    expect(elsewhere).toBeNull();
+    expect(theirs?.blueprintId).toBe(blueprint.id);
   });
 
   it("finds a language certificate's notice only in the language it tests", async () => {

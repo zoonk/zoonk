@@ -52,7 +52,7 @@ internal fun EssayStepContent(
     val essay = step.essay
     val grade = remember(essay.grade) { essay.grade?.toGrade() }
     val writing = essay.writing
-    if (grade != null && writing != null) {
+    if (grade != null) {
         WritingResultView(
             grade,
             writing,
@@ -64,7 +64,7 @@ internal fun EssayStepContent(
     }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        StepTitle(writing?.title ?: stringResource(R.string.essay_written_answer), Modifier.stepHeading())
+        StepTitle(writing.title, Modifier.stepHeading())
         if (essay.status == MockEssay.Status.BLANK) StepDetail(stringResource(R.string.mock_result_left_blank))
         if (essay.unsure) EssayUnsure()
     }

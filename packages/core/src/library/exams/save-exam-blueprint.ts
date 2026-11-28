@@ -17,7 +17,6 @@ import { followSourceRedirects } from "../sources/own-sources";
 import {
   type BlueprintContent,
   type ExamDate,
-  type ReadingProblem,
   examEditionSchema,
   examStructureSchema,
   topicFrequencySchema,
@@ -43,8 +42,6 @@ export type SaveExamBlueprintInput = {
   /** Addresses of the notice's required documents this reading couldn't download. */
   notDownloaded?: string[];
 };
-
-export type NoticeReading = { problems: ReadingProblem[]; read: boolean };
 
 export type SavedExamBlueprint = {
   blueprint: ExamBlueprint;
@@ -270,30 +267,6 @@ async function updateBlueprint({
     movesExamDays: movesExamDays({ current: stored, merged: content }),
     noticeId,
   };
-}
-
-export async function findNoticeReading({
-  identity,
-  sourceId,
-}: {
-  identity: ExamIdentity;
-  sourceId: string;
-}): Promise<NoticeReading> {
-  const [blueprint, source] = await Promise.all([
-    findExamBlueprintByKey({
-      identityKey: buildExamIdentityKey(identity),
-      language: identity.language,
-    }),
-    prisma.source.findUnique({ select: { contentHash: true }, where: { id: sourceId } }),
-  ]);
-
-  const edition = blueprint ? examEditionSchema.safeParse(blueprint.edition).data : undefined;
-
-  if (!edition || !source || edition.sourceHash !== source.contentHash) {
-    return { problems: [], read: false };
-  }
-
-  return { problems: edition.check?.problems ?? [], read: true };
 }
 
 async function keepNoticeUntilExam({

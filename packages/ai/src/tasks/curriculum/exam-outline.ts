@@ -17,6 +17,7 @@ type ExamSubject = {
   weight: number | null;
   /** In the notice's words and order. */
   topics: string[];
+  topicGroups?: { name: string; share: number; topics: string[] }[];
   writtenTasks?: string[];
 };
 
@@ -25,10 +26,19 @@ export type ExamOutline = {
   notes: string[];
   subjects: ExamSubject[];
   topicFrequency: { level: string; subject: string; topic: string }[];
+  writtenTasks?: { description: string; section: string; subjects: string[] }[];
 };
 
 const PERCENT = 100;
 const TOPIC_ID_PATTERN = /^S(?<subject>\d+)\.(?<topic>\d+)$/u;
+
+export function hasWrittenOptions(outline?: ExamOutline): boolean {
+  return Boolean(
+    outline?.writtenTasks?.some((task) =>
+      outline.subjects.some(({ choiceGroup, name }) => choiceGroup && task.subjects.includes(name)),
+    ),
+  );
+}
 
 function toTopicId({ subject, topic }: { subject: number; topic: number }): string {
   return `S${subject + 1}.${topic + 1}`;
@@ -39,7 +49,15 @@ function describeChoice({ choiceGroup, choiceTake = 1 }: ExamSubject): string {
   return `an option of "${choiceGroup}": each candidate takes ${taken}`;
 }
 
-function describeSubject({ index, subject }: { index: number; subject: ExamSubject }): string {
+function describeSubject({
+  index,
+  subject,
+  taskList,
+}: {
+  index: number;
+  subject: ExamSubject;
+  taskList: boolean;
+}): string {
   const details = [
     subject.group,
     subject.choiceGroup ? describeChoice(subject) : null,
@@ -53,15 +71,34 @@ function describeSubject({ index, subject }: { index: number; subject: ExamSubje
     (topic, topicIndex) => `  ${toTopicId({ subject: index, topic: topicIndex })} ${topic}`,
   );
 
+  const domains = (subject.topicGroups ?? []).map(({ name, share, topics: inDomain }) => {
+    const ids = inDomain.flatMap((topic) => {
+      const position = subject.topics.indexOf(topic);
+      return position === -1 ? [] : [toTopicId({ subject: index, topic: position })];
+    });
+
+    return `  Domain: ${name} | ${Math.round(share * PERCENT)}% of this subject | ${ids.join(", ")}`;
+  });
+
   return [
     heading,
     ...topics,
-    ...(subject.writtenTasks ?? []).map((task) => `  Written task: ${task}`),
+    ...domains,
+    ...(taskList ? [] : (subject.writtenTasks ?? []).map((task) => `  Written task: ${task}`)),
   ].join("\n");
 }
 
 export function formatExamOutline(outline: ExamOutline): string {
-  const subjects = outline.subjects.map((subject, index) => describeSubject({ index, subject }));
+  const tasks = outline.writtenTasks ?? [];
+
+  const subjects = outline.subjects.map((subject, index) =>
+    describeSubject({ index, subject, taskList: tasks.length > 0 }),
+  );
+
+  const written = tasks.map(
+    ({ description, section, subjects: allowed }) =>
+      `- ${section} | ${description}${allowed.length > 0 ? ` | Subjects: ${allowed.join(" / ")}` : ""}`,
+  );
 
   const frequency = outline.topicFrequency.map(
     (topic) => `- ${topic.subject} / ${topic.topic}: ${topic.level}`,
@@ -73,6 +110,7 @@ export function formatExamOutline(outline: ExamOutline): string {
       ? `NOTES:\n${outline.notes.map((note) => `- ${note}`).join("\n")}`
       : null,
     subjects.length > 0 ? `SUBJECTS:\n${subjects.join("\n")}` : null,
+    written.length > 0 ? `WRITTEN_TASKS:\n${written.join("\n")}` : null,
     frequency.length > 0 ? `TOPIC_FREQUENCY:\n${frequency.join("\n")}` : null,
   ]
     .filter(Boolean)
@@ -215,7 +253,17 @@ export function placeInExam({
 }): { area: string; topics: string[] } {
   const refs = topics.flatMap((value) => findTopic({ outline, value }) ?? []);
   const byTopics = findMainSubject(refs);
-  const subjectIndex = byTopics === -1 ? findSubjectByName({ name: area, outline }) : byTopics;
+  const written = byTopics === -1 && findWrittenTaskArea({ area, outline });
+
+  if (written && !outline.subjects.some((subject) => subject.name === written.area)) {
+    return { area: written.area, topics: [] };
+  }
+
+  const subjectIndex =
+    byTopics === -1
+      ? findSubjectByName({ name: written ? written.area : area, outline })
+      : byTopics;
+
   const subject = outline.subjects[subjectIndex];
 
   if (!subject) {
@@ -225,6 +273,28 @@ export function placeInExam({
   const own = new Set(refs.filter((ref) => ref.subject === subjectIndex).map((ref) => ref.topic));
 
   return { area: subject.name, topics: subject.topics.filter((topic) => own.has(topic)) };
+}
+
+export function findWrittenTaskArea({ area, outline }: { area: string; outline: ExamOutline }) {
+  const wanted = toComparable(area);
+  const tasks = outline.writtenTasks ?? [];
+  const sections = tasks.filter((task) => toComparable(task.section) === wanted);
+
+  const matches =
+    sections.length > 0
+      ? sections
+      : tasks.filter((task) => toComparable(task.description) === wanted);
+
+  const [first] = matches;
+
+  return first && matches.every((task) => task.section === first.section)
+    ? {
+        area: first.section,
+        subjects: first.subjects.filter((name) =>
+          matches.every((task) => task.subjects.includes(name)),
+        ),
+      }
+    : null;
 }
 
 const TOPIC_NUMBER_PATTERN = /^(?<number>\d+(?:\.\d+)*)[.)]?\s/u;

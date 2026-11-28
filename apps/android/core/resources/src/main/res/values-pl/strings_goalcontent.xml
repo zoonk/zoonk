@@ -24,6 +24,7 @@
   "goalcontent_from_material": "3977145aaf96ffd8ba75d3cb80a26462e93a28e45bc16b95d33c9ddc8faaceee",
   "goalcontent_known": "c9627aa8e498c728a8acbe5654541d32640e14640447c31d2a5279afe46d5b69",
   "goalcontent_known_before": "c06392f9dd2b78bd2c6c93f53885968fcd9b8c5b85b0cd71cba48486da58b414",
+  "goalcontent_left_out_why": "9a7274917fd9a13c438747525ec73cf1ca1ba27b65efb53e286e65e67a04625f",
   "goalcontent_lesson_count": "0b43f272132d0e6331ab622e61da9b8f9934b0f28685f44b50a0d905ea3dc5b2",
   "goalcontent_lessons_done": "a2f4f8236c5c05063c28b1209e3a978315a6aaab137ec05ab32e020aff1edd6a",
   "goalcontent_lessons_known_skipped": "c4ed0a817aff351e82fbdb6cf96b31da030ca06c624cb655881e220d3bf0dcda",
@@ -238,6 +239,8 @@
     <!-- Titles the list of what a subject or module contains, on its page while it's out of the learner's plan, so they can decide whether to add it back. Their plan doesn't teach it, so the title names its contents without promising they'll learn them. -->
     <string name="goalcontent_covers">Co zawiera</string>
     <string name="goalcontent_adjust_plan">Dostosuj plan</string>
+    <!-- Under the folded list of a module's or a subject's topics that the learner's plan leaves out: they don't fit in the study time before the date the learner set. Followed by a button to change the plan. -->
+    <string name="goalcontent_left_out_why">Nie zmieszczą się przed wybraną datą.</string>
     <string name="goalcontent_add_back">Przywróć</string>
     <string name="goalcontent_save_failed">Nie udało się zapisać. Spróbuj ponownie.</string>
     <plurals name="goalcontent_chapters_done">

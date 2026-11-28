@@ -8,6 +8,7 @@ export type PlannedSkillGraph = Omit<GoalSkillGraph, "extraSkills" | "skills"> &
 };
 
 type PlannedSkill = GoalSkillGraph["skills"][number] & {
+  domain?: PlanGraphSkill["domain"];
   outlined?: boolean;
   topicsUnknown?: boolean;
 };
@@ -77,12 +78,14 @@ export function toGoalPlanGraph({
         {
           area: skill.area || (courseTitles.get(skill.course) ?? null),
           courseIds: courseId ? [courseId] : [],
+          ...(skill.domain && { domain: skill.domain }),
           lessons: skill.estimatedLessons,
           name: skill.name,
           ...(skill.outcome ? { outcome: true } : {}),
           ...(skill.outlined ? { outlined: true } : {}),
           phase: Math.max(0, skill.phase - 1),
           skillId,
+          ...(skill.subject && { subject: skill.subject }),
           topics: skill.topicsUnknown && skill.topics.length === 0 ? undefined : skill.topics,
           weight: skill.examWeight,
         },

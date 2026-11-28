@@ -8,6 +8,22 @@ export function subjectNamesSection(
   return namesMatch(section, name) || (typeof group === "string" && namesMatch(section, group));
 }
 
+export function getWrittenTaskOptions(structure: ExamStructure) {
+  return (structure.mock?.sections ?? [])
+    .filter((section) => section.kind === "written")
+    .flatMap((section) =>
+      (section.tasks ?? []).map((task) => ({
+        description: task.description,
+        section: section.name,
+        subjects:
+          task.subjects ??
+          structure.subjects
+            .filter((subject) => subjectNamesSection(subject, section.name))
+            .map((subject) => subject.name),
+      })),
+    );
+}
+
 export function getWrittenTasks({
   structure,
   subject,
@@ -15,7 +31,7 @@ export function getWrittenTasks({
   structure: ExamStructure;
   subject: ExamStructure["subjects"][number];
 }): string[] {
-  return (structure.mock?.sections ?? [])
-    .filter((section) => section.kind === "written" && subjectNamesSection(subject, section.name))
-    .flatMap((section) => (section.tasks ?? []).map((task) => task.description));
+  return getWrittenTaskOptions(structure)
+    .filter((task) => task.subjects.includes(subject.name))
+    .map((task) => task.description);
 }

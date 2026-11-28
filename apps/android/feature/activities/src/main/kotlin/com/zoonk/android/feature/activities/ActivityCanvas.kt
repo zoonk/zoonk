@@ -65,14 +65,17 @@ fun ActivityCanvas(
         modifier =
             modifier
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(ZoonkRadius.xl))
+                .clip(RoundedCornerShape(ZoonkRadius.xl + CANVAS_PADDING))
                 .background(activityCanvasColor())
                 .then(if (description == null) Modifier else Modifier.semantics { contentDescription = description })
-                .padding(16.dp),
+                .padding(CANVAS_PADDING),
         verticalArrangement = Arrangement.spacedBy(gap),
         content = content,
     )
 }
+
+/** Main's `p-4`; the canvas's corner is its boxes' (`ZoonkRadius.xl`) plus this, so the two curves run side by side. */
+private val CANVAS_PADDING = 16.dp
 
 /** The canvas's color on the screen, for what has to blend into it, like a label's halo. */
 @Composable

@@ -102,6 +102,7 @@
     <string name="mock_result_reached_points_decimal">Reached the %1$s points it needs</string>
     <!-- Under a test whose minimum this mock can't judge. %1$s is the percent of its points it needs, such as "40%". -->
     <string name="mock_result_needs_percent">Needs %1$s of its points</string>
+    <string name="mock_result_written_no_estimate">No points estimate yet</string>
     <!-- Under a test whose minimum this mock can't judge. %1$s is the points it needs, possibly a decimal. -->
     <plurals name="mock_result_needs_points">
         <item quantity="one">Needs %1$s point</item>

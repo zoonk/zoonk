@@ -20,10 +20,10 @@ Here the learner reads the app in `TARGET_LANGUAGE` itself, the language they're
 # What the lesson has
 
 {{#bilingual}}
-A 3 to 5 minute lesson built from what you write, in this order: the new words (each with audio, a respelling and a meaning), recognizing them, one tip about a pattern, a quick fill-in-the-blank on that pattern, building sentences, listening, saying one or two sentences out loud, writing one sentence, and a short summary. Write only the content; the app builds the screens.
+A 3 to 5 minute lesson built from what you write, in this order: the new words (each with audio, a respelling and a meaning), recognizing them, one tip about a pattern, a table of word forms when the tip is about endings, a quick fill-in-the-blank on that pattern, building sentences, listening, choosing a reply in a short conversation, saying one or two sentences out loud, writing one sentence, and a short summary. Write only the content; the app builds the screens.
 {{/bilingual}}
 {{#sameLanguage}}
-A 3 to 5 minute lesson built from what you write, in this order: the new words (each with audio, a respelling and a definition), picking each word for its definition, one tip about a pattern, a quick fill-in-the-blank on that pattern, hearing each sentence and building it, saying one or two sentences out loud, writing one sentence, and a short summary. Write only the content; the app builds the screens.
+A 3 to 5 minute lesson built from what you write, in this order: the new words (each with audio, a respelling and a definition), picking each word for its definition, one tip about a pattern, a table of word forms when the tip is about endings, a quick fill-in-the-blank on that pattern, hearing each sentence and building it, choosing a reply in a short conversation, saying one or two sentences out loud, writing one sentence, and a short summary. Write only the content; the app builds the screens.
 {{/sameLanguage}}
 
 # Words
@@ -100,6 +100,46 @@ When the lesson is about hearing or saying sounds, a question never asks about a
 - `distractors`: 2 or 3 real forms a learner would wrongly pick (wrong agreement, wrong tense, wrong preposition). Put each one in the blank and read the sentence: if it is correct in any reading (a passive, another tense, a different but valid meaning), replace it.
 - `feedback`: one sentence in `LEARNER_LANGUAGE` on why the answer fits.
 
+# Pattern table
+
+When the tip is about a set of forms that differ by their endings (a verb's endings for each person, a noun's or adjective's endings for number, gender or case), the learner sees the whole set on one word, then completes it for another word that follows it (in Spanish, `hablar` to `trabajar`). Otherwise `patternTable` is `null`: for word order, a fixed phrase, politeness, or forms that change inside the word or irregularly ("sing", "sang"), choosing an ending practices nothing.
+
+- `prompt`: a short instruction in {{LEARNER_LANGUAGE}} ("Use the pattern from hablar to finish trabajar", written in {{LEARNER_LANGUAGE}}).
+- `modelWord`: the word whose full set is shown, in its dictionary form.
+- `newWord`: another word from the lesson's situation that follows exactly the same pattern.
+{{#bilingual}}
+- `modelMeaning` and `newMeaning`: each word's meaning in {{LEARNER_LANGUAGE}} ("to speak", written in {{LEARNER_LANGUAGE}}).
+{{/bilingual}}
+{{#sameLanguage}}
+- `modelMeaning` and `newMeaning`: `null`.
+{{/sameLanguage}}
+- `rows`: 4 to 8 rows, one per form. `label` names the form in {{TARGET_LANGUAGE}} (in Spanish, "yo", "tú"), `model` is `modelWord`'s form and `answer` is `newWord`'s. `blank` is `true` on the 2 or 3 rows the learner completes and `false` on the rows shown filled in.
+{{#bilingual}}
+- `labelMeaning`: the label in {{LEARNER_LANGUAGE}} ("I", "you", written in {{LEARNER_LANGUAGE}}), or `null` when the label is the same in both.
+{{/bilingual}}
+{{#sameLanguage}}
+- `labelMeaning`: `null`.
+{{/sameLanguage}}
+- `choices`: 4 to 6 endings, written without a hyphen ("éis"). Each blank's answer ends with one of them, never the whole answer. The app takes the longest choice an answer ends with as its ending, so that one must be right. The others are endings of the same set or a close one that a learner would wrongly pick.
+- `explanation`: one sentence in {{LEARNER_LANGUAGE}} on how `newWord` follows `modelWord`.
+
+# Dialogue
+
+When the lesson's situation is a conversation the learner takes part in (asking, ordering, greeting, explaining), the learner reads its start and picks what to say next. Otherwise `dialogue` is `null` (reading a sign, filling in a form), and so is a lesson about hearing or saying sounds, whose written lines would show the word they test.
+
+- `scene`: where it happens and who the other person is, in a few words of {{LEARNER_LANGUAGE}} ("A pharmacy in Madrid", written in {{LEARNER_LANGUAGE}}).
+- `lines`: 2 to 5 lines of the conversation so far, in {{TARGET_LANGUAGE}} at `LEVEL`, using the lesson's words and sentences. `speaker` is `them` for the other person and `you` for the learner's earlier lines. The last line is theirs, and it's what the learner answers.
+- `prompt`: in {{LEARNER_LANGUAGE}}, the moment the learner answers ("The landlord asks if you have questions. What do you say?", written in {{LEARNER_LANGUAGE}}).
+- `replies`: 3 or 4 {{TARGET_LANGUAGE}} replies, each one an answer to the last line. Exactly one has `isBest` `true`: it answers naturally, uses what this lesson teaches and fits the register. Every other reply is wrong for one clear reason a learner would fall for (the wrong form from the tip, the wrong register, a false friend), and never also a fine thing to say there.
+{{#bilingual}}
+- `translation` (on every line and reply): natural {{LEARNER_LANGUAGE}} with the same meaning.
+{{/bilingual}}
+{{#sameLanguage}}
+- `translation` (on every line and reply): the same meaning in plainer words.
+{{/sameLanguage}}
+- `why`: one sentence in {{LEARNER_LANGUAGE}} on why this reply is best, or what makes it wrong.
+- `explanation`: one sentence in {{LEARNER_LANGUAGE}} with what to remember for the next conversation like this one ("To give a time, say at: at 3 p.m.", written in {{LEARNER_LANGUAGE}}). The app shows it under every reply's `why`, so it never repeats the best reply's `why`.
+
 # Shared lessons
 
 Every learner of this language at this level reads the lesson, whatever their job or life. The learner's own lines, what they say, write or translate as themselves, never give them a job, field, employer or other personal fact ("my experience in sales", "I work in customer service"): keep them general ("my most recent role", "my last project", "the job I'm applying for"). Other people in the situation, such as a recruiter or a colleague, may have one.
@@ -140,7 +180,7 @@ The `pronunciation` field shows how the word sounds using only letters and lette
 - `LEARNER_LANGUAGE` text is natural and correct in its own variant, including grammatical gender ("a caução", not "o caução"). It may quote `TARGET_LANGUAGE` words in quotes or backticks when it talks about them.
 {{/bilingual}}
 - Every target-language sentence is grammatical and something a native speaker of that variant would say.
-- People address each other the way their roles call for: with someone they don't know (a landlord, a doctor, a receptionist), both sides use the polite form where `TARGET_LANGUAGE` has one ("usted", "Sie", "vous", "Lei"); with a friend, a classmate or family, the informal one. The sentences, tip examples, practice and writing answers keep that form.
+- People address each other the way their roles call for: with someone they don't know (a landlord, a doctor, a receptionist), both sides use the polite form where `TARGET_LANGUAGE` has one ("usted", "Sie", "vous", "Lei"); with a friend, a classmate or family, the informal one. The sentences, tip examples, practice, dialogue and writing answers keep that form.
 {{#bilingual}}
 - Translations are exact in meaning.
 {{/bilingual}}
@@ -165,3 +205,5 @@ The `pronunciation` field shows how the word sounds using only letters and lette
 {{/sameLanguage}}
 9. The words and sentences cover every part of `LESSON_CAN_DO`.
 10. In a lesson about sounds, no practice question asks about a sound or a letter in writing.
+11. The dialogue has exactly one best reply, and every other reply is wrong where it's said.
+12. In the pattern table, `newWord` follows `modelWord` in every row, and each blank's answer ends with the right choice, the longest one it ends with.

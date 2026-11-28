@@ -7,8 +7,9 @@ import { usePassMarksNote } from "../_utils/use-pass-marks-note";
 import { useMockScreen } from "./mock-context";
 import { useMockAbout } from "./mock-notes";
 import { MockResultInsights, useHasInsights } from "./mock-result-insights";
-import { MockResultPoints, hasTestRows } from "./mock-result-points";
+import { MockResultPoints } from "./mock-result-points";
 import { ResultSection } from "./mock-result-section";
+import { hasTestRows } from "./mock-result-test-rows";
 
 function PassMarks() {
   const t = useExtracted();

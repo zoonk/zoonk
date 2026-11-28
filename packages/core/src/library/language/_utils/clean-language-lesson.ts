@@ -167,6 +167,52 @@ function cleanWriting(content: LanguageLessonContent): LanguageLessonContent["wr
   };
 }
 
+function cleanPatternTable(
+  table: LanguageLessonContent["patternTable"],
+): LanguageLessonContent["patternTable"] {
+  return (
+    table && {
+      choices: table.choices.map(cleanText),
+      explanation: cleanText(table.explanation),
+      modelMeaning: cleanOptional(table.modelMeaning),
+      modelWord: cleanText(table.modelWord),
+      newMeaning: cleanOptional(table.newMeaning),
+      newWord: cleanText(table.newWord),
+      prompt: cleanText(table.prompt),
+      rows: table.rows.map((row) => ({
+        answer: cleanText(row.answer),
+        blank: row.blank,
+        label: cleanText(row.label),
+        labelMeaning: cleanOptional(row.labelMeaning),
+        model: cleanText(row.model),
+      })),
+    }
+  );
+}
+
+function cleanDialogue(
+  dialogue: LanguageLessonContent["dialogue"],
+): LanguageLessonContent["dialogue"] {
+  return (
+    dialogue && {
+      explanation: cleanText(dialogue.explanation),
+      lines: dialogue.lines.map((line) => ({
+        speaker: line.speaker,
+        text: cleanText(line.text),
+        translation: cleanText(line.translation),
+      })),
+      prompt: cleanText(dialogue.prompt),
+      replies: dialogue.replies.map((reply) => ({
+        isBest: reply.isBest,
+        text: cleanText(reply.text),
+        translation: cleanText(reply.translation),
+        why: cleanText(reply.why),
+      })),
+      scene: cleanText(dialogue.scene),
+    }
+  );
+}
+
 export function cleanLanguageLesson({
   content,
   knownWords,
@@ -177,6 +223,8 @@ export function cleanLanguageLesson({
   sameLanguage: boolean;
 }): LanguageLessonContent {
   return {
+    dialogue: cleanDialogue(content.dialogue),
+    patternTable: cleanPatternTable(content.patternTable),
     practice: cleanPractice(content),
     sentences: cleanSentences({ content, sameLanguage }),
     summary: content.summary.map(cleanText).filter(Boolean),

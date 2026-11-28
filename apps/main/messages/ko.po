@@ -1405,7 +1405,7 @@ msgid "Plus ends right away, and you won't be charged again."
 msgstr "Plus가 바로 종료되고 더 이상 요금이 청구되지 않아요."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
-#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/plan-date-line.tsx
 msgctxt "MUSFX9"
 msgid "You have Plus until <mono>{date}</mono>."
 msgstr "<mono>{date}</mono>까지 Plus를 이용할 수 있어요."
@@ -1420,16 +1420,6 @@ msgstr "이미 결제한 기간이 끝날 때까지 Plus를 이용할 수 있어
 msgctxt "KLKQ8N"
 msgid "Keep Plus"
 msgstr "Plus 계속 이용하기"
-
-#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
-msgctxt "YrbiTE"
-msgid "Plus ends on <mono>{date}</mono>."
-msgstr "Plus가 <mono>{date}</mono>에 종료돼요."
-
-#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
-msgctxt "AucmVG"
-msgid "Renews on <mono>{date}</mono>."
-msgstr "<mono>{date}</mono>에 갱신돼요."
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 #: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
@@ -1507,6 +1497,16 @@ msgstr "Zoonk가 계정에 Plus를 추가했어요. 변경하려면 문의해 �
 msgctxt "2OvvJx"
 msgid "Write to us"
 msgstr "문의하기"
+
+#: src/app/[lang]/(app)/(settings)/subscription/plan-date-line.tsx
+msgctxt "YrbiTE"
+msgid "Plus ends on <mono>{date}</mono>."
+msgstr "Plus가 <mono>{date}</mono>에 종료돼요."
+
+#: src/app/[lang]/(app)/(settings)/subscription/plan-date-line.tsx
+msgctxt "AucmVG"
+msgid "Renews on <mono>{date}</mono>."
+msgstr "<mono>{date}</mono>에 갱신돼요."
 
 #: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
 msgctxt "kRo_Bd"

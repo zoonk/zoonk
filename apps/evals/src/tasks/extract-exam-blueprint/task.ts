@@ -15,6 +15,7 @@ import {
   generateExtraction,
 } from "./generate";
 import { TEST_CASES } from "./test-cases";
+import { type WrittenGrading, type WrittenTaskFact, hasGrading } from "./written-grading-checks";
 
 type ExpectedFact =
   | { kind: "date"; date: string; dateKind?: ExtractionEvalOutput["dates"][number]["kind"] }
@@ -29,6 +30,8 @@ type ExpectedFact =
   | { kind: "subjectGroups"; subject: string; groups: string[] }
   | { kind: "groupedSubjects"; groups: string[] }
   | { kind: "choice"; options: string[]; partOf?: string; take?: number }
+  /** Every candidate sits every subject: no subject is an option of a choice. */
+  | { kind: "noChoice" }
   | { kind: "section"; day?: number; minutes?: number; name?: string; questions?: number }
   | { kind: "listeningParts"; parts: number; plays?: number; questions: number }
   | {
@@ -60,30 +63,6 @@ type ExpectedFact =
   | { kind: "session"; mentions: string }
   | { kind: "sharedClock" }
   | WrittenTaskFact;
-
-/** A written task as the notice states it; a field left out isn't checked, `null` must be unknown. */
-type WrittenTaskFact = {
-  kind: "writtenTask";
-  count?: number;
-  criterionPoints?: number[];
-  /** The group whose every subject, and only those, the task is on; null when it names none. */
-  drawsOn?: string | null;
-  grading?: WrittenGrading["kind"] | null;
-  handwritten?: boolean | null;
-  language?: { factor: number; method: "errorsPerLine" | "perError" | "other" } | null;
-  lines?: number | null;
-  points?: number | null;
-  rounding?: boolean;
-  zeroing?: boolean;
-};
-
-type WrittenGrading = {
-  criteria: { points: number | null }[];
-  kind: "enem" | "levels" | "oab" | "points";
-  language: { factor: number | null; method: string } | null;
-  rounding: unknown;
-  zeroing: unknown[];
-};
 
 type WrittenTask = {
   count: number;
@@ -489,32 +468,6 @@ function sameValue<T>(wanted: T | undefined, found: T | null | undefined): boole
   return wanted === undefined || (found ?? null) === wanted;
 }
 
-function hasLanguageRule(fact: WrittenTaskFact, grading: WrittenGrading | null | undefined) {
-  const language = grading?.language ?? null;
-
-  if (fact.language === undefined || fact.language === null) {
-    return fact.language === undefined || language === null;
-  }
-
-  return language?.method === fact.language.method && language.factor === fact.language.factor;
-}
-
-function hasGrading(fact: WrittenTaskFact, grading: WrittenGrading | null | undefined): boolean {
-  const kind = grading?.kind ?? null;
-  const points = grading?.criteria.map((criterion) => criterion.points) ?? [];
-
-  return (
-    (fact.grading === undefined ||
-      kind === fact.grading ||
-      (fact.grading === null && kind === "levels")) &&
-    (fact.criterionPoints === undefined ||
-      JSON.stringify(points) === JSON.stringify(fact.criterionPoints)) &&
-    hasLanguageRule(fact, grading) &&
-    (fact.rounding === undefined || Boolean(grading?.rounding) === fact.rounding) &&
-    (fact.zeroing === undefined || (grading?.zeroing.length ?? 0) > 0 === fact.zeroing)
-  );
-}
-
 function drawsOn({
   fact,
   reading,
@@ -557,7 +510,7 @@ function hasWrittenTask({ fact, reading }: { fact: WrittenTaskFact; reading: Rea
         sameValue(fact.lines, task.lines) &&
         sameValue(fact.points, task.points) &&
         sameValue(fact.handwritten, task.handwritten) &&
-        hasGrading(fact, task.grading) &&
+        hasGrading(fact, task) &&
         drawsOn({ fact, reading, task }),
     );
 }
@@ -660,6 +613,8 @@ function isFactFound({ fact, reading }: { fact: ExpectedFact; reading: Reading }
       return hasSubjectGroups({ fact, reading });
     case "choice":
       return hasChoice({ fact, reading });
+    case "noChoice":
+      return reading.subjects.every((subject) => !subject.choiceGroup);
     case "groupedSubjects":
       return hasGroupedSubjects({ fact, reading });
     case "format":

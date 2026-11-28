@@ -6,12 +6,12 @@ import {
   type LevelTestRanges,
   levelTestResultSchema,
 } from "@zoonk/core/language/level-test/contract";
-import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { cn } from "@zoonk/ui/lib/utils";
 import { isJsonObject } from "@zoonk/utils/json";
 import { useExtracted } from "next-intl";
 import { useDaysLeftText } from "../_components/days-left";
-import { daysUntilIsoDate, useFormatIsoDate } from "../_utils/iso-date";
+import { daysBetween, getTodayInZone, useFormatIsoDate } from "../_utils/iso-date";
+import { useLearnerClock } from "../_utils/learner-clock";
 import { useFormatDuration } from "../_utils/time-format";
 import { useLevelRangeFacts } from "../language/level-test/level-test-parts";
 import { readSetupLevel } from "./_utils/setup-level";
@@ -81,7 +81,7 @@ function useLevelFact(goal: GoalView, testRanges?: LevelTestRanges | null): Rece
 
 function useDateFact() {
   const t = useExtracted();
-  const today = useMountTime();
+  const { now } = useLearnerClock();
   const daysLeftText = useDaysLeftText();
   const formatDate = useFormatIsoDate();
 
@@ -90,7 +90,12 @@ function useDateFact() {
 
     if (goal.targetDate) {
       return {
-        count: daysLeftText(Math.max(0, daysUntilIsoDate({ isoDate: goal.targetDate, today }))),
+        count: daysLeftText(
+          Math.max(
+            0,
+            daysBetween(getTodayInZone({ now, timeZone: goal.timezone }), goal.targetDate),
+          ),
+        ),
         id: "date",
         label,
         value: formatDate(goal.targetDate, "row", { year: "always" }),

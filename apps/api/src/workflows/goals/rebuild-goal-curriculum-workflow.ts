@@ -1,5 +1,6 @@
 import { type GoalRebuildFollowUp } from "@zoonk/core/goals/rebuild-follow-up";
 import { getWorkflowMetadata, sleep } from "workflow";
+import { repeatUntil } from "../_shared/repeat-until";
 import { claimRunToken, waitForRunToken } from "../_shared/run-token";
 import {
   type GoalContentInput,
@@ -9,9 +10,13 @@ import {
 import {
   finishGoalRebuildStep,
   isGoalRebuildOwedStep,
+  isGoalResearchPendingStep,
   readGoalGraphStateStep,
 } from "./steps/goal-build-outcome-steps";
 import { recordGoalRunStep } from "./steps/record-goal-run-step";
+
+const RESEARCH_POLL = "10s";
+const MAX_RESEARCH_POLLS = 60;
 
 export type RebuildGoalCurriculumInput = GoalContentInput & { followUp: GoalRebuildFollowUp };
 
@@ -39,6 +44,20 @@ async function waitForSavedGraph(goalId: string) {
 }
 /* oxlint-enable no-await-in-loop */
 
+/**
+ * A changed exam country owes research for the new country's exam alongside this rebuild, so the
+ * rebuild waits for it to link that exam's notice. Research that outlasts the wait is left behind,
+ * as a first build leaves it.
+ */
+function waitForGoalResearch(goalId: string): Promise<boolean> {
+  return repeatUntil({
+    done: (pending) => !pending,
+    run: () => isGoalResearchPendingStep(goalId),
+    times: MAX_RESEARCH_POLLS,
+    wait: () => sleep(RESEARCH_POLL),
+  });
+}
+
 export async function rebuildGoalCurriculumWorkflow(input: RebuildGoalCurriculumInput) {
   "use workflow";
 
@@ -49,6 +68,7 @@ export async function rebuildGoalCurriculumWorkflow(input: RebuildGoalCurriculum
   try {
     await recordGoalRunStep({ clearFailure: false, generationId, goalId });
     const state = await waitForSavedGraph(goalId);
+    await waitForGoalResearch(goalId);
 
     if (!(await isGoalRebuildOwedStep({ followUp, goalId }))) {
       throw new Error("This curriculum rebuild is no longer owed.");

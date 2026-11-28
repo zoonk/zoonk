@@ -150,7 +150,7 @@ async function withDraftCountries({
 
       return {
         ...goal,
-        contentCountry: goal.draft.kind === "exam" ? exam : (goal.contentCountry ?? null),
+        contentCountry: exam ?? goal.contentCountry ?? null,
         suggested: getCountrySuggestions({
           homeCountry: profile?.homeCountry ?? null,
           language,

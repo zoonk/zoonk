@@ -33,7 +33,7 @@ async function findWordDetails({
   ];
 
   const words = await prisma.word.findMany({
-    orderBy: { createdAt: "asc" },
+    orderBy: [{ createdAt: "asc" }, { id: "asc" }],
     select: {
       audioUrl: true,
       pronunciations: {

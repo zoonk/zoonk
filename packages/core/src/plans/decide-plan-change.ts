@@ -276,7 +276,15 @@ async function decide({ decision, input }: { decision: Decision; input: PlanChan
       : decline(decision);
   }
 
-  if (!canUndoChange({ change, planVersion: decision.context.plan.version })) {
+  const planVersion = decision.context.plan.version;
+
+  // The change is read after the plan's version, so a newer Undo means a write that carried it
+  // forward landed in between: the plan moved, and Undo plans again from fresh reads.
+  if ((parsePlanChangePayload(change.payload).versionAfter ?? 0) > planVersion) {
+    throw new PlanConflictError();
+  }
+
+  if (!canUndoChange({ change, planVersion })) {
     return { status: "conflict" as const };
   }
 

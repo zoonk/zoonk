@@ -14,6 +14,7 @@ function subject(
     group: null,
     imageUrl: null,
     key,
+    leftOut: [],
     lessonsDone: 0,
     lessonsKnown: 0,
     lessonsTotal: 1,

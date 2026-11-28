@@ -9,12 +9,12 @@ export function toSwitcherGoals(goals: readonly LearnerSummaryGoal[]) {
   return goals.flatMap(
     ({
       dailyMinutes,
+      daysLeft,
       displayName,
       id,
       kind,
       languageFlag,
       status,
-      targetDate,
       targetDateEstimated,
       targetLanguage,
       targetRegion,
@@ -24,12 +24,12 @@ export function toSwitcherGoals(goals: readonly LearnerSummaryGoal[]) {
         : [
             {
               dailyMinutes,
+              daysLeft,
               displayName,
               id,
               kind,
               languageFlag,
               status,
-              targetDate,
               targetDateEstimated,
               targetLanguage,
               targetRegion,

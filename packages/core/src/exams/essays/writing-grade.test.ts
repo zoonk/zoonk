@@ -16,26 +16,22 @@ import { mockSession } from "../../_test-utils/mock-session";
 import { creditWrittenSkills } from "../../learner/written-evidence";
 import cacd2024Essay from "./_test-utils/cacd-2024-essay.json";
 import cacd2025HistoryQ4 from "./_test-utils/cacd-2025-history-q4.json";
+import { calibrationFixture, rowCalibrationFixture } from "./_test-utils/writing-calibration";
 import lineFixtures from "./_test-utils/writing-lines.json";
 import { loadEssayDrafts } from "./_utils/essay-drafts";
 import { gradeWriting, recordEssayGrade } from "./_utils/grade-essay-answer";
 import { getWritingAttemptId } from "./_utils/writing-attempt-id";
-import {
-  applyWritingArithmetic,
-  buildWritingFeedback,
-  createWritingQuoteLookup,
-} from "./_utils/writing-feedback";
-import { passedWritingEvaluations } from "./_utils/writing-rubric-evaluations";
-import {
-  getWritingRubricFingerprint,
-  getWritingTaskBasis,
-  matchesWritingTaskBasis,
-} from "./_utils/writing-task-basis";
+import { type WritingCalibration, writingCalibrationSchema } from "./_utils/writing-calibration";
+import savedCalibration from "./_utils/writing-calibration-data.json";
+import { applyWritingArithmetic, buildWritingFeedback } from "./_utils/writing-feedback";
+import { createWritingQuoteLookup } from "./_utils/writing-quotes";
+import { getWritingTaskBasis, matchesWritingTaskBasis } from "./_utils/writing-task-basis";
 import { MAX_ESSAY_CHARACTERS, MAX_WRITING_MS, essaySubmissionInputSchema } from "./essay-contract";
 import { getWritingAttempt } from "./get-writing-attempt";
 import {
   type WritingConditions,
   type WritingResult,
+  readWritingPrompt,
   writtenAnswerSchema,
   writtenItemSchema,
 } from "./writing-contract";
@@ -44,18 +40,22 @@ import {
   WRITING_MAX_CHARACTERS_PER_LINE,
   countWritingLines,
 } from "./writing-lines";
-import {
-  type WritingArithmetic,
-  getWritingArithmetic,
-  isNumericWritingRubric,
-} from "./writing-rubric-policy";
+import { isNumericWritingRubric } from "./writing-rubric-policy";
 
 vi.mock(import("@zoonk/ai/tasks/grading/grade-essay"), async (importOriginal) => ({
   ...(await importOriginal()),
   gradeWritingEvidence: vi.fn(),
 }));
 
-vi.mock("./_utils/writing-rubric-evaluations", () => ({ passedWritingEvaluations: {} }));
+const calibration = vi.hoisted(() => ({ current: null as WritingCalibration | null }));
+
+vi.mock(import("./_utils/writing-calibration"), async (importOriginal) => ({
+  ...(await importOriginal()),
+  get writingCalibration() {
+    return calibration.current;
+  },
+}));
+
 vi.mock("../../learner/written-evidence", () => ({ creditWrittenSkills: vi.fn() }));
 
 const citation = { passage: "Official grading rules", sourceId: "notice" };
@@ -74,11 +74,9 @@ const basis = writtenItemSchema.parse({
     { criterionId: "claim", description: "Explain the claim", points: 0.45 },
   ],
   assessedSkillIds: ["6d0ef67d-2dc8-4cca-b355-9924a7549387"],
-  charactersPerLine: 24,
   criteria: [{ id: "claim", name: "Claim", points: 0.75 }],
   grading: {
     criteria: [{ citation, id: "claim", points: 0.75, text: "Claim" }],
-    kind: "points",
     language: {
       citation,
       factor: 0.25,
@@ -86,7 +84,13 @@ const basis = writtenItemSchema.parse({
       method: "errorsPerLine",
       text: "Deduction",
     },
-    rounding: { citation, text: "Round to two places" },
+    rounding: {
+      citation,
+      mode: "nearest",
+      stage: "total",
+      step: 0.01,
+      text: "Round to two places",
+    },
     zeroing: [{ citation, kinds: ["offTopic"], text: "Off topic" }],
   },
   keySource: "practiceKey",
@@ -99,13 +103,12 @@ const basis = writtenItemSchema.parse({
 });
 
 const evidence: WritingEvidence = {
-  aspects: [
-    { aspectIndex: 0, criterionId: "claim", earned: true, quote: "A claim" },
-    { aspectIndex: 1, criterionId: "claim", earned: true, quote: "ignored" },
+  awards: [
+    { award: 1, quote: "A claim", row: 0 },
+    { award: 1, quote: "ignored", row: 1 },
   ],
-  criteria: [
-    { comment: "Good claim", example: null, id: "claim", level: "strong", quote: "A claim" },
-  ],
+  criteria: [{ comment: "Good claim", example: null, id: "claim", quote: "A claim" }],
+  elements: [],
   errors: [
     { correction: "error", kind: "spelling", quote: "eror" },
     { correction: "error", kind: "spelling", quote: "eror" },
@@ -113,6 +116,7 @@ const evidence: WritingEvidence = {
     { correction: "verified", kind: "grammar", quote: "invented" },
     { correction: "eligible", kind: "grammar", quote: "ignored" },
   ],
+  limits: [],
   nextStep: null,
   onTopicQuote: null,
   zeroKind: null,
@@ -132,11 +136,6 @@ const content = {
   writing: basis,
 };
 
-const arithmetic: WritingArithmetic = {
-  rounding: { mode: "nearest" as const, places: 2 },
-  zeroRules: [0],
-};
-
 function mockEvidence() {
   vi.mocked(gradeWritingEvidence, { partial: true }).mockResolvedValue({ data: evidence });
 }
@@ -147,13 +146,13 @@ function assess(
     context = null,
     rubric = basis,
     text = eligible,
-    gate = arithmetic,
+    gate = true,
     ignoredFrom = eligible.length,
   }: {
     context?: string | null;
     rubric?: typeof basis;
     text?: string;
-    gate?: typeof arithmetic | null;
+    gate?: boolean;
     ignoredFrom?: number | null;
   } = {},
 ) {
@@ -166,29 +165,28 @@ function assess(
   });
 
   return applyWritingArithmetic({
-    arithmetic: gate,
     basis: rubric,
     context,
     eligible: text,
     estimatedLines: 3,
     evidence: assessment,
     feedback,
+    numeric: gate,
   });
 }
 
 describe("writing grades", () => {
-  it.each([null, arithmetic])(
+  it.each([false, true])(
     "uses the line limit when there is no higher-value instruction",
     (gate) => {
       const text = "A claim and its explanation.";
 
       const full: WritingEvidence = {
         ...evidence,
-        aspects: [
-          { aspectIndex: 0, criterionId: "claim", earned: true, quote: "A claim" },
-          { aspectIndex: 1, criterionId: "claim", earned: true, quote: "its explanation" },
+        awards: [
+          { award: 1, quote: "A claim", row: 0 },
+          { award: 1, quote: "its explanation", row: 1 },
         ],
-        criteria: [{ ...evidence.criteria[0]!, level: gate ? "strong" : "complete" }],
         errors: [],
         nextStep: {
           criterionId: "claim",
@@ -222,7 +220,7 @@ describe("writing grades", () => {
     const prefix = "🙂 e\u0301:\t  ";
     const text = `${prefix}${written}.`;
 
-    expect(createWritingQuoteLookup(text)(quote)).toStrictEqual({
+    expect(createWritingQuoteLookup(text).locateUnique(quote)).toStrictEqual({
       end: prefix.length + written.length,
       start: prefix.length,
     });
@@ -230,7 +228,7 @@ describe("writing grades", () => {
     const result = assess(
       {
         ...evidence,
-        aspects: [{ aspectIndex: 0, criterionId: "claim", earned: true, quote }],
+        awards: [{ award: 1, quote, row: 0 }],
         criteria: [{ ...evidence.criteria[0]!, quote }],
         nextStep: {
           criterionId: "claim",
@@ -253,6 +251,20 @@ describe("writing grades", () => {
   it.each([
     { quote: "em áreas rurais", text: "Em áreas rurais e em áreas rurais." },
     { quote: "A a", text: "A a A" },
+  ])("credits $quote, which $text repeats, and highlights neither passage", ({ quote, text }) => {
+    const result = assess(
+      {
+        ...evidence,
+        awards: [{ award: 1, quote, row: 0 }],
+        criteria: [{ ...evidence.criteria[0]!, quote }],
+      },
+      { text },
+    );
+
+    expect(result).toMatchObject({ criteria: [{ quote: null }], rows: [{ earned: 0.3 }] });
+  });
+
+  it.each([
     { quote: "existe uma interação", text: "existindo uma interação" },
     { quote: "haveram problemas", text: "houveram problemas" },
     { quote: "em areas rurais", text: "em áreas rurais" },
@@ -261,7 +273,7 @@ describe("writing grades", () => {
     const result = assess(
       {
         ...evidence,
-        aspects: [{ aspectIndex: 0, criterionId: "claim", earned: true, quote }],
+        awards: [{ award: 1, quote, row: 0 }],
         criteria: [{ ...evidence.criteria[0]!, quote }],
         nextStep: {
           criterionId: "claim",
@@ -315,7 +327,7 @@ describe("writing grades", () => {
       errors: [{ quote: "eror", start: original.indexOf("eror") }],
       kind: "points",
       max: 0.75,
-      progress: { fixed: ["claim"], persists: [] },
+      progress: { fixed: [], persists: ["claim"] },
       rows: [{ earned: 0.3, id: "claim", max: 0.75 }],
       total: { high: 0.18, low: 0.05 },
     });
@@ -365,10 +377,10 @@ describe("writing grades", () => {
       assess(
         {
           ...evidence,
-          aspects: [],
+          awards: [],
           zeroKind: kind === "blank" || kind === "tooFewLines" ? null : kind,
           zeroQuote: example.quote ?? null,
-          zeroRuleIndex: example.quote ? 0 : null,
+          zeroRuleIndex: example.quote ? 7 : null,
         },
         { context: example.context, rubric, text: example.text },
       );
@@ -384,6 +396,56 @@ describe("writing grades", () => {
     expect(result(no)).toMatchObject({ kind: "points", zeroReason: null });
   });
 
+  it("returns zero and the exam's line rule on a measured sheet", async () => {
+    calibration.current = writingCalibrationSchema.parse(savedCalibration);
+
+    try {
+      const rule = "Answers of one line or fewer score zero.";
+
+      const writing = {
+        ...basis,
+        grading: {
+          ...basis.grading,
+          zeroing: [{ citation, kinds: ["tooFewLines" as const], maxLines: 1, text: rule }],
+        },
+      };
+
+      await expect(
+        gradeWriting({
+          content: { ...content, writing },
+          language: "en",
+          previousNextSteps: [],
+          text: "Claim",
+        }),
+      ).resolves.toMatchObject({
+        kind: "points",
+        nextStep: { kind: "zero" },
+        total: { high: 0, low: 0 },
+        zeroKind: "tooFewLines",
+        zeroReason: rule,
+      });
+    } finally {
+      calibration.current = null;
+    }
+  });
+
+  it("gives a blank answer the blank rule when a line-count rule comes first", () => {
+    const rubric = {
+      ...basis,
+      grading: {
+        ...basis.grading,
+        zeroing: [
+          { citation, kinds: ["tooFewLines" as const], maxLines: 7, text: "At most 7 lines" },
+          { citation, kinds: ["blank" as const], text: "Blank" },
+        ],
+      },
+    };
+
+    expect(
+      assess({ ...evidence, awards: [], zeroKind: null }, { rubric, text: " \n" }),
+    ).toMatchObject({ zeroKind: "blank", zeroReason: "Blank" });
+  });
+
   it("does not zero an off-topic nomination when the answer quotes relevant material", () => {
     expect(
       assess({
@@ -394,113 +456,6 @@ describe("writing grades", () => {
         zeroRuleIndex: 0,
       }),
     ).toMatchObject({ total: { high: 0.18, low: 0.05 }, zeroReason: null });
-  });
-
-  it("gates Enem's five competence ranges and caps a conditional proposal in code", () => {
-    const criteria = ["c1", "c2", "c3", "c4", "c5"].map((id) => ({ id, name: id, points: 200 }));
-
-    const rubric = {
-      ...basis,
-      criteria,
-      grading: { criteria: [], kind: "enem" as const, language: null, rounding: null, zeroing: [] },
-      points: 1000,
-    };
-
-    const graded: WritingEvidence = {
-      ...evidence,
-      criteria: criteria.map(({ id }) => ({
-        comment: "",
-        example: null,
-        id,
-        level: id === "c2" ? "partial" : "complete",
-        quote: "A claim",
-      })),
-      interventionElements: { action: true, agent: true, detail: true, effect: true, means: true },
-      proposalLimit: "conditional",
-    };
-
-    expect(getWritingArithmetic(rubric)).toBeNull();
-    expect(assess(graded, { gate: null, rubric })).toMatchObject({ kind: "levels" });
-
-    expect(assess(graded, { gate: { ...arithmetic, rounding: null }, rubric })).toMatchObject({
-      content: { high: 840, low: 720 },
-      deduction: { high: 0, low: 0 },
-      kind: "points",
-      max: 1000,
-      rows: [
-        { earned: 160, id: "c1", max: 200, range: { high: 200, low: 160 } },
-        { earned: 40, id: "c2", max: 200, range: { high: 160, low: 40 } },
-        { earned: 160, id: "c3", max: 200, range: { high: 200, low: 160 } },
-        { earned: 160, id: "c4", max: 200, range: { high: 200, low: 160 } },
-        { earned: 60, id: "c5", max: 200, range: { high: 80, low: 60 } },
-      ],
-      total: { high: 840, low: 720 },
-    });
-
-    const zero = {
-      ...rubric,
-      grading: {
-        ...rubric.grading,
-        zeroing: [{ citation, kinds: ["blank" as const], text: "Blank essay" }],
-      },
-    };
-
-    expect(
-      assess(graded, { gate: { ...arithmetic, rounding: null }, rubric: zero, text: " " }),
-    ).toMatchObject({ kind: "points", total: { high: 0, low: 0 }, zeroReason: "Blank essay" });
-  });
-
-  it("skips complete Enem competences even when their score has a range", () => {
-    const criteria = ["c1", "c2", "c3", "c4", "c5"].map((id) => ({ id, name: id, points: 200 }));
-
-    const rubric = {
-      ...basis,
-      criteria,
-      grading: { criteria: [], kind: "enem" as const, language: null, rounding: null, zeroing: [] },
-      points: 1000,
-    };
-
-    const graded: WritingEvidence = {
-      ...evidence,
-      criteria: criteria.map(({ id }) => ({
-        comment: "Explanation",
-        example: null,
-        id,
-        level: "complete",
-        quote: null,
-      })),
-      interventionElements: { action: true, agent: true, detail: true, effect: true, means: true },
-      nextStep: {
-        criterionId: "c1",
-        example: null,
-        quote: null,
-        text: "Revise the first competence.",
-        title: "Revise your writing",
-      },
-    };
-
-    const gate = { ...arithmetic, rounding: null };
-
-    expect(assess(graded, { gate, ignoredFrom: null, rubric })).toMatchObject({
-      kind: "points",
-      nextStep: null,
-      rows: [
-        { id: "c1", range: { high: 200, low: 160 } },
-        ...criteria.slice(1).map(({ id }) => ({ id })),
-      ],
-    });
-
-    const mixed: WritingEvidence = {
-      ...graded,
-      criteria: graded.criteria.map((criterion) =>
-        criterion.id === "c3" ? { ...criterion, level: "strong" } : criterion,
-      ),
-    };
-
-    expect(assess(mixed, { gate, ignoredFrom: null, rubric })).toMatchObject({
-      kind: "points",
-      nextStep: { criterionId: "c3", kind: "criterion" },
-    });
   });
 
   it.each([
@@ -519,17 +474,16 @@ describe("writing grades", () => {
       grading: {
         ...basis.grading,
         criteria: [{ ...basis.grading.criteria[0]!, points: max }],
-        kind: "oab" as const,
         language: null,
         rounding: null,
       },
       points: max,
     };
 
-    expect(getWritingArithmetic(rubric)).toBeNull();
-    expect(assess(evidence, { gate: null, rubric })).toMatchObject({ kind: "levels" });
+    expect(isNumericWritingRubric(rubric)).toBe(false);
+    expect(assess(evidence, { gate: false, rubric })).toMatchObject({ kind: "levels" });
 
-    expect(assess(evidence, { gate: { ...arithmetic, rounding: null }, rubric })).toMatchObject({
+    expect(assess(evidence, { rubric })).toMatchObject({
       decimals,
       deduction: { high: 0, low: 0 },
       kind: "points",
@@ -540,7 +494,7 @@ describe("writing grades", () => {
   });
 
   it("uses the active evaluated grader and withholds points after a provider fallback", async () => {
-    const grader = getWritingGrader("points");
+    const grader = getWritingGrader();
 
     const provenance = {
       ...grader,
@@ -553,7 +507,6 @@ describe("writing grades", () => {
     };
 
     const writing = { ...basis, grading: { ...basis.grading, rounding: null } };
-    const fingerprint = getWritingRubricFingerprint(writing);
 
     const input = {
       content: { ...content, writing },
@@ -562,21 +515,70 @@ describe("writing grades", () => {
       text: original,
     };
 
-    Object.assign(passedWritingEvaluations, {
-      [fingerprint]: {
-        arithmetic: { rounding: null, zeroRules: [] },
-        corpus: "fixture",
-        kind: "points",
-        model: grader.model,
-        promptRevision: grader.promptVersion,
-      },
+    const provider = vi.mocked(gradeWritingEvidence, { partial: true });
+    provider.mockResolvedValueOnce({ data: evidence, provenance });
+    await expect(gradeWriting(input)).resolves.toMatchObject({ kind: "levels" });
+
+    calibration.current = calibrationFixture({
+      grader,
+      rows: { definitePoint: rowCalibrationFixture(), judgedScale: rowCalibrationFixture() },
     });
 
     try {
-      const provider = vi.mocked(gradeWritingEvidence, { partial: true });
+      const unseen = {
+        ...input,
+        content: {
+          ...input.content,
+          writing: {
+            ...writing,
+            aspects: writing.aspects.map((aspect) => ({ ...aspect, points: 5 })),
+            grading: {
+              ...writing.grading,
+              criteria: writing.grading.criteria.map((criterion) => ({ ...criterion, points: 10 })),
+            },
+            points: 10,
+            taskKey: "unseen-exam-board",
+          },
+        },
+      };
 
       provider.mockResolvedValueOnce({ data: evidence, provenance });
-      await expect(gradeWriting(input)).resolves.toMatchObject({ decimals: 2, kind: "points" });
+
+      await expect(gradeWriting(unseen)).resolves.toMatchObject({
+        decimals: 0,
+        kind: "points",
+        max: 10,
+      });
+
+      provider.mockResolvedValueOnce({ data: evidence, provenance });
+
+      const mixed = {
+        ...writing,
+        aspects: writing.aspects.map((aspect, index) =>
+          index === 0 ? { ...aspect, kind: "judgedScale" as const } : aspect,
+        ),
+      };
+
+      await expect(
+        gradeWriting({ ...input, content: { ...content, writing: mixed } }),
+      ).resolves.toMatchObject({ kind: "points" });
+
+      calibration.current = calibrationFixture({ grader });
+      provider.mockResolvedValueOnce({ data: evidence, provenance });
+
+      await expect(
+        gradeWriting({ ...input, content: { ...content, writing: mixed } }),
+      ).resolves.toMatchObject({ kind: "levels" });
+
+      expect(isNumericWritingRubric(basis)).toBe(true);
+      expect(isNumericWritingRubric({ ...basis, points: 1 })).toBe(false);
+
+      expect(
+        isNumericWritingRubric({
+          ...basis,
+          grading: { ...basis.grading, rounding: { citation, text: "Precision" } },
+        }),
+      ).toBe(false);
 
       provider.mockResolvedValueOnce({
         data: evidence,
@@ -592,12 +594,12 @@ describe("writing grades", () => {
 
       await expect(gradeWriting(input)).resolves.toMatchObject({ kind: "levels" });
     } finally {
-      Reflect.deleteProperty(passedWritingEvaluations, fingerprint);
+      calibration.current = null;
     }
   });
 
   it("reads a saved recommendation without requiring an instruction title", () => {
-    const grade = assess(evidence, { gate: null, ignoredFrom: null });
+    const grade = assess(evidence, { gate: false, ignoredFrom: null });
 
     const nextStep = {
       criterionId: "claim",
@@ -638,15 +640,23 @@ describe("writing grades", () => {
     expect(grade).toMatchObject({
       ignoredFrom: eligible.length,
       kind: "levels",
-      progress: { fixed: ["claim"] },
+      progress: { persists: ["claim"] },
     });
 
     expect(grade).not.toHaveProperty("total");
-    expect(getWritingArithmetic(basis)).toBeNull();
     expect(isNumericWritingRubric(basis)).toBe(false);
 
     const [request] = vi.mocked(gradeWritingEvidence).mock.lastCall ?? [];
-    expect(request).toMatchObject({ scoringBasis: { points: 0.75 }, text: eligible });
+
+    expect(request).toMatchObject({
+      rows: [
+        { awards: [{ points: 0 }, { points: 0.3 }], criterionId: "claim" },
+        { awards: [{ points: 0 }, { points: 0.45 }], criterionId: "claim" },
+      ],
+      text: eligible,
+    });
+
+    expect(request?.rows[0]).not.toHaveProperty("kind");
     expect(request).not.toHaveProperty("previousNextSteps");
   });
 
@@ -686,17 +696,38 @@ describe("writing grades", () => {
   });
 });
 
-const rounded = (passage: string) =>
-  getWritingRubricFingerprint({
+const rounded = (rounding: { mode: "down" | "nearest"; step: number; text: string }) =>
+  getWritingTaskBasis({
     ...basis,
-    grading: {
-      ...basis.grading,
-      rounding: { citation: { passage, sourceId: "notice" }, text: "Scoring precision" },
-    },
+    grading: { ...basis.grading, rounding: { citation, stage: "total", ...rounding } },
   });
 
-describe(getWritingRubricFingerprint, () => {
-  it("keeps cosmetic changes out of the rubric and task compatibility keys", () => {
+const mean = (weights: readonly number[]) => ({
+  ...basis,
+  grading: {
+    ...basis.grading,
+    combination: { citation, method: "mean" as const, step: null, text: "The mean" },
+    criteria: weights.map((weight, index) => ({
+      citation,
+      id: `criterion-${index}`,
+      points: 10,
+      text: "A criterion",
+      weight,
+    })),
+    language: null,
+    rounding: null,
+    zeroing: [],
+  },
+  lines: 30,
+  points: 10,
+});
+
+// The basis a weighted mean's drill was issued with before its weights were part of it.
+const ISSUED_MEAN_BASIS =
+  '[30,10,{"criteria":[10,10],"language":null,"rounding":null,"zeroing":[],"combination":{"method":"mean","step":null}}]';
+
+describe(getWritingTaskBasis, () => {
+  it("keeps cosmetic changes out of the task compatibility key", () => {
     const revised = {
       ...basis,
       grading: {
@@ -715,19 +746,41 @@ describe(getWritingRubricFingerprint, () => {
 
     expect(matchesWritingTaskBasis({ prompt, task: revised })).toBe(true);
     expect(matchesWritingTaskBasis({ prompt, task: { ...revised, lines: 40 } })).toBe(false);
-    expect(getWritingRubricFingerprint(revised)).toBe(getWritingRubricFingerprint(basis));
 
-    expect(getWritingRubricFingerprint({ ...revised, points: 10 })).not.toBe(
-      getWritingRubricFingerprint(basis),
-    );
+    expect(getWritingTaskBasis({ ...revised, points: 10 })).not.toBe(getWritingTaskBasis(basis));
 
-    expect(getWritingArithmetic(revised)).toBeNull();
+    expect(isNumericWritingRubric(revised)).toBe(false);
   });
 
-  it("fingerprints the verified rounding rule independently of its wording", () => {
-    expect(rounded("Round to two places.")).toBe(rounded("Rounded to 2 decimal places."));
-    expect(rounded("Round down to 2 decimals.")).not.toBe(rounded("Round to 2 decimals."));
-    expect(rounded("Round to 3 decimals.")).not.toBe(rounded("Round to 2 decimals."));
+  it("tells apart a weighted mean's weights, which move its marks", () => {
+    expect(getWritingTaskBasis(mean([1, 3]))).not.toBe(getWritingTaskBasis(mean([1, 1])));
+    expect(getWritingTaskBasis(mean([1, 1]))).toBe(ISSUED_MEAN_BASIS);
+  });
+
+  it("tells apart two criteria swapping their weights", () => {
+    expect(getWritingTaskBasis(mean([1, 3]))).not.toBe(getWritingTaskBasis(mean([3, 1])));
+  });
+
+  it("keeps matching a basis stored in today's shape", () => {
+    const prompt = { ...mean([1, 1]), taskBasis: ISSUED_MEAN_BASIS };
+
+    expect(matchesWritingTaskBasis({ prompt, task: mean([1, 1]) })).toBe(true);
+    expect(matchesWritingTaskBasis({ prompt, task: mean([1, 3]) })).toBe(false);
+  });
+
+  it("reads an earlier drill's weights from the sheet it was issued with", () => {
+    const prompt = { ...mean([1, 3]), taskBasis: ISSUED_MEAN_BASIS };
+
+    expect(matchesWritingTaskBasis({ prompt, task: mean([1, 3]) })).toBe(true);
+    expect(matchesWritingTaskBasis({ prompt, task: mean([1, 1]) })).toBe(false);
+  });
+
+  it("fingerprints the rounding rule by its numbers, not its wording", () => {
+    const two = { mode: "nearest", step: 0.01, text: "Round to two places." } as const;
+
+    expect(rounded(two)).toBe(rounded({ ...two, text: "Rounded to 2 decimal places." }));
+    expect(rounded({ ...two, mode: "down" })).not.toBe(rounded(two));
+    expect(rounded({ ...two, step: 0.001 })).not.toBe(rounded(two));
   });
 });
 
@@ -761,6 +814,28 @@ describe(countWritingLines, () => {
 
     expect(ignoredFrom).toBeGreaterThan(cacd2025HistoryQ4.length);
     expect(ignoredFrom).toBeLessThan(cacd2025HistoryQ4.length * 2);
+  });
+
+  it.each([55, 70])("reads a task saved at %i characters a line at today's widths", (width) => {
+    expect(readWritingPrompt({ ...basis, charactersPerLine: width })).toMatchObject({
+      charactersPerLine: WRITING_CHARACTERS_PER_LINE,
+      maxCharactersPerLine: WRITING_MAX_CHARACTERS_PER_LINE,
+    });
+  });
+
+  it("grades a dense answer in full whatever width its task was saved with", async () => {
+    mockEvidence();
+    const writing = writtenItemSchema.parse({ ...basis, charactersPerLine: 55, lines: 40 });
+
+    const grade = await gradeWriting({
+      content: { ...content, writing },
+      language: "pt",
+      previousNextSteps: [],
+      text: cacd2025HistoryQ4,
+    });
+
+    expect(grade.ignoredFrom).toBeNull();
+    expect(vi.mocked(gradeWritingEvidence).mock.lastCall?.[0].text).toBe(cacd2025HistoryQ4);
   });
 
   it.each(lineFixtures)(

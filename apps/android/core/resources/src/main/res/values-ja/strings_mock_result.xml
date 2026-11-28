@@ -114,6 +114,7 @@
   "mock_result_up": "85b2d9f40fa091b25115b3b70de8d4f213295782c33cc21300eaede456888bfc",
   "mock_result_up_from": "7ba34496369ac61f08440de2c0e9b86997c84f329bbd902a475c024862c1e7dc",
   "mock_result_work_on": "e8d8c9ff0ff02b7915cb6a167453102afe157a8719771c5ecf07938cf8f1b6cb",
+  "mock_result_written_no_estimate": "9ab6c7942893fc7ab72db166a68182b6c293662bdc84d900f6eed23f83e0231e",
   "mock_result_wrong": "fbbe5b7086da1f767ddf6c21b48a073fbfc94ee15fb95602884bd9d0d5f4bdf0",
   "mock_result_your_plan": "567c5e7800de7ed847ad191053121c1248b44c20e5254d3927a9419146d2f258",
   "mock_result_your_preparation": "9659dc069bfcaf9d2531943e116cad6ee21e1facc3af82fcd8fba147ee270b7e"
@@ -216,6 +217,7 @@
     <string name="mock_result_reached_points_decimal">必要な%1$s点に達しました</string>
     <!-- Under a test whose minimum this mock can't judge. %1$s is the percent of its points it needs, such as "40%". -->
     <string name="mock_result_needs_percent">満点の%1$sが必要です</string>
+    <string name="mock_result_written_no_estimate">ポイントの推定はまだありません</string>
     <!-- Under a test whose minimum this mock can't judge. %1$s is the points it needs, possibly a decimal. -->
     <plurals name="mock_result_needs_points">
         <item quantity="other">%1$s点が必要です</item>

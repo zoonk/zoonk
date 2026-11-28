@@ -2920,6 +2920,96 @@
           ],
           "route": "goals"
         },
+        "id": "pt-exam-concurso-camara-owner-1",
+        "userInput": {
+          "goal": "quero passar no concurso da camara dos deputados, que vai ter uma prova em janeiro do ano que vem. quero passar na vaga de registro/redação",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examDay": "official",
+              "examMonth": 1,
+              "examYear": 2027,
+              "hasTarget": true,
+              "hasTargetDate": false,
+              "kind": "exam",
+              "title": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-exam-concurso-camara-owner-2",
+        "userInput": {
+          "goal": "quero passar no concurso da camara dos deputados, que vai ter uma prova em janeiro do ano que vem. quero passar na vaga de registro/redação",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examDay": "official",
+              "examMonth": 1,
+              "examYear": 2027,
+              "hasTarget": true,
+              "hasTargetDate": false,
+              "kind": "exam",
+              "title": {}
+            }
+          ],
+          "route": "goals"
+        },
         "id": "pt-exam-concurso-camara-owner-3",
         "userInput": {
           "goal": "quero passar no concurso da camara dos deputados, que vai ter uma prova em janeiro do ano que vem. quero passar na vaga de registro/redação",
@@ -4126,135 +4216,6 @@
           ],
           "route": "goals"
         },
-        "id": "pt-school-test-naming-its-subject-is-a-goal-3",
-        "userInput": {
-          "goal": "Prova de matemática na sexta sobre frações",
-          "language": "pt",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "goals": [
-            {
-              "examDay": "official",
-              "examMonth": 1,
-              "examYear": 2027,
-              "hasTarget": true,
-              "hasTargetDate": false,
-              "kind": "exam",
-              "title": {}
-            }
-          ],
-          "route": "goals"
-        },
-        "id": "pt-exam-concurso-camara-owner-1",
-        "userInput": {
-          "goal": "quero passar no concurso da camara dos deputados, que vai ter uma prova em janeiro do ano que vem. quero passar na vaga de registro/redação",
-          "language": "pt",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "goals": [
-            {
-              "examDay": "official",
-              "examMonth": 1,
-              "examYear": 2027,
-              "hasTarget": true,
-              "hasTargetDate": false,
-              "kind": "exam",
-              "title": {}
-            }
-          ],
-          "route": "goals"
-        },
-        "id": "pt-exam-concurso-camara-owner-2",
-        "userInput": {
-          "goal": "quero passar no concurso da camara dos deputados, que vai ter uma prova em janeiro do ano que vem. quero passar na vaga de registro/redação",
-          "language": "pt",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "goals": [
-            {
-              "kind": "exam"
-            }
-          ],
-          "route": "goals"
-        },
         "id": "pt-school-test-naming-its-subject-is-a-goal-1",
         "userInput": {
           "goal": "Prova de matemática na sexta sobre frações",
@@ -4328,272 +4289,14 @@
         "expected": {
           "goals": [
             {
-              "examName": null,
-              "examSubjects": [
-                {},
-                {},
-                {}
-              ],
-              "examTarget": null,
               "kind": "exam"
             }
           ],
           "route": "goals"
         },
-        "id": "ko-term-finals-with-subjects-name-no-exam-1",
+        "id": "pt-school-test-naming-its-subject-is-a-goal-3",
         "userInput": {
-          "goal": "기말고사 국어, 수학, 영어 평균 90점",
-          "language": "ko",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "goals": [
-            {
-              "examName": null,
-              "examSubjects": [
-                {},
-                {},
-                {}
-              ],
-              "examTarget": null,
-              "kind": "exam"
-            }
-          ],
-          "route": "goals"
-        },
-        "id": "ko-term-finals-with-subjects-name-no-exam-2",
-        "userInput": {
-          "goal": "기말고사 국어, 수학, 영어 평균 90점",
-          "language": "ko",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "goals": [
-            {
-              "examName": null,
-              "examTarget": null,
-              "kind": "exam"
-            }
-          ],
-          "route": "goals"
-        },
-        "id": "ja-term-test-with-subjects-names-no-exam-1",
-        "userInput": {
-          "goal": "期末テストの数学と英語で80点以上取りたい",
-          "language": "ja",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "goals": [
-            {
-              "examName": null,
-              "examTarget": null,
-              "kind": "exam"
-            }
-          ],
-          "route": "goals"
-        },
-        "id": "ja-term-test-with-subjects-names-no-exam-2",
-        "userInput": {
-          "goal": "期末テストの数学と英語で80点以上取りたい",
-          "language": "ja",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "goals": [
-            {
-              "examName": null,
-              "examTarget": null,
-              "kind": "exam"
-            }
-          ],
-          "route": "goals"
-        },
-        "id": "en-class-finals-name-no-exam-1",
-        "userInput": {
-          "goal": "Get through my calculus and physics finals next month",
-          "language": "en",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "goals": [
-            {
-              "examName": null,
-              "examTarget": null,
-              "kind": "exam"
-            }
-          ],
-          "route": "goals"
-        },
-        "id": "en-class-finals-name-no-exam-2",
-        "userInput": {
-          "goal": "Get through my calculus and physics finals next month",
-          "language": "en",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "goals": [
-            {
-              "examName": null,
-              "examTarget": null,
-              "kind": "exam"
-            }
-          ],
-          "route": "goals"
-        },
-        "id": "pt-term-tests-name-no-exam-1",
-        "userInput": {
-          "goal": "Passar nas provas do bimestre de química e física",
+          "goal": "Prova de matemática na sexta sobre frações",
           "language": "pt",
           "today": "2026-09-26"
         }
@@ -4625,16 +4328,16 @@
         "expected": {
           "goals": [
             {
-              "examName": null,
-              "examTarget": null,
+              "contentCountry": null,
+              "countryDependent": true,
               "kind": "exam"
             }
           ],
           "route": "goals"
         },
-        "id": "pt-term-tests-name-no-exam-2",
+        "id": "pt-nationality-is-not-an-exams-country-1",
         "userInput": {
-          "goal": "Passar nas provas do bimestre de química e física",
+          "goal": "Sou português e quero passar no exame de condução",
           "language": "pt",
           "today": "2026-09-26"
         }
@@ -4666,56 +4369,17 @@
         "expected": {
           "goals": [
             {
-              "examName": {},
+              "contentCountry": null,
+              "countryDependent": true,
               "kind": "exam"
             }
           ],
           "route": "goals"
         },
-        "id": "ko-national-exam-keeps-its-name-1",
+        "id": "pt-nationality-is-not-an-exams-country-2",
         "userInput": {
-          "goal": "수능 국어 수학 1등급 받고 싶어요",
-          "language": "ko",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "goals": [
-            {
-              "examName": {},
-              "kind": "exam"
-            }
-          ],
-          "route": "goals"
-        },
-        "id": "ko-national-exam-keeps-its-name-2",
-        "userInput": {
-          "goal": "수능 국어 수학 1등급 받고 싶어요",
-          "language": "ko",
+          "goal": "Sou português e quero passar no exame de condução",
+          "language": "pt",
           "today": "2026-09-26"
         }
       }

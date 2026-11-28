@@ -15,6 +15,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { mistakeShowing, pickInMistake } from "../_test-utils/shown-choice";
+import { gradingTranscriptions } from "../_test-utils/transcriptions";
 import { getUsageRule } from "../entitlements/limits";
 import { readSkillMistakeSignals } from "../learner/read-skill-mistake-signals";
 import { gradeSpokenAnswer } from "../library/language/grade-spoken-answer";
@@ -126,7 +127,7 @@ describe("Original notebook questions", () => {
     });
 
     expect(second).toMatchObject(first);
-    expect(transcribeSpeech).toHaveBeenCalledOnce();
+    expect(gradingTranscriptions()).toHaveLength(1);
     await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(1);
   });
 
@@ -218,7 +219,7 @@ describe("Original notebook questions", () => {
     const recorded = await first;
     expect(recorded.status).toBe("graded");
     await expect(gradeSpokenAnswer(input)).resolves.toMatchObject(recorded);
-    expect(transcribeSpeech).toHaveBeenCalledOnce();
+    expect(gradingTranscriptions()).toHaveLength(1);
     await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(1);
 
     await expect(
@@ -279,7 +280,7 @@ describe("Original notebook questions", () => {
     });
 
     await expect(record(recording)).resolves.toStrictEqual(first);
-    expect(transcribeSpeech).toHaveBeenCalledOnce();
+    expect(gradingTranscriptions()).toHaveLength(1);
     await expect(prisma.usageRecord.count({ where: { kind: "assist", userId } })).resolves.toBe(1);
     await expect(prisma.attempt.count({ where: { userId } })).resolves.toBe(1);
 
@@ -292,7 +293,7 @@ describe("Original notebook questions", () => {
       status: "graded",
     });
 
-    expect(transcribeSpeech).toHaveBeenCalledTimes(2);
+    expect(gradingTranscriptions()).toHaveLength(2);
     await expect(prisma.usageRecord.count({ where: { kind: "assist", userId } })).resolves.toBe(2);
 
     const [attempts, skillStates] = await Promise.all([
@@ -401,6 +402,7 @@ describe("Original notebook questions", () => {
 
     vi.mocked(transcribeSpeech)
       .mockRejectedValueOnce(new Error("Speech provider unavailable"))
+      .mockResolvedValueOnce(targetTranscript())
       .mockResolvedValueOnce(targetTranscript());
 
     vi.mocked(assessPronunciation).mockRejectedValueOnce(new Error("Speech provider unavailable"));

@@ -1,6 +1,13 @@
 import { isCountryCode } from "@zoonk/utils/countries";
 import { splitTargetLanguage } from "@zoonk/utils/language-regions";
 import { LANGUAGE_CODE_PATTERN, toCanonicalLanguage } from "@zoonk/utils/languages";
+import {
+  type GoalUnderstanding,
+  type RawGoalUnderstanding,
+  type RawUnderstoodGoal,
+  type UnderstoodGoal,
+  type UnderstoodGoalKind,
+} from "./understood-goal";
 
 const DAYS_PER_WEEK = 7;
 const MAX_GOALS = 3;
@@ -11,112 +18,6 @@ const MIN_YEAR = 1900;
 const MAX_YEAR = 2200;
 const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/u;
 const STUDY_TIME_PATTERN = /^(?:[01]\d|2[0-3]):[0-5]\d$/u;
-
-type GoalUnderstandingRoute = "explain" | "goals" | "instrument" | "unclear" | "unsafe";
-type UnderstoodGoalKind = "exam" | "language" | "learn";
-type UnderstoodOwnLevel = "advanced" | "basic" | "intermediate" | "none";
-type UnderstoodPurpose = "careerChange" | "deep" | "other" | "overview" | "refresh" | "work";
-
-/** Exams that are only passed or failed have none. */
-type UnderstoodExamTarget = "admission" | "position" | "score";
-
-/** `booked`: each candidate books their own day, so no notice ever sets it. */
-type UnderstoodExamDay = "booked" | "official";
-
-/** Every field present, null when the text didn't say. */
-type RawUnderstoodGoal = {
-  /** A test the learner's own teacher or course sets, which no public notice describes. */
-  classTest?: boolean;
-  contentCountry: string | null;
-  countryDependent: boolean;
-  displayName?: string;
-  examDay: UnderstoodExamDay | null;
-  examMonth: number | null;
-  examName: string | null;
-  examSubjects: string[] | null;
-  examTarget: UnderstoodExamTarget | null;
-  examYear: number | null;
-  institution: string | null;
-  kind: UnderstoodGoalKind;
-  level: string | null;
-  nativeLanguage: string | null;
-  ownLevel: UnderstoodOwnLevel | null;
-  purpose: UnderstoodPurpose | null;
-  reason: string | null;
-  role: string | null;
-  subject: string;
-  targetCourse: string | null;
-  targetDate: string | null;
-  targetLanguage: string | null;
-  targetPosition: string | null;
-  targetScore: string | null;
-  title: string;
-};
-
-export type RawGoalUnderstanding = {
-  dailyMinutes: number | null;
-  followUps: string[];
-  goals: RawUnderstoodGoal[];
-  instrument: string | null;
-  question: string | null;
-  route: GoalUnderstandingRoute;
-  studyDays: number[] | null;
-  studyTime: string | null;
-  studyTimeNote: string | null;
-};
-
-/** Fields the text didn't give are undefined, never null. */
-export type UnderstoodGoal = {
-  /** A learn goal's country, only when the learner's words named it or a place in it. */
-  contentCountry?: string;
-  /**
-   * A learn goal whose subject changes by country. Exams take their country from the exam and
-   * languages from their variety, so theirs is always false.
-   */
-  countryDependent: boolean;
-  /** A test the learner's own teacher or course sets: no public notice, name or day comes with it. */
-  classTest?: true;
-  displayName?: string;
-  examDay?: UnderstoodExamDay;
-  /** 1 to 12, for an exam named without its day ("in March"). */
-  examMonth?: number;
-  examName?: string;
-  /** The exam's subjects the learner prepares, in their words; undefined for the whole exam. */
-  examSubjects?: string[];
-  examTarget?: UnderstoodExamTarget;
-  examYear?: number;
-  institution?: string;
-  kind: UnderstoodGoalKind;
-  level?: string;
-  nativeLanguage?: string;
-  ownLevel?: UnderstoodOwnLevel;
-  purpose?: UnderstoodPurpose;
-  reason?: string;
-  role?: string;
-  subject: string;
-  targetCourse?: string;
-  targetDate?: string;
-  targetLanguage?: string;
-  /** A language goal's country, when the learner named one or a place where it's spoken. */
-  targetRegion?: string;
-  targetPosition?: string;
-  targetScore?: string;
-  title: string;
-};
-
-export type GoalUnderstanding =
-  | { route: "explain"; question: string }
-  | { instrument: string; route: "instrument" }
-  | { route: "unclear" | "unsafe" }
-  | {
-      dailyMinutes?: number;
-      followUps: string[];
-      goals: UnderstoodGoal[];
-      route: "goals";
-      studyDays?: number[];
-      studyTime?: string;
-      studyTimeNote?: string;
-    };
 
 function cleanText(value: string | null): string | undefined {
   const text = value?.trim();
@@ -214,16 +115,62 @@ function cleanYear(year: number | null): number | undefined {
     : undefined;
 }
 
-/** A class test has no public notice, so nothing may read the learner's word for it as an exam's name. */
-function cleanExamFields(goal: RawUnderstoodGoal) {
+/**
+ * An exam one organizer runs everywhere has no country of the learner's: a country named with it
+ * ("the SAT in Kenya") is only where they sit it.
+ */
+function hasOwnCountry(goal: RawUnderstoodGoal): boolean {
+  return goal.kind === "learn" || (goal.kind === "exam" && goal.countryDependent);
+}
+
+/** A date the learner gave says they booked, whatever else the reading says. */
+function isNotBooked({
+  goal,
+  targetDate,
+}: {
+  goal: RawUnderstoodGoal;
+  targetDate: string | undefined;
+}): true | undefined {
+  return (
+    (goal.kind === "exam" && goal.examDay === "booked" && goal.examNotBooked && !targetDate) ||
+    undefined
+  );
+}
+
+type ExamFields = Pick<
+  UnderstoodGoal,
+  | "classTest"
+  | "examDay"
+  | "examMonth"
+  | "examName"
+  | "examNotBooked"
+  | "examOption"
+  | "examSubjects"
+  | "examTarget"
+  | "examYear"
+>;
+
+/**
+ * Every exam field, undefined on other goals. A class test has no public notice, so nothing may
+ * read the learner's word for it as an exam's name, day, version or target.
+ */
+function cleanExamFields({
+  goal,
+  targetDate,
+}: {
+  goal: RawUnderstoodGoal;
+  targetDate: string | undefined;
+}): ExamFields {
   const exam = goal.kind === "exam";
   const publicExam = exam && !goal.classTest;
 
   return {
-    classTest: exam && goal.classTest ? (true as const) : undefined,
+    classTest: exam && goal.classTest ? true : undefined,
     examDay: publicExam ? (goal.examDay ?? undefined) : undefined,
     examMonth: exam ? cleanMonth(goal.examMonth) : undefined,
     examName: publicExam ? cleanText(goal.examName) : undefined,
+    examNotBooked: publicExam ? isNotBooked({ goal, targetDate }) : undefined,
+    examOption: publicExam ? cleanText(goal.examOption) : undefined,
     examSubjects: exam ? cleanTexts(goal.examSubjects) : undefined,
     examTarget: publicExam ? (goal.examTarget ?? undefined) : undefined,
     examYear: exam ? cleanYear(goal.examYear) : undefined,
@@ -248,13 +195,13 @@ function normalizeGoal({
     return null;
   }
 
-  const learn = goal.kind === "learn";
+  const targetDate = cleanTargetDate({ date: goal.targetDate, today });
 
   return {
-    contentCountry: learn ? cleanCountry(goal.contentCountry) : undefined,
-    countryDependent: learn && goal.countryDependent,
+    contentCountry: hasOwnCountry(goal) ? cleanCountry(goal.contentCountry) : undefined,
+    countryDependent: (goal.kind === "learn" || goal.kind === "exam") && goal.countryDependent,
     displayName: cleanText(goal.displayName ?? null),
-    ...cleanExamFields(goal),
+    ...cleanExamFields({ goal, targetDate }),
     institution: cleanText(goal.institution),
     kind: goal.kind,
     level: cleanText(goal.level),
@@ -265,7 +212,7 @@ function normalizeGoal({
     role: cleanText(goal.role),
     subject: cleanText(goal.subject) ?? title,
     targetCourse: cleanCourseName(goal.targetCourse),
-    targetDate: cleanTargetDate({ date: goal.targetDate, today }),
+    targetDate,
     targetLanguage,
     targetPosition: cleanText(goal.targetPosition),
     targetRegion,

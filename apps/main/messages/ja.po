@@ -1405,7 +1405,7 @@ msgid "Plus ends right away, and you won't be charged again."
 msgstr "Plusはすぐに終了し、それ以降は請求されません。"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
-#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/plan-date-line.tsx
 msgctxt "MUSFX9"
 msgid "You have Plus until <mono>{date}</mono>."
 msgstr "Plusは<mono>{date}</mono>まで利用できます。"
@@ -1420,16 +1420,6 @@ msgstr "お支払い済みの期間が終わるまで、引き続きPlusを利�
 msgctxt "KLKQ8N"
 msgid "Keep Plus"
 msgstr "Plusを継続する"
-
-#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
-msgctxt "YrbiTE"
-msgid "Plus ends on <mono>{date}</mono>."
-msgstr "Plusは<mono>{date}</mono>に終了します。"
-
-#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
-msgctxt "AucmVG"
-msgid "Renews on <mono>{date}</mono>."
-msgstr "<mono>{date}</mono>に更新されます。"
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 #: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
@@ -1507,6 +1497,16 @@ msgstr "ZoonkがアカウントにPlusを追加しました。変更するには
 msgctxt "2OvvJx"
 msgid "Write to us"
 msgstr "問い合わせる"
+
+#: src/app/[lang]/(app)/(settings)/subscription/plan-date-line.tsx
+msgctxt "YrbiTE"
+msgid "Plus ends on <mono>{date}</mono>."
+msgstr "Plusは<mono>{date}</mono>に終了します。"
+
+#: src/app/[lang]/(app)/(settings)/subscription/plan-date-line.tsx
+msgctxt "AucmVG"
+msgid "Renews on <mono>{date}</mono>."
+msgstr "<mono>{date}</mono>に更新されます。"
 
 #: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
 msgctxt "kRo_Bd"

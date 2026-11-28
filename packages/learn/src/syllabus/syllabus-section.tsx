@@ -16,6 +16,7 @@ import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components
 import { QuietDisclosure } from "../_components/quiet-disclosure";
 import { useFormatProgressShare } from "../_utils/percent";
 import { useExamQuestionCount } from "../exam/use-exam-question-count";
+import { LeftOutTopicsLine } from "./left-out-topics";
 import { namesModules } from "./names-modules";
 import { SharedExamsNote, useAlsoIn } from "./shared-exams";
 import { SubjectGroups } from "./subject-groups";
@@ -114,6 +115,7 @@ function SubjectRow({
           </ListRowTitle>
 
           {alsoIn && <ListRowDescription>{alsoIn}</ListRowDescription>}
+          <LeftOutTopicsLine count={subject.leftOut.length} />
         </span>
 
         <span className="text-muted-foreground hidden text-right font-mono text-xs whitespace-nowrap tabular-nums @2xl/subjects:block">

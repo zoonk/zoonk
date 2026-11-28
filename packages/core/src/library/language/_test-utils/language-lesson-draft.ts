@@ -1,9 +1,69 @@
 import { type LanguageLessonContent } from "@zoonk/ai/tasks/language/language-lesson";
 
+type Dialogue = NonNullable<LanguageLessonContent["dialogue"]>;
+type PatternTable = NonNullable<LanguageLessonContent["patternTable"]>;
+
+export function languageDialogue(overrides: Partial<Dialogue> = {}): Dialogue {
+  return {
+    explanation: "Uma pergunta direta sobre o valor é educada e natural com o proprietário.",
+    lines: [
+      {
+        speaker: "them",
+        text: "Hi, are you here about the apartment?",
+        translation: "Oi, você veio pelo apartamento?",
+      },
+      { speaker: "you", text: "Yes, I am", translation: "Sim, vim" },
+      { speaker: "them", text: "Great. Any questions?", translation: "Ótimo. Alguma pergunta?" },
+    ],
+    prompt: "O proprietário pergunta se você tem dúvidas. O que você responde?",
+    replies: [
+      {
+        isBest: true,
+        text: "How much is the rent?",
+        translation: "Quanto é o aluguel?",
+        why: "Pergunta o valor do aluguel de forma clara.",
+      },
+      {
+        isBest: false,
+        text: "How many is the rent?",
+        translation: "Quantos é o aluguel?",
+        why: "'How many' é para coisas que se contam; aluguel pede 'how much'.",
+      },
+      {
+        isBest: false,
+        text: "Give me the rent",
+        translation: "Me dá o aluguel",
+        why: "Soa como uma ordem e não pergunta o valor.",
+      },
+    ],
+    scene: "Visitando um apartamento em Chicago",
+    ...overrides,
+  };
+}
+
+export function languagePatternTable(overrides: Partial<PatternTable> = {}): PatternTable {
+  return {
+    choices: ["s", "es", "ies"],
+    explanation: "'Bill' segue 'rent': só se acrescenta -s no plural.",
+    modelMeaning: "o aluguel",
+    modelWord: "rent",
+    newMeaning: "a conta",
+    newWord: "bill",
+    prompt: "Use o padrão de 'rent' para completar 'bill'.",
+    rows: [
+      { answer: "bill", blank: false, label: "one", labelMeaning: "um", model: "rent" },
+      { answer: "bills", blank: true, label: "two", labelMeaning: "dois", model: "rents" },
+    ],
+    ...overrides,
+  };
+}
+
 export function languageLessonDraft(
   overrides: Partial<LanguageLessonContent> = {},
 ): LanguageLessonContent {
   return {
+    dialogue: null,
+    patternTable: null,
     practice: [
       {
         answer: "is",

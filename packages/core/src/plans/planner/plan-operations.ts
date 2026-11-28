@@ -121,7 +121,7 @@ function addSkills({
         ...(added.courseId && { courseIds: [added.courseId] }),
         lessons: added.lessons,
         name: added.name,
-        phase: anchor?.phase ?? 0,
+        phase: added.phase ?? anchor?.phase ?? 0,
         skillId: added.skillId,
         topics: [],
         weight: anchor?.weight ?? null,

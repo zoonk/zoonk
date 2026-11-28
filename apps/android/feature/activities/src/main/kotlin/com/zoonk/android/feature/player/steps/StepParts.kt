@@ -13,9 +13,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -134,7 +136,13 @@ fun splitQuestionData(text: String): Pair<String?, String> {
     return data to lines.subList(start, end + 1).joinToString("\n")
 }
 
-/** A question as a TalkBack heading, with any table of data or code above it; a reveal scrolls it away whole ([keptWhole]). */
+/** Whether the lesson shows the current screen's verdict, as main's `data-phase="feedback"`. */
+val LocalStepChecked = compositionLocalOf { false }
+
+/**
+ * A question as a TalkBack heading, with any table of data or code above it; a reveal scrolls it away whole ([keptWhole]).
+ * Once checked it steps back, so the eye goes to the verdict.
+ */
 @Composable
 fun QuestionText(text: String) {
     val (data, question) = remember(text) { splitQuestionData(text) }
@@ -146,8 +154,10 @@ fun QuestionText(text: String) {
             modifier = Modifier.keptWhole().semantics { heading() }.revealPart(LocalFeedbackReveal.current, RevealPart.Question),
             style =
                 MaterialTheme.typography.titleLarge
-                    .copy(fontWeight = FontWeight.SemiBold)
-                    .balanced(),
+                    .copy(
+                        color = if (LocalStepChecked.current) MaterialTheme.colorScheme.onSurfaceVariant else Color.Unspecified,
+                        fontWeight = FontWeight.SemiBold,
+                    ).balanced(),
         )
     }
 }

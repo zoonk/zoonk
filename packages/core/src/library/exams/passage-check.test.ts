@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { findNamesInDocument, isPassageInDocument } from "./passage-check";
+import { findNamesInDocument, findQuotedEntries, isPassageInDocument } from "./passage-check";
 
 const NOTICE = `4.1 As provas objetivas serão aplicadas em 8 e 15 de novembro de 2026.
 4.2 A prova de Linguagens, Códigos e suas Tecnologias terá 45 (quarenta e cinco) ques-
@@ -82,5 +82,51 @@ describe(findNamesInDocument, () => {
     });
 
     expect(found.size).toBe(0);
+  });
+});
+
+describe(findQuotedEntries, () => {
+  const TABLE = [
+    "| Algebra | linear equations | 35% |",
+    "| Advanced Algebra | 15% |",
+    "Problem-",
+    "Solving 50%",
+  ].join("\n");
+
+  const names = ["Algebra", "Advanced Algebra", "Problem-Solving"];
+  const entries = (passage: string) => findQuotedEntries({ names, passage, text: TABLE });
+
+  it("reads each name's entry from the page where it holds the quote, skipped cells included", () => {
+    expect(entries("Algebra … 35%")).toStrictEqual([
+      { entry: "algebra | linear equations | 35", name: "Algebra" },
+    ]);
+  });
+
+  it("cuts at the next name, even a longer one holding this one", () => {
+    expect(
+      findQuotedEntries({
+        names,
+        passage: "Algebra 15%",
+        text: "Algebra 35%, Advanced Algebra 15%",
+      }),
+    ).toStrictEqual([
+      { entry: "algebra 35%, ", name: "Algebra" },
+      { entry: "advanced algebra 15", name: "Advanced Algebra" },
+    ]);
+  });
+
+  it("skips words only within a line, so a quote can't join two rows", () => {
+    expect(entries("Algebra 15%")).toStrictEqual([]);
+  });
+
+  it("reads across a hyphenated line break the quote doesn't have", () => {
+    expect(entries("Problem-Solving 50%")).toStrictEqual([
+      { entry: "problemsolving 50", name: "Problem-Solving" },
+    ]);
+  });
+
+  it("finds nothing when a word is missing or out of order", () => {
+    expect(entries("Algebra … 20%")).toStrictEqual([]);
+    expect(entries("50% … Problem-Solving")).toStrictEqual([]);
   });
 });

@@ -2,9 +2,23 @@ import { createHash } from "node:crypto";
 import { type PrismaClient } from "../../../../generated/prisma/client";
 import { libraryIds } from "../library-ids";
 import { type EnemEdition, formatDatePt } from "./enem-edition";
+import { essayTotal } from "./enem-grading";
 
 const INEP_ENEM_URL =
   "https://www.gov.br/inep/pt-br/areas-de-atuacao/avaliacao-e-exames-educacionais/enem";
+
+export const essayScoringSources = {
+  handbook: {
+    id: libraryIds.source("enem-cartilha"),
+    title: "A redação do Enem 2025: cartilha do participante",
+    url: "https://download.inep.gov.br/publicacoes/institucionais/avaliacoes_e_exames_da_educacao_basica/a_redacao_no_enem_2025_cartilha_do_participante.pdf",
+  },
+  manual: {
+    id: libraryIds.source("enem-correction-manuals"),
+    title: "Manuais de correção da redação do Enem: competências II e V",
+    url: `${INEP_ENEM_URL}/outros-documentos`,
+  },
+};
 
 export function getNoticePassages(edition: EnemEdition) {
   const [firstDay, secondDay] = edition.examDays;
@@ -16,6 +30,7 @@ export function getNoticePassages(edition: EnemEdition) {
       "A redação é um texto dissertativo-argumentativo sobre um tema de ordem social, científica, cultural ou política, com até 30 linhas.",
     essayScoring:
       "A redação é corrigida por dois avaliadores, que atribuem de 0 a 200 pontos a cada uma das cinco competências.",
+    essayTotal: essayTotal.in("pt"),
     firstDay: `O primeiro dia de provas, em ${formatDatePt(firstDay)}, terá Linguagens, Códigos e suas Tecnologias, Ciências Humanas e suas Tecnologias e a redação, com 5 horas e 30 minutos de duração.`,
     foreignLanguage:
       "O participante responderá às questões da prova de Língua Estrangeira (Inglês ou Espanhol) escolhida no sistema de inscrição.",
@@ -47,7 +62,7 @@ function contentHash(text: string): string {
   return createHash("sha256").update(text).digest("hex");
 }
 
-/** Both documents are in Portuguese, so the English blueprint quotes them as written. */
+/** The source passages stay in Portuguese on both blueprints. */
 export async function writeEnemSources({
   edition,
   now,
@@ -97,6 +112,20 @@ export async function writeEnemSources({
       create: { id: surveyId, ...survey },
       update: survey,
       where: { id: surveyId },
+    }),
+    ...Object.values(essayScoringSources).map(({ id, title, url }) => {
+      const data = {
+        contentHash: contentHash(url),
+        fetchedAt: now,
+        identityKey: url.replace(/^https:\/\/(?:www\.)?/u, ""),
+        kind: "official" as const,
+        language: "pt",
+        publisher: "Inep",
+        title,
+        url,
+      };
+
+      return prisma.source.upsert({ create: { id, ...data }, update: data, where: { id } });
     }),
   ]);
 

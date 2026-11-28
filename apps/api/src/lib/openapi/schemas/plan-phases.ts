@@ -123,6 +123,13 @@ export const planPhaseSchema = z
     kind: phaseKindSchema.meta({
       description: "Exam phases have no name; clients name them by kind",
     }),
+    leftOut: z
+      .array(z.string())
+      .default([])
+      .meta({
+        description:
+          "A `learn` phase the plan holds part of: the skills of it the plan leaves out because they don't fit before its date, by their names in the plan's graph, in the graph's order. A later date or more study time brings them back. Empty for other kinds, for a phase that's `leftOut` as a whole (`notPlannedReason` says why) and when everything fits",
+      }),
     lessonsDone: z.int().min(0).meta({ description: "Its lessons the learner studied" }),
     lessonsTotal: z
       .int()

@@ -8,6 +8,10 @@ import { type TransactionClient, sql } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { normalizeString } from "@zoonk/utils/string";
 import { z } from "zod";
+import {
+  getActivityTemplate,
+  isExploreTemplate,
+} from "../../../library/activities/activity-templates";
 import { parseChallengeLessonSpec } from "../../../library/challenges/challenge-lesson-spec";
 import { parseStoredLessonSpec } from "../../../library/lessons/_utils/stored-lesson-spec";
 import { type Resolution, refuse } from "../_utils/resolved-change";
@@ -51,6 +55,23 @@ function screenKinds(spec: LessonSpec) {
   return spec.screens.map((screen) => screen.kind);
 }
 
+/** The writer can only fill a template from the catalog, and an explanation only an explorable one. */
+function findUnusableTemplate(spec: LessonSpec): string | null {
+  const screen = spec.screens.find(({ activityTemplate, kind }) => {
+    if (!activityTemplate) {
+      return false;
+    }
+
+    return kind === "explanation"
+      ? !isExploreTemplate(activityTemplate)
+      : !getActivityTemplate(activityTemplate);
+  });
+
+  return screen
+    ? `"${screen.activityTemplate}" isn't a template a ${screen.kind} screen can show.`
+    : null;
+}
+
 function ordinaryPlan({ after, before }: { after: Plan; before: Plan }) {
   const previous = after.kind === "challenge" ? null : parseStoredLessonSpec(before);
   const next = parseStoredLessonSpec({ ...after, estimatedMinutes: previous?.estimatedMinutes });
@@ -69,6 +90,12 @@ function ordinaryPlan({ after, before }: { after: Plan; before: Plan }) {
 
   if (introduced.length > 0) {
     return { problem: introduced.map((issue) => issue.detail).join(" ") };
+  }
+
+  const unusableTemplate = findUnusableTemplate(next);
+
+  if (unusableTemplate) {
+    return { problem: unusableTemplate };
   }
 
   const nextKinds = screenKinds(next);

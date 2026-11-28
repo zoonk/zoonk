@@ -36,14 +36,16 @@ import com.zoonk.api.models.OnboardingAnswerInputOneOf
 import com.zoonk.api.models.OnboardingContentCountry
 
 /**
- * Which country a country-dependent course is about. Unlike the other one-answer steps a tap only
- * picks, and Continue saves it, since a mis-tap would build a course for the wrong country; Skip
- * saves none, so the goal follows its language's own country.
+ * Which country a country-dependent course is about, or for an [exam], whose exam it is, since
+ * another country's exam of the same name is another exam. Unlike the other one-answer steps a tap
+ * only picks, and Continue saves it, since a mis-tap would build a course for the wrong country; Skip
+ * saves none, so the goal follows its language's own country, and an exam plans from its name alone.
  */
 @Composable
 internal fun ColumnScope.CountryStep(
     subject: String,
     country: OnboardingContentCountry,
+    exam: Boolean,
     language: String,
     pending: Boolean,
     onAnswer: (OnboardingAnswerInput) -> Unit,
@@ -66,13 +68,11 @@ internal fun ColumnScope.CountryStep(
             ),
         )
     }
-    val notice =
-        lessonLanguageLine(picked?.lessonVariety)
-            ?: country.defaultCountry?.let { stringResource(R.string.onboarding_country_skip_default, it.name) }
+    val notice = lessonLanguageLine(picked?.lessonVariety)
 
     StepForm(
-        title = stringResource(R.string.onboarding_country_title),
-        description = stringResource(R.string.onboarding_country_description),
+        title = stringResource(if (exam) R.string.onboarding_country_title_exam else R.string.onboarding_country_title),
+        description = if (exam) null else stringResource(R.string.onboarding_country_description),
         subject = subject,
         canContinue = picked != null,
         pending = pending,
