@@ -37,7 +37,7 @@ const NO_SPEECH = {
 
 async function sayIt(page: Page) {
   await page.getByRole("button", { name: "Record" }).click();
-  await expect(page.getByText("Listening… Tap Stop to check.")).toBeVisible();
+  await expect(page.getByText("Speak now", { exact: true })).toBeVisible();
 
   // The clock is kept out of the button's name, so it's read from its text.
   const stop = page.getByRole("button", { name: /^Stop/u });

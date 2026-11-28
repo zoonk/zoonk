@@ -21,7 +21,6 @@ function Recorder({ onStart, onStop }: { onStart: () => void; onStop: () => void
         onStop();
         setRecording(false);
       }}
-      preparation={{ cancelPreparation: vi.fn(), prepare: vi.fn() }}
       recording={recording}
     />
   );

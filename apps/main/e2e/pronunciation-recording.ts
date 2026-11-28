@@ -30,16 +30,14 @@ export async function allowPronunciationRecording(page: Page) {
 
       Object.defineProperty(globalThis, "MediaRecorder", { value: TestRecorder });
 
+      const track = {
+        stop() {
+          /** This fixture has no device resources to release. */
+        },
+      };
+
       Object.defineProperty(navigator.mediaDevices, "getUserMedia", {
-        value: async () => ({
-          getTracks: () => [
-            {
-              stop() {
-                /** This fixture has no device resources to release. */
-              },
-            },
-          ],
-        }),
+        value: async () => ({ getAudioTracks: () => [track], getTracks: () => [track] }),
       });
     },
     [...PRONUNCIATION_RECORDING],

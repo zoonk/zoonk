@@ -2,13 +2,14 @@
 
 import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { useExtracted } from "next-intl";
-import { useEffect } from "react";
 import { EnterButton } from "../_components/enter-button";
 import { formatClock } from "../_utils/clock";
+import { useSpeechPlayer } from "./speech-player-provider";
 
 /**
  * Recording as a screen's main action, wherever a learner answers out loud: "Record", then "Stop"
  * with the time, in one button that keeps its place. In a task's bar it sits where Check is.
+ * Record silences any example still playing, so the take holds only the learner.
  */
 export function RecordButton({
   busy = false,
@@ -17,7 +18,6 @@ export function RecordButton({
   elapsedMs,
   onStart,
   onStop,
-  preparation,
   recording,
   size,
 }: Pick<React.ComponentProps<typeof EnterButton>, "size"> & {
@@ -28,28 +28,15 @@ export function RecordButton({
   elapsedMs: number;
   onStart: () => void;
   onStop: () => void;
-  preparation: { cancelPreparation: () => void; prepare: () => void };
   recording: boolean;
 }) {
   const t = useExtracted();
-  const { cancelPreparation, prepare } = preparation;
+  const speech = useSpeechPlayer();
 
-  useEffect(() => {
-    function cancelOnSecondPointer(event: PointerEvent) {
-      if (!event.isPrimary) {
-        cancelPreparation();
-      }
-    }
-
-    globalThis.addEventListener("pointerdown", cancelOnSecondPointer, true);
-    globalThis.addEventListener("blur", cancelPreparation);
-
-    return () => {
-      globalThis.removeEventListener("pointerdown", cancelOnSecondPointer, true);
-      globalThis.removeEventListener("blur", cancelPreparation);
-      cancelPreparation();
-    };
-  }, [cancelPreparation]);
+  const start = () => {
+    speech?.silence();
+    onStart();
+  };
 
   return (
     <EnterButton
@@ -58,28 +45,7 @@ export function RecordButton({
       className={className}
       data-slot="record-button"
       disabled={disabled}
-      onBlur={cancelPreparation}
-      onClick={recording ? onStop : onStart}
-      onContextMenu={cancelPreparation}
-      onPointerCancel={cancelPreparation}
-      onPointerDown={(event) => {
-        if (!busy && !disabled && !recording && event.isPrimary && event.button === 0) {
-          prepare();
-        }
-      }}
-      onPointerLeave={(event) => {
-        if (event.buttons !== 0) {
-          cancelPreparation();
-        }
-      }}
-      onPointerUp={(event) => {
-        // Touch implicitly captures the pointer, even when the finger lifts outside the button.
-        if (
-          !event.currentTarget.contains(document.elementFromPoint(event.clientX, event.clientY))
-        ) {
-          cancelPreparation();
-        }
-      }}
+      onClick={recording ? onStop : start}
       size={size}
     >
       {recording

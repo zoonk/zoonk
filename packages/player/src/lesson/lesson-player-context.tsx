@@ -38,6 +38,7 @@ export type LessonPlayerActions = {
     attemptId: string;
     audio: Blob;
     durationMs: number;
+    micStartupMs?: number;
     stepId: string;
   }) => void;
 };

@@ -118,16 +118,21 @@ export function useStepGrading({
     [adapters, dispatch, ensureRun, keepGrade, resendUnsaved, state.helped, state.stepStartedAt],
   );
 
+  // The take right after a missed start goes unmeasured, so it's never called missed twice.
+  const missedStartRef = useRef<string | null>(null);
+
   const submitSpokenAnswer = useCallback(
     async ({
       attemptId,
       audio,
       durationMs: spokenMs,
+      micStartupMs,
       stepId,
     }: {
       attemptId: string;
       audio: Blob;
       durationMs: number;
+      micStartupMs?: number;
       stepId: string;
     }) => {
       const step = state.steps[stepId];
@@ -138,11 +143,21 @@ export function useStepGrading({
 
       dispatch({ stepId, type: "checkStarted" });
       const { gradeSpokenAnswer } = adapters;
+      const measured = micStartupMs !== undefined && missedStartRef.current !== stepId;
+      missedStartRef.current = null;
 
       const outcome = await boundedGrade(CHECK_BOUNDS.timeoutMs.spoken, () =>
         keepGrade({
           request: ensureRun().then((run) =>
-            run ? gradeSpokenAnswer({ attemptId, audio, durationMs: spokenMs, stepId }) : null,
+            run
+              ? gradeSpokenAnswer({
+                  attemptId,
+                  audio,
+                  durationMs: spokenMs,
+                  ...(measured && { micStartupMs }),
+                  stepId,
+                })
+              : null,
           ),
           stepId,
         }),
@@ -164,9 +179,14 @@ export function useStepGrading({
         outcome?.status === "limitReached" ||
         outcome?.status === "signUpRequired" ||
         outcome?.status === "slowDown" ||
+        outcome?.status === "missedStart" ||
         outcome?.status === "noSpeech"
           ? outcome
           : undefined;
+
+      if (outcome?.status === "missedStart") {
+        missedStartRef.current = stepId;
+      }
 
       dispatch({ issue, stepId, type: "checkFailed" });
     },

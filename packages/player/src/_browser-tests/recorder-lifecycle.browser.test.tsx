@@ -40,20 +40,20 @@ class TestRecorder extends EventTarget {
   }
 }
 
+/** The meter can't read this stream, so these takes also show recording never waits on it. */
 function microphone() {
-  const track = { stop: vi.fn() };
-  const stream = { getTracks: () => [track] } as unknown as MediaStream;
+  const track = Object.assign(new EventTarget(), { muted: false, stop: vi.fn() });
+
+  const stream = {
+    getAudioTracks: () => [track],
+    getTracks: () => [track],
+  } as unknown as MediaStream;
+
   return { stream, track };
 }
 
-function pointer(button: Element, type: "pointercancel" | "pointerdown") {
-  act(() => {
-    button.dispatchEvent(new PointerEvent(type, { bubbles: true, isPrimary: true }));
-  });
-}
-
-function microphonePermission(state: PermissionState) {
-  return vi.spyOn(navigator.permissions, "query").mockResolvedValue({ state } as PermissionStatus);
+function cue() {
+  return document.querySelector("[data-slot=record-cue]")?.textContent;
 }
 
 function openRecorder({ retained = false }: { retained?: boolean } = {}) {
@@ -84,67 +84,69 @@ describe("recorder ownership", () => {
     vi.useRealTimers();
   });
 
-  it("starts opening an allowed microphone on press and waits for capture before inviting speech", async () => {
+  it("opens the microphone only on Record, and invites speech only once the recorder starts", async () => {
     const mic = microphone();
 
     const getUserMedia = vi
       .spyOn(navigator.mediaDevices, "getUserMedia")
       .mockResolvedValue(mic.stream);
 
-    microphonePermission("granted");
     openRecorder();
     TestRecorder.holdStart = true;
     const record = page.getByRole("button", { exact: true, name: "Record" });
     await expect.element(record).toBeVisible();
     expect(getUserMedia).not.toHaveBeenCalled();
 
-    pointer(record.element(), "pointerdown");
-    await expect.poll(() => getUserMedia.mock.calls.length).toBe(1);
-    await expect.poll(() => TestRecorder.instances.length).toBe(1);
-    act(() => (record.element() as HTMLButtonElement).click());
-    await expect.element(page.getByText("Getting ready…")).toBeVisible();
+    await record.click();
+    await expect.poll(() => cue()).toBe("Getting ready…");
+    await expect.element(record).toHaveAttribute("aria-busy", "true");
     await expect.element(page.getByRole("button", { name: /^Stop/u })).not.toBeInTheDocument();
 
     act(() => {
       TestRecorder.instances[0]?.dispatchEvent(new Event("start"));
     });
 
-    await expect.element(page.getByText("Listening… Tap Stop to check.")).toBeVisible();
-    expect(getUserMedia).toHaveBeenCalledOnce();
-  });
-
-  it("discards audio from a cancelled press without checking it", async () => {
-    const mic = microphone();
-    microphonePermission("granted");
-    vi.spyOn(navigator.mediaDevices, "getUserMedia").mockResolvedValue(mic.stream);
-    const view = openRecorder();
-    const record = page.getByRole("button", { exact: true, name: "Record" });
-    await expect.element(record).toBeVisible();
-
-    pointer(record.element(), "pointerdown");
-    await expect.poll(() => TestRecorder.instances.length).toBe(1);
-    pointer(record.element(), "pointercancel");
-    expect(mic.track.stop).toHaveBeenCalledOnce();
-    act(() => TestRecorder.instances[0]?.finish());
-    expect(view.gradeSpokenAnswer).not.toHaveBeenCalled();
-    await expect.element(record).toBeEnabled();
-  });
-
-  it("asks for microphone permission only after a completed click", async () => {
-    microphonePermission("prompt");
-
-    const getUserMedia = vi
-      .spyOn(navigator.mediaDevices, "getUserMedia")
-      .mockResolvedValue(microphone().stream);
-
-    openRecorder();
-    const record = page.getByRole("button", { exact: true, name: "Record" });
-    await expect.element(record).toBeVisible();
-    pointer(record.element(), "pointerdown");
-    expect(getUserMedia).not.toHaveBeenCalled();
-    act(() => (record.element() as HTMLButtonElement).click());
+    await expect.poll(() => cue()).toBe("Speak now");
     await expect.element(page.getByRole("button", { name: /^Stop/u })).toBeVisible();
     expect(getUserMedia).toHaveBeenCalledOnce();
+  });
+
+  it("waits for a muted microphone to unmute before inviting speech", async () => {
+    const mic = microphone();
+    mic.track.muted = true;
+    vi.spyOn(navigator.mediaDevices, "getUserMedia").mockResolvedValue(mic.stream);
+    openRecorder();
+
+    await page.getByRole("button", { exact: true, name: "Record" }).click();
+    await expect.poll(() => TestRecorder.instances[0]?.start.mock.calls.length).toBe(1);
+    await expect.poll(() => cue()).toBe("Getting ready…");
+
+    act(() => {
+      mic.track.muted = false;
+      mic.track.dispatchEvent(new Event("unmute"));
+    });
+
+    await expect.poll(() => cue()).toBe("Speak now");
+  });
+
+  it("sends the time from the press to the recorder going live", async () => {
+    const mic = microphone();
+    vi.spyOn(navigator.mediaDevices, "getUserMedia").mockResolvedValue(mic.stream);
+    const view = openRecorder();
+    TestRecorder.holdStart = true;
+    const now = vi.spyOn(performance, "now").mockReturnValue(1000);
+    await page.getByRole("button", { exact: true, name: "Record" }).click();
+    await expect.poll(() => TestRecorder.instances.length).toBe(1);
+    now.mockReturnValue(1430);
+
+    act(() => {
+      TestRecorder.instances[0]?.dispatchEvent(new Event("start"));
+    });
+
+    await page.getByRole("button", { name: /^Stop/u }).click();
+    act(() => TestRecorder.instances[0]?.finish());
+    await expect.poll(() => view.gradeSpokenAnswer.mock.calls.length).toBe(1);
+    expect(view.gradeSpokenAnswer.mock.calls[0]?.[0].micStartupMs).toBe(430);
   });
 
   it("a retained owner can record again while its abandoned permission request is pending", async () => {
