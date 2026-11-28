@@ -1,0 +1,78 @@
+{
+  "script": "Hangul",
+  "title": "Your First Hangul Letters",
+  "description": "Read simple blocks such as 가 (ga), 나 (na), 마 (ma), and 아 (a).",
+  "canDo": "Read and say ㅏ (a), ㅗ (o), ㅣ (i), ㅇ (ng), ㄱ (g), ㄴ (n), and ㅁ (m).",
+  "intro": [
+    {
+      "title": "Build a syllable block",
+      "text": "A Korean syllable is written as one square block: put the consonant first, then place the vowel to its right or underneath."
+    },
+    {
+      "title": "When a syllable starts with a vowel",
+      "text": "Use ㅇ (ng) to fill the first spot in 아 (a), but leave it silent there. At the end of a syllable, ㅇ (ng) sounds like “ng” in “sing.”"
+    }
+  ],
+  "letters": [
+    {
+      "symbol": "ㅏ",
+      "readingAid": "a",
+      "ipa": "/a/",
+      "audioText": "아",
+      "pronunciation": "You'll hear it in 아 (a): like “ah” in “father,” but with the tongue a little farther forward. Korean doesn't contrast short and long vowels.",
+      "forms": []
+    },
+    {
+      "symbol": "ㅗ",
+      "readingAid": "o",
+      "ipa": "/o/",
+      "audioText": "오",
+      "pronunciation": "You'll hear it in 오 (o): like the start of “go,” held steady without the “oo” glide. Korean doesn't contrast short and long vowels.",
+      "forms": []
+    },
+    {
+      "symbol": "ㅣ",
+      "readingAid": "i",
+      "ipa": "/i/",
+      "audioText": "이",
+      "pronunciation": "You'll hear it in 이 (i): like “ee” in “see,” kept short and steady. Korean doesn't contrast short and long vowels.",
+      "forms": []
+    },
+    {
+      "symbol": "ㅇ",
+      "readingAid": "ng",
+      "ipa": "/ŋ/",
+      "audioText": "앙",
+      "pronunciation": "You'll hear it at the end of 앙 (ang), like “ng” in “sing.” At a block's start, it's silent.",
+      "forms": []
+    },
+    {
+      "symbol": "ㄱ",
+      "readingAid": "g",
+      "ipa": "/k/",
+      "audioText": "가",
+      "pronunciation": "You'll hear it in 가 (ga): a light k, like the k in “sky,” without the strong puff of air in “key.”",
+      "forms": []
+    },
+    {
+      "symbol": "ㄴ",
+      "readingAid": "n",
+      "ipa": "/n/",
+      "audioText": "나",
+      "pronunciation": "You'll hear it in 나 (na), like the n in “no.”",
+      "forms": []
+    },
+    {
+      "symbol": "ㅁ",
+      "readingAid": "m",
+      "ipa": "/m/",
+      "audioText": "마",
+      "pronunciation": "You'll hear it in 마 (ma), like the m in “mom.”",
+      "forms": []
+    }
+  ],
+  "summary": [
+    "Put a consonant first and its vowel beside it or underneath to read a Korean syllable block.",
+    "Use ㅇ (ng) silently at the start of a vowel-only syllable; at the end, it sounds like “ng” in “sing.”"
+  ]
+}

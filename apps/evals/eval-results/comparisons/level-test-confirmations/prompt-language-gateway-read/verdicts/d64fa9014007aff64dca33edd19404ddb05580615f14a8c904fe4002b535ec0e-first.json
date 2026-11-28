@@ -1,0 +1,116 @@
+{
+  "attempt": "first",
+  "costUsd": 0.005578789999999999,
+  "failures": [],
+  "packetId": "d64fa9014007aff64dca33edd19404ddb05580615f14a8c904fe4002b535ec0e",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs use the same A1 message and options, which a learner can match by words, so both sit at the level equally well.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "Output A's key (1 and 3) matches the message, since the cafe is next to the shop. Output B keys option 2, which the message contradicts because the bus leaves at ten.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both are in Portuguese with English-language message text and no language problems differ between them.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key includes option 2 'O ônibus sai às nove', but the message says the bus leaves at ten. The key also omits option 3, 'O café fica ao lado da loja', which the message supports.",
+            "criterion": "answers",
+            "learnerCost": "The learner is taught that the bus leaves at nine and is marked wrong for the correct cafe fact.",
+            "location": {
+              "detail": "Key line of the question",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A's answer key is correct and B's key teaches a false bus time, which is a major problem only B has."
+        },
+        "pairId": "4e494b13-5369-4eba-9171-74e7b8aeaee8"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets are at B1 with distractors that need reading rather than word matching, and the difficulty is similar.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "Output A's keys are all clearly supported by the passages. Output B's penalty option depends on a passing mention the coach does not clearly tie to the loss.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both are natural Brazilian Portuguese with US English questions and options, and both use 'você' correctly.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The coach mentions the two lost penalties in passing ('e ainda perdemos dois pênaltis') without linking them to the defeat, so keying 'failed to score on two penalty kicks' as a reason is weakly supported and could be disputed.",
+            "criterion": "answers",
+            "learnerCost": "A careful B1 reader could be marked wrong for disagreeing with a key that is not clearly stated in the text.",
+            "location": {
+              "detail": "The team failed to score on two penalty kicks.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "Both outputs are similar in quality, but A's keys are cleaner and easier to defend from the text, so A serves the reader slightly better."
+        },
+        "pairId": "bf5fa7ce-9869-4d69-bdb6-2bcf6fb831a8"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, so calibration is the same.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, so the answer sets are the same.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, so language quality is the same.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are identical, so neither serves its reader better."
+        },
+        "pairId": "d4852071-4680-4fe7-b2f4-6b8eca97ff43"
+      }
+    ]
+  }
+}

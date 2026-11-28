@@ -1,0 +1,19 @@
+{
+  "caseId": "pt-ar-letters",
+  "challenger": {
+    "costUsd": 0.003222,
+    "durationMs": 43930.713791999995,
+    "hash": "c4f5d794d05463b1418c2e82db1d4222af13cf9dda64d0f6d8835387f8e1d3f4",
+    "systemPromptHash": "7ea41f0e1642c03bc7db092d29955e1ab6a066af3a9bf0d8ff6a9bf462202425",
+    "userPromptHash": "f22961726cea928c9cfd84016832bf878f30a7bc195aab00b0ed0640d925f9ee"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.0027474599999999997,
+    "durationMs": 37225.355958,
+    "hash": "ba3d7a0e4e9ba394b71e74ff80e0b178c00f5879dd83d33c0c3b483cb2e676f5",
+    "systemPromptHash": "fb800533e6a995f7cf583e764f862f1f50fc79dac987c3eb5ddbe77dfed5cc9c",
+    "userPromptHash": "f22961726cea928c9cfd84016832bf878f30a7bc195aab00b0ed0640d925f9ee"
+  },
+  "run": 2
+}

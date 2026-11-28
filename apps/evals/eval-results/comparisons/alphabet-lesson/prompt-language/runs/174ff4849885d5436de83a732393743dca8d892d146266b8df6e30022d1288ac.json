@@ -1,0 +1,19 @@
+{
+  "caseId": "en-ko-hangul",
+  "challenger": {
+    "costUsd": 0.0016899999999999999,
+    "durationMs": 25897.699708,
+    "hash": "2b4be4dc7815d2f36335333565e6d308cb52b7b57717d1ab0161116a85e652b5",
+    "systemPromptHash": "e319657136a55c5a887f6e809ae5502b53a3bc555fc0793a4ea72a492e01c21d",
+    "userPromptHash": "31775ab0f68bd761775e9c88a6c4a848095574bde8cc65eb404bb1745d95c5b1"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.00192846,
+    "durationMs": 26536.244416,
+    "hash": "9b45ee2dd61fd3668527d444ec3a471bfcbc3a97277391366d9c432f776f2430",
+    "systemPromptHash": "fb800533e6a995f7cf583e764f862f1f50fc79dac987c3eb5ddbe77dfed5cc9c",
+    "userPromptHash": "31775ab0f68bd761775e9c88a6c4a848095574bde8cc65eb404bb1745d95c5b1"
+  },
+  "run": 2
+}

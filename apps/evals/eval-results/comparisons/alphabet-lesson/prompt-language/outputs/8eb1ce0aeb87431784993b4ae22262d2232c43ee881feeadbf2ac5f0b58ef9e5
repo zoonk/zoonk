@@ -1,0 +1,102 @@
+{
+  "script": "Hangul",
+  "title": "Hangul Vowels and First Consonants",
+  "description": "Read simple blocks like 가 (ga), 나 (na), and 다 (da), plus blocks that begin with vowel sounds.",
+  "canDo": "Read and say ㅏ, ㅓ, ㅗ, ㅜ, ㅡ, ㅣ, ㅇ, ㄱ, ㄴ, and ㄷ.",
+  "intro": [
+    {
+      "title": "Read in blocks",
+      "text": "Hangul letters sit together in syllable blocks, and you read the blocks from left to right. A block starts with a consonant and then a vowel: 가 (ga) puts ㄱ (g) before ㅏ (a)."
+    },
+    {
+      "title": "Find the vowel",
+      "text": "A vertical vowel sits to the right of its consonant, as in 가 (ga); a horizontal vowel sits below it, as in 고 (go). At the start of a block, ㅇ (silent) holds the place for a vowel, as in 아 (a); at the end, it sounds like ng, as in 앙 (ang)."
+    }
+  ],
+  "letters": [
+    {
+      "symbol": "ㅏ",
+      "readingAid": "a",
+      "ipa": "/a/",
+      "audioText": "아",
+      "pronunciation": "You'll hear it as 아 (a), close to the 'ah' in spa, but with the tongue a little farther forward.",
+      "forms": []
+    },
+    {
+      "symbol": "ㅓ",
+      "readingAid": "eo",
+      "ipa": "/ʌ/",
+      "audioText": "어",
+      "pronunciation": "You'll hear it as 어 (eo), like the 'uh' in cup.",
+      "forms": []
+    },
+    {
+      "symbol": "ㅗ",
+      "readingAid": "o",
+      "ipa": "/o/",
+      "audioText": "오",
+      "pronunciation": "You'll hear it as 오 (o), like the start of 'go'; stop before the vowel glides.",
+      "forms": []
+    },
+    {
+      "symbol": "ㅜ",
+      "readingAid": "u",
+      "ipa": "/u/",
+      "audioText": "우",
+      "pronunciation": "You'll hear it as 우 (u), like the 'oo' in food, held steady.",
+      "forms": []
+    },
+    {
+      "symbol": "ㅡ",
+      "readingAid": "eu",
+      "ipa": "/ɯ/",
+      "audioText": "으",
+      "pronunciation": "You'll hear it as 으 (eu); English has no exact match, so try 'oo' as in food with your lips unrounded.",
+      "forms": []
+    },
+    {
+      "symbol": "ㅣ",
+      "readingAid": "i",
+      "ipa": "/i/",
+      "audioText": "이",
+      "pronunciation": "You'll hear it as 이 (i), like the 'ee' in see, held steady.",
+      "forms": []
+    },
+    {
+      "symbol": "ㅇ",
+      "readingAid": "ng",
+      "ipa": "/ŋ/",
+      "audioText": "앙",
+      "pronunciation": "In 앙 (ang), it sounds like the 'ng' in sing, with no separate g sound; at the start of a block, it is silent.",
+      "forms": []
+    },
+    {
+      "symbol": "ㄱ",
+      "readingAid": "g",
+      "ipa": "/k/",
+      "audioText": "가",
+      "pronunciation": "In 가 (ga), it starts like the unpuffed k in skill; between vowels it often sounds more like g.",
+      "forms": []
+    },
+    {
+      "symbol": "ㄴ",
+      "readingAid": "n",
+      "ipa": "/n/",
+      "audioText": "나",
+      "pronunciation": "In 나 (na), it sounds like the n in no.",
+      "forms": []
+    },
+    {
+      "symbol": "ㄷ",
+      "readingAid": "d",
+      "ipa": "/t/",
+      "audioText": "다",
+      "pronunciation": "In 다 (da), it starts like the unpuffed t in stay; between vowels it often sounds more like d.",
+      "forms": []
+    }
+  ],
+  "summary": [
+    "Read Hangul one syllable block at a time, moving from left to right.",
+    "In each block, find the consonant first and then its vowel; ㅇ is silent at the start and sounds like ng at the end."
+  ]
+}

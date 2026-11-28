@@ -1,0 +1,76 @@
+{
+  "confirmations": [
+    {
+      "answerIndices": [
+        0,
+        3
+      ],
+      "level": "B1",
+      "options": [
+        "A few minutes of daily practice are enough.",
+        "A learner needs to play for hours every day.",
+        "Internet videos are enough to make good progress.",
+        "Lessons with a teacher are worth the higher price.",
+        "Lessons with a teacher are too expensive to pay for."
+      ],
+      "passage": "Comecei a aprender violão há seis meses, aos 40 anos. No começo, eu assistia a vídeos na internet, mas quase não avançava, porque ninguém corrigia meus erros. Então passei a ter aula com um professor do bairro. Embora seja mais caro, acho que vale a pena. Só não concordo com quem diz que é preciso tocar horas por dia: para mim, quinze minutos diários já bastam.",
+      "question": "What does the writer of the post think about learning the guitar?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        0,
+        2,
+        5
+      ],
+      "level": "B1",
+      "options": [
+        "The weather is less hot at that time of day.",
+        "Parking spots are easier to find at that time.",
+        "There are very few people around at that time.",
+        "Most tourists prefer to visit at that time of day.",
+        "The public elevator costs less at that time of day.",
+        "Visitors can photograph the churches without rushing."
+      ],
+      "passage": "Centro Histórico de Salvador. Muitos turistas visitam o Pelourinho à tarde, porém recomendamos chegar cedo, antes das 9h. Nesse horário, o sol ainda está fraco e o bairro fica quase vazio, de modo que dá para fotografar as igrejas com calma. Deixe o carro no hotel: as ruas são estreitas e é difícil encontrar vaga. Em vez disso, suba pelo elevador público, que custa centavos.",
+      "question": "According to the guide, why is it better to get to the Pelourinho early?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        4,
+        5
+      ],
+      "level": "B1",
+      "options": [
+        "The practices started too early in the day.",
+        "The referee made decisions against the team.",
+        "The team performed poorly in the first half.",
+        "The players did not make enough of an effort.",
+        "The players ran out of energy after halftime.",
+        "The team failed to score on two penalty kicks."
+      ],
+      "passage": "Pessoal, hoje perdemos por dois a um, mas não foi por falta de vontade, e o juiz também não teve culpa. No primeiro tempo, jogamos muito bem. O problema é que, depois do intervalo, o time estava cansado demais para correr, e ainda perdemos dois pênaltis. Por isso, a partir de segunda, o treino começa meia hora mais cedo, com mais corrida.",
+      "question": "According to the coach, why did the team lose the match?",
+      "skill": "listening"
+    },
+    {
+      "answerIndices": [
+        4,
+        5
+      ],
+      "level": "B1",
+      "options": [
+        "She should try to seem more formal than she really is.",
+        "She should explain to them why she left her previous job.",
+        "She should learn all of her answers by heart before going.",
+        "She should choose her clothes for the day with great care.",
+        "She should have a few true stories ready from her previous job.",
+        "She should answer naturally instead of reciting memorized lines."
+      ],
+      "passage": "Oi, Camila! Sobre a entrevista de amanhã: eu sei que você quer decorar todas as respostas, mas eu não faria isso, porque fica artificial. Em vez disso, pense em duas ou três situações reais do seu último emprego e conte com as suas palavras. Ah, e a roupa importa bem menos do que você imagina. O importante é parecer você mesma.",
+      "question": "What is the friend's main advice to Camila about the interview?",
+      "skill": "listening"
+    }
+  ]
+}

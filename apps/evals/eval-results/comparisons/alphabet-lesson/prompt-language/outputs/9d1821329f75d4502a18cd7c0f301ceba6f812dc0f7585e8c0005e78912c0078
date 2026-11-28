@@ -1,0 +1,102 @@
+{
+  "script": "Hiragana",
+  "title": "Your first hiragana: vowels and K",
+  "description": "Read the five vowel sounds and the K-row hiragana as short beats.",
+  "canDo": "Read and say あ (a), い (i), う (u), え (e), お (o), か (ka), き (ki), く (ku), け (ke), and こ (ko).",
+  "intro": [
+    {
+      "title": "One kana, one beat",
+      "text": "Read these hiragana from left to right. Each one takes one short beat: あ (a), い (i), う (u), え (e), お (o)."
+    },
+    {
+      "title": "Add a K sound",
+      "text": "In the K row, put a k sound before each vowel: か (ka) is k + a, and き (ki) is k + i. Say each kana as one smooth beat, not as separate letter names."
+    }
+  ],
+  "letters": [
+    {
+      "symbol": "あ",
+      "readingAid": "a",
+      "ipa": "/a/",
+      "audioText": "あ",
+      "pronunciation": "You'll hear it as あ (a), close to the vowel in “spa,” but a little farther forward and short.",
+      "forms": []
+    },
+    {
+      "symbol": "い",
+      "readingAid": "i",
+      "ipa": "/i/",
+      "audioText": "い",
+      "pronunciation": "You'll hear it as い (i), like the vowel in “machine,” kept short and pure.",
+      "forms": []
+    },
+    {
+      "symbol": "う",
+      "readingAid": "u",
+      "ipa": "/ɯ/",
+      "audioText": "う",
+      "pronunciation": "You'll hear it as う (u), closest to “oo” in “food,” but with unrounded lips and kept short.",
+      "forms": []
+    },
+    {
+      "symbol": "え",
+      "readingAid": "e",
+      "ipa": "/e/",
+      "audioText": "え",
+      "pronunciation": "You'll hear it as え (e), like the start of “day” without the y glide, kept short.",
+      "forms": []
+    },
+    {
+      "symbol": "お",
+      "readingAid": "o",
+      "ipa": "/o/",
+      "audioText": "お",
+      "pronunciation": "You'll hear it as お (o), like the start of “go” without the w glide, kept short.",
+      "forms": []
+    },
+    {
+      "symbol": "か",
+      "readingAid": "ka",
+      "ipa": "/ka/",
+      "audioText": "か",
+      "pronunciation": "You'll hear it as か (ka): k as in “skill” plus the short Japanese a, close to “spa” but a little farther forward.",
+      "forms": []
+    },
+    {
+      "symbol": "き",
+      "readingAid": "ki",
+      "ipa": "/ki/",
+      "audioText": "き",
+      "pronunciation": "You'll hear it as き (ki): k as in “skill” plus the short vowel in “machine.”",
+      "forms": []
+    },
+    {
+      "symbol": "く",
+      "readingAid": "ku",
+      "ipa": "/kɯ/",
+      "audioText": "く",
+      "pronunciation": "You'll hear it as く (ku): k as in “skill” plus an “oo”-like vowel, with unrounded lips.",
+      "forms": []
+    },
+    {
+      "symbol": "け",
+      "readingAid": "ke",
+      "ipa": "/ke/",
+      "audioText": "け",
+      "pronunciation": "You'll hear it as け (ke): k as in “skill” plus the start of “day,” without the y glide.",
+      "forms": []
+    },
+    {
+      "symbol": "こ",
+      "readingAid": "ko",
+      "ipa": "/ko/",
+      "audioText": "こ",
+      "pronunciation": "You'll hear it as こ (ko): k as in “skill” plus the start of “go,” without the w glide.",
+      "forms": []
+    }
+  ],
+  "summary": [
+    "Read each hiragana from left to right as one short beat.",
+    "The K-row kana pair k with each of the five vowel sounds."
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "attempt": "first",
+  "costUsd": 0.0024417399999999995,
+  "failures": [],
+  "packetId": "537c41bcb9bf5ce7c292ff1bae6a60ea3d08667574a93949712502f396881016",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, with the same B1 passages and questions.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The answer keys and options are identical in both outputs; the selected options are supported by the passages.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use natural Brazilian Portuguese passages and English questions and options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical and serve the learner equally."
+        },
+        "pairId": "1be18423-fbe0-4ea2-b8a9-0a428c354c30"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The key difference does not change the level or difficulty of the item.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "B",
+            "reason": "B keys statements 1 and 3, which the message supports. A incorrectly includes statement 2, while omitting the true statement 3.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both versions use the same message, question, and options in the appropriate languages.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key marks statement 2 as correct, but the bus leaves at ten, not nine; it also omits statement 3, which correctly says the cafe is next to the shop.",
+            "criterion": "answers",
+            "learnerCost": "A learner who trusts the key would be taught to select a false statement and miss a true one.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B gives the correct key; A marks a false statement and leaves out a true one."
+        },
+        "pairId": "29e2c659-659d-4b6c-862f-cb0152b622b3"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "A’s passages and questions offer somewhat richer B1 comprehension, including several distinct reasons and opinions to connect, while B relies more on simple, direct statements.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both keys match the passages: each selected option is supported, and the unselected options are not.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use natural Brazilian Portuguese passages and English questions and options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "A",
+          "reason": "Both sets are accurate, but A gives the learner a somewhat stronger B1 comprehension task through richer passages and more distinct supporting ideas."
+        },
+        "pairId": "6eb5308d-997a-4ece-bf16-81848f7007d9"
+      }
+    ]
+  }
+}

@@ -1,0 +1,200 @@
+{
+  "attempt": "first",
+  "costUsd": 0,
+  "failures": [],
+  "packetId": "29955d2f7cb99e3188dedb98c8e6dd913de1feb11f950a941a352b7122ad70f4",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "seat",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs have identical passages and options, and the questions read as B1 in both.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The keys are identical, and both carry the same two key errors (the Salvador and Camila items).",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use the same Brazilian Portuguese passages and English questions.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The passage says 'as ruas são estreitas e quase não há onde estacionar', so this option is true, but it is not keyed. It is also not a reason for visiting in the morning, so the key is defensible both ways.",
+            "criterion": "answers",
+            "learnerCost": "A careful reader sees a true statement from the text marked wrong, and the question's logic becomes unclear.",
+            "location": {
+              "detail": "The streets are narrow with almost no parking.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The passage says 'o metrô costuma atrasar de manhã', so this option is true, but it is not keyed. It is also not a reason against memorizing answers, so the key is defensible both ways.",
+            "criterion": "answers",
+            "learnerCost": "A careful reader sees a true statement from the text marked wrong, which undermines trust in the feedback.",
+            "location": {
+              "detail": "The subway is often late in the morning.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The passage says 'as ruas são estreitas e quase não há onde estacionar', so this option is true, but it is not keyed. It is also not a reason for visiting in the morning, so the key is defensible both ways.",
+            "criterion": "answers",
+            "learnerCost": "A careful reader sees a true statement from the text marked wrong, and the question's logic becomes unclear.",
+            "location": {
+              "detail": "The streets are narrow with almost no parking.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The passage says 'o metrô costuma atrasar de manhã', so this option is true, but it is not keyed. It is also not a reason against memorizing answers, so the key is defensible both ways.",
+            "criterion": "answers",
+            "learnerCost": "A careful reader sees a true statement from the text marked wrong, which undermines trust in the feedback.",
+            "location": {
+              "detail": "The subway is often late in the morning.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical, and they share the same two key problems."
+        },
+        "pairId": "37913dd4-9f32-46d8-92cc-7c60f5caaa30"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The options are identical in both, so the A1 level and distractors are the same.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "A's key (1 and 3) matches the message. B's key adds option 2, which the message contradicts.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both have the same Portuguese question and options, and the message is in English as intended.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The message says 'The bus leaves at ten', so option (2) 'O ônibus sai às nove' is false. The correct key is 1 and 3.",
+            "criterion": "answers",
+            "learnerCost": "The learner is taught that a false statement is correct, which leaves them with a wrong understanding of the message.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A's key is correct. B's key marks a false statement as right."
+        },
+        "pairId": "aadc6f3a-18c0-41cd-8b67-56e70d29937d"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets are at B1, with main points, reasons and stated opinions.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "B",
+            "reason": "B's keys match the passages. A's keys leave out true statements that the passages support, so those answers are defensible both ways.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use natural Brazilian Portuguese passages and English questions.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The passage says 'as ruas são estreitas e quase não há onde estacionar', so this option is true, but it is not keyed. It is also not a reason for visiting in the morning, so the key is defensible both ways.",
+            "criterion": "answers",
+            "learnerCost": "A careful reader sees a true statement from the text marked wrong, and the question's logic becomes unclear.",
+            "location": {
+              "detail": "The streets are narrow with almost no parking.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The passage says 'o metrô costuma atrasar de manhã', so this option is true, but it is not keyed. It is also not a reason against memorizing answers, so the key is defensible both ways.",
+            "criterion": "answers",
+            "learnerCost": "A careful reader sees a true statement from the text marked wrong, which undermines trust in the feedback.",
+            "location": {
+              "detail": "The subway is often late in the morning.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The passage says 'o sol ainda está fraco', which describes the sun's strength, not the temperature. Keying this as right is a reasonable inference but not a direct statement.",
+            "criterion": "answers",
+            "learnerCost": "A learner who looks for the exact words may be unsure why this option counts as right.",
+            "location": {
+              "detail": "The weather is less hot at that time of day.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "The coach says 'e ainda perdemos dois pênaltis' as an additional problem. The coach does not clearly connect the missed penalties to the defeat, so keying them as a cause is debatable.",
+            "criterion": "answers",
+            "learnerCost": "A learner may wonder whether the penalties were really a cause of the loss or just another problem mentioned.",
+            "location": {
+              "detail": "The team failed to score on two penalty kicks.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B's keys all match the passages. A keys two options that the passages support as true, but it leaves them unmarked."
+        },
+        "pairId": "d928d838-20b9-4ed9-9691-c0a229714f71"
+      }
+    ]
+  },
+  "seatContext": {
+    "accountIdentity": "present",
+    "managedSettings": [
+      "channelsEnabled"
+    ]
+  }
+}

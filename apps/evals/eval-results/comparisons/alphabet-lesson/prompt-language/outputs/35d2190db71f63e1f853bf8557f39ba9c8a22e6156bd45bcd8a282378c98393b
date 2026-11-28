@@ -1,0 +1,86 @@
+{
+  "script": "alfabeto cirílico russo",
+  "title": "Primeiras letras cirílicas",
+  "description": "Com estas letras, você já lê нос (nos), сон (son) e мама (mama).",
+  "canDo": "Leia e diga а (a), о (o), м (m), в (v), н (n), р (r), с (s) e у (u).",
+  "intro": [
+    {
+      "title": "Leia em sequência",
+      "text": "O russo se lê da esquerda para a direita, como o português. As letras se encadeiam para formar palavras; por exemplo, н (n), р (r) e с (s) são letras, não sílabas."
+    },
+    {
+      "title": "Repare no acento",
+      "text": "A sílaba tônica ajuda a ouvir as vogais: о (o) costuma mudar de som quando não recebe o acento. Em мама (mama), por exemplo, a primeira letra а (a) é tônica."
+    }
+  ],
+  "letters": [
+    {
+      "symbol": "в",
+      "readingAid": "v",
+      "ipa": "/v/",
+      "audioText": "ва",
+      "pronunciation": "Você ouvirá va (va), com o v de vida.",
+      "forms": []
+    },
+    {
+      "symbol": "н",
+      "readingAid": "n",
+      "ipa": "/n/",
+      "audioText": "на",
+      "pronunciation": "Você ouvirá na (na), com o n de nada.",
+      "forms": []
+    },
+    {
+      "symbol": "р",
+      "readingAid": "r",
+      "ipa": "/r/",
+      "audioText": "ра",
+      "pronunciation": "Você ouvirá ra (ra), com a ponta da língua vibrando; não é o R gutural de rua.",
+      "forms": []
+    },
+    {
+      "symbol": "с",
+      "readingAid": "s",
+      "ipa": "/s/",
+      "audioText": "са",
+      "pronunciation": "Você ouvirá sa (sa), com o s de sapo.",
+      "forms": []
+    },
+    {
+      "symbol": "у",
+      "readingAid": "u",
+      "ipa": "/u/",
+      "audioText": "у",
+      "pronunciation": "Como o u de tudo, sem deslizar para outro som.",
+      "forms": []
+    },
+    {
+      "symbol": "а",
+      "readingAid": "a",
+      "ipa": "/a/",
+      "audioText": "а",
+      "pronunciation": "Como o a de pá, curto e sem deslizar; átono, costuma se reduzir.",
+      "forms": []
+    },
+    {
+      "symbol": "м",
+      "readingAid": "m",
+      "ipa": "/m/",
+      "audioText": "ма",
+      "pronunciation": "Você ouvirá ma (ma), com o m de mala.",
+      "forms": []
+    },
+    {
+      "symbol": "о",
+      "readingAid": "o",
+      "ipa": "/o/",
+      "audioText": "о",
+      "pronunciation": "Como o o fechado de avô quando tônico; átono, costuma soar mais central e reduzido.",
+      "forms": []
+    }
+  ],
+  "summary": [
+    "Leia as letras cirílicas da esquerda para a direita e junte os sons para formar palavras.",
+    "O acento importa: a vogal о (o), em especial, muda de som quando não é tônica."
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00356749,
+  "failures": [],
+  "packetId": "62f8fb1aaa624a8e2e36196405b6fc70c019b41c9af7d5d3203cdb6c294ab39f",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs use the same A1 stated-fact items about shop opening times, bus times and the cafe's position, so the level fit is identical.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "A's key (1 and 3) matches the message. B's key (1 and 2) marks 'O ônibus sai às nove' as right, but the bus leaves at ten.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical in language, variant and content, with Portuguese instructions and English message text.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key marks option (2) 'O ônibus sai às nove' as right, but the message says 'The bus leaves at ten.' The key is wrong. A learner who trusts it would learn that the bus leaves at nine.",
+            "criterion": "answers",
+            "learnerCost": "The learner is taught a false time for the bus and is marked wrong for the correct choice if they follow the logic of the message.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A's answer key is correct; B's key wrongly accepts the bus option, which teaches a false fact."
+        },
+        "pairId": "0e2e24d4-8c24-46a5-bb93-174a0363616e"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical and use simple A1 facts about days, times, prices and places.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "Every option in both outputs is correctly right or wrong against its passage, and the keys match.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical in Brazilian Portuguese instructions and English passages.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are the same, so neither serves its learner better."
+        },
+        "pairId": "ce55ca8f-ae3b-425d-bd4a-a376af56e6ab"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets use A1 matching of days, times and items; neither is clearly above or below the level.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs have correct keys, and each option is clearly right or wrong from its passage.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use natural Brazilian Portuguese and US English passages with no problems found.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "B",
+          "reason": "B's sets vary the kinds of fact tested (day, time, item to bring, price) and give more distinct distractors, while A repeats the same set from the previous pair."
+        },
+        "pairId": "fc0947a6-2031-4ae3-aae4-0afb250f5b3a"
+      }
+    ]
+  }
+}

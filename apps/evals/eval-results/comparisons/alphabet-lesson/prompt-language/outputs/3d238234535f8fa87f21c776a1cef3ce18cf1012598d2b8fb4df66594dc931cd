@@ -1,0 +1,102 @@
+{
+  "script": "Hiragana",
+  "title": "Your First Hiragana",
+  "description": "Read simple Japanese combinations made from the five vowels and the K row.",
+  "canDo": "Read and say あ (a), い (i), う (u), え (e), お (o), か (ka), き (ki), く (ku), け (ke), and こ (ko).",
+  "intro": [
+    {
+      "title": "Read one beat at a time",
+      "text": "Read from left to right, then top to bottom. Each hiragana is one beat: あ (a) is one beat, and か (ka) is one beat."
+    },
+    {
+      "title": "Join the sounds",
+      "text": "In the K row, k combines with a vowel: か (ka), き (ki), く (ku), け (ke), こ (ko). The vowels here are short and pure."
+    }
+  ],
+  "letters": [
+    {
+      "symbol": "あ",
+      "readingAid": "a",
+      "ipa": "/a/",
+      "audioText": "あ",
+      "pronunciation": "あ (a): closest to the “ah” in “spa,” but a little more forward.",
+      "forms": []
+    },
+    {
+      "symbol": "い",
+      "readingAid": "i",
+      "ipa": "/i/",
+      "audioText": "い",
+      "pronunciation": "い (i): like the “ee” in “machine,” kept short and pure.",
+      "forms": []
+    },
+    {
+      "symbol": "う",
+      "readingAid": "u",
+      "ipa": "/ɯ/",
+      "audioText": "う",
+      "pronunciation": "う (u): closest to the “oo” in “food,” but say it with unrounded lips.",
+      "forms": []
+    },
+    {
+      "symbol": "え",
+      "readingAid": "e",
+      "ipa": "/e/",
+      "audioText": "え",
+      "pronunciation": "え (e): like the start of “say,” but stop before the y-glide.",
+      "forms": []
+    },
+    {
+      "symbol": "お",
+      "readingAid": "o",
+      "ipa": "/o/",
+      "audioText": "お",
+      "pronunciation": "お (o): like the start of “go,” but stop before the glide.",
+      "forms": []
+    },
+    {
+      "symbol": "か",
+      "readingAid": "ka",
+      "ipa": "/ka/",
+      "audioText": "か",
+      "pronunciation": "か (ka): k as in “sky,” then the “ah” in “spa,” a little more forward.",
+      "forms": []
+    },
+    {
+      "symbol": "き",
+      "readingAid": "ki",
+      "ipa": "/ki/",
+      "audioText": "き",
+      "pronunciation": "き (ki): k as in “sky,” then the “ee” in “machine,” short and pure.",
+      "forms": []
+    },
+    {
+      "symbol": "く",
+      "readingAid": "ku",
+      "ipa": "/kɯ/",
+      "audioText": "く",
+      "pronunciation": "く (ku): k as in “sky,” then the “oo” in “food” with unrounded lips.",
+      "forms": []
+    },
+    {
+      "symbol": "け",
+      "readingAid": "ke",
+      "ipa": "/ke/",
+      "audioText": "け",
+      "pronunciation": "け (ke): k as in “sky,” then the start of “say,” without the y-glide.",
+      "forms": []
+    },
+    {
+      "symbol": "こ",
+      "readingAid": "ko",
+      "ipa": "/ko/",
+      "audioText": "こ",
+      "pronunciation": "こ (ko): k as in “sky,” then the start of “go,” without the glide.",
+      "forms": []
+    }
+  ],
+  "summary": [
+    "Read hiragana from left to right, giving each character one beat.",
+    "The five vowels are short and pure; the K row pairs k with each vowel."
+  ]
+}

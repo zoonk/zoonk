@@ -1,0 +1,103 @@
+{
+  "script": "alfabeto cirílico",
+  "title": "Primeiras letras cirílicas",
+  "description": "Você já consegue ler palavras como мама (mama), кот (kot) e нос (nos).",
+  "canDo": "Leia e pronuncie а (a), о (o), м (m), т (t), к (k), в (v), н (n), с (s), у (u) e х (kh).",
+  "intro": [
+    {
+      "title": "Siga os sons",
+      "text": "Leia da esquerda para a direita. Cada letra representa um som, e os sons se juntam na ordem escrita."
+    },
+    {
+      "title": "Repare no о",
+      "text": "O о (o) soa como o de “avô” quando está tônico. Sem acento, pode enfraquecer e soar mais como um “a” curto."
+    }
+  ],
+  "letters": [
+    {
+      "symbol": "а",
+      "readingAid": "a",
+      "ipa": "/a/",
+      "audioText": "а",
+      "pronunciation": "Como o a de “pá”, aberto e sem deslizar para outro som.",
+      "forms": []
+    },
+    {
+      "symbol": "о",
+      "readingAid": "o",
+      "ipa": "/o/",
+      "audioText": "о",
+      "pronunciation": "Como o o fechado de “avô”; sem acento, costuma enfraquecer.",
+      "forms": []
+    },
+    {
+      "symbol": "м",
+      "readingAid": "m",
+      "ipa": "/m/",
+      "audioText": "ма",
+      "pronunciation": "Em ма (ma), o м soa como o m de “mala”.",
+      "forms": []
+    },
+    {
+      "symbol": "т",
+      "readingAid": "t",
+      "ipa": "/t/",
+      "audioText": "та",
+      "pronunciation": "Em та (ta), o т soa como o t de “tatu”, sem o chiado de “tia”.",
+      "forms": []
+    },
+    {
+      "symbol": "к",
+      "readingAid": "k",
+      "ipa": "/k/",
+      "audioText": "ка",
+      "pronunciation": "Em ка (ka), o к soa como o c de “casa”.",
+      "forms": []
+    },
+    {
+      "symbol": "в",
+      "readingAid": "v",
+      "ipa": "/v/",
+      "audioText": "ва",
+      "pronunciation": "Em ва (va), o в soa como o v de “vaca”.",
+      "forms": []
+    },
+    {
+      "symbol": "н",
+      "readingAid": "n",
+      "ipa": "/n/",
+      "audioText": "на",
+      "pronunciation": "Em на (na), o н soa como o n de “nada”.",
+      "forms": []
+    },
+    {
+      "symbol": "с",
+      "readingAid": "s",
+      "ipa": "/s/",
+      "audioText": "са",
+      "pronunciation": "Em са (sa), o с soa como o s de “sapo”.",
+      "forms": []
+    },
+    {
+      "symbol": "у",
+      "readingAid": "u",
+      "ipa": "/u/",
+      "audioText": "у",
+      "pronunciation": "Como o u de “tudo”, sem deslizar para outro som.",
+      "forms": []
+    },
+    {
+      "symbol": "х",
+      "readingAid": "kh",
+      "ipa": "/x/",
+      "audioText": "ха",
+      "pronunciation": "Em ха (kha), o х não tem equivalente exato em português; é um atrito no fundo da boca, próximo ao r forte de alguns sotaques.",
+      "forms": []
+    }
+  ],
+  "summary": [
+    "Leia as letras da esquerda para a direita e junte seus sons na ordem escrita.",
+    "В (v), н (n) e с (s) parecem letras latinas, mas têm sons diferentes; х (kh) também tem um som próprio.",
+    "O о (o) pode enfraquecer quando não recebe acento."
+  ]
+}

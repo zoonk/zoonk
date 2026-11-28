@@ -1,0 +1,102 @@
+{
+  "script": "Hiragana",
+  "title": "Your First Hiragana: Vowels and K",
+  "description": "Sound out the five vowels and the ka row, then read short strings like あ (a) か (ka) and い (i) け (ke).",
+  "canDo": "Read and say あ (a), い (i), う (u), え (e), お (o), か (ka), き (ki), く (ku), け (ke), and こ (ko).",
+  "intro": [
+    {
+      "title": "One symbol, one beat",
+      "text": "Read these hiragana from left to right, one short beat at a time. Keep the vowels steady rather than sliding between sounds as English vowels often do."
+    },
+    {
+      "title": "Add K to a vowel",
+      "text": "The vowel row is あ (a), い (i), う (u), え (e), お (o). Add k to those same vowels to read か (ka), き (ki), く (ku), け (ke), こ (ko)."
+    }
+  ],
+  "letters": [
+    {
+      "symbol": "あ",
+      "readingAid": "a",
+      "ipa": "/a/",
+      "audioText": "あ",
+      "pronunciation": "あ (a): like the vowel in “father,” but shorter and with the tongue a little farther forward.",
+      "forms": []
+    },
+    {
+      "symbol": "い",
+      "readingAid": "i",
+      "ipa": "/i/",
+      "audioText": "い",
+      "pronunciation": "い (i): like “ee” in “machine,” kept short and steady.",
+      "forms": []
+    },
+    {
+      "symbol": "う",
+      "readingAid": "u",
+      "ipa": "/ɯᵝ/",
+      "audioText": "う",
+      "pronunciation": "う (u): no exact US English match; it is close to “oo” in “food,” but with unrounded lips and the tongue a little less far back.",
+      "forms": []
+    },
+    {
+      "symbol": "え",
+      "readingAid": "e",
+      "ipa": "/e/",
+      "audioText": "え",
+      "pronunciation": "え (e): close to the vowel in “get,” but with a more closed mouth and no glide.",
+      "forms": []
+    },
+    {
+      "symbol": "お",
+      "readingAid": "o",
+      "ipa": "/o/",
+      "audioText": "お",
+      "pronunciation": "お (o): starts like “o” in “go,” but stays steady instead of gliding at the end.",
+      "forms": []
+    },
+    {
+      "symbol": "か",
+      "readingAid": "ka",
+      "ipa": "/ka/",
+      "audioText": "か",
+      "pronunciation": "か (ka): k as in “sky” plus the vowel in “father,” said in one short beat.",
+      "forms": []
+    },
+    {
+      "symbol": "き",
+      "readingAid": "ki",
+      "ipa": "/ki/",
+      "audioText": "き",
+      "pronunciation": "き (ki): k as in “sky” plus “ee” in “machine,” said in one short beat.",
+      "forms": []
+    },
+    {
+      "symbol": "く",
+      "readingAid": "ku",
+      "ipa": "/kɯᵝ/",
+      "audioText": "く",
+      "pronunciation": "く (ku): k as in “sky” plus the unrounded version of “oo” in “food,” said in one short beat.",
+      "forms": []
+    },
+    {
+      "symbol": "け",
+      "readingAid": "ke",
+      "ipa": "/ke/",
+      "audioText": "け",
+      "pronunciation": "け (ke): k as in “sky” plus a more closed, steady version of the vowel in “get.”",
+      "forms": []
+    },
+    {
+      "symbol": "こ",
+      "readingAid": "ko",
+      "ipa": "/ko/",
+      "audioText": "こ",
+      "pronunciation": "こ (ko): k as in “sky” plus the start of “go,” without the glide at the end.",
+      "forms": []
+    }
+  ],
+  "summary": [
+    "Read each hiragana as one short beat, moving from left to right.",
+    "The K row adds k to each of the five steady vowel sounds."
+  ]
+}
