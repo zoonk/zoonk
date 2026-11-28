@@ -207,15 +207,13 @@ function GoalDateValue() {
       <PlanDateText
         estimate={targetDateEstimated}
         isoDate={targetDate}
-        month={targetDateNamedMonth}
+        precision={targetDateNamedMonth ? "month" : "day"}
       />
     );
   }
 
   if (!plan.end && finish) {
-    return (
-      <PlanDateText estimate={finish.estimate} isoDate={finish.isoDate} month={finish.month} />
-    );
+    return <PlanDateText {...finish} />;
   }
 
   return goal.kind === "exam" ? t("To be confirmed") : t("None set");

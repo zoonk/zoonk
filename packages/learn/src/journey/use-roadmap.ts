@@ -11,6 +11,7 @@ import {
   getAxisFinish,
   getPlanFinish,
   getRoadmapPhases,
+  isPlanFinishLater,
 } from "./phase-dates";
 
 export function getLessonShare(phase: PlanPhaseView): number {
@@ -34,6 +35,12 @@ export function useRoadmapPhases() {
 export function useRoadmapFinish(): PlanDate | null {
   const { goal, paused, plan } = usePlanScreen();
   return getPlanFinish({ goalKind: goal.kind, paused, plan });
+}
+
+/** The finish row reads "Later" where the plan's finish lies past the years it lays out. */
+export function useRoadmapFinishLater(): boolean {
+  const { goal, paused, plan } = usePlanScreen();
+  return isPlanFinishLater({ goalKind: goal.kind, paused, plan });
 }
 
 /** The goal's date under the timeline's axis (`getAxisFinish`). */

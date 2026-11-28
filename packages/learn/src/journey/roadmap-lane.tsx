@@ -98,7 +98,7 @@ function GoalDate() {
     return null;
   }
 
-  return <PlanDateText estimate={finish.estimate} isoDate={finish.isoDate} month={finish.month} />;
+  return <PlanDateText {...finish} />;
 }
 
 /** In the last phase's band, so that phase is never narrower than the date under it. */
@@ -111,12 +111,7 @@ export function EndDateSizer() {
 
   return (
     <span aria-hidden="true" className={BAND_SIZER_CLASS}>
-      <PlanDateText
-        className="text-2xs"
-        estimate={finish.estimate}
-        isoDate={finish.isoDate}
-        month={finish.month}
-      />
+      <PlanDateText className="text-2xs" {...finish} />
     </span>
   );
 }

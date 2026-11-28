@@ -11,7 +11,6 @@ import { DoneMark } from "../_components/status-mark";
 import { LearnLink } from "../learn-link";
 import { usePlanScreen } from "../plan/plan-context";
 import { PlanDateText } from "../plan/plan-date-text";
-import { usePhaseName } from "../plan/use-phase-name";
 import { namesModules } from "../syllabus/names-modules";
 import { ReasonText } from "../syllabus/topic-note";
 import { CurrentPhaseMark } from "./current-phase-mark";
@@ -24,9 +23,10 @@ import {
   PathRowBody,
   usePhaseMocksLine,
 } from "./journey-phase-events";
+import { usePhaseRowName } from "./path-phase-row";
 import { PhaseDetails } from "./phase-details";
 import { PhaseWhen } from "./phase-when";
-import { useRoadmapFinish } from "./use-roadmap";
+import { useRoadmapFinish, useRoadmapFinishLater } from "./use-roadmap";
 
 type NodeState = PlanPhaseView["state"] | "finish";
 
@@ -64,8 +64,8 @@ const DATE_CLASS = "text-muted-foreground text-right text-xs";
 
 function PhaseTitle({ note, phase }: { note?: string | null; phase: PlanPhaseView }) {
   const t = useExtracted();
-  const { goal, plan } = usePlanScreen();
-  const phaseName = usePhaseName();
+  const { goal } = usePlanScreen();
+  const phaseRowName = usePhaseRowName();
   const lessonsLeft = phase.lessonsTotal - phase.lessonsDone;
 
   return (
@@ -73,7 +73,7 @@ function PhaseTitle({ note, phase }: { note?: string | null; phase: PlanPhaseVie
       <span
         className={cn("text-sm font-medium", phase.state === "done" && "text-muted-foreground")}
       >
-        {phaseName(phase, { mocksRequirePlus: plan.access.mocksRequirePlus })}
+        {phaseRowName(phase)}
         {phase.state === "current" && <span className="sr-only">{t(", you are here")}</span>}
         {phase.state === "done" && <span className="sr-only">{t(", done")}</span>}
       </span>
@@ -153,19 +153,19 @@ function FinishNode({ continues, examHref }: { continues: boolean; examHref: str
   const t = useExtracted();
   const { goal } = usePlanScreen();
   const finish = useRoadmapFinish();
+  const later = useRoadmapFinishLater();
 
   const content = (
     <PathRowBody
       value={
         finish ? (
-          <PlanDateText
-            className={DATE_CLASS}
-            estimate={finish.estimate}
-            isoDate={finish.isoDate}
-            month={finish.month}
-          />
+          <PlanDateText className={DATE_CLASS} {...finish} />
         ) : (
-          goal.kind === "exam" && <span className={DATE_CLASS}>{t("Date to be confirmed")}</span>
+          (goal.kind === "exam" || later) && (
+            <span className={DATE_CLASS}>
+              {goal.kind === "exam" ? t("Date to be confirmed") : t("Later")}
+            </span>
+          )
         )
       }
     >

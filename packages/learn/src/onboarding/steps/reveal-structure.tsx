@@ -30,10 +30,9 @@ import {
   PATH_ROW_LEADING_CLASS,
   PathRowBody,
 } from "../../journey/journey-phase-events";
-import { PHASE_END_CLASS, PhaseMark } from "../../journey/path-phase-row";
+import { PHASE_END_CLASS, PhaseMark, usePhaseRowName } from "../../journey/path-phase-row";
 import { PhaseWhen } from "../../journey/phase-when";
 import { usePlanScreen } from "../../plan/plan-context";
-import { usePhaseName } from "../../plan/use-phase-name";
 import { namesModules } from "../../syllabus/names-modules";
 import { SubjectGroups } from "../../syllabus/subject-groups";
 import { TopicChapters } from "../../syllabus/subject-topic-chapters";
@@ -42,8 +41,7 @@ import { hasSyllabusSection } from "../../syllabus/syllabus-section";
 import { useNotPlannedReason } from "../../syllabus/topic-note";
 
 function PhaseRow({ phase }: { phase: PlanPhaseView }) {
-  const phaseName = usePhaseName();
-  const { plan } = usePlanScreen();
+  const phaseRowName = usePhaseRowName();
 
   const row = (
     <>
@@ -51,12 +49,7 @@ function PhaseRow({ phase }: { phase: PlanPhaseView }) {
         <PhaseMark phase={phase} />
       </span>
       <PathRowBody value={<PhaseWhen className={PHASE_END_CLASS} phase={phase} />}>
-        <span className="font-medium">
-          {phaseName(phase, { mocksRequirePlus: plan.access.mocksRequirePlus })}
-        </span>
-        {phase.milestone && (
-          <span className="text-muted-foreground text-xs">{phase.milestone}</span>
-        )}
+        <span className="font-medium">{phaseRowName(phase)}</span>
       </PathRowBody>
     </>
   );

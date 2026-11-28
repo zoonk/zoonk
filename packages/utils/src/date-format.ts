@@ -5,9 +5,9 @@ import { getFormattingLocale } from "./locale";
 /**
  * Where a date sits decides how it's written, so a screen asks by role and every screen writes it
  * one way: a data row or a facts line ("Nov 14"), a sentence ("November 14"), a month in either
- * ("Jan", "January"), or a weekday's name.
+ * ("Jan", "January"), a year alone ("2031"), or a weekday's name.
  */
-export type DateRole = "row" | "rowMonth" | "sentence" | "sentenceMonth" | "weekday";
+export type DateRole = "row" | "rowMonth" | "sentence" | "sentenceMonth" | "weekday" | "year";
 
 export type DateFormat = {
   role?: DateRole;
@@ -32,6 +32,7 @@ const ROLE_OPTIONS: Record<DateRole, Omit<IsoDateOptions, "timeZone">> = {
   sentence: { day: "numeric", month: "long" },
   sentenceMonth: { month: "long" },
   weekday: { weekday: "long" },
+  year: { year: "numeric" },
 };
 
 const ROW_ROLES = new Set<DateRole>(["row", "rowMonth"]);

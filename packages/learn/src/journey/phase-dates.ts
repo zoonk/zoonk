@@ -12,12 +12,20 @@ type GoalKind = GoalView["kind"];
 
 type DatedPhase = Pick<
   PlanPhaseView,
-  "checkpoint" | "endDate" | "index" | "kind" | "short" | "startDate" | "state"
+  | "checkpoint"
+  | "endDate"
+  | "index"
+  | "kind"
+  | "later"
+  | "precision"
+  | "short"
+  | "startDate"
+  | "state"
 >;
 
 type DatedPlan = {
   end: PlanView["end"];
-  estimate: Pick<PlanView["estimate"], "endDate">;
+  estimate: Pick<PlanView["estimate"], "endDate" | "finishReason" | "precision">;
   phases: readonly DatedPhase[];
   schedule: Pick<
     PlanView["schedule"],
@@ -27,20 +35,56 @@ type DatedPlan = {
   week: Pick<PlanView["week"], "startDate">;
 };
 
-export type PlanDate = { estimate: boolean; isoDate: string; month: boolean };
+export type DatePrecision = "day" | "month" | "year";
 
-/** A short plan names a phase by its days ("Days 1–3"); every other phase by the day it ends. */
-export type PhaseEnd = PlanDate | { short: ShortPhaseView };
+export type PlanDate = { estimate: boolean; isoDate: string; precision: DatePrecision };
 
-/** An estimate this far from the plan's week is said by its month: "~Jan", never a day. */
-function isFarEstimate(plan: Pick<DatedPlan, "week">, isoDate: string): boolean {
-  return daysBetween(plan.week.startDate, isoDate) > NEAR_ESTIMATE_DAYS;
+/**
+ * A short plan names a phase by its days ("Days 1–3"), a phase whose work has no place yet by
+ * "Later", and every other phase by the day it ends.
+ */
+export type PhaseEnd = PlanDate | { later: true } | { short: ShortPhaseView };
+
+/**
+ * An estimate this far from the plan's week is said by its month ("~Jan"), never a day, and one
+ * core dates only by its year ("~2031") by that year.
+ */
+function getEstimatePrecision({
+  isoDate,
+  plan,
+  precision,
+}: {
+  isoDate: string;
+  plan: Pick<DatedPlan, "week">;
+  precision: PlanPhaseView["precision"];
+}): DatePrecision {
+  if (precision === "year") {
+    return "year";
+  }
+
+  return daysBetween(plan.week.startDate, isoDate) > NEAR_ESTIMATE_DAYS ? "month" : "day";
 }
 
 /** The day of a challenge still ahead that comes after the phase's last lesson. */
 function getLaterChallengeDay({ checkpoint, endDate }: DatedPhase): string | null {
   const challengeDay = checkpoint?.state === "upcoming" ? checkpoint.date : null;
   return challengeDay && endDate && challengeDay > endDate ? challengeDay : null;
+}
+
+/** A last phase without a day of its own ends with the plan. */
+function getEndWithPlan({ phase, plan }: { phase: DatedPhase; plan: DatedPlan }): PlanDate | null {
+  const lastIndex = plan.phases.findLast((entry) => entry.kind !== "afterExam")?.index;
+  const planEnd = phase.index === lastIndex ? plan.estimate.endDate : null;
+
+  if (!planEnd) {
+    return null;
+  }
+
+  return {
+    estimate: true,
+    isoDate: planEnd,
+    precision: getEstimatePrecision({ isoDate: planEnd, plan, precision: plan.estimate.precision }),
+  };
 }
 
 /**
@@ -66,18 +110,16 @@ export function getPhaseEnd({
     return null;
   }
 
+  if (phase.later) {
+    return { later: true };
+  }
+
   const challengeDay = getLaterChallengeDay(phase);
   // A phase is behind the learner on its challenge's day, which can come after its last lesson.
   const lastDay = challengeDay ?? phase.endDate;
 
   if (!lastDay) {
-    // A last phase without a day of its own ends with the plan.
-    const lastIndex = plan.phases.findLast((entry) => entry.kind !== "afterExam")?.index;
-    const planEnd = phase.index === lastIndex ? plan.estimate.endDate : null;
-
-    return planEnd
-      ? { estimate: true, isoDate: planEnd, month: isFarEstimate(plan, planEnd) }
-      : null;
+    return getEndWithPlan({ phase, plan });
   }
 
   const learns = phase.kind === "learn" || phase.kind === "afterExam";
@@ -88,7 +130,14 @@ export function getPhaseEnd({
     plan.schedule.targetDateEstimated ||
     (learns && (ahead || phase.checkpoint?.state === "upcoming"));
 
-  return { estimate, isoDate: lastDay, month: estimate && ahead && isFarEstimate(plan, lastDay) };
+  return {
+    estimate,
+    isoDate: lastDay,
+    precision:
+      estimate && (ahead || phase.precision === "year")
+        ? getEstimatePrecision({ isoDate: lastDay, plan, precision: phase.precision })
+        : "day",
+  };
 }
 
 /**
@@ -109,7 +158,7 @@ export function getPhaseStart({
   return {
     estimate: end.estimate && phase.state === "upcoming",
     isoDate: phase.startDate,
-    month: end.month,
+    precision: end.precision,
   };
 }
 
@@ -129,22 +178,52 @@ export function getPlanFinish({
 }): PlanDate | null {
   if (goalKind !== "exam" && plan.end) {
     const { finishedOn } = plan.end;
-    return finishedOn ? { estimate: false, isoDate: finishedOn, month: false } : null;
+    return finishedOn ? { estimate: false, isoDate: finishedOn, precision: "day" } : null;
   }
 
   const { targetDate, targetDateEstimated, targetDateNamedMonth } = plan.schedule;
 
   if (targetDate) {
-    return { estimate: targetDateEstimated, isoDate: targetDate, month: targetDateNamedMonth };
+    return {
+      estimate: targetDateEstimated,
+      isoDate: targetDate,
+      precision: targetDateNamedMonth ? "month" : "day",
+    };
   }
 
-  const { endDate } = plan.estimate;
+  const { endDate, precision } = plan.estimate;
 
   if (goalKind === "exam" || paused || !endDate) {
     return null;
   }
 
-  return { estimate: true, isoDate: endDate, month: isFarEstimate(plan, endDate) };
+  return {
+    estimate: true,
+    isoDate: endDate,
+    precision: getEstimatePrecision({ isoDate: endDate, plan, precision }),
+  };
+}
+
+/**
+ * A plan with no date whose finish lies past the years it lays out has no finish date: its list
+ * ends on "Later" and its timeline ends open.
+ */
+export function isPlanFinishLater({
+  goalKind,
+  paused = false,
+  plan,
+}: {
+  goalKind: GoalKind;
+  paused?: boolean;
+  plan: DatedPlan;
+}): boolean {
+  return (
+    goalKind !== "exam" &&
+    !paused &&
+    !plan.end &&
+    !plan.schedule.targetDate &&
+    plan.estimate.finishReason === "beyondHorizon"
+  );
 }
 
 /** The phases the roadmap draws: the after-exam ones and those left out aren't on it. */
@@ -165,7 +244,7 @@ export function getRoadmapPhases<Phase extends DatedPhase>(
   }));
 }
 
-function endKey(end: PhaseEnd): string {
+function endKey(end: PlanDate | { short: ShortPhaseView }): string {
   return "short" in end ? `days ${end.short.firstDay}-${end.short.lastDay}` : end.isoDate;
 }
 
@@ -190,7 +269,7 @@ export function getAxisDatedPhases({
 
   const dated = phases.slice(currentIndex, -1).flatMap((phase) => {
     const end = getPhaseEnd({ phase, plan });
-    return end ? [{ index: phase.index, key: endKey(end) }] : [];
+    return end && !("later" in end) ? [{ index: phase.index, key: endKey(end) }] : [];
   });
 
   return new Set(

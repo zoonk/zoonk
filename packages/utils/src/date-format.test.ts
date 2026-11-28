@@ -51,6 +51,11 @@ describe(formatIsoDate, () => {
     );
   });
 
+  it("writes a year alone, this year's too", () => {
+    expect(inEnglish("2031-06-14", { role: "year" })).toBe("2031");
+    expect(inEnglish("2026-12-14", { role: "year" })).toBe("2026");
+  });
+
   it("names a weekday alone, with no year in any year", () => {
     expect(inEnglish("2027-01-04", { role: "weekday" })).toBe("Monday");
   });
