@@ -76,6 +76,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.zoonk.android.ui.theme.LocalMoreContrast
 import com.zoonk.android.ui.theme.ZoonkRadius
+import com.zoonk.android.ui.theme.disabledEmphasis
 import com.zoonk.android.ui.theme.zoonk
 import kotlinx.coroutines.flow.drop
 
@@ -254,7 +255,7 @@ private fun LabeledField(
                     if (label != null) {
                         Text(
                             label,
-                            color = if (enabled) color else color.copy(alpha = DISABLED_ALPHA),
+                            color = if (enabled) color else color.disabledEmphasis(),
                             style = MaterialTheme.typography.titleSmall,
                         )
                     }
@@ -543,7 +544,6 @@ private val MARK_INSET = 12.dp
 
 /** Material's gap over a field's supporting text. */
 private val SUPPORTING_GAP = 4.dp
-private const val DISABLED_ALPHA = 0.38f
 
 /**
  * Scrolls a field into view with the ring drawn [FOCUS_RING_WIDTH] outside it, which a scroll to the field's own

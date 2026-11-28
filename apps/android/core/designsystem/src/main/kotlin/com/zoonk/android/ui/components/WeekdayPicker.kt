@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.weekdayNames
+import com.zoonk.android.ui.theme.disabledEmphasis
 import com.zoonk.android.ui.theme.zoonk
 import java.time.DayOfWeek
 import java.util.Locale
@@ -88,7 +89,7 @@ private fun DayToggle(
         enabled = enabled,
         shape = MaterialTheme.shapes.small,
         color = if (on) MaterialTheme.zoonk.selectedTint else Color.Transparent,
-        contentColor = if (enabled) content else content.copy(alpha = DISABLED_ALPHA),
+        contentColor = if (enabled) content else content.disabledEmphasis(),
         border = pickedBorder(),
     ) {
         Box(Modifier.padding(horizontal = DAY_PADDING), contentAlignment = Alignment.Center) {
@@ -109,4 +110,3 @@ private val MONDAY_TO_SUNDAY = listOf(1, 2, 3, 4, 5, 6, 0)
 private val WEEK_WIDTH = 384.dp
 private val DAY_GAP = 4.dp
 private val DAY_PADDING = 4.dp
-private const val DISABLED_ALPHA = 0.38f
