@@ -341,6 +341,7 @@ describe(loadGoalCurriculumInputs, () => {
       inputs,
       scope: { generalGoal: "Physics", ownerId: null },
     });
+
     const owned = toScopedGraphPrompt({ inputs, scope: { generalGoal: null, ownerId: user.id } });
 
     expect(shared.courseLevel).toBe("intermediate");
