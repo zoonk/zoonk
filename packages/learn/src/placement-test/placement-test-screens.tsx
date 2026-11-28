@@ -38,19 +38,17 @@ function CourseLine({ course }: { course: Course }) {
   );
 }
 
-function useCourseFact() {
+function useSkippedFact() {
   const t = useExtracted();
 
   return ({ lessons, skipped }: { lessons: number; skipped: number }): string =>
-    skipped > 0
-      ? t({
-          description:
-            "Under a picture of a course, after a placement test: how many of the course's lessons the test skipped, out of all of them.",
-          message:
-            "{skipped, plural, one {# of {lessons, number} lessons skipped} other {# of {lessons, number} lessons skipped}}",
-          values: { lessons, skipped },
-        })
-      : t("{count, plural, one {# lesson} other {# lessons}}", { count: lessons });
+    t({
+      description:
+        "Under a picture of a course, after a placement test: how many of the course's lessons the test skipped, out of all of them.",
+      message:
+        "{skipped, plural, one {# of {lessons, number} lessons skipped} other {# of {lessons, number} lessons skipped}}",
+      values: { lessons, skipped },
+    });
 }
 
 export function UpNextLesson({ title }: { title: string }) {
@@ -151,7 +149,7 @@ export function PlacementResult({
 }) {
   const t = useExtracted();
   const sentences = useSkippedLessonsSentences();
-  const courseFact = useCourseFact();
+  const skippedFact = useSkippedFact();
   const { button, pending: undoing, undone } = useResultUndo(undo);
   const { chapter, course, lessonsSkipped } = result;
   const nextLesson = undone ? null : result.nextLesson;
@@ -183,7 +181,10 @@ export function PlacementResult({
       {course && !undone && (
         <div className="-mt-1 flex flex-col gap-2.5">
           <CourseLine course={course} />
-          <TaskMeta facts={[courseFact({ lessons: course.lessons, skipped: lessonsSkipped })]} />
+          {/* With nothing skipped the line and its ring say it; a bare count reads as work done. */}
+          {lessonsSkipped > 0 && (
+            <TaskMeta facts={[skippedFact({ lessons: course.lessons, skipped: lessonsSkipped })]} />
+          )}
         </div>
       )}
 
