@@ -52,7 +52,6 @@ import { storeSource } from "./steps/store-sources-step";
 import { lookUpSubjectQuestionsStep } from "./steps/subject-questions-step";
 import { lookUpTopicFrequencyStep } from "./steps/topic-frequency-step";
 
-/** The goal's start hook, held by this run, which the learner answers while it waits. */
 function answerHook(answer: () => Promise<void>) {
   const getConflict = () => answer().then(() => null);
 

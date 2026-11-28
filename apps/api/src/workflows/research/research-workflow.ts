@@ -30,7 +30,6 @@ import { lookUpTargetCutoffStep } from "./steps/target-cutoff-step";
 import { lookUpTopicFrequencyStep } from "./steps/topic-frequency-step";
 import { waitForMaterialReading } from "./wait-for-material-reading";
 
-/** A goal's own research runs once at a time, holding this token from its start. */
 export function getGoalResearchToken(goalId: string): string {
   return `research-goal:${goalId}`;
 }

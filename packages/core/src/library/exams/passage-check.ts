@@ -205,7 +205,6 @@ function findSpanEnd({
   return null;
 }
 
-/** Every stretch of the page holding a passage's words in order. */
 function findPassageSpans({ page, passage }: { page: string; passage: string }): Span[] {
   const words = toWords(joinHyphenatedWords(passage));
 
