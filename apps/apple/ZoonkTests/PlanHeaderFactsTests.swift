@@ -24,7 +24,8 @@ final class PlanHeaderFactsTests: XCTestCase {
     ]
 
     for (identifier, month, year) in cases {
-      let (text, range) = PlanDate.monthAndYear("2026-12-14", locale: Locale(identifier: identifier))
+      let (text, range) = PlanDate.monthAndYear(
+        "2026-12-14", locale: Locale(identifier: identifier))
       let small = range.map { String(text[$0]) }
 
       XCTAssertEqual(small, year, identifier)
