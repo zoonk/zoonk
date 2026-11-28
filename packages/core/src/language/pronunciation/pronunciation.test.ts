@@ -322,7 +322,7 @@ describe(answerPronunciationReview, () => {
     await expect(answer(word.word)).resolves.toMatchObject({ grade: { isCorrect: true } });
 
     expect(transcribeSpeech).toHaveBeenCalledWith(expect.objectContaining({ language: "en" }));
-    expect(vi.mocked(transcribeSpeech).mock.calls[0]?.[0]).not.toHaveProperty("model");
+    expect(vi.mocked(transcribeSpeech).mock.calls[0]?.[0]?.model).toBeUndefined();
   });
 
   it("hides another learner's review and rejects audio it can't grade", async () => {

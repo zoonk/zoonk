@@ -1,7 +1,11 @@
 import "server-only";
 import { normalizeTypedAnswer } from "@zoonk/ai/tasks/grading/typed-answer-match";
 import { assessPronunciation } from "@zoonk/ai/tasks/language/assess-pronunciation";
-import { transcribeSpeech } from "@zoonk/ai/tasks/language/transcribe-speech";
+import {
+  NO_SPEECH_CHECK_MODEL,
+  type TranscriptionModelId,
+  transcribeSpeech,
+} from "@zoonk/ai/tasks/language/transcribe-speech";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import {
@@ -41,26 +45,57 @@ type HearInput = {
   userId: string;
 };
 
-async function transcribeAndCompare({
-  audio,
+/** Null when the model failed, and "" when it heard no words. */
+async function transcribe(
+  { audio, language, userId }: HearInput,
+  model?: TranscriptionModelId,
+): Promise<string | null> {
+  const { data: text, error } = await safeAsync(async () => {
+    const { data } = await transcribeSpeech({
+      analytics: { contentScope: "shared", distinctId: userId },
+      audio: audio.bytes,
+      language,
+      model,
+    });
+
+    return data.text;
+  });
+
+  if (error) {
+    logError(`Transcription with ${model ?? "the default model"} failed`, error);
+    return null;
+  }
+
+  return normalizeTypedAnswer(text) ? text : "";
+}
+
+/**
+ * The word-by-word judge writes the expected sentence for silence, noise or a cough, so only
+ * transcribers decide that nobody spoke, and it takes both: each alone misses some real
+ * one-syllable words. With both down, the judge grades alone.
+ */
+async function heardNoWords(input: HearInput, transcript: string | null): Promise<boolean> {
+  const check = await transcribe(input, NO_SPEECH_CHECK_MODEL);
+  return check === null ? transcript === "" : check === "";
+}
+
+function noSpeech({ expected, language }: HearInput): HeardSentence {
+  return { match: matchSpokenAnswer({ expected, heard: "", language }), transcript: "" };
+}
+
+async function compareTranscript({
   expected,
   language,
   romanization,
-  userId,
+  transcript,
   verifyExactReading,
-}: HearInput & { verifyExactReading?: boolean }) {
-  const { data: transcript } = await transcribeSpeech({
-    analytics: { contentScope: "shared", distinctId: userId },
-    audio: audio.bytes,
-    language,
-  });
-
-  const input = { expected, heard: transcript.text, language };
+}: HearInput & { transcript: string; verifyExactReading?: boolean }) {
+  const input = { expected, heard: transcript, language };
   const match = matchSpokenAnswer(input);
-  const heard = { match, transcript: transcript.text };
+  const heard = { match, transcript };
 
-  if (!match.normalizedHeard || match.isCorrect) {
-    return { heard, listen: match.isCorrect && Boolean(verifyExactReading) };
+  if (match.isCorrect) {
+    return { heard, listen: Boolean(verifyExactReading) };
   }
 
   const reading = await transcriptReading({ ...input, romanization });
@@ -77,7 +112,7 @@ async function transcribeAndCompare({
         score: 1,
         words: match.words.map(({ text }) => ({ heard: null, status: "correct" as const, text })),
       },
-      transcript: transcript.text,
+      transcript,
     },
     listen: false,
   };
@@ -119,29 +154,40 @@ export async function hearSpokenSentence({
   const verifyExactReading = await needsSurnameCheck(input);
 
   if (check === "thorough" || verifyExactReading) {
-    const { data, error } = await safeAsync(() => assessWordByWord(input));
+    const [judged, transcript] = await Promise.all([
+      safeAsync(() => assessWordByWord(input)),
+      transcribe(input),
+    ]);
 
-    if (!error) {
-      return data;
+    if (!transcript && (await heardNoWords(input, transcript))) {
+      return noSpeech(input);
     }
 
-    logError("The thorough speech check failed; trying transcription", error);
-    const { heard, listen } = await transcribeAndCompare({ ...input, verifyExactReading });
+    if (!judged.error) {
+      return judged.data;
+    }
+
+    logError("The thorough speech check failed; trying transcription", judged.error);
+
+    if (!transcript) {
+      throw judged.error;
+    }
+
+    const { heard, listen } = await compareTranscript({ ...input, transcript, verifyExactReading });
 
     if (listen) {
-      throw error;
+      throw judged.error;
     }
 
     return heard;
   }
 
-  const { data, error } = await safeAsync(() => transcribeAndCompare(input));
+  const transcript = await transcribe(input);
 
-  if (error) {
-    logError("The fast speech check failed; trying the word-by-word check", error);
-    return assessWordByWord(input);
+  if (!transcript) {
+    return (await heardNoWords(input, transcript)) ? noSpeech(input) : assessWordByWord(input);
   }
 
-  const { heard, listen } = data;
-  return listen ? assessWordByWord({ ...input, transcriberHeard: heard.transcript }) : heard;
+  const { heard, listen } = await compareTranscript({ ...input, transcript });
+  return listen ? assessWordByWord({ ...input, transcriberHeard: transcript }) : heard;
 }

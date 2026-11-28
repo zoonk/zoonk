@@ -1,5 +1,8 @@
 import { assessPronunciation } from "@zoonk/ai/tasks/language/assess-pronunciation";
-import { transcribeSpeech } from "@zoonk/ai/tasks/language/transcribe-speech";
+import {
+  NO_SPEECH_CHECK_MODEL,
+  transcribeSpeech,
+} from "@zoonk/ai/tasks/language/transcribe-speech";
 import { describe, expect, it, vi } from "vitest";
 import { matchSpokenAnswer } from "../spoken-answer-match";
 import { hearSpokenSentence } from "./hear-spoken-sentence";
@@ -16,6 +19,23 @@ function transcribe(text: string) {
   vi.mocked(transcribeSpeech).mockResolvedValueOnce({ data: { text } } as Awaited<
     ReturnType<typeof transcribeSpeech>
   >);
+}
+
+/** The no-speech check's model answers `second`; any other call answers `first`. */
+function transcribers({ first, second }: { first: string | Error; second?: string | Error }) {
+  vi.mocked(transcribeSpeech).mockImplementation(async ({ model }) => {
+    const text = model === NO_SPEECH_CHECK_MODEL ? second : first;
+
+    if (text === undefined) {
+      throw new Error(`No transcript for ${model}`);
+    }
+
+    if (text instanceof Error) {
+      throw text;
+    }
+
+    return { data: { text } } as Awaited<ReturnType<typeof transcribeSpeech>>;
+  });
 }
 
 function verdict(text: string, correct: boolean) {
@@ -94,9 +114,8 @@ describe(hearSpokenSentence, () => {
   it.each([
     ["zh", "王明", "汪明", "Wáng Míng"],
     ["zh", "王明", "王民", "Wáng Míng"],
-    ["en", "Take the bus", "", undefined],
   ])(
-    "trusts a transcript with other Mandarin tones or no words (%s %s)",
+    "trusts a transcript with other Mandarin tones (%s %s)",
     async (language, expected, heard, romanization) => {
       transcribe(heard);
       const result = await hearSpokenSentence({ ...recording, expected, language, romanization });
@@ -138,6 +157,7 @@ describe(hearSpokenSentence, () => {
     async (correct) => {
       const expected = "我姓单";
       const romanization = "Wǒ xìng Shàn";
+      transcribers({ first: expected });
       verdict(expected, correct);
 
       const result = await hearSpokenSentence({
@@ -152,8 +172,6 @@ describe(hearSpokenSentence, () => {
       expect(assessPronunciation).toHaveBeenCalledExactlyOnceWith(
         expect.objectContaining({ romanization }),
       );
-
-      expect(transcribeSpeech).not.toHaveBeenCalled();
     },
   );
 
@@ -185,5 +203,80 @@ describe(hearSpokenSentence, () => {
 
     expect(result.match.isCorrect).toBe(false);
     expect(assessPronunciation).toHaveBeenCalledOnce();
+  });
+
+  it.each(["fast", "thorough"] as const)(
+    "hears no speech when both transcribers hear no words, whatever the judge says (%s)",
+    async (check) => {
+      transcribers({ first: "", second: "" });
+      verdict("obrigado", true);
+
+      const result = await hearSpokenSentence({
+        ...recording,
+        check,
+        expected: "obrigado",
+        language: "pt",
+      });
+
+      expect(result.transcript).toBe("");
+      expect(result.match).toMatchObject({ isCorrect: false, normalizedHeard: "" });
+    },
+  );
+
+  it.each(["fast", "thorough"] as const)(
+    "lets the judge grade a short word only the no-speech check heard (%s)",
+    async (check) => {
+      transcribers({ first: "", second: "mam" });
+      verdict("vin", true);
+
+      const result = await hearSpokenSentence({
+        ...recording,
+        check,
+        expected: "vin",
+        language: "fr",
+      });
+
+      expect(assessPronunciation).toHaveBeenCalledExactlyOnceWith(
+        expect.not.objectContaining({ transcriberHeard: expect.anything() }),
+      );
+
+      expect(result.match.isCorrect).toBe(true);
+    },
+  );
+
+  it("hears no speech when the transcriber fails and the no-speech check hears no words", async () => {
+    transcribers({ first: new Error("language not supported"), second: "" });
+    verdict("Dia duit", true);
+
+    const result = await hearSpokenSentence({ ...recording, expected: "Dia duit", language: "ga" });
+
+    expect(result.match).toMatchObject({ isCorrect: false, normalizedHeard: "" });
+    expect(assessPronunciation).not.toHaveBeenCalled();
+  });
+
+  it("hears no speech when the transcriber hears no words and the no-speech check fails", async () => {
+    transcribers({ first: "", second: new Error("unavailable") });
+
+    const result = await hearSpokenSentence({
+      ...recording,
+      expected: "Take the bus",
+      language: "en",
+    });
+
+    expect(result.match).toMatchObject({ isCorrect: false, normalizedHeard: "" });
+    expect(assessPronunciation).not.toHaveBeenCalled();
+  });
+
+  it("lets the judge grade when both transcribers fail", async () => {
+    transcribers({ first: new Error("unavailable"), second: new Error("unavailable") });
+    verdict("Take the bus", true);
+
+    const result = await hearSpokenSentence({
+      ...recording,
+      expected: "Take the bus",
+      language: "en",
+    });
+
+    expect(result.match.isCorrect).toBe(true);
   });
 });

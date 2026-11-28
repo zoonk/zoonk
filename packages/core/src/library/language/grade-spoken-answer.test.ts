@@ -380,7 +380,7 @@ describe(gradeSpokenAnswer, () => {
       expect.objectContaining({ language: "en" }),
     );
 
-    expect(vi.mocked(transcribeSpeech).mock.calls[0]?.[0]).not.toHaveProperty("model");
+    expect(vi.mocked(transcribeSpeech).mock.calls[0]?.[0]?.model).toBeUndefined();
 
     const attempt = await prisma.attempt.findUniqueOrThrow({ where: { id: grade?.attemptId } });
 

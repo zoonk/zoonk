@@ -401,6 +401,7 @@ describe("Original notebook questions", () => {
 
     vi.mocked(transcribeSpeech)
       .mockRejectedValueOnce(new Error("Speech provider unavailable"))
+      .mockRejectedValueOnce(new Error("Speech provider unavailable"))
       .mockResolvedValueOnce(targetTranscript());
 
     vi.mocked(assessPronunciation).mockRejectedValueOnce(new Error("Speech provider unavailable"));
