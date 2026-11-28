@@ -311,7 +311,7 @@ private fun ColumnScope.RevealBody(
     onUseNoticeDay: (LocalDate) -> Unit,
     onCreateAccount: () -> Unit,
 ) {
-    val today = studyDay?.localDate?.toJavaLocalDate() ?: LocalDate.now()
+    val today = studyDay?.localDate?.toJavaLocalDate() ?: LocalDate.now(goalZone(goal.timezone))
     // Main's `RevealPlan`: what the learner chose, to check before starting: the time a day and where the plan ends,
     // an exam's options, and the lines that only show when the plan needs something from them.
     val choices: @Composable () -> Unit = {
