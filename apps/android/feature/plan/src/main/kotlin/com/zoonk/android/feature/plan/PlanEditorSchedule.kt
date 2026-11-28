@@ -15,7 +15,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusRequester
@@ -86,11 +88,12 @@ private fun DailyMinutes(
     }
     ActOn(edits.outcomes.dateMoved) { focus.pickedTime.requestFocus() }
 
-    fun setMinutes(minutes: Int) {
-        if (pending || minutes == shown) return
-        val operation =
-            if (weekendOn && shape.canDiffer) PlanOp.WeekdayMinutes(weekdayDays, minutes) else PlanOp.DailyMinutes(minutes)
-        edits.change(PlanPart.Schedule, listOf(operation), null)
+    val setMinutes by rememberUpdatedState { minutes: Int ->
+        if (!pending && minutes != shown) {
+            val operation =
+                if (weekendOn && shape.canDiffer) PlanOp.WeekdayMinutes(weekdayDays, minutes) else PlanOp.DailyMinutes(minutes)
+            edits.change(PlanPart.Schedule, listOf(operation), null)
+        }
     }
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -101,13 +104,13 @@ private fun DailyMinutes(
                 times = page.plan.schedule.dailyTimes,
                 minutes = shown,
                 label = stringResource(R.string.plan_daily_study_time),
-                onChange = ::setMinutes,
+                onChange = { setMinutes(it) },
                 modifier = Modifier.focusRequester(focus.pickedTime),
                 enabled = !pending,
                 suggested = suggestedMinutes((search as? TimeToCoverState.Answered)?.time),
             )
         }
-        DailyCoverage(page, edits, focus, minutes = shape.weekdays.toInt(), onUseTime = ::setMinutes)
+        DailyCoverage(page, edits, focus, minutes = shape.weekdays.toInt(), onUseTime = { setMinutes(it) })
         FullCourseSwitch(page, edits, focus.studyEverything)
     }
 }
@@ -155,8 +158,9 @@ private fun WeekendMinutes(
     val pending = edits.isPending(PlanPart.Schedule)
     val weekendDays = shape.weekendDays.map(Long::toInt)
     val shown = askedMinutes(edits.asked(PlanPart.Schedule), weekendDays) ?: (shape.weekend ?: shape.weekdays).toInt()
+    val currentWeekendDays by rememberUpdatedState(weekendDays)
 
-    fun setWeekend(minutes: Int) = edits.change(PlanPart.Schedule, listOf(PlanOp.WeekdayMinutes(weekendDays, minutes)), null)
+    fun setWeekend(minutes: Int) = edits.change(PlanPart.Schedule, listOf(PlanOp.WeekdayMinutes(currentWeekendDays, minutes)), null)
 
     WeekendTime(
         checked = weekendOn,

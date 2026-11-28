@@ -73,6 +73,7 @@ function QuestionStepScreen({
         <CountryStep
           {...props}
           {...view.contentCountry}
+          exam={view.goal.kind === "exam"}
           language={view.goal.language}
           subject={subject}
         />
@@ -109,6 +110,7 @@ function QuestionStepScreen({
       return (
         <DateStep
           {...props}
+          booked={view.bookedExam}
           dateProblem={view.dateProblem}
           exam={view.examDays}
           initialDate={view.goal.targetDate}

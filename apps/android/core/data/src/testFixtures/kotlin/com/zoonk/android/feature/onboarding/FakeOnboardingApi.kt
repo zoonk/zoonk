@@ -88,9 +88,10 @@ fun goalsUnderstanding(
     details: String = """{"onboardingId":"$DRAFT_ID"}""",
     examDates: String = "[]",
     targetDate: String? = null,
+    contentCountry: String = "null",
 ) = """
     {"status":"goals","schedule":{"dailyMinutes":15,"studyDays":null,"studyTime":null,"studyTimeNote":null},
-     "goals":[{"cutoff":null,"examDates":$examDates,
+     "goals":[{"cutoff":null,"examDates":$examDates,"contentCountry":$contentCountry,
        "draft":{"kind":"exam","language":"en","prompt":"pass the bar exam","title":"$title","displayName":"$title","details":$details${targetDate?.let {
     ""","targetDate":"$it""""
 } ?: ""}}}]}
@@ -134,11 +135,12 @@ fun setupView(
     firstLesson: String = "null",
     warmUp: String = "null",
     planRevealed: Boolean = false,
+    bookedExam: Boolean = false,
     languageAim: String = if (kind == "language") languageAimOf(targetLanguage = targetLanguage) else "null",
 ): Onboarding =
     ApiJson.decodeFromString(
         """
-        {"contentCountry":{"defaultCountry":{"code":"US","name":"United States"},"suggested":[]},"dateProblem":null,"examChoices":$examChoices,"examDays":null,"examSubjects":[],"followUps":[],"generationId":null,"goalIds":["$goalId"],
+        {"bookedExam":$bookedExam,"contentCountry":{"defaultCountry":{"code":"US","name":"United States"},"suggested":[]},"dateProblem":null,"examChoices":$examChoices,"examDays":null,"examSubjects":[],"followUps":[],"generationId":null,"goalIds":["$goalId"],
          "warmUp":$warmUp,"languageAim":$languageAim,"firstLesson":$firstLesson,"planRevealed":$planRevealed,"libraryCourse":null,"profile":{"memoryEnabled":true,"questions":[]},"planReadiness":{"readingNotice":false,"ready":$planReady},"quickTestMinutes":2,"recommendedMinutes":30,"startsOnRecommended":$startsOnRecommended,"steps":[${steps.joinToString(
             ",",
         ) { "\"$it\"" }}],

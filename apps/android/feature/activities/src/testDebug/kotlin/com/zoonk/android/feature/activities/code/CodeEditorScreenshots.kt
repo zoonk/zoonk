@@ -48,7 +48,7 @@ class CodeEditorScreenshots {
                     CodeEditor(
                         state = rememberTextFieldState(LONG_QUERY),
                         language = CodeLanguage.Sql,
-                        label = "Your query",
+                        label = "Query",
                         placeholder = "SELECT",
                         focusRequester = remember { FocusRequester() },
                         onSubmit = {},

@@ -145,7 +145,7 @@ class GoalSetupFlowTest {
         rule.onNodeWithText("Is there a date you're aiming for?").assertIsDisplayed()
         assertEquals(listOf(EXAM_GOAL_ID), api.generationReads.distinct())
         api.reply = { goalId, _ -> setupView(listOf("plan"), goalId = goalId) }
-        rule.onNodeWithText("Continue without a date").performClick()
+        rule.onNodeWithText("Skip").performClick()
         rule.waitForIdle()
 
         assertEquals(listOf(GOAL_ID, EXAM_GOAL_ID), api.answers.map { it.first })

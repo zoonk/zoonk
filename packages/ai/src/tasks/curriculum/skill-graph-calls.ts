@@ -14,7 +14,7 @@ import { type ExamLibrary } from "./_utils/library-skills";
 import { writesExamExtras } from "./_utils/skill-graph-extras";
 import { type GraphFrameSection } from "./_utils/skill-graph-sections";
 import { type OnSkillNamed, finishStreamedPart } from "./_utils/streamed-skill-names";
-import { type ExamOutline, formatExamOutline } from "./exam-outline";
+import { type ExamOutline, formatExamOutline, hasWrittenOptions } from "./exam-outline";
 import { buildSkillGraphSystemPrompt, startsWithSubject } from "./skill-graph-system-prompt";
 
 /**
@@ -80,16 +80,13 @@ const frameSchema = z.object({
 
 const examSkillSchema = skillSchema.extend({ extra: z.boolean() });
 
-const sectionSchema = z.object({ skills: z.array(skillSchema) });
-const examSectionSchema = z.object({ skills: z.array(examSkillSchema) });
+function sectionSkillsSchema(params: SkillGraphParams) {
+  const skills = writesExamExtras(params) ? examSkillSchema : skillSchema;
 
-const librarySectionSchema = z.object({
-  skills: z.array(skillSchema.extend({ reuse: z.string().nullable() })),
-});
-
-const examLibrarySectionSchema = z.object({
-  skills: z.array(examSkillSchema.extend({ reuse: z.string().nullable() })),
-});
+  return hasWrittenOptions(params.examBlueprint)
+    ? skills.extend({ subject: z.string().nullable() })
+    : skills;
+}
 
 type GraphFrame = z.infer<typeof frameSchema>;
 
@@ -310,11 +307,9 @@ async function writePart<TOutput>({
 }
 
 function wholeSchema(params: SkillGraphParams) {
-  if (writesExamExtras(params)) {
-    return schema.extend(examSectionSchema.shape);
-  }
-
-  return startsWithSubject(params) ? subjectStartSchema : schema;
+  return startsWithSubject(params)
+    ? subjectStartSchema
+    : schema.extend({ skills: z.array(sectionSkillsSchema(params)) });
 }
 
 export async function generateWholeSkillGraph(params: SkillGraphParams) {
@@ -346,14 +341,16 @@ export function generateSkillGraphSection({
   params: SkillGraphParams;
   part: SkillsPart;
 }) {
-  const extras = writesExamExtras(params);
+  const skill = sectionSkillsSchema(params);
   const sections = { ...part, kind: "skills" as const };
 
-  return part.library === null
-    ? writePart({ params, part: sections, partSchema: extras ? examSectionSchema : sectionSchema })
-    : writePart({
-        params,
-        part: sections,
-        partSchema: extras ? examLibrarySectionSchema : librarySectionSchema,
-      });
+  return writePart({
+    params,
+    part: sections,
+    partSchema: z.object({
+      skills: z.array(
+        part.library === null ? skill : skill.extend({ reuse: z.string().nullable() }),
+      ),
+    }),
+  });
 }

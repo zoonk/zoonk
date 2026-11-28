@@ -57,7 +57,7 @@ internal fun LessonRecap(
         title = stringResource(R.string.player_from_the_lesson),
         expanded = expanded,
         onExpandedChange = onExpandedChange,
-        leading = { MarkIcon(R.drawable.ic_format_quote) },
+        leading = { MarkIcon(R.drawable.ic_text_quote) },
         modifier = Modifier.bleed(LIST_ITEM_INSET),
         // As listRowDescription decides for a row's description: a blank title shows no line.
         supporting = title?.takeUnless(::isBlankWords)?.let { { RichInlineText(it) } },

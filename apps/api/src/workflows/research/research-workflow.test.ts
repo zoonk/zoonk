@@ -39,8 +39,9 @@ import { MS_PER_DAY } from "@zoonk/utils/date";
 import { SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { Response as PageResponse, fetch } from "undici";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { sleep } from "workflow";
+import { createHook, sleep } from "workflow";
 import { getRun, start } from "workflow/api";
+import { saveAnswerInputs } from "../../../../../packages/core/src/view-models/onboarding/_utils/save-onboarding-answer";
 import { mockHookConflict } from "../../../mocks/workflow";
 import { followWithOutdatedSummary, readFollowerDetails } from "../_test-utils/focus-test-follower";
 import * as noticeReconcile from "../freshness/reconcile-exam-notice";
@@ -51,6 +52,15 @@ import { recordNoticeFormatsStep } from "./steps/notice-formats-step";
 import { storeSource } from "./steps/store-sources-step";
 import { lookUpSubjectQuestionsStep } from "./steps/subject-questions-step";
 import { lookUpTopicFrequencyStep } from "./steps/topic-frequency-step";
+
+function answerHook(answer: () => Promise<void>) {
+  const getConflict = () => answer().then(() => null);
+
+  return Object.assign(Promise.resolve({}), {
+    [Symbol.dispose]: vi.fn(),
+    getConflict,
+  }) as unknown as ReturnType<typeof createHook>;
+}
 
 function otherRun(status: "completed" | "failed" | "running") {
   const cancel = vi.fn(() => Promise.resolve());
@@ -333,6 +343,37 @@ describe(researchWorkflow, () => {
 
     expect(generateExamResearchPlan).not.toHaveBeenCalled();
     expect(generateSourceResearchPlan).not.toHaveBeenCalled();
+  });
+
+  it("waits for the learner's exam country and uses it to research the notice", async () => {
+    const user = await userFixture();
+
+    const goal = await goalFixture({
+      details: { answered: [], countryDependent: true, examName: "Civil service exam" },
+      kind: "exam",
+      planRevealedAt: null,
+      userId: user.id,
+    });
+
+    await replayTcdfResearch();
+
+    vi.mocked(createHook).mockReturnValueOnce(
+      answerHook(async () => {
+        expect(generateExamResearchPlan).not.toHaveBeenCalled();
+
+        await expect(
+          saveAnswerInputs({ goal, input: { country: "BR", question: "contentCountry" } }),
+        ).resolves.toMatchObject({ status: "saved" });
+      }),
+    );
+
+    await expect(researchWorkflow({ goalId: goal.id })).resolves.toMatchObject({ status: "ready" });
+
+    expect(createHook).toHaveBeenCalledWith({ token: `research-country:${goal.id}` });
+
+    expect(generateExamResearchPlan).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ details: '{"contentCountry":"BR"}' }),
+    );
   });
 
   it("builds the blueprint from official sources, keeps every fact's passage and links the goal", async () => {

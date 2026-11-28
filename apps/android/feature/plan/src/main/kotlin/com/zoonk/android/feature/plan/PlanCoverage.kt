@@ -11,6 +11,7 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -164,6 +165,9 @@ internal fun MoveDateSwitch(
     var outcome by remember { mutableStateOf<MoveOutcome?>(null) }
     val date = (edits.timeToCover.forPlan(page.plan) as? TimeToCoverState.Answered)?.time?.fittingDate?.toJavaLocalDate()
     val pending = finding || edits.isPending(PlanPart.Schedule)
+    val currentDate by rememberUpdatedState(date)
+    val currentEdits by rememberUpdatedState(edits)
+    val currentPlan by rememberUpdatedState(page.plan)
 
     ActOn(edits.outcomes.moveDateFound) { found ->
         finding = false
@@ -177,16 +181,18 @@ internal fun MoveDateSwitch(
     }
 
     fun move() {
+        val current = currentEdits
         // Another change saving (a date picked, an Undo) is the learner's newer word.
-        if (pending || edits.pending.isNotEmpty() || edits.latest?.undoing == true) return
+        if (finding || current.pending.isNotEmpty() || current.latest?.undoing == true) return
         outcome = null
-        if (date == null) {
+        val fittingDate = currentDate
+        if (fittingDate == null) {
             finding = true
-            edits.findTimeToCover(page.plan, TimeAsker.MoveDate)
+            current.findTimeToCover(currentPlan, TimeAsker.MoveDate)
             return
         }
         // Once saved, the keyboard goes to the time picked (DailyMinutes acts on it).
-        edits.change(PlanPart.Schedule, listOf(PlanOp.TargetDate(date)), PlanAsker.MoveDate)
+        current.change(PlanPart.Schedule, listOf(PlanOp.TargetDate(fittingDate)), PlanAsker.MoveDate)
     }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {

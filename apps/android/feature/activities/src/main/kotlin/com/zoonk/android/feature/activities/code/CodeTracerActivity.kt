@@ -94,8 +94,10 @@ private fun CodeTracerActivity(props: ActivityProps) {
     val language = if (isPython) CodeLanguage.Python else CodeLanguage.JavaScript
     val onAnswerChange by rememberUpdatedState(props.onAnswerChange)
     val start = firstStep(fields.pauses)
-    var step by rememberSaveable { mutableIntStateOf(start) }
-    var furthest by rememberSaveable { mutableIntStateOf(start) }
+    // A screen opened again already checked shows the trace as it ended.
+    val opening = if (props.isChecked) fields.trace.size - 1 else start
+    var step by rememberSaveable { mutableIntStateOf(opening) }
+    var furthest by rememberSaveable { mutableIntStateOf(opening) }
     var predictions by rememberSaveable(stateSaver = draftsSaver { it }) { mutableStateOf(props.answer.assignmentPairs.orEmpty()) }
     val expectedPairs = props.expected.assignmentPairs
     val lastStep = fields.trace.size - 1
@@ -157,17 +159,17 @@ private fun CodeTracerActivity(props: ActivityProps) {
         if (asking != null) {
             Prediction(asking, predictions[asking.index.toString()], props.isLocked) { predict(asking.index, it) }
         } else if (!props.isChecked) {
-            Text(
-                stringResource(
-                    when {
-                        step < lastStep -> R.string.activities_code_step_next_line
-                        props.isExploring -> R.string.activities_code_whole_run_explored
-                        else -> R.string.activities_code_whole_run
-                    },
-                ),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodySmall,
-            )
+            // Main's `RunHint`: before the end, only a reminder that predictions are still ahead.
+            val hint =
+                when {
+                    step >= lastStep && props.isExploring -> R.string.activities_code_whole_run_explored
+                    step >= lastStep -> R.string.activities_code_whole_run
+                    !asksNothing && tracerAnswer(fields.pauses, predictions) == null -> R.string.activities_code_predict_ahead
+                    else -> null
+                }
+            hint?.let {
+                Text(stringResource(it), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
+            }
         }
         PredictionLog(revealed)
     }
@@ -259,8 +261,8 @@ private fun TracerPanel(
                 color = colors.onSurfaceVariant,
                 style = MaterialTheme.typography.labelMedium,
             )
-            StepButton(stringResource(R.string.activities_code_step_back), R.drawable.ic_arrow_back, canGoBack, onBack)
-            StepButton(stringResource(R.string.activities_code_step_forward), R.drawable.ic_arrow_forward, canGoForward, onForward)
+            StepButton(stringResource(R.string.activities_code_step_back), R.drawable.ic_skip_previous, canGoBack, onBack)
+            StepButton(stringResource(R.string.activities_code_step_forward), R.drawable.ic_skip_next, canGoForward, onForward)
         }
         val current = stringResource(R.string.activities_code_current_line)
         CodeListing(

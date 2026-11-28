@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "activities_code_badge_query_data": "f5cb04ba6c228b8ba63a886b53b0a11b02c2947b6822fe5ef817e4b658743f42",
-  "activities_code_badge_run": "bb16b49f325d5943ebd50aa015ed35f2187e86dc88bbddb08f10d68e4ae0e452",
   "activities_code_badge_step_through": "66d80aeb0439a8539ed218cae274b71332fa8420130aa38ce994eda69c4f3a7d",
-  "activities_code_badge_test_pattern": "a9c93a65f0e758bf7ac6db3823eaf07fdffcb95e4be04dd278f86c95edba9354",
   "activities_code_before_first_line": "35b582250c8e2c12a25d35d7c0692e2ffba1f76a77318e6d8ee87f666b6ea361",
   "activities_code_changed_code": "fd55189964d00081606484a3ae42eb874abe2c2c49565923438e5abfd9a87daf",
   "activities_code_changed_query": "1e905f9ef5689367b865c3deeb4845de26c09314941672ba03be396b96cdbfd1",
   "activities_code_code": "ac8eca868c1f9377d05ee169791d9c18da16fc62dfc47103b7ca46eafefb6b6f",
   "activities_code_current_line": "2b22fbc6726a1193310827fcfd9f051d7a195f86ae413c908a435952ad8c377a",
+  "activities_code_edit_lines": "ac46cc2d38a87bb1f736395e74fbcf78feb142b53d2977509d9cd5605b3ac254",
   "activities_code_error_line": "4c1acf683410885ceb8db4691b45700f215b1bf4c13850fe5556f7407dfa2955",
   "activities_code_examples_pass": "9e38e11f1e1d8b80d84ab27669bd4fd41424c0703bdc4dae3d895f92213606a3",
   "activities_code_expected": "38c543b2bcd2e5a8e4cab95b13cf76934b380687d9b04fff5b08e20941b5fa68",
@@ -18,7 +16,6 @@
   "activities_code_formula_that_works": "45f52011b578f0ceeb4dde61cc3decabcdda87eb9bc839865a6c66ec53670b40",
   "activities_code_hint_mistake": "840ba775cc9a8323c053c54dbb1d2f017e3095cc5a819d1d5453cb78af82715f",
   "activities_code_line_yours": "72a5b293cb5d493821890c5cb12de204776600afb835c4c3bebb00509eaa73bb",
-  "activities_code_lines_yours": "25dd2ef8acd00f855453b5bcba6ae8855cd73d3d4b082df2745ca431adae4da5",
   "activities_code_no_table": "fb1fdd12c084b407510248cbdb891036210d5e430e5e7c5091eb6c691ffd0cff",
   "activities_code_not_quite": "e6b681af1c199f62e6826e7db3b565678405f9a3a535bc02be7c1c920235525d",
   "activities_code_not_set": "aae196a2afa0af027d8de86588225ae38ee2bec40046e99a9939cfe6dab12354",
@@ -27,6 +24,7 @@
   "activities_code_pass_count": "0946d253a88862b1217a91816061dd50028c01f55f1d516cf30ca9de985213f5",
   "activities_code_pattern_cant_run": "3ffde1734bc34cc39e907cd90f62fa48d54c204582a653df473721b077cb7d15",
   "activities_code_pattern_that_works": "394f1fb7d267ccb65bd69f93281a69a11ccee03c4f313d119565744de07fd318",
+  "activities_code_predict_ahead": "c5e5418a21619c598edbb8e368803c2c6d5616fd27e5e25eba513496e38776ba",
   "activities_code_predict_first": "45229a8cd18930abdb524fde6561383050f2860382a59483a4411bf957bd152f",
   "activities_code_query": "4615bfb261331a733ecba4dffa01f152f04fc5f3b3b40d638431a728f24ebe7b",
   "activities_code_query_that_works": "c0e98c850be4db6558fe8d44c735c8906a3117de74c0df7a5e9b2a5e77f6326d",
@@ -69,10 +67,9 @@
   "activities_code_snippet_word": "1479804acc69c1df60166556ce26c076317d9b08b8ea1698b10e1482e3a752ff",
   "activities_code_snippet_zero_or_more": "07cce95213264c5500ecdab175985809cf874b32a010a2f222ad91e42e2049ef",
   "activities_code_sql_words": "6da243b15d78915f2f3c0db9a65ceb232d09d9437e3319852b7d4c2a5674a67b",
-  "activities_code_start_over": "c39cce86f2608cd81df20497577edf246fbcf8441e223e78eca752bcab48989c",
+  "activities_code_start_over": "e999a69ec6d0d9800bfbdb7dcc162ee1b0c477ae911f4977fb8eee023e7cced7",
   "activities_code_step_back": "c8c1d168547de835d67c4a74ac3dd174c77e1ee54a4a79249b87c8c14417ffc0",
   "activities_code_step_forward": "25cdad7b89c8dc4b6c61896e17d37e2b8e27d93d90e32f79f112e23806575c91",
-  "activities_code_step_next_line": "6f9853abc0b31b18e157d4ebaaf6a5105c805a7ecdb82869111eede487be4027",
   "activities_code_step_of": "65a95aa45c33cdde7a309d507bd405567340b1bbaaaae3d048924d264c226289",
   "activities_code_step_to_see": "ecee25e52771a7e87171a6946113387ee860dd761e72a17976c556c021fd6658",
   "activities_code_stopped_after": "c0df0036cbb47c10a15e99336eae1d523a7c7edc257a041d438f1646bc243959",
@@ -89,30 +86,28 @@
   "activities_code_your_formula": "adf08bfa2d955a4db389b6860db6ae607d1e3760a8c01a540677976214e38193",
   "activities_code_your_pattern": "763b9afb5f669b23bfeba5002a9de5ef48e43c241615abc4aac6b7be8daa678a",
   "activities_code_your_predictions": "194de333d52208bb9b7adfcb820f05c33785d3b59f54e3feab39db8c355d8556",
-  "activities_code_your_query": "2c7998f641e26c69217bc977045397ddcaae8cb72ad69b7d4cac4fcde1801a5c",
   "activities_code_your_result": "102d372b4fe8d406bf87b94ac46449eeb1a4bd9084f495d1077c49b72c95180a",
   "activities_code_your_result_rows": "8c8ac678081831a2f7a9db30bbf6db9e08162f6eccd802d41211f7707b024309"
 }
 -->
 <resources>
-    <string name="activities_code_badge_run">Kodu çalıştır</string>
     <!-- %1$s is a runtime's name, like Python, JavaScript or SQLite. -->
     <string name="activities_code_runtime_loading">%1$s ortamını hazırlıyoruz. İlk seferde birkaç saniye sürer.</string>
     <!-- %1$s is a runtime's name, like Python, JavaScript or SQLite. -->
     <string name="activities_code_runtime_failed">%1$s yüklenemedi. Bağlantını kontrol edip tekrar dene.</string>
     <string name="activities_code_run">Çalıştır</string>
     <string name="activities_code_run_again">Yeniden çalıştır</string>
-    <string name="activities_code_start_over">Kodu ilk hâline döndür</string>
+    <string name="activities_code_start_over">Baştan başla</string>
     <!-- The name of a block of program code, for TalkBack. -->
     <string name="activities_code_code">Kod</string>
     <!-- The lines of a program the learner may edit; %1$s lists their numbers, like "2 and 3". -->
-    <plurals name="activities_code_lines_yours">
-        <item quantity="one">%1$s numaralı satırı düzenleyebilirsin</item>
-        <item quantity="other">%1$s numaralı satırları düzenleyebilirsin</item>
+    <plurals name="activities_code_edit_lines">
+        <item quantity="one">%1$s numaralı satırı düzenle</item>
+        <item quantity="other">%1$s numaralı satırları düzenle</item>
     </plurals>
     <!-- A line of code the learner may edit, for TalkBack. -->
     <string name="activities_code_line_yours">%1$d numaralı satırı düzenleyebilirsin</string>
-    <!-- What a program shown to explore printed, with no expected output beside it. -->
+    <!-- What a program printed. -->
     <string name="activities_code_output">Çıktı</string>
     <!-- The output the program should print. -->
     <string name="activities_code_expected">Beklenen</string>
@@ -128,7 +123,6 @@
     <string name="activities_code_too_much_output">Çok fazla çıktı ürettiği için durduruldu. Hiç bitmeyen bir döngü mü var?</string>
     <!-- Before the feedback for a likely mistake the program's output shows. -->
     <string name="activities_code_not_quite">Tam olmadı:</string>
-    <string name="activities_code_badge_test_pattern">Bir örüntüyü test et</string>
     <!-- The field for a regular expression, for TalkBack. -->
     <string name="activities_code_your_pattern">Düzenli ifaden</string>
     <!-- The field for a spreadsheet formula, for TalkBack. -->
@@ -206,10 +200,7 @@
     <string name="activities_code_hint_mistake">%1$s:</string>
     <string name="activities_code_pattern_that_works">Çalışan bir desen</string>
     <string name="activities_code_formula_that_works">Çalışan bir formül</string>
-    <string name="activities_code_badge_query_data">Verileri sorgula</string>
-    <!-- The field for a SQL query, and its label. -->
-    <string name="activities_code_your_query">Sorgun</string>
-    <!-- Above the SQL query shown to explore, already written and ready to run. -->
+    <!-- Above the SQL query and its field. -->
     <string name="activities_code_query">Sorgu</string>
     <!-- The row of buttons that type SQL words and the tables' names, for TalkBack. -->
     <string name="activities_code_sql_words">SQL sözcükleri, tablolar ve sütunlar</string>
@@ -256,7 +247,8 @@
     <string name="activities_code_not_set">değer atanmadı</string>
     <string name="activities_code_predict_first">Önce tahmin et. Sonra ne olduğunu görmek için bir adım ilerle.</string>
     <string name="activities_code_step_to_see">Tahmininin doğru olup olmadığını görmek için bir adım ilerle.</string>
-    <string name="activities_code_step_next_line">Sonraki satırı çalıştırmak için bir adım ilerle.</string>
+    <!-- Under a code trace whose predictions aren't all made yet. -->
+    <string name="activities_code_predict_ahead">Bir değer tahmin etmen için duracağız.</string>
     <string name="activities_code_whole_run">Kodun çalışması tamamlandı. Hazır olduğunda tahminlerini kontrol et.</string>
     <!-- At the last step of a code trace shown to explore, with nothing to predict. -->
     <string name="activities_code_whole_run_explored">Kodun çalışması burada bitiyor.</string>

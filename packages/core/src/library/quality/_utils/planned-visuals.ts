@@ -1,4 +1,4 @@
-import { type LessonScreen } from "@zoonk/ai/tasks/lesson-spec/rules";
+import { type LessonScreen, isPlannedActivity } from "@zoonk/ai/tasks/lesson-spec/rules";
 import { type LessonVisualKind } from "@zoonk/ai/tasks/lesson-spec/visuals";
 import { type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { type MarkdownTable, findMarkdownTables } from "@zoonk/utils/markdown-table";
@@ -59,7 +59,11 @@ const SHOWS_PLANNED: Readonly<Record<LessonVisualKind, (input: VisualInput) => b
 export function findMissingPlannedVisual(input: VisualInput): string | null {
   const { specScreen } = input;
 
-  if (DRAWN_ON_THEIR_OWN.has(input.screen.kind) || SHOWS_PLANNED[specScreen.visualKind](input)) {
+  if (
+    isPlannedActivity(specScreen) ||
+    DRAWN_ON_THEIR_OWN.has(input.screen.kind) ||
+    SHOWS_PLANNED[specScreen.visualKind](input)
+  ) {
     return null;
   }
 

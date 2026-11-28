@@ -1,8 +1,14 @@
 import { normalizeString } from "@zoonk/utils/string";
 import { toPlainLine } from "@zoonk/utils/text-repairs";
-import { type ExamOutline, canBuildOn, isWrittenTestSubject, placeInExam } from "../exam-outline";
+import { type ExamOutline } from "../exam-outline";
 import { COURSE_LEVELS, type CourseLevel } from "./course-levels";
 import { EmptySkillGraphError } from "./empty-skill-graph-error";
+import {
+  distinguishBoundSkillNames,
+  dropChoicePrerequisites,
+  placeGraphSkill,
+  validateSubjectBinding,
+} from "./exam-skill-placement";
 import { toExamWeight } from "./exam-weight";
 import { fitLessonBudget } from "./lesson-budget";
 import { orderSkillGraph } from "./order-skill-graph";
@@ -26,6 +32,7 @@ type RawSkillGraphSkill = {
   prerequisites: string[];
   /** The `LIBRARY_SKILLS` id the model chose, before code applies it. */
   reuse?: string | null;
+  subject?: string | null;
   topics: string[];
 };
 
@@ -65,6 +72,7 @@ type SkillGraphSkill = {
   outcome?: boolean;
   /** The Library skill this is: it keeps its own name, size, course and prerequisite links. */
   libraryId?: string;
+  subject?: string;
 };
 
 type SkillGraphCourse = {
@@ -209,30 +217,6 @@ export function normalizePhases(
   };
 }
 
-/** An exam's skill takes its subject and topics from the notice, word for word. */
-function toArea({
-  courseTitle,
-  outline,
-  skill,
-}: {
-  courseTitle: string;
-  outline?: ExamOutline;
-  skill: RawSkillGraphSkill;
-}): { area: string; topics: string[] } {
-  const area = skill.area.trim() || courseTitle;
-
-  if (!outline || outline.subjects.length === 0) {
-    return { area, topics: [] };
-  }
-
-  return placeInExam({ area, outline, topics: skill.topics });
-}
-
-function isWrittenTestSkill({ area, outline }: { area: string; outline?: ExamOutline }): boolean {
-  const subject = outline?.subjects.find((item) => item.name === area);
-  return Boolean(subject && isWrittenTestSubject(subject));
-}
-
 function toGraphSkill({
   aliases,
   courseTitles,
@@ -250,10 +234,8 @@ function toGraphSkill({
   const [firstCourse = ""] = courseTitles.keys();
   const course = courseTitles.has(key) ? key : firstCourse;
 
-  const placed = toArea({ courseTitle: courseTitles.get(course) ?? "", outline, skill });
-
   return {
-    ...placed,
+    ...placeGraphSkill({ courseTitle: courseTitles.get(course) ?? "", outline, skill }),
     course,
     description: toPlainLine(skill.description),
     estimatedLessons: toSkillLessons(skill.estimatedLessons),
@@ -262,34 +244,9 @@ function toGraphSkill({
     level: skill.level,
     ...(skill.libraryId && { libraryId: skill.libraryId }),
     name: skill.name,
-    outcome: skill.outcome || isWrittenTestSkill({ area: placed.area, outline }),
     phase: clamp({ max: phaseCount, min: 1, value: skill.phase }),
     prerequisites: resolvePrerequisites({ aliases, skill }),
   };
-}
-
-/**
- * A learner who picks another option never studies this one, so nothing outside it may wait for it.
- */
-function dropChoicePrerequisites({
-  outline,
-  skills,
-}: {
-  outline?: ExamOutline;
-  skills: SkillGraphSkill[];
-}): SkillGraphSkill[] {
-  if (!outline?.subjects.some((subject) => subject.choiceGroup)) {
-    return skills;
-  }
-
-  const areas = new Map(skills.map((skill) => [skill.key, skill.area]));
-
-  return skills.map((skill) => ({
-    ...skill,
-    prerequisites: skill.prerequisites.filter((key) =>
-      canBuildOn({ area: skill.area, outline, prerequisiteArea: areas.get(key) ?? "" }),
-    ),
-  }));
 }
 
 function normalizeExtras({
@@ -326,7 +283,9 @@ export function normalizeSkillGraph(
     raw.courses.map((course) => [toKey(course.key), course.title.trim()]),
   );
 
-  const required = raw.skills.filter((skill) => !skill.extra);
+  const required = raw.skills.flatMap((skill) =>
+    skill.extra ? [] : validateSubjectBinding(skill, outline),
+  );
 
   if (courseTitles.size === 0 || raw.phases.length === 0 || required.length === 0) {
     throw new EmptySkillGraphError();
@@ -334,12 +293,14 @@ export function normalizeSkillGraph(
 
   const { aliases, skills: uniqueSkills } = dedupeSkills(required);
 
-  const graphSkills = dropChoicePrerequisites({
-    outline,
-    skills: uniqueSkills.map((skill) =>
-      toGraphSkill({ aliases, courseTitles, outline, phaseCount: raw.phases.length, skill }),
-    ),
-  });
+  const graphSkills = distinguishBoundSkillNames(
+    dropChoicePrerequisites({
+      outline,
+      skills: uniqueSkills.map((skill) =>
+        toGraphSkill({ aliases, courseTitles, outline, phaseCount: raw.phases.length, skill }),
+      ),
+    }),
+  );
 
   const supportingCourses = new Set(
     raw.courses

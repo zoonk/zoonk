@@ -19,6 +19,7 @@ function getFollowUpKey(followUp: FollowUp): string {
     case "catchUpMockReplan":
     case "rebuildGoalCurriculum":
     case "rememberOnboarding":
+    case "researchGoal":
       return followUp.input.goalId;
     case "prepareGoalLessons":
     case "prepareLevelTestBank":

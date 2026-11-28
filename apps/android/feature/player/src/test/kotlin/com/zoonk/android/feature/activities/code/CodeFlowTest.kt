@@ -189,6 +189,27 @@ class CodeFlowTest {
         assertEquals("const doubled = numbers.map((n) => n * 2);", runs.last().code.lines()[1])
     }
 
+    @Test
+    fun eachRunRunsTheCodeAsItIsWhenRunIsTapped() {
+        play(javaScriptRunner, javaScriptExpected, isCorrect = true) { request ->
+            ScriptedSandbox.printed(if ("n * 2" in request.code) "[ 2, 4, 6 ]\n" else "[ 2, 3, 4 ]\n")
+        }
+
+        line(2).performTextReplacement("const doubled = numbers.map((n) => n + 1);")
+        tap("Run")
+        shows("[ 2, 3, 4 ]")
+        line(2).performTextReplacement("const doubled = numbers.map((n) => n * 2);")
+        tap("Run")
+
+        val runs = { scripted.requests.filter { it.getValue("type").jsonPrimitive.content == "runProgram" } }
+        rule.waitUntil(WAIT_MS) { runs().size == 2 }
+        assertEquals(
+            listOf("const doubled = numbers.map((n) => n + 1);", "const doubled = numbers.map((n) => n * 2);"),
+            runs().map { it.code.lines()[1] },
+        )
+        rule.waitUntil(WAIT_MS) { rule.onAllNodesWithText("[ 2, 4, 6 ]").fetchSemanticsNodes().size == 2 }
+    }
+
     private fun field(name: String) = rule.onNode(hasContentDescription(name))
 
     private fun sqlRows(request: JsonObject): JsonElement {
@@ -208,10 +229,10 @@ class CodeFlowTest {
         harness.codeSandbox = { scope -> ScriptedSandbox(scope, ::sqlRows).sandbox }
         harness.play(listOf(ActivityFixtures.step("sqlPlayground")), restoration = restoration)
 
-        field("Your query").performTextReplacement("SELECT name, pop_millions FROM countries;")
+        field("Query").performTextReplacement("SELECT name, pop_millions FROM countries;")
         tap("Run")
         shows("Your result: 3 rows")
-        field("Your query").performTextReplacement("SELECT name FROM countries;")
+        field("Query").performTextReplacement("SELECT name FROM countries;")
         restoration.emulateSavedInstanceStateRestore()
 
         rule.onNodeWithText("Your result: 3 rows").assertExists()
@@ -223,10 +244,10 @@ class CodeFlowTest {
         playFixture("sqlPlayground", isCorrect = true, ::sqlRows)
         val pending = CompletableDeferred<Unit>()
 
-        field("Your query").performTextReplacement("SELECT name FROM countries;")
+        field("Query").performTextReplacement("SELECT name FROM countries;")
         scripted.gate = pending
         tap("Run")
-        field("Your query").performTextReplacement("SELECT name FROM countries ORDER BY name;")
+        field("Query").performTextReplacement("SELECT name FROM countries ORDER BY name;")
         pending.complete(Unit)
 
         shows("You changed the query. Run it again to see the new result.")
@@ -265,7 +286,7 @@ class CodeFlowTest {
             sandboxJson.encodeToJsonElement<QueryRun>(QueryRun.Done(QueryResult(listOf("blob"), listOf(listOf(cell)))))
         }
 
-        field("Your query").performTextReplacement("SELECT hex(zeroblob(200000)) AS blob;")
+        field("Query").performTextReplacement("SELECT hex(zeroblob(200000)) AS blob;")
         tap("Run")
 
         shows("Your result: 1 row")

@@ -38,11 +38,11 @@
   "onboarding_change_end_date": "81c6a7b76dddc686c6bafa55c527721a5142e41ce34cb23224ceabde4e80f3ae",
   "onboarding_change_exam_date": "1c629bb726c7e0e2378fef5c2cb914ad0d78b2a8193a5bfd1e587cd5ac8928d6",
   "onboarding_continue": "b87f76bd23a8ea11eef65c0a385053f19df4563c0c5b79dd4761f396b14f50bc",
-  "onboarding_country_description": "a3d926331823906705772eeab5f5d7b238cfda820790df34a750be75a0f1c2cb",
+  "onboarding_country_description": "0913f5aee80a80dcf1486a664c1853fcdafdb4f8a1aea19a4134b8a8037812a4",
   "onboarding_country_from_home": "78223098a61e3f2c3d3df24dd0f1bad9d61a75c95b440e6f4447301652fadd59",
   "onboarding_country_other": "97e1260d45cfa4c2201091b052231a19ad869cc6a40c0b832d325a63b1bfac21",
-  "onboarding_country_skip_default": "1a13378b393d4e1b90f7afdee4a47a1ee678cf75ef811e9929200232309743ba",
   "onboarding_country_title": "e1f811d86c2bf2a92fc5024f308b2a569291bb8cd21d701f1b18fa80870ec8c6",
+  "onboarding_country_title_exam": "1ca12f4ae8d1118d3386a0858d9fd69a4cb9326f803a8807c7c4babb0697de13",
   "onboarding_course_build": "b26947f2bc8e77454819d3b794ecc126e3d05c67aafc04f4df4010af4584a24f",
   "onboarding_course_chapter_description": "e63454f67a41ee007e8b18a88cdb43f2492b76da29cf1c9fd7a20394b658fbbc",
   "onboarding_course_chapters": "74f2c22e170847c6c1fb398017606d99f0e59d5b1d7c786e91a75234a149f84a",
@@ -54,13 +54,13 @@
   "onboarding_course_start_free": "790e1bbf2860a5d7ef19c9cf8756495692bc07f07d41abbbe146d72de2520382",
   "onboarding_course_starting": "bedb4524b5f9d274c2503111d788778aebc3629237b25ca5df25822cab72e013",
   "onboarding_create_account": "05015b654c655de993cdf2da2835fa7ae1f357687477485266d55d5a856dee9e",
-  "onboarding_date_continue_without": "57c757268d9688b8abe57c53ed092507bf43e469bc6ba32a39335c4b8cdae3d8",
-  "onboarding_date_description": "9923e20e44ed2b351f3409cddbf3f0060b5e9e87de5b79d888224654db3ba9f7",
   "onboarding_date_is_today": "5e55499833e0b0830312ce1f7bfd2b467b975094adc9643394dcba6bcf04e044",
   "onboarding_date_label": "845fa0dac856328db6389a5c0188404d70fa0193eac744d17eb08d6c7fc577a5",
+  "onboarding_date_not_booked": "51a1189adec5fceb3e0aacdae3530c3a449f0fd45f479345be8161a63ce372a2",
   "onboarding_date_passed": "740290df046a09583999881623caa93f6eb691295b7514c29d172f3542c3003e",
   "onboarding_date_remove": "1c57459ca83ee3d6765841abada15e8adbb83064ac908af57ba6afe4839cf24a",
   "onboarding_date_title": "f6d3952bcb3e377e77f94f0f600b1794130e03988bc2d1a852d833fadda9eede",
+  "onboarding_date_title_booked": "858e9d9114b500282c46ceb6f173511db4b6e23218222d08bdd494ff708949da",
   "onboarding_day_too_short": "8d0447b10e7bffa9c24c834aab0fb2ac681354e394e30c12709986fe2704ad10",
   "onboarding_days": "e951790bcef9739af1a92f9e1c5687c591d92c11963e74112866f99508c4e193",
   "onboarding_decide_later": "82418d805cfc07900e017dfc8cfe419bd6eff820e064942f1ed44ab7b54e335d",
@@ -75,8 +75,6 @@
   "onboarding_exam_expected": "3cbb2e4ac6c21f6b4fba065b2fb796a7cfbcc6cc7e6ac2b53aa3f522d02264ff",
   "onboarding_exam_on": "b87f81025771ff6dcb8301f174c30de590ba8917da49d5fc0700f26fc0c0e248",
   "onboarding_exam_on_two": "351a98c58f4d99ca070dd9fe09820be9d61a8645b350545958e523954547bc49",
-  "onboarding_exam_ready": "4f4f7cb721b3f986974b1dadf7da9e7fdadf189e36856d88263c0eb2bde993de",
-  "onboarding_exam_ready_first_day": "8c6748a84a64b5c41a908f5a0fe56b2afac7e7b7805f4e492f7bd79730aa348e",
   "onboarding_explain_description": "12ab8e4e9ab501ba27d018e71c1d2622524d4999787cffe603ee93f7a8476a94",
   "onboarding_explain_it": "0920e3334fea11e7907fca14de34ad573cfc5ebc26addab4f5b7e929e2b33763",
   "onboarding_finish_later": "587877ada00bd7a77375760b90296110252f5d8f90d52968052fd02899ddbe3a",
@@ -260,7 +258,6 @@
   "onboarding_role_work_title": "67f0b8f26df76c26edf78531940fa91259b6e8a848419e5a556c012578085e92",
   "onboarding_row_course": "78d7359ff111ffaf05389fd3093fbd4d256f6a77ea464ce9dfe86b9dec14d96f",
   "onboarding_row_cutoff_score": "0058d0d7ffd1eb5d5b2a59b0a0d5b105e714d4f47b9b0825aa7fca16ef779462",
-  "onboarding_row_date_booked": "4451d988643d65605821d963ddc3639ac6506b839d453dcb2e3150a9805e0a60",
   "onboarding_row_date_not_out_guide": "e8615997138644345f68b5db60fae470e03f0c4d03a09643cbec8821dd8dbd15",
   "onboarding_row_date_not_out_notice": "7132da7f0ba3e9bdee39135b51a54acc44538c442eb3a4fbf5913426d9e119ef",
   "onboarding_row_date_to_be_confirmed": "3b289be8763213ceab9df640c82fc72403a3a9db228b6d9084071ad88fca4bcc",
@@ -481,7 +478,6 @@
     <string name="onboarding_row_date_unknown">Tarihi biliyor musun? Buradan ayarla.</string>
     <string name="onboarding_row_date_not_out_notice">Sınavın resmî tarihi ilanda açıklanır. Zaten biliyor musun? Buradan belirle.</string>
     <string name="onboarding_row_date_not_out_guide">Sınav tarihi resmî takvimde açıklanır. Zaten biliyor musun? Buradan belirle.</string>
-    <string name="onboarding_row_date_booked">Bu sınavın tarihini kayıt yaptırırken seçersin. Zaten kayıt yaptırdın mı? Tarihi buradan ayarla.</string>
     <string name="onboarding_row_dates_estimated">Sınavın genelde yapıldığı tarihlere göre tahmin edildi. Resmî tarihler açıklanınca haber vereceğiz.</string>
     <string name="onboarding_row_pick_date">Tarihini seç</string>
     <string name="onboarding_row_several_sittings">Bu sınav yılda birkaç kez yapılıyor. Bir tarih seçene kadar planın ilk sınav tarihini esas alır.</string>
@@ -711,13 +707,11 @@
     <string name="onboarding_exam_on">Sınavın %1$s tarihinde</string>
     <!-- %1$s is an exam's first day, %2$s its second. -->
     <string name="onboarding_exam_on_two">Sınavın %1$s (ve %2$s) tarihlerinde</string>
-    <string name="onboarding_exam_ready">Planın, derslerini o tarihe kadar bitirmen için temponu ayarlar.</string>
-    <string name="onboarding_exam_ready_first_day">Planın, derslerini sınavın ilk gününe kadar bitirmen için temponu ayarlar.</string>
     <string name="onboarding_exam_expected">Bu tarih, ilanla kesinleşene kadar tahminidir.</string>
     <string name="onboarding_another_date">Başka bir tarih seç</string>
     <string name="onboarding_date_title">Hedeflediğin bir tarih var mı?</string>
-    <string name="onboarding_date_description">Tarih belirlemezsen tüm konuları kendi temponda çalışırsın, biz de her aşamaya ne zaman ulaşacağını gösteririz.</string>
-    <string name="onboarding_date_continue_without">Tarih belirlemeden devam et</string>
+    <string name="onboarding_date_title_booked">Sınavın ne zaman?</string>
+    <string name="onboarding_date_not_booked">Henüz tarih almadım</string>
     <string name="onboarding_date_remove">Tarihi kaldır</string>
     <string name="onboarding_date_label">Tarih</string>
     <!-- Leads the date question asked again because the goal's date passed. %1$s is that date, such as "May 5". -->
@@ -824,12 +818,10 @@
     <string name="onboarding_variety_note">Pratik yaptığın sohbetlerde ve sorularına verdiğimiz cevaplarda %1$s kullanıyoruz. Derslerde ve ses kayıtlarında %2$s kullanılıyor.</string>
     <!-- The title of the setup question asking which country a course should be about, for a subject that changes by country such as law or taxes. -->
     <string name="onboarding_country_title">Derslerin hangi ülkeye göre hazırlansın?</string>
-    <!-- Under that question's title. -->
-    <string name="onboarding_country_description">Burada öğreneceklerin ülkeden ülkeye değişir. Ülke seçimini daha sonra planından değiştirebilirsin.</string>
+    <string name="onboarding_country_description">Derslerindeki örnekleri, para birimini ve ölçü birimlerini ülkene göre seçiyoruz.</string>
+    <string name="onboarding_country_title_exam">Bu hangi ülkenin sınavı?</string>
     <!-- The last choice of that question, which opens the full list of countries. -->
     <string name="onboarding_country_other">Başka bir ülke</string>
-    <!-- Above that question's buttons before a country is picked: %1$s is the country Skip uses, in the reader's language, after the colon so it needs no article or case. -->
-    <string name="onboarding_country_skip_default">Atlarsan: %1$s</string>
     <!-- A badge beside the content country in "Here's what we understood": the country came from where the learner said they live, as "you said" marks what came from their words. -->
     <string name="onboarding_country_from_home">yaşadığın ülke</string>
     <string name="onboarding_test_question_progress">Soru %1$d / %2$d</string>

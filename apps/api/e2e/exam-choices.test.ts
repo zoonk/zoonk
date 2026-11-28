@@ -85,6 +85,7 @@ test.describe("Exam choices API", () => {
           { name: "Língua Inglesa", shortName: "Inglês" },
           { name: SPANISH, shortName: "Espanhol" },
         ],
+        required: true,
         subjects: [],
         take: 1,
       },

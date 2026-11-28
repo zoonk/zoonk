@@ -17,6 +17,7 @@
   "activities_chart_span": "56f2a02e4a2b3a21a8264bc5b4ab673d7b82ebbbe7876e9dcb78c54584622da3",
   "activities_chart_spans": "2e0319e1e30d0ffa69ce186a3314f9a55655fabbe39d69fd71295563ff5349c2",
   "activities_chart_tap_span": "a6d095447c414b523adea6bef2d17e982e77d834becd5c8816d8c9d7f03119c9",
+  "activities_dialogue_best_reply": "89a5d9939dfc5274b4c6d27ac85dc7eba0920bf3636cea82f3d4622223bb97a2",
   "activities_dialogue_conversation": "ce4adb5972e9b332a62ac208d962aaa6c62e6b8d0d3de56694b83321dad67092",
   "activities_dialogue_hear_best": "7afe1a7b20173021647c62bb65e44775b2f50543224aa0d8188205a8e6c8e932",
   "activities_dialogue_hear_line": "c36d9f381a81bfb50a065c84c4f8ffc8beb0931cda6de4a4a7080a4c49cc94a6",
@@ -142,6 +143,7 @@
     <string name="activities_dialogue_you_said">Şöyle dedin:</string>
     <string name="activities_dialogue_hear_line">Bu repliği dinle</string>
     <string name="activities_dialogue_hear_best">En uygun cevabı dinle</string>
+    <string name="activities_dialogue_best_reply">En iyi cevap:</string>
     <!-- The name of the list of replies the learner picks from in a conversation, for TalkBack. -->
     <string name="activities_dialogue_your_reply">Cevabın</string>
     <!-- Read by TalkBack when a row is lifted with the keyboard, like "Picked up Water is split at position 2." -->

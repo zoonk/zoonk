@@ -848,15 +848,25 @@ class OnboardingScreenshots {
         val SPECIALTY =
             """
             [{"group":"Specialty","leftOut":{"examPoints":360,"examQuestions":null,"name":"Specialty knowledge (P3)","points":180,"questions":null},
-              "options":[{"name":"Auditing and control","shortName":null},{"name":"Information technology","shortName":null}],"subjects":[],"take":1}]
+              "options":[{"name":"Auditing and control","shortName":null},{"name":"Information technology","shortName":null}],"subjects":[],"take":1,"required":false}]
             """.trimIndent()
 
         val MODULES =
             """
             [{"group":"Knowledge modules","leftOut":{"examPoints":null,"examQuestions":null,"name":"Knowledge modules","points":null,"questions":48},
               "options":[{"name":"Biology","shortName":null},{"name":"Chemistry","shortName":null},{"name":"Law","shortName":null},
-               {"name":"Social sciences and humanities","shortName":null}],"subjects":["Biology","Chemistry"],"take":2}]
+               {"name":"Social sciences and humanities","shortName":null}],"subjects":["Biology","Chemistry"],"take":2,"required":false}]
             """.trimIndent()
+
+        val DISCIPLINES =
+            """
+            [{"group":"Discipline","leftOut":{"examPoints":null,"examQuestions":110,"name":"Discipline","points":null,"questions":110},
+              "options":[{"name":"FE Chemical","shortName":"Chemical"},{"name":"FE Civil","shortName":"Civil"},
+               {"name":"FE Electrical and Computer","shortName":"Electrical and Computer"},{"name":"FE Mechanical","shortName":"Mechanical"}],
+              "subjects":[],"take":1,"required":true}]
+            """.trimIndent()
+
+        const val BOOKED_DETAILS = """{"answered":["target"],"examDay":"booked","examName":"IELTS Academic"}"""
 
         val SCREENS: List<Pair<String, @Composable () -> Unit>> =
             listOf(
@@ -915,6 +925,24 @@ class OnboardingScreenshots {
                                         goalsUnderstanding(
                                             title = "Prepare for the GRE",
                                             details = """{"examDay":"booked","onboardingId":"$DRAFT_ID"}""",
+                                        ),
+                                )
+                        },
+                        AppRoute.StartGoal(draftId = DRAFT_ID),
+                    )
+                },
+                "understood-exam-country" to {
+                    Start(
+                        FakeOnboardingApi().apply {
+                            draft =
+                                understoodDraft(
+                                    understanding =
+                                        goalsUnderstanding(
+                                            title = "Pass the G1 knowledge test",
+                                            details = """{"examDay":"booked","onboardingId":"$DRAFT_ID"}""",
+                                            contentCountry =
+                                                """{"code":"CA","name":"Canada","editable":false,"kind":"exam","lessonVariety":null,""" +
+                                                    """"rebuild":"none","source":"said"}""",
                                         ),
                                 )
                         },
@@ -1115,6 +1143,34 @@ class OnboardingScreenshots {
                     Setup(
                         FakeOnboardingApi().apply {
                             setup = { setupView(listOf("examChoice", "schedule", "plan"), kind = "exam", examChoices = MODULES) }
+                        },
+                    )
+                },
+                "setup-exam-required" to {
+                    Setup(
+                        FakeOnboardingApi().apply {
+                            setup = { setupView(listOf("examChoice", "schedule", "plan"), kind = "exam", examChoices = DISCIPLINES) }
+                        },
+                    )
+                },
+                "setup-booked-date" to {
+                    Setup(
+                        FakeOnboardingApi().apply {
+                            setup = {
+                                setupView(
+                                    listOf("targetDate", "schedule", "plan"),
+                                    kind = "exam",
+                                    details = BOOKED_DETAILS,
+                                    bookedExam = true,
+                                )
+                            }
+                        },
+                    )
+                },
+                "setup-exam-country" to {
+                    Setup(
+                        FakeOnboardingApi().apply {
+                            setup = { setupView(listOf("contentCountry", "targetDate", "schedule", "plan"), kind = "exam") }
                         },
                     )
                 },

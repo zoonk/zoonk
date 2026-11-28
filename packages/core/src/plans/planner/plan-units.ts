@@ -1,6 +1,7 @@
 import { type CourseLevel } from "@zoonk/db";
 import { apportion } from "@zoonk/utils/apportion";
 import { followCourseLessonOrder, keepCourseLevels } from "./course-unit-order";
+import { type PlanGraphSkill } from "./plan-state";
 import { countStandInLessons } from "./stand-in-size";
 
 export type PlannerLesson = {
@@ -15,6 +16,7 @@ export type PlannerLesson = {
 
 export type UnitSkill = {
   area: string;
+  domain?: PlanGraphSkill["domain"];
   focused?: boolean;
   index?: number;
   lessons: number;
@@ -138,10 +140,13 @@ export function assignLessonSkills({
   skills,
 }: {
   lessons: readonly Pick<PlannerLesson, "chapterId" | "lessonId" | "skillIds">[];
-  skills: readonly Pick<UnitSkill, "index" | "lessons" | "skillId">[];
+  skills: readonly Pick<UnitSkill, "domain" | "index" | "lessons" | "skillId">[];
 }): Map<string, string> {
   const order = new Map(skills.map((skill, position) => [skill.skillId, skill.index ?? position]));
-  const sizes = new Map(skills.map((skill) => [skill.skillId, skill.lessons]));
+
+  const sizes = new Map(
+    skills.map((skill) => [skill.skillId, skill.domain?.estimate ?? skill.lessons]),
+  );
 
   const taughtBy = lessons.map((lesson) => ({
     chapterId: lesson.chapterId,
@@ -199,7 +204,7 @@ export function getStandInLessons({
 }: {
   includeShortRemainder?: boolean;
   lessons: readonly Pick<PlannerLesson, "chapterId" | "lessonId" | "skillIds">[];
-  skills: readonly Pick<UnitSkill, "index" | "lessons" | "outlined" | "skillId">[];
+  skills: readonly Pick<UnitSkill, "domain" | "index" | "lessons" | "outlined" | "skillId">[];
 }): Map<string, number> {
   const taught = countAssigned(assignLessonSkills({ lessons, skills }));
 
@@ -207,6 +212,7 @@ export function getStandInLessons({
     skills.map((skill) => [
       skill.skillId,
       countStandInLessons({
+        domain: skill.domain,
         includeShortRemainder,
         lessons: skill.lessons,
         outlined: skill.outlined,
@@ -289,6 +295,7 @@ export function buildLessonUnits({
       );
 
     const missing = countStandInLessons({
+      domain: skill.domain,
       lessons: skill.lessons,
       outlined: skill.outlined,
       taught: counts.get(skill.skillId) ?? 0,

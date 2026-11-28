@@ -178,7 +178,9 @@ async function checkExam({
 
   await prisma.examBlueprint.update({ data: { nextCheckAt }, where: { id: blueprint.id } });
 
-  const isBehind = sourceHash !== content.edition.sourceHash;
+  const isBehind =
+    sourceHash !== content.edition.sourceHash &&
+    sourceHash !== content.edition.setAside?.sourceHash;
 
   return {
     blueprintUpdate: isBehind ? { examBlueprintId: blueprint.id } : null,

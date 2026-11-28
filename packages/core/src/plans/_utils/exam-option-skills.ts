@@ -1,6 +1,6 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
-import { getWrittenTasks } from "../../exams/_utils/written-tasks";
+import { getWrittenTaskOptions } from "../../exams/_utils/written-tasks";
 import { listChoiceGroups } from "../../exams/choices/choice-groups";
 import {
   type ExamPicks,
@@ -12,13 +12,29 @@ import { type ExamStructure, examStructureSchema } from "../../library/exams/blu
 import { getSkillArea } from "../planner/graph-areas";
 import {
   addSharedOptionSkills,
+  getOptionSkillSubject,
   joinOptionSkills,
   setAsideOptionSkills,
 } from "../planner/option-skills";
 import { type PlanGraph, type PlanGraphSkill, parsePlanGraph } from "../planner/plan-state";
 
-function listAreas(graph: PlanGraph): string[] {
-  return [...new Set(graph.skills.map((skill) => getSkillArea({ graph, skill })))];
+function matchOptionAreas({
+  graph,
+  names,
+  structure,
+}: {
+  graph: PlanGraph;
+  names: ReadonlySet<string>;
+  structure: ExamStructure;
+}) {
+  const areas = [...new Set(graph.skills.map((skill) => getSkillArea({ graph, skill })))];
+  const sectionNames = new Set(getWrittenTaskOptions(structure).map((task) => task.section));
+
+  return findSubjectAreas({
+    areas: areas.filter((area) => !sectionNames.has(area) || names.has(area)),
+    names,
+    structure,
+  });
 }
 
 function listTakenOptions({
@@ -46,45 +62,52 @@ async function addTakenFromSharedGraph({
   structure: ExamStructure;
   taken: ReadonlySet<string>;
 }): Promise<PlanGraph> {
+  const subjectsByArea = matchOptionAreas({ graph, names: taken, structure });
+
   const taught = new Set(
-    findSubjectAreas({ areas: listAreas(graph), names: taken, structure }).values(),
+    graph.skills.map((skill) => getOptionSkillSubject({ graph, skill, subjectsByArea })),
   );
 
-  const missing = [...taken].filter((name) => !taught.has(name));
+  const missing = new Set([...taken].filter((name) => !taught.has(name)));
 
-  if (missing.length === 0) {
+  if (missing.size === 0) {
     return graph;
   }
 
   const { graph: source } = await prunePlanNoticeGraph({
     graph: shared,
-    subjects: structure.subjects.map((subject) => ({
-      ...subject,
-      writtenTasks: getWrittenTasks({ structure, subject }),
-    })),
+    subjects: structure.subjects,
   });
 
-  const sharedAreas = findSubjectAreas({ areas: listAreas(source), names: taken, structure });
+  const available = joinOptionSkills(source);
 
-  const areas = new Set(
-    [...sharedAreas].flatMap(([area, option]) => (missing.includes(option) ? [area] : [])),
-  );
-
-  return addSharedOptionSkills({ areas, graph, shared: source });
+  return addSharedOptionSkills({
+    areas: missing,
+    graph,
+    shared: available,
+    subjectsByArea: matchOptionAreas({ graph: available, names: missing, structure }),
+  });
 }
 
 function applySharedSizes(graph: PlanGraph, shared: PlanGraph): PlanGraph {
   const estimates = new Map(
     [...shared.skills, ...(shared.extraSkills ?? [])].map((skill) => [
       skill.skillId,
-      skill.lessons,
+      skill.domain?.estimate ?? skill.lessons,
     ]),
   );
 
-  const size = <Skill extends PlanGraphSkill>(skill: Skill): Skill => ({
-    ...skill,
-    lessons: estimates.get(skill.skillId) ?? skill.lessons,
-  });
+  const size = <Skill extends PlanGraphSkill>(skill: Skill): Skill => {
+    const estimate = estimates.get(skill.skillId);
+
+    if (estimate === undefined) {
+      return skill;
+    }
+
+    return skill.domain
+      ? { ...skill, domain: { ...skill.domain, estimate } }
+      : { ...skill, lessons: estimate };
+  };
 
   return {
     ...graph,
@@ -137,9 +160,12 @@ export async function chooseExamOptionSkills({
     taken: listTakenOptions({ structure, untaken }),
   });
 
-  const areas = new Set(
-    findSubjectAreas({ areas: listAreas(joined), names: untaken, structure }).keys(),
+  return applySharedSizes(
+    setAsideOptionSkills({
+      areas: untaken,
+      graph: joined,
+      subjectsByArea: matchOptionAreas({ graph: joined, names: untaken, structure }),
+    }),
+    shared,
   );
-
-  return applySharedSizes(setAsideOptionSkills({ areas, graph: joined }), shared);
 }

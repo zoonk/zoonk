@@ -249,7 +249,7 @@ function placeExamSkills({
     skills: graph.skills.map((skill) => {
       const place = places.get(skill.key);
 
-      return place
+      return place && !skill.subject
         ? {
             ...skill,
             area: place.area,

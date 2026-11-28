@@ -21,6 +21,9 @@ const SHARED_EXPECTATIONS = `
   - Don't evaluate JSON formatting
 `;
 
+const EXAM_EXTRAS_EXPECTATION =
+  "The exam weight range applies to syllabus skills. Optional exam strategy lives in extraSkills and has examWeight null.";
+
 function withTopics(outline: ExamOutline, keep: (topic: string) => boolean): ExamOutline {
   return {
     ...outline,
@@ -339,6 +342,25 @@ const CACD_LANGUAGES_BLUEPRINT: ExamOutline = {
   topicFrequency: [],
 };
 
+const COMMUNITY_GARDEN_DOMAINS = [
+  {
+    name: "Harvest Scheduling",
+    share: 0.8,
+    topics: ["Build a staggered harvest timetable and adjust it when crops mature early or late"],
+  },
+  {
+    name: "Site Records",
+    share: 0.2,
+    topics: [
+      "Plot assignments",
+      "Tool sign-out",
+      "Volunteer attendance",
+      "Seed inventory",
+      "Donation pickups",
+    ],
+  },
+];
+
 export const TEST_CASES: TestCase<SkillGraphExpected, SkillGraphCase>[] = [
   ...DISCIPLINE_ALIAS_CASES,
   {
@@ -364,6 +386,69 @@ export const TEST_CASES: TestCase<SkillGraphExpected, SkillGraphCase>[] = [
   },
   {
     expectations: `
+      - The written paper includes a request reply and a directions note, both in the candidate's chosen language, and an English shift handover every candidate writes
+      - Keep both languages available: teach both option-dependent tasks for Italian and for Dutch. Each variant is topicless in "Written Paper" and names its language, with subject set to the exact option name
+      - The English handover is taught in "Written Paper" with no topics and no subject binding. No common skill depends on a skill for one option
+      - ${EXAM_EXTRAS_EXPECTATION}
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    expected: { writtenOptionSection: "Written Paper" },
+    id: "en-visitor-desk-written-language-options",
+    userInput: {
+      examBlueprint: {
+        name: "Marshport Visitor Desk Certificate",
+        notes: [
+          "Candidates choose either Italian or Dutch for the reading questions and the two visitor-facing writing tasks. Everyone writes the shift handover in English.",
+        ],
+        subjects: [
+          {
+            choiceGroup: "Visitor language",
+            group: "Reading Paper",
+            name: "Italian",
+            questions: 12,
+            topics: ["Reading visitor requests", "Reading opening hours and route maps"],
+            weight: null,
+          },
+          {
+            choiceGroup: "Visitor language",
+            group: "Reading Paper",
+            name: "Dutch",
+            questions: 12,
+            topics: ["Reading visitor requests", "Reading opening hours and route maps"],
+            weight: null,
+          },
+        ],
+        topicFrequency: [],
+        writtenTasks: [
+          {
+            description:
+              "Reply to a visitor's request in the chosen language, addressing each question politely.",
+            section: "Written Paper",
+            subjects: ["Italian", "Dutch"],
+          },
+          {
+            description:
+              "Write a directions note in the chosen language from a map and a list of closures.",
+            section: "Written Paper",
+            subjects: ["Italian", "Dutch"],
+          },
+          {
+            description:
+              "Write an English shift handover from a desk log, recording unresolved requests and follow-up times.",
+            section: "Written Paper",
+            subjects: [],
+          },
+        ],
+      },
+      goal: "Pass the Marshport Visitor Desk Certificate",
+      goalKind: "exam",
+      language: "en",
+      ownLevel: "basic",
+    },
+  },
+  {
+    expectations: `
       - MUST be in US English
       - A beginner learning Python, written one band at a time: this path is the \`beginner\` band only (COURSE_LEVEL), and the learner continues to the intermediate band later as a new path
       - Every skill is at \`beginner\` (or an earlier band): variables, types, conditions, loops, functions, lists and dictionaries, files, errors, modules and a first small program, with checking AI-written code where it helps
@@ -381,6 +466,39 @@ export const TEST_CASES: TestCase<SkillGraphExpected, SkillGraphCase>[] = [
       language: "en",
       ownLevel: "none",
       purpose: "deep",
+    },
+  },
+  {
+    expectations: `
+      - Use the official mark shares to divide the estimated lessons in Community Garden Operations. Harvest Scheduling gets about 80% and Site Records gets about 20%, each within five percentage points
+      - Teach the topics under both headings. Every skill with syllabus topics draws its topics from one heading. Site Records takes less time even though the syllabus lists more topics for it
+      - ${EXAM_EXTRAS_EXPECTATION}
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-community-garden-domain-shares",
+    userInput: {
+      examBlueprint: {
+        name: "Alder Vale Community Garden Coordinator Assessment",
+        notes: [
+          "One scored paper with short case questions. Its two domains carry 80 and 20 marks respectively.",
+        ],
+        subjects: [
+          {
+            group: null,
+            name: "Community Garden Operations",
+            questions: null,
+            topicGroups: COMMUNITY_GARDEN_DOMAINS,
+            topics: COMMUNITY_GARDEN_DOMAINS.flatMap(({ topics }) => topics),
+            weight: 1,
+          },
+        ],
+        topicFrequency: [],
+      },
+      goal: "Pass the Alder Vale Community Garden Coordinator Assessment",
+      goalKind: "exam",
+      language: "en",
+      ownLevel: "basic",
     },
   },
   {

@@ -72,8 +72,8 @@ describe("a decision a language model answers", () => {
     expect(billed.map((call) => call.usage.inputTokens)).toStrictEqual([1000]);
 
     expect(
-      logged.map(({ properties, provenance, task }) => ({
-        failed: properties?.$ai_is_error,
+      logged.map(({ failed, provenance, task }) => ({
+        failed,
         inputTokens: provenance.usage.inputTokens,
         task,
       })),
@@ -86,6 +86,6 @@ describe("a decision a language model answers", () => {
 
     await expect(decide()).resolves.toMatchObject({ answers: { isGeneral: { probability: 0.9 } } });
 
-    expect(logged.map(({ properties }) => properties?.$ai_is_error)).toStrictEqual([undefined]);
+    expect(logged.map(({ failed }) => failed)).toStrictEqual([undefined]);
   });
 });

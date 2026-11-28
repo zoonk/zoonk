@@ -48,6 +48,9 @@ const graphSkillSchema = z.object({
   area: z.string().nullable().default(null),
   courseIds: z.array(z.string()).optional(),
   deferredLessons: z.int().positive().optional(),
+  domain: z
+    .object({ estimate: z.int().positive(), name: z.string(), share: z.number().min(0).max(1) })
+    .optional(),
   extra: z.boolean().optional(),
   lessons: z.int().min(1),
   name: z.string(),
@@ -58,6 +61,7 @@ const graphSkillSchema = z.object({
   phase: z.int().min(0),
   plannedLessons: z.int().min(0).optional(),
   skillId: z.string(),
+  subject: z.string().optional(),
   /** The source's topic texts exactly, so the syllabus can tick each one; absent when unknown. */
   topics: z.array(z.string()).optional(),
   weight: z.number().nullable().default(null),

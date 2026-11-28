@@ -99,6 +99,7 @@ function listNoticeSubjects({
   skills: readonly PlanGraphSkill[];
 }): Set<number> {
   const studied = skills.filter((skill) => !skill.extra);
+  const bound = new Set(studied.flatMap((skill) => skill.subject ?? []));
   const topics = new Set(studied.flatMap((skill) => skill.topics?.map(normalizeString) ?? []));
 
   const named = matchAreasToSubjects({
@@ -109,7 +110,9 @@ function listNoticeSubjects({
   return new Set([
     ...named.values(),
     ...notice.subjects.flatMap((subject, index) =>
-      subject.topics.some((topic) => topics.has(normalizeString(topic))) ? [index] : [],
+      bound.has(subject.name) || subject.topics.some((topic) => topics.has(normalizeString(topic)))
+        ? [index]
+        : [],
     ),
   ]);
 }
@@ -158,7 +161,7 @@ function addSharedSubjects(graph: PlanGraph, notice: NoticeRepair): PlanGraph {
   const missingIds = new Set(missing.map((skill) => skill.skillId));
 
   return addSharedOptionSkills({
-    areas: new Set(missing.flatMap((skill) => skill.area ?? [])),
+    areas: new Set(missing.flatMap((skill) => skill.subject ?? skill.area ?? [])),
     graph,
     shared: {
       phases: [],

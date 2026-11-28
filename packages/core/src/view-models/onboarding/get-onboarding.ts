@@ -1,4 +1,4 @@
-import { prisma } from "@zoonk/db";
+import { type GoalKind, prisma } from "@zoonk/db";
 import "server-only";
 import { isJsonObject } from "@zoonk/utils/json";
 import { type SupportedLocale } from "@zoonk/utils/locale";
@@ -7,6 +7,7 @@ import { searchCourses } from "../../courses/search-courses";
 import { findActiveGoalId, loadGoalViews } from "../../goals/_utils/goal-view";
 import { readCourseStart } from "../../goals/course-start-details";
 import { getDaySplit } from "../../goals/daily-budget";
+import { type GoalView } from "../../goals/goal-contract";
 import { readGoalOpening } from "../../goals/goal-opening";
 import { LANGUAGE_REASON_VIEWS, toLanguageAimView } from "../../language/aims/language-aims";
 import { getQuickTestMinutes } from "../../language/level-test/level-test-contract";
@@ -39,6 +40,7 @@ import {
 import {
   getFollowUpQuestions,
   getOnboardingSteps,
+  isBookedExam,
   isClassTest,
   isCourseDateSkipped,
   isPlanRevealOwed,
@@ -111,6 +113,37 @@ async function findLibraryCourse({
   };
 }
 
+/** The notice's day stands in for an undated goal's, except where the learner said there's none or books their own day. */
+function getPlannedDate({
+  bookedExam,
+  details,
+  goalDate,
+  noticeDate,
+}: {
+  bookedExam: boolean;
+  details: Record<string, unknown>;
+  goalDate: string | null;
+  noticeDate: string | null;
+}): string | null {
+  return isCourseDateSkipped({ details, targetDate: goalDate }) || bookedExam
+    ? goalDate
+    : (goalDate ?? noticeDate);
+}
+
+/** Only the learner's words or pick say whose exam it is, so an exam's question has no default. */
+function getCountryQuestion({
+  kind,
+  view,
+}: {
+  kind: GoalKind;
+  view: Pick<GoalView, "languageCountry" | "suggested">;
+}): OnboardingView["contentCountry"] {
+  return {
+    defaultCountry: kind === "exam" ? null : view.languageCountry,
+    suggested: view.suggested,
+  };
+}
+
 /** Requires ownership; uncached so every answer immediately changes the remaining screens. */
 export async function getOnboarding({
   goalId,
@@ -164,12 +197,14 @@ export async function getOnboarding({
   }
 
   const dateProblem = getDateProblem({ goalDate, noSitting: notice.noSitting, today });
+  const bookedExam = isBookedExam({ details, kind: goal.kind });
 
   const steps = getOnboardingSteps({
     goal: {
       dateProblem: dateProblem?.kind ?? null,
       details,
       hasUnpickedChoice: notice.hasUnpickedChoice,
+      hasUnpickedRequiredChoice: notice.hasUnpickedRequiredChoice,
       kind: goal.kind,
       planRevealed: goal.planRevealedAt !== null,
       replacesGoalId: goal.replacesGoalId,
@@ -190,9 +225,12 @@ export async function getOnboarding({
           typeof details.subject === "string" && details.subject ? details.subject : goal.title,
       });
 
-  const targetDate = isCourseDateSkipped({ details, targetDate: view.targetDate })
-    ? null
-    : (view.targetDate ?? notice.examDate);
+  const targetDate = getPlannedDate({
+    bookedExam,
+    details,
+    goalDate: view.targetDate,
+    noticeDate: notice.examDate,
+  });
 
   // The time a day the course's page had picked stays the learner's until they change it.
   const { recommendedMinutes, startsOnRecommended } = getTimeQuestionDefaults({
@@ -213,10 +251,11 @@ export async function getOnboarding({
 
   return {
     onboarding: {
-      contentCountry: { defaultCountry: view.languageCountry, suggested: view.suggested },
+      bookedExam,
+      contentCountry: getCountryQuestion({ kind: goal.kind, view }),
       dateProblem,
       examChoices: notice.choices,
-      examDays: notice.examDays,
+      examDays: bookedExam ? null : notice.examDays,
       examSubjects: notice.subjects,
       firstLesson,
       followUps: getFollowUpQuestions(details),

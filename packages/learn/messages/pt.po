@@ -9465,6 +9465,11 @@ msgid "We use it for examples, money and units in your lessons."
 msgstr "A gente usa essa informação para adaptar os exemplos, a moeda e as unidades das suas aulas."
 
 #: src/onboarding/steps/country-step.tsx
+msgctxt "E7Yvro"
+msgid "Which country's exam is it?"
+msgstr "De qual país é a prova?"
+
+#: src/onboarding/steps/country-step.tsx
 msgctxt "jFT6CV"
 msgid "Which country should your lessons be about?"
 msgstr "Sobre qual país devem ser suas aulas?"
@@ -9509,6 +9514,16 @@ msgstr "Sua prova é em {date} (e {second})"
 msgctxt "cozhs1"
 msgid "{when, select, today {Your date is today, so there are no days left to plan.} other {Your date, {date}, has passed.}}"
 msgstr "{when, select, today {A data escolhida é hoje, então não há mais dias para planejar.} other {A data escolhida, {date}, já passou.}}"
+
+#: src/onboarding/steps/date-step.tsx
+msgctxt "tFQzba"
+msgid "Not booked yet"
+msgstr "Ainda não marquei"
+
+#: src/onboarding/steps/date-step.tsx
+msgctxt "4-H9Zy"
+msgid "When is your exam?"
+msgstr "Quando é sua prova?"
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "xle5hd"
@@ -10029,11 +10044,6 @@ msgstr "Essa prova acontece várias vezes ao ano. Até você escolher uma data, 
 msgctxt "I5Nteo"
 msgid "Pick your date"
 msgstr "Escolha sua data"
-
-#: src/onboarding/understood/understood-date-row.ts
-msgctxt "oxqgs5"
-msgid "You pick this test's day when you book it. Booked already? Set it here."
-msgstr "Você escolhe a data dessa prova na hora de agendar. Já agendou? Informe a data aqui."
 
 #. Under the date of a test with no official notice, such as a class test, when the learner hasn't given its date.
 #: src/onboarding/understood/understood-date-row.ts

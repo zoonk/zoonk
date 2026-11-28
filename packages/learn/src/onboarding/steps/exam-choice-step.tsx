@@ -30,6 +30,7 @@ export function ExamChoiceStep({
   );
 
   const isComplete = choices.every((choice) => (picks[choice.group] ?? []).length > 0);
+  const required = choices.some((choice) => choice.required);
   const takes = choices.reduce((sum, choice) => sum + choice.take, 0);
 
   const answerWith = (picked: Picks) =>
@@ -51,7 +52,7 @@ export function ExamChoiceStep({
     <StepForm
       canContinue={isComplete}
       onContinue={() => answerWith(picks)}
-      onSkip={() => onAnswer({ choices: null, question: "examChoice" })}
+      onSkip={required ? undefined : () => onAnswer({ choices: null, question: "examChoice" })}
       pending={pending}
       skipLabel={t("Decide later")}
       subject={subject}
