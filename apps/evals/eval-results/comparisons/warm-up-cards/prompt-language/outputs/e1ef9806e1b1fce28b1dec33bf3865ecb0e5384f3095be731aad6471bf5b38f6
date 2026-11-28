@@ -1,0 +1,180 @@
+{
+  "cards": [
+    {
+      "question": "If a pendulum is shortened while everything else stays the same, the clock will…",
+      "options": [
+        {
+          "text": "Gain time",
+          "correct": true
+        },
+        {
+          "text": "Lose time",
+          "correct": false
+        },
+        {
+          "text": "Keep the same rate",
+          "correct": false
+        }
+      ],
+      "reveal": "Gain time. A shorter pendulum completes each swing more quickly, so the clock's hands advance faster."
+    },
+    {
+      "question": "In a mechanical clock, what keeps its gear train from unwinding all at once?",
+      "options": [
+        {
+          "text": "A release in measured steps",
+          "correct": true
+        },
+        {
+          "text": "A heavier dial",
+          "correct": false
+        },
+        {
+          "text": "A longer hand",
+          "correct": false
+        }
+      ],
+      "reveal": "A release in measured steps. The escapement lets the gear train advance a little at a time while giving the timekeeper small pushes."
+    },
+    {
+      "question": "When you wind a spring-driven clock, what are you mainly doing?",
+      "options": [
+        {
+          "text": "Storing energy in a spring",
+          "correct": true
+        },
+        {
+          "text": "Tightening the gear teeth",
+          "correct": false
+        },
+        {
+          "text": "Adding weight to the pendulum",
+          "correct": false
+        }
+      ],
+      "reveal": "Storing energy in a spring. As the coiled spring unwinds, it transfers that energy to the clock's moving parts."
+    },
+    {
+      "question": "Why can a clock's chime stop while its hands keep moving?",
+      "options": [
+        {
+          "text": "The sound has its own mechanism",
+          "correct": true
+        },
+        {
+          "text": "The hands have their own motor",
+          "correct": false
+        },
+        {
+          "text": "The pendulum stops for silence",
+          "correct": false
+        }
+      ],
+      "reveal": "The sound has its own mechanism. Many clocks use separate parts to keep time and to strike or chime, so one can fail while the other still works."
+    },
+    {
+      "question": "When the minute hand makes 12 full turns, how far has the hour hand turned?",
+      "options": [
+        {
+          "text": "One full turn",
+          "correct": true
+        },
+        {
+          "text": "Half a turn",
+          "correct": false
+        }
+      ],
+      "reveal": "One full turn. The minute hand circles the dial once each hour; the hour hand takes 12 hours to circle it once."
+    },
+    {
+      "question": "In a portable mechanical watch, what usually takes the place of a swinging pendulum?",
+      "options": [
+        {
+          "text": "A balance wheel",
+          "correct": true
+        },
+        {
+          "text": "A sliding weight",
+          "correct": false
+        },
+        {
+          "text": "A rotating gear",
+          "correct": false
+        }
+      ],
+      "reveal": "A balance wheel. It swings back and forth with a small spring, regulating the watch much as a pendulum regulates a clock."
+    },
+    {
+      "question": "A worn pivot hole in a brass clock plate is often repaired by adding what?",
+      "options": [
+        {
+          "text": "A fitted bushing",
+          "correct": true
+        },
+        {
+          "text": "A longer gear tooth",
+          "correct": false
+        },
+        {
+          "text": "A thicker coat of oil",
+          "correct": false
+        }
+      ],
+      "reveal": "A fitted bushing. This small sleeve restores a round, centered support for the pivot, helping the wheel turn properly."
+    },
+    {
+      "question": "Why is simply adding fresh lubricant to dirty old clockwork often a poor fix?",
+      "options": [
+        {
+          "text": "It leaves grit in place",
+          "correct": true
+        },
+        {
+          "text": "It makes gears heavier",
+          "correct": false
+        },
+        {
+          "text": "It changes gear ratios",
+          "correct": false
+        }
+      ],
+      "reveal": "It leaves grit in place. Old lubricant and debris can continue to cause wear even after fresh lubricant is added."
+    },
+    {
+      "question": "A clock's tick and tock sound unevenly spaced; what does that often signal?",
+      "options": [
+        {
+          "text": "The movement is out of beat",
+          "correct": true
+        },
+        {
+          "text": "The pendulum is too heavy",
+          "correct": false
+        },
+        {
+          "text": "The hands are misaligned",
+          "correct": false
+        }
+      ],
+      "reveal": "The movement is out of beat. The pendulum's swing is not centered in the mechanism, so the tick and tock intervals differ."
+    },
+    {
+      "question": "In a weight-driven clock, what supplies energy as the clock runs?",
+      "options": [
+        {
+          "text": "A descending weight",
+          "correct": true
+        },
+        {
+          "text": "A coiled spring",
+          "correct": false
+        },
+        {
+          "text": "A battery",
+          "correct": false
+        }
+      ],
+      "reveal": "A descending weight. As gravity pulls it downward, it turns the clock's mechanism through a cord, chain, or similar connection."
+    }
+  ]
+}

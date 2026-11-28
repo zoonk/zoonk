@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "Quando uma cobrança nasce da compra de um produto ou serviço, ela incide sobre…",
+      "options": [
+        {
+          "text": "A renda recebida",
+          "correct": false
+        },
+        {
+          "text": "O consumo",
+          "correct": true
+        },
+        {
+          "text": "A propriedade de um imóvel",
+          "correct": false
+        }
+      ],
+      "reveal": "O consumo. Esse tipo de tributo está ligado à aquisição de bens e serviços, em vez de acompanhar diretamente a renda ou a propriedade."
+    },
+    {
+      "question": "Se um tributo é cobrado em várias etapas, sem descontar o que já foi pago, surge…",
+      "options": [
+        {
+          "text": "Cobrança em cascata",
+          "correct": true
+        },
+        {
+          "text": "Crédito automático",
+          "correct": false
+        },
+        {
+          "text": "Devolução integral",
+          "correct": false
+        }
+      ],
+      "reveal": "Cobrança em cascata. Sem o desconto das etapas anteriores, o tributo pode incidir sobre valores que já incluíam tributos pagos antes."
+    },
+    {
+      "question": "Numa venda, o valor tributado em etapas anteriores pode ser usado para…",
+      "options": [
+        {
+          "text": "Abater parte do tributo devido",
+          "correct": true
+        },
+        {
+          "text": "Virar lucro automaticamente",
+          "correct": false
+        },
+        {
+          "text": "Eliminar toda cobrança",
+          "correct": false
+        }
+      ],
+      "reveal": "Abater parte do tributo devido. Esse mecanismo, quando permitido, evita que a cobrança se acumule integralmente a cada etapa."
+    },
+    {
+      "question": "Uma mercadoria sai de uma cidade e vai ser consumida em outra; qual lugar pode orientar a cobrança?",
+      "options": [
+        {
+          "text": "Onde foi produzida",
+          "correct": false
+        },
+        {
+          "text": "Onde será consumida",
+          "correct": true
+        },
+        {
+          "text": "Onde fica o fabricante",
+          "correct": false
+        }
+      ],
+      "reveal": "Onde será consumida. A lógica do destino relaciona a cobrança ao lugar ligado ao consumo final, não à origem da mercadoria."
+    },
+    {
+      "question": "Se uma cobrança é definida como porcentagem do preço de uma venda, qual valor entra diretamente no cálculo?",
+      "options": [
+        {
+          "text": "O preço da venda",
+          "correct": true
+        },
+        {
+          "text": "O lucro anual",
+          "correct": false
+        },
+        {
+          "text": "O número de funcionários",
+          "correct": false
+        }
+      ],
+      "reveal": "O preço da venda. Ele funciona como base de cálculo nesse exemplo; outras cobranças podem usar bases diferentes."
+    },
+    {
+      "question": "Quando empresas gastam muito tempo entendendo regras e preenchendo obrigações, o custo está ligado a…",
+      "options": [
+        {
+          "text": "Cumprir as regras tributárias",
+          "correct": true
+        },
+        {
+          "text": "Fabricar os produtos",
+          "correct": false
+        },
+        {
+          "text": "Entregar as compras",
+          "correct": false
+        }
+      ],
+      "reveal": "Cumprir as regras tributárias. Esse esforço de entender e atender às obrigações é um custo, mesmo além do valor pago em tributos."
+    },
+    {
+      "question": "A existência de competências tributárias em diferentes níveis do governo brasileiro reflete…",
+      "options": [
+        {
+          "text": "O federalismo",
+          "correct": true
+        },
+        {
+          "text": "A divisão entre empresas",
+          "correct": false
+        },
+        {
+          "text": "A separação dos poderes",
+          "correct": false
+        }
+      ],
+      "reveal": "O federalismo. No Brasil, União, estados e municípios têm competências próprias, definidas na estrutura federativa do país."
+    },
+    {
+      "question": "Se duas escolhas parecidas recebem tratamentos tributários diferentes, o tributo pode acabar…",
+      "options": [
+        {
+          "text": "Influenciando a escolha",
+          "correct": true
+        },
+        {
+          "text": "Igualando todos os preços",
+          "correct": false
+        },
+        {
+          "text": "Eliminando os custos de produção",
+          "correct": false
+        }
+      ],
+      "reveal": "Influenciando a escolha. A neutralidade tributária busca limitar distorções para que o tributo, por si só, não favoreça uma opção semelhante a outra."
+    },
+    {
+      "question": "Quando a regra explica claramente como uma cobrança é calculada, fica mais fácil entender…",
+      "options": [
+        {
+          "text": "Como o valor foi formado",
+          "correct": true
+        },
+        {
+          "text": "Quanto a empresa vai lucrar",
+          "correct": false
+        },
+        {
+          "text": "Qual será o preço futuro",
+          "correct": false
+        }
+      ],
+      "reveal": "Como o valor foi formado. Regras claras ajudam a tornar a cobrança mais compreensível, embora não indiquem o lucro de uma empresa nem preços futuros."
+    },
+    {
+      "question": "O dinheiro arrecadado por tributos pode financiar principalmente…",
+      "options": [
+        {
+          "text": "Serviços e políticas públicas",
+          "correct": true
+        },
+        {
+          "text": "Lucros de empresas privadas",
+          "correct": false
+        },
+        {
+          "text": "Compras pessoais de servidores",
+          "correct": false
+        }
+      ],
+      "reveal": "Serviços e políticas públicas. A arrecadação compõe recursos do governo usados para financiar ações e serviços coletivos."
+    }
+  ]
+}

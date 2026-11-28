@@ -1,0 +1,180 @@
+{
+  "cards": [
+    {
+      "question": "A particle with less energy than a barrier can still reach the other side through…",
+      "options": [
+        {
+          "text": "A temporary energy boost",
+          "correct": false
+        },
+        {
+          "text": "Quantum tunneling",
+          "correct": true
+        },
+        {
+          "text": "A gap in the barrier",
+          "correct": false
+        }
+      ],
+      "reveal": "Quantum tunneling. A particle's wave-like quantum state can extend into and sometimes through a barrier, even when its energy is below the barrier's height."
+    },
+    {
+      "question": "When brighter light above a metal's cutoff frequency shines, what usually increases?",
+      "options": [
+        {
+          "text": "The light's frequency",
+          "correct": false
+        },
+        {
+          "text": "Energy of each electron",
+          "correct": false
+        },
+        {
+          "text": "Electrons emitted per second",
+          "correct": true
+        }
+      ],
+      "reveal": "The number of emitted electrons per second. At a fixed frequency above the cutoff, greater intensity means more photons arrive each second, while each photon's energy stays the same."
+    },
+    {
+      "question": "With electrons sent one at a time through two slits, what pattern builds on the screen?",
+      "options": [
+        {
+          "text": "A uniform scatter",
+          "correct": false
+        },
+        {
+          "text": "An interference pattern",
+          "correct": true
+        },
+        {
+          "text": "Two straight bands",
+          "correct": false
+        }
+      ],
+      "reveal": "An interference pattern. Each electron lands as a single dot, but many dots build up a pattern associated with waves passing through both slits."
+    },
+    {
+      "question": "Which carries more energy: one blue photon or one red photon?",
+      "options": [
+        {
+          "text": "One blue photon",
+          "correct": true
+        },
+        {
+          "text": "One red photon",
+          "correct": false
+        }
+      ],
+      "reveal": "One blue photon. Blue light has a higher frequency than red light, and a photon's energy increases with frequency."
+    },
+    {
+      "question": "When an atom emits light, why can it produce only certain colors?",
+      "options": [
+        {
+          "text": "Electron energies come in allowed steps",
+          "correct": true
+        },
+        {
+          "text": "Electrons emit random colors",
+          "correct": false
+        },
+        {
+          "text": "The nucleus filters the light",
+          "correct": false
+        }
+      ],
+      "reveal": "Electron energies come in allowed steps. A change between allowed levels releases a photon with a specific energy, which corresponds to a particular color."
+    },
+    {
+      "question": "In a magnetic-field experiment, an electron's “spin” is best understood as…",
+      "options": [
+        {
+          "text": "An electron's path around the nucleus",
+          "correct": false
+        },
+        {
+          "text": "An intrinsic quantum property",
+          "correct": true
+        },
+        {
+          "text": "A tiny sphere's rotation",
+          "correct": false
+        }
+      ],
+      "reveal": "An intrinsic quantum property. Spin affects how an electron behaves in a magnetic field, but it is not a tiny ball literally rotating."
+    },
+    {
+      "question": "Making a particle's position more precisely known necessarily makes what less precise?",
+      "options": [
+        {
+          "text": "Its mass",
+          "correct": false
+        },
+        {
+          "text": "Its momentum",
+          "correct": true
+        },
+        {
+          "text": "Its electric charge",
+          "correct": false
+        }
+      ],
+      "reveal": "Its momentum. The uncertainty principle sets a limit on how precisely a particle's position and momentum can both be specified."
+    },
+    {
+      "question": "In a two-slit setup, before a path measurement, an electron can be in…",
+      "options": [
+        {
+          "text": "One path with an unknown location",
+          "correct": false
+        },
+        {
+          "text": "A superposition of paths",
+          "correct": true
+        },
+        {
+          "text": "Two separate electrons",
+          "correct": false
+        }
+      ],
+      "reveal": "A superposition of paths. The quantum state can combine the possibilities of passing through either slit, helping explain the pattern that builds up."
+    },
+    {
+      "question": "Why can't two electrons in an atom occupy exactly the same quantum state?",
+      "options": [
+        {
+          "text": "The nucleus has limited space",
+          "correct": false
+        },
+        {
+          "text": "They repel electrically",
+          "correct": false
+        },
+        {
+          "text": "They obey the Pauli exclusion principle",
+          "correct": true
+        }
+      ],
+      "reveal": "They obey the Pauli exclusion principle. No two identical electrons can occupy the same quantum state, a rule that helps shape the structure of atoms."
+    },
+    {
+      "question": "In Bell tests, entangled particles can show correlations that…",
+      "options": [
+        {
+          "text": "Transmit instant messages",
+          "correct": false
+        },
+        {
+          "text": "Exceed local classical limits",
+          "correct": true
+        },
+        {
+          "text": "Depend only on distance",
+          "correct": false
+        }
+      ],
+      "reveal": "Exceed local classical limits. Bell-test results rule out explanations based on local hidden variables, but they do not allow controllable messages to travel faster than light."
+    }
+  ]
+}

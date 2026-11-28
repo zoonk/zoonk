@@ -1,0 +1,180 @@
+{
+  "cards": [
+    {
+      "question": "When electrons pass through two open slits one at a time, what pattern builds up?",
+      "options": [
+        {
+          "text": "An interference pattern",
+          "correct": true
+        },
+        {
+          "text": "Two bright spots",
+          "correct": false
+        },
+        {
+          "text": "A uniform smear",
+          "correct": false
+        }
+      ],
+      "reveal": "An interference pattern. Each detection is a single spot, but many detections build a pattern shaped by both possible paths."
+    },
+    {
+      "question": "Before a tiny particle is checked for position, what can quantum theory predict?",
+      "options": [
+        {
+          "text": "Its exact location",
+          "correct": false
+        },
+        {
+          "text": "A probability distribution",
+          "correct": true
+        },
+        {
+          "text": "Its average speed",
+          "correct": false
+        }
+      ],
+      "reveal": "A probability distribution. Quantum theory predicts the chances of different position measurements, rather than always assigning a definite position in advance."
+    },
+    {
+      "question": "Before a measurement, an atom can be described as what kind of state?",
+      "options": [
+        {
+          "text": "One definite state",
+          "correct": false
+        },
+        {
+          "text": "A combination of states",
+          "correct": true
+        },
+        {
+          "text": "A rapidly switching state",
+          "correct": false
+        }
+      ],
+      "reveal": "A combination of states. Quantum theory can represent a system as a superposition, with specific probabilities for possible measurement outcomes."
+    },
+    {
+      "question": "A particle faces a barrier with too little energy to climb over; what can still happen?",
+      "options": [
+        {
+          "text": "It can pass through",
+          "correct": true
+        },
+        {
+          "text": "It gains extra energy",
+          "correct": false
+        },
+        {
+          "text": "It stops at the surface",
+          "correct": false
+        }
+      ],
+      "reveal": "It can pass through. Quantum tunneling gives a particle a chance of appearing beyond a barrier that classical physics says it cannot cross."
+    },
+    {
+      "question": "Why can't two electrons in an atom share every identifying quantum property?",
+      "options": [
+        {
+          "text": "They obey an exclusion rule",
+          "correct": true
+        },
+        {
+          "text": "They repel electrically",
+          "correct": false
+        },
+        {
+          "text": "They occupy separate shells",
+          "correct": false
+        }
+      ],
+      "reveal": "They obey an exclusion rule. The Pauli exclusion principle means no two electrons in an atom can have the same set of quantum numbers."
+    },
+    {
+      "question": "If an electron's position is pinned down more tightly, what happens to how well its momentum is known?",
+      "options": [
+        {
+          "text": "It becomes less precise",
+          "correct": true
+        },
+        {
+          "text": "It stays equally precise",
+          "correct": false
+        }
+      ],
+      "reveal": "It becomes less precise. The uncertainty principle limits how precisely position and momentum can both be specified at once."
+    },
+    {
+      "question": "When an atom absorbs light, why can it take in only certain amounts of energy?",
+      "options": [
+        {
+          "text": "Only certain energy changes are allowed",
+          "correct": true
+        },
+        {
+          "text": "The light is split into colors",
+          "correct": false
+        },
+        {
+          "text": "The atom absorbs energy gradually",
+          "correct": false
+        }
+      ],
+      "reveal": "Only certain energy changes are allowed. Electrons in atoms occupy discrete energy levels, so an atom absorbs only amounts that match a gap between levels."
+    },
+    {
+      "question": "When two particles share a special quantum link, what can their distant measurements show?",
+      "options": [
+        {
+          "text": "Correlated results",
+          "correct": true
+        },
+        {
+          "text": "A controllable instant message",
+          "correct": false
+        },
+        {
+          "text": "Identical results every time",
+          "correct": false
+        }
+      ],
+      "reveal": "Correlated results. Entangled particles can show linked measurement outcomes, but this does not let anyone send a message faster than light."
+    },
+    {
+      "question": "In an atom, what does a map of an electron's orbital show?",
+      "options": [
+        {
+          "text": "Where it is likely found",
+          "correct": true
+        },
+        {
+          "text": "Its exact route around the nucleus",
+          "correct": false
+        },
+        {
+          "text": "Its fixed circular track",
+          "correct": false
+        }
+      ],
+      "reveal": "Where it is likely found. An orbital describes a probability distribution, not a tiny planetlike path around the nucleus."
+    },
+    {
+      "question": "For the same metal, brighter light ejects more electrons; what can raise each electron's energy?",
+      "options": [
+        {
+          "text": "Higher light frequency",
+          "correct": true
+        },
+        {
+          "text": "Greater light brightness",
+          "correct": false
+        },
+        {
+          "text": "Larger metal surface area",
+          "correct": false
+        }
+      ],
+      "reveal": "Higher light frequency. For a given metal, frequency affects the maximum kinetic energy of emitted electrons; brightness mainly affects how many are emitted."
+    }
+  ]
+}

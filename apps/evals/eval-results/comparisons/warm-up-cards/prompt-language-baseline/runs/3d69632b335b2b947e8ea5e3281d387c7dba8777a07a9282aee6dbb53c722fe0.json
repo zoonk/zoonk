@@ -1,0 +1,13 @@
+{
+  "caseId": "en-beekeeping",
+  "challenger": {
+    "costUsd": 0.0015053,
+    "durationMs": 22049.085916999997,
+    "hash": "784e58c8092c0b334e9cc69c7baa21d5b44e8574a69b326d276c535f47ba6580",
+    "systemPromptHash": "66b524fa4ef492c233d5d8767309a04a418e5133113dc0e5a4b8ce5af9758dd4",
+    "userPromptHash": "2d80c3a13e5b2a9bf829f64c000aa9ba7d87b0533c4296483fcc700a8162dabe"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 1
+}

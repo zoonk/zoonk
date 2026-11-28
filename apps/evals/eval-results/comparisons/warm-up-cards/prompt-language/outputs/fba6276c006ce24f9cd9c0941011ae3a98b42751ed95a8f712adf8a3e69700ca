@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "Quando uma cobrança incide em várias etapas sem abater valores anteriores, pode surgir…",
+      "options": [
+        {
+          "text": "Imposto sobre imposto",
+          "correct": true
+        },
+        {
+          "text": "Desconto por volume",
+          "correct": false
+        },
+        {
+          "text": "Reembolso automático",
+          "correct": false
+        }
+      ],
+      "reveal": "Imposto sobre imposto, também chamado de efeito cascata. O mesmo valor econômico pode entrar repetidamente no cálculo, elevando o peso total ao longo da produção."
+    },
+    {
+      "question": "Uma fábrica compra peças e depois vende um produto; para evitar repetir a cobrança, ela pode abater…",
+      "options": [
+        {
+          "text": "Tributo das compras da atividade",
+          "correct": true
+        },
+        {
+          "text": "Custo de qualquer investimento",
+          "correct": false
+        },
+        {
+          "text": "Valor pago aos funcionários",
+          "correct": false
+        }
+      ],
+      "reveal": "Tributo das compras da atividade. A empresa desconta esse valor ao calcular o que deve sobre a venda, considerando o que acrescentou ao produto."
+    },
+    {
+      "question": "Um imposto sobre consumo acompanha principalmente qual tipo de atividade?",
+      "options": [
+        {
+          "text": "Compra de bens e serviços",
+          "correct": true
+        },
+        {
+          "text": "Recebimento de salário",
+          "correct": false
+        },
+        {
+          "text": "Acúmulo de patrimônio",
+          "correct": false
+        }
+      ],
+      "reveal": "Compra de bens e serviços. Esse tipo de tributo está ligado ao consumo, enquanto outros podem incidir sobre renda ou patrimônio."
+    },
+    {
+      "question": "Quando a arrecadação acompanha o lugar onde o produto é consumido, o critério olha para…",
+      "options": [
+        {
+          "text": "O destino da venda",
+          "correct": true
+        },
+        {
+          "text": "A origem da produção",
+          "correct": false
+        },
+        {
+          "text": "A sede da empresa",
+          "correct": false
+        }
+      ],
+      "reveal": "O destino da venda. Nesse critério, a arrecadação é associada ao lugar do consumo, não ao lugar onde o bem foi produzido."
+    },
+    {
+      "question": "Na conta de um tributo, como se chama a grandeza sobre a qual a cobrança é aplicada?",
+      "options": [
+        {
+          "text": "Base de cálculo",
+          "correct": true
+        },
+        {
+          "text": "Alíquota",
+          "correct": false
+        },
+        {
+          "text": "Prazo de pagamento",
+          "correct": false
+        }
+      ],
+      "reveal": "Base de cálculo. É o valor ou a medida usada como referência para calcular a cobrança; a alíquota é o percentual ou a taxa aplicada a ela."
+    },
+    {
+      "question": "Quando um tributo busca interferir menos na escolha entre duas alternativas parecidas, qual princípio orienta essa ideia?",
+      "options": [
+        {
+          "text": "Neutralidade tributária",
+          "correct": true
+        },
+        {
+          "text": "Progressividade tributária",
+          "correct": false
+        },
+        {
+          "text": "Anterioridade tributária",
+          "correct": false
+        }
+      ],
+      "reveal": "Neutralidade tributária. A ideia é reduzir distorções nas decisões econômicas, embora nenhum sistema de tributos seja totalmente neutro."
+    },
+    {
+      "question": "Para entender quem termina arcando com o custo de um tributo, economistas analisam sua…",
+      "options": [
+        {
+          "text": "Incidência econômica",
+          "correct": true
+        },
+        {
+          "text": "Obrigação acessória",
+          "correct": false
+        },
+        {
+          "text": "Competência tributária",
+          "correct": false
+        }
+      ],
+      "reveal": "Incidência econômica. Ela trata de quem suporta o custo na prática, o que pode ser diferente de quem tem a obrigação legal de recolher o tributo."
+    },
+    {
+      "question": "Um tributo sobre consumo pode pesar proporcionalmente mais em qual faixa de renda?",
+      "options": [
+        {
+          "text": "Rendas menores",
+          "correct": true
+        },
+        {
+          "text": "Rendas maiores",
+          "correct": false
+        },
+        {
+          "text": "Todas por igual",
+          "correct": false
+        }
+      ],
+      "reveal": "Rendas menores, em proporção à renda. Famílias de menor renda tendem a gastar uma parcela maior do que recebem, então uma cobrança sobre consumo pode ocupar uma fatia maior do orçamento."
+    },
+    {
+      "question": "Na economia, cobrar pelo custo da poluição que recai sobre terceiros busca…",
+      "options": [
+        {
+          "text": "Incluir o dano no preço",
+          "correct": true
+        },
+        {
+          "text": "Premiar toda produção",
+          "correct": false
+        },
+        {
+          "text": "Eliminar custos de transporte",
+          "correct": false
+        }
+      ],
+      "reveal": "Incluir o dano no preço. Esse raciocínio tenta fazer a decisão econômica refletir custos que, sem a cobrança, ficariam com outras pessoas ou com a sociedade."
+    },
+    {
+      "question": "Quando a nota mostra separadamente o tributo embutido no valor, qual é o principal ganho?",
+      "options": [
+        {
+          "text": "Mais clareza sobre a cobrança",
+          "correct": true
+        },
+        {
+          "text": "Menos etapas de produção",
+          "correct": false
+        },
+        {
+          "text": "Preço final necessariamente menor",
+          "correct": false
+        }
+      ],
+      "reveal": "Mais clareza sobre a cobrança. Separar essa informação ajuda a visualizar o peso dos tributos, mas não garante que o preço final fique menor."
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "caseId": "en-japanese",
+  "costUsd": 0.016648,
+  "name": "answer keys",
+  "passed": 10,
+  "problems": [],
+  "run": 2,
+  "side": "incumbent",
+  "total": 10
+}

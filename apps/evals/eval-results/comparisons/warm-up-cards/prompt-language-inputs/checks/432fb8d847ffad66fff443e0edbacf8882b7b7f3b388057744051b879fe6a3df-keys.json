@@ -1,0 +1,12 @@
+{
+  "caseId": "en-beekeeping",
+  "costUsd": 0.023239999999999997,
+  "name": "answer keys",
+  "passed": 9,
+  "problems": [
+    "{\"itemLocator\":\"cards[1]\",\"keyedAnswer\":\"Remains unfertilized\",\"kind\":\"factualError\",\"workedAnswer\":\"The keyed choice describes the usual route to a drone, but the reveal incorrectly says all fertilized eggs develop into females. A fertilized egg with two identical alleles at the complementary sex-determination locus develops into a diploid male.\"}"
+  ],
+  "run": 2,
+  "side": "challenger",
+  "total": 10
+}

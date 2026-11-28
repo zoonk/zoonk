@@ -1,0 +1,58 @@
+{
+ "cards": [
+  {
+   "question": "No México, se você vê a placa \"oficina\" numa rua, que lugar ela costuma indicar?",
+   "options": [
+    {
+     "text": "Um escritório",
+     "correct": true
+    },
+    {
+     "text": "Uma oficina mecânica",
+     "correct": false
+    },
+    {
+     "text": "Uma loja de ferramentas",
+     "correct": false
+    }
+   ],
+   "reveal": "Um escritório. Em espanhol, \"oficina\" costuma ser um local de trabalho administrativo; para oficina mecânica, é comum dizer \"taller\"."
+  },
+  {
+   "question": "Se alguém diz \"Estoy embarazada\", o que está contando sobre si?",
+   "options": [
+    {
+     "text": "Que está grávida",
+     "correct": true
+    },
+    {
+     "text": "Que está envergonhada",
+     "correct": false
+    },
+    {
+     "text": "Que está confusa",
+     "correct": false
+    }
+   ],
+   "reveal": "Que está grávida. \"Embarazada\" não significa envergonhada; para isso, em geral se diz \"avergonzada\"."
+  },
+  {
+   "question": "Ao preencher um formulário mexicano, o que você informa no campo \"apellido\"?",
+   "options": [
+    {
+     "text": "Seu sobrenome",
+     "correct": true
+    },
+    {
+     "text": "Seu apelido",
+     "correct": false
+    },
+    {
+     "text": "Seu endereço",
+     "correct": false
+    }
+   ],
+   "reveal": "Seu sobrenome. Em espanhol, \"apellido\" é sobrenome; apelido é \"apodo\"."
+  }
+ ]
+}

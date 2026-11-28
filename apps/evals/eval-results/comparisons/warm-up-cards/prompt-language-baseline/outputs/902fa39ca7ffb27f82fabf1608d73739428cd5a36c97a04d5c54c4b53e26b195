@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "Num poema, chamar alguém de “rocha” para destacar sua firmeza usa qual recurso?",
+      "options": [
+        {
+          "text": "Metáfora",
+          "correct": true
+        },
+        {
+          "text": "Rima",
+          "correct": false
+        },
+        {
+          "text": "Onomatopeia",
+          "correct": false
+        }
+      ],
+      "reveal": "Metáfora. A palavra “rocha” é usada fora do sentido literal para sugerir firmeza, sem uma comparação explícita."
+    },
+    {
+      "question": "Numa conversa, “Que pontualidade!” dita a quem chegou bem atrasado pode expressar o quê?",
+      "options": [
+        {
+          "text": "Elogio literal",
+          "correct": false
+        },
+        {
+          "text": "Ironia",
+          "correct": true
+        },
+        {
+          "text": "Dúvida genuína",
+          "correct": false
+        }
+      ],
+      "reveal": "Ironia. A frase parece elogiar, mas o atraso contradiz o sentido literal."
+    },
+    {
+      "question": "Uma carta que uma grevista escreve durante a própria greve é que tipo de fonte histórica?",
+      "options": [
+        {
+          "text": "Fonte primária",
+          "correct": true
+        },
+        {
+          "text": "Síntese didática",
+          "correct": false
+        },
+        {
+          "text": "Relato fictício",
+          "correct": false
+        }
+      ],
+      "reveal": "Fonte primária. Ela foi produzida por alguém que viveu o período estudado, embora traga um ponto de vista particular."
+    },
+    {
+      "question": "Em um mapa físico, curvas que unem pontos de mesma altitude mostram principalmente o quê?",
+      "options": [
+        {
+          "text": "Altitude do terreno",
+          "correct": true
+        },
+        {
+          "text": "Distribuição das chuvas",
+          "correct": false
+        },
+        {
+          "text": "Densidade populacional",
+          "correct": false
+        }
+      ],
+      "reveal": "Altitude do terreno. Essas curvas ajudam a representar o relevo e a visualizar subidas, descidas e áreas mais planas."
+    },
+    {
+      "question": "Na fotossíntese, qual gás do ar fornece o carbono usado pela planta para formar açúcares?",
+      "options": [
+        {
+          "text": "Oxigênio",
+          "correct": false
+        },
+        {
+          "text": "Nitrogênio",
+          "correct": false
+        },
+        {
+          "text": "Dióxido de carbono",
+          "correct": true
+        }
+      ],
+      "reveal": "Dióxido de carbono. A planta usa o carbono desse gás para formar açúcares; o oxigênio é liberado no processo."
+    },
+    {
+      "question": "Água pura, formada por hidrogênio e oxigênio, é classificada como o quê?",
+      "options": [
+        {
+          "text": "Elemento químico",
+          "correct": false
+        },
+        {
+          "text": "Substância composta",
+          "correct": true
+        },
+        {
+          "text": "Mistura de substâncias",
+          "correct": false
+        }
+      ],
+      "reveal": "Substância composta. Suas moléculas reúnem átomos de dois elementos químicos diferentes: hidrogênio e oxigênio."
+    },
+    {
+      "question": "Num circuito simples em série, o filamento de uma lâmpada se rompe: o que ocorre com as outras?",
+      "options": [
+        {
+          "text": "Continuam acesas",
+          "correct": false
+        },
+        {
+          "text": "Todas apagam",
+          "correct": true
+        },
+        {
+          "text": "Ficam mais brilhantes",
+          "correct": false
+        }
+      ],
+      "reveal": "Todas apagam. Em série, a corrente percorre um único caminho; quando ele é interrompido, deixa de passar pelas outras lâmpadas."
+    },
+    {
+      "question": "Um valor sobe 20% e depois cai 20% sobre o novo valor; ao final, ele…",
+      "options": [
+        {
+          "text": "Volta ao original",
+          "correct": false
+        },
+        {
+          "text": "Fica abaixo do original",
+          "correct": true
+        },
+        {
+          "text": "Fica acima do original",
+          "correct": false
+        }
+      ],
+      "reveal": "Fica abaixo do original. Começando em 100, por exemplo, sobe para 120 e depois cai para 96, pois a segunda variação usa outra base."
+    },
+    {
+      "question": "Ao lançar duas vezes uma moeda equilibrada, qual é a chance de sair cara exatamente uma vez?",
+      "options": [
+        {
+          "text": "1/4",
+          "correct": false
+        },
+        {
+          "text": "1/2",
+          "correct": true
+        },
+        {
+          "text": "3/4",
+          "correct": false
+        }
+      ],
+      "reveal": "1/2. Há quatro sequências igualmente prováveis: cara-cara, cara-coroa, coroa-cara e coroa-coroa; duas têm exatamente uma cara."
+    },
+    {
+      "question": "Se o comprimento de um retângulo não muda e sua largura dobra, o que ocorre com a área?",
+      "options": [
+        {
+          "text": "Permanece igual",
+          "correct": false
+        },
+        {
+          "text": "Dobra",
+          "correct": true
+        },
+        {
+          "text": "Triplica",
+          "correct": false
+        }
+      ],
+      "reveal": "Dobra. A área é o comprimento multiplicado pela largura; ao dobrar apenas a largura, o produto também dobra."
+    }
+  ]
+}

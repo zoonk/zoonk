@@ -1,0 +1,20 @@
+{
+ "pairs": [
+  {
+   "input": {
+    "goal": "Espanhol",
+    "kind": "language",
+    "language": "pt",
+    "targetLanguage": "es",
+    "country": null
+   },
+   "expectations": "Cards for a Brazilian Portuguese reader learning Spanish: every question, option and reveal is in Brazilian Portuguese, with Spanish words only inside quotes.",
+   "clean": "{\n \"cards\": [\n  {\n   \"question\": \"No México, se você vê a placa \\\"oficina\\\" numa rua, que lugar ela costuma indicar?\",\n   \"options\": [\n    {\n     \"text\": \"Um escritório\",\n     \"correct\": true\n    },\n    {\n     \"text\": \"Uma oficina mecânica\",\n     \"correct\": false\n    },\n    {\n     \"text\": \"Uma loja de ferramentas\",\n     \"correct\": false\n    }\n   ],\n   \"reveal\": \"Um escritório. Em espanhol, \\\"oficina\\\" costuma ser um local de trabalho administrativo; para oficina mecânica, é comum dizer \\\"taller\\\".\"\n  },\n  {\n   \"question\": \"Se alguém diz \\\"Estoy embarazada\\\", o que está contando sobre si?\",\n   \"options\": [\n    {\n     \"text\": \"Que está grávida\",\n     \"correct\": true\n    },\n    {\n     \"text\": \"Que está envergonhada\",\n     \"correct\": false\n    },\n    {\n     \"text\": \"Que está confusa\",\n     \"correct\": false\n    }\n   ],\n   \"reveal\": \"Que está grávida. \\\"Embarazada\\\" não significa envergonhada; para isso, em geral se diz \\\"avergonzada\\\".\"\n  },\n  {\n   \"question\": \"Ao preencher um formulário mexicano, o que você informa no campo \\\"apellido\\\"?\",\n   \"options\": [\n    {\n     \"text\": \"Seu sobrenome\",\n     \"correct\": true\n    },\n    {\n     \"text\": \"Seu apelido\",\n     \"correct\": false\n    },\n    {\n     \"text\": \"Seu endereço\",\n     \"correct\": false\n    }\n   ],\n   \"reveal\": \"Seu sobrenome. Em espanhol, \\\"apellido\\\" é sobrenome; apelido é \\\"apodo\\\".\"\n  }\n ]\n}",
+   "flawed": "{\n \"cards\": [\n  {\n   \"question\": \"No México, se você vê a placa \\\"oficina\\\" numa rua, que lugar ela costuma indicar?\",\n   \"options\": [\n    {\n     \"text\": \"Um escritório\",\n     \"correct\": true\n    },\n    {\n     \"text\": \"Uma oficina mecânica\",\n     \"correct\": false\n    },\n    {\n     \"text\": \"Uma loja de ferramentas\",\n     \"correct\": false\n    }\n   ],\n   \"reveal\": \"Um escritório. Em espanhol, \\\"oficina\\\" costuma ser um local de trabalho administrativo; para oficina mecânica, é comum dizer \\\"taller\\\".\"\n  },\n  {\n   \"question\": \"Si alguien dice \\\"Estoy embarazada\\\", ¿qué está contando sobre sí misma?\",\n   \"options\": [\n    {\n     \"text\": \"Que está embarazada\",\n     \"correct\": true\n    },\n    {\n     \"text\": \"Que está avergonzada\",\n     \"correct\": false\n    },\n    {\n     \"text\": \"Que está confundida\",\n     \"correct\": false\n    }\n   ],\n   \"reveal\": \"Que está embarazada. \\\"Embarazada\\\" no significa avergonzada; para eso se dice \\\"avergonzada\\\".\"\n  },\n  {\n   \"question\": \"Ao preencher um formulário mexicano, o que você informa no campo \\\"apellido\\\"?\",\n   \"options\": [\n    {\n     \"text\": \"Seu sobrenome\",\n     \"correct\": true\n    },\n    {\n     \"text\": \"Seu apelido\",\n     \"correct\": false\n    },\n    {\n     \"text\": \"Seu endereço\",\n     \"correct\": false\n    }\n   ],\n   \"reveal\": \"Seu sobrenome. Em espanhol, \\\"apellido\\\" é sobrenome; apelido é \\\"apodo\\\".\"\n  }\n ]\n}",
+   "criterion": "language",
+   "defect": "The second card (question, all three options and the reveal) is written entirely in Spanish instead of Brazilian Portuguese, so a Brazilian beginner reads a card in the language they have not learned yet.",
+   "falseAllegation": "The first card is written in Spanish instead of Brazilian Portuguese.",
+   "provenance": "Eval case pt-espanhol output from GPT-6 Luna (synthetic, no learner data), trimmed to three cards; the flawed side rewrites card two in Spanish by hand."
+  }
+ ]
+}

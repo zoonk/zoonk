@@ -1,0 +1,180 @@
+{
+  "cards": [
+    {
+      "question": "In a two-slit experiment, when no device records an electron’s path, what appears on the screen?",
+      "options": [
+        {
+          "text": "A striped pattern",
+          "correct": true
+        },
+        {
+          "text": "Two plain bands",
+          "correct": false
+        },
+        {
+          "text": "One central spot",
+          "correct": false
+        }
+      ],
+      "reveal": "A striped pattern. Even electrons sent one at a time build up this pattern, as if each electron’s possible paths can affect one another."
+    },
+    {
+      "question": "Measurements of two entangled particles can show what, even when they are far apart?",
+      "options": [
+        {
+          "text": "Correlations stronger than classical physics allows",
+          "correct": true
+        },
+        {
+          "text": "A controllable instant message",
+          "correct": false
+        },
+        {
+          "text": "Identical readings in every setup",
+          "correct": false
+        }
+      ],
+      "reveal": "Correlations stronger than classical physics allows. The results are linked in a way that can’t be used to send a message faster than light."
+    },
+    {
+      "question": "A tiny particle meets a barrier it lacks the energy to cross classically; what can happen?",
+      "options": [
+        {
+          "text": "It may pass through",
+          "correct": true
+        },
+        {
+          "text": "It always bounces back",
+          "correct": false
+        },
+        {
+          "text": "It loses its mass",
+          "correct": false
+        }
+      ],
+      "reveal": "It may pass through. Quantum tunneling gives a particle some probability of getting across a barrier that would stop it in classical physics."
+    },
+    {
+      "question": "Why can an atom absorb only certain photon energies rather than any amount?",
+      "options": [
+        {
+          "text": "Electrons have allowed energy levels",
+          "correct": true
+        },
+        {
+          "text": "Only visible light reaches atoms",
+          "correct": false
+        },
+        {
+          "text": "The nucleus filters out colors",
+          "correct": false
+        }
+      ],
+      "reveal": "Electrons have allowed energy levels. A photon can be absorbed when its energy matches the gap between two allowed levels."
+    },
+    {
+      "question": "Which carries more energy per photon, blue light or red light?",
+      "options": [
+        {
+          "text": "Blue light",
+          "correct": true
+        },
+        {
+          "text": "Red light",
+          "correct": false
+        }
+      ],
+      "reveal": "Blue light. Its higher frequency means each blue photon carries more energy than a red photon."
+    },
+    {
+      "question": "Why can’t a quantum particle’s position and momentum both be perfectly precise at once?",
+      "options": [
+        {
+          "text": "Nature limits their joint precision",
+          "correct": true
+        },
+        {
+          "text": "Every measurement bumps the particle",
+          "correct": false
+        },
+        {
+          "text": "The particle has no momentum",
+          "correct": false
+        }
+      ],
+      "reveal": "Nature limits their joint precision. This is a feature of quantum states, not just a flaw in measuring equipment."
+    },
+    {
+      "question": "What does a quantum wave function’s squared magnitude tell you near a location?",
+      "options": [
+        {
+          "text": "Probability density for detection",
+          "correct": true
+        },
+        {
+          "text": "The particle’s exact speed",
+          "correct": false
+        },
+        {
+          "text": "Its path through that point",
+          "correct": false
+        }
+      ],
+      "reveal": "Probability density for detection. For a region, adding up that density gives the chance of finding the particle there."
+    },
+    {
+      "question": "For identical electrons, why can’t two occupy the exact same complete quantum state?",
+      "options": [
+        {
+          "text": "Pauli exclusion principle",
+          "correct": true
+        },
+        {
+          "text": "They are too large to overlap",
+          "correct": false
+        },
+        {
+          "text": "They take turns occupying it",
+          "correct": false
+        }
+      ],
+      "reveal": "Pauli exclusion principle. Electrons are fermions, and no two identical fermions can share the same complete quantum state."
+    },
+    {
+      "question": "In quantum teleportation, what is transferred from one particle to another?",
+      "options": [
+        {
+          "text": "A quantum state",
+          "correct": true
+        },
+        {
+          "text": "The particle itself",
+          "correct": false
+        },
+        {
+          "text": "A faster-than-light message",
+          "correct": false
+        }
+      ],
+      "reveal": "A quantum state. The process uses shared entanglement and ordinary classical communication; it doesn’t move the particle itself."
+    },
+    {
+      "question": "Before a spin measurement along a chosen axis, an electron can be described as…",
+      "options": [
+        {
+          "text": "A combination of possible outcomes",
+          "correct": true
+        },
+        {
+          "text": "Two separate electrons",
+          "correct": false
+        },
+        {
+          "text": "A tiny ball with fixed spin",
+          "correct": false
+        }
+      ],
+      "reveal": "A combination of possible outcomes. This superposition lets quantum theory predict probabilities, while a measurement gives one result."
+    }
+  ]
+}

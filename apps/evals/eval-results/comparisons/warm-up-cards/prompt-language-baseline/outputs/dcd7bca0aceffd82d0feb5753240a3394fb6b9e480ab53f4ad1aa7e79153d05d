@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "A Japanese apartment listing says 「マンション」; what kind of place should you picture?",
+      "options": [
+        {
+          "text": "A grand detached house",
+          "correct": false
+        },
+        {
+          "text": "An apartment-style condo",
+          "correct": true
+        },
+        {
+          "text": "A hotel room",
+          "correct": false
+        }
+      ],
+      "reveal": "An apartment-style condo. In Japanese, 「マンション」 commonly refers to a multi-unit residential building or a unit in one, not a grand detached house."
+    },
+    {
+      "question": "On a Japanese café menu, what drink does 「コーヒー」 name?",
+      "options": [
+        {
+          "text": "Coffee",
+          "correct": true
+        },
+        {
+          "text": "Hot chocolate",
+          "correct": false
+        },
+        {
+          "text": "Green tea",
+          "correct": false
+        }
+      ],
+      "reveal": "Coffee. 「コーヒー」 is a Japanese loanword that closely matches the English word, so this familiar menu item is easy to spot."
+    },
+    {
+      "question": "When someone greets you with 「こんにちは」, which moment does it usually fit?",
+      "options": [
+        {
+          "text": "A daytime hello",
+          "correct": true
+        },
+        {
+          "text": "A good-night farewell",
+          "correct": false
+        },
+        {
+          "text": "A morning greeting",
+          "correct": false
+        }
+      ],
+      "reveal": "A daytime hello. It is a common greeting used during the day, rather than the usual greeting for early morning or bedtime."
+    },
+    {
+      "question": "A friend says 「ありがとう」 after you help them; what are they expressing?",
+      "options": [
+        {
+          "text": "Thanks",
+          "correct": true
+        },
+        {
+          "text": "An apology",
+          "correct": false
+        },
+        {
+          "text": "A goodbye",
+          "correct": false
+        }
+      ],
+      "reveal": "Thanks. 「ありがとう」 is a common way to express gratitude; adding 「ございます」 makes the expression more polite."
+    },
+    {
+      "question": "At the start of a meal, what does saying 「いただきます」 usually express?",
+      "options": [
+        {
+          "text": "Gratitude before eating",
+          "correct": true
+        },
+        {
+          "text": "A toast after eating",
+          "correct": false
+        },
+        {
+          "text": "A request for seconds",
+          "correct": false
+        }
+      ],
+      "reveal": "Gratitude before eating. The phrase acknowledges the food and the people involved in providing it; it is not simply a direct equivalent of “bon appétit.”"
+    },
+    {
+      "question": "In a basic Japanese sentence, where does the action word usually appear?",
+      "options": [
+        {
+          "text": "At the beginning",
+          "correct": false
+        },
+        {
+          "text": "After the object",
+          "correct": true
+        },
+        {
+          "text": "Between subject and object",
+          "correct": false
+        }
+      ],
+      "reveal": "After the object. Japanese basic word order is often subject, object, then verb, unlike the usual subject-verb-object order in English."
+    },
+    {
+      "question": "In 「私は学生です」, what role does 「は」 play?",
+      "options": [
+        {
+          "text": "Marks the topic",
+          "correct": true
+        },
+        {
+          "text": "Marks past time",
+          "correct": false
+        },
+        {
+          "text": "Marks a question",
+          "correct": false
+        }
+      ],
+      "reveal": "It marks the topic. 「は」 tells you what the sentence is about; it does not always work exactly like an English subject marker."
+    },
+    {
+      "question": "If a Japanese sign says 「猫」, how many cats can that noun refer to?",
+      "options": [
+        {
+          "text": "Exactly one cat",
+          "correct": false
+        },
+        {
+          "text": "Cats only",
+          "correct": false
+        },
+        {
+          "text": "One or more cats",
+          "correct": true
+        }
+      ],
+      "reveal": "One or more cats. Japanese nouns often do not change form to mark singular or plural, so context usually tells you the number."
+    },
+    {
+      "question": "In 「学生ですか」, what does the final 「か」 signal?",
+      "options": [
+        {
+          "text": "A yes-or-no question",
+          "correct": true
+        },
+        {
+          "text": "A past event",
+          "correct": false
+        },
+        {
+          "text": "A plural noun",
+          "correct": false
+        }
+      ],
+      "reveal": "A yes-or-no question. Adding 「か」 at the end of this kind of sentence commonly turns it into a question."
+    },
+    {
+      "question": "When you call a new acquaintance 「田中さん」, what does 「さん」 add?",
+      "options": [
+        {
+          "text": "A polite name suffix",
+          "correct": true
+        },
+        {
+          "text": "A casual greeting",
+          "correct": false
+        },
+        {
+          "text": "A family relationship",
+          "correct": false
+        }
+      ],
+      "reveal": "A polite name suffix. 「さん」 is a respectful, widely used way to address someone by name, and it is not limited to one gender."
+    }
+  ]
+}

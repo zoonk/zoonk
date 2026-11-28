@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "Si alguien dice “I’m embarrassed”, ¿qué siente, aunque “embarazada” suene parecido?",
+      "options": [
+        {
+          "text": "Siente vergüenza",
+          "correct": true
+        },
+        {
+          "text": "Está esperando un bebé",
+          "correct": false
+        },
+        {
+          "text": "Está enojado",
+          "correct": false
+        }
+      ],
+      "reveal": "Siente vergüenza. “Embarrassed” significa avergonzado; “embarazada” se dice “pregnant” en inglés."
+    },
+    {
+      "question": "¿Qué lugar buscas en inglés cuando quieres pedir libros prestados y ves “library”?",
+      "options": [
+        {
+          "text": "Una biblioteca",
+          "correct": true
+        },
+        {
+          "text": "Una librería",
+          "correct": false
+        },
+        {
+          "text": "Una papelería",
+          "correct": false
+        }
+      ],
+      "reveal": "Una biblioteca. En español, una librería suele vender libros; “library” es el lugar donde puedes consultar o pedir libros prestados."
+    },
+    {
+      "question": "En un correo, si alguien escribe “Actually, I live in Puebla”, ¿qué está aclarando?",
+      "options": [
+        {
+          "text": "Que en realidad vive en Puebla",
+          "correct": true
+        },
+        {
+          "text": "Que vivió ahí hace años",
+          "correct": false
+        },
+        {
+          "text": "Que quizá viva ahí después",
+          "correct": false
+        }
+      ],
+      "reveal": "Que en realidad vive en Puebla. “Actually” suele introducir una aclaración, no significa “actualmente”."
+    },
+    {
+      "question": "Si ves “carpet” en una tienda de Estados Unidos, ¿qué tipo de producto probablemente señala?",
+      "options": [
+        {
+          "text": "Una alfombra",
+          "correct": true
+        },
+        {
+          "text": "Una carpeta para papeles",
+          "correct": false
+        },
+        {
+          "text": "Una cortina",
+          "correct": false
+        }
+      ],
+      "reveal": "Una alfombra. Aunque se parece a “carpeta”, “carpet” se refiere a una alfombra o revestimiento de piso."
+    },
+    {
+      "question": "Al buscar atención médica en un mapa de una ciudad de Estados Unidos, ¿qué indica “hospital”?",
+      "options": [
+        {
+          "text": "Un hospital",
+          "correct": true
+        },
+        {
+          "text": "Un hotel",
+          "correct": false
+        },
+        {
+          "text": "Una estación",
+          "correct": false
+        }
+      ],
+      "reveal": "Un hospital. “Hospital” se parece y significa lo mismo en español y en inglés: es un cognado transparente."
+    },
+    {
+      "question": "En una cafetería concurrida de Estados Unidos, ¿qué frase sirve para llamar la atención con cortesía?",
+      "options": [
+        {
+          "text": "“Excuse me”",
+          "correct": true
+        },
+        {
+          "text": "“Good night”",
+          "correct": false
+        },
+        {
+          "text": "“See you”",
+          "correct": false
+        }
+      ],
+      "reveal": "“Excuse me”. Sirve para llamar la atención con cortesía o pedir que te dejen pasar."
+    },
+    {
+      "question": "Al señalar una taza en una tienda, ¿qué pregunta en inglés te ayuda a saber su precio?",
+      "options": [
+        {
+          "text": "“How much is it?”",
+          "correct": true
+        },
+        {
+          "text": "“Where is it?”",
+          "correct": false
+        },
+        {
+          "text": "“Can I help?”",
+          "correct": false
+        }
+      ],
+      "reveal": "“How much is it?” significa “¿Cuánto cuesta?”. “How much” se usa para preguntar el precio."
+    },
+    {
+      "question": "Para preguntar si a Sofía le gusta el café, ¿qué forma completa “___ you like coffee?”",
+      "options": [
+        {
+          "text": "“Do”",
+          "correct": true
+        },
+        {
+          "text": "“Are”",
+          "correct": false
+        },
+        {
+          "text": "“Have”",
+          "correct": false
+        }
+      ],
+      "reveal": "“Do”. En una pregunta del presente simple como esta, “do” va antes del sujeto y del verbo principal."
+    },
+    {
+      "question": "Al describir un perro y luego varios con “small”, ¿qué pasa con el adjetivo en inglés?",
+      "options": [
+        {
+          "text": "No cambia",
+          "correct": true
+        },
+        {
+          "text": "Se pluraliza",
+          "correct": false
+        },
+        {
+          "text": "Cambia de género",
+          "correct": false
+        }
+      ],
+      "reveal": "No cambia. En inglés, los adjetivos normalmente no llevan marca de plural ni cambian según el género."
+    },
+    {
+      "question": "En Estados Unidos, ¿qué letrero suele indicar un baño público en un centro comercial?",
+      "options": [
+        {
+          "text": "“Restroom”",
+          "correct": true
+        },
+        {
+          "text": "“Kitchen”",
+          "correct": false
+        },
+        {
+          "text": "“Office”",
+          "correct": false
+        }
+      ],
+      "reveal": "“Restroom”. En Estados Unidos es una forma común y cortés de nombrar un baño público."
+    }
+  ]
+}

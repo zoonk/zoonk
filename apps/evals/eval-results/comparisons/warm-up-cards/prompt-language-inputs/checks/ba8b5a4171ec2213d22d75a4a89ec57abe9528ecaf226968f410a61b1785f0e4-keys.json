@@ -1,0 +1,13 @@
+{
+  "caseId": "en-beekeeping",
+  "costUsd": 0.035504,
+  "name": "answer keys",
+  "passed": 8,
+  "problems": [
+    "{\"itemLocator\":\"cards[0]\",\"keyedAnswer\":\"Inside worker bees’ bodies\",\"kind\":\"noCorrectOption\",\"workedAnswer\":\"The glands make the wax, but the flakes form on the outside of the worker’s abdomen as the secreted wax hardens. No option gives the location where the flakes form.\"}",
+    "{\"itemLocator\":\"cards[3]\",\"keyedAnswer\":\"A male bee\",\"kind\":\"factualError\",\"workedAnswer\":\"A drone is the expected answer. The error is in the reveal: fertilized eggs normally develop into females, but an egg with two matching alleles at the complementary sex-determination locus develops into a diploid male.\"}"
+  ],
+  "run": 1,
+  "side": "challenger",
+  "total": 10
+}

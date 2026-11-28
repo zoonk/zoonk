@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "A forager finds flowers far from the hive; how can nestmates learn which way to fly?",
+      "options": [
+        {
+          "text": "A round dance",
+          "correct": false
+        },
+        {
+          "text": "A waggle dance",
+          "correct": true
+        },
+        {
+          "text": "A scent trail",
+          "correct": false
+        }
+      ],
+      "reveal": "A waggle dance. Its angle signals direction relative to the sun, and the dance’s duration gives an estimate of distance."
+    },
+    {
+      "question": "In a honeybee hive, what usually decides whether an egg develops as male or female?",
+      "options": [
+        {
+          "text": "Its cell size",
+          "correct": false
+        },
+        {
+          "text": "Whether it is fertilized",
+          "correct": true
+        },
+        {
+          "text": "The season it is laid",
+          "correct": false
+        }
+      ],
+      "reveal": "Whether it is fertilized. Fertilized eggs develop as females; unfertilized eggs develop as males."
+    },
+    {
+      "question": "What material do worker bees make into the thin walls of their comb?",
+      "options": [
+        {
+          "text": "Plant resin",
+          "correct": false
+        },
+        {
+          "text": "Beeswax",
+          "correct": true
+        },
+        {
+          "text": "Packed pollen",
+          "correct": false
+        }
+      ],
+      "reveal": "Beeswax. Workers secrete tiny wax scales from glands on their abdomens and shape them into comb."
+    },
+    {
+      "question": "What must happen to nectar before bees can store it as honey for long periods?",
+      "options": [
+        {
+          "text": "Most water evaporates",
+          "correct": true
+        },
+        {
+          "text": "Pollen gets removed",
+          "correct": false
+        },
+        {
+          "text": "It freezes solid",
+          "correct": false
+        }
+      ],
+      "reveal": "Most water evaporates. Bees also change some of the nectar’s sugars with enzymes, then cap ripe honey in wax cells."
+    },
+    {
+      "question": "What does pollen mainly provide as food for growing honeybee larvae?",
+      "options": [
+        {
+          "text": "Protein and fats",
+          "correct": true
+        },
+        {
+          "text": "Mostly sugar",
+          "correct": false
+        },
+        {
+          "text": "Mostly water",
+          "correct": false
+        }
+      ],
+      "reveal": "Protein and fats. Pollen is a nutrient-rich food, while nectar and honey are mainly sources of energy."
+    },
+    {
+      "question": "Unlike worker bees, what does a male honeybee typically do outside the hive?",
+      "options": [
+        {
+          "text": "Searches for a mate",
+          "correct": true
+        },
+        {
+          "text": "Collects flower pollen",
+          "correct": false
+        },
+        {
+          "text": "Builds wax comb",
+          "correct": false
+        }
+      ],
+      "reveal": "Searches for a mate. Male honeybees, called drones, mate with queens; they do not gather pollen or build comb."
+    },
+    {
+      "question": "Which bee usually lays the eggs that develop into a hive’s worker bees?",
+      "options": [
+        {
+          "text": "The queen",
+          "correct": true
+        },
+        {
+          "text": "A worker",
+          "correct": false
+        },
+        {
+          "text": "A drone",
+          "correct": false
+        }
+      ],
+      "reveal": "The queen. She usually lays the hive’s eggs; workers are female bees that develop from fertilized eggs."
+    },
+    {
+      "question": "When a hive gets too warm, how do worker bees help cool it?",
+      "options": [
+        {
+          "text": "Fan air and spread water",
+          "correct": true
+        },
+        {
+          "text": "Seal every entrance",
+          "correct": false
+        },
+        {
+          "text": "Warm brood with wax",
+          "correct": false
+        }
+      ],
+      "reveal": "Fan air and spread water. Airflow helps water evaporate, carrying heat away from the hive."
+    },
+    {
+      "question": "When outside temperatures fall, what helps a honeybee colony stay warm without a nest heater?",
+      "options": [
+        {
+          "text": "Cluster and vibrate muscles",
+          "correct": true
+        },
+        {
+          "text": "Bury the comb in soil",
+          "correct": false
+        },
+        {
+          "text": "Rely on the queen’s body heat",
+          "correct": false
+        }
+      ],
+      "reveal": "Cluster and vibrate muscles. Bees generate heat by contracting their flight muscles while staying in place inside the cluster."
+    },
+    {
+      "question": "After a honeybee egg hatches, which stages come before it becomes an adult?",
+      "options": [
+        {
+          "text": "Larva, then pupa",
+          "correct": true
+        },
+        {
+          "text": "Pupa, then larva",
+          "correct": false
+        },
+        {
+          "text": "Nymph, then pupa",
+          "correct": false
+        }
+      ],
+      "reveal": "Larva, then pupa. A honeybee grows through these stages before emerging as an adult, a pattern called complete metamorphosis."
+    }
+  ]
+}

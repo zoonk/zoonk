@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "Quando cada etapa cobra sem descontar o tributo anterior, o que pode se acumular no preço?",
+      "options": [
+        {
+          "text": "Tributo sobre tributo",
+          "correct": true
+        },
+        {
+          "text": "Só o lucro da loja",
+          "correct": false
+        },
+        {
+          "text": "Apenas o preço inicial",
+          "correct": false
+        }
+      ],
+      "reveal": "Tributo sobre tributo. Sem compensação entre etapas, uma nova cobrança pode incluir valores tributários que já estavam embutidos no preço."
+    },
+    {
+      "question": "Num sistema não cumulativo, o tributo pago em insumos pode…",
+      "options": [
+        {
+          "text": "Gerar crédito abatível",
+          "correct": true
+        },
+        {
+          "text": "Ser sempre devolvido em dinheiro",
+          "correct": false
+        },
+        {
+          "text": "Sumir do preço automaticamente",
+          "correct": false
+        }
+      ],
+      "reveal": "Gerar crédito abatível. Conforme as regras do sistema, o valor pago em certos insumos pode ser descontado do tributo devido na etapa seguinte."
+    },
+    {
+      "question": "Se um tributo segue o princípio do destino, a arrecadação se vincula a…",
+      "options": [
+        {
+          "text": "Local de consumo",
+          "correct": true
+        },
+        {
+          "text": "Local de fabricação",
+          "correct": false
+        },
+        {
+          "text": "Sede da empresa",
+          "correct": false
+        }
+      ],
+      "reveal": "Local de consumo. Nesse princípio, a arrecadação acompanha onde o bem ou serviço é consumido, e não necessariamente onde foi produzido."
+    },
+    {
+      "question": "Na classificação tradicional, um tributo indireto costuma aparecer…",
+      "options": [
+        {
+          "text": "No preço de bens e serviços",
+          "correct": true
+        },
+        {
+          "text": "No valor declarado da renda",
+          "correct": false
+        },
+        {
+          "text": "No registro de propriedade",
+          "correct": false
+        }
+      ],
+      "reveal": "No preço de bens e serviços. Esse tipo de tributo pode ser incluído no valor pago por quem compra, embora outra pessoa ou empresa seja responsável pelo recolhimento."
+    },
+    {
+      "question": "Um tributo é chamado regressivo quando, em relação à renda, seu peso…",
+      "options": [
+        {
+          "text": "Pesa mais sobre rendas menores",
+          "correct": true
+        },
+        {
+          "text": "É igual para qualquer renda",
+          "correct": false
+        },
+        {
+          "text": "Pesa mais sobre rendas maiores",
+          "correct": false
+        }
+      ],
+      "reveal": "Pesa mais sobre rendas menores. A regressividade compara a carga tributária com a renda, não apenas o valor pago em reais."
+    },
+    {
+      "question": "A diferença entre quem recolhe legalmente e quem suporta o custo é chamada…",
+      "options": [
+        {
+          "text": "Incidência econômica",
+          "correct": true
+        },
+        {
+          "text": "Base de cálculo",
+          "correct": false
+        },
+        {
+          "text": "Competência tributária",
+          "correct": false
+        }
+      ],
+      "reveal": "Incidência econômica. O responsável legal pelo recolhimento pode não ser quem acaba suportando o custo, que pode ser repassado a outras pessoas."
+    },
+    {
+      "question": "Ao calcular um tributo, a base de cálculo é o valor ou medida sobre o qual…",
+      "options": [
+        {
+          "text": "A alíquota incide",
+          "correct": true
+        },
+        {
+          "text": "O prazo é contado",
+          "correct": false
+        },
+        {
+          "text": "A cobrança é fiscalizada",
+          "correct": false
+        }
+      ],
+      "reveal": "A alíquota incide. A base de cálculo pode ser, por exemplo, um valor em dinheiro ou uma quantidade definida pelas regras do tributo."
+    },
+    {
+      "question": "Quando uma regra concede benefício tributário, a receita que o governo deixa de arrecadar é…",
+      "options": [
+        {
+          "text": "Renúncia fiscal",
+          "correct": true
+        },
+        {
+          "text": "Receita vinculada",
+          "correct": false
+        },
+        {
+          "text": "Dívida ativa",
+          "correct": false
+        }
+      ],
+      "reveal": "Renúncia fiscal. É a arrecadação que deixa de ocorrer por causa de um benefício ou tratamento tributário favorecido."
+    },
+    {
+      "question": "A competência tributária de um nível de governo indica…",
+      "options": [
+        {
+          "text": "Poder constitucional de instituir tributos",
+          "correct": true
+        },
+        {
+          "text": "Direito de gastar qualquer receita",
+          "correct": false
+        },
+        {
+          "text": "Dever de fiscalizar toda empresa",
+          "correct": false
+        }
+      ],
+      "reveal": "Poder constitucional de instituir tributos. A Constituição distribui essa autoridade entre os níveis de governo."
+    },
+    {
+      "question": "Ao desenhar um tributo, qual objetivo busca evitar que ele distorça escolhas econômicas?",
+      "options": [
+        {
+          "text": "Neutralidade econômica",
+          "correct": true
+        },
+        {
+          "text": "Progressividade automática",
+          "correct": false
+        },
+        {
+          "text": "Arrecadação garantida",
+          "correct": false
+        }
+      ],
+      "reveal": "Neutralidade econômica. A ideia é reduzir a influência do tributo sobre decisões como consumir, produzir ou investir, sem pressupor que essa influência possa ser totalmente eliminada."
+    }
+  ]
+}

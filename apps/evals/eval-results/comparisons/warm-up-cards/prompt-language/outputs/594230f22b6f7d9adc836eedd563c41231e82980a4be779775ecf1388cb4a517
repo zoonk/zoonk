@@ -1,0 +1,180 @@
+{
+  "cards": [
+    {
+      "question": "During CPR, chest compressions mainly help keep what moving through the body?",
+      "options": [
+        {
+          "text": "Blood",
+          "correct": true
+        },
+        {
+          "text": "Air into the stomach",
+          "correct": false
+        },
+        {
+          "text": "Lymph",
+          "correct": false
+        }
+      ],
+      "reveal": "Blood. Compressions squeeze the chest and help circulate blood to the brain and other organs while the heart is not pumping effectively."
+    },
+    {
+      "question": "An automated external defibrillator checks heart activity; when can it send an electrical pulse?",
+      "options": [
+        {
+          "text": "A dangerous heart rhythm",
+          "correct": true
+        },
+        {
+          "text": "Any stopped heartbeat",
+          "correct": false
+        },
+        {
+          "text": "A slow breathing pattern",
+          "correct": false
+        }
+      ],
+      "reveal": "A dangerous heart rhythm. An AED can deliver a shock for certain abnormal rhythms, but not every type of cardiac arrest has a rhythm that responds to one."
+    },
+    {
+      "question": "Which condition usually starts with blocked blood flow to heart muscle, rather than an electrical failure?",
+      "options": [
+        {
+          "text": "Heart attack",
+          "correct": true
+        },
+        {
+          "text": "Cardiac arrest",
+          "correct": false
+        }
+      ],
+      "reveal": "Heart attack. A blocked coronary artery reduces blood flow to heart muscle; cardiac arrest is when the heart suddenly stops pumping effectively, often because of an electrical problem."
+    },
+    {
+      "question": "When food causes choking, which passage is blocked and keeps air from reaching the lungs?",
+      "options": [
+        {
+          "text": "The windpipe",
+          "correct": true
+        },
+        {
+          "text": "The esophagus",
+          "correct": false
+        },
+        {
+          "text": "The stomach",
+          "correct": false
+        }
+      ],
+      "reveal": "The windpipe. Choking happens when the airway is blocked; the esophagus carries food toward the stomach."
+    },
+    {
+      "question": "In first aid, medical shock means the body's tissues aren't receiving enough…",
+      "options": [
+        {
+          "text": "Oxygen-carrying blood",
+          "correct": true
+        },
+        {
+          "text": "Emotional reassurance",
+          "correct": false
+        },
+        {
+          "text": "Digestive enzymes",
+          "correct": false
+        }
+      ],
+      "reveal": "Oxygen-carrying blood. In medical shock, circulation is too limited to deliver enough oxygen to tissues and organs."
+    },
+    {
+      "question": "A concussion can affect which part of the body even when the skull looks unchanged?",
+      "options": [
+        {
+          "text": "Brain function",
+          "correct": true
+        },
+        {
+          "text": "Skull shape",
+          "correct": false
+        },
+        {
+          "text": "Blood type",
+          "correct": false
+        }
+      ],
+      "reveal": "Brain function. A concussion is a brain injury that can affect how the brain works, even without an obvious change to the skull."
+    },
+    {
+      "question": "Anaphylaxis is a severe allergic reaction; what makes it systemic rather than local?",
+      "options": [
+        {
+          "text": "It affects several body systems",
+          "correct": true
+        },
+        {
+          "text": "It stays in one small area",
+          "correct": false
+        },
+        {
+          "text": "It affects only one sense",
+          "correct": false
+        }
+      ],
+      "reveal": "It affects several body systems. Anaphylaxis is a bodywide allergic reaction, unlike a reaction limited to one spot, such as a patch of itchy skin."
+    },
+    {
+      "question": "As a blood clot forms, what creates a mesh that helps stabilize the plug?",
+      "options": [
+        {
+          "text": "Fibrin strands",
+          "correct": true
+        },
+        {
+          "text": "Platelet fragments",
+          "correct": false
+        },
+        {
+          "text": "Red blood cells",
+          "correct": false
+        }
+      ],
+      "reveal": "Fibrin strands. This protein forms a mesh that reinforces the platelet plug and helps hold the clot together."
+    },
+    {
+      "question": "A partial-thickness burn extends beyond the outer skin into which layer?",
+      "options": [
+        {
+          "text": "The dermis",
+          "correct": true
+        },
+        {
+          "text": "The muscle layer",
+          "correct": false
+        },
+        {
+          "text": "The bone",
+          "correct": false
+        }
+      ],
+      "reveal": "The dermis. Partial-thickness burns involve the outer skin and some of the layer beneath it; full-thickness burns extend through the full skin thickness."
+    },
+    {
+      "question": "Why can a stroke in one brain hemisphere cause weakness on the body's opposite side?",
+      "options": [
+        {
+          "text": "Motor pathways cross sides",
+          "correct": true
+        },
+        {
+          "text": "Each side controls itself",
+          "correct": false
+        },
+        {
+          "text": "The skull redirects signals",
+          "correct": false
+        }
+      ],
+      "reveal": "Motor pathways cross sides. Many nerve signals that control movement cross as they travel between the brain and the body."
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "caseId": "pt-reforma-tributaria",
+  "costUsd": 0.026128,
+  "name": "answer keys",
+  "passed": 9,
+  "problems": [
+    "{\"itemLocator\":\"cards[7]\",\"keyedAnswer\":\"Rendas menores\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"A broad consumption tax can weigh more heavily on lower-income households because they tend to spend a larger share of their income. But the stem asks what *can* happen without specifying a broad tax. A tax on luxury goods can take a larger share of higher-income households’ income, so “Rendas maiores” is also defensible.\"}"
+  ],
+  "run": 2,
+  "side": "challenger",
+  "total": 10
+}

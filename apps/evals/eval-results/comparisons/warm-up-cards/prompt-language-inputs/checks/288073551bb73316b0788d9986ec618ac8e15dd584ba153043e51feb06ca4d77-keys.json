@@ -1,0 +1,12 @@
+{
+  "caseId": "pt-reforma-tributaria",
+  "costUsd": 0.019864,
+  "name": "answer keys",
+  "passed": 9,
+  "problems": [
+    "{\"itemLocator\":\"cards[1]\",\"keyedAnswer\":\"Local do consumo\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"The stem asks where the revenue may go without specifying the allocation rule. “Local do consumo” is correct under the destination principle, while “Local da produção” is defensible under the origin principle. Buying far from headquarters does not establish which rule applies.\"}"
+  ],
+  "run": 1,
+  "side": "challenger",
+  "total": 10
+}

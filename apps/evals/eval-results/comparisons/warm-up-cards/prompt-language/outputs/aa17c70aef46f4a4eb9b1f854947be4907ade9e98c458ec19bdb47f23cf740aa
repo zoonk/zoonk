@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "During CPR, what do repeated chest presses mainly help do?",
+      "options": [
+        {
+          "text": "Move blood through the body",
+          "correct": true
+        },
+        {
+          "text": "Push air into the lungs",
+          "correct": false
+        },
+        {
+          "text": "Restart every stopped heart",
+          "correct": false
+        }
+      ],
+      "reveal": "Move blood through the body. Chest compressions create circulation when the heart is not pumping effectively, but they do not necessarily restart it."
+    },
+    {
+      "question": "Before an AED can advise a shock, what does it examine?",
+      "options": [
+        {
+          "text": "The heart’s electrical rhythm",
+          "correct": true
+        },
+        {
+          "text": "The person’s oxygen level",
+          "correct": false
+        },
+        {
+          "text": "The person’s body temperature",
+          "correct": false
+        }
+      ],
+      "reveal": "The heart’s electrical rhythm. An AED checks whether the rhythm is one that may respond to an electrical shock."
+    },
+    {
+      "question": "In first aid, what does “shock” describe happening inside the body?",
+      "options": [
+        {
+          "text": "Too little blood flow to tissues",
+          "correct": true
+        },
+        {
+          "text": "A sudden emotional reaction",
+          "correct": false
+        },
+        {
+          "text": "A bone breaking under pressure",
+          "correct": false
+        }
+      ],
+      "reveal": "Too little blood flow to tissues. In this medical sense, shock means vital organs may not be getting enough oxygen-rich blood."
+    },
+    {
+      "question": "Why does a brief faint often happen?",
+      "options": [
+        {
+          "text": "Less blood briefly reaches the brain",
+          "correct": true
+        },
+        {
+          "text": "The lungs briefly stop taking in oxygen",
+          "correct": false
+        },
+        {
+          "text": "The brain briefly receives extra blood",
+          "correct": false
+        }
+      ],
+      "reveal": "Less blood briefly reaches the brain. This temporary drop in blood flow can cause a short loss of consciousness."
+    },
+    {
+      "question": "During many seizures, what changes abruptly in the brain?",
+      "options": [
+        {
+          "text": "Electrical activity",
+          "correct": true
+        },
+        {
+          "text": "Bone structure",
+          "correct": false
+        },
+        {
+          "text": "Blood type",
+          "correct": false
+        }
+      ],
+      "reveal": "Electrical activity. A seizure involves a burst of abnormal electrical activity in the brain, which can affect movement, awareness, or sensation."
+    },
+    {
+      "question": "What separates anaphylaxis from a small, local allergic reaction?",
+      "options": [
+        {
+          "text": "A severe reaction across the body",
+          "correct": true
+        },
+        {
+          "text": "A mild reaction in one small area",
+          "correct": false
+        },
+        {
+          "text": "A reaction limited to the stomach",
+          "correct": false
+        }
+      ],
+      "reveal": "A severe reaction across the body. Anaphylaxis is a serious, rapid allergic reaction that can affect multiple body systems."
+    },
+    {
+      "question": "When an object fully blocks the airway, what is missing for speech?",
+      "options": [
+        {
+          "text": "Airflow past the vocal cords",
+          "correct": true
+        },
+        {
+          "text": "Blood flow to the tongue",
+          "correct": false
+        },
+        {
+          "text": "Food reaching the stomach",
+          "correct": false
+        }
+      ],
+      "reveal": "Airflow past the vocal cords. Speech depends on air moving through the voice box, where the vocal cords produce sound."
+    },
+    {
+      "question": "As a cut seals, what protein forms strands that reinforce the platelet plug?",
+      "options": [
+        {
+          "text": "Fibrin",
+          "correct": true
+        },
+        {
+          "text": "Keratin",
+          "correct": false
+        },
+        {
+          "text": "Collagen",
+          "correct": false
+        }
+      ],
+      "reveal": "Fibrin. Its mesh of strands strengthens the platelet plug and helps form a stable blood clot."
+    },
+    {
+      "question": "Why can the center of a very deep burn feel less painful than its edges?",
+      "options": [
+        {
+          "text": "Nerve endings may be damaged",
+          "correct": true
+        },
+        {
+          "text": "The center has more sweat glands",
+          "correct": false
+        },
+        {
+          "text": "The edges have less blood flow",
+          "correct": false
+        }
+      ],
+      "reveal": "Nerve endings may be damaged. A very deep burn can destroy nerves in its center, while less deeply burned areas around it may still feel pain."
+    },
+    {
+      "question": "After a bump or jolt, what does the term concussion describe?",
+      "options": [
+        {
+          "text": "A change in brain function",
+          "correct": true
+        },
+        {
+          "text": "A crack in the skull bone",
+          "correct": false
+        },
+        {
+          "text": "A tear in a neck muscle",
+          "correct": false
+        }
+      ],
+      "reveal": "A change in brain function. A concussion is a type of brain injury caused by a blow or jolt; losing consciousness is not required."
+    }
+  ]
+}

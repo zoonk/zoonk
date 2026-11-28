@@ -1,0 +1,180 @@
+{
+  "cards": [
+    {
+      "question": "In a Japanese apartment listing, what kind of place does \"マンション\" usually mean?",
+      "options": [
+        {
+          "text": "An apartment or condo",
+          "correct": true
+        },
+        {
+          "text": "A grand detached house",
+          "correct": false
+        },
+        {
+          "text": "A hotel room",
+          "correct": false
+        }
+      ],
+      "reveal": "An apartment or condo. Despite resembling the English word “mansion,” it usually refers to a multi-unit residential building or a unit in one."
+    },
+    {
+      "question": "At a Japanese café, if someone asks where the \"コンセント\" is, what are they looking for?",
+      "options": [
+        {
+          "text": "An electrical outlet",
+          "correct": true
+        },
+        {
+          "text": "A permission form",
+          "correct": false
+        },
+        {
+          "text": "A wall switch",
+          "correct": false
+        }
+      ],
+      "reveal": "An electrical outlet. It looks like the English word “consent,” but in Japanese it refers to a place to plug in an electrical device."
+    },
+    {
+      "question": "On a Japanese city map, what kind of place does the label \"ホテル\" point you toward?",
+      "options": [
+        {
+          "text": "A hotel",
+          "correct": true
+        },
+        {
+          "text": "A hospital",
+          "correct": false
+        },
+        {
+          "text": "A train station",
+          "correct": false
+        }
+      ],
+      "reveal": "A hotel. This is a close match to the English word, so it’s a handy sign to recognize."
+    },
+    {
+      "question": "After someone holds a door for you in Japan, what does \"ありがとう\" express?",
+      "options": [
+        {
+          "text": "Thanks",
+          "correct": true
+        },
+        {
+          "text": "An apology",
+          "correct": false
+        },
+        {
+          "text": "A farewell",
+          "correct": false
+        }
+      ],
+      "reveal": "Thanks. This is a casual way to show gratitude; a more polite version adds another part."
+    },
+    {
+      "question": "When you greet someone during the day in Japan, what does \"こんにちは\" usually communicate?",
+      "options": [
+        {
+          "text": "A daytime greeting",
+          "correct": true
+        },
+        {
+          "text": "A good-night greeting",
+          "correct": false
+        },
+        {
+          "text": "A farewell",
+          "correct": false
+        }
+      ],
+      "reveal": "A daytime greeting, often like “hello” or “good afternoon.”"
+    },
+    {
+      "question": "At a shop in Japan, what are you asking when you say \"いくらですか\"?",
+      "options": [
+        {
+          "text": "How much is it?",
+          "correct": true
+        },
+        {
+          "text": "Where is it?",
+          "correct": false
+        },
+        {
+          "text": "When does it open?",
+          "correct": false
+        }
+      ],
+      "reveal": "How much is it? It’s a useful question for asking a price."
+    },
+    {
+      "question": "When you meet a neighbor in the morning in Japan, what does \"おはようございます\" mean?",
+      "options": [
+        {
+          "text": "Good morning",
+          "correct": true
+        },
+        {
+          "text": "Good evening",
+          "correct": false
+        },
+        {
+          "text": "Thank you",
+          "correct": false
+        }
+      ],
+      "reveal": "Good morning. This is a polite greeting, making it a useful choice with someone you don’t know well."
+    },
+    {
+      "question": "When the subject is already clear from context in Japanese, a speaker can often…",
+      "options": [
+        {
+          "text": "Leave it unstated",
+          "correct": true
+        },
+        {
+          "text": "Use an obligatory pronoun",
+          "correct": false
+        },
+        {
+          "text": "Add a required article",
+          "correct": false
+        }
+      ],
+      "reveal": "Leave it unstated. Japanese often leaves out subjects and other understood information, while English usually makes the subject explicit."
+    },
+    {
+      "question": "A Japanese note mixes two syllabic scripts and character symbols; which three writing systems might appear?",
+      "options": [
+        {
+          "text": "Hiragana, katakana, kanji",
+          "correct": true
+        },
+        {
+          "text": "Hiragana, kanji, romaji",
+          "correct": false
+        },
+        {
+          "text": "Katakana, romaji, kanji",
+          "correct": false
+        }
+      ],
+      "reveal": "Hiragana, katakana, and kanji. Japanese writing commonly combines all three, sometimes within a single sentence."
+    },
+    {
+      "question": "When a Japanese name is written in the usual Japanese order in Japan, which part comes first?",
+      "options": [
+        {
+          "text": "Family name",
+          "correct": true
+        },
+        {
+          "text": "Given name",
+          "correct": false
+        }
+      ],
+      "reveal": "Family name. Japanese names are commonly written surname first, followed by given name; English-language contexts may reverse that order."
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "caseId": "en-python",
+  "challenger": {
+    "costUsd": 0.0007251899999999999,
+    "durationMs": 9648.28016699999,
+    "hash": "a4a3d65939c4f652ef1a8853deb5968b4cc6ed5cf98556eff110612843877349",
+    "systemPromptHash": "8dadb4fcd842b9b8b3019fe5b7dddf9d92f5e94eef3581a51f1e4c0f5aa9aa21",
+    "userPromptHash": "baffd163e9314260d6ce4314fc181a51581659af8908ff4a5e5a24f1f59eca43"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.00134762,
+    "durationMs": 19401.791874999995,
+    "hash": "ae8ca1555df0bb3e2bedaabd9d659808c566a66ce6588ff067b74e24ddeac9d4",
+    "systemPromptHash": "66b524fa4ef492c233d5d8767309a04a418e5133113dc0e5a4b8ce5af9758dd4",
+    "userPromptHash": "baffd163e9314260d6ce4314fc181a51581659af8908ff4a5e5a24f1f59eca43"
+  },
+  "run": 1
+}

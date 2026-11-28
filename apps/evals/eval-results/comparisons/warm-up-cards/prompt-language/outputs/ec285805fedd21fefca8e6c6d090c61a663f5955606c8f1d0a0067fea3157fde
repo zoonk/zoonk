@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "When a pendulum clock's rod is lengthened, the clock's pace usually…",
+      "options": [
+        {
+          "text": "Runs faster",
+          "correct": false
+        },
+        {
+          "text": "Runs slower",
+          "correct": true
+        },
+        {
+          "text": "Stays unchanged",
+          "correct": false
+        }
+      ],
+      "reveal": "Runs slower. A longer pendulum takes more time per swing, so the clock loses time unless adjusted."
+    },
+    {
+      "question": "When you wind a spring-driven clock, where is the energy stored?",
+      "options": [
+        {
+          "text": "In the coiled spring",
+          "correct": true
+        },
+        {
+          "text": "In the clock's gears",
+          "correct": false
+        },
+        {
+          "text": "In the clock's case",
+          "correct": false
+        }
+      ],
+      "reveal": "In the coiled spring. Winding tightens it, storing elastic energy that the clock releases as it runs."
+    },
+    {
+      "question": "Which part meters a mechanical clock's stored power into small, timed releases?",
+      "options": [
+        {
+          "text": "The escapement",
+          "correct": true
+        },
+        {
+          "text": "The clock hands",
+          "correct": false
+        },
+        {
+          "text": "The winding key",
+          "correct": false
+        }
+      ],
+      "reveal": "The escapement. It lets the gear train advance in controlled steps while helping keep the timekeeping motion going."
+    },
+    {
+      "question": "On a traditional 12-hour clock, how many times does the minute hand circle per hour-hand turn?",
+      "options": [
+        {
+          "text": "Six times",
+          "correct": false
+        },
+        {
+          "text": "Twelve times",
+          "correct": true
+        },
+        {
+          "text": "Twenty-four times",
+          "correct": false
+        }
+      ],
+      "reveal": "Twelve times. Gears connect the hands so the minute hand makes 12 turns while the hour hand makes one."
+    },
+    {
+      "question": "In many striking clocks, what can let the hands keep moving while the striking stops?",
+      "options": [
+        {
+          "text": "Separate gear trains",
+          "correct": true
+        },
+        {
+          "text": "A heavier pendulum",
+          "correct": false
+        },
+        {
+          "text": "A larger clock face",
+          "correct": false
+        }
+      ],
+      "reveal": "Separate gear trains. Many striking clocks have one train for timekeeping and another for sounding the hours."
+    },
+    {
+      "question": "What lets a mechanical pocket watch keep time without a swinging pendulum?",
+      "options": [
+        {
+          "text": "A balance wheel and spring",
+          "correct": true
+        },
+        {
+          "text": "A falling weight and cord",
+          "correct": false
+        },
+        {
+          "text": "A toothed wheel alone",
+          "correct": false
+        }
+      ],
+      "reveal": "A balance wheel and spring. Their repeated back-and-forth motion provides a portable timekeeping rhythm."
+    },
+    {
+      "question": "Why can ordinary household oil be a poor lubricant for a clock's tiny pivots?",
+      "options": [
+        {
+          "text": "It can gum up",
+          "correct": true
+        },
+        {
+          "text": "It evaporates instantly",
+          "correct": false
+        },
+        {
+          "text": "It makes metal magnetic",
+          "correct": false
+        }
+      ],
+      "reveal": "It can gum up. Clockwork needs suitable, carefully applied lubricant; the wrong oil can thicken and interfere with movement."
+    },
+    {
+      "question": "As a clock runs for years, why can a pivot hole in its brass plate grow oval?",
+      "options": [
+        {
+          "text": "The moving pivot wears it",
+          "correct": true
+        },
+        {
+          "text": "The brass absorbs water",
+          "correct": false
+        },
+        {
+          "text": "The spring pulls it wider",
+          "correct": false
+        }
+      ],
+      "reveal": "The moving pivot wears it. Brass is softer than the steel pivot, and repeated contact can gradually enlarge the hole."
+    },
+    {
+      "question": "A pendulum clock goes tick-tock with uneven gaps; what may be out of adjustment?",
+      "options": [
+        {
+          "text": "Its beat",
+          "correct": true
+        },
+        {
+          "text": "Its dial",
+          "correct": false
+        },
+        {
+          "text": "Its winding key",
+          "correct": false
+        }
+      ],
+      "reveal": "Its beat. The release should alternate at even intervals; an uneven tick-tock can mean the pendulum is out of beat."
+    },
+    {
+      "question": "Why can an antique wooden clock case change size slightly as the seasons change?",
+      "options": [
+        {
+          "text": "Wood takes up or releases moisture",
+          "correct": true
+        },
+        {
+          "text": "The gears warm the wood",
+          "correct": false
+        },
+        {
+          "text": "The varnish changes the grain",
+          "correct": false
+        }
+      ],
+      "reveal": "Wood takes up or releases moisture. Changes in humidity can make wood swell or shrink slightly."
+    }
+  ]
+}

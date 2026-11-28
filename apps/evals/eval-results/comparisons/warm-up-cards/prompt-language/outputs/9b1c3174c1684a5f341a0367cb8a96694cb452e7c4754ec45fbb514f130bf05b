@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "Si un formulario pide “parents' names”, ¿los nombres de quiénes busca?",
+      "options": [
+        {
+          "text": "Tus padres",
+          "correct": true
+        },
+        {
+          "text": "Tus parientes",
+          "correct": false
+        },
+        {
+          "text": "Tus amistades",
+          "correct": false
+        }
+      ],
+      "reveal": "De tus padres. “Parents” significa “padres”; “parientes” se dice “relatives”."
+    },
+    {
+      "question": "Si alguien corrige un dato diciendo “Actually, ...”, ¿qué quiere decir con esa palabra?",
+      "options": [
+        {
+          "text": "En realidad",
+          "correct": true
+        },
+        {
+          "text": "Actualmente",
+          "correct": false
+        },
+        {
+          "text": "Por casualidad",
+          "correct": false
+        }
+      ],
+      "reveal": "En realidad. “Actually” sirve para aclarar o corregir algo; “actualmente” se dice “currently”."
+    },
+    {
+      "question": "Tras equivocarse frente al grupo, alguien dice “I'm embarrassed”; ¿cómo se siente?",
+      "options": [
+        {
+          "text": "Con vergüenza",
+          "correct": true
+        },
+        {
+          "text": "Embarazada",
+          "correct": false
+        },
+        {
+          "text": "Con aburrimiento",
+          "correct": false
+        }
+      ],
+      "reveal": "Con vergüenza. “Embarrassed” significa “avergonzado”; no significa “embarazada”."
+    },
+    {
+      "question": "En un mapa del campus, “library” marca el sitio donde puedes…",
+      "options": [
+        {
+          "text": "Pedir libros prestados",
+          "correct": true
+        },
+        {
+          "text": "Comprar libros",
+          "correct": false
+        },
+        {
+          "text": "Pedir comida",
+          "correct": false
+        }
+      ],
+      "reveal": "Pedir libros prestados. “Library” es una biblioteca; una librería, donde compras libros, es una “bookstore”."
+    },
+    {
+      "question": "Si una propuesta es “sensible”, ¿qué cualidad destaca en inglés?",
+      "options": [
+        {
+          "text": "Que es sensata",
+          "correct": true
+        },
+        {
+          "text": "Que es sensible al tacto",
+          "correct": false
+        },
+        {
+          "text": "Que es sensacional",
+          "correct": false
+        }
+      ],
+      "reveal": "Que es sensata. En inglés, “sensible” describe algo razonable o práctico, no a alguien especialmente sensible."
+    },
+    {
+      "question": "Al saludar en una charla casual, ¿qué función suele tener “How are you?”",
+      "options": [
+        {
+          "text": "Un saludo breve",
+          "correct": true
+        },
+        {
+          "text": "Una pregunta médica",
+          "correct": false
+        },
+        {
+          "text": "Una despedida formal",
+          "correct": false
+        }
+      ],
+      "reveal": "Un saludo breve. Muchas veces se responde de manera corta y se sigue la conversación, sin dar un informe detallado sobre la salud."
+    },
+    {
+      "question": "En una tienda, si preguntas “How much is it?”, ¿qué quieres averiguar?",
+      "options": [
+        {
+          "text": "El precio",
+          "correct": true
+        },
+        {
+          "text": "El tamaño",
+          "correct": false
+        },
+        {
+          "text": "El origen",
+          "correct": false
+        }
+      ],
+      "reveal": "El precio. “How much” pregunta cuánto cuesta algo."
+    },
+    {
+      "question": "Con “she” en presente simple, ¿qué forma completa “work” en una oración afirmativa?",
+      "options": [
+        {
+          "text": "“works”",
+          "correct": true
+        },
+        {
+          "text": "“work”",
+          "correct": false
+        },
+        {
+          "text": "“working”",
+          "correct": false
+        }
+      ],
+      "reveal": "“Works”. En presente simple, la mayoría de los verbos lleva “-s” con “he”, “she” o “it”."
+    },
+    {
+      "question": "Al pedir que alguien abra una ventana con “Could you open the window?”, ¿qué tono suele tener la frase?",
+      "options": [
+        {
+          "text": "Una petición cortés",
+          "correct": true
+        },
+        {
+          "text": "Una capacidad pasada",
+          "correct": false
+        },
+        {
+          "text": "Un permiso concedido",
+          "correct": false
+        }
+      ],
+      "reveal": "Una petición cortés. En esa frase, “could” suaviza la solicitud; no se refiere a una habilidad pasada."
+    },
+    {
+      "question": "En inglés de EE.UU., ¿qué grafía suele llevar la palabra para el color de una pared?",
+      "options": [
+        {
+          "text": "“color”",
+          "correct": true
+        },
+        {
+          "text": "“colour”",
+          "correct": false
+        },
+        {
+          "text": "“collor”",
+          "correct": false
+        }
+      ],
+      "reveal": "“Color”. En inglés de EE.UU. se escribe así; en inglés británico suele escribirse “colour”."
+    }
+  ]
+}

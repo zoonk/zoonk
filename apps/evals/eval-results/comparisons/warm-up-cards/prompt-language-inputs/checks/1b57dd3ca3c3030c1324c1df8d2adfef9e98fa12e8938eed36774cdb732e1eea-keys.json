@@ -1,0 +1,12 @@
+{
+  "caseId": "pt-espanhol",
+  "costUsd": 0.031112,
+  "name": "answer keys",
+  "passed": 9,
+  "problems": [
+    "{\"itemLocator\":\"cards[8]\",\"keyedAnswer\":\"\\\"el agua fría\\\"\",\"kind\":\"noCorrectOption\",\"workedAnswer\":\"To say that the water is cold, use “El agua está fría.” The keyed phrase “el agua fría” means “the cold water.” Its article and adjective are correct, but none of the options includes the verb needed for the statement.\"}"
+  ],
+  "run": 2,
+  "side": "challenger",
+  "total": 10
+}

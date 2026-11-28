@@ -1,0 +1,13 @@
+{
+  "caseId": "en-quantum-physics",
+  "costUsd": 0.023936,
+  "name": "answer keys",
+  "passed": 8,
+  "problems": [
+    "{\"itemLocator\":\"cards[4]\",\"keyedAnswer\":\"Allowed energies come in steps\",\"kind\":\"factualError\",\"workedAnswer\":\"Discrete energy gaps explain absorption between bound levels. A photon can also ionize the atom: the outgoing electron carries away the energy above the ionization threshold. Absorption is therefore not limited to discrete photon energies.\"}",
+    "{\"itemLocator\":\"cards[8]\",\"keyedAnswer\":\"As a combination of states\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"Both a coherent superposition and a statistical mixture are possible before measurement. For example, randomly preparing spin-up or spin-down with equal probability produces a classical mixture of those two quantum states. The stem does not specify a coherent preparation.\"}"
+  ],
+  "run": 1,
+  "side": "challenger",
+  "total": 10
+}

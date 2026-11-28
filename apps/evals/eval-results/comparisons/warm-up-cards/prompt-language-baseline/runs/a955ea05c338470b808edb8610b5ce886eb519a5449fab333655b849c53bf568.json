@@ -1,0 +1,13 @@
+{
+  "caseId": "en-quantum-physics",
+  "challenger": {
+    "costUsd": 0.00152162,
+    "durationMs": 42469.36141700001,
+    "hash": "458c266008cbf585e89889be40eb40b82dd14151f6addf10b1e83769cd48bb4e",
+    "systemPromptHash": "66b524fa4ef492c233d5d8767309a04a418e5133113dc0e5a4b8ce5af9758dd4",
+    "userPromptHash": "76c8f5edf3b5f5a4efeb2d82662bf00fc0656033f1bb4036c68d738ca23c6549"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 2
+}

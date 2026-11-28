@@ -1,0 +1,13 @@
+{
+  "caseId": "pt-oab",
+  "challenger": {
+    "costUsd": 0.0020256299999999996,
+    "durationMs": 31980.260707999987,
+    "hash": "2515e91b39a70f38c4535871f8cebc98115e559318f91024c4ef4b7314a8f964",
+    "systemPromptHash": "3122a02e88f361a0c79e6592ca6e25e18189c3fe31c3f766cc26271c3a159c6e",
+    "userPromptHash": "1b640c029c0c9e113578bc2eb275de498c875ad7bab06ae9f6c5b5ba5cc425a2"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 1
+}

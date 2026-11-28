@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "Ao colocar um canudo num copo com água, ele parece mudar de direção por causa da...",
+      "options": [
+        {
+          "text": "Refração da luz",
+          "correct": true
+        },
+        {
+          "text": "Reflexão da luz",
+          "correct": false
+        },
+        {
+          "text": "Difração da luz",
+          "correct": false
+        }
+      ],
+      "reveal": "Refração da luz. Ao passar da água para o ar, a luz muda de velocidade e de direção, fazendo o canudo parecer deslocado."
+    },
+    {
+      "question": "Numa cadeia alimentar, qual recurso tende a ficar menos disponível a cada nível trófico?",
+      "options": [
+        {
+          "text": "Energia disponível",
+          "correct": true
+        },
+        {
+          "text": "Matéria dos organismos",
+          "correct": false
+        },
+        {
+          "text": "Água do ambiente",
+          "correct": false
+        }
+      ],
+      "reveal": "Energia disponível. Parte dela se dissipa como calor a cada transferência entre níveis; a matéria, por sua vez, pode circular no ecossistema."
+    },
+    {
+      "question": "Quando alguém diz que Pedro “chegou voando” para a aula, a expressão sugere que ele...",
+      "options": [
+        {
+          "text": "Chegou muito rápido",
+          "correct": true
+        },
+        {
+          "text": "Chegou antes do horário",
+          "correct": false
+        },
+        {
+          "text": "Veio de avião",
+          "correct": false
+        }
+      ],
+      "reveal": "Chegou muito rápido. Nesse contexto, “voando” é uma expressão figurada, não uma descrição literal do meio de transporte."
+    },
+    {
+      "question": "Por que uma área central costuma ficar mais quente que um parque arborizado próximo?",
+      "options": [
+        {
+          "text": "Asfalto e pouca vegetação",
+          "correct": true
+        },
+        {
+          "text": "Solo mais úmido",
+          "correct": false
+        },
+        {
+          "text": "Vegetação mais densa",
+          "correct": false
+        }
+      ],
+      "reveal": "Asfalto e pouca vegetação. Superfícies construídas absorvem e retêm calor, enquanto árvores fazem sombra e liberam vapor d’água."
+    },
+    {
+      "question": "Na Primeira Revolução Industrial, qual fonte de energia alimentava muitas máquinas a vapor?",
+      "options": [
+        {
+          "text": "Carvão mineral",
+          "correct": true
+        },
+        {
+          "text": "Energia nuclear",
+          "correct": false
+        },
+        {
+          "text": "Painéis solares",
+          "correct": false
+        }
+      ],
+      "reveal": "Carvão mineral. Sua queima aquecia água para produzir vapor, que movimentava máquinas em fábricas e transportes."
+    },
+    {
+      "question": "Uma receita para 4 pessoas usa 300 g de farinha; para 8, mantendo as proporções, serão...",
+      "options": [
+        {
+          "text": "600 g",
+          "correct": true
+        },
+        {
+          "text": "450 g",
+          "correct": false
+        },
+        {
+          "text": "900 g",
+          "correct": false
+        }
+      ],
+      "reveal": "600 g. Como a quantidade de pessoas dobrou, a quantidade de farinha também precisa dobrar para manter a mesma proporção."
+    },
+    {
+      "question": "No sal de cozinha, o que mantém os íons organizados no cristal?",
+      "options": [
+        {
+          "text": "Atração entre íons",
+          "correct": true
+        },
+        {
+          "text": "Compartilhamento de pares",
+          "correct": false
+        },
+        {
+          "text": "Elétrons livres entre átomos",
+          "correct": false
+        }
+      ],
+      "reveal": "Atração entre íons. Cargas opostas se atraem e formam a estrutura cristalina característica do sal."
+    },
+    {
+      "question": "Um piso retangular mede 8 m por 5 m; qual é a área que ele cobre?",
+      "options": [
+        {
+          "text": "40 m²",
+          "correct": true
+        },
+        {
+          "text": "26 m²",
+          "correct": false
+        },
+        {
+          "text": "13 m²",
+          "correct": false
+        }
+      ],
+      "reveal": "40 m². A área de um retângulo é o produto entre as medidas dos lados: 8 m × 5 m."
+    },
+    {
+      "question": "As folhas de muitas plantas parecem verdes porque a clorofila...",
+      "options": [
+        {
+          "text": "Reflete mais luz verde",
+          "correct": true
+        },
+        {
+          "text": "Absorve mais luz verde",
+          "correct": false
+        },
+        {
+          "text": "Emite luz verde própria",
+          "correct": false
+        }
+      ],
+      "reveal": "Reflete mais luz verde. A clorofila absorve principalmente luz vermelha e azul, e parte da luz verde refletida chega aos nossos olhos."
+    },
+    {
+      "question": "Numa campanha, verbos como “participe” e “ajude” são usados principalmente para...",
+      "options": [
+        {
+          "text": "Convidar à ação",
+          "correct": true
+        },
+        {
+          "text": "Apresentar dados neutros",
+          "correct": false
+        },
+        {
+          "text": "Contar uma lembrança pessoal",
+          "correct": false
+        }
+      ],
+      "reveal": "Convidar à ação. Esses verbos chamam o leitor para participar, uma estratégia comum em textos de campanha."
+    }
+  ]
+}

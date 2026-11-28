@@ -1,0 +1,19 @@
+{
+  "caseId": "pt-reforma-tributaria",
+  "challenger": {
+    "costUsd": 0.0019953,
+    "durationMs": 26247.041790999996,
+    "hash": "a6107a90447696f85604df9a96399a6faaee59b2403d3af8498bc536d4a2ed68",
+    "systemPromptHash": "78e262023e0611d8a7e591578d7c9ce499ae815246052198664df133b80b69a2",
+    "userPromptHash": "3c46ca9a034b16700ef325e14359de6584edb98b9602c86ad4a7b373091224f9"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.0018827199999999998,
+    "durationMs": 33583.916417,
+    "hash": "c5686519b8f6083b93346ff77a87e65ffe8bd3cd6a8e029fe6d471c6e6d96558",
+    "systemPromptHash": "66b524fa4ef492c233d5d8767309a04a418e5133113dc0e5a4b8ce5af9758dd4",
+    "userPromptHash": "3c46ca9a034b16700ef325e14359de6584edb98b9602c86ad4a7b373091224f9"
+  },
+  "run": 1
+}

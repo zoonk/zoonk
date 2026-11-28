@@ -1,0 +1,13 @@
+{
+  "caseId": "pt-enem",
+  "challenger": {
+    "costUsd": 0.0015515249999999998,
+    "durationMs": 22216.647500000006,
+    "hash": "902fa39ca7ffb27f82fabf1608d73739428cd5a36c97a04d5c54c4b53e26b195",
+    "systemPromptHash": "3122a02e88f361a0c79e6592ca6e25e18189c3fe31c3f766cc26271c3a159c6e",
+    "userPromptHash": "26b390e26beae95d494afef4d8ea964206450d8ef310238b81ad1f4d544de2e5"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 1
+}

@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "A Python loop runs through range(4); how many times does its body run?",
+      "options": [
+        {
+          "text": "3 times",
+          "correct": false
+        },
+        {
+          "text": "4 times",
+          "correct": true
+        },
+        {
+          "text": "5 times",
+          "correct": false
+        }
+      ],
+      "reveal": "4 times. The sequence starts at 0 and stops before 4, so the loop gets four values."
+    },
+    {
+      "question": "When Python checks whether x matches 5, which symbol belongs in the condition?",
+      "options": [
+        {
+          "text": "=",
+          "correct": false
+        },
+        {
+          "text": "==",
+          "correct": true
+        },
+        {
+          "text": "!=",
+          "correct": false
+        }
+      ],
+      "reveal": "==. A single equals sign assigns a value; two equals signs compare values."
+    },
+    {
+      "question": "In Python, what position number refers to the first item in a list?",
+      "options": [
+        {
+          "text": "1",
+          "correct": false
+        },
+        {
+          "text": "0",
+          "correct": true
+        },
+        {
+          "text": "-1",
+          "correct": false
+        }
+      ],
+      "reveal": "0. Python lists count positions from zero, so the second item is at position 1."
+    },
+    {
+      "question": "After a line ending in a colon, what tells Python which lines belong inside its block?",
+      "options": [
+        {
+          "text": "Indentation",
+          "correct": true
+        },
+        {
+          "text": "Parentheses",
+          "correct": false
+        },
+        {
+          "text": "Semicolons",
+          "correct": false
+        }
+      ],
+      "reveal": "Indentation. The extra leading spaces mark which statements are grouped inside a block."
+    },
+    {
+      "question": "What does 'ha' * 3 produce in Python?",
+      "options": [
+        {
+          "text": "hahaha",
+          "correct": true
+        },
+        {
+          "text": "ha3",
+          "correct": false
+        },
+        {
+          "text": "ha ha ha",
+          "correct": false
+        }
+      ],
+      "reveal": "hahaha. Multiplying a string by a whole number repeats its characters that many times."
+    },
+    {
+      "question": "A Python mapping stores Emma's grade under 'Emma'; what retrieves that value?",
+      "options": [
+        {
+          "text": "grades['Emma']",
+          "correct": true
+        },
+        {
+          "text": "grades[0]",
+          "correct": false
+        },
+        {
+          "text": "grades.Emma",
+          "correct": false
+        }
+      ],
+      "reveal": "grades['Emma']. A mapping uses the matching key inside square brackets to look up its value."
+    },
+    {
+      "question": "A text value '7' is converted with int(...); what kind of value comes back?",
+      "options": [
+        {
+          "text": "An integer",
+          "correct": true
+        },
+        {
+          "text": "A string",
+          "correct": false
+        },
+        {
+          "text": "A float",
+          "correct": false
+        }
+      ],
+      "reveal": "An integer. The text characters become a whole-number value that can be used in arithmetic."
+    },
+    {
+      "question": "A function reaches its end without a return value; what does its call produce?",
+      "options": [
+        {
+          "text": "None",
+          "correct": true
+        },
+        {
+          "text": "0",
+          "correct": false
+        },
+        {
+          "text": "An empty string",
+          "correct": false
+        }
+      ],
+      "reveal": "None. Python uses this special value when a function finishes without returning another value."
+    },
+    {
+      "question": "What does Python use to keep a changing sequence of items in one variable?",
+      "options": [
+        {
+          "text": "A list",
+          "correct": true
+        },
+        {
+          "text": "A string",
+          "correct": false
+        },
+        {
+          "text": "A Boolean",
+          "correct": false
+        }
+      ],
+      "reveal": "A list. It can hold multiple items in order, and you can add, remove, or replace items."
+    },
+    {
+      "question": "In a condition, what does the value False mean?",
+      "options": [
+        {
+          "text": "The condition is not true",
+          "correct": true
+        },
+        {
+          "text": "The condition has no value",
+          "correct": false
+        },
+        {
+          "text": "The condition is still running",
+          "correct": false
+        }
+      ],
+      "reveal": "The condition is not true. False is one of Python's two Boolean values, alongside True."
+    }
+  ]
+}

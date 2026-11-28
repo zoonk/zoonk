@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "En una tienda de libros, ¿qué encuentras si el letrero dice \"library\"?",
+      "options": [
+        {
+          "text": "Una biblioteca",
+          "correct": true
+        },
+        {
+          "text": "Una librería",
+          "correct": false
+        },
+        {
+          "text": "Una papelería",
+          "correct": false
+        }
+      ],
+      "reveal": "Una biblioteca. En inglés de EE. UU., \"library\" es una biblioteca; para una tienda de libros se usa \"bookstore\"."
+    },
+    {
+      "question": "Si Sofía dice \"I'm embarrassed\" tras equivocarse en clase, ¿cómo se siente?",
+      "options": [
+        {
+          "text": "Avergonzada",
+          "correct": true
+        },
+        {
+          "text": "Embarazada",
+          "correct": false
+        },
+        {
+          "text": "Enojada",
+          "correct": false
+        }
+      ],
+      "reveal": "Avergonzada. \"Embarrassed\" significa sentir vergüenza; \"pregnant\" significa embarazada."
+    },
+    {
+      "question": "Al llegar a una oficina, ¿qué señala el letrero \"Exit\" en inglés de EE. UU.?",
+      "options": [
+        {
+          "text": "La salida",
+          "correct": true
+        },
+        {
+          "text": "El éxito",
+          "correct": false
+        },
+        {
+          "text": "La entrada",
+          "correct": false
+        }
+      ],
+      "reveal": "La salida. \"Exit\" indica por dónde salir; \"éxito\" se dice \"success\" en inglés."
+    },
+    {
+      "question": "Si Diego dice \"My parents live in Puebla\", ¿quiénes viven ahí?",
+      "options": [
+        {
+          "text": "Sus padres",
+          "correct": true
+        },
+        {
+          "text": "Sus parientes",
+          "correct": false
+        },
+        {
+          "text": "Sus vecinos",
+          "correct": false
+        }
+      ],
+      "reveal": "Sus padres. \"Parents\" significa mamá y papá; para hablar de parientes en general se usa \"relatives\"."
+    },
+    {
+      "question": "Si Mateo dice \"I can assist you\", ¿qué ofrece hacer en ese momento?",
+      "options": [
+        {
+          "text": "Ayudarte",
+          "correct": true
+        },
+        {
+          "text": "Acompañarte a un evento",
+          "correct": false
+        },
+        {
+          "text": "Asistir a clase contigo",
+          "correct": false
+        }
+      ],
+      "reveal": "Ayudarte. En inglés, \"assist\" significa ayudar; para decir que alguien asiste a un evento se usa \"attend\"."
+    },
+    {
+      "question": "En una consulta médica, ¿a qué se refiere \"doctor\" en inglés de EE. UU.?",
+      "options": [
+        {
+          "text": "A un médico",
+          "correct": true
+        },
+        {
+          "text": "A un enfermero",
+          "correct": false
+        },
+        {
+          "text": "A un paciente",
+          "correct": false
+        }
+      ],
+      "reveal": "A un médico. \"Doctor\" se parece a \"doctor\" en español y suele nombrar a quien atiende pacientes en un consultorio."
+    },
+    {
+      "question": "En el tianguis, ¿qué significa \"How much is it?\" al preguntar por una pieza?",
+      "options": [
+        {
+          "text": "¿Cuánto cuesta?",
+          "correct": true
+        },
+        {
+          "text": "¿Dónde está?",
+          "correct": false
+        },
+        {
+          "text": "¿De quién es?",
+          "correct": false
+        }
+      ],
+      "reveal": "¿Cuánto cuesta? Es una forma común de preguntar el precio de algo en inglés."
+    },
+    {
+      "question": "En una cafetería, ¿qué añade \"Please\" al pedir un vaso de agua?",
+      "options": [
+        {
+          "text": "Por favor",
+          "correct": true
+        },
+        {
+          "text": "Muchas gracias",
+          "correct": false
+        },
+        {
+          "text": "Con permiso",
+          "correct": false
+        }
+      ],
+      "reveal": "Por favor. \"Please\" hace que una petición suene cortés; no significa \"gracias\"."
+    },
+    {
+      "question": "Para decir su edad, ¿qué completa \"I ___ 20 years old\" de forma natural en inglés?",
+      "options": [
+        {
+          "text": "\"am\"",
+          "correct": true
+        },
+        {
+          "text": "\"have\"",
+          "correct": false
+        },
+        {
+          "text": "\"do\"",
+          "correct": false
+        }
+      ],
+      "reveal": "\"am\". En inglés, la edad se expresa con el verbo \"be\"; en español decimos tener cierta edad."
+    },
+    {
+      "question": "En inglés de EE. UU., ¿qué puede significar \"you\" cuando Sofía habla con tres amigos?",
+      "options": [
+        {
+          "text": "Solo a una persona",
+          "correct": false
+        },
+        {
+          "text": "A una o varias personas",
+          "correct": true
+        },
+        {
+          "text": "Solo a una familia",
+          "correct": false
+        }
+      ],
+      "reveal": "A una o varias personas. \"You\" sirve para singular y plural; el contexto aclara a quién se dirige."
+    }
+  ]
+}

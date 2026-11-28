@@ -1,0 +1,13 @@
+{
+  "caseId": "en-beekeeping",
+  "costUsd": 0.03168,
+  "name": "answer keys",
+  "passed": 8,
+  "problems": [
+    "{\"itemLocator\":\"cards[3]\",\"keyedAnswer\":\"Unfertilized eggs\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"Queens normally lay unfertilized eggs in larger drone cells. Those eggs can develop into males, so “Eggs laid in larger cells” also answers the question. Cell size does not itself determine sex.\"}",
+    "{\"itemLocator\":\"cards[9]\",\"keyedAnswer\":\"To help retain liquid honey\",\"kind\":\"noCorrectOption\",\"workedAnswer\":\"The stem reverses the slope: a typical cell rises from its base toward its opening. If it rose from the opening toward the base as stated, the opening would be lower, and gravity would draw honey toward it rather than help retain it. Neither distractor explains the stated slope.\"}"
+  ],
+  "run": 2,
+  "side": "challenger",
+  "total": 10
+}
