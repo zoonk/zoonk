@@ -259,11 +259,7 @@ struct PhaseEnd: Equatable {
   }
 
   init(_ isoDate: String, estimate: Bool, grain: DateGrain, today: String) {
-    // In a column of dates, a month names its year only when it isn't this year's.
-    let date =
-      grain == .month
-      ? PlanDate.monthText(isoDate, today: today)
-      : PlanDate.text(isoDate, today: today, grain: grain)
+    let date = PlanDate.text(isoDate, today: today, grain: grain)
 
     guard estimate else {
       shown = date

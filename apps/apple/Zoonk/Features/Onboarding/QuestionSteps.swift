@@ -945,7 +945,7 @@ private struct DateQuestion: View {
       isoDay(date).prefix(7) == month.prefix(7)
     {
       Text(
-        "No exam date in \(PlanDate.monthText(month, today: PlanDate.today(), wide: true))",
+        "No exam date in \(PlanDate.longText(month, month: true))",
         tableName: "Exam",
         comment: "An exam with no sitting in the learner's month")
 

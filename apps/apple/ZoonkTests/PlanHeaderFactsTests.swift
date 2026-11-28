@@ -29,11 +29,18 @@ final class PlanHeaderFactsTests: XCTestCase {
       target: nil, finish: ("2027-01-22", .day), isExam: false, today: "2027-01-04")
     let month = PlanEndDateValue(
       target: nil, finish: ("2027-04-20", .month), isExam: false, today: "2027-01-04")
+    let nextYearsMonth = PlanEndDateValue(
+      target: nil, finish: ("2028-04-20", .month), isExam: false, today: "2027-01-04")
 
     XCTAssertEqual(day.shown, "~Jan 22")
     XCTAssertEqual(day.spoken, "About Jan 22")
     XCTAssertTrue(day.isDate)
-    XCTAssertEqual(month.shown, "~Apr 2027")
+    XCTAssertEqual(month.shown, "~Apr", "a month names its year only when it isn't this year's")
+    XCTAssertEqual(nextYearsMonth.shown, "~Apr 2028")
+  }
+
+  func testTheFinishReadoutNamesItsMonthsYearEvenInThisYear() {
+    XCTAssertEqual(PlanDate.finishText("2027-04-20", grain: .month), "April 2027")
   }
 
   func testASetEndDateWinsOverTheEstimatedFinish() {

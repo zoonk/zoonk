@@ -1000,13 +1000,14 @@ enum PlanDate {
     text(isoDate, today: today, grain: month ? .month : .day, weekday: weekday)
   }
 
-  /// "Nov 20", "Nov 2027" or "2031": an estimate names only what it can tell.
+  /// "Nov 20", "Nov" or "2031", with the year when it isn't this year's: an estimate names only
+  /// what it can tell.
   static func text(
     _ isoDate: String, today: String, grain: DateGrain, weekday: Bool = false
   ) -> String {
     switch grain {
     case .day: format(isoDate, .row, today: today, weekday: weekday)
-    case .month: format(isoDate, .rowMonth, today: today, year: .always)
+    case .month: format(isoDate, .rowMonth, today: today)
     case .year: format(isoDate, .year, today: today, year: .never)
     }
   }
@@ -1048,9 +1049,9 @@ enum PlanDate {
     return moment.formatted((thisYear ? style : style.year()).locale(.appLanguage))
   }
 
-  /// "Nov", or "November" when `wide`, with the year when it isn't this year's.
-  static func monthText(_ isoDate: String, today: String, wide: Bool = false) -> String {
-    format(isoDate, wide ? .sentenceMonth : .rowMonth, today: today)
+  /// "November", with the year when it isn't this year's.
+  static func monthText(_ isoDate: String, today: String) -> String {
+    format(isoDate, .sentenceMonth, today: today)
   }
 
   private static func inAnotherYear(_ isoDate: String, today: String) -> Bool {

@@ -1006,7 +1006,7 @@ func planNotReadyLine(lessons: Int, start: String?, today: String) -> Text {
 
   if start.prefix(7) != today.prefix(7) {
     return Text(
-      "\(lessons) lessons\u{00A0}· starts in \(PlanDate.monthText(start, today: today, wide: true))",
+      "\(lessons) lessons\u{00A0}· starts in \(PlanDate.monthText(start, today: today))",
       tableName: "Plan",
       comment: "A topic not ready yet: its lessons and the month they start, like 'January'")
   }

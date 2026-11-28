@@ -86,7 +86,7 @@ struct PlanDateSection: View {
       SectionFooter {
         if namedMonth, let date = schedule.targetDate {
           Text(
-            "\(PlanDate.text(date, today: plan.today, month: true)) for now. Pick the day when you know it.",
+            "\(PlanDate.longText(date, month: true)) for now. Pick the day when you know it.",
             tableName: "Plan",
             comment:
               "A month the learner named stands until they pick the day; the argument is the month the learner named, like 'May 2027'"
