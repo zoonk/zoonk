@@ -2,6 +2,7 @@ import { type ExamResearchPlan } from "@zoonk/ai/tasks/research/plan";
 import { type ExamIdentity } from "@zoonk/core/library/exams/identity";
 import { createHook, getWorkflowMetadata } from "workflow";
 import { type Run } from "workflow/api";
+import { repeatUntil } from "../_shared/repeat-until";
 import { claimRunToken, joinRun, startOnce } from "../_shared/run-token";
 import { scheduleFreshnessChecksStep } from "../freshness/steps/schedule-freshness-checks-step";
 import { getGoalContentToken, goalContentWorkflow } from "../goals/goal-content-workflow";
@@ -29,6 +30,8 @@ import { lookUpSubjectQuestionsStep } from "./steps/subject-questions-step";
 import { lookUpTargetCutoffStep } from "./steps/target-cutoff-step";
 import { lookUpTopicFrequencyStep } from "./steps/topic-frequency-step";
 import { waitForMaterialReading } from "./wait-for-material-reading";
+
+const MAX_COUNTRY_PASSES = 5;
 
 export function getGoalResearchToken(goalId: string): string {
   return `research-goal:${goalId}`;
@@ -264,6 +267,41 @@ async function research({
   return researchSources({ analytics, goal, plan, topic, uploads });
 }
 
+type CountryPass = { next: ResearchGoal | null; result: ResearchResult };
+
+async function researchCountryPass({
+  goal,
+  input,
+  runId,
+}: {
+  goal: ResearchGoal;
+  input: ResearchInput;
+  runId: string;
+}): Promise<CountryPass> {
+  const result = await research({ goal, input, runId });
+  const latest = goal.kind === "exam" ? await loadResearchGoalStep(goal.id) : null;
+
+  return { next: latest && latest.contentCountry !== goal.contentCountry ? latest : null, result };
+}
+
+/**
+ * The learner can change an exam's country while its research runs. The answer's wake finds this
+ * run past its wait, so it researches the new country's exam itself before it ends.
+ */
+async function researchLatestCountry(input: {
+  goal: ResearchGoal;
+  input: ResearchInput;
+  runId: string;
+}): Promise<ResearchResult> {
+  const pass = await repeatUntil<CountryPass>({
+    done: (current) => current.next === null,
+    run: (previous) => researchCountryPass({ ...input, goal: previous?.next ?? input.goal }),
+    times: MAX_COUNTRY_PASSES,
+  });
+
+  return pass.result;
+}
+
 export async function researchWorkflow(input: ResearchInput): Promise<ResearchResult> {
   "use workflow";
 
@@ -283,7 +321,7 @@ export async function researchWorkflow(input: ResearchInput): Promise<ResearchRe
     await waitForMaterialReading({ kind: "sources", sourceIds });
   }
 
-  const result = await research({ goal, input, runId: workflowRunId });
+  const result = await researchLatestCountry({ goal, input, runId: workflowRunId });
 
   await recordResearchOutcomeStep({ goalId: goal.id, result });
 

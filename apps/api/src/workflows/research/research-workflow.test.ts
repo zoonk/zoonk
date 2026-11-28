@@ -306,6 +306,34 @@ describe(researchWorkflow, () => {
     );
   });
 
+  it("researches the new country's exam when the learner changes the country while it runs", async () => {
+    const user = await userFixture();
+
+    const goal = await goalFixture({
+      contentCountry: "PT",
+      details: { answered: ["contentCountry"], countryDependent: true, examName: "TCDF" },
+      kind: "exam",
+      planRevealedAt: null,
+      userId: user.id,
+    });
+
+    const { plan } = await replayTcdfResearch();
+
+    vi.mocked(generateExamResearchPlan).mockImplementationOnce(async () => {
+      await saveAnswerInputs({ goal, input: { country: "BR", question: "contentCountry" } });
+      return { ...TASK_RESULT, data: plan };
+    });
+
+    await expect(researchWorkflow({ goalId: goal.id })).resolves.toMatchObject({ status: "ready" });
+
+    expect(
+      vi.mocked(generateExamResearchPlan).mock.calls.map(([call]) => call.details),
+    ).toStrictEqual([
+      expect.stringContaining('"contentCountry":"PT"'),
+      expect.stringContaining('"contentCountry":"BR"'),
+    ]);
+  });
+
   it("builds the blueprint from official sources, keeps every fact's passage and links the goal", async () => {
     const { goal } = await examGoal();
     const { extraction, plan } = await replayTcdfResearch();

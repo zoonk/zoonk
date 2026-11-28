@@ -5,6 +5,7 @@ import { type GoalKind } from "@zoonk/db";
 export type ResearchGoal = {
   /** An exam each country runs its own version of, whose country the learner hasn't given yet. */
   awaitingCountry: boolean;
+  contentCountry: string | null;
   details: string;
   id: string;
   kind: GoalKind;
