@@ -368,6 +368,30 @@ test("an answer to a test another device stopped shows that test's result", asyn
   await expect(page.getByText("That didn't go through. Your answers are kept.")).toBeHidden();
 });
 
+test("the Plan's row opens the last test's result when no test is left to start", async ({
+  noProgressUser,
+  userWithoutProgress: page,
+}) => {
+  const goal = await createLearnGoal(noProgressUser.id);
+
+  await page.goto("/placement-test");
+  await finishTest(page);
+  const skipped = await skippedLessons(goal.id);
+  await page.getByRole("button", { exact: true, name: "Done" }).click();
+
+  // The test started the learner in the course's last topic, so there is nothing left to test.
+  await page.getByRole("link", { name: /Test what you know.*\d+ lessons? skipped/u }).click();
+
+  await expect(page.getByText("You start here", { exact: true })).toBeVisible();
+  await expect(page.getByText(/^\d+ of \d+ lessons skipped$/u)).toBeVisible();
+  await expect(page.getByRole("button", { exact: true, name: "Undo" })).toBeVisible();
+  await expect(page.getByRole("button", { exact: true, name: "Start" })).toBeHidden();
+  expect(await skippedLessons(goal.id)).toBe(skipped);
+
+  await page.getByRole("button", { exact: true, name: "Done" }).click();
+  await expect(page).toHaveURL(/\/plan$/u);
+});
+
 test("a test's skip appears on Plan and Today and can be undone from Today", async ({
   noProgressUser,
   userWithoutProgress: page,

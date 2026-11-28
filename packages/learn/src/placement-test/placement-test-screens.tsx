@@ -153,6 +153,7 @@ export function PlacementResult({
   onDone,
   onStartLesson,
   onboarding,
+  pending,
   pressed,
   result,
   undo,
@@ -161,6 +162,8 @@ export function PlacementResult({
   onDone: () => void;
   onStartLesson: (lessonId: string) => void;
   onboarding: boolean;
+  /** The visit is still reading the test, or a save is out: a press now would be dropped. */
+  pending: boolean;
   pressed: TestPressed;
   result: PlacementResultPhase;
   undo: ResultUndo;
@@ -168,10 +171,10 @@ export function PlacementResult({
   const t = useExtracted();
   const sentences = useSkippedLessonsSentences();
   const courseFact = useCourseFact();
-  const { button, pending, undone } = useResultUndo(undo);
+  const { button, pending: undoing, undone } = useResultUndo(undo);
   const { chapter, course, lessonsSkipped } = result;
   const nextLesson = undone ? null : result.nextLesson;
-  const action = useResultAction({ nextLesson, onboarding });
+  const action = useResultAction({ nextLesson: result.saved ? null : nextLesson, onboarding });
   const { lessonId } = action;
   // Undone, the start is back at the course's first lesson, which this result doesn't name.
   const place = undone ? null : chapter;
@@ -180,11 +183,11 @@ export function PlacementResult({
     <TestOutcome
       busy={pressed === "main"}
       continueLabel={action.label}
-      disabled={pending}
+      disabled={pending || undoing}
       failed={failed}
       lead={<ResultLead held={result.heldUntilTomorrow} lessons={lessonsSkipped} undone={undone} />}
       onContinue={lessonId ? () => onStartLesson(lessonId) : onDone}
-      other={button(pressed !== null)}
+      other={button(pending || pressed !== null)}
       subject={
         place
           ? t({

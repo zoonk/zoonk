@@ -47,7 +47,7 @@ async function PlacementTestContent() {
   const plan = await getGoalPlan(goal.id);
   const test = plan.status === "ready" ? plan.plan.placementTest : null;
 
-  if (test?.kind !== "learn") {
+  if (test?.kind !== "learn" || (!test.attempt && !test.offer && !test.result)) {
     redirect({ href: "/plan", locale });
     return null;
   }
