@@ -15,6 +15,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
 import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
+import { EnterButton } from "../_components/enter-button";
 import { NameHint } from "../_components/name-hint";
 import { useChangeSaveErrorMessage } from "../_components/save-error";
 import { SheetHeader } from "../_components/sheet-header";
@@ -192,9 +193,9 @@ function NameDialogForm({
         <Button onClick={onClose} size="lg" type="button" variant="outline">
           {t("Cancel")}
         </Button>
-        <Button busy={pending} disabled={!canSave} focusableWhenDisabled size="lg" type="submit">
+        <EnterButton busy={pending} disabled={!canSave} size="lg" type="submit">
           {t("Save")}
-        </Button>
+        </EnterButton>
       </DrawerFooter>
     </form>
   );

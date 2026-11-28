@@ -41,11 +41,14 @@ function ReportSaveProblem() {
 export type UnsentAnswers<Answers> = { answers: Answers; failures: number };
 
 /** `failures` counts the saves that failed in a row, so a retry that fails again reads differently. */
+/** `message` replaces the first failure's line where there are no answers to keep. */
 export function AnswersSaveError({
   failures,
+  message,
   onRetry,
 }: {
   failures: number;
+  message?: string;
   onRetry?: () => void;
 }) {
   const t = useExtracted();
@@ -54,9 +57,8 @@ export function AnswersSaveError({
   return (
     <div className="flex flex-col items-start gap-1">
       <p className={cn("text-destructive-text text-sm", SENTENCE_WITH_ACTION_CLASS)} role="alert">
-        {failures > 1
-          ? t("Still not going through. You can come back later.")
-          : t("That didn't go through. Your answers are kept.")}
+        {failures > 1 && t("Still not going through. You can come back later.")}
+        {failures <= 1 && (message ?? t("That didn't go through. Your answers are kept."))}
         {onRetry && (
           <>
             {space}

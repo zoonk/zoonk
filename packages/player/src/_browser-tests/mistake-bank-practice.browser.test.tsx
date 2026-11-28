@@ -77,7 +77,11 @@ describe("exact standalone bank mistake practice", () => {
     await expect.element(page.getByText("Right answer: __init__(self, **kwargs**)")).toBeVisible();
 
     expect(answer).toHaveBeenCalledWith(
-      expect.objectContaining({ answer: { text: "Chloroplast" }, itemId: "original-bank-item" }),
+      expect.objectContaining({
+        answer: { text: "Chloroplast" },
+        itemId: "original-bank-item",
+        showing: "mistake:original-mistake:1",
+      }),
     );
   });
 

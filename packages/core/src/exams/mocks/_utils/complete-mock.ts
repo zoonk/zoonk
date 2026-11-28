@@ -8,6 +8,7 @@ import { oweFollowUps } from "../../../follow-ups/owe-follow-ups";
 import { loadSkillsToRelearn } from "../../../learner/_utils/load-skill-claims";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { bringBackMissedLessons } from "../../../plans/bring-back-missed-lessons";
+import { replanAfterMock } from "../../../plans/replan-after-mock";
 import { loadPreparationInputs } from "../../../preparation/_utils/load-preparation-inputs";
 import { measurePreparation } from "../../../preparation/section-preparation";
 import { readBlockPayload } from "../../../sessions/block-payload";
@@ -22,6 +23,7 @@ import {
 } from "../mock-contract";
 import { gradeMock } from "./grade-mock";
 import { loadSkillAreas } from "./mock-candidates";
+import { MOCK_BLANK_ANSWER } from "./mock-item-grading";
 import { getAskedItemIds } from "./mock-sections";
 import { type MockSitting, type OwnedMock } from "./owned-mock";
 import { settleAnytimeMock } from "./settle-anytime-mock";
@@ -43,8 +45,9 @@ async function measureGoalPreparation({
   return measurePreparation({ ...inputs, asOf: now }).value;
 }
 
+/** Only a placement mock reads these here; any other mock's re-plan reads its own (`replanAfterMock`). */
 async function loadMockSkillsToRelearn(mock: MockSitting): Promise<Set<string>> {
-  if (!mock.goalId) {
+  if (!mock.goalId || mock.conditions.purpose !== "placement") {
     return new Set();
   }
 
@@ -175,6 +178,40 @@ async function trackCompletion({
   });
 }
 
+/** After the mock counts as finished, so the plan reads it as the latest one. */
+async function replanForMock({
+  graded,
+  mock,
+  timeZone,
+  toRelearn,
+}: {
+  graded: readonly GradedMockAnswer[];
+  mock: MockSitting;
+  timeZone: string;
+  toRelearn: ReadonlySet<string>;
+}): Promise<string[]> {
+  if (!mock.goalId) {
+    return [];
+  }
+
+  const now = new Date();
+
+  if (mock.conditions.purpose !== "placement") {
+    return replanAfterMock({ goalId: mock.goalId, mockId: mock.id, now, timeZone });
+  }
+
+  await bringBackMissedLessons({
+    goalId: mock.goalId,
+    now,
+    skillIds: graded.flatMap((answer) =>
+      answer.outcome !== "right" && toRelearn.has(answer.skill.id) ? [answer.skill.id] : [],
+    ),
+    timeZone,
+  });
+
+  return [];
+}
+
 export async function completeMock({
   mock,
   owned,
@@ -201,18 +238,6 @@ export async function completeMock({
   });
 
   const reached = await settleMock({ graded, mock, owned, timeZone });
-
-  if (mock.goalId) {
-    await bringBackMissedLessons({
-      goalId: mock.goalId,
-      now: new Date(),
-      skillIds: graded.flatMap((answer) =>
-        answer.outcome !== "right" && toRelearn.has(answer.skill.id) ? [answer.skill.id] : [],
-      ),
-      timeZone,
-    });
-  }
-
   const after = await measureGoalPreparation({ goalId: mock.goalId, userId: mock.userId });
   const spentMs = graded.reduce((sum, answer) => sum + answer.durationMs, 0);
 
@@ -229,6 +254,18 @@ export async function completeMock({
       data: { finishedAt: new Date(), result: { ...result, reached }, status: "finished" },
       where: { id: mock.id, status: "active" },
     });
+
+    if (count && mock.conditions.purpose !== "placement") {
+      await tx.$executeRaw`
+        UPDATE attempts
+        SET evidence = CASE WHEN answer->'mockReplay' = 'true'::jsonb
+          THEN 'replay'::"AttemptEvidence" ELSE 'independent'::"AttemptEvidence" END
+        WHERE mock_exam_id = ${mock.id}::uuid
+          AND user_id = ${mock.userId}::uuid
+          AND skill_id IS NOT NULL
+          AND answer <> ${JSON.stringify(MOCK_BLANK_ANSWER)}::jsonb
+      `;
+    }
 
     if (count && mock.goalId && mock.conditions.purpose !== "placement") {
       const now = new Date();
@@ -253,10 +290,14 @@ export async function completeMock({
     return count > 0 ? count : unchanged(count);
   });
 
-  if (finished > 0) {
-    revalidateCacheTags([getLearnerModelCacheTag(mock.userId)]);
-    await trackCompletion({ graded, mock, result });
+  if (finished === 0) {
+    return result;
   }
 
-  return result;
+  const movedTopics = await replanForMock({ graded, mock, timeZone, toRelearn });
+
+  revalidateCacheTags([getLearnerModelCacheTag(mock.userId)]);
+  await trackCompletion({ graded, mock, result });
+
+  return movedTopics.length > 0 ? { ...result, movedTopics } : result;
 }

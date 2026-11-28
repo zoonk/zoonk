@@ -10,9 +10,10 @@ import {
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
-import { CalendarX2Icon, LibraryBigIcon, ListPlusIcon } from "lucide-react";
+import { LibraryBigIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { createContext, use, useEffect, useEffectEvent, useState } from "react";
+import { EnterButton } from "../_components/enter-button";
 import { SheetHeader } from "../_components/sheet-header";
 import { useCloseSuggestionSheet } from "../_components/suggestion";
 import { PlanChangeApplied } from "./plan-change-applied";
@@ -91,20 +92,9 @@ function FullCourseChoice({ course, onDone }: { course: FullCourse; onDone: () =
 
       <DrawerFooter>
         <DrawerClose render={<Button size="lg" variant="outline" />}>{t("Cancel")}</DrawerClose>
-        <Button
-          busy={isPending}
-          icon={
-            course.isExam ? (
-              <ListPlusIcon aria-hidden="true" />
-            ) : (
-              <CalendarX2Icon aria-hidden="true" />
-            )
-          }
-          onClick={() => void choose()}
-          size="lg"
-        >
+        <EnterButton busy={isPending} onClick={() => void choose()} size="lg">
           {course.isExam ? t("Keep studying") : t("Remove end date")}
-        </Button>
+        </EnterButton>
       </DrawerFooter>
     </>
   );

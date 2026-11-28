@@ -56,11 +56,11 @@ class MockPlanOffersViewModelTest {
         runTest(dispatcher) {
             val offers = viewModel()
 
-            offers.decline(Offer.FOCUS)
+            offers.decline(Offer.SKIP)
             advanceUntilIdle()
 
             assertEquals(emptyList<Offer>(), api.offers)
-            assertEquals(OfferAnswer.Declined, offers.state.value.answers[Offer.FOCUS])
+            assertEquals(OfferAnswer.Declined, offers.state.value.answers[Offer.SKIP])
         }
 
     @Test

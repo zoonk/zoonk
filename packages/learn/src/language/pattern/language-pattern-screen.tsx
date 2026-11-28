@@ -34,6 +34,16 @@ type LanguagePatternActions = {
 
 const PERCENT = 100;
 
+function ContinueAction({ href }: { href: string }) {
+  const t = useExtracted();
+
+  return (
+    <TaskActions>
+      <TaskMainLink href={href}>{t("Continue")}</TaskMainLink>
+    </TaskActions>
+  );
+}
+
 function DoneAction({ exitHref }: { exitHref: string }) {
   const t = useExtracted();
 
@@ -102,15 +112,18 @@ function RuleMenu({ pattern }: { pattern: MistakePatternView }) {
   );
 }
 
+/** Opened from a day's block (`continueHref`), the result goes on to the day's next stop. */
 export function LanguagePatternScreen({
   actions,
   buddy,
+  continueHref,
   exitHref,
   pattern,
   renderCeremony,
 }: {
   actions: LanguagePatternActions;
   buddy?: LearnBuddy | null;
+  continueHref?: string;
   exitHref: string;
   pattern: MistakePatternView;
   renderCeremony?: MomentCeremony;
@@ -131,7 +144,13 @@ export function LanguagePatternScreen({
         <TaskFrame
           exitHref={exitHref}
           exitToApp
-          footer={<DoneAction exitHref={exitHref} />}
+          footer={
+            continueHref ? (
+              <ContinueAction href={continueHref} />
+            ) : (
+              <DoneAction exitHref={exitHref} />
+            )
+          }
           headerTitle={<TaskHeaderTitle title={pattern.title} />}
         >
           <PatternDrillResult buddy={buddy} result={step.result} />

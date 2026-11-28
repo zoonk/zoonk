@@ -29,13 +29,12 @@ export type GoalTutorPlanChangeEffect = {
   }[];
   endDateAfter: string | null;
   endDateBefore: string | null;
-  lessonsAdded: number;
   /**
-   * Some lessons added aren't written yet, so `lessonsAdded` is an estimate: say about how many.
+   * How many more or fewer lessons the plan has with the change; absent when it stays the same or
+   * when `topicsLeftOut` lists topics. `estimated` when some aren't written yet.
    */
-  lessonsAddedEstimated?: true;
+  lessonCount?: { count: number; estimated?: true; kind: "fewer" | "more" };
   lessonsLeftOut?: string[];
-  lessonsRemoved: number;
   topicsAdded?: { area: string; topics: string[] }[];
   topicsLeftOut?: { area: string; topics: string[] }[];
 } | null;

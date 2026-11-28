@@ -19,7 +19,7 @@ function DeleteModelDataFooter() {
   return (
     <AlertDialogFooter>
       <AlertDialogCancel disabled={pending}>Cancel</AlertDialogCancel>
-      <AlertDialogAction busy={pending} type="submit" variant="destructive">
+      <AlertDialogAction busy={pending} enter="off" type="submit" variant="destructive">
         Delete
       </AlertDialogAction>
     </AlertDialogFooter>

@@ -50,8 +50,6 @@
   "today_mistakes_notebook": "ac592af7b759c937bf273984b5bcbaed0246737a29dd1d0b0bbb976a282b8d66",
   "today_mistakes_ready": "923a1ee420dd7b6bed3f6f4886b53b1d7bb9ac6d624416ab70f37caab61fc2da",
   "today_mistakes_redo": "b6a21002af111edd2c3a5ad0202d9ad044d0d558b743a0443f4d1eefc44f3120",
-  "today_mistakes_return_tomorrow": "3741876cddfd12d3b97ba93b07c6ebdc39a91cfe1064842426844e589199f6b1",
-  "today_mistakes_tomorrow": "c337d930b230afe7173c1951e769507a9f704aeab7958d1c42b51c00d12cb2da",
   "today_more_count": "f7900916f9f07fd42e5d8f7d2b7994e3820471142dccf6e2ac841c89a7a390f1",
   "today_more_lessons": "80faea37fea809a32f33f5f2b4f5ed8dad5297bb1138b79f45fecf3f09ffac09",
   "today_more_time_a_day": "ab86bdb17ca72519b33d1084d1602f72f4b49bb1680c04413e5a4a1b88c4c08e",
@@ -275,12 +273,8 @@
     <string name="today_saved_lessons_line">もう一度取り組みたいレッスン</string>
     <!-- The line under Completed lessons in Practice anytime. -->
     <string name="today_completed_lessons_line">レッスンをもう一度学ぶ</string>
-    <string name="today_mistakes_return_tomorrow">今日間違えた問題は明日から練習できます</string>
     <plurals name="today_mistakes_ready">
         <item quantity="other">%d件を練習できます</item>
-    </plurals>
-    <plurals name="today_mistakes_tomorrow">
-        <item quantity="other">明日は%d件を練習できます</item>
     </plurals>
     <string name="today_take_mock">模試を受ける</string>
     <string name="today_take_mock_detail">いつでも、試験1日分・半日分から選べます</string>

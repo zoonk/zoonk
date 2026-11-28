@@ -450,6 +450,13 @@ struct BlockRow: View {
           .typeStyle(.note)
         }
 
+        if let subjectLine {
+          Text(subjectLine)
+            .layoutPart(.note)
+            .typeStyle(.meta)
+            .foregroundStyle(.mutedForeground)
+        }
+
         if let shownLine {
           Text(shownLine)
             .layoutPart(.note)
@@ -469,9 +476,19 @@ struct BlockRow: View {
     block.isFinished ? nil : line
   }
 
+  /// Main's `RowLines`: on Today's list, the subject on a day of several subjects, or optional
+  /// study, finished rows included.
+  private var subjectLine: String? {
+    guard let view, !showsDetail, view.session.showsSubjects || block.subjectExtra != nil else {
+      return nil
+    }
+
+    return block.subjectLine(document: view.goal.examDocument ?? .notice)
+  }
+
   /// The title and the lines under it, for where the mark sits (craft E5).
   private var lineCount: Int {
-    1 + (failed ? 1 : 0) + (shownLine == nil ? 0 : 1)
+    1 + (failed ? 1 : 0) + (subjectLine == nil ? 0 : 1) + (shownLine == nil ? 0 : 1)
   }
 
   @ViewBuilder
@@ -493,10 +510,12 @@ struct BlockRow: View {
                 comment: "A block that moves today's missions"))
         }
 
-        Text(studyDuration(minutes: block.estimatedMinutes))
-          .layoutPart(.value)
-          .typeStyle(.data)
-          .foregroundStyle(.mutedForeground)
+        if !block.isAlreadyFixed {
+          Text(studyDuration(minutes: block.estimatedMinutes))
+            .layoutPart(.value)
+            .typeStyle(.data)
+            .foregroundStyle(.mutedForeground)
+        }
       }
       .coveredBySpinner(isBusy, alignment: .trailing)
     }
@@ -524,15 +543,13 @@ struct BlockRow: View {
     }
   }
 
-  /// A row is its title and at most one short line.
+  /// The row's own line, under its subject.
   private var line: String? {
     if today.isGettingReady(block, in: view) {
       return String(localized: "Getting ready…", table: "Today")
     }
 
-    return lineOverride
-      ?? (showsDetail
-        ? block.detail : block.label(document: view?.goal.examDocument ?? .notice))
+    return lineOverride ?? (showsDetail ? block.detail : block.label)
   }
 
   private var status: Text {

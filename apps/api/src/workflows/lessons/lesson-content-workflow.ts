@@ -55,6 +55,7 @@ export type LessonContentInput = {
   planManifest?: PlanGenerationManifest | null;
   analytics?: ContentAnalytics;
   forExam?: boolean;
+  remedial?: boolean;
   wait?: CallWait;
 };
 
@@ -238,7 +239,7 @@ async function planAndWrite({
   input: LessonContentInput;
   workflowRunId: string;
 }): Promise<LessonWriteOutcome> {
-  const claim = { lessonId: input.lessonId, workflowRunId };
+  const claim = { lessonId: input.lessonId, setAside: input.remedial, workflowRunId };
 
   const failed = { analytics: input.analytics, contentKind: "lesson", task: LESSON_TASK } as const;
 
@@ -351,7 +352,7 @@ export async function lessonContentWorkflow(
 
     return ready;
   } catch (error) {
-    await failLessonContentStep({ lessonId, workflowRunId });
+    await failLessonContentStep({ lessonId, setAside: input.remedial, workflowRunId });
     throw error;
   }
 }

@@ -144,13 +144,6 @@ export const lessonQuestionPaths = {
     pathSchema: goalBuddyConversationPathParamsSchema,
     tag: "Plans",
   }),
-  "/goals/{goalId}/plan/questions": tutorQuestionPaths({
-    about: "the earliest conversation for one of the learner's goals",
-    context: PLAN_QUESTION_CONTEXT,
-    operation: "Plan",
-    pathSchema: goalPathParamsSchema,
-    tag: "Plans",
-  }),
   "/goals/{goalId}/subjects/{subjectKey}/questions": tutorQuestionPaths({
     about: "a subject of one of the learner's goals (a subject of the exam's notice, or a module)",
     context:

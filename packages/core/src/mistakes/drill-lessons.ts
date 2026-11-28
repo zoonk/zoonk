@@ -2,6 +2,7 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { libraryRowsVisibleTo } from "../library/_utils/library-visibility";
 import { readLessonMapSentences } from "../library/lessons/lesson-map";
+import { SECOND_TAKE_KEY_WHERE } from "../library/second-takes/second-take-identity";
 import { type DrillLesson, type DrillView, type MistakeDrill } from "./mistake-drills";
 
 /** Returns only lessons visible to this learner. */
@@ -15,7 +16,10 @@ export async function findTeachingLessonIds({
   const rows = await prisma.lessonSkill.findMany({
     orderBy: { createdAt: "asc" },
     select: { lessonId: true, skillId: true },
-    where: { lesson: libraryRowsVisibleTo(userId), skillId: { in: [...skillIds] } },
+    where: {
+      lesson: { ...libraryRowsVisibleTo(userId), NOT: SECOND_TAKE_KEY_WHERE },
+      skillId: { in: [...skillIds] },
+    },
   });
 
   return new Map(

@@ -31,9 +31,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.feature.audio.SpeechPlayer
-import com.zoonk.android.feature.audio.SpokenText
-import com.zoonk.android.feature.audio.rememberSpokenAudio
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.StepResult
 import com.zoonk.android.feature.player.steps.WordBankScene
@@ -55,7 +52,6 @@ internal fun FillBlankView(
     result: StepResult?,
     locked: Boolean,
     language: String,
-    speech: SpeechPlayer?,
     onAnswer: (LessonAnswer?) -> Unit,
     question: @Composable () -> Unit,
 ) {
@@ -63,7 +59,6 @@ internal fun FillBlankView(
     var blanks by rememberSaveable(stateSaver = BlanksSaver) {
         mutableStateOf((answer as? LessonAnswer.FillBlank)?.userAnswers ?: List(blankCount) { null })
     }
-    val sounds = speech?.let { rememberSpokenAudio(it, language) }
     val checked = result != null
     val editable = !checked && !locked
     val focus = rememberWordBankFocus(answer)
@@ -145,7 +140,6 @@ internal fun FillBlankView(
                     val empty = blanks.indexOf(null)
                     if (empty == -1) return@WordBank
                     val option = options[tile]
-                    option.audioUrl?.let { sounds?.speak(listOf(SpokenText(null, recording = it))) }
                     val next = blanks.toMutableList().also { it[empty] = option.word }
                     focus.placed(tile, usedBlankTiles(options, next), complete = next.none { it == null })
                     blanks = next

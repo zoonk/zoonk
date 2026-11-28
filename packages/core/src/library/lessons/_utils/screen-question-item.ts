@@ -5,6 +5,7 @@ import { type Item, type TransactionClient } from "@zoonk/db";
 import { z } from "zod";
 import { type LibraryProvenance, toProvenanceData } from "../../_utils/library-rows";
 import { normalizeItem, parseItemContent, toStoredItem } from "../../items/item-content";
+import { isSecondTakeIdentityKey } from "../../second-takes/second-take-identity";
 import { type ScreenMathItem } from "../../steps/written-screens";
 import { CURRENT_STEPS } from "../lesson-versions";
 
@@ -207,10 +208,14 @@ async function findMatchingSkills(
   tx: TransactionClient,
   { lessonId, skillIds }: { lessonId: string; skillIds: string[] },
 ) {
-  const { ownerId } = await tx.lesson.findUniqueOrThrow({
-    select: { ownerId: true },
+  const { identityKey, ownerId } = await tx.lesson.findUniqueOrThrow({
+    select: { identityKey: true, ownerId: true },
     where: { id: lessonId },
   });
+
+  if (isSecondTakeIdentityKey(identityKey)) {
+    return [];
+  }
 
   return tx.skill.findMany({ select: { id: true }, where: { id: { in: skillIds }, ownerId } });
 }

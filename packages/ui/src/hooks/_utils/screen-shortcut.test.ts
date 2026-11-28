@@ -1,5 +1,10 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { SCREEN_ENTER_ATTRIBUTE, getNumberKeyIndex, isScreenShortcut } from "./screen-shortcut";
+import {
+  SCREEN_ENTER_ATTRIBUTE,
+  getNumberKeyIndex,
+  isInLayerOf,
+  isScreenShortcut,
+} from "./screen-shortcut";
 
 function pressOn(target: EventTarget, init: KeyboardEventInit) {
   const event = new KeyboardEvent("keydown", { bubbles: true, cancelable: true, ...init });
@@ -181,5 +186,36 @@ describe("scrollable question regions", () => {
     Object.defineProperty(line, "scrollWidth", { value: 260 });
 
     expect(isScreenShortcut(pressOn(line, { key: "ArrowRight" }))).toBe(true);
+  });
+});
+
+function control(selector: string): Element {
+  const element = document.querySelector(selector);
+
+  if (!element) {
+    throw new Error(`No ${selector}`);
+  }
+
+  return element;
+}
+
+describe(isInLayerOf, () => {
+  afterEach(() => {
+    document.body.innerHTML = "";
+  });
+
+  it("matches a key to the controls of the panel it was pressed in", () => {
+    document.body.innerHTML = `<button data-page>Continue</button>
+      <div role="dialog" data-under><button>Save focus</button></div>
+      <div role="dialog" tabindex="-1" data-top><div role="radio" tabindex="0">Pick</div><button>Save prerequisites</button></div>`;
+
+    const enter = pressOn(control("[data-top] [role=radio]"), { key: "Enter" });
+
+    expect(isInLayerOf(enter, control("[data-top] button"))).toBe(true);
+    expect(isInLayerOf(enter, control("[data-under] button"))).toBe(false);
+    expect(isInLayerOf(enter, control("[data-page]"))).toBe(false);
+
+    const onPage = pressOn(document.body, { key: "Enter" });
+    expect(isInLayerOf(onPage, control("[data-page]"))).toBe(true);
   });
 });

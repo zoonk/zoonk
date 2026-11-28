@@ -111,7 +111,7 @@ struct BuddyDayView: View {
   }
 
   private func open(_ opens: Components.Schemas.StudyMissionOpens, isFirstStep: Bool) {
-    if case .case6 = opens {
+    if case .case4 = opens {
       ask()
       return
     }

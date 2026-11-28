@@ -48,6 +48,7 @@ describe("test questions answered in a session", () => {
         answer: { selectedIndex: 0 },
         answeredAt: new Date(at.getTime() + index),
         durationMs: 1000,
+        fromLesson: false,
         hour: 12,
         isCorrect: true,
         localDate: at,

@@ -18,7 +18,7 @@ import { createUnstartedDay } from "./unstarted-day-fixtures";
 const DAYS_PER_WEEK = 7;
 
 test("shows practice links on Today while the goal is paused", async ({ browser }) => {
-  const { goal, user } = await createUnstartedDay();
+  const { goal, user } = await createUnstartedDay({ withMistake: true });
   await prisma.goal.update({ data: { status: "paused" }, where: { id: goal.id } });
 
   const page = await openAs(browser, user);

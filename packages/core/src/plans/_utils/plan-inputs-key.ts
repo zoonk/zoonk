@@ -34,6 +34,7 @@ const KEYED_FIELDS = {
   missedSkillIds: true,
   mockClocks: true,
   mockMinutes: true,
+  mockMisses: true,
   mode: "How the run lays the plan out (from today, or after this week), not what it plans.",
   movesPhaseEnds: "Whether the run moves the phase ends shown, which the plan it saves holds.",
   noticeAreas: true,

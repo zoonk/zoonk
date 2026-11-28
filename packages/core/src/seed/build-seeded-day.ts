@@ -1,17 +1,25 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { type SeededToday } from "@zoonk/db/seed";
-import { loadSessionBuildInput } from "../sessions/_utils/load-build-inputs";
 import { completeLessonPlanItems } from "../sessions/_utils/plan-items";
+import { planStudyDay } from "../sessions/_utils/plan-study-day";
+import { getStudyAnswerEvidence } from "../sessions/_utils/record-study-answer";
+import { readSavedDayPlan } from "../sessions/_utils/saved-day-plan";
 import { gradeSessionAnswer, parseSessionItem } from "../sessions/_utils/session-items";
 import { getBlockItemIds } from "../sessions/block-payload";
-import { loadDayMissionFacts } from "../sessions/missions/day-facts";
-import { pickMissions } from "../sessions/missions/pick-missions";
-import { type PlannedBlock, buildSessionBlocks } from "../sessions/session-builder";
+import { type PlannedBlock } from "../sessions/session-builder";
 
 type BankItem = Parameters<typeof parseSessionItem>[0];
 
-function toRightAnswer({ blockId, item }: { blockId: string; item: BankItem }) {
+function toRightAnswer({
+  blockId,
+  item,
+  placement,
+}: {
+  blockId: string;
+  item: BankItem;
+  placement: boolean;
+}) {
   const question = parseSessionItem(item);
 
   if (!question) {
@@ -24,7 +32,14 @@ function toRightAnswer({ blockId, item }: { blockId: string; item: BankItem }) {
     item: question,
   });
 
-  return [{ answer: correctAnswer, itemId: item.id, skillId: item.skillId }];
+  return [
+    {
+      answer: correctAnswer,
+      evidence: getStudyAnswerEvidence({ blank: false, placement }),
+      itemId: item.id,
+      skillId: item.skillId,
+    },
+  ];
 }
 
 async function loadRightAnswers({
@@ -43,7 +58,8 @@ async function loadRightAnswers({
       position,
       getBlockItemIds(block.payload).flatMap((itemId) => {
         const item = byId.get(itemId);
-        return item ? toRightAnswer({ blockId: today.blockId(position), item }) : [];
+        const placement = block.payload.placementItemIds.includes(itemId);
+        return item ? toRightAnswer({ blockId: today.blockId(position), item, placement }) : [];
       }),
     ]),
   );
@@ -61,22 +77,22 @@ export async function buildSeededDay({ goalId, today }: { goalId: string; today:
     userId: goal.userId,
   };
 
-  const plan = await prisma.plan.findUnique({ select: { version: true }, where: { goalId } });
-  const input = await loadSessionBuildInput(day);
-  // The seeded completion has no prompt admission or written response to settle.
-  const { blocks, plannedMinutes } = buildSessionBlocks({ ...input, produces: [] });
+  const selection = await readSavedDayPlan(day);
 
-  const [answers, facts] = await Promise.all([
-    loadRightAnswers({ blocks, today }),
-    loadDayMissionFacts({ ...day, blocks, plannedMinutes }),
-  ]);
+  if (!selection) {
+    return;
+  }
+
+  const { blocks, input, missions, plannedMinutes } = await planStudyDay({ ...day, selection });
+  const answers = await loadRightAnswers({ blocks, today });
 
   const finished = await today.write({
     answers,
     blocks,
     freshStart: input.freshStart,
-    missions: { picks: pickMissions(facts), version: 1 },
-    planVersion: plan?.version ?? null,
+    missions,
+    planVersion: selection.context.plan.version,
+    plannedMinutes,
   });
 
   await Promise.all(

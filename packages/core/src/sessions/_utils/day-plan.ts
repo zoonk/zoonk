@@ -13,6 +13,7 @@ import { loadSkillPrerequisites } from "../../library/skills/skill-prerequisites
 import { getLearnerTier } from "../../lookahead/learner-lookahead";
 import { fromIsoDate } from "../../plans/planner/plan-calendar";
 import { parsePlanGraph, parsePlanPhases, parsePlanSettings } from "../../plans/planner/plan-state";
+import { readBlockPayload } from "../block-payload";
 import { getGoalDayMinutes } from "./day-minutes";
 import { getSessionChallenges } from "./day-stretch";
 import { loadExamStructure } from "./exam-structure";
@@ -23,7 +24,7 @@ import { type SelectedDayPlan } from "./selected-day-plan";
 import { type SessionDayContext } from "./session-placement";
 import { type SessionPlanItem } from "./session-plan-item";
 
-function loadPreviousSession({
+async function loadPreviousSession({
   goalId,
   today,
   userId,
@@ -32,14 +33,27 @@ function loadPreviousSession({
   today: Date;
   userId: string;
 }) {
-  return prisma.studySession.findFirst({
+  const previous = await prisma.studySession.findFirst({
     orderBy: { localDate: "desc" },
     select: {
-      blocks: { select: { payload: true, startedAt: true }, where: { kind: "checkpoint" } },
+      blocks: {
+        select: { payload: true, startedAt: true },
+        where: {
+          OR: [{ kind: "checkpoint" }, { payload: { equals: true, path: ["replacedOnlyLesson"] } }],
+        },
+      },
       localDate: true,
     },
     where: { goalId, localDate: { lt: today }, userId },
   });
+
+  const { blocks = [], localDate = null } = previous ?? {};
+
+  return {
+    challenges: getSessionChallenges(blocks),
+    localDate,
+    replacedOnlyLesson: blocks.some((block) => readBlockPayload(block).replacedOnlyLesson),
+  };
 }
 
 async function loadLastStudyDate({ today, userId }: { today: Date; userId: string }) {
@@ -129,14 +143,14 @@ export async function loadDayPlan({
     goalPlan,
     graph,
     idleSkillIds,
-    isFirstDay: previousSession === null,
+    isFirstDay: previousSession.localDate === null,
     itemSkillIds: new Map(goalPlan.items.map((item) => [item.id, item.skillIds])),
     items: putLeftWorkFirst<SessionPlanItem>({
       items: plan?.items ?? [],
       left: selection?.left ?? [],
       prerequisites,
     }),
-    lastSessionChallenges: getSessionChallenges(previousSession?.blocks ?? []),
+    lastSessionChallenges: previousSession.challenges,
     lastStudyDate,
     lessonsAskedAt: plan?.lessonsAskedAt ?? null,
     listeningSkillIds,
@@ -145,7 +159,8 @@ export async function loadDayPlan({
     /** Where the days away count from when the learner hasn't studied since (see `getFreshStart`). */
     planStart: getPlanStart({ goal, settings: plan?.settings, timeZone }),
     prerequisites,
-    previousSessionDate: previousSession?.localDate ?? null,
+    previousReplacedOnlyLesson: previousSession.replacedOnlyLesson,
+    previousSessionDate: previousSession.localDate,
     settings: plan?.settings ?? null,
     skills,
     structure,

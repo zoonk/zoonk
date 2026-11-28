@@ -1,7 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { RENTING_SCENARIO } from "@zoonk/testing/fixtures/language";
-import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import {
@@ -67,7 +66,6 @@ describe("First steps from real learner history", () => {
     await Promise.all([
       learningEventFixture({ endedAt: earlier, kind: "lesson", userId: input.userId }),
       learningEventFixture({ endedAt: earlier, kind: "review", userId: input.userId }),
-      mistakeFixture({ fixedAt: earlier, status: "fixed", userId: input.userId }),
       prisma.lessonQuestion.create({
         data: {
           contextKind: "plan",
@@ -93,14 +91,14 @@ describe("First steps from real learner history", () => {
 
     const finished = await day("2026-10-13", "2026-10-14T02:00:00Z");
 
-    expect(finished.firstSteps).toMatchObject({ completedOn: "2026-10-13", done: 4, total: 4 });
+    expect(finished.firstSteps).toMatchObject({ completedOn: "2026-10-13", done: 3, total: 3 });
     expect(finished.firstSteps?.steps.every((step) => step.status === "done")).toBe(true);
 
     const nextDay = await day("2026-10-14", "2026-10-14T12:00:00Z");
     expect(nextDay.firstSteps).toBeNull();
   });
 
-  it("keeps a retired list retired when a pattern is drilled again on a later day", async () => {
+  it("keeps a language learner's finished list retired on a later day", async () => {
     const input = await learner();
 
     const goal = await prisma.goal.update({
@@ -121,21 +119,6 @@ describe("First steps from real learner history", () => {
     });
 
     const firstDay = new Date("2026-10-13T15:00:00Z");
-
-    const pattern = await prisma.mistakePattern.create({
-      data: {
-        content: { contrast: [], drill: [], examples: [], rule: "A rule." },
-        goalId: goal.id,
-        kind: "pattern",
-        language: "en",
-        model: "test",
-        practicedAt: new Date("2026-10-15T15:00:00Z"),
-        promptVersion: "test",
-        runId: "test",
-        title: "A pattern",
-        userId: input.userId,
-      },
-    });
 
     const chapter = await libraryChapterFixture();
 
@@ -159,20 +142,6 @@ describe("First steps from real learner history", () => {
           titleSnapshot: "A practice call",
           userId: input.userId,
         },
-      }),
-      learningEventFixture({
-        contentIds: { mistakePatternId: pattern.id },
-        endedAt: firstDay,
-        kind: "questions",
-        lessonKind: "patternDrill",
-        userId: input.userId,
-      }),
-      learningEventFixture({
-        contentIds: { mistakePatternId: pattern.id },
-        endedAt: new Date("2026-10-15T15:00:00Z"),
-        kind: "questions",
-        lessonKind: "patternDrill",
-        userId: input.userId,
       }),
       prisma.lessonQuestion.create({
         data: {
@@ -346,7 +315,6 @@ describe("First steps from real learner history", () => {
     expect(facts.firstSteps?.steps.map((step) => step.kind)).toStrictEqual([
       "somethingNew",
       "review",
-      "fixMistake",
       "askBuddy",
     ]);
   });

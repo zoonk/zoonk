@@ -4,6 +4,7 @@ import { Kbd } from "@zoonk/ui/components/kbd";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { SCREEN_ENTER, ignoreHeldEnter } from "@zoonk/ui/hooks/keyboard";
 import { cn, mergeRefs } from "@zoonk/ui/lib/utils";
+import { CheckIcon, MinusIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useLayoutEffect, useRef } from "react";
 import { SpokenMath } from "../rich-text/spoken-math";
@@ -96,8 +97,8 @@ export function AnswerOptionGroup({
 
 /**
  * The word an option shows. The right option says "Correct" when the learner missed it. A pick
- * needs no word of its own: its color and the verdict say it. Only a guess, which counts as
- * neither right nor wrong, says so, from the pick on, in the words its verdict keeps.
+ * needs no word of its own: its mark, its color and the verdict say it. Only a guess, which counts
+ * as neither right nor wrong, says so once it's checked; before, its mark shows the pick.
  */
 export function useAnswerTag({
   guessed,
@@ -110,18 +111,13 @@ export function useAnswerTag({
 }): React.ReactNode {
   const t = useExtracted();
 
-  if (result === "guess" || (picked && guessed)) {
-    const yourGuess = t({
-      description: "Tags the learner's pick when it counts as neither right nor wrong.",
-      message: "Your guess",
-    });
-
-    return result ? (
-      <AnswerTag className={ANSWER_TAG_TONE[result]}>{yourGuess}</AnswerTag>
-    ) : (
-      // Unspoken: the radio is checked.
-      <AnswerTag aria-hidden="true" className="text-foreground">
-        {yourGuess}
+  if (result === "guess" || (result && picked && guessed)) {
+    return (
+      <AnswerTag className={ANSWER_TAG_TONE[result]}>
+        {t({
+          description: "Tags the learner's pick when it counts as neither right nor wrong.",
+          message: "Your guess",
+        })}
       </AnswerTag>
     );
   }
@@ -139,45 +135,59 @@ function AnswerTag({ className, ...props }: React.ComponentProps<"span">) {
   );
 }
 
+const RESULT_MARK: Record<AnswerOptionResult, React.ReactNode> = {
+  guess: <MinusIcon />,
+  right: <CheckIcon />,
+  wrong: <XIcon />,
+};
+
 /**
  * A number is the row's key, so a touch screen gives up its room (craft E1, B2). On a row without a
- * pick mark, the picked row's key turns ink, as a radio's dot does. Once checked or disabled the key
- * does nothing, so it hides in its room and the answer stays put.
+ * pick mark, the picked row's key turns ink, as a radio's dot does. Once checked the key does
+ * nothing, so its room shows the verdict's mark and the answer stays put; a locked row without one
+ * hides its key. A verdict's mark stands bare, so it never reads as a ticked checkbox.
  */
 export function OptionMarker({
-  isChecked,
+  isLocked = false,
   layout,
   marker,
   picked,
+  result = null,
   showsPick = true,
 }: {
-  isChecked: boolean;
+  isLocked?: boolean;
   layout: "row" | "stacked";
   marker: React.ReactNode;
   picked: boolean;
+  result?: AnswerOptionResult | null;
   showsPick?: boolean;
 }) {
   const isKey = typeof marker === "number";
+  const verdict = isKey ? result && RESULT_MARK[result] : marker;
 
   return (
     <LineMarker
       aria-hidden="true"
       className={cn(
         isKey && "hidden pointer-fine:flex",
-        isKey && isChecked && "invisible",
+        isKey && isLocked && !result && "invisible",
         layout === "stacked" && "absolute top-3 left-3 z-10",
       )}
     >
-      <Kbd
-        className={cn(
-          "[&_svg]:size-3",
-          showsPick &&
-            "in-data-held:bg-selected in-data-held:text-selected-foreground in-data-[held=unchecked]:bg-foreground/4! in-data-[held=unchecked]:text-muted-foreground! in-data-held:ring-0 in-data-[held=unchecked]:ring-1!",
-          showsPick && picked && "bg-selected text-selected-foreground ring-0",
-        )}
-      >
-        {marker}
-      </Kbd>
+      {verdict ? (
+        <span className="flex size-5 items-center justify-center [&_svg]:size-4">{verdict}</span>
+      ) : (
+        <Kbd
+          className={cn(
+            "[&_svg]:size-3",
+            showsPick &&
+              "in-data-held:bg-selected in-data-held:text-selected-foreground in-data-[held=unchecked]:bg-foreground/4! in-data-[held=unchecked]:text-muted-foreground! in-data-held:ring-0 in-data-[held=unchecked]:ring-1!",
+            showsPick && picked && "bg-selected text-selected-foreground ring-0",
+          )}
+        >
+          {marker}
+        </Kbd>
+      )}
     </LineMarker>
   );
 }
@@ -258,10 +268,11 @@ export function AnswerOption({
       {...props}
     >
       <OptionMarker
-        isChecked={Boolean(result) || Boolean(props.disabled)}
+        isLocked={Boolean(props.disabled)}
         layout={layout}
         marker={marker}
         picked={picked && !result}
+        result={result}
         showsPick={!mark}
       />
 

@@ -27,7 +27,6 @@ import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.listRowDescription
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.api.models.LanguageTodaySpeaking
 import com.zoonk.api.models.MistakeListAvailability
@@ -80,14 +79,13 @@ fun TodayPracticeRows(
 ) {
     val mock = mocks?.takeIf { it.running != null || it.options.isNotEmpty() }
     val ready = mistakes?.ready?.toInt() ?: 0
-    val tomorrow = mistakes?.tomorrow?.toInt() ?: 0
-    if (mock == null && speaking == null && ready + tomorrow == 0 && !completedLessons && !savedLessons) return
+    if (mock == null && speaking == null && ready == 0 && !completedLessons && !savedLessons) return
 
     val rows =
         buildList<@Composable () -> Unit> {
             mock?.let { add { MockRow(it, navigate) } }
             speaking?.let { add { SpeakingRow(it, navigate) } }
-            if (ready + tomorrow > 0) add { MistakesRow(ready, tomorrow, navigate) }
+            if (ready > 0) add { MistakesRow(ready, navigate) }
             if (savedLessons) {
                 add {
                     PracticeRow(
@@ -160,41 +158,17 @@ private fun SpeakingRow(
 @Composable
 private fun MistakesRow(
     ready: Int,
-    tomorrow: Int,
     navigate: (AppRoute) -> Unit,
 ) {
-    val description =
-        when {
-            ready > 0 && tomorrow > 0 -> {
-                listOf(
-                    pluralStringResource(R.plurals.today_mistakes_ready, ready, ready),
-                    pluralStringResource(R.plurals.today_mistakes_tomorrow, tomorrow, tomorrow),
-                ).factsLine()
-            }
-
-            ready > 0 -> {
-                stringResource(R.string.today_mistakes_redo)
-            }
-
-            else -> {
-                stringResource(R.string.today_mistakes_return_tomorrow)
-            }
-        }
-    val count = if (ready > 0) ready else tomorrow
-    val countLabel =
-        if (ready > 0) {
-            pluralStringResource(R.plurals.today_mistakes_ready, ready, ready)
-        } else {
-            pluralStringResource(R.plurals.today_mistakes_tomorrow, tomorrow, tomorrow)
-        }
+    val countLabel = pluralStringResource(R.plurals.today_mistakes_ready, ready, ready)
 
     PracticeRow(
         kind = LearnKind.Mistakes,
         title = stringResource(R.string.today_mistakes_notebook),
-        description = description,
+        description = stringResource(R.string.today_mistakes_redo),
         trailing = {
             Text(
-                text = formatNumber(count.toDouble(), currentLocale()),
+                text = formatNumber(ready.toDouble(), currentLocale()),
                 modifier = Modifier.semantics { contentDescription = countLabel },
             )
         },

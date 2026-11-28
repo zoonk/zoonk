@@ -1,8 +1,8 @@
 "use client";
 
 import { type LessonMap as LessonMapData } from "@zoonk/core/library/lessons/map";
+import { EnterButton } from "@zoonk/learn/enter-button";
 import { SheetHeader } from "@zoonk/learn/sheet-header";
-import { Button } from "@zoonk/ui/components/button";
 import {
   Drawer,
   DrawerContent,
@@ -43,9 +43,9 @@ export function LessonMapSheet({
         </DrawerContent>
 
         <DrawerFooter>
-          <Button onClick={() => onOpenChange(false)} size="lg">
+          <EnterButton onClick={() => onOpenChange(false)} size="lg">
             {t("Got it")}
-          </Button>
+          </EnterButton>
         </DrawerFooter>
       </DrawerPopup>
     </Drawer>

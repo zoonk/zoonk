@@ -183,5 +183,5 @@ export async function adaptPlanFromMockAction(
     return { lessonsSkipped: result.lessonsSkipped, status: "applied" };
   }
 
-  return result.status === "unchanged" ? { reason: result.reason, status: "unchanged" } : null;
+  return result.status === "unchanged" ? { status: "unchanged" } : null;
 }

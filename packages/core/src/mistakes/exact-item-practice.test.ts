@@ -4,6 +4,7 @@ import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { mistakeShowing } from "../_test-utils/shown-choice";
 import { gradeMathAnswer, parseMathItem } from "../learner/_utils/math-items";
 import { recordLearnerAnswer } from "../learner/record-learner-answer";
 import { typedGrade } from "../lesson-player/_test-utils/typed-grade";
@@ -110,6 +111,7 @@ describe("exact bank question practice", () => {
         attemptId: crypto.randomUUID(),
         durationMs: 2000,
         itemId: setup.item.id,
+        showing: await mistakeShowing(first.mistake.id),
       },
       mistakeId: first.mistake.id,
     });
@@ -167,6 +169,7 @@ describe("exact bank question practice", () => {
         attemptId: crypto.randomUUID(),
         durationMs: 2000,
         itemId: setup.item.id,
+        showing: await mistakeShowing(first.mistake.id),
       },
       mistakeId: first.mistake.id,
     });
@@ -278,6 +281,7 @@ describe("other original bank formats", () => {
             attemptId: crypto.randomUUID(),
             durationMs: 2000,
             itemId: item.id,
+            showing: await mistakeShowing(recorded.mistake.id),
           },
           mistakeId: recorded.mistake.id,
         }),
@@ -347,6 +351,7 @@ describe("other original bank formats", () => {
       attemptId: crypto.randomUUID(),
       durationMs: 2000,
       itemId: item.id,
+      showing: await mistakeShowing(recorded.mistake.id),
     };
 
     const first = answerMistakePractice({ input, mistakeId: recorded.mistake.id });
@@ -361,7 +366,11 @@ describe("other original bank formats", () => {
 
     await expect(
       answerMistakePractice({
-        input: { ...input, answer: { text: "A different retry" } },
+        input: {
+          ...input,
+          answer: { text: "A different retry" },
+          showing: await mistakeShowing(recorded.mistake.id),
+        },
         mistakeId: recorded.mistake.id,
       }),
     ).resolves.toStrictEqual(result);

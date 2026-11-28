@@ -1,56 +1,67 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type Attempt } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
+import { isJsonObject } from "@zoonk/utils/json";
 import { logError } from "@zoonk/utils/logger";
 import { NOTHING_REACHED, type Reached } from "../../sessions/reached";
 import { type MistakePracticeAnswerInput } from "../contract";
 import { finishMistakePractice } from "../finish-mistake-practice";
-import { type MistakePracticeFeedback } from "../practice-feedback";
+import { type MistakePracticeFeedback, mistakePracticeFeedbackSchema } from "../practice-feedback";
 import { readFixedMistakeIds } from "./practice-runs";
 
 type PracticeRunInput = Pick<MistakePracticeAnswerInput, "run" | "timeZone">;
 
+const answerFeedbackSchema = mistakePracticeFeedbackSchema.pick({
+  correctAnswer: true,
+  explanation: true,
+  lessonResult: true,
+  trap: true,
+  workedSteps: true,
+});
+
 type AnswerFeedback = Pick<
   MistakePracticeFeedback,
-  "correctAnswer" | "explanation" | "isCorrect" | "lessonResult" | "trap" | "workedSteps"
+  "correctAnswer" | "explanation" | "lessonResult" | "trap" | "workedSteps"
 >;
 
+export function readPracticeFeedback(attempt: Attempt): AnswerFeedback | null {
+  const stored = isJsonObject(attempt.answer) ? attempt.answer.practiceFeedback : null;
+  const parsed = answerFeedbackSchema.safeParse(stored);
+  return parsed.success ? parsed.data : null;
+}
+
 export async function finishPracticeAnswer({
-  answerId,
+  attempt,
   feedback,
   input,
   mistakeId,
 }: {
-  answerId: string;
+  attempt: Attempt;
   feedback: AnswerFeedback;
   input: PracticeRunInput;
   mistakeId: string;
-}): Promise<MistakePracticeFeedback> {
-  const [saved, mistake, reached] = await Promise.all([
-    prisma.attempt.findUniqueOrThrow({ where: { id: answerId } }),
-    prisma.mistake.findUniqueOrThrow({ where: { id: mistakeId } }),
-    countRunSoFar({ answerId, input }),
-  ]);
-
-  const fixedMistakeIds = readFixedMistakeIds(saved.answer);
+}): Promise<MistakePracticeFeedback & { answerId: string }> {
+  const fixedMistakeIds = readFixedMistakeIds(attempt.answer);
   const fixed = fixedMistakeIds.includes(mistakeId);
+  const isCorrect = attempt.isCorrect;
 
   return {
-    ...feedback,
-    answerId,
+    ...(readPracticeFeedback(attempt) ?? feedback),
+    answerId: attempt.id,
     fixed,
     fixedMistakeIds,
-    isCorrect: saved.isCorrect,
-    mistakeStatus: fixed ? "fixed" : mistake.status,
-    reached,
+    isCorrect,
+    mistakeStatus: fixed ? "fixed" : "open",
+    reached: await countRunSoFar({ answerId: attempt.id, input }),
+    requiresLaterDay: isCorrect && !fixed,
   };
 }
 
-async function countRunSoFar({
+export async function countRunSoFar({
   answerId,
   input,
 }: {
-  answerId: string;
+  answerId?: string;
   input: PracticeRunInput;
 }): Promise<Reached> {
   const { run } = input;
@@ -61,8 +72,10 @@ async function countRunSoFar({
 
   const { data, error } = await safeAsync(() =>
     finishMistakePractice({
-      answerIds: [...run.answerIds, answerId],
+      answerIds: answerId ? [...run.answerIds, answerId] : run.answerIds,
+      blockId: run.blockId,
       goalId: run.goalId,
+      mockId: run.mockId,
       timeZone: input.timeZone,
     }),
   );

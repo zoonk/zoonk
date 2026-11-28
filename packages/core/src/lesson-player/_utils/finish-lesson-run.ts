@@ -9,13 +9,20 @@ import {
   getUserProgressCacheTag,
 } from "../../cache/tags";
 import { finishExplanations } from "../../goals/_utils/finish-explanations";
+import { loadSkillSurvivors } from "../../learner/_utils/update-learner-skill";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
+import { getSecondTakeSkillId } from "../../library/second-takes/second-take-identity";
 import { finishLessonChapters } from "../../mind-maps/finished-chapters";
 import { clampEnergy } from "../../progress/energy";
-import { completeLessonPlanItems, scheduleLessonCanDos } from "../../sessions/_utils/plan-items";
+import {
+  type CompletedLessonItems,
+  completeLessonPlanItems,
+  scheduleLessonCanDos,
+} from "../../sessions/_utils/plan-items";
 import { refitSessionLessons } from "../../sessions/_utils/refit-session-lessons";
 import { trackBlockCompleted } from "../../sessions/_utils/session-events";
-import { readBlockPayload } from "../../sessions/block-payload";
+import { type BlockPayload, readBlockPayload } from "../../sessions/block-payload";
+import { isOutsidePlanLesson } from "../../sessions/day-block";
 import { getCompletionEnergyContext } from "../../stats/completion-energy";
 import { upsertDailyProgress } from "../../stats/daily-progress";
 import { finishLearningEvent } from "../../stats/record-learning-event";
@@ -38,37 +45,104 @@ async function refitAfterMainBlock(
 ): Promise<void> {
   const payload = readBlockPayload(block);
 
-  if (payload.extra || payload.reinforcement) {
+  if (payload.extra || isOutsidePlanLesson(payload)) {
     return;
   }
 
   await refitSessionLessons(tx, { completedBlockId: block.id, sessionId: block.sessionId });
 }
 
-/** Replays are reviews in the ledger and must not increment lessons completed. */
-export async function finishLessonRun({
-  answerPoints,
-  answeredCount,
-  answers,
-  lessonId,
-  planSkillIds,
-  run,
-  skippedWritingStepIds,
-  tally,
-  timeZone,
+/** A lesson served another way teaches only the stuck skill it was chosen for. */
+function getTaughtSkillIds({
+  payload,
+  secondTakeSkillId,
+  teachingSkillIds,
+}: {
+  payload: BlockPayload | null;
+  secondTakeSkillId: string | null;
+  teachingSkillIds: readonly string[];
+}): readonly string[] {
+  if (secondTakeSkillId) {
+    return [secondTakeSkillId];
+  }
+
+  return payload?.returning === "anotherWay" ? payload.skillIds : teachingSkillIds;
+}
+
+/** Replays, second takes and lessons Today brings back move the evidence cutoff; another first finish sets only a missing one. */
+async function markTeachingBoundary({
+  block,
+  completedAt,
+  isReview,
+  secondTakeSkillId,
+  teachingSkillIds,
+  tx,
   userId,
 }: {
+  block: RunBlock | null;
+  completedAt: Date;
+  isReview: boolean;
+  secondTakeSkillId: string | null;
+  teachingSkillIds: readonly string[];
+  tx: TransactionClient;
+  userId: string;
+}) {
+  const payload = block ? readBlockPayload(block) : null;
+  const refresh = isReview || Boolean(payload?.returning);
+  const skillIds = getTaughtSkillIds({ payload, secondTakeSkillId, teachingSkillIds });
+
+  if (skillIds.length === 0) {
+    return;
+  }
+
+  const survivor = await loadSkillSurvivors(skillIds, tx);
+  const skills = [...new Set(skillIds.map((skillId) => survivor(skillId)))];
+
+  await tx.learnerSkill.createMany({
+    data: skills.map((skillId) => ({ helpedAt: completedAt, skillId, userId })),
+    skipDuplicates: true,
+  });
+
+  await tx.learnerSkill.updateMany({
+    data: { helpedAt: completedAt },
+    where: {
+      OR: [{ helpedAt: null }, ...(refresh ? [{ helpedAt: { lt: completedAt } }] : [])],
+      skillId: { in: skills },
+      userId,
+    },
+  });
+}
+
+type FinishLessonRunInput = {
   answerPoints: number;
   answeredCount: number;
   answers: Parameters<typeof reviewLessonPlanSkills>[0]["answers"];
+  identityKey: string;
   lessonId: string;
   planSkillIds: readonly string[];
   run: LearningEvent;
   skippedWritingStepIds: string[];
   tally: LessonRunTally;
+  teachingSkillIds: readonly string[];
   timeZone: string;
   userId: string;
-}) {
+};
+
+/** Replays are reviews in the ledger and must not increment lessons completed. */
+export async function finishLessonRun({
+  answerPoints,
+  answeredCount,
+  answers,
+  identityKey,
+  lessonId,
+  planSkillIds,
+  run,
+  skippedWritingStepIds,
+  tally,
+  teachingSkillIds,
+  timeZone,
+  userId,
+}: FinishLessonRunInput) {
   return writeLearnerChange({ planInputs: true, userId }, async (tx) => {
     const { completedAt, completionDate, currentEnergy } = await getCompletionEnergyContext({
       timeZone,
@@ -77,7 +151,6 @@ export async function finishLessonRun({
     });
 
     const isReplay = await hasFinishedLessonBefore(tx, { lessonId, runId: run.id, userId });
-    const score = scoreLibraryLesson({ ...tally, answerPoints, isFirstCompletion: !isReplay });
 
     const currentRun = await tx.learningEvent.findUniqueOrThrow({ where: { id: run.id } });
 
@@ -94,6 +167,12 @@ export async function finishLessonRun({
       userId,
     });
 
+    const secondTakeSkillId = getSecondTakeSkillId(identityKey);
+    const isFirstCompletion = !isReplay;
+    const isReview = isReplay || secondTakeSkillId !== null;
+
+    const score = scoreLibraryLesson({ ...tally, answerPoints, isFirstCompletion });
+
     const seconds = await getLessonCompletionSeconds({
       block,
       now: completedAt,
@@ -104,7 +183,7 @@ export async function finishLessonRun({
     const closed = await finishLearningEvent(tx, {
       endedAt: completedAt,
       eventId: run.id,
-      kind: isReplay ? "review" : "lesson",
+      kind: isReview ? "review" : "lesson",
       outcome: {
         brainPower: score.brainPower,
         correctAnswers: tally.correctCount,
@@ -118,6 +197,16 @@ export async function finishLessonRun({
     if (!closed) {
       return unchanged(null);
     }
+
+    await markTeachingBoundary({
+      block,
+      completedAt,
+      isReview,
+      secondTakeSkillId,
+      teachingSkillIds,
+      tx,
+      userId,
+    });
 
     await recordSkippedWritingSteps({ run: currentRun, skippedWritingStepIds, tx });
 
@@ -137,7 +226,7 @@ export async function finishLessonRun({
       date: completionDate,
       durationSeconds: seconds,
       field: answeredCount > 0 ? "interactiveCompleted" : "staticCompleted",
-      lessonsCompleted: isReplay ? 0 : 1,
+      lessonsCompleted: Number(!isReview),
       score: {
         brainPower: score.brainPower,
         correctCount: tally.correctCount,
@@ -171,11 +260,13 @@ export async function finishLessonRun({
         userId,
       }));
 
-    const { languageGoals, planItemIds } = await completeLessonPlanItems(tx, {
-      lessonId,
-      now: completedAt,
-      userId,
-    });
+    const replaysOutsidePlan =
+      isReplay && block !== null && isOutsidePlanLesson(readBlockPayload(block));
+
+    const { languageGoals, planItemIds }: CompletedLessonItems =
+      secondTakeSkillId || replaysOutsidePlan
+        ? { languageGoals: [], planItemIds: [] }
+        : await completeLessonPlanItems(tx, { lessonId, now: completedAt, userId });
 
     await finishLessonChapters(tx, {
       eventId: run.id,
@@ -196,7 +287,7 @@ export async function finishLessonRun({
         ...score,
         correctCount: tally.correctCount,
         incorrectCount: tally.incorrectCount,
-        isFirstCompletion: !isReplay,
+        isFirstCompletion,
         seconds,
         totalBrainPower: Number(progress.totalBrainPower),
       },

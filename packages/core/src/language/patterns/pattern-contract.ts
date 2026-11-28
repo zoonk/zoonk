@@ -5,6 +5,8 @@ import { activityBrainPowerSchema, missionMomentSchema } from "../../sessions/co
 import { progressCelebrationShape } from "../../sessions/progress-celebration";
 
 /** Code keeps a drill to this many questions, so all its answers can be sent back. */
+export const PATTERN_DRILL_SECONDS = 180;
+
 export const MAX_DRILL_QUESTIONS = 10;
 const MAX_DRILL_ANSWER_LENGTH = 200;
 

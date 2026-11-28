@@ -788,8 +788,6 @@ describe("OpenAPI response schemas", () => {
 
   it.each([
     { blockId: UUID, kind: "block" },
-    { kind: "mistakesPractice" },
-    { kind: "pattern", patternId: UUID },
     { kind: "pronunciation" },
     { chapterId: UUID, kind: "call" },
     { kind: "buddy" },
@@ -802,7 +800,6 @@ describe("OpenAPI response schemas", () => {
         chapterTitle: "The chapter",
         count: 2,
         minutes: 4,
-        patternTitle: "A pattern",
         rematch: true,
         title: "The block",
       },
@@ -836,7 +833,7 @@ describe("OpenAPI response schemas", () => {
           { kind: "mock", opens: { kind: "mockChooser" }, status: "available" },
           { kind: "challenge", status: "later", when: { date: "2026-10-19", kind: "challenge" } },
           { kind: "essay", status: "later", when: { kind: "essay" } },
-          { kind: "fixMistake", status: "later", when: { kind: "mistake" } },
+          { kind: "askBuddy", status: "later", when: { kind: "buddy" } },
         ],
         total: 6,
       },

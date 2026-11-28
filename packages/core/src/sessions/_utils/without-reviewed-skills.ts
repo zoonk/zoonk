@@ -6,7 +6,6 @@ import {
   type TransactionClient,
   prisma,
 } from "@zoonk/db";
-import { NOT_LESSON_ANSWER_FILTER } from "@zoonk/db/lesson-answer";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getStartOfLocalDay } from "../../learner/_utils/local-time";
@@ -48,7 +47,7 @@ export async function withoutReviewedSkills({
       select: { itemId: true, skillId: true, studySessionId: true },
       where: {
         OR: [
-          ...(answeredItemIds ? [] : [{ ...NOT_LESSON_ANSWER_FILTER, studySessionId: session.id }]),
+          ...(answeredItemIds ? [] : [{ fromLesson: false, studySessionId: session.id }]),
           {
             answeredAt: {
               gte: getStartOfLocalDay({ localDate: today, timeZone }),

@@ -10,20 +10,20 @@
   "mistakes_empty_open": "eaef3eece99aa5f8f373efb84763fe2a594791b701b56f0e7cc0393b6045e4f5",
   "mistakes_more_failed": "f14cbfa9e84bb4ff9a1e53669a8b36787fa33876af27d279d68e76988b6509b4",
   "mistakes_notebook_title": "6a19e87d36aa8f8e2622bef4cac0349f0dc48209b69b3f50342098a9adaae185",
-  "mistakes_nothing_description": "28c32fb9910e0242ffc7e49eb7e13271f03e243dd9935d6d92a64d33e528d1f5",
-  "mistakes_nothing_title": "bd6a11325eaab387a133fff53d3d4f1b37a065edb19bdf5966e2e1bef10f30e8",
+  "mistakes_nothing_title": "f9147231d1fdb93ce35a3702c405ac62b01e76faa184a021dac2301f7bd9a3a8",
   "mistakes_open_lesson": "7e49f578343aa48274b18086c39d7f9c08642d31195d116e578a37d8af2ca015",
-  "mistakes_opens_tomorrow": "9922010718a74767911dea142b69a4d082d0bf6816b8a11741464fd7bb2c2061",
   "mistakes_other_questions": "4223452a8e38e2567526f41cd73b3fc200423bd90e7c6373dd751e414d1cb7bb",
   "mistakes_practice": "a85e1a38b36e7a25b61f46c5062f24bd8e290561837a29c7eadfc96de361ac04",
-  "mistakes_practice_comes_back": "a3b83f11c57b6231b4fd6a754be8fef95c320355cc8e61c7d85d9a0f477f32a0",
+  "mistakes_practice_again": "034bb201cd74fd4d896ef7d5261967d11c84999f82e75e8780e6386532ce1574",
+  "mistakes_practice_already_fixed": "f891c3a65e2e0a557caeaf60e8af3802267e04956969005bcea22c134905b6e8",
+  "mistakes_practice_done": "630bd60a6cfc1973ac8a917a3ddbbc2ff147a21bf4d41968007ae8fa2062df43",
   "mistakes_practice_end": "ab984514bba57193480b620f831d6866e3393253c6080c7e3c2992bce3cd4b1b",
   "mistakes_practice_fixed": "f83e8201e87b5c731e0c8715bdb96bcb0b117585f25ccb8a4ead785c63e2fd36",
-  "mistakes_practice_missed_and_unreached": "d7d870e4715b1a273eae45afdf2484832308c7c2bf1547a96816ff882ea744eb",
+  "mistakes_practice_later_day": "1294d24869279c446983cc807da37e066265f94874e286aaa5479136c3c1a577",
+  "mistakes_practice_not_marked": "58e8951a5960bb51557b3b8898b8d9fa5aaffae477117ebfc054f04fec6ff370",
+  "mistakes_practice_not_saved": "2966d31c1d936f519ea168a7e65a97af8e4262d4899b6f4e6de54c58f415db5c",
   "mistakes_practice_title": "59a6e261dd713239ad112976d494553074891cb8b7fa3da5dc5422a65abe0133",
-  "mistakes_practice_tomorrow": "83e5bf688a128dafac655783b8366cd4b9ec01e92e38d36b6ccea277cddfe42f",
   "mistakes_practice_topic": "c9d03a05d5cc284abca701e8f6e5d3e1b3ad0005ce168580ecf5bec29169e465",
-  "mistakes_practice_unreached": "28f538ae365c3ff36c554137d4ee7cb698f967e560a93b9d15a48f46b3a43353",
   "mistakes_show_more": "146ece201b3697c70880e37b2f15c23147053cbae60f9fafb68228c97a3aef9c",
   "mistakes_tab_fixed": "5ccf921294cd847e17dcca3cc26e549453b774d99c04ccc2bd8d9e556972ebfe",
   "mistakes_tab_open": "264f0ed71fed89b9f5a6a05ba87794aea2d87bc4defb8aef8df82882988085c8"
@@ -33,20 +33,14 @@
     <string name="mistakes_practice_title">Esercitati sugli errori</string>
     <!-- The close button's spoken label once a question is answered: closing ends the practice. -->
     <string name="mistakes_practice_end">Esci. Le risposte date restano valide.</string>
-    <string name="mistakes_practice_comes_back">Quello che sbagli torna un altro giorno, così ti resta più impresso.</string>
-    <string name="mistakes_practice_missed_and_unreached">Ritroverai un altro giorno quello che hai sbagliato. Puoi ancora esercitarti sul resto.</string>
-    <string name="mistakes_practice_unreached">Puoi ancora esercitarti sul resto.</string>
     <plurals name="mistakes_practice_fixed">
         <item quantity="one">%d errore corretto</item>
         <item quantity="many">%d errori corretti</item>
         <item quantity="other">%d errori corretti</item>
     </plurals>
-    <string name="mistakes_nothing_title">Ancora niente su cui esercitarti</string>
-    <string name="mistakes_nothing_description">Puoi esercitarti sugli errori a partire dal giorno dopo averli fatti.</string>
+    <string name="mistakes_nothing_title">Niente da ripassare</string>
     <string name="mistakes_notebook_title">Quaderno degli errori</string>
     <string name="mistakes_practice">Esercitati sugli errori</string>
-    <!-- Under the notebook's title when no mistake is ready yet and some come back tomorrow. -->
-    <string name="mistakes_opens_tomorrow">Potrai esercitarti domani</string>
     <!-- The notebook's tab of mistakes the learner hasn't fixed yet. -->
     <string name="mistakes_tab_open">Da correggere</string>
     <!-- The notebook's tab of mistakes the learner fixed in practice. -->
@@ -64,7 +58,18 @@
     <string name="mistakes_cause_trap">Hai abboccato a una trappola</string>
     <string name="mistakes_cause_time">Tempo esaurito</string>
     <string name="mistakes_cause_guess">Hai tirato a indovinare</string>
-    <string name="mistakes_practice_tomorrow">Puoi esercitarti domani</string>
     <string name="mistakes_practice_topic">Esercitati su questo argomento</string>
+    <!-- After a right answer to a question the learner missed earlier the same day. A mistake is fixed only by a right answer on a later day. -->
+    <string name="mistakes_practice_later_day">Questa domanda tornerà un altro giorno per verificare che tu l’abbia imparata.</string>
+    <!-- Beside Done at the end of a practice of mistakes: starts another round right away. -->
+    <string name="mistakes_practice_again">Riprova</string>
+    <!-- The button that leaves a finished practice of mistakes. -->
+    <string name="mistakes_practice_done">Fatto</string>
+    <!-- Title of a practice of mistakes whose end didn't reach the server, so it doesn't count yet. -->
+    <string name="mistakes_practice_not_saved">La tua pratica sugli errori non è ancora salvata</string>
+    <!-- Title when a day's practice of mistakes opens and every one of its mistakes was already fixed elsewhere. -->
+    <string name="mistakes_practice_already_fixed">Tutto già corretto</string>
+    <!-- Under "Already fixed" when marking the day's practice done didn't reach the server. -->
+    <string name="mistakes_practice_not_marked">Non siamo riusciti a completarla. Controlla la connessione.</string>
     <string name="mistakes_open_lesson">Apri la lezione</string>
 </resources>

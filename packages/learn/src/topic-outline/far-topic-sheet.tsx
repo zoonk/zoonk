@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@zoonk/ui/components/button";
 import {
   Drawer,
   DrawerContent,
@@ -10,9 +9,9 @@ import {
   DrawerTrigger,
 } from "@zoonk/ui/components/drawer";
 import { Spinner } from "@zoonk/ui/components/spinner";
-import { ListPlusIcon, RotateCwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactElement, type ReactNode, useRef, useState } from "react";
+import { EnterButton } from "../_components/enter-button";
 import { OutlineLimitNotice, useLiveLimit } from "../_components/help-limit-notice";
 import { ListGroup, ListRowContent, ListRowLink, ListRowTitle } from "../_components/list-group";
 import { SheetHeader } from "../_components/sheet-header";
@@ -104,19 +103,14 @@ function FarTopicBody({
       </div>
 
       {copy.action && (
-        <Button
+        <EnterButton
           busy={isPending}
           disabled={isCapped}
-          focusableWhenDisabled
-          icon={
-            isFailure ? <RotateCwIcon aria-hidden="true" /> : <ListPlusIcon aria-hidden="true" />
-          }
           onClick={isFailure ? retry : request}
           size="lg"
-          variant={isFailure ? "outline" : "default"}
         >
           {copy.action}
-        </Button>
+        </EnterButton>
       )}
 
       <StatusRegion>

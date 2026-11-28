@@ -106,6 +106,11 @@ async function showMistakeChoice({ mistakeId }: MistakeShowingInput) {
   return showChoiceInBlock({ blockId: getMistakeShowing(mistake), item: replay.item });
 }
 
+/** The `showing` a practice run gets for this mistake now, which its item answer sends back. */
+export async function mistakeShowing(mistakeId: string): Promise<string> {
+  return getMistakeShowing(await prisma.mistake.findUniqueOrThrow({ where: { id: mistakeId } }));
+}
+
 /** Where each option of a mistake's replay sits until its next miss, as the learner sees them. */
 export async function shownMistakeOptions(input: MistakeShowingInput): Promise<string[]> {
   const shown = await showMistakeChoice(input);

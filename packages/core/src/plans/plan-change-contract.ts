@@ -63,7 +63,7 @@ export const planChangeSchema = z
       .string()
       .meta({
         description:
-          "edited, testedOut, missedDays, estimateUpdated (automatic re-estimates from pace data or written lessons changed the net seen lesson count by more than one, so the plan allows for the time its lessons need), resumed, noticeChanged (the plan followed its official exam notice and removed areas or skills), relearn (a miss in practice brought back the lessons of a topic taken as known; `effect.topicsAdded` names it) or coverageChanged (placement answers changed which topics fit by the date; `effect.topicsLeftOut` and `effect.topicsAdded` name them); keep unknown kinds",
+          "edited, testedOut, missedDays, estimateUpdated (automatic re-estimates from pace data or written lessons changed the net seen lesson count by more than one, so the plan allows for the time its lessons need), resumed, noticeChanged (the plan followed its official exam notice and removed areas or skills), relearn (a miss in practice brought back the lessons of a topic taken as known; `effect.topicsAdded` names it), mockReordered (a finished mock moved the topics it missed, not yet taught, earlier in the plan) or coverageChanged (placement answers changed which topics fit by the date; `effect.topicsLeftOut` and `effect.topicsAdded` name them); keep unknown kinds",
       }),
     lessonsSkipped: z
       .int()

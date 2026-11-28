@@ -15,9 +15,7 @@
   "buddy_page_first_challenge": "5ca88345282a6ca55752becad4efcdcc4f3149462eacee620c2aecbfb2fada9f",
   "buddy_page_first_essay": "a5cc139b3bc457c99ff7162fbcfff2a518958f69fd21a0fdbde85a1a29ac81a8",
   "buddy_page_first_lesson": "1149182b3f263e6985022980d24f7b435082d820148a331d384e3bc117bd27fb",
-  "buddy_page_first_mistake": "f0831727fc4d7ea80405bdc3c57da5ae9c06419b56d1e2613e2dc1c7d5be54a0",
   "buddy_page_first_mock": "ece6e8a54a0cfed8980b2902246738c84bcccc91b92bd10e3e26ba9e21a1c4d2",
-  "buddy_page_first_pattern": "22ca84907bfd7b074d081fc4e9f4855d20315ecf0601381c34bcfc65d65d6610",
   "buddy_page_first_review": "cabe96d9c3e2ad89bdf6ed780ee95cd2be0bc8b7c5f01594dd546d70920ed430",
   "buddy_page_first_steps": "e406716a86791e129ac3d285370578793b1409cd4223ca8cffccba723ae08337",
   "buddy_page_first_steps_done": "796ed980c814c17d98227600f3b0e33b8d1f02ffe9beb55c9866ce01f8ea0675",
@@ -88,8 +86,6 @@
     <string name="buddy_page_first_steps_done">Tu as tout essayé.</string>
     <string name="buddy_page_first_lesson">Terminer ta première leçon</string>
     <string name="buddy_page_first_review">Faire ta première révision</string>
-    <string name="buddy_page_first_mistake">Corriger ta première erreur</string>
-    <string name="buddy_page_first_pattern">S’entraîner sur une erreur récurrente</string>
     <string name="buddy_page_first_ask">Poser une question à %1$s</string>
     <string name="buddy_page_first_essay">Écrire ta première rédaction</string>
     <string name="buddy_page_first_call">Passer ton premier appel</string>

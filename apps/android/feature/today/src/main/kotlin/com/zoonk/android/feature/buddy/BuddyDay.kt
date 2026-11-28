@@ -3,15 +3,12 @@ package com.zoonk.android.feature.buddy
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,6 +23,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -47,7 +45,6 @@ import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.rememberExpandedBottomSheetState
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
@@ -55,7 +52,6 @@ import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.BuddyStatus
 import com.zoonk.api.models.BuddyStatusEnergy
 import com.zoonk.api.models.BuddyStatusNextStage
-import com.zoonk.api.models.StudyMission
 
 internal fun BuddyStatus.look(): BuddyLook =
     BuddyLook(
@@ -79,7 +75,7 @@ internal class BuddyDayTaps(
 
 internal fun DayMission.tap(firstStep: Boolean = false): BuddyTap? = opens?.let { BuddyTap(it, firstStep) }
 
-/** Main's quiet line beside the buddy on a phone: Energy and the day's missions, opening the day in a sheet ([open]). */
+/** Main's Energy beside the buddy's name: its mark and value, opening the buddy's day in a sheet ([open]). */
 @Composable
 internal fun BuddyTodayLine(
     status: BuddyStatus,
@@ -90,42 +86,23 @@ internal fun BuddyTodayLine(
     onOpenChange: (Boolean) -> Unit,
     navigator: AppNavigator,
 ) {
-    val today = status.today
-    val done = today?.missions?.count { it.status == StudyMission.Status.DONE } ?: 0
     val energy = status.energy.current?.let { formatPercent(it / PERCENT, currentLocale()) }
-    val number = MaterialTheme.typography.labelMedium.withTabularFigures()
-    val muted = MaterialTheme.colorScheme.onSurfaceVariant
-
+    val label = stringResource(R.string.buddy_page_energy_named, name)
+    val notYet = stringResource(R.string.stats_not_yet)
     val icon = with(LocalDensity.current) { LINE_ICON.toDp() }
 
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(10.dp), itemVerticalAlignment = Alignment.CenterVertically) {
-        TextButton(onClick = { navigator.open(AppRoute.StatsEnergy) }, contentPadding = PaddingValues(horizontal = DAY_LINE_PADDING)) {
-            Icon(painterResource(R.drawable.ic_bolt), null, Modifier.size(icon), tint = MaterialTheme.zoonk.energy)
-            Text(
-                stringResource(R.string.buddy_page_energy_named, name),
-                Modifier.padding(start = LINE_GAP),
-                color = muted,
-                style = number,
-            )
-            Text(energy ?: DASH, Modifier.padding(start = LINE_GAP), color = muted, style = number)
-        }
-        TextButton(onClick = { onOpenChange(true) }, contentPadding = PaddingValues(horizontal = DAY_LINE_PADDING)) {
-            if (today != null && today.missions.isNotEmpty()) {
-                val locale = currentLocale()
-                val total = today.missions.size
-                MissionsRing(done, total, Modifier.size(icon), strokeWidth = RING_STROKE)
-                Spacer(Modifier.width(LINE_GAP))
-                val count =
-                    stringResource(
-                        R.string.buddy_page_count,
-                        formatNumber(done.toDouble(), locale),
-                        formatNumber(total.toDouble(), locale),
-                    )
-                Text("${stringResource(R.string.missions_title)}\u2002$count", color = muted, style = number)
-            } else {
-                Text(stringResource(R.string.buddy_page_today, name), color = muted, style = number)
-            }
-        }
+    TextButton(
+        onClick = { onOpenChange(true) },
+        Modifier.semantics(mergeDescendants = true) { contentDescription = "$label ${energy ?: notYet}" },
+        contentPadding = PaddingValues(horizontal = DAY_LINE_PADDING),
+    ) {
+        Icon(painterResource(R.drawable.ic_bolt), null, Modifier.size(icon), tint = MaterialTheme.zoonk.energy)
+        Text(
+            energy ?: DASH,
+            Modifier.padding(start = LINE_GAP),
+            color = if (energy == null) MaterialTheme.zoonk.faint else MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+        )
     }
 
     if (open) BuddyTodaySheet(status, look, name, taps, navigator, onDismiss = { onOpenChange(false) })
@@ -261,11 +238,10 @@ private fun growthLine(next: BuddyStatusNextStage?): String {
 
 private const val PERCENT = 100.0
 private const val DASH = "–"
-private const val RING_STROKE = 6f
 private val LINE_ICON = 14.sp
 
 /** The day's line is a quiet button: its words sit this far inside its box. */
 internal val DAY_LINE_PADDING = 8.dp
 
-/** Main's `gap-1.5` between the line's mark, words and value. */
-private val LINE_GAP = 6.dp
+/** Main's `gap-1` between the mark and the value. */
+private val LINE_GAP = 4.dp

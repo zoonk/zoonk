@@ -28,6 +28,7 @@ import { type DayPracticeQuery, type DayWork, loadDayWork, loadHeldDayInput } fr
 import { loadDayWriting } from "./day-writing";
 import { getExamPrepAccess } from "./exam-access";
 import { loadLivingPlanSignals } from "./living-plan-session";
+import { loadDayRemediation } from "./load-day-remediation";
 import { loadDayPlanLessons } from "./load-plan-lessons";
 import { getReviewHorizon, loadReviewCapsules } from "./load-review-capsules";
 import { getPlanTopics } from "./practice-blocks";
@@ -104,7 +105,7 @@ async function finalizeBuildInput({
   review: Parameters<typeof loadReviewCapsules>[0];
   today: Date;
 }): Promise<SessionBuildInput> {
-  const { blocks } = buildSessionBlocks(input);
+  const { blocks } = buildSessionBlocks({ ...input, remedial: undefined });
   const ready = { ...input, freshStart: getDayFreshStart({ blocks, plan, today }) };
 
   if (keepsBlocks || blocks.length > 0) {
@@ -117,6 +118,8 @@ async function finalizeBuildInput({
 }
 
 type SessionBuildContext = BuildContext & {
+  /** Saved days retain their remedial allocation while other blocks are refilled. */
+  savedDay?: boolean;
   /** A day retaining blocks is not empty and must not get a weakest-topic fallback review. */
   keepsBlocks?: boolean;
   /** A finished mock isn't loaded as a checkpoint again, so a rebuilt mock day learns of it from the blocks it keeps. */
@@ -314,6 +317,10 @@ export async function loadSessionBuildInput(
     topics: getPlanTopics({ goal, graph: plan.graph }),
     unwritten: getDayUnwrittenTime({ reservedItems, today: localDate }),
   };
+
+  if (!base.mockReplacesDay && !context.savedDay) {
+    base.remedial = await loadDayRemediation({ context, plan });
+  }
 
   const work = { context, isReviewDay, plan, practiceQuery, review, signals };
 

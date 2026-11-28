@@ -459,10 +459,8 @@ struct PlanSuggestionSection: View {
     case .choice(let choice) where choice.take > 1:
       PlanSlotCard(
         title: Text.examChoiceQuestion(group: choice.group, take: choice.take),
-        description: Text(choice.leftOut.line)
+        description: Text.examChoiceDescription(take: choice.take)
       ) {
-        ExamPickLimit(take: choice.take)
-
         DividedRows {
           ExamOptionChecks(
             options: choice.options, take: choice.take,
@@ -487,12 +485,12 @@ struct PlanSuggestionSection: View {
     case .choice(let choice):
       PlanSlotCard(
         title: Text.examChoiceQuestion(group: choice.group, take: choice.take),
-        description: Text(choice.leftOut.line)
+        description: Text.examChoiceDescription(take: choice.take)
       ) {
         // Equal picks: one under the other in their order, none drawn as the main answer.
         VStack(spacing: 8) {
           ForEach(choice.options, id: \.self) { option in
-            Button(option.name) {
+            Button(option.shortName ?? option.name) {
               choose([option.name], in: choice, item: item)
             }
             .buttonStyle(.outline)

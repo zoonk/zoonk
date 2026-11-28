@@ -19,6 +19,7 @@ import { startAnytimeMock } from "../exams/mocks/start-anytime-mock";
 import { updateGoal } from "../goals/update-goal";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { createGoalPlan } from "../plans/create-goal-plan";
+import { buddyTarget } from "./_test-utils/buddy-target";
 import { claimLessonQuestionAnswer, completeLessonQuestionAnswer } from "./answer-lifecycle";
 import { createLessonQuestion } from "./create-lesson-question";
 import { getLessonQuestionThread } from "./get-lesson-question-thread";
@@ -165,7 +166,7 @@ async function examSetup({
 async function askBuddy(goalId: string, question = "The English lessons are too basic") {
   const created = await createLessonQuestion({
     input: { context: { kind: "plan" }, question, requestId: randomUUID() },
-    target: { conversationId: null, goalId, kind: "plan" },
+    target: buddyTarget(goalId),
   });
 
   if (created.status !== "created") {
@@ -238,7 +239,7 @@ describe("app tools the buddy offers", () => {
 
     const thread = await getLessonQuestionThread({
       contextKind: "plan",
-      target: { conversationId: null, goalId: goal.id, kind: "plan" },
+      target: buddyTarget(goal.id),
     });
 
     expect(thread.status === "ready" ? thread.thread?.questions : null).toMatchObject([

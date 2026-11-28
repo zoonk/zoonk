@@ -10,9 +10,11 @@ import { dismissPatternAction, practicePatternAction } from "./pattern-actions";
 
 export function PatternClient({
   buddy,
+  continueHref,
   pattern,
 }: {
   buddy: LearnerBuddy;
+  continueHref?: string;
   pattern: MistakePatternView;
 }) {
   const actions = useMemo(
@@ -28,6 +30,7 @@ export function PatternClient({
     <LanguagePatternScreen
       actions={actions}
       buddy={buddy}
+      continueHref={continueHref}
       exitHref="/today"
       pattern={pattern}
       renderCeremony={(moments, onClose) => (

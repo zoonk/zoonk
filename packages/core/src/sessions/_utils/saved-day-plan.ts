@@ -9,7 +9,7 @@ import { addsLessonsAfterLessonsDone } from "../../plans/_utils/plan-refresh-adm
 import { readPlanSummary } from "../../plans/_utils/plan-summary";
 import { computePlan } from "../../plans/_utils/replan";
 import { type SelectedSummary } from "../../plans/_utils/selected-summary-contract";
-import { type PlannedStudyDay } from "./plan-study-day";
+import { type PlannedStudyDay, getPlanAllocationBlocks } from "./plan-study-day";
 import { type SelectedDayPlan } from "./selected-day-plan";
 import { getSessionItemIdentity } from "./session-plan-item";
 import { dropSettledEvents } from "./settled-events";
@@ -77,7 +77,7 @@ function selectSavedDay({
 }
 
 function listOpenedKeys(day: PlannedStudyDay): string[] {
-  return day.blocks.flatMap((block) =>
+  return getPlanAllocationBlocks(day).flatMap((block) =>
     block.payload.planItemKey ? [block.payload.planItemKey] : [],
   );
 }
@@ -129,7 +129,7 @@ export async function readSavedDayPlan({
 }: {
   goal: Goal;
   now: Date;
-  saved: SavedPlan | null;
+  saved?: SavedPlan | null;
   timeZone: string;
 }): Promise<SelectedDayPlan | null> {
   const context = await loadPlanContext({ goal, now, saved, timeZone });

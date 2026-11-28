@@ -1,5 +1,5 @@
 import "server-only";
-import { type Mistake, prisma } from "@zoonk/db";
+import { type Mistake } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { io } from "next/cache";
 import { showStepOptions } from "../lesson-player/_utils/shown-step-options";
@@ -7,12 +7,16 @@ import { type TrueFalseLabels, getTrueFalseLabels } from "../library/exams/true-
 import { type ItemSetView } from "../library/items/item-set-view";
 import { loadExamStructure } from "../sessions/_utils/exam-structure";
 import { type SessionQuestion } from "../sessions/_utils/session-items";
+import { getUnservedMistakeIds, readBlockPayload } from "../sessions/block-payload";
 import { getSession } from "../users/get-session";
 import { narrowToSkill } from "./_utils/mistake-scope";
+import { findPracticeMock } from "./_utils/mock-practice";
+import { findPracticeBlock, loadPendingBlockMistakes } from "./_utils/practice-block";
+import { loadPracticeEntries } from "./_utils/practice-entries";
 import { resolvePracticeScope } from "./_utils/practice-scope";
 import { MAX_PRACTICE_ANSWERS, type MistakePracticeInput } from "./contract";
 import { findTeachingLessonIds, loadDrillLessons, toDrillView } from "./drill-lessons";
-import { getPracticeTimeZone, readyMistakeWhere } from "./mistake-availability";
+import { getPracticeTimeZone, listReadyMistakes } from "./mistake-availability";
 import {
   type DrillView,
   getDrillKind,
@@ -20,7 +24,7 @@ import {
   selectMistakesToPractice,
 } from "./mistake-drills";
 import { getMistakeShowing, toMistakeQuestion } from "./mistake-item";
-import { type MistakeLessonReplay, loadMistakeReplays } from "./mistake-replay";
+import { type MistakeLessonReplay } from "./mistake-replay";
 import { type MistakeSnapshot, readMistakeSnapshot } from "./mistake-snapshot";
 
 type MistakePracticeEntry = {
@@ -28,6 +32,8 @@ type MistakePracticeEntry = {
   drill: DrillView;
   lesson: MistakeLessonReplay | null;
   mistakeId: string;
+  /** The order this entry laid out its options in; an item answer sends it back. */
+  showing: string;
   tutorAvailable: boolean;
   /** Stimulus sets must be displayed with their questions. */
   questions: (SessionQuestion & { set: ItemSetView | null })[];
@@ -44,7 +50,6 @@ export type MistakePracticeResult =
   | { status: "notFound" }
   | { status: "unauthorized" };
 
-/** Every ready mistake a run holds, oldest first with skill breadth, one question each. Submit each answer to answerMistakePractice. */
 export async function getMistakePractice(
   input: MistakePracticeInput,
 ): Promise<MistakePracticeResult> {
@@ -55,51 +60,16 @@ export async function getMistakePractice(
   }
 
   const userId = session.user.id;
-  const scope = await resolvePracticeScope({ goalId: input.goalId });
+  const scope = await resolveRunScope(input, userId);
 
   if (!scope) {
     return { status: "notFound" };
   }
 
-  const timeZone = await getPracticeTimeZone({
-    goal: scope.goal,
-    timeZone: input.timeZone,
-    userId,
-  });
-
-  // Next's io boundary keeps the live practice day out of prerendering.
-  await io();
-  const today = getDateInTimeZone({ date: new Date(), timeZone });
-
-  const skillIds = narrowToSkill({ scopeSkillIds: scope.skillIds, skillId: input.skillId });
-
-  const open = await prisma.mistake.findMany({
-    orderBy: [{ createdAt: "asc" }, { id: "asc" }],
-    where: {
-      ...readyMistakeWhere({ localDate: today, timeZone }),
-      userId,
-      ...(skillIds ? { skillId: { in: skillIds } } : {}),
-    },
-  });
-
-  const replayById = await loadMistakeReplays({ mistakes: open, userId });
-
-  const drillable = open.filter((mistake) => {
-    const replay = replayById.get(mistake.id);
-
-    return (
-      replay &&
-      (input.includeAllFormats ||
-        (replay.kind === "item" && ["multipleChoice", "trueFalse"].includes(replay.item.format)))
-    );
-  });
-
-  const selected = selectMistakesToPractice({ limit: MAX_PRACTICE_ANSWERS, mistakes: drillable });
-
-  const replays = selected.map((mistake) => ({ mistake, replay: replayById.get(mistake.id) }));
+  const selected = await loadRunMistakes({ input, scope, userId });
 
   const lessons = await findTeachingLessonIds({
-    skillIds: selected.flatMap((mistake) => mistake.skillId ?? []),
+    skillIds: selected.flatMap(({ skillId }) => skillId ?? []),
     userId,
   });
 
@@ -108,40 +78,138 @@ export async function getMistakePractice(
     scope.goal ? loadExamStructure(scope.goal) : null,
   ]);
 
-  const practice = replays.flatMap(({ mistake, replay }) => {
-    if (!replay || (replay.kind === "lesson" && !input.includeAllFormats)) {
-      return [];
-    }
-
+  const practice = selected.map(({ replay, ...mistake }) => {
     const kind = getDrillKind(mistake.cause);
     const showing = getMistakeShowing(mistake);
 
-    return [
-      {
-        cause: mistake.cause,
-        drill: toDrillView({
-          drill: {
-            kind,
-            lessonId:
-              kind === "reteach" && mistake.skillId ? (lessons.get(mistake.skillId) ?? null) : null,
-            timeLimitSeconds: getDrillTimeLimitSeconds(kind),
-          },
-          lessons: drillLessons,
-        }),
-        lesson:
-          replay.kind === "lesson"
-            ? {
-                ...replay.lesson,
-                step: showStepOptions({ seed: showing, step: replay.lesson.step }),
-              }
-            : null,
-        mistakeId: mistake.id,
-        questions: replay.kind === "item" ? [toMistakeQuestion({ replay, showing })] : [],
-        snapshot: readMistakeSnapshot(mistake.snapshot),
-        tutorAvailable: replay.tutorAvailable,
-      },
-    ];
+    return {
+      cause: mistake.cause,
+      drill: toDrillView({
+        drill: {
+          kind,
+          lessonId:
+            kind === "reteach" && mistake.skillId ? (lessons.get(mistake.skillId) ?? null) : null,
+          timeLimitSeconds: getDrillTimeLimitSeconds(kind),
+        },
+        lessons: drillLessons,
+      }),
+      lesson:
+        replay.kind === "lesson"
+          ? { ...replay.lesson, step: showStepOptions({ seed: showing, step: replay.lesson.step }) }
+          : null,
+      mistakeId: mistake.id,
+      questions: replay.kind === "item" ? [toMistakeQuestion({ replay, showing })] : [],
+      showing,
+      snapshot: readMistakeSnapshot(mistake.snapshot),
+      tutorAvailable: replay.tutorAvailable,
+    };
   });
 
   return { practice, status: "ready", trueFalseLabels: getTrueFalseLabels(structure) };
+}
+
+async function resolveRunScope(input: MistakePracticeInput, userId: string) {
+  const { blockId, goalId, mockId, skillId } = input;
+
+  if ((blockId && mockId) || ((blockId || mockId) && skillId)) {
+    return null;
+  }
+
+  if (blockId) {
+    const block = await findPracticeBlock({ blockId, userId });
+    const goal = block?.session.goal ?? null;
+
+    return block && (!goalId || goal?.id === goalId)
+      ? { block, goal, mockId: undefined, skillIds: null }
+      : null;
+  }
+
+  if (mockId) {
+    const mock = await findPracticeMock({ mockId, userId });
+    return mock && { block: null, goal: mock.goal, mockId, skillIds: null };
+  }
+
+  const scope = await resolvePracticeScope({ goalId });
+  return scope && { ...scope, block: null, mockId: undefined };
+}
+
+async function loadRunMistakes({
+  input,
+  scope,
+  userId,
+}: {
+  input: MistakePracticeInput;
+  scope: NonNullable<Awaited<ReturnType<typeof resolveRunScope>>>;
+  userId: string;
+}) {
+  const { block, mockId } = scope;
+  const { skillId } = input;
+
+  const timeZone = await getPracticeTimeZone({
+    goal: scope.goal,
+    timeZone: input.timeZone,
+    userId,
+  });
+
+  await io();
+
+  const now = new Date();
+  const skillIds = narrowToSkill({ scopeSkillIds: scope.skillIds, skillId });
+
+  if (block) {
+    const { mistakes, replays } = await loadPendingBlockMistakes({
+      mistakeIds: ["completed", "skipped"].includes(block.block.status)
+        ? []
+        : getUnservedMistakeIds(readBlockPayload(block.block)),
+      now,
+      timeZone,
+      userId,
+    });
+
+    return mistakes.flatMap((mistake) => {
+      const replay = replays.get(mistake.id);
+      return replay ? [{ ...mistake, replay }] : [];
+    });
+  }
+
+  const entries = await loadPracticeEntries({
+    includeAllFormats: input.includeAllFormats,
+    mockId,
+    skillIds,
+    userId,
+  });
+
+  return orderPractice({
+    localDate: getDateInTimeZone({ date: now, timeZone }),
+    mistakes: entries,
+    mockId,
+    timeZone,
+  });
+}
+
+function orderPractice<TEntry extends Mistake>({
+  localDate,
+  mistakes,
+  mockId,
+  timeZone,
+}: {
+  localDate: Date;
+  mistakes: TEntry[];
+  mockId?: string;
+  timeZone: string;
+}) {
+  const earlier = listReadyMistakes({ localDate, mistakes, timeZone });
+  const earlierIds = new Set(earlier.map((mistake) => mistake.id));
+  const today = mistakes.filter((mistake) => !earlierIds.has(mistake.id));
+
+  if (mockId) {
+    return [...earlier, ...today];
+  }
+
+  const first = selectMistakesToPractice({ limit: MAX_PRACTICE_ANSWERS, mistakes: earlier });
+
+  return [
+    ...first,
+    ...selectMistakesToPractice({ limit: MAX_PRACTICE_ANSWERS - first.length, mistakes: today }),
+  ];
 }

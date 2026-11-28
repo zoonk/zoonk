@@ -1469,15 +1469,14 @@ export const TEST_CASES: GoalTutorCase[] = [
   goalCase({
     context: UX_PLAN,
     expectations:
-      "Carla's own words (Oct 2026), which once got 'não consigo antecipar' and no card. A project of her own: proposedChange asks to add a portfolio project set in the school where she teaches, starting soon (her 'logo'). The tool says its lessons start on 9 October (effect.addedTopicsStart): the answer says it comes into her plan from 9 October once she confirms it on the card, and that it adds 8 lessons and leaves out 13 that no longer fit before her date. Saying the plan can't bring the portfolio forward, or proposing no change, is a major error (cap 5.0); saying it starts today or right away is a major error (cap 6.0). No job promise.",
+      "Carla's own words (Oct 2026), which once got 'não consigo antecipar' and no card. A project of her own: proposedChange asks to add a portfolio project set in the school where she teaches, starting soon (her 'logo'). The tool says its lessons start on 9 October (effect.addedTopicsStart): the answer says it comes into her plan from 9 October once she confirms it on the card, and that, to make room for it, she'll study 5 fewer lessons before her date. Giving two lesson counts (such as 'adds 8 and leaves out 13') is a major error (cap 6.5). Saying the plan can't bring the portfolio forward, or proposing no change, is a major error (cap 5.0); saying it starts today or right away is a major error (cap 6.0). No job promise.",
     id: "pt-ux-school-project-soon",
     planChange: {
       effect: {
         addedTopicsStart: "2026-10-09",
         endDateAfter: null,
         endDateBefore: null,
-        lessonsAdded: 8,
-        lessonsRemoved: 13,
+        lessonCount: { count: 5, kind: "fewer" },
       },
     },
     question: "quero começar o portfólio logo, com algo da escola onde eu dou aula",
@@ -1558,8 +1557,7 @@ export const TEST_CASES: GoalTutorCase[] = [
         ],
         endDateAfter: null,
         endDateBefore: null,
-        lessonsAdded: 24,
-        lessonsRemoved: 18,
+        lessonCount: { count: 6, kind: "more" },
       },
     },
     question:
@@ -1576,8 +1574,21 @@ export const TEST_CASES: GoalTutorCase[] = [
   goalCase({
     context: ENEM_WITH_SETUP,
     expectations:
-      "Ana's own words (Nov 2026), which once got 'A proposta só se aplica quando você tocar em Aplicar no cartão' above a card whose buttons say something else. proposedChange asks to leave Redação out of her plan, since she'll study it with a private teacher (her choice). The answer says what will change and that nothing changes until she confirms it on the card under the answer. Naming or quoting a button of the card (Aplicar, Apply or any other) is a major error (cap 7.0).",
+      "Ana's own words (Nov 2026), which once got 'A proposta só se aplica quando você tocar em Aplicar no cartão' above a card whose buttons say something else, and later 'remove 115 aulas e acrescenta 151 aulas', which reads as the opposite of her request. proposedChange asks to leave Redação out of her plan, since she'll study it with a private teacher (her choice). The answer says in the terms of her request what leaves (Redação, with its topic 'Texto dissertativo-argumentativo a partir de uma situação-problema') and that its time goes to the rest of her plan. It says that nothing changes until she confirms it on the card under the answer. Saying the change adds lessons or giving two lesson counts (such as 'remove 115 e acrescenta 151') is a major error (cap 6.0). Naming or quoting a button of the card (Aplicar, Apply or any other) is a major error (cap 7.0).",
     id: "pt-enem-drop-redacao-tutor",
+    planChange: {
+      changes: "Redação left out of the plan",
+      effect: {
+        endDateAfter: null,
+        endDateBefore: null,
+        topicsLeftOut: [
+          {
+            area: "Redação",
+            topics: ["Texto dissertativo-argumentativo a partir de uma situação-problema"],
+          },
+        ],
+      },
+    },
     question: "Tira Redação do meu plano. Vou estudar redação com um professor particular.",
   }),
   goalCase({
@@ -1652,7 +1663,7 @@ export const TEST_CASES: GoalTutorCase[] = [
   goalCase({
     context: ENEM_NOTICE,
     expectations:
-      "Lucas asks for more biology and chemistry, less physics. proposedChange focuses biologia and química in Ciências da Natureza, keeping those words. The tool says the change adds 45 lessons and leaves out 21, and that Ondas and Calor (physics) stay out of the plan. The answer gives both numbers (adds 45, leaves out 21), never a net figure or only the 45, and names Ondas and Calor as left out before he applies it. Saying physics keeps its basics, its core or isn't left out is a major error (cap 6.0); so is giving only the lessons added (cap 6.5). No promise of 750.",
+      "Lucas asks for more biology and chemistry, less physics. proposedChange focuses biologia and química in Ciências da Natureza, keeping those words. The tool says Ondas and Calor (physics) leave the plan to make room. The answer names Ondas and Calor as left out before he applies it. Saying physics keeps its basics, its core or isn't left out is a major error (cap 6.0); so is saying only what comes in without what leaves, or giving two lesson counts (cap 6.5). No promise of 750.",
     id: "pt-enem-bio-chem-physics-left-out",
     planChange: {
       effect: {
@@ -1665,8 +1676,6 @@ export const TEST_CASES: GoalTutorCase[] = [
         ],
         endDateAfter: null,
         endDateBefore: null,
-        lessonsAdded: 45,
-        lessonsRemoved: 21,
         topicsAdded: [
           { area: "Ciências da Natureza", topics: ["Hereditariedade", "Compostos de carbono"] },
         ],
@@ -1678,7 +1687,7 @@ export const TEST_CASES: GoalTutorCase[] = [
   goalCase({
     context: OAB_PHILOSOPHY_DAY,
     expectations:
-      "A request in parts: Sundays with one hour, today's eight Filosofia lessons when Filosofia has few questions, and more Processo Civil. proposedChange asks for one hour on Sundays and more time and depth for Direito Processual Civil, in one call; it may also ask for less time for Filosofia do Direito. The answer covers each part: Sundays, Processo Civil (starting 8 Oct instead of 12 Oct), and Filosofia: why it's in today (the plan's order; it has 2 questions) and that the change gives it less room, or that today's session stays as it is. Ignoring the Filosofia part is a major error (cap 6.5). Leaving Filosofia out of the plan or suggesting it is a major error (cap 5.0); asking for more time for Filosofia is a major error (cap 4.0). Says the 45 lessons that no longer fit before the date.",
+      "A request in parts: Sundays with one hour, today's eight Filosofia lessons when Filosofia has few questions, and more Processo Civil. proposedChange asks for one hour on Sundays and more time and depth for Direito Processual Civil, in one call; it may also ask for less time for Filosofia do Direito. The answer covers each part: Sundays, Processo Civil (starting 8 Oct instead of 12 Oct), and Filosofia: why it's in today (the plan's order; it has 2 questions) and that the change gives it less room, or that today's session stays as it is. Ignoring the Filosofia part is a major error (cap 6.5). Leaving Filosofia out of the plan or suggesting it is a major error (cap 5.0); asking for more time for Filosofia is a major error (cap 4.0). Says she'll study 45 fewer lessons before the date.",
     id: "pt-oab-sundays-less-philosophy",
     planChange: {
       effect: {
@@ -1691,8 +1700,7 @@ export const TEST_CASES: GoalTutorCase[] = [
         ],
         endDateAfter: null,
         endDateBefore: null,
-        lessonsAdded: 0,
-        lessonsRemoved: 45,
+        lessonCount: { count: 45, kind: "fewer" },
       },
     },
     question:
@@ -1701,7 +1709,7 @@ export const TEST_CASES: GoalTutorCase[] = [
   goalCase({
     context: OAB_PHILOSOPHY_DAY,
     expectations:
-      "Sofia's own words: Sundays with one hour, more Processo Civil, less Filosofia, and a question about the date. proposedChange asks, in one call, for one hour on Sundays, more time for Direito Processual Civil and less time for Filosofia do Direito. Asking for more time or focus for Filosofia is a major error (cap 4.0), and so is leaving Filosofia out of the plan (cap 5.0). The answer says what the change does for each part as `changes` says it (Filosofia gets less time), the 45 lessons it leaves out, and that it applies once confirmed on the card. The date is a question: the notice (FGV) sets the 1ª fase for 10 January 2027; proposing to move the exam to March is a major error (cap 5.0).",
+      "Sofia's own words: Sundays with one hour, more Processo Civil, less Filosofia, and a question about the date. proposedChange asks, in one call, for one hour on Sundays, more time for Direito Processual Civil and less time for Filosofia do Direito. Asking for more time or focus for Filosofia is a major error (cap 4.0), and so is leaving Filosofia out of the plan (cap 5.0). The answer says what the change does for each part as `changes` says it (Filosofia gets less time), that she'll study 23 fewer lessons before the exam (one count: giving 45 and 22 apart is a major error, cap 6.5), and that it applies once confirmed on the card. The date is a question: the notice (FGV) sets the 1ª fase for 10 January 2027; proposing to move the exam to March is a major error (cap 5.0).",
     id: "pt-oab-more-civil-procedure-less-philosophy",
     planChange: {
       changes:
@@ -1716,8 +1724,7 @@ export const TEST_CASES: GoalTutorCase[] = [
         ],
         endDateAfter: null,
         endDateBefore: null,
-        lessonsAdded: 22,
-        lessonsRemoved: 45,
+        lessonCount: { count: 23, kind: "fewer" },
       },
     },
     question:
@@ -1740,11 +1747,15 @@ export const TEST_CASES: GoalTutorCase[] = [
   }),
   goalCase({
     context: ENEM_WITH_SETUP,
-    expectations: `${LOOKUP_EXPECTATIONS} He lowers his daily time to 40 minutes. proposedChange asks for 40 minutes a day, the time he chose. The answer says what the change does as the card says it (14 lessons no longer come before the date) and how the plan prioritizes: every topic stays in the plan (coreFits is true), the ones the exam asks most first. If lookUps has timeToCover, it may mention the suggested 95 minutes a day once, calmly; a time not taken from the lookup is a major error (cap 5.0). Proposing a time other than 40 minutes, giving a percentage or fraction of the exam the time covers, or saying 40 minutes isn't enough is a major error (cap 5.0). No promise of a score.`,
+    expectations: `${LOOKUP_EXPECTATIONS} He lowers his daily time to 40 minutes. proposedChange asks for 40 minutes a day, the time he chose. The answer says what the change does as the card says it (he'll study 14 fewer lessons before the date) and how the plan prioritizes: every topic stays in the plan (coreFits is true), the ones the exam asks most first. If lookUps has timeToCover, it may mention the suggested 95 minutes a day once, calmly; a time not taken from the lookup is a major error (cap 5.0). Proposing a time other than 40 minutes, giving a percentage or fraction of the exam the time covers, or saying 40 minutes isn't enough is a major error (cap 5.0). No promise of a score.`,
     id: "pt-enem-less-time-chosen",
     lookUps: ENEM_TIME_TO_COVER,
     planChange: {
-      effect: { endDateAfter: null, endDateBefore: null, lessonsAdded: 0, lessonsRemoved: 14 },
+      effect: {
+        endDateAfter: null,
+        endDateBefore: null,
+        lessonCount: { count: 14, kind: "fewer" },
+      },
     },
     question: "vou ter que diminuir pra 40 minutos por dia",
   }),
@@ -2133,7 +2144,7 @@ export const TEST_CASES: GoalTutorCase[] = [
     appTools: { conversationCall: { minutes: [1, 2], unit: "Talking about your projects" } },
     context: { ...INTERVIEW_PLAN, today: { ...INTERVIEW_PLAN.today, date: "2026-10-09" } },
     expectations:
-      "Marcos's own words: behavioral questions starting next week, and a mock interview call. proposedChange asks for more time for behavioral questions (perguntas comportamentais), starting next week (his words). The tool says they start on 22 October with the change, against 30 October now, and that it adds 25 lessons and leaves out 25: the answer gives 22 October and, since he asked for next week (12 to 16 October), says in a sentence why not sooner (what those lessons build on comes first in his plan), and gives both 25s. Saying they start next week, right away or soon is a major error (cap 6.0); giving 22 October without saying it's later than he asked and why caps at 7.0. The message's one card is the change's: offeredTools has no conversationCall offered (none called, or one that came back onePerMessage or changeFirst), and the answer says in a sentence that the call's card comes in the next answer when he asks for it; saying the call card is under this answer is a major error (cap 6.0).",
+      "Marcos's own words: behavioral questions starting next week, and a mock interview call. proposedChange asks for more time for behavioral questions (perguntas comportamentais), starting next week (his words). The tool says they start on 22 October with the change, against 30 October now: the answer gives 22 October and, since he asked for next week (12 to 16 October), says in a sentence why not sooner (what those lessons build on comes first in his plan). Saying they start next week, right away or soon is a major error (cap 6.0); giving 22 October without saying it's later than he asked and why caps at 7.0. The message's one card is the change's: offeredTools has no conversationCall offered (none called, or one that came back onePerMessage or changeFirst), and the answer says in a sentence that the call's card comes in the next answer when he asks for it; saying the call card is under this answer is a major error (cap 6.0).",
     id: "pt-interview-behavioral-next-week",
     planChange: {
       effect: {
@@ -2146,8 +2157,6 @@ export const TEST_CASES: GoalTutorCase[] = [
         ],
         endDateAfter: null,
         endDateBefore: null,
-        lessonsAdded: 25,
-        lessonsRemoved: 25,
       },
     },
     question:

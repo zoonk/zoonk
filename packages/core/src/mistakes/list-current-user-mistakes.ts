@@ -1,6 +1,5 @@
 import "server-only";
 import { type Mistake, type MistakeCause, prisma } from "@zoonk/db";
-import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { cacheTag } from "next/cache";
 import { getLearnerModelCacheTag } from "../cache/tags";
 import { readExamPicks } from "../exams/choices/exam-choices";
@@ -13,7 +12,7 @@ import { getSession } from "../users/get-session";
 import { getScopeSkillIds } from "./_utils/mistake-scope";
 import { visibleMistakeWhere } from "./_utils/visible-mistake";
 import { type MistakeAvailability, type MistakeListInput } from "./contract";
-import { getPracticeTimeZone, loadMistakePracticeAvailability } from "./mistake-availability";
+import { loadMistakePracticeAvailability } from "./mistake-availability";
 import { type MistakeLesson, findMistakeLessons, getMistakeLessonPlace } from "./mistake-lessons";
 import { type MistakeSnapshot, readMistakeSnapshot } from "./mistake-snapshot";
 
@@ -22,10 +21,7 @@ type MistakeEntry = Pick<
   "cause" | "createdAt" | "fixedAt" | "id" | "itemId" | "status"
 > & {
   lesson: MistakeLesson | null;
-  /** Open and made on an earlier local day; today's mistakes return tomorrow. */
   practiceAvailable: boolean;
-  /** This open mistake has practice material and becomes available on the next local day. */
-  practiceAvailableTomorrow: boolean;
   skill: { id: string; name: string } | null;
   snapshot: MistakeSnapshot;
 };
@@ -109,10 +105,6 @@ export async function listCurrentUserMistakes(
     ...(skillIds ? { skillId: { in: skillIds } } : {}),
   };
 
-  const timeZone = await getPracticeTimeZone({ goal, timeZone: input.timeZone, userId });
-
-  const localDate = getDateInTimeZone({ date: new Date(), timeZone });
-
   const [rows, counts, structure, practiceAvailability] = await Promise.all([
     prisma.mistake.findMany({
       include: {
@@ -126,13 +118,7 @@ export async function listCurrentUserMistakes(
     }),
     countMistakes(scope),
     goal ? loadExamStructure(goal, { blueprint, picks: readExamPicks(savedPlan?.settings) }) : null,
-    loadMistakePracticeAvailability({
-      goalId: input.goalId,
-      localDate,
-      skillId: input.skillId,
-      timeZone,
-      userId,
-    }),
+    loadMistakePracticeAvailability({ goalId: input.goalId, skillId: input.skillId, userId }),
   ]);
 
   const page = rows.slice(0, input.limit);
@@ -154,7 +140,6 @@ export async function listCurrentUserMistakes(
       itemId: row.itemId,
       lesson: lessons.get(row.id) ?? null,
       practiceAvailable: practiceAvailability.readyIds.has(row.id),
-      practiceAvailableTomorrow: practiceAvailability.tomorrowIds.has(row.id),
       skill: row.skill,
       snapshot: readMistakeSnapshot(row.snapshot),
       status: row.status,

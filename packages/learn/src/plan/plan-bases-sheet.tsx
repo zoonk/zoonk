@@ -2,7 +2,6 @@
 
 import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
 import { type PlanBaseView, type PlanBasesView } from "@zoonk/core/plans/view-contract";
-import { Button } from "@zoonk/ui/components/button";
 import {
   Drawer,
   DrawerContent,
@@ -14,6 +13,7 @@ import {
 import { LayersIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
+import { EnterButton } from "../_components/enter-button";
 import { QUIET_ACTION_CLASS } from "../_components/quiet-disclosure";
 import { SheetHeader } from "../_components/sheet-header";
 import { PlanEffectDiff, PlanEffectNote } from "../plan-diff/plan-effect-diff";
@@ -132,16 +132,15 @@ function BasesFooter({
 
   return (
     <DrawerFooter note={<div aria-live="polite">{note()}</div>}>
-      <Button
+      <EnterButton
         busy={isPending}
         disabled={changed.length === 0 || preview.status !== "ready"}
-        focusableWhenDisabled
         onClick={onSave}
         ref={saveButton}
         size="lg"
       >
         {t("Save")}
-      </Button>
+      </EnterButton>
     </DrawerFooter>
   );
 }

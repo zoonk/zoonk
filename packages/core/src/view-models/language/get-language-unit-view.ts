@@ -4,6 +4,7 @@ import { type CefrLevel } from "@zoonk/utils/cefr";
 import { isUuid } from "@zoonk/utils/uuid";
 import { findLearnerLanguageGoal } from "../../language/_utils/language-goal";
 import { getSpeakingLevel } from "../../language/conversations/_utils/conversation-goal";
+import { getScenarioRegion } from "../../language/conversations/_utils/conversation-scenario";
 import { loadPracticeCall } from "../../language/conversations/_utils/practice-call";
 import { formatLevels } from "../../language/levels/skill-level-rules";
 import { findFreshMistakePattern } from "../../language/patterns/find-fresh-pattern";
@@ -208,7 +209,11 @@ export async function getLanguageUnitView({
         Boolean(goal) &&
         chapter.lessons.some(({ lesson }) => !done.has(lesson.id)) &&
         !blockedTestOutChapters.has(chapter.id),
-      conversation: await loadPracticeCall({ chapterId: chapter.id, level }),
+      conversation: await loadPracticeCall({
+        chapterId: chapter.id,
+        level,
+        targetRegion: getScenarioRegion(goal),
+      }),
       goalId: goal?.id ?? null,
       grammarTips,
       lessons: chapter.lessons.map(({ lesson }) => ({

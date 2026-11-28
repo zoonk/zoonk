@@ -9,6 +9,7 @@ import {
   loadAnytimeMockSetup,
 } from "../exams/mocks/_utils/anytime-mock-setup";
 import { getSpeakingLevel } from "../language/conversations/_utils/conversation-goal";
+import { getScenarioRegion } from "../language/conversations/_utils/conversation-scenario";
 import { loadPracticeCall } from "../language/conversations/_utils/practice-call";
 import { loadDoneUnitIds } from "../language/units/can-do-events";
 import { findCurrentUnit, loadLanguageUnits } from "../language/units/language-units";
@@ -165,7 +166,11 @@ async function offerConversationCall(goal: Goal): Promise<TutorToolResult> {
 
   return {
     offer: {
-      call: await loadPracticeCall({ chapterId: unit.chapterId, level }),
+      call: await loadPracticeCall({
+        chapterId: unit.chapterId,
+        level,
+        targetRegion: getScenarioRegion(goal),
+      }),
       chapterId: unit.chapterId,
       goalId: goal.id,
       kind: "conversationCall",
