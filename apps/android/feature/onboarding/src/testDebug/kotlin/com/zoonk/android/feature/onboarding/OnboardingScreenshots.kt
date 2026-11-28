@@ -94,6 +94,7 @@ import com.zoonk.api.models.LanguageLevelTestResult
 import com.zoonk.api.models.OnboardingDraft
 import com.zoonk.api.models.PlanFinishPrecision
 import com.zoonk.api.models.PlanFinishReason
+import com.zoonk.api.models.PlanPhaseChaptersInner
 import com.zoonk.api.models.PlanTimeAdvice
 import com.zoonk.api.models.SourceReadStatus
 import com.zoonk.api.models.TodayUploadRequest
@@ -167,19 +168,14 @@ class OnboardingScreenshots {
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun revealWritingChapters() {
-        val today = LocalDate.now()
-        val end = today.plusDays(30)
-        val plan =
-            planOf(
-                targetDate = null,
-                endDate = end,
-                phases = listOf(phaseOf(0, "learn", "current", today, end, "[${chapterOf("Variables")}]")),
-            )
-        val phase = plan.phases.single()
+        val end = LocalDate.now().plusDays(30)
+        val precision = PlanFinishPrecision.MONTH
+        val plan = undatedPlan(end, precision, ends = listOf(end to precision))
+        val chapter = ApiJson.decodeFromString<PlanPhaseChaptersInner>(chapterOf("Variables")).copy(writing = true)
         val writingPhase =
-            phase.copy(
+            plan.phases.single().copy(
                 milestone = "Write small Python programs",
-                chapters = phase.chapters.map { it.copy(writing = true) },
+                chapters = listOf(chapter),
             )
         val api = setupPlanApi().apply { shownPlan = plan.copy(phases = listOf(writingPhase)) }
         val scenario = "reveal-writing-chapters"
