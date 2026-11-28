@@ -2,6 +2,12 @@ import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, CircleIcon } from "lucide-react";
 
+/**
+ * An empty choice mark's line. Its shape alone says whether one answer counts or several, so it
+ * reaches 3:1 at rest, as on iOS and Android, where a field's line stays soft.
+ */
+export const CHOICE_MARK_LINE_CLASS = "border-foreground/50 contrast-more:border-foreground";
+
 export type PickMarkKind = "check" | "radio";
 
 /**
@@ -31,9 +37,10 @@ export function PickMark({
     >
       <span
         className={cn(
-          "border-input dark:bg-input/30 text-selected-foreground flex size-4 items-center justify-center border",
+          "dark:bg-input/30 text-selected-foreground flex size-4 items-center justify-center border",
+          CHOICE_MARK_LINE_CLASS,
           kind === "radio" ? "rounded-full" : "rounded-sm",
-          "in-data-held:border-selected in-data-held:bg-selected in-data-[held=unchecked]:border-input! in-data-[held=unchecked]:bg-transparent!",
+          "in-data-held:border-selected in-data-held:bg-selected in-data-[held=unchecked]:border-foreground/50! in-data-[held=unchecked]:bg-transparent!",
           picked && "border-selected bg-selected dark:bg-selected",
         )}
       >
