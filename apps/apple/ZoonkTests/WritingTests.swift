@@ -604,7 +604,7 @@ final class WritingDraftTests: XCTestCase {
     await server.waitForSaves(1)
     writer.write("first plus a new paragraph")
     await server.releaseSaves()
-    await saving.value
+    _ = await saving.value
 
     XCTAssertEqual(writer.text, "first plus a new paragraph")
     let kept = KeptWriting.read(blockId)
@@ -627,7 +627,7 @@ final class WritingDraftTests: XCTestCase {
     await server.waitForSaves(1)
     second.write("Unsaved in the second window")
     await server.releaseSaves()
-    await saving.value
+    _ = await saving.value
 
     XCTAssertEqual(KeptWriting.read(blockId)?.text, "Unsaved in the second window")
   }

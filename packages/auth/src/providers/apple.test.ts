@@ -32,11 +32,7 @@ vi.mock("jose", () => ({
       return this;
     }
 
-    async sign() {
-      void this;
-
-      return mocks.signClientSecret();
-    }
+    sign = mocks.signClientSecret;
   },
   importPKCS8: mocks.importPrivateKey,
 }));
