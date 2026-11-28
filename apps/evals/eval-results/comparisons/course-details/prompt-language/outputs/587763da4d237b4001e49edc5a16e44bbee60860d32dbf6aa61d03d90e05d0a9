@@ -1,0 +1,21 @@
+{
+  "categories": [
+    "science",
+    "math"
+  ],
+  "description": "Quantum physics describes how matter and light behave at the scale of atoms. The course moves from atoms, light, uncertainty, and entanglement to quantum devices, experimental measurements, and the math used to describe quantum states, energy, and change. These ideas help explain technologies such as chips, LEDs, and lasers.",
+  "landingPage": {
+    "audience": [
+      "High school science students",
+      "College students building physics skills",
+      "Curious readers new to physics"
+    ],
+    "outcomes": [
+      "Explain why atoms and light behave differently",
+      "Read results from simple quantum experiments",
+      "Use math to compare tiny measurements",
+      "Describe how quantum systems change over time"
+    ],
+    "valueProposition": "Explain why atoms, light, and the technology in your phone behave in ways everyday physics can't predict."
+  }
+}

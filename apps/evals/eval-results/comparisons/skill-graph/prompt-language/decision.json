@@ -1,0 +1,612 @@
+{
+  "cases": [
+    {
+      "caseId": "pt-biology-beginner-deep",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "en-economics-beginner-deep",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "en-data-analyst-work",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "pt-career-change-ux",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "es-language-english-hotel",
+      "language": "es",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "pt-language-english-moving-abroad",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "ko-language-japanese-working-holiday",
+      "language": "ko",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "en-product-nextjs",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    }
+  ],
+  "outcome": "retain",
+  "preferences": [],
+  "readers": [
+    {
+      "failedPackets": 0,
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    },
+    {
+      "failedPackets": 0,
+      "family": "openai",
+      "model": "openai/gpt-6-luna",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    },
+    {
+      "failedPackets": 0,
+      "family": "owner",
+      "model": "owner",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    }
+  ],
+  "reason": "In pt, the challenger adds 16.67 weighted major-affected runs per 100 matched. The trade allows 0.",
+  "rows": [
+    {
+      "attempted": 16,
+      "casesByLanguage": {
+        "pt": 3,
+        "en": 3,
+        "es": 1,
+        "ko": 1
+      },
+      "costPer1000": 45.987,
+      "date": "2026-11-28T14:37:42.605Z",
+      "deliveryByLanguage": {
+        "pt": {
+          "costPer1000": 52.307066666666664,
+          "p50": 111.48384525000002,
+          "p95": 146.528925375,
+          "successful": 6
+        },
+        "en": {
+          "costPer1000": 41.326566666666665,
+          "p50": 85.15094029200007,
+          "p95": 136.50059370800003,
+          "successful": 6
+        },
+        "es": {
+          "costPer1000": 40.41295,
+          "p50": 82.30717300000006,
+          "p95": 89.73255708399996,
+          "successful": 2
+        },
+        "ko": {
+          "costPer1000": 46.582150000000006,
+          "p50": 101.15709833299998,
+          "p95": 104.85836700000009,
+          "successful": 2
+        }
+      },
+      "losses": 0,
+      "missingMatches": 0,
+      "p50": 89.73255708399996,
+      "p95": 146.528925375,
+      "quality": [
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "coverage",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "orderAndPrerequisites",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "granularity",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "noFiller",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "goalFit",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "aiEraSkills",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [
+            {
+              "caseId": "pt-career-change-ux",
+              "run": 1
+            },
+            {
+              "caseId": "pt-biology-beginner-deep",
+              "run": 1
+            },
+            {
+              "caseId": "pt-career-change-ux",
+              "run": 2
+            }
+          ],
+          "both": [
+            {
+              "caseId": "pt-career-change-ux",
+              "run": 1
+            },
+            {
+              "caseId": "pt-biology-beginner-deep",
+              "run": 1
+            },
+            {
+              "caseId": "pt-career-change-ux",
+              "run": 2
+            }
+          ],
+          "check": true,
+          "criterion": "orderAndPrerequisites",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "coverage",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "orderAndPrerequisites",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "granularity",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "noFiller",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "goalFit",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "aiEraSkills",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "coverage",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "orderAndPrerequisites",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "granularity",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "noFiller",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "goalFit",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "aiEraSkills",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "coverage",
+          "language": "ko",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "orderAndPrerequisites",
+          "language": "ko",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "granularity",
+          "language": "ko",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "noFiller",
+          "language": "ko",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "goalFit",
+          "language": "ko",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "aiEraSkills",
+          "language": "ko",
+          "weight": 1
+        }
+      ],
+      "side": "incumbent",
+      "status": "eligible",
+      "succeeded": 16,
+      "ties": 0,
+      "unresolved": 8,
+      "weightedMajorsByLanguage": {
+        "pt": 3,
+        "en": 0,
+        "es": 0,
+        "ko": 0
+      },
+      "wins": 0
+    },
+    {
+      "attempted": 16,
+      "casesByLanguage": {
+        "pt": 3,
+        "en": 3,
+        "es": 1,
+        "ko": 1
+      },
+      "costPer1000": 45.67775,
+      "date": "2026-11-28T14:37:42.605Z",
+      "deliveryByLanguage": {
+        "pt": {
+          "costPer1000": 51.02235000000002,
+          "p50": 101.330334041,
+          "p95": 141.59127470900003,
+          "successful": 6
+        },
+        "en": {
+          "costPer1000": 41.29336666666667,
+          "p50": 79.88221770899999,
+          "p95": 126.05149312499998,
+          "successful": 6
+        },
+        "es": {
+          "costPer1000": 40.823150000000005,
+          "p50": 84.68605775000003,
+          "p95": 88.66088525000005,
+          "successful": 2
+        },
+        "ko": {
+          "costPer1000": 47.651700000000005,
+          "p50": 99.06183679100009,
+          "p95": 104.22653291700011,
+          "successful": 2
+        }
+      },
+      "losses": 0,
+      "missingMatches": 0,
+      "p50": 88.66088525000005,
+      "p95": 141.59127470900003,
+      "quality": [
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "coverage",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "orderAndPrerequisites",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "granularity",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "noFiller",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "goalFit",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "aiEraSkills",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [
+            {
+              "caseId": "pt-biology-beginner-deep",
+              "run": 2
+            },
+            {
+              "caseId": "pt-career-change-ux",
+              "run": 1
+            },
+            {
+              "caseId": "pt-biology-beginner-deep",
+              "run": 1
+            },
+            {
+              "caseId": "pt-career-change-ux",
+              "run": 2
+            }
+          ],
+          "both": [
+            {
+              "caseId": "pt-career-change-ux",
+              "run": 1
+            },
+            {
+              "caseId": "pt-biology-beginner-deep",
+              "run": 1
+            },
+            {
+              "caseId": "pt-career-change-ux",
+              "run": 2
+            }
+          ],
+          "check": true,
+          "criterion": "orderAndPrerequisites",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "coverage",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "orderAndPrerequisites",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "granularity",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "noFiller",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "goalFit",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "aiEraSkills",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "coverage",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "orderAndPrerequisites",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "granularity",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "noFiller",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "goalFit",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "aiEraSkills",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "coverage",
+          "language": "ko",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "orderAndPrerequisites",
+          "language": "ko",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "granularity",
+          "language": "ko",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "noFiller",
+          "language": "ko",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "goalFit",
+          "language": "ko",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "aiEraSkills",
+          "language": "ko",
+          "weight": 1
+        }
+      ],
+      "side": "challenger",
+      "status": "trade",
+      "succeeded": 16,
+      "ties": 0,
+      "unresolved": 8,
+      "weightedMajorsByLanguage": {
+        "pt": 4,
+        "en": 0,
+        "es": 0,
+        "ko": 0
+      },
+      "wins": 0
+    }
+  ]
+}

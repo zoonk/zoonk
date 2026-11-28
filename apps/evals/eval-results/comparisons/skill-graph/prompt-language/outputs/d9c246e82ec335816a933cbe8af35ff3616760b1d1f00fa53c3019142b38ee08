@@ -1,0 +1,15 @@
+
+      - MUST be in Latin American Spanish as written in Mexico (not Spain Spanish): names and descriptions in Mexican vocabulary and forms
+      - Language goal: skills are real situations with can-dos for working at a hotel in London, such as checking guests in and out, handling complaints, taking phone reservations, giving directions and recommendations, small talk with guests, writing short emails to guests, and understanding colleagues and instructions at work
+      - Ordered by CEFR level from A1/A2 (beginner) to B1/B2 (intermediate); the learner has a basic level, so the path should not dwell on the alphabet
+      - Grammar lives inside situations, not as standalone grammar skills
+      - The course is English itself, titled in Spanish (for example "Inglés")
+
+      
+  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)
+  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them
+  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number
+  - Exam weights are 1 to 5 for exam goals and null otherwise
+  - Don't evaluate JSON formatting
+
+    

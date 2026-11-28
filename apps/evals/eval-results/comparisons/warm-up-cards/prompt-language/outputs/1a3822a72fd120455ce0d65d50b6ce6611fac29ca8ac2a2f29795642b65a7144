@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "In Python, what does the single equals sign do in `score = 10`?",
+      "options": [
+        {
+          "text": "Stores a value",
+          "correct": true
+        },
+        {
+          "text": "Checks equality",
+          "correct": false
+        },
+        {
+          "text": "Names a function",
+          "correct": false
+        }
+      ],
+      "reveal": "It stores a value under a name. A single equals sign assigns; Python uses `==` to compare values."
+    },
+    {
+      "question": "Why do lines beneath an `if` statement usually begin farther to the right?",
+      "options": [
+        {
+          "text": "They mark its code block",
+          "correct": true
+        },
+        {
+          "text": "They mark a comment",
+          "correct": false
+        },
+        {
+          "text": "They continue a string",
+          "correct": false
+        }
+      ],
+      "reveal": "They mark its code block. Python uses the spacing at the start of lines to show which statements belong together."
+    },
+    {
+      "question": "After `result = numbers.append(7)`, what is stored in `result`?",
+      "options": [
+        {
+          "text": "None",
+          "correct": true
+        },
+        {
+          "text": "The changed list",
+          "correct": false
+        },
+        {
+          "text": "The number 7",
+          "correct": false
+        }
+      ],
+      "reveal": "None. `append` changes the list in place but does not return the updated list."
+    },
+    {
+      "question": "What integers does `range(5)` produce when used in a Python loop?",
+      "options": [
+        {
+          "text": "0 through 4",
+          "correct": true
+        },
+        {
+          "text": "1 through 5",
+          "correct": false
+        },
+        {
+          "text": "0 through 5",
+          "correct": false
+        }
+      ],
+      "reveal": "0 through 4. The starting value is included, but the stop value is not."
+    },
+    {
+      "question": "In Python, what does an empty list count as in an `if` condition?",
+      "options": [
+        {
+          "text": "False",
+          "correct": true
+        },
+        {
+          "text": "True",
+          "correct": false
+        },
+        {
+          "text": "An error",
+          "correct": false
+        }
+      ],
+      "reveal": "False. Empty containers, including lists, count as false in a condition."
+    },
+    {
+      "question": "What happens when Python runs the assignment `",
+      "options": [
+        {
+          "text": "It raises a TypeError",
+          "correct": true
+        },
+        {
+          "text": "It edits that character",
+          "correct": false
+        },
+        {
+          "text": "It deletes the whole string",
+          "correct": false
+        }
+      ],
+      "reveal": "It raises a TypeError. Python strings cannot be changed one character at a time; an edited version must be created instead."
+    },
+    {
+      "question": "When a Python loop goes through `",
+      "options": [
+        {
+          "text": "One character",
+          "correct": true
+        },
+        {
+          "text": "One word",
+          "correct": false
+        },
+        {
+          "text": "One pair of characters",
+          "correct": false
+        }
+      ],
+      "reveal": "One character. A string is a sequence, so a loop visits its characters one at a time."
+    },
+    {
+      "question": "In a Python dictionary, what does `profile[",
+      "options": [
+        {
+          "text": "A key",
+          "correct": true
+        },
+        {
+          "text": "A list position",
+          "correct": false
+        },
+        {
+          "text": "A character count",
+          "correct": false
+        }
+      ],
+      "reveal": "A key. Dictionaries use keys to look up their associated values."
+    },
+    {
+      "question": "If a Python function reaches its end without a `return` statement, what does its call produce?",
+      "options": [
+        {
+          "text": "None",
+          "correct": true
+        },
+        {
+          "text": "An empty string",
+          "correct": false
+        },
+        {
+          "text": "The last calculated value",
+          "correct": false
+        }
+      ],
+      "reveal": "None. Python functions return `None` automatically when they finish without returning another value."
+    },
+    {
+      "question": "Two separate lists each contain 2 and 4 in that order. What does Python report when comparing them with `==`?",
+      "options": [
+        {
+          "text": "True",
+          "correct": true
+        },
+        {
+          "text": "False",
+          "correct": false
+        },
+        {
+          "text": "An error",
+          "correct": false
+        }
+      ],
+      "reveal": "True. For lists, `==` compares the items and their order, not whether both names point to the very same list."
+    }
+  ]
+}

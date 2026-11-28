@@ -1,0 +1,181 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "me sorprendió que muchos se apuntaran porque no tenían espacio para guardar en casa cosas que apenas utilizaban.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "easy",
+        "context": null,
+        "question": "¿Qué descubrió Andrea sobre algunos de los primeros usuarios?",
+        "options": [
+          {
+            "text": "Buscaban una solución a la falta de espacio en sus viviendas.",
+            "isCorrect": true,
+            "reason": "Andrea diz que muitos se inscreveram porque não tinham onde guardar objetos pouco usados.",
+            "misconception": null
+          },
+          {
+            "text": "Necesitaban ayuda para pagar los objetos que usaban a diario.",
+            "isCorrect": false,
+            "reason": "Você confunde a expectativa inicial de Andrea com o motivo que a surpreendeu.",
+            "misconception": "Confunde expectativa com descoberta."
+          },
+          {
+            "text": "Querían donar los libros que ya no les cabían en casa.",
+            "isCorrect": false,
+            "reason": "Andrea esclarece que a biblioteca é de objetos, não de livros.",
+            "misconception": "Confunde o tipo de biblioteca."
+          }
+        ]
+      },
+      {
+        "evidence": "decidimos no hacerlo: preferimos centrarnos en objetos duraderos que pudieran prestarse muchas veces.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "medium",
+        "context": null,
+        "question": "¿Por qué rechazaron la propuesta de recoger ropa?",
+        "options": [
+          {
+            "text": "Porque querían limitarse a artículos que resistieran varios préstamos.",
+            "isCorrect": true,
+            "reason": "Você ouve que eles optaram por objetos duráveis, que pudessem ser emprestados muitas vezes.",
+            "misconception": null
+          },
+          {
+            "text": "Porque ya habían reunido suficientes prendas para los usuarios.",
+            "isCorrect": false,
+            "reason": "Andrea diz que lhes ofereceram roupas, mas não afirma que já tivessem o suficiente.",
+            "misconception": "Supõe um excesso de doações."
+          },
+          {
+            "text": "Porque preferían recibir únicamente herramientas de reparación.",
+            "isCorrect": false,
+            "reason": "As ferramentas foram importantes no início, mas depois eles também aceitaram jogos e outros objetos.",
+            "misconception": "Toma a coleção inicial como limite permanente."
+          }
+        ]
+      },
+      {
+        "evidence": "Lo importante, para mí, es que antes de adquirir algo nos planteemos cuánto lo vamos a usar y si existe otra manera de conseguirlo.",
+        "skill": 2,
+        "format": "multipleChoice",
+        "difficulty": "hard",
+        "context": null,
+        "question": "¿Qué postura defiende Andrea respecto al consumo?",
+        "options": [
+          {
+            "text": "Hay que reflexionar sobre las alternativas antes de comprar.",
+            "isCorrect": true,
+            "reason": "Andrea propõe que você pense no uso do objeto e em outras formas de consegui-lo antes de comprá-lo.",
+            "misconception": null
+          },
+          {
+            "text": "Es necesario evitar cualquier compra que no sea imprescindible.",
+            "isCorrect": false,
+            "reason": "Ela rejeita a ideia de deixar de comprar e reconhece que às vezes comprar é prático.",
+            "misconception": "Confunde reflexão com proibição."
+          },
+          {
+            "text": "Conviene adquirir los objetos para poder compartirlos después.",
+            "isCorrect": false,
+            "reason": "Andrea fala das vantagens de compartilhar, mas não recomenda comprar para depois emprestar.",
+            "misconception": "Inverte a relação entre compra e compartilhamento."
+          }
+        ]
+      },
+      {
+        "evidence": "Lo que más trabajo nos dio fue organizar las reparaciones.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "medium",
+        "context": null,
+        "question": "¿Cuál fue la mayor dificultad del proyecto al comenzar?",
+        "options": [
+          {
+            "text": "Resolver cómo arreglar los objetos dañados.",
+            "isCorrect": true,
+            "reason": "Andrea afirma que organizar os consertos foi o que deu mais trabalho.",
+            "misconception": null
+          },
+          {
+            "text": "Conseguir un espacio con un precio adecuado.",
+            "isCorrect": false,
+            "reason": "Você ouve que eles esperavam essa dificuldade, mas a prefeitura cedeu um local.",
+            "misconception": "Confunde problema previsto com problema real."
+          },
+          {
+            "text": "Encontrar suficientes personas interesadas en apuntarse.",
+            "isCorrect": false,
+            "reason": "Andrea menciona os usuários, mas identifica os consertos como a principal dificuldade.",
+            "misconception": "Atribui a dificuldade ao número de usuários."
+          }
+        ]
+      },
+      {
+        "evidence": "antes queremos asegurarnos de que el actual funciona sin depender siempre de las mismas cuatro personas. Por eso estamos preparando encuentros para formar a nuevos voluntarios.",
+        "skill": 2,
+        "format": "multipleChoice",
+        "difficulty": "hard",
+        "context": null,
+        "question": "¿Qué prioridad tienen los responsables antes de ampliar el proyecto?",
+        "options": [
+          {
+            "text": "Preparar a más personas para que colaboren en el local existente.",
+            "isCorrect": true,
+            "reason": "Andrea explica que você verá novos voluntários sendo preparados para distribuir melhor o trabalho atual.",
+            "misconception": null
+          },
+          {
+            "text": "Buscar un lugar apropiado para abrir en otro barrio.",
+            "isCorrect": false,
+            "reason": "Abrir outro local é uma possibilidade futura, mas Andrea diz que antes querem reforçar a equipe atual.",
+            "misconception": "Confunde um plano futuro com a prioridade imediata."
+          },
+          {
+            "text": "Recuperar la cuota anual para financiar el crecimiento.",
+            "isCorrect": false,
+            "reason": "Você ouve que a quota fixa foi eliminada, e Andrea não propõe retomá-la.",
+            "misconception": "Retoma uma medida abandonada."
+          }
+        ]
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Andrea",
+        "gender": "female",
+        "accent": "Castilian Spanish"
+      }
+    ],
+    "title": "Una biblioteca para compartir objetos",
+    "turns": [
+      {
+        "speaker": "Andrea",
+        "text": "Buenas tardes. Hoy quiero contaros una experiencia que empezó hace tres años en mi barrio de Valencia. Un grupo de vecinos pensamos en abrir una biblioteca, pero no de libros, sino de objetos que usamos de vez en cuando. Yo esperaba que viniera gente que no podía permitirse comprarlos. Y vino, claro, pero me sorprendió que muchos se apuntaran porque no tenían espacio para guardar en casa cosas que apenas utilizaban."
+      },
+      {
+        "speaker": "Andrea",
+        "text": "Al principio recogimos sobre todo herramientas para pequeñas reparaciones. También nos ofrecieron ropa, y hubo quien propuso aceptarla para atraer a más gente. Sin embargo, decidimos no hacerlo: preferimos centrarnos en objetos duraderos que pudieran prestarse muchas veces. Así llegaron juegos de mesa, tiendas de campaña y hasta una máquina de coser. Cada persona puede llevarse dos cosas durante una semana, aunque si nadie las ha reservado, puede ampliar el préstamo."
+      },
+      {
+        "speaker": "Andrea",
+        "text": "A menudo me preguntan si nuestro objetivo es que la gente deje de comprar. Yo diría que no exactamente. A veces comprar es lo más práctico, y tampoco queremos hacer sentir culpable a nadie. Lo importante, para mí, es que antes de adquirir algo nos planteemos cuánto lo vamos a usar y si existe otra manera de conseguirlo. Cuando compartimos, además, conocemos a personas con las que quizá no hablaríamos de otro modo."
+      },
+      {
+        "speaker": "Andrea",
+        "text": "Eso sí, no todo ha sido fácil. Pensábamos que el principal problema sería encontrar un local asequible, pero el ayuntamiento nos cedió uno cerca del mercado. Lo que más trabajo nos dio fue organizar las reparaciones. Algunos objetos volvían estropeados y no teníamos ni las piezas ni las personas necesarias para arreglarlos enseguida. Al final, un taller del barrio se ofreció a enseñarnos, una tarde al mes, a hacer las reparaciones más sencillas."
+      },
+      {
+        "speaker": "Andrea",
+        "text": "Ahora tenemos unos cuatrocientos socios, aunque no todos vienen con frecuencia. Al principio cobramos cinco euros al año para cubrir gastos, pero comprobamos que algunas familias se quedaban fuera. Así que eliminamos la cuota fija y cada uno aporta lo que puede. Hay quien da dinero y quien prefiere ayudarnos a ordenar el almacén o a atender a los nuevos usuarios."
+      },
+      {
+        "speaker": "Andrea",
+        "text": "Y ¿qué haremos a partir de ahora? Nos han sugerido abrir otro local en un barrio cercano. La idea nos gusta, pero antes queremos asegurarnos de que el actual funciona sin depender siempre de las mismas cuatro personas. Por eso estamos preparando encuentros para formar a nuevos voluntarios. Si conseguimos repartir mejor el trabajo, ya habrá tiempo de crecer. De momento, nos basta con ver cómo un objeto que llevaba meses olvidado en un armario vuelve a ser útil. Muchas gracias."
+      }
+    ]
+  }
+}

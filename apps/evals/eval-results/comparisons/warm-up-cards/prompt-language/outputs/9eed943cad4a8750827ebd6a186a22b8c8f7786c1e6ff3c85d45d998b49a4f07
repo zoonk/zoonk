@@ -1,0 +1,180 @@
+{
+  "cards": [
+    {
+      "question": "What keeps a wound mechanical clock's gears from turning freely all at once?",
+      "options": [
+        {
+          "text": "A friction brake",
+          "correct": false
+        },
+        {
+          "text": "A stronger driving force",
+          "correct": false
+        },
+        {
+          "text": "A timed release",
+          "correct": true
+        }
+      ],
+      "reveal": "A timed release. The mechanism lets the gear train move in controlled steps, helping regulate the clock's pace."
+    },
+    {
+      "question": "For small swings, which matters more to a pendulum's timing: its length or the bob's mass?",
+      "options": [
+        {
+          "text": "Its length",
+          "correct": true
+        },
+        {
+          "text": "The bob's mass",
+          "correct": false
+        }
+      ],
+      "reveal": "Its length. A longer pendulum takes more time per swing; for small swings, the bob's mass has little effect on the timing."
+    },
+    {
+      "question": "As a clock's hanging mass slowly drops, what does that motion provide to the mechanism?",
+      "options": [
+        {
+          "text": "Energy to drive the gears",
+          "correct": true
+        },
+        {
+          "text": "A signal that regulates the pendulum",
+          "correct": false
+        },
+        {
+          "text": "A brake that holds the gears",
+          "correct": false
+        }
+      ],
+      "reveal": "Energy to drive the gears. As the mass descends, gravity supplies the force that keeps the clock mechanism moving."
+    },
+    {
+      "question": "When you wind a clock, what happens to the coiled metal strip inside?",
+      "options": [
+        {
+          "text": "It stores elastic energy",
+          "correct": true
+        },
+        {
+          "text": "It lubricates the gears",
+          "correct": false
+        },
+        {
+          "text": "It changes the pendulum's length",
+          "correct": false
+        }
+      ],
+      "reveal": "It stores elastic energy. As the strip unwinds, it releases that energy to power the clock."
+    },
+    {
+      "question": "Why can one full turn of a clock's minute hand move its hour hand only a little?",
+      "options": [
+        {
+          "text": "Different gear ratios",
+          "correct": true
+        },
+        {
+          "text": "A heavier hour hand",
+          "correct": false
+        },
+        {
+          "text": "A larger pendulum swing",
+          "correct": false
+        }
+      ],
+      "reveal": "Different gear ratios. The connected wheels turn at different rates, making the hour hand move much more slowly than the minute hand."
+    },
+    {
+      "question": "A pendulum clock's tick and tock have unequal pauses; what might that signal?",
+      "options": [
+        {
+          "text": "The clock may be out of beat",
+          "correct": true
+        },
+        {
+          "text": "The hands may be misaligned",
+          "correct": false
+        },
+        {
+          "text": "The spring may be fully wound",
+          "correct": false
+        }
+      ],
+      "reveal": "The clock may be out of beat. Adjusting the movement's position can help make the ticks and tocks evenly spaced."
+    },
+    {
+      "question": "In many mechanical clocks that ring a bell, how can ringing happen without stopping timekeeping?",
+      "options": [
+        {
+          "text": "A separate gear train",
+          "correct": true
+        },
+        {
+          "text": "A faster pendulum",
+          "correct": false
+        },
+        {
+          "text": "A longer chain",
+          "correct": false
+        }
+      ],
+      "reveal": "A separate gear train. Many striking clocks use one mechanism to keep time and another to operate the striking parts."
+    },
+    {
+      "question": "Why can old, sticky lubricant make a clock run poorly?",
+      "options": [
+        {
+          "text": "It can increase friction",
+          "correct": true
+        },
+        {
+          "text": "It can lighten the pendulum",
+          "correct": false
+        },
+        {
+          "text": "It can alter the gear ratio",
+          "correct": false
+        }
+      ],
+      "reveal": "It can increase friction. Old or contaminated lubricant may interfere with the movement of small parts instead of helping them move smoothly."
+    },
+    {
+      "question": "What is the thin decorative wood layer sometimes found on an antique clock case called?",
+      "options": [
+        {
+          "text": "Veneer",
+          "correct": true
+        },
+        {
+          "text": "Inlay",
+          "correct": false
+        },
+        {
+          "text": "Carving",
+          "correct": false
+        }
+      ],
+      "reveal": "Veneer. It is a thin layer of decorative material applied over a base, rather than a case made entirely from that wood."
+    },
+    {
+      "question": "Before taking apart an unfamiliar clock, what can photos of each step help preserve?",
+      "options": [
+        {
+          "text": "A record of where parts came from",
+          "correct": true
+        },
+        {
+          "text": "A way to loosen tight screws",
+          "correct": false
+        },
+        {
+          "text": "A test of the clock's accuracy",
+          "correct": false
+        }
+      ],
+      "reveal": "A record of where parts came from. Photos can help during reassembly, especially when similar-looking pieces fit or wear differently."
+    }
+  ]
+}

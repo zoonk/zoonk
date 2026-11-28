@@ -1,0 +1,791 @@
+{
+  "cases": [
+    {
+      "caseId": "en-data-analysis-beginner",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "en-star-wars-overview",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "en-contract-law-beginner",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "pt-farmacologia-beginner",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "pt-economia-overview",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "pt-ingles-language-beginner",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "en-quantum-physics-from-scratch",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "pt-fisica-quantica-do-zero",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "pt-enem-exam",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "en-advanced-music-theory",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "it-finanza-personale-beginner",
+      "language": "it",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "ja-eiyogaku-beginner",
+      "language": "ja",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "ko-hanguksa-exam",
+      "language": "ko",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "tr-almanca-language-beginner",
+      "language": "tr",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "pl-prawo-pracy-beginner",
+      "language": "pl",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    }
+  ],
+  "outcome": "retain",
+  "preferences": [],
+  "readers": [
+    {
+      "failedPackets": 0,
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    },
+    {
+      "failedPackets": 0,
+      "family": "openai",
+      "model": "openai/gpt-6-luna",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    },
+    {
+      "failedPackets": 0,
+      "family": "owner",
+      "model": "owner",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    }
+  ],
+  "reason": "A pricier challenger needs owner judgment.",
+  "rows": [
+    {
+      "attempted": 30,
+      "casesByLanguage": {
+        "en": 5,
+        "pt": 5,
+        "it": 1,
+        "ja": 1,
+        "ko": 1,
+        "tr": 1,
+        "pl": 1
+      },
+      "costPer1000": 0.7526314999999999,
+      "date": "2026-11-28T13:31:39.291Z",
+      "deliveryByLanguage": {
+        "en": {
+          "costPer1000": 0.6464945,
+          "p50": 8.906882999999999,
+          "p95": 10.614365624999998,
+          "successful": 10
+        },
+        "pt": {
+          "costPer1000": 0.76081,
+          "p50": 8.796569084000003,
+          "p95": 13.632572500000009,
+          "successful": 10
+        },
+        "it": {
+          "costPer1000": 0.8172799999999999,
+          "p50": 8.085956959000002,
+          "p95": 11.79441425,
+          "successful": 2
+        },
+        "ja": {
+          "costPer1000": 0.8094299999999999,
+          "p50": 6.452230916,
+          "p95": 12.672807417000003,
+          "successful": 2
+        },
+        "ko": {
+          "costPer1000": 0.71283,
+          "p50": 7.900187875000003,
+          "p95": 8.710088292,
+          "successful": 2
+        },
+        "tr": {
+          "costPer1000": 0.82243,
+          "p50": 10.821085415999987,
+          "p95": 10.886230583000026,
+          "successful": 2
+        },
+        "pl": {
+          "costPer1000": 1.09098,
+          "p50": 12.756737332999997,
+          "p95": 14.670426749999985,
+          "successful": 2
+        }
+      },
+      "losses": 0,
+      "missingMatches": 0,
+      "p50": 9.108113874999995,
+      "p95": 13.632572500000009,
+      "quality": [
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "fit",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "honesty",
+          "language": "en",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "promise",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "audience",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "language",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "fit",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "honesty",
+          "language": "pt",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "promise",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "audience",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "language",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "fit",
+          "language": "it",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "honesty",
+          "language": "it",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "promise",
+          "language": "it",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "audience",
+          "language": "it",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "language",
+          "language": "it",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "fit",
+          "language": "ja",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "honesty",
+          "language": "ja",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "promise",
+          "language": "ja",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "audience",
+          "language": "ja",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "language",
+          "language": "ja",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "fit",
+          "language": "ko",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "honesty",
+          "language": "ko",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "promise",
+          "language": "ko",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "audience",
+          "language": "ko",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "language",
+          "language": "ko",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "fit",
+          "language": "tr",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "honesty",
+          "language": "tr",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "promise",
+          "language": "tr",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "audience",
+          "language": "tr",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "language",
+          "language": "tr",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "fit",
+          "language": "pl",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "honesty",
+          "language": "pl",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "promise",
+          "language": "pl",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "audience",
+          "language": "pl",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "language",
+          "language": "pl",
+          "weight": 1
+        }
+      ],
+      "side": "incumbent",
+      "status": "eligible",
+      "succeeded": 30,
+      "ties": 0,
+      "unresolved": 15,
+      "weightedMajorsByLanguage": {
+        "en": 0,
+        "pt": 0,
+        "it": 0,
+        "ja": 0,
+        "ko": 0,
+        "tr": 0,
+        "pl": 0
+      },
+      "wins": 0
+    },
+    {
+      "attempted": 30,
+      "casesByLanguage": {
+        "en": 5,
+        "pt": 5,
+        "it": 1,
+        "ja": 1,
+        "ko": 1,
+        "tr": 1,
+        "pl": 1
+      },
+      "costPer1000": 0.8266546666666664,
+      "date": "2026-11-28T13:31:39.291Z",
+      "deliveryByLanguage": {
+        "en": {
+          "costPer1000": 0.7031089999999999,
+          "p50": 9.507265250000001,
+          "p95": 13.916552541000012,
+          "successful": 10
+        },
+        "pt": {
+          "costPer1000": 0.9204355,
+          "p50": 11.222348750000005,
+          "p95": 14.468019624999986,
+          "successful": 10
+        },
+        "it": {
+          "costPer1000": 0.838765,
+          "p50": 8.43535149999999,
+          "p95": 9.318632750000019,
+          "successful": 2
+        },
+        "ja": {
+          "costPer1000": 0.788955,
+          "p50": 7.190029500000004,
+          "p95": 11.092136459,
+          "successful": 2
+        },
+        "ko": {
+          "costPer1000": 0.7551049999999999,
+          "p50": 7.412035499999998,
+          "p95": 9.32449554199999,
+          "successful": 2
+        },
+        "tr": {
+          "costPer1000": 0.9213075,
+          "p50": 10.21993754199997,
+          "p95": 12.584239792000037,
+          "successful": 2
+        },
+        "pl": {
+          "costPer1000": 0.9779649999999999,
+          "p50": 10.901211833000009,
+          "p95": 12.709852000000014,
+          "successful": 2
+        }
+      },
+      "losses": 0,
+      "missingMatches": 0,
+      "p50": 10.704631374999996,
+      "p95": 14.146517582999994,
+      "quality": [
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "fit",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "honesty",
+          "language": "en",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "promise",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "audience",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "language",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "fit",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "honesty",
+          "language": "pt",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "promise",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "audience",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "language",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "fit",
+          "language": "it",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "honesty",
+          "language": "it",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "promise",
+          "language": "it",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "audience",
+          "language": "it",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "language",
+          "language": "it",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "fit",
+          "language": "ja",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "honesty",
+          "language": "ja",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "promise",
+          "language": "ja",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "audience",
+          "language": "ja",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "language",
+          "language": "ja",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "fit",
+          "language": "ko",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "honesty",
+          "language": "ko",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "promise",
+          "language": "ko",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "audience",
+          "language": "ko",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "language",
+          "language": "ko",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "fit",
+          "language": "tr",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "honesty",
+          "language": "tr",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "promise",
+          "language": "tr",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "audience",
+          "language": "tr",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "language",
+          "language": "tr",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "fit",
+          "language": "pl",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "honesty",
+          "language": "pl",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "promise",
+          "language": "pl",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "audience",
+          "language": "pl",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "language",
+          "language": "pl",
+          "weight": 1
+        }
+      ],
+      "side": "challenger",
+      "status": "dominated",
+      "succeeded": 30,
+      "ties": 0,
+      "unresolved": 15,
+      "weightedMajorsByLanguage": {
+        "en": 0,
+        "pt": 0,
+        "it": 0,
+        "ja": 0,
+        "ko": 0,
+        "tr": 0,
+        "pl": 0
+      },
+      "wins": 0
+    }
+  ]
+}

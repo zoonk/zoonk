@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "When a clock's bob is moved lower on its rod, the clock's pace usually…",
+      "options": [
+        {
+          "text": "It slows down",
+          "correct": true
+        },
+        {
+          "text": "It speeds up",
+          "correct": false
+        },
+        {
+          "text": "It stays the same",
+          "correct": false
+        }
+      ],
+      "reveal": "It slows down. Lowering the bob lengthens the effective pendulum, so each swing takes a little longer."
+    },
+    {
+      "question": "As a pendulum clock runs, what makes its gear train advance in measured steps?",
+      "options": [
+        {
+          "text": "The escapement",
+          "correct": true
+        },
+        {
+          "text": "The dial",
+          "correct": false
+        },
+        {
+          "text": "The winding key",
+          "correct": false
+        }
+      ],
+      "reveal": "The escapement. It releases the gear train in controlled steps and gives the pendulum a small push to keep it swinging."
+    },
+    {
+      "question": "In a spring-powered clock, winding stores energy mainly in…",
+      "options": [
+        {
+          "text": "A coiled steel strip",
+          "correct": true
+        },
+        {
+          "text": "The gear teeth",
+          "correct": false
+        },
+        {
+          "text": "The clock hands",
+          "correct": false
+        }
+      ],
+      "reveal": "A coiled steel strip. Called the mainspring, it stores energy when wound and releases it gradually through the mechanism."
+    },
+    {
+      "question": "In a weight-driven clock, what supplies energy as the mechanism runs?",
+      "options": [
+        {
+          "text": "A descending weight",
+          "correct": true
+        },
+        {
+          "text": "A tightening spring",
+          "correct": false
+        },
+        {
+          "text": "A swinging pendulum",
+          "correct": false
+        }
+      ],
+      "reveal": "A descending weight. Gravity pulls it downward, and the clock's mechanism draws on that motion as it runs."
+    },
+    {
+      "question": "After the minute hand makes 12 full turns, how far has the hour hand moved?",
+      "options": [
+        {
+          "text": "One full turn",
+          "correct": true
+        },
+        {
+          "text": "Half a turn",
+          "correct": false
+        },
+        {
+          "text": "Twelve full turns",
+          "correct": false
+        }
+      ],
+      "reveal": "One full turn. The gears connecting the hands make the hour hand complete one revolution for every 12 revolutions of the minute hand."
+    },
+    {
+      "question": "A pendulum clock's tick and tock are unevenly spaced; what does that usually signal?",
+      "options": [
+        {
+          "text": "It is out of beat",
+          "correct": true
+        },
+        {
+          "text": "Its hands are misaligned",
+          "correct": false
+        },
+        {
+          "text": "Its strike count is wrong",
+          "correct": false
+        }
+      ],
+      "reveal": "It is out of beat. In a properly adjusted clock, the tick and tock are evenly spaced, supporting steady timekeeping."
+    },
+    {
+      "question": "In many mechanical clocks, which train powers the bell or gong at the hour?",
+      "options": [
+        {
+          "text": "The striking train",
+          "correct": true
+        },
+        {
+          "text": "The timekeeping train",
+          "correct": false
+        },
+        {
+          "text": "The motion works",
+          "correct": false
+        }
+      ],
+      "reveal": "The striking train. In many clocks, it is a separate set of parts that operates the bell or gong apart from the timekeeping mechanism."
+    },
+    {
+      "question": "In many pendulum clocks, what links the escapement to the swinging rod?",
+      "options": [
+        {
+          "text": "The crutch",
+          "correct": true
+        },
+        {
+          "text": "The mainspring",
+          "correct": false
+        },
+        {
+          "text": "The hour wheel",
+          "correct": false
+        }
+      ],
+      "reveal": "The crutch. It connects the escapement to the pendulum assembly, passing along the small impulse that helps keep the pendulum moving."
+    },
+    {
+      "question": "A shaft rocks side to side in a worn plate hole; what problem can this cause?",
+      "options": [
+        {
+          "text": "Poor gear engagement",
+          "correct": true
+        },
+        {
+          "text": "A shorter winding cycle",
+          "correct": false
+        },
+        {
+          "text": "A faster pendulum swing",
+          "correct": false
+        }
+      ],
+      "reveal": "Poor gear engagement. A worn, enlarged hole can let a shaft shift, disturbing the way its gear teeth meet neighboring gears."
+    },
+    {
+      "question": "On a mechanical clock, where is a tiny drop of oil most often meant to reduce friction?",
+      "options": [
+        {
+          "text": "At pivot bearings",
+          "correct": true
+        },
+        {
+          "text": "On the dial face",
+          "correct": false
+        },
+        {
+          "text": "Along gear teeth",
+          "correct": false
+        }
+      ],
+      "reveal": "At pivot bearings. Clock oil goes at specified points where a pivot turns in a plate or bushing; gear teeth generally aren't routine oiling points."
+    }
+  ]
+}

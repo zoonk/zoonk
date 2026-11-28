@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "At a Japanese hotel, a traveler asks where the \"コンセント\" is; what are they looking for?",
+      "options": [
+        {
+          "text": "An electrical outlet",
+          "correct": true
+        },
+        {
+          "text": "A permission slip",
+          "correct": false
+        },
+        {
+          "text": "A light switch",
+          "correct": false
+        }
+      ],
+      "reveal": "An electrical outlet. The similar-looking English word “consent” can send you in the wrong direction."
+    },
+    {
+      "question": "A Japanese apartment listing calls the place a \"マンション\"; what kind of home is it?",
+      "options": [
+        {
+          "text": "A huge luxury house",
+          "correct": false
+        },
+        {
+          "text": "An apartment or condo",
+          "correct": true
+        },
+        {
+          "text": "A detached farmhouse",
+          "correct": false
+        }
+      ],
+      "reveal": "An apartment or condo. In Japanese, this usually refers to a unit in a multi-unit residential building, not a grand house."
+    },
+    {
+      "question": "In \"私は学生です,\" when \"は\" sets up the topic, what role does it play?",
+      "options": [
+        {
+          "text": "Topic marker",
+          "correct": true
+        },
+        {
+          "text": "Past-tense marker",
+          "correct": false
+        },
+        {
+          "text": "Plural marker",
+          "correct": false
+        }
+      ],
+      "reveal": "Topic marker. It tells you what the sentence is about, which can differ from simply marking the grammatical subject."
+    },
+    {
+      "question": "In the basic sentence \"私はりんごを食べます,\" where does the action word usually go?",
+      "options": [
+        {
+          "text": "At the end",
+          "correct": true
+        },
+        {
+          "text": "Before the subject",
+          "correct": false
+        },
+        {
+          "text": "Between subject and object",
+          "correct": false
+        }
+      ],
+      "reveal": "At the end. Japanese basic sentence order is often subject, object, then verb."
+    },
+    {
+      "question": "Just before a meal in Japan, what does \"いただきます\" commonly express?",
+      "options": [
+        {
+          "text": "Gratitude for the meal",
+          "correct": true
+        },
+        {
+          "text": "A greeting to a guest",
+          "correct": false
+        },
+        {
+          "text": "A request for the menu",
+          "correct": false
+        }
+      ],
+      "reveal": "Gratitude for the meal. The expression is said before eating and acknowledges the food and those involved in providing it."
+    },
+    {
+      "question": "At a busy café, what can you say with \"すみません\" to get a server's attention?",
+      "options": [
+        {
+          "text": "Excuse me",
+          "correct": true
+        },
+        {
+          "text": "Good morning",
+          "correct": false
+        },
+        {
+          "text": "See you tomorrow",
+          "correct": false
+        }
+      ],
+      "reveal": "Excuse me. Depending on the situation, it can also mean “sorry” or express thanks."
+    },
+    {
+      "question": "When you greet someone in the morning, what does \"おはようございます\" mean?",
+      "options": [
+        {
+          "text": "Good morning",
+          "correct": true
+        },
+        {
+          "text": "Good evening",
+          "correct": false
+        },
+        {
+          "text": "Thank you very much",
+          "correct": false
+        }
+      ],
+      "reveal": "Good morning. This is the polite form of a common morning greeting."
+    },
+    {
+      "question": "At a restaurant, what are you asking for with \"水\"?",
+      "options": [
+        {
+          "text": "Water",
+          "correct": true
+        },
+        {
+          "text": "Rice",
+          "correct": false
+        },
+        {
+          "text": "Tea",
+          "correct": false
+        }
+      ],
+      "reveal": "Water. This is a handy word to recognize on a menu or when ordering."
+    },
+    {
+      "question": "During a conversation, what can \"はい\" signal besides agreeing?",
+      "options": [
+        {
+          "text": "I'm following along",
+          "correct": true
+        },
+        {
+          "text": "I disagree",
+          "correct": false
+        },
+        {
+          "text": "I'm ending the conversation",
+          "correct": false
+        }
+      ],
+      "reveal": "I'm following along. It can acknowledge that you’re listening without necessarily meaning that you agree."
+    },
+    {
+      "question": "At a Japanese train station, what does \"切符\" name at the ticket machine?",
+      "options": [
+        {
+          "text": "A train ticket",
+          "correct": true
+        },
+        {
+          "text": "A platform map",
+          "correct": false
+        },
+        {
+          "text": "A station locker",
+          "correct": false
+        }
+      ],
+      "reveal": "A train ticket. You’ll see this word when buying a paper ticket for a ride."
+    }
+  ]
+}

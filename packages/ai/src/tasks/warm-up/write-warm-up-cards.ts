@@ -6,7 +6,7 @@ import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
 import { formatLocalContext } from "../_utils/language-context";
-import { getPromptLanguageName } from "../_utils/prompt-language";
+import { fillPromptLanguages, getPromptLanguageName } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import { rawWarmUpCardSchema } from "./warm-up-cards";
 import promptTemplate from "./write-warm-up-cards.prompt.md";
@@ -54,6 +54,23 @@ function formatTargetLanguage({ language, targetLanguage }: WriteWarmUpCardsPara
     : "the one GOAL names";
 }
 
+function buildSystemPrompt(params: WriteWarmUpCardsParams): string {
+  const template = selectPromptVariants({
+    template: promptTemplate,
+    variants: {
+      exam: params.kind === "exam",
+      language: params.kind === "language",
+      learn: params.kind === "learn",
+    },
+  });
+
+  return fillPromptLanguages({
+    learnerLanguage: params.language,
+    targetLanguage: params.targetLanguage,
+    template,
+  }).replaceAll("{{TARGET_LANGUAGE}}", "the language GOAL names");
+}
+
 function formatInputs(params: WriteWarmUpCardsParams): string {
   return [
     `LANGUAGE: ${getPromptLanguageName({ language: params.language })}`,
@@ -74,14 +91,7 @@ export async function generateWarmUpCards(params: WriteWarmUpCardsParams) {
     useFallback = true,
   } = params;
 
-  const systemPrompt = selectPromptVariants({
-    template: promptTemplate,
-    variants: {
-      exam: params.kind === "exam",
-      language: params.kind === "language",
-      learn: params.kind === "learn",
-    },
-  });
+  const systemPrompt = buildSystemPrompt(params);
 
   const userPrompt = `${formatInputs(params)}\n\n${formatUntrustedInput({ GOAL: params.goal })}\n`;
   const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });

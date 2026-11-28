@@ -1,0 +1,180 @@
+{
+  "cards": [
+    {
+      "question": "Ao dizer “Estoy embarazada”, uma pessoa está contando que está…",
+      "options": [
+        {
+          "text": "Com vergonha",
+          "correct": false
+        },
+        {
+          "text": "Grávida",
+          "correct": true
+        },
+        {
+          "text": "Com sono",
+          "correct": false
+        }
+      ],
+      "reveal": "Grávida. Em espanhol, “embarazada” significa grávida; para dizer “com vergonha”, você pode usar “avergonzada”."
+    },
+    {
+      "question": "Num formulário mexicano, o campo “apellido” pede qual informação?",
+      "options": [
+        {
+          "text": "Seu sobrenome",
+          "correct": true
+        },
+        {
+          "text": "Seu apelido",
+          "correct": false
+        },
+        {
+          "text": "Seu endereço",
+          "correct": false
+        }
+      ],
+      "reveal": "Seu sobrenome. “Apellido” é sobrenome; parece com “apelido”, mas não tem esse sentido."
+    },
+    {
+      "question": "Se alguém descreve uma sobremesa como “exquisita”, o que quer dizer?",
+      "options": [
+        {
+          "text": "Muito saborosa",
+          "correct": true
+        },
+        {
+          "text": "Estranha",
+          "correct": false
+        },
+        {
+          "text": "Apimentada",
+          "correct": false
+        }
+      ],
+      "reveal": "Muito saborosa. “Exquisita” costuma elogiar algo delicioso ou de qualidade refinada, não algo esquisito."
+    },
+    {
+      "question": "Num anúncio de emprego, “oficina” indica principalmente um local de…",
+      "options": [
+        {
+          "text": "Trabalho administrativo",
+          "correct": true
+        },
+        {
+          "text": "Conserto de carros",
+          "correct": false
+        },
+        {
+          "text": "Venda de ingressos",
+          "correct": false
+        }
+      ],
+      "reveal": "Trabalho administrativo. Em espanhol, “oficina” costuma ser um escritório; para uma oficina mecânica, é comum dizer “taller”."
+    },
+    {
+      "question": "Numa barraca no México, alguém pergunta “¿Cuánto cuesta?”; quer saber…",
+      "options": [
+        {
+          "text": "Quanto custa",
+          "correct": true
+        },
+        {
+          "text": "Onde fica",
+          "correct": false
+        },
+        {
+          "text": "Que horas são",
+          "correct": false
+        }
+      ],
+      "reveal": "Quanto custa. “¿Cuánto cuesta?” é uma pergunta útil para descobrir o preço de algo."
+    },
+    {
+      "question": "Quando alguém diz “buen provecho” ao ver você comendo, está desejando…",
+      "options": [
+        {
+          "text": "Bom apetite",
+          "correct": true
+        },
+        {
+          "text": "Boa viagem",
+          "correct": false
+        },
+        {
+          "text": "Boa noite",
+          "correct": false
+        }
+      ],
+      "reveal": "Bom apetite. “Buen provecho” é uma expressão usada em refeições, parecida com o nosso “bom apetite”."
+    },
+    {
+      "question": "Ao conhecer alguém, o que a pessoa quer saber com “¿Cómo te llamas?”?",
+      "options": [
+        {
+          "text": "Como você se chama",
+          "correct": true
+        },
+        {
+          "text": "Onde você mora",
+          "correct": false
+        },
+        {
+          "text": "Quantos anos você tem",
+          "correct": false
+        }
+      ],
+      "reveal": "Como você se chama. A resposta costuma começar com “Me llamo…” e depois vem o nome."
+    },
+    {
+      "question": "Para completar “___ problema”, qual artigo combina com essa palavra em espanhol?",
+      "options": [
+        {
+          "text": "“El”",
+          "correct": true
+        },
+        {
+          "text": "“La”",
+          "correct": false
+        },
+        {
+          "text": "“Lo”",
+          "correct": false
+        }
+      ],
+      "reveal": "“El”. “Problema” termina em “a”, mas é masculino em espanhol: “el problema”."
+    },
+    {
+      "question": "Para dizer que Ana está em casa agora, qual verbo completa “Ana ___ en casa”?",
+      "options": [
+        {
+          "text": "“Ser”",
+          "correct": false
+        },
+        {
+          "text": "“Estar”",
+          "correct": true
+        },
+        {
+          "text": "“Tener”",
+          "correct": false
+        }
+      ],
+      "reveal": "“Estar”. Em espanhol, esse verbo costuma indicar onde uma pessoa está; a localização de um evento pode usar “ser”."
+    },
+    {
+      "question": "Numa conversa formal no México, qual forma costuma marcar mais formalidade?",
+      "options": [
+        {
+          "text": "“Tú”",
+          "correct": false
+        },
+        {
+          "text": "“Usted”",
+          "correct": true
+        }
+      ],
+      "reveal": "“Usted”. No México, costuma soar mais formal que “tú”, embora a escolha também dependa da relação e da situação."
+    }
+  ]
+}

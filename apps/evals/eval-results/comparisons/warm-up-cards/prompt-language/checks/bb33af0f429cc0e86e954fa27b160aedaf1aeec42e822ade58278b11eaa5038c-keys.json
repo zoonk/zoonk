@@ -1,0 +1,13 @@
+{
+  "caseId": "en-antique-clocks",
+  "costUsd": 0.023672,
+  "name": "answer keys",
+  "passed": 8,
+  "problems": [
+    "{\"itemLocator\":\"cards[1]\",\"keyedAnswer\":\"In the mainspring’s tension\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"A key can wind a mainspring or raise a driving weight. The spring stores elastic energy; the raised weight stores gravitational potential energy. The stem does not specify which type of clock is being wound.\"}",
+    "{\"itemLocator\":\"cards[7]\",\"keyedAnswer\":\"To reduce friction\",\"kind\":\"noCorrectOption\",\"workedAnswer\":\"Reducing friction explains why oil is used, not why only a small amount is used. A small drop suffices at a pivot, and excess oil can spread beyond the bearing. No option gives that reason.\"}"
+  ],
+  "run": 2,
+  "side": "incumbent",
+  "total": 10
+}

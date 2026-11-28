@@ -1,0 +1,109 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00283294,
+  "failureCodes": [
+    "failed_controls"
+  ],
+  "failures": [
+    "Missed the control bank defect."
+  ],
+  "packetId": "c0d393323af5c081d8ba9997624f0925c757b93b67dc704a890bafc1ef247cbb",
+  "passed": false,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As duas versões são idênticas, e as respostas corretas correspondem ao que é dito no diálogo.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas têm uma conversa de campus, quatro questões de múltipla escolha com quatro opções e duração compatível com a tarefa descrita.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "O diálogo soa natural, e as razões e concepções equivocadas estão em português brasileiro nas duas versões.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "As versões são idênticas e servem igualmente ao leitor."
+        },
+        "pairId": "0432faf7-6da1-492d-b8c9-8aa3cb3fde8d"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As respostas corretas e os distratores correspondem ao que Nerea diz no monólogo.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas versões trazem um monólogo em espanhol com questões de múltipla escolha; não há diferença relevante de adequação ao formato.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "B",
+            "reason": "A versão B traduz para português brasileiro o trecho que aparece em espanhol na razão da primeira questão de A.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "A razão contém a palavra espanhola “Oyes” em meio ao português, em vez de usar uma forma em português brasileiro, como “Você ouve”.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "Essa mistura pode interromper a leitura da explicação e não atende à expectativa de razões em português brasileiro.",
+            "location": {
+              "detail": "Oyes que aceptan objetos usados e incluso algunos que necesitan un pequeño arreglo.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "As versões são muito parecidas, mas B mantém as explicações em português brasileiro; A deixa uma palavra em espanhol em uma delas."
+        },
+        "pairId": "cc68eb03-26bf-4ccb-b59a-7ed00ca4a4c0"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As respostas corretas nas duas versões são sustentadas pelos respectivos diálogos, sem outra opção claramente defensável.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Ambas apresentam uma conversa universitária com quatro questões de múltipla escolha e quatro opções, em formato e extensão compatíveis com a tarefa.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os dois diálogos soam naturais, e as razões e concepções equivocadas estão em português brasileiro.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "Embora os temas sejam diferentes, as duas versões atendem de forma semelhante às expectativas e têm questões coerentes com seus próprios diálogos."
+        },
+        "pairId": "fb3939b3-7b5f-4eff-8c8f-80e08c30165b"
+      }
+    ]
+  }
+}

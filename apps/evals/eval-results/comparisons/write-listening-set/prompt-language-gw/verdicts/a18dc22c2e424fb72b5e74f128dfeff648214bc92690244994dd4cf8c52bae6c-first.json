@@ -1,0 +1,97 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00576179,
+  "failureCodes": [
+    "failed_controls"
+  ],
+  "failures": [
+    "Missed the control bank defect."
+  ],
+  "packetId": "a18dc22c2e424fb72b5e74f128dfeff648214bc92690244994dd4cf8c52bae6c",
+  "passed": false,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, so the keys are equally right and equally fair.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, so their fit to the DELE B2 monologue format is the same.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, so the Spanish script and Brazilian Portuguese reasons are equally natural.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are the same set, so neither serves the learner better."
+        },
+        "pairId": "3acbd4c5-a2d6-4d69-8c7d-660401163e52"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets have correct richtig/falsch keys that match the script, with no wrong key or defensible alternative found in either.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both are short two-speaker everyday conversations with six statements, balanced about half true and played once, which fits Goethe B1 Teil 3.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both scripts use natural spoken German with reactions and contractions, and their Portuguese reasons point to what was said.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "Both sets are accurate, similarly balanced and similarly realistic, so neither clearly serves the learner better."
+        },
+        "pairId": "935e0521-9c6f-441d-90a3-c352db6b3593"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, so the keys are equally right.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, so exam realism is the same.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, so naturalness is the same.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are the same set, so neither serves the learner better."
+        },
+        "pairId": "9b10daf2-6e07-4465-a412-ee6aee07fd03"
+      }
+    ]
+  }
+}

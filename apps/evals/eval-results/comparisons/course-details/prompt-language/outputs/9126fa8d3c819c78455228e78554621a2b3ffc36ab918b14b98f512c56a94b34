@@ -1,0 +1,20 @@
+{
+  "categories": [
+    "law"
+  ],
+  "description": "Prawo pracy określa prawa i obowiązki pracowników oraz pracodawców w Polsce. Obejmuje rodzaje umów, wynagrodzenie, czas pracy, urlopy, chorobę, bezpieczeństwo, równe traktowanie i zakończenie zatrudnienia, by łatwiej było sprawdzać, co przysługuje ci w typowych sytuacjach zawodowych.",
+  "landingPage": {
+    "audience": [
+      "Osoby zaczynające pierwszą pracę",
+      "Pracownicy na umowach cywilnoprawnych",
+      "Osoby zmieniające lub kończące pracę"
+    ],
+    "outcomes": [
+      "Porównywać umowę o pracę, zlecenie i o dzieło",
+      "Sprawdzać limit czasu pracy i dodatki za nadgodziny",
+      "Liczyć przysługujący urlop i wynagrodzenie za chorobę",
+      "Odbierać świadectwo pracy po zakończeniu zatrudnienia"
+    ],
+    "valueProposition": "Sprawdzać, co przysługuje ci w pracy i co zawiera twoja umowa"
+  }
+}

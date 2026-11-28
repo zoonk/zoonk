@@ -1,0 +1,21 @@
+{
+  "categories": [
+    "law",
+    "business"
+  ],
+  "description": "Contract law looks at when agreements can be enforced, what their terms mean, and what may happen when someone breaks them. You’ll look at everyday agreements like leases, job offers, app terms, and freelance contracts, plus exceptions and how courts handle disputes. Rules can vary by state, so this course can help you read agreements more carefully and prepare informed questions for a lawyer.",
+  "landingPage": {
+    "audience": [
+      "People reviewing a lease or job offer",
+      "Freelancers working with client agreements",
+      "Students curious about how contracts work"
+    ],
+    "outcomes": [
+      "Tell when a promise may become enforceable",
+      "Spot terms that affect your choices",
+      "Describe what may happen after a breach",
+      "Compare how different agreements handle disputes"
+    ],
+    "valueProposition": "Spot the terms that could shape your choices before signing an agreement"
+  }
+}

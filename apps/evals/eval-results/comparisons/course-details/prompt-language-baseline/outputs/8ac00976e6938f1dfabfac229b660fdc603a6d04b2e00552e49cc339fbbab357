@@ -1,0 +1,20 @@
+{
+  "categories": [
+    "law"
+  ],
+  "description": "Prawo pracy określa prawa i obowiązki pracowników oraz pracodawców w Polsce. Kurs obejmuje umowy, wynagrodzenie, czas pracy, urlopy, chorobę, ochronę pracownika i zakończenie zatrudnienia. Przyda się, gdy sprawdzasz warunki pracy lub przygotowujesz się do rozmowy z pracodawcą; nie zastępuje porady prawnika.",
+  "landingPage": {
+    "audience": [
+      "Osoby przed podpisaniem umowy",
+      "Pracownicy sprawdzający swoje prawa",
+      "Studenci kierunków związanych z prawem"
+    ],
+    "outcomes": [
+      "Porównywać umowę o pracę, zlecenie i dzieło",
+      "Obliczać czas pracy, nadgodziny i wymiar urlopu",
+      "Sprawdzać wynagrodzenie za urlop i zwolnienie chorobowe",
+      "Ustalać okres wypowiedzenia i sprawdzać świadectwo pracy"
+    ],
+    "valueProposition": "Sprawdzać, jakie prawa przysługują ci przy umowie, nadgodzinach, urlopie i odejściu z pracy"
+  }
+}

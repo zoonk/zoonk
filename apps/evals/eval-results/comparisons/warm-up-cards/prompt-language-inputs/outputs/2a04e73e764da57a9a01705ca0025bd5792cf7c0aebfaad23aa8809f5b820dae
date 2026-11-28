@@ -1,0 +1,180 @@
+{
+  "cards": [
+    {
+      "question": "In a mechanical clock, what makes the gear train advance in tiny, timed steps?",
+      "options": [
+        {
+          "text": "The escapement",
+          "correct": true
+        },
+        {
+          "text": "The winding key",
+          "correct": false
+        },
+        {
+          "text": "The hour hand",
+          "correct": false
+        }
+      ],
+      "reveal": "The escapement. It releases the gear train’s energy in measured increments, helping regulate the clock’s motion."
+    },
+    {
+      "question": "After a key is turned, where does a mechanical clock keep the energy for later?",
+      "options": [
+        {
+          "text": "In the mainspring’s tension",
+          "correct": true
+        },
+        {
+          "text": "In the clock’s weight",
+          "correct": false
+        },
+        {
+          "text": "In the winding key",
+          "correct": false
+        }
+      ],
+      "reveal": "In the mainspring’s tension. Winding tightens the spring, storing energy that gradually drives the mechanism as the spring unwinds."
+    },
+    {
+      "question": "If two pendulums swing through similar small angles, which completes each swing more slowly?",
+      "options": [
+        {
+          "text": "The longer one",
+          "correct": true
+        },
+        {
+          "text": "The shorter one",
+          "correct": false
+        }
+      ],
+      "reveal": "The longer one. A longer pendulum takes more time to complete a swing, so it makes a clock run more slowly."
+    },
+    {
+      "question": "In a pocket watch with no hanging bob, what usually swings to set the timekeeping rhythm?",
+      "options": [
+        {
+          "text": "A balance wheel and hairspring",
+          "correct": true
+        },
+        {
+          "text": "A winding key and chain",
+          "correct": false
+        },
+        {
+          "text": "A pendulum rod and bob",
+          "correct": false
+        }
+      ],
+      "reveal": "A balance wheel and hairspring. The wheel oscillates back and forth while the spring helps control its rhythm."
+    },
+    {
+      "question": "Between a clock’s power source and its hands, what carries motion across the mechanism?",
+      "options": [
+        {
+          "text": "A train of gears",
+          "correct": true
+        },
+        {
+          "text": "A set of springs",
+          "correct": false
+        },
+        {
+          "text": "A chain of levers",
+          "correct": false
+        }
+      ],
+      "reveal": "A train of gears. Its connected wheels transmit motion from the power source through the clock to the hands."
+    },
+    {
+      "question": "A pendulum clock’s tick and tock sound uneven; what part of its timing is likely off?",
+      "options": [
+        {
+          "text": "Its beat",
+          "correct": true
+        },
+        {
+          "text": "Its winding",
+          "correct": false
+        },
+        {
+          "text": "Its striking",
+          "correct": false
+        }
+      ],
+      "reveal": "Its beat. When the intervals between ticks and tocks are unequal, the clock is said to be out of beat."
+    },
+    {
+      "question": "In an old clock, what can make a gear shaft wobble where it passes through the plate?",
+      "options": [
+        {
+          "text": "A worn pivot hole",
+          "correct": true
+        },
+        {
+          "text": "A loose clock face",
+          "correct": false
+        },
+        {
+          "text": "A short pendulum bob",
+          "correct": false
+        }
+      ],
+      "reveal": "A worn pivot hole. Repeated movement can wear the opening wider or oval, letting the shaft sit out of position."
+    },
+    {
+      "question": "Why does a clock mechanism use only a very small amount of purpose-made lubricant?",
+      "options": [
+        {
+          "text": "To reduce friction",
+          "correct": true
+        },
+        {
+          "text": "To slow the gears",
+          "correct": false
+        },
+        {
+          "text": "To seal out air",
+          "correct": false
+        }
+      ],
+      "reveal": "To reduce friction. A clock’s moving contact points are small, so excess lubricant can spread where it isn’t needed."
+    },
+    {
+      "question": "In a clock that also chimes the hour, what commonly drives the striking apart from timekeeping?",
+      "options": [
+        {
+          "text": "A separate striking train",
+          "correct": true
+        },
+        {
+          "text": "The minute hand",
+          "correct": false
+        },
+        {
+          "text": "The pendulum bob",
+          "correct": false
+        }
+      ],
+      "reveal": "A separate striking train. Many striking clocks use distinct gearwork for keeping time and sounding the hour, though both may draw power from the same source."
+    },
+    {
+      "question": "What thin part lets a pendulum hang and flex slightly as it swings?",
+      "options": [
+        {
+          "text": "A suspension spring",
+          "correct": true
+        },
+        {
+          "text": "A balance spring",
+          "correct": false
+        },
+        {
+          "text": "A return spring",
+          "correct": false
+        }
+      ],
+      "reveal": "A suspension spring. It supports the pendulum and bends slightly as the pendulum swings."
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "caseId": "en-cambridge-first-part-2-sentence-completion",
+  "challenger": {
+    "costUsd": 0.012647000000000002,
+    "durationMs": 27984.47445800001,
+    "hash": "da75f449dc747282be394cf27d7037f84339acc94403648651897b822f8fe0f1",
+    "systemPromptHash": "162f20daf02572a7ad49967b9607a281e61de7a65764841726cbc40ee84eca25",
+    "userPromptHash": "7c1c7c099138d8b0799ba24f5f9467c6822872ce526a663ed8b74cfc1578a3f6"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.012688250000000002,
+    "durationMs": 26288.11262499998,
+    "hash": "518aca283be11939713139bf1d1157bdd43ce7b73dfaa4725e527279fa3312fe",
+    "systemPromptHash": "117d340fe2a1c62be76cebf960837203150f79679cc827feba15a86d2c8d6849",
+    "userPromptHash": "7c1c7c099138d8b0799ba24f5f9467c6822872ce526a663ed8b74cfc1578a3f6"
+  },
+  "run": 1
+}

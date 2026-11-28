@@ -1,0 +1,12 @@
+{
+  "caseId": "en-quantum-physics",
+  "costUsd": 0.021311999999999998,
+  "name": "answer keys",
+  "passed": 9,
+  "problems": [
+    "{\"itemLocator\":\"cards[6]\",\"keyedAnswer\":\"Its momentum\",\"kind\":\"noCorrectOption\",\"workedAnswer\":\"The uncertainty relation ΔxΔp ≥ ℏ/2 means that reducing position spread raises the minimum allowed momentum spread. If the actual momentum spread is already above that new minimum, it need not increase. Thus none of the options necessarily becomes less precise.\"}"
+  ],
+  "run": 2,
+  "side": "challenger",
+  "total": 10
+}

@@ -1,0 +1,205 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00333544,
+  "failures": [],
+  "packetId": "5594d1d230ef168cac046dbaae208d3e7b211432a2409c4e3a3a8c735926f861",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "All five answers are supported by the recording, and the questions follow its order. Neither version has a noticeable advantage in key fairness.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both versions use the same conversation and questions, but the recording is under the required 600 words and both speakers are listed as British rather than mixing British and Australian accents.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "The dialogue is conversational and contains no stage directions or narrator lines; the two versions are identical.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The script is shorter than the required 600 words for an IELTS Part 1 recording of about four to five minutes.",
+            "criterion": "examRealism",
+            "learnerCost": "Learners get less practice with the length and sustained listening expected in the exam.",
+            "location": {
+              "detail": "The full recording script",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "Both speakers are identified as having British English accents; the expectation requires a mix of British and Australian accents.",
+            "criterion": "examRealism",
+            "learnerCost": "Learners miss practice understanding the range of accents specified for this task.",
+            "location": {
+              "detail": "Speaker accent information",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The script is shorter than the required 600 words for an IELTS Part 1 recording of about four to five minutes.",
+            "criterion": "examRealism",
+            "learnerCost": "Learners get less practice with the length and sustained listening expected in the exam.",
+            "location": {
+              "detail": "The full recording script",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "Both speakers are identified as having British English accents; the expectation requires a mix of British and Australian accents.",
+            "criterion": "examRealism",
+            "learnerCost": "Learners miss practice understanding the range of accents specified for this task.",
+            "location": {
+              "detail": "Speaker accent information",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical, including the same shortcomings in length and accent variety."
+        },
+        "pairId": "03eb2316-e343-43cf-bdf9-2d0a4180c0b1"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The marked answers are supported by the monologue, and the distractors reflect details it mentions.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both versions use the same Spanish monologue and questions, which suit the specified monologue task.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "A",
+            "reason": "A keeps all reasons and misconceptions in Brazilian Portuguese. B switches the feedback for question 2 into Spanish, against the stated language requirement.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The reasons and misconceptions for all three options in question 2 are in Spanish rather than Brazilian Portuguese.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "A Brazilian reader may not understand this feedback, making it harder to learn from the answer choices.",
+            "location": {
+              "detail": "Question 2, options 1–3: reasons and misconceptions",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A meets the requirement for Brazilian Portuguese feedback throughout. B includes Spanish feedback in question 2, which may be inaccessible to the intended reader."
+        },
+        "pairId": "4685d6b7-8fd7-437e-b595-739d2683d709"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "B’s apron question supplies the purpose—protecting clothes—which makes the answer readily guessable without listening. A’s requested watering can is not similarly given away by the question.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both versions fall short of the required 600-word recording length and identify both speakers as British, despite the requirement to mix British and Australian accents. Neither has a clear advantage on those exam-realism expectations.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both scripts use conversational openings and exchanges, with no stage directions or narrator lines.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The script is shorter than the required 600 words for an IELTS Part 1 recording of about four to five minutes.",
+            "criterion": "examRealism",
+            "learnerCost": "Learners get less practice with the length and sustained listening expected in the exam.",
+            "location": {
+              "detail": "The full recording script",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "Both speakers are identified as having British English accents; the expectation requires a mix of British and Australian accents.",
+            "criterion": "examRealism",
+            "learnerCost": "Learners miss practice understanding the range of accents specified for this task.",
+            "location": {
+              "detail": "Speaker accent information",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The question gives away the answer by asking for an item “to protect her clothes,” making “apron” guessable from common sense without hearing the recording.",
+            "criterion": "keys",
+            "learnerCost": "A learner could answer correctly without practicing listening, so this question does not reliably test the stated skill.",
+            "location": {
+              "detail": "Hannah should bring an ______ to protect her clothes.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The script is shorter than the required 600 words for an IELTS Part 1 recording of about four to five minutes.",
+            "criterion": "examRealism",
+            "learnerCost": "Learners get less practice with the length and sustained listening expected in the exam.",
+            "location": {
+              "detail": "The full recording script",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "Both speakers are identified as having British English accents; the expectation requires a mix of British and Australian accents.",
+            "criterion": "examRealism",
+            "learnerCost": "Learners miss practice understanding the range of accents specified for this task.",
+            "location": {
+              "detail": "Speaker accent information",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "B makes one answer guessable from the question itself, so it does not reliably practice listening. Both versions also miss the required recording length and accent mix."
+        },
+        "pairId": "adaf8f2e-dbaf-46fe-91e2-5fcd07c6de50"
+      }
+    ]
+  }
+}

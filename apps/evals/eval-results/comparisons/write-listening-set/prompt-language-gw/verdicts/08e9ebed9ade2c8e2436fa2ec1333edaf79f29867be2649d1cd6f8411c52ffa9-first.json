@@ -1,0 +1,139 @@
+{
+  "attempt": "first",
+  "costUsd": 0.0028255399999999996,
+  "failures": [],
+  "packetId": "08e9ebed9ade2c8e2436fa2ec1333edaf79f29867be2649d1cd6f8411c52ffa9",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As duas versões são idênticas, e as respostas aceitas correspondem ao que Hannah diz e completam as frases de forma gramatical.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas usam um monólogo e seis questões, conforme o pedido, e são equivalentes quanto ao formato e à adequação ao exame.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os roteiros são idênticos; ambos têm uma formulação pouco natural em inglês ao dizer que os mapas “would show us most about the river's past”.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "A formulação “show us most about” não é natural em inglês nesse contexto; “tell us most about” ou “show us the most” seria mais idiomático.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "O aprendiz pode assimilar uma construção pouco natural ou se distrair tentando entender a frase.",
+            "location": {
+              "detail": "would show us most about the river's past",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "A formulação “show us most about” não é natural em inglês nesse contexto; “tell us most about” ou “show us the most” seria mais idiomático.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "O aprendiz pode assimilar uma construção pouco natural ou se distrair tentando entender a frase.",
+            "location": {
+              "detail": "would show us most about the river's past",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "As versões são idênticas e apresentam os mesmos pontos fortes e a mesma formulação pouco natural."
+        },
+        "pairId": "18a86899-1f5a-479b-91d9-09cb413ff536"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As respostas aceitas em ambas as versões estão no roteiro e completam as frases de modo gramatical.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas versões oferecem um monólogo com seis questões de completar frases, de acordo com o pedido; nenhuma se destaca claramente em realismo de exame.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "A",
+            "reason": "O roteiro de B tem a construção pouco natural “show us most about the river's past”; o roteiro de A evita esse problema.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "A formulação “show us most about” não é natural em inglês nesse contexto; “tell us most about” ou “show us the most” seria mais idiomático.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "O aprendiz pode assimilar uma construção pouco natural ou se distrair tentando entender a frase.",
+            "location": {
+              "detail": "would show us most about the river's past",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "As duas versões têm respostas válidas e formato semelhante, mas o roteiro de A não contém a formulação pouco natural presente em B."
+        },
+        "pairId": "5f6ee208-ec85-493a-8297-4fbc12adcb3d"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As respostas corretas estão de acordo com o roteiro em ambas as versões, e as alternativas incorretas não parecem defensáveis pelo que Nerea diz.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas apresentam um monólogo em espanhol e questões de múltipla escolha compatíveis com a tarefa indicada.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "A",
+            "reason": "A mantém todos os motivos e as explicações em português brasileiro; em B, o motivo e a ideia equivocada da primeira alternativa da segunda questão estão em espanhol.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "O motivo e a ideia equivocada dessa alternativa estão em espanhol, apesar da exigência de que todos os motivos e concepções equivocadas estejam em português brasileiro.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "O leitor brasileiro pode não entender a explicação do distrator, que deveria ajudá-lo a compreender o que ouviu.",
+            "location": {
+              "detail": "segunda questão, primeira alternativa: motivo e concepção equivocada",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A cumpre a exigência de apresentar os motivos em português brasileiro; B inclui uma explicação e uma concepção equivocada em espanhol, o que pode impedir o aprendiz de compreendê-las."
+        },
+        "pairId": "fdfa219e-0770-40a9-8667-e15eebc0b7de"
+      }
+    ]
+  }
+}

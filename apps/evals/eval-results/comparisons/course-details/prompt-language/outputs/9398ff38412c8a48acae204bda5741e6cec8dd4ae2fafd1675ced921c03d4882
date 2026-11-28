@@ -1,0 +1,21 @@
+{
+  "categories": [
+    "communication",
+    "culture"
+  ],
+  "description": "Almanca, günlük yaşamda, eğitimde ve işte kullanılan bir dildir. Başlangıçtan ileri düzeye kadar konuşma, dinleme, okuma ve yazmayı; tanışmadan iş ve eğitim ortamlarındaki iletişime kadar farklı durumları kapsar. Almanca konuşulan yerlerde iletişim kurmana ve bu kültürleri daha yakından tanımana yardımcı olur.",
+  "landingPage": {
+    "audience": [
+      "Almancaya yeni başlayanlar",
+      "Almanya'ya seyahat edecekler",
+      "Almanca konuşulan kültürleri merak edenler"
+    ],
+    "outcomes": [
+      "Kendini Almanca tanıtmak",
+      "Kafede sipariş verip hesabı ödemek",
+      "Randevu ayarlayıp yolculukta yardım istemek",
+      "Farklı konularda görüşlerini açıklayıp sohbeti sürdürmek"
+    ],
+    "valueProposition": "Almanca konuşulan yerlerde günlük işlerini halletmek ve sohbeti farklı konularda sürdürebilmek"
+  }
+}

@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "A beekeeper spots fresh wax flakes in a hive; where did the bees produce them?",
+      "options": [
+        {
+          "text": "From flower petals",
+          "correct": false
+        },
+        {
+          "text": "Inside worker bees’ bodies",
+          "correct": true
+        },
+        {
+          "text": "By melting stored honey",
+          "correct": false
+        }
+      ],
+      "reveal": "Inside worker bees’ bodies. Worker bees release tiny wax scales from glands on the underside of the abdomen."
+    },
+    {
+      "question": "A bee dances after finding food; what can another bee read from its movements?",
+      "options": [
+        {
+          "text": "The food’s direction and distance",
+          "correct": true
+        },
+        {
+          "text": "The flower’s exact species",
+          "correct": false
+        },
+        {
+          "text": "The hive’s temperature",
+          "correct": false
+        }
+      ],
+      "reveal": "The food’s direction and distance. The dance’s angle relates to the sun, while its length helps signal how far away the food is."
+    },
+    {
+      "question": "A hive’s stores begin as flower nectar; what change helps the liquid keep well as honey?",
+      "options": [
+        {
+          "text": "Pollen gets mixed in",
+          "correct": false
+        },
+        {
+          "text": "Moisture is lowered",
+          "correct": true
+        },
+        {
+          "text": "The nectar is frozen",
+          "correct": false
+        }
+      ],
+      "reveal": "Moisture is lowered. Bees fan air over ripening nectar, and enzymes also change some of its sugars."
+    },
+    {
+      "question": "A queen lays an egg that has not been fertilized; what will hatch from it?",
+      "options": [
+        {
+          "text": "A female worker",
+          "correct": false
+        },
+        {
+          "text": "A male bee",
+          "correct": true
+        },
+        {
+          "text": "A queen bee",
+          "correct": false
+        }
+      ],
+      "reveal": "A male bee. In honey bees, unfertilized eggs develop into males; fertilized eggs develop into females."
+    },
+    {
+      "question": "A honey bee has more than the two forward-facing eyes you might expect; how many in all?",
+      "options": [
+        {
+          "text": "Two",
+          "correct": false
+        },
+        {
+          "text": "Three",
+          "correct": false
+        },
+        {
+          "text": "Five",
+          "correct": true
+        }
+      ],
+      "reveal": "Five. A honey bee has two large compound eyes and three small eyes called ocelli."
+    },
+    {
+      "question": "Two female larvae begin life in similar cells; what helps one develop into a queen?",
+      "options": [
+        {
+          "text": "Steady royal jelly feeding",
+          "correct": true
+        },
+        {
+          "text": "Extra pollen alone",
+          "correct": false
+        },
+        {
+          "text": "A larger egg",
+          "correct": false
+        }
+      ],
+      "reveal": "Steady royal jelly feeding. Queen larvae receive this rich food throughout development, while worker larvae switch to other food."
+    },
+    {
+      "question": "When a healthy hive sends its queen and many workers away together, what is happening?",
+      "options": [
+        {
+          "text": "The colony is reproducing",
+          "correct": true
+        },
+        {
+          "text": "A food search is beginning",
+          "correct": false
+        },
+        {
+          "text": "The workers are changing roles",
+          "correct": false
+        }
+      ],
+      "reveal": "The colony is reproducing. In a swarm, part of the colony leaves with the queen to start a new home."
+    },
+    {
+      "question": "As a honey bee colony gathers tightly during cold weather, what generates heat within the group?",
+      "options": [
+        {
+          "text": "Bees vibrating flight muscles",
+          "correct": true
+        },
+        {
+          "text": "Sunlight trapped in comb",
+          "correct": false
+        },
+        {
+          "text": "Fermenting stored pollen",
+          "correct": false
+        }
+      ],
+      "reveal": "Bees vibrating flight muscles. They can produce heat by moving these muscles without taking flight."
+    },
+    {
+      "question": "In a honey bee’s comb, what advantage do six-sided cells offer?",
+      "options": [
+        {
+          "text": "They pack without gaps",
+          "correct": true
+        },
+        {
+          "text": "They hold more water",
+          "correct": false
+        },
+        {
+          "text": "They need no wax",
+          "correct": false
+        }
+      ],
+      "reveal": "They pack without gaps. Six-sided cells fit together tightly, leaving little empty space between them."
+    },
+    {
+      "question": "A worker packs pollen into small baskets on her hind legs; what is this load mainly used for?",
+      "options": [
+        {
+          "text": "Making wax comb",
+          "correct": false
+        },
+        {
+          "text": "Feeding developing bees",
+          "correct": true
+        },
+        {
+          "text": "Sealing the hive entrance",
+          "correct": false
+        }
+      ],
+      "reveal": "Feeding developing bees. Pollen supplies protein and other nutrients that growing larvae need."
+    }
+  ]
+}

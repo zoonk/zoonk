@@ -1,0 +1,10 @@
+{
+  "caseId": "pt-cambridge-accepted-article-regression",
+  "costUsd": 0.021263999999999998,
+  "name": "answer keys",
+  "passed": 6,
+  "problems": [],
+  "run": 2,
+  "side": "challenger",
+  "total": 6
+}

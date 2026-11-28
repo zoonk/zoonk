@@ -1,0 +1,20 @@
+{
+  "categories": [
+    "law"
+  ],
+  "description": "Prawo pracy określa zasady zatrudnienia oraz prawa i obowiązki pracowników i pracodawców w Polsce. Obejmuje umowy, wynagrodzenie, czas pracy, urlopy, chorobę, ochronę pracownika, zakończenie zatrudnienia i spory. Pomaga oceniać codzienne sytuacje w pracy i przygotowywać pytania do prawnika lub Państwowej Inspekcji Pracy.",
+  "landingPage": {
+    "audience": [
+      "Osoby przed pierwszą pracą",
+      "Pracownicy na umowach cywilnoprawnych",
+      "Osoby zmieniające pracę"
+    ],
+    "outcomes": [
+      "Porównywać umowę o pracę, zlecenie i o dzieło",
+      "Obliczać urlop i dodatek za nadgodziny",
+      "Sprawdzać, co przysługuje podczas choroby i wypowiedzenia",
+      "Szukać pomocy w sporze z pracodawcą"
+    ],
+    "valueProposition": "Sprawdzać, czy umowa, grafik i wypłata są zgodne z prawami pracownika"
+  }
+}

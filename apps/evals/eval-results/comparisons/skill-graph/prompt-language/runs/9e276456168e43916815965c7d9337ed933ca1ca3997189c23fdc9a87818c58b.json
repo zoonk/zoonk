@@ -1,0 +1,19 @@
+{
+  "caseId": "en-product-nextjs",
+  "challenger": {
+    "costUsd": 0.04051125,
+    "durationMs": 79882.21770899999,
+    "hash": "22a7c107d0c42c4d9cf41087d603541453ae9a65977bc32219790b8fd069082f",
+    "systemPromptHash": "b0378268f9050d4c98ca265a5f8245ed0808ac60f0f0b8006acbc1b188db3dec",
+    "userPromptHash": "e3be4e8f149bcc74ec4d0c61ae6786c74567562a543880b46d9a0efe9760fb1e"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.04483125,
+    "durationMs": 88907.69020900014,
+    "hash": "41bdb5495cd707f0ac402644cbf97c13b2a383aaef5a214a81403eb7e31596da",
+    "systemPromptHash": "58ebaa6554dc0e98f20565c077a43af3d9d710a23385fd278e3df8c3f42af614",
+    "userPromptHash": "e3be4e8f149bcc74ec4d0c61ae6786c74567562a543880b46d9a0efe9760fb1e"
+  },
+  "run": 1
+}

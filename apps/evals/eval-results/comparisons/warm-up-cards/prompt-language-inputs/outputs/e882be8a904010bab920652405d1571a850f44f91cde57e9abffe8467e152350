@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "With both slits open and no path recorded, what pattern builds up on a screen?",
+      "options": [
+        {
+          "text": "Alternating bright and dark bands",
+          "correct": true
+        },
+        {
+          "text": "Two bright blobs",
+          "correct": false
+        },
+        {
+          "text": "A uniform glow",
+          "correct": false
+        }
+      ],
+      "reveal": "Alternating bright and dark bands. The alternatives can combine like waves, even when particles arrive one at a time."
+    },
+    {
+      "question": "When a detector checks an electron along one chosen direction, how many spin results are possible?",
+      "options": [
+        {
+          "text": "One",
+          "correct": false
+        },
+        {
+          "text": "Two",
+          "correct": true
+        },
+        {
+          "text": "A continuous range",
+          "correct": false
+        }
+      ],
+      "reveal": "Two possible values, often labeled spin up and spin down. The labels depend on the direction the detector checks."
+    },
+    {
+      "question": "Two linked particles are measured far apart; what can their results show?",
+      "options": [
+        {
+          "text": "Stronger-than-classical correlations",
+          "correct": true
+        },
+        {
+          "text": "A message sent instantly",
+          "correct": false
+        },
+        {
+          "text": "No relationship",
+          "correct": false
+        }
+      ],
+      "reveal": "Stronger-than-classical correlations. Entanglement links measurement outcomes, but it cannot send a controllable message faster than light."
+    },
+    {
+      "question": "Why can't a particle have perfectly sharp position and momentum at once?",
+      "options": [
+        {
+          "text": "The limits are built into quantum states",
+          "correct": true
+        },
+        {
+          "text": "Measuring it always shakes it",
+          "correct": false
+        },
+        {
+          "text": "Our tools lack enough precision",
+          "correct": false
+        }
+      ],
+      "reveal": "The limits are built into quantum states. Making position more sharply defined necessarily makes momentum less sharply defined, and vice versa."
+    },
+    {
+      "question": "When light's frequency rises, what happens to the energy of each photon?",
+      "options": [
+        {
+          "text": "It rises",
+          "correct": true
+        },
+        {
+          "text": "It falls",
+          "correct": false
+        },
+        {
+          "text": "It stays the same",
+          "correct": false
+        }
+      ],
+      "reveal": "It rises. A photon's energy is proportional to its frequency, so higher-frequency light carries more energy per photon."
+    },
+    {
+      "question": "In an atom, where does an electron's orbital picture place it?",
+      "options": [
+        {
+          "text": "A probability distribution",
+          "correct": true
+        },
+        {
+          "text": "A tiny planet's track",
+          "correct": false
+        },
+        {
+          "text": "A fixed circular path",
+          "correct": false
+        }
+      ],
+      "reveal": "A probability distribution. An orbital maps where an electron is likely to be found, not a route it follows around the nucleus."
+    },
+    {
+      "question": "A particle meets a barrier it lacks enough energy to cross classically; what can happen?",
+      "options": [
+        {
+          "text": "It can appear beyond it",
+          "correct": true
+        },
+        {
+          "text": "It always bounces back",
+          "correct": false
+        },
+        {
+          "text": "It gains energy from nowhere",
+          "correct": false
+        }
+      ],
+      "reveal": "It can appear beyond it. Quantum tunneling gives a particle some chance of crossing a barrier that classical physics says it cannot cross."
+    },
+    {
+      "question": "Why can two electrons in an atom occupy the same orbital only with different spins?",
+      "options": [
+        {
+          "text": "They cannot share a full state",
+          "correct": true
+        },
+        {
+          "text": "They repel electrically",
+          "correct": false
+        },
+        {
+          "text": "One electron moves faster",
+          "correct": false
+        }
+      ],
+      "reveal": "They cannot share a full state. The exclusion principle lets two electrons occupy the same orbital only if their spins differ."
+    },
+    {
+      "question": "When excited hydrogen atoms emit light, why do they produce distinct spectral lines?",
+      "options": [
+        {
+          "text": "Only certain energy changes occur",
+          "correct": true
+        },
+        {
+          "text": "Atoms emit only one color",
+          "correct": false
+        },
+        {
+          "text": "The glass filters most colors",
+          "correct": false
+        }
+      ],
+      "reveal": "Only certain energy changes occur. Hydrogen's allowed energy levels are discrete, so emitted photons have specific energies and colors."
+    },
+    {
+      "question": "For a particle with greater momentum, what happens to its de Broglie wavelength?",
+      "options": [
+        {
+          "text": "It gets shorter",
+          "correct": true
+        },
+        {
+          "text": "It gets longer",
+          "correct": false
+        },
+        {
+          "text": "It stays the same",
+          "correct": false
+        }
+      ],
+      "reveal": "It gets shorter. A particle's de Broglie wavelength is inversely proportional to its momentum."
+    }
+  ]
+}

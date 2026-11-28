@@ -1,0 +1,109 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00678159,
+  "failureCodes": [
+    "failed_controls"
+  ],
+  "failures": [
+    "Missed the control bank defect."
+  ],
+  "packetId": "3820b35093a0f3dcead610b1473f34dc7f6065abfa52eb98d85cf72987c13368",
+  "passed": false,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, so they give the learner the same keys, the same realism and the same speech.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, so they match the exam to the same degree.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, so the script reads the same in each.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are identical, so neither serves the learner better."
+        },
+        "pairId": "3080b053-a124-46d6-a3c9-2c02c7391900"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets have six questions whose keys match the script, with distractors such as the camera, the rejected paint and the depth measurement.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both sets use one speaker, a 3 to 4 minute monologue, six sentence-completion gaps in script order, and short answers, which fits the named part.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "A",
+            "reason": "A's script sounds more like spoken English, with first-person asides and a natural opening, while B reads more like written prose.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The script uses long written-style subordinate clauses that a listener would not hear in ordinary speech, so it reads as prose rather than a talk.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "On a single hearing the long sentence is hard to follow, which weakens the ear-training the set is meant to give.",
+            "location": {
+              "detail": "sentence beginning 'We'd hoped the garden would attract wildlife'",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A matches B on keys and realism, and its script sounds more like natural speech, which makes it a better listening practice for the learner."
+        },
+        "pairId": "94793ff6-e843-4a83-8514-d995ad02b017"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets give the same correct options, with distractors that the recording rejects or only mentions as a wish or a past plan.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both sets are identical, with three-option multiple choice questions in recording order.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs have the same Spanish script and the same Portuguese reasons, which are in Brazilian Portuguese.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are the same on every criterion, so neither serves the learner better."
+        },
+        "pairId": "95583379-d753-4c9a-8e1a-ca51d6da629d"
+      }
+    ]
+  }
+}

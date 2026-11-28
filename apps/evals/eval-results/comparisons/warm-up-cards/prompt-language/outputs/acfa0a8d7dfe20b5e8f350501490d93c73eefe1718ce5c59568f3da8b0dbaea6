@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "In a Japanese rental listing, what kind of home does \"マンション\" usually describe?",
+      "options": [
+        {
+          "text": "A grand detached house",
+          "correct": false
+        },
+        {
+          "text": "An apartment or condo",
+          "correct": true
+        },
+        {
+          "text": "A hotel room",
+          "correct": false
+        }
+      ],
+      "reveal": "An apartment or condo. In Japan, \"マンション\" usually means a multiunit apartment building or a unit in one, not a grand detached home."
+    },
+    {
+      "question": "When you see \"ホテル\" on a Japanese street sign, what place is it pointing to?",
+      "options": [
+        {
+          "text": "A hotel",
+          "correct": true
+        },
+        {
+          "text": "A hospital",
+          "correct": false
+        },
+        {
+          "text": "A hostel",
+          "correct": false
+        }
+      ],
+      "reveal": "A hotel. The Japanese term closely resembles the English word and has the same basic meaning."
+    },
+    {
+      "question": "At a Japanese café, what drink does \"コーヒー\" usually mean?",
+      "options": [
+        {
+          "text": "Tea",
+          "correct": false
+        },
+        {
+          "text": "Coffee",
+          "correct": true
+        },
+        {
+          "text": "Hot chocolate",
+          "correct": false
+        }
+      ],
+      "reveal": "Coffee. This familiar-sounding term is commonly used for the drink in Japanese, too."
+    },
+    {
+      "question": "What daytime greeting does Japanese \"こんにちは\" commonly express?",
+      "options": [
+        {
+          "text": "Hello",
+          "correct": true
+        },
+        {
+          "text": "Good morning",
+          "correct": false
+        },
+        {
+          "text": "Good night",
+          "correct": false
+        }
+      ],
+      "reveal": "Hello. It is a common daytime greeting, often translated as “good afternoon,” though it does not map neatly to just one English greeting."
+    },
+    {
+      "question": "After someone helps you carry a box, what does \"ありがとう\" express?",
+      "options": [
+        {
+          "text": "Thanks",
+          "correct": true
+        },
+        {
+          "text": "I'm sorry",
+          "correct": false
+        },
+        {
+          "text": "Good morning",
+          "correct": false
+        }
+      ],
+      "reveal": "Thanks. \"ありがとう\" expresses gratitude; a more polite version adds \"ございます\"."
+    },
+    {
+      "question": "In a busy restaurant, what can \"すみません\" do when you need a server?",
+      "options": [
+        {
+          "text": "Get someone's attention",
+          "correct": true
+        },
+        {
+          "text": "Ask for directions",
+          "correct": false
+        },
+        {
+          "text": "Say good night",
+          "correct": false
+        }
+      ],
+      "reveal": "Get someone's attention. Depending on the situation, \"すみません\" can also mean “excuse me” or “I'm sorry.”"
+    },
+    {
+      "question": "In \"私は水を飲みます\", where does the main action usually appear?",
+      "options": [
+        {
+          "text": "At the end",
+          "correct": true
+        },
+        {
+          "text": "Before the subject",
+          "correct": false
+        },
+        {
+          "text": "Between the subject and object",
+          "correct": false
+        }
+      ],
+      "reveal": "At the end. Japanese commonly places the verb at the end of a clause, so the action comes after the subject and object here."
+    },
+    {
+      "question": "In \"りんごを食べます\", what role does the particle \"を\" mark?",
+      "options": [
+        {
+          "text": "The direct object",
+          "correct": true
+        },
+        {
+          "text": "The speaker",
+          "correct": false
+        },
+        {
+          "text": "The location",
+          "correct": false
+        }
+      ],
+      "reveal": "The direct object. The particle \"を\" follows the thing acted on, which is the apple in this sentence."
+    },
+    {
+      "question": "When speaking politely about Emma, where does \"さん\" usually go?",
+      "options": [
+        {
+          "text": "After her name",
+          "correct": true
+        },
+        {
+          "text": "Before her name",
+          "correct": false
+        },
+        {
+          "text": "At the sentence's end",
+          "correct": false
+        }
+      ],
+      "reveal": "After her name. Japanese commonly attaches \"さん\" to another person's name as a polite title; speakers generally do not use it for themselves."
+    },
+    {
+      "question": "On a Japanese menu, what kind of term is often written in \"カタカナ\"?",
+      "options": [
+        {
+          "text": "A foreign loanword",
+          "correct": true
+        },
+        {
+          "text": "A native verb ending",
+          "correct": false
+        },
+        {
+          "text": "A politeness marker",
+          "correct": false
+        }
+      ],
+      "reveal": "A foreign loanword. Japanese commonly uses \"カタカナ\" for many borrowed terms, as well as some names and sound effects."
+    }
+  ]
+}

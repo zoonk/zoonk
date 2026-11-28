@@ -1,0 +1,21 @@
+{
+  "categories": [
+    "business",
+    "tech"
+  ],
+  "description": "Data analysis uses numbers to answer practical questions. It covers organizing and cleaning data, summarizing and comparing results, spotting patterns and trends, choosing honest charts, and checking whether a conclusion holds up, including claims made by AI. These skills help you make clearer decisions at work, in school, and in everyday life.",
+  "landingPage": {
+    "audience": [
+      "Office workers who handle spreadsheets",
+      "Students using data for school projects",
+      "Curious beginners working with numbers"
+    ],
+    "outcomes": [
+      "Sort and clean data in a spreadsheet",
+      "Summarize data and compare groups",
+      "Choose charts that show patterns honestly",
+      "Check findings and explain what the data supports"
+    ],
+    "valueProposition": "Turn messy numbers into clear answers you can check and explain"
+  }
+}

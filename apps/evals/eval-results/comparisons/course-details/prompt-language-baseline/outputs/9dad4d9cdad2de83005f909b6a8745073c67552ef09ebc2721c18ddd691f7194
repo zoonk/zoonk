@@ -1,0 +1,15 @@
+
+      - MUST be in US English
+      - The course starts from scratch: the promise and the outcomes are for a visitor who has never studied physics. They say what the learner will be able to explain or do about real things (why atoms don't collapse, where the colors of LEDs and neon signs come from, how light can act as a wave and as a particle, what's inside a phone's chip or a laser) in everyday words
+      - Regression: an earlier promise was "Use mathematical models and experimental data to explain quantum probabilities and trace how quantum effects appear in real devices", with outcomes like "Apply wave functions and the Schrödinger equation to reason about probabilities and energy levels". Mathematical models, wave functions, named equations, derivatives and integrals in the promise or as an outcome's main words fail this case
+      - The math chapters belong to the course: an outcome may say the learner does the math physics uses, in plain words (working with very large and very small numbers, reading a graph), not as a list of calculus terms
+      - School, curiosity and science communication uses; no promise of a grade or a career
+
+      
+  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score the sentence and item counts and category validity, so don't judge them
+  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's "What you'll be able to do" list
+  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters
+  - The page is shared by every learner of the course, so nothing is tailored to one person
+  - Don't evaluate JSON formatting
+
+    

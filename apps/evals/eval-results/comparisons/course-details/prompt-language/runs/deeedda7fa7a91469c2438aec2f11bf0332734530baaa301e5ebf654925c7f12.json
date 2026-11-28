@@ -1,0 +1,19 @@
+{
+  "caseId": "pt-fisica-quantica-do-zero",
+  "challenger": {
+    "costUsd": 0.00099896,
+    "durationMs": 13309.70754199999,
+    "hash": "d82061c270f5c21915323c510770ad3c77c13608016eb82e45404bd154c683fd",
+    "systemPromptHash": "0492fd99f0a5e77ff420ef7f3ff2e4cacb9247f3b46936e7adc43340c7c26184",
+    "userPromptHash": "6a13e00bef07c1c6d29a07197686c8ff69b079e363e5d964bd9805230f5c1326"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.0010774299999999999,
+    "durationMs": 13632.57250000001,
+    "hash": "2e0197b6a10e0cbd9674661cccde04d40546f4be5737bb14fc66670e4b529017",
+    "systemPromptHash": "782cebffd04f74e4a27023e27678685d5ac6ee34a8481cb679d4f0909e3b41c8",
+    "userPromptHash": "6a13e00bef07c1c6d29a07197686c8ff69b079e363e5d964bd9805230f5c1326"
+  },
+  "run": 1
+}

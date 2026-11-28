@@ -1,0 +1,155 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "she said I should take a sun hat instead.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "The organiser advised Hannah to take a ______ on her first visit.",
+        "keyPoints": [
+          "A sun hat."
+        ],
+        "acceptedAnswers": [
+          "sun hat"
+        ],
+        "sampleAnswer": "sun hat"
+      },
+      {
+        "evidence": "the site had once been a railway station.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "The land used for the garden had previously been occupied by a ______.",
+        "keyPoints": [
+          "A railway station."
+        ],
+        "acceptedAnswers": [
+          "railway station"
+        ],
+        "sampleAnswer": "railway station"
+      },
+      {
+        "evidence": "What we collected from the café instead was coffee grounds.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "hard",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "The volunteers obtained ______ from a local café to add to their compost.",
+        "keyPoints": [
+          "Coffee grounds."
+        ],
+        "acceptedAnswers": [
+          "coffee grounds"
+        ],
+        "sampleAnswer": "coffee grounds"
+      },
+      {
+        "evidence": "some local children painted the names of the herbs on wooden spoons.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "The children used ______ to make labels for the herbs.",
+        "keyPoints": [
+          "Wooden spoons."
+        ],
+        "acceptedAnswers": [
+          "wooden spoons"
+        ],
+        "sampleAnswer": "wooden spoons"
+      },
+      {
+        "evidence": "I signed up for a photography course.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "Hannah decided to take a course in ______ after helping with the garden's website.",
+        "keyPoints": [
+          "Photography."
+        ],
+        "acceptedAnswers": [
+          "photography"
+        ],
+        "sampleAnswer": "photography"
+      },
+      {
+        "evidence": "patience was the most useful thing I'd developed.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "hard",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "Hannah considers ______ to be the most valuable quality she gained from the project.",
+        "keyPoints": [
+          "Patience."
+        ],
+        "acceptedAnswers": [
+          "patience"
+        ],
+        "sampleAnswer": "patience"
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Hannah",
+        "gender": "female",
+        "accent": "British English"
+      }
+    ],
+    "title": "A garden in the city",
+    "turns": [
+      {
+        "speaker": "Hannah",
+        "text": "Last spring, I joined a group that was turning an empty piece of land into a community garden. I'd recently moved to the area and wanted to meet people. I wasn't an experienced gardener, but the organiser assured me that didn't matter. Before my first visit, I asked her what to bring. I thought I'd need waterproof boots, but she said I should take a sun hat instead. Most of the work that day was out in the open, and she was right: it got really hot."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "When I arrived, I was surprised by the size of the place. From the road, you could only see a narrow entrance between two buildings. I'd assumed the land had always been part of the park next door, but one of the volunteers explained that the site had once been a railway station. There was nothing left of the platforms, although we kept finding bits of old brick whenever we dug into the ground."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "At first, we concentrated on improving the soil. A café nearby offered to give us its vegetable peelings, but they weren't suitable for the mixture we were making. What we collected from the café instead was coffee grounds. These went into the compost, along with leaves and other material from the garden. It was hard work carrying everything, but people chatted as they worked, and the time passed quickly."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Once we'd planted some herbs, we needed a way to show visitors what they were looking at. We considered making signs from pieces of card, but they wouldn't have lasted long in the rain. In the end, some local children painted the names of the herbs on wooden spoons. We pushed the handles into the soil beside each plant. They looked cheerful, and the children were proud when they came back with their families."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "By summer, the garden was attracting quite a few visitors, and we wanted more people to hear about it. I offered to help with our website, even though I'd never done anything like that before. Another volunteer showed me how to add pictures, and I enjoyed it so much that I signed up for a photography course. I still take pictures for the website, though now I spend a bit longer choosing the right light."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Of course, not everything we planted grew successfully. One bed of vegetables was eaten by insects, and we had to start again. That was disappointing, especially after all the work we'd put in. But looking back, I'd say patience was the most useful thing I'd developed. You can't make a garden happen overnight. You learn to notice small changes and keep going, even when the results aren't what you expected. I'm looking forward to seeing what we can achieve next year."
+      }
+    ]
+  }
+}

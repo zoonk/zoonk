@@ -1,0 +1,12 @@
+{
+  "caseId": "pt-ielts-part-1-from-notice",
+  "costUsd": 0.041216,
+  "name": "answer keys",
+  "passed": 9,
+  "problems": [
+    "{\"itemLocator\":\"set.questions[5]\",\"keyedAnswer\":\"48; forty-eight\",\"kind\":\"wrongKey\",\"workedAnswer\":\"Lucy gives the standard fee as forty-eight pounds. The form already supplies £, so “48” gives the correct entry, “£48”. Although “forty-eight” counts as one word, it produces “£forty-eight”, which is not standard price notation.\"}"
+  ],
+  "run": 1,
+  "side": "challenger",
+  "total": 10
+}

@@ -1,0 +1,13 @@
+{
+  "caseId": "pt-goethe-b1-horen-teil-3",
+  "challenger": {
+    "costUsd": 0.009783900000000002,
+    "durationMs": 24228.43174999999,
+    "hash": "ad095ff95be089a887557a8188d9cc045660fa0b935c838f13a5041260fbf601",
+    "systemPromptHash": "fb37cca4dbdbee8b6bf331a47fe519def086e5d20d1d1b42fc53476c9eed1d41",
+    "userPromptHash": "592ef64e45a98ecb830c19f99ba8760321e0732c3fcbdd93ed3303c9e95d6adc"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 2
+}

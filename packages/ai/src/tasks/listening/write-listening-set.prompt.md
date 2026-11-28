@@ -4,7 +4,7 @@ You write listening tests for a learning app. Write one recording and the questi
 
 # Goal
 
-Write one recording for `TASK` in `SCRIPT_LANGUAGE` at `LEVEL`, with exactly `COUNT` questions in the allowed `FORMATS`.
+Write one recording for `TASK` in {{TARGET_LANGUAGE}} at `LEVEL`, with exactly `COUNT` questions in the allowed `FORMATS`.
 
 # The recording
 
@@ -21,11 +21,11 @@ Write one recording for `TASK` in `SCRIPT_LANGUAGE` at `LEVEL`, with exactly `CO
 - Fit `LEVEL` in the vocabulary, pace and how directly speakers express their ideas.
 - `speakers`: everyone who speaks, each with a short `name` (a first name, or a role such as "Receptionist" or "Lecturer" when the recording never names them), a `gender` so each gets a fitting voice, and an `accent` from `ACCENTS`, named as a variety of the language ("British English", "Mexican Spanish"). When `ACCENTS` has several, use accents that fit the speakers and situation.
 - `turns`: what each speaker says, in order, each with the speaker's exact `name`. Use only spoken words. Write formulas and commands as the speaker would say them ("one half", "type L S"), and make any aside part of the sentence. Leave out stage directions, sound effects, brackets, parentheses and Markdown. Include a narrator only if `TASK` has one. A monologue is one speaker with several turns, each a paragraph.
-- `title`: a short name of the situation in `SCRIPT_LANGUAGE` ("Booking a table for a birthday dinner"), without the exam's or the part's name.
+- `title`: a short name of the situation in {{TARGET_LANGUAGE}} ("Booking a table for a birthday dinner" for an English recording), without the exam's or the part's name.
 
 # The questions
 
-- Exactly `COUNT` questions in `SCRIPT_LANGUAGE`. They follow the order the answers are heard in.
+- Exactly `COUNT` questions in {{TARGET_LANGUAGE}}. They follow the order the answers are heard in.
 {{#exam}}
 - Use only the formats from `FORMATS` that this part of `EXAM` asks, mixed the way the part mixes them: many listening papers never ask true or false, and a part that asks only one kind of question gets only that format.
 {{/exam}}
@@ -36,7 +36,7 @@ Write one recording for `TASK` in `SCRIPT_LANGUAGE` at `LEVEL`, with exactly `CO
 {{#exam}}
 - `context` holds what the paper prints beside the question when the task has it (the heading of a form, notes or a table with a numbered gap), or null.
 {{/exam}}
-- `reason` and `misconception` are in `LANGUAGE`, speak to the learner as "you", and point to what was said ("The man first says Monday, then corrects it to Thursday").
+- `reason` and `misconception` are in {{LEARNER_LANGUAGE}}, speak to the learner as "you", and point to what was said ("The man first says Monday, then corrects it to Thursday", written in {{LEARNER_LANGUAGE}}).
 - `difficulty` spreads across `easy`, `medium` and `hard` within `LEVEL`.
 {{#multipleChoice}}
 - multipleChoice: exactly `OPTION_COUNT` options with one correct, each option's `text` without a letter. Options are similar in length and all plausible from the recording. The correct option has `misconception` null; each wrong one has a short label of the listening mistake behind it ("Picks the first day mentioned, before the correction").
@@ -60,4 +60,4 @@ Write one recording for `TASK` in `SCRIPT_LANGUAGE` at `LEVEL`, with exactly `CO
 
 # Final check
 
-Before answering, make sure each `evidence` is copied exactly from the turns, every question's answer is right and is said in the recording, the questions follow the order of the recording, and the script sounds like people talking in `SCRIPT_LANGUAGE`.
+Before answering, make sure each `evidence` is copied exactly from the turns, every question's answer is right and is said in the recording, the questions follow the order of the recording, and the script sounds like people talking in {{TARGET_LANGUAGE}}.

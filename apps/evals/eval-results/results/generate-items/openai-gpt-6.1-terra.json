@@ -432,91 +432,6 @@
       "categoryScores": [
         {
           "categoryId": "correctness",
-          "reasoning": "All three keyed answers are supported and uniquely defensible. The library notice permits withdrawal after returning the first book or reporting its loss; the campaign promotes recirculating usable clothing; and the meeting message proposes online access to address a participation barrier. No factual error or incorrect key triggers a correctness cap.",
-          "score": 10,
-          "label": "Correctness",
-          "weight": 30
-        },
-        {
-          "categoryId": "misconceptionsAndFeedback",
-          "reasoning": "Most feedback identifies useful mistakes, including confusing reservation with withdrawal, overlooking an exception, and interpreting a figurative expression literally. However, the explanation for item 1's final option does not account for its invented no-reservation condition, and item 2's final explanation only partially accounts for its option. Item 3 also includes a weakly grounded lack-of-interest distractor. The mismatch between stated mistakes and their options triggers the cap of 7.",
-          "score": 7,
-          "label": "Misconceptions & feedback",
-          "weight": 25
-        },
-        {
-          "categoryId": "realism",
-          "reasoning": "The items broadly follow ENEM presentation: short Spanish support texts, Portuguese commands and explanations, everyday situations, and five alternatives with one correct answer. However, conspicuously absolute distractors make some choices easier to eliminate than their intended reading demands warrant. The third text's generic description as a message also gives it a less concrete communicative setting than the library notice and clothing campaign.",
-          "score": 8,
-          "label": "Exam and setting realism",
-          "weight": 25
-        },
-        {
-          "categoryId": "skillFit",
-          "reasoning": "The situations and targeted expressions vary, and these are contextual reading questions rather than text-free drills. Nevertheless, the central skill constraint is not met: transparent vocabulary and contextual clues let a Portuguese reader reach the answers without resolving the intended Spanish expressions. This is especially clear in items 2 and 3, where the exchange vocabulary and the final online-participation sentence independently reveal the keys. Correct language allocation does not compensate for that explicit task-fit failure.",
-          "score": 6,
-          "label": "Skill fit & variety",
-          "weight": 20
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 3 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 3454,
-          "outputTokens": 1187,
-          "reasoningTokens": 393
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "The set fails the central requirement that answering depend on Spanish that cannot be inferred from Portuguese cognates. Item 2 reveals the clothing-exchange purpose through transparent clues such as “punto de intercambio” and “en buen estado.” Item 3 effectively supplies its answer through “conexión en línea, participaríamos más personas,” without requiring understanding of the structures named in the command. Item 1 also relies heavily on transparent reservation, withdrawal and exception vocabulary rather than a decisive nontransparent expression.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Some distractors are insufficiently grounded in specific misreadings. Item 1's final option introduces not having made a reservation, which its explanation about reversing “hasta que” does not explain. Item 2's final option changes exchanging clothes into separating all clothes; ignoring “en buen estado” explains only part of that change. Item 3's lack-of-interest option has little textual basis. Absolute wording such as “sem exceções,” “qualquer reunião” and “sempre” also makes elimination easier.",
-          "kind": "minorErrors",
-          "score": 7
-        },
-        {
-          "conclusion": "Make a different nontransparent Spanish expression decisive in each item, and remove redundant cognate-rich clues that independently reveal the answer. Build distractors around identifiable alternative readings of those expressions, with feedback explaining the entire mistaken reading. Give the third text a clearer communicative setting, such as a workplace forum comment, and use more balanced alternatives.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
-      "testCase": {
-        "expectations": "ENEM-style foreign language items for a Brazilian learner who chose Spanish: each item's support text is in Spanish (a notice, a chronicle, a website, an ad, a song, a comic strip or another real genre), while the command, the 5 options and the reasons are in Brazilian Portuguese. Never English, never a text-free grammar or translation drill. The answer must depend on words or structures of the Spanish text that a Portuguese reader can't infer from cognates, so a reader who knows only Portuguese can't pick it from the look-alike words or from the options alone, and the command never translates the words that settle it. Distractors come from real misreadings (a false friend, a cognate taken at face value, a detail read in isolation). The three texts differ in genre and situation and turn on different expressions. Check every key against the Spanish text.",
-        "id": "pt-enem-espanhol-interpretacao-multiple-choice-1",
-        "userInput": {
-          "count": 3,
-          "examFormat": {
-            "name": "ENEM",
-            "optionCount": 5,
-            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada."
-          },
-          "format": "multipleChoice",
-          "language": "pt",
-          "level": "intermediate",
-          "skill": {
-            "description": "Usar vocabulário, expressões e estruturas linguísticas para entender o tema e a função de textos em espanhol.",
-            "name": "Interpretar vocabulário e estruturas de textos em espanhol"
-          }
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "correctness",
           "reasoning": "All three items have exactly one correct answer, correctly keyed. Item 1 costs 1.5 × (40/60) × 30 × $0.80 = $24. Item 2 saves [1.2 × 1.5 − 0.8 × 0.75] × 20 × $0.25 = $6. Item 3 permits floor[($10 − $3)/(1.1 × $0.25)] = 25 days. The worked explanations are accurate.",
           "score": 10,
           "label": "Correctness",
@@ -2452,6 +2367,274 @@
           "skill": {
             "description": "Use the equations of motion for constant acceleration, including motion under gravity, and read velocity-time graphs.",
             "name": "Kinematics in one dimension"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "The five rubric rows accurately distinguish formal writing, response to the theme and genre, argumentation, cohesion, and intervention. All row points are null as required. The outline gives one defensible thesis rather than prescribing it as the only correct answer.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The checklist names useful, observable features, including all five intervention elements. Its intervention bullet, however, combines those elements with respect for human rights in a single check. The argument bullet likewise combines explanation with use of repertoire. Separate checks would let a grader identify exactly what the learner omitted.",
+          "score": 8,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The national social theme, short motivating texts, formal Portuguese command, 30-line limit, human-rights requirement, and five competencies make this recognizable as an ENEM redação. The two texts are usable but offer less contrast than a scenario paired with a documentary or legal perspective would.",
+          "score": 9,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The task requires the learner to produce the requested writing: defend a thesis about access to culture, support arguments with sociocultural knowledge, and develop an intervention. It is entirely in Brazilian Portuguese and appropriately scoped for one intermediate essay.",
+          "score": 10,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "itemsScored": 1,
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 1261,
+          "inputTokens": 2988,
+          "outputTokens": 533,
+          "reasoningTokens": 0
+        }
+      },
+      "keyFlaws": [],
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Some key points bundle judgments a grader should make separately. A student could explain a barrier convincingly without connecting it to sociocultural knowledge, or propose an action and name its agent without specifying how it would be carried out. The checklist does not distinguish those cases.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Keep the everyday scenario in Texto I, but give Texto II a distinct perspective, such as the cultural rights recognized in Article 215 of the Brazilian Constitution. That would give the learner an opportunity to connect a right to a practical barrier rather than mainly restating the travel problem.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "One ENEM essay prompt (redação) in Brazilian Portuguese: a theme with short motivating texts and the standard command for a dissertative-argumentative text with an intervention proposal. The rubric uses ENEM's five competencies, and since ENEM's grid doesn't give its rows points of their own, every row's points is null.",
+        "id": "pt-enem-redacao-essay-2",
+        "userInput": {
+          "count": 1,
+          "examFormat": {
+            "name": "ENEM",
+            "optionCount": 5,
+            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada. Redação: texto dissertativo-argumentativo com proposta de intervenção, corrigido pelas cinco competências."
+          },
+          "format": "essay",
+          "language": "pt",
+          "level": "intermediate",
+          "skill": {
+            "description": "Escrever um texto dissertativo-argumentativo com tese, argumentos com repertório e proposta de intervenção completa.",
+            "name": "Redação do ENEM"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Each A is uniquely supported: the volunteers should give notice if absent; a rain forecast alone does not move the fair; and the forum writer misses the afternoons with friends despite the usefulness of video calls. No competing option states the same conclusion.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The literal reading of “plantados,” the confusion of forecast with official alert, and the isolated reading of “menos” are specific and well explained. Other mappings are weaker: the registration procedure in item 1 does not follow from reversing who waits, and the feedback for item 3's recovery option rebuts a stronger claim than the option makes.",
+          "score": 7,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The message, notice and forum comment are plausible short Spanish texts, each followed by a Portuguese command and five parallel options. The set is less convincing as an intermediate ENEM exercise where the supposedly hard fair item can be settled by a transparent restatement and the alternative that rain is necessary for an outdoor fair is easy to discard on practical grounds.",
+          "score": 8,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The texts vary in genre, situation and target expression, and the forum item connects an idiom to the writer's attitude. However, the first two items allow a learner to match an explicit action or venue condition without interpreting the target language feature. The three commands also use much the same expression-to-paraphrase task, limiting the range of reading skills assessed.",
+          "score": 6,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "itemsScored": 3,
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 1271,
+          "inputTokens": 3868,
+          "outputTokens": 682,
+          "reasoningTokens": 0
+        }
+      },
+      "keyFlaws": [],
+      "steps": [
+        {
+          "conclusion": "The first two items can be solved without understanding the Spanish expression named in the command. In the volunteer message, “avisa con tiempo” gives the action in A almost verbatim. In the fair notice, the plaza announcement and the separate official-alert condition establish A even if the reader skips “aunque.” Both keys are correct, but neither reliably tests the intended interpretation.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Some distractors add ideas that the cited mistake does not explain: reversing who waits does not introduce registration in item 1, and treating calls as “uma forma de recuperar” past afternoons in item 3 need not mean treating them as complete replacements. Item 2 also mixes Portuguese gender agreement in “uma alerta de tempestade emitido”; use “um alerta de tempestade emitido.”",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Keep the distinct genres, but vary what the learner must infer. For the volunteer message, ask what social consequence the warning seeks to avoid rather than what action it requests. For the fair notice, make the interpretation turn on the connector rather than a second sentence that independently settles the question.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "ENEM-style foreign language items for a Brazilian learner who chose Spanish: each item's support text is in Spanish (a notice, a chronicle, a website, an ad, a song, a comic strip or another real genre), while the command, the 5 options and the reasons are in Brazilian Portuguese. Never English, never a text-free grammar or translation drill. The answer must depend on words or structures of the Spanish text that a Portuguese reader can't infer from cognates, so a reader who knows only Portuguese can't pick it from the look-alike words or from the options alone, and the command never translates the words that settle it. Distractors come from real misreadings (a false friend, a cognate taken at face value, a detail read in isolation). The three texts differ in genre and situation and turn on different expressions. Check every key against the Spanish text.",
+        "id": "pt-enem-espanhol-interpretacao-multiple-choice-2",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "ENEM",
+            "optionCount": 5,
+            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada."
+          },
+          "format": "multipleChoice",
+          "language": "pt",
+          "level": "intermediate",
+          "skill": {
+            "description": "Usar vocabulário, expressões e estruturas linguísticas para entender o tema e a função de textos em espanhol.",
+            "name": "Interpretar vocabulário e estruturas de textos em espanhol"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Each first option is uniquely supported: the visitor is asked to seek consent, the collection plan underestimated donations, and the outreach team supplemented rather than rejected social media. Item 3 nevertheless contains a vocabulary error in its setup: Spanish “oficina” does not ordinarily denote the educational workshop described in Portuguese.",
+          "score": 7,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The duration reading of “corto” is a plausible trap, and its feedback contrasts time with space. Several other traps are less credible: mistaking collection for distribution does not explain the claimed sequence of events, and neither a staffing shortage nor a conflict between merchants and schools has much textual support. The labels and reasons are generally specific.",
+          "score": 7,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The short passages, everyday purposes, Portuguese commands and five alternatives fit the exam format. The repeated framing around a quoted expression feels more like a series of vocabulary exercises than a varied ENEM set. The second and third texts have different subjects but read much like the same kind of first-person outreach report.",
+          "score": 8,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The situations and target expressions vary, but all three tasks can be solved by matching transparent surrounding details to a Portuguese paraphrase. Even the nominally hard item restates its point in the readily recognizable phrase “si son el único canal.” The set therefore measures little of the required Spanish-dependent interpretation or difficulty progression.",
+          "score": 5,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "itemsScored": 3,
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 1271,
+          "inputTokens": 4042,
+          "outputTokens": 869,
+          "reasoningTokens": 48
+        }
+      },
+      "keyFlaws": [
+        {
+          "itemLocator": "items[2]",
+          "keyedAnswer": "reconhecer a utilidade das redes sociais e apontar o limite de usá-las como único meio de divulgação.",
+          "kind": "factualError",
+          "workedAnswer": "The keyed inference is correct: the writer denies that social networks lack value and objects only to relying on them alone. The lexical defect is in the stimulus: “anunciar la oficina” ordinarily means announcing the office, not publicizing the reading workshop specified in the setup. The intended Spanish is “anunciar el taller de lectura.”"
+        }
+      ],
+      "steps": [
+        {
+          "conclusion": "None of the three answers requires understanding the expression named in the command. In item 1, “antes de fotografiar” and “vida privada” lead to the privacy option; in item 2, “muchos más ejemplares de los previstos” directly states the underestimate; in item 3, “único canal” and the list of other channels reveal the limitation. A Portuguese reader can bypass the Spanish skill the set is meant to assess.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Item 3 carries Portuguese “oficina” into Spanish where “taller de lectura” would denote the workshop. Some distractors are also weakly motivated: item 2 introduces distribution and understaffing without a cue for either, and item 3 offers a rivalry between merchants and schools that the passage gives little reason to infer.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Test each draft by masking the target expression: if the key is still apparent, revise the passage or options. For item 2, for example, contrast first-person accounts of receiving too few versus too many books without explicitly stating which happened. Give items 2 and 3 more distinct genre features rather than presenting both as retrospective campaign reports.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "ENEM-style foreign language items for a Brazilian learner who chose Spanish: each item's support text is in Spanish (a notice, a chronicle, a website, an ad, a song, a comic strip or another real genre), while the command, the 5 options and the reasons are in Brazilian Portuguese. Never English, never a text-free grammar or translation drill. The answer must depend on words or structures of the Spanish text that a Portuguese reader can't infer from cognates, so a reader who knows only Portuguese can't pick it from the look-alike words or from the options alone, and the command never translates the words that settle it. Distractors come from real misreadings (a false friend, a cognate taken at face value, a detail read in isolation). The three texts differ in genre and situation and turn on different expressions. Check every key against the Spanish text.",
+        "id": "pt-enem-espanhol-interpretacao-multiple-choice-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "ENEM",
+            "optionCount": 5,
+            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada."
+          },
+          "format": "multipleChoice",
+          "language": "pt",
+          "level": "intermediate",
+          "skill": {
+            "description": "Usar vocabulário, expressões e estruturas linguísticas para entender o tema e a função de textos em espanhol.",
+            "name": "Interpretar vocabulário e estruturas de textos em espanhol"
           }
         }
       }

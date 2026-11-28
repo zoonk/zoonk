@@ -1,0 +1,19 @@
+{
+  "caseId": "pt-oab",
+  "challenger": {
+    "costUsd": 0.0013962,
+    "durationMs": 22368.225749999983,
+    "hash": "cbb04f82a1b278ae009c19ef18139c9ea6aa967795d623c4e3d65f17b1d13bf1",
+    "systemPromptHash": "9a9f1ea388faafdcb987a6a0652bed1c72d1ac6b950666bf9f23f162c28c39dc",
+    "userPromptHash": "1b640c029c0c9e113578bc2eb275de498c875ad7bab06ae9f6c5b5ba5cc425a2"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.0020256299999999996,
+    "durationMs": 31980.260707999987,
+    "hash": "2515e91b39a70f38c4535871f8cebc98115e559318f91024c4ef4b7314a8f964",
+    "systemPromptHash": "3122a02e88f361a0c79e6592ca6e25e18189c3fe31c3f766cc26271c3a159c6e",
+    "userPromptHash": "1b640c029c0c9e113578bc2eb275de498c875ad7bab06ae9f6c5b5ba5cc425a2"
+  },
+  "run": 1
+}

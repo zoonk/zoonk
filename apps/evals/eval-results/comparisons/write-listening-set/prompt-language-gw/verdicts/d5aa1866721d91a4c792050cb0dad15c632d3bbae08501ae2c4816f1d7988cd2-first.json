@@ -1,0 +1,120 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00518669,
+  "failureCodes": [
+    "failed_controls"
+  ],
+  "failures": [
+    "Missed the control bank defect."
+  ],
+  "packetId": "d5aa1866721d91a4c792050cb0dad15c632d3bbae08501ae2c4816f1d7988cd2",
+  "passed": false,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets have six questions whose keys match the recording, with a corrected distractor (blue filter, rejected plastic pots). Each has one weak question: A's 'heavy rain' and B's 'rainwater' can be partly guessed from the question wording.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both are six-question sentence completion sets on a single British speaker's monologue, in the same order as the recording, with paraphrased questions. Neither is clearly closer to the named Part 2 format.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both scripts are equally written-sounding Hannah monologues with the same mild contractions and no stage directions, so neither reads more like speech than the other.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The gap can be answered from the question's own words plus common sense: a garden group collecting water to water plants is very likely rainwater, so the item can be guessed without listening.",
+            "criterion": "keys",
+            "learnerCost": "A learner could score this item without hearing the recording, so it does not practise listening.",
+            "location": {
+              "detail": "Question 4 gap: 'The group collects ______ to water the garden.'",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "'Heavy rain' is a likely guess for a gap about what stops outdoor bat-watching, so the item is partly answerable from common sense.",
+            "criterion": "keys",
+            "learnerCost": "A learner might answer without listening, which weakens the listening practice.",
+            "location": {
+              "detail": "Question 5 gap: 'The group cancels its outings when there is ______.'",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "Both sets are equally sound and equally realistic for a Cambridge B2 Part 2 monologue; each has one minor guessable item and neither serves its learner noticeably better."
+        },
+        "pairId": "91633be1-79d5-4e18-8a54-4b5f12c86cfb"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so keys, realism and naturalness cannot differ.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so exam realism cannot differ.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so natural speech cannot differ.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are the same text, so neither serves its reader better."
+        },
+        "pairId": "9269fe19-c7ea-4727-816f-2212e00ea685"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets have keys that match the Spanish monologue, and the distractors are clearly rejected in the script; the two outputs are the same.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both are multiple-choice sets in the same order as the monologue, with the same difficulty spread; they are identical.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both scripts are the same Spanish monologue, with natural speech in Castilian and reasons in Brazilian Portuguese; they are identical.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are identical, so neither serves the learner better."
+        },
+        "pairId": "f04e4a43-43c5-41d5-adb6-75a417794a1a"
+      }
+    ]
+  }
+}

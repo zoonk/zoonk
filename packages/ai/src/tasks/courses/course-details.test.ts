@@ -5,7 +5,11 @@ import { generateCourseDetails } from "./course-details";
 import type * as Ai from "ai";
 
 vi.mock("server-only", () => ({}));
-vi.mock("./course-details.prompt.md", () => ({ default: "Categories: {{CATEGORIES}}" }));
+
+vi.mock("./course-details.prompt.md", () => ({
+  default:
+    "Categories: {{CATEGORIES}}\nWrite in {{LEARNER_LANGUAGE}}.{{#languageCourse}} Teach {{TARGET_LANGUAGE}}.{{/languageCourse}}",
+}));
 
 vi.mock("ai", async (importOriginal) => {
   const actual = await importOriginal<typeof Ai>();
@@ -72,6 +76,7 @@ describe(generateCourseDetails, () => {
     expect(systemPrompt).toContain("health");
     expect(systemPrompt).not.toContain("languages");
     expect(systemPrompt).not.toContain("exams");
+    expect(systemPrompt).toContain("Write in Português Brasileiro. Teach Español de México.");
     expect(userPrompt).toContain("TARGET_LANGUAGE: Español de México");
     expect(userPrompt).toContain("- [overview] Antibodies: How antibodies find germs");
   });
@@ -97,15 +102,18 @@ describe(generateCourseDetails, () => {
     ]);
   });
 
-  it("records the deployed selection version across languages while varying per-call input", async () => {
+  it("names each reader's language in the instructions, and no practiced language outside a language course", async () => {
     const results = await Promise.all(
       ["en", "pt", "es", "fr"].map((language) =>
         generateCourseDetails({ chapters, country: null, courseTitle: "Immunology", language }),
       ),
     );
 
-    expect(new Set(results.map((result) => result.provenance.promptVersion)).size).toBe(1);
-    expect(new Set(results.map((result) => result.systemPrompt)).size).toBe(1);
-    expect(new Set(results.map((result) => result.userPrompt)).size).toBe(4);
+    expect(results.map((result) => result.systemPrompt.split("\n").at(-1))).toStrictEqual([
+      "Write in US English.",
+      "Write in Português Brasileiro.",
+      "Write in Español de México.",
+      "Write in Français.",
+    ]);
   });
 });

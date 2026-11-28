@@ -1,0 +1,12 @@
+{
+  "caseId": "en-quantum-physics",
+  "costUsd": 0.027016000000000002,
+  "name": "answer keys",
+  "passed": 9,
+  "problems": [
+    "{\"itemLocator\":\"cards[3]\",\"keyedAnswer\":\"Electrons have allowed energy levels\",\"kind\":\"factualError\",\"workedAnswer\":\"The key explains absorption between bound states, where the photon energy must match the energy gap. The stem does not restrict itself to those transitions. Above the ionization threshold, an atom can absorb photons across a continuous range of energies because the ejected electron can carry away the excess as kinetic energy.\"}"
+  ],
+  "run": 2,
+  "side": "incumbent",
+  "total": 10
+}

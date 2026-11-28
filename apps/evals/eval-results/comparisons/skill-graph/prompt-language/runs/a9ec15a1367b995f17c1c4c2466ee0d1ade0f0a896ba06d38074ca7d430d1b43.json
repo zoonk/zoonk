@@ -1,0 +1,19 @@
+{
+  "caseId": "en-economics-beginner-deep",
+  "challenger": {
+    "costUsd": 0.057137650000000005,
+    "durationMs": 126051.49312499998,
+    "hash": "bba0fed1708b3802c447c63277014c600c58246d5c7a517e35e434b2aa41e0a2",
+    "systemPromptHash": "7dd5e581cdc6e50b6f4a26cb70eafa88c43f32bf20c6c38438981d53f3a11016",
+    "userPromptHash": "2fbbd0c79b888435db2c681d13a6b9ca2eb2b33f08d8a3aeb9a3bfe8cc912abf"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.05513685,
+    "durationMs": 122184.42441700003,
+    "hash": "e79f54f6db177f7cc1d5e0893be267952702153ba5204238c6f59fa02ee3e028",
+    "systemPromptHash": "245c358b957b37cd81aa3ae6b896adc4beba96f94646f17f3389ab23f66175a0",
+    "userPromptHash": "2fbbd0c79b888435db2c681d13a6b9ca2eb2b33f08d8a3aeb9a3bfe8cc912abf"
+  },
+  "run": 2
+}

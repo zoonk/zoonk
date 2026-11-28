@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "When a small cut stops bleeding, what helps form the first plug at the injury?",
+      "options": [
+        {
+          "text": "Platelets clumping together",
+          "correct": true
+        },
+        {
+          "text": "Red cells making a seal",
+          "correct": false
+        },
+        {
+          "text": "Scar tissue forming",
+          "correct": false
+        }
+      ],
+      "reveal": "Platelets clumping together. These blood components stick to the damaged vessel area and help start a clot."
+    },
+    {
+      "question": "When a joint is sprained, which tissue is usually injured?",
+      "options": [
+        {
+          "text": "A ligament",
+          "correct": true
+        },
+        {
+          "text": "A muscle",
+          "correct": false
+        },
+        {
+          "text": "A bone",
+          "correct": false
+        }
+      ],
+      "reveal": "A ligament. Ligaments connect bones at joints, while a strain usually involves a muscle or tendon."
+    },
+    {
+      "question": "What usually fills a new blister caused by a burn?",
+      "options": [
+        {
+          "text": "Clear tissue fluid",
+          "correct": true
+        },
+        {
+          "text": "Trapped air",
+          "correct": false
+        },
+        {
+          "text": "Pus",
+          "correct": false
+        }
+      ],
+      "reveal": "Clear tissue fluid. It collects between skin layers after damage; a blister does not usually mean an infection."
+    },
+    {
+      "question": "During a faint, what change most directly causes someone to briefly lose consciousness?",
+      "options": [
+        {
+          "text": "Less blood flow to the brain",
+          "correct": true
+        },
+        {
+          "text": "Too much oxygen in the blood",
+          "correct": false
+        },
+        {
+          "text": "A sudden drop in body temperature",
+          "correct": false
+        }
+      ],
+      "reveal": "Less blood flow to the brain. The brief reduction can interrupt normal brain function and cause a short loss of consciousness."
+    },
+    {
+      "question": "In adults, which core temperature is the usual threshold for hypothermia?",
+      "options": [
+        {
+          "text": "Below 95°F (35°C)",
+          "correct": true
+        },
+        {
+          "text": "Below 97°F (36.1°C)",
+          "correct": false
+        },
+        {
+          "text": "Below 90°F (32.2°C)",
+          "correct": false
+        }
+      ],
+      "reveal": "Below 95°F (35°C). Hypothermia means the body's core temperature has fallen below this threshold."
+    },
+    {
+      "question": "For certain dangerous heart rhythms, an AED shock is intended to help what happen?",
+      "options": [
+        {
+          "text": "The natural pacemaker regain control",
+          "correct": true
+        },
+        {
+          "text": "The heart beat faster permanently",
+          "correct": false
+        },
+        {
+          "text": "The heart muscle stop contracting",
+          "correct": false
+        }
+      ],
+      "reveal": "The natural pacemaker regain control. A shock can reset electrical activity in some dangerous rhythms, though it does not work for every kind of cardiac arrest."
+    },
+    {
+      "question": "In medical shock, what is the central problem in the body?",
+      "options": [
+        {
+          "text": "Tissues get too little blood flow",
+          "correct": true
+        },
+        {
+          "text": "The body makes too many red cells",
+          "correct": false
+        },
+        {
+          "text": "The lungs hold too much air",
+          "correct": false
+        }
+      ],
+      "reveal": "Tissues get too little blood flow. Without enough circulation, organs may not receive the oxygen they need to function."
+    },
+    {
+      "question": "After contact with an allergen, which chemical often contributes to itching and swelling?",
+      "options": [
+        {
+          "text": "Histamine",
+          "correct": true
+        },
+        {
+          "text": "Insulin",
+          "correct": false
+        },
+        {
+          "text": "Melatonin",
+          "correct": false
+        }
+      ],
+      "reveal": "Histamine. During some allergic reactions, immune cells release it, and it can widen small blood vessels and cause itching."
+    },
+    {
+      "question": "After a blow to the head, what best describes a concussion?",
+      "options": [
+        {
+          "text": "A temporary change in brain function",
+          "correct": true
+        },
+        {
+          "text": "A crack in the skull bone",
+          "correct": false
+        },
+        {
+          "text": "A bruise limited to the scalp",
+          "correct": false
+        }
+      ],
+      "reveal": "A temporary change in brain function. A concussion can affect thinking, balance, or memory without requiring a skull fracture."
+    },
+    {
+      "question": "Why can very dry air make a nosebleed more likely?",
+      "options": [
+        {
+          "text": "The nasal lining can crack",
+          "correct": true
+        },
+        {
+          "text": "Blood thickens inside the nose",
+          "correct": false
+        },
+        {
+          "text": "The nose makes extra bone tissue",
+          "correct": false
+        }
+      ],
+      "reveal": "The nasal lining can crack. Dryness can irritate the delicate surface and leave small blood vessels more exposed."
+    }
+  ]
+}

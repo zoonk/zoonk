@@ -1,0 +1,180 @@
+{
+  "cards": [
+    {
+      "question": "When a small cut begins to seal itself, which blood component helps form the first plug?",
+      "options": [
+        {
+          "text": "Red blood cells",
+          "correct": false
+        },
+        {
+          "text": "Platelets",
+          "correct": true
+        },
+        {
+          "text": "White blood cells",
+          "correct": false
+        }
+      ],
+      "reveal": "Platelets. They gather at damaged blood vessels and help start a clot; a protein mesh later reinforces it."
+    },
+    {
+      "question": "During CPR, what do chest compressions mainly provide?",
+      "options": [
+        {
+          "text": "A temporary flow of blood",
+          "correct": true
+        },
+        {
+          "text": "An electrical reset",
+          "correct": false
+        },
+        {
+          "text": "A dose of oxygen",
+          "correct": false
+        }
+      ],
+      "reveal": "A temporary flow of blood. Compressions squeeze the chest to move blood around the body while the heart is not pumping effectively."
+    },
+    {
+      "question": "An AED can help in some cardiac arrests because its shock can…",
+      "options": [
+        {
+          "text": "Interrupt certain chaotic rhythms",
+          "correct": true
+        },
+        {
+          "text": "Restart every stopped heart",
+          "correct": false
+        },
+        {
+          "text": "Push blood through the chest",
+          "correct": false
+        }
+      ],
+      "reveal": "Interrupt certain chaotic rhythms. An AED checks the heart's electrical pattern; a shock can help restore an organized rhythm in certain cases."
+    },
+    {
+      "question": "When food blocks the route air takes to the lungs, what immediate danger does that create?",
+      "options": [
+        {
+          "text": "Airflow to the lungs is blocked",
+          "correct": true
+        },
+        {
+          "text": "Food is stuck in the stomach",
+          "correct": false
+        },
+        {
+          "text": "The lungs stop making oxygen",
+          "correct": false
+        }
+      ],
+      "reveal": "Airflow to the lungs is blocked. Without enough air reaching the lungs, the amount of oxygen in the blood can fall."
+    },
+    {
+      "question": "In first aid, medical shock is a problem with what part of the body’s function?",
+      "options": [
+        {
+          "text": "Blood flow to vital organs",
+          "correct": true
+        },
+        {
+          "text": "A sudden emotional reaction",
+          "correct": false
+        },
+        {
+          "text": "A high body temperature",
+          "correct": false
+        }
+      ],
+      "reveal": "Blood flow to vital organs. In medical shock, the body's circulation cannot deliver enough blood and oxygen to tissues."
+    },
+    {
+      "question": "After a twist, which injury means a bone has cracked rather than a ligament?",
+      "options": [
+        {
+          "text": "A fracture",
+          "correct": true
+        },
+        {
+          "text": "A sprain",
+          "correct": false
+        }
+      ],
+      "reveal": "A fracture. It is a break in bone; a sprain is an injury to a ligament, the tissue connecting bones at a joint."
+    },
+    {
+      "question": "On a cool day, what can make someone's core temperature keep falling even without freezing weather?",
+      "options": [
+        {
+          "text": "Heat loss exceeds heat production",
+          "correct": true
+        },
+        {
+          "text": "Sweat glands stop working",
+          "correct": false
+        },
+        {
+          "text": "Blood cools only at the skin",
+          "correct": false
+        }
+      ],
+      "reveal": "Heat loss exceeds heat production. Hypothermia is a dangerous drop in core body temperature and can develop without freezing weather."
+    },
+    {
+      "question": "When a burn creates a fluid-filled blister, where does that fluid usually collect?",
+      "options": [
+        {
+          "text": "Between layers of skin",
+          "correct": true
+        },
+        {
+          "text": "Inside sweat glands",
+          "correct": false
+        },
+        {
+          "text": "Within the muscle",
+          "correct": false
+        }
+      ],
+      "reveal": "Between layers of skin. Damage from a burn can let fluid collect beneath the outer layer, raising it into a blister."
+    },
+    {
+      "question": "During a seizure, what is happening in the brain?",
+      "options": [
+        {
+          "text": "Abnormal electrical activity",
+          "correct": true
+        },
+        {
+          "text": "A sudden drop in temperature",
+          "correct": false
+        },
+        {
+          "text": "A muscle's lack of oxygen",
+          "correct": false
+        }
+      ],
+      "reveal": "Abnormal electrical activity. A seizure involves a sudden burst of unusual activity in the brain's electrical signaling."
+    },
+    {
+      "question": "When a brain blood vessel is blocked or bursts, the event is called…",
+      "options": [
+        {
+          "text": "A stroke",
+          "correct": true
+        },
+        {
+          "text": "A concussion",
+          "correct": false
+        },
+        {
+          "text": "A seizure",
+          "correct": false
+        }
+      ],
+      "reveal": "A stroke. It happens when a blocked or ruptured blood vessel disrupts blood flow in the brain or causes bleeding there."
+    }
+  ]
+}

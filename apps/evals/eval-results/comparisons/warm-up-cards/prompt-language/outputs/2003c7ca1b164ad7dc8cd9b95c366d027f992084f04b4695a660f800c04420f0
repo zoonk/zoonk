@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "Ao ouvir alguém no México dizer que está «embarazada», que notícia está dando?",
+      "options": [
+        {
+          "text": "Está grávida",
+          "correct": true
+        },
+        {
+          "text": "Está com vergonha",
+          "correct": false
+        },
+        {
+          "text": "Está cansada",
+          "correct": false
+        }
+      ],
+      "reveal": "Está grávida. «Embarazada» não significa «embaraçada»; para dizer que está com vergonha, usa-se «avergonzada»."
+    },
+    {
+      "question": "No México, dizer «oficina» em um contexto de trabalho administrativo aponta para qual lugar?",
+      "options": [
+        {
+          "text": "Um escritório",
+          "correct": true
+        },
+        {
+          "text": "Uma oficina mecânica",
+          "correct": false
+        },
+        {
+          "text": "Uma loja",
+          "correct": false
+        }
+      ],
+      "reveal": "Um escritório. «Oficina» costuma nomear um local de trabalho administrativo; em português brasileiro, a palavra costuma lembrar um lugar de conserto."
+    },
+    {
+      "question": "Ao preencher um cadastro no México, «apellido» pede qual dado?",
+      "options": [
+        {
+          "text": "Sobrenome",
+          "correct": true
+        },
+        {
+          "text": "Apelido",
+          "correct": false
+        },
+        {
+          "text": "Nome do meio",
+          "correct": false
+        }
+      ],
+      "reveal": "Sobrenome. «Apellido» é o sobrenome; em português brasileiro, «apelido» costuma ser um nome informal ou carinhoso."
+    },
+    {
+      "question": "Ao descrever um caminho como «largo» em espanhol mexicano, ele é principalmente como?",
+      "options": [
+        {
+          "text": "Comprido",
+          "correct": true
+        },
+        {
+          "text": "Pesado",
+          "correct": false
+        },
+        {
+          "text": "Raso",
+          "correct": false
+        }
+      ],
+      "reveal": "Comprido. «Largo» fala de extensão no comprimento; em português brasileiro, «largo» costuma indicar algo amplo ou de grande largura."
+    },
+    {
+      "question": "Numa notícia mexicana, «actualmente» indica que algo acontece em que período?",
+      "options": [
+        {
+          "text": "No momento presente",
+          "correct": true
+        },
+        {
+          "text": "Em um período passado",
+          "correct": false
+        },
+        {
+          "text": "De vez em quando",
+          "correct": false
+        }
+      ],
+      "reveal": "No momento presente. «Actualmente» é cognato de «atualmente»: em espanhol mexicano, também se refere ao que ocorre agora."
+    },
+    {
+      "question": "Ao encontrar alguém no México, a pessoa inicia a conversa com «¿Qué tal?»; o que quer saber?",
+      "options": [
+        {
+          "text": "Como você está",
+          "correct": true
+        },
+        {
+          "text": "Qual é seu endereço",
+          "correct": false
+        },
+        {
+          "text": "Que horas são",
+          "correct": false
+        }
+      ],
+      "reveal": "Como você está. Como cumprimento, «¿Qué tal?» pergunta como vão as coisas, de um jeito informal."
+    },
+    {
+      "question": "Num balcão de loja no México, a pergunta «¿Cuánto cuesta?» quer saber o quê?",
+      "options": [
+        {
+          "text": "O preço",
+          "correct": true
+        },
+        {
+          "text": "O tamanho",
+          "correct": false
+        },
+        {
+          "text": "O horário de abertura",
+          "correct": false
+        }
+      ],
+      "reveal": "O preço. «¿Cuánto cuesta?» é uma maneira comum de perguntar quanto custa um item."
+    },
+    {
+      "question": "Para completar «Tú ___ café», qual forma de «tomar» combina com «tú» no presente?",
+      "options": [
+        {
+          "text": "«tomas»",
+          "correct": true
+        },
+        {
+          "text": "«toma»",
+          "correct": false
+        },
+        {
+          "text": "«toman»",
+          "correct": false
+        }
+      ],
+      "reveal": "«Tomas». Com «tú», a forma informal singular de «tomar» no presente termina em -as."
+    },
+    {
+      "question": "Apesar de terminar em -a, qual artigo acompanha «problema» em espanhol?",
+      "options": [
+        {
+          "text": "«el»",
+          "correct": true
+        },
+        {
+          "text": "«la»",
+          "correct": false
+        },
+        {
+          "text": "«lo»",
+          "correct": false
+        }
+      ],
+      "reveal": "«El». Em espanhol, «problema» é masculino apesar do final em -a, por isso se diz «el problema»."
+    },
+    {
+      "question": "Em uma conversa formal no México com uma pessoa desconhecida, qual pronome singular tende a soar respeitoso?",
+      "options": [
+        {
+          "text": "«usted»",
+          "correct": true
+        },
+        {
+          "text": "«tú»",
+          "correct": false
+        },
+        {
+          "text": "«ustedes»",
+          "correct": false
+        }
+      ],
+      "reveal": "«Usted». No México, esse pronome costuma marcar tratamento formal ou respeitoso para uma pessoa; «ustedes» é plural."
+    }
+  ]
+}

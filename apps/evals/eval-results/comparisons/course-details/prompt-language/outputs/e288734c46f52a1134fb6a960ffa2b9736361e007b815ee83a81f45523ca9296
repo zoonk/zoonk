@@ -1,0 +1,21 @@
+{
+  "categories": [
+    "culture",
+    "arts"
+  ],
+  "description": "Star Wars is a science-fiction saga told through films and expanded in shows, games, and books. Follow the Skywalker story, the myths and galaxy behind it, and the effects and sound that helped shape its place in popular culture.",
+  "landingPage": {
+    "audience": [
+      "Star Wars fans",
+      "Moviegoers curious about science fiction",
+      "Readers and players of the saga"
+    ],
+    "outcomes": [
+      "Follow the Skywalker story across three trilogies",
+      "Describe the myths and worlds behind the saga",
+      "Spot how movie effects and sound shaped filmmaking",
+      "Compare the films with related shows, games, and books"
+    ],
+    "valueProposition": "Follow the Skywalker saga and see what shaped its myths, worlds, and film legacy"
+  }
+}

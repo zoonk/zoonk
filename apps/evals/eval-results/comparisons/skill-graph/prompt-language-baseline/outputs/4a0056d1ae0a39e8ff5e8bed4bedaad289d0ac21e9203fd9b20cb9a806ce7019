@@ -1,0 +1,17 @@
+
+      - MUST be in Brazilian Portuguese
+      - Career change into UX design from zero: user research and interviews, synthesizing findings, information architecture, user flows, wireframes, prototyping in a design tool such as Figma, usability testing, visual design and typography basics, interaction design, accessibility, design systems, working with product managers and developers, measuring outcomes
+      - Must include using AI tools well in design work (research synthesis, generating and critiquing ideas and prototypes, checking AI output)
+      - What gets the job is part of the path, in two areas of their own near the end whose skills are marked as outcome skills: a portfolio of complete UX projects written up as case studies, and the job search for junior UX roles in Brazil (a résumé and portfolio that present eight years of teaching as an asset, such as running research with real people and explaining ideas clearly, finding openings, interviews and the design exercise or portfolio presentation); a "history of design" or generic career motivation is filler
+      - Only these portfolio and job-search skills are outcome skills
+      - The portfolio's projects grow with the path: the first project's skills (including choosing its problem) have prerequisites only in the first phase, so it can start in the first weeks; later projects build on later phases
+      - Area sizes follow the job's daily work: the hands-on areas (interaction and interface design, prototyping and usability testing) together get the most lessons and start in the first phases; user research is substantial but no single supporting area (research, collaboration, theory) has more lessons than prototyping and usability testing, and research doesn't fill the first months alone
+
+      
+  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)
+  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them
+  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number
+  - Exam weights are 1 to 5 for exam goals and null otherwise
+  - Don't evaluate JSON formatting
+
+    

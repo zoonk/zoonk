@@ -1,0 +1,13 @@
+{
+  "caseId": "en-antique-clocks",
+  "challenger": {
+    "costUsd": 0.0013533199999999999,
+    "durationMs": 22263.567959000007,
+    "hash": "2a04e73e764da57a9a01705ca0025bd5792cf7c0aebfaad23aa8809f5b820dae",
+    "systemPromptHash": "66b524fa4ef492c233d5d8767309a04a418e5133113dc0e5a4b8ce5af9758dd4",
+    "userPromptHash": "455ae3ae9a059f109d730235ae88269a3bd02ca8d87f785b37ce6576e2f81496"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 2
+}

@@ -1,0 +1,20 @@
+{
+  "categories": [
+    "arts"
+  ],
+  "description": "Advanced music theory shows how chords shape the harmony and direction of a song. Work with seventh chords, secondary dominants, borrowed chords, key changes, voice leading, and new chords beneath a melody to make more deliberate musical choices.",
+  "landingPage": {
+    "audience": [
+      "Songwriters refining their harmony",
+      "Musicians arranging songs",
+      "Music students beyond the basics"
+    ],
+    "outcomes": [
+      "Build seventh chords in any key",
+      "Add secondary dominants to a progression",
+      "Move a song into a new key",
+      "Reharmonize a melody with smooth chord changes"
+    ],
+    "valueProposition": "Shape a song’s mood and direction by changing its chords and key"
+  }
+}

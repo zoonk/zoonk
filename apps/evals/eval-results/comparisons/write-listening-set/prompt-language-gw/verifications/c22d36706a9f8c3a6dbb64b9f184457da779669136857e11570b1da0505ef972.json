@@ -1,0 +1,162 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "en-computing-lecture-spoken-notation",
+        "claimId": "f48c4c27e53eccee",
+        "criterion": "keys",
+        "observationId": "ffe6b34b80c92fd94396f77df4d2a060bfc674b17f6f50ea849efeae3d8a5add.first.dc36d8b7-88c4-4a44-a327-cc4e159b89d4.0",
+        "run": 1,
+        "side": "incumbent"
+      },
+      {
+        "caseId": "en-computing-lecture-spoken-notation",
+        "claimId": "59b389b5037fab8f",
+        "criterion": "keys",
+        "observationId": "ffe6b34b80c92fd94396f77df4d2a060bfc674b17f6f50ea849efeae3d8a5add.first.dc36d8b7-88c4-4a44-a327-cc4e159b89d4.2",
+        "run": 1,
+        "side": "challenger"
+      },
+      {
+        "caseId": "en-computing-lecture-spoken-notation",
+        "claimId": "74bdf47749f365a4",
+        "criterion": "keys",
+        "observationId": "162ca431bfb4ac8f5109fdc000a06b71d23447d68478015be99203e3e6f5d5d3.first.e11119f1-b817-4902-b319-cae90ac8b66c.1",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.0012469999999999998,
+    "id": "c22d36706a9f8c3a6dbb64b9f184457da779669136857e11570b1da0505ef972",
+    "packet": [
+      {
+        "A": {
+          "blob": "e28a3cc207cb8b10ae277130dc394190bf4e98980b307e534ce367d7cbdd66dc",
+          "format": "text"
+        },
+        "B": {
+          "blob": "d3b9359462f322946a931853d88087de4957f6aaff4d0046ab36e6a59e841030",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "Every reason and misconception of the second question is written in Spanish instead of Brazilian Portuguese, so the learner gets the explanation of that answer in the language they are being tested on.",
+            "claimId": "14b6cfdd5d6298a1",
+            "criterion": "naturalSpeech",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "B"
+          },
+          {
+            "claim": "The questions and options are written in Brazilian Portuguese instead of Spanish.",
+            "claimId": "6a03f21879b22b11",
+            "criterion": "naturalSpeech",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "A"
+          }
+        ],
+        "expectations": {
+          "blob": "09803fc2d24b1de2ec9718d3917bc9d25aa51ccbce6f0146f303ab854bf1a987",
+          "format": "text"
+        },
+        "input": {
+          "blob": "d5c8e6c07ff797238a5ddb72546bb373e495f0b5e46b22bf3601b5b8892bcdc2",
+          "format": "json"
+        }
+      },
+      {
+        "A": {
+          "blob": "d9116b7b7119273e9f747117efd5113f76d4966cdc26a01c67be49c9f77c0425",
+          "format": "text"
+        },
+        "B": {
+          "blob": "f49dbb6458d2b325a2a48cd04ad7e4fb8c0224ede34507ddfe9d5da1b90b7dd2",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "In ls -l output, a directory's first character is a lowercase d, not a capital D. The lecture teaches a false rule for reading the listing.",
+            "claimId": "f48c4c27e53eccee",
+            "criterion": "keys",
+            "location": {
+              "detail": "A dash means a regular file, while a D means a directory.",
+              "kind": "quote"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "In ls -l output, a directory's first character is a lowercase d, not a capital D. The lecture teaches a false rule for reading the listing.",
+            "claimId": "59b389b5037fab8f",
+            "criterion": "keys",
+            "location": {
+              "detail": "A dash means a regular file, while a D means a directory.",
+              "kind": "quote"
+            },
+            "output": "B"
+          },
+          {
+            "claim": "Question 3 can be answered from its own words: four out of eight is the only option that is exactly half, while five out of nine and four out of nine are not half, so the lecture is not needed.",
+            "claimId": "74bdf47749f365a4",
+            "criterion": "keys",
+            "location": {
+              "detail": "Which count shows that half of the regular files in Leah's example are hidden?",
+              "kind": "quote"
+            },
+            "output": "A"
+          }
+        ],
+        "expectations": {
+          "blob": "bcfff9e89de780c21ef1f8c47b9a72e2e2d372c90f422e7c3dc02ad3ed9d902e",
+          "format": "text"
+        },
+        "input": {
+          "blob": "84a0ab7c4d63e9c0e90fae7e662e77748c972a6c9825657b67d7abf2f9178994",
+          "format": "json"
+        }
+      }
+    ],
+    "passed": true,
+    "plantedDefectPassed": true,
+    "protocolHash": "ed018fd13c57b447f6f3cbfd3fcf01e6b506c0102da6f1fa19dac5ce44b4d919",
+    "reader": {
+      "channel": "gateway",
+      "family": "openai",
+      "model": "openai/gpt-6-luna"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "14b6cfdd5d6298a1",
+          "finding": "holds",
+          "reason": "In B’s second question, all three reasons and all non-null misconceptions are in Spanish (for example, “Oyes” and “Interpreta el requisito…”). In A, those explanations are in Brazilian Portuguese."
+        },
+        {
+          "claimId": "6a03f21879b22b11",
+          "finding": "doesn't hold",
+          "reason": "A’s questions and options are in Spanish, not Brazilian Portuguese; the claim is false."
+        },
+        {
+          "claimId": "f48c4c27e53eccee",
+          "finding": "holds for both",
+          "reason": "Both A and B say a capital “D” marks a directory. In `ls -l` output, the directory marker is lowercase `d`, so both teach the incorrect rule."
+        },
+        {
+          "claimId": "59b389b5037fab8f",
+          "finding": "holds for both",
+          "reason": "Both A and B say a capital “D” marks a directory. In `ls -l` output, the directory marker is lowercase `d`, so both teach the incorrect rule."
+        },
+        {
+          "claimId": "74bdf47749f365a4",
+          "finding": "holds for both",
+          "reason": "In A and B, the only offered count that is exactly half is four out of eight: 4/8 = 1/2, while 5/9 and 4/9 are not half. The question can be answered from the options alone."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

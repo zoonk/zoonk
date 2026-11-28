@@ -1,0 +1,19 @@
+{
+  "caseId": "pt-espanhol",
+  "challenger": {
+    "costUsd": 0.0025780499999999997,
+    "durationMs": 34750.644166,
+    "hash": "2003c7ca1b164ad7dc8cd9b95c366d027f992084f04b4695a660f800c04420f0",
+    "systemPromptHash": "db433ff15c0d053e13caad3b99865dd6048b543943c49dafb128f620301397e7",
+    "userPromptHash": "324e4597c2decbe583d81c41a40a9d702a9b28b22c874dfe8b10557cc7380bb1"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.00254855,
+    "durationMs": 34174.352084000006,
+    "hash": "99f598958a321462dbbd3e39b9c8fa5da18997a03faca88a0f3726e20f796631",
+    "systemPromptHash": "2e517ed55961682cecffcb1bc1c5ee87d2b417e7b858edf1580891312807cf10",
+    "userPromptHash": "324e4597c2decbe583d81c41a40a9d702a9b28b22c874dfe8b10557cc7380bb1"
+  },
+  "run": 1
+}

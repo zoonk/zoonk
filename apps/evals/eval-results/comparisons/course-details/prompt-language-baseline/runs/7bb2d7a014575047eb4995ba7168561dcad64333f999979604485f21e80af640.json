@@ -1,0 +1,13 @@
+{
+  "caseId": "tr-almanca-language-beginner",
+  "challenger": {
+    "costUsd": 0.00078743,
+    "durationMs": 10886.230583000026,
+    "hash": "4ccdd3e96ec6378d0db53d96948de9103bcc46ee773e8dc129d3466222651b80",
+    "systemPromptHash": "782cebffd04f74e4a27023e27678685d5ac6ee34a8481cb679d4f0909e3b41c8",
+    "userPromptHash": "4055b8c7404cfc4d5cfb8baaebba61451d743127e6a26d630be02a98d33f37a8"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 1
+}

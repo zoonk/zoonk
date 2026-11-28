@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "Sem querer causar o resultado, alguém o provoca por negligência; no direito penal, a conduta é…",
+      "options": [
+        {
+          "text": "Culposa",
+          "correct": true
+        },
+        {
+          "text": "Dolosa",
+          "correct": false
+        },
+        {
+          "text": "Preterdolosa",
+          "correct": false
+        }
+      ],
+      "reveal": "Culposa. A culpa ocorre quando o resultado vem de imprudência, negligência ou imperícia, sem intenção de produzi-lo."
+    },
+    {
+      "question": "Uma pessoa nasceu com vida: em que momento começa sua personalidade civil?",
+      "options": [
+        {
+          "text": "Na concepção",
+          "correct": false
+        },
+        {
+          "text": "No nascimento com vida",
+          "correct": true
+        },
+        {
+          "text": "Na maioridade",
+          "correct": false
+        }
+      ],
+      "reveal": "No nascimento com vida. A lei protege direitos do nascituro desde a concepção, mas distingue essa proteção do início da personalidade civil."
+    },
+    {
+      "question": "Um cliente compartilha uma informação durante a relação profissional; o que protege essa informação?",
+      "options": [
+        {
+          "text": "Sigilo profissional",
+          "correct": true
+        },
+        {
+          "text": "Publicidade processual",
+          "correct": false
+        },
+        {
+          "text": "Livre divulgação",
+          "correct": false
+        }
+      ],
+      "reveal": "Sigilo profissional. A confidencialidade protege a relação entre advogado e cliente e é um dever central da atuação profissional."
+    },
+    {
+      "question": "Uma lei contraria a Constituição durante um processo: quem pode afastá-la naquele caso?",
+      "options": [
+        {
+          "text": "Poder Judiciário",
+          "correct": true
+        },
+        {
+          "text": "Poder Executivo",
+          "correct": false
+        },
+        {
+          "text": "Ministério Público",
+          "correct": false
+        }
+      ],
+      "reveal": "Poder Judiciário. No controle difuso, juízes e tribunais podem deixar de aplicar uma norma inconstitucional ao resolver um caso concreto."
+    },
+    {
+      "question": "Alguém usa e controla um imóvel, mas não consta como proprietário; essa situação é…",
+      "options": [
+        {
+          "text": "Posse",
+          "correct": true
+        },
+        {
+          "text": "Propriedade",
+          "correct": false
+        },
+        {
+          "text": "Usufruto",
+          "correct": false
+        }
+      ],
+      "reveal": "Posse. Ela corresponde ao exercício de fato de poderes sobre um bem e não significa, por si só, que a pessoa seja proprietária."
+    },
+    {
+      "question": "Ao interpretar um contrato, a boa-fé objetiva aponta para qual padrão de conduta?",
+      "options": [
+        {
+          "text": "Leal e cooperativa",
+          "correct": true
+        },
+        {
+          "text": "Guiada por intenção secreta",
+          "correct": false
+        },
+        {
+          "text": "Voltada à vantagem unilateral",
+          "correct": false
+        }
+      ],
+      "reveal": "Leal e cooperativa. A boa-fé objetiva é um padrão de comportamento que orienta as partes na relação contratual."
+    },
+    {
+      "question": "Para a administração pública, agir conforme a legalidade significa…",
+      "options": [
+        {
+          "text": "Respeitar limites legais",
+          "correct": true
+        },
+        {
+          "text": "Fazer tudo que não é proibido",
+          "correct": false
+        },
+        {
+          "text": "Seguir apenas a vontade do gestor",
+          "correct": false
+        }
+      ],
+      "reveal": "Respeitar limites legais. Diferentemente do particular, a administração precisa de fundamento jurídico para sua atuação."
+    },
+    {
+      "question": "Além de ser pessoal, habitual e remunerado, que vínculo caracteriza o emprego?",
+      "options": [
+        {
+          "text": "Subordinação jurídica",
+          "correct": true
+        },
+        {
+          "text": "Autonomia plena",
+          "correct": false
+        },
+        {
+          "text": "Trabalho eventual",
+          "correct": false
+        }
+      ],
+      "reveal": "Subordinação jurídica. No emprego, o trabalhador presta serviços sob direção do empregador, além de estarem presentes os demais elementos da relação."
+    },
+    {
+      "question": "Uma cobrança é tributo, e não multa, quando…",
+      "options": [
+        {
+          "text": "Não pune ato ilícito",
+          "correct": true
+        },
+        {
+          "text": "Depende de um contrato",
+          "correct": false
+        },
+        {
+          "text": "É sempre voluntária",
+          "correct": false
+        }
+      ],
+      "reveal": "Não pune ato ilícito. A definição legal de tributo exclui a cobrança que funciona como sanção por uma conduta ilegal."
+    },
+    {
+      "question": "Em regra, quem deve demonstrar o fato que fundamenta o direito pedido em juízo?",
+      "options": [
+        {
+          "text": "A parte autora",
+          "correct": true
+        },
+        {
+          "text": "A parte ré",
+          "correct": false
+        },
+        {
+          "text": "O juiz",
+          "correct": false
+        }
+      ],
+      "reveal": "A parte autora. Em regra, cabe a ela provar os fatos que formam a base do direito que está pedindo."
+    }
+  ]
+}

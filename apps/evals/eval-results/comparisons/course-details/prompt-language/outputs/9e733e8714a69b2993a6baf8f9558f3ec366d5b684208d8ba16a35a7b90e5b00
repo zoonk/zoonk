@@ -1,0 +1,14 @@
+
+      - MUST be in natural Italian, "tu" wherever the copy speaks to the visitor (never "Lei"), not translated from English
+      - The promise and the outcomes start with the infinitive ("Leggere la busta paga…", "Scegliere…"), never an imperative ("Leggi…", "Risparmia…")
+      - Names the main areas of personal finance in plain words (budget, risparmio, prestiti e rate, tasse, investimenti e pensione) with Italian examples such as the busta paga, the TFR, the 730, a conto corrente, a fondo pensione or acquisti a rate; amounts, if any, in euro written the Italian way (1.000 €). Penalize dollars, credit scores, 401(k) or other US defaults
+      - Regulated field: frames the course as understanding everyday money decisions and knowing when to ask a consulente finanziario, a commercialista or a CAF; never recommends specific investments or products and never promises returns or savings
+
+      
+  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score the sentence and item counts and category validity, so don't judge them
+  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's "What you'll be able to do" list
+  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters
+  - The page is shared by every learner of the course, so nothing is tailored to one person
+  - Don't evaluate JSON formatting
+
+    

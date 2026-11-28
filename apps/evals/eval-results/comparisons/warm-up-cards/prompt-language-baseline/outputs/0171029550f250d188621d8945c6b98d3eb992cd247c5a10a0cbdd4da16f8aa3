@@ -1,0 +1,176 @@
+{
+  "cards": [
+    {
+      "question": "During cardiac arrest, what is CPR designed to help maintain until the heart can pump effectively?",
+      "options": [
+        {
+          "text": "Blood flow to vital organs",
+          "correct": true
+        },
+        {
+          "text": "The heart’s normal rhythm",
+          "correct": false
+        },
+        {
+          "text": "The lungs’ oxygen production",
+          "correct": false
+        }
+      ],
+      "reveal": "Blood flow to vital organs. CPR helps circulate blood while the heart is not pumping effectively; it does not itself restore a normal rhythm."
+    },
+    {
+      "question": "When an AED recommends a shock, what kind of heart rhythm is it meant to address?",
+      "options": [
+        {
+          "text": "Certain abnormal rhythms",
+          "correct": true
+        },
+        {
+          "text": "Any slow heartbeat",
+          "correct": false
+        },
+        {
+          "text": "Blocked coronary arteries",
+          "correct": false
+        }
+      ],
+      "reveal": "Certain abnormal rhythms. An AED can treat some dangerous rhythms with a shock, but not every type of cardiac arrest."
+    },
+    {
+      "question": "When a small blood vessel is damaged, what helps form the mesh that strengthens a clot?",
+      "options": [
+        {
+          "text": "Fibrin strands",
+          "correct": true
+        },
+        {
+          "text": "Red blood cells",
+          "correct": false
+        },
+        {
+          "text": "Skin oils",
+          "correct": false
+        }
+      ],
+      "reveal": "Fibrin strands. They form a mesh that helps hold a blood clot together, while platelets gather at the damaged area."
+    },
+    {
+      "question": "When an object blocks the airway, which process is directly disrupted?",
+      "options": [
+        {
+          "text": "Air exchange in the lungs",
+          "correct": true
+        },
+        {
+          "text": "Blood circulation to the skin",
+          "correct": false
+        },
+        {
+          "text": "Food digestion in the stomach",
+          "correct": false
+        }
+      ],
+      "reveal": "Air exchange in the lungs. A blocked airway limits the movement of air needed to bring oxygen into the body and remove carbon dioxide."
+    },
+    {
+      "question": "A severe allergic reaction becomes especially dangerous when it interferes with which functions?",
+      "options": [
+        {
+          "text": "Breathing and circulation",
+          "correct": true
+        },
+        {
+          "text": "Hearing and balance",
+          "correct": false
+        },
+        {
+          "text": "Bone growth and repair",
+          "correct": false
+        }
+      ],
+      "reveal": "Breathing and circulation. A severe allergic reaction can cause swelling or changes in blood flow that disrupt these vital functions."
+    },
+    {
+      "question": "Even without fear or surprise, a person can be in medical shock when tissues receive too little…",
+      "options": [
+        {
+          "text": "Blood flow",
+          "correct": true
+        },
+        {
+          "text": "Body heat",
+          "correct": false
+        },
+        {
+          "text": "Digestive enzymes",
+          "correct": false
+        }
+      ],
+      "reveal": "Blood flow. Medical shock means the tissues are not getting enough blood, and it is different from feeling emotionally startled."
+    },
+    {
+      "question": "After a blow to the head, can a concussion happen without the person blacking out?",
+      "options": [
+        {
+          "text": "Yes",
+          "correct": true
+        },
+        {
+          "text": "No",
+          "correct": false
+        }
+      ],
+      "reveal": "Yes. A concussion can affect brain function without causing a loss of consciousness."
+    },
+    {
+      "question": "Which injury involves a ligament stretched or torn rather than a bone?",
+      "options": [
+        {
+          "text": "A sprain",
+          "correct": true
+        },
+        {
+          "text": "A fracture",
+          "correct": false
+        }
+      ],
+      "reveal": "A sprain. It affects a ligament, the tissue that connects bones at a joint; a fracture is a break in a bone."
+    },
+    {
+      "question": "During heat stroke, which body function is severely disrupted?",
+      "options": [
+        {
+          "text": "Temperature regulation",
+          "correct": true
+        },
+        {
+          "text": "Blood clot formation",
+          "correct": false
+        },
+        {
+          "text": "Sound processing",
+          "correct": false
+        }
+      ],
+      "reveal": "Temperature regulation. Heat stroke occurs when the body’s ability to control its temperature is overwhelmed."
+    },
+    {
+      "question": "Hypothermia is defined by an unusually low temperature in which part of the body?",
+      "options": [
+        {
+          "text": "The body's core",
+          "correct": true
+        },
+        {
+          "text": "The skin's surface only",
+          "correct": false
+        },
+        {
+          "text": "The hands and feet only",
+          "correct": false
+        }
+      ],
+      "reveal": "The body's core. Hypothermia means the internal body temperature has dropped too low, not simply that the skin feels cold."
+    }
+  ]
+}

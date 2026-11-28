@@ -1,0 +1,20 @@
+{
+  "categories": [
+    "communication"
+  ],
+  "description": "Inglês é uma língua usada em viagens, estudos, trabalho e cultura. Você vai praticar conversas do dia a dia, ler e escrever textos e acompanhar falas cada vez mais naturais e complexas. Isso ajuda a se comunicar em situações reais.",
+  "landingPage": {
+    "audience": [
+      "Quem nunca estudou inglês",
+      "Quem planeja viajar para fora",
+      "Estudantes que precisam ler em inglês"
+    ],
+    "outcomes": [
+      "Apresentar-se e falar da própria rotina",
+      "Fazer pedidos e resolver imprevistos em viagens",
+      "Conversar sobre planos, experiências e opiniões",
+      "Acompanhar conversas e textos mais complexos em inglês"
+    ],
+    "valueProposition": "Falar inglês em viagens, estudos e trabalho, do primeiro contato a conversas mais complexas"
+  }
+}

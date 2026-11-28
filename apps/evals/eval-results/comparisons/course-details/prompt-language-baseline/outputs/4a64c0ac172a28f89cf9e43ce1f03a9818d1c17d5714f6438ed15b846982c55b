@@ -1,0 +1,21 @@
+{
+  "categories": [
+    "math",
+    "tech"
+  ],
+  "description": "Data analysis turns numbers into answers to real questions. Use spreadsheets to organize and clean data, summarize and compare results, choose honest charts, spot patterns, judge uncertainty, and check claims, including AI-generated ones. These skills help you make better choices at work, school, and in daily life.",
+  "landingPage": {
+    "audience": [
+      "Students facing data assignments",
+      "Workers who use spreadsheets",
+      "People curious about data claims"
+    ],
+    "outcomes": [
+      "Clean and sort raw data in a spreadsheet",
+      "Summarize data with averages and variation",
+      "Choose charts that show data fairly",
+      "Compare groups and judge what data supports"
+    ],
+    "valueProposition": "Turn raw numbers into clear charts and sound answers for everyday questions"
+  }
+}

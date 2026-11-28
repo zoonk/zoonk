@@ -1,0 +1,180 @@
+{
+  "cards": [
+    {
+      "question": "In some cardiac arrests, an AED shock can help by interrupting what?",
+      "options": [
+        {
+          "text": "Disorganized electrical activity",
+          "correct": true
+        },
+        {
+          "text": "Weak blood flow",
+          "correct": false
+        },
+        {
+          "text": "Blocked airways",
+          "correct": false
+        }
+      ],
+      "reveal": "Disorganized electrical activity. A shock can interrupt certain dangerous heart rhythms, giving the heart’s electrical system a chance to organize. It does not work for every cardiac arrest."
+    },
+    {
+      "question": "After a small cut, what helps build the plug that slows blood loss?",
+      "options": [
+        {
+          "text": "Platelets",
+          "correct": true
+        },
+        {
+          "text": "Red blood cells",
+          "correct": false
+        },
+        {
+          "text": "White blood cells",
+          "correct": false
+        }
+      ],
+      "reveal": "Platelets. They gather at a damaged blood vessel and form an initial plug; proteins in the blood later help strengthen it."
+    },
+    {
+      "question": "When too little air passes through the voice box, what can't happen for speech?",
+      "options": [
+        {
+          "text": "Vocal folds vibrate",
+          "correct": true
+        },
+        {
+          "text": "The tongue moves",
+          "correct": false
+        },
+        {
+          "text": "The lungs expand",
+          "correct": false
+        }
+      ],
+      "reveal": "Vocal folds vibrate. Air from the lungs makes them vibrate, creating sound that the mouth and tongue shape into speech."
+    },
+    {
+      "question": "Why can a fluid-filled blister appear after skin is damaged by heat or rubbing?",
+      "options": [
+        {
+          "text": "Fluid collects between skin layers",
+          "correct": true
+        },
+        {
+          "text": "Oil gathers under the skin",
+          "correct": false
+        },
+        {
+          "text": "A blood vessel fills with air",
+          "correct": false
+        }
+      ],
+      "reveal": "Fluid collects between skin layers. Damage can cause fluid to build up beneath the outer layer, forming a cushion over the injured area."
+    },
+    {
+      "question": "In first aid, “shock” describes a body state; what is the central problem?",
+      "options": [
+        {
+          "text": "Organs get too little blood flow",
+          "correct": true
+        },
+        {
+          "text": "The body becomes unusually cold",
+          "correct": false
+        },
+        {
+          "text": "The heart beats too quickly",
+          "correct": false
+        }
+      ],
+      "reveal": "Organs get too little blood flow. Without enough circulation, tissues may not receive the oxygen they need to function."
+    },
+    {
+      "question": "Which injury involves a ligament rather than a muscle or tendon?",
+      "options": [
+        {
+          "text": "Sprain",
+          "correct": true
+        },
+        {
+          "text": "Strain",
+          "correct": false
+        }
+      ],
+      "reveal": "Sprain. It involves a ligament, which connects bones at a joint; a strain involves a muscle or tendon."
+    },
+    {
+      "question": "What makes a fracture “open” even when no bone sticks out?",
+      "options": [
+        {
+          "text": "A wound connects to the fracture",
+          "correct": true
+        },
+        {
+          "text": "The bone shifts out of place",
+          "correct": false
+        },
+        {
+          "text": "The nearby joint swells",
+          "correct": false
+        }
+      ],
+      "reveal": "A wound connects to the fracture. The skin is broken in a way that communicates with the broken bone, even if the bone is not visible."
+    },
+    {
+      "question": "In cold conditions, what causes core body temperature to fall over time?",
+      "options": [
+        {
+          "text": "The body loses heat faster than it makes it",
+          "correct": true
+        },
+        {
+          "text": "The blood stops carrying heat",
+          "correct": false
+        },
+        {
+          "text": "The skin makes extra heat",
+          "correct": false
+        }
+      ],
+      "reveal": "The body loses heat faster than it makes it. When heat loss outpaces heat production, the body's internal temperature can drop."
+    },
+    {
+      "question": "After a blow or jolt, what does the term concussion describe?",
+      "options": [
+        {
+          "text": "A temporary change in brain function",
+          "correct": true
+        },
+        {
+          "text": "A crack in the skull",
+          "correct": false
+        },
+        {
+          "text": "A cut on the scalp",
+          "correct": false
+        }
+      ],
+      "reveal": "A temporary change in brain function. A concussion can affect how the brain works, even without a skull fracture or a loss of consciousness."
+    },
+    {
+      "question": "During a faint, what briefly falls enough to disrupt normal brain function?",
+      "options": [
+        {
+          "text": "Blood flow to the brain",
+          "correct": true
+        },
+        {
+          "text": "Body temperature",
+          "correct": false
+        },
+        {
+          "text": "Lung capacity",
+          "correct": false
+        }
+      ],
+      "reveal": "Blood flow to the brain. A brief reduction can interrupt normal brain function and cause a person to lose consciousness; fainting can have many triggers."
+    }
+  ]
+}

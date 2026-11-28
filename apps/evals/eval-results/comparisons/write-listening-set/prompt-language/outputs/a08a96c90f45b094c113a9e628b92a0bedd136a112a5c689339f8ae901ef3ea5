@@ -1,0 +1,155 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "we created the garden on the roof of the library",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "The community garden was built on top of a ______.",
+        "keyPoints": [
+          "The garden is on top of the library."
+        ],
+        "acceptedAnswers": [
+          "library"
+        ],
+        "sampleAnswer": "library"
+      },
+      {
+        "evidence": "What worried the engineer was the wind.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "The engineer was concerned about the effect of the ______ on the garden.",
+        "keyPoints": [
+          "The engineer was concerned about the wind."
+        ],
+        "acceptedAnswers": [
+          "wind"
+        ],
+        "sampleAnswer": "wind"
+      },
+      {
+        "evidence": "A nearby café offered us its coffee grounds, which we mixed into the soil to improve it.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "The gardeners improved the soil using ______ from a local business.",
+        "keyPoints": [
+          "They used coffee grounds."
+        ],
+        "acceptedAnswers": [
+          "coffee grounds"
+        ],
+        "sampleAnswer": "coffee grounds"
+      },
+      {
+        "evidence": "we wrote the names on wooden spoons and stuck them into the soil",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "The volunteers used ______ instead of buying labels for the plants.",
+        "keyPoints": [
+          "They used wooden spoons as plant labels."
+        ],
+        "acceptedAnswers": [
+          "wooden spoons"
+        ],
+        "sampleAnswer": "wooden spoons"
+      },
+      {
+        "evidence": "What really surprised us was the number of butterflies that arrived once the flowers opened.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "The gardeners were amazed by how many ______ came to the garden.",
+        "keyPoints": [
+          "They were surprised by the number of butterflies."
+        ],
+        "acceptedAnswers": [
+          "butterflies"
+        ],
+        "sampleAnswer": "butterflies"
+      },
+      {
+        "evidence": "we put a calendar near the library entrance, and volunteers write their names on it",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "hard",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "The volunteers use a ______ to arrange who will water the plants.",
+        "keyPoints": [
+          "They use a calendar to organize the watering."
+        ],
+        "acceptedAnswers": [
+          "calendar"
+        ],
+        "sampleAnswer": "calendar"
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Hannah",
+        "gender": "female",
+        "accent": "British English"
+      }
+    ],
+    "title": "",
+    "turns": [
+      {
+        "speaker": "Hannah",
+        "text": "I’d like to tell you about a community garden I helped set up in my town. A few years ago, there wasn’t much green space in the centre, and a group of us wanted to do something about it. At first, we looked at the roof of the old railway station, but it wasn’t safe enough. In the end, we created the garden on the roof of the library. It was a surprising choice, but the building had a lift, so everyone could get up there."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Before we could plant anything, we had to get advice from an engineer. We assumed the main problem would be the weight of the soil. Actually, the roof was strong enough for the containers we planned to use. What worried the engineer was the wind. Up there, it could knock over pots and damage young plants. So we put up a low wooden fence, with spaces between the boards, to slow the air down without blocking it completely."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "We didn’t have much money for the project, so we asked local businesses for help. A nearby café offered us its coffee grounds, which we mixed into the soil to improve it. They also gave us some empty tins, although we found those were too small for most plants. The café staff were pleased that something they’d normally throw away could be useful, and they started coming up to see how the garden was developing."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Once the containers were ready, we invited families to an afternoon of planting. We wanted visitors to know what was growing, but proper plant labels were more expensive than we expected. One volunteer had a clever idea: we wrote the names on wooden spoons and stuck them into the soil. People brought them from home, and a shop donated a few more. The children enjoyed decorating the handles, and it made each container look different."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "We’d hoped the garden would attract wildlife, though we didn’t know what we’d see so high above the street. In the first summer, someone spotted a bird carrying a twig, but it didn’t stay. What really surprised us was the number of butterflies that arrived once the flowers opened. A local expert showed us how to count them without disturbing them. Now we do a count every month in summer, and the results go on the library website."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Of course, a garden needs attention even when the weather’s bad or everyone’s busy. At first, we tried sending messages whenever the plants needed watering, but people weren’t always sure who was going. So we put a calendar near the library entrance, and volunteers write their names on it. That simple change has worked much better. We still share photographs online, too, but the calendar is what keeps the work organised. If you’re interested, come and see us on Saturday morning. You don’t need any gardening experience."
+      }
+    ]
+  }
+}

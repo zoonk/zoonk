@@ -1,0 +1,205 @@
+{
+  "attempt": "first",
+  "costUsd": 0.0073793899999999996,
+  "failures": [],
+  "packetId": "a5918d3568ec54065473ebf101527872558acde8a471a9250c30e57cf9f30660",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, with the same keys, and the same sample answer breaks the two-word limit.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical in recording type, length and question format, and both use only British speakers.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical and read as natural British speech.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Both speakers are British English, but the expectation asks for a mix of British and Australian accents.",
+            "criterion": "examRealism",
+            "learnerCost": "The learner never hears the Australian accent that the real Part 1 mixes in, so they are not prepared for it.",
+            "location": {
+              "detail": "speakers list: Leah (British English) and Hannah (British English); no Australian speaker",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The sampleAnswer 'the eighteenth of May' is four words, which breaks the instruction to write no more than two words and/or a number.",
+            "criterion": "keys",
+            "learnerCost": "The model answer teaches the learner to write an answer longer than the exam allows.",
+            "location": {
+              "detail": "sampleAnswer of the date question",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "Both speakers are British English, but the expectation asks for a mix of British and Australian accents.",
+            "criterion": "examRealism",
+            "learnerCost": "The learner never hears the Australian accent that the real Part 1 mixes in, so they are not prepared for it.",
+            "location": {
+              "detail": "speakers list: Leah (British English) and Hannah (British English); no Australian speaker",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The sampleAnswer 'the eighteenth of May' is four words, which breaks the instruction to write no more than two words and/or a number.",
+            "criterion": "keys",
+            "learnerCost": "The model answer teaches the learner to write an answer longer than the exam allows.",
+            "location": {
+              "detail": "sampleAnswer of the date question",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are identical, so neither serves its reader better."
+        },
+        "pairId": "30ddaa30-04c0-43bb-9fd6-f9d4cf106b0f"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs have the same correct keys, with one correct option per question and a clear reason for each distractor.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs have the same monologue format, Castilian speaker and five multiple-choice questions in recording order.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "B",
+            "reason": "Output A gives two reasons in Spanish, which the learner cannot read, while output B gives all reasons in Brazilian Portuguese.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Two option reasons for question 2 are written in Spanish ('Oyes'), not in Brazilian Portuguese as the expectation requires.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "A Brazilian learner cannot read these reasons, so they cannot tell why the option is wrong or right.",
+            "location": {
+              "detail": "reason of the first option of question 2",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "A second reason for question 2 is written in Spanish ('Oyes'), not in Brazilian Portuguese.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "The learner gets no usable explanation for the selection criterion option, which is the one the question tests.",
+            "location": {
+              "detail": "reason of the third option of question 2",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "Output B gives all its reasons in Brazilian Portuguese as the expectation requires, while output A gives two in Spanish that the reader cannot use."
+        },
+        "pairId": "4f456eca-a896-4160-9a20-612a78e974b8"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "B",
+            "reason": "Output A's sample answer for the date question breaks the two-word limit, while output B's keys all fit the format.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "A",
+            "reason": "Output A includes a speaker self-correction that the expectation asks for, while output B has none.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both scripts read as natural British conversation with appropriate fillers and openings.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Both speakers are British English, but the expectation asks for a mix of British and Australian accents.",
+            "criterion": "examRealism",
+            "learnerCost": "The learner never hears the Australian accent that the real Part 1 mixes in, so they are not prepared for it.",
+            "location": {
+              "detail": "speakers list: Leah (British English) and Hannah (British English); no Australian speaker",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The sampleAnswer 'the eighteenth of May' is four words, which breaks the instruction to write no more than two words and/or a number.",
+            "criterion": "keys",
+            "learnerCost": "The model answer teaches the learner to write an answer longer than the exam allows.",
+            "location": {
+              "detail": "sampleAnswer of the date question",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "Both speakers are British English, but the expectation asks for a mix of British and Australian accents.",
+            "criterion": "examRealism",
+            "learnerCost": "The learner never hears the Australian accent that the real Part 1 mixes in, so they are not prepared for it.",
+            "location": {
+              "detail": "speakers list: Kevin (British English) and Hannah (British English); no Australian speaker",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "No speaker corrects themselves before any answer, but the expectation asks for one or two answers to follow a self-correction.",
+            "criterion": "examRealism",
+            "learnerCost": "The learner never practises catching a correction, the trap the real Part 1 uses.",
+            "location": {
+              "detail": "whole script: no self-correction by any speaker",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "Both outputs have one major accent gap, but output A's sample answer teaches a format the exam forbids, which misleads the learner more than output B's missing self-correction."
+        },
+        "pairId": "742a9ef0-9412-48ea-ad3a-93e42574c709"
+      }
+    ]
+  }
+}

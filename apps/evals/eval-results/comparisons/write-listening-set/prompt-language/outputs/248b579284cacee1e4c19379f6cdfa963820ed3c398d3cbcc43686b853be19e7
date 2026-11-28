@@ -1,0 +1,159 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "I found a repair event at the railway station.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "Hannah first saw people repairing objects at a ______ in Birmingham.",
+        "keyPoints": [
+          "The place was a railway station."
+        ],
+        "acceptedAnswers": [
+          "railway station"
+        ],
+        "sampleAnswer": "railway station"
+      },
+      {
+        "evidence": "The first thing we managed to mend was a lamp.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "At the first event, the volunteers' first successful repair was a ______.",
+        "keyPoints": [
+          "They first repaired a lamp."
+        ],
+        "acceptedAnswers": [
+          "lamp"
+        ],
+        "sampleAnswer": "lamp"
+      },
+      {
+        "evidence": "patience is the most important quality a volunteer can have.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "Hannah now considers ______ to be the key quality for volunteers.",
+        "keyPoints": [
+          "Hannah considers patience the most important quality."
+        ],
+        "acceptedAnswers": [
+          "patience"
+        ],
+        "sampleAnswer": "patience"
+      },
+      {
+        "evidence": "taking photographs before we take anything apart.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "Before dismantling an object, volunteers take ______ to help them put it back together.",
+        "keyPoints": [
+          "They take photographs."
+        ],
+        "acceptedAnswers": [
+          "photographs"
+        ],
+        "sampleAnswer": "photographs"
+      },
+      {
+        "evidence": "What we really need people to donate is spare parts.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "hard",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "The repair café particularly wants donations of ______.",
+        "keyPoints": [
+          "The café needs spare parts."
+        ],
+        "acceptedAnswers": [
+          "spare parts"
+        ],
+        "sampleAnswer": "spare parts"
+      },
+      {
+        "evidence": "seeing someone return home with more confidence.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "hard",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "Hannah's favourite outcome is that visitors leave with greater ______.",
+        "keyPoints": [
+          "She values the confidence visitors gain."
+        ],
+        "acceptedAnswers": [
+          "confidence"
+        ],
+        "sampleAnswer": "confidence"
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Hannah",
+        "gender": "female",
+        "accent": "British English"
+      }
+    ],
+    "title": "Starting a Repair Café",
+    "turns": [
+      {
+        "speaker": "Hannah",
+        "text": "Hello, everyone. I'm Hannah, and I help run a repair café in my town. People bring us things that have stopped working, and we try to fix them together. The idea first came to me when I was visiting Birmingham. I'd gone there to see a museum, but on my way home, I found a repair event at the railway station. I only meant to stay for a few minutes, but I ended up watching people work for over an hour."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "When I got home, I mentioned the idea to a few neighbours. We wondered if anyone would actually come, but we decided to try. We borrowed a room at the library for our first event. One neighbour brought a toaster, but we couldn't get that working. The first thing we managed to mend was a lamp. Its owner had been given it by her grandmother, so she was delighted that she wouldn't have to throw it away."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "At first, I thought we'd need volunteers with lots of technical qualifications. Of course, it's useful to have some experienced people, especially when you're dealing with electrical equipment. But I've learned that patience is the most important quality a volunteer can have. Sometimes you spend ages working out what's wrong, and it would be easy to give up. You also need to listen carefully to the owner, who's often noticed something that helps."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "We don't simply take an object away and hand it back when it's fixed. We encourage the owner to sit with us and join in. One useful habit we've developed is taking photographs before we take anything apart. That way, if we're unsure where a piece belongs later, we can look back and check. We used to make drawings, but that took longer, and the pictures weren't always very clear."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "After a few months, more people started coming, and we moved into the village hall. There's enough room there for several tables, and we can make tea while people wait. Some visitors have kindly offered to buy us new tools, although we've already got plenty. What we really need people to donate is spare parts. Even a broken machine can contain something we can use to repair another one."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Not everything can be fixed, of course. If something's unsafe, we explain why and suggest where it can be recycled. But even when a repair doesn't work, the visit isn't wasted. People meet their neighbours, and they often discover how an everyday object works. A visitor once told me she'd bought an expensive new machine, only to find that the old one needed a very simple adjustment."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "For me, the best result is seeing someone return home with more confidence. They might not become an expert, but next time something goes wrong, they may feel able to investigate instead of immediately replacing it. We've now started running short workshops for anyone who wants to learn basic skills. You don't need to bring anything, and you certainly don't need any experience. Just come along and be ready to have a go. Thanks for listening."
+      }
+    ]
+  }
+}

@@ -1,0 +1,125 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "You might think the L option shows hidden names, but that's the A option.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "easy",
+        "context": null,
+        "question": "Which option makes the listing include hidden names?",
+        "options": [
+          {
+            "text": "The L option",
+            "isCorrect": false,
+            "reason": "You hear the lecturer mention L, but she says A is the option that shows hidden names.",
+            "misconception": "Confuses the long-listing option with the option that includes hidden names"
+          },
+          {
+            "text": "The A option",
+            "isCorrect": true,
+            "reason": "The lecturer says the A option shows hidden names.",
+            "misconception": null
+          },
+          {
+            "text": "No option",
+            "isCorrect": false,
+            "reason": "The lecturer says a plain L S normally leaves out names beginning with a dot.",
+            "misconception": "Assumes the plain command includes hidden names"
+          }
+        ]
+      },
+      {
+        "evidence": "They refer to the current directory and its parent, so leave them out of the file count.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "medium",
+        "context": null,
+        "question": "What should you do with the entries named dot and dot dot?",
+        "options": [
+          {
+            "text": "Count both as hidden files",
+            "isCorrect": false,
+            "reason": "You hear that these entries begin with dots, but the lecturer says they are directories and should be left out.",
+            "misconception": "Counts special directory entries as hidden files"
+          },
+          {
+            "text": "Count only the current directory",
+            "isCorrect": false,
+            "reason": "The lecturer says to leave out both the current directory and its parent.",
+            "misconception": "Excludes only one of the two special entries"
+          },
+          {
+            "text": "Leave both out of the file count",
+            "isCorrect": true,
+            "reason": "The lecturer says the two entries refer to directories, so you should leave them out.",
+            "misconception": null
+          }
+        ]
+      },
+      {
+        "evidence": "Four of the eight regular files have names beginning with a dot, so exactly half are hidden.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "hard",
+        "context": null,
+        "question": "In the example, what proportion of the regular files are hidden?",
+        "options": [
+          {
+            "text": "Four out of ten",
+            "isCorrect": false,
+            "reason": "You would get ten by including the two special directory entries, which the lecturer says to exclude.",
+            "misconception": "Includes the two special directory entries in the total"
+          },
+          {
+            "text": "Four out of eight",
+            "isCorrect": true,
+            "reason": "The lecturer says four of the eight regular files have names beginning with a dot.",
+            "misconception": null
+          },
+          {
+            "text": "Two out of eight",
+            "isCorrect": false,
+            "reason": "The lecturer mentions two special directory entries, but says four regular files are hidden.",
+            "misconception": "Confuses the special directory entries with the hidden files"
+          }
+        ]
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Lecturer",
+        "gender": "female",
+        "accent": "American English"
+      }
+    ],
+    "title": "Counting Hidden Files in a Directory",
+    "turns": [
+      {
+        "speaker": "Lecturer",
+        "text": "Today we'll look at a quick way to check whether half the files in a directory are hidden. First, open a terminal and move into the directory you want to check. Then type L S, a space, a dash, and the lowercase letters L and A, and press Enter. That's the L S command with two options."
+      },
+      {
+        "speaker": "Lecturer",
+        "text": "The L option gives you a long listing, with information such as permissions, size, and modification date. You might think the L option shows hidden names, but that's the A option. It includes names that begin with a dot, which a plain L S normally leaves out. So we need both options for this demonstration."
+      },
+      {
+        "speaker": "Lecturer",
+        "text": "Now, don't just count every line you see. The listing may start with a total line, which isn't a file. And look at the first character of each permissions field. A dash means a regular file, while a D means a directory. For our check, we're counting regular files, not directories or symbolic links."
+      },
+      {
+        "speaker": "Lecturer",
+        "text": "You'll also see two special entries named dot and dot dot. They refer to the current directory and its parent, so leave them out of the file count. They're shown because we used the A option, but they aren't hidden files."
+      },
+      {
+        "speaker": "Lecturer",
+        "text": "Let's say our listing contains eight regular files. Four names start with a dot, and the other four don't. The two special directory entries are there too. If you count them, you might get ten entries and think four out of ten are hidden. But we exclude those directories. Four of the eight regular files have names beginning with a dot, so exactly half are hidden."
+      },
+      {
+        "speaker": "Lecturer",
+        "text": "To check another directory, use the same steps: identify the regular files, count how many have names starting with a dot, and compare that number with the total number of regular files. If the hidden count is half the total, you've got your answer."
+      }
+    ]
+  }
+}

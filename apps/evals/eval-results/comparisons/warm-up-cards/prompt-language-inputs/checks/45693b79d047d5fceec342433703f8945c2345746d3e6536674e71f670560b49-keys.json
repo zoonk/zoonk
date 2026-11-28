@@ -1,0 +1,16 @@
+{
+  "caseId": "en-quantum-physics",
+  "costUsd": 0.038672,
+  "name": "answer keys",
+  "passed": 5,
+  "problems": [
+    "{\"itemLocator\":\"cards[1]\",\"keyedAnswer\":\"A probability distribution\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"Given a particle’s state, quantum theory can predict both its position distribution and its average speed. The stem asks what can be predicted before a position measurement, not specifically what can be predicted about that measurement’s outcome.\"}",
+    "{\"itemLocator\":\"cards[2]\",\"keyedAnswer\":\"A combination of states\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"An atom can be in a superposition of energy eigenstates, but it can also be prepared in one definite energy eigenstate before a measurement. The stem does not specify a preparation that distinguishes the two answers.\"}",
+    "{\"itemLocator\":\"cards[5]\",\"keyedAnswer\":\"It becomes less precise\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"The uncertainty relation Δp ≥ ℏ/(2Δx) sets a lower bound on momentum spread. Reducing Δx raises that bound, but if the original Δp is already above the new bound, it can stay unchanged. Both offered outcomes are possible.\"}",
+    "{\"itemLocator\":\"cards[6]\",\"keyedAnswer\":\"Only certain energy changes are allowed\",\"kind\":\"factualError\",\"workedAnswer\":\"The discrete-gap answer applies to transitions between bound states. A photon can also ionize an atom: a continuous range of photon energies above threshold can be absorbed, with excess energy going into kinetic energy.\"}",
+    "{\"itemLocator\":\"cards[7]\",\"keyedAnswer\":\"Correlated results\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"For a pair in the state (|00⟩ + |11⟩)/√2 measured in the 0/1 basis, the two results match on every trial, although each local result is random. Thus “Identical results every time,” read as pairwise agreement, is one correlation the measurements can show.\"}"
+  ],
+  "run": 2,
+  "side": "challenger",
+  "total": 10
+}

@@ -1,0 +1,160 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "Der Freitag wäre vielleicht gut, nein, da können viele noch nicht. Wir machen das Fest am Samstag, dem fünfzehnten Juni.",
+        "skill": 1,
+        "format": "trueFalse",
+        "difficulty": "easy",
+        "context": null,
+        "statement": "Das Fest findet an einem Freitag statt.",
+        "isTrue": false,
+        "reason": "Tobias menciona primeiro a sexta-feira, mas se corrige e diz que a festa será no sábado.",
+        "misconception": "Você pode ter ouvido a primeira sugestão de Tobias e não percebido a correção."
+      },
+      {
+        "evidence": "Diesmal möchte ich die Nachbarn bitten, verschiedene Salate mitzubringen.",
+        "skill": 1,
+        "format": "trueFalse",
+        "difficulty": "easy",
+        "context": null,
+        "statement": "Tobias möchte, dass die Nachbarn Salate zum Fest beitragen.",
+        "isTrue": true,
+        "reason": "Tobias diz que quer pedir aos vizinhos que tragam saladas variadas.",
+        "misconception": null
+      },
+      {
+        "evidence": "Bleiben wir lieber im Innenhof.",
+        "skill": 1,
+        "format": "trueFalse",
+        "difficulty": "medium",
+        "context": null,
+        "statement": "Clara und Tobias entscheiden sich für ein Fest im Park.",
+        "isTrue": false,
+        "reason": "Clara propõe que a festa seja no pátio interno, e Tobias aceita a ideia.",
+        "misconception": "Você pode ter confundido a sugestão de Marie, o parque, com a decisão final."
+      },
+      {
+        "evidence": "Ich würde vorher Geld bei allen einsammeln. Davon kaufen wir dann gemeinsam die Getränke.",
+        "skill": 1,
+        "format": "trueFalse",
+        "difficulty": "medium",
+        "context": null,
+        "statement": "Die Getränke sollen mit Geld von allen gekauft werden.",
+        "isTrue": true,
+        "reason": "Tobias sugere recolher dinheiro de todos antes da festa e usá-lo para comprar as bebidas.",
+        "misconception": null
+      },
+      {
+        "evidence": "Dann lassen wir die Band lieber. Ich stelle eine Musikliste zusammen und bringe meinen Lautsprecher mit.",
+        "skill": 1,
+        "format": "trueFalse",
+        "difficulty": "hard",
+        "context": null,
+        "statement": "Beim Fest wird eine Band live spielen.",
+        "isTrue": false,
+        "reason": "Clara rejeita a ideia da banda e diz que vai preparar uma lista de músicas e levar sua caixa de som.",
+        "misconception": "Você pode ter entendido a menção à banda como uma decisão, mas ela foi rejeitada por ser cara."
+      },
+      {
+        "evidence": "Wir räumen am Sonntagmorgen zusammen auf.",
+        "skill": 1,
+        "format": "trueFalse",
+        "difficulty": "medium",
+        "context": null,
+        "statement": "Clara und Tobias wollen erst am Tag nach dem Fest gemeinsam aufräumen.",
+        "isTrue": true,
+        "reason": "Tobias combina a arrumação para domingo de manhã, depois da festa de sábado.",
+        "misconception": null
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Clara",
+        "gender": "female",
+        "accent": "Standard German"
+      },
+      {
+        "name": "Tobias",
+        "gender": "male",
+        "accent": "Standard German"
+      }
+    ],
+    "title": "Ein Fest im Innenhof",
+    "turns": [
+      {
+        "speaker": "Clara",
+        "text": "Hallo Tobias, hast du kurz Zeit? Ich wollte mit dir über unser Nachbarschaftsfest sprechen. Einige Leute haben mich schon gefragt, ob es dieses Jahr wieder stattfindet."
+      },
+      {
+        "speaker": "Tobias",
+        "text": "Ja, unbedingt. Ich habe auch schon in den Kalender geschaut. Der Freitag wäre vielleicht gut, nein, da können viele noch nicht. Wir machen das Fest am Samstag, dem fünfzehnten Juni."
+      },
+      {
+        "speaker": "Clara",
+        "text": "Einverstanden. Da haben auch Familien mit Kindern mehr Zeit. Sollen wir wie letztes Jahr am Nachmittag anfangen? Dann können die Kinder erst spielen und später essen wir zusammen."
+      },
+      {
+        "speaker": "Tobias",
+        "text": "Gute Idee. Letztes Mal hatten wir allerdings viel zu viel Brot und am Ende kaum noch Salat. Diesmal möchte ich die Nachbarn bitten, verschiedene Salate mitzubringen."
+      },
+      {
+        "speaker": "Clara",
+        "text": "Das können wir auf den Zettel schreiben, den wir im Haus aufhängen. Ich kümmere mich gern darum. Vielleicht melden sich auch ein paar Leute, die Kuchen backen."
+      },
+      {
+        "speaker": "Tobias",
+        "text": "Super. Und wo feiern wir? Marie hat den Park vorgeschlagen. Da hätten wir zwar mehr Platz, aber wir müssten alle Tische dorthin tragen."
+      },
+      {
+        "speaker": "Clara",
+        "text": "Stimmt. Bleiben wir lieber im Innenhof. Dort sind die Wege kurz und wir können schnell noch etwas aus den Wohnungen holen. Bei Regen könnten wir in den Gemeinschaftsraum gehen."
+      },
+      {
+        "speaker": "Tobias",
+        "text": "Ich frage gleich den Hausmeister, ob der Raum frei ist. Die Tische können wir bestimmt wieder von ihm bekommen. Letztes Jahr hat das ja problemlos geklappt."
+      },
+      {
+        "speaker": "Clara",
+        "text": "Und was machen wir mit den Getränken? Wenn jeder etwas anderes mitbringt, haben wir am Ende vielleicht wieder nur Wasser und Apfelsaft."
+      },
+      {
+        "speaker": "Tobias",
+        "text": "Ich würde vorher Geld bei allen einsammeln. Davon kaufen wir dann gemeinsam die Getränke. Ich kann mit dem Fahrrad zum Getränkemarkt fahren."
+      },
+      {
+        "speaker": "Clara",
+        "text": "Gut, dann schreibe ich auch das auf den Zettel. Wer etwas Besonderes trinken möchte, kann es natürlich zusätzlich selbst mitbringen."
+      },
+      {
+        "speaker": "Tobias",
+        "text": "Ach ja, und Musik brauchen wir auch. Meine Schwester kennt eine Band, aber die Musiker wären ziemlich teuer. Außerdem ist der Hof nicht besonders groß."
+      },
+      {
+        "speaker": "Clara",
+        "text": "Dann lassen wir die Band lieber. Ich stelle eine Musikliste zusammen und bringe meinen Lautsprecher mit. Die Nachbarn können mir vorher ihre Wünsche schicken."
+      },
+      {
+        "speaker": "Tobias",
+        "text": "Das passt. Wir sollten nur abends nicht zu laut sein. Einige ältere Nachbarn gehen früh schlafen, und die Kinder im Haus natürlich auch."
+      },
+      {
+        "speaker": "Clara",
+        "text": "Stimmt. Und nach dem Fest müssen wir noch an die Tische und den Müll denken. Ich habe am Samstagabend leider keine Zeit mehr, weil ich meine Mutter vom Bahnhof abhole."
+      },
+      {
+        "speaker": "Tobias",
+        "text": "Kein Problem. Wir räumen am Sonntagmorgen zusammen auf. Ich frage noch Erik, ob er uns dabei hilft. Zu dritt geht das sicher schnell."
+      },
+      {
+        "speaker": "Clara",
+        "text": "Prima. Ich hänge den Zettel heute Abend auf. Dann sehen wir, wer mitmacht. Danke, Tobias, bis später!"
+      },
+      {
+        "speaker": "Tobias",
+        "text": "Danke dir. Ich freue mich schon auf das Fest. Bis später!"
+      }
+    ]
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "categories": [
+    "culture",
+    "arts"
+  ],
+  "description": "Star Wars is a science-fiction saga built around the Skywalker family and a galaxy of planets, species and technology. Follow its three trilogies, mythic roots, groundbreaking film effects and growth into series, games and books to see how it shaped popular culture.",
+  "landingPage": {
+    "audience": [
+      "Longtime Star Wars fans",
+      "Movie fans curious about special effects",
+      "Readers interested in modern myths"
+    ],
+    "outcomes": [
+      "Follow the Skywalker story across three trilogies",
+      "Spot myths behind the heroes' biggest choices",
+      "Describe what makes the galaxy feel lived-in",
+      "Trace Star Wars' influence across movies and other media"
+    ],
+    "valueProposition": "Make sense of the Skywalker saga and the galaxy that grew around it"
+  }
+}

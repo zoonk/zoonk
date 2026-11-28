@@ -1,0 +1,14 @@
+{
+  "caseId": "en-quantum-physics",
+  "costUsd": 0.033776,
+  "name": "answer keys",
+  "passed": 7,
+  "problems": [
+    "{\"itemLocator\":\"cards[2]\",\"keyedAnswer\":\"No electrons are emitted\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"In the single-photon regime, each photon has less energy than the metal’s work function, so no electrons are emitted. At sufficiently high intensity, an electron can absorb multiple photons whose combined energy exceeds the work function. Making the light brighter can then increase emission, so “More electrons emerge” is also defensible.\"}",
+    "{\"itemLocator\":\"cards[3]\",\"keyedAnswer\":\"Its energy levels are discrete\",\"kind\":\"factualError\",\"workedAnswer\":\"Discrete energy gaps explain absorption lines for transitions between bound states. Above the ionization threshold, an atom can absorb a continuous range of photon energies: the excess energy becomes kinetic energy of the outgoing particles. The stem needs to specify transitions between bound states.\"}",
+    "{\"itemLocator\":\"cards[6]\",\"keyedAnswer\":\"Correlated outcomes\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"The stem asks what the pair can show, not what it must show. For the entangled state (|00⟩ + |11⟩)/√2, measuring both particles in the 0/1 basis gives either 00 or 11. Thus “Identical results every time” is a possible example of “Correlated outcomes.”\"}"
+  ],
+  "run": 1,
+  "side": "incumbent",
+  "total": 10
+}

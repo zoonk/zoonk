@@ -1,0 +1,12 @@
+{
+  "caseId": "en-cambridge-first-part-2-sentence-completion",
+  "costUsd": 0.037584000000000006,
+  "name": "answer keys",
+  "passed": 5,
+  "problems": [
+    "{\"itemLocator\":\"set.questions[3]\",\"keyedAnswer\":\"wooden spoons\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"“Spoons” should also be accepted. It is heard in the recording and identifies what the volunteers used as labels; the stem does not require the material.\"}"
+  ],
+  "run": 2,
+  "side": "challenger",
+  "total": 6
+}

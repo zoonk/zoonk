@@ -1,0 +1,20 @@
+{
+  "categories": [
+    "law"
+  ],
+  "description": "Contract law sets the rules for when promises become binding, how written terms are read, and what can affect an agreement or happen when it is broken. Everyday examples such as leases, job offers, app terms, and freelance agreements help you read contracts and study legal issues without treating the course as legal advice.",
+  "landingPage": {
+    "audience": [
+      "People signing leases or service contracts",
+      "Freelancers reviewing client agreements",
+      "Students curious about U.S. law"
+    ],
+    "outcomes": [
+      "Tell when a promise can become binding",
+      "Find renewal and cancellation terms in agreements",
+      "Compare what each side must do",
+      "Explain common court remedies for a broken agreement"
+    ],
+    "valueProposition": "Spot key terms and risks before signing everyday agreements"
+  }
+}

@@ -1,0 +1,304 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "Instead, our aim was to give local people an affordable place to do things together.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "easy",
+        "context": null,
+        "question": "What was the main purpose of creating the centre?",
+        "options": [
+          {
+            "text": "To provide a low-cost shared space",
+            "isCorrect": true,
+            "reason": "Você ouve que o objetivo era oferecer à comunidade um lugar acessível para realizar atividades em conjunto.",
+            "misconception": null
+          },
+          {
+            "text": "To create more local housing",
+            "isCorrect": false,
+            "reason": "Você ouve que transformar a fábrica em apartamentos foi uma sugestão, mas não o plano escolhido.",
+            "misconception": "Confunde uma sugestão rejeitada com o objetivo final."
+          },
+          {
+            "text": "To increase parking in the area",
+            "isCorrect": false,
+            "reason": "Você ouve que algumas pessoas queriam um estacionamento, mas a proposta do centro era outra.",
+            "misconception": "Escolhe uma proposta alternativa mencionada."
+          }
+        ]
+      },
+      {
+        "evidence": "The centre is on Larch Street, that's Larch, L-A-R-C-H.",
+        "skill": 2,
+        "format": "multipleChoice",
+        "difficulty": "medium",
+        "context": "Centre location\nWrite ONE WORD ONLY.\n_____ Street",
+        "question": "Complete the street name.",
+        "options": [
+          {
+            "text": "Larch",
+            "isCorrect": true,
+            "reason": "Hannah diz e soletra Larch.",
+            "misconception": null
+          },
+          {
+            "text": "Larsh",
+            "isCorrect": false,
+            "reason": "Hannah soletra o nome com C-H no final.",
+            "misconception": "Confunde a grafia ouvida."
+          },
+          {
+            "text": "March",
+            "isCorrect": false,
+            "reason": "Hannah soletra o nome com L no início.",
+            "misconception": "Confunde a letra inicial."
+          }
+        ]
+      },
+      {
+        "evidence": "From the railway station you can take the number eighteen, no, sorry, the number eighty bus.",
+        "skill": 2,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 0
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Getting to the centre\nWrite ONE NUMBER ONLY.\nBus from the railway station: number _____",
+        "question": "Complete the bus number.",
+        "keyPoints": [
+          "The bus number is 80."
+        ],
+        "acceptedAnswers": [
+          "80",
+          "eighty"
+        ],
+        "sampleAnswer": "eighty"
+      },
+      {
+        "evidence": "If you need a route without steps, please use the lower gate on the east side of the building.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "easy",
+        "context": null,
+        "question": "Which entrance should visitors use to avoid steps?",
+        "options": [
+          {
+            "text": "The main entrance at the front",
+            "isCorrect": false,
+            "reason": "Você ouve que a entrada da frente tem vários degraus.",
+            "misconception": "Escolhe a entrada principal apesar dos degraus."
+          },
+          {
+            "text": "The lower gate on the east side",
+            "isCorrect": true,
+            "reason": "Hannah indica o portão inferior no lado leste para quem precisa de um caminho sem degraus.",
+            "misconception": null
+          },
+          {
+            "text": "The gate at the back",
+            "isCorrect": false,
+            "reason": "Você ouve que o portão dos fundos é para entregas e fica trancado durante o dia.",
+            "misconception": "Confunde o portão de entregas com uma entrada para visitantes."
+          }
+        ]
+      },
+      {
+        "evidence": "To use one, you'll need a one pound coin, which you get back when you open it again.",
+        "skill": 2,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 0
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Changing rooms\nWrite ONE NUMBER ONLY.\nCoin needed for a locker: £_____",
+        "question": "Complete the value of the coin.",
+        "keyPoints": [
+          "The coin is worth one pound."
+        ],
+        "acceptedAnswers": [
+          "1",
+          "one"
+        ],
+        "sampleAnswer": "one"
+      },
+      {
+        "evidence": "The plan is to hold it outdoors, but if it rains, it'll move into the glasshouse.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "medium",
+        "context": null,
+        "question": "Where will Saturday's gardening session take place if the weather is bad?",
+        "options": [
+          {
+            "text": "In the glasshouse",
+            "isCorrect": true,
+            "reason": "Você ouve que, se chover, a atividade será transferida para a estufa.",
+            "misconception": null
+          },
+          {
+            "text": "In the café",
+            "isCorrect": false,
+            "reason": "Hannah diz que o café foi considerado, mas não tem espaço suficiente.",
+            "misconception": "Escolhe um local considerado e rejeitado."
+          },
+          {
+            "text": "In the library",
+            "isCorrect": false,
+            "reason": "Você ouve que a biblioteca também foi considerada, mas não há espaço suficiente para a atividade.",
+            "misconception": "Escolhe um local alternativo rejeitado."
+          }
+        ]
+      },
+      {
+        "evidence": "It now begins at half past six in the evening and runs for an hour and a half.",
+        "skill": 2,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 0
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Photography group\nWrite ONE NUMBER ONLY.\nCurrent starting time: _____ p.m.",
+        "question": "Complete the starting time.",
+        "keyPoints": [
+          "The group now starts at 6:30 p.m."
+        ],
+        "acceptedAnswers": [
+          "6:30",
+          "6.30"
+        ],
+        "sampleAnswer": "half past six"
+      },
+      {
+        "evidence": "However, if you're interested in the pottery course, please reserve a place in advance, because there are only eight wheels.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "medium",
+        "context": null,
+        "question": "Which activity must visitors book before attending?",
+        "options": [
+          {
+            "text": "The pottery course",
+            "isCorrect": true,
+            "reason": "Você ouve que é necessário reservar uma vaga no curso de cerâmica porque há apenas oito tornos.",
+            "misconception": null
+          },
+          {
+            "text": "The walking group",
+            "isCorrect": false,
+            "reason": "Hannah diz que o grupo de caminhada não precisa de reserva.",
+            "misconception": "Confunde a atividade reservável com outra atividade mencionada."
+          },
+          {
+            "text": "The photography group",
+            "isCorrect": false,
+            "reason": "Você ouve detalhes sobre o grupo de fotografia, mas a reserva antecipada é exigida para o curso de cerâmica.",
+            "misconception": "Associa a exigência a uma atividade mencionada anteriormente."
+          }
+        ]
+      },
+      {
+        "evidence": "We ask you to bring your own apron, though, as the work can get messy.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Pottery course\nWrite ONE WORD ONLY.\nBring an _____",
+        "question": "Complete the note.",
+        "keyPoints": [
+          "Participants should bring an apron."
+        ],
+        "acceptedAnswers": [
+          "apron"
+        ],
+        "sampleAnswer": "apron"
+      },
+      {
+        "evidence": "But first, the money will go towards repairing the roof over the dance studio.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "hard",
+        "context": null,
+        "question": "What will the centre's cake-sale money be used for first?",
+        "options": [
+          {
+            "text": "Fixing part of the building",
+            "isCorrect": true,
+            "reason": "Você ouve que o dinheiro será usado primeiro para consertar o telhado sobre o estúdio de dança.",
+            "misconception": null
+          },
+          {
+            "text": "Buying furniture for the café",
+            "isCorrect": false,
+            "reason": "Hannah diz que mesas extras foram consideradas, mas o telhado é a prioridade.",
+            "misconception": "Escolhe uma compra considerada, mas não prioritária."
+          },
+          {
+            "text": "Improving access to the garden",
+            "isCorrect": false,
+            "reason": "Você ouve que o caminho do jardim poderá ser melhorado no futuro, depois do conserto urgente.",
+            "misconception": "Confunde um plano futuro com a prioridade imediata."
+          }
+        ]
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Hannah",
+        "gender": "female",
+        "accent": "British English"
+      }
+    ],
+    "title": "A new community centre",
+    "turns": [
+      {
+        "speaker": "Hannah",
+        "text": "Good morning, everyone, and welcome to the first open day at Riverside Community Centre. I'm Hannah, the centre manager. Before you look around, I'd like to tell you a little about the building and how to make the most of your visit. Some people suggested turning this old factory into flats, while others wanted a car park. Instead, our aim was to give local people an affordable place to do things together. We've kept some of the original brickwork, but everything inside is new."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "First, a few practical details for those of you who might come back with friends. The centre is on Larch Street, that's Larch, L-A-R-C-H. It's just behind the swimming pool, not next to the library, as some older maps show. There's a small car park, but it fills up quickly when there's a class on, so public transport is often easier."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "From the railway station you can take the number eighteen, no, sorry, the number eighty bus. It stops right outside our building. The eighteen takes you to the sports centre on the other side of town. If you cycle, there are stands beside the main entrance, and we hope to put in some covered ones later this year."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Now, the front entrance has several steps. If you need a route without steps, please use the lower gate on the east side of the building. There's a wide path from there to the lift. You might see a gate at the back, but that's for deliveries and it stays locked during the day. Staff can always help you find your way."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "You'll find the changing rooms on the ground floor, near the dance studio. There are lockers there if you'd rather not carry your coat around. To use one, you'll need a one pound coin, which you get back when you open it again. We used to lend out keys at reception, but people found the coin system much simpler."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Outside, there's a garden where volunteers grow vegetables. This Saturday they're running a session on growing food in small spaces. The plan is to hold it outdoors, but if it rains, it'll move into the glasshouse. We did think about using the café, or even the library across the road, but neither has enough room for all the plants and equipment."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "On Tuesday evenings, we have a beginners' photography group. It used to start at six, but that was too early for people coming from work. It now begins at half past six in the evening and runs for an hour and a half. You don't need an expensive camera. A phone is fine, and the group leader can lend you equipment if you'd like to try something different."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Most activities are open to anyone who turns up. However, if you're interested in the pottery course, please reserve a place in advance, because there are only eight wheels. You can do that online or at reception. The café and the weekly walking group don't need bookings, although it's worth checking the walking group's noticeboard for the latest route."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "For the pottery course, we'll provide clay and all the tools you need. We ask you to bring your own apron, though, as the work can get messy. Wear comfortable shoes too. You'll collect your finished pieces a couple of weeks later, once they've been fired and have had time to cool."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Finally, some of you have asked what we'll do with the money from today's cake sale. We considered buying extra tables for the café, and we'd also like to improve the garden path eventually. But first, the money will go towards repairing the roof over the dance studio. That work can't wait until winter. Thanks for listening, and please do ask a member of staff if you have any questions while you're looking around."
+      }
+    ]
+  }
+}

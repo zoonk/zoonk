@@ -14,7 +14,10 @@ vi.mock("./generate-items.prompt.md", () => ({
 }));
 
 vi.mock("./item-rules", () => ({
-  withItemRules: vi.fn((taskPrompt: string) => `${taskPrompt}\n# Rules`),
+  withItemRules: vi.fn(
+    (taskPrompt: string) =>
+      `${taskPrompt}\n# Rules in {{LEARNER_LANGUAGE}} for {{TARGET_LANGUAGE}}`,
+  ),
 }));
 
 vi.mock("ai", async (importOriginal) => {
@@ -55,7 +58,7 @@ describe(generateItems, () => {
   });
 
   it("writes a language exam's essay in its language, set where it is spoken", async () => {
-    const { userPrompt } = await generateItems({
+    const { systemPrompt, userPrompt } = await generateItems({
       country: null,
       examFormat: { name: "CELI 3", style: "Produzione scritta" },
       format: "essay",
@@ -69,6 +72,8 @@ describe(generateItems, () => {
       "# Goal",
       expect.objectContaining({ languageGoal: true }),
     );
+
+    expect(systemPrompt).toContain("# Rules in Português Brasileiro for Italiano");
 
     expect(userPrompt).toMatch(/TARGET_LANGUAGE: \S/u);
     expect(userPrompt).toContain("- Place: Italy");

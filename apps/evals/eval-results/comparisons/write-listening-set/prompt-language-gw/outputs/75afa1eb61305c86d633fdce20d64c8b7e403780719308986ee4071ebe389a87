@@ -1,0 +1,185 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "Lo que nos puso en marcha fue ver la cantidad de objetos casi nuevos que acababan en la basura.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "easy",
+        "context": null,
+        "question": "¿Qué motivó inicialmente la creación de la biblioteca?",
+        "options": [
+          {
+            "text": "La preocupación por los objetos que se tiraban.",
+            "isCorrect": true,
+            "reason": "Você ouve que a iniciativa começou ao verem objetos quase novos no lixo.",
+            "misconception": null
+          },
+          {
+            "text": "La necesidad de reducir los gastos familiares.",
+            "isCorrect": false,
+            "reason": "Você ouve que essa é uma suposição frequente, mas não foi a motivação inicial.",
+            "misconception": "Confunde uma suposição comum com o motivo real."
+          },
+          {
+            "text": "La falta de lugares para reunirse en el barrio.",
+            "isCorrect": false,
+            "reason": "Você ouve que a biblioteca aproximou vizinhos, mas essa não foi a razão de sua criação.",
+            "misconception": "Toma um efeito posterior como causa inicial."
+          }
+        ]
+      },
+      {
+        "evidence": "También recibimos una pequeña ayuda del ayuntamiento para comprar estanterías, aunque no para adquirir herramientas.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "medium",
+        "context": null,
+        "question": "¿Para qué se utilizó la aportación municipal?",
+        "options": [
+          {
+            "text": "Para equipar la sala con estanterías.",
+            "isCorrect": true,
+            "reason": "Você ouve que a ajuda da prefeitura serviu para comprar estantes.",
+            "misconception": null
+          },
+          {
+            "text": "Para aumentar la colección de herramientas.",
+            "isCorrect": false,
+            "reason": "Você ouve Andrea esclarecer que o dinheiro não foi usado para adquirir ferramentas.",
+            "misconception": "Associa a ajuda aos objetos emprestados."
+          },
+          {
+            "text": "Para colocar anuncios en los comercios.",
+            "isCorrect": false,
+            "reason": "Você ouve que os próprios comércios ajudaram com os cartazes nos escaparates.",
+            "misconception": "Atribui à prefeitura a contribuição dos comerciantes."
+          }
+        ]
+      },
+      {
+        "evidence": "Decidimos que el préstamo duraría una semana, con la posibilidad de ampliarlo si nadie más lo había solicitado.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "easy",
+        "context": null,
+        "question": "¿Qué plazo de préstamo se estableció inicialmente?",
+        "options": [
+          {
+            "text": "Una semana, con opción de prórroga.",
+            "isCorrect": true,
+            "reason": "Você ouve que o empréstimo dura uma semana e pode ser ampliado em certas condições.",
+            "misconception": null
+          },
+          {
+            "text": "Un mes, sin posibilidad de prórroga.",
+            "isCorrect": false,
+            "reason": "Você ouve a proposta de um mês, mas Andrea explica que ela foi rejeitada.",
+            "misconception": "Escolhe a proposta rejeitada."
+          },
+          {
+            "text": "Hasta que otro usuario pida el objeto.",
+            "isCorrect": false,
+            "reason": "Você ouve que a existência de outro pedido só determina se o prazo pode ser ampliado.",
+            "misconception": "Confunde a condição de prorrogação com o prazo inicial."
+          }
+        ]
+      },
+      {
+        "evidence": "Ahora organizamos encuentros mensuales en los que esas personas enseñan a otras.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "medium",
+        "context": null,
+        "question": "¿Qué ocurre en los encuentros relacionados con las reparaciones?",
+        "options": [
+          {
+            "text": "Algunos usuarios comparten lo que saben.",
+            "isCorrect": true,
+            "reason": "Você ouve que usuários com experiência ensinam outras pessoas nos encontros mensais.",
+            "misconception": null
+          },
+          {
+            "text": "Los profesionales arreglan todos los objetos.",
+            "isCorrect": false,
+            "reason": "Você ouve que profissionais são chamados apenas para reparos complicados ou perigosos.",
+            "misconception": "Generaliza o papel dos profissionais."
+          },
+          {
+            "text": "Los vecinos entregan objetos sin utilizar.",
+            "isCorrect": false,
+            "reason": "Você ouve que os vizinhos doaram objetos no começo, não que essa seja a finalidade dos encontros.",
+            "misconception": "Confunde a campanha inicial com os encontros mensais."
+          }
+        ]
+      },
+      {
+        "evidence": "Yo no lo veo de esa manera. Algunas personas prueban un objeto aquí y después compran uno porque descubren que lo necesitan con frecuencia.",
+        "skill": 2,
+        "format": "multipleChoice",
+        "difficulty": "hard",
+        "context": null,
+        "question": "¿Qué opina Andrea sobre el posible efecto de la biblioteca en las tiendas?",
+        "options": [
+          {
+            "text": "No cree que necesariamente las perjudique.",
+            "isCorrect": true,
+            "reason": "Você ouve Andrea rejeitar essa preocupação e explicar que algumas pessoas acabam comprando objetos depois de experimentá-los.",
+            "misconception": null
+          },
+          {
+            "text": "Cree que reducirá la clientela de todas ellas.",
+            "isCorrect": false,
+            "reason": "Você ouve que otras personas plantean la posibilidad de un perjuicio, pero Andrea no comparte esa opinión.",
+            "misconception": "Atribui à palestrante uma preocupação que ela rejeita."
+          },
+          {
+            "text": "Piensa que sustituirá las compras habituales.",
+            "isCorrect": false,
+            "reason": "Você ouve que Andrea considera que compartilhar não resolve sozinho todos os problemas de consumo.",
+            "misconception": "Exagera o alcance que Andrea atribui ao compartilhamento."
+          }
+        ]
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Andrea",
+        "gender": "female",
+        "accent": "Castilian Spanish"
+      }
+    ],
+    "title": "Una biblioteca de objetos para el barrio",
+    "turns": [
+      {
+        "speaker": "Andrea",
+        "text": "Buenas tardes. Hoy quiero contaros cómo nació la biblioteca de objetos de nuestro barrio de Zaragoza. La idea es sencilla: en lugar de comprar algo que solo necesitamos de vez en cuando, podemos pedirlo prestado. Tenemos desde herramientas hasta juegos de mesa. Pero no empezamos por una preocupación económica, como suele pensar la gente. Lo que nos puso en marcha fue ver la cantidad de objetos casi nuevos que acababan en la basura."
+      },
+      {
+        "speaker": "Andrea",
+        "text": "Al principio pensamos en instalar el proyecto en el mercado municipal, porque pasa mucha gente por allí. Luego vimos que no había espacio suficiente. Al final nos cedieron una sala en el centro cívico, que además está cerca de varias paradas de autobús. La primera semana abrimos solo dos tardes y vinieron doce personas. Parecía poco, pero muchas volvieron con vecinos y familiares."
+      },
+      {
+        "speaker": "Andrea",
+        "text": "Para conseguir los primeros objetos hicimos una campaña entre los vecinos. Algunos ofrecieron cosas que llevaban años sin usar. También recibimos una pequeña ayuda del ayuntamiento para comprar estanterías, aunque no para adquirir herramientas. Y hubo comercios que nos prestaron carteles para anunciar la iniciativa en sus escaparates. Así, poco a poco, la sala fue llenándose."
+      },
+      {
+        "speaker": "Andrea",
+        "text": "Una de las primeras decisiones fue cuánto tiempo podría quedarse cada persona con lo que pedía. Alguien propuso un mes, porque así resultaría más cómodo. Sin embargo, rechazamos esa idea: con tan pocos objetos, otros usuarios habrían tenido que esperar demasiado. Decidimos que el préstamo duraría una semana, con la posibilidad de ampliarlo si nadie más lo había solicitado."
+      },
+      {
+        "speaker": "Andrea",
+        "text": "También surgió la cuestión de las reparaciones. Mucha gente creía que íbamos a necesitar técnicos profesionales para todo. Pero pronto descubrimos que entre los propios usuarios había personas capaces de arreglar una bicicleta o cambiar una pieza sencilla. Ahora organizamos encuentros mensuales en los que esas personas enseñan a otras. Si la reparación es complicada o puede ser peligrosa, entonces sí recurrimos a profesionales."
+      },
+      {
+        "speaker": "Andrea",
+        "text": "A veces nos preguntan si una iniciativa así perjudica a las tiendas del barrio. Yo no lo veo de esa manera. Algunas personas prueban un objeto aquí y después compran uno porque descubren que lo necesitan con frecuencia. Además, varias tiendas colaboran ofreciéndonos asesoramiento. Eso sí, sería ingenuo pensar que compartir soluciona por sí solo todos los problemas de consumo."
+      },
+      {
+        "speaker": "Andrea",
+        "text": "Lo que más me ha sorprendido no es que ahorremos dinero, aunque eso ayuda. Es que gente que antes apenas se saludaba ahora se conoce y se echa una mano. Para el próximo año queremos abrir también los sábados, pero solo si conseguimos más voluntarios. Preferimos crecer despacio y mantener un servicio fiable. En fin, si pasáis por el centro cívico, acercaos a conocernos. Gracias."
+      }
+    ]
+  }
+}

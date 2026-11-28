@@ -1,0 +1,20 @@
+{
+  "categories": [
+    "arts"
+  ],
+  "description": "Advanced music theory shows how chords and melodies work together. Build on familiar harmony with seventh chords, borrowed chords, key changes, voice leading, and reharmonization to shape the sound of songs.",
+  "landingPage": {
+    "audience": [
+      "Songwriters shaping chord progressions",
+      "Musicians ready for deeper harmony",
+      "Music students beyond the fundamentals"
+    ],
+    "outcomes": [
+      "Build and spell seventh chords in any key",
+      "Use secondary and borrowed chords for color",
+      "Move songs between keys with smooth chord changes",
+      "Reharmonize melodies with chords that move smoothly"
+    ],
+    "valueProposition": "Give your songs richer harmony and smoother chord changes"
+  }
+}

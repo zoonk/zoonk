@@ -1,0 +1,211 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "en-ielts-part-1-form-completion",
+        "claimId": "d0dff206d006860f",
+        "criterion": "examRealism",
+        "observationId": "bd4a99da6351a582ca1350b6a59df64eca73ca0333a2cc54da5bd33f8d4aa65a.first.c05ee784-e7aa-4644-a293-683d3f915ab6.0",
+        "run": 1,
+        "side": "incumbent"
+      },
+      {
+        "caseId": "en-ielts-part-1-form-completion",
+        "claimId": "27e469b5dcfa13cd",
+        "criterion": "examRealism",
+        "observationId": "bd4a99da6351a582ca1350b6a59df64eca73ca0333a2cc54da5bd33f8d4aa65a.first.c05ee784-e7aa-4644-a293-683d3f915ab6.1",
+        "run": 1,
+        "side": "challenger"
+      },
+      {
+        "caseId": "en-ielts-part-1-form-completion",
+        "claimId": "1dd5eb883e63aa79",
+        "criterion": "examRealism",
+        "observationId": "58b98e8574b7670451d8786d8937d9cd10c3cc91db736ad736386c64c6249a3f.first.90a058d4-a6fa-49b2-8614-d99f6ff2460d.0",
+        "run": 1,
+        "side": "challenger"
+      },
+      {
+        "caseId": "en-ielts-part-1-form-completion",
+        "claimId": "36b48a12e33ab2b0",
+        "criterion": "examRealism",
+        "observationId": "58b98e8574b7670451d8786d8937d9cd10c3cc91db736ad736386c64c6249a3f.first.90a058d4-a6fa-49b2-8614-d99f6ff2460d.1",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.0014804999999999998,
+    "id": "15a4bf69588391110ba301ba7d508f19fc8b9e07a282b8c02f5d26a6b6c8f39d",
+    "packet": [
+      {
+        "A": {
+          "blob": "d3b9359462f322946a931853d88087de4957f6aaff4d0046ab36e6a59e841030",
+          "format": "text"
+        },
+        "B": {
+          "blob": "e28a3cc207cb8b10ae277130dc394190bf4e98980b307e534ce367d7cbdd66dc",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "The questions and options are written in Brazilian Portuguese instead of Spanish.",
+            "claimId": "3f08151f843f0f48",
+            "criterion": "naturalSpeech",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "B"
+          },
+          {
+            "claim": "Every reason and misconception of the second question is written in Spanish instead of Brazilian Portuguese, so the learner gets the explanation of that answer in the language they are being tested on.",
+            "claimId": "8c9830a34879e464",
+            "criterion": "naturalSpeech",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "A"
+          }
+        ],
+        "expectations": {
+          "blob": "09803fc2d24b1de2ec9718d3917bc9d25aa51ccbce6f0146f303ab854bf1a987",
+          "format": "text"
+        },
+        "input": {
+          "blob": "d5c8e6c07ff797238a5ddb72546bb373e495f0b5e46b22bf3601b5b8892bcdc2",
+          "format": "json"
+        }
+      },
+      {
+        "A": {
+          "blob": "42cdfd4be7d523dc2863fe18b2bc53ae191dce615e80ddd74404e0abc8209b22",
+          "format": "text"
+        },
+        "B": {
+          "blob": "2e141eea829e1a5a623e980d20b2d6f941f9e9bb11e9f3ecf22e60c9e5e7ea97",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "Both speakers are British English; the expectation requires the British and Australian accents to be mixed, and no Australian speaker appears.",
+            "claimId": "d0dff206d006860f",
+            "criterion": "examRealism",
+            "location": {
+              "detail": "speakers list: Hannah and Leah are both British English",
+              "kind": "whole"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "Both speakers are British English; the expectation requires the British and Australian accents to be mixed, and no Australian speaker appears.",
+            "claimId": "27e469b5dcfa13cd",
+            "criterion": "examRealism",
+            "location": {
+              "detail": "speakers list: Hannah and Kevin are both British English",
+              "kind": "whole"
+            },
+            "output": "B"
+          },
+          {
+            "claim": "Both speakers use British English only. The expectation requires a mix of the listed British and Australian accents, and no Australian speaker appears.",
+            "claimId": "1dd5eb883e63aa79",
+            "criterion": "examRealism",
+            "location": {
+              "detail": "speakers list: both speakers British English",
+              "kind": "whole"
+            },
+            "output": "B"
+          },
+          {
+            "claim": "Both speakers use British English only. The expectation requires a mix of the listed British and Australian accents, and no Australian speaker appears.",
+            "claimId": "36b48a12e33ab2b0",
+            "criterion": "examRealism",
+            "location": {
+              "detail": "speakers list: both speakers British English",
+              "kind": "whole"
+            },
+            "output": "A"
+          }
+        ],
+        "expectations": {
+          "blob": "375790283f8ec2e244da558bed984bf743d9aba5f13ee7362250c7e85a47a5c6",
+          "format": "text"
+        },
+        "input": {
+          "blob": "6e4ca088993adb7c01b9f88386a8cfaa427f48e8eda7e4d8ae833e665884ecc1",
+          "format": "json"
+        },
+        "relatedObservations": [
+          {
+            "claim": "Os dois falantes estão identificados com sotaque britânico; não há mistura com o sotaque australiano exigido.",
+            "output": "B"
+          },
+          {
+            "claim": "As questões 4 e 5 pedem respostas como “gloves” e “library”, que não são nomes, números, datas, preços ou endereços, conforme a expectativa para as respostas.",
+            "output": "B"
+          },
+          {
+            "claim": "Os dois falantes estão identificados com sotaque britânico; não há mistura com o sotaque australiano exigido.",
+            "output": "A"
+          },
+          {
+            "claim": "As questões 4 e 5 pedem respostas como “gloves” e “library”, que não são nomes, números, datas, preços ou endereços, conforme a expectativa para as respostas.",
+            "output": "A"
+          },
+          {
+            "claim": "As duas pessoas estão identificadas com sotaque britânico; não há falante com sotaque australiano, apesar da exigência de misturar os dois sotaques.",
+            "output": "A"
+          },
+          {
+            "claim": "As duas pessoas estão identificadas com sotaque britânico; não há falante com sotaque australiano, apesar da exigência de misturar os dois sotaques.",
+            "output": "B"
+          }
+        ]
+      }
+    ],
+    "passed": true,
+    "plantedDefectPassed": true,
+    "protocolHash": "ed018fd13c57b447f6f3cbfd3fcf01e6b506c0102da6f1fa19dac5ce44b4d919",
+    "reader": {
+      "channel": "gateway",
+      "family": "openai",
+      "model": "openai/gpt-6-luna"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "3f08151f843f0f48",
+          "finding": "doesn't hold",
+          "reason": "As questões e opções de B estão em espanhol; os motivos e as concepções equivocadas estão em português brasileiro. A afirmação confunde a língua das explicações com a das questões e opções."
+        },
+        {
+          "claimId": "8c9830a34879e464",
+          "finding": "holds",
+          "reason": "Na segunda questão de A, os motivos e a concepção equivocada estão em espanhol, não em português brasileiro. Em B, os equivalentes estão em português brasileiro."
+        },
+        {
+          "claimId": "d0dff206d006860f",
+          "finding": "holds for both",
+          "reason": "A lista de falantes de A identifica Nerea e Leah como falantes de inglês britânico; B identifica Hannah e Kevin como falantes de inglês britânico. Nenhum inclui inglês australiano, embora a expectativa peça a mistura dos dois sotaques."
+        },
+        {
+          "claimId": "27e469b5dcfa13cd",
+          "finding": "holds for both",
+          "reason": "A lista de falantes de A identifica Nerea e Leah como falantes de inglês britânico; B identifica Hannah e Kevin como falantes de inglês britânico. Nenhum inclui inglês australiano, embora a expectativa peça a mistura dos dois sotaques."
+        },
+        {
+          "claimId": "1dd5eb883e63aa79",
+          "finding": "holds for both",
+          "reason": "Ambos os outputs identificam seus dois falantes como usuários de inglês britânico e não incluem um falante de inglês australiano, apesar da exigência de misturar os sotaques."
+        },
+        {
+          "claimId": "36b48a12e33ab2b0",
+          "finding": "holds for both",
+          "reason": "Ambos os outputs identificam seus dois falantes como usuários de inglês britânico e não incluem um falante de inglês australiano, apesar da exigência de misturar os sotaques."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

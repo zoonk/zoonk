@@ -1,0 +1,115 @@
+{
+  "attempt": "first",
+  "costUsd": 0.0028007399999999995,
+  "failures": [],
+  "packetId": "afafee8e08113c18b5e0bfb29b0b5fd17d6fdd4b023d231ca57452eff8c3e414",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As perguntas têm respostas sustentadas pelo monólogo, e os gabaritos são os mesmos nas duas versões.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas versões apresentam o mesmo monólogo, o mesmo número de perguntas e o mesmo formato.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "B",
+            "reason": "Na questão 2, B mantém a justificativa e a misconception em português brasileiro; A usa espanhol nesses campos.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "A justificativa está em espanhol, embora a expectativa peça justificativas em português brasileiro.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "O leitor pode não entender por que a opção está errada.",
+            "location": {
+              "detail": "Oyes que aceptan objetos usados e incluso algunos que necesitan un pequeño arreglo.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "A misconception está em espanhol, embora a expectativa peça misconceptions em português brasileiro.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "O leitor pode não entender qual interpretação equivocada a opção representa.",
+            "location": {
+              "detail": "Interpreta el requisito de buen estado como exigencia de producto nuevo.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B corrige o problema de idioma na justificativa e na misconception da questão 2; o restante das versões é igual."
+        },
+        "pairId": "6a01cac0-6ca6-40db-a069-9a7c255d0f71"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Todas as respostas aceitas nas duas versões aparecem no roteiro e completam as frases de forma gramatical.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "A",
+            "reason": "A apresenta diretamente as frases com lacunas; B acrescenta perguntas diretas que repetem a informação solicitada nas frases, afastando-se um pouco do formato de sentence completion.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "B",
+            "reason": "O roteiro de B soa um pouco mais espontâneo, com detalhes e expressões mais próprios de uma fala informal; ambos são compreensíveis e naturais no geral.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "A é ligeiramente mais fiel ao formato de completar frases, enquanto o roteiro de B soa um pouco mais espontâneo; nenhuma diferença pesa o bastante para tornar uma versão claramente melhor."
+        },
+        "pairId": "b2756745-ac29-4fb1-8d0d-3a61488e8ba3"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As perguntas, os gabaritos e todas as respostas aceitas são idênticos e estão corretos de acordo com o roteiro.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas versões são idênticas e apresentam o mesmo formato e a mesma quantidade de perguntas.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os roteiros e as perguntas são idênticos; não há diferença de naturalidade ou linguagem.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "As duas versões são idênticas."
+        },
+        "pairId": "c195e0fb-54cf-42c2-bb55-4776fda164d5"
+      }
+    ]
+  }
+}

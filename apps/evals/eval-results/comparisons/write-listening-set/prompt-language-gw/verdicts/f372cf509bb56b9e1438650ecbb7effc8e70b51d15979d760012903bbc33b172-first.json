@@ -1,0 +1,198 @@
+{
+  "attempt": "first",
+  "costUsd": 0.0065899899999999996,
+  "failureCodes": [
+    "invalid_response",
+    "failed_controls"
+  ],
+  "failures": [
+    "Verdict does not cover the sealed criteria or outputs.",
+    "Preferred one of two identical outputs."
+  ],
+  "packetId": "f372cf509bb56b9e1438650ecbb7effc8e70b51d15979d760012903bbc33b172",
+  "passed": false,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, and the keys match the recording.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, and both miss the expected accent mix and the self-correction.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The input asks for speakers who mix British and Australian accents, but both speakers are British English.",
+            "criterion": "examRealism",
+            "learnerCost": "The learner hears only one accent, so the accent mix the exam uses is never practised.",
+            "location": {
+              "detail": "speakers list: Hannah and Kevin are both British English",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "No answer follows a speaker's self-correction, although the expectation asks for one or two answers after a correction.",
+            "criterion": "examRealism",
+            "learnerCost": "The learner never practises catching the corrected detail that real Part 1 questions use as a trap.",
+            "location": {
+              "detail": "whole set: no correction precedes any key",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The input asks for speakers who mix British and Australian accents, but both speakers are British English.",
+            "criterion": "examRealism",
+            "learnerCost": "The learner hears only one accent, so the accent mix the exam uses is never practised.",
+            "location": {
+              "detail": "speakers list: Hannah and Kevin are both British English",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "No answer follows a speaker's self-correction, although the expectation asks for one or two answers after a correction.",
+            "criterion": "examRealism",
+            "learnerCost": "The learner never practises catching the corrected detail that real Part 1 questions use as a trap.",
+            "location": {
+              "detail": "whole set: no correction precedes any key",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": null,
+        "pairId": "6ad67d26-bc16-4f8c-ba24-d5138017aa6c"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets have the same five questions with the same correct answers and the same distractors.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both sets have the same five questions in the same order, with the same options.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "A",
+            "reason": "A gives every reason and misconception in Brazilian Portuguese, while B writes them in Spanish, which the reader cannot read.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Reasons and misconceptions are written in Spanish instead of Brazilian Portuguese across the set, against the expectation.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "The Brazilian learner cannot read why each option is right or wrong, so the feedback does not teach them.",
+            "location": {
+              "detail": "Oyes que aceptan objetos usados e incluso algunos que necesitan un pequeño arreglo.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "The questions and keys are the same, but B's explanations are in Spanish, so its Brazilian reader cannot use them."
+        },
+        "pairId": "d48b566d-783e-4351-9930-c121bfd220a7"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets have correct keys; B's sample answer is longer than the two-word limit, but its accepted answers are right.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "B",
+            "reason": "B includes the date correction and the rejected-distractor pattern the exam uses; A has no self-correction.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both scripts read as natural spoken English.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The input asks for speakers who mix British and Australian accents, but both speakers are British English.",
+            "criterion": "examRealism",
+            "learnerCost": "The learner hears only one accent, so the accent mix the exam uses is never practised.",
+            "location": {
+              "detail": "speakers list: Hannah and Leah are both British English",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "No answer follows a speaker's self-correction, although the expectation asks for one or two answers after a correction.",
+            "criterion": "examRealism",
+            "learnerCost": "The learner never practises catching the corrected detail that real Part 1 questions use as a trap.",
+            "location": {
+              "detail": "whole set: no correction precedes any key",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The input asks for speakers who mix British and Australian accents, but both speakers are British English.",
+            "criterion": "examRealism",
+            "learnerCost": "The learner hears only one accent, so the accent mix the exam uses is never practised.",
+            "location": {
+              "detail": "speakers list: Hannah and Leah are both British English",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The model answer for the workshop date has four words, over the two-word limit the question states.",
+            "criterion": "keys",
+            "learnerCost": "The learner may think a longer answer than the limit allows is acceptable on the form.",
+            "location": {
+              "detail": "the eighteenth of May",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B includes the self-correction on the date and the distractor pattern the exam uses, while A lacks the correction; both share the accent gap."
+        },
+        "pairId": "e1fba1df-4ce0-449e-aa23-1034837d7e26"
+      }
+    ]
+  }
+}

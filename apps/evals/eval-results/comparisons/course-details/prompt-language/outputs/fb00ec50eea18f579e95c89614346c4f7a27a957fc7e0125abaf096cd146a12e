@@ -1,0 +1,21 @@
+{
+  "categories": [
+    "health",
+    "science"
+  ],
+  "description": "A farmacologia estuda como os remédios agem e são processados pelo corpo. Você vai percorrer doses e formas de uso, interações, efeitos adversos, antibióticos e resistência bacteriana, para conversar com mais clareza com profissionais de saúde.",
+  "landingPage": {
+    "audience": [
+      "Estudantes de cursos da saúde",
+      "Pessoas curiosas sobre remédios",
+      "Quem acompanha tratamentos com profissionais"
+    ],
+    "outcomes": [
+      "Descrever o caminho de um remédio pelo corpo",
+      "Comparar como doses e vias mudam os efeitos",
+      "Perceber riscos de interações e efeitos adversos",
+      "Explicar por que bactérias ficam resistentes a antibióticos"
+    ],
+    "valueProposition": "Reconhecer efeitos e riscos possíveis dos remédios para conversar melhor com profissionais de saúde"
+  }
+}

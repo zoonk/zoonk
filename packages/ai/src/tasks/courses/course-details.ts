@@ -7,7 +7,8 @@ import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { formatLocalContext } from "../_utils/language-context";
-import { getPromptLanguageName } from "../_utils/prompt-language";
+import { fillPromptLanguages, getPromptLanguageName } from "../_utils/prompt-language";
+import { selectPromptVariants } from "../_utils/prompt-variants";
 import { getVerbForm } from "../_utils/verb-form";
 import promptTemplate from "./course-details.prompt.md";
 
@@ -26,7 +27,7 @@ export const SUBJECT_CATEGORIES = COURSE_CATEGORIES.filter(
   (category) => !FORMAT_CATEGORIES.has(category),
 );
 
-const systemPrompt = promptTemplate.replace("{{CATEGORIES}}", () => SUBJECT_CATEGORIES.join(", "));
+const template = promptTemplate.replace("{{CATEGORIES}}", () => SUBJECT_CATEGORIES.join(", "));
 
 export const PAGE_LIST_ITEMS = { audience: 3, outcomes: 4 } as const;
 
@@ -75,6 +76,17 @@ function formatChapters(chapters: readonly DetailsChapter[]): string {
         .join("");
 }
 
+function buildSystemPrompt({ language, targetLanguage }: CourseDetailsParams): string {
+  return fillPromptLanguages({
+    learnerLanguage: language,
+    targetLanguage: targetLanguage ?? undefined,
+    template: selectPromptVariants({
+      template,
+      variants: { languageCourse: Boolean(targetLanguage) },
+    }),
+  });
+}
+
 function buildUserPrompt(params: CourseDetailsParams): string {
   const targetLanguage = params.targetLanguage
     ? getPromptLanguageName({ language: params.targetLanguage, userLanguage: params.language })
@@ -112,6 +124,7 @@ function normalizeCourseDetails(raw: RawCourseDetails): CourseDetails {
 
 export async function generateCourseDetails(params: CourseDetailsParams) {
   const { analytics, model = defaultModel, reasoning, useFallback = true } = params;
+  const systemPrompt = buildSystemPrompt(params);
   const userPrompt = buildUserPrompt(params);
   const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 

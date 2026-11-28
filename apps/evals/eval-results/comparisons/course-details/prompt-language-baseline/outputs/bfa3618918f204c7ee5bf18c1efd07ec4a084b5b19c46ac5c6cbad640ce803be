@@ -1,0 +1,21 @@
+{
+  "categories": [
+    "society",
+    "math"
+  ],
+  "description": "A preparação para o ENEM cobre Linguagens, Ciências Humanas, Matemática, Ciências da Natureza e redação. Começa com porcentagens, proporções, funções, estatística, leitura de textos e gráficos, ecologia e ondas, e avança pelas demais habilidades cobradas na prova.",
+  "landingPage": {
+    "audience": [
+      "Estudantes do ensino médio",
+      "Quem vai prestar o ENEM",
+      "Candidatos a vagas em universidades públicas"
+    ],
+    "outcomes": [
+      "Responder questões de Linguagens e Ciências Humanas",
+      "Resolver problemas de Matemática com dados do enunciado",
+      "Responder questões de Ciências da Natureza",
+      "Planejar e escrever a redação do ENEM"
+    ],
+    "valueProposition": "Resolver questões do ENEM e escrever uma redação com argumentos bem organizados"
+  }
+}

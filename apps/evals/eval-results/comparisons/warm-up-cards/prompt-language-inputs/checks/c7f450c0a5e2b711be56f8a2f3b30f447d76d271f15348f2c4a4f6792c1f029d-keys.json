@@ -1,0 +1,12 @@
+{
+  "caseId": "pt-enem",
+  "costUsd": 0.026223999999999997,
+  "name": "answer keys",
+  "passed": 9,
+  "problems": [
+    "{\"itemLocator\":\"cards[1]\",\"keyedAnswer\":\"Energia disponível\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"Less energy is available at each successive trophic level, but “matéria dos organismos” can mean biomass, which also tends to decrease across trophic levels in terrestrial food chains. The stem asks for a tendency, so both answers fit. Matter cycling through the ecosystem does not imply equal biomass at each level.\"}"
+  ],
+  "run": 2,
+  "side": "incumbent",
+  "total": 10
+}

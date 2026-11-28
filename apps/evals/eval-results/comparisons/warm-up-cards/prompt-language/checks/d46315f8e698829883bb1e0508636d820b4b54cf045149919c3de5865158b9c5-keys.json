@@ -1,0 +1,14 @@
+{
+  "caseId": "en-python",
+  "costUsd": 0.024088,
+  "name": "answer keys",
+  "passed": 7,
+  "problems": [
+    "{\"itemLocator\":\"cards[5]\",\"keyedAnswer\":\"It raises a TypeError\",\"kind\":\"noCorrectOption\",\"workedAnswer\":\"The stem ends before the assignment is shown. Assigning to a character position in a string would raise TypeError, but no such operation appears in the question.\"}",
+    "{\"itemLocator\":\"cards[6]\",\"keyedAnswer\":\"One character\",\"kind\":\"noCorrectOption\",\"workedAnswer\":\"The stem omits the iterable. A loop over a string yields one character per iteration, while a loop over a list of words yields one word per iteration. The question does not establish which applies.\"}",
+    "{\"itemLocator\":\"cards[7]\",\"keyedAnswer\":\"A key\",\"kind\":\"noCorrectOption\",\"workedAnswer\":\"The stem stops at profile[. In profile[key], the subscript is a key and the lookup produces its associated value. The missing text is needed to tell what the question asks about.\"}"
+  ],
+  "run": 1,
+  "side": "challenger",
+  "total": 10
+}

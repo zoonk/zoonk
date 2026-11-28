@@ -1,0 +1,159 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "it was a coffee machine that I actually worked on first",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Working at a repair café. Write NO MORE THAN TWO WORDS.",
+        "question": "The first item Hannah helped to repair at the café was a ______.",
+        "keyPoints": [
+          "A coffee machine."
+        ],
+        "acceptedAnswers": [
+          "coffee machine"
+        ],
+        "sampleAnswer": "coffee machine"
+      },
+      {
+        "evidence": "my course at college was engineering",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Working at a repair café. Write NO MORE THAN TWO WORDS.",
+        "question": "Hannah says that she studied ______ at college.",
+        "keyPoints": [
+          "Engineering."
+        ],
+        "acceptedAnswers": [
+          "engineering"
+        ],
+        "sampleAnswer": "engineering"
+      },
+      {
+        "evidence": "we moved into the school hall",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Working at a repair café. Write NO MORE THAN TWO WORDS.",
+        "question": "The repair café now meets in the ______.",
+        "keyPoints": [
+          "The school hall."
+        ],
+        "acceptedAnswers": [
+          "school hall"
+        ],
+        "sampleAnswer": "school hall"
+      },
+      {
+        "evidence": "I’d say patience is what you really need",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Working at a repair café. Write NO MORE THAN TWO WORDS.",
+        "question": "Hannah believes that ______ is the most important quality for volunteers.",
+        "keyPoints": [
+          "Patience."
+        ],
+        "acceptedAnswers": [
+          "patience"
+        ],
+        "sampleAnswer": "patience"
+      },
+      {
+        "evidence": "I used a wooden spoon to tap the joints back into place",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "hard",
+        "context": "Working at a repair café. Write NO MORE THAN TWO WORDS.",
+        "question": "Hannah used a ______ to put the parts of an old chair back into position.",
+        "keyPoints": [
+          "A wooden spoon."
+        ],
+        "acceptedAnswers": [
+          "wooden spoon"
+        ],
+        "sampleAnswer": "wooden spoon"
+      },
+      {
+        "evidence": "we’re planning a tool library",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "hard",
+        "context": "Working at a repair café. Write NO MORE THAN TWO WORDS.",
+        "question": "The volunteers intend to set up a ______ so that residents can borrow equipment.",
+        "keyPoints": [
+          "A tool library."
+        ],
+        "acceptedAnswers": [
+          "tool library"
+        ],
+        "sampleAnswer": "tool library"
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Hannah",
+        "gender": "female",
+        "accent": "British English"
+      }
+    ],
+    "title": "Working at a repair café",
+    "turns": [
+      {
+        "speaker": "Hannah",
+        "text": "Hello, everyone. I’m Hannah, and I’m going to tell you about the repair café where I volunteer. People bring us things that have stopped working, and we try to fix them together. When I joined, I thought I’d start by repairing bicycles, but it was a coffee machine that I actually worked on first. Its owner stayed to watch, and we managed to get it going again. I was nervous, but she was delighted."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "I’d always enjoyed taking things apart to see how they worked. People sometimes assume I was studying design, but my course at college was engineering. That gave me some useful technical knowledge, although I soon discovered there were plenty of practical things I still needed to learn. The more experienced volunteers were happy to show me, and nobody seemed to mind when I asked the same question twice."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "At first, the café met in a room at the library. It was a pleasant place, but there wasn’t much space for larger objects, and we had to be very careful about making noise. So we moved into the school hall, which has been much better. We can spread out the tables, and there’s enough room for visitors to sit and have a chat while they wait."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "You might think the most important quality for a volunteer is confidence. It certainly helps, especially when you’re explaining something to a visitor. But I’d say patience is what you really need. Sometimes a repair takes much longer than you expect, and it’s tempting to give up. You have to be willing to try different approaches, and to accept that not every problem has an obvious solution."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "One of my favourite repairs was an old chair that belonged to a visitor’s grandmother. I thought we’d need a special tool to fix it, but another volunteer suggested looking for something simpler. In the end, I used a wooden spoon to tap the joints back into place. It was gentle enough not to damage the chair. The visitor was pleased because the chair had been in her family for years."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "We’ve also been thinking about how to help people make repairs at home. We considered selling cheap tools, but that would still mean people buying things they might use only once. Instead, we’re planning a tool library, where local people can borrow what they need and bring it back afterwards. We’re collecting equipment for it now, and we hope to open it later this year."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "The café has changed how I think about broken things. I used to replace them without much thought. Now I usually ask myself whether they could be fixed first. Thanks for listening, and do come and visit us sometime."
+      }
+    ]
+  }
+}

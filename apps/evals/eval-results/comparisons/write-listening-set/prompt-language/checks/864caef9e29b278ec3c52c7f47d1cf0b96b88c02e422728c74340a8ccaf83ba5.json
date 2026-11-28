@@ -1,0 +1,11 @@
+{
+  "blockingProblems": [],
+  "caseId": "pt-cambridge-accepted-article-regression",
+  "costUsd": 0,
+  "name": "code checks",
+  "passed": 7,
+  "problems": [],
+  "run": 1,
+  "side": "challenger",
+  "total": 7
+}

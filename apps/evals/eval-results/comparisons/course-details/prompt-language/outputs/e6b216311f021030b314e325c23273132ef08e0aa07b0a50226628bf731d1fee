@@ -1,0 +1,20 @@
+{
+  "categories": [
+    "law"
+  ],
+  "description": "Contract law covers when promises become enforceable, how to read contract terms, and what may happen when an agreement is broken. You’ll look at agreements such as leases, job offers, app terms, and freelance contracts, and see how courts handle disputes; this is for general education, not legal advice.",
+  "landingPage": {
+    "audience": [
+      "People reviewing a lease or job offer",
+      "Freelancers signing client agreements",
+      "Curious about everyday legal agreements"
+    ],
+    "outcomes": [
+      "Tell when a promise may bind you",
+      "Read key terms in leases and job offers",
+      "Spot what may follow a broken agreement",
+      "Ask a lawyer focused questions about a contract"
+    ],
+    "valueProposition": "Spot contract terms that could affect your money or choices before you sign"
+  }
+}

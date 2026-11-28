@@ -9,7 +9,7 @@ vi.mock("./skill-graph.prompt.md", async () => {
 
 const KIND_INPUTS = {
   exam: ["`EXAM_BLUEPRINT`", "`SECTION`"],
-  language: ["`TARGET_LANGUAGE`"],
+  language: ["The language being learned:"],
   learn: ["`PURPOSE`"],
 } as const;
 
@@ -17,7 +17,7 @@ const GOAL_KINDS = ["exam", "language", "learn"] as const;
 
 describe(buildSkillGraphSystemPrompt, () => {
   it.each(GOAL_KINDS)("gives a %s goal its own inputs and none of the other kinds'", (goalKind) => {
-    const prompt = buildSkillGraphSystemPrompt({ goalKind });
+    const prompt = buildSkillGraphSystemPrompt({ goalKind, language: "en" });
 
     const others = GOAL_KINDS.filter((kind) => kind !== goalKind).flatMap(
       (kind) => KIND_INPUTS[kind],
@@ -30,10 +30,28 @@ describe(buildSkillGraphSystemPrompt, () => {
     expect(prompt).not.toContain("{{");
   });
 
+  it("names the learner's language and the one a language goal learns", () => {
+    const prompt = buildSkillGraphSystemPrompt({
+      goalKind: "language",
+      language: "pt",
+      targetLanguage: "en",
+    });
+
+    expect(prompt).toContain("The learner's language: Português Brasileiro.");
+    expect(prompt).toContain("The language being learned: US English.");
+  });
+
+  it("points a language goal without a known language at the goal", () => {
+    const prompt = buildSkillGraphSystemPrompt({ goalKind: "language", language: "en" });
+
+    expect(prompt).toContain("The language being learned: the language GOAL names.");
+  });
+
   it("adds the material and lesson budget rules only to a test from the learner's own material", () => {
     const prompt = buildSkillGraphSystemPrompt({
       goalKind: "exam",
       hasMaterial: true,
+      language: "en",
       lessonBudget: 15,
     });
 
@@ -44,8 +62,8 @@ describe(buildSkillGraphSystemPrompt, () => {
 
   it("tells only a product goal how to title and fill the product's course", () => {
     const product = { brand: "Acme", courseTitle: "Gizmo", name: "Gizmo" };
-    const withProduct = buildSkillGraphSystemPrompt({ goalKind: "learn", product });
-    const without = buildSkillGraphSystemPrompt({ goalKind: "learn" });
+    const withProduct = buildSkillGraphSystemPrompt({ goalKind: "learn", language: "en", product });
+    const without = buildSkillGraphSystemPrompt({ goalKind: "learn", language: "en" });
 
     for (const input of ["`PRODUCT`", "`PRODUCT_COURSE`"]) {
       expect(withProduct).toContain(input);
@@ -58,7 +76,12 @@ describe(buildSkillGraphSystemPrompt, () => {
   it.each(["none", "basic"] as const)(
     "adds subject-first rules for a deep beginner at %s",
     (ownLevel) => {
-      const prompt = buildSkillGraphSystemPrompt({ goalKind: "learn", ownLevel, purpose: "deep" });
+      const prompt = buildSkillGraphSystemPrompt({
+        goalKind: "learn",
+        language: "en",
+        ownLevel,
+        purpose: "deep",
+      });
 
       expect(prompt).toContain("Build a progression of subject capabilities");
       expect(prompt).not.toContain("{{");
@@ -72,7 +95,7 @@ describe(buildSkillGraphSystemPrompt, () => {
     { ownLevel: "none", purpose: "refresh" },
     { hasMaterial: true, ownLevel: "none", purpose: "deep" },
   ] as const)("keeps the subject-first rules out of other learning paths: %j", (params) => {
-    const prompt = buildSkillGraphSystemPrompt({ goalKind: "learn", ...params });
+    const prompt = buildSkillGraphSystemPrompt({ goalKind: "learn", language: "en", ...params });
 
     expect(prompt).not.toContain("Build a progression of subject capabilities");
     expect(prompt).not.toContain("{{");

@@ -4,7 +4,7 @@ import { z } from "zod";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
-import { getPromptLanguageName } from "../_utils/prompt-language";
+import { fillPromptLanguages, getPromptLanguageName } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
 import { type ItemExamFormat } from "./generate-items";
@@ -150,11 +150,15 @@ function buildSystemPrompt(params: PlacementItemsParams): string {
     variants: { ...writes, trueFalse: writes.quick && params.quickFormat === "trueFalse" },
   });
 
-  return withItemRules(prompt, {
-    field: false,
-    formats,
-    languageGoal: Boolean(params.targetLanguage),
-    usedSituations: params.skills.some((skill) => skill.usedSituations?.length),
+  return fillPromptLanguages({
+    learnerLanguage: params.language,
+    targetLanguage: params.targetLanguage ?? undefined,
+    template: withItemRules(prompt, {
+      field: false,
+      formats,
+      languageGoal: Boolean(params.targetLanguage),
+      usedSituations: params.skills.some((skill) => skill.usedSituations?.length),
+    }),
   });
 }
 

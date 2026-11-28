@@ -1,0 +1,19 @@
+{
+  "caseId": "pt-biology-beginner-deep",
+  "challenger": {
+    "costUsd": 0.06646825,
+    "durationMs": 141591.27470900002,
+    "hash": "e38410bb70ec4c0501c2ef9c332113d8e8b1bcf2eb709491df5bec596d24f0bd",
+    "systemPromptHash": "54bb9e4d76f82243391e53d95d955f40ec2ea1a2f71d692e9efd66f50c1c0569",
+    "userPromptHash": "dea69ec5d27d0aabc8f97bb8bdc307cc04a3fe0d482eb0d1f2bcfe9b569071e0"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.07028825,
+    "durationMs": 146528.925375,
+    "hash": "ee28727533a36a10fc81f7ed2c2ab4fe0107b5cfb95293c3651a03fcc37ec93a",
+    "systemPromptHash": "245c358b957b37cd81aa3ae6b896adc4beba96f94646f17f3389ab23f66175a0",
+    "userPromptHash": "dea69ec5d27d0aabc8f97bb8bdc307cc04a3fe0d482eb0d1f2bcfe9b569071e0"
+  },
+  "run": 1
+}

@@ -1,0 +1,31 @@
+{
+ "pairs": [
+  {
+   "input": {
+    "courseTitle": "Inglês",
+    "language": "pt",
+    "country": null,
+    "targetLanguage": "en",
+    "chapters": [
+     {
+      "level": "beginner",
+      "title": "Apresentações",
+      "description": "Dizer quem você é, de onde vem e o que faz."
+     },
+     {
+      "level": "beginner",
+      "title": "No aeroporto e no hotel",
+      "description": "Fazer check-in, pedir informações e resolver problemas simples."
+     }
+    ]
+   },
+   "expectations": "A Brazilian Portuguese course page for an English course: every field is in Brazilian Portuguese.",
+   "clean": "{\n \"categories\": [\n  \"communication\"\n ],\n \"description\": \"O inglês dos Estados Unidos aparece em situações cotidianas, viagens, estudos e trabalho. O curso vai de apresentações, pedidos e conversas sobre a rotina a assuntos mais complexos, ampliando vocabulário, pronúncia, leitura, escrita e compreensão de conversas.\",\n \"landingPage\": {\n  \"audience\": [\n   \"Quem planeja viajar aos Estados Unidos\",\n   \"Estudantes que usam inglês nos estudos\",\n   \"Curiosos pela cultura americana\"\n  ],\n  \"outcomes\": [\n   \"Apresentar-se e falar da própria rotina\",\n   \"Resolver pedidos e imprevistos simples em viagens\",\n   \"Conversar sobre estudos, trabalho e planos\",\n   \"Acompanhar conversas e expressar opiniões com nuance\"\n  ],\n  \"valueProposition\": \"Conversar em inglês em viagens, restaurantes e situações do dia a dia, avançando até estudos e trabalho.\"\n }\n}",
+   "flawed": "{\n \"categories\": [\n  \"communication\"\n ],\n \"description\": \"O inglês dos Estados Unidos aparece em situações cotidianas, viagens, estudos e trabalho. O curso vai de apresentações, pedidos e conversas sobre a rotina a assuntos mais complexos, ampliando vocabulário, pronúncia, leitura, escrita e compreensão de conversas.\",\n \"landingPage\": {\n  \"audience\": [\n   \"Quem planeja viajar aos Estados Unidos\",\n   \"Estudantes que usam inglês nos estudos\",\n   \"Curiosos pela cultura americana\"\n  ],\n  \"outcomes\": [\n   \"Introduce yourself and talk about your routine\",\n   \"Handle simple requests and problems when traveling\",\n   \"Talk about studies, work and plans\",\n   \"Follow conversations and share opinions with nuance\"\n  ],\n  \"valueProposition\": \"Conversar em inglês em viagens, restaurantes e situações do dia a dia, avançando até estudos e trabalho.\"\n }\n}",
+   "criterion": "language",
+   "defect": "All four outcomes are written in English instead of Brazilian Portuguese, while the rest of the page is in Portuguese, so the page shows its \"What you will be able to do\" list in the language the visitor wants to learn.",
+   "falseAllegation": "The value proposition is written in English instead of Brazilian Portuguese.",
+   "provenance": "Eval case pt-ingles-language-beginner output from GPT-6 Luna (synthetic, no learner data); the flawed side translates the outcomes to English by hand."
+  }
+ ]
+}

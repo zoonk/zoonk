@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "When a honeybee colony faces a cold winter, what do its workers do to stay warm?",
+      "options": [
+        {
+          "text": "Form a tight cluster",
+          "correct": true
+        },
+        {
+          "text": "Hibernate alone",
+          "correct": false
+        },
+        {
+          "text": "Leave for warmer regions",
+          "correct": false
+        }
+      ],
+      "reveal": "Form a tight cluster. Bees vibrate their flight muscles to generate heat, keeping the cluster’s center warm even when it’s cold outside."
+    },
+    {
+      "question": "What do honeybees make from plant resins to seal small gaps in a hive?",
+      "options": [
+        {
+          "text": "A sticky resin blend",
+          "correct": true
+        },
+        {
+          "text": "Wax flakes",
+          "correct": false
+        },
+        {
+          "text": "Packed pollen",
+          "correct": false
+        }
+      ],
+      "reveal": "A sticky resin blend. Bees mix collected plant resins with wax and other materials to make propolis, which helps seal and protect the hive."
+    },
+    {
+      "question": "A honeybee colony has workers, a queen, and drones; which group is male?",
+      "options": [
+        {
+          "text": "Drones",
+          "correct": true
+        },
+        {
+          "text": "Workers",
+          "correct": false
+        },
+        {
+          "text": "The queen",
+          "correct": false
+        }
+      ],
+      "reveal": "Drones. They are male bees; workers and queens are female."
+    },
+    {
+      "question": "As nectar ripens into honey in a hive, what helps remove much of its water?",
+      "options": [
+        {
+          "text": "Air moved by bees",
+          "correct": true
+        },
+        {
+          "text": "Pollen mixed into it",
+          "correct": false
+        },
+        {
+          "text": "Wax melting into it",
+          "correct": false
+        }
+      ],
+      "reveal": "Air moved by bees. Workers fan their wings over nectar in the comb, helping water evaporate as the nectar ripens."
+    },
+    {
+      "question": "What do worker bees produce to build the pale, hexagonal walls of a comb?",
+      "options": [
+        {
+          "text": "Wax from their bodies",
+          "correct": true
+        },
+        {
+          "text": "Resin from tree bark",
+          "correct": false
+        },
+        {
+          "text": "Fibers from flowers",
+          "correct": false
+        }
+      ],
+      "reveal": "Wax from their bodies. Worker bees secrete tiny wax scales from glands on their abdomens, then shape them into comb."
+    },
+    {
+      "question": "When a worker returns with a figure-eight dance, what can nestmates learn about food?",
+      "options": [
+        {
+          "text": "Its direction and distance",
+          "correct": true
+        },
+        {
+          "text": "Its sweetness and color",
+          "correct": false
+        },
+        {
+          "text": "The number of flowers nearby",
+          "correct": false
+        }
+      ],
+      "reveal": "Its direction and distance. The dance’s movements give other bees clues about where a food source is, using the sun as a reference for direction."
+    },
+    {
+      "question": "What does pollen mainly provide to a honeybee colony?",
+      "options": [
+        {
+          "text": "Protein and other nutrients",
+          "correct": true
+        },
+        {
+          "text": "Most of its quick energy",
+          "correct": false
+        },
+        {
+          "text": "The water bees drink",
+          "correct": false
+        }
+      ],
+      "reveal": "Protein and other nutrients. Pollen supplies important nutrients for raising young bees, while nectar is the colony’s main carbohydrate-rich energy source."
+    },
+    {
+      "question": "Where do Varroa mites usually reproduce inside a honeybee hive?",
+      "options": [
+        {
+          "text": "In capped brood cells",
+          "correct": true
+        },
+        {
+          "text": "In stored honey",
+          "correct": false
+        },
+        {
+          "text": "On adult bees only",
+          "correct": false
+        }
+      ],
+      "reveal": "In capped brood cells. A female mite enters a cell with a developing bee and lays eggs there, so the young mites develop alongside the bee."
+    },
+    {
+      "question": "After mating, how can a queen fertilize eggs long after her mating flight?",
+      "options": [
+        {
+          "text": "She stores sperm internally",
+          "correct": true
+        },
+        {
+          "text": "She mates every day",
+          "correct": false
+        },
+        {
+          "text": "Workers fertilize the eggs",
+          "correct": false
+        }
+      ],
+      "reveal": "She stores sperm internally. A queen can keep sperm in a specialized organ and use it as she lays eggs, rather than mating each time."
+    },
+    {
+      "question": "When a strong honeybee colony swarms, what usually happens to its old queen?",
+      "options": [
+        {
+          "text": "She leaves with part of the colony",
+          "correct": true
+        },
+        {
+          "text": "She stays with the whole colony",
+          "correct": false
+        },
+        {
+          "text": "She becomes a worker",
+          "correct": false
+        }
+      ],
+      "reveal": "She leaves with part of the colony. Swarming is one way a colony reproduces: some workers depart with the old queen while a new queen can remain with the bees left behind."
+    }
+  ]
+}

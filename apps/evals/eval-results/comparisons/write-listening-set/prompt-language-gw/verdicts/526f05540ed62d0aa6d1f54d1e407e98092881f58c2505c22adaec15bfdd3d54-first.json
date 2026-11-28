@@ -1,0 +1,205 @@
+{
+  "attempt": "first",
+  "costUsd": 0.004983039999999999,
+  "failures": [],
+  "packetId": "526f05540ed62d0aa6d1f54d1e407e98092881f58c2505c22adaec15bfdd3d54",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "A’s samples violate the stated number limit in fewer places than B’s. Both otherwise key the details to the recording, but both provide some sample answers in words where the question requires a number.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "A",
+            "reason": "Both offer ten ordered form-completion questions and a plausible everyday booking conversation. A has more useful self-corrections, while both add accent and difficulty metadata despite the request for no accents and no level.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "B",
+            "reason": "B’s key points are in Brazilian Portuguese as requested. A’s key points are in English, which makes them less accessible to the Brazilian learner; both scripts otherwise sound like plausible spoken conversations.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The sample answers for numerical questions use words even though the prompts require a number: for example, “three,” “quarter past eight,” and “forty-eight pounds.” These do not follow the stated answer limits.",
+            "criterion": "keys",
+            "learnerCost": "A learner could copy the displayed sample answer and lose credit for exceeding the number-only limit.",
+            "location": {
+              "detail": "Sample answers for questions 2, 3, 4 and 8",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The output supplies speaker accents and question difficulty levels even though the expectation explicitly says to provide no accents and no level.",
+            "criterion": "examRealism",
+            "learnerCost": "The set does not follow the requested exam presentation and gives the learner metadata they were not meant to receive.",
+            "location": {
+              "detail": "Speaker metadata and difficulty fields throughout",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The key points are in English rather than Brazilian Portuguese.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "The learner may not understand the explanations and cannot use them to review the listening answers.",
+            "location": {
+              "detail": "Key points for all ten questions",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The sample answers for numerical questions use words even though the prompts require a number: for example, “three,” “quarter past nine,” “forty-eight pounds,” “twenty-four,” and the phone number spelled out in words.",
+            "criterion": "keys",
+            "learnerCost": "A learner could copy the displayed sample answer and lose credit for exceeding the number-only limit.",
+            "location": {
+              "detail": "Sample answers for questions 3, 4, 5, 7 and 10",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The output supplies speaker accents and question difficulty levels even though the expectation explicitly says to provide no accents and no level.",
+            "criterion": "examRealism",
+            "learnerCost": "The set does not follow the requested exam presentation and gives the learner metadata they were not meant to receive.",
+            "location": {
+              "detail": "Speaker metadata and difficulty fields throughout",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B puts its key points in Brazilian Portuguese, making the review material usable for the intended learner. Both outputs have serious answer-format and exam-metadata problems, but A’s English key points are an additional barrier."
+        },
+        "pairId": "05f3b4f7-2468-4646-8b3a-be5e2336001d"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The correct details are supported by the recording in both, but both include sample answers in words where a number-only response is required.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both provide ten ordered form-completion questions and a plausible everyday booking conversation, and both add accents and difficulty levels despite the request for neither.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "The scripts sound like plausible spoken conversations and both keep their key points in Brazilian Portuguese.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The sample answers for numerical questions use words even though the prompts require a number: for example, “three,” “quarter past nine,” “forty-eight pounds,” “twenty-four,” and the phone number spelled out in words.",
+            "criterion": "keys",
+            "learnerCost": "A learner could copy the displayed sample answer and lose credit for exceeding the number-only limit.",
+            "location": {
+              "detail": "Sample answers for questions 3, 4, 5, 7 and 10",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The output supplies speaker accents and question difficulty levels even though the expectation explicitly says to provide no accents and no level.",
+            "criterion": "examRealism",
+            "learnerCost": "The set does not follow the requested exam presentation and gives the learner metadata they were not meant to receive.",
+            "location": {
+              "detail": "Speaker metadata and difficulty fields throughout",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The sample answers for numerical questions use words even though the prompts require a number: for example, “three,” “quarter past nine,” “forty-eight pounds,” “twenty-four,” and the phone number spelled out in words.",
+            "criterion": "keys",
+            "learnerCost": "A learner could copy the displayed sample answer and lose credit for exceeding the number-only limit.",
+            "location": {
+              "detail": "Sample answers for questions 3, 4, 5, 7 and 10",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The output supplies speaker accents and question difficulty levels even though the expectation explicitly says to provide no accents and no level.",
+            "criterion": "examRealism",
+            "learnerCost": "The set does not follow the requested exam presentation and gives the learner metadata they were not meant to receive.",
+            "location": {
+              "detail": "Speaker metadata and difficulty fields throughout",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical, including their strengths and their answer-format and metadata problems."
+        },
+        "pairId": "345a306d-85c5-4e30-83c6-cf2f5c949956"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The correct options are supported by the monologue, and the distractors are grounded in details it mentions.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both provide the same Spanish monologue and Spanish questions for the requested DELE B2 listening task.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "B",
+            "reason": "B keeps the explanations and misconceptions in Brazilian Portuguese. A includes Spanish explanations and misconceptions, contrary to the language requirement.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Some explanations and misconceptions are in Spanish rather than Brazilian Portuguese, including “Oyes que aceptan objetos usados e incluso algunos que necesitan un pequeño arreglo.”",
+            "criterion": "naturalSpeech",
+            "learnerCost": "The learner may not be able to use the explanation to understand why an answer is right or wrong, and it does not follow the required language.",
+            "location": {
+              "detail": "Question 2, first option’s reason and misconception",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "The questions and keys are equivalent, but B follows the explicit requirement that explanations and misconceptions be in Brazilian Portuguese."
+        },
+        "pairId": "89b4a975-00c0-49b2-97c4-9f6412d80dcf"
+      }
+    ]
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "categories": [
+    "communication"
+  ],
+  "description": "Almanca, Almanya ve diğer Almanca konuşulan yerlerde iletişim kurmanı sağlayan dildir. Tanışma, alışveriş, randevu ve yolculuk konuşmalarından başlayıp eğitim ve iş ortamlarında sohbet etmeye, günlük metinleri takip etmeye ve kendini daha incelikli anlatmaya uzanır; seyahat, eğitim ve işte iletişim kurmanı kolaylaştırır.",
+  "landingPage": {
+    "audience": [
+      "Almancaya sıfırdan başlayanlar",
+      "Almanya’ya seyahat etmeyi planlayanlar",
+      "Almanca konuşulan ülkelerde okumayı düşünenler"
+    ],
+    "outcomes": [
+      "Almanca kendini tanıtıp basit sorular sormak",
+      "Kafede sipariş verip hesabı ödemek",
+      "Doktor randevusu alıp tren istasyonunda yolunu bulmak",
+      "Almanca sohbetleri sürdürüp düşüncelerini açıklamak"
+    ],
+    "valueProposition": "Almanca konuşulan yerlerde gündelik işlerini konuşarak halletmek"
+  }
+}

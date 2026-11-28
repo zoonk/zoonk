@@ -1,0 +1,20 @@
+{
+  "categories": [
+    "economics"
+  ],
+  "description": "La finanza personale riguarda come gestire il denaro nella vita quotidiana. Dalla busta paga, al budget, al 730 e ai prestiti, fino al risparmio e agli investimenti, trovi strumenti per valutare le tue scelte finanziarie.",
+  "landingPage": {
+    "audience": [
+      "Chi ha appena iniziato a lavorare",
+      "Chi vuole tenere sotto controllo le spese",
+      "Chi sta valutando un prestito o un mutuo"
+    ],
+    "outcomes": [
+      "Leggere la busta paga e stimare il netto",
+      "Fare un budget e creare un fondo imprevisti",
+      "Preparare il 730 e controllare detrazioni e rimborsi",
+      "Pianificare risparmi e investimenti per obiettivi futuri"
+    ],
+    "valueProposition": "Gestire entrate, spese e risparmi senza farti sorprendere dalle rate o dagli imprevisti"
+  }
+}

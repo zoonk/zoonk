@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "After `b = a` for a list, you change `b[0]`; what happens to `a[0]`?",
+      "options": [
+        {
+          "text": "It changes too",
+          "correct": true
+        },
+        {
+          "text": "It stays the same",
+          "correct": false
+        },
+        {
+          "text": "It becomes zero",
+          "correct": false
+        }
+      ],
+      "reveal": "It changes too. Both names refer to the same list, so changing it through either name affects the one shared object."
+    },
+    {
+      "question": "When a loop uses `range(3)`, which numbers does it visit?",
+      "options": [
+        {
+          "text": "0, 1, 2",
+          "correct": true
+        },
+        {
+          "text": "1, 2, 3",
+          "correct": false
+        },
+        {
+          "text": "0, 1, 2, 3",
+          "correct": false
+        }
+      ],
+      "reveal": "0, 1, 2. The ending value is left out, so `range(3)` produces three numbers starting at zero."
+    },
+    {
+      "question": "In a Python `if` statement, what tells Python which lines belong inside the block?",
+      "options": [
+        {
+          "text": "Indentation",
+          "correct": true
+        },
+        {
+          "text": "Parentheses",
+          "correct": false
+        },
+        {
+          "text": "A trailing comma",
+          "correct": false
+        }
+      ],
+      "reveal": "Indentation. Lines indented under an `if` statement form its block, so consistent spacing is part of Python's syntax."
+    },
+    {
+      "question": "In Python, what position does `items[0]` refer to in a list?",
+      "options": [
+        {
+          "text": "The first item",
+          "correct": true
+        },
+        {
+          "text": "The second item",
+          "correct": false
+        },
+        {
+          "text": "The last item",
+          "correct": false
+        }
+      ],
+      "reveal": "The first item. Python uses zero-based indexing, so the first position is numbered 0."
+    },
+    {
+      "question": "In `count = 5`, what is the single equals sign doing?",
+      "options": [
+        {
+          "text": "Assigning a value",
+          "correct": true
+        },
+        {
+          "text": "Checking equality",
+          "correct": false
+        },
+        {
+          "text": "Adding two values",
+          "correct": false
+        }
+      ],
+      "reveal": "Assigning a value. A single `=` stores the value on the right in the name on the left; `==` checks whether two values are equal."
+    },
+    {
+      "question": "After creating `word = \"cat\"`, can you replace just its first character in place?",
+      "options": [
+        {
+          "text": "No, strings cannot be changed in place",
+          "correct": true
+        },
+        {
+          "text": "Yes, if you use an index",
+          "correct": false
+        },
+        {
+          "text": "Yes, if you use `append`",
+          "correct": false
+        }
+      ],
+      "reveal": "No, strings cannot be changed in place. You can make a new string from parts of the old one, but the original string stays unchanged."
+    },
+    {
+      "question": "In Python 7 / 2 gives 3.5; what does 7 // 2 give?",
+      "options": [
+        {
+          "text": "3",
+          "correct": true
+        },
+        {
+          "text": "3.5",
+          "correct": false
+        },
+        {
+          "text": "4",
+          "correct": false
+        }
+      ],
+      "reveal": "3. The `//` operator performs floor division, giving the whole-number result rounded down; `/` gives ordinary division."
+    },
+    {
+      "question": "When you look up `menu[\"soup\"]` in a dictionary, what is `\"soup\"` used as?",
+      "options": [
+        {
+          "text": "A key",
+          "correct": true
+        },
+        {
+          "text": "An index",
+          "correct": false
+        },
+        {
+          "text": "A function",
+          "correct": false
+        }
+      ],
+      "reveal": "A key. A dictionary uses keys to find their associated values, so `\"soup\"` identifies the entry to look up."
+    },
+    {
+      "question": "If a Python function reaches its end without a `return` statement, what does it give back?",
+      "options": [
+        {
+          "text": "`None`",
+          "correct": true
+        },
+        {
+          "text": "Zero",
+          "correct": false
+        },
+        {
+          "text": "An empty string",
+          "correct": false
+        }
+      ],
+      "reveal": "`None`. Python functions return this special value when they finish without an explicit `return` value."
+    },
+    {
+      "question": "When you loop through the string `\"fox\"` one item at a time, what does each item contain?",
+      "options": [
+        {
+          "text": "One character",
+          "correct": true
+        },
+        {
+          "text": "One word",
+          "correct": false
+        },
+        {
+          "text": "One number",
+          "correct": false
+        }
+      ],
+      "reveal": "One character. A string is iterable, and looping over it visits its characters in order."
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "caseId": "pt-reforma-tributaria",
+  "costUsd": 0.021712,
+  "name": "answer keys",
+  "passed": 9,
+  "problems": [
+    "{\"itemLocator\":\"cards[7]\",\"keyedAnswer\":\"a — Consumo e produção\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"Consumption and production are the broad categories, but payment method and operating hours are also economic choices. A neutral tax should avoid favoring one payment method or operating schedule over another, so both distractors also fit the stem.\"}"
+  ],
+  "run": 2,
+  "side": "challenger",
+  "total": 10
+}

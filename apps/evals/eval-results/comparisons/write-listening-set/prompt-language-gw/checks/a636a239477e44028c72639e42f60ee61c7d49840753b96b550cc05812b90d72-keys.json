@@ -1,0 +1,12 @@
+{
+  "caseId": "en-cambridge-accepted-article-regression",
+  "costUsd": 0.0258,
+  "name": "answer keys",
+  "passed": 5,
+  "problems": [
+    "{\"itemLocator\":\"set.questions[5]\",\"keyedAnswer\":\"schoolchildren; school children\",\"kind\":\"wrongKey\",\"workedAnswer\":\"Accept only “schoolchildren”. It completes “came from the local schoolchildren” and matches the transcript. The two-word alternative “school children” does not appear in the transcript.\"}"
+  ],
+  "run": 1,
+  "side": "incumbent",
+  "total": 6
+}

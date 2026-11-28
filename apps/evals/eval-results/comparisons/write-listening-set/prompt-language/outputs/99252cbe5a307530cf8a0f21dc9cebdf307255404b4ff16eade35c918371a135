@@ -1,0 +1,324 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "It's Hensley. That's H-E-N-S-L-E-Y.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Family canoe session booking\nWrite ONE WORD ONLY.\nSurname: ______",
+        "question": "Complete the booking form.",
+        "keyPoints": [
+          "O sobrenome é Hensley, soletrado pelo cliente."
+        ],
+        "acceptedAnswers": [
+          "Hensley"
+        ],
+        "sampleAnswer": "Hensley"
+      },
+      {
+        "evidence": "Could we make it the eighteenth of May?",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Family canoe session booking\nWrite ONE WORD AND/OR A NUMBER.\nDate: ______ May",
+        "question": "Complete the booking form.",
+        "keyPoints": [
+          "A data escolhida é 18 de maio, após a correção de 11 de maio."
+        ],
+        "acceptedAnswers": [
+          "18",
+          "18th",
+          "eighteenth"
+        ],
+        "sampleAnswer": "eighteenth"
+      },
+      {
+        "evidence": "There'll be two adults and three children.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 0
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Family canoe session booking\nWrite ONE NUMBER.\nNumber of children: ______",
+        "question": "Complete the booking form.",
+        "keyPoints": [
+          "Três crianças participarão."
+        ],
+        "acceptedAnswers": [
+          "3"
+        ],
+        "sampleAnswer": "three"
+      },
+      {
+        "evidence": "you need to be here at quarter past nine",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 0
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Family canoe session booking\nWrite ONE NUMBER.\nArrival time: ______",
+        "question": "Complete the booking form.",
+        "keyPoints": [
+          "O grupo deve chegar às 9h15, antes do início da sessão."
+        ],
+        "acceptedAnswers": [
+          "9:15",
+          "9.15"
+        ],
+        "sampleAnswer": "quarter past nine"
+      },
+      {
+        "evidence": "the total for your group will be forty-eight pounds",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 0
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Family canoe session booking\nWrite ONE NUMBER.\nTotal price: £______",
+        "question": "Complete the booking form.",
+        "keyPoints": [
+          "Com o desconto familiar, o preço total é de 48 libras."
+        ],
+        "acceptedAnswers": [
+          "48"
+        ],
+        "sampleAnswer": "forty-eight pounds"
+      },
+      {
+        "evidence": "Go straight to the boathouse.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Family canoe session booking\nWrite ONE WORD ONLY.\nMeeting point: the ______",
+        "question": "Complete the booking form.",
+        "keyPoints": [
+          "O ponto de encontro é a boathouse, não a recepção."
+        ],
+        "acceptedAnswers": [
+          "boathouse"
+        ],
+        "sampleAnswer": "boathouse"
+      },
+      {
+        "evidence": "The twenty-four comes right past our entrance",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 0
+        },
+        "format": "typed",
+        "difficulty": "hard",
+        "context": "Family canoe session booking\nWrite ONE NUMBER.\nBus to the centre's entrance: number ______",
+        "question": "Complete the booking form.",
+        "keyPoints": [
+          "O ônibus 24 passa pela entrada do centro."
+        ],
+        "acceptedAnswers": [
+          "24"
+        ],
+        "sampleAnswer": "twenty-four"
+      },
+      {
+        "evidence": "you should each bring a towel",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Family canoe session booking\nWrite ONE WORD ONLY.\nEach person should bring a ______",
+        "question": "Complete the booking form.",
+        "keyPoints": [
+          "Cada pessoa deve levar uma toalha."
+        ],
+        "acceptedAnswers": [
+          "towel"
+        ],
+        "sampleAnswer": "towel"
+      },
+      {
+        "evidence": "Let's have the vegetarian option for everyone, please.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "hard",
+        "context": "Family canoe session booking\nWrite ONE WORD ONLY.\nLunch choice: ______",
+        "question": "Complete the booking form.",
+        "keyPoints": [
+          "O cliente escolhe a opção vegetariana para todo o grupo."
+        ],
+        "acceptedAnswers": [
+          "vegetarian"
+        ],
+        "sampleAnswer": "vegetarian"
+      },
+      {
+        "evidence": "It's zero seven seven zero zero nine zero zero two four five.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 0
+        },
+        "format": "typed",
+        "difficulty": "hard",
+        "context": "Family canoe session booking\nWrite ONE NUMBER.\nMobile number: ______",
+        "question": "Complete the booking form.",
+        "keyPoints": [
+          "O número de celular é 07700 900 245."
+        ],
+        "acceptedAnswers": [
+          "07700900245",
+          "07700 900 245"
+        ],
+        "sampleAnswer": "zero seven seven zero zero nine zero zero two four five"
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Lucy",
+        "gender": "female",
+        "accent": "British English"
+      },
+      {
+        "name": "Ryan",
+        "gender": "male",
+        "accent": "British English"
+      }
+    ],
+    "title": "Booking a family canoe session",
+    "turns": [
+      {
+        "speaker": "Lucy",
+        "text": "Good morning, Riverside Activity Centre. Lucy speaking. How can I help?"
+      },
+      {
+        "speaker": "Ryan",
+        "text": "Hi. I'm calling about the family canoe sessions on your website. My sister and I would like to bring our children, but I wasn't sure whether we needed to book."
+      },
+      {
+        "speaker": "Lucy",
+        "text": "Yes, you do. We keep the groups quite small, so it's best to book ahead. I can do that for you now. Can I take your surname first?"
+      },
+      {
+        "speaker": "Ryan",
+        "text": "It's Hensley. That's H-E-N-S-L-E-Y."
+      },
+      {
+        "speaker": "Lucy",
+        "text": "Thanks. And is it a weekend session you're looking for? We run them on Saturdays and Sundays."
+      },
+      {
+        "speaker": "Ryan",
+        "text": "Saturday would be best. I was thinking of the eleventh of May, no, sorry, that's when my son's got a football match. Could we make it the eighteenth of May?"
+      },
+      {
+        "speaker": "Lucy",
+        "text": "Let me see. Yes, there are places on that date. How many people will be coming?"
+      },
+      {
+        "speaker": "Ryan",
+        "text": "There'll be two adults and three children. The youngest is seven. Is that old enough?"
+      },
+      {
+        "speaker": "Lucy",
+        "text": "Yes, children can come from the age of six, as long as they're with an adult. And nobody needs any previous experience. The instructor goes through everything before you get on the water."
+      },
+      {
+        "speaker": "Ryan",
+        "text": "That's good, because none of us has tried canoeing before. What time does it start?"
+      },
+      {
+        "speaker": "Lucy",
+        "text": "The session starts at half past nine, but you need to be here at quarter past nine. That gives everyone time to get changed and collect a life jacket."
+      },
+      {
+        "speaker": "Ryan",
+        "text": "Fine. We'll aim to get there a little earlier, in case the traffic's bad. And how much will it cost for the five of us?"
+      },
+      {
+        "speaker": "Lucy",
+        "text": "Normally it would be sixty pounds, but there's a family discount that weekend. So the total for your group will be forty-eight pounds. You can pay online once I've sent you the booking details."
+      },
+      {
+        "speaker": "Ryan",
+        "text": "Great. I know where the centre is, but I've never been inside. Should we meet at the main reception desk?"
+      },
+      {
+        "speaker": "Lucy",
+        "text": "Not for canoeing. Go straight to the boathouse. It's the low building beside the river, just beyond the car park. Your instructor will meet you at the door."
+      },
+      {
+        "speaker": "Ryan",
+        "text": "Right. We might come by bus if my sister needs the car. Does the number twelve stop near you?"
+      },
+      {
+        "speaker": "Lucy",
+        "text": "That one stops in the town centre, which is quite a walk away. The twenty-four comes right past our entrance, though. It runs every twenty minutes on Saturdays."
+      },
+      {
+        "speaker": "Ryan",
+        "text": "That's useful. Now, do we have to bring any special equipment?"
+      },
+      {
+        "speaker": "Lucy",
+        "text": "We provide the canoes and life jackets. Wear comfortable clothes you don't mind getting wet, and you should each bring a towel. We have changing rooms where you can leave a bag."
+      },
+      {
+        "speaker": "Ryan",
+        "text": "OK. I saw something about lunch on the website. Can we order that when we arrive?"
+      },
+      {
+        "speaker": "Lucy",
+        "text": "We need to know beforehand, actually. The café makes a chicken lunch or a vegetarian lunch for the groups. They're both the same price."
+      },
+      {
+        "speaker": "Ryan",
+        "text": "Let's have the vegetarian option for everyone, please. One of the children doesn't eat meat, and it'll be simpler if we all have the same."
+      },
+      {
+        "speaker": "Lucy",
+        "text": "No problem. Finally, could I take a mobile number? We'll only use it if there's a change to the session, for example if the weather's really bad."
+      },
+      {
+        "speaker": "Ryan",
+        "text": "Sure. It's zero seven seven zero zero nine zero zero two four five. I usually answer that number during the day."
+      },
+      {
+        "speaker": "Lucy",
+        "text": "Thanks. I'll send the full details and payment link to the email address you've given us. If you need to change the booking, just call us at least two days before the session."
+      },
+      {
+        "speaker": "Ryan",
+        "text": "Will do. Thanks very much for your help. We're all looking forward to it."
+      },
+      {
+        "speaker": "Lucy",
+        "text": "You're welcome. See you in May. Goodbye."
+      }
+    ]
+  }
+}

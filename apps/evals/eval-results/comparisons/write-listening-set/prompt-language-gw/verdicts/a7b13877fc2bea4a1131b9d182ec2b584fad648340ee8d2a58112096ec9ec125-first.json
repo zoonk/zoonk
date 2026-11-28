@@ -1,0 +1,150 @@
+{
+  "attempt": "first",
+  "costUsd": 0.0033238399999999998,
+  "failures": [],
+  "packetId": "a7b13877fc2bea4a1131b9d182ec2b584fad648340ee8d2a58112096ec9ec125",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As mesmas cinco respostas estão corretas e são sustentadas pelo monólogo em ambas as versões.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas versões usam o mesmo monólogo e o mesmo formato de questões; não há diferença perceptível de adequação ao exame.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "B",
+            "reason": "B mantém as justificativas e os campos de misconception em português brasileiro. A deixa trechos em espanhol, como “Oyes que aceptan...” e “Interpreta el requisito de buen estado como exigencia de producto nuevo.”",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Alguns campos de justificativa e misconception estão em espanhol, apesar da exigência de que todos estejam em português brasileiro.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "O leitor pode tropeçar em trechos que não estão na língua pedida e ter mais dificuldade para entender por que uma alternativa está errada.",
+            "location": {
+              "detail": "Há trechos em espanhol nos campos de justificativa e misconception, incluindo as frases citadas.",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "As questões e o roteiro são equivalentes, mas B traduz integralmente as explicações para o português brasileiro, como exige a tarefa."
+        },
+        "pairId": "2d6a710a-40c2-4f6c-a41e-a4c4ff2a4bb9"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As cinco respostas indicadas estão corretas e podem ser recuperadas da conversa em ambas as versões.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Ambas têm uma conversa longa de situação cotidiana, cinco respostas de preenchimento e uma correção relevante; porém, as duas usam apenas sotaques britânicos, embora a tarefa peça uma mistura de britânico e australiano.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas conversas são compreensíveis e soam plausíveis como uma ligação de atendimento; nenhuma se destaca claramente na naturalidade da fala.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "As duas pessoas estão identificadas com sotaque britânico; não há falante com sotaque australiano, apesar da exigência de misturar os dois sotaques.",
+            "criterion": "examRealism",
+            "learnerCost": "O exercício não prepara o aluno para ouvir a variedade australiana prevista para esta parte do exame.",
+            "location": {
+              "detail": "Os dois campos de sotaque dos falantes indicam British English; não há Australian English.",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "As duas pessoas estão identificadas com sotaque britânico; não há falante com sotaque australiano, apesar da exigência de misturar os dois sotaques.",
+            "criterion": "examRealism",
+            "learnerCost": "O exercício não prepara o aluno para ouvir a variedade australiana prevista para esta parte do exame.",
+            "location": {
+              "detail": "Os dois campos de sotaque dos falantes indicam British English; não há Australian English.",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "As versões têm qualidade semelhante e ambas deixam de incluir o sotaque australiano pedido."
+        },
+        "pairId": "32daa1d5-a0d2-4024-84ff-20909b277f40"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As mesmas respostas estão corretas e sustentadas pela conversa.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "As versões são idênticas e ambas usam apenas sotaques britânicos, sem a mistura de sotaques exigida.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "O roteiro idêntico soa plausível como uma conversa cotidiana e é fácil de acompanhar.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "As duas pessoas estão identificadas com sotaque britânico; não há falante com sotaque australiano, apesar da exigência de misturar os dois sotaques.",
+            "criterion": "examRealism",
+            "learnerCost": "O exercício não prepara o aluno para ouvir a variedade australiana prevista para esta parte do exame.",
+            "location": {
+              "detail": "Os dois campos de sotaque dos falantes indicam British English; não há Australian English.",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "As duas pessoas estão identificadas com sotaque britânico; não há falante com sotaque australiano, apesar da exigência de misturar os dois sotaques.",
+            "criterion": "examRealism",
+            "learnerCost": "O exercício não prepara o aluno para ouvir a variedade australiana prevista para esta parte do exame.",
+            "location": {
+              "detail": "Os dois campos de sotaque dos falantes indicam British English; não há Australian English.",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "As versões são idênticas; ambas deixam de incluir o sotaque australiano pedido."
+        },
+        "pairId": "b55e02a9-3d53-4847-9672-3299b99b0086"
+      }
+    ]
+  }
+}

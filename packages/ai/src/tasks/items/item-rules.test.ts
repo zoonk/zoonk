@@ -116,7 +116,7 @@ describe(withItemRules, () => {
     );
 
     expect(prompt).toContain(
-      "In `LANGUAGE` (in a language goal, the practiced language is in `TARGET_LANGUAGE`).",
+      "In `LANGUAGE` (in a language goal, the practiced language is in {{TARGET_LANGUAGE}}).",
     );
   });
 

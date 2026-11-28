@@ -1,0 +1,20 @@
+{
+  "categories": [
+    "communication"
+  ],
+  "description": "O inglês dos Estados Unidos ajuda você a se comunicar em viagens, estudos, trabalho e no dia a dia. Você começa com apresentações, aeroporto, hotel, restaurante e rotina, e avança para conversas mais longas, leitura, escrita, pronúncia e opiniões.",
+  "landingPage": {
+    "audience": [
+      "Iniciantes sem experiência com inglês",
+      "Quem planeja viajar para os EUA",
+      "Estudantes e profissionais que usam inglês"
+    ],
+    "outcomes": [
+      "Apresentar-se e falar de onde você vem",
+      "Fazer check-in e pedir ajuda em viagens",
+      "Pedir comida e combinar horários em inglês",
+      "Acompanhar conversas em inglês sobre temas variados"
+    ],
+    "valueProposition": "Conversar em inglês em viagens, estudos, trabalho e no dia a dia"
+  }
+}

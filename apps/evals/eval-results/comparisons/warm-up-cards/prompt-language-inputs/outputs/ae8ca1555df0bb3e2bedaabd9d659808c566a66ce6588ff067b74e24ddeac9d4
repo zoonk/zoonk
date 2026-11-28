@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "If `b = a` makes `b` refer to a list already named `a`, why does editing `b[0]` affect `a[0]`?",
+      "options": [
+        {
+          "text": "Both names point to one list",
+          "correct": true
+        },
+        {
+          "text": "The list is copied automatically",
+          "correct": false
+        },
+        {
+          "text": "The names are permanently linked",
+          "correct": false
+        }
+      ],
+      "reveal": "Both names point to one list. Assignment gives `b` a reference to the same list; it doesn’t copy the list’s contents."
+    },
+    {
+      "question": "A loop runs over `range(4)`. Which numbers does the loop visit, in order?",
+      "options": [
+        {
+          "text": "0, 1, 2, 3",
+          "correct": true
+        },
+        {
+          "text": "1, 2, 3, 4",
+          "correct": false
+        },
+        {
+          "text": "0, 1, 2, 3, 4",
+          "correct": false
+        }
+      ],
+      "reveal": "0, 1, 2, 3. The starting number is included, but the number inside `range()` is the stopping point and is left out."
+    },
+    {
+      "question": "After `name = input(...)`, what kind of value does `name` hold, even if you type 42?",
+      "options": [
+        {
+          "text": "A text value",
+          "correct": true
+        },
+        {
+          "text": "An integer",
+          "correct": false
+        },
+        {
+          "text": "A true-or-false value",
+          "correct": false
+        }
+      ],
+      "reveal": "A text value. `input()` returns what you type as text, so code must convert it before doing arithmetic."
+    },
+    {
+      "question": "Two separate lists contain the same items. Which test checks whether their contents match?",
+      "options": [
+        {
+          "text": "The `==` operator",
+          "correct": true
+        },
+        {
+          "text": "The `is` operator",
+          "correct": false
+        },
+        {
+          "text": "The `in` operator",
+          "correct": false
+        }
+      ],
+      "reveal": "The `==` operator. It compares values; `is` checks whether two names refer to the very same object."
+    },
+    {
+      "question": "A Python string spells `cat`; what happens if code tries to replace its first character in place?",
+      "options": [
+        {
+          "text": "It raises a `TypeError`",
+          "correct": true
+        },
+        {
+          "text": "It changes the string",
+          "correct": false
+        },
+        {
+          "text": "It adds a new character",
+          "correct": false
+        }
+      ],
+      "reveal": "It raises a `TypeError`. Strings can’t be changed in place; code can instead make a new string with the desired characters."
+    },
+    {
+      "question": "In `-7 // 3`, what result surprises programmers who expect division to truncate toward zero?",
+      "options": [
+        {
+          "text": "-3",
+          "correct": true
+        },
+        {
+          "text": "-2",
+          "correct": false
+        },
+        {
+          "text": "-2.33",
+          "correct": false
+        }
+      ],
+      "reveal": "-3. The `//` operator rounds down to the next lower whole number, rather than toward zero."
+    },
+    {
+      "question": "A function uses `items=[]` as a parameter default; what happens across calls that omit `items`?",
+      "options": [
+        {
+          "text": "They reuse one list",
+          "correct": true
+        },
+        {
+          "text": "They get fresh lists",
+          "correct": false
+        },
+        {
+          "text": "Python rejects the definition",
+          "correct": false
+        }
+      ],
+      "reveal": "They reuse one list. Python evaluates a default argument once when the function is defined, not again for each call."
+    },
+    {
+      "question": "When code opens a file with `with open(...) as f`, what happens after the block ends?",
+      "options": [
+        {
+          "text": "The file is closed",
+          "correct": true
+        },
+        {
+          "text": "The file stays open",
+          "correct": false
+        },
+        {
+          "text": "The file is deleted",
+          "correct": false
+        }
+      ],
+      "reveal": "The file is closed. The `with` construct handles cleanup when the block finishes, including when an error occurs inside it."
+    },
+    {
+      "question": "What does `[n * 2 for n in [1, 2, 3]]` build?",
+      "options": [
+        {
+          "text": "A new list",
+          "correct": true
+        },
+        {
+          "text": "A generator object",
+          "correct": false
+        },
+        {
+          "text": "A dictionary",
+          "correct": false
+        }
+      ],
+      "reveal": "A new list. The expression takes each value in the source list, doubles it, and collects the results."
+    },
+    {
+      "question": "In ordinary Python code, how does Python know which statements belong inside an `if` block?",
+      "options": [
+        {
+          "text": "Their indentation",
+          "correct": true
+        },
+        {
+          "text": "Their curly braces",
+          "correct": false
+        },
+        {
+          "text": "A closing keyword",
+          "correct": false
+        }
+      ],
+      "reveal": "Their indentation. Consistent spacing marks the block’s start and end, rather than braces or a closing word."
+    }
+  ]
+}

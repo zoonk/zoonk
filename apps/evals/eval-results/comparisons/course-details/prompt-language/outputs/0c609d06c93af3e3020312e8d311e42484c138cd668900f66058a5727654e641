@@ -1,0 +1,20 @@
+{
+  "categories": [
+    "science"
+  ],
+  "description": "Quantum physics describes how matter and light behave at atomic scales, where everyday rules no longer apply. Starting with simple math and graphs, the course covers atoms, light, measurement, linked particles, and the math used to describe quantum motion and energy. These ideas help explain experiments and technologies such as chips, LEDs, and lasers.",
+  "landingPage": {
+    "audience": [
+      "High school students curious about physics",
+      "College students starting physics",
+      "Readers curious about quantum technology"
+    ],
+    "outcomes": [
+      "Describe how atoms and light behave",
+      "Explain what measuring a particle can reveal",
+      "Use graphs to track changes in quantum experiments",
+      "Track how quantum states change as conditions shift"
+    ],
+    "valueProposition": "Explain how quantum physics shapes atoms and the technology in your phone"
+  }
+}

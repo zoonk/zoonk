@@ -1,0 +1,13 @@
+{
+  "caseId": "pt-farmacologia-beginner",
+  "challenger": {
+    "costUsd": 0.00059563,
+    "durationMs": 8181.172250000003,
+    "hash": "c72bee848fbec2f24c972886d606b474c3022d09df7f12a8c1909534ea912da0",
+    "systemPromptHash": "782cebffd04f74e4a27023e27678685d5ac6ee34a8481cb679d4f0909e3b41c8",
+    "userPromptHash": "b253e8b1db6fa786f95e39df0b12898d77c36cf21bba327b92a117c1cbea1343"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 1
+}

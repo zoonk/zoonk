@@ -1,0 +1,12 @@
+{
+  "caseId": "pt-oab",
+  "costUsd": 0.02096,
+  "name": "answer keys",
+  "passed": 9,
+  "problems": [
+    "{\"itemLocator\":\"cards[8]\",\"keyedAnswer\":\"Imposto\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"Both “imposto” and “contribuição de melhoria” satisfy the stem. An imposto does not depend on a specific state activity directed at the taxpayer. A contribuição de melhoria is triggered by an increase in property value resulting from a public work, which is neither a specific public service nor an exercise of police power.\"}"
+  ],
+  "run": 1,
+  "side": "challenger",
+  "total": 10
+}

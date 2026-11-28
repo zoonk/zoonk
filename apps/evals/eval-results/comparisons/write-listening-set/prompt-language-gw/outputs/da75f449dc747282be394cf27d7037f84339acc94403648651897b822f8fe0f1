@@ -1,0 +1,160 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "we found an old railway station",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "The garden project was set up at a former ______.",
+        "keyPoints": [
+          "The site was a railway station."
+        ],
+        "acceptedAnswers": [
+          "railway station"
+        ],
+        "sampleAnswer": "railway station"
+      },
+      {
+        "evidence": "another neighbour brought some photographs she'd found in her attic",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "A neighbour provided old ______ that helped the group learn about the site.",
+        "keyPoints": [
+          "The neighbour brought photographs."
+        ],
+        "acceptedAnswers": [
+          "photographs"
+        ],
+        "sampleAnswer": "photographs"
+      },
+      {
+        "evidence": "a local shop gave us wooden boxes",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "The first herbs were planted in ______ donated by a shop.",
+        "keyPoints": [
+          "The herbs were planted in wooden boxes."
+        ],
+        "acceptedAnswers": [
+          "wooden boxes"
+        ],
+        "sampleAnswer": "wooden boxes"
+      },
+      {
+        "evidence": "to collect rainwater. We use that for the plants",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "The group collects ______ to water the garden.",
+        "keyPoints": [
+          "The group collects rainwater."
+        ],
+        "acceptedAnswers": [
+          "rainwater",
+          "rain water"
+        ],
+        "sampleAnswer": "rainwater"
+      },
+      {
+        "evidence": "several children who rarely spoke in class had gained confidence",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "hard",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "Teachers noticed that some quiet children developed more ______ after visiting the garden.",
+        "keyPoints": [
+          "The children gained confidence."
+        ],
+        "acceptedAnswers": [
+          "confidence"
+        ],
+        "sampleAnswer": "confidence"
+      },
+      {
+        "evidence": "So we made a podcast instead",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "The volunteers created a ______ to share their experience with other groups.",
+        "keyPoints": [
+          "The volunteers made a podcast."
+        ],
+        "acceptedAnswers": [
+          "podcast"
+        ],
+        "sampleAnswer": "podcast"
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Hannah",
+        "gender": "female",
+        "accent": "British English"
+      }
+    ],
+    "title": "Turning an old station into a garden",
+    "turns": [
+      {
+        "speaker": "Hannah",
+        "text": "A couple of years ago, I joined a group that wanted to create a garden for everyone in our town. At first, we thought we might use the school playground, but the school needed it for sports. Instead, we found an old railway station that had been empty for years. The building itself wasn't safe to go inside, but there was plenty of open ground around it. It was a bit untidy, to put it politely, though we could see its possibilities."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Before we made any plans, we wanted to know more about the place. One neighbour offered us a book about the town, which was interesting but didn't tell us much about the land itself. Then another neighbour brought some photographs she'd found in her attic. They showed where the paths used to be, and even what had grown there. We put copies up at our first meeting, and people enjoyed recognising places they remembered from childhood."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Getting started was harder than we'd expected. The soil near the building was poor, and we couldn't afford to replace it all. Someone suggested planting straight into large plastic pots, but we didn't have enough of those. In the end, a local shop gave us wooden boxes that had been used to deliver fruit. We filled them with better soil and planted herbs in them. That meant we could move the plants around while we worked out where everything else should go."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Water was another problem. There was a tap inside the station, but it would have cost too much to connect it again. Instead, we put large containers beside the roof to collect rainwater. We use that for the plants, and we've hardly needed to bring any water from home. We also made sure the paths were wide enough for wheelchairs and pushchairs, because we wanted the garden to be somewhere the whole community could enjoy."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "We soon started inviting school groups to visit. I assumed the children would enjoy learning the names of plants, and some certainly did. But their teachers noticed something else. After a few visits, several children who rarely spoke in class had gained confidence. They were happy to explain to visitors what they'd been growing. One boy even offered to show a group of adults around, which his teacher said would have been unthinkable a few months earlier."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "People in other towns began asking how we'd managed the project. We thought about producing a video, but none of us had the right equipment. So we made a podcast instead. We interviewed volunteers about the mistakes we'd made as well as the things that had gone well. It was surprisingly easy to record, and people could listen while they were doing other things. Several groups have since told us it encouraged them to start projects of their own."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "The garden still changes from season to season. We don't always agree about what to plant next, but that's part of the fun. What matters is that a place most people had forgotten has become somewhere they can meet. If you're thinking of doing something similar, my advice is to start small and ask your neighbours what they'd like. You may be surprised by how many people want to help."
+      }
+    ]
+  }
+}

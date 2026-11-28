@@ -1,0 +1,20 @@
+{
+  "categories": [
+    "economics"
+  ],
+  "description": "A economia estuda como pessoas, empresas e governos escolhem usar recursos limitados. Dos preços e do dinheiro a empregos, produção, comércio, inflação e políticas públicas, ela ajuda a ler notícias e avaliar decisões que afetam sua vida.",
+  "landingPage": {
+    "audience": [
+      "Estudantes do ensino médio",
+      "Quem quer cuidar melhor do próprio dinheiro",
+      "Curiosos sobre notícias econômicas"
+    ],
+    "outcomes": [
+      "Comparar opções pelo que você deixa de lado",
+      "Explicar por que um preço sobe ou cai",
+      "Comparar o poder de compra em momentos diferentes",
+      "Explicar como decisões públicas mexem no emprego"
+    ],
+    "valueProposition": "Fazer escolhas mais conscientes com seu dinheiro e perceber como preços, juros e inflação afetam seu dia a dia"
+  }
+}

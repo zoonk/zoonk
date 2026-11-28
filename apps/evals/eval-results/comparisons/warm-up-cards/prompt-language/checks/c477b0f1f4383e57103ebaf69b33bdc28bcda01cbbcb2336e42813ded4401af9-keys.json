@@ -1,0 +1,12 @@
+{
+  "caseId": "pt-oab",
+  "costUsd": 0.021672,
+  "name": "answer keys",
+  "passed": 9,
+  "problems": [
+    "{\"itemLocator\":\"cards[0]\",\"keyedAnswer\":\"Tributo\",\"kind\":\"noCorrectOption\",\"workedAnswer\":\"The distinguishing feature is that the charge does not punish an unlawful act, whereas a fine does. “Tributo” names a type of charge, not that feature: a public tariff can also be nonpunitive without being a tax. “Sanção por ilícito” describes the fine, not the charge in the stem.\"}"
+  ],
+  "run": 2,
+  "side": "challenger",
+  "total": 10
+}

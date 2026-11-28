@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "Quando um tributo incide de novo sobre valores já tributados em etapas anteriores, o efeito é…",
+      "options": [
+        {
+          "text": "Cobrança em cascata",
+          "correct": true
+        },
+        {
+          "text": "Crédito integral",
+          "correct": false
+        },
+        {
+          "text": "Tributação só na venda final",
+          "correct": false
+        }
+      ],
+      "reveal": "Cobrança em cascata. Sem um mecanismo de crédito, cada etapa pode tributar um valor que já carrega tributos anteriores, acumulando cobranças."
+    },
+    {
+      "question": "Num sistema que permite créditos, o que pode ocorrer com o tributo pago nos insumos ao vender o produto?",
+      "options": [
+        {
+          "text": "Abatimento do tributo devido",
+          "correct": true
+        },
+        {
+          "text": "Devolução automática em dinheiro",
+          "correct": false
+        },
+        {
+          "text": "Cobrança duplicada integral",
+          "correct": false
+        }
+      ],
+      "reveal": "Abatimento do tributo devido. O crédito pode descontar valores pagos em etapas anteriores, reduzindo a repetição da cobrança ao longo da produção."
+    },
+    {
+      "question": "Se a arrecadação segue o local de consumo, qual lugar orienta a atribuição do tributo?",
+      "options": [
+        {
+          "text": "Onde o produto é consumido",
+          "correct": true
+        },
+        {
+          "text": "Onde ele é produzido",
+          "correct": false
+        },
+        {
+          "text": "Onde fica o vendedor",
+          "correct": false
+        }
+      ],
+      "reveal": "Onde o produto é consumido. Esse é o princípio do destino: a arrecadação é associada ao local de consumo, não ao de produção."
+    },
+    {
+      "question": "Num tributo calculado sobre o preço de uma compra, qual valor entra na conta antes da alíquota?",
+      "options": [
+        {
+          "text": "O valor tributável da compra",
+          "correct": true
+        },
+        {
+          "text": "A quantidade de parcelas",
+          "correct": false
+        },
+        {
+          "text": "O lucro do vendedor",
+          "correct": false
+        }
+      ],
+      "reveal": "O valor tributável da compra. A base de cálculo é a grandeza sobre a qual se aplica a alíquota; ela pode ser definida de modos diferentes conforme o tributo."
+    },
+    {
+      "question": "Mantida a mesma base de cálculo, o que uma alíquota maior tende a fazer com o valor calculado?",
+      "options": [
+        {
+          "text": "Aumentar o tributo calculado",
+          "correct": true
+        },
+        {
+          "text": "Reduzir o tributo calculado",
+          "correct": false
+        },
+        {
+          "text": "Não alterar o cálculo",
+          "correct": false
+        }
+      ],
+      "reveal": "Aumentar o tributo calculado. A alíquota é a taxa aplicada à base; com a mesma base, uma porcentagem maior resulta em um valor maior."
+    },
+    {
+      "question": "Um tributo cobrado sobre a renda de uma pessoa costuma ser classificado como…",
+      "options": [
+        {
+          "text": "Direto",
+          "correct": true
+        },
+        {
+          "text": "Indireto",
+          "correct": false
+        },
+        {
+          "text": "Taxa de consumo",
+          "correct": false
+        }
+      ],
+      "reveal": "Direto. Ele incide sobre renda ou patrimônio; tributos cobrados sobre o consumo costumam ser classificados como indiretos."
+    },
+    {
+      "question": "Mesmo quando uma empresa recolhe um tributo, quem pode acabar suportando parte do custo?",
+      "options": [
+        {
+          "text": "Quem compra o produto",
+          "correct": true
+        },
+        {
+          "text": "Apenas a empresa",
+          "correct": false
+        },
+        {
+          "text": "O órgão que arrecada",
+          "correct": false
+        }
+      ],
+      "reveal": "Quem compra o produto. A empresa pode repassar parte do custo no preço, embora a divisão do peso econômico dependa das condições do mercado."
+    },
+    {
+      "question": "Em uma tabela progressiva, o que costuma acontecer com a alíquota marginal conforme cresce a base tributável?",
+      "options": [
+        {
+          "text": "Ela tende a subir",
+          "correct": true
+        },
+        {
+          "text": "Ela cai a cada faixa",
+          "correct": false
+        },
+        {
+          "text": "Ela fica sempre igual",
+          "correct": false
+        }
+      ],
+      "reveal": "Ela tende a subir. Em estruturas progressivas, faixas mais altas da base podem ter alíquotas marginais maiores, sem que toda a base receba a alíquota máxima."
+    },
+    {
+      "question": "No sistema tributário brasileiro, uma taxa pode estar ligada a qual situação?",
+      "options": [
+        {
+          "text": "Serviço específico e divisível",
+          "correct": true
+        },
+        {
+          "text": "Qualquer gasto geral",
+          "correct": false
+        },
+        {
+          "text": "Renda anual da pessoa",
+          "correct": false
+        }
+      ],
+      "reveal": "Serviço específico e divisível. Em termos gerais, uma taxa pode decorrer desse tipo de serviço público ou do exercício do poder de polícia."
+    },
+    {
+      "question": "Quando regras tributárias ficam mais simples, qual custo pode diminuir para uma empresa?",
+      "options": [
+        {
+          "text": "Tempo gasto com cálculos e declarações",
+          "correct": true
+        },
+        {
+          "text": "Valor de cada produto vendido",
+          "correct": false
+        },
+        {
+          "text": "Custo de fabricar seus produtos",
+          "correct": false
+        }
+      ],
+      "reveal": "Tempo gasto com cálculos e declarações. Esse trabalho faz parte do custo de cumprir obrigações tributárias, que é diferente do valor dos tributos pagos."
+    }
+  ]
+}

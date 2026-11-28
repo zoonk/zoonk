@@ -1,0 +1,172 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "Deshalb machen wir das Fest am Samstag, dem vierzehnten Juni.",
+        "skill": 1,
+        "format": "trueFalse",
+        "difficulty": "easy",
+        "context": null,
+        "statement": "Das Nachbarschaftsfest findet an einem Samstag statt.",
+        "isTrue": true,
+        "reason": "Clara diz que a festa será no sábado, depois de explicar que a sexta-feira era o plano inicial.",
+        "misconception": null
+      },
+      {
+        "evidence": "Dann dürfen wir den großen Raum in der Stadtbibliothek benutzen.",
+        "skill": 1,
+        "format": "trueFalse",
+        "difficulty": "medium",
+        "context": null,
+        "statement": "Bei Regen fällt das Fest aus.",
+        "isTrue": false,
+        "reason": "Clara explica que, se chover, eles poderão usar uma sala na biblioteca municipal.",
+        "misconception": "Você pode ter entendido que a festa depende do jardim, mas há uma alternativa para a chuva."
+      },
+      {
+        "evidence": "Das Nachbarschaftszentrum leiht uns sechs Tische.",
+        "skill": 1,
+        "format": "trueFalse",
+        "difficulty": "medium",
+        "context": null,
+        "statement": "Niklas besorgt die Tische beim Nachbarschaftszentrum.",
+        "isTrue": true,
+        "reason": "Niklas conta que o centro comunitário emprestará seis mesas e que ele vai buscá-las.",
+        "misconception": null
+      },
+      {
+        "evidence": "Ich würde vorschlagen, dass jeder etwas Vegetarisches mitbringt.",
+        "skill": 1,
+        "format": "trueFalse",
+        "difficulty": "easy",
+        "context": null,
+        "statement": "Clara möchte für alle Würstchen grillen.",
+        "isTrue": false,
+        "reason": "Clara rejeita a ideia de grelhar salsichas e propõe que cada pessoa leve algo vegetariano.",
+        "misconception": "Você pode ter confundido a sugestão de Niklas com o que Clara prefere."
+      },
+      {
+        "evidence": "dass die Musik spätestens um neun Uhr abends aufhören muss.",
+        "skill": 1,
+        "format": "trueFalse",
+        "difficulty": "hard",
+        "context": null,
+        "statement": "Um neun Uhr müssen alle Gäste nach Hause gehen.",
+        "isTrue": false,
+        "reason": "Clara diz que a música deve terminar até as nove. Niklas acrescenta que as pessoas ainda podem ficar conversando em voz baixa.",
+        "misconception": "Você pode ter confundido o horário de terminar a música com o fim da festa."
+      },
+      {
+        "evidence": "Am Sonntagmorgen habe ich Zeit, bevor ich zu meinen Eltern fahre.",
+        "skill": 1,
+        "format": "trueFalse",
+        "difficulty": "medium",
+        "context": null,
+        "statement": "Niklas hilft am Sonntag beim Aufräumen.",
+        "isTrue": true,
+        "reason": "Niklas diz que vai ajudar e que tem tempo no domingo de manhã, antes de visitar os pais.",
+        "misconception": null
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Clara",
+        "gender": "female",
+        "accent": "Standard German"
+      },
+      {
+        "name": "Niklas",
+        "gender": "male",
+        "accent": "Standard German"
+      }
+    ],
+    "title": "Ein Fest für die Nachbarschaft",
+    "turns": [
+      {
+        "speaker": "Clara",
+        "text": "Hallo Niklas, hast du kurz Zeit? Ich wollte noch mal mit dir über unser Nachbarschaftsfest sprechen. Es sind schon viele Leute aus dem Haus dabei."
+      },
+      {
+        "speaker": "Niklas",
+        "text": "Klar. Ich habe gestern auch mit Frau Berger aus dem Haus gegenüber geredet. Sie findet die Idee gut. Wann soll das Fest denn genau stattfinden? Am Freitag?"
+      },
+      {
+        "speaker": "Clara",
+        "text": "Das war zuerst der Plan. Aber am Freitag arbeiten einige bis spät. Deshalb machen wir das Fest am Samstag, dem vierzehnten Juni. Gegen vier Uhr wollen wir anfangen."
+      },
+      {
+        "speaker": "Niklas",
+        "text": "Gut, da kann ich auch. Und wo treffen wir uns? Ich dachte, wir könnten die Tische in den Garten stellen."
+      },
+      {
+        "speaker": "Clara",
+        "text": "Ja, wenn das Wetter schön ist. Falls es regnet, können wir aber nicht im Garten bleiben. Ich habe gefragt: Dann dürfen wir den großen Raum in der Stadtbibliothek benutzen. Der ist direkt um die Ecke."
+      },
+      {
+        "speaker": "Niklas",
+        "text": "Das ist praktisch. Hoffentlich müssen wir nicht alles im letzten Moment dorthin tragen. Können wir am Morgen entscheiden?"
+      },
+      {
+        "speaker": "Clara",
+        "text": "Ja, ich schaue am Samstagvormittag nach dem Wetterbericht und schreibe allen eine Nachricht. Übrigens brauchen wir noch Tische. Hast du welche?"
+      },
+      {
+        "speaker": "Niklas",
+        "text": "Nur einen kleinen. Aber das ist kein Problem. Das Nachbarschaftszentrum leiht uns sechs Tische. Ich hole sie am Samstag mit dem Auto ab. Meine Schwester hilft mir beim Tragen."
+      },
+      {
+        "speaker": "Clara",
+        "text": "Super. Stühle bringe ich mit, und ein paar Nachbarn haben auch welche. Wir sollten ihnen vorher sagen, dass sie ihren Namen draufschreiben. Sonst weiß am Ende niemand mehr, wem welcher Stuhl gehört."
+      },
+      {
+        "speaker": "Niklas",
+        "text": "Stimmt. Wie machen wir das mit dem Essen? Wollen wir Würstchen grillen? Ich könnte einen Grill besorgen."
+      },
+      {
+        "speaker": "Clara",
+        "text": "Lieber nicht. Einige essen kein Fleisch, und außerdem ist Grillen im Garten nicht erlaubt. Ich würde vorschlagen, dass jeder etwas Vegetarisches mitbringt. Salate, Brot oder einen Kuchen zum Beispiel."
+      },
+      {
+        "speaker": "Niklas",
+        "text": "Einverstanden. Dann mache ich meinen Nudelsalat. Getränke könnten wir zusammen kaufen. Wasser und Saft reichen vielleicht, oder?"
+      },
+      {
+        "speaker": "Clara",
+        "text": "Ja, und ein bisschen Kaffee für den Nachmittag. Ich kaufe alles am Freitag ein und hebe den Kassenbon auf. Dann teilen wir die Kosten später."
+      },
+      {
+        "speaker": "Niklas",
+        "text": "Gut. Für die Kinder wollte Frau Berger ein paar Spiele vorbereiten. Ihre Tochter hat auch gefragt, ob sie mit zwei Freunden Musik machen darf."
+      },
+      {
+        "speaker": "Clara",
+        "text": "Gerne! Die drei spielen doch in der Schulband, oder? Sag ihnen nur bitte, dass die Musik spätestens um neun Uhr abends aufhören muss. Danach soll es im Garten ruhig sein."
+      },
+      {
+        "speaker": "Niklas",
+        "text": "Mach ich. Das Fest selbst muss dann aber nicht gleich zu Ende sein. Wir können ja noch leise zusammensitzen."
+      },
+      {
+        "speaker": "Clara",
+        "text": "Genau. Und am nächsten Tag müssen wir noch aufräumen. Ich würde das nicht allein schaffen."
+      },
+      {
+        "speaker": "Niklas",
+        "text": "Ich helfe dir. Am Sonntagmorgen habe ich Zeit, bevor ich zu meinen Eltern fahre. Wir können um zehn anfangen."
+      },
+      {
+        "speaker": "Clara",
+        "text": "Prima, dann frage ich noch zwei andere. Zu viert geht es schnell. Ich freue mich schon, endlich mal alle Nachbarn kennenzulernen."
+      },
+      {
+        "speaker": "Niklas",
+        "text": "Ich auch. Dann bis Samstag, und schick mir bitte die Nachricht wegen des Wetters."
+      },
+      {
+        "speaker": "Clara",
+        "text": "Mach ich. Bis dann!"
+      }
+    ]
+  }
+}

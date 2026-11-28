@@ -1,0 +1,180 @@
+{
+  "cards": [
+    {
+      "question": "Se cada etapa cobra imposto sobre um valor que já foi tributado antes, o efeito é…",
+      "options": [
+        {
+          "text": "Imposto cumulativo",
+          "correct": true
+        },
+        {
+          "text": "Crédito automático",
+          "correct": false
+        },
+        {
+          "text": "Tributação no destino",
+          "correct": false
+        }
+      ],
+      "reveal": "Imposto cumulativo. A cobrança se acumula ao longo da cadeia, porque o tributo pago antes não é descontado da etapa seguinte."
+    },
+    {
+      "question": "Ao calcular o imposto devido, uma empresa desconta o tributo pago em compras anteriores usando um…",
+      "options": [
+        {
+          "text": "Crédito sobre insumos",
+          "correct": true
+        },
+        {
+          "text": "Desconto por volume",
+          "correct": false
+        },
+        {
+          "text": "Reembolso ao consumidor",
+          "correct": false
+        }
+      ],
+      "reveal": "Crédito sobre insumos. Ele pode abater parte do imposto devido, evitando que a cobrança se repita integralmente em cada etapa."
+    },
+    {
+      "question": "Em economia, a incidência de um tributo aponta principalmente…",
+      "options": [
+        {
+          "text": "Quem suporta o custo",
+          "correct": true
+        },
+        {
+          "text": "Quem aprova a cobrança",
+          "correct": false
+        },
+        {
+          "text": "Quem emite a nota",
+          "correct": false
+        }
+      ],
+      "reveal": "Quem suporta o custo. Isso pode ser diferente de quem tem a obrigação formal de recolher o tributo ao governo."
+    },
+    {
+      "question": "Num princípio de tributação pelo destino, a arrecadação é vinculada ao lugar onde ocorre…",
+      "options": [
+        {
+          "text": "O consumo",
+          "correct": true
+        },
+        {
+          "text": "A fabricação",
+          "correct": false
+        },
+        {
+          "text": "A sede da empresa",
+          "correct": false
+        }
+      ],
+      "reveal": "O consumo. No princípio do destino, o local em que o bem ou serviço é consumido orienta a atribuição da arrecadação."
+    },
+    {
+      "question": "No cálculo de um tributo, qual dado uma alíquota percentual multiplica?",
+      "options": [
+        {
+          "text": "A base tributável",
+          "correct": true
+        },
+        {
+          "text": "O prazo de pagamento",
+          "correct": false
+        },
+        {
+          "text": "O número de parcelas",
+          "correct": false
+        }
+      ],
+      "reveal": "A base tributável. É o valor usado como referência para calcular o tributo; a alíquota é o percentual aplicado a ele."
+    },
+    {
+      "question": "Entre comprar insumos e vender um produto, o valor agregado por uma etapa é…",
+      "options": [
+        {
+          "text": "Venda menos insumos",
+          "correct": true
+        },
+        {
+          "text": "Soma dos tributos",
+          "correct": false
+        },
+        {
+          "text": "Preço final ao consumidor",
+          "correct": false
+        }
+      ],
+      "reveal": "Venda menos insumos. Essa diferença representa o valor criado naquela etapa, antes de considerar outros detalhes da contabilidade."
+    },
+    {
+      "question": "Num sistema progressivo de tributação da renda, faixas maiores tendem a ter…",
+      "options": [
+        {
+          "text": "Alíquotas marginais maiores",
+          "correct": true
+        },
+        {
+          "text": "A mesma alíquota em todas as faixas",
+          "correct": false
+        },
+        {
+          "text": "Alíquotas marginais menores",
+          "correct": false
+        }
+      ],
+      "reveal": "Alíquotas marginais maiores. Em um sistema progressivo, o percentual aplicado à próxima faixa de renda cresce conforme a faixa aumenta."
+    },
+    {
+      "question": "Em teoria, um tributo mais neutro interfere pouco nas escolhas de…",
+      "options": [
+        {
+          "text": "Consumo e produção",
+          "correct": true
+        },
+        {
+          "text": "Horário de funcionamento",
+          "correct": false
+        },
+        {
+          "text": "Forma de pagamento",
+          "correct": false
+        }
+      ],
+      "reveal": "Consumo e produção. A ideia de neutralidade é que o tributo distorça o mínimo possível as decisões econômicas."
+    },
+    {
+      "question": "Quando diferentes níveis de governo têm competências tributárias, o federalismo fiscal organiza…",
+      "options": [
+        {
+          "text": "Poderes e receitas",
+          "correct": true
+        },
+        {
+          "text": "Preços de mercado",
+          "correct": false
+        },
+        {
+          "text": "Contratos entre empresas",
+          "correct": false
+        }
+      ],
+      "reveal": "Poderes e receitas. O federalismo fiscal trata de como responsabilidades e recursos se distribuem entre níveis de governo."
+    },
+    {
+      "question": "Simplificar a cobrança de um tributo garante, por si só, que o valor total pago caia?",
+      "options": [
+        {
+          "text": "Sim",
+          "correct": false
+        },
+        {
+          "text": "Não",
+          "correct": true
+        }
+      ],
+      "reveal": "Não. Regras mais simples podem facilitar o entendimento e o cumprimento, mas não determinam, por si só, quanto será cobrado."
+    }
+  ]
+}

@@ -1,0 +1,1069 @@
+{
+  "courses": [
+    {
+      "countrySpecific": false,
+      "key": "nextjs",
+      "levels": [
+        "beginner",
+        "intermediate",
+        "advanced"
+      ],
+      "title": "Next.js"
+    },
+    {
+      "countrySpecific": false,
+      "key": "javascript",
+      "levels": [
+        "beginner",
+        "intermediate"
+      ],
+      "title": "JavaScript"
+    },
+    {
+      "countrySpecific": false,
+      "key": "react",
+      "levels": [
+        "beginner",
+        "intermediate"
+      ],
+      "title": "React"
+    },
+    {
+      "countrySpecific": false,
+      "key": "typescript",
+      "levels": [
+        "beginner"
+      ],
+      "title": "TypeScript"
+    }
+  ],
+  "estimatedHours": 66.9,
+  "phases": [
+    {
+      "estimatedHours": 12.6,
+      "milestone": "Run a Next.js app and build interactive pages with shared layouts.",
+      "title": "Getting a working app"
+    },
+    {
+      "estimatedHours": 15.5,
+      "milestone": "Build a multi-route app that reads and updates data.",
+      "title": "Building complete flows"
+    },
+    {
+      "estimatedHours": 18.6,
+      "milestone": "Secure an app and control its rendering, caching, and user experience.",
+      "title": "Handling real-world behavior"
+    },
+    {
+      "estimatedHours": 20.2,
+      "milestone": "Test, deploy, diagnose, and maintain production Next.js applications.",
+      "title": "Operating with confidence"
+    }
+  ],
+  "skills": [
+    {
+      "area": "First pages",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Create a Next.js project, start its development server, and change the content of its home page.",
+      "estimatedLessons": 5,
+      "examWeight": null,
+      "key": "create-run-app",
+      "level": "beginner",
+      "name": "Create and run a Next.js app",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": []
+    },
+    {
+      "area": "First pages",
+      "topics": [],
+      "course": "javascript",
+      "description": "Use functions, objects, arrays, and modules to organize the data and code used by a web app.",
+      "estimatedLessons": 10,
+      "examWeight": null,
+      "key": "js-web-fundamentals",
+      "level": "beginner",
+      "name": "Use JavaScript functions, objects, and modules",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": []
+    },
+    {
+      "area": "First pages",
+      "topics": [],
+      "course": "react",
+      "description": "Create React components with JSX and pass data through props.",
+      "estimatedLessons": 12,
+      "examWeight": null,
+      "key": "react-components",
+      "level": "beginner",
+      "name": "Build React components with props",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "js-web-fundamentals"
+      ]
+    },
+    {
+      "area": "First pages",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Compose a Next.js page from reusable components and render lists and conditional content.",
+      "estimatedLessons": 9,
+      "examWeight": null,
+      "key": "compose-next-page",
+      "level": "beginner",
+      "name": "Compose a Next.js page",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "create-run-app",
+        "react-components"
+      ]
+    },
+    {
+      "area": "First pages",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Add App Router pages and shared layouts using the file and folder conventions.",
+      "estimatedLessons": 10,
+      "examWeight": null,
+      "key": "pages-layouts",
+      "level": "beginner",
+      "name": "Create pages and shared layouts",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "compose-next-page"
+      ]
+    },
+    {
+      "area": "Routing and navigation",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Connect routes with Link and understand client-side navigation and prefetching.",
+      "estimatedLessons": 8,
+      "examWeight": null,
+      "key": "link-navigation",
+      "level": "beginner",
+      "name": "Navigate between routes",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "pages-layouts"
+      ]
+    },
+    {
+      "area": "First pages",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Apply global CSS and CSS Modules while avoiding unintended style conflicts.",
+      "estimatedLessons": 8,
+      "examWeight": null,
+      "key": "style-next-app",
+      "level": "beginner",
+      "name": "Style a Next.js app",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "compose-next-page"
+      ]
+    },
+    {
+      "area": "Rendering and data",
+      "topics": [],
+      "course": "react",
+      "description": "Use state and event handlers to make components respond to user input.",
+      "estimatedLessons": 12,
+      "examWeight": null,
+      "key": "react-state-events",
+      "level": "beginner",
+      "name": "Manage React state and events",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "react-components"
+      ]
+    },
+    {
+      "area": "Rendering and data",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Place interactive React components behind a client boundary and pass suitable data from server components.",
+      "estimatedLessons": 12,
+      "examWeight": null,
+      "key": "client-components",
+      "level": "beginner",
+      "name": "Add interactive client components",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "compose-next-page",
+        "react-state-events"
+      ]
+    },
+    {
+      "area": "Rendering and data",
+      "topics": [],
+      "course": "javascript",
+      "description": "Use promises, async functions, and error handling to work with asynchronous web operations.",
+      "estimatedLessons": 10,
+      "examWeight": null,
+      "key": "js-async",
+      "level": "intermediate",
+      "name": "Handle asynchronous JavaScript operations",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "js-web-fundamentals"
+      ]
+    },
+    {
+      "area": "Rendering and data",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Fetch and display external data in an async server component, including basic failure handling.",
+      "estimatedLessons": 10,
+      "examWeight": null,
+      "key": "server-fetch",
+      "level": "beginner",
+      "name": "Fetch data in server components",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "compose-next-page",
+        "js-async"
+      ]
+    },
+    {
+      "area": "First pages",
+      "topics": [],
+      "course": "typescript",
+      "description": "Use common TypeScript types, interfaces, and type checking in component-based applications.",
+      "estimatedLessons": 12,
+      "examWeight": null,
+      "key": "ts-component-types",
+      "level": "beginner",
+      "name": "Type component data with TypeScript",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "js-web-fundamentals",
+        "react-components"
+      ]
+    },
+    {
+      "area": "First pages",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Configure TypeScript in a Next.js app and type pages, props, and route data.",
+      "estimatedLessons": 8,
+      "examWeight": null,
+      "key": "next-typescript",
+      "level": "beginner",
+      "name": "Use TypeScript in Next.js",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "pages-layouts",
+        "ts-component-types"
+      ]
+    },
+    {
+      "area": "Routing and navigation",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Use dynamic segments and catch-all routes to render pages from URL parameters.",
+      "estimatedLessons": 10,
+      "examWeight": null,
+      "key": "dynamic-routes",
+      "level": "intermediate",
+      "name": "Build dynamic routes",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "pages-layouts"
+      ]
+    },
+    {
+      "area": "Routing and navigation",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Read and update search parameters to support shareable filters, sorting, and pagination.",
+      "estimatedLessons": 10,
+      "examWeight": null,
+      "key": "search-params",
+      "level": "intermediate",
+      "name": "Manage URL search parameters",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "link-navigation",
+        "client-components"
+      ]
+    },
+    {
+      "area": "Routing and navigation",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Organize nested layouts and route groups without unintentionally changing public URLs.",
+      "estimatedLessons": 10,
+      "examWeight": null,
+      "key": "route-organization",
+      "level": "intermediate",
+      "name": "Organize nested routes and layouts",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "pages-layouts"
+      ]
+    },
+    {
+      "area": "Routing and navigation",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Handle missing routes and missing resources using the appropriate not-found conventions.",
+      "estimatedLessons": 7,
+      "examWeight": null,
+      "key": "not-found",
+      "level": "intermediate",
+      "name": "Handle missing pages and resources",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "dynamic-routes",
+        "server-fetch"
+      ]
+    },
+    {
+      "area": "Rendering and data",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Use server-only environment variables and understand when public variables are embedded in browser code.",
+      "estimatedLessons": 8,
+      "examWeight": null,
+      "key": "environment-variables",
+      "level": "beginner",
+      "name": "Configure environment variables safely",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "create-run-app"
+      ]
+    },
+    {
+      "area": "Rendering and data",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Access a database from server code and manage connections and credentials across environments.",
+      "estimatedLessons": 12,
+      "examWeight": null,
+      "key": "database-access",
+      "level": "intermediate",
+      "name": "Access a database from Next.js",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "server-fetch",
+        "environment-variables"
+      ]
+    },
+    {
+      "area": "Rendering and data",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Choose server and client component boundaries based on interactivity, data access, and bundle size.",
+      "estimatedLessons": 12,
+      "examWeight": null,
+      "key": "component-boundaries",
+      "level": "intermediate",
+      "name": "Design server and client boundaries",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "client-components",
+        "server-fetch"
+      ]
+    },
+    {
+      "area": "Rendering and data",
+      "topics": [],
+      "course": "react",
+      "description": "Use effects and cleanup for browser-side synchronization while avoiding unnecessary effects.",
+      "estimatedLessons": 10,
+      "examWeight": null,
+      "key": "react-effects",
+      "level": "intermediate",
+      "name": "Synchronize React with browser effects",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "react-state-events"
+      ]
+    },
+    {
+      "area": "Rendering and data",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Fetch and refresh browser-side data when interaction or live updates make client fetching appropriate.",
+      "estimatedLessons": 10,
+      "examWeight": null,
+      "key": "client-data",
+      "level": "intermediate",
+      "name": "Fetch data on the client",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "client-components",
+        "js-async",
+        "react-effects"
+      ]
+    },
+    {
+      "area": "Mutations and security",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Submit a form to a Server Function and perform a server-side data change.",
+      "estimatedLessons": 12,
+      "examWeight": null,
+      "key": "server-actions",
+      "level": "intermediate",
+      "name": "Submit forms with Server Functions",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "client-components",
+        "js-async"
+      ]
+    },
+    {
+      "area": "Mutations and security",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Validate submitted data on the server and return useful field and application errors.",
+      "estimatedLessons": 12,
+      "examWeight": null,
+      "key": "form-validation",
+      "level": "intermediate",
+      "name": "Validate Server Function input",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "server-actions"
+      ]
+    },
+    {
+      "area": "Mutations and security",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Show pending, success, and failure states while a form submission is processed.",
+      "estimatedLessons": 10,
+      "examWeight": null,
+      "key": "form-feedback",
+      "level": "intermediate",
+      "name": "Show form submission feedback",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "server-actions",
+        "react-state-events"
+      ]
+    },
+    {
+      "area": "Mutations and security",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Create Route Handlers that accept HTTP requests and return appropriate responses.",
+      "estimatedLessons": 12,
+      "examWeight": null,
+      "key": "route-handlers",
+      "level": "intermediate",
+      "name": "Build HTTP Route Handlers",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "pages-layouts",
+        "js-async"
+      ]
+    },
+    {
+      "area": "Rendering and data",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Read request headers and cookies and set cookies in supported server-side contexts.",
+      "estimatedLessons": 10,
+      "examWeight": null,
+      "key": "request-cookies",
+      "level": "intermediate",
+      "name": "Read and set request cookies",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "route-handlers"
+      ]
+    },
+    {
+      "area": "Performance and discoverability",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Use the image and font features to serve appropriately sized assets and reduce layout shifts.",
+      "estimatedLessons": 10,
+      "examWeight": null,
+      "key": "images-fonts",
+      "level": "intermediate",
+      "name": "Optimize images and fonts",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "compose-next-page"
+      ]
+    },
+    {
+      "area": "Rendering and data",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Explain how server rendering, the React Server Component payload, and hydration produce an interactive page.",
+      "estimatedLessons": 12,
+      "examWeight": null,
+      "key": "rendering-hydration",
+      "level": "intermediate",
+      "name": "Trace rendering and hydration",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "component-boundaries"
+      ]
+    },
+    {
+      "area": "Rendering and data",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Choose when route content can be generated ahead of requests and when it must depend on request-time data.",
+      "estimatedLessons": 12,
+      "examWeight": null,
+      "key": "static-dynamic-rendering",
+      "level": "intermediate",
+      "name": "Choose static or dynamic rendering",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "rendering-hydration",
+        "request-cookies"
+      ]
+    },
+    {
+      "area": "Rendering and data",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Generate known dynamic route parameters at build time and handle parameters not generated in advance.",
+      "estimatedLessons": 10,
+      "examWeight": null,
+      "key": "generate-static-params",
+      "level": "intermediate",
+      "name": "Generate route parameters ahead of time",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "dynamic-routes",
+        "static-dynamic-rendering"
+      ]
+    },
+    {
+      "area": "Rendering and data",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Use loading conventions and Suspense boundaries to stream available content while slower content loads.",
+      "estimatedLessons": 12,
+      "examWeight": null,
+      "key": "streaming-suspense",
+      "level": "intermediate",
+      "name": "Stream pages with Suspense",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "server-fetch",
+        "rendering-hydration"
+      ]
+    },
+    {
+      "area": "Rendering and data",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Handle route-level failures with error boundaries and provide recovery without exposing sensitive details.",
+      "estimatedLessons": 10,
+      "examWeight": null,
+      "key": "route-errors",
+      "level": "intermediate",
+      "name": "Handle route errors",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "route-organization",
+        "server-fetch"
+      ]
+    },
+    {
+      "area": "Rendering and data",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Distinguish request memoization, server caches, and client router caching for the installed Next.js version.",
+      "estimatedLessons": 14,
+      "examWeight": null,
+      "key": "cache-layers",
+      "level": "advanced",
+      "name": "Distinguish Next.js cache layers",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "static-dynamic-rendering",
+        "link-navigation"
+      ]
+    },
+    {
+      "area": "Rendering and data",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Configure data and component caching using the APIs and defaults supported by the app's Next.js version.",
+      "estimatedLessons": 14,
+      "examWeight": null,
+      "key": "configure-caching",
+      "level": "advanced",
+      "name": "Configure data and component caching",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "cache-layers",
+        "server-fetch"
+      ]
+    },
+    {
+      "area": "Rendering and data",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Refresh cached content after changes using time-based policies, paths, or tags as appropriate.",
+      "estimatedLessons": 12,
+      "examWeight": null,
+      "key": "revalidate-content",
+      "level": "advanced",
+      "name": "Revalidate cached content",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "configure-caching",
+        "server-actions"
+      ]
+    },
+    {
+      "area": "Rendering and data",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Combine cached content and request-time content using Cache Components when supported and enabled.",
+      "estimatedLessons": 12,
+      "examWeight": null,
+      "key": "cache-components",
+      "level": "advanced",
+      "name": "Combine cached and dynamic content",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "configure-caching",
+        "streaming-suspense"
+      ]
+    },
+    {
+      "area": "Mutations and security",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Integrate an authentication provider and manage sign-in, sign-out, and sessions with secure cookies.",
+      "estimatedLessons": 15,
+      "examWeight": null,
+      "key": "authentication",
+      "level": "intermediate",
+      "name": "Add authentication and sessions",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "request-cookies",
+        "environment-variables"
+      ]
+    },
+    {
+      "area": "Mutations and security",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Enforce user and resource permissions close to data access and mutations rather than relying on hidden UI.",
+      "estimatedLessons": 14,
+      "examWeight": null,
+      "key": "authorization",
+      "level": "advanced",
+      "name": "Authorize access to data and actions",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "authentication",
+        "database-access",
+        "server-actions"
+      ]
+    },
+    {
+      "area": "Mutations and security",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Protect endpoints and actions against untrusted input, cross-site requests, secret exposure, and unsafe redirects.",
+      "estimatedLessons": 15,
+      "examWeight": null,
+      "key": "secure-server-interfaces",
+      "level": "advanced",
+      "name": "Secure server interfaces",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "form-validation",
+        "route-handlers",
+        "authorization"
+      ]
+    },
+    {
+      "area": "Routing and navigation",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Apply redirects, rewrites, and headers using configuration or request interception where appropriate.",
+      "estimatedLessons": 12,
+      "examWeight": null,
+      "key": "redirect-rewrite-proxy",
+      "level": "advanced",
+      "name": "Control requests and redirects",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "route-handlers",
+        "link-navigation"
+      ]
+    },
+    {
+      "area": "Performance and discoverability",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Define static and dynamic metadata, social previews, robots rules, and sitemaps for discoverable routes.",
+      "estimatedLessons": 12,
+      "examWeight": null,
+      "key": "metadata-seo",
+      "level": "intermediate",
+      "name": "Generate metadata and sitemaps",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "dynamic-routes",
+        "server-fetch"
+      ]
+    },
+    {
+      "area": "Performance and discoverability",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Support accessible navigation, focus behavior, and semantic page content across client-side route changes.",
+      "estimatedLessons": 10,
+      "examWeight": null,
+      "key": "accessible-navigation",
+      "level": "intermediate",
+      "name": "Build accessible route experiences",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "link-navigation",
+        "client-components"
+      ]
+    },
+    {
+      "area": "Routing and navigation",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Render multiple route slots and manage their independent loading and navigation behavior.",
+      "estimatedLessons": 12,
+      "examWeight": null,
+      "key": "parallel-routes",
+      "level": "advanced",
+      "name": "Build parallel routes",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "route-organization",
+        "streaming-suspense"
+      ]
+    },
+    {
+      "area": "Routing and navigation",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Intercept a route to show contextual content such as a modal while preserving a direct URL.",
+      "estimatedLessons": 10,
+      "examWeight": null,
+      "key": "intercepting-routes",
+      "level": "advanced",
+      "name": "Build intercepting routes",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "parallel-routes",
+        "dynamic-routes"
+      ]
+    },
+    {
+      "area": "Routing and navigation",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Structure locale-aware routes and content while accounting for navigation and discoverability.",
+      "estimatedLessons": 10,
+      "examWeight": null,
+      "key": "internationalized-routes",
+      "level": "advanced",
+      "name": "Build locale-aware routes",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "dynamic-routes",
+        "metadata-seo"
+      ]
+    },
+    {
+      "area": "Mutations and security",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Process external webhooks with raw request bodies, signature verification, and duplicate-event handling.",
+      "estimatedLessons": 12,
+      "examWeight": null,
+      "key": "webhooks",
+      "level": "advanced",
+      "name": "Handle external webhooks safely",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "secure-server-interfaces"
+      ]
+    },
+    {
+      "area": "Performance and discoverability",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Find unnecessary client JavaScript and defer nonessential components and third-party code.",
+      "estimatedLessons": 12,
+      "examWeight": null,
+      "key": "reduce-client-bundle",
+      "level": "advanced",
+      "name": "Reduce client-side JavaScript",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "component-boundaries",
+        "rendering-hydration"
+      ]
+    },
+    {
+      "area": "Performance and discoverability",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Measure application performance and investigate slow rendering, network requests, and Web Vitals.",
+      "estimatedLessons": 12,
+      "examWeight": null,
+      "key": "measure-performance",
+      "level": "advanced",
+      "name": "Measure Next.js performance",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "streaming-suspense",
+        "images-fonts"
+      ]
+    },
+    {
+      "area": "Quality and deployment",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Test Next.js components and server-side logic with suitable unit and integration test boundaries.",
+      "estimatedLessons": 14,
+      "examWeight": null,
+      "key": "unit-integration-tests",
+      "level": "intermediate",
+      "name": "Test components and server logic",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "component-boundaries",
+        "server-actions"
+      ]
+    },
+    {
+      "area": "Quality and deployment",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Exercise navigation, authentication, and data changes in a running application with browser tests.",
+      "estimatedLessons": 14,
+      "examWeight": null,
+      "key": "end-to-end-tests",
+      "level": "advanced",
+      "name": "Test complete application flows",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "unit-integration-tests",
+        "authentication"
+      ]
+    },
+    {
+      "area": "Quality and deployment",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Run production builds, interpret build failures, and configure supported Next.js build options.",
+      "estimatedLessons": 10,
+      "examWeight": null,
+      "key": "production-builds",
+      "level": "intermediate",
+      "name": "Build and configure for production",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "create-run-app",
+        "environment-variables"
+      ]
+    },
+    {
+      "area": "Quality and deployment",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Deploy a Next.js app to a managed platform with correct environment variables and production settings.",
+      "estimatedLessons": 12,
+      "examWeight": null,
+      "key": "managed-deployment",
+      "level": "intermediate",
+      "name": "Deploy a Next.js application",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "production-builds",
+        "database-access"
+      ]
+    },
+    {
+      "area": "Quality and deployment",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Choose among managed hosting, self-hosting, and static export based on runtime and feature constraints.",
+      "estimatedLessons": 12,
+      "examWeight": null,
+      "key": "deployment-models",
+      "level": "advanced",
+      "name": "Choose a deployment model",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "production-builds",
+        "static-dynamic-rendering"
+      ]
+    },
+    {
+      "area": "Quality and deployment",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Select compatible server runtimes and account for platform differences in APIs and execution limits.",
+      "estimatedLessons": 10,
+      "examWeight": null,
+      "key": "server-runtimes",
+      "level": "advanced",
+      "name": "Choose server runtimes",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "deployment-models",
+        "route-handlers"
+      ]
+    },
+    {
+      "area": "Quality and deployment",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Instrument server and client behavior with logs, error reporting, and tracing while protecting sensitive data.",
+      "estimatedLessons": 12,
+      "examWeight": null,
+      "key": "production-observability",
+      "level": "advanced",
+      "name": "Observe production application behavior",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "managed-deployment",
+        "route-errors"
+      ]
+    },
+    {
+      "area": "Quality and deployment",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Diagnose hydration mismatches, stale data, build failures, and differences between development and production.",
+      "estimatedLessons": 14,
+      "examWeight": null,
+      "key": "debug-next-app",
+      "level": "advanced",
+      "name": "Diagnose Next.js application failures",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "rendering-hydration",
+        "cache-layers",
+        "production-builds"
+      ]
+    },
+    {
+      "area": "Legacy and integration",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Read and modify Pages Router routes, layouts, and data-fetching methods in an existing application.",
+      "estimatedLessons": 14,
+      "examWeight": null,
+      "key": "pages-router",
+      "level": "advanced",
+      "name": "Maintain Pages Router applications",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "pages-layouts",
+        "static-dynamic-rendering"
+      ]
+    },
+    {
+      "area": "Legacy and integration",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Migrate routes incrementally from the Pages Router to the App Router and verify behavior at each step.",
+      "estimatedLessons": 12,
+      "examWeight": null,
+      "key": "migrate-app-router",
+      "level": "advanced",
+      "name": "Migrate to the App Router",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "pages-router",
+        "component-boundaries"
+      ]
+    },
+    {
+      "area": "Quality and deployment",
+      "topics": [],
+      "course": "nextjs",
+      "description": "Upgrade Next.js using version-specific release notes, migration tools, and tests to check changed behavior.",
+      "estimatedLessons": 10,
+      "examWeight": null,
+      "key": "upgrade-next",
+      "level": "advanced",
+      "name": "Upgrade Next.js safely",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "production-builds",
+        "end-to-end-tests"
+      ]
+    }
+  ],
+  "repaired": []
+}

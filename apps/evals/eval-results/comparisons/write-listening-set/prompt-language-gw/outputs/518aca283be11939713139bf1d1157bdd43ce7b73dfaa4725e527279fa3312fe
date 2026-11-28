@@ -1,0 +1,156 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "It was a broken streetlight that first got me interested in bats.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Watching bats in the city",
+        "question": "Write NO MORE THAN TWO WORDS. Hannah's interest in bats began because of a broken ______.",
+        "keyPoints": [
+          "The broken object was a streetlight."
+        ],
+        "acceptedAnswers": [
+          "streetlight",
+          "street light"
+        ],
+        "sampleAnswer": "streetlight"
+      },
+      {
+        "evidence": "At first I thought a blue filter would do, but our trainer said no, use a red filter.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Watching bats in the city",
+        "question": "Write NO MORE THAN TWO WORDS. Volunteers should put a ______ on their torch.",
+        "keyPoints": [
+          "The torch should have a red filter."
+        ],
+        "acceptedAnswers": [
+          "red filter"
+        ],
+        "sampleAnswer": "red filter"
+      },
+      {
+        "evidence": "For example, we look for changes in insect numbers, because bats depend on them for food.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "hard",
+        "context": "Watching bats in the city",
+        "question": "Write NO MORE THAN TWO WORDS. The group's observations can help reveal changes in local ______.",
+        "keyPoints": [
+          "The observations can reveal changes in insect numbers."
+        ],
+        "acceptedAnswers": [
+          "insect numbers"
+        ],
+        "sampleAnswer": "insect numbers"
+      },
+      {
+        "evidence": "But I've had much better results under the old bridge at the far end.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Watching bats in the city",
+        "question": "Write NO MORE THAN TWO WORDS. Hannah recommends looking for bats beneath the old ______.",
+        "keyPoints": [
+          "She recommends the area beneath the old bridge."
+        ],
+        "acceptedAnswers": [
+          "bridge"
+        ],
+        "sampleAnswer": "bridge"
+      },
+      {
+        "evidence": "The one thing that stops us is heavy rain.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Watching bats in the city",
+        "question": "Write NO MORE THAN TWO WORDS. The group cancels its outings when there is ______.",
+        "keyPoints": [
+          "Heavy rain prevents the group from going out."
+        ],
+        "acceptedAnswers": [
+          "heavy rain"
+        ],
+        "sampleAnswer": "heavy rain"
+      },
+      {
+        "evidence": "We share our sound recordings with local researchers, who can identify the bats from them.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "hard",
+        "context": "Watching bats in the city",
+        "question": "Write NO MORE THAN TWO WORDS. The volunteers send their sound ______ to local researchers.",
+        "keyPoints": [
+          "The volunteers share sound recordings."
+        ],
+        "acceptedAnswers": [
+          "recordings"
+        ],
+        "sampleAnswer": "recordings"
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Hannah",
+        "gender": "female",
+        "accent": "British English"
+      }
+    ],
+    "title": "Watching bats in the city",
+    "turns": [
+      {
+        "speaker": "Hannah",
+        "text": "When people hear that I spend my evenings watching bats, they often ask whether I've always been interested in wildlife. Well, I enjoyed going to the park as a child, but I wasn't particularly interested in animals. It was a broken streetlight that first got me interested in bats. One evening, on my way home, I stopped beneath it and noticed these tiny shapes flying around in the darkness. A neighbour told me what they were, and I started reading about them."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "A few years later, I joined a local group that counts bats. Our new volunteers sometimes arrive with expensive cameras, but they soon find they don't need them. A small torch is useful for finding your way, though. At first I thought a blue filter would do, but our trainer said no, use a red filter. That gives you enough light to see the path without disturbing the bats. We also advise people to wear comfortable shoes because we walk quite a distance."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "People sometimes assume we're only interested in finding out how many bats there are. Of course, that's important, especially as some species are becoming less common. But the information also tells us about the wider environment. For example, we look for changes in insect numbers, because bats depend on them for food. If fewer bats are visiting a particular place, that can be a sign that something has changed in the local food supply."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "So where should you go if you want to see bats yourself? Lots of people try the lake in the middle of the park, and you can be lucky there. But I've had much better results under the old bridge at the far end. The water flows more slowly there, and insects gather above it. You don't have to stand right beside the water, either. There's a path a few metres away where you can watch quite safely."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "We usually meet just before sunset, although the time changes during the year. On colder evenings we might see fewer bats, but we still go out and record what we find. The one thing that stops us is heavy rain. In those conditions, the equipment can get damaged, and the bats tend to stay where they're sheltered anyway. If the forecast looks uncertain, we send everyone a message in the afternoon so they know whether to come."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "One of the best things about the project is that anyone can contribute, even if they can't recognise the different species. We use small devices that pick up the sounds bats make, and we listen to them later. We share our sound recordings with local researchers, who can identify the bats from them. They also give us feedback, so we're gradually learning to recognise the sounds ourselves. If you're curious, come along to one of our walks. You might be surprised by what's flying above you."
+      }
+    ]
+  }
+}

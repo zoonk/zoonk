@@ -1,0 +1,21 @@
+{
+  "categories": [
+    "math",
+    "science"
+  ],
+  "description": "O ENEM reúne questões de Matemática, Ciências da Natureza, Ciências Humanas e Linguagens, além de uma redação dissertativo-argumentativa. A preparação começa com porcentagens, proporções e leitura de dados, e avança por funções, estatística, ondas, ecologia, eletricidade, textos e temas das demais áreas para ajudar você a lidar com as questões e tarefas da prova.",
+  "landingPage": {
+    "audience": [
+      "Alunos do ensino médio",
+      "Quem vai prestar o ENEM",
+      "Quem busca vaga pelo Sisu"
+    ],
+    "outcomes": [
+      "Resolver questões de matemática do ENEM",
+      "Resolver questões de Ciências da Natureza",
+      "Responder questões de Linguagens e Ciências Humanas",
+      "Escrever a redação dissertativo-argumentativa do ENEM"
+    ],
+    "valueProposition": "Resolver questões do ENEM e escrever uma redação dissertativo-argumentativa"
+  }
+}

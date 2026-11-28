@@ -1,0 +1,238 @@
+{
+  "attempt": "first",
+  "costUsd": 0.0045010399999999996,
+  "failures": [],
+  "packetId": "5be6fb887736b7880c9fc33df28678ad101ce9dfc242118f6f7b0460b556b828",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As duas versões são idênticas: as dez respostas principais estão apoiadas no diálogo, mas as mesmas falhas de duração, idioma das keyPoints e exemplos de resposta aparecem em ambas.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Ambas usam uma conversa cotidiana e dez questões de preenchimento, mas o roteiro fica abaixo do mínimo de 600 palavras e não treina suficientemente a duração solicitada.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "O diálogo soa razoavelmente conversacional nas duas versões, mas ambas deixam as keyPoints em inglês, embora a expectativa peça português brasileiro.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "O roteiro tem menos de 600 palavras, abaixo do mínimo explícito para a duração pretendida de 4 a 5 minutos.",
+            "criterion": "examRealism",
+            "learnerCost": "O aluno pratica com um áudio substancialmente mais curto do que o exigido para essa parte do IELTS.",
+            "location": {
+              "detail": "turns do diálogo, do início ao encerramento",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "As keyPoints estão em inglês, não em português brasileiro, como exigido.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "O aluno pode não conseguir compreender as explicações e os pontos-chave apresentados após a escuta.",
+            "location": {
+              "detail": "keyPoints das dez questões",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "Algumas respostas-modelo excedem o limite de uma palavra e/ou um número, embora as questões indiquem “ONE WORD AND/OR A NUMBER”; por exemplo, a resposta do telefone é escrita por extenso.",
+            "criterion": "keys",
+            "learnerCost": "O aluno pode acreditar que respostas longas por extenso são aceitas e perder pontos por exceder o limite.",
+            "location": {
+              "detail": "sampleAnswer das questões 2, 4, 5 e 6",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "O roteiro tem menos de 600 palavras, abaixo do mínimo explícito para a duração pretendida de 4 a 5 minutos.",
+            "criterion": "examRealism",
+            "learnerCost": "O aluno pratica com um áudio substancialmente mais curto do que o exigido para essa parte do IELTS.",
+            "location": {
+              "detail": "turns do diálogo, do início ao encerramento",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "As keyPoints estão em inglês, não em português brasileiro, como exigido.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "O aluno pode não conseguir compreender as explicações e os pontos-chave apresentados após a escuta.",
+            "location": {
+              "detail": "keyPoints das dez questões",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "Algumas respostas-modelo excedem o limite de uma palavra e/ou um número, embora as questões indiquem “ONE WORD AND/OR A NUMBER”; por exemplo, a resposta do telefone é escrita por extenso.",
+            "criterion": "keys",
+            "learnerCost": "O aluno pode acreditar que respostas longas por extenso são aceitas e perder pontos por exceder o limite.",
+            "location": {
+              "detail": "sampleAnswer das questões 2, 4, 5 e 6",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "As versões são idênticas e têm as mesmas falhas importantes."
+        },
+        "pairId": "3f94a362-c9bb-4f34-8a26-5195c306063c"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "As duas versões têm respostas principais apoiadas no diálogo, mas A tem menos respostas-modelo que excedem o limite declarado: em A, o exemplo de horário está por extenso; em B, também há exemplos extensos de telefone, data e preço.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "A",
+            "reason": "A conversa sobre uma viagem de bicicleta se encaixa mais diretamente no exemplo de arranjos de viagem e inclui correções de data e preço; B trata de uma aula de cerâmica e não oferece várias correções numéricas como solicitado. Ambas ficam abaixo de 600 palavras.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os dois diálogos são razoavelmente conversacionais, mas ambos deixam as keyPoints em inglês, não em português brasileiro.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "O roteiro tem menos de 600 palavras, abaixo do mínimo explícito para a duração pretendida de 4 a 5 minutos.",
+            "criterion": "examRealism",
+            "learnerCost": "O aluno pratica com um áudio substancialmente mais curto do que o exigido para essa parte do IELTS.",
+            "location": {
+              "detail": "turns do diálogo, do início ao encerramento",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "As keyPoints estão em inglês, não em português brasileiro, como exigido.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "O aluno pode não conseguir compreender as explicações e os pontos-chave apresentados após a escuta.",
+            "location": {
+              "detail": "keyPoints das dez questões",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "A resposta-modelo “quarter past nine” excede o limite de uma palavra e/ou um número indicado na questão.",
+            "criterion": "keys",
+            "learnerCost": "O aluno pode copiar o formato inválido e ter a resposta marcada como errada por exceder o limite.",
+            "location": {
+              "detail": "“quarter past nine”",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "O roteiro tem menos de 600 palavras, abaixo do mínimo explícito para a duração pretendida de 4 a 5 minutos.",
+            "criterion": "examRealism",
+            "learnerCost": "O aluno pratica com um áudio substancialmente mais curto do que o exigido para essa parte do IELTS.",
+            "location": {
+              "detail": "turns do diálogo, do início ao encerramento",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "As keyPoints estão em inglês, não em português brasileiro, como exigido.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "O aluno pode não conseguir compreender as explicações e os pontos-chave apresentados após a escuta.",
+            "location": {
+              "detail": "keyPoints das dez questões",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "Algumas respostas-modelo excedem o limite de uma palavra e/ou um número indicado nas questões, como a resposta do telefone escrita por extenso e “quarter past ten”.",
+            "criterion": "keys",
+            "learnerCost": "O aluno pode acreditar que respostas longas por extenso são aceitas e perder pontos por exceder o limite.",
+            "location": {
+              "detail": "sampleAnswer das questões 2, 4, 5 e 6",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A se aproxima mais do cenário de viagem e pratica melhor as correções de informações solicitadas. As duas versões ainda têm falhas importantes, inclusive duração insuficiente e keyPoints no idioma errado."
+        },
+        "pairId": "5186b681-de96-4d43-b1f3-3f75e998120a"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As cinco respostas corretas estão apoiadas no monólogo em ambas as versões.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas versões têm o mesmo monólogo em espanhol e as mesmas questões de múltipla escolha.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "B",
+            "reason": "Em A, uma justificativa está em espanhol; B traduz essa explicação para português brasileiro, como pede o caso.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "A justificativa “Oyes que aceptan objetos usados e incluso algunos que necesitan un pequeño arreglo.” está em espanhol, embora as razões devam estar em português brasileiro.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "O leitor pode não entender a explicação associada à alternativa e ficar sem saber por que ela está incorreta.",
+            "location": {
+              "detail": "“Oyes que aceptan objetos usados e incluso algunos que necesitan un pequeño arreglo.”",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B mantém o conjunto e as respostas, mas deixa a explicação da segunda questão compreensível para o leitor brasileiro ao colocá-la em português."
+        },
+        "pairId": "d362f53c-d36b-4b4a-8f30-ce0846856293"
+      }
+    ]
+  }
+}

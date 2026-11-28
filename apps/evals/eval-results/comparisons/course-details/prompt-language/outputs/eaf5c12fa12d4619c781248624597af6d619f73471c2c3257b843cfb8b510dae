@@ -1,0 +1,21 @@
+{
+  "categories": [
+    "math",
+    "tech"
+  ],
+  "description": "Data analysis turns raw numbers into evidence for decisions. Organize and clean data, summarize and compare results, make clear charts, test patterns, and judge claims, including AI-generated ones.",
+  "landingPage": {
+    "audience": [
+      "Students using data for schoolwork",
+      "Office workers with spreadsheet tasks",
+      "Beginners curious about data-based claims"
+    ],
+    "outcomes": [
+      "Organize and clean data in a spreadsheet",
+      "Summarize results with numbers and charts",
+      "Compare groups and spot patterns in data",
+      "Judge whether evidence supports a conclusion"
+    ],
+    "valueProposition": "Turn messy data into clear answers for work, school, and everyday decisions"
+  }
+}

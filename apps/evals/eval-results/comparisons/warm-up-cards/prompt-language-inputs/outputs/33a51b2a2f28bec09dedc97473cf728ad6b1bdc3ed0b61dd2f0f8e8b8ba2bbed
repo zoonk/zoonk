@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "If `b = a` for a list, then `b.append(3)`, what happens to `a`?",
+      "options": [
+        {
+          "text": "It includes 3 too",
+          "correct": true
+        },
+        {
+          "text": "It stays unchanged",
+          "correct": false
+        },
+        {
+          "text": "It becomes a string",
+          "correct": false
+        }
+      ],
+      "reveal": "It includes 3 too. Assigning a list to another variable doesn’t copy it; both names refer to the same list."
+    },
+    {
+      "question": "At an `input()` prompt, you type 12; what kind of value does Python receive?",
+      "options": [
+        {
+          "text": "A string",
+          "correct": true
+        },
+        {
+          "text": "An integer",
+          "correct": false
+        },
+        {
+          "text": "A Boolean",
+          "correct": false
+        }
+      ],
+      "reveal": "A string. `input()` returns text, even when what you type looks like a number."
+    },
+    {
+      "question": "A loop runs `range(3)`; what sequence of values does it visit?",
+      "options": [
+        {
+          "text": "0, 1, 2",
+          "correct": true
+        },
+        {
+          "text": "1, 2, 3",
+          "correct": false
+        },
+        {
+          "text": "0, 1, 2, 3",
+          "correct": false
+        }
+      ],
+      "reveal": "0, 1, 2. `range()` starts at 0 by default and stops just before its endpoint."
+    },
+    {
+      "question": "After an `if` line ends with a colon, what tells Python which lines are inside?",
+      "options": [
+        {
+          "text": "Their indentation",
+          "correct": true
+        },
+        {
+          "text": "Their variable names",
+          "correct": false
+        },
+        {
+          "text": "Their punctuation",
+          "correct": false
+        }
+      ],
+      "reveal": "Their indentation. Python uses the amount of leading whitespace to mark code blocks, not braces."
+    },
+    {
+      "question": "To look up `\"name\"` in a Python dictionary, what does the code use?",
+      "options": [
+        {
+          "text": "A key",
+          "correct": true
+        },
+        {
+          "text": "A list position",
+          "correct": false
+        },
+        {
+          "text": "A function name",
+          "correct": false
+        }
+      ],
+      "reveal": "A key. A dictionary finds a value using its associated key, rather than the value’s position in a sequence."
+    },
+    {
+      "question": "In Python 3, what kind of result does `6 / 2` produce?",
+      "options": [
+        {
+          "text": "A float",
+          "correct": true
+        },
+        {
+          "text": "An integer",
+          "correct": false
+        },
+        {
+          "text": "A string",
+          "correct": false
+        }
+      ],
+      "reveal": "A float. In Python 3, `/` produces a floating-point result even when the division comes out evenly."
+    },
+    {
+      "question": "In Python 3, using `//`, what value does `-7 // 2` produce?",
+      "options": [
+        {
+          "text": "-4",
+          "correct": true
+        },
+        {
+          "text": "-3",
+          "correct": false
+        },
+        {
+          "text": "-3.5",
+          "correct": false
+        }
+      ],
+      "reveal": "-4. Floor division rounds down to the next whole number, rather than simply dropping the decimal part toward zero."
+    },
+    {
+      "question": "If a Python function reaches its end without a `return`, what value comes back?",
+      "options": [
+        {
+          "text": "None",
+          "correct": true
+        },
+        {
+          "text": "0",
+          "correct": false
+        },
+        {
+          "text": "False",
+          "correct": false
+        }
+      ],
+      "reveal": "None. Python functions return this special value automatically when they finish without a `return` statement."
+    },
+    {
+      "question": "In Python, what happens if code tries `word[0] = \"C\"` on a string?",
+      "options": [
+        {
+          "text": "It raises an error",
+          "correct": true
+        },
+        {
+          "text": "It changes the first letter",
+          "correct": false
+        },
+        {
+          "text": "It makes a new string",
+          "correct": false
+        }
+      ],
+      "reveal": "It raises an error. Strings are immutable, so their characters can’t be replaced by assigning to an index."
+    },
+    {
+      "question": "Two separately created lists both contain `[1]`; what does `a is b` return?",
+      "options": [
+        {
+          "text": "False",
+          "correct": true
+        },
+        {
+          "text": "True",
+          "correct": false
+        },
+        {
+          "text": "An error",
+          "correct": false
+        }
+      ],
+      "reveal": "False. `is` checks whether two names refer to the very same object, not whether their contents match."
+    }
+  ]
+}

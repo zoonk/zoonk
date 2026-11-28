@@ -1,0 +1,13 @@
+{
+  "caseId": "ko-language-japanese-working-holiday",
+  "challenger": {
+    "costUsd": 0.04739215,
+    "durationMs": 104858.36700000009,
+    "hash": "51b831bbce8e25a13d98160f0d5797d4af7e6aa58ac9061b54acec15d7c9bd11",
+    "systemPromptHash": "fec22d7736604dfc84fc0af28172436ff868318e7aa2216b8a453a7d709ceb8d",
+    "userPromptHash": "f13fe145b012941a8df2208c100ab6be3e6785f508aad0a4fd6f1c51b8a470ff"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 2
+}

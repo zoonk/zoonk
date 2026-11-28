@@ -1,0 +1,13 @@
+{
+  "caseId": "en-japanese",
+  "challenger": {
+    "costUsd": 0.00189328,
+    "durationMs": 28508.031625000003,
+    "hash": "2920dcb2a38872a599385c6e7cd24230a80694f439378247850dd878c04ed326",
+    "systemPromptHash": "2e517ed55961682cecffcb1bc1c5ee87d2b417e7b858edf1580891312807cf10",
+    "userPromptHash": "4bc8bab2f0e71588497ae473fc814ac973a40c9e7aedc181e10f0e9acb36dbb4"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 1
+}

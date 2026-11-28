@@ -1,0 +1,12 @@
+{
+  "caseId": "pt-espanhol",
+  "costUsd": 0.022584,
+  "name": "answer keys",
+  "passed": 9,
+  "problems": [
+    "{\"itemLocator\":\"cards[8]\",\"keyedAnswer\":\"“Estar”\",\"kind\":\"noCorrectOption\",\"workedAnswer\":\"The complete sentence is “Ana está en casa.” The verb is “estar,” but the blank requires its third-person singular form, “está.” None of the offered infinitives fits as written.\"}"
+  ],
+  "run": 2,
+  "side": "incumbent",
+  "total": 10
+}

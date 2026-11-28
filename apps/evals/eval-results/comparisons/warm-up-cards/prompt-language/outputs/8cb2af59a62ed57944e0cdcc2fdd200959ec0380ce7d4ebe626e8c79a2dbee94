@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "Ao ouvir que Ana está “embarazada”, que notícia ela está dando?",
+      "options": [
+        {
+          "text": "Está com vergonha",
+          "correct": false
+        },
+        {
+          "text": "Está grávida",
+          "correct": true
+        },
+        {
+          "text": "Está recém-casada",
+          "correct": false
+        }
+      ],
+      "reveal": "Grávida. Em espanhol, “embarazada” significa grávida; a semelhança com “embaraçada” pode confundir quem fala português."
+    },
+    {
+      "question": "Num almoço mexicano, pedem “un vaso de agua”; que objeto você deve pegar?",
+      "options": [
+        {
+          "text": "Um copo",
+          "correct": true
+        },
+        {
+          "text": "Um vaso de plantas",
+          "correct": false
+        },
+        {
+          "text": "Uma garrafa térmica",
+          "correct": false
+        }
+      ],
+      "reveal": "Um copo. Em espanhol, “vaso” costuma ser o recipiente para beber; em português brasileiro, “vaso” lembra mais um recipiente decorativo ou sanitário."
+    },
+    {
+      "question": "Depois de provar um prato, ouvir “está exquisito” indica que ele está como?",
+      "options": [
+        {
+          "text": "Muito gostoso",
+          "correct": true
+        },
+        {
+          "text": "Meio estranho",
+          "correct": false
+        },
+        {
+          "text": "Bem salgado",
+          "correct": false
+        }
+      ],
+      "reveal": "Muito gostoso. Em espanhol, “exquisito” é um elogio para algo delicioso ou refinado; “esquisito” em português costuma significar estranho."
+    },
+    {
+      "question": "Ao preencher um formulário, “apellido” pede qual dado da pessoa?",
+      "options": [
+        {
+          "text": "Nome de batismo",
+          "correct": false
+        },
+        {
+          "text": "Sobrenome",
+          "correct": true
+        },
+        {
+          "text": "Nome de usuário",
+          "correct": false
+        }
+      ],
+      "reveal": "Sobrenome. Em espanhol, “apellido” corresponde ao sobrenome; em português brasileiro, “apelido” geralmente é um nome informal."
+    },
+    {
+      "question": "Se alguém diz “espera un rato”, por quanto tempo está pedindo que você espere?",
+      "options": [
+        {
+          "text": "Por um tempinho",
+          "correct": true
+        },
+        {
+          "text": "Por exatamente uma hora",
+          "correct": false
+        },
+        {
+          "text": "Até amanhã",
+          "correct": false
+        }
+      ],
+      "reveal": "Por um tempinho. Em espanhol, “rato” pode ser um período curto ou não especificado; não é o animal chamado “rato” em português."
+    },
+    {
+      "question": "Em “un camino largo”, “largo” descreve o caminho como…",
+      "options": [
+        {
+          "text": "Comprido",
+          "correct": true
+        },
+        {
+          "text": "Largo de lado a lado",
+          "correct": false
+        },
+        {
+          "text": "Íngreme",
+          "correct": false
+        }
+      ],
+      "reveal": "Comprido. Em espanhol, “largo” significa comprido; para dizer que algo é largo no sentido de amplo, usa-se “ancho”."
+    },
+    {
+      "question": "Na feira no México, se você pergunta “¿Cuánto cuesta?”, que informação quer saber?",
+      "options": [
+        {
+          "text": "O preço",
+          "correct": true
+        },
+        {
+          "text": "O horário",
+          "correct": false
+        },
+        {
+          "text": "O endereço",
+          "correct": false
+        }
+      ],
+      "reveal": "O preço. “¿Cuánto cuesta?” é uma forma comum de perguntar quanto algo custa."
+    },
+    {
+      "question": "Ao chegar a um café, perguntar “¿Dónde está el baño?” ajuda a descobrir…",
+      "options": [
+        {
+          "text": "Onde fica o banheiro",
+          "correct": true
+        },
+        {
+          "text": "A que horas fecha",
+          "correct": false
+        },
+        {
+          "text": "Qual é o prato do dia",
+          "correct": false
+        }
+      ],
+      "reveal": "Onde fica o banheiro. “¿Dónde está…?” pergunta onde algo está, e “baño” é banheiro."
+    },
+    {
+      "question": "Em “Me gustan las películas”, o que faz o verbo aparecer no plural?",
+      "options": [
+        {
+          "text": "O que agrada",
+          "correct": true
+        },
+        {
+          "text": "Quem sente o gosto",
+          "correct": false
+        },
+        {
+          "text": "O lugar da conversa",
+          "correct": false
+        }
+      ],
+      "reveal": "O que agrada. Com “gustar”, o verbo concorda com aquilo de que se gosta; “me” indica a pessoa que sente o gosto."
+    },
+    {
+      "question": "Falando com várias pessoas no México, qual pronome costuma expressar “vocês”?",
+      "options": [
+        {
+          "text": "“ustedes”",
+          "correct": true
+        },
+        {
+          "text": "“vosotros”",
+          "correct": false
+        },
+        {
+          "text": "“nosotros”",
+          "correct": false
+        }
+      ],
+      "reveal": "“Ustedes”. No México, essa forma é usada para se dirigir a grupos; “vosotros” é usado na Espanha para o tratamento informal plural."
+    }
+  ]
+}

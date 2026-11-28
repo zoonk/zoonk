@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "Quando a relação com o cliente termina, o que ocorre com as informações confidenciais?",
+      "options": [
+        {
+          "text": "O dever continua",
+          "correct": true
+        },
+        {
+          "text": "O dever acaba",
+          "correct": false
+        },
+        {
+          "text": "Depende de ordem judicial",
+          "correct": false
+        }
+      ],
+      "reveal": "O dever continua. O encerramento do atendimento não elimina o sigilo profissional sobre as informações recebidas durante a relação."
+    },
+    {
+      "question": "Uma ameaça ilegal de impedir alguém de se locomover pode ser enfrentada por qual remédio constitucional?",
+      "options": [
+        {
+          "text": "Habeas corpus",
+          "correct": true
+        },
+        {
+          "text": "Mandado de segurança",
+          "correct": false
+        },
+        {
+          "text": "Habeas data",
+          "correct": false
+        }
+      ],
+      "reveal": "Habeas corpus. Ele protege a liberdade de locomoção contra ilegalidade ou abuso de poder, inclusive diante de uma ameaça."
+    },
+    {
+      "question": "No direito civil brasileiro, desde quando ficam resguardados os direitos do nascituro?",
+      "options": [
+        {
+          "text": "Desde a concepção",
+          "correct": true
+        },
+        {
+          "text": "Após o nascimento com vida",
+          "correct": false
+        },
+        {
+          "text": "A partir da maioridade",
+          "correct": false
+        }
+      ],
+      "reveal": "Desde a concepção. O Código Civil resguarda os direitos do nascituro, embora a personalidade civil comece com o nascimento com vida."
+    },
+    {
+      "question": "Ao interpretar e cumprir um contrato, para que serve a boa-fé objetiva?",
+      "options": [
+        {
+          "text": "Orientar condutas leais",
+          "correct": true
+        },
+        {
+          "text": "Garantir lucro mínimo",
+          "correct": false
+        },
+        {
+          "text": "Dispensar o contrato escrito",
+          "correct": false
+        }
+      ],
+      "reveal": "Orientar condutas leais. A boa-fé objetiva estabelece um padrão de comportamento honesto e cooperativo entre as partes."
+    },
+    {
+      "question": "Uma pessoa começa a executar um crime, mas é impedida por terceiro antes de concluí-lo. Em regra, isso configura…",
+      "options": [
+        {
+          "text": "Crime tentado",
+          "correct": true
+        },
+        {
+          "text": "Desistência voluntária",
+          "correct": false
+        },
+        {
+          "text": "Crime consumado",
+          "correct": false
+        }
+      ],
+      "reveal": "Crime tentado. A execução começou, mas o resultado não ocorreu por uma circunstância alheia à vontade da pessoa."
+    },
+    {
+      "question": "Uma conduta parece reprovável, mas nenhuma lei anterior a define como crime. Ela pode gerar condenação criminal?",
+      "options": [
+        {
+          "text": "Não, falta previsão legal",
+          "correct": true
+        },
+        {
+          "text": "Sim, pelo costume",
+          "correct": false
+        },
+        {
+          "text": "Sim, por analogia",
+          "correct": false
+        }
+      ],
+      "reveal": "Não, falta previsão legal. Pelo princípio da legalidade, não há crime nem pena sem lei anterior que os estabeleça."
+    },
+    {
+      "question": "Uma entidade da administração indireta, criada diretamente por lei e com personalidade pública, é uma…",
+      "options": [
+        {
+          "text": "Autarquia",
+          "correct": true
+        },
+        {
+          "text": "Empresa pública",
+          "correct": false
+        },
+        {
+          "text": "Sociedade de economia mista",
+          "correct": false
+        }
+      ],
+      "reveal": "Autarquia. Ela tem personalidade jurídica de direito público e é criada diretamente por lei para exercer atividades administrativas."
+    },
+    {
+      "question": "Uma pessoa trabalha pessoalmente, com pagamento e sob direção da empresa, de modo não eventual. Esses elementos apontam para qual vínculo?",
+      "options": [
+        {
+          "text": "Relação de emprego",
+          "correct": true
+        },
+        {
+          "text": "Trabalho voluntário",
+          "correct": false
+        },
+        {
+          "text": "Prestação autônoma",
+          "correct": false
+        }
+      ],
+      "reveal": "Relação de emprego. Pessoalidade, pagamento, não eventualidade e subordinação são elementos que a caracterizam."
+    },
+    {
+      "question": "A taxa se distingue do imposto porque sua cobrança está ligada a qual tipo de atividade?",
+      "options": [
+        {
+          "text": "Atividade estatal específica",
+          "correct": true
+        },
+        {
+          "text": "Renda do contribuinte",
+          "correct": false
+        },
+        {
+          "text": "Aumento do patrimônio",
+          "correct": false
+        }
+      ],
+      "reveal": "Atividade estatal específica. A taxa pode decorrer do poder de polícia ou de um serviço público específico e divisível."
+    },
+    {
+      "question": "Num processo civil, sem regra especial de distribuição, quem prova os fatos que constituem o direito alegado?",
+      "options": [
+        {
+          "text": "Quem propõe a ação",
+          "correct": true
+        },
+        {
+          "text": "Quem responde à ação",
+          "correct": false
+        },
+        {
+          "text": "O juiz do processo",
+          "correct": false
+        }
+      ],
+      "reveal": "Quem propõe a ação. Em regra, cabe ao autor provar os fatos que formam a base do direito que alega."
+    }
+  ]
+}

@@ -1,0 +1,156 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "We booked the riverside park first, then moved to the library courtyard, then reserved the school hall, and finally settled on the market hall.",
+        "skill": 1,
+        "format": "order",
+        "difficulty": "easy",
+        "question": "In what order did the colleagues arrange the possible venues?",
+        "steps": [
+          "They booked a park by the river.",
+          "They moved the event to the library's outdoor space.",
+          "They reserved a room at a school.",
+          "They chose the market hall."
+        ],
+        "reason": "You hear Darius list the venues in the order they were arranged, ending with the market hall."
+      },
+      {
+        "evidence": "We went with the market hall because its doors could open onto the square if it was fine, but we could close them if it rained.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "medium",
+        "context": null,
+        "question": "Why did the colleagues finally choose the market hall?",
+        "options": [
+          {
+            "text": "It gave them options in different weather.",
+            "isCorrect": true,
+            "reason": "You hear that they could open the doors in good weather or close them if it rained.",
+            "misconception": null
+          },
+          {
+            "text": "It cost less than the other venues.",
+            "isCorrect": false,
+            "reason": "You hear Rosa say someone thought it was the cheapest, but she corrects that claim.",
+            "misconception": "Accepts a claim the speaker corrects"
+          },
+          {
+            "text": "It was nearest to the main bus stops.",
+            "isCorrect": false,
+            "reason": "You hear Rosa say the school was closer to the main bus stops.",
+            "misconception": "Attributes another venue's advantage to the market hall"
+          }
+        ]
+      },
+      {
+        "evidence": "First we planned the flyers, then we considered a radio announcement, then we chose the community newsletter, and eventually we put a notice on the community group's website.",
+        "skill": 1,
+        "format": "order",
+        "difficulty": "medium",
+        "question": "In what order did the colleagues consider or use these ways of publicizing the event?",
+        "steps": [
+          "They planned to distribute printed flyers.",
+          "They considered making an announcement on the radio.",
+          "They chose to use the community newsletter.",
+          "They posted information on a community website."
+        ],
+        "reason": "You hear Darius trace the publicity plans from the unprinted flyers to the website notice."
+      },
+      {
+        "evidence": "First we booked an acoustic band, then invited the local choir, then planned to play recorded music, and finally asked a poetry group to perform.",
+        "skill": 1,
+        "format": "order",
+        "difficulty": "hard",
+        "question": "In what order did the colleagues make these entertainment plans?",
+        "steps": [
+          "They booked a band.",
+          "They invited a choir.",
+          "They planned to use recorded music.",
+          "They asked a poetry group to take part."
+        ],
+        "reason": "You hear Darius correct Rosa's memory and list the four plans in sequence. Only the poetry group performed."
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Rosa",
+        "gender": "female",
+        "accent": "British English"
+      },
+      {
+        "name": "Darius",
+        "gender": "male",
+        "accent": "British English"
+      }
+    ],
+    "title": "Tracing changes to a community event",
+    "turns": [
+      {
+        "speaker": "Rosa",
+        "text": "Hi, Darius. Before we write the report on the Raleigh community event, can we work out how our plans changed? My notes are a mess."
+      },
+      {
+        "speaker": "Darius",
+        "text": "Mine too. Let's start with the venue. We booked the riverside park first, then moved to the library courtyard, then reserved the school hall, and finally settled on the market hall. I think that's right."
+      },
+      {
+        "speaker": "Rosa",
+        "text": "Yes. The park was out because of the work on the riverbank. Then the library discovered its courtyard would be closed for repairs."
+      },
+      {
+        "speaker": "Darius",
+        "text": "And the school hall was only available in the evening. We'd promised families an afternoon event, so that didn't work."
+      },
+      {
+        "speaker": "Rosa",
+        "text": "I remember someone saying the market hall was the cheapest choice, but it wasn't. And the school was actually closer to the main bus stops."
+      },
+      {
+        "speaker": "Darius",
+        "text": "That's right. We went with the market hall because its doors could open onto the square if it was fine, but we could close them if it rained. That flexibility mattered more than the extra cost."
+      },
+      {
+        "speaker": "Rosa",
+        "text": "Now, how did we end up advertising it? I remember designing flyers, though I don't think we ever printed them."
+      },
+      {
+        "speaker": "Darius",
+        "text": "No, the printer couldn't fit us in. First we planned the flyers, then we considered a radio announcement, then we chose the community newsletter, and eventually we put a notice on the community group's website. It took a while to get there."
+      },
+      {
+        "speaker": "Rosa",
+        "text": "The radio slot was too expensive, wasn't it? And the newsletter deadline had already passed by the time we had a confirmed venue."
+      },
+      {
+        "speaker": "Darius",
+        "text": "Exactly. The website notice turned out well, though. Tanya could update it whenever we had new details, which wouldn't have been possible with the flyers."
+      },
+      {
+        "speaker": "Rosa",
+        "text": "What about the entertainment? I told Kevin we'd had a choir booked, but now I'm not sure that's what happened."
+      },
+      {
+        "speaker": "Darius",
+        "text": "We invited them, but they couldn't make it. First we booked an acoustic band, then invited the local choir, then planned to play recorded music, and finally asked a poetry group to perform. The poetry group was the only one that actually appeared."
+      },
+      {
+        "speaker": "Rosa",
+        "text": "Of course. The band cancelled when we changed the date, and the choir already had another engagement. Why did we abandon the recorded music?"
+      },
+      {
+        "speaker": "Darius",
+        "text": "We couldn't find anyone to manage the equipment throughout the afternoon. The poets brought everything they needed, and they even ran a short workshop afterwards."
+      },
+      {
+        "speaker": "Rosa",
+        "text": "That's worth mentioning. The event ended up quite different from what we'd imagined, but people seemed to enjoy it."
+      },
+      {
+        "speaker": "Darius",
+        "text": "They did. I'll send you my notes, and you can start the report."
+      }
+    ]
+  }
+}

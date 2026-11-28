@@ -1,0 +1,131 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00537459,
+  "failureCodes": [
+    "failed_controls"
+  ],
+  "failures": [
+    "Missed the control bank defect."
+  ],
+  "packetId": "8df60f82758e7540eab5c5e3f6e092527a7215707f72dfc2c90c9e06383ff35d",
+  "passed": false,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both keys are supported by the script and no wrong option is defensible; the answers are the same in both sets' structure and the distractors are clearly wrong.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "A",
+            "reason": "A's recording has more listening-paper distractors, including a rejected shopkeeper suggestion and several rejected figures, so it trains the learner to pick the right item more closely than B does.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both scripts use contractions and spoken openings and closings, with similar prose stiffness in places, so neither reads more like real speech.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The set has 6 questions where the task says the real test has 10.",
+            "criterion": "examRealism",
+            "learnerCost": "The learner practises a shorter set than the real Part 2, so pacing and stamina are not trained.",
+            "location": {
+              "detail": "whole set, 6 questions",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The set has 6 questions where the task says the real test has 10.",
+            "criterion": "examRealism",
+            "learnerCost": "The learner practises a shorter set than the real Part 2, so pacing and stamina are not trained.",
+            "location": {
+              "detail": "whole set, 6 questions",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "The question repeats the recording's wording ('first' and the verb 'mend' of the evidence line) instead of paraphrasing it, so the answer can be matched by word-spotting without following the meaning.",
+            "criterion": "examRealism",
+            "learnerCost": "The learner can pick the answer by matching a word rather than understanding the sentence, which weakens the listening practice.",
+            "location": {
+              "detail": "At the first event, the volunteers' first successful repair was a ______.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "Both sets have the same keys, correct answers and speaker, and each would serve a learner about equally well; A's extra realism is small."
+        },
+        "pairId": "690d50f8-f863-4c59-9c9b-a3b9d0dd958e"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs have the same questions and keys, and each option's correctness is the same in both.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs have the same questions, speaker and length, so they match the DELE listening set equally well.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs have the same Castilian script and the same Brazilian Portuguese reasons, so neither reads better.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are the same set, with identical questions, options, reasons and script."
+        },
+        "pairId": "768f2a7d-d98b-42de-a21a-d257ffe8b384"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs have the same questions and accepted answers, and each key is supported by the script.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are the same repair café set with the same length, format and distractors.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs have the same script, with identical contractions, openings and closings.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are identical in questions, answers and script, so neither serves its reader better."
+        },
+        "pairId": "ba5a9c8f-5e5c-4177-8aaa-b26c96bc5ec5"
+      }
+    ]
+  }
+}

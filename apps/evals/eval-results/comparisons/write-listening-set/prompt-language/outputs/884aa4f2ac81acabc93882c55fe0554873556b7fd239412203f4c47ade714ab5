@@ -1,0 +1,238 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "I wanted to ask whether I can change my project from a written guide to a series of short audio recordings.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "easy",
+        "context": null,
+        "question": "Why does Maya go to see Professor Trevor?",
+        "options": [
+          {
+            "text": "To ask about changing the format of her project",
+            "isCorrect": true,
+            "reason": "Você ouve Maya perguntar se pode trocar o guia escrito por gravações curtas.",
+            "misconception": null
+          },
+          {
+            "text": "To request more time to finish her project",
+            "isCorrect": false,
+            "reason": "Você ouve Maya mencionar sexta-feira, mas ela não pede mais tempo.",
+            "misconception": "Confunde uma data de entrega com um pedido de prazo."
+          },
+          {
+            "text": "To find a new topic for her project",
+            "isCorrect": false,
+            "reason": "Você ouve que Maya continua trabalhando com a história dos prédios do campus.",
+            "misconception": "Confunde uma mudança de formato com uma mudança de tema."
+          },
+          {
+            "text": "To ask the professor to record an interview",
+            "isCorrect": false,
+            "reason": "Você ouve Maya falar de entrevistas com funcionários, não de uma entrevista com o professor.",
+            "misconception": "Confunde o professor com as pessoas que Maya pretende entrevistar."
+          }
+        ]
+      },
+      {
+        "evidence": "Actually, use the quiet room in the library basement. The media lab is being renovated, so it's not available this month.",
+        "skill": 2,
+        "format": "multipleChoice",
+        "difficulty": "medium",
+        "context": null,
+        "question": "Where does Professor Trevor suggest Maya make her recordings?",
+        "options": [
+          {
+            "text": "In the campus media lab",
+            "isCorrect": false,
+            "reason": "Você ouve o professor mencionar o laboratório primeiro, mas ele corrige a sugestão porque o espaço está em reforma.",
+            "misconception": "Escolhe a primeira sugestão, antes da correção."
+          },
+          {
+            "text": "At the library desk",
+            "isCorrect": false,
+            "reason": "Você ouve que Maya pode pegar um microfone no balcão, não que deve gravar ali.",
+            "misconception": "Confunde o local de empréstimo com o local de gravação."
+          },
+          {
+            "text": "In a room beneath the library",
+            "isCorrect": true,
+            "reason": "Você ouve o professor recomendar a sala silenciosa no subsolo da biblioteca.",
+            "misconception": null
+          },
+          {
+            "text": "At Maya's home",
+            "isCorrect": false,
+            "reason": "Você ouve que Maya gravou uma amostra em casa, mas o professor sugere outro local para as gravações.",
+            "misconception": "Confunde o local da amostra com o local recomendado."
+          }
+        ]
+      },
+      {
+        "evidence": "I used to worry that students wouldn't be interested in listening to old interviews, but your sample has changed my mind. The speaker's description makes the place feel real.",
+        "skill": 3,
+        "format": "multipleChoice",
+        "difficulty": "hard",
+        "context": null,
+        "question": "What does Professor Trevor imply about Maya's sample?",
+        "options": [
+          {
+            "text": "It convinced him that the interviews could engage students.",
+            "isCorrect": true,
+            "reason": "Você ouve que a amostra mudou a opinião do professor e fez o lugar parecer real para ele.",
+            "misconception": null
+          },
+          {
+            "text": "It made him concerned that the project would be too long.",
+            "isCorrect": false,
+            "reason": "Você ouve o professor elogiar o efeito da amostra. Depois, ele recomenda limitar o número de prédios.",
+            "misconception": "Confunde o comentário sobre a amostra com o limite de prédios."
+          },
+          {
+            "text": "It showed him that the sound quality was already perfect.",
+            "isCorrect": false,
+            "reason": "Você ouve Maya dizer que a qualidade do som poderia melhorar, e o professor não afirma que ela está perfeita.",
+            "misconception": "Confunde o elogio ao conteúdo com uma avaliação técnica do som."
+          },
+          {
+            "text": "It reminded him that written guides are more useful.",
+            "isCorrect": false,
+            "reason": "Você ouve o professor mudar de opinião a favor das entrevistas em áudio, não preferir um guia escrito.",
+            "misconception": "Inverte a reação do professor à amostra."
+          }
+        ]
+      },
+      {
+        "evidence": "Before you make any appointments, send me a one-page outline showing which buildings you've chosen and what you want to cover at each one.",
+        "skill": 2,
+        "format": "multipleChoice",
+        "difficulty": "medium",
+        "context": null,
+        "question": "What does Professor Trevor ask Maya to do before arranging interviews?",
+        "options": [
+          {
+            "text": "Choose five buildings for the guide",
+            "isCorrect": false,
+            "reason": "Você ouve que a proposta original tinha cinco prédios, mas o professor recomenda trabalhar com três.",
+            "misconception": "Escolhe o número da proposta original."
+          },
+          {
+            "text": "Send him a brief plan of the project",
+            "isCorrect": true,
+            "reason": "Você ouve o professor pedir um roteiro de uma página antes de Maya marcar as entrevistas.",
+            "misconception": null
+          },
+          {
+            "text": "Add music to the sample recording",
+            "isCorrect": false,
+            "reason": "Você ouve Maya dizer que ainda não adicionou música, mas o professor não pede que ela faça isso antes das entrevistas.",
+            "misconception": "Toma um detalhe sobre a amostra como uma tarefa solicitada."
+          },
+          {
+            "text": "Reserve a microphone at the library",
+            "isCorrect": false,
+            "reason": "Você ouve o professor recomendar a reserva do microfone, mas a tarefa que ele pede antes de marcar entrevistas é enviar o roteiro.",
+            "misconception": "Confunde uma recomendação geral com a etapa exigida antes das entrevistas."
+          }
+        ]
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Maya",
+        "gender": "female",
+        "accent": "American English"
+      },
+      {
+        "name": "Trevor",
+        "gender": "male",
+        "accent": "American English"
+      }
+    ],
+    "title": "Planning an audio guide",
+    "turns": [
+      {
+        "speaker": "Maya",
+        "text": "Hi, Professor Trevor. Do you have a few minutes to talk about my community history project?"
+      },
+      {
+        "speaker": "Trevor",
+        "text": "Sure, Maya. I was just looking over the project proposals. Yours is about the old buildings around campus, right?"
+      },
+      {
+        "speaker": "Maya",
+        "text": "Yes. I wanted to ask whether I can change my project from a written guide to a series of short audio recordings. People could listen to them while they walk around campus."
+      },
+      {
+        "speaker": "Trevor",
+        "text": "That sounds interesting. What made you decide on audio?"
+      },
+      {
+        "speaker": "Maya",
+        "text": "I was reading about the history of the science building, and there were stories from people who studied there fifty years ago. It seemed a shame to just summarize their experiences on a page. I thought listeners might connect more with their actual voices."
+      },
+      {
+        "speaker": "Trevor",
+        "text": "I see. You could still include some written information, though, couldn't you? Maybe a short introduction for each stop on the walk."
+      },
+      {
+        "speaker": "Maya",
+        "text": "Definitely. I'd also provide a written version of each recording. That way, people who can't hear the audio can still use the guide."
+      },
+      {
+        "speaker": "Trevor",
+        "text": "Good thinking. Have you considered where you'll make the recordings? You could reserve the media lab. Actually, use the quiet room in the library basement. The media lab is being renovated, so it's not available this month."
+      },
+      {
+        "speaker": "Maya",
+        "text": "Oh, I didn't know that. Is there a microphone in the quiet room?"
+      },
+      {
+        "speaker": "Trevor",
+        "text": "Not in the room itself, but you can borrow one from the library desk. I'd reserve it a few days ahead, especially since other students are working on audio projects too."
+      },
+      {
+        "speaker": "Maya",
+        "text": "I'll do that. I made a short sample at home, using an interview from the university archives. Would you like to hear it? It's only about a minute."
+      },
+      {
+        "speaker": "Trevor",
+        "text": "Yes, let's have a listen."
+      },
+      {
+        "speaker": "Maya",
+        "text": "So that's the sample. I haven't added any music yet, and I know the sound quality could be better."
+      },
+      {
+        "speaker": "Trevor",
+        "text": "I used to worry that students wouldn't be interested in listening to old interviews, but your sample has changed my mind. The speaker's description makes the place feel real."
+      },
+      {
+        "speaker": "Maya",
+        "text": "That's a relief. I was afraid it might be too slow. For the rest, I was thinking of interviewing current staff members as well as using the archive material."
+      },
+      {
+        "speaker": "Trevor",
+        "text": "That could give you some useful contrasts. Just be careful not to take on too much. Three buildings should be enough for this assignment, even if your original proposal listed five."
+      },
+      {
+        "speaker": "Maya",
+        "text": "Three sounds manageable. Should I start arranging the staff interviews this week?"
+      },
+      {
+        "speaker": "Trevor",
+        "text": "Before you make any appointments, send me a one-page outline showing which buildings you've chosen and what you want to cover at each one. Then we can check that the interviews will fit your plan."
+      },
+      {
+        "speaker": "Maya",
+        "text": "All right. I'll send it by Friday. Thanks for helping me figure this out."
+      },
+      {
+        "speaker": "Trevor",
+        "text": "You're welcome. I'm looking forward to seeing where you take it."
+      }
+    ]
+  }
+}

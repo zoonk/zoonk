@@ -1,0 +1,160 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "She suggested bringing binoculars instead, so I could see birds on the far bank without disturbing them.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "Hannah was advised to take ______ to help her watch birds from a distance.",
+        "keyPoints": [
+          "Binoculars"
+        ],
+        "acceptedAnswers": [
+          "binoculars"
+        ],
+        "sampleAnswer": "binoculars"
+      },
+      {
+        "evidence": "The easiest way is to follow the path past the old stone bridge.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "To reach the volunteers' grassy meeting area, Hannah recommends going past the ______.",
+        "keyPoints": [
+          "Stone bridge"
+        ],
+        "acceptedAnswers": [
+          "stone bridge"
+        ],
+        "sampleAnswer": "stone bridge"
+      },
+      {
+        "evidence": "Now, when we find a tree that needs attention, we tie an orange ribbon around it.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "The volunteers mark a tree that needs help with an ______.",
+        "keyPoints": [
+          "Orange ribbon"
+        ],
+        "acceptedAnswers": [
+          "orange ribbon"
+        ],
+        "sampleAnswer": "orange ribbon"
+      },
+      {
+        "evidence": "But the measurement we take every week is the water temperature.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "Each week, the volunteers measure the ______ at the same spot in the river.",
+        "keyPoints": [
+          "Water temperature"
+        ],
+        "acceptedAnswers": [
+          "water temperature",
+          "temperature"
+        ],
+        "sampleAnswer": "water temperature"
+      },
+      {
+        "evidence": "Now I write everything in a waterproof notebook, which is much more practical.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "hard",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "Hannah now uses a ______ to record her findings while she is at the river.",
+        "keyPoints": [
+          "Waterproof notebook"
+        ],
+        "acceptedAnswers": [
+          "waterproof notebook"
+        ],
+        "sampleAnswer": "waterproof notebook"
+      },
+      {
+        "evidence": "The children used them to choose plants for their butterfly garden.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "hard",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "The group's wildlife records helped schoolchildren select plants for a ______.",
+        "keyPoints": [
+          "Butterfly garden"
+        ],
+        "acceptedAnswers": [
+          "butterfly garden"
+        ],
+        "sampleAnswer": "butterfly garden"
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Hannah",
+        "gender": "female",
+        "accent": "British English"
+      }
+    ],
+    "title": "Looking after a local river",
+    "turns": [
+      {
+        "speaker": "Hannah",
+        "text": "Hello, everyone. I'm Hannah, and today I'm going to tell you about the Saturday mornings I spend with a group of volunteers looking after our local river. I joined last spring because I wanted to spend more time outdoors, and I thought I'd just be picking up litter. In fact, we do all sorts of things, from watching wildlife to checking the condition of the water."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Before my first visit, I assumed I'd need a camera to record what I saw. But the group leader said that wasn't necessary. She suggested bringing binoculars instead, so I could see birds on the far bank without disturbing them. The group has some you can borrow, but I bought a small pair. They're easy to carry, and I use them on walks with my family now, too."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "We normally meet at nine, outside the café near the station, and walk to the river together. There are several paths down to the water, and the first time I went alone, I took the wrong one. The easiest way is to follow the path past the old stone bridge. Once you've gone under it, you'll see a wide grassy area where we leave our bags. It's much quieter there than it is near the road."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "One of our jobs is to find young trees that might need protecting. Last winter, some of them were damaged when the river rose after heavy rain. Now, when we find a tree that needs attention, we tie an orange ribbon around it. Someone suggested using paint, but we decided against that because it could harm the tree. Later, another team comes along and puts a small fence around it."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "We also collect information about the river itself. At first, I thought the most important thing would be its depth, especially after rain. But the measurement we take every week is the water temperature. We check it in the same place each time, so that the results can be compared. Changes can affect the animals living in the river, even if the water still looks clean to us."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Everyone records what they find. I used my phone on my first day, but my hands were wet and the screen was difficult to see. Now I write everything in a waterproof notebook, which is much more practical. Back at home, I type the information into a form on the group's website. It doesn't take long, and then all the volunteers can see what's been happening along the river."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "The work doesn't stop at the riverbank, either. Last year, the group shared its wildlife records with a local school. The children used them to choose plants for their butterfly garden. Some of the volunteers helped them put the plants in, and I went back a few weeks later to see how they were growing. It was lovely to see the children so interested. If you'd like to join us, come and have a chat with me afterwards. You don't need any experience, just clothes you don't mind getting muddy."
+      }
+    ]
+  }
+}

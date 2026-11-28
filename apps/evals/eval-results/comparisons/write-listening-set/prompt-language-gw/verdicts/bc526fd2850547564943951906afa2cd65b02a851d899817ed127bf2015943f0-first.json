@@ -1,0 +1,126 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00264694,
+  "failures": [],
+  "packetId": "bc526fd2850547564943951906afa2cd65b02a851d899817ed127bf2015943f0",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As mesmas seis respostas estão no roteiro, e os espaços aceitam respostas gramaticais.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas versões usam o mesmo monólogo e as mesmas seis questões; nenhuma se destaca no formato apresentado.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "O roteiro e os motivos estão iguais nas duas versões e soam adequados para um monólogo em inglês, com explicações em português.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "As saídas são idênticas e não apresentam uma diferença que favoreça uma delas."
+        },
+        "pairId": "5cf030d4-9fe3-4da4-be41-42302f3781c2"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As respostas corretas e os distratores correspondem ao que Nerea diz no roteiro.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas versões têm as mesmas questões, o mesmo formato e o mesmo roteiro.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "A",
+            "reason": "Na versão A, todos os motivos e as concepções equivocadas estão em português brasileiro; na B, alguns estão em espanhol.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "O motivo da primeira alternativa da segunda questão está em espanhol, não em português brasileiro.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "O leitor brasileiro pode ter dificuldade para entender a explicação do distrator.",
+            "location": {
+              "detail": "Oyes que aceptan objetos usados e incluso algunos que necesitan un pequeño arreglo.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "A concepção equivocada da primeira alternativa da segunda questão está em espanhol, não em português brasileiro.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "O leitor pode não entender a explicação sobre o erro associado à alternativa.",
+            "location": {
+              "detail": "Interpreta el requisito de buen estado como exigencia de producto nuevo.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "O motivo da terceira alternativa da segunda questão está em espanhol, não em português brasileiro.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "O leitor brasileiro pode ter dificuldade para entender por que a alternativa está errada.",
+            "location": {
+              "detail": "Oyes que aceptaron objetos en buen estado o que solo necesitaran un arreglo sencillo.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A mantém todas as explicações em português brasileiro, conforme a exigência; B inclui três explicações em espanhol."
+        },
+        "pairId": "5fb6b716-5feb-4e3f-b700-a2bb1f7c72d1"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As respostas são encontradas no roteiro e completam os espaços de forma gramatical em ambas as versões.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "B",
+            "reason": "O roteiro de B traz distratores mais úteis para a prática, como binóculos versus termômetro e folhas versus casca de laranja, que as questões aproveitam.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os dois roteiros são monólogos claros e plausíveis, com linguagem adequada para fala.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "B",
+          "reason": "As questões de B aproveitam melhor as alternativas mencionadas e rejeitadas no roteiro, oferecendo prática mais próxima da escuta de prova."
+        },
+        "pairId": "8e6f9882-8942-420d-a64f-6602fc2786ec"
+      }
+    ]
+  }
+}

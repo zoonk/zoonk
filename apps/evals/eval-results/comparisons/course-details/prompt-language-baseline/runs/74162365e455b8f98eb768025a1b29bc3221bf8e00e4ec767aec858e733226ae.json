@@ -1,0 +1,13 @@
+{
+  "caseId": "pt-ingles-language-beginner",
+  "challenger": {
+    "costUsd": 0.00062063,
+    "durationMs": 8796.569084000002,
+    "hash": "328f800e28398e081a6116f720d181f764cdeb03740345d8943e19e0e5943c71",
+    "systemPromptHash": "782cebffd04f74e4a27023e27678685d5ac6ee34a8481cb679d4f0909e3b41c8",
+    "userPromptHash": "f5b697770bb2b45b8cab351e8f0d0865e96a14dc204643c85d601a1b7dbe168d"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 1
+}
