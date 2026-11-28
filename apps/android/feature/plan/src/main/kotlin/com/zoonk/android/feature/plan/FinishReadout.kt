@@ -33,10 +33,14 @@ import java.time.LocalDate
 val Plan.aimAhead: String?
     get() = languageAim?.takeIf { aim -> aim.choices.any { it.aim.value == aim.aim?.value } }?.let { it.label ?: it.aim?.value }
 
-/** When the plan finishes, written as its precision says: "Mar 2027", or "2031" once it's far off. */
+/** When the plan finishes, in a sentence, as its precision says: "March 2027", or "2031" once it's far off. */
 @Composable
 fun forecastDate(forecast: PlanForecast.On): String =
-    if (forecast.year) formatPlanDate(forecast.date, forecast.date, currentLocale(), year = true) else monthYear(forecast.date)
+    if (forecast.year) {
+        formatPlanDate(forecast.date, forecast.date, currentLocale(), year = true)
+    } else {
+        formatDate(forecast.date, currentLocale(), DateStyle.Month)
+    }
 
 @Composable
 private fun monthYear(date: LocalDate): String = formatDate(date, currentLocale(), DateStyle.MonthShort)
