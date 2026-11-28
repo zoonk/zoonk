@@ -5380,65 +5380,6 @@
         }
       }
     },
-    "Change my plan" : {
-      "comment" : "Gives a subject more time",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Meinen Plan ändern"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cambiar mi plan"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Modifier mon plan"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Modifica il mio piano"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "学習計画を変更する"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "내 계획 바꾸기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zmień mój plan"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mudar meu plano"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Planımı değiştir"
-          }
-        }
-      }
-    },
     "Check it again before you hand in. Your result shows how these answers went." : {
       "localizations" : {
         "de" : {
@@ -6560,65 +6501,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tüm bölümler tamamlandı. Devam etmek için bu oturumu teslim et."
-          }
-        }
-      }
-    },
-    "Focus more on %@?" : {
-      "comment" : "Offer to focus an area",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mehr auf %@ konzentrieren?"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "¿Dedicar más tiempo a %@?"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Consacrer plus de temps à %@ ?"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vuoi dedicare più tempo a %@?"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@にもっと時間をかけますか？"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@에 더 집중할까요?"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Więcej czasu na: %@?"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dedicar mais tempo a %@?"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ için daha fazla zaman ayıralım mı?"
           }
         }
       }
@@ -9390,65 +9272,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Deneme sınavlarında henüz yok: uygulamalı sınav."
-          }
-        }
-      }
-    },
-    "Not now" : {
-      "comment" : "Declines giving a subject more time",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Jetzt nicht"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ahora no"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pas maintenant"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non ora"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今はしない"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "나중에"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nie teraz"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Agora não"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Şimdi değil"
           }
         }
       }
@@ -14162,6 +13985,65 @@
         }
       }
     },
+    "What you missed now comes sooner" : {
+      "comment" : "On a mock exam's result: the plan moved the topics the learner missed earlier. The topics follow, one per line.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was du verpasst hast, kommt jetzt früher dran"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ahora verás antes los temas que no supiste"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce que tu as raté arrive maintenant plus tôt"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gli argomenti che ti erano sfuggiti arrivano prima"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "間違えた内容が、より早く出てきます"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "전에 놓친 주제가 이제 더 일찍 나와요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zagadnienia, które ci umknęły, pojawią się wcześniej"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que você errou agora aparece antes"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kaçırdığın konular artık daha erken karşına çıkıyor"
+          }
+        }
+      }
+    },
     "Work on: %@." : {
       "comment" : "Under a mock exam's score when only the subject to work on is named: the words of the second half of “Strongest: {best}. Work on: {worst}.”",
       "localizations" : {
@@ -14694,71 +14576,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sonraki soruya geçtikten sonra geri dönemezsin."
-          }
-        }
-      }
-    },
-    "You got %@ of %lld right there." : {
-      "comment" : "Why the mock exam offers more time for a subject",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "In diesem Fach hast du %1$@ von %2$lld Fragen richtig beantwortet."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "You got %1$@ of %2$lld right there."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Acertaste %1$@ de %2$lld en esa materia."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as eu %1$@ bonnes réponses sur %2$lld dans cette matière."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "In questa materia hai risposto correttamente a %1$@ domande su %2$lld."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "この科目では%1$@問正解しました（全%2$lld問）。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이 과목에서는 %1$@문제를 맞혔어요(전체 %2$lld문제)."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "W tym przedmiocie masz %1$@ z %2$lld poprawnych odpowiedzi."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você acertou %1$@ de %2$lld nessa matéria."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu branşta %1$@ soruyu doğru cevapladın; toplam %2$lld soru vardı."
           }
         }
       }
@@ -16068,6 +15885,65 @@
         }
       }
     },
+    "Your plan" : {
+      "comment" : "What a mock changed in the plan",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Plan"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu plan"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo piano"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習計画"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "내 계획"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twój plan"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planın"
+          }
+        }
+      }
+    },
     "Your plan didn't need to change." : {
       "comment" : "A plan change the plan already had",
       "localizations" : {
@@ -16123,65 +15999,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Planında değişiklik gerekmedi."
-          }
-        }
-      }
-    },
-    "Your plan gives %@ more time." : {
-      "comment" : "Focus applied",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dein Plan sieht mehr Zeit für %@ vor."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu plan dedica más tiempo a %@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ton plan accorde plus de temps à %@."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il tuo piano dedica più tempo a %@."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "学習計画では%@の学習時間が増えます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "계획에서 %@에 더 많은 시간을 배정해요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twój plan przeznacza więcej czasu na: %@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seu plano reserva mais tempo para %@."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Planın %@ için daha fazla süre ayırıyor."
           }
         }
       }

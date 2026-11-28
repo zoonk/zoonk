@@ -1,6 +1,10 @@
 import { t } from "../../_utils/localize";
 import { stockMarketCourse } from "../../library/stock-market/stock-market-course";
+import { shareholderVoteItem } from "../../library/stock-market/stock-market-items";
 import { type SeedLearner } from "../types";
+
+const { content: shareholderVote } = shareholderVoteItem;
+const [correctVote, missedVote] = shareholderVote.options;
 
 export const pedroStocks: SeedLearner = {
   attempts: [
@@ -41,6 +45,67 @@ export const pedroStocks: SeedLearner = {
       seconds: 31,
       skill: "shareholder-rights",
       step: { lesson: "own-a-share", position: 7 },
+    },
+    {
+      answer: { selectedIndex: 1 },
+      day: -3,
+      isCorrect: false,
+      item: shareholderVoteItem.key,
+      key: shareholderVoteItem.key,
+      mistake: {
+        cause: "gap",
+        snapshot: {
+          answer: missedVote.text,
+          context: shareholderVote.context,
+          correctAnswer: correctVote.text,
+          explanation: missedVote.reason,
+          format: shareholderVoteItem.format,
+          misconception: missedVote.misconception,
+          question: shareholderVote.question,
+        },
+        status: "open",
+      },
+      seconds: 22,
+      skill: shareholderVoteItem.skill,
+    },
+    {
+      answer: { number: 0.05, values: { owned: 5000, total: 10_000_000 } },
+      day: -3,
+      isCorrect: true,
+      item: "ownership-percent",
+      key: "ownership-percent",
+      seconds: 48,
+      skill: "share-ownership",
+    },
+    {
+      answer: { isTrue: true },
+      day: -1,
+      isCorrect: false,
+      item: "no-guaranteed-return",
+      key: "no-guaranteed-return",
+      mistake: {
+        cause: "gap",
+        snapshot: {
+          answer: "true",
+          correctAnswer: "false",
+          explanation: t(
+            "Nobody promises shareholders a return. Dividends and gains depend on how the company does.",
+            "Ninguém promete retorno aos acionistas. Dividendos e ganhos dependem de como a empresa vai.",
+          ),
+          format: "trueFalse",
+          misconception: t(
+            "Thinks shares come with a promised return",
+            "Acha que ações vêm com retorno prometido",
+          ),
+          question: t(
+            "A company must pay its shareholders a minimum return every year.",
+            "Uma empresa é obrigada a pagar um retorno mínimo aos acionistas todo ano.",
+          ),
+        },
+        status: "open",
+      },
+      seconds: 14,
+      skill: "shareholder-rights",
     },
   ],
   brainPower: 420,
@@ -88,7 +153,7 @@ export const pedroStocks: SeedLearner = {
   name: "Pedro Lima",
   session: { finished: 1 },
   skills: [
-    { memory: "solid", skill: "share-ownership" },
+    { memory: "fading", skill: "share-ownership" },
     { memory: "learning", skill: "shareholder-rights" },
     { memory: "learning", skill: "ipo" },
     { memory: "learning", skill: "dividends" },

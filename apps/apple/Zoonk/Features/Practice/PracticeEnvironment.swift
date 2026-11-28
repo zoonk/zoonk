@@ -11,7 +11,7 @@ enum PracticeDestination: Equatable, Sendable {
   case checkpoint(blockId: String, sessionId: String?)
   case challenge(planItemId: String, sessionId: String?)
   case lesson(lessonId: String)
-  case mistakePractice(skillId: String?)
+  case mistakePractice(MistakePracticeScope)
   case mock(blockId: String, sessionId: String?)
   case pattern(patternId: String)
   case plan

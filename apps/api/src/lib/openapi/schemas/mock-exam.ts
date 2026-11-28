@@ -216,6 +216,12 @@ export const mockViewResponseSchema = z
     mistakes: z.array(
       z.object({ cause: z.enum(MistakeCause).nullable(), count: z.number().int() }),
     ),
+    mockId: uuidSchema()
+      .nullable()
+      .meta({
+        description:
+          "The sitting, once it started: GET /v1/me/mistake-practice?mockId= practices a finished mock's mistakes",
+      }),
     number: z.number().int().min(1),
     pacing: z.enum(["official", "practice"]).optional(),
     passMarks: passMarksSchema
@@ -227,6 +233,9 @@ export const mockViewResponseSchema = z
     planItemId: uuidSchema()
       .nullable()
       .meta({ description: "The plan item it plays: its challenge, before and on its day" }),
+    practiceAvailable: z
+      .boolean()
+      .meta({ description: "The finished mock has open mistakes with usable practice material" }),
     purpose: mockPurposeSchema,
     questions: z.number().int(),
     reached: reachedSchema.meta({

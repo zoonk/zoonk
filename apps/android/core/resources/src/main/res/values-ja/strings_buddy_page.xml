@@ -15,9 +15,7 @@
   "buddy_page_first_challenge": "939b4e3f858808f1ccf6edb360e581087e48c5d2727a0100f249999df0d3c4fa",
   "buddy_page_first_essay": "9fb7f363308ab8e4b7370b93aaf682fb962312aa934feac8af3d08193ce8b1a9",
   "buddy_page_first_lesson": "aa8d5b6a87079c25b5e404cb7b4cf1022d330f80595b29e7f65929624036333e",
-  "buddy_page_first_mistake": "b9d9d251e12ad14fc42e2655c3a752b5bfa6516ba094a91c350261a01b2dd9c4",
   "buddy_page_first_mock": "1ac51ba273b1d8fe573e035a8745b1b7996cf7bc3d75604fb546a9a7a725d51d",
-  "buddy_page_first_pattern": "532a5ad82dc06d67f050567e291ff23394340c2da7e6bf90a0b5cda59c779e43",
   "buddy_page_first_review": "df48d0d3913d1b1e12299d69b3ec641fed414b30cfc59c3b1e34174028c96e82",
   "buddy_page_first_steps": "bd84885e1b02741baf1b2ec2cf684f0d162b524debf409fb7fb8bee4102999bb",
   "buddy_page_first_steps_done": "f8e1331a283569d2dd0a0a94b6b112efdfc41975dfc8d4288aa14e923f810f8e",
@@ -86,8 +84,6 @@
     <string name="buddy_page_first_steps_done">すべて試しました。</string>
     <string name="buddy_page_first_lesson">最初のレッスンを終える</string>
     <string name="buddy_page_first_review">初めて復習する</string>
-    <string name="buddy_page_first_mistake">初めて間違いを克服する</string>
-    <string name="buddy_page_first_pattern">ミスの傾向に合わせて練習する</string>
     <string name="buddy_page_first_ask">%1$sに質問する</string>
     <string name="buddy_page_first_essay">初めての小論文を書く</string>
     <string name="buddy_page_first_call">初めて会話練習をする</string>

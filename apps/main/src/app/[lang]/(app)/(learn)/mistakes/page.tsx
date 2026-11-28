@@ -1,7 +1,7 @@
 import { NotFoundPage } from "@/components/errors/not-found-page";
 import { DetailSkeleton } from "@/components/learn/detail-skeleton";
 import { getCurrentGoal } from "@/lib/learn/current-goal";
-import { getTodayPattern } from "@zoonk/core/language/patterns/today";
+import { getNoticedPattern } from "@zoonk/core/language/patterns/noticed";
 import { mistakeListInputSchema } from "@zoonk/core/mistakes/contract";
 import { listCurrentUserMistakes } from "@zoonk/core/mistakes/list-current-user";
 import { MistakesNotebookBar } from "@zoonk/learn/mistakes";
@@ -59,7 +59,7 @@ async function MistakesBody({ searchParams }: Pick<Props, "searchParams">) {
 
   const [result, language] = await Promise.all([
     listCurrentUserMistakes({ ...input, goalId: goal.id }),
-    getTodayPattern({ goalId: goal.id }),
+    getNoticedPattern({ goalId: goal.id }),
   ]);
 
   if (result.status !== "ready") {

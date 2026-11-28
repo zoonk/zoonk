@@ -14,6 +14,12 @@ const RECALLED_STABILITY_DAYS = 1;
 
 export const FOCUS_WEIGHT_FACTOR = 2;
 
+/** How a recent mock missed a topic the plan hasn't taught yet: `shortPart` when its part fell under its minimum. */
+export type MockMiss = "missed" | "shortPart";
+
+/** Modest, so a missed topic moves ahead of its peers without outweighing the exam's own weights. */
+const MOCK_MISS_FACTORS: Record<MockMiss, number> = { missed: 1.5, shortPart: 2 };
+
 const UNCERTAINTY_WEIGHT = 0.5;
 
 export type SkillReadiness = {
@@ -39,14 +45,16 @@ function getUncertainty(readiness: SkillReadiness): number {
 }
 
 export function getExamValue({
+  mockMiss,
   readiness,
   weight,
 }: {
+  mockMiss?: MockMiss;
   readiness: SkillReadiness | undefined;
   weight: number;
 }): number {
   if (!isRecalled(readiness)) {
-    return weight;
+    return mockMiss ? weight * MOCK_MISS_FACTORS[mockMiss] : weight;
   }
 
   const gap = GAP_BY_STATE[readiness.state];

@@ -89,7 +89,8 @@ struct ListRow<Leading: View, Trailing: View>: View {
 struct RowLayout<Mark: View, Words: View, Value: View>: View {
   @Environment(\.stacksContent) private var isStacked
 
-  /// `.firstTextBaseline` puts the mark on the first of three lines or more.
+  /// `.firstTextBaseline` puts the mark on the first of three lines or more; the value stays on
+  /// the row's center, since it belongs to the whole row (craft E5).
   var alignment = VerticalAlignment.center
   /// A row without a mark starts its words on the list's edge. `ListRow` says so itself: its
   /// mark is styled, and a styled `EmptyView` is another type.
@@ -101,22 +102,24 @@ struct RowLayout<Mark: View, Words: View, Value: View>: View {
   @ViewBuilder let value: Value
 
   var body: some View {
-    let layout =
+    let markAndWords =
       if isStacked, let stackedMarkSpacing {
         AnyLayout(VStackLayout(alignment: .leading, spacing: stackedMarkSpacing))
       } else {
         AnyLayout(HStackLayout(alignment: alignment, spacing: 12))
       }
 
-    layout {
-      if hasMark {
-        mark
-          .markColumn()
-          .layoutPart(.mark)
-      }
+    HStack(spacing: 12) {
+      markAndWords {
+        if hasMark {
+          mark
+            .markColumn()
+            .layoutPart(.mark)
+        }
 
-      column
-        .frame(maxWidth: .infinity, alignment: .leading)
+        column
+          .frame(maxWidth: .infinity, alignment: .leading)
+      }
 
       if !isStacked {
         shownValue

@@ -88,7 +88,7 @@ export function DeleteDialog({
 
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isPending}>{t("Cancel")}</AlertDialogCancel>
-          <AlertDialogAction busy={isPending} onClick={onDelete} variant="destructive">
+          <AlertDialogAction busy={isPending} enter="off" onClick={onDelete} variant="destructive">
             {t("Delete passkey")}
           </AlertDialogAction>
         </AlertDialogFooter>

@@ -482,7 +482,7 @@ describe("language view models", () => {
     ]);
   });
 
-  it("adds the plan's level to Today, leaves the noticed pattern to Today's own read, and offers no exam's speaking to a goal that names none", async () => {
+  it("adds the plan's level to Today, never a noticed pattern, and offers no exam's speaking to a goal that names none", async () => {
     const setup = await languageGoalFixture();
     const { goal, user } = setup;
     mockSession(user.id);

@@ -1,6 +1,7 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
+import { findLatestFinishedMock } from "../plans/_utils/mock-misses";
 import { getSkillArea } from "../plans/planner/graph-areas";
 import { parsePlanGraph, parsePlanSettings } from "../plans/planner/plan-state";
 import { proposePlanChange } from "../plans/propose-plan-change";
@@ -50,6 +51,13 @@ export async function rebalancePlanAfterSession({
     return;
   }
 
+  const weekAgo = new Date(now.getTime() - WEEK_DAYS * MS_PER_DAY);
+
+  // A mock that week already moved what it missed up the plan, from fresher evidence.
+  if (await findLatestFinishedMock({ goalId, since: weekAgo })) {
+    return;
+  }
+
   const plan = await prisma.plan.findUnique({
     select: { coveredShare: true, graph: true, id: true, settings: true },
     where: { goalId },
@@ -76,11 +84,7 @@ export async function rebalancePlanAfterSession({
     }),
   ]);
 
-  const { areas, weakestAreaId } = getAreaPreparations({
-    ...inputs,
-    now,
-    weekAgo: new Date(now.getTime() - WEEK_DAYS * MS_PER_DAY),
-  });
+  const { areas, weakestAreaId } = getAreaPreparations({ ...inputs, now, weekAgo });
 
   const focus = pickRebalance({
     areas: toRebalanceAreas({ areas, graph, skills: inputs.skills }),

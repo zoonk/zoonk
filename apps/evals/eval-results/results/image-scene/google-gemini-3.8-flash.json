@@ -1455,6 +1455,492 @@
           "textAllowed": true
         }
       }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "Each state has the specified color, and each matching swatch gives an interval rather than an exact value. This teaches the central idea correctly, though the missing abbreviations make state-specific lookups less immediate.",
+          "score": 8,
+          "label": "Teaches the idea",
+          "weight": 35
+        },
+        {
+          "categoryId": "simplicity",
+          "reasoning": "One map and one adjacent legend communicate a single idea. Gray keeps the remaining states visible without competing with the four highlighted states.",
+          "score": 10,
+          "label": "One idea, simply",
+          "weight": 25
+        },
+        {
+          "categoryId": "labels",
+          "reasoning": "All four percentage labels match the screen exactly and are necessary to interpret the swatches. However, none of the four highlighted states has its requested abbreviation; naming the states in the focal-object description does not label them on the map.",
+          "score": 6,
+          "label": "Labels",
+          "weight": 25
+        },
+        {
+          "categoryId": "fields",
+          "reasoning": "The descriptions and placement instructions are in English. Each supplied label target specifies a position beside one uniquely identified legend swatch.",
+          "score": 10,
+          "label": "English fields and placement",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 2 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1726,
+          "outputTokens": 465,
+          "reasoningTokens": 49
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The map omits all four requested state abbreviations. The color-to-range key works, but a learner must recognize the state shapes to tell which range applies to TO, GO, MT, or MS.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Place TO, GO, MT, and MS inside their respective colored states. Keep the four legend labels unchanged so the learner can look up each state's range by color.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A thematic map read through its colors: the screen gives four colors and their ranges, so the scene has a legend with a swatch for each of the four colors (pale yellow, yellow, green, dark green), each labeled with its exact range (0%–24%, 25%–49%, 50%–74%, 75%–100%), and the states colored to match. A legend with swatches and no text fails this case.",
+        "expected": {
+          "labels": "some"
+        },
+        "id": "thematic-map-legend-in-screen-pt-1",
+        "userInput": {
+          "alt": "Mapa fictício com Tocantins em amarelo-claro, Goiás em amarelo, Mato Grosso em verde e Mato Grosso do Sul em verde-escuro.",
+          "context": "ENEM › Geografia › Mapas temáticos e legendas",
+          "language": "pt",
+          "request": "Mapa fictício do Brasil dividido em UFs. TO amarelo-claro, GO amarelo, MT verde e MS verde-escuro; demais UFs em cinza. Siglas TO, GO, MT e MS visíveis. Tema: percentual de escolas com biblioteca.",
+          "screenText": "Cada cor tem uma faixa\nUma **faixa de valores** é um intervalo: a cor indica onde o percentual está, não seu valor exato. Nesta legenda fictícia de escolas com biblioteca, cada cor ocupa uma UF diferente no mapa.\n\n| Cor | Percentual |\n| --- | ---: |\n| Amarelo-claro | 0%–24% |\n| Amarelo | 25%–49% |\n| Verde | 50%–74% |\n| Verde-escuro | 75%–100% |",
+          "textAllowed": true
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "Each highlighted state has the intended color, and each matching swatch shows an interval rather than an exact value. The central idea is clear at a glance.",
+          "score": 10,
+          "label": "Teaches the idea",
+          "weight": 35
+        },
+        {
+          "categoryId": "simplicity",
+          "reasoning": "One map and one supporting legend are sufficient. The gray states preserve the geographic context without competing with the four examples.",
+          "score": 10,
+          "label": "One idea, simply",
+          "weight": 25
+        },
+        {
+          "categoryId": "labels",
+          "reasoning": "All four percentage ranges match the screen exactly and are necessary to read the legend. However, none of the four requested state abbreviations appears on the map.",
+          "score": 8,
+          "label": "Labels",
+          "weight": 25
+        },
+        {
+          "categoryId": "fields",
+          "reasoning": "The descriptive fields are in English, and each range label has a precise placement beside its corresponding swatch.",
+          "score": 10,
+          "label": "English fields and placement",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 2 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1718,
+          "outputTokens": 428,
+          "reasoningTokens": 50
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The requested state abbreviations are missing. The legend still teaches how to read the colors, but learners must recognize the state outlines to identify the four examples.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Place TO, GO, MT and MS inside their respective states. Keep the four range labels beside their swatches so the map identifies the states and the legend explains the colors.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A thematic map read through its colors: the screen gives four colors and their ranges, so the scene has a legend with a swatch for each of the four colors (pale yellow, yellow, green, dark green), each labeled with its exact range (0%–24%, 25%–49%, 50%–74%, 75%–100%), and the states colored to match. A legend with swatches and no text fails this case.",
+        "expected": {
+          "labels": "some"
+        },
+        "id": "thematic-map-legend-in-screen-pt-2",
+        "userInput": {
+          "alt": "Mapa fictício com Tocantins em amarelo-claro, Goiás em amarelo, Mato Grosso em verde e Mato Grosso do Sul em verde-escuro.",
+          "context": "ENEM › Geografia › Mapas temáticos e legendas",
+          "language": "pt",
+          "request": "Mapa fictício do Brasil dividido em UFs. TO amarelo-claro, GO amarelo, MT verde e MS verde-escuro; demais UFs em cinza. Siglas TO, GO, MT e MS visíveis. Tema: percentual de escolas com biblioteca.",
+          "screenText": "Cada cor tem uma faixa\nUma **faixa de valores** é um intervalo: a cor indica onde o percentual está, não seu valor exato. Nesta legenda fictícia de escolas com biblioteca, cada cor ocupa uma UF diferente no mapa.\n\n| Cor | Percentual |\n| --- | ---: |\n| Amarelo-claro | 0%–24% |\n| Amarelo | 25%–49% |\n| Verde | 50%–74% |\n| Verde-escuro | 75%–100% |",
+          "textAllowed": true
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "All four swatches have their exact ranges and match the designated state colors. The interval concept is clear at a glance, though the missing abbreviations make the individual state examples harder to identify.",
+          "score": 8,
+          "label": "Teaches the idea",
+          "weight": 35
+        },
+        {
+          "categoryId": "simplicity",
+          "reasoning": "One map and one legend focus attention on the color-to-range relationship. The gray states preserve the national outline without introducing another idea.",
+          "score": 10,
+          "label": "One idea, simply",
+          "weight": 25
+        },
+        {
+          "categoryId": "labels",
+          "reasoning": "The four percentage labels are necessary, exact, and concise. The label set is incomplete because none of the four requested state abbreviations appears.",
+          "score": 7,
+          "label": "Labels",
+          "weight": 25
+        },
+        {
+          "categoryId": "fields",
+          "reasoning": "The descriptive fields are in English, and each percentage label has a specific placement beside its matching swatch.",
+          "score": 10,
+          "label": "English fields and placement",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 2 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1724,
+          "outputTokens": 412,
+          "reasoningTokens": 20
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The requested abbreviations TO, GO, MT, and MS are missing from the map. The legend still teaches the color ranges, but learners must recognize the state outlines to identify each example.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Place TO, GO, MT, and MS inside their respective colored states. Keep the percentage ranges beside the legend swatches so they read as intervals, not exact state values.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A thematic map read through its colors: the screen gives four colors and their ranges, so the scene has a legend with a swatch for each of the four colors (pale yellow, yellow, green, dark green), each labeled with its exact range (0%–24%, 25%–49%, 50%–74%, 75%–100%), and the states colored to match. A legend with swatches and no text fails this case.",
+        "expected": {
+          "labels": "some"
+        },
+        "id": "thematic-map-legend-in-screen-pt-3",
+        "userInput": {
+          "alt": "Mapa fictício com Tocantins em amarelo-claro, Goiás em amarelo, Mato Grosso em verde e Mato Grosso do Sul em verde-escuro.",
+          "context": "ENEM › Geografia › Mapas temáticos e legendas",
+          "language": "pt",
+          "request": "Mapa fictício do Brasil dividido em UFs. TO amarelo-claro, GO amarelo, MT verde e MS verde-escuro; demais UFs em cinza. Siglas TO, GO, MT e MS visíveis. Tema: percentual de escolas com biblioteca.",
+          "screenText": "Cada cor tem uma faixa\nUma **faixa de valores** é um intervalo: a cor indica onde o percentual está, não seu valor exato. Nesta legenda fictícia de escolas com biblioteca, cada cor ocupa uma UF diferente no mapa.\n\n| Cor | Percentual |\n| --- | ---: |\n| Amarelo-claro | 0%–24% |\n| Amarelo | 25%–49% |\n| Verde | 50%–74% |\n| Verde-escuro | 75%–100% |",
+          "textAllowed": true
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "Learners can match blue RJ to 60%–79% and green ES to 40%–59%. The legend identifies the ranges by color without naming either state, preserving the question.",
+          "score": 10,
+          "label": "Teaches the idea",
+          "weight": 35
+        },
+        {
+          "categoryId": "simplicity",
+          "reasoning": "The Brazil map is the sole focal object, with one supporting legend. Gray fills keep the other federative units visible without competing with RJ and ES.",
+          "score": 10,
+          "label": "One idea, simply",
+          "weight": 25
+        },
+        {
+          "categoryId": "labels",
+          "reasoning": "RJ and ES identify the two states the question names. The two swatch labels reproduce the exact percentage ranges, with no redundant captions.",
+          "score": 10,
+          "label": "Labels",
+          "weight": 25
+        },
+        {
+          "categoryId": "fields",
+          "reasoning": "All descriptive fields are in English. Each state abbreviation is placed on its state, and each percentage range is placed beside its corresponding swatch.",
+          "score": 10,
+          "label": "English fields and placement",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 2 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1609,
+          "outputTokens": 314,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "The request asks for a legend: the scene keeps it, with a blue swatch labeled 60%–79% and a green swatch labeled 40%–59%, and Rio de Janeiro in blue and Espírito Santo in green. The legend never names which state is in which range, since the question asks that.",
+        "expected": {
+          "labels": "some"
+        },
+        "id": "thematic-map-legend-question-pt-1",
+        "userInput": {
+          "alt": "Mapa fictício de coleta seletiva: Rio de Janeiro em azul, faixa de 60% a 79%, e Espírito Santo em verde, faixa de 40% a 59%.",
+          "context": "ENEM › Geografia › Mapas temáticos e legendas",
+          "language": "pt",
+          "request": "Mapa fictício do Brasil dividido em UFs. RJ em azul e ES em verde; demais UFs em cinza. Siglas RJ e ES visíveis. Legenda: azul, 60%–79%; verde, 40%–59%. Tema: domicílios atendidos por coleta seletiva.",
+          "screenText": "Em um novo mapa fictício de coleta seletiva, vale a mesma legenda: verde indica 40%–59% e azul indica 60%–79%.\nQuais são as faixas percentuais de RJ e ES, respectivamente?",
+          "textAllowed": true
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "RJ is blue and ES is green. The legend pairs blue with 60%–79% and green with 40%–59% without naming either state, so the learner must read the map to answer.",
+          "score": 10,
+          "label": "Teaches the idea",
+          "weight": 35
+        },
+        {
+          "categoryId": "simplicity",
+          "reasoning": "The divided Brazil map is the sole focal object. Gray fills keep the other states visible as context without competing with RJ and ES. The two-swatch legend is the only supporting object.",
+          "score": 10,
+          "label": "One idea, simply",
+          "weight": 25
+        },
+        {
+          "categoryId": "labels",
+          "reasoning": "RJ and ES identify the two states asked about, and the swatch labels match the screen’s percentage ranges exactly. All four labels are necessary; none acts as a caption.",
+          "score": 10,
+          "label": "Labels",
+          "weight": 25
+        },
+        {
+          "categoryId": "fields",
+          "reasoning": "The descriptive fields are in English. Each abbreviation is placed on its state, and each percentage range is placed beside its corresponding legend swatch.",
+          "score": 10,
+          "label": "English fields and placement",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 2 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1619,
+          "outputTokens": 351,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "The request asks for a legend: the scene keeps it, with a blue swatch labeled 60%–79% and a green swatch labeled 40%–59%, and Rio de Janeiro in blue and Espírito Santo in green. The legend never names which state is in which range, since the question asks that.",
+        "expected": {
+          "labels": "some"
+        },
+        "id": "thematic-map-legend-question-pt-2",
+        "userInput": {
+          "alt": "Mapa fictício de coleta seletiva: Rio de Janeiro em azul, faixa de 60% a 79%, e Espírito Santo em verde, faixa de 40% a 59%.",
+          "context": "ENEM › Geografia › Mapas temáticos e legendas",
+          "language": "pt",
+          "request": "Mapa fictício do Brasil dividido em UFs. RJ em azul e ES em verde; demais UFs em cinza. Siglas RJ e ES visíveis. Legenda: azul, 60%–79%; verde, 40%–59%. Tema: domicílios atendidos por coleta seletiva.",
+          "screenText": "Em um novo mapa fictício de coleta seletiva, vale a mesma legenda: verde indica 40%–59% e azul indica 60%–79%.\nQuais são as faixas percentuais de RJ e ES, respectivamente?",
+          "textAllowed": true
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "RJ is blue and ES is green. The legend pairs blue with 60%–79% and green with 40%–59% without naming either state, so learners must read the map to answer.",
+          "score": 10,
+          "label": "Teaches the idea",
+          "weight": 35
+        },
+        {
+          "categoryId": "simplicity",
+          "reasoning": "The Brazil map is the sole focal object, with one small legend. Gray boundaries and fills keep the other states as geographic context without introducing another topic.",
+          "score": 10,
+          "label": "One idea, simply",
+          "weight": 25
+        },
+        {
+          "categoryId": "labels",
+          "reasoning": "RJ and ES identify the two states asked about. The only other labels are the exact percentage ranges needed to read the swatches; none acts as a caption.",
+          "score": 10,
+          "label": "Labels",
+          "weight": 25
+        },
+        {
+          "categoryId": "fields",
+          "reasoning": "All descriptive fields are in English. Each state abbreviation goes on its state, and each percentage range goes beside its matching swatch.",
+          "score": 10,
+          "label": "English fields and placement",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 2 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1613,
+          "outputTokens": 296,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "The request asks for a legend: the scene keeps it, with a blue swatch labeled 60%–79% and a green swatch labeled 40%–59%, and Rio de Janeiro in blue and Espírito Santo in green. The legend never names which state is in which range, since the question asks that.",
+        "expected": {
+          "labels": "some"
+        },
+        "id": "thematic-map-legend-question-pt-3",
+        "userInput": {
+          "alt": "Mapa fictício de coleta seletiva: Rio de Janeiro em azul, faixa de 60% a 79%, e Espírito Santo em verde, faixa de 40% a 59%.",
+          "context": "ENEM › Geografia › Mapas temáticos e legendas",
+          "language": "pt",
+          "request": "Mapa fictício do Brasil dividido em UFs. RJ em azul e ES em verde; demais UFs em cinza. Siglas RJ e ES visíveis. Legenda: azul, 60%–79%; verde, 40%–59%. Tema: domicílios atendidos por coleta seletiva.",
+          "screenText": "Em um novo mapa fictício de coleta seletiva, vale a mesma legenda: verde indica 40%–59% e azul indica 60%–79%.\nQuais são as faixas percentuais de RJ e ES, respectivamente?",
+          "textAllowed": true
+        }
+      }
     }
   ],
   "taskId": "image-scene"

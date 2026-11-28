@@ -60,7 +60,6 @@ function notebook(lang: Lang): Notebook {
         itemId: `item-${index}`,
         lesson: { id: `lesson-${index}`, title: skill },
         practiceAvailable: true,
-        practiceAvailableTomorrow: false,
         skill: { id: `skill-${skill}`, name: skill },
         snapshot: { answer, correctAnswer, question },
         status: "open",
@@ -79,7 +78,7 @@ function notebook(lang: Lang): Notebook {
   for (const mistake of mistakes) byCause[mistake.cause ?? "unsorted"] += 1;
 
   return {
-    availability: { ready: mistakes.length, tomorrow: 0 },
+    availability: { ready: mistakes.length },
     counts: { byCause, fixed: 3, open: mistakes.length },
     hasMore: false,
     mistakes,

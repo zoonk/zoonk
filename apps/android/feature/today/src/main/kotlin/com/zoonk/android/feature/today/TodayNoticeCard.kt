@@ -1,16 +1,11 @@
 package com.zoonk.android.feature.today
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.feature.exam.ExamChecklist
@@ -20,6 +15,8 @@ import com.zoonk.android.feature.exam.examMomentWords
 import com.zoonk.android.feature.exam.icon
 import com.zoonk.android.feature.language.LanguagePracticeNotice
 import com.zoonk.android.feature.onboarding.OnboardingStore
+import com.zoonk.android.feature.plan.ExamChoiceButtons
+import com.zoonk.android.feature.plan.ExamChoiceDescription
 import com.zoonk.android.feature.plan.ExamChoicePicks
 import com.zoonk.android.feature.plan.PlanEffectDiff
 import com.zoonk.android.feature.plan.examChoiceQuestion
@@ -110,7 +107,7 @@ internal fun TodayNotice(
 
         Today.Notice.PRACTICE -> {
             state.language?.let {
-                LanguagePracticeNotice(read.today.goal.id, read.today.pattern, it.pronunciation, layout, state.navigate, modifier)
+                LanguagePracticeNotice(read.today.goal.id, it.pronunciation, layout, state.navigate, modifier)
             }
         }
 
@@ -236,23 +233,13 @@ private fun ExamChoiceNotice(
         lineAction = { SuggestionOpen(stringResource(R.string.today_exam_choice_choose)) },
     ) {
         SuggestionHeader(question)
-        SuggestionDescription(stringResource(R.string.exam_choice_left_out))
+        ExamChoiceDescription(choice)
         if (choice.take > 1) {
             ExamChoicePicks(choice, saving, onSave = choose) { save, enabled ->
                 SuggestionMainAction(stringResource(R.string.plan_save), save, enabled, busy = saving)
             }
         } else {
-            // Main's `SuggestionChoices`: equal picks, one under the other, each as wide as the column.
-            Column(Modifier.padding(top = 4.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                choice.options.forEach { option ->
-                    SuggestionAction(
-                        onClick = { choose(listOf(option.name)) },
-                        modifier = Modifier.fillMaxWidth(),
-                        enabled = !saving,
-                        secondary = true,
-                    ) { Text(option.shortName ?: option.name) }
-                }
-            }
+            ExamChoiceButtons(choice, enabled = !saving, onChoose = choose)
         }
         if (viewModel.examChoiceFailedOn == state.read.noticeVisit()) SuggestionSaveError()
     }

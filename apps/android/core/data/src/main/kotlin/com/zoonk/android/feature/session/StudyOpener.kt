@@ -311,6 +311,14 @@ fun StudyBlockOpening.route(): AppRoute? =
                 ?: AppRoute.Session(sessionId = value.sessionId.toString())
         }
 
+        is StudyBlockOpening.StudyBlockOpeningMistakesPracticeValue -> {
+            AppRoute.MistakePractice(blockId = value.blockId.toString(), sessionId = value.sessionId.toString())
+        }
+
+        is StudyBlockOpening.StudyBlockOpeningPatternValue -> {
+            AppRoute.Pattern(value.patternId.toString(), value.sessionId.toString())
+        }
+
         is StudyBlockOpening.StudyBlockOpeningTodayValue -> {
             AppRoute.Today
         }
@@ -380,10 +388,13 @@ private fun DayStep.shown() =
                 refresh,
                 reinforcement,
                 weakest,
+                mistakesPractice = screen == StudyBlock.Screen.MISTAKES_PRACTICE,
                 mockPreparationReview = true.takeIf { mockPreparationReview },
+                returning = OpenStudyDayRequestTargetOneOfShownFlags.Returning.entries.firstOrNull { it.value == returning?.value },
             ),
         kind = OpenStudyDayRequestTargetOneOfShown.Kind.valueOf(kind.name),
         lessonId = lessonId,
         planItemKey = planItemKey,
         position = position,
+        patternId = patternId,
     )

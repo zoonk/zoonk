@@ -7,7 +7,6 @@ import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { describe, expect, it } from "vitest";
 import { toBlockPayload } from "../block-payload";
 import { loadDayMissionFacts } from "./day-facts";
-import { pickMissions } from "./pick-missions";
 
 const now = new Date("2026-10-13T12:00:00Z");
 const localDate = new Date("2026-10-13T00:00:00Z");
@@ -181,56 +180,13 @@ describe("language mission eligibility against real quota and material rows", ()
     ).toBe(false);
   });
 
-  it("offers a pattern only to the goal it was noticed in, not another goal of its language", async () => {
+  it("leaves a fresh pattern out of the missions and first steps", async () => {
     const input = await languageGoalFixture();
-    const other = await languageGoalFixture({ userId: input.user.id });
     await patternFixture({ goalId: input.goal.id, userId: input.user.id });
 
-    const [mine, theirs] = await Promise.all([load(input), load(other)]);
-
-    expect(mine.candidates.map((candidate) => candidate.kind)).toContain("pattern");
-    expect(theirs.candidates.map((candidate) => candidate.kind)).not.toContain("pattern");
-  });
-
-  it("prioritizes a valid pattern's final offer day without spending AI usage", async () => {
-    const input = await languageGoalFixture();
-
-    const pattern = await prisma.mistakePattern.create({
-      data: {
-        content: {
-          contrast: [],
-          drill: [
-            {
-              answer: "for",
-              feedback: "Use for with a duration.",
-              options: ["for", "since"],
-              sentence: "I studied ___ two years.",
-            },
-          ],
-          examples: [],
-          rule: "Use for with a duration.",
-        },
-        createdAt: new Date("2026-10-07T12:00:00Z"),
-        goalId: input.goal.id,
-        kind: "pattern",
-        language: "en",
-        model: "test",
-        promptVersion: "test",
-        runId: "test",
-        title: "For and since",
-        userId: input.user.id,
-      },
-    });
-
     const facts = await load(input);
-    facts.firstSteps = null;
 
-    expect(pickMissions(facts).at(-1)).toMatchObject({
-      anchor: { patternId: pattern.id },
-      kind: "pattern",
-    });
-
-    await expect(prisma.usageRecord.count({ where: { userId: input.user.id } })).resolves.toBe(0);
-    await expect(prisma.aiCall.count({ where: { userId: input.user.id } })).resolves.toBe(0);
+    expect(facts.candidates.map((candidate) => candidate.kind)).not.toContain("pattern");
+    expect(facts.firstSteps?.steps.map((step) => step.kind)).not.toContain("pattern");
   });
 });

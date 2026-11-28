@@ -50,7 +50,7 @@ async function writeScenarios({ learner, lookup, prisma }: LanguageScope) {
       return prisma.conversationScenario.upsert({
         create: { ...data, chapterId, level: scenario.level },
         update: data,
-        where: { chapterLevel: { chapterId, level: scenario.level } },
+        where: { chapterLevelRegion: { chapterId, level: scenario.level, targetRegion: "" } },
       });
     }),
   );

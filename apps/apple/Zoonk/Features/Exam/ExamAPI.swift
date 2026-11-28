@@ -43,19 +43,9 @@ enum MockStepOutcome: String, Decodable, Sendable {
   case expired
 }
 
-enum MockPlanOffer: String, Encodable, Sendable {
-  case skip
-  case focus
-}
-
 enum MockPlanOfferOutcome: Equatable, Sendable {
-  enum Reason: String, Decodable, Sendable {
-    case alreadyIn
-    case cantMove
-  }
-
   case applied(lessonsSkipped: Int)
-  case unchanged(Reason?)
+  case unchanged
 }
 
 enum EssaySubmission: Equatable, Sendable {
@@ -326,18 +316,17 @@ struct ExamAPI {
     }
   }
 
-  func adaptPlan(token: String, blockId: String, offer: MockPlanOffer) async throws
-    -> MockPlanOfferOutcome
-  {
+  /// Skips the lessons the mock showed the learner knows.
+  func skipKnownLessons(token: String, blockId: String) async throws -> MockPlanOfferOutcome {
     let body: Components.Schemas.MockPlanOfferInput = try PracticeJSON.recode(
-      MockPlanOfferRequest(offer: offer, timeZone: timeZone))
+      MockPlanOfferRequest(offer: "skip", timeZone: timeZone))
 
     return try await clients.perform(token: token) { client in
       switch try await client.adaptPlanFromMock(path: .init(blockId: blockId), body: .json(body)) {
       case .ok(let response):
         let result: MockPlanOfferResponse = try PracticeJSON.recode(try response.body.json)
         return result.status == "applied"
-          ? .applied(lessonsSkipped: result.lessonsSkipped ?? 0) : .unchanged(result.reason)
+          ? .applied(lessonsSkipped: result.lessonsSkipped ?? 0) : .unchanged
       case .unauthorized: throw APIError.unauthorized
       default: throw APIError.unavailable
       }
@@ -503,12 +492,11 @@ private struct MockAnswerRequest: Encodable {
 }
 
 private struct MockPlanOfferRequest: Encodable {
-  let offer: MockPlanOffer
+  let offer: String
   let timeZone: String
 }
 
 private struct MockPlanOfferResponse: Decodable {
   let lessonsSkipped: Int?
-  let reason: MockPlanOfferOutcome.Reason?
   let status: String
 }

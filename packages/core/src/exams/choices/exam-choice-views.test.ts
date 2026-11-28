@@ -57,6 +57,25 @@ describe(listExamChoiceViews, () => {
     ).toStrictEqual([]);
   });
 
+  it("names options by their full names when two share a short name", () => {
+    const structure: ExamStructure = {
+      ...enem,
+      subjects: [
+        subject("Física I", 10, { choiceGroup: MODULES, shortName: "Física" }),
+        subject("Física II", 10, { choiceGroup: MODULES, shortName: "Física" }),
+        subject("Química Orgânica", 10, { choiceGroup: MODULES, shortName: "Química" }),
+      ],
+    };
+
+    const [view] = listExamChoiceViews({ picks: { examChoices: [], examSubjects: [] }, structure });
+
+    expect(view?.options).toStrictEqual([
+      { name: "Física I", shortName: null },
+      { name: "Física II", shortName: null },
+      { name: "Química Orgânica", shortName: "Química" },
+    ]);
+  });
+
   it("asks for as many modules as candidates take, and says what two of them are worth", () => {
     const exani = examStructureSchema.parse(EXANI_STRUCTURE);
     const unpicked = { examChoices: [], examSubjects: [] };

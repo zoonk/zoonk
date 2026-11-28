@@ -113,6 +113,7 @@ export function MockHandInDialog({
         <AlertDialogFooter>
           <AlertDialogCancel>{t("Keep answering")}</AlertDialogCancel>
           <AlertDialogAction
+            enter="off"
             onClick={() => {
               onOpenChange(false);
               void runner.submitSection();

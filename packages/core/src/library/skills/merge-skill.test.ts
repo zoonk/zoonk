@@ -38,6 +38,8 @@ describe(mergeSkillForAdmin, () => {
         libraryLessonFixture(),
       ]);
 
+    const helpedAt = new Date("2026-11-20T12:00:00Z");
+
     const [item] = await Promise.all([
       itemFixture({ skillId: duplicate.id }),
       learnerSkillFixture({
@@ -47,7 +49,13 @@ describe(mergeSkillForAdmin, () => {
         userId: onlyDuplicate.id,
       }),
       learnerSkillFixture({ reps: 6, skillId: duplicate.id, state: "solid", userId: both.id }),
-      learnerSkillFixture({ reps: 1, skillId: survivor.id, state: "learning", userId: both.id }),
+      learnerSkillFixture({
+        helpedAt,
+        reps: 1,
+        skillId: survivor.id,
+        state: "learning",
+        userId: both.id,
+      }),
       lessonSkillFixture({ lessonId: lesson.id, skillId: duplicate.id }),
       skillPrerequisiteFixture({ prerequisiteId: prerequisite.id, skillId: duplicate.id }),
       skillPrerequisiteFixture({ prerequisiteId: duplicate.id, skillId: dependent.id }),
@@ -88,7 +96,7 @@ describe(mergeSkillForAdmin, () => {
 
     expect(learnerSkills).toMatchObject([
       { reps: 4, skillId: survivor.id, userId: onlyDuplicate.id },
-      { reps: 6, skillId: survivor.id, userId: both.id },
+      { helpedAt, reps: 6, skillId: survivor.id, userId: both.id },
     ]);
 
     expect(movedAttempt.skillId).toBe(survivor.id);

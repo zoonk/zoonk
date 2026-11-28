@@ -1076,7 +1076,7 @@ private func today(session: StudyDay, planChange: TodayView.PlanChange? = nil) t
     earlierWork: [], exam: nil, examChoice: nil, focusTest: nil,
     goal: try decode(
       #"{"dateEstimated":false,"daysLeft":null,"id":"g1","kind":"learn","title":"Goal"}"#),
-    insight: nil, mockFunding: nil, notice: nil, pattern: nil,
+    insight: nil, mockFunding: nil, notice: nil,
     planChange: planChange, progress: nil, session: session, sourceChange: nil,
     studiedToday: false, suggestedGoal: nil, uploadRequest: nil, weeklyChallenge: nil)
 }

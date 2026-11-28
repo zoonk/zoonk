@@ -3,7 +3,10 @@ import { prisma } from "@zoonk/db";
 import { isCefrLevel } from "@zoonk/utils/cefr";
 import { findCheckpointUnit } from "../../language/conversations/_utils/checkpoint-block";
 import { getSpeakingLevel } from "../../language/conversations/_utils/conversation-goal";
-import { findUnitScenario } from "../../language/conversations/_utils/conversation-scenario";
+import {
+  findUnitScenario,
+  getScenarioRegion,
+} from "../../language/conversations/_utils/conversation-scenario";
 import {
   type ConversationScenario,
   conversationScenarioSchema,
@@ -72,7 +75,13 @@ export async function loadChallengeCall({
     getSpeakingLevel({ goal, targetLanguage, userId }),
   ]);
 
-  const scenario = unit ? await findUnitScenario({ chapterId: unit.chapterId, level }) : null;
+  const scenario = unit
+    ? await findUnitScenario({
+        chapterId: unit.chapterId,
+        level,
+        targetRegion: getScenarioRegion(goal),
+      })
+    : null;
 
   return {
     goals: toGoals(scenario),

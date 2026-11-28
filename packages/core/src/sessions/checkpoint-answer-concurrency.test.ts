@@ -245,6 +245,10 @@ describe("checkpoint answer recording", () => {
     });
 
     expect(mistake.cause).toBe("trap");
+
+    await expect(
+      prisma.attempt.findUniqueOrThrow({ where: { id: mistake.attemptId ?? "" } }),
+    ).resolves.toMatchObject({ cause: "trap", evidence: "independent" });
   });
 
   it.each([
@@ -355,7 +359,7 @@ describe("checkpoint answer recording", () => {
         where: { itemId: item.id, studySessionId: session.id, userId: user.id },
       });
 
-      expect(attempts).toHaveLength(1);
+      expect(attempts).toMatchObject([{ evidence: "independent" }]);
 
       const answered = { feedback: { isCorrect: attempts[0]?.isCorrect }, status: "ready" };
 

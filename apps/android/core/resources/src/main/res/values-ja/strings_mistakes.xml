@@ -10,20 +10,20 @@
   "mistakes_empty_open": "026ce2a4487d84fbc62b76838f8e751970396b1d37e42b62db0c6fd8e75d3735",
   "mistakes_more_failed": "4680a772d17072c6c1cac5818e2393cc78633761d121636a8cbdd82077c6d139",
   "mistakes_notebook_title": "f215fd53d5e81479a0547ab8b9de672c096cf9a5450a86e82419fa903c73d549",
-  "mistakes_nothing_description": "fcafb30c2fb9e5d443a74ea1677cb33400043ace47052078bd0654638f22b31a",
-  "mistakes_nothing_title": "027921feb5f37ffd5afa64d62710fce6a44bc4d85acd7acd6351c9b25f9318db",
+  "mistakes_nothing_title": "4bafa00332a542963ed72e7c7896d51f3741da9fc2742f5f0a882fe265a22746",
   "mistakes_open_lesson": "be76a779afa7e01fc16d37f3f2d472a9ff5d5ce03b2e9b086a98df1f04f8afb2",
-  "mistakes_opens_tomorrow": "342758d7fb23c0d468ac9c4b5ba37504c377048aa86d601d9fe0a114d2f56a6b",
   "mistakes_other_questions": "d67369990b54a9180396e270b0ef4cacc6f4ae010e42468d9dcaa5c253f0c3d5",
   "mistakes_practice": "e980141c5058597c0d5f7990dc6b0c85de2b038ccfc41c7a95fce707cc11ab4a",
-  "mistakes_practice_comes_back": "7b38db2be14a5a6d05534e4da7064082001cb2216173fd2fdb6cb939e2ff1775",
+  "mistakes_practice_again": "6fd833d42cbfb9f85b8d24b8baf49adf98927186e7d7bb172a320b01f424d5a4",
+  "mistakes_practice_already_fixed": "069f077addb5552eb125c02275776391b2801ed3409049d6ae3408cd6936383f",
+  "mistakes_practice_done": "e2a452f7d62af3b7f8e0a655a63be44bd8e3c34418a8240372cf5cc2614f536f",
   "mistakes_practice_end": "a27bec73363f70467fa32b7fa584fbe5d558c120f31fa2f889154b222c44f8e4",
   "mistakes_practice_fixed": "51b9bd33e05b33539c8410ecdd45cc5029d6e3fd3fa8e6e7217039904a3223b5",
-  "mistakes_practice_missed_and_unreached": "e8c3fbbbd1969040b63172aee813277079d3cd2ebeee28ec6ed2a779262e2427",
+  "mistakes_practice_later_day": "09c9a03ef25e6e668a2bc65b70ab0a41ccbaea361b0ee4c67e578dadba4f6a4a",
+  "mistakes_practice_not_marked": "9c69f32e498ef34dee23dec8b15c9797b1fbac82becb83fea7df667d0341835b",
+  "mistakes_practice_not_saved": "d3ee024be662a521fe4041d669f9cd8d1b3f88e9eb982086e105f46f1a762e0a",
   "mistakes_practice_title": "7edc98e6a1adcbc053fbde105dd356df5c21839db2def8015edf0f102e8cf02b",
-  "mistakes_practice_tomorrow": "5689f6fcb408e2306d3985277548b275f5c865538a6e43aeb9483d16d32ebbe6",
   "mistakes_practice_topic": "e0166abd10cc6ba5d386a2e2cd1bd20c6b038a435e4a707952e37d46d7b5ed8e",
-  "mistakes_practice_unreached": "c714b1bbf23d5512139c53fe47683f383c34bbf85df4b69c6a3cbb1967e60698",
   "mistakes_show_more": "fc63f46d3e98564355dc30ec1c2fa22a93bbbc7989d81534a03d07236e5b4f8e",
   "mistakes_tab_fixed": "8f87c4e75da4f27442a89a6d4e4d6d1a49cc716e5fed1bb49b082c4b9b0f47bb",
   "mistakes_tab_open": "cbcbcc631797813a9d0114ce1dc0f44142a393914977e63ff2521c0bf36f03e5"
@@ -33,18 +33,12 @@
     <string name="mistakes_practice_title">間違えたところの練習</string>
     <!-- The close button's spoken label once a question is answered: closing ends the practice. -->
     <string name="mistakes_practice_end">練習を終了する。答えた分は記録されます。</string>
-    <string name="mistakes_practice_comes_back">間違えた問題は、記憶に残りやすくなるように、日を置いてまた出てきます。</string>
-    <string name="mistakes_practice_missed_and_unreached">間違えた問題は別の日にまた出てきます。残りの問題は引き続き練習できます。</string>
-    <string name="mistakes_practice_unreached">残りの問題は引き続き練習できます。</string>
     <plurals name="mistakes_practice_fixed">
         <item quantity="other">%d件の間違いを克服しました</item>
     </plurals>
-    <string name="mistakes_nothing_title">まだ練習する問題はありません</string>
-    <string name="mistakes_nothing_description">間違えた問題は、翌日から練習できるようになります。</string>
+    <string name="mistakes_nothing_title">練習する問題はありません</string>
     <string name="mistakes_notebook_title">間違いノート</string>
     <string name="mistakes_practice">間違えたところの練習</string>
-    <!-- Under the notebook's title when no mistake is ready yet and some come back tomorrow. -->
-    <string name="mistakes_opens_tomorrow">明日から練習できます</string>
     <!-- The notebook's tab of mistakes the learner hasn't fixed yet. -->
     <string name="mistakes_tab_open">未克服</string>
     <!-- The notebook's tab of mistakes the learner fixed in practice. -->
@@ -62,7 +56,18 @@
     <string name="mistakes_cause_trap">ひっかけに引っかかりました</string>
     <string name="mistakes_cause_time">時間が足りませんでした</string>
     <string name="mistakes_cause_guess">予想で答えました</string>
-    <string name="mistakes_practice_tomorrow">明日から練習できます</string>
     <string name="mistakes_practice_topic">このトピックを練習する</string>
+    <!-- After a right answer to a question the learner missed earlier the same day. A mistake is fixed only by a right answer on a later day. -->
+    <string name="mistakes_practice_later_day">定着を確認するため、この問題は別の日にもう一度出てきます。</string>
+    <!-- Beside Done at the end of a practice of mistakes: starts another round right away. -->
+    <string name="mistakes_practice_again">もう一度練習する</string>
+    <!-- The button that leaves a finished practice of mistakes. -->
+    <string name="mistakes_practice_done">完了</string>
+    <!-- Title of a practice of mistakes whose end didn't reach the server, so it doesn't count yet. -->
+    <string name="mistakes_practice_not_saved">練習内容はまだ保存されていません</string>
+    <!-- Title when a day's practice of mistakes opens and every one of its mistakes was already fixed elsewhere. -->
+    <string name="mistakes_practice_already_fixed">すでに克服済み</string>
+    <!-- Under "Already fixed" when marking the day's practice done didn't reach the server. -->
+    <string name="mistakes_practice_not_marked">完了にできませんでした。接続を確認してください。</string>
     <string name="mistakes_open_lesson">レッスンを開く</string>
 </resources>

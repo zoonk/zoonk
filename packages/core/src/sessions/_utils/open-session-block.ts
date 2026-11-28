@@ -9,7 +9,7 @@ import { type StudyBlockView } from "./session-view";
 type BlockToOpen = {
   block: Pick<
     StudyBlockView,
-    "checkpoint" | "id" | "kind" | "lessonId" | "planItemId" | "screen" | "status"
+    "checkpoint" | "id" | "kind" | "lessonId" | "patternId" | "planItemId" | "screen" | "status"
   >;
   goalId: string | null;
   sessionId: string;
@@ -129,6 +129,14 @@ async function openChallenge({
 }
 
 function toStartedOpening({ block, sessionId }: BlockToOpen): StudyBlockOpening {
+  if (block.screen === "mistakesPractice") {
+    return { blockId: block.id, kind: "mistakesPractice", sessionId };
+  }
+
+  if (block.screen === "pattern" && block.patternId) {
+    return { blockId: block.id, kind: "pattern", patternId: block.patternId, sessionId };
+  }
+
   if (block.kind === "produce") {
     return { blockId: block.id, kind: "essay", sessionId };
   }

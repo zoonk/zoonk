@@ -30,6 +30,7 @@
   "disclosure_collapsed": "2c949888045de91fdf88192313ad12ce396489bf2ee588cdb2be6dd96137ca37",
   "disclosure_expanded": "9a95085ed99408ab6e89dd4e381a88222034c87d4d38447ec1f243e353bab80a",
   "exam_choice_left_out": "3dfebf1bc6b2fa174e349b917b439d58fcfac8ef1034261d34c1d8d484958f44",
+  "exam_choice_left_out_several": "8eaee408e526826474dba14b36ac772ffc78a23fa49729de82d3ad92067e8f94",
   "exam_choice_pick_up_to": "8e8020929908a0508eea9d51d1d464113c6ae286a5d7061a43e2ef36aa02b748",
   "gate_build_plan": "dcf1f0d278a7940fc8e289573597ea0ee212fcf581546b721661289a6680b68e",
   "gate_log_in": "2be55c412a383b70cf84eed736fba6b2744b6863fc6f6a2ca5e4b63a96ffd2c7",
@@ -141,6 +142,8 @@
     <string name="weekend_time_label">Durée d’étude le week-end</string>
     <!-- Under a question asking which option of an exam the learner will take, such as its foreign language. Until they pick, their plan has none of the options. -->
     <string name="exam_choice_left_out">Choisis une option pour l’inclure dans ton plan.</string>
+    <!-- Under a question asking which options of an exam the learner will take, such as two of its subject modules. Until they pick, their plan has none of the options. %1$d is how many they can pick, always 2 or more. -->
+    <string name="exam_choice_left_out_several">Choisis jusqu’à %1$d options pour les inclure dans ton plan.</string>
     <string name="disclosure_expanded">Développé</string>
     <string name="disclosure_collapsed">Réduit</string>
     <!-- TalkBack reads one line of a before-and-after list: which side it's on, then its words, such as "Now: Plan ends June 3" or "Better: Un café, por favor". -->

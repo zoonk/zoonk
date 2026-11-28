@@ -1,6 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, plannedSkills } from "@zoonk/testing/fixtures/goals";
-import { attemptFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
+import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
@@ -31,7 +31,6 @@ async function readyToFinish(userId: string, kind: "boss" | "weekly" = "weekly")
         picks: [
           { anchor: { blockKind: "review" }, kind: "review", total: 1 },
           { anchor: { blockKind: "learn" }, kind: "somethingNew", total: 1 },
-          { anchor: {}, kind: "fixMistake", total: 1 },
         ],
         version: 1,
       },
@@ -93,7 +92,6 @@ async function readyToFinish(userId: string, kind: "boss" | "weekly" = "weekly")
       sessionId: session.id,
       status: "completed",
     }),
-    mistakeFixture({ fixedAt: new Date(), skillId: skill.id, status: "fixed", userId }),
     attemptFixture({ itemId: item.id, studySessionId: session.id, userId }),
   ]);
 

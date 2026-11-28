@@ -2,7 +2,7 @@ import "server-only";
 import { cacheTag } from "next/cache";
 import { getGoalsCacheTag, getLearnerModelCacheTag } from "../../cache/tags";
 import {
-  type PracticeMistake,
+  type TimedPracticeMistake,
   loadPracticeMistakes,
 } from "../../mistakes/mistake-practice-eligibility";
 import { getMistakeSkillIds } from "../_utils/goal-skill-graph";
@@ -13,7 +13,7 @@ import { readOwnedGoal } from "./owned-goal";
 export async function readPracticeMistakes(
   userId: string,
   goalId: string,
-): Promise<PracticeMistake[]> {
+): Promise<TimedPracticeMistake[]> {
   "use cache: private";
 
   cacheTag(getGoalsCacheTag(userId), getLearnerModelCacheTag(userId));

@@ -11,6 +11,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { scheduleFreshnessChecks } from "../exams/freshness-checks";
 import { temperatureSpec } from "../quality/_test-utils/written-lessons";
+import { getSecondTakeIdentityKey } from "../second-takes/second-take-identity";
 import { loadLessonDocuments } from "./_utils/lesson-sources";
 import { linkLessonLaws, loadLessonLawsInput, replanUnsourcedLesson } from "./lesson-laws";
 
@@ -215,6 +216,15 @@ describe(loadLessonLawsInput, () => {
         skills: [],
       },
     });
+  });
+
+  it("does not start fresh law research for a second take", async () => {
+    const secondTake = await libraryLessonFixture({
+      identityKey: getSecondTakeIdentityKey({ ownerId: null, skillId: randomUUID() }),
+      title: "Imparcialidade e conflito de interesses",
+    });
+
+    await expect(loadLessonLawsInput(secondTake.id)).resolves.toBeNull();
   });
 
   it("never asks about a language, challenge, product or material lesson, or one with its laws", async () => {

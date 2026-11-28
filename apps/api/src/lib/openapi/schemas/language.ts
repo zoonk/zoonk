@@ -139,7 +139,7 @@ export const goalMistakePatternSchema = z
       .nullable()
       .meta({
         description:
-          "A language goal's pattern noticed in recent mistakes, not practiced or dismissed yet; open it with GET /v1/mistake-patterns/{patternId}. Null for any other goal, and when one of the day's missions already opens it",
+          "A language goal's pattern noticed in recent mistakes, not practiced or dismissed yet; open it with GET /v1/mistake-patterns/{patternId}. Null for any other goal",
       }),
   })
   .meta({ id: "GoalMistakePattern" });

@@ -28,8 +28,6 @@
   "language_level_up": "c182264a4eb6546c573d49051f523682ef61563af7999293dcafd4526011b248",
   "language_levels_move": "3fb7f8744b6d108fcf7fb65ccd888bdad0f5e0f45fb3918ab483df56fa5fcf38",
   "language_pattern_noticed": "fb42b82ff5b10584d9497f7474db8e9eef37b8a0629f6c04fa90c0095254578d",
-  "language_pattern_noticed_summary": "589211b307721cab84f7f0f3f98487f0be19dff789dec23c24ba0b983551d1f3",
-  "language_pattern_practice": "5002565e94346e019f5b3bf5fa14c93f3c036af2d056d3df63f445ba6f8f7f67",
   "language_pattern_typos": "afebc866524648b71469ea205aa41e681bc3e0358621035ed5bd2a6216b828d0",
   "language_pattern_typos_description": "3344a7f3f16703ed3a682448f6e0828710d2ebad3029cf6eb5cd270297b7153e",
   "language_practice_estimates": "5435822ac733b8d92ed7e49b6e5571121ad636a8e6ede346ee9e196e2c1ee0c3",
@@ -144,10 +142,6 @@
     <string name="language_alphabet_skip_failed">Nie udało się zapisać. Spróbuj ponownie.</string>
     <!-- Button that opens the words to say aloud again; "them" is those words. -->
     <string name="language_say_them">Powiedz je</string>
-    <!-- %1$s names the rule the learner keeps getting wrong. -->
-    <string name="language_pattern_noticed_summary">Zauważyliśmy powtarzający się błąd: %1$s</string>
-    <!-- Opens the noticed pattern. -->
-    <string name="language_pattern_practice">Poćwicz</string>
     <string name="language_level">Poziom: %1$s</string>
     <!-- %1$s is the learner's language level now, %2$s the level they aim for: "A2 → B1". -->
     <string name="language_level_toward">%1$s → %2$s</string>

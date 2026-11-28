@@ -18,7 +18,7 @@ import {
   sentenceOrdersWorkflow,
 } from "../language/sentence-orders-workflow";
 import { getLessonContentHookToken } from "../lessons/lesson-content-result";
-import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
+import { type LessonContentInput, lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { getChapterMindMapToken, toChapterMindMapInput } from "../mind-maps/chapter-mind-map-input";
 import { chapterMindMapWorkflow } from "../mind-maps/chapter-mind-map-workflow";
 import { alphabetReviewWorkflow } from "../quality/alphabet-review-workflow";
@@ -27,6 +27,7 @@ import { sourceVisibilityWorkflow } from "../research/source-visibility-workflow
 import { waitForMaterialReading } from "../research/wait-for-material-reading";
 import { sessionPreparationWorkflow } from "../sessions/session-preparation-workflow";
 import { backgroundTaskWorkflow, getBackgroundTaskToken } from "./background-task-workflow";
+import { catchUpMockReplanStep } from "./steps/catch-up-mock-replan-step";
 import {
   endFollowUpStep,
   listFollowUpsStep,
@@ -63,6 +64,12 @@ async function startPlacementPreparation(
   await startOnce(placementItemsWorkflow, [{ ...input, analytics: { distinctId: userId } }], ask);
 }
 
+async function startLessonContent(writing: LessonContentInput | null): Promise<void> {
+  if (writing) {
+    await startOnce(lessonContentWorkflow, [writing], getLessonContentHookToken(writing.lessonId));
+  }
+}
+
 /** `start()` in a workflow is a step, so a replay never starts the same run twice. */
 // oxlint-disable-next-line complexity -- Each follow-up kind starts its own workflow.
 async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
@@ -74,6 +81,9 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
       return;
     case "refreshPlanSuggestion":
       await retryPlanConflicts(refreshPlanSuggestionStep, { ...followUp.input, userId });
+      return;
+    case "catchUpMockReplan":
+      await retryPlanConflicts(catchUpMockReplanStep, { ...followUp.input, userId });
       return;
     case "settleSessionPlan":
       await settleSessionPlanStep({ ...followUp.input, userId });
@@ -130,19 +140,9 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
     case "preparePlacementItems":
       return startPlacementPreparation(followUp);
 
-    case "writeLesson": {
-      const writing = await requestLessonWritingStep({ lessonId: followUp.input.lessonId, userId });
-
-      if (writing) {
-        await startOnce(
-          lessonContentWorkflow,
-          [writing],
-          getLessonContentHookToken(writing.lessonId),
-        );
-      }
-
-      return;
-    }
+    case "writeSecondTake":
+    case "writeLesson":
+      return startLessonContent(await requestLessonWritingStep(followUp.input, userId));
     case "writeSentenceOrders":
       await startSentenceOrders(followUp.input.lessonId);
       return;

@@ -7,3 +7,5 @@ export const visibleMistakeWhere = {
     { attempt: { mockExam: { status: "finished" as const } } },
   ],
 };
+
+export const openVisibleMistakeWhere = { ...visibleMistakeWhere, status: "open" as const };
