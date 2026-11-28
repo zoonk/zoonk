@@ -8,6 +8,7 @@ import { MAX_PICK_KEYS, shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useRef } from "react";
+import { CHOICE_MARK_LINE_CLASS } from "../_components/answer-pick-mark";
 import {
   LIST_ROW_INTERACTIVE_CLASS,
   ListRowContent,
@@ -183,7 +184,7 @@ export function ChoiceList<Value extends string>({
             {choice.trailing}
             <RadioGroupItem
               aria-keyshortcuts={numberKeys ? shortcutKeys("pick", index) : undefined}
-              className="self-center"
+              className={cn("self-center", CHOICE_MARK_LINE_CLASS)}
               value={choice.value}
             />
           </RadioGroupOption>
@@ -259,7 +260,7 @@ export function CheckList<Value extends string>({
             <Checkbox
               aria-keyshortcuts={numberKeys ? shortcutKeys("pick", index) : undefined}
               checked={isPicked}
-              className="self-center"
+              className={cn("self-center", CHOICE_MARK_LINE_CLASS)}
               disabled={isDisabled}
               onCheckedChange={() => toggle(choice)}
             />

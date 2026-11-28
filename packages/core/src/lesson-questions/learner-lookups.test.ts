@@ -24,6 +24,7 @@ import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/p
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { toIsoDate } from "../plans/planner/plan-calendar";
 import { BRAIN_POWER_BONUS } from "../sessions/brain-power";
+import { buddyTarget } from "./_test-utils/buddy-target";
 import { claimLessonQuestionAnswer } from "./answer-lifecycle";
 import { createLessonQuestion } from "./create-lesson-question";
 import { lookUpTutorData } from "./look-up-tutor-data";
@@ -74,7 +75,7 @@ async function plannedLearner({ open = true }: { open?: boolean } = {}) {
 async function answering(goalId: string) {
   const created = await createLessonQuestion({
     input: { context: { kind: "plan" }, question: "How am I doing?", requestId: randomUUID() },
-    target: { conversationId: null, goalId, kind: "plan" },
+    target: buddyTarget(goalId),
   });
 
   if (created.status !== "created") {

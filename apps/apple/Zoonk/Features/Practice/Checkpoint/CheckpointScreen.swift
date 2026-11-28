@@ -652,7 +652,7 @@ private struct CheckpointReview: View {
                 result: PracticeItemResult(
                   answer: given[question.itemId] ?? (answer.isCorrect ? correctAnswer : .dontKnow),
                   correctAnswer: correctAnswer, isCorrect: answer.isCorrect),
-                isLocked: true, draft: .constant(nil))
+                isLocked: true, showsStatement: false, isReview: true, draft: .constant(nil))
             }
 
             PracticeFeedbackPanel(

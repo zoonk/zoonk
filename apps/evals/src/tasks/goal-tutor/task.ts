@@ -66,7 +66,7 @@ type GoalTutorInput = Omit<
   planChange?: GoalTutorPlanChangeStandIn;
 };
 
-const NO_EFFECT = { endDateAfter: null, endDateBefore: null, lessonsAdded: 0, lessonsRemoved: 0 };
+const NO_EFFECT = { endDateAfter: null, endDateBefore: null };
 
 function standInAppTool({
   appTools,

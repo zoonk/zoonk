@@ -53,11 +53,7 @@ function voiced(option: WordBankOption): WordBankOption {
 function withWordAudio(step: PlayableLanguageStep): PlayableLanguageStep {
   return {
     ...step,
-    exercise: {
-      ...step.exercise,
-      fillBlankOptions: step.exercise.fillBlankOptions.map(voiced),
-      wordBankOptions: step.exercise.wordBankOptions.map(voiced),
-    },
+    exercise: { ...step.exercise, wordBankOptions: step.exercise.wordBankOptions.map(voiced) },
   };
 }
 
@@ -179,25 +175,14 @@ describe("language lesson screens", () => {
     const played = recordPlays();
 
     renderLessonPlayer({
-      lesson: buildLesson(
-        [
-          withWordAudio(languageStep("reading")),
-          withWordAudio(languageStep("fillBlank")),
-          teachingStep("summary"),
-        ],
-        { language: "pt", targetLanguage: "en" },
-      ),
+      lesson: buildLesson([withWordAudio(languageStep("reading")), teachingStep("summary")], {
+        language: "pt",
+        targetLanguage: "en",
+      }),
     });
 
     await pickWords(["How", "much"]);
     expect(played).toStrictEqual([wordAudioUrl("How"), wordAudioUrl("much")]);
-
-    await pickWords(["is", "the", "rent?"]);
-    await checkRightAndContinue();
-
-    await expect.element(page.getByText("The electron is drawn as a")).toBeVisible();
-    await pickWords(["cloud"]);
-    expect(played.at(-1)).toBe(wordAudioUrl("cloud"));
   });
 
   it("shows the reading of a blank's sentence and of each word in the bank", async () => {

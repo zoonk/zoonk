@@ -161,7 +161,6 @@ fun LanguageStepView(
                         result,
                         locked,
                         languages.target,
-                        speech,
                         select,
                         question,
                     )

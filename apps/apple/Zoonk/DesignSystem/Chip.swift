@@ -3,7 +3,8 @@ import SwiftUI
 /// Main's `Eyebrow`: the one small line over a title, as a chip with an optional mark before its
 /// words (rule 7). It holds a label of a few words, never a control or a sentence; `success` is main's
 /// `SuccessEyebrow`, green with a check (or the mark it's given), for what just finished or holds. Over a task's, a card's, a sheet's
-/// or a step's title only: a page that has the app's bar has no line over its title.
+/// or a step's title only: a page that has the app's bar has no line over its title. A `filled` one
+/// is on the muted fill with no line, as main tags a mistake's cause.
 struct Chip: View {
   enum Tone {
     case neutral
@@ -13,11 +14,13 @@ struct Chip: View {
   let text: Text
   var systemImage: String?
   var tone = Tone.neutral
+  var filled = false
 
-  init(_ text: Text, systemImage: String? = nil, tone: Tone = .neutral) {
+  init(_ text: Text, systemImage: String? = nil, tone: Tone = .neutral, filled: Bool = false) {
     self.text = text
     self.systemImage = tone == .success ? systemImage ?? "checkmark" : systemImage
     self.tone = tone
+    self.filled = filled
   }
 
   var body: some View {
@@ -32,7 +35,7 @@ struct Chip: View {
     }
     // Before the chip's own muted style, which only fills in what this leaves unset.
     .foregroundStyle(tone == .success ? Color.successText : Color.mutedForeground)
-    .chip(wraps: true)
+    .chip(wraps: true, filled: filled)
   }
 }
 
@@ -64,13 +67,16 @@ struct ChipRow: View {
 extension View {
   /// The chip's look, for a word at a row's end that isn't a count (a count is `.badge(_:)`). Never a
   /// colored badge. One that `wraps` takes more lines instead of overflowing.
-  func chip(wraps: Bool = false) -> some View {
-    typeStyle(.chip)
+  func chip(wraps: Bool = false, filled: Bool = false) -> some View {
+    let shape = RoundedRectangle(cornerRadius: Radius.md, style: .continuous)
+
+    return typeStyle(.chip)
       .foregroundStyle(.mutedForeground)
       .padding(.horizontal, 8)
       .padding(.vertical, 3)
       .frame(minHeight: 22)
-      .overlay(RoundedRectangle(cornerRadius: Radius.md, style: .continuous).strokeBorder(.input))
+      .background(filled ? Color.muted : .clear, in: shape)
+      .overlay(shape.strokeBorder(filled ? .clear : Color.input))
       .fixedSize(horizontal: !wraps, vertical: true)
   }
 }

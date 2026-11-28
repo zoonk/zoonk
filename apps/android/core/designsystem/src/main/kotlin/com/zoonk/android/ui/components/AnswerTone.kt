@@ -8,7 +8,6 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.theme.LocalMoreContrast
@@ -59,8 +58,8 @@ fun pickedBorder(): BorderStroke = BorderStroke(1.dp, pickedBorderColor())
 fun pickedBorderColor(): Color = if (LocalMoreContrast.current) MaterialTheme.colorScheme.outline else Color.Transparent
 
 /**
- * The right option says "Correct" when the learner missed it. A pick needs no word of its own: its color and the
- * verdict say it, and only a guess ([guessed]), which counts as neither, says so.
+ * The right option says "Correct" when the learner missed it. A pick needs no word of its own: its mark, its color and
+ * the verdict say it, and only a guess ([guessed]), which counts as neither, says so once it's checked.
  */
 @Composable
 fun AnswerTag(
@@ -84,17 +83,6 @@ fun AnswerTag(
         }
 
     Text(text = text, modifier = modifier, color = color, style = MaterialTheme.zoonkType.tag)
-}
-
-/** Before Check, a guess says so in the words its verdict keeps. Unspoken: the option is selected. */
-@Composable
-fun GuessTag(modifier: Modifier = Modifier) {
-    Text(
-        text = stringResource(R.string.answer_tag_your_guess),
-        modifier = modifier.clearAndSetSemantics {},
-        color = MaterialTheme.colorScheme.onSurface,
-        style = MaterialTheme.zoonkType.tag,
-    )
 }
 
 private val CHECKED = 1.5.dp

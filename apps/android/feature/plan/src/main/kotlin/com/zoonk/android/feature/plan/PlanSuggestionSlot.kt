@@ -380,6 +380,7 @@ private fun SlotSuggestion(
                 layout = layout,
                 failed = edits.hasFailed(PlanPart.ExamChoices),
                 pending = edits.isPending(PlanPart.ExamChoices),
+                saving = edits.askedExamChoice(item.choice.group) != null,
                 answer = slot.shownAnswer(item),
                 onChoose = { subjects -> edits.chooseExamOption(item.choice.group, subjects, PlanAsker.SuggestedChoice(item)) },
             )

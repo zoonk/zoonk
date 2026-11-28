@@ -8,74 +8,94 @@ enum AnswerOptionResult: Equatable {
   case wrong
 }
 
-/// Main's `AnswerOption`: its number key, its words and, once checked, the word its result shows.
-/// The first ten answer to their number key on a hardware keyboard (the tenth to 0), as on the web.
+/// Main's `AnswerOption`: its words, a mark at its end that shows what's picked, a ring where the
+/// question takes one answer and a square where it takes several, and once checked the word its
+/// result shows. On a hardware keyboard the first ten answer to their number key (the tenth to 0),
+/// as on the web, and show it before the words; once checked, that room shows the verdict's mark.
 struct AnswerOption: View {
   var marker: Int?
   var shortcut: Int?
+  var picks: ChoiceMark.Kind = .one
   var isPicked = false
   var result: AnswerOptionResult?
-  /// The learner's pick was a guess, so it says "Your guess".
+  /// The learner's pick was a guess, so once checked it says "Your guess".
   var isGuessed = false
   var isLocked = false
   var tag: AnyView?
   let text: RichInline
   var detail: String?
-  /// Without one, the answer is shown after the fact: the same look, with nothing to press.
+  /// Without one, the answer is shown after the fact: the same look, with nothing to press and no
+  /// mark, led by its marker (such as a step's place) in ink once picked, or else by its verdict's.
   let action: (() -> Void)?
 
   @Environment(\.hasHardwareKeyboard) private var hasKeyboard
-
-  /// A number key shows only while a keyboard can press it, as main's shows only with a fine
-  /// pointer; a number that isn't a key, such as an order step's place, always shows.
-  private var shownMarker: Int? {
-    action == nil || hasKeyboard ? marker : nil
-  }
 
   var body: some View {
     if let action {
       button(action)
     } else {
-      markedContent
-        .answerOptionFrame(AnswerOptionStyle.tone(isPicked: isPicked, result: result))
-        .accessibilityElement(children: .combine)
+      HStack(alignment: .firstTextBaseline, spacing: 12) {
+        if let marker {
+          KeyMarker(number: marker, isPicked: isPicked && result == nil)
+        } else if let result {
+          VerdictMark(result: result)
+        }
+        answerContent
+      }
+      .answerOptionFrame(AnswerOptionStyle.tone(isPicked: isPicked, result: result))
+      .accessibilityElement(children: .combine)
     }
   }
 
+  /// The mark holds its room from the first draw, so a pick or a check moves no word. Words too
+  /// wide to share their line go under the key and the mark.
   private func button(_ action: @escaping () -> Void) -> some View {
-    Button(action: action) {
-      if let marker = shownMarker {
-        ViewThatFits(in: .horizontal) {
-          markedContent
+    let key = hasKeyboard ? marker : nil
 
-          VStack(alignment: .leading, spacing: 12) {
-            KeyMarker(number: marker, isPicked: isPicked && result == nil)
-            answerContent
+    return Button(action: action) {
+      ViewThatFits(in: .horizontal) {
+        HStack(alignment: .firstTextBaseline, spacing: 12) {
+          if let key {
+            pickKey(key)
           }
+          answerContent
+          ChoiceMark(kind: picks, isPicked: isPicked)
         }
-      } else {
-        markedContent
+
+        VStack(alignment: .leading, spacing: 12) {
+          HStack(spacing: 12) {
+            if let key {
+              pickKey(key)
+            }
+            Spacer(minLength: 0)
+            ChoiceMark(kind: picks, isPicked: isPicked)
+          }
+          answerContent
+        }
       }
     }
     .buttonStyle(AnswerOptionStyle(isPicked: isPicked, result: result))
     .disabled(isLocked)
     .modifier(PickKey(index: isLocked ? nil : (shortcut ?? marker).map { $0 - 1 }))
-    .accessibilityAddTraits(isPicked ? .isSelected : [])
+    .choiceTraits(picks, isPicked: isPicked)
   }
 
-  private var markedContent: some View {
-    HStack(alignment: .firstTextBaseline, spacing: 12) {
-      if let marker = shownMarker {
-        KeyMarker(number: marker, isPicked: isPicked && result == nil)
+  /// Once locked the key answers nothing, so it hides in its room, which shows the verdict's mark
+  /// once checked, and the words stay put.
+  private func pickKey(_ number: Int) -> some View {
+    KeyMarker(number: number)
+      .opacity(isLocked || result != nil ? 0 : 1)
+      .overlay {
+        if let result {
+          VerdictMark(result: result)
+        }
       }
-      answerContent
-    }
   }
 
   private var answerContent: some View {
     TagBesideOrUnder(
       text: text, detail: detail, tag: hasTag ? AnyView(tagContent) : nil,
-      hasMarker: shownMarker != nil)
+      hasMarker: marker != nil || action != nil)
   }
 
   @ViewBuilder
@@ -86,38 +106,21 @@ struct AnswerOption: View {
       Text(label)
         .typeStyle(.tag)
         .foregroundStyle(tagColor(result))
-    } else if isPicked && isGuessed {
-      // Unspoken: VoiceOver already says the option is selected.
-      Text(yourGuess)
-        .typeStyle(.tag)
-        .foregroundStyle(Color(.foreground))
-        .accessibilityHidden(true)
     }
   }
 
   private var hasTag: Bool {
-    if tag != nil {
-      return true
-    }
-
-    if let result {
-      return resultLabel(result) != nil
-    }
-
-    return isPicked && isGuessed
-  }
-
-  private var yourGuess: LocalizedStringResource {
-    LocalizedStringResource(
-      "Your guess", table: "Practice",
-      comment: "Mark beside the learner's pick when it counts as neither right nor wrong.")
+    tag != nil || result.flatMap(resultLabel) != nil
   }
 
   /// The right option says "Correct" when the learner missed it. A pick needs no word of its own:
-  /// its color and the verdict say it, and only a guess, which counts as neither, says so.
+  /// its mark, its color and the verdict say it. Only a guess, which counts as neither right nor
+  /// wrong, says so once it's checked; before, its mark shows the pick.
   private func resultLabel(_ result: AnswerOptionResult) -> LocalizedStringResource? {
     if result == .guess || (isPicked && isGuessed) {
-      return yourGuess
+      return LocalizedStringResource(
+        "Your guess", table: "Practice",
+        comment: "Mark beside the learner's pick when it counts as neither right nor wrong.")
     }
 
     guard result == .right, !isPicked else {
@@ -247,7 +250,8 @@ private struct AnswerOptionLayout: Layout {
 
   func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
     let content = subviews.prefix(hasTag ? 2 : 1)
-    // ViewThatFits can keep the key beside a multiline answer when its words still fit there.
+    // ViewThatFits can keep the key and the mark beside a multiline answer when its words still
+    // fit there.
     let fitting =
       proposal.width == nil && hasMarker
       ? ProposedViewSize(width: widestUnit(in: subviews), height: proposal.height) : proposal
@@ -317,9 +321,9 @@ private struct AnswerOptionLayout: Layout {
   }
 }
 
-/// Main's `Kbd`: the key that picks an option. A picked option's key turns ink: the option's mark,
-/// as a radio's dot is.
-private struct KeyMarker: View {
+/// Main's `Kbd`: the key that picks an option, or the marker of an answer shown after the fact, in
+/// ink once picked.
+struct KeyMarker: View {
   let number: Int
   var isPicked = false
 
@@ -334,6 +338,65 @@ private struct KeyMarker: View {
       .background(Color(.foreground).opacity(isPicked ? 1 : 0.04), in: shape)
       .overlay(shape.strokeBorder(Color(.foreground).opacity(isPicked ? 0 : 0.12)))
       .accessibilityHidden(true)
+  }
+}
+
+/// Main's verdict mark, in a key's room or before an answer shown after the fact: lucide's check,
+/// cross or dash at main's size and weight, bare and in the words' color, so it never reads as a
+/// ticked checkbox. VoiceOver hears the verdict from the row and its feedback.
+struct VerdictMark: View {
+  let result: AnswerOptionResult
+
+  @Environment(\.typeStyle) private var lineStyle
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+  @Environment(\.legibilityWeight) private var legibility
+
+  /// Main's 16px icon in its 20px room, growing with the words.
+  @ScaledMetric(relativeTo: .subheadline) private var size = 16.0
+  @ScaledMetric(relativeTo: .subheadline) private var room = 20.0
+
+  var body: some View {
+    let capHeight = lineStyle.uiFont(dynamicTypeSize, legibility: legibility).capHeight
+
+    VerdictGlyph(result: result)
+      .stroke(style: StrokeStyle(lineWidth: size / 12, lineCap: .round, lineJoin: .round))
+      .frame(width: size, height: size)
+      .frame(width: room)
+      // Beside text, it centers on the first line's capitals, as the choice mark does.
+      .alignmentGuide(.firstTextBaseline) { $0[VerticalAlignment.center] + capHeight / 2 }
+      .accessibilityHidden(true)
+  }
+}
+
+/// Lucide's check, x and minus, drawn in its 24-unit grid.
+private struct VerdictGlyph: Shape {
+  let result: AnswerOptionResult
+
+  func path(in rect: CGRect) -> Path {
+    let unit = rect.width / 24
+
+    func point(_ x: CGFloat, _ y: CGFloat) -> CGPoint {
+      CGPoint(x: rect.minX + x * unit, y: rect.minY + y * unit)
+    }
+
+    var path = Path()
+
+    switch result {
+    case .right:
+      path.move(to: point(20, 6))
+      path.addLine(to: point(9, 17))
+      path.addLine(to: point(4, 12))
+    case .wrong:
+      path.move(to: point(18, 6))
+      path.addLine(to: point(6, 18))
+      path.move(to: point(6, 6))
+      path.addLine(to: point(18, 18))
+    case .guess:
+      path.move(to: point(5, 12))
+      path.addLine(to: point(19, 12))
+    }
+
+    return path
   }
 }
 

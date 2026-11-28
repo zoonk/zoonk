@@ -1,6 +1,8 @@
 package com.zoonk.android.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.heightIn
@@ -12,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -110,3 +113,23 @@ fun PendingPicture(
     shape: PictureShape = PictureShape.Portrait,
     content: @Composable ColumnScope.() -> Unit,
 ) = MediaPending(modifier.heightIn(max = frame.maxHeight()).aspectRatio(shape.ratio), content)
+
+/** A picture that never came: [content], its description, centered in the space a drawn one of its [shape] takes. */
+@Composable
+fun MissingPicture(
+    frame: PictureFrame,
+    modifier: Modifier = Modifier,
+    shape: PictureShape = PictureShape.Portrait,
+    content: @Composable BoxScope.() -> Unit,
+) = Box(
+    modifier
+        .heightIn(max = frame.maxHeight())
+        .aspectRatio(shape.ratio)
+        .clip(RoundedCornerShape(ZoonkRadius.xl))
+        .background(MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = MISSING_FILL_ALPHA)),
+    contentAlignment = Alignment.Center,
+    content = content,
+)
+
+/** Main's `bg-muted/50`. */
+private const val MISSING_FILL_ALPHA = 0.5f

@@ -21,6 +21,9 @@ import { holdActionAnswer } from "./held-action";
 
 const GOAL_URL = /\/start\/(?<goalId>[0-9a-f-]{36})$/u;
 
+/** A server that hasn't started a course yet loads that route's code first, as the first test in a shard. */
+const FIRST_START_TIMEOUT_MS = 10_000;
+
 async function createOutlinedCourse() {
   const id = randomUUID().slice(0, 8);
   const org = await getAiOrganization();
@@ -331,11 +334,12 @@ test.describe("Starting a course in another language", () => {
     await expect(page.getByText(/inglês.*português/u)).toBeVisible();
     await expect(page.getByRole("list").getByText(/What robots are made of/u)).toBeHidden();
 
-    const level = page.getByRole("radio", { name: /^O básico/u });
-    await level.click();
-    await page.getByRole("button", { name: "Criar meu plano" }).click();
+    await startCourseWithLevel(page, { button: "Criar meu plano", level: /^O básico/u });
 
-    await expect(page).toHaveURL(/\/pt\/start\/[0-9a-f-]{36}$/u);
+    await expect(page).toHaveURL(/\/pt\/start\/[0-9a-f-]{36}$/u, {
+      timeout: FIRST_START_TIMEOUT_MS,
+    });
+
     const goalId = new URL(page.url()).pathname.split("/").at(-1) ?? "";
 
     await expect(prisma.goal.findUniqueOrThrow({ where: { id: goalId } })).resolves.toMatchObject({

@@ -163,7 +163,7 @@ export type LessonTutorSuggestion = z.infer<typeof lessonTutorSuggestionSchema>;
 
 export type TutorTarget =
   | { chapterId: string; kind: "chapter" }
-  | { conversationId: string | null; goalId: string; kind: "plan" }
+  | { conversationId: string; goalId: string; kind: "plan" }
   | { goalId: string; kind: "subject"; subjectKey: string }
   | { itemId: string; kind: "item" }
   | { blockId: string; kind: "mock" }

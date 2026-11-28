@@ -8,7 +8,7 @@ import { prisma } from "@zoonk/db";
 import { isSameLanguage } from "@zoonk/utils/languages";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import {
-  listTargetBankWords,
+  listVoicedBankWords,
   normalizeWordKey,
 } from "../../player/contracts/build-word-bank-options";
 import { type LibraryProvenance } from "../_utils/library-rows";
@@ -134,7 +134,7 @@ async function storeLanguageLesson({
     organizationId: organization.id,
     provenance,
     targetLanguage: inputs.targetLanguage,
-    texts: listTargetBankWords({ sentences: stored.sentencesById, steps }).filter(
+    texts: listVoicedBankWords({ sentences: stored.sentencesById, steps }).filter(
       (word) => !lessonWordKeys.has(toKey(word)),
     ),
   });

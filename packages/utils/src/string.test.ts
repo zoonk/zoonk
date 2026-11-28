@@ -355,6 +355,27 @@ describe(replaceEmDashes, () => {
     expect(replaceEmDashes(text)).toBe(expected);
   });
 
+  it.each([
+    ["| Delivery | — | $14 |", "| Delivery | – | $14 |"],
+    ["| Already owned | 12 |—|", "| Already owned | 12 |–|"],
+    ["| Item | Cost |\n|---|---|\n| Tax | — |", "| Item | Cost |\n|---|---|\n| Tax | – |"],
+  ])(
+    "keeps a table cell that holds only a dash as a mark for none, as an en dash: %j",
+    (text, expected) => {
+      expect(replaceEmDashes(text)).toBe(expected);
+    },
+  );
+
+  it.each([
+    ["| Fee | 12 — 14 |", "| Fee | 12, 14 |"],
+    ["No || — basta um true", "No ||, basta um true"],
+    ["— |x| is the distance from zero.", "|x| is the distance from zero."],
+    ["The size is |x| —", "The size is |x|"],
+    [String.raw`Type a \| — then stop.`, String.raw`Type a \|, then stop.`],
+  ])("reads any other dash beside a pipe as prose: %j", (text, expected) => {
+    expect(replaceEmDashes(text)).toBe(expected);
+  });
+
   it("keeps en dashes, which join ranges", () => {
     expect(replaceEmDashes("Nível B1–B2, artigos 1º–5º")).toBe("Nível B1–B2, artigos 1º–5º");
   });
@@ -396,6 +417,7 @@ describe(createEmDashReplacer, () => {
     "Rode `a — b` — e veja:\n```js\nf('a — b');\n```\n— Sim — `x`.",
     "Um ` solto — e `fim — já`.\n  ```js\nx — y\n```\n— x",
     "Veja — isto:\n~~~js\nf('a — b');\n~~~\n— Sim.",
+    "| A | B |\n|---|---|\n| x | — |\n—| — y | z — |\nTax \\| — fim",
   ];
 
   it.each(TEXTS)("reads %j as the whole text would, wherever the stream cuts it", (text) => {
@@ -418,7 +440,20 @@ describe(createEmDashReplacer, () => {
   });
 
   it("reads any text as the whole text would, wherever the stream cuts it", () => {
-    const pieces = constantFrom("a", " ", "—", "`", "```", "~", "~~~", "\n", ".", "x — y");
+    const pieces = constantFrom(
+      "a",
+      " ",
+      "—",
+      "`",
+      "```",
+      "~",
+      "~~~",
+      "\n",
+      ".",
+      "x — y",
+      "|",
+      "\\",
+    );
 
     assert(
       property(

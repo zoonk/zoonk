@@ -1,8 +1,12 @@
 import { type Page, expect } from "./fixtures";
 
-export async function startCourseWithLevel(page: Page) {
-  const level = page.getByRole("radio", { name: /^The basics/u });
-  await level.click();
-  await expect(level).toBeChecked();
-  await page.getByRole("button", { name: "Build my plan" }).click();
+/** A level picked before the page hydrates lands a moment later, and enables the button then. */
+export async function startCourseWithLevel(
+  page: Page,
+  { button = "Build my plan", level = /^The basics/u }: { button?: string; level?: RegExp } = {},
+) {
+  const choice = page.getByRole("radio", { name: level });
+  await choice.click();
+  await expect(choice).toBeChecked();
+  await page.getByRole("button", { name: button }).click();
 }
