@@ -61,6 +61,13 @@ final class VoiceRecorder {
     status.startProblem ?? (AVAudioApplication.shared.recordPermission == .denied ? .denied : nil)
   }
 
+  /// A microphone that couldn't start may work for the next word; a denied permission stays denied.
+  func clearStartFailure() {
+    if status == .failedToStart(.unavailable) {
+      status = .idle
+    }
+  }
+
   func start(onRecorded: @escaping @MainActor (VoiceRecording) -> Void) async {
     guard status == .idle || status.startProblem != nil else {
       return

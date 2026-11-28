@@ -181,6 +181,7 @@ private struct PronunciationRoundView: View {
         }
         .announcesStatus(announcement(state))
         .slowCheck(round.isPending, isSlow: $isSlow)
+        .onChange(of: round.index) { recorder.clearStartFailure() }
       }
     }
   }
