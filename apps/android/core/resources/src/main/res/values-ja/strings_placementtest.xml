@@ -3,7 +3,6 @@
 {
   "placementtest_about": "2537a58356f43ff269ad32e19a45cb447e49c13bcf622b8b36f1b69960c7b35e",
   "placementtest_choose_description": "326ac519773dedfcd53eb085a49c18a1d5f7e125d83f1fabfd6024b1ded9124e",
-  "placementtest_course_lessons": "6b31b7e90d27cf352c6785ed441183929f4b07baa11830fdc7ba4a58c216254a",
   "placementtest_course_skipped": "4d8f1cb65b56a3badf844dc8af09d28bb6da7867ea253712b308f782fd2f76f4",
   "placementtest_done": "345e9b8bb499382a12c8b3339547b5134ab50681a1d8431b7f9647c319728ed4",
   "placementtest_find_level": "2b38fa85fe9905144365ea1b82b4e9defe0d4d697b42505bf5752c2cd0b9871b",
@@ -102,8 +101,5 @@
     <!-- Under a picture of a course, after a placement test: how many of the course's lessons the test skipped, out of all of them. -->
     <plurals name="placementtest_course_skipped">
         <item quantity="other">全%2$dレッスンのうち%1$dレッスンをスキップ</item>
-    </plurals>
-    <plurals name="placementtest_course_lessons">
-        <item quantity="other">%dレッスン</item>
     </plurals>
 </resources>

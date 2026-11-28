@@ -3,7 +3,6 @@
 {
   "placementtest_about": "1fce9c2df480fbf8f7d9a2e1d829bf622b6072babb23edaed9ff5b43e8eb548a",
   "placementtest_choose_description": "7a0ff33c6218122abf9a5f2cb0bc617d88737ab5ec2f23c3e13e493792a7aac6",
-  "placementtest_course_lessons": "30702b57d95e2bc53dfd4f29e8f9be479acb9d4293b449639fb672b0e17fdd90",
   "placementtest_course_skipped": "fe6345c72020404d0b03b592b5185f6df6444a38c22d6f35996cdb273ed36905",
   "placementtest_done": "95f47d9afc69b26eaa60f7ab9cc54bd6336a6c658684bb3c6fe48281b7bbe50d",
   "placementtest_find_level": "73753c8f058cd95d38aa8ec7286043cc613f50d715b635f5cbf3309d3f880531",
@@ -110,10 +109,5 @@
         <item quantity="one">%1$d de %2$d aulas puladas</item>
         <item quantity="many">%1$d de %2$d aulas puladas</item>
         <item quantity="other">%1$d de %2$d aulas puladas</item>
-    </plurals>
-    <plurals name="placementtest_course_lessons">
-        <item quantity="one">%d aula</item>
-        <item quantity="many">%d aulas</item>
-        <item quantity="other">%d aulas</item>
     </plurals>
 </resources>

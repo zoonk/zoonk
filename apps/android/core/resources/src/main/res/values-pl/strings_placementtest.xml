@@ -3,7 +3,6 @@
 {
   "placementtest_about": "158cfe4af5d3a2b8987f13ebaef3052b83f0ae42acd194f5114c35a6437e8d4c",
   "placementtest_choose_description": "15a2ae85d029921024638f9a2f4f05ece53f6b17f3f09707fc95c1200b22066c",
-  "placementtest_course_lessons": "0810f210d11164e2d1f930319c9d19612bd4957948d8f41fc9464ba3f5c1f1a9",
   "placementtest_course_skipped": "0e9aa582c3f5d5c6fb6b9b71c1e20a4b0d2bcb0261cc89c688b637accb797efd",
   "placementtest_done": "df41fce386fe5e1ec91c134c9c4bc07d9f065b8a570cf29b9fd21c9cba4ff501",
   "placementtest_find_level": "f1a07a2b5279bdae935d6ec83447b469ba27f0b12709cc4e160600784b64c0b1",
@@ -114,11 +113,5 @@
         <item quantity="few">Pominięto %1$d z %2$d lekcji</item>
         <item quantity="many">Pominięto %1$d z %2$d lekcji</item>
         <item quantity="other">Pominięto %1$d z %2$d lekcji</item>
-    </plurals>
-    <plurals name="placementtest_course_lessons">
-        <item quantity="one">%d lekcja</item>
-        <item quantity="few">%d lekcje</item>
-        <item quantity="many">%d lekcji</item>
-        <item quantity="other">%d lekcji</item>
     </plurals>
 </resources>

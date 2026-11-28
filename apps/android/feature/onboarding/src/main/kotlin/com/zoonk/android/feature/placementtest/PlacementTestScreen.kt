@@ -14,6 +14,7 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -351,9 +352,8 @@ internal fun courseTest(
 )
 
 /**
- * The plan's offer for a course: the test's card alone, with "Not now". With no offer the server can't open a test (one
- * was taken and too little is left ahead to check again), so there's no Start: the page opens the saved result, with
- * Done, and only without one says the first days place the learner.
+ * The plan's way into a course's test. A test taken before opens on its saved result, with Done, and with "Take the test
+ * again" while the server can open a new one, which shows the offer in place: the test's card alone, with "Not now". With neither, the first days place the learner.
  */
 @Composable
 private fun ColumnScope.PlanCourseOffer(
@@ -378,10 +378,20 @@ private fun ColumnScope.PlanCourseOffer(
     val row = (plan.value?.plan?.placementTest as? PlanPlacementTest.PlanPlacementTestOneOfValue)?.value
     val offer = row?.offer
     val saved = row?.result?.phase()
+    var retaking by rememberSaveable { mutableStateOf(false) }
+    // Undo reads the plan again, whose result then has no change left; the screen keeps its Undo to say the lessons are back.
+    var shownChange by rememberSaveable(saved?.attemptId) { mutableStateOf(saved?.changeId) }
+    LaunchedEffect(saved?.changeId) { saved?.changeId?.let { shownChange = it } }
     when {
-        offer == null && saved != null -> {
-            val undo = rememberPlacementUndo(plans, goalId, saved.changeId)
-            PlacementResult(saved, action = stringResource(R.string.placementtest_done), onAction = onDone, undo = undo)
+        saved != null && !(retaking && offer != null) -> {
+            val undo = rememberPlacementUndo(plans, goalId, saved.changeId ?: shownChange)
+            PlacementResult(
+                saved,
+                action = stringResource(R.string.placementtest_done),
+                onAction = onDone,
+                undo = undo,
+                onRetake = offer?.let { { retaking = true } },
+            )
             return
         }
 

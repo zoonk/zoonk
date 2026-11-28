@@ -49,6 +49,7 @@ import com.zoonk.android.ui.components.Facts
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
+import com.zoonk.android.ui.components.LinkButton
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.MeterPart
@@ -252,7 +253,8 @@ private fun CourseLine(course: PlacementTestPhase.Course) {
  * Main's `PlacementResult`: where the course's test starts the learner. The chapter's name is the title under "You
  * start here", over the course's line, how much of it was skipped and the lesson that's next. A result that exists
  * before the plan does has no line to draw and says only where they start. A sentence shows only for what the picture
- * can't: lessons Undo put back, or skips held until tomorrow.
+ * can't: lessons Undo put back, or skips held until tomorrow. A saved result opened again from the plan offers a new
+ * test ([onRetake]) while one can start.
  */
 @Composable
 internal fun ColumnScope.PlacementResult(
@@ -263,6 +265,7 @@ internal fun ColumnScope.PlacementResult(
     busy: Boolean = false,
     pressed: Pressed? = null,
     failed: Boolean = false,
+    onRetake: (() -> Unit)? = null,
 ) {
     val restored = undo?.restoredLessons
     val undone = restored != null
@@ -285,22 +288,27 @@ internal fun ColumnScope.PlacementResult(
         course?.let {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 CourseLine(it)
-                Facts(
-                    listOf(
-                        if (result.lessonsSkipped > 0) {
+                if (result.lessonsSkipped > 0) {
+                    Facts(
+                        listOf(
                             pluralStringResource(
                                 R.plurals.placementtest_course_skipped,
                                 result.lessonsSkipped,
                                 result.lessonsSkipped,
                                 it.lessons,
-                            )
-                        } else {
-                            pluralStringResource(R.plurals.placementtest_course_lessons, it.lessons, it.lessons)
-                        },
-                    ),
-                )
+                            ),
+                        ),
+                    )
+                }
             }
             result.nextLesson?.let { title -> UpNext(title, result.nextMinutes) }
+        }
+        onRetake?.let {
+            LinkButton(
+                stringResource(R.string.placementtest_take_test_again),
+                onClick = it,
+                enabled = !busy && pressed == null && undo?.saving != true,
+            )
         }
         TestActions(action, onAction, busy = busy || pressed == Pressed.Main, enabled = !busy && pressed == null, failed, undo)
     }

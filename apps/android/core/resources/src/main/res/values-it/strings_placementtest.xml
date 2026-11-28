@@ -3,7 +3,6 @@
 {
   "placementtest_about": "33a3f038bd0b92a5645386a7a7eb23055ee2c87f7b0d78972c8f48a7f695da2f",
   "placementtest_choose_description": "4a8fce2d8b9045471712ed3c83c8004d6427c6cffe9056695657415753711cc9",
-  "placementtest_course_lessons": "36ce78286f993f74c453902044265329d073899494981e5b9fb55b98d7a21075",
   "placementtest_course_skipped": "70f330a5f1f05d52486bef179f2305cfbc72d697d959fa300d1551cc67e6185e",
   "placementtest_done": "bb8db314e2fa91a25d8b39a4eb149141daf53a8e2088b9608a67e06564acbafe",
   "placementtest_find_level": "9f5e680a5b066fdb96b0844bfd80564440b6eb7a970f2ff99d055e620610ff29",
@@ -110,10 +109,5 @@
         <item quantity="one">%1$d di %2$d lezioni saltate</item>
         <item quantity="many">%1$d di %2$d lezioni saltate</item>
         <item quantity="other">%1$d di %2$d lezioni saltate</item>
-    </plurals>
-    <plurals name="placementtest_course_lessons">
-        <item quantity="one">%d lezione</item>
-        <item quantity="many">%d lezioni</item>
-        <item quantity="other">%d lezioni</item>
     </plurals>
 </resources>

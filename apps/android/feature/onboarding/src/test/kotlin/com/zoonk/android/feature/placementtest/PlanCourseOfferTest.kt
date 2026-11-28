@@ -6,6 +6,7 @@ import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.lifecycle.SavedStateHandle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.AppCache
@@ -34,7 +35,7 @@ import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 import java.util.UUID
 
-/** The Plan's way into a course's test offers Start only while the server can open one. */
+/** The Plan's way into a course's test opens a test taken before on its result, and offers a new one only while it can start. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w411dp-h891dp")
 class PlanCourseOfferTest {
@@ -42,16 +43,14 @@ class PlanCourseOfferTest {
     val rule: ComposeContentTestRule = createComposeRule()
 
     private val api = FakeOnboardingApi().apply { placement = placementOf(next = null, status = "done") }
+    private val planApi = FakePlanApi()
 
     private fun show(row: String) {
         val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
         val store = OnboardingStore(api, cache, session) { SignInResult.SignedIn }
-        val plans =
-            PlanStore(
-                FakePlanApi().apply { shownPlan = planOf().copy(placementTest = ApiJson.decodeFromString<PlanPlacementTest>(row)) },
-                cache,
-            )
+        planApi.shownPlan = planWith(row)
+        val plans = PlanStore(planApi, cache)
         val vm = PlacementTestViewModel(GOAL_ID, store, SavedStateHandle())
         rule.setContent {
             ZoonkTheme {
@@ -91,6 +90,7 @@ class PlanCourseOfferTest {
         rule.onNodeWithText("Undo").assertIsDisplayed()
         rule.onNodeWithText("Done").assertIsDisplayed()
         rule.onNodeWithText("Start").assertDoesNotExist()
+        rule.onNodeWithText("Take the test again").assertDoesNotExist()
         rule.onNodeWithText("We'll see what you know in your first few days").assertDoesNotExist()
         assertEquals(0, api.sittingsStarted)
     }
@@ -104,12 +104,46 @@ class PlanCourseOfferTest {
     }
 
     @Test
-    fun aSavedResultWithATestThatCanStartOffersTheTest() {
+    fun aSavedResultWithATestThatCanStartOpensThatResultAndTakesTheTestAgainInPlace() {
         show(RESULT_WITH_OFFER)
+
+        rule.onNodeWithText("Why prices move").assertIsDisplayed()
+        rule.onNodeWithText("Undo").assertIsDisplayed()
+        rule.onNodeWithText("Done").assertIsDisplayed()
+        rule.onNodeWithText("Start").assertDoesNotExist()
+
+        rule.onNodeWithText("Take the test again").performClick()
 
         rule.onNodeWithText("Up to 8 questions").assertIsDisplayed()
         rule.onNodeWithText("Start").assertIsDisplayed()
+        rule.onNodeWithText("Not now").assertIsDisplayed()
+        rule.onNodeWithText("Why prices move").assertDoesNotExist()
+        assertEquals(0, api.sittingsStarted)
     }
+
+    @Test
+    fun undoOnASavedResultSaysTheLessonsAreBackAfterThePlanReadsAgainAndKeepsTheWayToRetake() {
+        show(RESULT_WITH_OFFER)
+        planApi.shownPlan = planWith(RESULT_WITH_OFFER.replace(CHANGE, "null").replace("\"lessonsSkipped\":4", "\"lessonsSkipped\":0"))
+
+        rule.onNodeWithText("Undo").performClick()
+
+        rule.onNodeWithText("No lessons skipped").assertIsDisplayed()
+        rule.onNodeWithText("The lessons are back in your plan.").assertIsDisplayed()
+        rule.onNodeWithText("Undo").assertDoesNotExist()
+        rule.onNodeWithText("Take the test again").assertIsDisplayed()
+    }
+
+    @Test
+    fun aResultThatSkippedNothingShowsNoLessonCount() {
+        show(RESULT_WITHOUT_OFFER.replace(CHANGE, "null").replace("\"lessonsSkipped\":4", "\"lessonsSkipped\":0"))
+
+        rule.onNodeWithText("Why prices move").assertIsDisplayed()
+        rule.onNodeWithText("9 lessons", substring = true).assertDoesNotExist()
+        rule.onNodeWithContentDescription("9 lessons", substring = true).assertDoesNotExist()
+    }
+
+    private fun planWith(row: String) = planOf().copy(placementTest = ApiJson.decodeFromString<PlanPlacementTest>(row))
 
     private companion object {
         const val START =

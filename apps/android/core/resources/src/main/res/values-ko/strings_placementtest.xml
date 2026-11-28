@@ -3,7 +3,6 @@
 {
   "placementtest_about": "a33def34a986cc523a5a18bd27a69e8075b3b3c92998075adaba2e1147a189c7",
   "placementtest_choose_description": "20d54ad0d6ebf608311e7fd3d3316f9cd90ce885bedded26fd514f8d995a2e24",
-  "placementtest_course_lessons": "b38ec1255f122648fbead7795f6e98cab8221c519f26a99312b99eb2125350e0",
   "placementtest_course_skipped": "02cb52ef40a5e57c72139fad8809750defb34ed72457c05bd2ec172b09727043",
   "placementtest_done": "b8c7e209251b4d4d15676213ebe0143a4e86ebf78d78bd6f43c2fe88e279ca97",
   "placementtest_find_level": "00a6d14e43cd380b3125a8ef9cc478c85be8b4fb4bb81944a43a56c50ebdb7ef",
@@ -102,8 +101,5 @@
     <!-- Under a picture of a course, after a placement test: how many of the course's lessons the test skipped, out of all of them. -->
     <plurals name="placementtest_course_skipped">
         <item quantity="other">전체 %2$d개 레슨 중 %1$d개 건너뜀</item>
-    </plurals>
-    <plurals name="placementtest_course_lessons">
-        <item quantity="other">레슨 %d개</item>
     </plurals>
 </resources>

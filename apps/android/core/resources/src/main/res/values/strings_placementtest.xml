@@ -65,8 +65,6 @@
         <item quantity="one">%1$d of %2$d lessons skipped</item>
         <item quantity="other">%1$d of %2$d lessons skipped</item>
     </plurals>
-    <plurals name="placementtest_course_lessons">
-        <item quantity="one">%d lesson</item>
-        <item quantity="other">%d lessons</item>
-    </plurals>
+    <!-- A quiet action on the result of a placement test opened again from the plan: it offers a new test. -->
+    <string name="placementtest_take_test_again">Take the test again</string>
 </resources>
