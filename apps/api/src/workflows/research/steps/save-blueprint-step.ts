@@ -1,6 +1,10 @@
 import { generateSourceChangeNotice } from "@zoonk/ai/tasks/research/source-change-notice";
-import { type ReadingCheck } from "@zoonk/core/library/exams/blueprint-contract";
+import {
+  type ReadingCheck,
+  type ReadingProblem,
+} from "@zoonk/core/library/exams/blueprint-contract";
 import { type ExamIdentity } from "@zoonk/core/library/exams/identity";
+import { setAsideNoticeReading } from "@zoonk/core/library/exams/notice-reading";
 import {
   type BlueprintNotice,
   isPastEdition,
@@ -8,7 +12,7 @@ import {
   saveExamBlueprint,
 } from "@zoonk/core/library/exams/save";
 import { recordReusePolicy } from "@zoonk/core/library/sources/record-reuse-policy";
-import { logInfo } from "@zoonk/utils/logger";
+import { logError, logInfo } from "@zoonk/utils/logger";
 import { type ResearchAnalytics } from "../_utils/research-analytics";
 import { type BlueprintReading } from "./extract-blueprint-step";
 
@@ -127,4 +131,31 @@ export async function saveBlueprintStep({
     movesExamDays: saved.movesExamDays,
     noticeId: saved.noticeId,
   };
+}
+
+/** Staff fix a reading that kept contradicting itself; the blueprint keeps its last reading meanwhile. */
+export async function setAsideReadingStep({
+  identity,
+  problem,
+  reading,
+}: {
+  identity: ExamIdentity;
+  problem: ReadingProblem;
+  reading: BlueprintReading;
+}): Promise<void> {
+  "use step";
+
+  const problems = reading.problems ?? [problem];
+  const { sourceHash } = reading.content.edition;
+
+  const examBlueprintId = sourceHash
+    ? await setAsideNoticeReading({ identity, problems, sourceHash })
+    : null;
+
+  logError("[blueprint] A reading still contradicts itself after a corrected re-read:", {
+    exam: identity.role ? `${identity.name}, ${identity.role}` : identity.name,
+    examBlueprintId,
+    problem,
+    sourceHash,
+  });
 }

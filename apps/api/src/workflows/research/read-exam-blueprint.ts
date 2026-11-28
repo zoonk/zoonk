@@ -9,7 +9,7 @@ import { type ResearchAnalytics } from "./_utils/research-analytics";
 import { extractBlueprint } from "./steps/extract-blueprint-step";
 import { findNoticeReadingStep } from "./steps/is-notice-read-step";
 import { refreshFollowerSummariesStep } from "./steps/link-goal-step";
-import { saveBlueprintStep } from "./steps/save-blueprint-step";
+import { saveBlueprintStep, setAsideReadingStep } from "./steps/save-blueprint-step";
 
 export type SavedBlueprint = { created: boolean; examBlueprintId: string; movesExamDays: boolean };
 
@@ -104,15 +104,26 @@ export async function readExamBlueprint({
   }
 
   const shared = identity.ownerId === null;
+  const corrections = stored?.problems ?? [];
+  const read = { analytics, background, exam: describeExam(identity), shared, sourceIds };
+  const first = await extractBlueprint({ ...read, corrections });
 
-  const reading = await extractBlueprint({
-    analytics,
-    background,
-    corrections: stored?.problems ?? [],
-    exam: describeExam(identity),
-    shared,
-    sourceIds,
-  });
+  const isCorrected = corrections.some((problem) => problem.kind === "wholeExamSubjects");
+
+  // Subjects that each hold the whole exam are worth one more reading told what they are, since a
+  // planner would teach every version as compulsory.
+  const reading =
+    first.wholeExamSubjects && !isCorrected
+      ? await extractBlueprint({
+          ...read,
+          corrections: first.problems ?? [first.wholeExamSubjects],
+        })
+      : first;
+
+  if (reading.wholeExamSubjects) {
+    await setAsideReadingStep({ identity, problem: reading.wholeExamSubjects, reading });
+    return null;
+  }
 
   if (isNew && !reading.usable) {
     return null;

@@ -367,6 +367,7 @@
     "./library/exams/learners": "./src/library/exams/exam-learners.ts",
     "./library/exams/material-topics": "./src/library/exams/material-topics.ts",
     "./library/exams/notice-formats": "./src/library/exams/notice-formats.ts",
+    "./library/exams/notice-reading": "./src/library/exams/notice-reading.ts",
     "./library/exams/pass-marks": "./src/library/exams/pass-marks.ts",
     "./library/exams/passage-check": "./src/library/exams/passage-check.ts",
     "./library/exams/reading-check": "./src/library/exams/reading-check.ts",

@@ -7,6 +7,7 @@ import {
   pastQuestionsSchema,
   pastTopicFrequencySchema,
 } from "./blueprint-past-contract";
+import { readingCheckSchema, setAsideReadingSchema } from "./reading-check-contract";
 import { citationSchema, sectionTaskSchema } from "./written-grading";
 
 const EXAM_FORMAT_KINDS = [
@@ -288,36 +289,13 @@ const examDateSchema = z.object({
   startTime: clockTimeSchema.nullable(),
 });
 
-const readingProblemSchema = z.discriminatedUnion("kind", [
-  z.object({ citation: citationSchema, kind: z.literal("missingSubject"), name: z.string() }),
-  z.object({
-    citation: citationSchema,
-    kind: z.literal("missingCount"),
-    questions: z.number().int(),
-    subject: z.string(),
-  }),
-  z.object({ kind: z.literal("countsOffTotal"), sum: z.number().int(), total: z.number().int() }),
-  z.object({
-    kind: z.literal("unconfirmed"),
-    part: z.enum(["examDate", "scale", "topics"]),
-    subject: z.string().nullable(),
-  }),
-]);
-
-const readingCheckSchema = z.object({
-  checkedAt: z.iso.datetime(),
-  problems: z.array(readingProblemSchema),
-});
-
-export type ReadingProblem = z.infer<typeof readingProblemSchema>;
-export type ReadingCheck = z.infer<typeof readingCheckSchema>;
-
 export const examEditionSchema = z.object({
   check: readingCheckSchema.nullable(),
   citations: z.array(citationSchema),
   dates: z.array(examDateSchema),
   noticeUrl: z.string().nullable(),
   questionCount: z.number().int().nullable(),
+  setAside: setAsideReadingSchema.nullable().optional(),
   sourceHash: z.string().nullable(),
   /** Every document the reading read, the notice first, so a new reading reads them all again. */
   sourceIds: z.array(z.string()).optional(),
@@ -336,6 +314,7 @@ export const topicFrequencySchema = z.array(
   }),
 );
 
+export type { ReadingCheck, ReadingProblem } from "./reading-check-contract";
 export type Citation = z.infer<typeof citationSchema>;
 export type ExamStructure = z.infer<typeof examStructureSchema>;
 export type ExamEdition = z.infer<typeof examEditionSchema>;
