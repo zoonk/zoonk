@@ -1,0 +1,19 @@
+{
+  "caseId": "pt-economia-overview",
+  "challenger": {
+    "costUsd": 0.00082276,
+    "durationMs": 10704.631374999997,
+    "hash": "8efdadef7cb86fa37f1e14a180c1c19b72e39867f3aa0f80d97dd88db4e6d407",
+    "systemPromptHash": "0492fd99f0a5e77ff420ef7f3ff2e4cacb9247f3b46936e7adc43340c7c26184",
+    "userPromptHash": "5280601bc464eecc3ec41c05d593f7166345ae76df72149ea33a6c1e788160e7"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.00060673,
+    "durationMs": 8636.303291000004,
+    "hash": "968027016f47a81fc352344e16a887f7e4bd47548d009b5317f6a4bb1e15f525",
+    "systemPromptHash": "782cebffd04f74e4a27023e27678685d5ac6ee34a8481cb679d4f0909e3b41c8",
+    "userPromptHash": "5280601bc464eecc3ec41c05d593f7166345ae76df72149ea33a6c1e788160e7"
+  },
+  "run": 2
+}

@@ -1,0 +1,20 @@
+{
+  "categories": [
+    "arts"
+  ],
+  "description": "Music theory shows how notes and chords shape a song’s sound and direction. Work with richer chords, borrowed harmony, key changes, smooth connections between chords, and new chord choices under a melody to shape the music you write or play.",
+  "landingPage": {
+    "audience": [
+      "Songwriters shaping their own progressions",
+      "Instrumentalists arranging familiar songs",
+      "Music students past the fundamentals"
+    ],
+    "outcomes": [
+      "You can spell seventh chords in any key",
+      "You can add tension or color to a progression",
+      "You can move a song into a new key",
+      "You can give a melody a new mood with chords"
+    ],
+    "valueProposition": "You can give familiar melodies richer harmony and a fresh mood"
+  }
+}

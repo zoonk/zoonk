@@ -1,0 +1,21 @@
+{
+  "categories": [
+    "math",
+    "science"
+  ],
+  "description": "O ENEM reúne questões de Linguagens, Ciências Humanas, Ciências da Natureza e Matemática, além da redação. A preparação começa com porcentagens, proporções, funções, estatística, ondas, ecologia e eletricidade, e avança pelas demais áreas e tarefas da prova.",
+  "landingPage": {
+    "audience": [
+      "Estudantes do ensino médio",
+      "Quem vai prestar vestibular",
+      "Adultos retomando os estudos"
+    ],
+    "outcomes": [
+      "Resolver questões de matemática com porcentagens e proporções",
+      "Ler textos e imagens nas questões de Linguagens",
+      "Responder questões de Ciências Humanas e da Natureza",
+      "Planejar e escrever a redação do ENEM"
+    ],
+    "valueProposition": "Responder às questões do ENEM e escrever uma redação com argumentos claros"
+  }
+}

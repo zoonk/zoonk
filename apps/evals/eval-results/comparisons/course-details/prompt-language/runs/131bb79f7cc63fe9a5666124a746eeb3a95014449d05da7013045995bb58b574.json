@@ -1,0 +1,19 @@
+{
+  "caseId": "en-contract-law-beginner",
+  "challenger": {
+    "costUsd": 0.00045626,
+    "durationMs": 8236.673041000002,
+    "hash": "3c5cabcf13104fe9a1942dbc6329bdc3cec14d97e93b4e0fb6ade9f407289b2b",
+    "systemPromptHash": "6c650146bc77eba3fcaa07bd2138cf490fdea276cf402826c2abaafbfc13e373",
+    "userPromptHash": "163459e7568a64a554099b5792d28b7fbd9b944bec9900c4f18e7eb89f1f9ee1"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.00041322999999999995,
+    "durationMs": 5953.177665999996,
+    "hash": "20a42958981e1f6e4a02d5888c0c98d97d3e15c31397dd4d73a35666e61b512b",
+    "systemPromptHash": "782cebffd04f74e4a27023e27678685d5ac6ee34a8481cb679d4f0909e3b41c8",
+    "userPromptHash": "163459e7568a64a554099b5792d28b7fbd9b944bec9900c4f18e7eb89f1f9ee1"
+  },
+  "run": 1
+}

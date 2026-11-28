@@ -1,0 +1,21 @@
+{
+  "categories": [
+    "culture",
+    "arts"
+  ],
+  "description": "Star Wars is a science-fiction saga that follows the Skywalker family across three trilogies. The course covers its mythic roots, imagined worlds, filmmaking techniques, and growth across movies, shows, games, and books, giving you context for discussing the story and its place in pop culture.",
+  "landingPage": {
+    "audience": [
+      "Star Wars fans curious about the saga",
+      "Moviegoers interested in film history",
+      "Readers and gamers drawn to sci-fi worlds"
+    ],
+    "outcomes": [
+      "Trace the Skywalker story across three trilogies",
+      "Spot the myths behind its heroes and conflicts",
+      "Explain how sound and effects shaped the films",
+      "Follow the story into shows, games, and books"
+    ],
+    "valueProposition": "Follow the Skywalker saga and spot the myths and movie craft behind its galaxy."
+  }
+}

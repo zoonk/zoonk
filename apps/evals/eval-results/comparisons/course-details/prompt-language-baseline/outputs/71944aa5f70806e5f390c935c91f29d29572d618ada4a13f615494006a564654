@@ -1,0 +1,15 @@
+
+      - MUST be in natural Turkish, "sen" wherever the copy speaks to the visitor (never "siz"); the course is German itself, for Turkish speakers
+      - The promise and the outcomes are verb-final phrases, as Turkish learning goals are written ("Kafede Almanca sipariş vermek", "…sipariş verebilmek"), never an imperative ("Sipariş ver", "Konuş")
+      - Focuses on communicating in real situations where German is spoken (travel, Erasmus or a university in Germany, Austria or Switzerland, work, friends and family there), from first conversations to confident use
+      - Never promises fluency, a Goethe-Zertifikat or TestDaF result, a visa or a job, and never mentions how long it takes
+      - Categories don't matter for language courses: don't judge them
+
+      
+  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score the sentence and item counts and category validity, so don't judge them
+  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's "What you'll be able to do" list
+  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters
+  - The page is shared by every learner of the course, so nothing is tailored to one person
+  - Don't evaluate JSON formatting
+
+    

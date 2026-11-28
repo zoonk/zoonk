@@ -1,0 +1,20 @@
+{
+  "categories": [
+    "economics"
+  ],
+  "description": "La finanza personale riguarda le scelte quotidiane su entrate, spese, debiti e risparmi. Parti da busta paga, budget, fondo per gli imprevisti, rate e 730, poi arrivi a risparmio, investimenti, pensione e assicurazioni: informazioni generali per decidere con più criterio, non consulenza personalizzata.",
+  "landingPage": {
+    "audience": [
+      "Lavoratori dipendenti alle prime buste paga",
+      "Chi vuole mettere ordine nelle spese",
+      "Chi sta valutando un prestito o un mutuo"
+    ],
+    "outcomes": [
+      "Leggere la busta paga e controllare il netto",
+      "Preparare un budget e accantonare per imprevisti",
+      "Confrontare un finanziamento prima di firmare",
+      "Scegliere come risparmiare e investire per obiettivi futuri"
+    ],
+    "valueProposition": "Gestire lo stipendio, affrontare gli imprevisti e fare scelte più consapevoli sui tuoi soldi"
+  }
+}

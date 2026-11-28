@@ -1,0 +1,21 @@
+{
+  "categories": [
+    "science",
+    "tech"
+  ],
+  "description": "Quantum physics describes how light and matter behave at the scale of atoms and smaller. The course covers wave and particle behavior, atoms, measurement, uncertainty, entanglement, and quantum technology, while building the math for reading experiment data and describing motion, energy, and changing quantum states.",
+  "landingPage": {
+    "audience": [
+      "Students building math foundations",
+      "Curious readers of modern physics",
+      "People interested in quantum technology"
+    ],
+    "outcomes": [
+      "Compare atomic scales with everyday sizes",
+      "Explain why atoms stay stable and produce colors",
+      "Read plots from quantum experiments",
+      "Calculate how quantum systems change over time"
+    ],
+    "valueProposition": "Explain how quantum physics shapes atoms and the chips, LEDs, and lasers in everyday devices"
+  }
+}

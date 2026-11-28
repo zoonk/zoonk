@@ -1,0 +1,20 @@
+{
+  "categories": [
+    "communication"
+  ],
+  "description": "O inglês usado nos Estados Unidos serve para conversar, viajar, estudar e trabalhar. Você vai praticar fala, escuta, leitura e escrita, de apresentações, aeroportos e restaurantes a conversas e textos mais complexos, para se comunicar em situações variadas.",
+  "landingPage": {
+    "audience": [
+      "Quem está começando do zero",
+      "Quem planeja viajar para os Estados Unidos",
+      "Estudantes e profissionais que usam inglês"
+    ],
+    "outcomes": [
+      "Apresentar-se e falar da própria rotina",
+      "Pedir comida e resolver imprevistos em viagens",
+      "Conversar sobre estudos, trabalho e planos pessoais",
+      "Defender opiniões em conversas mais complexas"
+    ],
+    "valueProposition": "Conversar em inglês em viagens, estudos e no trabalho, das apresentações às situações mais complexas"
+  }
+}

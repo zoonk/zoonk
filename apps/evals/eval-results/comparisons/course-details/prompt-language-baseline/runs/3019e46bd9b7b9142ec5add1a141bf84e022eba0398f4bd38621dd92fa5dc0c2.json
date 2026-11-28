@@ -1,0 +1,13 @@
+{
+  "caseId": "pt-enem-exam",
+  "challenger": {
+    "costUsd": 0.0007811299999999999,
+    "durationMs": 9953.25441699999,
+    "hash": "d060ec11378a8876654e1f4a7c8eb684440bcee17fb219622277f6baf4bb3c25",
+    "systemPromptHash": "782cebffd04f74e4a27023e27678685d5ac6ee34a8481cb679d4f0909e3b41c8",
+    "userPromptHash": "072d1a413111bba9c27b47d0f9d5caa7f881a2cdd7b30cd28bcea958c551cb46"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 1
+}

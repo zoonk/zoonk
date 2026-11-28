@@ -1,0 +1,19 @@
+{
+  "caseId": "pl-prawo-pracy-beginner",
+  "challenger": {
+    "costUsd": 0.00113025,
+    "durationMs": 12709.852000000014,
+    "hash": "f7f017066bb3e2e13d7888b4e714f48a6f73583da35ad7ff265f076ed7bf8f8e",
+    "systemPromptHash": "a980dae35b87aa2592e5e8947f0b8472621149d30bed5fe67bfa3e92c877532c",
+    "userPromptHash": "c181ee048e1f0ed998b660ec0a64dcfe3c31e6808107416c9137efb73ef5d259"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.00100523,
+    "durationMs": 12756.737332999997,
+    "hash": "8ac00976e6938f1dfabfac229b660fdc603a6d04b2e00552e49cc339fbbab357",
+    "systemPromptHash": "782cebffd04f74e4a27023e27678685d5ac6ee34a8481cb679d4f0909e3b41c8",
+    "userPromptHash": "c181ee048e1f0ed998b660ec0a64dcfe3c31e6808107416c9137efb73ef5d259"
+  },
+  "run": 1
+}

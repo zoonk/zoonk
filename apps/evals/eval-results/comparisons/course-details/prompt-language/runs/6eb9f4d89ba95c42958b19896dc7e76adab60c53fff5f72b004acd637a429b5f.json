@@ -1,0 +1,19 @@
+{
+  "caseId": "en-data-analysis-beginner",
+  "challenger": {
+    "costUsd": 0.0006511599999999999,
+    "durationMs": 9507.265250000002,
+    "hash": "eaf5c12fa12d4619c781248624597af6d619f73471c2c3257b843cfb8b510dae",
+    "systemPromptHash": "6c650146bc77eba3fcaa07bd2138cf490fdea276cf402826c2abaafbfc13e373",
+    "userPromptHash": "bf0f77ee9252dc68b67b23abed42f198f470d6ea45f1be0f1c7c070b11ec617a"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.00059913,
+    "durationMs": 8404.312374999998,
+    "hash": "4a64c0ac172a28f89cf9e43ce1f03a9818d1c17d5714f6438ed15b846982c55b",
+    "systemPromptHash": "782cebffd04f74e4a27023e27678685d5ac6ee34a8481cb679d4f0909e3b41c8",
+    "userPromptHash": "bf0f77ee9252dc68b67b23abed42f198f470d6ea45f1be0f1c7c070b11ec617a"
+  },
+  "run": 2
+}

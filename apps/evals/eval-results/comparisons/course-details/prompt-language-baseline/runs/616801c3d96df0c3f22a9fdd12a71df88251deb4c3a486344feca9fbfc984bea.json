@@ -1,0 +1,13 @@
+{
+  "caseId": "en-quantum-physics-from-scratch",
+  "challenger": {
+    "costUsd": 0.00075393,
+    "durationMs": 10213.179957999993,
+    "hash": "b347d7fe61f1357fc25c71d6e6923d4b9323bc4f68e09c4bc56818966bd005b4",
+    "systemPromptHash": "782cebffd04f74e4a27023e27678685d5ac6ee34a8481cb679d4f0909e3b41c8",
+    "userPromptHash": "7c784b624e7cd53c69da9156a9e626952037c94f09a2847dc787e069aee82e9e"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 1
+}

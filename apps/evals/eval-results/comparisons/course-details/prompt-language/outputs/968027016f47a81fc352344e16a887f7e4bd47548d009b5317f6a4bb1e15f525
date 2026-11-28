@@ -1,0 +1,20 @@
+{
+  "categories": [
+    "economics"
+  ],
+  "description": "Economia estuda como pessoas, empresas e governos fazem escolhas com recursos limitados. O curso passa por preços, trabalho, dinheiro, inflação, crescimento e políticas públicas, temas que ajudam a acompanhar notícias e avaliar decisões que afetam seu bolso e os serviços públicos.",
+  "landingPage": {
+    "audience": [
+      "Estudantes do ensino médio",
+      "Quem organiza o próprio orçamento",
+      "Curiosos sobre a economia do país"
+    ],
+    "outcomes": [
+      "Comparar escolhas pelo que você deixa de ganhar",
+      "Explicar por que preços mudam no supermercado",
+      "Avaliar como juros e inflação afetam seu dinheiro",
+      "Comparar decisões do governo pelos efeitos no país"
+    ],
+    "valueProposition": "Tomar decisões sobre seu dinheiro e explicar por que preços e juros mudam"
+  }
+}

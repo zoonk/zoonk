@@ -1,0 +1,20 @@
+{
+  "categories": [
+    "economics"
+  ],
+  "description": "La finanza personale riguarda il modo in cui gestisci entrate, spese e risparmi. Parti da busta paga, budget, fondo per gli imprevisti, prestiti e 730, per poi affrontare investimenti, assicurazioni e pensione: temi utili per valutare le scelte di denaro nella vita quotidiana.",
+  "landingPage": {
+    "audience": [
+      "Chi ha appena iniziato a lavorare",
+      "Famiglie con spese da organizzare",
+      "Curiosi di risparmio e investimenti"
+    ],
+    "outcomes": [
+      "Leggere la busta paga e orientarti nel 730",
+      "Tenere il budget e preparare un fondo imprevisti",
+      "Confrontare prestiti e rate dal costo totale",
+      "Scegliere risparmi e investimenti per i tuoi obiettivi"
+    ],
+    "valueProposition": "Gestire lo stipendio, affrontare gli imprevisti e scegliere con criterio prestiti e risparmi."
+  }
+}

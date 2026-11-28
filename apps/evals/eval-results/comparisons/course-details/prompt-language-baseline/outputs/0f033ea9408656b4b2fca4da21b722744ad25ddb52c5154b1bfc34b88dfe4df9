@@ -1,0 +1,20 @@
+{
+  "categories": [
+    "law"
+  ],
+  "description": "Prawo pracy określa prawa i obowiązki pracowników oraz pracodawców. Kurs obejmuje umowy, czas pracy, wynagrodzenie, urlopy, chorobę, bezpieczeństwo, równe traktowanie, zakończenie pracy i spory; pomaga przygotować się do rozmów i ocenić, kiedy szukać profesjonalnej pomocy.",
+  "landingPage": {
+    "audience": [
+      "Osoby zaczynające pierwszą pracę",
+      "Pracownicy na etacie lub zleceniu",
+      "Osoby zarządzające zespołem"
+    ],
+    "outcomes": [
+      "Porównywać umowę o pracę, zlecenie i dzieło",
+      "Sprawdzać, czy godziny pracy i nadgodziny są prawidłowe",
+      "Obliczać urlop i wynagrodzenie za czas choroby",
+      "Przygotowywać się do rozmowy o sporze w pracy"
+    ],
+    "valueProposition": "Sprawdzać, czy umowa, wypłata i urlop zgadzają się z prawem"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "caseId": "ko-hanguksa-exam",
+  "challenger": {
+    "costUsd": 0.0007833499999999999,
+    "durationMs": 7412.035499999998,
+    "hash": "2a63c7c9dad6e64b3567a5f8c893aafd5fc0f539afab138ea42edc401e1fb38d",
+    "systemPromptHash": "37ab2a1d99259880ee1bc8d54d42c20e93a4795dbad130186f8492e8379f03d2",
+    "userPromptHash": "56c918ed4264e3f19731e04d03fae79d68b8a6d2802624c1dbf3fef9c3bb68bd"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.0007633299999999999,
+    "durationMs": 8710.088292,
+    "hash": "d812273fada3c8527f198a8fdc6a6d820f9fc03a17d5188431406f8f9c22cd31",
+    "systemPromptHash": "782cebffd04f74e4a27023e27678685d5ac6ee34a8481cb679d4f0909e3b41c8",
+    "userPromptHash": "56c918ed4264e3f19731e04d03fae79d68b8a6d2802624c1dbf3fef9c3bb68bd"
+  },
+  "run": 1
+}

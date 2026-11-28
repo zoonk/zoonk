@@ -1,0 +1,21 @@
+{
+  "categories": [
+    "tech",
+    "math"
+  ],
+  "description": "Data analysis uses tables, summaries, charts, and comparisons to answer questions with evidence. Start with spreadsheets and data cleanup, then move into comparing groups, spotting patterns, judging uncertainty, and sharing findings for better decisions at school, work, and in everyday life.",
+  "landingPage": {
+    "audience": [
+      "Students working with data",
+      "People who use spreadsheets at work",
+      "Curious beginners making sense of numbers"
+    ],
+    "outcomes": [
+      "Organize and summarize data in a spreadsheet",
+      "Fix messy data before it skews results",
+      "Choose charts that fit the question",
+      "Check AI findings against the data"
+    ],
+    "valueProposition": "Turn messy spreadsheet data into answers you can check"
+  }
+}

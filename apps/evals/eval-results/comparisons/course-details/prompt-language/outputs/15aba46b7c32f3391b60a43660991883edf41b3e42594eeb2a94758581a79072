@@ -1,0 +1,20 @@
+{
+  "categories": [
+    "arts"
+  ],
+  "description": "Music theory explains how notes and chords work together in songs. Work with seventh chords, chords that add tension or borrow color, smooth chord movement, key changes, and new harmonies under a melody for writing, arranging, or discussing music.",
+  "landingPage": {
+    "audience": [
+      "Songwriters changing their sound",
+      "Instrumentalists ready for richer chords",
+      "Music students past the basics"
+    ],
+    "outcomes": [
+      "Build seventh chords in any key",
+      "Make one chord lead naturally to another",
+      "Connect chords smoothly across a key change",
+      "Change a melody's mood by replacing its chords"
+    ],
+    "valueProposition": "Shape a song's mood with richer chords and smoother changes"
+  }
+}

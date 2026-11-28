@@ -1,0 +1,13 @@
+{
+  "caseId": "en-star-wars-overview",
+  "challenger": {
+    "costUsd": 0.00064163,
+    "durationMs": 8906.882999999998,
+    "hash": "60ffaf954d02a9b006d29a63ef127e56904614de130a222ee780fad07423df57",
+    "systemPromptHash": "782cebffd04f74e4a27023e27678685d5ac6ee34a8481cb679d4f0909e3b41c8",
+    "userPromptHash": "a43434e1fe49a42e535a103c0ca23ae0312607c0276e90b5afa7be1b4d05a545"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 1
+}
