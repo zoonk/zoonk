@@ -334,7 +334,8 @@ private fun OutputCell(
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    Column(modifier.padding(horizontal = 16.dp, vertical = 12.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+    // The code box's inset, so both boxes start their words on one edge.
+    Column(modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
         Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium)
         content()
     }

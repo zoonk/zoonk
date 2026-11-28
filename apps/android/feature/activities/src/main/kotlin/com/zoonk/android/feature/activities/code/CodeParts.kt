@@ -343,4 +343,4 @@ internal fun SandboxRunBar(
 
 internal const val SOFT_ALPHA = 0.12f
 internal const val STALE_ALPHA = 0.6f
-private val EDITOR_PADDING = 16.dp
+private val EDITOR_PADDING = 12.dp
