@@ -3,6 +3,7 @@ package com.zoonk.android.feature.plan
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.api.models.PlanFinishPrecision
 import com.zoonk.api.models.PlanPhase
 import kotlinx.datetime.LocalDate
 import org.junit.Assert.assertEquals
@@ -52,13 +53,27 @@ class PhaseEndTest {
     }
 
     @Test
-    fun theCurrentPhaseKeepsItsDayEvenWhenItsEndIsFar() {
+    fun aFarEstimatedEndOfTheCurrentPhaseIsSaidByItsMonth() {
         val plan =
             learnPlan().withCurrent {
                 it.copy(endDate = LocalDate(2026, 12, 20), checkpoint = it.checkpoint?.copy(date = LocalDate(2026, 12, 20)))
             }
 
-        assertEquals("~Dec 20", ends(page(plan))["Data structures"])
+        assertEquals("~Dec", ends(page(plan))["Data structures"])
+    }
+
+    @Test
+    fun aPhaseWhoseWorkHasNoPlaceInThePlanYetEndsLater() {
+        val plan = learnPlan().withPhase("Projects") { it.copy(later = true, startDate = null, endDate = null) }
+
+        assertEquals("Later", ends(page(plan))["Projects"])
+    }
+
+    @Test
+    fun aFarEndIsSaidByItsYear() {
+        val plan = learnPlan().withPhase("Web apps") { it.copy(endDate = LocalDate(2029, 6, 10), precision = PlanFinishPrecision.YEAR) }
+
+        assertEquals("~2029", ends(page(plan))["Web apps"])
     }
 
     private fun ends(page: PlanPageState): Map<String, String?> {
@@ -70,6 +85,11 @@ class PhaseEndTest {
 
     private fun com.zoonk.api.models.Plan.withCurrent(change: (PlanPhase) -> PlanPhase) =
         copy(phases = phases.map { if (it.state == PlanPhase.State.CURRENT) change(it) else it })
+
+    private fun com.zoonk.api.models.Plan.withPhase(
+        name: String,
+        change: (PlanPhase) -> PlanPhase,
+    ) = copy(phases = phases.map { if (it.name == name) change(it) else it })
 
     private fun page(plan: com.zoonk.api.models.Plan): PlanPageState {
         val summary = learnerSummary()

@@ -1,9 +1,11 @@
 import { readScheduledAnswers } from "../../learner/facts/scheduled-answers";
 import { type PlanView } from "../plan-view-contract";
-import { toIsoDate } from "../planner/plan-calendar";
+import { fromIsoDate, toIsoDate } from "../planner/plan-calendar";
 import { type WritingWork, listRemainingWriting } from "../planner/writing-schedule";
+import { getDatedFinish, getFinishDisplay } from "./course-finish";
 import { type PlanReadContext } from "./plan-read-projection";
-import { readPlanSummary } from "./plan-summary";
+import { type PlanSummary } from "./plan-summary";
+import { type SelectedSummary } from "./selected-summary-contract";
 
 export const MINUTES_PER_HOUR = 60;
 
@@ -42,14 +44,28 @@ export async function loadPlanWritingWork({ goal, state, today }: PlanReadContex
 
 export function buildEstimateView({
   context,
+  finish,
+  summary,
   writing,
 }: {
   context: PlanReadContext;
+  finish: SelectedSummary["forecast"]["finish"] | null;
+  summary: PlanSummary | null;
   writing: readonly WritingWork[];
 }): PlanView["estimate"] {
   const pace = context.state.settings.pace;
-  const endDate = getShownEnd(context);
+  const dated = context.goal.targetDate !== null;
   const fullCourse = context.goal.kind === "exam" && context.state.settings.fullCourse;
+  const fullCourseEndDate = fullCourse ? (summary?.advice.fullCourseEndDate ?? null) : null;
+
+  const forecast =
+    fullCourseEndDate && summary
+      ? getDatedFinish({
+          date: fullCourseEndDate,
+          today: fromIsoDate(summary.basis.layoutStudyDay),
+        })
+      : finish;
+
   const { items } = context;
   const totalHours = context.plan.estimateHours ?? 0;
 
@@ -60,13 +76,9 @@ export function buildEstimateView({
   const remainingWriting = writing.reduce((sum, entry) => sum + entry.minutes, 0);
 
   return {
-    endDate,
-    fullCourseEndDate: fullCourse
-      ? (readPlanSummary({
-          plan: { ...context.plan, userId: context.goal.userId },
-          value: context.plan.summary,
-        })?.advice.fullCourseEndDate ?? null)
-      : null,
+    ...getFinishDisplay(forecast),
+    endDate: dated ? (fullCourseEndDate ?? getShownEnd(context)) : (forecast?.date ?? null),
+    fullCourseEndDate,
     pace: pace ? { factor: pace.factor, source: pace.source } : null,
     remainingHours: toHours(remainingMinutes + remainingWriting),
     totalHours: Math.round(totalHours * 10) / 10,

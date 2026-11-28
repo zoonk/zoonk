@@ -18,6 +18,7 @@ function missing(overrides: Partial<Parameters<typeof normalizeCoverage>[0]["mis
   return {
     area: "",
     description: "Uma ideia.",
+    estimatedLessons: 6.4,
     examWeight: 3,
     name: "Calcular juros compostos",
     prerequisites: [],
@@ -28,7 +29,7 @@ function missing(overrides: Partial<Parameters<typeof normalizeCoverage>[0]["mis
 }
 
 describe(normalizeCoverage, () => {
-  it("keeps a gap whose quoted line is in a reference and names that reference", () => {
+  it("keeps a gap whose quoted line is in a reference, names that reference and rounds its size", () => {
     const result = normalizeCoverage({
       exam: false,
       graphSkills,
@@ -40,6 +41,7 @@ describe(normalizeCoverage, () => {
       {
         area: null,
         description: "Uma ideia.",
+        estimatedLessons: 6,
         examWeight: null,
         name: "Calcular juros compostos",
         prerequisites: ["percent"],
@@ -197,6 +199,7 @@ describe("an exam's notice", () => {
       {
         area: "Direito Penal",
         description: "Reconhecer os crimes de falsidade documental.",
+        estimatedLessons: 6,
         examWeight: 4,
         name: "Identificar crimes de falsidade documental",
         prerequisites: ["documents"],

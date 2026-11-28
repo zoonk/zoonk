@@ -93,6 +93,27 @@ enum PlanChangeEffect {
     return lessonsChange && rounding ? nil : (after, before)
   }
 
+  /// Main's `useEndMoveText`: the end by its days only while core dates both by their month and
+  /// both are near; otherwise by month and year, or the year alone. Nothing when both read alike.
+  static func endMoveText(_ effect: PlanEffect, today: String) -> (
+    after: String, before: String, day: Bool
+  )? {
+    guard let end = shownEndMove(effect) else {
+      return nil
+    }
+
+    let day =
+      effect.endPrecisionAfter == .month && effect.endPrecisionBefore == .month
+      && PlanDate.isNear(end.after, to: today) && PlanDate.isNear(end.before, to: today)
+    let text = { (isoDate: String, precision: PlanForecast.Precision?) in
+      PlanDate.finishText(isoDate, grain: day ? .day : precision == .year ? .year : .month)
+    }
+    let after = text(end.after, effect.endPrecisionAfter)
+    let before = text(end.before, effect.endPrecisionBefore)
+
+    return after == before ? nil : (after, before, day)
+  }
+
   static func topicNames(_ areas: [PlanEffect.Topics]?) -> [String] {
     (areas ?? []).flatMap { $0.topics.map(planTopicWords) }
   }
@@ -225,20 +246,24 @@ enum PlanChangeEffect {
   private static func endConsequence(
     _ effect: PlanEffect, _ options: PlanChangeOptions, today: String
   ) -> PlanChangeConsequence? {
-    guard options.goalDate == nil, let end = shownEndMove(effect) else {
+    guard options.goalDate == nil, let end = endMoveText(effect, today: today) else {
       return nil
     }
 
-    let after = PlanDate.longDay(end.after, today: today)
-    let before = PlanDate.longDay(end.before, today: today)
-
     return PlanChangeConsequence(
       key: "end",
-      text: String(
-        localized: "Your plan will end on \(after) instead of \(before).", table: "Plan",
-        comment:
-          "A plan change's consequence: the plan's end moves; the arguments are days like \"May 5\""
-      ),
+      text: end.day
+        ? String(
+          localized: "Your plan will end on \(end.after) instead of \(end.before).", table: "Plan",
+          comment:
+            "A plan change's consequence: the plan's end moves; the arguments are days like \"May 5\""
+        )
+        : String(
+          localized: "Your plan will end around \(end.after) instead of \(end.before).",
+          table: "Plan",
+          comment:
+            "{after} and {before} are a month and year, like \"May 2027\", or a year, like \"2031\"."
+        ),
       whole: true)
   }
 
@@ -381,13 +406,13 @@ enum PlanChangeEffect {
             comment: "A row of a plan change's details: the goal's end date"),
         before: move.before.map(date), after: date(move.after))
     }
-    let end = shownEndMove(effect).flatMap { end in
+    let end = endMoveText(effect, today: today).flatMap { end in
       moved(
         key: "end",
         label: String(
           localized: "Plan ends", table: "Plan",
           comment: "A row of a plan change's details: the day the plan ends"),
-        before: date(end.before), after: date(end.after))
+        before: end.before, after: end.after)
     }
     let phases = (effect.phaseEnds ?? []).map { phase in
       moved(

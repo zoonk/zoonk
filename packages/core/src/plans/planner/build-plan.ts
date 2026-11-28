@@ -5,6 +5,7 @@ import { type BossMinutes } from "./boss-minutes";
 import { type BuiltPlan } from "./built-plan";
 import { type CarryOver } from "./carry-over";
 import { getKeptBaseChoices, hasBaseChoices, withBaseChoices } from "./chosen-bases";
+import { listDeferredTeaching, markLaterPhases } from "./deferred-teaching";
 import { listEndsBeforeLessons } from "./ends-before-lessons";
 import { type ExamBossDays, listBossDayFacts } from "./exam-boss-days";
 import { type PlanExtraInput, appendExamExtras, withoutExamExtras } from "./exam-extras";
@@ -105,11 +106,13 @@ export function buildPlan(given: BuildPlanInput) {
 
   const built = settlePlannedBosses({ build: buildWithBosses, input });
 
-  return appendExamExtras({
+  const planned = appendExamExtras({
     built: withoutUntestableChallenges({ built, input }),
     input,
     requested: given,
   });
+
+  return given.goal.targetDate ? planned : markLaterPhases({ built: planned, graph: input.graph });
 }
 
 function buildWithBosses(input: BuildPlanInput): BuiltPlan {
@@ -278,10 +281,14 @@ function planGoal({
     writingSchedule: work.writing.writingSchedule,
   });
 
+  const keptStandInCuts = listKeptStandInCuts({ frozen, units: unitsByKey });
+  const deferred = input.goal.targetDate === null;
+
   return {
     ...outline,
     skillLessons,
-    ...listDroppedSkills(dropped),
+    ...listDroppedSkills(deferred ? [] : dropped),
+    ...(deferred && { deferredTeaching: listDeferredTeaching({ dropped, keptStandInCuts }) }),
     endsBeforeLessons: listEndsBeforeLessons({
       given: input,
       items,
@@ -297,7 +304,7 @@ function planGoal({
     order: toLaidOutOrder(restSchedule),
     planDays: funded.days,
     skillMinutes: getSkillMinutes({
-      dropped: [...dropped, ...listKeptStandInCuts({ frozen, units: unitsByKey })],
+      dropped: [...dropped, ...keptStandInCuts],
       kept: queue.filter((unit) => work.finishedKeys.has(unit.key)),
       pending: [...pending, ...work.deferred],
     }),

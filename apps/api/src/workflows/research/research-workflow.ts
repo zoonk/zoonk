@@ -6,7 +6,12 @@ import { claimRunToken, joinRun, startOnce } from "../_shared/run-token";
 import { scheduleFreshnessChecksStep } from "../freshness/steps/schedule-freshness-checks-step";
 import { getGoalContentToken, goalContentWorkflow } from "../goals/goal-content-workflow";
 import { type ResearchAnalytics, toResearchAnalytics } from "./_utils/research-analytics";
-import { describeExam, readExamBlueprint } from "./read-exam-blueprint";
+import {
+  type SavedBlueprint,
+  describeExam,
+  readExamBlueprint,
+  reconcileReadExamBlueprint,
+} from "./read-exam-blueprint";
 import { researchProduct } from "./research-product";
 import { type ResearchResult, researchResultSchema } from "./research-result";
 import { type ResearchContext, findAndStoreSources, researchSources } from "./research-sources";
@@ -77,11 +82,13 @@ async function finishExam({
   examBlueprintId,
   goal,
   isShared,
+  saved,
 }: {
   analytics: ResearchAnalytics;
   examBlueprintId: string;
   goal: ResearchGoal;
   isShared: boolean;
+  saved?: SavedBlueprint | null;
 }): Promise<ResearchResult> {
   // Refused when the notice is another country's than the one the learner gave for their exam.
   if (!(await linkGoalToBlueprintStep({ examBlueprintId, goalId: goal.id }))) {
@@ -100,6 +107,13 @@ async function finishExam({
       ]),
       scheduleFreshnessChecksStep([{ examBlueprintId, kind: "exam" }]),
     ]);
+
+    // The reconcile saves only onto the notice it read, so it reads the one the lookups wrote.
+    if (saved) {
+      await Promise.allSettled([
+        reconcileReadExamBlueprint({ analytics, exceptGoalId: null, saved, shared: true }),
+      ]);
+    }
 
     await refreshFollowerSummariesStep(examBlueprintId);
   }
@@ -240,7 +254,7 @@ async function researchExam(context: ResearchContext<ExamResearchPlan>): Promise
     };
   }
 
-  return finishExam({ analytics, examBlueprintId, goal, isShared });
+  return finishExam({ analytics, examBlueprintId, goal, isShared, saved });
 }
 
 async function research({

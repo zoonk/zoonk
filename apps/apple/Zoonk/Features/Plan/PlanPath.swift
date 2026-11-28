@@ -146,7 +146,7 @@ private struct PlanPhaseRow: View {
         // the same; the current phase keeps its name, as main's does.
         header(
           next: false,
-          byPlace: isExpanded && phase.state != .current
+          byPlace: isExpanded && phase.state != .current && phase.milestone == nil
             && phase.chapters.contains { Self.isSameName($0.title, phase.title) })
       }
       .disclosureGroupStyle(.foldUnderLabel)
@@ -237,8 +237,8 @@ private struct PlanPhaseRow: View {
     }
     if let checkpoint = phase.checkpoint {
       PlanCheckpointRow(
-        checkpoint: checkpoint, isLanguage: context.goal.kind == .language,
-        isPaused: context.isPaused, today: context.plan.today)
+        checkpoint: checkpoint, phase: phase, isLanguage: context.goal.kind == .language,
+        isPaused: context.isPaused, plan: context.plan)
     }
   }
 
@@ -314,7 +314,8 @@ private struct PlanPhaseRow: View {
   }
 }
 
-/// A phase's row on the path: its mark, its name over a line, and when it ends.
+/// A phase's row on the path: its mark, what the learner can do once it's done (else its name)
+/// over a line, and when it ends.
 struct PlanPhaseLabel: View {
   @Environment(\.legibilityWeight) private var legibilityWeight
 
@@ -326,19 +327,15 @@ struct PlanPhaseLabel: View {
   var byPlace = false
 
   var body: some View {
-    let title = Text(byPlace ? phase.placeName : phase.title)
+    let title = Text(byPlace ? phase.placeName : phase.label)
       .typeWeight(.medium, legibility: legibilityWeight)
       .foregroundStyle(phase.state == .done ? Color.mutedForeground : Color(.foreground))
 
     ListRow(title, description: description) {
       StatusMark(status: next ? .next : phase.mark)
     } trailing: {
-      if let end {
-        Text(verbatim: end.shown)
-          .typeStyle(.data)
-          .layoutRole(.date)
-          .accessibilityHidden(true)
-      }
+      end?.when
+        .accessibilityHidden(true)
     }
     .accessibilityElement(children: .combine)
     .accessibilityValue(Text(verbatim: spokenState))
@@ -487,14 +484,21 @@ struct PlanChapterRow: View {
 
 private struct PlanCheckpointRow: View {
   let checkpoint: PlanPhase.Checkpoint
+  let phase: PlanPhase
   let isLanguage: Bool
   let isPaused: Bool
-  let today: String
+  let plan: GoalPlan
 
   var body: some View {
-    PlanRouteLink(route: .challenge(planItemId: checkpoint.planItemId)) {
-      PlanChallengeLabel(
-        when: when, explains: checkpoint.state != .done, isLanguage: isLanguage)
+    let label = PlanChallengeLabel(
+      when: when, explains: checkpoint.state != .done, isLanguage: isLanguage)
+
+    if let planItemId = checkpoint.planItemId {
+      PlanRouteLink(route: .challenge(planItemId: planItemId)) {
+        label
+      }
+    } else {
+      label
     }
   }
 
@@ -504,24 +508,34 @@ private struct PlanCheckpointRow: View {
     }
 
     // A paused plan has nothing planned until the learner resumes, as its phases' ends.
-    return isPaused ? nil : checkpoint.when(today: today)
+    return isPaused ? nil : checkpoint.when(in: plan, phase: phase)
   }
 }
 
 extension PlanPhase.Checkpoint {
-  /// When it comes. Dated today, the next session is today's, which may already be under way.
-  func when(today: String) -> PlanWhen? {
+  /// When it comes. Dated today, the next session is today's, which may already be under way. One
+  /// whose phase's work has no day yet comes later, and its day is said as its phase's end is, by
+  /// its month or year once that's all the plan knows.
+  func when(in plan: GoalPlan, phase: PlanPhase) -> PlanWhen? {
+    if later == true {
+      return .words(Text(verbatim: PhaseEnd.later.shown))
+    }
+
     switch when {
-    case .nextSession where date == today:
-      .words(Text("Today", tableName: "Plan", comment: "When the phase's challenge comes"))
+    case .nextSession where date == plan.today:
+      return .words(Text("Today", tableName: "Plan", comment: "When the phase's challenge comes"))
     case .nextSession:
-      .words(
+      return .words(
         Text(
           "Next time", tableName: "Plan",
           comment: "When the phase's challenge comes: the next time the learner studies")
       )
     case .date, .queued:
-      date.map { .date(PlanDate.estimateText($0, today: today)) }
+      return date.map { date in
+        .date(
+          PlanDate.estimateText(
+            date, today: plan.today, grain: plan.phaseGrain(date, phase: phase)))
+      }
     }
   }
 }
@@ -550,17 +564,31 @@ extension PlanDate {
   static func estimate(_ isoDate: String, today: String, month: Bool = false) -> (
     text: String, spoken: String
   ) {
-    let date = text(isoDate, today: today, month: month)
+    estimate(isoDate, today: today, grain: month ? .month : .day)
+  }
+
+  static func estimate(_ isoDate: String, today: String, grain: DateGrain) -> (
+    text: String, spoken: String
+  ) {
+    let date = text(isoDate, today: today, grain: grain)
 
     let spoken =
-      month
-      ? String(
-        localized: LocalizedStringResource(
-          "aboutMonth", defaultValue: "About \(date)", table: "Plan",
-          comment: "An estimated month, read aloud; the argument is a month like 'May 2027'"))
-      : String(
-        localized: "About \(date)", table: "Plan",
-        comment: "An estimated day, read aloud; the argument is a day like 'Nov 20'")
+      switch grain {
+      case .day:
+        String(
+          localized: "About \(date)", table: "Plan",
+          comment: "An estimated day, read aloud; the argument is a day like 'Nov 20'")
+      case .month:
+        String(
+          localized: LocalizedStringResource(
+            "aboutMonth", defaultValue: "About \(date)", table: "Plan",
+            comment: "An estimated month, read aloud; the argument is a month like 'May 2027'"))
+      case .year:
+        String(
+          localized: LocalizedStringResource(
+            "aboutYear", defaultValue: "About \(date)", table: "Plan",
+            comment: "An estimated year, read aloud; the argument is a year like '2031'"))
+      }
 
     return (
       String(
@@ -570,7 +598,11 @@ extension PlanDate {
   }
 
   static func estimateText(_ isoDate: String, today: String, month: Bool = false) -> Text {
-    let date = estimate(isoDate, today: today, month: month)
+    estimateText(isoDate, today: today, grain: month ? .month : .day)
+  }
+
+  static func estimateText(_ isoDate: String, today: String, grain: DateGrain) -> Text {
+    let date = estimate(isoDate, today: today, grain: grain)
     return Text(verbatim: date.text).accessibilityLabel(Text(verbatim: date.spoken))
   }
 }
@@ -1013,7 +1045,7 @@ func planNotReadyLine(lessons: Int, start: String?, today: String) -> Text {
 
   if start.prefix(7) != today.prefix(7) {
     return Text(
-      "\(lessons) lessons\u{00A0}· starts in \(PlanDate.monthText(start, today: today, wide: true))",
+      "\(lessons) lessons\u{00A0}· starts in \(PlanDate.monthText(start, today: today))",
       tableName: "Plan",
       comment: "A topic not ready yet: its lessons and the month they start, like 'January'")
   }

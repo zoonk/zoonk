@@ -277,7 +277,7 @@ internal fun ColumnScope.PlanEditorBody(
     onClose: (() -> Unit)? = null,
     drafts: EditorDrafts = remember { EditorDrafts() },
 ) {
-    val aimDates by produceState<Map<String, java.time.LocalDate?>>(emptyMap(), page.plan) {
+    val aimDates by produceState<Map<String, PlanForecast?>>(emptyMap(), page.plan) {
         value = emptyMap()
         val aim = page.plan.languageAim
         value =
@@ -289,11 +289,7 @@ internal fun ColumnScope.PlanEditorBody(
                 .map { choice ->
                     async {
                         val preview = edits.preview(listOf(PlanOp.Aim(choice.aim.value)))
-                        choice.aim.value to
-                            preview
-                                ?.takeIf { it.ready }
-                                ?.finishDate
-                                ?.toJavaLocalDate()
+                        choice.aim.value to preview?.takeIf { it.ready }?.forecast
                     }
                 }.awaitAll()
                 .toMap()

@@ -427,7 +427,11 @@ class PlanScreenshots {
                         PlanEffectDiff(planChange(effect = effect(""""lessonsRemoved":3""")).effect)
                         PlanEffectDiff(
                             planChange(
-                                effect = effect(""""lessonsAdded":2,"endDateBefore":"2027-01-10","endDateAfter":"2027-01-20""""),
+                                effect =
+                                    effect(
+                                        """"lessonsAdded":2,"endDateBefore":"2028-01-10","endDateAfter":"2028-03-20",""" +
+                                            """"endPrecisionBefore":"month","endPrecisionAfter":"month"""",
+                                    ),
                             ).effect,
                         )
                     },

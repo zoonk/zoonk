@@ -41,4 +41,13 @@ class TimeLineTest {
         assertNull(timeOffer(lineAt(minutes = 120), minutes = 120))
         assertEquals(240, timeOffer(lineAt(minutes = 60, recommended = 805, focus = 240), minutes = 60))
     }
+
+    @Test
+    fun anUndatedGoalsLineIsItsForecastEvenPastTheYearsAPlanLaysOut() {
+        fun undated(advice: LineAdvice) =
+            timeLine(advice, false, dated = false, findFailed = false, found = null, hasDays = true, minutes = 30)
+
+        assertEquals(TimeLine.Finish(PlanForecast.Beyond), undated(LineAdvice(PlanForecast.Beyond)))
+        assertEquals(TimeLine.NoFinish, undated(LineAdvice(null)))
+    }
 }

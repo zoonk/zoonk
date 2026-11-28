@@ -6,36 +6,27 @@ import {
   isWrittenTestSubject,
 } from "@zoonk/ai/tasks/curriculum/exam-outline";
 import { matchNoticeAreas } from "../../exams/_utils/match-areas";
-import { type GoalSkillGraph } from "./save-goal-skills";
+import { type PlannedSkillGraph } from "./goal-plan-graph";
+import { insertGraphSkills, toFreeKeys } from "./insert-graph-skills";
+import { estimateTopicLessons, toTopicSkillName } from "./uncovered-topic-skill";
 
 type Coverage = Awaited<ReturnType<typeof checkCoverage>>["data"];
 
 type MissingSkill = Pick<
   Coverage["missing"][number],
-  "area" | "course" | "description" | "examWeight" | "name" | "prerequisites" | "topics"
+  | "area"
+  | "course"
+  | "description"
+  | "estimatedLessons"
+  | "examWeight"
+  | "name"
+  | "prerequisites"
+  | "topics"
 >;
 
-type GraphSkill = GoalSkillGraph["skills"][number];
-
-const COVERAGE_SKILL_LESSONS = 2;
+type GraphSkill = PlannedSkillGraph["skills"][number];
 
 const DEFAULT_TOPIC_WEIGHT = 3;
-
-export function toFreeKeys({
-  count,
-  graph,
-  prefix,
-}: {
-  count: number;
-  graph: GoalSkillGraph;
-  prefix: string;
-}): string[] {
-  const taken = new Set(graph.skills.map((skill) => skill.key));
-
-  return Array.from({ length: graph.skills.length + count }, (_, index) => `${prefix}-${index + 1}`)
-    .filter((key) => !taken.has(key))
-    .slice(0, count);
-}
 
 function getTopicOrder({
   outline,
@@ -53,7 +44,7 @@ function getTopicOrder({
   return positions.length > 0 ? Math.min(...positions) : Infinity;
 }
 
-function findFirstRunEnd({ area, graph }: { area: string; graph: GoalSkillGraph }): number {
+function findFirstRunEnd({ area, graph }: { area: string; graph: PlannedSkillGraph }): number {
   const start = graph.skills.findIndex((skill) => skill.area === area);
   const end = graph.skills.findIndex((skill, index) => index > start && skill.area !== area);
 
@@ -70,7 +61,7 @@ function findEarlierSubjectEnd({
   outline,
 }: {
   area: string | null | undefined;
-  graph: GoalSkillGraph;
+  graph: PlannedSkillGraph;
   outline?: ExamOutline;
 }): number {
   const subjects = outline?.subjects ?? [];
@@ -89,7 +80,7 @@ function findAfter({
   outline,
   prerequisites,
 }: {
-  graph: GoalSkillGraph;
+  graph: PlannedSkillGraph;
   missing: MissingSkill;
   outline?: ExamOutline;
   prerequisites: readonly GraphSkill[];
@@ -124,7 +115,7 @@ function toGraphSkill({
   missing,
   outline,
 }: {
-  graph: GoalSkillGraph;
+  graph: PlannedSkillGraph;
   key: string;
   missing: MissingSkill;
   outline?: ExamOutline;
@@ -150,7 +141,7 @@ function toGraphSkill({
       area: missing.area ?? neighbor?.area ?? "",
       course: named?.key ?? neighbor?.course ?? graph.courses[0]?.key ?? "",
       description: missing.description,
-      estimatedLessons: COVERAGE_SKILL_LESSONS,
+      estimatedLessons: missing.estimatedLessons,
       examWeight: missing.examWeight,
       key,
       level: neighbor?.level ?? "beginner",
@@ -179,34 +170,15 @@ function isWrittenTestArea({
   return parts.has(area) || Boolean(subject && isWrittenTestSubject(subject));
 }
 
-/** Each addition goes right after the graph position `after` (-1 is the start), in the given order. */
-export function insertGraphSkills({
-  additions,
-  graph,
-}: {
-  additions: readonly { after: number; skill: GraphSkill }[];
-  graph: GoalSkillGraph;
-}): GoalSkillGraph {
-  const skills = [
-    ...additions.filter((addition) => addition.after === -1).map((addition) => addition.skill),
-    ...graph.skills.flatMap((skill, index) => [
-      skill,
-      ...additions.filter((addition) => addition.after === index).map((addition) => addition.skill),
-    ]),
-  ];
-
-  return { ...graph, skills };
-}
-
 function addCoverageSkills({
   graph,
   missing,
   outline,
 }: {
-  graph: GoalSkillGraph;
+  graph: PlannedSkillGraph;
   missing: readonly MissingSkill[];
   outline?: ExamOutline;
-}): GoalSkillGraph {
+}): PlannedSkillGraph {
   if (missing.length === 0) {
     return graph;
   }
@@ -225,8 +197,8 @@ function reweightExamSkills({
   graph,
 }: {
   examWeights: readonly Coverage["examWeights"][number][];
-  graph: GoalSkillGraph;
-}): GoalSkillGraph {
+  graph: PlannedSkillGraph;
+}): PlannedSkillGraph {
   if (examWeights.length === 0) {
     return graph;
   }
@@ -247,10 +219,10 @@ function placeExamSkills({
   outline,
   placements,
 }: {
-  graph: GoalSkillGraph;
+  graph: PlannedSkillGraph;
   outline?: ExamOutline;
   placements: readonly Coverage["placements"][number][];
-}): GoalSkillGraph {
+}): PlannedSkillGraph {
   if (placements.length === 0) {
     return graph;
   }
@@ -275,7 +247,7 @@ function placeExamSkills({
   };
 }
 
-function getSubjectWeight({ graph, subject }: { graph: GoalSkillGraph; subject: string }) {
+function getSubjectWeight({ graph, subject }: { graph: PlannedSkillGraph; subject: string }) {
   const weights = graph.skills.flatMap((skill) =>
     skill.area === subject && skill.examWeight !== null ? [skill.examWeight] : [],
   );
@@ -288,19 +260,23 @@ function getSubjectWeight({ graph, subject }: { graph: GoalSkillGraph; subject: 
 function coverRemainingTopics({
   graph,
   outline,
+  sized,
 }: {
-  graph: GoalSkillGraph;
+  graph: PlannedSkillGraph;
   outline: ExamOutline;
-}): GoalSkillGraph {
+  sized: PlannedSkillGraph;
+}): PlannedSkillGraph {
   const uncovered = findUncoveredTopics({ outline, skills: graph.skills });
+  const estimate = estimateTopicLessons(sized.skills);
 
   return addCoverageSkills({
     graph,
     missing: uncovered.map(({ subject, topic }) => ({
       area: subject,
       description: topic,
+      estimatedLessons: estimate(subject) ?? 1,
       examWeight: getSubjectWeight({ graph, subject }),
-      name: topic,
+      name: toTopicSkillName(topic),
       prerequisites: [],
       topics: [topic],
     })),
@@ -314,22 +290,23 @@ export function applyGraphCoverage({
   outline,
 }: {
   coverage: Coverage;
-  graph: GoalSkillGraph;
+  graph: PlannedSkillGraph;
   outline?: ExamOutline;
-}): { changed: boolean; graph: GoalSkillGraph } {
+}): { changed: boolean; graph: PlannedSkillGraph } {
   const { examWeights, missing, placements } = coverage;
 
-  const checked = addCoverageSkills({
-    graph: placeExamSkills({
-      graph: reweightExamSkills({ examWeights, graph }),
-      outline,
-      placements,
-    }),
-    missing,
+  const placed = placeExamSkills({
+    graph: reweightExamSkills({ examWeights, graph }),
     outline,
+    placements,
   });
 
-  const covered = outline ? coverRemainingTopics({ graph: checked, outline }) : checked;
+  const checked = addCoverageSkills({ graph: placed, missing, outline });
+
+  const covered = outline
+    ? coverRemainingTopics({ graph: checked, outline, sized: placed })
+    : checked;
+
   const moved = examWeights.length > 0 || missing.length > 0 || placements.length > 0;
 
   return { changed: moved || covered !== checked, graph: covered };
@@ -340,7 +317,7 @@ export function needsCoverageCheck({
   outline,
   references,
 }: {
-  graph: GoalSkillGraph;
+  graph: PlannedSkillGraph;
   outline?: ExamOutline;
   references: readonly unknown[];
 }): boolean {

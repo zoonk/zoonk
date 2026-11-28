@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { finishPrecisionSchema, finishReasonSchema } from "../finish-contract";
 
 const minutesSchema = z.number().nonnegative();
 
@@ -76,12 +77,9 @@ export const selectedSummarySchema = z
         basis: z.literal("estimated"),
         dailyNeed: dailyNeedSchema,
         finish: z.union([
-          z.object({ date: z.iso.date() }).strict(),
+          z.object({ date: z.iso.date(), precision: finishPrecisionSchema.optional() }).strict(),
           z
-            .object({
-              date: z.null(),
-              reason: z.enum(["nothingLeft", "noStudyDays", "beyondHorizon"]),
-            })
+            .object({ date: z.null(), precision: z.null().optional(), reason: finishReasonSchema })
             .strict(),
         ]),
       })

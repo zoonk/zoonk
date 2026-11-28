@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { finishPrecisionSchema } from "./finish-contract";
 import { DAYS_PER_WEEK } from "./planner/plan-state";
 
 const isoDateSchema = z.iso.date();
@@ -80,6 +81,12 @@ export const planEffectSchema = z
       .nullable()
       .meta({ description: "When the plan ends after the change" }),
     endDateBefore: isoDateSchema.nullable().meta({ description: "When it ended before" }),
+    endPrecisionAfter: finishPrecisionSchema
+      .optional()
+      .meta({ description: "The precision of endDateAfter, when available" }),
+    endPrecisionBefore: finishPrecisionSchema
+      .optional()
+      .meta({ description: "The precision of endDateBefore, when available" }),
     fromPlacement: z
       .literal(true)
       .optional()

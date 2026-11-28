@@ -783,7 +783,8 @@ describe(getGoalPlan, () => {
       "lesson",
     ]);
 
-    expect(plan?.estimate.endDate).toBe("2020-10-03");
+    expect(plan?.phases.at(-1)?.endDate).toBe("2020-10-03");
+    expect(plan?.estimate).toMatchObject({ endDate: "2020-10-03", precision: "month" });
     expect(plan?.feasibility).not.toHaveProperty("alternative");
   });
 

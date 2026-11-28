@@ -26,7 +26,7 @@ async function openJourney(page: Page) {
 }
 
 test.describe("Journey", () => {
-  test("the End date row says the timeline's estimated finish when the learner set no date", async ({
+  test("the You finish row says the timeline's estimated finish when the learner set no date", async ({
     browser,
   }) => {
     await asPersona(browser, { persona: "buddy" }, async ({ page, user }) => {
@@ -41,9 +41,9 @@ test.describe("Journey", () => {
       const finishText = (await finish.textContent()) ?? "";
 
       const properties = page.getByRole("region", { exact: true, name: "Your plan" });
-      const endDate = properties.getByRole("button", { name: /^End date/u });
-      await expect(endDate.locator('[data-slot="plan-date"]')).toHaveText(finishText);
-      await expect(endDate).not.toContainText("None set");
+      const youFinish = properties.getByRole("button", { name: /^You finish/u });
+      await expect(youFinish.locator('[data-slot="plan-date"]')).toHaveText(finishText);
+      await expect(youFinish).not.toContainText("None set");
     });
   });
 

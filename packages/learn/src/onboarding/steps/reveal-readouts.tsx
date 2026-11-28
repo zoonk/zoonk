@@ -1,25 +1,16 @@
 "use client";
 
 import { BigQuantity } from "@zoonk/ui/components/big-quantity";
-import { getIsoDateParts } from "@zoonk/utils/date-format";
 import { useExtracted } from "next-intl";
-import { daysBetween, useFormatIsoDate, useIsoToday } from "../../_utils/iso-date";
-import { useAppLocale } from "../../_utils/locale";
+import { FinishReadout, Readout } from "../../_components/finish-readout";
+import { daysBetween, useIsoToday } from "../../_utils/iso-date";
 import { useFormatDuration } from "../../_utils/time-format";
+import { getAimAhead } from "../../language-aim/aim-ahead";
 import { usePlanScreen } from "../../plan/plan-context";
 import { useStudyDaysText } from "../../plan/use-study-days-text";
-import { getAimAhead } from "./schedule-aim";
 
-const READOUT_CLASS = "text-readout text-2xl leading-tight";
-
-function Readout({ children, label }: { children: React.ReactNode; label: string }) {
-  return (
-    <div className="flex min-w-0 flex-col gap-1 py-3 ps-3 first:ps-0 sm:ps-4">
-      <span className={READOUT_CLASS}>{children}</span>
-      <span className="text-muted-foreground text-xs leading-snug">{label}</span>
-    </div>
-  );
-}
+/** A cell of the row of readouts, divided from the one before it. */
+const CELL_CLASS = "py-3 ps-3 first:ps-0 sm:ps-4";
 
 function useTimeLabel(): string {
   const t = useExtracted();
@@ -44,34 +35,15 @@ function TimeReadout() {
   const { shape } = plan.schedule;
 
   return (
-    <Readout label={label}>
+    <Readout className={CELL_CLASS} label={label}>
       <BigQuantity>{formatDuration(shape.weekdays)}</BigQuantity>
     </Readout>
   );
 }
 
-/** The month reads first and big, its year small, in the locale's order. */
-function MonthYear({ isoDate }: { isoDate: string }) {
-  const locale = useAppLocale();
-  const today = useIsoToday();
-  const parts = getIsoDateParts({ isoDate, locale, role: "rowMonth", today, year: "always" });
-
-  return parts.map((part, index) =>
-    part.type === "year" ? (
-      // oxlint-disable-next-line react/no-array-index-key -- the parts are fixed for this date
-      <span className="text-muted-foreground text-compact font-medium" key={index}>
-        {part.value}
-      </span>
-    ) : (
-      part.value
-    ),
-  );
-}
-
-/** A language plan without a date ends where its aim is, so it reads as the aim and when. */
-function FinishReadout() {
+/** The days left to a date the learner has, else when the plan finishes (`FinishReadout`). */
+function EndReadout() {
   const t = useExtracted();
-  const formatDate = useFormatIsoDate();
   const today = useIsoToday();
   const { goal, plan } = usePlanScreen();
   const { targetDate, targetDateEstimated } = plan.schedule;
@@ -80,7 +52,10 @@ function FinishReadout() {
     const days = Math.max(0, daysBetween(today, targetDate));
 
     return (
-      <Readout label={goal.kind === "exam" ? t("until the exam") : t("until your date")}>
+      <Readout
+        className={CELL_CLASS}
+        label={goal.kind === "exam" ? t("until the exam") : t("until your date")}
+      >
         {targetDateEstimated ? (
           <>
             <span aria-hidden="true">
@@ -99,27 +74,18 @@ function FinishReadout() {
     );
   }
 
+  // Past the years a plan lays out, "10+ years" was said where the time was picked; the reveal
+  // shows the plan, not that wait again.
   if (!plan.estimate.endDate) {
     return null;
   }
 
-  const aim = getAimAhead(plan.languageAim);
-
-  return aim ? (
-    <Readout
-      label={t({
-        description:
-          'Under the level a language plan reaches: when. {month} is a month and year, like "Nov 2027".',
-        message: "by {month}",
-        values: { month: formatDate(plan.estimate.endDate, "sentenceMonth", { year: "always" }) },
-      })}
-    >
-      {aim}
-    </Readout>
-  ) : (
-    <Readout label={t("estimated finish")}>
-      <MonthYear isoDate={plan.estimate.endDate} />
-    </Readout>
+  return (
+    <FinishReadout
+      aim={getAimAhead(plan.languageAim)}
+      className={CELL_CLASS}
+      forecast={plan.estimate}
+    />
   );
 }
 
@@ -127,7 +93,7 @@ export function RevealReadouts() {
   return (
     <div className="grid auto-cols-fr grid-flow-col border-y [&>*+*]:border-s">
       <TimeReadout />
-      <FinishReadout />
+      <EndReadout />
     </div>
   );
 }

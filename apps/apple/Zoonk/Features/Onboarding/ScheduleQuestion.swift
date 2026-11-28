@@ -156,7 +156,7 @@ struct ScheduleQuestion: View {
           comment: "Onboarding question"))
 
       Section {
-        timeMenu(shown)
+        timeRow(shown)
           .keepsBeforeHinge()
           .listRowBackground(Color.clear)
       }
@@ -295,47 +295,25 @@ struct ScheduleQuestion: View {
       locale: .appLanguage, comment: "The day's time is shorter than the goals typed together need")
   }
 
-  private func timeMenu(_ shown: Shown) -> some View {
+  private func timeRow(_ shown: Shown) -> some View {
     let minutes = shown.minutes ?? view.recommendedMinutes
     let suggested = ScheduleTime.suggestedMinutes(shown.found)
 
-    return Menu {
-      Picker(
-        selection: Binding(
-          get: { minutes },
-          set: {
-            picked = ScheduleTime.pickedMinutes(
-              startsOnRecommended: view.startsOnRecommended, first: found.first,
-              found: shown.lastFound, minutes: $0)
-          })
+    return DailyTimeRow(
+      finish: finish(shown), aim: view.languageAimView?.aimAhead, updating: shown.updating
+    ) {
+      DailyTimeMenu(
+        minutes: minutes,
+        times: ScheduleTime.dailyTimes(timeChoices.map(\.minutes), with: minutes, suggested),
+        suggested: suggested, stale: isStale(shown)
       ) {
-        ForEach(
-          ScheduleTime.dailyTimes(timeChoices.map(\.minutes), with: minutes, suggested),
-          id: \.self
-        ) { time in
-          Text(TimeAnswer.choiceLabel(time, suggested: suggested))
-            .tag(time)
-        }
-      } label: {
-        Text("Time a day", tableName: "Onboarding", comment: "Label of the daily study time picker")
+        picked = ScheduleTime.pickedMinutes(
+          startsOnRecommended: view.startsOnRecommended, first: found.first,
+          found: shown.lastFound, minutes: $0)
       }
-    } label: {
-      HStack(alignment: .firstTextBaseline, spacing: 8) {
-        bigQuantity(duration(minutes))
-          .typeStyle(.momentReadout)
-          .multilineTextAlignment(.leading)
-        Image(systemName: "chevron.down")
-          .typeStyle(.section)
-          .foregroundStyle(.mutedForeground)
-      }
-      .foregroundStyle(isStale(shown) ? .mutedForeground : .primary)
+      .disabled(shown.minutes == nil)
+      .redacted(reason: shown.minutes == nil ? .placeholder : [])
     }
-    .disabled(shown.minutes == nil)
-    .redacted(reason: shown.minutes == nil ? .placeholder : [])
-    .accessibilityLabel(
-      Text("Time a day", tableName: "Onboarding", comment: "Label of the daily study time picker")
-    )
-    .accessibilityValue(duration(minutes))
   }
 
   /// Main's `ScheduleAim`: the aim sizes the course, so it sits by the time it's reached in, one tap
@@ -370,11 +348,11 @@ struct ScheduleQuestion: View {
 
       AimChoicesSheet(
         languageAim: languageAim,
-        currentEnd: finishDate(shown),
+        currentEnd: finish(shown),
         readEnd: { [onboarding, goalID = view.goal.id] aim in
           let advice = try? await onboarding.timeAdvice(
             goalID: goalID, week: key.week, dailyMinutes: key.minutes, aim: aim)
-          return advice?.ready == true ? advice?.endDate : nil
+          return advice?.ready == true ? advice?.forecast : nil
         }
       ) { picked in
         await changeAim(picked)
@@ -383,9 +361,9 @@ struct ScheduleQuestion: View {
     }
   }
 
-  private func finishDate(_ shown: Shown) -> String? {
-    if case .finish(let endDate) = shown.shownLine {
-      return endDate
+  private func finish(_ shown: Shown) -> PlanForecast? {
+    if case .finish(let forecast) = shown.shownLine {
+      return forecast
     }
 
     return nil
@@ -409,8 +387,7 @@ struct ScheduleQuestion: View {
         ? nil
         : ScheduleTime.split(
           minutes: shown.minutes, choices: timeChoices, answers: Array(found.answers.values)),
-      updating: shown.updating,
-      aim: view.languageAimView?.aimAhead
+      updating: shown.updating
     ) {
       if found.status == .failed {
         found.restart()

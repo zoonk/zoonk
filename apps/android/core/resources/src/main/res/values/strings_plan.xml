@@ -22,6 +22,8 @@
     <string name="plan_ends_about">Ends around %1$s</string>
     <!-- When a phase of the plan is expected to end. %1$s is a month, like "Jan". -->
     <string name="plan_ends_about_month">Ends around %1$s</string>
+    <string name="plan_later">Later</string>
+    <string name="plan_ends_later">Ends later</string>
     <string name="plan_date_range">%1$s – %2$s</string>
 
     <string name="plan_no_goal_description">Tell us what you want to learn, and we\'ll plan every day until you get there.</string>
@@ -63,7 +65,7 @@
     </plurals>
     <string name="plan_today">Today</string>
     <string name="plan_mock_exam">Mock exam</string>
-    <!-- In the roadmap's legend, beside the flag at the day the plan finishes when the learner set no end date. -->
+    <!-- Names the day the plan works out it finishes when the learner set no end date: beside the flag in the roadmap's legend, and as the label of that date in the plan's settings. -->
     <string name="plan_roadmap_you_finish">You finish</string>
     <!-- In the roadmap's legend, beside the mark of each phase's end-of-phase questions (the Trickster, before the learner has met him). -->
     <string name="plan_legend_phase_questions">Phase questions</string>
@@ -599,13 +601,14 @@
     <string name="plan_time_past_date">Your date, %1$s, has passed.</string>
     <!-- %1$s is a month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it. -->
     <string name="plan_time_past_date_month">Your date, %1$s, has passed.</string>
-    <string name="plan_time_finish_unknown">We can\'t estimate a finish date for this schedule. Try more time or more study days.</string>
     <string name="plan_time_finish_failed">We couldn\'t work out when you\'d finish.</string>
     <string name="plan_time_no_days">Choose at least one study day.</string>
     <string name="plan_time_working">Working out the time your goal needs…</string>
     <string name="plan_time_find_failed">We couldn\'t work out the time your goal needs.</string>
-    <!-- %1$s is a month and year, like "March 2027". -->
-    <string name="plan_finish_around">You finish around %1$s.</string>
+    <!-- How long finishing the plan takes at the time picked, when it's more than ten years. -->
+    <string name="plan_finish_years_plus">10+ years</string>
+    <!-- Under '10+ years': how long finishing the plan takes at the time picked. -->
+    <string name="plan_finish_to_finish">to finish</string>
     <string name="plan_finish_working">Working out when you\'d finish…</string>
     <!-- %1$s is a day, such as "May 5". -->
     <string name="plan_time_covers_everything_by">Your time covers everything by %1$s</string>
@@ -619,11 +622,8 @@
     <!-- %1$s is a date, such as "November 8". -->
     <string name="plan_move_date_to">Move your date to %1$s</string>
     <string name="plan_full_course_switch">Keep studying after the exam</string>
-    <string name="plan_finish">At %1$s a day, you finish in %2$s.</string>
-    <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's day with its year, such as "May 5, 2027". -->
-    <string name="plan_finish_after_exam">At %1$s a day, you finish in %2$s, after the exam on %3$s.</string>
-    <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "prévu en %3$s"). -->
-    <string name="plan_finish_after_exam_month">At %1$s a day, you finish in %2$s, after the exam in %3$s.</string>
+    <!-- {date} is a month and year, like "January 2027", or a year, like "2031". -->
+    <string name="plan_finish_around">You finish around %1$s.</string>
     <string name="plan_study_everything">Remove end date</string>
     <string name="plan_study_everything_exam_description">You study every topic. What doesn\'t fit before the exam comes after it.</string>
     <string name="plan_study_everything_goal_description">Every part of your goal, with no end date.</string>
@@ -742,6 +742,8 @@
     </plurals>
     <!-- {after} and {before} are days, like "May 5". -->
     <string name="plan_effect_plan_ends">Your plan will end on %1$s instead of %2$s.</string>
+    <!-- {after} and {before} are a month and year, like "May 2027", or a year, like "2031". -->
+    <string name="plan_effect_plan_ends_around">Your plan will end around %1$s instead of %2$s.</string>
     <!-- {after} and {before} are days, like "May 5". -->
     <string name="plan_effect_phase_ends">%1$s will end on %2$s instead of %3$s.</string>
     <!-- {date} is a weekday and day, like "Monday, May 5". -->

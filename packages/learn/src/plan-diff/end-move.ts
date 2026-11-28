@@ -3,7 +3,12 @@ import { daysBetween } from "../_utils/iso-date";
 
 type EndMoveEffect = Pick<
   NonNullable<PlanChangeView["effect"]>,
-  "endDateAfter" | "endDateBefore" | "lessonsAdded" | "lessonsRemoved"
+  | "endDateAfter"
+  | "endDateBefore"
+  | "endPrecisionAfter"
+  | "endPrecisionBefore"
+  | "lessonsAdded"
+  | "lessonsRemoved"
 >;
 
 const ROUNDING_DAYS = 1;

@@ -38,6 +38,7 @@ export const DAYS_PER_WEEK = 7;
 const isoDateSchema = z.iso.date();
 
 const graphPhaseSchema = z.object({
+  later: z.literal(true).optional(),
   milestone: z.string().nullable().default(null),
   name: z.string(),
 });
@@ -46,6 +47,7 @@ const graphPhaseSchema = z.object({
 const graphSkillSchema = z.object({
   area: z.string().nullable().default(null),
   courseIds: z.array(z.string()).optional(),
+  deferredLessons: z.int().positive().optional(),
   domain: z
     .object({ estimate: z.int().positive(), name: z.string(), share: z.number().min(0).max(1) })
     .optional(),
@@ -80,6 +82,11 @@ export const planGraphSchema = z.object({
   optionSkills: z.array(optionSkillSchema).optional(),
   phases: z.array(graphPhaseSchema).default([]),
   skills: z.array(graphSkillSchema).default([]),
+  /**
+   * A language plan's lessons for bands its aim reaches that have no situations yet: counted in
+   * the forecast, never placed. Only the planned graph has it, never the saved one.
+   */
+  unwrittenLessons: z.int().min(1).optional(),
 });
 
 const lightWeekSchema = z.object({ endDate: isoDateSchema, startDate: isoDateSchema });
@@ -199,6 +206,7 @@ const planPhaseSchema = z.object({
   challengeLeftOut: z.boolean().optional(),
   endDate: isoDateSchema.nullable().default(null),
   kind: z.enum(PLAN_PHASE_KINDS).default("learn"),
+  later: z.literal(true).optional(),
   milestone: z.string().nullable().default(null),
   minutes: z.number().min(0).default(0),
   name: z.string().default(""),

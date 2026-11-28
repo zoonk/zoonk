@@ -9,6 +9,7 @@ import { checkCoverage } from "@zoonk/ai/tasks/curriculum/coverage-check";
 import { checkMemberCoverage } from "@zoonk/ai/tasks/curriculum/member-coverage";
 import {
   generateSkillGraphFrame,
+  generateSkillGraphSection,
   generateWholeSkillGraph,
 } from "@zoonk/ai/tasks/curriculum/skill-graph-calls";
 import { decideLibraryIdentity } from "@zoonk/ai/tasks/identity/decision";
@@ -66,6 +67,7 @@ import { z } from "zod";
 import { loadPlacementPlan } from "../../../../../packages/core/src/learner/_utils/goal-skill-graph";
 import { loadPlacementState } from "../../../../../packages/core/src/learner/placement/_utils/load-placement-state";
 import { saveAnswerInputs } from "../../../../../packages/core/src/view-models/onboarding/_utils/save-onboarding-answer";
+import { mockNoticeSubjectWriter } from "../_test-utils/notice-subject-writer";
 import { getStreamedEvents } from "../_test-utils/parse-stream-events";
 import { recordedOutput, replayStreamedOutline, taskResult } from "../_test-utils/recorded-outputs";
 import { solveAsKeyed, solveLikeTheKeys } from "../_test-utils/solved-items";
@@ -109,6 +111,19 @@ function isolatedGraph(): SkillGraph {
       title: `${course.title} ${token}`,
     })),
     skills: recordedGraph.skills.map((skill) => ({ ...skill, name: `${skill.name} ${token}` })),
+  };
+}
+
+/** A language graph learners aiming for any level share has situations in every band. */
+function inEveryBand(graph: SkillGraph): SkillGraph {
+  const bands = ["beginner", "intermediate", "advanced"] as const;
+
+  return {
+    ...graph,
+    skills: graph.skills.map((skill, index) => ({
+      ...skill,
+      level: bands[index % bands.length] ?? skill.level,
+    })),
   };
 }
 
@@ -520,7 +535,11 @@ describe(goalContentWorkflow, () => {
 
     const { data: frame, ...frameResult } = taskResult({ courses: [], phases: [], sections: [] });
     vi.mocked(generateSkillGraphFrame).mockResolvedValue({ ...frameResult, output: frame });
-    vi.mocked(generateWholeSkillGraph).mockResolvedValue(graphResult(graph));
+
+    vi.mocked(generateWholeSkillGraph).mockImplementation(async (params) =>
+      graphResult(params.goalKind === "language" ? inEveryBand(graph) : graph),
+    );
+
     vi.mocked(generateCourseOutline).mockResolvedValue(taskResult(recordedOutline));
 
     vi.mocked(streamCourseOutline).mockImplementation(
@@ -1070,6 +1089,7 @@ describe(goalContentWorkflow, () => {
             {
               area: null,
               description: "Adjuvants.",
+              estimatedLessons: 2,
               examWeight: null,
               name: added,
               prerequisites: [],
@@ -2122,8 +2142,8 @@ describe(goalContentWorkflow, () => {
     const answers = italianAnswers();
 
     vi.mocked(generateWholeSkillGraph)
-      .mockResolvedValueOnce(graphResult(isolatedGraph()))
-      .mockResolvedValueOnce(graphResult(isolatedGraph()));
+      .mockResolvedValueOnce(graphResult(inEveryBand(isolatedGraph())))
+      .mockResolvedValueOnce(graphResult(inEveryBand(isolatedGraph())));
 
     const learners = await Promise.all([newGoal(answers), newGoal(answers)]);
     await Promise.all(learners.map(({ goal }) => goalContentWorkflow({ goalId: goal.id })));
@@ -2592,6 +2612,7 @@ describe(goalContentWorkflow, () => {
             {
               area: "Immunology",
               description: "Heavy and light chains, and the part that binds the antigen.",
+              estimatedLessons: 5,
               examWeight: 5,
               name: missed,
               prerequisites: [],
@@ -2602,6 +2623,7 @@ describe(goalContentWorkflow, () => {
             {
               area: "Immunology",
               description: "The chains an antibody is made of and where it binds the antigen.",
+              estimatedLessons: 5,
               examWeight: 5,
               name: twin,
               prerequisites: [],
@@ -2750,6 +2772,81 @@ describe(goalContentWorkflow, () => {
     expect(events.filter((event) => event === "createPlan:completed")).toHaveLength(1);
   });
 
+  it("writes a subject absent from the early draft as a sized section", async () => {
+    const { goal } = await newGoal({ details: { examName: "Board exam" }, kind: "exam" });
+    const area = "Statistics";
+    const name = `Compare sampling methods ${crypto.randomUUID().slice(0, 8)}`;
+    const title = `Statistics ${crypto.randomUUID().slice(0, 8)}`;
+    const topics = ["Random samples", "Sampling bias"];
+
+    const known = {
+      ...examStructure([]).subjects[0],
+      citation,
+      name: "Immunology",
+      topics: ["Vaccines"],
+    };
+
+    const blueprint = await examBlueprintFixture({
+      name: "Board exam",
+      structure: { ...examStructure([]), subjects: [known, { ...known, name: area, topics }] },
+    });
+
+    const [opening] = graph.skills;
+
+    if (!opening) {
+      throw new Error("Expected the draft opening skill.");
+    }
+
+    vi.mocked(checkCoverage).mockResolvedValue(
+      taskResult({
+        examWeights: [],
+        missing: [],
+        placements: [{ area: "Immunology", key: opening.key, topics: ["Vaccines"] }],
+      }),
+    );
+
+    mockNoticeSubjectWriter({
+      area,
+      courseTitle: title,
+      lessonCount: 14,
+      skillName: name,
+      topicIds: ["S2.1", "S2.2"],
+    });
+
+    researchEndsWhenAsked(async () => {
+      await prisma.goal.update({ data: { examBlueprintId: blueprint.id }, where: { id: goal.id } });
+    });
+
+    await goalContentWorkflow({ goalId: goal.id, researchId: "research-run" });
+
+    expect(generateSkillGraphSection).toHaveBeenCalledOnce();
+    expect(checkCoverage).toHaveBeenCalledOnce();
+
+    const [plan, shared, course] = await Promise.all([
+      prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
+      prisma.examSkillGraph.findUniqueOrThrow({ where: { examBlueprintId: blueprint.id } }),
+      prisma.course.findFirstOrThrow({ where: { title } }),
+    ]);
+
+    const sizes = z.object({
+      skills: z.array(
+        z.object({
+          area: z.string(),
+          courseIds: z.array(z.string()),
+          lessons: z.number(),
+          name: z.string(),
+          topics: z.array(z.string()).optional(),
+        }),
+      ),
+    });
+
+    for (const stored of [plan, shared]) {
+      expect(sizes.parse(stored.graph).skills.filter((skill) => skill.area === area)).toStrictEqual(
+        [{ area, courseIds: [course.id], lessons: 14, name, topics }],
+      );
+    }
+  });
+
   it("follows a late notice and asks separately about its date", async () => {
     const { goal, user } = await newGoal({
       details: { examName: "Late board exam", level: "basic" },
@@ -2803,6 +2900,7 @@ describe(goalContentWorkflow, () => {
             {
               area: "Immunology",
               description: "Heavy and light chains, and the part that binds the antigen.",
+              estimatedLessons: 5,
               examWeight: 5,
               name: missed,
               prerequisites: [],
@@ -2961,6 +3059,7 @@ describe(goalContentWorkflow, () => {
             {
               area: "Immunology",
               description: "Heavy and light chains, and the part that binds the antigen.",
+              estimatedLessons: 5,
               examWeight: 5,
               name: missed,
               prerequisites: [],
@@ -3027,6 +3126,7 @@ describe(goalContentWorkflow, () => {
             {
               area: "Immunology",
               description: "Heavy and light chains, and the part that binds the antigen.",
+              estimatedLessons: 5,
               examWeight: 5,
               name: missed,
               prerequisites: [],
@@ -3193,6 +3293,7 @@ describe(goalContentWorkflow, () => {
             {
               area: "Immunology",
               description: "Heavy and light chains, and the part that binds the antigen.",
+              estimatedLessons: 5,
               examWeight: 5,
               name: missed,
               prerequisites: [],
@@ -3653,8 +3754,13 @@ describe(goalContentWorkflow, () => {
     expect(events).toStrictEqual(["graph", "research ended"]);
     expect(vi.mocked(sleep)).toHaveBeenCalledWith("3s");
 
+    expect(generateWholeSkillGraph).toHaveBeenCalledWith(
+      expect.objectContaining({ courseLevel: "beginner" }),
+    );
+
     expect(checkCoverage).toHaveBeenCalledWith(
       expect.objectContaining({
+        courseLevel: "beginner",
         references: [
           {
             text: "1. Antigens 2. Adaptive immunity 3. Vaccine trials",

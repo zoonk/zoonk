@@ -19,6 +19,7 @@ import { type PlanStatus } from "../preparation/plan-status";
 import { type WeeklyStudyTime } from "../progress/weekly-study-time-contract";
 import { type WeekDay } from "../sessions/daily-goal";
 import { type NotPlannedReason } from "../view-models/syllabus/syllabus-contract";
+import { type FinishPrecision, type FinishReason } from "./finish-contract";
 import { type MockFundingView } from "./mock-funding-contract";
 import { type PlanNumbers } from "./numbers-contract";
 import { type LearnerPlanOperation, type PlanOperation } from "./plan-contract";
@@ -120,7 +121,9 @@ export type PlanOffer = { effect: PlanEffect; fits: boolean; operations: Learner
 export type PlanPhaseCheckpointView = {
   locked: boolean;
   date: string | null;
+  later?: boolean;
   planItemId: string | null;
+  precision?: FinishPrecision | null;
   state: "done" | "upcoming";
   when: BossTiming;
 };
@@ -135,6 +138,7 @@ export type PlanPhaseView = {
   hours: number;
   index: number;
   kind: PlanPhaseKind;
+  later?: boolean;
   /** Names of its skills the plan leaves out for time while it holds the rest of the phase. */
   leftOut: string[];
   lessonsDone: number;
@@ -143,6 +147,7 @@ export type PlanPhaseView = {
   mocks: { count: number; nextDate: string | null; nextPlanItemId?: string };
   /** Empty for exam phases, which the apps name by kind. */
   name: string;
+  precision?: FinishPrecision | null;
   short: ShortPhaseView | null;
   startDate: string | null;
   state: "current" | "done" | "leftOut" | "unfinished" | "upcoming";
@@ -229,8 +234,10 @@ export type PlanView = {
   currentPhase: number | null;
   estimate: {
     endDate: string | null;
+    finishReason?: FinishReason | null;
     fullCourseEndDate: string | null;
     pace: { factor: number; source: PaceSource } | null;
+    precision?: FinishPrecision | null;
     remainingHours: number;
     totalHours: number;
   };

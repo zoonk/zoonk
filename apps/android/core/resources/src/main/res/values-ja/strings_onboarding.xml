@@ -6,18 +6,18 @@
   "onboarding_adding_material": "a35b237f82d469ddc9214f0fcadd5bd1a41466aae49289e2491ae4b2ee19288c",
   "onboarding_admission_placeholder": "a8ba7b01173de710cbba399752319fa8352a716f47968dcf4923d7952c071709",
   "onboarding_admission_title": "0bfdfaa40aaeea412e663b95454c72b0ddfc02bb93ce664a4ea23bd522b0cc6c",
+  "onboarding_aim_around_month": "3cc3ba5002e3c1e720bb0be3d74487b3b1928ddbe1cb80104fad8d650ea5aacb",
+  "onboarding_aim_around_year": "72e526affae7b74da30d378fa64318f3f84af66b2ae95d520a5ffdbc49c525ac",
+  "onboarding_aim_beyond": "b401716acdc9c92cdd24605b346fa30c3dc6e7abbc1e86151736297f240a6ece",
   "onboarding_aim_by_month": "d2ab1d5371bcdcbe606d8682c08d4e3ba0a88a6e88ea0c20e035baaad1387824",
   "onboarding_aim_change": "8dea3e4c220c46dfe31f216635ab735a559bded91e4b5d1a1373e04345b15e53",
   "onboarding_aim_description": "8541cd8ebcacd93cb65b61f067f2d9e52045a10ebbfb6fb7b84ff740287fc65e",
-  "onboarding_aim_finish": "f5103ece4d5b5b295af8d5d79767f31856276640dc7969571cf1a6070d0f8a08",
   "onboarding_aim_fluent": "905a1e4a8dde12006f4eb09ca0111da364dd8e9d704b6b6b04ef419cd4ced35f",
   "onboarding_aim_from_advanced": "771322c7b1ed24d5acd4f7120f4d41b6983e17978759ec74ef8e27d970e2e29a",
   "onboarding_aim_from_basic": "afd29f814922fe6085fd759e991f510ab2ae91d194cc3d90f04c230316ba9e4e",
   "onboarding_aim_from_intermediate": "09cd5ae89dc646ccd241b8e814b0d25af311885d5b65aacfd7eaf12351d9ac4f",
   "onboarding_aim_from_level": "13635d980559d3f050277347de1acad1acf0aeb89b30f766b72854474f14d4e1",
   "onboarding_aim_from_none": "8ed5433e3e555448838e2be5623764797d759051b172010a3f640655322122fc",
-  "onboarding_aim_hours_month": "27bb799417e4c33c9020720eb8cb0feea34f2074782fef127f144715f8df7ec0",
-  "onboarding_aim_hours_more": "5eb3c82f8199f619872cc640bc01d531f97a53bb430ca50f2a53d555b3e4bfee",
   "onboarding_aim_picker_title": "7da21b9e5b01588d89b3847704b830e4a134510c255dedf0e3f03beddfca1ebb",
   "onboarding_aim_talk": "98e2757832d2283149713a2ce06c42f4d4697f38436c0d4aae4ed9e75e5ffeec",
   "onboarding_aim_title": "26b23e164a22d17c799f3023737cefd51c16145b557003fe8bf176a1067b6a53",
@@ -180,16 +180,15 @@
   "onboarding_position_label": "a2ac4f32049092bd5cf914d43b6afa68f6e8fda9390c207c216d46d51ed7d44f",
   "onboarding_position_title": "d90efc5c11709a576d63601ba657eae865c7dd367101aaec52acec40d11af826",
   "onboarding_purpose_career_change": "6acac8523734ecdd508dfcd517e58e43afb86bd3c033e2c15b95d9f8291bc124",
-  "onboarding_purpose_career_change_description": "61846bf3d1645a848651c59a3521308abe5a5a15051ca4f0fc11f6da8735857e",
-  "onboarding_purpose_deep": "6b5d80f7ff3dbfa3979a259ef9e37043bfbd00f52ed1a62b462304c233f31f06",
-  "onboarding_purpose_deep_description": "b07c29d3158045c2cad3de210beb895f8e90ab980279590155fb9e135d2070c3",
-  "onboarding_purpose_description": "6876d0971caba99456a65bf77dfb3fe9804b8ed54225f14f5b324fb367be51a0",
+  "onboarding_purpose_career_change_description": "0369b64d2daed0585cd8999648cba6fd3af92db3bf65683f3fe61fa821e161a4",
+  "onboarding_purpose_deep": "ad62a45d933fde9d682a5b1236b0c5096abe0315faf94fbed0216052d2f6612c",
+  "onboarding_purpose_deep_description": "b321d81ba3c4c1b3cdd3b9f5b1f2943494a2ab641dc349a1fef3f5555df8ee95",
   "onboarding_purpose_label": "5b7b54f7f7610da309529925f6803cc9fab8330408768692ab0f4df6e73b4ed5",
   "onboarding_purpose_other": "a9f6eeecefcd5eca26cad4fa1031d81e6046cbfc3fb2174e6a64505e6a4905b6",
   "onboarding_purpose_overview": "7c16f89b6fc55b58663fec08b8086b7b238ff4053ca652712709351d973455b7",
-  "onboarding_purpose_overview_description": "f5109ee58cf690029d5a1eb209dc470e7b5efebc5b827b5fed1d508b11939e35",
+  "onboarding_purpose_overview_description": "249f2c1ac7742b32db40035a989455cdcbfba4b8e4a010044be833d3b328d159",
   "onboarding_purpose_refresh": "cf99d887660154aaa8e6bb1ab6182d4534792917f1317c0a5ba4b42061fb4c34",
-  "onboarding_purpose_refresh_description": "a9c6e82633b5b8b41b3ac6ccb3c5c0ca442f2c5575afbca4f113d59a5da76511",
+  "onboarding_purpose_refresh_description": "f1e226f6ec883e80ecb9ca03f11dbc7b24709228c6c9d2a7cc741204d1453eb4",
   "onboarding_purpose_title": "97fb47b64ebead19d3c30f8b909e46c8b02c0f2b4e4c0af484b89278c19e71e4",
   "onboarding_purpose_work": "b78b57bd3bcdf4c05d2df0e9b2e85516af7ee06d52e68c5e650e1a248dcc49d4",
   "onboarding_question_failed": "250545d15513859569193944ad878c5f295e43ceea298f222cacca744536a399",
@@ -624,17 +623,16 @@
     <string name="onboarding_continue">続ける</string>
     <string name="onboarding_skip">スキップ</string>
     <string name="onboarding_purpose_title">学習の目的は何ですか？</string>
-    <string name="onboarding_purpose_description">学ぶ内容の深さと、それに応じた学習期間が決まります。</string>
     <string name="onboarding_purpose_label">学習の目的</string>
     <string name="onboarding_purpose_overview">全体像をつかむ</string>
-    <string name="onboarding_purpose_overview_description">数式なしで、大事なポイントを学ぶ短いコース</string>
-    <string name="onboarding_purpose_deep">深く理解する</string>
-    <string name="onboarding_purpose_deep_description">基礎から上級まで、ひと通り学ぶコース</string>
+    <string name="onboarding_purpose_overview_description">主なポイントをざっと知りたいです</string>
+    <string name="onboarding_purpose_deep">しっかり理解する</string>
+    <string name="onboarding_purpose_deep_description">段階を追って、少しずつ深く学びたい</string>
     <string name="onboarding_purpose_work">仕事に活かす</string>
     <string name="onboarding_purpose_career_change">転職する</string>
-    <string name="onboarding_purpose_career_change_description">新しい仕事に必要なことを学び、ポートフォリオも作る</string>
+    <string name="onboarding_purpose_career_change_description">新しい仕事に必要なことを学び、ポートフォリオを作りたいです</string>
     <string name="onboarding_purpose_refresh">以前学んだことを復習する</string>
-    <string name="onboarding_purpose_refresh_description">短いテストを受けてから、以前のレベルを取り戻します</string>
+    <string name="onboarding_purpose_refresh_description">以前の実力を取り戻したいです</string>
     <string name="onboarding_purpose_other">その他</string>
     <string name="onboarding_level_title">どのくらい知っていますか？</string>
     <string name="onboarding_level_description">学習計画をどこから始めるかだけが変わります。</string>
@@ -775,12 +773,12 @@
     <string name="onboarding_aim_title">%1$sの目標レベル</string>
     <string name="onboarding_aim_change">変更する</string>
     <string name="onboarding_aim_picker_title">どのレベルを目指しますか？</string>
-    <!-- %1$s is hours of study, such as "190 hr". -->
-    <string name="onboarding_aim_hours_more">あと約%1$s</string>
-    <!-- %1$s is hours of study, such as "190 hr"; %2$s a month, such as "Mar 2027". -->
-    <string name="onboarding_aim_hours_month">あと約%1$s・%2$sごろ</string>
+    <!-- Under a language level to aim for, when reaching it takes more than ten years at the learner's time. -->
+    <string name="onboarding_aim_beyond">10年以上先</string>
+    <!-- When a language level is reached. {year} is a year, like "2031". -->
+    <string name="onboarding_aim_around_year">%1$sごろ</string>
+    <string name="onboarding_aim_around_month">%1$sごろ</string>
     <string name="onboarding_aim_by_month">%1$sまでに</string>
-    <string name="onboarding_aim_finish">1日%1$sのペースなら、%2$sには%3$sごろに到達します。</string>
     <string name="onboarding_reason_travel">旅行</string>
     <string name="onboarding_reason_travel_description">旅行先で注文したり、道を尋ねたり、ちょっと話したりする</string>
     <string name="onboarding_reason_talk">人と話す</string>

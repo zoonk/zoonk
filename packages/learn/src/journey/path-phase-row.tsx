@@ -128,16 +128,26 @@ function usePhaseState() {
 }
 
 /**
+ * A phase with a milestone is named by what the learner can do once it's done, on its band, its
+ * row and its sheet alike, so a screen never shows a phase under two names.
+ */
+export function usePhaseRowName() {
+  const phaseName = usePhaseName();
+  const { plan } = usePlanScreen();
+
+  return (phase: PlanPhaseView): string =>
+    phase.milestone ?? phaseName(phase, { mocksRequirePlus: plan.access.mocksRequirePlus });
+}
+
+/**
  * One run of words: a browser reads hidden text as its own block, so a band named from its parts
  * read "Phase 3 , you are here".
  */
 export function usePhaseLabel() {
-  const phaseName = usePhaseName();
+  const phaseRowName = usePhaseRowName();
   const phaseState = usePhaseState();
-  const { plan } = usePlanScreen();
 
-  return (phase: PlanPhaseView): string =>
-    `${phaseName(phase, { mocksRequirePlus: plan.access.mocksRequirePlus })}${phaseState(phase)}`;
+  return (phase: PlanPhaseView): string => `${phaseRowName(phase)}${phaseState(phase)}`;
 }
 
 export function PhaseName({
@@ -152,15 +162,15 @@ export function PhaseName({
   phase: PlanPhaseView;
 }) {
   const phaseName = usePhaseName();
+  const phaseRowName = usePhaseRowName();
   const phaseState = usePhaseState();
-  const { plan } = usePlanScreen();
-  const name = phaseName(phase, { mocksRequirePlus: plan.access.mocksRequirePlus });
+  const name = phaseRowName(phase);
   const state = phaseState(phase, { isNext });
 
   return (
     <>
       <span className={cn("font-medium", phase.state === "done" && "text-muted-foreground")}>
-        {byPlace && phase.state !== "current" ? (
+        {byPlace && !phase.milestone && phase.state !== "current" ? (
           <>
             <span className="in-data-panel-open:hidden">{name}</span>
             <span className="hidden in-data-panel-open:inline">

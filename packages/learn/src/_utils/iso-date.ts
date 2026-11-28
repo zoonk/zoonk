@@ -33,6 +33,10 @@ export function daysBetween(from: string, to: string): number {
   return Math.round((isoDateToUtc(to).getTime() - isoDateToUtc(from).getTime()) / MS_PER_DAY);
 }
 
+export function isNearEstimate({ date, today }: { date: string; today: string }): boolean {
+  return Math.abs(daysBetween(today, date)) <= NEAR_ESTIMATE_DAYS;
+}
+
 /** A day the server sends as UTC midnight, as its calendar day. */
 export function toIsoDay(date: Date): string {
   return date.toISOString().slice(0, "YYYY-MM-DD".length);
@@ -41,6 +45,7 @@ export function toIsoDay(date: Date): string {
 type DateOptions = Omit<DateFormat, "role">;
 
 const REFERENCE_SUNDAY = Date.parse("2023-01-01T00:00:00Z");
+const NEAR_ESTIMATE_DAYS = 42;
 
 /** Today as a calendar day: the plan's own day, or today on the learner's clock. */
 export function useIsoToday(): string {

@@ -17,6 +17,22 @@ final class PlanHeaderFactsTests: XCTestCase {
     XCTAssertEqual(planDaysLeft(plan, goal: goal(.exam, .paused))?.shown, "60 days left")
   }
 
+  func testAMonthsYearIsSmallWithItsOwnUnitAndTheGapBesideIt() {
+    let cases = [
+      ("en_US", "Dec", " 2026"), ("pt_BR", "dez. de", " 2026"), ("ko_KR", "12월", "2026년 "),
+      ("ja_JP", "12月", "2026年"),
+    ]
+
+    for (identifier, month, year) in cases {
+      let (text, range) = PlanDate.monthAndYear(
+        "2026-12-14", locale: Locale(identifier: identifier))
+      let small = range.map { String(text[$0]) }
+
+      XCTAssertEqual(small, year, identifier)
+      XCTAssertEqual(text.replacingOccurrences(of: year, with: ""), month, identifier)
+    }
+  }
+
   func testAnEndDateNotSetSaysOnlyThat() {
     let value = PlanEndDateValue(target: nil, isExam: false, today: "2027-01-04")
 
@@ -26,19 +42,34 @@ final class PlanHeaderFactsTests: XCTestCase {
 
   func testAnEndDateNotSetSaysTheEstimatedFinishAsEveryEstimate() {
     let day = PlanEndDateValue(
-      target: nil, finish: ("2027-01-22", false), isExam: false, today: "2027-01-04")
+      target: nil, finish: ("2027-01-22", .day), isExam: false, today: "2027-01-04")
     let month = PlanEndDateValue(
-      target: nil, finish: ("2027-04-20", true), isExam: false, today: "2027-01-04")
+      target: nil, finish: ("2027-04-20", .month), isExam: false, today: "2027-01-04")
+    let nextYearsMonth = PlanEndDateValue(
+      target: nil, finish: ("2028-04-20", .month), isExam: false, today: "2027-01-04")
 
     XCTAssertEqual(day.shown, "~Jan 22")
     XCTAssertEqual(day.spoken, "About Jan 22")
     XCTAssertTrue(day.isDate)
-    XCTAssertEqual(month.shown, "~Apr 2027")
+    XCTAssertEqual(month.shown, "~Apr", "a month names its year only when it isn't this year's")
+    XCTAssertEqual(nextYearsMonth.shown, "~Apr 2028")
+  }
+
+  func testAnEndDateNotSetSaysTenPlusYearsPastTheYearsAPlanLaysOut() {
+    let value = PlanEndDateValue(
+      target: nil, finishesLater: true, isExam: false, today: "2027-01-04")
+
+    XCTAssertEqual(value.shown, "10+ years")
+    XCTAssertFalse(value.isDate)
+  }
+
+  func testTheFinishReadoutNamesItsMonthsYearEvenInThisYear() {
+    XCTAssertEqual(PlanDate.finishText("2027-04-20", grain: .month), "April 2027")
   }
 
   func testASetEndDateWinsOverTheEstimatedFinish() {
     let value = PlanEndDateValue(
-      target: ("2027-03-05", false, false), finish: ("2027-01-22", false), isExam: false,
+      target: ("2027-03-05", false, .day), finish: ("2027-01-22", .day), isExam: false,
       today: "2027-01-04")
 
     XCTAssertEqual(value.shown, "Mar 5")

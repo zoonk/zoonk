@@ -53,17 +53,22 @@ async function findActiveExtraLessons({ context, now }: { context: PlanContext; 
 export async function loadExtraPlanGraph({
   context,
   now,
+  readExamOptionSource,
   state,
 }: {
   context: PlanContext;
   now: Date;
+  readExamOptionSource?: Parameters<typeof chooseExamOptionSkills>[0]["readSource"];
   state: PlanState;
 }) {
   const [activeLessons, resolved] = await Promise.all([
     findActiveExtraLessons({ context, now }),
-    chooseExamOptionSkills({ goal: context.goal, graph: state.graph, picks: state.settings }).then(
-      (chosen) => resolveMergedSkills(withAskedExtras(chosen, state.settings.extras)),
-    ),
+    chooseExamOptionSkills({
+      goal: context.goal,
+      graph: state.graph,
+      picks: state.settings,
+      readSource: readExamOptionSource,
+    }).then((chosen) => resolveMergedSkills(withAskedExtras(chosen, state.settings.extras))),
   ]);
 
   const extraSkills = new Map(

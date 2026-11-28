@@ -368,7 +368,7 @@ private struct RevealNoticeDay: View {
           failure
         }
       } else if let noSitting = schedule.noSitting {
-        let month = PlanDate.monthText(noSitting.month, today: PlanDate.today(), wide: true)
+        let month = PlanDate.longText(noSitting.month, month: true)
         Section {
           Text(
             "No exam date in \(month)", tableName: "Exam",

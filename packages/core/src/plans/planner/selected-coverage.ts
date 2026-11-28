@@ -7,6 +7,7 @@ import { getHarderStartSkillIds, getSkillArea } from "./graph-areas";
 import { getBaseChoices } from "./plan-bases";
 import { type PlannedItem } from "./plan-items";
 import { PLAN_EPSILON } from "./plan-precision";
+import { DEFAULT_LESSON_MINUTES } from "./plan-units";
 import { type SkillRequirement, getWrittenCoverage, isCompleted } from "./selected-requirement";
 
 export type ExamSubjectShare = { areas: readonly string[]; share: number };
@@ -225,7 +226,7 @@ export function getWholeShortfall({
   const standInsLeft = measured.reduce(
     (sum, { required, skillId }) =>
       sum + Math.max(0, required.standIn - (standIns.get(skillId) ?? 0)),
-    0,
+    (input.graph.unwrittenLessons ?? 0) * DEFAULT_LESSON_MINUTES * input.paceFactor,
   );
 
   return [...lessonsLeft.values()].reduce((sum, minutes) => sum + minutes, standInsLeft);
@@ -292,6 +293,7 @@ export function getCoverage({
   const writingFits = !written || written.coveredRaw >= written.requiredRaw - PLAN_EPSILON;
 
   const coreFits =
+    (input.graph.unwrittenLessons ?? 0) === 0 &&
     writingFits &&
     skills.every(
       (skill) =>

@@ -181,16 +181,31 @@ function DailyTimeReadout({
 }
 
 export function DailyTimePicker({
+  aside,
   minutes,
   titled = false,
   ...props
-}: DailyTimeProps & { minutes: number | null; titled?: boolean }) {
-  const picker =
+}: DailyTimeProps & {
+  /** What the time picked gets the learner, at the row's end. */
+  aside?: React.ReactNode;
+  minutes: number | null;
+  titled?: boolean;
+}) {
+  const time =
     minutes === null ? (
       <Skeleton className="h-12 w-40" />
     ) : (
       <DailyTimeReadout minutes={minutes} {...props} />
     );
+
+  const picker = aside ? (
+    <div className="flex items-end justify-between gap-4">
+      {time}
+      {aside}
+    </div>
+  ) : (
+    time
+  );
 
   if (!titled) {
     return picker;

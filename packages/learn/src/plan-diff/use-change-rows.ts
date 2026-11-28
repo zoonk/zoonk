@@ -11,7 +11,7 @@ import {
   getTopicNames,
   useNames,
 } from "./change-names";
-import { getShownEndMove } from "./end-move";
+import { useEndMoveText } from "./use-end-move-text";
 
 export type ChangeRow = {
   after: string;
@@ -108,9 +108,10 @@ function moved({ after, before, key, label }: Omit<ChangeRow, "detail">): Change
 function useDateRows() {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
+  const endMoveText = useEndMoveText();
 
   return (effect: PlanEffect, goalDate?: GoalDateMove): ChangeRow[] => {
-    const end = getShownEndMove(effect);
+    const end = endMoveText(effect);
 
     return [
       ...(goalDate
@@ -122,12 +123,7 @@ function useDateRows() {
           })
         : []),
       ...(end
-        ? moved({
-            after: formatDate(end.after),
-            before: formatDate(end.before),
-            key: "end",
-            label: t("Plan ends"),
-          })
+        ? moved({ after: end.after, before: end.before, key: "end", label: t("Plan ends") })
         : []),
       ...(effect.phaseEnds ?? []).flatMap((phase) =>
         moved({

@@ -8,6 +8,7 @@ import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../pr
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import { getVerbForm } from "../_utils/verb-form";
+import { type COURSE_LEVELS } from "./_utils/course-levels";
 import {
   type CoverageReference,
   type ExamWeightChange,
@@ -42,6 +43,7 @@ const schema = z.object({
     z.object({
       course: z.string(),
       description: z.string(),
+      estimatedLessons: z.number(),
       name: z.string(),
       prerequisites: z.array(z.string()),
       syllabusLine: z.string(),
@@ -55,6 +57,7 @@ const examSchema = z.object({
     z.object({
       course: z.string(),
       description: z.string(),
+      estimatedLessons: z.number(),
       examWeight: z.number().nullable(),
       name: z.string(),
       prerequisites: z.array(z.string()),
@@ -70,6 +73,7 @@ const noticeSchema = z.object({
       area: z.string(),
       course: z.string(),
       description: z.string(),
+      estimatedLessons: z.number(),
       examWeight: z.number().nullable(),
       name: z.string(),
       prerequisites: z.array(z.string()),
@@ -86,6 +90,7 @@ type RawCoverage = {
     area?: string;
     course: string;
     description: string;
+    estimatedLessons: number;
     examWeight?: number | null;
     name: string;
     prerequisites: string[];
@@ -99,6 +104,8 @@ type CoverageSkill = {
   key: string;
   name: string;
   description: string;
+  /** The graph's own sizes, so a missing skill is sized like its neighbors. */
+  estimatedLessons?: number;
   examWeight?: number | null;
   area?: string | null;
   topics?: string[];
@@ -108,6 +115,8 @@ export type CoverageCheckParams = {
   language: string;
   goal: string;
   goalKind: "exam" | "language" | "learn";
+  /** A broad learn goal's one level band, the same one its graph was written up to. */
+  courseLevel?: (typeof COURSE_LEVELS)[number];
   /** The graph's courses: a missing skill goes in the course of its own discipline. */
   courses: { key: string; title: string }[];
   skills: CoverageSkill[];
@@ -139,18 +148,28 @@ function formatPlace({ outline, skill }: { outline: ExamOutline; skill: Coverage
 
 function formatSkill({ outline, skill }: { outline?: ExamOutline; skill: CoverageSkill }): string {
   const line = `- ${skill.key}: ${skill.name}. ${skill.description}`;
+  const lessons = skill.estimatedLessons;
+  const size = typeof lessons === "number" ? ` (${lessons} lessons)` : "";
   const place = outline ? formatPlace({ outline, skill }) : "";
   const weight = typeof skill.examWeight === "number" ? ` (exam weight ${skill.examWeight})` : "";
 
-  return `${line}${place}${weight}`;
+  return `${line}${size}${place}${weight}`;
 }
 
 function getNoticeOutline(params: CoverageCheckParams): ExamOutline | undefined {
   return params.goalKind === "exam" ? params.examOutline : undefined;
 }
 
+function getCourseLevel(params: CoverageCheckParams) {
+  return params.goalKind === "learn" ? params.courseLevel : undefined;
+}
+
 function toPromptVariants(params: CoverageCheckParams) {
-  return { exam: params.goalKind === "exam", notice: Boolean(getNoticeOutline(params)) };
+  return {
+    courseLevel: Boolean(getCourseLevel(params)),
+    exam: params.goalKind === "exam",
+    notice: Boolean(getNoticeOutline(params)),
+  };
 }
 
 function getSchema(params: CoverageCheckParams): z.ZodType<RawCoverage> {
@@ -200,10 +219,12 @@ function buildUserPrompt(params: CoverageCheckParams): string {
     ),
   });
 
+  const courseLevel = getCourseLevel(params);
+
   return `
     LANGUAGE: ${getPromptLanguageName({ language: params.language })}
     VERB_FORM: ${getVerbForm(params.language)}
-    GOAL_KIND: ${params.goalKind}
+    GOAL_KIND: ${params.goalKind}${courseLevel ? `\n    COURSE_LEVEL: ${courseLevel}` : ""}
     COURSES:
 ${params.courses.map((course) => `- ${course.key}: ${course.title}`).join("\n")}
     SKILLS:

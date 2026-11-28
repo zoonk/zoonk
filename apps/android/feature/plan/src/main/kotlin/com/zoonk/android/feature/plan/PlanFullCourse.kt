@@ -31,50 +31,34 @@ import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.Switch
-import com.zoonk.android.ui.format.DateStyle
-import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.formatDate
-import com.zoonk.android.ui.format.formatMinutes
+import com.zoonk.api.models.PlanFinishPrecision
 import kotlinx.datetime.toJavaLocalDate
 import java.time.LocalDate
 import java.util.UUID
 
-/** Names the exam's year beside the finish's, so November 2027 never reads as the exam's month. */
+/** Main's `useFinishSentence`: when a plan that studies past its exam finishes, "January 2027" or, far off, "2031". */
 @Composable
 internal fun finishText(
-    course: FullCourse,
     endDate: LocalDate?,
-    page: PlanPageState,
+    precision: PlanFinishPrecision?,
 ): String? {
     endDate ?: return null
-    val locale = currentLocale()
-    val month = formatDate(endDate, locale, DateStyle.Month, page.today)
-    val time =
-        formatMinutes(
-            page.plan.schedule.dailyMinutes
-                .toInt(),
-            locale,
-        )
-    return if (course.isExam) {
-        stringResource(
-            if (course.targetDateNamedMonth) R.string.plan_finish_after_exam_month else R.string.plan_finish_after_exam,
-            time,
-            month,
-            goalDate(course.targetDate, course.targetDateNamedMonth, page.today, DateStyle.LongYear),
-        )
-    } else {
-        stringResource(R.string.plan_finish, time, month)
-    }
+    val shown = EndDate(endDate, if (precision == PlanFinishPrecision.YEAR) EndPrecision.Year else EndPrecision.Month)
+    return stringResource(R.string.plan_finish_around, endDateText(shown))
 }
 
-/** Main's `FullCourseSwitch`, under an exam's time a day. */
+/**
+ * Main's `FullCourseSwitch`, under an exam's time a day: only on a plan that already studies past the exam, so it can be
+ * turned off. Before the exam the option lives in the coverage suggestion; after it, the Plan asks.
+ */
 @Composable
 internal fun FullCourseSwitch(
     page: PlanPageState,
     edits: PlanEdits,
     focus: FocusRequester,
 ) {
-    val course = fullCourse(page)?.takeIf { it.isExam } ?: return
+    val course = fullCourse(page)?.takeIf { it.isExam && it.on } ?: return
+    val finish = finishText(course.endDate, course.precision)
     val on =
         edits
             .asked(PlanPart.FullCourse)
@@ -99,6 +83,9 @@ internal fun FullCourseSwitch(
         ) {
             Text(stringResource(R.string.plan_full_course_switch), Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
             Switch(checked = on, onCheckedChange = null)
+        }
+        finish?.let {
+            Text(it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         if (edits.hasFailed(PlanPart.FullCourse)) SaveFailedText()
     }
@@ -170,13 +157,16 @@ internal fun ColumnScope.StudyEverythingBody(
     val pending = edits.isPending(PlanPart.FullCourse)
     val asking = !pending && course.endDate == null
     val shown = preview.of(operations, page.plan)
-    val endDate =
-        course.endDate ?: (shown as? PlanPreviewState.Ready)
-            ?.preview
-            ?.effect
-            ?.endDateAfter
-            ?.toJavaLocalDate()
-    val finish = finishText(course, endDate, page)
+    val result = (shown as? PlanPreviewState.Ready)?.preview
+    val finish =
+        if (course.endDate != null) {
+            finishText(course.endDate, course.precision)
+        } else {
+            finishText(
+                (result?.finishDate ?: result?.effect?.endDateAfter)?.toJavaLocalDate(),
+                result?.precision ?: result?.effect?.endPrecisionAfter,
+            )
+        }
 
     LaunchedEffect(asking, page.plan) {
         if (asking && preview.of(operations, page.plan) == PlanPreviewState.Idle) onPreview(operations)

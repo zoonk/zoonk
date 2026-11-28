@@ -128,6 +128,23 @@ final class ScheduleTimeTests: XCTestCase {
   }
 
   /// The suggestion is offered only while a shorter time is picked.
+  func testAGoalWithoutADateSaysWhenTheTimePickedFinishesIt() {
+    let line = {
+      (date: String?, precision: PlanForecast.Precision?, reason: PlanForecast.Reason?) in
+      ScheduleTime.line(
+        advice: TimeAdvice(
+          endDate: date, finishReason: reason, fullCourseEndDate: nil, precision: precision,
+          readingNotice: false, ready: true),
+        askFailed: false, dated: false, findFailed: false, found: nil, hasDays: true, minutes: 35)
+    }
+
+    XCTAssertEqual(line("2027-03-01", .month, nil), .finish(.month("2027-03-01")))
+    XCTAssertEqual(line("2031-06-01", .year, nil), .finish(.year("2031-06-01")))
+    XCTAssertEqual(line(nil, nil, .beyondHorizon), .finish(.beyond))
+    XCTAssertEqual(line(nil, nil, .noStudyDays), .quiet)
+    XCTAssertEqual(line(nil, nil, .nothingLeft), .quiet)
+  }
+
   func testOffersTheSuggestionOnlyBelowIt() {
     let suggests = Line.suggests(everything(120))
 

@@ -16,6 +16,7 @@
 ## Placeholders
 
 - Name, title and language-name placeholders can't decline (a language comes as “angielski”): keep them in the nominative, as the subject or after a colon: “Napisz do: {name}”, “Język lekcji: {language}”. To ask the buddy, give it its own clause: “Zapytaj o ten rozdział. Odpowie {buddy}”.
+- A month, or a month and year, comes in the nominative (“maj 2027”), so the same goes for it: never after “około”, “do” or “w”, but after a colon: “Orientacyjnie: {date}”.
 
 ## Glossary
 

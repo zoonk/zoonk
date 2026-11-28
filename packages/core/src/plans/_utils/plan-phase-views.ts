@@ -1,13 +1,13 @@
-import { type Goal, type PlanItemStatus } from "@zoonk/db";
+import { type Goal } from "@zoonk/db";
 import { type ChallengeTiming } from "../../checkpoints/_utils/challenge-timing";
 import { isPastPlusOnlyMock } from "../../checkpoints/plus-only-mock";
 import { type PlanChapterView, type PlanPhaseView } from "../plan-view-contract";
-import { toIsoDate } from "../planner/plan-calendar";
+import { getEarliestDate, toIsoDate } from "../planner/plan-calendar";
 import { isWritingItem } from "../planner/plan-item-rules";
 import { type PlanPhase } from "../planner/plan-state";
-import { buildCheckpoint } from "./phase-checkpoint";
+import { buildPhaseMilestones } from "./phase-checkpoint";
 import { getPhaseStates } from "./phase-states";
-import { hasPlanDeadline, withinLessonScope } from "./plan-end";
+import { hasPlanDeadline, isTodo, withinLessonScope } from "./plan-end";
 import { type PlanReadItem, getPlanReadItemKey } from "./plan-read-projection";
 import { type ShortPlanShape, toShortPhaseView } from "./short-plan-view";
 import {
@@ -19,8 +19,6 @@ import {
 import { countLessonProgress, getWorkProgress, isWorkFinished } from "./work-progress";
 
 const MINUTES_PER_HOUR = 60;
-
-const isTodo = (status: PlanItemStatus) => getWorkProgress(status) === "todo";
 
 const isTestedOut = (item: Pick<PlanReadItem, "status">) =>
   getWorkProgress(item.status) === "testedOut";
@@ -137,7 +135,7 @@ function buildChapters({
       return [];
     }
 
-    const todo = inGroup.filter((item) => isTodo(item.status));
+    const todo = inGroup.filter((item) => isTodo(item));
     const writing = isWritingItem(first) && todo.length > 0;
 
     const nextDate = getEarliestDate(
@@ -187,11 +185,6 @@ function buildChapters({
 
     return { ...group, state: key === currentKey ? ("current" as const) : ("upcoming" as const) };
   });
-}
-
-function getEarliestDate(items: readonly PlanReadItem[]): string | null {
-  const dates = items.flatMap((item) => (item.scheduledFor ? [toIsoDate(item.scheduledFor)] : []));
-  return dates.toSorted()[0] ?? null;
 }
 
 function buildMocks({
@@ -250,6 +243,7 @@ export function buildPhaseViews({
   challengesOpen = true,
   chapterTitles,
   currentPhase,
+  deferredLessons = new Map(),
   estimateMinutes = null,
   goalKind,
   items: planItems,
@@ -272,6 +266,7 @@ export function buildPhaseViews({
   challengesOpen?: boolean;
   chapterTitles: ReadonlyMap<string, string>;
   currentPhase: number | null;
+  deferredLessons?: ReadonlyMap<number, number>;
   estimateMinutes?: number | null;
   goalKind: Goal["kind"];
   items: readonly PlanReadItem[];
@@ -311,7 +306,7 @@ export function buildPhaseViews({
     const reason = phaseReasons.has(index) ? (phaseReasons.get(index) ?? null) : "time";
 
     return {
-      challengeLeftOut: phase.challengeLeftOut === true,
+      ...buildPhaseMilestones({ items: inPhase, locked: !challengesOpen, phase, timings, today }),
       chapterCount: new Set(lessons.map((item) => getGroupKey({ item, skillAreas }))).size,
       chapters: buildChapters({
         chapterTitles,
@@ -326,18 +321,15 @@ export function buildPhaseViews({
         todayItemKeys,
         upNextItemId,
       }),
-      checkpoint: buildCheckpoint({ items: inPhase, locked: !challengesOpen, timings }),
-      endDate: phase.endDate,
       hours: Math.round((minutes / MINUTES_PER_HOUR) * 10) / 10,
       index,
       kind: phase.kind,
-      ...countLessonProgress(lessons),
-      milestone: phase.milestone,
+      ...(phase.later && { later: true }),
+      ...countLessonProgress(lessons, deferredLessons.get(index)),
       mocks: buildMocks({ items: inPhase, mocksRequirePlus, today }),
       name: phase.name,
-      notPlannedReason: states[index] === "leftOut" ? reason : null,
+      notPlannedReason: states[index] === "leftOut" && !phase.later ? reason : null,
       short: toShortPhaseView({ phase, shape: shortPlan }),
-      startDate: phase.startDate,
       state: states[index] ?? "upcoming",
     };
   });

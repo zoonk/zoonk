@@ -1,7 +1,7 @@
 import { once } from "@zoonk/utils/once";
 import { findDayIndex, findDayIndexFrom } from "./day-index";
 import { type StudyPortion, getUnitStudy } from "./interval-study-minutes";
-import { findLargestCount, makeRoomForOutcomes } from "./outcome-room";
+import { closeWhatFits, makeRoomForOutcomes } from "./outcome-room";
 import { addDays } from "./plan-calendar";
 import { PLAN_EPSILON } from "./plan-precision";
 import { type QueueUnit } from "./plan-units";
@@ -199,54 +199,6 @@ function layUnits({
   );
 }
 
-function fitsWhole({
-  cumulative,
-  units,
-}: {
-  cumulative: readonly number[];
-  units: readonly QueueUnit[];
-}): boolean {
-  return placeUnits({ cumulative, units }).every(({ dayIndex }) => dayIndex >= 0);
-}
-
-function closeWhatFits({
-  cumulative,
-  placed,
-  units,
-}: {
-  cumulative: readonly number[];
-  placed: readonly PlacedUnit[];
-  units: readonly QueueUnit[];
-}): { kept: QueueUnit[]; leftOut: QueueUnit[] } {
-  const closing = units.at(-1);
-  const before = units.slice(0, -1);
-  const unchanged = { kept: [...units], leftOut: [] };
-
-  if (closing?.kind !== "boss" || placed.every(({ dayIndex }) => dayIndex >= 0)) {
-    return unchanged;
-  }
-
-  const fitting = placed.slice(0, -1).filter(({ dayIndex }) => dayIndex >= 0);
-
-  const count = findLargestCount({
-    high: fitting.length,
-    low: 0,
-    works: (fitted) => fitsWhole({ cumulative, units: [...before.slice(0, fitted), closing] }),
-  });
-
-  if (count === null) {
-    return unchanged;
-  }
-
-  const kept = before.slice(0, count);
-  const reachesPhase = kept.some((unit) => unit.kind === "lesson" && unit.phase === closing.phase);
-  const takesOnlyDepth = before.slice(count, fitting.length).every((unit) => unit.depth);
-
-  return reachesPhase && takesOnlyDepth
-    ? { kept: [...kept, closing], leftOut: before.slice(count) }
-    : unchanged;
-}
-
 export function makeOutcomeRoom({
   cumulative,
   placed,
@@ -267,9 +219,11 @@ export function makeOutcomeRoom({
 
 export function scheduleUnits({
   days,
+  preserveWork = false,
   units: given,
 }: {
   days: readonly PlanDay[];
+  preserveWork?: boolean;
   units: readonly QueueUnit[];
 }): { dropped: DroppedUnit[]; events: ScheduledEvent[]; units: ScheduledUnit[] } {
   const cumulative = getCumulativeCapacity(days);
@@ -277,12 +231,23 @@ export function scheduleUnits({
   const units = withKeptLessons({ days, units: given });
 
   const initial = placeUnits({ cumulative, units });
-  const room = makeOutcomeRoom({ cumulative, placed: initial, units });
+
+  const room = preserveWork
+    ? { kept: units, leftOut: [] }
+    : makeOutcomeRoom({ cumulative, placed: initial, units });
 
   const roomPlaced =
     room.leftOut.length > 0 ? placeUnits({ cumulative, units: room.kept }) : initial;
 
-  const closed = closeWhatFits({ cumulative, placed: roomPlaced, units: room.kept });
+  const closed = preserveWork
+    ? room
+    : closeWhatFits({
+        fits: (list) =>
+          placeUnits({ cumulative, units: list }).every(({ dayIndex }) => dayIndex >= 0),
+        placed: roomPlaced,
+        units: room.kept,
+      });
+
   const { kept } = closed;
   const leftOut = [...room.leftOut, ...closed.leftOut];
   const placed = closed.leftOut.length > 0 ? placeUnits({ cumulative, units: kept }) : roomPlaced;

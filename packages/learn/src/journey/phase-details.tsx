@@ -11,6 +11,7 @@ import { usePhaseName } from "../plan/use-phase-name";
 import { JourneyChapters } from "./journey-chapters";
 import { type JourneyPathLinks } from "./journey-links";
 import { CheckpointRow, MockRow, usePhaseMocksLine } from "./journey-phase-events";
+import { usePhaseRowName } from "./path-phase-row";
 import { isNamedLikeAChapter } from "./path-phases";
 import { getPhaseStart } from "./phase-dates";
 import { usePhaseEnd } from "./phase-when";
@@ -31,6 +32,10 @@ function usePhaseRange() {
       return end.days;
     }
 
+    if ("later" in end) {
+      return t("Later");
+    }
+
     const start = getPhaseStart({ end, phase });
 
     if (!start) {
@@ -38,10 +43,8 @@ function usePhaseRange() {
     }
 
     return t.rich("<start></start> – <end></end>", {
-      end: () => <PlanDateText estimate={end.estimate} isoDate={end.isoDate} month={end.month} />,
-      start: () => (
-        <PlanDateText estimate={start.estimate} isoDate={start.isoDate} month={start.month} />
-      ),
+      end: () => <PlanDateText {...end} />,
+      start: () => <PlanDateText {...start} />,
     });
   };
 }
@@ -93,7 +96,7 @@ function ExamPhaseEvents({ links, phase }: { links: JourneyPathLinks; phase: Pla
 
       {checkpoint && (
         <li>
-          <CheckpointRow checkpoint={checkpoint} links={links} />
+          <CheckpointRow checkpoint={checkpoint} links={links} phase={phase} />
         </li>
       )}
     </ul>
@@ -102,13 +105,14 @@ function ExamPhaseEvents({ links, phase }: { links: JourneyPathLinks; phase: Pla
 
 export function PhaseDetails({ links, phase }: { links: JourneyPathLinks; phase: PlanPhaseView }) {
   const phaseName = usePhaseName();
+  const phaseRowName = usePhaseRowName();
   const phaseRange = usePhaseRange();
   const phaseLessons = usePhaseLessons();
-  const { plan } = usePlanScreen();
   const range = phaseRange(phase);
   const listsChapters = phase.kind === "learn";
 
   const byPlace =
+    !phase.milestone &&
     phase.state !== "current" &&
     listsChapters &&
     isNamedLikeAChapter({ name: phaseName(phase), phase });
@@ -116,9 +120,7 @@ export function PhaseDetails({ links, phase }: { links: JourneyPathLinks; phase:
   return (
     <>
       <SheetHeader>
-        <DrawerTitle>
-          {phaseName(phase, { byPlace, mocksRequirePlus: plan.access.mocksRequirePlus })}
-        </DrawerTitle>
+        <DrawerTitle>{byPlace ? phaseName(phase, { byPlace }) : phaseRowName(phase)}</DrawerTitle>
         <DrawerDescription className="font-mono text-xs text-balance tabular-nums">
           <FactSegments facts={[phaseLessons(phase)]} lead={range} />
         </DrawerDescription>
@@ -128,9 +130,9 @@ export function PhaseDetails({ links, phase }: { links: JourneyPathLinks; phase:
         {listsChapters ? (
           <JourneyChapters
             chapters={phase.chapters}
-            checkpoint={phase.checkpoint}
             leftOut={phase.leftOut}
             links={links}
+            phase={phase}
           />
         ) : (
           <ExamPhaseEvents links={links} phase={phase} />

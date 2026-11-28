@@ -99,15 +99,17 @@ private fun DailyMinutes(
     Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
         // The picker carries the name for screen readers; this is its visible title.
         SectionLabel(stringResource(R.string.plan_daily_study_time), Modifier.clearAndSetSemantics {})
-        DailyTimePicker(
-            times = page.plan.schedule.dailyTimes,
-            minutes = shown,
-            label = stringResource(R.string.plan_daily_study_time),
-            onChange = { setMinutes(it) },
-            modifier = Modifier.focusRequester(focus.pickedTime),
-            enabled = !pending,
-            suggested = suggestedMinutes((search as? TimeToCoverState.Answered)?.time),
-        )
+        TimeWithFinish(shownFinish(page), aim = page.plan.aimAhead, updating = pending) {
+            DailyTimePicker(
+                times = page.plan.schedule.dailyTimes,
+                minutes = shown,
+                label = stringResource(R.string.plan_daily_study_time),
+                onChange = { setMinutes(it) },
+                modifier = Modifier.focusRequester(focus.pickedTime),
+                enabled = !pending,
+                suggested = suggestedMinutes((search as? TimeToCoverState.Answered)?.time),
+            )
+        }
         DailyCoverage(page, edits, focus, minutes = shape.weekdays.toInt(), onUseTime = { setMinutes(it) })
         FullCourseSwitch(page, edits, focus.studyEverything)
     }

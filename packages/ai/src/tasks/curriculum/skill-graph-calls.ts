@@ -101,6 +101,8 @@ export type SkillGraphParams = {
   goal: string;
   goalKind: "learn" | "exam" | "language";
   purpose?: "overview" | "deep" | "work" | "careerChange" | "refresh";
+  /** A broad learn goal's one level band; the learner continues to the next as a new goal. */
+  courseLevel?: (typeof COURSE_LEVELS)[number];
   ownLevel?: "none" | "basic" | "intermediate" | "advanced";
   context?: string;
   /** The graph's areas and topics are the notice's own, word for word. */
@@ -208,6 +210,7 @@ function formatGoalInputs(params: SkillGraphParams): string {
     `VERB_FORM: ${getVerbForm(params.language)}`,
     `GOAL_KIND: ${params.goalKind}`,
     params.goalKind === "learn" && `PURPOSE: ${params.purpose ?? "none"}`,
+    params.goalKind === "learn" && params.courseLevel && `COURSE_LEVEL: ${params.courseLevel}`,
     `OWN_LEVEL: ${params.ownLevel ?? "none given"}`,
     params.goalKind === "language" && `TARGET_LANGUAGE: ${formatTargetLanguage(params)}`,
     params.lessonBudget && `LESSON_BUDGET: ${params.lessonBudget}`,

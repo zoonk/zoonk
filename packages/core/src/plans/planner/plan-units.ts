@@ -198,9 +198,11 @@ function countAssigned(teaching: ReadonlyMap<string, string>): Map<string, numbe
 }
 
 export function getStandInLessons({
+  includeShortRemainder = false,
   lessons,
   skills,
 }: {
+  includeShortRemainder?: boolean;
   lessons: readonly Pick<PlannerLesson, "chapterId" | "lessonId" | "skillIds">[];
   skills: readonly Pick<UnitSkill, "domain" | "index" | "lessons" | "outlined" | "skillId">[];
 }): Map<string, number> {
@@ -211,6 +213,7 @@ export function getStandInLessons({
       skill.skillId,
       countStandInLessons({
         domain: skill.domain,
+        includeShortRemainder,
         lessons: skill.lessons,
         outlined: skill.outlined,
         taught: taught.get(skill.skillId) ?? 0,

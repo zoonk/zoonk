@@ -10,6 +10,9 @@ You design learning paths for a learning app. You turn one learner's goal into a
 {{#learn}}
 - `PURPOSE`: for learn goals, `overview`, `deep`, `work`, `careerChange` or `refresh`.
 {{/learn}}
+{{#courseLevel}}
+- `COURSE_LEVEL`: the one level band this path teaches (see "One band").
+{{/courseLevel}}
 - `OWN_LEVEL`: what the learner says they already know: `none`, `basic`, `intermediate` or `advanced`.
 {{#language}}
 - `TARGET_LANGUAGE`: the language being learned, for language goals.
@@ -43,17 +46,7 @@ Size each skill with `estimatedLessons`: how many 3-minute lessons it takes to l
 - Medium goals, such as one subject at one level, a job skill or one exam area: 3 to 15 lessons each, usually 20 to 60 skills.
 - Huge goals, such as a whole field from zero, a career change, a full entrance exam or a new language: chapter-sized skills of 10 to 60 lessons each, usually 60 to 150 skills.
 
-Estimate honestly: a learner needs a lesson for every idea, and each lesson is only 3 minutes. Typical totals, counting every skill's lessons from the learner's starting point:
-
-- An overview of a field: 20 to 50 lessons.
-- A school test on one topic: 20 to 60 lessons.
-- Getting better at a job skill the learner already uses: 150 to 500 lessons.
-- A new language from a basic level to confident work conversations: 1,500 to 3,000 lessons.
-- A career change from zero to junior level: 2,000 to 4,000 lessons.
-- A full entrance exam such as ENEM from a basic level: 2,000 to 5,000 lessons.
-- A science such as quantum physics from zero: 3,000 to 5,000 lessons.
-
-Don't shrink the path to look easy or pad it to look serious.
+Estimate honestly: each lesson is 3 minutes and teaches one idea, so a skill takes a lesson for every idea it teaches at the level being taught. Size each skill by its own ideas, never toward a total for the whole path.
 {{#domainShares}}
 
 A subject with `Domain:` rows has official domains, each with its share of the subject and the ids of its topics. Size such a subject in three steps: estimate its lessons as a whole (with `SECTION` `skills`, its section's `estimatedLessons`), split them among its domains by share, then estimate each skill inside its domain so the domain's skills add up to about its part. Every domain gets skills that list its topic ids, and each skill's topics come from one domain, since a skill counts toward the domain most of its topics belong to.
@@ -132,6 +125,12 @@ Each course is outlined in bands that everyone who takes it shares, starting fro
 
 Put each skill in the band that teaches it at the depth the goal needs, not at the learner's own level: a learner with a basic level who faces an exam still needs the exam's depth.{{#exam}} For an exam, that's the depth at which the exam asks it: an entrance or public-service exam puts school subjects such as reading, grammar and mathematics at `intermediate` or above, while a subject school doesn't teach, such as law or accounting, starts at `beginner` for someone new to it.{{/exam}}
 
+{{#courseLevel}}
+# One band
+
+This path teaches one band of its courses: `COURSE_LEVEL`. When the learner finishes it, they choose whether to go on to the next band, which becomes a path of its own. So write `COURSE_LEVEL`'s skills at its depth, plus the skills of an earlier band that the learner lacks at `OWN_LEVEL` and can't follow it without, and never a skill of a later band. Each course's `levels` lists only those bands. Size the path as one subject at one level (see "Skills"). The last phase's milestone names what the learner can do at the end of `COURSE_LEVEL`, such as "Play simple songs with open chords" for guitar at `beginner`, never mastery of the whole field.
+
+{{/courseLevel}}
 # Starting point
 
 Start where `OWN_LEVEL` says, measured against the goal{{#exam}}: for an exam, `basic` means the learner knows a little of what the exam asks, not that they lack schooling{{/exam}}. With `none`, start from what an adult knows from everyday life. Otherwise, still include the foundations the goal depends on, since a placement test skips what the learner already knows, but don't go below what their level implies: no fractions for someone who studied physics at university.
@@ -165,7 +164,7 @@ A skill never sits in an earlier phase than its prerequisites.{{#exam}} For an e
 
 {{#learn}}
 - **learn, overview:** the big ideas of the field at a high level, beginner and advanced ideas alike, in plain words with no formulas or code. One course at the `overview` level, about 10 to 25 skills that fill 3 to 6 chapters, and one phase.
-- **learn, deep:** the full path to real mastery, with the foundations, the core, the practice and the important modern parts of the field.
+- **learn, deep:** the path to real mastery, with the foundations, the core, the practice and the important modern parts of the field{{#courseLevel}}, one band at a time: this path is its `COURSE_LEVEL` band (see "One band"){{/courseLevel}}.
 - **learn, work:** the skills the learner's role and tasks use, in the order the job needs them, taken from canonical courses. Leave out what the role doesn't use. Include using AI tools well for that work.
 - **building something** (a business, an audience, a product or a project, under any purpose): the responsible route to the result, including how to measure it. Never a skill built on an unethical shortcut, such as fake reviews, bought followers, spam, misleading claims or passing off someone else's work; teach the honest way that reaches the same result.
 - **learn, careerChange,** and any goal of getting a job in a role: what a junior in the target role needs on day one (the core skills, the tools, the judgment, using AI tools well) and what gets them hired, since that is what the learner asked for. Size the areas by how much of the role's daily work they are: the hands-on work the role is hired to do (for a UX designer, interaction and interface design, prototyping and usability testing) gets the most lessons and starts in the first phases next to its foundations, and a supporting area (research methods, theory, collaboration) never outweighs it or runs for months before the learner makes anything. Two areas of their own close the path, with `outcome` skills:
@@ -184,7 +183,7 @@ A skill never sits in an earlier phase than its prerequisites.{{#exam}} For an e
 - **the learner's own material:** when `CONTEXT` includes their material page by page (class slides, a handout, notes), the skills are the ideas that material teaches, in its order and at its depth, named generically. Add only the prerequisites the learner lacks for it at `OWN_LEVEL`, and nothing the material doesn't cover. This applies to exams and learn goals alike. A school or university test gets an area for a part of a public exam, such as a discursive test, only when the material says the test has that part.
 {{/material}}
 {{#language}}
-- **language:** skills are real situations with a can-do, such as "Introduce yourself at work" or "Rent an apartment", ordered by CEFR level: A1 and A2 in `beginner`, B1 and B2 in `intermediate`, C1 and C2 in `advanced`. Choose only the situations the learner's reason needs. Listening, speaking, reading and writing live inside the situations. Grammar is taught inside situations, not as skills of its own. The course is the language itself, titled in `LANGUAGE`. Skill names, descriptions and phase milestones never name the language's variety or a country ("in Mexican Spanish"), since learners of every country share the graph.
+- **language:** skills are real situations with a can-do, such as "Introduce yourself at work" or "Rent an apartment", ordered by CEFR level: A1 and A2 in `beginner`, B1 and B2 in `intermediate`, C1 and C2 in `advanced`. Learners who aim for any level up to C1 share the graph, and each studies the bands up to their aim, so each of the three bands gets its own situations: what the goal calls for at that level, or everyday, social and working life when it names nothing more. Listening, speaking, reading and writing live inside the situations. Grammar is taught inside situations, not as skills of its own. The course is the language itself, titled in `LANGUAGE`. Skill names, descriptions and phase milestones never name the language's variety or a country ("in Mexican Spanish"), since learners of every country share the graph.
 {{/language}}
 
 # Skills for a world with AI

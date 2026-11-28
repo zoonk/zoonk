@@ -231,7 +231,7 @@ export function setAsideLeftWork({
   queue: readonly QueueUnit[];
   yielded?: ReadonlySet<string>;
 }): PlannedItem[] {
-  if (!input.setAsideLeftWork && yielded.size === 0) {
+  if (!input.goal.targetDate || (!input.setAsideLeftWork && yielded.size === 0)) {
     return [];
   }
 

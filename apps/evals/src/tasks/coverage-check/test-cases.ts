@@ -174,6 +174,38 @@ export const TEST_CASES: TestCase<CoverageCheckExpected, CoverageCheckParams>[] 
     },
   },
   {
+    expected: { gaps: ["Unit 4: Balancing chemical equations"] },
+    id: "en-beginner-chemistry-band-skips-later-topics",
+    userInput: {
+      courseLevel: "beginner",
+      courses: [{ key: "chemistry", title: "Chemistry" }],
+      goal: "Learn chemistry",
+      goalKind: "learn",
+      language: "en",
+      references: [
+        {
+          text: [
+            "Unit 1: Matter, elements and compounds",
+            "Unit 2: Atoms, protons, neutrons and electrons",
+            "Unit 3: The periodic table",
+            "Unit 4: Balancing chemical equations",
+            "Unit 5: Acids and bases in everyday life",
+            "Unit 6: Molecular orbital theory",
+            "Unit 7: Reaction mechanisms in organic synthesis",
+            "Unit 8: Chemical thermodynamics: Gibbs free energy and entropy",
+          ].join("\n"),
+          title: "CHEM 101-301: General to Advanced Chemistry",
+        },
+      ],
+      skills: [
+        skill("matter", "Tell elements, compounds and mixtures apart"),
+        skill("atoms", "Describe what atoms are made of"),
+        skill("periodic-table", "Read the periodic table"),
+        skill("acids-bases", "Recognize acids and bases at home"),
+      ],
+    },
+  },
+  {
     expected: { gaps: [] },
     id: "es-python-no-gaps",
     userInput: {
@@ -357,6 +389,71 @@ export const TEST_CASES: TestCase<CoverageCheckExpected, CoverageCheckParams>[] 
           name: "Distinguir sistemas e formas de governo",
           topics: ["2 Sistemas e formas de governo"],
         }),
+      ],
+    },
+  },
+  {
+    expected: {
+      gapLessons: [
+        { max: 20, min: 6 },
+        { max: 4, min: 1 },
+      ],
+      gaps: [
+        "3 Engenharia de software: processos de desenvolvimento, requisitos, testes, manutenção e qualidade",
+        "4 Notação assintótica (Big O)",
+      ],
+    },
+    id: "pt-notice-gap-sized-like-neighbors",
+    userInput: {
+      courses: [{ key: "computacao", title: "Ciência da Computação" }],
+      examOutline: {
+        name: "CGU, Auditor Federal de Finanças e Controle - Tecnologia da Informação (Cebraspe)",
+        notes: [],
+        subjects: [
+          {
+            group: "Conhecimentos específicos (P3)",
+            name: "Desenvolvimento de Sistemas",
+            questions: 90,
+            topics: [
+              "1 Lógica de programação: algoritmos, estruturas de controle, funções e recursão",
+              "2 Estruturas de dados: listas, pilhas, filas, árvores, grafos e tabelas hash",
+              "3 Engenharia de software: processos de desenvolvimento, requisitos, testes, manutenção e qualidade",
+              "4 Notação assintótica (Big O)",
+            ],
+            weight: null,
+          },
+        ],
+        topicFrequency: [],
+      },
+      goal: "Passar no concurso da CGU na área de TI",
+      goalKind: "exam",
+      language: "pt",
+      references: [],
+      skills: [
+        {
+          ...placed({
+            area: "Desenvolvimento de Sistemas",
+            examWeight: 5,
+            key: "logica",
+            name: "Escrever algoritmos com funções e recursão",
+            topics: [
+              "1 Lógica de programação: algoritmos, estruturas de controle, funções e recursão",
+            ],
+          }),
+          estimatedLessons: 12,
+        },
+        {
+          ...placed({
+            area: "Desenvolvimento de Sistemas",
+            examWeight: 5,
+            key: "estruturas",
+            name: "Escolher a estrutura de dados para um problema",
+            topics: [
+              "2 Estruturas de dados: listas, pilhas, filas, árvores, grafos e tabelas hash",
+            ],
+          }),
+          estimatedLessons: 14,
+        },
       ],
     },
   },

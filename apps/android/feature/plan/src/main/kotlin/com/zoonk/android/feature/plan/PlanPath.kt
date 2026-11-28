@@ -26,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -36,6 +37,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.zoonk.android.R
 import com.zoonk.android.feature.goalcontent.planOutsideReason
 import com.zoonk.android.ui.characters.Trickster
@@ -146,7 +148,7 @@ private fun PhaseItem(
             LeftOutTopicsRow(phase.leftOut, indent = nested)
             if (open) {
                 phase.mocks.nextDate?.let { MockRow(page, it.toJavaLocalDate(), links, phase.mocks.nextPlanItemId) }
-                phase.checkpoint?.let { CheckpointRow(page, it, links, indent = nested, brief = brief) }
+                phase.checkpoint?.let { CheckpointRow(page, phase, it, links, indent = nested, brief = brief) }
             }
         }
         return
@@ -176,13 +178,13 @@ private fun PhaseItem(
             byPlace = byPlace && expanded && phase.state != PlanPhase.State.CURRENT,
         )
         if (expanded) {
-            PhaseChapters(page, phase.chapters, phase.checkpoint, links, indent = nested, brief = brief, leftOut = phase.leftOut)
+            PhaseChapters(page, phase, links, indent = nested, brief = brief)
             phase.mocks.nextDate?.let { MockRow(page, it.toJavaLocalDate(), links, phase.mocks.nextPlanItemId) }
         }
     }
 }
 
-/** A phase's row on the path: its mark, its name over [line], and when it ends. */
+/** A phase's row on the path: its mark, what the learner can do by its end (else its name) over [line], and when it ends. */
 @Composable
 internal fun PhaseRow(
     plan: Plan,
@@ -198,7 +200,7 @@ internal fun PhaseRow(
 ) {
     // A paused plan's phases end when the learner resumes, so no date says otherwise, as main's `usePhaseEnd`.
     val date = if (paused) null else phaseEnd(plan, phase, plan.today)
-    val name = phaseName(phase, plan.access.mocksRequirePlus, byPlace = byPlace)
+    val name = phaseRowName(phase, plan.access.mocksRequirePlus, byPlace)
     val state =
         if (nextChapter != null && phase.state != PlanPhase.State.CURRENT) {
             stringResource(R.string.plan_up_next_suffix)
@@ -231,6 +233,8 @@ internal fun PhaseRow(
                 }
             },
         meta = date?.let { { TrailingText(it) } },
+        // Main's PathRowBody gives its titles 9rem. Scale the base size before multiplying because Android scales text nonlinearly.
+        headlineBasis = with(LocalDensity.current) { 16.sp.toDp() * 9 },
     )
 }
 
@@ -255,10 +259,30 @@ fun phaseEnd(
     today: LocalDate,
 ): PlanDateWords? =
     when (val end = plan.phaseEnd(phase)) {
-        null -> null
-        is PhaseEnd.Days -> shortDays(plan, phase)?.let(::sameWords)
-        is PlanEnd -> endWords(formatPlanDate(end.date, today, currentLocale(), month = end.month), end.estimate, end.month)
+        null -> {
+            null
+        }
+
+        is PhaseEnd.Days -> {
+            shortDays(plan, phase)?.let(::sameWords)
+        }
+
+        PhaseEnd.Later -> {
+            laterWords()
+        }
+
+        is PlanEnd -> {
+            endWords(
+                formatPlanDate(end.date, today, currentLocale(), month = end.month, year = end.year),
+                end.estimate,
+                end.month || end.year,
+            )
+        }
     }
+
+/** An end not in the plan yet: its work is still owed, past the years the plan lays out. */
+@Composable
+internal fun laterWords() = PlanDateWords(stringResource(R.string.plan_later), stringResource(R.string.plan_ends_later))
 
 /** A phase's or the goal's end as it's shown ("Nov 10", "~Nov 10") and as TalkBack says it ("Ends about Nov 10"). */
 @Composable
@@ -425,15 +449,13 @@ internal fun ChapterMark(
 @Composable
 internal fun PhaseChapters(
     page: PlanPageState,
-    chapters: List<PlanPhaseChaptersInner>,
-    checkpoint: PlanPhaseCheckpoint?,
+    phase: PlanPhase,
     links: PlanLinks,
     indent: Dp = 0.dp,
     brief: Boolean = false,
-    leftOut: List<String> = emptyList(),
 ) {
     var showAll by rememberSaveable { mutableStateOf(false) }
-    val rows = chapters.filterNot { it.isWritingAhead }
+    val rows = phase.chapters.filterNot { it.isWritingAhead }
     val window = chapterWindow(rows.map { it.state })
     val hidden = rows.size - (window.last - window.first + 1).coerceAtLeast(0)
     val shown = if (showAll) rows else rows.slice(window)
@@ -454,8 +476,8 @@ internal fun PhaseChapters(
                 indent = indent,
             ) { showAll = !showAll }
         }
-        LeftOutTopicsRow(leftOut, indent)
-        checkpoint?.let { CheckpointRow(page, it, links, indent, brief) }
+        LeftOutTopicsRow(phase.leftOut, indent)
+        phase.checkpoint?.let { CheckpointRow(page, phase, it, links, indent, brief) }
     }
 }
 
@@ -619,6 +641,7 @@ private fun challengeNotInPlan(page: PlanPageState): String =
 @Composable
 internal fun CheckpointRow(
     page: PlanPageState,
+    phase: PlanPhase,
     checkpoint: PlanPhaseCheckpoint,
     links: PlanLinks,
     indent: Dp = 0.dp,
@@ -630,19 +653,31 @@ internal fun CheckpointRow(
     val date = checkpoint.date?.toJavaLocalDate()
     val trailing =
         when {
-            done -> sameWords(stringResource(R.string.plan_challenge_won))
+            done -> {
+                sameWords(stringResource(R.string.plan_challenge_won))
+            }
 
             // A paused plan has nothing planned until the learner resumes, as [PhaseRow]'s end.
-            page.isPaused -> null
+            page.isPaused -> {
+                null
+            }
 
             // Dated today, the next session is today's, which may already be under way.
-            whenPlanned == PlanPhaseCheckpoint.`When`.NEXT_SESSION && date == page.today -> sameWords(stringResource(R.string.plan_today))
+            whenPlanned == PlanPhaseCheckpoint.`When`.NEXT_SESSION && date == page.today -> {
+                sameWords(stringResource(R.string.plan_today))
+            }
 
-            whenPlanned == PlanPhaseCheckpoint.`When`.NEXT_SESSION -> sameWords(stringResource(R.string.plan_challenge_next_session))
+            whenPlanned == PlanPhaseCheckpoint.`When`.NEXT_SESSION -> {
+                sameWords(stringResource(R.string.plan_challenge_next_session))
+            }
 
-            date != null -> planDate(date, page.today, estimate = true)
-
-            else -> null
+            else -> {
+                when (val day = page.plan.challengeDay(phase)) {
+                    PhaseEnd.Later -> sameWords(stringResource(R.string.plan_later))
+                    is PlanEnd -> planDate(day.date, page.today, day.estimate, day.month, day.year)
+                    else -> null
+                }
+            }
         }
     val planItemId = checkpoint.planItemId?.toString()
     val lines =
@@ -727,8 +762,12 @@ private fun FinishItem(
     inSheet: Boolean,
 ) {
     val finish =
-        page.finish?.let { planDate(it.date, page.today, it.estimate, it.month) }
-            ?: if (page.isExam) sameWords(stringResource(R.string.plan_date_to_be_confirmed)) else null
+        page.finish?.let { planDate(it.date, page.today, it.estimate, it.month, it.year) }
+            ?: when {
+                page.isExam -> sameWords(stringResource(R.string.plan_date_to_be_confirmed))
+                page.plan.forecast == PlanForecast.Beyond && !page.isPaused -> laterWords()
+                else -> null
+            }
 
     ListRow(
         chevronSpace = true,
@@ -803,7 +842,7 @@ internal fun ColumnScope.PhaseDetails(
                 null
             }
 
-            is PhaseEnd.Days -> {
+            is PhaseEnd.Days, PhaseEnd.Later -> {
                 phaseEnd(page, phase)?.text
             }
 
@@ -811,8 +850,9 @@ internal fun ColumnScope.PhaseDetails(
                 phase.start?.let { start ->
                     stringResource(
                         R.string.plan_date_range,
-                        formatPlanDate(start, page.today, currentLocale(), end.month),
-                        planDate(end.date, page.today, end.estimate, end.month).text,
+                        // Main's `getPhaseStart`: a phase ahead starts where the one before it ends, so it's an estimate whenever its end is.
+                        planDate(start, page.today, end.estimate && phase.state == PlanPhase.State.UPCOMING, end.month, end.year).text,
+                        planDate(end.date, page.today, end.estimate, end.month, end.year).text,
                     )
                 }
             }
@@ -839,7 +879,7 @@ internal fun ColumnScope.PhaseDetails(
 
     Column {
         Text(
-            text = phaseName(phase, page.mocksRequirePlus, byPlace),
+            text = phaseRowName(phase, page.mocksRequirePlus, byPlace),
             modifier = Modifier.semantics { heading() },
             style = MaterialTheme.typography.titleLarge,
         )
@@ -852,7 +892,7 @@ internal fun ColumnScope.PhaseDetails(
 
     Column(Modifier.bleed(LIST_ITEM_INSET)) {
         if (learn) {
-            PhaseChapters(page, phase.chapters, phase.checkpoint, links, leftOut = phase.leftOut)
+            PhaseChapters(page, phase, links)
         } else {
             phase.mocks.nextDate?.let { MockRow(page, it.toJavaLocalDate(), links, phase.mocks.nextPlanItemId) }
             if (phase.mocks.nextDate == null && phase.mocks.count > 0) {
@@ -864,7 +904,7 @@ internal fun ColumnScope.PhaseDetails(
                     MetaLine(pluralStringResource(R.plurals.plan_mock_exams_count, phase.mocks.count.toInt(), phase.mocks.count.toInt()))
                 }
             }
-            phase.checkpoint?.let { CheckpointRow(page, it, links) }
+            phase.checkpoint?.let { CheckpointRow(page, phase, it, links) }
         }
     }
 }

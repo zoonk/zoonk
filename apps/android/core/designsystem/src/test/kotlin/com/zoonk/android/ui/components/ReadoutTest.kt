@@ -22,4 +22,23 @@ class ReadoutTest {
         assertEquals(emptyList<String>(), smallParts("70\u202F%"))
         assertEquals(listOf(" left"), smallParts("16% left"))
     }
+
+    @Test
+    fun aPlusAfterTheNumberIsPartOfIt() {
+        assertEquals(listOf(" years"), smallParts("10+ years"))
+        assertEquals(listOf("over "), smallParts("over 10+"))
+    }
+
+    @Test
+    fun aMonthsYearIsSmallWithItsOwnUnitAndTheGapBesideIt() {
+        fun small(
+            text: String,
+            year: String,
+        ) = monthReadout(text, year, unit).spanStyles.map { text.substring(it.start, it.end) }
+
+        assertEquals(listOf(" 2026"), small("Dec 2026", "2026"))
+        assertEquals(listOf(" 2026"), small("dez. de 2026", "2026"))
+        assertEquals(listOf("2026년 "), small("2026년 12월", "2026년"))
+        assertEquals(listOf("2026年"), small("2026年12月", "2026年"))
+    }
 }

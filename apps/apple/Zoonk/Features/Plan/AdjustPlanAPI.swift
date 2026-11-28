@@ -178,6 +178,8 @@ struct PlanEffect: Decodable, Equatable, Sendable {
   var areaStarts: [AreaStart]?
   let endDateAfter: String?
   let endDateBefore: String?
+  var endPrecisionAfter: PlanForecast.Precision?
+  var endPrecisionBefore: PlanForecast.Precision?
   /// For `coverageChanged`: the learner's placement answers made it.
   var fromPlacement: Bool?
   let lessonsAdded: Int
@@ -208,11 +210,16 @@ struct PlanChangePreview: Decodable, Equatable, Sendable {
 
   let effect: PlanEffect?
   let feasibility: Feasibility?
-  /// When the whole course would finish after the change; nil for a plan with a date, or past the
-  /// days a plan lays out.
+  /// When a plan without a date would finish after the change.
   let finishDate: String?
+  var finishReason: PlanForecast.Reason?
+  var precision: PlanForecast.Precision?
   let ready: Bool
   let unchanged: Bool
+
+  var forecast: PlanForecast? {
+    PlanForecast(date: finishDate, precision: precision, reason: finishReason)
+  }
 }
 
 struct AppliedPlanChange: Decodable, Equatable, Identifiable, Sendable {

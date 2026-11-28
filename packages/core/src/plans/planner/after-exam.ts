@@ -1,4 +1,5 @@
 import { type GoalKind } from "@zoonk/db";
+import { type ComputedPlan } from "../_utils/replan";
 import { MAX_PLAN_DAYS } from "../target-date-range";
 import { type ExamBossDays, listBossEvents, withBossEvents } from "./exam-boss-days";
 import { type FundedMocks, type MockFunding, fundMocks } from "./mock-funding";
@@ -16,7 +17,7 @@ import {
   listPlanDays,
   scheduleUnits,
 } from "./schedule-units";
-import { type SkillMinutes, hasCompleteSkillCoverage } from "./skill-minutes";
+import { hasCompleteSkillCoverage } from "./skill-minutes";
 
 export type AfterExamSpan = { end: Date; minutes: number; start: Date };
 
@@ -28,27 +29,23 @@ export type AfterExam = {
   units: ScheduledUnit[];
 };
 
-function endsAfterExam({
-  end,
-  targetDate,
-}: {
-  end: string | null;
-  targetDate: string | null;
-}): boolean {
-  return end !== null && targetDate !== null && end > targetDate;
-}
-
-export function getFullCourseEnd({
+export function getFullCourseFinishDate({
   built,
-  end,
-  targetDate,
-}: {
-  built: { skillMinutes: readonly SkillMinutes[] };
-  end: string | null;
-  targetDate: string | null;
-}): string | null {
-  const holdsAll = hasCompleteSkillCoverage(built.skillMinutes);
-  return holdsAll && endsAfterExam({ end, targetDate }) ? end : null;
+  selected,
+  state,
+}: Pick<ComputedPlan, "built" | "selected" | "state">): string | null {
+  if (!state.settings.fullCourse || !state.goal.targetDate) {
+    return null;
+  }
+
+  const afterExam = built.phases.find((phase) => phase.kind === "afterExam")?.endDate;
+
+  const end =
+    afterExam && (!selected.endDate || afterExam > selected.endDate) ? afterExam : selected.endDate;
+
+  return end && end > state.goal.targetDate && hasCompleteSkillCoverage(built.skillMinutes)
+    ? end
+    : null;
 }
 
 function goesOnAfterExam({

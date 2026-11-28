@@ -4,6 +4,7 @@ import { measureDepth } from "../planner/coverage-measures";
 import { toIsoDate } from "../planner/plan-calendar";
 import { planEffectSchema } from "./plan-change-payload";
 import { type PlanContext } from "./plan-context";
+import { readSavedCourseForecast } from "./saved-course-forecast";
 import {
   type SelectedCoverage,
   type SelectedSummary,
@@ -108,6 +109,19 @@ export function toPlanSummary({
     schemaVersion: PLAN_SUMMARY_SCHEMA_VERSION,
     selected,
   };
+}
+
+export function readSavedFinish(context: PlanContext) {
+  if (context.goal.targetDate) {
+    return null;
+  }
+
+  const summary = readPlanSummary({
+    plan: { ...context.plan, userId: context.goal.userId },
+    value: context.plan.summary,
+  });
+
+  return readSavedCourseForecast({ context, summary }).finish;
 }
 
 /** @public A lesson's completion writes what it says. */

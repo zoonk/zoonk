@@ -23,7 +23,6 @@ import com.zoonk.android.feature.plan.LeftOutTopicsRow
 import com.zoonk.android.feature.plan.PhaseRow
 import com.zoonk.android.feature.plan.isWritingAhead
 import com.zoonk.android.feature.plan.optionalStudyLabel
-import com.zoonk.android.feature.plan.sameWords
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
@@ -55,21 +54,21 @@ fun RevealStructure(
     }
 }
 
-/** A plan of one phase has nothing to group, so its chapters are the list. */
 @Composable
 private fun RevealPath(
     plan: Plan,
     modifier: Modifier,
 ) {
     val phases = plan.phases
-    val only = phases.singleOrNull()
     if (phases.isEmpty()) return
+    val only = phases.singleOrNull()
+    val chapters = only?.chapters.orEmpty().filterNot { it.isWritingAhead }
 
     Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SectionHeader(stringResource(R.string.plan_your_path))
         Column(Modifier.bleed(LIST_ITEM_INSET)) {
-            if (only != null) {
-                only.chapters.filterNot { it.isWritingAhead }.forEach { ChapterRow(it, links = null, indent = 0.dp) }
+            if (only != null && chapters.isNotEmpty()) {
+                chapters.forEach { ChapterRow(it, links = null, indent = 0.dp) }
                 LeftOutTopicsRow(only.leftOut, indent = 0.dp)
             } else {
                 phases.forEachIndexed { index, phase ->
@@ -88,17 +87,15 @@ private fun RevealPhase(
     phase: PlanPhase,
 ) {
     val chapters = phase.chapters.filterNot { it.isWritingAhead }
-    val line = phase.milestone?.let(::sameWords)
     if (chapters.isEmpty() && phase.leftOut.isEmpty()) {
-        PhaseRow(plan, phase, line)
+        PhaseRow(plan, phase, line = null)
         return
     }
 
     var expanded by rememberSaveable(phase.index) { mutableStateOf(false) }
     val nested = listRowWordsStart() - LIST_ITEM_INSET
     Column {
-        // Main's two lines: its milestone over how many topics the plan's date leaves out.
-        PhaseRow(plan, phase, line, onClick = { expanded = !expanded }, expanded = expanded, leftOutTopics = phase.leftOut.size)
+        PhaseRow(plan, phase, line = null, onClick = { expanded = !expanded }, expanded = expanded, leftOutTopics = phase.leftOut.size)
         if (expanded) {
             chapters.forEach { ChapterRow(it, links = null, indent = nested) }
             LeftOutTopicsRow(phase.leftOut, indent = nested)

@@ -47,14 +47,14 @@ export function getNotPlannedReason({
 }
 
 /** Set-aside lessons count as neither studied nor known. */
-function getTopicStatus(items: readonly SyllabusItem[]): SyllabusTopic["status"] {
+function getTopicStatus(items: readonly SyllabusItem[], deferred = false): SyllabusTopic["status"] {
   const done = items.filter((item) => isWorkFinished(item.status)).length;
 
-  if (items.every((item) => getWorkProgress(item.status) === "testedOut")) {
+  if (!deferred && items.every((item) => getWorkProgress(item.status) === "testedOut")) {
     return "known";
   }
 
-  if (done === items.length) {
+  if (!deferred && done === items.length) {
     return "studied";
   }
 
@@ -118,10 +118,11 @@ export function buildTopic({
   const lessons = own.length > 0 ? items.own : items.all;
   const taught = lessons.filter((item) => item.skillId && skillIds.has(item.skillId));
 
+  const deferred = teaching.some((skill) => (skill.deferredLessons ?? 0) > 0);
   const known = teaching.every((skill) => knownSkillIds.has(skill.skillId));
 
   const reason = getNotPlannedReason({
-    hasItems: taught.length > 0,
+    hasItems: taught.length > 0 || deferred,
     hasSkills: teaching.length > 0,
     known,
     pastBasics: teaching.every((skill) => pastBasicsSkillIds.has(skill.skillId)),
@@ -147,12 +148,12 @@ export function buildTopic({
   }
 
   // Known topics still require practice even when their lessons are skipped.
-  if (taught.length === 0) {
+  if (taught.length === 0 && !deferred) {
     return { ...empty, notPlannedReason: null, status: "known" };
   }
 
   // Set-aside lessons leave the topic out for time while preserving studied progress.
-  if (isRestSetAside(taught)) {
+  if (!deferred && isRestSetAside(taught)) {
     return studied.length > 0
       ? {
           ...topicChapters({ chapters, items: studied }),
@@ -169,7 +170,7 @@ export function buildTopic({
     name: topic,
     nextDate: getEarliestTodoDate(taught),
     notPlannedReason: null,
-    status: getTopicStatus(taught),
+    status: getTopicStatus(taught, deferred),
   };
 }
 

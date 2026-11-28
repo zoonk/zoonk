@@ -31,7 +31,6 @@ function DaySplitWords({ split }: { split: DaySplit }) {
 
 /** The time the goal needs, under the time picked, with the suggestion to take while less is picked. */
 export function TimeAnswer({
-  aim = null,
   date,
   exam,
   line,
@@ -42,8 +41,6 @@ export function TimeAnswer({
   subjectsTakenOut = false,
   updating = false,
 }: {
-  /** A language goal's aim above the learner's level, which its finish is when they reach. */
-  aim?: string | null;
   date: GoalDate | null;
   exam: boolean;
   line: TimeLine;
@@ -59,6 +56,11 @@ export function TimeAnswer({
   const space = useSentenceSpace();
   const failed = FAILED_KINDS.has(line.kind);
   const offer = getOffer({ line, minutes });
+  const finish = line.kind === "finish";
+
+  if (finish && !split) {
+    return null;
+  }
 
   return (
     <p
@@ -69,20 +71,15 @@ export function TimeAnswer({
         updating && "opacity-50",
       )}
     >
-      <span>
-        <LineWords
-          aim={aim}
-          date={date}
-          exam={exam}
-          line={line}
-          minutes={minutes}
-          subjectsTakenOut={subjectsTakenOut}
-        />
-      </span>
+      {!finish && (
+        <span>
+          <LineWords date={date} exam={exam} line={line} subjectsTakenOut={subjectsTakenOut} />
+        </span>
+      )}
 
       {split && (
         <>
-          {space}
+          {!finish && space}
           <DaySplitWords split={split} />
         </>
       )}

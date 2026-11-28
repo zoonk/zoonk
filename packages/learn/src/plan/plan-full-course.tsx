@@ -40,6 +40,7 @@ export function useFullCourse() {
     isExam,
     on: schedule.fullCourse,
     operations,
+    precision: plan.estimate.precision,
     targetDate: schedule.targetDate,
     targetDateNamedMonth: schedule.targetDateNamedMonth,
   };
@@ -53,7 +54,7 @@ export function useFullCourseText() {
 
   return {
     finish: (course: FullCourse): string | null =>
-      course.endDate && finishSentence({ endDate: course.endDate }),
+      course.endDate && finishSentence({ endDate: course.endDate, precision: course.precision }),
   };
 }
 

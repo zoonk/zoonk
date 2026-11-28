@@ -428,17 +428,13 @@ private struct PurposeQuestion: View {
             value: "overview",
             label: String(
               localized: "Get an overview", table: "Onboarding", comment: "Purpose choice"),
-            detail: Text(
-              "The big ideas, in short", tableName: "Onboarding",
-              comment: "Purpose choice detail")
+            detail: Text("I want a quick look at the big ideas", tableName: "Onboarding")
           ),
           .init(
             value: "deep",
             label: String(
               localized: "Understand it well", table: "Onboarding", comment: "Purpose choice"),
-            detail: Text(
-              "The full path, from the basics to advanced", tableName: "Onboarding",
-              comment: "Purpose choice detail")),
+            detail: Text("I want to go deeper, one level at a time", tableName: "Onboarding")),
           .init(
             value: "work",
             label: String(
@@ -448,13 +444,13 @@ private struct PurposeQuestion: View {
             label: String(
               localized: "Change careers", table: "Onboarding", comment: "Purpose choice"),
             detail: Text(
-              "What the new role needs, portfolio included", tableName: "Onboarding",
-              comment: "Purpose choice detail")),
+              "I want to learn what I need for a new role and build a portfolio",
+              tableName: "Onboarding")),
           .init(
             value: "refresh",
             label: String(
               localized: "Refresh what I studied", table: "Onboarding", comment: "Purpose choice"),
-            detail: Text("Back to the level I had, after a short test", tableName: "Onboarding")),
+            detail: Text("I want to get back to the level I had", tableName: "Onboarding")),
           .init(
             value: "other",
             label: String(
@@ -975,7 +971,7 @@ private struct DateQuestion: View {
       isoDay(date).prefix(7) == month.prefix(7)
     {
       Text(
-        "No exam date in \(PlanDate.monthText(month, today: PlanDate.today(), wide: true))",
+        "No exam date in \(PlanDate.longText(month, month: true))",
         tableName: "Exam",
         comment: "An exam with no sitting in the learner's month")
 

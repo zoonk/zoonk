@@ -64,11 +64,13 @@ async function findSharedExam({
 
 /** Internal workflow bridge: the goal must come from the learner's authorized run. */
 export async function saveExamSkillGraph({
+  expectedGraph,
   graph,
   inputs,
   provenance,
   scope,
 }: {
+  expectedGraph?: PlanGraph;
   graph: PlanGraph;
   inputs: SharedInputs;
   provenance: { generatedAt: Date; model: string; promptVersion: string; runId: string };
@@ -106,13 +108,30 @@ export async function saveExamSkillGraph({
   await writePlanInputs(async (tx) => {
     await lockPlanBlueprintWrite(tx, examBlueprintId);
 
+    if (expectedGraph) {
+      const latest = await tx.examSkillGraph.findUnique({
+        select: { graph: true },
+        where: { examBlueprintId },
+      });
+
+      if (
+        latest &&
+        !isDeepStrictEqual(parsePlanGraph(latest.graph), parsePlanGraph(expectedGraph))
+      ) {
+        return;
+      }
+    }
+
     const blueprint = await tx.examBlueprint.findUniqueOrThrow({ where: { id: examBlueprintId } });
 
-    const pruned = await prunePlanNoticeGraph({
-      db: tx,
-      graph,
-      subjects: toExamOutline(blueprint).subjects,
-    });
+    const outline = toExamOutline(blueprint);
+    const expectedOutline = inputs.graphPrompt.examBlueprint;
+
+    if (expectedGraph && expectedOutline && !isDeepStrictEqual(outline, expectedOutline)) {
+      return;
+    }
+
+    const pruned = await prunePlanNoticeGraph({ db: tx, graph, subjects: outline.subjects });
 
     const { count } = await tx.examSkillGraph.createMany({
       data: [{ ...kept, examBlueprintId, graph: pruned.graph }],

@@ -8,7 +8,7 @@ import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type ServiceTier, buildProviderOptions } from "../../provider-options";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { getVerbForm } from "../_utils/verb-form";
-import { toSkillNameKey } from "./_utils/skill-graph-checks";
+import { toSkillNameKey } from "./_utils/skill-name-keys";
 import systemPrompt from "./member-coverage.prompt.md";
 
 /**

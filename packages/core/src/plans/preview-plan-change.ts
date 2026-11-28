@@ -1,6 +1,6 @@
 import "server-only";
 import { isPlanReady } from "./_utils/apply-plan-change";
-import { getCourseFinish } from "./_utils/course-finish";
+import { getCourseFinish, getFinishDisplay } from "./_utils/course-finish";
 import { computeCheckedChange } from "./_utils/extra-offer";
 import { foldChangeAreas } from "./_utils/fold-part-areas";
 import { findOwnedPlan } from "./_utils/owned-plan";
@@ -20,6 +20,7 @@ const BUILDING: PlanChangePreview = {
   effect: null,
   feasibility: null,
   finishDate: null,
+  ...getFinishDisplay(null),
   ready: false,
   unchanged: false,
 };
@@ -71,6 +72,7 @@ export async function previewPlanChange({
     const { computed, effect, unchanged } = checked;
 
     const { coreFits, coveredShare, fits, measure } = computed.feasibility;
+    const finish = getCourseFinish(computed);
 
     return {
       preview: {
@@ -81,7 +83,8 @@ export async function previewPlanChange({
           fits,
           measure,
         },
-        finishDate: getCourseFinish(computed),
+        finishDate: finish?.date ?? null,
+        ...getFinishDisplay(finish),
         ready: true,
         unchanged,
       },

@@ -25,6 +25,7 @@ export function startsWithSubject({
 
 /** Every call of one exam's graph reads the same text, so they share a cached prefix. */
 export function buildSkillGraphSystemPrompt({
+  courseLevel,
   examBlueprint,
   firstSkill,
   goalKind,
@@ -36,6 +37,7 @@ export function buildSkillGraphSystemPrompt({
   purpose,
 }: Pick<
   SkillGraphParams,
+  | "courseLevel"
   | "examBlueprint"
   | "firstSkill"
   | "goalKind"
@@ -50,6 +52,7 @@ export function buildSkillGraphSystemPrompt({
     template,
     variants: {
       budget: Boolean(lessonBudget),
+      courseLevel: goalKind === "learn" && Boolean(courseLevel),
       domainShares: Boolean(examBlueprint?.subjects.some((subject) => subject.topicGroups?.length)),
       exam: goalKind === "exam",
       extras: writesExamExtras({ goalKind, hasMaterial, lessonBudget }),

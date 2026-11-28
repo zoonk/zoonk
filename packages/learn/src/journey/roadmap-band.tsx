@@ -3,10 +3,9 @@
 import { type PlanPhaseView } from "@zoonk/core/plans/view-contract";
 import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { usePlanScreen } from "../plan/plan-context";
-import { usePhaseName } from "../plan/use-phase-name";
 import { CurrentPhaseMark } from "./current-phase-mark";
-import { BandTodayTick, EndDateSizer } from "./roadmap-lane";
+import { usePhaseRowName } from "./path-phase-row";
+import { AxisDateSizer, BandTodayTick } from "./roadmap-lane";
 import { BAND_CHECK_CLASS, BandName, splitBandName } from "./roadmap-styles";
 import { getLessonShare } from "./use-roadmap";
 
@@ -14,17 +13,18 @@ const PERCENT = 100;
 
 export function BandFace({
   isLast,
+  labelled,
   phase,
   todayShare = null,
 }: {
   isLast: boolean;
+  labelled: boolean;
   phase: PlanPhaseView;
   todayShare?: number | null;
 }) {
   const t = useExtracted();
-  const phaseName = usePhaseName();
-  const { plan } = usePlanScreen();
-  const name = phaseName(phase, { mocksRequirePlus: plan.access.mocksRequirePlus });
+  const phaseRowName = usePhaseRowName();
+  const name = phaseRowName(phase);
 
   return (
     <>
@@ -38,7 +38,7 @@ export function BandFace({
         }
         name={name}
       />
-      {isLast && <EndDateSizer />}
+      <AxisDateSizer isLast={isLast} labelled={labelled} phase={phase} />
       {phase.state === "current" && <span className="sr-only">{t(", you are here")}</span>}
       {phase.state === "done" && <span className="sr-only">{t(", done")}</span>}
       {phase.state === "current" && (

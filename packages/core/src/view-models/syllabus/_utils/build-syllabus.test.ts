@@ -767,6 +767,30 @@ describe(buildSyllabus, () => {
     ]);
   });
 
+  it("leaves out none of a module's skills an undated plan owes for later", () => {
+    const syllabus = buildSyllabus({
+      areaCourses: new Map(),
+      chapterTitles: new Map(),
+      items: [lesson({ chapterId: "ch-64", skillId: "s-64" })],
+      knownSkillIds: new Set(),
+      notice: null,
+      pastBasicsSkillIds: new Set(),
+      skills: [
+        { area: "Long surahs", name: "Memorize Surahs 64–66", skillId: "s-64", topics: [] },
+        {
+          area: "Long surahs",
+          deferredLessons: 3,
+          name: "Memorize Surahs 56–58",
+          skillId: "s-56",
+          topics: [],
+        },
+      ],
+      skippedAreas: [],
+    });
+
+    expect(syllabus.subjects.map((subject) => subject.leftOut)).toStrictEqual([[]]);
+  });
+
   it("names what an exam subject's date leaves out only when it lists no topics", () => {
     const input = oldGraphInput();
 

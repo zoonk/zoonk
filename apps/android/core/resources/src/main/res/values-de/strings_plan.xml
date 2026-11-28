@@ -209,6 +209,7 @@
   "plan_effect_numbers_different": "ddf1b982e7a0dada823894ffc07b81387950b1e594ff2bb64c04608d9f126372",
   "plan_effect_phase_ends": "b91f0364ccad721ff85cb3b0dac374e6ad101acc557fe6c3cc369e0620814a76",
   "plan_effect_plan_ends": "7a1e908c4025287de03695911068985c528a215f0aaebf58f0e12dd7ef4eb5a8",
+  "plan_effect_plan_ends_around": "9e1266a5f951e354cf546b4d72593b4d7ddf58e179b62dde92fd9f4465a6d9d8",
   "plan_effect_row_added": "74268e498924c5d05e8616d2c0ce0fe01f58744bae31e0796b7ca5880bd7c4e8",
   "plan_effect_row_end_date": "3e6bd327cf46ac7f0b6d3e2616512f131e7885c43e03030c6e27cc7e85e1cde5",
   "plan_effect_row_ends": "795a9fd2938a3fef1748d494b70ceb6c3495be167f121b8f7796a5a8d11dade9",
@@ -236,6 +237,7 @@
   "plan_ends": "c4e6be00bf7fa46c1197e3cb7870f8ac4d1f38d398ee52c29170ec64b0480488",
   "plan_ends_about": "7b06cd906db216f40f99631135fe4388d4b6fd569800d5670bcf5d5da96822e0",
   "plan_ends_about_month": "7932ff5056becaff214a15a12f06178181b9587eb8a5b2ecc39ca5b2712e7889",
+  "plan_ends_later": "d16a67362d94890ec606d3e663fe970e824780e92fb551ae77b313857cf233c0",
   "plan_estimate_based_on": "1f3168fa02f322c306d4e24bcaa6777e42d5ee66c6b166ba6b08967f32aba687",
   "plan_estimate_based_on_last": "86b6d05ddd46d6851c6f9d874b70a745e29d7df281b273f229963fe2454faa1e",
   "plan_estimate_based_on_reviews": "a0283b1ac6bdb9f9df6bbff1cbff676f188f26c9ad2a288145050d1ba8143a03",
@@ -262,11 +264,10 @@
   "plan_find_building": "b19c8cb593fe4faf8dd134d0401a093815e73668a7df0ce3a9abf13f18ead1ae",
   "plan_find_date": "534acfba49766f82fb2cd3ca84fa9ba686d0da31aa95b6c5cd04b07086d4bf3a",
   "plan_find_no_date": "04ef44ef94aab74c0a507317a694aa8c38352e494aee6da04c54d118021a3fb9",
-  "plan_finish": "7dc93b9662379371300f0afdf36805d05d1c555ca1ccb0f12af3bf6191967f1e",
-  "plan_finish_after_exam": "d3ccab12d46d52bb7b63553b093ff95420a645dd92916c2d5d69ab2affd662c9",
-  "plan_finish_after_exam_month": "d3ad0a309ddaeb61b99a5824d37c220168779a8e45e4f74b5f35ab3bf72d828f",
-  "plan_finish_around": "8e1551710fb54fa22df18127cffb4d13f18d96d9a58fd0d453bc6a065d237009",
+  "plan_finish_around": "b521b7f64d5eb05978d6476b76aa5c410b3f7a7f8d4f5078bcede2fe8176944d",
+  "plan_finish_to_finish": "1fe216da956679174504d70e50a903436d5afb7f331dc62fd4cad33fd52747d9",
   "plan_finish_working": "2580c416354abc35ee46572bba2af74689715ab7d744dafd523c18204fa6a273",
+  "plan_finish_years_plus": "7f01c4730169cfb36aae0b060f75d851836121a2ab2a888dfb91cae5408c3834",
   "plan_finished_title": "683e031a676874792ce1fbb61516c3e562c70c623a43cebc52d3b45c5ab4c0c4",
   "plan_fit_time_left": "29c79b9f8e09eaec251531dee5c2cdabecafeb33b34657c99186184ffacc4415",
   "plan_focus_already_in": "d83f5e01cb119dfd4d88f14e75e3f813c6c5060fdfb9599d2a31022e8c71f608",
@@ -281,6 +282,7 @@
   "plan_going_deeper": "fea689e4d7bfde9c769d43469297ec6852a449c7904b82a9e18ea74a798d9f24",
   "plan_how_calculated": "0739cd6e655c7f2749b75c10ea4dd2ba2866b4d58c54f8ac05514fc0539dfa06",
   "plan_keep_studying": "9ada847af1875e7b362a18294cd07ef0c4e36c5486b80281ea65723d7f92fdd2",
+  "plan_later": "aa56eeebd2b478efd573c08be7635a31ea9d0d14ce3f69032aa8ae9ea3350916",
   "plan_left_out_topics": "a64ec60ad06937304295c2c78b3515d30859a11244ab05e21b926bed79c01ea5",
   "plan_legend_phase_questions": "ff9b5a5054417223374b8c0f2b2f59ee9058425fc2b1c3243b9ed6482cd9eef8",
   "plan_lessons": "99948753edd71a789e3be2c03926c6c38f227595fc5cf4d5185c4e955bd97c4f",
@@ -443,7 +445,6 @@
   "plan_time_enough_in_plan_month": "f319d29a56dedb7b7b641312dd4f6503b0386e938efa17d9e6e97b15d4bc8bf4",
   "plan_time_find_failed": "bfd4e3ef1ccc8717c60d1ec4a3d0cc755eecc2c21ab03bd73f30d9d9a0b68e35",
   "plan_time_finish_failed": "12e6e6a38c80b434236a3c6e5faa2c6ece686f10cf3b13327672d6804478339f",
-  "plan_time_finish_unknown": "cc322bc333a77a877df815615dfd6508421b1dd159e5925faf10311deaddab1b",
   "plan_time_no_days": "4a63c77e739ec1809fac4a8d16c3e4aaf581106e2382f7a6e5fb0eec372ef7bf",
   "plan_time_past_date": "4b08a26f1d2fb4ddc66b7d008efbde0f5458f40221f701c3f9757b03146e9560",
   "plan_time_past_date_month": "70c7fe0ae1b13701274d7e64a4b3a6568c1d8b6940940a1ac15882d6c97c18a8",
@@ -555,6 +556,8 @@
     <string name="plan_ends_about">Endet etwa am %1$s</string>
     <!-- When a phase of the plan is expected to end. %1$s is a month, like "Jan". -->
     <string name="plan_ends_about_month">Endet etwa im %1$s</string>
+    <string name="plan_later">Später</string>
+    <string name="plan_ends_later">Endet später</string>
     <string name="plan_date_range">%1$s – %2$s</string>
     <string name="plan_no_goal_description">Sag uns, was du lernen möchtest, und wir planen jeden Tag bis zu deinem Ziel.</string>
     <string name="plan_setup_left_title">Dein Plan folgt nach ein paar Fragen</string>
@@ -593,7 +596,7 @@
     </plurals>
     <string name="plan_today">Heute</string>
     <string name="plan_mock_exam">Probeprüfung</string>
-    <!-- In the roadmap's legend, beside the flag at the day the plan finishes when the learner set no end date. -->
+    <!-- Names the day the plan works out it finishes when the learner set no end date: beside the flag in the roadmap's legend, and as the label of that date in the plan's settings. -->
     <string name="plan_roadmap_you_finish">Du bist fertig</string>
     <!-- In the roadmap's legend, beside the mark of each phase's end-of-phase questions (the Trickster, before the learner has met him). -->
     <string name="plan_legend_phase_questions">Fragen zur Phase</string>
@@ -1116,13 +1119,14 @@
     <string name="plan_time_past_date">Dein Zieldatum (%1$s) ist vorbei.</string>
     <!-- %1$s is a month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it. -->
     <string name="plan_time_past_date_month">Dein Zieldatum (%1$s) ist vorbei.</string>
-    <string name="plan_time_finish_unknown">Für diesen Zeitplan können wir kein Abschlussdatum schätzen. Versuch es mit mehr Zeit oder mehr Lerntagen.</string>
     <string name="plan_time_finish_failed">Wir konnten nicht berechnen, wann du fertig wärst.</string>
     <string name="plan_time_no_days">Wähle mindestens einen Lerntag.</string>
     <string name="plan_time_working">Wir berechnen, wie viel Zeit du für dein Ziel brauchst…</string>
     <string name="plan_time_find_failed">Wir konnten nicht berechnen, wie viel Zeit du für dein Ziel brauchst.</string>
-    <!-- %1$s is a month and year, like "March 2027". -->
-    <string name="plan_finish_around">Du bist etwa im %1$s fertig.</string>
+    <!-- How long finishing the plan takes at the time picked, when it's more than ten years. -->
+    <string name="plan_finish_years_plus">Über 10 Jahre</string>
+    <!-- Under '10+ years': how long finishing the plan takes at the time picked. -->
+    <string name="plan_finish_to_finish">bis zum Abschluss</string>
     <string name="plan_finish_working">Wir berechnen, wann du fertig wärst…</string>
     <!-- %1$s is a day, such as "May 5". -->
     <string name="plan_time_covers_everything_by">Mit deiner Lernzeit schaffst du bis zum %1$s alles</string>
@@ -1136,11 +1140,8 @@
     <!-- %1$s is a date, such as "November 8". -->
     <string name="plan_move_date_to">Zieldatum auf %1$s verschieben</string>
     <string name="plan_full_course_switch">Nach der Prüfung weiterlernen</string>
-    <string name="plan_finish">Mit %1$s am Tag bist du im %2$s fertig.</string>
-    <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's day with its year, such as "May 5, 2027". -->
-    <string name="plan_finish_after_exam">Mit %1$s pro Tag bist du im %2$s fertig, also nach der Prüfung am %3$s.</string>
-    <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "prévu en %3$s"). -->
-    <string name="plan_finish_after_exam_month">Mit %1$s pro Tag bist du im %2$s fertig, also nach der Prüfung im %3$s.</string>
+    <!-- {date} is a month and year, like "January 2027", or a year, like "2031". -->
+    <string name="plan_finish_around">Du schließt ungefähr um %1$s herum ab.</string>
     <string name="plan_study_everything">Enddatum entfernen</string>
     <string name="plan_study_everything_exam_description">Du lernst den gesamten Stoff. Was vor der Prüfung nicht mehr in deinen Plan passt, kommt danach.</string>
     <string name="plan_study_everything_goal_description">Alle Inhalte zu deinem Ziel, ohne Enddatum.</string>
@@ -1259,6 +1260,8 @@
     </plurals>
     <!-- {after} and {before} are days, like "May 5". -->
     <string name="plan_effect_plan_ends">Dein Plan endet am %1$s statt am %2$s.</string>
+    <!-- {after} and {before} are a month and year, like "May 2027", or a year, like "2031". -->
+    <string name="plan_effect_plan_ends_around">Dein Plan endet ungefähr um %1$s herum statt um %2$s herum.</string>
     <!-- {after} and {before} are days, like "May 5". -->
     <string name="plan_effect_phase_ends">%1$s endet am %2$s statt am %3$s.</string>
     <!-- {date} is a weekday and day, like "Monday, May 5". -->

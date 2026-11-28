@@ -21,7 +21,12 @@ import {
   mockSearchTermsFor,
   uniqueWord,
 } from "../identity/_test-utils/identity-mocks";
-import { addMissingExamGraphSkills, prepareNoticeGraphRepair } from "./exam-graph-repair";
+import { addCoveredExamSkills } from "./_test-utils/covered-exam-skills";
+import {
+  loadExamGraphReconcile,
+  prepareNoticeGraphRepair,
+  saveReconciledExamGraph,
+} from "./exam-graph-repair";
 
 const provenance = {
   generatedAt: new Date().toISOString(),
@@ -97,6 +102,7 @@ function mockMissingOptions({ readingId, word }: { readingId: string; word: stri
   const missing = [ENGLISH, SPANISH].map((area) => ({
     area,
     description: `Read short texts in ${area}`,
+    estimatedLessons: 4,
     examWeight: 2,
     name: `Ler textos em ${area} ${word}`,
     prerequisites: [readingId],
@@ -114,7 +120,7 @@ async function loadGraph(examBlueprintId: string) {
   return parsePlanGraph(stored.graph);
 }
 
-describe(addMissingExamGraphSkills, () => {
+describe(saveReconciledExamGraph, () => {
   beforeEach(() => {
     vi.resetAllMocks();
     mockSearchTerms([uniqueWord()]);
@@ -126,7 +132,7 @@ describe(addMissingExamGraphSkills, () => {
     const word = uniqueWord();
     mockMissingOptions({ readingId: reading.id, word });
 
-    await expect(addMissingExamGraphSkills(blueprint.id)).resolves.toStrictEqual([
+    await expect(addCoveredExamSkills(blueprint.id)).resolves.toStrictEqual([
       `Ler textos em ${ENGLISH} ${word}`,
       `Ler textos em ${SPANISH} ${word}`,
     ]);
@@ -160,7 +166,7 @@ describe(addMissingExamGraphSkills, () => {
       }),
     ).resolves.toHaveLength(2);
 
-    await expect(addMissingExamGraphSkills(blueprint.id)).resolves.toStrictEqual([]);
+    await expect(addCoveredExamSkills(blueprint.id)).resolves.toStrictEqual([]);
     expect(checkCoverage).toHaveBeenCalledOnce();
   });
 
@@ -182,7 +188,7 @@ describe(addMissingExamGraphSkills, () => {
 
     mockDecision(spanish.id);
 
-    await addMissingExamGraphSkills(blueprint.id);
+    await addCoveredExamSkills(blueprint.id);
 
     const repaired = await loadGraph(blueprint.id);
 
@@ -200,7 +206,7 @@ describe(addMissingExamGraphSkills, () => {
       visibility: "public",
     });
 
-    await addMissingExamGraphSkills(blueprint.id);
+    await addCoveredExamSkills(blueprint.id);
     const repaired = await loadGraph(blueprint.id);
     const added = repaired.skills.find((skill) => skill.area === SPANISH);
     const skill = await prisma.skill.findUniqueOrThrow({ where: { id: added?.skillId } });
@@ -213,7 +219,7 @@ describe(addMissingExamGraphSkills, () => {
     const courseId = graph.skills[0]?.courseIds[0];
     await prisma.course.update({ data: { country: null }, where: { id: courseId } });
     mockMissingOptions({ readingId: reading.id, word: uniqueWord() });
-    await addMissingExamGraphSkills(blueprint.id);
+    await addCoveredExamSkills(blueprint.id);
     const repaired = await loadGraph(blueprint.id);
     const added = repaired.skills.find((skill) => skill.area === SPANISH);
 
@@ -287,6 +293,7 @@ describe(addMissingExamGraphSkills, () => {
           {
             area: MATH,
             description: "Solve the restored math questions",
+            estimatedLessons: 6,
             examWeight: 5,
             name: `Resolver questões de matemática ${uniqueWord()}`,
             prerequisites: [],
@@ -313,8 +320,10 @@ describe(addMissingExamGraphSkills, () => {
       userPrompt: "",
     });
 
-    await expect(addMissingExamGraphSkills(blueprint.id)).resolves.toHaveLength(1);
-    expect(areas(await loadGraph(blueprint.id))).toStrictEqual([LANGUAGES, MATH]);
+    await expect(addCoveredExamSkills(blueprint.id)).resolves.toHaveLength(1);
+    const shared = await loadGraph(blueprint.id);
+    expect(areas(shared)).toStrictEqual([LANGUAGES, MATH]);
+    expect(shared.skills.find((skill) => skill.area === MATH)?.lessons).toBe(6);
 
     await repair();
     expect(areas(await readPlan())).toStrictEqual([LANGUAGES, MATH]);
@@ -435,10 +444,37 @@ describe(addMissingExamGraphSkills, () => {
     });
   });
 
+  it("keeps the winning shared graph when two reconciles read the same draft", async () => {
+    const { blueprint, graph } = await writtenGraph();
+    const snapshot = await loadExamGraphReconcile(blueprint.id);
+
+    if (!snapshot) {
+      throw new Error("Expected a draft to reconcile.");
+    }
+
+    const results = await Promise.all(
+      [7, 13].map((lessons) =>
+        saveReconciledExamGraph({
+          examBlueprintId: blueprint.id,
+          graph: { ...graph, skills: graph.skills.map((skill) => ({ ...skill, lessons })) },
+          storedGraph: snapshot.storedGraph,
+          structure: snapshot.structure,
+        }),
+      ),
+    );
+
+    expect(results.filter(Boolean)).toHaveLength(1);
+    const saved = await loadGraph(blueprint.id);
+
+    expect(saved.skills.map((skill) => skill.lessons)).toStrictEqual(
+      results[0] ? [7, 7] : [13, 13],
+    );
+  });
+
   it("asks no model when the graph already teaches every topic", async () => {
     const blueprint = await choiceBlueprintFixture();
 
-    await expect(addMissingExamGraphSkills(blueprint.id)).resolves.toStrictEqual([]);
+    await expect(addCoveredExamSkills(blueprint.id)).resolves.toStrictEqual([]);
     expect(checkCoverage).not.toHaveBeenCalled();
   });
 });

@@ -27,6 +27,9 @@ import com.zoonk.android.feature.onboarding.start.text
 import com.zoonk.android.feature.plan.DaySplit
 import com.zoonk.android.feature.plan.GoalDate
 import com.zoonk.android.feature.plan.TimeAnswer
+import com.zoonk.android.feature.plan.TimeLine
+import com.zoonk.android.feature.plan.TimeWithFinish
+import com.zoonk.android.feature.plan.forecast
 import com.zoonk.android.feature.plan.lineAdvice
 import com.zoonk.android.feature.plan.suggestedMinutes
 import com.zoonk.android.feature.plan.timeLine
@@ -48,7 +51,6 @@ import com.zoonk.api.models.OnboardingTimeChoicesInner
 import com.zoonk.api.models.PlanTimeAdvice
 import com.zoonk.api.models.PlanTimeToCover
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.toJavaLocalDate
 import java.util.TimeZone
 
 @Composable
@@ -152,10 +154,9 @@ private fun ColumnScope.ScheduleTime(
         )
     val asked = studyWeek(days, minutes ?: recommendedMinutes, weekend)
 
-    val aim =
-        LocalSetupAim.current.aim
-            ?.aim
-            ?.value
+    val setupAim = LocalSetupAim.current.aim
+    val aim = setupAim?.aim?.value
+    val aimAhead = setupAim?.takeIf { it.choices.any { choice -> choice.aim.value == aim } }?.let { it.label ?: aim }
     val timeAdvice =
         rememberPlanAnswer(
             store.timeAdvice,
@@ -267,14 +268,16 @@ private fun ColumnScope.ScheduleTime(
             val label = stringResource(R.string.onboarding_schedule_time_label)
             // The picker carries the name for screen readers; this is its visible title.
             Text(label, Modifier.clearAndSetSemantics {}, fontWeight = FontWeight.Medium, style = MaterialTheme.typography.bodyMedium)
-            DailyTimePicker(
-                times = timeChoices.map { it.minutes },
-                minutes = minutes,
-                label = label,
-                onChange = pick,
-                suggested = suggestedMinutes(found),
-                stale = stale,
-            )
+            TimeWithFinish((shown.line as? TimeLine.Finish)?.forecast, aim = aimAhead, updating = shown.updating) {
+                DailyTimePicker(
+                    times = timeChoices.map { it.minutes },
+                    minutes = minutes,
+                    label = label,
+                    onChange = pick,
+                    suggested = suggestedMinutes(found),
+                    stale = stale,
+                )
+            }
         }
 
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -291,7 +294,7 @@ private fun ColumnScope.ScheduleTime(
             )
         }
 
-        ScheduleAim(advice?.endDate?.toJavaLocalDate(), minutes, goal, store, asked.adviceInput(minutes ?: recommendedMinutes))
+        ScheduleAim(advice?.forecast, minutes, goal, store, asked.adviceInput(minutes ?: recommendedMinutes))
 
         DateLink(dated = dated, exam = exam, enabled = !pending, onClick = vm::changeDate)
 
@@ -300,16 +303,6 @@ private fun ColumnScope.ScheduleTime(
             date = date,
             exam = exam,
             line = shown.line,
-            aim =
-                LocalSetupAim.current.aim?.let { selected ->
-                    selected.aim?.value?.takeIf { value ->
-                        selected.choices.any {
-                            it.aim.value ==
-                                value
-                        }
-                    }
-                },
-            minutes = minutes,
             offer = timeOffer(shown.line, minutes),
             onRetry = if (findFailed) covering.restart else timeAdvice.restart,
             onUseOffer = { choose(it, found) },

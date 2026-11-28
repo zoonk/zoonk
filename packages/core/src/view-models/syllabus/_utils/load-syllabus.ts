@@ -62,6 +62,7 @@ function toSyllabusItem(item: SyllabusItem): SyllabusItem {
 function toSkills(graph: PlanGraph): SyllabusSkill[] {
   return graph.skills.map((skill) => ({
     area: getSkillArea({ graph, skill }),
+    ...(skill.deferredLessons && { deferredLessons: skill.deferredLessons }),
     ...(skill.extra && { extra: true }),
     name: skill.name,
     skillId: skill.skillId,

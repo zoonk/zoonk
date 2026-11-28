@@ -2,8 +2,8 @@ import SwiftUI
 
 /// Main's `TimeAnswer`, shared by the time question and the plan editor: one line under the picker.
 /// For a goal with a date it says the time the plan suggests, so it stays put as times are picked,
-/// with a button to use that time while a shorter one is picked; for one without, when the time
-/// picked finishes it.
+/// with a button to use that time while a shorter one is picked; for one without, the finish
+/// readout beside the time says when it ends, and this line only while that's worked out.
 struct TimeAnswer: View {
   struct GoalDate: Equatable {
     let isoDate: String
@@ -19,8 +19,6 @@ struct TimeAnswer: View {
   var split: DaySplit?
   /// The last answer, still in place while the new one is worked out.
   var updating = false
-  /// A language goal's aim above the learner's level, which its finish is when they reach.
-  var aim: String?
   var subjectsTakenOut = false
   let onRetry: () -> Void
   let onUseOffer: (Int) -> Void
@@ -107,7 +105,7 @@ struct TimeAnswer: View {
         Self.suggestionWords(
           suggested, exam: exam, date: $0, subjectsTakenOut: subjectsTakenOut)
       }
-    case .quiet:
+    case .quiet, .finish:
       return nil
     case .pastDate:
       return shown.map { date in
@@ -125,26 +123,6 @@ struct TimeAnswer: View {
             table: "Onboarding",
             comment: "The goal's date has passed; the argument is a date like 'May 5, 2027'")
       }
-    case .finish(let endDate) where aim != nil && minutes != nil:
-      return String(
-        localized:
-          "At \(planDurationText(minutes: Double(minutes ?? 0))) a day, you reach \(aim ?? "") around \(PlanDate.longText(endDate, month: true)).",
-        table: "Onboarding",
-        comment:
-          "When a language goal reaches its aim at the time picked; the arguments are a duration like '30 min', a level like 'B1' and a month like 'May 2027'"
-      )
-    case .finish(let endDate):
-      return String(
-        localized: "You finish around \(PlanDate.longText(endDate, month: true)).",
-        table: "Onboarding",
-        comment:
-          "When a goal without a date finishes at the time picked; the argument is a month like 'May 2027'"
-      )
-    case .noFinish:
-      return String(
-        localized:
-          "We can't estimate an end date. Try more time or more study days.",
-        table: "Onboarding", comment: "No finish date fits the time and days picked")
     case .noDays:
       return String(
         localized: "Choose at least one study day.", table: "Onboarding",

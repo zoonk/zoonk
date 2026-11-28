@@ -1,4 +1,5 @@
 import { type ExamIdentity } from "@zoonk/core/library/exams/identity";
+import { reconcileExamNotice } from "../freshness/reconcile-exam-notice";
 import {
   listNoticeGoalsStep,
   logNoticeRepairFailureStep,
@@ -12,7 +13,37 @@ import { findNoticeReadingStep } from "./steps/is-notice-read-step";
 import { refreshFollowerSummariesStep } from "./steps/link-goal-step";
 import { saveBlueprintStep, setAsideReadingStep } from "./steps/save-blueprint-step";
 
-export type SavedBlueprint = { created: boolean; examBlueprintId: string; movesExamDays: boolean };
+export type SavedBlueprint = {
+  created: boolean;
+  examBlueprintId: string;
+  movesExamDays: boolean;
+  noticeId: string | null;
+};
+
+export async function reconcileReadExamBlueprint({
+  analytics,
+  exceptGoalId,
+  saved,
+  shared,
+}: {
+  analytics: ResearchAnalytics;
+  exceptGoalId: string | null;
+  saved: SavedBlueprint;
+  shared: boolean;
+}): Promise<void> {
+  try {
+    if (shared) {
+      await reconcileExamNotice({ analytics, examBlueprintId: saved.examBlueprintId });
+    }
+  } finally {
+    await updateExamNoticePlans({
+      examBlueprintId: saved.examBlueprintId,
+      exceptGoalId,
+      movesExamDays: saved.movesExamDays,
+      noticeId: saved.noticeId,
+    });
+  }
+}
 
 export function describeExam(identity: ExamIdentity): string {
   return identity.role ? `${identity.name}, ${identity.role}` : identity.name;
@@ -65,6 +96,18 @@ export async function updateExamNoticePlans({
   } while (after);
 }
 
+async function extractBlueprintWithCorrections(input: Parameters<typeof extractBlueprint>[0]) {
+  const first = await extractBlueprint(input);
+
+  const isCorrected = input.corrections?.some((problem) => problem.kind === "wholeExamSubjects");
+
+  // Subjects that each hold the whole exam are worth one more reading told what they are, since a
+  // planner would teach every version as compulsory.
+  return first.wholeExamSubjects && !isCorrected
+    ? extractBlueprint({ ...input, corrections: first.problems ?? [first.wholeExamSubjects] })
+    : first;
+}
+
 /**
  * Never reads a notice the blueprint was already read from, whatever instructions would read it;
  * only an admin's `force` does.
@@ -107,19 +150,7 @@ export async function readExamBlueprint({
   const shared = identity.ownerId === null;
   const corrections = stored?.problems ?? [];
   const read = { analytics, background, exam: describeExam(identity), shared, sourceIds };
-  const first = await extractBlueprint({ ...read, corrections });
-
-  const isCorrected = corrections.some((problem) => problem.kind === "wholeExamSubjects");
-
-  // Subjects that each hold the whole exam are worth one more reading told what they are, since a
-  // planner would teach every version as compulsory.
-  const reading =
-    first.wholeExamSubjects && !isCorrected
-      ? await extractBlueprint({
-          ...read,
-          corrections: first.problems ?? [first.wholeExamSubjects],
-        })
-      : first;
+  const reading = await extractBlueprintWithCorrections({ ...read, corrections });
 
   if (reading.wholeExamSubjects) {
     await setAsideReadingStep({ identity, problem: reading.wholeExamSubjects, reading });
@@ -146,12 +177,9 @@ export async function readExamBlueprint({
 
   await refreshFollowerSummariesStep(saved.examBlueprintId);
 
-  await updateExamNoticePlans({
-    examBlueprintId: saved.examBlueprintId,
-    exceptGoalId,
-    movesExamDays: saved.movesExamDays,
-    noticeId: saved.noticeId,
-  });
+  if (background || !shared) {
+    await reconcileReadExamBlueprint({ analytics, exceptGoalId, saved, shared });
+  }
 
   return saved;
 }

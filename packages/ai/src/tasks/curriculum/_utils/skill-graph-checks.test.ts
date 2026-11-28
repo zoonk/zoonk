@@ -1,9 +1,6 @@
 import { describe, expect, it } from "vitest";
-import {
-  type CheckedGraphSkill,
-  findSkillGraphProblems,
-  toSkillNameKey,
-} from "./skill-graph-checks";
+import { type CheckedGraphSkill, findSkillGraphProblems } from "./skill-graph-checks";
+import { toSkillNameKey } from "./skill-name-keys";
 
 function skill(overrides: Partial<CheckedGraphSkill> & { key: string }): CheckedGraphSkill {
   return {

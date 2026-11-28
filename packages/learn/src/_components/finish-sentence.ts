@@ -2,34 +2,31 @@
 
 import { useExtracted } from "next-intl";
 import { useFormatIsoDate } from "../_utils/iso-date";
-import { useFormatDuration } from "../_utils/time-format";
+import { type FinishForecast } from "./finish-readout";
 
-/**
- * When the learner finishes, in one sentence wherever it shows. A language plan ends where its aim
- * is, so with an `aim` it says when they reach it.
- */
+export function useFormatFinishDate() {
+  const formatDate = useFormatIsoDate();
+
+  return (endDate: string, precision: FinishForecast["precision"] | "day"): string => {
+    if (precision === "year") {
+      return formatDate(endDate, "year");
+    }
+
+    return formatDate(endDate, precision === "day" ? "sentence" : "sentenceMonth", {
+      year: "always",
+    });
+  };
+}
+
+/** When a plan that studies past its exam finishes, in one sentence. */
 export function useFinishSentence() {
   const t = useExtracted();
-  const formatDate = useFormatIsoDate();
-  const formatDuration = useFormatDuration();
+  const formatDate = useFormatFinishDate();
 
-  return ({
-    aim = null,
-    endDate,
-    minutes = null,
-  }: {
-    aim?: string | null;
-    endDate: string;
-    minutes?: number | null;
-  }): string => {
-    const month = formatDate(endDate, "sentenceMonth", { year: "always" });
-
-    return aim && minutes !== null
-      ? t("At {time} a day, you reach {level} around {month}.", {
-          level: aim,
-          month,
-          time: formatDuration(minutes),
-        })
-      : t("You finish around {month}.", { month });
-  };
+  return ({ endDate, precision }: { endDate: string; precision: FinishForecast["precision"] }) =>
+    t({
+      description: '{date} is a month and year, like "January 2027", or a year, like "2031".',
+      message: "You finish around {date}.",
+      values: { date: formatDate(endDate, precision) },
+    });
 }

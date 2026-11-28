@@ -26,6 +26,7 @@ import {
 import { useBandFit } from "./use-band-fit";
 import {
   useAxisDatedPhases,
+  useFinishLabel,
   useRoadmapFinish,
   useRoadmapPhases,
   useRoadmapPosition,
@@ -38,12 +39,14 @@ const moveBetweenBands = moveFocusWithArrows("roadmap-band");
 function PhaseBand({
   focusable,
   isLast,
+  labelled,
   links,
   phase,
   todayShare,
 }: {
   focusable: boolean;
   isLast: boolean;
+  labelled: boolean;
   links: JourneyPathLinks;
   phase: PlanPhaseView;
   todayShare: number | null;
@@ -69,7 +72,7 @@ function PhaseBand({
           />
         }
       >
-        <BandFace isLast={isLast} phase={phase} todayShare={todayShare} />
+        <BandFace isLast={isLast} labelled={labelled} phase={phase} todayShare={todayShare} />
       </DrawerTrigger>
 
       <DrawerPopup>
@@ -100,6 +103,7 @@ function PhaseColumn({
       <PhaseBand
         focusable={focusable}
         isLast={isLast}
+        labelled={labelled}
         links={links}
         phase={phase}
         todayShare={todayShare}
@@ -109,23 +113,6 @@ function PhaseColumn({
       <PhaseAxis isLast={isLast} labelled={labelled} phase={phase} />
     </li>
   );
-}
-
-function useFinishLabel() {
-  const t = useExtracted();
-  const { goal, plan } = usePlanScreen();
-
-  if (goal.kind === "exam") {
-    return t("Exam date");
-  }
-
-  return plan.schedule.targetDate
-    ? t("End date")
-    : t({
-        description:
-          "In the roadmap's legend, beside the flag at the day the plan finishes when the learner set no end date.",
-        message: "You finish",
-      });
 }
 
 function RoadmapLegend() {

@@ -30,8 +30,9 @@ const CHAPTER_LEVELS = ["beginner", "beginner", "intermediate", "advanced"] as c
 
 async function outlinedCourse({
   format = "core",
+  lessonMinutes = 5,
   levels = CHAPTER_LEVELS,
-}: { format?: CourseFormat; levels?: readonly CourseLevel[] } = {}) {
+}: { format?: CourseFormat; lessonMinutes?: number; levels?: readonly CourseLevel[] } = {}) {
   const course = await courseFixture({
     format,
     isPublished: true,
@@ -56,7 +57,7 @@ async function outlinedCourse({
         prisma.chapterSkill.create({ data: { chapterId: chapter.id, skillId: skill.id } }),
         ...Array.from({ length: LESSONS_PER_CHAPTER }, async (_, lessonPosition) => {
           const lesson = await libraryLessonFixture({
-            estimatedMinutes: 5,
+            estimatedMinutes: lessonMinutes,
             homeChapterId: chapter.id,
             title: `Part ${position + 1}, lesson ${lessonPosition + 1}`,
           });
@@ -216,8 +217,8 @@ describe(estimateCoursePlan, () => {
     ).resolves.toBeNull();
   });
 
-  it("does not promise a finish date when a low-time one-day schedule leaves course lessons out", async () => {
-    const { course } = await outlinedCourse();
+  it("does not promise a finish date when course lessons extend past the placement window", async () => {
+    const { course } = await outlinedCourse({ lessonMinutes: 60 });
 
     await expect(
       estimateCoursePlan({ courseId: course.id, dailyMinutes: 5, studyDays: [1] }),

@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.plan
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -51,12 +52,11 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.PlaceholderVerticalAlign
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.Hyphens
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
@@ -69,7 +69,6 @@ import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.ListRowChevron
 import com.zoonk.android.ui.components.glyphScale
-import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.theme.Geist
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.balanced
@@ -98,11 +97,12 @@ internal fun PlanRoadmap(
     onOpenPath: (() -> Unit)? = null,
 ) {
     val phases = page.plan.roadmapPhases
-    if (phases.size < 2) return
+    if (phases.isEmpty()) return
 
     BoxWithConstraints(modifier.fillMaxWidth()) {
         val bandsFit = MIN_BAND_WIDTH * phases.size + BAND_GAP * (phases.size - 1) <= maxWidth
-        if (maxWidth < FULL_ROADMAP_WIDTH || !bandsFit) {
+        // A plan with one phase has no phases to set side by side, but its bar still ends on its finish.
+        if (phases.size == 1 || maxWidth < FULL_ROADMAP_WIDTH || !bandsFit) {
             RoadmapCompact(page, phases, onOpenPath)
         } else {
             RoadmapFull(page, phases, links, maxWidth)
@@ -112,8 +112,8 @@ internal fun PlanRoadmap(
 
 private val FULL_ROADMAP_WIDTH = 560.dp
 
+/** Where the learner is: the row under the roadmap already names the phase. */
 private data class RoadmapPosition(
-    val name: String,
     val end: PlanDateWords?,
     val number: Int,
     val total: Int,
@@ -127,7 +127,6 @@ private fun roadmapPosition(
     val index = phases.indexOfFirst { it.state == PlanPhase.State.CURRENT }
     val current = phases.getOrNull(index) ?: return null
     return RoadmapPosition(
-        phaseName(current, page.mocksRequirePlus),
         phaseEnd(page, current).takeUnless { page.isPaused },
         index + 1,
         phases.size,
@@ -146,28 +145,17 @@ private fun PhaseEndLine(end: PlanDateWords) {
     )
 }
 
-/**
- * "Phase 1 of 4 · Basics" on one line, or the name under the number when they don't fit, so a wrapped line never
- * starts on a dot, as web's `FactSegments` cuts it.
- */
 @Composable
 private fun PositionLine(
     position: RoadmapPosition,
     modifier: Modifier,
 ) {
-    val style = MaterialTheme.typography.labelMedium.balanced()
-    val number = stringResource(R.string.plan_roadmap_phase_number, position.number, position.total)
-    val oneLine = positionWords(number, listOf(position.name))
-    val measurer = rememberTextMeasurer()
-    BoxWithConstraints(modifier) {
-        val fits = measurer.measure(oneLine, style, softWrap = false, maxLines = 1).size.width <= constraints.maxWidth
-        Text(
-            text = if (fits) oneLine else positionWords(number, listOf(position.name), separator = "\n"),
-            style = style,
-            maxLines = 3,
-            overflow = TextOverflow.Ellipsis,
-        )
-    }
+    Text(
+        text = stringResource(R.string.plan_roadmap_phase_number, position.number, position.total),
+        modifier = modifier,
+        style = MaterialTheme.typography.labelMedium,
+        fontWeight = FontWeight.Medium,
+    )
 }
 
 @Composable
@@ -177,8 +165,6 @@ private fun RoadmapCompact(
     onOpen: (() -> Unit)?,
 ) {
     val position = roadmapPosition(page, phases)
-    val done = phases.count { it.state == PlanPhase.State.DONE }
-    val small = MaterialTheme.typography.labelMedium
     val clickable =
         if (onOpen == null) {
             Modifier
@@ -192,38 +178,74 @@ private fun RoadmapCompact(
         modifier = clickable.heightIn(min = 48.dp).padding(vertical = 4.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        RoadmapMeter(phases)
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            if (position != null) {
-                PositionLine(position, Modifier.weight(1f))
-                position.end?.let { PhaseEndLine(it) }
-            } else {
-                Text(
-                    text = pluralStringResource(R.plurals.plan_phases_done, phases.size, done, phases.size),
-                    modifier = Modifier.weight(1f),
-                    style = small,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-            if (onOpen != null) ListRowChevron()
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            RoadmapMeter(phases, Modifier.weight(1f))
+            CompactFinish(page)
+            // One phase has no place to say under the bar, so the way to its path ends the bar.
+            if (phases.size == 1 && onOpen != null) ListRowChevron()
         }
+        if (phases.size > 1) CompactLine(phases, position, onOpen)
+    }
+}
+
+/** Main's `CompactFinish`: where the bar ends, as the full timeline's axis ends: the flag and the goal's date, or open. */
+@Composable
+private fun CompactFinish(page: PlanPageState) {
+    val finish = page.finish ?: return
+    val words = planDate(finish.date, page.today, finish.estimate, finish.month, finish.year)
+    val label = stringResource(page.finishLabel())
+    val color = MaterialTheme.colorScheme.onSurfaceVariant
+
+    Row(
+        modifier = Modifier.clearAndSetSemantics { contentDescription = "$label, ${words.spoken}" },
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        Icon(painterResource(R.drawable.ic_flag), contentDescription = null, modifier = Modifier.size(14.dp * glyphScale()), tint = color)
+        Text(words.text, style = MaterialTheme.typography.labelMedium, color = color, maxLines = 1)
     }
 }
 
 @Composable
-private fun RoadmapMeter(phases: List<PlanPhase>) {
+private fun CompactLine(
+    phases: List<PlanPhase>,
+    position: RoadmapPosition?,
+    onOpen: (() -> Unit)?,
+) {
+    val done = phases.count { it.state == PlanPhase.State.DONE }
+    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        if (position != null) {
+            PositionLine(position, Modifier.weight(1f))
+            position.end?.let { PhaseEndLine(it) }
+        } else if (onOpen != null) {
+            Text(
+                text = pluralStringResource(R.plurals.plan_phases_done, phases.size, done, phases.size),
+                modifier = Modifier.weight(1f),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        if (onOpen != null) ListRowChevron()
+    }
+}
+
+@Composable
+private fun RoadmapMeter(
+    phases: List<PlanPhase>,
+    modifier: Modifier,
+) {
     val track = MaterialTheme.colorScheme.surfaceContainerHighest
     val fill = MaterialTheme.colorScheme.tertiary
     val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
 
     Canvas(
-        Modifier
-            .fillMaxWidth()
+        modifier
             .height(6.dp)
             .clearAndSetSemantics {},
     ) {
-        val gap = 2.dp.toPx()
-        val minimum = 24.dp.toPx()
+        val gap = minOf(2.dp.toPx(), size.width / (phases.size * 2))
+        val available = size.width - (phases.size - 1) * gap
+        val minimum = minOf(24.dp.toPx(), available / phases.size)
         val radius = CornerRadius(size.height / 2)
         val widths = weightedWidths(phases.map { it.weight() }, size.width, List(phases.size) { minimum }, gap)
         var start = 0f
@@ -275,11 +297,20 @@ private fun RoadmapFull(
     val overrun = page.plan.overrun(page.goal.kind)
     val axisDated = page.plan.axisDatedPhases(page.goal.kind, page.today)
     val weights = phases.map { it.weight() }
-    val parted = phases.map { bandName(it, phaseName(it, page.mocksRequirePlus), keepParts = true) }
-    val loose = phases.map { bandName(it, phaseName(it, page.mocksRequirePlus), keepParts = false) }
-    // Main's `EndDateSizer`: the last band is never narrower than the date under it, so the date keeps one line.
-    val endDate = page.finish?.let { dateValue(planDate(it.date, page.today, it.estimate, it.month).text) }
-    val bands = bandLayout(parted, loose, weights, width, endDate)
+    val names = phases.map { phaseRowName(it, page.mocksRequirePlus) }
+    val parted = phases.mapIndexed { index, phase -> bandName(phase, names[index], keepParts = true) }
+    val loose = phases.mapIndexed { index, phase -> bandName(phase, names[index], keepParts = false) }
+    // Main's `AxisDateSizer`: a band is never narrower than the date under it, so dates keep one line and never meet.
+    val endDate = page.finish?.let { dateValue(planDate(it.date, page.today, it.estimate, it.month, it.year).text) }
+    val dates =
+        phases.mapIndexed { index, phase ->
+            when {
+                phase.index in axisDated -> phaseEnd(page, phase)?.let { if (it.date) dateValue(it.text) else AnnotatedString(it.text) }
+                index == phases.lastIndex -> endDate
+                else -> null
+            }
+        }
+    val bands = bandLayout(parted, loose, weights, width, dates)
 
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -354,17 +385,20 @@ private fun RoadmapLegend(
                     )
                 },
             ) {
-                val finish =
-                    when {
-                        page.isExam -> R.string.plan_exam_date
-                        page.plan.schedule.targetDate != null -> R.string.plan_deadline
-                        else -> R.string.plan_roadmap_you_finish
-                    }
-                Text(stringResource(finish), style = style, color = color)
+                Text(stringResource(page.finishLabel()), style = style, color = color)
             }
         }
     }
 }
+
+/** Main's `useFinishLabel`: what the flag at the plan's finish stands for: the goal's date, or with none the finish the plan works out. */
+@StringRes
+private fun PlanPageState.finishLabel(): Int =
+    when {
+        isExam -> R.string.plan_exam_date
+        plan.schedule.targetDate != null -> R.string.plan_deadline
+        else -> R.string.plan_roadmap_you_finish
+    }
 
 @Composable
 private fun LegendPair(
@@ -411,24 +445,23 @@ private fun bandName(
 }
 
 /**
- * Main's `splitBandName`: a short name is one part; a longer one is cut between words, never leaving a short
- * word ("e", "of") at the first line's end or one word alone on the second when another cut avoids it, then
- * where its longer part is shortest.
+ * Main's `splitBandName`: a short name is one part; a longer one is cut between words where its longer part is
+ * shortest. Each thing that reads badly, a short word ("e", "of") at the first line's end or one word alone on the
+ * second, makes a cut cost as if that part were longer, so a short name dodges them and a long one stays balanced.
  */
 internal fun bandNameParts(name: String): List<String> {
     val words = name.split(" ")
     if (name.length <= ONE_LINE_NAME_LENGTH || words.size == 1) return listOf(name)
     val cut =
-        (1 until words.size).minWith(
-            compareBy(
-                { cut -> listOf(words[cut - 1].count(Char::isLetter) <= SHORT_WORD_LETTERS, cut == words.lastIndex).count { it } },
-                { cut -> maxOf(words.take(cut).joinToString(" ").length, words.drop(cut).joinToString(" ").length) },
-            ),
-        )
+        (1 until words.size).minBy { cut ->
+            val faults = listOf(words[cut - 1].count(Char::isLetter) <= SHORT_WORD_LETTERS, cut == words.lastIndex).count { it }
+            maxOf(words.take(cut).joinToString(" ").length, words.drop(cut).joinToString(" ").length) + faults * FAULT_LETTERS
+        }
     return listOf(words.take(cut).joinToString(" "), words.drop(cut).joinToString(" "))
 }
 
 private const val SHORT_WORD_LETTERS = 3
+private const val FAULT_LETTERS = 6
 
 private const val ONE_LINE_NAME_LENGTH = 16
 private const val NO_BREAK_SPACE = '\u00A0'
@@ -499,7 +532,7 @@ private fun bandLayout(
     loose: List<BandName>,
     weights: List<Float>,
     width: Dp,
-    endDate: AnnotatedString?,
+    dates: List<AnnotatedString?>,
 ): BandLayout {
     val measurer = rememberTextMeasurer()
     val style = bandStyle()
@@ -520,12 +553,11 @@ private fun bandLayout(
         val narrowest = MIN_BAND_WIDTH.roundToPx()
         val gap = BAND_GAP.roundToPx()
         val total = width.roundToPx()
-        val lastFloor = endDate?.let { measurer.measure(it, dateStyle).size.width + padding } ?: 0
+        val dateFloors = dates.map { date -> max(narrowest, date?.let { measurer.measure(it, dateStyle).size.width + padding } ?: 0) }
 
         fun least(names: List<BandName>) =
             names.mapIndexed { index, name ->
-                val floor = if (index == names.lastIndex) max(narrowest, lastFloor) else narrowest
-                max(floor, ceil(measure(name).multiParagraph.intrinsics.minIntrinsicWidth).toInt() + padding)
+                max(dateFloors[index], ceil(measure(name).multiParagraph.intrinsics.minIntrinsicWidth).toInt() + padding)
             }
 
         val partsLeast = least(parted)
@@ -542,7 +574,7 @@ private fun bandLayout(
             sizes.mapIndexed { index, size ->
                 size.width ?: if (size.fit == BandFit.PARTS) partsLeast[index] else narrowest
             }
-        val floors = minimums.mapIndexed { index, minimum -> if (index == names.lastIndex) max(minimum, lastFloor) else minimum }
+        val floors = minimums.mapIndexed { index, minimum -> max(minimum, dateFloors[index]) }
         val widths = weightedWidths(weights, total.toFloat(), floors.map(Int::toFloat), gap.toFloat()).map { floor(it).toInt() }
         val text = names.indices.maxOfOrNull { measure(names[it], (widths[it] - padding).coerceAtLeast(0)).size.height } ?: 0
         return BandLayout(names, widths.map { it.toDp() }, max(BAND_HEIGHT.roundToPx(), text + BAND_PADDING_Y.roundToPx() * 2).toDp())
@@ -699,7 +731,12 @@ private fun PhaseBand(
         ) {
             Text(
                 text = name.text,
-                modifier = Modifier.padding(horizontal = BAND_PADDING_X, vertical = BAND_PADDING_Y).align(Alignment.CenterStart),
+                // The band's description already says its name, as main's band's label does.
+                modifier =
+                    Modifier
+                        .padding(horizontal = BAND_PADDING_X, vertical = BAND_PADDING_Y)
+                        .align(Alignment.CenterStart)
+                        .clearAndSetSemantics {},
                 style = bandStyle(name.hyphenates),
                 onTextLayout = { nameSize = it.size },
                 inlineContent =
@@ -793,7 +830,7 @@ private fun PhaseAxis(
     val goalShare = overrun?.share?.takeIf { axisFinish != null }
     val goalAtEnd = goalShare != null && goalShare >= MIDDLE_SHARE
     // The legend names the flag's date ("Exam date"), so the axis shows the date alone, in the data face.
-    val goalDate = page.finish?.let { dateValue(planDate(it.date, page.today, it.estimate, it.month).text) }
+    val goalDate = page.finish?.let { dateValue(planDate(it.date, page.today, it.estimate, it.month, it.year).text) }
     val end = phaseEnd(page, phase)?.let { if (it.date) dateValue(it.text) else AnnotatedString(it.text) }
     // A phase's end gives way when it meets an earlier label: its row on the path says it.
     val labels =
@@ -924,19 +961,6 @@ private fun FractionRow(
                 placeable.placeRelative(end?.let { left.coerceAtMost(it - placeable.width) } ?: left, 0)
             }
         }
-    }
-}
-
-@Composable
-private fun positionWords(
-    name: String,
-    details: List<String>,
-    separator: String = FACT_SEPARATOR,
-): AnnotatedString {
-    val quiet = MaterialTheme.colorScheme.onSurfaceVariant
-    return buildAnnotatedString {
-        append(name)
-        withStyle(SpanStyle(color = quiet)) { details.forEach { append("$separator$it") } }
     }
 }
 

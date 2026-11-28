@@ -24,7 +24,7 @@ struct AdjustPlanSheet: View {
   /// The weekend switch answers at once, while the plan it changed is read again; until it's
   /// touched, it shows whether the plan's weekend has its own time.
   @State private var weekendChoice: Bool?
-  @State private var aimEnds: [String: String] = [:]
+  @State private var aimEnds: [String: PlanForecast] = [:]
 
   let goal: LearnerGoal
   let plan: GoalPlan
@@ -53,7 +53,7 @@ struct AdjustPlanSheet: View {
               .readsAimEnds(
                 $aimEnds, aims: languageAim.previewedAims, key: plan
               ) { [editor] aim in
-                await editor.preview([.aim(aim)])?.finishDate
+                await editor.preview([.aim(aim)])?.forecast
               }
           }
 

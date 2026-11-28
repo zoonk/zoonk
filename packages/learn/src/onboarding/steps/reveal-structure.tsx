@@ -34,10 +34,9 @@ import {
   PATH_ROW_LEADING_CLASS,
   PathRowBody,
 } from "../../journey/journey-phase-events";
-import { PHASE_END_CLASS, PhaseMark } from "../../journey/path-phase-row";
+import { PHASE_END_CLASS, PhaseMark, usePhaseRowName } from "../../journey/path-phase-row";
 import { PhaseWhen } from "../../journey/phase-when";
 import { usePlanScreen } from "../../plan/plan-context";
-import { usePhaseName } from "../../plan/use-phase-name";
 import { LeftOutTopicsLine } from "../../syllabus/left-out-topics";
 import { namesModules } from "../../syllabus/names-modules";
 import { SubjectGroups } from "../../syllabus/subject-groups";
@@ -46,9 +45,8 @@ import { SubjectTopics } from "../../syllabus/subject-topics";
 import { hasSyllabusSection } from "../../syllabus/syllabus-section";
 import { useNotPlannedReason } from "../../syllabus/topic-note";
 
-function PhaseRow({ phase }: { phase: PlanPhaseView }) {
-  const phaseName = usePhaseName();
-  const { plan } = usePlanScreen();
+function PhaseRow({ alignChevron, phase }: { alignChevron: boolean; phase: PlanPhaseView }) {
+  const phaseRowName = usePhaseRowName();
 
   const row = (
     <>
@@ -56,12 +54,7 @@ function PhaseRow({ phase }: { phase: PlanPhaseView }) {
         <PhaseMark phase={phase} />
       </span>
       <PathRowBody value={<PhaseWhen className={PHASE_END_CLASS} phase={phase} />}>
-        <span className="font-medium">
-          {phaseName(phase, { mocksRequirePlus: plan.access.mocksRequirePlus })}
-        </span>
-        {phase.milestone && (
-          <span className="text-muted-foreground text-xs">{phase.milestone}</span>
-        )}
+        <span className="font-medium">{phaseRowName(phase)}</span>
         <LeftOutTopicsLine count={phase.leftOut.length} />
       </PathRowBody>
     </>
@@ -71,7 +64,7 @@ function PhaseRow({ phase }: { phase: PlanPhaseView }) {
     return (
       <div className={PATH_ROW_CLASS} data-slot="path-row">
         {row}
-        <ListRowChevronSpace />
+        {alignChevron && <ListRowChevronSpace />}
       </div>
     );
   }
@@ -87,9 +80,9 @@ function PhaseRow({ phase }: { phase: PlanPhaseView }) {
         <div className="nested-rows flex flex-col pb-2" data-slot="path-nested">
           <JourneyChapters
             chapters={phase.chapters}
-            checkpoint={null}
             leftOut={phase.leftOut}
             links={null}
+            phase={null}
           />
         </div>
       </CollapsibleContent>
@@ -97,7 +90,6 @@ function PhaseRow({ phase }: { phase: PlanPhaseView }) {
   );
 }
 
-/** A plan of one phase has nothing to group, so its chapters are the list. */
 function RevealPath() {
   const t = useExtracted();
   const titleId = useId();
@@ -114,18 +106,18 @@ function RevealPath() {
         <PageSectionTitle id={titleId}>{t("Your path")}</PageSectionTitle>
       </PageSectionHeader>
 
-      {rest.length === 0 ? (
+      {rest.length === 0 && hasListedChapters(only.chapters) ? (
         <JourneyChapters
           chapters={only.chapters}
-          checkpoint={null}
           leftOut={only.leftOut}
           links={null}
+          phase={null}
         />
       ) : (
         <ol className="flex flex-col [&>li+li]:border-t" data-slot="journey-path-list">
           {plan.phases.map((phase) => (
             <li key={phase.index}>
-              <PhaseRow phase={phase} />
+              <PhaseRow alignChevron={rest.length > 0} phase={phase} />
             </li>
           ))}
         </ol>

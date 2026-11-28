@@ -2,7 +2,8 @@ import { normalizeString } from "@zoonk/utils/string";
 import { toPlainLine } from "@zoonk/utils/text-repairs";
 import { type ExamOutline, placeInExam } from "../exam-outline";
 import { toExamWeight } from "./exam-weight";
-import { toSkillNameKey } from "./skill-graph-checks";
+import { toSkillLessons } from "./skill-lessons";
+import { toSkillNameKey } from "./skill-name-keys";
 
 export type CoverageReference = { title: string; text: string };
 
@@ -10,6 +11,7 @@ type RawMissingSkill = {
   area: string;
   course?: string;
   description: string;
+  estimatedLessons: number;
   examWeight: number | null;
   name: string;
   prerequisites: string[];
@@ -20,6 +22,7 @@ type RawMissingSkill = {
 export type MissingSkill = {
   name: string;
   description: string;
+  estimatedLessons: number;
   /** 1 to 5; null outside exams. */
   examWeight: number | null;
   prerequisites: string[];
@@ -135,6 +138,7 @@ export function normalizeCoverage({
         ...toPlace({ outline, skill }),
         ...(skill.course && { course: skill.course }),
         description: toPlainLine(skill.description),
+        estimatedLessons: toSkillLessons(skill.estimatedLessons),
         examWeight: exam ? toExamWeight(skill.examWeight) : null,
         name,
         prerequisites: [...new Set(skill.prerequisites)].filter((key) => graphKeys.has(key)),

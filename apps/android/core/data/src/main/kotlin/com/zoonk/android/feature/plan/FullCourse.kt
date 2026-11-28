@@ -2,6 +2,7 @@ package com.zoonk.android.feature.plan
 
 import androidx.compose.runtime.Immutable
 import com.zoonk.api.models.LearnerSummaryGoal
+import com.zoonk.api.models.PlanFinishPrecision
 import kotlinx.datetime.toJavaLocalDate
 import java.time.LocalDate
 
@@ -15,8 +16,7 @@ data class FullCourse(
     val isExam: Boolean,
     val on: Boolean,
     val endDate: LocalDate?,
-    val targetDate: LocalDate,
-    val targetDateNamedMonth: Boolean,
+    val precision: PlanFinishPrecision?,
 ) {
     fun operations(on: Boolean): List<PlanOp> = if (isExam) listOf(PlanOp.FullCourse(on)) else listOf(PlanOp.TargetDate(null))
 }
@@ -25,9 +25,9 @@ data class FullCourse(
 fun fullCourse(page: PlanPageState): FullCourse? {
     val plan = page.plan
     val schedule = plan.schedule
-    val target = schedule.targetDate ?: return null
+    schedule.targetDate ?: return null
     val fits = plan.feasibility?.fits ?: false
     if (page.goal.kind == LearnerSummaryGoal.Kind.EXPLAIN || (page.isExam && fits && !schedule.fullCourse)) return null
     val end = if (page.isExam) plan.estimate.fullCourseEndDate else null
-    return FullCourse(page.isExam, schedule.fullCourse, end?.toJavaLocalDate(), target.toJavaLocalDate(), schedule.targetDateNamedMonth)
+    return FullCourse(page.isExam, schedule.fullCourse, end?.toJavaLocalDate(), plan.estimate.precision)
 }

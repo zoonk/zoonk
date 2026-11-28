@@ -55,8 +55,8 @@ import { prepareProposedChange } from "../staff/content-fixes/handlers/registry"
 import { getSession } from "../users/get-session";
 import { writePlanInputs } from "./_utils/plan-input-write";
 import { attachChapterToCourse } from "./chapters/attach-course-chapter";
+import { addCoveredExamSkills } from "./curriculum/_test-utils/covered-exam-skills";
 import { findEarlyOutlineChapter } from "./curriculum/early-outline-chapter";
-import { addMissingExamGraphSkills } from "./curriculum/exam-graph-repair";
 import { resetExamSkillGraphForAdmin } from "./curriculum/exam-skill-graph-reset";
 import { loadGoalCurriculumInputs } from "./curriculum/goal-curriculum-inputs";
 import { placeChaptersAfter } from "./curriculum/place-chapters-after";
@@ -1609,6 +1609,7 @@ async function graphRepairCase(): Promise<WriterCase> {
       missing: [ENGLISH, SPANISH].map((area) => ({
         area,
         description: `Read short texts in ${area}`,
+        estimatedLessons: 4,
         examWeight: 2,
         name: `Ler textos em ${area} ${word}`,
         prerequisites: [reading.id],
@@ -1629,7 +1630,7 @@ async function graphRepairCase(): Promise<WriterCase> {
     },
     plan,
     root: blueprintRoot(blueprint.id),
-    write: () => addMissingExamGraphSkills(blueprint.id),
+    write: () => addCoveredExamSkills(blueprint.id),
   };
 }
 
@@ -2232,7 +2233,7 @@ async function graphFixCase(): Promise<WriterCase> {
 const WRITER_CASES: Record<string, Record<string, () => Promise<WriterCase>>> = {
   "library/chapters/attach-course-chapter.ts": { attachChapterToCourse: attachCase },
   "library/curriculum/early-outline-chapter.ts": { findEarlyOutlineChapter: earlyOutlineCase },
-  "library/curriculum/exam-graph-repair.ts": { addMissingExamGraphSkills: graphRepairCase },
+  "library/curriculum/exam-graph-repair.ts": { saveReconciledExamGraph: graphRepairCase },
   "library/curriculum/exam-skill-graph-reset.ts": { resetExamSkillGraphForAdmin: graphResetCase },
   "library/curriculum/place-chapters-after.ts": { placeChaptersAfter: continuationsCase },
   "library/curriculum/reusable-curriculum.ts": { saveExamSkillGraph: sharedGraphCase },

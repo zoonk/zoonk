@@ -840,6 +840,207 @@
       ],
       "testCase": {
         "expected": {
+          "gaps": [
+            "Unit 4: Balancing chemical equations"
+          ]
+        },
+        "id": "en-beginner-chemistry-band-skips-later-topics-1",
+        "userInput": {
+          "courseLevel": "beginner",
+          "courses": [
+            {
+              "key": "chemistry",
+              "title": "Chemistry"
+            }
+          ],
+          "goal": "Learn chemistry",
+          "goalKind": "learn",
+          "language": "en",
+          "references": [
+            {
+              "text": "Unit 1: Matter, elements and compounds\nUnit 2: Atoms, protons, neutrons and electrons\nUnit 3: The periodic table\nUnit 4: Balancing chemical equations\nUnit 5: Acids and bases in everyday life\nUnit 6: Molecular orbital theory\nUnit 7: Reaction mechanisms in organic synthesis\nUnit 8: Chemical thermodynamics: Gibbs free energy and entropy",
+              "title": "CHEM 101-301: General to Advanced Chemistry"
+            }
+          ],
+          "skills": [
+            {
+              "description": "Tell elements, compounds and mixtures apart.",
+              "key": "matter",
+              "name": "Tell elements, compounds and mixtures apart"
+            },
+            {
+              "description": "Describe what atoms are made of.",
+              "key": "atoms",
+              "name": "Describe what atoms are made of"
+            },
+            {
+              "description": "Read the periodic table.",
+              "key": "periodic-table",
+              "name": "Read the periodic table"
+            },
+            {
+              "description": "Recognize acids and bases at home.",
+              "key": "acids-bases",
+              "name": "Recognize acids and bases at home"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "gaps": [
+            "Unit 4: Balancing chemical equations"
+          ]
+        },
+        "id": "en-beginner-chemistry-band-skips-later-topics-2",
+        "userInput": {
+          "courseLevel": "beginner",
+          "courses": [
+            {
+              "key": "chemistry",
+              "title": "Chemistry"
+            }
+          ],
+          "goal": "Learn chemistry",
+          "goalKind": "learn",
+          "language": "en",
+          "references": [
+            {
+              "text": "Unit 1: Matter, elements and compounds\nUnit 2: Atoms, protons, neutrons and electrons\nUnit 3: The periodic table\nUnit 4: Balancing chemical equations\nUnit 5: Acids and bases in everyday life\nUnit 6: Molecular orbital theory\nUnit 7: Reaction mechanisms in organic synthesis\nUnit 8: Chemical thermodynamics: Gibbs free energy and entropy",
+              "title": "CHEM 101-301: General to Advanced Chemistry"
+            }
+          ],
+          "skills": [
+            {
+              "description": "Tell elements, compounds and mixtures apart.",
+              "key": "matter",
+              "name": "Tell elements, compounds and mixtures apart"
+            },
+            {
+              "description": "Describe what atoms are made of.",
+              "key": "atoms",
+              "name": "Describe what atoms are made of"
+            },
+            {
+              "description": "Read the periodic table.",
+              "key": "periodic-table",
+              "name": "Read the periodic table"
+            },
+            {
+              "description": "Recognize acids and bases at home.",
+              "key": "acids-bases",
+              "name": "Recognize acids and bases at home"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "gaps": [
+            "Unit 4: Balancing chemical equations"
+          ]
+        },
+        "id": "en-beginner-chemistry-band-skips-later-topics-3",
+        "userInput": {
+          "courseLevel": "beginner",
+          "courses": [
+            {
+              "key": "chemistry",
+              "title": "Chemistry"
+            }
+          ],
+          "goal": "Learn chemistry",
+          "goalKind": "learn",
+          "language": "en",
+          "references": [
+            {
+              "text": "Unit 1: Matter, elements and compounds\nUnit 2: Atoms, protons, neutrons and electrons\nUnit 3: The periodic table\nUnit 4: Balancing chemical equations\nUnit 5: Acids and bases in everyday life\nUnit 6: Molecular orbital theory\nUnit 7: Reaction mechanisms in organic synthesis\nUnit 8: Chemical thermodynamics: Gibbs free energy and entropy",
+              "title": "CHEM 101-301: General to Advanced Chemistry"
+            }
+          ],
+          "skills": [
+            {
+              "description": "Tell elements, compounds and mixtures apart.",
+              "key": "matter",
+              "name": "Tell elements, compounds and mixtures apart"
+            },
+            {
+              "description": "Describe what atoms are made of.",
+              "key": "atoms",
+              "name": "Describe what atoms are made of"
+            },
+            {
+              "description": "Read the periodic table.",
+              "key": "periodic-table",
+              "name": "Read the periodic table"
+            },
+            {
+              "description": "Recognize acids and bases at home.",
+              "key": "acids-bases",
+              "name": "Recognize acids and bases at home"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
           "gaps": []
         },
         "id": "es-python-no-gaps-1",
@@ -1869,6 +2070,285 @@
       ],
       "testCase": {
         "expected": {
+          "gapLessons": [
+            {
+              "max": 20,
+              "min": 6
+            },
+            {
+              "max": 4,
+              "min": 1
+            }
+          ],
+          "gaps": [
+            "3 Engenharia de software: processos de desenvolvimento, requisitos, testes, manutenção e qualidade",
+            "4 Notação assintótica (Big O)"
+          ]
+        },
+        "id": "pt-notice-gap-sized-like-neighbors-1",
+        "userInput": {
+          "courses": [
+            {
+              "key": "computacao",
+              "title": "Ciência da Computação"
+            }
+          ],
+          "examOutline": {
+            "name": "CGU, Auditor Federal de Finanças e Controle - Tecnologia da Informação (Cebraspe)",
+            "notes": [],
+            "subjects": [
+              {
+                "group": "Conhecimentos específicos (P3)",
+                "name": "Desenvolvimento de Sistemas",
+                "questions": 90,
+                "topics": [
+                  "1 Lógica de programação: algoritmos, estruturas de controle, funções e recursão",
+                  "2 Estruturas de dados: listas, pilhas, filas, árvores, grafos e tabelas hash",
+                  "3 Engenharia de software: processos de desenvolvimento, requisitos, testes, manutenção e qualidade",
+                  "4 Notação assintótica (Big O)"
+                ],
+                "weight": null
+              }
+            ],
+            "topicFrequency": []
+          },
+          "goal": "Passar no concurso da CGU na área de TI",
+          "goalKind": "exam",
+          "language": "pt",
+          "references": [],
+          "skills": [
+            {
+              "description": "Escrever algoritmos com funções e recursão.",
+              "key": "logica",
+              "name": "Escrever algoritmos com funções e recursão",
+              "examWeight": 5,
+              "area": "Desenvolvimento de Sistemas",
+              "topics": [
+                "1 Lógica de programação: algoritmos, estruturas de controle, funções e recursão"
+              ],
+              "estimatedLessons": 12
+            },
+            {
+              "description": "Escolher a estrutura de dados para um problema.",
+              "key": "estruturas",
+              "name": "Escolher a estrutura de dados para um problema",
+              "examWeight": 5,
+              "area": "Desenvolvimento de Sistemas",
+              "topics": [
+                "2 Estruturas de dados: listas, pilhas, filas, árvores, grafos e tabelas hash"
+              ],
+              "estimatedLessons": 14
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "gapLessons": [
+            {
+              "max": 20,
+              "min": 6
+            },
+            {
+              "max": 4,
+              "min": 1
+            }
+          ],
+          "gaps": [
+            "3 Engenharia de software: processos de desenvolvimento, requisitos, testes, manutenção e qualidade",
+            "4 Notação assintótica (Big O)"
+          ]
+        },
+        "id": "pt-notice-gap-sized-like-neighbors-2",
+        "userInput": {
+          "courses": [
+            {
+              "key": "computacao",
+              "title": "Ciência da Computação"
+            }
+          ],
+          "examOutline": {
+            "name": "CGU, Auditor Federal de Finanças e Controle - Tecnologia da Informação (Cebraspe)",
+            "notes": [],
+            "subjects": [
+              {
+                "group": "Conhecimentos específicos (P3)",
+                "name": "Desenvolvimento de Sistemas",
+                "questions": 90,
+                "topics": [
+                  "1 Lógica de programação: algoritmos, estruturas de controle, funções e recursão",
+                  "2 Estruturas de dados: listas, pilhas, filas, árvores, grafos e tabelas hash",
+                  "3 Engenharia de software: processos de desenvolvimento, requisitos, testes, manutenção e qualidade",
+                  "4 Notação assintótica (Big O)"
+                ],
+                "weight": null
+              }
+            ],
+            "topicFrequency": []
+          },
+          "goal": "Passar no concurso da CGU na área de TI",
+          "goalKind": "exam",
+          "language": "pt",
+          "references": [],
+          "skills": [
+            {
+              "description": "Escrever algoritmos com funções e recursão.",
+              "key": "logica",
+              "name": "Escrever algoritmos com funções e recursão",
+              "examWeight": 5,
+              "area": "Desenvolvimento de Sistemas",
+              "topics": [
+                "1 Lógica de programação: algoritmos, estruturas de controle, funções e recursão"
+              ],
+              "estimatedLessons": 12
+            },
+            {
+              "description": "Escolher a estrutura de dados para um problema.",
+              "key": "estruturas",
+              "name": "Escolher a estrutura de dados para um problema",
+              "examWeight": 5,
+              "area": "Desenvolvimento de Sistemas",
+              "topics": [
+                "2 Estruturas de dados: listas, pilhas, filas, árvores, grafos e tabelas hash"
+              ],
+              "estimatedLessons": 14
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "gapLessons": [
+            {
+              "max": 20,
+              "min": 6
+            },
+            {
+              "max": 4,
+              "min": 1
+            }
+          ],
+          "gaps": [
+            "3 Engenharia de software: processos de desenvolvimento, requisitos, testes, manutenção e qualidade",
+            "4 Notação assintótica (Big O)"
+          ]
+        },
+        "id": "pt-notice-gap-sized-like-neighbors-3",
+        "userInput": {
+          "courses": [
+            {
+              "key": "computacao",
+              "title": "Ciência da Computação"
+            }
+          ],
+          "examOutline": {
+            "name": "CGU, Auditor Federal de Finanças e Controle - Tecnologia da Informação (Cebraspe)",
+            "notes": [],
+            "subjects": [
+              {
+                "group": "Conhecimentos específicos (P3)",
+                "name": "Desenvolvimento de Sistemas",
+                "questions": 90,
+                "topics": [
+                  "1 Lógica de programação: algoritmos, estruturas de controle, funções e recursão",
+                  "2 Estruturas de dados: listas, pilhas, filas, árvores, grafos e tabelas hash",
+                  "3 Engenharia de software: processos de desenvolvimento, requisitos, testes, manutenção e qualidade",
+                  "4 Notação assintótica (Big O)"
+                ],
+                "weight": null
+              }
+            ],
+            "topicFrequency": []
+          },
+          "goal": "Passar no concurso da CGU na área de TI",
+          "goalKind": "exam",
+          "language": "pt",
+          "references": [],
+          "skills": [
+            {
+              "description": "Escrever algoritmos com funções e recursão.",
+              "key": "logica",
+              "name": "Escrever algoritmos com funções e recursão",
+              "examWeight": 5,
+              "area": "Desenvolvimento de Sistemas",
+              "topics": [
+                "1 Lógica de programação: algoritmos, estruturas de controle, funções e recursão"
+              ],
+              "estimatedLessons": 12
+            },
+            {
+              "description": "Escolher a estrutura de dados para um problema.",
+              "key": "estruturas",
+              "name": "Escolher a estrutura de dados para um problema",
+              "examWeight": 5,
+              "area": "Desenvolvimento de Sistemas",
+              "topics": [
+                "2 Estruturas de dados: listas, pilhas, filas, árvores, grafos e tabelas hash"
+              ],
+              "estimatedLessons": 14
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
           "gapCourses": [
             "penal",
             "administrativo"
@@ -2864,16 +3344,272 @@
             {
               "area": "Prova discursiva",
               "key": "resposta-curta",
-              "topics": []
+              "topics": [
+                "uma questão discursiva, relacionada a conhecimentos complementares, a ser respondida em até 30 linhas, no valor de 30,00 pontos"
+              ]
             },
             {
               "area": "Prova discursiva",
               "key": "situacao-problema",
-              "topics": []
+              "topics": [
+                "uma questão envolvendo situação-problema, relacionada a conhecimentos específicos do cargo/especialidade, a ser respondida em até 60 linhas, no valor de 70,00 pontos"
+              ]
             }
           ]
         },
         "id": "pt-written-task-practice-in-its-subject-1",
+        "userInput": {
+          "courses": [
+            {
+              "key": "etica",
+              "title": "Ética no Serviço Público"
+            },
+            {
+              "key": "redacao",
+              "title": "Redação Discursiva"
+            }
+          ],
+          "examOutline": {
+            "name": "Concurso da CGU, Auditor Federal de Finanças e Controle",
+            "notes": [],
+            "subjects": [
+              {
+                "group": "Conhecimentos básicos (P1)",
+                "name": "Ética Pública e Responsabilidade Profissional",
+                "questions": null,
+                "topics": [
+                  "1 Fundamentos da ética pública",
+                  "2 Conflitos de interesses"
+                ],
+                "weight": null
+              },
+              {
+                "group": "Prova discursiva (P4)",
+                "name": "Prova discursiva",
+                "questions": 2,
+                "topics": [
+                  "uma questão discursiva, relacionada a conhecimentos complementares, a ser respondida em até 30 linhas, no valor de 30,00 pontos",
+                  "uma questão envolvendo situação-problema, relacionada a conhecimentos específicos do cargo/especialidade, a ser respondida em até 60 linhas, no valor de 70,00 pontos"
+                ],
+                "weight": null,
+                "writtenTasks": [
+                  "uma questão discursiva, relacionada a conhecimentos complementares, a ser respondida em até 30 linhas, no valor de 30,00 pontos",
+                  "uma questão envolvendo situação-problema, relacionada a conhecimentos específicos do cargo/especialidade, a ser respondida em até 60 linhas, no valor de 70,00 pontos"
+                ]
+              }
+            ],
+            "topicFrequency": []
+          },
+          "goal": "Passar no concurso da CGU",
+          "goalKind": "exam",
+          "language": "pt",
+          "references": [],
+          "skills": [
+            {
+              "description": "Interpretar fundamentos da ética pública.",
+              "key": "fundamentos",
+              "name": "Interpretar fundamentos da ética pública",
+              "examWeight": 3,
+              "area": "Ética Pública e Responsabilidade Profissional",
+              "topics": [
+                "1 Fundamentos da ética pública"
+              ]
+            },
+            {
+              "description": "Identificar conflitos de interesses.",
+              "key": "conflitos",
+              "name": "Identificar conflitos de interesses",
+              "examWeight": 3,
+              "area": "Ética Pública e Responsabilidade Profissional",
+              "topics": [
+                "2 Conflitos de interesses"
+              ]
+            },
+            {
+              "description": "Responder questão discursiva em 30 linhas.",
+              "key": "resposta-curta",
+              "name": "Responder questão discursiva em 30 linhas",
+              "examWeight": 4,
+              "area": "Redação discursiva",
+              "topics": []
+            },
+            {
+              "description": "Resolver situação-problema em 60 linhas.",
+              "key": "situacao-problema",
+              "name": "Resolver situação-problema em 60 linhas",
+              "examWeight": 5,
+              "area": "Redação discursiva",
+              "topics": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "gaps": [],
+          "placements": [
+            {
+              "area": "Prova discursiva",
+              "key": "resposta-curta",
+              "topics": [
+                "uma questão discursiva, relacionada a conhecimentos complementares, a ser respondida em até 30 linhas, no valor de 30,00 pontos"
+              ]
+            },
+            {
+              "area": "Prova discursiva",
+              "key": "situacao-problema",
+              "topics": [
+                "uma questão envolvendo situação-problema, relacionada a conhecimentos específicos do cargo/especialidade, a ser respondida em até 60 linhas, no valor de 70,00 pontos"
+              ]
+            }
+          ]
+        },
+        "id": "pt-written-task-practice-in-its-subject-2",
+        "userInput": {
+          "courses": [
+            {
+              "key": "etica",
+              "title": "Ética no Serviço Público"
+            },
+            {
+              "key": "redacao",
+              "title": "Redação Discursiva"
+            }
+          ],
+          "examOutline": {
+            "name": "Concurso da CGU, Auditor Federal de Finanças e Controle",
+            "notes": [],
+            "subjects": [
+              {
+                "group": "Conhecimentos básicos (P1)",
+                "name": "Ética Pública e Responsabilidade Profissional",
+                "questions": null,
+                "topics": [
+                  "1 Fundamentos da ética pública",
+                  "2 Conflitos de interesses"
+                ],
+                "weight": null
+              },
+              {
+                "group": "Prova discursiva (P4)",
+                "name": "Prova discursiva",
+                "questions": 2,
+                "topics": [
+                  "uma questão discursiva, relacionada a conhecimentos complementares, a ser respondida em até 30 linhas, no valor de 30,00 pontos",
+                  "uma questão envolvendo situação-problema, relacionada a conhecimentos específicos do cargo/especialidade, a ser respondida em até 60 linhas, no valor de 70,00 pontos"
+                ],
+                "weight": null,
+                "writtenTasks": [
+                  "uma questão discursiva, relacionada a conhecimentos complementares, a ser respondida em até 30 linhas, no valor de 30,00 pontos",
+                  "uma questão envolvendo situação-problema, relacionada a conhecimentos específicos do cargo/especialidade, a ser respondida em até 60 linhas, no valor de 70,00 pontos"
+                ]
+              }
+            ],
+            "topicFrequency": []
+          },
+          "goal": "Passar no concurso da CGU",
+          "goalKind": "exam",
+          "language": "pt",
+          "references": [],
+          "skills": [
+            {
+              "description": "Interpretar fundamentos da ética pública.",
+              "key": "fundamentos",
+              "name": "Interpretar fundamentos da ética pública",
+              "examWeight": 3,
+              "area": "Ética Pública e Responsabilidade Profissional",
+              "topics": [
+                "1 Fundamentos da ética pública"
+              ]
+            },
+            {
+              "description": "Identificar conflitos de interesses.",
+              "key": "conflitos",
+              "name": "Identificar conflitos de interesses",
+              "examWeight": 3,
+              "area": "Ética Pública e Responsabilidade Profissional",
+              "topics": [
+                "2 Conflitos de interesses"
+              ]
+            },
+            {
+              "description": "Responder questão discursiva em 30 linhas.",
+              "key": "resposta-curta",
+              "name": "Responder questão discursiva em 30 linhas",
+              "examWeight": 4,
+              "area": "Redação discursiva",
+              "topics": []
+            },
+            {
+              "description": "Resolver situação-problema em 60 linhas.",
+              "key": "situacao-problema",
+              "name": "Resolver situação-problema em 60 linhas",
+              "examWeight": 5,
+              "area": "Redação discursiva",
+              "topics": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "gaps": [],
+          "placements": [
+            {
+              "area": "Prova discursiva",
+              "key": "resposta-curta",
+              "topics": [
+                "uma questão discursiva, relacionada a conhecimentos complementares, a ser respondida em até 30 linhas, no valor de 30,00 pontos"
+              ]
+            },
+            {
+              "area": "Prova discursiva",
+              "key": "situacao-problema",
+              "topics": [
+                "uma questão envolvendo situação-problema, relacionada a conhecimentos específicos do cargo/especialidade, a ser respondida em até 60 linhas, no valor de 70,00 pontos"
+              ]
+            }
+          ]
+        },
+        "id": "pt-written-task-practice-in-its-subject-3",
         "userInput": {
           "courses": [
             {

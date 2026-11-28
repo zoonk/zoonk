@@ -9,6 +9,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
@@ -24,18 +25,51 @@ fun Readout(
     text: String,
     modifier: Modifier = Modifier,
     style: TextStyle = MaterialTheme.typography.headlineSmall,
+    textAlign: TextAlign? = null,
 ) {
-    val words = MaterialTheme.typography.labelMedium
-    val unit =
-        SpanStyle(
-            fontSize = maxOf(style.fontSize.value * UNIT_SHARE, words.fontSize.value).sp,
-            letterSpacing = UNIT_TRACKING.em,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-    Text(text = readout(text, unit), modifier = modifier, style = style.withTabularFigures().copy(fontWeight = FontWeight.SemiBold))
+    Text(text = readout(text, unitStyle(style)), modifier = modifier, style = readoutStyle(style), textAlign = textAlign)
 }
 
-/** Digits in any script, and the separators between them ("1,292", "3.5"), are the number. */
+/** A month as a readout (main's `MonthYear`): the month big and its [year] small, in the order [text] puts them. */
+@Composable
+fun MonthReadout(
+    text: String,
+    year: String,
+    modifier: Modifier = Modifier,
+    style: TextStyle = MaterialTheme.typography.headlineSmall,
+    textAlign: TextAlign? = null,
+) {
+    val unit = unitStyle(style).copy(fontWeight = FontWeight.Medium)
+    Text(text = monthReadout(text, year, unit), modifier = modifier, style = readoutStyle(style), textAlign = textAlign)
+}
+
+/** The [year] as the language writes it alone ("2026년") and the gap beside it are the small part, as a number's unit is. */
+internal fun monthReadout(
+    text: String,
+    year: String,
+    unit: SpanStyle,
+): AnnotatedString =
+    buildAnnotatedString {
+        append(text)
+        val at = text.indexOf(year)
+        if (at >= 0) {
+            val start = text.substring(0, at).trimEnd().length
+            val end = text.length - text.substring(at + year.length).trimStart().length
+            addStyle(unit, start, end)
+        }
+    }
+
+private fun readoutStyle(style: TextStyle) = style.withTabularFigures().copy(fontWeight = FontWeight.SemiBold)
+
+@Composable
+private fun unitStyle(style: TextStyle): SpanStyle =
+    SpanStyle(
+        fontSize = maxOf(style.fontSize.value * UNIT_SHARE, MaterialTheme.typography.labelMedium.fontSize.value).sp,
+        letterSpacing = UNIT_TRACKING.em,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+
+/** Digits in any script, and the separators between them ("1,292", "3.5"), are the number, with a "+" after them ("10+"). */
 internal fun readout(
     text: String,
     unit: SpanStyle,
@@ -68,7 +102,7 @@ private fun numberEnd(
         end++
     }
     return when {
-        text.getOrNull(end) == '%' -> end + 1
+        text.getOrNull(end) == '%' || text.getOrNull(end) == '+' -> end + 1
         text.getOrNull(end) in PERCENT_SPACES && text.getOrNull(end + 1) == '%' -> end + 2
         else -> end
     }

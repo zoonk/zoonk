@@ -168,7 +168,10 @@ export function useSchedule({
   /** When another aim would be reached at the week shown, as the line would say once it's picked. */
   const readAimEnd = async (other: LanguageAim) => {
     const answer = await askAdvice(other);
-    return answer?.ready ? answer.endDate : null;
+
+    return answer?.ready
+      ? { endDate: answer.endDate, finishReason: answer.finishReason, precision: answer.precision }
+      : null;
   };
 
   const timeAdvice = usePlanAnswer({

@@ -9,7 +9,7 @@ import { useExtracted } from "next-intl";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { useFormatDuration } from "../_utils/time-format";
 import { type LessonVariety, getLessonVarietyName } from "../country/use-country-lines";
-import { useRoadmapFinish } from "../journey/use-roadmap";
+import { useFinishLabel, useRoadmapFinish, useRoadmapFinishLater } from "../journey/use-roadmap";
 import { useVarietyName } from "../language-variety/use-variety-words";
 import { LearnLink } from "../learn-link";
 import { useActivityName } from "./plan-activities";
@@ -193,13 +193,15 @@ function MockExamsRow({ examHref, mocks }: { examHref: string | null; mocks: Moc
 }
 
 /**
- * The date the learner set, or with none the finish the plan works out, as the timeline says it.
- * Never the day a finished plan was done.
+ * The date the learner set, or with none the finish the plan works out, as the timeline and the
+ * time picker say it: "10+ years" past the years a plan lays out. Never the day a finished plan
+ * was done.
  */
 function GoalDateValue() {
   const t = useExtracted();
   const { goal, plan } = usePlanScreen();
   const finish = useRoadmapFinish();
+  const finishLater = useRoadmapFinishLater();
   const { targetDate, targetDateEstimated, targetDateNamedMonth } = plan.schedule;
 
   if (targetDate) {
@@ -207,18 +209,39 @@ function GoalDateValue() {
       <PlanDateText
         estimate={targetDateEstimated}
         isoDate={targetDate}
-        month={targetDateNamedMonth}
+        precision={targetDateNamedMonth ? "month" : "day"}
       />
     );
   }
 
   if (!plan.end && finish) {
-    return (
-      <PlanDateText estimate={finish.estimate} isoDate={finish.isoDate} month={finish.month} />
-    );
+    return <PlanDateText {...finish} />;
+  }
+
+  if (finishLater) {
+    return t({
+      description:
+        "How long finishing the plan takes at the time picked, when it's more than ten years.",
+      message: "10+ years",
+    });
   }
 
   return goal.kind === "exam" ? t("To be confirmed") : t("None set");
+}
+
+/** The setting is the goal's date; while it holds the finish the plan works out, it's named as that. */
+function useGoalDateLabel() {
+  const t = useExtracted();
+  const { goal, plan } = usePlanScreen();
+  const finish = useRoadmapFinish();
+  const finishLater = useRoadmapFinishLater();
+  const finishLabel = useFinishLabel();
+
+  if (plan.end || !(finish || finishLater)) {
+    return goal.kind === "exam" ? t("Exam date") : t("End date");
+  }
+
+  return finishLabel;
 }
 
 export function PlanProperties({
@@ -235,6 +258,7 @@ export function PlanProperties({
   const studyDaysText = useStudyDaysText();
   const varietyName = useVarietyName();
   const { goal, paused, plan } = usePlanScreen();
+  const goalDateLabel = useGoalDateLabel();
   const skipped = new Set(plan.steering.skippedActivities);
   const practiced = LANGUAGE_ACTIVITY_TYPES.filter((activity) => !skipped.has(activity));
 
@@ -245,10 +269,7 @@ export function PlanProperties({
       </PageSectionHeader>
 
       <ul className="flex flex-col">
-        <PropertyRow
-          label={goal.kind === "exam" ? t("Exam date") : t("End date")}
-          onOpen={() => onOpen("date")}
-        >
+        <PropertyRow label={goalDateLabel} onOpen={() => onOpen("date")}>
           <GoalDateValue />
         </PropertyRow>
 

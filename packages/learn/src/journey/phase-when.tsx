@@ -38,7 +38,7 @@ function useEndsWords() {
     });
 }
 
-/** How a phase's end is read aloud: "Ends Dec 12", "Ends around Dec 12", or a short plan's days. */
+/** How a phase's end is read aloud: "Ends Dec 12", "Ends around Dec 12", "Ends later", or a short plan's days. */
 export function usePhaseEndSpoken() {
   const t = useExtracted();
   const phaseEnd = usePhaseEnd();
@@ -56,14 +56,19 @@ export function usePhaseEndSpoken() {
       return end.days;
     }
 
-    const date = formatPlanDate(end.isoDate, { month: end.month });
+    if ("later" in end) {
+      return t("Ends later");
+    }
+
+    const date = formatPlanDate(end.isoDate, { precision: end.precision });
 
     return end.estimate
       ? t({
           description:
-            'In the month form, {date} is a month, like "Jan"; otherwise a day, like "Dec 12".',
-          message: "{dateKind, select, month {Ends around {date}} other {Ends around {date}}}",
-          values: { date, dateKind: end.month ? "month" : "day" },
+            'In the month form, {date} is a month, like "Jan"; in the year form, a year, like "2031"; otherwise a day, like "Dec 12".',
+          message:
+            "{dateKind, select, month {Ends around {date}} year {Ends around {date}} other {Ends around {date}}}",
+          values: { date, dateKind: end.precision },
         })
       : endsWords(date);
   };
@@ -71,7 +76,8 @@ export function usePhaseEndSpoken() {
 
 /**
  * When a phase ends. In a column of dates (a row's end, the timeline's axis) the place says it's
- * the end, so the date stands alone in the data face: "Dec 12", "~Dec 12" or "~Jan". Under the
+ * the end, so the date stands alone in the data face: "Dec 12", "~Dec 12", "~Jan" or "~2031"; a phase
+ * whose work has no place yet reads "Later" in words. Under the
  * compact bar nothing else says so, so `labelled` names it in words: "Ends ~Dec 12". Either is read
  * aloud as "Ends around Dec 12".
  */
@@ -103,7 +109,16 @@ export function PhaseWhen({
     );
   }
 
-  const date = formatPlanDate(end.isoDate, { month: end.month });
+  if ("later" in end) {
+    return (
+      <span className={cn(className, "font-sans whitespace-nowrap")} data-slot="phase-when">
+        <span aria-hidden="true">{labelled ? t("Ends later") : t("Later")}</span>
+        <span className="sr-only">{t("Ends later")}</span>
+      </span>
+    );
+  }
+
+  const date = formatPlanDate(end.isoDate, { precision: end.precision });
   const shownDate = end.estimate ? t("~{date}", { date }) : date;
 
   return (

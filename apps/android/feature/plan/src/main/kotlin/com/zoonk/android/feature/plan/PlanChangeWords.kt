@@ -15,8 +15,10 @@ import com.zoonk.android.ui.format.weekdayNames
 import com.zoonk.api.models.ExamDocument
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanEffect
+import com.zoonk.api.models.PlanFinishPrecision
 import kotlinx.datetime.toJavaLocalDate
 import java.time.LocalDate
+import java.time.YearMonth
 import java.time.temporal.ChronoUnit
 import kotlin.math.abs
 
@@ -109,18 +111,70 @@ fun countsByDate(
     return !after.isAfter(targetDate)
 }
 
+/** A plan's end in a change, said as precisely as core dates it: its day, its month or, far off, its year. */
+internal data class EndDate(
+    val date: LocalDate,
+    val precision: EndPrecision,
+)
+
+internal enum class EndPrecision { Day, Month, Year }
+
 /**
- * The end move worth saying: never a day or less while the change adds or leaves out lessons, since
- * an end a day earlier beside lessons left out reads backwards.
+ * Main's `useEndMoveText`: the end move worth saying, never a day or less while the change adds or leaves out lessons,
+ * since an end a day earlier beside lessons left out reads backwards. Both ends are said by their day only while both
+ * are by their month and within six weeks of [today]; an end that reads the same before and after isn't a move.
  */
-internal fun shownEndMove(effect: PlanEffect?): Pair<LocalDate, LocalDate>? {
+internal fun shownEndMove(
+    effect: PlanEffect?,
+    today: LocalDate,
+): Pair<EndDate, EndDate>? {
     effect ?: return null
     val after = effect.endDateAfter?.toJavaLocalDate() ?: return null
     val before = effect.endDateBefore?.toJavaLocalDate() ?: return null
     if (after == before) return null
     val lessonsChange = effect.lessonsAdded > 0 || effect.lessonsRemoved > 0
     val rounding = abs(ChronoUnit.DAYS.between(before, after)) <= 1
-    return if (lessonsChange && rounding) null else before to after
+    if (lessonsChange && rounding) return null
+    val byDay =
+        effect.endPrecisionAfter == PlanFinishPrecision.MONTH &&
+            effect.endPrecisionBefore == PlanFinishPrecision.MONTH &&
+            isNearEstimate(after, today) &&
+            isNearEstimate(before, today)
+    val shownBefore = EndDate(before, endPrecision(byDay, effect.endPrecisionBefore))
+    val shownAfter = EndDate(after, endPrecision(byDay, effect.endPrecisionAfter))
+    return if (readsTheSame(shownBefore, shownAfter)) null else shownBefore to shownAfter
+}
+
+private fun endPrecision(
+    byDay: Boolean,
+    precision: PlanFinishPrecision?,
+): EndPrecision =
+    when {
+        byDay -> EndPrecision.Day
+        precision == PlanFinishPrecision.YEAR -> EndPrecision.Year
+        else -> EndPrecision.Month
+    }
+
+private fun readsTheSame(
+    first: EndDate,
+    second: EndDate,
+): Boolean =
+    first.precision == second.precision &&
+        when (first.precision) {
+            EndPrecision.Day -> first.date == second.date
+            EndPrecision.Month -> YearMonth.from(first.date) == YearMonth.from(second.date)
+            EndPrecision.Year -> first.date.year == second.date.year
+        }
+
+/** "May 5, 2027", "May 2027" or "2031": always with its year, since a plan's end can be years away. */
+@Composable
+internal fun endDateText(end: EndDate): String {
+    val locale = currentLocale()
+    return when (end.precision) {
+        EndPrecision.Day -> formatDate(end.date, locale, DateStyle.LongYear)
+        EndPrecision.Month -> formatDate(end.date, locale, DateStyle.Month)
+        EndPrecision.Year -> formatPlanDate(end.date, end.date, locale, year = true)
+    }
 }
 
 private const val NOTICE_SOURCE = "notice"

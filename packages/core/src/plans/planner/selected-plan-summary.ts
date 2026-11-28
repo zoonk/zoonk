@@ -2,12 +2,13 @@ import { createHash } from "node:crypto";
 import { type SelectedSummary } from "../_utils/selected-summary-contract";
 import { type BuildPlanInput, type BuiltPlan } from "./build-plan";
 import { getKeptBaseChoices } from "./chosen-bases";
-import { estimateDailyNeed, estimateFinish, readFixedDays } from "./daily-need";
+import { estimateDailyNeed, getScheduledFinish, readFixedDays } from "./daily-need";
 import { mayMovePhaseDates } from "./phase-dates-move";
 import { getBaseChoices, getDefaultBaseChoice } from "./plan-bases";
 import { daysBetween, toIsoDate } from "./plan-calendar";
 import { getCoverageDeadline, getSelectedCoverage } from "./plan-coverage";
 import { PHASE_WORK_KINDS } from "./plan-item-rules";
+import { PLAN_EPSILON } from "./plan-precision";
 import { type ExamSubjectShare } from "./selected-coverage";
 import { listSettled, readRequirement, sumRequirement } from "./selected-requirement";
 
@@ -125,12 +126,24 @@ export function summarizeSelectedPlan({
   const deadline = getCoverageDeadline({ built, input });
   const requirementBySkill = readRequirement({ built, input });
   const settled = listSettled(input);
-  const requirement = sumRequirement({ built, requirement: requirementBySkill, settled });
+  const requirement = sumRequirement({ built, input, requirement: requirementBySkill, settled });
+  const endDate = getEndDate(built);
+
+  const placedEstimates = new Map(
+    built.skillMinutes.map(({ skillId, standIn }) => [skillId, standIn?.total ?? 0]),
+  );
+
+  const hasUnplacedEstimates =
+    (input.graph.unwrittenLessons ?? 0) > 0 ||
+    [...requirementBySkill].some(
+      ([skillId, { standIn }]) =>
+        !settled.has(skillId) && standIn > (placedEstimates.get(skillId) ?? 0) + PLAN_EPSILON,
+    );
 
   return {
     bases: summarizeBases(input),
     coverage: getSelectedCoverage({ built, examSubjects, input }),
-    endDate: getEndDate(built),
+    endDate,
     forecast: {
       basis: "estimated",
       dailyNeed: deadline
@@ -139,7 +152,13 @@ export function summarizeSelectedPlan({
             remaining: requirement.remainingRaw,
           })
         : { basis: "estimated", minutes: null, reason: "noDeadline" },
-      finish: estimateFinish({ built, input, remaining: requirement.remainingRaw }),
+      finish: getScheduledFinish({
+        built,
+        endDate,
+        hasUnplacedEstimates,
+        input,
+        remaining: requirement.remainingRaw,
+      }),
     },
     phaseDates: readPhaseDates({ built, input }),
     requirement,

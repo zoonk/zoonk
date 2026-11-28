@@ -25,14 +25,14 @@ type CountedLesson = Pick<
   "chapterId" | "kind" | "lessonId" | "lessons" | "skillId" | "status"
 >;
 
-export function countLessonProgress(lessons: readonly CountedLesson[]): {
-  lessonsDone: number;
-  lessonsTotal: number;
-} {
+export function countLessonProgress(
+  lessons: readonly CountedLesson[],
+  deferredLessons = 0,
+): { lessonsDone: number; lessonsTotal: number } {
   return {
     lessonsDone: countLessons(lessons.filter((item) => getWorkProgress(item.status) === "studied")),
-    lessonsTotal: countLessons(
-      lessons.filter((item) => getWorkProgress(item.status) !== "testedOut"),
-    ),
+    lessonsTotal:
+      deferredLessons +
+      countLessons(lessons.filter((item) => getWorkProgress(item.status) !== "testedOut")),
   };
 }

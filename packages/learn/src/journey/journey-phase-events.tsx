@@ -1,6 +1,6 @@
 "use client";
 
-import { type PlanPhaseCheckpointView } from "@zoonk/core/plans/view-contract";
+import { type PlanPhaseCheckpointView, type PlanPhaseView } from "@zoonk/core/plans/view-contract";
 import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { Trickster } from "@zoonk/ui/components/trickster";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -15,6 +15,7 @@ import { MockSchedule } from "../mock/mock-schedule";
 import { usePlanScreen } from "../plan/plan-context";
 import { PlanDateText } from "../plan/plan-date-text";
 import { type JourneyPathLinks } from "./journey-links";
+import { getChallengeDate } from "./phase-dates";
 
 export const PATH_ROW_CLASS =
   "row-bleed data-highlighted:bg-muted data-highlighted:hover:bg-muted held-pressed:bg-muted flex min-h-11 items-center gap-3 rounded-lg py-1.5 text-left text-sm transition-colors outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50";
@@ -83,18 +84,20 @@ export function PhaseCheckpointMark() {
 export function CheckpointRow({
   checkpoint,
   links,
+  phase,
 }: {
   checkpoint: PlanPhaseCheckpointView;
   links: JourneyPathLinks;
+  phase: PlanPhaseView;
 }) {
   const t = useExtracted();
-  const { goal, paused, today } = usePlanScreen();
+  const { goal, paused, plan, today } = usePlanScreen();
   const isDone = checkpoint.state === "done";
   // A locked one is never in a session, so it keeps its planned day.
   const when = checkpoint.locked ? "date" : checkpoint.when;
   // A paused plan has nothing planned until the learner resumes, as `usePhaseEnd` says of phases.
   const planned = !isDone && !paused;
-  const onDate = planned && when === "date";
+  const date = planned && when === "date" ? getChallengeDate({ phase, plan }) : null;
 
   return (
     <EventRow href={checkpoint.planItemId ? links.challenge(checkpoint.planItemId) : null}>
@@ -108,7 +111,8 @@ export function CheckpointRow({
             {planned &&
               when === "nextSession" &&
               (checkpoint.date === today ? t("Today") : t("Next time"))}
-            {onDate && checkpoint.date && <PlanDateText estimate isoDate={checkpoint.date} />}
+            {date && "later" in date && t("Later")}
+            {date && "isoDate" in date && <PlanDateText {...date} />}
           </span>
         }
       >

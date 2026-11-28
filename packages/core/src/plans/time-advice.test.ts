@@ -1,11 +1,13 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
+import { planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { getBudgetForGoal, getDaySplit } from "../goals/daily-budget";
 import { updateGoal } from "../goals/update-goal";
+import { finishGoalPlacement } from "../learner/placement/finish-goal-placement";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
 import { openStudyDay } from "../sessions/open-study-day";
 import { answerOnboardingQuestion } from "../view-models/onboarding/answer-onboarding-question";
@@ -21,6 +23,7 @@ import { findPlanTimeToCover, getPlanTimeAdvice } from "./get-time-advice";
 import { endNoticeWait } from "./notice-wait";
 import { runPlanSetupTask } from "./plan-setup";
 import { parsePlanSettings } from "./planner/plan-state";
+import { previewPlanChange } from "./preview-plan-change";
 import { refreshPlanSuggestion } from "./refresh-plan-suggestion";
 import { type PlanTimeAdviceInput } from "./time-advice-contract";
 
@@ -211,13 +214,97 @@ describe(getPlanTimeAdvice, () => {
       targetDate: null,
     });
 
+    await expect(
+      previewPlanChange({
+        goalId: goal.id,
+        input: { operations: [{ kind: "setDailyMinutes", minutes: 30 }], timeZone: "UTC" },
+      }),
+    ).resolves.toMatchObject({
+      preview: {
+        effect: {
+          endDateAfter: end(long),
+          endDateBefore: end(short),
+          endPrecisionAfter: "month",
+          endPrecisionBefore: "month",
+        },
+        finishDate: end(long),
+        finishReason: null,
+        precision: "month",
+      },
+      status: "ready",
+    });
+
     await updateGoal({
       goalId: goal.id,
       input: { dailyMinutes: 30, studyDays: EVERY_DAY, timeZone: "UTC" },
     });
 
     const saved = await getGoalPlan(goal.id);
-    expect(saved.status === "ready" && saved.plan.estimate.endDate).toBe(end(long));
+
+    expect(saved).toMatchObject({
+      plan: { estimate: { endDate: end(long), finishReason: null, precision: "month" } },
+      status: "ready",
+    });
+
+    expect(long).toMatchObject({ advice: { finishReason: null, precision: "month" } });
+  });
+
+  it("keeps the quoted finish when saving the same onboarding schedule", async () => {
+    vi.setSystemTime(new Date("2026-11-28T14:00:00Z"));
+
+    const [user, library] = await Promise.all([
+      userFixture(),
+      planLibraryFixture({
+        skills: Array.from({ length: 5 }, (_, index) => ({
+          builds: index === 0 ? undefined : index - 1,
+          lessons: 0,
+        })),
+      }),
+    ]);
+
+    const { goal, plan } = await unplannedGoalFixture({
+      dailyMinutes: 15,
+      planRevealedAt: null,
+      timezone: "UTC",
+      userId: user.id,
+    });
+
+    mockSession(user.id);
+
+    await prisma.plan.update({
+      data: { graph: library.graph, phases: library.graph.phases },
+      where: { id: plan.id },
+    });
+
+    await Promise.all(
+      library.skills.map(({ id }, position) =>
+        planItemFixture({ planId: plan.id, position, skillId: id }),
+      ),
+    );
+
+    await expect(
+      finishGoalPlacement({ goalId: goal.id, input: { fromScratch: false, timeZone: "UTC" } }),
+    ).resolves.toMatchObject({ status: "ready" });
+
+    await expect(
+      answerOnboardingQuestion({ goalId: goal.id, input: { question: "placement" } }),
+    ).resolves.toMatchObject({ status: "saved" });
+
+    const schedule = { dailyMinutes: 15, studyDays: WEEKDAYS };
+    const advice = await readCoverage(goal.id, WEEKDAYS, schedule);
+    expect(advice.endDate).toBe("2026-12-01");
+
+    await expect(
+      answerOnboardingQuestion({
+        goalId: goal.id,
+        input: { ...schedule, question: "schedule", timeZone: "UTC" },
+      }),
+    ).resolves.toMatchObject({ status: "saved" });
+
+    await expect(getGoalPlan(goal.id)).resolves.toMatchObject({
+      plan: { estimate: { endDate: advice.endDate, precision: advice.precision } },
+      status: "ready",
+    });
   });
 
   it("has no finish date when an undated plan cannot schedule the whole curriculum", async () => {
@@ -233,7 +320,24 @@ describe(getPlanTimeAdvice, () => {
 
     await expect(
       getPlanTimeAdvice({ goalId: goal.id, input: { dailyMinutes: 5, studyDays: [0] } }),
-    ).resolves.toMatchObject({ advice: { endDate: null, ready: true }, status: "ready" });
+    ).resolves.toMatchObject({
+      advice: { endDate: null, finishReason: "beyondHorizon", precision: null, ready: true },
+      status: "ready",
+    });
+
+    await updateGoal({
+      goalId: goal.id,
+      input: { dailyMinutes: 5, studyDays: [0], timeZone: "UTC" },
+    });
+
+    await expect(getGoalPlan(goal.id)).resolves.toMatchObject({
+      plan: {
+        end: null,
+        estimate: { endDate: null, finishReason: "beyondHorizon", precision: null },
+        phases: expect.arrayContaining([expect.objectContaining({ endDate: null, later: true })]),
+      },
+      status: "ready",
+    });
   });
 
   it("recommends the least fitting accepted time when more time adds an exam mock", async () => {
@@ -987,6 +1091,7 @@ describe(getPlanTimeAdvice, () => {
 
     expect(everything.advice.coveredShare).toBe(own.advice.coveredShare);
     expect(everything.advice.fullCourseEndDate).toMatch(/^\d{4}-\d{2}-\d{2}$/u);
+    expect(everything.advice.precision).toBe("month");
     expect((everything.advice.fullCourseEndDate ?? "") > "2020-10-16").toBe(true);
 
     expect(sundays.advice).toMatchObject({ fullCourseEndDate: null, ready: true });
@@ -1037,6 +1142,7 @@ describe(getPlanTimeAdvice, () => {
 
     const everything = await readEstimate();
     expect(everything.fullCourseEndDate).toBe(everything.endDate);
+    expect(everything.precision).toBe("month");
     expect((everything.fullCourseEndDate ?? "") > "2020-10-16").toBe(true);
 
     await expect(
@@ -1065,10 +1171,12 @@ describe(getPlanTimeAdvice, () => {
     await expect(readAdvice(goal.id, EVERY_DAY)).resolves.toStrictEqual({
       coveredShare: null,
       endDate: null,
+      finishReason: null,
       focusSubjects: [],
       fullCourseEndDate: null,
       measure: "goal",
       numbers: null,
+      precision: null,
       readingNotice: false,
       ready: false,
       recommendedMinutes: null,

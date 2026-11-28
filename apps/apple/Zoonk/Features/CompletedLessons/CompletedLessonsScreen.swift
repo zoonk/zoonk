@@ -338,6 +338,6 @@ private struct NextPageRow: View {
 /// A month's section title: "November", with its year once it isn't this one, capitalized as a
 /// title is in every language.
 func completedLessonsMonthTitle(_ month: String, today: String) -> String {
-  let title = PlanDate.monthText("\(month)-01", today: today, wide: true)
+  let title = PlanDate.monthText("\(month)-01", today: today)
   return title.prefix(1).localizedUppercase + title.dropFirst()
 }

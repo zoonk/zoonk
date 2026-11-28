@@ -6,7 +6,7 @@ import { type ExamSubjectShare } from "../planner/selected-coverage";
 import { summarizeSelectedPlan } from "../planner/selected-plan-summary";
 import { sumWriting } from "../planner/summarize-plan";
 import { type PlanContext } from "./plan-context";
-import { readSelectedItemFacts } from "./selected-item-contract";
+import { getSavedPhaseWorkMinutes, readSelectedItemFacts } from "./selected-item-contract";
 
 export function retainPlanAllocation({
   built,
@@ -41,13 +41,7 @@ export function retainPlanAllocation({
     const days: [string, number, number][] =
       facts.days ??
       (timed
-        ? [
-            [
-              toIsoDate(item.scheduledFor),
-              facts.minutes,
-              facts.parts.written + facts.parts.unwritten,
-            ],
-          ]
+        ? [[toIsoDate(item.scheduledFor), facts.minutes, getSavedPhaseWorkMinutes(facts)]]
         : []);
 
     return [{ days, end: fromIsoDate(facts.teachingEnd ?? toIsoDate(item.scheduledFor)), key }];

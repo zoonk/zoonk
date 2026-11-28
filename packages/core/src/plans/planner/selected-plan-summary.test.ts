@@ -1,12 +1,13 @@
 import { describe, expect, it } from "vitest";
+import { isPlanFinished } from "../_utils/plan-end";
 import { chooseBases } from "./base-choices";
 import { type BuildPlanInput, buildPlan } from "./build-plan";
-import { type FixedDays, estimateDailyNeed } from "./daily-need";
-import { fromIsoDate, toIsoDate } from "./plan-calendar";
+import { type FixedDays, estimateDailyNeed, getScheduledFinish } from "./daily-need";
+import { addDays, fromIsoDate, toIsoDate } from "./plan-calendar";
 import { type ExistingPlanItem } from "./plan-items";
 import { type PlanGraphSkill, parsePlanSettings } from "./plan-state";
 import { DEFAULT_LESSON_MINUTES, type PlannerLesson } from "./plan-units";
-import { type DayShape, type FixedEvent } from "./schedule-units";
+import { type DayShape, type FixedEvent, getCumulativeCapacity } from "./schedule-units";
 import { summarizeSelectedPlan } from "./selected-plan-summary";
 
 const TODAY = fromIsoDate("2026-09-28");
@@ -248,6 +249,82 @@ describe(summarizeSelectedPlan, () => {
     expect(summary.sourceSkillIds).toStrictEqual(["s1", "s2"]);
   });
 
+  it("counts the lessons of a band with no situations yet in what's left to study", () => {
+    const input = learnInput({ goal: { dailyMinutes: 3, kind: "language", targetDate: null } });
+    const owed = { ...input, graph: { ...input.graph, unwrittenLessons: 10 }, paceFactor: 2 };
+
+    expect(summarize(owed).requirement).toStrictEqual({
+      doneRaw: 0,
+      remainingRaw: 24 + 10 * DEFAULT_LESSON_MINUTES * 2,
+      totalRaw: 24 + 10 * DEFAULT_LESSON_MINUTES * 2,
+    });
+  });
+
+  it("finishes when its last phase ends, even when the lessons fit sooner in theory", () => {
+    const input = learnInput({
+      goal: { dailyMinutes: 15, kind: "learn", targetDate: null },
+      graph: {
+        phases: [
+          { milestone: null, name: "Basics" },
+          { milestone: null, name: "Practice" },
+        ],
+        skills: [skill("s1", { lessons: 600 }), skill("s2", { lessons: 1200, phase: 1 })],
+      },
+      lessons: [],
+    });
+
+    const built = buildPlan(input);
+    const finish = summarizeSelectedPlan({ built, examSubjects: null, input }).forecast.finish;
+    const end = built.phases.at(-1)?.endDate;
+
+    expect(built.droppedSkillIds).toStrictEqual([]);
+    expect(end).toMatch(/^2029-/u);
+    expect(finish).toStrictEqual({ date: end, precision: "year" });
+  });
+
+  it("forecasts a finish when a short weekly routine needs all its time for lessons", () => {
+    const input = learnInput({
+      goal: { dailyMinutes: 10, kind: "learn", targetDate: null },
+      graph: {
+        phases: [{ milestone: null, name: "Basics" }],
+        skills: [skill("s1", { lessons: 50 })],
+      },
+      lessons: [],
+      settings: parsePlanSettings({
+        startDate: "2026-09-21",
+        weekdayMinutes: [0, 10, 0, 0, 0, 0, 0],
+      }),
+    });
+
+    expect(summarize(input).forecast.finish).toStrictEqual({
+      date: "2027-07-05",
+      precision: "month",
+    });
+  });
+
+  it.each([
+    { finish: { date: expect.any(String), precision: "month" }, unwrittenLessons: 10 },
+    { finish: { date: expect.any(String), precision: "year" }, unwrittenLessons: 300 },
+    { finish: { date: null, precision: null, reason: "beyondHorizon" }, unwrittenLessons: 1600 },
+  ])(
+    "forecasts $unwrittenLessons unwritten language lessons without adding a phase",
+    ({ finish, unwrittenLessons }) => {
+      const input = learnInput({
+        goal: { dailyMinutes: 3, kind: "language", targetDate: null },
+        paceFactor: 2,
+      });
+
+      const owed = { ...input, graph: { ...input.graph, unwrittenLessons } };
+      const built = buildPlan(owed);
+
+      expect(
+        summarizeSelectedPlan({ built, examSubjects: null, input: owed }).forecast.finish,
+      ).toMatchObject(finish);
+
+      expect(built.phases.map(({ name }) => name)).toStrictEqual(["Basics"]);
+    },
+  );
+
   it("says the whole requirement fits when every lesson is laid before the date", () => {
     const summary = summarize(learnInput());
 
@@ -349,7 +426,7 @@ describe(summarizeSelectedPlan, () => {
     expect(coverageOf(input)).toMatchObject({ coveredShare: null, fits: false });
   });
 
-  it("credits a finished lesson two skills share once to each, and once in the requirement", () => {
+  it("credits a shared finished lesson once and keeps the incomplete outline's remainder owed", () => {
     const input = learnInput({
       items: [existing({ id: "d1", lessonId: "shared", skillId: "s1", status: "done" })],
       lessons: [lesson("shared", ["s1", "s2"], 5), lesson("l2", ["s1"]), lesson("l3", ["s2"])],
@@ -365,10 +442,10 @@ describe(summarizeSelectedPlan, () => {
 
     expect(skills.find((entry) => entry.skillId === "s2")).toMatchObject({
       coveredRaw: 8,
-      requiredRaw: 8,
+      requiredRaw: 12,
     });
 
-    expect(summary.requirement).toStrictEqual({ doneRaw: 5, remainingRaw: 6, totalRaw: 11 });
+    expect(summary.requirement).toStrictEqual({ doneRaw: 5, remainingRaw: 10, totalRaw: 15 });
   });
 
   it("requires a base's core when the learner studies it essentially, and all of it in depth", () => {
@@ -439,8 +516,119 @@ describe(summarizeSelectedPlan, () => {
 
     expect(summarize(finished).forecast.finish).toStrictEqual({
       date: null,
+      precision: null,
       reason: "nothingLeft",
     });
+  });
+
+  it("uses month precision through 548 days and year precision for farther finishes", () => {
+    const input = learnInput({
+      goal: { dailyMinutes: 30, kind: "language", targetDate: null },
+      graph: { phases: [], skills: [] },
+      lessons: [],
+    });
+
+    const built = buildPlan(input);
+    const capacity = getCumulativeCapacity(built.planDays);
+
+    const finish = (remaining: number) =>
+      getScheduledFinish({ built, endDate: null, hasUnplacedEstimates: true, input, remaining });
+
+    expect(finish(capacity[548] ?? 0)).toStrictEqual({ date: "2028-03-29", precision: "month" });
+    expect(finish(capacity[549] ?? 0)).toStrictEqual({ date: "2028-03-30", precision: "year" });
+    expect(finish(capacity[3649] ?? 0)).toStrictEqual({ date: "2036-09-24", precision: "year" });
+
+    expect(finish((capacity.at(-1) ?? 0) + 1)).toMatchObject({
+      date: null,
+      reason: "beyondHorizon",
+    });
+  });
+
+  it("forecasts no study days for unwritten work in a later phase without any study days", () => {
+    const input = learnInput({
+      goal: { dailyMinutes: 60, kind: "language", targetDate: null },
+      graph: {
+        phases: [{ later: true, milestone: null, name: "C1–C2" }],
+        skills: [],
+        unwrittenLessons: 1500,
+      },
+      lessons: [],
+      settings: parsePlanSettings({ weekdayMinutes: [0, 0, 0, 0, 0, 0, 0] }),
+    });
+
+    expect(summarize(input).forecast.finish).toStrictEqual({
+      date: null,
+      precision: null,
+      reason: "noStudyDays",
+    });
+  });
+
+  it("keeps work outside the placement window owed until a later plan can fit it", () => {
+    const input = learnInput({
+      goal: { dailyMinutes: 15, kind: "learn", targetDate: null },
+      graph: {
+        phases: [
+          { milestone: null, name: "First" },
+          { milestone: null, name: "Next" },
+        ],
+        skills: Array.from({ length: 30 }, (_, index) =>
+          skill(`s${index}`, { lessons: 200, phase: index < 20 ? 0 : 1 }),
+        ),
+      },
+      lessons: [],
+      settings: parsePlanSettings({
+        startDate: "2026-09-28",
+        weekdayMinutes: [0, 15, 15, 15, 15, 15, 0],
+      }),
+    });
+
+    const built = buildPlan(input);
+    const summary = summarizeSelectedPlan({ built, examSubjects: null, input });
+
+    expect(summary.forecast.finish).toMatchObject({ date: null, reason: "beyondHorizon" });
+    expect(summary.requirement.remainingRaw).toBe(30 * 200 * DEFAULT_LESSON_MINUTES);
+    expect(built.droppedSkillIds).toStrictEqual([]);
+    expect(built.deferredTeaching).toContainEqual(expect.objectContaining({ skillId: "s29" }));
+    expect(built.phases[0]).toMatchObject({ endDate: null, later: true });
+    expect(built.phases[1]).toMatchObject({ endDate: null, later: true });
+
+    const items = built.items.map((item, position) => ({
+      ...item,
+      id: item.key,
+      position,
+      status: "done" as const,
+    }));
+
+    const today = addDays(built.planDays.at(-1)?.date ?? input.today, 1);
+
+    expect(
+      isPlanFinished({ goalKind: "learn", items, phases: built.phases, targetDate: null, today }),
+    ).toBe(false);
+
+    const next = buildPlan({ ...input, items, mode: "automatic", today });
+
+    expect(next.droppedSkillIds).toStrictEqual([]);
+    expect(next.deferredTeaching).toStrictEqual([]);
+    expect(next.phases[1]).toMatchObject({ endDate: expect.any(String) });
+    expect(next.phases[1]?.later).toBeUndefined();
+  });
+
+  it("counts a partly outlined skill's short remainder until the outline is complete", () => {
+    const estimated = [skill("s1", { lessons: 4 })];
+
+    const partlyWritten = learnInput({
+      goal: { dailyMinutes: 15, kind: "learn", targetDate: null },
+      graph: { phases: [], skills: estimated },
+      lessons: [lesson("l1", ["s1"], 6)],
+    });
+
+    const outlined = {
+      ...partlyWritten,
+      graph: { phases: [], skills: estimated.map((item) => ({ ...item, outlined: true })) },
+    };
+
+    expect(summarize(partlyWritten).requirement.remainingRaw).toBe(6 + 3 * DEFAULT_LESSON_MINUTES);
+    expect(summarize(outlined).requirement.remainingRaw).toBe(6);
   });
 
   it("raises the phase-dates card only for a build that kept dates that cost something", () => {

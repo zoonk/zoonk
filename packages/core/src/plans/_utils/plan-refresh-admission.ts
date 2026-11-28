@@ -16,7 +16,7 @@ export function addsLessonsAfterLessonsDone({
 }): boolean {
   const { goal, items, state } = context;
 
-  if (!isPlanLaidOut(context)) {
+  if (!isPlanLaidOut(context) || context.phases.some((phase) => phase.later)) {
     return false;
   }
 

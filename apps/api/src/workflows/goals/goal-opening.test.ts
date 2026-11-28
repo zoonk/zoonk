@@ -601,6 +601,19 @@ describe("a learn goal's opening", () => {
       userId: user.id,
     });
 
+    const bands = ["beginner", "intermediate", "advanced"] as const;
+
+    vi.mocked(generateWholeSkillGraph).mockResolvedValue({
+      ...taskResult({
+        ...graph,
+        skills: graph.skills.map((skill, index) => ({
+          ...skill,
+          level: bands[index % 3] ?? skill.level,
+        })),
+      }),
+      repaired: [],
+    });
+
     await goalContentWorkflow({ goalId: goal.id });
 
     expect(generateGoalOpening).not.toHaveBeenCalled();

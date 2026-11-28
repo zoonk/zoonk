@@ -64,9 +64,15 @@ class PhaseDatesTest {
     }
 
     @Test
-    fun saysAFarPhaseUnderWayByItsDayEvenWhileItsChallengeKeepsItAnEstimate() {
+    fun saysAFarEstimatedEndOfThePhaseUnderWayByItsMonthAsOneAhead() {
         val shaped = planOf(phase(0, "current", "2027-02-20", checkpoint = challenge("2027-03-01")))
-        assertEquals(PlanEnd(day("2027-03-01"), estimate = true, month = false), shaped.phaseEnd(shaped.phases[0]))
+        assertEquals(PlanEnd(day("2027-03-01"), estimate = true, month = true), shaped.phaseEnd(shaped.phases[0]))
+    }
+
+    @Test
+    fun keepsTheDayOfAFarEndOfThePhaseUnderWayThatIsntAnEstimate() {
+        val shaped = planOf(phase(0, "current", "2027-08-14"))
+        assertEquals(PlanEnd(day("2027-08-14"), estimate = false, month = false), shaped.phaseEnd(shaped.phases[0]))
     }
 
     @Test
@@ -79,6 +85,45 @@ class PhaseDatesTest {
     fun marksEveryPhaseOfAPlanWhoseDateIsAnEstimateAsOne() {
         val shaped = planOf(phase(0, "current", "2026-11-20", kind = "foundations"), target = "2027-05-01", targetEstimated = true)
         assertEquals(PlanEnd(day("2026-11-20"), estimate = true, month = false), shaped.phaseEnd(shaped.phases[0]))
+    }
+
+    @Test
+    fun estimatesAnExamPhaseAheadWhoseChallengeFallsOnItsLastDayAsTheChallengesRowDoes() {
+        val shaped =
+            planOf(
+                phase(0, "current", "2026-11-20", kind = "foundations"),
+                phase(1, end = "2027-07-16", kind = "gaps", checkpoint = challenge("2027-07-16"), start = "2026-11-21"),
+            )
+        assertEquals(PlanEnd(day("2027-07-16"), estimate = true, month = true), shaped.phaseEnd(shaped.phases[1]))
+    }
+
+    @Test
+    fun saysAChallengeWhosePhaseHasNoPlaceYetLater() {
+        val shaped =
+            planOf(
+                phase(0),
+                phase(1, checkpoint = """{"date":null,"later":true,"locked":false,"planItemId":null,"state":"upcoming","when":"date"}"""),
+            )
+        assertEquals(PhaseEnd.Later, shaped.challengeDay(shaped.phases[1]))
+    }
+
+    @Test
+    fun datesAChallengeAsItsPhasesEndIs() {
+        val byYear = planOf(phase(0, end = "2031-04-02", checkpoint = challenge("2031-04-02"), precision = "year"))
+        val far = planOf(phase(0, end = "2027-04-02", checkpoint = challenge("2027-04-02"), precision = "month"))
+        val near = planOf(phase(0, end = "2026-12-01", checkpoint = challenge("2026-12-01")))
+        assertEquals(PlanEnd(day("2031-04-02"), estimate = true, month = false, year = true), byYear.challengeDay(byYear.phases[0]))
+        assertEquals(PlanEnd(day("2027-04-02"), estimate = true, month = true), far.challengeDay(far.phases[0]))
+        assertEquals(PlanEnd(day("2026-12-01"), estimate = true, month = false), near.challengeDay(near.phases[0]))
+    }
+
+    @Test
+    fun datesAFarChallengeOnTheLastDayOfThePhaseUnderWayByItsMonthAsThePhase() {
+        val shaped =
+            planOf(phase(0, "current", "2027-02-27", checkpoint = challenge("2027-02-27", precision = "month"), precision = "month"))
+        val phaseEnd = PlanEnd(day("2027-02-27"), estimate = true, month = true)
+        assertEquals(phaseEnd, shaped.phaseEnd(shaped.phases[0]))
+        assertEquals(phaseEnd, shaped.challengeDay(shaped.phases[0]))
     }
 
     @Test
@@ -153,6 +198,25 @@ class PhaseDatesTest {
     fun theFinishIsThePlansOwnEndAboutWhenTheLearnerSetNoDate() {
         val shaped = planOf(phase(0), planEnd = "2026-12-12")
         assertEquals(PlanEnd(day("2026-12-12"), estimate = true, month = false), shaped.finish(LEARN))
+    }
+
+    @Test
+    fun usesTheSavedFinishPrecisionForTheFinishRowAndThePhaseEndingOnThatDate() {
+        val end = "2026-12-12"
+        val shaped = planOf(phase(0, "current", end, checkpoint = challenge(end)), planEnd = end, precision = "month")
+        val expected = PlanEnd(day(end), estimate = true, month = true)
+
+        assertEquals(expected, shaped.finish(LEARN))
+        assertEquals(expected, shaped.phaseEnd(shaped.phases[0]))
+    }
+
+    @Test
+    fun aPhaseUnderWayIsSaidByHowNearItsEstimatedEndIsOrByItsYearWhenCoreSays() {
+        val byDay = planOf(phase(0, "current", "2026-12-10", checkpoint = challenge("2026-12-10"), precision = "month"))
+        val byYear = planOf(phase(0, "current", "2029-02-23", checkpoint = challenge("2029-02-23"), precision = "year"))
+
+        assertEquals(PlanEnd(day("2026-12-10"), estimate = true, month = false), byDay.phaseEnd(byDay.phases[0]))
+        assertEquals(PlanEnd(day("2029-02-23"), estimate = true, month = false, year = true), byYear.phaseEnd(byYear.phases[0]))
     }
 
     @Test
@@ -307,6 +371,7 @@ class PhaseDatesTest {
     private fun planOf(
         vararg phases: String,
         planEnd: String? = null,
+        precision: String? = null,
         target: String? = null,
         targetEstimated: Boolean = false,
         shortPlan: Boolean = false,
@@ -316,7 +381,7 @@ class PhaseDatesTest {
             """
             "phases":[${phases.joinToString(",")}],
             "end":$end,
-            "estimate":{"remainingHours":10,"totalHours":12,"endDate":${planEnd.json()}},
+            "estimate":{"remainingHours":10,"totalHours":12,"endDate":${planEnd.json()},"precision":${precision.json()}},
             "schedule":{"dailyMinutes":20,"dailyTimes":[15,30,45],"fullCourse":false,"lightWeeks":[],"studyDays":5,"targetDate":${target.json()},
               "targetDateEstimated":$targetEstimated,"targetDateNamedMonth":false,"shape":{"canDiffer":false,"weekdayDays":[1,2,3,4,5],"weekdays":20,"weekend":null,"weekendDays":[]},"weekdayMinutes":[0,20,20,20,20,20,0]},
             "shortPlan":${if (shortPlan) """{"days":5,"mockDate":null}""" else "null"},
@@ -332,15 +397,17 @@ class PhaseDatesTest {
         checkpoint: String? = null,
         short: String? = null,
         start: String? = null,
+        precision: String? = null,
     ) =
         """{"chapterCount":0,"chapters":[],"checkpoint":${checkpoint ?: "null"},"startDate":${start.json()},"endDate":${end.json()},"hours":10,
         "index":$index,"kind":"$kind","lessonsDone":0,"lessonsTotal":0,"mocks":{"count":0},"name":"Phase $index","notPlannedReason":${if (state == "leftOut") "\"time\"" else "null"},"state":"$state",
-        "short":${short ?: "null"}}"""
+        "short":${short ?: "null"},"precision":${precision.json()}}"""
 
     private fun challenge(
         date: String = "2026-11-22",
         state: String = "upcoming",
-    ) = """{"date":"$date","locked":false,"planItemId":null,"state":"$state","when":"date"}"""
+        precision: String? = null,
+    ) = """{"date":"$date","locked":false,"planItemId":null,"precision":${precision.json()},"state":"$state","when":"date"}"""
 
     private fun short(
         first: Int,

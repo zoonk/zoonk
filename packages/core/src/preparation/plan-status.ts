@@ -63,13 +63,8 @@ export function getMinutesPerItem({
     : DEFAULT_MINUTES_PER_PLAN_ITEM;
 }
 
-function getPlanAdjustments(targetDate: Date | null): PlanAdjustment[] {
-  const options: PlanAdjustment[] = ["addTime", "narrowScope"];
-  return targetDate ? [...options, "moveDate"] : options;
-}
-
-function getNeedsAdjusting(targetDate: Date | null): PlanStatus {
-  return { kind: "needsAdjusting", options: getPlanAdjustments(targetDate) };
+function getNeedsAdjusting(): PlanStatus {
+  return { kind: "needsAdjusting", options: ["addTime", "narrowScope", "moveDate"] };
 }
 
 function listRequired({
@@ -129,7 +124,7 @@ function getPlanLifecycle({
   goalKind: Goal["kind"];
   items: readonly PlanStatusItem[];
   phaseChallengesRequired: boolean;
-  phases: readonly Pick<PlanPhase, "challengeLeftOut">[];
+  phases: readonly Pick<PlanPhase, "challengeLeftOut" | "later">[];
   studiesPastTarget: boolean;
   targetDate: Date | null;
   today: Date;
@@ -155,8 +150,8 @@ function getPlanLifecycle({
   }
 
   // Winning what's on the calendar can't finish it: it needs more study days or a later date.
-  if (hasChallengeLeftOut(ends) && areLessonsFinished(ends)) {
-    return { kind: "needsAdjusting", options: targetDate ? ["addTime", "moveDate"] : ["addTime"] };
+  if (targetDate && !studiesPastTarget && hasChallengeLeftOut(ends) && areLessonsFinished(ends)) {
+    return { kind: "needsAdjusting", options: ["addTime", "moveDate"] };
   }
 
   const challenges = countChallengesLeft(ends);
@@ -233,7 +228,7 @@ export function getPlanStatus({
   goalKind: Goal["kind"];
   items: readonly PlanStatusItem[];
   minutesPerItem: number;
-  phases?: readonly Pick<PlanPhase, "challengeLeftOut">[];
+  phases?: readonly Pick<PlanPhase, "challengeLeftOut" | "later">[];
   studiesPastTarget?: boolean;
   targetDate: Date | null;
   /** The learner-local date, as a UTC-midnight label like `scheduledFor`. */
@@ -268,7 +263,7 @@ export function getPlanStatus({
   }
 
   if (hasWorkAfterDate({ items, phaseChallengesRequired, studiesPastTarget, targetDate })) {
-    return getNeedsAdjusting(targetDate);
+    return getNeedsAdjusting();
   }
 
   if (pace.kind === "onPace") {
@@ -283,7 +278,22 @@ export function getPlanStatus({
     return { days: 0, extraMinutesPerDay: 0, kind: "behind", lessons: pace.lessons };
   }
 
-  return pace.catchUp
-    ? { ...pace.catchUp, kind: "behind", lessons: null }
-    : getNeedsAdjusting(targetDate);
+  if (pace.catchUp) {
+    return { ...pace.catchUp, kind: "behind", lessons: null };
+  }
+
+  if (targetDate && !studiesPastTarget) {
+    return getNeedsAdjusting();
+  }
+
+  const overdue = items.filter(
+    (item) => !isFinished(item) && item.scheduledFor && item.scheduledFor < today,
+  );
+
+  return {
+    days: 0,
+    extraMinutesPerDay: 0,
+    kind: "behind",
+    lessons: countLessonsLeft(overdue) || null,
+  };
 }

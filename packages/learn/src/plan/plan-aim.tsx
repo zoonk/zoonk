@@ -20,7 +20,14 @@ function useAimFinishes() {
 
   const { ask, ends } = useAimEnds(async (aim) => {
     const preview = await actions.preview([{ aim, kind: "setAim" }]);
-    return preview?.finishDate ?? null;
+
+    return preview
+      ? {
+          endDate: preview.finishDate,
+          finishReason: preview.finishReason,
+          precision: preview.precision,
+        }
+      : null;
   });
 
   const askAll = useEffectEvent((revision: object) => {

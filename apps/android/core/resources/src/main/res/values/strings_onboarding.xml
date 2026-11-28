@@ -282,17 +282,16 @@
     <string name="onboarding_continue">Continue</string>
     <string name="onboarding_skip">Skip</string>
     <string name="onboarding_purpose_title">What do you want from it?</string>
-    <string name="onboarding_purpose_description">It sets how deep your course goes, and so how long it is.</string>
     <string name="onboarding_purpose_label">What you want from it</string>
     <string name="onboarding_purpose_overview">Get an overview</string>
-    <string name="onboarding_purpose_overview_description">A short course: the big ideas, no formulas</string>
-    <string name="onboarding_purpose_deep">Understand it in depth</string>
-    <string name="onboarding_purpose_deep_description">The full path, from the basics to advanced</string>
+    <string name="onboarding_purpose_overview_description">I want a quick look at the big ideas</string>
+    <string name="onboarding_purpose_deep">Understand it well</string>
+    <string name="onboarding_purpose_deep_description">I want to go deeper, one level at a time</string>
     <string name="onboarding_purpose_work">Use it at work</string>
     <string name="onboarding_purpose_career_change">Change careers</string>
-    <string name="onboarding_purpose_career_change_description">What the new role needs, portfolio included</string>
+    <string name="onboarding_purpose_career_change_description">I want to learn what I need for a new role and build a portfolio</string>
     <string name="onboarding_purpose_refresh">Refresh what I studied</string>
-    <string name="onboarding_purpose_refresh_description">Back to the level I had, after a short test</string>
+    <string name="onboarding_purpose_refresh_description">I want to get back to the level I had</string>
     <string name="onboarding_purpose_other">Something else</string>
     <string name="onboarding_level_title">How much do you already know?</string>
     <string name="onboarding_level_description">It only changes where your plan starts.</string>
@@ -440,12 +439,12 @@
     <string name="onboarding_aim_title">%1$s level to reach</string>
     <string name="onboarding_aim_change">Change</string>
     <string name="onboarding_aim_picker_title">How far do you want to go?</string>
-    <!-- %1$s is hours of study, such as "190 hr". -->
-    <string name="onboarding_aim_hours_more">About %1$s more</string>
-    <!-- %1$s is hours of study, such as "190 hr"; %2$s a month, such as "Mar 2027". -->
-    <string name="onboarding_aim_hours_month">About %1$s more · around %2$s</string>
+    <!-- Under a language level to aim for, when reaching it takes more than ten years at the learner's time. -->
+    <string name="onboarding_aim_beyond">In 10+ years</string>
+    <!-- When a language level is reached. {year} is a year, like "2031". -->
+    <string name="onboarding_aim_around_year">Around %1$s</string>
+    <string name="onboarding_aim_around_month">Around %1$s</string>
     <string name="onboarding_aim_by_month">by %1$s</string>
-    <string name="onboarding_aim_finish">At %1$s a day, you reach %2$s around %3$s.</string>
     <string name="onboarding_reason_travel">Travel</string>
     <string name="onboarding_reason_travel_description">Get by on trips: order, ask the way, small talk</string>
     <string name="onboarding_reason_talk">Talk with people</string>

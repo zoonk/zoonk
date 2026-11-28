@@ -7,11 +7,13 @@ export const CHAPTER_LESSONS = 10;
 
 export function countStandInLessons({
   domain,
+  includeShortRemainder = false,
   lessons,
   outlined = false,
   taught,
 }: {
   domain?: PlanGraphSkill["domain"];
+  includeShortRemainder?: boolean;
   lessons: number;
   outlined?: boolean;
   taught: number;
@@ -25,5 +27,5 @@ export function countStandInLessons({
   }
 
   const missing = lessons - taught;
-  return missing >= (domain ? 1 : MIN_STAND_IN_LESSONS) ? missing : 0;
+  return missing >= (domain || includeShortRemainder ? 1 : MIN_STAND_IN_LESSONS) ? missing : 0;
 }

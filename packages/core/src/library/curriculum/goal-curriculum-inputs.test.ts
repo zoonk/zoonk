@@ -322,6 +322,33 @@ describe(loadGoalCurriculumInputs, () => {
     expect(shared.ownLevel).toBe("none");
   });
 
+  it("writes a broad learn goal's shared graph one band at a time, and a private course's whole", async () => {
+    const user = await userFixture();
+
+    const goal = await goalFixture({
+      details: { courseLevel: "intermediate", level: "basic", purpose: "deep" },
+      prompt: "Physics",
+      userId: user.id,
+    });
+
+    const inputs = await loadGoalCurriculumInputs(goal.id);
+
+    if (!inputs) {
+      throw new Error("Expected the goal's inputs");
+    }
+
+    const shared = toScopedGraphPrompt({
+      inputs,
+      scope: { generalGoal: "Physics", ownerId: null },
+    });
+
+    const owned = toScopedGraphPrompt({ inputs, scope: { generalGoal: null, ownerId: user.id } });
+
+    expect(shared.courseLevel).toBe("intermediate");
+    expect(owned.courseLevel).toBeUndefined();
+    expect(owned.context ?? "").not.toContain("courseLevel");
+  });
+
   it("writes an exam's shared graph from the exam alone, never its first learner's words, target or level", async () => {
     const [user, blueprint] = await Promise.all([
       userFixture(),

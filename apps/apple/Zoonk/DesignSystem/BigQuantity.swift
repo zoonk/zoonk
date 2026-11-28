@@ -42,12 +42,13 @@ struct BigQuantity: View {
     return TypeStyle.smallButton.font(in: environment)
   }
 
-  /// Main's `splitQuantity`: a number keeps its sign, its separators and a percent sign.
+  /// Main's `splitQuantity`: a number keeps its sign, its separators and a percent sign, or a
+  /// plus after it ("10+").
   nonisolated static func parts(_ text: String) -> [(text: String, isNumber: Bool)] {
     var parts: [(text: String, isNumber: Bool)] = []
     var rest = Substring(text)
 
-    while let match = rest.firstMatch(of: /[~≈+\-−]?\d[\d.,:]*(?:[\u{00A0}\u{202F}]?%)?/) {
+    while let match = rest.firstMatch(of: /[~≈+\-−]?\d[\d.,:]*(?:[\u{00A0}\u{202F}]?%|\+)?/) {
       if match.range.lowerBound > rest.startIndex {
         parts.append((String(rest[..<match.range.lowerBound]), false))
       }

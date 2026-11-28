@@ -21,7 +21,13 @@ vi.mock("ai", async (importOriginal) => {
 const REFERENCE = { text: "Unit 3: Hypothesis testing", title: "Intro to Statistics syllabus" };
 
 const SKILLS = [
-  { description: "Mean and median.", examWeight: 2, key: "center", name: "Describe the center" },
+  {
+    description: "Mean and median.",
+    estimatedLessons: 8,
+    examWeight: 2,
+    key: "center",
+    name: "Describe the center",
+  },
 ];
 
 const NOTICE: ExamOutline = {
@@ -35,6 +41,7 @@ const NOTICE: ExamOutline = {
 
 const MISSING = {
   description: "Decide whether data supports a claim.",
+  estimatedLessons: 4,
   name: "Test a hypothesis",
   prerequisites: ["center"],
   syllabusLine: "Unit 3: Hypothesis testing",
@@ -58,6 +65,7 @@ async function sendCheck(params: Partial<Parameters<typeof checkCoverage>[0]>) {
   return {
     data: result.data,
     instructions: typeof call?.instructions === "string" ? call.instructions : "",
+    prompt: typeof call?.prompt === "string" ? call.prompt : "",
     schema: JSON.stringify(format?.schema),
   };
 }
@@ -81,6 +89,32 @@ describe(checkCoverage, () => {
       missing: [{ area: null, examWeight: null, name: "Test a hypothesis", topics: [] }],
       placements: [],
     });
+  });
+
+  it("shows the graph's sizes and sizes each missing skill in lessons", async () => {
+    vi.mocked(generateText).mockResolvedValue(createGenerateTextResult({ missing: [MISSING] }));
+
+    const { data, prompt, schema } = await sendCheck({ goalKind: "learn" });
+
+    expect(prompt).toContain("- center: Describe the center. Mean and median. (8 lessons)");
+    expect(schema).toContain("estimatedLessons");
+    expect(data.missing[0]?.estimatedLessons).toBe(4);
+  });
+
+  it("judges a one-band learn path's coverage only up to the band it stops at", async () => {
+    vi.mocked(generateText).mockResolvedValue(createGenerateTextResult({ missing: [] }));
+
+    const banded = await sendCheck({ courseLevel: "beginner", goalKind: "learn" });
+
+    expect(banded.prompt).toContain("COURSE_LEVEL: beginner");
+    expect(banded.instructions).toContain("# One band");
+    expect(banded.instructions).not.toContain("{{");
+
+    vi.mocked(generateText).mockClear();
+    const whole = await sendCheck({ goalKind: "learn" });
+
+    expect(whole.prompt).not.toContain("COURSE_LEVEL");
+    expect(whole.instructions).not.toMatch(/COURSE_LEVEL|# One band/u);
   });
 
   it("weighs an exam's skills without placing them when its notice isn't known", async () => {

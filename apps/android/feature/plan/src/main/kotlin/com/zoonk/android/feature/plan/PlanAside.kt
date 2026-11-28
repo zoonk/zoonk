@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.plan
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -108,7 +109,7 @@ internal fun PlanProperties(
         SectionHeader(stringResource(R.string.plan_your_plan))
         Column {
             PropertyRow(
-                label = stringResource(if (page.isExam) R.string.plan_exam_date else R.string.plan_deadline),
+                label = stringResource(goalDateLabel(page)),
                 value = goalDateValue(page),
                 onClick = onOpen?.let { { it(PlanSection.Date) } },
                 onClickLabel = adjust,
@@ -263,16 +264,41 @@ private fun PropertyRow(
     }
 }
 
-/** Main's `GoalDateValue`: the date the learner set, or with none the timeline's estimated finish; never the day a finished plan was done. */
+/** The finish the plan works out, which the date setting holds while the learner set no date. */
+private val PlanPageState.workedOutFinish: PlanEnd?
+    get() = finish?.takeIf { plan.schedule.targetDate == null && !isExam && it.estimate }
+
+/** Main's `isPlanFinishLater`: a plan without a date whose finish lies past the years it lays out. */
+private val PlanPageState.finishesLater: Boolean
+    get() = !isExam && !isPaused && plan.end == null && plan.forecast == PlanForecast.Beyond
+
+/** Main's `useGoalDateLabel`: the setting is the goal's date; while it holds the finish the plan works out, it's named as that. */
+@StringRes
+internal fun goalDateLabel(page: PlanPageState): Int =
+    when {
+        page.workedOutFinish != null || page.finishesLater -> R.string.plan_roadmap_you_finish
+        page.isExam -> R.string.plan_exam_date
+        else -> R.string.plan_deadline
+    }
+
+/**
+ * Main's `GoalDateValue`: the date the learner set, or with none the timeline's estimated finish, "10+ years" past the
+ * years a plan lays out; never the day a finished plan was done.
+ */
 @Composable
-private fun goalDateValue(page: PlanPageState): AnnotatedString {
+internal fun goalDateValue(page: PlanPageState): AnnotatedString {
     val schedule = page.plan.schedule
     schedule.targetDate?.toJavaLocalDate()?.let { target ->
         return dateValue(planDate(target, page.today, schedule.targetDateEstimated, schedule.targetDateNamedMonth).text)
     }
-    val finish = page.finish?.takeIf { !page.isExam && it.estimate }
-    return finish?.let { dateValue(planDate(it.date, page.today, estimate = true, month = it.month).text) }
-        ?: AnnotatedString(stringResource(if (page.isExam) R.string.plan_to_be_confirmed else R.string.plan_end_none_set))
+    page.workedOutFinish?.let { return dateValue(planDate(it.date, page.today, estimate = true, month = it.month, year = it.year).text) }
+    val words =
+        when {
+            page.finishesLater -> R.string.plan_finish_years_plus
+            page.isExam -> R.string.plan_to_be_confirmed
+            else -> R.string.plan_end_none_set
+        }
+    return AnnotatedString(stringResource(words))
 }
 
 /** Main's `DailyTimeValue`: a time alone is a value, in the data face; "20 min · 30 min weekends" is a phrase, in the words' face. */

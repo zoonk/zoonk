@@ -1,24 +1,23 @@
 "use client";
 
-import { useExtracted } from "next-intl";
-import { useFinishSentence } from "../_components/finish-sentence";
+import { PickedTimeFinish } from "../_components/finish-readout";
+import { getAimAhead } from "../language-aim/aim-ahead";
 import { usePlanScreen } from "./plan-context";
 
+/** When the saved schedule finishes the plan, beside its daily time; dimmed while a change saves. */
 export function PlanFinish({ pending }: { pending: boolean }) {
-  const t = useExtracted();
-  const finishSentence = useFinishSentence();
   const { paused, plan, today } = usePlanScreen();
   const { endDate } = plan.estimate;
 
   // The end is the saved schedule's last day, laid out again only by a change: once it has
   // passed, it no longer says when the learner finishes.
-  if (paused || !endDate || endDate < today || plan.end) {
-    return null;
-  }
+  const shown = !paused && !plan.end && (endDate === null || endDate >= today);
 
   return (
-    <p aria-busy={pending} aria-live="polite" className="text-muted-foreground text-sm">
-      {pending ? t("Working out when you'd finish…") : finishSentence({ endDate })}
-    </p>
+    <PickedTimeFinish
+      aim={getAimAhead(plan.languageAim)}
+      forecast={shown ? plan.estimate : null}
+      updating={pending}
+    />
   );
 }

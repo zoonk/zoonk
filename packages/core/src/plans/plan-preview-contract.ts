@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { finishDisplayFields } from "./finish-contract";
 import { planEffectSchema } from "./plan-effect-contract";
 
 export const planChangePreviewSchema = z
@@ -34,8 +35,9 @@ export const planChangePreviewSchema = z
       .nullable()
       .meta({
         description:
-          "When the plan would finish its whole course after the change: null while it's being built, for a plan with a date (it ends on that date whatever it covers), and when the course doesn't fit in the days a plan lays out. Date a language aim's choice by this, as the time advice's `endDate` does",
+          "Estimated finish date for an undated plan after the change, as in time advice. Null while the plan is being built, for dated plans, or when there is no forecast date (see finishReason)",
       }),
+    ...finishDisplayFields,
     ready: z
       .boolean()
       .meta({ description: "False while the plan is being built: ask again in a few seconds" }),

@@ -4,14 +4,15 @@ import { type PlanPhaseView } from "@zoonk/core/plans/view-contract";
 import { useExtracted } from "next-intl";
 import { getShareInPhase } from "../plan/phase-weight";
 import { usePlanScreen } from "../plan/plan-context";
-import { usePhaseName } from "../plan/use-phase-name";
 import {
   type PlanDate,
   getAxisDatedPhases,
   getAxisFinish,
   getPlanFinish,
   getRoadmapPhases,
+  isPlanFinishLater,
 } from "./phase-dates";
+import { getRoadmapPlace } from "./roadmap-place";
 
 export function getLessonShare(phase: PlanPhaseView): number {
   if (phase.state === "done") {
@@ -34,6 +35,30 @@ export function useRoadmapPhases() {
 export function useRoadmapFinish(): PlanDate | null {
   const { goal, paused, plan } = usePlanScreen();
   return getPlanFinish({ goalKind: goal.kind, paused, plan });
+}
+
+/** What the flag at the plan's finish stands for: the goal's date, or with none the finish the plan works out. */
+export function useFinishLabel() {
+  const t = useExtracted();
+  const { goal, plan } = usePlanScreen();
+
+  if (goal.kind === "exam") {
+    return t("Exam date");
+  }
+
+  return plan.schedule.targetDate
+    ? t("End date")
+    : t({
+        description:
+          "Names the day the plan works out it finishes when the learner set no end date: beside the flag in the roadmap's legend, and as the label of that date in the plan's settings.",
+        message: "You finish",
+      });
+}
+
+/** The finish row reads "Later" where the plan's finish lies past the years it lays out. */
+export function useRoadmapFinishLater(): boolean {
+  const { goal, paused, plan } = usePlanScreen();
+  return isPlanFinishLater({ goalKind: goal.kind, paused, plan });
 }
 
 /** The goal's date under the timeline's axis (`getAxisFinish`). */
@@ -63,26 +88,21 @@ export function useRoadmapOverrun(): { phaseIndex: number; share: number } | nul
   return phase && share !== null ? { phaseIndex: phase.index, share } : null;
 }
 
-/** The phase's place leads; its own name follows only when it has one. */
+/** Where the learner is: the row under it already names the phase. */
 export function useRoadmapPosition() {
   const t = useExtracted();
-  const phaseName = usePhaseName();
-  const { plan } = usePlanScreen();
-  const { currentIndex, phases } = useRoadmapPhases();
-  const current = phases[currentIndex];
+  const { phases } = useRoadmapPhases();
+  const place = getRoadmapPlace(phases);
 
-  if (!current) {
+  if (!place) {
     return null;
   }
 
-  const name = phaseName(current, { mocksRequirePlus: plan.access.mocksRequirePlus });
-
   return {
-    name: name === phaseName(current, { byPlace: true }) ? null : name,
-    phase: current,
+    phase: place.phase,
     place: t("Phase {number, number} of {total, number}", {
-      number: currentIndex + 1,
-      total: phases.length,
+      number: place.number,
+      total: place.total,
     }),
   };
 }

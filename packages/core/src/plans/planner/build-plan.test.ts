@@ -1,17 +1,22 @@
 import { describe, expect, it } from "vitest";
+import { getPlanStatus } from "../../preparation/plan-status";
+import { buildSyllabus } from "../../view-models/syllabus/_utils/build-syllabus";
 import { findCurrentPhase, getPhaseStates, isPhaseFinished } from "../_utils/phase-states";
 import { isPlanFinished } from "../_utils/plan-end";
 import { readSelectedItemFacts } from "../_utils/selected-item-contract";
 import { getPlannedBossMinutes } from "./boss-minutes";
 import { type BuildPlanInput, type BuiltPlan, buildPlan } from "./build-plan";
-import { withPlannedLessons } from "./core-first";
+import { countSkillLessons, withPlannedLessons } from "./core-first";
 import { getShownPhaseEnds } from "./kept-phase-ends";
 import { addDays, daysBetween, fromIsoDate, toIsoDate } from "./plan-calendar";
+import { getFittedStandInLessons } from "./plan-effect";
 import { getPlanFeasibility } from "./plan-feasibility";
 import { type ExistingPlanItem, type PlannedItem } from "./plan-items";
 import { type PlanGraphSkill, parsePlanSettings } from "./plan-state";
 import { DEFAULT_LESSON_MINUTES, type PlannerLesson } from "./plan-units";
+import { getRunEffect } from "./run-outcome";
 import { listSelectedItemFacts } from "./selected-item-facts";
+import { summarizeSelectedPlan } from "./selected-plan-summary";
 
 const TODAY = fromIsoDate("2026-09-28");
 
@@ -81,6 +86,136 @@ function summarize(plan: Pick<ReturnType<typeof buildPlan>, "items">) {
 }
 
 describe(buildPlan, () => {
+  it("keeps the current chapter and counts all work when an undated schedule shrinks", () => {
+    const graph = {
+      phases: [
+        { milestone: null, name: "Basics" },
+        { milestone: null, name: "Advanced" },
+      ],
+      skills: [
+        skill("basics", { area: "Physics", lessons: 150, outlined: true }),
+        skill("math", { area: "Physics", lessons: 400, phase: 1 }),
+        skill("project", { area: "Physics", lessons: 30, outcome: true, phase: 1 }),
+      ],
+    };
+
+    const input = planInput({
+      goal: { dailyMinutes: 45, kind: "learn", targetDate: null },
+      graph,
+      lessons: Array.from({ length: 150 }, (_, index) => lesson(`basics-${index}`, ["basics"])),
+    });
+
+    const first = buildPlan(input);
+
+    const standInLessons = new Map([
+      ["math", 400],
+      ["project", 30],
+    ]);
+
+    const savedItems = (plan: ReturnType<typeof buildPlan>) => {
+      const fitted = getFittedStandInLessons({ skillMinutes: plan.skillMinutes, standInLessons });
+
+      return store(plan, new Set(["lesson:basics-0"])).map((item) => ({
+        ...item,
+        completedAt: item.status === "done" ? TODAY : item.completedAt,
+        lessons: fitted.get(item.skillId ?? ""),
+      }));
+    };
+
+    let items = savedItems(first);
+
+    const schedule = (dailyMinutes: number, count: number) => ({
+      ...input,
+      goal: { ...input.goal, dailyMinutes },
+      items,
+      settings: parsePlanSettings({
+        startDate: toIsoDate(TODAY),
+        weekdayMinutes: Array.from({ length: 7 }, (_, day) =>
+          (day + 6) % 7 < count ? dailyMinutes : 0,
+        ),
+      }),
+      today: addDays(TODAY, 7),
+    });
+
+    const plans = Array.from({ length: 7 }, (_, i) => {
+      const plan = buildPlan(schedule(15, 7 - i));
+      items = savedItems(plan);
+      return plan;
+    });
+
+    const monday = schedule(5, 1);
+    const tight = buildPlan(monday);
+
+    for (const plan of [...plans, tight]) {
+      expect(plan.droppedSkillIds).toStrictEqual([]);
+
+      expect(
+        plan.items.find((item) => item.kind === "lesson" && item.status === "todo"),
+      ).toMatchObject({ lessonId: "basics-1" });
+    }
+
+    expect(tight.phases[0]?.endDate).not.toBeNull();
+    expect(tight.phases[1]).toMatchObject({ endDate: null, later: true });
+
+    const effect = getRunEffect({
+      built: tight,
+      context: { items: savedItems(first), phases: first.phases },
+      graph,
+      kept: undefined,
+      standInLessons,
+    });
+
+    expect(effect.lessonsRemoved).toBe(0);
+    expect(effect.topicsLeftOut).toBeUndefined();
+    expect(buildPlan({ ...input, items: savedItems(tight) }).deferredTeaching).toStrictEqual([]);
+
+    expect(
+      summarizeSelectedPlan({ built: tight, examSubjects: null, input: monday }).forecast.finish,
+    ).toMatchObject({ date: null, reason: "beyondHorizon" });
+
+    expect(
+      getPlanStatus({
+        goalKind: "learn",
+        items: tight.items,
+        minutesPerItem: 5,
+        phases: tight.phases,
+        targetDate: null,
+        today: monday.today,
+      })?.kind,
+    ).not.toBe("needsAdjusting");
+
+    const deferred = countSkillLessons(tight.deferredTeaching ?? []);
+
+    const syllabus = buildSyllabus({
+      areaCourses: new Map(),
+      chapterTitles: new Map(),
+      deadline: false,
+      items: savedItems(tight).filter((item) => item.kind === "lesson"),
+      knownSkillIds: new Set(),
+      notice: null,
+      pastBasicsSkillIds: new Set(),
+      skills: graph.skills.map((topic) => ({
+        ...topic,
+        area: "Physics",
+        deferredLessons: deferred.get(topic.skillId),
+        topics: [],
+      })),
+      skippedAreas: [],
+    });
+
+    expect(syllabus.lessons).toStrictEqual({ done: 1, known: 0, total: 580 });
+
+    const settled = buildPlan({
+      ...monday,
+      items: savedItems(first),
+      setAsideLeftWork: true,
+      today: addDays(TODAY, 700),
+    });
+
+    expect(settled.items.some((item) => item.status === "skipped")).toBe(false);
+    expect(settled.deferredTeaching).not.toHaveLength(0);
+  });
+
   it("adds the whole exam extra in spare time without moving the notice lessons", () => {
     const graph = {
       phases: [{ milestone: null, name: "Exam" }],

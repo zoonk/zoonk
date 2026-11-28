@@ -19,7 +19,11 @@ type LeftItem = Pick<
   "chapterId" | "kind" | "lessonId" | "lessons" | "skillId" | "status"
 >;
 
-type EndPhase = Pick<PlanPhase, "challengeLeftOut">;
+type EndPhase = Pick<PlanPhase, "challengeLeftOut" | "later">;
+
+function hasLaterWork(phases: readonly EndPhase[] = []): boolean {
+  return phases.some((phase) => phase.later);
+}
 
 type PlanEndInput = {
   phaseChallengesRequired?: boolean;
@@ -98,49 +102,36 @@ function isClosingWorkLeft({
   return EXAM_DAY_KINDS.has(item.kind) && isTodo(item) && !past;
 }
 
-export function isPlanOver({
+type PlanOverInput = Omit<PlanEndInput, "targetDate" | "today"> & {
+  targetDate?: Date | null;
+  today?: Date | null;
+};
+
+function hasClosingWork({
   phaseChallengesRequired = true,
   goalKind,
   items,
   phases,
   targetDate = null,
   today = null,
-}: {
-  phaseChallengesRequired?: boolean;
-  goalKind: Goal["kind"];
-  items: readonly DatedEndItem[];
-  phases?: readonly EndPhase[];
-  targetDate?: Date | null;
-  today?: Date | null;
-}): boolean {
-  const learn = items.filter((item) => LEARN_KINDS.has(item.kind));
-
+}: PlanOverInput): boolean {
   return (
-    learn.length > 0 &&
-    !learn.some((item) => isTodo(item)) &&
-    !hasChallengeLeftOut({ phaseChallengesRequired, phases }) &&
-    !items.some((item) =>
+    hasLaterWork(phases) ||
+    hasChallengeLeftOut({ phaseChallengesRequired, phases }) ||
+    items.some((item) =>
       isClosingWorkLeft({ goalKind, item, phaseChallengesRequired, targetDate, today }),
     )
   );
 }
 
-export function isPlanFinished({
-  phaseChallengesRequired = true,
-  goalKind,
-  items,
-  phases,
-  studiesPastTarget = false,
-  targetDate,
-  today,
-}: PlanEndInput): boolean {
-  return (
-    areLessonsFinished({ items, studiesPastTarget, targetDate }) &&
-    !hasChallengeLeftOut({ phaseChallengesRequired, phases }) &&
-    !items.some((item) =>
-      isClosingWorkLeft({ goalKind, item, phaseChallengesRequired, targetDate, today }),
-    )
-  );
+export function isPlanOver(input: PlanOverInput): boolean {
+  const learn = input.items.filter((item) => LEARN_KINDS.has(item.kind));
+
+  return learn.length > 0 && !learn.some((item) => isTodo(item)) && !hasClosingWork(input);
+}
+
+export function isPlanFinished(input: PlanEndInput): boolean {
+  return areLessonsFinished(input) && !hasClosingWork(input);
 }
 
 type PlanEndViewInput = Omit<PlanEndInput, "items"> & {
@@ -206,7 +197,9 @@ export function countChallengesLeft(input: PlanEndInput): number {
   const challenges = input.items.filter((item) => item.kind === "boss" && isTodo(item));
   const rest = input.items.filter((item) => item.kind !== "boss");
 
-  return challenges.length > 0 && isPlanFinished({ ...input, items: rest, phases: [] })
+  return challenges.length > 0 &&
+    !hasLaterWork(input.phases) &&
+    isPlanFinished({ ...input, items: rest, phases: [] })
     ? challenges.length
     : 0;
 }

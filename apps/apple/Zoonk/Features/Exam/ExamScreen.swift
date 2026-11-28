@@ -293,7 +293,7 @@ private struct ExamHero: View {
   @ViewBuilder
   private var noSittingSection: some View {
     if !exam.isLastDays, exam.noticeDay == nil, let noSitting = exam.noSitting {
-      let month = PlanDate.monthText(noSitting.month, today: PlanDate.today(), wide: true)
+      let month = PlanDate.longText(noSitting.month, month: true)
       Section {
         VStack(alignment: .leading, spacing: 4) {
           Text(

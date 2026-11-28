@@ -32,8 +32,9 @@ fun planDate(
     today: LocalDate,
     estimate: Boolean = false,
     month: Boolean = false,
+    year: Boolean = false,
 ): PlanDateWords {
-    val formatted = formatPlanDate(date, today, currentLocale(), month)
+    val formatted = formatPlanDate(date, today, currentLocale(), month, year = year)
     return if (estimate) {
         PlanDateWords(
             stringResource(R.string.plan_date_estimate, formatted),
@@ -61,6 +62,17 @@ fun phaseName(
         else -> phaseKindName(phase.kind, number)
     }
 }
+
+/**
+ * Main's `usePhaseRowName`: a phase with a milestone is named by what the learner can do once it's done, on its band,
+ * its row and its sheet alike, so a screen never shows a phase under two names.
+ */
+@Composable
+fun phaseRowName(
+    phase: PlanPhase,
+    mocksRequirePlus: Boolean,
+    byPlace: Boolean = false,
+): String = phase.milestone?.takeIf { it.isNotBlank() } ?: phaseName(phase, mocksRequirePlus, byPlace)
 
 @Composable
 fun phaseKindName(

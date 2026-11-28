@@ -26,7 +26,9 @@ import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasSetTextAction
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onFirst
@@ -92,6 +94,10 @@ import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.LanguageLevelTestOneOfResult
 import com.zoonk.api.models.LanguageLevelTestResult
 import com.zoonk.api.models.OnboardingDraft
+import com.zoonk.api.models.PlanFinishPrecision
+import com.zoonk.api.models.PlanFinishReason
+import com.zoonk.api.models.PlanPhaseChaptersInner
+import com.zoonk.api.models.PlanTimeAdvice
 import com.zoonk.api.models.SourceReadStatus
 import com.zoonk.api.models.TodayUploadRequest
 import kotlinx.coroutines.CoroutineScope
@@ -160,6 +166,60 @@ class OnboardingScreenshots {
     @Test
     @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
     fun tablet() = capture("tablet")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun revealWritingChapters() {
+        val end = LocalDate.now().plusDays(30)
+        val precision = PlanFinishPrecision.MONTH
+        val plan = undatedPlan(end, precision, ends = listOf(end to precision))
+        val chapter = ApiJson.decodeFromString<PlanPhaseChaptersInner>(chapterOf("Variables")).copy(writing = true)
+        val writingPhase =
+            plan.phases.single().copy(
+                milestone = "Write small Python programs",
+                chapters = listOf(chapter),
+            )
+        val api = setupPlanApi().apply { shownPlan = plan.copy(phases = listOf(writingPhase)) }
+        val scenario = "reveal-writing-chapters"
+
+        compose.setContent {
+            ZoonkTheme { Surface { Reveal(api, goal = learnGoal()) } }
+        }
+        write("$scenario-phone-screen", compose.onRoot().captureRender(scenario = scenario).asAndroidBitmap())
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun revealTopicsLeftOutPhone() = revealTopicsLeftOut("phone")
+
+    @Test
+    @Config(qualifiers = "w700dp-h900dp-xhdpi")
+    fun revealTopicsLeftOutMedium() = revealTopicsLeftOut("medium")
+
+    @Test
+    @Config(qualifiers = "w1280dp-h900dp-land-xhdpi")
+    fun revealTopicsLeftOutExpanded() = revealTopicsLeftOut("expanded")
+
+    private fun revealTopicsLeftOut(name: String) {
+        val today = LocalDate.now()
+        val end = today.plusDays(53)
+        val precision = PlanFinishPrecision.MONTH
+        val ends = listOf(today.plusDays(14), today.plusDays(30), end).map { it to precision }
+        val base = planOf(phases = learnPhases(ends), targetDate = end, endDate = end)
+        val topics = listOf("User authentication", "Database migrations")
+        val chapter = ApiJson.decodeFromString<PlanPhaseChaptersInner>(chapterOf("Flask"))
+        val partial = base.phases.last().copy(chapters = listOf(chapter), chapterCount = 1, leftOut = topics)
+        val api = setupPlanApi().apply { shownPlan = base.copy(phases = base.phases.dropLast(1) + partial) }
+        compose.setContent { ZoonkTheme { Surface { Reveal(api, goal = learnGoal()) } } }
+
+        val count = "2 topics not in your plan"
+        compose.onNodeWithText(count).assertIsDisplayed()
+        write("reveal-topics-left-out-$name", compose.onRoot().captureRender().asAndroidBitmap())
+        compose.onNode(hasText(count) and hasClickAction()).performSemanticsAction(SemanticsActions.OnClick)
+        compose.onNode(hasText(count) and hasClickAction()).performSemanticsAction(SemanticsActions.OnClick)
+        compose.onNodeWithText(topics.last()).assertIsDisplayed()
+        write("reveal-topics-left-out-open-$name", compose.onRoot().captureRender().asAndroidBitmap())
+    }
 
     /** Questions still being written wait for the learner's Start, so it's tapped first. */
     @Test
@@ -772,23 +832,56 @@ class OnboardingScreenshots {
         write("level-test-writing-$name", compose.onRoot().captureRender().asAndroidBitmap())
     }
 
+    /** When an undated plan finishes, beside the time question's minutes and in the reveal: a month, a year, past ten years, an aim. */
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun finishPhone() = capture("phone-screen", screens = FINISH_SCREENS)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun finishPhoneDark() = capture("phone-dark", dark = true, screens = FINISH_SCREENS)
+
+    @Test
+    @Config(qualifiers = "w411dp-h1800dp-xxhdpi")
+    fun finishPhoneAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        capture("phone-font200", screens = FINISH_SCREENS)
+    }
+
+    /** Every study day switched off on an undated plan's time question: it asks for one instead of a finish. */
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun noStudyDaysPhone() {
+        compose.setContent { ZoonkTheme { Surface { FINISH_SCREENS.first().second() } } }
+        compose.waitForIdle()
+        listOf("Mon", "Tue", "Wed", "Thu", "Fri").forEach {
+            compose.onNodeWithText(it).performSemanticsAction(SemanticsActions.OnClick)
+            compose.waitForIdle()
+        }
+        // The chips fade as each is switched off; the picture is of where they settle.
+        compose.mainClock.advanceTimeBy(1_000)
+        compose.waitForIdle()
+        write("time-no-days-phone-screen", compose.onRoot().captureRender().asAndroidBitmap())
+    }
+
     private fun capture(
         name: String,
         dark: Boolean = false,
         moreContrast: Boolean = false,
+        screens: List<Pair<String, @Composable () -> Unit>> = SCREENS,
     ) {
         var index by mutableIntStateOf(0)
         compose.setContent {
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
-                Surface { key(index) { SCREENS[index].second() } }
+                Surface { key(index) { screens[index].second() } }
             }
         }
-        SCREENS.indices.forEach { screen ->
+        screens.indices.forEach { screen ->
             // Each navigation entry has its own ViewModels in the app.
             compose.activity.viewModelStore.clear()
             index = screen
             compose.waitForIdle()
-            write("${SCREENS[screen].first}-$name", compose.onRoot().captureRender().asAndroidBitmap())
+            write("${screens[screen].first}-$name", compose.onRoot().captureRender().asAndroidBitmap())
         }
     }
 
@@ -1338,6 +1431,7 @@ class OnboardingScreenshots {
             api: FakePlanApi,
             isGuest: Boolean = false,
             run: GenerationRun = GenerationRun(status = GenerationRun.Status.Following),
+            goal: com.zoonk.api.models.Goal = examGoal(),
         ) {
             val preview =
                 remember {
@@ -1347,7 +1441,7 @@ class OnboardingScreenshots {
                 }
             SetupColumn {
                 PlanRevealStep(
-                    examGoal(),
+                    goal,
                     isGuest,
                     run,
                     onRetryRun = {},
@@ -1357,6 +1451,117 @@ class OnboardingScreenshots {
                 )
             }
         }
+
+        private fun undatedAdvice(
+            endDate: kotlinx.datetime.LocalDate?,
+            precision: PlanFinishPrecision? = null,
+            reason: PlanFinishReason? = null,
+        ) = adviceOf(null, endDate = endDate, targetDate = null).copy(precision = precision, finishReason = reason)
+
+        /** An undated Python plan whose phases end as [ends] say, each by its precision; a phase with no end has no place yet. */
+        private fun undatedPlan(
+            endDate: LocalDate?,
+            precision: PlanFinishPrecision? = null,
+            reason: PlanFinishReason? = null,
+            ends: List<Pair<LocalDate?, PlanFinishPrecision?>>,
+        ) = planOf(targetDate = null, endDate = endDate, phases = learnPhases(ends)).let {
+            it.copy(estimate = it.estimate.copy(precision = precision, finishReason = reason))
+        }
+
+        private fun learnPhases(ends: List<Pair<LocalDate?, PlanFinishPrecision?>>): List<String> {
+            val named =
+                listOf(
+                    "Python basics" to "Write small programs with variables and types",
+                    "Data structures" to "Organize data with lists and dictionaries",
+                    "Web apps" to "Build a small web app with Flask",
+                )
+            return ends.mapIndexed { index, (end, precision) ->
+                val start = if (index == 0) LocalDate.now() else ends[index - 1].first?.plusDays(1)
+                val later = end == null || start == null
+                val startDate = start?.takeUnless { later }?.let { "\"$it\"" }
+                val endDate = end?.takeUnless { later }?.let { "\"$it\"" }
+                val endPrecision = precision?.takeUnless { later }?.let { "\"${it.value}\"" }
+                """
+                {"chapterCount":0,"chapters":[],"hours":20,"index":$index,"kind":"learn","lessonsDone":0,"lessonsTotal":12,
+                 "mocks":{"count":0,"nextDate":null},"milestone":"${named[index].second}","name":"${named[index].first}",
+                 "checkpoint":{"date":$endDate,"later":$later,"locked":false,"planItemId":null,"precision":$endPrecision,"state":"upcoming","when":"date"},
+                 "notPlannedReason":null,"state":"${if (index == 0) "current" else "upcoming"}",
+                 "startDate":$startDate,"endDate":$endDate,"later":$later,"precision":$endPrecision}
+                """.trimIndent()
+            }
+        }
+
+        private fun learnGoal() =
+            examGoal().copy(kind = com.zoonk.api.models.Goal.Kind.LEARN, title = "Learn Python", displayName = "Learn Python")
+
+        @Composable
+        private fun UndatedSchedule(
+            advice: PlanTimeAdvice,
+            languageAim: String? = null,
+        ) = Setup(
+            FakeOnboardingApi().apply {
+                setup = {
+                    if (languageAim == null) {
+                        setupView(listOf("schedule", "plan"))
+                    } else {
+                        setupView(listOf("schedule", "plan"), kind = "language", targetLanguage = "fr", languageAim = languageAim)
+                    }
+                }
+                this.advice = { advice }
+            },
+        )
+
+        val FINISH_SCREENS: List<Pair<String, @Composable () -> Unit>> =
+            listOf(
+                "time-month" to { UndatedSchedule(undatedAdvice(kotlinx.datetime.LocalDate(2027, 3, 15), PlanFinishPrecision.MONTH)) },
+                "time-year" to { UndatedSchedule(undatedAdvice(kotlinx.datetime.LocalDate(2031, 5, 2), PlanFinishPrecision.YEAR)) },
+                "time-beyond" to { UndatedSchedule(undatedAdvice(null, reason = PlanFinishReason.BEYOND_HORIZON)) },
+                "time-language" to {
+                    UndatedSchedule(
+                        undatedAdvice(kotlinx.datetime.LocalDate(2027, 11, 6), PlanFinishPrecision.MONTH),
+                        languageAim = languageAimOf("B1", targetLanguage = "fr"),
+                    )
+                },
+                "reveal-month" to {
+                    val today = LocalDate.now()
+                    val ends =
+                        listOf(
+                            today.plusDays(30) to PlanFinishPrecision.MONTH,
+                            today.plusDays(75) to PlanFinishPrecision.MONTH,
+                            today.plusDays(120) to PlanFinishPrecision.MONTH,
+                        )
+                    Reveal(
+                        setupPlanApi().apply { shownPlan = undatedPlan(today.plusDays(120), PlanFinishPrecision.MONTH, ends = ends) },
+                        goal = learnGoal(),
+                    )
+                },
+                "reveal-year" to {
+                    val today = LocalDate.now()
+                    val ends =
+                        listOf(
+                            today.plusDays(60) to PlanFinishPrecision.MONTH,
+                            today.plusYears(2) to PlanFinishPrecision.YEAR,
+                            today.plusYears(5) to PlanFinishPrecision.YEAR,
+                        )
+                    Reveal(
+                        setupPlanApi().apply { shownPlan = undatedPlan(today.plusYears(5), PlanFinishPrecision.YEAR, ends = ends) },
+                        goal = learnGoal(),
+                    )
+                },
+                "reveal-beyond" to {
+                    val today = LocalDate.now()
+                    val ends =
+                        listOf(
+                            today.plusDays(60) to PlanFinishPrecision.MONTH,
+                            today.plusYears(4) to PlanFinishPrecision.YEAR,
+                            null to null,
+                        )
+                    Reveal(
+                        setupPlanApi().apply { shownPlan = undatedPlan(null, reason = PlanFinishReason.BEYOND_HORIZON, ends = ends) },
+                        goal = learnGoal(),
+                    )
+                },
+            )
 
         private fun setupPlanApi() =
             FakePlanApi().apply {

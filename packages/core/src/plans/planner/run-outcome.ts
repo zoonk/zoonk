@@ -3,6 +3,7 @@ import { listReleasedEnds } from "./phase-dates-move";
 import {
   type EffectItem,
   type PlanEffect,
+  asDeferredTeaching,
   getFittedStandInLessons,
   getSeenChange,
 } from "./plan-effect";
@@ -41,7 +42,7 @@ export function getRunEffect({
   kept,
   standInLessons,
 }: {
-  built: Pick<BuiltPlan, "items" | "phases" | "skillMinutes">;
+  built: Pick<BuiltPlan, "deferredTeaching" | "items" | "phases" | "skillMinutes">;
   context: { items: readonly SavedEffectItem[]; phases: readonly PlanPhase[] };
   graph: PlanGraph;
   kept: ReadonlyMap<number, Date> | undefined;
@@ -53,10 +54,10 @@ export function getRunEffect({
     item.lessonId ? 1 : (fitted.get(item.skillId ?? "") ?? 1);
 
   const effect = getSeenChange({
-    after: built.items,
+    after: [...built.items, ...asDeferredTeaching(built.deferredTeaching)],
     before: context.items,
     graph,
-    lessonsAfter: sizeOf,
+    lessonsAfter: (item) => item.lessons ?? sizeOf(item),
     lessonsBefore: (item) => (item.lessonId ? 1 : (item.lessons ?? sizeOf(item))),
   });
 

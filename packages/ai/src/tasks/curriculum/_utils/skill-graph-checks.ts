@@ -1,10 +1,13 @@
-import { normalizeString } from "@zoonk/utils/string";
 import { findWritingFlaws } from "@zoonk/utils/text-flaws";
+import { type CourseLevel } from "./course-levels";
+import { findPastCourseLevel } from "./past-course-level";
+import { toSkillIdentityKey, toSkillNameKey } from "./skill-name-keys";
 
 export type CheckedGraphSkill = {
   area: string;
   description: string;
   key: string;
+  level?: CourseLevel;
   libraryId?: string;
   name: string;
   phase: number;
@@ -21,6 +24,7 @@ type SkillGraphProblemCode =
   | "markdown"
   | "nearDuplicate"
   | "offNoticeFirst"
+  | "pastCourseLevel"
   | "placeholder"
   | "repeatedPhaseName"
   | "textbookChain";
@@ -40,79 +44,6 @@ const MAX_CHAIN = 12;
  */
 const MAX_CHAINED_SHARE = 0.75;
 const MIN_CHAINED_SUBJECT = 6;
-
-const NAME_STOPWORDS = new Set([
-  "a",
-  "an",
-  "and",
-  "as",
-  "au",
-  "aux",
-  "da",
-  "das",
-  "de",
-  "del",
-  "der",
-  "des",
-  "die",
-  "do",
-  "dos",
-  "du",
-  "e",
-  "el",
-  "em",
-  "en",
-  "et",
-  "for",
-  "im",
-  "in",
-  "la",
-  "las",
-  "le",
-  "les",
-  "los",
-  "na",
-  "nas",
-  "no",
-  "nos",
-  "o",
-  "of",
-  "on",
-  "os",
-  "the",
-  "to",
-  "um",
-  "uma",
-  "und",
-  "von",
-  "with",
-  "y",
-]);
-
-export function toNameWords(name: string): string[] {
-  return normalizeString(name)
-    .replaceAll(/[^\p{L}\p{N}\s]/gu, " ")
-    .split(/\s+/u)
-    .filter((word) => word && !NAME_STOPWORDS.has(word));
-}
-
-/** Articles do not change an action; its words' order can change its direction. */
-export function toSkillNameKey(name: string): string {
-  return toNameWords(name).join(" ");
-}
-
-export function toSkillIdentityKey(skill: {
-  libraryId?: string;
-  name: string;
-  subject?: string | null;
-}): string {
-  if (skill.libraryId) {
-    return `library:${skill.libraryId}`;
-  }
-
-  const identity = toSkillNameKey(skill.name);
-  return skill.subject ? JSON.stringify([skill.subject, identity]) : identity;
-}
 
 type Graph = ReadonlyMap<string, CheckedGraphSkill>;
 
@@ -340,12 +271,14 @@ function findWritingProblems({
   );
 }
 
-/** `exam` is whether the graph follows an exam's notice. */
+/** `exam` is whether the graph follows an exam's notice; `courseLevel`, the one band it teaches. */
 export function findSkillGraphProblems({
+  courseLevel,
   exam,
   phases,
   skills,
 }: {
+  courseLevel?: CourseLevel;
   exam: boolean;
   phases: readonly GraphPhase[];
   skills: readonly CheckedGraphSkill[];
@@ -358,6 +291,7 @@ export function findSkillGraphProblems({
     ...(exam ? findTextbookChains(graph) : []),
     ...(exam ? findOffNoticeFirst(skills) : []),
     ...findNearDuplicates(skills),
+    ...findPastCourseLevel({ courseLevel, skills }),
     ...findRepeatedPhaseNames({ phases, skills }),
     ...findWritingProblems({ phases, skills }),
   ];

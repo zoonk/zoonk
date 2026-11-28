@@ -1254,6 +1254,65 @@
         }
       }
     },
+    "10+ years" : {
+      "comment" : "How long finishing the plan takes at the time picked, when it's more than ten years.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Über 10 Jahre"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Más de 10 años"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "plus de 10 ans"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Più di 10 anni"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10年以上"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10년 이상"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ponad 10 lat"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10+ anos"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10+ yıl"
+          }
+        }
+      }
+    },
     "A course on this is ready now" : {
       "comment" : "Under a Library course offered while the learner's plan is built",
       "localizations" : {
@@ -2187,6 +2246,72 @@
         }
       }
     },
+    "aimAroundYear" : {
+      "comment" : "When a language level is reached. {year} is a year, like \"2031\".",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ungefähr %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Around %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alrededor de %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vers %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intorno al %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ごろ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@쯤"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mniej więcej: %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por volta de %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yaklaşık %@"
+          }
+        }
+      }
+    },
     "Another country" : {
       "comment" : "Opens every country, after the ones the content country question suggests",
       "localizations" : {
@@ -2718,71 +2843,6 @@
         }
       }
     },
-    "At %@ a day, you reach %@ around %@." : {
-      "comment" : "When a language goal reaches its aim at the time picked; the arguments are a duration like '30 min', a level like 'B1' and a month like 'May 2027'",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit %1$@ pro Tag erreichst du %2$@ etwa im %3$@."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "At %1$@ a day, you reach %2$@ around %3$@."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con %1$@ al día, alcanzas el nivel %2$@ hacia %3$@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avec %1$@ par jour, tu atteins le niveau %2$@ vers %3$@."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con %1$@ al giorno, raggiungi %2$@ verso %3$@."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1日%1$@なら、%2$@に到達するのは%3$@ごろです。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "하루 %1$@씩 공부하면 %2$@에 %3$@쯤 도달해요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Przy %1$@ nauki dziennie przewidywany termin osiągnięcia poziomu %2$@ to %3$@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Com %1$@ por dia, você chega ao nível %2$@ por volta de %3$@."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Günde %1$@ çalışarak %2$@ seviyesine %3$@ civarında ulaşırsın."
-          }
-        }
-      }
-    },
     "Back" : {
       "comment" : "Goes back to the previous question",
       "localizations" : {
@@ -2897,64 +2957,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kısa teste dön"
-          }
-        }
-      }
-    },
-    "Back to the level I had, after a short test" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nach einem kurzen Test zurück auf mein früheres Level"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Volver al nivel que tenía, después de una prueba corta"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Retrouver mon ancien niveau après un court test"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tornare al livello di prima, dopo un breve test"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "短いテストを受けてから、以前のレベルを取り戻します"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "짧은 테스트를 보고 예전 실력을 되찾아요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Powrót do dawnego poziomu po krótkim teście"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Voltar ao nível que eu tinha, depois de um teste rápido"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kısa bir testten sonra eski seviyeme dönmek"
           }
         }
       }
@@ -3137,7 +3139,7 @@
       }
     },
     "by %@" : {
-      "comment" : "Under the level a language plan reaches, as in 'B1 by Nov 2027'",
+      "comment" : "Under the level a language plan reaches, as in 'B1 by Nov 2027', or by a year alone when it's far, as in 'B2 by 2031'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -8906,6 +8908,64 @@
         }
       }
     },
+    "I want a quick look at the big ideas" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ich möchte einen kurzen Überblick über das Wichtigste"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quiero echar un vistazo rápido a las ideas principales"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je veux un aperçu des notions clés"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voglio una rapida panoramica dei concetti principali"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "主なポイントをざっと知りたいです"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "핵심 개념을 빠르게 훑어보고 싶어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chcę szybko poznać najważniejsze zagadnienia"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quero uma visão geral das ideias principais"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Temel kavramlara kısaca göz atmak istiyorum"
+          }
+        }
+      }
+    },
     "I want to" : {
       "comment" : "The goal box's label, before the learner's words",
       "localizations" : {
@@ -8961,6 +9021,239 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yapmak istediğim"
+          }
+        }
+      }
+    },
+    "I want to get back to the level I had" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ich möchte wieder mein früheres Level erreichen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quiero recuperar el nivel que tenía"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je veux retrouver mon ancien niveau"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voglio tornare al livello di prima"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "以前の実力を取り戻したいです"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "예전 실력을 되찾고 싶어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chcę wrócić do dawnego poziomu"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quero voltar ao nível que eu tinha"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eski seviyeme dönmek istiyorum"
+          }
+        }
+      }
+    },
+    "I want to go deeper, one level at a time" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ich möchte Schritt für Schritt tiefer einsteigen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quiero profundizar, nivel por nivel"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je veux approfondir, niveau après niveau"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voglio approfondire, un livello alla volta"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "段階を追って、少しずつ深く学びたい"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "한 단계씩 더 깊이 배우고 싶어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chcę zgłębiać temat, przechodząc poziom po poziomie"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quero me aprofundar, um nível de cada vez"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Her seferinde bir seviye daha derine inmek istiyorum"
+          }
+        }
+      }
+    },
+    "I want to learn what I need for a new role and build a portfolio" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ich möchte lernen, was ich für eine neue Stelle brauche, und ein Portfolio aufbauen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quiero aprender lo que necesito para un nuevo puesto y crear un portafolio"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je veux apprendre ce qu’il me faut pour un nouveau poste et constituer un portfolio"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voglio imparare quello che mi serve per un nuovo ruolo e creare un portfolio"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しい仕事に必要なことを学び、ポートフォリオを作りたいです"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "새로운 직무에 필요한 내용을 배우고 포트폴리오를 만들고 싶어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chcę nauczyć się tego, co będzie mi potrzebne na nowym stanowisku, i stworzyć portfolio"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quero aprender o que preciso para uma nova função e montar um portfólio"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yeni bir pozisyon için gerekenleri öğrenip portfolyo hazırlamak istiyorum"
+          }
+        }
+      }
+    },
+    "In 10+ years" : {
+      "comment" : "Under a language level to aim for, when reaching it takes more than ten years at the learner's time.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In über 10 Jahren"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En más de 10 años"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dans plus de 10 ans"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tra più di 10 anni"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10年以上先"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10년 이상 후"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Za ponad 10 lat"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Em mais de 10 anos"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10+ yıl içinde"
           }
         }
       }
@@ -18016,124 +18309,6 @@
         }
       }
     },
-    "The big ideas, in short" : {
-      "comment" : "Purpose choice detail",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Das Wichtigste in Kürze"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Las ideas principales, resumidas"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Les grandes idées, en bref"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "I concetti principali, in breve"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "大事なポイントを手短に"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "핵심 개념을 간단히"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Najważniejsze zagadnienia w skrócie"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "As ideias principais, em resumo"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Temel kavramların özeti"
-          }
-        }
-      }
-    },
-    "The full path, from the basics to advanced" : {
-      "comment" : "Purpose choice detail",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Der ganze Weg, von den Grundlagen bis zu fortgeschrittenen Inhalten"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "El recorrido completo, de lo básico a lo avanzado"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Un cours complet, des bases au niveau avancé"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il percorso completo, dalle basi al livello avanzato"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "基礎から上級まで、ひと通り学ぶコース"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "기초부터 고급까지 배우는 전체 코스"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pełna ścieżka, od podstaw po poziom zaawansowany"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A trilha completa, do básico ao avançado"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Temelden ileri seviyeye kapsamlı bir kurs"
-          }
-        }
-      }
-    },
     "The lesson is back in your plan." : {
       "localizations" : {
         "de" : {
@@ -19388,6 +19563,65 @@
         }
       }
     },
+    "to finish" : {
+      "comment" : "Under '10+ years': how long finishing the plan takes at the time picked.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bis zum Abschluss"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "para terminar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "pour terminer"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "per finire"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完了まで"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "완료까지"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "do ukończenia"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "para concluir"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tamamlanma süresi"
+          }
+        }
+      }
+    },
     "Today" : {
       "comment" : "Leaves the start flow for Today",
       "localizations" : {
@@ -20445,65 +20679,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu belgeyi daha önce okuduk. Farklı bir belge yükle."
-          }
-        }
-      }
-    },
-    "We can't estimate an end date. Try more time or more study days." : {
-      "comment" : "No finish date fits the time and days picked",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir können kein Enddatum ermitteln. Versuch es mit mehr Zeit oder mehr Lerntagen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No podemos calcular cuándo terminarás. Prueba con más tiempo o más días de estudio."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Impossible d’estimer une date de fin. Essaie avec plus de temps ou plus de jours d’étude."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non possiamo stimare una data di fine. Prova con più tempo o più giorni di studio."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "終了日の目安を出せません。学習時間を長くするか、学習する日を増やしてみてください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "완료일을 예상할 수 없어요. 학습 시간이나 학습하는 날을 늘려 보세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nie możemy oszacować daty zakończenia. Spróbuj wydłużyć czas nauki lub wybrać więcej dni."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não dá para estimar uma data de término. Tente aumentar o tempo ou os dias de estudo."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bitiş tarihini tahmin edemiyoruz. Çalışma süreni veya çalışacağın gün sayısını artırmayı dene."
           }
         }
       }
@@ -22538,65 +22713,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kaç puan alman gerekiyor?"
-          }
-        }
-      }
-    },
-    "What the new role needs, portfolio included" : {
-      "comment" : "Purpose choice detail",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Was du für den neuen Job brauchst, inklusive Portfolio"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lo que necesitas para el nuevo puesto, con portafolio incluido"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ce qu’il faut pour ton nouveau poste, portfolio compris"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quello che serve per il nuovo ruolo, portfolio incluso"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新しい仕事に必要なことを学び、ポートフォリオも作る"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "새 직무에 필요한 내용부터 포트폴리오까지"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "To, czego wymaga nowe stanowisko, w tym portfolio"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O que a nova função exige, com portfólio incluído"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Yeni işin için gerekenler, portfolyo dahil"
           }
         }
       }
@@ -24891,65 +25007,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bugün müziğin temelleriyle başlayabilirsin: nota okuma, ritim ve kulak eğitimi."
-          }
-        }
-      }
-    },
-    "You finish around %@." : {
-      "comment" : "When a goal without a date finishes at the time picked; the argument is a month like 'May 2027'",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du bist voraussichtlich im %@ fertig."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Terminas aproximadamente en %@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu termines vers %@."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Finirai verso %@."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "学習は%@ごろに終わります。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@쯤 마칠 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Orientacyjny termin ukończenia: %@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você termina por volta de %@."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ civarında bitirirsin."
           }
         }
       }

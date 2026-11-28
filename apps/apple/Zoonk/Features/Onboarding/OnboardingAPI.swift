@@ -244,12 +244,18 @@ extension TimeChoice {
 }
 
 struct TimeAdvice: PlanAnswer, Decodable {
-  /// When a goal without a date finishes at this time; nil when the time can't hold it all.
+  /// When a goal without a date finishes at this time.
   let endDate: String?
+  let finishReason: PlanForecast.Reason?
   /// For an exam studying everything: when everything ends at this time, once the plan holds it.
   let fullCourseEndDate: String?
+  let precision: PlanForecast.Precision?
   let readingNotice: Bool
   let ready: Bool
+
+  var forecast: PlanForecast? {
+    PlanForecast(date: endDate, precision: precision, reason: finishReason)
+  }
 }
 
 struct TimeToCover: PlanAnswer, Decodable {

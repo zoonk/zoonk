@@ -365,6 +365,27 @@ export const TEST_CASES: TestCase<SkillGraphExpected, SkillGraphCase>[] = [
   ...DISCIPLINE_ALIAS_CASES,
   {
     expectations: `
+      - MUST be in US English
+      - A one-word goal from someone with no background who wants depth, written one band at a time: this path is physics at the \`beginner\` band only (COURSE_LEVEL), and the learner continues to the intermediate band later as a new path
+      - Every skill is at \`beginner\` (or an earlier band); no intermediate or advanced physics such as Lagrangian mechanics, Maxwell's equations in differential form, quantum mechanics or relativity
+      - It reaches forces and motion early instead of opening with weeks of algebra drills: supporting math comes just before the physics that uses it
+      - The size is honest for one subject at one band: tens of skills of a few lessons each, a few hundred lessons at most, never the thousands a whole field takes
+      - The last phase's milestone names what a learner can do at the end of beginner physics, not mastery of physics
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-physics-one-band",
+    userInput: {
+      courseLevel: "beginner",
+      goal: "Physics",
+      goalKind: "learn",
+      language: "en",
+      ownLevel: "none",
+      purpose: "deep",
+    },
+  },
+  {
+    expectations: `
       - The written paper includes a request reply and a directions note, both in the candidate's chosen language, and an English shift handover every candidate writes
       - Keep both languages available: teach both option-dependent tasks for Italian and for Dutch. Each variant is topicless in "Written Paper" and names its language, with subject set to the exact option name
       - The English handover is taught in "Written Paper" with no topics and no subject binding. No common skill depends on a skill for one option
@@ -424,6 +445,27 @@ export const TEST_CASES: TestCase<SkillGraphExpected, SkillGraphCase>[] = [
       goalKind: "exam",
       language: "en",
       ownLevel: "basic",
+    },
+  },
+  {
+    expectations: `
+      - MUST be in US English
+      - A beginner learning Python, written one band at a time: this path is the \`beginner\` band only (COURSE_LEVEL), and the learner continues to the intermediate band later as a new path
+      - Every skill is at \`beginner\` (or an earlier band): variables, types, conditions, loops, functions, lists and dictionaries, files, errors, modules and a first small program, with checking AI-written code where it helps
+      - No intermediate or advanced Python such as metaclasses, descriptors, interpreter internals, async internals or C extensions
+      - The size is honest for one subject at one band: tens of skills of a few lessons each, a few hundred lessons at most
+      - The last phase's milestone names what a beginner can build, not mastery of Python
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-python-one-band",
+    userInput: {
+      courseLevel: "beginner",
+      goal: "Learn Python",
+      goalKind: "learn",
+      language: "en",
+      ownLevel: "none",
+      purpose: "deep",
     },
   },
   {
@@ -1035,7 +1077,7 @@ export const TEST_CASES: TestCase<SkillGraphExpected, SkillGraphCase>[] = [
     expectations: `
       - MUST be in Latin American Spanish as written in Mexico (not Spain Spanish): names and descriptions in Mexican vocabulary and forms
       - Language goal: skills are real situations with can-dos for working at a hotel in London, such as checking guests in and out, handling complaints, taking phone reservations, giving directions and recommendations, small talk with guests, writing short emails to guests, and understanding colleagues and instructions at work
-      - Ordered by CEFR level from A1/A2 (beginner) to B1/B2 (intermediate); the learner has a basic level, so the path should not dwell on the alphabet
+      - Ordered by CEFR level from A1/A2 (beginner) through B1/B2 (intermediate) to C1 (advanced), each band with situations of its own, since learners aiming for any level share the graph; the learner has a basic level, so the path should not dwell on the alphabet
       - Grammar lives inside situations, not as standalone grammar skills
       - The course is English itself, titled in Spanish (for example "Inglés")
 
@@ -1056,7 +1098,7 @@ export const TEST_CASES: TestCase<SkillGraphExpected, SkillGraphCase>[] = [
     expectations: `
       - MUST be in Brazilian Portuguese
       - Language goal for a move abroad with a partner: skills are real situations with can-dos for the move and the first months there, such as immigration and arrival, renting a home, opening a bank account and getting a phone plan, the doctor and the pharmacy, work, neighbors and making friends
-      - Ordered by CEFR level from A2 toward B1+ (beginner then intermediate); the learner says they're at A2, so the path doesn't start at the alphabet or greetings
+      - Ordered by CEFR level through beginner, intermediate and advanced, each band with situations of its own, since learners aiming for any level share the graph; the learner says they're at A2, so the path doesn't start at the alphabet or greetings
       - Grammar lives inside situations, not as standalone grammar skills
       - The course is English itself, titled in Portuguese ("Inglês")
       - Each phase's title names a stage of the move in a few words, different from every other phase's title, and never one of the situations it teaches: a phase titled "Alugando um apartamento" over the skill "Alugar um apartamento" is the failure this case guards against

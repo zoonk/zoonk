@@ -329,13 +329,20 @@ describe("durable skill graph generation", () => {
         userId: user.id,
       });
 
-      const written = sectionResult(FRAME.sections[0]!);
+      const levels =
+        kind === "language"
+          ? (["beginner", "intermediate", "advanced"] as const)
+          : (["beginner"] as const);
+
+      const estimatedHours = kind === "language" ? 1.2 : 0.4;
 
       const graph = {
-        courses: FRAME.courses,
-        estimatedHours: 0.4,
-        phases: FRAME.phases.map((phase) => ({ ...phase, estimatedHours: 0.4 })),
-        skills: written.output.skills,
+        courses: FRAME.courses.map((course) => ({ ...course, levels: [...levels] })),
+        estimatedHours,
+        phases: FRAME.phases.map((phase) => ({ ...phase, estimatedHours })),
+        skills: levels.flatMap((level, index) =>
+          sectionResult(FRAME.sections[index]!).output.skills.map((skill) => ({ ...skill, level })),
+        ),
       };
 
       vi.mocked(generateWholeSkillGraph).mockResolvedValue({ ...taskResult(graph), repaired: [] });

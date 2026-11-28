@@ -1,5 +1,4 @@
 import { type ServiceTier, chooseServiceTier } from "@zoonk/ai/provider-options";
-import { checkCoverage } from "@zoonk/ai/tasks/curriculum/coverage-check";
 import { checkMemberCoverage } from "@zoonk/ai/tasks/curriculum/member-coverage";
 import { type generateSkillGraph } from "@zoonk/ai/tasks/curriculum/skill-graph";
 import { classifyGoalSpecificity } from "@zoonk/ai/tasks/identity/goal-specificity";
@@ -26,6 +25,7 @@ import {
 } from "@zoonk/core/library/curriculum/shared-graph-prompt";
 import { type MemberCheckRequest } from "@zoonk/core/plans/member-check";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
+import { readGraphCoverage } from "./check-graph-coverage";
 
 type GraphProvenance = Awaited<ReturnType<typeof generateSkillGraph>>["provenance"];
 
@@ -136,26 +136,17 @@ export async function checkGraphCoverageStep({
   const prompt = toScopedGraphPrompt({ inputs, scope });
   const outline = prompt.goalKind === "exam" ? prompt.examBlueprint : undefined;
 
-  const coverage = await checkCoverage({
-    analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
-    courses: graph.courses.map(({ key, title }) => ({ key, title })),
-    examOutline: outline,
-    goal: prompt.goal,
-    goalKind: prompt.goalKind,
-    language: prompt.language,
+  const { data } = await readGraphCoverage({
+    graph,
+    params: {
+      ...prompt,
+      analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
+      serviceTier: chooseServiceTier({ wait: "learner" }),
+    },
     references,
-    serviceTier: chooseServiceTier({ wait: "learner" }),
-    skills: graph.skills.map(({ area, description, examWeight, key, name, topics }) => ({
-      area,
-      description,
-      examWeight,
-      key,
-      name,
-      topics,
-    })),
   });
 
-  return applyGraphCoverage({ coverage: coverage.data, graph, outline });
+  return applyGraphCoverage({ coverage: data, graph, outline });
 }
 
 export type MemberCheckInputs = RunScope & {
@@ -248,6 +239,7 @@ export async function saveExamSkillGraphStep({
   graph,
   idsByKey,
   inputs,
+  previous,
   provenance,
   scope,
 }: {
@@ -255,12 +247,18 @@ export async function saveExamSkillGraphStep({
   graph: GoalSkillGraph;
   idsByKey: Record<string, string>;
   inputs: GoalCurriculumInputs;
+  previous?: {
+    courseIdsByKey: Record<string, string>;
+    graph: GoalSkillGraph;
+    idsByKey: Record<string, string>;
+  };
   provenance: GraphProvenance;
   scope: CurriculumScope;
 }): Promise<void> {
   "use step";
 
   await saveExamSkillGraph({
+    expectedGraph: previous && toGoalPlanGraph(previous),
     graph: toGoalPlanGraph({ courseIdsByKey, graph, idsByKey }),
     inputs,
     provenance: {

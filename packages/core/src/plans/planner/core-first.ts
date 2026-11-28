@@ -27,9 +27,11 @@ export function countSkillLessons(units: readonly QueueUnit[]): Map<string, numb
 }
 
 export function withPlannedLessons({
+  deferredLessons,
   graph,
   skillLessons,
 }: {
+  deferredLessons?: ReadonlyMap<string, number>;
   graph: PlanGraph;
   skillLessons: ReadonlyMap<string, number>;
 }): PlanGraph {
@@ -37,6 +39,7 @@ export function withPlannedLessons({
     ...graph,
     skills: graph.skills.map((skill) => ({
       ...skill,
+      deferredLessons: deferredLessons?.get(skill.skillId),
       plannedLessons: skillLessons.get(skill.skillId) ?? 0,
     })),
   };
@@ -46,7 +49,11 @@ export function withPlannedLessons({
 export function withoutPlannedLessons(graph: PlanGraph): PlanGraph {
   return {
     ...graph,
-    skills: graph.skills.map((skill) => ({ ...skill, plannedLessons: undefined })),
+    skills: graph.skills.map((skill) => ({
+      ...skill,
+      deferredLessons: undefined,
+      plannedLessons: undefined,
+    })),
   };
 }
 

@@ -28,7 +28,7 @@ import {
 import { PHASE_END_CLASS, PhaseMark, PhaseName } from "./path-phase-row";
 import { findOpenPhase, findOwnChapter, isNamedLikeAChapter } from "./path-phases";
 import { PhaseWhen } from "./phase-when";
-import { useRoadmapFinish } from "./use-roadmap";
+import { useRoadmapFinish, useRoadmapFinishLater } from "./use-roadmap";
 
 function PhaseColumns({
   byPlace = false,
@@ -59,7 +59,7 @@ function OpenPhaseEvents({ links, phase }: { links: JourneyPathLinks; phase: Pla
   return (
     phase.checkpoint && (
       <div className={NESTED_CLASS} data-slot="path-nested">
-        <CheckpointRow checkpoint={phase.checkpoint} links={links} />
+        <CheckpointRow checkpoint={phase.checkpoint} links={links} phase={phase} />
       </div>
     )
   );
@@ -150,9 +150,9 @@ function ChaptersPhase({
           <div className={NESTED_CLASS} data-slot="path-nested">
             <JourneyChapters
               chapters={phase.chapters}
-              checkpoint={phase.checkpoint}
               leftOut={phase.leftOut}
               links={links}
+              phase={phase}
             />
           </div>
         </CollapsibleContent>
@@ -190,8 +190,10 @@ function PhaseItem({
 }
 
 function FinishItem() {
+  const t = useExtracted();
   const { goal } = usePlanScreen();
   const finish = useRoadmapFinish();
+  const later = useRoadmapFinishLater();
 
   return (
     <li data-state="finish">
@@ -201,13 +203,10 @@ function FinishItem() {
         </span>
         <PathRowBody
           value={
-            finish && (
-              <PlanDateText
-                className="text-muted-foreground text-xs"
-                estimate={finish.estimate}
-                isoDate={finish.isoDate}
-                month={finish.month}
-              />
+            finish ? (
+              <PlanDateText className={PHASE_END_CLASS} {...finish} />
+            ) : (
+              later && <span className={PHASE_END_CLASS}>{t("Later")}</span>
             )
           }
         >

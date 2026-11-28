@@ -1,4 +1,6 @@
 import { describe, expect, it } from "vitest";
+import { fromIsoDate } from "../planner/plan-calendar";
+import { parsePlanSettings } from "../planner/plan-state";
 import {
   type PlanSummary,
   readFreshPlanSummary,
@@ -6,6 +8,7 @@ import {
   reduceCompletedSummary,
   reduceRestoredSummary,
 } from "./plan-summary";
+import { readSavedCourseForecast } from "./saved-course-forecast";
 import { readSavedFeasibility } from "./saved-plan-advice";
 import { type SelectedCoverage } from "./selected-summary-contract";
 
@@ -69,6 +72,60 @@ const summary: PlanSummary = {
     totalMinutes: 60,
   },
 };
+
+describe(readSavedCourseForecast, () => {
+  it("moves an undated milestone and finish by the teaching minutes missed in a week", () => {
+    const context = {
+      goal: { dailyMinutes: 45, kind: "learn" as const, targetDate: null },
+      items: [
+        {
+          chapterId: "chapter",
+          completedAt: null,
+          id: "lesson-item",
+          kind: "lesson" as const,
+          lessonId: "lesson",
+          minutes: 45,
+          phase: 0,
+          position: 0,
+          scheduledFor: fromIsoDate("2026-10-20"),
+          skillId: "skill",
+          status: "todo" as const,
+          titleSnapshot: "Vectors",
+        },
+      ],
+      phases: [
+        {
+          endDate: "2026-10-30",
+          kind: "learn" as const,
+          milestone: null,
+          minutes: 100,
+          name: "Basics",
+          startDate: "2026-10-14",
+        },
+      ],
+      state: {
+        settings: parsePlanSettings({
+          startDate: "2026-10-14",
+          weekdayMinutes: [0, 45, 45, 45, 45, 45, 0],
+        }),
+      },
+      today: fromIsoDate("2026-10-21"),
+    };
+
+    const onPace = readSavedCourseForecast({
+      context: { ...context, items: context.items.map((item) => ({ ...item, status: "done" })) },
+      summary,
+    });
+
+    const away = readSavedCourseForecast({ context, summary });
+
+    expect(onPace.finish?.date).toBe("2026-11-03");
+    expect(onPace.phases[0]?.endDate).toBe("2026-10-30");
+    expect(away.finish?.date).toBe("2026-11-05");
+    expect(away.phases[0]).toMatchObject({ endDate: "2026-11-03", startDate: "2026-10-14" });
+    expect(context.phases[0]?.endDate).toBe("2026-10-30");
+  });
+});
 
 describe(readPlanSummary, () => {
   it("describes the plan version it was posted with, whatever happened since", () => {

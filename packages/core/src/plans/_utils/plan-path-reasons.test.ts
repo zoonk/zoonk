@@ -163,4 +163,58 @@ describe("a phase the plan holds part of", () => {
       ["leftOut", []],
     ]);
   });
+
+  it("names none of the skills an undated plan owes for later", async () => {
+    const user = await userFixture();
+    const goal = await goalFixture({ targetDate: null, userId: user.id });
+    const phases = [{ name: "Juz' Amma" }, { name: "Long surahs" }];
+
+    await planFixture({
+      goalId: goal.id,
+      graph: {
+        phases,
+        skills: [
+          { area: "Short surahs", lessons: 1, name: "Memorize An-Naba", phase: 0, skillId: "naba" },
+          { area: "Long surahs", lessons: 1, name: "Memorize Al-Mulk", phase: 1, skillId: "s67" },
+          {
+            area: "Long surahs",
+            deferredLessons: 2,
+            lessons: 2,
+            name: "Memorize Surahs 56–58",
+            phase: 1,
+            skillId: "s56",
+          },
+        ],
+      },
+      phases,
+    });
+
+    const context = await loadPlanContext({ goal, now: new Date("2026-11-27T12:00:00Z") });
+
+    if (!context) {
+      throw new Error("Fixture must have a saved plan");
+    }
+
+    context.items = [
+      lessonOn({ day: "2026-11-27", phase: 0, skillId: "naba" }),
+      lessonOn({ day: "2036-11-20", phase: 1, skillId: "s67" }),
+    ];
+
+    const path = buildPlanPath({
+      access: { mocksRequirePlus: false },
+      challengeResults: new Map(),
+      chapterTitles: new Map(),
+      context,
+      currentPhase: 0,
+      skillAreas: new Map(),
+      syllabus: {
+        knownSkillIds: new Set(),
+        pastBasicsSkillIds: new Set(),
+        skippedBaseIds: new Set(),
+      },
+      today: { blocks: [], session: null },
+    });
+
+    expect(path.map((phase) => phase.leftOut)).toStrictEqual([[], []]);
+  });
 });

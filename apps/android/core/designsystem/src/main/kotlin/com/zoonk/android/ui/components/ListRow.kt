@@ -97,6 +97,7 @@ fun ListRow(
     trailing: (@Composable () -> Unit)? = null,
     chevron: Boolean = onClick != null && expanded == null && trailing == null,
     chevronSpace: Boolean = false,
+    headlineBasis: Dp? = null,
 ) {
     require(leading == null || lead == null)
     val openWords = expanded?.let { stringResource(if (it) R.string.disclosure_expanded else R.string.disclosure_collapsed) }
@@ -159,6 +160,7 @@ fun ListRow(
         RowContent(
             parts = parts,
             firstLine = MaterialTheme.typography.titleSmall,
+            headlineBasis = headlineBasis,
             leadingOnFirstLine = lead != null,
             modifier = Modifier.weight(1f),
             mark =
@@ -333,7 +335,7 @@ fun MarkedLine(
 /**
  * A row's mark, title, value and descriptions, placed as E5 and E6 say. The value sits at the end, past
  * [VALUE_GAP], so a list's values keep one column however its titles wrap, and moves under the title only
- * when the title would get less than [TITLE_BASIS] (or what it needs) or the words are narrower than
+ * when the title would get less than [headlineBasis] (or what it needs) or the words are narrower than
  * [STACKED_WIDTH], as main's title row wraps. Beside one or two lines (the title however it wraps, a value moved under it, each description)
  * the mark is centered on the words; beside three or more, or as a text lead ([leadingOnFirstLine]), it is
  * centered on the first line, a line as tall as [firstLine]'s at this text size. A value beside the words
@@ -349,6 +351,7 @@ private fun RowContent(
     title: @Composable () -> Unit,
     value: (@Composable () -> Unit)? = null,
     descriptions: (@Composable () -> Unit)? = null,
+    headlineBasis: Dp? = null,
 ) {
     val measurer = rememberTextMeasurer()
     // As the words' own style lays a line out at this text size, nonlinear scaling included.
@@ -365,11 +368,14 @@ private fun RowContent(
         val titleMeasurable = titles.first()
         val room = width - (valuePlaceable?.let { it.width + VALUE_GAP.roundToPx() } ?: 0)
         val notesMeasurable = notes.firstOrNull()
+        val basis = headlineBasis?.roundToPx() ?: TITLE_BASIS.roundToPx()
         val beside =
             valuePlaceable == null ||
                 (
                     width >= STACKED_WIDTH.roundToPx() &&
-                        room >= minOf(titleMeasurable.maxIntrinsicWidth(Constraints.Infinity), TITLE_BASIS.roundToPx())
+                        room >= titleMeasurable.minIntrinsicWidth(Constraints.Infinity) &&
+                        room >= (notesMeasurable?.minIntrinsicWidth(Constraints.Infinity) ?: 0) &&
+                        room >= minOf(titleMeasurable.maxIntrinsicWidth(Constraints.Infinity), basis)
                 )
         val textWidth = if (beside) room.coerceAtLeast(0) else width
         val titlePlaceable = titleMeasurable.measure(Constraints(maxWidth = textWidth))
