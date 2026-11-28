@@ -315,6 +315,34 @@ describe("a verdict from the latest mock exam beside an estimate from practice",
     expect(standing([...practice, ...unjudged])?.standing).toBe("met");
   });
 
+  it("gives no verdict from a mock whose answers were marked by rules the task has since changed", () => {
+    const structure = structuredClone(CGU);
+    const written = structure.mock?.sections.find(({ kind }) => kind === "written");
+    const task = written?.tasks?.find(({ key }) => key === "long");
+    const [criterion] = task?.grading?.criteria ?? [];
+
+    if (!task?.grading || !criterion) {
+      throw new Error("Expected the long CGU task criterion");
+    }
+
+    task.grading = {
+      ...task.grading,
+      criteria: [
+        { ...criterion, id: "case", points: 35 },
+        { ...criterion, id: "argument", points: 35 },
+      ],
+    };
+
+    expect(
+      projectWritten({
+        mocks: part ? [{ id: "mock", part }] : [],
+        objective: OBJECTIVE,
+        samples: sitting,
+        structure,
+      })?.parts[0],
+    ).toMatchObject({ range: null, standing: "unmeasured" });
+  });
+
   it("gives no verdict when later practice puts the whole estimate on the other side", () => {
     const later = Array.from({ length: 6 }, (_, index) => [
       sample({ high: 6, id: `short-${index}`, key: "short", low: 6 }),

@@ -1,5 +1,7 @@
 import { type readLatestWrittenMocks } from "../../learner/facts/written-mocks";
 import { type WrittenSample } from "../../learner/facts/written-samples";
+import { type listWrittenTasks } from "../../library/exams/written-tasks";
+import { answersWritingTask } from "../essays/_utils/writing-task-basis";
 import { mockWrittenStanding } from "../mocks/mock-written-points";
 import { getCalibratedWritingGrade } from "../scoring/calibrated-written-standing";
 import { writtenStanding } from "../scoring/written-points";
@@ -9,10 +11,12 @@ export function withMockStanding({
   mocks,
   parts,
   samples,
+  tasks,
 }: {
   mocks: Awaited<ReturnType<typeof readLatestWrittenMocks>>;
   parts: WrittenProjection["parts"];
   samples: readonly WrittenSample[];
+  tasks: ReturnType<typeof listWrittenTasks>;
 }) {
   if (mocks.length === 0) {
     return parts;
@@ -34,8 +38,14 @@ export function withMockStanding({
       return part;
     }
 
+    // An answer marked by rules its task no longer has leaves the mock unjudged, as it leaves
+    // the estimate, so the part keeps its own verdict.
     const grades = new Map(
       (byMock.get(latest.id) ?? []).flatMap(({ answer, itemId, prompt }) => {
+        if (!tasks.some((task) => answersWritingTask({ prompt, task }))) {
+          return [];
+        }
+
         const grade = getCalibratedWritingGrade({
           basis: prompt,
           grade: answer.grade,

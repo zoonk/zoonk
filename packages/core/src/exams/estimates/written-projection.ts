@@ -7,7 +7,7 @@ import { listWrittenTasks } from "../../library/exams/written-tasks";
 import { type EstimatedScore } from "../../preparation/estimated-score";
 import { namesMatch } from "../_utils/name-match";
 import { getWritingDecimals } from "../essays/_utils/writing-decimals";
-import { matchesWritingTaskBasis } from "../essays/_utils/writing-task-basis";
+import { answersWritingTask } from "../essays/_utils/writing-task-basis";
 import { canCalibrateWritingTask } from "../essays/writing-rubric-policy";
 import { isWrittenSubject } from "../mocks/written-subject";
 import {
@@ -54,9 +54,7 @@ function projectTask(task: WrittenTask, samples: readonly WrittenSample[]): Task
     ({ answer, numericEligible, prompt }) =>
       numericEligible &&
       answer.conditions.version === "firstDraft" &&
-      prompt.taskKey === task.key &&
-      prompt.unit === "answer" &&
-      matchesWritingTaskBasis({ prompt, task }),
+      answersWritingTask({ prompt, task }),
   );
 
   for (const { answer, itemId, prompt } of eligible) {
@@ -138,6 +136,7 @@ export function projectWrittenParts({
       }),
     })),
     samples,
+    tasks,
   });
 }
 

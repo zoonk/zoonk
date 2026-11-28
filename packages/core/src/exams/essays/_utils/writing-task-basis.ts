@@ -207,3 +207,22 @@ export function matchesWritingTaskBasis({
     .map((saved) => withGroupedZeroTriggers(saved))
     .includes(taskBasis);
 }
+
+/**
+ * Whether a saved answer still answers this task: a whole answer to it, marked by the rules the
+ * task has now. A correction that changes how the task is marked leaves earlier answers out of
+ * its estimate and out of a mock's verdict alike.
+ */
+export function answersWritingTask({
+  prompt,
+  task,
+}: {
+  prompt: Basis & { taskBasis?: string; taskKey: string; unit: string };
+  task: Basis & { key: string };
+}): boolean {
+  return (
+    prompt.taskKey === task.key &&
+    prompt.unit === "answer" &&
+    matchesWritingTaskBasis({ prompt, task })
+  );
+}
