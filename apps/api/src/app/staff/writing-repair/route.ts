@@ -2,7 +2,7 @@ import { createErrorResponse, errors, httpStatus } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { startNoticeReadingAgain } from "@/lib/freshness";
 import { readBody } from "@/lib/request-input";
-import { STAFF_WRITING_REPAIR_SCOPE } from "@zoonk/auth/cli-login-contract";
+import { STAFF_REPAIR_SCOPE } from "@zoonk/auth/cli-login-contract";
 import { getStaffActor } from "@zoonk/core/staff/actor";
 import {
   listWrittenBlueprintRepairs,
@@ -21,7 +21,7 @@ const inputSchema = z.strictObject({
 
 async function repairWriting(request: Request) {
   const input = await readBody(request, inputSchema);
-  const actor = await getStaffActor(input.apply ? STAFF_WRITING_REPAIR_SCOPE : undefined);
+  const actor = await getStaffActor(input.apply ? STAFF_REPAIR_SCOPE : undefined);
 
   if (actor.status !== "ready") {
     const identified = "userId" in actor ? actor : null;
@@ -38,8 +38,8 @@ async function repairWriting(request: Request) {
 
     if (actor.status === "missingScope" && input.apply) {
       return createErrorResponse({
-        code: "WRITING_REPAIR_SCOPE_REQUIRED",
-        message: "Log in with pnpm zoonk login --repair-writing to apply writing repairs.",
+        code: "REPAIR_SCOPE_REQUIRED",
+        message: "Log in with pnpm zoonk login --repair to apply repairs.",
         status: httpStatus.forbidden,
       });
     }

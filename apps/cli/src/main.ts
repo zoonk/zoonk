@@ -32,9 +32,9 @@ function apiError({ origin, result }: { origin: string; result: HttpResult }): C
     );
   }
 
-  if (result.status === FORBIDDEN && error?.code === "WRITING_REPAIR_SCOPE_REQUIRED") {
+  if (result.status === FORBIDDEN && error?.code === "REPAIR_SCOPE_REQUIRED") {
     return new CliError(
-      `Log in to ${origin} with writing repair access: \`${loginCommand(origin)} --repair-writing\`.`,
+      `Log in to ${origin} with repair access: \`${loginCommand(origin)} --repair\`.`,
     );
   }
 
@@ -108,7 +108,7 @@ async function run(argv: string[]) {
   }
 
   if (command.name === "login") {
-    await logIn({ file, origin, writingRepair: command.writingRepair });
+    await logIn({ file, origin, repair: command.repair });
     await runRequest({ file, origin, request: WHOAMI_REQUEST });
     return;
   }

@@ -1,6 +1,6 @@
 import { type Goal } from "@zoonk/db";
 import { isCountryCode } from "@zoonk/utils/countries";
-import { isCountryGoal } from "../../../goals/_utils/goal-content-country";
+import { hasCountryReading, isCountryGoal } from "../../../goals/_utils/goal-content-country";
 import { readPlacementAttempt } from "../../../learner/placement/_utils/placement-attempt-record";
 import { type OnboardingAnswerInput } from "../onboarding-contract";
 import { getFollowUpQuestions, readExamTarget } from "../onboarding-steps";
@@ -98,6 +98,11 @@ export function getDetailChanges({
   }
 }
 
+/** An exam goal read before readings recorded whether its country matters takes its first one. */
+function takesCountryAnswer(goal: Goal): boolean {
+  return isCountryGoal(goal) || (goal.kind === "exam" && !hasCountryReading(goal));
+}
+
 export function isInvalidGoalAnswer({
   current,
   input,
@@ -116,7 +121,7 @@ export function isInvalidGoalAnswer({
 
   return (
     input.question === "contentCountry" &&
-    (!isCountryGoal(current) || (input.country !== null && !isCountryCode(input.country)))
+    (!takesCountryAnswer(current) || (input.country !== null && !isCountryCode(input.country)))
   );
 }
 

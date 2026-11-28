@@ -19,13 +19,62 @@ function sentRequest(argv: string[]) {
 }
 
 describe(parseInvocation, () => {
-  it("requests writing repair authority only on an explicit login", () => {
+  it("requests repair authority only on an explicit login", () => {
     expect(parseInvocation(["login"]).command).toStrictEqual({ name: "login" });
 
-    expect(parseInvocation(["login", "--repair-writing"]).command).toStrictEqual({
+    expect(parseInvocation(["login", "--repair"]).command).toStrictEqual({
       name: "login",
-      writingRepair: true,
+      repair: true,
     });
+  });
+
+  it("previews an exam goal repair by default and sends one answer", () => {
+    expect(sentRequest(["staff", "repair-exam-goal", "goal-1", "--country", "ca"])).toStrictEqual({
+      body: { apply: false, country: "CA", goalId: "goal-1" },
+      method: "POST",
+      path: "/staff/exam-goal-repair",
+    });
+
+    expect(
+      sentRequest([
+        "staff",
+        "repair-exam-goal",
+        "goal-1",
+        "--choice",
+        "Discipline = Mechanical",
+        "--apply",
+      ]),
+    ).toStrictEqual({
+      body: {
+        apply: true,
+        choice: { group: "Discipline", subjects: ["Mechanical"] },
+        goalId: "goal-1",
+      },
+      method: "POST",
+      path: "/staff/exam-goal-repair",
+    });
+  });
+
+  it("refuses an exam goal repair that names no answer or two", () => {
+    expect(() => parseInvocation(["staff", "repair-exam-goal", "goal-1"])).toThrow(
+      "either --country or --choice",
+    );
+
+    expect(() =>
+      parseInvocation([
+        "staff",
+        "repair-exam-goal",
+        "goal-1",
+        "--country",
+        "CA",
+        "--choice",
+        "Discipline=Mechanical",
+      ]),
+    ).toThrow("either --country or --choice");
+
+    expect(() =>
+      parseInvocation(["staff", "repair-exam-goal", "goal-1", "--choice", "Mechanical"]),
+    ).toThrow("<group>=<option>");
   });
 
   it("previews writing repair by default and sends the cursor when explicitly applying", () => {

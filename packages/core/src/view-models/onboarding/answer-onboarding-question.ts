@@ -1,3 +1,4 @@
+import { type Goal } from "@zoonk/db";
 import { type SupportedLocale } from "@zoonk/utils/locale";
 import "server-only";
 import { after } from "next/server";
@@ -23,6 +24,7 @@ import { unlessPlanConflict } from "../../plans/plan-conflict";
 import { refreshGoalPlan } from "../../plans/refresh-goal-plan";
 import { updateLearningProfile } from "../../profile/update-learning-profile";
 import { answerProfileOnboardingQuestion } from "./_utils/answer-profile-onboarding-question";
+import { type GoalAnswerInput } from "./_utils/onboarding-answer-details";
 import { saveAnswerInputs } from "./_utils/save-onboarding-answer";
 import { type OnboardingAnswerInput } from "./onboarding-contract";
 
@@ -109,6 +111,58 @@ function trackAnswer({
   }
 }
 
+/** Re-plans a goal after its answer was saved: the learner's answer, or staff filling one the learner's words already gave. */
+export async function settleGoalAnswer({
+  goal,
+  goalIds,
+  input,
+}: {
+  goal: Goal;
+  goalIds: string[];
+  input: GoalAnswerInput;
+}): Promise<void> {
+  revalidateCacheTags([
+    getGoalsCacheTag(goal.userId),
+    getLearningProfileCacheTag(goal.userId),
+    getLearnerModelCacheTag(goal.userId),
+  ]);
+
+  // Schedule is last: personalization can read every answer before the first lessons.
+  if (input.question === "schedule") {
+    await settleNewPlan({ goalId: goal.id });
+
+    await Promise.all(
+      goalIds
+        .filter((id) => id !== goal.id)
+        .map(async (id) => {
+          await refreshGoalPlan({ goalId: id, mode: "forced", onConflict: "yield" });
+
+          await followSavedPlan(id);
+        }),
+    );
+  } else {
+    await refreshGoalPlan({
+      goalId: goal.id,
+      keepsOpenUndo: input.question === "placement",
+      mode: input.question === "targetDate" ? "forced" : "automatic",
+      onConflict: "yield",
+    });
+  }
+
+  if (input.question === "schedule" || input.question === "targetDate") {
+    await followSavedPlan(goal.id);
+  }
+
+  // The time a day re-plans the first days, so their lessons start being written before Today needs them.
+  if (input.question === "schedule") {
+    await oweGoalLessons({
+      also: [{ input: { goalId: goal.id }, kind: "rememberOnboarding" }],
+      goalId: goal.id,
+      userId: goal.userId,
+    });
+  }
+}
+
 /** Requires an owned goal; remembers skipped answers too, and schedule answers settle its plan and shared time. A language goal whose reason is a certificate it knows moves to an exam goal for it. */
 export async function answerOnboardingQuestion({
   goalId,
@@ -156,47 +210,7 @@ export async function answerOnboardingQuestion({
   }
 
   trackAnswer({ changed: saved.goalIds.includes(goalId), goal, input });
-
-  revalidateCacheTags([
-    getGoalsCacheTag(goal.userId),
-    getLearningProfileCacheTag(goal.userId),
-    getLearnerModelCacheTag(goal.userId),
-  ]);
-
-  // Schedule is last: personalization can read every answer before the first lessons.
-  if (input.question === "schedule") {
-    await settleNewPlan({ goalId });
-
-    await Promise.all(
-      saved.goalIds
-        .filter((id) => id !== goalId)
-        .map(async (id) => {
-          await refreshGoalPlan({ goalId: id, mode: "forced", onConflict: "yield" });
-
-          await followSavedPlan(id);
-        }),
-    );
-  } else {
-    await refreshGoalPlan({
-      goalId,
-      keepsOpenUndo: input.question === "placement",
-      mode: input.question === "targetDate" ? "forced" : "automatic",
-      onConflict: "yield",
-    });
-  }
-
-  if (input.question === "schedule" || input.question === "targetDate") {
-    await followSavedPlan(goalId);
-  }
-
-  // The time a day re-plans the first days, so their lessons start being written before Today needs them.
-  if (input.question === "schedule") {
-    await oweGoalLessons({
-      also: [{ input: { goalId }, kind: "rememberOnboarding" }],
-      goalId,
-      userId: goal.userId,
-    });
-  }
+  await settleGoalAnswer({ goal, goalIds: saved.goalIds, input });
 
   // "Pass a certificate" inside a language goal moves it to an exam goal for that certificate.
   if (isCertificateAnswer(input) && goal.kind === "language") {

@@ -1,7 +1,7 @@
 export const HELP = `Usage: pnpm zoonk <command> [--api <url>]
 
 Account
-  login [--repair-writing]                 Log in through your browser. Request permission to apply writing repairs with --repair-writing.
+  login [--repair]                         Log in through your browser. Request permission to apply repairs with --repair.
   logout                                   End this machine's login
   whoami                                   Show who is logged in
 
@@ -25,6 +25,12 @@ Written exam preparation repair
   staff repair-writing <blueprints|learners> [--after <cursor>] [--apply]
                                            Preview one page. --apply starts notice rereads
                                            or reopens unsupported writing claims.
+
+Exam goal repair
+  staff repair-exam-goal <goalId> (--country <code> | --choice "<group>=<option>") [--apply]
+                                           Preview filling the exam country or option a goal is
+                                           missing, from the learner's own words, as their answer
+                                           would. --apply saves it; a learner's answer stays.
 
 Shared clip audit
   staff audit-clips <words|sentences> [--after <cursor>] [--limit <n>] [--voiced-before <ISO date>]
