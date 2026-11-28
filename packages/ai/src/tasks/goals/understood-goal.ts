@@ -1,13 +1,13 @@
-export type GoalUnderstandingRoute = "explain" | "goals" | "instrument" | "unclear" | "unsafe";
+type GoalUnderstandingRoute = "explain" | "goals" | "instrument" | "unclear" | "unsafe";
 export type UnderstoodGoalKind = "exam" | "language" | "learn";
-export type UnderstoodOwnLevel = "advanced" | "basic" | "intermediate" | "none";
-export type UnderstoodPurpose = "careerChange" | "deep" | "other" | "overview" | "refresh" | "work";
+type UnderstoodOwnLevel = "advanced" | "basic" | "intermediate" | "none";
+type UnderstoodPurpose = "careerChange" | "deep" | "other" | "overview" | "refresh" | "work";
 
 /** Exams that are only passed or failed have none. */
-export type UnderstoodExamTarget = "admission" | "position" | "score";
+type UnderstoodExamTarget = "admission" | "position" | "score";
 
 /** `booked`: each candidate books their own day, so no notice ever sets it. */
-export type UnderstoodExamDay = "booked" | "official";
+type UnderstoodExamDay = "booked" | "official";
 
 /** Every field present, null when the text didn't say. */
 export type RawUnderstoodGoal = {
