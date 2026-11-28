@@ -832,6 +832,26 @@ export const TEST_CASES: UnderstandGoalCase[] = [
     goal: "I want to learn French and get ready for my finals",
     language: "en",
   }),
+  testCase("ja-term-test-with-subjects-names-no-exam", {
+    expected: { goals: [{ examName: null, examTarget: null, kind: "exam" }], route: "goals" },
+    goal: "期末テストの数学と英語で80点以上取りたい",
+    language: "ja",
+  }),
+  testCase("en-class-finals-name-no-exam", {
+    expected: { goals: [{ examName: null, examTarget: null, kind: "exam" }], route: "goals" },
+    goal: "Get through my calculus and physics finals next month",
+    language: "en",
+  }),
+  testCase("pt-term-tests-name-no-exam", {
+    expected: { goals: [{ examName: null, examTarget: null, kind: "exam" }], route: "goals" },
+    goal: "Passar nas provas do bimestre de química e física",
+    language: "pt",
+  }),
+  testCase("ko-national-exam-keeps-its-name", {
+    expected: { goals: [{ examName: /수능/u, kind: "exam" }], route: "goals" },
+    goal: "수능 국어 수학 1등급 받고 싶어요",
+    language: "ko",
+  }),
   testCase("en-chemistry-final-asks-nothing", {
     expected: { followUp: null, goals: [{ examName: null, kind: "exam" }], route: "goals" },
     goal: "chemistry final next week",

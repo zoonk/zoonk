@@ -11079,179 +11079,9 @@
           ],
           "route": "goals"
         },
-        "id": "ko-term-finals-with-a-target-average-asks-which-subjects-1",
-        "userInput": {
-          "goal": "이번 기말고사 평균 85점 넘기고 싶어요",
-          "language": "ko",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "followUp": {},
-          "goals": [
-            {
-              "examName": null,
-              "examSubjects": null,
-              "kind": "exam",
-              "targetScore": {}
-            }
-          ],
-          "route": "goals"
-        },
-        "id": "ko-term-finals-with-a-target-average-asks-which-subjects-2",
-        "userInput": {
-          "goal": "이번 기말고사 평균 85점 넘기고 싶어요",
-          "language": "ko",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "followUp": {},
-          "goals": [
-            {
-              "examName": null,
-              "examSubjects": null,
-              "kind": "exam",
-              "targetScore": {}
-            }
-          ],
-          "route": "goals"
-        },
         "id": "ko-term-finals-with-a-target-average-asks-which-subjects-3",
         "userInput": {
           "goal": "이번 기말고사 평균 85점 넘기고 싶어요",
-          "language": "ko",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "followUp": {},
-          "goals": [
-            {
-              "examName": null,
-              "examSubjects": null,
-              "kind": "exam"
-            }
-          ],
-          "route": "goals"
-        },
-        "id": "ko-term-midterms-asks-which-subjects-1",
-        "userInput": {
-          "goal": "다음 달 중간고사 준비",
-          "language": "ko",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "followUp": {},
-          "goals": [
-            {
-              "examName": null,
-              "examSubjects": null,
-              "kind": "exam"
-            }
-          ],
-          "route": "goals"
-        },
-        "id": "ko-term-midterms-asks-which-subjects-2",
-        "userInput": {
-          "goal": "다음 달 중간고사 준비",
           "language": "ko",
           "today": "2026-09-26"
         }
@@ -11459,90 +11289,6 @@
           ],
           "route": "goals"
         },
-        "id": "pt-term-tests-asks-which-subjects-1",
-        "userInput": {
-          "goal": "Quero tirar notas boas nas provas do trimestre",
-          "language": "pt",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "followUp": {},
-          "goals": [
-            {
-              "examName": null,
-              "examSubjects": null,
-              "kind": "exam"
-            }
-          ],
-          "route": "goals"
-        },
-        "id": "pt-term-tests-asks-which-subjects-2",
-        "userInput": {
-          "goal": "Quero tirar notas boas nas provas do trimestre",
-          "language": "pt",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "followUp": {},
-          "goals": [
-            {
-              "examName": null,
-              "examSubjects": null,
-              "kind": "exam"
-            }
-          ],
-          "route": "goals"
-        },
         "id": "pt-term-tests-asks-which-subjects-3",
         "userInput": {
           "goal": "Quero tirar notas boas nas provas do trimestre",
@@ -11585,180 +11331,10 @@
           ],
           "route": "goals"
         },
-        "id": "es-term-finals-asks-which-subjects-1",
-        "userInput": {
-          "goal": "Aprobar los finales de este cuatrimestre",
-          "language": "es",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "followUp": {},
-          "goals": [
-            {
-              "examName": null,
-              "examSubjects": null,
-              "kind": "exam"
-            }
-          ],
-          "route": "goals"
-        },
-        "id": "es-term-finals-asks-which-subjects-2",
-        "userInput": {
-          "goal": "Aprobar los finales de este cuatrimestre",
-          "language": "es",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "followUp": {},
-          "goals": [
-            {
-              "examName": null,
-              "examSubjects": null,
-              "kind": "exam"
-            }
-          ],
-          "route": "goals"
-        },
         "id": "es-term-finals-asks-which-subjects-3",
         "userInput": {
           "goal": "Aprobar los finales de este cuatrimestre",
           "language": "es",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "followUp": {},
-          "goals": [
-            {
-              "examName": null,
-              "examSubjects": null,
-              "kind": "exam",
-              "targetScore": {}
-            }
-          ],
-          "route": "goals"
-        },
-        "id": "ja-term-test-with-a-target-average-asks-which-subjects-1",
-        "userInput": {
-          "goal": "期末テストで平均80点を取りたい",
-          "language": "ja",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "followUp": {},
-          "goals": [
-            {
-              "examName": null,
-              "examSubjects": null,
-              "kind": "exam",
-              "targetScore": {}
-            }
-          ],
-          "route": "goals"
-        },
-        "id": "ja-term-test-with-a-target-average-asks-which-subjects-2",
-        "userInput": {
-          "goal": "期末テストで平均80点を取りたい",
-          "language": "ja",
           "today": "2026-09-26"
         }
       }
@@ -11845,185 +11421,9 @@
           ],
           "route": "goals"
         },
-        "id": "ko-term-finals-naming-its-subjects-asks-nothing-1",
-        "userInput": {
-          "goal": "기말고사 국어, 수학, 영어 평균 90점",
-          "language": "ko",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "followUp": null,
-          "goals": [
-            {
-              "examName": null,
-              "examSubjects": [
-                {},
-                {},
-                {}
-              ],
-              "kind": "exam",
-              "targetScore": {}
-            }
-          ],
-          "route": "goals"
-        },
-        "id": "ko-term-finals-naming-its-subjects-asks-nothing-2",
-        "userInput": {
-          "goal": "기말고사 국어, 수학, 영어 평균 90점",
-          "language": "ko",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "followUp": null,
-          "goals": [
-            {
-              "examName": null,
-              "examSubjects": [
-                {},
-                {},
-                {}
-              ],
-              "kind": "exam",
-              "targetScore": {}
-            }
-          ],
-          "route": "goals"
-        },
         "id": "ko-term-finals-naming-its-subjects-asks-nothing-3",
         "userInput": {
           "goal": "기말고사 국어, 수학, 영어 평균 90점",
-          "language": "ko",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "followUp": null,
-          "goals": [
-            {
-              "examName": null,
-              "kind": "exam"
-            }
-          ],
-          "route": "goals"
-        },
-        "id": "ko-term-finals-in-one-subject-asks-nothing-1",
-        "userInput": {
-          "goal": "수학 기말고사 대비",
-          "language": "ko",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "followUp": null,
-          "goals": [
-            {
-              "examName": null,
-              "kind": "exam"
-            }
-          ],
-          "route": "goals"
-        },
-        "id": "ko-term-finals-in-one-subject-asks-nothing-2",
-        "userInput": {
-          "goal": "수학 기말고사 대비",
           "language": "ko",
           "today": "2026-09-26"
         }
@@ -16803,6 +16203,1024 @@
               }
             ]
           },
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examName": null,
+              "examSubjects": [
+                {},
+                {},
+                {}
+              ],
+              "examTarget": null,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "ko-term-finals-with-subjects-name-no-exam-1",
+        "userInput": {
+          "goal": "기말고사 국어, 수학, 영어 평균 90점",
+          "language": "ko",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examName": null,
+              "examSubjects": [
+                {},
+                {},
+                {}
+              ],
+              "examTarget": null,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "ko-term-finals-with-subjects-name-no-exam-2",
+        "userInput": {
+          "goal": "기말고사 국어, 수학, 영어 평균 90점",
+          "language": "ko",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "followUp": {},
+          "goals": [
+            {
+              "examName": null,
+              "examSubjects": null,
+              "kind": "exam",
+              "targetScore": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "ko-term-finals-with-a-target-average-asks-which-subjects-1",
+        "userInput": {
+          "goal": "이번 기말고사 평균 85점 넘기고 싶어요",
+          "language": "ko",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "followUp": {},
+          "goals": [
+            {
+              "examName": null,
+              "examSubjects": null,
+              "kind": "exam",
+              "targetScore": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "ko-term-finals-with-a-target-average-asks-which-subjects-2",
+        "userInput": {
+          "goal": "이번 기말고사 평균 85점 넘기고 싶어요",
+          "language": "ko",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "followUp": {},
+          "goals": [
+            {
+              "examName": null,
+              "examSubjects": null,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "ko-term-midterms-asks-which-subjects-1",
+        "userInput": {
+          "goal": "다음 달 중간고사 준비",
+          "language": "ko",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "followUp": {},
+          "goals": [
+            {
+              "examName": null,
+              "examSubjects": null,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "ko-term-midterms-asks-which-subjects-2",
+        "userInput": {
+          "goal": "다음 달 중간고사 준비",
+          "language": "ko",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "followUp": {},
+          "goals": [
+            {
+              "examName": null,
+              "examSubjects": null,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-term-tests-asks-which-subjects-1",
+        "userInput": {
+          "goal": "Quero tirar notas boas nas provas do trimestre",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "followUp": {},
+          "goals": [
+            {
+              "examName": null,
+              "examSubjects": null,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-term-tests-asks-which-subjects-2",
+        "userInput": {
+          "goal": "Quero tirar notas boas nas provas do trimestre",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "followUp": {},
+          "goals": [
+            {
+              "examName": null,
+              "examSubjects": null,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "es-term-finals-asks-which-subjects-1",
+        "userInput": {
+          "goal": "Aprobar los finales de este cuatrimestre",
+          "language": "es",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "followUp": {},
+          "goals": [
+            {
+              "examName": null,
+              "examSubjects": null,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "es-term-finals-asks-which-subjects-2",
+        "userInput": {
+          "goal": "Aprobar los finales de este cuatrimestre",
+          "language": "es",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "followUp": {},
+          "goals": [
+            {
+              "examName": null,
+              "examSubjects": null,
+              "kind": "exam",
+              "targetScore": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "ja-term-test-with-a-target-average-asks-which-subjects-1",
+        "userInput": {
+          "goal": "期末テストで平均80点を取りたい",
+          "language": "ja",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "title repeats targetScore",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "title repeats targetScore",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "title repeats targetScore",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "followUp": {},
+          "goals": [
+            {
+              "examName": null,
+              "examSubjects": null,
+              "kind": "exam",
+              "targetScore": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "ja-term-test-with-a-target-average-asks-which-subjects-2",
+        "userInput": {
+          "goal": "期末テストで平均80点を取りたい",
+          "language": "ja",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "followUp": null,
+          "goals": [
+            {
+              "examName": null,
+              "examSubjects": [
+                {},
+                {},
+                {}
+              ],
+              "kind": "exam",
+              "targetScore": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "ko-term-finals-naming-its-subjects-asks-nothing-1",
+        "userInput": {
+          "goal": "기말고사 국어, 수학, 영어 평균 90점",
+          "language": "ko",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "followUp": null,
+          "goals": [
+            {
+              "examName": null,
+              "examSubjects": [
+                {},
+                {},
+                {}
+              ],
+              "kind": "exam",
+              "targetScore": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "ko-term-finals-naming-its-subjects-asks-nothing-2",
+        "userInput": {
+          "goal": "기말고사 국어, 수학, 영어 평균 90점",
+          "language": "ko",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "followUp": null,
+          "goals": [
+            {
+              "examName": null,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "ko-term-finals-in-one-subject-asks-nothing-1",
+        "userInput": {
+          "goal": "수학 기말고사 대비",
+          "language": "ko",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "followUp": null,
+          "goals": [
+            {
+              "examName": null,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "ko-term-finals-in-one-subject-asks-nothing-2",
+        "userInput": {
+          "goal": "수학 기말고사 대비",
+          "language": "ko",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examName": null,
+              "examTarget": null,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "ja-term-test-with-subjects-names-no-exam-1",
+        "userInput": {
+          "goal": "期末テストの数学と英語で80点以上取りたい",
+          "language": "ja",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examName": null,
+              "examTarget": null,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "ja-term-test-with-subjects-names-no-exam-2",
+        "userInput": {
+          "goal": "期末テストの数学と英語で80点以上取りたい",
+          "language": "ja",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examName": null,
+              "examTarget": null,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-class-finals-name-no-exam-1",
+        "userInput": {
+          "goal": "Get through my calculus and physics finals next month",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examName": null,
+              "examTarget": null,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-class-finals-name-no-exam-2",
+        "userInput": {
+          "goal": "Get through my calculus and physics finals next month",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examName": null,
+              "examTarget": null,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-term-tests-name-no-exam-1",
+        "userInput": {
+          "goal": "Passar nas provas do bimestre de química e física",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examName": null,
+              "examTarget": null,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-term-tests-name-no-exam-2",
+        "userInput": {
+          "goal": "Passar nas provas do bimestre de química e física",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examName": {},
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "ko-national-exam-keeps-its-name-1",
+        "userInput": {
+          "goal": "수능 국어 수학 1등급 받고 싶어요",
+          "language": "ko",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examName": {},
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "ko-national-exam-keeps-its-name-2",
+        "userInput": {
+          "goal": "수능 국어 수학 1등급 받고 싶어요",
+          "language": "ko",
           "today": "2026-09-26"
         }
       }

@@ -139,6 +139,7 @@ function isNotBooked({
 
 type ExamFields = Pick<
   UnderstoodGoal,
+  | "classTest"
   | "examDay"
   | "examMonth"
   | "examName"
@@ -149,7 +150,10 @@ type ExamFields = Pick<
   | "examYear"
 >;
 
-/** Every exam field, undefined on other goals. */
+/**
+ * Every exam field, undefined on other goals. A class test has no public notice, so nothing may
+ * read the learner's word for it as an exam's name, day, version or target.
+ */
 function cleanExamFields({
   goal,
   targetDate,
@@ -158,15 +162,17 @@ function cleanExamFields({
   targetDate: string | undefined;
 }): ExamFields {
   const exam = goal.kind === "exam";
+  const publicExam = exam && !goal.classTest;
 
   return {
-    examDay: exam ? (goal.examDay ?? undefined) : undefined,
+    classTest: exam && goal.classTest ? true : undefined,
+    examDay: publicExam ? (goal.examDay ?? undefined) : undefined,
     examMonth: exam ? cleanMonth(goal.examMonth) : undefined,
-    examName: exam ? cleanText(goal.examName) : undefined,
-    examNotBooked: isNotBooked({ goal, targetDate }),
-    examOption: exam ? cleanText(goal.examOption) : undefined,
+    examName: publicExam ? cleanText(goal.examName) : undefined,
+    examNotBooked: publicExam ? isNotBooked({ goal, targetDate }) : undefined,
+    examOption: publicExam ? cleanText(goal.examOption) : undefined,
     examSubjects: exam ? cleanTexts(goal.examSubjects) : undefined,
-    examTarget: exam ? (goal.examTarget ?? undefined) : undefined,
+    examTarget: publicExam ? (goal.examTarget ?? undefined) : undefined,
     examYear: exam ? cleanYear(goal.examYear) : undefined,
   };
 }

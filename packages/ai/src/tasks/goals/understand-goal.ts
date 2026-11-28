@@ -53,7 +53,7 @@ const goalSchema = z.object({
   title: z.string(),
 });
 
-const schema = z.object({
+const materialSchema = z.object({
   dailyMinutes: z.number().nullable(),
   goals: z.array(goalSchema),
   instrument: z.string().nullable(),
@@ -62,6 +62,14 @@ const schema = z.object({
   studyDays: z.array(z.number()).nullable(),
   studyTime: z.string().nullable(),
   studyTimeNote: z.string().nullable(),
+}) satisfies z.ZodType<RawGoalUnderstanding>;
+
+/**
+ * Material's own rules already say when an exam on it is a class test; asking again there made
+ * readings take a test's date from a syllabus.
+ */
+const wordsSchema = materialSchema.extend({
+  goals: z.array(goalSchema.extend({ classTest: z.boolean() })),
 }) satisfies z.ZodType<RawGoalUnderstanding>;
 
 type GoalMaterial = {
@@ -179,7 +187,9 @@ export async function understandGoal(params: UnderstandGoalParams) {
       generateText({
         instructions: systemPrompt,
         model,
-        output: Output.object({ schema }),
+        output: Output.object<RawGoalUnderstanding>({
+          schema: params.material?.overview ? materialSchema : wordsSchema,
+        }),
         prompt: userPrompt,
         providerOptions,
         reasoning,

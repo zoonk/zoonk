@@ -129,6 +129,7 @@ async function toGoalView({
 
   const details = compactDetails({
     answered: getGoalAnswered({ answered, goal }),
+    classTest: goal.classTest,
     examDay: goal.examDay,
     examMonth: goal.examMonth,
     examName: goal.examName,

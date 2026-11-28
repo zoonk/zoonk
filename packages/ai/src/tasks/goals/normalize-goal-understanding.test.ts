@@ -10,6 +10,7 @@ const TODAY = "2026-09-26";
 
 function rawGoal(overrides: Partial<RawUnderstoodGoal> = {}): RawUnderstoodGoal {
   return {
+    classTest: false,
     contentCountry: null,
     countryDependent: false,
     examDay: null,
@@ -262,6 +263,41 @@ describe(normalizeGoalUnderstanding, () => {
       { examDay: undefined, examTarget: undefined },
       { examDay: undefined, examTarget: undefined },
     ]);
+  });
+
+  it("never names a class test as a public exam, so nothing treats a school term's name as one", () => {
+    const result = normalizeGoalUnderstanding({
+      dailyMinutesLimits: DAILY_MINUTES_LIMITS,
+      raw: raw({
+        goals: [
+          rawGoal({
+            classTest: true,
+            examDay: "official",
+            examName: "기말고사",
+            examSubjects: ["국어", "수학", "영어"],
+            examTarget: "score",
+            kind: "exam",
+            subject: "기말고사",
+          }),
+          rawGoal({ classTest: false, examDay: "official", examName: "수능", kind: "exam" }),
+        ],
+      }),
+      today: TODAY,
+    });
+
+    expect(result).toMatchObject({
+      goals: [
+        {
+          classTest: true,
+          examDay: undefined,
+          examName: undefined,
+          examSubjects: ["국어", "수학", "영어"],
+          examTarget: undefined,
+          subject: "기말고사",
+        },
+        { classTest: undefined, examDay: "official", examName: "수능" },
+      ],
+    });
   });
 
   it("drops past or invalid dates, invalid times and out-of-range weekdays", () => {

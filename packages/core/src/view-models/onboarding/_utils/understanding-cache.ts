@@ -9,6 +9,7 @@ import { isNamedExam } from "./exam-facts";
 
 /** Every field the reading keeps, so a reused reading loses none of them. */
 const understoodGoalFields = {
+  classTest: z.literal(true).optional(),
   contentCountry: z.string().optional(),
   countryDependent: z.boolean(),
   displayName: z.string().optional(),

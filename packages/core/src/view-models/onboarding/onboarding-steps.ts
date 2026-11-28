@@ -83,7 +83,7 @@ function hasExamTarget(details: Record<string, unknown>): boolean {
 }
 
 export function isClassTest(details: Record<string, unknown>): boolean {
-  return details.materialIntent === "exam";
+  return details.classTest === true || details.materialIntent === "exam";
 }
 
 /** Includes explicitly skipped questions. */
