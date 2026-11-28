@@ -1,9 +1,12 @@
 package com.zoonk.android.ui.components
 
 import android.content.res.Configuration
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,12 +28,20 @@ import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.input.InputMode
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.layout.AlignmentLine
 import androidx.compose.ui.layout.FirstBaseline
 import androidx.compose.ui.layout.LastBaseline
@@ -38,6 +49,7 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.ParentDataModifier
 import androidx.compose.ui.layout.VerticalAlignmentLine
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalInputModeManager
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.semantics
@@ -65,10 +77,12 @@ fun AnswerOptionGroup(
  * once checked the word its result shows, and the mark of a pick at its end. An option among several picks is a
  * [Role.Checkbox] and ends with a checkbox, one of a pick-one question a [Role.RadioButton] with a radio, so their shape
  * says which before a tap; one that acts at once is a [Role.Button], and one shown after the fact has no role and
- * nothing to press, and neither has a mark. [tag] replaces the result's word (an order step's place). A [glyph] marks
- * the option in place of a number key, on every device, as main's review does (✓, ✗). The key and the mark sit on the
- * words' first line; a [stacked] card, a picture's, takes them over its picture's top corners. [readingContent]
- * supplies a picture's caption for intrinsic sizing without placing a second copy.
+ * nothing to press, and neither has a mark. With a keyboard, Space picks a checkbox or radio option and Enter goes on
+ * to the screen's main action, as in main's forms, unless the option [keepsEnter] (a warm-up's guess, final at once),
+ * where Enter picks it too. [tag] replaces the result's word (an order step's place). A [glyph] marks the option in
+ * place of a number key, on every device, as main's review does (✓, ✗). The key and the mark sit on the words' first
+ * line; a [stacked] card, a picture's, takes them over its picture's top corners. [readingContent] supplies a picture's
+ * caption for intrinsic sizing without placing a second copy.
  */
 @Composable
 fun AnswerOption(
@@ -79,6 +93,7 @@ fun AnswerOption(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     role: Role? = Role.RadioButton,
+    keepsEnter: Boolean = false,
     tag: (@Composable () -> Unit)? = null,
     glyph: Painter? = null,
     stacked: Boolean = false,
@@ -98,6 +113,9 @@ fun AnswerOption(
         }
     val several = role == Role.Checkbox
     val marked = several || role == Role.RadioButton
+    val interactions = remember { MutableInteractionSource() }
+    val indication = LocalIndication.current
+    val inputModes = LocalInputModeManager.current
     val label = MaterialTheme.typography.labelLarge
     val optionStyle = label.copy(lineBreak = label.lineBreak.copy(strategy = LineBreak.Strategy.Simple))
     val shownTag: (@Composable () -> Unit)? =
@@ -125,10 +143,27 @@ fun AnswerOption(
                 .border(tone.border, shape)
                 .then(
                     when (role) {
-                        null -> Modifier.semantics(mergeDescendants = true) {}
-                        Role.Checkbox -> Modifier.toggleable(value = picked, enabled = enabled, role = role, onValueChange = { onClick() })
-                        Role.Button -> Modifier.clickable(enabled = enabled, role = role, onClick = onClick)
-                        else -> Modifier.selectable(selected = picked, enabled = enabled, role = role, onClick = onClick)
+                        null -> {
+                            Modifier.semantics(mergeDescendants = true) {}
+                        }
+
+                        Role.Button -> {
+                            Modifier.clickable(enabled = enabled, role = role, onClick = onClick)
+                        }
+
+                        else -> {
+                            val pick =
+                                if (several) {
+                                    Modifier.toggleable(picked, interactions, indication, enabled, role) { onClick() }
+                                } else {
+                                    Modifier.selectable(picked, interactions, indication, enabled, role, onClick)
+                                }
+                            if (keepsEnter) {
+                                pick
+                            } else {
+                                Modifier.passingEnter(enabled, interactions, inputModes::inputMode, onClick).then(pick)
+                            }
+                        }
                     },
                 ).padding(if (stacked) PaddingValues(STACKED_PADDING) else PaddingValues(horizontal = 16.dp, vertical = 13.dp)),
         content = { ProvideTextStyle(optionStyle, content) },
@@ -164,6 +199,24 @@ fun AnswerOption(
         onReadingOverflow = onReadingOverflow,
     )
 }
+
+/**
+ * A checkbox or radio option's keyboard stop, outside its pick, so Enter goes on to the screen's main action while Space
+ * or a D-pad's center picks. Only a keyboard focuses it, as it does Compose's own controls.
+ */
+private fun Modifier.passingEnter(
+    enabled: Boolean,
+    interactions: MutableInteractionSource,
+    inputMode: () -> InputMode,
+    onPick: () -> Unit,
+): Modifier =
+    focusProperties { canFocus = inputMode() == InputMode.Keyboard }
+        .focusable(enabled, interactions)
+        .onKeyEvent { event ->
+            val picks = event.key == Key.Spacebar || event.key == Key.DirectionCenter
+            if (picks && event.type == KeyEventType.KeyDown && event.nativeKeyEvent.repeatCount == 0) onPick()
+            picks
+        }.focusProperties { canFocus = false }
 
 /**
  * A pick at an option's end, as the app's choice lists end theirs: a radio where one answer counts, a checkbox where
