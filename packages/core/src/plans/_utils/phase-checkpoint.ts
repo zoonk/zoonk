@@ -7,23 +7,19 @@ import { type PlanReadItem, getPlanReadItemKey } from "./plan-read-projection";
 import { isWorkFinished } from "./work-progress";
 
 function buildCheckpoint({
+  boss,
   locked = false,
-  items,
   precision,
-  timings,
+  timing,
 }: {
+  boss: PlanReadItem | undefined;
   locked?: boolean;
-  items: readonly PlanReadItem[];
   precision: PlanPhaseCheckpointView["precision"];
-  timings: ReadonlyMap<string, ChallengeTiming>;
+  timing?: ChallengeTiming;
 }): PlanPhaseCheckpointView | null {
-  const boss = items.find((item) => item.kind === "boss");
-
   if (!boss) {
     return null;
   }
-
-  const timing = timings.get(boss.id ?? "") ?? timings.get(getPlanReadItemKey(boss));
 
   return {
     date: timing?.date ?? (boss.scheduledFor ? toIsoDate(boss.scheduledFor) : null),
@@ -53,12 +49,14 @@ export function buildPhaseMilestones({
 > {
   const dates = getPhaseMilestoneDates({ phase, today });
   const later = phase.later === true;
-  const checkpoint = buildCheckpoint({ items, locked, precision: dates.precision, timings });
+  const boss = items.find((item) => item.kind === "boss");
+  const timing = boss && (timings.get(boss.id ?? "") ?? timings.get(getPlanReadItemKey(boss)));
+  const checkpoint = buildCheckpoint({ boss, locked, precision: dates.precision, timing });
 
   return {
     challengeLeftOut: !later && phase.challengeLeftOut === true,
     checkpoint:
-      later && checkpoint?.state !== "done"
+      (timing?.later ?? later) && checkpoint?.state !== "done"
         ? {
             date: null,
             later: true,

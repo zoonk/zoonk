@@ -15,10 +15,11 @@ type TimingItem = ChallengeReachItem & {
   phase: number;
   scheduledFor: Date | null;
 };
-export type ChallengeTiming = { date: string | null; when: BossTiming };
+export type ChallengeTiming = { date: string | null; later?: boolean; when: BossTiming };
 
 /** Today is what Today shows; every later day is an estimate of the room it leaves challenges. */
 export function getChallengeTimings({
+  challengeDates,
   goal,
   items,
   results = new Map(),
@@ -27,6 +28,7 @@ export function getChallengeTimings({
   todayBlocks,
   todaySessionDate = today,
 }: {
+  challengeDates?: ReadonlyMap<string, Date | null>;
   goal: Pick<Goal, "dailyMinutes" | "kind" | "targetDate">;
   items: readonly TimingItem[];
   results?: ReadonlyMap<string, CheckpointResult>;
@@ -130,17 +132,26 @@ export function getChallengeTimings({
     items
       .filter((boss) => boss.kind === "boss")
       .map((boss): [string, ChallengeTiming] => {
+        const id = getId(boss);
+        const scheduled = challengeDates?.get(id);
+        const projected = scheduled === undefined ? {} : { later: false };
+
         if (inToday(boss)) {
-          return [getId(boss), { date: toIsoDate(today), when: "nextSession" }];
+          return [id, { date: toIsoDate(today), ...projected, when: "nextSession" }];
         }
 
+        if (scheduled === null) {
+          return [id, { date: null, later: true, when: "date" }];
+        }
+
+        const planned = scheduled ?? boss.scheduledFor;
+
         const estimatedFor =
-          dates.get(getId(boss)) ??
-          (isChallengeReached({ boss, items }) ? future : boss.scheduledFor);
+          dates.get(id) ?? (isChallengeReached({ boss, items }) ? future : planned);
 
         const estimate = new Date(Math.max(tomorrow.getTime(), estimatedFor?.getTime() ?? 0));
 
-        return [getId(boss), { date: toIsoDate(estimate), when: "date" }];
+        return [id, { date: toIsoDate(estimate), ...projected, when: "date" }];
       }),
   );
 }

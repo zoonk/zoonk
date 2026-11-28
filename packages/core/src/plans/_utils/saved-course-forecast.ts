@@ -1,8 +1,10 @@
+import { isChallengeReached } from "../../checkpoints/_utils/challenge-reach";
 import { findFinishByCapacity } from "../planner/daily-need";
 import { addDays, fromIsoDate, getWeeklyEventWeekday, toIsoDate } from "../planner/plan-calendar";
 import { createLearnDays } from "../planner/plan-days";
 import { PHASE_WORK_KINDS } from "../planner/plan-item-rules";
 import { getCalendar, getPlanStart } from "../planner/plan-run-days";
+import { type PlanPhase } from "../planner/plan-state";
 import { getLessonCapacity } from "../planner/schedule-units";
 import { getDatedFinish, getSavedCourseFinish } from "./course-finish";
 import { type PlanReadContext, type PlanReadItem } from "./plan-read-projection";
@@ -35,6 +37,45 @@ function getMissedMinutes({
   return days.reduce((sum, [day, , raw]) => (day >= layoutDay && day < today ? sum + raw : sum), 0);
 }
 
+function projectChallengeDates({
+  items,
+  missedThrough,
+  move,
+  phases,
+  today,
+}: {
+  items: readonly PlanReadItem[];
+  missedThrough: ReadonlyMap<number, number>;
+  move: (date: string, remaining: number) => { date: string | null };
+  phases: readonly PlanPhase[];
+  today: Date;
+}): Map<string, Date | null> {
+  return new Map(
+    items.flatMap((boss) => {
+      const id = boss.id ?? boss.key;
+      const remaining = missedThrough.get(boss.phase) ?? 0;
+
+      if (
+        boss.kind !== "boss" ||
+        boss.status !== "todo" ||
+        !id ||
+        !boss.scheduledFor ||
+        remaining === 0 ||
+        phases[boss.phase]?.later
+      ) {
+        return [];
+      }
+
+      if (boss.scheduledFor <= today || isChallengeReached({ boss, items })) {
+        return [[id, boss.scheduledFor]];
+      }
+
+      const moved = move(toIsoDate(boss.scheduledFor), remaining).date;
+      return [[id, moved ? fromIsoDate(moved) : null]];
+    }),
+  );
+}
+
 export function readSavedCourseForecast({
   context,
   summary,
@@ -49,9 +90,10 @@ export function readSavedCourseForecast({
   const finish = !goal.targetDate && summary ? getSavedCourseFinish(summary) : null;
   const day = toIsoDate(today);
   const layoutDay = summary?.basis.layoutStudyDay;
+  const challengeDates = new Map<string, Date | null>();
 
   if (goal.targetDate || !layoutDay || layoutDay >= day || goal.kind === "exam") {
-    return { finish, phases };
+    return { challengeDates, finish, phases };
   }
 
   const byPhase = new Map<number, number>();
@@ -65,7 +107,11 @@ export function readSavedCourseForecast({
   }
 
   if (byPhase.size === 0) {
-    return { finish: finish?.date ? getDatedFinish({ date: finish.date, today }) : finish, phases };
+    return {
+      challengeDates,
+      finish: finish?.date ? getDatedFinish({ date: finish.date, today }) : finish,
+      phases,
+    };
   }
 
   const input = { goal, settings: context.state.settings, today };
@@ -90,6 +136,7 @@ export function readSavedCourseForecast({
       : getDatedFinish({ date, today });
 
   const missed = { total: 0 };
+  const missedThrough = new Map<number, number>();
 
   const movedPhases = phases.map((phase, index) => {
     const startDate =
@@ -98,6 +145,7 @@ export function readSavedCourseForecast({
         : phase.startDate;
 
     missed.total += byPhase.get(index) ?? 0;
+    missedThrough.set(index, missed.total);
     const endDate = phase.endDate ? move(phase.endDate, missed.total).date : null;
 
     return {
@@ -108,5 +156,9 @@ export function readSavedCourseForecast({
     };
   });
 
-  return { finish: finish?.date ? move(finish.date, missed.total) : finish, phases: movedPhases };
+  return {
+    challengeDates: projectChallengeDates({ items, missedThrough, move, phases, today }),
+    finish: finish?.date ? move(finish.date, missed.total) : finish,
+    phases: movedPhases,
+  };
 }

@@ -36,6 +36,7 @@ type PathInput = Pick<
   | "taughtSkillIds"
 > & {
   access: Pick<PlanView["access"], "mocksRequirePlus">;
+  challengeDates?: ReadonlyMap<string, Date | null>;
   context: PlanReadContext;
   syllabus: Pick<SyllabusInput, "knownSkillIds" | "pastBasicsSkillIds" | "skippedBaseIds"> | null;
   today: Awaited<ReturnType<typeof readPlanToday>>;
@@ -44,6 +45,7 @@ type PathInput = Pick<
 
 export function buildPlanPath({
   access,
+  challengeDates,
   challengeResults,
   context,
   syllabus,
@@ -101,6 +103,7 @@ export function buildPlanPath({
     studiesPastTarget: goal.kind === "exam" && state.settings.fullCourse,
     targetDate: goal.targetDate,
     timings: getChallengeTimings({
+      challengeDates,
       goal,
       items,
       results: challengeResults,

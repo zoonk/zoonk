@@ -284,6 +284,7 @@ export async function buildPlanView({
     ...readPlanOffers({ fresh, partAreas, pastDate, summary }),
     phases: buildPlanPath({
       access,
+      challengeDates: forecast.challengeDates,
       challengeResults,
       chapterTitles,
       context: { ...context, phases: forecast.phases },
