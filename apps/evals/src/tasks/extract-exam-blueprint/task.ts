@@ -7,6 +7,7 @@ import { getFormatShares } from "@zoonk/core/library/exams/format-shares";
 import { getMarkingPenalty } from "@zoonk/core/library/exams/marking-penalty";
 import { toMaterialTopicName } from "@zoonk/core/library/exams/material-topics";
 import { findTaskSubjects } from "@zoonk/core/library/exams/written-task-subjects";
+import { listSubjectGroups } from "@zoonk/utils/exam-groups";
 import { normalizeString } from "@zoonk/utils/string";
 import {
   type ExtractionEvalInput,
@@ -25,6 +26,7 @@ type ExpectedFact =
   /** Learner material: every topic names an idea, never a copied line of notes or the subject's own title. */
   | { kind: "shortTopics" }
   | { kind: "group"; subject: string; group: string }
+  | { kind: "subjectGroups"; subject: string; groups: string[] }
   | { kind: "groupedSubjects"; groups: string[] }
   | { kind: "choice"; options: string[]; partOf?: string; take?: number }
   /** Every candidate sits every subject: no subject is an option of a choice. */
@@ -214,6 +216,22 @@ function getQuestionTotals(reading: Reading): number[] {
     sumQuestions(reading.mock?.sections ?? []),
     sumQuestions(reading.subjects),
   ].filter((total) => total !== null);
+}
+
+function hasSubjectGroups({
+  fact,
+  reading,
+}: {
+  fact: Extract<ExpectedFact, { kind: "subjectGroups" }>;
+  reading: Reading;
+}): boolean {
+  const subject = findSubject({ name: fact.subject, reading });
+  const groups = subject ? listSubjectGroups(subject).map((group) => normalizeString(group)) : [];
+
+  return (
+    groups.length === fact.groups.length &&
+    fact.groups.every((wanted) => groups.some((group) => group.includes(normalizeString(wanted))))
+  );
 }
 
 function findSubject({ name, reading }: { name: string; reading: Reading }) {
@@ -640,6 +658,8 @@ function isFactFound({ fact, reading }: { fact: ExpectedFact; reading: Reading }
       return normalizeString(findSubject({ name: fact.subject, reading })?.group ?? "").includes(
         normalizeString(fact.group),
       );
+    case "subjectGroups":
+      return hasSubjectGroups({ fact, reading });
     case "choice":
       return hasChoice({ fact, reading });
     case "noChoice":

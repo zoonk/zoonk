@@ -61,7 +61,7 @@ async function voiceClip({
   });
 
   if (error) {
-    logError("Error voicing a speech clip:", error);
+    logError("Error voicing a speech clip:", error.name, error.message);
     return null;
   }
 

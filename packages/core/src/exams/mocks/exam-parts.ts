@@ -1,8 +1,9 @@
+import { listSubjectGroups } from "@zoonk/utils/exam-groups";
 import { normalizeString } from "@zoonk/utils/string";
 import { matchAreasToSubjects } from "../../exams/_utils/match-areas";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { findNamingSections } from "../_utils/name-match";
-import { isObjectiveSection, isQuestionSubject } from "./written-subject";
+import { getQuestionGroup, isObjectiveSection, isQuestionSubject } from "./written-subject";
 
 type Subject = ExamStructure["subjects"][number];
 
@@ -36,7 +37,7 @@ export function findSubjectSections({
 
   const exact = [
     [subject.shortName, subject.name],
-    [subject.group],
+    listSubjectGroups(subject),
     [whole?.shortName, whole?.name, whole?.group],
   ]
     .map((names) => findExactSections({ names, sections }))
@@ -112,8 +113,10 @@ function mapSubjectsToSections(structure: ExamStructure | null): Map<string, str
     : own;
 }
 
-function toSubjectParts(subject: Subject): string[] {
-  return [subject.name, subject.group, subject.partOf].filter((name) => typeof name === "string");
+function toSubjectParts({ structure, subject }: { structure: ExamStructure; subject: Subject }) {
+  return [subject.name, getQuestionGroup({ structure, subject }), subject.partOf].filter(
+    (name) => typeof name === "string",
+  );
 }
 
 /** A mock section's own name and the subjects it asks; undefined for an unnamed one, the whole exam. */
@@ -130,11 +133,15 @@ export function listSectionParts({
 
   const sections = mapSubjectsToSections(structure);
 
-  const asked = (structure?.subjects ?? []).filter((subject) =>
+  if (!structure) {
+    return [section];
+  }
+
+  const asked = structure.subjects.filter((subject) =>
     sections.get(subject.name)?.includes(section),
   );
 
-  return [section, ...asked.flatMap((subject) => toSubjectParts(subject))];
+  return [section, ...asked.flatMap((subject) => toSubjectParts({ structure, subject }))];
 }
 
 /** The sections a plan area's questions sit in, as its subject's when one has it. */
@@ -165,5 +172,9 @@ export function listAreaParts({
   const subject = findSubject({ area, structure });
   const sections = listAreaSections({ area, structure });
 
-  return [area, ...(subject ? toSubjectParts(subject) : []), ...sections];
+  return [
+    area,
+    ...(subject && structure ? toSubjectParts({ structure, subject }) : []),
+    ...sections,
+  ];
 }

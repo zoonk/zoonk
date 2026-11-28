@@ -652,6 +652,8 @@ class PlanScreenshots {
         val fitOperations = laterFitPlan.fitOffer!!.operations.map { it.op }
         val pastDate = pastDatePlan()
         val timeLeft = plan("\"status\":{\"kind\":\"needsAdjusting\",\"options\":[\"addTime\"]},\"fitOffer\":null")
+        val oneLanguage = plan(""""examChoices":[$LANGUAGE_CHOICE]""")
+        val twoModules = plan(""""examChoices":[${MODULES_CHOICE.replace(""""subjects":["Biología"]""", """"subjects":[]""")}]""")
         val goalRevision = planAdviceRevision(goalCard)
         val dateFound = TimeToCoverState.Answered(goalRevision, timeToCover(recommended = 105, fittingDate = "2027-04-18"))
         val noDate = TimeToCoverState.Answered(goalRevision, timeToCover(recommended = 105))
@@ -758,6 +760,10 @@ class PlanScreenshots {
                     Shot(pagedPlan, edits = PlanEdits(changes = mapOf(change.id to EditorChange(change))), state = {
                         SlotState(position = 1).apply { result = SlotResult(SlotItem.FitLessons(pagedPlan.fitOffer!!), change) }
                     }),
+                "plan-slot-exam-choice" to Shot(oneLanguage, summary = exam),
+                "plan-slot-exam-modules" to Shot(twoModules, summary = exam),
+                "plan-slot-exam-modules-saving" to
+                    Shot(twoModules, summary = exam, edits = PlanEdits(pending = setOf(PlanPart.ExamChoices))),
                 "plan-slot-time-left" to Shot(timeLeft),
                 "plan-slot-past-date" to Shot(pastDate),
                 "plan-slot-past-date-exam" to Shot(pastDate, summary = exam),
@@ -828,6 +834,16 @@ class PlanScreenshots {
         val examAreas = "[${area("Administrative law")},${area("Constitutional law")},${area("Portuguese")},${area("Logical reasoning")}]"
         val examFocusPage = PlanPageState(exam.goals.first(), coveragePlan(kind = "exam", areas = examAreas).withFocusTest(CHECKED), exam)
         val found = TimeToCoverState.Answered(planAdviceRevision(goalPlan), timeToCover(recommended = 75, fittingDate = "2027-04-18"))
+        val language = learnerSummary(kind = "language", title = "Spanish")
+        val writingOff =
+            plan(
+                """"steering":{"difficultyBias":"standard","lessonsStudied":0,"practiceBias":"balanced","skippedActivities":["writing"]}""",
+            )
+        val activities = PlanPageState(language.goals.first(), writingOff, language)
+        val modulesFull = plan(EDITOR_CHOICES.replace(""""subjects":["Biología"]""", """"subjects":["Biología","Química"]"""))
+        val examChoices = PlanPageState(exam.goals.first(), modulesFull, exam)
+        val writingBack = mapOf(PlanPart.Activities to listOf<PlanOp>(PlanOp.RestoreActivities(listOf("writing"))))
+        val modulesSaving = mapOf(PlanPart.ExamChoices to listOf<PlanOp>(PlanOp.ExamChoice("Módulos", listOf("Biología", "Química"))))
 
         fun preview(
             operations: List<PlanOp>,
@@ -861,6 +877,17 @@ class PlanScreenshots {
                 "plan-coverage-exam" to { PlanScheduleSection(examPage, PlanEdits(), EditorDrafts()) },
                 "plan-date-study-everything" to { PlanDateSection(goal, PlanEdits(), EditorDrafts()) },
                 "plan-sheet-focus" to { ChooseFocusBody(goal, PlanEdits(), onFocusTest = {}, onDone = {}) },
+                "plan-sheet-focus-saving" to {
+                    ChooseFocusBody(goal, PlanEdits(pending = setOf(PlanPart.Focus)), onFocusTest = {}, onDone = {})
+                },
+                "plan-exam-choices" to { PlanExamChoices(examChoices, PlanEdits()) },
+                "plan-exam-choices-saving" to {
+                    PlanExamChoices(examChoices, PlanEdits(pending = setOf(PlanPart.ExamChoices), asked = modulesSaving))
+                },
+                "plan-activities" to { PlanActivities(activities, PlanEdits()) },
+                "plan-activities-saving" to {
+                    PlanActivities(activities, PlanEdits(pending = setOf(PlanPart.Activities), asked = writingBack))
+                },
                 "plan-sheet-study-everything" to { StudyEverythingBody(goal, PlanEdits(), everything, onPreview = {}, onDone = {}) },
                 "plan-sheet-study-everything-checking" to {
                     StudyEverythingBody(
@@ -1292,13 +1319,18 @@ class PlanScreenshots {
               "tasks":[{"key":"short","name":"30-line question","max":30,"range":{"low":12,"high":14}},
                {"key":"long","name":"60-line question","max":70,"range":{"low":29,"high":33}}]}]}"""
 
+        const val LANGUAGE_CHOICE =
+            """{"group":"Língua estrangeira","leftOut":{"examPoints":null,"examQuestions":180,"name":"Língua estrangeira","points":null,"questions":5},
+             "options":[{"name":"Inglês","shortName":null},{"name":"Espanhol","shortName":null}],"subjects":[],"take":1,"required":false}"""
+
+        const val MODULES_CHOICE =
+            """{"group":"Módulos","leftOut":{"examPoints":null,"examQuestions":null,"name":"Módulos","points":null,"questions":48},
+             "options":[{"name":"Biología","shortName":null},{"name":"Química","shortName":null},{"name":"Derecho","shortName":null},
+              {"name":"Premedicina","shortName":null}],"subjects":["Biología"],"take":2,"required":false}"""
+
         val EDITOR_CHOICES =
             """
-            "examChoices":[{"group":"Língua estrangeira","leftOut":{"examPoints":null,"examQuestions":180,"name":"Língua estrangeira","points":null,"questions":5},"options":[{"name":"Inglês","shortName":null},
-             {"name":"Espanhol","shortName":null}],"subjects":[],"take":1,"required":false},
-             {"group":"Módulos","leftOut":{"examPoints":null,"examQuestions":null,"name":"Módulos","points":null,"questions":48},
-              "options":[{"name":"Biología","shortName":null},{"name":"Química","shortName":null},{"name":"Derecho","shortName":null},
-               {"name":"Premedicina","shortName":null}],"subjects":["Biología"],"take":2,"required":false}],
+            "examChoices":[$LANGUAGE_CHOICE,$MODULES_CHOICE],
             "bases":{"daysLeft":12,"knownCount":1,"items":[
              {"area":"Matemática","choice":"essential","choices":["deep","essential","quick","skip"],
               "minutes":{"deep":120,"essential":40,"quick":10},"name":"Frações","neededFor":["Probabilidade"],

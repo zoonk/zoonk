@@ -8,6 +8,7 @@ import { challengeFixTask } from "./challenge-fix/task";
 import { challengeReviewTask } from "./challenge-review/task";
 import { changingFactsTask } from "./changing-facts/task";
 import { checkCitedFactsTask } from "./check-cited-facts/task";
+import { checkClipEndingTask } from "./check-clip-ending/task";
 import { checkExamReadingTask } from "./check-exam-reading/task";
 import { checkLevelTestQuestionsTask } from "./check-level-test-questions/task";
 import { checkRecallOverlapTask } from "./check-recall-overlap/task";
@@ -265,6 +266,7 @@ export const TASK_GROUPS: readonly { name: string; tasks: readonly RegisteredTas
       languageAudioTask,
       wordIpaTask,
       checkWordPronunciationTask,
+      checkClipEndingTask,
       conversationScenarioTask,
       speakingMockScenarioTask,
       examSpeakingCardTask,

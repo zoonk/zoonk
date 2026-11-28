@@ -64,6 +64,7 @@ const blueprintSubjectSchema = z.object({
   group: z.string().nullable().optional(),
   matrix: z.array(z.string()).optional(),
   name: z.string(),
+  otherGroups: z.array(z.string().min(1)).min(1).optional(),
   partOf: z.string().nullable().optional(),
   questions: z.number().int().nullable(),
   shortName: z.string().nullable().optional(),
@@ -125,6 +126,8 @@ export const pointsMinimumSchema = z.object({
 
 export type PointsMinimum = z.infer<typeof pointsMinimumSchema>;
 
+const PART_AS_WRITTEN = "as a subject's `group`, `otherGroups` or `name` writes";
+
 const markingRowSchema = z.object({
   citation: citationSchema,
   format: z
@@ -135,8 +138,7 @@ const markingRowSchema = z.object({
     .string()
     .nullable()
     .meta({
-      description:
-        "The test or block it scores, as a subject's `group` or `name` writes it; null for the whole exam",
+      description: `The test or block it scores, ${PART_AS_WRITTEN} it; null for the whole exam`,
     }),
   points: z.number().positive().meta({ description: "What a right answer earns" }),
   questions: z
@@ -171,9 +173,7 @@ const scoredPartSchema = z.object({
     .meta({
       description: "The least every candidate must reach in it; null when none applies to all",
     }),
-  name: z
-    .string()
-    .meta({ description: "The test or block, as a subject's `group` or `name` writes it" }),
+  name: z.string().meta({ description: `The test or block, ${PART_AS_WRITTEN} it` }),
   qualifying: z
     .boolean()
     .meta({ description: "It only has to reach its minimum and doesn't count toward the result" }),
@@ -190,9 +190,7 @@ const finalShareSchema = z.object({
   parts: z
     .array(z.string())
     .min(1)
-    .meta({
-      description: "The tests or blocks it adds, as a subject's `group` or `name` writes them",
-    }),
+    .meta({ description: `The tests or blocks it adds, ${PART_AS_WRITTEN} them` }),
   share: z
     .number()
     .positive()

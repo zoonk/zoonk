@@ -38,6 +38,7 @@ import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.controlInk
 import com.zoonk.android.ui.components.pickedBorder
+import com.zoonk.android.ui.theme.disabledEmphasis
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.FocusTestSummary
 import com.zoonk.api.models.Plan
@@ -135,8 +136,8 @@ internal fun ColumnScope.ChooseFocusBody(
                     AreaChoice(
                         choice = choice,
                         checked = name in chosen,
+                        enabled = !pending,
                         onCheckedChange = { checked ->
-                            if (pending) return@AreaChoice
                             saved = null
                             chosen = if (checked) chosen + name else chosen - name
                         },
@@ -150,7 +151,7 @@ internal fun ColumnScope.ChooseFocusBody(
                 onClick = ::save,
                 modifier = Modifier.fillMaxWidth(),
                 enabled = chosen.toSet() != current.toSet() && !unchanged,
-            ) { Text(stringResource(if (removes) R.string.plan_remove_focus else R.string.plan_focus_on_these)) }
+            ) { Text(stringResource(if (removes) R.string.plan_remove_focus else R.string.plan_save)) }
             if (save != null && edits.sheetFailed(PlanPart.Focus, save)) SaveFailedText()
         },
     )
@@ -209,14 +210,17 @@ private fun FocusTestLink(
 private fun AreaChoice(
     choice: FocusChoice,
     checked: Boolean,
+    enabled: Boolean,
     onCheckedChange: (Boolean) -> Unit,
 ) {
     val colors = MaterialTheme.colorScheme
+    val ink = { color: Color -> if (enabled) color else color.disabledEmphasis() }
 
     Surface(
         checked = checked,
         onCheckedChange = onCheckedChange,
         modifier = Modifier.fillMaxWidth().semantics { role = Role.Checkbox },
+        enabled = enabled,
         shape = MaterialTheme.shapes.medium,
         color = if (checked) MaterialTheme.zoonk.selectedTint else Color.Transparent,
         border = if (checked) pickedBorder() else BorderStroke(1.dp, colors.outline),
@@ -226,23 +230,28 @@ private fun AreaChoice(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(Modifier.weight(1f)) {
-                Text(choice.area.name, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
+                Text(
+                    choice.area.name,
+                    color = ink(colors.onSurface),
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Medium,
+                )
                 if (choice.parts.isNotEmpty()) {
                     Text(
                         stringResource(R.string.plan_focus_includes, joinList(choice.parts)),
                         style = MaterialTheme.typography.bodyMedium,
-                        color = colors.onSurfaceVariant,
+                        color = ink(colors.onSurfaceVariant),
                     )
                 }
                 choice.area.focusPart?.takeIf { checked }?.let {
                     Text(
                         stringResource(R.string.plan_focus_only, it),
                         style = MaterialTheme.typography.bodyMedium,
-                        color = colors.onSurfaceVariant,
+                        color = ink(colors.onSurfaceVariant),
                     )
                 }
             }
-            Checkbox(checked = checked, onCheckedChange = null, modifier = Modifier.controlInk())
+            Checkbox(checked = checked, onCheckedChange = null, modifier = Modifier.controlInk(), enabled = enabled)
         }
     }
 }

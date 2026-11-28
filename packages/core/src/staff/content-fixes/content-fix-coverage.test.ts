@@ -42,6 +42,7 @@ const NOT_FIXED: Record<string, string> = {
   Attempt: ONE_LEARNERS,
   Certificate: ONE_LEARNERS,
   "Chapter: creating, deleting or merging": "Structure fixes rearrange existing rows only.",
+  ClipEndingAudit: BOOKKEEPING,
   ContentFix: "The fixes themselves; revert proposes an inverse fix.",
   ContentReviewFlag: BOOKKEEPING,
   "Course: creating, deleting or merging": "Structure fixes rearrange existing rows only.",

@@ -2,7 +2,6 @@ package com.zoonk.android.feature.plan
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -15,16 +14,16 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.onboarding.CheckList
+import com.zoonk.android.feature.onboarding.Choice
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.MenuSelect
-import com.zoonk.android.ui.components.SelectionChip
 import com.zoonk.android.ui.components.Suggestion
 import com.zoonk.android.ui.components.SuggestionAction
 import com.zoonk.android.ui.components.SuggestionDescription
@@ -57,20 +56,21 @@ private fun ExamChoiceOptions(
     edits: PlanEdits,
 ) {
     val pending = edits.isPending(PlanPart.ExamChoices)
+    val asked = edits.askedExamChoice(choice.group)
 
     if (choice.take > 1) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             SectionLabel(choice.group)
             ExamPickLimit(choice.take)
-            ExamChoicePicks(choice, saving = false, enabled = !pending, onSave = { edits.chooseExamOption(choice.group, it, null) })
+            ExamChoicePicks(
+                choice,
+                saving = asked != null,
+                enabled = !pending || asked != null,
+                onSave = { edits.chooseExamOption(choice.group, it, null) },
+            )
         }
     } else {
-        val shown =
-            edits
-                .asked(PlanPart.ExamChoices)
-                .filterIsInstance<PlanOp.ExamChoice>()
-                .firstOrNull { it.group == choice.group }
-                ?.subjects ?: choice.subjects
+        val shown = asked?.subjects ?: choice.subjects
         MenuSelect(
             label = choice.group,
             options = choice.options,
@@ -78,6 +78,7 @@ private fun ExamChoiceOptions(
             optionLabel = { it.shortName ?: it.name },
             onPick = { if (it.name !in shown) edits.chooseExamOption(choice.group, listOf(it.name), null) },
             enabled = !pending,
+            placeholder = stringResource(R.string.plan_exam_choice_not_set),
         )
     }
 }
@@ -100,23 +101,17 @@ fun ExamChoicePicks(
     var draft by rememberSaveable(choice.subjects) { mutableStateOf(choice.subjects) }
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            choice.options.forEach { option ->
-                val picked = option.name in draft
-                SelectionChip(
-                    text = option.shortName ?: option.name,
-                    selected = picked,
-                    onClick = { draft = choice.toggled(draft, option.name) },
-                    role = Role.Checkbox,
-                    enabled = enabled && !saving && (picked || !choice.isFull(draft)),
-                )
-            }
-        }
+        CheckList(
+            choices = choice.options.map { Choice(it.name, it.shortName ?: it.name) },
+            value = draft,
+            label = choice.group,
+            onToggle = { draft = choice.toggled(draft, it) },
+            max = choice.take.toInt(),
+            readOnly = !enabled || saving,
+        )
         save({ onSave(draft) }, enabled && choice.canSave(draft))
     }
 }
-
-internal fun ExamChoice.isFull(picked: List<String>) = picked.size >= take
 
 /** [picked] with [option] ticked or unticked, in the notice's order. */
 fun ExamChoice.toggled(
@@ -125,7 +120,7 @@ fun ExamChoice.toggled(
 ): List<String> =
     when {
         option in picked -> picked - option
-        isFull(picked) -> picked
+        picked.size >= take -> picked
         else -> options.map { it.name }.filter { it in picked || it == option }
     }
 
@@ -221,6 +216,7 @@ internal fun ExamChoiceSuggestion(
     layout: SuggestionLayout,
     failed: Boolean,
     pending: Boolean,
+    saving: Boolean,
     answer: SlotAnswer?,
     onChoose: (subjects: List<String>) -> Unit,
     modifier: Modifier = Modifier,
@@ -245,7 +241,7 @@ internal fun ExamChoiceSuggestion(
         }
         ExamChoiceDescription(choice)
         if (choice.take > 1) {
-            ExamChoicePicks(choice, saving = false, enabled = !pending, onSave = onChoose)
+            ExamChoicePicks(choice, saving, onChoose, enabled = !pending || saving)
         } else {
             ExamChoiceButtons(choice, enabled = !pending, onChoose = onChoose)
         }

@@ -59,6 +59,7 @@ function discipline({
     group: null,
     matrix: [],
     name,
+    otherGroups: [],
     partOf: null,
     passages: choiceGroup ? [...passages, { document: 1, passage: CHOICE_LINE }] : passages,
     questions: 110,

@@ -137,6 +137,8 @@ const extractionSchema = z.object({
       /** When the topics are a skills matrix's paired contents (ENEM's); empty otherwise. */
       matrix: z.array(z.string()),
       name: z.string(),
+      /** The other parts that test it too, when the notice tests it in more than one; else empty. */
+      otherGroups: z.array(z.string()),
       /** The subject whose question count includes this one's. */
       partOf: z.string().nullable(),
       questions: z.number().int().nullable(),

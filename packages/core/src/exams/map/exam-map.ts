@@ -1,5 +1,6 @@
 import { type MasteryState } from "@zoonk/db";
 import { type ExamStructure, type TopicFrequency } from "../../library/exams/blueprint-contract";
+import { getGroupLabel } from "../../library/exams/group-label";
 import {
   getPastQuestionsSource,
   getSubjectQuestions,
@@ -136,7 +137,7 @@ export function buildExamMap({
 
       return {
         frequency: top,
-        group: subject.group ?? null,
+        group: getGroupLabel({ structure, subject }),
         level: toLevel({ skills, subject: subject.name }),
         name: subject.name,
         questions: getSubjectQuestions({ structure, subject }),

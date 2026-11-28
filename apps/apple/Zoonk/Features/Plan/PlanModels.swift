@@ -4,6 +4,8 @@ import SwiftUI
 /// Every date is a calendar day.
 struct GoalPlan: Decodable, Equatable, Sendable {
   struct Area: Decodable, Equatable, Identifiable, Sendable {
+    /// The part of a focused area the learner named; nil when it's focused whole.
+    let focusPart: String?
     let focused: Bool
     let name: String
     /// A part of another area, listed under it.

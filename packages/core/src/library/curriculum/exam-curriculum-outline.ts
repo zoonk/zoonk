@@ -8,6 +8,7 @@ import {
   examStructureSchema,
   topicFrequencySchema,
 } from "../exams/blueprint-contract";
+import { getGroupLabel } from "../exams/group-label";
 import { getSubjectQuestions } from "../exams/subject-questions";
 import { listTopicLevels } from "../exams/topic-frequency";
 
@@ -46,7 +47,7 @@ export function toExamOutline(
         return {
           choiceGroup: subject.choiceGroup ?? null,
           ...takenOf(subject.choiceGroup),
-          group: subject.group ?? null,
+          group: getGroupLabel({ structure, subject }),
           name: subject.name,
           questions: getSubjectQuestions({ structure, subject }),
           shortName: subject.shortName ?? null,
