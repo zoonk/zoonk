@@ -522,7 +522,7 @@
 
         ListRow(Text(verbatim: "Unit 2 · Porcentagem")) {
         } trailing: {
-          DisclosureChevron(pointsDown: true)
+          DisclosureChevron(foldIsOpen: true)
         }
 
         NavigationLink {
