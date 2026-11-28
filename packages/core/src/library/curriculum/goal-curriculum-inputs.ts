@@ -13,7 +13,7 @@ import { usesTools } from "../../plans/_utils/plan-tools";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { type OnboardingQuestion } from "../../view-models/onboarding/onboarding-contract";
-import { getMissingQuestions } from "../../view-models/onboarding/onboarding-steps";
+import { getMissingQuestions, isClassTest } from "../../view-models/onboarding/onboarding-steps";
 import { getContentCountryScope } from "../content-country";
 import { type CandidateExam, toGoalCandidateExams } from "../exams/candidate-exams";
 import { GOAL_PRODUCT_SELECT, type GoalProduct, toGoalProduct } from "../products/goal-product";
@@ -66,6 +66,8 @@ export type GoalCurriculumInputs = {
   blueprintReference: { text: string; title: string } | null;
   references: { text: string; title: string }[];
   hasMaterial: boolean;
+  /** A test the learner's own teacher or course sets, which only their class describes. */
+  classTest: boolean;
   hasPlanGraph: boolean;
   usesTools: boolean;
   unansweredQuestions: OnboardingQuestion[];
@@ -259,6 +261,7 @@ export async function loadGoalCurriculumInputs(
       targetLanguage: goal.targetLanguage ?? undefined,
     },
     hasMaterial: material.length > 0,
+    classTest: goal.kind === "exam" && isClassTest(details),
     hasPlanGraph: parsePlanGraph(goal.plan?.graph).skills.length > 0,
     isGuest: goal.user.isAnonymous,
     knownSubjects: getKnownSubjects(goal),
