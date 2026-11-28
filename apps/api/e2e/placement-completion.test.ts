@@ -95,7 +95,7 @@ test("a finished placement returns an Undo ID accepted by Plan", async () => {
       lessonsSkipped: 1,
       result: {
         changeId: expect.any(String),
-        course: { lessons: 2 },
+        course: { chapters: [{ done: 0, lessons: 2, skipped: 1, start: true }], lessons: 2 },
         nextLesson: { title: expect.any(String) },
       },
     });

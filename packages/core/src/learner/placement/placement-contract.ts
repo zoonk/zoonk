@@ -57,6 +57,7 @@ export const placementResultSchema = z
       .object({
         chapters: z.array(
           z.object({
+            done: z.int().nonnegative(),
             lessons: z.int().nonnegative(),
             skipped: z.int().nonnegative(),
             start: z.boolean(),

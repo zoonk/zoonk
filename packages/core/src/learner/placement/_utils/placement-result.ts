@@ -2,8 +2,9 @@ import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
 import { parsePlanChangePayload } from "../../../plans/_utils/plan-change-payload";
 import { readTestOutChange } from "../../../plans/_utils/read-test-out-change";
-import { countItemLessons } from "../../../plans/_utils/stand-in-lessons";
+import { countLessons } from "../../../plans/_utils/stand-in-lessons";
 import { placementPartReceipt } from "../../../plans/_utils/test-out-receipt";
+import { isWorkFinished } from "../../../plans/_utils/work-progress";
 import { type PlacementRecord } from "./placement-attempt-record";
 
 export async function readPlacementNextLesson(goalId: string, tx: TransactionClient) {
@@ -74,16 +75,20 @@ export async function readPlacementCourse(
       rows,
       (row) => row.chapterId ?? row.lesson?.homeChapterId ?? row.skillId,
     ).values(),
-  ].map((group) => ({
-    lessons: group.reduce((total, row) => total + countItemLessons(row), 0),
-    skipped: group.reduce(
-      (total, row) =>
-        total +
-        (row.status === "testedOut" && startedPastItems.has(row.id) ? countItemLessons(row) : 0),
-      0,
-    ),
-    start: next !== undefined && group.includes(next),
-  }));
+  ].map((group) => {
+    const finished = group.filter((row) => isWorkFinished(row.status));
+
+    const skipped = countLessons(
+      finished.filter((row) => row.status === "testedOut" && startedPastItems.has(row.id)),
+    );
+
+    return {
+      done: countLessons(finished) - skipped,
+      lessons: countLessons(group),
+      skipped,
+      start: next !== undefined && group.includes(next),
+    };
+  });
 
   return { chapters, lessons: chapters.reduce((total, chapter) => total + chapter.lessons, 0) };
 }

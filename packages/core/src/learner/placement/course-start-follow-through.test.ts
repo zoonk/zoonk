@@ -33,9 +33,9 @@ import { listKnownSkills } from "../_utils/skill-claims";
 import { finishGoalPlacement } from "./finish-goal-placement";
 import { getGoalPlacement } from "./get-goal-placement";
 
-async function setup() {
+async function setup(phases = [5]) {
   const user = await userFixture();
-  const fixture = await learnerGoalFixture({ itemsPerSkill: 0, phases: [5], userId: user.id });
+  const fixture = await learnerGoalFixture({ itemsPerSkill: 0, phases, userId: user.id });
   mockSession(user.id);
   const goalId = fixture.goal.id;
 
@@ -156,6 +156,48 @@ describe("course placement after completion", () => {
           nextLesson: { id: planItems[4]!.lessonId },
         },
       },
+    });
+  });
+
+  it("separates completed lessons from this start when finishing and reopening the result", async () => {
+    const { finish, goalId, planItems, user } = await setup([2, 5]);
+
+    const study = (index: number) =>
+      prisma.$transaction((tx) =>
+        completeLessonPlanItems(tx, {
+          lessonId: planItems[index]!.lessonId!,
+          now: new Date(),
+          userId: user.id,
+        }),
+      );
+
+    await study(0);
+
+    await prisma.planItem.update({
+      data: { completedAt: new Date(), status: "testedOut" },
+      where: { id: planItems[1]!.id },
+    });
+
+    const firstChapter = { done: 2, lessons: 2, skipped: 0, start: false };
+
+    const result = (done: number, skipped: number) => ({
+      course: { chapters: [firstChapter, { done, lessons: 5, skipped, start: true }], lessons: 7 },
+      lessonsSkipped: skipped,
+      nextLesson: { id: planItems[6]!.lessonId },
+    });
+
+    await expect(finish()).resolves.toMatchObject({
+      completion: { lessonsSkipped: 4, result: result(0, 4) },
+    });
+
+    await expect(getGoalPlacement({ goalId })).resolves.toMatchObject({
+      placement: { result: result(0, 4) },
+    });
+
+    await study(2);
+
+    await expect(getGoalPlacement({ goalId })).resolves.toMatchObject({
+      placement: { result: result(1, 3) },
     });
   });
 
