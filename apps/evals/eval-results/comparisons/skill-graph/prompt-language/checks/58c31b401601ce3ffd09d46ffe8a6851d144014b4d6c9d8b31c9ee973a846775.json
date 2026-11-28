@@ -1,0 +1,15 @@
+{
+  "caseId": "pt-biology-beginner-deep",
+  "costUsd": 0,
+  "criteria": [
+    "orderAndPrerequisites"
+  ],
+  "name": "code checks",
+  "passed": 7,
+  "problems": [
+    "\"Avaliar conservação e restauração ecológica\" sits at the end of a chain of 13 prerequisites; list only what a skill can't be learned without (at most 12 deep)."
+  ],
+  "run": 1,
+  "side": "challenger",
+  "total": 8
+}

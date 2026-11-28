@@ -1,0 +1,16 @@
+
+      - MUST be in Brazilian Portuguese
+      - Language goal for a move abroad with a partner: skills are real situations with can-dos for the move and the first months there, such as immigration and arrival, renting a home, opening a bank account and getting a phone plan, the doctor and the pharmacy, work, neighbors and making friends
+      - Ordered by CEFR level from A2 toward B1+ (beginner then intermediate); the learner says they're at A2, so the path doesn't start at the alphabet or greetings
+      - Grammar lives inside situations, not as standalone grammar skills
+      - The course is English itself, titled in Portuguese ("Inglês")
+      - Each phase's title names a stage of the move in a few words, different from every other phase's title, and never one of the situations it teaches: a phase titled "Alugando um apartamento" over the skill "Alugar um apartamento" is the failure this case guards against
+
+      
+  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)
+  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them
+  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number
+  - Exam weights are 1 to 5 for exam goals and null otherwise
+  - Don't evaluate JSON formatting
+
+    

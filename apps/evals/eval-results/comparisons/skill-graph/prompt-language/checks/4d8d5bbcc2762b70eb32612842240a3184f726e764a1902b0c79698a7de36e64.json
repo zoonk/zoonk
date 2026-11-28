@@ -1,0 +1,11 @@
+{
+  "caseId": "es-language-english-hotel",
+  "costUsd": 0,
+  "criteria": [],
+  "name": "code checks",
+  "passed": 8,
+  "problems": [],
+  "run": 2,
+  "side": "challenger",
+  "total": 8
+}

@@ -1,0 +1,15 @@
+
+      - MUST be in natural Korean in 해요체
+      - Language goal: skills are real situations with can-dos for a working holiday in Japan, such as arriving and the residence card, finding a share house, a part-time job interview, working a shift at a café or a convenience store, the bank and the phone plan, the doctor, and making friends
+      - Ordered by level from A1 (beginner), since the learner starts from zero: kana come first; grammar lives inside situations
+      - The course is Japanese itself, titled in Korean (for example "일본어")
+      - Skill names and milestones end in ~ㄹ 수 있어요 (계산할 수 있어요, 읽을 수 있어요), never as an order (~하세요, ~해 보세요) or a bare noun
+
+      
+  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)
+  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them
+  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number
+  - Exam weights are 1 to 5 for exam goals and null otherwise
+  - Don't evaluate JSON formatting
+
+    

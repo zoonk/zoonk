@@ -1,0 +1,1139 @@
+{
+  "courses": [
+    {
+      "countrySpecific": false,
+      "key": "japanese",
+      "levels": [
+        "beginner",
+        "intermediate"
+      ],
+      "title": "일본어"
+    }
+  ],
+  "estimatedHours": 180.2,
+  "phases": [
+    {
+      "estimatedHours": 37,
+      "milestone": "기본적인 대화를 나누고 일상에서 필요한 정보를 읽을 수 있어요.",
+      "title": "첫걸음을 떼는 시기"
+    },
+    {
+      "estimatedHours": 42.2,
+      "milestone": "혼자 이동하고 생활에 필요한 일을 처리할 수 있어요.",
+      "title": "혼자 생활하는 시기"
+    },
+    {
+      "estimatedHours": 51.6,
+      "milestone": "일자리를 찾고 직장에서 기본적인 소통을 할 수 있어요.",
+      "title": "일상과 일을 이어 가는 시기"
+    },
+    {
+      "estimatedHours": 49.4,
+      "milestone": "예상하지 못한 상황을 해결하고 일과 사회생활에서 의견을 주고받을 수 있어요.",
+      "title": "더 폭넓게 어울리는 시기"
+    }
+  ],
+  "skills": [
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "인사와 감사, 사과를 주고받으며 기본 발음과 말투를 익혀요.",
+      "estimatedLessons": 20,
+      "examWeight": null,
+      "key": "greetings",
+      "level": "beginner",
+      "name": "인사와 감사를 전할 수 있어요",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": []
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "이름과 출신, 간단한 계획을 말하고 상대방에게도 물어요.",
+      "estimatedLessons": 24,
+      "examWeight": null,
+      "key": "self-introduction",
+      "level": "beginner",
+      "name": "자기소개를 할 수 있어요",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": []
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "가게와 역의 짧은 표기를 읽으며 히라가나의 소리와 표기를 익혀요.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "hiragana-signs",
+      "level": "beginner",
+      "name": "히라가나로 된 표기를 읽을 수 있어요",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": []
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "메뉴와 상품명에 자주 쓰이는 외래어를 읽으며 가타카나를 익혀요.",
+      "estimatedLessons": 26,
+      "examWeight": null,
+      "key": "katakana-products",
+      "level": "beginner",
+      "name": "가타카나 상품명을 읽을 수 있어요",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": []
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "이름과 연락처를 묻는 간단한 서식을 읽고 필요한 내용을 적어요.",
+      "estimatedLessons": 22,
+      "examWeight": null,
+      "key": "basic-forms",
+      "level": "beginner",
+      "name": "기본 인적 사항을 적을 수 있어요",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "hiragana-signs",
+        "katakana-products"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "못 알아들은 말을 다시 말해 달라고 하거나 천천히 말해 달라고 요청해요.",
+      "estimatedLessons": 18,
+      "examWeight": null,
+      "key": "ask-to-repeat",
+      "level": "beginner",
+      "name": "다시 말해 달라고 요청할 수 있어요",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": []
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "가격과 수량을 묻고 답하며 기본 숫자와 세는 표현을 사용해요.",
+      "estimatedLessons": 24,
+      "examWeight": null,
+      "key": "prices-and-quantities",
+      "level": "beginner",
+      "name": "가격과 수량을 물을 수 있어요",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": []
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "시각과 날짜를 묻고 답하며 영업 시간이나 약속 시간을 확인해요.",
+      "estimatedLessons": 24,
+      "examWeight": null,
+      "key": "time-and-dates",
+      "level": "beginner",
+      "name": "시간과 날짜를 확인할 수 있어요",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": []
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "간단한 메뉴를 읽고 음식과 음료를 주문하며 계산을 요청해요.",
+      "estimatedLessons": 26,
+      "examWeight": null,
+      "key": "order-food",
+      "level": "beginner",
+      "name": "음식을 주문하고 계산할 수 있어요",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "prices-and-quantities"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "필요한 물건을 찾고 봉투와 결제 방법에 관한 질문에 답해요.",
+      "estimatedLessons": 24,
+      "examWeight": null,
+      "key": "shop-for-essentials",
+      "level": "beginner",
+      "name": "생활용품을 살 수 있어요",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "prices-and-quantities"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "화장실이나 출구처럼 필요한 장소를 묻고 짧은 안내를 이해해요.",
+      "estimatedLessons": 20,
+      "examWeight": null,
+      "key": "ask-location",
+      "level": "beginner",
+      "name": "필요한 장소를 물을 수 있어요",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": []
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "역 이름과 목적지를 확인하고 표를 사거나 교통카드 충전을 요청해요.",
+      "estimatedLessons": 24,
+      "examWeight": null,
+      "key": "train-tickets",
+      "level": "beginner",
+      "name": "승차권을 사고 목적지를 확인할 수 있어요",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "prices-and-quantities"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "출입구와 방향, 금지 사항 등 생활 속에서 자주 보는 한자 표지를 이해해요.",
+      "estimatedLessons": 24,
+      "examWeight": null,
+      "key": "common-signs",
+      "level": "beginner",
+      "name": "생활 표지판을 읽을 수 있어요",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "hiragana-signs"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "가는 곳과 하는 일, 하루 일정에 대해 짧게 말하고 물어요.",
+      "estimatedLessons": 22,
+      "examWeight": null,
+      "key": "daily-routine",
+      "level": "beginner",
+      "name": "하루 일과를 이야기할 수 있어요",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "time-and-dates"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "좋아하는 음식과 취미를 말하고 상대방의 취향을 물어요.",
+      "estimatedLessons": 20,
+      "examWeight": null,
+      "key": "likes-and-hobbies",
+      "level": "beginner",
+      "name": "취향과 취미를 나눌 수 있어요",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": []
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "장소와 시간을 정하고 간단한 초대에 수락이나 거절로 답해요.",
+      "estimatedLessons": 22,
+      "examWeight": null,
+      "key": "simple-plans",
+      "level": "beginner",
+      "name": "만날 약속을 잡을 수 있어요",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "time-and-dates"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "역무원이나 행인에게 길을 묻고 갈아타는 곳과 이동 방향을 확인해요.",
+      "estimatedLessons": 26,
+      "examWeight": null,
+      "key": "directions-and-transfers",
+      "level": "beginner",
+      "name": "길과 환승 방법을 물을 수 있어요",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "ask-location",
+        "train-tickets"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "운행 안내와 지연 안내에서 시간과 변경된 이동 방법을 찾아요.",
+      "estimatedLessons": 24,
+      "examWeight": null,
+      "key": "transport-disruptions",
+      "level": "beginner",
+      "name": "교통 지연 안내를 이해할 수 있어요",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "directions-and-transfers"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "체크인과 체크아웃을 하고 예약 내용이나 시설 이용을 확인해요.",
+      "estimatedLessons": 24,
+      "examWeight": null,
+      "key": "temporary-accommodation",
+      "level": "beginner",
+      "name": "숙소에서 예약을 확인할 수 있어요",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "time-and-dates"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "위치와 비용, 입주 가능일을 묻고 방을 보러 갈 약속을 잡아요.",
+      "estimatedLessons": 28,
+      "examWeight": null,
+      "key": "find-housing",
+      "level": "beginner",
+      "name": "방을 구하고 방문을 예약할 수 있어요",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "simple-plans"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "공용 공간 사용과 청소, 소음에 관한 기본 규칙을 묻고 이해해요.",
+      "estimatedLessons": 24,
+      "examWeight": null,
+      "key": "shared-housing",
+      "level": "beginner",
+      "name": "공동생활 규칙을 확인할 수 있어요",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": []
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "분리배출 안내에서 쓰레기 종류와 배출 요일을 찾아 확인해요.",
+      "estimatedLessons": 22,
+      "examWeight": null,
+      "key": "waste-disposal",
+      "level": "beginner",
+      "name": "쓰레기 배출 안내를 이해할 수 있어요",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "time-and-dates",
+        "common-signs"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "휴대전화 요금제의 데이터와 비용을 묻고 가입에 필요한 정보를 제공해요.",
+      "estimatedLessons": 26,
+      "examWeight": null,
+      "key": "phone-plan",
+      "level": "beginner",
+      "name": "휴대전화 요금제를 신청할 수 있어요",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "basic-forms"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "창구에서 계좌 개설을 요청하고 필요한 서류와 절차를 물어요.",
+      "estimatedLessons": 26,
+      "examWeight": null,
+      "key": "bank-account",
+      "level": "beginner",
+      "name": "은행 계좌 개설을 문의할 수 있어요",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "basic-forms"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "택배 발송과 수령을 요청하고 주소와 배송 시간을 확인해요.",
+      "estimatedLessons": 24,
+      "examWeight": null,
+      "key": "send-and-receive-parcels",
+      "level": "beginner",
+      "name": "택배를 보내고 받을 수 있어요",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "basic-forms",
+        "time-and-dates"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "공공기관 창구에서 방문 목적을 말하고 필요한 서류를 물어요.",
+      "estimatedLessons": 28,
+      "examWeight": null,
+      "key": "public-office-visit",
+      "level": "beginner",
+      "name": "행정 창구에서 도움을 요청할 수 있어요",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "basic-forms"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "증상과 시작 시점을 말하고 진료 접수와 예약에 필요한 질문에 답해요.",
+      "estimatedLessons": 28,
+      "examWeight": null,
+      "key": "medical-visit",
+      "level": "beginner",
+      "name": "병원에서 증상을 말할 수 있어요",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "time-and-dates",
+        "basic-forms"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "약국에서 증상을 설명하고 복용 횟수와 주의사항을 확인해요.",
+      "estimatedLessons": 24,
+      "examWeight": null,
+      "key": "pharmacy",
+      "level": "beginner",
+      "name": "약국에서 약을 문의할 수 있어요",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "medical-visit"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "알레르기나 먹지 못하는 재료를 말하고 음식에 들어 있는지 확인해요.",
+      "estimatedLessons": 22,
+      "examWeight": null,
+      "key": "food-restrictions",
+      "level": "beginner",
+      "name": "음식 재료와 알레르기를 확인할 수 있어요",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "order-food"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "상품의 크기나 색상을 묻고 교환이나 환불 가능 여부를 확인해요.",
+      "estimatedLessons": 24,
+      "examWeight": null,
+      "key": "returns-and-exchanges",
+      "level": "beginner",
+      "name": "상품 교환이나 환불을 요청할 수 있어요",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "shop-for-essentials"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "분실한 물건의 생김새와 마지막으로 본 장소를 설명하고 도움을 요청해요.",
+      "estimatedLessons": 24,
+      "examWeight": null,
+      "key": "lost-property",
+      "level": "beginner",
+      "name": "분실물을 신고할 수 있어요",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "ask-location"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "위급한 상황에서 위치와 필요한 도움을 짧게 알리고 안내를 따라요.",
+      "estimatedLessons": 26,
+      "examWeight": null,
+      "key": "emergency-help",
+      "level": "beginner",
+      "name": "긴급 상황에서 도움을 요청할 수 있어요",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "ask-location"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "친구에게 안부와 근황을 묻고 짧은 메시지로 답해요.",
+      "estimatedLessons": 22,
+      "examWeight": null,
+      "key": "everyday-messages",
+      "level": "beginner",
+      "name": "일상 메시지를 주고받을 수 있어요",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "hiragana-signs"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "모집 공고에서 업무 내용과 근무 시간, 지원 조건을 찾아요.",
+      "estimatedLessons": 28,
+      "examWeight": null,
+      "key": "read-job-postings",
+      "level": "intermediate",
+      "name": "구인 공고를 읽을 수 있어요",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "time-and-dates"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "경력과 가능한 근무 시간을 정리하고 지원서의 질문에 답해요.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "job-application",
+      "level": "intermediate",
+      "name": "구직 지원서를 작성할 수 있어요",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "basic-forms",
+        "read-job-postings"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "전화나 메시지로 지원 의사를 밝히고 면접 일정과 준비물을 확인해요.",
+      "estimatedLessons": 26,
+      "examWeight": null,
+      "key": "contact-employer",
+      "level": "intermediate",
+      "name": "고용주에게 지원 의사를 전할 수 있어요",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "read-job-postings"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "자신의 경험과 지원 이유, 가능한 근무 조건을 질문에 맞게 설명해요.",
+      "estimatedLessons": 32,
+      "examWeight": null,
+      "key": "job-interview",
+      "level": "intermediate",
+      "name": "채용 면접에서 답할 수 있어요",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "self-introduction",
+        "job-application"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "시급과 근무 시간, 휴식과 지급일을 묻고 설명을 확인해요.",
+      "estimatedLessons": 28,
+      "examWeight": null,
+      "key": "employment-conditions",
+      "level": "intermediate",
+      "name": "근무 조건을 확인할 수 있어요",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "read-job-postings"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "첫 출근 때 동료에게 인사하고 자신의 역할과 업무 장소를 확인해요.",
+      "estimatedLessons": 24,
+      "examWeight": null,
+      "key": "first-day-at-work",
+      "level": "beginner",
+      "name": "첫 출근에 인사하고 역할을 확인할 수 있어요",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "self-introduction"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "업무 지시의 순서와 기한을 이해하고 모르는 부분을 되물어요.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "understand-work-instructions",
+      "level": "intermediate",
+      "name": "업무 지시를 이해하고 확인할 수 있어요",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "ask-to-repeat"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "완료한 일과 진행 중인 일을 알리고 다음 할 일을 물어요.",
+      "estimatedLessons": 26,
+      "examWeight": null,
+      "key": "report-work-progress",
+      "level": "intermediate",
+      "name": "업무 진행 상황을 보고할 수 있어요",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "understand-work-instructions"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "근무표를 확인하고 교대나 휴무를 정중하게 요청해요.",
+      "estimatedLessons": 26,
+      "examWeight": null,
+      "key": "shift-changes",
+      "level": "intermediate",
+      "name": "근무 일정 변경을 요청할 수 있어요",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "time-and-dates"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "지각이나 결근 사유를 알리고 언제 출근할 수 있는지 전달해요.",
+      "estimatedLessons": 24,
+      "examWeight": null,
+      "key": "late-or-absent",
+      "level": "beginner",
+      "name": "지각이나 결근을 알릴 수 있어요",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "time-and-dates"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "손님을 맞이하고 원하는 것을 물으며 적절한 사람에게 안내해요.",
+      "estimatedLessons": 28,
+      "examWeight": null,
+      "key": "welcome-customers",
+      "level": "intermediate",
+      "name": "손님을 맞이하고 안내할 수 있어요",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "greetings",
+        "ask-location"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "손님의 주문과 수량을 듣고 되짚어 확인한 뒤 전달해요.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "take-customer-orders",
+      "level": "intermediate",
+      "name": "손님의 주문을 받고 확인할 수 있어요",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "order-food",
+        "welcome-customers"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "가격과 결제 방법을 안내하고 영수증이나 봉투에 관한 요청을 처리해요.",
+      "estimatedLessons": 26,
+      "examWeight": null,
+      "key": "handle-checkout",
+      "level": "intermediate",
+      "name": "계산대에서 손님을 응대할 수 있어요",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "shop-for-essentials",
+        "welcome-customers"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "전화로 용건과 연락처를 듣고 담당자에게 내용을 전달해요.",
+      "estimatedLessons": 28,
+      "examWeight": null,
+      "key": "work-phone-calls",
+      "level": "intermediate",
+      "name": "직장 전화를 받고 전달할 수 있어요",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "ask-to-repeat"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "메신저로 업무 요청과 확인 사항을 정중하고 간결하게 주고받아요.",
+      "estimatedLessons": 26,
+      "examWeight": null,
+      "key": "work-messages",
+      "level": "intermediate",
+      "name": "업무 메시지를 주고받을 수 있어요",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "everyday-messages",
+        "understand-work-instructions"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "직장에서 위험하거나 이해되지 않는 상황을 알리고 안전한 방법을 물어요.",
+      "estimatedLessons": 26,
+      "examWeight": null,
+      "key": "workplace-safety",
+      "level": "intermediate",
+      "name": "직장에서 위험을 알릴 수 있어요",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "understand-work-instructions"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "실수나 지연을 알리고 사과한 뒤 어떻게 처리할지 상의해요.",
+      "estimatedLessons": 28,
+      "examWeight": null,
+      "key": "report-work-mistakes",
+      "level": "intermediate",
+      "name": "업무 실수를 알리고 상의할 수 있어요",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "report-work-progress"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "동료와 휴식 시간에 근황과 주말 계획을 이야기하고 적절히 반응해요.",
+      "estimatedLessons": 26,
+      "examWeight": null,
+      "key": "coworker-small-talk",
+      "level": "intermediate",
+      "name": "동료와 가벼운 대화를 나눌 수 있어요",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "daily-routine",
+        "likes-and-hobbies"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "친구의 제안에 이유를 덧붙여 답하고 장소나 시간을 함께 조정해요.",
+      "estimatedLessons": 24,
+      "examWeight": null,
+      "key": "adjust-social-plans",
+      "level": "intermediate",
+      "name": "약속을 조정하고 이유를 설명할 수 있어요",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "simple-plans"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "집의 고장이나 불편을 설명하고 방문 수리 일정과 비용을 확인해요.",
+      "estimatedLessons": 28,
+      "examWeight": null,
+      "key": "housing-repairs",
+      "level": "intermediate",
+      "name": "집 수리를 요청할 수 있어요",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "find-housing"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "주거 계약에서 비용과 기간, 퇴거 조건을 살펴보고 이해되지 않는 내용을 물어요.",
+      "estimatedLessons": 32,
+      "examWeight": null,
+      "key": "housing-contract",
+      "level": "intermediate",
+      "name": "주거 계약 조건을 확인할 수 있어요",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "find-housing"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "청구서와 서비스 안내에서 금액과 기한을 확인하고 잘못된 내용을 문의해요.",
+      "estimatedLessons": 28,
+      "examWeight": null,
+      "key": "bills-and-services",
+      "level": "intermediate",
+      "name": "청구서와 서비스 문제를 문의할 수 있어요",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "prices-and-quantities",
+        "time-and-dates"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "행정 안내문에서 기한과 준비 서류를 찾고 창구에서 추가 설명을 요청해요.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "administrative-notices",
+      "level": "intermediate",
+      "name": "행정 안내문을 확인하고 문의할 수 있어요",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "public-office-visit"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "진료 중 검사와 치료에 관한 설명을 듣고 이해되지 않는 부분을 확인해요.",
+      "estimatedLessons": 32,
+      "examWeight": null,
+      "key": "medical-explanations",
+      "level": "intermediate",
+      "name": "진료 설명을 듣고 질문할 수 있어요",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "medical-visit"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "재난 안내에서 위험과 대피 지시를 파악하고 주변 사람에게 상황을 물어요.",
+      "estimatedLessons": 28,
+      "examWeight": null,
+      "key": "disaster-guidance",
+      "level": "intermediate",
+      "name": "재난 안내를 이해하고 대피를 물을 수 있어요",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "emergency-help"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "서비스 문제를 구체적으로 설명하고 가능한 해결 방법을 정중하게 요청해요.",
+      "estimatedLessons": 28,
+      "examWeight": null,
+      "key": "service-complaints",
+      "level": "intermediate",
+      "name": "서비스 문제의 해결을 요청할 수 있어요",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "returns-and-exchanges"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "손님의 불만을 듣고 사과하며 해결 가능한 범위와 담당자 연결을 안내해요.",
+      "estimatedLessons": 32,
+      "examWeight": null,
+      "key": "customer-complaints",
+      "level": "intermediate",
+      "name": "손님의 불만에 대응할 수 있어요",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "welcome-customers",
+        "report-work-mistakes"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "여러 업무의 우선순위와 마감 시간을 동료에게 확인하고 조율해요.",
+      "estimatedLessons": 28,
+      "examWeight": null,
+      "key": "coordinate-work",
+      "level": "intermediate",
+      "name": "동료와 업무 순서를 조율할 수 있어요",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "understand-work-instructions",
+        "report-work-progress"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "급여명세의 항목을 확인하고 예상과 다른 금액에 관해 질문해요.",
+      "estimatedLessons": 28,
+      "examWeight": null,
+      "key": "pay-statement",
+      "level": "intermediate",
+      "name": "급여 내역을 확인하고 질문할 수 있어요",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "employment-conditions"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "근무 중 생긴 어려움을 설명하고 가능한 조정 방안을 상의해요.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "discuss-workplace-concerns",
+      "level": "intermediate",
+      "name": "직장 문제와 조정 방안을 상의할 수 있어요",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "employment-conditions",
+        "report-work-progress"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "일상 경험이나 익숙한 주제에 대해 이유와 예를 들어 의견을 말해요.",
+      "estimatedLessons": 28,
+      "examWeight": null,
+      "key": "express-opinions",
+      "level": "intermediate",
+      "name": "의견과 이유를 이야기할 수 있어요",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": []
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "여러 사람의 대화에서 화제를 따라가며 질문하고 자신의 경험을 덧붙여요.",
+      "estimatedLessons": 32,
+      "examWeight": null,
+      "key": "group-conversation",
+      "level": "intermediate",
+      "name": "여럿이 나누는 대화에 참여할 수 있어요",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "coworker-small-talk",
+        "express-opinions"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "상대방의 생각을 확인하고 의견이 다를 때 이유를 덧붙여 정중하게 말해요.",
+      "estimatedLessons": 28,
+      "examWeight": null,
+      "key": "polite-disagreement",
+      "level": "intermediate",
+      "name": "의견 차이를 정중하게 표현할 수 있어요",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "express-opinions"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "모임이나 행사 안내에서 참가 조건을 확인하고 주최자에게 질문해요.",
+      "estimatedLessons": 26,
+      "examWeight": null,
+      "key": "join-local-activities",
+      "level": "intermediate",
+      "name": "모임에 참가하며 필요한 정보를 물을 수 있어요",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "simple-plans"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "퇴거와 서비스 해지에 필요한 절차를 묻고 날짜와 최종 비용을 확인해요.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "moving-out",
+      "level": "intermediate",
+      "name": "퇴거와 서비스 해지를 요청할 수 있어요",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "housing-contract",
+        "bills-and-services"
+      ]
+    },
+    {
+      "area": "일본어",
+      "topics": [],
+      "course": "japanese",
+      "description": "퇴사 의사를 전하고 마지막 근무일과 필요한 절차를 상의해요.",
+      "estimatedLessons": 26,
+      "examWeight": null,
+      "key": "leave-a-job",
+      "level": "intermediate",
+      "name": "퇴사 일정과 절차를 상의할 수 있어요",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "employment-conditions"
+      ]
+    }
+  ],
+  "repaired": []
+}

@@ -1,0 +1,1020 @@
+{
+  "courses": [
+    {
+      "countrySpecific": false,
+      "key": "ingles",
+      "levels": [
+        "beginner",
+        "intermediate"
+      ],
+      "title": "Inglês"
+    }
+  ],
+  "estimatedHours": 165.4,
+  "phases": [
+    {
+      "estimatedHours": 36.8,
+      "milestone": "Comunicar necessidades imediatas e compreender respostas em situações cotidianas.",
+      "title": "Primeiros passos no cotidiano"
+    },
+    {
+      "estimatedHours": 38.6,
+      "milestone": "Resolver tarefas básicas da mudança e cuidar da rotina com mais autonomia.",
+      "title": "Ganhando autonomia"
+    },
+    {
+      "estimatedHours": 43.6,
+      "milestone": "Explicar problemas, acompanhar orientações e resolver imprevistos do dia a dia.",
+      "title": "Lidando com imprevistos"
+    },
+    {
+      "estimatedHours": 46.4,
+      "milestone": "Participar de conversas mais longas e negociar soluções na comunidade e no trabalho.",
+      "title": "Participando com confiança"
+    }
+  ],
+  "skills": [
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Dizer quem é e trocar informações pessoais em encontros cotidianos.",
+      "estimatedLessons": 24,
+      "examWeight": null,
+      "key": "introduce-yourself",
+      "level": "beginner",
+      "name": "Apresentar-se em situações cotidianas",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": []
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Dizer e compreender nomes, endereços e contatos, inclusive quando soletrados.",
+      "estimatedLessons": 24,
+      "examWeight": null,
+      "key": "personal-details",
+      "level": "beginner",
+      "name": "Trocar dados pessoais e de contato",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "introduce-yourself"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Pedir repetição, falar mais devagar e confirmar o que foi entendido.",
+      "estimatedLessons": 25,
+      "examWeight": null,
+      "key": "clarify-speech",
+      "level": "beginner",
+      "name": "Pedir esclarecimentos durante uma conversa",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": []
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Compreender e informar preços, horários, datas e quantidades em interações cotidianas.",
+      "estimatedLessons": 25,
+      "examWeight": null,
+      "key": "numbers-dates",
+      "level": "beginner",
+      "name": "Trocar informações sobre números e horários",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": []
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Perguntar onde ficam lugares e acompanhar instruções simples de localização.",
+      "estimatedLessons": 24,
+      "examWeight": null,
+      "key": "directions",
+      "level": "beginner",
+      "name": "Pedir e compreender direções",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "clarify-speech"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Perguntar sobre rotas, paradas e horários e compreender orientações de deslocamento.",
+      "estimatedLessons": 27,
+      "examWeight": null,
+      "key": "public-transit",
+      "level": "beginner",
+      "name": "Usar o transporte público",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "numbers-dates",
+        "directions"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Pedir passagens, consultar tarifas e esclarecer como pagar uma viagem.",
+      "estimatedLessons": 22,
+      "examWeight": null,
+      "key": "transit-tickets",
+      "level": "beginner",
+      "name": "Comprar passagens e consultar tarifas",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "numbers-dates"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Responder a perguntas comuns sobre viagem, bagagem e documentos na chegada.",
+      "estimatedLessons": 28,
+      "examWeight": null,
+      "key": "airport-arrival",
+      "level": "beginner",
+      "name": "Comunicar-se na chegada de viagem",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "personal-details",
+        "clarify-speech"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Confirmar uma reserva e pedir informações essenciais em uma hospedagem temporária.",
+      "estimatedLessons": 24,
+      "examWeight": null,
+      "key": "temporary-stay",
+      "level": "beginner",
+      "name": "Usar uma hospedagem temporária",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "personal-details",
+        "numbers-dates"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Pedir produtos, perguntar o preço e pagar em lojas e mercados.",
+      "estimatedLessons": 25,
+      "examWeight": null,
+      "key": "shop-pay",
+      "level": "beginner",
+      "name": "Comprar produtos e pagar",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "numbers-dates"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Fazer pedidos, compreender perguntas sobre opções e pedir a conta.",
+      "estimatedLessons": 24,
+      "examWeight": null,
+      "key": "order-food",
+      "level": "beginner",
+      "name": "Pedir comida e bebida",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "numbers-dates"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Perguntar sobre ingredientes e comunicar alergias ou restrições alimentares.",
+      "estimatedLessons": 22,
+      "examWeight": null,
+      "key": "food-restrictions",
+      "level": "beginner",
+      "name": "Comunicar restrições alimentares",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "order-food"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Descrever sintomas simples e pedir ajuda para encontrar atendimento.",
+      "estimatedLessons": 25,
+      "examWeight": null,
+      "key": "basic-health",
+      "level": "beginner",
+      "name": "Comunicar necessidades básicas de saúde",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "clarify-speech"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Informar localização e natureza de uma emergência e acompanhar instruções imediatas.",
+      "estimatedLessons": 26,
+      "examWeight": null,
+      "key": "emergency-call",
+      "level": "beginner",
+      "name": "Pedir ajuda em uma emergência",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "personal-details",
+        "basic-health"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Trocar cumprimentos e conversar brevemente sobre rotina e convivência.",
+      "estimatedLessons": 23,
+      "examWeight": null,
+      "key": "greet-neighbors",
+      "level": "beginner",
+      "name": "Conversar brevemente com vizinhos",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "introduce-yourself"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Entender informações essenciais em anúncios e perguntar sobre disponibilidade e preço.",
+      "estimatedLessons": 27,
+      "examWeight": null,
+      "key": "housing-listings",
+      "level": "beginner",
+      "name": "Consultar anúncios de moradia",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "numbers-dates",
+        "personal-details"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Fazer perguntas sobre cômodos, condições e custos durante uma visita.",
+      "estimatedLessons": 27,
+      "examWeight": null,
+      "key": "visit-housing",
+      "level": "beginner",
+      "name": "Visitar uma moradia para alugar",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "housing-listings"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Entender informações básicas de um contrato e perguntar sobre valores e prazos.",
+      "estimatedLessons": 28,
+      "examWeight": null,
+      "key": "basic-lease",
+      "level": "beginner",
+      "name": "Esclarecer condições básicas de aluguel",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "visit-housing"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Descrever uma necessidade simples da moradia e combinar uma visita ou resposta.",
+      "estimatedLessons": 25,
+      "examWeight": null,
+      "key": "contact-landlord",
+      "level": "beginner",
+      "name": "Entrar em contato com o proprietário",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "personal-details",
+        "numbers-dates"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Pedir ligação de serviços e compreender perguntas sobre endereço, datas e cobrança.",
+      "estimatedLessons": 27,
+      "examWeight": null,
+      "key": "set-up-utilities",
+      "level": "beginner",
+      "name": "Solicitar serviços para a moradia",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "personal-details",
+        "numbers-dates"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Comparar opções básicas de telefone e internet e contratar um plano.",
+      "estimatedLessons": 26,
+      "examWeight": null,
+      "key": "phone-internet",
+      "level": "beginner",
+      "name": "Contratar telefone e internet",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "numbers-dates",
+        "personal-details"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Pedir informações sobre conta, documentos necessários e tarifas bancárias básicas.",
+      "estimatedLessons": 27,
+      "examWeight": null,
+      "key": "open-bank-account",
+      "level": "beginner",
+      "name": "Abrir uma conta bancária",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "personal-details",
+        "numbers-dates"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Pedir ajuda com cartão, saque, depósito e transferência em uma agência.",
+      "estimatedLessons": 24,
+      "examWeight": null,
+      "key": "basic-banking",
+      "level": "beginner",
+      "name": "Realizar operações bancárias cotidianas",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "open-bank-account"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Marcar, confirmar e remarcar horários por telefone ou mensagem.",
+      "estimatedLessons": 25,
+      "examWeight": null,
+      "key": "appointments",
+      "level": "beginner",
+      "name": "Marcar e alterar compromissos",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "numbers-dates",
+        "personal-details"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Pedir uma consulta, explicar brevemente a necessidade e entender orientações de chegada.",
+      "estimatedLessons": 27,
+      "examWeight": null,
+      "key": "book-medical-care",
+      "level": "beginner",
+      "name": "Marcar uma consulta de saúde",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "appointments",
+        "basic-health"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Pedir um medicamento ou produto e fazer perguntas simples sobre seu uso.",
+      "estimatedLessons": 25,
+      "examWeight": null,
+      "key": "pharmacy",
+      "level": "beginner",
+      "name": "Pedir orientação em uma farmácia",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "basic-health",
+        "shop-pay"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Perguntar como solicitar documentos e compreender instruções simples de atendimento.",
+      "estimatedLessons": 28,
+      "examWeight": null,
+      "key": "public-services",
+      "level": "beginner",
+      "name": "Solicitar informações em serviços públicos",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "personal-details",
+        "clarify-speech"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Entender informações sobre temperatura e previsão e conversar sobre o que vestir.",
+      "estimatedLessons": 23,
+      "examWeight": null,
+      "key": "weather-clothing",
+      "level": "beginner",
+      "name": "Conversar sobre clima e vestuário",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "numbers-dates"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Perguntar sobre coleta de lixo, lavanderia e outras regras práticas da moradia.",
+      "estimatedLessons": 24,
+      "examWeight": null,
+      "key": "building-routines",
+      "level": "beginner",
+      "name": "Entender rotinas de uma moradia",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "clarify-speech"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Pedir informação sobre produtos, tamanhos e disponibilidade em uma loja.",
+      "estimatedLessons": 23,
+      "examWeight": null,
+      "key": "find-products",
+      "level": "beginner",
+      "name": "Encontrar produtos em lojas",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "shop-pay"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Explicar o defeito de um produto e perguntar sobre troca ou devolução.",
+      "estimatedLessons": 28,
+      "examWeight": null,
+      "key": "return-purchase",
+      "level": "intermediate",
+      "name": "Trocar ou devolver uma compra",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "shop-pay"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Descrever um defeito na moradia, sua urgência e o acesso para reparo.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "request-repair",
+      "level": "intermediate",
+      "name": "Solicitar reparos na moradia",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "contact-landlord"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Explicar uma cobrança inesperada e pedir esclarecimento sobre fatura e pagamento.",
+      "estimatedLessons": 29,
+      "examWeight": null,
+      "key": "billing-problem",
+      "level": "intermediate",
+      "name": "Esclarecer problemas em uma fatura",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "set-up-utilities"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Relatar sintomas, duração, histórico relevante e responder a perguntas em uma consulta.",
+      "estimatedLessons": 32,
+      "examWeight": null,
+      "key": "medical-consultation",
+      "level": "intermediate",
+      "name": "Descrever sintomas em uma consulta",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "basic-health",
+        "book-medical-care"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Compreender orientações sobre exames e tratamento e confirmar como segui-las.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "medical-instructions",
+      "level": "intermediate",
+      "name": "Compreender orientações de saúde",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "medical-consultation"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Perguntar quais serviços de saúde estão cobertos e quais custos podem surgir.",
+      "estimatedLessons": 29,
+      "examWeight": null,
+      "key": "health-coverage",
+      "level": "intermediate",
+      "name": "Esclarecer cobertura de saúde",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "public-services",
+        "basic-health"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Explicar um problema com cartão ou transação e acompanhar as orientações recebidas.",
+      "estimatedLessons": 28,
+      "examWeight": null,
+      "key": "bank-problem",
+      "level": "intermediate",
+      "name": "Resolver problemas bancários",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "basic-banking"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Perguntar sobre o andamento de uma solicitação e esclarecer documentos pendentes.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "application-follow-up",
+      "level": "intermediate",
+      "name": "Acompanhar uma solicitação de documentos",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "public-services"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Explicar o motivo de uma ligação, acompanhar transferências e confirmar próximos passos.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "service-phone-call",
+      "level": "intermediate",
+      "name": "Resolver uma solicitação por telefone",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "clarify-speech",
+        "personal-details"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Entender avisos de interrupção e pedir alternativas quando um trajeto muda.",
+      "estimatedLessons": 28,
+      "examWeight": null,
+      "key": "transit-disruption",
+      "level": "intermediate",
+      "name": "Lidar com mudanças no transporte",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "public-transit"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Descrever um serviço necessário e comparar preços, prazos e condições apresentados.",
+      "estimatedLessons": 29,
+      "examWeight": null,
+      "key": "service-estimate",
+      "level": "intermediate",
+      "name": "Pedir e comparar orçamentos",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "numbers-dates",
+        "clarify-speech"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Pedir ajuda prática a pessoas próximas e combinar como e quando agir.",
+      "estimatedLessons": 28,
+      "examWeight": null,
+      "key": "neighbor-help",
+      "level": "intermediate",
+      "name": "Pedir ajuda a vizinhos",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "greet-neighbors"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Compreender avisos de clima severo e perguntar sobre cuidados e mudanças de planos.",
+      "estimatedLessons": 27,
+      "examWeight": null,
+      "key": "weather-alerts",
+      "level": "intermediate",
+      "name": "Entender alertas de clima severo",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "weather-clothing"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Entender informações sobre atividades locais e perguntar como participar.",
+      "estimatedLessons": 28,
+      "examWeight": null,
+      "key": "community-activities",
+      "level": "intermediate",
+      "name": "Participar de atividades comunitárias",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "appointments",
+        "greet-neighbors"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Compreender os pontos principais de notícias locais e conversar sobre seus efeitos práticos.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "local-news",
+      "level": "intermediate",
+      "name": "Acompanhar notícias locais",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "clarify-speech"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Convidar pessoas, responder a convites e combinar detalhes de um encontro.",
+      "estimatedLessons": 28,
+      "examWeight": null,
+      "key": "social-invitations",
+      "level": "intermediate",
+      "name": "Fazer e aceitar convites",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "greet-neighbors",
+        "appointments"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Contar acontecimentos pessoais e fazer perguntas para manter a conversa.",
+      "estimatedLessons": 32,
+      "examWeight": null,
+      "key": "share-experiences",
+      "level": "intermediate",
+      "name": "Conversar sobre experiências pessoais",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "introduce-yourself"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Expressar preferências e opiniões com justificativas em conversas informais.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "express-opinions",
+      "level": "intermediate",
+      "name": "Expressar opiniões em conversas",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "share-experiences"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Acompanhar mudanças de assunto, entrar na conversa e pedir espaço para falar.",
+      "estimatedLessons": 34,
+      "examWeight": null,
+      "key": "group-conversation",
+      "level": "intermediate",
+      "name": "Participar de conversas em grupo",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "clarify-speech",
+        "express-opinions"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Reconhecer ideias principais em fala natural e confirmar detalhes que não ficaram claros.",
+      "estimatedLessons": 32,
+      "examWeight": null,
+      "key": "natural-conversation",
+      "level": "intermediate",
+      "name": "Acompanhar conversas em ritmo natural",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "clarify-speech",
+        "share-experiences"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Conversar sobre responsabilidades, horários e tarefas com colegas.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "work-routines",
+      "level": "intermediate",
+      "name": "Conversar sobre rotinas de trabalho",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "introduce-yourself",
+        "numbers-dates"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Acompanhar instruções de tarefas e perguntar sobre etapas, prioridades e prazos.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "work-instructions",
+      "level": "intermediate",
+      "name": "Esclarecer instruções de trabalho",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "work-routines",
+        "clarify-speech"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Relatar o andamento de tarefas e explicar dificuldades ou necessidades de apoio.",
+      "estimatedLessons": 31,
+      "examWeight": null,
+      "key": "work-progress",
+      "level": "intermediate",
+      "name": "Informar andamento e dificuldades no trabalho",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "work-instructions"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Acompanhar os pontos principais, fazer perguntas e contribuir em reuniões cotidianas.",
+      "estimatedLessons": 33,
+      "examWeight": null,
+      "key": "work-meetings",
+      "level": "intermediate",
+      "name": "Participar de reuniões de trabalho",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "work-progress",
+        "group-conversation"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Escrever mensagens claras para pedir informações, confirmar decisões e combinar prazos.",
+      "estimatedLessons": 29,
+      "examWeight": null,
+      "key": "work-messages",
+      "level": "intermediate",
+      "name": "Trocar mensagens profissionais cotidianas",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "work-routines"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Explicar uma dificuldade de convivência e propor uma solução respeitosa.",
+      "estimatedLessons": 31,
+      "examWeight": null,
+      "key": "neighbor-disagreement",
+      "level": "intermediate",
+      "name": "Resolver desentendimentos com vizinhos",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "neighbor-help",
+        "express-opinions"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Discutir condições de moradia, pedir alterações e confirmar acordos.",
+      "estimatedLessons": 31,
+      "examWeight": null,
+      "key": "negotiate-housing",
+      "level": "intermediate",
+      "name": "Negociar condições de moradia",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "basic-lease",
+        "express-opinions"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Explicar uma situação não resolvida, solicitar providências e confirmar o acompanhamento.",
+      "estimatedLessons": 31,
+      "examWeight": null,
+      "key": "service-complaint",
+      "level": "intermediate",
+      "name": "Fazer uma reclamação sobre serviços",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "service-phone-call",
+        "billing-problem"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Perguntar sobre opções de cuidado, riscos e próximos passos para tomar decisões informadas.",
+      "estimatedLessons": 32,
+      "examWeight": null,
+      "key": "discuss-treatment",
+      "level": "intermediate",
+      "name": "Conversar sobre opções de tratamento",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "medical-instructions"
+      ]
+    },
+    {
+      "area": "Inglês",
+      "topics": [],
+      "course": "ingles",
+      "description": "Explicar uma situação pessoal, esclarecer exigências e confirmar o encaminhamento com um atendente.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "complex-public-service",
+      "level": "intermediate",
+      "name": "Resolver pendências em serviços públicos",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "application-follow-up"
+      ]
+    }
+  ],
+  "repaired": []
+}

@@ -1,0 +1,19 @@
+{
+  "caseId": "es-language-english-hotel",
+  "challenger": {
+    "costUsd": 0.04159675,
+    "durationMs": 84686.05775000004,
+    "hash": "6fe4a5d569f02e564dd3abe30cdb2d5f499c7d8b453a4b8e508f4af05d09728a",
+    "systemPromptHash": "f428845bd1bd3da498cd9345c9b01bb03a42b6a2424c2f3145df118d8b08d40d",
+    "userPromptHash": "f7bf84bf2df79907febacea0b77a842722403fc8010b8ea2871c9dc93fc88214"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.04384175,
+    "durationMs": 89732.55708399997,
+    "hash": "20fa29fa2bb53942f057fb0c3f100ae73794d1b7ff56b0bca1d8f38362abf96c",
+    "systemPromptHash": "fec22d7736604dfc84fc0af28172436ff868318e7aa2216b8a453a7d709ceb8d",
+    "userPromptHash": "f7bf84bf2df79907febacea0b77a842722403fc8010b8ea2871c9dc93fc88214"
+  },
+  "run": 1
+}

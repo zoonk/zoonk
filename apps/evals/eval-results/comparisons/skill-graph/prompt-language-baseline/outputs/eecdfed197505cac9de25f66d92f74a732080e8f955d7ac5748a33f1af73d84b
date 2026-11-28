@@ -1,0 +1,1639 @@
+{
+  "courses": [
+    {
+      "countrySpecific": false,
+      "key": "economics",
+      "levels": [
+        "beginner",
+        "intermediate"
+      ],
+      "title": "Economics"
+    },
+    {
+      "countrySpecific": false,
+      "key": "math",
+      "levels": [
+        "beginner",
+        "intermediate",
+        "advanced"
+      ],
+      "title": "Mathematical Methods for Economics"
+    },
+    {
+      "countrySpecific": false,
+      "key": "statistics",
+      "levels": [
+        "beginner",
+        "intermediate",
+        "advanced"
+      ],
+      "title": "Statistics"
+    },
+    {
+      "countrySpecific": false,
+      "key": "micro",
+      "levels": [
+        "beginner",
+        "intermediate",
+        "advanced"
+      ],
+      "title": "Microeconomics"
+    },
+    {
+      "countrySpecific": false,
+      "key": "macro",
+      "levels": [
+        "beginner",
+        "intermediate",
+        "advanced"
+      ],
+      "title": "Macroeconomics"
+    },
+    {
+      "countrySpecific": false,
+      "key": "econometrics",
+      "levels": [
+        "intermediate",
+        "advanced"
+      ],
+      "title": "Econometrics"
+    },
+    {
+      "countrySpecific": false,
+      "key": "public",
+      "levels": [
+        "intermediate",
+        "advanced"
+      ],
+      "title": "Public Economics"
+    },
+    {
+      "countrySpecific": false,
+      "key": "international",
+      "levels": [
+        "intermediate",
+        "advanced"
+      ],
+      "title": "International Economics"
+    },
+    {
+      "countrySpecific": false,
+      "key": "growth-development",
+      "levels": [
+        "intermediate",
+        "advanced"
+      ],
+      "title": "Economic Growth and Development"
+    },
+    {
+      "countrySpecific": false,
+      "key": "labor",
+      "levels": [
+        "intermediate",
+        "advanced"
+      ],
+      "title": "Labor Economics"
+    },
+    {
+      "countrySpecific": false,
+      "key": "industrial",
+      "levels": [
+        "intermediate",
+        "advanced"
+      ],
+      "title": "Industrial Organization"
+    },
+    {
+      "countrySpecific": false,
+      "key": "behavioral",
+      "levels": [
+        "intermediate",
+        "advanced"
+      ],
+      "title": "Behavioral Economics"
+    },
+    {
+      "countrySpecific": false,
+      "key": "environmental",
+      "levels": [
+        "intermediate",
+        "advanced"
+      ],
+      "title": "Environmental Economics"
+    }
+  ],
+  "estimatedHours": 308.5,
+  "phases": [
+    {
+      "estimatedHours": 30.5,
+      "milestone": "Explain everyday economic choices, markets, and aggregate outcomes using basic quantitative tools.",
+      "title": "First footholds"
+    },
+    {
+      "estimatedHours": 65.5,
+      "milestone": "Analyze competitive markets, basic macroeconomic fluctuations, and simple economic evidence.",
+      "title": "Building fluency"
+    },
+    {
+      "estimatedHours": 65,
+      "milestone": "Apply economic models and statistical methods to policy, growth, trade, and labor questions.",
+      "title": "Connecting the pieces"
+    },
+    {
+      "estimatedHours": 75.5,
+      "milestone": "Evaluate strategic behavior, causal evidence, and complex economic policies.",
+      "title": "Working with complexity"
+    },
+    {
+      "estimatedHours": 72,
+      "milestone": "Integrate advanced theory and empirical evidence to investigate economic questions.",
+      "title": "Independent analysis"
+    }
+  ],
+  "skills": [
+    {
+      "area": "Economic foundations",
+      "topics": [],
+      "course": "economics",
+      "description": "Distinguish scarce resources, goods, services, and the choices made by households, firms, and governments.",
+      "estimatedLessons": 15,
+      "examWeight": null,
+      "key": "scarcity-and-choices",
+      "level": "beginner",
+      "name": "Explain scarcity and economic choice",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": []
+    },
+    {
+      "area": "Economic foundations",
+      "topics": [],
+      "course": "economics",
+      "description": "Identify the value of the best alternative forgone and compare additional benefits with additional costs.",
+      "estimatedLessons": 20,
+      "examWeight": null,
+      "key": "opportunity-marginal",
+      "level": "beginner",
+      "name": "Compare opportunity costs and marginal tradeoffs",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "scarcity-and-choices"
+      ]
+    },
+    {
+      "area": "Economic foundations",
+      "topics": [],
+      "course": "economics",
+      "description": "Explain how incentives and constraints shape behavior without assuming that everyone responds identically.",
+      "estimatedLessons": 20,
+      "examWeight": null,
+      "key": "incentives",
+      "level": "beginner",
+      "name": "Analyze incentives and constraints",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "opportunity-marginal"
+      ]
+    },
+    {
+      "area": "Microeconomics",
+      "topics": [],
+      "course": "micro",
+      "description": "Explain how buyers and sellers interact and how prices and quantities adjust in a competitive market.",
+      "estimatedLessons": 25,
+      "examWeight": null,
+      "key": "supply-demand",
+      "level": "beginner",
+      "name": "Explain supply, demand, and market equilibrium",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "incentives"
+      ]
+    },
+    {
+      "area": "Macroeconomics",
+      "topics": [],
+      "course": "macro",
+      "description": "Distinguish total output, income, employment, and the price level as measures of an economy.",
+      "estimatedLessons": 20,
+      "examWeight": null,
+      "key": "macro-aggregates",
+      "level": "beginner",
+      "name": "Distinguish major macroeconomic aggregates",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "scarcity-and-choices"
+      ]
+    },
+    {
+      "area": "Quantitative methods",
+      "topics": [],
+      "course": "math",
+      "description": "Use equations, proportions, percentages, and graphs to represent economic relationships.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "economic-algebra",
+      "level": "beginner",
+      "name": "Represent economic relationships with algebra",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": []
+    },
+    {
+      "area": "Microeconomics",
+      "topics": [],
+      "course": "micro",
+      "description": "Calculate and interpret responsiveness to price and income, including the distinction between movements and shifts.",
+      "estimatedLessons": 25,
+      "examWeight": null,
+      "key": "elasticity",
+      "level": "beginner",
+      "name": "Measure economic elasticities",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "supply-demand",
+        "economic-algebra"
+      ]
+    },
+    {
+      "area": "Economic foundations",
+      "topics": [],
+      "course": "economics",
+      "description": "Use opportunity costs to explain specialization, exchange, and potential gains from trade.",
+      "estimatedLessons": 20,
+      "examWeight": null,
+      "key": "comparative-advantage",
+      "level": "beginner",
+      "name": "Explain gains from specialization and trade",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "opportunity-marginal",
+        "economic-algebra"
+      ]
+    },
+    {
+      "area": "Microeconomics",
+      "topics": [],
+      "course": "micro",
+      "description": "Use willingness to pay and production costs to interpret consumer and producer surplus.",
+      "estimatedLessons": 20,
+      "examWeight": null,
+      "key": "market-surplus",
+      "level": "beginner",
+      "name": "Measure gains from market exchange",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "supply-demand",
+        "economic-algebra"
+      ]
+    },
+    {
+      "area": "Macroeconomics",
+      "topics": [],
+      "course": "macro",
+      "description": "Explain national income accounting and distinguish nominal output from inflation-adjusted output.",
+      "estimatedLessons": 25,
+      "examWeight": null,
+      "key": "national-accounts",
+      "level": "beginner",
+      "name": "Interpret national income and output",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "macro-aggregates",
+        "economic-algebra"
+      ]
+    },
+    {
+      "area": "Macroeconomics",
+      "topics": [],
+      "course": "macro",
+      "description": "Calculate and interpret inflation, unemployment, and labor force measures, including their limitations.",
+      "estimatedLessons": 20,
+      "examWeight": null,
+      "key": "inflation-unemployment",
+      "level": "beginner",
+      "name": "Interpret inflation and unemployment measures",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "macro-aggregates",
+        "economic-algebra"
+      ]
+    },
+    {
+      "area": "Economic foundations",
+      "topics": [],
+      "course": "economics",
+      "description": "Explain how property rights, contracts, and institutions support or constrain economic exchange.",
+      "estimatedLessons": 20,
+      "examWeight": null,
+      "key": "economic-institutions",
+      "level": "beginner",
+      "name": "Explain institutions and economic exchange",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "incentives"
+      ]
+    },
+    {
+      "area": "Microeconomics",
+      "topics": [],
+      "course": "micro",
+      "description": "Predict shortages, surpluses, and changes in welfare when governments impose price controls.",
+      "estimatedLessons": 20,
+      "examWeight": null,
+      "key": "price-controls",
+      "level": "beginner",
+      "name": "Analyze price controls",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "market-surplus"
+      ]
+    },
+    {
+      "area": "Macroeconomics",
+      "topics": [],
+      "course": "macro",
+      "description": "Explain the functions of money, credit, banks, and central banks in an economy.",
+      "estimatedLessons": 25,
+      "examWeight": null,
+      "key": "money-banking-basics",
+      "level": "beginner",
+      "name": "Explain money, credit, and banking",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "macro-aggregates"
+      ]
+    },
+    {
+      "area": "Quantitative methods",
+      "topics": [],
+      "course": "math",
+      "description": "Use functions, exponents, logarithms, and growth rates to describe economic quantities over time.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "functions-growth",
+      "level": "beginner",
+      "name": "Model functions and growth rates",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "economic-algebra"
+      ]
+    },
+    {
+      "area": "Quantitative methods",
+      "topics": [],
+      "course": "math",
+      "description": "Interpret derivatives as rates of change and use them to find simple marginal quantities and optima.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "single-variable-calculus",
+      "level": "intermediate",
+      "name": "Apply derivatives to economic choices",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "functions-growth"
+      ]
+    },
+    {
+      "area": "Microeconomics",
+      "topics": [],
+      "course": "micro",
+      "description": "Use preferences, budget constraints, and marginal rates of substitution to model consumer choice.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "consumer-choice",
+      "level": "intermediate",
+      "name": "Model consumer choice",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "opportunity-marginal",
+        "single-variable-calculus"
+      ]
+    },
+    {
+      "area": "Microeconomics",
+      "topics": [],
+      "course": "micro",
+      "description": "Derive demand responses to price and income changes and separate substitution and income effects.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "individual-demand",
+      "level": "intermediate",
+      "name": "Derive individual demand",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "consumer-choice",
+        "elasticity"
+      ]
+    },
+    {
+      "area": "Microeconomics",
+      "topics": [],
+      "course": "micro",
+      "description": "Relate production technology and input choices to marginal products, returns to scale, and costs.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "production-costs",
+      "level": "intermediate",
+      "name": "Analyze production and costs",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "single-variable-calculus"
+      ]
+    },
+    {
+      "area": "Microeconomics",
+      "topics": [],
+      "course": "micro",
+      "description": "Derive a competitive firm's output and supply decisions in short-run and long-run settings.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "competitive-firm",
+      "level": "intermediate",
+      "name": "Model competitive firm decisions",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "production-costs",
+        "supply-demand"
+      ]
+    },
+    {
+      "area": "Microeconomics",
+      "topics": [],
+      "course": "micro",
+      "description": "Analyze how taxes affect equilibrium, tax incidence, revenue, and deadweight loss.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "tax-incidence",
+      "level": "intermediate",
+      "name": "Analyze taxes in competitive markets",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "elasticity",
+        "market-surplus"
+      ]
+    },
+    {
+      "area": "Microeconomics",
+      "topics": [],
+      "course": "micro",
+      "description": "Explain why external costs, external benefits, and public goods can prevent efficient market outcomes.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "market-failures",
+      "level": "intermediate",
+      "name": "Identify externalities and public goods",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "market-surplus"
+      ]
+    },
+    {
+      "area": "Microeconomics",
+      "topics": [],
+      "course": "micro",
+      "description": "Determine a monopoly's price and output and compare its welfare effects with competition.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "monopoly",
+      "level": "intermediate",
+      "name": "Analyze monopoly pricing",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "production-costs",
+        "individual-demand",
+        "market-surplus"
+      ]
+    },
+    {
+      "area": "Macroeconomics",
+      "topics": [],
+      "course": "macro",
+      "description": "Explain how consumption, investment, government spending, and net exports contribute to aggregate demand.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "aggregate-expenditure",
+      "level": "intermediate",
+      "name": "Model aggregate expenditure",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "national-accounts"
+      ]
+    },
+    {
+      "area": "Macroeconomics",
+      "topics": [],
+      "course": "macro",
+      "description": "Analyze short-run output and inflation responses to demand and supply shocks.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "aggregate-demand-supply",
+      "level": "intermediate",
+      "name": "Analyze aggregate demand and supply",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "aggregate-expenditure",
+        "inflation-unemployment"
+      ]
+    },
+    {
+      "area": "Macroeconomics",
+      "topics": [],
+      "course": "macro",
+      "description": "Explain government spending, taxation, deficits, debt, and their short-run macroeconomic effects.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "fiscal-policy",
+      "level": "intermediate",
+      "name": "Analyze fiscal policy",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "aggregate-demand-supply"
+      ]
+    },
+    {
+      "area": "Macroeconomics",
+      "topics": [],
+      "course": "macro",
+      "description": "Trace how central bank actions influence interest rates, spending, inflation, and output.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "monetary-policy",
+      "level": "intermediate",
+      "name": "Analyze monetary policy transmission",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "money-banking-basics",
+        "aggregate-demand-supply"
+      ]
+    },
+    {
+      "area": "Quantitative methods",
+      "topics": [],
+      "course": "statistics",
+      "description": "Use probability, conditional probability, random variables, and common distributions to describe uncertainty.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "probability",
+      "level": "intermediate",
+      "name": "Model uncertainty with probability",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "economic-algebra"
+      ]
+    },
+    {
+      "area": "Quantitative methods",
+      "topics": [],
+      "course": "statistics",
+      "description": "Summarize economic data using distributions, averages, dispersion, and appropriately chosen visualizations.",
+      "estimatedLessons": 25,
+      "examWeight": null,
+      "key": "descriptive-statistics",
+      "level": "beginner",
+      "name": "Summarize economic data",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "economic-algebra"
+      ]
+    },
+    {
+      "area": "Quantitative methods",
+      "topics": [],
+      "course": "statistics",
+      "description": "Explain sampling distributions, standard errors, confidence intervals, and hypothesis tests.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "statistical-inference",
+      "level": "intermediate",
+      "name": "Make statistical inferences",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "probability",
+        "descriptive-statistics"
+      ]
+    },
+    {
+      "area": "Econometrics",
+      "topics": [],
+      "course": "econometrics",
+      "description": "Estimate and interpret a linear association while checking residuals, uncertainty, and model fit.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "simple-regression",
+      "level": "intermediate",
+      "name": "Estimate simple economic regressions",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "statistical-inference"
+      ]
+    },
+    {
+      "area": "Economic foundations",
+      "topics": [],
+      "course": "economics",
+      "description": "Distinguish association from causal effects and identify confounding and selection in economic examples.",
+      "estimatedLessons": 25,
+      "examWeight": null,
+      "key": "economic-causality",
+      "level": "intermediate",
+      "name": "Distinguish economic causation from correlation",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "incentives"
+      ]
+    },
+    {
+      "area": "Microeconomics",
+      "topics": [],
+      "course": "micro",
+      "description": "Use expected utility and risk aversion to explain insurance and decisions under uncertainty.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "risk-insurance",
+      "level": "intermediate",
+      "name": "Analyze risk and insurance decisions",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "consumer-choice",
+        "probability"
+      ]
+    },
+    {
+      "area": "Macroeconomics",
+      "topics": [],
+      "course": "macro",
+      "description": "Explain productivity, capital accumulation, and population growth as sources of long-run output differences.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "growth-basics",
+      "level": "intermediate",
+      "name": "Explain sources of economic growth",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "national-accounts",
+        "production-costs"
+      ]
+    },
+    {
+      "area": "Quantitative methods",
+      "topics": [],
+      "course": "math",
+      "description": "Use partial derivatives and constrained optimization to solve choices involving several variables.",
+      "estimatedLessons": 45,
+      "examWeight": null,
+      "key": "multivariable-optimization",
+      "level": "advanced",
+      "name": "Solve constrained multivariable problems",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "single-variable-calculus"
+      ]
+    },
+    {
+      "area": "Microeconomics",
+      "topics": [],
+      "course": "micro",
+      "description": "Derive consumer and producer decisions using constrained optimization and interpret shadow prices.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "formal-optimization",
+      "level": "advanced",
+      "name": "Solve formal consumer and firm problems",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "consumer-choice",
+        "production-costs",
+        "multivariable-optimization"
+      ]
+    },
+    {
+      "area": "Microeconomics",
+      "topics": [],
+      "course": "micro",
+      "description": "Analyze interconnected markets, efficiency, and the welfare theorems under their stated assumptions.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "general-equilibrium",
+      "level": "advanced",
+      "name": "Analyze general equilibrium and welfare",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "formal-optimization",
+        "market-surplus"
+      ]
+    },
+    {
+      "area": "Microeconomics",
+      "topics": [],
+      "course": "micro",
+      "description": "Find Nash equilibria and analyze strategic interactions in simultaneous and sequential games.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "game-theory",
+      "level": "intermediate",
+      "name": "Solve strategic games",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "incentives"
+      ]
+    },
+    {
+      "area": "Econometrics",
+      "topics": [],
+      "course": "econometrics",
+      "description": "Estimate multiple regression models and assess omitted variables, functional form, and uncertainty.",
+      "estimatedLessons": 45,
+      "examWeight": null,
+      "key": "multiple-regression",
+      "level": "intermediate",
+      "name": "Estimate multiple regression models",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "simple-regression",
+        "economic-causality"
+      ]
+    },
+    {
+      "area": "Econometrics",
+      "topics": [],
+      "course": "econometrics",
+      "description": "Prepare economic datasets, document transformations, and reproduce analysis with statistical software.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "reproducible-data",
+      "level": "intermediate",
+      "name": "Build reproducible economic data analyses",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "simple-regression"
+      ]
+    },
+    {
+      "area": "Econometrics",
+      "topics": [],
+      "course": "econometrics",
+      "description": "Assess randomized designs, noncompliance, attrition, and the scope of experimental estimates.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "economic-experiments",
+      "level": "intermediate",
+      "name": "Evaluate economic experiments",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "economic-causality",
+        "statistical-inference"
+      ]
+    },
+    {
+      "area": "Macroeconomics",
+      "topics": [],
+      "course": "macro",
+      "description": "Connect goods-market and money-market equilibrium to output and interest rates using the IS-LM framework.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "is-lm",
+      "level": "intermediate",
+      "name": "Analyze output and interest rates",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "aggregate-expenditure",
+        "monetary-policy"
+      ]
+    },
+    {
+      "area": "Macroeconomics",
+      "topics": [],
+      "course": "macro",
+      "description": "Analyze unemployment, inflation expectations, and their relationship over different time horizons.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "phillips-curve",
+      "level": "intermediate",
+      "name": "Analyze inflation and unemployment dynamics",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "aggregate-demand-supply",
+        "inflation-unemployment"
+      ]
+    },
+    {
+      "area": "Growth and development",
+      "topics": [],
+      "course": "growth-development",
+      "description": "Use the Solow model to analyze capital accumulation, steady states, and productivity differences.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "solow-growth",
+      "level": "intermediate",
+      "name": "Analyze growth with the Solow model",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "growth-basics",
+        "single-variable-calculus"
+      ]
+    },
+    {
+      "area": "International economics",
+      "topics": [],
+      "course": "international",
+      "description": "Model trade patterns and distributional effects using comparative advantage and factor endowments.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "trade-theory",
+      "level": "intermediate",
+      "name": "Analyze international trade patterns",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "comparative-advantage",
+        "general-equilibrium"
+      ]
+    },
+    {
+      "area": "International economics",
+      "topics": [],
+      "course": "international",
+      "description": "Analyze tariffs, quotas, and trade agreements, including their distributional and welfare effects.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "trade-policy",
+      "level": "intermediate",
+      "name": "Evaluate trade policy",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "trade-theory",
+        "tax-incidence"
+      ]
+    },
+    {
+      "area": "International economics",
+      "topics": [],
+      "course": "international",
+      "description": "Interpret exchange rates, balance-of-payments accounts, and international capital flows.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "exchange-balance",
+      "level": "intermediate",
+      "name": "Analyze exchange rates and external accounts",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "national-accounts",
+        "money-banking-basics"
+      ]
+    },
+    {
+      "area": "Public economics",
+      "topics": [],
+      "course": "public",
+      "description": "Compare taxes and transfers using efficiency, equity, incidence, and administrative considerations.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "tax-transfer-design",
+      "level": "intermediate",
+      "name": "Evaluate taxes and transfers",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "tax-incidence",
+        "consumer-choice"
+      ]
+    },
+    {
+      "area": "Labor and inequality",
+      "topics": [],
+      "course": "labor",
+      "description": "Analyze labor supply, labor demand, wages, and employment under competitive conditions.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "labor-markets",
+      "level": "intermediate",
+      "name": "Model labor markets",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "consumer-choice",
+        "competitive-firm"
+      ]
+    },
+    {
+      "area": "Labor and inequality",
+      "topics": [],
+      "course": "labor",
+      "description": "Measure income inequality and poverty and interpret how measurement choices affect comparisons.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "inequality-measures",
+      "level": "intermediate",
+      "name": "Measure inequality and poverty",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "descriptive-statistics"
+      ]
+    },
+    {
+      "area": "Markets, behavior, and the environment",
+      "topics": [],
+      "course": "environmental",
+      "description": "Compare taxes, tradable permits, and regulation as responses to pollution and other externalities.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "environmental-policy",
+      "level": "intermediate",
+      "name": "Evaluate environmental policy instruments",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "market-failures",
+        "tax-incidence"
+      ]
+    },
+    {
+      "area": "Quantitative methods",
+      "topics": [],
+      "course": "math",
+      "description": "Use vectors, matrices, linear systems, and matrix operations to represent economic models.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "linear-algebra",
+      "level": "intermediate",
+      "name": "Apply linear algebra to economic models",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "economic-algebra"
+      ]
+    },
+    {
+      "area": "Quantitative methods",
+      "topics": [],
+      "course": "statistics",
+      "description": "Apply likelihood, large-sample reasoning, and estimation principles to statistical models.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "advanced-inference",
+      "level": "advanced",
+      "name": "Apply likelihood and asymptotic inference",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "statistical-inference",
+        "multivariable-optimization"
+      ]
+    },
+    {
+      "area": "Econometrics",
+      "topics": [],
+      "course": "econometrics",
+      "description": "Derive least squares in matrix form and assess identification, bias, consistency, and inference assumptions.",
+      "estimatedLessons": 45,
+      "examWeight": null,
+      "key": "ols-theory",
+      "level": "advanced",
+      "name": "Derive and assess least squares",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "multiple-regression",
+        "linear-algebra",
+        "advanced-inference"
+      ]
+    },
+    {
+      "area": "Econometrics",
+      "topics": [],
+      "course": "econometrics",
+      "description": "Assess heteroskedasticity, dependence, clustering, and appropriate standard errors.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "robust-inference",
+      "level": "advanced",
+      "name": "Choose robust econometric inference",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "ols-theory"
+      ]
+    },
+    {
+      "area": "Econometrics",
+      "topics": [],
+      "course": "econometrics",
+      "description": "Use fixed effects and difference-in-differences while examining treatment timing and parallel trends.",
+      "estimatedLessons": 45,
+      "examWeight": null,
+      "key": "panel-difference",
+      "level": "advanced",
+      "name": "Estimate panel and difference-in-differences models",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "multiple-regression",
+        "economic-causality",
+        "robust-inference"
+      ]
+    },
+    {
+      "area": "Econometrics",
+      "topics": [],
+      "course": "econometrics",
+      "description": "Use instrumental variables and assess relevance, exclusion, and the population affected by the instrument.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "instrumental-variables",
+      "level": "advanced",
+      "name": "Estimate effects with instrumental variables",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "ols-theory",
+        "economic-causality"
+      ]
+    },
+    {
+      "area": "Econometrics",
+      "topics": [],
+      "course": "econometrics",
+      "description": "Estimate local effects at assignment thresholds and examine continuity and manipulation assumptions.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "regression-discontinuity",
+      "level": "advanced",
+      "name": "Estimate regression discontinuity effects",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "multiple-regression",
+        "economic-causality"
+      ]
+    },
+    {
+      "area": "Econometrics",
+      "topics": [],
+      "course": "econometrics",
+      "description": "Model binary and limited outcomes and interpret predicted probabilities and marginal effects.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "discrete-choice",
+      "level": "advanced",
+      "name": "Estimate discrete outcome models",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "multiple-regression",
+        "advanced-inference"
+      ]
+    },
+    {
+      "area": "Microeconomics",
+      "topics": [],
+      "course": "micro",
+      "description": "Analyze adverse selection, signaling, moral hazard, and contracts when information is asymmetric.",
+      "estimatedLessons": 45,
+      "examWeight": null,
+      "key": "asymmetric-information",
+      "level": "advanced",
+      "name": "Analyze asymmetric information and contracts",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "game-theory",
+        "risk-insurance"
+      ]
+    },
+    {
+      "area": "Markets, behavior, and the environment",
+      "topics": [],
+      "course": "industrial",
+      "description": "Compare oligopoly models, strategic pricing, entry, and the conditions that sustain collusion.",
+      "estimatedLessons": 45,
+      "examWeight": null,
+      "key": "oligopoly",
+      "level": "advanced",
+      "name": "Analyze oligopoly and strategic competition",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "game-theory",
+        "monopoly"
+      ]
+    },
+    {
+      "area": "Markets, behavior, and the environment",
+      "topics": [],
+      "course": "behavioral",
+      "description": "Analyze present bias, reference dependence, and bounded rationality and their implications for choices.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "behavioral-choice",
+      "level": "intermediate",
+      "name": "Analyze behavioral departures from standard choice",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "consumer-choice",
+        "risk-insurance"
+      ]
+    },
+    {
+      "area": "Public economics",
+      "topics": [],
+      "course": "public",
+      "description": "Analyze public goods provision, free riding, and collective decisions about public spending.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "public-goods",
+      "level": "advanced",
+      "name": "Analyze public goods provision",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "market-failures",
+        "game-theory"
+      ]
+    },
+    {
+      "area": "Public economics",
+      "topics": [],
+      "course": "public",
+      "description": "Compare policy costs and benefits over time while accounting for distribution and uncertainty.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "cost-benefit",
+      "level": "intermediate",
+      "name": "Evaluate policies with cost-benefit analysis",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "market-surplus",
+        "risk-insurance",
+        "functions-growth"
+      ]
+    },
+    {
+      "area": "Labor and inequality",
+      "topics": [],
+      "course": "labor",
+      "description": "Analyze education, training, experience, and wage differences using human capital and signaling models.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "human-capital",
+      "level": "advanced",
+      "name": "Analyze human capital and wage differences",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "labor-markets",
+        "asymmetric-information"
+      ]
+    },
+    {
+      "area": "Labor and inequality",
+      "topics": [],
+      "course": "labor",
+      "description": "Evaluate wage-setting institutions, bargaining, employer market power, and their effects on employment.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "labor-institutions",
+      "level": "advanced",
+      "name": "Analyze wage-setting institutions and power",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "labor-markets",
+        "game-theory"
+      ]
+    },
+    {
+      "area": "Growth and development",
+      "topics": [],
+      "course": "growth-development",
+      "description": "Analyze poverty, credit constraints, health, education, and institutions in developing economies.",
+      "estimatedLessons": 45,
+      "examWeight": null,
+      "key": "development-constraints",
+      "level": "intermediate",
+      "name": "Analyze constraints on economic development",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "inequality-measures",
+        "growth-basics",
+        "asymmetric-information"
+      ]
+    },
+    {
+      "area": "Macroeconomics",
+      "topics": [],
+      "course": "macro",
+      "description": "Model saving, consumption, and investment across time using present values and intertemporal choices.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "intertemporal-macro",
+      "level": "advanced",
+      "name": "Model intertemporal consumption and investment",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "formal-optimization",
+        "functions-growth"
+      ]
+    },
+    {
+      "area": "Macroeconomics",
+      "topics": [],
+      "course": "macro",
+      "description": "Analyze banks, leverage, liquidity, and the transmission of financial shocks to the real economy.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "financial-frictions",
+      "level": "advanced",
+      "name": "Analyze financial frictions and crises",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "money-banking-basics",
+        "asymmetric-information",
+        "aggregate-demand-supply"
+      ]
+    },
+    {
+      "area": "International economics",
+      "topics": [],
+      "course": "international",
+      "description": "Analyze monetary and fiscal policy under different exchange-rate regimes and capital mobility.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "open-economy-macro",
+      "level": "advanced",
+      "name": "Analyze open-economy macroeconomic policy",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "exchange-balance",
+        "is-lm"
+      ]
+    },
+    {
+      "area": "Quantitative methods",
+      "topics": [],
+      "course": "math",
+      "description": "Use integrals to accumulate flows, calculate areas, and represent continuous economic quantities.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "integration",
+      "level": "intermediate",
+      "name": "Apply integration to economic quantities",
+      "outcome": false,
+      "phase": 5,
+      "prerequisites": [
+        "single-variable-calculus"
+      ]
+    },
+    {
+      "area": "Quantitative methods",
+      "topics": [],
+      "course": "math",
+      "description": "Analyze difference and differential equations used to represent economic adjustment over time.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "dynamic-math",
+      "level": "advanced",
+      "name": "Solve economic dynamic equations",
+      "outcome": false,
+      "phase": 5,
+      "prerequisites": [
+        "integration",
+        "functions-growth"
+      ]
+    },
+    {
+      "area": "Econometrics",
+      "topics": [],
+      "course": "econometrics",
+      "description": "Analyze stationarity, trends, serial correlation, and dynamic relationships in economic time series.",
+      "estimatedLessons": 45,
+      "examWeight": null,
+      "key": "time-series",
+      "level": "advanced",
+      "name": "Model economic time series",
+      "outcome": false,
+      "phase": 5,
+      "prerequisites": [
+        "ols-theory",
+        "dynamic-math"
+      ]
+    },
+    {
+      "area": "Econometrics",
+      "topics": [],
+      "course": "econometrics",
+      "description": "Evaluate forecasting models using out-of-sample tests, uncertainty, and comparisons with simple benchmarks.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "economic-forecasting",
+      "level": "advanced",
+      "name": "Evaluate economic forecasts",
+      "outcome": false,
+      "phase": 5,
+      "prerequisites": [
+        "time-series",
+        "reproducible-data"
+      ]
+    },
+    {
+      "area": "Econometrics",
+      "topics": [],
+      "course": "econometrics",
+      "description": "Connect economic models to data through identification, estimation, simulation, and model validation.",
+      "estimatedLessons": 45,
+      "examWeight": null,
+      "key": "structural-estimation",
+      "level": "advanced",
+      "name": "Estimate structural economic models",
+      "outcome": false,
+      "phase": 5,
+      "prerequisites": [
+        "advanced-inference",
+        "formal-optimization",
+        "reproducible-data"
+      ]
+    },
+    {
+      "area": "Microeconomics",
+      "topics": [],
+      "course": "micro",
+      "description": "Analyze repeated interaction, incomplete information, and equilibrium refinements in strategic settings.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "advanced-games",
+      "level": "advanced",
+      "name": "Analyze dynamic and incomplete-information games",
+      "outcome": false,
+      "phase": 5,
+      "prerequisites": [
+        "game-theory",
+        "asymmetric-information"
+      ]
+    },
+    {
+      "area": "Markets, behavior, and the environment",
+      "topics": [],
+      "course": "industrial",
+      "description": "Evaluate differentiated products, platform markets, mergers, and the evidence used in competition policy.",
+      "estimatedLessons": 45,
+      "examWeight": null,
+      "key": "competition-policy",
+      "level": "advanced",
+      "name": "Evaluate market power and competition policy",
+      "outcome": false,
+      "phase": 5,
+      "prerequisites": [
+        "oligopoly",
+        "discrete-choice"
+      ]
+    },
+    {
+      "area": "Markets, behavior, and the environment",
+      "topics": [],
+      "course": "behavioral",
+      "description": "Evaluate behavioral interventions using evidence on welfare, heterogeneity, and unintended effects.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "behavioral-policy",
+      "level": "advanced",
+      "name": "Evaluate behavioral policy interventions",
+      "outcome": false,
+      "phase": 5,
+      "prerequisites": [
+        "behavioral-choice",
+        "economic-experiments"
+      ]
+    },
+    {
+      "area": "Markets, behavior, and the environment",
+      "topics": [],
+      "course": "environmental",
+      "description": "Analyze climate externalities, discounting, uncertainty, and international coordination.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "climate-economics",
+      "level": "advanced",
+      "name": "Analyze climate change economics",
+      "outcome": false,
+      "phase": 5,
+      "prerequisites": [
+        "environmental-policy",
+        "cost-benefit",
+        "game-theory"
+      ]
+    },
+    {
+      "area": "Public economics",
+      "topics": [],
+      "course": "public",
+      "description": "Analyze optimal taxation and social insurance when redistribution changes incentives and information is limited.",
+      "estimatedLessons": 45,
+      "examWeight": null,
+      "key": "optimal-tax-insurance",
+      "level": "advanced",
+      "name": "Analyze optimal taxation and social insurance",
+      "outcome": false,
+      "phase": 5,
+      "prerequisites": [
+        "tax-transfer-design",
+        "asymmetric-information",
+        "formal-optimization"
+      ]
+    },
+    {
+      "area": "Labor and inequality",
+      "topics": [],
+      "course": "labor",
+      "description": "Assess economic explanations and empirical evidence for discrimination and persistent earnings gaps.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "discrimination",
+      "level": "advanced",
+      "name": "Analyze labor market discrimination",
+      "outcome": false,
+      "phase": 5,
+      "prerequisites": [
+        "labor-markets",
+        "multiple-regression",
+        "economic-experiments"
+      ]
+    },
+    {
+      "area": "Quantitative methods",
+      "topics": [],
+      "course": "math",
+      "description": "Formulate and solve dynamic optimization problems using value functions and intertemporal constraints.",
+      "estimatedLessons": 45,
+      "examWeight": null,
+      "key": "dynamic-optimization",
+      "level": "advanced",
+      "name": "Solve dynamic optimization problems",
+      "outcome": false,
+      "phase": 5,
+      "prerequisites": [
+        "multivariable-optimization",
+        "dynamic-math"
+      ]
+    },
+    {
+      "area": "Growth and development",
+      "topics": [],
+      "course": "growth-development",
+      "description": "Analyze innovation, knowledge spillovers, and incentives as mechanisms of sustained growth.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "endogenous-growth",
+      "level": "advanced",
+      "name": "Analyze innovation and endogenous growth",
+      "outcome": false,
+      "phase": 5,
+      "prerequisites": [
+        "solow-growth",
+        "dynamic-optimization"
+      ]
+    },
+    {
+      "area": "Growth and development",
+      "topics": [],
+      "course": "growth-development",
+      "description": "Evaluate development interventions using causal evidence, mechanisms, context, and external validity.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "development-policy-evidence",
+      "level": "advanced",
+      "name": "Evaluate development policy evidence",
+      "outcome": false,
+      "phase": 5,
+      "prerequisites": [
+        "development-constraints",
+        "economic-experiments",
+        "panel-difference"
+      ]
+    },
+    {
+      "area": "Macroeconomics",
+      "topics": [],
+      "course": "macro",
+      "description": "Analyze forward-looking macroeconomic models with household and firm decisions and monetary policy rules.",
+      "estimatedLessons": 50,
+      "examWeight": null,
+      "key": "dynamic-macro",
+      "level": "advanced",
+      "name": "Analyze dynamic macroeconomic models",
+      "outcome": false,
+      "phase": 5,
+      "prerequisites": [
+        "intertemporal-macro",
+        "dynamic-optimization",
+        "monetary-policy"
+      ]
+    },
+    {
+      "area": "Macroeconomics",
+      "topics": [],
+      "course": "macro",
+      "description": "Evaluate debt sustainability and fiscal-monetary interactions under changing interest and growth rates.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "debt-sustainability",
+      "level": "advanced",
+      "name": "Evaluate public debt sustainability",
+      "outcome": false,
+      "phase": 5,
+      "prerequisites": [
+        "fiscal-policy",
+        "dynamic-math",
+        "monetary-policy"
+      ]
+    },
+    {
+      "area": "International economics",
+      "topics": [],
+      "course": "international",
+      "description": "Analyze heterogeneous firms, global value chains, and how trade shocks affect workers and regions.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "modern-trade",
+      "level": "advanced",
+      "name": "Analyze firms and distribution in trade",
+      "outcome": false,
+      "phase": 5,
+      "prerequisites": [
+        "trade-theory",
+        "labor-markets",
+        "oligopoly"
+      ]
+    },
+    {
+      "area": "Economic foundations",
+      "topics": [],
+      "course": "economics",
+      "description": "Compare theoretical predictions and empirical identification strategies when assessing an economic claim.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "evaluate-economic-research",
+      "level": "intermediate",
+      "name": "Evaluate economic research and policy claims",
+      "outcome": false,
+      "phase": 5,
+      "prerequisites": [
+        "general-equilibrium",
+        "economic-experiments",
+        "instrumental-variables",
+        "panel-difference"
+      ]
+    }
+  ],
+  "repaired": []
+}
