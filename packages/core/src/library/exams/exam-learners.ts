@@ -1,5 +1,6 @@
 import "server-only";
 import {
+  type ExamBlueprint,
   type Goal,
   type GoalKind,
   type Plan,
@@ -9,6 +10,7 @@ import {
 } from "@zoonk/db";
 import { getString, isJsonObject } from "@zoonk/utils/json";
 import { findNamedChoices } from "../../exams/choices/named-exam-choices";
+import { isCountryGoal } from "../../goals/_utils/goal-content-country";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import {
   refreshGoalTestSummary,
@@ -16,6 +18,7 @@ import {
 } from "../../learner/placement/_utils/test-sitting";
 import { getPlanState } from "../../plans/_utils/plan-context";
 import { applyPlanOperations } from "../../plans/planner/plan-operations";
+import { isExamCountryOwed } from "../../view-models/onboarding/onboarding-steps";
 import { getReferenceSyllabusNeed } from "../curriculum/goal-curriculum-inputs";
 import { toExamIdentity, toSharedContext } from "../curriculum/shared-graph-prompt";
 import { courseFollowersFilter } from "../products/course-release";
@@ -130,7 +133,34 @@ async function saveNamedChoices(
   return true;
 }
 
-/** Also takes the options of the notice's choices that the learner's stated position or answers name. */
+const INTERNATIONAL = "ZZ";
+
+/**
+ * A country-dependent exam the learner placed is only that country's: another country's notice by
+ * the same name teaches another exam. A notice of the learner's own material, or one run the same
+ * everywhere, is never another country's.
+ */
+function isOtherCountryExam({
+  blueprint,
+  goal,
+}: {
+  blueprint: Pick<ExamBlueprint, "country" | "ownerId">;
+  goal: Pick<Goal, "contentCountry" | "details" | "kind">;
+}): boolean {
+  return (
+    goal.kind === "exam" &&
+    isCountryGoal(goal) &&
+    goal.contentCountry !== null &&
+    blueprint.ownerId === null &&
+    blueprint.country !== INTERNATIONAL &&
+    blueprint.country !== goal.contentCountry
+  );
+}
+
+/**
+ * Also takes the options of the notice's choices that the learner's stated position or answers
+ * name. Returns false without linking a notice of another country than the one the learner gave.
+ */
 export async function linkGoalToExamBlueprint({
   examBlueprintId,
   goalId,
@@ -139,7 +169,7 @@ export async function linkGoalToExamBlueprint({
   goalId: string;
 }): Promise<boolean> {
   const blueprint = await prisma.examBlueprint.findUnique({
-    select: { structure: true },
+    select: { country: true, ownerId: true, structure: true },
     where: { id: examBlueprintId },
   });
 
@@ -157,7 +187,7 @@ export async function linkGoalToExamBlueprint({
     async (tx) => {
       const current = await tx.goal.findUnique({ include: { plan: true }, where: { id: goalId } });
 
-      if (!current) {
+      if (!current || (blueprint && isOtherCountryExam({ blueprint, goal: current }))) {
         return unchanged(false);
       }
 
@@ -263,6 +293,7 @@ export async function linkGoalToResearchSources({
 export async function getResearchGoal(goalId: string) {
   const goal = await prisma.goal.findUnique({
     select: {
+      contentCountry: true,
       details: true,
       goalSources: {
         orderBy: { createdAt: "asc" },
@@ -285,9 +316,11 @@ export async function getResearchGoal(goalId: string) {
   }
 
   const { goalSources, targetDate: _targetDate, ...rest } = goal;
+  const details = isJsonObject(goal.details) ? goal.details : {};
 
   return {
     ...rest,
+    awaitingCountry: isExamCountryOwed({ details, kind: goal.kind }),
     referenceSyllabi: getReferenceSyllabusNeed(goal),
     uploadIds: goalSources.map((link) => link.sourceId),
   };
@@ -307,6 +340,7 @@ export function toLearnerWords(goal: { prompt: string; title: string }): string 
 }
 
 export function toResearchPlanInput(goal: {
+  contentCountry: string | null;
   details: unknown;
   kind: GoalKind;
   prompt: string;
@@ -321,7 +355,10 @@ export function toResearchPlanInput(goal: {
   }
 
   return {
-    details: toSharedContext(details) ?? "none",
+    details:
+      toSharedContext(details, {
+        contentCountry: goal.kind === "exam" ? goal.contentCountry : null,
+      }) ?? "none",
     goal: goal.kind === "exam" ? toResearchedExam({ details, title: goal.title }) : goal.title,
     personal: false,
   };

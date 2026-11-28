@@ -1,7 +1,8 @@
 import { type ExamResearchPlan } from "@zoonk/ai/tasks/research/plan";
 import { type ExamIdentity } from "@zoonk/core/library/exams/identity";
-import { getWorkflowMetadata } from "workflow";
+import { getWorkflowMetadata, sleep } from "workflow";
 import { type Run } from "workflow/api";
+import { repeatUntil } from "../_shared/repeat-until";
 import { claimRunToken, joinRun, startOnce } from "../_shared/run-token";
 import { scheduleFreshnessChecksStep } from "../freshness/steps/schedule-freshness-checks-step";
 import { getGoalContentToken, goalContentWorkflow } from "../goals/goal-content-workflow";
@@ -30,6 +31,29 @@ import { lookUpTargetCutoffStep } from "./steps/target-cutoff-step";
 import { lookUpTopicFrequencyStep } from "./steps/topic-frequency-step";
 import { waitForMaterialReading } from "./wait-for-material-reading";
 
+const COUNTRY_POLL = "3s";
+const MAX_COUNTRY_POLLS = 60;
+
+/** Another country's exam by the same name is another exam, so none is read before the learner says whose. */
+async function waitForExamCountry(goal: ResearchGoal): Promise<ResearchGoal | null> {
+  if (!goal.awaitingCountry) {
+    return goal;
+  }
+
+  const waited = await repeatUntil({
+    done: (latest) => !latest?.awaitingCountry,
+    run: () => loadResearchGoalStep(goal.id),
+    times: MAX_COUNTRY_POLLS,
+    wait: () => sleep(COUNTRY_POLL),
+  });
+
+  if (waited?.awaitingCountry) {
+    throw new Error("Choose the exam's country before researching it.");
+  }
+
+  return waited;
+}
+
 export type ResearchInput = {
   goalId: string;
   /** When absent or empty, research reads the material the learner uploaded with the goal. */
@@ -47,7 +71,10 @@ async function finishExam({
   goal: ResearchGoal;
   isShared: boolean;
 }): Promise<ResearchResult> {
-  await linkGoalToBlueprintStep({ examBlueprintId, goalId: goal.id });
+  // Refused when the notice is another country's than the one the learner gave for their exam.
+  if (!(await linkGoalToBlueprintStep({ examBlueprintId, goalId: goal.id }))) {
+    return { reason: "noOfficialSource", status: "needsUpload" };
+  }
 
   // The lookups only add to the notice and the plan, so one that fails is left to the next research.
   if (isShared) {
@@ -241,7 +268,8 @@ export async function researchWorkflow(input: ResearchInput): Promise<ResearchRe
   const { workflowRunId } = getWorkflowMetadata();
 
   await recordResearchRunStep({ goalId: input.goalId, runId: workflowRunId });
-  const goal = await loadResearchGoalStep(input.goalId);
+  const loaded = await loadResearchGoalStep(input.goalId);
+  const goal = loaded && (await waitForExamCountry(loaded));
 
   if (!goal) {
     return { status: "missing" };

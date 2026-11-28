@@ -1,6 +1,7 @@
 import { type SkillGraphParams } from "@zoonk/ai/tasks/curriculum/skill-graph-calls";
 import { WORK_FIELDS } from "@zoonk/ai/tasks/items/work-fields";
 import { type GoalKind } from "@zoonk/db";
+import { isCountryCode } from "@zoonk/utils/countries";
 import { getString } from "@zoonk/utils/json";
 import { LANGUAGE_CODE_PATTERN, getLanguageName } from "@zoonk/utils/languages";
 import { z } from "zod";
@@ -32,11 +33,18 @@ const SHARED_FACTS = {
   nativeLanguage: z.string().regex(LANGUAGE_CODE_PATTERN),
 };
 
-export function toSharedContext(details: Record<string, unknown>): string | undefined {
-  const shared = Object.entries(SHARED_FACTS).flatMap(([key, schema]) => {
+/** `contentCountry` is the goal's own column, never a key of `details`, which clients can send. */
+export function toSharedContext(
+  details: Record<string, unknown>,
+  { contentCountry }: { contentCountry?: string | null } = {},
+): string | undefined {
+  const facts = Object.entries(SHARED_FACTS).flatMap(([key, schema]) => {
     const fact = schema.safeParse(details[key]);
     return fact.success ? [[key, fact.data] as const] : [];
   });
+
+  const country = contentCountry && isCountryCode(contentCountry) ? contentCountry : null;
+  const shared = country ? [...facts, ["contentCountry", country] as const] : facts;
 
   return shared.length > 0 ? JSON.stringify(Object.fromEntries(shared)) : undefined;
 }

@@ -31,6 +31,7 @@ const DETAILS = {
 };
 
 const GOAL = {
+  contentCountry: null,
   details: DETAILS,
   kind: "exam" as const,
   prompt: "Sou a Sofia, estagiária em Pelotas, e quero passar na OAB em março",
@@ -75,6 +76,20 @@ describe(toResearchPlanInput, () => {
 
     expect(camara.goal).toBe(
       "concurso da Câmara dos Deputados, Analista Legislativo, área de Registro e Redação",
+    );
+  });
+
+  it("reads the country the learner gave for their exam as a code, and never a learn goal's", () => {
+    const pilot = { ...GOAL, details: { examName: "Private pilot licence" }, title: "Pilot" };
+
+    expect(toResearchPlanInput({ ...pilot, contentCountry: "CA" }).details).toBe(
+      '{"contentCountry":"CA"}',
+    );
+
+    expect(toResearchPlanInput({ ...pilot, contentCountry: "Canada" }).details).toBe("none");
+
+    expect(toResearchPlanInput({ ...pilot, contentCountry: "CA", kind: "learn" }).details).toBe(
+      "none",
     );
   });
 
@@ -127,6 +142,46 @@ describe(linkGoalToExamBlueprint, () => {
         goals.map((row) => [row.title, [row.examBlueprintId, row.targetLanguage]]),
       ),
     ).toStrictEqual({ "DELE B2": [other.id, "es"], "PTE Academic 65": [pte.id, "en"] });
+  });
+
+  it("never links another country's notice to an exam the learner placed in theirs", async () => {
+    const user = await userFixture();
+
+    const [american, canadian, international, placed, unplaced] = await Promise.all([
+      examBlueprintFixture({ country: "US", name: "Private Pilot Certificate" }),
+      examBlueprintFixture({ country: "CA", name: "Private Pilot Licence" }),
+      examBlueprintFixture({ country: "ZZ", name: "IELTS Academic" }),
+      goalFixture({
+        contentCountry: "CA",
+        details: { countryDependent: true },
+        kind: "exam",
+        userId: user.id,
+      }),
+      goalFixture({ details: { countryDependent: true }, kind: "exam", userId: user.id }),
+    ]);
+
+    await expect(
+      linkGoalToExamBlueprint({ examBlueprintId: american.id, goalId: placed.id }),
+    ).resolves.toBe(false);
+
+    await expect(
+      linkGoalToExamBlueprint({ examBlueprintId: international.id, goalId: placed.id }),
+    ).resolves.toBe(true);
+
+    await expect(
+      linkGoalToExamBlueprint({ examBlueprintId: canadian.id, goalId: placed.id }),
+    ).resolves.toBe(true);
+
+    await expect(
+      linkGoalToExamBlueprint({ examBlueprintId: american.id, goalId: unplaced.id }),
+    ).resolves.toBe(true);
+
+    const goals = await prisma.goal.findMany({ where: { id: { in: [placed.id, unplaced.id] } } });
+
+    expect(Object.fromEntries(goals.map((row) => [row.id, row.examBlueprintId]))).toStrictEqual({
+      [placed.id]: canadian.id,
+      [unplaced.id]: american.id,
+    });
   });
 
   it("takes the specialty the learner's stated position names, and never one only their goal's words name", async () => {

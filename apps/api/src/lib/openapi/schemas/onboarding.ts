@@ -42,8 +42,18 @@ const dateProblemSchema = z
 
 export const onboardingResponseSchema = z
   .object({
+    bookedExam: z
+      .boolean()
+      .meta({
+        description:
+          "True for an exam each candidate books their own day for (a test center's computer-based test, a driving test): its date is the day the learner booked, and null while they haven't booked it yet",
+      }),
     contentCountry: z.object({
-      defaultCountry: countryChoiceSchema.nullable(),
+      defaultCountry: countryChoiceSchema
+        .nullable()
+        .meta({
+          description: "Null for an exam: only the learner's words or pick say whose exam it is",
+        }),
       suggested: suggestedCountriesSchema,
     }),
     dateProblem: dateProblemSchema,
