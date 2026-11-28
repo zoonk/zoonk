@@ -26,11 +26,18 @@ export async function getCourseDetail({ courseId }: { courseId: string }) {
     written: written.includes(level),
   }));
 
-  const [examplePlan, editions, quickTestMinutes] = await Promise.all([
+  const [examplePlan, editions] = await Promise.all([
     course.organization ? getCoursePlanExample(course) : null,
     course.familyId ? listPublishedCourseEditions({ courseId }) : [],
-    getCourseQuickTestMinutes(course),
   ]);
 
-  return { ...course, contentCountry, editions, exam, examplePlan, levels, quickTestMinutes };
+  return {
+    ...course,
+    contentCountry,
+    editions,
+    exam,
+    examplePlan,
+    levels,
+    quickTestMinutes: getCourseQuickTestMinutes(course),
+  };
 }

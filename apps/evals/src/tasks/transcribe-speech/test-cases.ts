@@ -169,6 +169,27 @@ export const TEST_CASES: TestCase<SpeechClipExpected, SpeechClipInput>[] = [
     },
   },
   {
+    expected: { flaggedWords: [] },
+    id: "fr-vin-alone",
+    userInput: { language: "fr", spokenText: "vin", targetText: "vin" },
+  },
+  {
+    expected: { flaggedWords: [] },
+    id: "fr-un-alone",
+    userInput: { language: "fr", spokenText: "un", targetText: "un" },
+  },
+  {
+    expected: { flaggedWords: [] },
+    id: "pt-pao-alone",
+    userInput: { language: "pt", spokenText: "pão", targetText: "pão" },
+  },
+  {
+    expected: { flaggedWords: ["obrigado"] },
+    id: "pt-no-speech",
+    /** Its clip is two seconds of quiet room noise, made with ffmpeg rather than text-to-speech. */
+    userInput: { language: "pt", spokenText: "", targetText: "obrigado" },
+  },
+  {
     expected: { flaggedWords: ["gara,"] },
     id: "mg-station-market",
     userInput: {

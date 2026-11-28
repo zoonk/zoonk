@@ -8,7 +8,7 @@ import { prisma } from "@zoonk/db";
 import { isSameLanguage } from "@zoonk/utils/languages";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import {
-  listTargetBankWords,
+  listVoicedBankWords,
   normalizeWordKey,
 } from "../../player/contracts/build-word-bank-options";
 import { type LibraryProvenance } from "../_utils/library-rows";
@@ -16,6 +16,7 @@ import { finishLibraryGeneration } from "../claims/generation-claim";
 import { recordLessonQualityDecision } from "../quality/lesson-quality-decision";
 import { cleanLanguageLesson } from "./_utils/clean-language-lesson";
 import { fillMissingAudio } from "./_utils/language-audio";
+import { listDroppedLanguageActivities } from "./_utils/language-lesson-activities";
 import {
   type LanguageLessonInputs,
   loadLanguageLessonInputs,
@@ -134,7 +135,7 @@ async function storeLanguageLesson({
     organizationId: organization.id,
     provenance,
     targetLanguage: inputs.targetLanguage,
-    texts: listTargetBankWords({ sentences: stored.sentencesById, steps }).filter(
+    texts: listVoicedBankWords({ sentences: stored.sentencesById, steps }).filter(
       (word) => !lessonWordKeys.has(toKey(word)),
     ),
   });
@@ -188,6 +189,10 @@ export async function writeLanguageLessonDraft({
 
   const lesson = cleanWrittenLanguageLesson({ content: written.data, inputs });
 
+  const dropped = lesson
+    ? listDroppedLanguageActivities({ content: lesson, targetLanguage: inputs.targetLanguage })
+    : [];
+
   await recordLessonQualityDecision({
     blocking: lesson
       ? []
@@ -200,6 +205,12 @@ export async function writeLanguageLessonDraft({
           },
         ],
     lessonId,
+    minor: dropped.map((problem) => ({
+      code: "droppedActivity",
+      problem,
+      screen: null,
+      source: "code" as const,
+    })),
     phase: "codeCheck",
     writerRunId: written.provenance.runId,
   });

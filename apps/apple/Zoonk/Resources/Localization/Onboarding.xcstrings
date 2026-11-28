@@ -11147,6 +11147,64 @@
         }
       }
     },
+    "Not booked yet" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch nicht gebucht"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aún no lo reservé"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas encore réservé"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non ancora prenotato"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まだ申し込んでいない"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아직 날짜 미정"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jeszcze nie mam terminu"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ainda não marquei"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Henüz tarih almadım"
+          }
+        }
+      }
+    },
     "Not now" : {
       "comment" : "Leaves the test taken from the plan, or a lesson's offer to check the level, for now",
       "localizations" : {
@@ -21831,6 +21889,64 @@
         }
       }
     },
+    "We use it for examples, money and units in your lessons." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir passen Beispiele, Währung und Einheiten in deinen Lektionen an dein Land an."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo usamos para adaptar los ejemplos, la moneda y las unidades de tus lecciones."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il nous sert à adapter les exemples, la monnaie et les unités de tes leçons."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo usiamo per adattare esempi, valute e unità di misura nelle tue lezioni."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "レッスンで使う例や通貨、単位を国に合わせます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "레슨에 나오는 예시, 화폐, 단위를 나라에 맞춰 정해요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Na tej podstawie dobieramy przykłady, walutę i jednostki w twoich lekcjach."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A gente usa essa informação para adaptar os exemplos, a moeda e as unidades das suas aulas."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Derslerindeki örnekleri, para birimini ve ölçü birimlerini ülkene göre seçiyoruz."
+          }
+        }
+      }
+    },
     "We'll read it again. To fix one detail, use its pencil below." : {
       "comment" : "Under the typed words while they're being changed",
       "localizations" : {
@@ -22778,6 +22894,64 @@
         }
       }
     },
+    "When is your exam?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wann ist deine Prüfung?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Cuándo es tu examen?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quand a lieu ton examen ?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quando hai l’esame?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "試験日はいつですか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시험 날짜가 언제인가요?"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kiedy masz egzamin?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quando é sua prova?"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sınavın ne zaman?"
+          }
+        }
+      }
+    },
     "When you study" : {
       "comment" : "Row with when the learner studies",
       "localizations" : {
@@ -23187,6 +23361,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Derslerin hangi ülkeyle ilgili olsun?"
+          }
+        }
+      }
+    },
+    "Which country's exam is it?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für welches Land ist die Prüfung?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿De qué país es el examen?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De quel pays est cet examen ?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Di quale Paese è l’esame?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "どの国の試験ですか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "어느 나라의 시험인가요?"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Z którego kraju jest ten egzamin?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De qual país é a prova?"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu hangi ülkenin sınavı?"
           }
         }
       }
@@ -24777,65 +25009,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bir sesli mesaj aldın. Dinle ve cevapla."
-          }
-        }
-      }
-    },
-    "You pick this test's day when you book it. Booked already? Set it here." : {
-      "comment" : "Under the date of a test each candidate books a day for, such as the GRE",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Den Termin für diesen Test wählst du bei der Buchung. Schon gebucht? Trag ihn hier ein."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eliges la fecha de esta prueba al agendarla. ¿Ya la agendaste? Indica la fecha aquí."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu choisis la date de cette épreuve quand tu réserves ta place. Tu as déjà réservé ? Indique-la ici."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Scegli la data di questo test quando lo prenoti. L’hai già prenotato? Impostala qui."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "この試験の受験日は予約時に選びます。もう予約しましたか？ここで設定してください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이 시험은 접수할 때 응시 날짜를 정해요. 이미 접수했나요? 여기에 시험 날짜를 입력하세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Datę tego testu wybierasz przy rezerwacji. Masz już rezerwację? Ustaw tutaj datę."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você escolhe o dia desta prova ao agendar. Já agendou? Informe a data aqui."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu sınavın gününü randevu alırken seçersin. Randevunu aldın mı? Tarihi buradan belirle."
           }
         }
       }

@@ -71,17 +71,17 @@ struct SQLPlaygroundFields: Decodable, Sendable {
   }
 
   /// Mirrors main's `sqlSnippets`. Keywords and tables add a space after themselves.
-  var snippets: [String] {
-    let words =
+  var snippets: [SnippetKey] {
+    let all =
       ["SELECT", "FROM", "WHERE", "AND", "OR", "ORDER BY", "DESC", "GROUP BY", "COUNT(*)"].map {
-        $0 + " "
+        SnippetKey(label: $0, before: $0 + " ")
       }
-      + tables.flatMap { [$0.name + " "] + $0.columns.map(\.name) }
-    return words.enumerated().filter { index, word in
-      words.firstIndex {
-        $0.trimmingCharacters(in: .whitespaces) == word.trimmingCharacters(in: .whitespaces)
+      + tables.flatMap {
+        [SnippetKey(label: $0.name, before: $0.name + " ")]
+          + $0.columns.map { SnippetKey(label: $0.name, before: $0.name) }
       }
-        == index
+    return all.enumerated().filter { index, snippet in
+      all.firstIndex { $0.label == snippet.label } == index
     }.map(\.element)
   }
 }
@@ -100,6 +100,7 @@ private struct SQLPlaygroundCanvas: View {
   @State private var runner = CodeSQLRunner()
   @ActivityState private var query: String
   @State private var selection: TextSelection?
+  @FocusState private var isEditorFocused: Bool
   @ActivityState private var queryRun: SQLRun?
   @State private var activeRun: UUID?
   @State private var revision = 0
@@ -134,7 +135,7 @@ private struct SQLPlaygroundCanvas: View {
         SQLTableViewer(table: table)
       }
 
-      if !isChecked {
+      if !isChecked || !query.isEmpty {
         editor
       }
 
@@ -189,60 +190,45 @@ private struct SQLPlaygroundCanvas: View {
   private var editor: some View {
     VStack(alignment: .leading, spacing: 8) {
       editorLabel
-        .typeStyle(.body.weight(.medium))
+        .typeStyle(.meta.weight(.medium))
+        .foregroundStyle(.mutedForeground)
         .accessibilityHidden(true)
 
+      // A checked query stays as it was run, in the same field, as main's does, so nothing moves.
       MultilineTextField(
         text: $query, selection: $selection, prompt: Text(verbatim: "SELECT"), label: editorLabel
       )
+      .codeColors(query, language: "sql")
       .lineLimit(3...)
       .typeStyle(.body.monospaced())
       .textFieldStyle(.plain)
-      .fieldBorder()
+      .focused($isEditorFocused)
+      .fieldBorder(isFocused: isEditorFocused)
       .textInputAutocapitalization(.never)
       .autocorrectionDisabled()
       .keyboardType(.asciiCapable)
-      .toolbar {
-        // Above the keyboard, where they're needed: a phone keyboard then only types values.
-        ToolbarItem(placement: .keyboard) {
-          snippets
-        }
+      .disabled(isChecked)
+
+      CodeSnippetBar(
+        snippets: fields.snippets,
+        label: Text(
+          "SQL words, tables and columns", tableName: "ActivitiesCode",
+          comment: "VoiceOver: buttons that type SQL"),
+        isEnabled: !isChecked
+      ) { snippet in
+        snippet.insert(into: &query, selection: &selection)
       }
 
       CodeRunBar(
         runtimeName: "SQLite", status: runtime, hasRun: queryRun != nil,
         isExploring: context.phase == .explore, isRunning: activeRun != nil,
-        canRun: !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, run: runQuery,
-        retry: { runtimeAttempt += 1 })
+        canRun: !isChecked && !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+        run: runQuery, retry: { runtimeAttempt += 1 })
     }
   }
 
   private var editorLabel: Text {
-    context.phase == .explore
-      ? Text("Query", tableName: "ActivitiesCode", comment: "Label of an explored SQL editor")
-      : Text(
-        "Your query", tableName: "ActivitiesCode", comment: "Label of the learner's SQL editor")
-  }
-
-  private var snippets: some View {
-    HorizontalScroll {
-      HStack(spacing: 6) {
-        ForEach(fields.snippets, id: \.self) { snippet in
-          Button {
-            insert(snippet)
-          } label: {
-            Text(verbatim: snippet.trimmingCharacters(in: .whitespaces))
-              .typeStyle(.data)
-          }
-          .buttonStyle(.outline)
-        }
-      }
-    }
-    .accessibilityElement(children: .contain)
-    .accessibilityLabel(
-      Text(
-        "SQL words, tables and columns", tableName: "ActivitiesCode",
-        comment: "VoiceOver: buttons that type SQL"))
+    Text("Query", tableName: "ActivitiesCode")
   }
 
   @ViewBuilder
@@ -372,20 +358,6 @@ private struct SQLPlaygroundCanvas: View {
       locale: .appLanguage, comment: "How many rows a query returned")
   }
 
-  private func insert(_ snippet: String) {
-    var range = query.endIndex..<query.endIndex
-    if case .selection(let selected) = selection?.indices, selected.upperBound <= query.endIndex {
-      range = selected
-    }
-
-    let start = query.distance(from: query.startIndex, to: range.lowerBound)
-    let selected = query[range]
-    query.replaceSubrange(range, with: snippet + selected)
-    selection = TextSelection(
-      insertionPoint: query.index(
-        query.startIndex, offsetBy: start + snippet.count + selected.count))
-  }
-
   private func runQuery() {
     guard !isChecked, activeRun == nil,
       !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
@@ -397,6 +369,8 @@ private struct SQLPlaygroundCanvas: View {
     let started = revision
     let sql = query
     activeRun = id
+    // As on main, where Run takes focus from the query, the keyboard goes so the rows show.
+    isEditorFocused = false
 
     Task {
       let run = await runner.run(query: sql, tables: fields.tables)

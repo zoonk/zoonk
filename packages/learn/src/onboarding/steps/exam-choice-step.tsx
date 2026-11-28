@@ -6,6 +6,7 @@ import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { PageSectionTitle } from "../../_components/page";
+import { ExamPickLimit } from "../../plan/exam-choice-picks";
 import { CheckList, ChoiceList } from "../choice-list";
 import { StepForm } from "./step-form";
 
@@ -29,6 +30,7 @@ export function ExamChoiceStep({
   );
 
   const isComplete = choices.every((choice) => (picks[choice.group] ?? []).length > 0);
+  const required = choices.some((choice) => choice.required);
   const takes = choices.reduce((sum, choice) => sum + choice.take, 0);
 
   const answerWith = (picked: Picks) =>
@@ -50,7 +52,7 @@ export function ExamChoiceStep({
     <StepForm
       canContinue={isComplete}
       onContinue={() => answerWith(picks)}
-      onSkip={() => onAnswer({ choices: null, question: "examChoice" })}
+      onSkip={required ? undefined : () => onAnswer({ choices: null, question: "examChoice" })}
       pending={pending}
       skipLabel={t("Decide later")}
       subject={subject}
@@ -71,9 +73,7 @@ export function ExamChoiceStep({
 
             {choice.take > 1 ? (
               <>
-                <p className="text-muted-foreground text-sm">
-                  {t("Pick up to {take, number}.", { take: choice.take })}
-                </p>
+                <ExamPickLimit take={choice.take} />
 
                 <CheckList
                   choices={options}

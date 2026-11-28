@@ -39,17 +39,21 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.feature.activities.ActivityBadge
 import com.zoonk.android.feature.activities.ActivityCanvas
 import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.activities.LineMarker
 import com.zoonk.android.feature.activities.jsonSaver
+import com.zoonk.android.feature.questions.itemLine
 import com.zoonk.android.ui.code.CodeFrame
 import com.zoonk.android.ui.code.CodeLine
 import com.zoonk.android.ui.code.CodeLineText
@@ -59,7 +63,8 @@ import com.zoonk.android.ui.code.rememberSpokenCode
 import com.zoonk.android.ui.components.fadingHorizontalScroll
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatList
-import com.zoonk.android.ui.richtext.RichText
+import com.zoonk.android.ui.richtext.RichTextLine
+import com.zoonk.android.ui.richtext.SpokenText
 import com.zoonk.android.ui.theme.GeistMono
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.zoonkType
@@ -70,7 +75,7 @@ import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepA
 
 val codeRunnerRenderer =
     ActivityRenderer(
-        badge = { ActivityBadge(R.string.activities_code_badge_run, R.drawable.ic_terminal) },
+        badge = { null },
         canvas = { CodeRunnerActivity(it) },
     )
 
@@ -110,14 +115,17 @@ private fun CodeRunnerActivity(props: ActivityProps) {
         }
     var run by rememberSaveable(stateSaver = RunSaver) { mutableStateOf(props.answer.output?.let(ProgramRun::printed)) }
     val program = programWithEdits(original, editors.mapValues { it.value.text.toString() })
+    // References to runProgram compare equal whatever they capture, so Run and Enter can keep an older one: it reads this instead.
+    val currentProgram by rememberUpdatedState(program)
     val matches = run?.let { sameOutput(it.output, fields.expectedOutput) } == true
     val mistake = run?.takeUnless { matches || props.isExploring }?.let { mistakeFor(it.output, fields.mistakes)?.feedback }
 
     fun runProgram() {
-        if (props.isLocked) return
+        if (isLocked) return
         val revision = editorRun.start() ?: return
+        val code = currentProgram
         scope.launch {
-            val result = sandbox.runProgram(program, language)
+            val result = sandbox.runProgram(code, language)
             val current = editorRun.finish(revision)
             if (isLocked) return@launch
             run = result
@@ -204,26 +212,24 @@ private fun CodePanel(
                 style = MaterialTheme.typography.labelMedium.copy(fontFamily = GeistMono),
             )
             if (marksYourLines) {
-                val style = MaterialTheme.typography.labelMedium
-                Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                    LineMarker(style) {
-                        Icon(painterResource(R.drawable.ic_edit), null, Modifier.size(12.dp), tint = colors.onSurfaceVariant)
-                    }
-                    Text(
-                        pluralStringResource(
-                            R.plurals.activities_code_lines_yours,
-                            fields.editableLines.size,
-                            formatList(fields.editableLines.map(Long::toString), currentLocale()),
-                        ),
-                        color = colors.onSurfaceVariant,
-                        style = style,
-                    )
-                }
+                // Main's "Edit line 2" goes once checked, keeping its room so the header doesn't move.
+                Text(
+                    pluralStringResource(
+                        R.plurals.activities_code_edit_lines,
+                        fields.editableLines.size,
+                        formatList(fields.editableLines.map(Long::toString), currentLocale()),
+                    ),
+                    Modifier
+                        .alpha(if (isLocked) 0f else 1f)
+                        .then(if (isLocked) Modifier.clearAndSetSemantics {} else Modifier),
+                    color = colors.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelMedium,
+                )
             }
         }
         val spoken = rememberSpokenCode()
         // Editable lines are one-line fields, so the program keeps its lines' shape and scrolls.
-        CodeFrame(stringResource(R.string.activities_code_code), wraps = false, stopPerLine = true) {
+        CodeFrame(stringResource(R.string.activities_code_code), wraps = false, stopPerLine = true, holdsFields = true) {
             lines.forEachIndexed { index, line ->
                 val number = index + 1
                 val isError = errorLine == number
@@ -272,7 +278,7 @@ private fun CodeRunnerOutput(
     isStale: Boolean,
 ) {
     val colors = MaterialTheme.colorScheme
-    val shape = RoundedCornerShape(ZoonkRadius.option)
+    val shape = RoundedCornerShape(ZoonkRadius.xl)
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Row(
             Modifier
@@ -333,7 +339,8 @@ private fun OutputCell(
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    Column(modifier.padding(horizontal = 16.dp, vertical = 12.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+    // The code box's inset, so both boxes start their words on one edge.
+    Column(modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
         Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium)
         content()
     }
@@ -385,7 +392,7 @@ private fun PrintedOutput(
             val tone =
                 when {
                     !hasTarget -> colors.onSurface
-                    matches -> colors.tertiary
+                    matches -> colors.onTertiaryContainer
                     else -> colors.error
                 }
             OutputText(run.output.trimEnd(), live, tone)
@@ -439,13 +446,15 @@ private fun NotQuite(mistake: String) {
         LineMarker(
             style,
         ) { Icon(painterResource(R.drawable.ic_cancel), null, Modifier.size(16.dp), tint = MaterialTheme.colorScheme.error) }
-        Column {
-            Text(
-                stringResource(R.string.activities_code_not_quite),
-                color = MaterialTheme.colorScheme.error,
-                style = style.copy(fontWeight = FontWeight.SemiBold),
-            )
-            RichText(mistake, style = style)
-        }
+        // Main's `NotQuiteLead`: the lead starts the feedback's own line.
+        val lead = stringResource(R.string.activities_code_not_quite)
+        val why = itemLine(mistake)
+        val line =
+            buildAnnotatedString {
+                withStyle(SpanStyle(color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.SemiBold)) { append(lead) }
+                append(" ")
+                append(why.text)
+            }
+        RichTextLine(SpokenText(line, why.spoken?.let { "$lead $it" }), Modifier, style)
     }
 }

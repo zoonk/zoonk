@@ -9,6 +9,7 @@ import { unpinnedCourseSourceId } from "../goals/course-start-details";
 import { type GoalRebuildFollowUp } from "../goals/goal-rebuild-follow-up";
 import {
   getAnsweredQuestions,
+  isBookedExam,
   isCourseDateSkipped,
 } from "../view-models/onboarding/onboarding-steps";
 import { commitPlan } from "./_utils/commit-plan";
@@ -73,6 +74,10 @@ async function getExamTarget({
     })
   ) {
     return { asksNotice: false, noticeDate: null, targetDate: null };
+  }
+
+  if (isBookedExam({ details: isJsonObject(goal.details) ? goal.details : {}, kind: goal.kind })) {
+    return { asksNotice: false, noticeDate: null, targetDate: goalDate };
   }
 
   if (goalDate && !(followNotice && goalDate === noticeDate)) {

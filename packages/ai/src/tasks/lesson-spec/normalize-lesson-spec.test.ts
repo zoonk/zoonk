@@ -143,6 +143,50 @@ describe(normalizeLessonSpec, () => {
     ]);
   });
 
+  it.each([
+    {
+      activityTemplate: " find-error ",
+      expectedTemplate: "find-error",
+      expectedVisual: "A worked answer",
+      expectedVisualKind: "template",
+      visual: " A worked answer ",
+    },
+    {
+      activityTemplate: "made-up-chart",
+      expectedTemplate: null,
+      expectedVisual: null,
+      expectedVisualKind: "none",
+      visual: null,
+    },
+    {
+      activityTemplate: null,
+      expectedTemplate: null,
+      expectedVisual: null,
+      expectedVisualKind: "none",
+      visual: null,
+    },
+  ])("normalizes application template $activityTemplate without changing its kind", (example) => {
+    const spec = normalizeLessonSpec({
+      exploreIds,
+      raw: rawSpec([
+        rawScreen({
+          activityTemplate: example.activityTemplate,
+          kind: "application",
+          visual: example.visual,
+          visualKind: "template",
+        }),
+      ]),
+      templateIds,
+    });
+
+    expect(spec.screens.at(-1)).toMatchObject({
+      activityTemplate: example.expectedTemplate,
+      kind: "application",
+      visual: example.expectedVisual,
+      visualKind: example.expectedVisualKind,
+    });
+  });
+
   it("stores an empty visual as no visual", () => {
     const spec = normalizeLessonSpec({
       exploreIds,

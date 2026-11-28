@@ -105,10 +105,11 @@ struct UnderstoodFacts: Decodable {
 /// What the title already says gets no row of its own.
 enum UnderstoodRows {
   /// `countryAsked` keeps the country's row after the learner clears it, so they can pick again.
+  /// `today` is the draft's day in its zone, as core counts the goal's days.
   static func rows(
     for goal: Components.Schemas.UnderstoodGoal,
     countryAsked: Bool = false,
-    today: Date = .now,
+    today: String,
     locale: Locale = .current
   ) -> [UnderstoodRow] {
     guard let facts = try? UnderstoodFacts(goal.draft.value1) else {
@@ -186,7 +187,7 @@ enum UnderstoodRows {
     let isExam = country.kind == .exam
     let badge: LocalizedStringResource? =
       switch country.source {
-      case .said where !isExam:
+      case .said:
         LocalizedStringResource(
           "you said", table: "Onboarding",
           comment: "Marks a level row as the learner's own words")
@@ -212,7 +213,7 @@ enum UnderstoodRows {
       value: country.name,
       badge: badge,
       note: country.lessonVariety.map(lessonLanguageLine),
-      field: country.editable && !isExam ? .contentCountry : nil)
+      field: country.editable ? .contentCountry : nil)
   }
 
   static func scheduleRow(
@@ -492,9 +493,8 @@ enum UnderstoodRows {
   private static func dateRow(
     facts: UnderstoodFacts,
     examDates: [Components.Schemas.OnboardingExamDate],
-    today: Date
+    today from: String
   ) -> UnderstoodRow? {
-    let from = isoDay(today)
     let month = facts.details?.examMonth
     let year = facts.details?.examYear
     // A language certificate's dates come from its official guide, any other exam's from its notice.
@@ -521,13 +521,14 @@ enum UnderstoodRows {
           : LocalizedStringResource(
             "End date", table: "Onboarding", comment: "Row with the date a goal aims for"),
         value: PlanDate.format(targetDate, .row, today: from),
-        note: official.flatMap { day($0.date) }.map { daysLeft(until: $0, today: today) }
-          ?? suggested.map { noticeDayText($0.date) },
+        note: official.flatMap { daysLeft(until: $0.date, today: from) }
+          ?? suggested.map { noticeDayText($0.date, today: from) },
         source: (official ?? suggested)?.source.flatMap(source),
         field: .targetDate, editValue: targetDate, suggestedDate: suggested?.date)
     }
 
-    guard facts.kind == "exam" else {
+    // A booked exam's day is the learner's own booking, which the date question asks.
+    guard facts.kind == "exam", facts.details?.examDay != "booked" else {
       return nil
     }
 
@@ -536,7 +537,6 @@ enum UnderstoodRows {
         id: "targetDate", label: examDateLabel,
         value: toBeConfirmed(month: month, year: year),
         note: unknownDateNote(
-          booked: facts.details?.examDay == "booked",
           named: facts.details?.examName?.isEmpty == false, isGuide: isGuide),
         field: .targetDate, editValue: "")
     }
@@ -571,7 +571,7 @@ enum UnderstoodRows {
           localized: LocalizedStringResource(
             "From its usual dates. We'll tell you when the official ones are out.",
             table: "Onboarding", comment: "Under exam dates estimated from past years"))
-        : day(shown.date).map { daysLeft(until: $0, today: today) },
+        : daysLeft(until: shown.date, today: from),
       source: estimated ? nil : shown.source.flatMap(source),
       field: .targetDate, editValue: shown.date)
   }
@@ -600,7 +600,7 @@ enum UnderstoodRows {
     return UnderstoodRow(
       id: "targetDate", label: examDateLabel,
       value: PlanDate.format(kept, .rowMonth, today: from),
-      note: noticeDay.map { noticeDayText($0.date) },
+      note: noticeDay.map { noticeDayText($0.date, today: from) },
       source: noticeDay?.source.flatMap(source),
       field: .targetDate, editValue: kept, suggestedDate: noticeDay?.date)
   }
@@ -633,15 +633,7 @@ enum UnderstoodRows {
       field: .targetDate, editValue: first.date, choiceDates: open.map(\.date))
   }
 
-  private static func unknownDateNote(booked: Bool, named: Bool, isGuide: Bool) -> String {
-    if booked {
-      return String(
-        localized: LocalizedStringResource(
-          "You pick this test's day when you book it. Booked already? Set it here.",
-          table: "Onboarding",
-          comment: "Under the date of a test each candidate books a day for, such as the GRE"))
-    }
-
+  private static func unknownDateNote(named: Bool, isGuide: Bool) -> String {
     if !named {
       return String(
         localized: LocalizedStringResource(
@@ -663,8 +655,8 @@ enum UnderstoodRows {
           table: "Onboarding", comment: "Under an exam date that isn't out yet, from its notice"))
   }
 
-  private static func noticeDayText(_ isoDate: String) -> String {
-    let date = PlanDate.format(isoDate, .sentence, today: PlanDate.today())
+  private static func noticeDayText(_ isoDate: String, today: String) -> String {
+    let date = PlanDate.format(isoDate, .sentence, today: today)
     return String(
       localized: "The official exam date is \(date). Use it?", table: "Onboarding"
     )
@@ -710,9 +702,12 @@ enum UnderstoodRows {
         comment: "An exam date that isn't out yet, with the month the learner named"))
   }
 
-  private static func daysLeft(until date: Date, today: Date) -> String {
-    let days =
-      Calendar.current.dateComponents([.day], from: today.startOfDay, to: date.startOfDay).day ?? 0
+  private static func daysLeft(until isoDate: String, today: String) -> String? {
+    guard day(isoDate) != nil else {
+      return nil
+    }
+
+    let days = max(0, PlanDate.days(from: today, to: isoDate))
 
     return String(
       localized: LocalizedStringResource(
@@ -747,8 +742,4 @@ enum UnderstoodRows {
     return PlanDate.timeOfDay(minutes: parts[0] * 60 + parts[1])
   }
 
-}
-
-extension Date {
-  fileprivate var startOfDay: Date { Calendar.current.startOfDay(for: self) }
 }

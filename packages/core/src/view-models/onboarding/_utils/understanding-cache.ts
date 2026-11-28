@@ -15,6 +15,8 @@ const understoodGoalFields = {
   examDay: z.enum(["booked", "official"]).optional(),
   examMonth: z.number().optional(),
   examName: z.string().optional(),
+  examNotBooked: z.literal(true).optional(),
+  examOption: z.string().optional(),
   examSubjects: z.array(z.string()).optional(),
   examTarget: z.enum(["admission", "position", "score"]).optional(),
   examYear: z.number().optional(),

@@ -107,8 +107,7 @@ async function loadCourseStart(courseId: string, language: string) {
 
   const [course, editions, existing, limit] = await Promise.all([
     loadStartableCourse(courseId).then(
-      async (found) =>
-        found && { ...found, quickTestMinutes: await getCourseQuickTestMinutes(found) },
+      (found) => found && { ...found, quickTestMinutes: getCourseQuickTestMinutes(found) },
     ),
     listPublishedCourseEditions({ courseId }),
     findCourseGoalStart(courseId),

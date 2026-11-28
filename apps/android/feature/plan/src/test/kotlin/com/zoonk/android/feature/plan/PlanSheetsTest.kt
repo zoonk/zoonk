@@ -56,7 +56,7 @@ class PlanSheetsTest {
     fun aFocusSavedFromAnEarlierOpeningLeavesTheNextOneOpen() {
         focus()
         compose.onNodeWithText("Geometry").performClick()
-        compose.onNodeWithText("Focus on these").performClick()
+        compose.onNodeWithText("Save").performClick()
         open = false
         compose.waitForIdle()
         open = true
@@ -64,7 +64,7 @@ class PlanSheetsTest {
 
         answer(PlanChangeResult(change = null, status = PlanChangeResult.Status.APPLIED))
 
-        compose.onNodeWithText("Focus on these").assertIsDisplayed()
+        compose.onNodeWithText("Save").assertIsDisplayed()
         assertEquals(0, done)
     }
 

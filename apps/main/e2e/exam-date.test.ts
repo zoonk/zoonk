@@ -170,3 +170,32 @@ test.describe("Exam date", () => {
     }
   });
 });
+
+test("a booked exam asks its date once, and not having booked yet moves on without one", async ({
+  noProgressUser,
+  userWithoutProgress: page,
+}) => {
+  const goal = await goalFixture({
+    details: { answered: ["target"], examDay: "booked", examName: "IELTS Academic" },
+    kind: "exam",
+    planRevealedAt: null,
+    title: "Pass the IELTS Academic",
+    userId: noProgressUser.id,
+  });
+
+  await planFixture({ goalId: goal.id, phases: [] });
+  await page.goto(`/start/${goal.id}`);
+
+  const question = page.getByRole("heading", { name: "When is your exam?" });
+  await expect(question).toBeVisible();
+  await page.getByRole("button", { name: "Not booked yet" }).click();
+
+  await expect(page.getByRole("heading", { name: "How much do you already know?" })).toBeVisible();
+
+  const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+  expect(saved.targetDate).toBeNull();
+
+  await page.reload();
+  await expect(page.getByRole("heading", { name: "How much do you already know?" })).toBeVisible();
+  await expect(question).toBeHidden();
+});

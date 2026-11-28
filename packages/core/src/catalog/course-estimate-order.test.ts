@@ -22,7 +22,7 @@ const NOW = new Date("2020-09-28T12:00:00Z");
 
 async function orderedCourse(exam: boolean) {
   const [course, skills] = await Promise.all([
-    courseFixture({ isPublished: true, visibility: "public" }),
+    courseFixture({ format: exam ? "exam" : "core", isPublished: true, visibility: "public" }),
     Promise.all(Array.from({ length: 5 }, () => skillFixture())),
   ]);
 
@@ -56,42 +56,44 @@ async function orderedCourse(exam: boolean) {
     data: { prerequisiteId: skills[0]!.id, skillId: skills[1]!.id },
   });
 
-  if (exam) {
-    const blueprint = await examBlueprintFixture({
-      structure: {
-        formats: [],
-        rules: [],
-        subjects: [
-          { name: "Writing", topics: [] },
-          { name: "Reading", topics: [] },
-        ],
-      },
-    });
-
-    await prisma.examSkillGraph.create({
-      data: {
-        examBlueprintId: blueprint.id,
-        generatedAt: NOW,
-        graph: {
-          phases: [{ milestone: null, name: "Grammar" }],
-          skills: skills.map((skill, index) => ({
-            area: index === 2 ? "Reading" : "Writing",
-            lessons: 1,
-            name: skill.name,
-            phase: 0,
-            skillId: skill.id,
-            weight: index === 2 ? 5 : 1,
-          })),
-        },
-        model: "fixture",
-        primaryCourseId: course.id,
-        promptVersion: "fixture",
-        runId: "fixture",
-      },
-    });
+  if (!exam) {
+    return { blueprint: null, chapters, course };
   }
 
-  return { chapters, course };
+  const blueprint = await examBlueprintFixture({
+    structure: {
+      formats: [],
+      rules: [],
+      subjects: [
+        { name: "Writing", topics: [] },
+        { name: "Reading", topics: [] },
+      ],
+    },
+  });
+
+  await prisma.examSkillGraph.create({
+    data: {
+      examBlueprintId: blueprint.id,
+      generatedAt: NOW,
+      graph: {
+        phases: [{ milestone: null, name: "Grammar" }],
+        skills: skills.map((skill, index) => ({
+          area: index === 2 ? "Reading" : "Writing",
+          lessons: 1,
+          name: skill.name,
+          phase: 0,
+          skillId: skill.id,
+          weight: index === 2 ? 5 : 1,
+        })),
+      },
+      model: "fixture",
+      primaryCourseId: course.id,
+      promptVersion: "fixture",
+      runId: "fixture",
+    },
+  });
+
+  return { blueprint, chapters, course };
 }
 
 describe("published course study order", () => {
@@ -105,7 +107,10 @@ describe("published course study order", () => {
   it.each([false, true])(
     "keeps undated chapter weeks and level phases in published order (exam-linked: %s)",
     async (exam) => {
-      const [{ course, chapters }, user] = await Promise.all([orderedCourse(exam), userFixture()]);
+      const [{ blueprint, chapters, course }, user] = await Promise.all([
+        orderedCourse(exam),
+        userFixture(),
+      ]);
 
       const estimate = await estimateCoursePlan({
         courseId: course.id,
@@ -130,6 +135,8 @@ describe("published course study order", () => {
       if (started.status !== "created") {
         throw new Error("Expected course start");
       }
+
+      expect(started.goal.examBlueprintId).toBe(blueprint?.id ?? null);
 
       const plan = await prisma.plan.findUniqueOrThrow({
         include: { items: { orderBy: { position: "asc" } } },

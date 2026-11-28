@@ -246,6 +246,14 @@ const REGISTRY: Record<string, Registration[]> = {
       writes: ["examBlueprint.updateMany"],
     },
   ],
+  "library/exams/notice-reading.ts": [
+    {
+      fields: ["setAside"],
+      verdict: "excluded",
+      why: "a set-aside notice version only spares research and freshness checks a reread",
+      writes: ["raw:exam_blueprints"],
+    },
+  ],
   "library/exams/record-choice-options.ts": [
     {
       fields: ["pastOptions"],

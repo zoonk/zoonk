@@ -1,12 +1,14 @@
 import { type ExamOutline } from "@zoonk/ai/tasks/curriculum/exam-outline";
 import { type ExamBlueprint } from "@zoonk/db";
-import { getWrittenTasks } from "../../exams/_utils/written-tasks";
+import { getWrittenTaskOptions } from "../../exams/_utils/written-tasks";
 import { listChoiceGroups } from "../../exams/choices/choice-groups";
+import { getExamDomainGroups } from "../../plans/planner/exam-domain-size";
 import {
   type ExamStructure,
   examStructureSchema,
   topicFrequencySchema,
 } from "../exams/blueprint-contract";
+import { getGroupLabel } from "../exams/group-label";
 import { getSubjectQuestions } from "../exams/subject-questions";
 import { listTopicLevels } from "../exams/topic-frequency";
 
@@ -31,6 +33,7 @@ export function toExamOutline(
   const frequency = topicFrequencySchema.safeParse(blueprint.topicFrequency).data ?? [];
 
   const choices = structure ? listChoiceGroups(structure) : [];
+  const writtenTasks = structure ? getWrittenTaskOptions(structure) : [];
 
   const takenOf = (name?: string | null) => {
     const choice = choices.find((item) => item.name === name);
@@ -38,17 +41,24 @@ export function toExamOutline(
   };
 
   const subjects = structure
-    ? structure.subjects.map((subject) => ({
-        choiceGroup: subject.choiceGroup ?? null,
-        ...takenOf(subject.choiceGroup),
-        group: subject.group ?? null,
-        name: subject.name,
-        questions: getSubjectQuestions({ structure, subject }),
-        shortName: subject.shortName ?? null,
-        topics: subject.topics,
-        weight: subject.weight,
-        writtenTasks: getWrittenTasks({ structure, subject }),
-      }))
+    ? structure.subjects.map((subject) => {
+        const topicGroups = getExamDomainGroups(subject.topicGroups);
+
+        return {
+          choiceGroup: subject.choiceGroup ?? null,
+          ...takenOf(subject.choiceGroup),
+          group: getGroupLabel({ structure, subject }),
+          name: subject.name,
+          questions: getSubjectQuestions({ structure, subject }),
+          shortName: subject.shortName ?? null,
+          ...(topicGroups.length > 0 && { topicGroups }),
+          topics: subject.topics,
+          weight: subject.weight,
+          writtenTasks: writtenTasks
+            .filter((task) => task.subjects.includes(subject.name))
+            .map((task) => task.description),
+        };
+      })
     : [];
 
   const looked = structure ? listTopicLevels({ structure, topicFrequency: [] }) : [];
@@ -62,5 +72,6 @@ export function toExamOutline(
       subject,
       topic,
     })),
+    ...(writtenTasks.length > 0 && { writtenTasks }),
   };
 }

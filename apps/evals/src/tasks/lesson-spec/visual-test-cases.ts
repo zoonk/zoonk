@@ -6,6 +6,7 @@ import { listPlannerTemplates } from "@zoonk/core/library/activities/writer-temp
 export type LessonSpecExpected = {
   avoidTemplates?: readonly string[];
   pictures?: "any" | "none" | "some";
+  practiceTemplates?: readonly string[];
   /** Answering this lesson's questions means seeing something, so at least one shows it in a picture. */
   questionPicture?: boolean;
   /** The case's own `secondTake` input again, since the scorer reads only `expected`. */

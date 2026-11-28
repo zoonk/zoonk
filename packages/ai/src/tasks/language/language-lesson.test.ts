@@ -7,7 +7,8 @@ import type * as Ai from "ai";
 vi.mock("server-only", () => ({}));
 
 vi.mock("./language-lesson.prompt.md", () => ({
-  default: "Respell words:\n{{READER_RESPELLING}}\n- Stress the accent.",
+  default:
+    "Respell words:\n{{READER_RESPELLING}}\n- Stress the accent.\nReply in {{TARGET_LANGUAGE}}, explain in {{LEARNER_LANGUAGE}}.",
 }));
 
 vi.mock("./language-lesson-respelling-pt.prompt.md", () => ({
@@ -60,11 +61,20 @@ describe(generateLanguageLesson, () => {
 
     const german = await generateLanguageLesson({ ...LESSON, learnerLanguage: "de" });
 
-    expect(portuguese.systemPrompt).toBe(
-      "Respell words:\n- Portuguese readers.\n- Stress the accent.",
+    expect(portuguese.systemPrompt).toMatch(
+      /^Respell words:\n- Portuguese readers\.\n- Stress the accent\.\n/u,
     );
 
-    expect(english.systemPrompt).toBe("Respell words:\n- English readers.\n- Stress the accent.");
-    expect(german.systemPrompt).toBe("Respell words:\n- Stress the accent.");
+    expect(english.systemPrompt).toMatch(
+      /^Respell words:\n- English readers\.\n- Stress the accent\.\n/u,
+    );
+
+    expect(german.systemPrompt).toMatch(/^Respell words:\n- Stress the accent\.\n/u);
+  });
+
+  it("names the practiced and the learner's language in the rules", async () => {
+    const { systemPrompt } = await generateLanguageLesson(LESSON);
+
+    expect(systemPrompt).toContain("Reply in US English, explain in Português Brasileiro.");
   });
 });

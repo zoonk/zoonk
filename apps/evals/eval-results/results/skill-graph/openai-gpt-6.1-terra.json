@@ -6711,6 +6711,566 @@
           "language": "pt"
         }
       }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Both options cover both named reading topics. Each has a topicless Written Paper reply and directions note with the exact language as its subject. The shared English handover covers unresolved requests and follow-up times, with no topic or subject binding. All syllabus weights are in range, and the blueprint supplies no frequency distinction that the equal weights contradict.",
+          "score": 10,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "Within each option, interpreting a request precedes answering it, and interpreting maps and closures feeds into the complete directions note. The English chain runs independently from selecting log details to writing entries to completing the handover. The phase titles name stages rather than repeating skills, and the milestones describe capabilities reached in those stages.",
+          "score": 10,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "The five-to-ten-lesson units allow focused practice on distinctions such as recognizing a request's main purpose versus identifying all its questions. The sizing issue is at the path level: the phase hours appear to sum parallel Italian and Dutch lessons rather than show the study time for one option plus English.",
+          "score": 8,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The content stays within the tested tasks, with no strategy or unrelated visitor-desk material. Parallel language variants are necessary, not duplication for one learner. The least distinct pair is English handover entries and the complete handover: checking against the log adds value, but the final skill could specify what is checked across entries to keep its lessons from repeating the preceding skill.",
+          "score": 8,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The map preserves the candidate's language choice and the compulsory English task. It starts with concrete reading actions suitable for a basic learner and builds toward the documents the exam actually asks for. Names and milestones are in English, and the skill names lead with actions.",
+          "score": 10,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The learner must interpret constraints, choose a viable route, select unresolved items and check finished documents against source information. These are judgment and verification skills exercised through the manual writing the exam scores; no AI-tool unit is needed.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 12 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 6961,
+          "outputTokens": 808,
+          "reasoningTokens": 80
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The 20.5-hour estimate appears to count both language options. Phase 1, for example, budgets 6.4 hours for 64 lessons, but a candidate takes only 32 of those lessons. Without a per-option estimate, the planner overstates the time a candidate should set aside.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the final English handover skill more distinct from writing individual entries. For example, have the learner audit a whole handover against a mixed-status log: omit resolved items and verify that every outstanding request is paired with the correct follow-up time.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - The written paper includes a request reply and a directions note, both in the candidate's chosen language, and an English shift handover every candidate writes\n      - Keep both languages available: teach both option-dependent tasks for Italian and for Dutch. Each variant is topicless in \"Written Paper\" and names its language, with subject set to the exact option name\n      - The English handover is taught in \"Written Paper\" with no topics and no subject binding. No common skill depends on a skill for one option\n      - The exam weight range applies to syllabus skills. Optional exam strategy lives in extraSkills and has examWeight null.\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "writtenOptionSection": "Written Paper"
+        },
+        "id": "en-visitor-desk-written-language-options-1",
+        "userInput": {
+          "examBlueprint": {
+            "name": "Marshport Visitor Desk Certificate",
+            "notes": [
+              "Candidates choose either Italian or Dutch for the reading questions and the two visitor-facing writing tasks. Everyone writes the shift handover in English."
+            ],
+            "subjects": [
+              {
+                "choiceGroup": "Visitor language",
+                "group": "Reading Paper",
+                "name": "Italian",
+                "questions": 12,
+                "topics": [
+                  "Reading visitor requests",
+                  "Reading opening hours and route maps"
+                ],
+                "weight": null
+              },
+              {
+                "choiceGroup": "Visitor language",
+                "group": "Reading Paper",
+                "name": "Dutch",
+                "questions": 12,
+                "topics": [
+                  "Reading visitor requests",
+                  "Reading opening hours and route maps"
+                ],
+                "weight": null
+              }
+            ],
+            "topicFrequency": [],
+            "writtenTasks": [
+              {
+                "description": "Reply to a visitor's request in the chosen language, addressing each question politely.",
+                "section": "Written Paper",
+                "subjects": [
+                  "Italian",
+                  "Dutch"
+                ]
+              },
+              {
+                "description": "Write a directions note in the chosen language from a map and a list of closures.",
+                "section": "Written Paper",
+                "subjects": [
+                  "Italian",
+                  "Dutch"
+                ]
+              },
+              {
+                "description": "Write an English shift handover from a desk log, recording unresolved requests and follow-up times.",
+                "section": "Written Paper",
+                "subjects": []
+              }
+            ]
+          },
+          "goal": "Pass the Marshport Visitor Desk Certificate",
+          "goalKind": "exam",
+          "language": "en",
+          "ownLevel": "basic"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Both options cover visitor requests, hours and maps, polite replies addressing every question, and directions notes based on maps and closures. The common English handover covers both unresolved requests and follow-up times. All syllabus weights are in range, and the blueprint gives no frequency distinction that the equal weights contradict.",
+          "score": 10,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The writing tasks build on relevant skills within each option, and the English handover depends only on extracting log details. The sequencing works; the phase 2 milestone should say that learners can select handover details, not yet express them clearly in writing.",
+          "score": 8,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "The path gives manageable lesson blocks to concrete distinctions such as identifying a visitor's questions versus interpreting constraints. Sentence-level answers lead to complete replies, and ordinary directions lead to closure-aware notes. The time budget is plausible for one option with practice and review, though its scope is implicit.",
+          "score": 9,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The paired language variants serve different candidates rather than duplicating work for one candidate. Combining information from requests, schedules and maps builds on reading individual details. Pacing is confined to an optional extra skill with null exam weight.",
+          "score": 10,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The map preserves the candidate's language choice throughout. Each visitor-facing writing variant names its language, has the exact option as subject, and sits in Written Paper with no topics. The English handover is topicless and subject-unbound. The English action names and practical desk tasks fit the requested exam.",
+          "score": 10,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The exam requires independent reading and writing, so manual practice is appropriate. Selecting unresolved items, checking reply completeness and routing around closures all exercise judgment. An explicit route-tracing check would make error detection as concrete for notes as it is for replies.",
+          "score": 9,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 12 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 6238,
+          "outputTokens": 739,
+          "reasoningTokens": 54
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The phase 2 milestone claims the learner can express handover details clearly in writing. By that point the learner has extracted open requests and times from a desk log, but the skill that teaches writing the English handover is in phase 3.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Label the hour estimates as time for one chosen language plus the common work, so candidates know how to use them. In the final directions-note skill, make the check concrete: trace the written route on the map and verify that it reaches the destination without using a listed closure.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - The written paper includes a request reply and a directions note, both in the candidate's chosen language, and an English shift handover every candidate writes\n      - Keep both languages available: teach both option-dependent tasks for Italian and for Dutch. Each variant is topicless in \"Written Paper\" and names its language, with subject set to the exact option name\n      - The English handover is taught in \"Written Paper\" with no topics and no subject binding. No common skill depends on a skill for one option\n      - The exam weight range applies to syllabus skills. Optional exam strategy lives in extraSkills and has examWeight null.\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "writtenOptionSection": "Written Paper"
+        },
+        "id": "en-visitor-desk-written-language-options-2",
+        "userInput": {
+          "examBlueprint": {
+            "name": "Marshport Visitor Desk Certificate",
+            "notes": [
+              "Candidates choose either Italian or Dutch for the reading questions and the two visitor-facing writing tasks. Everyone writes the shift handover in English."
+            ],
+            "subjects": [
+              {
+                "choiceGroup": "Visitor language",
+                "group": "Reading Paper",
+                "name": "Italian",
+                "questions": 12,
+                "topics": [
+                  "Reading visitor requests",
+                  "Reading opening hours and route maps"
+                ],
+                "weight": null
+              },
+              {
+                "choiceGroup": "Visitor language",
+                "group": "Reading Paper",
+                "name": "Dutch",
+                "questions": 12,
+                "topics": [
+                  "Reading visitor requests",
+                  "Reading opening hours and route maps"
+                ],
+                "weight": null
+              }
+            ],
+            "topicFrequency": [],
+            "writtenTasks": [
+              {
+                "description": "Reply to a visitor's request in the chosen language, addressing each question politely.",
+                "section": "Written Paper",
+                "subjects": [
+                  "Italian",
+                  "Dutch"
+                ]
+              },
+              {
+                "description": "Write a directions note in the chosen language from a map and a list of closures.",
+                "section": "Written Paper",
+                "subjects": [
+                  "Italian",
+                  "Dutch"
+                ]
+              },
+              {
+                "description": "Write an English shift handover from a desk log, recording unresolved requests and follow-up times.",
+                "section": "Written Paper",
+                "subjects": []
+              }
+            ]
+          },
+          "goal": "Pass the Marshport Visitor Desk Certificate",
+          "goalKind": "exam",
+          "language": "en",
+          "ownLevel": "basic"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Harvest Scheduling receives 103 of 129 syllabus lessons (79.8%); Site Records receives 26 (20.2%). The map covers building and adjusting timetables and all five named record types. No skill mixes topics across headings. Harvest skills carry higher exam weights than record skills, and optional pacing is unweighted.",
+          "score": 10,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The stages progress sensibly from interpreting dates to building and revising a timetable, with achievable milestones. The central dependency gap is in redistribution: the skill calls for acting on a maturity change, yet its only direct prerequisite is balancing capacity, which does not teach how to revise the affected window.",
+          "score": 8,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Several narrow operations are oversized for the described short cases. Placing already-calculated windows on a calendar gets seven lessons before a further seven on identifying gaps and overlaps; shifting a window earlier or later gets seven lessons in each direction. The issue is the depth assigned to those individual actions, not the overall hour count.",
+          "score": 7,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "Capacity balancing is a standalone scored skill without support in the notice. The early- and late-maturity skills also duplicate the date-shifting procedure rather than using the two directions as contrasting cases within one skill. Exam pacing, by contrast, is appropriately confined to extraSkills.",
+          "score": 7,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The English action names, accessible starting point and case-based descriptions fit a basic learner preparing for this paper. The clear mismatch is treating quantity and capacity constraints as an exam requirement, including them even in the final timetable check.",
+          "score": 8,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "Estimating windows, detecting conflicts, revising plans and checking the result exercise judgment rather than rote recall. Manual calendar and record work fits the scored paper; an AI-tool skill is not needed.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 10 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 6058,
+          "outputTokens": 772,
+          "reasoningTokens": 38
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The map gives seven scored lessons to balancing harvest quantities against capacity limits, which the blueprint does not identify as a tested ability. It also spends 14 lessons on separate early- and late-maturity skills whose descriptions teach essentially the same operation: shift a harvest window and check the resulting schedule.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The prerequisite chain for redistributing harvests runs through capacity balancing but not through either skill that revises the affected dates. The listed order is workable, but the graph does not capture the timing judgment that redistribution uses.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use a single adjustment skill with contrasting early and late cases. Have the learner recalculate the changed window, identify any gaps or overlaps, and justify a revised timetable. Preserve the roughly 80:20 lesson split when consolidating the skills.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - Use the official mark shares to divide the estimated lessons in Community Garden Operations. Harvest Scheduling gets about 80% and Site Records gets about 20%, each within five percentage points\n      - Teach the topics under both headings. Every skill with syllabus topics draws its topics from one heading. Site Records takes less time even though the syllabus lists more topics for it\n      - The exam weight range applies to syllabus skills. Optional exam strategy lives in extraSkills and has examWeight null.\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-community-garden-domain-shares-1",
+        "userInput": {
+          "examBlueprint": {
+            "name": "Alder Vale Community Garden Coordinator Assessment",
+            "notes": [
+              "One scored paper with short case questions. Its two domains carry 80 and 20 marks respectively."
+            ],
+            "subjects": [
+              {
+                "group": null,
+                "name": "Community Garden Operations",
+                "questions": null,
+                "topicGroups": [
+                  {
+                    "name": "Harvest Scheduling",
+                    "share": 0.8,
+                    "topics": [
+                      "Build a staggered harvest timetable and adjust it when crops mature early or late"
+                    ]
+                  },
+                  {
+                    "name": "Site Records",
+                    "share": 0.2,
+                    "topics": [
+                      "Plot assignments",
+                      "Tool sign-out",
+                      "Volunteer attendance",
+                      "Seed inventory",
+                      "Donation pickups"
+                    ]
+                  }
+                ],
+                "topics": [
+                  "Build a staggered harvest timetable and adjust it when crops mature early or late",
+                  "Plot assignments",
+                  "Tool sign-out",
+                  "Volunteer attendance",
+                  "Seed inventory",
+                  "Donation pickups"
+                ],
+                "weight": 1
+              }
+            ],
+            "topicFrequency": []
+          },
+          "goal": "Pass the Alder Vale Community Garden Coordinator Assessment",
+          "goalKind": "exam",
+          "language": "en",
+          "ownLevel": "basic"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Of the 50 syllabus lessons, 40 teach Harvest Scheduling and 10 teach Site Records, exactly matching the 80:20 mark split. The map teaches timetable construction and both maturity adjustments, gives each of the five record types its own skill, and never mixes headings within a skill. Weights of 5 for scheduling and 1 for records reflect the blueprint’s priorities.",
+          "score": 10,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The path moves from reading maturity windows to estimating dates, spacing plantings, building a timetable, and revising it. The independent record skills need no scheduling prerequisite, and both milestones are supported. The weakness is the second phase title: “Handling Changing Conditions” describes its scheduling situation rather than its stage.",
+          "score": 8,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Two lessons per record type leave room for an explanation and a short case. Five hours is plausible for 50 three-minute syllabus lessons plus practice and review. The questionable allocation is ten lessons across two narrowly distinguished date-shift skills, with no indication of what makes their worked cases substantively different.",
+          "score": 8,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "Harvest-window estimation and gap detection serve the timetable task, and pacing is correctly confined to extraSkills. The early- and late-adjustment pair is the one clear overlap: both cases are required, but the stated action and method are otherwise the same.",
+          "score": 8,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The map starts at a sensible level for a learner with basic knowledge and targets the short-case assessment rather than general gardening expertise. The English skill names are reusable, verb-first actions. All syllabus weights are in range, and the optional pacing skill has null weight.",
+          "score": 10,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "Estimating readiness, finding conflicts, and revising a plan under changed conditions exercise judgment and checking. The record skills likewise ask learners to infer a status or quantity from entries. These are appropriate manual abilities for the scored paper; an AI-tool skill is not needed.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 10 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 5191,
+          "outputTokens": 818,
+          "reasoningTokens": 78
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The early- and late-maturity skills each allocate five lessons to revising the same timetable. Their descriptions change only the direction of the date shift; they do not identify different scheduling decisions that warrant separate skills. Also, “Handling Changing Conditions” names the situation taught in phase 2 rather than the learner’s stage of progression.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use one adjustment skill with contrasting early and late cases. Ask learners to show which dates must move, which can stay fixed, and whether the revision creates a gap or overlap. This keeps both tested cases explicit without repeating the procedure. “Applied Case Practice” would better describe the second phase’s stage.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - Use the official mark shares to divide the estimated lessons in Community Garden Operations. Harvest Scheduling gets about 80% and Site Records gets about 20%, each within five percentage points\n      - Teach the topics under both headings. Every skill with syllabus topics draws its topics from one heading. Site Records takes less time even though the syllabus lists more topics for it\n      - The exam weight range applies to syllabus skills. Optional exam strategy lives in extraSkills and has examWeight null.\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-community-garden-domain-shares-2",
+        "userInput": {
+          "examBlueprint": {
+            "name": "Alder Vale Community Garden Coordinator Assessment",
+            "notes": [
+              "One scored paper with short case questions. Its two domains carry 80 and 20 marks respectively."
+            ],
+            "subjects": [
+              {
+                "group": null,
+                "name": "Community Garden Operations",
+                "questions": null,
+                "topicGroups": [
+                  {
+                    "name": "Harvest Scheduling",
+                    "share": 0.8,
+                    "topics": [
+                      "Build a staggered harvest timetable and adjust it when crops mature early or late"
+                    ]
+                  },
+                  {
+                    "name": "Site Records",
+                    "share": 0.2,
+                    "topics": [
+                      "Plot assignments",
+                      "Tool sign-out",
+                      "Volunteer attendance",
+                      "Seed inventory",
+                      "Donation pickups"
+                    ]
+                  }
+                ],
+                "topics": [
+                  "Build a staggered harvest timetable and adjust it when crops mature early or late",
+                  "Plot assignments",
+                  "Tool sign-out",
+                  "Volunteer attendance",
+                  "Seed inventory",
+                  "Donation pickups"
+                ],
+                "weight": 1
+              }
+            ],
+            "topicFrequency": []
+          },
+          "goal": "Pass the Alder Vale Community Garden Coordinator Assessment",
+          "goalKind": "exam",
+          "language": "en",
+          "ownLevel": "basic"
+        }
+      }
     }
   ],
   "taskId": "skill-graph"

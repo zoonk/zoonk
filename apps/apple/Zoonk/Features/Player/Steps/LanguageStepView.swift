@@ -360,7 +360,9 @@ private struct TranslationView: View {
     LessonOptionList(
       options: exercise.translationOptions.map {
         LessonOption(
-          id: $0.id, text: $0.word, detail: $0.romanization, isCorrect: $0.id == word.id)
+          id: $0.id, text: $0.word,
+          detail: $0.romanization.map { RichInline(text: AttributedString($0)) },
+          isCorrect: $0.id == word.id)
       },
       selectedId: context.answer.flatMap {
         if case .translation(let id) = $0 { id } else { nil }
@@ -449,8 +451,6 @@ struct LessonWordBank<Tiles: View>: View {
 
 /// A tile fills the first empty blank, and a filled blank empties on a tap.
 private struct FillBlankView: View {
-  @Environment(\.lessonAudio) private var audio
-
   let exercise: LanguageExercise
   let context: LessonStepContext
 
@@ -549,7 +549,6 @@ private struct FillBlankView: View {
 
     answers[empty] = option.word
     context.select(.fillBlank(userAnswers: answers))
-    audio.playWord(option.audioUrl)
   }
 }
 

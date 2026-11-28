@@ -44,6 +44,42 @@ describe(parseInvocation, () => {
     });
   });
 
+  it("audits one page of clips and sends the cursor, limit and voicing cutoff", () => {
+    expect(sentRequest(["staff", "audit-clips", "words"])).toStrictEqual({
+      body: { kind: "words" },
+      method: "POST",
+      path: "/staff/audit-clips",
+    });
+
+    expect(
+      sentRequest([
+        "staff",
+        "audit-clips",
+        "sentences",
+        "--after",
+        "cursor",
+        "--limit",
+        "25",
+        "--voiced-before",
+        "2026-11-27T12:00:00Z",
+      ]),
+    ).toStrictEqual({
+      body: { after: "cursor", kind: "sentences", limit: 25, voicedBefore: "2026-11-27T12:00:00Z" },
+      method: "POST",
+      path: "/staff/audit-clips",
+    });
+  });
+
+  it("rejects an unknown clip kind and nonnumeric limit before making a request", () => {
+    expect(() => sentRequest(["staff", "audit-clips", "speech"])).toThrow(
+      /Choose "words" or "sentences"/u,
+    );
+
+    expect(() => sentRequest(["staff", "audit-clips", "words", "--limit", "1.5"])).toThrow(
+      /--limit needs a whole number/u,
+    );
+  });
+
   it("turns list filters into the request body", () => {
     expect(
       sentRequest([

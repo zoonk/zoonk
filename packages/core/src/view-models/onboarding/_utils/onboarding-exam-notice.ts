@@ -2,7 +2,11 @@ import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
 import { getNoSitting } from "../../../exams/_utils/notice-day";
 import { getExamCalendarDay, getPlanExamDays } from "../../../exams/_utils/plan-exam-days";
-import { listExamChoiceViews } from "../../../exams/choices/exam-choice-views";
+import {
+  type UnpickedChoices,
+  findUnpickedChoices,
+  listExamChoiceViews,
+} from "../../../exams/choices/exam-choice-views";
 import { toChosenStructure } from "../../../exams/choices/exam-choices";
 import { loadExamPicks } from "../../../exams/choices/load-exam-choices";
 import { findNamedChoices } from "../../../exams/choices/named-exam-choices";
@@ -23,15 +27,16 @@ export async function findExamNotice({
   goal: Pick<Goal, "details" | "examBlueprintId" | "id">;
   goalDate: string | null;
   today: string;
-}): Promise<{
-  choices: OnboardingView["examChoices"];
-  examDate: string | null;
-  examDays: OnboardingView["examDays"];
-  fromMaterial: boolean;
-  hasUnpickedChoice: boolean;
-  noSitting: NoSitting | null;
-  subjects: OnboardingView["examSubjects"];
-}> {
+}): Promise<
+  UnpickedChoices & {
+    choices: OnboardingView["examChoices"];
+    examDate: string | null;
+    examDays: OnboardingView["examDays"];
+    fromMaterial: boolean;
+    noSitting: NoSitting | null;
+    subjects: OnboardingView["examSubjects"];
+  }
+> {
   if (!goal.examBlueprintId) {
     return {
       choices: [],
@@ -39,6 +44,7 @@ export async function findExamNotice({
       examDays: null,
       fromMaterial: false,
       hasUnpickedChoice: false,
+      hasUnpickedRequiredChoice: false,
       noSitting: null,
       subjects: [],
     };
@@ -81,7 +87,7 @@ export async function findExamNotice({
         ? getNextSittingDays({ edition: blueprint.edition, today })
         : null,
     fromMaterial: Boolean(blueprint?.ownerId),
-    hasUnpickedChoice: views.some((choice) => choice.subjects.length === 0),
+    ...findUnpickedChoices(views),
     noSitting: getNoSitting({ blueprint, details, goalDate, today }),
     subjects: subjects.map((subject) => ({
       name: subject.name,

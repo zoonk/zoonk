@@ -48,7 +48,10 @@ struct FeedbackVerdict<End: View>: View {
       Label {
         title
       } icon: {
+        // Main's `size-4` lucide mark: smaller than the words' own symbol, and as heavy as its ink.
         Image(systemName: symbol ?? tone.symbol)
+          .imageScale(.small)
+          .fontWeight(.semibold)
       }
       .typeStyle(.verdict)
       .foregroundStyle(tone.words)

@@ -1240,6 +1240,12 @@ msgctxt "vj_mVz"
 msgid "{belt}, level {level}"
 msgstr "{belt}, {level}. seviye"
 
+#. Under a question asking which options of an exam the learner will take, such as two of its subject modules. Until they pick, their plan has none of the options. {take} is how many they can pick, always 2 or more.
+#: src/_utils/use-choice-left-out.ts
+msgctxt "Wu7pJv"
+msgid "Pick up to {take, number} so your plan includes them."
+msgstr "Planına en fazla {take, number} seçenek ekle."
+
 #. Under a question asking which option of an exam the learner will take, such as its foreign language. Until they pick, their plan has none of the options.
 #: src/_utils/use-choice-left-out.ts
 msgctxt "vYD7Jb"
@@ -9419,6 +9425,11 @@ msgid "We use it for examples, money and units in your lessons."
 msgstr "Derslerindeki örnekleri, para birimini ve ölçü birimlerini ülkene göre seçiyoruz."
 
 #: src/onboarding/steps/country-step.tsx
+msgctxt "E7Yvro"
+msgid "Which country's exam is it?"
+msgstr "Bu hangi ülkenin sınavı?"
+
+#: src/onboarding/steps/country-step.tsx
 msgctxt "jFT6CV"
 msgid "Which country should your lessons be about?"
 msgstr "Derslerin hangi ülkeye göre hazırlansın?"
@@ -9465,6 +9476,16 @@ msgid "{when, select, today {Your date is today, so there are no days left to pl
 msgstr "{when, select, today {Hedef tarihin bugün, bu yüzden planlanacak gün kalmadı.} other {Hedeflediğin {date} tarihi geçti.}}"
 
 #: src/onboarding/steps/date-step.tsx
+msgctxt "tFQzba"
+msgid "Not booked yet"
+msgstr "Henüz tarih almadım"
+
+#: src/onboarding/steps/date-step.tsx
+msgctxt "4-H9Zy"
+msgid "When is your exam?"
+msgstr "Sınavın ne zaman?"
+
+#: src/onboarding/steps/date-step.tsx
 msgctxt "xle5hd"
 msgid "Is there a date you're aiming for?"
 msgstr "Hedeflediğin bir tarih var mı?"
@@ -9488,12 +9509,6 @@ msgstr "Sonra karar ver"
 msgctxt "y_efbE"
 msgid "{count, plural, one {Which one will you take?} other {Which ones will you take?}}"
 msgstr "{count, plural, one {Hangi sınava gireceksin?} other {Hangi sınavlara gireceksin?}}"
-
-#: src/onboarding/steps/exam-choice-step.tsx
-#: src/plan/exam-choice-picks.tsx
-msgctxt "cIh6nO"
-msgid "Pick up to {take, number}."
-msgstr "En fazla {take, number} tane seç."
 
 #: src/onboarding/steps/level-choices.tsx
 msgctxt "BY-vT3"
@@ -10001,11 +10016,6 @@ msgctxt "I5Nteo"
 msgid "Pick your date"
 msgstr "Tarihini seç"
 
-#: src/onboarding/understood/understood-date-row.ts
-msgctxt "oxqgs5"
-msgid "You pick this test's day when you book it. Booked already? Set it here."
-msgstr "Bu sınavın tarihini kayıt yaptırırken seçersin. Zaten kayıt yaptırdın mı? Tarihi buradan ayarla."
-
 #. Under the date of a test with no official notice, such as a class test, when the learner hasn't given its date.
 #: src/onboarding/understood/understood-date-row.ts
 msgctxt "KuZTTr"
@@ -10388,6 +10398,11 @@ msgstr "{date} tarihinde tekrar"
 msgctxt "LcFFqV"
 msgid "New lessons start"
 msgstr "Yeni derslerin başlangıcı"
+
+#: src/plan/exam-choice-picks.tsx
+msgctxt "cIh6nO"
+msgid "Pick up to {take, number}."
+msgstr "En fazla {take, number} tane seç."
 
 #: src/plan/exam-choice-question.tsx
 msgctxt "FXC8l3"

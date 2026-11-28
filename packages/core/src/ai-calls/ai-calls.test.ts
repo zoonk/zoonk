@@ -166,6 +166,16 @@ describe(writeAiCalls, () => {
     });
   });
 
+  it("marks a billed run whose answer couldn't be used as failed", async () => {
+    const failed = generation({ failed: true });
+    const passed = generation();
+
+    await writeAiCalls([toAiCallRow(failed), toAiCallRow(passed)]);
+
+    await expect(findRun(failed.provenance.runId)).resolves.toMatchObject({ failed: true });
+    await expect(findRun(passed.provenance.runId)).resolves.toMatchObject({ failed: false });
+  });
+
   it("leaves the cost empty for a model the price list doesn't know", async () => {
     const call = generation({ provenance: { ...generation().provenance, costUsd: undefined } });
 

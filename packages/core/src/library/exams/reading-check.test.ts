@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { cacdStructure } from "./_test-utils/cacd-structure";
 import { type BlueprintContent } from "./blueprint-contract";
 import { findReadingProblems } from "./reading-check";
 
@@ -122,6 +123,68 @@ describe(findReadingProblems, () => {
         findings: { missingSubjects: [], statedCounts: [] },
       }),
     ).toStrictEqual([{ kind: "countsOffTotal", sum: 76, total: 80 }]);
+  });
+
+  it("names subjects that each hold the whole exam, an exam taken in one of several versions", () => {
+    const content = reading([]);
+
+    const check = (subjects: BlueprintContent["structure"]["subjects"], questionCount = 110) =>
+      findReadingProblems({
+        checked: subjects,
+        content: {
+          ...content,
+          edition: { ...content.edition, questionCount },
+          structure: { ...content.structure, subjects },
+        },
+        documents,
+        findings: { missingSubjects: [], statedCounts: [] },
+      });
+
+    expect(
+      check([
+        noticeSubject("Civil", 110),
+        noticeSubject("Electrical and Computer", 110),
+        noticeSubject("Mechanical", 110),
+      ]),
+    ).toStrictEqual([
+      {
+        kind: "wholeExamSubjects",
+        subjects: ["Civil", "Electrical and Computer", "Mechanical"],
+        total: 110,
+      },
+    ]);
+
+    const discipline = { choiceGroup: "Discipline" };
+
+    expect(
+      check([
+        noticeSubject("Civil", 110, discipline),
+        noticeSubject("Mechanical", 110, discipline),
+      ]),
+    ).toStrictEqual([]);
+
+    expect(check([noticeSubject("Paper 1", 80), noticeSubject("Paper 2", 80)], 160)).toStrictEqual(
+      [],
+    );
+  });
+
+  it("counts a first phase's questions on the subjects a later written phase tests again", () => {
+    const structure = cacdStructure();
+
+    const subjects = structure.subjects.map((subject) =>
+      subject.choiceGroup ? subject : { ...subject, questions: 30 },
+    );
+
+    const content = { ...reading([]), structure: { ...structure, subjects } };
+
+    expect(
+      findReadingProblems({
+        checked: subjects,
+        content,
+        documents,
+        findings: { missingSubjects: [], statedCounts: [] },
+      }),
+    ).toStrictEqual([]);
   });
 
   it("counts a choice's questions once, and an option counted inside another subject not again", () => {

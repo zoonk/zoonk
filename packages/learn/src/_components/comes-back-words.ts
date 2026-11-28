@@ -6,10 +6,10 @@ import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useExtracted } from "next-intl";
 import { useCallback, useSyncExternalStore } from "react";
 import { useFormatIsoDate } from "../_utils/iso-date";
+import { useLearnerClock } from "../_utils/learner-clock";
 import {
   OPENING_DATE,
   type OpeningDay,
-  toFirstRenderDay,
   toOpeningDay,
   watchOpeningClock,
 } from "../_utils/opening-day";
@@ -51,6 +51,8 @@ export function receivedAtOf(refusal: object | null): number | undefined {
  * its instant, it is simply over.
  */
 export function useOpeningDay(availableAt: string | null, receivedAt?: number): OpeningDay | null {
+  const clock = useLearnerClock();
+
   const subscribe = useCallback(
     (notify: () => void) => watchOpening(availableAt, notify),
     [availableAt],
@@ -59,7 +61,7 @@ export function useOpeningDay(availableAt: string | null, receivedAt?: number): 
   const day = useSyncExternalStore(
     subscribe,
     () => toOpeningDay({ availableAt, now: new Date(), timeZone: getLocalTimeZone() }),
-    () => toFirstRenderDay(availableAt),
+    () => toOpeningDay({ availableAt, ...clock }),
   );
 
   const passedOnArrival =

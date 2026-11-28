@@ -102,6 +102,7 @@ import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LessonSummaryIdeas
+import com.zoonk.android.ui.components.MissingPicture
 import com.zoonk.android.ui.components.ObserveEdits
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
@@ -109,6 +110,7 @@ import com.zoonk.android.ui.components.PendingPicture
 import com.zoonk.android.ui.components.PictureFrame
 import com.zoonk.android.ui.components.PictureShape
 import com.zoonk.android.ui.components.PrivatePicture
+import com.zoonk.android.ui.components.StackedCornerClearance
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.fitTo
 import com.zoonk.android.ui.components.isWideLayout
@@ -589,7 +591,7 @@ internal fun CheckView(
                 locked = locked,
                 onSelect = { id -> actions.select(id?.let(LessonAnswer::Check)) },
                 columns = if (pictured != null && !crowded) 2 else 1,
-                keysAtTop = pictured != null,
+                stacked = pictured != null,
                 optionReadingContent = optionCaption,
                 onReadingOverflow = { crowded = true },
                 optionContent =
@@ -942,8 +944,8 @@ data class ChoiceOption(
 /**
  * Options picked by a tap or a number key; tapping a pick again clears it. Once checked, only the
  * right option and a wrong pick stay, marked, unless [keepsEveryOption] (a guess keeps every option
- * too). [columns] lays them out as a grid, as picture options are; [keysAtTop] keeps each number at
- * the top beside a picture, which has no line of words to sit on.
+ * too). [columns] lays them out as a grid, as picture options are, each a [stacked] card whose number
+ * and mark take its picture's top corners, since a picture has no line of words to sit on.
  */
 @Composable
 fun ChoiceOptions(
@@ -954,7 +956,7 @@ fun ChoiceOptions(
     locked: Boolean,
     onSelect: (String?) -> Unit,
     columns: Int = 1,
-    keysAtTop: Boolean = false,
+    stacked: Boolean = false,
     keepsEveryOption: Boolean = false,
     label: String = stringResource(R.string.player_answer_options),
     optionReadingContent: (@Composable (ChoiceOption) -> Unit)? = null,
@@ -985,7 +987,7 @@ fun ChoiceOptions(
                         result = item.result,
                         modifier = Modifier.weight(1f),
                         enabled = !locked && !isChecked,
-                        keyAtTop = keysAtTop,
+                        stacked = stacked,
                         guessed = isGuess,
                         readingContent = optionReadingContent?.let { reading -> { reading(item.option) } },
                         onReadingOverflow = onReadingOverflow,
@@ -1005,7 +1007,10 @@ private data class ShownOption(
     val result: AnswerResult?,
 )
 
-/** Main's `PictureOptionContent`: the option's picture, drawn or still drawing, and its name only once checked. */
+/**
+ * Main's `PictureOptionContent`: the option's picture, drawn, still drawing or described where it never came, and its
+ * name only once checked.
+ */
 @Composable
 private fun PictureOption(
     step: LessonStep,
@@ -1049,12 +1054,13 @@ private fun PictureOption(
             }
 
             else -> {
-                Surface(color = MaterialTheme.colorScheme.surfaceContainerHigh, shape = MaterialTheme.shapes.medium) {
+                MissingPicture(PictureFrame.Question, Modifier.fillMaxWidth(), PictureShape.Square) {
                     Text(
                         alt,
-                        modifier = Modifier.padding(12.dp),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = StackedCornerClearance),
+                        style = MaterialTheme.typography.bodyMedium,
+                        textAlign = TextAlign.Center,
+                        onTextLayout = { if (it.hasVisualOverflow) onDescriptionOverflow() },
                     )
                 }
             }

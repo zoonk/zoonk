@@ -67,7 +67,13 @@ async function unwrittenUnitCall() {
 
   return {
     renting,
-    writing: { kind: "unitScenario", level: "A2", unit, userId: user.id } as const,
+    writing: {
+      kind: "unitScenario",
+      level: "A2",
+      targetRegion: "",
+      unit,
+      userId: user.id,
+    } as const,
   };
 }
 

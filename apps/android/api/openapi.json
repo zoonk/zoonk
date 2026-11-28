@@ -52704,7 +52704,7 @@
             "type": "integer",
             "minimum": -9007199254740991,
             "maximum": 9007199254740991,
-            "description": "When the summary changes without a write: the next local or UTC midnight (when the allowance starts over), the end of a day carried over from the night before, the subscription's next change or the session's end"
+            "description": "When the summary changes without a write: the active goal's next local midnight, a midnight that changes a goal's days left, the UTC allowance reset, the end of a day carried over from the night before, the subscription's next change or the session's end"
           },
           "places": {
             "type": "object",
@@ -53046,6 +53046,13 @@
             "minimum": -9007199254740991,
             "maximum": 9007199254740991
           },
+          "daysLeft": {
+            "nullable": true,
+            "description": "Calendar days until the target date in the goal's time zone. Zero on the date, null once past or without a date.",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
           "displayName": {
             "type": "string"
           },
@@ -53138,6 +53145,7 @@
           "courseId",
           "courseLevel",
           "dailyMinutes",
+          "daysLeft",
           "displayName",
           "id",
           "isActive",
@@ -76920,7 +76928,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -77320,7 +77329,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -77712,7 +77722,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -78068,7 +78079,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -78451,7 +78463,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -78860,7 +78873,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -79216,7 +79230,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -79572,7 +79587,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -81498,7 +81514,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -81898,7 +81915,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -82290,7 +82308,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -82646,7 +82665,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -83029,7 +83049,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -83438,7 +83459,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -83794,7 +83816,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -84150,7 +84173,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -95284,6 +95308,10 @@
               "additionalProperties": false
             }
           },
+          "required": {
+            "type": "boolean",
+            "description": "True when the options make up the whole exam (each a whole version candidates sit one of), so the plan has nothing to study until one is picked; false when the rest of the exam can be studied while it waits"
+          },
           "subjects": {
             "type": "array",
             "items": {
@@ -95302,6 +95330,7 @@
           "group",
           "leftOut",
           "options",
+          "required",
           "subjects",
           "take"
         ],
@@ -102763,11 +102792,16 @@
       "Onboarding": {
         "type": "object",
         "properties": {
+          "bookedExam": {
+            "type": "boolean",
+            "description": "True for an exam each candidate books their own day for (a test center's computer-based test, a driving test): its date is the day the learner booked, and null while they haven't booked it yet"
+          },
           "contentCountry": {
             "type": "object",
             "properties": {
               "defaultCountry": {
                 "nullable": true,
+                "description": "Null for an exam: only the learner's words or pick say whose exam it is",
                 "type": "object",
                 "properties": {
                   "code": {
@@ -102939,7 +102973,7 @@
           },
           "examDays": {
             "nullable": true,
-            "description": "The days of the exam's next sitting, for the `targetDate` screen to lead with, when the exam has a public calendar (a goal started from a public exam course, or an exam goal whose notice is public); null for other goals",
+            "description": "The days of the exam's next sitting, for the `targetDate` screen to lead with, when the exam has a public calendar (a goal started from a public exam course, or an exam goal whose notice is public); null for other goals and for a booked exam, whose day is the learner's booking",
             "type": "object",
             "properties": {
               "days": {
@@ -103283,6 +103317,7 @@
           }
         },
         "required": [
+          "bookedExam",
           "contentCountry",
           "dateProblem",
           "examChoices",
@@ -105235,6 +105270,221 @@
             "minimum": -9007199254740991,
             "maximum": 9007199254740991
           },
+          "setAside": {
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "checkedAt": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+              },
+              "problems": {
+                "type": "array",
+                "items": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "citation": {
+                          "type": "object",
+                          "properties": {
+                            "passage": {
+                              "type": "string"
+                            },
+                            "sourceId": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "passage",
+                            "sourceId"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "missingSubject"
+                          ],
+                          "x-zoonk-closed-enum": true
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "citation",
+                        "kind",
+                        "name"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "citation": {
+                          "type": "object",
+                          "properties": {
+                            "passage": {
+                              "type": "string"
+                            },
+                            "sourceId": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "passage",
+                            "sourceId"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "missingCount"
+                          ],
+                          "x-zoonk-closed-enum": true
+                        },
+                        "questions": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "subject": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "citation",
+                        "kind",
+                        "questions",
+                        "subject"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "countsOffTotal"
+                          ],
+                          "x-zoonk-closed-enum": true
+                        },
+                        "sum": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "total": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "sum",
+                        "total"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "wholeExamSubjects"
+                          ],
+                          "x-zoonk-closed-enum": true
+                        },
+                        "subjects": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "total": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "subjects",
+                        "total"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "unconfirmed"
+                          ],
+                          "x-zoonk-closed-enum": true
+                        },
+                        "part": {
+                          "type": "string",
+                          "enum": [
+                            "examDate",
+                            "scale",
+                            "topics"
+                          ]
+                        },
+                        "subject": {
+                          "nullable": true,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "part",
+                        "subject"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "properties": {
+                        "kind": {
+                          "enum": [
+                            "missingSubject",
+                            "missingCount",
+                            "countsOffTotal",
+                            "wholeExamSubjects",
+                            "unconfirmed",
+                            "__unknown_api_union_tag__"
+                          ],
+                          "type": "string",
+                          "x-zoonk-unknown-tag": true
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "type": "object"
+                    }
+                  ],
+                  "type": "object"
+                }
+              },
+              "sourceHash": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "checkedAt",
+              "problems",
+              "sourceHash"
+            ],
+            "additionalProperties": false
+          },
           "sourceHash": {
             "nullable": true,
             "type": "string"
@@ -105503,7 +105753,7 @@
                           "items": {
                             "type": "string"
                           },
-                          "description": "The tests or blocks it adds, as a subject's `group` or `name` writes them"
+                          "description": "The tests or blocks it adds, as a subject's `group`, `otherGroups` or `name` writes them"
                         },
                         "share": {
                           "type": "number",
@@ -105560,7 +105810,7 @@
                         },
                         "part": {
                           "nullable": true,
-                          "description": "The test or block it scores, as a subject's `group` or `name` writes it; null for the whole exam",
+                          "description": "The test or block it scores, as a subject's `group`, `otherGroups` or `name` writes it; null for the whole exam",
                           "type": "string"
                         },
                         "points": {
@@ -105676,7 +105926,7 @@
                         },
                         "name": {
                           "type": "string",
-                          "description": "The test or block, as a subject's `group` or `name` writes it"
+                          "description": "The test or block, as a subject's `group`, `otherGroups` or `name` writes it"
                         },
                         "qualifying": {
                           "type": "boolean",
@@ -106473,6 +106723,14 @@
                 "name": {
                   "type": "string"
                 },
+                "otherGroups": {
+                  "minItems": 1,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
                 "partOf": {
                   "nullable": true,
                   "type": "string"
@@ -106492,8 +106750,60 @@
                   "items": {
                     "type": "object",
                     "properties": {
+                      "basis": {
+                        "description": "Whether `share` counts the subject's marks or its questions",
+                        "type": "string",
+                        "enum": [
+                          "marks",
+                          "questions"
+                        ]
+                      },
+                      "citation": {
+                        "description": "The official passage that states this heading's share",
+                        "type": "object",
+                        "properties": {
+                          "passage": {
+                            "type": "string"
+                          },
+                          "sourceId": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "passage",
+                          "sourceId"
+                        ],
+                        "additionalProperties": false
+                      },
                       "name": {
                         "type": "string"
+                      },
+                      "questions": {
+                        "description": "The official range of the subject's questions on this heading",
+                        "type": "object",
+                        "properties": {
+                          "max": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "min": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          }
+                        },
+                        "required": [
+                          "max",
+                          "min"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "share": {
+                        "description": "Its official part of the subject; set on every heading of the subject or on none, adding up to 1",
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
                       },
                       "topics": {
                         "type": "array",

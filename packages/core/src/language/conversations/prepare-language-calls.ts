@@ -5,7 +5,11 @@ import { arePhaseChallengesRequired } from "../../checkpoints/_utils/phase-chall
 import { type LanguageUnit } from "../units/language-units";
 import { findCheckpointUnit, toCheckpointScenarioUnit } from "./_utils/checkpoint-block";
 import { getSpeakingLevel } from "./_utils/conversation-goal";
-import { findUnitScenario, toScenarioUnit } from "./_utils/conversation-scenario";
+import {
+  findUnitScenario,
+  getScenarioRegion,
+  toScenarioUnit,
+} from "./_utils/conversation-scenario";
 import {
   findSpeakingMockSetup,
   findWaitingSpeakingMock,
@@ -50,9 +54,11 @@ async function listScenarioWritings({ goalId, userId }: LearnerGoal): Promise<Ca
       unit !== null && all.findIndex((other) => other?.chapterId === unit.chapterId) === index,
   );
 
+  const targetRegion = getScenarioRegion(goal);
+
   const missing = await Promise.all(
     units.map(async (unit) =>
-      (await findUnitScenario({ chapterId: unit.chapterId, level })) ? [] : [unit],
+      (await findUnitScenario({ chapterId: unit.chapterId, level, targetRegion })) ? [] : [unit],
     ),
   );
 
@@ -61,6 +67,7 @@ async function listScenarioWritings({ goalId, userId }: LearnerGoal): Promise<Ca
     .map((unit) => ({
       kind: "unitScenario",
       level,
+      targetRegion,
       unit: toScenarioUnit(toCheckpointScenarioUnit({ goal, targetLanguage, unit })),
       userId,
     }));

@@ -459,19 +459,19 @@ struct PlanSuggestionSection: View {
     case .choice(let choice) where choice.take > 1:
       PlanSlotCard(
         title: Text.examChoiceQuestion(group: choice.group, take: choice.take),
-        description: Text(choice.leftOut.line)
+        description: Text.examChoiceDescription(take: choice.take)
       ) {
-        ExamPickLimit(take: choice.take)
-
-        ExamOptionToggles(
-          options: choice.options, take: choice.take,
-          picked: Binding(
-            get: { draft(choice) },
-            set: { names in
-              store.setSuggestionState(store.suggestionKey(goalId: context.goal.id)) {
-                $0.choiceDrafts[choice.group] = names
-              }
-            }))
+        DividedRows {
+          ExamOptionChecks(
+            options: choice.options, take: choice.take,
+            picked: Binding(
+              get: { draft(choice) },
+              set: { names in
+                store.setSuggestionState(store.suggestionKey(goalId: context.goal.id)) {
+                  $0.choiceDrafts[choice.group] = names
+                }
+              }))
+        }
       } actions: {
         Button {
           choose(draft(choice), in: choice, item: item)
@@ -485,12 +485,12 @@ struct PlanSuggestionSection: View {
     case .choice(let choice):
       PlanSlotCard(
         title: Text.examChoiceQuestion(group: choice.group, take: choice.take),
-        description: Text(choice.leftOut.line)
+        description: Text.examChoiceDescription(take: choice.take)
       ) {
         // Equal picks: one under the other in their order, none drawn as the main answer.
         VStack(spacing: 8) {
           ForEach(choice.options, id: \.self) { option in
-            Button(option.name) {
+            Button(option.shortName ?? option.name) {
               choose([option.name], in: choice, item: item)
             }
             .buttonStyle(.outline)

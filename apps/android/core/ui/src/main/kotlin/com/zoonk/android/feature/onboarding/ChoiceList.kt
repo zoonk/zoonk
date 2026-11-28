@@ -33,6 +33,7 @@ import com.zoonk.android.ui.components.controlInk
 import com.zoonk.android.ui.components.layoutPart
 import com.zoonk.android.ui.components.listRowDescription
 import com.zoonk.android.ui.components.pickIndex
+import com.zoonk.android.ui.theme.disabledEmphasis
 import com.zoonk.android.ui.theme.zoonk
 
 data class Choice<T>(
@@ -118,7 +119,10 @@ fun <T> ChoiceList(
     }
 }
 
-/** Several answers at once, one row per choice with its checkbox; with [max], the other rows are disabled once that many are picked. */
+/**
+ * Several answers at once, one row per choice with its checkbox; with [max], the other rows are disabled once that many are picked.
+ * While [readOnly], as a save runs, every row is disabled, as main's.
+ */
 @Composable
 fun <T> CheckList(
     choices: List<Choice<T>>,
@@ -142,10 +146,10 @@ fun <T> CheckList(
             val checked = choice.value in value
             if (index > 0) ListDivider(besideHighlight = checked || choices[index - 1].value in value)
             val interaction = remember { MutableInteractionSource() }
-            val open = checked || !full
-            // Past the limit an option is dimmed in its words' own colors (Material's disabled emphasis), so what it
-            // draws stays its words' color, and the box takes Material's disabled look.
-            val dim = { color: Color -> if (open) Color.Unspecified else color.copy(alpha = color.alpha * DISABLED_ALPHA) }
+            val open = !readOnly && (checked || !full)
+            // A disabled option is dimmed in its words' own colors (Material's disabled emphasis), so what it draws
+            // stays its words' color, and the box takes Material's disabled look.
+            val dim = { color: Color -> if (open) Color.Unspecified else color.disabledEmphasis() }
             ListRow(
                 headline = { Text(choice.label, color = dim(MaterialTheme.colorScheme.onSurface)) },
                 interactionSource = interaction,
@@ -156,7 +160,7 @@ fun <T> CheckList(
                         value = checked,
                         interactionSource = interaction,
                         indication = null,
-                        enabled = open && !readOnly,
+                        enabled = open,
                         role = Role.Checkbox,
                     ) { onToggle(choice.value) },
                 supporting = listRowDescription(choice.description, dim(MaterialTheme.colorScheme.onSurfaceVariant)),
@@ -166,6 +170,3 @@ fun <T> CheckList(
         }
     }
 }
-
-/** Material's disabled emphasis. */
-private const val DISABLED_ALPHA = 0.38f

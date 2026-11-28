@@ -86,6 +86,32 @@ function isMistakesRun(block: BuiltBlock): boolean {
   return Array.isArray(block.payload.mistakeIds) && block.payload.mistakeIds.length > 0;
 }
 
+/** No one finishes a lesson nobody has written, so the learner stops at its block. */
+async function stopAtUnwrittenLesson(
+  scope: LearnerScope,
+  { blocks, session }: { blocks: readonly BuiltBlock[]; session: SeedSession },
+): Promise<SeedSession> {
+  const ordinary = blocks.filter((block) => !isMistakesRun(block));
+
+  const written = await scope.prisma.lesson.findMany({
+    select: { id: true },
+    where: {
+      contentStatus: "completed",
+      id: { in: ordinary.flatMap((block) => (block.lessonId ? [block.lessonId] : [])) },
+    },
+  });
+
+  const writtenIds = new Set(written.map((lesson) => lesson.id));
+
+  const unwritten = ordinary.findIndex(
+    (block) => block.kind === "learn" && block.lessonId !== null && !writtenIds.has(block.lessonId),
+  );
+
+  return unwritten === -1
+    ? session
+    : { ...session, finished: Math.min(session.finished, unwritten) };
+}
+
 /** The learner stops at the mistakes run after their completed work, leaving its questions open. */
 function orderOfStudy({
   blocks,
@@ -221,7 +247,8 @@ async function writeDay(
 ): Promise<FinishedBlock[]> {
   const { learner, prisma, userId } = scope;
   const id = todaySessionId(learner);
-  const { order, progress: seedProgress } = orderOfStudy({ blocks: day.blocks, session });
+  const reached = await stopAtUnwrittenLesson(scope, { blocks: day.blocks, session });
+  const { order, progress: seedProgress } = orderOfStudy({ blocks: day.blocks, session: reached });
   const placed = placeBlocks(scope, { blocks: day.blocks, order, progress: seedProgress });
   const status = getSessionStatus(seedProgress, day.blocks);
   const startedAt = status === "planned" ? null : studyMoment(scope, 0);

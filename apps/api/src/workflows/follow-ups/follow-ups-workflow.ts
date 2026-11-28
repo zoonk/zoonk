@@ -24,6 +24,7 @@ import { chapterMindMapWorkflow } from "../mind-maps/chapter-mind-map-workflow";
 import { alphabetReviewWorkflow } from "../quality/alphabet-review-workflow";
 import { startResearchUploadAnswer } from "../research/answer-research-upload-workflow";
 import { sourceVisibilityWorkflow } from "../research/source-visibility-workflow";
+import { startOrResumeResearch } from "../research/start-or-resume-research";
 import { waitForMaterialReading } from "../research/wait-for-material-reading";
 import { sessionPreparationWorkflow } from "../sessions/session-preparation-workflow";
 import { backgroundTaskWorkflow, getBackgroundTaskToken } from "./background-task-workflow";
@@ -139,6 +140,8 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
     }
     case "preparePlacementItems":
       return startPlacementPreparation(followUp);
+    case "researchGoal":
+      return startOrResumeResearch(followUp.input.goalId);
 
     case "writeSecondTake":
     case "writeLesson":

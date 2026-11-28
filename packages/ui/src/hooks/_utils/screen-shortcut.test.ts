@@ -65,7 +65,7 @@ describe(isScreenShortcut, () => {
     expect(isScreenShortcut(pressOn(field, { key: "1" }))).toBe(false);
   });
 
-  it("leaves Enter to a focused button or link, but not to a picked answer or a button with its own key", () => {
+  it("leaves Enter to a focused button, link or checkbox, but not to an answer or a button with its own key", () => {
     const button = mount('<button data-target type="button">Explain first</button>');
     expect(isScreenShortcut(pressOn(button, { key: "Enter" }))).toBe(false);
     expect(isScreenShortcut(pressOn(button, { key: "3" }))).toBe(true);
@@ -81,6 +81,18 @@ describe(isScreenShortcut, () => {
     );
 
     expect(isScreenShortcut(pressOn(audio, { key: "Enter" }))).toBe(true);
+
+    const checkbox = mount(
+      '<button data-target role="checkbox" aria-checked="false">Remember me</button>',
+    );
+
+    expect(isScreenShortcut(pressOn(checkbox, { key: "Enter" }))).toBe(false);
+
+    const answer = mount(
+      `<button data-target role="checkbox" aria-checked="true" ${SCREEN_ENTER_ATTRIBUTE}>Paris</button>`,
+    );
+
+    expect(isScreenShortcut(pressOn(answer, { key: "Enter" }))).toBe(true);
   });
 
   it("leaves Enter to an input it presses, such as a file picker outside a form", () => {

@@ -1,7 +1,11 @@
 import { z } from "zod";
 import { imageRequestSchema, numberedImageRequestSchema } from "../images/image-request-schema";
 import { GENERATED_ITEM_SCHEMAS } from "../items/item-schemas";
-import { type LessonScreenKind } from "../lesson-spec/lesson-spec-rules";
+import {
+  type LessonScreen,
+  type LessonScreenKind,
+  isPlannedActivity,
+} from "../lesson-spec/lesson-spec-rules";
 import { lessonVisualSchema } from "../visuals/visual-schema";
 
 const MIN_OPTIONS = 2;
@@ -192,12 +196,16 @@ const WRITTEN_KINDS_BY_SCREEN: Readonly<Record<LessonScreenKind, readonly Writte
  * exams that ask short written answers (`shortAnswers`).
  */
 export function getWrittenKinds({
+  activityTemplate,
   kind,
   shortAnswers,
-}: {
-  kind: LessonScreenKind;
+}: Pick<LessonScreen, "activityTemplate" | "kind"> & {
   shortAnswers: boolean;
 }): readonly WrittenScreenKind[] {
+  if (isPlannedActivity({ activityTemplate, kind })) {
+    return WRITTEN_KINDS_BY_SCREEN.activity;
+  }
+
   const kinds = WRITTEN_KINDS_BY_SCREEN[kind];
 
   return shortAnswers && (kind === "check" || kind === "application")

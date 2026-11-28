@@ -9,7 +9,7 @@ import { type ConversationScenario } from "../conversation-contract";
 import { getCheckpointMinutes } from "../conversation-rules";
 import { findLanguageCheckpointBlock, toCheckpointScenarioUnit } from "./checkpoint-block";
 import { getSpeakingLevel } from "./conversation-goal";
-import { findUnitScenario, toScenarioUnit } from "./conversation-scenario";
+import { findUnitScenario, getScenarioRegion, toScenarioUnit } from "./conversation-scenario";
 import { createConversation } from "./create-conversation";
 
 export type CheckpointRefusal = Exclude<
@@ -187,7 +187,8 @@ export async function startCheckpointCall({
 
   const { goal, targetLanguage, unit } = checkpoint;
   const level = await getSpeakingLevel({ goal, targetLanguage, userId });
-  const scenario = await findUnitScenario({ chapterId: unit.chapterId, level });
+  const targetRegion = getScenarioRegion(goal);
+  const scenario = await findUnitScenario({ chapterId: unit.chapterId, level, targetRegion });
 
   if (!scenario) {
     const scenarioUnit = toScenarioUnit(toCheckpointScenarioUnit({ goal, targetLanguage, unit }));
@@ -195,7 +196,7 @@ export async function startCheckpointCall({
     return (
       (await findCheckpointRefusal(found)) ?? {
         status: "preparing",
-        writing: { kind: "unitScenario", level, unit: scenarioUnit, userId },
+        writing: { kind: "unitScenario", level, targetRegion, unit: scenarioUnit, userId },
       }
     );
   }

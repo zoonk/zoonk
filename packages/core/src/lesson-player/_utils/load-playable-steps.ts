@@ -60,7 +60,9 @@ async function loadTargetWords({
     return [];
   }
 
+  // Later rows win a tile's merged audio, so the oldest voiced spelling comes last.
   return prisma.word.findMany({
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
     select: { audioUrl: true, id: true, romanization: true, word: true },
     where: { targetLanguage, word: { in: [...new Set(texts)], mode: "insensitive" } },
   });

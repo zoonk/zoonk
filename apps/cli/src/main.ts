@@ -1,6 +1,7 @@
 import { isJsonObject } from "../../../packages/utils/src/json.ts";
 import { loginCommand, resolveApiOrigin } from "./api-origin.ts";
 import { type ApiRequest, WHOAMI_REQUEST, parseInvocation } from "./args.ts";
+import { AUDIT_CLIPS_PATH, checkAuditPage } from "./audit-clips.ts";
 import { credentialsPath } from "./credentials.ts";
 import { CliError, EXIT_CODES } from "./errors.ts";
 import { HELP } from "./help.ts";
@@ -80,6 +81,10 @@ async function runRequest({
   }
 
   process.stdout.write(`${JSON.stringify(shapeOutput({ body: result.body, shape }), null, 2)}\n`);
+
+  if (request.path === AUDIT_CLIPS_PATH) {
+    checkAuditPage(result.body);
+  }
 
   if (note) {
     process.stderr.write(`${note(result.body)}\n`);
