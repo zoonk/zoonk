@@ -14,6 +14,8 @@ final class PlacementTestShots: XCTestCase {
       throw XCTSkip("Pass TEST_RUNNER_ZOONK_SHOTS=<folder> to write them")
     }
 
+    // The ways out are found by what VoiceOver reads on ✕.
+    try await readsWhatVoiceOverReads()
     let folder = URL(fileURLWithPath: path)
     try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
     let session = SessionStore.preview()
@@ -280,9 +282,7 @@ final class PlacementTestShots: XCTestCase {
 
     for (name, inDark, screen) in screens {
       for scheme in inDark ? [ColorScheme.light, .dark] : [.light] {
-        try await write(
-          screen, scheme: scheme,
-          to: folder.appending(path: "\(name).\(scheme == .dark ? "dark" : "light").png"))
+        try await write(screen, scheme: scheme, name: name, in: folder)
       }
     }
 
@@ -297,6 +297,38 @@ final class PlacementTestShots: XCTestCase {
     try await pressBarButton("Close", in: window)
     try await Task.sleep(for: .milliseconds(1200))
     try snapshot(window, to: folder.appending(path: "16-ways-out.light.png"))
+    try measure("16-ways-out", in: folder)
+
+    let focus = try host(
+      PlacementQuestionScreen(
+        subject: "Língua Inglesa", number: 3, total: 10, question: question, labels: .trueFalse,
+        isSaving: false, failures: 0,
+        stopHint: LocalizedStringResource(
+          "Haven't studied most of this yet? That's fine. You can stop here and start learning.",
+          table: "FocusTest"), onReport: {}, onAnswer: { _ in }, onStop: {}), scheme: .light)
+    try await waitForLayout(in: focus)
+    try await Task.sleep(for: .milliseconds(600))
+    try await pressBarButton("Close", in: focus)
+    try await Task.sleep(for: .milliseconds(1200))
+    try snapshot(focus, to: folder.appending(path: "16b-ways-out-focus-hint.light.png"))
+    focus.isHidden = true
+
+    for (name, size) in [("17-button-icon-large-text", DynamicTypeSize.accessibility3)] {
+      try await write(
+        VStack {
+          Spacer()
+          BusyButton(isBusy: false, icon: .play) {
+          } label: {
+            Text(verbatim: "Responder mais perguntas")
+          }
+          .buttonStyle(.outline)
+          .controlSize(.large)
+          .buttonSizing(.flexible)
+          .padding()
+        }
+        .dynamicTypeSize(size), scheme: .dark,
+        to: folder.appending(path: "\(name).dark.png"))
+    }
   }
 
   private func host(_ screen: some View, scheme: ColorScheme) throws -> UIWindow {
@@ -311,12 +343,54 @@ final class PlacementTestShots: XCTestCase {
     return window
   }
 
-  private func write(_ screen: some View, scheme: ColorScheme, to file: URL) async throws {
+  private func write(_ screen: some View, scheme: ColorScheme, name: String, in folder: URL)
+    async throws
+  {
+    try await write(
+      screen, scheme: scheme,
+      to: folder.appending(path: "\(name).\(scheme == .dark ? "dark" : "light").png"),
+      measured: scheme == .light ? name : nil, in: folder)
+  }
+
+  private func write(
+    _ screen: some View, scheme: ColorScheme, to file: URL, measured name: String? = nil,
+    in folder: URL? = nil
+  ) async throws {
     let window = try host(screen, scheme: scheme)
     try await waitForLayout(in: window)
     try await Task.sleep(for: .milliseconds(800))
     try snapshot(window, to: file)
+
+    if let name, let folder {
+      try measure(name, in: folder)
+    }
+
     window.isHidden = true
+  }
+
+  /// The PR's key screens, phone and light, measured as `pr:media adopt` takes a render: the
+  /// layout capture of the frame drawn, and the picture's bytes and build beside it. Only with
+  /// `TEST_RUNNER_ZOONK_LAYOUT_CAPTURE=1`, into the folder's `measured/`.
+  private func measure(_ name: String, in folder: URL) throws {
+    let screens = [
+      "01-offer-onboarding": "course-offer", "03-question": "course-question",
+      "06-listening": "listening-question", "09-result": "course-result",
+      "16-ways-out": "course-ways-out",
+    ]
+
+    guard LayoutCapture.isOn, let shot = screens[name] else { return }
+
+    let measured = folder.appending(path: "measured")
+    try FileManager.default.createDirectory(at: measured, withIntermediateDirectories: true)
+    var capture = LayoutCaptureWriter.capture(
+      scenario: shot, screen: shot, picture: measured.appending(path: "\(shot)-phone-light.png"))
+    XCTAssertNil(capture["error"], "\(shot): \(capture["error"] ?? "")")
+
+    var picture = try XCTUnwrap(capture["picture"] as? [String: Any])
+    picture["build"] = capture["build"]
+    capture["picture"] = picture
+    try JSONSerialization.data(withJSONObject: capture, options: [.sortedKeys, .prettyPrinted])
+      .write(to: measured.appending(path: "\(shot)-phone-light.json"))
   }
 
   private func snapshot(_ window: UIWindow, to file: URL) throws {

@@ -16,6 +16,7 @@ final class LostPlacementFinishTests: XCTestCase {
     try await readsWhatVoiceOverReads()
 
     for onboarding in [false, true] {
+      var opened: String?
       let server = LostFinishServer(goalID: goalID)
       let dependencies = AppDependencies(
         clients: APIClientFactory(
@@ -27,7 +28,8 @@ final class LostPlacementFinishTests: XCTestCase {
           PlacementTestFlow(
             goalID: goalID, subject: "Investing",
             offer: CoursePlacementOffer(estimatedMinutes: 4, questions: 8),
-            onOnboardingDone: onboarding ? { _ in } : nil
+            onOnboardingDone: onboarding ? { _ in } : nil,
+            onStartLesson: { opened = $0 }
           ) {}
           .appDependencies(dependencies)
         }
@@ -50,6 +52,12 @@ final class LostPlacementFinishTests: XCTestCase {
       }
       let finishes = await server.finishes
       XCTAssertEqual(finishes, 2)
+
+      // The plan's result opens the lesson it names, not the day's session.
+      if !onboarding {
+        try await activate("Start lesson", in: window)
+        XCTAssertEqual(opened, "00000000-0000-4000-8000-0000000000b2")
+      }
       window.isHidden = true
     }
   }
@@ -101,7 +109,7 @@ private actor LostFinishServer: ClientTransport {
   private var finished: String {
     #"""
     {"answered":8,"areas":[],"complete":true,"dayBudgetSpent":0,"dayBudgetUsed":false,"knownSkillIds":[],"needsItems":[],"phases":[],"started":true,"trueFalseLabels":"trueFalse","focusTest":null,"status":"unavailable","next":null,"attempt":null,
-     "result":{"attemptId":"\#(goalID)","changeId":"\#(goalID)","finishedAt":"2026-11-27T10:00:00.000Z","lessonsSkipped":3,"chapter":"Why prices move","course":null,"nextLesson":null}}
+     "result":{"attemptId":"\#(goalID)","changeId":"\#(goalID)","finishedAt":"2026-11-27T10:00:00.000Z","lessonsSkipped":3,"chapter":"Why prices move","course":null,"nextLesson":{"id":"00000000-0000-4000-8000-0000000000b2","title":"News, results and expectations","estimatedMinutes":4,"chapter":"Why prices move"}}}
     """#
   }
 }
