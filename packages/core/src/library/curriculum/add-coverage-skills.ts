@@ -21,10 +21,18 @@ const COVERAGE_SKILL_LESSONS = 2;
 
 const DEFAULT_TOPIC_WEIGHT = 3;
 
-function toFreeKeys({ count, graph }: { count: number; graph: GoalSkillGraph }): string[] {
+export function toFreeKeys({
+  count,
+  graph,
+  prefix,
+}: {
+  count: number;
+  graph: GoalSkillGraph;
+  prefix: string;
+}): string[] {
   const taken = new Set(graph.skills.map((skill) => skill.key));
 
-  return Array.from({ length: graph.skills.length + count }, (_, index) => `coverage-${index + 1}`)
+  return Array.from({ length: graph.skills.length + count }, (_, index) => `${prefix}-${index + 1}`)
     .filter((key) => !taken.has(key))
     .slice(0, count);
 }
@@ -171,6 +179,25 @@ function isWrittenTestArea({
   return parts.has(area) || Boolean(subject && isWrittenTestSubject(subject));
 }
 
+/** Each addition goes right after the graph position `after` (-1 is the start), in the given order. */
+export function insertGraphSkills({
+  additions,
+  graph,
+}: {
+  additions: readonly { after: number; skill: GraphSkill }[];
+  graph: GoalSkillGraph;
+}): GoalSkillGraph {
+  const skills = [
+    ...additions.filter((addition) => addition.after === -1).map((addition) => addition.skill),
+    ...graph.skills.flatMap((skill, index) => [
+      skill,
+      ...additions.filter((addition) => addition.after === index).map((addition) => addition.skill),
+    ]),
+  ];
+
+  return { ...graph, skills };
+}
+
 function addCoverageSkills({
   graph,
   missing,
@@ -184,21 +211,13 @@ function addCoverageSkills({
     return graph;
   }
 
-  const keys = toFreeKeys({ count: missing.length, graph });
+  const keys = toFreeKeys({ count: missing.length, graph, prefix: "coverage" });
 
   const additions = missing.map((item, index) =>
     toGraphSkill({ graph, key: keys[index] ?? `coverage-${index + 1}`, missing: item, outline }),
   );
 
-  const skills = [
-    ...additions.filter((addition) => addition.after === -1).map((addition) => addition.skill),
-    ...graph.skills.flatMap((skill, index) => [
-      skill,
-      ...additions.filter((addition) => addition.after === index).map((addition) => addition.skill),
-    ]),
-  ];
-
-  return { ...graph, skills };
+  return insertGraphSkills({ additions, graph });
 }
 
 function reweightExamSkills({

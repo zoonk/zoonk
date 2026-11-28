@@ -34,6 +34,7 @@
     "./tasks/curriculum/course-outline": "./src/tasks/curriculum/course-outline.ts",
     "./tasks/curriculum/coverage-check": "./src/tasks/curriculum/coverage-check.ts",
     "./tasks/curriculum/exam-outline": "./src/tasks/curriculum/exam-outline.ts",
+    "./tasks/curriculum/member-coverage": "./src/tasks/curriculum/member-coverage.ts",
     "./tasks/curriculum/outline-areas": "./src/tasks/curriculum/_utils/outline-areas.ts",
     "./tasks/curriculum/setup-lesson-outline": "./src/tasks/curriculum/setup-lesson-outline.ts",
     "./tasks/curriculum/empty-skill-graph-error": "./src/tasks/curriculum/_utils/empty-skill-graph-error.ts",

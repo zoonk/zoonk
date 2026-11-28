@@ -4835,6 +4835,7 @@ msgstr "Ask {name}"
 #: src/onboarding/steps/reveal-body.tsx
 #: src/plan/plan-past-date-suggestion.tsx
 #: src/plan/plan-suggestion.tsx
+#: src/syllabus/subject-chapters.tsx
 #: src/syllabus/subject-not-planned.tsx
 #: src/today/today-falling-behind.tsx
 msgctxt "2f2Vee"
@@ -11054,10 +11055,11 @@ msgctxt "VDuR1W"
 msgid "The official exam date is {date}."
 msgstr "The official exam date is {date}."
 
+#. Asks whether to add topics to the learner's plan. {topics} lists their names, which are often actions themselves, such as “Memorize An-Nahl”, so they stay after the colon rather than inside the sentence.
 #: src/plan/use-operation-question.ts
-msgctxt "EP7Gpz"
-msgid "Add {topics} to your plan?"
-msgstr "Add {topics} to your plan?"
+msgctxt "UDs2Ah"
+msgid "Add to your plan: {topics}?"
+msgstr "Add to your plan: {topics}?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "oeLkPK"
@@ -13091,6 +13093,12 @@ msgctxt "tSwkMF"
 msgid "Asked a lot"
 msgstr "Asked a lot"
 
+#. Under a module or a phase of the learner's plan, and on the row that lists them: how many of its topics the plan leaves out because they don't fit before the plan's date.
+#: src/syllabus/left-out-topics.tsx
+msgctxt "JUUl4s"
+msgid "{count, plural, one {# topic not in your plan} other {# topics not in your plan}}"
+msgstr "{count, plural, one {# topic not in your plan} other {# topics not in your plan}}"
+
 #. On one exam's plan. {exams} names the learner's other exams that test some of the same topics.
 #: src/syllabus/shared-exams.tsx
 msgctxt "zK-7PG"
@@ -13141,6 +13149,12 @@ msgstr "{count, plural, one {# chapter done} other {# chapters done}}"
 msgctxt "oUXyHJ"
 msgid "{done, plural, one {# chapter done} other {# chapters done}}, {known, plural, one {# you already know} other {# you already know}}"
 msgstr "{done, plural, one {# chapter done} other {# chapters done}}, {known, plural, one {# you already know} other {# you already know}}"
+
+#. Under the folded list of a module's or a subject's topics that the learner's plan leaves out: they don't fit in the study time before the date the learner set. Followed by a button to change the plan.
+#: src/syllabus/subject-chapters.tsx
+msgctxt "TKVmQQ"
+msgid "They don't fit before your date."
+msgstr "They don't fit before your date."
 
 #: src/syllabus/subject-chapters.tsx
 msgctxt "Do1Pfd"

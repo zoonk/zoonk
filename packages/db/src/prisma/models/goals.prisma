@@ -172,6 +172,9 @@ model Plan {
   promptVersion       String?         @map("prompt_version")
   runId               String?         @map("run_id")
   generatedAt         DateTime?       @map("generated_at")
+  /// When the check for members of a complete list the goal names finished on this graph, or the
+  /// build found none owed. Null while the daily sweep still owes the check.
+  membersCheckedAt    DateTime?       @map("members_checked_at")
   /// Set when the last build gave up before it had skills, so placement and the plan offer to try
   /// again; cleared when a new run starts.
   buildFailedAt       DateTime?       @map("build_failed_at")

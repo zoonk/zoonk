@@ -92,6 +92,11 @@
         <item quantity="other">%1$d of %2$d lessons done</item>
     </plurals>
     <string name="plan_not_in_your_plan">Not in your plan</string>
+    <!-- Under a module or a phase of the learner's plan, and on the row that lists them: how many of its topics the plan leaves out because they don't fit before the plan's date. -->
+    <plurals name="plan_left_out_topics">
+        <item quantity="one">%d topic not in your plan</item>
+        <item quantity="other">%d topics not in your plan</item>
+    </plurals>
     <plurals name="plan_lessons_not_studied">
         <item quantity="one">%d lesson not studied</item>
         <item quantity="other">%d lessons not studied</item>
@@ -786,7 +791,8 @@
     <string name="plan_change_areas_from_basics">%1$s start from the basics.</string>
     <string name="plan_change_exam_date">Exam date: %1$s.</string>
     <string name="plan_change_end_date">End date: %1$s.</string>
-    <string name="plan_ask_add_topics">Add %1$s to your plan?</string>
+    <!-- Asks whether to add topics to the learner's plan. {topics} lists their names, which are often actions themselves, such as “Memorize An-Nahl”, so they stay after the colon rather than inside the sentence. -->
+    <string name="plan_ask_add_topics">Add to your plan: %1$s?</string>
     <string name="plan_ask_focus">Focus on %1$s?</string>
     <string name="plan_ask_remove_focus">Remove your focus?</string>
     <string name="plan_ask_less_time">Less time for %1$s?</string>

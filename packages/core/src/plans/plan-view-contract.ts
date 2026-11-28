@@ -135,6 +135,8 @@ export type PlanPhaseView = {
   hours: number;
   index: number;
   kind: PlanPhaseKind;
+  /** Names of its skills the plan leaves out for time while it holds the rest of the phase. */
+  leftOut: string[];
   lessonsDone: number;
   lessonsTotal: number;
   milestone: string | null;

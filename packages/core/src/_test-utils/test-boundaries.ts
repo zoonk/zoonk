@@ -54,6 +54,12 @@ export const boundaries = {
   "@zoonk/ai/tasks/courses/icon": { generateCourseIcon: vi.fn() },
   "@zoonk/ai/tasks/courses/intent": { classifyCourseIntent: vi.fn() },
   "@zoonk/ai/tasks/curriculum/coverage-check": { checkCoverage: vi.fn() },
+  // A goal that names no complete list, unless a test says otherwise.
+  "@zoonk/ai/tasks/curriculum/member-coverage": {
+    checkMemberCoverage: vi.fn(async () => ({
+      data: { members: [], reason: null, set: null, uncovered: [] },
+    })),
+  },
   "@zoonk/ai/tasks/curriculum/setup-lesson-outline": { generateSetupLessonOutline: vi.fn() },
   "@zoonk/ai/tasks/goals/find-exam-date": { findExamDate: vi.fn() },
   "@zoonk/ai/tasks/goals/understand-goal": { understandGoal: vi.fn() },

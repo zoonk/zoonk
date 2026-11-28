@@ -149,6 +149,13 @@ export const syllabusSubjectSchema = z
     key: z
       .string()
       .meta({ description: "Stable within the goal's syllabus, URL-safe: the subject's page" }),
+    leftOut: z
+      .array(z.string())
+      .default([])
+      .meta({
+        description:
+          "The skills of a subject in the plan that the plan leaves out because they don't fit before its date (`notPlannedReason` `time` for each), by their names in the plan's graph, in the graph's order. A later date or more study time brings them back. Empty when the subject has `topics` (each topic carries its own status), when it's out of the plan as a whole (`covers` lists it then), and when everything fits",
+      }),
     lessonsDone: countSchema.meta({
       description:
         "Its lessons the learner studied, never ones the plan set aside or they tested out of (`lessonsKnown`), so taking test-out credit back never lowers it",
