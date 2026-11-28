@@ -1253,6 +1253,12 @@ msgctxt "vj_mVz"
 msgid "{belt}, level {level}"
 msgstr "{belt}, level {level}"
 
+#. Under a question asking which options of an exam the learner will take, such as two of its subject modules. Until they pick, their plan has none of the options. {take} is how many they can pick, always 2 or more.
+#: src/_utils/use-choice-left-out.ts
+msgctxt "Wu7pJv"
+msgid "Pick up to {take, number} so your plan includes them."
+msgstr "Pick up to {take, number} so your plan includes them."
+
 #. Under a question asking which option of an exam the learner will take, such as its foreign language. Until they pick, their plan has none of the options.
 #: src/_utils/use-choice-left-out.ts
 msgctxt "vYD7Jb"
@@ -9528,12 +9534,6 @@ msgctxt "y_efbE"
 msgid "{count, plural, one {Which one will you take?} other {Which ones will you take?}}"
 msgstr "{count, plural, one {Which one will you take?} other {Which ones will you take?}}"
 
-#: src/onboarding/steps/exam-choice-step.tsx
-#: src/plan/exam-choice-picks.tsx
-msgctxt "cIh6nO"
-msgid "Pick up to {take, number}."
-msgstr "Pick up to {take, number}."
-
 #: src/onboarding/steps/level-choices.tsx
 msgctxt "BY-vT3"
 msgid "I know it well"
@@ -10422,6 +10422,11 @@ msgstr "Review on {date}"
 msgctxt "LcFFqV"
 msgid "New lessons start"
 msgstr "New lessons start"
+
+#: src/plan/exam-choice-picks.tsx
+msgctxt "cIh6nO"
+msgid "Pick up to {take, number}."
+msgstr "Pick up to {take, number}."
 
 #: src/plan/exam-choice-question.tsx
 msgctxt "FXC8l3"

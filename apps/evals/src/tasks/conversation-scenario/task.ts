@@ -34,7 +34,7 @@ export const conversationScenarioTask: Task<
     distribution: "shared",
     first: "quality",
     reads: "A learner reads the scenario; a voice model plays the character",
-    reason: "Cached per chapter and level and reused by every learner of the unit",
+    reason: "Cached per chapter, level and country and reused by every learner of the unit there",
     waits: "Prepared ahead in a workflow; a request writes it when missing",
   },
   scoreCategories: CONVERSATION_SCENARIO_SCORE_CATEGORIES,

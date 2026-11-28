@@ -76463,7 +76463,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -76862,7 +76863,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -77253,7 +77255,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -77608,7 +77611,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -77990,7 +77994,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -78398,7 +78403,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -78753,7 +78759,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -79108,7 +79115,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -81016,7 +81024,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -81415,7 +81424,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -81806,7 +81816,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -82161,7 +82172,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -82543,7 +82555,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -82951,7 +82964,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -83306,7 +83320,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -83661,7 +83676,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",

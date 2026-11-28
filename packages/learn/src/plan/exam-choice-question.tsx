@@ -31,7 +31,7 @@ export function ExamChoiceAnswers({
   onPick: (input: { group: string; subjects: string[] }) => void;
   pending: boolean;
 }) {
-  const leftOutLine = useChoiceLeftOutLine();
+  const leftOutLine = useChoiceLeftOutLine(choice.take);
   const saveVariant = useMainActionVariant();
 
   return (

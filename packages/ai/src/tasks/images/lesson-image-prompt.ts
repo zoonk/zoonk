@@ -49,7 +49,7 @@ function formatText({ language, scene }: { language: string; scene: ImageScene }
     `The image has exactly ${count} ${count === 1 ? "piece" : "pieces"} of text, written in ${getPromptLanguageName({ language })}, each once and spelled exactly as given:`,
     ...labels,
     "Nothing else is written anywhere. Don't label or name any other object, even the ones the scene describes, and add no titles or captions.",
-    "A label that goes on an object is written on it, like a price on a tag. Every other label is large, dark gray, in a clean sans-serif, on a small white rounded pill next to what it names, with a thin line pointing at it when needed.",
+    "A label that goes on an object is written on it, like a price on a tag, and one beside a legend swatch is written plainly beside it. Every other label is large, dark gray, in a clean sans-serif, on a small white rounded pill next to what it names, with a thin line pointing at it when needed.",
   ].join("\n");
 }
 
