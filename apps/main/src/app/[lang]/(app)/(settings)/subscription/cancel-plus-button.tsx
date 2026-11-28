@@ -75,7 +75,7 @@ export function CancelPlusButton({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel disabled={pending}>{t("Keep Plus")}</AlertDialogCancel>
-          <AlertDialogAction busy={pending} onClick={cancel}>
+          <AlertDialogAction busy={pending} enter="off" onClick={cancel}>
             {t("Cancel Plus")}
           </AlertDialogAction>
         </AlertDialogFooter>

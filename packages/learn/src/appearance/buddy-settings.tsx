@@ -162,9 +162,9 @@ function BuddyDialog({
         </DrawerContent>
 
         <DrawerFooter>
-          <Button disabled={!draft.changed} form={formId} size="lg" type="submit">
+          <EnterButton disabled={!draft.changed} form={formId} size="lg" type="submit">
             {t("Save")}
-          </Button>
+          </EnterButton>
         </DrawerFooter>
       </DrawerPopup>
     </Drawer>

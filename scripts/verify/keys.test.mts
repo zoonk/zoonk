@@ -166,6 +166,7 @@ describe("a panel the walk opened", () => {
     closeDrawn: true,
     dim: null,
     edge: null,
+    enter: { bound: ["Save"], takenBy: null, unmarked: [] },
     focusBack: true,
     focusInside: true,
     label: "Rename",
@@ -198,6 +199,20 @@ describe("a panel the walk opened", () => {
         "fail Rename isn't centered on a laptop, or shows its handle",
         "fail Rename didn't close on Esc and give focus back to what opened it",
         "warn Rename opens away from the bottom on a phone, where what opens over a page is a sheet",
+      ],
+    );
+  });
+
+  it("names a filled answer Enter misses, a control that takes Enter first, and two main actions", () => {
+    assert.deepEqual(
+      panelFindings({
+        ...panel,
+        enter: { bound: ["Save", "Done"], takenBy: "Close", unmarked: ["Open LinkedIn"] },
+      }).map((finding) => `${finding.check}: ${finding.message}`),
+      [
+        `Behavior: Enter: Rename draws Open LinkedIn filled, but Enter doesn't press it and it shows no ⏎: draw its main action with EnterButton, or say Enter must not press it (enter="off")`,
+        "Behavior: Enter: Rename opens on Close, so Enter presses that instead of Save, Done",
+        "Behavior: Enter: two main actions answer Enter in Rename: Save, Done",
       ],
     );
   });
