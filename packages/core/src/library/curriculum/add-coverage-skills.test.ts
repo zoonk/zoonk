@@ -465,7 +465,7 @@ describe("sizing a notice topic no skill teaches", () => {
       },
       graph: {
         ...graph,
-        skills: [skill({ area: null, estimatedLessons: 12, key: "grammar", topics: [] })],
+        skills: [skill({ area: "", estimatedLessons: 12, key: "grammar", topics: [] })],
       },
       outline: { ...sizedOutline, subjects: sizedOutline.subjects.slice(0, 1) },
     }).graph.skills;
