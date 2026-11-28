@@ -430,6 +430,16 @@ msgid "You've used your questions"
 msgstr "Hai esaurito le domande"
 
 #: src/_components/help-limit-notice.tsx
+msgctxt "19tT0C"
+msgid "No more code runs today"
+msgstr "Oggi non hai più esecuzioni di codice"
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "JnTk6z"
+msgid "You've used your code runs"
+msgstr "Hai esaurito le esecuzioni di codice"
+
+#: src/_components/help-limit-notice.tsx
 msgctxt "aw2Ukw"
 msgid "No more material today"
 msgstr "Oggi non puoi caricare altro materiale"

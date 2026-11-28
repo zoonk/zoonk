@@ -10,6 +10,11 @@ import {
   type LessonPicture,
   type PlayableLibraryLesson,
 } from "@zoonk/core/lesson-player/playable-lesson";
+import { type SandboxLanguage } from "@zoonk/core/library/activities/program-languages";
+import {
+  type CodeRunPhase,
+  type CodeRunResult,
+} from "@zoonk/core/library/activities/sandbox-contract";
 import { type SpokenAnswerGrade } from "@zoonk/core/library/language/spoken-answer-contract";
 import { type HelpLimit } from "@zoonk/learn/help-limit";
 import { type SaveLesson } from "@zoonk/learn/saved-lessons/saves";
@@ -101,6 +106,24 @@ export type SpokenAnswerOutcome =
   | { status: "noSpeech" }
   | { retryAfterSeconds: number; status: "slowDown" };
 
+/**
+ * `offline`: the request or its stream broke off, so the same `requestId` may still be running and
+ * is sent again to retry. `unavailable`: the server answered but couldn't run it.
+ */
+export type CodeRunOutcome =
+  | { result: CodeRunResult; status: "finished" }
+  | { status: "alreadyRunning" }
+  | { status: "offline" }
+  | { status: "unavailable" }
+  | HelpLimit;
+
+export type RunCode = (input: {
+  code: string;
+  language: SandboxLanguage;
+  onPhase: (phase: CodeRunPhase) => void;
+  requestId: string;
+}) => Promise<CodeRunOutcome>;
+
 export type ExampleLine = { line: string | null };
 
 /** Hosts own auth and transport; omitting an optional adapter disables its controls. */
@@ -134,6 +157,8 @@ export type LessonPlayerAdapters = {
     durationMs: number;
     stepId: string;
   }) => Promise<SpokenAnswerOutcome>;
+  /** Runs a program in a language the server runs; without it, Run can't start for those languages. */
+  runCode?: RunCode;
   /** Saves the lesson for later, or stops keeping it; without it, the player has no bookmark. */
   saveLesson?: SaveLesson;
   startLesson: (input?: { runId: string }) => Promise<LessonStartOutcome>;

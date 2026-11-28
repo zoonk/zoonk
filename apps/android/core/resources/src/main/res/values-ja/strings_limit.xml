@@ -38,6 +38,8 @@
   "limit_questions_day": "7d193e23a908131f43c64622f89c97d26891dafa086ecd700544f34ced72548c",
   "limit_questions_used": "2b6b14c001a4beaeb8d93f11b7d21e84f5f93e1047880e0eed7ac76c1bfd9eb6",
   "limit_quick_explanations_used": "d19b9456b360c5d4e85d44786f338aa1880ad5a6d0c776430907b4e567b45e2a",
+  "limit_runs_day": "b01e72c7188d6df259cef5d07b751eeb801aab117d24bc115e6c197871256bce",
+  "limit_runs_used": "c16346e1d28dae15f56c9dd517338975ff64e42561ab3fd61fa650472f9033eb",
   "limit_sentence": "80406619a4b014f9f5aeebf41a9616ffb200a05163747b5f44b9d2f7801c289d",
   "limit_sign_up_required": "0305a5bf981d5190b586c115b076db9f7c5f6d10abd3aa54204e93f10de85433",
   "limit_slow_down_minutes": "1e15706d86ce12ade581d548ef17650be9f0144877d0d857687c041db03fcebd",
@@ -87,6 +89,8 @@
     <string name="limit_questions_used">問題数の上限に達しました</string>
     <string name="limit_uploads_day">今日はこれ以上資料を追加できません</string>
     <string name="limit_questions_day">今日の問題数の上限に達しました</string>
+    <string name="limit_runs_day">今日はこれ以上コードを実行できません</string>
+    <string name="limit_runs_used">コード実行回数を使い切りました</string>
     <string name="limit_call_time_used">会話の利用時間が上限に達しました</string>
     <!-- The title over "You can try again now." once a call the learner's call time stopped can be made again. -->
     <string name="limit_call_time_back">また会話練習ができます</string>

@@ -5,6 +5,7 @@ import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import com.zoonk.android.feature.player.model.ActivityAnswer
 import com.zoonk.android.feature.player.model.ActivityStepContent
+import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.api.models.ActivityBaseMap
 import com.zoonk.api.models.ActivityExpected
 import com.zoonk.api.models.ActivityRoundedAnswer
@@ -28,6 +29,7 @@ fun hidesAskedTotal(
  * [baseMap] is a map activity's base map as the API draws it, with its places already projected.
  * [takeNumberKeys] gives the screen's number keys to a canvas whose keys act on its own state.
  * [onComplete] gives an answer and checks it at once, for a canvas whose last move finishes it, as a match board's last pair.
+ * [stepId] is the step it's drawn on, for work a canvas holds past a rotation, and [navigator] takes a limit's way on.
  */
 data class ActivityProps(
     val content: ActivityStepContent,
@@ -43,6 +45,8 @@ data class ActivityProps(
     val takeNumberKeys: (((Int) -> Boolean)?) -> Unit = {},
     val roundedAnswer: ActivityRoundedAnswer? = null,
     val onComplete: (ActivityAnswer) -> Unit = onAnswerChange,
+    val stepId: String = "",
+    val navigator: AppNavigator? = null,
 ) {
     val isChecked: Boolean get() = phase == ActivityPhase.Checked
     val isExploring: Boolean get() = phase == ActivityPhase.Explore

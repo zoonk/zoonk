@@ -70,11 +70,19 @@ export function getLiveCallReservationMicros(talkSeconds: number): number {
 }
 
 export const FREE_LESSON_LIMIT = 20;
+
+/**
+ * A code step passes only with a finished run, so a cap a learner could reach would block a lesson
+ * they already started. Only a script reaches these; the day's AI spend still bounds the cost.
+ */
+const CODE_RUN_CEILING = 300;
+const GUEST_CODE_RUN_CEILING = 60;
 export const USAGE_WINDOW_MS = 30 * MS_PER_DAY;
 
 const USAGE_RULES: Record<EntitlementTier, Record<UsageKind, UsageRule>> = {
   free: {
     assist: { day: 100, rolling30Days: 500 },
+    codeRun: { day: CODE_RUN_CEILING },
     conversation: {
       daySeconds: FREE_CALL_MINUTES_A_DAY * SECONDS_PER_MINUTE,
       rolling30Days: FREE_CALL_MINUTES_A_MONTH * SECONDS_PER_MINUTE,
@@ -89,6 +97,7 @@ const USAGE_RULES: Record<EntitlementTier, Record<UsageKind, UsageRule>> = {
   },
   guest: {
     assist: { day: 40, rolling30Days: 100 },
+    codeRun: { day: GUEST_CODE_RUN_CEILING },
     conversation: { total: 0 },
     explanation: { day: 5, rolling30Days: 10 },
     goal: { total: 1 },
@@ -100,6 +109,7 @@ const USAGE_RULES: Record<EntitlementTier, Record<UsageKind, UsageRule>> = {
   },
   plus: {
     assist: { fairUseDay: 1000 },
+    codeRun: { day: CODE_RUN_CEILING },
     conversation: {
       daySeconds: PLUS_CALL_MINUTES_A_DAY * SECONDS_PER_MINUTE,
       rolling30Days: PLUS_CALL_MINUTES_A_MONTH * SECONDS_PER_MINUTE,
@@ -137,7 +147,7 @@ export const ESSAY_GRADE_COST_MICROS = 20_000;
 export const TYPED_GRADE_COST_MICROS = 5000;
 
 /** Costs are USD millionths; reusable content is free. */
-const COST_MICROS: Record<Exclude<UsageKind, "conversation">, number> = {
+const COST_MICROS: Record<Exclude<UsageKind, "codeRun" | "conversation">, number> = {
   assist: 5000,
   explanation: 20_000,
   goal: GOAL_COST_MICROS,
@@ -201,6 +211,10 @@ export function getEstimatedCostMicros({
 
   if (REUSABLE_KINDS.has(kind) && !generated) {
     return 0;
+  }
+
+  if (kind === "codeRun") {
+    throw new Error("Code runs require a toolchain cost at admission");
   }
 
   return COST_MICROS[kind];

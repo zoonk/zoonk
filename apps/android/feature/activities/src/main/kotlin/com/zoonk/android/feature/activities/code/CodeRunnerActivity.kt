@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -54,12 +55,17 @@ import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.activities.LineMarker
 import com.zoonk.android.feature.activities.jsonSaver
 import com.zoonk.android.feature.questions.itemLine
+import com.zoonk.android.navigation.AppNavigator
+import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.ActOn
 import com.zoonk.android.ui.code.CodeFrame
 import com.zoonk.android.ui.code.CodeLine
 import com.zoonk.android.ui.code.CodeLineText
 import com.zoonk.android.ui.code.CodeLineTone
 import com.zoonk.android.ui.code.highlightCode
 import com.zoonk.android.ui.code.rememberSpokenCode
+import com.zoonk.android.ui.components.LimitNotice
+import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.fadingHorizontalScroll
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatList
@@ -69,8 +75,10 @@ import com.zoonk.android.ui.theme.GeistMono
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf16Fields
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf16Value as CodeRunnerContent
 
 val codeRunnerRenderer =
@@ -79,30 +87,16 @@ val codeRunnerRenderer =
         canvas = { CodeRunnerActivity(it) },
     )
 
-private val CodeLanguage.runtimeName
-    get() =
-        when (this) {
-            CodeLanguage.JavaScript -> "JavaScript"
-            CodeLanguage.Python -> "Python"
-            CodeLanguage.Sql -> "SQLite"
-        }
-
-private val CodeLanguage.defaultFileName
-    get() =
-        when (this) {
-            CodeLanguage.JavaScript -> "main.js"
-            CodeLanguage.Python -> "main.py"
-            CodeLanguage.Sql -> "query.sql"
-        }
-
 private val RunSaver = jsonSaver(sandboxJson, ProgramRun.serializer())
 
 @Composable
 private fun CodeRunnerActivity(props: ActivityProps) {
     val fields = (props.content as CodeRunnerContent).value.fields
     val language = fields.codeLanguage ?: return
+    // A step's language never changes, so these calls stay the same across recompositions.
+    val server = if (language.runsOnServer) codeRunModel(props.stepId) else null
     val sandbox = LocalCodeSandbox.current
-    val runtime = rememberSandboxRuntime(sandbox, language)
+    val runtime = if (server == null) rememberSandboxRuntime(sandbox, language) else null
     val editorRun = rememberEditorRun()
     val scope = rememberCoroutineScope()
     val onAnswerChange by rememberUpdatedState(props.onAnswerChange)
@@ -122,6 +116,10 @@ private fun CodeRunnerActivity(props: ActivityProps) {
 
     fun runProgram() {
         if (isLocked) return
+        if (server != null) {
+            server.run(currentProgram, language)
+            return
+        }
         val revision = editorRun.start() ?: return
         val code = currentProgram
         scope.launch {
@@ -130,6 +128,16 @@ private fun CodeRunnerActivity(props: ActivityProps) {
             if (isLocked) return@launch
             run = result
             onAnswerChange(if (!current || result.stop == ProgramStop.Unavailable) null else outputAnswer(result.output))
+        }
+    }
+
+    if (server != null) {
+        ActOn(server.result) { ran ->
+            val current = ran.code == currentProgram
+            editorRun.showResult(current)
+            if (isLocked) return@ActOn
+            run = ran.run
+            onAnswerChange(if (current) outputAnswer(ran.run.output, ran.run.runId) else null)
         }
     }
 
@@ -154,25 +162,112 @@ private fun CodeRunnerActivity(props: ActivityProps) {
         )
         CodeRunnerOutput(fields.expectedOutput.takeUnless { props.isExploring }, language, run, matches, mistake, editorRun.isStale)
         if (!props.isChecked) {
-            SandboxRunBar(
-                runtimeName = language.runtimeName,
-                runtime = runtime,
-                hasRun = run != null,
-                isExploring = props.isExploring,
-                isRunning = editorRun.isRunning,
-                onRun = ::runProgram,
-                onReset =
-                    if (program == original ||
-                        props.isLocked
-                    ) {
-                        null
-                    } else {
-                        ({ editors.forEach { (number, state) -> state.setTextAndPlaceCursorAtEnd(lines[number - 1]) } })
-                    },
-            )
+            val onReset =
+                if (program == original || props.isLocked) {
+                    null
+                } else {
+                    { editors.forEach { (number, state) -> state.setTextAndPlaceCursorAtEnd(lines[number - 1]) } }
+                }
+            when {
+                server != null -> {
+                    ServerRunBar(
+                        server,
+                        language,
+                        props.navigator,
+                        hasRun = run != null,
+                        isExploring = props.isExploring,
+                        onRun = ::runProgram,
+                        onReset = onReset,
+                    )
+                }
+
+                runtime != null -> {
+                    SandboxRunBar(
+                        runtimeName = language.displayName,
+                        runtime = runtime,
+                        hasRun = run != null,
+                        isExploring = props.isExploring,
+                        isRunning = editorRun.isRunning,
+                        onRun = ::runProgram,
+                        onReset = onReset,
+                    )
+                }
+            }
         }
     }
 }
+
+/**
+ * The run bar for a language our servers run: no runtime to load, how far a run got once it takes a moment, why the last one
+ * didn't run with Try again in Run's place, and a limit the learner reached over Run, which asks the server again.
+ */
+@Composable
+private fun ServerRunBar(
+    model: CodeRunModel,
+    language: CodeLanguage,
+    navigator: AppNavigator?,
+    hasRun: Boolean,
+    isExploring: Boolean,
+    onRun: () -> Unit,
+    onReset: (() -> Unit)?,
+) {
+    when (val issue = model.issue.value) {
+        ServerRunIssue.Offline -> {
+            RunFailed(stringResource(R.string.activities_code_run_offline, language.displayName), onTryAgain = onRun)
+        }
+
+        ServerRunIssue.Unavailable -> {
+            RunFailed(stringResource(R.string.activities_code_run_failed), onTryAgain = onRun)
+        }
+
+        else -> {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                if (issue is ServerRunIssue.Limited) {
+                    LimitNotice(
+                        issue.limit,
+                        LimitSubject.Runs,
+                        onCreateAccount = { navigator?.open(AppRoute.Login) },
+                        onSubscribe = { navigator?.open(AppRoute.Subscription) },
+                        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                    )
+                }
+                RunControls(
+                    hasRun = hasRun,
+                    isExploring = isExploring,
+                    isRunning = model.isRunning,
+                    onRun = onRun,
+                    onReset = onReset,
+                    status = phaseLine(model.isRunning, model.phase, language),
+                )
+            }
+        }
+    }
+}
+
+/** How far a run got, once it has taken long enough to notice, so a quick one doesn't flash a line. */
+@Composable
+private fun phaseLine(
+    isRunning: Boolean,
+    phase: CodeRunPhase?,
+    language: CodeLanguage,
+): String? {
+    val slow by produceState(false, isRunning) {
+        value = false
+        if (isRunning) {
+            delay(PHASE_DELAY)
+            value = true
+        }
+    }
+    if (!isRunning || !slow) return null
+
+    return when (phase) {
+        null, CodeRunPhase.Starting -> stringResource(R.string.activities_code_phase_starting, language.displayName)
+        CodeRunPhase.Compiling -> stringResource(R.string.activities_code_phase_compiling)
+        CodeRunPhase.Running -> stringResource(R.string.activities_code_phase_running)
+    }
+}
+
+private val PHASE_DELAY = 400.milliseconds
 
 @Composable
 private fun CodePanel(
@@ -190,7 +285,7 @@ private fun CodePanel(
     val shape = RoundedCornerShape(ZoonkRadius.xl)
     val editable = fields.editableLines.map(Long::toInt).toSet()
     val lines = program.split("\n")
-    val highlightedLines = highlightCode(program, language.fenceName)
+    val highlightedLines = highlightCode(program, language.id)
     val style = MaterialTheme.zoonkType.codeField
     val digits = lines.size.toString().length
     val errorLine = run?.error?.line?.takeUnless { isStale }
@@ -206,7 +301,7 @@ private fun CodePanel(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                fields.fileName ?: language.defaultFileName,
+                fields.fileName ?: language.fileName,
                 Modifier.weight(1f),
                 color = colors.onSurfaceVariant,
                 style = MaterialTheme.typography.labelMedium.copy(fontFamily = GeistMono),
@@ -414,7 +509,8 @@ private fun StopNotice(
             }
 
             run.stop == ProgramStop.Timeout -> {
-                pluralStringResource(R.plurals.activities_code_stopped_after, language.timeLimitSeconds, language.timeLimitSeconds)
+                language.timeLimitSeconds?.let { pluralStringResource(R.plurals.activities_code_stopped_after, it, it) }
+                    ?: stringResource(R.string.activities_code_took_too_long)
             }
 
             run.stop == ProgramStop.TooMuchOutput -> {

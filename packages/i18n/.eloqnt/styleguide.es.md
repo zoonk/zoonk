@@ -49,6 +49,7 @@
 - “hello@zoonk.com”: “contacto@zoonk.com”
 - “App Store”: always with its article, as Apple writes it in Latin America, also where English has none: “Administrar en el App Store”, “Google Play y el App Store”
 - “You've reached today's study time”: “Completaste tu tiempo de estudio de hoy”, in every line that starts with it
+- Daily-limit titles: “No more {things} today”: “No te quedan {cosas} hoy”; “You've used your {things}”: “Alcanzaste tu límite de {cosas}”
 - “Keep Plus” (turns a stopped renewal back on): “Conservar Plus”
 
 ## Feature names and states

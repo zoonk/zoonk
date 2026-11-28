@@ -9,6 +9,7 @@ import { SessionCeremony } from "@/components/learn/session-ceremony";
 import { useSignUpHref } from "@/components/learn/use-sign-up-href";
 import { useLessonSessionSlots } from "@/components/session/use-lesson-session-slots";
 import { redirect, useRouter } from "@/i18n/navigation";
+import { requestCodeRun } from "@/lib/code-runs/code-run-request";
 import { useTutorConfig } from "@/lib/learn/tutor-config";
 import { useTutorCards } from "@/lib/learn/use-tutor-cards";
 import { sendLessonClock } from "@/lib/lessons/lesson-clock-request";
@@ -51,20 +52,16 @@ const DEFAULT_ROUTING: LessonRouting = { exit: "/", exitTo: null, nextLesson: nu
 function createCeremonySlot(buddy: TutorViewer["buddy"]): Pick<LessonPlayerSlots, "ceremony"> {
   return {
     ceremony: (moments, onClose) => (
-      <MainLearnProvider>
-        <SessionCeremony buddy={buddy} moments={moments} onClose={onClose} />
-      </MainLearnProvider>
+      <SessionCeremony buddy={buddy} moments={moments} onClose={onClose} />
     ),
   };
 }
 
 const FINISHED_CHAPTER_SLOT: Pick<LessonPlayerSlots, "finishedChapter"> = {
   finishedChapter: (chapter) => (
-    <MainLearnProvider>
-      <MainFinishedChapterMaps>
-        <FinishedChapterMoment chapter={chapter} />
-      </MainFinishedChapterMaps>
-    </MainLearnProvider>
+    <MainFinishedChapterMaps>
+      <FinishedChapterMoment chapter={chapter} />
+    </MainFinishedChapterMaps>
   ),
 };
 
@@ -95,6 +92,7 @@ function createAdapters({
     getLessonPictures: (stepIds) => getLessonPicturesAction(lessonId, stepIds),
     gradeSpokenAnswer: (input) => requestSpokenGrade({ ...input, studySessionId: visit.sessionId }),
     requestExampleLine,
+    runCode: requestCodeRun,
     ...(goalId && { saveLesson: saveLessonIn(goalId) }),
     startLesson: (input) =>
       startLibraryLesson({
@@ -267,5 +265,10 @@ function LessonPlayerVisit({
  */
 export function LessonPlayerClient(props: LessonPlayerClientProps) {
   const { bfcacheId } = useRouter();
-  return <LessonPlayerVisit key={bfcacheId} {...props} />;
+
+  return (
+    <MainLearnProvider>
+      <LessonPlayerVisit key={bfcacheId} {...props} />
+    </MainLearnProvider>
+  );
 }

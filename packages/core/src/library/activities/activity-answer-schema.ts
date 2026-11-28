@@ -1,3 +1,4 @@
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { MAX_ANSWER_ITEMS } from "./answer-limits";
 import { MAX_PROGRAM_OUTPUT_LENGTH, MAX_QUERY_ROWS } from "./programs/program-limits";
@@ -49,7 +50,13 @@ export const activityAnswerSchema = z.discriminatedUnion("kind", [
   z.object({ kind: z.literal("notes"), notes: answerIdsSchema }).strict(),
   z.object({ kind: z.literal("numeric"), value: z.number() }).strict(),
   z.object({ ids: answerIdsSchema, kind: z.literal("order") }).strict(),
-  z.object({ kind: z.literal("output"), output: programTextSchema }).strict(),
+  z
+    .object({
+      kind: z.literal("output"),
+      output: programTextSchema,
+      runId: uuidSchema().optional(),
+    })
+    .strict(),
   z.object({ kind: z.literal("pattern"), pattern: answerTextSchema }).strict(),
   z
     .object({

@@ -1,0 +1,25 @@
+enum CodeRunStop {
+  done
+  error
+  timeout
+  tooMuchOutput @map("too_much_output")
+  unavailable
+}
+
+model CodeRun {
+  id          String       @id @db.Uuid
+  userId      String       @map("user_id") @db.Uuid
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  requestId   String       @map("request_id") @db.Uuid
+  language    String
+  sandboxName String       @map("sandbox_name")
+  stop        CodeRunStop?
+  output      String?
+  errorOutput String?      @map("error_output")
+  startedAt   DateTime     @map("started_at")
+  finishedAt  DateTime?    @map("finished_at")
+
+  @@unique([userId, requestId])
+  @@index([userId, startedAt])
+  @@map("code_runs")
+}

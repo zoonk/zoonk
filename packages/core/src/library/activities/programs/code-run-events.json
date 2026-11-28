@@ -1,0 +1,1 @@
+"event: phase\ndata: {\"phase\":\"starting\"}\n\nevent: phase\ndata: {\"phase\":\"compiling\"}\n\nevent: phase\ndata: {\"phase\":\"running\"}\n\nevent: result\ndata: {\"error\":null,\"errorOutput\":\"\",\"output\":\"hello\\n\",\"runId\":\"ec8eedd5-7adf-48aa-b686-ed38e40340b5\",\"stop\":\"done\"}\n\n"

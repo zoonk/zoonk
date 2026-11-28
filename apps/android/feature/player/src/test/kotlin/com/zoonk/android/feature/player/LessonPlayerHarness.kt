@@ -22,7 +22,9 @@ import com.zoonk.android.data.DraftStore
 import com.zoonk.android.data.DraftsChange
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.feature.activities.code.CodeSandbox
+import com.zoonk.android.feature.activities.code.LocalCodeRuns
 import com.zoonk.android.feature.activities.code.LocalCodeSandbox
+import com.zoonk.android.feature.activities.code.ScriptedCodeRuns
 import com.zoonk.android.feature.audio.previewSpeech
 import com.zoonk.android.feature.catalog.CatalogStore
 import com.zoonk.android.feature.catalog.FakeCatalogApi
@@ -123,6 +125,7 @@ internal class LessonPlayerHarness(
         }
         viewModel = newViewModel()
         val sandbox = codeSandbox(scope)
+        val codeRuns = ScriptedCodeRuns()
         openAgain = { newViewModel().also { it.open(lesson) } }
 
         val content: @Composable () -> Unit = {
@@ -130,6 +133,7 @@ internal class LessonPlayerHarness(
                 CompositionLocalProvider(
                     LocalSnackbarHostState provides SnackbarHostState(),
                     LocalCodeSandbox provides sandbox,
+                    LocalCodeRuns provides codeRuns,
                     LocalPrivatePictures provides pictures,
                     LocalLayoutDirection provides (layoutDirection ?: LocalLayoutDirection.current),
                     LocalLessonSpeech provides if (withSpeech) previewSpeech() else null,

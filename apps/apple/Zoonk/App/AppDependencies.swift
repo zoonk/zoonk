@@ -5,6 +5,7 @@ struct AppDependencies {
   let buddyStore: BuddyStore
   let cache: AppCache
   let certificatesStore: CertificatesStore
+  let codeRuns: CodeRuns
   let completedLessonsStore: CompletedLessonsStore
   let countryCatalogStore: CountryCatalogStore
   let courseCatalogStore: CourseCatalogStore
@@ -60,6 +61,7 @@ struct AppDependencies {
     buddyStore = BuddyStore(api: buddyAPI ?? BuddyAPI(clients: clients), cache: cache)
     certificatesStore = CertificatesStore(
       api: certificatesAPI ?? CertificatesAPI(clients: clients), cache: cache)
+    codeRuns = .live(api: CodeRunAPI(clients: clients), cache: cache)
     let completedLessonsStore = CompletedLessonsStore(
       api: CompletedLessonsAPI(clients: clients), cache: cache)
     self.completedLessonsStore = completedLessonsStore
@@ -151,6 +153,7 @@ extension View {
       .environment(\.lessonAudio, .voice(dependencies.voice))
       .environment(\.spokenAnswerRecording, .voice)
       .environment(\.activityRenderers, .app)
+      .environment(\.codeRuns, dependencies.codeRuns)
       .environment(\.openURL, OpenURLAction(handler: LinkOpening.open))
   }
 }

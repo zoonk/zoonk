@@ -7,6 +7,10 @@ import {
 } from "@zoonk/core/exams/essays/writing-contract";
 import { writtenTestShapeSchema } from "@zoonk/core/exams/mocks/contract";
 import {
+  codeRunPhaseSchema,
+  codeRunResultSchema,
+} from "@zoonk/core/library/activities/sandbox-contract";
+import {
   type CreateDocumentOptions,
   type ZodOpenApiOperationObject,
   type ZodOpenApiPathItemObject,
@@ -20,6 +24,7 @@ import { catalogPaths } from "./paths/catalog";
 import { catalogResourcePaths } from "./paths/catalog-resources";
 import { certificatePaths } from "./paths/certificates";
 import { checkpointPaths } from "./paths/checkpoints";
+import { codeRunPaths } from "./paths/code-runs";
 import { completedLessonPaths } from "./paths/completed-lessons";
 import { contentFixPaths } from "./paths/content-fixes";
 import { contentGenerationPaths } from "./paths/content-generation";
@@ -121,6 +126,7 @@ const paths = withInternalErrorResponses({
   ...catalogResourcePaths,
   ...certificatePaths,
   ...checkpointPaths,
+  ...codeRunPaths,
   ...completedLessonPaths,
   ...contentFixPaths,
   ...staffPaths,
@@ -213,6 +219,8 @@ export function createOpenAPIDocument({
     {
       components: {
         schemas: {
+          CodeRunPhase: codeRunPhaseSchema,
+          CodeRunResult: codeRunResultSchema,
           SaveWritingDraft: saveWritingDraftSchema,
           WritingAttempt: writingAttemptSchema,
           WritingPromptStep: writingPromptStepSchema,

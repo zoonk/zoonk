@@ -97,6 +97,43 @@ class CodeHighlightTest {
     }
 
     @Test
+    fun `colors every language the code runner runs on a server`() {
+        assertEquals(
+            listOf(builtin("Console"), string("${'$'}\"Hi {name}\""), comment("// C#")),
+            coloredLine("Console.WriteLine(${'$'}\"Hi {name}\"); // C#", "csharp"),
+        )
+        assertEquals(listOf(keyword("func"), builtin("fmt"), string("`raw`")), coloredLine("func main() { fmt.Println(`raw`) }", "go"))
+        assertEquals(
+            listOf(keyword("let"), keyword("mut"), builtin("i32"), number("2"), builtin("println"), string("\"{n}\"")),
+            coloredLine("let mut n: i32 = 2; println!(\"{n}\");", "rust"),
+        )
+        assertEquals(
+            listOf(keyword("let"), builtin("Int"), number("3"), builtin("print"), string("\"\\(total)\"")),
+            coloredLine("let total: Int = 3; print(\"\\(total)\")", "swift"),
+        )
+        assertEquals(
+            listOf(keyword("fun"), keyword("val"), string("'x'"), builtin("println")),
+            coloredLine("fun main() { val c = 'x'; println(c) }", "kotlin"),
+        )
+        assertEquals(
+            listOf(keyword("<?php"), keyword("echo"), builtin("strlen"), comment("# PHP")),
+            coloredLine("<?php echo strlen(${'$'}name); # PHP", "php"),
+        )
+        assertEquals(
+            listOf(keyword("def"), builtin("puts"), string("\"hi\""), comment("# Ruby")),
+            coloredLine("def greet = puts \"hi\" # Ruby", "ruby"),
+        )
+    }
+
+    @Test
+    fun `takes a Rust lifetime for a name, not a string to the line's end`() {
+        assertEquals(
+            listOf(keyword("fn"), builtin("str"), builtin("char"), string("'x'")),
+            coloredLine("fn first<'a>(s: &'a str) -> char { 'x' }", "rust"),
+        )
+    }
+
+    @Test
     fun `colors Java and C, with C's preprocessor lines`() {
         assertEquals(
             listOf(keyword("public"), keyword("static"), keyword("void"), builtin("String"), keyword("int"), number("2")),
@@ -135,7 +172,7 @@ class CodeHighlightTest {
     fun `colors only strings, numbers and comments in a language it doesn't know`() {
         assertEquals(
             listOf(string("\"oi\""), comment("// 2 items")),
-            coloredLine("fn main() { let s = \"oi\"; } // 2 items", "rust"),
+            coloredLine("fn main() { let s = \"oi\"; } // 2 items", "zig"),
         )
         assertEquals(listOf(number("1"), number("2"), comment("# loop")), coloredLine("for x in [1, 2]:  # loop", null))
         assertEquals(listOf(number("1"), comment("-- one")), coloredLine("SELECT 1 -- one", null))

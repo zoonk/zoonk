@@ -430,6 +430,16 @@ msgid "You've used your questions"
 msgstr "Soru hakkın bitti"
 
 #: src/_components/help-limit-notice.tsx
+msgctxt "19tT0C"
+msgid "No more code runs today"
+msgstr "Bugün daha fazla kod çalıştıramazsın"
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "JnTk6z"
+msgid "You've used your code runs"
+msgstr "Kod çalıştırma hakkını kullandın"
+
+#: src/_components/help-limit-notice.tsx
 msgctxt "aw2Ukw"
 msgid "No more material today"
 msgstr "Bugünkü materyal yükleme hakkın bitti"

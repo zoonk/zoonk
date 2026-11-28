@@ -19,7 +19,9 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DraftStore
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.feature.activities.code.LocalCodeRuns
 import com.zoonk.android.feature.activities.code.LocalCodeSandbox
+import com.zoonk.android.feature.activities.code.ScriptedCodeRuns
 import com.zoonk.android.feature.activities.code.ScriptedSandbox
 import com.zoonk.android.feature.player.FakeLessonPlayerApi
 import com.zoonk.android.feature.player.LESSON_ID
@@ -158,6 +160,7 @@ class ActivityScreenshots {
         val cache = AppCache(session, scope)
         val drafts = DraftStore(temporary.newFolder(), scope)
         val sandbox = ScriptedSandbox(scope).sandbox
+        val codeRuns = ScriptedCodeRuns()
         val explored =
             ActivityFixtures.exploreNames.filter { it.substringBefore('.') in activityRenderers }.sorted().map { name ->
                 val step = ActivityFixtures.exploreStep(name, id = "explore")
@@ -200,7 +203,11 @@ class ActivityScreenshots {
 
         compose.setContent {
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
-                CompositionLocalProvider(LocalSnackbarHostState provides SnackbarHostState(), LocalCodeSandbox provides sandbox) {
+                CompositionLocalProvider(
+                    LocalSnackbarHostState provides SnackbarHostState(),
+                    LocalCodeSandbox provides sandbox,
+                    LocalCodeRuns provides codeRuns,
+                ) {
                     key(index) {
                         val (_, lesson, state) = screens[index]
                         LessonPlayer(lesson, state, LessonEnding(), viewModel, exits, rememberAppNavigator())

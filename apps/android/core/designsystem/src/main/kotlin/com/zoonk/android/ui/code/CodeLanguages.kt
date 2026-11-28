@@ -144,6 +144,99 @@ private val LANGUAGES =
             builtins = "NULL cin cout endl free malloc printf puts scanf std strlen",
         ),
         Language(
+            names = listOf("csharp", "cs", "c#"),
+            rules =
+                listOf(
+                    rule(RuleKind.Comment, SLASH_COMMENT),
+                    rule(RuleKind.String, """[${'$'}@]{0,2}$QUOTED"""),
+                ) + C_LIKE_RULES.drop(2),
+            keywords =
+                "abstract as async await base bool break byte case catch char class const continue decimal default do double else enum " +
+                    "false finally float for foreach if in int interface internal is long namespace new null object out override params " +
+                    "private protected public readonly record ref return sealed short static string struct switch this throw true try " +
+                    "uint ulong using var virtual void while",
+            builtins = "Console Convert DateTime Dictionary Exception List Math String",
+        ),
+        Language(
+            names = listOf("go", "golang"),
+            rules =
+                listOf(
+                    rule(RuleKind.Comment, SLASH_COMMENT),
+                    rule(RuleKind.String, """"(?:\\$ANY_BUT_LINE_END|[^"\\\n])*"?|`[^`]*`?|'(?:\\$ANY_BUT_LINE_END|[^'\\\n])*'?"""),
+                ) + C_LIKE_RULES.drop(2),
+            keywords =
+                "break case chan const continue default defer else fallthrough false for func go goto if import interface iota map " +
+                    "nil package range return select struct switch true type var",
+            builtins =
+                "append bool byte cap close copy delete error float64 fmt int int64 len make math new panic recover rune sort strconv " +
+                    "string strings",
+        ),
+        Language(
+            names = listOf("rust", "rs"),
+            rules =
+                listOf(
+                    rule(RuleKind.Comment, SLASH_COMMENT),
+                    // A quote opens a char only when it closes one character later; otherwise it's a lifetime (`'a`).
+                    rule(RuleKind.String, """"(?:\\$ANY_BUT_LINE_END|[^"\\\n])*"?|'(?:\\$ANY_BUT_LINE_END|[^'\\\n])'"""),
+                ) + C_LIKE_RULES.drop(2),
+            keywords =
+                "as break const continue crate dyn else enum false fn for if impl in let loop match mod move mut pub ref return self " +
+                    "Self static struct super trait true type unsafe use where while",
+            builtins =
+                "Box Err HashMap None Ok Option Result Some String Vec bool char eprintln f32 f64 format i32 i64 isize panic print " +
+                    "println str u32 u64 u8 usize vec",
+        ),
+        Language(
+            names = listOf("swift"),
+            rules =
+                listOf(
+                    rule(RuleKind.Comment, SLASH_COMMENT),
+                    rule(RuleKind.String, """""${'"'}[\s\S]*?(?:""${'"'}|$END)|"(?:\\$ANY_BUT_LINE_END|[^"\\\n])*"?"""),
+                ) + C_LIKE_RULES.drop(2),
+            keywords =
+                "as break case catch class continue default defer do else enum extension false for func guard if import in init inout " +
+                    "internal is let nil private protocol public repeat return self Self static struct switch throw throws true try var " +
+                    "where while",
+            builtins = "Array Bool Character Dictionary Double Float Int Set String abs max min print",
+        ),
+        Language(
+            names = listOf("kotlin", "kt", "kts"),
+            rules =
+                listOf(
+                    rule(RuleKind.Comment, SLASH_COMMENT),
+                    rule(RuleKind.String, """""${'"'}[\s\S]*?(?:""${'"'}|$END)|$QUOTED"""),
+                ) + C_LIKE_RULES.drop(2),
+            keywords =
+                "as break class companion continue data do else enum false for fun if import in interface internal is null object open " +
+                    "override package private protected public return sealed super this throw true try val var when while",
+            builtins =
+                "Any Array Boolean Char Double Int List Long Map MutableList Set String Unit arrayOf listOf mapOf mutableListOf print " +
+                    "println setOf",
+        ),
+        Language(
+            names = listOf("php"),
+            rules =
+                listOf(
+                    rule(RuleKind.Comment, """//[^\n]*|#[^\n]*|/\*[\s\S]*?(?:\*/|$END)"""),
+                    rule(RuleKind.Keyword, """<\?php|\?>"""),
+                ) + C_LIKE_RULES.drop(1),
+            keywords =
+                "abstract and array as break case catch class const continue default do echo else elseif empty extends false final " +
+                    "finally fn for foreach function global if implements instanceof interface isset match namespace new null or print " +
+                    "private protected public readonly require return static switch throw trait true try unset use while yield",
+            builtins =
+                "array_filter array_map count explode implode in_array json_encode printf sprintf str_repeat strlen strtolower " +
+                    "strtoupper var_dump",
+        ),
+        Language(
+            names = listOf("ruby", "rb"),
+            rules = listOf(rule(RuleKind.Comment, """#[^\n]*""")) + C_LIKE_RULES.drop(1),
+            keywords =
+                "alias and begin break case class def do else elsif end ensure false for if in module next nil not or redo rescue " +
+                    "retry return self super then true undef unless until when while yield",
+            builtins = "Array Float Hash Integer String attr_accessor attr_reader lambda p print proc puts raise require",
+        ),
+        Language(
             names = listOf("html", "htm", "xml", "svg"),
             rules =
                 listOf(

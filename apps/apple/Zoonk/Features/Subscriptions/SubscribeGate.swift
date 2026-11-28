@@ -201,6 +201,7 @@ extension HelpLimit {
     case uploads
     case questions
     case callTime
+    case runs
   }
 
   /// Main's limit words: what ran out as the title, when more comes back as the line. A monthly
@@ -306,6 +307,8 @@ extension HelpLimit {
       LocalizedStringResource("You've used your questions", table: "Subscriptions")
     case .callTime:
       LocalizedStringResource("You've used your call time", table: "Subscriptions")
+    case .runs:
+      LocalizedStringResource("You've used your code runs", table: "Subscriptions")
     case nil:
       LocalizedStringResource("You've reached your limit", table: "Subscriptions")
     }
@@ -338,7 +341,13 @@ extension HelpLimit {
     case .callTime:
       LocalizedStringResource(
         "No more calls today", table: "Subscriptions", comment: "The plan's call time is used")
-    case .quickExplanations, .goals, .uploads, .questions, nil:
+    case .runs:
+      LocalizedStringResource("No more code runs today", table: "Subscriptions")
+    case .questions:
+      LocalizedStringResource("No more questions today", table: "Subscriptions")
+    case .uploads:
+      LocalizedStringResource("No more material today", table: "Subscriptions")
+    case .quickExplanations, .goals, nil:
       LocalizedStringResource(
         "You've reached today's limit", table: "Subscriptions",
         comment: "The learner used today's AI checks, clips and similar")

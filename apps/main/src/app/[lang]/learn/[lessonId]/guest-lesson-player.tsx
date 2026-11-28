@@ -1,6 +1,5 @@
 "use client";
 
-import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { useSignUpHref } from "@/components/learn/use-sign-up-href";
 import { type LessonFit } from "@zoonk/core/view-models/onboarding/get-lesson-fit";
 import { GuestLessonFit, GuestSignUpLink } from "@zoonk/learn/guest-ending";
@@ -48,9 +47,5 @@ export function GuestLessonPlayer({
     [fit, goal, signUpHref],
   );
 
-  return (
-    <MainLearnProvider>
-      <LessonPlayerClient {...props} endingSlots={endingSlots} />
-    </MainLearnProvider>
-  );
+  return <LessonPlayerClient {...props} endingSlots={endingSlots} />;
 }

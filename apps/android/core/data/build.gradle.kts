@@ -104,8 +104,11 @@ dependencies {
 }
 
 val nativeProfileFixtures = rootProject.file("../../packages/core/src/profile/questions/profile-native-fixtures.json")
+val codeRunEvents = rootProject.file("../../packages/core/src/library/activities/programs/code-run-events.json")
 
 tasks.withType<Test>().configureEach {
     inputs.file(nativeProfileFixtures)
+    inputs.file(codeRunEvents)
     systemProperty("zoonk.profileFixtures", nativeProfileFixtures.absolutePath)
+    systemProperty("zoonk.codeRunEvents", codeRunEvents.absolutePath)
 }

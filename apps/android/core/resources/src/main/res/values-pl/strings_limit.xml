@@ -38,6 +38,8 @@
   "limit_questions_day": "180193994ebfce1152c5bc34eec2fe7ff99815f5ddbe3ae9311f8735251fb550",
   "limit_questions_used": "7c8596a170c85f469c5bb7f7ff9bd537d2aba824c7453b64748b8cd654055ad1",
   "limit_quick_explanations_used": "cf475c18224ba3705c254a1ba12782febf5df61a2b89bdcce97ff0e45d4e1960",
+  "limit_runs_day": "93cf21819f83587f2c0086b093f4f005ce846e86a0f4af96fe26ee7ad8db49f1",
+  "limit_runs_used": "05baf4e6109f3cb62eec2ce75dca8716547899c2ba13888c87cfdd33dc617ee3",
   "limit_sentence": "66de3c044470be8f8571478a737f73065386222f7e05dee5f32b62f4ada53b46",
   "limit_sign_up_required": "7c1c85acb74cd3ef3896707eb671c78ade8f32323eeed2b946f07bf7f7b095ef",
   "limit_slow_down_minutes": "bc6ca47c429e20d2a9ad515f53bcf8c796273e6d04881675a4009b94e0b60691",
@@ -93,6 +95,8 @@
     <string name="limit_questions_used">Wykorzystano limit pytań</string>
     <string name="limit_uploads_day">Wykorzystano dzienny limit materiałów</string>
     <string name="limit_questions_day">Wykorzystano dzienny limit pytań</string>
+    <string name="limit_runs_day">Dziś nie możesz już uruchamiać kodu</string>
+    <string name="limit_runs_used">Wykorzystano limit uruchomień kodu</string>
     <string name="limit_call_time_used">Twój czas na rozmowy się skończył</string>
     <!-- The title over "You can try again now." once a call the learner's call time stopped can be made again. -->
     <string name="limit_call_time_back">Możesz znów rozmawiać</string>

@@ -9,6 +9,7 @@ import {
   type LessonAnswerVerdict,
   gradeLessonAnswer,
 } from "../../lesson-player/_utils/grade-lesson-answer";
+import { resolveMeasuredOutput } from "../../lesson-player/_utils/resolve-measured-output";
 import { getStepQuestion } from "../../lesson-player/_utils/step-question";
 import { getStepSampleAnswer } from "../../lesson-player/_utils/step-sample-answer";
 import { lessonStepAnswerSchema, lessonStepCheckResultSchema } from "../../lesson-player/contract";
@@ -105,6 +106,28 @@ async function answerUnchecked({
   };
 }
 
+async function resolvePracticeAnswer({
+  input,
+  saved,
+  step,
+  userId,
+}: {
+  input: Extract<MistakePracticeAnswerInput, { stepId: string }>;
+  saved: Attempt | null;
+  step: PlayableLibraryStep;
+  userId: string;
+}): Promise<LessonPracticeAnswer | null> {
+  if (saved) {
+    return z
+      .union([lessonStepAnswerSchema, z.object({ dontKnow: z.literal(true) }).strict()])
+      .parse(readSavedPracticeAnswer(saved.answer));
+  }
+
+  return "dontKnow" in input.answer
+    ? input.answer
+    : resolveMeasuredOutput({ answer: input.answer, step, userId });
+}
+
 export async function answerLessonMistake({
   input,
   mistake,
@@ -128,11 +151,11 @@ export async function answerLessonMistake({
 }): Promise<MistakePracticeAnswerResult> {
   const { lesson } = replay;
 
-  const answer = saved
-    ? z
-        .union([lessonStepAnswerSchema, z.object({ dontKnow: z.literal(true) }).strict()])
-        .parse(readSavedPracticeAnswer(saved.answer))
-    : input.answer;
+  const answer = await resolvePracticeAnswer({ input, saved, step: lesson.step, userId });
+
+  if (!answer) {
+    return { status: "invalidItem" };
+  }
 
   const grade = async (useModel: boolean) =>
     "dontKnow" in answer

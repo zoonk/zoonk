@@ -2802,6 +2802,148 @@
         }
       }
     },
+    "/code-runs": {
+      "post": {
+        "description": "Runs one source file in a sandbox for the authenticated learner or guest. Source is limited to 64 KiB in UTF-8. One run can be active per learner across all languages. Repeating a request ID returns its completed result without another charge.",
+        "operationId": "runCode",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Run code",
+        "tags": [
+          "Lessons"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "maxLength": 65536
+                  },
+                  "language": {
+                    "type": "string",
+                    "enum": [
+                      "cpp",
+                      "csharp",
+                      "go",
+                      "java",
+                      "kotlin",
+                      "php",
+                      "ruby",
+                      "rust",
+                      "swift",
+                      "typescript"
+                    ]
+                  },
+                  "requestId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  }
+                },
+                "required": [
+                  "code",
+                  "language",
+                  "requestId"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Zero or more `phase` events with JSON `{ phase }` (`starting`, `compiling` or `running`), then one `result` event with JSON `{ runId, stop, output, errorOutput, error }`. Stops are `done`, `error`, `timeout`, `tooMuchOutput` or `unavailable`. The error is null or `{ line, message }`; the line is one-based or null. The run ID identifies its measured stdout when checking the activity answer.",
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request is invalid (`VALIDATION_ERROR`), or the source is longer than the largest program that runs (`CODE_TOO_LONG`, with `details.maxBytes`, that limit in UTF-8 bytes)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "A free learner reached today's AI budget (`USAGE_LIMIT_REACHED` with resource `aiSpend`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "A guest is asked to create a free account, where their work moves: their own cap is used (`USAGE_LIMIT_REACHED` with `details.limit`), or the day's AI budget all guests share is spent (`SIGN_UP_REQUIRED`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "A run is already active (`ALREADY_RUNNING`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "`SLOW_DOWN`: try again after `Retry-After`; or `USAGE_LIMIT_REACHED`, back tomorrow: the learner reached the day's run ceiling, the same for every account (resource `codeRun`), or a Plus learner reached today's AI budget (resource `aiSpend`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/me/completed-lessons": {
       "get": {
         "description": "The goal's completed lessons, one per lesson, newest first by the last time the learner finished it, so a replay moves a lesson to the top. A lesson counts for the goal when the learner finished it and it's in the goal's plan (finishing a lesson checks it off in every plan) or the learner studied it while the goal was active. Review capsules, skipped and tested-out lessons, practice and unfinished runs are left out. `available` indicates whether the lesson can be replayed and saved. Group the rows by `finishedOn`. `group` narrows the list to one of the plan's groups, which `filter` lists with how many completed lessons each has. A replay can shift later pages by one: skip a lesson already shown.",
@@ -31025,6 +31167,11 @@
                       "output": {
                         "type": "string",
                         "maxLength": 10000
+                      },
+                      "runId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                       }
                     },
                     "required": [
@@ -52165,6 +52312,7 @@
               "tutorMessage",
               "upload",
               "conversation",
+              "codeRun",
               "assist",
               "mindMap",
               "outline",
@@ -60772,8 +60920,18 @@
                           "language": {
                             "type": "string",
                             "enum": [
+                              "cpp",
+                              "csharp",
+                              "go",
+                              "java",
                               "javascript",
+                              "kotlin",
+                              "php",
                               "python",
+                              "ruby",
+                              "rust",
+                              "swift",
+                              "typescript",
                               "__unknown_api_value__"
                             ]
                           },
@@ -72861,8 +73019,18 @@
                               "language": {
                                 "type": "string",
                                 "enum": [
+                                  "cpp",
+                                  "csharp",
+                                  "go",
+                                  "java",
                                   "javascript",
+                                  "kotlin",
+                                  "php",
                                   "python",
+                                  "ruby",
+                                  "rust",
+                                  "swift",
+                                  "typescript",
                                   "__unknown_api_value__"
                                 ]
                               },
@@ -110307,6 +110475,11 @@
                       "output": {
                         "type": "string",
                         "maxLength": 10000
+                      },
+                      "runId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                       }
                     },
                     "required": [
@@ -111133,6 +111306,78 @@
           }
         ],
         "type": "object"
+      },
+      "CodeRunPhase": {
+        "type": "object",
+        "properties": {
+          "phase": {
+            "type": "string",
+            "enum": [
+              "starting",
+              "compiling",
+              "running"
+            ]
+          }
+        },
+        "required": [
+          "phase"
+        ],
+        "additionalProperties": false
+      },
+      "CodeRunResult": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "line": {
+                "nullable": true,
+                "type": "integer",
+                "minimum": 0,
+                "exclusiveMinimum": true,
+                "maximum": 9007199254740991
+              },
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "line",
+              "message"
+            ],
+            "additionalProperties": false
+          },
+          "errorOutput": {
+            "type": "string"
+          },
+          "output": {
+            "type": "string"
+          },
+          "runId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "stop": {
+            "type": "string",
+            "enum": [
+              "done",
+              "error",
+              "timeout",
+              "tooMuchOutput",
+              "unavailable"
+            ]
+          }
+        },
+        "required": [
+          "error",
+          "errorOutput",
+          "output",
+          "runId",
+          "stop"
+        ],
+        "additionalProperties": false
       },
       "WritingPromptStep": {
         "type": "string",

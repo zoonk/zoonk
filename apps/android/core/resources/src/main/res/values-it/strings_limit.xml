@@ -38,6 +38,8 @@
   "limit_questions_day": "5883d22da391f28ffb23eb55d01153055cb4f948581061a6de2bb82f52772290",
   "limit_questions_used": "10c1684d480de18264fea4e8ffd9fbe63b70e20864d00041ffabc154b2cf8286",
   "limit_quick_explanations_used": "a36156cc16cfc9d8015d6b5a22cfa606355c909ce6935609547f517ef3711d74",
+  "limit_runs_day": "f988396446848b2bcaab3e2ac1394c87fb1b957d775844c67bf558586b02fe4c",
+  "limit_runs_used": "49dba309fa61f1ab79f41a0050ab62ab2cf45c1aef0827699d245c2a0e46fe4c",
   "limit_sentence": "82f5312a98d72a91e84081dcf74f07f4169f4be75eb4d441eed65a99508c3900",
   "limit_sign_up_required": "4a624918c7a4e8f3524d791318f72e7ab8c6533a34adf2b69acf9c99d38a0abc",
   "limit_slow_down_minutes": "c183ba9098f30e5a92fab770b392c8c8aa3c76aa3c66fb22058c1b12d09cfb30",
@@ -91,6 +93,8 @@
     <string name="limit_questions_used">Hai esaurito le domande</string>
     <string name="limit_uploads_day">Oggi non puoi caricare altro materiale</string>
     <string name="limit_questions_day">Hai esaurito le domande di oggi</string>
+    <string name="limit_runs_day">Oggi non hai più esecuzioni di codice</string>
+    <string name="limit_runs_used">Hai esaurito le esecuzioni di codice</string>
     <string name="limit_call_time_used">Hai esaurito il tempo per le conversazioni</string>
     <!-- The title over "You can try again now." once a call the learner's call time stopped can be made again. -->
     <string name="limit_call_time_back">Hai di nuovo tempo per le conversazioni</string>

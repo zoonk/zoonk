@@ -35,6 +35,7 @@ async function findRefusedLessonReplay({
 
 export async function claimUsageInTransaction({
   continuing = false,
+  costMicros: reservedCost,
   generated,
   preparing = false,
   kind,
@@ -46,6 +47,7 @@ export async function claimUsageInTransaction({
 }: {
   /** Continues a start the limits already admitted, so only its use is recorded. */
   continuing?: boolean;
+  costMicros?: number;
   generated: boolean;
   preparing?: boolean;
   kind: UsageKind;
@@ -95,7 +97,7 @@ export async function claimUsageInTransaction({
     return { decision: { status: "allowed" }, recorded: true };
   }
 
-  const costMicros = getEstimatedCostMicros({ generated, kind, seconds });
+  const costMicros = reservedCost ?? getEstimatedCostMicros({ generated, kind, seconds });
 
   const decision: UsageDecision = continuing
     ? { status: "allowed" }

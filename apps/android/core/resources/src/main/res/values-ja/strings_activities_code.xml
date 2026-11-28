@@ -24,6 +24,9 @@
   "activities_code_pass_count": "2dc8ad703e83fb3a6d2e62d2786abee42441a876d6a6e6354f440c7584e9c3de",
   "activities_code_pattern_cant_run": "5954c263cecfa73d2d61c08780050843475a634cb2bbefdc3c5a62a1e41fb515",
   "activities_code_pattern_that_works": "81e8a44d9a1cadb5e36ef1a6aa54677f2588f6d6d165400b6a993fdf1443f6a4",
+  "activities_code_phase_compiling": "e1d12cf94cf9173d896936893ba49b6b2eda774c7d6802855da01b392db1559e",
+  "activities_code_phase_running": "0ed6d48551d0a846ee88708a50b01045c3f5613db751afc3dac88b098312aed9",
+  "activities_code_phase_starting": "9c3b6828ae0faeccc5e322ae7b78cd007fff0aa45e348fb9ac6d3133d6967d5f",
   "activities_code_predict_ahead": "5a8248ee3b5cabe2e5f88d98fa656f23221eb46c6dbb947cff347ac3b548ca5a",
   "activities_code_predict_first": "91a25293e3e755340e1e6eb5cb39fdf912eb9c03a39561d55affefe71b19f7a9",
   "activities_code_query": "b434b306f327b85418a0e0ea5c0a6d7ebaccba1118e51691b973ab6b32f2256a",
@@ -35,6 +38,8 @@
   "activities_code_row_missing": "5783437c28fd2c9b5798b4111136fdfdde10324d673fef931dca0f1528858b0d",
   "activities_code_run": "d1bb5bdfab924332ba88a701522639f300a1c1fd6cf8118dd00ce88b98c23aee",
   "activities_code_run_again": "c46b173a3d7ef981aaaa6b1ca8cf9144eeeced75e4ae4ac54a08165f54c3c7f5",
+  "activities_code_run_failed": "1c1c099bee3bccc4355bee2f3137612090cd419d3ba2f8e80e7b14bf8ca2c923",
+  "activities_code_run_offline": "f82d4202534b112df4047a922837d5c803ec9fd7d6dc6af4d26366d5f16e2f58",
   "activities_code_run_to_see": "f7e73f80c094d7f4fafcbab8829f56b6cc115c73beba0dd7204335429e23d06a",
   "activities_code_runtime_failed": "9840681ca11f8adf7279051bb8a8ef29c3ff9393e0829b96a9032035f51515a8",
   "activities_code_runtime_loading": "9c36f5fb24f5ba8b0d87c339af44c3885396c82a94ed77d7ba57c0316706e11d",
@@ -77,6 +82,7 @@
   "activities_code_table_named": "3b61ed04c5777f413ce4f82cb89df8869452fea0405dbd1e31ea229241e52db7",
   "activities_code_table_rows": "e340277c5dd7bc6ea0815ec3bdd35b42438f99fe1d5f298be914295d44510f57",
   "activities_code_too_much_output": "2cd511b347d5e18f845a6ec566a50456546ba4b14e76dbcd4998bae276d84655",
+  "activities_code_took_too_long": "f637c9d5f4fefa84f601beea8775e46dc187d49c52a9966ea88032ab8ae030de",
   "activities_code_value_was": "49229a1222a3416833d6b02707255597beda89ae991579a84ef542e5fbfac9e8",
   "activities_code_variables": "f7bbac5a1d0e9c4326bcc9ebc78e1683730afb6ac407584d61f93f69760224ac",
   "activities_code_whole_run": "2b581225b893391e7c7ee1bf97171e298c0fc23e5b6d63b9b4f7bccdfb0fbcf6",
@@ -98,6 +104,11 @@
     <string name="activities_code_run">実行する</string>
     <string name="activities_code_run_again">もう一度実行する</string>
     <string name="activities_code_start_over">最初からやり直す</string>
+    <string name="activities_code_phase_starting">%1$sを準備しています…</string>
+    <string name="activities_code_phase_compiling">コードをコンパイルしています…</string>
+    <string name="activities_code_phase_running">コードを実行しています…</string>
+    <string name="activities_code_run_offline">%1$sのコードを実行するには接続が必要です。接続を確認して、もう一度お試しください。</string>
+    <string name="activities_code_run_failed">コードを実行できませんでした。もう一度お試しください。</string>
     <!-- The name of a block of program code, for TalkBack. -->
     <string name="activities_code_code">コード</string>
     <!-- The lines of a program the learner may edit; %1$s lists their numbers, like "2 and 3". -->
@@ -118,6 +129,7 @@
     <plurals name="activities_code_stopped_after">
         <item quantity="other">%d秒で停止しました。終わらないループはありませんか？</item>
     </plurals>
+    <string name="activities_code_took_too_long">時間がかかりすぎたため停止しました。終わらないループがありますか？</string>
     <string name="activities_code_too_much_output">出力が多すぎたため、実行を停止しました。終わらないループはありませんか？</string>
     <!-- Before the feedback for a likely mistake the program's output shows. -->
     <string name="activities_code_not_quite">惜しい：</string>

@@ -176,9 +176,34 @@ msgid "Don't play this string"
 msgstr "No toques esta cuerda"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
+msgctxt "-Redg6"
+msgid "Running {runtime} code needs a connection. Check yours and try again."
+msgstr "Para ejecutar código de {runtime}, necesitas conexión. Revisa la tuya e inténtalo de nuevo."
+
+#: src/activities/_sandbox/sandbox-run-bar.tsx
+msgctxt "WH1ru4"
+msgid "Your code didn't run. Try again."
+msgstr "No se ejecutó tu código. Inténtalo de nuevo."
+
+#: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "eYmsAC"
 msgid "{runtime} didn't load. Check your connection and try again."
 msgstr "{runtime} no se cargó. Revisa tu conexión e inténtalo de nuevo."
+
+#: src/activities/_sandbox/sandbox-run-bar.tsx
+msgctxt "evmUu7"
+msgid "Getting {runtime} ready…"
+msgstr "Preparando {runtime}…"
+
+#: src/activities/_sandbox/sandbox-run-bar.tsx
+msgctxt "xWwz6u"
+msgid "Compiling your code…"
+msgstr "Compilando tu código…"
+
+#: src/activities/_sandbox/sandbox-run-bar.tsx
+msgctxt "yP7nBA"
+msgid "Running your code…"
+msgstr "Ejecutando tu código…"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
@@ -714,14 +739,19 @@ msgid "A {language} program of {count, plural, one {# line} other {# lines}}. Ed
 msgstr "Un programa en {language} de {count, plural, one {# línea} other {# líneas}}. Edita tus líneas, ejecútalo y compara su salida con la esperada: {expected}"
 
 #: src/activities/code-runner/code-runner-output.tsx
-msgctxt "qpwrn5"
-msgid "Line {line}: {error}"
-msgstr "Línea {line}: {error}"
+msgctxt "_4sBFi"
+msgid "Stopped because it took too long. Is there a loop that never ends?"
+msgstr "Se detuvo porque tardó demasiado. ¿Hay un bucle que nunca termina?"
 
 #: src/activities/code-runner/code-runner-output.tsx
 msgctxt "IY8DPN"
 msgid "Stopped after {seconds} seconds. Is there a loop that never ends?"
 msgstr "Se detuvo después de {seconds} segundos. ¿Hay un ciclo que nunca termina?"
+
+#: src/activities/code-runner/code-runner-output.tsx
+msgctxt "qpwrn5"
+msgid "Line {line}: {error}"
+msgstr "Línea {line}: {error}"
 
 #: src/activities/code-runner/code-runner-output.tsx
 msgctxt "wzki3Y"

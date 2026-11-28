@@ -108,6 +108,9 @@ jobs:
           database: ${{ env.NEON_DATABASE }}
           role: ${{ env.NEON_ROLE }}
           suspend_timeout: 300
+      - name: Build code runner bases for the API project
+        if: env.PREVIEW_DATABASE_APPS == 'true'
+        run: pnpm --filter @zoonk/core sandbox:build --verify-fork
       - name: Migrate the PR database once
         if: env.PREVIEW_DATABASE_APPS == 'true'
         env:

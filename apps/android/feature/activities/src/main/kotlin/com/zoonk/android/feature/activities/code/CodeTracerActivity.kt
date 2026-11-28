@@ -267,7 +267,7 @@ private fun TracerPanel(
         val current = stringResource(R.string.activities_code_current_line)
         CodeListing(
             code,
-            language.fenceName,
+            language.id,
             stringResource(R.string.activities_code_code),
             toneOf = { if (it == currentLine) CodeLineTone.Current else CodeLineTone.Plain },
             stateOf = { line -> current.takeIf { line == currentLine } },

@@ -17,7 +17,8 @@ function runtimeStatus(
   return loaded.isReady ? "ready" : "failed";
 }
 
-export function useSandboxRuntime(kind: ProgramKind): {
+/** Null for a language our servers run: nothing loads on the device. */
+export function useSandboxRuntime(kind: ProgramKind | null): {
   retry: () => void;
   status: SandboxRuntimeStatus;
 } {
@@ -25,6 +26,10 @@ export function useSandboxRuntime(kind: ProgramKind): {
   const [loaded, setLoaded] = useState<{ attempt: number; isReady: boolean } | null>(null);
 
   useEffect(() => {
+    if (!kind) {
+      return;
+    }
+
     const subscription = { isActive: true };
 
     void warmUpSandbox(kind).then((isReady) => {
@@ -38,7 +43,7 @@ export function useSandboxRuntime(kind: ProgramKind): {
     };
   }, [attempt, kind]);
 
-  const status = runtimeStatus(loaded, attempt);
+  const status = kind ? runtimeStatus(loaded, attempt) : "ready";
 
   return { retry: () => setAttempt((current) => current + 1), status };
 }

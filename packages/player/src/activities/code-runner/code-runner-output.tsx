@@ -1,5 +1,9 @@
 "use client";
 
+import {
+  type ProgramLanguage,
+  isSandboxLanguage,
+} from "@zoonk/core/library/activities/program-languages";
 import { PROGRAM_TIME_LIMIT_MS } from "@zoonk/core/library/activities/program-limits";
 import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { SidewaysScroll } from "@zoonk/ui/components/sideways-scroll";
@@ -36,9 +40,22 @@ function OutputText({ className, text }: { className?: string; text: string }) {
   );
 }
 
-function StopNotice({ language, run }: { language: "javascript" | "python"; run: ProgramRun }) {
+/** Our servers stop a program's build and its run at different limits, so a time can't be named. */
+function useTimeoutText(language: ProgramLanguage): string {
   const t = useExtracted();
-  const seconds = String(PROGRAM_TIME_LIMIT_MS[language] / MS_PER_SECOND);
+
+  if (isSandboxLanguage(language)) {
+    return t("Stopped because it took too long. Is there a loop that never ends?");
+  }
+
+  return t("Stopped after {seconds} seconds. Is there a loop that never ends?", {
+    seconds: String(PROGRAM_TIME_LIMIT_MS[language] / MS_PER_SECOND),
+  });
+}
+
+function StopNotice({ language, run }: { language: ProgramLanguage; run: ProgramRun }) {
+  const t = useExtracted();
+  const timeoutText = useTimeoutText(language);
 
   const message = (() => {
     if (run.stop === "error" && run.error) {
@@ -48,7 +65,7 @@ function StopNotice({ language, run }: { language: "javascript" | "python"; run:
     }
 
     if (run.stop === "timeout") {
-      return t("Stopped after {seconds} seconds. Is there a loop that never ends?", { seconds });
+      return timeoutText;
     }
 
     if (run.stop === "tooMuchOutput") {
@@ -107,7 +124,7 @@ export function CodeRunnerOutput({
 }: {
   expectedOutput: string | null;
   isStale: boolean;
-  language: "javascript" | "python";
+  language: ProgramLanguage;
   matches: boolean;
   mistake: string | null;
   run: ProgramRun | null;

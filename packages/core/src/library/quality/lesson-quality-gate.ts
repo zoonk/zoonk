@@ -118,19 +118,18 @@ export async function runLessonQualityGate({
     spec: context.spec,
   });
 
-  const [programProblems, reviewer] = await Promise.all([
-    checkLessonPrograms(checked.screens),
-    review
-      ? reviewLesson({
-          analytics,
-          context,
-          lesson,
-          screens: checked.screens,
-          serviceTier,
-          writerModel,
-        })
-      : null,
-  ]);
+  const programProblems = await checkLessonPrograms(checked.screens);
+
+  const reviewer = review
+    ? await reviewLesson({
+        analytics,
+        context,
+        lesson,
+        screens: checked.screens,
+        serviceTier,
+        writerModel,
+      })
+    : null;
 
   const codeProblems = [...checked.problems, ...programProblems].map((problem) => ({
     isMinor: ADVISORY_CODES.has(problem.code),

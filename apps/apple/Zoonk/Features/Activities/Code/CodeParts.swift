@@ -19,6 +19,10 @@ struct CodeRunBar: View {
   let retry: () -> Void
   /// Shown only once there's something to undo.
   var reset: (() -> Void)?
+  /// Why the last run didn't happen, in place of the runtime's "didn't load".
+  var failure: LocalizedStringResource?
+  /// What the run is doing, under Run.
+  var progress: String?
 
   private var loadingLine: String? {
     guard status == .loading else {
@@ -34,9 +38,10 @@ struct CodeRunBar: View {
     VStack(alignment: .leading, spacing: status == .failed ? 8 : 6) {
       if status == .failed {
         FailureLine(
-          message: LocalizedStringResource(
-            "\(runtimeName) didn't load. Check your connection and try again.",
-            table: "ActivitiesCode", comment: "A code runtime (Python) failed to download")
+          message: failure
+            ?? LocalizedStringResource(
+              "\(runtimeName) didn't load. Check your connection and try again.",
+              table: "ActivitiesCode", comment: "A code runtime (Python) failed to download")
         )
         .typeStyle(.body)
 
@@ -66,13 +71,13 @@ struct CodeRunBar: View {
         }
         .controlSize(.large)
 
-        if let loadingLine {
-          ActivityCaption(Text(loadingLine))
+        if let line = loadingLine ?? progress {
+          ActivityCaption(Text(line))
         }
       }
     }
     // One stack whatever the status, so the line a retry brings back is read out.
-    .announcesStatus(loadingLine)
+    .announcesStatus(loadingLine ?? progress)
   }
 
   private var runButton: some View {

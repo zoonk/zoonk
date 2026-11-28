@@ -50,6 +50,8 @@ jobs:
         run: pnpm deploy:require-ci
       - name: Load staging database credentials
         run: pnpm deploy:database
+      - name: Build code runner bases for the API project
+        run: pnpm --filter @zoonk/core sandbox:build --verify-fork
       - name: Migrate staging once
         run: pnpm --filter @zoonk/db db:deploy
       - name: Deploy staging apps

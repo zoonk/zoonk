@@ -4,6 +4,7 @@ import { type TutorViewer } from "@/components/learn/main-ask-tutor";
 import { SessionCeremony } from "@/components/learn/session-ceremony";
 import { useQuestionTutor } from "@/components/learn/use-question-tutor";
 import { useRouter } from "@/i18n/navigation";
+import { requestCodeRun } from "@/lib/code-runs/code-run-request";
 import { postToApp } from "@/lib/http/post-to-app";
 import { useLessonPlayerHref } from "@/lib/lessons/use-lesson-player-href";
 import { requestSpokenGrade } from "@/lib/speech/spoken-answer-request";
@@ -108,7 +109,7 @@ export function MistakePracticeClient({
       renderCeremony={(moments, onClose) => (
         <SessionCeremony buddy={tutor.buddy} moments={moments} onClose={onClose} />
       )}
-      renderLesson={(props) => <LessonPracticeStep {...props} />}
+      renderLesson={(props) => <LessonPracticeStep {...props} runCode={requestCodeRun} />}
       trueFalseLabels={trueFalseLabels}
       tutor={questionTutor}
     />

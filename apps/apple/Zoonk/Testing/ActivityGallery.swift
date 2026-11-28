@@ -1,10 +1,13 @@
 #if DEBUG
+  import HTTPTypes
+  import OpenAPIRuntime
   import SwiftUI
 
   /// Launch with `--activity-gallery` and the screens as `[PlayableLibraryStep]` JSON in
   /// `ZOONK_ACTIVITY_GALLERY`. `ZOONK_ACTIVITY_GALLERY_OPEN` opens one screen at launch; with
   /// `ZOONK_ACTIVITY_GALLERY_ANSWER` (a `LessonStepAnswer`) it starts answered and checked, and
-  /// with `ZOONK_ACTIVITY_GALLERY_EXPLORE` it starts explored. Each is also a launch argument.
+  /// with `ZOONK_ACTIVITY_GALLERY_EXPLORE` it starts explored. `ZOONK_ACTIVITY_GALLERY_CODE_RUN`
+  /// answers a run on our servers (`GalleryCodeRun`). Each is also a launch argument.
   struct ActivityGalleryLaunch: ViewModifier {
     private let steps: [LessonStep]? = {
       guard ProcessInfo.processInfo.arguments.contains("--activity-gallery"),
@@ -32,9 +35,92 @@
             isExploring: debugLaunchValue("ZOONK_ACTIVITY_GALLERY_EXPLORE") != nil
           )
           .zoonkStyles()
+          .transformEnvironment(\.codeRuns) { codeRuns in
+            if let run = GalleryCodeRun.launched {
+              codeRuns = run.codeRuns
+            }
+          }
         }
       } else {
         content
+      }
+    }
+  }
+
+  /// What `/v1/code-runs` answers, as JSON: `{"status": 200, "body": "<the SSE events>",
+  /// "eventDelayMs": 700}`, an error's status and body, or `{"offline": true}`. Each run sends
+  /// one event every `eventDelayMs`.
+  private struct GalleryCodeRun: Decodable, Sendable {
+    var status = 200
+    var body = ""
+    var eventDelayMs = 0
+    var offline = false
+
+    static let launched = debugLaunchValue("ZOONK_ACTIVITY_GALLERY_CODE_RUN").map {
+      do {
+        return try JSONDecoder().decode(Self.self, from: Data($0.utf8))
+      } catch {
+        preconditionFailure("ZOONK_ACTIVITY_GALLERY_CODE_RUN must be a code run's answer: \(error)")
+      }
+    }
+
+    private enum CodingKeys: CodingKey {
+      case status, body, eventDelayMs, offline
+    }
+
+    init(from decoder: any Decoder) throws {
+      let container = try decoder.container(keyedBy: CodingKeys.self)
+      status = try container.decodeIfPresent(Int.self, forKey: .status) ?? 200
+      body = try container.decodeIfPresent(String.self, forKey: .body) ?? ""
+      eventDelayMs = try container.decodeIfPresent(Int.self, forKey: .eventDelayMs) ?? 0
+      offline = try container.decodeIfPresent(Bool.self, forKey: .offline) ?? false
+    }
+
+    var codeRuns: CodeRuns {
+      let api = CodeRunAPI(
+        clients: APIClientFactory(
+          baseURL: URL(string: "https://api.zoonk.test")!, transport: Transport(run: self)))
+
+      return CodeRuns { request in
+        do {
+          return try await api.run(request, token: nil)
+        } catch APIError.network {
+          return .offline
+        } catch {
+          return .unavailable
+        }
+      }
+    }
+
+    private struct Transport: ClientTransport {
+      let run: GalleryCodeRun
+
+      func send(
+        _ request: HTTPRequest, body: HTTPBody?, baseURL: URL, operationID: String
+      ) async throws -> (HTTPResponse, HTTPBody?) {
+        if run.offline {
+          throw URLError(.notConnectedToInternet)
+        }
+
+        var headerFields = HTTPFields()
+        headerFields[.contentType] = run.status == 200 ? "text/event-stream" : "application/json"
+        let events = run.body.components(separatedBy: "\n\n").filter { !$0.isEmpty }
+        let delay = Duration.milliseconds(run.eventDelayMs)
+        let stream = AsyncThrowingStream<ArraySlice<UInt8>, any Error> { continuation in
+          let task = Task {
+            for event in events {
+              try await Task.sleep(for: delay)
+              continuation.yield(ArraySlice("\(event)\n\n".utf8))
+            }
+            continuation.finish()
+          }
+          continuation.onTermination = { _ in task.cancel() }
+        }
+
+        return (
+          HTTPResponse(status: .init(code: run.status), headerFields: headerFields),
+          HTTPBody(stream, length: .unknown, iterationBehavior: .single)
+        )
       }
     }
   }

@@ -132,7 +132,7 @@ export type LimitWords = {
 };
 
 /** What the learner asked for when the help ran out; without it the notice names no kind. */
-export type HelpKind = "explanations" | "messages" | "questions" | "uploads";
+export type HelpKind = "explanations" | "messages" | "questions" | "runs" | "uploads";
 
 type NoticeLimit =
   | { status: "signUpRequired" | "slowDown" }
@@ -245,6 +245,8 @@ function useHelpTitles(kind: HelpKind | undefined): CapTitles {
       };
     case "questions":
       return { day: t("No more questions today"), guest, rolling: t("You've used your questions") };
+    case "runs":
+      return { day: t("No more code runs today"), guest, rolling: t("You've used your code runs") };
     case "uploads":
       return { day: t("No more material today"), guest, rolling: t("You've used your uploads") };
     case undefined:

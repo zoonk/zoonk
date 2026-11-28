@@ -255,6 +255,102 @@ struct CodeSyntax {
             + cLikeRules.dropFirst())
       ),
       (
+        ["csharp", "cs", "c#"],
+        CodeSyntax(
+          keywords: words(
+            "abstract as async await base bool break byte case catch char class const continue decimal default do double else enum false finally float for foreach if in int interface internal is long namespace new null object out override params private protected public readonly record ref return sealed short static string struct switch this throw true try uint ulong using var virtual void while"
+          ),
+          builtins: words("Console Convert DateTime Dictionary Exception List Math String"),
+          rules: [
+            cLikeRules[0],
+            Rule(kind: .string, pattern: #/[$@]{0,2}"(?:\\.|[^"\\\n])*"?|'(?:\\.|[^'\\\n])*'?/#),
+          ] + cLikeRules.dropFirst(2))
+      ),
+      (
+        ["go", "golang"],
+        CodeSyntax(
+          keywords: words(
+            "break case chan const continue default defer else fallthrough false for func go goto if import interface iota map nil package range return select struct switch true type var"
+          ),
+          builtins: words(
+            "append bool byte cap close copy delete error float64 fmt int int64 len make math new panic recover rune sort strconv string strings"
+          ),
+          rules: [
+            cLikeRules[0],
+            Rule(kind: .string, pattern: #/"(?:\\.|[^"\\\n])*"?|`[^`]*`?|'(?:\\.|[^'\\\n])*'?/#),
+          ] + cLikeRules.dropFirst(2))
+      ),
+      (
+        ["rust", "rs"],
+        CodeSyntax(
+          keywords: words(
+            "as break const continue crate dyn else enum false fn for if impl in let loop match mod move mut pub ref return self Self static struct super trait true type unsafe use where while"
+          ),
+          builtins: words(
+            "Box Err HashMap None Ok Option Result Some String Vec bool char eprintln f32 f64 format i32 i64 isize panic print println str u32 u64 u8 usize vec"
+          ),
+          rules: [
+            cLikeRules[0],
+            // A quote opens a char only when it closes one character later; otherwise it's a
+            // lifetime (`'a`).
+            Rule(kind: .string, pattern: #/"(?:\\.|[^"\\\n])*"?|'(?:\\.|[^'\\\n])'/#),
+          ] + cLikeRules.dropFirst(2))
+      ),
+      (
+        ["swift"],
+        CodeSyntax(
+          keywords: words(
+            "as break case catch class continue default defer do else enum extension false for func guard if import in init inout internal is let nil private protocol public repeat return self Self static struct switch throw throws true try var where while"
+          ),
+          builtins: words(
+            "Array Bool Character Dictionary Double Float Int Set String abs max min print"),
+          rules: [
+            cLikeRules[0],
+            Rule(kind: .string, pattern: #/"""[\s\S]*?(?:"""|$)|"(?:\\.|[^"\\\n])*"?/#),
+          ] + cLikeRules.dropFirst(2))
+      ),
+      (
+        ["kotlin", "kt", "kts"],
+        CodeSyntax(
+          keywords: words(
+            "as break class companion continue data do else enum false for fun if import in interface internal is null object open override package private protected public return sealed super this throw true try val var when while"
+          ),
+          builtins: words(
+            "Any Array Boolean Char Double Int List Long Map MutableList Set String Unit arrayOf listOf mapOf mutableListOf print println setOf"
+          ),
+          rules: [
+            cLikeRules[0],
+            Rule(
+              kind: .string,
+              pattern: #/"""[\s\S]*?(?:"""|$)|"(?:\\.|[^"\\\n])*"?|'(?:\\.|[^'\\\n])*'?/#),
+          ] + cLikeRules.dropFirst(2))
+      ),
+      (
+        ["php"],
+        CodeSyntax(
+          keywords: words(
+            "abstract and array as break case catch class const continue default do echo else elseif empty extends false final finally fn for foreach function global if implements instanceof interface isset match namespace new null or print private protected public readonly require return static switch throw trait true try unset use while yield"
+          ),
+          builtins: words(
+            "array_filter array_map count explode implode in_array json_encode printf sprintf str_repeat strlen strtolower strtoupper var_dump"
+          ),
+          rules: [
+            Rule(kind: .comment, pattern: #/\/\/[^\n]*|#[^\n]*|\/\*[\s\S]*?(?:\*\/|$)/#),
+            Rule(kind: .keyword, pattern: /<\?php|\?>/),
+          ] + cLikeRules.dropFirst())
+      ),
+      (
+        ["ruby", "rb"],
+        CodeSyntax(
+          keywords: words(
+            "alias and begin break case class def do else elsif end ensure false for if in module next nil not or redo rescue retry return self super then true undef unless until when while yield"
+          ),
+          builtins: words(
+            "Array Float Hash Integer String attr_accessor attr_reader lambda p print proc puts raise require"
+          ),
+          rules: [Rule(kind: .comment, pattern: /#[^\n]*/)] + cLikeRules.dropFirst())
+      ),
+      (
         ["html", "htm", "xml", "svg"],
         CodeSyntax(rules: [
           Rule(kind: .comment, pattern: /<!--[\s\S]*?(?:-->|$)/),

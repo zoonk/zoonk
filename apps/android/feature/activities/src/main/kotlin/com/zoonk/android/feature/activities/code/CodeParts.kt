@@ -91,13 +91,8 @@ import com.zoonk.android.ui.theme.zoonkType
 /** The app's one sandbox; the lesson screen provides it. */
 val LocalCodeSandbox = staticCompositionLocalOf<CodeSandbox> { error("The lesson screen provides the code sandbox") }
 
-internal val CodeLanguage.fenceName: String
-    get() =
-        when (this) {
-            CodeLanguage.JavaScript -> "javascript"
-            CodeLanguage.Python -> "python"
-            CodeLanguage.Sql -> "sql"
-        }
+/** Runs on our servers, for the languages [CodeLanguage.runsOnServer]; the lesson screen provides it. */
+val LocalCodeRuns = staticCompositionLocalOf<CodeRuns> { error("The lesson screen provides the code runs") }
 
 private data class Highlighting(
     private val language: CodeLanguage,
@@ -105,7 +100,7 @@ private data class Highlighting(
 ) : OutputTransformation {
     override fun TextFieldBuffer.transformOutput() {
         var offset = 0
-        highlightCode(asCharSequence().toString(), language.fenceName).forEach { tokens ->
+        highlightCode(asCharSequence().toString(), language.id).forEach { tokens ->
             val line = styledCodeLine(tokens, colors, field = true)
             line.spanStyles.forEach { span -> addStyle(span.item, offset + span.start, offset + span.end) }
             offset += line.length + 1
@@ -296,21 +291,59 @@ internal fun SandboxRunBar(
     canRun: Boolean = true,
 ) {
     if (runtime.status == SandboxRuntimeStatus.Failed) {
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(
-                stringResource(R.string.activities_code_runtime_failed, runtimeName),
-                Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-            OutlinedButton(onClick = runtime::retry) {
-                Icon(painterResource(R.drawable.ic_refresh), contentDescription = null, Modifier.size(18.dp))
-                Text(stringResource(R.string.load_failed_try_again), Modifier.padding(start = 8.dp))
-            }
-        }
+        RunFailed(stringResource(R.string.activities_code_runtime_failed, runtimeName), onTryAgain = runtime::retry)
         return
     }
 
+    RunControls(
+        hasRun = hasRun,
+        isExploring = isExploring,
+        isRunning = isRunning,
+        onRun = onRun,
+        onReset = onReset,
+        canRun = canRun,
+        status =
+            if (runtime.status ==
+                SandboxRuntimeStatus.Loading
+            ) {
+                stringResource(R.string.activities_code_runtime_loading, runtimeName)
+            } else {
+                null
+            },
+    )
+}
+
+/** Why the code couldn't run, and Try again in Run's place. */
+@Composable
+internal fun RunFailed(
+    message: String,
+    onTryAgain: () -> Unit,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(
+            message,
+            Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+            color = MaterialTheme.colorScheme.error,
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        OutlinedButton(onClick = onTryAgain) {
+            Icon(painterResource(R.drawable.ic_refresh), contentDescription = null, Modifier.size(18.dp))
+            Text(stringResource(R.string.load_failed_try_again), Modifier.padding(start = 8.dp))
+        }
+    }
+}
+
+/** Start over when the code changed, and Run, with a [status] line under them while it has one. */
+@Composable
+internal fun RunControls(
+    hasRun: Boolean,
+    isExploring: Boolean,
+    isRunning: Boolean,
+    onRun: () -> Unit,
+    onReset: (() -> Unit)?,
+    canRun: Boolean = true,
+    status: String? = null,
+) {
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
             if (onReset != null) {
@@ -333,9 +366,9 @@ internal fun SandboxRunBar(
                 Text(stringResource(if (isExploring && hasRun) R.string.activities_code_run_again else R.string.activities_code_run))
             }
         }
-        if (runtime.status == SandboxRuntimeStatus.Loading) {
+        if (status != null) {
             Text(
-                stringResource(R.string.activities_code_runtime_loading, runtimeName),
+                status,
                 Modifier.semantics { liveRegion = LiveRegionMode.Polite },
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodySmall,

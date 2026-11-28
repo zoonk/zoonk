@@ -24,6 +24,9 @@
   "activities_code_pass_count": "f21c049d4ac8cbbcb1033abf87527aa23918e04c6e7b7e4c2d7b5622bd10c85f",
   "activities_code_pattern_cant_run": "31b420df57484fc7292b601ff65cf80b5077e92b7512f15cb1ed3933b52e55ae",
   "activities_code_pattern_that_works": "b41bf8d157b7d1a49056409d948d0f962d0eca2ddc7ac389f36c675971b3ebd7",
+  "activities_code_phase_compiling": "fef52afe9682facb9cb47d15084d272f9c874f662e9f46d78a86b10186380cbd",
+  "activities_code_phase_running": "5fe2da3cb7bf443c70ce83828aeed02acf258be35975d0d4664ebc0bc502cfeb",
+  "activities_code_phase_starting": "82aaeffc0c7fb9ae4901373760f2362f265a0347903a22eddf9a49407e82bd75",
   "activities_code_predict_ahead": "8aacea40641aeda053ae6bc8c39470d617267118f7c47093527a3d011811f040",
   "activities_code_predict_first": "0c65604e23559fd4d00f7c385f314efef3d8bf881d366ef705755d9b955fb41e",
   "activities_code_query": "6221f585c11f288aad0ebfcc0e2d2cfef1cf7d5f66cd7376a08d709bd68e22c0",
@@ -35,6 +38,8 @@
   "activities_code_row_missing": "413add69c8f3904c8abdc067d2213565c0ff18a715ce903d709e243e7b0610ee",
   "activities_code_run": "6892dfe4931ee1de588af53e3c4df07af680e30a08691f208e0869230b569f76",
   "activities_code_run_again": "512d4ff05b50fa4ff02d8987afeb1b1e150c0763792fc2db68519ed94d76f09d",
+  "activities_code_run_failed": "b2b3bfb6f8407a3735b0925846bdba208ee89975326f885400abb887e48637a6",
+  "activities_code_run_offline": "9e44a07f64dbdf6911421290aef2996e4a0e0144cf9cb56b2e53ac1f19d8844f",
   "activities_code_run_to_see": "00adefe42b2fa03397e9da130814c231fe60d98ad95bf3f1101e97af1bb54330",
   "activities_code_runtime_failed": "9bdb489c497434b539c01ec8877b027962869d1833af2fd5707280d01fff6cda",
   "activities_code_runtime_loading": "f487675fe380f431977c30bdf69a257d12e05c33febd46be99a5c652b82a958c",
@@ -77,6 +82,7 @@
   "activities_code_table_named": "fa2c8990133910e338f4a63fedc729a45673514a6d88a4d0217557c62222aaf0",
   "activities_code_table_rows": "607745518bb1d5a3f9e4c31572a0516b66a2f2752ad00e9b44f57a487607d25b",
   "activities_code_too_much_output": "9dfa5f20b55a99b4f88c9e91a0e85ed51f264f29a4c1068dd7905f3218e60680",
+  "activities_code_took_too_long": "486cf61be59dd95a7f0d66b855f4ea50e6bafd98e470b696fcae6aa1324c9618",
   "activities_code_value_was": "7bb5edb8187f0caee9f83f9b9cf15283ba60a7de2d7e8b774deed5de9dc7b9a4",
   "activities_code_variables": "17c1b5c0624d2354233c012ee8ac0111ea3690e4af2d866817d50cb86cf8f29a",
   "activities_code_whole_run": "2d2d5d65321eefa12561a12635ca7d88c0d3c6d1508a3aee0ff4ed4f80f5f57d",
@@ -98,6 +104,11 @@
     <string name="activities_code_run">Esegui</string>
     <string name="activities_code_run_again">Esegui di nuovo</string>
     <string name="activities_code_start_over">Ricomincia</string>
+    <string name="activities_code_phase_starting">Stiamo preparando %1$s…</string>
+    <string name="activities_code_phase_compiling">Stiamo compilando il tuo codice…</string>
+    <string name="activities_code_phase_running">Stiamo eseguendo il tuo codice…</string>
+    <string name="activities_code_run_offline">Per eseguire codice con %1$s serve una connessione. Controlla la connessione e riprova.</string>
+    <string name="activities_code_run_failed">Il tuo codice non è stato eseguito. Riprova.</string>
     <!-- The name of a block of program code, for TalkBack. -->
     <string name="activities_code_code">Codice</string>
     <!-- The lines of a program the learner may edit; %1$s lists their numbers, like "2 and 3". -->
@@ -122,6 +133,7 @@
         <item quantity="many">Esecuzione interrotta dopo %d secondi. C’è un ciclo che non finisce mai?</item>
         <item quantity="other">Esecuzione interrotta dopo %d secondi. C’è un ciclo che non finisce mai?</item>
     </plurals>
+    <string name="activities_code_took_too_long">Esecuzione interrotta perché ci è voluto troppo tempo. C’è un ciclo che non finisce mai?</string>
     <string name="activities_code_too_much_output">Esecuzione interrotta perché il programma ha stampato troppo testo. C’è un ciclo che non termina mai?</string>
     <!-- Before the feedback for a likely mistake the program's output shows. -->
     <string name="activities_code_not_quite">Non proprio:</string>

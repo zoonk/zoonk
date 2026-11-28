@@ -18,6 +18,8 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.Resource
+import com.zoonk.android.feature.activities.code.LocalCodeRuns
+import com.zoonk.android.feature.activities.code.LocalCodeSandbox
 import com.zoonk.android.feature.audio.GradeOutcome
 import com.zoonk.android.feature.audio.VoiceRecording
 import com.zoonk.android.feature.feedback.rememberSaveFailureReport
@@ -209,6 +211,8 @@ internal fun MistakeLessonQuestion(
     ) { part, _, _ ->
         CompositionLocalProvider(
             LocalLessonSpeech provides app.speech,
+            LocalCodeSandbox provides app.codeSandbox,
+            LocalCodeRuns provides app.codeRuns,
             LocalBoardMisses provides boardMisses,
             LocalOptionKeys provides true,
         ) {

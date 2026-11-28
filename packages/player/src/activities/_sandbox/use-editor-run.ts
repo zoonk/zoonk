@@ -55,5 +55,10 @@ export function useEditorRun({ isChecked }: { isChecked: boolean }) {
     return current ? "current" : "stale";
   }
 
-  return { edit, finish, isRunning, isStale, start };
+  /** False once the screen went away or was checked, so a run still waiting stops. */
+  function isActive(startedRevision: number): boolean {
+    return active.current === startedRevision;
+  }
+
+  return { edit, finish, isActive, isRunning, isStale, start };
 }

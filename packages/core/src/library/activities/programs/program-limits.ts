@@ -1,8 +1,10 @@
+import { PROGRAM_LANGUAGES } from "./program-languages";
+
 export type ProgramKind = "javascript" | "python" | "sql";
 
 export const PROGRAM_TIME_LIMIT_MS: Record<ProgramKind, number> = {
-  javascript: 3000,
-  python: 5000,
+  javascript: PROGRAM_LANGUAGES.javascript.timeLimitMs,
+  python: PROGRAM_LANGUAGES.python.timeLimitMs,
   sql: 3000,
 };
 

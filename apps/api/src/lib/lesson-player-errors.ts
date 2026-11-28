@@ -4,12 +4,15 @@ import { createErrorResponse, errors, httpStatus, slowDownError } from "./api-er
 
 type RefusedUsage = Exclude<UsageDecision, { status: "allowed" }>;
 
-function getLimitStatus(tier: string): number {
+/** Plus lifts a free learner's caps, except the code-run ceiling every account shares. */
+function getLimitStatus({ resource, tier }: { resource: string; tier: string }): number {
   if (tier === "guest") {
     return httpStatus.forbidden;
   }
 
-  return tier === "free" ? httpStatus.paymentRequired : httpStatus.tooManyRequests;
+  return tier === "free" && resource !== "codeRun"
+    ? httpStatus.paymentRequired
+    : httpStatus.tooManyRequests;
 }
 
 export function signUpRequiredError() {
@@ -41,7 +44,7 @@ export function usageDecisionError(decision: RefusedUsage) {
     code: LESSON_PLAYER_ERROR_CODES.usageLimitReached,
     details: { limit: decision.limit },
     message: "This plan's limit is reached",
-    status: getLimitStatus(decision.limit.tier),
+    status: getLimitStatus(decision.limit),
   });
 }
 

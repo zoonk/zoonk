@@ -382,6 +382,7 @@ internal fun ExplanationView(
     step: LessonStep,
     content: StepContent.Explanation,
     actions: StepActions,
+    navigator: AppNavigator,
     part: StepPart,
     marking: LessonMarking?,
 ) {
@@ -401,7 +402,14 @@ internal fun ExplanationView(
         }
         if (part.showsTurn) {
             LessonStepVisual(explanation.visual)
-            content.explore?.takeUnless { step.isExploredPictureLost }?.let { ExploredActivityCanvas(it, actions.cantListen) }
+            content.explore?.takeUnless { step.isExploredPictureLost }?.let {
+                ExploredActivityCanvas(
+                    it,
+                    actions.cantListen,
+                    step.id,
+                    navigator,
+                )
+            }
         }
         if (part.showsScreen && explanation.exampleLineSlot != null) actions.exampleLine(step.id)?.let { ExampleLine(it) }
         if (part.showsScreen && marking != null) DidntGetItButton()

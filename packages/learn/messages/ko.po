@@ -430,6 +430,16 @@ msgid "You've used your questions"
 msgstr "질문 한도를 다 썼어요"
 
 #: src/_components/help-limit-notice.tsx
+msgctxt "19tT0C"
+msgid "No more code runs today"
+msgstr "오늘은 더 이상 코드를 실행할 수 없어요"
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "JnTk6z"
+msgid "You've used your code runs"
+msgstr "코드 실행 횟수를 다 사용했어요"
+
+#: src/_components/help-limit-notice.tsx
 msgctxt "aw2Ukw"
 msgid "No more material today"
 msgstr "오늘은 자료를 더 올릴 수 없어요"

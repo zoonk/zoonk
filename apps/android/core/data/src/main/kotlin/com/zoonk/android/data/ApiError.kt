@@ -57,19 +57,27 @@ internal suspend fun <T> send(call: suspend () -> Response<T>): Response<T> {
             throw ApiException(ApiError.Unavailable)
         }
     if (response.isSuccessful) return response
+    throw apiRefusal(response.code()) { response.errorBody()?.string() }
+}
+
+/** A response with [status] that isn't a success, as an [ApiException] with the API's error in [body] when it sent one. */
+internal fun apiRefusal(
+    status: Int,
+    body: () -> String?,
+): ApiException {
     val error =
-        when (response.code()) {
+        when (status) {
             401 -> ApiError.Unauthorized
             404 -> ApiError.NotFound
             else -> ApiError.Unavailable
         }
-    val body = errorBody(response)
-    throw ApiException(error, body?.code, response.code(), body?.details)
+    val refusal = errorBody(body)
+    return ApiException(error, refusal?.code, status, refusal?.details)
 }
 
-private fun errorBody(response: Response<*>): ErrorError? =
+private fun errorBody(body: () -> String?): ErrorError? =
     try {
-        response.errorBody()?.string()?.let { ApiJson.decodeFromString<Error>(it).error }
+        body()?.let { ApiJson.decodeFromString<Error>(it).error }
     } catch (e: SerializationException) {
         null
     } catch (e: IOException) {

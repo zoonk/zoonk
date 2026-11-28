@@ -7,6 +7,11 @@
     <string name="activities_code_run">Run</string>
     <string name="activities_code_run_again">Run again</string>
     <string name="activities_code_start_over">Start over</string>
+    <string name="activities_code_phase_starting">Getting %1$s ready…</string>
+    <string name="activities_code_phase_compiling">Compiling your code…</string>
+    <string name="activities_code_phase_running">Running your code…</string>
+    <string name="activities_code_run_offline">Running %1$s code needs a connection. Check yours and try again.</string>
+    <string name="activities_code_run_failed">Your code didn\'t run. Try again.</string>
     <!-- The name of a block of program code, for TalkBack. -->
     <string name="activities_code_code">Code</string>
 
@@ -30,6 +35,7 @@
         <item quantity="one">Stopped after %d second. Is there a loop that never ends?</item>
         <item quantity="other">Stopped after %d seconds. Is there a loop that never ends?</item>
     </plurals>
+    <string name="activities_code_took_too_long">Stopped because it took too long. Is there a loop that never ends?</string>
     <string name="activities_code_too_much_output">Stopped because it printed too much. Is there a loop that never ends?</string>
     <!-- Before the feedback for a likely mistake the program's output shows. -->
     <string name="activities_code_not_quite">Not quite:</string>

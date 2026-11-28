@@ -10,7 +10,8 @@ import androidx.compose.runtime.setValue
 
 /**
  * One run at a time of code the learner keeps editing, as main's `useEditorRun`. Run it in the screen's
- * `rememberCoroutineScope()`, so leaving the screen drops the result.
+ * `rememberCoroutineScope()`, so leaving the screen drops the result; a run on our servers is held by [CodeRunModel]
+ * instead, which tells it [showResult].
  */
 @Stable
 class EditorRun(
@@ -35,6 +36,11 @@ class EditorRun(
         if (isRunning) return null
         isRunning = true
         return revision
+    }
+
+    /** A result [CodeRunModel] held shows; [current] is whether it ran the code as it is now. */
+    fun showResult(current: Boolean) {
+        isStale = !current
     }
 
     /** False when the code changed while it ran, so the result describes older code. */

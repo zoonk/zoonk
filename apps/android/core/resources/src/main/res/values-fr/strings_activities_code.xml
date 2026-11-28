@@ -24,6 +24,9 @@
   "activities_code_pass_count": "e62e85f6ae8c8eb688bd6729eb65b9ce3632080a4501dece0262493b2302c505",
   "activities_code_pattern_cant_run": "adfbd35d3e4450e9196b648b3af299467608cf81582d268d8ed8896a1d1648fd",
   "activities_code_pattern_that_works": "d29a3df1bc44122c83fb6df7858b023bd2c08254a033087685e870239f6e47fb",
+  "activities_code_phase_compiling": "68486c74ee6bb719820e02acee12ca33baab8330461b5fcd58aa7b7554c5ae09",
+  "activities_code_phase_running": "8a3bceef121ea9bad6c76ca3ad0eb5a486175177bcfedef79a8854aef4dcbf5c",
+  "activities_code_phase_starting": "5d742c4c030bd275270fdb0d945323305dc6076c9894ec56e8006653036e010b",
   "activities_code_predict_ahead": "822f1058eec88162ede790d0f5a7575f8fd641298b7e188d6ca8257d5a3e383a",
   "activities_code_predict_first": "96e34173107a8dd1fc982aafc3576d4af9fed79aba97480cd6c061da9c4289f9",
   "activities_code_query": "eaa1772a51c28e1bd70cb9f95209f795f4512633f94d3705a3545b0d7d95c244",
@@ -35,6 +38,8 @@
   "activities_code_row_missing": "e3ba317616d29109b0cef94a2fc1e5f6474eb018bb48ac91557f2503236ee5f7",
   "activities_code_run": "33abf3b3e92b5f8cd93dcea3a7f8ca22ac1d21f9373349788a04e924843c575b",
   "activities_code_run_again": "6cbc65753fc893619c93c360ffef54a2a98f3f5416d2fbba38f89aa7ff98bb12",
+  "activities_code_run_failed": "f0bfbe0662a77b40f33f6b3833105bf74cdde8f7bdf138e2d508e9d654b1e0ad",
+  "activities_code_run_offline": "05c082c2860298bfee5703077ca033a1df62666345b221ff385ce4f77234dce5",
   "activities_code_run_to_see": "16f6698162cef46a573bc7e515d0072495c1a23377398876b7c88bfe823c82b7",
   "activities_code_runtime_failed": "bf31f0c439305d804c287234abfd667f4f83e7929d52fab2a4d2f195096f65b1",
   "activities_code_runtime_loading": "55cbc51edb5358c1f46ef3dfe75011d6181f04b9d525dcd55e30f6d50a086dba",
@@ -77,6 +82,7 @@
   "activities_code_table_named": "777e8eb60b7f1383647538b517699e43bdebffb0d861a847f916c57903303845",
   "activities_code_table_rows": "988bd6b090696a888579cb9f3980b254f7b8171a9b36eca3fda05a37b10955ec",
   "activities_code_too_much_output": "b77cdb493dba335ea5fa04670252b29c8328dc126754c6334f6a01ba2bc42431",
+  "activities_code_took_too_long": "f5ec02d8c4259f57347225dfff76a1935b93643ab668c7709acf502999ed901a",
   "activities_code_value_was": "9c6accb3f917ab1ab9678e05f3217728455ddf21fbcaee39d94d0dfc26b1d33c",
   "activities_code_variables": "72c73fc78b157835f4fd3a9f73bc344b2ffba6339ec8e2c1a9f564fcb8be5583",
   "activities_code_whole_run": "97ee56b835acff8194831eb0dded30c355244136f09b71efb6d42ea0ea725995",
@@ -98,6 +104,11 @@
     <string name="activities_code_run">Exécuter</string>
     <string name="activities_code_run_again">Exécuter à nouveau</string>
     <string name="activities_code_start_over">Recommencer</string>
+    <string name="activities_code_phase_starting">Préparation de %1$s…</string>
+    <string name="activities_code_phase_compiling">Compilation de ton code…</string>
+    <string name="activities_code_phase_running">Exécution de ton code…</string>
+    <string name="activities_code_run_offline">Pour exécuter du code %1$s, il faut une connexion. Vérifie la tienne et réessaie.</string>
+    <string name="activities_code_run_failed">Ton code ne s’est pas exécuté. Réessaie.</string>
     <!-- The name of a block of program code, for TalkBack. -->
     <string name="activities_code_code">Code</string>
     <!-- The lines of a program the learner may edit; %1$s lists their numbers, like "2 and 3". -->
@@ -122,6 +133,7 @@
         <item quantity="many">Arrêt après %d secondes. Y a-t-il une boucle qui ne se termine jamais ?</item>
         <item quantity="other">Arrêt après %d secondes. Y a-t-il une boucle qui ne se termine jamais ?</item>
     </plurals>
+    <string name="activities_code_took_too_long">L’exécution s’est arrêtée, car elle a pris trop de temps. Y a-t-il une boucle sans fin ?</string>
     <string name="activities_code_too_much_output">Arrêt : trop de résultats affichés. Y a-t-il une boucle qui ne se termine jamais ?</string>
     <!-- Before the feedback for a likely mistake the program's output shows. -->
     <string name="activities_code_not_quite">Pas tout à fait :</string>
