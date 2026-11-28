@@ -92,7 +92,12 @@ describe(buildPhaseViews, () => {
       state: "current",
     });
 
-    expect(upcoming).toMatchObject({ endDate: null, later: true, notPlannedReason: null });
+    expect(upcoming).toMatchObject({
+      endDate: null,
+      later: true,
+      notPlannedReason: null,
+      state: "upcoming",
+    });
   });
 
   it("uses the planner's minutes for each phase", () => {

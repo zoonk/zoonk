@@ -116,7 +116,9 @@ export function getPhaseStates({
     const inPhase = items.filter((item) => item.phase === index);
 
     if (inPhase.length === 0) {
-      return items.length > 0 && phase.kind !== "afterExam" ? "leftOut" : "upcoming";
+      return items.length > 0 && phase.kind !== "afterExam" && !phase.later
+        ? "leftOut"
+        : "upcoming";
     }
 
     const required = phaseChallengesRequired
