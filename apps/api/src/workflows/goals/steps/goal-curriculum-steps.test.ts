@@ -133,6 +133,39 @@ describe(decideGoalScopeStep, () => {
     expect(scope).toMatchObject({ generalGoal: null, ownerId: user.id });
   });
 
+  it("keeps a goal private when its reading asked the learner a question, since a shared plan never reads the answer", async () => {
+    const user = await userFixture();
+
+    const finals = await goalFixture({
+      details: {
+        followUps: [
+          { answer: "Chemistry, history", question: "Which subjects do your finals cover?" },
+        ],
+        subject: "end-of-semester exams",
+      },
+      kind: "exam",
+      language: "en",
+      prompt: "Help me get through my end-of-semester exams",
+      title: "Get through my end-of-semester exams",
+      userId: user.id,
+    });
+
+    vi.mocked(classifyGoalSpecificity).mockResolvedValue(
+      taskResult({
+        generalGoal: "Preparing for end-of-semester exams",
+        personalDetails: [],
+        privateCourse: false,
+      }),
+    );
+
+    const scope = await decideGoalScopeStep({
+      inputs: await loadInputs(finals.id),
+      workflowRunId: "run",
+    });
+
+    expect(scope).toMatchObject({ generalGoal: null, ownerId: user.id });
+  });
+
   it("shares a started public course's content by the course's title, never by the goal's", async () => {
     const [user, course] = await Promise.all([
       userFixture(),
