@@ -134,7 +134,7 @@ private struct SQLPlaygroundCanvas: View {
         SQLTableViewer(table: table)
       }
 
-      if !isChecked {
+      if !isChecked || !query.isEmpty {
         editor
       }
 
@@ -189,39 +189,48 @@ private struct SQLPlaygroundCanvas: View {
   private var editor: some View {
     VStack(alignment: .leading, spacing: 8) {
       editorLabel
-        .typeStyle(.body.weight(.medium))
+        .typeStyle(.meta.weight(.medium))
+        .foregroundStyle(.mutedForeground)
         .accessibilityHidden(true)
 
-      MultilineTextField(
-        text: $query, selection: $selection, prompt: Text(verbatim: "SELECT"), label: editorLabel
-      )
-      .lineLimit(3...)
-      .typeStyle(.body.monospaced())
-      .textFieldStyle(.plain)
-      .fieldBorder()
-      .textInputAutocapitalization(.never)
-      .autocorrectionDisabled()
-      .keyboardType(.asciiCapable)
-      .toolbar {
-        // Above the keyboard, where they're needed: a phone keyboard then only types values.
-        ToolbarItem(placement: .keyboard) {
-          snippets
+      // A checked query stays as it was run, read-only.
+      if isChecked {
+        Text(verbatim: query)
+          .typeStyle(.body.monospaced())
+          .textSelection(.enabled)
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .fieldBorder()
+          .accessibilityLabel(editorLabel)
+          .accessibilityValue(Text(verbatim: query))
+      } else {
+        MultilineTextField(
+          text: $query, selection: $selection, prompt: Text(verbatim: "SELECT"), label: editorLabel
+        )
+        .lineLimit(3...)
+        .typeStyle(.body.monospaced())
+        .textFieldStyle(.plain)
+        .fieldBorder()
+        .textInputAutocapitalization(.never)
+        .autocorrectionDisabled()
+        .keyboardType(.asciiCapable)
+        .toolbar {
+          // Above the keyboard, where they're needed: a phone keyboard then only types values.
+          ToolbarItem(placement: .keyboard) {
+            snippets
+          }
         }
       }
 
       CodeRunBar(
         runtimeName: "SQLite", status: runtime, hasRun: queryRun != nil,
         isExploring: context.phase == .explore, isRunning: activeRun != nil,
-        canRun: !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, run: runQuery,
-        retry: { runtimeAttempt += 1 })
+        canRun: !isChecked && !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+        run: runQuery, retry: { runtimeAttempt += 1 })
     }
   }
 
   private var editorLabel: Text {
-    context.phase == .explore
-      ? Text("Query", tableName: "ActivitiesCode", comment: "Label of an explored SQL editor")
-      : Text(
-        "Your query", tableName: "ActivitiesCode", comment: "Label of the learner's SQL editor")
+    Text("Query", tableName: "ActivitiesCode")
   }
 
   private var snippets: some View {

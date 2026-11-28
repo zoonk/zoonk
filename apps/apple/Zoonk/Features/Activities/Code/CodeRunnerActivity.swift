@@ -171,24 +171,21 @@ private struct CodeRunnerCanvas: View {
       .typeStyle(.data)
   }
 
+  /// Main's "Edit line 2": gone once checked, keeping its room so the header doesn't move.
   @ViewBuilder
   private var yourLines: some View {
     if !isExploring {
       let lines = fields.editableLines.map(String.init).formatted(.list(type: .and))
 
-      Label {
+      Group {
         if fields.editableLines.count == 1 {
-          Text(
-            "Line \(lines) is yours", tableName: "ActivitiesCode",
-            comment: "The one line of a program the learner edits")
+          Text("Edit line \(lines)", tableName: "ActivitiesCode")
         } else {
-          Text(
-            "Lines \(lines) are yours", tableName: "ActivitiesCode",
-            comment: "The lines of a program the learner edits, like “2 and 3”")
+          Text("Edit lines \(lines)", tableName: "ActivitiesCode")
         }
-      } icon: {
-        Image(systemName: "pencil")
       }
+      .opacity(isChecked ? 0 : 1)
+      .accessibilityHidden(isChecked)
     }
   }
 
@@ -292,13 +289,7 @@ private struct CodeRunnerOutput: View {
     VStack(alignment: .leading, spacing: 12) {
       HStack(alignment: .top, spacing: 0) {
         cell {
-          if expectedOutput == nil {
-            Text("Output", tableName: "ActivitiesCode", comment: "What an explored program printed")
-          } else {
-            Text(
-              "Your output", tableName: "ActivitiesCode",
-              comment: "What the learner's program printed")
-          }
+          Text("Output", tableName: "ActivitiesCode")
         } content: {
           printed
         }

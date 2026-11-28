@@ -102,10 +102,12 @@ private struct CodeTracerCanvas: View {
   init(context: ActivityCanvasContext, fields: CodeTracerFields) {
     self.context = context
     self.fields = fields
-    // Before the first line when the learner must predict it.
-    let start = fields.pauses.contains { $0.step == 0 } ? -1 : 0
-    _step = ActivityState(wrappedValue: start, "step")
-    _furthest = ActivityState(wrappedValue: start, "furthest")
+    // Before the first line when the learner must predict it; a checked trace opened again shows how it ended.
+    let isChecked = if case .checked = context.phase { true } else { false }
+    let opening =
+      isChecked ? fields.trace.count - 1 : fields.pauses.contains { $0.step == 0 } ? -1 : 0
+    _step = ActivityState(wrappedValue: opening, "step")
+    _furthest = ActivityState(wrappedValue: opening, "furthest")
     _predictions = ActivityState(wrappedValue: context.answer?.pairs ?? [:], "predictions")
   }
 
@@ -167,7 +169,7 @@ private struct CodeTracerCanvas: View {
 
       if let upcoming {
         prediction(index: upcoming)
-      } else if !isChecked {
+      } else if !isChecked, let hint {
         ActivityCaption(hint)
       }
 
@@ -274,11 +276,12 @@ private struct CodeTracerCanvas: View {
     .buttonStyle(.outline)
   }
 
-  private var hint: Text {
+  /// Main's `RunHint`: before the end, only a reminder that predictions are still ahead.
+  private var hint: Text? {
     if step < lastStep {
-      Text(
-        "Step forward to run the next line.", tableName: "ActivitiesCode",
-        comment: "Under a code trace")
+      asksNothing || fields.pauses.indices.allSatisfy({ predictions[String($0)] != nil })
+        ? nil
+        : Text("We'll stop for you to predict a value.", tableName: "ActivitiesCode")
     } else if context.phase == .explore {
       Text(
         "That's the whole run.", tableName: "ActivitiesCode",

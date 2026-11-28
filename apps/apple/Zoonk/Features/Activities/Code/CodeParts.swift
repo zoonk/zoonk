@@ -53,13 +53,10 @@ struct CodeRunBar: View {
           if let reset {
             Button(action: reset) {
               Label {
-                Text(
-                  "Start over with the original code", tableName: "ActivitiesCode",
-                  comment: "Undo the learner's edits to a program")
+                Text("Start over", tableName: "ActivitiesCode")
               } icon: {
                 Image(systemName: "arrow.counterclockwise")
               }
-              .labelStyle(.iconOnly)
             }
             .buttonStyle(.outline)
             .disabled(isRunning)
