@@ -358,7 +358,7 @@ describe(replaceEmDashes, () => {
   it.each([
     ["| Delivery | — | $14 |", "| Delivery | – | $14 |"],
     ["| Already owned | 12 |—|", "| Already owned | 12 |–|"],
-    ["Item | Cost\n--- | ---\nTax | —\n— | $3", "Item | Cost\n--- | ---\nTax | –\n– | $3"],
+    ["| Item | Cost |\n|---|---|\n| Tax | — |", "| Item | Cost |\n|---|---|\n| Tax | – |"],
   ])(
     "keeps a table cell that holds only a dash as a mark for none, as an en dash: %j",
     (text, expected) => {
@@ -369,6 +369,8 @@ describe(replaceEmDashes, () => {
   it.each([
     ["| Fee | 12 — 14 |", "| Fee | 12, 14 |"],
     ["No || — basta um true", "No ||, basta um true"],
+    ["— |x| is the distance from zero.", "|x| is the distance from zero."],
+    ["The size is |x| —", "The size is |x|"],
     [String.raw`Type a \| — then stop.`, String.raw`Type a \|, then stop.`],
   ])("reads any other dash beside a pipe as prose: %j", (text, expected) => {
     expect(replaceEmDashes(text)).toBe(expected);

@@ -50,11 +50,9 @@ export function normalizePunctuation(text: string): string {
   return text.replaceAll(/(?<!\s)\s+(?<punctuation>[!?.,;:!?。、！？؟])/gu, "$<punctuation>");
 }
 
-const CELL_PIPE_BEFORE = `(?<=${CELL_PIPE.source}[ \t]*)`;
-
 const NONE_CELL_DASH = new RegExp(
-  String.raw`${CELL_PIPE_BEFORE}—(?=[ \t]*(?:\||$))|(?<=^[ \t]*)—(?=[ \t]*\|)`,
-  "gmu",
+  String.raw`(?<=${CELL_PIPE.source}[ \t]*)—(?=[ \t]*${CELL_PIPE.source})`,
+  "gu",
 );
 
 function replaceProseEmDashes(text: string): string {
