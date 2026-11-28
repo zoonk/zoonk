@@ -10,7 +10,7 @@ export type TestEventContext = {
   test: "course" | "focus" | "language" | "level_test_out";
 };
 
-export type TestRow =
+type TestRow =
   | "continue"
   | "direct"
   | "first_lesson"

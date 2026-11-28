@@ -132,7 +132,7 @@ async function loadPlacementFacts({
   return { ...answersRead, build, exam, items, ownLevel };
 }
 
-export type PlacementFacts = Awaited<ReturnType<typeof loadPlacementFacts>>;
+type PlacementFacts = Awaited<ReturnType<typeof loadPlacementFacts>>;
 
 /** Uses all answers, not only placement's; today applies the learner-local daily budget. */
 export async function loadPlacementWithSummary({
