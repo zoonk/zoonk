@@ -10,7 +10,7 @@ import { type OwnLevel } from "../placement-steps";
 import { type PlacementAttempt } from "./placement-attempt-record";
 
 /** Lost generation runs must not leave placement waiting indefinitely. */
-export const QUESTION_WRITING_WINDOW_MS = 10 * 60 * 1000;
+const QUESTION_WRITING_WINDOW_MS = 10 * 60 * 1000;
 
 export function coursePreparationFailed(attempt: PlacementAttempt) {
   return (

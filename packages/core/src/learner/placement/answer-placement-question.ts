@@ -2,6 +2,8 @@ import "server-only";
 import { type Goal, type TransactionClient, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { gradedTestAnswer, testEventContext, trackTestEvents } from "../../analytics/test-events";
+import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
+import { getGoalsCacheTag } from "../../cache/tags";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
 import { getAskedItemFilter } from "../../library/items/item-field";
 import { ITEM_IMAGE_INCLUDE } from "../../library/items/item-image";
@@ -142,12 +144,12 @@ function readStoredAnswer({
 
 async function recordPlacementAnswer({
   attemptId,
-  goalId,
+  goal: { id: goalId, kind },
   input,
   part,
 }: {
   attemptId?: string;
-  goalId: string;
+  goal: Pick<Goal, "id" | "kind">;
   input: LearnerAnswer & { itemId: string };
   part?: number;
 }) {
@@ -220,6 +222,10 @@ async function recordPlacementAnswer({
   });
 
   if (saved?.events) {
+    if (kind === "learn") {
+      revalidateCacheTags([getGoalsCacheTag(userId)]);
+    }
+
     publishLearnerAnswer({ events: saved.events, userId });
   }
 
@@ -280,7 +286,7 @@ export async function answerPlacementQuestion({
 
   const saved = await recordPlacementAnswer({
     attemptId: input.attemptId,
-    goalId,
+    goal: owned.goal,
     input: {
       answer: input.answer,
       graded: { durationMs: input.durationMs, isCorrect: graded.isCorrect },

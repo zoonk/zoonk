@@ -1,12 +1,12 @@
 import "server-only";
 import { gradedTestAnswer, testEventContext, trackTestEvents } from "../../analytics/test-events";
 import { matchesExpectedAnswer } from "../../library/activities/templates/_utils/grade-interaction";
+import { saveLevelTestProgress } from "./_utils/level-test-records";
 import { toBankAnswer } from "./_utils/level-test-shown-order";
 import {
   canWriteLevelTest,
   isFixedDuringTest,
   loadLevelTestContext,
-  saveLevelTestProgress,
   toLevelTestView,
 } from "./_utils/level-test-state";
 import {

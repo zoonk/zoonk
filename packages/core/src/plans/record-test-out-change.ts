@@ -56,7 +56,10 @@ export async function recordTestOutChange(input: Input): Promise<void> {
       );
 
       const versionAfter = context.plan.version + 1;
-      const lessonsSkipped = countLessons(items);
+
+      const lessonsSkipped = countLessons(
+        starts ? items.filter((item) => item.kind === "lesson") : items,
+      );
 
       const topicsLeftOut = listChangeTopics({
         graph: context.state.graph,

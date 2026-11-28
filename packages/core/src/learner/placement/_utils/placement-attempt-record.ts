@@ -13,7 +13,6 @@ import {
 } from "../placement-contract";
 
 export type PlacementAttemptView = z.infer<typeof placementAttemptViewSchema>;
-export type PlacementLength = z.infer<typeof placementLengthSchema>;
 export type PlacementResult = z.infer<typeof placementResultSchema>;
 
 const partReceiptSchema = z.object({

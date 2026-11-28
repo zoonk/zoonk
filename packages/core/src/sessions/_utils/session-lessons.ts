@@ -1,5 +1,6 @@
 import { MIN_BLOCK_MINUTES, PRACTICE_MINUTES_PER_QUESTION, toMinutes } from "../block-minutes";
 import { toBlockPayload } from "../block-payload";
+import { getSessionDayMinutes } from "../fresh-start";
 import { isFullReviewDay } from "../full-review";
 import { type PlannedBlock, type PlannedLesson, type SessionBuildInput } from "../session-builder";
 
@@ -19,6 +20,43 @@ export function toLessonBlock(lesson: PlannedLesson, reinforcement: boolean): Pl
       title: lesson.title,
     }),
   };
+}
+
+export function reserveCourseOpeningLesson(day: SessionBuildInput) {
+  const opening =
+    day.courseOpeningLessonId &&
+    !day.usedMinutes &&
+    !isSessionReviewDay(day) &&
+    !day.mockReplacesDay &&
+    getSessionDayMinutes(day) > 0
+      ? [...day.lessons, ...(day.fillLessons ?? [])].find(
+          (lesson) => lesson.lessonId === day.courseOpeningLessonId,
+        )
+      : null;
+
+  if (!opening) {
+    return null;
+  }
+
+  const block = toLessonBlock(opening, false);
+
+  const remaining = {
+    ...day,
+    fillLessons: day.fillLessons?.filter((lesson) => lesson.lessonId !== opening.lessonId),
+    lessons: day.lessons.filter((lesson) => lesson.lessonId !== opening.lessonId),
+    planItems: day.planItems?.filter(
+      (item) => (item.id ?? item.key) !== (opening.planItemId ?? opening.planItemKey),
+    ),
+    remedial: day.remedial && {
+      ...day.remedial,
+      teaching: day.remedial.teaching.filter(
+        (option) => !("lessonId" in option) || option.lessonId !== opening.lessonId,
+      ),
+    },
+    usedMinutes: block.estimatedMinutes,
+  };
+
+  return { block, remaining };
 }
 
 /** The first lesson may overflow the soft budget. */

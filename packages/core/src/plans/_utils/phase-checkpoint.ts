@@ -15,7 +15,7 @@ export function buildCheckpoint({
 }): PlanPhaseCheckpointView | null {
   const boss = items.find((item) => item.kind === "boss");
 
-  if (!boss) {
+  if (!boss || boss.status === "testedOut") {
     return null;
   }
 

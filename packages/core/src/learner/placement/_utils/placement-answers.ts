@@ -30,7 +30,6 @@ type PlacementAnswerRow = {
   fromLesson: boolean;
   isPlacement: boolean;
   itemId: string | null;
-  localDate: Date;
   mockExamId: string | null;
   studySessionId: string | null;
 };
@@ -42,16 +41,6 @@ export function isPlacementAnswer(attempt: PlacementAnswerRow): boolean {
     (attempt.isPlacement ||
       (attempt.itemId !== null && !attempt.fromLesson && attempt.studySessionId === null))
   );
-}
-
-export function isPlacementAnswerOn({
-  attempt,
-  day,
-}: {
-  attempt: PlacementAnswerRow;
-  day: Date;
-}): boolean {
-  return isPlacementAnswer(attempt) && attempt.localDate.getTime() === day.getTime();
 }
 
 /** Counts only answers since this goal began; older answers still contribute placement evidence. */
