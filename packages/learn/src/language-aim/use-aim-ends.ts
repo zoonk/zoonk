@@ -3,15 +3,16 @@
 import { type LanguageAim } from "@zoonk/core/language/aims";
 import { safeAsync } from "@zoonk/utils/error";
 import { useRef, useState } from "react";
+import { type FinishForecast } from "../_components/finish-readout";
 
-type AimEnds = { ends: Partial<Record<LanguageAim, string | null>>; request: number };
+type AimEnds = { ends: Partial<Record<LanguageAim, FinishForecast | null>>; request: number };
 
 /**
  * When each aim would be reached, read from the planner as picking that aim would lay the plan out
- * (`read`, null when it has no date). Asked only while the choices show, since each one plans the
+ * (`read`, null while it isn't known). Asked only while the choices show, since each one plans the
  * goal again; an answer to an earlier ask is dropped.
  */
-export function useAimEnds(read: (aim: LanguageAim) => Promise<string | null>) {
+export function useAimEnds(read: (aim: LanguageAim) => Promise<FinishForecast | null>) {
   const [state, setState] = useState<AimEnds>({ ends: {}, request: 0 });
   const last = useRef(0);
 

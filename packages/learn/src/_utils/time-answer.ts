@@ -1,18 +1,18 @@
 import { type PlanTimeAdvice, type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
+import { type FinishForecast } from "../_components/finish-readout";
 
 export type TimeLine =
   | { kind: "asking" }
   | { kind: "askFailed" }
   | { kind: "findFailed" }
-  | { kind: "finish"; endDate: string }
+  | { forecast: FinishForecast; kind: "finish" }
   | { kind: "noDays" }
-  | { kind: "noFinish" }
   | { kind: "pastDate" }
   /** `focus`: the suggestion is capped, so the plan starts with what matters most. */
   | { focus: boolean; kind: "suggestion"; minutes: number }
   | { kind: "working" };
 
-export type LineAdvice = Pick<PlanTimeAdvice, "endDate">;
+export type LineAdvice = Pick<PlanTimeAdvice, "endDate" | "finishReason" | "precision">;
 
 const BUSY_LINES = new Set<TimeLine["kind"]>(["asking", "working"]);
 
@@ -70,7 +70,12 @@ function getFinishLine({
     return { kind: askFailed ? "askFailed" : "asking" };
   }
 
-  return advice.endDate ? { endDate: advice.endDate, kind: "finish" } : { kind: "noFinish" };
+  if (advice.finishReason === "noStudyDays") {
+    return { kind: "noDays" };
+  }
+
+  const { endDate, finishReason, precision } = advice;
+  return { forecast: { endDate, finishReason, precision }, kind: "finish" };
 }
 
 /**

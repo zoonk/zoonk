@@ -64,12 +64,29 @@ describe(getTimeLine, () => {
     expect(getTimeLine(undated)).toStrictEqual({ kind: "asking" });
     expect(getTimeLine({ ...undated, askFailed: true })).toStrictEqual({ kind: "askFailed" });
 
-    expect(getTimeLine({ ...undated, advice: adviceAt({ endDate: "2027-03-15" }) })).toStrictEqual({
-      endDate: "2027-03-15",
+    const near = adviceAt({ endDate: "2027-03-15", finishReason: null, precision: "month" });
+
+    expect(getTimeLine({ ...undated, advice: near })).toStrictEqual({
+      forecast: { endDate: "2027-03-15", finishReason: null, precision: "month" },
       kind: "finish",
     });
+  });
 
-    expect(getTimeLine({ ...undated, advice: adviceAt() })).toStrictEqual({ kind: "noFinish" });
+  it("says a finish past the years a plan lays out, with no date", () => {
+    const undated = { ...LINE, dated: false, found: null, minutes: 15 };
+    const beyond = adviceAt({ finishReason: "beyondHorizon", precision: null });
+
+    expect(getTimeLine({ ...undated, advice: beyond })).toStrictEqual({
+      forecast: { endDate: null, finishReason: "beyondHorizon", precision: null },
+      kind: "finish",
+    });
+  });
+
+  it("asks for a study day when the plan has none to finish on", () => {
+    const undated = { ...LINE, dated: false, found: null, minutes: 15 };
+    const noDays = adviceAt({ finishReason: "noStudyDays", precision: null });
+
+    expect(getTimeLine({ ...undated, advice: noDays })).toStrictEqual({ kind: "noDays" });
   });
 });
 

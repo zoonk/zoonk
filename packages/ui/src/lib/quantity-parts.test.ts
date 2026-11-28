@@ -33,4 +33,11 @@ describe(splitQuantity, () => {
     expect(splitQuantity("3.48%")).toStrictEqual([{ numeric: true, text: "3.48%" }]);
     expect(splitQuantity("3,48\u00A0%")).toStrictEqual([{ numeric: true, text: "3,48\u00A0%" }]);
   });
+
+  it("keeps an open-ended number's plus with it", () => {
+    expect(splitQuantity("10+ years")).toStrictEqual([
+      { numeric: true, text: "10+" },
+      { numeric: false, text: " years" },
+    ]);
+  });
 });

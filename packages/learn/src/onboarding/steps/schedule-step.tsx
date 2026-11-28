@@ -9,14 +9,16 @@ import { Button } from "@zoonk/ui/components/button";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useExtracted } from "next-intl";
 import { DailyTimePicker } from "../../_components/daily-time-picker";
+import { type FinishForecast, PickedTimeFinish } from "../../_components/finish-readout";
 import { type GoalDate, TimeAnswer } from "../../_components/time-answer";
 import { getSuggestedMinutes } from "../../_utils/time-answer";
 import { type GenerationFirstLesson, type GenerationRun } from "../../generation/generation-run";
+import { getAimAhead } from "../../language-aim/aim-ahead";
 import { type OnboardingActions } from "../onboarding-actions";
 import { OnboardingQuestionShown } from "../onboarding-clock";
 import { PlanReceipt } from "../plan-receipt";
 import { type LibraryCourseLink, PlanWait } from "./plan-wait";
-import { ScheduleAim, getAimAhead } from "./schedule-aim";
+import { ScheduleAim } from "./schedule-aim";
 import { type GoalsTogether, toPickedMinutes, waitsToSave } from "./schedule-time";
 import { StepForm } from "./step-form";
 import { EVERY_DAY, WeekdayToggles, WeekendMinutes } from "./study-week";
@@ -69,7 +71,12 @@ function DateLinkLabel({ dated, exam }: { dated: boolean; exam: boolean }) {
   return dated ? t("Change end date") : t("Set end date");
 }
 
-function ScheduleTime({ schedule }: { schedule: Schedule }) {
+function getForecast(schedule: Schedule): FinishForecast | null {
+  const { line } = schedule.shown;
+  return line.kind === "finish" ? line.forecast : null;
+}
+
+function ScheduleTime({ aim, schedule }: { aim: string | null; schedule: Schedule }) {
   const t = useExtracted();
   const { found, minutes, setPicked } = schedule;
 
@@ -78,6 +85,15 @@ function ScheduleTime({ schedule }: { schedule: Schedule }) {
       <OnboardingQuestionShown step="schedule" />
 
       <DailyTimePicker
+        aside={
+          schedule.dated ? null : (
+            <PickedTimeFinish
+              aim={aim}
+              forecast={getForecast(schedule)}
+              updating={schedule.shown.updating}
+            />
+          )
+        }
         label={t("Time a day")}
         minutes={minutes}
         onChange={(next) =>
@@ -97,20 +113,11 @@ function ScheduleTime({ schedule }: { schedule: Schedule }) {
 }
 
 /** What the time and days picked get the learner, last, so its changing length moves nothing. */
-function ScheduleAnswer({
-  aim,
-  exam,
-  schedule,
-}: {
-  aim: string | null;
-  exam: boolean;
-  schedule: Schedule;
-}) {
+function ScheduleAnswer({ exam, schedule }: { exam: boolean; schedule: Schedule }) {
   const { found, minutes, setPicked, shown } = schedule;
 
   return (
     <TimeAnswer
-      aim={aim}
       date={getGoalDate(schedule)}
       exam={exam}
       line={shown.line}
@@ -229,10 +236,10 @@ export function ScheduleStep({
         rail={<PlanReceipt goal={goal} />}
         title={t("How much time can you study each day?")}
       >
-        <ScheduleTime schedule={schedule} />
+        <ScheduleTime aim={aim} schedule={schedule} />
         <ScheduleWeek minutes={schedule.minutes ?? recommendedMinutes} week={schedule.week} />
         <ScheduleAim
-          endDate={schedule.shown.line.kind === "finish" ? schedule.shown.line.endDate : null}
+          forecast={getForecast(schedule)}
           languageAim={languageAim}
           onChangeAim={onChangeAim}
           readEnd={schedule.readAimEnd}
@@ -247,7 +254,7 @@ export function ScheduleStep({
         >
           <DateLinkLabel dated={schedule.dated} exam={exam} />
         </Button>
-        <ScheduleAnswer aim={aim} exam={exam} schedule={schedule} />
+        <ScheduleAnswer exam={exam} schedule={schedule} />
       </StepForm>
     </PlanWait>
   );

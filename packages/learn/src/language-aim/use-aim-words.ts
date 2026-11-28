@@ -2,6 +2,7 @@
 
 import { type LanguageAim, toLanguageAimBand } from "@zoonk/core/language/aims";
 import { useExtracted } from "next-intl";
+import { type FinishForecast } from "../_components/finish-readout";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { useLanguageNameInSentence } from "../_utils/use-language-name";
 
@@ -19,10 +20,25 @@ export function useAimWords() {
 
   return {
     /** When the plan reaches that level at the learner's time; nothing while it isn't known. */
-    around: (endDate: string | null): string | undefined =>
-      endDate
-        ? t("Around {month}", { month: formatDate(endDate, "sentenceMonth", { year: "always" }) })
-        : undefined,
+    around: (forecast: FinishForecast | null): string | undefined => {
+      if (forecast?.finishReason === "beyondHorizon") {
+        return t("In 10+ years");
+      }
+
+      if (!forecast?.endDate) {
+        return undefined;
+      }
+
+      return forecast.precision === "year"
+        ? t({
+            description: 'When a language level is reached. {year} is a year, like "2031".',
+            message: "Around {year}",
+            values: { year: formatDate(forecast.endDate, "year") },
+          })
+        : t("Around {month}", {
+            month: formatDate(forecast.endDate, "sentenceMonth", { year: "always" }),
+          });
+    },
     label: (aim: string | null): string | null => {
       const band = toLanguageAimBand(aim);
       return band ? labels[band] : null;

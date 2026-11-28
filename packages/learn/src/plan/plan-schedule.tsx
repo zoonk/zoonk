@@ -64,7 +64,7 @@ function DailyCoverage({
   const { feasibility, schedule } = plan;
 
   if (!feasibility?.deadline || !schedule.targetDate) {
-    return <PlanFinish pending={pending} />;
+    return null;
   }
 
   const date = {
@@ -161,6 +161,7 @@ function DailyMinutes({
   return (
     <div className="flex flex-col gap-2" id={getEditorSectionId("time")}>
       <DailyTimePicker
+        aside={plan.schedule.targetDate ? null : <PlanFinish pending={planChange.isPending} />}
         disabled={isPending}
         label={t("Daily study time")}
         minutes={time.shown}

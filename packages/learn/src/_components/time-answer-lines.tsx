@@ -2,22 +2,14 @@ import { useExtracted } from "next-intl";
 import { useGoalDateValues } from "../_utils/iso-date";
 import { type TimeLine } from "../_utils/time-answer";
 import { useFormatDuration } from "../_utils/time-format";
-import { useFinishSentence } from "./finish-sentence";
 import { type GoalDate } from "./time-answer-texts";
 
 type DatedLine = Extract<TimeLine, { kind: "pastDate" | "suggestion" }>;
 
-type FinishLine = Extract<TimeLine, { kind: "finish" | "noFinish" }>;
-
 const DATED_KINDS = new Set<TimeLine["kind"]>(["pastDate", "suggestion"]);
-const FINISH_KINDS = new Set<TimeLine["kind"]>(["finish", "noFinish"]);
 
 function isDatedLine(line: TimeLine): line is DatedLine {
   return DATED_KINDS.has(line.kind);
-}
-
-function isFinishLine(line: TimeLine): line is FinishLine {
-  return FINISH_KINDS.has(line.kind);
 }
 
 /** The time a dated goal needs, which the picker can take: the same words whatever time is picked. */
@@ -116,30 +108,7 @@ function DatedWords({
   }
 }
 
-/** A language plan ends where its aim is, so its finish says when the learner reaches it. */
-function FinishWords({
-  aim,
-  line,
-  minutes,
-}: {
-  aim: string | null;
-  line: FinishLine;
-  minutes: number | null;
-}) {
-  const t = useExtracted();
-  const finishSentence = useFinishSentence();
-
-  switch (line.kind) {
-    case "finish":
-      return finishSentence({ aim, endDate: line.endDate, minutes });
-    case "noFinish":
-      return t("We can't estimate an end date. Try more time or more study days.");
-    default:
-      return line satisfies never;
-  }
-}
-
-function StatusWords({ line }: { line: Exclude<TimeLine, DatedLine | FinishLine> }) {
+function StatusWords({ line }: { line: Exclude<TimeLine, DatedLine | { kind: "finish" }> }) {
   const t = useExtracted();
 
   switch (line.kind) {
@@ -158,19 +127,16 @@ function StatusWords({ line }: { line: Exclude<TimeLine, DatedLine | FinishLine>
   }
 }
 
+/** No words for an undated goal's finish: it shows as a readout beside the time picked. */
 export function LineWords({
-  aim = null,
   date,
   exam,
   line,
-  minutes,
   subjectsTakenOut,
 }: {
-  aim?: string | null;
   date: GoalDate | null;
   exam: boolean;
   line: TimeLine;
-  minutes: number | null;
   subjectsTakenOut: boolean;
 }) {
   if (isDatedLine(line)) {
@@ -179,8 +145,8 @@ export function LineWords({
     );
   }
 
-  if (isFinishLine(line)) {
-    return <FinishWords aim={aim} line={line} minutes={minutes} />;
+  if (line.kind === "finish") {
+    return null;
   }
 
   return <StatusWords line={line} />;
