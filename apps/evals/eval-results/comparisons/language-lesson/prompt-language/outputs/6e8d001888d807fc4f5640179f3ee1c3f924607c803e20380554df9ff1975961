@@ -1,0 +1,224 @@
+{
+  "words": [
+    {
+      "word": "sprzątam",
+      "translation": "I clean",
+      "pronunciation": "SPSHON-tahm",
+      "romanization": null,
+      "tip": "Start with the consonants together, without adding a vowel before them.",
+      "note": null,
+      "distractors": [
+        "gotuję",
+        "prasuję",
+        "maluję"
+      ]
+    },
+    {
+      "word": "piorę",
+      "translation": "I wash clothes",
+      "pronunciation": "PYO-reh",
+      "romanization": null,
+      "tip": "Tap the tip of your tongue briefly behind your upper teeth for the Polish r.",
+      "note": "This verb is used for washing clothes and other textiles.",
+      "distractors": [
+        "szyję",
+        "suszę",
+        "prasuję"
+      ]
+    },
+    {
+      "word": "odkurzam",
+      "translation": "I vacuum",
+      "pronunciation": "od-KOO-zham",
+      "romanization": null,
+      "tip": "Say the middle sound like the s in English 'vision'.",
+      "note": null,
+      "distractors": [
+        "zamiatam",
+        "ścieram",
+        "myję"
+      ]
+    },
+    {
+      "word": "zmywam",
+      "translation": "I wash the dishes",
+      "pronunciation": "ZMIH-vahm",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "gotuję",
+        "nakrywam",
+        "wycieram"
+      ]
+    },
+    {
+      "word": "codziennie",
+      "translation": "every day",
+      "pronunciation": "tso-JEN-nyeh",
+      "romanization": null,
+      "tip": "Start with a quick ts sound, as at the end of English 'cats'.",
+      "note": null,
+      "distractors": [
+        "co tydzień",
+        "co miesiąc",
+        "czasami"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "Codziennie sprzątam mieszkanie",
+      "translation": "I clean the apartment every day",
+      "explanation": "The form `sprzątam` already means 'I clean', so you don't need a separate word for 'I'.",
+      "romanization": null,
+      "distractors": [
+        "jestem",
+        "być",
+        "możesz"
+      ],
+      "translationDistractors": [
+        "they",
+        "laundry",
+        "weekly"
+      ],
+      "speakingPrompt": "Say that you clean the apartment every day."
+    },
+    {
+      "sentence": "W sobotę piorę ubrania",
+      "translation": "I wash clothes on Saturdays",
+      "explanation": "`W sobotę` means 'on Saturday'; here it describes a regular Saturday activity.",
+      "romanization": null,
+      "distractors": [
+        "jestem",
+        "być",
+        "możesz"
+      ],
+      "translationDistractors": [
+        "dishes",
+        "Monday",
+        "dry"
+      ],
+      "speakingPrompt": "Say that you wash clothes on Saturdays."
+    },
+    {
+      "sentence": "W niedzielę odkurzam pokój",
+      "translation": "I vacuum the room on Sundays",
+      "explanation": "`Odkurzam` means 'I vacuum', and `pokój` tells you what is being vacuumed.",
+      "romanization": null,
+      "distractors": [
+        "jestem",
+        "być",
+        "możesz"
+      ],
+      "translationDistractors": [
+        "kitchen",
+        "Saturday",
+        "sweep"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "Wieczorem zmywam naczynia",
+      "translation": "I wash the dishes in the evening",
+      "explanation": "`Wieczorem` means 'in the evening' without needing a separate word for 'in'.",
+      "romanization": null,
+      "distractors": [
+        "jestem",
+        "być",
+        "możesz"
+      ],
+      "translationDistractors": [
+        "clothes",
+        "morning",
+        "dry"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Saying who does the chore",
+    "text": "Polish verb forms can show who is doing an activity, so you can often leave out `ja`, meaning 'I'. For example, `Sprzątam mieszkanie` means 'I clean the apartment', and `Piorę ubrania` means 'I wash clothes'. Unlike in English, you don't have to say 'I' every time.",
+    "examples": []
+  },
+  "practice": [
+    {
+      "question": "Choose the verb form that goes with 'I'.",
+      "template": "Ja [BLANK] mieszkanie.",
+      "answer": "sprzątam",
+      "distractors": [
+        "sprzątasz",
+        "sprząta",
+        "sprzątają"
+      ],
+      "feedback": "`Sprzątam` is the form that goes with `ja`, meaning 'I'."
+    },
+    {
+      "question": "Choose the verb form that goes with 'I'.",
+      "template": "Ja [BLANK] naczynia.",
+      "answer": "zmywam",
+      "distractors": [
+        "zmywasz",
+        "zmywa",
+        "zmywają"
+      ],
+      "feedback": "`Zmywam` means 'I wash the dishes' and matches `ja`."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "Your housemate asks what you do every day. What do you say?",
+    "scene": "At home with a housemate",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Ja odkurzam pokój.",
+        "translation": "I vacuum the room."
+      },
+      {
+        "speaker": "them",
+        "text": "A co ty robisz codziennie?",
+        "translation": "And what do you do every day?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "Codziennie zmywam naczynia.",
+        "translation": "I wash the dishes every day.",
+        "isBest": true,
+        "why": "This naturally describes a chore you do every day."
+      },
+      {
+        "text": "Ja zmywasz naczynia.",
+        "translation": "I wash the dishes.",
+        "isBest": false,
+        "why": "`Zmywasz` is the 'you' form, so it doesn't match `ja`."
+      },
+      {
+        "text": "Ja sprzątają mieszkanie.",
+        "translation": "I clean the apartment.",
+        "isBest": false,
+        "why": "`Sprzątają` is the 'they' form, so it doesn't match `ja`."
+      }
+    ],
+    "explanation": "You can leave out `ja` when the verb form already shows that you mean 'I'."
+  },
+  "writing": {
+    "prompt": "Write a message saying: 'I clean the apartment every day.'",
+    "answers": [
+      "Codziennie sprzątam mieszkanie.",
+      "Sprzątam mieszkanie codziennie.",
+      "Ja codziennie sprzątam mieszkanie.",
+      "Ja sprzątam mieszkanie codziennie."
+    ],
+    "keyPoints": [
+      "Use `sprzątam` to say that you clean.",
+      "Include `mieszkanie` for the apartment and `codziennie` for every day."
+    ]
+  },
+  "summary": [
+    "Use \"codziennie sprzątam mieszkanie\" to say you clean the apartment every day.",
+    "Use \"piorę ubrania\" to say you wash clothes.",
+    "Use \"odkurzam pokój\" for vacuuming a room and \"zmywam naczynia\" for washing dishes."
+  ]
+}

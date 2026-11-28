@@ -1,0 +1,206 @@
+{
+  "words": [
+    {
+      "word": "Thanks for having me",
+      "translation": "obrigado por me receber",
+      "pronunciation": "THÊNKS FÓR RRE-ving MI",
+      "romanization": null,
+      "tip": "No som de 'th' em 'thanks', posicione a ponta da língua entre os dentes e solte o ar suavemente, sem produzir som de 'f' ou 's'.",
+      "note": "Expressão usada logo nos primeiros segundos da entrevista para agradecer o convite e a oportunidade.",
+      "distractors": [
+        "Thanks for taking me",
+        "Thanks for holding me",
+        "Thanks for keeping me"
+      ]
+    },
+    {
+      "word": "pleasure to meet you",
+      "translation": "prazer em conhecer você",
+      "pronunciation": "PLÉ-jer TU MIT YU",
+      "romanization": null,
+      "tip": null,
+      "note": "Soa mais polido e formal no ambiente corporativo do que o simples 'nice to meet you'.",
+      "distractors": [
+        "pleasure for meeting you",
+        "pleasure to know you",
+        "pleasure of meeting you"
+      ]
+    },
+    {
+      "word": "a background in",
+      "translation": "uma formação em",
+      "pronunciation": "EI BÉK-graund IN",
+      "romanization": null,
+      "tip": null,
+      "note": "Refere-se ao conjunto de seus estudos e experiências prévias em uma determinada área.",
+      "distractors": [
+        "a history in",
+        "a past in",
+        "a context in"
+      ]
+    },
+    {
+      "word": "walk you through",
+      "translation": "apresentar a você",
+      "pronunciation": "UÓK YU THRU",
+      "romanization": null,
+      "tip": "A letra 'l' em 'walk' não é pronunciada; diga apenas o som de 'uó' seguido de 'k'.",
+      "note": "Expressão comum para dizer que você vai explicar os pontos do seu currículo passo a passo.",
+      "distractors": [
+        "run you over",
+        "step you by",
+        "lead you out"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "Thanks for taking the time to meet with me today",
+      "translation": "Obrigado por disponibilizar um tempo para falar comigo hoje",
+      "explanation": "Em inglês profissional, 'take the time' é a fórmula padrão para valorizar a agenda da outra pessoa, sempre seguida de 'to' e o verbo.",
+      "romanization": null,
+      "distractors": [
+        "giving",
+        "taking of",
+        "to meeting"
+      ],
+      "translationDistractors": [
+        "perder",
+        "dar"
+      ],
+      "speakingPrompt": "Agradeça ao entrevistador por reservar um tempo para a conversa de hoje"
+    },
+    {
+      "sentence": "It's a pleasure to meet you in person",
+      "translation": "É um prazer conhecer você pessoalmente",
+      "explanation": "Usa-se 'meet' quando você está encontrando e conhecendo a pessoa pela primeira vez; 'know' indicaria que vocês já se conheciam.",
+      "romanization": null,
+      "distractors": [
+        "knowing",
+        "meet with",
+        "pleased"
+      ],
+      "translationDistractors": [
+        "reencontrar",
+        "saber"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "I'd love to walk you through my recent experience",
+      "translation": "Eu adoraria apresentar minha experiência recente",
+      "explanation": "'Walk someone through' passa a ideia de conduzir o ouvinte com clareza e estrutura pelos seus projetos passados.",
+      "romanization": null,
+      "distractors": [
+        "talking",
+        "step",
+        "walked"
+      ],
+      "translationDistractors": [
+        "caminhar",
+        "passear"
+      ],
+      "speakingPrompt": "Diga que gostaria de guiar o entrevistador pela sua experiência mais recente"
+    }
+  ],
+  "tip": {
+    "title": "Agradecimentos com 'Thank you for' e verbo no -ing",
+    "text": "Em inglês, qualquer verbo que aparece logo após a preposição `for` deve receber a terminação `-ing`. Ao cumprimentar no início da entrevista, diga `Thanks for having me` ou `Thank you for taking the time`. Nunca use a forma básica ou com 'to' (`for have` ou `for to take`).",
+    "examples": [
+      {
+        "sentence": "Thank you for having me today",
+        "translation": "Obrigado por me receber hoje"
+      },
+      {
+        "sentence": "Thanks for taking the time to talk",
+        "translation": "Obrigado por disponibilizar um tempo para conversar"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Complete a saudação com a forma correta do verbo após a preposição.",
+      "template": "Thank you for [BLANK] with me today.",
+      "answer": "meeting",
+      "distractors": [
+        "meet",
+        "to meet",
+        "met"
+      ],
+      "feedback": "Após a preposição 'for', o verbo sempre assume a forma em '-ing'."
+    },
+    {
+      "question": "Escolha o verbo adequado para agradecer o convite para a entrevista.",
+      "template": "Thanks for [BLANK] me to this interview.",
+      "answer": "inviting",
+      "distractors": [
+        "invite",
+        "to invite",
+        "invited"
+      ],
+      "feedback": "A preposição 'for' exige o verbo com a terminação '-ing'."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "A recrutadora pede que você fale um pouco sobre sua trajetória. Como você introduz sua resposta com segurança?",
+    "scene": "Uma sala de reunião em Chicago com uma recrutadora chamada Sophia",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Good morning! Thanks for coming in today.",
+        "translation": "Bom dia! Obrigado por vir hoje."
+      },
+      {
+        "speaker": "you",
+        "text": "Good morning, Sophia. It's a pleasure to meet you.",
+        "translation": "Bom dia, Sophia. É um prazer conhecer você."
+      },
+      {
+        "speaker": "them",
+        "text": "Great to meet you too. To get started, could you briefly introduce yourself?",
+        "translation": "Ótimo conhecer você também. Para começarmos, você poderia se apresentar brevemente?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "Sure, I'd love to walk you through my professional background",
+        "translation": "Claro, eu adoraria apresentar meu histórico profissional",
+        "isBest": true,
+        "why": "Usa vocabulário corporativo natural e propõe um resumo claro da sua trajetória."
+      },
+      {
+        "text": "Sure, I want to walk you to my past job",
+        "translation": "Claro, eu quero caminhar com você até meu trabalho passado",
+        "isBest": false,
+        "why": "'Walk you to' significa conduzir alguém a pé até um lugar físico, o que não faz sentido aqui."
+      },
+      {
+        "text": "Sure, thank you for to have me today",
+        "translation": "Claro, obrigado por me ter hoje",
+        "isBest": false,
+        "why": "Apresenta um erro gramatical com 'for to have' e não responde ao pedido de apresentação."
+      }
+    ],
+    "explanation": "Usar 'walk you through' demonstra liderança e organização ao iniciar a apresentação do seu perfil."
+  },
+  "writing": {
+    "prompt": "Escreva em inglês: 'Obrigado por disponibilizar um tempo para falar comigo hoje.'",
+    "answers": [
+      "Thanks for taking the time to meet with me today.",
+      "Thank you for taking the time to meet with me today.",
+      "Thanks for taking the time to speak with me today.",
+      "Thank you for taking the time to talk with me today."
+    ],
+    "keyPoints": [
+      "Usa a forma 'taking' com terminação -ing após a preposição 'for'",
+      "Contém a expressão 'take the time'",
+      "Conecta o verbo de fala ou reunião usando 'to meet', 'to speak' ou 'to talk' com 'with me'"
+    ]
+  },
+  "summary": [
+    "Cumprimentar formalmente dizendo 'It's a pleasure to meet you'",
+    "Agradecer a oportunidade no início usando 'Thanks for having me' ou 'Thanks for taking the time'",
+    "Iniciar o resumo da sua carreira de forma colaborativa com 'I'd love to walk you through my background'"
+  ]
+}

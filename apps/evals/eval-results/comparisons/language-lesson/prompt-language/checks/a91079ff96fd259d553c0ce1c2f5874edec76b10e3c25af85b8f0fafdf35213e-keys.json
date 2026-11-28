@@ -1,0 +1,12 @@
+{
+  "caseId": "es-en-a2-work",
+  "costUsd": 0.026,
+  "name": "answer keys",
+  "passed": 10,
+  "problems": [
+    "{\"itemLocator\":\"sentences[2]\",\"keyedAnswer\":\"I work from nine to five. / Trabajo de nueve a cinco.\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"“I work from nine until five” describes the same shift, so “until” is a valid alternative to “to.” The Spanish distractor “hasta” also works: “Trabajo de nueve hasta cinco.”\"}"
+  ],
+  "run": 1,
+  "side": "incumbent",
+  "total": 11
+}

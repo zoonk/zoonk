@@ -1,0 +1,10 @@
+{
+  "caseId": "en-es-a2-doctor",
+  "costUsd": 0,
+  "name": "code checks",
+  "passed": 1,
+  "problems": [],
+  "run": 2,
+  "side": "incumbent",
+  "total": 1
+}

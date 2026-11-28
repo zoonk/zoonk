@@ -1,0 +1,229 @@
+{
+  "words": [
+    {
+      "word": "la renta",
+      "translation": "the rent",
+      "pronunciation": "LAH RREN-tah",
+      "romanization": null,
+      "tip": "Roll the initial r in renta by letting the tip of your tongue vibrate against the ridge behind your upper teeth.",
+      "note": null,
+      "distractors": [
+        "la hipoteca",
+        "la tarifa",
+        "la multa"
+      ]
+    },
+    {
+      "word": "el depósito",
+      "translation": "the deposit",
+      "pronunciation": "EHL deh-POH-see-toh",
+      "romanization": null,
+      "tip": "Stress the second syllable, POH, as indicated by the accent.",
+      "note": null,
+      "distractors": [
+        "el anticipo",
+        "el préstamo",
+        "el recibo"
+      ]
+    },
+    {
+      "word": "los servicios",
+      "translation": "the utilities",
+      "pronunciation": "LOHS sehr-VEE-syohs",
+      "romanization": null,
+      "tip": "Tap the tongue briefly behind your upper teeth for the r in servicios.",
+      "note": "In this context, servicios means utilities such as water and electricity.",
+      "distractors": [
+        "las reparaciones",
+        "los muebles",
+        "los vecinos"
+      ]
+    },
+    {
+      "word": "¿Cuánto es?",
+      "translation": "How much is it?",
+      "pronunciation": "KWAN-toh EHS",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "¿Cuándo es?",
+        "¿Dónde está?",
+        "¿Quién es?"
+      ]
+    },
+    {
+      "word": "están incluidos",
+      "translation": "are included",
+      "pronunciation": "ehs-TAHN een-kloo-EE-dohs",
+      "romanization": null,
+      "tip": "Say the two vowel sounds in the middle of incluidos separately: kloo-EE.",
+      "note": "Use this form with a masculine plural noun such as servicios.",
+      "distractors": [
+        "están excluidos",
+        "están pendientes",
+        "están disponibles"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "¿Cuánto es la renta?",
+      "translation": "How much is the rent?",
+      "explanation": "As in English, the question begins with “how much,” followed by the verb and the thing being priced.",
+      "romanization": null,
+      "distractors": [
+        "son",
+        "cuántos",
+        "del"
+      ],
+      "translationDistractors": [
+        "many",
+        "are",
+        "deposit"
+      ],
+      "speakingPrompt": "Ask how much the rent is."
+    },
+    {
+      "sentence": "¿Cuánto es el depósito?",
+      "translation": "How much is the deposit?",
+      "explanation": "Use the same question pattern as for rent, followed by el depósito.",
+      "romanization": null,
+      "distractors": [
+        "son",
+        "cuántas",
+        "las"
+      ],
+      "translationDistractors": [
+        "rents",
+        "are",
+        "when"
+      ],
+      "speakingPrompt": "Ask how much the deposit is."
+    },
+    {
+      "sentence": "¿Los servicios están incluidos?",
+      "translation": "Are the utilities included?",
+      "explanation": "Spanish can put the subject before the verb in a question. Están incluidos agrees with the plural los servicios.",
+      "romanization": null,
+      "distractors": [
+        "está",
+        "incluida",
+        "el"
+      ],
+      "translationDistractors": [
+        "is",
+        "excluded",
+        "rent"
+      ],
+      "speakingPrompt": "Ask whether the utilities are included."
+    },
+    {
+      "sentence": "¿Cuánto cuestan los servicios?",
+      "translation": "How much do the utilities cost?",
+      "explanation": "Use cuestan with the plural los servicios. English uses “do” in this question, but Spanish does not need an extra word.",
+      "romanization": null,
+      "distractors": [
+        "cuesta",
+        "es",
+        "la"
+      ],
+      "translationDistractors": [
+        "does",
+        "deposit",
+        "included"
+      ],
+      "speakingPrompt": "Ask how much the utilities cost."
+    }
+  ],
+  "tip": {
+    "title": "Ask how much something is",
+    "text": "Use `¿Cuánto es ...?` to ask the price of one thing: `¿Cuánto es la renta?` means “How much is the rent?” With a plural noun, use `son`: `¿Cuánto son los servicios?` means “How much are the utilities?” Unlike English, Spanish uses `cuánto` here even when the noun is plural.",
+    "examples": []
+  },
+  "practice": [
+    {
+      "question": "Choose the word that completes the question.",
+      "template": "¿Cuánto [BLANK] la renta mensual?",
+      "answer": "es",
+      "distractors": [
+        "son",
+        "eres",
+        "soy"
+      ],
+      "feedback": "Use es because la renta is singular."
+    },
+    {
+      "question": "Choose the word that completes the question.",
+      "template": "¿Cuánto [BLANK] los servicios al mes?",
+      "answer": "son",
+      "distractors": [
+        "es",
+        "eres",
+        "soy"
+      ],
+      "feedback": "Use son because los servicios is plural."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "The landlord asks if you have a question. Ask about the rent.",
+    "scene": "An apartment in Mexico City, with the landlord",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Buenas tardes. ¿Le interesa el departamento?",
+        "translation": "Good afternoon. Are you interested in the apartment?"
+      },
+      {
+        "speaker": "you",
+        "text": "Sí, gracias",
+        "translation": "Yes, thank you"
+      },
+      {
+        "speaker": "them",
+        "text": "¿Tiene alguna pregunta?",
+        "translation": "Do you have any questions?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "¿Cuánto es la renta?",
+        "translation": "How much is the rent?",
+        "isBest": true,
+        "why": "This naturally asks the price of the rent."
+      },
+      {
+        "text": "¿Cuánto son la renta?",
+        "translation": "How much are the rent?",
+        "isBest": false,
+        "why": "La renta is singular, so use es rather than son."
+      },
+      {
+        "text": "¿Cuántos es la renta?",
+        "translation": "How many is the rent?",
+        "isBest": false,
+        "why": "Use cuánto, not cuántos, to ask how much the rent is."
+      }
+    ],
+    "explanation": "For a plural noun such as los servicios, use son instead of es."
+  },
+  "writing": {
+    "prompt": "Write a message asking: “How much is the deposit?”",
+    "answers": [
+      "¿Cuánto es el depósito?",
+      "¿Cuánto cuesta el depósito?",
+      "¿De cuánto es el depósito?"
+    ],
+    "keyPoints": [
+      "Ask how much the deposit is.",
+      "Use the singular el depósito."
+    ]
+  },
+  "summary": [
+    "Ask the rent with “¿Cuánto es la renta?”",
+    "Ask the deposit amount with “¿Cuánto es el depósito?”",
+    "Ask whether utilities are included with “¿Los servicios están incluidos?”",
+    "Ask their cost with “¿Cuánto cuestan los servicios?”"
+  ]
+}

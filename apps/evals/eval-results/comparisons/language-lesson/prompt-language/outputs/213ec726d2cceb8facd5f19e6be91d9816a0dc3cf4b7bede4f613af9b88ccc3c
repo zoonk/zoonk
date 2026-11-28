@@ -1,0 +1,221 @@
+{
+  "words": [
+    {
+      "word": "I work as",
+      "translation": "trabajo como",
+      "pronunciation": "AI UÉRK AZ",
+      "romanization": null,
+      "tip": null,
+      "note": "Usa esta frase antes del nombre de un puesto.",
+      "distractors": [
+        "I work with",
+        "I work for",
+        "I work near"
+      ]
+    },
+    {
+      "word": "a team member",
+      "translation": "un integrante del equipo",
+      "pronunciation": "A TIM MÉM-ber",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "a manager",
+        "a customer",
+        "a visitor"
+      ]
+    },
+    {
+      "word": "an office",
+      "translation": "una oficina",
+      "pronunciation": "AN Á-fis",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "a store",
+        "a school",
+        "a hospital"
+      ]
+    },
+    {
+      "word": "I work from",
+      "translation": "trabajo desde",
+      "pronunciation": "AI UÉRK FRAM",
+      "romanization": null,
+      "tip": null,
+      "note": "Para dar tu horario, sigue con la hora de inicio, `to` y la hora de salida.",
+      "distractors": [
+        "I work until",
+        "I work before",
+        "I work after"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "I work as a team member",
+      "translation": "Trabajo como integrante del equipo",
+      "explanation": "Usa `work as` antes del puesto. En inglés se incluye `a` antes de `team member`.",
+      "romanization": null,
+      "distractors": [
+        "is",
+        "an",
+        "does"
+      ],
+      "translationDistractors": [
+        "oficina",
+        "desde",
+        "horario"
+      ],
+      "speakingPrompt": "Di que trabajas como integrante del equipo."
+    },
+    {
+      "sentence": "I work in an office",
+      "translation": "Trabajo en una oficina",
+      "explanation": "Como en español, `in` indica aquí el lugar de trabajo. Usa `an` antes de `office`.",
+      "romanization": null,
+      "distractors": [
+        "a",
+        "are",
+        "does"
+      ],
+      "translationDistractors": [
+        "equipo",
+        "horario",
+        "como"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "What are your hours?",
+      "translation": "¿Cuál es tu horario?",
+      "explanation": "En inglés, `hours` puede referirse al horario de trabajo. Se usa `are` porque `hours` está en plural.",
+      "romanization": null,
+      "distractors": [
+        "is",
+        "do",
+        "my"
+      ],
+      "translationDistractors": [
+        "oficina",
+        "equipo",
+        "dónde"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "I work from nine to five",
+      "translation": "Trabajo de nueve a cinco",
+      "explanation": "Para decir la hora de inicio y la de salida, usa `from` y `to`, como «de» y «a» en español.",
+      "romanization": null,
+      "distractors": [
+        "at",
+        "is",
+        "until"
+      ],
+      "translationDistractors": [
+        "oficina",
+        "como",
+        "antes"
+      ],
+      "speakingPrompt": "Di que trabajas de nueve a cinco."
+    }
+  ],
+  "tip": {
+    "title": "Di tu horario con from y to",
+    "text": "Para dar la hora de inicio y la de salida, usa `from` y `to`: `I work from nine to five` significa «Trabajo de nueve a cinco». No traduzcas «a» con `at` entre las dos horas: usa `to`.",
+    "examples": []
+  },
+  "practice": [
+    {
+      "question": "Completa el horario.",
+      "template": "I work [BLANK] eight to four",
+      "answer": "from",
+      "distractors": [
+        "at",
+        "in",
+        "until"
+      ],
+      "feedback": "Usa `from` antes de la hora de inicio."
+    },
+    {
+      "question": "Completa el horario.",
+      "template": "I work from nine [BLANK] six",
+      "answer": "to",
+      "distractors": [
+        "at",
+        "in",
+        "on"
+      ],
+      "feedback": "Usa `to` antes de la hora de salida."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "Tu compañero te pregunta por tu horario. ¿Qué le respondes?",
+    "scene": "En la oficina, con un compañero de trabajo",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Welcome to the team!",
+        "translation": "¡Bienvenido al equipo!"
+      },
+      {
+        "speaker": "you",
+        "text": "I work in this office",
+        "translation": "Trabajo en esta oficina"
+      },
+      {
+        "speaker": "them",
+        "text": "What are your hours?",
+        "translation": "¿Cuál es tu horario?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "I work from nine to five",
+        "translation": "Trabajo de nueve a cinco",
+        "isBest": true,
+        "why": "Da las horas de inicio y de salida de forma natural."
+      },
+      {
+        "text": "I work from nine at five",
+        "translation": "Trabajo desde las nueve a las cinco",
+        "isBest": false,
+        "why": "No se usa `at` entre las dos horas de un horario."
+      },
+      {
+        "text": "I work at nine to five",
+        "translation": "Trabajo a las nueve hasta las cinco",
+        "isBest": false,
+        "why": "Para indicar el inicio de este horario, se necesita `from`, no `at`."
+      },
+      {
+        "text": "I work from nine in five",
+        "translation": "Trabajo desde las nueve en cinco",
+        "isBest": false,
+        "why": "`In` no introduce la hora de salida en esta frase."
+      }
+    ],
+    "explanation": "Para dar un horario completo, coloca `from` antes de la hora de inicio y `to` antes de la hora de salida."
+  },
+  "writing": {
+    "prompt": "Escribe en inglés: «Trabajo de nueve a cinco».",
+    "answers": [
+      "I work from nine to five.",
+      "I work from 9 to 5.",
+      "I work from 9 a.m. to 5 p.m."
+    ],
+    "keyPoints": [
+      "Usa `from` antes de la hora de inicio.",
+      "Usa `to` antes de la hora de salida."
+    ]
+  },
+  "summary": [
+    "“I work as a team member” dice que trabajas como integrante del equipo.",
+    "“I work in an office” dice que trabajas en una oficina.",
+    "“I work from nine to five” indica que trabajas de nueve a cinco."
+  ]
+}

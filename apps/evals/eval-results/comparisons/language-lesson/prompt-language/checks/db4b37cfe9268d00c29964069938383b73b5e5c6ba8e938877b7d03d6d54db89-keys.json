@@ -1,0 +1,12 @@
+{
+  "caseId": "pt-it-a2-past-weather",
+  "costUsd": 0.037688,
+  "name": "answer keys",
+  "passed": 9,
+  "problems": [
+    "{\"itemLocator\":\"words[2]\",\"keyedAnswer\":\"faceva freddo — fa-TCHÊ-va FRÉD-do\",\"kind\":\"factualError\",\"workedAnswer\":\"The translation is correct, but standard Italian freddo has a closed stressed /e/. For a Brazilian Portuguese speaker, write FRÊD-do rather than FRÉD-do, which signals an open /ɛ/.\"}"
+  ],
+  "run": 2,
+  "side": "incumbent",
+  "total": 10
+}

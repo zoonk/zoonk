@@ -1,0 +1,159 @@
+{
+  "words": [
+    {
+      "word": "pat",
+      "translation": "a light touch made with the flat of the hand",
+      "pronunciation": "PAT",
+      "romanization": null,
+      "tip": "Release a noticeable puff of air from your lips when making the p sound without buzzing your throat.",
+      "note": null,
+      "distractors": [
+        "bat",
+        "cat",
+        "mat"
+      ]
+    },
+    {
+      "word": "bat",
+      "translation": "a shaped wooden or metal stick used to hit a ball in sports",
+      "pronunciation": "BAT",
+      "romanization": null,
+      "tip": "Make your throat vibrate the moment your lips open to pronounce the b sound.",
+      "note": null,
+      "distractors": [
+        "pat",
+        "bad",
+        "bet"
+      ]
+    },
+    {
+      "word": "pin",
+      "translation": "a thin piece of metal with a sharp point used to join things",
+      "pronunciation": "PIN",
+      "romanization": null,
+      "tip": "Hold a hand in front of your mouth to feel the burst of air on the initial sound.",
+      "note": "'pin' has a short i vowel, while 'pen' has a short e vowel.",
+      "distractors": [
+        "bin",
+        "pen",
+        "pan"
+      ]
+    },
+    {
+      "word": "bin",
+      "translation": "a container used for storing things or collecting waste",
+      "pronunciation": "BIN",
+      "romanization": null,
+      "tip": "Vibrate your vocal cords immediately as you separate your lips on the first consonant.",
+      "note": null,
+      "distractors": [
+        "pin",
+        "tin",
+        "fin"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "He hits the ball with a bat",
+      "translation": "He hits the ball with a bat",
+      "explanation": "The noun 'bat' begins with a voiced b sound and refers to sports equipment used for striking.",
+      "romanization": null,
+      "distractors": [
+        "pat",
+        "bin",
+        "pin"
+      ],
+      "translationDistractors": [
+        "pat",
+        "bin",
+        "pin"
+      ],
+      "speakingPrompt": "Say that someone strikes the ball with a piece of sports equipment"
+    },
+    {
+      "sentence": "She gave the friendly dog a gentle pat",
+      "translation": "She gave the friendly dog a gentle pat",
+      "explanation": "The noun 'pat' starts with an unvoiced p sound and means a light stroke with the hand.",
+      "romanization": null,
+      "distractors": [
+        "bat",
+        "bin"
+      ],
+      "translationDistractors": [
+        "bat",
+        "bin"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "Fasten the paper notice with a pin",
+      "translation": "Fasten the paper notice with a pin",
+      "explanation": "The noun 'pin' begins with an unvoiced p sound and identifies a small, sharp fastener.",
+      "romanization": null,
+      "distractors": [
+        "bin",
+        "pat"
+      ],
+      "translationDistractors": [
+        "bin",
+        "pat"
+      ],
+      "speakingPrompt": "Tell someone to attach a paper notice using a sharp metal fastener"
+    }
+  ],
+  "tip": {
+    "title": "Voiced and voiceless initial consonants",
+    "text": "Sounds like `b` and `p` are shaped the same way by the lips, but they differ in vibration. With `b`, your vocal cords buzz the instant your lips part. With `p`, your cords stay still while a puff of air escapes.",
+    "examples": [
+      {
+        "sentence": "The dog likes a gentle pat",
+        "translation": "The dog likes a gentle pat"
+      },
+      {
+        "sentence": "Drop the empty cup in the bin",
+        "translation": "Drop the empty cup in the bin"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Choose the word that fits the sentence meaning.",
+      "template": "Throw the empty soda can into the [BLANK]",
+      "answer": "bin",
+      "distractors": [
+        "pin",
+        "pat"
+      ],
+      "feedback": "A 'bin' is a container for trash, whereas a 'pin' is a sharp metal fastener."
+    },
+    {
+      "question": "Choose the word that fits the sentence meaning.",
+      "template": "He swung the wooden [BLANK] and hit a home run",
+      "answer": "bat",
+      "distractors": [
+        "pat",
+        "pin"
+      ],
+      "feedback": "A 'bat' is the equipment swung in baseball to hit the ball."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": null,
+  "writing": {
+    "prompt": "Write a sentence stating that he hit the ball with a bat.",
+    "answers": [
+      "He hit the ball with a bat.",
+      "He hits the ball with a bat."
+    ],
+    "keyPoints": [
+      "Uses 'bat' rather than 'pat'",
+      "Uses 'with' before the tool"
+    ]
+  },
+  "summary": [
+    "Use 'pat' for a light touch with the hand and 'bat' for the sports tool",
+    "Distinguish 'pin' as a pointed fastener from 'bin' as a storage container",
+    "Feel vocal cord vibration on voiced starts like 'b' and an air puff on unvoiced starts like 'p'"
+  ]
+}

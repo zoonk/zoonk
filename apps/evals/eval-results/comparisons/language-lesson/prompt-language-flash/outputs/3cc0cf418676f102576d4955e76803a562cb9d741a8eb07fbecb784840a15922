@@ -1,0 +1,229 @@
+{
+  "words": [
+    {
+      "word": "die Besichtigung",
+      "translation": "the viewing",
+      "pronunciation": "dee beh-ZIKH-tee-goong",
+      "romanization": null,
+      "tip": "For '-ch-', put your tongue in position for the English 'y' in 'yes' and breathe out gently without vibrating your vocal cords.",
+      "note": null,
+      "distractors": [
+        "die Bestätigung",
+        "die Beschreibung",
+        "die Bedingung"
+      ]
+    },
+    {
+      "word": "besichtigen",
+      "translation": "to view",
+      "pronunciation": "beh-ZIKH-tee-gen",
+      "romanization": null,
+      "tip": "Stress falls on the second syllable, '-zikh-', while the prefix 'be-' is short and unstressed.",
+      "note": "Use 'besichtigen' specifically for inspecting or touring places like apartments or sights; for visiting people, use 'besuchen'.",
+      "distractors": [
+        "bestellen",
+        "beschäftigen",
+        "besuchen"
+      ]
+    },
+    {
+      "word": "der Termin",
+      "translation": "the appointment",
+      "pronunciation": "dehr tehr-MEEN",
+      "romanization": null,
+      "tip": "Stress the second syllable, '-meen', and hold the vowel longer than you would in the English word 'determine'.",
+      "note": null,
+      "distractors": [
+        "der Teller",
+        "der Teppich",
+        "der Text"
+      ]
+    },
+    {
+      "word": "passt es Ihnen?",
+      "translation": "does that work for you?",
+      "pronunciation": "PAHST ess EE-nen?",
+      "romanization": null,
+      "tip": "The 'a' in 'passt' is short and open like the 'a' in 'father', never like the flat vowel in US English 'past'.",
+      "note": null,
+      "distractors": [
+        "kostet es Ihnen?",
+        "gehört es Ihnen?",
+        "fehlt es Ihnen?"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "Kann ich die Wohnung besichtigen?",
+      "translation": "Can I view the apartment?",
+      "explanation": "German puts the modal verb 'kann' at the start for a question and sends the infinitive 'besichtigen' to the very end.",
+      "romanization": null,
+      "distractors": [
+        "besichtigt",
+        "können",
+        "über"
+      ],
+      "translationDistractors": [
+        "buying",
+        "clean",
+        "leave"
+      ],
+      "speakingPrompt": "Ask the landlord if you can view the apartment"
+    },
+    {
+      "sentence": "Wann haben Sie Zeit für einen Termin?",
+      "translation": "When do you have time for an appointment?",
+      "explanation": "The preposition 'für' always requires the accusative case, turning the masculine article 'ein' into 'einen'.",
+      "romanization": null,
+      "distractors": [
+        "einem",
+        "einer",
+        "seid"
+      ],
+      "translationDistractors": [
+        "why",
+        "cancel",
+        "keys"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "Passt es Ihnen am Freitag um 14 Uhr?",
+      "translation": "Does Friday at 2:00 p.m. work for you?",
+      "explanation": "German uses 'am' for specific calendar days and 'um' for precise clock times.",
+      "romanization": null,
+      "distractors": [
+        "im",
+        "an",
+        "nach"
+      ],
+      "translationDistractors": [
+        "tomorrow",
+        "morning",
+        "rent"
+      ],
+      "speakingPrompt": "Ask if Friday at 2:00 p.m. works for the landlord"
+    },
+    {
+      "sentence": "Freitag um 14 Uhr passt mir gut",
+      "translation": "Friday at 2:00 p.m. works well for me",
+      "explanation": "The verb 'passen' takes a dative pronoun, so 'for me' is expressed simply as 'mir'.",
+      "romanization": null,
+      "distractors": [
+        "mich",
+        "mein",
+        "gutem"
+      ],
+      "translationDistractors": [
+        "badly",
+        "them",
+        "Monday"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Using am for days and um for times",
+    "text": "When scheduling a meeting in German, use `am` before days of the week and `um` before specific clock times. In English, you say 'on Friday at 2', but in German you must pair each element with its own fixed preposition: `am Freitag um 14 Uhr`. Forgetting `am` or swapping it with `im` is the most common pitfall for English speakers.",
+    "examples": [
+      {
+        "sentence": "Der Termin ist am Montag um 10 Uhr",
+        "translation": "The appointment is on Monday at 10:00 a.m."
+      },
+      {
+        "sentence": "Passt es Ihnen am Dienstag um 16 Uhr?",
+        "translation": "Does Tuesday at 4:00 p.m. work for you?"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Choose the right preposition before the day of the week",
+      "template": "Haben Sie [BLANK] Mittwoch um 15 Uhr Zeit?",
+      "answer": "am",
+      "distractors": [
+        "im",
+        "um",
+        "in"
+      ],
+      "feedback": "Days of the week always take 'am', while specific hours take 'um'."
+    },
+    {
+      "question": "Choose the right preposition before the clock time",
+      "template": "Die Besichtigung ist am Samstag [BLANK] 11 Uhr",
+      "answer": "um",
+      "distractors": [
+        "an",
+        "am",
+        "ab"
+      ],
+      "feedback": "Use 'um' to state exact clock times in German."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "The landlord offers a viewing slot. Confirm that this time works for you.",
+    "scene": "A phone call with a landlord in Berlin",
+    "lines": [
+      {
+        "speaker": "you",
+        "text": "Guten Tag, kann ich die Wohnung besichtigen?",
+        "translation": "Good day, can I view the apartment?"
+      },
+      {
+        "speaker": "them",
+        "text": "Ja, gerne. Wann haben Sie Zeit für einen Termin?",
+        "translation": "Yes, gladly. When do you have time for an appointment?"
+      },
+      {
+        "speaker": "you",
+        "text": "Passt es Ihnen am Freitag um 14 Uhr?",
+        "translation": "Does Friday at 2:00 p.m. work for you?"
+      },
+      {
+        "speaker": "them",
+        "text": "Ja, Freitag um 14 Uhr ist perfekt. Geht das bei Ihnen?",
+        "translation": "Yes, Friday at 2:00 p.m. is perfect. Does that work for you?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "Ja, Freitag um 14 Uhr passt mir gut",
+        "translation": "Yes, Friday at 2:00 p.m. works well for me",
+        "isBest": true,
+        "why": "This answers politely and confirms the agreed-upon time using the correct dative pronoun 'mir'."
+      },
+      {
+        "text": "Ja, Freitag um 14 Uhr passt mich gut",
+        "translation": "Yes, Friday at 2:00 p.m. works me good",
+        "isBest": false,
+        "why": "'Passen' requires the dative pronoun 'mir', not the accusative 'mich'."
+      },
+      {
+        "text": "Ich möchte die Wohnung bestellen",
+        "translation": "I would like to order the apartment",
+        "isBest": false,
+        "why": "'Bestellen' means to order goods at a restaurant or store, not to book an appointment or view a home."
+      }
+    ],
+    "explanation": "Remember to use the dative pronoun 'mir' with 'passen' when saying a time suits you."
+  },
+  "writing": {
+    "prompt": "Write a message asking the landlord if you can view the apartment on Friday at 2:00 p.m.",
+    "answers": [
+      "Kann ich die Wohnung am Freitag um 14 Uhr besichtigen?",
+      "Kann ich am Freitag um 14 Uhr die Wohnung besichtigen?"
+    ],
+    "keyPoints": [
+      "Starts with 'Kann ich'",
+      "Uses 'am Freitag um 14 Uhr' for the day and time",
+      "Places the infinitive 'besichtigen' at the end"
+    ]
+  },
+  "summary": [
+    "'Kann ich die Wohnung besichtigen?' politely asks if you can see the place",
+    "'Passt es Ihnen am Freitag um 14 Uhr?' checks if a specific day and time works",
+    "'Freitag um 14 Uhr passt mir gut' confirms that the proposed time suits you"
+  ]
+}

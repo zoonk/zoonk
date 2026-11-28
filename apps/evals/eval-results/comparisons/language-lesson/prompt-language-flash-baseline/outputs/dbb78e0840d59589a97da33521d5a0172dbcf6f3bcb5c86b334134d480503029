@@ -1,0 +1,223 @@
+{
+  "words": [
+    {
+      "word": "me duele",
+      "translation": "my ... hurts",
+      "pronunciation": "meh DWEH-leh",
+      "romanization": null,
+      "tip": "Blend the 'u' and 'e' smoothly in 'duele' like 'dweh', without pausing between the vowels.",
+      "note": "In Spanish you don't say 'my stomach hurts me'; you say 'me duele' followed by the body part with 'el' or 'la'.",
+      "distractors": [
+        "me gusta",
+        "me queda",
+        "me parece"
+      ]
+    },
+    {
+      "word": "el dolor",
+      "translation": "the pain",
+      "pronunciation": "ehl doh-LOHR",
+      "romanization": null,
+      "tip": "Tap your tongue against the roof of your mouth once for the final 'r', without curling it backward like in English.",
+      "note": null,
+      "distractors": [
+        "el doctor",
+        "el color",
+        "el olor"
+      ]
+    },
+    {
+      "word": "desde hace",
+      "translation": "for",
+      "pronunciation": "DEHS-deh AH-seh",
+      "romanization": null,
+      "tip": "The 'h' in 'hace' is completely silent, so pronounce it as 'AH-seh'.",
+      "note": "Use 'desde hace' with an amount of time to express how long something has been going on, equivalent to 'for two days'.",
+      "distractors": [
+        "hasta que",
+        "después de",
+        "antes de"
+      ]
+    },
+    {
+      "word": "el medicamento",
+      "translation": "the medication",
+      "pronunciation": "ehl meh-dee-kah-MEHN-toh",
+      "romanization": null,
+      "tip": "Stress the second-to-last syllable: 'MEHN'. Keep all vowels crisp and short.",
+      "note": null,
+      "distractors": [
+        "el médico",
+        "el momento",
+        "el movimiento"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "¿Desde cuándo tiene este dolor?",
+      "translation": "Since when have you had this pain?",
+      "explanation": "Doctors address adult patients with the polite form 'usted', so 'tiene' is used instead of 'tienes'.",
+      "romanization": null,
+      "distractors": [
+        "tienes",
+        "hace",
+        "para"
+      ],
+      "translationDistractors": [
+        "where",
+        "why",
+        "who"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "Me duele la cabeza desde hace dos días",
+      "translation": "My head has hurt for two days",
+      "explanation": "Spanish uses the definite article 'la' instead of a possessive like 'my' with body parts, and 'desde hace' to indicate duration.",
+      "romanization": null,
+      "distractors": [
+        "mi",
+        "por",
+        "para"
+      ],
+      "translationDistractors": [
+        "until",
+        "since",
+        "stomach"
+      ],
+      "speakingPrompt": "Tell the doctor that your head has hurt for two days"
+    },
+    {
+      "sentence": "¿Toma algún medicamento actualmente?",
+      "translation": "Do you currently take any medication?",
+      "explanation": "'Actualmente' is a false friend meaning 'currently' or 'at the moment', not 'actually'.",
+      "romanization": null,
+      "distractors": [
+        "bebe",
+        "pasa",
+        "realmente"
+      ],
+      "translationDistractors": [
+        "actually",
+        "yesterday",
+        "never"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "No tomo ningún medicamento",
+      "translation": "I don't take any medication",
+      "explanation": "Spanish requires a double negative here: 'no' before the verb and 'ningún' before the masculine noun 'medicamento'.",
+      "romanization": null,
+      "distractors": [
+        "nada",
+        "alguno",
+        "tomamos"
+      ],
+      "translationDistractors": [
+        "some",
+        "always",
+        "vitamins"
+      ],
+      "speakingPrompt": "Tell the doctor that you don't take any medication"
+    }
+  ],
+  "tip": {
+    "title": "Using doler to say what hurts",
+    "text": "The verb `doler` works like `gustar`: the body part is the subject. If one thing hurts, use `me duele` followed by `el` or `la`. If multiple parts hurt, change the verb to `me duelen`. English speakers often mistakenly say `mi cabeza duele`; always use `me duele la cabeza` instead.",
+    "examples": [
+      {
+        "sentence": "Me duele el estómago",
+        "translation": "My stomach hurts"
+      },
+      {
+        "sentence": "Me duelen los ojos",
+        "translation": "My eyes hurt"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Choose the correct phrase to complete the sentence.",
+      "template": "Tengo fiebre [BLANK] tres días",
+      "answer": "desde hace",
+      "distractors": [
+        "para",
+        "desde que"
+      ],
+      "feedback": "Use 'desde hace' followed by a time period to say how long a symptom has lasted."
+    },
+    {
+      "question": "Choose the correct verb form for the body part.",
+      "template": "Doctor, [BLANK] la garganta cuando paso saliva",
+      "answer": "me duele",
+      "distractors": [
+        "me duelen",
+        "duele me"
+      ],
+      "feedback": "'La garganta' is singular, so use 'me duele'."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "The doctor asks if you take any medicine regularly. What do you say?",
+    "scene": "A consultation room at a medical clinic in Mexico City",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Buenos días. ¿Qué molestia tiene?",
+        "translation": "Good morning. What symptoms do you have?"
+      },
+      {
+        "speaker": "you",
+        "text": "Me duele el estómago desde hace dos días",
+        "translation": "My stomach has hurt for two days"
+      },
+      {
+        "speaker": "them",
+        "text": "Entiendo. ¿Toma algún medicamento?",
+        "translation": "I see. Do you take any medication?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "No, no tomo ningún medicamento",
+        "translation": "No, I don't take any medication",
+        "isBest": true,
+        "why": "This is a polite, natural response that clearly answers the doctor's question using correct negation."
+      },
+      {
+        "text": "No tomo algún medicina",
+        "translation": "I don't take some medicine",
+        "isBest": false,
+        "why": "After 'no', you must use negative words like 'ningún', and 'medicina' is feminine so 'algún' does not match."
+      },
+      {
+        "text": "Me duele mucho el estómago",
+        "translation": "My stomach hurts a lot",
+        "isBest": false,
+        "why": "This repeats your symptom instead of answering whether you take any medication."
+      }
+    ],
+    "explanation": "In Spanish, answering a negative question naturally uses double negatives like 'no tomo ningún medicamento'."
+  },
+  "writing": {
+    "prompt": "Write a message to your doctor in Spanish: 'My head hurts, and I don't take any medication'",
+    "answers": [
+      "Me duele la cabeza y no tomo ningún medicamento.",
+      "Me duele la cabeza, y no tomo ningún medicamento.",
+      "Me duele la cabeza y no tomo medicamentos."
+    ],
+    "keyPoints": [
+      "Uses 'me duele la cabeza' instead of 'mi cabeza duele'",
+      "Uses 'no tomo' for 'I don't take'",
+      "Includes 'ningún medicamento' or 'medicamentos'"
+    ]
+  },
+  "summary": [
+    "Say what hurts using 'me duele' with singular body parts or 'me duelen' with plural ones",
+    "Explain how long you have had symptoms using 'desde hace'",
+    "State whether you take medication with 'tomo' or 'no tomo ningún medicamento'"
+  ]
+}

@@ -1,0 +1,238 @@
+{
+  "words": [
+    {
+      "word": "me duele",
+      "translation": "it hurts",
+      "pronunciation": "MEH DWEH-leh",
+      "romanization": null,
+      "tip": "Keep the two vowels in `duele` together in one syllable: DWEH.",
+      "note": "Use this phrase before a singular body part to say it hurts.",
+      "distractors": [
+        "me pica",
+        "me arde",
+        "me pesa"
+      ]
+    },
+    {
+      "word": "la cabeza",
+      "translation": "the head",
+      "pronunciation": "LAH kah-BEH-sah",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "el brazo",
+        "la espalda",
+        "el estómago"
+      ]
+    },
+    {
+      "word": "desde ayer",
+      "translation": "since yesterday",
+      "pronunciation": "DES-deh ah-YEHR",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "hasta ayer",
+        "desde hoy",
+        "desde mañana"
+      ]
+    },
+    {
+      "word": "tomar",
+      "translation": "to take",
+      "pronunciation": "toh-MAHR",
+      "romanization": null,
+      "tip": "For the final `r`, briefly tap your tongue behind your upper teeth instead of using an American English r.",
+      "note": "Use `tomar` for taking medicine.",
+      "distractors": [
+        "comer",
+        "dormir",
+        "trabajar"
+      ]
+    },
+    {
+      "word": "el medicamento",
+      "translation": "the medication",
+      "pronunciation": "EL meh-dee-kah-MEN-toh",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "la receta",
+        "la farmacia",
+        "la consulta"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "Me duele la cabeza desde ayer",
+      "translation": "My head has hurt since yesterday",
+      "explanation": "Spanish uses `me duele la cabeza` where English says “my head hurts.” `Desde ayer` tells the doctor when it started.",
+      "romanization": null,
+      "distractors": [
+        "duelen",
+        "las",
+        "cuántos"
+      ],
+      "translationDistractors": [
+        "tomorrow",
+        "feet",
+        "until"
+      ],
+      "speakingPrompt": "Tell the doctor your head has hurt since yesterday."
+    },
+    {
+      "sentence": "¿Desde cuándo le duele la cabeza?",
+      "translation": "When did your headache start?",
+      "explanation": "The doctor uses `le duele` to ask politely about your pain. `Desde cuándo` asks when it began.",
+      "romanization": null,
+      "distractors": [
+        "duelen",
+        "los",
+        "cuántos"
+      ],
+      "translationDistractors": [
+        "where",
+        "medicine",
+        "stop"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "¿Toma algún medicamento?",
+      "translation": "Do you take any medication?",
+      "explanation": "The doctor uses `toma` to address you politely. Spanish doesn't need a separate word for “do” in this question.",
+      "romanization": null,
+      "distractors": [
+        "tomo",
+        "ningún",
+        "unas"
+      ],
+      "translationDistractors": [
+        "did",
+        "head",
+        "yesterday"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "No tomo ningún medicamento",
+      "translation": "I don't take any medication",
+      "explanation": "Use `tomo` to say what you take. With `no`, Spanish uses `ningún` before the singular noun `medicamento`.",
+      "romanization": null,
+      "distractors": [
+        "toma",
+        "ninguna",
+        "unos"
+      ],
+      "translationDistractors": [
+        "does",
+        "some",
+        "pain"
+      ],
+      "speakingPrompt": "Tell the doctor you don't take any medication."
+    }
+  ],
+  "tip": {
+    "title": "Talking about what hurts",
+    "text": "Use `me duele` before a singular body part to say it hurts: `Me duele la cabeza` means “My head hurts.” A doctor addressing you politely may ask `¿Le duele la cabeza?`, meaning “Does your head hurt?” Answer with `me duele`, not `le duele`, when talking about yourself.",
+    "examples": [
+      {
+        "sentence": "Me duele la cabeza",
+        "translation": "My head hurts"
+      },
+      {
+        "sentence": "¿Le duele la cabeza?",
+        "translation": "Does your head hurt?"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Choose the word the patient needs.",
+      "template": "A mí [BLANK] duele la cabeza",
+      "answer": "me",
+      "distractors": [
+        "le",
+        "nos",
+        "les"
+      ],
+      "feedback": "Use `me duele` to say that a part of your own body hurts."
+    },
+    {
+      "question": "Choose the word the doctor needs.",
+      "template": "¿A usted [BLANK] duele la cabeza?",
+      "answer": "le",
+      "distractors": [
+        "me",
+        "nos",
+        "les"
+      ],
+      "feedback": "Use `le duele` when asking one person politely about their pain."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "The doctor asks when your headache started. What do you say?",
+    "scene": "At a doctor's office in Mexico",
+    "lines": [
+      {
+        "speaker": "you",
+        "text": "Me duele la cabeza",
+        "translation": "My head hurts"
+      },
+      {
+        "speaker": "them",
+        "text": "¿Desde cuándo le duele la cabeza?",
+        "translation": "When did your headache start?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "Me duele desde ayer",
+        "translation": "It has hurt since yesterday",
+        "isBest": true,
+        "why": "This tells the doctor when your pain started."
+      },
+      {
+        "text": "Le duele desde ayer",
+        "translation": "Your head has hurt since yesterday",
+        "isBest": false,
+        "why": "Use `me`, not `le`, to talk about your own pain."
+      },
+      {
+        "text": "Me duelen desde ayer",
+        "translation": "They have hurt since yesterday",
+        "isBest": false,
+        "why": "Use `duele`, not the plural `duelen`, for one head."
+      },
+      {
+        "text": "Me duele desde mañana",
+        "translation": "It has hurt since tomorrow",
+        "isBest": false,
+        "why": "Tomorrow cannot be when pain that you have now started."
+      }
+    ],
+    "explanation": "Use `desde` followed by a time to say when a symptom began."
+  },
+  "writing": {
+    "prompt": "Write a message to the doctor: “My head has hurt since yesterday.”",
+    "answers": [
+      "Me duele la cabeza desde ayer.",
+      "Desde ayer me duele la cabeza.",
+      "La cabeza me duele desde ayer."
+    ],
+    "keyPoints": [
+      "Uses `me duele` for your own pain.",
+      "Uses `desde ayer` to say it started yesterday."
+    ]
+  },
+  "summary": [
+    "“Me duele la cabeza” tells the doctor your head hurts.",
+    "“Desde ayer” says a symptom started yesterday.",
+    "“No tomo ningún medicamento” says you don't take any medication."
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "caseId": "pt-en-b1-doctor",
+  "costUsd": 0.034423999999999996,
+  "name": "answer keys",
+  "passed": 9,
+  "problems": [
+    "{\"itemLocator\":\"sentences[1]\",\"keyedAnswer\":\"I've had a sore throat for three days\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"The keyed sentence is more idiomatic, but the tiles also allow “I've had a sore throat since three days ago.” Here “three days ago” is a starting point, so “since” is grammatical and the symptom duration is the same.\"}",
+    "{\"itemLocator\":\"words[4]\",\"keyedAnswer\":\"for three days = há três dias\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"Without a sentence, “há três dias” can mean either “for three days” or the distractor “three days ago.” Compare “Estou com febre há três dias” (duration) with “A febre começou há três dias” (onset).\"}"
+  ],
+  "run": 2,
+  "side": "challenger",
+  "total": 11
+}

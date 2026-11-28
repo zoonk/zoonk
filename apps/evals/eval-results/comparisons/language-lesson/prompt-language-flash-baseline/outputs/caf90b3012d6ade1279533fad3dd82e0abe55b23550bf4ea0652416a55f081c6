@@ -1,0 +1,173 @@
+{
+  "words": [
+    {
+      "word": "bat",
+      "translation": "a wooden or metal club used to strike a ball in sports",
+      "pronunciation": "BAT",
+      "romanization": null,
+      "tip": "Touch your lips together and turn on your voice immediately without releasing a puff of air.",
+      "note": null,
+      "distractors": [
+        "pat",
+        "mat",
+        "cat"
+      ]
+    },
+    {
+      "word": "pat",
+      "translation": "to tap lightly with an open hand",
+      "pronunciation": "PAT",
+      "romanization": null,
+      "tip": "Hold a hand in front of your mouth to feel a sharp puff of air when you release your lips.",
+      "note": null,
+      "distractors": [
+        "bat",
+        "hat",
+        "fat"
+      ]
+    },
+    {
+      "word": "bin",
+      "translation": "a container used for storing things or collecting trash",
+      "pronunciation": "BIN",
+      "romanization": null,
+      "tip": "Vibrate your vocal cords at the exact moment your lips open.",
+      "note": null,
+      "distractors": [
+        "pin",
+        "tin",
+        "fin"
+      ]
+    },
+    {
+      "word": "pin",
+      "translation": "a thin, pointed piece of metal used to fasten cloth or paper",
+      "pronunciation": "PIN",
+      "romanization": null,
+      "tip": "Release air quickly from closed lips without vibrating your vocal cords first.",
+      "note": null,
+      "distractors": [
+        "bin",
+        "pen",
+        "pan"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "He hits the ball with a wooden bat",
+      "translation": "He hits the ball with a wooden bat",
+      "explanation": "The starting sound begins with the voiced consonant 'b', naming the sports equipment rather than an action.",
+      "romanization": null,
+      "distractors": [
+        "pat",
+        "mat"
+      ],
+      "translationDistractors": [
+        "pat",
+        "mat"
+      ],
+      "speakingPrompt": "State what equipment he uses to hit the ball"
+    },
+    {
+      "sentence": "Gently pat the dog on the back",
+      "translation": "Gently pat the dog on the back",
+      "explanation": "The voiceless consonant 'p' creates the verb meaning to tap lightly with a hand.",
+      "romanization": null,
+      "distractors": [
+        "bat",
+        "cat"
+      ],
+      "translationDistractors": [
+        "bat",
+        "cat"
+      ],
+      "speakingPrompt": "Tell someone to stroke the dog lightly"
+    },
+    {
+      "sentence": "Throw the plastic cup in the trash bin",
+      "translation": "Throw the plastic cup in the trash bin",
+      "explanation": "The noun 'bin' starts with voiced 'b' and refers to a container.",
+      "romanization": null,
+      "distractors": [
+        "pin",
+        "tin"
+      ],
+      "translationDistractors": [
+        "pin",
+        "tin"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "Fasten the name tag with a small metal pin",
+      "translation": "Fasten the name tag with a small metal pin",
+      "explanation": "The noun 'pin' starts with an unvoiced burst of air on 'p', meaning a fastener.",
+      "romanization": null,
+      "distractors": [
+        "bin",
+        "fin"
+      ],
+      "translationDistractors": [
+        "bin",
+        "fin"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Voiced and voiceless starting sounds",
+    "text": "Pairs like `p` and `b` share the same mouth shape, but differ in vocal cord vibration and air release. For `p`, air bursts out with no voice vibration. For `b`, your voice turns on right away with almost no burst of air. Switching this initial consonant changes the entire meaning of everyday words.",
+    "examples": [
+      {
+        "sentence": "Hold the baseball bat with both hands",
+        "translation": "Hold the baseball bat with both hands"
+      },
+      {
+        "sentence": "Give your friend a reassuring pat on the shoulder",
+        "translation": "Give your friend a reassuring pat on the shoulder"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Choose the word that means a waste container.",
+      "template": "Drop the empty soda can into the blue recycling [BLANK]",
+      "answer": "bin",
+      "distractors": [
+        "pin",
+        "pat"
+      ],
+      "feedback": "A container for trash or recycling is a bin, starting with voiced 'b'."
+    },
+    {
+      "question": "Choose the word that means a sharp fastener.",
+      "template": "Attach the paper notice to the cork board with a [BLANK]",
+      "answer": "pin",
+      "distractors": [
+        "bin",
+        "bat"
+      ],
+      "feedback": "A tiny sharp fastener is a pin, which starts with an unvoiced 'p'."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": null,
+  "writing": {
+    "prompt": "Write a sentence telling someone to put the trash in the container.",
+    "answers": [
+      "Put the trash in the bin",
+      "Put the trash into the bin",
+      "Put the garbage in the bin",
+      "Put the garbage into the bin"
+    ],
+    "keyPoints": [
+      "Uses the noun 'bin'",
+      "Uses the verb 'put'"
+    ]
+  },
+  "summary": [
+    "'Bat' and 'pat' show how starting sounds distinguish completely different words",
+    "'Bin' and 'pin' demonstrate the acoustic difference between voiced and voiceless consonants"
+  ]
+}

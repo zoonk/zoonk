@@ -1,0 +1,217 @@
+{
+  "words": [
+    {
+      "word": "die Wohnung",
+      "translation": "the apartment",
+      "pronunciation": "dee VOH-noong",
+      "romanization": null,
+      "tip": "German w sounds like English v; round your lips for the long vowel in the first syllable.",
+      "note": null,
+      "distractors": [
+        "das Zimmer",
+        "die Küche",
+        "die Miete"
+      ]
+    },
+    {
+      "word": "besichtigen",
+      "translation": "to view",
+      "pronunciation": "beh-ZIKH-tih-gen",
+      "romanization": null,
+      "tip": "For the ch, bring the middle of your tongue close to the roof of your mouth and let air flow through; don't make a hard k.",
+      "note": "Use this for viewing a property in person.",
+      "distractors": [
+        "mieten",
+        "verkaufen",
+        "renovieren"
+      ]
+    },
+    {
+      "word": "passen",
+      "translation": "to work for someone",
+      "pronunciation": "PAH-sen",
+      "romanization": null,
+      "tip": null,
+      "note": "You can use this when a proposed time suits someone.",
+      "distractors": [
+        "kosten",
+        "dauern",
+        "gehören"
+      ]
+    },
+    {
+      "word": "der Termin",
+      "translation": "the appointment",
+      "pronunciation": "dair tair-MEEN",
+      "romanization": null,
+      "tip": "Stress the second syllable of Termin.",
+      "note": null,
+      "distractors": [
+        "der Vertrag",
+        "der Schlüssel",
+        "die Anzeige"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "Kann ich die Wohnung besichtigen?",
+      "translation": "Can I view the apartment?",
+      "explanation": "As in English, the question starts with “can.” In German, besichtigen goes at the end.",
+      "romanization": null,
+      "distractors": [
+        "können",
+        "mich",
+        "besichtigt"
+      ],
+      "translationDistractors": [
+        "rent",
+        "you",
+        "house"
+      ],
+      "speakingPrompt": "Ask if you can view the apartment."
+    },
+    {
+      "sentence": "Passt Ihnen Freitag um 14 Uhr?",
+      "translation": "Does Friday at 2 p.m. work for you?",
+      "explanation": "Ihnen is the polite form used here for “you.” German uses um before a clock time.",
+      "romanization": null,
+      "distractors": [
+        "passen",
+        "dich",
+        "haben"
+      ],
+      "translationDistractors": [
+        "Monday",
+        "morning",
+        "me"
+      ],
+      "speakingPrompt": "Ask the landlord if Friday at 2 p.m. works."
+    },
+    {
+      "sentence": "Ja, Freitag um 14 Uhr passt mir",
+      "translation": "Yes, Friday at 2 p.m. works for me",
+      "explanation": "Use mir to say the time works for you. Freitag is the subject, so the verb is passt.",
+      "romanization": null,
+      "distractors": [
+        "passen",
+        "mich",
+        "Ihnen"
+      ],
+      "translationDistractors": [
+        "you",
+        "doesn't",
+        "Saturday"
+      ],
+      "speakingPrompt": "Agree to Friday at 2 p.m."
+    },
+    {
+      "sentence": "Ist der Termin am Freitag?",
+      "translation": "Is the appointment on Friday?",
+      "explanation": "The verb ist comes first in this yes-or-no question. Use am before the day.",
+      "romanization": null,
+      "distractors": [
+        "sind",
+        "um",
+        "den"
+      ],
+      "translationDistractors": [
+        "viewing",
+        "Monday",
+        "time"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Ask to view the apartment with kann ich",
+    "text": "Start with `Kann ich`, then put `besichtigen` at the end: `Kann ich die Wohnung besichtigen?` means “Can I view the apartment?” Add a day before `besichtigen`: `Kann ich die Wohnung am Freitag besichtigen?` means “Can I view the apartment on Friday?” Unlike English, German puts the main action at the end of this question.",
+    "examples": []
+  },
+  "practice": [
+    {
+      "question": "Choose the word that completes the question.",
+      "template": "Kann ich die Wohnung morgen [BLANK]?",
+      "answer": "besichtigen",
+      "distractors": [
+        "besichtige",
+        "besichtigst",
+        "besichtigt"
+      ],
+      "feedback": "After kann, use besichtigen at the end of the question."
+    },
+    {
+      "question": "Choose the word that completes the question.",
+      "template": "Kann ich einen Termin [BLANK]?",
+      "answer": "vereinbaren",
+      "distractors": [
+        "vereinbare",
+        "vereinbarst",
+        "vereinbart"
+      ],
+      "feedback": "After kann, use vereinbaren at the end to ask if you can arrange an appointment."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "The landlord suggests a time that works for you. What do you say?",
+    "scene": "A phone call with a landlord in Berlin",
+    "lines": [
+      {
+        "speaker": "you",
+        "text": "Kann ich die Wohnung besichtigen?",
+        "translation": "Can I view the apartment?"
+      },
+      {
+        "speaker": "them",
+        "text": "Ja. Passt Ihnen Freitag um 14 Uhr?",
+        "translation": "Yes. Does Friday at 2 p.m. work for you?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "Ja, Freitag um 14 Uhr passt mir",
+        "translation": "Yes, Friday at 2 p.m. works for me",
+        "isBest": true,
+        "why": "This naturally agrees to the proposed time."
+      },
+      {
+        "text": "Ja, Freitag um 14 Uhr passen mir",
+        "translation": "Yes, Friday at 2 p.m. work for me",
+        "isBest": false,
+        "why": "Freitag needs passt, not passen."
+      },
+      {
+        "text": "Ja, Freitag um 14 Uhr passt mich",
+        "translation": "Yes, Friday at 2 p.m. works me",
+        "isBest": false,
+        "why": "Use mir, not mich, to say a time works for you."
+      },
+      {
+        "text": "Nein, Freitag um 14 Uhr passt mir nicht",
+        "translation": "No, Friday at 2 p.m. doesn't work for me",
+        "isBest": false,
+        "why": "This declines the time, but you want to agree to it."
+      }
+    ],
+    "explanation": "Use Ihnen to ask politely whether a time works for the other person."
+  },
+  "writing": {
+    "prompt": "Write a message asking: “Can I view the apartment on Friday?”",
+    "answers": [
+      "Kann ich die Wohnung am Freitag besichtigen?",
+      "Kann ich am Freitag die Wohnung besichtigen?",
+      "Kann ich mir die Wohnung am Freitag anschauen?",
+      "Kann ich mir am Freitag die Wohnung anschauen?"
+    ],
+    "keyPoints": [
+      "Ask whether you can view the apartment.",
+      "Include Friday and put the main action at the end."
+    ]
+  },
+  "summary": [
+    "“Kann ich die Wohnung besichtigen?” asks if you can view the apartment.",
+    "“Passt Ihnen Freitag um 14 Uhr?” asks politely if that time works.",
+    "“Freitag um 14 Uhr passt mir” agrees to the time."
+  ]
+}

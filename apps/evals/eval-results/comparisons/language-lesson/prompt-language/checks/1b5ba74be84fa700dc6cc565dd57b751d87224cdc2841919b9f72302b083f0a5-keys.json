@@ -1,0 +1,14 @@
+{
+  "caseId": "pt-en-a1-th-sounds",
+  "costUsd": 0.031296000000000004,
+  "name": "answer keys",
+  "passed": 8,
+  "problems": [
+    "{\"itemLocator\":\"words[0]\",\"keyedAnswer\":\"DHÂ BÉTH-rum\",\"kind\":\"factualError\",\"workedAnswer\":\"Use “THÂ BÉTH-rum” to retain both instances of “th.” The tip explains the voiceless /θ/ in “bathroom” but not the voiced /ð/ in “the”: use the same tongue position between the teeth and add voice for “the.”\"}",
+    "{\"itemLocator\":\"words[1]\",\"keyedAnswer\":\"DHÂ BÉD-rum\",\"kind\":\"factualError\",\"workedAnswer\":\"Use “THÂ BÉD-rum” to retain “th” in “the.” The missing tip should explain that /ð/ is made by letting air pass between the tongue tip and the teeth while voicing the sound.\"}",
+    "{\"itemLocator\":\"words[2]\",\"keyedAnswer\":\"DHÂ LÍ-ving RUM\",\"kind\":\"factualError\",\"workedAnswer\":\"Use “THÂ LÍ-ving RUM” to retain “th” in “the.” The tip covers the /r/ in “room” but should also explain the voiced /ð/ in “the”: place the tongue tip lightly between the teeth and let air pass while voicing.\"}"
+  ],
+  "run": 1,
+  "side": "incumbent",
+  "total": 11
+}

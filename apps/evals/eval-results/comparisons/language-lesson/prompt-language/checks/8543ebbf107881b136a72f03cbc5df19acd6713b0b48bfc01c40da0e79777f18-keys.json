@@ -1,0 +1,15 @@
+{
+  "caseId": "pt-en-b1-interview-opening",
+  "costUsd": 0.054656,
+  "name": "answer keys",
+  "passed": 7,
+  "problems": [
+    "{\"itemLocator\":\"sentences[0]\",\"keyedAnswer\":\"Obrigado por me receber hoje\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"A candidate can say “Thanks for having me today” to thank the interviewer for the invitation. “Obrigado por me convidar hoje” is therefore defensible, although “receber” more directly conveys being hosted.\"}",
+    "{\"itemLocator\":\"sentences[1]\",\"keyedAnswer\":\"I'm excited to be here and discuss this role\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"“I'm excited to be here and discussing this role” also fits an interview already underway: “be” is shared by “be here” and “be discussing this role.” The prompt does not require the discussion to be in the future.\"}",
+    "{\"itemLocator\":\"sentences[2]\",\"keyedAnswer\":\"Minha trajetória profissional me preparou para esta vaga\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"“Minha formação profissional me preparou para esta vaga” is also valid. “My background” can refer to professional training as well as career experience, and the English sentence does not distinguish them.\"}",
+    "{\"itemLocator\":\"words[3]\",\"keyedAnswer\":\"THIZ ROUL\",\"kind\":\"factualError\",\"workedAnswer\":\"In standard US English, “this” is /ðɪs/. The initial consonant is voiced, but the final consonant is /s/, not the /z/ suggested by “THIZ.”\"}"
+  ],
+  "run": 2,
+  "side": "challenger",
+  "total": 11
+}

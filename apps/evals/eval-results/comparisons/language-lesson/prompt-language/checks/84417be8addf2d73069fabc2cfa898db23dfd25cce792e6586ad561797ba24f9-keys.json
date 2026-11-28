@@ -1,0 +1,12 @@
+{
+  "caseId": "en-de-a2-viewing",
+  "costUsd": 0.042232,
+  "name": "answer keys",
+  "passed": 10,
+  "problems": [
+    "{\"itemLocator\":\"sentences[3]\",\"keyedAnswer\":\"Is the appointment on Friday?\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"The appointment in this call is an apartment viewing, so “Is the viewing on Friday?” is also a natural translation of “Ist der Termin am Freitag?” The distractor “viewing” should not be marked wrong in this context.\"}"
+  ],
+  "run": 2,
+  "side": "incumbent",
+  "total": 11
+}

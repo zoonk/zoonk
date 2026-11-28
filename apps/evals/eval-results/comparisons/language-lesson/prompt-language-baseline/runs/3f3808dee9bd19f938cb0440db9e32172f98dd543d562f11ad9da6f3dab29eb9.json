@@ -1,0 +1,13 @@
+{
+  "caseId": "en-pl-a1-household-chores",
+  "challenger": {
+    "costUsd": 0.015093100000000002,
+    "durationMs": 32492.458083000034,
+    "hash": "e28db769b5830961cef4efedbba1ea9d1508041c690a46af38f5cacef7748fc9",
+    "systemPromptHash": "08a31bc2bf19a1de85bcc4becaa9fafe06dff5436f190e072738c3cf625d8e6f",
+    "userPromptHash": "b1d1d30a88e3e473fb418339cd865e08002c34e0813522b4208b35d26dbc6347"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 2
+}

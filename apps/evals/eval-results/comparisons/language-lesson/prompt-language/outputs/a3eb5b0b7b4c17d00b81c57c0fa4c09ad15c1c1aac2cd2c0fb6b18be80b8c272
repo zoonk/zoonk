@@ -1,0 +1,175 @@
+{
+  "words": [
+    {
+      "word": "bat",
+      "translation": "a wooden or metal stick used to hit a ball in a game",
+      "pronunciation": "BAT",
+      "romanization": null,
+      "tip": "Start with your lips together and use your voice as you release them for the b sound.",
+      "note": "A bat can also be a flying animal.",
+      "distractors": [
+        "ball",
+        "glove",
+        "helmet"
+      ]
+    },
+    {
+      "word": "pat",
+      "translation": "a gentle touch with a flat hand",
+      "pronunciation": "PAT",
+      "romanization": null,
+      "tip": "Start with your lips together, then release them without using your voice for the p sound.",
+      "note": null,
+      "distractors": [
+        "punch",
+        "kick",
+        "bite"
+      ]
+    },
+    {
+      "word": "pin",
+      "translation": "a small, thin piece of metal with a sharp point, used to hold cloth together",
+      "pronunciation": "PIN",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "screw",
+        "bolt",
+        "hook"
+      ]
+    },
+    {
+      "word": "bin",
+      "translation": "a large container that holds trash",
+      "pronunciation": "BIN",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "broom",
+        "mop",
+        "dustpan"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "He hit the ball with a bat",
+      "translation": "He hit the ball with a bat",
+      "explanation": "Here, `with a bat` tells you what he used to hit the ball.",
+      "romanization": null,
+      "distractors": [
+        "pat",
+        "an",
+        "are"
+      ],
+      "translationDistractors": [
+        "pat",
+        "an",
+        "are"
+      ],
+      "speakingPrompt": "Say what he used to hit the ball."
+    },
+    {
+      "sentence": "Give the dog a pat",
+      "translation": "Give the dog a pat",
+      "explanation": "Use `give` to ask someone to do something. Here, `a pat` is a gentle touch.",
+      "romanization": null,
+      "distractors": [
+        "bat",
+        "an",
+        "is"
+      ],
+      "translationDistractors": [
+        "bat",
+        "an",
+        "is"
+      ],
+      "speakingPrompt": "Ask someone to give the dog a gentle touch."
+    },
+    {
+      "sentence": "Use a pin to hold it",
+      "translation": "Use a pin to hold it",
+      "explanation": "`Use a pin` tells someone what to use. `To hold it` tells them why.",
+      "romanization": null,
+      "distractors": [
+        "bin",
+        "an",
+        "are"
+      ],
+      "translationDistractors": [
+        "bin",
+        "an",
+        "are"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "Put the trash in the bin",
+      "translation": "Put the trash in the bin",
+      "explanation": "`Put` starts an instruction. `In the bin` tells someone where the trash goes.",
+      "romanization": null,
+      "distractors": [
+        "pin",
+        "an",
+        "is"
+      ],
+      "translationDistractors": [
+        "pin",
+        "an",
+        "is"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Listen for the first sound",
+    "text": "Place your lips together, then release them for both `p` and `b`. Your throat vibrates for `b`, but not for `p`; touch your throat to feel the difference. Listen to the first sound in `bat` and `pat`, or `bin` and `pin`.",
+    "examples": []
+  },
+  "practice": [
+    {
+      "question": "Choose the word that fits.",
+      "template": "He hit the ball with a [BLANK].",
+      "answer": "bat",
+      "distractors": [
+        "pat",
+        "bin",
+        "kick"
+      ],
+      "feedback": "A bat is used to hit a ball."
+    },
+    {
+      "question": "Choose the word that fits.",
+      "template": "She put the trash in the [BLANK].",
+      "answer": "bin",
+      "distractors": [
+        "pin",
+        "pat",
+        "kick"
+      ],
+      "feedback": "A bin can hold trash."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": null,
+  "writing": {
+    "prompt": "Write an instruction telling someone to place the garbage in a waste container.",
+    "answers": [
+      "Put the trash in the bin.",
+      "Put the garbage in the bin.",
+      "Put the trash in a bin.",
+      "Put the garbage in a bin."
+    ],
+    "keyPoints": [
+      "Uses `put` to give an instruction.",
+      "Uses `in` to say where the trash goes."
+    ]
+  },
+  "summary": [
+    "“Bat” and “pat” start with different sounds: use your voice for `b`, but not for `p`.",
+    "“Bin” and “pin” also differ in their first sound.",
+    "“Give the dog a pat” asks someone to touch the dog gently."
+  ]
+}

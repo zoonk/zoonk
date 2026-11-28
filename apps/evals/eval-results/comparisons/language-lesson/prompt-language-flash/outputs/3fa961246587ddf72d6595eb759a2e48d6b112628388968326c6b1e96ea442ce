@@ -1,0 +1,197 @@
+{
+  "words": [
+    {
+      "word": "唔該",
+      "translation": "please / excuse me",
+      "pronunciation": "mm-GOY",
+      "romanization": "m4 goi1",
+      "tip": "The first syllable 'm' is a hummed sound made with closed lips and no vowel at all; drop your pitch low.",
+      "note": "Use '唔該' (m4 goi1) both to get a server's attention and to politely request things like food or the bill.",
+      "distractors": [
+        "多謝",
+        "早晨",
+        "再見"
+      ]
+    },
+    {
+      "word": "奶茶",
+      "translation": "milk tea",
+      "pronunciation": "NIGH-chah",
+      "romanization": "naai5 caa4",
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "檸茶",
+        "咖啡",
+        "清水"
+      ]
+    },
+    {
+      "word": "菠蘿包",
+      "translation": "pineapple bun",
+      "pronunciation": "BOH-loh-bow",
+      "romanization": "bo1 lo4 baau1",
+      "tip": "The final syllable 'baau1' rhymes with English 'cow', not 'bowl'.",
+      "note": null,
+      "distractors": [
+        "蛋撻",
+        "多士",
+        "白飯"
+      ]
+    },
+    {
+      "word": "幾多錢",
+      "translation": "how much",
+      "pronunciation": "GAY-doh-cheen",
+      "romanization": "gei2 do1 cin2",
+      "tip": null,
+      "note": "Literally means 'how much money'; placed at the end of what you are inquiring about.",
+      "distractors": [
+        "幾多個",
+        "點樣做",
+        "喺邊度"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "唔該一杯奶茶",
+      "translation": "A cup of milk tea, please",
+      "explanation": "Cantonese places the politeness marker '唔該' (m4 goi1) right at the beginning of an order, followed by the quantity '一杯' (jat1 bui1) and the item.",
+      "romanization": "m4 goi1 jat1 bui1 naai5 caa4",
+      "distractors": [
+        "三",
+        "幾",
+        "錢"
+      ],
+      "translationDistractors": [
+        "sandwich",
+        "cold",
+        "two"
+      ],
+      "speakingPrompt": "Politely order a cup of milk tea"
+    },
+    {
+      "sentence": "唔該一個菠蘿包",
+      "translation": "A pineapple bun, please",
+      "explanation": "'個' (go3) is the general classifier used for baked goods like buns, preceded by '一' (jat1) for 'one'.",
+      "romanization": "m4 goi1 jat1 go3 bo1 lo4 baau1",
+      "distractors": [
+        "杯",
+        "去",
+        "好"
+      ],
+      "translationDistractors": [
+        "egg",
+        "tart",
+        "menu"
+      ],
+      "speakingPrompt": "Politely ask for a pineapple bun"
+    },
+    {
+      "sentence": "請問一共幾多錢？",
+      "translation": "Excuse me, how much is it in total?",
+      "explanation": "Start questions politely with '請問' (cing2 man6, 'may I ask'), and place the question phrase '幾多錢' (gei2 do1 cin2) at the very end.",
+      "romanization": "cing2 man6 jat1 gung6 gei2 do1 cin2?",
+      "distractors": [
+        "包",
+        "茶",
+        "有"
+      ],
+      "translationDistractors": [
+        "who",
+        "where",
+        "ready"
+      ],
+      "speakingPrompt": "Ask the server for the total price"
+    }
+  ],
+  "tip": {
+    "title": "Ordering politely with 唔該 and asking prices with 幾多錢",
+    "text": "To order food or drinks, start your sentence with `唔該` (m4 goi1, 'please'), followed directly by the number, classifier, and item. When you want to ask how much something costs, put `幾多錢` (gei2 do1 cin2) at the end of the sentence instead of at the beginning like in English.",
+    "examples": [
+      {
+        "sentence": "唔該一杯奶茶",
+        "translation": "A cup of milk tea, please"
+      },
+      {
+        "sentence": "呢個幾多錢？",
+        "translation": "How much is this one?"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Choose the correct phrase to ask how much something costs.",
+      "template": "請問呢個 [BLANK]？",
+      "answer": "幾多錢",
+      "distractors": [
+        "菠蘿包",
+        "一杯",
+        "唔該"
+      ],
+      "feedback": "'幾多錢' (gei2 do1 cin2) means 'how much' and goes at the end of price queries."
+    },
+    {
+      "question": "Choose the word needed to order politely at the start of your request.",
+      "template": "[BLANK] 一個菠蘿包",
+      "answer": "唔該",
+      "distractors": [
+        "幾多錢",
+        "奶茶",
+        "一共"
+      ],
+      "feedback": "'唔該' (m4 goi1) is the polite marker placed at the beginning of an order to mean 'please'."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "You are sitting at a table in a cha chaan teng and the server comes over with a notepad. What do you say?",
+    "scene": "A bustling cha chaan teng in Mong Kok",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "想飲咩呀？",
+        "translation": "What would you like to drink?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "唔該一杯奶茶同一個菠蘿包",
+        "translation": "A cup of milk tea and a pineapple bun, please",
+        "isBest": true,
+        "why": "This politely orders both your drink and food item using '唔該' (m4 goi1)."
+      },
+      {
+        "text": "請問幾多錢？",
+        "translation": "Excuse me, how much is it?",
+        "isBest": false,
+        "why": "This asks for the price before you have ordered anything."
+      },
+      {
+        "text": "多謝一杯奶茶",
+        "translation": "Thank you a cup of milk tea",
+        "isBest": false,
+        "why": "'多謝' (do1 ze6) is for thanking someone for a gift or payment, not for requesting items."
+      }
+    ],
+    "explanation": "Always start dining requests with '唔該' (m4 goi1) rather than '多謝' (do1 ze6)."
+  },
+  "writing": {
+    "prompt": "Write a note requesting one milk tea and asking how much it is in total.",
+    "answers": [
+      "唔該一杯奶茶，請問一共幾多錢？",
+      "唔該一杯奶茶，一共幾多錢？",
+      "唔該一杯奶茶，幾多錢？"
+    ],
+    "keyPoints": [
+      "Uses '唔該' (m4 goi1) before '一杯奶茶'",
+      "Uses '幾多錢' (gei2 do1 cin2) to ask the price"
+    ]
+  },
+  "summary": [
+    "'唔該' (m4 goi1) means 'please' or 'excuse me' and starts your order politely",
+    "'奶茶' (naai5 caa4) and '菠蘿包' (bo1 lo4 baau1) are staple cha chaan teng items",
+    "'幾多錢' (gei2 do1 cin2) asks how much something costs at the end of a question"
+  ]
+}

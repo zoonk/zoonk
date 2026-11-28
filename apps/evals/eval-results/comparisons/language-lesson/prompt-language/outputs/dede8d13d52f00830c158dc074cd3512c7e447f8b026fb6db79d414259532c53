@@ -1,0 +1,186 @@
+{
+  "words": [
+    {
+      "word": "bat",
+      "translation": "a stick used to hit a ball in baseball",
+      "pronunciation": "BAT",
+      "romanization": null,
+      "tip": "Close your lips for the first sound and let your voice vibrate as you release it.",
+      "note": null,
+      "distractors": [
+        "glove",
+        "helmet",
+        "racket"
+      ]
+    },
+    {
+      "word": "pat",
+      "translation": "a gentle touch with a flat hand",
+      "pronunciation": "PAT",
+      "romanization": null,
+      "tip": "Close your lips for the first sound, then release a puff of air without using your voice.",
+      "note": null,
+      "distractors": [
+        "slap",
+        "pinch",
+        "punch"
+      ]
+    },
+    {
+      "word": "cap",
+      "translation": "a soft hat with a visor",
+      "pronunciation": "KAP",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "scarf",
+        "helmet",
+        "hood"
+      ]
+    },
+    {
+      "word": "map",
+      "translation": "a drawing that shows where places are",
+      "pronunciation": "MAP",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "menu",
+        "ticket",
+        "receipt"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "Hit the ball with a bat",
+      "translation": "Hit the ball with a bat",
+      "explanation": "Start with `Hit` to tell someone what to do. `With a bat` says what to use.",
+      "romanization": null,
+      "distractors": [
+        "pat",
+        "an",
+        "is"
+      ],
+      "translationDistractors": [
+        "pat",
+        "an",
+        "is"
+      ],
+      "speakingPrompt": "Tell someone to use a bat to hit the ball."
+    },
+    {
+      "sentence": "Give the baby a pat",
+      "translation": "Give the baby a pat",
+      "explanation": "After `Give`, say who gets the gentle touch, then say `a pat`.",
+      "romanization": null,
+      "distractors": [
+        "bat",
+        "an",
+        "are"
+      ],
+      "translationDistractors": [
+        "bat",
+        "an",
+        "are"
+      ],
+      "speakingPrompt": "Tell someone to touch the baby gently."
+    },
+    {
+      "sentence": "Wear a cap on your head",
+      "translation": "Wear a cap on your head",
+      "explanation": "Start with `Wear` to tell someone what to put on. `On your head` says where to wear it.",
+      "romanization": null,
+      "distractors": [
+        "map",
+        "an",
+        "is"
+      ],
+      "translationDistractors": [
+        "map",
+        "an",
+        "is"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "Use a map to find Denver",
+      "translation": "Use a map to find Denver",
+      "explanation": "`Use a map` says what to use. `To find Denver` says why to use it.",
+      "romanization": null,
+      "distractors": [
+        "cap",
+        "an",
+        "are"
+      ],
+      "translationDistractors": [
+        "cap",
+        "an",
+        "are"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Listen to the first sound",
+    "text": "In `bat` and `pat`, close your lips for the first sound; use your voice for `b`, but release air without your voice for `p`. In `cap`, make the first sound at the back of your mouth; in `map`, close your lips and let the sound come through your nose. Listen to the beginning as well as the rest of the word.",
+    "examples": [
+      {
+        "sentence": "Hit the ball with a bat",
+        "translation": "Hit the ball with a bat"
+      },
+      {
+        "sentence": "Give the baby a pat",
+        "translation": "Give the baby a pat"
+      },
+      {
+        "sentence": "Use a map to find Denver",
+        "translation": "Use a map to find Denver"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Choose the word that fits.",
+      "template": "Hit the ball with a [BLANK].",
+      "answer": "bat",
+      "distractors": [
+        "pat",
+        "cap",
+        "map"
+      ],
+      "feedback": "A bat is used to hit a ball."
+    },
+    {
+      "question": "Choose the word that fits.",
+      "template": "Wear a [BLANK] to shade your eyes.",
+      "answer": "cap",
+      "distractors": [
+        "map",
+        "pat",
+        "bat"
+      ],
+      "feedback": "A cap has a visor that can shade your eyes."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": null,
+  "writing": {
+    "prompt": "Write a note telling someone to use a drawing of places to locate Denver.",
+    "answers": [
+      "Use a map to find Denver.",
+      "Use a map to locate Denver."
+    ],
+    "keyPoints": [
+      "Uses 'map' for a drawing of places",
+      "Tells someone to use it to find Denver"
+    ]
+  },
+  "summary": [
+    "'Bat' and 'pat' begin with different sounds.",
+    "'Cap' and 'map' begin with different sounds.",
+    "'Use a map' tells someone to look at a drawing of places."
+  ]
+}

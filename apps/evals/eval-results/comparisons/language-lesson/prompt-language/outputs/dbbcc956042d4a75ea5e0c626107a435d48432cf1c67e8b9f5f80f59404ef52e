@@ -1,0 +1,183 @@
+{
+  "words": [
+    {
+      "word": "bat",
+      "translation": "a stick used to hit a ball",
+      "pronunciation": "BAT",
+      "romanization": null,
+      "tip": "Start with your lips together and use your voice for the first sound.",
+      "note": null,
+      "distractors": [
+        "glove",
+        "helmet",
+        "ball"
+      ]
+    },
+    {
+      "word": "pat",
+      "translation": "a light touch with a flat hand",
+      "pronunciation": "PAT",
+      "romanization": null,
+      "tip": "Start with your lips together, then let out a small puff of air without using your voice.",
+      "note": null,
+      "distractors": [
+        "pinch",
+        "kick",
+        "hug"
+      ]
+    },
+    {
+      "word": "fan",
+      "translation": "a machine that moves air to help keep you cool",
+      "pronunciation": "FAN",
+      "romanization": null,
+      "tip": "Touch your top teeth to your bottom lip and blow air out without using your voice.",
+      "note": null,
+      "distractors": [
+        "heater",
+        "lamp",
+        "radio"
+      ]
+    },
+    {
+      "word": "van",
+      "translation": "a road vehicle with a large enclosed space for people or goods",
+      "pronunciation": "VAN",
+      "romanization": null,
+      "tip": "Touch your top teeth to your bottom lip and use your voice as you let air out.",
+      "note": null,
+      "distractors": [
+        "bicycle",
+        "motorcycle",
+        "scooter"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "He hit the ball with a bat",
+      "translation": "He hit the ball with a bat",
+      "explanation": "Use `with` to name what he used to hit the ball.",
+      "romanization": null,
+      "distractors": [
+        "pat",
+        "hits",
+        "an"
+      ],
+      "translationDistractors": [
+        "pat",
+        "hits",
+        "an"
+      ],
+      "speakingPrompt": "Say how he hit the ball."
+    },
+    {
+      "sentence": "A pat is a gentle touch",
+      "translation": "A pat is a gentle touch",
+      "explanation": "Use `is` to say what a pat is.",
+      "romanization": null,
+      "distractors": [
+        "bat",
+        "are",
+        "gently"
+      ],
+      "translationDistractors": [
+        "bat",
+        "are",
+        "gently"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "The fan blows cool air",
+      "translation": "The fan blows cool air",
+      "explanation": "Use `blows` to say what the fan does.",
+      "romanization": null,
+      "distractors": [
+        "van",
+        "blow",
+        "are"
+      ],
+      "translationDistractors": [
+        "van",
+        "blow",
+        "are"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "I ride in the van",
+      "translation": "I ride in the van",
+      "explanation": "Use `in` to say you are inside the van when you ride.",
+      "romanization": null,
+      "distractors": [
+        "fan",
+        "rides",
+        "at"
+      ],
+      "translationDistractors": [
+        "fan",
+        "rides",
+        "at"
+      ],
+      "speakingPrompt": "Say where you ride."
+    }
+  ],
+  "tip": {
+    "title": "Listen to the first sound",
+    "text": "In `pat` and `bat`, close your lips first; use your voice for `b`, but not for `p`. In `fan` and `van`, let air pass between your teeth and lip; use your voice for `v`, but not for `f`. Listen carefully: changing just the first sound changes the word.",
+    "examples": [
+      {
+        "sentence": "He hit the ball with a bat",
+        "translation": "He hit the ball with a bat"
+      },
+      {
+        "sentence": "The fan blows cool air",
+        "translation": "The fan blows cool air"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Choose the word that fits.",
+      "template": "She hit the ball with a [BLANK].",
+      "answer": "bat",
+      "distractors": [
+        "pat",
+        "hug",
+        "pinch"
+      ],
+      "feedback": "A bat is a stick used to hit a ball."
+    },
+    {
+      "question": "Choose the word that fits.",
+      "template": "The [BLANK] blows cool air at me.",
+      "answer": "fan",
+      "distractors": [
+        "van",
+        "helmet",
+        "glove"
+      ],
+      "feedback": "A fan moves air to help keep you cool."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": null,
+  "writing": {
+    "prompt": "Write that you ride inside a van.",
+    "answers": [
+      "I ride in the van.",
+      "I ride in a van.",
+      "I'm riding in the van.",
+      "I am riding in the van."
+    ],
+    "keyPoints": [
+      "Use 'van' for the vehicle.",
+      "Use 'in' to say you ride inside it."
+    ]
+  },
+  "summary": [
+    "‘Bat’ starts with your voice; ‘pat’ starts with a puff of air.",
+    "‘Fan’ and ‘van’ start with air between your teeth and lip, but only ‘van’ starts with your voice."
+  ]
+}

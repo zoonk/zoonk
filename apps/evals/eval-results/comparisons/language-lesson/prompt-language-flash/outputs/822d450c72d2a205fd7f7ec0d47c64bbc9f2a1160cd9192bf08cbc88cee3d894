@@ -1,0 +1,207 @@
+{
+  "words": [
+    {
+      "word": "a sore throat",
+      "translation": "dor de garganta",
+      "pronunciation": "ei SÓR THROUT",
+      "romanization": null,
+      "tip": "Para pronunciar 'throat', coloque a ponta da língua entre os dentes para fazer o som de 'th', sem som de 'f' ou 't'.",
+      "note": null,
+      "distractors": [
+        "a cough drop",
+        "a stuffed nose",
+        "a chest pain"
+      ]
+    },
+    {
+      "word": "a headache",
+      "translation": "dor de cabeça",
+      "pronunciation": "ei RRE-deik",
+      "romanization": null,
+      "tip": "O 'h' em 'head' tem som de 'rr' suave, e a terminação '-ache' se pronuncia 'eik', com som seco de 'k' no final sem colocar uma vogal depois.",
+      "note": null,
+      "distractors": [
+        "a heartbeat",
+        "a headscarf",
+        "a heartache"
+      ]
+    },
+    {
+      "word": "dizzy",
+      "translation": "tonto",
+      "pronunciation": "DI-zi",
+      "romanization": null,
+      "tip": "A primeira sílaba é tônica e tem um 'i' curto; evite alongar o som como se fosse 'dízi'.",
+      "note": null,
+      "distractors": [
+        "busy",
+        "lazy",
+        "fuzzy"
+      ]
+    },
+    {
+      "word": "since",
+      "translation": "desde",
+      "pronunciation": "SINS",
+      "romanization": null,
+      "tip": "Termine a palavra direto no som de 's', sem pronunciar um 'i' de apoio no final.",
+      "note": null,
+      "distractors": [
+        "sense",
+        "science",
+        "soon"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "I've had a sore throat since Tuesday",
+      "translation": "Estou com dor de garganta desde terça-feira",
+      "explanation": "Em inglês, usa-se o present perfect ('I've had') quando o sintoma começou no passado e ainda continua, enquanto em português dizemos apenas 'estou com'.",
+      "romanization": null,
+      "distractors": [
+        "from",
+        "having",
+        "am"
+      ],
+      "translationDistractors": [
+        "terça",
+        "ontem",
+        "tive"
+      ],
+      "speakingPrompt": "Diga ao médico que você está com dor de garganta desde terça-feira"
+    },
+    {
+      "sentence": "I feel dizzy and I've had a headache for two days",
+      "translation": "Estou tonto e com dor de cabeça há dois dias",
+      "explanation": "Use 'for' para indicar a duração total do sintoma ('for two days'), equivalente ao nosso 'há dois dias'.",
+      "romanization": null,
+      "distractors": [
+        "since",
+        "ago",
+        "makes"
+      ],
+      "translationDistractors": [
+        "desde",
+        "sentia",
+        "semanas"
+      ],
+      "speakingPrompt": "Explique que você sente tontura e está com dor de cabeça há dois dias"
+    },
+    {
+      "sentence": "I've felt weak since yesterday morning",
+      "translation": "Estou me sentindo fraco desde ontem de manhã",
+      "explanation": "A combinação 'since yesterday morning' marca o ponto de início exato do sintoma no passado.",
+      "romanization": null,
+      "distractors": [
+        "for",
+        "during",
+        "after"
+      ],
+      "translationDistractors": [
+        "há",
+        "tarde",
+        "noite"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Since e for com sintomas que continuam",
+    "text": "Quando um sintoma começou no passado e ainda está acontecendo, usamos `I have had` (ou `I've had`) em vez de dizer 'I have'. Para dizer quando o sintoma começou (uma data ou momento específico), use `since`. Para dizer a duração total (quantas horas ou dias se passaram), use `for`.",
+    "examples": [
+      {
+        "sentence": "I've had a fever since yesterday",
+        "translation": "Estou com febre desde ontem"
+      },
+      {
+        "sentence": "I've had this cough for three days",
+        "translation": "Estou com essa tosse há três dias"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Complete a frase indicando o momento em que a febre começou.",
+      "template": "I've had a high fever [BLANK] yesterday afternoon",
+      "answer": "since",
+      "distractors": [
+        "for",
+        "from",
+        "ago"
+      ],
+      "feedback": "'Since' é a palavra correta para marcar o ponto de início específico no passado ('ontem à tarde')."
+    },
+    {
+      "question": "Complete a frase indicando a duração total do sintoma.",
+      "template": "I have felt dizzy [BLANK] two days",
+      "answer": "for",
+      "distractors": [
+        "since",
+        "during",
+        "at"
+      ],
+      "feedback": "'For' indica a duração total de tempo transcorrido ('há dois dias' ou 'por dois dias')."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "O médico pergunta sobre os seus sintomas e quando começaram. O que você responde?",
+    "scene": "Um consultório médico em Seattle",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Hi, what brings you in today?",
+        "translation": "Olá, o que traz você aqui hoje?"
+      },
+      {
+        "speaker": "you",
+        "text": "I'm not feeling well, doctor",
+        "translation": "Não estou me sentindo bem, doutor"
+      },
+      {
+        "speaker": "them",
+        "text": "Tell me what symptoms you have and how long they've lasted",
+        "translation": "Conte-me quais sintomas você tem e há quanto tempo duram"
+      }
+    ],
+    "replies": [
+      {
+        "text": "I've had a sore throat and a headache since Monday",
+        "translation": "Estou com dor de garganta e dor de cabeça desde segunda-feira",
+        "isBest": true,
+        "why": "Essa resposta descreve com precisão os sintomas e usa a estrutura correta com 'since' para indicar o início."
+      },
+      {
+        "text": "I have a sore throat since two days ago",
+        "translation": "Tenho dor de garganta desde dois dias atrás",
+        "isBest": false,
+        "why": "Para duração com quantidade de dias, deve-se usar 'for two days', além de 'I've had' para indicar continuidade."
+      },
+      {
+        "text": "I am feeling dizzy from Monday until now",
+        "translation": "Estou sentindo tontura de segunda-feira até agora",
+        "isBest": false,
+        "why": "Essa construção soa pouco natural em inglês em comparação a 'since Monday'."
+      }
+    ],
+    "explanation": "Lembre-se de usar 'since' para apontar o momento exato em que o problema começou ('since Monday') e 'for' para a quantidade de tempo ('for two days')."
+  },
+  "writing": {
+    "prompt": "Escreva em inglês para o médico: 'Estou com dor de garganta há três dias.'",
+    "answers": [
+      "I've had a sore throat for three days.",
+      "I have had a sore throat for three days."
+    ],
+    "keyPoints": [
+      "Usa 'I've had' ou 'I have had' para o sintoma contínuo",
+      "Usa 'for' antes da duração de três dias ('three days')"
+    ]
+  },
+  "summary": [
+    "Dizer 'I have a sore throat' ou 'a headache' para descrever dores comuns",
+    "Usar 'since' para apontar o início de um sintoma, como em 'since yesterday'",
+    "Usar 'for' para falar da duração, como em 'for two days'",
+    "Usar 'I've had' para sintomas que começaram antes e continuam agora"
+  ]
+}

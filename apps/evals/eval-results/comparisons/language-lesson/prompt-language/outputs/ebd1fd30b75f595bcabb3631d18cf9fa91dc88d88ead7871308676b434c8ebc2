@@ -1,0 +1,211 @@
+{
+  "words": [
+    {
+      "word": "c'era il sole",
+      "translation": "estava ensolarado",
+      "pronunciation": "TCHÉ-ra IL SÔ-le",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "c'era la nebbia",
+        "c'era vento",
+        "c'era la neve"
+      ]
+    },
+    {
+      "word": "pioveva",
+      "translation": "chovia",
+      "pronunciation": "pio-VÊ-va",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "nevicava",
+        "grandinava",
+        "lampeggiava"
+      ]
+    },
+    {
+      "word": "faceva freddo",
+      "translation": "estava frio",
+      "pronunciation": "fa-TCHÊ-va FRÉD-do",
+      "romanization": null,
+      "tip": "Em `freddo`, mantenha a língua um pouco mais de tempo contra o céu da boca para pronunciar o `d` duplo.",
+      "note": null,
+      "distractors": [
+        "faceva caldo",
+        "faceva fresco",
+        "c'era umidità"
+      ]
+    },
+    {
+      "word": "la settimana scorsa",
+      "translation": "a semana passada",
+      "pronunciation": "la set-ti-MA-na SCÔR-sa",
+      "romanization": null,
+      "tip": "Em `settimana`, segure brevemente o `t` duplo antes de soltar o ar.",
+      "note": null,
+      "distractors": [
+        "il mese scorso",
+        "la settimana prossima",
+        "l'anno scorso"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "La settimana scorsa c'era il sole",
+      "translation": "Na semana passada estava ensolarado",
+      "explanation": "Em italiano, `c'era il sole` expressa que havia sol. A expressão de tempo pode vir no começo da frase, como em português.",
+      "romanization": null,
+      "distractors": [
+        "c'erano",
+        "prossima",
+        "luna"
+      ],
+      "translationDistractors": [
+        "próxima",
+        "chuvoso",
+        "mês"
+      ],
+      "speakingPrompt": "Conte que na semana passada estava ensolarado"
+    },
+    {
+      "sentence": "Ieri pioveva e faceva freddo",
+      "translation": "Ontem chovia e estava frio",
+      "explanation": "Para descrever o tempo no passado, o italiano usa `pioveva` para a chuva e `faceva freddo` para o frio, sem indicar um sujeito.",
+      "romanization": null,
+      "distractors": [
+        "piovevano",
+        "facevano",
+        "freddi"
+      ],
+      "translationDistractors": [
+        "chovia",
+        "calor",
+        "amanhã"
+      ],
+      "speakingPrompt": "Conte que ontem chovia e estava frio"
+    },
+    {
+      "sentence": "Ieri pioveva?",
+      "translation": "Ontem chovia?",
+      "explanation": "Como em português, a pergunta pode manter a mesma ordem de uma frase afirmativa; a entonação indica a pergunta.",
+      "romanization": null,
+      "distractors": [
+        "piovevano",
+        "domani",
+        "nevicano"
+      ],
+      "translationDistractors": [
+        "amanhã",
+        "nevava",
+        "hoje"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "La settimana scorsa faceva freddo",
+      "translation": "Na semana passada estava frio",
+      "explanation": "Para falar do clima, o italiano usa `faceva freddo`, enquanto em português dizemos “estava frio”.",
+      "romanization": null,
+      "distractors": [
+        "facevano",
+        "prossima",
+        "freddi"
+      ],
+      "translationDistractors": [
+        "próxima",
+        "calor",
+        "ano"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Como falar do tempo no passado",
+    "text": "Para descrever o tempo no passado, use expressões como `c'era il sole`, `pioveva` e `faceva freddo`. Elas não precisam de um sujeito explícito. Para falar do clima frio, use `faceva freddo`, em vez de traduzir literalmente “estava frio”.",
+    "examples": []
+  },
+  "practice": [
+    {
+      "question": "Complete a frase sobre o tempo",
+      "template": "Ieri [BLANK] il sole",
+      "answer": "c'era",
+      "distractors": [
+        "c'erano",
+        "siamo",
+        "avete"
+      ],
+      "feedback": "Use `c'era il sole` para dizer que havia sol no passado."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "A pessoa pergunta sobre ontem. Conte que chovia e estava frio",
+    "scene": "Uma conversa com uma conhecida na Itália",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Che tempo faceva la settimana scorsa?",
+        "translation": "Como estava o tempo na semana passada?"
+      },
+      {
+        "speaker": "you",
+        "text": "C'era il sole",
+        "translation": "Estava ensolarado"
+      },
+      {
+        "speaker": "them",
+        "text": "E ieri?",
+        "translation": "E ontem?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "Ieri pioveva e faceva freddo",
+        "translation": "Ontem chovia e estava frio",
+        "isBest": true,
+        "why": "A resposta descreve a chuva e o frio de ontem com as expressões corretas."
+      },
+      {
+        "text": "Ieri piovevano e faceva freddo",
+        "translation": "Ontem chovia e estava frio",
+        "isBest": false,
+        "why": "Para dizer que chovia, use `pioveva`, não `piovevano`."
+      },
+      {
+        "text": "Ieri pioveva e facevano freddo",
+        "translation": "Ontem chovia e estava frio",
+        "isBest": false,
+        "why": "Para falar do frio, use `faceva freddo`, não `facevano freddo`."
+      },
+      {
+        "text": "Ieri c'erano il sole",
+        "translation": "Ontem estava ensolarado",
+        "isBest": false,
+        "why": "Com `il sole`, use `c'era`, não `c'erano`."
+      }
+    ],
+    "explanation": "Para situar a descrição no passado, você pode começar com `ieri` ou `la settimana scorsa`."
+  },
+  "writing": {
+    "prompt": "Escreva em italiano: “Ontem chovia e estava frio.”",
+    "answers": [
+      "Ieri pioveva e faceva freddo.",
+      "Pioveva e faceva freddo ieri.",
+      "Ieri faceva freddo e pioveva."
+    ],
+    "keyPoints": [
+      "Use `pioveva` para dizer que chovia.",
+      "Use `faceva freddo` para falar do frio.",
+      "Indique que isso aconteceu ontem com `ieri`."
+    ]
+  },
+  "summary": [
+    "“La settimana scorsa c'era il sole” diz que na semana passada estava ensolarado.",
+    "“Ieri pioveva” diz que ontem chovia.",
+    "“Faceva freddo” descreve o frio no passado."
+  ]
+}

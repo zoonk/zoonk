@@ -1,0 +1,12 @@
+{
+  "caseId": "es-en-a2-work",
+  "costUsd": 0.0348,
+  "name": "answer keys",
+  "passed": 10,
+  "problems": [
+    "{\"itemLocator\":\"sentences[3]\",\"keyedAnswer\":\"I work from nine to five\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"“I work from nine until five” also translates “Trabajo de nueve a cinco.” Both “to” and the distractor “until” correctly introduce the shift’s end time.\"}"
+  ],
+  "run": 2,
+  "side": "incumbent",
+  "total": 11
+}

@@ -1,0 +1,13 @@
+{
+  "caseId": "pt-en-b1-interview-repeat",
+  "challenger": {
+    "costUsd": 0.014059850000000002,
+    "durationMs": 30967.369917000004,
+    "hash": "a4728e0e8b0f0a0ebaa7261e1cfb2e7e3a1531fd2861fbcc820599677f0a5e1e",
+    "systemPromptHash": "4f3597f7d64f22c2685313adf24afb310eef4260f925d17e142129e5aeb851ca",
+    "userPromptHash": "025187033fc11f3d0c5b5cb15602524aca747f479bad86821a6fd9eeb0d9a472"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 1
+}

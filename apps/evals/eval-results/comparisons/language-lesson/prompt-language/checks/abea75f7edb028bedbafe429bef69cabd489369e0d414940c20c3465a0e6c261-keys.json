@@ -1,0 +1,10 @@
+{
+  "caseId": "en-pt-a1-restaurant",
+  "costUsd": 0.017456,
+  "name": "answer keys",
+  "passed": 10,
+  "problems": [],
+  "run": 2,
+  "side": "incumbent",
+  "total": 10
+}

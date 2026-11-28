@@ -1,0 +1,213 @@
+{
+  "words": [
+    {
+      "word": "la renta",
+      "translation": "rent",
+      "pronunciation": "LA RREN-tah",
+      "romanization": null,
+      "tip": "Roll the initial r by letting the tip of your tongue vibrate against the ridge behind your upper teeth.",
+      "note": null,
+      "distractors": [
+        "la hipoteca",
+        "la venta",
+        "la compra"
+      ]
+    },
+    {
+      "word": "el depósito",
+      "translation": "the deposit",
+      "pronunciation": "EHL deh-POH-see-toh",
+      "romanization": null,
+      "tip": "Stress the second syllable, as shown by the accent on the o.",
+      "note": null,
+      "distractors": [
+        "el contrato",
+        "el recibo",
+        "el pago"
+      ]
+    },
+    {
+      "word": "los servicios",
+      "translation": "the utilities",
+      "pronunciation": "LOHS sehr-VEE-syohs",
+      "romanization": null,
+      "tip": null,
+      "note": "Here, servicios means utilities such as water and electricity.",
+      "distractors": [
+        "los muebles",
+        "los electrodomésticos",
+        "las reparaciones"
+      ]
+    },
+    {
+      "word": "el departamento",
+      "translation": "the apartment",
+      "pronunciation": "EHL deh-pahr-tah-MEN-toh",
+      "romanization": null,
+      "tip": "For the r, briefly touch your tongue to the ridge behind your upper teeth rather than using an English r.",
+      "note": null,
+      "distractors": [
+        "la oficina",
+        "la bodega",
+        "el local"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "¿Cuánto es la renta del departamento?",
+      "translation": "How much is the rent for the apartment?",
+      "explanation": "Spanish puts es before the thing whose amount you are asking about. Del combines de and el, meaning “of the” here.",
+      "romanization": null,
+      "distractors": [
+        "son",
+        "las",
+        "muchos"
+      ],
+      "translationDistractors": [
+        "deposit",
+        "many",
+        "are"
+      ],
+      "speakingPrompt": "Ask how much the apartment rent is."
+    },
+    {
+      "sentence": "¿Cuánto es el depósito?",
+      "translation": "How much is the deposit?",
+      "explanation": "Use cuánto es to ask for the amount, followed by el depósito.",
+      "romanization": null,
+      "distractors": [
+        "son",
+        "las",
+        "están"
+      ],
+      "translationDistractors": [
+        "rent",
+        "many",
+        "are"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "¿Los servicios están incluidos en la renta?",
+      "translation": "Are the utilities included in the rent?",
+      "explanation": "Están incluidos goes after los servicios; English puts “are” before “the utilities” in the question.",
+      "romanization": null,
+      "distractors": [
+        "está",
+        "incluido",
+        "el"
+      ],
+      "translationDistractors": [
+        "excluded",
+        "deposit",
+        "is"
+      ],
+      "speakingPrompt": "Ask if utilities are included in the rent."
+    },
+    {
+      "sentence": "La renta es de ocho mil pesos",
+      "translation": "The rent is eight thousand pesos",
+      "explanation": "Spanish uses es de before the amount here; English simply uses “is.”",
+      "romanization": null,
+      "distractors": [
+        "son",
+        "las",
+        "muchas"
+      ],
+      "translationDistractors": [
+        "are",
+        "deposit",
+        "dollars"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Ask for an amount with cuánto es",
+    "text": "Use `¿Cuánto es... ?` to ask for the amount of a single charge. Put `es` before the charge, as in `¿Cuánto es la renta?` or `¿Cuánto es el depósito?`. Keep `es` singular for these charges, even though the answer may be many pesos.",
+    "examples": [
+      {
+        "sentence": "¿Cuánto es la renta?",
+        "translation": "How much is the rent?"
+      },
+      {
+        "sentence": "¿Cuánto es el depósito?",
+        "translation": "How much is the deposit?"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Choose the word that completes the question.",
+      "template": "¿Cuánto [BLANK] el depósito del departamento?",
+      "answer": "es",
+      "distractors": [
+        "son",
+        "estoy",
+        "somos"
+      ],
+      "feedback": "Use es because el depósito is one charge."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "The landlord has told you the rent. Ask about the deposit.",
+    "scene": "An apartment viewing in Mexico City, with the landlord",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "¿Tiene alguna pregunta sobre el departamento?",
+        "translation": "Do you have any questions about the apartment?"
+      },
+      {
+        "speaker": "you",
+        "text": "¿Cuánto es la renta?",
+        "translation": "How much is the rent?"
+      },
+      {
+        "speaker": "them",
+        "text": "Son ocho mil pesos al mes",
+        "translation": "It's eight thousand pesos a month"
+      }
+    ],
+    "replies": [
+      {
+        "text": "¿Cuánto es el depósito?",
+        "translation": "How much is the deposit?",
+        "isBest": true,
+        "why": "This naturally asks for the deposit amount."
+      },
+      {
+        "text": "¿Cuánto son el depósito?",
+        "translation": "How much are the deposit?",
+        "isBest": false,
+        "why": "El depósito is singular, so it needs es rather than son."
+      },
+      {
+        "text": "El depósito está incluido en la renta",
+        "translation": "The deposit is included in the rent",
+        "isBest": false,
+        "why": "This states that the deposit is included instead of asking how much it is."
+      }
+    ],
+    "explanation": "Use cuánto es before a single charge when asking for its amount."
+  },
+  "writing": {
+    "prompt": "Write a message asking: “How much is the deposit?”",
+    "answers": [
+      "¿Cuánto es el depósito?",
+      "¿De cuánto es el depósito?",
+      "¿Cuánto cuesta el depósito?"
+    ],
+    "keyPoints": [
+      "Ask for the amount of the deposit.",
+      "Use el depósito for “the deposit.”"
+    ]
+  },
+  "summary": [
+    "“¿Cuánto es la renta?” asks how much the rent is.",
+    "“¿Cuánto es el depósito?” asks for the deposit amount.",
+    "“¿Los servicios están incluidos en la renta?” asks whether utilities are included."
+  ]
+}

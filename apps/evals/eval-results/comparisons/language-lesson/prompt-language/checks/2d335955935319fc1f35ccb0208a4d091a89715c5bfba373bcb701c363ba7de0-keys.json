@@ -1,0 +1,12 @@
+{
+  "caseId": "pt-en-b1-interview-opening",
+  "costUsd": 0.026751999999999998,
+  "name": "answer keys",
+  "passed": 10,
+  "problems": [
+    "{\"itemLocator\":\"sentences[1]\",\"keyedAnswer\":\"Obrigado por me receber hoje\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"“Thanks for having me today” can thank the interviewer for hosting the candidate or for inviting them. The distractor “convidar” therefore also yields a defensible translation: “Obrigado por me convidar hoje.”\"}"
+  ],
+  "run": 2,
+  "side": "incumbent",
+  "total": 11
+}

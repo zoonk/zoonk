@@ -1,0 +1,203 @@
+{
+  "words": [
+    {
+      "word": "passage",
+      "translation": "a short piece of written text",
+      "pronunciation": "PASS-ij",
+      "romanization": null,
+      "tip": "Stress the first syllable and keep the 'a' short, as in 'cat'.",
+      "note": null,
+      "distractors": [
+        "message",
+        "page",
+        "section"
+      ]
+    },
+    {
+      "word": "topic",
+      "translation": "the subject that a text is about",
+      "pronunciation": "TAH-pik",
+      "romanization": null,
+      "tip": "Stress the first syllable and pronounce the 'o' as an open 'ah' sound.",
+      "note": null,
+      "distractors": [
+        "title",
+        "chapter",
+        "lesson"
+      ]
+    },
+    {
+      "word": "detail",
+      "translation": "a small piece of specific information",
+      "pronunciation": "di-TEIL",
+      "romanization": null,
+      "tip": "In everyday speech, put the primary stress on the second syllable.",
+      "note": null,
+      "distractors": [
+        "outline",
+        "opinion",
+        "reason"
+      ]
+    },
+    {
+      "word": "main",
+      "translation": "most important",
+      "pronunciation": "MEIN",
+      "romanization": null,
+      "tip": null,
+      "note": "'main' is an adjective that usually comes directly before a noun, like 'main idea'.",
+      "distractors": [
+        "plain",
+        "brief",
+        "minor"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "Read the short passage",
+      "translation": "Read the short passage",
+      "explanation": "This instruction begins with the base verb 'Read' to state the task directly.",
+      "romanization": null,
+      "distractors": [
+        "Reading",
+        "Reads"
+      ],
+      "translationDistractors": [
+        "Reading",
+        "Reads"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "What is the main topic?",
+      "translation": "What is the main topic?",
+      "explanation": "The question word 'What' combines with 'is' and the noun phrase 'the main topic' to ask about the central subject.",
+      "romanization": null,
+      "distractors": [
+        "Where",
+        "topic main"
+      ],
+      "translationDistractors": [
+        "Where",
+        "topic main"
+      ],
+      "speakingPrompt": "Ask your study partner about the text's primary subject"
+    },
+    {
+      "sentence": "Find one key detail",
+      "translation": "Find one key detail",
+      "explanation": "'Find' starts the command, followed by the quantity 'one' and the descriptive phrase 'key detail'.",
+      "romanization": null,
+      "distractors": [
+        "Finding",
+        "Finds"
+      ],
+      "translationDistractors": [
+        "Finding",
+        "Finds"
+      ],
+      "speakingPrompt": "Tell a classmate to locate a specific fact in the text"
+    }
+  ],
+  "tip": {
+    "title": "Using the adjective 'main' before a noun",
+    "text": "Place `the main` directly before a singular noun to highlight the single most important thing in a text. Common combinations include `the main topic` and `the main idea`. When this phrase acts as the subject, pair it with the singular verb `is`.",
+    "examples": [
+      {
+        "sentence": "The main topic is history",
+        "translation": "The main topic is history"
+      },
+      {
+        "sentence": "The main idea is clear",
+        "translation": "The main idea is clear"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Choose the word that describes the central subject.",
+      "template": "The [BLANK] topic is plant growth.",
+      "answer": "main",
+      "distractors": [
+        "mainly",
+        "mains"
+      ],
+      "feedback": "'Main' is the adjective needed to describe the singular noun 'topic'."
+    },
+    {
+      "question": "Complete the sentence with the singular noun for a fact.",
+      "template": "Find one important [BLANK] in the text.",
+      "answer": "detail",
+      "distractors": [
+        "details",
+        "detailed"
+      ],
+      "feedback": "The number 'one' requires the singular noun 'detail'."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "Your study partner asks you to locate a specific fact. What do you say?",
+    "scene": "A study room at a community college",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Look at this short passage.",
+        "translation": "Look at this short passage."
+      },
+      {
+        "speaker": "you",
+        "text": "What is the main topic?",
+        "translation": "What is the main topic?"
+      },
+      {
+        "speaker": "them",
+        "text": "It discusses water conservation.",
+        "translation": "It discusses water conservation."
+      },
+      {
+        "speaker": "them",
+        "text": "Can you find a detail about daily use?",
+        "translation": "Can you find a detail about daily use?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "Yes, one detail mentions shorter showers",
+        "translation": "Yes, one detail mentions shorter showers",
+        "isBest": true,
+        "why": "This correctly names a specific fact about daily water use found in the reading."
+      },
+      {
+        "text": "Yes, the main topic is water",
+        "translation": "Yes, the main topic is water",
+        "isBest": false,
+        "why": "This repeats the general topic instead of giving a specific detail about daily use."
+      },
+      {
+        "text": "No, reading the passage today",
+        "translation": "No, reading the passage today",
+        "isBest": false,
+        "why": "This does not answer the question about finding a specific fact."
+      }
+    ],
+    "explanation": "Look for specific facts and examples when asked for a detail rather than repeating the broad subject."
+  },
+  "writing": {
+    "prompt": "Write a question asking what the primary subject of a text is.",
+    "answers": [
+      "What is the main topic?",
+      "What's the main topic?"
+    ],
+    "keyPoints": [
+      "Begins with 'What is' or 'What's'",
+      "Uses 'the main topic'"
+    ]
+  },
+  "summary": [
+    "'What is the main topic?' asks for the primary subject of a reading passage.",
+    "'Find one key detail' asks someone to spot a single specific piece of information.",
+    "'The main...' identifies the most important point or idea in a passage."
+  ]
+}

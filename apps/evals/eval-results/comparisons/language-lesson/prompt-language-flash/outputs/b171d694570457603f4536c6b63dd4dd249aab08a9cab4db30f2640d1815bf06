@@ -1,0 +1,206 @@
+{
+  "words": [
+    {
+      "word": "rent",
+      "translation": "o aluguel",
+      "pronunciation": "RÉNT",
+      "romanization": null,
+      "tip": "Em inglês, o 'r' no início não tem som de 'h'; dobre a ponta da língua para trás sem encostar no céu da boca.",
+      "note": "Cuidado com o falso amigo: 'rent' significa aluguel, não renda salarial.",
+      "distractors": [
+        "rate",
+        "bill",
+        "cost"
+      ]
+    },
+    {
+      "word": "security deposit",
+      "translation": "a caução",
+      "pronunciation": "si-CUIUR-i-ti di-PÓ-zit",
+      "romanization": null,
+      "tip": null,
+      "note": "Nos Estados Unidos, a caução geralmente equivale ao valor de um mês de aluguel.",
+      "distractors": [
+        "credit score",
+        "bank account",
+        "monthly fee"
+      ]
+    },
+    {
+      "word": "utilities",
+      "translation": "as contas de consumo",
+      "pronunciation": "iu-TI-li-tiz",
+      "romanization": null,
+      "tip": "A primeira sílaba soa como a palavra 'you'; não coloque som de 'i' antes da pronúncia.",
+      "note": "Refere-se aos serviços essenciais da casa, como água, eletricidade e gás.",
+      "distractors": [
+        "facilities",
+        "appliances",
+        "expenses"
+      ]
+    },
+    {
+      "word": "included",
+      "translation": "incluído",
+      "pronunciation": "in-CLU-did",
+      "romanization": null,
+      "tip": "A terminação '-ed' tem som claro de 'did', pronunciada como uma sílaba a mais.",
+      "note": null,
+      "distractors": [
+        "available",
+        "furnished",
+        "located"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "How much is the rent?",
+      "translation": "Quanto é o aluguel?",
+      "explanation": "Usa-se 'How much is' para perguntar o valor de algo no singular, invertendo o verbo com o sujeito.",
+      "romanization": null,
+      "distractors": [
+        "are",
+        "many",
+        "does"
+      ],
+      "translationDistractors": [
+        "custa",
+        "quando",
+        "onde"
+      ],
+      "speakingPrompt": "Pergunte quanto custa o aluguel"
+    },
+    {
+      "sentence": "Are utilities included in the rent?",
+      "translation": "As contas de consumo estão incluídas no aluguel?",
+      "explanation": "Como 'utilities' é um substantivo no plural, a pergunta começa com 'Are'.",
+      "romanization": null,
+      "distractors": [
+        "is",
+        "do",
+        "includes"
+      ],
+      "translationDistractors": [
+        "fora",
+        "pagas",
+        "sozinhas"
+      ],
+      "speakingPrompt": "Pergunte se as contas de consumo estão incluídas no aluguel"
+    },
+    {
+      "sentence": "The security deposit is one month of rent",
+      "translation": "A caução é de um mês de aluguel",
+      "explanation": "Em inglês, 'one month of rent' é a forma comum de expressar o valor equivalente a um mês.",
+      "romanization": null,
+      "distractors": [
+        "for",
+        "at",
+        "are"
+      ],
+      "translationDistractors": [
+        "dois",
+        "contrato",
+        "prazo"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Perguntando o que está incluído com 'included'",
+    "text": "Para saber se despesas ou serviços já fazem parte do preço, use `Is ... included?` para itens no singular ou `Are ... included?` para plurais. Em perguntas, o verbo vem antes do item que você quer saber.",
+    "examples": [
+      {
+        "sentence": "Is water included?",
+        "translation": "A água está incluída?"
+      },
+      {
+        "sentence": "Are utilities included?",
+        "translation": "As contas de consumo estão incluídas?"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Complete a pergunta sobre as contas básicas.",
+      "template": "[BLANK] utilities included in the rent?",
+      "answer": "Are",
+      "distractors": [
+        "Is",
+        "Do",
+        "Have"
+      ],
+      "feedback": "Como 'utilities' está no plural, a pergunta exige a forma 'Are'."
+    },
+    {
+      "question": "Complete a pergunta sobre o valor do aluguel.",
+      "template": "How much [BLANK] the rent?",
+      "answer": "is",
+      "distractors": [
+        "are",
+        "does",
+        "cost"
+      ],
+      "feedback": "'The rent' é tratado como singular, logo usamos 'is'."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "O proprietário perguntou se você tem dúvidas sobre os valores. Pergunte se as contas estão incluídas.",
+    "scene": "Uma ligação telefônica com o proprietário de um imóvel em Chicago",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Hello, thanks for calling about the apartment.",
+        "translation": "Olá, obrigado por ligar sobre o apartamento."
+      },
+      {
+        "speaker": "you",
+        "text": "Hi! How much is the rent?",
+        "translation": "Oi! Quanto é o aluguel?"
+      },
+      {
+        "speaker": "them",
+        "text": "The rent is $1,600 a month. Do you have any questions about the costs?",
+        "translation": "O aluguel é 1.600 dólares por mês. Você tem alguma dúvida sobre os custos?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "Are utilities included in the rent?",
+        "translation": "As contas de consumo estão incluídas no aluguel?",
+        "isBest": true,
+        "why": "Faz a pergunta de forma correta usando 'Are' para concordar com o plural 'utilities'."
+      },
+      {
+        "text": "Is utilities included in the rent?",
+        "translation": "As contas de consumo está incluída no aluguel?",
+        "isBest": false,
+        "why": "'Utilities' é plural, então a pergunta deve começar com 'Are', não 'Is'."
+      },
+      {
+        "text": "How much is the bedroom?",
+        "translation": "Quanto é o quarto?",
+        "isBest": false,
+        "why": "Essa frase pergunta o preço do quarto em vez de esclarecer se as contas estão inclusas no total."
+      }
+    ],
+    "explanation": "Para perguntar se taxas ou serviços estão cobertos pelo aluguel, use 'Are ... included?' com palavras no plural."
+  },
+  "writing": {
+    "prompt": "Escreva em inglês: 'Quanto é a caução?'",
+    "answers": [
+      "How much is the security deposit?",
+      "How much is the deposit?"
+    ],
+    "keyPoints": [
+      "Começa com 'How much is'",
+      "Usa 'the security deposit' ou 'the deposit'"
+    ]
+  },
+  "summary": [
+    "'How much is the rent?' pergunta o valor mensal do aluguel.",
+    "'Are utilities included?' pergunta se contas como água e luz estão inclusas.",
+    "'The security deposit' refere-se ao valor da caução exigida no contrato."
+  ]
+}

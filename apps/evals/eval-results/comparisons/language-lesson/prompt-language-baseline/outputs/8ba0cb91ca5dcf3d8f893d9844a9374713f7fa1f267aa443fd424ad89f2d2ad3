@@ -1,0 +1,225 @@
+{
+  "words": [
+    {
+      "word": "唔該",
+      "translation": "please",
+      "pronunciation": "MM GOY",
+      "romanization": "m4 goi1",
+      "tip": "The first syllable is a humming sound: keep your lips closed without adding a vowel.",
+      "note": "Use this when making a request; it can also mean “thank you” for a service.",
+      "distractors": [
+        "對唔住",
+        "你好",
+        "再見"
+      ]
+    },
+    {
+      "word": "我要",
+      "translation": "I’d like",
+      "pronunciation": "NGOH YEEW",
+      "romanization": "ngo5 jiu3",
+      "tip": "Start the first syllable with the “ng” sound at the end of English “sing,” without adding a vowel before it.",
+      "note": "Use this to say what you want to order.",
+      "distractors": [
+        "我唔要",
+        "你要",
+        "佢要"
+      ]
+    },
+    {
+      "word": "奶茶",
+      "translation": "milk tea",
+      "pronunciation": "NIGH CHAH",
+      "romanization": "naai5 caa4",
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "咖啡",
+        "檸檬茶",
+        "熱水"
+      ]
+    },
+    {
+      "word": "菠蘿包",
+      "translation": "pineapple bun",
+      "pronunciation": "BOH LAW BOW",
+      "romanization": "bo1 lo4 baau1",
+      "tip": "The last syllable rhymes with English “cow.”",
+      "note": "A pineapple bun usually has a patterned crust but no pineapple inside.",
+      "distractors": [
+        "蛋撻",
+        "三文治",
+        "西多士"
+      ]
+    },
+    {
+      "word": "幾多錢",
+      "translation": "how much does it cost",
+      "pronunciation": "GAY DAW CHEEN",
+      "romanization": "gei2 do1 cin2",
+      "tip": "Let the pitch rise on the first and last syllables, while keeping the middle syllable high and level.",
+      "note": null,
+      "distractors": [
+        "幾點鐘",
+        "幾多歲",
+        "喺邊度"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "唔該，我要一杯奶茶同一個菠蘿包",
+      "translation": "I’d like a milk tea and a pineapple bun, please",
+      "explanation": "Use `一杯` for a cup of tea and `一個` for a bun. `唔該` makes the request polite.",
+      "romanization": "m4 goi1, ngo5 jiu3 jat1 bui1 naai5 caa4 tung4 jat1 go3 bo1 lo4 baau1",
+      "distractors": [
+        "隻",
+        "本",
+        "邊個"
+      ],
+      "translationDistractors": [
+        "coffee",
+        "two",
+        "eggs"
+      ],
+      "speakingPrompt": "Order a milk tea and a pineapple bun."
+    },
+    {
+      "sentence": "奶茶同菠蘿包幾多錢？",
+      "translation": "How much are the milk tea and pineapple bun?",
+      "explanation": "Name the items first, then put `幾多錢` after them. Unlike English, you don’t need a separate word for “are.”",
+      "romanization": "naai5 caa4 tung4 bo1 lo4 baau1 gei2 do1 cin2?",
+      "distractors": [
+        "邊個",
+        "幾歲",
+        "佢"
+      ],
+      "translationDistractors": [
+        "coffee",
+        "where",
+        "tomorrow"
+      ],
+      "speakingPrompt": "Ask how much the milk tea and pineapple bun cost."
+    },
+    {
+      "sentence": "唔該，一杯奶茶",
+      "translation": "A milk tea, please",
+      "explanation": "You can give a short order by saying `唔該` followed by the item. `一杯` means one cup.",
+      "romanization": "m4 goi1, jat1 bui1 naai5 caa4",
+      "distractors": [
+        "隻",
+        "本",
+        "邊個"
+      ],
+      "translationDistractors": [
+        "coffee",
+        "two",
+        "bread"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "一個菠蘿包十五蚊",
+      "translation": "A pineapple bun is fifteen dollars",
+      "explanation": "The price follows the item directly, without a separate word for “is.” `蚊` is the everyday Cantonese word for dollars.",
+      "romanization": "jat1 go3 bo1 lo4 baau1 sap6 ng5 man1",
+      "distractors": [
+        "邊個",
+        "隻",
+        "幾歲"
+      ],
+      "translationDistractors": [
+        "tea",
+        "fifty",
+        "cents"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Ask a price with 幾多錢",
+    "text": "Put the item before `幾多錢` to ask how much it costs. `奶茶幾多錢？` means “How much is the milk tea?” `菠蘿包幾多錢？` means “How much is the pineapple bun?” Unlike in English, you don’t need a separate word for “is.”",
+    "examples": [
+      {
+        "sentence": "奶茶幾多錢？",
+        "translation": "How much is the milk tea?"
+      },
+      {
+        "sentence": "菠蘿包幾多錢？",
+        "translation": "How much is the pineapple bun?"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Choose the phrase that asks for the price.",
+      "template": "一個菠蘿包[BLANK]？",
+      "answer": "幾多錢",
+      "distractors": [
+        "幾多歲",
+        "幾點鐘",
+        "幾多杯"
+      ],
+      "feedback": "Put `幾多錢` after the bun to ask its price."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "You’ve ordered. Ask how much the items cost.",
+    "scene": "A cha chaan teng in Hong Kong, speaking with a server",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "你好，想食啲乜嘢？",
+        "translation": "Hello, what would you like?"
+      },
+      {
+        "speaker": "you",
+        "text": "唔該，我要一杯奶茶同一個菠蘿包",
+        "translation": "I’d like a milk tea and a pineapple bun, please."
+      },
+      {
+        "speaker": "them",
+        "text": "好，仲有冇其他問題？",
+        "translation": "OK, do you have any other questions?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "奶茶同菠蘿包幾多錢？",
+        "translation": "How much are the milk tea and pineapple bun?",
+        "isBest": true,
+        "why": "This naturally asks for the price of the items you ordered."
+      },
+      {
+        "text": "奶茶同菠蘿包幾多歲？",
+        "translation": "How old are the milk tea and pineapple bun?",
+        "isBest": false,
+        "why": "`幾多歲` asks about age, not price."
+      },
+      {
+        "text": "幾多錢奶茶同菠蘿包？",
+        "translation": "How much money milk tea and pineapple bun?",
+        "isBest": false,
+        "why": "The items need to come before `幾多錢` in this question."
+      }
+    ],
+    "explanation": "To ask a price, name the item or items first and follow them with `幾多錢`."
+  },
+  "writing": {
+    "prompt": "Write a message asking: “How much are the milk tea and pineapple bun?”",
+    "answers": [
+      "奶茶同菠蘿包幾多錢？",
+      "奶茶同菠蘿包一共幾多錢？",
+      "奶茶同菠蘿包係幾多錢？"
+    ],
+    "keyPoints": [
+      "Name both the milk tea and the pineapple bun.",
+      "Use `幾多錢` to ask the price after naming the items."
+    ]
+  },
+  "summary": [
+    "“唔該，我要一杯奶茶同一個菠蘿包” orders a milk tea and a pineapple bun.",
+    "“奶茶同菠蘿包幾多錢？” asks how much they cost."
+  ]
+}

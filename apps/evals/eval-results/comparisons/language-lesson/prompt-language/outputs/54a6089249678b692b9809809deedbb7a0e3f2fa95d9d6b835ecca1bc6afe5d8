@@ -1,0 +1,234 @@
+{
+  "words": [
+    {
+      "word": "我想要",
+      "translation": "I’d like",
+      "pronunciation": "NGOH-SUHNG-YEEW",
+      "romanization": "ngo5 soeng2 jiu3",
+      "tip": "For the middle syllable, round your lips while saying a vowel like the one in “uh.”",
+      "note": null,
+      "distractors": [
+        "我唔要",
+        "我有",
+        "我見到"
+      ]
+    },
+    {
+      "word": "奶茶",
+      "translation": "milk tea",
+      "pronunciation": "NAI-CHAH",
+      "romanization": "naai5 caa4",
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "檸茶",
+        "咖啡",
+        "凍水"
+      ]
+    },
+    {
+      "word": "菠蘿包",
+      "translation": "a pineapple bun",
+      "pronunciation": "BOH-loh-bow",
+      "romanization": "bo1 lo4 baau1",
+      "tip": null,
+      "note": "A pineapple bun is named for its patterned topping; it usually contains no pineapple.",
+      "distractors": [
+        "蛋撻",
+        "三文治",
+        "公仔麵"
+      ]
+    },
+    {
+      "word": "幾多錢",
+      "translation": "how much",
+      "pronunciation": "GAY-doh-tseen",
+      "romanization": "gei2 do1 cin2",
+      "tip": "Start the last syllable with a quick “ts” sound, keeping the t and s together.",
+      "note": null,
+      "distractors": [
+        "幾多個",
+        "幾點",
+        "幾耐"
+      ]
+    },
+    {
+      "word": "唔該",
+      "translation": "please",
+      "pronunciation": "MM-GOY",
+      "romanization": "m4 goi1",
+      "tip": "Say the first syllable with your lips closed, humming without adding a vowel.",
+      "note": "You can also use this phrase to thank someone for a service.",
+      "distractors": [
+        "對唔住",
+        "再見",
+        "早晨"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "唔該，我想要一杯奶茶",
+      "translation": "A milk tea, please",
+      "explanation": "Start with `唔該` to make the request polite. `一杯` means “one cup” and goes before the drink.",
+      "romanization": "m4 goi1, ngo5 soeng2 jiu3 jat1 bui1 naai5 caa4",
+      "distractors": [
+        "書",
+        "醫院",
+        "火車"
+      ],
+      "translationDistractors": [
+        "coffee",
+        "bread",
+        "train"
+      ],
+      "speakingPrompt": "Order a milk tea politely."
+    },
+    {
+      "sentence": "我想要一個菠蘿包",
+      "translation": "I’d like a pineapple bun",
+      "explanation": "`一個` goes before the bun, where English uses “a.” Use `個` here rather than `杯`, which is for cups.",
+      "romanization": "ngo5 soeng2 jiu3 jat1 go3 bo1 lo4 baau1",
+      "distractors": [
+        "杯",
+        "醫院",
+        "火車"
+      ],
+      "translationDistractors": [
+        "tea",
+        "cup",
+        "train"
+      ],
+      "speakingPrompt": "Order a pineapple bun."
+    },
+    {
+      "sentence": "唔該，一共幾多錢？",
+      "translation": "How much is it altogether, please?",
+      "explanation": "`一共` means “altogether.” Cantonese puts it before `幾多錢`, without adding a word for “is.”",
+      "romanization": "m4 goi1, jat1 gung6 gei2 do1 cin2?",
+      "distractors": [
+        "書",
+        "火車",
+        "醫院"
+      ],
+      "translationDistractors": [
+        "where",
+        "coffee",
+        "train"
+      ],
+      "speakingPrompt": "Ask how much the order costs altogether."
+    },
+    {
+      "sentence": "奶茶二十蚊",
+      "translation": "The milk tea is twenty dollars",
+      "explanation": "The price follows `奶茶` directly; you don’t need a separate word for “is.” `蚊` is a colloquial word for dollars in Hong Kong.",
+      "romanization": "naai5 caa4 ji6 sap6 man1",
+      "distractors": [
+        "醫院",
+        "火車",
+        "書"
+      ],
+      "translationDistractors": [
+        "coffee",
+        "ten",
+        "train"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Ask for what you’d like",
+    "text": "Start an order with `我想要`, then say the item. Put `一杯` before a cup of milk tea and `一個` before a pineapple bun. Unlike English “a,” these phrases include a word that matches the kind of item.",
+    "examples": [
+      {
+        "sentence": "我想要一杯奶茶",
+        "translation": "I’d like a milk tea"
+      },
+      {
+        "sentence": "我想要一個菠蘿包",
+        "translation": "I’d like a pineapple bun"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Choose the phrase for “I’d like.”",
+      "template": "唔該，[BLANK]一杯凍奶茶",
+      "answer": "我想要",
+      "distractors": [
+        "要想我",
+        "我幾多錢",
+        "幾多錢我"
+      ],
+      "feedback": "Use `我想要` before the item to say what you’d like."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "The server asks what else you’d like to eat. What do you say?",
+    "scene": "A cha chaan teng in Hong Kong, with a server",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "想飲啲乜嘢？",
+        "translation": "What would you like to drink?"
+      },
+      {
+        "speaker": "you",
+        "text": "唔該，我想要一杯奶茶",
+        "translation": "A milk tea, please."
+      },
+      {
+        "speaker": "them",
+        "text": "仲想食啲乜嘢？",
+        "translation": "What else would you like to eat?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "我想要一個菠蘿包，唔該",
+        "translation": "I’d like a pineapple bun, please.",
+        "isBest": true,
+        "why": "This politely orders something to eat."
+      },
+      {
+        "text": "我想要一杯菠蘿包",
+        "translation": "I’d like a cup of pineapple bun.",
+        "isBest": false,
+        "why": "`杯` is for a cup, not a bun."
+      },
+      {
+        "text": "我想要一杯奶茶",
+        "translation": "I’d like a milk tea.",
+        "isBest": false,
+        "why": "The server asked what you’d like to eat, not drink."
+      },
+      {
+        "text": "我想要一個幾多錢",
+        "translation": "I’d like one how much.",
+        "isBest": false,
+        "why": "`幾多錢` asks a price; it isn’t something you can order."
+      }
+    ],
+    "explanation": "Use `一個` before a pineapple bun and `一杯` before a cup of milk tea."
+  },
+  "writing": {
+    "prompt": "Write a message asking: “How much is it altogether, please?”",
+    "answers": [
+      "唔該，一共幾多錢？",
+      "請問一共幾多錢？",
+      "一共幾多錢，唔該？",
+      "唔該，總共幾多錢？"
+    ],
+    "keyPoints": [
+      "Use a polite phrase such as `唔該` or `請問`.",
+      "Ask for the total with `一共` or `總共` and `幾多錢`."
+    ]
+  },
+  "summary": [
+    "“我想要一杯奶茶” orders a milk tea.",
+    "“我想要一個菠蘿包” orders a pineapple bun.",
+    "“一共幾多錢？” asks how much the order costs altogether.",
+    "“唔該” makes a request polite and can also thank someone for a service."
+  ]
+}

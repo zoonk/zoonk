@@ -1,0 +1,154 @@
+{
+  "words": [
+    {
+      "word": "plant",
+      "translation": "a living thing that usually has roots and leaves",
+      "pronunciation": "PLANT",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "animal",
+        "rock",
+        "cloud"
+      ]
+    },
+    {
+      "word": "sunlight",
+      "translation": "light that comes from the sun",
+      "pronunciation": "SUN-lyt",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "moonlight",
+        "starlight",
+        "lamplight"
+      ]
+    },
+    {
+      "word": "grow",
+      "translation": "to become bigger over time",
+      "pronunciation": "GROH",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "shrink",
+        "rest",
+        "fall"
+      ]
+    },
+    {
+      "word": "soil",
+      "translation": "the material on the ground in which many plants grow",
+      "pronunciation": "SOYL",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "water",
+        "air",
+        "rock"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "Plants need sunlight and water",
+      "translation": "Plants need sunlight and water",
+      "explanation": "The words after 'need' tell you what plants require. 'And' joins two things they need.",
+      "romanization": null,
+      "distractors": [
+        "needs",
+        "needing",
+        "but"
+      ],
+      "translationDistractors": [
+        "needs",
+        "needing",
+        "but"
+      ],
+      "speakingPrompt": "Read aloud what plants need."
+    },
+    {
+      "sentence": "Plants grow in soil",
+      "translation": "Plants grow in soil",
+      "explanation": "'In soil' tells you where plants grow.",
+      "romanization": null,
+      "distractors": [
+        "grows",
+        "are",
+        "to"
+      ],
+      "translationDistractors": [
+        "grows",
+        "are",
+        "to"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "Sunlight helps plants grow",
+      "translation": "Sunlight helps plants grow",
+      "explanation": "'Sunlight' is the thing that helps. After 'helps plants,' use 'grow' without 'to'.",
+      "romanization": null,
+      "distractors": [
+        "help",
+        "grows",
+        "are"
+      ],
+      "translationDistractors": [
+        "help",
+        "grows",
+        "are"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Use nearby words to find meaning",
+    "text": "Nearby words can help you understand a word in a passage. In `Plants need sunlight and water`, `plants`, `need`, and `water` help you understand what the sentence is about. Read the whole sentence instead of looking at just one word.",
+    "examples": [
+      {
+        "sentence": "Plants need sunlight and water",
+        "translation": "Plants need sunlight and water"
+      },
+      {
+        "sentence": "Plants grow in soil",
+        "translation": "Plants grow in soil"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Choose the word that fits the sentence.",
+      "template": "Plants need [BLANK] from the sun.",
+      "answer": "sunlight",
+      "distractors": [
+        "soil",
+        "leaves",
+        "shoes"
+      ],
+      "feedback": "'From the sun' tells you that 'sunlight' fits."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": null,
+  "writing": {
+    "prompt": "Write one sentence saying that water is necessary for plants to get bigger.",
+    "answers": [
+      "Plants need water to grow.",
+      "Plants need water for growth."
+    ],
+    "keyPoints": [
+      "Says that plants need water",
+      "Connects water with plants getting bigger"
+    ]
+  },
+  "summary": [
+    "'Plants need sunlight and water' tells you two things plants need.",
+    "'Plants grow in soil' tells you where plants grow.",
+    "Nearby words can help you understand a short passage."
+  ]
+}

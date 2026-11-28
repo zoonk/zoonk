@@ -1,0 +1,198 @@
+{
+  "words": [
+    {
+      "word": "passage",
+      "translation": "a short piece of writing from a book or article",
+      "pronunciation": "PASS-ij",
+      "romanization": null,
+      "tip": "Stress the first syllable and say the second syllable with a short sound like 'ij'.",
+      "note": null,
+      "distractors": [
+        "message",
+        "page",
+        "paper"
+      ]
+    },
+    {
+      "word": "topic",
+      "translation": "the subject that someone talks or writes about",
+      "pronunciation": "TAH-pik",
+      "romanization": null,
+      "tip": "Start with an open 'ah' sound in the first syllable, not an 'oh' sound.",
+      "note": null,
+      "distractors": [
+        "title",
+        "token",
+        "type"
+      ]
+    },
+    {
+      "word": "main",
+      "translation": "most important or central",
+      "pronunciation": "MEIN",
+      "romanization": null,
+      "tip": null,
+      "note": "Use 'main' before a noun, as in 'main idea' or 'main topic'.",
+      "distractors": [
+        "mean",
+        "mine",
+        "many"
+      ]
+    },
+    {
+      "word": "fact",
+      "translation": "a piece of information that is true",
+      "pronunciation": "FAKT",
+      "romanization": null,
+      "tip": "Pronounce both the 'k' and 't' sounds clearly at the end of the word.",
+      "note": null,
+      "distractors": [
+        "face",
+        "fast",
+        "fault"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "Read the short passage",
+      "translation": "Read the short passage",
+      "explanation": "This sentence starts directly with the base verb 'read' to give a clear instruction.",
+      "romanization": null,
+      "distractors": [
+        "reading",
+        "reads"
+      ],
+      "translationDistractors": [
+        "reading",
+        "reads"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "What is the main topic?",
+      "translation": "What is the main topic?",
+      "explanation": "Questions asking about a singular noun use 'What is' followed by the noun phrase.",
+      "romanization": null,
+      "distractors": [
+        "are",
+        "which"
+      ],
+      "translationDistractors": [
+        "are",
+        "which"
+      ],
+      "speakingPrompt": "Ask your study partner to name the central subject of the text."
+    },
+    {
+      "sentence": "Find one true fact",
+      "translation": "Find one true fact",
+      "explanation": "The adjective 'true' comes directly before the noun 'fact' to describe it.",
+      "romanization": null,
+      "distractors": [
+        "truly",
+        "finding"
+      ],
+      "translationDistractors": [
+        "truly",
+        "finding"
+      ],
+      "speakingPrompt": "Tell a classmate to locate a single true detail in the text."
+    }
+  ],
+  "tip": {
+    "title": "Adjectives before nouns in descriptions",
+    "text": "In English, descriptive words like `main` or `short` go directly in front of the noun they describe. For example, say `main topic` rather than `topic main`. Placing the describing word after the noun is a common mistake to avoid.",
+    "examples": [
+      {
+        "sentence": "This is the main topic",
+        "translation": "This is the main topic"
+      },
+      {
+        "sentence": "Read the short passage",
+        "translation": "Read the short passage"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Choose the correct word to complete the sentence.",
+      "template": "The [BLANK] topic is easy to find.",
+      "answer": "main",
+      "distractors": [
+        "mainly",
+        "mains"
+      ],
+      "feedback": "Use the adjective 'main' right before the noun 'topic'."
+    },
+    {
+      "question": "Choose the correct word to complete the sentence.",
+      "template": "Liam reads a [BLANK] passage in class.",
+      "answer": "short",
+      "distractors": [
+        "shortly",
+        "shorts"
+      ],
+      "feedback": "Use the basic adjective 'short' to describe the noun 'passage'."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "Your study partner asks about the subject of the text. What do you say?",
+    "scene": "A library study room at a college",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Let's read this short passage together.",
+        "translation": "Let us read this brief text together."
+      },
+      {
+        "speaker": "you",
+        "text": "What is the main topic?",
+        "translation": "What is the central subject?"
+      },
+      {
+        "speaker": "them",
+        "text": "It explains why plants need sunlight.",
+        "translation": "It gives reasons why plants require light from the sun."
+      }
+    ],
+    "replies": [
+      {
+        "text": "Yes, that is the main fact.",
+        "translation": "Yes, that is the central true detail.",
+        "isBest": true,
+        "why": "This response confirms the partner's point using the correct word order 'main fact'."
+      },
+      {
+        "text": "Yes, that is the fact main.",
+        "translation": "Yes, that is the true detail central.",
+        "isBest": false,
+        "why": "The adjective 'main' must go before the noun 'fact', not after it."
+      },
+      {
+        "text": "Yes, read the passage.",
+        "translation": "Yes, look at the text.",
+        "isBest": false,
+        "why": "This repeats an instruction instead of responding to what the partner just said."
+      }
+    ],
+    "explanation": "Always place describing words like 'main' right before the noun they modify."
+  },
+  "writing": {
+    "prompt": "Write a question asking what the central subject of a text is.",
+    "answers": [
+      "What is the main topic?",
+      "What is the main topic of the passage?"
+    ],
+    "keyPoints": [
+      "Starts with 'What is'",
+      "Places 'main' before 'topic'"
+    ]
+  },
+  "summary": [
+    "You can now identify key reading terms like 'passage', 'topic', and 'fact'.",
+    "You can ask 'What is the main topic?' to identify the central subject of a text.",
+    "You can place adjectives before nouns correctly, as in 'main fact' and 'short passage'."
+  ]
+}

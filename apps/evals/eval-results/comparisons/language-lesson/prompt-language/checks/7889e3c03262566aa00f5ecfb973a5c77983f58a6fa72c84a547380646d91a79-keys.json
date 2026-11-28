@@ -1,0 +1,12 @@
+{
+  "caseId": "en-es-a2-renting",
+  "costUsd": 0.023903999999999998,
+  "name": "answer keys",
+  "passed": 10,
+  "problems": [
+    "{\"itemLocator\":\"words[1]\",\"keyedAnswer\":\"Stress the second syllable of depósito, not the third as in English “deposit.”\",\"kind\":\"factualError\",\"workedAnswer\":\"Both Spanish de-PÓ-si-to and US English de-POS-it stress the second syllable. The Spanish guidance is correct, but the English comparison is not.\"}"
+  ],
+  "run": 2,
+  "side": "challenger",
+  "total": 11
+}

@@ -1,0 +1,13 @@
+{
+  "caseId": "en-es-a2-renting",
+  "costUsd": 0.03612,
+  "name": "answer keys",
+  "passed": 10,
+  "problems": [
+    "{\"itemLocator\":\"words[2]\",\"keyedAnswer\":\"LOHS sehr-VEE-syohs\",\"kind\":\"factualError\",\"workedAnswer\":\"“VEE” cues an English /v/. In Mexican Spanish, the v in servicios represents the same phoneme as b and is normally pronounced here by bringing the lips close together, without touching the upper teeth to the lower lip.\"}",
+    "{\"itemLocator\":\"words[4]\",\"keyedAnswer\":\"Say the two vowel sounds in the middle of incluidos separately: kloo-EE.\",\"kind\":\"factualError\",\"workedAnswer\":\"The usual pronunciation is in-clui-dos: ui forms a diphthong in the stressed syllable, roughly “kwee.” The tip incorrectly presents a separate “kloo-EE” pronunciation as required.\"}"
+  ],
+  "run": 1,
+  "side": "incumbent",
+  "total": 12
+}

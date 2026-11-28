@@ -1,0 +1,13 @@
+{
+  "caseId": "pt-en-a1-th-sounds",
+  "costUsd": 0.027128,
+  "name": "answer keys",
+  "passed": 9,
+  "problems": [
+    "{\"itemLocator\":\"words[0]\",\"keyedAnswer\":\"DHÂ BÉTH-rum\",\"kind\":\"wrongKey\",\"workedAnswer\":\"Use “THÂ BÉTH-rum” to preserve “th” in both words. The tip correctly explains the voiceless /θ/ in “bathroom,” but it should also explain the /ð/ in “the”: keep the tongue tip between the teeth and let air pass, this time with the voice vibrating.\"}",
+    "{\"itemLocator\":\"words[1]\",\"keyedAnswer\":\"DHÂ BÉD-rum\",\"kind\":\"wrongKey\",\"workedAnswer\":\"Use “THÂ BÉD-rum” to preserve “th” in “the.” The missing tip should explain its voiced /ð/: place the tongue tip between the teeth and let air pass while the voice vibrates.\"}"
+  ],
+  "run": 2,
+  "side": "incumbent",
+  "total": 11
+}

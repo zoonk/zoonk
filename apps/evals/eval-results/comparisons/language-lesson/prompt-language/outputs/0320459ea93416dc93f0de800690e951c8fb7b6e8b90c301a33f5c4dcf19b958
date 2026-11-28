@@ -1,0 +1,230 @@
+{
+  "words": [
+    {
+      "word": "Thanks for having me",
+      "translation": "Obrigado por me receber",
+      "pronunciation": "THÉNKS for RRÉ-ving MI",
+      "romanization": null,
+      "tip": "Em 'thanks', coloque a ponta da língua entre os dentes e solte o ar para fazer o som de 'th', sem trocá-lo por 'f'.",
+      "note": "Use essa frase para agradecer por ter sido convidado para a entrevista.",
+      "distractors": [
+        "Thanks for letting me know",
+        "Sorry to keep you waiting",
+        "Thanks for your patience"
+      ]
+    },
+    {
+      "word": "I appreciate the opportunity",
+      "translation": "Agradeço a oportunidade",
+      "pronunciation": "AI a-PRI-shi-eit dha a-per-TU-na-ti",
+      "romanization": null,
+      "tip": "Em 'the', encoste levemente a língua entre os dentes e faça a voz vibrar, sem trocar o som por 'd'.",
+      "note": null,
+      "distractors": [
+        "I missed the opportunity",
+        "I declined the offer",
+        "I received the invitation"
+      ]
+    },
+    {
+      "word": "look forward to",
+      "translation": "aguardar com expectativa",
+      "pronunciation": "LUK FÓR-uard TU",
+      "romanization": null,
+      "tip": null,
+      "note": "Essa expressão é usada para falar de algo futuro que você espera com entusiasmo.",
+      "distractors": [
+        "look back on",
+        "put up with",
+        "give up on"
+      ]
+    },
+    {
+      "word": "a brief introduction",
+      "translation": "uma breve apresentação",
+      "pronunciation": "a BRIF in-tro-DAK-shan",
+      "romanization": null,
+      "tip": "Em 'brief', passe do 'b' para o 'r' sem acrescentar uma vogal entre eles.",
+      "note": null,
+      "distractors": [
+        "a detailed explanation",
+        "a final decision",
+        "a written recommendation"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "Thanks for having me today",
+      "translation": "Obrigado por me receber hoje",
+      "explanation": "Em inglês, 'having me' se refere a receber você como convidado; não precisa ser traduzido palavra por palavra.",
+      "romanization": null,
+      "distractors": [
+        "has",
+        "were",
+        "their"
+      ],
+      "translationDistractors": [
+        "amanhã",
+        "convidar",
+        "nós"
+      ],
+      "speakingPrompt": "Agradeça ao entrevistador por receber você"
+    },
+    {
+      "sentence": "I appreciate the opportunity to introduce myself",
+      "translation": "Agradeço a oportunidade de me apresentar",
+      "explanation": "Depois de 'the opportunity', use 'to introduce' para dizer qual é a oportunidade. Em português, usamos 'de me apresentar'.",
+      "romanization": null,
+      "distractors": [
+        "introduces",
+        "yourself",
+        "were"
+      ],
+      "translationDistractors": [
+        "apresentarão",
+        "você",
+        "vaga"
+      ],
+      "speakingPrompt": "Diga que agradece a oportunidade de se apresentar"
+    },
+    {
+      "sentence": "I look forward to learning more about the role",
+      "translation": "Estou ansioso para saber mais sobre a vaga",
+      "explanation": "Depois de 'look forward to', use 'learning', com '-ing'. Aqui, 'the role' se refere à vaga.",
+      "romanization": null,
+      "distractors": [
+        "learns",
+        "learned",
+        "yourself"
+      ],
+      "translationDistractors": [
+        "ontem",
+        "menos",
+        "empresa"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "Could I start with a brief introduction?",
+      "translation": "Posso começar com uma breve apresentação?",
+      "explanation": "Use 'Could I' para fazer um pedido educado. A expressão 'start with' indica por onde você quer começar.",
+      "romanization": null,
+      "distractors": [
+        "starting",
+        "starts",
+        "were"
+      ],
+      "translationDistractors": [
+        "terminar",
+        "longa",
+        "eles"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Fale de expectativas com “look forward to”",
+    "text": "Use `look forward to` para dizer que espera algo com entusiasmo. Depois de `to`, use um substantivo ou um verbo terminado em `-ing`, como em `look forward to learning`. Não use o verbo na forma básica, como em `look forward to learn`.",
+    "examples": [
+      {
+        "sentence": "I look forward to learning more about the role",
+        "translation": "Estou ansioso para saber mais sobre a vaga"
+      },
+      {
+        "sentence": "I look forward to meeting the team",
+        "translation": "Estou ansioso para conhecer a equipe"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Complete a frase sobre sua expectativa para a entrevista.",
+      "template": "I look forward to [BLANK] more about the role.",
+      "answer": "learning",
+      "distractors": [
+        "learn",
+        "learned",
+        "learns"
+      ],
+      "feedback": "Depois de 'look forward to', use o verbo com '-ing': 'learning'."
+    },
+    {
+      "question": "Complete a frase sobre conhecer a equipe.",
+      "template": "I look forward to [BLANK] the team.",
+      "answer": "meeting",
+      "distractors": [
+        "meet",
+        "met",
+        "meets"
+      ],
+      "feedback": "A expressão 'look forward to' pede 'meeting', e não a forma básica 'meet'."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "O entrevistador pergunta se você gostaria de se apresentar. O que você responde?",
+    "scene": "Início de uma entrevista de emprego, com o entrevistador",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Welcome. How would you like to begin?",
+        "translation": "Boas-vindas. Como você gostaria de começar?"
+      },
+      {
+        "speaker": "you",
+        "text": "Thanks for having me today.",
+        "translation": "Obrigado por me receber hoje."
+      },
+      {
+        "speaker": "them",
+        "text": "Would you like to introduce yourself?",
+        "translation": "Você gostaria de se apresentar?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "Yes, I appreciate the opportunity to introduce myself.",
+        "translation": "Sim, agradeço a oportunidade de me apresentar.",
+        "isBest": true,
+        "why": "A resposta aceita o convite de forma educada e agradece a oportunidade."
+      },
+      {
+        "text": "Yes, I look forward to introduce myself.",
+        "translation": "Sim, estou ansioso para me apresentar.",
+        "isBest": false,
+        "why": "Depois de 'look forward to', use 'introducing', não 'introduce'."
+      },
+      {
+        "text": "Yes, I appreciate to introduce myself.",
+        "translation": "Sim, agradeço por me apresentar.",
+        "isBest": false,
+        "why": "'Appreciate' não é seguido diretamente de 'to introduce' nessa construção."
+      },
+      {
+        "text": "Yes, I look forward introduce myself.",
+        "translation": "Sim, estou ansioso para me apresentar.",
+        "isBest": false,
+        "why": "Falta 'to' depois de 'look forward', e o verbo seguinte deve terminar em '-ing'."
+      }
+    ],
+    "explanation": "Para falar de uma expectativa futura, use 'look forward to' seguido de um substantivo ou de um verbo com '-ing'."
+  },
+  "writing": {
+    "prompt": "Escreva uma frase para iniciar a entrevista: “Agradeço a oportunidade de me apresentar.”",
+    "answers": [
+      "I appreciate the opportunity to introduce myself.",
+      "I'm grateful for the opportunity to introduce myself.",
+      "I am grateful for the opportunity to introduce myself."
+    ],
+    "keyPoints": [
+      "Agradeça a oportunidade.",
+      "Use 'to introduce myself' para dizer que vai se apresentar."
+    ]
+  },
+  "summary": [
+    "“Thanks for having me” agradece por receberem você.",
+    "“I appreciate the opportunity to introduce myself” abre sua apresentação com educação.",
+    "“I look forward to learning more about the role” expressa interesse pela vaga."
+  ]
+}

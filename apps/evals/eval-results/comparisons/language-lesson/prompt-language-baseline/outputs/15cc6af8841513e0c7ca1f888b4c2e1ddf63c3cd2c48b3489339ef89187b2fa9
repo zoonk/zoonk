@@ -1,0 +1,233 @@
+{
+  "words": [
+    {
+      "word": "唔該",
+      "translation": "please",
+      "pronunciation": "m-GOY",
+      "romanization": "m4 goi1",
+      "tip": "Start with a humming “m” sound, without adding a vowel.",
+      "note": "唔該 can also mean “thank you” for a service.",
+      "distractors": [
+        "對唔住",
+        "你好",
+        "再見"
+      ]
+    },
+    {
+      "word": "我要",
+      "translation": "I would like",
+      "pronunciation": "ngaw-YEEW",
+      "romanization": "ngo5 jiu3",
+      "tip": "Start with the “ng” sound at the end of “sing,” without adding a vowel before it.",
+      "note": null,
+      "distractors": [
+        "你要",
+        "我有",
+        "我識"
+      ]
+    },
+    {
+      "word": "奶茶",
+      "translation": "milk tea",
+      "pronunciation": "nye-TSAH",
+      "romanization": "naai5 caa4",
+      "tip": "Start the second syllable with a “ts” sound and a puff of air.",
+      "note": null,
+      "distractors": [
+        "咖啡",
+        "凍檸茶",
+        "清茶"
+      ]
+    },
+    {
+      "word": "菠蘿包",
+      "translation": "pineapple bun",
+      "pronunciation": "boh-law-BOW",
+      "romanization": "bo1 lo4 baau1",
+      "tip": "The last syllable rhymes with “cow.”",
+      "note": "A pineapple bun gets its name from its patterned top; it usually contains no pineapple.",
+      "distractors": [
+        "蛋撻",
+        "三文治",
+        "叉燒包"
+      ]
+    },
+    {
+      "word": "幾多錢",
+      "translation": "how much",
+      "pronunciation": "gay-daw-TSEEN",
+      "romanization": "gei2 do1 cin2",
+      "tip": "Start the last syllable with a “ts” sound and a puff of air.",
+      "note": "Use this phrase to ask about a price.",
+      "distractors": [
+        "幾多歲",
+        "幾時",
+        "邊度"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "唔該，我要一杯奶茶",
+      "translation": "A milk tea, please",
+      "explanation": "我要 means “I would like.” 一杯 means “one cup” and comes before 奶茶.",
+      "romanization": "m4 goi1, ngo5 jiu3 jat1 bui1 naai5 caa4",
+      "distractors": [
+        "你",
+        "張",
+        "佢"
+      ],
+      "translationDistractors": [
+        "coffee",
+        "bun",
+        "you"
+      ],
+      "speakingPrompt": "Order a milk tea"
+    },
+    {
+      "sentence": "唔該，我要一個菠蘿包",
+      "translation": "A pineapple bun, please",
+      "explanation": "Use 一個 before 菠蘿包 to order one bun. Unlike English “a,” 個 is a counting word used with certain nouns.",
+      "romanization": "m4 goi1, ngo5 jiu3 jat1 go3 bo1 lo4 baau1",
+      "distractors": [
+        "杯",
+        "佢",
+        "你"
+      ],
+      "translationDistractors": [
+        "tea",
+        "two",
+        "you"
+      ],
+      "speakingPrompt": "Order a pineapple bun"
+    },
+    {
+      "sentence": "唔該，一共幾多錢？",
+      "translation": "How much is it altogether, please?",
+      "explanation": "一共 means “altogether.” Put 幾多錢 after it to ask for the total price.",
+      "romanization": "m4 goi1, jat1 gung6 gei2 do1 cin2?",
+      "distractors": [
+        "邊個",
+        "幾時",
+        "歲"
+      ],
+      "translationDistractors": [
+        "where",
+        "who",
+        "old"
+      ],
+      "speakingPrompt": "Ask how much your order costs altogether"
+    },
+    {
+      "sentence": "一共五十蚊",
+      "translation": "Fifty dollars altogether",
+      "explanation": "一共 gives the total, and 蚊 is the everyday Cantonese word for dollars.",
+      "romanization": "jat1 gung6 ng5 sap6 man1",
+      "distractors": [
+        "歲",
+        "杯",
+        "你"
+      ],
+      "translationDistractors": [
+        "cups",
+        "years",
+        "you"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Counting drinks and buns",
+    "text": "In Cantonese, put a counting word between “one” and the item. For a drink, say `我要一杯奶茶` (I would like a cup of milk tea). For a bun, say `我要一個菠蘿包` (I would like a pineapple bun). Unlike English, you need the counting word even when ordering just one.",
+    "examples": [
+      {
+        "sentence": "我要一杯奶茶",
+        "translation": "I would like a cup of milk tea"
+      },
+      {
+        "sentence": "我要一個菠蘿包",
+        "translation": "I would like a pineapple bun"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Choose the counting word for a cup of milk tea.",
+      "template": "我要一[BLANK]奶茶",
+      "answer": "杯",
+      "distractors": [
+        "張",
+        "條",
+        "隻"
+      ],
+      "feedback": "Use 杯 to count cups of a drink."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "You have ordered. Ask for the total price.",
+    "scene": "A cha chaan teng in Hong Kong, speaking to a server",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "你好，想食啲乜嘢？",
+        "translation": "Hello, what would you like to eat?"
+      },
+      {
+        "speaker": "you",
+        "text": "唔該，我要一杯奶茶同一個菠蘿包",
+        "translation": "A milk tea and a pineapple bun, please"
+      },
+      {
+        "speaker": "them",
+        "text": "仲想問啲乜？",
+        "translation": "What else would you like to ask?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "唔該，一共幾多錢？",
+        "translation": "How much is it altogether, please?",
+        "isBest": true,
+        "why": "This politely asks for the total price."
+      },
+      {
+        "text": "一共幾多歲？",
+        "translation": "How old is it altogether?",
+        "isBest": false,
+        "why": "幾多歲 asks about age, not price."
+      },
+      {
+        "text": "我要一張奶茶",
+        "translation": "I would like one milk tea.",
+        "isBest": false,
+        "why": "張 is the wrong counting word for a cup of milk tea, and this does not ask the price."
+      },
+      {
+        "text": "奶茶係邊個？",
+        "translation": "Who is the milk tea?",
+        "isBest": false,
+        "why": "邊個 asks who someone is, not how much something costs."
+      }
+    ],
+    "explanation": "Use 幾多錢 when asking about a price."
+  },
+  "writing": {
+    "prompt": "Write a message asking: “How much is a milk tea?”",
+    "answers": [
+      "一杯奶茶幾多錢？",
+      "奶茶幾多錢？",
+      "唔該，一杯奶茶幾多錢？",
+      "唔該，奶茶幾多錢？"
+    ],
+    "keyPoints": [
+      "Use 奶茶 for milk tea and 幾多錢 to ask the price.",
+      "If you specify one cup, use 一杯 before 奶茶."
+    ]
+  },
+  "summary": [
+    "“我要一杯奶茶” orders a milk tea.",
+    "“我要一個菠蘿包” orders a pineapple bun.",
+    "“一共幾多錢？” asks for the total price."
+  ]
+}
