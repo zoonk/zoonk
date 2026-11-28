@@ -15,11 +15,16 @@ function useAreaQuestion() {
 
   return function areaQuestion(operation: PlanOperation): string | null {
     if (operation.kind === "addSkills") {
-      return t("Add {topics} to your plan?", {
-        topics: shortList(
-          operation.skills.map((skill) => skill.name),
-          "topics",
-        ),
+      return t({
+        description:
+          "Asks whether to add topics to the learner's plan. {topics} lists their names, which are often actions themselves, such as “Memorize An-Nahl”, so they stay after the colon rather than inside the sentence.",
+        message: "Add to your plan: {topics}?",
+        values: {
+          topics: shortList(
+            operation.skills.map((skill) => skill.name),
+            "topics",
+          ),
+        },
       });
     }
 

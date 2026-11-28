@@ -17,7 +17,7 @@
   "plan_archive_goal": "2735c94e20ade6c1271a4b6df1629a872b16751d288b4ce445a3336312f63939",
   "plan_archive_goal_short": "76094bfa6e38e42854b00e7cbb60b2ec40c3cb7e43ea8fd3938bc81ebed29883",
   "plan_archive_title": "28191ae1ab35ec926a4ff695ab669acbe8b7e3e10207964e4aa765d0ba564cb0",
-  "plan_ask_add_topics": "ca58c09207397c97d93b97de26cd0d77d5d2162e51c62e8cffb641acd889d732",
+  "plan_ask_add_topics": "953da9b2cf4ee76c6d21b2c64b2d3a9a7f5f4260eb88d29dc8f49a1bab034e1b",
   "plan_ask_aim": "cb1a634d6b8d992db6c103d94ee4486cebdf3ddcae304f0a913b5686bed738ee",
   "plan_ask_change": "6ae8be64f3594efdc5d489df03a571bda29b40195e1f39c88f5eb81737e2a332",
   "plan_ask_daily_time": "93ea33fb85ecd8006806264b18d4a1cfd4d3f098b0eb960cdd17943829ec52bf",
@@ -1302,7 +1302,8 @@
     <string name="plan_change_areas_from_basics">In %1$s beginnst du mit den Grundlagen.</string>
     <string name="plan_change_exam_date">Prüfungstermin: %1$s.</string>
     <string name="plan_change_end_date">Endtermin: %1$s.</string>
-    <string name="plan_ask_add_topics">%1$s in deinen Plan aufnehmen?</string>
+    <!-- Asks whether to add topics to the learner's plan. {topics} lists their names, which are often actions themselves, such as “Memorize An-Nahl”, so they stay after the colon rather than inside the sentence. -->
+    <string name="plan_ask_add_topics">Zu deinem Plan hinzufügen: %1$s?</string>
     <string name="plan_ask_focus">Schwerpunkt auf %1$s legen?</string>
     <string name="plan_ask_remove_focus">Schwerpunkt aufheben?</string>
     <string name="plan_ask_less_time">Weniger Zeit für %1$s?</string>

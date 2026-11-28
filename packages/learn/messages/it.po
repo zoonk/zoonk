@@ -11059,10 +11059,11 @@ msgctxt "VDuR1W"
 msgid "The official exam date is {date}."
 msgstr "La data ufficiale dell’esame è il {date}."
 
+#. Asks whether to add topics to the learner's plan. {topics} lists their names, which are often actions themselves, such as “Memorize An-Nahl”, so they stay after the colon rather than inside the sentence.
 #: src/plan/use-operation-question.ts
-msgctxt "EP7Gpz"
-msgid "Add {topics} to your plan?"
-msgstr "Aggiungere {topics} al tuo piano?"
+msgctxt "UDs2Ah"
+msgid "Add to your plan: {topics}?"
+msgstr "Aggiungere al tuo piano: {topics}?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "oeLkPK"
