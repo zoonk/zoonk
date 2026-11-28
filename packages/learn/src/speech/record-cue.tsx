@@ -147,7 +147,7 @@ export function RecordCue({
           {t({
             description:
               "Before recording. “Speak now” must match the cue shown when the microphone is on.",
-            message: "Say it after “Speak now”",
+            message: "Say it when “Speak now” appears",
           })}
         </p>
       )}

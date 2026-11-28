@@ -211,7 +211,7 @@ class VoiceAnswerRecorderTest {
 
     private companion object {
         const val KEY = "microphone"
-        const val IDLE_CUE = "Say it after “Speak now”"
+        const val IDLE_CUE = "Say it when “Speak now” appears"
     }
 }
 

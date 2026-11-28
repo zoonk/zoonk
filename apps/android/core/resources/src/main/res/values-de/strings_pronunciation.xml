@@ -7,7 +7,7 @@
   "pronunciation_listen": "6dde94a2e746075b1cfad4d418f42c2efdcac434f4ee4e7dbb60db5745d19536",
   "pronunciation_listen_slowly": "2b809c2b642d0a6634cdecfff93ee1e96d075bae4b36a9e7afc48fa148b3fb2d",
   "pronunciation_microphone_off": "3162228be97a65691a350e54a4defc4d04aa1589c0b2c7c77b6a8fc0f8d0dc78",
-  "pronunciation_microphone_unavailable": "337d79013f72713454e76229f5ff576d26ab2625dcad9529b81f2ea9bc7a5cd6",
+  "pronunciation_microphone_unavailable": "a70e6f7d7f5e2c54795b37b230ef72f8c1c4d22d74ad5484b46daded5267f67f",
   "pronunciation_no_words": "93062d3f0f8ee6903c5f459ca65feaaadd281d1888360f0c9ce5f35295785900",
   "pronunciation_nothing_said": "5a072b0e13aad1bb4ddb293b4dd7bfaa2b59975a86fd3c03635fa833e1b12758",
   "pronunciation_options": "84ff2034a0daf93af9701dcaf8dd8db3b1234eb174b85cabc801a662f08a53ae",
@@ -34,7 +34,7 @@
     <string name="pronunciation_options">Seitenoptionen</string>
     <string name="pronunciation_skip">Überspringen</string>
     <string name="pronunciation_microphone_off">Schalte in den Einstellungen das Mikrofon für Zoonk ein, um das Wort auszusprechen. Du kannst es vorerst überspringen.</string>
-    <string name="pronunciation_microphone_unavailable">Das Mikrofon ist hier nicht verfügbar. Du kannst dieses Wort überspringen.</string>
+    <string name="pronunciation_microphone_unavailable">Wir können dein Mikrofon nicht verwenden, also überspring dieses Wort.</string>
     <string name="pronunciation_sounded_right">Das klang richtig</string>
     <!-- %1$s is what the grader heard when the word didn't sound right. -->
     <string name="pronunciation_heard">Wir haben „%1$s“ gehört</string>

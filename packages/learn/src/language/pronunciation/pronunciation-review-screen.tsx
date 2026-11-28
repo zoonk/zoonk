@@ -110,7 +110,7 @@ function useWordTake({
     recording: on,
     unavailable: mic.available
       ? null
-      : t("The microphone isn't available here. You can skip this word."),
+      : t("We can't use your microphone, so skip this word."),
   });
 
   const cue =

@@ -157,7 +157,7 @@ export function SpeakingStep({
     recording: recording || recorder.status === "acquiring",
     unavailable: micAvailable
       ? null
-      : t("The microphone isn't available here. You can skip this part."),
+      : t("We can't use your microphone, so skip this part."),
   });
 
   return (

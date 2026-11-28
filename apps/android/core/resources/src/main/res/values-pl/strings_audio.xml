@@ -13,7 +13,7 @@
   "audio_open_settings": "254d1e1928829c039ff9d74a1077a1b6447f53c19457421aa1e950d51eed3677",
   "audio_record": "e5e63c7b203b5ffb642aa74f3aab779ae4aab1e8d3375505d85bcffb87c1483e",
   "audio_record_stop": "7816575b06d1910b02636e2ea15967cd543e5d433854723fad77ca7eae90fd2e",
-  "audio_say_after_cue": "bc97d77eeed0271f24c1f85b29a6d54d6b32e7821078cad8b2c0be904e0098fb",
+  "audio_say_when_cue_appears": "ccd76924fe03a3d8ad8941234ef4d0e912744bd71f66a5d8cc87c705952ece81",
   "audio_speak_now": "a97c5c589b418a547919ecf78e919ff44585c535591e3571d804e808c42fe55c",
   "audio_stop": "cc8ccf05f451de2348bf05c85d5fb4138c8127e8934c54dc5634b80869958b43",
   "audio_try_again": "a6c3df419b992d78cfbc3cb8d83a46b58dab24f37a2a11511c3f2533f97ef874",
@@ -35,7 +35,7 @@
     <string name="audio_no_speech">Nie usłyszeliśmy żadnych słów. Spróbuj ponownie.</string>
     <string name="audio_check_failed">Tym razem nie udało nam się sprawdzić twojej odpowiedzi. Spróbuj ponownie.</string>
     <!-- Before recording. “Speak now” must match the cue shown when the microphone is on. -->
-    <string name="audio_say_after_cue">Powiedz to po „Mów teraz”</string>
+    <string name="audio_say_when_cue_appears">Powiedz to, gdy pojawi się „Mów teraz”</string>
     <string name="audio_microphone_getting_ready">Przygotowujemy…</string>
     <!-- Shown the moment the microphone is on: an instruction to start talking now, not a button. -->
     <string name="audio_speak_now">Mów teraz</string>

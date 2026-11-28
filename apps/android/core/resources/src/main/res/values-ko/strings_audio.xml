@@ -13,7 +13,7 @@
   "audio_open_settings": "eea75fb9dbe49ddac9b9946d4e166e152c92eba47c6cccb7f2af796986284eb4",
   "audio_record": "214eb82843e16b3b63e71183c9bff02c1f74065e254ded9bf87eed3f187df17f",
   "audio_record_stop": "efc0ddcbb14e1301f15acf5957f1510ca00513920407c79480dcf9df84e1c89e",
-  "audio_say_after_cue": "b4ebc9305fbcd6301fcf750d98437db35fac455358538dd6781a48469b974024",
+  "audio_say_when_cue_appears": "02848e8b0e1f33db1dc54c6b31464c4c2bd3513659089b8220edb7aa25c86534",
   "audio_speak_now": "8e1f8ce7525794f552b6b8ff0b24831026b333df246a1d99e2a0a800f4cf27e6",
   "audio_stop": "d67e514aa54485349fb0493c4e742ce3b00cca0802bb2348ff6214e790233ae5",
   "audio_try_again": "0b419a9817a96e139104926a23074817aed1c19ff485be6c0f7d1cebb28b2b60",
@@ -35,7 +35,7 @@
     <string name="audio_no_speech">말소리가 들리지 않았어요. 다시 시도해 보세요.</string>
     <string name="audio_check_failed">이번에는 답을 확인하지 못했어요. 다시 시도해 보세요.</string>
     <!-- Before recording. “Speak now” must match the cue shown when the microphone is on. -->
-    <string name="audio_say_after_cue">‘지금 말해 보세요’가 나오면 이어서 말해 보세요</string>
+    <string name="audio_say_when_cue_appears">‘지금 말해 보세요’가 표시되면 말해 주세요</string>
     <string name="audio_microphone_getting_ready">준비하고 있어요…</string>
     <!-- Shown the moment the microphone is on: an instruction to start talking now, not a button. -->
     <string name="audio_speak_now">지금 말해 보세요</string>

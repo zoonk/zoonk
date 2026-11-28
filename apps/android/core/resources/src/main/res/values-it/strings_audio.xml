@@ -13,7 +13,7 @@
   "audio_open_settings": "2455c82d9d0ca9677bc1ca41098608b541a8879899e9fc342c18624603680dbc",
   "audio_record": "0549bac6ef4a692f6a1fc52e2da296642de0781a85de07073bb93fbbcc505e5b",
   "audio_record_stop": "07337096018e9f5d206ed1221fe7ef8937003c09558c558793d3ecf810e3acdc",
-  "audio_say_after_cue": "c6887eafc05cbf92d95436b9522c74c1ed530adb2c1d1f7296db7f022d7502ed",
+  "audio_say_when_cue_appears": "26672407a0a17b1ebf2c7a70ee5aa1d90bef6542db94282f489b94ebc801fb3d",
   "audio_speak_now": "ac10b4b56078b31135d9b57237f187e15082e608f229a3366d522887746d01ca",
   "audio_stop": "22284f62dee2722b23680d45a15b6062cee7f832483e4172a6b30243fb52afed",
   "audio_try_again": "48117bede2a6ff6f0e24834f5e3775ac17ea38e969cd769a512df77bf6d77f4a",
@@ -35,7 +35,7 @@
     <string name="audio_no_speech">Non abbiamo sentito nessuna parola. Riprova.</string>
     <string name="audio_check_failed">Questa volta non abbiamo potuto controllare la tua risposta. Riprova.</string>
     <!-- Before recording. “Speak now” must match the cue shown when the microphone is on. -->
-    <string name="audio_say_after_cue">Dillo dopo «Parla ora»</string>
+    <string name="audio_say_when_cue_appears">Dillo quando compare “Parla ora”</string>
     <string name="audio_microphone_getting_ready">Stiamo preparando…</string>
     <!-- Shown the moment the microphone is on: an instruction to start talking now, not a button. -->
     <string name="audio_speak_now">Parla ora</string>

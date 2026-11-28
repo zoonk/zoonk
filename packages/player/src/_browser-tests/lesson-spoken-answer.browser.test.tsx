@@ -76,7 +76,7 @@ describe("spoken answers", () => {
     allowMicrophone();
     openSpokenLesson({ gradeSpokenAnswer: vi.fn<GradeSpokenAnswer>(() => hang()) });
 
-    await expect.poll(() => cue()?.textContent).toBe("Say it after “Speak now”");
+    await expect.poll(() => cue()?.textContent).toBe("Say it when “Speak now” appears");
     expect(cue()?.getAttribute("aria-hidden")).toBe("true");
     expect(barNote()?.textContent).toBe("");
     await page.getByRole("button", { name: "Record" }).click();
@@ -107,7 +107,7 @@ describe("spoken answers", () => {
     await expect.element(note).toBeVisible();
     await expect.element(note).not.toHaveClass("text-destructive-text");
     await expect.element(page.getByRole("button", { name: "Record" })).toBeVisible();
-    expect(cue()?.textContent).toBe("Say it after “Speak now”");
+    expect(cue()?.textContent).toBe("Say it when “Speak now” appears");
     expect(gradeSpokenAnswer.mock.calls[0]?.[0].micStartupMs).toBeGreaterThanOrEqual(0);
 
     await sayIt();

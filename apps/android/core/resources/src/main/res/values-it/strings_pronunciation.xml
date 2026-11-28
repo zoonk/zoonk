@@ -7,7 +7,7 @@
   "pronunciation_listen": "382494dc2cc91a0db597df799d3e927b1b245a60465925f7f55d99cffc5cdc84",
   "pronunciation_listen_slowly": "990f2a38a36bca88374e35c0d5106831ad05dc2285834dcdd757280f7c5031b9",
   "pronunciation_microphone_off": "00a3f84809aa77e1a10086dfc272b0c14941fc568d18d1e4630dfaa64812f001",
-  "pronunciation_microphone_unavailable": "f9a7f49b859f76a708db6539d2faadd7bbc3fb60637d725e271a0e7fe5e3d768",
+  "pronunciation_microphone_unavailable": "dd4402cdab2b1bed25ae5eb7c0cd1fb9328dc6a1797be1c5c93726482234ecb7",
   "pronunciation_no_words": "c39873a3a0904b6fd5d5b0262654213a5a4d67a012f78621c6b40bc33b0f5f13",
   "pronunciation_nothing_said": "4542b34a46e5c6eb19107fcdfcddbe1fcd84ac027ab7392933ef5ec8d7543d00",
   "pronunciation_options": "f032b3ce2e117c66b418c2faf79356e143ef1f3e099d132a9edeb6778d2b8b87",
@@ -34,7 +34,7 @@
     <string name="pronunciation_options">Opzioni della schermata</string>
     <string name="pronunciation_skip">Salta</string>
     <string name="pronunciation_microphone_off">Per dire la parola, consenti a Zoonk di usare il microfono nelle Impostazioni. Per ora puoi saltarla.</string>
-    <string name="pronunciation_microphone_unavailable">Qui il microfono non è disponibile. Puoi saltare questa parola.</string>
+    <string name="pronunciation_microphone_unavailable">Non possiamo usare il microfono, quindi salta questa parola.</string>
     <string name="pronunciation_sounded_right">L’hai pronunciata bene</string>
     <!-- %1$s is what the grader heard when the word didn't sound right. -->
     <string name="pronunciation_heard">Abbiamo sentito “%1$s”</string>

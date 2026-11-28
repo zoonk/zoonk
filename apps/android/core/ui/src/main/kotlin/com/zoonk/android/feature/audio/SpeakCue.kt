@@ -66,7 +66,7 @@ fun SpeakCue(
         contentAlignment = Alignment.CenterStart,
     ) {
         CueLabel(
-            stringResource(R.string.audio_say_after_cue),
+            stringResource(R.string.audio_say_when_cue_appears),
             MaterialTheme.colorScheme.onSurfaceVariant,
             visible = !live && !acquiring && !checking,
         )

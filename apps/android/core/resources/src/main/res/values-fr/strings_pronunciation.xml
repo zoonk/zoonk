@@ -7,7 +7,7 @@
   "pronunciation_listen": "f06d7cdce56dfdb0b09b82f165ae645ae5b3f941eb44aa01fc965d8c366a93c4",
   "pronunciation_listen_slowly": "ae53e800370a536a48b82b4dba1a4bfc01e70c7e2845025a584e7eb337227dac",
   "pronunciation_microphone_off": "4ef2022e774c50287b2d625f58df67fb1eba4183563cb6667bd88c8505d228b9",
-  "pronunciation_microphone_unavailable": "de65433afbd90645f7b539b8cdf10ccebfc36f8bc734737e197797848f8a5d08",
+  "pronunciation_microphone_unavailable": "47f5233155630df8ace0f7294a4cc6a360a757899f24979ca0363bd06b50e27a",
   "pronunciation_no_words": "d032104d8b472c6aa80a2f027e262e17a5a5ecb9983afb6cabb5a86131074da5",
   "pronunciation_nothing_said": "75328401830129b179537e142e11fa1b1104ca8394fcb00a54e242e49762e6b4",
   "pronunciation_options": "35b7bb7ff3a4206bb93b4480d0d1683161f098a325144875dfa4098de178de72",
@@ -34,7 +34,7 @@
     <string name="pronunciation_options">Options de l’écran</string>
     <string name="pronunciation_skip">Passer</string>
     <string name="pronunciation_microphone_off">Active le micro pour Zoonk dans les paramètres pour prononcer le mot. Tu peux le passer pour l’instant.</string>
-    <string name="pronunciation_microphone_unavailable">Le micro n’est pas disponible ici. Tu peux passer ce mot.</string>
+    <string name="pronunciation_microphone_unavailable">On ne peut pas utiliser ton micro, alors saute ce mot.</string>
     <string name="pronunciation_sounded_right">Ça sonnait juste</string>
     <!-- %1$s is what the grader heard when the word didn't sound right. -->
     <string name="pronunciation_heard">On a entendu « %1$s »</string>

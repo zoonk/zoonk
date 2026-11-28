@@ -6412,9 +6412,9 @@ msgid "I didn't understand the audio"
 msgstr "Nie rozumiem nagrania"
 
 #: src/language/level-test/level-test-questions.tsx
-msgctxt "TEizt2"
-msgid "The microphone isn't available here. You can skip this part."
-msgstr "Mikrofon jest tu niedostępny. Możesz pominąć tę część."
+msgctxt "U9t3gU"
+msgid "We can't use your microphone, so skip this part."
+msgstr "Nie możemy skorzystać z mikrofonu, więc pomiń tę część."
 
 #: src/language/level-test/level-test-questions.tsx
 msgctxt "TIG4Hb"
@@ -6643,9 +6643,9 @@ msgid "Nothing said this time"
 msgstr "Tym razem bez słów"
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "y1aleL"
-msgid "The microphone isn't available here. You can skip this word."
-msgstr "Mikrofon jest tu niedostępny. Możesz pominąć to słowo."
+msgctxt "lMwCDv"
+msgid "We can't use your microphone, so skip this word."
+msgstr "Nie możemy skorzystać z mikrofonu, więc pomiń to słowo."
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 msgctxt "mSmk6Q"
@@ -13061,9 +13061,9 @@ msgstr "Przygotowujemy…"
 
 #. Before recording. “Speak now” must match the cue shown when the microphone is on.
 #: src/speech/record-cue.tsx
-msgctxt "p9c99m"
-msgid "Say it after “Speak now”"
-msgstr "Powiedz to po „Mów teraz”"
+msgctxt "cD1tXW"
+msgid "Say it when “Speak now” appears"
+msgstr "Powiedz to, gdy pojawi się „Mów teraz”"
 
 #: src/speech/record-note.tsx
 msgctxt "pvPbx0"

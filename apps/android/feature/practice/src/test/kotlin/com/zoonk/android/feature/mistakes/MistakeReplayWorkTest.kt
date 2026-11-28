@@ -99,7 +99,7 @@ class MistakeReplayWorkTest {
             )
         run(replay(FIRST_MISTAKE, "spokenAnswer", spoken))
 
-        rule.onNodeWithText("Say it after “Speak now”", useUnmergedTree = true).assertExists()
+        rule.onNodeWithText("Say it when “Speak now” appears", useUnmergedTree = true).assertExists()
         rule.onNodeWithText("Record").assertExists()
         rule.onNodeWithText("Check").assertDoesNotExist()
     }
