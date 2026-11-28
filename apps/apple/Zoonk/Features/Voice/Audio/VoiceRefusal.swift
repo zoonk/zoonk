@@ -101,6 +101,10 @@ struct VoiceRefusal: Error, Equatable, Sendable {
     code == "NO_SPEECH"
   }
 
+  var isMissedStart: Bool {
+    code == "MISSED_START"
+  }
+
   var isPlusRequired: Bool {
     code == "PLUS_REQUIRED"
   }
@@ -179,6 +183,8 @@ enum Refusable<Value: Sendable>: Sendable {
 enum GradeOutcome<Value: Sendable>: Sendable {
   case graded(Value)
   case noSpeech
+  /// A likely clipped opening; the answer was not graded.
+  case missedStart
   case limit(HelpLimit)
   case failed
   case obsolete

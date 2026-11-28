@@ -37,7 +37,8 @@ struct LessonStepView: View {
         step: step, state: state, context: context, part: part,
         cantTalk: Binding(get: { store.cantTalkToday }, set: { store.cantTalkToday = $0 }),
         cantListen: Binding(get: { store.cantListenToday }, set: { store.cantListenToday = $0 }),
-        micBlocked: Binding(get: { store.isMicBlocked }, set: { store.isMicBlocked = $0 }),
+        microphoneProblem: Binding(
+          get: { store.microphoneProblem }, set: { store.microphoneProblem = $0 }),
         team: store.challengeTeam, waitForRun: { await store.ensureRun() },
         studySessionId: { store.studySessionId })
       if part == .turn, step.kind == .check || step.kind == .typedAnswer {
@@ -78,7 +79,7 @@ struct LessonQuestionStepView: View {
   let part: LessonStepPart
   @Binding var cantTalk: Bool
   @Binding var cantListen: Bool
-  @Binding var micBlocked: Bool
+  @Binding var microphoneProblem: MicrophoneProblem?
   var team: [String] = []
   var waitForRun: @MainActor () async -> Bool = { true }
   var studySessionId: @MainActor () -> String? = { nil }
@@ -95,7 +96,7 @@ struct LessonQuestionStepView: View {
     case .spokenAnswer(let content, let listening):
       SpokenAnswerStepView(
         step: step, content: content, listening: listening, context: context,
-        cantTalk: $cantTalk, cantListen: $cantListen, micBlocked: $micBlocked,
+        cantTalk: $cantTalk, cantListen: $cantListen, microphoneProblem: $microphoneProblem,
         waitForRun: waitForRun, studySessionId: studySessionId, part: part, mistake: mistake,
         onPracticeGraded: onPracticeGraded, onCheckingChanged: onCheckingChanged)
     case .activity(let content):
@@ -463,7 +464,8 @@ enum SpokenAnswerMode: Equatable {
   case type
 
   init(
-    canListen: Bool, canSpeak: Bool, cantTalk: Bool, cantListen: Bool, micBlocked: Bool,
+    canListen: Bool, canSpeak: Bool, cantTalk: Bool, cantListen: Bool,
+    microphoneProblem: MicrophoneProblem?,
     lockedAnswer: LessonAnswer? = nil, heard: SpokenHeard? = nil
   ) {
     if heard != nil {
@@ -474,7 +476,7 @@ enum SpokenAnswerMode: Equatable {
       self = .listen
     } else if (cantTalk || !canSpeak) && canListen && !cantListen {
       self = .listen
-    } else if cantTalk || micBlocked || !canSpeak {
+    } else if cantTalk || microphoneProblem != nil || !canSpeak {
       self = .type
     } else {
       self = .speak
@@ -484,14 +486,14 @@ enum SpokenAnswerMode: Equatable {
 
 extension LessonStep {
   func spokenAnswerMode(
-    canSpeak: Bool, cantTalk: Bool, cantListen: Bool, micBlocked: Bool,
+    canSpeak: Bool, cantTalk: Bool, cantListen: Bool, microphoneProblem: MicrophoneProblem?,
     lockedAnswer: LessonAnswer?, heard: SpokenHeard?
   ) -> SpokenAnswerMode? {
     guard case .spokenAnswer(_, let listening) = content else { return nil }
 
     return SpokenAnswerMode(
       canListen: listening != nil, canSpeak: canSpeak, cantTalk: cantTalk, cantListen: cantListen,
-      micBlocked: micBlocked, lockedAnswer: lockedAnswer, heard: heard)
+      microphoneProblem: microphoneProblem, lockedAnswer: lockedAnswer, heard: heard)
   }
 
   /// The prompt this screen plays. Main's `ListeningInstead`: a spoken screen answered by listening
@@ -510,6 +512,7 @@ extension LessonStep {
 
 private struct SpokenAnswerStepView: View {
   @Environment(\.spokenAnswerRecording) private var recording
+  @Environment(RecordInBar.self) private var recordInBar: RecordInBar?
   @FocusState private var isFocused: Bool
 
   let step: LessonStep
@@ -518,7 +521,7 @@ private struct SpokenAnswerStepView: View {
   let context: LessonStepContext
   @Binding var cantTalk: Bool
   @Binding var cantListen: Bool
-  @Binding var micBlocked: Bool
+  @Binding var microphoneProblem: MicrophoneProblem?
   let waitForRun: @MainActor () async -> Bool
   let studySessionId: @MainActor () -> String?
   let part: LessonStepPart
@@ -529,7 +532,7 @@ private struct SpokenAnswerStepView: View {
   private var mode: SpokenAnswerMode {
     SpokenAnswerMode(
       canListen: listening != nil, canSpeak: recording.input != nil, cantTalk: cantTalk,
-      cantListen: cantListen, micBlocked: micBlocked,
+      cantListen: cantListen, microphoneProblem: microphoneProblem,
       lockedAnswer: context.isLocked ? context.answer : nil, heard: context.result?.heard)
   }
 
@@ -563,6 +566,10 @@ private struct SpokenAnswerStepView: View {
         }
       }
       if mode == .speak {
+        if !context.isLocked {
+          RecordCue(
+            recorder: recordInBar?.recorder, isChecking: recordInBar?.isChecking == true)
+        }
         modeSwitch
       }
     }
@@ -578,18 +585,20 @@ private struct SpokenAnswerStepView: View {
           waitForRun: waitForRun,
           studySessionId: studySessionId,
           onGraded: context.resolveSpoken,
-          onBlocked: {
-            micBlocked = true
-            announcePolitely(Self.micBlockedLine)
+          onMicrophoneProblem: { problem in
+            microphoneProblem = problem
+            announcePolitely(Self.microphoneProblemLine(problem))
           }, mistake: mistake, onPracticeGraded: onPracticeGraded,
           onCheckingChanged: onCheckingChanged))
     } else {
-      if micBlocked, !context.isLocked {
+      if let microphoneProblem, !context.isLocked {
         VStack(alignment: .leading, spacing: 4) {
-          Text(Self.micBlockedLine)
+          Text(Self.microphoneProblemLine(microphoneProblem))
             .foregroundStyle(.mutedForeground)
 
-          if let settings = URL(string: UIApplication.openSettingsURLString) {
+          if microphoneProblem == .denied,
+            let settings = URL(string: UIApplication.openSettingsURLString)
+          {
             Link(destination: settings) {
               Text(
                 "Open Settings", tableName: "Player",
@@ -622,9 +631,32 @@ private struct SpokenAnswerStepView: View {
     }
   }
 
-  private static var micBlockedLine: String {
-    String(
-      localized: "The microphone is blocked.", table: "Player")
+  private static func microphoneProblemLine(_ problem: MicrophoneProblem) -> String {
+    switch problem {
+    case .denied:
+      String(localized: "The microphone is blocked.", table: "Player")
+    case .unavailable:
+      String(localized: "We can't use your microphone, so type what you'd say.", table: "Player")
+    }
+  }
+
+  private var modeSwitchLabel: String {
+    guard mode == .speak else {
+      return cantTalk
+        ? String(
+          localized: "I can talk now", table: "Player", comment: "Goes back to answering out loud")
+        : String(
+          localized: "Say it instead", table: "Player", comment: "Tries the microphone again")
+    }
+    let label = String(localized: "I can't talk now", table: "Player")
+    let alternative =
+      listening != nil
+      ? String(localized: "Listen", table: "Player")
+      : String(
+        localized: "Type instead", table: "Player",
+        comment:
+          "On a question answered aloud: the learner types this one answer instead of saying it.")
+    return "\(label). \(alternative)"
   }
 
   /// An answer started one way doesn't carry over, and asking to speak tries the microphone again.
@@ -634,7 +666,7 @@ private struct SpokenAnswerStepView: View {
       Button {
         context.select(nil)
         cantTalk = mode == .speak
-        micBlocked = false
+        microphoneProblem = nil
       } label: {
         if mode == .speak {
           Label {
@@ -657,6 +689,7 @@ private struct SpokenAnswerStepView: View {
           }
         }
       }
+      .accessibilityLabel(modeSwitchLabel)
       .buttonStyle(.outline)
       .controlSize(.large)
     }

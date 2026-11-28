@@ -1,7 +1,5 @@
 import SwiftUI
 
-/// Records an answer from the screen's bottom bar: Record is the bar's main action and the line
-/// about it (`RecordNote`) sits right over it, so the step draws only a limit here.
 struct VoiceAnswerRecorder<Grade: Sendable>: View {
   @Environment(VoiceServices.self) private var voice
   @Environment(RecordInBar.self) private var bar: RecordInBar?
@@ -10,16 +8,19 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
   @State private var isSlow = false
   @State private var grading: Task<Void, Never>?
   @State private var issue: Issue?
+  // Ask for a retake once per screen; grade later takes as heard.
+  @State private var sendsStartup = true
 
   let grade: @MainActor (VoiceServices, VoiceRecording) async -> GradeOutcome<Grade>
   let onGraded: @MainActor (Grade) -> Void
   /// A microphone that's off hands over to the screen's other way to answer; without one, the bar
   /// says how to turn it on and the screen's other way on (Skip) stays.
-  var onBlocked: (() -> Void)?
+  var onMicrophoneProblem: ((MicrophoneProblem) -> Void)?
   var onCheckingChanged: ((Bool) -> Void)?
 
   private enum Issue: Equatable {
     case noSpeech
+    case missedStart
     case failed
     case limit(HelpLimit)
   }
@@ -36,6 +37,9 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
       Task { await record() }
     }
     .announcesStatus(announcement)
+    .onChange(of: recorder.status.startProblem) { _, problem in
+      if let problem { onMicrophoneProblem?(problem) }
+    }
     .onChange(of: checking) { _, value in onCheckingChanged?(value) }
     .onDisappear {
       recorder.cancel()
@@ -45,7 +49,7 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
   }
 
   private var isOff: Bool {
-    recorder.isDenied && onBlocked == nil
+    recorder.microphoneProblem == .denied && onMicrophoneProblem == nil
   }
 
   private var note: RecordNote? {
@@ -56,8 +60,8 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
           table: "Voice", comment: "How to turn the microphone back on to record a spoken answer"))
     }
 
-    if let active = RecordNote(active: recorder.status) {
-      return active
+    if recorder.status == .acquiring || recorder.isRecording {
+      return nil
     }
 
     if checking {
@@ -66,9 +70,9 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
 
     switch issue {
     case .noSpeech: return .noSpeech
+    case .missedStart: return .missedStart
     case .failed: return .failed
-    case .limit: return nil
-    case nil: return .ready
+    case .limit, nil: return nil
     }
   }
 
@@ -83,13 +87,16 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
 
   private func record() async {
     issue = nil
+    voice.player.stopAny()
 
-    let started = await recorder.start { recording in
+    await recorder.start { recording in
+      var recording = recording
+
+      if !sendsStartup {
+        recording.micStartupMs = nil
+      }
+
       grading = Task { await check(recording) }
-    }
-
-    if !started, recorder.isDenied {
-      onBlocked?()
     }
   }
 
@@ -102,6 +109,9 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
       onGraded(value)
     case .noSpeech:
       issue = .noSpeech
+    case .missedStart:
+      issue = .missedStart
+      sendsStartup = false
     case .limit(let limit):
       issue = .limit(limit)
     case .failed:

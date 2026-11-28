@@ -60,6 +60,14 @@ async function createSpokenAnswer(
     });
   }
 
+  if (result.status === "missedStart") {
+    return createErrorResponse({
+      code: LESSON_PLAYER_ERROR_CODES.missedStart,
+      message: "We may have missed the start. Say it again.",
+      status: httpStatus.unprocessableEntity,
+    });
+  }
+
   return NextResponse.json(spokenAnswerGradeSchema.parse(result.grade));
 }
 

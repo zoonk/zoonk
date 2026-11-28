@@ -663,6 +663,11 @@ class LessonPlayerViewModel(
                 GradeOutcome.NoSpeech
             }
 
+            GradeOutcome.MissedStart -> {
+                dispatch(LessonAction.CheckFailed(stepId, CheckIssue.MissedStart))
+                GradeOutcome.MissedStart
+            }
+
             is GradeOutcome.Limited -> {
                 dispatch(LessonAction.CheckFailed(stepId, CheckIssue.Refused(LessonRefusal.Limited(outcome.limit))))
                 outcome

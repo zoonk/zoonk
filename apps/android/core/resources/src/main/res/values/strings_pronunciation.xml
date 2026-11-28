@@ -10,6 +10,7 @@
     <string name="pronunciation_options">Screen options</string>
     <string name="pronunciation_skip">Skip</string>
     <string name="pronunciation_microphone_off">Turn on the microphone for Zoonk in Settings to say the word. You can skip it for now.</string>
+    <string name="pronunciation_microphone_unavailable">We can\'t use your microphone, so skip this word.</string>
     <string name="pronunciation_sounded_right">That sounded right</string>
     <!-- %1$s is what the grader heard when the word didn't sound right. -->
     <string name="pronunciation_heard">We heard “%1$s”</string>

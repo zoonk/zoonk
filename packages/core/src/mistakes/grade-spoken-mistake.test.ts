@@ -150,6 +150,66 @@ describe("Original notebook questions", () => {
     expect(transcribeSpeech).not.toHaveBeenCalled();
   });
 
+  it("replays a missed start without recording a practice answer or generating an explanation", async () => {
+    const { mistake, step, user } = await setup();
+    const transcript = "Much is the rent?";
+
+    const { words } = matchSpokenAnswer({
+      expected: TARGET_TEXT,
+      heard: transcript,
+      language: "en",
+    });
+
+    vi.mocked(transcribeSpeech).mockResolvedValueOnce({
+      ...targetTranscript(),
+      data: { text: transcript },
+    });
+
+    vi.mocked(assessPronunciation).mockResolvedValueOnce({
+      data: { transcript, words: words.map((word) => ({ ...word, issue: null })) },
+      provenance: targetTranscript().provenance,
+      systemPrompt: "",
+      usage: {
+        inputTokenDetails: {
+          cacheReadTokens: undefined,
+          cacheWriteTokens: undefined,
+          noCacheTokens: 0,
+        },
+        inputTokens: 0,
+        outputTokenDetails: { reasoningTokens: undefined, textTokens: 0 },
+        outputTokens: 0,
+        totalTokens: 0,
+      },
+      userPrompt: "",
+    });
+
+    const input = {
+      audio: AUDIO,
+      fields: { attemptId: crypto.randomUUID(), durationMs: 2400, mistakeId: mistake.id },
+      stepId: step.id,
+    };
+
+    await expect(
+      gradeSpokenAnswer({ ...input, fields: { ...input.fields, micStartupMs: 400 } }),
+    ).resolves.toStrictEqual({ status: "missedStart" });
+
+    await expect(gradeSpokenAnswer(input)).resolves.toStrictEqual({ status: "missedStart" });
+
+    expect(transcribeSpeech).toHaveBeenCalledOnce();
+    expect(explainSpokenAnswer).not.toHaveBeenCalled();
+
+    await Promise.all([
+      expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(0),
+      expect(
+        prisma.mistake.findUnique({ select: { status: true }, where: { id: mistake.id } }),
+      ).resolves.toStrictEqual({ status: mistake.status }),
+      expect(prisma.pronunciationReview.count({ where: { userId: user.id } })).resolves.toBe(0),
+      expect(
+        prisma.usageRecord.count({ where: { kind: "assist", userId: user.id } }),
+      ).resolves.toBe(1),
+    ]);
+  });
+
   it("uses the whole question time instead of only the recording for timed practice", async () => {
     const { mistake, step, user } = await setup();
     await prisma.mistake.update({ data: { cause: "time" }, where: { id: mistake.id } });

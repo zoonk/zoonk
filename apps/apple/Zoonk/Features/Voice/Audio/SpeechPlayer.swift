@@ -104,6 +104,14 @@ final class SpeechPlayer {
       return
     }
 
+    stopAny()
+  }
+
+  func stopAny() {
+    guard current != nil else {
+      return
+    }
+
     stopCurrent()
     current = nil
     releaseSession()

@@ -7,6 +7,7 @@
   "pronunciation_listen": "cefed615e5ab62605620d1c986a01e0e590622a274d37a47978da5eb452edee8",
   "pronunciation_listen_slowly": "e25158e8d11666ef56743ba33e2636b088bfcd67074d319ac435c88369d83427",
   "pronunciation_microphone_off": "07a9cf63b755bc71d6ca5f8a2df2b4dc00724fc9a6befbe4dfc36292617e2a4a",
+  "pronunciation_microphone_unavailable": "3f027215af802503c7c7d6ed531bb297e8caa06ecbfe30b5e5458dfdb0c26055",
   "pronunciation_no_words": "37cbd957b05441e46cde63f13ce5efb7b7728b8bdc91a6c22fa63dc9c92b148e",
   "pronunciation_nothing_said": "6656cc3b5b7ef3b99e49819f736cce229c4d35a5b7031d0d06019859e8c110c2",
   "pronunciation_options": "980992239d93945cd4495f66dd0d88e27575e231ca6c2fbed72ef37760f1e223",
@@ -33,6 +34,7 @@
     <string name="pronunciation_options">Opciones de pantalla</string>
     <string name="pronunciation_skip">Saltar</string>
     <string name="pronunciation_microphone_off">Activa el micrófono para Zoonk en Configuración para pronunciar la palabra. Puedes saltarla por ahora.</string>
+    <string name="pronunciation_microphone_unavailable">No podemos usar tu micrófono, así que sáltate esta palabra.</string>
     <string name="pronunciation_sounded_right">Sonó bien</string>
     <!-- %1$s is what the grader heard when the word didn't sound right. -->
     <string name="pronunciation_heard">Escuchamos “%1$s”</string>

@@ -8,15 +8,17 @@
     <string name="audio_here_is_what_it_says">%1$s Here\'s what it says:</string>
     <string name="audio_try_again">Try again</string>
     <string name="audio_record">Record</string>
-    <!-- Button that stops recording the learner, a short label like a media player's Stop. A hint names it: "Tap Stop to check." -->
+    <!-- Button that stops recording the learner, a short label like a media player's Stop. -->
     <string name="audio_record_stop">Stop</string>
-    <!-- Shown while recording the learner. "Stop" is the label of the button that stops recording, so use the same word as that button. -->
-    <string name="audio_listening">Listening… Tap Stop to check.</string>
     <string name="audio_checking_slow">Still checking. This is taking longer than usual.</string>
     <string name="audio_no_speech">We couldn\'t hear any words. Try again.</string>
     <string name="audio_check_failed">We couldn\'t check your answer this time. Try again.</string>
-    <!-- “Record” is the label of the button that starts the recording. -->
-    <string name="audio_say_it">Tap Record and say it out loud</string>
+    <!-- Before recording. “Speak now” must match the cue shown when the microphone is on. -->
+    <string name="audio_say_when_cue_appears">Say it when “Speak now” appears</string>
+    <string name="audio_microphone_getting_ready">Getting ready…</string>
+    <!-- Shown the moment the microphone is on: an instruction to start talking now, not a button. -->
+    <string name="audio_speak_now">Speak now</string>
+    <string name="audio_missed_start">We may have missed the start. Say it again.</string>
     <string name="audio_microphone_off_title">The microphone is off</string>
     <string name="audio_open_settings">Open Settings</string>
 </resources>

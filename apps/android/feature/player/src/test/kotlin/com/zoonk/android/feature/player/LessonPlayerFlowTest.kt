@@ -943,7 +943,7 @@ class LessonPlayerFlowTest {
 
         rule.onRoot().performKeyInput { pressKey(Key.Enter) }
 
-        rule.onNodeWithText("Stop").assertExists()
+        rule.waitUntilExactlyOneExists(hasText("Stop"))
     }
 
     /**

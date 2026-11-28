@@ -8,6 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
@@ -43,6 +44,7 @@ class VoiceDeviceTest {
             val recorder = VoiceRecorder(context, scope)
             val recorded = CompletableDeferred<VoiceRecording>()
             assertTrue(withContext(Dispatchers.Main) { recorder.start { recorded.complete(it) } })
+            withTimeout(5_000) { recorder.state.first { it is VoiceRecorder.Status.Recording } }
             delay(1_500)
             withContext(Dispatchers.Main) { recorder.stop() }
             val take = withTimeout(5_000) { recorded.await() }

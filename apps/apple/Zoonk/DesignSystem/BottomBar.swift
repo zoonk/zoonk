@@ -168,9 +168,6 @@ struct BarNote: View {
     /// A failure the screen is still working through, such as an answer being sent again: drawn as
     /// a failure, read as a status.
     case waiting
-    /// Drawn as a status but not read as it shows, such as the line while the learner records:
-    /// VoiceOver's speech would end up in the recording.
-    case hint
   }
 
   struct Action {
@@ -237,7 +234,7 @@ struct BarNote: View {
       switch tone {
       case .failure:
         FailureLine(message: message)
-      case .status, .hint:
+      case .status:
         Text(message)
           .foregroundStyle(.mutedForeground)
       case .waiting:

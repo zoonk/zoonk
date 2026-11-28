@@ -7,6 +7,7 @@
   "pronunciation_listen": "dc1412771df8fb35e0dda947f3e29d7c49a74fb84edede5352bdce4c0e5703f1",
   "pronunciation_listen_slowly": "8494b3eb33ef650a7649537d5d4a46c860c5857b448cf27411670f345005974f",
   "pronunciation_microphone_off": "776f3b473a3f2705a6e1fc438152c002aa12e460d449233a03ad3c87dd5be427",
+  "pronunciation_microphone_unavailable": "2f302d7a94223c53a05626f6b8e1b45ef8ba1865375e55806a6557e9a7d26e70",
   "pronunciation_no_words": "11db19f1675f23e9558a05ef57da1b03874dd5589fa9d6fb63e5760f4fda513c",
   "pronunciation_nothing_said": "4e110f0aac66b905b172c1b225a28347fc32f929d2c8683b5555b523e5cbb0ac",
   "pronunciation_options": "66d5c500588232dc1bd367664e17a51d20d47f80d32bb6874aeb56b9ac3d2a57",
@@ -33,6 +34,7 @@
     <string name="pronunciation_options">Opcje ekranu</string>
     <string name="pronunciation_skip">Pomiń</string>
     <string name="pronunciation_microphone_off">Włącz dostęp do mikrofonu dla Zoonka w ustawieniach, żeby powiedzieć to słowo. Na razie możesz je pominąć.</string>
+    <string name="pronunciation_microphone_unavailable">Nie możemy skorzystać z mikrofonu, więc pomiń to słowo.</string>
     <string name="pronunciation_sounded_right">To brzmiało dobrze</string>
     <!-- %1$s is what the grader heard when the word didn't sound right. -->
     <string name="pronunciation_heard">Usłyszeliśmy „%1$s”</string>

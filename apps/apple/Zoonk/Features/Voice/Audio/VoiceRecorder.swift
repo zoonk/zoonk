@@ -1,10 +1,17 @@
 import AVFoundation
 import Observation
 
+enum MicrophoneProblem: Equatable {
+  case denied
+  case unavailable
+}
+
 struct VoiceRecording: Sendable {
   let attemptId = UUID().uuidString
   let audio: Data
   let durationMs: Int
+  /// Time until the microphone went live, excluding time spent on the permission prompt.
+  var micStartupMs: Int? = nil
 }
 
 /// Each recording lives in a temporary file that's read and deleted as soon as it stops, so nothing
@@ -17,16 +24,24 @@ final class VoiceRecorder {
     case idle
     case acquiring
     case recording(startedAt: Date)
-    case denied
+    case failedToStart(MicrophoneProblem)
+
+    var startProblem: MicrophoneProblem? {
+      if case .failedToStart(let problem) = self { return problem }
+      return nil
+    }
   }
 
   /// A spoken answer is one sentence; a longer recording is a microphone left on.
   static let maxDuration: TimeInterval = 30
+  private static let meterInterval = Duration.milliseconds(100)
+  private static let levelHistory = 160
+  private static let maxStartup = Duration.seconds(60)
 
   private(set) var status = Status.idle
-  /// From 0 to 1.
-  private(set) var level: Double = 0
-
+  /// Normalized input levels (0 to 1), oldest first.
+  private(set) var recentLevels: [Double] = []
+  @ObservationIgnored private var micStartupMs: Int?
   @ObservationIgnored private var recorder: AVAudioRecorder?
   @ObservationIgnored private var delegate: RecorderDelegate?
   @ObservationIgnored private var meter: Task<Void, Never>?
@@ -42,56 +57,72 @@ final class VoiceRecorder {
     return false
   }
 
-  /// False before the learner is asked: tapping Record asks.
-  var isDenied: Bool {
-    status == .denied || AVAudioApplication.shared.recordPermission == .denied
+  var microphoneProblem: MicrophoneProblem? {
+    status.startProblem ?? (AVAudioApplication.shared.recordPermission == .denied ? .denied : nil)
   }
 
-  /// False when the microphone is off or couldn't start.
-  @discardableResult
-  func start(onRecorded: @escaping @MainActor (VoiceRecording) -> Void) async -> Bool {
-    guard status == .idle || status == .denied else {
-      return false
+  /// A microphone that couldn't start may work for the next word; a denied permission stays denied.
+  func clearStartFailure() {
+    if status == .failedToStart(.unavailable) {
+      status = .idle
+    }
+  }
+
+  func start(onRecorded: @escaping @MainActor (VoiceRecording) -> Void) async {
+    guard status == .idle || status.startProblem != nil else {
+      return
     }
 
+    var pressedAt = ContinuousClock.now
+    let wasAsked = AVAudioApplication.shared.recordPermission == .undetermined
     status = .acquiring
     acquisition += 1
     let mine = acquisition
     let isAllowed = await AVAudioApplication.requestRecordPermission()
 
     guard acquisition == mine else {
-      return false
+      return
     }
 
     guard isAllowed else {
-      status = .denied
-      return false
+      status = .failedToStart(.denied)
+      return
     }
 
-    guard let recorder = makeRecorder() else {
-      SharedAudioSession.release(for: self)
-      status = .idle
-      return false
+    if wasAsked {
+      pressedAt = .now
     }
 
-    let delegate = RecorderDelegate { [weak self] in self?.finish() }
+    guard await openSession(), acquisition == mine, let recorder = makeRecorder() else {
+      if acquisition == mine {
+        SharedAudioSession.release(for: self)
+        status = .failedToStart(.unavailable)
+      } else if status == .idle {
+        SharedAudioSession.release(for: self)
+      }
+
+      return
+    }
+
+    let delegate = RecorderDelegate { [weak self, weak recorder] in
+      guard let recorder, self?.recorder === recorder else { return }
+      self?.finish()
+    }
     recorder.delegate = delegate
     recorder.isMeteringEnabled = true
 
     guard recorder.record(forDuration: Self.maxDuration) else {
       discard(recorder)
       SharedAudioSession.release(for: self)
-      status = .idle
-      return false
+      status = .failedToStart(.unavailable)
+      return
     }
 
     self.recorder = recorder
     self.delegate = delegate
     self.onRecorded = onRecorded
-    status = .recording(startedAt: .now)
     observeInterruptions()
-    startMeter()
-    return true
+    watch(recorder, pressedAt: pressedAt)
   }
 
   func stop() {
@@ -109,17 +140,21 @@ final class VoiceRecorder {
     recorder?.stop()
   }
 
-  private func makeRecorder() -> AVAudioRecorder? {
-    let session = AVAudioSession.sharedInstance()
-
+  private func openSession() async -> Bool {
     do {
-      try session.setCategory(
-        .playAndRecord, mode: .default, options: [.defaultToSpeaker, .allowBluetoothHFP])
-      try SharedAudioSession.activate(for: self)
+      try await SharedAudioSession.activate(for: self) { session in
+        try session.setCategory(
+          .playAndRecord, mode: .default, options: [.defaultToSpeaker, .allowBluetoothHFP])
+        // AVAudioSession suppresses haptics during recording by default.
+        try session.setAllowHapticsAndSystemSoundsDuringRecording(true)
+      }
+      return true
     } catch {
-      return nil
+      return false
     }
+  }
 
+  private func makeRecorder() -> AVAudioRecorder? {
     let url = FileManager.default.temporaryDirectory
       .appending(path: "voice-\(UUID().uuidString).m4a")
 
@@ -148,19 +183,22 @@ final class VoiceRecorder {
 
     let audio = try? Data(contentsOf: recorder.url)
     let deliver = onRecorded
+    let failedToStart = status == .acquiring && deliver != nil
+    let startup = micStartupMs
     discard(recorder)
     self.recorder = nil
     delegate = nil
     onRecorded = nil
     meter?.cancel()
     meter = nil
-    level = 0
-    status = .idle
+    recentLevels = []
+    micStartupMs = nil
+    status = failedToStart ? .failedToStart(.unavailable) : .idle
     stopObservingInterruptions()
     SharedAudioSession.release(for: self)
 
-    if let audio, !audio.isEmpty, let deliver {
-      deliver(VoiceRecording(audio: audio, durationMs: durationMs))
+    if !failedToStart, let audio, !audio.isEmpty, let deliver {
+      deliver(VoiceRecording(audio: audio, durationMs: durationMs, micStartupMs: startup))
     }
   }
 
@@ -168,18 +206,27 @@ final class VoiceRecorder {
     recorder.deleteRecording()
   }
 
-  private func startMeter() {
+  // The microphone can still be switching on after record() returns.
+  private func watch(_ recorder: AVAudioRecorder, pressedAt: ContinuousClock.Instant) {
     meter = Task { [weak self] in
       while !Task.isCancelled {
-        guard let self, let recorder = self.recorder else {
+        guard let self, self.recorder === recorder else {
           return
         }
 
-        recorder.updateMeters()
-        // -50 dB is silence for speech; 0 dB is the loudest.
-        let power = Double(recorder.averagePower(forChannel: 0))
-        self.level = min(1, max(0, (power + 50) / 50))
-        try? await Task.sleep(for: .milliseconds(100))
+        if isRecording {
+          recorder.updateMeters()
+          let power = Double(recorder.averagePower(forChannel: 0))
+          recentLevels.append(min(1, max(0, (power + 50) / 50)))
+          recentLevels.removeFirst(max(0, recentLevels.count - Self.levelHistory))
+          try? await Task.sleep(for: Self.meterInterval)
+        } else if recorder.currentTime > 0 {
+          let startup = ContinuousClock.now - pressedAt
+          micStartupMs = startup <= Self.maxStartup ? Int(startup / .milliseconds(1)) : nil
+          status = .recording(startedAt: .now)
+        } else {
+          try? await Task.sleep(for: .milliseconds(10))
+        }
       }
     }
   }

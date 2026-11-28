@@ -23,7 +23,7 @@ struct MistakeLessonQuestionView: View {
   @State private var soundOwner = UUID().uuidString
   @State private var cantTalk = LessonTodayChoices.standard.isChosenToday(.cantTalk)
   @State private var cantListen = LessonTodayChoices.standard.isChosenToday(.cantListen)
-  @State private var micBlocked = false
+  @State private var microphoneProblem: MicrophoneProblem?
   @State private var attemptId = UUID().uuidString.lowercased()
   @State private var sent: LessonAnswer?
   @State private var sentDuration: Int?
@@ -87,7 +87,8 @@ struct MistakeLessonQuestionView: View {
     guard !showsIdea else { return nil }
     let mode = replay.step.spokenAnswerMode(
       canSpeak: recording.input != nil, cantTalk: cantTalk, cantListen: cantListen,
-      micBlocked: micBlocked, lockedAnswer: state.phase == .playing ? nil : state.currentAnswer,
+      microphoneProblem: microphoneProblem,
+      lockedAnswer: state.phase == .playing ? nil : state.currentAnswer,
       heard: state.currentResult?.heard)
     return replay.step.shownPromptAudio(spokenMode: mode, cantListen: cantListen)
   }
@@ -272,7 +273,7 @@ struct MistakeLessonQuestionView: View {
   private func content(_ part: LessonStepPart) -> some View {
     LessonQuestionStepView(
       step: replay.step, state: state, context: context, part: part,
-      cantTalk: $cantTalk, cantListen: $cantListen, micBlocked: $micBlocked,
+      cantTalk: $cantTalk, cantListen: $cantListen, microphoneProblem: $microphoneProblem,
       mistake: SpokenMistakeTarget(
         mistakeId: entry.mistakeId, attemptId: attemptId,
         goalId: scope.goal(goalId), blockId: scope.blockId, mockId: scope.mockId,

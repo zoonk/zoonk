@@ -99,11 +99,13 @@ fun ListenButton(
     state: SpeechState = audio.state,
     rate: Float = 1f,
     @DrawableRes icon: Int = R.drawable.ic_volume_up,
+    enabled: Boolean = true,
 ) {
     val description = if (state == SpeechState.Idle) null else speechActionLabel(state, label)
     OutlinedButton(
         onClick = { if (audio.isBusy) audio.cancel() else audio.speak(segments, rate) },
         modifier = modifier.semantics { description?.let { stateDescription = it } },
+        enabled = enabled,
     ) {
         SpeechStatusIcon(state) { Icon(painterResource(icon), contentDescription = null, modifier = Modifier.size(buttonIconSize())) }
         Spacer(Modifier.size(ButtonDefaults.IconSpacing))

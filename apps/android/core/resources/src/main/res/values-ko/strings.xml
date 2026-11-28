@@ -70,6 +70,8 @@
   "not_found_title": "12326177841bbc90578b294f5e0784ea93661a9b3e09d3fefdc431cd05ce4c8b",
   "player_not_saved": "d66bc9b5d3048a476b8fa0a70340508de4847c91762ade0c9c1f925137275e0e",
   "player_not_saved_description": "376547f3d52ee0220c01d7d7ca993d5d6b6d5f7a25ebc1c1feb7d4a5dbd61b9a",
+  "player_spoken_listen": "093f13bee6bc8fb0120f413e63687bd7b54fa2d8c7dad531dd99123bc47abaac",
+  "player_type_spoken_answer": "975953822633e11a47773a29956147a09fb4a8a5a1577ddc63a5dc0666018534",
   "suggestion_other_options": "f5259764d87f6c6e459620889390faa3c4968bdddae3f0ea3b5bb1f11160c75b",
   "suggestion_save_failed": "02fbee30e383655064d1e2eb7fe48ce9521e4e2fc702ca3eeb5513fe63fa06cf",
   "suggestion_view": "e3a1fb8f637296b1df8426e16ce50ab0f7e50bd50aacf93f195548bbe8f8599a",
@@ -184,4 +186,7 @@
     <string name="player_not_saved_description">일부 답이 아직 저장되지 않았어요. 레슨이 열려 있는 동안 계속 저장을 시도할게요.</string>
     <!-- Labels a scale's numbers with what they count or measure; {unit} is the activity's own unit text, such as days, km/h or times. -->
     <string name="activities_guess_in_unit">단위: %1$s</string>
+    <string name="player_spoken_listen">듣기</string>
+    <!-- On a question answered aloud: the learner types this one answer instead of saying it. -->
+    <string name="player_type_spoken_answer">대신 입력하기</string>
 </resources>

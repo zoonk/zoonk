@@ -64,42 +64,23 @@ final class RecordInBar {
   }
 }
 
-/// Main's `RecordNote`: the one line about recording, right over Record, in the same words on every
-/// screen that records. A check that isn't slow yet has none: Record's busy button says it.
 enum RecordNote: Equatable {
-  case ready
-  case acquiring
-  /// Not read as it shows: VoiceOver's speech would end up in the take.
-  case recording
   case noSpeech
+  case missedStart
   case failed
   case slow
+  case microphoneUnavailable
   /// The microphone is off where skipping is the other way on: how to turn it back on.
   case microphoneOff(String)
-
-  init?(active status: VoiceRecorder.Status) {
-    switch status {
-    case .acquiring: self = .acquiring
-    case .recording: self = .recording
-    case .idle, .denied: return nil
-    }
-  }
 
   @MainActor
   var note: BarNote {
     switch self {
-    case .ready:
+    case .missedStart:
       BarNote(
         LocalizedStringResource(
-          "Tap Record and say it out loud", table: "Voice",
-          comment: "Asks the learner to record their answer"), tone: .status)
-    case .acquiring:
-      BarNote(LocalizedStringResource("Getting ready…", table: "Today"), tone: .hint)
-    case .recording:
-      BarNote(
-        LocalizedStringResource(
-          "Listening… Tap Stop to check.", table: "Voice",
-          comment: "Shown while the learner records an answer"), tone: .hint)
+          "We may have missed the start. Say it again.", table: "Voice"),
+        tone: .status)
     case .noSpeech:
       BarNote(
         LocalizedStringResource(
@@ -115,6 +96,11 @@ enum RecordNote: Equatable {
         LocalizedStringResource(
           "Still checking. This is taking longer than usual.", table: "Voice",
           comment: "Grading a spoken answer is taking longer than usual"), tone: .status)
+    case .microphoneUnavailable:
+      BarNote(
+        LocalizedStringResource(
+          "We can't use your microphone, so skip this word.", table: "Voice"),
+        tone: .status)
     case .microphoneOff(let line):
       BarNote(
         line, tone: .status,

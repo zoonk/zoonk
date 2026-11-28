@@ -102,4 +102,7 @@
     <string name="player_not_saved_description">Some answers aren\'t saved yet. We\'ll keep trying while this lesson is open.</string>
     <!-- Labels a scale's numbers with what they count or measure; {unit} is the activity's own unit text, such as days, km/h or times. -->
     <string name="activities_guess_in_unit">Unit: %1$s</string>
+    <string name="player_spoken_listen">Listen</string>
+    <!-- On a question answered aloud: the learner types this one answer instead of saying it. -->
+    <string name="player_type_spoken_answer">Type instead</string>
 </resources>

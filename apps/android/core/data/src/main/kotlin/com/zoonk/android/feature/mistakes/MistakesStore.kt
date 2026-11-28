@@ -109,6 +109,7 @@ class LiveMistakesApi(
             stepId = stepId,
             durationMs = recording.durationMs,
             audio = recording.part(),
+            micStartupMs = recording.micStartupMs,
             timeZone = timeZone,
             practiceDurationMs = practiceDurationMs.coerceAtMost(3_600_000),
             mistakeId = mistakeId,

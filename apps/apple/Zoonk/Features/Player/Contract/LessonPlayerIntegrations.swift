@@ -156,8 +156,7 @@ struct SpokenAnswerContext {
   /// The run's session, once it started.
   let studySessionId: @MainActor () -> String?
   let onGraded: @MainActor (SpokenAnswerVerdict) -> Void
-  /// The microphone is off for the app: the screen offers typing instead.
-  let onBlocked: @MainActor () -> Void
+  let onMicrophoneProblem: @MainActor (MicrophoneProblem) -> Void
   var mistake: SpokenMistakeTarget? = nil
   var onPracticeGraded: (@MainActor (Components.Schemas.MistakePracticeFeedback) -> Void)? = nil
   var onCheckingChanged: (@MainActor (Bool) -> Void)? = nil

@@ -4,9 +4,11 @@ import { toListeningStep } from "@zoonk/core/lesson-player/grade";
 import { MainActionInBar } from "@zoonk/learn/main-action-slot";
 import { useSpokenText } from "@zoonk/learn/rich-text/speech";
 import { RecordButton } from "@zoonk/learn/speech/record-button";
+import { RecordCue } from "@zoonk/learn/speech/record-cue";
 import { useRecordNote } from "@zoonk/learn/speech/record-note";
 import {
   type MicrophoneProblem,
+  type Recording,
   useCanRecord,
   useVoiceRecorder,
 } from "@zoonk/ui/hooks/voice-recorder";
@@ -19,6 +21,7 @@ import { PlayerAudioProvider } from "../../player-audio-context";
 import { LessonHelpLimitNotice } from "../_components/help-limit-notice";
 import { splitQuestionData } from "../_utils/lesson-aside";
 import { useLessonPlayer, useLessonPlayerConfig } from "../lesson-player-context";
+import { type LessonPlayerState } from "../lesson-player-state";
 import { CANT_LISTEN_TODAY, CANT_TALK_TODAY, useTodayChoice } from "../use-today-choice";
 import { ExerciseStepView } from "./exercise-step";
 import { LessonAnswerField } from "./lesson-answer-field";
@@ -42,6 +45,14 @@ function TargetText({ step }: { step: StepOf<"spokenAnswer"> }) {
   );
 }
 
+function splitIssue(issue: LessonPlayerState["checkIssue"]) {
+  if (issue?.status === "missedStart" || issue?.status === "noSpeech") {
+    return { limit: null, problem: issue.status };
+  }
+
+  return { limit: issue, problem: null };
+}
+
 /** Recording is this step's answer, so Record and Stop take the bar's place where Check is. */
 function RecordAnswer({
   onProblem,
@@ -53,8 +64,8 @@ function RecordAnswer({
   const { actions, state } = useLessonPlayer();
 
   const onRecorded = useCallback(
-    ({ audio, durationMs }: { audio: Blob; durationMs: number }) =>
-      actions.submitSpokenAnswer({ attemptId: crypto.randomUUID(), audio, durationMs, stepId }),
+    (recording: Recording) =>
+      actions.submitSpokenAnswer({ ...recording, attemptId: crypto.randomUUID(), stepId }),
     [actions, stepId],
   );
 
@@ -72,28 +83,27 @@ function RecordAnswer({
   };
 
   const isIdle = recorder.status === "idle" || recorder.status === "acquiring";
-  const issue = isIdle ? state.checkIssue : null;
-  const limit = issue?.status === "noSpeech" ? null : issue;
+  const { limit, problem } = splitIssue(isIdle ? state.checkIssue : null);
 
   const note = useRecordNote({
-    acquiring: recorder.status === "acquiring",
-    problem: issue?.status === "noSpeech" ? "noSpeech" : null,
-    recording: isRecording,
+    problem,
+    recording: recorder.status === "acquiring" || isRecording,
   });
 
   return (
     <>
+      <RecordCue recorder={recorder} />
+
       <div aria-live="polite" className="empty:hidden">
         {limit && <LessonHelpLimitNotice limit={limit} />}
       </div>
 
-      <MainActionInBar note={!limit && (isIdle || isRecording) && note}>
+      <MainActionInBar note={!limit && note}>
         <RecordButton
           busy={recorder.status === "acquiring"}
           elapsedMs={recorder.elapsedMs}
           onStart={() => void startRecording()}
           onStop={recorder.stop}
-          preparation={recorder}
           recording={isRecording}
         />
       </MainActionInBar>

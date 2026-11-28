@@ -63,15 +63,18 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.constrainHeight
 import androidx.compose.ui.unit.constrainWidth
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.data.Resource
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.activities.ActivityAnnouncement
+import com.zoonk.android.feature.audio.SpeakCue
 import com.zoonk.android.feature.audio.VoiceAnswerButton
 import com.zoonk.android.feature.audio.VoiceAnswerLimit
 import com.zoonk.android.feature.audio.VoiceAnswerModel
+import com.zoonk.android.feature.audio.VoiceRecorder
 import com.zoonk.android.feature.audio.checkNote
 import com.zoonk.android.feature.audio.recordNote
 import com.zoonk.android.feature.audio.voiceAnswerModel
@@ -686,10 +689,14 @@ internal fun SpokenAnswerView(
     val spoken = content.content
     val locked = state.phase != LessonPhase.Playing
     val voice = spokenVoice(step, actions)
-    val types = state.spokenMode(step, actions.cantTalk, actions.cantListen, voice.blocked) == SpokenMode.Type
+    val recorderStatus by voice.recorder.state.collectAsStateWithLifecycle()
+    val micUnavailable = recorderStatus == VoiceRecorder.Status.Unavailable
+    val micProblem = voice.blocked || micUnavailable
+    val types = state.spokenMode(step, actions.cantTalk, actions.cantListen, micProblem) == SpokenMode.Type
     val switchTo = { cantTalk: Boolean ->
         actions.select(null)
         voice.blocked = false
+        voice.recorder.clearStartFailure()
         actions.setCantTalk(cantTalk)
     }
     val listening = state.shownStep(step, actions.cantTalk, actions.cantListen).content as? StepContent.Language
@@ -703,14 +710,23 @@ internal fun SpokenAnswerView(
     }
 
     QuestionScene {
-        if (part.showsScreen) TargetText(spoken)
+        if (part.showsScreen) {
+            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                TargetText(spoken)
+                if (!types && (!locked || state.phase == LessonPhase.Checking)) {
+                    SpeakCue(voice.recorder, checking = voice.checking || state.phase == LessonPhase.Checking)
+                }
+            }
+        }
 
         if (part.showsTurn) {
             when {
                 types -> {
-                    if (voice.blocked && !locked) {
+                    if (micProblem && !locked) {
                         Text(
-                            stringResource(R.string.player_microphone_is_blocked),
+                            stringResource(
+                                if (micUnavailable) R.string.player_microphone_unavailable else R.string.player_microphone_is_blocked,
+                            ),
                             modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             style = MaterialTheme.typography.bodyMedium,
@@ -736,7 +752,18 @@ internal fun SpokenAnswerView(
                         stringResource(if (actions.cantTalk) R.string.player_can_talk_now else R.string.player_say_it_instead),
                     ) { switchTo(false) }
                 } else {
-                    StepWayOut(R.drawable.ic_mic_off, stringResource(R.string.player_cant_talk_now)) { switchTo(true) }
+                    val label = stringResource(R.string.player_cant_talk_now)
+                    val alternative =
+                        stringResource(
+                            if (content.listening !=
+                                null
+                            ) {
+                                R.string.player_spoken_listen
+                            } else {
+                                R.string.player_type_spoken_answer
+                            },
+                        )
+                    StepWayOut(R.drawable.ic_mic_off, label, accessibleLabel = "$label. $alternative") { switchTo(true) }
                 }
             }
         }
@@ -795,7 +822,10 @@ fun lessonBarNote(
 ): (@Composable () -> Unit)? {
     val answering = state.phase == LessonPhase.Playing || state.phase == LessonPhase.Checking
     if (step == null || !answering) return null
-    if (recordsInBar(step, state, actions)) return recordNote(spokenVoice(step, actions))
+    if (step.content is StepContent.SpokenAnswer) {
+        val note = recordNote(spokenVoice(step, actions))
+        if (recordsInBar(step, state, actions)) return note
+    }
     // A check that names its own problem (no words heard, a limit) says it where the learner answers.
     return checkNote(checking = state.phase == LessonPhase.Checking, failed = state.checkFailed && state.checkIssue == null)
 }
@@ -806,9 +836,13 @@ fun recordsInBar(
     step: LessonStep?,
     state: LessonPlayerState,
     actions: StepActions,
-): Boolean =
-    step?.content is StepContent.SpokenAnswer &&
-        state.spokenMode(step, actions.cantTalk, actions.cantListen, spokenVoice(step, actions).blocked) == SpokenMode.Speak
+): Boolean {
+    if (step?.content !is StepContent.SpokenAnswer) return false
+    val voice = spokenVoice(step, actions)
+    val status by voice.recorder.state.collectAsStateWithLifecycle()
+    val micProblem = voice.blocked || status == VoiceRecorder.Status.Unavailable
+    return state.spokenMode(step, actions.cantTalk, actions.cantListen, micProblem) == SpokenMode.Speak
+}
 
 @Composable
 private fun TargetText(spoken: SpokenAnswerStepContent) {
@@ -928,9 +962,15 @@ internal fun GhostAction(
 internal fun StepWayOut(
     icon: Int,
     label: String,
+    accessibleLabel: String? = null,
     onClick: () -> Unit,
 ) {
-    OutlinedButton(onClick = onClick, size = ButtonSize.Large, leadingIcon = { ButtonIcon(icon) }) { Text(label) }
+    OutlinedButton(
+        onClick = onClick,
+        modifier = if (accessibleLabel == null) Modifier else Modifier.semantics { contentDescription = accessibleLabel },
+        size = ButtonSize.Large,
+        leadingIcon = { ButtonIcon(icon) },
+    ) { Text(label) }
 }
 
 data class ChoiceOption(

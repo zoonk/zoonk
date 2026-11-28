@@ -73,6 +73,7 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.audio.ListenButton
 import com.zoonk.android.feature.audio.MicrophoneOff
 import com.zoonk.android.feature.audio.RecordButton
+import com.zoonk.android.feature.audio.SpeakCue
 import com.zoonk.android.feature.audio.SpeechFailedNote
 import com.zoonk.android.feature.audio.SpeechPlayer
 import com.zoonk.android.feature.audio.SpeechState
@@ -252,6 +253,8 @@ private fun WordStep(
     val normal = key(word.id) { rememberSpokenAudio(speech, round.language) }
     val slow = key(word.id) { rememberSpokenAudio(speech, round.language) }
     val status by model.recorder.state.collectAsStateWithLifecycle()
+    val micUnavailable = model.microphoneOff || status == VoiceRecorder.Status.Unavailable
+    val listens = status != VoiceRecorder.Status.Acquiring && status !is VoiceRecorder.Status.Recording
     val tapRecord =
         rememberRecordTap(
             recorder = model.recorder,
@@ -266,9 +269,23 @@ private fun WordStep(
     val haptics = LocalHapticFeedback.current
     val note =
         when {
-            step.grade != null -> null
-            model.microphoneOff -> ({ MicrophoneOff(stringResource(R.string.pronunciation_microphone_off), titled = false) })
-            else -> recordNote(status, checking = round.pending, issue = round.issue, navigator = navigator)
+            step.grade != null -> {
+                null
+            }
+
+            model.microphoneOff -> {
+                ({ MicrophoneOff(stringResource(R.string.pronunciation_microphone_off), titled = false) })
+            }
+
+            else -> {
+                recordNote(
+                    status,
+                    checking = round.pending,
+                    issue = round.issue,
+                    navigator = navigator,
+                    unavailable = stringResource(R.string.pronunciation_microphone_unavailable),
+                )
+            }
         }
 
     LaunchedEffect(step.grade) {
@@ -283,7 +300,7 @@ private fun WordStep(
                 Modifier.taskKeys(onEnter = { if (step.grade != null && !round.pending) model.next() }, onEscape = navigator::closeTask),
             title = { Text(stringResource(R.string.pronunciation_title)) },
             actions = {
-                if (step.grade == null && !model.microphoneOff) {
+                if (step.grade == null && !micUnavailable) {
                     WordMenu(enabled = !round.pending && status == VoiceRecorder.Status.Idle, onSkip = model::next)
                 }
             },
@@ -306,7 +323,13 @@ private fun WordStep(
             WordPages(
                 Modifier.fillMaxSize().padding(padding),
                 meter = { RoundMeter(round) },
-                word = { key(word.id) { WordCard(word, round.language, normal, slow, navigator) } },
+                word = {
+                    key(word.id) {
+                        WordCard(word, round.language, normal, slow, navigator, listens = listens) {
+                            if (step.grade == null && !micUnavailable) SpeakCue(model.recorder, checking = round.pending)
+                        }
+                    }
+                },
             ) {
                 step.grade?.let { GradeNote(it) }
             }
@@ -399,9 +422,7 @@ private fun RoundMeter(round: PronunciationRound) {
             contentDescription = label
             progressBarRangeInfo = ProgressBarRangeInfo(round.outcomes.size.toFloat(), 0f..total.toFloat())
         },
-        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium)
         TaskSegments(round.segments)
     }
 }
@@ -413,6 +434,8 @@ private fun WordCard(
     normal: SpokenAudio,
     slow: SpokenAudio,
     navigator: AppNavigator,
+    listens: Boolean,
+    cue: @Composable () -> Unit,
 ) {
     val segments = listOf(SpokenText(word.word, recording = word.audioUrl, personal = false))
     // One sound plays at a time, so at most one of them failed.
@@ -442,7 +465,13 @@ private fun WordCard(
         }
 
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            ListenButton(normal, segments, stringResource(R.string.pronunciation_listen), state = normal.state.withoutFailure())
+            ListenButton(
+                normal,
+                segments,
+                stringResource(R.string.pronunciation_listen),
+                state = normal.state.withoutFailure(),
+                enabled = listens,
+            )
             ListenButton(
                 slow,
                 segments,
@@ -450,10 +479,11 @@ private fun WordCard(
                 state = slow.state.withoutFailure(),
                 rate = SpeechPlayer.SLOW_RATE,
                 icon = R.drawable.ic_slow_motion_video,
+                enabled = listens,
             )
         }
 
-        failed?.let { (audio, rate) ->
+        failed?.takeIf { listens }?.let { (audio, rate) ->
             SpeechFailedNote(
                 language = language,
                 limit = (audio.state as? SpeechState.Failed)?.limit,
@@ -465,6 +495,8 @@ private fun WordCard(
         word.tip?.let {
             ItemLine(it, style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant))
         }
+
+        cue()
     }
 }
 
@@ -565,7 +597,7 @@ private fun WordActions(
             }
         }
 
-        model.microphoneOff -> {
+        model.microphoneOff || status == VoiceRecorder.Status.Unavailable -> {
             TaskActions { width ->
                 Button(
                     busy = round.pending,

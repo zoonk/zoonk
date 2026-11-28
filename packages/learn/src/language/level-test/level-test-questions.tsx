@@ -18,6 +18,7 @@ import {
 import { OnboardingTestQuestion } from "../../onboarding/onboarding-host";
 import { PlacementQuestionScreen } from "../../onboarding/steps/placement-question";
 import { RecordButton } from "../../speech/record-button";
+import { RecordCue } from "../../speech/record-cue";
 import { type RecordProblem, useRecordNote } from "../../speech/record-note";
 import { useSpokenAudio } from "../../speech/use-spoken-audio";
 import { ListeningMessage } from "./level-test-parts";
@@ -151,13 +152,10 @@ export function SpeakingStep({
   const recording = recorder.status === "recording";
 
   const note = useRecordNote({
-    acquiring: recorder.status === "acquiring",
     checking: isPending,
     problem,
-    recording,
-    unavailable: micAvailable
-      ? null
-      : t("The microphone isn't available here. You can skip this part."),
+    recording: recording || recorder.status === "acquiring",
+    unavailable: micAvailable ? null : t("We can't use your microphone, so skip this part."),
   });
 
   return (
@@ -175,7 +173,6 @@ export function SpeakingStep({
                 elapsedMs={recorder.elapsedMs}
                 onStart={() => void recorder.start()}
                 onStop={recorder.stop}
-                preparation={recorder}
                 recording={recording}
               />
             )}
@@ -186,6 +183,8 @@ export function SpeakingStep({
           <OnboardingTitle lang={language}>{sentence.speaking.sentence}</OnboardingTitle>
           <OnboardingDescription>{sentence.speaking.translation}</OnboardingDescription>
         </OnboardingHeading>
+
+        {micAvailable && <RecordCue checking={isPending} recorder={recorder} />}
       </OnboardingColumn>
     </OnboardingTestQuestion>
   );

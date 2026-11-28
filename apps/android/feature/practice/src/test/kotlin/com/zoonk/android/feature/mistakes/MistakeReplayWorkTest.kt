@@ -87,7 +87,6 @@ class MistakeReplayWorkTest {
         }
     }
 
-    /** The spoken screen asks to "Tap Record", so mistake practice's bar has the lesson's own Record. */
     @Test
     fun aSpokenMistakeCanBeRecorded() {
         val spoken =
@@ -100,7 +99,7 @@ class MistakeReplayWorkTest {
             )
         run(replay(FIRST_MISTAKE, "spokenAnswer", spoken))
 
-        rule.onNodeWithText("Tap Record and say it out loud").assertExists()
+        rule.onNodeWithText("Say it when “Speak now” appears", useUnmergedTree = true).assertExists()
         rule.onNodeWithText("Record").assertExists()
         rule.onNodeWithText("Check").assertDoesNotExist()
     }

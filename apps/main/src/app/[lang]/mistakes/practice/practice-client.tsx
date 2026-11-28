@@ -74,6 +74,7 @@ export function MistakePracticeClient({
         record: async ({
           audio,
           durationMs,
+          micStartupMs,
           stepId,
           mistakeId,
           attemptId,
@@ -84,6 +85,7 @@ export function MistakePracticeClient({
             attemptId,
             audio,
             durationMs,
+            micStartupMs,
             practice: { ...run, answerIds: runAnswerIds, mistakeId, practiceDurationMs },
             stepId,
             studySessionId: null,

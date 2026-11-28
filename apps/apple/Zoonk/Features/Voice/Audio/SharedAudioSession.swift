@@ -11,6 +11,25 @@ enum SharedAudioSession {
     users.insert(ObjectIdentifier(user))
   }
 
+  /// Holds the shared session during activation, which can block while the audio route changes.
+  static func activate(
+    for user: AnyObject,
+    configure: @escaping @Sendable (AVAudioSession) throws -> Void
+  ) async throws {
+    users.insert(ObjectIdentifier(user))
+
+    do {
+      try await Task.detached(priority: .userInitiated) {
+        let session = AVAudioSession.sharedInstance()
+        try configure(session)
+        try session.setActive(true)
+      }.value
+    } catch {
+      release(for: user)
+      throw error
+    }
+  }
+
   /// Other apps' audio comes back once nobody uses it.
   static func release(for user: AnyObject) {
     guard users.remove(ObjectIdentifier(user)) != nil, users.isEmpty else {

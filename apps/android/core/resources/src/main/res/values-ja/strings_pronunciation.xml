@@ -7,6 +7,7 @@
   "pronunciation_listen": "66df8a35f691aa67d5d0daa6047d182f0c64c2b41d267b9f0e1e5f130dcd111b",
   "pronunciation_listen_slowly": "af0fa30f0709e23ffbccbe4673b5a183a1f8086c87a3fcef2a7b40cf4e1a1b14",
   "pronunciation_microphone_off": "8de595b04b3d7970d2e1a159932acfde9c1581b815249988d1c39981f1a30495",
+  "pronunciation_microphone_unavailable": "6db0725565c2d04b16d982ebc5d4cf7da9062f94d300bf9aa9d518add67c19fd",
   "pronunciation_no_words": "b0cf118476a94163e9fad062939b1f7409c2ac1415695c5286b527ac3ccda9bc",
   "pronunciation_nothing_said": "6e736d6c78940ee4ad536418cca6d992f5b6b85a069afc126ff2d5e69bdbc9e2",
   "pronunciation_options": "a7e8e9ad0152d4c9cd26c08cc584ff6bcbea188f6807ad81a45bde2ed64d6e4a",
@@ -33,6 +34,7 @@
     <string name="pronunciation_options">画面のオプション</string>
     <string name="pronunciation_skip">スキップ</string>
     <string name="pronunciation_microphone_off">単語を声に出して言うには、設定でZoonkにマイクの使用を許可してください。今はスキップできます。</string>
+    <string name="pronunciation_microphone_unavailable">マイクを使えないため、この単語はスキップしてください。</string>
     <string name="pronunciation_sounded_right">正しく発音できました</string>
     <!-- %1$s is what the grader heard when the word didn't sound right. -->
     <string name="pronunciation_heard">「%1$s」と聞こえました</string>

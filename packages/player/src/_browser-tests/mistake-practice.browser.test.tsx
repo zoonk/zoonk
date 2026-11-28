@@ -252,6 +252,44 @@ describe("exact lesson mistake practice", () => {
     expect(record.mock.calls[0]?.[0].practiceDurationMs).toBeGreaterThanOrEqual(0);
   });
 
+  it("asks again after a missed start, sending every later take without its startup time", async () => {
+    allowMicrophone();
+
+    const grade = {
+      attemptId: crypto.randomUUID(),
+      explanation: null,
+      isCorrect: true,
+      score: 1,
+      transcript: "How much is the rent?",
+      words: [],
+      wordsToPractice: [],
+    };
+
+    const record = vi
+      .fn<NonNullable<Actions["record"]>>()
+      .mockResolvedValueOnce({ status: "missedStart" })
+      .mockResolvedValueOnce({ status: "noSpeech" })
+      .mockResolvedValue({ feedback: feedback(), grade, status: "graded" });
+
+    openPractice(spokenAnswerStep(), { record });
+    await page.getByRole("button", { exact: true, name: "Record" }).click();
+    await page.getByRole("button", { name: /^Stop/u }).click();
+
+    await expect
+      .element(page.getByText("We may have missed the start. Say it again."))
+      .toBeVisible();
+
+    await page.getByRole("button", { exact: true, name: "Record" }).click();
+    await page.getByRole("button", { name: /^Stop/u }).click();
+    await expect.poll(() => record.mock.calls).toHaveLength(2);
+    await page.getByRole("button", { exact: true, name: "Record" }).click();
+    await page.getByRole("button", { name: /^Stop/u }).click();
+    await expect.element(page.getByRole("region", { name: "Answer feedback" })).toBeVisible();
+    expect(record.mock.calls[0]?.[0].micStartupMs).toBeGreaterThanOrEqual(0);
+    expect(record.mock.calls[1]?.[0]).not.toHaveProperty("micStartupMs");
+    expect(record.mock.calls[2]?.[0]).not.toHaveProperty("micStartupMs");
+  });
+
   it("keeps a spoken recording for a network retry, still offering Record in the bar, and sends its original step", async () => {
     allowMicrophone();
 

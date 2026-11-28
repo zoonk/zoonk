@@ -6412,9 +6412,9 @@ msgid "I didn't understand the audio"
 msgstr "Nie rozumiem nagrania"
 
 #: src/language/level-test/level-test-questions.tsx
-msgctxt "TEizt2"
-msgid "The microphone isn't available here. You can skip this part."
-msgstr "Mikrofon jest tu niedostępny. Możesz pominąć tę część."
+msgctxt "U9t3gU"
+msgid "We can't use your microphone, so skip this part."
+msgstr "Nie możemy skorzystać z mikrofonu, więc pomiń tę część."
 
 #: src/language/level-test/level-test-questions.tsx
 msgctxt "TIG4Hb"
@@ -6643,9 +6643,9 @@ msgid "Nothing said this time"
 msgstr "Tym razem bez słów"
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "y1aleL"
-msgid "The microphone isn't available here. You can skip this word."
-msgstr "Mikrofon jest tu niedostępny. Możesz pominąć to słowo."
+msgctxt "lMwCDv"
+msgid "We can't use your microphone, so skip this word."
+msgstr "Nie możemy skorzystać z mikrofonu, więc pomiń to słowo."
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 msgctxt "mSmk6Q"
@@ -13045,7 +13045,13 @@ msgctxt "7Y6Yvq"
 msgid "Record"
 msgstr "Nagraj"
 
-#: src/speech/record-note.tsx
+#. Shown the moment the microphone is on: an instruction to start talking now, not a button.
+#: src/speech/record-cue.tsx
+msgctxt "NQsS5y"
+msgid "Speak now"
+msgstr "Mów teraz"
+
+#: src/speech/record-cue.tsx
 #: src/today/today-block-row.tsx
 #: src/today/today-coming-lessons.tsx
 #: src/today/today-segment-popover.tsx
@@ -13053,17 +13059,16 @@ msgctxt "2LhxfA"
 msgid "Getting ready…"
 msgstr "Przygotowujemy…"
 
-#. “Stop” is the label of the button that ends the recording.
-#: src/speech/record-note.tsx
-msgctxt "CzQFwa"
-msgid "Listening… Tap Stop to check."
-msgstr "Słuchamy… Naciśnij „Zatrzymaj”, aby sprawdzić odpowiedź."
+#. Before recording. “Speak now” must match the cue shown when the microphone is on.
+#: src/speech/record-cue.tsx
+msgctxt "cD1tXW"
+msgid "Say it when “Speak now” appears"
+msgstr "Powiedz to, gdy pojawi się „Mów teraz”"
 
-#. “Record” is the label of the button that starts the recording.
 #: src/speech/record-note.tsx
-msgctxt "PDfU14"
-msgid "Tap Record and say it out loud"
-msgstr "Stuknij „Nagraj” i powiedz to na głos"
+msgctxt "pvPbx0"
+msgid "We may have missed the start. Say it again."
+msgstr "Początek mógł nam umknąć. Powiedz to jeszcze raz."
 
 #: src/speech/speech-parts.tsx
 msgctxt "e__Yqd"

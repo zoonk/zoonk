@@ -11502,6 +11502,65 @@
         }
       }
     },
+    "Type instead" : {
+      "comment" : "On a question answered aloud: the learner types this one answer instead of saying it.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stattdessen tippen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escribir en su lugar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Écris plutôt"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scrivi invece"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "代わりに入力"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "대신 입력하기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Napisz zamiast mówić"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Digitar"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yaz"
+          }
+        }
+      }
+    },
     "Underlining what matters most…" : {
       "comment" : "What the wait is doing while a lesson's key ideas are highlighted",
       "localizations" : {
@@ -11792,6 +11851,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kelime bilgisi"
+          }
+        }
+      }
+    },
+    "We can't use your microphone, so type what you'd say." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir können dein Mikrofon nicht nutzen, also schreib auf, was du sagen würdest."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No podemos usar tu micrófono, así que escribe lo que dirías."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On ne peut pas utiliser ton micro, alors écris ce que tu dirais."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non riusciamo a usare il tuo microfono, quindi scrivi quello che diresti."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "マイクが使えないため、話す内容を文字で入力してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "마이크를 사용할 수 없어요. 말하려던 내용을 글로 입력하세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie możemy skorzystać z twojego mikrofonu, więc napisz to, co chcesz powiedzieć."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A gente não consegue usar seu microfone, então digite o que você falaria."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mikrofonunu kullanamıyoruz, bu yüzden söyleyeceklerini yaz."
           }
         }
       }

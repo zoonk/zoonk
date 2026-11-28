@@ -485,6 +485,11 @@ class MistakePracticeViewModel(
                 GradeOutcome.NoSpeech
             }
 
+            GradeOutcome.MissedStart -> {
+                lessonFailed(recording = true)
+                GradeOutcome.MissedStart
+            }
+
             is GradeOutcome.Limited -> {
                 lessonFailed(recording = true)
                 outcome

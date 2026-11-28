@@ -101,6 +101,7 @@
   "player_lesson_ready": "15974cea53a7d6aecba26a37f4a8731a472e446b003ba19c9db942edc32d6a13",
   "player_listen": "3840fbf9176a031dc18f83778aef41d73981c0be9f655fa2db608e3950db06c8",
   "player_microphone_is_blocked": "96f35d86a81b2d8aad0eb2394a43227a46916e8205c9e315767d45bccf39f45c",
+  "player_microphone_unavailable": "8d62e5a622ecbc1fd2008e1cddeb5f65a157f7af07c90bbd0fe667658277be48",
   "player_next_lesson": "b5d9524a893ec8ebab4fc49d1f0bb49ddbd9024df72f534454f7a57f097fb3dc",
   "player_next_step_failed": "56042968d7471d3d94379487efa5ed4a37345ebc8ba8b62ceee1b54820f29480",
   "player_not_found_description": "8fd57e8aac9aedac567f162217a14b94c25363a0295a4fde5a2a3cf73f2bc9a4",
@@ -348,6 +349,7 @@
     <!-- On a speaking screen being typed because the microphone was blocked: goes back to answering out loud. -->
     <string name="player_say_it_instead">소리 내어 말하기</string>
     <string name="player_microphone_is_blocked">마이크 사용이 차단됐어요.</string>
+    <string name="player_microphone_unavailable">마이크를 사용할 수 없어요. 말하려던 내용을 글로 입력하세요.</string>
     <string name="player_what_we_heard">이렇게 들렸어요</string>
     <!-- Read by screen readers after a word of a spoken answer the learner skipped. -->
     <string name="player_word_not_heard">%1$s (들리지 않음)</string>

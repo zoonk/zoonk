@@ -4362,65 +4362,6 @@
         }
       }
     },
-    "Listening… Tap Stop to check." : {
-      "comment" : "Shown while the learner records an answer",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir hören zu… Tippe auf „Stopp“, um deine Antwort zu prüfen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Escuchando… Toca Detener para comprobar."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Écoute en cours… Appuie sur Arrêter pour vérifier."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stiamo ascoltando… Tocca Interrompi per controllare."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "聞いています…答え合わせをするには「停止」をタップしてください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "듣고 있어요… 확인하려면 중지를 누르세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Słuchamy… Naciśnij „Stop”, aby sprawdzić."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ouvindo… Toque em Parar para conferir."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dinliyoruz… Kontrol etmek için Durdur’a dokun."
-          }
-        }
-      }
-    },
     "Microphone on" : {
       "comment" : "The learner unmuted themselves",
       "localizations" : {
@@ -6491,6 +6432,65 @@
         }
       }
     },
+    "Say it when “Speak now” appears" : {
+      "comment" : "Before recording. “Speak now” must match the cue shown when the microphone is on.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sag es, wenn „Sprich jetzt“ erscheint"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dilo cuando aparezca “Habla ahora”"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dis-le quand « Parle maintenant » s’affiche"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dillo quando compare “Parla ora”"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「今すぐ話してください」と表示されたら話してください"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "‘지금 말해 보세요’가 표시되면 말해 주세요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Powiedz to, gdy pojawi się „Mów teraz”"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fale quando aparecer “Fale agora”"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“Şimdi konuş” yazısı göründüğünde söyle"
+          }
+        }
+      }
+    },
     "Screen options" : {
       "comment" : "The round's options menu",
       "localizations" : {
@@ -6841,6 +6841,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Doğru söylendi"
+          }
+        }
+      }
+    },
+    "Speak now" : {
+      "comment" : "Shown the moment the microphone is on: an instruction to start talking now, not a button.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sprich jetzt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Habla ahora"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parle maintenant"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parla ora"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今すぐ話してください"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "지금 말해 보세요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mów teraz"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fale agora"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Şimdi konuş"
           }
         }
       }
@@ -7667,65 +7726,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Acele etme."
-          }
-        }
-      }
-    },
-    "Tap Record and say it out loud" : {
-      "comment" : "Asks the learner to record their answer",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tippe auf „Aufnehmen“ und sprich deine Antwort laut aus"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toca Grabar y dilo en voz alta"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Appuie sur Enregistrer et dis-le à voix haute"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tocca Registra e dillo ad alta voce"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "「録音」をタップして、答えを声に出して言ってください"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "녹음 버튼을 누르고 소리 내어 말해 보세요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stuknij „Nagraj” i powiedz to na głos"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toque em Gravar e fale em voz alta"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kaydet düğmesine dokun ve sesli söyle"
           }
         }
       }
@@ -9860,6 +9860,64 @@
         }
       }
     },
+    "We can't use your microphone, so skip this word." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir können dein Mikrofon nicht verwenden, also überspring dieses Wort."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No podemos usar tu micrófono, así que sáltate esta palabra."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On ne peut pas utiliser ton micro, alors saute ce mot."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non possiamo usare il microfono, quindi salta questa parola."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "マイクを使えないため、この単語はスキップしてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "마이크를 사용할 수 없으니 이 단어는 건너뛰어 주세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie możemy skorzystać z mikrofonu, więc pomiń to słowo."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não dá para usar seu microfone, então pule esta palavra."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mikrofonunu kullanamıyoruz, bu yüzden bu kelimeyi atla."
+          }
+        }
+      }
+    },
     "We couldn't check your answer this time. Try again." : {
       "comment" : "Grading a spoken answer failed",
       "localizations" : {
@@ -10151,6 +10209,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "“%@” diye duyduk"
+          }
+        }
+      }
+    },
+    "We may have missed the start. Say it again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Anfang wurde vielleicht nicht aufgenommen. Sag es noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Puede que no hayamos captado el inicio. Dilo otra vez."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On a peut-être raté le début. Dis-le encore."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Potremmo non aver registrato l’inizio. Ripetilo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "話し始めを認識できなかった可能性があります。もう一度話してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "처음 부분을 놓쳤을 수도 있어요. 다시 말해 보세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Początek mógł nam umknąć. Powiedz to jeszcze raz."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Talvez a gente não tenha captado o começo. Fale de novo."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Başlangıcını kaçırmış olabiliriz. Tekrar söyle."
           }
         }
       }

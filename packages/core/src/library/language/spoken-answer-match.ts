@@ -20,6 +20,10 @@ export type SpokenAnswerMatch = {
 };
 
 const MAX_WORDS_TO_EXPLAIN = 2;
+// Keep the threshold below the 450 ms startup observed when Safari with AirPods clipped the opening.
+const MISSED_START_MIN_MIC_STARTUP_MS = 400;
+// A quick word like "a" takes about this long to say, which bounds how many words a late start can hide.
+const SHORTEST_WORD_MS = 200;
 const LONE_LETTER = /^\p{L}\p{M}*$/u;
 const DIGIT_GROUP = /^\p{Nd}+$/u;
 
@@ -157,6 +161,26 @@ function getTokenOffsets(words: readonly ExpectedWord[]): number[] {
   );
 }
 
+function alignTokens({
+  expected,
+  heard,
+  language,
+}: {
+  expected: string;
+  heard: string;
+  language: string;
+}) {
+  const expectedWords = toExpectedWords({ expected, language });
+  const heardTokens = toTokens({ language, text: heard });
+
+  const outcomes = getTokenOutcomes({
+    expected: expectedWords.flatMap((word) => word.tokens),
+    heard: heardTokens,
+  });
+
+  return { expectedWords, heardTokens, outcomes };
+}
+
 export function matchSpokenAnswer({
   expected,
   heard,
@@ -166,14 +190,7 @@ export function matchSpokenAnswer({
   heard: string;
   language: string;
 }): SpokenAnswerMatch {
-  const expectedWords = toExpectedWords({ expected, language });
-  const heardTokens = toTokens({ language, text: heard });
-
-  const outcomes = getTokenOutcomes({
-    expected: expectedWords.flatMap((word) => word.tokens),
-    heard: heardTokens,
-  });
-
+  const { expectedWords, heardTokens, outcomes } = alignTokens({ expected, heard, language });
   const offsets = getTokenOffsets(expectedWords);
   const separator = getTokenSeparator(language);
 
@@ -203,4 +220,38 @@ export function pickWordsToExplain(words: readonly SpokenWordResult[]): SpokenWo
   const missed = words.filter((word) => word.status === "missed");
 
   return [...different, ...missed].slice(0, MAX_WORDS_TO_EXPLAIN);
+}
+
+/**
+ * Whether the take lost only its opening to a slow microphone start: the words heard all match the
+ * sentence's end, and no more of it is missing than the startup could hide. It's judged on the
+ * transcript's tokens, so an unspaced sentence (Chinese, Japanese) isn't one all-or-nothing word.
+ */
+export function hasMissedStart({
+  expected,
+  heard,
+  language,
+  micStartupMs,
+}: {
+  expected: string;
+  heard: string;
+  language: string;
+  micStartupMs?: number;
+}): boolean {
+  if (micStartupMs === undefined || micStartupMs < MISSED_START_MIN_MIC_STARTUP_MS) {
+    return false;
+  }
+
+  const matched = alignTokens({ expected, heard, language }).outcomes.map(
+    (outcome) => outcome.matched,
+  );
+
+  const firstHeard = matched.indexOf(true);
+  const lost = firstHeard === -1 ? matched.length : firstHeard;
+
+  return (
+    lost > 0 &&
+    lost <= Math.floor(micStartupMs / SHORTEST_WORD_MS) &&
+    matched.slice(lost).every(Boolean)
+  );
 }

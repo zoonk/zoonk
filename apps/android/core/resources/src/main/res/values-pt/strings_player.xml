@@ -101,6 +101,7 @@
   "player_lesson_ready": "fabfaa5934fc98685e64c6bffb34256085a24767d4fb0a50fce41041baecd62f",
   "player_listen": "55366525747555dbe28edbbf4c740748fd29815e1a225256313115f12c1869ff",
   "player_microphone_is_blocked": "70076cb0471c78d209c2247e8117d1252531bdb6fa2545ffef79574860eb8ebb",
+  "player_microphone_unavailable": "ab414659136843c8b13d197b03310539b3f186cf390cbae97248007f1bb170bd",
   "player_next_lesson": "7bd9f0b726aa2ab49cfdc4a88c62413f30f4973f992cc7a798f4b160a34f1a5d",
   "player_next_step_failed": "a82775aee2a392c8118db0ff54834c69f573fb55878db7abe040f08281e4dec5",
   "player_not_found_description": "8e0515d12a4f6420af8c796af70257eed3fa5bba511ccd6b0b852f2e89f2872a",
@@ -354,6 +355,7 @@
     <!-- On a speaking screen being typed because the microphone was blocked: goes back to answering out loud. -->
     <string name="player_say_it_instead">Responder falando</string>
     <string name="player_microphone_is_blocked">O microfone está bloqueado.</string>
+    <string name="player_microphone_unavailable">A gente não consegue usar seu microfone, então digite o que você falaria.</string>
     <string name="player_what_we_heard">O que ouvimos</string>
     <!-- Read by screen readers after a word of a spoken answer the learner skipped. -->
     <string name="player_word_not_heard">%1$s (não ouvimos)</string>

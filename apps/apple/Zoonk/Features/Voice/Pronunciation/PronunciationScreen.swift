@@ -139,6 +139,8 @@ private struct PronunciationRoundView: View {
       }
     case .word(_, let state):
       if let word = round.current {
+        let canRecord = canRecord(state)
+
         QuestionSpread(
           readableWidth: PracticeLayout.readableWidth, spacing: 24, note: note(state)?.note,
           usesPracticeBar: true
@@ -147,8 +149,12 @@ private struct PronunciationRoundView: View {
         } stimulus: {
           RoundMeter(round: round)
 
-          PronunciationWordView(word: word, language: reviews.language, owner: reviews.goalId)
-            .id(word.id)
+          PronunciationWordView(
+            word: word, language: reviews.language, owner: reviews.goalId,
+            canListen: !isTakeOn,
+            cue: canRecord ? RecordCue(recorder: recorder, isChecking: round.isPending) : nil
+          )
+          .id(word.id)
         } response: {
           wordStatus(state)
         } actions: {
@@ -161,7 +167,7 @@ private struct PronunciationRoundView: View {
           }
         }
         .taskOptions(
-          isShown: showsOptions(state),
+          isShown: canRecord,
           label: Text("Screen options", tableName: "Voice", comment: "The round's options menu")
         ) {
           skipButton(round)
@@ -175,12 +181,13 @@ private struct PronunciationRoundView: View {
         }
         .announcesStatus(announcement(state))
         .slowCheck(round.isPending, isSlow: $isSlow)
+        .onChange(of: round.index) { recorder.clearStartFailure() }
       }
     }
   }
 
-  private func showsOptions(_ state: PronunciationRound.WordState) -> Bool {
-    if case .ready = state { return !recorder.isDenied }
+  private func canRecord(_ state: PronunciationRound.WordState) -> Bool {
+    if case .ready = state { return recorder.microphoneProblem == nil }
     return false
   }
 
@@ -194,7 +201,11 @@ private struct PronunciationRoundView: View {
         Image(systemName: "forward.end")
       }
     }
-    .disabled(round.isPending || recorder.isRecording || recorder.status == .acquiring)
+    .disabled(round.isPending || isTakeOn)
+  }
+
+  private var isTakeOn: Bool {
+    recorder.isRecording || recorder.status == .acquiring
   }
 
   @ViewBuilder
@@ -215,16 +226,21 @@ private struct PronunciationRoundView: View {
       return nil
     }
 
-    if recorder.isDenied {
+    switch recorder.microphoneProblem {
+    case .unavailable:
+      return .microphoneUnavailable
+    case .denied:
       return .microphoneOff(
         String(
           localized:
             "Turn on the microphone for Zoonk in Settings to say the word. You can skip it for now.",
           table: "Voice", comment: "How to say a word when the microphone is off"))
+    case nil:
+      break
     }
 
-    if let active = RecordNote(active: recorder.status) {
-      return active
+    if isTakeOn {
+      return nil
     }
 
     if round?.isPending == true {
@@ -233,9 +249,9 @@ private struct PronunciationRoundView: View {
 
     switch notice {
     case .noSpeech: return .noSpeech
+    case .missedStart: return .missedStart
     case .failed: return .failed
-    case .limit: return nil
-    case nil: return .ready
+    case .limit, nil: return nil
     }
   }
 
@@ -289,7 +305,7 @@ private struct PronunciationRoundView: View {
         .keyboardShortcut(.defaultAction)
       }
     case .ready:
-      if recorder.isDenied {
+      if recorder.microphoneProblem != nil {
         Button {
           Task { await round.next() }
         } label: {
@@ -301,7 +317,7 @@ private struct PronunciationRoundView: View {
       } else {
         RecordButton(recorder: recorder, isChecking: round.isPending) {
           Task {
-            voice.player.stop(owner: reviews.goalId)
+            voice.player.stopAny()
             await recorder.start { recording in
               Task { await round.record(recording) }
             }
@@ -339,14 +355,7 @@ private struct RoundMeter: View {
   let round: PronunciationRound
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 8) {
-      Text(
-        "Word \(round.index + 1) of \(round.words.count)", tableName: "Voice",
-        comment: "Where the learner is in the round"
-      )
-      .typeStyle(.data)
-      .foregroundStyle(.mutedForeground)
-
+    ZStack {
       MeterParts(
         parts: round.words.indices.map { position in
           switch round.outcomes[position] {
@@ -359,8 +368,14 @@ private struct RoundMeter: View {
           case nil:
             .init(fill: position == round.index ? .current : .track)
           }
-        })
+        }
+      )
     }
+    .accessibilityElement(children: .ignore)
+    .accessibilityLabel(
+      Text(
+        "Word \(round.index + 1) of \(round.words.count)", tableName: "Voice",
+        comment: "Where the learner is in the round"))
   }
 }
 

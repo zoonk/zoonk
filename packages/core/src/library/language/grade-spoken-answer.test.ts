@@ -842,6 +842,51 @@ describe(gradeSpokenAnswer, () => {
     await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(0);
   });
 
+  it("asks again as a missed start when the mic started too late to hear any of the sentence", async () => {
+    const [step, user] = await Promise.all([createSpokenStep(), userFixture()]);
+    mockSession(user.id);
+    mockTranscript("");
+
+    await expect(
+      gradeSpokenAnswer({
+        audio: AUDIO,
+        fields: { ...FIELDS, micStartupMs: 1000 },
+        stepId: step.id,
+      }),
+    ).resolves.toStrictEqual({ status: "missedStart" });
+  });
+
+  it("replays a missed start without saving progress or generating an explanation", async () => {
+    const [step, user] = await Promise.all([createSpokenStep(), userFixture()]);
+    mockSession(user.id);
+    mockTranscript("Much is the rent?");
+    const fields = { ...FIELDS, attemptId: crypto.randomUUID() };
+
+    await expect(
+      gradeSpokenAnswer({
+        audio: AUDIO,
+        fields: { ...fields, micStartupMs: 400 },
+        stepId: step.id,
+      }),
+    ).resolves.toStrictEqual({ status: "missedStart" });
+
+    await expect(
+      gradeSpokenAnswer({ audio: AUDIO, fields, stepId: step.id }),
+    ).resolves.toStrictEqual({ status: "missedStart" });
+
+    expect(transcribeSpeech).toHaveBeenCalledOnce();
+    expect(explainSpokenAnswer).not.toHaveBeenCalled();
+
+    await Promise.all([
+      expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(0),
+      expect(prisma.mistake.count({ where: { userId: user.id } })).resolves.toBe(0),
+      expect(prisma.pronunciationReview.count({ where: { userId: user.id } })).resolves.toBe(0),
+      expect(
+        prisma.usageRecord.count({ where: { kind: "assist", userId: user.id } }),
+      ).resolves.toBe(1),
+    ]);
+  });
+
   it("links the attempt to the learner's own study session only", async () => {
     const [ownStep, foreignStep, learner, other] = await Promise.all([
       createSpokenStep(),

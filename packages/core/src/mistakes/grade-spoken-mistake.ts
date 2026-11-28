@@ -172,10 +172,11 @@ async function gradeOpenRecording({
   const graded = await runAnswerGrade({
     attemptId,
     cacheWithoutModelClaim: true,
-    grade: async () => ({
-      grade: await gradeSpokenRecording({
+    grade: () =>
+      gradeSpokenRecording({
         audio,
         cacheExplanation: false,
+        micStartupMs: fields.micStartupMs,
         step: {
           id: step.id,
           learnerLanguage: lesson.language,
@@ -186,7 +187,6 @@ async function gradeOpenRecording({
         },
         userId,
       }),
-    }),
     questionId: step.id,
     userId,
   });
@@ -195,7 +195,12 @@ async function gradeOpenRecording({
     return { retryAfterSeconds: 1, status: "slowDown" };
   }
 
-  if (graded.result.grade === null) {
+  if (graded.result.status === "missedStart") {
+    return { status: "missedStart" };
+  }
+
+  // A cached null grade also represents silence.
+  if (graded.result.status === "noSpeech" || graded.result.grade === null) {
     return { status: "noSpeech" };
   }
 

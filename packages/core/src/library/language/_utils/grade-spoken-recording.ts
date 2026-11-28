@@ -1,6 +1,6 @@
 import "server-only";
-import { type SpokenAnswerGrade } from "../spoken-answer-contract";
-import { pickWordsToExplain } from "../spoken-answer-match";
+import { type GradeSpokenAnswerResult, type SpokenAnswerGrade } from "../spoken-answer-contract";
+import { hasMissedStart, pickWordsToExplain } from "../spoken-answer-match";
 import { type SpokenAudio, hearSpokenSentence } from "./hear-spoken-sentence";
 import { loadPracticeWords } from "./practice-words";
 import { getSpokenAnswerExplanation } from "./spoken-answer-explanation";
@@ -10,11 +10,13 @@ export const SPOKEN_EVIDENCE_SCORE = 0.8;
 export async function gradeSpokenRecording({
   audio,
   cacheExplanation = true,
+  micStartupMs,
   step,
   userId,
 }: {
   audio: SpokenAudio;
   cacheExplanation?: boolean;
+  micStartupMs?: number;
   step: {
     id: string;
     learnerLanguage: string;
@@ -24,7 +26,10 @@ export async function gradeSpokenRecording({
     targetText: string;
   };
   userId: string;
-}): Promise<Omit<SpokenAnswerGrade, "attemptId" | "practice"> | null> {
+}): Promise<
+  | { grade: Omit<SpokenAnswerGrade, "attemptId" | "practice">; status: "graded" }
+  | Extract<GradeSpokenAnswerResult, { status: "missedStart" | "noSpeech" }>
+> {
   const { match, transcript } = await hearSpokenSentence({
     audio,
     expected: step.targetText,
@@ -33,8 +38,21 @@ export async function gradeSpokenRecording({
     userId,
   });
 
+  const missedStart =
+    !match.isCorrect &&
+    hasMissedStart({
+      expected: step.targetText,
+      heard: transcript,
+      language: step.targetLanguage,
+      micStartupMs,
+    });
+
+  if (missedStart) {
+    return { status: "missedStart" };
+  }
+
   if (!match.normalizedHeard) {
-    return null;
+    return { status: "noSpeech" };
   }
 
   const wordsToPractice = await loadPracticeWords({
@@ -55,11 +73,14 @@ export async function gradeSpokenRecording({
       });
 
   return {
-    explanation,
-    isCorrect: match.isCorrect,
-    score: match.score,
-    transcript,
-    words: match.words,
-    wordsToPractice,
+    grade: {
+      explanation,
+      isCorrect: match.isCorrect,
+      score: match.score,
+      transcript,
+      words: match.words,
+      wordsToPractice,
+    },
+    status: "graded",
   };
 }

@@ -206,6 +206,7 @@
     "./speech": "./src/speech/use-spoken-audio.ts",
     "./speech/parts": "./src/speech/speech-parts.tsx",
     "./speech/record-button": "./src/speech/record-button.tsx",
+    "./speech/record-cue": "./src/speech/record-cue.tsx",
     "./speech/record-note": "./src/speech/record-note.tsx",
     "./stat-tile": "./src/_components/stat-tile.tsx",
     "./step-card": "./src/_components/step-card.tsx",

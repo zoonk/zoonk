@@ -29,6 +29,8 @@ type SpeechPlayer = {
     rate: number;
     url: string;
   }) => Promise<PlaybackEnd>;
+  /** Stops playback across all owners. */
+  silence: () => void;
   stop: (owner: PlaybackOwner) => void;
 };
 
@@ -145,7 +147,7 @@ function createSpeechPlayer(
     audio?.load();
   };
 
-  return { dispose, load, play, stop, unlock };
+  return { dispose, load, play, silence: stopCurrent, stop, unlock };
 }
 
 /**
