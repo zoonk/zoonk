@@ -55,9 +55,10 @@ import { lookUpTopicFrequencyStep } from "./steps/topic-frequency-step";
 function answerHook(answer: () => Promise<void>) {
   const getConflict = () => answer().then(() => null);
 
-  return Object.assign(Promise.resolve({}), { getConflict }) as unknown as ReturnType<
-    typeof createHook
-  >;
+  return Object.assign(Promise.resolve({}), {
+    [Symbol.dispose]: vi.fn(),
+    getConflict,
+  }) as unknown as ReturnType<typeof createHook>;
 }
 
 function otherRun(status: "completed" | "failed" | "running") {
@@ -299,39 +300,11 @@ describe(researchWorkflow, () => {
 
     await expect(researchWorkflow({ goalId: goal.id })).resolves.toMatchObject({ status: "ready" });
 
-    expect(createHook).toHaveBeenCalledWith({ token: `research-goal:${goal.id}` });
+    expect(createHook).toHaveBeenCalledWith({ token: `research-country:${goal.id}` });
 
     expect(generateExamResearchPlan).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({ details: '{"contentCountry":"BR"}' }),
     );
-  });
-
-  it("researches the new country's exam when the learner changes the country while it runs", async () => {
-    const user = await userFixture();
-
-    const goal = await goalFixture({
-      contentCountry: "PT",
-      details: { answered: ["contentCountry"], countryDependent: true, examName: "TCDF" },
-      kind: "exam",
-      planRevealedAt: null,
-      userId: user.id,
-    });
-
-    const { plan } = await replayTcdfResearch();
-
-    vi.mocked(generateExamResearchPlan).mockImplementationOnce(async () => {
-      await saveAnswerInputs({ goal, input: { country: "BR", question: "contentCountry" } });
-      return { ...TASK_RESULT, data: plan };
-    });
-
-    await expect(researchWorkflow({ goalId: goal.id })).resolves.toMatchObject({ status: "ready" });
-
-    expect(
-      vi.mocked(generateExamResearchPlan).mock.calls.map(([call]) => call.details),
-    ).toStrictEqual([
-      expect.stringContaining('"contentCountry":"PT"'),
-      expect.stringContaining('"contentCountry":"BR"'),
-    ]);
   });
 
   it("builds the blueprint from official sources, keeps every fact's passage and links the goal", async () => {

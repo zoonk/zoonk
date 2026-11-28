@@ -2,7 +2,6 @@ import { type ExamResearchPlan } from "@zoonk/ai/tasks/research/plan";
 import { type ExamIdentity } from "@zoonk/core/library/exams/identity";
 import { createHook, getWorkflowMetadata } from "workflow";
 import { type Run } from "workflow/api";
-import { repeatUntil } from "../_shared/repeat-until";
 import { claimRunToken, joinRun, startOnce } from "../_shared/run-token";
 import { scheduleFreshnessChecksStep } from "../freshness/steps/schedule-freshness-checks-step";
 import { getGoalContentToken, goalContentWorkflow } from "../goals/goal-content-workflow";
@@ -31,26 +30,34 @@ import { lookUpTargetCutoffStep } from "./steps/target-cutoff-step";
 import { lookUpTopicFrequencyStep } from "./steps/topic-frequency-step";
 import { waitForMaterialReading } from "./wait-for-material-reading";
 
-const MAX_COUNTRY_PASSES = 5;
-
 export function getGoalResearchToken(goalId: string): string {
   return `research-goal:${goalId}`;
 }
 
+export function getExamCountryToken(goalId: string): string {
+  return `research-country:${goalId}`;
+}
+
 /**
  * Another country's exam by the same name is another exam, so none is read before the learner says
- * whose. The answer owes this research (`researchGoal`), which wakes the run holding the goal's
- * token once it is saved; a run that doesn't hold it leaves the research to the one that does.
+ * whose. Their answer owes this research (`researchGoal`), which wakes this wait; the goal is read
+ * again once the wait exists, so an answer saved just before it is never missed.
  */
 async function waitForExamCountry(goal: ResearchGoal): Promise<ResearchGoal | null> {
   if (!goal.awaitingCountry) {
     return goal;
   }
 
-  const answered = createHook({ token: getGoalResearchToken(goal.id) });
+  using answered = createHook({ token: getExamCountryToken(goal.id) });
 
   if (await answered.getConflict()) {
     return null;
+  }
+
+  const current = await loadResearchGoalStep(goal.id);
+
+  if (current && !current.awaitingCountry) {
+    return current;
   }
 
   await answered;
@@ -267,41 +274,6 @@ async function research({
   return researchSources({ analytics, goal, plan, topic, uploads });
 }
 
-type CountryPass = { next: ResearchGoal | null; result: ResearchResult };
-
-async function researchCountryPass({
-  goal,
-  input,
-  runId,
-}: {
-  goal: ResearchGoal;
-  input: ResearchInput;
-  runId: string;
-}): Promise<CountryPass> {
-  const result = await research({ goal, input, runId });
-  const latest = goal.kind === "exam" ? await loadResearchGoalStep(goal.id) : null;
-
-  return { next: latest && latest.contentCountry !== goal.contentCountry ? latest : null, result };
-}
-
-/**
- * The learner can change an exam's country while its research runs. The answer's wake finds this
- * run past its wait, so it researches the new country's exam itself before it ends.
- */
-async function researchLatestCountry(input: {
-  goal: ResearchGoal;
-  input: ResearchInput;
-  runId: string;
-}): Promise<ResearchResult> {
-  const pass = await repeatUntil<CountryPass>({
-    done: (current) => current.next === null,
-    run: (previous) => researchCountryPass({ ...input, goal: previous?.next ?? input.goal }),
-    times: MAX_COUNTRY_PASSES,
-  });
-
-  return pass.result;
-}
-
 export async function researchWorkflow(input: ResearchInput): Promise<ResearchResult> {
   "use workflow";
 
@@ -321,7 +293,7 @@ export async function researchWorkflow(input: ResearchInput): Promise<ResearchRe
     await waitForMaterialReading({ kind: "sources", sourceIds });
   }
 
-  const result = await researchLatestCountry({ goal, input, runId: workflowRunId });
+  const result = await research({ goal, input, runId: workflowRunId });
 
   await recordResearchOutcomeStep({ goalId: goal.id, result });
 
