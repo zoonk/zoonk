@@ -61,7 +61,10 @@ enum FocusTestCopy {
         localized: "In progress", table: "FocusTest",
         comment: "The Focus test's line on the plan while a sitting is open")
 
-      guard let sitting = summary.sitting else { return [inProgress] }
+      // A question is named only while there's one to ask.
+      guard let sitting = summary.sitting, sitting.answered < sitting.questions else {
+        return [inProgress]
+      }
       return [inProgress, TestCopy.question(sitting.answered + 1, of: sitting.questions)]
     case .sitting, .checked:
       return [

@@ -123,6 +123,35 @@ final class PlacementTestContractTests: XCTestCase {
       ["Skip lessons you already know", "About 4 min"])
   }
 
+  func testACourseRowShowsOnlyWithATestOrAResultToOpen() throws {
+    let neither = try planTest(
+      #"{"estimatedMinutes":4,"kind":"learn","offer":null,"result":null,"state":"start","attempt":null}"#
+    )
+    XCTAssertFalse(neither.isShown)
+
+    let resultOnly = try planTest(
+      #"""
+      {"attempt":null,"estimatedMinutes":4,"kind":"learn","offer":null,"state":"result",
+       "result":{"attemptId":"c367d72f-4d87-408a-ba10-6bbcddca31ba",
+                 "finishedAt":"2026-11-21T16:23:39Z","lessonsSkipped":4,
+                 "chapter":null,"course":null,"nextLesson":null}}
+      """#)
+    XCTAssertTrue(resultOnly.isShown)
+  }
+
+  func testTheFocusRowNamesAQuestionOnlyWhileOneIsLeft() throws {
+    let summary = { (answered: Int) in
+      try JSONDecoder().decode(
+        FocusTestSummary.self,
+        from: Data(
+          #"{"offer":{"minutes":6},"sessionQuestions":"off","state":"sitting","suggestsFocus":true,"sitting":{"answered":\#(answered),"questions":6}}"#
+            .utf8))
+    }
+
+    XCTAssertEqual(FocusTestCopy.planLine(try summary(2)), ["In progress", "Question 3 of 6"])
+    XCTAssertEqual(FocusTestCopy.planLine(try summary(6)), ["In progress"])
+  }
+
   func testAnOnboardingTestStepReadsItsModeAndItsOffer() throws {
     let step = try read(
       #"""

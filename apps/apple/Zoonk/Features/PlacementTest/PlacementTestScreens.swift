@@ -27,7 +27,8 @@ struct PlacementTestResultView: View {
           ? Text(PlacementTestCopy.retakeTomorrow) : nil),
       continueLabel: onboarding
         ? nil
-        : end.nextLesson == nil || restored ? Text(TestCopy.done) : Text(TestCopy.startLesson),
+        : end.nextLesson == nil || end.revisited || restored
+          ? Text(TestCopy.done) : Text(TestCopy.startLesson),
       undo: undo, isSaving: pressed != nil || undo?.request.isRunning == true, failed: failed,
       onContinue: onDone
     ) {

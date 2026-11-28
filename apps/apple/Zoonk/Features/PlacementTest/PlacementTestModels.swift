@@ -143,6 +143,10 @@ struct PlanPlacementTest: Decodable, Equatable, Sendable {
 
   var languageResult: PlacementTestResult? { kind == .language ? result : nil }
 
-  /// Nothing is left ahead to check and nothing was checked yet.
-  var isShown: Bool { !(state == .start && estimatedMinutes == 0) }
+  /// Something to open: a test to start or go on with, or the last one's result. A course with
+  /// neither has no row.
+  var isShown: Bool {
+    guard kind == .learn else { return !(state == .start && estimatedMinutes == 0) }
+    return attempt != nil || offer != nil || result != nil
+  }
 }
