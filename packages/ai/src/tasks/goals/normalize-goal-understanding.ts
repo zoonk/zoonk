@@ -25,6 +25,8 @@ type UnderstoodExamDay = "booked" | "official";
 
 /** Every field present, null when the text didn't say. */
 type RawUnderstoodGoal = {
+  /** A test the learner's own teacher or course sets, which no public notice describes. */
+  classTest: boolean;
   contentCountry: string | null;
   countryDependent: boolean;
   displayName?: string;
@@ -210,6 +212,21 @@ function cleanYear(year: number | null): number | undefined {
     : undefined;
 }
 
+/** A class test has no public notice, so nothing may read the learner's word for it as an exam's name. */
+function cleanExamFields(goal: RawUnderstoodGoal) {
+  const exam = goal.kind === "exam";
+  const publicExam = exam && !goal.classTest;
+
+  return {
+    examDay: publicExam ? (goal.examDay ?? undefined) : undefined,
+    examMonth: exam ? cleanMonth(goal.examMonth) : undefined,
+    examName: publicExam ? cleanText(goal.examName) : undefined,
+    examSubjects: exam ? cleanTexts(goal.examSubjects) : undefined,
+    examTarget: publicExam ? (goal.examTarget ?? undefined) : undefined,
+    examYear: exam ? cleanYear(goal.examYear) : undefined,
+  };
+}
+
 function normalizeGoal({
   goal,
   today,
@@ -234,12 +251,7 @@ function normalizeGoal({
     contentCountry: learn ? cleanCountry(goal.contentCountry) : undefined,
     countryDependent: learn && goal.countryDependent,
     displayName: cleanText(goal.displayName ?? null),
-    examDay: goal.kind === "exam" ? (goal.examDay ?? undefined) : undefined,
-    examMonth: goal.kind === "exam" ? cleanMonth(goal.examMonth) : undefined,
-    examName: goal.kind === "exam" ? cleanText(goal.examName) : undefined,
-    examSubjects: goal.kind === "exam" ? cleanTexts(goal.examSubjects) : undefined,
-    examTarget: goal.kind === "exam" ? (goal.examTarget ?? undefined) : undefined,
-    examYear: goal.kind === "exam" ? cleanYear(goal.examYear) : undefined,
+    ...cleanExamFields(goal),
     institution: cleanText(goal.institution),
     kind: goal.kind,
     level: cleanText(goal.level),
