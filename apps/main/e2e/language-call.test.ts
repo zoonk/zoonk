@@ -504,14 +504,18 @@ test.describe("Language practice in the plan", () => {
       userId: noProgressUser.id,
     });
 
+    // The learner's own finished test, which onboarding shows when it opens.
+    const attemptId = randomUUID();
+
     await prisma.goal.update({
       data: {
         details: {
           answered: [...ANSWERED, ...PROFILE_QUESTIONS],
           level: "A2",
           levelTest: {
+            attemptId,
             result: {
-              attemptId: null,
+              attemptId,
               finishedAt: new Date().toISOString(),
               lessonsSkipped: 3,
               levelsSkipped: ["A1"],

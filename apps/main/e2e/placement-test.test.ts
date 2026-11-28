@@ -109,6 +109,21 @@ async function expectPlanStops(page: Page, stops: { count: number; name: string 
   });
 }
 
+/** Names every stop of a goal's plan, in the plan and in its graph. */
+async function nameStops(goalId: string, name: string) {
+  const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId } });
+  const graph = z.looseObject({ phases: z.array(z.looseObject({})) }).parse(plan.graph);
+  const stops = z.array(z.looseObject({}));
+
+  await prisma.plan.update({
+    data: {
+      graph: { ...graph, phases: stops.parse(graph.phases).map((stop) => ({ ...stop, name })) },
+      phases: stops.parse(plan.phases).map((stop) => ({ ...stop, name })),
+    },
+    where: { id: plan.id },
+  });
+}
+
 test.describe("Testing what you know from the plan", () => {
   test("a test finds where the learner starts, skips the lessons before it, and Undo restores them", async ({
     noProgressUser,
@@ -376,14 +391,14 @@ test("a long topic keeps the question's title on one line in the middle of the b
   noProgressUser,
   userWithoutProgress: page,
 }, testInfo) => {
-  await createLearnGoal(noProgressUser.id);
+  const goal = await createLearnGoal(noProgressUser.id);
+  await nameStops(goal.id, "Expressions, like terms, parentheses and every kind of first equation");
   await page.setViewportSize({ height: 844, width: 390 });
 
   await page.goto("/placement-test");
   await page.getByRole("button", { exact: true, name: "Start" }).click();
   await atQuestion(page, 1);
 
-  // The topics here end in a long random suffix, too long for one line on a phone.
   const title = page.locator('[data-slot="task-header"] h1').filter({ visible: true });
   const box = await title.boundingBox();
   expect(await title.evaluate((node) => node.scrollWidth > node.clientWidth)).toBe(true);
@@ -410,7 +425,12 @@ test("the ways out go back to the question by their own ✕, Esc or a press outs
   const backToTheQuestion = async (close: () => Promise<void>) => {
     await testLeave(page).click();
     await expect(waysOut.getByRole("button", { name: "Stop and use my answers" })).toBeVisible();
-    await page.screenshot({ path: testInfo.outputPath("ways-out-dialog.png") });
+
+    await page.screenshot({
+      animations: "disabled",
+      path: testInfo.outputPath("ways-out-dialog.png"),
+    });
+
     await close();
     await expect(waysOut).toBeHidden();
     await atQuestion(page, 2);
@@ -515,14 +535,6 @@ test("the Plan's row opens the last test's result when no test is left to start"
   await expectPlanStops(page, stops);
 });
 
-/** Older plans saved their stops without names, in the plan and in its graph. */
-function withoutNames(stops: unknown) {
-  return z
-    .array(z.looseObject({}))
-    .parse(stops)
-    .map((stop) => ({ ...stop, name: "" }));
-}
-
 test("a stop with no saved name is titled as the Plan names it", async ({
   noProgressUser,
   userWithoutProgress: page,
@@ -536,16 +548,8 @@ test("a stop with no saved name is titled as the Plan names it", async ({
   await stopTest(page);
   await expect(page.getByText("You start here", { exact: true })).toBeVisible();
 
-  const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
-  const graph = z.looseObject({ phases: z.array(z.looseObject({})) }).parse(plan.graph);
-
-  await prisma.plan.update({
-    data: {
-      graph: { ...graph, phases: withoutNames(graph.phases) },
-      phases: withoutNames(plan.phases),
-    },
-    where: { id: plan.id },
-  });
+  // Older plans saved their stops without names.
+  await nameStops(goal.id, "");
 
   await page.reload();
   await expect(page.getByText("You start here", { exact: true })).toBeVisible();
