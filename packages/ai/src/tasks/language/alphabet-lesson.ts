@@ -4,10 +4,10 @@ import { z } from "zod";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
-import { getLanguagePromptContext } from "../_utils/prompt-language";
+import { fillPromptLanguages } from "../_utils/prompt-language";
 import { type LessonProblem, formatLessonProblems } from "../lesson-writer/format-lesson-plan";
 import fixPrompt from "./alphabet-lesson-fix.prompt.md";
-import systemPrompt from "./alphabet-lesson.prompt.md";
+import promptTemplate from "./alphabet-lesson.prompt.md";
 
 /**
  * Written once per script and learner language and shared: on 4 cases (8 Nov 2026), Luna scored
@@ -57,37 +57,26 @@ export type GenerateAlphabetLessonParams = {
   analytics?: AiGenerationContext;
 };
 
-function formatLanguages(params: { learnerLanguage: string; targetLanguage: string }): string {
-  const languages = getLanguagePromptContext({
-    targetLanguage: params.targetLanguage,
-    userLanguage: params.learnerLanguage,
-  });
-
-  return `
-    TARGET_LANGUAGE: ${languages.targetLanguageName}
-    LEARNER_LANGUAGE: ${languages.userLanguageName}
-  `;
-}
-
 async function runAlphabetLessonTask({
-  instructions,
   params,
+  template,
   task,
   userPrompt,
 }: {
-  instructions: string;
   params: GenerateAlphabetLessonParams;
   task: string;
+  template: string;
   userPrompt: string;
 }) {
   const { analytics, model = defaultModel, reasoning, serviceTier, useFallback = true } = params;
   const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });
+  const systemPrompt = fillPromptLanguages({ ...params, template });
 
   const { provenance, result } = await runTaskGeneration({
     analytics,
     generate: () =>
       generateText({
-        instructions,
+        instructions: systemPrompt,
         model,
         output: Output.object({ schema }),
         prompt: userPrompt,
@@ -95,25 +84,19 @@ async function runAlphabetLessonTask({
         reasoning,
       }),
     libraryInput: true,
-    systemPrompt: instructions,
+    systemPrompt,
     task,
   });
 
-  return {
-    data: result.output,
-    provenance,
-    systemPrompt: instructions,
-    usage: result.usage,
-    userPrompt,
-  };
+  return { data: result.output, provenance, systemPrompt, usage: result.usage, userPrompt };
 }
 
 export async function generateAlphabetLesson(params: GenerateAlphabetLessonParams) {
   return runAlphabetLessonTask({
-    instructions: systemPrompt,
     params,
     task: "alphabet-lesson",
-    userPrompt: formatLanguages(params),
+    template: promptTemplate,
+    userPrompt: "Write the lesson.",
   });
 }
 
@@ -199,8 +182,7 @@ export type FixAlphabetLessonParams = GenerateAlphabetLessonParams & {
 export async function fixAlphabetLesson(params: FixAlphabetLessonParams) {
   const { lesson, problems } = params;
 
-  const userPrompt = `${formatLanguages(params)}
-PUBLISHED_LESSON:
+  const userPrompt = `PUBLISHED_LESSON:
 ${formatPublishedLesson(lesson)}
 
 PROBLEMS:
@@ -208,9 +190,9 @@ ${formatLessonProblems(problems)}
 `;
 
   const fix = await runAlphabetLessonTask({
-    instructions: `${systemPrompt}\n${fixPrompt}`,
     params,
     task: "alphabet-lesson-fix",
+    template: `${promptTemplate}\n${fixPrompt}`,
     userPrompt,
   });
 
