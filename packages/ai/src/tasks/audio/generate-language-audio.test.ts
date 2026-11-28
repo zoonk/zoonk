@@ -1,3 +1,4 @@
+import { format } from "node:util";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { blockTestGatewayFetch } from "../../_utils/block-test-gateway-fetch";
 import { type convertWavToMp3 } from "./convert-wav-to-mp3";
@@ -41,6 +42,15 @@ vi.mock("../language/check-word-pronunciation", () => ({
 vi.mock("./check-clip-ending", () => ({ checkClipEnding: checkClipEndingMock }));
 
 vi.mock("@zoonk/utils/logger", () => ({ logError: logErrorMock }));
+
+function logged() {
+  return logErrorMock.mock.calls.map((args) => format(...args)).join("\n");
+}
+
+/** Like the AI SDK's errors, it keeps the model's answer on a property the log prints. */
+function failedWithAnswer(text: string) {
+  return Object.assign(new Error("No object generated."), { text });
+}
 
 function wordIpa(data: { englishIpa: string | null; ipa: string | null }) {
   return { data };
@@ -117,10 +127,8 @@ describe(generateLanguageAudio, () => {
     expect(result.data?.provenance.model).toBe(FLASH);
     expect(requestedModels()).toStrictEqual([FLASH, FLASH_LITE, MAI_VOICE]);
 
-    const logged = JSON.stringify(logErrorMock.mock.calls.map((args) => args.map(String)));
-
-    expect(logged).toContain("sound");
-    expect(logged).not.toContain("vivo in");
+    expect(logged()).toContain("sound");
+    expect(logged()).not.toContain("vivo in");
   });
 
   it("keeps the first flagged clip that passed its other checks", async () => {
@@ -199,7 +207,27 @@ describe(generateLanguageAudio, () => {
     const result = await generateLanguageAudio({ language: "de", text: "Name" });
 
     expect(result.data).toBeNull();
-    expect(result.error?.message).toContain("didn't read \"Name\" with its language's sounds");
+    expect(result.error?.message).toContain("didn't read the word with its language's sounds");
+    expect(result.error?.message).not.toContain("Name");
+    expect(logged()).not.toMatch(/Name|naːmə/u);
+  });
+
+  it("logs no word or what was heard when a look-alike word's checks fail", async () => {
+    writeWordIpaMock.mockResolvedValue(wordIpa({ englishIpa: "neɪm", ipa: "ˈnaːmə" }));
+    checkWordPronunciationMock.mockRejectedValue(failedWithAnswer('{"heard":"naːmə"}'));
+
+    await generateLanguageAudio({ language: "de", text: "Name" });
+
+    writeWordIpaMock.mockRejectedValue(failedWithAnswer('{"ipa":"ˈnaːmə"}'));
+
+    await generateLanguageAudio({ language: "de", text: "Name" });
+
+    expect(logErrorMock).toHaveBeenCalledWith(
+      "Writing a word's IPA failed; voicing it without:",
+      "Error",
+    );
+
+    expect(logged()).not.toMatch(/Name|naːmə/u);
   });
 
   it("keeps a look-alike word's clip when the check can't run", async () => {

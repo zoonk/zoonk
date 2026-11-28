@@ -117,7 +117,7 @@ async function findLookAlike({
   const { data, error } = await safeAsync(() => writeWordIpa({ analytics, language, word: text }));
 
   if (error) {
-    logError("Writing a word's IPA failed; voicing it without:", error);
+    logError("Writing a word's IPA failed; voicing it without:", error.name);
     return null;
   }
 
@@ -163,16 +163,12 @@ async function assertNativeReading({
 
   for (const { error } of listens) {
     if (error) {
-      logError("Checking a word's pronunciation failed:", error);
+      logError("Checking a word's pronunciation failed:", error.name);
     }
   }
 
-  const heardElse = checks.find((check) => !check.soundsNative);
-
-  if (heardElse) {
-    throw new Error(
-      `${model} didn't read "${text}" with its language's sounds (heard /${heardElse.heard}/)`,
-    );
+  if (checks.some((check) => !check.soundsNative)) {
+    throw new Error(`${model} didn't read the word with its language's sounds`);
   }
 }
 
@@ -279,7 +275,7 @@ async function generateWithFallback({
     }
 
     const lastError = error instanceof Error ? error : new Error(String(error));
-    logError("All TTS providers failed after retries:", lastError);
+    logError("All TTS providers failed after retries:", lastError.message);
     throw lastError;
   }
 }
