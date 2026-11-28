@@ -171,10 +171,7 @@ export function BuddyTab({ lang, q }: { lang: Lang; q: URLSearchParams }) {
       >
         <Conversation />
       </BuddyScreen>
-      <AutoClick
-        selector="[data-slot=buddy-today] button[aria-haspopup=dialog]"
-        when={q.get("sheet") === "1"}
-      />
+      <AutoClick selector="button[data-slot=buddy-today]" when={q.get("sheet") === "1"} />
     </AppFrame>
   );
 }

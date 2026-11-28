@@ -1598,13 +1598,6 @@ msgctxt "lO7wKc"
 msgid "Not yet"
 msgstr "아직이에요"
 
-#: src/buddies/buddy-today.tsx
-#: src/missions/missions-card.tsx
-#: src/session/summary/summary-rewards.tsx
-msgctxt "IFviMa"
-msgid "Today's missions"
-msgstr "오늘의 미션"
-
 #: src/buddies/use-buddy-name.ts
 msgctxt "buddyNames.WsAzWR"
 msgid "Beep"
@@ -7572,6 +7565,12 @@ msgctxt "0gBkBl"
 msgid "Missions done"
 msgstr "미션 완료"
 
+#: src/missions/missions-card.tsx
+#: src/session/summary/summary-rewards.tsx
+msgctxt "IFviMa"
+msgid "Today's missions"
+msgstr "오늘의 미션"
+
 #. "It" is the question: it comes back in later practice.
 #: src/mistakes/drill/drill-answer-notes.tsx
 msgctxt "thfSv-"
@@ -13013,11 +13012,6 @@ msgstr "학습 탭"
 msgctxt "xmcVZ0"
 msgid "Search"
 msgstr "검색"
-
-#: src/shell/level-link.tsx
-msgctxt "bzSrZ6"
-msgid "Level {level}"
-msgstr "레벨 {level}"
 
 #. Accessible name of the chip that opens Level. belt is the translated belt name; level is the learner’s level number. Each locale controls their order and punctuation.
 #: src/shell/level-link.tsx

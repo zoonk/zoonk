@@ -338,33 +338,37 @@ private struct BuddyContent: View {
       })
   }
 
-  /// Where the list isn't beside it, its button is on the name's row, as main's is: the bar has no
-  /// room left on a phone.
+  /// The buddy's face, its name as the page's title and its Energy after the name on one row, as
+  /// main's; where the list isn't beside it, its button ends the row: the bar has no room left on a
+  /// phone.
   private func thread(listsBeside: Bool) -> some View {
     conversationView
       .safeAreaBar(edge: .top) {
-        VStack(alignment: .leading, spacing: 0) {
-          PageHeader(Text(name)) {
-            if !listsBeside, list?.value != nil {
-              Button {
-                isListShown = true
-              } label: {
-                Label {
-                  Text(
-                    "Conversations", tableName: "Buddy",
-                    comment:
-                      "The list of the learner's separate conversations with their buddy, and the button that opens it."
-                  )
-                } icon: {
-                  Image(systemName: "bubble.left.and.bubble.right")
-                }
-                .labelStyle(.iconOnly)
+        PageHeader(Text(name)) {
+          face
+        } beside: {
+          // Beside the name it reads as the buddy's status, not as one of the row's buttons.
+          energyButton
+            .fixedSize()
+        } trailing: {
+          if !listsBeside, list?.value != nil {
+            Button {
+              isListShown = true
+            } label: {
+              Label {
+                Text(
+                  "Conversations", tableName: "Buddy",
+                  comment:
+                    "The list of the learner's separate conversations with their buddy, and the button that opens it."
+                )
+              } icon: {
+                Image(systemName: "bubble.left.and.bubble.right")
               }
-              .buttonStyle(.ghost.icon.endsRow)
-              .controlSize(.small)
+              .labelStyle(.iconOnly)
             }
+            .buttonStyle(.ghost.icon.endsRow)
+            .controlSize(.small)
           }
-          dayLine
         }
         .listRowEdges()
         // A list's first row sits this far under the bar, so the title is where every page's is.
@@ -507,99 +511,51 @@ private struct BuddyContent: View {
       .frame(width: 32, height: 32)
   }
 
-  /// Both marks take one width, so the two labels start on one edge when the line stacks.
-  @ScaledMetric(relativeTo: .footnote) private var dayLineIconWidth: CGFloat = 18
+  private var energyTitle: Text {
+    Text(
+      "\(name)'s Energy", tableName: "Buddy",
+      comment: "The buddy's Energy; the argument is its name")
+  }
+
+  /// Main's Energy on the buddy's row: its value, or a faint dash before the first lesson.
+  private var energyValue: Text {
+    guard let current = status.energy.current else {
+      return Text(verbatim: "–").foregroundStyle(.faint)
+    }
+
+    return Text(
+      (current / 100).formatted(.percent.precision(.fractionLength(0)).locale(.appLanguage)))
+  }
 
   private var energyButton: some View {
     Button {
-      places.open(.energy)
+      isDayShown = true
     } label: {
       Label {
-        HStack(spacing: 6) {
-          Text(
-            "\(name)'s Energy", tableName: "Buddy",
-            comment: "The buddy's Energy; the argument is its name")
-          if let current = status.energy.current {
-            Text(
-              (current / 100).formatted(
-                .percent.precision(.fractionLength(0)).locale(.appLanguage)))
-          }
-        }
+        energyValue
       } icon: {
         Image(systemName: "bolt.fill")
           .foregroundStyle(.energy)
-          .frame(width: dayLineIconWidth)
       }
-      .frame(minHeight: 44)
+      .labelStyle(.titleAndIcon)
+      .typeStyle(.note)
+      .monospacedDigit()
+      .foregroundStyle(.mutedForeground)
+      .frame(minWidth: 44, minHeight: 44, alignment: .leading)
       .contentShape(.rect)
     }
-  }
-
-  private var missionsButton: some View {
-    Button {
-      isDayShown = true
-    } label: {
-      if let today = status.today, !today.missions.isEmpty {
-        Label {
-          HStack(spacing: 6) {
-            Text("Today's missions", tableName: "Buddy")
-            Text(
-              "\(today.missions.filter { $0.status == .done }.count) of \(today.missions.count)",
-              tableName: "Buddy", comment: "Glasses earned of all of them")
-          }
-        } icon: {
-          Image(systemName: "checklist")
-            .frame(width: dayLineIconWidth)
-        }
-        .frame(minHeight: 44)
-        .contentShape(.rect)
-      } else {
-        Text(
-          "\(name) today", tableName: "Buddy",
-          comment: "Title of the buddy's day; the argument is its name"
-        )
-        .frame(minHeight: 44)
-        .contentShape(.rect)
-      }
-    }
-  }
-
-  private var dayLine: some View {
-    HStack(spacing: 16) {
-      Button {
-        isDayShown = true
-      } label: {
-        face
-      }
-      .accessibilityLabel(Text(name))
-      .accessibilityHint(
-        Text(
-          "Shows \(name)'s day", tableName: "Buddy",
-          comment: "VoiceOver hint of the buddy's day line; the argument is the buddy's name")
-      )
-
-      ViewThatFits(in: .horizontal) {
-        HStack(spacing: 16) {
-          energyButton
-          missionsButton
-        }
-        VStack(alignment: .leading, spacing: 0) {
-          energyButton
-          missionsButton
-        }
-      }
-      .fixedSize(horizontal: false, vertical: true)
-
-      Spacer(minLength: 0)
-
-      DisclosureChevron()
-    }
     .buttonStyle(.plain)
-    .labelStyle(.titleAndIcon)
-    .typeStyle(.note)
-    .monospacedDigit()
-    .foregroundStyle(.mutedForeground)
-    .contentShape(.rect)
+    .accessibilityLabel(energyTitle)
+    .accessibilityValue(
+      status.energy.current == nil
+        ? Text("Not yet", tableName: "Progress", comment: "A stat without a value yet")
+        : energyValue
+    )
+    .accessibilityHint(
+      Text(
+        "Shows \(name)'s day", tableName: "Buddy",
+        comment: "VoiceOver hint of the buddy's day line; the argument is the buddy's name")
+    )
   }
 
   @ViewBuilder
