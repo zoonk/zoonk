@@ -30,6 +30,7 @@
   "placementtest_start_lesson": "17b79a26e7ac1833a4f3bd813f8189687c0478232bfd0039c8d13ac15a8557f9",
   "placementtest_start_title": "27ac4448c089aa7eebcff6547aac076aceee254fd5090717a1741c60e46fdab7",
   "placementtest_take_again_later": "a6356a645dd706f07504141f75c60c73baa260f9ae4fa46aefb876ac9a0c6174",
+  "placementtest_take_test_again": "13dcb8aee6218970dff33e927a358734d4b544f6b6aa5a177bf88ebaa5b71e24",
   "placementtest_test": "f672badd5abcd955f9205a950908af904058eee3a6780c5b49c168c88d4a4562",
   "placementtest_test_out": "b7d39d9b2aa9ee6364a998a761b113e6be611badd132435548bed7e390486278",
   "placementtest_test_out_description": "8d36a874b0bb57c785ec8982c79155466d0130820de1029ca8a584f5695e284c",
@@ -106,4 +107,6 @@
         <item quantity="one">%1$d / %2$d ders atlandı</item>
         <item quantity="other">%1$d / %2$d ders atlandı</item>
     </plurals>
+    <!-- A quiet action on the result of a placement test opened again from the plan: it offers a new test. -->
+    <string name="placementtest_take_test_again">Testi yeniden çöz</string>
 </resources>

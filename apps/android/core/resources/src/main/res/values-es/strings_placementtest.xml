@@ -30,6 +30,7 @@
   "placementtest_start_lesson": "05a12742dc0ed209a930f3b0ef4afc4ae709c27747f1a36ea5c31f46dc8ebb3b",
   "placementtest_start_title": "04d4804e2dafd4dd6874d9926cf18484093332d90333f5012ef0f1fb33fccb2a",
   "placementtest_take_again_later": "7a4838f41ed31a414ae4a46c4e523a47d55debfbce45e6d2d7a8efdbbaec377d",
+  "placementtest_take_test_again": "4a5a609871bfd98ea4945e860accddac4d1fd282554ef28f3a1cb7bc206da160",
   "placementtest_test": "5c5a7fb84db9072f1dcec7f9234a5318e1366968aafe7ba11c954ffe8978ecc5",
   "placementtest_test_out": "941b8bbe8592a42f024950ba1cc7f89ffde64be10edb2a92e5a62e76940d04ce",
   "placementtest_test_out_description": "4c717e906b051961d3029be348167fca0f8cc1bc48013c36076e1f2e9ebdc58a",
@@ -110,4 +111,6 @@
         <item quantity="many">%1$d de %2$d lecciones saltadas</item>
         <item quantity="other">%1$d de %2$d lecciones saltadas</item>
     </plurals>
+    <!-- A quiet action on the result of a placement test opened again from the plan: it offers a new test. -->
+    <string name="placementtest_take_test_again">Volver a hacer la prueba</string>
 </resources>

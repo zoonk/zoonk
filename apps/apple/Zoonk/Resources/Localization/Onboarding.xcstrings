@@ -16813,6 +16813,65 @@
         }
       }
     },
+    "Take the test again" : {
+      "comment" : "A quiet action on the result of a placement test opened again from the plan: it offers a new test.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Test noch einmal machen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volver a hacer la prueba"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Refaire le test"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ripeti il test"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "レベル診断テストを受け直す"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "레벨 테스트 다시 하기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rozwiąż test ponownie"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fazer o teste de novo"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Testi yeniden çöz"
+          }
+        }
+      }
+    },
     "Talk about almost anything with ease" : {
       "comment" : "Under the Speak it fluently reason",
       "localizations" : {
@@ -27235,9 +27294,6 @@
           }
         }
       }
-    },
-    "Take the test again" : {
-      "comment" : "A quiet action on the result of a placement test opened again from the plan: it offers a new test."
     }
   },
   "version" : "1.0"

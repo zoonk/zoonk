@@ -30,6 +30,7 @@
   "placementtest_start_lesson": "bb03045da5400d68b99f8153ee65e3ad85569347825356d2a1dd44cf84c80b07",
   "placementtest_start_title": "ab3085c0ca2f20692f5352ee83cca157e1517c346cab790428301ac3a6d5424c",
   "placementtest_take_again_later": "1a3c32308c2d1bad4d39f2524e2c007a02912f627e24a3bba22c77f8c351bae9",
+  "placementtest_take_test_again": "860ce972f3ad919d2e566f38d668907be0552ee5b3fa6a0d85c949a21be25bc1",
   "placementtest_test": "4dd7b0538eccd213a45e86fd3ae7c6d59546ad41db05d294ac152d033cef0684",
   "placementtest_test_out": "deecca55a8d20f1062e5654692ef1c0d6d9efd16de69a12b41628241595bd4d5",
   "placementtest_test_out_description": "c7555ff52c4f82c414d36dc56d8ea19e7c8cc8f9c78fed9ab8c04be27583f93f",
@@ -114,4 +115,6 @@
         <item quantity="many">Pominięto %1$d z %2$d lekcji</item>
         <item quantity="other">Pominięto %1$d z %2$d lekcji</item>
     </plurals>
+    <!-- A quiet action on the result of a placement test opened again from the plan: it offers a new test. -->
+    <string name="placementtest_take_test_again">Rozwiąż test ponownie</string>
 </resources>

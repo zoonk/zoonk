@@ -30,6 +30,7 @@
   "placementtest_start_lesson": "addd87c26382e4bb017c02c0bc4f938517fc765aafc46db46cbaba4ae822b165",
   "placementtest_start_title": "12c4a3440815d4e22a54beba05eb5c5498150b382f13609749097befd9ab652b",
   "placementtest_take_again_later": "c1213447c4089bcb650dfeaf48cda46cf1316f370f907f451f501476d19ce62a",
+  "placementtest_take_test_again": "3dc375b5b7558ace8d3da2fd8a95d53cc3b38e07e523d5abc9a41d0b88e99339",
   "placementtest_test": "f8241cd6160253f26459873620d2de6fe8fc287460ae74682980114fad085235",
   "placementtest_test_out": "ef349d4c50bab3e2e0f28d164107ff9d0d7230fad2c167ecfb556e673210bf5d",
   "placementtest_test_out_description": "17fd82929e8a0475eb07056df598c6b88820a6b2fc64d28e54c8c719c8d4ecda",
@@ -110,4 +111,6 @@
         <item quantity="many">%1$d de %2$d aulas puladas</item>
         <item quantity="other">%1$d de %2$d aulas puladas</item>
     </plurals>
+    <!-- A quiet action on the result of a placement test opened again from the plan: it offers a new test. -->
+    <string name="placementtest_take_test_again">Fazer o teste de novo</string>
 </resources>

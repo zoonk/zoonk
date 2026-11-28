@@ -30,6 +30,7 @@
   "placementtest_start_lesson": "f16d47dc194353570c38a8d9661b7b1a210b91cdfd330e4710a5a290a4ab2fe2",
   "placementtest_start_title": "43de6579bcc2c93a8b20135b3ef72480859c78e583bdb02ad1884603ef734832",
   "placementtest_take_again_later": "d0f9abcdc5dc374da28dff9bfb7935b5a622f36fd35097695649fd220ed8a5bd",
+  "placementtest_take_test_again": "f660e1bb109d86a00356d36c82bbffc4fec25f5e249928a349e35339db5d8e9b",
   "placementtest_test": "d7de9248ea5c0591cd709a559ed983e0e8771f4b9e91c21047c95f9a72cbbbc9",
   "placementtest_test_out": "d91c9f55d19be58eb7b6741e596cbbd365bb74f539413e39d54f9cf2a3e30e30",
   "placementtest_test_out_description": "55579cdbc3acf91bae8b92cfe53f37e7acb28a09f95b227e1f0a2675060bb85c",
@@ -106,4 +107,6 @@
         <item quantity="one">%1$d von %2$d Lektionen übersprungen</item>
         <item quantity="other">%1$d von %2$d Lektionen übersprungen</item>
     </plurals>
+    <!-- A quiet action on the result of a placement test opened again from the plan: it offers a new test. -->
+    <string name="placementtest_take_test_again">Test noch einmal machen</string>
 </resources>
