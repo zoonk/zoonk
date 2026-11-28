@@ -345,6 +345,42 @@ describe(buildPhaseViews, () => {
       null,
     ]);
   });
+
+  it("gives challenges the phase's later state and milestone precision", () => {
+    const views = buildPhaseViews({
+      chapterTitles: new Map(),
+      currentPhase: 2,
+      goalKind: "learn",
+      items: [
+        boss(0, 0, "todo", "2029-01-09"),
+        { ...lesson(1, 1), status: "done" },
+        boss(2, 2, "todo", "2028-12-01"),
+      ],
+      phases: [
+        phase({ later: true, milestone: "Solve equations." }),
+        phase({ challengeLeftOut: true, later: true }),
+        phase({ endDate: "2028-12-01", milestone: "Use matrices。" }),
+      ],
+      skillAreas: new Map(),
+      today: new Date("2026-10-13T00:00:00Z"),
+      upNextItemId: null,
+    });
+
+    expect(views).toMatchObject([
+      {
+        challengeLeftOut: false,
+        checkpoint: { date: null, later: true, planItemId: "item-0", precision: null },
+        milestone: "Solve equations",
+        state: "upcoming",
+      },
+      {
+        challengeLeftOut: false,
+        checkpoint: { date: null, later: true, planItemId: null },
+        state: "upcoming",
+      },
+      { checkpoint: { date: "2028-12-01", precision: "year" }, milestone: "Use matrices" },
+    ]);
+  });
 });
 
 const done = (item: ExistingPlanItem): ExistingPlanItem => ({ ...item, status: "done" });

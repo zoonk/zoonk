@@ -2,9 +2,10 @@ import { readScheduledAnswers } from "../../learner/facts/scheduled-answers";
 import { type PlanView } from "../plan-view-contract";
 import { fromIsoDate, toIsoDate } from "../planner/plan-calendar";
 import { type WritingWork, listRemainingWriting } from "../planner/writing-schedule";
-import { getDatedFinish, getFinishDisplay, getSavedCourseFinish } from "./course-finish";
+import { getDatedFinish, getFinishDisplay } from "./course-finish";
 import { type PlanReadContext } from "./plan-read-projection";
 import { type PlanSummary } from "./plan-summary";
+import { type SelectedSummary } from "./selected-summary-contract";
 
 export const MINUTES_PER_HOUR = 60;
 
@@ -41,35 +42,14 @@ export async function loadPlanWritingWork({ goal, state, today }: PlanReadContex
   });
 }
 
-function readEstimateFinish({
-  dated,
-  fullCourseEndDate,
-  summary,
-}: {
-  dated: boolean;
-  fullCourseEndDate: string | null;
-  summary: PlanSummary | null;
-}) {
-  if (!summary) {
-    return null;
-  }
-
-  if (fullCourseEndDate) {
-    return getDatedFinish({
-      date: fullCourseEndDate,
-      today: fromIsoDate(summary.basis.layoutStudyDay),
-    });
-  }
-
-  return dated ? null : getSavedCourseFinish(summary);
-}
-
 export function buildEstimateView({
   context,
+  finish,
   summary,
   writing,
 }: {
   context: PlanReadContext;
+  finish: SelectedSummary["forecast"]["finish"] | null;
   summary: PlanSummary | null;
   writing: readonly WritingWork[];
 }): PlanView["estimate"] {
@@ -77,7 +57,14 @@ export function buildEstimateView({
   const dated = context.goal.targetDate !== null;
   const fullCourse = context.goal.kind === "exam" && context.state.settings.fullCourse;
   const fullCourseEndDate = fullCourse ? (summary?.advice.fullCourseEndDate ?? null) : null;
-  const forecast = readEstimateFinish({ dated, fullCourseEndDate, summary });
+
+  const forecast =
+    fullCourseEndDate && summary
+      ? getDatedFinish({
+          date: fullCourseEndDate,
+          today: fromIsoDate(summary.basis.layoutStudyDay),
+        })
+      : finish;
 
   const { items } = context;
   const totalHours = context.plan.estimateHours ?? 0;

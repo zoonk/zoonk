@@ -60,6 +60,7 @@ export function scheduleCarriedAndRest({
       scheduleLearnedOrder({
         days: placed.days,
         order: learnedOrder,
+        preserveWork: input.goal.targetDate === null,
         quickBases: listQuickBaseIds(input),
         rest,
       });

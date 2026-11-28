@@ -3,6 +3,7 @@ import { type LaidOutOrder } from "./learned-order";
 import { type MockFunding } from "./mock-funding";
 import { type PlannedItem } from "./plan-items";
 import { type PlanSettings } from "./plan-state";
+import { type QueueUnit } from "./plan-units";
 import { type PlannedMocks } from "./planned-mocks";
 import { type PlanDay } from "./schedule-units";
 import { type SkillMinutes } from "./skill-minutes";
@@ -14,6 +15,7 @@ export type BuiltPlan = PlanOutline & {
   lessonDayMinutes: ReadonlyMap<string, ReadonlyMap<string, number>>;
   lessonRawMinutes: ReadonlyMap<string, ReadonlyMap<string, number>>;
   droppedSkillIds: string[];
+  deferredTeaching?: readonly QueueUnit[];
   endsBeforeLessons: number[];
   items: PlannedItem[];
   keptKeys: ReadonlySet<string>;

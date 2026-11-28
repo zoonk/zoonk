@@ -92,8 +92,12 @@ export const planPhaseSchema = z
           .nullable()
           .meta({
             description:
-              "The approximate phase-challenge date in the Plan, an estimate rather than a fixed day. Never earlier than tomorrow unless today's day holds the challenge (`when` is `nextSession`); weekly challenges and mocks retain their calendar dates.",
+              "The approximate phase-challenge date. Null while the challenge has no placement date. An upcoming date is at least tomorrow unless today's session holds the challenge.",
           }),
+        later: z
+          .boolean()
+          .optional()
+          .meta({ description: "The upcoming challenge is still owed and has no placement date." }),
         locked: z
           .boolean()
           .meta({
@@ -104,14 +108,19 @@ export const planPhaseSchema = z
           .nullable()
           .meta({
             description:
-              "Its intro is GET /challenges/{planItemId}; null for an unsaved selection, shown without an action link until Open persists it",
+              "Its intro is GET /challenges/{planItemId}. Null before its plan item exists.",
+          }),
+        precision: finishPrecisionSchema
+          .nullish()
+          .meta({
+            description: "The precision shared with the phase's milestone. Null without a date.",
           }),
         state: z.enum(["done", "upcoming"]),
         when: z
           .enum(["date", "nextSession", "queued"])
           .meta({
             description:
-              "`date`: an approximate date for a phase challenge, never earlier than tomorrow. `nextSession` means today's session holds it, or the day Today plans holds it before the session is built, so no estimate applies. A challenge tests only finished lessons, and no challenge or lesson waits for another challenge. `queued` is retained for older clients and is never returned. Always `date` once won, while locked.",
+              "`date` means a challenge has an approximate date when one is available. `nextSession` means today's session holds it, or the day Today plans holds it before the session is built, so no estimate applies. A challenge tests only finished lessons, and no challenge or lesson waits for another challenge. `queued` is retained for older clients and is never returned. Always `date` once won, while locked.",
           }),
       })
       .nullable()

@@ -113,6 +113,10 @@ export function getPhaseStates({
     : currentPhase;
 
   return phases.map((phase, index) => {
+    if (phase.later && index !== current) {
+      return "upcoming";
+    }
+
     const inPhase = items.filter((item) => item.phase === index);
 
     if (inPhase.length === 0) {

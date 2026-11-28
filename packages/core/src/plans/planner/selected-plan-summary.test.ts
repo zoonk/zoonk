@@ -283,7 +283,7 @@ describe(summarizeSelectedPlan, () => {
     expect(finish).toStrictEqual({ date: end, precision: "year" });
   });
 
-  it("reports a study week that leaves no lesson room as beyond the horizon", () => {
+  it("forecasts a finish when a short weekly routine needs all its time for lessons", () => {
     const input = learnInput({
       goal: { dailyMinutes: 10, kind: "learn", targetDate: null },
       graph: {
@@ -298,9 +298,8 @@ describe(summarizeSelectedPlan, () => {
     });
 
     expect(summarize(input).forecast.finish).toStrictEqual({
-      date: null,
-      precision: null,
-      reason: "beyondHorizon",
+      date: "2027-07-05",
+      precision: "month",
     });
   });
 
@@ -570,7 +569,8 @@ describe(summarizeSelectedPlan, () => {
 
     expect(summary.forecast.finish).toMatchObject({ date: null, reason: "beyondHorizon" });
     expect(summary.requirement.remainingRaw).toBe(30 * 200 * DEFAULT_LESSON_MINUTES);
-    expect(built.droppedSkillIds).toContain("s29");
+    expect(built.droppedSkillIds).toStrictEqual([]);
+    expect(built.deferredTeaching).toContainEqual(expect.objectContaining({ skillId: "s29" }));
     expect(built.phases[0]).toMatchObject({ endDate: null, later: true });
     expect(built.phases[1]).toMatchObject({ endDate: null, later: true });
 
@@ -590,6 +590,7 @@ describe(summarizeSelectedPlan, () => {
     const next = buildPlan({ ...input, items, mode: "automatic", today });
 
     expect(next.droppedSkillIds).toStrictEqual([]);
+    expect(next.deferredTeaching).toStrictEqual([]);
     expect(next.phases[1]).toMatchObject({ endDate: expect.any(String) });
     expect(next.phases[1]?.later).toBeUndefined();
   });

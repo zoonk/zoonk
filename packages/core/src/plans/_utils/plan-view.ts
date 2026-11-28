@@ -41,6 +41,7 @@ import { buildScheduleView } from "./plan-schedule-view";
 import { getPlanSummaryBasis, readFreshPlanSummary } from "./plan-summary";
 import { buildPlanTimingView } from "./plan-timing-view";
 import { loadPlanTools, toPlanToolViews } from "./plan-tools";
+import { readSavedCourseForecast } from "./saved-course-forecast";
 import { readPlanOffers, readSavedBases, readSavedFeasibility } from "./saved-plan-advice";
 import { getShortPlanShape, toShortPlanView } from "./short-plan-view";
 import { getWrittenPracticeView } from "./written-practice-view";
@@ -245,6 +246,7 @@ export async function buildPlanView({
 
   const pastDate = status?.kind === "pastDate";
   const feasibility = readSavedFeasibility(summary);
+  const forecast = readSavedCourseForecast({ context, summary });
 
   return {
     access,
@@ -263,7 +265,7 @@ export async function buildPlanView({
       timeZone: context.timeZone,
       today: context.today,
     }),
-    estimate: buildEstimateView({ context, summary, writing }),
+    estimate: buildEstimateView({ context, finish: forecast.finish, summary, writing }),
     examChoices,
     examDocument: getExamDocument(goal),
     feasibility,
@@ -284,7 +286,7 @@ export async function buildPlanView({
       access,
       challengeResults,
       chapterTitles,
-      context,
+      context: { ...context, phases: forecast.phases },
       currentPhase,
       estimateMinutes:
         summary?.selected.totalMinutes ?? (context.plan.estimateHours ?? 0) * MINUTES_PER_HOUR,

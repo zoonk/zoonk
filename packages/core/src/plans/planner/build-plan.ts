@@ -5,6 +5,7 @@ import { type BossMinutes } from "./boss-minutes";
 import { type BuiltPlan } from "./built-plan";
 import { type CarryOver } from "./carry-over";
 import { getKeptBaseChoices, hasBaseChoices, withBaseChoices } from "./chosen-bases";
+import { listDeferredTeaching, markLaterPhases } from "./deferred-teaching";
 import { listEndsBeforeLessons } from "./ends-before-lessons";
 import { type ExamBossDays, listBossDayFacts } from "./exam-boss-days";
 import { type PlanExtraInput, appendExamExtras, withoutExamExtras } from "./exam-extras";
@@ -26,7 +27,6 @@ import { type PlanBase } from "./plan-bases";
 import { getLastLessonDate, scheduleRunEvents } from "./plan-events";
 import { type ExistingPlanItem, fromUnit, mergePlanItems } from "./plan-items";
 import { type ExamWindow } from "./plan-phases";
-import { PLAN_EPSILON } from "./plan-precision";
 import { getPlanStart } from "./plan-run-days";
 import { type PlanGraph, type PlanSettings } from "./plan-state";
 import { type PlannerLesson } from "./plan-units";
@@ -113,35 +113,6 @@ export function buildPlan(given: BuildPlanInput) {
   });
 
   return given.goal.targetDate ? planned : markLaterPhases({ built: planned, graph: input.graph });
-}
-
-function markLaterPhases<Plan extends BuiltPlan>({
-  built,
-  graph,
-}: {
-  built: Plan;
-  graph: PlanGraph;
-}): Plan {
-  const waiting = new Set(
-    built.skillMinutes
-      .filter(({ covered, total }) => covered < total - PLAN_EPSILON)
-      .map(({ skillId }) => skillId),
-  );
-
-  if (waiting.size === 0) {
-    return built;
-  }
-
-  const later = new Set(
-    graph.skills.filter(({ skillId }) => waiting.has(skillId)).map(({ phase }) => phase),
-  );
-
-  return {
-    ...built,
-    phases: built.phases.map((phase, index) =>
-      later.has(index) ? { ...phase, endDate: null, later: true } : phase,
-    ),
-  };
 }
 
 function buildWithBosses(input: BuildPlanInput): BuiltPlan {
@@ -310,10 +281,14 @@ function planGoal({
     writingSchedule: work.writing.writingSchedule,
   });
 
+  const keptStandInCuts = listKeptStandInCuts({ frozen, units: unitsByKey });
+  const deferred = input.goal.targetDate === null;
+
   return {
     ...outline,
     skillLessons,
-    ...listDroppedSkills(dropped),
+    ...listDroppedSkills(deferred ? [] : dropped),
+    ...(deferred && { deferredTeaching: listDeferredTeaching({ dropped, keptStandInCuts }) }),
     endsBeforeLessons: listEndsBeforeLessons({
       given: input,
       items,
@@ -329,7 +304,7 @@ function planGoal({
     order: toLaidOutOrder(restSchedule),
     planDays: funded.days,
     skillMinutes: getSkillMinutes({
-      dropped: [...dropped, ...listKeptStandInCuts({ frozen, units: unitsByKey })],
+      dropped: [...dropped, ...keptStandInCuts],
       kept: queue.filter((unit) => work.finishedKeys.has(unit.key)),
       pending: [...pending, ...work.deferred],
     }),

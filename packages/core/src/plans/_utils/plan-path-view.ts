@@ -59,6 +59,11 @@ export function buildPlanPath({
   return buildPhaseViews({
     ...input,
     challengesOpen: input.phaseChallengesRequired !== false,
+    deferredLessons: state.graph.skills.reduce(
+      (counts, { deferredLessons = 0, phase }) =>
+        counts.set(phase, (counts.get(phase) ?? 0) + deferredLessons),
+      new Map<number, number>(),
+    ),
     goalKind: goal.kind,
     items,
     mocksRequirePlus: access.mocksRequirePlus,

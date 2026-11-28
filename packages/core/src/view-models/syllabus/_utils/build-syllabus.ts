@@ -9,7 +9,7 @@ import {
   type SyllabusView,
 } from "../syllabus-contract";
 import { getDisplayWeights } from "./display-weights";
-import { getSubjectProgress } from "./subject-progress";
+import { countDeferredLessons, getSubjectProgress } from "./subject-progress";
 import {
   buildChapters,
   chapterKeyOf,
@@ -47,10 +47,12 @@ function getSharedWith({
 function sumPlannedLessons({
   itemArea,
   items,
+  skills,
   subjects,
 }: {
   itemArea: (item: SyllabusItem) => string | null;
   items: readonly SyllabusItem[];
+  skills: SyllabusInput["skills"];
   subjects: readonly SyllabusSubject[];
 }): SyllabusView["lessons"] {
   const planned = new Set(
@@ -59,6 +61,7 @@ function sumPlannedLessons({
 
   const { lessonsDone, lessonsKnown, lessonsTotal } = getSubjectProgress(
     items.filter((item) => planned.has(itemArea(item) ?? "")),
+    skills,
   );
 
   return { done: lessonsDone + lessonsKnown, known: lessonsKnown, total: lessonsTotal };
@@ -201,16 +204,10 @@ export function buildSyllabus(
     const topics = withHeadingStatuses(built);
 
     const notPlannedReason = getNotPlannedReason({
-      hasItems: own.length > 0,
+      hasItems: own.length + countDeferredLessons(ownSkills) > 0,
       hasSkills: ownSkills.length > 0,
       known: ownSkills.every((skill) => knownSkillIds.has(skill.skillId)),
       skipped,
-    });
-
-    const measured = measureSubject({
-      areas: draft.areas,
-      notPlannedReason,
-      sections: extra ? null : sections,
     });
 
     const writtenPart = extra ? undefined : findWrittenPart(draft, input.writtenPractice);
@@ -227,8 +224,12 @@ export function buildSyllabus(
       group: draft.group,
       imageUrl: draft.areas.map((area) => areaCourses.get(area)?.imageUrl).find(Boolean) ?? null,
       key: keys[index] ?? draft.name,
-      ...getSubjectProgress(own),
-      ...measured,
+      ...getSubjectProgress(own, ownSkills),
+      ...measureSubject({
+        areas: draft.areas,
+        notPlannedReason,
+        sections: extra ? null : sections,
+      }),
       matrix: [...(draft.matrix ?? [])],
       name: draft.name,
       nextDate: getEarliestTodoDate(own),
@@ -258,6 +259,7 @@ export function buildSyllabus(
     lessons: sumPlannedLessons({
       itemArea,
       items: items.filter((item) => !extraIds.has(item.skillId ?? "")),
+      skills: ordinary,
       subjects,
     }),
     noticeUrl: fromNotice?.url ?? null,

@@ -210,18 +210,36 @@ function estimateFinish({
 
   const share = built.planDays.findLast((day) => day.shape.open)?.shape.share ?? 1;
 
-  const capacities = { total: 0 };
+  return findFinishByCapacity({
+    capacityAt: (date, offset) => {
+      const day = built.planDays[offset];
+      return day?.shape.open ? getLessonCapacity(day) : getStudyMinutes({ calendar, date }) * share;
+    },
+    remaining,
+    start: input.today,
+    today: input.today,
+  });
+}
 
-  for (let offset = 0; offset < MAX_PLAN_DAYS; offset += 1) {
-    const day = built.planDays[offset];
-    const date = day?.date ?? addDays(input.today, offset);
+export function findFinishByCapacity({
+  capacityAt,
+  remaining,
+  start,
+  today,
+}: {
+  capacityAt: (date: Date, offset: number) => number;
+  remaining: number;
+  start: Date;
+  today: Date;
+}): Finish {
+  const end = addDays(today, MAX_PLAN_DAYS);
+  const capacity = { total: 0 };
 
-    capacities.total += day?.shape.open
-      ? getLessonCapacity(day)
-      : getStudyMinutes({ calendar, date }) * share;
+  for (let date = start, offset = 0; date < end; date = addDays(date, 1), offset += 1) {
+    capacity.total += capacityAt(date, offset);
 
-    if (capacities.total >= remaining - PLAN_EPSILON) {
-      return { date: toIsoDate(date), precision: getFinishPrecision({ date, today: input.today }) };
+    if (capacity.total >= remaining - PLAN_EPSILON) {
+      return { date: toIsoDate(date), precision: getFinishPrecision({ date, today }) };
     }
   }
 

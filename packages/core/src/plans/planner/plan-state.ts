@@ -46,6 +46,7 @@ const graphPhaseSchema = z.object({
 const graphSkillSchema = z.object({
   area: z.string().nullable().default(null),
   courseIds: z.array(z.string()).optional(),
+  deferredLessons: z.int().positive().optional(),
   extra: z.boolean().optional(),
   lessons: z.int().min(1),
   name: z.string(),

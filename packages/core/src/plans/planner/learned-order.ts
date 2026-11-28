@@ -1,5 +1,6 @@
 import { PLAN_EPSILON } from "./plan-precision";
 import { type QueueUnit } from "./plan-units";
+import { scheduleUndated } from "./schedule-undated";
 import {
   type DroppedUnit,
   type PlanDay,
@@ -195,23 +196,24 @@ function keepsPlaced({
 export function scheduleLearnedOrder({
   days,
   order,
+  preserveWork = false,
   quickBases,
   rest,
 }: {
   days: readonly PlanDay[];
   order: LaidOutOrder;
+  preserveWork?: boolean;
   quickBases: ReadonlySet<string>;
   rest: readonly QueueUnit[];
 }): ReturnType<typeof scheduleUnits> | null {
-  const inPlace = scheduleUnits({
-    days,
-    units: followLearnedOrder({ extras: "inPlace", order, rest }),
-  });
+  const schedule = preserveWork ? scheduleUndated : scheduleUnits;
+
+  const inPlace = schedule({ days, units: followLearnedOrder({ extras: "inPlace", order, rest }) });
 
   if (keepsPlaced({ order, quickBases, rest, schedule: inPlace })) {
     return inPlace;
   }
 
-  const last = scheduleUnits({ days, units: followLearnedOrder({ extras: "last", order, rest }) });
+  const last = schedule({ days, units: followLearnedOrder({ extras: "last", order, rest }) });
   return keepsPlaced({ cores: true, order, quickBases, rest, schedule: last }) ? last : null;
 }

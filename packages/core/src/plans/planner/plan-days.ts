@@ -10,10 +10,11 @@ import {
   daysBetween,
   fromIsoDate,
   getStudyMinutes,
+  hasStudyTimeAfterWeeklyEvent,
   toIsoDate,
 } from "./plan-calendar";
 import { type ExamWindow, findExamWindow, getDayLearningShare } from "./plan-phases";
-import { type PlanSettings, type PracticeBias } from "./plan-state";
+import { DAYS_PER_WEEK, type PlanSettings, type PracticeBias } from "./plan-state";
 import { getBossKey } from "./plan-units";
 import { type DayShape, type FixedEvent } from "./schedule-units";
 import { getShortExamEvents, isLightDayBefore, isShortExam, mockEvent } from "./short-exam-plan";
@@ -50,8 +51,6 @@ export function getExamDayRules({
   };
 }
 
-const DAY_OF_SECOND_WEEK = 7;
-
 type CalendarInput = { calendar: StudyCalendar; practiceBias: PracticeBias };
 
 function fixedEvent(
@@ -61,16 +60,14 @@ function fixedEvent(
 }
 
 function getWeeklyEvent({ date, mockMinutes }: { date: Date; mockMinutes: number | null }) {
-  if (mockMinutes !== null) {
-    return mockEvent({ date, fullLength: false, minutes: mockMinutes, replacesDay: true });
-  }
-
-  return fixedEvent({
-    key: `checkpoint:${toIsoDate(date)}`,
-    kind: "checkpoint",
-    minutes: WEEKLY_CHECKPOINT_MINUTES,
-    title: "",
-  });
+  return mockMinutes === null
+    ? fixedEvent({
+        key: `checkpoint:${toIsoDate(date)}`,
+        kind: "checkpoint",
+        minutes: WEEKLY_CHECKPOINT_MINUTES,
+        title: "",
+      })
+    : mockEvent({ date, fullLength: false, minutes: mockMinutes, replacesDay: true });
 }
 
 export function createLearnDays({
@@ -88,8 +85,9 @@ export function createLearnDays({
   planStart?: Date;
   targetDate: Date | null;
 }): (date: Date) => DayShape {
-  const firstCheckpoint = addDays(start, DAY_OF_SECOND_WEEK);
+  const firstCheckpoint = addDays(start, DAYS_PER_WEEK);
   const every = mockMinutes === null ? 1 : getMockWeeks({ calendar, minutes: mockMinutes });
+  const requiredRoom = targetDate === null && mockMinutes === null ? WEEKLY_CHECKPOINT_MINUTES : 0;
 
   return (date) => {
     const open = targetDate === null || date < targetDate;
@@ -97,6 +95,7 @@ export function createLearnDays({
     const isCheckpointDay =
       date >= firstCheckpoint &&
       date.getUTCDay() === eventWeekday &&
+      hasStudyTimeAfterWeeklyEvent({ calendar, date, minutes: requiredRoom }) &&
       isMockWeek({ date, every, firstMockDay: firstCheckpoint });
 
     return {

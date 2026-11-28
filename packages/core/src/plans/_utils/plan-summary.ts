@@ -2,9 +2,9 @@ import { z } from "zod";
 import { savedPlanOfferOperationsSchema } from "../plan-contract";
 import { measureDepth } from "../planner/coverage-measures";
 import { toIsoDate } from "../planner/plan-calendar";
-import { getSavedCourseFinish } from "./course-finish";
 import { planEffectSchema } from "./plan-change-payload";
 import { type PlanContext } from "./plan-context";
+import { readSavedCourseForecast } from "./saved-course-forecast";
 import {
   type SelectedCoverage,
   type SelectedSummary,
@@ -121,7 +121,7 @@ export function readSavedFinish(context: PlanContext) {
     value: context.plan.summary,
   });
 
-  return summary ? getSavedCourseFinish(summary) : null;
+  return readSavedCourseForecast({ context, summary }).finish;
 }
 
 /** @public A lesson's completion writes what it says. */

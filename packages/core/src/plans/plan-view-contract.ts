@@ -121,7 +121,9 @@ export type PlanOffer = { effect: PlanEffect; fits: boolean; operations: Learner
 export type PlanPhaseCheckpointView = {
   locked: boolean;
   date: string | null;
+  later?: boolean;
   planItemId: string | null;
+  precision?: FinishPrecision | null;
   state: "done" | "upcoming";
   when: BossTiming;
 };

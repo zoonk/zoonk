@@ -5,6 +5,7 @@ import { SMALL_CHANGE_DAYS, SMALL_CHANGE_LESSONS } from "./plan-change-threshold
 import { isUnwrittenLesson } from "./plan-item-rules";
 import { type PlannedItem } from "./plan-items";
 import { type PlanGraph } from "./plan-state";
+import { type QueueUnit } from "./plan-units";
 import { type SkillMinutes } from "./skill-minutes";
 import { getTopicChanges } from "./topic-changes";
 
@@ -151,6 +152,19 @@ type SeenItem = Pick<EffectItem, "chapterId" | "kind" | "lessonId" | "skillId" |
   lessons?: number | null;
   titleSnapshot: string;
 };
+
+export function asDeferredTeaching(units: readonly QueueUnit[] = []) {
+  return units.map((unit) => ({
+    chapterId: unit.chapterId,
+    kind: unit.kind,
+    lessonId: unit.lessonId,
+    lessons: unit.lessons ?? 1,
+    scheduledFor: null,
+    skillId: unit.skillId,
+    status: "todo" as const,
+    titleSnapshot: unit.title,
+  }));
+}
 
 function countSkillLessons({
   items,

@@ -134,7 +134,14 @@ function getChangeEffect({
   reviewDate: string | null;
 }): PlanEffect {
   const { items: shown, today } = context;
-  const seen = getSeenEffect({ computed, fallback: baseline, shown });
+
+  const seen = getSeenEffect({
+    computed,
+    fallback: baseline,
+    savedGraph: context.state.graph,
+    shown,
+  });
+
   const focus = getChangeFocus({ computed, operations });
   const areaEnds = getSteeredEnds({ baseline, computed, focus, operations, shown });
   const areaLessons = getUnnamedAreaLessons({ baseline, computed, operations, shown });

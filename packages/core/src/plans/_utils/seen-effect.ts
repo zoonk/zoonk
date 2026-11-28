@@ -1,6 +1,11 @@
 import { getFullCourseFinishDate } from "../planner/after-exam";
 import { toIsoDate } from "../planner/plan-calendar";
-import { type PlanEffect, getFittedStandInLessons, getSeenChange } from "../planner/plan-effect";
+import {
+  type PlanEffect,
+  asDeferredTeaching,
+  getFittedStandInLessons,
+  getSeenChange,
+} from "../planner/plan-effect";
 import { type PlanGraph } from "../planner/plan-state";
 import { getCourseFinish, getDatedFinish } from "./course-finish";
 import { type ContextPlanItem } from "./plan-context";
@@ -62,23 +67,45 @@ function joinGraphs({ computed, fallback }: { computed: ComputedPlan; fallback: 
 
 export function getSeenEffect({
   computed,
-  fallback = computed,
+  fallback,
+  savedGraph,
   shown,
 }: {
   computed: ComputedPlan;
   fallback?: ComputedPlan;
+  savedGraph?: PlanGraph;
   shown: readonly ContextPlanItem[];
 }): PlanEffect {
+  const baseline = fallback ?? computed;
+  const shownLessons = new Set(shown.flatMap((item) => item.lessonId ?? []));
+
+  const deferredCounts = new Map(
+    savedGraph?.skills.map((skill) => [skill.skillId, skill.deferredLessons ?? 0]),
+  );
+
+  const deferredBefore = asDeferredTeaching(baseline.built.deferredTeaching).flatMap((item) => {
+    const left = deferredCounts.get(item.skillId ?? "") ?? 0;
+    const lessons = Math.min(left, item.lessons);
+
+    if (lessons === 0 || (item.lessonId && shownLessons.has(item.lessonId))) {
+      return [];
+    }
+
+    deferredCounts.set(item.skillId ?? "", left - lessons);
+    return [{ ...item, lessons }];
+  });
+
   return getSeenChange({
-    after: computed.built.items,
-    before: shown,
-    graph: joinGraphs({ computed, fallback }),
-    ...getLessonCounters({ computed, fallback }),
+    after: [...computed.built.items, ...asDeferredTeaching(computed.built.deferredTeaching)],
+    before: [...shown, ...deferredBefore],
+    graph: joinGraphs({ computed, fallback: baseline }),
+    ...getLessonCounters({ computed, fallback: baseline }),
   });
 }
 
 function sizeBy(sizes: ReadonlyMap<string, number>) {
-  return (item: CountedItem) => (item.lessonId ? 1 : (sizes.get(item.skillId ?? "") ?? 1));
+  return (item: CountedItem) =>
+    item.lessonId ? 1 : (item.lessons ?? sizes.get(item.skillId ?? "") ?? 1);
 }
 
 export function getBuiltChange({
@@ -89,8 +116,8 @@ export function getBuiltChange({
   before: ComputedPlan;
 }): PlanEffect {
   return getSeenChange({
-    after: after.built.items,
-    before: before.built.items,
+    after: [...after.built.items, ...asDeferredTeaching(after.built.deferredTeaching)],
+    before: [...before.built.items, ...asDeferredTeaching(before.built.deferredTeaching)],
     graph: joinGraphs({ computed: after, fallback: before }),
     lessonsAfter: sizeBy(fitStandIns(after)),
     lessonsBefore: sizeBy(fitStandIns(before)),

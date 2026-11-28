@@ -159,7 +159,7 @@ describe(getPlanStatus, () => {
     ).toStrictEqual({ kind: "onTrack" });
   });
 
-  it("needs adjusting when the fix would take over a week", () => {
+  it("reports missed lessons on an undated plan even if catching up would take over a week", () => {
     expect(
       getPlanStatus({
         goalKind: "learn",
@@ -168,7 +168,7 @@ describe(getPlanStatus, () => {
         targetDate: null,
         today: TODAY,
       }),
-    ).toStrictEqual({ kind: "needsAdjusting", options: ["addTime", "narrowScope"] });
+    ).toStrictEqual({ days: 0, extraMinutesPerDay: 0, kind: "behind", lessons: 8 });
   });
 
   it("needs adjusting, with moving the date, when the plan runs past the target", () => {

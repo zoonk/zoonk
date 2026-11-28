@@ -12,6 +12,7 @@ import { keepPhaseEnds } from "./kept-phase-ends";
 import { scheduleCoresFirst } from "./least-worth-cores";
 import { type PlanGraph, type PlanSettings } from "./plan-state";
 import { type QueueUnit } from "./plan-units";
+import { scheduleUndated } from "./schedule-undated";
 import {
   type PlanDay,
   type ScheduledUnit,
@@ -121,8 +122,17 @@ function arrangeExamUnits({
   const { graph, queue } = input;
   const gapAreas = getAreasOf({ graph, skillIds: input.missedSkillIds });
 
+  if (!input.goal.targetDate && !queue.rates) {
+    return scheduleUndated({
+      days: input.days,
+      units: keepPhaseEnds({ days: input.days, ends: input.phaseEnds, units }),
+    });
+  }
+
+  const schedule = input.goal.targetDate ? scheduleUnits : scheduleUndated;
+
   return queue.rates
-    ? scheduleUnits({
+    ? schedule({
         days: input.days,
         units: arrangeStudyCycle({
           areaPhases: getCyclePhases({ focusAreas: input.settings.focusAreas, gapAreas, graph }),
@@ -173,6 +183,10 @@ function scheduleWith({
 
   const whole = schedulePending(arrange(input.units));
 
+  if (!input.goal.targetDate) {
+    return { ...whole, yielded: [] };
+  }
+
   const keptEnds = input.phaseEnds.size > 0;
   const plain = keptEnds ? scheduleUnits({ days: input.days, units: input.units }) : whole;
 
@@ -180,7 +194,7 @@ function scheduleWith({
     plain.dropped.some((unit) => unit.kind === "lesson") ||
     whole.dropped.some((unit) => unit.kind === "lesson" || (keptEnds && unit.kind === "boss"));
 
-  if (!input.goal.targetDate || !dropsWork) {
+  if (!dropsWork) {
     return { ...whole, yielded: [] };
   }
 

@@ -31,6 +31,7 @@ export type NoticeSubject = {
 export type SyllabusSkill = {
   extra?: boolean;
   area: string;
+  deferredLessons?: number;
   name: string;
   skillId: string;
   topics: readonly string[];

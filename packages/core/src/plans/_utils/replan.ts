@@ -5,7 +5,7 @@ import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag, getLearnerModelCacheTag } from "../../cache/tags";
 import { type BuiltPlan, type PlanningMode, buildPlan } from "../planner/build-plan";
 import { getChosenStandInLessons } from "../planner/chosen-bases";
-import { withPlannedLessons } from "../planner/core-first";
+import { countSkillLessons, withPlannedLessons } from "../planner/core-first";
 import { type StudyScheduleAt } from "../planner/daily-time-plans";
 import { withoutExamExtras } from "../planner/exam-extras";
 import { type PlanBases } from "../planner/plan-bases";
@@ -168,6 +168,7 @@ export async function computePlan({
   const standInLessons = getChosenStandInLessons(builtInput);
 
   const saved = withPlannedLessons({
+    deferredLessons: built.deferredTeaching && countSkillLessons(built.deferredTeaching),
     graph: withPlacedExtras({ built, extraSkills, graph: fullGraph }),
     skillLessons: built.skillLessons,
   });

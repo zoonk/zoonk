@@ -50,6 +50,11 @@ export function fromIsoDate(value: string): Date {
   return parseLocalDate(value);
 }
 
+export function getEarliestDate(items: readonly { scheduledFor: Date | null }[]): string | null {
+  const dates = items.flatMap((item) => (item.scheduledFor ? [toIsoDate(item.scheduledFor)] : []));
+  return dates.toSorted()[0] ?? null;
+}
+
 export function getPlanCalendar({
   dailyMinutes,
   settings,
@@ -119,6 +124,24 @@ export function getStudyMinutes({
   return isInLightWeek({ date, lightWeeks: calendar.lightWeeks })
     ? Math.round(minutes * LIGHT_WEEK_FACTOR)
     : minutes;
+}
+
+export function hasStudyTimeAfterWeeklyEvent({
+  calendar,
+  date,
+  minutes,
+}: {
+  calendar: StudyCalendar;
+  date: Date;
+  minutes: number;
+}) {
+  return (
+    minutes === 0 ||
+    getStudyMinutes({ calendar, date }) > minutes ||
+    Array.from({ length: DAYS_PER_WEEK - 1 }, (_, offset) => addDays(date, -offset - 1)).some(
+      (day) => getStudyMinutes({ calendar, date: day }) > 0,
+    )
+  );
 }
 
 export function scaleWeekdayMinutes({
