@@ -370,6 +370,7 @@ private fun RowContent(
                 (
                     width >= STACKED_WIDTH.roundToPx() &&
                         room >= titleMeasurable.minIntrinsicWidth(Constraints.Infinity) &&
+                        room >= (notesMeasurable?.minIntrinsicWidth(Constraints.Infinity) ?: 0) &&
                         room >= minOf(titleMeasurable.maxIntrinsicWidth(Constraints.Infinity), TITLE_BASIS.roundToPx())
                 )
         val textWidth = if (beside) room.coerceAtLeast(0) else width
