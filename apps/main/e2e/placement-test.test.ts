@@ -456,6 +456,7 @@ test("onboarding's test ends on where the learner starts, which a reload keeps",
   await page.goto(`/start/${goal.id}`);
   await expect(page.getByRole("heading", { name: "Where would you like to start?" })).toBeVisible();
   await expect(page.getByRole("radio", { name: /^Test/u })).toBeChecked();
+  await expect(page.getByRole("radio", { name: /^First lesson/u })).not.toBeChecked();
   await page.getByRole("button", { exact: true, name: "Start" }).click();
   await atQuestion(page, 1);
   await answerRight(page);
