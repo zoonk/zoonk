@@ -96,7 +96,7 @@ function ExamPhaseEvents({ links, phase }: { links: JourneyPathLinks; phase: Pla
 
       {checkpoint && (
         <li>
-          <CheckpointRow checkpoint={checkpoint} links={links} />
+          <CheckpointRow checkpoint={checkpoint} links={links} phase={phase} />
         </li>
       )}
     </ul>
@@ -128,7 +128,7 @@ export function PhaseDetails({ links, phase }: { links: JourneyPathLinks; phase:
 
       <DrawerContent className="pt-2">
         {listsChapters ? (
-          <JourneyChapters chapters={phase.chapters} checkpoint={phase.checkpoint} links={links} />
+          <JourneyChapters chapters={phase.chapters} links={links} phase={phase} />
         ) : (
           <ExamPhaseEvents links={links} phase={phase} />
         )}

@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  type PlanChapterView,
-  type PlanPhaseCheckpointView,
-} from "@zoonk/core/plans/view-contract";
+import { type PlanChapterView, type PlanPhaseView } from "@zoonk/core/plans/view-contract";
 import {
   Collapsible,
   CollapsibleContent,
@@ -187,15 +184,18 @@ function useShowMoreLabel({ hidden, showAll }: { hidden: number; showAll: boolea
     : t("{count, plural, one {# more chapter} other {# more chapters}}", { count: hidden });
 }
 
-/** Without `links` the rows only say what's there, every one of them, and none opens anything. */
+/**
+ * Without `links` the rows only say what's there, every one of them, and none opens anything. With
+ * them, the `phase`'s challenge ends the list.
+ */
 export function JourneyChapters({
   chapters,
-  checkpoint,
   links,
+  phase,
 }: {
   chapters: PlanChapterView[];
-  checkpoint: PlanPhaseCheckpointView | null;
   links: JourneyPathLinks | null;
+  phase: PlanPhaseView | null;
 }) {
   const [showAll, setShowAll] = useState(false);
   const listId = useId();
@@ -229,9 +229,9 @@ export function JourneyChapters({
         </li>
       )}
 
-      {checkpoint && links && (
+      {phase?.checkpoint && links && (
         <li>
-          <CheckpointRow checkpoint={checkpoint} links={links} />
+          <CheckpointRow checkpoint={phase.checkpoint} links={links} phase={phase} />
         </li>
       )}
     </ul>

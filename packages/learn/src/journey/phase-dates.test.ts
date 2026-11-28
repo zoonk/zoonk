@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   getAxisDatedPhases,
   getAxisFinish,
+  getChallengeDate,
   getPhaseEnd,
   getPhaseStart,
   getPlanFinish,
@@ -282,6 +283,80 @@ describe(getPhaseEnd, () => {
   it("gives a phase still being planned no date", () => {
     const building = phase(0);
     expect(getPhaseEnd({ phase: building, plan: plan([building, phase(1)]) })).toBeNull();
+  });
+});
+
+describe(getChallengeDate, () => {
+  it("says a challenge under a phase whose work has no place yet comes later", () => {
+    const later = phase(1, { checkpoint: { ...CHALLENGE, date: null, later: true }, later: true });
+    const end = getChallengeDate({ phase: later, plan: plan([phase(0), later]) });
+    expect(end).toStrictEqual({ later: true });
+  });
+
+  it("dates a challenge on the last day of the phase under way by that day, as the phase", () => {
+    const current = phase(0, {
+      checkpoint: { ...CHALLENGE, date: "2027-02-27", precision: "month" },
+      endDate: "2027-02-27",
+      precision: "month",
+      state: "current",
+    });
+
+    const shaped = plan([current, phase(1)]);
+    const phaseEnd = { estimate: true, isoDate: "2027-02-27", precision: "day" };
+
+    expect(getPhaseEnd({ phase: current, plan: shaped })).toStrictEqual(phaseEnd);
+    expect(getChallengeDate({ phase: current, plan: shaped })).toStrictEqual(phaseEnd);
+  });
+
+  it("dates a challenge ahead by its month, or by its year when core dates its phase so", () => {
+    const current = phase(0, { endDate: "2026-11-20", state: "current" });
+
+    const far = phase(1, {
+      checkpoint: { ...CHALLENGE, date: "2027-04-02" },
+      endDate: "2027-04-02",
+    });
+
+    const byYear = phase(2, {
+      checkpoint: { ...CHALLENGE, date: "2031-04-02" },
+      endDate: "2031-04-02",
+      precision: "year",
+    });
+
+    const shaped = plan([current, far, byYear]);
+
+    expect(getChallengeDate({ phase: far, plan: shaped })).toStrictEqual({
+      estimate: true,
+      isoDate: "2027-04-02",
+      precision: "month",
+    });
+
+    expect(getChallengeDate({ phase: byYear, plan: shaped })).toStrictEqual({
+      estimate: true,
+      isoDate: "2031-04-02",
+      precision: "year",
+    });
+  });
+
+  it("dates a challenge on an undated plan's finish as the finish is said", () => {
+    const last = phase(1, {
+      checkpoint: { ...CHALLENGE, date: "2027-01-10" },
+      endDate: "2027-01-10",
+    });
+
+    const shaped = plan([phase(0, { state: "current" }), last], {
+      estimate: { endDate: "2027-01-10", precision: "year" },
+    });
+
+    expect(getChallengeDate({ phase: last, plan: shaped })).toStrictEqual({
+      estimate: true,
+      isoDate: "2027-01-10",
+      precision: "year",
+    });
+  });
+
+  it("gives a challenge with no day yet no date", () => {
+    const current = phase(0, { checkpoint: { ...CHALLENGE, date: null }, state: "current" });
+    expect(getChallengeDate({ phase: current, plan: plan([current]) })).toBeNull();
   });
 });
 

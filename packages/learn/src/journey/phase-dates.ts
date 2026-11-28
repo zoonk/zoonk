@@ -163,6 +163,34 @@ export function getPhaseEnd({
 }
 
 /**
+ * When a phase's challenge comes, said as the phase's end is, so a phase and its challenge on the
+ * same day read the same date: "Later" while the phase's work has no place yet.
+ */
+export function getChallengeDate({
+  phase,
+  plan,
+}: {
+  phase: DatedPhase;
+  plan: DatedPlan;
+}): PlanDate | { later: true } | null {
+  const { checkpoint } = phase;
+
+  if (checkpoint?.later) {
+    return { later: true };
+  }
+
+  if (!checkpoint?.date) {
+    return null;
+  }
+
+  return {
+    estimate: true,
+    isoDate: checkpoint.date,
+    precision: getPhaseEndPrecision({ estimate: true, lastDay: checkpoint.date, phase, plan }),
+  };
+}
+
+/**
  * When a phase starts, beside its end in a range. A phase ahead starts where the one before it
  * ends, so its start is an estimate whenever its end is, and both ends of the range say so.
  */

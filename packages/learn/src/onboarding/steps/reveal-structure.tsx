@@ -72,7 +72,7 @@ function PhaseRow({ phase }: { phase: PlanPhaseView }) {
 
       <CollapsibleContent className={ROW_FOLD_CLASS}>
         <div className="nested-rows flex flex-col pb-2" data-slot="path-nested">
-          <JourneyChapters chapters={phase.chapters} checkpoint={null} links={null} />
+          <JourneyChapters chapters={phase.chapters} links={null} phase={null} />
         </div>
       </CollapsibleContent>
     </Collapsible>
@@ -97,7 +97,7 @@ function RevealPath() {
       </PageSectionHeader>
 
       {rest.length === 0 ? (
-        <JourneyChapters chapters={only.chapters} checkpoint={null} links={null} />
+        <JourneyChapters chapters={only.chapters} links={null} phase={null} />
       ) : (
         <ol className="flex flex-col [&>li+li]:border-t" data-slot="journey-path-list">
           {plan.phases.map((phase) => (

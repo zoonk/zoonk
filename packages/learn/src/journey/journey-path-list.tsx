@@ -59,7 +59,7 @@ function OpenPhaseEvents({ links, phase }: { links: JourneyPathLinks; phase: Pla
   return (
     phase.checkpoint && (
       <div className={NESTED_CLASS} data-slot="path-nested">
-        <CheckpointRow checkpoint={phase.checkpoint} links={links} />
+        <CheckpointRow checkpoint={phase.checkpoint} links={links} phase={phase} />
       </div>
     )
   );
@@ -136,11 +136,7 @@ function ChaptersPhase({
 
         <CollapsibleContent className={ROW_FOLD_CLASS}>
           <div className={NESTED_CLASS} data-slot="path-nested">
-            <JourneyChapters
-              chapters={phase.chapters}
-              checkpoint={phase.checkpoint}
-              links={links}
-            />
+            <JourneyChapters chapters={phase.chapters} links={links} phase={phase} />
           </div>
         </CollapsibleContent>
       </Collapsible>
