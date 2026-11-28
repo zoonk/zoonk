@@ -6,6 +6,7 @@ import { buildPhaseViews } from "./plan-phase-views";
 import { type PlanReadItem } from "./plan-read-projection";
 import { type PlanSummary } from "./plan-summary";
 import { readSavedCourseForecast } from "./saved-course-forecast";
+import { type SavedItemFacts } from "./selected-item-contract";
 
 function item(kind: "lesson" | "boss", phase = 0): PlanReadItem {
   return {
@@ -87,7 +88,32 @@ describe(readSavedCourseForecast, () => {
     expect(saved.phases[1]).toMatchObject({ endDate: null, later: true, startDate: null });
   });
 
-  it("moves the finish when only an overdue challenge remains", () => {
+  it("moves the finish and phase end when only an overdue saved challenge remains", () => {
+    const facts = {
+      boss: {
+        kind: "text",
+        minutes: 15,
+        questions: 10,
+        testedKeys: ["lesson"],
+        testedSkillIds: ["skill"],
+        waiting: false,
+      },
+      minutes: 15,
+      parts: { checkpoint: 15, practice: 0, unwritten: 0, written: 0 },
+      schemaVersion: 1,
+      skillIds: ["skill"],
+    } satisfies SavedItemFacts;
+
+    const saved = forecast([
+      { ...item("lesson"), status: "done" },
+      { ...item("boss"), facts },
+    ]);
+
+    expect(saved.finish?.date).toBe("2027-01-06");
+    expect(saved.phases[0]?.endDate).toBe("2027-01-06");
+  });
+
+  it("moves the finish for an overdue legacy challenge without saved facts", () => {
     expect(forecast([item("boss")]).finish?.date).toBe("2027-01-06");
   });
 

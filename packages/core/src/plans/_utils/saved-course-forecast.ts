@@ -9,7 +9,7 @@ import { getLessonCapacity } from "../planner/schedule-units";
 import { getDatedFinish, getSavedCourseFinish } from "./course-finish";
 import { type PlanReadContext, type PlanReadItem } from "./plan-read-projection";
 import { type PlanSummary } from "./plan-summary";
-import { readSelectedItemFacts } from "./selected-item-contract";
+import { getSavedPhaseWorkMinutes, readSelectedItemFacts } from "./selected-item-contract";
 
 function getMissedMinutes({
   item,
@@ -30,7 +30,7 @@ function getMissedMinutes({
     [
       toIsoDate(item.scheduledFor),
       item.minutes ?? 0,
-      facts ? facts.parts.written + facts.parts.unwritten : (item.minutes ?? 0),
+      facts ? getSavedPhaseWorkMinutes(facts) : (item.minutes ?? 0),
     ] as const,
   ];
 

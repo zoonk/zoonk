@@ -37,6 +37,10 @@ export function readSelectedItemFacts(value: unknown): SavedItemFacts | null {
   return parsed.success ? parsed.data : null;
 }
 
+export function getSavedPhaseWorkMinutes({ parts }: SavedItemFacts): number {
+  return parts.written + parts.unwritten + parts.checkpoint;
+}
+
 export function withSelectedItemFacts({
   facts,
   items,
