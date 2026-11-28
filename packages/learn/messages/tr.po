@@ -9421,7 +9421,7 @@ msgstr "Derslerindeki örnekleri, para birimini ve ölçü birimlerini ülkene g
 #: src/onboarding/steps/country-step.tsx
 msgctxt "E7Yvro"
 msgid "Which country's exam is it?"
-msgstr ""
+msgstr "Bu hangi ülkenin sınavı?"
 
 #: src/onboarding/steps/country-step.tsx
 msgctxt "jFT6CV"
@@ -9472,12 +9472,12 @@ msgstr "{when, select, today {Hedef tarihin bugün, bu yüzden planlanacak gün 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "tFQzba"
 msgid "Not booked yet"
-msgstr ""
+msgstr "Henüz tarih almadım"
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "4-H9Zy"
 msgid "When is your exam?"
-msgstr ""
+msgstr "Sınavın ne zaman?"
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "xle5hd"

@@ -9421,7 +9421,7 @@ msgstr "レッスンで使う例や通貨、単位を国に合わせます。"
 #: src/onboarding/steps/country-step.tsx
 msgctxt "E7Yvro"
 msgid "Which country's exam is it?"
-msgstr ""
+msgstr "どの国の試験ですか？"
 
 #: src/onboarding/steps/country-step.tsx
 msgctxt "jFT6CV"
@@ -9472,12 +9472,12 @@ msgstr "{when, select, today {目標日が今日のため、計画に組み込�
 #: src/onboarding/steps/date-step.tsx
 msgctxt "tFQzba"
 msgid "Not booked yet"
-msgstr ""
+msgstr "まだ申し込んでいない"
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "4-H9Zy"
 msgid "When is your exam?"
-msgstr ""
+msgstr "試験日はいつですか？"
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "xle5hd"

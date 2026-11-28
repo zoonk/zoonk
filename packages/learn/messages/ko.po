@@ -9421,7 +9421,7 @@ msgstr "레슨에 나오는 예시, 화폐, 단위를 나라에 맞춰 정해요
 #: src/onboarding/steps/country-step.tsx
 msgctxt "E7Yvro"
 msgid "Which country's exam is it?"
-msgstr ""
+msgstr "어느 나라의 시험인가요?"
 
 #: src/onboarding/steps/country-step.tsx
 msgctxt "jFT6CV"
@@ -9472,12 +9472,12 @@ msgstr "{when, select, today {목표 날짜가 오늘이라 계획을 세울 기
 #: src/onboarding/steps/date-step.tsx
 msgctxt "tFQzba"
 msgid "Not booked yet"
-msgstr ""
+msgstr "아직 날짜 미정"
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "4-H9Zy"
 msgid "When is your exam?"
-msgstr ""
+msgstr "시험 날짜가 언제인가요?"
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "xle5hd"

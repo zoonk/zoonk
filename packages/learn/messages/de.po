@@ -9421,7 +9421,7 @@ msgstr "Wir passen Beispiele, Währung und Einheiten in deinen Lektionen an dein
 #: src/onboarding/steps/country-step.tsx
 msgctxt "E7Yvro"
 msgid "Which country's exam is it?"
-msgstr ""
+msgstr "Für welches Land ist die Prüfung?"
 
 #: src/onboarding/steps/country-step.tsx
 msgctxt "jFT6CV"
@@ -9472,12 +9472,12 @@ msgstr "{when, select, today {Dein Termin ist heute, deshalb bleiben keine Tage 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "tFQzba"
 msgid "Not booked yet"
-msgstr ""
+msgstr "Noch nicht gebucht"
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "4-H9Zy"
 msgid "When is your exam?"
-msgstr ""
+msgstr "Wann ist deine Prüfung?"
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "xle5hd"
