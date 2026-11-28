@@ -7,13 +7,14 @@ import {
   getPartPointsPerQuestion,
   getPointsPerQuestion,
 } from "../../library/exams/part-points";
+import { getQuestionGroup } from "../../library/exams/question-group";
 import { listCountedSubjects } from "../choices/choice-groups";
 import { getWrongPenalty } from "../scoring/mock-scoring";
 import { getChoiceFormatKey, getFormatSelection } from "./mock-format-mix";
 import { findAreaSubject } from "./mock-options";
 import { type MockCandidate, type MockPlan, getPlannedItemIds } from "./mock-plan";
 import { type ItemMarking, type MockMarking } from "./mock-points-contract";
-import { isWrittenSubject } from "./written-subject";
+import { isWrittenOnly, isWrittenSubject } from "./written-subject";
 
 type Subject = ExamStructure["subjects"][number];
 type Scoring = NonNullable<ExamStructure["mock"]>["scoring"];
@@ -31,31 +32,37 @@ const ROW_FORMATS: Partial<Record<ItemFormat, MarkingRow["format"]>> = {
   typed: "shortAnswer",
 };
 
-function rankPart({ row, subject }: { row: MarkingRow; subject: Subject | undefined }) {
+type AskedSubject = { questionGroup: string | null; subject: Subject };
+
+function toAsked({ structure, subject }: { structure: ExamStructure; subject: Subject }) {
+  return { questionGroup: getQuestionGroup({ structure, subject }), subject };
+}
+
+function rankPart({ asked, row }: { asked: AskedSubject | undefined; row: MarkingRow }) {
   if (row.part === null) {
     return 0;
   }
 
-  if (row.part === subject?.name) {
+  if (row.part === asked?.subject.name) {
     return 2;
   }
 
-  return row.part === subject?.group ? 1 : null;
+  return row.part === asked?.questionGroup ? 1 : null;
 }
 
 /** The most specific row wins: the subject's own name, then its group, then the whole exam. */
 function rankRow({
+  asked,
   format,
   selection,
   row,
-  subject,
 }: {
+  asked: AskedSubject | undefined;
   format: MarkingRow["format"];
   selection: string;
   row: MarkingRow;
-  subject: Subject | undefined;
 }): number | null {
-  const partRank = rankPart({ row, subject });
+  const partRank = rankPart({ asked, row });
 
   if (partRank === null || (row.format !== null && row.format !== format)) {
     return null;
@@ -76,18 +83,18 @@ function rankRow({
 }
 
 function findRows({
+  asked,
   format,
   selection,
   rows,
-  subject,
 }: {
+  asked: AskedSubject | undefined;
   format: MarkingRow["format"];
   selection: string;
   rows: readonly MarkingRow[];
-  subject: Subject | undefined;
 }): MarkingRow[] {
   const ranked = rows.flatMap((row) => {
-    const rank = rankRow({ format, row, selection, subject });
+    const rank = rankRow({ asked, format, row, selection });
     return rank === null ? [] : [{ rank, row }];
   });
 
@@ -115,13 +122,13 @@ function fillRows<T>({ items, rows }: { items: readonly T[]; rows: readonly Mark
   }));
 }
 
-function findPart({ parts, subject }: { parts: MarkedParts; subject: Subject | undefined }) {
-  if (!subject) {
+function findPart({ asked, parts }: { asked: AskedSubject | undefined; parts: MarkedParts }) {
+  if (!asked) {
     return null;
   }
 
   const names = new Set(parts.map((part) => part.name));
-  const keys = [subject.group, subject.name].filter((key) => typeof key === "string");
+  const keys = [asked.questionGroup, asked.subject.name].filter((key) => typeof key === "string");
 
   return keys.find((key) => names.has(key)) ?? keys[0] ?? null;
 }
@@ -138,19 +145,25 @@ function markItems({
   const rows = structure.mock?.scoring.marking ?? [];
   const wrongPenalty = getWrongPenalty(structure);
   const areas = [...new Set(items.flatMap((item) => item.area ?? []))];
-  const subjects = new Map(areas.map((area) => [area, findAreaSubject({ area, structure })]));
+
+  const subjects = new Map(
+    areas.flatMap((area) => {
+      const subject = findAreaSubject({ area, structure });
+      return subject ? [[area, toAsked({ structure, subject })]] : [];
+    }),
+  );
 
   const matched = items.map((item) => {
-    const subject = item.area ? subjects.get(item.area) : undefined;
+    const asked = item.area ? subjects.get(item.area) : undefined;
 
     const found = findRows({
+      asked,
       format: ROW_FORMATS[item.itemFormat] ?? null,
       rows,
       selection: getFormatSelection(item.format ?? null),
-      subject,
     });
 
-    return { found, item, part: findPart({ parts, subject }) };
+    return { found, item, part: findPart({ asked, parts }) };
   });
 
   const groups = Map.groupBy(matched, (entry) =>
@@ -265,11 +278,11 @@ function toMockMarking({
     parts.length > 0
       ? structure.subjects
           .flatMap((subject) => {
-            const name = findPart({ parts, subject });
+            const name = findPart({ asked: toAsked({ structure, subject }), parts });
 
             if (
               !name ||
-              isWrittenSubject({ structure, subject }) ||
+              isWrittenOnly({ structure, subject }) ||
               parts.some((part) => part.name === name)
             ) {
               return [];
@@ -277,8 +290,8 @@ function toMockMarking({
 
             const subjects = structure.subjects.filter(
               (item) =>
-                findPart({ parts, subject: item }) === name &&
-                !isWrittenSubject({ structure, subject: item }),
+                findPart({ asked: toAsked({ structure, subject: item }), parts }) === name &&
+                !isWrittenOnly({ structure, subject: item }),
             );
 
             const places = listCountedSubjects({ choiceGroups: structure.choiceGroups, subjects });

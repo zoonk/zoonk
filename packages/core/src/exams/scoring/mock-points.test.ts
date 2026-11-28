@@ -1,5 +1,6 @@
 import { type ItemFormat } from "@zoonk/db";
 import { describe, expect, it } from "vitest";
+import { CACD_SHARED, cacdStructure } from "../../library/exams/_test-utils/cacd-structure";
 import { type ExamStructure, type MarkingRow } from "../../library/exams/blueprint-contract";
 import { markPlannedItems } from "../mocks/mock-marking";
 import { type MockMarking } from "../mocks/mock-points-contract";
@@ -420,6 +421,59 @@ describe("an exam with a qualifying paper", () => {
     const below = score({ right: 25, wrong: 3 }).parts[1];
 
     expect(below).toMatchObject({ earned: 60, met: false, short: 3 });
+  });
+});
+
+describe("a qualifying first phase that retests the written phase's subjects", () => {
+  const areas = [...CACD_SHARED, "História Mundial"];
+
+  function scoreFirstPhase({ reversed, wrongs }: { reversed: boolean; wrongs: number }) {
+    const cacd = cacdStructure();
+    const scoring = cacd.mock?.scoring;
+
+    const structure =
+      reversed && cacd.mock && scoring
+        ? {
+            ...cacd,
+            mock: { ...cacd.mock, scoring: { ...scoring, parts: scoring.parts?.toReversed() } },
+          }
+        : cacd;
+
+    const marking = mark({ planned: areas.map((area) => ({ area, count: 30 })), structure });
+
+    const answers = areas.flatMap((area, index) =>
+      answer({
+        area,
+        marking,
+        outcomes: index === 0 ? { right: 30 - wrongs, wrong: wrongs } : { right: 18, wrong: 12 },
+      }),
+    );
+
+    return { marking, points: scoreMockPoints({ answers, marking, scope: "full" }) };
+  }
+
+  it.each([false, true])(
+    "scores every area's items in the first phase, whatever order its parts are in (reversed: %s)",
+    (reversed) => {
+      const { marking, points } = scoreFirstPhase({ reversed, wrongs: 12 });
+
+      expect(Object.values(marking.items)).toStrictEqual(
+        Array.from({ length: 240 }, () => ({
+          part: "Primeira Fase",
+          points: 1,
+          wrongPenalty: 0.25,
+        })),
+      );
+
+      expect(points.parts).toMatchObject([
+        { asked: 240, earned: 120, met: true, name: "Primeira Fase", qualifying: true },
+      ]);
+    },
+  );
+
+  it("misses the first phase's minimum a wrong answer short of it", () => {
+    const { points } = scoreFirstPhase({ reversed: false, wrongs: 13 });
+    expect(points.parts).toMatchObject([{ earned: 118.75, met: false, name: "Primeira Fase" }]);
   });
 });
 

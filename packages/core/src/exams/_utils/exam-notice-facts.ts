@@ -4,6 +4,7 @@ import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { type BlueprintContent } from "../../library/exams/blueprint-contract";
+import { getGroupLabel } from "../../library/exams/group-label";
 import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
 import { getPastQuestionsSource, getSubjectQuestions } from "../../library/exams/subject-questions";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
@@ -45,7 +46,7 @@ function toSubject({
   const fromLatestEdition = subject.questions === null && questions !== null;
 
   return {
-    group: subject.group ?? null,
+    group: getGroupLabel({ structure, subject }),
     name: subject.name,
     questions,
     ...(fromLatestEdition ? { fromLatestEdition } : {}),

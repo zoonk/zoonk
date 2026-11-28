@@ -1,3 +1,4 @@
+import { listSubjectGroups } from "@zoonk/utils/exam-groups";
 import { isSameNameWord, toNameWords } from "@zoonk/utils/name-words";
 import { normalizeString } from "@zoonk/utils/string";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
@@ -65,7 +66,7 @@ function namesPartly({ said, subject }: { said: string; subject: Subject }): boo
 }
 
 function namesExactly({ said, subject }: { said: string; subject: Subject }): boolean {
-  const groups = [subject.group, subject.choiceGroup].flatMap((name) =>
+  const groups = [...listSubjectGroups(subject), subject.choiceGroup].flatMap((name) =>
     name ? [toKey(name)] : [],
   );
 

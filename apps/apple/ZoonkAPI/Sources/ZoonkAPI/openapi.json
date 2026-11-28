@@ -105126,7 +105126,7 @@
                           "items": {
                             "type": "string"
                           },
-                          "description": "The tests or blocks it adds, as a subject's `group` or `name` writes them"
+                          "description": "The tests or blocks it adds, as a subject's `group`, `otherGroups` or `name` writes them"
                         },
                         "share": {
                           "type": "number",
@@ -105184,7 +105184,7 @@
                         },
                         "part": {
                           "nullable": true,
-                          "description": "The test or block it scores, as a subject's `group` or `name` writes it; null for the whole exam",
+                          "description": "The test or block it scores, as a subject's `group`, `otherGroups` or `name` writes it; null for the whole exam",
                           "type": "string"
                         },
                         "points": {
@@ -105303,7 +105303,7 @@
                         },
                         "name": {
                           "type": "string",
-                          "description": "The test or block, as a subject's `group` or `name` writes it"
+                          "description": "The test or block, as a subject's `group`, `otherGroups` or `name` writes it"
                         },
                         "qualifying": {
                           "type": "boolean",
@@ -106106,6 +106106,14 @@
                 },
                 "name": {
                   "type": "string"
+                },
+                "otherGroups": {
+                  "minItems": 1,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
                 },
                 "partOf": {
                   "nullable": true,

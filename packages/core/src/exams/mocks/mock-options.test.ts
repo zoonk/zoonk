@@ -1,8 +1,9 @@
 import { describe, expect, it } from "vitest";
+import { CACD_SHARED, cacdStructure } from "../../library/exams/_test-utils/cacd-structure";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { getMockFormatMix } from "./mock-format-mix";
 import { planOptionMock } from "./mock-option-plan";
-import { listMockOptions } from "./mock-options";
+import { getSubjectShares, listMockOptions } from "./mock-options";
 import { type MockCandidate, countPlannedQuestions } from "./mock-plan";
 import { getMockQuestionsShortfall } from "./mock-shortfall";
 
@@ -653,5 +654,15 @@ describe(getMockQuestionsShortfall, () => {
     expect(
       shortfall([...candidates("Matemática", 45), ...candidates("Ciências da Natureza", 45)]),
     ).toStrictEqual([]);
+  });
+});
+
+describe("a qualifying first phase that retests the written phase's subjects", () => {
+  it("splits the first phase's items among every area it asks, the written phase's included", () => {
+    const shares = getSubjectShares(cacdStructure());
+
+    expect(shares.map((share) => [share.name, share.group, share.questions])).toStrictEqual(
+      [...CACD_SHARED, "História Mundial"].map((name) => [name, "Primeira Fase", 30]),
+    );
   });
 });

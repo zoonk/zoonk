@@ -669,6 +669,38 @@ describe(toBlueprintContent, () => {
     ]);
   });
 
+  it("keeps a subject's other part only when the check confirmed it for that subject", () => {
+    const [languages, math] = blueprintExtraction().subjects;
+
+    const extraction = blueprintExtraction({
+      subjects: [
+        { ...languages!, group: "Segunda Fase", otherGroups: ["Primeira Fase"] },
+        {
+          ...math!,
+          group: "Segunda Fase",
+          otherGroups: ["Primeira Fase", "Segunda Fase"],
+          passages: languages!.passages,
+        },
+      ],
+    });
+
+    const content = readWith({ extraction, keep: (id) => id !== "subjects.1.otherGroups.0" });
+
+    expect(
+      content.structure.subjects.map(({ group, otherGroups }) => ({ group, otherGroups })),
+    ).toStrictEqual([
+      { group: "Segunda Fase", otherGroups: ["Primeira Fase"] },
+      { group: "Segunda Fase", otherGroups: undefined },
+    ]);
+
+    const ungrouped = readWith({ extraction, keep: (id) => !id.endsWith(".group") });
+
+    expect(ungrouped.structure.subjects.map((subject) => subject.otherGroups)).toStrictEqual([
+      undefined,
+      undefined,
+    ]);
+  });
+
   it("keeps a choice the check confirmed for two options or more, and only a part of a kept subject", () => {
     const base = blueprintExtraction();
     const [languages, math] = base.subjects;

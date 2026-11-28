@@ -1,5 +1,6 @@
 import { normalizeString } from "@zoonk/utils/string";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
+import { isAlsoAskedAsQuestions } from "../../library/exams/question-group";
 
 type StructureSection = NonNullable<ExamStructure["mock"]>["sections"][number];
 
@@ -16,9 +17,13 @@ export function isWrittenSubject({
   subject,
 }: {
   structure: ExamStructure;
-  subject: Pick<ExamStructure["subjects"][number], "group" | "name" | "questions">;
+  subject: Pick<ExamStructure["subjects"][number], "choiceGroup" | "group" | "name" | "questions">;
 }): boolean {
-  const names = new Set([subject.name, subject.group ?? ""].map((name) => normalizeString(name)));
+  const names = new Set(
+    [subject.name, subject.group ?? "", subject.choiceGroup ?? ""].map((name) =>
+      normalizeString(name),
+    ),
+  );
 
   const isWrittenSectionName = (structure.mock?.sections ?? []).some(
     (section) => section.kind === "written" && names.has(normalizeString(section.name)),
@@ -34,7 +39,10 @@ const PAPER_KINDS = ["listening", "practical", "speaking"] as const;
 
 type PaperKind = (typeof PAPER_KINDS)[number];
 
-type NamedSubject = Pick<ExamStructure["subjects"][number], "group" | "name" | "questions">;
+type NamedSubject = Pick<
+  ExamStructure["subjects"][number],
+  "choiceGroup" | "group" | "name" | "otherGroups" | "questions"
+>;
 
 /** The kind of paper a subject is sat as when it isn't questions on a page; null for those. */
 export function getPaperKind({
@@ -61,5 +69,17 @@ export function isQuestionSubject({
   structure: ExamStructure;
   subject: NamedSubject;
 }): boolean {
-  return getPaperKind({ structure, subject }) === null && !isWrittenSubject({ structure, subject });
+  return getPaperKind({ structure, subject }) === null && !isWrittenOnly({ structure, subject });
+}
+
+export function isWrittenOnly({
+  structure,
+  subject,
+}: {
+  structure: ExamStructure;
+  subject: NamedSubject;
+}): boolean {
+  return (
+    isWrittenSubject({ structure, subject }) && !isAlsoAskedAsQuestions({ structure, subject })
+  );
 }

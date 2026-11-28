@@ -1,9 +1,7 @@
 import { matchAreasToSubjects } from "../../exams/_utils/match-areas";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
-import {
-  getPartQuestions,
-  getPlannedSubjectQuestions,
-} from "../../library/exams/subject-questions";
+import { getPartQuestions, getQuestionGroup } from "../../library/exams/question-group";
+import { getPlannedSubjectQuestions } from "../../library/exams/subject-questions";
 import { namesMatch } from "../_utils/name-match";
 import { type MockOptionView, type MockShape } from "./mock-contract";
 import { listDayOptions } from "./mock-day-options";
@@ -58,12 +56,11 @@ export function getSubjectShares(structure: ExamStructure | null): SubjectShare[
 
   const shares = objective.map((subject) => {
     const whole = objective.find((other) => other.name === subject.partOf);
+    const group = structure ? getQuestionGroup({ structure, subject }) : null;
 
     return {
       group:
-        subject.group && structure && getPartQuestions({ name: subject.group, structure }) !== null
-          ? subject.group
-          : null,
+        group && structure && getPartQuestions({ name: group, structure }) !== null ? group : null,
       name: subject.name,
       partOf: whole ? whole.name : null,
       questions: structure ? getPlannedSubjectQuestions({ structure, subject }) || null : null,
