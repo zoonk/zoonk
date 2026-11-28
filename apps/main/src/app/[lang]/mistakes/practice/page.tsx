@@ -9,6 +9,7 @@ import { mistakePracticeInputSchema } from "@zoonk/core/mistakes/contract";
 import { getMistakePractice } from "@zoonk/core/mistakes/practice";
 import { getSession } from "@zoonk/core/users/session";
 import { DrawnMath } from "@zoonk/learn/rich-text/drawn-math";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { lang } from "next/root-params";
@@ -27,10 +28,52 @@ function PracticeMain({ children }: { children: React.ReactNode }) {
   return <main className="bg-background flex min-h-dvh flex-col">{children}</main>;
 }
 
-function readSkillId(query: Awaited<Props["searchParams"]>): string | undefined {
-  const skill = Array.isArray(query.skill) ? query.skill[0] : query.skill;
-  const parsed = mistakePracticeInputSchema.shape.skillId.safeParse(skill);
-  return parsed.success ? parsed.data : undefined;
+function readParam(query: Awaited<Props["searchParams"]>, name: string): string | undefined {
+  const value = query[name];
+  return Array.isArray(value) ? value[0] : value;
+}
+
+/** One scope at a time: a day's block, a finished mock, a skill, or the whole notebook. */
+function readScope(query: Awaited<Props["searchParams"]>) {
+  const parsed = mistakePracticeInputSchema.safeParse({
+    blockId: readParam(query, "blockId"),
+    mockId: readParam(query, "mockId"),
+    skillId: readParam(query, "skill"),
+  });
+
+  // A mock's result page names itself (`mockPage`), since a scheduled mock's address isn't its id.
+  const mockPage = uuidSchema().safeParse(readParam(query, "mockPage")).data;
+
+  return parsed.success
+    ? {
+        blockId: parsed.data.blockId,
+        mockId: parsed.data.mockId,
+        mockPage: parsed.data.mockId && mockPage,
+        skillId: parsed.data.skillId,
+      }
+    : {};
+}
+
+type PracticeScope = ReturnType<typeof readScope>;
+
+function getPracticeHref({ blockId, mockId, mockPage, skillId }: PracticeScope): string {
+  const params = new URLSearchParams({
+    ...(blockId && { blockId }),
+    ...(mockId && { mockId }),
+    ...(mockPage && { mockPage }),
+    ...(skillId && { skill: skillId }),
+  });
+
+  return params.size > 0 ? `/mistakes/practice?${params}` : "/mistakes/practice";
+}
+
+/** A run ends where it was opened from: Today for a day's block, a mock's result, or the notebook. */
+function getBackHref({ blockId, mockPage }: PracticeScope): string {
+  if (blockId) {
+    return "/today";
+  }
+
+  return mockPage ? `/mock/${mockPage}` : "/mistakes";
 }
 
 async function PracticeBody({ searchParams }: Pick<Props, "searchParams">) {
@@ -42,14 +85,10 @@ async function PracticeBody({ searchParams }: Pick<Props, "searchParams">) {
     getTutorViewer(),
   ]);
 
-  const skillId = readSkillId(query);
+  const scope = readScope(query);
 
   if (!session) {
-    return (
-      <AuthGateScreen
-        next={skillId ? `/mistakes/practice?skill=${skillId}` : "/mistakes/practice"}
-      />
-    );
+    return <AuthGateScreen next={getPracticeHref(scope)} />;
   }
 
   if (!goal) {
@@ -57,7 +96,14 @@ async function PracticeBody({ searchParams }: Pick<Props, "searchParams">) {
     return null;
   }
 
-  const result = await getMistakePractice({ goalId: goal.id, includeAllFormats: true, skillId });
+  const result = await getMistakePractice({
+    blockId: scope.blockId,
+    // A mock's run follows the sitting's goal, which may not be the current one.
+    goalId: scope.mockId ? undefined : goal.id,
+    includeAllFormats: true,
+    mockId: scope.mockId,
+    skillId: scope.skillId,
+  });
 
   if (result.status !== "ready") {
     return (
@@ -71,8 +117,11 @@ async function PracticeBody({ searchParams }: Pick<Props, "searchParams">) {
     <PracticeMain>
       <DrawnMath content={result.practice}>
         <MistakePracticeClient
+          backHref={getBackHref(scope)}
+          doneHref={scope.blockId ? "/session" : undefined}
           goalId={goal.id}
           practice={result.practice}
+          scope={{ blockId: scope.blockId, mockId: scope.mockId, skillId: scope.skillId }}
           trueFalseLabels={result.trueFalseLabels}
           tutor={tutor}
         />

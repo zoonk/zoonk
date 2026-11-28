@@ -83,6 +83,7 @@ msgstr "Pulado"
 #: src/language/level-test/level-test-results.tsx
 #: src/language/pattern/language-pattern-screen.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
+#: src/mistakes/practice-done.tsx
 #: src/mock/mock-speaking.tsx
 #: src/placement-test/placement-test-screens.tsx
 #: src/plan/plan-change-applied.tsx
@@ -267,8 +268,10 @@ msgstr "{days, plural, one {Falta cerca de # dia} other {Faltam cerca de # dias}
 #: src/language/conversation/speaking-mock-result.tsx
 #: src/language/exam-speaking/exam-speaking-result.tsx
 #: src/language/level-test/level-test-results.tsx
+#: src/language/pattern/language-pattern-screen.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/language/unit/practice-conversation.tsx
+#: src/mistakes/practice-done.tsx
 #: src/mock/mock-entry.tsx
 #: src/mock/mock-result-actions.tsx
 #: src/mock/mock-screen.tsx
@@ -1237,6 +1240,12 @@ msgctxt "vj_mVz"
 msgid "{belt}, level {level}"
 msgstr "{belt}, nível {level}"
 
+#. Under a question asking which options of an exam the learner will take, such as two of its subject modules. Until they pick, their plan has none of the options. {take} is how many they can pick, always 2 or more.
+#: src/_utils/use-choice-left-out.ts
+msgctxt "Wu7pJv"
+msgid "Pick up to {take, number} so your plan includes them."
+msgstr "Escolha até {take, number} para incluir essas opções no seu plano."
+
 #. Under a question asking which option of an exam the learner will take, such as its foreign language. Until they pick, their plan has none of the options.
 #: src/_utils/use-choice-left-out.ts
 msgctxt "vYD7Jb"
@@ -1625,7 +1634,6 @@ msgstr "Zu"
 #: src/focus-test/focus-test-screens.tsx
 #: src/language/level-test/level-test-flow.tsx
 #: src/language/level-test/level-test-preparing.tsx
-#: src/mock/mock-result-plan.tsx
 #: src/placement-test/placement-test-flow.tsx
 #: src/plan/plan-fit-suggestion.tsx
 #: src/plan/plan-offer-preview.tsx
@@ -3079,7 +3087,6 @@ msgstr "Usar minha data"
 
 #: src/conversation/tutor-plan-change.tsx
 #: src/focus-test/focus-test-proposal.tsx
-#: src/mock/mock-result-plan.tsx
 #: src/plan/plan-offer-preview.tsx
 #: src/today/today-plan-change.tsx
 msgctxt "ZPLfTK"
@@ -6695,16 +6702,6 @@ msgctxt "mEBzEG"
 msgid "Say them"
 msgstr "Repetir palavras"
 
-#: src/language/today/language-today-section.tsx
-msgctxt "vM7I9_"
-msgid "Practice it"
-msgstr "Praticar"
-
-#: src/language/today/language-today-section.tsx
-msgctxt "7kZ0WC"
-msgid "We noticed a pattern: {pattern}"
-msgstr "A gente percebeu um padrão: {pattern}"
-
 #: src/language/unit/language-unit-screen.tsx
 msgctxt "gHReMQ"
 msgid "Grammar tips"
@@ -7341,17 +7338,6 @@ msgid "Do your first review"
 msgstr "Fazer sua primeira revisão"
 
 #: src/missions/first-step-copy.tsx
-msgctxt "missions.ttVg8D"
-msgid "Fix your first mistake"
-msgstr "Corrigir seu primeiro erro"
-
-#: src/missions/first-step-copy.tsx
-#: src/missions/mission-copy.tsx
-msgctxt "missions.kiRlIl"
-msgid "Practice a pattern"
-msgstr "Praticar um padrão"
-
-#: src/missions/first-step-copy.tsx
 #: src/missions/mission-copy.tsx
 msgctxt "missions.3x5cH9"
 msgid "Ask {buddy} something"
@@ -7445,11 +7431,6 @@ msgid "Practice writing"
 msgstr "Praticar redação"
 
 #: src/missions/mission-copy.tsx
-msgctxt "missions.wCMhp6"
-msgid "{count, plural, one {Fix a mistake} other {Fix # mistakes}}"
-msgstr "{count, plural, =1 {Corrigir um erro} other {Corrigir # erros}}"
-
-#: src/missions/mission-copy.tsx
 msgctxt "missions.YahrnI"
 msgid "Practice pronunciation"
 msgstr "Praticar a pronúncia"
@@ -7508,16 +7489,6 @@ msgstr ", vá para a redação de hoje"
 msgctxt "GKiQ-V"
 msgid ", go to today's practice"
 msgstr ", vá para a prática de hoje"
-
-#: src/missions/mission-copy.tsx
-msgctxt "0DwB4q"
-msgid ", practice your mistakes"
-msgstr ", pratique o que você errou"
-
-#: src/missions/mission-copy.tsx
-msgctxt "7Qfw5L"
-msgid ", go to the pattern"
-msgstr ", vá para o padrão"
 
 #: src/missions/mission-copy.tsx
 msgctxt "MuPgWl"
@@ -7639,11 +7610,6 @@ msgid "Open the lesson"
 msgstr "Abrir a aula"
 
 #: src/mistakes/mistake-entry.tsx
-msgctxt "BICox_"
-msgid "Practice tomorrow"
-msgstr "Pratique amanhã"
-
-#: src/mistakes/mistake-entry.tsx
 msgctxt "E7KLhm"
 msgid "Practice this topic"
 msgstr "Praticar este tópico"
@@ -7652,6 +7618,26 @@ msgstr "Praticar este tópico"
 msgctxt "z2HeMD"
 msgid "Leave. What you answered counts."
 msgstr "Sair. Suas respostas continuam valendo."
+
+#. Under "Already fixed" when marking the day's practice done didn't reach the server.
+#: src/mistakes/mistake-practice-run.tsx
+msgctxt "tV3pjd"
+msgid "We couldn't mark it done. Check your connection."
+msgstr "Não foi possível marcar como concluído. Confira sua conexão."
+
+#. Title of a practice of mistakes whose end didn't reach the server, so it doesn't count yet.
+#: src/mistakes/mistake-practice-run.tsx
+msgctxt "dHwNew"
+msgid "Your practice isn't saved yet"
+msgstr "Sua prática ainda não foi salva"
+
+#. Title when a day's practice of mistakes opens and every one of its mistakes was already fixed elsewhere.
+#: src/mistakes/mistake-practice-run.tsx
+#: src/mistakes/practice-done.tsx
+#: src/session/use-block-copy.ts
+msgctxt "Q3nyx6"
+msgid "Already fixed"
+msgstr "Já corrigidos"
 
 #: src/mistakes/mistake-practice-run.tsx
 #: src/session/use-block-copy.ts
@@ -7713,34 +7699,14 @@ msgid "What you got wrong"
 msgstr "O que você errou"
 
 #: src/mistakes/mistakes-row.tsx
-msgctxt "lLGcbO"
-msgid "{ready, plural, =0 {# ready to practice} one {# ready to practice} other {# ready to practice}} · {tomorrow, plural, =0 {# available tomorrow} one {# available tomorrow} other {# available tomorrow}}"
-msgstr "{ready, plural, =0 {# prontos para praticar} one {# pronto para praticar} other {# prontos para praticar}} · {tomorrow, plural, =0 {# disponíveis amanhã} one {# disponível amanhã} other {# disponíveis amanhã}}"
-
-#: src/mistakes/mistakes-row.tsx
 msgctxt "AMKpbi"
 msgid "Redo what you got wrong"
 msgstr "Refaça o que você errou"
 
 #: src/mistakes/mistakes-row.tsx
-msgctxt "DZU4se"
-msgid "Today's mistakes return tomorrow"
-msgstr "Os erros de hoje voltam amanhã"
-
-#: src/mistakes/mistakes-row.tsx
 msgctxt "DWCSOn"
 msgid "{count, plural, =0 {# ready to practice} one {# ready to practice} other {# ready to practice}}"
 msgstr "{count, plural, =0 {# prontos para praticar} one {# pronto para praticar} other {# prontos para praticar}}"
-
-#: src/mistakes/mistakes-row.tsx
-msgctxt "XiaKfK"
-msgid "{count, plural, =0 {# available tomorrow} one {# available tomorrow} other {# available tomorrow}}"
-msgstr "{count, plural, =0 {# disponíveis amanhã} one {# disponível amanhã} other {# disponíveis amanhã}}"
-
-#: src/mistakes/notebook-availability-text.tsx
-msgctxt "LoO9E7"
-msgid "Practice opens tomorrow"
-msgstr "A prática fica disponível amanhã"
 
 #: src/mistakes/practice-done.tsx
 msgctxt "_GkpAM"
@@ -7748,29 +7714,15 @@ msgid "{count, plural, one {# mistake fixed} other {# mistakes fixed}}"
 msgstr "{count, plural, one {# erro corrigido} other {# erros corrigidos}}"
 
 #: src/mistakes/practice-done.tsx
-msgctxt "ith1Nx"
-msgid "Nothing to practice yet"
-msgstr "Ainda não há nada para praticar"
+msgctxt "qSu8Tu"
+msgid "Nothing to practice"
+msgstr "Nada para praticar"
 
+#. Beside Done at the end of a practice of mistakes: starts another round right away.
 #: src/mistakes/practice-done.tsx
-msgctxt "IBOhsd"
-msgid "Mistakes come back for practice from the day after you make them."
-msgstr "Os erros ficam disponíveis para praticar a partir do dia seguinte."
-
-#: src/mistakes/practice-done.tsx
-msgctxt "zaS-g7"
-msgid "The ones you missed come back another day, when they stick better."
-msgstr "O que você errou volta outro dia, quando fica mais fácil fixar."
-
-#: src/mistakes/practice-done.tsx
-msgctxt "gMgMMy"
-msgid "The ones you missed come back another day. The rest are still ready to practice."
-msgstr "O que você errou volta outro dia. O restante continua disponível para praticar."
-
-#: src/mistakes/practice-done.tsx
-msgctxt "4bskgW"
-msgid "The rest are still ready to practice."
-msgstr "O restante continua disponível para praticar."
+msgctxt "UCNJdd"
+msgid "Practice again"
+msgstr "Praticar de novo"
 
 #: src/mistakes/practice-step.tsx
 #: src/session/question-block/block-question.tsx
@@ -7783,6 +7735,12 @@ msgstr "Não tenho certeza"
 msgctxt "HJwk2o"
 msgid "{count, plural, =0 {No mistakes fixed} one {Mistake fixed. It leaves your notebook.} other {# mistakes fixed. They leave your notebook.}}"
 msgstr "{count, plural, =0 {# erros corrigidos} one {# erro corrigido. Ele sai do seu caderno.} other {# erros corrigidos. Eles saem do seu caderno.}}"
+
+#. After a right answer to a question the learner missed earlier the same day. A mistake is fixed only by a right answer on a later day.
+#: src/mistakes/practice-step.tsx
+msgctxt "rOJjcd"
+msgid "This question comes back another day to make sure."
+msgstr "Essa pergunta vai voltar outro dia para garantir que você aprendeu."
 
 #: src/mistakes/practice-step.tsx
 #: src/session/question-block/question-feedback.tsx
@@ -8411,11 +8369,6 @@ msgid "{count, plural, one {# lesson} other {# lessons}} skipped."
 msgstr "{count, plural, one {# aula pulada} other {# aulas puladas}}."
 
 #: src/mock/mock-result-plan.tsx
-msgctxt "DRJEUg"
-msgid "Your plan gives {area} more time."
-msgstr "Seu plano reserva mais tempo para {area}."
-
-#: src/mock/mock-result-plan.tsx
 #: src/plan-diff/change-names.ts
 #: src/plan/use-short-list.ts
 msgctxt "v5V1P2"
@@ -8443,16 +8396,6 @@ msgid "Skip {count, plural, one {# lesson} other {# lessons}} you already know?"
 msgstr "Pular {count, plural, one {# aula} other {# aulas}} sobre o que você já sabe?"
 
 #: src/mock/mock-result-plan.tsx
-msgctxt "b4G-y7"
-msgid "You got {correct, plural, =0 {# of {total} right} one {# of {total} right} other {# of {total} right}} there."
-msgstr "Você acertou {correct, plural, =0 {# de {total}} other {# de {total}}} nessa área."
-
-#: src/mock/mock-result-plan.tsx
-msgctxt "1-4FCE"
-msgid "Focus more on {area}?"
-msgstr "Dar mais atenção a {area}?"
-
-#: src/mock/mock-result-plan.tsx
 msgctxt "iaHiP_"
 msgid "Down from {before}"
 msgstr "Caiu de {before}"
@@ -8461,6 +8404,12 @@ msgstr "Caiu de {before}"
 msgctxt "U5RRFl"
 msgid "Up from {before}"
 msgstr "Subiu de {before}"
+
+#. On a mock exam's result: the plan moved the topics the learner missed earlier. The topics follow, one per line.
+#: src/mock/mock-result-plan.tsx
+msgctxt "5PMRDS"
+msgid "What you missed now comes sooner"
+msgstr "O que você errou agora aparece antes"
 
 #: src/mock/mock-result-plan.tsx
 #: src/mock/mock-result-view.tsx
@@ -9546,12 +9495,6 @@ msgctxt "y_efbE"
 msgid "{count, plural, one {Which one will you take?} other {Which ones will you take?}}"
 msgstr "{count, plural, one {Qual prova você vai fazer?} other {Quais provas você vai fazer?}}"
 
-#: src/onboarding/steps/exam-choice-step.tsx
-#: src/plan/exam-choice-picks.tsx
-msgctxt "cIh6nO"
-msgid "Pick up to {take, number}."
-msgstr "Escolha até {take, number}."
-
 #: src/onboarding/steps/level-choices.tsx
 msgctxt "BY-vT3"
 msgid "I know it well"
@@ -10445,6 +10388,11 @@ msgstr "Revisão em {date}"
 msgctxt "LcFFqV"
 msgid "New lessons start"
 msgstr "Novas aulas começam"
+
+#: src/plan/exam-choice-picks.tsx
+msgctxt "cIh6nO"
+msgid "Pick up to {take, number}."
+msgstr "Escolha até {take, number}."
 
 #: src/plan/exam-choice-question.tsx
 msgctxt "FXC8l3"
@@ -12854,6 +12802,35 @@ msgctxt "vrNWq4"
 msgid "Earned today"
 msgstr "Conquistado hoje"
 
+#. Under "Fix 3 mistakes", a step of the day that practices questions the learner got wrong.
+#: src/session/use-block-copy.ts
+msgctxt "s1C8zD"
+msgid "Questions you missed before"
+msgstr "Perguntas que você errou antes"
+
+#: src/session/use-block-copy.ts
+msgctxt "hHRG9b"
+msgid "A pattern in your mistakes"
+msgstr "Um padrão nos seus erros"
+
+#. Under a lesson the learner takes again because its idea has been hard for them.
+#: src/session/use-block-copy.ts
+msgctxt "AYWLbe"
+msgid "Once more: this one's been tricky"
+msgstr "De novo: esse tópico tem sido difícil"
+
+#. Under a short lesson that explains, in a new way, an idea the learner keeps missing.
+#: src/session/use-block-copy.ts
+msgctxt "yeSnsN"
+msgid "Another way to see it"
+msgstr "Outra forma de entender"
+
+#. Under a short lesson written for an idea that has been hard for the learner.
+#: src/session/use-block-copy.ts
+msgctxt "eqv6T0"
+msgid "This one's been tricky"
+msgstr "Esse tópico tem sido difícil"
+
 #: src/session/use-block-copy.ts
 msgctxt "z0XIiH"
 msgid "What you already know"
@@ -12863,6 +12840,17 @@ msgstr "O que você já sabe"
 msgctxt "n1W87b"
 msgid "New lesson"
 msgstr "Nova aula"
+
+#: src/session/use-block-copy.ts
+msgctxt "GYx283"
+msgid "{count, plural, one {Fix # mistake} other {Fix # mistakes}}"
+msgstr "{count, plural, =0 {Corrigir # erros} one {Corrigir # erro} other {Corrigir # erros}}"
+
+#. A study step that drills one rule the learner keeps getting wrong, titled like the day's other practice steps ("Practice: Fractions"). {pattern} names the rule, like "Adjective endings after der".
+#: src/session/use-block-copy.ts
+msgctxt "HECBTo"
+msgid "Practice: {pattern}"
+msgstr "Prática: {pattern}"
 
 #. A block practising one subject the learner chose. {subject} names it, like "Percentages".
 #: src/session/use-block-copy.ts

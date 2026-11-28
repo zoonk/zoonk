@@ -48,6 +48,7 @@ export const spokenAnswerFieldsSchema = z
         description:
           "ID for this recording. A retry after grading returns the saved result without using more help. While grading is in progress, a retry can return 429. Required for notebook practice.",
       }),
+    blockId: uuidSchema().optional().meta({ description: "The day block for notebook practice" }),
     durationMs: z.coerce
       .number()
       .int()
@@ -66,6 +67,7 @@ export const spokenAnswerFieldsSchema = z
           "Milliseconds between pressing Record and the recorder starting, measured on a monotonic clock. On iOS and Android, any time awaiting microphone permission is excluded.",
       }),
     mistakeId: uuidSchema().optional(),
+    mockId: uuidSchema().optional().meta({ description: "The finished mock for mistake practice" }),
     practiceDurationMs: z.coerce.number().int().pipe(answerDurationSchema).optional(),
     studySessionId: uuidSchema().optional().meta({ description: "Today's study session, if any" }),
     timeZone: answerTimeZoneSchema,

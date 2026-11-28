@@ -12,6 +12,9 @@ import com.zoonk.android.feature.audio.GradeOutcome
 import com.zoonk.android.feature.audio.VoiceRecording
 import com.zoonk.android.feature.audio.toGradeOutcome
 import com.zoonk.android.feature.player.DayChoices
+import com.zoonk.android.feature.player.SessionMove
+import com.zoonk.android.feature.player.SessionMover
+import com.zoonk.android.feature.player.SessionSteps
 import com.zoonk.android.feature.player.TodayChoices
 import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonPlayerState
@@ -35,6 +38,7 @@ import com.zoonk.android.feature.questions.Drill
 import com.zoonk.android.feature.questions.Question
 import com.zoonk.android.feature.questions.TrueFalseWords
 import com.zoonk.android.feature.session.ReachedFacts
+import com.zoonk.android.ui.components.MomentScore
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LessonStepAnswer
 import com.zoonk.api.models.MistakeDrill
@@ -94,24 +98,30 @@ data class PracticeState(
     val fixedIds: Set<String> = emptySet(),
     val reached: ReachedFacts = ReachedFacts(level = null, energy = null),
     val end: PracticeEnd? = null,
+    /** A day block's completion that didn't get through: the run isn't over until it does. */
+    val finishFailures: Int = 0,
+    val finishing: Boolean = false,
+    val again: AgainLoad = AgainLoad.Idle,
     val lesson: LessonPlayerState? = null,
     val lessonGrade: MistakePracticeFeedback? = null,
 ) {
-    val endNote: PracticeEndNote?
-        get() {
-            val missed = run.answers.values.any { !it.isCorrect }
-            val unreached = run.answers.size < read.tasks.size
+    /** A day block's completion failed and hasn't got through since: the run waits on "Try again". */
+    val unsaved: Boolean get() = end == null && finishFailures > 0
 
-            return when {
-                missed && unreached -> PracticeEndNote.MissedAndUnreached
-                missed -> PracticeEndNote.Missed
-                unreached -> PracticeEndNote.Unreached
-                else -> null
-            }
-        }
+    /**
+     * Going again can fix something today only while a mistake from an earlier day is still open in
+     * the scope, which the finish says; today's misses wait for another day.
+     */
+    val offersAgain: Boolean
+        get() = end?.summary?.hasMorePractice == true && again != AgainLoad.NothingLeft
+
+    /** The run's own answers, so a batch whose answers counted nothing new still shows how it went. */
+    val score: MomentScore
+        get() = MomentScore(run.answers.size, run.answers.values.count { it.isCorrect })
 }
 
-enum class PracticeEndNote { Missed, MissedAndUnreached, Unreached }
+/** "Practice again" reads a fresh batch in the same scope; [NothingLeft] when it came back empty. */
+enum class AgainLoad { Idle, Loading, Failed, NothingLeft }
 
 /** Each answer carries the run's earlier ones, so a run left halfway still counts; the end counts it once more. */
 class MistakePracticeViewModel(
@@ -121,8 +131,25 @@ class MistakePracticeViewModel(
     private val sessions: SessionSource,
     private val saved: SavedStateHandle,
     private val now: () -> Long = SystemClock::elapsedRealtime,
+    /** A day block's run and the steps of its session, so its end goes on to the day's next stop. */
+    sessionId: UUID? = null,
+    steps: SessionSteps? = null,
 ) : ViewModel(),
     RunControls {
+    private val sessionMover = if (sessionId != null && steps != null) SessionMover(steps, sessionId, viewModelScope) else null
+    val sessionMove: StateFlow<SessionMove> = sessionMover?.move ?: MutableStateFlow(SessionMove()).asStateFlow()
+
+    /** A day block's run ends as the day's other blocks do, on its next stop. */
+    val leadsOn: Boolean get() = sessionMover != null
+
+    fun continueSession() {
+        sessionMover?.continueSession()
+    }
+
+    fun stopSession() {
+        sessionMover?.stop()
+    }
+
     private val mutableState = MutableStateFlow<PracticeState?>(null)
     val state: StateFlow<PracticeState?> = mutableState.asStateFlow()
 
@@ -157,11 +184,61 @@ class MistakePracticeViewModel(
 
     override val canRetry: Boolean get() = sent != null
 
-    /** Only from a read made since the last answer: a kept one may hold mistakes that now wait for tomorrow. */
+    /** A day's block ends on Today and is done there: it never offers to go again. */
+    val practicesAgain: Boolean get() = key.blockId == null
+
+    /** Only from a read made since the last answer: a kept one may hold mistakes this run already fixed. */
     fun begin(practice: MistakePractice) {
         if (mutableState.value != null || this.practice.freshState.value !is LoadState.Loaded) return
         day.read(sessions.current, viewModelScope)
-        val read = practice.toQuestions()
+        start(practice.toQuestions())
+    }
+
+    /** A day's block whose mistakes are all gone still ends through its finish, which completes it. */
+    fun beginEmpty() {
+        if (mutableState.value != null || key.blockId == null) return
+        val read = PracticeQuestions(emptyList(), TrueFalseWords.TrueFalse)
+        mutableState.value = PracticeState(read, QuestionRun(0, RunPhase.Finishing, DrillStage.Open))
+        finish()
+    }
+
+    /** A run holds a batch of the scope's mistakes, so going again reads the next one rather than replaying this. */
+    fun practiceAgain() {
+        val current = mutableState.value ?: return
+        if (!practicesAgain || !current.offersAgain || current.again == AgainLoad.Loading) return
+        mutableState.value = current.copy(again = AgainLoad.Loading)
+        viewModelScope.launch {
+            practice.refresh()
+            val read = (practice.state.value as? LoadState.Loaded)?.value?.takeIf { practice.freshState.value is LoadState.Loaded }
+            when {
+                read != null && read.practice.isNotEmpty() -> {
+                    attempts.clear()
+                    sent = null
+                    lessonSent = null
+                    spokenSent = null
+                    closeWhenEnded = false
+                    start(read.toQuestions())
+                }
+
+                practice.freshState.value is LoadState.Failed -> {
+                    mutableState.update { it?.copy(again = AgainLoad.Failed) }
+                }
+
+                else -> {
+                    mutableState.update { it?.copy(again = AgainLoad.NothingLeft) }
+                }
+            }
+        }
+    }
+
+    /** Sends a day block's completion again after it didn't get through. */
+    fun retryFinish() {
+        val current = mutableState.value ?: return
+        if (current.run.phase != RunPhase.Finishing || current.end != null || current.finishing) return
+        finish()
+    }
+
+    private fun start(read: PracticeQuestions) {
         val lesson = restoreLesson(read, 0)
         val phase = if (lessonSent != null) RunPhase.AnswerFailed else RunPhase.Answering
         mutableState.value = PracticeState(read, QuestionRun(0, phase, read.openingStage(0)), lesson = lesson)
@@ -189,6 +266,7 @@ class MistakePracticeViewModel(
     private fun send(submission: Submission) {
         val current = mutableState.value ?: return
         val mistakeId = submission.question.mistakeId ?: return
+        val showing = submission.question.showing ?: return
         if (!current.run.canAnswer) return
         mutableState.value = current.copy(run = current.run.checking(submission.sender))
         sent = submission
@@ -196,7 +274,7 @@ class MistakePracticeViewModel(
 
         viewModelScope.launch {
             val (question, answer, _, duration) = submission
-            when (val result = store.answer(key, mistakeId, question.itemId, answer, duration, attemptId, current.answerIds)) {
+            when (val result = store.answer(key, mistakeId, question.itemId, showing, answer, duration, attemptId, current.answerIds)) {
                 is MutationResult.Done -> {
                     sent = null
                     mutableState.update { it?.answered(mistakeId, answer, result.value) }
@@ -263,7 +341,7 @@ class MistakePracticeViewModel(
             }
 
             current.run.phase == RunPhase.Finishing -> {
-                if (current.end == null) closeWhenEnded = true else closing.value = true
+                if (current.finishing) closeWhenEnded = true else closing.value = true
             }
 
             current.answerIds.isNotEmpty() -> {
@@ -279,14 +357,22 @@ class MistakePracticeViewModel(
 
     private fun finish() {
         val answerIds = mutableState.value?.answerIds.orEmpty()
+        mutableState.update { it?.copy(finishing = true) }
         viewModelScope.launch {
-            // A count that didn't get through still ends the run: each answer was counted as it came.
-            val summary = if (answerIds.isEmpty()) null else (store.finish(key, answerIds) as? MutationResult.Done)?.value
-            mutableState.update { state ->
-                state?.copy(
-                    end = PracticeEnd(summary),
-                    reached = summary?.let { state.reached.then(ReachedFacts(it.reached.level, it.reached.energy)) } ?: state.reached,
-                )
+            val counts = answerIds.isNotEmpty() || key.blockId != null
+            val summary = if (counts) (store.finish(key, answerIds) as? MutationResult.Done)?.value else null
+            // Each answer was counted as it came, so a count that didn't get through still ends the run, except a
+            // day block's: its completion is what marks its row done on Today.
+            if (summary == null && key.blockId != null) {
+                mutableState.update { it?.copy(finishing = false, finishFailures = it.finishFailures + 1) }
+            } else {
+                mutableState.update { state ->
+                    state?.copy(
+                        finishing = false,
+                        end = PracticeEnd(summary),
+                        reached = summary?.let { state.reached.then(ReachedFacts(it.reached.level, it.reached.energy)) } ?: state.reached,
+                    )
+                }
             }
             if (closeWhenEnded) closing.value = true
         }
@@ -557,7 +643,12 @@ internal fun MistakePractice.toQuestions(): PracticeQuestions {
                     MistakePracticeTask.Bank(
                         inner
                             .recode<MistakePracticePracticeInnerQuestionsInner, Question>()
-                            .copy(drill = drill, mistakeId = entry.mistakeId.toString(), tutorAvailable = entry.tutorAvailable),
+                            .copy(
+                                drill = drill,
+                                mistakeId = entry.mistakeId.toString(),
+                                showing = entry.showing,
+                                tutorAvailable = entry.tutorAvailable,
+                            ),
                     )
                 }
             }

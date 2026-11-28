@@ -1,15 +1,17 @@
 import { gradeTypedAnswer } from "@zoonk/ai/tasks/grading/grade-typed-answer";
 import { prisma } from "@zoonk/db";
-import { goalFixture, planFixture, plannedSkills } from "@zoonk/testing/fixtures/goals";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture, stepVariantFixture } from "@zoonk/testing/fixtures/library-steps";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
-import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
+import {
+  studySessionBlockFixture,
+  studySessionFixture,
+} from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
-import { pickInMistake } from "../_test-utils/shown-choice";
+import { mistakeShowing, pickInMistake } from "../_test-utils/shown-choice";
 import { gradeChoiceAnswer, parseChoiceItem } from "../learner/_utils/choice-items";
 import { recordLearnerAnswer } from "../learner/record-learner-answer";
 import { typedGrade } from "../lesson-player/_test-utils/typed-grade";
@@ -120,7 +122,13 @@ describe("exact-question practice", () => {
     });
 
     const result = await answerMistakePractice({
-      input: { answer: { selectedIndex: 0 }, durationMs: 2000, itemId: bank.id, timeZone: "UTC" },
+      input: {
+        answer: { selectedIndex: 0 },
+        durationMs: 2000,
+        itemId: bank.id,
+        showing: await mistakeShowing(mistake.id),
+        timeZone: "UTC",
+      },
       mistakeId: mistake.id,
     });
 
@@ -182,7 +190,7 @@ describe("exact-question practice", () => {
     ).resolves.toHaveLength(1);
   });
 
-  it("takes no practice answer for a mistake made today", async () => {
+  it("grades a lesson question from today without fixing the notebook entry", async () => {
     const { mistake, step, user } = await setup();
 
     await prisma.mistake.update({
@@ -201,8 +209,12 @@ describe("exact-question practice", () => {
       mistakeId: mistake.id,
     });
 
-    expect(result).toStrictEqual({ status: "invalidItem" });
-    await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(0);
+    expect(result).toMatchObject({
+      feedback: { fixed: false, isCorrect: true, requiresLaterDay: true },
+      status: "ready",
+    });
+
+    await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(1);
   });
 
   it("offers no replacement for missing or retired originals, including their availability", async () => {
@@ -213,7 +225,12 @@ describe("exact-question practice", () => {
 
     await expect(
       answerMistakePractice({
-        input: { answer: { selectedIndex: 0 }, durationMs: 2000, itemId: bank.id },
+        input: {
+          answer: { selectedIndex: 0 },
+          durationMs: 2000,
+          itemId: bank.id,
+          showing: await mistakeShowing(mistake.id),
+        },
         mistakeId: mistake.id,
       }),
     ).resolves.toStrictEqual({ status: "invalidItem" });
@@ -321,7 +338,12 @@ describe("exact-question practice", () => {
 
     await expect(
       answerMistakePractice({
-        input: { answer: { selectedIndex: 0 }, durationMs: 2000, itemId: bank.id },
+        input: {
+          answer: { selectedIndex: 0 },
+          durationMs: 2000,
+          itemId: bank.id,
+          showing: await mistakeShowing(mistake.id),
+        },
         mistakeId: mistake.id,
       }),
     ).resolves.toStrictEqual({ status: "invalidItem" });
@@ -418,6 +440,52 @@ describe("exact-question practice", () => {
     await expect(prisma.learningEvent.count({ where: { userId: user.id } })).resolves.toBe(0);
   });
 
+  it("completes a day's block whose over-cap typed answer couldn't be checked, without fixing or counting it", async () => {
+    const { input, mistake, step, user } = await typedSetup();
+    const userId = user.id;
+    const session = await studySessionFixture({ startedAt: new Date(), status: "active", userId });
+
+    const block = await studySessionBlockFixture({
+      kind: "review",
+      payload: { mistakeIds: [mistake.id] },
+      sessionId: session.id,
+      status: "active",
+    });
+
+    await prisma.modelGrade.createMany({
+      data: Array.from({ length: 5 }, () => ({ questionId: step.id, userId })),
+    });
+
+    await expect(
+      answerMistakePractice({
+        input: { ...input, run: { answerIds: [], blockId: block.id }, timeZone: "UTC" },
+        mistakeId: mistake.id,
+      }),
+    ).resolves.toMatchObject({
+      feedback: { answerId: null, lessonResult: { checked: false } },
+      status: "ready",
+    });
+
+    await expect(
+      finishMistakePractice({ answerIds: [], blockId: block.id, ended: true, timeZone: "UTC" }),
+    ).resolves.toMatchObject({ status: "ready" });
+
+    await expect(
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } }),
+    ).resolves.toMatchObject({ status: "completed" });
+
+    await expect(getMistakePractice({ blockId: block.id, timeZone: "UTC" })).resolves.toMatchObject(
+      { practice: [] },
+    );
+
+    await expect(
+      prisma.mistake.findUniqueOrThrow({ where: { id: mistake.id } }),
+    ).resolves.toMatchObject({ fixedAt: null, status: "open" });
+
+    await expect(prisma.attempt.count({ where: { userId } })).resolves.toBe(0);
+    await expect(prisma.learnerSkill.count({ where: { userId } })).resolves.toBe(0);
+  });
+
   it("does not fix a preserved original through a rewritten question with the same source id", async () => {
     const { bank, user, skill } = await setup();
     const original = parseChoiceItem(bank);
@@ -484,52 +552,18 @@ describe("exact-question practice", () => {
 
     await expect(
       answerMistakePractice({
-        input: { answer: right, durationMs: 2000, itemId: bank.id },
+        input: {
+          answer: right,
+          durationMs: 2000,
+          itemId: bank.id,
+          showing: await mistakeShowing(recorded.mistake.id),
+        },
         mistakeId: recorded.mistake.id,
       }),
     ).resolves.toMatchObject({ feedback: { fixed: true }, status: "ready" });
   });
 
-  it("settles the notebook mission from an exact lesson correction", async () => {
-    const { mistake, skill, step, user } = await setup();
-    const goal = await goalFixture({ timezone: "UTC", userId: user.id });
-    await planFixture({ goalId: goal.id, graph: { skills: plannedSkills([skill]) } });
-
-    await studySessionFixture({
-      goalId: goal.id,
-      localDate: new Date(new Date().toISOString().slice(0, 10)),
-      missions: { picks: [{ anchor: {}, kind: "fixMistake", total: 1 }], version: 1 },
-      userId: user.id,
-    });
-
-    const answered = await answerMistakePractice({
-      input: {
-        answer: { kind: "check", optionId: "right" },
-        attemptId: crypto.randomUUID(),
-        durationMs: 2000,
-        stepId: step.id,
-        timeZone: "UTC",
-      },
-      mistakeId: mistake.id,
-    });
-
-    if (answered.status !== "ready" || !answered.feedback.answerId) {
-      throw new Error("The exact answer must be recorded");
-    }
-
-    await expect(
-      finishMistakePractice({
-        answerIds: [answered.feedback.answerId],
-        ended: true,
-        timeZone: "UTC",
-      }),
-    ).resolves.toMatchObject({
-      result: { missionMoment: { completed: ["fixMistake"] } },
-      status: "ready",
-    });
-  });
-
-  it("gives a later wrong answer to a fixed original the answer that fixed it, recording nothing new", async () => {
+  it("refuses a new request for a fixed lesson question", async () => {
     const { mistake, step, user } = await setup();
 
     const right = await answerMistakePractice({
@@ -553,9 +587,9 @@ describe("exact-question practice", () => {
       timeZone: "UTC",
     };
 
-    await expect(answerMistakePractice({ input, mistakeId: mistake.id })).resolves.toStrictEqual(
-      right,
-    );
+    await expect(answerMistakePractice({ input, mistakeId: mistake.id })).resolves.toStrictEqual({
+      status: "invalidItem",
+    });
 
     await expect(
       prisma.mistake.count({ where: { status: "open", userId: user.id } }),

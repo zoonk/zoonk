@@ -91,7 +91,7 @@ test.describe("Mistakes notebook", () => {
 
     await page.getByRole("button", { name: "Leave. What you answered counts." }).click();
     await expect(page.getByRole("heading", { name: "Practice done" })).toBeVisible();
-    await page.getByRole("link", { name: /^Back(?! to)/u }).click();
+    await page.getByRole("link", { name: "Done" }).click();
     await expect(notebookTab(page, /^Fixed\s*1$/u)).toBeVisible();
     await expect(notebookTab(page, /^To fix\s*1$/u)).toBeVisible();
     await expect(page.getByRole("link", { name: /^Practice mistakes/u })).toBeVisible();
@@ -133,7 +133,7 @@ test.describe("Mistakes notebook", () => {
       .poll(() => prisma.dailyProgress.findFirst({ where: { userId: user.id } }))
       .toMatchObject({ brainPowerEarned: 2, correctAnswers: 1, interactiveCompleted: 1 });
 
-    await page.getByRole("link", { name: /^Back(?! to)/u }).click();
+    await page.getByRole("link", { name: "Done" }).click();
     await expect(page).toHaveURL(/\/mistakes$/u);
 
     // Once, not retried: the browser's old copy shows until a fresh read replaces it. Visible only,
@@ -150,7 +150,7 @@ test.describe("Mistakes notebook", () => {
     await page.context().close();
   });
 
-  test("a mistake missed in practice waits for tomorrow, and the ones a stopped run never reached stay ready, in a run left open in another tab too", async ({
+  test("a mistake missed in practice and the ones a stopped run never reached stay ready, in a run left open in another tab too", async ({
     browser,
   }) => {
     const { user } = await createMistakeLearner({ causes: ["trap", "guess"] });
@@ -173,19 +173,57 @@ test.describe("Mistakes notebook", () => {
 
     await other.getByRole("button", { name: "Leave. What you answered counts." }).click();
 
-    const done = other.getByRole("status").filter({ hasText: "Practice done" });
-
-    await expect(
-      done.getByText(
-        "The ones you missed come back another day. The rest are still ready to practice.",
-      ),
-    ).toBeVisible();
-
-    await other.getByRole("link", { name: /^Back(?! to)/u }).click();
+    await expect(other.getByRole("heading", { name: "Practice done" })).toBeVisible();
+    await other.getByRole("link", { name: "Done" }).click();
     await expect(notebookTab(other, /^To fix\s*2$/u)).toBeVisible();
 
     await page.getByRole("link", { name: /^Practice mistakes/u }).click();
     await expect(page.getByRole("heading", { name: "guess first question?" })).toBeVisible();
+
+    await page.context().close();
+  });
+
+  test("a mistake made today is practiced at once, stays open after a right answer, and the run ends on Done with its score", async ({
+    browser,
+  }) => {
+    const { drills, user } = await createMistakeLearner({ causes: ["trap"] });
+    const now = new Date();
+
+    await prisma.mistake.update({
+      data: { createdAt: now, missedAt: now },
+      where: { id: drills[0]!.mistake.id },
+    });
+
+    const page = await openAs(browser, user);
+    await page.goto("/mistakes");
+    await page.getByRole("link", { name: /^Practice mistakes/u }).click();
+
+    const question = page.getByRole("heading", { name: "trap first question?" });
+    const feedback = page.getByRole("region", { name: "Answer feedback" });
+
+    await expect(question).toBeVisible();
+    await page.getByRole("radio", { name: "Right answer" }).click();
+    await page.getByRole("button", { name: /^Check/u }).click();
+    await expect(feedback.getByText("Correct!")).toBeVisible();
+
+    await expect(
+      feedback.getByText("This question comes back another day to make sure."),
+    ).toBeVisible();
+
+    await page.getByRole("button", { name: /^Continue/u }).click();
+    await expect(page.getByRole("heading", { name: "Practice done" })).toBeVisible();
+    await expect(page.getByText(/mistakes? fixed/u)).toHaveCount(0);
+    await expect(page.getByText(/of 1 right/u)).toBeVisible();
+    await expect(page.getByRole("link", { name: /^Done/u })).toBeVisible();
+
+    await expect
+      .poll(() =>
+        prisma.mistake.findUnique({
+          select: { status: true },
+          where: { id: drills[0]!.mistake.id },
+        }),
+      )
+      .toStrictEqual({ status: "open" });
 
     await page.context().close();
   });

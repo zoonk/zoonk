@@ -40,6 +40,9 @@ import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
+import com.zoonk.api.models.ExamChoice
+import com.zoonk.api.models.ExamChoiceLeftOut
+import com.zoonk.api.models.ExamChoiceOptionsInner
 import com.zoonk.api.models.ExamDocument
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.PlanAreasInner
@@ -231,6 +234,35 @@ class PlanScreenshots {
     fun examExpanded() = capture("plan-exam-expanded", exam = examPage(dated = true))
 
     @Test
+    @Config(qualifiers = "w1280dp-h900dp-land-xhdpi")
+    fun examChoiceOneTablet() = captureExamChoice("exam-choice-one", "ENEM", "Foreign language", listOf("English", "Spanish"), take = 1)
+
+    @Test
+    @Config(qualifiers = "w1280dp-h900dp-land-xhdpi")
+    fun examChoiceTwoTablet() =
+        captureExamChoice("exam-choice-two", "EXANI-II", "Subject modules", listOf("Biology", "Chemistry", "Law", "Premedicine"), take = 2)
+
+    private fun captureExamChoice(
+        scenario: String,
+        title: String,
+        group: String,
+        options: List<String>,
+        take: Long,
+    ) {
+        val page = examPage(dated = true, title = title)
+        val choice =
+            ExamChoice(
+                group = group,
+                leftOut = ExamChoiceLeftOut(examPoints = null, examQuestions = null, name = group, points = null, questions = 24 * take),
+                options = options.map { ExamChoiceOptionsInner(name = it, shortName = null) },
+                subjects = emptyList(),
+                take = take,
+            )
+        show(exam = page.copy(plan = page.plan.copy(examChoices = listOf(choice))))
+        write("plan-$scenario-tablet", compose.onRoot().captureRender(scenario = scenario).asAndroidBitmap())
+    }
+
+    @Test
     @Config(qualifiers = "w411dp-h3000dp-xxhdpi")
     fun examStrategyOfferPhone() = capture("plan-exam-strategy-offer-phone", exam = strategyOfferPage(), structure = examSyllabus())
 
@@ -294,8 +326,11 @@ class PlanScreenshots {
         return PlanPageState(learnerSummary().goals.first(), plan, learnerSummary())
     }
 
-    private fun examPage(dated: Boolean): PlanPageState {
-        val summary = learnerSummary(kind = "exam", title = "ENEM")
+    private fun examPage(
+        dated: Boolean,
+        title: String = "ENEM",
+    ): PlanPageState {
+        val summary = learnerSummary(kind = "exam", title = title)
         val base = learnPlan().let { plan -> plan.copy(phases = plan.phases.map { it.asEnem() }) }
         val after =
             base.phases.last().copy(

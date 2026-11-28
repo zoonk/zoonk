@@ -5,6 +5,27 @@ import XCTest
 
 @testable import Zoonk
 
+final class MockResultOfferTests: XCTestCase {
+  /// The result offers its mistakes only while some are open, and never after placement.
+  func testAResultOffersItsMistakesOnlyWhileSomeAreOpen() async throws {
+    let base = await MockTransport(itemIds: [], status: "finished").mockJSON()
+    func view(available: Bool, purpose: String = "practice") throws -> MockView {
+      let json = base.replacingOccurrences(
+        of: #""mockId": null"#, with: #""mockId": "sitting""#
+      )
+      .replacingOccurrences(
+        of: #""practiceAvailable": false"#, with: #""practiceAvailable": \#(available)"#
+      )
+      .replacingOccurrences(of: #""purpose": "practice""#, with: #""purpose": "\#(purpose)""#)
+      return try JSONDecoder().decode(MockView.self, from: Data(json.utf8))
+    }
+
+    XCTAssertEqual(try view(available: true).mistakesToPractice, "sitting")
+    XCTAssertNil(try view(available: false).mistakesToPractice)
+    XCTAssertNil(try view(available: true, purpose: "placement").mistakesToPractice)
+  }
+}
+
 final class MockSectionMovesTests: XCTestCase {
   private let forwardOnly = MockSection.Navigation(
     answerChanges: 2, forwardOnly: true, itemSeconds: 90, mustAnswer: false)
@@ -651,7 +672,7 @@ private actor MockTransport: ClientTransport {
     return (HTTPResponse(status: .noContent), nil)
   }
 
-  private func mockJSON() -> String {
+  fileprivate func mockJSON() -> String {
     let draftsJSON = String(decoding: try! JSONEncoder().encode(storedDrafts), as: UTF8.self)
     let changedJSON = String(
       decoding: try! JSONEncoder().encode(review?.changed ?? []), as: UTF8.self)
@@ -681,7 +702,8 @@ private actor MockTransport: ClientTransport {
         "current": \(currentJSON), "date": "2026-10-29", "day": null, "essayRubric": null,
         "essays": [], "examDocument": "notice", "examName": "Sample Exam", "examQuestions": null,
         "fullLength": true, "goalId": "44444444-4444-4444-8444-444444444444", "leftOut": [],
-        "minutes": 30, "missionMoment": null, "mistakes": [], "number": 1, "passMarks": null,
+        "minutes": 30, "missionMoment": null, "mistakes": [], "mockId": null, "number": 1, "passMarks": null,
+        "practiceAvailable": false,
         "planItemId": null, "purpose": "practice", "questions": \(itemIds.count),
         "reached": {"energy": null, "level": null}, "result": null, "reusedQuestions": 0,
         "review": [], "scoreNotes": {"noticeScoring": null, "relative": false, "scale": null},

@@ -32,10 +32,7 @@ function facts(kinds: MissionKind[], overrides: Partial<DayMissionFacts> = {}): 
     candidates: kinds.map((kind) => candidate(kind)),
     firstSteps: null,
     localDate: TODAY,
-    oldestReadyMistakeAt: null,
-    patternExpiresTomorrow: false,
     plannedMinutes: 20,
-    readyMistakeCount: 0,
     recentPicks: [],
     ...overrides,
     dailyMinutes: overrides.dailyMinutes ?? overrides.plannedMinutes ?? 30,
@@ -76,10 +73,8 @@ describe(pickMissions, () => {
     ]);
   });
 
-  it("uses an available first step before pressing needs", () => {
-    const input = facts(["review", "somethingNew", "askBuddy", "fixMistake"], {
-      readyMistakeCount: 8,
-    });
+  it("uses an available first step before the rotation", () => {
+    const input = facts(["review", "somethingNew", "askBuddy", "call"]);
 
     input.firstSteps = {
       done: 2,
@@ -114,69 +109,34 @@ describe(pickMissions, () => {
     ).toStrictEqual(["review", "somethingNew", "askBuddy"]);
   });
 
-  it.each([5, 12])("prioritizes a pile of %i ready mistakes", (readyMistakeCount) => {
-    expect(
-      picks(["review", "somethingNew", "call", "fixMistake"], { readyMistakeCount }),
-    ).toStrictEqual(["review", "somethingNew", "fixMistake"]);
-  });
-
-  it("prioritizes a ready mistake a week old", () => {
-    expect(
-      picks(["review", "somethingNew", "call", "fixMistake"], {
-        oldestReadyMistakeAt: new Date("2026-10-06T00:00:00Z"),
-        recentPicks: [["fixMistake"]],
-      }),
-    ).toStrictEqual(["review", "somethingNew", "fixMistake"]);
-  });
-
-  it("prioritizes a pattern whose offer ends tomorrow", () => {
-    expect(
-      picks(["review", "somethingNew", "fixMistake", "pattern"], { patternExpiresTomorrow: true }),
-    ).toStrictEqual(["review", "somethingNew", "pattern"]);
-  });
-
   it("offers the least recently offered kind", () => {
     expect(
-      picks(["review", "somethingNew", "fixMistake", "pattern", "call"], {
-        recentPicks: [["fixMistake"], ["call"], ["pattern"]],
+      picks(["review", "somethingNew", "pronunciation", "call", "askBuddy"], {
+        recentPicks: [["pronunciation"], ["call"], ["askBuddy"]],
       }),
-    ).toStrictEqual(["review", "somethingNew", "pattern"]);
+    ).toStrictEqual(["review", "somethingNew", "askBuddy"]);
   });
 
   it("favors a kind never offered within the last seven sessions", () => {
     expect(
-      picks(["review", "somethingNew", "fixMistake", "call"], { recentPicks: [["fixMistake"]] }),
+      picks(["review", "somethingNew", "pronunciation", "call"], {
+        recentPicks: [["pronunciation"]],
+      }),
     ).toStrictEqual(["review", "somethingNew", "call"]);
   });
 
   it("breaks rotation ties in catalog order", () => {
     expect(
-      picks([
-        "review",
-        "somethingNew",
-        "askBuddy",
-        "call",
-        "pronunciation",
-        "pattern",
-        "practice",
-        "fixMistake",
-      ]),
-    ).toStrictEqual(["review", "somethingNew", "fixMistake"]);
+      picks(["review", "somethingNew", "askBuddy", "call", "pronunciation", "practice"]),
+    ).toStrictEqual(["review", "somethingNew", "practice"]);
   });
 
   it("fills absent slots without repeating a kind", () => {
-    expect(picks(["fixMistake", "pattern", "pronunciation", "call"])).toStrictEqual([
-      "pattern",
+    expect(picks(["pronunciation", "call", "askBuddy"])).toStrictEqual([
+      "call",
+      "askBuddy",
       "pronunciation",
-      "fixMistake",
     ]);
-  });
-
-  it("does not pair ordinary practice with fixing mistakes", () => {
-    const result = picks(["fixMistake", "practice", "call"]);
-    expect(result).toContain("fixMistake");
-    expect(result).not.toContain("practice");
-    expect(result).toHaveLength(2);
   });
 
   it("does not offer practice and weak-area practice for the same block", () => {
@@ -191,8 +151,14 @@ describe(pickMissions, () => {
 
   it("fills short days only with planned work", () => {
     expect(
-      picks(["somethingNew", "essay", "askBuddy", "fixMistake"], { plannedMinutes: 10 }),
+      picks(["somethingNew", "essay", "askBuddy", "call"], { plannedMinutes: 10 }),
     ).toStrictEqual(["essay", "somethingNew"]);
+  });
+
+  it("gives a short day without planned missions one small mission outside the day", () => {
+    expect(picks(["askBuddy", "call"], { dailyMinutes: 30, plannedMinutes: 10 })).toStrictEqual([
+      "call",
+    ]);
   });
 
   it("does not offer weak-area practice on short days", () => {
@@ -208,7 +174,7 @@ describe(pickMissions, () => {
   });
 
   it("is deterministic and leaves its inputs unchanged", () => {
-    const input = facts(["review", "call", "fixMistake", "pattern"]);
+    const input = facts(["review", "call", "pronunciation", "askBuddy"]);
     const before = structuredClone(input);
     expect(pickMissions(input)).toStrictEqual(pickMissions(input));
     expect(input).toStrictEqual(before);

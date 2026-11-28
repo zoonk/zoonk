@@ -1,22 +1,40 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { getAnswerAttemptId } from "../learner/_utils/answer-once";
+import { findSavedAttempt, getAnswerAttemptId } from "../learner/_utils/answer-once";
 import { saveDayBeforeActivity } from "../sessions/ensure-study-session";
 import { getSession } from "../users/get-session";
 import { answerItemMistake } from "./_utils/answer-item-mistake";
 import { answerLessonMistake } from "./_utils/answer-lesson-mistake";
-import { readPracticeClaim } from "./_utils/practice-claim";
+import { getPracticeAnswerScope } from "./_utils/practice-answer-scope";
+import { finishPracticeAnswer, readPracticeFeedback } from "./_utils/practice-feedback";
 import { visibleMistakeWhere } from "./_utils/visible-mistake";
 import { type MistakePracticeAnswerInput } from "./contract";
 import { getDrillKind, getDrillTimeLimitSeconds } from "./mistake-drills";
-import { loadMistakeReplay } from "./mistake-replay";
+import { isMistakeShowing } from "./mistake-item";
+import { type MistakeReplay, loadMistakeReplay } from "./mistake-replay";
 import { type MistakePracticeFeedback } from "./practice-feedback";
 
 export type MistakePracticeAnswerResult =
   | { feedback: MistakePracticeFeedback; status: "ready" }
   | { status: "invalidItem" | "notFound" | "unauthorized" | "retryable" };
 
-/** The answer must target the exact saved source; skill membership never substitutes for identity. A mistake that isn't ready returns the answer that counted for it today. */
+function matchesQuestion({
+  input,
+  mistakeId,
+  replay,
+}: {
+  input: MistakePracticeAnswerInput;
+  mistakeId: string;
+  replay: MistakeReplay;
+}) {
+  return replay.kind === "item"
+    ? "itemId" in input &&
+        input.itemId === replay.item.id &&
+        isMistakeShowing({ mistakeId, showing: input.showing })
+    : "stepId" in input && input.stepId === replay.lesson.step.id;
+}
+
+/** A new answer must target the exact saved source of an open entry, in an order that entry showed. */
 export function answerMistakePractice(input: {
   input: Extract<MistakePracticeAnswerInput, { itemId: string }>;
   mistakeId: string;
@@ -51,40 +69,54 @@ export async function answerMistakePractice({
     return { status: "notFound" };
   }
 
-  const replay = await loadMistakeReplay({ mistake, userId });
-
-  if (
-    !replay ||
-    (replay.kind === "item"
-      ? !("itemId" in input) || input.itemId !== replay.item.id
-      : !("stepId" in input) || input.stepId !== replay.lesson.step.id)
-  ) {
-    return { status: "invalidItem" };
-  }
-
   const attemptId = getAnswerAttemptId({
     key: input.attemptId ?? crypto.randomUUID(),
     questionId: mistake.id,
     userId,
   });
 
-  const claim = await readPracticeClaim({
-    attemptId,
-    goalId: input.run?.goalId,
-    mistakeId: mistake.id,
-    timeZone: input.timeZone,
-    userId,
-  });
+  const [saved, scope] = await Promise.all([
+    findSavedAttempt({ attemptId, userId }),
+    getPracticeAnswerScope({
+      blockId: input.run?.blockId,
+      goalId: input.run?.goalId,
+      mistakeId: mistake.id,
+      mockId: input.run?.mockId,
+      timeZone: input.timeZone,
+      userId,
+    }),
+  ]);
 
-  if (!claim) {
+  if (!scope) {
+    return { status: "notFound" };
+  }
+
+  const { goalId, timeZone } = scope;
+  const feedback = saved && readPracticeFeedback(saved);
+
+  if (saved && feedback) {
+    return {
+      feedback: await finishPracticeAnswer({ attempt: saved, feedback, input, mistakeId }),
+      status: "ready",
+    };
+  }
+
+  if (!saved && mistake.status !== "open") {
     return { status: "invalidItem" };
   }
 
-  const { saved, timeZone } = claim;
+  const replay = await loadMistakeReplay({ mistake, userId });
+
+  if (!replay || !matchesQuestion({ input, mistakeId: mistake.id, replay })) {
+    return { status: "invalidItem" };
+  }
 
   const kind = getDrillKind(mistake.cause);
   const timeLimitSeconds = getDrillTimeLimitSeconds(kind);
-  await saveDayBeforeActivity({ goalId: input.run?.goalId, timeZone: input.timeZone, userId });
+
+  if (!saved) {
+    await saveDayBeforeActivity({ goalId, timeZone, userId });
+  }
 
   if (replay.kind === "item" && "itemId" in input) {
     return answerItemMistake({

@@ -1,4 +1,5 @@
 import { isPhaseChallenge } from "../../checkpoints/_utils/challenge-reach";
+import { isOutsidePlanLesson } from "../day-block";
 import { isFullReviewDay } from "../full-review";
 import {
   type PlannedBlock,
@@ -86,7 +87,7 @@ export function fillRemainingLessonTime({
   writingMinutes: number;
 }) {
   const fixed = blocks
-    .filter((block) => block.kind !== "learn" || block.payload.reinforcement)
+    .filter((block) => block.kind !== "learn" || isOutsidePlanLesson(block.payload))
     .filter((block) => !block.payload.checkpoint || !isPhaseChallenge(block.payload.checkpoint));
 
   const candidates = getNewLessons({

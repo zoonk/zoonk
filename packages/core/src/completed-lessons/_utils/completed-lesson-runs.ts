@@ -1,4 +1,5 @@
 import { type Sql, sql } from "@zoonk/db";
+import { SECOND_TAKE_IDENTITY_PATTERN } from "../../library/second-takes/second-take-identity";
 
 /**
  * A goal's finished Library lesson runs, one row each, with the lesson they finished. A run counts
@@ -15,6 +16,7 @@ export function completedLessonRuns({ goalId, userId }: { goalId: Sql; userId: S
       AND run.kind IN ('lesson', 'review')
       AND run.lesson_kind = 'library'
       AND run.ended_at IS NOT NULL
+      AND lesson.identity_key !~ ${SECOND_TAKE_IDENTITY_PATTERN}
       AND (
         run.goal_id = ${goalId}
         OR EXISTS (

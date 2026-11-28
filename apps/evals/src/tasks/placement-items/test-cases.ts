@@ -354,6 +354,25 @@ const CASES: TestCase<unknown, CaseInput>[] = [
     },
   },
   {
+    expectations: `Tap questions for a Brazilian learning Italian, a conversation skill at B1 to B2 (intermediate): following a conversation between several people and joining in without contradicting what each one said. What the people say and every line the learner could say are in natural Italian set in Italy, while the setup, the question and reasons are in Brazilian Portuguese. Every Italian line stays in Italian from its first word to its last: an option that starts in Italian and ends in Portuguese ("Se ho capito bene, nessuna delle due quer alterar o horário atual") fails, even as a wrong option, since it gives the answer away. Wrong options are mistakes made in Italian, such as mixing up who said what or misreading a tense. Each tap question is in its own situation and answered by tapping alone.`,
+    id: "pt-it-group-conversation-taps-whole-italian",
+    userInput: {
+      language: "pt",
+      quickCount: 0,
+      quickFormat: "multipleChoice",
+      skills: [
+        {
+          description:
+            "Acompanhar conversas entre várias pessoas, entrar na fala e responder de maneira apropriada.",
+          level: "intermediate",
+          name: "Conversar com várias pessoas",
+        },
+      ],
+      tapCount: 3,
+      targetLanguage: "it",
+    },
+  },
+  {
     expectations: `Tap questions in US English for a skill whose cases are naturally long: telling which reasoning flaw an argument makes. A match board has 4 or 5 pairs, and each card is a word or a short label the learner takes in at a glance on a phone (a flaw's name and a few words that sum up a move, such as "Attacks the person"). A card that quotes a whole argument fails. Arguments that need a sentence each go to "select all that apply" (which of these arguments attack the person instead of the claim) instead of onto cards. The board is hard to guess because its pairs are close to each other (a straw man and a red herring, a false cause and a slippery slope), never because its cards are long. Each tap question is in its own situation and answered by tapping alone, and each flaw is named and explained correctly.`,
     id: "en-wordy-skill-taps-short-cards",
     userInput: {

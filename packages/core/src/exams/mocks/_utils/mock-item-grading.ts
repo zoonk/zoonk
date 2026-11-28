@@ -1,4 +1,4 @@
-import { type JsonObject } from "@zoonk/utils/json";
+import { type JsonObject, isJsonObject } from "@zoonk/utils/json";
 import { type ChoiceItem, gradeChoiceAnswer } from "../../../learner/_utils/choice-items";
 import { gradeMathAnswer, readRecordedMath } from "../../../learner/_utils/math-items";
 import { matchesAcceptedAnswer, toTypedSnapshot } from "../../../learner/_utils/typed-items";
@@ -14,7 +14,7 @@ import {
   toMockQuestionView,
 } from "./mock-items";
 
-const BLANK = { dontKnow: true } as const;
+export const MOCK_BLANK_ANSWER = { dontKnow: true } as const;
 
 export type MockItemGrade = {
   answered: boolean;
@@ -35,7 +35,7 @@ function gradeChoice({
 }): MockItemGrade {
   const choice = mockChoiceSchema.safeParse(answer).data ?? null;
   const shown = showMockChoice({ item, mock });
-  const graded = gradeChoiceAnswer({ answer: choice ?? BLANK, item, shown });
+  const graded = gradeChoiceAnswer({ answer: choice ?? MOCK_BLANK_ANSWER, item, shown });
   const several = shown.format === "multipleChoice" && choice && "selectedIndexes" in choice;
 
   const credit = several
@@ -52,7 +52,7 @@ function gradeChoice({
     answered: choice !== null,
     credit,
     isCorrect: graded.isCorrect,
-    recorded: choice ?? BLANK,
+    recorded: choice ?? MOCK_BLANK_ANSWER,
     snapshot: graded.snapshot,
   };
 }
@@ -75,7 +75,7 @@ function gradeMockAnswer({
       answered: number !== null,
       credit: Number(graded.isCorrect),
       isCorrect: graded.isCorrect,
-      recorded: number === null ? BLANK : graded.recorded,
+      recorded: number === null ? MOCK_BLANK_ANSWER : graded.recorded,
       snapshot: graded.snapshot,
     };
   }
@@ -88,7 +88,7 @@ function gradeMockAnswer({
       answered: text !== null,
       credit: Number(isCorrect),
       isCorrect,
-      recorded: text === null ? BLANK : { text },
+      recorded: text === null ? MOCK_BLANK_ANSWER : { text },
       snapshot: toTypedSnapshot({ explanation: null, item, text }),
     };
   }
@@ -110,7 +110,15 @@ export function gradeMockItem(input: Parameters<typeof gradeMockAnswer>[0]): Moc
 }
 
 export function readRecordedMockAnswer(value: unknown): MockAnswer | null {
-  const parsed = mockAnswerSchema.safeParse(value);
+  const answer = isJsonObject(value)
+    ? Object.fromEntries(
+        Object.entries(value).filter(
+          ([key]) => !["fixedMistakeIds", "mockMistakeId", "mockReplay"].includes(key),
+        ),
+      )
+    : value;
+
+  const parsed = mockAnswerSchema.safeParse(answer);
 
   if (parsed.success) {
     return parsed.data;

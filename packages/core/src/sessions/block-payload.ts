@@ -6,8 +6,8 @@ import { writingBlockSchema, writingPacingSchema } from "../exams/essays/writing
 import { brainPowerRewardSchema } from "../milestones/milestone-reward";
 import { MISTAKE_DRILL_KINDS } from "../mistakes/mistake-drills";
 import { CAPSULE_FORMATS } from "./capsules";
-import { mockIdentitySchema } from "./day-block";
-import { MISSION_KINDS } from "./missions/catalog";
+import { mockIdentitySchema, returningLessonSchema } from "./day-block";
+import { savedMissionKindsSchema } from "./missions/catalog";
 
 const capsuleSchema = z.object({
   format: z.enum(CAPSULE_FORMATS),
@@ -77,12 +77,14 @@ const blockPayloadSchema = z.object({
     .default(null),
   /** Retain the earned mission moment so retries and redraws return the same result. */
   missionResult: z
-    .object({ completed: z.array(z.enum(MISSION_KINDS)), fullMealPaid: z.boolean() })
+    .object({ completed: savedMissionKindsSchema, fullMealPaid: z.boolean() })
     .nullable()
     .default(null),
+  mistakeIds: z.array(z.string()).default([]),
   mockPreparationReview: z.literal(true).optional(),
   /** Wrong answers cancel right ones and blanks are allowed; swipe capsules score net separately. */
   netScored: z.boolean().default(false),
+  patternId: uuidSchema().nullable().default(null),
   /** Unsettled placement questions lead the first week's sessions. */
   placementItemIds: z.array(z.string()).default([]),
   placementRecheckItemIds: z.array(z.string()).optional(),
@@ -94,6 +96,8 @@ const blockPayloadSchema = z.object({
   refresh: z.boolean().default(false),
   /** A short lesson before a boss rematch, on the skills the lost duel missed. */
   reinforcement: z.boolean().default(false),
+  replacedOnlyLesson: z.literal(true).optional(),
+  returning: returningLessonSchema.nullable().default(null),
   /** Lays out its questions' options in an order of its own. Unset on blocks made before that, whose answers point into the stored order. */
   shufflesOptions: z.literal(true).optional(),
   skillIds: z.array(z.string()).default([]),
@@ -114,6 +118,8 @@ const blockPayloadSchema = z.object({
   title: z.string().nullable().default(null),
   /** A practice block's topics as its plan names them, most asked first: what its row says it practises. */
   topics: z.array(z.string()).default([]),
+  /** Mistakes a run served today that couldn't be checked (no model grade left): served, never answered. */
+  uncheckedMistakeIds: z.array(z.string()).default([]),
   /** Nothing is due; use weak studied topics rather than leaving the day empty. */
   weakest: z.boolean().default(false),
   writing: writingBlockSchema.optional(),
@@ -125,6 +131,21 @@ const blockPayloadSchema = z.object({
 export type BlockPayload = z.infer<typeof blockPayloadSchema>;
 export type BlockCapsule = z.infer<typeof capsuleSchema>;
 export type BlockCheckpoint = z.infer<typeof checkpointSchema>;
+
+export function isRemedialPractice({
+  mistakeIds,
+  patternId,
+}: Pick<BlockPayload, "mistakeIds" | "patternId">): boolean {
+  return mistakeIds.length > 0 || patternId !== null;
+}
+
+/** The block's mistakes a run still has to serve today. */
+export function getUnservedMistakeIds({
+  mistakeIds,
+  uncheckedMistakeIds,
+}: Pick<BlockPayload, "mistakeIds" | "uncheckedMistakeIds">): string[] {
+  return mistakeIds.filter((id) => !uncheckedMistakeIds.includes(id));
+}
 
 export function hasWritingProgress({ writing }: BlockPayload): boolean {
   return Boolean(writing?.admissionId || writing?.draft);

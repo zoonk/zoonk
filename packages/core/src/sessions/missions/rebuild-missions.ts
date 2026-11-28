@@ -135,21 +135,13 @@ async function isEligible({
     return false;
   }
 
-  const candidate = facts.candidates.find(
-    (entry) =>
-      entry.kind === pick.kind &&
-      (!pick.anchor.patternId || entry.anchor.patternId === pick.anchor.patternId),
-  );
+  const candidate = facts.candidates.find((entry) => entry.kind === pick.kind);
 
   if (pick.kind === "call") {
     return canCall({ client, pick, session });
   }
 
   if (!candidate && pick.kind !== "finishChapter" && pick.kind !== "weakSpot") {
-    return false;
-  }
-
-  if (pick.kind === "fixMistake" && facts.readyMistakeCount < pick.total) {
     return false;
   }
 

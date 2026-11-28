@@ -1,4 +1,5 @@
 import {
+  type AttemptEvidence,
   type MasteryState,
   Prisma,
   type StudyBlockKind,
@@ -28,11 +29,17 @@ export type BuiltBlock = {
     chapterId: string | null;
     drills: readonly { itemIds: readonly string[] }[];
     itemIds: readonly string[];
+    placementItemIds: readonly string[];
     title: string | null;
   };
 };
 
-export type BlockAnswer = { answer: Prisma.InputJsonObject; itemId: string; skillId: string };
+export type BlockAnswer = {
+  answer: Prisma.InputJsonObject;
+  evidence: AttemptEvidence | null;
+  itemId: string;
+  skillId: string;
+};
 
 export type BuiltDay = {
   /** By the block's position. */
@@ -41,6 +48,7 @@ export type BuiltDay = {
   freshStart: StudyFreshStart | null;
   missions: Prisma.InputJsonObject;
   planVersion: number | null;
+  plannedMinutes: number;
 };
 
 export type FinishedBlock = BuiltBlock & {
@@ -66,12 +74,39 @@ function todayBlockId(learner: SeedLearner, position: number): string {
   return seedId(`learner:${learner.key}:session:today:block:${position}`);
 }
 
-function getBlockStatus(session: SeedSession, position: number): StudyBlockStatus {
-  if (position < session.finished) {
+function getBlockStatus(session: SeedSession, turn: number): StudyBlockStatus {
+  if (turn < session.finished) {
     return "completed";
   }
 
-  return position === session.finished && session.started ? "active" : "pending";
+  return turn === session.finished && session.started ? "active" : "pending";
+}
+
+function isMistakesRun(block: BuiltBlock): boolean {
+  return Array.isArray(block.payload.mistakeIds) && block.payload.mistakeIds.length > 0;
+}
+
+/** The learner stops at the mistakes run after their completed work, leaving its questions open. */
+function orderOfStudy({
+  blocks,
+  session,
+}: {
+  blocks: readonly BuiltBlock[];
+  session: SeedSession;
+}) {
+  const mistakes = blocks.filter((block) => isMistakesRun(block));
+
+  if (mistakes.length === 0) {
+    return { order: blocks, progress: session };
+  }
+
+  const ordinary = blocks.filter((block) => !isMistakesRun(block));
+  const finished = Math.min(session.finished, ordinary.length);
+
+  return {
+    order: [...ordinary.slice(0, finished), ...mistakes, ...ordinary.slice(finished)],
+    progress: { ...session, finished },
+  };
 }
 
 function getSessionStatus(session: SeedSession, blocks: readonly BuiltBlock[]): StudySessionStatus {
@@ -103,27 +138,26 @@ function toStartSnapshot(scope: LearnerScope, earnedToday: number): Prisma.Input
 
 function placeBlocks(
   scope: LearnerScope,
-  { blocks, session }: { blocks: readonly BuiltBlock[]; session: SeedSession },
+  { blocks, order, progress }: { blocks: readonly BuiltBlock[] } & ReturnType<typeof orderOfStudy>,
 ) {
-  const minutesBefore = (position: number) =>
-    blocks.slice(0, position).reduce((sum, block) => sum + block.estimatedMinutes, 0);
+  const minutesBefore = (turn: number) =>
+    order.slice(0, turn).reduce((sum, block) => sum + block.estimatedMinutes, 0);
 
   return blocks.map((block, position) => {
-    const status = getBlockStatus(session, position);
+    const turn = order.indexOf(block);
+    const status = getBlockStatus(progress, turn);
     const isStarted = status !== "pending";
 
     return {
-      // Core counts an active block that has no focus clock from when it started, hours ago by the
-      // time anyone opens a seeded day. The learner left this one, so its clock is stopped.
+      // Seeded work resumes with a paused clock instead of counting the time since its start.
       block:
         status === "active"
           ? { ...block, payload: { ...block.payload, timing: { activeAt: null, elapsedMs: 0 } } }
           : block,
-      completedAt:
-        status === "completed" ? studyMoment(scope, 0, minutesBefore(position + 1)) : null,
+      completedAt: status === "completed" ? studyMoment(scope, 0, minutesBefore(turn + 1)) : null,
       id: todayBlockId(scope.learner, position),
       position,
-      startedAt: isStarted ? studyMoment(scope, 0, minutesBefore(position)) : null,
+      startedAt: isStarted ? studyMoment(scope, 0, minutesBefore(turn)) : null,
       status,
     };
   });
@@ -155,18 +189,21 @@ function toBlockAttempts(
 ): Prisma.AttemptCreateManyInput[] {
   const { learner, userId } = scope;
 
-  return blocks.flatMap(({ answers, completedAt, startedAt }) => {
+  return blocks.flatMap(({ answers, completedAt, payload, startedAt }) => {
     const step = (completedAt.getTime() - startedAt.getTime()) / (answers.length + 1);
 
-    return answers.map(({ answer, itemId, skillId }, index) => {
+    return answers.map(({ answer, evidence, itemId, skillId }, index) => {
       const answeredAt = new Date(startedAt.getTime() + step * (index + 1));
+      const isPlacement = payload.placementItemIds.includes(itemId);
 
       return {
         answer,
         answeredAt,
         durationMs: Math.round(step),
+        evidence,
         fromLesson: false,
         isCorrect: true,
+        isPlacement,
         itemId,
         skillId,
         studySessionId: sessionId,
@@ -184,8 +221,9 @@ async function writeDay(
 ): Promise<FinishedBlock[]> {
   const { learner, prisma, userId } = scope;
   const id = todaySessionId(learner);
-  const placed = placeBlocks(scope, { blocks: day.blocks, session });
-  const status = getSessionStatus(session, day.blocks);
+  const { order, progress: seedProgress } = orderOfStudy({ blocks: day.blocks, session });
+  const placed = placeBlocks(scope, { blocks: day.blocks, order, progress: seedProgress });
+  const status = getSessionStatus(seedProgress, day.blocks);
   const startedAt = status === "planned" ? null : studyMoment(scope, 0);
 
   const finished = placed.flatMap(({ block, completedAt, position, startedAt: blockStart }) =>
@@ -206,7 +244,7 @@ async function writeDay(
       localDate: scopeDay(scope, 0),
       missions: day.missions,
       planVersion: day.planVersion,
-      plannedMinutes: day.blocks.reduce((sum, block) => sum + block.estimatedMinutes, 0),
+      plannedMinutes: day.plannedMinutes,
       startSnapshot: startedAt ? toStartSnapshot(scope, earnedToday) : Prisma.DbNull,
       startedAt,
       status,

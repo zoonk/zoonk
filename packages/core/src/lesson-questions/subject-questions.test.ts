@@ -8,6 +8,7 @@ import { trackServerEvent } from "../analytics/server";
 import { updateMemoryFromActivity } from "../memory/update-memory-from-activity";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { createGoalPlan } from "../plans/create-goal-plan";
+import { buddyTarget } from "./_test-utils/buddy-target";
 import { parseLessonQuestionContextSnapshot } from "./_utils/context-snapshot-schema";
 import { type LessonQuestionContextInput, type TutorTarget } from "./contract";
 import { createLessonQuestion } from "./create-lesson-question";
@@ -101,9 +102,10 @@ describe("asking the buddy about a subject", () => {
       getLessonQuestionThread({ target: { ...target, subjectKey: "genetica" } }),
     ).resolves.toStrictEqual({ status: "ready", thread: null });
 
-    await expect(
-      getLessonQuestionThread({ target: { conversationId: null, goalId: goal.id, kind: "plan" } }),
-    ).resolves.toStrictEqual({ status: "ready", thread: null });
+    await expect(getLessonQuestionThread({ target: buddyTarget(goal.id) })).resolves.toStrictEqual({
+      status: "ready",
+      thread: null,
+    });
 
     await expect(getLessonQuestion({ questionId })).resolves.toMatchObject({
       question: { id: questionId },

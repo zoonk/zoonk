@@ -22,7 +22,7 @@ describe(loadFirstSteps, () => {
       }),
     );
 
-    expect(counts.result).toMatchObject({ done: 0, total: 4 });
+    expect(counts.result).toMatchObject({ done: 0, total: 3 });
     expect(counts.writes).toBe(0);
   });
 });

@@ -157,7 +157,6 @@ describe("what a mission still asks", () => {
   });
 
   it.each([
-    ["fixMistake", 3, 6],
     ["askBuddy", 1, 2],
     ["pronunciation", 1, 3],
   ] as const)(

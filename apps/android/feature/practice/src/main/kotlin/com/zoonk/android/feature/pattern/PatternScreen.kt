@@ -48,6 +48,8 @@ import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
 import com.zoonk.android.feature.certificates.naming
 import com.zoonk.android.feature.feedback.rememberSaveFailureReport
 import com.zoonk.android.feature.player.LessonTitle
+import com.zoonk.android.feature.player.SessionEndActions
+import com.zoonk.android.feature.player.leaveTaskFor
 import com.zoonk.android.feature.practice.RunFinished
 import com.zoonk.android.feature.practice.RunFrame
 import com.zoonk.android.feature.practice.RunIntro
@@ -104,11 +106,21 @@ fun PatternScreen(
         return
     }
     val viewModel =
-        viewModel(key = "pattern:$patternId:${runAccount(app)}") { PatternViewModel(patternId, app.patterns, createSavedStateHandle()) }
+        viewModel(key = "pattern:$patternId:${route.sessionId}:${runAccount(app)}") {
+            PatternViewModel(
+                patternId,
+                app.patterns,
+                createSavedStateHandle(),
+                sessionId = route.sessionId?.let { runCatching { UUID.fromString(it) }.getOrNull() },
+                steps = app.studyOpener,
+            )
+        }
     val state by viewModel.state.collectAsStateWithLifecycle()
     val closed by viewModel.closed.collectAsStateWithLifecycle()
+    val move by viewModel.sessionMove.collectAsStateWithLifecycle()
 
     LaunchedEffect(closed) { if (closed) navigator.closeTask() }
+    LaunchedEffect(move.leaving) { move.leaving?.let(navigator::leaveTaskFor) }
     BackHandler(onBack = viewModel::leave)
 
     when (val drill = state) {
@@ -158,7 +170,7 @@ internal fun PatternContent(
     val onClose = viewModel::leave
     when {
         drill.isTypos -> TyposPattern(drill.pattern, onClose)
-        step is DrillStep.Result -> PatternResult(drill.pattern.title, step.result, app, onClose, onSeePlus)
+        step is DrillStep.Result -> PatternResult(drill.pattern.title, step.result, viewModel, app, onClose, onSeePlus)
         step is DrillStep.Question -> PatternQuestion(drill, step.index, viewModel, app, onClose)
         else -> PatternIntroPage(drill.pattern, onStart = viewModel::start, onClose = onClose)
     }
@@ -434,10 +446,13 @@ private fun AlsoCameUp(examples: List<MistakePatternExamplesInner>) {
 private fun PatternResult(
     title: String,
     result: MistakePatternPracticeResult,
+    viewModel: PatternViewModel,
     app: AppContainer,
     onClose: () -> Unit,
     onSeePlus: () -> Unit,
 ) {
+    val move by viewModel.sessionMove.collectAsStateWithLifecycle()
+
     MomentAfterCeremony(app, result.ceremony, result.certificates.map { it.naming }, onSeePlus) { buddy ->
         RunFinished(
             title = stringResource(R.string.practice_done_title),
@@ -445,6 +460,13 @@ private fun PatternResult(
             saving = false,
             onClose = onClose,
             headerTitle = title,
+            // From its row on Today, the drill ends as the day's other blocks do, on the next stop.
+            actions =
+                if (viewModel.leadsOn) {
+                    { SessionEndActions(move, completed = false, canStop = true, viewModel::stopSession, viewModel::continueSession) }
+                } else {
+                    null
+                },
             detail = stringResource(if (result.correct == result.total) R.string.pattern_got_it else R.string.pattern_keep_going),
         ) {
             MomentReadouts(brainPower = result.brainPower, score = MomentScore(result.total.toInt(), result.correct.toInt()))

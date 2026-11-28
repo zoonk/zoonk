@@ -1,5 +1,58 @@
 import Foundation
 
+/// Which open mistakes a run asks: the notebook's, one skill's, a day block's, or a finished mock's.
+enum MistakePracticeScope: Hashable, Sendable {
+  case notebook
+  case skill(String)
+  case block(String)
+  case mock(String)
+
+  init(skillId: String?, blockId: String?, mockId: String?) {
+    if let skillId {
+      self = .skill(skillId)
+    } else if let blockId {
+      self = .block(blockId)
+    } else if let mockId {
+      self = .mock(mockId)
+    } else {
+      self = .notebook
+    }
+  }
+
+  var skillId: String? {
+    if case .skill(let id) = self { id } else { nil }
+  }
+
+  var blockId: String? {
+    if case .block(let id) = self { id } else { nil }
+  }
+
+  var mockId: String? {
+    if case .mock(let id) = self { id } else { nil }
+  }
+
+  /// "Practice again" only while the server says a mistake from an earlier day is still open in
+  /// the scope, the one case where another run can fix something today. A day's block never
+  /// offers it: the day goes on.
+  func offersPracticeAgain(hasMorePractice: Bool?) -> Bool {
+    blockId == nil && hasMorePractice == true
+  }
+
+  /// A day's practice whose mistakes were all fixed elsewhere: its run's title and its row's on
+  /// Today.
+  static let alreadyFixed = LocalizedStringResource(
+    "Already fixed", table: "Practice",
+    comment:
+      "Title when a day's practice of mistakes opens and every one of its mistakes was already fixed elsewhere."
+  )
+
+  /// The goal the run names: a mock's run takes it from the finished sitting, so it still works
+  /// after the learner switched goals.
+  func goal(_ activeGoalId: String?) -> String? {
+    mockId == nil ? activeGoalId : nil
+  }
+}
+
 struct MistakePracticeStep: Equatable {
   let entry: MistakePracticeEntry
   let isFirstOfEntry: Bool
@@ -20,12 +73,6 @@ enum MistakePracticePhase: Equatable {
   var failed: SentAnswer? {
     if case .answerFailed(let sent) = self { sent } else { nil }
   }
-}
-
-enum PracticeEndNote: Equatable {
-  case missed
-  case missedAndUnreached
-  case unreached
 }
 
 /// The run keeps the questions it started with: a fixed mistake leaves the server's practice, not the
@@ -152,15 +199,9 @@ struct MistakePracticeState: Equatable {
     phase = .ended(summary)
   }
 
-  var endNote: PracticeEndNote? {
-    let missed = verdicts.contains { $0 != .right }
-    let unreached = verdicts.count < steps.count
-    switch (missed, unreached) {
-    case (true, true): return .missedAndUnreached
-    case (true, false): return .missed
-    case (false, true): return .unreached
-    case (false, false): return nil
-    }
+  /// The run's answers graded right, for its score.
+  var rightAnswers: Int {
+    verdicts.filter { $0 == .right }.count
   }
 
   var segments: [TaskSegment] {

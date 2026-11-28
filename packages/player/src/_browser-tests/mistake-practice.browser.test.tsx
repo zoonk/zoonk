@@ -6,6 +6,7 @@ import {
   type Actions,
   practiceFeedback as feedback,
   openPractice,
+  practiceEntries,
 } from "../_test-utils/mistake-practice";
 import { languageStep, spokenAnswerStep, teachingStep } from "../preview/preview-steps";
 
@@ -145,7 +146,7 @@ describe("exact lesson mistake practice", () => {
     await expect.element(page.getByRole("region", { name: "Answer feedback" })).toBeVisible();
     await page.getByRole("button", { name: /^Continue/u }).click();
     await expect.element(page.getByRole("heading", { name: "Practice done" })).toBeVisible();
-    expect(actions.finish).not.toHaveBeenCalled();
+    expect(actions.finish).toHaveBeenCalledExactlyOnceWith({ answerIds: [] });
   });
 
   it("waits on Continue while a lesson's board is played, then names its first wrong try", async () => {
@@ -357,5 +358,128 @@ describe("exact lesson mistake practice", () => {
     await expect.element(verdict).toBeVisible();
     await expect.element(verdict).toMatchTextContent(/Not quite/u);
     await expect.element(verdict).toMatchTextContent(/How much is the rent\?/u);
+  });
+});
+
+const SUMMARY = {
+  brainPower: 0,
+  ceremony: null,
+  certificates: [],
+  correct: 0,
+  hasMorePractice: false,
+  missionMoment: null,
+  reached: { energy: null, level: null },
+  seconds: 30,
+  total: 1,
+};
+
+async function answerAndContinue() {
+  await page.getByRole("textbox").fill("A paraphrase");
+  await page.getByRole("button", { name: /^Check/u }).click();
+  await expect.element(page.getByRole("region", { name: "Answer feedback" })).toBeVisible();
+  await page.getByRole("button", { name: /^Continue/u }).click();
+}
+
+describe("the end of a mistake practice run", () => {
+  afterEach(() => vi.restoreAllMocks());
+
+  const MORE = { ...SUMMARY, hasMorePractice: true };
+
+  it("leads with Done and loads a fresh batch for Practice again, saying so when that fails", async () => {
+    const again = vi
+      .fn<Actions["again"]>()
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce(practiceEntries(teachingStep("typedAnswer")));
+
+    openPractice(teachingStep("typedAnswer"), {
+      again,
+      finish: vi.fn<Actions["finish"]>().mockResolvedValue(MORE),
+    });
+
+    await answerAndContinue();
+
+    await expect
+      .element(page.getByRole("link", { name: /^Done/u }))
+      .toHaveAttribute("href", "/mistakes");
+
+    await page.getByRole("button", { name: /^Practice again/u }).click();
+
+    await expect
+      .element(page.getByText("That didn't go through. Your answers are kept."))
+      .toBeVisible();
+
+    await page.getByRole("button", { name: /^Practice again/u }).click();
+    await expect.element(page.getByRole("textbox")).toBeVisible();
+    expect(again).toHaveBeenCalledTimes(2);
+  });
+
+  it("offers no Practice again when only today's misses are left, as the finish says", async () => {
+    openPractice(teachingStep("typedAnswer"), {
+      answer: vi.fn<Actions["answer"]>().mockResolvedValue(feedback(false)),
+      finish: vi.fn<Actions["finish"]>().mockResolvedValue(SUMMARY),
+    });
+
+    await answerAndContinue();
+    await expect.element(page.getByRole("link", { name: /^Done/u })).toBeVisible();
+
+    await expect
+      .element(page.getByRole("button", { name: /^Practice again/u }))
+      .not.toBeInTheDocument();
+  });
+
+  it("scores a batch from its own answers when the finish counted nothing new", async () => {
+    openPractice(teachingStep("typedAnswer"), {
+      finish: vi
+        .fn<Actions["finish"]>()
+        .mockResolvedValue({ ...SUMMARY, brainPower: 0, correct: 0, total: 0 }),
+    });
+
+    await answerAndContinue();
+    await expect.element(page.getByText(/of 1 right/u)).toBeVisible();
+  });
+
+  it("goes on to the day's next stop from a day's block", async () => {
+    openPractice(
+      teachingStep("typedAnswer"),
+      { finish: vi.fn<Actions["finish"]>().mockResolvedValue(MORE) },
+      undefined,
+      undefined,
+      { dayBlock: true, doneHref: "/session" },
+    );
+
+    await answerAndContinue();
+
+    await expect
+      .element(page.getByRole("link", { name: /^Continue/u }))
+      .toHaveAttribute("href", "/session");
+
+    await expect
+      .element(page.getByRole("button", { name: /^Practice again/u }))
+      .not.toBeInTheDocument();
+  });
+
+  it("says an emptied day's block is already fixed, holding it until its completion goes through", async () => {
+    const finish = vi
+      .fn<Actions["finish"]>()
+      .mockRejectedValueOnce(new Error("offline"))
+      .mockResolvedValueOnce(SUMMARY);
+
+    openPractice(null, { finish }, undefined, undefined, { dayBlock: true, doneHref: "/session" });
+
+    await expect.element(page.getByRole("heading", { name: "Already fixed" })).toBeVisible();
+
+    await expect
+      .element(page.getByText("We couldn't mark it done. Check your connection."))
+      .toBeVisible();
+
+    await page.getByRole("button", { name: "Try again" }).click();
+    await expect.element(page.getByRole("heading", { name: "Already fixed" })).toBeVisible();
+
+    await expect
+      .element(page.getByRole("link", { name: /^Done/u }))
+      .toHaveAttribute("href", "/session");
+
+    expect(finish).toHaveBeenCalledTimes(2);
+    expect(finish).toHaveBeenLastCalledWith({ answerIds: [] });
   });
 });

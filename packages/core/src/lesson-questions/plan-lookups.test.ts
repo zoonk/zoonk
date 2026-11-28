@@ -13,6 +13,7 @@ import { mockSession } from "../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { createSetUpGoalPlan } from "../plans/_test-utils/set-up-plan";
 import { findPlanTimeToCover } from "../plans/get-time-advice";
+import { buddyTarget } from "./_test-utils/buddy-target";
 import { claimLessonQuestionAnswer } from "./answer-lifecycle";
 import { createLessonQuestion } from "./create-lesson-question";
 import { lookUpTutorData } from "./look-up-tutor-data";
@@ -83,7 +84,7 @@ async function answering({ goalId, userId }: { goalId: string; userId: string })
 
   const created = await createLessonQuestion({
     input: { context: { kind: "plan" }, question: "What's ahead?", requestId: randomUUID() },
-    target: { conversationId: null, goalId, kind: "plan" },
+    target: buddyTarget(goalId),
   });
 
   if (created.status !== "created") {

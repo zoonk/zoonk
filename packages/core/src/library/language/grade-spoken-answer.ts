@@ -213,16 +213,20 @@ async function recordSpokenGrade({
 > {
   const question = `${step.content.prompt}\n${step.targetText}`;
 
-  const evidence = await loadLanguageStepEvidence({
-    isCorrect: grade.score >= SPOKEN_EVIDENCE_SCORE,
-    lesson: { level: step.level, targetLanguage: step.targetLanguage },
-    step: { kind: "spokenAnswer", wordId: null },
-    userId,
-  });
+  const [evidence, run] = await Promise.all([
+    loadLanguageStepEvidence({
+      isCorrect: grade.score >= SPOKEN_EVIDENCE_SCORE,
+      lesson: { level: step.level, targetLanguage: step.targetLanguage },
+      step: { kind: "spokenAnswer", wordId: null },
+      userId,
+    }),
+    findOpenLessonRun({ lessonId: step.lessonId, userId }),
+  ]);
 
   const outcome = await recordAnswerOnce({
     answer: {
       answer: { kind: "spoken", transcript: grade.transcript },
+      answeredAt: new Date(receivedAt),
       attemptId: grade.attemptId,
       graded: { durationMs, isCorrect: grade.isCorrect, score: grade.score },
       language: step.learnerLanguage,
@@ -237,6 +241,9 @@ async function recordSpokenGrade({
           replay: step.replay,
         },
       },
+      ...(run
+        ? { lessonRun: { lessonId: step.lessonId, startedAt: run.startedAt } }
+        : { evidence: "guided" }),
       purpose: "learning",
       skillId: step.skillId,
       stepId: step.id,

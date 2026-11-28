@@ -119,14 +119,16 @@ export async function completeLessonContent({
 
 export async function releaseStaleLessonClaims({
   lessonId,
+  setAside = false,
   staleRunId,
 }: {
   lessonId: string;
+  setAside?: boolean;
   staleRunId: string;
 }): Promise<boolean> {
   const [content, spec] = await prisma.$transaction([
     prisma.lesson.updateMany({
-      data: { contentStatus: "failed" },
+      data: { contentStatus: "failed", ...(setAside && { setAsideAt: new Date() }) },
       where: {
         contentRunId: staleRunId,
         contentStatus: { in: ["pending", "running"] },

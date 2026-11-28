@@ -19,12 +19,14 @@ import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { ContentFeedbackMenu } from "../feedback/content-feedback-menu";
 import { type QuestionTutor } from "../questions/question-tutor";
 import { usePreloadMath } from "../rich-text/use-preload-math";
+import { FailedMoment } from "../session/failed-moment";
 import { type MomentCeremony } from "../session/moment-ceremony";
 import { QuestionBlockHeader } from "../session/question-block/question-block-header";
 import { type LessonHref } from "./drill/drill-types";
 import {
   type PracticeEntry,
-  getPracticeEndNote,
+  canPracticeAgain,
+  getPracticeScore,
   getPracticeSegments,
 } from "./mistake-practice-state";
 import { NothingToPractice, PracticeDone, PracticeSaving } from "./practice-done";
@@ -37,15 +39,24 @@ import { getPracticeTutorItem } from "./practice-tutor-item";
 import { type MistakePracticeActions, useMistakePractice } from "./use-mistake-practice";
 
 export type { LessonPracticeRenderer } from "./practice-step";
-export type { MistakePracticeFeedback, MistakePracticeSummary } from "./mistake-practice-state";
+export type {
+  MistakePracticeFeedback,
+  MistakePracticeSummary,
+  PracticeEntry,
+} from "./mistake-practice-state";
 
 type Run = ReturnType<typeof useMistakePractice>;
+
+/** The run asks nothing more: its finish is out, failed or done. */
+function isOver(kind: Run["state"]["phase"]["kind"]): boolean {
+  return kind === "ending" || kind === "finishFailed" || kind === "ended";
+}
 
 function EndButton({ backHref, run }: { backHref: string; run: Run }) {
   const t = useExtracted();
   const { phase } = run.state;
 
-  if (run.state.answerIds.length === 0 || phase.kind === "ending" || phase.kind === "ended") {
+  if (run.state.answerIds.length === 0 || isOver(phase.kind)) {
     return <TaskClose href={backHref} />;
   }
 
@@ -67,8 +78,7 @@ function QuestionMenu({ run }: { run: Run }) {
   if (
     !run.step ||
     phase.kind === "idea" ||
-    phase.kind === "ending" ||
-    phase.kind === "ended" ||
+    isOver(phase.kind) ||
     (timed && phase.kind !== "feedback")
   ) {
     return null;
@@ -115,13 +125,14 @@ function PracticeBar({
 
 /** A question's own phases (answering, checking, feedback) are one screen. */
 function getScreen(kind: Run["state"]["phase"]["kind"]) {
-  return kind === "idea" || kind === "ending" || kind === "ended" ? kind : "question";
+  return kind === "idea" || isOver(kind) ? kind : "question";
 }
 
 function PracticeBody({
   askButton,
-  backHref,
+  doneHref,
   buddy,
+  dayBlock,
   lessonHref,
   renderCeremony,
   renderLesson,
@@ -129,34 +140,72 @@ function PracticeBody({
   trueFalseLabels,
 }: {
   askButton: React.ReactNode;
-  backHref: string;
+  doneHref: string;
   buddy?: LearnBuddy | null;
+  dayBlock: boolean;
   lessonHref: LessonHref | null;
   renderCeremony?: MomentCeremony;
   renderLesson: LessonPracticeRenderer;
   run: Run;
   trueFalseLabels: TrueFalseLabels;
 }) {
+  const t = useExtracted();
   const { phase } = run.state;
   useScreenAtTop(`${run.state.index}:${getScreen(phase.kind)}`);
 
-  if (run.steps.length === 0) {
-    return <NothingToPractice backHref={backHref} />;
+  // An emptied block has no answers to keep: only marking it done didn't go through.
+  if (phase.kind === "finishFailed") {
+    const answered = run.state.answerIds.length > 0;
+
+    return (
+      <FailedMoment
+        failures={run.state.failures}
+        message={
+          answered
+            ? undefined
+            : t({
+                description:
+                  "Under \"Already fixed\" when marking the day's practice done didn't reach the server.",
+                message: "We couldn't mark it done. Check your connection.",
+              })
+        }
+        onRetry={run.end}
+        title={
+          answered
+            ? t({
+                description:
+                  "Title of a practice of mistakes whose end didn't reach the server, so it doesn't count yet.",
+                message: "Your practice isn't saved yet",
+              })
+            : t({
+                description:
+                  "Title when a day's practice of mistakes opens and every one of its mistakes was already fixed elsewhere.",
+                message: "Already fixed",
+              })
+        }
+      />
+    );
   }
 
   if (phase.kind === "ending") {
     return <PracticeSaving />;
   }
 
+  if (run.steps.length === 0) {
+    return <NothingToPractice dayBlock={dayBlock} doneHref={doneHref} />;
+  }
+
   if (phase.kind === "ended" || !run.step) {
     return (
       <PracticeDone
-        backHref={backHref}
+        again={!dayBlock && canPracticeAgain(run.state) ? run.again : null}
         buddy={buddy}
+        dayBlock={dayBlock}
+        doneHref={doneHref}
         fixed={run.state.fixedIds.length}
-        note={getPracticeEndNote(run.state)}
         reached={run.state.reached}
         renderCeremony={renderCeremony}
+        score={getPracticeScore(run.state)}
         summary={phase.kind === "ended" ? phase.summary : null}
       />
     );
@@ -180,10 +229,16 @@ function PracticeBody({
   );
 }
 
+/**
+ * A day's block run (`dayBlock`) waits for its completion before it's over and offers no Practice
+ * again: it goes on to the day's next stop.
+ */
 export function MistakePracticeRun({
   actions,
   backHref,
   buddy,
+  dayBlock = false,
+  doneHref,
   lessonHref,
   practice,
   renderCeremony,
@@ -194,6 +249,9 @@ export function MistakePracticeRun({
   actions: MistakePracticeActions;
   backHref: string;
   buddy?: LearnBuddy | null;
+  dayBlock?: boolean;
+  /** Where the done screen's main action goes; a day's block goes on to the day's next stop. */
+  doneHref?: string;
   lessonHref: LessonHref | null;
   practice: PracticeEntry[];
   renderCeremony?: MomentCeremony;
@@ -202,11 +260,11 @@ export function MistakePracticeRun({
   tutor?: QuestionTutor | null;
 }) {
   const t = useExtracted();
-  const run = useMistakePractice({ actions, practice });
+  const run = useMistakePractice({ actions, dayBlock, practice });
   const { phase } = run.state;
-  usePreloadMath(practice);
+  usePreloadMath(run.state.steps);
 
-  const asking = phase.kind !== "ending" && phase.kind !== "ended" && run.step !== null;
+  const asking = !isOver(phase.kind) && run.step !== null;
   const asideRoot = tutor && asking ? getTaskAsideRootProps() : null;
 
   const content = (
@@ -220,13 +278,14 @@ export function MistakePracticeRun({
         menu={<QuestionMenu run={run} />}
         segments={getPracticeSegments(run.state)}
         title={t("Practice mistakes")}
-        total={phase.kind === "ending" || phase.kind === "ended" ? 0 : run.steps.length}
+        total={isOver(phase.kind) ? 0 : run.steps.length}
       />
 
       <PracticeBody
         askButton={tutor?.button}
-        backHref={backHref}
+        doneHref={doneHref ?? backHref}
         buddy={buddy}
+        dayBlock={dayBlock}
         lessonHref={lessonHref}
         renderCeremony={renderCeremony}
         renderLesson={renderLesson}

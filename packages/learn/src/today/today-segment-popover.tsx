@@ -14,6 +14,7 @@ import { KindMark, type LearnKind } from "../_components/kind-tile";
 import { FactSegments } from "../_components/task-meta";
 import { toLabelCase } from "../_utils/label-case";
 import { useFormatDuration } from "../_utils/time-format";
+import { isAlreadyFixed } from "../session/block-kind";
 import { type DayStepPart } from "../session/day-meter-parts";
 import { type DayStep } from "../session/session-types";
 import { useBlockTitle } from "../session/use-block-copy";
@@ -54,7 +55,8 @@ function useSegmentFacts() {
   const isGettingReady = useStepGettingReady();
 
   return ({ block, state }: { block: DayStep; state: DaySegmentState }): SegmentFacts => {
-    const time = formatDuration(block.estimatedMinutes);
+    // An already fixed row has no time left to spend, so it states no time.
+    const time = isAlreadyFixed(block) ? undefined : formatDuration(block.estimatedMinutes);
 
     if (state === "done") {
       return { status: t("Done") };

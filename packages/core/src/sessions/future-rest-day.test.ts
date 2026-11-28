@@ -166,6 +166,10 @@ describe("an unstarted day after a plan change", () => {
     await followPlanToday({ changeId: proposal.id, context });
 
     await expect(
+      prisma.studySession.findUniqueOrThrow({ include: SESSION_INCLUDE, where: { id: before.id } }),
+    ).resolves.toStrictEqual(after);
+
+    await expect(
       prisma.planChange.findUniqueOrThrow({ where: { id: proposal.id } }),
     ).resolves.toStrictEqual(savedChange);
   });

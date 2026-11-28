@@ -15,9 +15,7 @@
   "buddy_page_first_challenge": "1172e34a186f67e52915b025f87d0dfe885d195e43e4e89c34bc6665764c2f92",
   "buddy_page_first_essay": "db85b2b92d19c05578bf3df834ede82f3cf294a794a260524190eb02dfcacd81",
   "buddy_page_first_lesson": "8e016c698be4924c1aca5ffff4634909a75494d7caeb2ebd233e17f001db953e",
-  "buddy_page_first_mistake": "5e1f1d6ec7f79852d22faed14b6305d44c0fd07d7758c10527ce57cb4a756924",
   "buddy_page_first_mock": "82fe0bb5ebb386f6f6eb22e4278948e0ef944e9d8eb954297ef685d899d1e6c8",
-  "buddy_page_first_pattern": "96720280a8f2555f4a5b16a0593c214c9d80d7217fd30de76a3b6f04ecfece7d",
   "buddy_page_first_review": "6ddaf3c5adb06357f4575269b1b28e94a11aff0f38f6540b4a652258ecce322c",
   "buddy_page_first_steps": "9390a97334515cc339b7f805da0f98d1f235ed64185a892239dc1473acace12a",
   "buddy_page_first_steps_done": "9fce66cb725292cd5fd6585d827f7deb0d50313c099530830d2b258bec2db633",
@@ -87,8 +85,6 @@
     <string name="buddy_page_first_steps_done">Her şeyi denedin.</string>
     <string name="buddy_page_first_lesson">İlk dersini bitir</string>
     <string name="buddy_page_first_review">İlk tekrarını yap</string>
-    <string name="buddy_page_first_mistake">İlk hatanı düzelt</string>
-    <string name="buddy_page_first_pattern">Tekrarlayan bir hata üzerinde çalış</string>
     <string name="buddy_page_first_ask">%1$s ile konuş</string>
     <string name="buddy_page_first_essay">İlk kompozisyonunu yaz</string>
     <string name="buddy_page_first_call">İlk sohbetini yap</string>

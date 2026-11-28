@@ -204,12 +204,12 @@
     <string name="mock_result_not_done">Not done</string>
     <string name="mock_result_your_preparation">Your preparation</string>
     <string name="mock_result_your_plan">Your plan</string>
+    <!-- On a mock exam's result: the plan moved the topics the learner missed earlier. The topics follow, one per line. -->
+    <string name="mock_result_plan_moved">What you missed now comes sooner</string>
     <plurals name="mock_result_skip_title">
         <item quantity="one">Skip %d lesson you already know?</item>
         <item quantity="other">Skip %d lessons you already know?</item>
     </plurals>
-    <!-- %1$s is a subject, such as "Mathematics". -->
-    <string name="mock_result_focus_title">Focus more on %1$s?</string>
     <!-- %1$s lists the topics, such as "Fractions, Ratios and 2 more topics". -->
     <string name="mock_result_skip_line">You got everything right in %1$s.</string>
     <!-- %1$s names three topics; %2$d counts the rest: "Fractions, Ratios, Areas and 2 more topics". -->
@@ -217,14 +217,8 @@
         <item quantity="one">%1$s and %2$d more topic</item>
         <item quantity="other">%1$s and %2$d more topics</item>
     </plurals>
-    <!-- %1$s can be a decimal, since some questions give partial credit: "You got 4.5 of 10 right there." -->
-    <plurals name="mock_result_focus_line">
-        <item quantity="one">You got %1$s of %2$d right there.</item>
-        <item quantity="other">You got %1$s of %2$d right there.</item>
-    </plurals>
     <string name="mock_result_skip_them">Skip them</string>
     <string name="mock_result_keep_them">Keep them</string>
-    <string name="mock_result_change_plan">Change my plan</string>
     <!-- The share the learner is prepared rose since the last mock exam: "Up from 12%". -->
     <string name="mock_result_up_from">Up from %1$s</string>
     <!-- The share the learner is prepared fell since the last mock exam: "Down from 15%". -->
@@ -235,9 +229,6 @@
         <item quantity="one">%d lesson skipped.</item>
         <item quantity="other">%d lessons skipped.</item>
     </plurals>
-    <!-- %1$s is a subject, such as "Mathematics". -->
-    <string name="mock_result_focus_done">Your plan gives %1$s more time.</string>
     <string name="mock_result_after">After this mock exam</string>
     <string name="mock_result_continue">Continue</string>
-    <string name="mock_result_not_now">Not now</string>
 </resources>

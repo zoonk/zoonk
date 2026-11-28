@@ -1,0 +1,164 @@
+import { type StudySessionBlock } from "@zoonk/db";
+import { getBlockItemIds, isRemedialPractice, readBlockPayload } from "../block-payload";
+import { getSessionDayMinutes } from "../fresh-start";
+import { type PlannedLesson, type SessionBuildInput, buildSessionBlocks } from "../session-builder";
+import { getSessionUsedMinutes } from "../session-minutes";
+
+type SavedBlock = Pick<
+  StudySessionBlock,
+  "estimatedMinutes" | "id" | "kind" | "lessonId" | "payload" | "status"
+>;
+
+type OpenedDay = { blocks: readonly SavedBlock[]; plannedMinutes: number };
+
+function isRemedialBlock(block: SavedBlock) {
+  const payload = readBlockPayload(block);
+  return isRemedialPractice(payload) || payload.returning !== null;
+}
+
+/** Preserve opened practice's share only after study begins; unstarted days rebuild whole. */
+function getOpenedPractice({
+  kept,
+  session,
+  teachingMinutes,
+}: {
+  kept: readonly SavedBlock[];
+  session: OpenedDay;
+  teachingMinutes: number;
+}): SessionBuildInput["openedPractice"] {
+  const keptIds = new Set(kept.map((block) => block.id));
+
+  const minutes = getSessionUsedMinutes(
+    session.blocks.filter((block) => block.kind === "practice" && !keptIds.has(block.id)),
+  );
+
+  if (
+    kept.every((block) => block.status === "pending" || isRemedialBlock(block)) ||
+    minutes <= 0 ||
+    session.plannedMinutes <= 0
+  ) {
+    return undefined;
+  }
+
+  return { dayMinutes: session.plannedMinutes, minutes: minutes + teachingMinutes };
+}
+
+/** A whole answer reserves a fresh day, but a day already open only takes what fits its time left. */
+function fitWriting({
+  minutes,
+  produces,
+}: {
+  minutes: number;
+  produces: SessionBuildInput["produces"];
+}): SessionBuildInput["produces"] {
+  return produces.filter(
+    (_, index) =>
+      produces.slice(0, index + 1).reduce((total, produce) => total + produce.minutes, 0) <=
+      minutes,
+  );
+}
+
+function withoutKept({
+  dated,
+  input,
+  kept,
+  session,
+}: {
+  dated: boolean;
+  input: SessionBuildInput;
+  kept: readonly SavedBlock[];
+  session: OpenedDay;
+}): SessionBuildInput {
+  const kinds = new Set(
+    kept.filter((block) => !isRemedialPractice(readBlockPayload(block))).map(({ kind }) => kind),
+  );
+
+  const mistakes = getSessionUsedMinutes(
+    kept.filter((block) => readBlockPayload(block).mistakeIds.length > 0),
+  );
+
+  const replacedOnlyLesson = kept.some((block) => readBlockPayload(block).replacedOnlyLesson);
+
+  const teaching = getSessionUsedMinutes(
+    kept.filter((block) => {
+      const { patternId, replacedOnlyLesson: replaced, returning } = readBlockPayload(block);
+      return !replaced && (returning !== null || (!dated && patternId !== null));
+    }),
+  );
+
+  const usedMinutes = getSessionUsedMinutes(kept) - mistakes - teaching;
+  const minutesLeft = getSessionDayMinutes(input) - usedMinutes;
+
+  const lessonIds = new Set(kept.flatMap((block) => (block.lessonId ? [block.lessonId] : [])));
+  const itemIds = new Set(kept.flatMap((block) => getBlockItemIds(readBlockPayload(block))));
+
+  const keptCheckpoints = new Set(
+    kept.flatMap((block) =>
+      block.kind === "checkpoint" ? [readBlockPayload(block).planItemId] : [],
+    ),
+  );
+
+  const isNewLesson = (lesson: { lessonId: string | null }) =>
+    !lesson.lessonId || !lessonIds.has(lesson.lessonId);
+
+  const drillLessons = new Set(kept.map((block) => readBlockPayload(block).writingLessonId));
+
+  const newLessons = (lessons: readonly PlannedLesson[]) =>
+    lessons
+      .filter((lesson) => isNewLesson(lesson))
+      .map((lesson) =>
+        lesson.drill && lesson.lessonId && drillLessons.has(lesson.lessonId)
+          ? { ...lesson, drill: undefined, minutes: lesson.minutes - lesson.drill.minutes }
+          : lesson,
+      );
+
+  return {
+    ...input,
+    capsules: kinds.has("review") ? [] : input.capsules,
+    checkpoints: input.checkpoints
+      .filter((checkpoint) => !keptCheckpoints.has(checkpoint.planItemId))
+      .map((checkpoint) => ({
+        ...checkpoint,
+        reinforcement: checkpoint.reinforcement?.filter(isNewLesson),
+      })),
+    fillLessons: !replacedOnlyLesson && input.fillLessons ? newLessons(input.fillLessons) : [],
+    lessons: replacedOnlyLesson ? [] : newLessons(input.lessons),
+    openedPractice: getOpenedPractice({ kept, session, teachingMinutes: teaching }),
+    placementItemIds: kinds.has("review") ? [] : input.placementItemIds,
+    practice: input.practice.filter((item) => !itemIds.has(item.itemId)),
+    // A day that keeps its practice gives the rest of its time to lessons.
+    practiceShare: kinds.has("practice") ? 0 : input.practiceShare,
+    produces:
+      kept.length > 0
+        ? fitWriting({ minutes: minutesLeft, produces: input.produces })
+        : input.produces,
+    remedial:
+      mistakes || teaching
+        ? { dated, kept: { mistakes, teaching }, mistakes: [], teaching: [] }
+        : undefined,
+    unwritten: replacedOnlyLesson ? [] : input.unwritten,
+    usedMinutes,
+  };
+}
+
+export function buildRemainingDay({
+  dated,
+  input,
+  kept,
+  session,
+}: {
+  dated: boolean;
+  input: SessionBuildInput;
+  kept: readonly SavedBlock[];
+  session: OpenedDay;
+}) {
+  const remaining = withoutKept({ dated, input, kept, session });
+  const { blocks, plannedMinutes } = buildSessionBlocks(remaining);
+
+  return {
+    blocks,
+    plannedMinutes: Math.ceil(
+      Math.max(getSessionUsedMinutes(kept), (remaining.usedMinutes ?? 0) + plannedMinutes),
+    ),
+  };
+}

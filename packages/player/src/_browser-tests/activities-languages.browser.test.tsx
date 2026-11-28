@@ -113,11 +113,14 @@ describe("language activities", () => {
       .toBeVisible();
 
     const rows = page.getByRole("radio").elements();
-    const keys = rows.flatMap((row) => [...row.querySelectorAll("kbd")]);
 
-    expect(keys.map((key) => getComputedStyle(key).visibility)).toStrictEqual(
-      keys.map(() => "hidden"),
-    );
+    const shownNumbers = rows
+      .flatMap((row) => [...row.querySelectorAll("kbd")])
+      .filter((key) => getComputedStyle(key).visibility !== "hidden")
+      .map((key) => key.textContent?.trim())
+      .filter(Boolean);
+
+    expect(shownNumbers).toStrictEqual([]);
 
     const tags = rows.map((row) => tagPlacement(row)).filter((placement) => placement !== null);
 

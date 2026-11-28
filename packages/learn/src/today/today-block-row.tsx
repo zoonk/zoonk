@@ -10,9 +10,10 @@ import { TITLE_ROW_CLASS, TRUNCATED_TITLE_CLASS } from "../_components/title-row
 import { useFormatDuration } from "../_utils/time-format";
 import { type MissionView } from "../missions/mission-links";
 import { MockSchedule } from "../mock/mock-schedule";
+import { isAlreadyFixed } from "../session/block-kind";
 import { BlockMark } from "../session/block-mark";
 import { type DayStep } from "../session/session-types";
-import { useBlockTitle } from "../session/use-block-copy";
+import { useBlockTitle, useRemedialLine } from "../session/use-block-copy";
 import { useTodayScreen } from "./today-context";
 import { NEXT_TITLE_ID } from "./today-ids";
 import { getLessonAgainId, isFinished } from "./today-queue";
@@ -29,6 +30,13 @@ export function getRowClass({ isNext }: { isNext: boolean }): string {
       : "[@media(hover:hover)]:has-[[data-slot=today-row-open]:hover]:before:bg-muted/70",
   );
 }
+
+/**
+ * A row's mark is centered beside a title and one line, and sits on the title's line once two or
+ * more lines are under it (craft E5); the time stays on the row's center.
+ */
+export const ROW_MARK_CLASS =
+  "flex h-5 w-4 shrink-0 items-center justify-center group-has-[[data-slot=today-row-lines]>:nth-child(3)]/row:self-start";
 
 /** The row's own open replaces its time with a spinner, leaving the test offer independent. */
 function RowTime({ minutes }: { minutes: number }) {
@@ -95,6 +103,9 @@ function RowName({ block, isNext }: { block: DayStep; isNext: boolean }) {
 
 const ROW_LINE_CLASS = cn(TRUNCATED_TITLE_CLASS, "text-muted-foreground text-xs leading-4");
 
+/** Why the plan added a row is a sentence: cut short at large text, it would lose its point. */
+const WHY_LINE_CLASS = "text-muted-foreground text-xs leading-4 text-pretty";
+
 function RowLines({
   block,
   isNext,
@@ -108,15 +119,17 @@ function RowLines({
   const { actions } = useTodayScreen();
   const isGettingReady = useStepGettingReady();
   const stepLabel = useStepLabel({ includeSubject: false });
+  const remedialLine = useRemedialLine();
   const subject = useBlockSubject()(block);
   const line = isGettingReady(block) ? t("Getting ready…") : stepLabel(block);
+  const lineClass = line === remedialLine(block) ? WHY_LINE_CLASS : ROW_LINE_CLASS;
 
   return (
     <>
       {(showSubject || block.subjectExtra) && subject && (
         <span className={ROW_LINE_CLASS}>{subject}</span>
       )}
-      {!isFinished(block) && line && <span className={ROW_LINE_CLASS}>{line}</span>}
+      {!isFinished(block) && line && <span className={lineClass}>{line}</span>}
 
       {isNext && block.canTestOut && block.chapterId && (
         <TestOutStartLink compact onStart={() => actions.startTestOut(block.chapterId ?? "")} />
@@ -200,7 +213,7 @@ export function BlockRow({
       )}
       data-slot={isNext ? "today-next" : undefined}
     >
-      <span className="flex h-5 w-4 shrink-0 items-center justify-center">
+      <span className={ROW_MARK_CLASS}>
         <BlockMark block={block} />
       </span>
 
@@ -224,7 +237,7 @@ export function BlockRow({
                 data-slot="mission-row-mark"
               />
             )}
-            {!finished && <RowTime minutes={block.estimatedMinutes} />}
+            {!finished && !isAlreadyFixed(block) && <RowTime minutes={block.estimatedMinutes} />}
           </span>
         )}
       </div>
@@ -256,7 +269,7 @@ export function PlanLessonRow({
       aria-current={current ? "step" : undefined}
       className={cn(getRowClass({ isNext: current }), onOpen && disabled && !busy && "opacity-50")}
     >
-      <span className="flex h-5 w-4 shrink-0 items-center justify-center">
+      <span className={ROW_MARK_CLASS}>
         <KindMark kind="lesson" />
       </span>
 

@@ -42,18 +42,7 @@ const mistakeSchema = z
         description:
           "The original lesson, or a lesson on the same skill, at the time the notebook was read. Null when there is no existing lesson. POST /v1/me/mistakes/{mistakeId}/lesson also works when this field is null.",
       }),
-    practiceAvailable: z
-      .boolean()
-      .meta({
-        description:
-          "Open and made on an earlier learner-local day; today's mistakes become available tomorrow",
-      }),
-    practiceAvailableTomorrow: z
-      .boolean()
-      .meta({
-        description:
-          "This open mistake has drill material and becomes available on the next learner-local day",
-      }),
+    practiceAvailable: z.boolean().meta({ description: "Open and has usable practice material" }),
     skill: z
       .object({ id: uuidSchema(), name: z.string() })
       .nullable()
@@ -134,6 +123,12 @@ export const mistakePracticeResponseSchema = z
         questions: z
           .array(mistakeQuestionSchema)
           .meta({ description: "The question to answer: the mistake's own while it can be asked" }),
+        showing: z
+          .string()
+          .meta({
+            description:
+              "The order this entry laid out its options in. Send it back unchanged with an answer to its question",
+          }),
         snapshot: mistakeSnapshotSchema,
         tutorAvailable: z.boolean(),
       }),
@@ -152,6 +147,12 @@ export const mistakePracticeCompletionSchema = z
     ...progressCelebrationShape,
     brainPower: activityBrainPowerSchema,
     correct: z.number().int().min(0),
+    hasMorePractice: z
+      .boolean()
+      .meta({
+        description:
+          "After the run ends, a playable mistake from an earlier local day remains open in its scope. Always false for day blocks.",
+      }),
     missionMoment: missionMomentSchema.nullable(),
     seconds: z.number().int().min(0).meta({ description: "Learning time the run added to today" }),
     total: z.number().int().min(0).meta({ description: "Answers the run counted" }),

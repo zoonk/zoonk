@@ -65,7 +65,7 @@ describe("mistake reads", () => {
       '"items"',
     );
 
-    expect(reads.result).toMatchObject({ availability: { ready: 3, tomorrow: 0 } });
+    expect(reads.result).toMatchObject({ availability: { ready: 3 } });
     expect(reads.rows).toBeLessThanOrEqual(skills.length);
   });
 });

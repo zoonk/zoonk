@@ -195,11 +195,13 @@ export async function completeLibraryLesson({
     answerPoints,
     answeredCount: attempts.length,
     answers: attempts,
+    identityKey: lesson.identityKey,
     lessonId,
     planSkillIds: heldSkillIds.get(lessonId) ?? [],
     run,
     skippedWritingStepIds,
     tally,
+    teachingSkillIds: lesson.skills.map(({ skillId }) => skillId),
     timeZone,
     userId,
   });

@@ -69,11 +69,11 @@ const MOCK_MISSIONS: MissionMomentView = {
 };
 
 const PRACTICE_MISSIONS: MissionMomentView = {
-  completed: ["fixMistake"],
+  completed: ["practice"],
   fullMeal: { bonus: BONUS, paid: false },
   missions: [
     { done: 1, kind: "review", status: "done", total: 1 },
-    { done: 2, kind: "fixMistake", status: "done", total: 2 },
+    { done: 1, kind: "practice", status: "done", total: 1 },
     { done: 0, kind: "somethingNew", minutes: 8, status: "todo", total: 1 },
   ],
 };

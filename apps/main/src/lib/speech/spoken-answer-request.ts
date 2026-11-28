@@ -50,7 +50,14 @@ export async function requestSpokenGrade({
   micStartupMs?: number;
   stepId: string;
   studySessionId: string | null;
-  practice?: { mistakeId: string; goalId: string; answerIds: string[]; practiceDurationMs: number };
+  practice?: {
+    mistakeId: string;
+    blockId?: string;
+    goalId?: string;
+    mockId?: string;
+    answerIds: string[];
+    practiceDurationMs: number;
+  };
 }): Promise<SpokenAnswerOutcome> {
   const form = new FormData();
   form.set("attemptId", attemptId);
@@ -65,8 +72,15 @@ export async function requestSpokenGrade({
   if (practice) {
     form.set("mistakeId", practice.mistakeId);
     form.set("practiceDurationMs", String(Math.round(practice.practiceDurationMs)));
-    form.set("goalId", practice.goalId);
     form.set("answerIds", JSON.stringify(practice.answerIds));
+
+    for (const name of ["blockId", "goalId", "mockId"] as const) {
+      const value = practice[name];
+
+      if (value) {
+        form.set(name, value);
+      }
+    }
   }
 
   if (studySessionId) {

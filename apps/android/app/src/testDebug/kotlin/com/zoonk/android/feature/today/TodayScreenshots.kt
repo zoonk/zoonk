@@ -220,6 +220,33 @@ class TodayScreenshots {
     fun placementChangeTabletDark() =
         captureFocusTestNotice("today-placement-change-tablet-dark", dark = true, day = "notice-placement-change")
 
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun examModulesPhone() {
+        showExamModules()
+        compose.onNodeWithText("Choose").performClick()
+        write(
+            "today-exam-modules-phone",
+            compose
+                .onAllNodes(isRoot())
+                .onLast()
+                .captureRender(scenario = "exam-modules")
+                .asAndroidBitmap(),
+        )
+    }
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun examModulesTablet() {
+        showExamModules()
+        write("today-exam-modules-tablet", compose.onRoot().captureRender(scenario = "exam-modules").asAndroidBitmap())
+    }
+
+    private fun showExamModules() {
+        val read = DAYS.first { it.first == "notice-exam-modules" }.second
+        compose.setContent { ZoonkTheme { Screen(read) } }
+    }
+
     /** The Focus test's suggestion on Today, or its proposal on [day]. */
     private fun captureFocusTestNotice(
         name: String,
@@ -277,7 +304,7 @@ class TodayScreenshots {
                     refreshIfLessonsMoved = app.today::refreshIfLessonsMoved,
                     practice = {
                         TodayPracticeRows(
-                            MistakeListAvailability(ready = 3, tomorrow = 1),
+                            MistakeListAvailability(ready = 3),
                             MOCKS,
                             SPEAKING,
                             completedLessons = true,
@@ -862,12 +889,12 @@ class TodayScreenshots {
                 )
                 add(
                     buildJsonObject {
-                        put("done", 1)
-                        put("kind", "fixMistake")
+                        put("done", 0)
+                        put("kind", "askBuddy")
                         put("status", "todo")
-                        put("total", 3)
-                        put("minutes", 4)
-                        putJsonObject("opens") { put("kind", "mistakesPractice") }
+                        put("total", 1)
+                        put("minutes", 2)
+                        putJsonObject("opens") { put("kind", "buddy") }
                     },
                 )
             }

@@ -10,7 +10,6 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useCallback, useMemo, useState } from "react";
 import { type SelectedAnswer, type StepResult } from "../step-answer";
-import { useWordAudio } from "../use-word-audio";
 import { type BlankState, getCompletedUserAnswers } from "./_utils/fill-blank-state";
 import { getTemplateRomanization } from "./_utils/template-romanization";
 import { removeKeepingFocus } from "./_utils/word-bank-focus";
@@ -179,10 +178,6 @@ export function FillBlankStep({
     return Array.from({ length: blankCount }, () => null);
   });
 
-  const { play } = useWordAudio({
-    preloadUrls: step.fillBlankOptions.map((option) => option.audioUrl),
-  });
-
   const handlePlaceWord = useCallback(
     (option: WordBankOption) => {
       const firstEmptyIndex = blanks.indexOf(null);
@@ -190,8 +185,6 @@ export function FillBlankStep({
       if (firstEmptyIndex === -1) {
         return;
       }
-
-      void play(option.audioUrl);
 
       const next = [...blanks];
       next[firstEmptyIndex] = option.word;
@@ -203,7 +196,7 @@ export function FillBlankStep({
         onSelectAnswer({ kind: "fillBlank", userAnswers });
       }
     },
-    [blanks, onSelectAnswer, play],
+    [blanks, onSelectAnswer],
   );
 
   const handleRemoveWord = useCallback(

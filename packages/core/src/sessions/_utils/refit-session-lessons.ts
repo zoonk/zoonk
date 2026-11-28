@@ -1,6 +1,6 @@
 import { type StudySessionBlock, type TransactionClient } from "@zoonk/db";
-import "server-only";
 import { findActiveSubscriptionForUser } from "../../auth/subscription";
+import "server-only";
 import {
   type ChallengeReachItem,
   isPhaseChallenge,
@@ -9,6 +9,7 @@ import { getExamPrepAccess as getTierExamPrep } from "../../entitlements/limits"
 import { loadSkillPrerequisites } from "../../library/skills/skill-prerequisites";
 import { parsePlanGraph, parsePlanSettings } from "../../plans/planner/plan-state";
 import { readBlockPayload } from "../block-payload";
+import { isOutsidePlanLesson } from "../day-block";
 import { getSessionUsedMinutes } from "../session-minutes";
 import { getLessonLookahead } from "./day-lessons";
 import { orderDayBlocks } from "./day-stretch";
@@ -50,7 +51,7 @@ async function trimSessionLessons({
         block.status === "pending" &&
         block.startedAt === null &&
         !payload.extra &&
-        !payload.reinforcement
+        !isOutsidePlanLesson(payload)
       );
     })
     .toReversed();
@@ -114,11 +115,13 @@ async function orderRefilledBlocks({
   blocks,
   items,
   tx,
+  welcomeBack,
 }: {
   added: readonly StudySessionBlock[];
   blocks: readonly StudySessionBlock[];
   items: readonly ChallengeReachItem[];
   tx: TransactionClient;
+  welcomeBack: boolean;
 }) {
   if (added.length > 0) {
     const pending = [...blocks, ...added].filter(
@@ -126,7 +129,7 @@ async function orderRefilledBlocks({
         (block.status === "pending" || block.status === "active") && !readBlockPayload(block).extra,
     );
 
-    const ordered = orderDayBlocks({ blocks: pending, items });
+    const ordered = orderDayBlocks({ blocks: pending, items, welcomeBack });
     const positions = pending.map((block) => block.position).toSorted((a, b) => a - b);
     const moved = ordered.filter((block, index) => block.position !== positions[index]);
 
@@ -250,7 +253,13 @@ export async function refitSessionLessons(
         })
       : [];
 
-  await orderRefilledBlocks({ added, blocks, items: plan.items, tx });
+  await orderRefilledBlocks({
+    added,
+    blocks,
+    items: plan.items,
+    tx,
+    welcomeBack: session.freshStart === "welcomeBack",
+  });
 
   await saveDeferredCount({ blocks: [...blocks, ...added], completedBlockId, leaving, tx });
 

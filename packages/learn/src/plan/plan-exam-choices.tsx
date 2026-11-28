@@ -18,7 +18,7 @@ import {
   SuggestionSummary,
 } from "../_components/suggestion";
 import { useStillMounted } from "../_utils/use-still-mounted";
-import { ExamChoicePicks } from "./exam-choice-picks";
+import { ExamChoicePicks, ExamPickLimit } from "./exam-choice-picks";
 import { ExamChoiceAnswers, useExamChoiceQuestion } from "./exam-choice-question";
 import { useSharedRequest } from "./layout-shared";
 import { usePlanScreen } from "./plan-context";
@@ -127,11 +127,15 @@ function ExamChoice({ choice }: { choice: ExamChoiceView }) {
       </h3>
 
       {choice.take > 1 ? (
-        <ExamChoicePicks
-          choice={choice}
-          onSave={(subjects) => choose({ group: choice.group, subjects })}
-          pending={isPending}
-        />
+        <div className="flex flex-col gap-3">
+          <ExamPickLimit take={choice.take} />
+
+          <ExamChoicePicks
+            choice={choice}
+            onSave={(subjects) => choose({ group: choice.group, subjects })}
+            pending={isPending}
+          />
+        </div>
       ) : (
         <OneOptionChoice choice={choice} choose={choose} isPending={isPending} labelId={labelId} />
       )}

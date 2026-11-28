@@ -15,6 +15,8 @@ protocol NamedBlock {
   /// Which of the day's practices this is, when it has more than one; nil from older servers.
   var practiceNumber: Int? { get }
   var questions: Int { get }
+  /// A day's mistakes run or pattern drill, named by what it fixes; nil for anything else.
+  var remedialTitle: String? { get }
   var title: String? { get }
   var topics: [String] { get }
   /// A written block's drill or whole answer; nil for anything else.
@@ -46,6 +48,10 @@ extension NamedBlock {
   /// One name per block (main's `use-block-copy.ts`): "The Trickster", "Rematch", "Weekly
   /// challenge", "Mock exam", "Call", "Review", or a practice's topic.
   var displayTitle: String {
+    if let remedialTitle {
+      return remedialTitle
+    }
+
     if let challenge {
       if challenge.mock {
         return String(localized: "Mock exam", table: "Today", comment: "A mock exam block")
@@ -125,6 +131,70 @@ extension NamedBlock {
 }
 
 extension StudyBlock: NamedBlock {
+  var remedialTitle: String? {
+    if isAlreadyFixed {
+      return String(localized: MistakePracticeScope.alreadyFixed)
+    }
+
+    return switch screen {
+    case .mistakesPractice:
+      String(
+        localized: "Fix \(questions) mistakes", table: "Today", locale: .appLanguage,
+        comment: "Mistakes to fix: a step of the day, or how many the notebook has ready")
+    case .pattern:
+      title.map {
+        String(
+          localized: "practicePattern", defaultValue: "Practice: \($0)", table: "Today",
+          comment:
+            "A study step that drills one rule the learner keeps getting wrong, titled like the day's other practice steps (\"Practice: Fractions\"). {pattern} names the rule, like \"Adjective endings after der\"."
+        )
+      }
+    case .challenge, .essay, .lesson, .session, .unknown:
+      nil
+    }
+  }
+
+  /// Why work the plan added for the learner's mistakes is in the day. It never counts: a count can
+  /// be false by the time it's read.
+  var remedialLine: String? {
+    if isAlreadyFixed {
+      return nil
+    }
+
+    switch screen {
+    case .mistakesPractice:
+      return String(
+        localized: "Questions you missed before", table: "Today",
+        comment:
+          "Under \"Fix 3 mistakes\", a step of the day that practices questions the learner got wrong."
+      )
+    case .pattern:
+      return String(localized: "A pattern in your mistakes", table: "Today")
+    case .challenge, .essay, .lesson, .session, .unknown:
+      break
+    }
+
+    switch returning {
+    case .again:
+      return String(
+        localized: "Once more: this one's been tricky", table: "Today",
+        comment:
+          "Under a lesson the learner takes again because its idea has been hard for them.")
+    case .anotherWay:
+      return String(
+        localized: "Another way to see it", table: "Today",
+        comment:
+          "Under a short lesson that explains, in a new way, an idea the learner keeps missing.")
+    case .missed:
+      return String(
+        localized: "This one's been tricky", table: "Today",
+        comment:
+          "Under a short lesson written for an idea that has been hard for the learner.")
+    case nil:
+      return nil
+    }
+  }
+
   var challenge: BlockChallenge? {
     checkpoint.map { BlockChallenge(mock: $0.mock, rematch: $0.rematch, weekly: $0.isWeekly) }
   }
@@ -192,6 +262,14 @@ extension StudyBlock {
 
   /// The row's line where the block is told on its own, as "Up next" does.
   var detail: String? {
+    if isAlreadyFixed {
+      return nil
+    }
+
+    if let remedialLine {
+      return remedialLine
+    }
+
     if hasCapsules && weakest {
       return String(
         localized: "\(questions) questions on what's been hardest for you", table: "Today",
@@ -239,8 +317,14 @@ extension StudyBlock {
       comment: "A practice block's questions")
   }
 
-  /// The row's one short line on Today's list: the subject, or what a challenge or review is.
-  func label(document: ExamDocument) -> String? {
+  /// Main's `useBlockSubject`: the subject a block belongs to, or that the exam doesn't test it.
+  func subjectLine(document: ExamDocument) -> String? {
+    subjectExtra.map { examExtraLabel(hasNotice: $0 == .notice, document: document) } ?? subject
+  }
+
+  /// Main's `useStepLabel`: the row's line under its subject on Today's list, what a challenge,
+  /// practice or review is, or why remedial work is in the day.
+  var label: String? {
     // A refused start is the one thing to know before tapping it, even while lessons come first.
     if case .tomorrow = writingAvailability {
       return writingLine
@@ -250,6 +334,10 @@ extension StudyBlock {
       return String(
         localized: "After today's lessons", table: "Today",
         comment: "A challenge that opens once the lessons before it are done")
+    }
+
+    if let remedialLine {
+      return remedialLine
     }
 
     // A practice's name doesn't say what it's on, so the line counts its topics before naming the
@@ -280,12 +368,7 @@ extension StudyBlock {
           locale: .appLanguage, comment: "A practice block's questions")
     }
 
-    if kind == .produce, let writingLine {
-      return writingLine
-    }
-
-    return subjectExtra.map { examExtraLabel(hasNotice: $0 == .notice, document: document) }
-      ?? subject
+    return kind == .produce ? writingLine : nil
   }
 }
 

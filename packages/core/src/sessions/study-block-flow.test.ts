@@ -5,7 +5,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { runDeferredWork } from "../_test-utils/deferred-work";
 import { mockSession } from "../_test-utils/mock-session";
-import { pickInMistake } from "../_test-utils/shown-choice";
+import { mistakeShowing, pickInMistake } from "../_test-utils/shown-choice";
 import { analytics } from "../_test-utils/test-boundaries";
 import { answerMistakePractice } from "../mistakes/answer-mistake-practice";
 import { finishMistakePractice } from "../mistakes/finish-mistake-practice";
@@ -102,12 +102,22 @@ async function playLesson({
   });
 }
 
-async function playNotebook({ mistakeId, itemId }: { mistakeId: string; itemId: string }) {
+async function playNotebook({
+  blockId,
+  mistakeId,
+  itemId,
+}: {
+  blockId: string;
+  mistakeId: string;
+  itemId: string;
+}) {
   const answer = await answerMistakePractice({
     input: {
       answer: await pickInMistake({ mistakeId }),
       durationMs: 2000,
       itemId,
+      run: { answerIds: [], blockId },
+      showing: await mistakeShowing(mistakeId),
       timeZone: "UTC",
     },
     mistakeId,
@@ -121,6 +131,7 @@ async function playNotebook({ mistakeId, itemId }: { mistakeId: string; itemId: 
 
   const finished = await finishMistakePractice({
     answerIds: [answer.feedback.answerId],
+    blockId,
     ended: true,
     timeZone: "UTC",
   });
@@ -145,9 +156,13 @@ describe("study session blocks", () => {
   it("pays a short day's review and lesson missions once, then finishes its mistake practice", async () => {
     const flush = runDeferredWork();
     const { lessons, mistake, session, user } = await setup();
-    const [review, learn] = session.blocks.map((block) => block.id);
+    const [mistakes, review, learn] = session.blocks.map((block) => block.id);
 
-    expect(session.blocks.map((block) => block.kind)).toStrictEqual(["review", "learn"]);
+    expect(session.blocks.map((block) => block.kind)).toStrictEqual([
+      "practice",
+      "review",
+      "learn",
+    ]);
 
     await playReview({ blockId: review ?? "", sessionId: session.id });
 
@@ -168,6 +183,7 @@ describe("study session blocks", () => {
     });
 
     const notebookPower = await playNotebook({
+      blockId: mistakes ?? "",
       itemId: mistake.itemId ?? "",
       mistakeId: mistake.id,
     });
@@ -203,7 +219,7 @@ describe("study session blocks", () => {
 
   it("settles a block once and says what's missing before it can finish", async () => {
     const { session, user } = await setup();
-    const [review] = session.blocks;
+    const review = session.blocks.find((block) => block.kind === "review");
     const blockId = review?.id ?? "";
 
     await startStudyBlock({ blockId, input: {}, sessionId: session.id });
@@ -245,7 +261,7 @@ describe("study session blocks", () => {
 
   it("keeps a lesson check answer separate from the same study block question", async () => {
     const { session, user } = await setup();
-    const blockId = session.blocks[0]?.id ?? "";
+    const blockId = session.blocks.find((block) => block.kind === "review")?.id ?? "";
     const sessionId = session.id;
 
     await startStudyBlock({ blockId, input: {}, sessionId });
