@@ -92,6 +92,15 @@ export const EXCEPTIONS: AlignmentException[] = [
     scenario: "/plan/matematica-e-suas-tecnologias",
   },
   {
+    configuration: "phone touch pt",
+    issue: 2929,
+    maxMeasured: null,
+    piece: "page",
+    reason: "A chapter row gives its title only the width its date leaves, on main too",
+    relation: "lone-word",
+    scenario: "/pt/plan/historia-mundial",
+  },
+  {
     configuration: "laptop keys",
     issue: 2944,
     maxMeasured: null,
