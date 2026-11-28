@@ -59,6 +59,16 @@ func levelTestGroups(total: Int) -> [Int] {
   return [reading, listening, total - reading - listening].filter { $0 > 0 }
 }
 
+/// A listening message plays a little slower than normal, so the test isn't one of catching fast
+/// speech.
+let levelTestListeningRate: Float = 0.9
+
+/// How long a message takes to hear, in whole seconds: its clip's length at the slower rate. One
+/// length before, during and after a play.
+func heardSeconds(clip seconds: TimeInterval) -> Int {
+  Int((seconds / Double(levelTestListeningRate)).rounded())
+}
+
 /// A level test question: a reading passage or a listening message and its options. A confirmation
 /// asks for every right option, so a guess rarely passes.
 struct LevelTestQuestionScreen: View {
@@ -95,14 +105,22 @@ struct LevelTestQuestionScreen: View {
       options: question.options, select: selectsAll ? .all : .one)
     shown.context = isListening ? nil : question.passage
 
+    // Every way the question ends silences its message at the press, before the save.
+    let silenced = { (action: @escaping () -> Void) in
+      {
+        voice.player.stop(owner: owner)
+        action()
+      }
+    }
+
     return PlacementQuestionScreen(
       subject: languageSkillName(question.skill.rawValue), number: number, total: total,
       groups: levelTestGroups(total: total), question: shown,
-      second: isListening ? listeningAction(skips: skips) : nil,
+      second: isListening ? listeningAction(skips: skips, deferAudio: silenced(onDeferAudio)) : nil,
       isSaving: isSaving, failures: failures, context: context,
       onReport: onReport,
-      onAnswer: { onAnswer($0, skips) },
-      onStop: canStop ? onStop : nil,
+      onAnswer: { answer in silenced { onAnswer(answer, skips) }() },
+      onStop: canStop ? silenced(onStop) : nil,
       media: {
         if isListening {
           ListeningMessage(question: question, language: targetLanguage, owner: owner) {
@@ -114,12 +132,14 @@ struct LevelTestQuestionScreen: View {
 
   /// "Can't listen now" ends the test's listening until the message has played to its end once;
   /// after, "I didn't understand" is the answer. A message that can't play yet is skipped.
-  private func listeningAction(skips: Bool) -> QuestionSecondAction {
+  private func listeningAction(skips: Bool, deferAudio: @escaping () -> Void)
+    -> QuestionSecondAction
+  {
     let label = Self.listeningLabel(skips: skips, heard: heard)
 
     return QuestionSecondAction(
       label: label, steadyAmong: Self.listeningLabels,
-      action: label == TestCopy.cantListen ? onDeferAudio : nil)
+      action: label == TestCopy.cantListen ? deferAudio : nil)
   }
 
   /// A message the learner can't hear yet is skipped, this question only: answering it would move
@@ -190,10 +210,8 @@ private struct ListeningMessage: View {
 
   @Environment(VoiceServices.self) private var voice
   @State private var played = false
-  /// The clip's length once it played, for a message whose length wasn't known before.
+  /// The clip's length once a play knew it, for a message whose length wasn't known before.
   @State private var length: TimeInterval?
-
-  private static let rate: Float = 0.9
 
   var body: some View {
     let state = voice.player.state(for: owner)
@@ -201,7 +219,9 @@ private struct ListeningMessage: View {
 
     VStack(alignment: .leading, spacing: 12) {
       HStack(spacing: 12) {
-        playButton(state, isWaiting: isWaiting)
+        OpeningClock(availableAt: failedLimit(state)?.availableAt) { now in
+          playButton(state, isWaiting: isWaiting, retries: retries(state, at: now))
+        }
 
         // The row keeps its size when the clip arrives.
         if isWaiting {
@@ -221,7 +241,7 @@ private struct ListeningMessage: View {
       .frame(minHeight: 44)
 
       if case .failed(let limit) = state {
-        ListeningFailedNote(limit: limit, play: play)
+        ListeningFailedNote(limit: limit)
       }
     }
     .frame(maxWidth: .infinity, alignment: .leading)
@@ -229,27 +249,44 @@ private struct ListeningMessage: View {
     .onDisappear { voice.player.stop(owner: owner) }
   }
 
+  /// The line fills as the message plays; its length stays the time it takes to hear.
   private func progress(_ playback: (elapsed: TimeInterval, length: TimeInterval)?) -> some View {
-    let total = playback?.length ?? length ?? question.audio?.durationMs.map { Double($0) / 1000 }
-    let elapsed = playback?.elapsed ?? 0
+    let clip = question.audio?.durationMs.map { Double($0) / 1000 } ?? length ?? playback?.length
+    let playing = playback?.length ?? clip
 
     return HStack(spacing: 12) {
       Meter(
-        value: total.map { $0 > 0 ? elapsed / $0 : 0 } ?? 0, fill: Color(.foreground), height: 4)
+        value: playing.map { $0 > 0 ? (playback?.elapsed ?? 0) / $0 : 0 } ?? 0,
+        fill: Color(.foreground), height: 4)
 
-      if let total {
-        Text(
-          verbatim: PlanDate.clock(seconds: Int(((total - elapsed) / Double(Self.rate)).rounded()))
-        )
+      // The length's room is kept while it isn't known, so the line doesn't move when it is.
+      Text(verbatim: PlanDate.clock(seconds: clip.map { heardSeconds(clip: $0) } ?? 0))
         .typeStyle(.data)
         .monospacedDigit()
         .foregroundStyle(.mutedForeground)
-      }
+        .opacity(clip == nil ? 0 : 1)
     }
     .accessibilityHidden(true)
+    .onChange(of: playback?.length) { _, known in
+      if length == nil, let known {
+        length = known
+      }
+    }
   }
 
-  private func playButton(_ state: SpeechPlayer.State, isWaiting: Bool) -> some View {
+  private func failedLimit(_ state: SpeechPlayer.State) -> HelpLimit? {
+    if case .failed(let limit) = state { limit } else { nil }
+  }
+
+  /// A failed play the learner can try again turns the row's button into the retry.
+  private func retries(_ state: SpeechPlayer.State, at now: Date) -> Bool {
+    guard case .failed(let limit) = state else { return false }
+    return limit?.letsTry(at: now) ?? true
+  }
+
+  private func playButton(_ state: SpeechPlayer.State, isWaiting: Bool, retries: Bool)
+    -> some View
+  {
     Button {
       if state == .loading || state == .playing {
         voice.player.stop(owner: owner)
@@ -262,6 +299,10 @@ private struct ListeningMessage: View {
           Text(
             "The voice message is on its way…", tableName: "Onboarding",
             comment: "While a level test listening question's recording is still being made")
+        } else if retries {
+          Text(
+            "Try again", tableName: "Onboarding",
+            comment: "Plays a level test listening question's message again after it failed")
         } else if state == .loading || state == .playing {
           Text(
             "Stop the message", tableName: "Onboarding",
@@ -279,6 +320,8 @@ private struct ListeningMessage: View {
         if isWaiting || state == .loading {
           ProgressView()
             .controlSize(.small)
+        } else if retries {
+          Image(systemName: "arrow.counterclockwise")
         } else {
           Image(systemName: state == .playing ? "stop.fill" : "play.fill")
         }
@@ -304,7 +347,7 @@ private struct ListeningMessage: View {
     Task {
       let heard = await voice.player.play(
         .word(question.passage, recording: question.audio?.url, language: language),
-        rate: Self.rate, owner: owner, fallback: (question.passage, language))
+        rate: levelTestListeningRate, owner: owner, fallback: (question.passage, language))
 
       if let heard {
         length = heard
@@ -314,9 +357,8 @@ private struct ListeningMessage: View {
   }
 }
 
-/// Why a listening question's message didn't play, and Try again. The gate takes Try again's place
-/// until its day has come, then Try again takes it back, in the room the gate had: the answers sit
-/// under it.
+/// Why a listening question's message didn't play; the row's own button is its retry. A limit a
+/// retry can't lift yet says so in the same room until its time comes.
 struct ListeningFailedNote: View {
   static var audioDidntPlay: String {
     String(
@@ -325,39 +367,16 @@ struct ListeningFailedNote: View {
   }
 
   let limit: HelpLimit?
-  let play: () -> Void
 
   var body: some View {
     OpeningClock(availableAt: limit?.availableAt) { now in
-      note(now)
-    }
-  }
-
-  private func note(_ now: Date) -> some View {
-    HeldSlot(gated: limit.map { !$0.isOpen(at: now) } ?? false) {
-      VStack(alignment: .leading, spacing: 8) {
-        if let limit {
-          if !limit.isOpen(at: now) {
-            LimitNotice(limit: limit)
-          }
+      HeldSlot(gated: limit.map { !$0.isOpen(at: now) } ?? false) {
+        if let limit, !limit.isOpen(at: now) {
+          LimitNotice(limit: limit)
         } else {
           Text(Self.audioDidntPlay)
             .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
-        }
-
-        if limit?.letsTry(at: now) ?? true {
-          Button(action: play) {
-            Label {
-              Text(
-                "Try again", tableName: "Onboarding",
-                comment: "Plays a level test listening question's message again after it failed")
-            } icon: {
-              Image(systemName: "arrow.counterclockwise")
-            }
-          }
-          .buttonStyle(.outline)
-          .controlSize(.small)
         }
       }
     }
