@@ -9,19 +9,36 @@ function isGoalAction(request: Request, goalId: string): boolean {
 }
 
 /**
- * On a wait for a test's questions, refuses the next Server Action for the goal that isn't the
- * wait's own check, as a dropped connection would: the start the wait makes once the questions
- * arrive. The checks still go through, so the questions arrive. Returns whether it refused one.
+ * On a wait for a test's questions, runs `writeQuestions` and refuses the start the wait makes once
+ * they arrive, as a dropped connection would. The wait's own checks are held while the questions
+ * are being written, since a check that reads half of them says there is nothing to ask. Returns
+ * whether a start was refused.
  */
-export async function refuseStartAfterWait(page: Page, goalId: string): Promise<() => boolean> {
+export async function refuseStartAfterWait({
+  goalId,
+  page,
+  writeQuestions,
+}: {
+  goalId: string;
+  page: Page;
+  writeQuestions: () => Promise<unknown>;
+}): Promise<() => boolean> {
   const check = await page.waitForRequest((request) => isGoalAction(request, goalId));
   const checkId = check.headers()["next-action"];
+  const { promise: written, resolve: markWritten } = Promise.withResolvers<null>();
   let refused = false;
 
   await page.route("**/*", async (route) => {
     const request = route.request();
 
-    if (refused || !isGoalAction(request, goalId) || request.headers()["next-action"] === checkId) {
+    if (!isGoalAction(request, goalId)) {
+      await route.fallback();
+      return;
+    }
+
+    await written;
+
+    if (refused || request.headers()["next-action"] === checkId) {
       await route.fallback();
       return;
     }
@@ -29,6 +46,11 @@ export async function refuseStartAfterWait(page: Page, goalId: string): Promise<
     refused = true;
     await route.abort("connectionfailed");
   });
+
+  const checked = await check.response();
+  await checked?.finished();
+  await writeQuestions();
+  markWritten(null);
 
   return () => refused;
 }

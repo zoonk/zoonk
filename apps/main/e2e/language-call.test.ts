@@ -416,7 +416,6 @@ test.describe("Language practice in the plan", () => {
 
     expect(clip.fileLoaded()).toBe(true);
 
-    // Once the message has played to its end, the way around it gives its place to the miss.
     await page.getByRole("button", { name: "I didn't understand" }).click();
     await expect(testQuestion(page, 6, 12)).toBeVisible();
     await page.getByRole("button", { name: "Can't listen now" }).click();
