@@ -13339,7 +13339,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vuoi aggiungere %@ al tuo piano?"
+            "value" : "Aggiungere %@ al tuo piano?"
           }
         },
         "ja" : {
@@ -13351,7 +13351,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@을(를) 계획에 추가할까요?"
+            "value" : "계획에 %@을(를) 추가할까요?"
           }
         },
         "pl" : {
@@ -13369,7 +13369,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ planına eklensin mi?"
+            "value" : "Planına %@ eklensin mi?"
           }
         }
       }
