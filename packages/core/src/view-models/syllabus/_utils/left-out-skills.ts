@@ -22,17 +22,16 @@ export function listHeldSkillIds(
   );
 }
 
-/** The skills the plan leaves out for time, in the order given. */
-export function listLeftOutSkills<TSkill extends { area: string; skillId: string }>({
-  facts,
-  skills,
-}: {
-  facts: LeftOutFacts;
-  skills: readonly TSkill[];
-}): TSkill[] {
+/**
+ * The skills the plan leaves out for time, in the order given. Lessons an undated plan owes for
+ * later are still in it.
+ */
+export function listLeftOutSkills<
+  TSkill extends { area: string; deferredLessons?: number; skillId: string },
+>({ facts, skills }: { facts: LeftOutFacts; skills: readonly TSkill[] }): TSkill[] {
   return skills.flatMap((skill) =>
     getNotPlannedReason({
-      hasItems: facts.heldSkillIds.has(skill.skillId),
+      hasItems: facts.heldSkillIds.has(skill.skillId) || (skill.deferredLessons ?? 0) > 0,
       hasSkills: true,
       known: facts.knownSkillIds.has(skill.skillId),
       pastBasics: facts.pastBasicsSkillIds.has(skill.skillId),
