@@ -53,7 +53,8 @@ case "$action" in
     head -c "$cap" < "$staged/$action.stderr.pipe" > "$staged/$action.stderr" &
     err_pid=$!
     set +e
-    timeout -s KILL "$limit" bash -c 'echo $$ > "$0/cgroup.procs" && exec "$@"' "$jail" \\
+    # Ubuntu's uutils timeout exits 124 after its kill; preserving the status reports SIGKILL as 137.
+    timeout --preserve-status -s KILL "$limit" bash -c 'echo $$ > "$0/cgroup.procs" && exec "$@"' "$jail" \\
       runuser -u learner -- env -i \\
       HOME=/home/learner USER=learner LOGNAME=learner PATH=/usr/local/bin:/usr/bin:/bin \\
       LANG=C.UTF-8 TZ=UTC DOTNET_CLI_TELEMETRY_OPTOUT=1 DOTNET_NOLOGO=1 \\
