@@ -4,7 +4,12 @@ import {
   type LevelTestResult,
 } from "@zoonk/core/language/level-test/contract";
 import { describe, expect, it } from "vitest";
-import { toLevelTestGroups, toListeningOut, toOpenedLevelTestPhase } from "./level-test-phase";
+import {
+  toHeardLengthMs,
+  toLevelTestGroups,
+  toListeningOut,
+  toOpenedLevelTestPhase,
+} from "./level-test-phase";
 
 const ATTEMPT_ID = "0198a6c4-2f6e-7c1a-9b1e-3f2d4c5b6a71";
 
@@ -147,5 +152,13 @@ describe(toListeningOut, () => {
     expect(toListeningOut({ audioPending: true, heard: true, playFailed: false })).toBe(
       "notUnderstood",
     );
+  });
+});
+
+describe(toHeardLengthMs, () => {
+  it("gives a message's length as the test plays it, to the nearest second", () => {
+    expect(toHeardLengthMs(8500)).toBe(9000);
+    expect(toHeardLengthMs(8000)).toBe(9000);
+    expect(toHeardLengthMs(3000)).toBe(3000);
   });
 });

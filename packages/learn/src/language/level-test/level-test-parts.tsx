@@ -24,16 +24,34 @@ import { type PlaybackTime } from "../../speech/speech-player-provider";
 import { type useSpokenAudio } from "../../speech/use-spoken-audio";
 import { useSkillName } from "../_utils/use-skill-name";
 import { LevelBar } from "../level-bar";
-
-/** Slower than normal, so a level test isn't a test of catching fast speech. */
-const LISTENING_RATE = 0.9;
+import { LISTENING_RATE, toHeardLengthMs } from "./level-test-phase";
 
 type ReadyTest = Extract<LanguageLevelTestView, { status: "ready" }>;
 type LevelView = ReadyTest["levels"][number];
 type TestQuestion = Extract<ReadyTest["next"], { kind: "question" }>["question"];
 
-function toPlayedMs(clipMs: number): number {
-  return clipMs / LISTENING_RATE;
+function MessageLine({
+  lengthMs,
+  played,
+}: {
+  lengthMs: number | null;
+  played: PlaybackTime | null;
+}) {
+  return (
+    <>
+      <Meter className="h-1 min-w-0 flex-1 rounded-xs">
+        <MeterFill
+          className="rounded-xs transition-[width] duration-200 ease-linear motion-reduce:transition-none"
+          share={played && played.totalMs > 0 ? played.elapsedMs / played.totalMs : 0}
+        />
+      </Meter>
+
+      {/* The length's room is kept while it isn't known yet, so the line never jumps. */}
+      <span className="text-muted-foreground min-w-[4ch] text-end font-mono text-xs tabular-nums">
+        {lengthMs !== null && formatClock(toHeardLengthMs(lengthMs))}
+      </span>
+    </>
+  );
 }
 
 /** `onHeard` fires only when the message played to its end, never on a stop or a failed play. */
@@ -56,8 +74,6 @@ export function ListeningMessage({
   const buttonState = withoutFailure(speech.state);
   const { status } = buttonState;
   const playing = status === "playing";
-  const totalMs = time?.totalMs ?? question.audio?.durationMs ?? null;
-  const elapsedMs = playing ? (time?.elapsedMs ?? 0) : 0;
 
   const label = useSpeechActionLabel(
     buttonState,
@@ -108,19 +124,10 @@ export function ListeningMessage({
             {t("The voice message is on its way…")}
           </p>
         ) : (
-          <>
-            <Meter className="h-1 min-w-0 flex-1 rounded-xs">
-              <MeterFill
-                className="rounded-xs transition-[width] duration-200 ease-linear motion-reduce:transition-none"
-                share={playing && totalMs ? elapsedMs / totalMs : 0}
-              />
-            </Meter>
-
-            {/* The length's room is kept while it isn't known yet, so the line never jumps. */}
-            <span className="text-muted-foreground min-w-[4ch] text-end font-mono text-xs tabular-nums">
-              {totalMs !== null && formatClock(toPlayedMs(totalMs - elapsedMs))}
-            </span>
-          </>
+          <MessageLine
+            lengthMs={question.audio?.durationMs ?? time?.totalMs ?? null}
+            played={playing ? time : null}
+          />
         )}
       </div>
 
