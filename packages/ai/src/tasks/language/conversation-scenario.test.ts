@@ -51,4 +51,24 @@ describe(generateConversationScenario, () => {
     expect(english.systemPrompt).toContain("- `title`: in US English, the goal");
     expect(english.systemPrompt).not.toContain("never in");
   });
+
+  it("sets the call in the learner's country, in its variety, when lessons teach another", async () => {
+    const spain = await generateConversationScenario({
+      ...UNIT,
+      learnerLanguage: "en",
+      targetLanguage: "es",
+      targetRegion: "ES",
+    });
+
+    const shared = await generateConversationScenario({
+      ...UNIT,
+      learnerLanguage: "en",
+      targetLanguage: "es",
+    });
+
+    expect(spain.userPrompt).toContain("- Place: Spain");
+    expect(spain.systemPrompt).toContain("in Español (España)");
+    expect(shared.userPrompt).toContain("- Place: Mexico");
+    expect(shared.systemPrompt).toContain("in Español de México");
+  });
 });

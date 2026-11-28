@@ -209,4 +209,22 @@ export const TEST_CASES: TestCase<unknown, ConversationScenarioInput>[] = [
       unitTitle: "Renting an apartment",
     },
   },
+  {
+    expectations: `US English speaker learning Spanish at A1 whose goal names Spain, booking a hotel room. Lessons teach Mexican Spanish, but this call is set in Spain: a hotel in a Spanish city or street, a Spanish name, prices in euros, and Spain's Spanish in the opening line, labels and hints ("habitación", "¿Cuánto cuesta la noche?"), with "usted" for a stranger at work. Nothing from Mexico: no pesos, no Mexican city, no Mexico-only words. Opening line and hints very short (A1). Title, situation, role and every objective description in US English, never Spanish.`,
+    id: "en-es-ES-a1-hotel",
+    userInput: {
+      canDo: ["Book a hotel room by phone", "Ask the price per night", "Ask what's included"],
+      learnerLanguage: "en",
+      level: "A1",
+      targetLanguage: "es",
+      targetRegion: "ES",
+      unitDescription: "Call a hotel to book a room, ask the price and what's included",
+      unitTitle: "Booking a hotel room",
+    },
+  },
+  {
+    expectations: `Brazilian learner of English at A2 whose goal names the United Kingdom, renting a flat. Lessons teach US English, but this call is set in the UK: a British name, a street or area in a UK city, rent in pounds (per month or per week), and British English in the opening line, labels and hints ("flat", "letting agent", "bills included"), never "apartment" or dollars. Opening line and hints short (A2). Title, situation and descriptions in Brazilian Portuguese.`,
+    id: "pt-en-GB-a2-renting",
+    userInput: { ...PT_RENTING_UNIT, level: "A2", targetRegion: "GB" },
+  },
 ];

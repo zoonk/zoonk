@@ -15,7 +15,11 @@ import {
   startCheckpointCall,
 } from "./_utils/checkpoint-call";
 import { getSpeakingLevel } from "./_utils/conversation-goal";
-import { findUnitScenario, toScenarioUnit } from "./_utils/conversation-scenario";
+import {
+  findUnitScenario,
+  getScenarioRegion,
+  toScenarioUnit,
+} from "./_utils/conversation-scenario";
 import { createConversation } from "./_utils/create-conversation";
 import { findSpeakingMockSetup, findWaitingSpeakingMock } from "./_utils/speaking-mock";
 import { type PreparingCall } from "./call-writing-contract";
@@ -65,11 +69,13 @@ async function startPractice({
 
   const goal = await findLearnerLanguageGoal({ goalId: input.goalId, targetLanguage, userId });
   const level = await getSpeakingLevel({ goal, targetLanguage, userId });
-  const scenario = await findUnitScenario({ chapterId: chapter.id, level });
+  const targetRegion = getScenarioRegion(goal);
+  const scenario = await findUnitScenario({ chapterId: chapter.id, level, targetRegion });
 
   if (!scenario) {
     const unit = toScenarioUnit({ ...chapter, targetLanguage });
-    return { status: "preparing", writing: { kind: "unitScenario", level, unit, userId } };
+    const writing = { kind: "unitScenario", level, targetRegion, unit, userId } as const;
+    return { status: "preparing", writing };
   }
 
   await saveDayBeforeActivity({ goalId: input.goalId, language: targetLanguage, userId });
@@ -120,7 +126,12 @@ async function readCheckpointCall({
   }
 
   const level = await getSpeakingLevel({ goal, targetLanguage, userId });
-  const scenario = await findUnitScenario({ chapterId: unit.chapterId, level });
+
+  const scenario = await findUnitScenario({
+    chapterId: unit.chapterId,
+    level,
+    targetRegion: getScenarioRegion(goal),
+  });
 
   if (!scenario) {
     return { status: "preparing", unitTitle: unit.title };
