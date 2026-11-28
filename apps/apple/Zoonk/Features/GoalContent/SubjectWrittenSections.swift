@@ -72,6 +72,7 @@ private struct SubjectWrittenPoints: View {
         }
 
         WrittenStandingLine(part: points)
+          .typeStyle(.note)
       }
       .padding(.vertical, 4)
 
@@ -113,7 +114,7 @@ private func minimumText(_ minimum: PointsMinimum, max: Double?) -> Text {
   }
 
   return Text(
-    "Minimum to pass: \(WritingLabels.points(minimum.value)) of \(WritingLabels.points(max))",
+    "Minimum to pass: \(WritingLabels.points(minimum.value)) of \(WritingLabels.partPoints(max))",
     tableName: "Plan")
 }
 

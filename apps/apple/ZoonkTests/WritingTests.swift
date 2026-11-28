@@ -335,6 +335,16 @@ final class WritingResultDecodingTests: XCTestCase {
       "A zero mark keeps its scale's decimals, as web and Android write it")
     XCTAssertEqual(WritingLabels.range(.init(high: 0.04, low: 0), decimals: 1), "0.0")
     XCTAssertEqual(WritingLabels.range(.init(high: 0, low: 0), of: 30, decimals: 0), "0 of 30")
+    XCTAssertEqual(
+      WritingLabels.range(.init(high: 14.67, low: 14.67), of: 22, decimals: 1), "14.7 of 22",
+      "A whole maximum never pads to its mark's decimals")
+    XCTAssertEqual(
+      WritingLabels.range(.init(high: 1.5, low: 1.5), of: 1.5, decimals: 1), "1.5 of 1.5")
+    XCTAssertEqual(
+      WritingLabels.range(.init(high: 18.1, low: 16.6), of: 30, decimals: 0, headline: true),
+      "16–19 of 30")
+    XCTAssertEqual(
+      WritingLabels.range(.init(high: 48.01, low: 48.01), of: 70, decimals: 0), "48 of 70")
     XCTAssertEqual(WritingLabels.deduction(.init(high: 0.6, low: 0.3)), "−0.3 to −0.6")
     XCTAssertEqual(WritingLabels.deduction(.init(high: 0.6, low: 0.6)), "−0.6")
     XCTAssertEqual(WritingLabels.deduction(.init(high: 0.6, low: 0)), "0.0 to −0.6")

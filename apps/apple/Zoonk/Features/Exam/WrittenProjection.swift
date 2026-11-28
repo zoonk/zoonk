@@ -163,6 +163,7 @@ struct WrittenProjectionSections: View {
           // The headline already says this part is likely below its minimum.
           if projection.headline != .below(part) {
             WrittenStandingLine(part: part)
+              .typeStyle(.note)
           }
         }
       }
@@ -205,7 +206,7 @@ struct PointsReadout: View {
         .typeStyle(.momentReadout)
         .monospacedDigit()
       Text(
-        "of \(WritingLabels.points(max, decimals: decimals))", tableName: "Essay"
+        "of \(WritingLabels.partPoints(max))", tableName: "Essay"
       )
       .typeStyle(.body)
       .foregroundStyle(.mutedForeground)
@@ -277,7 +278,8 @@ private struct ScoreRow<Detail: View>: View {
 /// A written part's estimate against its own minimum, as main's `WrittenStandingLine` says it.
 /// Each verdict is "likely": it comes from how closely graders' marks match the board's, never a
 /// promise, so it never says by how much; the estimate beside it shows the gap. Without one, an
-/// estimate beside a minimum would read as a pass, so the line says it can't tell.
+/// estimate beside a minimum would read as a pass, so the line says it can't tell. Its type comes
+/// from where it sits, so in a mock's "By test" it reads like the objective tests' lines beside it.
 struct WrittenStandingLine: View {
   let part: WrittenPartPoints
 
@@ -289,7 +291,7 @@ struct WrittenStandingLine: View {
       case .met:
         line(
           Text("Likely above the \(points) points needed", tableName: "Plan"),
-          mark: Image(systemName: "checkmark").foregroundStyle(.successText),
+          mark: Image(systemName: "checkmark"),
           style: .mutedForeground)
       case .below:
         line(
@@ -301,7 +303,6 @@ struct WrittenStandingLine: View {
           mark: Image(systemName: "exclamationmark.triangle"), style: .warningText)
       case .unmeasured:
         Text("Can't say yet whether this reaches the \(points) points needed", tableName: "Plan")
-          .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
       case .unrecognized, nil:
         EmptyView()
@@ -316,7 +317,6 @@ struct WrittenStandingLine: View {
       mark.accessibilityHidden(true)
       words
     }
-    .typeStyle(.note)
     .foregroundStyle(style)
   }
 }

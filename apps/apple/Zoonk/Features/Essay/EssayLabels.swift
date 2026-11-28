@@ -13,6 +13,8 @@ enum WritingLabels {
     return value.formatted(.number.precision(.fractionLength(decimals)).locale(locale))
   }
 
+  /// A fixed amount, such as a maximum or a minimum, as it is: "22", "9.5", "1.25". It never pads
+  /// to a mark's decimals, so a criterion reads "14.7 of 22", never "14.7 of 22.0".
   static func partPoints(_ value: Double) -> String {
     let format = FloatingPointFormatStyle<Double>.number
       .precision(.fractionLength(0...2))
@@ -88,7 +90,7 @@ enum WritingLabels {
   ) -> String {
     String(
       localized:
-        "\(self.range(range, decimals: decimals, headline: headline)) of \(points(max, decimals: decimals))",
+        "\(self.range(range, decimals: decimals, headline: headline)) of \(partPoints(max))",
       table: "Essay", comment: "A range of points of a question's total, like '16–19 of 30'")
   }
 

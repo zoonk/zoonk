@@ -444,7 +444,7 @@ private struct WritingCriteriaSection: View {
   private func score(_ row: WritingResult.Row) -> String {
     String(
       localized:
-        "\(WritingLabels.range(row.range ?? .init(high: row.earned, low: row.earned), decimals: decimals(row))) of \(WritingLabels.points(row.max, decimals: decimals(row)))",
+        "\(WritingLabels.range(row.range ?? .init(high: row.earned, low: row.earned), decimals: decimals(row))) of \(WritingLabels.partPoints(row.max))",
       table: "Essay", comment: "A criterion's points, like '7.1 of 9.5'")
   }
 
