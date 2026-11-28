@@ -61,11 +61,7 @@ private fun ExamChoiceOptions(
     if (choice.take > 1) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             SectionLabel(choice.group)
-            Text(
-                text = stringResource(R.string.exam_choice_pick_up_to, choice.take),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            ExamPickLimit(choice.take)
             ExamChoicePicks(choice, saving = false, enabled = !pending, onSave = { edits.chooseExamOption(choice.group, it, null) })
         }
     } else {
@@ -175,6 +171,16 @@ fun examChoiceQuestion(choice: ExamChoice): String =
         if (choice.take > 1) R.string.plan_exam_choice_question_several else R.string.plan_exam_choice_question,
         choice.group,
     )
+
+/** Main's `ExamPickLimit`: how many options a choice takes, where nothing above the picks says it already. */
+@Composable
+fun ExamPickLimit(take: Long) {
+    Text(
+        text = stringResource(R.string.exam_choice_pick_up_to, take),
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+}
 
 @Composable
 fun ExamChoiceDescription(choice: ExamChoice) {
