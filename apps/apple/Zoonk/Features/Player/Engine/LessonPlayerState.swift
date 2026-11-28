@@ -501,9 +501,7 @@ struct LessonPlayerState: Equatable, Sendable {
   /// Number questions are kept. A lesson left with nothing to do as it opens (`opening`) waits for
   /// Finish, since only a learner's action saves one.
   mutating func skipWriting(opening: Bool = false, now: Date = .now) {
-    skipAhead(.writingSkipped, into: \.skippedWritingStepIds, opening: opening, now: now) {
-      $0.isWriting
-    }
+    skipAhead(.writingSkipped, opening: opening, now: now) { $0.isWriting }
   }
 
   /// Leaves out the spoken screens ahead that nobody can answer now (`isLeftOut`). The learner's "I
@@ -517,7 +515,7 @@ struct LessonPlayerState: Equatable, Sendable {
       return
     }
 
-    skipAhead(.speakingSkipped, into: \.unavailableStepIds, opening: opening, now: now, isLeftOut)
+    skipAhead(.speakingSkipped, opening: opening, now: now, isLeftOut)
   }
 
   /// "Turn back on": the screens the skip left out come back, and the learner is where they were.
@@ -526,19 +524,42 @@ struct LessonPlayerState: Equatable, Sendable {
       return
     }
 
-    queue = restore.queue
-    skippedWritingStepIds.removeAll { restore.leftOut.contains($0) }
-    unavailableStepIds.removeAll { restore.leftOut.contains($0) }
+    takeBack(restore)
+    let leftOut = unavailableStepIds + skippedWritingStepIds
+    queue = restore.queue.enumerated().filter { index, id in
+      index < restore.position || !leftOut.contains(id)
+    }.map(\.element)
     skipRestore = nil
     notice = nil
     enter(restore.position, now: now)
   }
 
-  /// The screen in view and those ahead that `isLeftOut` picks are recorded in `list` and left out,
-  /// with `notice` and the way back while the lesson goes on.
+  /// Writing left out goes to the server as skipped; speaking stays with the screens this device
+  /// can't play.
+  private static func leftOutList(_ notice: Notice) -> WritableKeyPath<LessonPlayerState, [String]>
+  {
+    notice == .writingSkipped ? \.skippedWritingStepIds : \.unavailableStepIds
+  }
+
+  /// The skip whose notice shows, with the screens it left out back in its list.
+  private mutating func takeBackSkip() -> SkipRestore? {
+    guard let restore = skipRestore, notice == restore.notice else {
+      return nil
+    }
+
+    takeBack(restore)
+    return restore
+  }
+
+  private mutating func takeBack(_ restore: SkipRestore) {
+    self[keyPath: Self.leftOutList(restore.notice)].removeAll { restore.leftOut.contains($0) }
+  }
+
+  /// The screen in view and those ahead that `isLeftOut` picks are left out, with `notice` and the
+  /// way back while the lesson goes on. A second skip while the same notice shows keeps the first
+  /// one's way back, so one "Turn back on" puts back both.
   private mutating func skipAhead(
-    _ notice: Notice, into list: WritableKeyPath<LessonPlayerState, [String]>, opening: Bool,
-    now: Date, _ isLeftOut: (LessonStep) -> Bool
+    _ notice: Notice, opening: Bool, now: Date, _ isLeftOut: (LessonStep) -> Bool
   ) {
     guard phase == .playing else {
       return
@@ -550,11 +571,15 @@ struct LessonPlayerState: Equatable, Sendable {
       return
     }
 
+    let list = Self.leftOutList(notice)
     let recorded = self[keyPath: list]
     let added = ahead.reduce(into: [String]()) { added, id in
       if !recorded.contains(id), !added.contains(id) { added.append(id) }
     }
-    let restore = SkipRestore(notice: notice, position: position, queue: queue, leftOut: added)
+    let earlier = skipRestore.flatMap { self.notice == notice && $0.notice == notice ? $0 : nil }
+    let restore = SkipRestore(
+      notice: notice, position: earlier?.position ?? position, queue: earlier?.queue ?? queue,
+      leftOut: (earlier?.leftOut ?? []) + added)
     self[keyPath: list] += added
     leaveOutAhead({ ahead.contains($0) }, completionStatus: opening ? .ready : .saving, now: now)
 
@@ -743,9 +768,17 @@ struct LessonPlayerState: Equatable, Sendable {
 
     if keepsScreen {
       fillUntouched(from: known, workedStepIds: workedStepIds)
-    } else {
-      if !firstVerdicts.isEmpty { resetForResume() }
-      resume(from: known)
+      return
+    }
+
+    // A skip made as the lesson opened is made again where the run places the learner, so "Turn
+    // back on" still puts its screens back.
+    let skipped = known.isEmpty ? nil : takeBackSkip()
+    if !firstVerdicts.isEmpty || skipped != nil { resetForResume() }
+    resume(from: known)
+
+    if let skipped {
+      skipAhead(skipped.notice, opening: true, now: .now) { skipped.leftOut.contains($0.id) }
     }
   }
 

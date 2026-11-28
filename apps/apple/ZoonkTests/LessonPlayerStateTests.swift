@@ -1501,6 +1501,66 @@ final class LessonPlayerHelpTests: XCTestCase {
     XCTAssertEqual(state.notice, .speakingSkipped)
   }
 
+  func testTurnBackOnPutsBackBothSpeakingSkipsMadeOnTheSameScreen() throws {
+    var state = LessonPlayerState(
+      lessonId: "lesson",
+      steps: [
+        try step(spokenStep("hear", listening: true)), try step(spokenStep("say")),
+        try step(check(id: "dictation")), try step(summary),
+      ])
+
+    state.skipSpeaking(undoable: true) {
+      $0.isUnanswerableAloud(canSpeak: false, cantListen: false)
+    }
+    state.skipSteps(["dictation"])
+    state.skipSpeaking(undoable: true) { $0.isUnanswerableAloud(canSpeak: false, cantListen: true) }
+    XCTAssertEqual(state.queue, ["summary"])
+
+    state.restoreSkipped()
+    XCTAssertEqual(state.queue, ["hear", "say", "summary"], "what can't listen left out stays out")
+    XCTAssertEqual(state.currentStep?.id, "hear")
+    XCTAssertEqual(state.unavailableStepIds, ["dictation"])
+  }
+
+  func testTurnBackOnPutsBackWhatTheOpeningSkipLeftOutOnceTheRunPlacesTheLearner() throws {
+    var state = LessonPlayerState(
+      lessonId: "lesson",
+      steps: [
+        try step(check(id: "answered")), try step(spokenStep("say")), try step(check(id: "open")),
+        try step(summary),
+      ])
+    state.skipSpeaking(undoable: true, opening: true) {
+      $0.isUnanswerableAloud(canSpeak: false, cantListen: false)
+    }
+
+    state.startRun(runId: "run", answers: [runAnswer("answered", isCorrect: true)])
+    XCTAssertEqual(state.currentStep?.id, "open")
+    XCTAssertEqual(state.notice, .speakingSkipped)
+
+    state.restoreSkipped()
+    XCTAssertEqual(state.currentStep?.id, "say")
+    XCTAssertEqual(state.queue, ["answered", "say", "open", "summary"])
+    XCTAssertEqual(state.unavailableStepIds, [])
+  }
+
+  func testTurnBackOnPutsBackTheWritingLeftOutBeforeTheRunPlacesTheLearner() throws {
+    var state = LessonPlayerState(
+      lessonId: "lesson",
+      steps: [
+        try step(check(id: "answered")), try step(typedAnswer), try step(check(id: "open")),
+        try step(summary),
+      ])
+    state.skipWriting(opening: true)
+
+    state.startRun(runId: "run", answers: [runAnswer("answered", isCorrect: true)])
+    XCTAssertEqual(state.currentStep?.id, "open")
+    XCTAssertEqual(state.notice, .writingSkipped)
+
+    state.restoreSkipped()
+    XCTAssertEqual(state.currentStep?.id, "typed")
+    XCTAssertEqual(state.skippedWritingStepIds, [])
+  }
+
   func testADeviceThatCantRecordLeavesOutSpeakingWithNothingToTurnBackOn() throws {
     var state = LessonPlayerState(
       lessonId: "lesson", steps: [try step(spokenStep("say")), try step(check(id: "check"))])
