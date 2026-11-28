@@ -449,6 +449,40 @@ describe(checkWrittenLesson, () => {
     expect(codesOf(withScreen(5, fallback), { allowActivityFallback: true })).toStrictEqual([]);
   });
 
+  it("requires a templated application to use its activity and permits a check after fixing", () => {
+    const original = temperatureSpec();
+
+    const spec = {
+      ...original,
+      screens: original.screens.map((screen) =>
+        screen.kind === "application"
+          ? { ...screen, activityTemplate: "numberLine", visualKind: "template" as const }
+          : screen,
+      ),
+    };
+
+    const lesson = writtenTemperatureLesson();
+    const activity = lesson.screens[5];
+
+    if (activity?.kind !== "activity") {
+      throw new Error("Screen 6 is an activity.");
+    }
+
+    expect(codesOf(lesson, { spec })).toContainEqual([7, "screenKind"]);
+    expect(codesOf(lesson, { allowActivityFallback: true, spec })).toStrictEqual([]);
+    expect(codesOf(withScreen(7, activity), { spec })).toStrictEqual([]);
+    expect(codesOf(withScreen(7, activity))).toContainEqual([7, "screenKind"]);
+
+    const asReading = codesOf(withScreen(7, explanation("A rise takes the dot up.")), { spec });
+
+    expect(asReading).toContainEqual([7, "screenKind"]);
+    expect(asReading).not.toContainEqual([7, "plannedVisual"]);
+
+    expect(
+      codesOf(withScreen(7, { ...activity, template: "categorize" }), { spec }),
+    ).toContainEqual([7, "activityTemplate"]);
+  });
+
   it("reports content that breaks the step contract or the activity rules", () => {
     const twoCorrect: WrittenScreen = {
       basis: null,

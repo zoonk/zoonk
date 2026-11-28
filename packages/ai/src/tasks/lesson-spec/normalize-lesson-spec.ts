@@ -5,6 +5,7 @@ import {
   type LessonSpec,
   type LessonSpecSkill,
   estimateLessonMinutes,
+  isPlannedActivity,
 } from "./lesson-spec-rules";
 import { type LessonVisualKind } from "./lesson-visuals";
 
@@ -74,13 +75,11 @@ function normalizeActivity({
     return { activityTemplate: exploreIds.has(template) ? template : null, kind: screen.kind };
   }
 
-  if (screen.kind !== "activity") {
-    return { activityTemplate: null, kind: screen.kind };
+  if (isPlannedActivity(screen) && templateIds.has(template)) {
+    return { activityTemplate: template, kind: screen.kind };
   }
 
-  return templateIds.has(template)
-    ? { activityTemplate: template, kind: "activity" }
-    : { activityTemplate: null, kind: "check" };
+  return { activityTemplate: null, kind: screen.kind === "activity" ? "check" : screen.kind };
 }
 
 type ScreenVisual = Pick<LessonScreen, "activityTemplate" | "visual" | "visualKind">;
@@ -106,7 +105,7 @@ function toVisual({
   const nothing: ScreenVisual = { activityTemplate: null, visual: null, visualKind: "none" };
 
   // An activity draws itself; its picture is one its template asks for.
-  if (kind === "activity") {
+  if (isPlannedActivity({ activityTemplate, kind })) {
     return { activityTemplate, visual: picture || null, visualKind: "template" };
   }
 
