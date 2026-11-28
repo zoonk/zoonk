@@ -1,6 +1,9 @@
-import { type GoalSkillGraph } from "./save-goal-skills";
-
-type GraphSkill = GoalSkillGraph["skills"][number];
+type SizedSkill = {
+  area: string | null;
+  estimatedLessons: number;
+  legacyEstimate?: boolean;
+  topics?: readonly string[];
+};
 
 function getMedian(values: readonly number[]): number | null {
   const sorted = values.toSorted((a, b) => a - b);
@@ -15,26 +18,25 @@ function getMedian(values: readonly number[]): number | null {
     : (sorted[middle] ?? 0);
 }
 
-function getLessonsPerTopic(skills: readonly GraphSkill[]): number | null {
-  return getMedian(
-    skills.map((skill) => skill.estimatedLessons / Math.max(1, skill.topics.length)),
-  );
+function lessonsPerTopic(skill: SizedSkill): number {
+  return skill.estimatedLessons / Math.max(1, skill.topics?.length ?? 0);
 }
 
-/** A topic no skill teaches is sized like the skills the writer sized in its subject. */
-export function getTopicLessons({
-  sized,
-  subject,
-}: {
-  sized: GoalSkillGraph;
-  subject: string;
-}): number {
-  const median =
-    getLessonsPerTopic(sized.skills.filter((skill) => skill.area === subject)) ??
-    getLessonsPerTopic(sized.skills) ??
-    1;
+export function estimateTopicLessons(skills: readonly SizedSkill[]) {
+  const sized = skills.filter((skill) => !skill.legacyEstimate);
+  const overall = getMedian(sized.map((skill) => lessonsPerTopic(skill)));
 
-  return Math.max(1, Math.round(median));
+  const subjects = new Map(
+    [...Map.groupBy(sized, (skill) => skill.area)].map(([area, items]) => [
+      area,
+      getMedian(items.map((skill) => lessonsPerTopic(skill))),
+    ]),
+  );
+
+  return function forSubject(subject: string | null): number | null {
+    const median = subjects.get(subject) ?? overall;
+    return median === null ? null : Math.max(1, Math.round(median));
+  };
 }
 
 const TOPIC_ENUMERATOR = /^\s*(?:\d+(?:\.\d+)*[.)]?|[a-z][.)]|[ivxlc]+\s*[.)–-])\s+/iu;

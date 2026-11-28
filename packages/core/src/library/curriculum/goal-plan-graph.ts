@@ -1,4 +1,5 @@
 import { type PlanGraph, type PlanGraphSkill } from "../../plans/planner/plan-state";
+import { LEGACY_COVERAGE_LESSONS } from "./legacy-exam-estimates";
 import { type GoalSkillGraph } from "./save-goal-skills";
 
 export type PlannedSkillGraph = Omit<GoalSkillGraph, "extraSkills" | "skills"> & {
@@ -8,6 +9,7 @@ export type PlannedSkillGraph = Omit<GoalSkillGraph, "extraSkills" | "skills"> &
 };
 
 type PlannedSkill = GoalSkillGraph["skills"][number] & {
+  legacyEstimate?: boolean;
   outlined?: boolean;
   topicsUnknown?: boolean;
 };
@@ -83,6 +85,8 @@ export function toGoalPlanGraph({
           ...(skill.outlined ? { outlined: true } : {}),
           phase: Math.max(0, skill.phase - 1),
           skillId,
+          ...(skill.estimatedLessons === LEGACY_COVERAGE_LESSONS &&
+            !skill.legacyEstimate && { sizedEstimate: true as const }),
           topics: skill.topicsUnknown && skill.topics.length === 0 ? undefined : skill.topics,
           weight: skill.examWeight,
         },

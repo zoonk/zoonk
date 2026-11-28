@@ -37,6 +37,22 @@ const graph: GoalSkillGraph = {
 };
 
 describe(toGoalPlanGraph, () => {
+  it("distinguishes a sized two-lesson skill from a legacy two-lesson estimate", () => {
+    const result = toGoalPlanGraph({
+      courseIdsByKey: { math: "course-math" },
+      graph: {
+        ...graph,
+        skills: [
+          graphSkill({ estimatedLessons: 2, key: "sized" }),
+          graphSkill({ estimatedLessons: 2, key: "legacy", legacyEstimate: true }),
+        ],
+      },
+      idsByKey: { legacy: "legacy-id", sized: "sized-id" },
+    });
+
+    expect(result.skills.map((skill) => skill.sizedEstimate)).toStrictEqual([true, undefined]);
+  });
+
   it("keeps teaching order, counts phases from zero and uses the course as the area", () => {
     const result = toGoalPlanGraph({
       courseIdsByKey: { math: "course-math", physics: "course-physics" },

@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { sizeLegacyExamSkills } from "../../library/curriculum/legacy-exam-estimates";
 import { isPlanFinished } from "../_utils/plan-end";
 import { chooseBases } from "./base-choices";
 import { type BuildPlanInput, buildPlan } from "./build-plan";
@@ -250,7 +251,7 @@ describe(summarizeSelectedPlan, () => {
   });
 
   it("counts the lessons of a band with no situations yet in what's left to study", () => {
-    const input = learnInput({ goal: { dailyMinutes: 3, kind: "learn", targetDate: null } });
+    const input = learnInput({ goal: { dailyMinutes: 3, kind: "language", targetDate: null } });
     const owed = { ...input, graph: { ...input.graph, unwrittenLessons: 10 }, paceFactor: 2 };
 
     expect(summarize(owed).requirement).toStrictEqual({
@@ -259,6 +260,29 @@ describe(summarizeSelectedPlan, () => {
       totalRaw: 24 + 10 * DEFAULT_LESSON_MINUTES * 2,
     });
   });
+
+  it.each([
+    { finish: { date: expect.any(String), precision: "month" }, unwrittenLessons: 10 },
+    { finish: { date: expect.any(String), precision: "year" }, unwrittenLessons: 300 },
+    { finish: { date: null, precision: null, reason: "beyondHorizon" }, unwrittenLessons: 1600 },
+  ])(
+    "forecasts $unwrittenLessons unwritten language lessons without adding a phase",
+    ({ finish, unwrittenLessons }) => {
+      const input = learnInput({
+        goal: { dailyMinutes: 3, kind: "language", targetDate: null },
+        paceFactor: 2,
+      });
+
+      const owed = { ...input, graph: { ...input.graph, unwrittenLessons } };
+      const built = buildPlan(owed);
+
+      expect(
+        summarizeSelectedPlan({ built, examSubjects: null, input: owed }).forecast.finish,
+      ).toMatchObject(finish);
+
+      expect(built.phases.map(({ name }) => name)).toStrictEqual(["Basics"]);
+    },
+  );
 
   it("says the whole requirement fits when every lesson is laid before the date", () => {
     const summary = summarize(learnInput());
@@ -523,15 +547,22 @@ describe(summarizeSelectedPlan, () => {
   });
 
   it("counts a partly outlined skill's short remainder until the outline is complete", () => {
+    const written = skill("s1", { lessons: 2 });
+
+    const estimated = sizeLegacyExamSkills({
+      phases: [],
+      skills: [written, skill("reference", { lessons: 4 })],
+    }).skills.filter(({ skillId }) => skillId === written.skillId);
+
     const partlyWritten = learnInput({
       goal: { dailyMinutes: 15, kind: "learn", targetDate: null },
-      graph: { phases: [], skills: [skill("s1", { lessons: 4 })] },
+      graph: { phases: [], skills: estimated },
       lessons: [lesson("l1", ["s1"], 6)],
     });
 
     const outlined = {
       ...partlyWritten,
-      graph: { phases: [], skills: [skill("s1", { lessons: 4, outlined: true })] },
+      graph: { phases: [], skills: estimated.map((item) => ({ ...item, outlined: true })) },
     };
 
     expect(summarize(partlyWritten).requirement.remainingRaw).toBe(6 + 3 * DEFAULT_LESSON_MINUTES);

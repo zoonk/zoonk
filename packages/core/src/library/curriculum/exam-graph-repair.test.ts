@@ -321,7 +321,9 @@ describe(saveReconciledExamGraph, () => {
     });
 
     await expect(addCoveredExamSkills(blueprint.id)).resolves.toHaveLength(1);
-    expect(areas(await loadGraph(blueprint.id))).toStrictEqual([LANGUAGES, MATH]);
+    const shared = await loadGraph(blueprint.id);
+    expect(areas(shared)).toStrictEqual([LANGUAGES, MATH]);
+    expect(shared.skills.find((skill) => skill.area === MATH)?.lessons).toBe(6);
 
     await repair();
     expect(areas(await readPlan())).toStrictEqual([LANGUAGES, MATH]);
