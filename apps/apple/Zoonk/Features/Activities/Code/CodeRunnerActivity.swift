@@ -407,7 +407,7 @@ private struct CodeRunnerOutput: View {
 
   private func outputText(_ text: String) -> some View {
     Text(verbatim: text.replacingOccurrences(of: "\\s+$", with: "", options: .regularExpression))
-      .typeStyle(.section.monospaced())
+      .typeStyle(.programOutput)
       .textSelection(.enabled)
   }
 

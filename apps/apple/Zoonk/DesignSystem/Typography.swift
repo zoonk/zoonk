@@ -93,6 +93,8 @@ extension TypeStyle {
   static let code = TypeStyle(
     size: 14, relativeTo: .subheadline, weight: .regular, tracking: 0, face: .mono,
     lineHeight: 24.0 / 14)
+  /// What a program printed, and what it should print: main's `font-mono text-lg font-semibold`.
+  static let programOutput = TypeStyle(size: 18, relativeTo: .body, weight: .semibold, face: .mono)
   /// Uppercase, inside a panel or over a search group only.
   static let label = TypeStyle(
     size: 11.5, relativeTo: .caption2, weight: .medium, tracking: 0.04, isUppercase: true)
