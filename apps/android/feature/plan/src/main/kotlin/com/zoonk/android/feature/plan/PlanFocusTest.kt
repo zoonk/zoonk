@@ -121,6 +121,10 @@ private fun questionOf(
 @Composable
 private fun placementTestLine(test: PlanPlacementTest): String =
     when (test) {
+        is PlanPlacementTest.PlanPlacementTestOneOf2Value -> {
+            ""
+        }
+
         is PlanPlacementTest.PlanPlacementTestOneOf1Value -> {
             val row = test.value
             val result = row.result

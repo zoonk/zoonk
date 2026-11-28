@@ -223,6 +223,7 @@ internal fun languageTest(
 internal val LanguageLevelTest.openAttemptId: UUID?
     get() =
         when (this) {
+            is LanguageLevelTest.LanguageLevelTestOneOf2Value -> null
             is LanguageLevelTest.LanguageLevelTestOneOfValue -> value.attemptId
             is LanguageLevelTest.LanguageLevelTestOneOf1Value -> value.attemptId
         }
@@ -230,6 +231,7 @@ internal val LanguageLevelTest.openAttemptId: UUID?
 internal val LanguageLevelTest.isFinished: Boolean
     get() =
         when (this) {
+            is LanguageLevelTest.LanguageLevelTestOneOf2Value -> false
             is LanguageLevelTest.LanguageLevelTestOneOfValue -> value.result != null
             is LanguageLevelTest.LanguageLevelTestOneOf1Value -> value.result != null
         }
@@ -237,6 +239,7 @@ internal val LanguageLevelTest.isFinished: Boolean
 internal val LanguageLevelTest.total: Long
     get() =
         when (this) {
+            is LanguageLevelTest.LanguageLevelTestOneOf2Value -> 0
             is LanguageLevelTest.LanguageLevelTestOneOfValue -> value.total
             is LanguageLevelTest.LanguageLevelTestOneOf1Value -> value.total
         }
@@ -244,6 +247,7 @@ internal val LanguageLevelTest.total: Long
 internal val LanguageLevelTest.estimatedMinutes: Long
     get() =
         when (this) {
+            is LanguageLevelTest.LanguageLevelTestOneOf2Value -> 0
             is LanguageLevelTest.LanguageLevelTestOneOfValue -> value.estimatedMinutes
             is LanguageLevelTest.LanguageLevelTestOneOf1Value -> value.estimatedMinutes
         }
