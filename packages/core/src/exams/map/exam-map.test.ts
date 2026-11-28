@@ -305,6 +305,12 @@ describe("a qualifying phase that retests the counted subjects", () => {
     expect(shares[0]).toBeCloseTo(written);
   });
 
+  it("keeps the shared subjects' questions in the first phase when the written phase counts its tests", () => {
+    expect(
+      listPlanShares(cacdStructure({ secondMaxPoints: 800, secondQuestions: 8 })),
+    ).toStrictEqual(listPlanShares(cacdStructure()));
+  });
+
   it("states no written weight when neither a formula nor the written points are known", () => {
     const shares = listPlanShares(cacdStructure({ finalShares: false }));
 

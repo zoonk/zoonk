@@ -665,4 +665,45 @@ describe("a qualifying first phase that retests the written phase's subjects", (
       [...CACD_SHARED, "História Mundial"].map((name) => [name, "Primeira Fase", 30]),
     );
   });
+
+  it("splits them the same when the written phase counts its tests", () => {
+    expect(getSubjectShares(cacdStructure({ secondQuestions: 8 }))).toStrictEqual(
+      getSubjectShares(cacdStructure()),
+    );
+  });
+});
+
+describe("a choice whose options a written test is also named after", () => {
+  it("keeps asking the options' stated questions", () => {
+    const citation = { passage: "…", sourceId: "notice" };
+    const option = { choiceGroup: "Language", group: "Objective", topics: [], weight: null };
+
+    const structure: ExamStructure = {
+      formats: [],
+      mock: {
+        adaptive: false,
+        citations: [],
+        order: null,
+        scoring: { description: "", method: "raw" },
+        sections: [
+          { day: null, kind: "objective", minutes: 60, name: "Objective", questions: 40 },
+          { day: null, kind: "written", minutes: 60, name: "Language", questions: null },
+        ],
+        timeLimitMinutes: null,
+        totalQuestions: 40,
+      },
+      rules: [],
+      subjects: [
+        { citation, group: "Objective", name: "Math", questions: 30, topics: [], weight: null },
+        { ...option, citation, name: "English", questions: 10 },
+        { ...option, citation, name: "French", questions: 10 },
+      ],
+    };
+
+    expect(getSubjectShares(structure).map((share) => share.name)).toStrictEqual([
+      "Math",
+      "English",
+      "French",
+    ]);
+  });
 });

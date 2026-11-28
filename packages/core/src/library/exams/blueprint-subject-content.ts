@@ -40,7 +40,7 @@ export function toSubject({
   const otherGroups = group
     ? [
         ...new Set(
-          item.otherGroups.filter(
+          (item.otherGroups ?? []).filter(
             (other, index) => other !== group && kept.has(`${id}.otherGroups.${index}`),
           ),
         ),

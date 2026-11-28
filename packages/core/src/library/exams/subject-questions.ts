@@ -1,9 +1,9 @@
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { normalizeString } from "@zoonk/utils/string";
 import { listCountedSubjects } from "../../exams/choices/choice-groups";
-import { isWrittenOnly } from "../../exams/mocks/written-subject";
+import { getQuestionGroup, isWrittenOnly } from "../../exams/mocks/written-subject";
 import { type ExamStructure } from "./blueprint-contract";
-import { getPartQuestions, getQuestionGroup } from "./question-group";
+import { getPartQuestions } from "./part-questions";
 
 type Subject = ExamStructure["subjects"][number];
 

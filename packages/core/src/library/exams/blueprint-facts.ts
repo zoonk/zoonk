@@ -91,7 +91,10 @@ function subjectFacts({ documents, extraction, found, material }: FactSource): F
 
     const groups = [
       ...(subject.group ? [{ group: subject.group, id: `${id}.group` }] : []),
-      ...subject.otherGroups.map((group, other) => ({ group, id: `${id}.otherGroups.${other}` })),
+      ...(subject.otherGroups ?? []).map((group, other) => ({
+        group,
+        id: `${id}.otherGroups.${other}`,
+      })),
     ].flatMap((group) =>
       toFacts({
         claims: [

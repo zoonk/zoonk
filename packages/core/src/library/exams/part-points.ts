@@ -1,6 +1,6 @@
 import { isWrittenSubject } from "../../exams/mocks/written-subject";
 import { type ExamStructure, type MarkingRow, type ScoredPart } from "./blueprint-contract";
-import { getPartQuestions } from "./question-group";
+import { getPartQuestions } from "./part-questions";
 
 type Row = Pick<MarkingRow, "part" | "points" | "questions">;
 

@@ -7,14 +7,13 @@ import {
   getPartPointsPerQuestion,
   getPointsPerQuestion,
 } from "../../library/exams/part-points";
-import { getQuestionGroup } from "../../library/exams/question-group";
 import { listCountedSubjects } from "../choices/choice-groups";
 import { getWrongPenalty } from "../scoring/mock-scoring";
 import { getChoiceFormatKey, getFormatSelection } from "./mock-format-mix";
 import { findAreaSubject } from "./mock-options";
 import { type MockCandidate, type MockPlan, getPlannedItemIds } from "./mock-plan";
 import { type ItemMarking, type MockMarking } from "./mock-points-contract";
-import { isWrittenOnly, isWrittenSubject } from "./written-subject";
+import { getQuestionGroup, isWrittenOnly, isWrittenPart } from "./written-subject";
 
 type Subject = ExamStructure["subjects"][number];
 type Scoring = NonNullable<ExamStructure["mock"]>["scoring"];
@@ -185,18 +184,6 @@ function markItems({
       ]),
     ),
   );
-}
-
-function isWrittenPart({ name, structure }: { name: string; structure: ExamStructure }) {
-  const subjects = structure.subjects.filter(
-    (subject) => subject.group === name || subject.name === name,
-  );
-
-  return subjects.length > 0
-    ? subjects.every((subject) => isWrittenSubject({ structure, subject }))
-    : (structure.mock?.sections ?? []).some(
-        (section) => section.kind === "written" && section.name === name,
-      );
 }
 
 function sumKnown(values: readonly (number | null)[]): number | null {

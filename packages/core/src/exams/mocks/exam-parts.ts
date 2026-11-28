@@ -2,9 +2,8 @@ import { listSubjectGroups } from "@zoonk/utils/exam-groups";
 import { normalizeString } from "@zoonk/utils/string";
 import { matchAreasToSubjects } from "../../exams/_utils/match-areas";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
-import { getQuestionGroup } from "../../library/exams/question-group";
 import { findNamingSections } from "../_utils/name-match";
-import { isObjectiveSection, isQuestionSubject } from "./written-subject";
+import { getQuestionGroup, isObjectiveSection, isQuestionSubject } from "./written-subject";
 
 type Subject = ExamStructure["subjects"][number];
 

@@ -5,6 +5,7 @@ import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { getSubjectQuestions } from "../../library/exams/subject-questions";
 import { findSubjectSections } from "../mocks/exam-parts";
 import { listCountedSubjects } from "./choice-groups";
+import { listNamedParts, scopeToParts } from "./exam-part-scope";
 
 type Subject = ExamStructure["subjects"][number];
 type Mock = NonNullable<ExamStructure["mock"]>;
@@ -246,7 +247,13 @@ export function scopeExamStructure({
     return structure;
   }
 
-  return keepExamSubjects(structure, addParts({ named, subjects: structure.subjects }));
+  const kept = addParts({ named, subjects: structure.subjects });
+  const parts = listNamedParts({ examSubjects, structure });
+
+  return (
+    (parts.length > 0 && scopeToParts({ kept, parts, structure })) ||
+    keepExamSubjects(structure, kept)
+  );
 }
 
 function keepExamSubjects(structure: ExamStructure, kept: ReadonlySet<string>): ExamStructure {

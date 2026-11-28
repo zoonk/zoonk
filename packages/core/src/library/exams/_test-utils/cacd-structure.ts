@@ -32,10 +32,12 @@ function written(name: string) {
 export function cacdStructure({
   finalShares = true,
   secondMaxPoints = null,
+  secondQuestions = null,
   worldHistoryItems = null,
 }: {
   finalShares?: boolean;
   secondMaxPoints?: number | null;
+  secondQuestions?: number | null;
   worldHistoryItems?: number | null;
 } = {}): ExamStructure {
   return {
@@ -74,7 +76,7 @@ export function cacdStructure({
             minimum: { unit: "points", value: 480 },
             name: SECOND,
             qualifying: false,
-            questions: null,
+            questions: secondQuestions,
           },
         ],
       },

@@ -1,6 +1,7 @@
+import { listSubjectGroups } from "@zoonk/utils/exam-groups";
 import { normalizeString } from "@zoonk/utils/string";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
-import { isAlsoAskedAsQuestions } from "../../library/exams/question-group";
+import { getPartQuestions } from "../../library/exams/part-questions";
 
 type StructureSection = NonNullable<ExamStructure["mock"]>["sections"][number];
 
@@ -19,10 +20,10 @@ export function isWrittenSubject({
   structure: ExamStructure;
   subject: Pick<ExamStructure["subjects"][number], "choiceGroup" | "group" | "name" | "questions">;
 }): boolean {
+  const choice = subject.questions === null ? (subject.choiceGroup ?? "") : "";
+
   const names = new Set(
-    [subject.name, subject.group ?? "", subject.choiceGroup ?? ""].map((name) =>
-      normalizeString(name),
-    ),
+    [subject.name, subject.group ?? "", choice].map((name) => normalizeString(name)),
   );
 
   const isWrittenSectionName = (structure.mock?.sections ?? []).some(
@@ -72,6 +73,43 @@ export function isQuestionSubject({
   return getPaperKind({ structure, subject }) === null && !isWrittenOnly({ structure, subject });
 }
 
+/** A part is written when every subject it groups sits a written test, or a written section has its name. */
+export function isWrittenPart({ name, structure }: { name: string; structure: ExamStructure }) {
+  const subjects = structure.subjects.filter(
+    (subject) => subject.group === name || subject.name === name,
+  );
+
+  return subjects.length > 0
+    ? subjects.every((subject) => isWrittenSubject({ structure, subject }))
+    : (structure.mock?.sections ?? []).some(
+        (section) => section.kind === "written" && section.name === name,
+      );
+}
+
+function isQuestionPart({ name, structure }: { name: string; structure: ExamStructure }) {
+  return getPartQuestions({ name, structure }) !== null && !isWrittenPart({ name, structure });
+}
+
+/**
+ * The part a subject's questions sit in. A subject one test asks as questions and another as a
+ * written test is asked as questions in the one that counts questions and isn't written.
+ */
+export function getQuestionGroup({
+  structure,
+  subject,
+}: {
+  structure: ExamStructure;
+  subject: Pick<ExamStructure["subjects"][number], "group" | "otherGroups">;
+}): string | null {
+  const groups = listSubjectGroups(subject);
+
+  if (groups.length <= 1) {
+    return subject.group ?? null;
+  }
+
+  return groups.find((name) => isQuestionPart({ name, structure })) ?? groups[0] ?? null;
+}
+
 export function isWrittenOnly({
   structure,
   subject,
@@ -80,6 +118,7 @@ export function isWrittenOnly({
   subject: NamedSubject;
 }): boolean {
   return (
-    isWrittenSubject({ structure, subject }) && !isAlsoAskedAsQuestions({ structure, subject })
+    isWrittenSubject({ structure, subject }) &&
+    !(subject.otherGroups ?? []).some((name) => isQuestionPart({ name, structure }))
   );
 }

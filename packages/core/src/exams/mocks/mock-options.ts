@@ -1,6 +1,6 @@
 import { matchAreasToSubjects } from "../../exams/_utils/match-areas";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
-import { getPartQuestions, getQuestionGroup } from "../../library/exams/question-group";
+import { getPartQuestions } from "../../library/exams/part-questions";
 import { getPlannedSubjectQuestions } from "../../library/exams/subject-questions";
 import { namesMatch } from "../_utils/name-match";
 import { type MockOptionView, type MockShape } from "./mock-contract";
@@ -11,7 +11,7 @@ import { type SubjectShare } from "./mock-subject-shares";
 import { type UnpickedChoice } from "./mock-unpicked";
 import { countSubjectPaperQuestions, isPartOfAnother } from "./subject-paper-size";
 import { getSubjectPace } from "./subject-sections";
-import { isQuestionSubject } from "./written-subject";
+import { getQuestionGroup, isQuestionSubject } from "./written-subject";
 
 export type MockOption = MockOptionView;
 
