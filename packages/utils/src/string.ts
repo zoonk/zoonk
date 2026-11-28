@@ -1,5 +1,6 @@
 import { editProse, findCodeFences } from "./code-fence";
 import { parseInlineMarkupRanges } from "./inline-markup";
+import { CELL_PIPE } from "./markdown-table";
 
 const SLUG_MAX_LENGTH = 50;
 const WORD_CONNECTOR_PATTERN = /^[-'’‐‑‒–]$/u;
@@ -49,8 +50,14 @@ export function normalizePunctuation(text: string): string {
   return text.replaceAll(/(?<!\s)\s+(?<punctuation>[!?.,;:!?。、！？؟])/gu, "$<punctuation>");
 }
 
+const NONE_CELL_DASH = new RegExp(
+  String.raw`(?<=${CELL_PIPE.source}[ \t]*)—(?=[ \t]*${CELL_PIPE.source})`,
+  "gu",
+);
+
 function replaceProseEmDashes(text: string): string {
   return text
+    .replaceAll(NONE_CELL_DASH, "–")
     .replaceAll(/^[ \t]*—[ \t]*/gmu, "")
     .replaceAll(/[ \t]*—[ \t]*(?=[,.;:!?)]|$)/gmu, "")
     .replaceAll(/[ \t]*—[ \t]*/gu, ", ");
@@ -58,8 +65,8 @@ function replaceProseEmDashes(text: string): string {
 
 /**
  * The app never shows em dashes in prose: one that opens a line or closes a clause before
- * punctuation goes, any other becomes a comma. En dashes stay: they join ranges ("B1–B2"). Code
- * keeps every character as written.
+ * punctuation goes, any other becomes a comma. A table cell that holds only a dash keeps an en dash
+ * as its mark. En dashes stay: they join ranges ("B1–B2"). Code keeps every character as written.
  */
 export function replaceEmDashes(text: string): string {
   return text.includes("—") ? editProse(text, replaceProseEmDashes) : text;
