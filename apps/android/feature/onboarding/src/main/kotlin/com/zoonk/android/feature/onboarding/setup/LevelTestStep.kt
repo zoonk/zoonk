@@ -448,9 +448,16 @@ internal class LevelRow(
     val bar: @Composable (Modifier) -> Unit,
 )
 
-/** The names and levels take their widest one's width, so every bar starts and ends together. */
+/**
+ * The names and levels take their widest one's width, so every bar starts and ends together. With [captioned], a
+ * hairline closes the rows over the caption under them, which is about every row: right under the last row, it would
+ * read as that row's own line.
+ */
 @Composable
-internal fun LevelRows(levels: List<LevelRow>) {
+internal fun LevelRows(
+    levels: List<LevelRow>,
+    captioned: Boolean = false,
+) {
     val names = levels.map { it.name }
     val labels = levels.map { it.label }
     val nameStyle = MaterialTheme.typography.labelLarge
@@ -481,6 +488,7 @@ internal fun LevelRows(levels: List<LevelRow>) {
                     )
                 }
             }
+            if (captioned) HorizontalDivider()
         }
     }
 }

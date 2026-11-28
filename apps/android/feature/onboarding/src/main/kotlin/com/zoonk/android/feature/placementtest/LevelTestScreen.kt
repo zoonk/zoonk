@@ -293,7 +293,8 @@ internal fun ColumnScope.LevelResult(
         failed = failed,
         undo = undo,
     ) {
-        SkippedCaption(if (undo?.restoredLessons == null) lessons else 0) { LevelRows(levelRows(ranges)) }
+        val skipped = if (undo?.restoredLessons == null) lessons else 0
+        SkippedCaption(skipped) { LevelRows(levelRows(ranges), captioned = skipped > 0) }
         result.result
             ?.nextLesson
             ?.takeIf { undo?.restoredLessons == null }
