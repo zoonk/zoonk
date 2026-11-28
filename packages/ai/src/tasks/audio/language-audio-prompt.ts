@@ -14,6 +14,14 @@ const NATIVE_SOUNDS_TEMPLATE =
 const WORD_IPA_TEMPLATE =
   "The text is the {{LANGUAGE}} word, not the English word spelled the same. Pronounce it /{{IPA}}/.";
 
+/**
+ * Without it, a phrase left open on purpose ("vivo in") came out finished ("vivo in ca"): 7 of 21
+ * open phrases before, 0 of 21 after, and ordinary words and sentences unchanged (Nov 2026).
+ * Appending a full stop to the text instead still added speech to 2 of 21.
+ */
+const SAY_ONLY_THE_TEXT =
+  "Say only the given text, exactly once. It may be an unfinished phrase that ends mid-sentence: stop right after its last word and add nothing (no other word, syllable, laugh or sound).";
+
 function fillLanguage(template: string, languageName: string): string {
   return template.replaceAll("{{LANGUAGE}}", () => languageName);
 }
@@ -43,6 +51,7 @@ export function getLanguageAudioPrompt({
     usagePrompt,
     fillLanguage(READ_ALOUD_TEMPLATE, languageName),
     ipa ? fillLanguage(WORD_IPA_TEMPLATE, languageName).replace("{{IPA}}", () => ipa) : "",
+    SAY_ONLY_THE_TEXT,
   ]
     .filter(Boolean)
     .join("\n\n");
