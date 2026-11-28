@@ -107,32 +107,15 @@ private fun PatternTableActivity(props: ActivityProps) {
                                 }
 
                                 else -> {
-                                    Box {
-                                        Box(
-                                            Modifier
-                                                .alpha(
-                                                    if (props.isChecked) 0f else 1f,
-                                                ).then(if (props.isChecked) Modifier.clearAndSetSemantics {} else Modifier),
-                                        ) {
-                                            OpenBlank(
-                                                row,
-                                                blankStem(fields.choices, row.answer),
-                                                filled["$index"],
-                                                active == index,
-                                                !props.isLocked && !props.isChecked,
-                                            ) { active = index }
-                                        }
-                                        Box(
-                                            Modifier
-                                                .alpha(
-                                                    if (props.isChecked) 1f else 0f,
-                                                ).then(if (props.isChecked) Modifier else Modifier.clearAndSetSemantics {}),
-                                        ) {
-                                            CheckedBlank(
-                                                blankStem(fields.choices, row.answer),
-                                                filled["$index"],
-                                                if (props.isChecked) expected["$index"] else patternEnding(fields.choices, row.answer),
-                                            )
+                                    val stem = blankStem(fields.choices, row.answer)
+                                    Box(contentAlignment = Alignment.CenterStart) {
+                                        BlankRoom(row, stem, fields.choices)
+                                        if (props.isChecked) {
+                                            CheckedBlank(stem, filled["$index"], expected["$index"])
+                                        } else {
+                                            OpenBlank(row, stem, filled["$index"], active == index, !props.isLocked) {
+                                                active = index
+                                            }
                                         }
                                     }
                                 }
@@ -338,6 +321,23 @@ private fun OpenBlank(
                     .drawBehind { drawLine(line, Offset(0f, size.height), Offset(size.width, size.height), strokeWidth = 2.dp.toPx()) },
             )
         }
+    }
+}
+
+/**
+ * Every word a blank can show, open or checked, laid out unseen so its cell is sized for all of
+ * them: picking an ending or checking moves no column and no row.
+ */
+@Composable
+private fun BlankRoom(
+    row: PatternRow,
+    stem: String,
+    choices: List<String>,
+) {
+    val right = patternEnding(choices, row.answer)
+    Box(Modifier.alpha(0f).clearAndSetSemantics {}) {
+        (listOf(null) + choices).forEach { OpenBlank(row, stem, it, isActive = false, enabled = false) {} }
+        choices.forEach { CheckedBlank(stem, it, right) }
     }
 }
 
