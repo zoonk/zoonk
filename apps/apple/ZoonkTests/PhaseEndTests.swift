@@ -260,6 +260,38 @@ final class PhaseEndTests: XCTestCase {
     XCTAssertEqual(plan.phaseEnd(plan.phases[0]), end("2027-01-22", estimate: true))
   }
 
+  func testAnExamPhaseAheadEndingOnItsChallengesDayIsAnEstimateAsTheChallengesRowIs() throws {
+    let plan = try plan(phases: [
+      phase(0, kind: "foundations", state: "current", end: "2027-01-20"),
+      phase(1, kind: "gaps", state: "upcoming", end: "2027-07-16", challenge: "2027-07-16"),
+    ])
+
+    XCTAssertEqual(
+      plan.phaseEnd(plan.phases[1]), end("2027-07-16", estimate: true, grain: .month))
+  }
+
+  func testAChallengeWhosePhaseComesLaterDecodesWithNoDayAndNoPage() throws {
+    let json = phase(1, kind: "learn", state: "upcoming", end: nil, later: true)
+      .replacingOccurrences(
+        of: "\"checkpoint\": null",
+        with: """
+          "checkpoint": { "date": null, "later": true, "locked": false, "planItemId": null,
+            "precision": null, "state": "upcoming", "when": "date" }
+          """
+      )
+      .replacingOccurrences(
+        of: "\"name\": null",
+        with:
+          "\"name\": \"Science\", \"chapterCount\":0, \"hours\":1, \"milestone\":null, \"short\":null"
+      )
+    let decoded = try JSONDecoder().decode(Components.Schemas.PlanPhase.self, from: Data(json.utf8))
+    let checkpoint = try XCTUnwrap((try PracticeJSON.recode(decoded) as PlanPhase).checkpoint)
+
+    XCTAssertEqual(checkpoint.later, true)
+    XCTAssertNil(checkpoint.planItemId)
+    XCTAssertNil(checkpoint.date)
+  }
+
   func testEveryPhaseOfAPlanWhoseDateIsAnEstimateIsOne() throws {
     let plan = try goalPlanFixture(
       phases: [phase(0, kind: "foundations", state: "current", end: "2027-01-10")],

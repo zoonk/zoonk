@@ -85,9 +85,8 @@ struct PlanRoadmapContent: View {
   let structure: GoalSyllabus?
 
   var body: some View {
-    // Main's: one phase is the whole plan, so there's nothing to place the learner in, and a
-    // paused plan has no place in time until the learner resumes.
-    if context.plan.roadPhases.count >= 2, !context.isPaused {
+    // A paused plan has no place in time until the learner resumes.
+    if !context.plan.roadPhases.isEmpty, !context.isPaused {
       if structure != nil {
         Button {
           context.show(.path)
@@ -124,7 +123,8 @@ struct RoadmapPhaseRow: View {
 
 }
 
-/// Main's line under the roadmap: "Phase 1 of 4", then the phase's end.
+/// Main's phase bar, ending on the flag at the plan's finish, then the line under it: "Phase 1 of
+/// 4", then the phase's end. One phase is the whole plan, so it has no place to name.
 private struct RoadmapCompact: View {
   @Environment(\.legibilityWeight) private var legibilityWeight
 
@@ -136,17 +136,53 @@ private struct RoadmapCompact: View {
     let currentIndex = phases.firstIndex { $0.state == .current }
 
     VStack(alignment: .leading, spacing: 8) {
-      MeterParts(
-        parts: phases.map { phase in
-          MeterParts.Part(
-            weight: phase.weight,
-            fill: phase.state == .current
-              ? .currentPhase(phase.lessonShare) : .share(phase.lessonShare))
-        }, minimumWidth: 24)
+      HStack(spacing: 8) {
+        MeterParts(
+          parts: phases.map { phase in
+            MeterParts.Part(
+              weight: phase.weight,
+              fill: phase.state == .current
+                ? .currentPhase(phase.lessonShare) : .share(phase.lessonShare))
+          }, minimumWidth: 24)
 
-      line(phases: phases, currentIndex: currentIndex)
+        finish
+
+        if phases.count == 1, opens {
+          DisclosureChevron()
+        }
+      }
+
+      if phases.count > 1 {
+        line(phases: phases, currentIndex: currentIndex)
+      }
     }
     .accessibilityElement(children: .combine)
+  }
+
+  /// Where the bar ends, as main's: the flag and the goal's date, or open past the years a plan
+  /// lays out.
+  @ViewBuilder private var finish: some View {
+    let plan = context.plan
+
+    if let finish = plan.roadmapFinish(isExam: context.goal.kind == .exam) {
+      let day = PlanDate.text(finish.isoDate, today: plan.today, grain: finish.grain)
+      let date =
+        finish.estimate
+        ? PlanDate.estimate(finish.isoDate, today: plan.today, grain: finish.grain)
+        : (text: day, spoken: day)
+
+      HStack(spacing: 4) {
+        Image(systemName: "flag")
+          .imageScale(.small)
+        Text(verbatim: date.text)
+      }
+      .typeStyle(.meta)
+      .foregroundStyle(.mutedForeground)
+      .fixedSize()
+      .accessibilityElement(children: .ignore)
+      .accessibilityLabel(planFinishLabel(context))
+      .accessibilityValue(Text(verbatim: date.spoken))
+    }
   }
 
   private func line(phases: [PlanPhase], currentIndex: Int?) -> some View {
@@ -317,9 +353,8 @@ extension GoalPlan {
 
     let learns = phase.kind == .learn || phase.kind == .afterExam
     let ahead = phase.state == .upcoming
-    let endsOnChallenge = lastDay != phase.endDate
     let isEstimate =
-      endsOnChallenge || schedule.targetDateEstimated
+      phase.endingChallengeDay != nil || schedule.targetDateEstimated
       || (learns && (ahead || phase.checkpoint?.state == .upcoming))
 
     return PhaseEnd(
@@ -366,7 +401,7 @@ extension GoalPlan {
     }
 
     return phase.state == .upcoming || phase.precision == .year
-      ? grain(isoDate, precision: phase.precision) : .day
+      ? estimateGrain(isoDate, precision: phase.precision) : .day
   }
 
   /// The finish is dated as core forecasts it, by how near it is when an older plan doesn't say.
@@ -374,13 +409,13 @@ extension GoalPlan {
     switch estimate.precision {
     case .year: .year
     case .month: .month
-    case nil: grain(isoDate, precision: nil)
+    case nil: estimateGrain(isoDate, precision: nil)
     }
   }
 
   /// An estimate past six weeks from this week's start names only its month, and one core says is
   /// years away only its year.
-  private func grain(_ isoDate: String, precision: PlanForecast.Precision?) -> DateGrain {
+  func estimateGrain(_ isoDate: String, precision: PlanForecast.Precision?) -> DateGrain {
     if precision == .year {
       return .year
     }
@@ -395,16 +430,18 @@ extension PlanPhase {
     milestone ?? title
   }
 
-  /// The day the phase is behind you: it ends with its challenge, which can come the day after its
-  /// last lesson.
+  /// The day the phase is behind you: it ends with its challenge, which can come after its last
+  /// lesson.
   var untilDate: String? {
-    guard let endDate else {
-      return nil
-    }
+    endingChallengeDay ?? endDate
+  }
 
-    guard let challenge = checkpoint?.date, checkpoint?.state == .upcoming, challenge > endDate
+  /// The day of a challenge still ahead that comes on or after the phase's last lesson.
+  var endingChallengeDay: String? {
+    guard let endDate, let challenge = checkpoint?.date, checkpoint?.state == .upcoming,
+      challenge >= endDate
     else {
-      return endDate
+      return nil
     }
 
     return challenge
@@ -657,6 +694,22 @@ func planFinish(_ context: PlanContext) -> PlanWhen? {
       : Text(PlanDate.text(finish.isoDate, today: plan.today, grain: finish.grain)))
 }
 
+/// Main's `useFinishLabel`: what the flag at the plan's finish stands for, the goal's date, or with
+/// none the finish the plan works out.
+func planFinishLabel(_ context: PlanContext) -> Text {
+  if context.goal.kind == .exam {
+    return Text("Exam date", tableName: "Plan", comment: "Setting: the exam's date")
+  }
+
+  return context.plan.schedule.targetDate == nil
+    ? Text(
+      "You finish", tableName: "Plan",
+      comment:
+        "Names the day the plan works out it finishes when the learner set no end date: beside the flag in the roadmap's legend, and as the label of that date in the plan's settings."
+    )
+    : Text("End date", tableName: "Plan", comment: "Setting: the goal's end date")
+}
+
 /// The places a phone lists nowhere else: the lessons done, the mind maps and the exam's page.
 struct PlanMoreSection: View {
   @Environment(LearnerSummaryStore.self) private var learner
@@ -700,11 +753,7 @@ struct PlanSettingsSection: View {
     let schedule = context.plan.schedule
 
     PageSection {
-      setting(
-        label: context.goal.kind == .exam
-          ? Text("Exam date", tableName: "Plan", comment: "Setting: the exam's date")
-          : Text("End date", tableName: "Plan", comment: "Setting: the goal's end date"),
-        value: dateValue, section: .date)
+      setting(label: dateLabel, value: dateValue, section: .date)
 
       setting(
         label: Text("Daily study time", tableName: "Plan"),
@@ -886,6 +935,18 @@ struct PlanSettingsSection: View {
     } else {
       Text(verbatim: time.text).typeStyle(.data)
     }
+  }
+
+  /// The setting is the goal's date; while it holds the finish the plan works out, it's named as
+  /// that.
+  private var dateLabel: Text {
+    if estimatedFinish != nil {
+      return planFinishLabel(context)
+    }
+
+    return context.goal.kind == .exam
+      ? Text("Exam date", tableName: "Plan", comment: "Setting: the exam's date")
+      : Text("End date", tableName: "Plan", comment: "Setting: the goal's end date")
   }
 
   private var dateValue: some View {

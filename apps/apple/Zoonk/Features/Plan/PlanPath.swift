@@ -220,7 +220,7 @@ private struct PlanPhaseRow: View {
     if let checkpoint = phase.checkpoint {
       PlanCheckpointRow(
         checkpoint: checkpoint, isLanguage: context.goal.kind == .language,
-        isPaused: context.isPaused, today: context.plan.today)
+        isPaused: context.isPaused, plan: context.plan)
     }
   }
 
@@ -460,12 +460,18 @@ private struct PlanCheckpointRow: View {
   let checkpoint: PlanPhase.Checkpoint
   let isLanguage: Bool
   let isPaused: Bool
-  let today: String
+  let plan: GoalPlan
 
   var body: some View {
-    PlanRouteLink(route: .challenge(planItemId: checkpoint.planItemId)) {
-      PlanChallengeLabel(
-        when: when, explains: checkpoint.state != .done, isLanguage: isLanguage)
+    let label = PlanChallengeLabel(
+      when: when, explains: checkpoint.state != .done, isLanguage: isLanguage)
+
+    if let planItemId = checkpoint.planItemId {
+      PlanRouteLink(route: .challenge(planItemId: planItemId)) {
+        label
+      }
+    } else {
+      label
     }
   }
 
@@ -475,24 +481,33 @@ private struct PlanCheckpointRow: View {
     }
 
     // A paused plan has nothing planned until the learner resumes, as its phases' ends.
-    return isPaused ? nil : checkpoint.when(today: today)
+    return isPaused ? nil : checkpoint.when(in: plan)
   }
 }
 
 extension PlanPhase.Checkpoint {
-  /// When it comes. Dated today, the next session is today's, which may already be under way.
-  func when(today: String) -> PlanWhen? {
+  /// When it comes. Dated today, the next session is today's, which may already be under way. One
+  /// whose phase's work has no day yet comes later, and a day months or years away is said by its
+  /// month or year, as its phase's end is.
+  func when(in plan: GoalPlan) -> PlanWhen? {
+    if later == true {
+      return .words(Text(verbatim: PhaseEnd.later.shown))
+    }
+
     switch when {
-    case .nextSession where date == today:
-      .words(Text("Today", tableName: "Plan", comment: "When the phase's challenge comes"))
+    case .nextSession where date == plan.today:
+      return .words(Text("Today", tableName: "Plan", comment: "When the phase's challenge comes"))
     case .nextSession:
-      .words(
+      return .words(
         Text(
           "Next time", tableName: "Plan",
           comment: "When the phase's challenge comes: the next time the learner studies")
       )
     case .date, .queued:
-      date.map { .date(PlanDate.estimateText($0, today: today)) }
+      return date.map { date in
+        let grain = precision.map { plan.estimateGrain(date, precision: $0) } ?? .day
+        return .date(PlanDate.estimateText(date, today: plan.today, grain: grain))
+      }
     }
   }
 }
