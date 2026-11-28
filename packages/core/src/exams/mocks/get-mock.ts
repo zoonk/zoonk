@@ -100,17 +100,18 @@ async function loadFinished({
   const result = mockResultSchema.safeParse(owned.mock.result).data ?? null;
   const reached = keptReachedSchema.safeParse(owned.mock.result).data?.reached ?? NOTHING_REACHED;
 
-  const [review, offers, { grades, numericBlankItems, views: essays }, practice] = await Promise.all([
-    loadMockReview({ areas, mock: owned.mock, userId: owned.userId }),
-    loadMockPlanOffers({
-      blueprint: owned.blueprint,
-      goal: owned.goal,
-      purpose: conditions.purpose,
-      result,
-    }),
-    loadMockEssayViews({ areas, mock: owned.mock }),
-    loadPracticeEntries({ mockId: owned.mock.id, skillIds: null, userId: owned.userId }),
-  ]);
+  const [review, offers, { grades, numericBlankItems, views: essays }, practice] =
+    await Promise.all([
+      loadMockReview({ areas, mock: owned.mock, userId: owned.userId }),
+      loadMockPlanOffers({
+        blueprint: owned.blueprint,
+        goal: owned.goal,
+        purpose: conditions.purpose,
+        result,
+      }),
+      loadMockEssayViews({ areas, mock: owned.mock }),
+      loadPracticeEntries({ mockId: owned.mock.id, skillIds: null, userId: owned.userId }),
+    ]);
 
   return {
     ...review,
