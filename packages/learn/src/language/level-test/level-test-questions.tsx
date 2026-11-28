@@ -155,9 +155,7 @@ export function SpeakingStep({
     checking: isPending,
     problem,
     recording: recording || recorder.status === "acquiring",
-    unavailable: micAvailable
-      ? null
-      : t("We can't use your microphone, so skip this part."),
+    unavailable: micAvailable ? null : t("We can't use your microphone, so skip this part."),
   });
 
   return (
