@@ -3,7 +3,7 @@ import { auth } from "@zoonk/auth";
 import {
   type STAFF_PROPOSE_SCOPE,
   STAFF_READ_SCOPE,
-  type STAFF_WRITING_REPAIR_SCOPE,
+  type STAFF_REPAIR_SCOPE,
 } from "@zoonk/auth/cli-login-contract";
 import { prisma } from "@zoonk/db";
 import { headers } from "next/headers";
@@ -19,10 +19,7 @@ function readBearerToken(requestHeaders: Headers): string | null {
   return token;
 }
 
-type StaffScope =
-  | typeof STAFF_PROPOSE_SCOPE
-  | typeof STAFF_READ_SCOPE
-  | typeof STAFF_WRITING_REPAIR_SCOPE;
+type StaffScope = typeof STAFF_PROPOSE_SCOPE | typeof STAFF_READ_SCOPE | typeof STAFF_REPAIR_SCOPE;
 
 /**
  * The staff member acting in this request, from a CLI access token alone: a Better Auth session

@@ -5,6 +5,7 @@ import { type HttpResult, RequestError, postForm, unexpectedResponse } from "./h
 
 const CLIENT_ID = "zoonk-cli";
 const SCOPE = "staff:read staff:propose offline_access";
+const REPAIR_SCOPE = "staff:repair";
 const DEVICE_CODE_GRANT = "urn:ietf:params:oauth:grant-type:device_code";
 /** RFC 8628 section 3.2: clients poll every 5 seconds when the server names no interval. */
 const DEFAULT_POLL_SECONDS = 5;
@@ -82,13 +83,10 @@ function tokenError(result: HttpResult): TokenResult {
   return { error: oauthError(result) ?? `HTTP ${result.status}`, ok: false };
 }
 
-export async function requestDeviceCode(
-  origin: string,
-  writingRepair = false,
-): Promise<DeviceCode> {
+export async function requestDeviceCode(origin: string, repair = false): Promise<DeviceCode> {
   const result = await postForm(new URL(ENDPOINTS.deviceCode, origin), {
     client_id: CLIENT_ID,
-    scope: writingRepair ? `${SCOPE} staff:repair-writing` : SCOPE,
+    scope: repair ? `${SCOPE} ${REPAIR_SCOPE}` : SCOPE,
   });
 
   const body = isJsonObject(result.body) ? result.body : {};

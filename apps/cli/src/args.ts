@@ -1,10 +1,9 @@
-import { readFileSync } from "node:fs";
 import { parseArgs } from "node:util";
-import { isJsonObject } from "../../../packages/utils/src/json.ts";
 import { auditClipsCommand } from "./audit-clips.ts";
 import { describeParseError, usageError } from "./errors.ts";
+import { examGoalRepairCommand } from "./exam-goal-repair.ts";
+import { fixTarget, readJsonObject, requireReason } from "./fix-arguments.ts";
 import { commandUsage } from "./help.ts";
-import { parseJson } from "./http.ts";
 import { type Note, proposalNote, revertNote, withdrawalNote } from "./notes.ts";
 import { type OutputShape } from "./output.ts";
 import { parseFields, parseOrder, parseWhereOptions, parseWholeNumber } from "./query-options.ts";
@@ -16,7 +15,7 @@ export type ApiRequest =
 
 export type Command =
   | { name: "help" }
-  | { name: "login"; writingRepair?: true }
+  | { name: "login"; repair?: true }
   | { name: "logout" }
   | { name: "request"; note?: Note; request: ApiRequest; shape?: OutputShape };
 
@@ -27,12 +26,14 @@ type Options = {
   apply?: boolean;
   batch?: string;
   check?: boolean;
+  choice?: string[];
+  country?: string;
   fields?: string;
   limit?: string;
   offset?: string;
   order?: string;
   reason?: string;
-  "repair-writing"?: boolean;
+  repair?: boolean;
   "voiced-before"?: string;
   where?: string[];
 };
@@ -46,54 +47,6 @@ type CommandSpec = {
 export const WHOAMI_REQUEST: ApiRequest = { method: "GET", path: "/staff/me" };
 
 const LONGEST_COMMAND_WORDS = 3;
-
-function readText(path: string): string {
-  try {
-    return readFileSync(path, "utf8");
-  } catch {
-    throw usageError(`Can't read ${path}.`);
-  }
-}
-
-function readJsonObject(path: string): Record<string, unknown> {
-  const body = parseJson(readText(path));
-
-  if (!isJsonObject(body)) {
-    throw usageError(
-      `${path} must hold one JSON object: { reason, feedbackId?, changes } or { reason, fixes: [{ changes }] }.`,
-    );
-  }
-
-  return body;
-}
-
-function requireReason(reason: string | undefined): string {
-  if (!reason?.trim()) {
-    throw usageError(`"staff fixes revert" needs a reason: ${commandUsage("staff fixes revert")}`);
-  }
-
-  return reason;
-}
-
-function fixTarget({
-  args,
-  batch,
-  command,
-}: {
-  args: string[];
-  batch: string | undefined;
-  command: string;
-}) {
-  const [fixId, ...extra] = args;
-
-  if (extra.length > 0 || (fixId === undefined) === (batch === undefined)) {
-    throw usageError(
-      `"staff fixes ${command}" takes one fix id or --batch <batchId>: ${commandUsage(`staff fixes ${command}`)}`,
-    );
-  }
-
-  return fixId === undefined ? { batchId: batch } : { fixId };
-}
 
 function get(path: string, shape?: OutputShape): RequestCommand {
   return { name: "request", request: { method: "GET", path }, shape };
@@ -110,9 +63,9 @@ const COMMANDS = new Map<string, CommandSpec>([
       arguments: 0,
       build: (_args, options) => ({
         name: "login",
-        ...(options["repair-writing"] && { writingRepair: true as const }),
+        ...(options.repair && { repair: true as const }),
       }),
-      options: ["repair-writing"],
+      options: ["repair"],
     },
   ],
   ["logout", { arguments: 0, build: () => ({ name: "logout" }), options: [] }],
@@ -123,6 +76,10 @@ const COMMANDS = new Map<string, CommandSpec>([
   [
     "staff repair-writing",
     { arguments: 1, build: writingRepairCommand, options: ["after", "apply"] },
+  ],
+  [
+    "staff repair-exam-goal",
+    { arguments: 1, build: examGoalRepairCommand, options: ["apply", "choice", "country"] },
   ],
   [
     "staff audit-clips",
@@ -303,13 +260,15 @@ function parseCommandLine(argv: string[]) {
         apply: { type: "boolean" },
         batch: { type: "string" },
         check: { type: "boolean" },
+        choice: { multiple: true, type: "string" },
+        country: { type: "string" },
         fields: { type: "string" },
         help: { short: "h", type: "boolean" },
         limit: { type: "string" },
         offset: { type: "string" },
         order: { type: "string" },
         reason: { type: "string" },
-        "repair-writing": { type: "boolean" },
+        repair: { type: "boolean" },
         "voiced-before": { type: "string" },
         where: { multiple: true, type: "string" },
       },

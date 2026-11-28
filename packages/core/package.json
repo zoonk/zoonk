@@ -795,6 +795,7 @@
     "./profile/questions/suggest-tools": "./src/profile/questions/suggest-profile-tools.ts",
     "./staff/models": "./src/staff/models.ts",
     "./staff/records": "./src/staff/records.ts",
+    "./staff/repair-exam-goal": "./src/staff/repair-exam-goal.ts",
     "./staff/repair-written-preparation": "./src/staff/repair-written-preparation.ts",
     "./staff/users": "./src/staff/users.ts",
     "./staff/input": "./src/staff/input.ts",

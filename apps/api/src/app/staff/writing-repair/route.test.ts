@@ -1,7 +1,7 @@
 import {
   STAFF_PROPOSE_SCOPE,
   STAFF_READ_SCOPE,
-  STAFF_WRITING_REPAIR_SCOPE,
+  STAFF_REPAIR_SCOPE,
 } from "@zoonk/auth/cli-login-contract";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
@@ -25,7 +25,7 @@ describe("staff writing repair authority", () => {
 
     const [ordinary, privileged] = await Promise.all([
       cliTokenFixture({ scopes: [STAFF_READ_SCOPE, STAFF_PROPOSE_SCOPE], user }),
-      cliTokenFixture({ scopes: [STAFF_READ_SCOPE, STAFF_WRITING_REPAIR_SCOPE], user }),
+      cliTokenFixture({ scopes: [STAFF_READ_SCOPE, STAFF_REPAIR_SCOPE], user }),
     ]);
 
     sendStaffAuthorization(`Bearer ${ordinary.accessToken}`);
