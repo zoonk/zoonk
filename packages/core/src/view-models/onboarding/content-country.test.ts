@@ -2,6 +2,7 @@ import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { onboardingDraftFixture } from "@zoonk/testing/fixtures/onboarding-drafts";
+import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
@@ -107,7 +108,69 @@ describe("content country question", () => {
         select: { input: true, revision: true },
         where: { kind: "researchGoal", userId: user.id },
       }),
-    ).resolves.toStrictEqual([{ input: { goalId: exam.id }, revision: 0 }]);
+    ).resolves.toStrictEqual([{ input: { goalId: exam.id }, revision: 1 }]);
+  });
+
+  it("lets go of another country's exam and owes research for the new one when the country changes", async () => {
+    const user = await userFixture();
+
+    const exam = await goalFixture({
+      details: { answered: [], countryDependent: true },
+      kind: "exam",
+      planRevealedAt: null,
+      userId: user.id,
+    });
+
+    const answer = (country: string) =>
+      saveAnswerInputs({ goal: exam, input: { country, question: "contentCountry" } });
+
+    const research = () =>
+      prisma.followUp.findMany({
+        select: { revision: true },
+        where: { key: exam.id, kind: "researchGoal" },
+      });
+
+    await answer("CA");
+    const canadian = await examBlueprintFixture({ country: "CA" });
+    await prisma.goal.update({ data: { examBlueprintId: canadian.id }, where: { id: exam.id } });
+
+    await answer("CA");
+    await expect(research()).resolves.toStrictEqual([{ revision: 0 }]);
+
+    await answer("AU");
+    await answer("AU");
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: exam.id } })).resolves.toMatchObject({
+      contentCountry: "AU",
+      examBlueprintId: null,
+    });
+
+    await expect(research()).resolves.toStrictEqual([{ revision: 1 }]);
+  });
+
+  it("keeps an exam that fits any country when the country changes", async () => {
+    const user = await userFixture();
+    const international = await examBlueprintFixture({ country: "ZZ" });
+
+    const exam = await goalFixture({
+      contentCountry: "CA",
+      details: { answered: ["contentCountry"], countryDependent: true },
+      examBlueprintId: international.id,
+      kind: "exam",
+      planRevealedAt: null,
+      userId: user.id,
+    });
+
+    await saveAnswerInputs({ goal: exam, input: { country: "AU", question: "contentCountry" } });
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: exam.id } })).resolves.toMatchObject({
+      contentCountry: "AU",
+      examBlueprintId: international.id,
+    });
+
+    await expect(
+      prisma.followUp.count({ where: { key: exam.id, kind: "researchGoal" } }),
+    ).resolves.toBe(0);
   });
 
   it("owes one rebuild when another tab or the goal's settings change the country the first build read", async () => {

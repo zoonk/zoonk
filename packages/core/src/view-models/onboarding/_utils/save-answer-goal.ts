@@ -5,9 +5,10 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { oweFollowUps } from "../../../follow-ups/owe-follow-ups";
 import { hasCountryReading } from "../../../goals/_utils/goal-content-country";
 import { saveMetadataInTransaction } from "../../../goals/_utils/goal-metadata";
+import { oweExamCountryResearch } from "../../../library/exams/exam-country";
 import { parsePlanGraph } from "../../../plans/planner/plan-state";
 import { type OnboardingAnswerInput } from "../onboarding-contract";
-import { getAnsweredQuestions, isExamCountryOwed } from "../onboarding-steps";
+import { getAnsweredQuestions } from "../onboarding-steps";
 
 function withoutAnswered(details: unknown) {
   return isJsonObject(details)
@@ -52,22 +53,6 @@ function needsCurriculumRebuild({
         : !isDeepStrictEqual(value, Reflect.get(current, key)),
     )
   );
-}
-
-/**
- * Research waits for an exam's country, as another country's exam of the same name is another
- * exam, so the answer that gives it owes the research: the run waiting resumes, or one starts.
- */
-async function oweExamResearch({ current, input, own, tx }: Omit<AnswerGoal, "data">) {
-  const details = isJsonObject(current.details) ? current.details : {};
-
-  if (own && input.question === "contentCountry" && isExamCountryOwed({ ...current, details })) {
-    await oweFollowUps({
-      db: tx,
-      followUps: [{ input: { goalId: current.id }, kind: "researchGoal" }],
-      userId: current.userId,
-    });
-  }
 }
 
 async function saveGoalAnswer({ current, data, input, own, tx }: AnswerGoal): Promise<boolean> {
@@ -130,8 +115,8 @@ async function saveGoalAnswer({ current, data, input, own, tx }: AnswerGoal): Pr
 export async function saveAnswerGoal(answer: AnswerGoal): Promise<boolean> {
   const changed = await saveGoalAnswer(answer);
 
-  if (changed) {
-    await oweExamResearch(answer);
+  if (changed && answer.own && answer.input.question === "contentCountry") {
+    await oweExamCountryResearch(answer.tx, answer.current);
   }
 
   return changed;

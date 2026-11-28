@@ -1,5 +1,9 @@
 import "server-only";
 import { type ExamBlueprint, type Goal, type TransactionClient } from "@zoonk/db";
+import { isJsonObject } from "@zoonk/utils/json";
+import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
+import { refreshTestSummary } from "../../learner/placement/_utils/test-sitting";
+import { isExamCountryOwed } from "../../view-models/onboarding/onboarding-steps";
 
 const INTERNATIONAL = "ZZ";
 
@@ -44,4 +48,47 @@ export async function findCountryExamId(
   const isOther = blueprint && isOtherCountryExam({ blueprint, goal: { contentCountry, kind } });
 
   return isOther ? null : examBlueprintId;
+}
+
+/**
+ * Research reads an exam's country, so the answer that gives the first one or a new one owes it:
+ * the run waiting resumes, or one starts. A shared notice of the old country's exam is let go, so
+ * nothing keeps teaching it; one that fits any country, or the learner's own, stays.
+ */
+export async function oweExamCountryResearch(
+  tx: TransactionClient,
+  before: Pick<Goal, "contentCountry" | "details" | "id" | "kind" | "userId">,
+): Promise<void> {
+  if (before.kind !== "exam") {
+    return;
+  }
+
+  const after = await tx.goal.findUniqueOrThrow({
+    include: { examBlueprint: { select: { country: true, ownerId: true } } },
+    where: { id: before.id },
+  });
+
+  const details = isJsonObject(before.details) ? before.details : {};
+  const waited = isExamCountryOwed({ details, kind: before.kind });
+
+  if (!waited && after.contentCountry === before.contentCountry) {
+    return;
+  }
+
+  const blueprint = after.examBlueprint;
+
+  if (blueprint && !isOtherCountryExam({ blueprint, goal: after })) {
+    return;
+  }
+
+  if (blueprint) {
+    await tx.goal.update({ data: { examBlueprintId: null }, where: { id: after.id } });
+    await refreshTestSummary({ goalId: after.id, tx });
+  }
+
+  await oweFollowUps({
+    db: tx,
+    followUps: [{ input: { goalId: after.id }, kind: "researchGoal" }],
+    userId: after.userId,
+  });
 }
