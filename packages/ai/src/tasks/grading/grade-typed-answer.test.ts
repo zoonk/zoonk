@@ -5,10 +5,11 @@ import { gradeTypedAnswer } from "./grade-typed-answer";
 import type * as Ai from "ai";
 
 vi.mock("server-only", () => ({}));
+vi.mock("../_utils/regional-forms.prompt.md", () => ({ default: "Regional forms." }));
+
 vi.mock("./grade-typed-answer.prompt.md", () => ({
   default: "Grade the answer in {{LEARNER_LANGUAGE}}.",
 }));
-vi.mock("../_utils/regional-forms.prompt.md", () => ({ default: "Regional forms." }));
 
 vi.mock("./grade-typed-answer-language-practice.prompt.md", () => ({
   default: "Language practice rules for {{TARGET_LANGUAGE}}.",
