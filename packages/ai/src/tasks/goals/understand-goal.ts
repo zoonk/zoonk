@@ -35,6 +35,7 @@ const goalSchema = z.object({
   examSubjects: z.array(z.string()).nullable(),
   examTarget: z.enum(["admission", "score", "position"]).nullable(),
   examYear: z.number().nullable(),
+  followUps: z.array(z.string()),
   institution: z.string().nullable(),
   kind: z.enum(["learn", "exam", "language"]),
   level: z.string().nullable(),
@@ -54,7 +55,6 @@ const goalSchema = z.object({
 
 const schema = z.object({
   dailyMinutes: z.number().nullable(),
-  followUps: z.array(z.string()),
   goals: z.array(goalSchema),
   instrument: z.string().nullable(),
   question: z.string().nullable(),
