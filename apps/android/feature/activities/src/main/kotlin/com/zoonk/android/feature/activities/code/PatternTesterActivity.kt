@@ -55,7 +55,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.feature.activities.ActivityBadge
 import com.zoonk.android.feature.activities.ActivityCanvas
 import com.zoonk.android.feature.activities.ActivityCanvasLabel
 import com.zoonk.android.feature.activities.ActivityProps
@@ -80,7 +79,7 @@ import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf19FieldsOneOfHin
 
 val patternTesterRenderer =
     ActivityRenderer(
-        badge = { ActivityBadge(R.string.activities_code_badge_test_pattern, R.drawable.ic_regular_expression) },
+        badge = { null },
         canvas = { PatternTesterActivity(it) },
     )
 

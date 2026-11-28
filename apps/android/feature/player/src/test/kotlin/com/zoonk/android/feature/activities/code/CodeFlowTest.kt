@@ -229,10 +229,10 @@ class CodeFlowTest {
         harness.codeSandbox = { scope -> ScriptedSandbox(scope, ::sqlRows).sandbox }
         harness.play(listOf(ActivityFixtures.step("sqlPlayground")), restoration = restoration)
 
-        field("Your query").performTextReplacement("SELECT name, pop_millions FROM countries;")
+        field("Query").performTextReplacement("SELECT name, pop_millions FROM countries;")
         tap("Run")
         shows("Your result: 3 rows")
-        field("Your query").performTextReplacement("SELECT name FROM countries;")
+        field("Query").performTextReplacement("SELECT name FROM countries;")
         restoration.emulateSavedInstanceStateRestore()
 
         rule.onNodeWithText("Your result: 3 rows").assertExists()
@@ -244,10 +244,10 @@ class CodeFlowTest {
         playFixture("sqlPlayground", isCorrect = true, ::sqlRows)
         val pending = CompletableDeferred<Unit>()
 
-        field("Your query").performTextReplacement("SELECT name FROM countries;")
+        field("Query").performTextReplacement("SELECT name FROM countries;")
         scripted.gate = pending
         tap("Run")
-        field("Your query").performTextReplacement("SELECT name FROM countries ORDER BY name;")
+        field("Query").performTextReplacement("SELECT name FROM countries ORDER BY name;")
         pending.complete(Unit)
 
         shows("You changed the query. Run it again to see the new result.")
@@ -286,7 +286,7 @@ class CodeFlowTest {
             sandboxJson.encodeToJsonElement<QueryRun>(QueryRun.Done(QueryResult(listOf("blob"), listOf(listOf(cell)))))
         }
 
-        field("Your query").performTextReplacement("SELECT hex(zeroblob(200000)) AS blob;")
+        field("Query").performTextReplacement("SELECT hex(zeroblob(200000)) AS blob;")
         tap("Run")
 
         shows("Your result: 1 row")

@@ -51,7 +51,6 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.feature.activities.ActivityBadge
 import com.zoonk.android.feature.activities.ActivityCanvas
 import com.zoonk.android.feature.activities.ActivityCanvasLabel
 import com.zoonk.android.feature.activities.ActivityProps
@@ -84,7 +83,7 @@ import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf18Fields as SqlF
 
 val sqlPlaygroundRenderer =
     ActivityRenderer(
-        badge = { ActivityBadge(R.string.activities_code_badge_query_data, R.drawable.ic_database) },
+        badge = { null },
         canvas = { SqlPlaygroundActivity(it) },
         showsData = { true },
     )
@@ -116,7 +115,7 @@ private fun SqlPlaygroundActivity(props: ActivityProps) {
     val result = (run as? QueryRun.Done)?.result
 
     fun runQuery() {
-        if (props.isLocked ||
+        if (isLocked ||
             query.text
                 .toString()
                 .jsTrim()
@@ -145,23 +144,24 @@ private fun SqlPlaygroundActivity(props: ActivityProps) {
     ActivityCanvas {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) { fields.tables.forEach { SqlTableViewer(it) } }
 
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            val label = stringResource(if (props.isExploring) R.string.activities_code_query else R.string.activities_code_your_query)
-            Text(label, style = MaterialTheme.typography.titleSmall)
-            CodeEditor(
-                state = query,
-                language = CodeLanguage.Sql,
-                label = label,
-                placeholder = "SELECT",
-                focusRequester = focus,
-                onSubmit = ::runQuery,
-                readOnly = props.isLocked || props.isChecked,
-            )
-            if (!props.isChecked) {
+        // Main keeps a checked query read-only, with its tools disabled.
+        if (!props.isChecked || query.text.isNotEmpty()) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                val label = stringResource(R.string.activities_code_query)
+                Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium)
+                CodeEditor(
+                    state = query,
+                    language = CodeLanguage.Sql,
+                    label = label,
+                    placeholder = "SELECT",
+                    focusRequester = focus,
+                    onSubmit = ::runQuery,
+                    readOnly = props.isLocked || props.isChecked,
+                )
                 SnippetBar(
                     snippets = sqlSnippets(fields.tables),
                     label = stringResource(R.string.activities_code_sql_words),
-                    enabled = !props.isLocked,
+                    enabled = !props.isLocked && !props.isChecked,
                 ) { snippet ->
                     query.insertSnippet(snippet)
                     focus.requestFocus()
@@ -171,10 +171,11 @@ private fun SqlPlaygroundActivity(props: ActivityProps) {
                     runtime,
                     isExploring = props.isExploring,
                     canRun =
-                        query.text
-                            .toString()
-                            .jsTrim()
-                            .isNotEmpty(),
+                        !props.isChecked &&
+                            query.text
+                                .toString()
+                                .jsTrim()
+                                .isNotEmpty(),
                     hasRun = run != null,
                     isRunning = editorRun.isRunning,
                     onRun = ::runQuery,

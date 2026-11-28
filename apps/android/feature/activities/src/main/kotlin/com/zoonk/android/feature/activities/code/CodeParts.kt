@@ -72,7 +72,6 @@ import com.zoonk.android.ui.code.styledCodeLine
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.OutlinedButton
-import com.zoonk.android.ui.components.OutlinedIconButton
 import com.zoonk.android.ui.components.fadingHorizontalScroll
 import com.zoonk.android.ui.theme.GeistMono
 import com.zoonk.android.ui.theme.LocalMoreContrast
@@ -312,14 +311,13 @@ internal fun SandboxRunBar(
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
             if (onReset != null) {
-                val reset = stringResource(R.string.activities_code_start_over)
-                OutlinedIconButton(
+                OutlinedButton(
                     onClick = onReset,
-                    Modifier.semantics { contentDescription = reset },
                     enabled = !isRunning,
+                    leadingIcon = { ButtonIcon(R.drawable.ic_replay) },
                     size = ButtonSize.Large,
                 ) {
-                    Icon(painterResource(R.drawable.ic_replay), contentDescription = null)
+                    Text(stringResource(R.string.activities_code_start_over))
                 }
             }
             OutlinedButton(

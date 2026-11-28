@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "activities_code_badge_query_data": "5c35b8a456a850537f69e4b01a474b12bdecb784b88650738c4b4a396444f0c8",
-  "activities_code_badge_run": "f328741319afca9aaf14c7f3e1f2839efea27ad3282f49d3ca6eacd144b200b3",
   "activities_code_badge_step_through": "52047959c7e55ba4bb2fc5e556f11e9e70dd80b0152c9424ea7422b7c2243bdf",
-  "activities_code_badge_test_pattern": "10a124b61bcbce3886a7b982de45bb61f622b200e16fdfa5b742ba1e5225d651",
   "activities_code_before_first_line": "7063e1f2a1555035676bb4e66700f292305515f665b69eaab72691d94d8327ec",
   "activities_code_changed_code": "800fc093ef511284112a3987edf51c162d12d0284aa68c88475fb138a460e8d0",
   "activities_code_changed_query": "58efa27daf4648e82d199b3ee0e3fdf8b6562fe8fb5682090c2c5665a260d925",
   "activities_code_code": "3fa86e1cd2704bb573b490b4235fe5c8bc00f06b52bafb9e5fa399c1404e5f20",
   "activities_code_current_line": "2cf075c044ede81489889a9e19ba1a2c1732af52013933cac5d9693afb3e35f3",
+  "activities_code_edit_lines": "88ff52163ac033ba8c4d5ea8bfb351968c9c0e747c8740f886bb9fc2206caf81",
   "activities_code_error_line": "f5afc3dda428bf54a3ee8e9206a1d4af925805bbb566a3ab4eb7121bfc7fbab8",
   "activities_code_examples_pass": "8f460fafeb357edf1225cc6a32f9ab6c45e382a60afb491fa16584e22667b65d",
   "activities_code_expected": "ac13ac2005f7198674b2d0eedf28183b48776dd736c0d030f58cc4cc2da2a758",
@@ -18,7 +16,6 @@
   "activities_code_formula_that_works": "44a6f501b10dedd2821b4415cddebfd788580d125f8e5e42c935b8ac0181f3f8",
   "activities_code_hint_mistake": "56c2648d13cc9126f0ebc17c314790a375abd609a00e0ec7ae5ad01d5ca97fa5",
   "activities_code_line_yours": "6c47fb4a933231b574012bc64e69c2cc8abccfa32efb594b39db366c863531e9",
-  "activities_code_lines_yours": "bb5e7e8b10e044f7803b749766b60bf417f0d5c017791d938c66221e3f57737b",
   "activities_code_no_table": "140bce3e23985f582b952b0b2cc4eca9e1cff3853d239b739b43449f76c4046b",
   "activities_code_not_quite": "736491b531dbf8107d3db1291bc08baf6c86b5acd2cc0396e1a00761801ba3f2",
   "activities_code_not_set": "fcdf49c43b63e1f42578ad3fabb715b5f761e48e652c74cae983a5d9efee721c",
@@ -27,6 +24,7 @@
   "activities_code_pass_count": "2dc8ad703e83fb3a6d2e62d2786abee42441a876d6a6e6354f440c7584e9c3de",
   "activities_code_pattern_cant_run": "5954c263cecfa73d2d61c08780050843475a634cb2bbefdc3c5a62a1e41fb515",
   "activities_code_pattern_that_works": "81e8a44d9a1cadb5e36ef1a6aa54677f2588f6d6d165400b6a993fdf1443f6a4",
+  "activities_code_predict_ahead": "5a8248ee3b5cabe2e5f88d98fa656f23221eb46c6dbb947cff347ac3b548ca5a",
   "activities_code_predict_first": "91a25293e3e755340e1e6eb5cb39fdf912eb9c03a39561d55affefe71b19f7a9",
   "activities_code_query": "b434b306f327b85418a0e0ea5c0a6d7ebaccba1118e51691b973ab6b32f2256a",
   "activities_code_query_that_works": "cb03179f54c8ef1d3b4dd56b2ae8951be7aa4aa6f73b2ff1a37327d079d987fc",
@@ -69,10 +67,9 @@
   "activities_code_snippet_word": "fdcac2871753eb78b22a8169d736a80f979cabe9f922ef50234f0578a30197d6",
   "activities_code_snippet_zero_or_more": "2bc794ab864a45e18fd36c2492e12c8790fa53de4a1ffff7678f93ff29cd5bc4",
   "activities_code_sql_words": "8f5ac831b4b25f0b011978a0448610e2ffbc52386f7b8932bd7b332b25536a10",
-  "activities_code_start_over": "99e8005b716f5e5abdb9b07f550beac1cb38b16b46bbf5e9c0c2855b1882eefa",
+  "activities_code_start_over": "508d763279a7085844dded471b03a902ad564d0da13adc2c276e7ca433c63335",
   "activities_code_step_back": "498a1c7b0cb3ae77e8e7af8789638c1882871e015647d21d33b993f16aa189bf",
   "activities_code_step_forward": "b3987a3250395df2b95fecbca2d4abbe545dd1c26358e1f92c1539ff32119c9a",
-  "activities_code_step_next_line": "92322a0abbff40c2f290f0a305cc4328801a81454a097658ef685eaf54ecc021",
   "activities_code_step_of": "634a39f1f1b047896f6046670a86036e0dae3711598ec850c9eac51d655989c1",
   "activities_code_step_to_see": "262deb79f1431b47ab6607135aff9ad77151888f9c96702cb808d9162e0b9026",
   "activities_code_stopped_after": "a6ec8acd0e48380c586670caa030f9c297d9763e0e1cb71b26f19d1b38cf6e2f",
@@ -89,29 +86,27 @@
   "activities_code_your_formula": "daa552fae32846212349306b2fc3e30b9e2043cfc2e54658387af0300cab09d2",
   "activities_code_your_pattern": "a84917dadfc25898eb1524bbba8e268dc3fc18a8acc4ec1816ad3c042b08eedd",
   "activities_code_your_predictions": "68134c7d536affb407cbcd972e4e8f404bc2fbf5b77efe2f7fae869559276f5e",
-  "activities_code_your_query": "77d25685c6490eb13aef114b1b991b2f3472d9eb22e3ae0da04b715220a0d4cb",
   "activities_code_your_result": "a09cbfc8e46db82fb1ff754b90194e649e1bd315b1717a408dbf8e9ef9a1c01a",
   "activities_code_your_result_rows": "e5c0543d85d689e8984d899d1cc32479bbb4986d882f2fd8b72e87151d0ef2e0"
 }
 -->
 <resources>
-    <string name="activities_code_badge_run">コードを実行する</string>
     <!-- %1$s is a runtime's name, like Python, JavaScript or SQLite. -->
     <string name="activities_code_runtime_loading">%1$sを準備しています。初回は数秒かかります。</string>
     <!-- %1$s is a runtime's name, like Python, JavaScript or SQLite. -->
     <string name="activities_code_runtime_failed">%1$sを読み込めませんでした。通信状況を確認して、もう一度お試しください。</string>
     <string name="activities_code_run">実行する</string>
     <string name="activities_code_run_again">もう一度実行する</string>
-    <string name="activities_code_start_over">元のコードからやり直す</string>
+    <string name="activities_code_start_over">最初からやり直す</string>
     <!-- The name of a block of program code, for TalkBack. -->
     <string name="activities_code_code">コード</string>
     <!-- The lines of a program the learner may edit; %1$s lists their numbers, like "2 and 3". -->
-    <plurals name="activities_code_lines_yours">
-        <item quantity="other">%1$s行目は編集できます</item>
+    <plurals name="activities_code_edit_lines">
+        <item quantity="other">行 %1$s を編集</item>
     </plurals>
     <!-- A line of code the learner may edit, for TalkBack. -->
     <string name="activities_code_line_yours">%1$d行目は編集できます</string>
-    <!-- What a program shown to explore printed, with no expected output beside it. -->
+    <!-- What a program printed. -->
     <string name="activities_code_output">出力</string>
     <!-- The output the program should print. -->
     <string name="activities_code_expected">期待される出力</string>
@@ -126,7 +121,6 @@
     <string name="activities_code_too_much_output">出力が多すぎたため、実行を停止しました。終わらないループはありませんか？</string>
     <!-- Before the feedback for a likely mistake the program's output shows. -->
     <string name="activities_code_not_quite">惜しい：</string>
-    <string name="activities_code_badge_test_pattern">規則性を確かめる</string>
     <!-- The field for a regular expression, for TalkBack. -->
     <string name="activities_code_your_pattern">パターン</string>
     <!-- The field for a spreadsheet formula, for TalkBack. -->
@@ -202,10 +196,7 @@
     <string name="activities_code_hint_mistake">%1$s：</string>
     <string name="activities_code_pattern_that_works">条件を満たすパターン</string>
     <string name="activities_code_formula_that_works">条件を満たす数式</string>
-    <string name="activities_code_badge_query_data">データを検索する</string>
-    <!-- The field for a SQL query, and its label. -->
-    <string name="activities_code_your_query">クエリ</string>
-    <!-- Above the SQL query shown to explore, already written and ready to run. -->
+    <!-- Above the SQL query and its field. -->
     <string name="activities_code_query">クエリ</string>
     <!-- The row of buttons that type SQL words and the tables' names, for TalkBack. -->
     <string name="activities_code_sql_words">SQLのキーワード、テーブル名、列名</string>
@@ -249,7 +240,8 @@
     <string name="activities_code_not_set">未設定</string>
     <string name="activities_code_predict_first">まず予想してみましょう。次のステップに進むと、結果がわかります。</string>
     <string name="activities_code_step_to_see">次のステップに進んで、予想が合っているか確かめましょう。</string>
-    <string name="activities_code_step_next_line">次のステップに進むと、次の行が実行されます。</string>
+    <!-- Under a code trace whose predictions aren't all made yet. -->
+    <string name="activities_code_predict_ahead">値を予測するところで一時停止します。</string>
     <string name="activities_code_whole_run">実行はこれで終わりです。準備ができたら、予想の答え合わせをしましょう。</string>
     <!-- At the last step of a code trace shown to explore, with nothing to predict. -->
     <string name="activities_code_whole_run_explored">実行の流れはここまでです。</string>

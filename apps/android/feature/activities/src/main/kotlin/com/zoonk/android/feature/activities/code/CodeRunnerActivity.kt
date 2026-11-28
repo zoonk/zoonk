@@ -39,12 +39,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.feature.activities.ActivityBadge
 import com.zoonk.android.feature.activities.ActivityCanvas
 import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityRenderer
@@ -70,7 +70,7 @@ import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepA
 
 val codeRunnerRenderer =
     ActivityRenderer(
-        badge = { ActivityBadge(R.string.activities_code_badge_run, R.drawable.ic_terminal) },
+        badge = { null },
         canvas = { CodeRunnerActivity(it) },
     )
 
@@ -207,26 +207,24 @@ private fun CodePanel(
                 style = MaterialTheme.typography.labelMedium.copy(fontFamily = GeistMono),
             )
             if (marksYourLines) {
-                val style = MaterialTheme.typography.labelMedium
-                Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                    LineMarker(style) {
-                        Icon(painterResource(R.drawable.ic_edit), null, Modifier.size(12.dp), tint = colors.onSurfaceVariant)
-                    }
-                    Text(
-                        pluralStringResource(
-                            R.plurals.activities_code_lines_yours,
-                            fields.editableLines.size,
-                            formatList(fields.editableLines.map(Long::toString), currentLocale()),
-                        ),
-                        color = colors.onSurfaceVariant,
-                        style = style,
-                    )
-                }
+                // Main's "Edit line 2" goes once checked, keeping its room so the header doesn't move.
+                Text(
+                    pluralStringResource(
+                        R.plurals.activities_code_edit_lines,
+                        fields.editableLines.size,
+                        formatList(fields.editableLines.map(Long::toString), currentLocale()),
+                    ),
+                    Modifier
+                        .alpha(if (isLocked) 0f else 1f)
+                        .then(if (isLocked) Modifier.clearAndSetSemantics {} else Modifier),
+                    color = colors.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelMedium,
+                )
             }
         }
         val spoken = rememberSpokenCode()
         // Editable lines are one-line fields, so the program keeps its lines' shape and scrolls.
-        CodeFrame(stringResource(R.string.activities_code_code), wraps = false, stopPerLine = true) {
+        CodeFrame(stringResource(R.string.activities_code_code), wraps = false, stopPerLine = true, holdsFields = true) {
             lines.forEachIndexed { index, line ->
                 val number = index + 1
                 val isError = errorLine == number
@@ -388,7 +386,7 @@ private fun PrintedOutput(
             val tone =
                 when {
                     !hasTarget -> colors.onSurface
-                    matches -> colors.tertiary
+                    matches -> colors.onTertiaryContainer
                     else -> colors.error
                 }
             OutputText(run.output.trimEnd(), live, tone)
