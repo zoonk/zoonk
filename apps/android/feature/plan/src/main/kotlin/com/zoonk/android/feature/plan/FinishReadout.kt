@@ -1,9 +1,8 @@
 package com.zoonk.android.feature.plan
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -91,8 +90,9 @@ fun FinishReadout(
 }
 
 /**
- * The time a day with when the plan finishes at it beside it, as the time question and Adjust plan show them; under it
- * when they don't fit side by side. While a newer answer is worked out ([updating]), the last one stays, dimmed.
+ * The time a day with when the plan finishes at it beside it, as the time question and Adjust plan show them. Like
+ * main's, the finish keeps to the row's end and wraps in the room the time leaves it, so at a large text size it stays
+ * one block that reads from the same edge. While a newer answer is worked out ([updating]), the last one stays, dimmed.
  */
 @Composable
 fun TimeWithFinish(
@@ -103,17 +103,13 @@ fun TimeWithFinish(
     picker: @Composable () -> Unit,
 ) {
     val busy = stringResource(R.string.plan_finish_working)
-    FlowRow(
-        modifier,
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-        itemVerticalAlignment = Alignment.Bottom,
-    ) {
-        Box(Modifier.weight(1f)) { picker() }
+    Row(modifier, horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.Bottom) {
+        picker()
         forecast?.let {
             FinishReadout(
                 it,
                 Modifier
+                    .weight(1f)
                     .alpha(if (updating) UPDATING_ALPHA else 1f)
                     .semantics {
                         liveRegion = LiveRegionMode.Polite
