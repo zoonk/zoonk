@@ -439,6 +439,7 @@
     "./library/lessons/reuse": "./src/library/lessons/lesson-reuse.ts",
     "./library/lessons/versions": "./src/library/lessons/lesson-versions.ts",
     "./library/lessons/write-content": "./src/library/lessons/write-lesson-content.ts",
+    "./library/lessons/written-activities": "./src/library/lessons/_utils/written-activities.ts",
     "./library/listening/content": "./src/library/listening/listening-content.ts",
     "./library/listening/view": "./src/library/listening/listening-set-view.ts",
     "./library/listening/voice": "./src/library/listening/voice-listening-set.ts",

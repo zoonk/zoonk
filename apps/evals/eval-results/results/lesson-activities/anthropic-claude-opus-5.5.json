@@ -1,0 +1,606 @@
+{
+  "modelId": "anthropic/claude-opus-5.5",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The starter prints `-1`, the intended edit prints `-0.5`, and reversing the subtraction prints `0.5`. The feedback correctly explains each result, including `7.5` if the subtraction is omitted.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 40
+        },
+        {
+          "categoryId": "fitsLesson",
+          "reasoning": "Only line 1 is editable, the starter and solution use the lesson’s expression, and both required mistakes have targeted feedback. The prompt withholds the answer but misses the explicit one-sentence requirement.",
+          "score": 8,
+          "label": "Fits the lesson and the template",
+          "weight": 40
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The English is plain and supportive, and operators and expressions are formatted as code. The prompt could be leaner by stating the goal without first diagnosing the error.",
+          "score": 8,
+          "label": "Language and style",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1575,
+          "outputTokens": 375,
+          "reasoningTokens": 18
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The prompt uses two sentences instead of the required one. The first diagnoses the starter code; the second already states the task without revealing the output.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use one content-focused sentence: “Make Python divide `15` by `2`, keep the decimal part, and then subtract `8`.”",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "A Python codeRunner whose editable line is the division, uses the lesson's `15 / 2 - 8`, prints -0.5 only when the slash keeps the decimal part, and gives feedback for -1 and 0.5. The prompt says what the program should do without giving the output.",
+        "id": "python-numeric-practice-1",
+        "language": "en",
+        "origin": "production",
+        "userInput": {
+          "activities": [
+            {
+              "activityTemplate": "codeRunner",
+              "brief": "In Python, the learner fixes line 1, `result = 15 // 2 - 8`, which drops the decimal part and prints `-1`, so it divides with the slash that keeps it; line 2 prints `result`, which is `-0.5` once it's right. Reversing the subtraction, `8 - 15 / 2`, prints `0.5`.",
+              "screen": 8
+            }
+          ],
+          "lessonId": "01a1d52e-a56b-750a-ab5e-76eb91a3a555"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The starter, solution and reversed subtraction produce `-1`, `-0.5` and `0.5` respectively, and the explanation gives the correct order of operations. The weakness is in what the check establishes: matching the output does not establish that the learner used division.",
+          "score": 8,
+          "label": "Accuracy",
+          "weight": 40
+        },
+        {
+          "categoryId": "fitsLesson",
+          "reasoning": "The activity makes the intended expression editable, keeps `print(result)` fixed, and gives targeted feedback for both specified mistakes. The prompt withholds the answer but breaks the one-sentence rule, and the output-only check admits edits other than the intended fix.",
+          "score": 7,
+          "label": "Fits the lesson and the template",
+          "weight": 40
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The English is plain and supportive, and the operators and expressions are formatted as code. The `-1` feedback is wordier than needed: it explains the loss of the fractional part both as cutting off `.5` and as turning the quotient into 7.",
+          "score": 8,
+          "label": "Language and style",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1589,
+          "outputTokens": 664,
+          "reasoningTokens": 209
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The output check cannot tell whether the learner fixed the division. For example, `result = -0.5` on line 1 passes without using `/`.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The prompt uses two sentences rather than the required one. The first explains the starter code; the second already states the task without revealing the output.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use just the task sentence: “Divide 15 by 2, keep the decimal part, and then subtract 8.” The `-1` feedback could also be shorter: “`//` drops the decimal part here. Use `/` to keep it.”",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "A Python codeRunner whose editable line is the division, uses the lesson's `15 / 2 - 8`, prints -0.5 only when the slash keeps the decimal part, and gives feedback for -1 and 0.5. The prompt says what the program should do without giving the output.",
+        "id": "python-numeric-practice-2",
+        "language": "en",
+        "origin": "production",
+        "userInput": {
+          "activities": [
+            {
+              "activityTemplate": "codeRunner",
+              "brief": "In Python, the learner fixes line 1, `result = 15 // 2 - 8`, which drops the decimal part and prints `-1`, so it divides with the slash that keeps it; line 2 prints `result`, which is `-0.5` once it's right. Reversing the subtraction, `8 - 15 / 2`, prints `0.5`.",
+              "screen": 8
+            }
+          ],
+          "lessonId": "01a1d52e-a56b-750a-ab5e-76eb91a3a555"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The solution prints `8.0`, the unparenthesized expression prints `28.0`, and the worked total of $24 is correct. However, “Python divides first” is false as a trace of this expression, and matching `8.0` alone does not verify the learner's calculation.",
+          "score": 5,
+          "label": "Accuracy",
+          "weight": 40
+        },
+        {
+          "categoryId": "fitsLesson",
+          "reasoning": "The Python runner preserves Hannah, Richmond, DoorDash and all the order amounts. Line 1 is editable, the starter prints `0`, and the missing-parentheses mistake has distinct feedback. The main gap is that a hard-coded share passes without the lesson's required move. The prompt also misses the one-sentence, content-only requirement.",
+          "score": 6,
+          "label": "Fits the lesson and the template",
+          "weight": 40
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The English is plain and supportive, and the code snippets are set as code. The feedback connects each likely mistake to a familiar part of the bill, such as counting a one-time fee four times.",
+          "score": 9,
+          "label": "Language and style",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1638,
+          "outputTokens": 726,
+          "reasoningTokens": 231
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The check tests the printed value, not whether the learner wrote the whole expression. `share = 8.0` passes without using the order details or parentheses. The `28.0` feedback also misstates the evaluation order: Python evaluates `4 * 7` first. The relevant point is that `6 / 3` happens before subtraction.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The prompt uses two sentences rather than one, and “Write line 1” directs the learner to a screen location rather than focusing solely on the calculation.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Keep the output-specific feedback, but also check the edited assignment for a calculation that splits the whole order, allowing equivalent expressions. Phrase the prompt as a single request to calculate `share` from the DoorDash order details.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "The application becomes a Python codeRunner in the DoorDash situation where the learner writes the whole expression with parentheses; only `(4 * 7 + 2 - 6) / 3` and equivalents print 8.0, and the version without parentheses prints something else with its own feedback.",
+        "id": "python-numeric-application-1",
+        "language": "en",
+        "origin": "production",
+        "userInput": {
+          "activities": [
+            {
+              "activityTemplate": "codeRunner",
+              "brief": "Hannah and two roommates in Richmond order four $7 meals on DoorDash, with a $2 delivery fee and a $6 coupon off the whole order, split three ways. The learner writes line 1, `share = ...`, the expression for each share, so `print(share)` prints `8.0`; `4 * 7 + 2 - 6 / 3` prints `28.0`, dividing only the coupon.",
+              "screen": 13
+            }
+          ],
+          "lessonId": "01a1d52e-a56b-750a-ab5e-76eb91a3a555"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The solution and all four listed mistake outputs are arithmetically correct. However, a bare `8.0` is accepted as a correct answer to an expression-writing task, and a bare `28.0` would receive feedback claiming the learner divided the coupon.",
+          "score": 5,
+          "label": "Accuracy",
+          "weight": 40
+        },
+        {
+          "categoryId": "fitsLesson",
+          "reasoning": "The situation, numbers, editable assignment and unchanged print line match the brief. The starter does not print the target, and the intended missing-parentheses edit gets specific feedback. The check does not enforce the required calculation, and the prompt misses the one-sentence requirement.",
+          "score": 7,
+          "label": "Fits the lesson and the template",
+          "weight": 40
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The English is approachable and the code is formatted clearly. In the explanation, “`/` keeps the decimal” is less precise than saying that Python’s `/` returns a float.",
+          "score": 8,
+          "label": "Language and style",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1634,
+          "outputTokens": 564,
+          "reasoningTokens": 127
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The check tests the printed value, not the expression. `share = 8.0` passes without the learner modeling the order or grouping the total. Output alone also cannot establish which mistake produced a value like `28.0`.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The prompt uses three sentences instead of one. “Write line 1” also emphasizes the edit location rather than the calculation.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Check the edited expression as well as its output, allowing equivalent ways to group and split the order total. Use the expression to distinguish the missing-parentheses mistake from unrelated edits that print `28.0`.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "The application becomes a Python codeRunner in the DoorDash situation where the learner writes the whole expression with parentheses; only `(4 * 7 + 2 - 6) / 3` and equivalents print 8.0, and the version without parentheses prints something else with its own feedback.",
+        "id": "python-numeric-application-2",
+        "language": "en",
+        "origin": "production",
+        "userInput": {
+          "activities": [
+            {
+              "activityTemplate": "codeRunner",
+              "brief": "Hannah and two roommates in Richmond order four $7 meals on DoorDash, with a $2 delivery fee and a $6 coupon off the whole order, split three ways. The learner writes line 1, `share = ...`, the expression for each share, so `print(share)` prints `8.0`; `4 * 7 + 2 - 6 / 3` prints `28.0`, dividing only the coupon.",
+              "screen": 13
+            }
+          ],
+          "lessonId": "01a1d52e-a56b-750a-ab5e-76eb91a3a555"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The traced assignments match the Python run: `meio` is 2, comparing 26 with 17 sets `fim` to 1, `meio` becomes 0, and comparing 5 with 17 sets `inicio` to 1. The final `meio` is 1, where the target is found. Each pause points to the corresponding `meio` assignment.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 40
+        },
+        {
+          "categoryId": "fitsLesson",
+          "reasoning": "The tracer uses the requested list, target and watch variables. It pauses at all three midpoint calculations and offers 1 as the second-round rounding-up mistake. The prompt asks for predictions without revealing the answers, but its extra sentence violates the one-sentence requirement.",
+          "score": 8,
+          "label": "Fits the lesson and the template",
+          "weight": 40
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The Portuguese questions are short and concrete. The operator `//` is set as code, but variable names and assignments in the learner-facing questions and feedback are not consistently distinguished from prose.",
+          "score": 8,
+          "label": "Language and style",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1864,
+          "outputTokens": 469,
+          "reasoningTokens": 17
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The prompt exceeds the one-sentence limit: the first sentence gives the task, and the second explains `//`. The pause questions and explanation also present code expressions such as `fim = 1` as plain prose.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use “Acompanhe esta busca binária por 17 e preveja o valor de `meio` em cada rodada.” as the full prompt. Keep the rounding reminder in the feedback, where it explains why 0, not 1, is correct on the second pause.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "A codeTracer of the lesson's binary search with its variable names, whose trace matches a real run, pausing at each middle position with the rounding-up mistake among the options. Portuguese text.",
+        "id": "binary-search-tracer-1",
+        "language": "pt",
+        "origin": "production",
+        "userInput": {
+          "activities": [
+            {
+              "activityTemplate": "codeTracer",
+              "brief": "Trace a standard binary search for 17 in [5, 17, 26, 38, 44, 59] in Python, watching `inicio`, `fim` and `meio`. Pauses ask for `meio` at each round: 2, then 0, then 1. The tempting wrong option on the second round is 1, from rounding the middle up.",
+              "screen": 9
+            }
+          ],
+          "lessonId": "01a1bc07-924d-7e56-a5e7-d49b6abb2e32"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The trace matches the assignments in the code: `meio = 2` leads to `fim = 1`, then `meio = 0` leads to `inicio = 1`, and finally `meio = 1` finds 17. Each pause targets the corresponding assignment and includes the correct value.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 40
+        },
+        {
+          "categoryId": "fitsLesson",
+          "reasoning": "The tracer uses the specified list, target and variable names. It pauses at all three middle positions and offers 1 as the second-round rounding-up distractor. The one-sentence prompt asks for a prediction without revealing the answers. The only small mismatch is that the explanation switches from Python’s `//` to floor brackets.",
+          "score": 9,
+          "label": "Fits the lesson and the template",
+          "weight": 40
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The Portuguese questions are short and clear, especially the second-round question that identifies the remaining interval. Inline code formatting is missing from learner-facing prose, notably for `meio`, which is both a variable name and an ordinary word.",
+          "score": 8,
+          "label": "Language and style",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1893,
+          "outputTokens": 528,
+          "reasoningTokens": 80
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The Portuguese prompt, questions and explanation leave code references such as `meio` and `fim = 1` in plain text. This makes variable names harder to distinguish from ordinary Portuguese words.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use `1 // 2 = 0` in the second-round explanation instead of `⌊1/2⌋ = 0`. Both are mathematically correct, but the Python notation connects the rounding-up mistake directly to the line the learner is tracing.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "A codeTracer of the lesson's binary search with its variable names, whose trace matches a real run, pausing at each middle position with the rounding-up mistake among the options. Portuguese text.",
+        "id": "binary-search-tracer-2",
+        "language": "pt",
+        "origin": "production",
+        "userInput": {
+          "activities": [
+            {
+              "activityTemplate": "codeTracer",
+              "brief": "Trace a standard binary search for 17 in [5, 17, 26, 38, 44, 59] in Python, watching `inicio`, `fim` and `meio`. Pauses ask for `meio` at each round: 2, then 0, then 1. The tempting wrong option on the second round is 1, from rounding the middle up.",
+              "screen": 9
+            }
+          ],
+          "lessonId": "01a1bc07-924d-7e56-a5e7-d49b6abb2e32"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The solution prints `segue` synchronously and then `5`, and the listed mistake traces are correct as console output. The false exclusivity claim about `.catch()` in the learner feedback triggers the cap of 5.",
+          "score": 5,
+          "label": "Accuracy",
+          "weight": 40
+        },
+        {
+          "categoryId": "fitsLesson",
+          "reasoning": "Only the recovery step is editable. The starter does not reach the final success handler, and the output check accepts recovery to `4` without requiring one particular spelling. The one-sentence prompt names the task without revealing the output, and the feedback distinguishes the starter from common incorrect returns.",
+          "score": 10,
+          "label": "Fits the lesson and the template",
+          "weight": 40
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The Portuguese is direct and accessible, and the prompt is concise. Code formatting is mostly consistent, but the final explanation leaves the expression `4 + 1` unformatted.",
+          "score": 8,
+          "label": "Language and style",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1688,
+          "outputTokens": 470,
+          "reasoningTokens": 51
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The starter feedback falsely says that only `.catch()` handles a rejection. `.then(undefined, () => 4)` is also a valid line 2: its second argument handles the rejection and recovers with `4`.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The final explanation leaves `4 + 1` as plain text rather than setting the expression as code.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Keep the starter feedback specific to the missing rejection handler: “Esse `.then(() => 4)` só trata o sucesso. Use `.catch(() => 4)` para recuperar a cadeia.”",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "A JavaScript codeRunner whose edited line is the recovering step, printing `segue` then `5` only when the chain catches the rejection; the starter's output (an unhandled rejection or only `segue`) differs and has feedback. Portuguese text.",
+        "id": "javascript-promises-1",
+        "language": "pt",
+        "origin": "production",
+        "userInput": {
+          "activities": [
+            {
+              "activityTemplate": "codeRunner",
+              "brief": "In JavaScript, the chain `Promise.reject('falha')`, then a step that should recover with 4, then `.then(n => console.log(n + 1))`, then `console.log('segue')` on its own line. The learner fixes line 2, written as `.then(() => 4)`, so the chain recovers from the rejection; once right the program prints `segue` and then `5`.",
+              "screen": 12
+            }
+          ],
+          "lessonId": "01a1bc07-9497-7920-9a63-2bcc5f9ee360"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The solution correctly logs `segue` synchronously and then `5` after recovery. The `NaN` and `6` traces also fit the described mistakes. However, the false claim that `.then()` does not handle rejection triggers the accuracy cap of 5.",
+          "score": 5,
+          "label": "Accuracy",
+          "weight": 40
+        },
+        {
+          "categoryId": "fitsLesson",
+          "reasoning": "The starter, editable line, recovery value and final computation match the brief. The prompt states the content goal in one sentence without revealing the output. The unchanged starter cannot print `5`, and feedback covers its `segue` output as well as a missing return and a wrong recovery value.",
+          "score": 10,
+          "label": "Fits the lesson and the template",
+          "weight": 40
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The Portuguese prompt is direct and plain, and most code references are formatted as code. The four-sentence starter feedback could be shorter, and `4 + 1` should be set as code in the explanation.",
+          "score": 8,
+          "label": "Language and style",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1660,
+          "outputTokens": 456,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The starter feedback teaches a false rule: `.then()` can handle rejection through its second argument. It is the specific call `.then(() => 4)` that leaves the rejection unhandled.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The starter feedback is longer than needed because it discusses `.then()`, `.finally()`, and `.catch()` together. The explanation also leaves the code expression `4 + 1` unformatted.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Focus the `segue` feedback on the missing rejection handler in line 2. That diagnosis applies both to the unchanged starter and to a `.finally(() => 4)` edit without implying that `.catch()` is the only way to recover.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A JavaScript codeRunner whose edited line is the recovering step, printing `segue` then `5` only when the chain catches the rejection; the starter's output (an unhandled rejection or only `segue`) differs and has feedback. Portuguese text.",
+        "id": "javascript-promises-2",
+        "language": "pt",
+        "origin": "production",
+        "userInput": {
+          "activities": [
+            {
+              "activityTemplate": "codeRunner",
+              "brief": "In JavaScript, the chain `Promise.reject('falha')`, then a step that should recover with 4, then `.then(n => console.log(n + 1))`, then `console.log('segue')` on its own line. The learner fixes line 2, written as `.then(() => 4)`, so the chain recovers from the rejection; once right the program prints `segue` and then `5`.",
+              "screen": 12
+            }
+          ],
+          "lessonId": "01a1bc07-9497-7920-9a63-2bcc5f9ee360"
+        }
+      }
+    }
+  ],
+  "taskId": "lesson-activities"
+}

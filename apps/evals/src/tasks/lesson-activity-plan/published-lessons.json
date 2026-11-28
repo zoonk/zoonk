@@ -1,0 +1,3521 @@
+{
+  "01a1d52e-a56b-750a-ab5e-76eb91a3a555": {
+    "chapterTitle": "Values and variables",
+    "courseTitle": "Python",
+    "language": "en",
+    "level": "beginner",
+    "screens": [
+      {
+        "content": {
+          "text": "Maya's receipt shows three items at $4 each and one $2 fee. She wants Python to work out the whole charge in a single line. How can one calculation get it right?",
+          "variant": "text"
+        },
+        "kind": "hook"
+      },
+      {
+        "content": {
+          "text": "Three $4 items cost 3 times 4. In Python you write that as `3 * 4`, and Python gives back `12`. The star `*` means multiply. A calculation written with numbers like this is called a **numeric expression**.",
+          "title": "Python does the math"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "reveal": "Python gives back `17`.",
+          "options": [
+            { "id": "a", "text": "`13`", "isCorrect": false },
+            { "id": "b", "text": "`17`", "isCorrect": true },
+            { "id": "c", "text": "`42`", "isCorrect": false }
+          ],
+          "variant": "guess",
+          "question": "Python runs the line `5 + 2 * 6`. What number do you think it gives back?"
+        },
+        "kind": "hook"
+      },
+      {
+        "content": {
+          "text": "Python does multiplying and dividing before adding and subtracting. So `5 + 2 * 6` becomes `5 + 12`, then `17`. Starting with `5 + 2` gives `42`, because it skips that rule. This rule is called the **order of operations**.",
+          "title": "Multiply before you add"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "text": "Your game score is 4, and you lose 7 points. In Python that's `4 - 7`, and the answer is `-3`. The minus sign `-` subtracts, and the result can drop below zero, just like on paper.",
+          "title": "Subtracting can go below zero"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "text": "Two friends split a $9 pizza equally. In Python, `9 / 2` gives `4.5`. The slash `/` divides, and Python keeps the part after the decimal point. So each share is $4.50, and nobody loses the 50 cents.",
+          "title": "Dividing keeps the decimals",
+          "exampleLineSlot": {
+            "idea": "splitting a bill or a subscription cost equally with friends or roommates"
+          }
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "steps": [
+            {
+              "math": "12 / 3 = 4.0",
+              "text": "Dividing comes before subtracting, so start with `12 / 3`. The slash always gives a decimal answer, even when the numbers divide evenly. So you get `4.0`, not `4`."
+            },
+            {
+              "math": "4.0 - 6 = -2.0",
+              "text": "Now subtract 6 from that. Since 6 is bigger than 4.0, the answer goes below zero."
+            }
+          ],
+          "title": "Divide, then subtract",
+          "result": "Python gives back `-2.0`. The `.0` stays because the division already made a decimal number.",
+          "problem": "What number does Python give back for `12 / 3 - 6`?"
+        },
+        "kind": "workedExample"
+      },
+      {
+        "content": {
+          "basis": {
+            "quote": "The slash `/` divides, and Python keeps the part after the decimal point.",
+            "position": 5
+          },
+          "context": "Python runs this line: `15 / 2 - 8`",
+          "options": [
+            {
+              "id": "a",
+              "text": "-1",
+              "reason": "You cut off the part after the decimal point. Python's `/` keeps it, so 15 / 2 has a .5 at the end.",
+              "isCorrect": false
+            },
+            {
+              "id": "b",
+              "text": "-0.5",
+              "reason": "Python divides 15 by 2 first and keeps the decimal part. Then it subtracts 8, which gives -0.5.",
+              "isCorrect": true
+            },
+            {
+              "id": "c",
+              "text": "0.5",
+              "reason": "You took the division result away from 8. The line subtracts 8 from the division result, so the answer lands below zero.",
+              "isCorrect": false
+            }
+          ],
+          "question": "What number does Python give back?"
+        },
+        "kind": "check"
+      },
+      {
+        "content": {
+          "text": "`18 / 3 * 2` mixes dividing and multiplying. Dividing and multiplying rank the same, so Python works from left to right. `18 / 3` gives `6.0`, then `6.0 * 2` gives `12.0`. Adding and subtracting work the same way.",
+          "title": "Same rank, left to right"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "text": "`5 + 2 * 6` gives `17`. To add first, wrap that part in parentheses: `(5 + 2) * 6`. Python always works out what's inside the parentheses first. So it becomes `7 * 6`, which gives `42`.",
+          "title": "Parentheses go first"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "steps": [
+            {
+              "math": "(8 + 4) = 12",
+              "text": "The parentheses come first, so add 8 and 4. Now the line reads `12 / 3 * 2`."
+            },
+            {
+              "math": "12 / 3 = 4.0",
+              "text": "Dividing and multiplying rank the same, so go left to right. The `/` comes first on the left, so divide before you multiply."
+            },
+            { "math": "4.0 * 2 = 8.0", "text": "Last, multiply what you have by 2." }
+          ],
+          "title": "Parentheses, then left to right",
+          "result": "Python gives back `8.0`. Multiplying `3 * 2` first would have given `2.0`, a different answer.",
+          "problem": "What number does Python give back for `(8 + 4) / 3 * 2`?\n\nStart inside the parentheses: `8 + 4` gives `12`."
+        },
+        "kind": "workedExample"
+      },
+      {
+        "content": {
+          "basis": {
+            "quote": "Dividing and multiplying rank the same, so Python works from left to right.",
+            "position": 8
+          },
+          "context": "Python runs this line: `(7 + 3) / 2 * 4`",
+          "options": [
+            {
+              "id": "a",
+              "text": "1.25",
+              "reason": "You did 2 * 4 first. Dividing and multiplying rank the same, so Python goes left to right and divides first.",
+              "isCorrect": false
+            },
+            {
+              "id": "b",
+              "text": "13",
+              "reason": "You skipped the parentheses, so only 3 got divided. Python adds 7 and 3 first because they sit inside parentheses.",
+              "isCorrect": false
+            },
+            {
+              "id": "c",
+              "text": "20",
+              "reason": "Python adds inside the parentheses first, then divides by 2, then multiplies by 4, left to right. That gives 20.",
+              "isCorrect": true
+            }
+          ],
+          "question": "What number does Python give back?"
+        },
+        "kind": "check"
+      },
+      {
+        "content": {
+          "basis": null,
+          "context": "Hannah and two roommates in Richmond order four $7 meals on DoorDash. There's a $2 delivery fee and a $6 coupon off the whole order. They split the total three ways.",
+          "options": [
+            {
+              "id": "a",
+              "text": "`(4 * 7 + 2 - 6) / 3`, which gives `8.0`",
+              "reason": "The parentheses make Python find the whole total first: $28 of food, plus $2, minus $6 is $24. Then it divides that by 3.",
+              "isCorrect": true
+            },
+            {
+              "id": "b",
+              "text": "`4 * (7 + 2 - 6) / 3`, which gives `4.0`",
+              "reason": "These parentheses add the fee and coupon to the price of one meal, so they count four times. The fee and coupon apply once, to the whole order.",
+              "isCorrect": false
+            },
+            {
+              "id": "c",
+              "text": "`4 * 7 + 2 - 6 / 3`, which gives `28.0`",
+              "reason": "Without parentheses, Python divides first, so only the $6 coupon gets split three ways. Wrap the whole total in parentheses before dividing.",
+              "isCorrect": false
+            }
+          ],
+          "question": "Which Python line gives each person's share?"
+        },
+        "kind": "check"
+      }
+    ],
+    "spec": {
+      "canDo": "Calculate numeric results using Python's arithmetic rules.",
+      "description": "Use Python's basic arithmetic operators and calculation order to work out totals and shared costs.",
+      "estimatedMinutes": 5,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "brief": "Maya's receipt lists three $4 items and a single $2 fee. How can Python work out the full charge in one calculation?",
+          "kind": "hook",
+          "skills": [0, 1],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "A numeric expression is a calculation written with numbers: `3 * 4` gives `12`. Python uses `*` to mean multiply.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "What will Python produce for `5 + 2 * 6`: `42`, `17`, or `72`? Reveal `17`; the tempting `42` comes from calculating straight across from the left.",
+          "kind": "guess",
+          "skills": [1],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Python does multiplication and division before addition and subtraction: `5 + 2 * 6` becomes `5 + 12`, then `17`. Starting with `5 + 2` ignores that order.",
+          "kind": "explanation",
+          "skills": [1],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Python uses `-` for subtraction, and the result can be below zero: removing 7 points from a score of 4 gives `4 - 7`, or `-3`.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Python uses `/` for division and keeps the fractional part: splitting $9 equally between two people gives `9 / 2`, or `4.5`.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Work through `12 / 3 - 6`: first calculate `12 / 3 → 4.0`, noting that `/` gives a decimal result even for an exact division. Then subtract: `4.0 - 6 → -2.0`.",
+          "kind": "workedExample",
+          "skills": [0, 1],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Ask the learner to calculate `15 / 2 - 8`; the answer is `-0.5`. Include `-1.0` for dropping the fractional part of the division and `0.5` for reversing the subtraction.",
+          "kind": "check",
+          "skills": [0, 1],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Within multiplication/division or addition/subtraction, work from left to right: `18 / 3 * 2` becomes `6.0 * 2`, then `12.0`. Multiplication does not automatically come before division.",
+          "kind": "explanation",
+          "skills": [1],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Parentheses make their enclosed calculation happen first: `(5 + 2) * 6` becomes `7 * 6`, giving `42` instead of `17`.",
+          "kind": "explanation",
+          "skills": [1],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Evaluate `(8 + 4) / 3 * 2` one move at a time: parentheses give `12 / 3 * 2`; division gives `4.0 * 2`; multiplication gives `8.0`. Highlight the left-to-right choice after the parentheses.",
+          "kind": "workedExample",
+          "skills": [1],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Ask the learner to evaluate `(7 + 3) / 2 * 4`; the answer is `20.0`. Include `1.25` for multiplying `2 * 4` before dividing and `13.0` for ignoring the parentheses.",
+          "kind": "check",
+          "skills": [1],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Three people split four $7 meals, one $2 delivery fee, and a $6 discount on the whole order; ask the learner to choose a Python expression and calculate each share. The answer is `(4 * 7 + 2 - 6) / 3 → 8.0`; contrast `4 * 7 + 2 - 6 / 3`, which divides only the discount.",
+          "kind": "application",
+          "skills": [0, 1],
+          "visual": null,
+          "visualKind": "none"
+        }
+      ],
+      "skills": [
+        {
+          "description": "Calculate numeric results with Python's addition, subtraction, multiplication, and division operators.",
+          "example": "15 / 2 - 8 produces -0.5.",
+          "hard": true,
+          "name": "Calculate with Python arithmetic operators",
+          "topic": "Python arithmetic operators",
+          "useCase": "Calculate prices, equal shares, and changes in quantities in a Python program."
+        },
+        {
+          "description": "Evaluate a numeric expression using parentheses, operation priority, and left-to-right order within equal-priority operations.",
+          "example": "(8 + 4) / 3 * 2 produces 8.0.",
+          "hard": true,
+          "name": "Apply Python's order of operations",
+          "topic": "Python operator precedence",
+          "useCase": "Make a total or shared-cost calculation apply fees and discounts in the intended order."
+        }
+      ],
+      "title": "Numeric expressions"
+    }
+  },
+  "01a1bc07-924d-7e56-a5e7-d49b6abb2e32": {
+    "chapterTitle": "Algoritmos e estruturas de dados",
+    "courseTitle": "Tecnologia da Informação",
+    "language": "pt",
+    "level": "intermediate",
+    "screens": [
+      {
+        "content": {
+          "text": "Thaís procura o código 27 no cadastro de pedidos, onde ele aparece em três linhas seguidas. O sistema acha o código, mas aponta uma linha que não é a primeira com ele. Como uma busca encontra o valor sem trazer sua primeira ocorrência?",
+          "variant": "text"
+        },
+        "kind": "hook"
+      },
+      {
+        "content": {
+          "text": "Uma busca pode comparar o alvo com o item do meio e descartar a metade que não pode contê-lo. Isso se chama **busca binária**. Ela exige dados ordenados pelo campo comparado. Estes pedidos seguem a data, então os códigos 42, 18 e 65 ficam fora de ordem e não servem para ela.\n\n| Data | Código |\n|---|---:|\n| 03/08/2026 | 42 |\n| 04/08/2026 | 18 |\n| 05/08/2026 | 65 |",
+          "title": "Ordenado pelo campo certo"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "reveal": "Ela devolve a posição 2, mesmo havendo 27 também na posição 1.",
+          "options": [
+            { "id": "a", "text": "Posição 3", "isCorrect": false },
+            { "id": "b", "text": "Posição 2", "isCorrect": true },
+            { "id": "c", "text": "Posição 1", "isCorrect": false }
+          ],
+          "variant": "guess",
+          "question": "No vetor [12, 27, 27, 27, 46], com posições contadas a partir de zero, uma busca binária padrão procura 27. Que posição ela devolve?"
+        },
+        "kind": "hook"
+      },
+      {
+        "content": {
+          "text": "Em [12, 27, 27, 27, 46], a busca guarda duas posições, início = 0 e fim = 4, ambas incluídas. Entre elas fica o **trecho candidato**, onde o alvo ainda pode estar. Ela examina o meio: $\\text{meio} = \\text{início} + \\lfloor (\\text{fim} - \\text{início})/2 \\rfloor$, com a divisão arredondada para baixo. Aqui, $0 + \\lfloor 4/2 \\rfloor = 2$.",
+          "title": "O meio do trecho"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "text": "Na posição 2 está 27, igual ao alvo. A versão padrão para na primeira igualdade que encontra e devolve 2, embora a posição 1 também tenha 27. Por isso, ela acha o valor, mas não garante a primeira ocorrência entre valores repetidos.",
+          "title": "Igualdade encerra a busca"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "basis": { "quote": "Ela exige dados ordenados pelo campo comparado.", "position": 1 },
+          "context": "Julgue o item a seguir.",
+          "options": [
+            {
+              "id": "a",
+              "text": "Certo",
+              "reason": "O vetor está ordenado, mas pelo campo errado. Seria preciso ordená-lo por nome antes ou usar outro método de busca.",
+              "isCorrect": false
+            },
+            {
+              "id": "b",
+              "text": "Errado",
+              "reason": "A ordem por matrícula não diz nada sobre a ordem dos nomes. Ao comparar um nome com o do meio, a busca descartaria metades que podem conter o alvo.",
+              "isCorrect": true
+            }
+          ],
+          "question": "_Um vetor de servidores ordenado por matrícula pode ser pesquisado por nome com busca binária, sem outra preparação._"
+        },
+        "kind": "check"
+      },
+      {
+        "content": {
+          "text": "Em [10, 20, 30, 40, 50], procurando 40, o meio é a posição 2, com 30. Como o vetor é crescente e 30 < 40, o alvo só pode estar à direita. Então início = meio + 1 = 3, e as posições de 0 a 2 saem. Se o valor do meio fosse maior que o alvo, seria fim = meio − 1.",
+          "title": "Descartar o meio e um lado"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "steps": [
+            {
+              "math": "\\text{início} = 0,\\quad \\text{fim} = 5",
+              "text": "O trecho candidato começa com o vetor inteiro."
+            },
+            {
+              "math": "\\text{meio} = 0 + \\lfloor (5 - 0)/2 \\rfloor = 2",
+              "text": "O meio arredonda a divisão para baixo."
+            },
+            {
+              "math": "22 < 37 \\Rightarrow \\text{início} = 2 + 1 = 3",
+              "text": "Na posição 2 está 22, menor que 37. O alvo só pode estar à direita, então o início avança."
+            },
+            {
+              "math": "\\text{meio} = 3 + \\lfloor (5 - 3)/2 \\rfloor = 4",
+              "text": "Agora o trecho vai de 3 a 5, e o novo meio é a posição 4."
+            },
+            { "math": "37 = 37", "text": "Na posição 4 está 37, igual ao alvo, e a busca termina." }
+          ],
+          "title": "Buscando 37 passo a passo",
+          "result": "A busca devolve a posição 4, depois de examinar só as posições 2 e 4.",
+          "problem": "Procure 37 em [6, 14, 22, 31, 37, 49], com posições de 0 a 5. Que posição a busca devolve?"
+        },
+        "kind": "workedExample"
+      },
+      {
+        "content": {
+          "basis": {
+            "quote": "Ela examina o meio: $\\text{meio} = \\text{início} + \\lfloor (\\text{fim} - \\text{início})/2 \\rfloor$, com a divisão arredondada para baixo.",
+            "position": 3
+          },
+          "context": "Uma busca binária procura 17 em [5, 17, 26, 38, 44, 59], com posições contadas a partir de zero.",
+          "options": [
+            {
+              "id": "a",
+              "text": "2, 0 e 1",
+              "reason": "O meio inicial é 2, com 26 > 17, então fim = 1. No trecho de 0 a 1, o meio é 0 + ⌊1/2⌋ = 0, com 5 < 17, então início = 1. A posição 1 tem 17.",
+              "isCorrect": true
+            },
+            {
+              "id": "b",
+              "text": "3 e 1",
+              "reason": "O primeiro meio é 0 + ⌊5/2⌋ = 2, não 3. Arredondar a divisão para cima muda todas as posições examinadas.",
+              "isCorrect": false
+            },
+            {
+              "id": "c",
+              "text": "2 e 1",
+              "reason": "No trecho de 0 a 1, o meio arredonda para baixo: 0 + ⌊1/2⌋ = 0. Pular para 1 é usar o meio de cima, o que parece natural porque o 17 está ali.",
+              "isCorrect": false
+            }
+          ],
+          "question": "Quais posições ela examina, em ordem?"
+        },
+        "kind": "check"
+      },
+      {
+        "content": {
+          "text": "Procure 25 em [10, 20, 30]. O meio 1 tem 20 < 25, então início = 2. O meio 2 tem 30 > 25, então fim = 1. Com início > fim, não sobra candidato: o valor está ausente. Por isso a busca só continua enquanto início ≤ fim. Um vetor vazio já começa assim, com início = 0 e fim = −1.",
+          "title": "Quando não sobra candidato"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "basis": {
+            "quote": "Por isso a busca só continua enquanto início ≤ fim.",
+            "position": 9
+          },
+          "context": "Julgue o item a seguir, sobre uma busca binária em andamento.",
+          "options": [
+            {
+              "id": "a",
+              "text": "Certo",
+              "reason": "Com início = fim = 6, ainda vale início ≤ fim, então sobra um candidato: a posição 6. Só depois de compará-la, se o alvo não estiver lá, os limites se cruzam.",
+              "isCorrect": true
+            },
+            {
+              "id": "b",
+              "text": "Errado",
+              "reason": "Início igual a fim não é um trecho vazio. Vazio é início > fim, e aqui a posição 6 ainda pode conter o alvo.",
+              "isCorrect": false
+            }
+          ],
+          "question": "_Com início = fim = 6, ainda é necessário examinar a posição 6 antes de concluir que o alvo está ausente._"
+        },
+        "kind": "check"
+      },
+      {
+        "content": {
+          "text": "Num vetor ordenado de 1.024 elementos, cada rodada descarta cerca de metade dos candidatos: 1.024, 512, 256… até sobrar 1. São no máximo 11 posições examinadas, não 1.024. Com acesso direto às posições e comparações de custo constante, o pior tempo é $O(\\log n)$.",
+          "title": "Metade a cada rodada",
+          "exampleLineSlot": {
+            "idea": "procurar um nome numa lista em ordem alfabética abrindo perto do meio e descartando metade"
+          }
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "text": "Numa lista encadeada simples, não dá para saltar até o meio: é preciso seguir as ligações uma a uma. Com 1.024 elementos, chegar aos meios custa cerca de 512 + 256 + 128 + … ≈ 1.024 passos. Por isso, mesmo descartando metade a cada rodada, o pior tempo é $O(n)$, não $O(\\log n)$.",
+          "title": "Lista encadeada não salta"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "basis": null,
+          "context": "A prefeitura de Joinville vai criar um serviço de consulta de protocolos por código, com milhares de buscas por dia e comparações de custo constante. Um código pode se repetir, e o serviço deve devolver sua primeira ocorrência.",
+          "options": [
+            {
+              "id": "a",
+              "text": "Vetor ordenado por código, com a busca padrão adaptada para garantir a primeira ocorrência.",
+              "reason": "O vetor ordenado por código permite consultas em O(log n). Como a versão padrão para em qualquer igualdade, ela precisa de adaptação para devolver a primeira ocorrência.",
+              "isCorrect": true
+            },
+            {
+              "id": "b",
+              "text": "Vetor ordenado por data, que já está em ordem e evita reordenar.",
+              "reason": "Ordenar por data não ordena os códigos. A busca binária exige ordem pelo campo comparado, que aqui é o código.",
+              "isCorrect": false
+            },
+            {
+              "id": "c",
+              "text": "Lista encadeada ordenada por código, que mantém o tempo O(log n).",
+              "reason": "Na lista, chegar ao meio exige seguir ligações uma a uma. Por isso o pior tempo fica O(n), não O(log n).",
+              "isCorrect": false
+            },
+            {
+              "id": "d",
+              "text": "Vetor ordenado por código, usando a busca padrão sem mudanças.",
+              "reason": "A estrutura está certa, mas a busca padrão para na primeira igualdade que encontra. Em [12, 27, 27, 27, 46], ela devolve 2, não 1.",
+              "isCorrect": false
+            }
+          ],
+          "question": "Qual escolha atende ao serviço?"
+        },
+        "kind": "check"
+      }
+    ],
+    "spec": {
+      "canDo": "Verificar pré-requisitos e executar uma busca binária",
+      "description": "Como verificar quando a busca binária é adequada e acompanhar seus passos sem perder candidatos.",
+      "estimatedMinutes": 5,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "brief": "Thaís consulta um código repetido no cadastro, mas o sistema aponta uma ocorrência que não é a primeira. Por que uma busca pode encontrar o código sem trazer sua primeira ocorrência?",
+          "kind": "hook",
+          "skills": [],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "A busca binária exige dados ordenados pelo campo comparado: ordenar pedidos pela data não permite buscar seus códigos por esse método. Mostre os pedidos com colunas Data/Código: 03/08/2026–42, 04/08/2026–18 e 05/08/2026–65.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "table"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "No vetor [12, 27, 27, 27, 46], qual posição, contando de zero, uma busca binária padrão devolverá ao procurar 27? Opções: 1, 2 ou 3; resposta imediata: 2; a tentadora é 1, por confundir encontrar o valor com encontrar sua primeira ocorrência.",
+          "kind": "guess",
+          "skills": [1],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "A busca examina o meio do trecho candidato, delimitado pelas posições início e fim, ambas incluídas: meio = início + ⌊(fim − início)/2⌋, arredondando a divisão para baixo. No vetor anterior, início = 0 e fim = 4 dão meio = 2.",
+          "kind": "explanation",
+          "skills": [1],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Na versão padrão, encontrar igualdade encerra a busca, sem garantir a primeira ocorrência entre valores repetidos. Como o valor da posição 2 é 27, a busca anterior termina ali, embora também exista 27 na posição 1.",
+          "kind": "explanation",
+          "skills": [1],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Julgar: «Um vetor de servidores ordenado por matrícula pode ser pesquisado por nome com busca binária, sem outra preparação». Gabarito: Errado; a armadilha é considerar suficiente qualquer ordenação, mesmo por outro campo.",
+          "kind": "check",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Sem igualdade, a comparação elimina o meio e o lado que não pode conter o alvo: em ordem crescente, valor central menor leva a início = meio + 1; maior leva a fim = meio − 1. Em [10, 20, 30, 40, 50], procurar 40 elimina as posições de 0 a 2.",
+          "kind": "explanation",
+          "skills": [1],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Resolver em etapas a busca de 37 em [6, 14, 22, 31, 37, 49], com posições de 0 a 5: início = 0, fim = 5; meio = 2; valor 22 < 37; início = 3. Depois, meio = 4; valor 37 = alvo; devolver 4.",
+          "kind": "workedExample",
+          "skills": [1],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Executar a busca de 17 em [5, 17, 26, 38, 44, 59] e informar as posições examinadas, contando de zero. Resposta: 2, 0, 1; incluir 2, 1 como alternativa tentadora, por usar o meio superior no trecho de duas posições.",
+          "kind": "check",
+          "skills": [1],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "A busca continua enquanto início ≤ fim; início > fim significa que não restou candidato, inclusive num vetor vazio, iniciado com 0 e −1. Ao procurar 25 em [10, 20, 30], os limites terminam em início = 2 e fim = 1: valor ausente.",
+          "kind": "explanation",
+          "skills": [1],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Julgar: «Com início = fim = 6, ainda é necessário examinar a posição 6 antes de concluir que o alvo está ausente». Gabarito: Certo; a resposta tentadora é Errado, por confundir um trecho com um candidato com um trecho vazio.",
+          "kind": "check",
+          "skills": [1],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Num vetor já ordenado, com acesso direto às posições e comparações de custo constante, a busca binária tem pior tempo O(log n), pois reduz aproximadamente à metade os candidatos a cada rodada. Com 1.024 elementos, são no máximo 11 posições examinadas, não 1.024.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Numa lista encadeada simples, chegar ao meio exige percorrer ligações: mesmo reduzindo candidatos pela metade, uma implementação eficiente da busca binária tem pior tempo O(n). Assim, uma lista ordenada com 1.024 elementos não herda o tempo O(log n) do vetor.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Um serviço fará muitas consultas por código, com comparações de custo constante, e exige a primeira ocorrência: escolha entre vetor ordenado por código, vetor ordenado por data e lista encadeada ordenada por código. Resposta: o primeiro permite busca O(log n), mas a versão padrão precisa ser adaptada para garantir a primeira ocorrência; rejeitar que ordenar por data baste ou que a lista também garanta esse tempo.",
+          "kind": "application",
+          "skills": [0, 1],
+          "visual": null,
+          "visualKind": "none"
+        }
+      ],
+      "skills": [
+        {
+          "description": "Verificar a ordenação pelo campo pesquisado e o custo de acesso para decidir quando a busca binária é adequada.",
+          "example": "Um vetor ordenado por código permite buscar códigos em O(log n), mas ordenar por data não satisfaz esse pré-requisito.",
+          "hard": false,
+          "name": "Verificar pré-requisitos da busca binária",
+          "topic": "Pré-requisitos da busca binária",
+          "useCase": "Escolher uma estratégia de consulta para registros mantidos em vetores ou listas."
+        },
+        {
+          "description": "Acompanhar comparações e atualizar os limites até encontrar o alvo ou esvaziar o trecho candidato.",
+          "example": "Buscar 37 em [6, 14, 22, 31, 37, 49] examina as posições 2 e 4 e devolve 4.",
+          "hard": true,
+          "name": "Aplicar busca binária",
+          "topic": "Busca binária",
+          "useCase": "Interpretar algoritmos de consulta e detectar erros nos limites de uma busca."
+        }
+      ],
+      "title": "Busca binária"
+    }
+  },
+  "01a1bc07-9497-7920-9a63-2bcc5f9ee360": {
+    "chapterTitle": "JavaScript, acessibilidade e responsividade",
+    "courseTitle": "Tecnologia da Informação",
+    "language": "pt",
+    "level": "intermediate",
+    "screens": [
+      {
+        "content": {
+          "text": "No sistema de Danilo, o código envia um documento ao servidor e, na última linha, registra _fim do envio_ no console. Só que o console mostra _fim do envio_ antes do comprovante que o servidor devolveu. Como a última instrução pode aparecer primeiro?",
+          "variant": "text"
+        },
+        "kind": "hook"
+      },
+      {
+        "content": {
+          "text": "Quando o sistema de Danilo envia um documento, a resposta do servidor não chega na hora. Por isso o código recebe um objeto que vai guardar o resultado: o comprovante, se o envio der certo, ou um erro, se falhar. Esse objeto é uma **Promise**.",
+          "title": "Um resultado que ainda vai chegar"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "reveal": "O `console.log` da linha seguinte executa primeiro, mesmo com o valor da Promise já pronto.",
+          "options": [
+            { "id": "a", "text": "A função que recebe o valor da Promise", "isCorrect": false },
+            { "id": "b", "text": "O `console.log` da linha seguinte", "isCorrect": true }
+          ],
+          "variant": "guess",
+          "question": "Uma Promise já terminou com sucesso. O código registra uma função para receber o valor dela e, na linha seguinte, executa um `console.log` comum. Qual dos dois executa primeiro?"
+        },
+        "kind": "hook"
+      },
+      {
+        "content": {
+          "text": "Veja este código:\n\n```javascript\nPromise.resolve('comprovante')\n  .then(console.log);\nconsole.log('fim');\n```\n\nO valor já existe, mas o console mostra `fim` primeiro. Isso acontece porque o `.then()` só registra a função. Ela roda depois que termina o código que está executando de uma vez, linha após linha. Esse trecho é o **trecho síncrono**.",
+          "title": "O .then() espera a vez"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "text": "Observe este código:\n\n```javascript\nPromise.resolve(6)\n  .then(n => n * 3)\n  .then(console.log)\n```\n\nO primeiro `.then()` recebe 6 e retorna 18. Cada `.then()` devolve uma nova Promise, e o valor que a função retorna vira o resultado dela. Por isso o último passo recebe `18`. Essa sequência de passos é uma **cadeia de promises**.",
+          "title": "Cada passo entrega um valor"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "text": "Agora a função retorna uma Promise, não um número:\n\n```javascript\nPromise.resolve(6)\n  .then(n => Promise.resolve(n * 3))\n  .then(console.log)\n```\n\nMesmo assim, o último passo recebe `18`. A cadeia espera essa Promise terminar e repassa o resultado dela, nunca o objeto Promise.",
+          "title": "Promise retornada é aguardada"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "basis": {
+            "quote": "A cadeia espera essa Promise terminar e repassa o resultado dela, nunca o objeto Promise.",
+            "position": 5
+          },
+          "context": "Considere o código:\n\n```javascript\nPromise.resolve(5)\n  .then(n => Promise.resolve(n + 4))\n  .then(n => console.log(n * 2));\n```",
+          "options": [
+            {
+              "id": "a",
+              "text": "`NaN`",
+              "reason": "Se o último passo recebesse esse objeto Promise, multiplicá-lo por 2 daria `NaN`. Mas ele recebe o valor 9 com que a Promise foi cumprida.",
+              "isCorrect": false
+            },
+            {
+              "id": "b",
+              "text": "Nada é impresso",
+              "reason": "A Promise retornada não trava a cadeia. Ela é aguardada, e quando termina com 9 o último passo roda normalmente.",
+              "isCorrect": false
+            },
+            {
+              "id": "c",
+              "text": "`18`",
+              "reason": "O primeiro passo retorna uma Promise que termina com 9. A cadeia espera por ela e repassa o 9, e o último passo imprime 9 × 2.",
+              "isCorrect": true
+            },
+            {
+              "id": "d",
+              "text": "`10`",
+              "reason": "O 10 vem de 5 × 2, como se o último passo recebesse o valor inicial. Só que cada passo recebe o que o anterior retornou, e aqui isso é 9.",
+              "isCorrect": false
+            }
+          ],
+          "question": "O que o console imprime?"
+        },
+        "kind": "check"
+      },
+      {
+        "content": {
+          "text": "Agora veja este código:\n\n```javascript\nPromise.resolve(5)\n  .then(n => { n + 4; })\n  .then(console.log)\n```\n\nA soma 9 é calculada, mas o console mostra `undefined`. Com chaves, a seta só retorna o que vier depois de um `return`. Sem `return`, a função entrega `undefined` ao próximo passo.",
+          "title": "Sem return, vai undefined"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "text": "`Promise.reject('rede')` cria uma Promise que já falhou, com o motivo `'rede'`. Essa falha se chama **rejeição**. Ela passa direto pelas funções de sucesso até achar um `.catch()`. Por isso este código imprime apenas `rede`:\n\n```javascript\nPromise.reject('rede')\n  .then(() => console.log('ok'))\n  .catch(console.log)\n```",
+          "title": "A falha pula o sucesso"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "text": "Neste código, o `.catch()` trata a falha e retorna `'cópia local'`:\n\n```javascript\nPromise.reject('rede')\n  .catch(() => 'cópia local')\n  .then(console.log)\n```\n\nComo ele retorna um valor comum, a Promise que ele devolve termina com sucesso. Então o `.then()` seguinte roda e imprime `cópia local`.",
+          "title": "O .catch() pode salvar a cadeia",
+          "exampleLineSlot": {
+            "idea": "um aplicativo que a pessoa usa e que mostra dados salvos no aparelho quando a internet cai"
+          }
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "steps": [
+            {
+              "text": "Na primeira passagem, a linha da cadeia só registra as funções. Nenhuma delas executa ainda."
+            },
+            {
+              "text": "O trecho síncrono continua, então `console.log('livre')` imprime `livre` antes de tudo."
+            },
+            {
+              "text": "Depois que esse trecho termina, a rejeição com `'rede'` pula o `.then(() => 99)`, porque ele só trata sucesso."
+            },
+            {
+              "text": "O `.catch()` trata a falha e retorna `7`. Como 7 é um valor comum, a cadeia volta ao sucesso."
+            },
+            { "text": "O último `.then()` recebe esse 7 e o imprime." }
+          ],
+          "title": "Falha, recuperação e ordem",
+          "result": "A saída é `livre` e depois `7`. O 99 nunca aparece, porque a função que o retornaria foi pulada.",
+          "problem": "Qual é a saída, em ordem, deste código?\n\n```javascript\nPromise.reject('rede')\n  .then(() => 99)\n  .catch(() => 7)\n  .then(console.log);\nconsole.log('livre');\n```"
+        },
+        "kind": "workedExample"
+      },
+      {
+        "content": {
+          "basis": {
+            "quote": "Como ele retorna um valor comum, a Promise que ele devolve termina com sucesso.",
+            "position": 9
+          },
+          "context": "Considere o código:\n\n```javascript\nPromise.reject('falha')\n  .catch(() => 4)\n  .then(n => console.log(n + 1));\nconsole.log('segue');\n```",
+          "options": [
+            {
+              "id": "a",
+              "text": "Certo",
+              "reason": "`segue` sai primeiro por ser do trecho síncrono. Depois, o `.catch()` retorna 4, a cadeia volta ao sucesso e o `.then()` imprime 4 + 1.",
+              "isCorrect": true
+            },
+            {
+              "id": "b",
+              "text": "Errado",
+              "reason": "Uma rejeição não impede sucessos posteriores. Quando o `.catch()` retorna um valor comum, como 4, a cadeia se recupera e o `.then()` seguinte roda.",
+              "isCorrect": false
+            }
+          ],
+          "question": "Julgue o item: a saída é `segue` e, depois, `5`."
+        },
+        "kind": "check"
+      },
+      {
+        "content": {
+          "text": "Observe este código:\n\n```javascript\nPromise.resolve(8)\n  .finally(() => 0)\n  .then(console.log)\n```\n\nA função do `.finally()` retorna 0, mas o console mostra `8`. Ela roda no sucesso e na falha, para limpar, como esconder um aviso de carregamento. Se termina sem erro, o resultado anterior passa adiante intacto.",
+          "title": "O .finally() limpa e repassa"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "text": "Se uma função passada a `.then()`, `.catch()` ou `.finally()` lança uma exceção com `throw`, a Promise devolvida por esse método é rejeitada com a exceção como motivo. Por isso, até no `.finally()`, o resultado anterior se perde. Neste código, o console mostra `limpeza`, não 8:\n\n```javascript\nPromise.resolve(8)\n  .finally(() => { throw 'limpeza'; })\n  .catch(console.log)\n```",
+          "title": "Um throw vira rejeição"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "basis": null,
+          "context": "No portal Arquivo Claro, `salvar()` devolve uma Promise rejeitada. A equipe quer que o último passo imprima `rascunho`. O código atual é:\n\n```javascript\nsalvar()\n  .catch(() => { 'rascunho'; })\n  .finally(() => console.log('limpo'))\n  .then(console.log);\nconsole.log('liberado');\n```",
+          "options": [
+            {
+              "id": "a",
+              "text": "Sai `limpo`, `undefined` e `liberado`. O ajuste é escrever `return 'rascunho'` no `.catch()`.",
+              "reason": "O ajuste está certo, mas a ordem não. `liberado` pertence ao trecho síncrono e sai antes de qualquer função da cadeia.",
+              "isCorrect": false
+            },
+            {
+              "id": "b",
+              "text": "Sai `liberado` e `limpo`, sem `undefined`. A cadeia segue rejeitada e precisa de outro `.catch()`.",
+              "reason": "Mesmo sem `return`, o `.catch()` termina sem erro e recupera a cadeia. Por isso o último `.then()` roda e imprime `undefined`.",
+              "isCorrect": false
+            },
+            {
+              "id": "c",
+              "text": "Sai `liberado`, `limpo` e `undefined`. O ajuste é escrever `return 'rascunho'` no `.catch()`.",
+              "reason": "O `.catch()` recupera a cadeia, mas, com chaves e sem `return`, entrega `undefined`. O `.finally()` repassa esse valor, e o `return` faz o `.catch()` entregar `rascunho`.",
+              "isCorrect": true
+            },
+            {
+              "id": "d",
+              "text": "Sai `liberado`, `limpo` e `undefined`. O ajuste é retornar `'rascunho'` no `.finally()`.",
+              "reason": "A saída está certa, mas o ajuste não funciona. Um `.finally()` que termina sem erro repassa o resultado anterior e ignora o próprio retorno.",
+              "isCorrect": false
+            }
+          ],
+          "question": "Qual análise da saída atual e do ajuste está correta?"
+        },
+        "kind": "check"
+      }
+    ],
+    "spec": {
+      "canDo": "Analisar resultados e falhas em cadeias de promises",
+      "description": "Como uma cadeia de promises transmite valores e falhas, incluindo recuperação e limpeza.",
+      "estimatedMinutes": 5,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "brief": "No sistema de Danilo, o console registra “fim do envio” antes de registrar o comprovante recebido do servidor. Como a última instrução pode aparecer antes do resultado?",
+          "kind": "hook",
+          "skills": [],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Uma Promise representa o resultado de uma operação, que pode terminar com sucesso ou falha: enviar um documento pode produzir um comprovante ou um erro.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Uma Promise já terminou com sucesso; o código registra uma função para receber seu valor e depois executa uma instrução comum: qual executa primeiro? Opções: “A função registrada” e “A instrução comum”; correta: instrução comum; tentadora: função registrada, porque o resultado já existe.",
+          "kind": "guess",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "O `.then()` registra uma função de sucesso, mas sua execução espera o trecho síncrono atual terminar: `Promise.resolve('comprovante').then(console.log); console.log('fim');` imprime primeiro `fim`, mesmo com a Promise já bem-sucedida.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Cada `.then()` devolve outra Promise, cujo resultado depende do retorno da função: em `Promise.resolve(6).then(n => n * 3).then(console.log)`, o último passo recebe `18`.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Se a função retorna uma Promise, a cadeia acompanha o resultado dela: em `Promise.resolve(6).then(n => Promise.resolve(n * 3)).then(console.log)`, o último passo recebe `18`, não o objeto Promise.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Perguntar o que imprime `Promise.resolve(5).then(n => Promise.resolve(n + 4)).then(n => console.log(n * 2));`: resposta `18`. Incluir `NaN` como distração de quem supõe que o último passo recebe o objeto Promise.",
+          "kind": "check",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Sem `return`, a função entrega `undefined` ao próximo passo: `Promise.resolve(5).then(n => { n + 4; }).then(console.log)` imprime `undefined`, embora a soma tenha sido calculada.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Uma rejeição pula funções de sucesso até encontrar tratamento com `.catch()`: `Promise.reject('rede').then(() => console.log('ok')).catch(console.log)` imprime apenas `rede`.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Retornar um valor comum no `.catch()` recupera a cadeia: `Promise.reject('rede').catch(() => 'cópia local').then(console.log)` imprime `cópia local`.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Resolver `Promise.reject('rede').then(() => 99).catch(() => 7).then(console.log); console.log('livre');` em passos: registrar funções; imprimir `livre`; pular o primeiro `.then()`; recuperar com `7`; imprimir `7`.",
+          "kind": "workedExample",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Julgar: em `Promise.reject('falha').catch(() => 4).then(n => console.log(n + 1)); console.log('segue');`, a saída é `segue` e depois `5`. Veredito: Certo; explorar a tentação de considerar que uma rejeição impede qualquer sucesso posterior.",
+          "kind": "check",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "O `.finally()` executa uma limpeza tanto no sucesso quanto na falha, preservando o resultado quando termina normalmente: `Promise.resolve(8).finally(() => 0).then(console.log)` imprime `8`, não `0`.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Lançar uma exceção em uma função da cadeia produz rejeição, inclusive no `.finally()`: `Promise.resolve(8).finally(() => { throw 'limpeza'; }).catch(console.log)` imprime `limpeza`.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "No portal Arquivo Claro, `salvar()` rejeita; avaliar `salvar().catch(() => { 'rascunho'; }).finally(() => console.log('limpo')).then(console.log); console.log('liberado');`: prever `liberado`, `limpo`, `undefined` e escolher inserir `return` no `.catch()` para entregar `rascunho`. Incluir a falsa correção de retornar `rascunho` no `.finally()`.",
+          "kind": "application",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        }
+      ],
+      "skills": [
+        {
+          "description": "Determinar como valores retornados e falhas percorrem uma cadeia de promises.",
+          "example": "Promise.reject('rede').catch(() => 7).then(console.log) imprime 7.",
+          "hard": true,
+          "name": "Analisar resultados de cadeias de promises",
+          "topic": "Encadeamento de promises",
+          "useCase": "Revisar o fluxo de sucesso, recuperação e limpeza em operações de sistemas web."
+        }
+      ],
+      "title": "Encadeamento e tratamento de promises"
+    }
+  },
+  "01a21731-6277-775d-a41a-9eaea5ba5655": {
+    "chapterTitle": "Simple C++ programs",
+    "courseTitle": "C++ Programming",
+    "language": "en",
+    "level": "beginner",
+    "screens": [
+      {
+        "content": {
+          "text": "Dev runs his first C++ program:\n\n```cpp\nint main() { return 0; }\n```\n\nThe run log says _Finished; no output._ Nothing showed up on his screen. Did his program actually do anything?",
+          "variant": "text"
+        },
+        "kind": "hook"
+      },
+      {
+        "content": {
+          "text": "A C++ program keeps its instructions in named blocks. Each block is called a **function**. The function named `main` is the program's starting point, or entry point. So in a small program like Dev's, running the program means running `main`:\n\n```cpp\nint main() { return 0; }\n```",
+          "title": "Where a program starts"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "reveal": "That 0 tells the computer the program finished successfully.",
+          "options": [
+            { "id": "a", "text": "The program succeeded", "isCorrect": true },
+            { "id": "b", "text": "The program failed", "isCorrect": false }
+          ],
+          "variant": "guess",
+          "question": "When Dev's program finishes, it hands the number 0 back to the computer. What does that 0 tell the computer?"
+        },
+        "kind": "hook"
+      },
+      {
+        "content": {
+          "text": "When a program finishes, it hands one number back to the computer. This number is called the **exit status**. So `return 0;` reports success. A 0 doesn't mean nothing worked. It means nothing went wrong.",
+          "title": "Zero means success"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "text": "Dev's program puts no text on the screen. It still finishes successfully, because its exit status is 0. Showing a message and reporting success are two separate things.",
+          "title": "Success without a message",
+          "exampleLineSlot": {
+            "idea": "something that completes successfully without announcing it, like an automatic bill payment that goes through quietly"
+          }
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "basis": {
+            "quote": "Showing a message and reporting success are two separate things.",
+            "position": 4
+          },
+          "context": "A tool that runs programs shows this after a run:\n\n```text\nNo text displayed\nExit status: 0\n```\n\nThen it adds a warning: _This run failed._",
+          "options": [
+            {
+              "id": "a",
+              "text": "Yes, a working program shows text",
+              "reason": "A program can succeed without displaying anything. It's tempting because we expect working things to show a result, but the exit status is what reports success.",
+              "isCorrect": false
+            },
+            {
+              "id": "b",
+              "text": "Yes, a 0 means nothing worked",
+              "reason": "Zero sounds like nothing, but as an exit status it means nothing went wrong. So this run succeeded.",
+              "isCorrect": false
+            },
+            {
+              "id": "c",
+              "text": "No, the run succeeded",
+              "reason": "An exit status of 0 means the program finished with no problems. Showing no text doesn't change that.",
+              "isCorrect": true
+            }
+          ],
+          "question": "Is that warning right?"
+        },
+        "kind": "check"
+      },
+      {
+        "content": {
+          "text": "In `int main() { return 0; }`, the work `main` does sits between `{` and `}`. Here that's just `{ return 0; }`. The part inside the braces is called the function's **body**.",
+          "title": "What goes inside the braces"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "text": "Right after the name `main` come parentheses: `()`. A function lists any inputs it takes inside them. In `int main() { return 0; }` they're empty, so this `main` takes no inputs.",
+          "title": "The empty parentheses"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "text": "The `int` in `int main()` says the function hands back a whole number. `int` is short for **integer**, which means a whole number like 0, 5 or -3. For `main`, that number is the exit status, like the 0 in `return 0;`.",
+          "title": "The word in front of main"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "text": "A return statement like `return 0;` ends with a semicolon, because the `;` marks where that instruction stops. The closing `}` ends the whole function, so no semicolon goes after this function's closing brace:\n\n```cpp\nint main() { return 0; }\n```",
+          "title": "Where the semicolon goes"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "basis": {
+            "quote": "The function named `main` is the program's starting point, or entry point.",
+            "position": 1
+          },
+          "context": "A program has two functions:\n\n```cpp\nint helper() { return 0; }\nint main() { return 0; }\n```",
+          "options": [
+            {
+              "id": "a",
+              "text": "```cpp\nint helper() { return 0; }\n```",
+              "reason": "It comes first in the file, which makes it tempting. But C++ starts with `main`, not with whichever function is on top.",
+              "isCorrect": false
+            },
+            {
+              "id": "b",
+              "text": "```cpp\nint main() { return 0; }\n```",
+              "reason": "C++ uses the function named `main` as the program's starting point, wherever it sits in the file.",
+              "isCorrect": true
+            },
+            {
+              "id": "c",
+              "text": "```cpp\nreturn 0;\n```",
+              "reason": "That's only one instruction inside a body, not a whole function. The program starts with the complete `main` function.",
+              "isCorrect": false
+            }
+          ],
+          "question": "Which code is the function where the program starts running?"
+        },
+        "kind": "check"
+      },
+      {
+        "content": {
+          "text": "`int main() {}` is a complete program with an empty body. When `main` reaches its closing `}`, C++ acts as if it said `return 0;`. So it finishes successfully. This rule is special to `main`, not to other functions.",
+          "title": "main without a return"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "basis": null,
+          "context": "You're setting up a starter file in Visual Studio Code for a class project. It must run successfully and show nothing.\n\nVersion A:\n```cpp\nint start() { return 0; }\n```\nVersion B:\n```cpp\nint main() {}\n```",
+          "options": [
+            {
+              "id": "a",
+              "text": "Version B, with exit status 0",
+              "reason": "Version B has `main`, where the program starts. Reaching its closing brace counts as `return 0;`, so it succeeds.",
+              "isCorrect": true
+            },
+            {
+              "id": "b",
+              "text": "Neither, since B has no return",
+              "reason": "`main` doesn't need a written return. Reaching its closing brace works like `return 0;`.",
+              "isCorrect": false
+            },
+            {
+              "id": "c",
+              "text": "Version A, with exit status 0",
+              "reason": "Its written `return 0;` is tempting. But the function is named `start`, and a C++ program needs `main` to begin.",
+              "isCorrect": false
+            },
+            {
+              "id": "d",
+              "text": "Version B, with no exit status",
+              "reason": "Every finished program sends back an exit status. For B it's 0, because of the special rule for `main`.",
+              "isCorrect": false
+            }
+          ],
+          "question": "Which version works, and what exit status does it end with?"
+        },
+        "kind": "check"
+      }
+    ],
+    "spec": {
+      "canDo": "Identify main and recognize successful completion in a minimal C++ program.",
+      "description": "Recognize the parts of a minimal C++ program and understand how it reports successful completion.",
+      "estimatedMinutes": 4,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "brief": "Show `int main() { return 0; }` beside a run log saying “Finished; no output.” Dev runs this tiny program and sees no message—did anything actually happen?",
+          "kind": "hook",
+          "skills": [0, 1],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "A function is a named block of instructions, and C++ starts your program's instructions in the one named `main`. Show `int main() { return 0; }`, emphasizing `main`.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "For `int main() { return 0; }`, ask: “What will this program report when it finishes?” Options: “Successful completion” (correct) and “A program-reported failure” (tempting: zero sounds like nothing worked).",
+          "kind": "guess",
+          "skills": [1],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "An exit status is a number a finished program sends back to the system; zero means successful completion. In `int main() { return 0; }`, `return 0;` sends back that success status.",
+          "kind": "explanation",
+          "skills": [1],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Finishing successfully does not require displaying a message. The program `int main() { return 0; }` reports success without putting text on the screen.",
+          "kind": "explanation",
+          "skills": [1],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "A program runner reports “No text displayed; exit status 0”; ask whether its warning “This run failed” is justified. Correct: “No”; tempting: “Yes,” because a successful program should show something.",
+          "kind": "check",
+          "skills": [1],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "The instructions between `{` and `}` form a function's body. Show `int main() { return 0; }` with only `{ return 0; }` emphasized.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "The empty parentheses in `main()` say this version takes no inputs through its function heading. Keep `int main() { return 0; }` visible, emphasizing `()`.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "The word `int` says the function returns a whole number. In `int main() { return 0; }`, that whole number is the program's exit status.",
+          "kind": "explanation",
+          "skills": [0, 1],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "The semicolon ends the instruction `return 0;`. Show the complete minimal program with that semicolon emphasized, rather than a semicolon after the closing brace.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Show `int helper() { return 0; }` above `int main() { return 0; }`; ask the learner to select the complete function where the program's instructions start. Correct: the entire `main` function; distractors: the first function and only `return 0;`.",
+          "kind": "check",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Reaching the closing brace of `main` without a written return has the same effect as `return 0;`. Show `int main() {}` as a complete program that finishes successfully; this special rule does not apply to every function.",
+          "kind": "explanation",
+          "skills": [0, 1],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "You need a starter file that runs successfully without displaying anything: choose A, `int start() { return 0; }`, or B, `int main() {}``, then predict its exit status. Correct: B and 0; tempting errors: choosing A because it explicitly returns zero, or rejecting B because it has no written return.",
+          "kind": "application",
+          "skills": [0, 1],
+          "visual": null,
+          "visualKind": "none"
+        }
+      ],
+      "skills": [
+        {
+          "description": "Recognize main and the basic parts that make it a complete C++ function.",
+          "example": "In int main() { return 0; }, main names the starting function and the braces enclose its body.",
+          "hard": false,
+          "name": "Identify main in a minimal C++ program",
+          "topic": "C++ program structure",
+          "useCase": "Check that a starter C++ file contains the function needed to begin running."
+        },
+        {
+          "description": "Recognize that main reports success by returning zero, including when it reaches its closing brace without a written return.",
+          "example": "Both int main() { return 0; } and int main() {} finish with a success status.",
+          "hard": false,
+          "name": "Recognize successful completion of main",
+          "topic": "C++ exit status",
+          "useCase": "Understand why a program can finish successfully even when it displays no message."
+        }
+      ],
+      "title": "C++ program structure"
+    }
+  },
+  "01a1a275-5f15-7b6e-b1a5-b53035943991": {
+    "chapterTitle": "Linear equations",
+    "courseTitle": "Mathematics",
+    "language": "en",
+    "level": "intermediate",
+    "screens": [
+      {
+        "content": {
+          "text": "Amara is checking an art-supply order for her school. Her scratch work ends with x = 6, and the invoice total is $54. What does that 6 actually tell her?",
+          "variant": "text"
+        },
+        "kind": "hook"
+      },
+      {
+        "content": {
+          "text": "Does $x = 6$ solve $4x + 9 = 33$? Replace every $x$ with 6 in the original equation: $4(6) + 9 = 24 + 9 = 33$. This is called **substitution**. A value works only if both sides come out equal. Here both sides are 33.",
+          "title": "Plug the value back in",
+          "exampleLineSlot": {
+            "idea": "double-checking a total you worked out before you pay a bill or place an order"
+          }
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "reveal": "No order of whole packs spends exactly $66, even though one value makes the equation true.",
+          "options": [
+            { "id": "a", "text": "7.5 packs", "isCorrect": false },
+            { "id": "b", "text": "No order of whole packs", "isCorrect": true },
+            { "id": "c", "text": "8 packs", "isCorrect": false },
+            { "id": "d", "text": "7 packs", "isCorrect": false }
+          ],
+          "variant": "guess",
+          "question": "Lucy buys packs of printer paper for her office. The supplier charges $6 for delivery plus $8 per sealed pack. Which order spends exactly $66?"
+        },
+        "kind": "hook"
+      },
+      {
+        "content": {
+          "text": "Lucy's cost is $6 + 8p = 66$, which gives $p = 7.5$. Substituting checks out, because $6 + 8(7.5) = 66$. But the supplier only sells sealed packs, so 7.5 isn't an order she can place. 7 packs cost $62 and 8 cost $70, so no whole-pack order hits $66.",
+          "title": "Packs come whole"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "steps": [
+            {
+              "math": "5(5) + 4 \\overset{?}{=} 2(5) + 19",
+              "text": "Replace every $x$ with 5, on both sides of the original equation."
+            },
+            { "math": "5(5) + 4 = 25 + 4 = 29", "text": "Work out the left side on its own." },
+            {
+              "math": "2(5) + 19 = 10 + 19 = 29",
+              "text": "Now work out the right side on its own."
+            },
+            { "math": "29 = 29", "text": "Both sides equal 29, so the two sides match." }
+          ],
+          "title": "Checking x = 5",
+          "result": "Yes. $x = 5$ makes the original equation true, so it is a solution.",
+          "problem": "Does $x = 5$ solve $5x + 4 = 2x + 19$?"
+        },
+        "kind": "workedExample"
+      },
+      {
+        "content": {
+          "basis": { "quote": "A value works only if both sides come out equal.", "position": 1 },
+          "options": [
+            {
+              "id": "a",
+              "text": "Yes, because both sides equal 22",
+              "reason": "The left side is $7(3) - 3 = 18$, not 22. It's tempting to assume the sides match once one of them gives a clean number.",
+              "isCorrect": false
+            },
+            {
+              "id": "b",
+              "text": "No, because the sides are 21 and 9",
+              "reason": "21 and 9 are only $7(3)$ and $3(3)$. You still have to subtract 3 on the left and add 13 on the right.",
+              "isCorrect": false
+            },
+            {
+              "id": "c",
+              "text": "Yes, because both sides equal 18",
+              "reason": "Only the left side is 18. The right side is $3(3) + 13 = 22$, and checking one side isn't enough.",
+              "isCorrect": false
+            },
+            {
+              "id": "d",
+              "text": "No, because the sides are 18 and 22",
+              "reason": "The left side is $21 - 3 = 18$ and the right side is $9 + 13 = 22$. They differ, so 3 isn't a solution.",
+              "isCorrect": true
+            }
+          ],
+          "question": "Someone claims $x = 3$ solves $7x - 3 = 3x + 13$. Which check is correct?"
+        },
+        "kind": "check"
+      },
+      {
+        "content": {
+          "text": "Amara's $x$ is the number of art kits she ordered, and each kit costs $9. So $9x = 54$ means $x = 6$ kits. The $54 is the money, and the 6 counts kits. Reading it as $6 would get her order wrong.",
+          "title": "What x counts"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "text": "A hose fills a tank at 4 gallons per minute. To get 10 gallons, solve $4t = 10$, so $t = 2.5$ minutes. Unlike packs, time can be split, so 2.5 minutes is a real answer: two and a half minutes.",
+          "title": "Some answers can be fractions"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "text": "A rented floor sander can run from 0 through 6 hours, so $0 \\le t \\le 6$. This limit is called a **constraint**. If a cost equation gives $t = -1$, reject it, because a run can't last −1 hours. A solution that breaks a constraint can't describe the situation, even when the equation is true.",
+          "title": "Stay inside the limits"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "basis": {
+            "quote": "A solution that breaks a constraint can't describe the situation, even when the equation is true.",
+            "position": 8
+          },
+          "context": "A rented carpet cleaner may run from 0 through 4 hours. Solving its cost equation gives $t = 4.25$, and substituting it makes both sides match.",
+          "options": [
+            {
+              "id": "a",
+              "text": "Reject it, because it runs past 4 hours",
+              "reason": "The machine may run at most 4 hours, and 4.25 is more than that. So the value breaks the limit even though the equation checks.",
+              "isCorrect": true
+            },
+            {
+              "id": "b",
+              "text": "Accept it, because it satisfies the equation",
+              "reason": "A true equation isn't enough on its own. The value also has to fit the 0-to-4-hour limit, and 4.25 doesn't.",
+              "isCorrect": false
+            },
+            {
+              "id": "c",
+              "text": "Reject it, because time must be whole hours",
+              "reason": "Time is a measurement, so fractions like 2.5 or 3.75 hours are fine. The real reason to reject 4.25 is that it exceeds 4 hours.",
+              "isCorrect": false
+            },
+            {
+              "id": "d",
+              "text": "Accept it, because time can be a fraction",
+              "reason": "Time can be a fraction, so the .25 isn't the problem. The problem is that 4.25 hours is longer than the 4 hours allowed.",
+              "isCorrect": false
+            }
+          ],
+          "question": "What should you conclude about $t = 4.25$?"
+        },
+        "kind": "check"
+      },
+      {
+        "content": {
+          "text": "A lab sample warms by 9 °C and ends at 2 °C. If $T$ is its starting temperature, $T + 9 = 2$ gives $T = -7$ °C. Temperatures can go below zero, so −7 °C is a real starting point. A negative answer can work when the quantity allows negatives, but it must still fit every limit in the situation.",
+          "title": "Negative can be fine"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "basis": null,
+          "context": "Ryan is setting up the meeting room at his Louisville community center. He must spend exactly $154 and end with no more than 30 chairs. With $b$ boxes, $14 + 28b = 154$ gives $b = 5$.\n\n| Item | Chairs | Cost |\n|---|---:|---:|\n| Already owned | 12 | $0 |\n| Each box | 4 | $28 |\n| Delivery | 0 | $14 |",
+          "options": [
+            {
+              "id": "a",
+              "text": "5 boxes put him over the chair limit",
+              "reason": "Substituting gives $14 + 28(5) = 154$, so the cost works. But $12 + 4(5) = 32$ chairs, which breaks the limit of 30.",
+              "isCorrect": true
+            },
+            {
+              "id": "b",
+              "text": "5 boxes meet all of his requirements",
+              "reason": "The cost checks, but the 20 new chairs join the 12 he already owns, for 32 chairs. Counting only the purchased chairs makes 5 boxes look fine.",
+              "isCorrect": false
+            },
+            {
+              "id": "c",
+              "text": "No order of whole boxes spends $154",
+              "reason": "5 is a whole number, and $14 + 28(5) = 154$. So 5 boxes do spend exactly $154, and the problem lies elsewhere.",
+              "isCorrect": false
+            },
+            {
+              "id": "d",
+              "text": "4 boxes meet all of his requirements",
+              "reason": "4 boxes keep him at 28 chairs, but they cost $14 + 28(4) = 126$ dollars, not $154.",
+              "isCorrect": false
+            }
+          ],
+          "question": "Which conclusion is correct?"
+        },
+        "kind": "check"
+      }
+    ],
+    "spec": {
+      "canDo": "Check an equation’s solution against the original situation",
+      "description": "Use substitution, units, and real-world limits to decide whether an algebraic answer fits the original situation.",
+      "estimatedMinutes": 4,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "brief": "Amara’s supply-order estimate lists x = 6, but the invoice total is $54. What does that 6 actually tell her?",
+          "kind": "hook",
+          "skills": [1],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Substitution means replacing a variable with a proposed value to test the original equation: for x = 6 in 4x + 9 = 33, both sides equal 33.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "A supplier charges $6 delivery plus $8 per sealed pack; which order will spend exactly $66? Options: 7 packs; 8 packs; 7.5 packs; no whole-pack order—correct: no whole-pack order; tempting: 7.5 packs because it makes the equation true.",
+          "kind": "guess",
+          "skills": [0, 1],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "A count of sealed packs must be a whole number: although 6 + 8(7.5) = 66, buying 7.5 sealed packs is impossible.",
+          "kind": "explanation",
+          "skills": [1],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Check x = 5 in 5x + 4 = 2x + 19, revealing one move at a time: replace every x; evaluate the left side as 29; evaluate the right side as 29; conclude that x = 5 satisfies the original equation.",
+          "kind": "workedExample",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Ask which result correctly checks x = 3 in 7x − 3 = 3x + 13: A, yes because both sides are 18; B, yes because both sides are 22; C, no because the sides are 18 and 22; D, no because the sides are 21 and 9. Correct: C; A is tempting when only the left side is evaluated.",
+          "kind": "check",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "The variable’s definition determines what its value means: in the supply order, x counts $9 kits, so 9x = 54 gives 6 kits—not $6.",
+          "kind": "explanation",
+          "skills": [1],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Measured quantities can allow fractions: a hose delivering 4 gallons per minute takes t = 2.5 minutes to deliver 10 gallons, so 4t = 10 has a usable fractional answer.",
+          "kind": "explanation",
+          "skills": [1],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "A solution must stay within the situation’s stated limits: if equipment can run from 0 through 6 hours, including both endpoints, t = −1 hour cannot describe an allowed run.",
+          "kind": "explanation",
+          "skills": [1],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "A machine may run from 0 through 4 hours, and t = 4.25 satisfies its cost equation; ask which conclusion follows: accept because it satisfies the equation; accept because time allows fractions; reject because it exceeds 4 hours; reject because time must be whole hours. Correct: exceeds 4 hours; the tempting answer treats a true equation as sufficient.",
+          "kind": "check",
+          "skills": [1],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "A negative answer is valid when the quantity permits negative values: if T is a starting temperature in °C, T + 9 = 2 gives T = −7 °C, a possible temperature.",
+          "kind": "explanation",
+          "skills": [1],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Show a table with columns Item, Chairs, Cost and rows Already owned | 12 | —; Each box | 4 | $28; Delivery | — | $14; Ryan must spend exactly $154 and have no more than 30 chairs, and 14 + 28b = 154 gives b = 5. Ask which conclusion is correct: 5 boxes meet all requirements; 5 boxes exceed the chair limit; 4 boxes meet all requirements; no whole-box order spends $154—correct: 5 boxes exceed the limit because the equation checks but 12 + 4(5) = 32; tempting: counting only the 20 purchased chairs.",
+          "kind": "application",
+          "skills": [0, 1],
+          "visual": null,
+          "visualKind": "table"
+        }
+      ],
+      "skills": [
+        {
+          "description": "Substitute a proposed value into the original equation and check whether both sides have the same value.",
+          "example": "For x = 5 in 5x + 4 = 2x + 19, both sides equal 29.",
+          "hard": true,
+          "name": "Check equation solutions by substitution",
+          "topic": "Checking equation solutions",
+          "useCase": "Verify a calculated quantity before using it in an order, estimate, or financial decision."
+        },
+        {
+          "description": "Use the variable’s meaning and the situation’s restrictions to decide whether an algebraic solution is usable.",
+          "example": "The equation 6 + 8p = 66 gives p = 7.5, but sealed packs must be purchased in whole numbers.",
+          "hard": false,
+          "name": "Interpret solutions in context",
+          "topic": "Solutions in context",
+          "useCase": "Decide whether an answer represents an allowable count, measurement, temperature, or purchase."
+        }
+      ],
+      "title": "Checking solutions in context"
+    }
+  },
+  "01a1bbfe-6d8b-7c0f-be18-e38392977600": {
+    "chapterTitle": "Negações e equivalências",
+    "courseTitle": "Raciocínio Lógico",
+    "language": "pt",
+    "level": "intermediate",
+    "screens": [
+      {
+        "content": {
+          "text": "Nayara, analista de controle interno, lê no sistema: _O relatório foi entregue e revisado_. Ela responde: _Isso não é verdade_. Ela está dizendo que nenhuma das duas etapas aconteceu?",
+          "variant": "text"
+        },
+        "kind": "hook"
+      },
+      {
+        "content": {
+          "text": "Quando você diz _Não é verdade que o arquivo foi enviado_, afirma que a frase _O arquivo foi enviado_ é falsa. Isso é a **negação** da frase. Se $p$ é _O arquivo foi enviado_, a negação se escreve $\\neg p$.",
+          "title": "Negar é dizer que é falso"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "reveal": "Os registros vão mostrar que pelo menos uma das etapas não ocorreu: pode ter faltado só uma delas ou as duas.",
+          "options": [
+            { "id": "a", "text": "Exatamente uma das etapas não ocorreu", "isCorrect": false },
+            { "id": "b", "text": "As duas etapas não ocorreram", "isCorrect": false },
+            { "id": "c", "text": "Pelo menos uma das etapas não ocorreu", "isCorrect": true }
+          ],
+          "variant": "guess",
+          "question": "Uma auditoria desmente a frase _O parecer foi assinado e publicado_. O que os registros do processo vão necessariamente mostrar?"
+        },
+        "kind": "hook"
+      },
+      {
+        "content": {
+          "text": "Se o parecer foi assinado, mas não publicado, a frase _assinado e publicado_ já é falsa. Uma frase com _e_ só é verdadeira quando as duas partes são; basta uma ser falsa para derrubá-la. Com $p$ e $q$ para as partes, ela se chama **conjunção**: $p \\wedge q$.",
+          "title": "Quando um _e_ é falso",
+          "exampleLineSlot": {
+            "idea": "um aviso ou relatório do trabalho do aluno que exige duas condições ao mesmo tempo"
+          }
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "text": "_Faltou a assinatura ou faltou a publicação_ é verdadeira se faltou uma delas e também se faltaram as duas. Na lógica, o _ou_ só é falso quando nenhuma alternativa ocorre. Essa é a **disjunção inclusiva**: $p \\vee q$.",
+          "title": "O _ou_ aceita as duas"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "steps": [
+            {
+              "math": "\\neg(p \\wedge q)",
+              "text": "Chame _o documento é válido_ de $p$ e _o cadastro está ativo_ de $q$. A negação da frase inteira fica assim:"
+            },
+            {
+              "math": "\\wedge \\;\\longrightarrow\\; \\vee",
+              "text": "Uma conjunção cai quando pelo menos uma parte é falsa. Por isso, na negação, o _e_ vira _ou_."
+            },
+            { "math": "\\neg p \\vee \\neg q", "text": "Agora negue cada parte, uma por uma." }
+          ],
+          "title": "Negando um _e_",
+          "result": "_O documento não é válido ou o cadastro não está ativo._ Essa negação também vale quando as duas coisas falham.",
+          "problem": "Negue a frase _O documento é válido e o cadastro está ativo_."
+        },
+        "kind": "workedExample"
+      },
+      {
+        "content": {
+          "basis": {
+            "quote": "Uma frase com _e_ só é verdadeira quando as duas partes são; basta uma ser falsa para derrubá-la.",
+            "position": 3
+          },
+          "context": "Julgue o item a seguir.",
+          "options": [
+            {
+              "id": "a",
+              "text": "Certo",
+              "reason": "Manter o _e_ exige que faltem as duas etapas. Mas basta faltar uma delas para desmentir a frase original, por isso o _e_ vira _ou_.",
+              "isCorrect": false
+            },
+            {
+              "id": "b",
+              "text": "Errado",
+              "reason": "Se faltar só o registro, a frase original já é falsa. A negação correta é _O contrato não foi assinado ou não foi registrado_.",
+              "isCorrect": true
+            }
+          ],
+          "question": "A negação de _O contrato foi assinado e registrado_ é _O contrato não foi assinado e não foi registrado_."
+        },
+        "kind": "check"
+      },
+      {
+        "content": {
+          "text": "_Não é verdade que houve erro ou atraso_ significa que não houve erro e não houve atraso. Se qualquer um dos dois tivesse ocorrido, _houve erro ou atraso_ seria verdadeira. Para negar um _ou_, as duas alternativas precisam ser falsas.",
+          "title": "Negar um _ou_ derruba os dois"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "steps": [
+            {
+              "math": "\\neg(p \\vee q)",
+              "text": "Com $p$ para _o servidor está indisponível_ e $q$ para _a conexão caiu_, a negação da frase inteira é:"
+            },
+            {
+              "math": "\\vee \\;\\longrightarrow\\; \\wedge",
+              "text": "Para derrubar um _ou_, as duas alternativas precisam ser falsas. Então, na negação, o _ou_ vira _e_."
+            },
+            { "math": "\\neg p \\wedge \\neg q", "text": "Agora negue cada parte." },
+            {
+              "text": "As duas trocas, a do _e_ e a do _ou_, são as **leis de De Morgan**: você nega cada parte e troca _e_ por _ou_, ou _ou_ por _e_."
+            }
+          ],
+          "title": "Negando um _ou_",
+          "result": "_O servidor não está indisponível e a conexão não caiu._ Ou seja, nenhuma das duas falhas aconteceu.",
+          "problem": "Negue a frase _O servidor está indisponível ou a conexão caiu_."
+        },
+        "kind": "workedExample"
+      },
+      {
+        "content": {
+          "basis": {
+            "quote": "Para negar um _ou_, as duas alternativas precisam ser falsas.",
+            "position": 7
+          },
+          "context": "Julgue o item a seguir.",
+          "options": [
+            {
+              "id": "a",
+              "text": "Certo",
+              "reason": "A frase _digital ou físico_ é verdadeira se qualquer um dos meios foi usado. Para ela ser falsa, a solicitação não foi digital e não foi física.",
+              "isCorrect": true
+            },
+            {
+              "id": "b",
+              "text": "Errado",
+              "reason": "Excluir só um meio não basta. Se a solicitação foi enviada pelo outro, _digital ou físico_ continua verdadeira.",
+              "isCorrect": false
+            }
+          ],
+          "question": "Negar que uma solicitação foi enviada por meio digital ou por meio físico exige afirmar que ela não foi enviada por nenhum desses dois meios."
+        },
+        "kind": "check"
+      },
+      {
+        "content": {
+          "text": "Sendo $p$ _há pendência_ e $q$ _o cadastro está ativo_, negue $p \\wedge \\neg q$. A segunda parte vira $\\neg\\neg q$: negar que ele não está ativo é dizer que está. Essa **dupla negação** devolve $q$: _Não há pendência ou o cadastro está ativo_.",
+          "title": "Duas negações se cancelam"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "basis": null,
+          "context": "O sistema Conformis, usado por um órgão para validar fornecedores, dispara um alerta quando uma mensagem é falsa. Um fornecedor está com cadastro inativo e sem nenhuma pendência.\n\n| Mensagem | Texto |\n|---|---|\n| A | Cadastro ativo e sem pendência |\n| B | Cadastro ativo ou sem pendência |",
+          "options": [
+            {
+              "id": "a",
+              "text": "Nenhum dispara, pois a negação de A, _cadastro inativo e com pendência_, é falsa.",
+              "reason": "Essa negação manteve o _e_. A negação de A é _cadastro inativo ou com pendência_, verdadeira aqui, então A dispara.",
+              "isCorrect": false
+            },
+            {
+              "id": "b",
+              "text": "A e B disparam, pois o cadastro está inativo.",
+              "reason": "B é um _ou_ e continua verdadeira porque não há pendência. Só a negação de B, _cadastro inativo e com pendência_, faria o alerta disparar, e ela é falsa.",
+              "isCorrect": false
+            },
+            {
+              "id": "c",
+              "text": "Só B dispara, pois sua negação, _cadastro inativo ou com pendência_, é verdadeira.",
+              "reason": "Negar um _ou_ exige trocar por _e_. A negação de B é _cadastro inativo e com pendência_, que é falsa, então B não dispara.",
+              "isCorrect": false
+            },
+            {
+              "id": "d",
+              "text": "Só A dispara, pois sua negação, _cadastro inativo ou com pendência_, é verdadeira.",
+              "reason": "O cadastro inativo já torna A falsa, e sua negação é verdadeira. Já B é verdadeira porque não há pendência, e sua negação, _cadastro inativo e com pendência_, é falsa.",
+              "isCorrect": true
+            }
+          ],
+          "question": "Qual conclusão está correta sobre os alertas?"
+        },
+        "kind": "check"
+      }
+    ],
+    "spec": {
+      "canDo": "Negar conjunções e disjunções",
+      "description": "Aplicar as leis de De Morgan para negar frases com “e” e “ou” sem mudar seu sentido lógico.",
+      "estimatedMinutes": 5,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "brief": "Nayara contesta a informação de que um relatório foi entregue e revisado. Isso significa que nenhuma das duas etapas aconteceu?",
+          "kind": "hook",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Negar uma frase é afirmar que ela é falsa: “Não é verdade que o arquivo foi enviado” nega “O arquivo foi enviado”. Apresentar ¬ como símbolo da negação.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Uma auditoria desmente: “O parecer foi assinado e publicado”; o que os registros necessariamente mostrarão? Opções: “Pelo menos uma etapa não ocorreu” (correta) e “As duas etapas não ocorreram” (tentadora); revelar a resposta após a escolha.",
+          "kind": "guess",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Uma frase ligada por “e”, chamada conjunção (∧), é falsa quando pelo menos uma parte é falsa. O parecer assinado, mas não publicado, já desmente a frase inteira: não precisam faltar as duas etapas.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Na lógica, a disjunção inclusiva, escrita “ou” (∨), aceita uma ou ambas as alternativas. “Faltou assinatura ou faltou publicação” também vale quando faltaram as duas.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Mostrar a negação de “O documento é válido e o cadastro está ativo”, usando p e q para essas partes. Etapas: escrever ¬(p ∧ q); trocar “e” por “ou”; negar cada parte, obtendo ¬p ∨ ¬q: “O documento não é válido ou o cadastro não está ativo”.",
+          "kind": "workedExample",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Julgar: “A negação de ‘O contrato foi assinado e registrado’ é ‘O contrato não foi assinado e não foi registrado’”. Gabarito: Errado; a resposta tentadora mantém o “e”, mas basta faltar assinatura ou registro.",
+          "kind": "check",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Para negar um “ou”, as duas alternativas precisam ser falsas: “Não é verdade que houve erro ou atraso” significa “Não houve erro e não houve atraso”. Se qualquer um ocorreu, a frase original continua verdadeira.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Mostrar a negação de “O servidor está indisponível ou a conexão caiu”, com p e q representando essas partes. Etapas: escrever ¬(p ∨ q); trocar “ou” por “e”; negar cada parte, obtendo ¬p ∧ ¬q: “O servidor não está indisponível e a conexão não caiu”.",
+          "kind": "workedExample",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Julgar: “Negar que uma solicitação foi enviada por meio digital ou físico exige afirmar que ela não foi enviada por nenhum desses meios”. Gabarito: Certo; incluir Errado como resposta tentadora para quem acha suficiente excluir apenas um meio.",
+          "kind": "check",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "A dupla negação cancela a negação anterior: negar “Há pendência e o cadastro não está ativo” produz “Não há pendência ou o cadastro está ativo”. Destacar apenas o cancelamento ¬¬q, que devolve q.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Um sistema alerta quando uma mensagem é falsa; mostrar a tabela com colunas Mensagem e Texto: A | “Cadastro ativo e sem pendência”; B | “Cadastro ativo ou sem pendência”. Com cadastro inativo e nenhuma pendência, pedir as duas negações e quais alertas disparar: somente A; negações corretas são “Cadastro inativo ou com pendência” e “Cadastro inativo e com pendência”, com “A e B” como decisão tentadora.",
+          "kind": "application",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "table"
+        }
+      ],
+      "skills": [
+        {
+          "description": "Negar uma conjunção ou disjunção trocando o conectivo e negando cada uma de suas partes.",
+          "example": "A negação de “O pedido foi autorizado e pago” é “O pedido não foi autorizado ou não foi pago”.",
+          "hard": true,
+          "name": "Aplicar as leis de De Morgan",
+          "topic": "Leis de De Morgan",
+          "useCase": "Interpretar negativas em relatórios, regras de sistemas e itens de julgamento lógico."
+        }
+      ],
+      "title": "Leis de De Morgan"
+    }
+  },
+  "01a19de3-62bc-7224-a9aa-7fbc239e7398": {
+    "chapterTitle": "Entradas e saídas de dinheiro",
+    "courseTitle": "Educação Financeira",
+    "language": "pt",
+    "level": "overview",
+    "screens": [
+      {
+        "content": {
+          "text": "Domingo à noite, Sabrina tenta lembrar onde gastou o dinheiro da semana. Ela lembra do mercado e da farmácia, mas falta explicar uma parte do dinheiro. Como descobrir para onde ele foi sem depender da memória?",
+          "variant": "text"
+        },
+        "kind": "hook"
+      },
+      {
+        "content": {
+          "text": "Quando Sabrina recebe R$ 50,00 por um bico, ela pode anotar num caderno ou numa planilha do celular. Os dois servem, desde que seja fácil olhar e atualizar. Essa lista do dinheiro que entra e sai se chama **registro**.",
+          "title": "Anote onde for fácil"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "reveal": "No registro de todo o dinheiro de Cauê, esse saque não é nem entrada nem saída.",
+          "options": [
+            { "id": "a", "text": "Nem entrada nem saída", "isCorrect": true },
+            { "id": "b", "text": "Saída de R$ 120,00", "isCorrect": false },
+            { "id": "c", "text": "Entrada de R$ 120,00", "isCorrect": false }
+          ],
+          "variant": "guess",
+          "question": "Cauê saca R$ 120,00 da própria conta e guarda na carteira. No registro de todo o dinheiro dele, conta e carteira juntas, o que esse saque é?"
+        },
+        "kind": "hook"
+      },
+      {
+        "content": {
+          "text": "Antes do saque, Cauê tinha R$ 120,00 na conta. Depois, tem os mesmos R$ 120,00 na carteira. Ter dinheiro na mão não aumentou o total dele. Mover dinheiro entre lugares seus se chama **transferência**, e ela fica anotada à parte das entradas e saídas.",
+          "title": "Dinheiro que só muda de lugar"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "text": "Sabrina paga um café de R$ 4,50 com moedas. Esse gasto não aparece no extrato do banco, mas o dinheiro saiu do bolso dela. Por isso, gasto em dinheiro vivo também entra no registro, como saída.",
+          "title": "Gastos pequenos também contam",
+          "exampleLineSlot": {
+            "idea": "um gasto pequeno que o aluno paga em dinheiro vivo no dia a dia, como um café ou um salgado"
+          }
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "steps": [
+            {
+              "text": "Comece pela data. Os dois acontecimentos foram no mesmo dia, então as duas linhas começam com 08/09."
+            },
+            {
+              "text": "Depois, escreva uma descrição curta de cada um: _Serviço recebido_ e _Lanche_. Assim, você lembra depois do que se trata."
+            },
+            {
+              "text": "Os R$ 95,00 chegaram para Leandro, então vão na coluna Entrada. A coluna Saída dessa linha fica com um traço."
+            },
+            {
+              "text": "Os R$ 7,00 saíram do bolso dele, então vão na coluna Saída. A coluna Entrada dessa linha fica com um traço."
+            }
+          ],
+          "title": "Montando o registro do dia",
+          "result": "O registro do dia fica assim:\n\n| Data | Descrição | Entrada | Saída |\n|---|---|---:|---:|\n| 08/09 | Serviço recebido | R$ 95,00 | – |\n| 08/09 | Lanche | – | R$ 7,00 |\n\nCada linha mostra quando, o quê e quanto entrou ou saiu.",
+          "problem": "Em 08/09, Leandro recebe R$ 95,00 por um serviço e paga R$ 7,00 por um lanche. Como ele anota os dois no registro?"
+        },
+        "kind": "workedExample"
+      },
+      {
+        "content": {
+          "basis": {
+            "quote": "Por isso, gasto em dinheiro vivo também entra no registro, como saída.",
+            "position": 4
+          },
+          "context": "Em 10/09, Leandro paga R$ 18,00 em dinheiro vivo por uma passagem de ônibus.",
+          "options": [
+            {
+              "id": "a",
+              "text": "Passagem, saída de R$ 18,00",
+              "reason": "Falta a data. Sem ela, fica difícil saber em que dia o dinheiro saiu quando ele revisar a semana.",
+              "isCorrect": false
+            },
+            {
+              "id": "b",
+              "text": "10/09, Passagem, saída de R$ 18,00",
+              "reason": "Ela tem a data, uma descrição curta e o valor como saída. Com isso, você sabe quando, o quê e quanto saiu.",
+              "isCorrect": true
+            },
+            {
+              "id": "c",
+              "text": "Não anotar, pois foi em dinheiro",
+              "reason": "Pagar em dinheiro vivo também tira dinheiro do bolso. Parece dispensável porque não aparece no extrato, mas é justamente o gasto que a memória esquece.",
+              "isCorrect": false
+            },
+            {
+              "id": "d",
+              "text": "10/09, Passagem, entrada de R$ 18,00",
+              "reason": "Os R$ 18,00 saíram do bolso de Leandro para pagar a passagem. Por isso vão como saída, não como entrada.",
+              "isCorrect": false
+            }
+          ],
+          "question": "Qual anotação deixa o registro dele completo?"
+        },
+        "kind": "check"
+      },
+      {
+        "content": {
+          "text": "Iara combinou de receber R$ 80,00 de uma cliente na sexta. Hoje é quarta, e o dinheiro ainda não chegou. No registro do que já aconteceu, dinheiro combinado só vira entrada no dia em que chega.",
+          "title": "Promessa ainda não é entrada"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "basis": {
+            "quote": "No registro do que já aconteceu, dinheiro combinado só vira entrada no dia em que chega.",
+            "position": 7
+          },
+          "context": "Danilo termina hoje um conserto de R$ 150,00. O cliente avisou que vai pagar amanhã.",
+          "options": [
+            {
+              "id": "a",
+              "text": "Entrada de R$ 150,00",
+              "reason": "O serviço acabou, mas o pagamento não chegou. Parece justo anotar já, mas o registro mostra só o dinheiro que entrou de fato.",
+              "isCorrect": false
+            },
+            {
+              "id": "b",
+              "text": "Entrada de R$ 150,00 com a data de amanhã",
+              "reason": "Anotar hoje um pagamento de amanhã é contar com algo que ainda não aconteceu. Se o cliente atrasar, o registro fica errado.",
+              "isCorrect": false
+            },
+            {
+              "id": "c",
+              "text": "Nenhuma entrada ainda",
+              "reason": "O dinheiro ainda não chegou. A entrada de R$ 150,00 só vai para o registro amanhã, quando o cliente pagar.",
+              "isCorrect": true
+            }
+          ],
+          "question": "O que Danilo deve lançar hoje no registro das entradas recebidas?"
+        },
+        "kind": "check"
+      },
+      {
+        "content": {
+          "basis": null,
+          "context": "Você está sem internet, mas tem um caderno. Estes são os acontecimentos que você precisa organizar:\n\n| Data | Acontecimento | Valor |\n|---|---|---:|\n| 14/09 | Serviço recebido por Pix | R$ 210,00 |\n| 14/09 | Saque para a própria carteira | R$ 40,00 |\n| 14/09 | Lanche pago em dinheiro | R$ 9,00 |\n| 16/09 | Pagamento prometido, ainda não recebido | R$ 60,00 |",
+          "options": [
+            {
+              "id": "a",
+              "text": "Entrada de R$ 210,00 e saída de R$ 9,00",
+              "reason": "Só o Pix de R$ 210,00 entrou e só o lanche de R$ 9,00 saiu. O saque fica à parte como transferência, e a promessa fica de fora.",
+              "isCorrect": true
+            },
+            {
+              "id": "b",
+              "text": "Entrada de R$ 270,00 e saída de R$ 9,00",
+              "reason": "Você somou os R$ 60,00 prometidos para 16/09. Eles ainda não chegaram, então não são entrada.",
+              "isCorrect": false
+            },
+            {
+              "id": "c",
+              "text": "Entrada de R$ 250,00 e saída de R$ 9,00",
+              "reason": "Você contou o saque como entrada. Os R$ 40,00 só passaram da conta para a carteira, então são uma transferência.",
+              "isCorrect": false
+            },
+            {
+              "id": "d",
+              "text": "Entrada de R$ 210,00 e saída de R$ 49,00",
+              "reason": "Você contou o saque como saída. O dinheiro continua seu e só mudou de lugar, então é uma transferência.",
+              "isCorrect": false
+            }
+          ],
+          "question": "Quais entradas e saídas vão para o seu registro de 14/09?"
+        },
+        "kind": "check"
+      }
+    ],
+    "spec": {
+      "canDo": "Registrar entradas e saídas em um meio acessível",
+      "description": "Um registro simples reúne entradas e saídas para acompanhar o dinheiro sem depender da memória.",
+      "estimatedMinutes": 4,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "brief": "Sabrina tenta lembrar os gastos da semana, mas só recorda as compras maiores. Como descobrir para onde o dinheiro foi sem depender da memória?",
+          "kind": "hook",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "O registro pode ficar onde for fácil consultar e atualizar: um caderno serve tão bem quanto uma planilha para anotar um pagamento recebido.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Cauê saca R$ 120,00 da própria conta para carregar na carteira: como isso entra no registro do dinheiro dele? Opções: “Receita de R$ 120,00”, “Despesa de R$ 120,00” e “Transferência entre seus próprios lugares”; correta: transferência; tentadora: receita, porque agora há dinheiro na mão.",
+          "kind": "guess",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Mover dinheiro da sua conta para sua carteira não cria receita nem despesa: o saque pode ser anotado como transferência, separado das entradas e saídas.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "O registro inclui também os gastos pequenos em dinheiro: um café de R$ 4,50 é uma saída, mesmo sem aparecer no extrato bancário.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Mostrar como registrar dois acontecimentos de 08/09: recebimento de R$ 95,00 por um serviço e pagamento de R$ 7,00 por um lanche. Revelar um passo por vez — data, descrição e valor na coluna de entrada ou saída — até formar a tabela com colunas “Data”, “Descrição”, “Entrada” e “Saída” e linhas “08/09 | Serviço recebido | R$ 95,00 | —” e “08/09 | Lanche | — | R$ 7,00”.",
+          "kind": "workedExample",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "table"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Em 10/09, foram pagos R$ 18,00 em dinheiro por uma passagem; pedir que escolha a anotação completa. Correta: “10/09 — Passagem — saída de R$ 18,00”; incluir como erro tentador “Não anotar, pois foi em dinheiro”.",
+          "kind": "check",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "No registro do que já aconteceu, uma promessa de pagamento ainda não é entrada: os R$ 80,00 combinados para sexta só entram quando forem recebidos.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Um serviço de R$ 150,00 foi concluído hoje, mas o pagamento só chegará amanhã; perguntar o que lançar hoje no registro das entradas recebidas. Opções: “Nenhuma entrada ainda” e “Entrada de R$ 150,00”; correta: nenhuma entrada ainda; tentadora: registrar porque o serviço terminou.",
+          "kind": "check",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Você está sem internet, mas tem um caderno: pedir que monte o registro do dia usando a tabela “Data | Acontecimento | Valor”, com “14/09 | Serviço recebido por Pix | R$ 210,00”, “14/09 | Saque para a própria carteira | R$ 40,00”, “14/09 | Lanche pago em dinheiro | R$ 9,00” e “16/09 | Pagamento prometido, ainda não recebido | R$ 60,00”. Esperar uma entrada de R$ 210,00 e uma saída de R$ 9,00 em 14/09, deixando o saque separado como transferência e o pagamento prometido fora das entradas realizadas.",
+          "kind": "application",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "table"
+        }
+      ],
+      "skills": [
+        {
+          "description": "Anotar data, descrição e valor das entradas e saídas realizadas, sem confundir transferências próprias ou valores previstos com receitas e despesas.",
+          "example": "Registrar “10/09, Passagem, saída de R$ 18,00” em um caderno.",
+          "hard": true,
+          "name": "Registrar movimentos financeiros",
+          "topic": "Registro de movimentações",
+          "useCase": "Acompanhar o dinheiro recebido e gasto usando um caderno, uma planilha ou um aplicativo."
+        }
+      ],
+      "title": "Registro de movimentações"
+    }
+  },
+  "01a1d52e-a545-7717-a7c3-2632ad313de3": {
+    "chapterTitle": "Values and variables",
+    "courseTitle": "Python",
+    "language": "en",
+    "level": "beginner",
+    "screens": [
+      {
+        "content": {
+          "text": "Iris peeks at the sample data behind an event app. Her ticket count is written as `3`, but her name is written as `\"Iris\"`. Why does her name get quotation marks when the count doesn't?",
+          "variant": "text"
+        },
+        "kind": "hook"
+      },
+      {
+        "content": {
+          "text": "Python works with pieces of information, like Iris's ticket count. In Python, that count is written as just `3`, with no quotes. One piece of information like this is called a **value**, and `3` is a number value.",
+          "title": "Pieces of information"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "reveal": "Python treats `\"3\"` as text, not as a number.",
+          "options": [
+            { "id": "a", "text": "As a number", "isCorrect": false },
+            { "id": "b", "text": "As text", "isCorrect": true }
+          ],
+          "variant": "guess",
+          "question": "In the app's data, someone changes Iris's ticket count from `3` to `\"3\"`. How will Python treat the new entry?"
+        },
+        "kind": "hook"
+      },
+      {
+        "content": {
+          "text": "The quotation marks around `\"3\"` tell Python that this value is text. So even though the inside looks like a number, Python treats it like a word, not a count. Python calls a text value a **string**.",
+          "title": "Quotes make text"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "basis": {
+            "quote": "The quotation marks around `\"3\"` tell Python that this value is text.",
+            "position": 3
+          },
+          "context": "Tyler reads some data and says: _`\"42\"` is a number value, because everything inside the quotation marks is a digit.",
+          "options": [
+            {
+              "id": "a",
+              "text": "Yes, it's a number",
+              "reason": "It's tempting because 42 looks like a number. But the quotes make `\"42\"` text, so Python treats it as a string.",
+              "isCorrect": false
+            },
+            {
+              "id": "b",
+              "text": "No, it's a string",
+              "reason": "The quotation marks around `\"42\"` make it text, no matter what's inside them.",
+              "isCorrect": true
+            }
+          ],
+          "question": "Is Tyler right?"
+        },
+        "kind": "check"
+      },
+      {
+        "content": {
+          "text": "A scale might weigh a box at 4.5 kilograms. In Python, you write that as `4.5`, with a decimal point and no quotes. It's still a number value, just like `3`.",
+          "title": "Numbers with decimals"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "text": "You can write the word Ready as `'Ready'` or as `\"Ready\"`. Both are the same string. The quotes only mark where the text starts and ends, so they aren't part of the text. Just use the same kind on both ends.",
+          "title": "Single or double quotes"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "check": {
+            "kind": "interaction",
+            "explanation": "Only the quotes decide the group, not the characters inside. 12 and 6.25 have no quotes, so they're numbers. '6.25' and \"12\" hold digits, but their quotes make them strings, just like \"Open\" and 'Closed'."
+          },
+          "fields": {
+            "items": [
+              {
+                "id": "i1",
+                "why": "It has no quotes, so Python reads it as a number.",
+                "text": "12",
+                "groupId": "numbers"
+              },
+              {
+                "id": "i2",
+                "why": "A decimal point is fine in a number, and there are no quotes.",
+                "text": "6.25",
+                "groupId": "numbers"
+              },
+              {
+                "id": "i3",
+                "why": "The digits look like a number, but the double quotes make it text.",
+                "text": "\"12\"",
+                "groupId": "strings"
+              },
+              {
+                "id": "i4",
+                "why": "Single quotes work just like double quotes, so this is text, not a number.",
+                "text": "'6.25'",
+                "groupId": "strings"
+              },
+              {
+                "id": "i5",
+                "why": "A word in double quotes is a string.",
+                "text": "\"Open\"",
+                "groupId": "strings"
+              },
+              {
+                "id": "i6",
+                "why": "A word in single quotes is a string too.",
+                "text": "'Closed'",
+                "groupId": "strings"
+              }
+            ],
+            "groups": [
+              {
+                "id": "numbers",
+                "rule": "Written with no quotation marks, like 12 or 6.25.",
+                "label": "Numbers"
+              },
+              {
+                "id": "strings",
+                "rule": "Wrapped in matching single or double quotes, whatever is inside.",
+                "label": "Strings"
+              }
+            ]
+          },
+          "prompt": "Sort each Python value into Numbers or Strings.",
+          "template": "categorize"
+        },
+        "kind": "activity"
+      },
+      {
+        "content": {
+          "basis": null,
+          "context": "Keisha ships a package from a post office in Boise. The shipping tool needs its weight, 2.5 kilograms, as a number and its label, B52, as text.",
+          "options": [
+            {
+              "id": "a",
+              "text": "Neither in quotes: `2.5` and `B52`",
+              "reason": "The weight is right, but B52 has no quotes. Text needs quotation marks to be a string.",
+              "isCorrect": false
+            },
+            {
+              "id": "b",
+              "text": "Only the label in quotes: `2.5` and `\"B52\"`",
+              "reason": "The weight has no quotes, so it stays a number. The quotes around B52 make the label a string.",
+              "isCorrect": true
+            },
+            {
+              "id": "c",
+              "text": "Both in quotes: `\"2.5\"` and `\"B52\"`",
+              "reason": "Quotes around 2.5 turn the weight into text, so both values become strings. It's tempting because 2.5 still looks like a number inside the quotes.",
+              "isCorrect": false
+            },
+            {
+              "id": "d",
+              "text": "Only the weight in quotes: `\"2.5\"` and `B52`",
+              "reason": "This puts the quotes on the wrong value. The weight becomes text, and the label without quotes isn't a string.",
+              "isCorrect": false
+            }
+          ],
+          "question": "Which pair of Python values should she enter?"
+        },
+        "kind": "check"
+      }
+    ],
+    "spec": {
+      "canDo": "Recognize numbers and strings as Python values",
+      "description": "Learn how Python represents numbers and text so you can recognize the information in simple code.",
+      "estimatedMinutes": 3,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "brief": "Iris opens an event app’s sample data: the ticket count is written as 3, but her name appears as \"Iris\". Why does one have quotation marks?",
+          "kind": "hook",
+          "skills": [],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "A value is one piece of information Python works with: the ticket count 3 is a number value. Show 3 as Python text without introducing commands or variable names.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Ask: “An entry changes from 3 to \"3\"; how will Python treat the new entry?” Options: “As a number” and “As text”; the correct answer is text, while the tempting answer is number because the digit looks unchanged.",
+          "kind": "guess",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Quotation marks make \"3\" a text value, called a string. Even though its content is a digit, Python treats this value as text rather than a number.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Ask the learner to judge: “\"42\" is a number value because everything inside the quotation marks is a digit.” Verdict: false; include the tempting judgment “True” and explain that the quotation marks make it a string.",
+          "kind": "check",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "A number can include a decimal point: 4.5 represents a measured weight in kilograms. It is still a number value, without quotation marks.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Strings can use matching single or double quotation marks: 'Ready' and \"Ready\" represent the same text. The surrounding marks identify the string; they are not part of its text.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": "categorize",
+          "brief": "Have the learner sort 12, 6.25, \"12\", '6.25', \"Open\", and 'Closed' into Numbers and Strings, then ask what decides where '6.25' belongs. Correct groups: the two unquoted values are Numbers and all four quoted values are Strings; address the tempting mistake of sorting by the characters inside the quotes.",
+          "kind": "activity",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "template"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "A shipping tool needs a package weight of 2.5 kilograms as a number and the label B52 as text; ask the learner to write the two Python values, without variable names. Accept 2.5 with either \"B52\" or 'B52'; address the tempting response \"2.5\" with \"B52\", which makes both values strings.",
+          "kind": "application",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        }
+      ],
+      "skills": [
+        {
+          "description": "Recognize number and string values by how they are written in Python.",
+          "example": "3 is a number value, while \"Ready\" and \"3\" are string values.",
+          "hard": false,
+          "name": "Recognize Python values",
+          "topic": "Python values",
+          "useCase": "Read simple Python data and distinguish quantities from text such as labels and names."
+        }
+      ],
+      "title": "Python values"
+    }
+  },
+  "01a1d374-c0d5-7498-a279-8959a2d9a965": {
+    "chapterTitle": "Interpreting DNA sequences",
+    "courseTitle": "Computational biology",
+    "language": "en",
+    "level": "beginner",
+    "screens": [
+      {
+        "content": {
+          "text": "Two lab files describe the same short piece of DNA, but their records don't match. How can ATGGC and GCCAT both describe the same piece?\n\n| File | Sequence |\n|---|---|\n| A | ATGGC |\n| B | GCCAT |",
+          "variant": "text"
+        },
+        "kind": "hook"
+      },
+      {
+        "content": {
+          "text": "DNA usually isn't one chain of bases but two, linked side by side. Each chain is called a **strand**. In this short piece, the two strands are joined at five spots, with one base from each strand at every spot.",
+          "image": {
+            "alt": "A flat DNA piece shaped like a ladder: two rails labeled strand, joined by five rungs of paired circles.",
+            "prompt": "A flat, ladder-like DNA segment drawn horizontally. Two continuous side rails, the top one and the bottom one each labeled 'strand'. Five rungs between them, each made of two paired, unlabeled circles touching in the middle. No letters on the circles, no arrows, no end labels. Clean, simple science diagram on a white background."
+          },
+          "title": "DNA has two chains"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "reveal": "The paired strand will contain only T and G.",
+          "options": [
+            { "id": "a", "text": "T and G", "isCorrect": true },
+            { "id": "b", "text": "A and G", "isCorrect": false },
+            { "id": "c", "text": "A and C", "isCorrect": false }
+          ],
+          "variant": "guess",
+          "question": "One strand of a DNA piece contains only the bases A and C. Which bases will the strand paired with it contain?"
+        },
+        "kind": "hook"
+      },
+      {
+        "content": {
+          "text": "Across the two strands, A always sits opposite T, and C always sits opposite G. So the partner of ATGGC isn't a copy. It reads TACCG, letter by letter. These matching partners are called **complementary bases**.",
+          "image": {
+            "alt": "A DNA piece with upper bases A T G G C, each joined to the base below it: T A C C G.",
+            "prompt": "A flat DNA segment drawn horizontally between two rails. Upper bases in order: A, T, G, G, C. Lower bases in order: T, A, C, C, G. Each upper base is connected to the lower base directly beneath it, making five pairs. No arrows, no end labels. Clean science diagram on a white background."
+          },
+          "title": "A pairs with T, C with G"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "basis": {
+            "quote": "Across the two strands, A always sits opposite T, and C always sits opposite G.",
+            "position": 3
+          },
+          "image": {
+            "alt": "A DNA piece with upper bases A C C A, each joined to an empty spot directly below it.",
+            "prompt": "A flat DNA segment drawn horizontally between two rails. Upper bases in order: A, C, C, A. Below them, four empty base spots shown as blank circles, each connected to the base directly above it. No arrows, no end labels. Clean science diagram on a white background."
+          },
+          "context": "The upper strand in the picture reads ACCA.",
+          "options": [
+            {
+              "id": "a",
+              "text": "AGGA",
+              "reason": "You paired each C with G but left the A's as they were. A pairs with T, so both ends need a T.",
+              "isCorrect": false
+            },
+            {
+              "id": "b",
+              "text": "ACCA",
+              "reason": "That copies the upper strand. It's tempting to think the partner matches, but each base faces its partner: A gets T and C gets G.",
+              "isCorrect": false
+            },
+            {
+              "id": "c",
+              "text": "TGGT",
+              "reason": "A pairs with T and C pairs with G, so each A gets a T and each C gets a G.",
+              "isCorrect": true
+            }
+          ],
+          "question": "Which bases fill the lower strand's blanks, from left to right?"
+        },
+        "kind": "check"
+      },
+      {
+        "content": {
+          "text": "The two ends of a strand aren't the same chemically, so they get different labels. One end is 5′, said _five-prime_, and the other is 3′, said _three-prime_. Here, ATGGC starts at the 5′ end and finishes at the 3′ end.",
+          "image": {
+            "alt": "A single DNA strand with bases A T G G C, its left end labeled 5′ and its right end labeled 3′.",
+            "prompt": "One horizontal DNA strand drawn as a single rail with five bases in order from left to right: A, T, G, G, C. The left end is labeled 5′ and the right end is labeled 3′. Clean science diagram on a white background."
+          },
+          "title": "A strand has two different ends"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "text": "Labs write a DNA record starting at the 5′ end and moving toward the 3′ end. So a strand shown as 3′-CAGT-5′ is reported as TGAC. You start at its right-hand end, where the 5′ is, and read to the left.",
+          "image": {
+            "alt": "A DNA strand reading 3′-C A G T-5′, with an arrow below it running from the right-hand 5′ end to the left-hand 3′ end.",
+            "prompt": "One horizontal DNA strand showing, from left to right: label 3′, then bases C, A, G, T, then label 5′. Beneath the strand, an arrow starts under the right-hand 5′ end and points left toward the 3′ end. Clean science diagram on a white background."
+          },
+          "title": "Records start at the 5′ end"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "text": "In a DNA piece, the 5′ end of one strand sits beside the 3′ end of the other. This is called **antiparallel**. So you read the top strand 5′ to 3′ from left to right, but the bottom one from right to left.",
+          "image": {
+            "alt": "Two paired rows: 5′-A T G G C-3′ above 3′-T A C C G-5′. An arrow over the top row points right; one under the bottom row points left.",
+            "prompt": "A flat DNA segment with two rows. Upper row: 5′ then A, T, G, G, C then 3′. Lower row: 3′ then T, A, C, C, G then 5′. Each upper base connected to the lower base beneath it, five pairs. Above the upper row, an arrow pointing right. Below the lower row, an arrow pointing left. Clean science diagram on a white background."
+          },
+          "title": "Paired strands run opposite ways"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "image": {
+            "alt": "Two paired rows: 5′-A T G G C-3′ above 3′-T A C C G-5′. An arrow over the top row points right; one under the bottom row points left.",
+            "prompt": "A flat DNA segment with two rows. Upper row: 5′ then A, T, G, G, C then 3′. Lower row: 3′ then T, A, C, C, G then 5′. Each upper base connected to the lower base beneath it, five pairs. Above the upper row, an arrow pointing right. Below the lower row, an arrow pointing left. Clean science diagram on a white background."
+          },
+          "steps": [
+            {
+              "math": "\\text{ATGGC} \\rightarrow \\text{TACCG}",
+              "text": "First, pair each base: A with T, T with A, G with C, G with C, and C with G."
+            },
+            {
+              "math": "3'\\text{-TACCG-}5'",
+              "text": "The partner runs the opposite way. So its left end is 3′ and its right end is 5′."
+            },
+            {
+              "math": "5'\\text{-GCCAT-}3'",
+              "text": "Now read it from its 5′ end, starting at the right and moving left."
+            }
+          ],
+          "title": "Finding a reverse complement",
+          "result": "The reverse complement is 5′-GCCAT-3′. That's why file B's GCCAT describes the same piece as file A's ATGGC: it's the record of the other strand.",
+          "problem": "The partner strand, reported from 5′ to 3′, is called the **reverse complement**. What is the reverse complement of 5′-ATGGC-3′?"
+        },
+        "kind": "workedExample"
+      },
+      {
+        "content": {
+          "basis": {
+            "quote": "Now read it from its 5′ end, starting at the right and moving left.",
+            "position": 8
+          },
+          "options": [
+            {
+              "id": "a",
+              "text": "5′-CTAAG-3′",
+              "reason": "That's the paired strand, but read the wrong way. It runs 3′ to 5′ from left to right, so you still need to reverse it.",
+              "isCorrect": false
+            },
+            {
+              "id": "b",
+              "text": "5′-GAATC-3′",
+              "reason": "Pairing GATTC gives CTAAG. Read from its 5′ end, right to left, that partner gives GAATC.",
+              "isCorrect": true
+            },
+            {
+              "id": "c",
+              "text": "5′-CTTAG-3′",
+              "reason": "That's GATTC written backward without pairing. Each base also has to switch to its partner: A to T, C to G.",
+              "isCorrect": false
+            }
+          ],
+          "question": "What is the reverse complement of 5′-GATTC-3′?"
+        },
+        "kind": "check"
+      },
+      {
+        "content": {
+          "text": "Sometimes the reverse complement matches the original. AGCT pairs with TCGA, and TCGA read from its 5′ end is AGCT again. So an unchanged result doesn't mean you skipped a step.",
+          "title": "Sometimes it comes out the same"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "basis": {
+            "quote": "Sometimes the reverse complement matches the original.",
+            "position": 10
+          },
+          "context": "A teammate says: _The reverse complement of 5′-AATT-3′ is 5′-AATT-3′._",
+          "options": [
+            {
+              "id": "a",
+              "text": "Yes, that's correct",
+              "reason": "AATT pairs with TTAA. Read from its 5′ end, TTAA gives AATT again.",
+              "isCorrect": true
+            },
+            {
+              "id": "b",
+              "text": "No, a partner must look different",
+              "reason": "A reverse complement can read the same as the original. It's tempting to expect a change, but here pairing and reversing cancel out.",
+              "isCorrect": false
+            },
+            {
+              "id": "c",
+              "text": "No, it should be 5′-TTAA-3′",
+              "reason": "TTAA is the paired strand before reversing. Read from its 5′ end, it becomes AATT.",
+              "isCorrect": false
+            }
+          ],
+          "question": "Is your teammate right?"
+        },
+        "kind": "check"
+      },
+      {
+        "content": {
+          "basis": null,
+          "context": "Hector's genetics lab at a university in Raleigh stores the record 5′-ACGTA-3′. Three partner records arrive, all written 5′ to 3′: TGCAT, ATGCA and TACGT.",
+          "options": [
+            {
+              "id": "a",
+              "text": "ATGCA, placed as 3′-ACGTA-5′",
+              "reason": "ATGCA is the stored record written backward. Reversing alone doesn't pair the bases, so A would sit across from A.",
+              "isCorrect": false
+            },
+            {
+              "id": "b",
+              "text": "TACGT, placed as 3′-TGCAT-5′",
+              "reason": "Flipped to run 3′ to 5′, TACGT reads TGCAT, and each base pairs with the one above it: A-T, C-G, G-C, T-A, A-T.",
+              "isCorrect": true
+            },
+            {
+              "id": "c",
+              "text": "TGCAT, placed as 5′-TGCAT-3′",
+              "reason": "TGCAT only pairs the bases. Written 5′ to 3′, it would run the same way as the stored strand, but partners run opposite ways.",
+              "isCorrect": false
+            }
+          ],
+          "question": "Which record comes from the opposite strand, and how does it line up beneath 5′-ACGTA-3′?"
+        },
+        "kind": "check"
+      }
+    ],
+    "spec": {
+      "canDo": "Find the reverse complement of a DNA sequence.",
+      "description": "Use DNA base pairing and strand direction to match sequences reported from opposite strands.",
+      "estimatedMinutes": 5,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "brief": "Two lab files for the same short DNA piece show different records: ATGGC and GCCAT. How can both describe the same piece? Show a table with columns File and Sequence, with rows A: ATGGC and B: GCCAT.",
+          "kind": "hook",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "table"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "DNA usually has two linked chains called strands: this short piece has two strands joined across five positions.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": "A flat ladder-like DNA segment with two continuous rails, each labeled strand, and five rungs made of paired, unlabeled circles; no letters, arrows, or end labels.",
+          "visualKind": "picture"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "If one DNA strand contains only A and C, which letters will its paired strand contain: A and C, T and G, or A and G? The answer is T and G; A and C is the tempting idea that the partner is a copy.",
+          "kind": "guess",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Across paired DNA strands, A pairs with T and C pairs with G; these matching partners are complementary bases. Show ATGGC facing TACCG, explaining why the partner replaces letters rather than copying them.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": "A flat DNA segment with upper bases A T G G C and lower bases T A C C G, aligned in five connected pairs between two rails; no arrows or end labels.",
+          "visualKind": "picture"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Ask which letters fill the lower strand's blanks from left to right beneath ACCA: TGGT, ACCA, or AGGA. The answer is TGGT; include ACCA as the tempting copy-instead-of-pair mistake.",
+          "kind": "check",
+          "skills": [0],
+          "visual": "A flat DNA segment with upper bases A C C A and four blank lower base positions, each connected to the base directly above; no arrows or end labels.",
+          "visualKind": "picture"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "A DNA strand has chemically different ends labeled 5′, pronounced five-prime, and 3′, pronounced three-prime. Show these labels at the two ends of ATGGC.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": "One horizontal DNA strand with bases A T G G C in order, its left end labeled 5′ and its right end labeled 3′.",
+          "visualKind": "picture"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "DNA sequence records normally run from the 5′ end toward the 3′ end. A strand displayed as 3′-CAGT-5′ is therefore reported as TGAC, starting at its right-hand end.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": "One horizontal DNA strand displaying 3′-C A G T-5′, with an arrow beneath it pointing from the right-hand 5′ end toward the left-hand 3′ end.",
+          "visualKind": "picture"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Paired DNA strands run in opposite directions, called antiparallel: the 5′ end of one sits beside the 3′ end of the other. In this piece, reading each strand from 5′ to 3′ means moving in opposite directions.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": "A flat DNA segment with upper row 5′-A T G G C-3′ and lower row 3′-T A C C G-5′, connected in five base pairs; an upper arrow points right and a lower arrow points left.",
+          "visualKind": "picture"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Find the reverse complement—the partner strand reported 5′ to 3′—of 5′-ATGGC-3′. Reveal one move at a time: pair the bases to get TACCG; label that row 3′-TACCG-5′; read it from its 5′ end to get 5′-GCCAT-3′.",
+          "kind": "workedExample",
+          "skills": [0],
+          "visual": "A flat DNA segment with upper row 5′-A T G G C-3′ and lower row 3′-T A C C G-5′, connected in five base pairs; an upper arrow points right and a lower arrow points left.",
+          "visualKind": "picture"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Ask for the reverse complement of 5′-GATTC-3′, with options 5′-GAATC-3′, 5′-CTAAG-3′, and 5′-CTTAG-3′. The answer is GAATC; CTAAG pairs without reversing, while CTTAG reverses without pairing.",
+          "kind": "check",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "A reverse complement can equal the original sequence: AGCT pairs with TCGA, which reads AGCT when reversed. An unchanged result does not necessarily mean you skipped a step.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Judge the statement: “The reverse complement of 5′-AATT-3′ is 5′-AATT-3′.” It is correct; the tempting rejection assumes that a partner's reported sequence must always look different.",
+          "kind": "check",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "A lab stores 5′-ACGTA-3′ and receives three candidate partner records, all written 5′ to 3′: TGCAT, ATGCA, and TACGT; choose the opposite-strand match, then align it beneath the stored strand with end labels. The answer is TACGT, aligned as 3′-TGCAT-5′ beneath 5′-ACGTA-3′; the other candidates only complement or only reverse.",
+          "kind": "application",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        }
+      ],
+      "skills": [
+        {
+          "description": "Use complementary base pairing and opposite strand directions to write a DNA strand's partner from 5′ to 3′.",
+          "example": "The reverse complement of 5′-ATGGC-3′ is 5′-GCCAT-3′.",
+          "hard": true,
+          "name": "Find the reverse complement",
+          "topic": "DNA reverse complements",
+          "useCase": "Match short DNA records reported from opposite strands of the same DNA segment."
+        }
+      ],
+      "title": "DNA strands and reverse complements"
+    }
+  },
+  "01a1c5ed-9d64-7bba-acf8-69be1f7b0541": {
+    "chapterTitle": "JavaScript, acessibilidade e responsividade",
+    "courseTitle": "Tecnologia da Informação",
+    "language": "pt",
+    "level": "intermediate",
+    "screens": [
+      {
+        "content": {
+          "text": "Leandro clica em _Confirmar_ no portal onde fez um pedido. A página não recarrega, mas o aviso _Pendente_ vira _Enviado_, e todo o resto continua igual. Como o código consegue mudar só esse trecho?",
+          "variant": "text"
+        },
+        "kind": "hook"
+      },
+      {
+        "content": {
+          "text": "Ao ler o HTML, o navegador monta na memória uma árvore de objetos, um para cada elemento. O botão _Confirmar_ e o parágrafo do aviso são objetos separados, por isso o código pode alterar só o aviso. Essa árvore se chama **DOM**.",
+          "image": {
+            "alt": "Árvore com body ligado a main, que se liga a um botão Confirmar e a um parágrafo de aviso com o texto Pendente.",
+            "prompt": "Diagrama em árvore, simples, fundo claro. No topo, uma caixa body; abaixo, ligada a ela, uma caixa main. De main saem duas ligações: uma para a caixa button id=confirmar com o texto Confirmar, outra para a caixa p id=aviso com o texto Pendente. Linhas indicam a relação entre pai e filho."
+          },
+          "title": "A página como uma árvore"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "reveal": "Aparece _Pendente_: o código-fonte continua mostrando o HTML que chegou do servidor.",
+          "options": [
+            { "id": "a", "text": "Enviado", "isCorrect": false },
+            { "id": "b", "text": "Pendente", "isCorrect": true }
+          ],
+          "variant": "guess",
+          "question": "O código trocou _Pendente_ por _Enviado_ no aviso. Sem recarregar a página, Leandro abre _Exibir código-fonte_ no navegador. Que texto ele encontra no parágrafo do aviso?"
+        },
+        "kind": "hook"
+      },
+      {
+        "content": {
+          "text": "O código alterou o DOM, a árvore que o navegador mantém na memória, e não o HTML enviado pelo servidor. Por isso a tela mostra _Enviado_, mas o código-fonte ainda mostra _Pendente_. Já o painel _Elementos_ do navegador exibe o DOM atual.",
+          "title": "Código-fonte não é o DOM"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "text": "Com dois parágrafos de classe `aviso` na página, `document.querySelector('.aviso')` devolve só o primeiro, na ordem do documento. O método aceita qualquer seletor CSS: `.aviso` procura pela classe, e `#aviso`, pelo id.",
+          "title": "Encontrar o primeiro elemento"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "text": "Se nenhum elemento tem o id `resultado`, `document.querySelector('#resultado')` devolve `null`, o valor que indica que nada foi encontrado. Por isso, tentar mudar o texto desse resultado gera um erro, e nenhum elemento é criado.",
+          "title": "Quando nada combina"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "basis": {
+            "quote": "O método aceita qualquer seletor CSS: `.aviso` procura pela classe, e `#aviso`, pelo id.",
+            "position": 4
+          },
+          "context": "Com a página carregada, o DOM contém apenas um parágrafo com a classe `status` e o texto _Aguardando_, sem id nenhum.",
+          "options": [
+            {
+              "id": "a",
+              "text": "Certo",
+              "reason": "O `#` procura pelo id, e o parágrafo só tem a classe `status`, sem id algum. Como nenhum elemento combina, o método devolve `null`.",
+              "isCorrect": true
+            },
+            {
+              "id": "b",
+              "text": "Errado",
+              "reason": "Quem marca Errado lê `#status` como se buscasse a classe. Para achar a classe, o seletor seria `.status`, e aí o parágrafo seria encontrado.",
+              "isCorrect": false
+            }
+          ],
+          "question": "Julgue o item: _`document.querySelector('#status')` devolve `null`, embora exista um parágrafo com a classe status."
+        },
+        "kind": "check"
+      },
+      {
+        "content": {
+          "text": "Imagine um parágrafo guardado em `fim` e uma string com _Pronto_ entre as marcações de abertura e de fechamento de `strong`. A linha que atribui essa string a `fim.textContent` apaga o que havia no parágrafo. A tela mostra as marcações literalmente, com os sinais de menor e maior, porque **textContent** não lê marcação HTML.",
+          "title": "Texto puro, sem marcação"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "text": "Agora a mesma string, com _Pronto_ entre as marcações de `strong`, vai para `fim.innerHTML`. O navegador lê a string como HTML: os filhos antigos saem, e entra um elemento `strong` com _Pronto_ em negrito, sem os sinais de menor e maior. Essa propriedade é a **innerHTML**.",
+          "title": "A string vira HTML"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "steps": [
+            {
+              "text": "O seletor `#retorno` procura pelo id, e existe um parágrafo com esse id. Então `retorno` guarda esse parágrafo, e não `null`."
+            },
+            {
+              "text": "Ao receber um valor, `textContent` remove todos os filhos do parágrafo. O elemento `em` com _Aguarde_ desaparece."
+            },
+            {
+              "text": "A string entra como um único trecho de texto. Como `textContent` não interpreta marcação, nenhum elemento `strong` é criado."
+            }
+          ],
+          "title": "Prevendo o resultado",
+          "result": "O parágrafo passa a exibir literalmente as marcações de `strong` em volta de _Concluído_, com os sinais de menor e maior, sem negrito e sem nenhum elemento filho.",
+          "problem": "No DOM carregado, o parágrafo de id `retorno` contém um elemento `em` com _Aguarde_. O código executa `const retorno = document.querySelector('#retorno')` e depois atribui a `retorno.textContent` uma string com _Concluído_ entre as marcações de `strong`. O que fica dentro do parágrafo?"
+        },
+        "kind": "workedExample"
+      },
+      {
+        "content": {
+          "basis": {
+            "quote": "A tela mostra as marcações literalmente, com os sinais de menor e maior, porque **textContent** não lê marcação HTML.",
+            "position": 7
+          },
+          "context": "No DOM carregado, a div de id `saida` contém um `span` com _Antigo_. Executa-se uma linha que atribui a `document.querySelector('#saida').textContent` uma string com _Novo_ entre as marcações de abertura e de fechamento de `b`.",
+          "options": [
+            {
+              "id": "a",
+              "text": "Certo",
+              "reason": "Esse seria o efeito de `innerHTML`, que lê a string como HTML. Com `textContent`, o span sai, mas nenhum elemento `b` é criado.",
+              "isCorrect": false
+            },
+            {
+              "id": "b",
+              "text": "Errado",
+              "reason": "O `textContent` remove o span e põe só texto. A div passa a exibir literalmente as marcações de `b` em volta de _Novo_, sem elemento `b`.",
+              "isCorrect": true
+            }
+          ],
+          "question": "Julgue o item: _O span antigo é substituído por um elemento b contendo Novo._"
+        },
+        "kind": "check"
+      },
+      {
+        "content": {
+          "text": "Num parágrafo com a classe `aviso`, a linha `elemento.classList.add('ok')` acrescenta uma classe sem tirar a outra: o parágrafo fica com `aviso ok`. Essa lista de classes do elemento é o **classList**. A aparência muda conforme as regras CSS que passam a valer para o elemento. Se existir `.ok { color: green; }`, por exemplo, ele fica verde.",
+          "title": "Somar uma classe"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "text": "Um portal exibe um comentário vindo de outro sistema: uma marcação de imagem com endereço inválido e o atributo `onerror=\"roubar()\"`. Com `innerHTML`, o navegador cria a imagem, e a falha ao carregá-la executa `roubar()`, mesmo sem tag `script`. Com `textContent`, isso vira só texto na tela.",
+          "title": "Texto de fora entra como texto",
+          "exampleLineSlot": {
+            "idea": "um campo de comentário ou de busca num sistema web que o aprendiz usa ou mantém no trabalho"
+          }
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "basis": null,
+          "context": "No portal Protocolo Fácil, da prefeitura de Maringá, um clique em _Atualizar_ deve mostrar uma mensagem vinda de outro sistema, exatamente como chegou, num parágrafo de id `aviso` e classe `mensagem`. O parágrafo também ganha a classe `ok`, que o CSS deixa verde, sem perder `mensagem`.",
+          "options": [
+            {
+              "id": "a",
+              "text": "Selecionar `#aviso`, pôr a mensagem em `innerHTML` e chamar `classList.add('ok')`. A mensagem é lida como HTML, com as classes `mensagem ok`.",
+              "reason": "Com `innerHTML`, a mensagem de fora vira HTML e pode criar elementos maliciosos. O requisito pede o texto literal, que é o papel de `textContent`.",
+              "isCorrect": false
+            },
+            {
+              "id": "b",
+              "text": "Selecionar `#aviso`, pôr a mensagem em `textContent` e chamar `classList.add('ok')`. O texto aparece literal, com as classes `mensagem ok`.",
+              "reason": "O `#aviso` acha o parágrafo pelo id, e `textContent` mostra a mensagem como chegou. O `classList.add('ok')` mantém `mensagem`, e o texto fica verde.",
+              "isCorrect": true
+            },
+            {
+              "id": "c",
+              "text": "Selecionar `.aviso`, pôr a mensagem em `textContent` e chamar `classList.add('ok')`. O texto aparece literal, com as classes `mensagem ok`.",
+              "reason": "O parágrafo tem a classe `mensagem`, e `aviso` é o id. Então `.aviso` devolve `null`, e tentar mudar o texto gera erro.",
+              "isCorrect": false
+            }
+          ],
+          "question": "Qual sequência atende ao requisito, e com que resultado?"
+        },
+        "kind": "check"
+      }
+    ],
+    "spec": {
+      "canDo": "Analisar alterações de conteúdo e classes no DOM",
+      "description": "Como selecionar elementos e prever mudanças de conteúdo e aparência sem confundir texto com HTML.",
+      "estimatedMinutes": 5,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "brief": "Leandro clica em Confirmar num portal, e apenas o aviso “Pendente” vira “Enviado”, sem recarregar a página. Como o código muda só esse trecho?",
+          "kind": "hook",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "O DOM é o modelo da página que o navegador mantém como uma árvore de objetos. No exemplo, o botão Confirmar e o parágrafo do aviso são objetos separados, então o código pode alterar apenas o aviso.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": "Árvore simplificada do DOM: body ligado a main; main ligado a button com id confirmar e texto Confirmar, e a p com id aviso e texto Pendente; cada ligação indica a relação entre elemento pai e filho.",
+          "visualKind": "picture"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Após o código trocar “Pendente” por “Enviado”, o usuário abre “Exibir código-fonte”, sem recarregar a página: qual texto aparece ali, “Pendente” ou “Enviado”? Correta: “Pendente”; tentadora: “Enviado”, por imaginar que a alteração visível reescreve o documento recebido.",
+          "kind": "guess",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Alterar o DOM não reescreve o HTML recebido do servidor: o aviso pode mostrar “Enviado” enquanto “Exibir código-fonte” ainda contém “Pendente”. O painel de elementos do navegador acompanha o DOM atual, não apenas esse documento inicial.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "`document.querySelector()` procura um elemento usando um seletor CSS e devolve apenas o primeiro correspondente. Com dois parágrafos de classe `aviso`, `document.querySelector('.aviso')` seleciona o primeiro na ordem do documento.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Quando nada corresponde ao seletor, `querySelector()` devolve `null`, indicando ausência de elemento. Se `#resultado` não existe naquele momento, tentar acessar diretamente sua propriedade `textContent` provoca um erro em vez de criar o elemento.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Com o DOM já carregado contendo apenas `<p class=\"status\">Aguardando</p>`, julgar: “`document.querySelector('#status')` devolve null, embora exista um parágrafo com a classe status”. Gabarito: Certo; a resposta tentadora confunde o seletor de identificador `#` com o de classe `.`.",
+          "kind": "check",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "`textContent` substitui o conteúdo de um elemento por texto, sem interpretar marcações HTML. Atribuir `'<strong>Pronto</strong>'` a essa propriedade mostra inclusive os sinais `<` e `>` e substitui os filhos anteriores do elemento.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "`innerHTML` interpreta a string atribuída como HTML e substitui os filhos do elemento pelo resultado. Com `'<strong>Pronto</strong>'`, cria um elemento `strong` contendo Pronto, em vez de exibir as marcações como texto.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Resolver em etapas, com o DOM carregado, `<p id=\"retorno\"><em>Aguarde</em></p>`, `const retorno = document.querySelector('#retorno')` e `retorno.textContent = '<strong>Concluído</strong>'`. Mostrar a seleção do parágrafo, a substituição de seus filhos e o resultado literal `<strong>Concluído</strong>`, sem elemento `strong`.",
+          "kind": "workedExample",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Com o DOM carregado contendo `<div id=\"saida\"><span>Antigo</span></div>`, executar `document.querySelector('#saida').textContent = '<b>Novo</b>'` e julgar: “O span antigo é substituído por um elemento b contendo Novo”. Gabarito: Errado; aparece o texto literal `<b>Novo</b>`, e a alternativa tentadora atribui a `textContent` o comportamento de `innerHTML`.",
+          "kind": "check",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "`classList` permite alterar classes individualmente: em `<p class=\"aviso\">`, `elemento.classList.add('ok')` resulta nas classes `aviso ok`, preservando a anterior. A aparência depende das regras CSS existentes para essas classes.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Texto recebido de fora deve ser inserido como texto quando não há necessidade de HTML: `textContent` não transforma uma mensagem em elementos executáveis. Usar `innerHTML` com conteúdo não confiável pode introduzir HTML malicioso, mesmo sem uma tag `script`.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Após um clique, um portal deve mostrar uma mensagem externa literalmente em `<p id=\"aviso\" class=\"mensagem\">` e acrescentar `ok`, preservando `mensagem`; há CSS que deixa `.ok` verde. Pedir a sequência e o resultado: selecionar `#aviso`, atribuir a mensagem a `textContent` e chamar `classList.add('ok')`; o distrator usa `innerHTML` para interpretar a mensagem.",
+          "kind": "application",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        }
+      ],
+      "skills": [
+        {
+          "description": "Prever como seletores e alterações de conteúdo ou classes modificam os elementos de uma página.",
+          "example": "Selecionar #aviso, inserir uma mensagem com textContent e acrescentar a classe ok sem remover as classes existentes.",
+          "hard": true,
+          "name": "Analisar atualizações de interface",
+          "topic": "Manipulação do DOM",
+          "useCase": "Revisar código que atualiza avisos, resultados e estados visuais após ações do usuário."
+        }
+      ],
+      "title": "Seleção e manipulação do DOM"
+    }
+  },
+  "01a1bc05-f4d5-7114-8b08-64bf5e85bb1d": {
+    "chapterTitle": "Informação e administração digital",
+    "courseTitle": "Direito Administrativo",
+    "language": "pt",
+    "level": "intermediate",
+    "screens": [
+      {
+        "content": {
+          "text": "Valéria quer saber com quem uma autarquia federal fechou contratos neste ano. No portal do órgão, ela só encontra notícias de eventos e fotos de inaugurações. O órgão pode esperar alguém pedir para mostrar seus gastos?",
+          "variant": "text"
+        },
+        "kind": "hook"
+      },
+      {
+        "content": {
+          "text": "A autarquia que Valéria procura não pode esperar um pedido. A Lei de Acesso à Informação (LAI) manda o órgão publicar por conta própria o que interessa a todos, como seus contratos. Isso se chama **transparência ativa**.",
+          "title": "Publicar sem esperar pedido"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "reveal": "O município ainda divulga sem esperar pedido, por outros meios, e os dados dos seus gastos continuam obrigatórios na internet.",
+          "options": [
+            {
+              "id": "a",
+              "text": "Ele só divulga quando alguém pedir, já que está dispensado",
+              "isCorrect": false
+            },
+            {
+              "id": "b",
+              "text": "Ele continua obrigado a publicar tudo no site, sem dispensa",
+              "isCorrect": false
+            },
+            {
+              "id": "c",
+              "text": "Ele divulga sem pedido por outros meios, e os gastos seguem no site",
+              "isCorrect": true
+            }
+          ],
+          "variant": "guess",
+          "question": "Um município de 8 mil habitantes não tem um portal com essas informações. A LAI dispensa cidades de até 10 mil habitantes da divulgação obrigatória na internet. O que continua valendo para ele?"
+        },
+        "kind": "hook"
+      },
+      {
+        "content": {
+          "text": "O município de 8 mil habitantes fica dispensado só do site obrigatório. A transparência ativa continua, então ele divulga sem pedido por outros meios, como um mural na prefeitura. Por isso, esperar alguém pedir não basta.",
+          "title": "Dispensa do site, não do dever"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "text": "Mesmo com 8 mil habitantes, o município mantém na internet, em tempo real, o que arrecada e cada despesa paga. A dispensa não alcança esses dados, porque a LAI preserva a exigência da lei fiscal. Eles formam a **execução orçamentária e financeira**.",
+          "title": "Os gastos ficam na internet"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "steps": [
+            {
+              "math": "7.000 \\le 10.000",
+              "text": "Primeiro, veja se a dispensa alcança o município. Com 7 mil habitantes, ele está abaixo do limite de 10 mil."
+            },
+            {
+              "text": "Depois, veja o que a dispensa cobre. Ela afasta só a divulgação obrigatória na internet prevista na LAI, e a transparência ativa continua por outros meios."
+            },
+            {
+              "text": "Por fim, confira a ressalva. Receitas e despesas são execução orçamentária e financeira, e a lei fiscal manda mantê-las na internet em tempo real."
+            }
+          ],
+          "title": "Um site esvaziado",
+          "result": "A retirada não se justifica pela dispensa. A prefeitura precisa recolocar esses dados no site, porque a obrigação fiscal continua valendo.",
+          "problem": "Uma prefeitura de 7 mil habitantes tirou do site os dados de receitas e despesas, alegando a dispensa da LAI para municípios pequenos. A retirada é válida?"
+        },
+        "kind": "workedExample"
+      },
+      {
+        "content": {
+          "basis": {
+            "quote": "A dispensa não alcança esses dados, porque a LAI preserva a exigência da lei fiscal.",
+            "position": 4
+          },
+          "context": "Julgue o item: _Uma prefeitura com 9 mil habitantes pode deixar de publicar na internet a sua execução financeira, com fundamento na dispensa prevista na LAI._",
+          "options": [
+            {
+              "id": "a",
+              "text": "Certo",
+              "reason": "Com 9 mil habitantes, a prefeitura está mesmo dispensada, e isso torna o item tentador. Mas a dispensa não abrange toda publicação eletrônica: os dados fiscais continuam na internet.",
+              "isCorrect": false
+            },
+            {
+              "id": "b",
+              "text": "Errado",
+              "reason": "A dispensa cobre só a divulgação obrigatória na internet prevista na própria LAI. A execução orçamentária e financeira segue obrigatória no site por exigência da lei fiscal.",
+              "isCorrect": true
+            }
+          ],
+          "question": "O item está certo ou errado?"
+        },
+        "kind": "check"
+      },
+      {
+        "content": {
+          "text": "Notícias não bastam para a autarquia de Valéria cumprir a LAI. O portal precisa trazer estrutura e contatos, repasses, despesas, licitações e contratos, dados de programas e obras e respostas a perguntas frequentes. Esse é o **conteúdo mínimo**.",
+          "title": "O que o portal precisa ter",
+          "exampleLineSlot": {
+            "idea": "o portal da prefeitura ou de um órgão público que o aprendiz já consultou"
+          }
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "text": "Contratos publicados como fotos escaneadas não bastam, porque ninguém consegue pesquisá-los nem levar os valores para uma planilha. O portal precisa de busca, atualização, acessibilidade e arquivos abertos que um programa lê sozinho. Esse arquivo é **legível por máquina**.",
+          "title": "Dados que dá para reutilizar"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "text": "Uma empresa pública estadual de saneamento também publica seus contratos sem esperar pedido. Isso acontece porque a LAI vale para órgãos dos três Poderes e para a administração direta e indireta, respeitados os sigilos que a lei prevê.",
+          "title": "Também nas estatais"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "text": "A prefeitura repassa R$ 200.000 a uma associação sem fins lucrativos para oficinas de música. Esse repasse é uma **subvenção social**. A associação divulga quanto recebeu e como gastou, mas o que não tem relação com esse dinheiro, como as doações dos sócios, segue privado. A publicidade cobre só a parcela pública e seu destino.",
+          "title": "Só a parte pública"
+        },
+        "kind": "explanation"
+      },
+      {
+        "content": {
+          "basis": {
+            "quote": "A publicidade cobre só a parcela pública e seu destino.",
+            "position": 10
+          },
+          "context": "A Associação Ponteio recebe subvenção do estado para manter um coral. Julgue o item: _A associação deve divulgar a aplicação desses recursos, mas a LAI não a obriga, só por receber a subvenção, a abrir documentos exclusivamente privados e sem relação com esses recursos._",
+          "options": [
+            {
+              "id": "a",
+              "text": "Certo",
+              "reason": "Para entidades privadas sem fins lucrativos, a LAI alcança a parcela de recursos públicos recebida e a sua destinação. Documentos sem relação com esses recursos, como o registro de doações privadas, ficam fora desse dever.",
+              "isCorrect": true
+            },
+            {
+              "id": "b",
+              "text": "Errado",
+              "reason": "Receber dinheiro público não transforma a associação em órgão público. Por isso, a LAI não alcança todos os seus documentos. Ela alcança só os ligados aos recursos recebidos e ao seu uso, mesmo quando estão numa ata.",
+              "isCorrect": false
+            }
+          ],
+          "question": "O item está certo ou errado?"
+        },
+        "kind": "check"
+      },
+      {
+        "content": {
+          "basis": null,
+          "context": "Danilo, analista de controle, avalia o portal de uma autarquia federal com base na LAI. Há notícias atualizadas, mas faltam despesas e contratos, e os relatórios estão em imagens escaneadas. O órgão diz que enviará tudo a quem pedir.",
+          "options": [
+            {
+              "id": "a",
+              "text": "O portal falha no conteúdo e no formato, e atender pedidos não substitui a publicação espontânea.",
+              "reason": "Despesas e contratos fazem parte do conteúdo mínimo, e imagens escaneadas não são legíveis por máquina. Responder pedidos não cumpre a transparência ativa, que exige publicar sem pedido.",
+              "isCorrect": true
+            },
+            {
+              "id": "b",
+              "text": "O portal está regular, porque o órgão entrega as informações a quem pedir.",
+              "reason": "Entregar mediante pedido parece suficiente, mas a transparência ativa exige publicar por iniciativa própria. A promessa de atender pedidos não supre o portal incompleto.",
+              "isCorrect": false
+            },
+            {
+              "id": "c",
+              "text": "A falha está só nos arquivos escaneados, já que as notícias atualizadas mostram transparência.",
+              "reason": "Notícias não fazem parte do conteúdo mínimo que a LAI exige. Sem despesas e contratos publicados, o portal também falha no conteúdo.",
+              "isCorrect": false
+            },
+            {
+              "id": "d",
+              "text": "A falha está só no conteúdo, porque o formato dos arquivos fica a critério do órgão.",
+              "reason": "O formato não é livre. A LAI exige arquivos que permitam pesquisa e reutilização, e imagens escaneadas impedem a leitura por máquina.",
+              "isCorrect": false
+            }
+          ],
+          "question": "Qual conclusão deve constar do relatório de Danilo?"
+        },
+        "kind": "check"
+      }
+    ],
+    "spec": {
+      "canDo": "Aplicar deveres de transparência ativa da administração pública",
+      "description": "A publicação de informações sem pedido segue deveres e exceções que permitem avaliar a transparência de um órgão.",
+      "estimatedMinutes": 4,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "brief": "Valéria procura os contratos de uma autarquia no portal, mas encontra apenas notícias de eventos. O órgão pode esperar alguém pedir para divulgar seus gastos?",
+          "kind": "hook",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Transparência ativa é divulgar informações de interesse coletivo sem esperar pedidos: uma autarquia deve publicar seus contratos por iniciativa própria.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Um município com 8 mil habitantes não mantém essas informações na internet: quais deveres permanecem? Opções: 'Divulgar por outros meios e manter a divulgação fiscal exigida'; 'Divulgar apenas quando houver pedido'; 'Publicar tudo obrigatoriamente na internet'; correta: primeira; tentadora: segunda.",
+          "kind": "guess",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Municípios com até 10 mil habitantes são dispensados da divulgação obrigatória na internet prevista na LAI, não da transparência ativa: o município do caso ainda deve divulgar por outros meios.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Essa dispensa não afasta a divulgação na internet da execução orçamentária e financeira exigida pela legislação fiscal: um município com 8 mil habitantes não pode invocá-la para esconder esses dados.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Resolver o caso de uma prefeitura com 7 mil habitantes que retirou seus dados de execução financeira da internet: identificar a dispensa da LAI; verificar a obrigação fiscal preservada; concluir que a retirada não se justifica por essa dispensa.",
+          "kind": "workedExample",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Julgar: 'Uma prefeitura com 9 mil habitantes pode deixar de publicar na internet a execução financeira com fundamento na dispensa da LAI'; errado. Incluir a tentação de tratar a dispensa como abrangente de toda publicação eletrônica.",
+          "kind": "check",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "O conteúdo mínimo inclui estrutura e contatos, repasses, despesas, licitações e contratos, acompanhamento de programas e obras, além de perguntas frequentes: publicar só notícias não atende à LAI.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "O portal deve permitir obter e reutilizar as informações, com pesquisa, formatos abertos, atualização e acessibilidade: contratos em arquivos que impedem leitura por máquina não bastam.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "A LAI alcança órgãos de todos os Poderes e entidades da administração direta e indireta: uma empresa pública também tem deveres de divulgação, respeitadas as restrições legais aplicáveis.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Entidades privadas sem fins lucrativos que recebem recursos públicos devem dar publicidade ao recebimento e à destinação desses recursos: uma associação subvencionada não precisa, por isso, abrir todos os seus arquivos privados.",
+          "kind": "explanation",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Julgar: 'Uma associação que recebe subvenção pública pode ter o dever de divulgar a aplicação desses recursos sem abrir todos os arquivos de sua atividade privada'; certo. A tentação é estender a LAI indistintamente a todos os documentos da associação.",
+          "kind": "check",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        },
+        {
+          "activityTemplate": null,
+          "brief": "Danilo avalia o portal de uma autarquia: há notícias atualizadas, mas faltam despesas, contratos e arquivos reutilizáveis; o órgão afirma que enviará tudo se alguém pedir. Elaborar uma conclusão curta que identifique as falhas de conteúdo e de acesso, explicando por que responder a pedidos não substitui a publicação espontânea.",
+          "kind": "application",
+          "skills": [0],
+          "visual": null,
+          "visualKind": "none"
+        }
+      ],
+      "skills": [
+        {
+          "description": "Determinar quais informações devem ser divulgadas espontaneamente e quando se aplicam exceções aos deveres de publicação.",
+          "example": "Uma prefeitura com 8 mil habitantes continua obrigada à divulgação fiscal na internet, apesar da dispensa específica da LAI.",
+          "hard": true,
+          "name": "Aplicar deveres de transparência ativa",
+          "topic": "Transparência ativa",
+          "useCase": "Avaliar portais públicos e apontar omissões na divulgação de gastos, contratos e atividades."
+        }
+      ],
+      "title": "LAI: transparência ativa"
+    }
+  }
+}

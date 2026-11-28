@@ -58,6 +58,8 @@ import { languageLessonCheckTask } from "./language-lesson-check/task";
 import { languageLessonFixTask } from "./language-lesson-fix/task";
 import { languageLessonTask } from "./language-lesson/task";
 import { languageSentenceOrdersTask } from "./language-sentence-orders/task";
+import { lessonActivitiesTask } from "./lesson-activities/task";
+import { lessonActivityPlanTask } from "./lesson-activity-plan/task";
 import { lessonFixTask } from "./lesson-fix/task";
 import { lessonImageTask } from "./lesson-image/task";
 import { lessonLawsTask } from "./lesson-laws/task";
@@ -180,6 +182,8 @@ export const TASK_GROUPS: readonly { name: string; tasks: readonly RegisteredTas
       lessonMarksTask,
       lessonQualityCheckTask,
       lessonFixTask,
+      lessonActivityPlanTask,
+      lessonActivitiesTask,
       stepVariantTask,
       exampleLinesTask,
       setupLessonOutlineTask,

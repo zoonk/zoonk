@@ -13,7 +13,7 @@ export const ACTIVITY_SERVICE_TIER = chooseServiceTier({ wait: "soon" });
 type Written = { index: number; converted: ConvertedScreen };
 
 /** Each written activity through core's validator, then its programs run as a learner's would be. */
-async function checkActivities({
+export async function checkWrittenActivities({
   indexes,
   language,
   written,
@@ -45,7 +45,7 @@ async function checkActivities({
   }));
 }
 
-type CheckedActivity = Awaited<ReturnType<typeof checkActivities>>[number];
+type CheckedActivity = Awaited<ReturnType<typeof checkWrittenActivities>>[number];
 
 /**
  * Writes the activities, and once more those whose content or programs fail, with what failed.
@@ -76,7 +76,7 @@ export async function writeCheckedActivities({
 
   const first = await write(indexes, []);
 
-  const checked = await checkActivities({
+  const checked = await checkWrittenActivities({
     indexes,
     language: context.language,
     written: first.data,
@@ -93,7 +93,7 @@ export async function writeCheckedActivities({
     failed,
   );
 
-  const rechecked = await checkActivities({
+  const rechecked = await checkWrittenActivities({
     indexes: failed.map(({ index }) => index),
     language: context.language,
     written: second.data,

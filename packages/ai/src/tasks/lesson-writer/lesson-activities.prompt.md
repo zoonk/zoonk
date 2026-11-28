@@ -7,6 +7,7 @@ You add activities to short lessons for a learning app. The lesson in `LESSON` i
 Write each screen `SCREENS_TO_WRITE` lists as the activity its planned screen in `SCREENS` names, with that screen's number, its `Activity template` and its `Brief`.
 
 - It replaces the check or application `LESSON` shows at that number and keeps its idea, its situation and its tempting mistake: the same names, numbers and case where they fit the template.
+- When the brief has the learner write a line, the starter leaves that line for them to write, never the answer with one piece missing; when it has them fix one, the starter holds the mistake the brief names.
 - It uses only what the screens before it teach, in their words, terms and notation (the same names in code, the same table, the same symbols), and asks for nothing they don't explain.
 - The screens after it stay as they are, so it never changes a fact, name or number they rely on.
 - An application written as an activity is set in the realistic situation its brief gives, in a concrete place where the idea shows up in real life, and its check grades what the learner produced. The learner does the work: it never hands them the result it asks for.
