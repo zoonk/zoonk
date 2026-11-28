@@ -19,7 +19,7 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
   let onGraded: @MainActor (Grade) -> Void
   /// A microphone that's off hands over to the screen's other way to answer; without one, the bar
   /// says how to turn it on and the screen's other way on (Skip) stays.
-  var onBlocked: (() -> Void)?
+  var onMicrophoneProblem: ((MicrophoneProblem) -> Void)?
   var onCheckingChanged: ((Bool) -> Void)?
 
   private enum Issue: Equatable {
@@ -41,6 +41,9 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
       Task { await record() }
     }
     .announcesStatus(announcement)
+    .onChange(of: recorder.status.startProblem) { _, problem in
+      if let problem { onMicrophoneProblem?(problem) }
+    }
     .onChange(of: checking) { _, value in onCheckingChanged?(value) }
     .onDisappear {
       recorder.cancel()
@@ -50,7 +53,7 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
   }
 
   private var isOff: Bool {
-    recorder.isDenied && onBlocked == nil
+    recorder.microphoneProblem == .denied && onMicrophoneProblem == nil
   }
 
   private var note: RecordNote? {
@@ -90,7 +93,7 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
     issue = nil
     voice.player.stopAny()
 
-    let started = await recorder.start { recording in
+    await recorder.start { recording in
       var recording = recording
 
       if !sendsStartup {
@@ -98,10 +101,6 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
       }
 
       grading = Task { await check(recording) }
-    }
-
-    if !started, recorder.isDenied {
-      onBlocked?()
     }
   }
 

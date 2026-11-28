@@ -8208,6 +8208,9 @@
         }
       }
     },
+    "The microphone isn't available here. You can skip this word." : {
+
+    },
     "The mock didn't start. Try again in a moment." : {
       "comment" : "Starting the speaking mock failed",
       "localizations" : {

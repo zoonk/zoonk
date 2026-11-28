@@ -1,6 +1,11 @@
 import AVFoundation
 import Observation
 
+enum MicrophoneProblem: Equatable {
+  case denied
+  case unavailable
+}
+
 struct VoiceRecording: Sendable {
   let attemptId = UUID().uuidString
   let audio: Data
@@ -21,7 +26,12 @@ final class VoiceRecorder {
     /// From the press until the recorder's own clock moves: the learner waits for "Speak now".
     case acquiring
     case recording(startedAt: Date)
-    case denied
+    case failedToStart(MicrophoneProblem)
+
+    var startProblem: MicrophoneProblem? {
+      if case .failedToStart(let problem) = self { return problem }
+      return nil
+    }
   }
 
   /// A spoken answer is one sentence; a longer recording is a microphone left on.
@@ -51,17 +61,13 @@ final class VoiceRecorder {
     return false
   }
 
-  /// False before the learner is asked: tapping Record asks.
-  var isDenied: Bool {
-    status == .denied || AVAudioApplication.shared.recordPermission == .denied
+  var microphoneProblem: MicrophoneProblem? {
+    status.startProblem ?? (AVAudioApplication.shared.recordPermission == .denied ? .denied : nil)
   }
 
-  /// False when the microphone is off or couldn't start. True once the recorder started, while
-  /// the take still waits to go live (`.acquiring`).
-  @discardableResult
-  func start(onRecorded: @escaping @MainActor (VoiceRecording) -> Void) async -> Bool {
-    guard status == .idle || status == .denied else {
-      return false
+  func start(onRecorded: @escaping @MainActor (VoiceRecording) -> Void) async {
+    guard status == .idle || status.startProblem != nil else {
+      return
     }
 
     var pressedAt = ContinuousClock.now
@@ -72,12 +78,12 @@ final class VoiceRecorder {
     let isAllowed = await AVAudioApplication.requestRecordPermission()
 
     guard acquisition == mine else {
-      return false
+      return
     }
 
     guard isAllowed else {
-      status = .denied
-      return false
+      status = .failedToStart(.denied)
+      return
     }
 
     // Time spent answering the permission prompt isn't the microphone's.
@@ -88,24 +94,27 @@ final class VoiceRecorder {
     guard await openSession(), acquisition == mine, let recorder = makeRecorder() else {
       if acquisition == mine {
         SharedAudioSession.release(for: self)
-        status = .idle
+        status = .failedToStart(.unavailable)
       } else if status == .idle {
         // Cancelled while the session opened, and no other take has it since.
         SharedAudioSession.release(for: self)
       }
 
-      return false
+      return
     }
 
-    let delegate = RecorderDelegate { [weak self] in self?.finish() }
+    let delegate = RecorderDelegate { [weak self, weak recorder] in
+      guard let recorder, self?.recorder === recorder else { return }
+      self?.finish()
+    }
     recorder.delegate = delegate
     recorder.isMeteringEnabled = true
 
     guard recorder.record(forDuration: Self.maxDuration) else {
       discard(recorder)
       SharedAudioSession.release(for: self)
-      status = .idle
-      return false
+      status = .failedToStart(.unavailable)
+      return
     }
 
     self.recorder = recorder
@@ -113,7 +122,6 @@ final class VoiceRecorder {
     self.onRecorded = onRecorded
     observeInterruptions()
     watch(recorder, pressedAt: pressedAt)
-    return true
   }
 
   func stop() {
@@ -176,6 +184,7 @@ final class VoiceRecorder {
 
     let audio = try? Data(contentsOf: recorder.url)
     let deliver = onRecorded
+    let failedToStart = status == .acquiring && deliver != nil
     let startup = micStartupMs
     discard(recorder)
     self.recorder = nil
@@ -185,11 +194,11 @@ final class VoiceRecorder {
     meter = nil
     recentLevels = []
     micStartupMs = nil
-    status = .idle
+    status = failedToStart ? .failedToStart(.unavailable) : .idle
     stopObservingInterruptions()
     SharedAudioSession.release(for: self)
 
-    if let audio, !audio.isEmpty, let deliver {
+    if !failedToStart, let audio, !audio.isEmpty, let deliver {
       deliver(VoiceRecording(audio: audio, durationMs: durationMs, micStartupMs: startup))
     }
   }

@@ -41,7 +41,7 @@ struct RecordCue: View {
       switch recorder?.status {
       case .acquiring: .gettingReady
       case .recording: .live
-      case .idle, .denied, nil: isChecking ? .checking : .before
+      case .idle, .failedToStart, nil: isChecking ? .checking : .before
       }
     }
   }

@@ -153,7 +153,7 @@ private struct PronunciationRoundView: View {
           )
           .id(word.id)
 
-          if case .ready = state, !recorder.isDenied {
+          if case .ready = state, recorder.microphoneProblem == nil {
             RecordCue(recorder: recorder, isChecking: round.isPending)
           }
         } response: {
@@ -187,7 +187,7 @@ private struct PronunciationRoundView: View {
   }
 
   private func showsOptions(_ state: PronunciationRound.WordState) -> Bool {
-    if case .ready = state { return !recorder.isDenied }
+    if case .ready = state { return recorder.microphoneProblem == nil }
     return false
   }
 
@@ -226,12 +226,17 @@ private struct PronunciationRoundView: View {
       return nil
     }
 
-    if recorder.isDenied {
+    switch recorder.microphoneProblem {
+    case .unavailable:
+      return .microphoneUnavailable
+    case .denied:
       return .microphoneOff(
         String(
           localized:
             "Turn on the microphone for Zoonk in Settings to say the word. You can skip it for now.",
           table: "Voice", comment: "How to say a word when the microphone is off"))
+    case nil:
+      break
     }
 
     if isTakeOn {
@@ -300,7 +305,7 @@ private struct PronunciationRoundView: View {
         .keyboardShortcut(.defaultAction)
       }
     case .ready:
-      if recorder.isDenied {
+      if recorder.microphoneProblem != nil {
         Button {
           Task { await round.next() }
         } label: {

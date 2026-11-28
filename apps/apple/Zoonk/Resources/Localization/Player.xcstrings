@@ -11796,6 +11796,9 @@
         }
       }
     },
+    "We can't use your microphone, so type what you'd say." : {
+
+    },
     "We couldn't check your answer this time. Try again." : {
       "comment" : "The server couldn't grade a written or spoken answer",
       "localizations" : {

@@ -104,7 +104,7 @@ struct LessonStageView: View {
     if let step = state.currentStep {
       let spokenMode = step.spokenAnswerMode(
         canSpeak: recording.input != nil, cantTalk: store.cantTalkToday,
-        cantListen: store.cantListenToday, micBlocked: store.isMicBlocked,
+        cantListen: store.cantListenToday, microphoneProblem: store.microphoneProblem,
         lockedAnswer: state.phase == .playing ? nil : state.currentAnswer,
         heard: state.currentResult?.heard)
       let prompt = ShownPrompt(
