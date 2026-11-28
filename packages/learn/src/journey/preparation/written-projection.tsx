@@ -38,7 +38,7 @@ function ScoreRow({
 }: {
   children?: React.ReactNode;
   decimals?: number;
-  /** Graded by level: no points to wait for, so no meter holds their place. */
+  /** Graded by level: no points to wait for. */
   levels?: boolean;
   max: number | null;
   minimumShare?: number | null;
@@ -80,9 +80,7 @@ function ScoreRow({
           {value()}
         </span>
       </p>
-      {max !== null && !(levels && !range) && (
-        <PointsMeter max={max} minimumShare={minimumShare} range={range} />
-      )}
+      {max !== null && <PointsMeter max={max} minimumShare={minimumShare} range={range} />}
       {children}
     </div>
   );

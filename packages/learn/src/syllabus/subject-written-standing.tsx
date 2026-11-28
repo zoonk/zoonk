@@ -98,7 +98,12 @@ function PointsScale({ written }: { written: WrittenSubject }) {
             range={range}
           />
         )}
-        {minimum && <MinimumLegend>{minimumLine(written.points)}</MinimumLegend>}
+        {minimum &&
+          (range ? (
+            <MinimumLegend>{minimumLine(written.points)}</MinimumLegend>
+          ) : (
+            <p className="text-muted-foreground text-xs">{minimumLine(written.points)}</p>
+          ))}
         <WrittenStandingLine part={written.points} />
       </div>
       <StepRows>
