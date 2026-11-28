@@ -32,12 +32,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -60,7 +58,9 @@ import com.zoonk.android.feature.activities.ActivityCanvasLabel
 import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.activities.LineMarker
+import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.answerTone
 import com.zoonk.android.ui.components.fadingHorizontalScroll
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatAmount
@@ -133,24 +133,25 @@ private fun PatternTesterActivity(props: ActivityProps) {
     }
 
     ActivityCanvas(gap = 16.dp) {
-        RichText(
-            regex?.task ?: formula?.task.orEmpty(),
-            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
-            literalNumbers = regex != null,
-        )
+        if (!props.isExploring) {
+            RichText(
+                regex?.task ?: formula?.task.orEmpty(),
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
+                literalNumbers = regex != null,
+            )
+        }
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            PatternField(value, isRegex = regex != null, props.isLocked, props.isChecked, focus)
-            if (!props.isChecked) {
-                SnippetBar(
-                    snippets = if (formula != null) formulaSnippets(formula) else regexSnippets(),
-                    label = stringResource(R.string.activities_code_symbols),
-                    enabled = !props.isLocked,
-                    onInsert = { snippet ->
-                        value.insertSnippet(snippet)
-                        focus.requestFocus()
-                    },
-                )
-            }
+            PatternField(value, isRegex = regex != null, props.isLocked || props.isChecked, focus)
+            // Main keeps a checked answer's keys, disabled, so nothing under them moves.
+            SnippetBar(
+                snippets = if (formula != null) formulaSnippets(formula) else regexSnippets(),
+                label = stringResource(R.string.activities_code_symbols),
+                enabled = !props.isLocked && !props.isChecked,
+                onInsert = { snippet ->
+                    value.insertSnippet(snippet)
+                    focus.requestFocus()
+                },
+            )
         }
         if (regex != null) RegexExamples(regex, value.text.toString())
         if (formula != null) FormulaExamples(formula, value.text.toString())
@@ -172,14 +173,14 @@ private fun PatternTesterActivity(props: ActivityProps) {
                     ),
                 )
                 val colors = MaterialTheme.colorScheme
-                val shape = RoundedCornerShape(ZoonkRadius.option)
+                val shape = RoundedCornerShape(ZoonkRadius.xl)
                 Text(
                     if (regex != null) "/${regex.solution}/" else "=${formula?.solution.orEmpty()}",
                     Modifier
                         .clip(shape)
                         .background(colors.surface)
                         .border(1.dp, colors.outlineVariant, shape)
-                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                        .padding(horizontal = 12.dp, vertical = 10.dp),
                     style = MaterialTheme.zoonkType.codeField,
                 )
             }
@@ -191,13 +192,11 @@ private fun PatternTesterActivity(props: ActivityProps) {
 private fun PatternField(
     value: TextFieldState,
     isRegex: Boolean,
-    isLocked: Boolean,
-    isChecked: Boolean,
+    readOnly: Boolean,
     focus: FocusRequester,
 ) {
     val colors = MaterialTheme.colorScheme
-    val shape = RoundedCornerShape(ZoonkRadius.option)
-    val style = MaterialTheme.typography.titleLarge.copy(fontFamily = GeistMono, color = colors.onSurface)
+    val style = MaterialTheme.zoonkType.codeField.copy(color = colors.onSurface)
     var focused by remember { mutableStateOf(false) }
     val label = stringResource(if (isRegex) R.string.activities_code_your_pattern else R.string.activities_code_your_formula)
     val delimiter = @Composable { Text("/", Modifier.clearAndSetSemantics {}, color = colors.onSurfaceVariant, style = style) }
@@ -205,12 +204,9 @@ private fun PatternField(
     Row(
         Modifier
             .fillMaxWidth()
-            .heightIn(min = 56.dp)
-            .alpha(if (isChecked) CHECKED_ALPHA else 1f)
-            .clip(shape)
-            .background(colors.surface)
-            .border(2.dp, if (focused) colors.primary else colors.outline, shape)
-            .padding(horizontal = 16.dp),
+            .heightIn(min = 48.dp)
+            .codeField(colors, focused)
+            .padding(horizontal = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(2.dp),
     ) {
@@ -223,7 +219,7 @@ private fun PatternField(
                     .focusRequester(focus)
                     .onFocusChanged { focused = it.isFocused }
                     .semantics { contentDescription = label },
-            readOnly = isLocked,
+            readOnly = readOnly,
             textStyle = style,
             keyboardOptions = codeKeyboard,
             lineLimits = TextFieldLineLimits.SingleLine,
@@ -321,9 +317,10 @@ private fun SampleRow(
     val colors = MaterialTheme.colorScheme
     val shape = RoundedCornerShape(ZoonkRadius.option)
     val failing = result?.passes == false
-    val destructive = MaterialTheme.zoonk.destructive
     val words = if (shouldMatch) colors.onTertiaryContainer else colors.error
-    val tint = if (shouldMatch) colors.tertiary else destructive
+    val tint = if (shouldMatch) colors.tertiary else MaterialTheme.zoonk.destructive
+    // Main's tested row: the right answer's line and tint when it passes, the wrong one's when it fails.
+    val tone = answerTone(picked = false, result = result?.let { if (it.passes) AnswerResult.Right else AnswerResult.Wrong })
     val status =
         result?.let {
             stringResource(
@@ -342,8 +339,7 @@ private fun SampleRow(
                 append(sample)
             } else {
                 append(sample.substring(0, match.start))
-                // A failing row is tinted already, so its match takes only the words' color.
-                withStyle(SpanStyle(color = words, background = if (failing) Color.Unspecified else tint.copy(alpha = SOFT_ALPHA))) {
+                withStyle(SpanStyle(color = words, background = tint.copy(alpha = SOFT_ALPHA))) {
                     append(sample.substring(match.start, match.end))
                 }
                 append(sample.substring(match.end))
@@ -355,9 +351,14 @@ private fun SampleRow(
             .fillMaxWidth()
             .heightIn(min = 48.dp)
             .clip(shape)
-            .background(if (failing) destructive.copy(alpha = SOFT_ALPHA) else colors.surface)
-            .border(1.dp, if (failing) colors.error.copy(alpha = FAILING_EDGE_ALPHA) else colors.outlineVariant, shape)
-            .semantics(mergeDescendants = true) { status?.let { stateDescription = it } }
+            .background(colors.surface)
+            .then(
+                if (result == null) {
+                    Modifier.border(1.dp, colors.outlineVariant, shape)
+                } else {
+                    Modifier.background(tone.container).border(tone.border, shape)
+                },
+            ).semantics(mergeDescendants = true) { status?.let { stateDescription = it } }
             .padding(horizontal = 12.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -421,7 +422,7 @@ private fun FormulaExamples(
                 }
             },
     ) {
-        Row(Modifier.background(colors.surfaceContainer)) {
+        Row(Modifier.background(tableHeaderColor())) {
             val header = MaterialTheme.typography.labelMedium
             val muted = colors.onSurfaceVariant
             names.forEach { Text(it, cell.weight(1f), color = muted, style = header.copy(fontFamily = GeistMono)) }
@@ -494,20 +495,19 @@ private fun PatternHints(
                                 tint = MaterialTheme.zoonk.vizHighlight,
                             )
                         }
-                        Column {
-                            RichText(
-                                stringResource(R.string.activities_code_hint_mistake, hint.mistake),
-                                style = style.copy(fontWeight = FontWeight.SemiBold),
-                                literalNumbers = literalNumbers,
-                            )
-                            RichText(hint.hint, style = style, literalNumbers = literalNumbers)
-                        }
+                        // Main's one line: the mistake in bold, then what to try.
+                        RichText(
+                            "**${stringResource(R.string.activities_code_hint_mistake, hint.mistake)}** ${hint.hint}",
+                            style = style,
+                            literalNumbers = literalNumbers,
+                        )
                     }
                 }
             }
         }
-        if (!isChecked && shown < hints.size) {
-            OutlinedButton(onClick = { shown += 1 }, enabled = !isLocked) {
+        // Main keeps the button, disabled, once a passing answer is checked.
+        if (visible.size < hints.size) {
+            OutlinedButton(onClick = { shown += 1 }, enabled = !isLocked && !isChecked) {
                 Icon(painterResource(R.drawable.ic_lightbulb), null, Modifier.size(18.dp))
                 Text(
                     stringResource(if (shown == 0) R.string.activities_code_show_hint else R.string.activities_code_show_another_hint),
@@ -518,17 +518,9 @@ private fun PatternHints(
     }
 }
 
-private const val CHECKED_ALPHA = 0.8f
-private const val FAILING_EDGE_ALPHA = 0.5f
-
 internal fun patternHintCount(
     total: Int,
     shown: Int,
     checked: Boolean,
     correct: Boolean?,
-): Int =
-    if (checked) {
-        if (correct == true) 0 else total
-    } else {
-        shown.coerceIn(0, total)
-    }
+): Int = if (checked && correct != true) total else shown.coerceIn(0, total)
