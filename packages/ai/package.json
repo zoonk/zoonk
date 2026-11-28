@@ -23,6 +23,7 @@
     "./tasks/lessons/question": "./src/tasks/lessons/lesson-question.ts",
     "./tasks/lessons/question-context": "./src/tasks/lessons/lesson-question-context.ts",
     "./tasks/audio": "./src/tasks/audio/generate-language-audio.ts",
+    "./tasks/audio/check-clip-ending": "./src/tasks/audio/check-clip-ending.ts",
     "./tasks/audio/listening": "./src/tasks/audio/voice-listening-script.ts",
     "./tasks/audio/listening-voices": "./src/tasks/audio/listening-voices.ts",
     "./tasks/audio/prompt": "./src/tasks/audio/language-audio-prompt.ts",

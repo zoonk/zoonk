@@ -5,14 +5,18 @@ import { generateLanguageAudio } from "./generate-language-audio";
 import { type generateSpeechWithProvider } from "./speech-provider";
 
 const {
+  checkClipEndingMock,
   checkWordPronunciationMock,
   convertWavToMp3Mock,
   generateSpeechWithProviderMock,
+  logErrorMock,
   writeWordIpaMock,
 } = vi.hoisted(() => ({
+  checkClipEndingMock: vi.fn(),
   checkWordPronunciationMock: vi.fn(),
   convertWavToMp3Mock: vi.fn<typeof convertWavToMp3>(),
   generateSpeechWithProviderMock: vi.fn<typeof generateSpeechWithProvider>(),
+  logErrorMock: vi.fn(),
   writeWordIpaMock: vi.fn(),
 }));
 
@@ -34,8 +38,16 @@ vi.mock("../language/check-word-pronunciation", () => ({
   checkWordPronunciation: checkWordPronunciationMock,
 }));
 
+vi.mock("./check-clip-ending", () => ({ checkClipEnding: checkClipEndingMock }));
+
+vi.mock("@zoonk/utils/logger", () => ({ logError: logErrorMock }));
+
 function wordIpa(data: { englishIpa: string | null; ipa: string | null }) {
   return { data };
+}
+
+function endingHeard(added: "none" | "sound" | "speech") {
+  return { data: { added, heard: added === "none" ? "vivo in" : "vivo in ca" } };
 }
 
 function heardAs(pronunciation: "english" | "native" | "unclear") {
@@ -74,6 +86,73 @@ describe(generateLanguageAudio, () => {
     convertWavToMp3Mock.mockResolvedValue({ audio: mp3Audio, durationSeconds: 2.5 });
     writeWordIpaMock.mockResolvedValue(wordIpa({ englishIpa: null, ipa: "ˈpalavɾa" }));
     checkWordPronunciationMock.mockResolvedValue(heardAs("native"));
+    checkClipEndingMock.mockResolvedValue(endingHeard("none"));
+  });
+
+  it("voices an open phrase again when its clip says more than the text", async () => {
+    checkClipEndingMock
+      .mockResolvedValueOnce(endingHeard("speech"))
+      .mockResolvedValue(endingHeard("none"));
+
+    const result = await generateLanguageAudio({ language: "it", text: "vivo in" });
+
+    expect(result.data?.provenance.model).toBe(FLASH_LITE);
+    expect(requestedModels()).toStrictEqual([FLASH, FLASH_LITE]);
+
+    expect(checkClipEndingMock).toHaveBeenCalledWith({
+      abortSignal: expect.any(AbortSignal),
+      audio: mp3Audio,
+      language: "it",
+      mediaType: "audio/mpeg",
+      text: "vivo in",
+    });
+  });
+
+  it("keeps the first clip when every model adds to it, logging no text or what was heard", async () => {
+    checkClipEndingMock.mockResolvedValue(endingHeard("sound"));
+
+    const result = await generateLanguageAudio({ language: "it", text: "vivo in" });
+
+    expect(result.error).toBeNull();
+    expect(result.data?.provenance.model).toBe(FLASH);
+    expect(requestedModels()).toStrictEqual([FLASH, FLASH_LITE, MAI_VOICE]);
+
+    const logged = JSON.stringify(logErrorMock.mock.calls.map((args) => args.map(String)));
+
+    expect(logged).toContain("sound");
+    expect(logged).not.toContain("vivo in");
+  });
+
+  it("keeps the first flagged clip that passed its other checks", async () => {
+    convertWavToMp3Mock
+      .mockRejectedValueOnce(new Error(`${FLASH} returned silent audio`))
+      .mockResolvedValue({ audio: mp3Audio, durationSeconds: 1 });
+
+    checkClipEndingMock.mockResolvedValue(endingHeard("speech"));
+
+    const result = await generateLanguageAudio({ language: "it", text: "vivo in" });
+
+    expect(result.data?.provenance.model).toBe(FLASH_LITE);
+    expect(requestedModels()).toStrictEqual([FLASH, FLASH_LITE, MAI_VOICE]);
+  });
+
+  it("keeps an open phrase's clip when the ending check can't run", async () => {
+    checkClipEndingMock.mockRejectedValue(new Error("Gemini unavailable"));
+
+    const result = await generateLanguageAudio({ language: "it", text: "vivo in" });
+
+    expect(result.error).toBeNull();
+    expect(requestedModels()).toStrictEqual([FLASH]);
+  });
+
+  it.each([
+    ["a question", "es", "Hola, ¿qué tal?"],
+    ["a sentence in a script with its own full stop", "hi", "यह मेरा घर है।"],
+    ["a passage", "it", "Una frase lunga. Un'altra frase."],
+  ])("never checks the ending of %s", async (_, language, text) => {
+    await generateLanguageAudio({ language, text });
+
+    expect(checkClipEndingMock).not.toHaveBeenCalled();
   });
 
   it("gives a word English spells the same its IPA, on Gemini Flash only", async () => {

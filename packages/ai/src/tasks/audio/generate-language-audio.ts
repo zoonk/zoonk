@@ -12,6 +12,7 @@ import { type TaskProvenance } from "../../provenance/task-provenance";
 import { checkWordPronunciation } from "../language/check-word-pronunciation";
 import { type WordIpa, writeWordIpa } from "../language/word-ipa";
 import { convertWavToMp3 } from "./convert-wav-to-mp3";
+import { type ClipAddition, findClipAddition } from "./find-clip-addition";
 import alphabetSymbolPrompt from "./generate-language-audio-alphabet-symbol.prompt.md";
 import { DEFAULT_LANGUAGE_AUDIO_VOICE, getLanguageAudioPrompt } from "./language-audio-prompt";
 import { assertExpectedAudioSize, getMaxSeconds } from "./speech-limits";
@@ -175,6 +176,19 @@ async function assertNativeReading({
   }
 }
 
+/** Carries the clip, so it can still be kept when every model adds to theirs. */
+class AddedToClipError extends Error {
+  readonly added: ClipAddition;
+  readonly voiced: VoicedAudio;
+
+  constructor({ added, voiced }: { added: ClipAddition; voiced: VoicedAudio }) {
+    super(`${voiced.model} added ${added} to the clip`);
+    this.name = "AddedToClipError";
+    this.added = added;
+    this.voiced = voiced;
+  }
+}
+
 type VoiceInput = {
   analytics?: AiGenerationContext;
   instructions: string;
@@ -185,8 +199,8 @@ type VoiceInput = {
 };
 
 /**
- * Inside the retry boundary, so malformed, silent or overlong audio, or a word read the English
- * way, falls back like a transport failure.
+ * Inside the retry boundary, so malformed, silent or overlong audio, a word read the English way or
+ * a clip that says more than its text falls back like a transport failure.
  */
 async function generateWithModel({
   analytics,
@@ -211,18 +225,35 @@ async function generateWithModel({
 
   const { audio, durationSeconds } = await convertWavToMp3({ audio: wavAudio, maxSeconds, model });
 
-  if (lookAlike) {
-    await assertNativeReading({ analytics, audio, language, lookAlike, model, text });
+  const [added] = await Promise.all([
+    findClipAddition({ analytics, audio, language, text }),
+    lookAlike
+      ? assertNativeReading({ analytics, audio, language, lookAlike, model, text })
+      : undefined,
+  ]);
+
+  const voiced: VoicedAudio = { audio, durationSeconds, format: "mp3", model, providerMetadata };
+
+  if (added) {
+    throw new AddedToClipError({ added, voiced });
   }
 
-  return { audio, durationSeconds, format: "mp3", model, providerMetadata };
+  return voiced;
 }
 
-/** Each adapter owns transient request retries; this layer owns cross-model and quality retries. */
+/**
+ * Each adapter owns transient request retries; this layer owns cross-model and quality retries.
+ * When every model adds to its clip, the first such clip is kept, so a checker's false alarm never
+ * leaves a word silent.
+ */
 async function generateWithFallback({
+  firstAdded,
   models,
   ...input
-}: VoiceInput & { models: readonly SpeechModelName[] }): Promise<VoicedAudio> {
+}: VoiceInput & {
+  firstAdded?: AddedToClipError;
+  models: readonly SpeechModelName[];
+}): Promise<VoicedAudio> {
   const [model, ...remainingModels] = models;
 
   if (!model) {
@@ -236,8 +267,15 @@ async function generateWithFallback({
       throw error;
     }
 
+    const added = firstAdded ?? (error instanceof AddedToClipError ? error : undefined);
+
     if (remainingModels.length > 0) {
-      return generateWithFallback({ ...input, models: remainingModels });
+      return generateWithFallback({ ...input, firstAdded: added, models: remainingModels });
+    }
+
+    if (added) {
+      logError(`Every speech model added to its clip; keeping the first: ${added.message}`);
+      return added.voiced;
     }
 
     const lastError = error instanceof Error ? error : new Error(String(error));
