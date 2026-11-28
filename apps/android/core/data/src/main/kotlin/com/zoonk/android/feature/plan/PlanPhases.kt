@@ -134,8 +134,10 @@ fun Plan.phaseEnd(phase: PlanPhase): PhaseEnd? {
         return null
     }
     if (phase.later == true) return PhaseEnd.Later
+    val challengeDay = phase.endingChallengeDay()
+    // A phase is behind the learner on its challenge's day, which can come after its last lesson.
     val lastDay =
-        phase.lastDay() ?: run {
+        challengeDay ?: phase.end ?: run {
             // A last phase without a day of its own ends with the plan.
             val last = phases.lastOrNull { it.kind != PlanPhase.Kind.AFTER_EXAM }?.index
             val planEnd = estimate.endDate?.toJavaLocalDate()?.takeIf { phase.index == last } ?: return null
@@ -143,9 +145,8 @@ fun Plan.phaseEnd(phase: PlanPhase): PhaseEnd? {
         }
     val learns = phase.kind == PlanPhase.Kind.LEARN || phase.kind == PlanPhase.Kind.AFTER_EXAM
     val ahead = phase.state == PlanPhase.State.UPCOMING
-    val endsOnChallenge = lastDay != phase.end
     val estimated =
-        endsOnChallenge ||
+        challengeDay != null ||
             schedule.targetDateEstimated ||
             (learns && (ahead || phase.checkpoint?.state == PlanPhaseCheckpoint.State.UPCOMING))
     val year = phase.precision == PlanFinishPrecision.YEAR
@@ -157,10 +158,19 @@ fun Plan.phaseEnd(phase: PlanPhase): PhaseEnd? {
     }
 }
 
-/** A phase is behind the learner on its challenge's day, which can come after its last lesson. */
-private fun PlanPhase.lastDay(): LocalDate? {
+/** When a challenge still ahead comes: "Later" while its phase's work has no place yet, else its day, as precisely as core dates its phase. */
+fun Plan.challengeDay(checkpoint: PlanPhaseCheckpoint): PhaseEnd? {
+    if (checkpoint.later == true) return PhaseEnd.Later
+    val date = checkpoint.date?.toJavaLocalDate() ?: return null
+    val precision = checkpoint.precision ?: return PlanEnd(date, estimate = true, month = false)
+    return estimateEnd(date, year = precision == PlanFinishPrecision.YEAR)
+}
+
+/** The day of a challenge still ahead that comes on or after the phase's last lesson. */
+private fun PlanPhase.endingChallengeDay(): LocalDate? {
     val challengeDay = checkpoint?.takeIf { it.state == PlanPhaseCheckpoint.State.UPCOMING }?.date?.toJavaLocalDate()
-    return if (challengeDay != null && end != null && challengeDay.isAfter(end)) challengeDay else end
+    val end = end ?: return null
+    return challengeDay?.takeUnless { it.isBefore(end) }
 }
 
 /**

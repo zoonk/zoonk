@@ -82,6 +82,39 @@ class PhaseDatesTest {
     }
 
     @Test
+    fun estimatesAnExamPhaseAheadWhoseChallengeFallsOnItsLastDayAsTheChallengesRowDoes() {
+        val shaped =
+            planOf(
+                phase(0, "current", "2026-11-20", kind = "foundations"),
+                phase(1, end = "2027-07-16", kind = "gaps", checkpoint = challenge("2027-07-16"), start = "2026-11-21"),
+            )
+        assertEquals(PlanEnd(day("2027-07-16"), estimate = true, month = true), shaped.phaseEnd(shaped.phases[1]))
+    }
+
+    @Test
+    fun saysAChallengeWhosePhaseHasNoPlaceYetLater() {
+        val shaped =
+            planOf(
+                phase(0),
+                phase(1, checkpoint = """{"date":null,"later":true,"locked":false,"planItemId":null,"state":"upcoming","when":"date"}"""),
+            )
+        assertEquals(PhaseEnd.Later, shaped.challengeDay(shaped.phases[1].checkpoint!!))
+    }
+
+    @Test
+    fun saysAChallengeByItsPhasesPrecision() {
+        val byYear = planOf(phase(0, checkpoint = challenge("2031-04-02", precision = "year")))
+        val byMonth = planOf(phase(0, checkpoint = challenge("2027-04-02", precision = "month")))
+        val byDay = planOf(phase(0, checkpoint = challenge("2027-04-02")))
+        assertEquals(
+            PlanEnd(day("2031-04-02"), estimate = true, month = false, year = true),
+            byYear.challengeDay(byYear.phases[0].checkpoint!!),
+        )
+        assertEquals(PlanEnd(day("2027-04-02"), estimate = true, month = true), byMonth.challengeDay(byMonth.phases[0].checkpoint!!))
+        assertEquals(PlanEnd(day("2027-04-02"), estimate = true, month = false), byDay.challengeDay(byDay.phases[0].checkpoint!!))
+    }
+
+    @Test
     fun keepsAChallengeOnItsPhasesLastDayAtThatDay() {
         val shaped = planOf(phase(0, "current", "2026-11-20", checkpoint = challenge("2026-11-20")))
         assertEquals(day("2026-11-20"), (shaped.phaseEnd(shaped.phases[0]) as PlanEnd).date)
@@ -361,7 +394,8 @@ class PhaseDatesTest {
     private fun challenge(
         date: String = "2026-11-22",
         state: String = "upcoming",
-    ) = """{"date":"$date","locked":false,"planItemId":null,"state":"$state","when":"date"}"""
+        precision: String? = null,
+    ) = """{"date":"$date","locked":false,"planItemId":null,"precision":${precision.json()},"state":"$state","when":"date"}"""
 
     private fun short(
         first: Int,
