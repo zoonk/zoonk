@@ -15,16 +15,24 @@ struct ChoiceRow<Words: View>: View {
   let action: () -> Void
   @ViewBuilder let words: Words
 
+  @Environment(\.isEnabled) private var isEnabled
+
   var body: some View {
     Button(action: action) {
       ChoiceRowLabel(picks: picks, isPicked: isPicked, isLocked: isLocked) {
         words
       }
-      .opacity(canPick ? 1 : 0.5)
+      .opacity(dims ? 0.5 : 1)
     }
     .disabled(isLocked || !canPick)
     .pickedRow(isPicked)
     .choiceTraits(picks, isPicked: isPicked)
+  }
+
+  /// Main's `CheckList` also dims every row while its list can't change, as while it saves; a
+  /// `ChoiceList` keeps its pick standing out.
+  private var dims: Bool {
+    !canPick || (picks == .several && !isEnabled)
   }
 }
 
