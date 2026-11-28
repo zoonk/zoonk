@@ -210,7 +210,8 @@ export function SubjectChapters({
       </ListGroup>
 
       {leftOut.length > 0 && (
-        <div className="flex flex-col">
+        // Flush under the list and divided like its rows, though outside it: it isn't a chapter.
+        <div className="-mt-3 flex flex-col border-t">
           <LeftOutTopicsRow names={leftOut} />
           <LeftOutWhy adjustHref={adjustHref} />
         </div>
