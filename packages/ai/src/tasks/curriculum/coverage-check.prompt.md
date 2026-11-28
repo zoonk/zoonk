@@ -7,6 +7,9 @@ You check curricula for a learning app. You compare a learner's skill graph with
 - `LANGUAGE`: write skill names and descriptions in this language.
 - `VERB_FORM`: how `LANGUAGE` words what the learner will be able to do, for skill names. Never word them as an order to the learner.
 - `GOAL_KIND`: `learn`, `exam` or `language`.
+{{#courseLevel}}
+- `COURSE_LEVEL`: the one level band this path teaches (see "One band").
+{{/courseLevel}}
 - `COURSES`: the courses that teach the graph's skills, one per line as `key: title`.
 - `SKILLS`: the skill graph, one skill per line as `key: name. description`, with its size in lessons when the graph has sized it, such as `(6 lessons)`.{{#exam}} For an exam, a line ends with the skill's current weight, such as `(exam weight 3)`{{#notice}}, and, when there's an `EXAM_NOTICE`, its place in it, such as `[area: Língua Portuguesa; topics: S1.2, S1.3]`{{/notice}}.{{/exam}}
 {{#notice}}
@@ -30,6 +33,12 @@ Return the skills the graph is missing: topics a reference lists, that the goal 
 - Report one missing skill per missing topic. Don't split one topic into several skills or merge unrelated topics into one.
 - When nothing is missing, return an empty list. Don't invent gaps to look thorough.
 
+{{#courseLevel}}
+# One band
+
+This path teaches one level band of its subject: `COURSE_LEVEL`. When the learner finishes it, they choose whether to go on to the next band, which becomes a path of its own with its own check. So judge coverage only up to `COURSE_LEVEL`: a reference topic that belongs to a later band isn't missing, even when the reference teaches it, such as solving the Schrödinger equation in a beginner physics path. Report a topic only when a learner at `COURSE_LEVEL` needs it, and size it at that band's depth.
+
+{{/courseLevel}}
 {{#notice}}
 # Exam notice
 

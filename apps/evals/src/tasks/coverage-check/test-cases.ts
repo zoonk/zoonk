@@ -174,6 +174,38 @@ export const TEST_CASES: TestCase<CoverageCheckExpected, CoverageCheckParams>[] 
     },
   },
   {
+    expected: { gaps: ["Unit 4: Balancing chemical equations"] },
+    id: "en-beginner-chemistry-band-skips-later-topics",
+    userInput: {
+      courseLevel: "beginner",
+      courses: [{ key: "chemistry", title: "Chemistry" }],
+      goal: "Learn chemistry",
+      goalKind: "learn",
+      language: "en",
+      references: [
+        {
+          text: [
+            "Unit 1: Matter, elements and compounds",
+            "Unit 2: Atoms, protons, neutrons and electrons",
+            "Unit 3: The periodic table",
+            "Unit 4: Balancing chemical equations",
+            "Unit 5: Acids and bases in everyday life",
+            "Unit 6: Molecular orbital theory",
+            "Unit 7: Reaction mechanisms in organic synthesis",
+            "Unit 8: Chemical thermodynamics: Gibbs free energy and entropy",
+          ].join("\n"),
+          title: "CHEM 101-301: General to Advanced Chemistry",
+        },
+      ],
+      skills: [
+        skill("matter", "Tell elements, compounds and mixtures apart"),
+        skill("atoms", "Describe what atoms are made of"),
+        skill("periodic-table", "Read the periodic table"),
+        skill("acids-bases", "Recognize acids and bases at home"),
+      ],
+    },
+  },
+  {
     expected: { gaps: [] },
     id: "es-python-no-gaps",
     userInput: {

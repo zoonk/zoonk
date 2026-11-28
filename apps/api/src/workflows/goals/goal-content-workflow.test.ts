@@ -3616,8 +3616,13 @@ describe(goalContentWorkflow, () => {
     expect(events).toStrictEqual(["graph", "research ended"]);
     expect(vi.mocked(sleep)).toHaveBeenCalledWith("3s");
 
+    expect(generateWholeSkillGraph).toHaveBeenCalledWith(
+      expect.objectContaining({ courseLevel: "beginner" }),
+    );
+
     expect(checkCoverage).toHaveBeenCalledWith(
       expect.objectContaining({
+        courseLevel: "beginner",
         references: [
           {
             text: "1. Antigens 2. Adaptive immunity 3. Vaccine trials",

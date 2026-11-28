@@ -13,6 +13,7 @@ export function readGraphCoverage({
 }) {
   return checkCoverage({
     analytics: params.analytics,
+    courseLevel: params.courseLevel,
     courses: graph.courses.map(({ key, title }) => ({ key, title })),
     examOutline: params.goalKind === "exam" ? params.examBlueprint : undefined,
     goal: params.goal,

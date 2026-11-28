@@ -8,6 +8,7 @@ import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../pr
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import { getVerbForm } from "../_utils/verb-form";
+import { type COURSE_LEVELS } from "./_utils/course-levels";
 import {
   type CoverageReference,
   type ExamWeightChange,
@@ -114,6 +115,8 @@ export type CoverageCheckParams = {
   language: string;
   goal: string;
   goalKind: "exam" | "language" | "learn";
+  /** A broad learn goal's one level band, the same one its graph was written up to. */
+  courseLevel?: (typeof COURSE_LEVELS)[number];
   /** The graph's courses: a missing skill goes in the course of its own discipline. */
   courses: { key: string; title: string }[];
   skills: CoverageSkill[];
@@ -157,8 +160,16 @@ function getNoticeOutline(params: CoverageCheckParams): ExamOutline | undefined 
   return params.goalKind === "exam" ? params.examOutline : undefined;
 }
 
+function getCourseLevel(params: CoverageCheckParams) {
+  return params.goalKind === "learn" ? params.courseLevel : undefined;
+}
+
 function toPromptVariants(params: CoverageCheckParams) {
-  return { exam: params.goalKind === "exam", notice: Boolean(getNoticeOutline(params)) };
+  return {
+    courseLevel: Boolean(getCourseLevel(params)),
+    exam: params.goalKind === "exam",
+    notice: Boolean(getNoticeOutline(params)),
+  };
 }
 
 function getSchema(params: CoverageCheckParams): z.ZodType<RawCoverage> {
@@ -208,10 +219,12 @@ function buildUserPrompt(params: CoverageCheckParams): string {
     ),
   });
 
+  const courseLevel = getCourseLevel(params);
+
   return `
     LANGUAGE: ${getPromptLanguageName({ language: params.language })}
     VERB_FORM: ${getVerbForm(params.language)}
-    GOAL_KIND: ${params.goalKind}
+    GOAL_KIND: ${params.goalKind}${courseLevel ? `\n    COURSE_LEVEL: ${courseLevel}` : ""}
     COURSES:
 ${params.courses.map((course) => `- ${course.key}: ${course.title}`).join("\n")}
     SKILLS:

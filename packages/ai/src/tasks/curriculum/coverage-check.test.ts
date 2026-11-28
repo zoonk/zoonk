@@ -101,6 +101,22 @@ describe(checkCoverage, () => {
     expect(data.missing[0]?.estimatedLessons).toBe(4);
   });
 
+  it("judges a one-band learn path's coverage only up to the band it stops at", async () => {
+    vi.mocked(generateText).mockResolvedValue(createGenerateTextResult({ missing: [] }));
+
+    const banded = await sendCheck({ courseLevel: "beginner", goalKind: "learn" });
+
+    expect(banded.prompt).toContain("COURSE_LEVEL: beginner");
+    expect(banded.instructions).toContain("# One band");
+    expect(banded.instructions).not.toContain("{{");
+
+    vi.mocked(generateText).mockClear();
+    const whole = await sendCheck({ goalKind: "learn" });
+
+    expect(whole.prompt).not.toContain("COURSE_LEVEL");
+    expect(whole.instructions).not.toMatch(/COURSE_LEVEL|# One band/u);
+  });
+
   it("weighs an exam's skills without placing them when its notice isn't known", async () => {
     vi.mocked(generateText).mockResolvedValue(
       createGenerateTextResult({
