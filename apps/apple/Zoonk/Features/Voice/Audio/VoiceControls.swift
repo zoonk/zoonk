@@ -99,7 +99,7 @@ enum RecordNote: Equatable {
     case .microphoneUnavailable:
       BarNote(
         LocalizedStringResource(
-          "The microphone isn't available here. You can skip this word.", table: "Voice"),
+          "We can't use your microphone, so skip this word.", table: "Voice"),
         tone: .status)
     case .microphoneOff(let line):
       BarNote(

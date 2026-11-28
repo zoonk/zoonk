@@ -56,7 +56,7 @@ struct RecordCue: View {
 
     ZStack(alignment: .leading) {
       Text(
-        "Say it after “Speak now”", tableName: "Voice",
+        "Say it when “Speak now” appears", tableName: "Voice",
         comment: "Before recording. “Speak now” must match the cue shown when the microphone is on."
       )
       .foregroundStyle(.mutedForeground)

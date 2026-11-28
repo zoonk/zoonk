@@ -6314,65 +6314,6 @@
         }
       }
     },
-    "Say it after “Speak now”" : {
-      "comment" : "Before recording. “Speak now” must match the cue shown when the microphone is on.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sag es nach „Sprich jetzt“"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dilo después de “Habla ahora”"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dis-le après « Parle maintenant »"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dillo dopo «Parla ora»"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "「今すぐ話してください」のあとに話してください"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "‘지금 말해 보세요’가 나오면 이어서 말해 보세요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Powiedz to po „Mów teraz”"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fale depois de “Fale agora”"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "“Şimdi konuş” dedikten sonra söyle"
-          }
-        }
-      }
-    },
     "Say it again" : {
       "comment" : "Pronunciation round title",
       "localizations" : {
@@ -6487,6 +6428,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Şöyle söyle: %@"
+          }
+        }
+      }
+    },
+    "Say it when “Speak now” appears" : {
+      "comment" : "Before recording. “Speak now” must match the cue shown when the microphone is on.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sag es, wenn „Sprich jetzt“ erscheint"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dilo cuando aparezca “Habla ahora”"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dis-le quand « Parle maintenant » s’affiche"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dillo quando compare “Parla ora”"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「今すぐ話してください」と表示されたら話してください"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "‘지금 말해 보세요’가 표시되면 말해 주세요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Powiedz to, gdy pojawi się „Mów teraz”"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fale quando aparecer “Fale agora”"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“Şimdi konuş” yazısı göründüğünde söyle"
           }
         }
       }
@@ -8326,64 +8326,6 @@
         }
       }
     },
-    "The microphone isn't available here. You can skip this word." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Das Mikrofon ist hier nicht verfügbar. Du kannst dieses Wort überspringen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "El micrófono no está disponible aquí. Puedes saltar esta palabra."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le micro n’est pas disponible ici. Tu peux passer ce mot."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Qui il microfono non è disponibile. Puoi saltare questa parola."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ここではマイクを使えません。この単語はスキップできます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "여기서는 마이크를 사용할 수 없어요. 이 단어는 건너뛰어도 돼요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mikrofon jest tu niedostępny. Możesz pominąć to słowo."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O microfone não está disponível aqui. Você pode pular esta palavra."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mikrofon burada kullanılamıyor. Bu kelimeyi atlayabilirsin."
-          }
-        }
-      }
-    },
     "The mock didn't start. Try again in a moment." : {
       "comment" : "Starting the speaking mock failed",
       "localizations" : {
@@ -9914,6 +9856,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kelime bilgisi"
+          }
+        }
+      }
+    },
+    "We can't use your microphone, so skip this word." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir können dein Mikrofon nicht verwenden, also überspring dieses Wort."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No podemos usar tu micrófono, así que sáltate esta palabra."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On ne peut pas utiliser ton micro, alors saute ce mot."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non possiamo usare il microfono, quindi salta questa parola."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "マイクを使えないため、この単語はスキップしてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "마이크를 사용할 수 없으니 이 단어는 건너뛰어 주세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie możemy skorzystać z mikrofonu, więc pomiń to słowo."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não dá para usar seu microfone, então pule esta palavra."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mikrofonunu kullanamıyoruz, bu yüzden bu kelimeyi atla."
           }
         }
       }
