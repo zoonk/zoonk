@@ -78,6 +78,7 @@
 - “Needs adjusting”: “Anpassung nötig”
 - “Too tight”: “Zu knapp”
 - “left out”: “ausgelassen”, not “übersprungen”
+- “Skip” (the learner's choice) and “skipped” (a test showed it's known): “überspringen” / “übersprungen”, not “ausgelassen”
 - “Time a day” as a label or a setting's name (how long the learner studies each day; formerly “Daily time”): “Tägliche Lernzeit”, not “Zeitbudget”
 - “rest day”: “Pausentag”, not “Ruhetag”
 
