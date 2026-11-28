@@ -2,11 +2,15 @@ package com.zoonk.android.data
 
 import com.zoonk.api.models.LearnerSummary
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
 
@@ -20,6 +24,7 @@ class LearnerSummaryStore(
     cache: AppCache,
     scope: CoroutineScope,
     now: () -> Long = System::currentTimeMillis,
+    isForeground: Flow<Boolean> = flowOf(true),
 ) {
     val summary: Resource<LearnerSummary> =
         cache.resource(Audience.SignedIn, DataDomain.entries.toSet(), maxAge = 1.minutes) { session ->
@@ -27,17 +32,19 @@ class LearnerSummaryStore(
         }
 
     init {
-        scope.invalidateAtNextChange(summary, summary, now)
+        scope.invalidateAtNextChange(summary, summary, isForeground, now)
     }
 }
 
 /**
  * Reads [resource] again when [summary] says things change without a write (`nextChangeAt`): the
- * next midnight, the subscription's next change.
+ * next midnight, the subscription's next change. A timer counts uptime, which stops while the phone
+ * sleeps, so returning to the foreground checks the wall clock again.
  */
 fun CoroutineScope.invalidateAtNextChange(
     summary: Resource<LearnerSummary>,
     resource: Resource<*>,
+    isForeground: Flow<Boolean> = flowOf(true),
     now: () -> Long = System::currentTimeMillis,
 ) = launch {
     summary.state
@@ -45,7 +52,9 @@ fun CoroutineScope.invalidateAtNextChange(
         .distinctUntilChanged()
         .collectLatest { nextChangeAt ->
             nextChangeAt ?: return@collectLatest
-            delay((nextChangeAt - now()).coerceAtLeast(0).milliseconds)
+            withTimeoutOrNull((nextChangeAt - now()).coerceAtLeast(0).milliseconds) {
+                isForeground.firstOrNull { it && now() >= nextChangeAt } ?: awaitCancellation()
+            }
             resource.invalidate()
         }
 }

@@ -56,11 +56,12 @@ internal fun planFacts(goal: Goal): List<PlanFact> {
     val locale = currentLocale()
     val details = goal.details
     val dateLabel = stringResource(if (goal.kind == Goal.Kind.EXAM) R.string.onboarding_row_exam_date else R.string.onboarding_date_label)
+    val today = LocalDate.now(goalZone(goal.timezone))
     val date =
         goal.targetDate?.toJavaLocalDate()?.let { day ->
             val days =
                 ChronoUnit.DAYS
-                    .between(LocalDate.now(), day)
+                    .between(today, day)
                     .toInt()
                     .coerceAtLeast(0)
             PlanFact(
@@ -73,7 +74,7 @@ internal fun planFacts(goal: Goal): List<PlanFact> {
             stringResource(if (goal.kind == Goal.Kind.EXAM) R.string.onboarding_row_to_be_confirmed else R.string.plan_end_none_set),
         ).takeIf { details.answered("targetDate") }
     val resources = LocalResources.current
-    val rows = remember(resources, locale) { UnderstoodRows(resources, locale, is24Hour = false) }
+    val rows = remember(resources, locale, today) { UnderstoodRows(resources, locale, is24Hour = false, today = today) }
     val facts = goal.facts()
 
     return listOfNotNull(PlanFact(stringResource(R.string.onboarding_row_goal), goal.displayName), date) +
