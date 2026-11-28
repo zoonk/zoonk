@@ -63,6 +63,8 @@ const AI_TASK_DESCRIPTIONS: Record<string, string> = {
   "language-lesson-check": "Reviews a language lesson for errors",
   "language-lesson-fix": "Fixes what a reviewer found in a language lesson",
   "language-sentence-orders": "Writes other valid word orders for a sentence",
+  "lesson-activities": "Writes the activities an older lesson's plan now asks for",
+  "lesson-activity-plan": "Picks which practice screens of an older lesson become activities",
   "lesson-fix": "Fixes the screens a review flagged",
   "lesson-image": "Draws a lesson picture",
   "lesson-laws": "Names the laws a lesson teaches",

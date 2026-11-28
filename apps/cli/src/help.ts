@@ -31,6 +31,13 @@ Shared clip audit
                                            Listen for added speech or sounds in one page of clips.
                                            Default 100, at most 250. Use the same cutoff on each page.
 
+Lesson activities
+  staff lesson-activities <lessonId>...    For up to 5 published lessons written before lessons
+                                           practised skills by doing them: pick the practice screens
+                                           that become activities, write and check them, and print
+                                           each one's setPlan and setScreens fix in "fixes", ready
+                                           for staff fixes propose.
+
 Content fixes (proposed here, approved by a staff person in Admin with a passkey)
   staff fixes propose [--check] <file.json>  Propose the fix or batch in the file, and print its review
                                            link and each fix's changes and effects. Nothing changes

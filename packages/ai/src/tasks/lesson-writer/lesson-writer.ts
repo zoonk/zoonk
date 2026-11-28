@@ -13,21 +13,26 @@ import {
 import { readsNoviceRules } from "../_utils/novice-rules";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import typedQuestionRules from "../items/item-rules/typed-question.prompt.md";
+import activityRules from "./activity.prompt.md";
 import {
   type LessonProblem,
   type LessonWritingContext,
   formatLessonPlan,
   formatLessonProblems,
 } from "./format-lesson-plan";
+import formattingRules from "./formatting.prompt.md";
 import { normalizeLessonMap } from "./lesson-map";
 import rulesTemplate from "./lesson-writer.prompt.md";
 import { getScreenCharacterTarget } from "./screen-length";
+import voiceRules from "./voice.prompt.md";
 import { fitWrittenBounds } from "./written-lesson-bounds";
 import { type WrittenLesson, writtenLessonSchema } from "./written-lesson-schema";
 
-const systemPrompt = rulesTemplate.replace("{{TYPED_QUESTION}}", () =>
-  typedQuestionRules.trim().replaceAll(/^/gmu, "  "),
-);
+const systemPrompt = rulesTemplate
+  .replace("{{TYPED_QUESTION}}", () => typedQuestionRules.trim().replaceAll(/^/gmu, "  "))
+  .replace("{{VOICE}}", () => voiceRules.trimEnd())
+  .replace("{{ACTIVITY}}", () => activityRules.trimEnd())
+  .replace("{{FORMATTING}}", () => formattingRules.trimEnd());
 
 const lessonOutput = schemaInPrompt(writtenLessonSchema, { repair: fitWrittenBounds });
 
@@ -70,7 +75,7 @@ export type WriteLessonDraftParams = LessonWritingContext & {
   analytics?: AiGenerationContext;
 };
 
-const FIND_ERROR_TEMPLATE = "findError";
+export const FIND_ERROR_TEMPLATE = "findError";
 
 function buildSystemPrompt(params: WriteLessonDraftParams): string {
   const novice = readsNoviceRules(params);

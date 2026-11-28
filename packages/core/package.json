@@ -728,6 +728,7 @@
     "./staff/content-fixes/withdraw": "./src/staff/content-fixes/withdraw-content-fix.ts",
     "./staff/me": "./src/staff/get-staff-me.ts",
     "./staff/lesson": "./src/staff/lesson.ts",
+    "./staff/lesson-activities": "./src/staff/lesson-activities.ts",
     "./staff/lesson-contract": "./src/staff/lesson-contract.ts",
     "./subscriptions/apple-contract": "./src/subscriptions/apple-contract.ts",
     "./subscriptions/apple-notification": "./src/subscriptions/process-apple-subscription-notification.ts",
