@@ -3,710 +3,6 @@
   "results": [
     {
       "classification": {
-        "expected": "true",
-        "predicted": "true"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "same": "true"
-        },
-        "id": "enem-full-name-3",
-        "language": "pt",
-        "userInput": {
-          "candidate": {
-            "board": "INEP",
-            "country": "BR",
-            "name": "ENEM",
-            "role": null
-          },
-          "request": {
-            "board": "INEP",
-            "country": "BR",
-            "name": "Exame Nacional do Ensino Médio",
-            "role": null
-          }
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "true",
-        "predicted": "true"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "same": "true"
-        },
-        "id": "enem-with-year-3",
-        "language": "pt",
-        "userInput": {
-          "candidate": {
-            "board": "INEP",
-            "country": "BR",
-            "name": "ENEM",
-            "role": null
-          },
-          "request": {
-            "board": null,
-            "country": "BR",
-            "name": "ENEM 2027",
-            "role": null
-          }
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "true",
-        "predicted": "true"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "same": "true"
-        },
-        "id": "tcdf-same-role-3",
-        "language": "pt",
-        "userInput": {
-          "candidate": {
-            "board": "Cebraspe",
-            "country": "BR",
-            "name": "Tribunal de Contas do Distrito Federal",
-            "role": "Analista Administrativo de Controle Externo"
-          },
-          "request": {
-            "board": "Cebraspe",
-            "country": "BR",
-            "name": "Concurso TCDF",
-            "role": "Analista Administrativo de Controle Externo"
-          }
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "false",
-        "predicted": "false"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "same": "false"
-        },
-        "id": "tcdf-other-role-3",
-        "language": "pt",
-        "userInput": {
-          "candidate": {
-            "board": "Cebraspe",
-            "country": "BR",
-            "name": "Concurso TCDF",
-            "role": "Analista Administrativo de Controle Externo"
-          },
-          "request": {
-            "board": "Cebraspe",
-            "country": "BR",
-            "name": "Concurso TCDF",
-            "role": "Auditor de Controle Externo"
-          }
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "false",
-        "predicted": "false"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "same": "false"
-        },
-        "id": "oab-phases-3",
-        "language": "pt",
-        "userInput": {
-          "candidate": {
-            "board": "FGV",
-            "country": "BR",
-            "name": "OAB Exame de Ordem Unificado",
-            "role": "1ª fase"
-          },
-          "request": {
-            "board": "FGV",
-            "country": "BR",
-            "name": "OAB 2ª fase",
-            "role": null
-          }
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "true",
-        "predicted": "true"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "same": "true"
-        },
-        "id": "oab-same-phase-3",
-        "language": "pt",
-        "userInput": {
-          "candidate": {
-            "board": "FGV",
-            "country": "BR",
-            "name": "OAB Exame de Ordem Unificado",
-            "role": "1ª fase"
-          },
-          "request": {
-            "board": "FGV",
-            "country": "BR",
-            "name": "OAB",
-            "role": "Primeira fase"
-          }
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "true",
-        "predicted": "true"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "same": "true"
-        },
-        "id": "oab-unnamed-phase-is-first-3",
-        "language": "pt",
-        "userInput": {
-          "candidate": {
-            "board": "FGV",
-            "country": "BR",
-            "name": "OAB Exame de Ordem Unificado",
-            "role": "1ª fase"
-          },
-          "request": {
-            "board": null,
-            "country": "BR",
-            "name": "OAB",
-            "role": null
-          }
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "false",
-        "predicted": "false"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "same": "false"
-        },
-        "id": "oab-candidate-without-phase-3",
-        "language": "pt",
-        "userInput": {
-          "candidate": {
-            "board": "FGV",
-            "country": "BR",
-            "name": "OAB Exame de Ordem Unificado",
-            "role": null
-          },
-          "request": {
-            "board": "FGV",
-            "country": "BR",
-            "name": "OAB Exame de Ordem Unificado",
-            "role": "1ª fase"
-          }
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "false",
-        "predicted": "false"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "same": "false"
-        },
-        "id": "oab-second-phase-areas-3",
-        "language": "pt",
-        "userInput": {
-          "candidate": {
-            "board": "FGV",
-            "country": "BR",
-            "name": "OAB Exame de Ordem Unificado",
-            "role": "2ª fase - Direito Civil"
-          },
-          "request": {
-            "board": "FGV",
-            "country": "BR",
-            "name": "OAB",
-            "role": "2ª fase - Direito Penal"
-          }
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "false",
-        "predicted": "false"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "same": "false"
-        },
-        "id": "sat-vs-psat-3",
-        "language": "en",
-        "userInput": {
-          "candidate": {
-            "board": "College Board",
-            "country": "US",
-            "name": "SAT",
-            "role": null
-          },
-          "request": {
-            "board": "College Board",
-            "country": "US",
-            "name": "PSAT/NMSQT",
-            "role": null
-          }
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "false",
-        "predicted": "false"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "same": "false"
-        },
-        "id": "abitur-states-3",
-        "language": "de",
-        "userInput": {
-          "candidate": {
-            "board": null,
-            "country": "DE",
-            "name": "Abitur Baden-Württemberg",
-            "role": null
-          },
-          "request": {
-            "board": null,
-            "country": "DE",
-            "name": "Abitur Bayern",
-            "role": null
-          }
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "true",
-        "predicted": "true"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "same": "true"
-        },
-        "id": "en-oab-in-english-3",
-        "language": "en",
-        "userInput": {
-          "candidate": {
-            "board": "FGV",
-            "country": "BR",
-            "name": "Exame de Ordem Unificado OAB",
-            "role": null
-          },
-          "request": {
-            "board": null,
-            "country": "BR",
-            "name": "Brazilian bar exam",
-            "role": null
-          }
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "false",
-        "predicted": "false"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "same": "false"
-        },
-        "id": "pt-fuvest-vs-enem-3",
-        "language": "pt",
-        "userInput": {
-          "candidate": {
-            "board": "INEP",
-            "country": "BR",
-            "name": "ENEM",
-            "role": null
-          },
-          "request": {
-            "board": "Fuvest",
-            "country": "BR",
-            "name": "vestibular da Fuvest",
-            "role": null
-          }
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "true",
-        "predicted": "true"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "same": "true"
-        },
-        "id": "bac-translation-3",
-        "language": "en",
-        "userInput": {
-          "candidate": {
-            "board": "Ministère de l'Éducation nationale",
-            "country": "FR",
-            "name": "Baccalauréat général",
-            "role": null
-          },
-          "request": {
-            "board": null,
-            "country": "FR",
-            "name": "French baccalaureate",
-            "role": null
-          }
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "false",
-        "predicted": "false"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "same": "false"
-        },
-        "id": "canadian-licence-vs-faa-certificate-1",
-        "language": "en",
-        "userInput": {
-          "candidate": {
-            "board": "Federal Aviation Administration",
-            "country": "US",
-            "name": "FAA Private Pilot Certificate",
-            "role": null
-          },
-          "request": {
-            "board": "Transport Canada",
-            "country": "CA",
-            "name": "Private Pilot Licence",
-            "role": null
-          }
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "false",
-        "predicted": "false"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "same": "false"
-        },
-        "id": "canadian-licence-vs-faa-certificate-2",
-        "language": "en",
-        "userInput": {
-          "candidate": {
-            "board": "Federal Aviation Administration",
-            "country": "US",
-            "name": "FAA Private Pilot Certificate",
-            "role": null
-          },
-          "request": {
-            "board": "Transport Canada",
-            "country": "CA",
-            "name": "Private Pilot Licence",
-            "role": null
-          }
-        }
-      }
-    },
-    {
-      "classification": {
         "expected": "false",
         "predicted": "false"
       },
@@ -795,31 +91,75 @@
     },
     {
       "classification": {
-        "expected": "true",
+        "expected": "false",
         "predicted": "false"
       },
       "steps": [
         {
-          "conclusion": "Expected `true`. Generated `false`.",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "Expected `true`. Generated `false`.",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "Expected `true`. Generated `false`.",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "same": "false"
+        },
+        "id": "faa-certificate-named-by-a-canadian-3",
+        "language": "en",
+        "userInput": {
+          "candidate": {
+            "board": "Transport Canada",
+            "country": "CA",
+            "name": "Private Pilot Licence",
+            "role": null
+          },
+          "request": {
+            "board": null,
+            "country": "CA",
+            "name": "FAA Private Pilot Certificate",
+            "role": null
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "true",
+        "predicted": "true"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
         }
       ],
       "testCase": {
         "expected": {
           "same": "true"
         },
-        "id": "sat-named-with-another-country-1",
+        "id": "sat-sitting-place-is-no-country-1",
         "language": "en",
         "userInput": {
           "candidate": {
@@ -830,7 +170,7 @@
           },
           "request": {
             "board": null,
-            "country": "KE",
+            "country": null,
             "name": "SAT",
             "role": null
           }
@@ -840,30 +180,30 @@
     {
       "classification": {
         "expected": "true",
-        "predicted": "false"
+        "predicted": "true"
       },
       "steps": [
         {
-          "conclusion": "Expected `true`. Generated `false`.",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "Expected `true`. Generated `false`.",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "Expected `true`. Generated `false`.",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
         "expected": {
           "same": "true"
         },
-        "id": "sat-named-with-another-country-2",
+        "id": "sat-sitting-place-is-no-country-2",
         "language": "en",
         "userInput": {
           "candidate": {
@@ -874,7 +214,51 @@
           },
           "request": {
             "board": null,
-            "country": "KE",
+            "country": null,
+            "name": "SAT",
+            "role": null
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "true",
+        "predicted": "true"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "same": "true"
+        },
+        "id": "sat-sitting-place-is-no-country-3",
+        "language": "en",
+        "userInput": {
+          "candidate": {
+            "board": "College Board",
+            "country": "US",
+            "name": "SAT",
+            "role": null
+          },
+          "request": {
+            "board": null,
+            "country": null,
             "name": "SAT",
             "role": null
           }
@@ -952,6 +336,50 @@
           "same": "true"
         },
         "id": "enem-full-name-2",
+        "language": "pt",
+        "userInput": {
+          "candidate": {
+            "board": "INEP",
+            "country": "BR",
+            "name": "ENEM",
+            "role": null
+          },
+          "request": {
+            "board": "INEP",
+            "country": "BR",
+            "name": "Exame Nacional do Ensino Médio",
+            "role": null
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "true",
+        "predicted": "true"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "same": "true"
+        },
+        "id": "enem-full-name-3",
         "language": "pt",
         "userInput": {
           "candidate": {
@@ -1083,6 +511,50 @@
         "expected": {
           "same": "true"
         },
+        "id": "enem-with-year-3",
+        "language": "pt",
+        "userInput": {
+          "candidate": {
+            "board": "INEP",
+            "country": "BR",
+            "name": "ENEM",
+            "role": null
+          },
+          "request": {
+            "board": null,
+            "country": "BR",
+            "name": "ENEM 2027",
+            "role": null
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "true",
+        "predicted": "true"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "same": "true"
+        },
         "id": "enem-unknown-country-1",
         "language": "pt",
         "userInput": {
@@ -1147,87 +619,43 @@
     },
     {
       "classification": {
-        "expected": "false",
+        "expected": "true",
         "predicted": "true"
       },
       "steps": [
         {
-          "conclusion": "Expected `false`. Generated `true`.",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "Expected `false`. Generated `true`.",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "Expected `false`. Generated `true`.",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
         "expected": {
-          "same": "false"
+          "same": "true"
         },
-        "id": "bar-exam-unknown-country-1",
-        "language": "en",
+        "id": "enem-unknown-country-3",
+        "language": "pt",
         "userInput": {
           "candidate": {
-            "board": "NCBE",
-            "country": "US",
-            "name": "Uniform Bar Examination",
+            "board": "INEP",
+            "country": "BR",
+            "name": "ENEM",
             "role": null
           },
           "request": {
             "board": null,
             "country": null,
-            "name": "Bar exam",
-            "role": null
-          }
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "false",
-        "predicted": "true"
-      },
-      "steps": [
-        {
-          "conclusion": "Expected `false`. Generated `true`.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected `false`. Generated `true`.",
-          "kind": "minorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected `false`. Generated `true`.",
-          "kind": "potentialImprovements",
-          "score": 6
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "same": "false"
-        },
-        "id": "bar-exam-unknown-country-2",
-        "language": "en",
-        "userInput": {
-          "candidate": {
-            "board": "NCBE",
-            "country": "US",
-            "name": "Uniform Bar Examination",
-            "role": null
-          },
-          "request": {
-            "board": null,
-            "country": null,
-            "name": "Bar exam",
+            "name": "ENEM",
             "role": null
           }
         }
@@ -1304,6 +732,50 @@
           "same": "true"
         },
         "id": "tcdf-same-role-2",
+        "language": "pt",
+        "userInput": {
+          "candidate": {
+            "board": "Cebraspe",
+            "country": "BR",
+            "name": "Tribunal de Contas do Distrito Federal",
+            "role": "Analista Administrativo de Controle Externo"
+          },
+          "request": {
+            "board": "Cebraspe",
+            "country": "BR",
+            "name": "Concurso TCDF",
+            "role": "Analista Administrativo de Controle Externo"
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "true",
+        "predicted": "true"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "same": "true"
+        },
+        "id": "tcdf-same-role-3",
         "language": "pt",
         "userInput": {
           "candidate": {
@@ -1435,6 +907,50 @@
         "expected": {
           "same": "false"
         },
+        "id": "tcdf-other-role-3",
+        "language": "pt",
+        "userInput": {
+          "candidate": {
+            "board": "Cebraspe",
+            "country": "BR",
+            "name": "Concurso TCDF",
+            "role": "Analista Administrativo de Controle Externo"
+          },
+          "request": {
+            "board": "Cebraspe",
+            "country": "BR",
+            "name": "Concurso TCDF",
+            "role": "Auditor de Controle Externo"
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "false",
+        "predicted": "false"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "same": "false"
+        },
         "id": "oab-phases-1",
         "language": "pt",
         "userInput": {
@@ -1480,6 +996,50 @@
           "same": "false"
         },
         "id": "oab-phases-2",
+        "language": "pt",
+        "userInput": {
+          "candidate": {
+            "board": "FGV",
+            "country": "BR",
+            "name": "OAB Exame de Ordem Unificado",
+            "role": "1ª fase"
+          },
+          "request": {
+            "board": "FGV",
+            "country": "BR",
+            "name": "OAB 2ª fase",
+            "role": null
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "false",
+        "predicted": "false"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "same": "false"
+        },
+        "id": "oab-phases-3",
         "language": "pt",
         "userInput": {
           "candidate": {
@@ -1611,6 +1171,50 @@
         "expected": {
           "same": "true"
         },
+        "id": "oab-same-phase-3",
+        "language": "pt",
+        "userInput": {
+          "candidate": {
+            "board": "FGV",
+            "country": "BR",
+            "name": "OAB Exame de Ordem Unificado",
+            "role": "1ª fase"
+          },
+          "request": {
+            "board": "FGV",
+            "country": "BR",
+            "name": "OAB",
+            "role": "Primeira fase"
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "true",
+        "predicted": "true"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "same": "true"
+        },
         "id": "oab-unnamed-phase-is-first-1",
         "language": "pt",
         "userInput": {
@@ -1656,6 +1260,50 @@
           "same": "true"
         },
         "id": "oab-unnamed-phase-is-first-2",
+        "language": "pt",
+        "userInput": {
+          "candidate": {
+            "board": "FGV",
+            "country": "BR",
+            "name": "OAB Exame de Ordem Unificado",
+            "role": "1ª fase"
+          },
+          "request": {
+            "board": null,
+            "country": "BR",
+            "name": "OAB",
+            "role": null
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "true",
+        "predicted": "true"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "same": "true"
+        },
+        "id": "oab-unnamed-phase-is-first-3",
         "language": "pt",
         "userInput": {
           "candidate": {
@@ -1787,6 +1435,50 @@
         "expected": {
           "same": "false"
         },
+        "id": "oab-candidate-without-phase-3",
+        "language": "pt",
+        "userInput": {
+          "candidate": {
+            "board": "FGV",
+            "country": "BR",
+            "name": "OAB Exame de Ordem Unificado",
+            "role": null
+          },
+          "request": {
+            "board": "FGV",
+            "country": "BR",
+            "name": "OAB Exame de Ordem Unificado",
+            "role": "1ª fase"
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "false",
+        "predicted": "false"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "same": "false"
+        },
         "id": "oab-second-phase-areas-1",
         "language": "pt",
         "userInput": {
@@ -1832,6 +1524,50 @@
           "same": "false"
         },
         "id": "oab-second-phase-areas-2",
+        "language": "pt",
+        "userInput": {
+          "candidate": {
+            "board": "FGV",
+            "country": "BR",
+            "name": "OAB Exame de Ordem Unificado",
+            "role": "2ª fase - Direito Civil"
+          },
+          "request": {
+            "board": "FGV",
+            "country": "BR",
+            "name": "OAB",
+            "role": "2ª fase - Direito Penal"
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "false",
+        "predicted": "false"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "same": "false"
+        },
+        "id": "oab-second-phase-areas-3",
         "language": "pt",
         "userInput": {
           "candidate": {
@@ -1963,6 +1699,50 @@
         "expected": {
           "same": "false"
         },
+        "id": "sat-vs-psat-3",
+        "language": "en",
+        "userInput": {
+          "candidate": {
+            "board": "College Board",
+            "country": "US",
+            "name": "SAT",
+            "role": null
+          },
+          "request": {
+            "board": "College Board",
+            "country": "US",
+            "name": "PSAT/NMSQT",
+            "role": null
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "false",
+        "predicted": "false"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "same": "false"
+        },
         "id": "abitur-states-1",
         "language": "de",
         "userInput": {
@@ -2008,6 +1788,50 @@
           "same": "false"
         },
         "id": "abitur-states-2",
+        "language": "de",
+        "userInput": {
+          "candidate": {
+            "board": null,
+            "country": "DE",
+            "name": "Abitur Baden-Württemberg",
+            "role": null
+          },
+          "request": {
+            "board": null,
+            "country": "DE",
+            "name": "Abitur Bayern",
+            "role": null
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "false",
+        "predicted": "false"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "same": "false"
+        },
+        "id": "abitur-states-3",
         "language": "de",
         "userInput": {
           "candidate": {
@@ -2115,6 +1939,50 @@
     },
     {
       "classification": {
+        "expected": "true",
+        "predicted": "true"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "same": "true"
+        },
+        "id": "en-oab-in-english-3",
+        "language": "en",
+        "userInput": {
+          "candidate": {
+            "board": "FGV",
+            "country": "BR",
+            "name": "Exame de Ordem Unificado OAB",
+            "role": null
+          },
+          "request": {
+            "board": null,
+            "country": "BR",
+            "name": "Brazilian bar exam",
+            "role": null
+          }
+        }
+      }
+    },
+    {
+      "classification": {
         "expected": "false",
         "predicted": "false"
       },
@@ -2203,6 +2071,50 @@
     },
     {
       "classification": {
+        "expected": "false",
+        "predicted": "false"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "same": "false"
+        },
+        "id": "pt-fuvest-vs-enem-3",
+        "language": "pt",
+        "userInput": {
+          "candidate": {
+            "board": "INEP",
+            "country": "BR",
+            "name": "ENEM",
+            "role": null
+          },
+          "request": {
+            "board": "Fuvest",
+            "country": "BR",
+            "name": "vestibular da Fuvest",
+            "role": null
+          }
+        }
+      }
+    },
+    {
+      "classification": {
         "expected": "true",
         "predicted": "true"
       },
@@ -2272,6 +2184,50 @@
           "same": "true"
         },
         "id": "bac-translation-2",
+        "language": "en",
+        "userInput": {
+          "candidate": {
+            "board": "Ministère de l'Éducation nationale",
+            "country": "FR",
+            "name": "Baccalauréat général",
+            "role": null
+          },
+          "request": {
+            "board": null,
+            "country": "FR",
+            "name": "French baccalaureate",
+            "role": null
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "true",
+        "predicted": "true"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "same": "true"
+        },
+        "id": "bac-translation-3",
         "language": "en",
         "userInput": {
           "candidate": {
