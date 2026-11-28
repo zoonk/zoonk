@@ -93,9 +93,20 @@ final class LessonPlayerStore {
   /// From a send that failed until every held answer is saved, so a lesson that opens with answers
   /// held and sends them at once never shows it.
   var hasUnsavedAnswers: Bool { sendFailed && !held.isEmpty }
-  /// "I can't talk now" lasts the rest of the learner's day on this device.
+  /// "I can't talk now" lasts the rest of the learner's day on this device. Taking it back on the
+  /// screen it left the lesson's speaking out from puts the speaking back.
   var cantTalkToday: Bool {
-    didSet { choices.setChosenToday(.cantTalk, cantTalkToday) }
+    didSet {
+      choices.setChosenToday(.cantTalk, cantTalkToday)
+
+      changeWhatCanBeAnswered { state in
+        if cantTalkToday {
+          leaveOutSpeaking(&state, opening: false)
+        } else if state.skipRestore?.notice == .speakingSkipped {
+          state.restoreSkipped()
+        }
+      }
+    }
   }
   /// "I can't listen now" lasts the rest of the learner's day on this device, as music's by-ear
   /// questions keep it.
@@ -103,15 +114,14 @@ final class LessonPlayerStore {
     didSet {
       choices.setChosenToday(.cantListen, cantListenToday)
 
-      if cantListenToday, var state {
-        leaveOutDictation(&state)
-        self.state = state
+      if cantListenToday {
+        changeWhatCanBeAnswered { state in
+          leaveOutDictation(&state)
+          leaveOutSpeaking(&state, opening: false)
+        }
       }
     }
   }
-  /// The microphone was off when a spoken screen tried it, so spoken screens are typed until the
-  /// learner asks to speak again. Kept here, since both halves of a spread show it.
-  var isMicBlocked = false
   /// The screen and answer round whose "From the lesson" is open, so a fold keeps it open and the
   /// screen's next round starts it folded.
   var openRecap: String?
@@ -140,6 +150,8 @@ final class LessonPlayerStore {
   private let lessonResource: Resource<LessonLoad>
   private var session: SessionStore { cache.session }
   private let choices: LessonTodayChoices
+  /// The device records spoken answers.
+  private let canRecord: Bool
   private let defaults: UserDefaults
   private let blockFinished: @MainActor (_ sessionID: String, BlockMoment) -> Void
   /// A start that opened a study block names its session, which the session screen shows.
@@ -176,6 +188,7 @@ final class LessonPlayerStore {
     preferences: Resource<LearningPreferences>,
     lessonResource: Resource<LessonLoad>,
     choices: LessonTodayChoices = .standard,
+    canRecord: Bool = true,
     defaults: UserDefaults = .standard,
     blockFinished: @escaping @MainActor (_ sessionID: String, BlockMoment) -> Void = { _, _ in },
     sessionStarted: @escaping @MainActor (_ sessionID: String) -> Void = { _ in },
@@ -194,6 +207,7 @@ final class LessonPlayerStore {
     self.preferences = preferences
     self.lessonResource = lessonResource
     self.choices = choices
+    self.canRecord = canRecord
     self.defaults = defaults
     self.blockFinished = blockFinished
     self.sessionStarted = sessionStarted
@@ -344,6 +358,7 @@ final class LessonPlayerStore {
       lessonId: lesson.id, steps: lesson.steps, hasMap: lesson.summary != nil)
     leaveOutDictation(&state)
     state.resume(from: lesson.resume)
+    leaveOutSpeaking(&state, opening: true)
     self.state = state
     works = [:]
     acted = false
@@ -532,6 +547,7 @@ final class LessonPlayerStore {
     guard var state = self.state else { return }
 
     leaveOutDictation(&state)
+    leaveOutSpeaking(&state, opening: true)
 
     // "Skip writing questions today" lasts the rest of the learner's day on this device.
     if choices.isChosenToday(.cantWrite) {
@@ -605,6 +621,28 @@ final class LessonPlayerStore {
   private func leaveOutDictation(_ state: inout LessonPlayerState) {
     guard cantListenToday else { return }
     state.skipSteps(state.queue.filter { state.steps[$0]?.isDictation == true })
+  }
+
+  /// A lesson the change leaves with nothing to answer is saved.
+  private func changeWhatCanBeAnswered(_ change: (inout LessonPlayerState) -> Void) {
+    guard var state else { return }
+    let wasEnded = state.completion != nil
+    change(&state)
+    self.state = state
+
+    if !wasEnded {
+      finishIfCompleted()
+    }
+  }
+
+  /// A spoken screen nobody can say or listen to now is left out. The learner's "I can't talk now"
+  /// can be turned back on; a device that can't record has nothing to turn back on.
+  private func leaveOutSpeaking(_ state: inout LessonPlayerState, opening: Bool) {
+    guard !canRecord || cantTalkToday else { return }
+    let cantListen = cantListenToday
+    state.skipSpeaking(undoable: canRecord, opening: opening) {
+      $0.isUnanswerableAloud(canSpeak: false, cantListen: cantListen)
+    }
   }
 
   private func showWaiting(_ outline: LessonOutline, identity: AuthenticatedSession?) async {
@@ -808,9 +846,14 @@ final class LessonPlayerStore {
     UsageAnalytics.track(event)
   }
 
-  func restoreWriting() {
-    choices.setChosenToday(.cantWrite, false)
-    state?.restoreWriting()
+  /// "Turn back on" takes back the choice that left screens out, and they come back.
+  func restoreSkipped() {
+    if state?.skipRestore?.notice == .speakingSkipped {
+      cantTalkToday = false
+    } else {
+      choices.setChosenToday(.cantWrite, false)
+      state?.restoreSkipped()
+    }
   }
 
   /// Device-graded answers show their verdict at once and are recorded in the background; typed and

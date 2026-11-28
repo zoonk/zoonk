@@ -5,31 +5,23 @@ import XCTest
 final class SpokenAnswerModeTests: XCTestCase {
   func testSpeakingIsTheDefault() {
     XCTAssertEqual(mode(), .speak)
-  }
-
-  func testCantTalkPlaysTheListeningVersionOrTyping() {
-    XCTAssertEqual(mode(canListen: true, cantTalk: true), .listen)
-    XCTAssertEqual(mode(cantTalk: true), .type)
-  }
-
-  func testCantTalkOrListenTypesTheSentence() {
-    XCTAssertEqual(mode(canListen: true, cantTalk: true, cantListen: true), .type)
-    XCTAssertEqual(mode(canListen: true, canSpeak: false, cantListen: true), .type)
     XCTAssertEqual(mode(canListen: true, cantListen: true), .speak, "speaking needs no listening")
   }
 
-  func testABlockedMicrophoneTypesTheSentence() {
-    XCTAssertEqual(mode(micBlocked: true), .type)
-    XCTAssertEqual(mode(canListen: true, micBlocked: true), .type)
+  func testCantTalkPlaysTheListeningVersion() {
+    XCTAssertEqual(mode(canListen: true, cantTalk: true), .listen)
+    XCTAssertEqual(mode(canListen: true, canSpeak: false), .listen)
   }
 
-  func testNoRecorderStillLeavesAWayToAnswer() {
-    XCTAssertEqual(mode(canListen: true, canSpeak: false), .listen)
-    XCTAssertEqual(mode(canSpeak: false), .type)
+  func testAScreenThatCantBeSaidOrListenedToIsNeverTyped() {
+    XCTAssertEqual(mode(cantTalk: true), .cantAnswer)
+    XCTAssertEqual(mode(canSpeak: false), .cantAnswer)
+    XCTAssertEqual(mode(canListen: true, cantTalk: true, cantListen: true), .cantAnswer)
+    XCTAssertEqual(mode(canListen: true, canSpeak: false, cantListen: true), .cantAnswer)
   }
 
   func testAnAnsweredScreenShowsTheWayItWasAnswered() {
-    XCTAssertEqual(mode(lockedAnswer: .spokenAnswer(text: "Hola")), .type)
+    XCTAssertEqual(mode(cantTalk: true, lockedAnswer: .spokenAnswer(text: "Hola")), .typed)
     XCTAssertEqual(
       mode(canListen: true, lockedAnswer: .listening(arrangedWords: ["Hola"])), .listen)
     XCTAssertEqual(
@@ -39,11 +31,10 @@ final class SpokenAnswerModeTests: XCTestCase {
 
   private func mode(
     canListen: Bool = false, canSpeak: Bool = true, cantTalk: Bool = false,
-    cantListen: Bool = false, micBlocked: Bool = false,
-    lockedAnswer: LessonAnswer? = nil, heard: SpokenHeard? = nil
+    cantListen: Bool = false, lockedAnswer: LessonAnswer? = nil, heard: SpokenHeard? = nil
   ) -> SpokenAnswerMode {
     SpokenAnswerMode(
       canListen: canListen, canSpeak: canSpeak, cantTalk: cantTalk, cantListen: cantListen,
-      micBlocked: micBlocked, lockedAnswer: lockedAnswer, heard: heard)
+      lockedAnswer: lockedAnswer, heard: heard)
   }
 }

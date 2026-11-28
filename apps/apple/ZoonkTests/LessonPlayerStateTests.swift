@@ -1269,6 +1269,24 @@ private let typedAnswer = teaching(
   content:
     #"{"question": "Why?", "basis": null, "keyPoints": ["size"], "sampleAnswer": "Because."}"#)
 
+private func spokenStep(_ id: String, listening: Bool = false) -> String {
+  let exercise =
+    listening
+    ? """
+    , "listening": {"id": "listen", "position": 0, "kind": "listening", "content": {},
+      "sentence": null, "word": null, "wordBankOptions": [], "sentenceWordOptions": [],
+      "readingPromptWords": [], "fillBlankOptions": [], "translationOptions": [],
+      "vocabularyOptions": [], "matchColumnsRightItems": []}
+    """ : ""
+
+  return """
+    {"id": "\(id)", "position": 0, "skillId": null, "citation": null, "image": null,
+     "imagePending": false, "kind": "spokenAnswer", "content": {"language": "fr",
+       "prompt": "Say hello.", "targetText": "Bonjour", "romanization": null,
+       "translation": null}\(exercise)}
+    """
+}
+
 private let summary = teaching(
   "summary", kind: "summary", content: #"{"ideas": [{"text": "Paris"}]}"#)
 
@@ -1429,7 +1447,7 @@ final class LessonPlayerHelpTests: XCTestCase {
     XCTAssertEqual(state.notice, .writingSkipped)
     XCTAssertEqual(state.skippedWritingStepIds, ["typed"])
 
-    state.restoreWriting()
+    state.restoreSkipped()
     XCTAssertEqual(state.currentStep?.id, "typed")
     XCTAssertEqual(state.skippedWritingStepIds, [])
     XCTAssertNil(state.notice)
@@ -1439,6 +1457,69 @@ final class LessonPlayerHelpTests: XCTestCase {
     var state = LessonPlayerState(lessonId: "lesson", steps: [try step(typedAnswer)])
 
     state.skipWriting(opening: true)
+
+    XCTAssertEqual(state.phase, .completed)
+    XCTAssertEqual(state.completion?.status, .ready, "only a learner's Finish saves it")
+  }
+
+  func testCantTalkLeavesOutTheSpeakingNobodyCanListenToUntilTurnedBackOn() throws {
+    var state = LessonPlayerState(
+      lessonId: "lesson",
+      steps: [
+        try step(spokenStep("say")), try step(spokenStep("hear", listening: true)),
+        try step(check(id: "check")), try step(spokenStep("later")),
+      ])
+
+    state.skipSpeaking(undoable: true) {
+      $0.isUnanswerableAloud(canSpeak: false, cantListen: false)
+    }
+    XCTAssertEqual(state.currentStep?.id, "hear", "a screen with a listening version stays")
+    XCTAssertEqual(state.queue, ["hear", "check"])
+    XCTAssertEqual(state.notice, .speakingSkipped)
+    XCTAssertEqual(state.unavailableStepIds, ["say", "later"])
+    XCTAssertEqual(state.skippedWritingStepIds, [], "the server never hears of it")
+
+    state.restoreSkipped()
+    XCTAssertEqual(state.currentStep?.id, "say")
+    XCTAssertEqual(state.queue, ["say", "hear", "check", "later"])
+    XCTAssertEqual(state.unavailableStepIds, [])
+    XCTAssertNil(state.notice)
+  }
+
+  func testCantListenToALeftOutSpeakingScreenLeavesItOutToo() throws {
+    var state = LessonPlayerState(
+      lessonId: "lesson",
+      steps: [try step(spokenStep("hear", listening: true)), try step(check(id: "check"))])
+
+    state.skipSpeaking(undoable: true) {
+      $0.isUnanswerableAloud(canSpeak: false, cantListen: false)
+    }
+    XCTAssertEqual(state.currentStep?.id, "hear")
+
+    state.skipSpeaking(undoable: true) { $0.isUnanswerableAloud(canSpeak: false, cantListen: true) }
+    XCTAssertEqual(state.currentStep?.id, "check")
+    XCTAssertEqual(state.notice, .speakingSkipped)
+  }
+
+  func testADeviceThatCantRecordLeavesOutSpeakingWithNothingToTurnBackOn() throws {
+    var state = LessonPlayerState(
+      lessonId: "lesson", steps: [try step(spokenStep("say")), try step(check(id: "check"))])
+
+    state.skipSpeaking(undoable: false, opening: true) {
+      $0.isUnanswerableAloud(canSpeak: false, cantListen: false)
+    }
+
+    XCTAssertEqual(state.currentStep?.id, "check")
+    XCTAssertNil(state.notice)
+    XCTAssertNil(state.skipRestore)
+  }
+
+  func testSkippingSpeakingInALessonOfOnlySpeakingWaitsForFinishAsItOpens() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: [try step(spokenStep("say"))])
+
+    state.skipSpeaking(undoable: true, opening: true) {
+      $0.isUnanswerableAloud(canSpeak: false, cantListen: false)
+    }
 
     XCTAssertEqual(state.phase, .completed)
     XCTAssertEqual(state.completion?.status, .ready, "only a learner's Finish saves it")

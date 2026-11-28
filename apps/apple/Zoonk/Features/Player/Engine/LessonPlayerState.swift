@@ -26,6 +26,9 @@ struct LessonPlayerState: Equatable, Sendable {
     case pictureReady
     /// "Skip writing questions today" left the lesson's writing out; "Turn back on" puts it back.
     case writingSkipped
+    /// "I can't talk now" left out the spoken screens nobody can listen to instead; "Turn back on"
+    /// puts them back.
+    case speakingSkipped
   }
 
   struct Completion: Equatable, Sendable {
@@ -55,10 +58,12 @@ struct LessonPlayerState: Equatable, Sendable {
     let skillId: String?
   }
 
-  struct WritingRestore: Hashable, Sendable {
+  /// Where the learner was before a skip with a notice, and the screens it left out.
+  struct SkipRestore: Hashable, Sendable {
+    let notice: Notice
     let position: Int
     let queue: [String]
-    let skippedWritingStepIds: [String]
+    let leftOut: [String]
   }
 
   struct PendingCheck: Hashable, Sendable {
@@ -99,12 +104,13 @@ struct LessonPlayerState: Equatable, Sendable {
   private(set) var selfCorrected: Set<String> = []
   /// How many parts of a worked example, or decisions of a challenge, are shown.
   private(set) var revealed: [String: Int] = [:]
-  /// Screens that can't be played after all (a question about a picture that never came).
+  /// Screens that can't be played after all (a question about a picture that never came, a spoken
+  /// screen nobody can say or listen to now). Never sent: the server doesn't need them.
   private(set) var unavailableStepIds: [String] = []
   /// Writing left out of this run, without a verdict ("I don't know yet", "Skip writing questions
   /// today").
   private(set) var skippedWritingStepIds: [String] = []
-  private(set) var writingRestore: WritingRestore?
+  private(set) var skipRestore: SkipRestore?
   /// Questions answered after "Explain first", so memory rates them as helped.
   private(set) var helped: Set<String> = []
   private(set) var misses: [Miss] = []
@@ -492,37 +498,67 @@ struct LessonPlayerState: Equatable, Sendable {
   /// Number questions are kept. A lesson left with nothing to do as it opens (`opening`) waits for
   /// Finish, since only a learner's action saves one.
   mutating func skipWriting(opening: Bool = false, now: Date = .now) {
+    skipAhead(.writingSkipped, into: \.skippedWritingStepIds, opening: opening, now: now) {
+      $0.isWriting
+    }
+  }
+
+  /// Leaves out the spoken screens ahead that nobody can answer now (`isLeftOut`). The learner's "I
+  /// can't talk now" says so and can be turned back on; a device that can't record leaves them out
+  /// silently (`undoable` false), as a dictation is while the learner can't listen.
+  mutating func skipSpeaking(
+    undoable: Bool, opening: Bool = false, now: Date = .now, where isLeftOut: (LessonStep) -> Bool
+  ) {
+    guard undoable else {
+      skipSteps(queue[position...].filter { steps[$0].map(isLeftOut) == true }, now: now)
+      return
+    }
+
+    skipAhead(.speakingSkipped, into: \.unavailableStepIds, opening: opening, now: now, isLeftOut)
+  }
+
+  /// "Turn back on": the screens the skip left out come back, and the learner is where they were.
+  mutating func restoreSkipped(now: Date = .now) {
+    guard let restore = skipRestore, notice == restore.notice, phase == .playing else {
+      return
+    }
+
+    queue = restore.queue
+    skippedWritingStepIds.removeAll { restore.leftOut.contains($0) }
+    unavailableStepIds.removeAll { restore.leftOut.contains($0) }
+    skipRestore = nil
+    notice = nil
+    enter(restore.position, now: now)
+  }
+
+  /// The screen in view and those ahead that `isLeftOut` picks are recorded in `list` and left out,
+  /// with `notice` and the way back while the lesson goes on.
+  private mutating func skipAhead(
+    _ notice: Notice, into list: WritableKeyPath<LessonPlayerState, [String]>, opening: Bool,
+    now: Date, _ isLeftOut: (LessonStep) -> Bool
+  ) {
     guard phase == .playing else {
       return
     }
 
-    let ahead = queue[position...].filter { steps[$0]?.isWriting == true }
+    let ahead = queue[position...].filter { steps[$0].map(isLeftOut) == true }
 
     guard !ahead.isEmpty else {
       return
     }
 
-    let restore = WritingRestore(
-      position: position, queue: queue, skippedWritingStepIds: skippedWritingStepIds)
-    addSkippedWriting(Array(ahead))
+    let recorded = self[keyPath: list]
+    let added = ahead.reduce(into: [String]()) { added, id in
+      if !recorded.contains(id), !added.contains(id) { added.append(id) }
+    }
+    let restore = SkipRestore(notice: notice, position: position, queue: queue, leftOut: added)
+    self[keyPath: list] += added
     leaveOutAhead({ ahead.contains($0) }, completionStatus: opening ? .ready : .saving, now: now)
 
     if phase == .playing {
-      notice = .writingSkipped
-      writingRestore = restore
+      self.notice = notice
+      skipRestore = restore
     }
-  }
-
-  mutating func restoreWriting(now: Date = .now) {
-    guard let restore = writingRestore, notice == .writingSkipped, phase == .playing else {
-      return
-    }
-
-    queue = restore.queue
-    skippedWritingStepIds = restore.skippedWritingStepIds
-    writingRestore = nil
-    notice = nil
-    enter(restore.position, now: now)
   }
 
   /// The attempt id to send the answer on screen under.
@@ -1101,7 +1137,7 @@ struct LessonPlayerState: Equatable, Sendable {
     revealed = [:]
     misses = []
     quickCheck = nil
-    writingRestore = nil
+    skipRestore = nil
     notice = nil
     completion = nil
     reviewing = false
@@ -1171,6 +1207,9 @@ struct LessonPlayerState: Equatable, Sendable {
     guard !known.isEmpty else {
       return
     }
+
+    // A skip's way back would return the learner to where it found them, before they were placed.
+    skipRestore = nil
 
     let missedOnce = queue.filter { id in
       let tries = known.filter { $0.stepId == id }

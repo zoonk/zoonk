@@ -104,7 +104,7 @@ struct LessonStageView: View {
     if let step = state.currentStep {
       let spokenMode = step.spokenAnswerMode(
         canSpeak: recording.input != nil, cantTalk: store.cantTalkToday,
-        cantListen: store.cantListenToday, micBlocked: store.isMicBlocked,
+        cantListen: store.cantListenToday,
         lockedAnswer: state.phase == .playing ? nil : state.currentAnswer,
         heard: state.currentResult?.heard)
       let prompt = ShownPrompt(
@@ -432,6 +432,12 @@ extension LessonPlayerState.Notice {
       String(
         localized: "Writing is off for today.", table: "Player",
         comment: "\"Skip writing questions today\" left the lesson's writing out")
+    case .speakingSkipped:
+      String(
+        localized: "Speaking is off for today.", table: "Player",
+        comment:
+          "\"I can't talk now\" left out the lesson's questions answered out loud that can't be listened to instead"
+      )
     }
   }
 }
@@ -752,32 +758,40 @@ private struct LessonNotice: View {
         .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
       case .writingSkipped:
-        HStack(alignment: .firstTextBaseline) {
-          Label {
-            Text(LessonPlayerState.Notice.writingSkipped.line)
-          } icon: {
-            Image(systemName: "pencil.slash")
-          }
-          .foregroundStyle(.mutedForeground)
-
-          Spacer(minLength: 8)
-
-          if state.writingRestore != nil, state.phase == .playing {
-            Button {
-              store.restoreWriting()
-            } label: {
-              Text(
-                "Turn back on", tableName: "Player",
-                comment: "Takes back \"Skip writing questions today\": written answers come back")
-            }
-            .buttonStyle(.ghost)
-          }
-        }
-        .typeStyle(.body)
+        skipped(.writingSkipped, systemImage: "pencil.slash")
+      case .speakingSkipped:
+        skipped(.speakingSkipped, systemImage: "mic.slash")
       case .selfCorrect, nil:
         EmptyView()
       }
     }
+  }
+
+  private func skipped(_ notice: LessonPlayerState.Notice, systemImage: String) -> some View {
+    HStack(alignment: .firstTextBaseline) {
+      Label {
+        Text(notice.line)
+      } icon: {
+        Image(systemName: systemImage)
+      }
+      .foregroundStyle(.mutedForeground)
+
+      Spacer(minLength: 8)
+
+      if state.skipRestore != nil, state.phase == .playing {
+        Button {
+          store.restoreSkipped()
+        } label: {
+          Text(
+            "Turn back on", tableName: "Player",
+            comment:
+              "Takes back \"Skip writing questions today\" or \"I can't talk now\": the questions it left out come back"
+          )
+        }
+        .buttonStyle(.ghost)
+      }
+    }
+    .typeStyle(.body)
   }
 }
 

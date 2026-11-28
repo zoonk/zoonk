@@ -9270,65 +9270,6 @@
         }
       }
     },
-    "Turn on the microphone for Zoonk in Settings to answer out loud." : {
-      "comment" : "How to turn the microphone back on to record a spoken answer",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aktiviere in den Einstellungen das Mikrofon für Zoonk, um laut zu antworten."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Activa el micrófono para Zoonk en Configuración para responder en voz alta."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Active le micro pour Zoonk dans Réglages pour répondre à voix haute."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Attiva il microfono per Zoonk in Impostazioni per rispondere ad alta voce."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "声に出して答えるには、「設定」でZoonkのマイクをオンにしてください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "소리 내어 답하려면 설정에서 Zoonk의 마이크 사용을 허용하세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "W Ustawieniach zezwól Zoonkowi na dostęp do mikrofonu, aby odpowiadać na głos."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ative o microfone para o Zoonk em Ajustes para responder em voz alta."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sesli cevap vermek için Ayarlar’da Zoonk’a mikrofon izni ver."
-          }
-        }
-      }
-    },
     "Turn on the microphone for Zoonk in Settings to say the word. You can skip it for now." : {
       "comment" : "How to say a word when the microphone is off",
       "localizations" : {
@@ -11222,6 +11163,12 @@
           }
         }
       }
+    },
+    "Allow the microphone in Settings, then tap Record." : {
+      "comment" : "How to turn the microphone back on to record a spoken answer"
+    },
+    "We can't use your microphone. Check it, then tap Record." : {
+      "comment" : "The microphone is allowed but didn't start, so a recording couldn't begin"
     }
   },
   "version" : "1.0"
