@@ -15,7 +15,8 @@ struct MeterParts: View {
 
     var weight = 1.0
     var fill: Fill
-    /// A ring over the fill: where the learner is, such as the chapter a test starts them in.
+    /// A ring over the fill, with the page inside it rather than the track: where the learner is,
+    /// such as the chapter a test starts them in.
     var ringed = false
   }
 
@@ -58,9 +59,12 @@ struct MeterParts: View {
         case .color(let color):
           context.fill(Path(roundedRect: rect, cornerRadius: radius), with: .color(color))
         case .share(let filled, let color):
-          fill(rect, share: filled, with: color, radius: radius, in: context)
+          fill(
+            rect, share: filled, with: color, track: !part.ringed, radius: radius, in: context)
         case .currentPhase(let filled):
-          fill(rect, share: filled, with: .success.opacity(0.3), radius: radius, in: context)
+          fill(
+            rect, share: filled, with: .success.opacity(0.3), track: !part.ringed, radius: radius,
+            in: context)
         }
 
         if part.ringed {
@@ -80,11 +84,14 @@ struct MeterParts: View {
 
   /// The track, filled in `color` from its start this far (0 to 1).
   private func fill(
-    _ rect: CGRect, share: Double, with color: Color, radius: Double, in context: GraphicsContext
+    _ rect: CGRect, share: Double, with color: Color, track drawsTrack: Bool, radius: Double,
+    in context: GraphicsContext
   ) {
     let track = Path(roundedRect: rect, cornerRadius: radius)
     var part = context
-    part.fill(track, with: .color(.surface3))
+    if drawsTrack {
+      part.fill(track, with: .color(.surface3))
+    }
     part.clip(to: track)
     part.fill(
       Path(
