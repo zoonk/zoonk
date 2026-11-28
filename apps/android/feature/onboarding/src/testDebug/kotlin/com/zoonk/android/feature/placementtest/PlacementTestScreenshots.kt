@@ -166,8 +166,14 @@ class PlacementTestScreenshots(
             Ask(
                 QuestionFormat.MatchPairs,
                 "Match each term to what it means.",
-                left = listOf("Plaintiff", "Defendant", "Verdict", "Appeal"),
-                right = listOf("The decision", "Who is sued", "Asking a higher court", "Who sues"),
+                left = listOf("Share", "Dividend", "Dilution", "Buyback"),
+                right =
+                    listOf(
+                        "Profit paid out to owners",
+                        "The company buying its own shares",
+                        "A slice of the company",
+                        "Your stake shrinking as shares are added",
+                    ),
             )
         }
 
@@ -176,8 +182,14 @@ class PlacementTestScreenshots(
         shoot("question-select-all", sitting = asking(answered = 4)) {
             Ask(
                 QuestionFormat.MultipleChoice,
-                "Which of these can end a contract?",
-                options = listOf("Performance", "Breach", "Agreement", "A full moon", "Impossibility"),
+                "Which of these can shrink your share of a company?",
+                options =
+                    listOf(
+                        "The company issues new shares",
+                        "Employees turn stock options into shares",
+                        "The share price falls",
+                        "Bonds convert into shares",
+                    ),
                 select = Select.All,
             )
         }

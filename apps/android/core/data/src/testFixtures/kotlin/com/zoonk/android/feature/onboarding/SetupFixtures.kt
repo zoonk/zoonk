@@ -31,10 +31,12 @@ fun trueFalseQuestion(itemId: String = ITEM_ID) =
      "options":null,"question":"A contract needs consideration to be binding."}
     """.trimIndent()
 
-fun orderQuestion() =
-    """
+fun orderQuestion(
+    question: String = "Put a civil case's stages in order.",
+    options: List<String> = listOf("Complaint", "Answer", "Discovery", "Trial"),
+) = """
     {"context":null,"image":null,"itemId":"$ITEM_ID","skillId":"$SKILL_ID","visual":null,"format":"order",
-     "options":["Complaint","Answer","Discovery","Trial"],"question":"Put a civil case's stages in order."}
+     "options":[${options.joinToString(",") { "\"$it\"" }}],"question":"$question"}
     """.trimIndent()
 
 fun placementOf(
