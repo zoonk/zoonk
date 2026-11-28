@@ -6,8 +6,11 @@ import { type ClipEndingCheck, checkClipEnding } from "./check-clip-ending";
 /** A learner can be waiting on a new phrase's clip, and no answer keeps it anyway. */
 const CLIP_ENDING_CHECK_TIMEOUT_MS = 5000;
 
-/** Voices finish a phrase left open, such as "vivo in"; a sentence ends where its text does. */
-const SENTENCE_END = /[\p{Sentence_Terminal}…]["'”’»)\]]*$/u;
+/**
+ * Voices finish a phrase left open, such as "vivo in" or "vivo in…"; a sentence ends where its
+ * text does, even inside quotes or brackets ("「ありがとう。」", "« Fin. »").
+ */
+const SENTENCE_END = /(?<![.…])\p{Sentence_Terminal}[\s\p{Pe}\p{Pf}"']*$/u;
 
 export type ClipAddition = Exclude<ClipEndingCheck["added"], "none">;
 
@@ -23,7 +26,7 @@ export async function findClipAddition({
   language: string;
   text: string;
 }): Promise<ClipAddition | null> {
-  if (SENTENCE_END.test(text.trim())) {
+  if (SENTENCE_END.test(text)) {
     return null;
   }
 
@@ -39,7 +42,7 @@ export async function findClipAddition({
   );
 
   if (error) {
-    logError("Checking a clip's ending failed:", error);
+    logError("Checking a clip's ending failed:", error.name);
     return null;
   }
 
