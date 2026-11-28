@@ -19,18 +19,26 @@ The picture must teach. A learner who looks at it for two seconds should see the
 - `layout`: `single` for one object, a small scene, a whole with its parts, a cycle or a map; `comparison` for two things the screen compares by how they look, side by side: `focalObject` is the first and the first supporting object the second (two paintings, "Earth and Sun next to an electron and its nucleus"); `sequence` for a before and after or a cause and its effect the screen is about, linked by one arrow. Two places, two moments of a story or two parts of someone's day (a kitchen in the morning and an office at noon) share one picture only when ALT names both: then draw them side by side as a `comparison`, `focalObject` the first scene and the first supporting object the second, without labels naming them. Otherwise show the one scene ALT describes (or that the request is mostly about, when there is no ALT) as `single`, even when REQUEST or SCREEN_TEXT mentions another. A screen that asks the learner to compare two scenes by looking (which of the pictures labeled 1 and 2 fits) is a `comparison` with the labels 1 and 2.
 - `relation`: how the objects relate in space or cause, in one short sentence, or null.
 - `motion`: the movement to show with thin dashed lines and one arrow ("a dashed orbit spiraling inward"), or null when nothing moves.
-- `labels`: zero to six labels, only when a word, number or price makes the idea readable at a glance ("before $80", "you pay $60", "nucleus"). A whole shown with its parts labels each part the screen names; anything else uses as few as the idea needs. Each label is at most four words (numbers and prices don't count), written in `LANGUAGE`. `target` says in English where it goes: "next to the nucleus", or "on the old price tag" when the label is the object's own text. Every piece of text in the picture is a label: don't also write a price or a number into `focalObject`. Use an empty list when `TEXT_ALLOWED` is `no` and whenever the picture is clear without words. Never titles, captions, sentences or legends.
+- `labels`: zero to six labels, only when a word, number or price makes the idea readable at a glance ("before $80", "you pay $60", "nucleus"). A whole shown with its parts labels each part the screen names; anything else uses as few as the idea needs. Each label is at most four words (numbers and prices don't count), written in `LANGUAGE`. `target` says in English where it goes: "next to the nucleus", or "on the old price tag" when the label is the object's own text. Every piece of text in the picture is a label: don't also write a price or a number into `focalObject`. Use an empty list when `TEXT_ALLOWED` is `no` and whenever the picture is clear without words. Never titles, captions or sentences.
 
 Write `focalObject`, `supportingObjects`, `relation`, `motion` and every `target` in English, whatever `LANGUAGE` is. Only label texts use `LANGUAGE`.
 
 People are adults unless REQUEST, ALT or SCREEN_TEXT says they're children. A label must be easy to read on a phone: never several labels written small on papers, screens or signs inside the scene; label the object itself, or leave the words to SCREEN_TEXT.
+
+# A picture read through its colors
+
+When REQUEST or SCREEN_TEXT says what each color in the picture stands for (a thematic map colored by ranges, a pie chart, a map's key), the learner reads the picture by matching colors, so it has a legend they can read:
+
+- The legend is a supporting object: a small box with one swatch for each of those colors, named by the same colors `focalObject` gives the areas or marks ("a legend box with a pale blue, a medium blue and a dark blue swatch").
+- Each swatch has a label saying what its color stands for, exactly as REQUEST or SCREEN_TEXT says it ("0% a 19%"), with `target` "beside the pale blue swatch in the legend". A swatch never goes without its label: when the labels don't fit in six, label fewer areas, never fewer swatches.
+- When neither says what the colors stand for, or `TEXT_ALLOWED` is `no`, draw no legend.
 
 # A picture a question is about
 
 When `SCREEN_TEXT` asks a question about the picture (which structure the arrow marks, which region is shaded, what changed between two scenes), the learner answers by looking, so the picture shows everything the question needs and never its answer:
 
 - Keep every part the question points at, even in a fuller drawing (a plant cell with its wall, vacuole and chloroplasts, a triangle with its marked angle).
-- Label only the letters or numbers the question uses to point at parts ("A", "B", "1", "2"), up to six. Never write the name of what the question asks for ("vacúolo", "nucleus"), and no other words.
+- Label only the letters or numbers the question uses to point at parts ("A", "B", "1", "2"), up to six. Never write the name of what the question asks for ("vacúolo", "nucleus"), and no other words, except a legend's labels: reading the legend is how the learner answers.
 
 # Show what the screen is about
 
