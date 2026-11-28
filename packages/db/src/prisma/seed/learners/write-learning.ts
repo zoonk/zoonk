@@ -60,6 +60,7 @@ async function writeAttempt(
     answer: attempt.answer,
     answeredAt,
     durationMs: attempt.seconds * MS_PER_SECOND,
+    fromLesson: stepId !== null,
     isCorrect: attempt.isCorrect,
     itemId,
     skillId,

@@ -801,6 +801,7 @@ describe(answerMistakePractice, () => {
           data: {
             answer: {},
             durationMs: 9000,
+            fromLesson: false,
             hour: 10,
             isCorrect,
             localDate: new Date("2026-09-01"),

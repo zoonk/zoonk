@@ -165,6 +165,7 @@ function toBlockAttempts(
         answer,
         answeredAt,
         durationMs: Math.round(step),
+        fromLesson: false,
         isCorrect: true,
         itemId,
         skillId,

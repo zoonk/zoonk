@@ -148,6 +148,7 @@ describe("placement questions for an exam goal", () => {
       data: Array.from({ length: 3 }, () => ({
         answer: { pick: 0 },
         durationMs: 5000,
+        fromLesson: false,
         hour: 12,
         isCorrect: true,
         isPlacement: true,
