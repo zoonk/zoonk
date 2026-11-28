@@ -114,15 +114,19 @@ function toUnopenedPhase({
 
 /**
  * `asked`: the learner already chose the test, so it's waited for instead of offered again.
+ * `attemptId`: the test the learner was in. A read that finds it closed, such as after another
+ * device stopped it, shows its result on the Plan too, where a past result is otherwise not shown.
  * `canStart`: false when the course has nothing a test could skip, so the Plan offers no start.
  */
 export function toPlacementTestPhase({
   asked = false,
+  attemptId,
   canStart = true,
   outcome,
   surface,
 }: {
   asked?: boolean;
+  attemptId?: string;
   canStart?: boolean;
   outcome: PlacementOutcome;
   surface: "onboarding" | "plan";
@@ -135,7 +139,7 @@ export function toPlacementTestPhase({
   const result = ("result" in outcome && outcome.result) || null;
 
   if (!attempt) {
-    return surface === "onboarding" && result
+    return result && (surface === "onboarding" || result.attemptId === attemptId)
       ? toResultPhase({
           changeId: result.changeId,
           heldUntilTomorrow: result.heldUntilTomorrow === true,

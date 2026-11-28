@@ -82,7 +82,16 @@ export function usePlacementTest({
     }
 
     if (finished.status === "stale") {
-      setPhase(toPlacementTestPhase({ asked: true, outcome: await actions.get(), surface }));
+      setPhase(
+        toPlacementTestPhase({
+          asked: true,
+          attemptId: attempt.id,
+          canStart,
+          outcome: await actions.get(),
+          surface,
+        }),
+      );
+
       return true;
     }
 
@@ -91,8 +100,12 @@ export function usePlacementTest({
   };
 
   /** A test that's over closes in the same save; if that fails, its screen holds the retry. */
-  const show = async (outcome: PlacementOutcome, asked: boolean): Promise<boolean> => {
-    const next = toPlacementTestPhase({ asked, canStart, outcome, surface });
+  const show = async (
+    outcome: PlacementOutcome,
+    asked: boolean,
+    attemptId?: string,
+  ): Promise<boolean> => {
+    const next = toPlacementTestPhase({ asked, attemptId, canStart, outcome, surface });
 
     if (next.kind !== "over") {
       setPhase(next);
@@ -166,7 +179,7 @@ export function usePlacementTest({
         return;
       }
 
-      setFailed(!(await show(outcome, true).catch(() => false)));
+      setFailed(!(await show(outcome, true, from.attempt.id).catch(() => false)));
     });
 
   return {

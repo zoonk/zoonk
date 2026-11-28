@@ -344,6 +344,30 @@ test.describe("Testing what you know from the plan", () => {
   });
 });
 
+test("an answer to a test another device stopped shows that test's result", async ({
+  noProgressUser,
+  userWithoutProgress: page,
+}) => {
+  await createLearnGoal(noProgressUser.id);
+
+  await page.goto("/placement-test");
+  await page.getByRole("button", { exact: true, name: "Start" }).click();
+  await atQuestion(page, 1);
+  await answerRight(page);
+  await atQuestion(page, 2);
+
+  const other = await page.context().newPage();
+  await other.goto("/placement-test");
+  await atQuestion(other, 2);
+  await stopTest(other);
+  await expect(other.getByText("You start here", { exact: true })).toBeVisible();
+
+  await page.getByRole("button", { name: "I don't know yet" }).click();
+
+  await expect(page.getByText("You start here", { exact: true })).toBeVisible();
+  await expect(page.getByText("That didn't go through. Your answers are kept.")).toBeHidden();
+});
+
 test("a test's skip appears on Plan and Today and can be undone from Today", async ({
   noProgressUser,
   userWithoutProgress: page,
