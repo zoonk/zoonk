@@ -2,12 +2,22 @@ import { globSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { configDefaults, defineConfig } from "vitest/config";
 
+/** Match the apps' raw-loader, so a test reads the prompt production sends. */
+const markdownAsText = {
+  enforce: "pre" as const,
+  name: "markdown-as-text",
+  transform(code: string, id: string) {
+    return id.endsWith(".md") ? `export default ${JSON.stringify(code)};` : null;
+  },
+};
+
 /** A mocked module stays mocked in its worker, so files that mock run in a fresh worker each. */
 const OWN_MOCKS = globSync("src/**/*.test.ts", { cwd: import.meta.dirname }).filter((file) =>
   /\bvi\.(?:mock|doMock|unmock)\(/u.test(readFileSync(resolve(import.meta.dirname, file), "utf8")),
 );
 
 export default defineConfig({
+  plugins: [markdownAsText],
   resolve: { tsconfigPaths: true },
   test: {
     environment: "node",
