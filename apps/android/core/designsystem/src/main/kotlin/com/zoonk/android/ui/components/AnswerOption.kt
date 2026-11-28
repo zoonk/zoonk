@@ -118,20 +118,7 @@ fun AnswerOption(
     val inputModes = LocalInputModeManager.current
     val label = MaterialTheme.typography.labelLarge
     val optionStyle = label.copy(lineBreak = label.lineBreak.copy(strategy = LineBreak.Strategy.Simple))
-    val shownTag: (@Composable () -> Unit)? =
-        tag ?: when {
-            result != null -> {
-                { AnswerTag(picked, result, guessed = guessed) }
-            }
-
-            picked && guessed && role != Role.Button -> {
-                { GuessTag() }
-            }
-
-            else -> {
-                null
-            }
-        }
+    val shownTag: (@Composable () -> Unit)? = tag ?: result?.let { checked -> { AnswerTag(picked, checked, guessed = guessed) } }
 
     TagBesideOrUnder(
         modifier =
