@@ -2,6 +2,7 @@ import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { warmUpFixture } from "@zoonk/testing/fixtures/warm-ups";
 import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
@@ -61,6 +62,37 @@ describe(getOnboarding, () => {
       });
     },
   );
+
+  it("never offers a booked exam a notice's day: only the day the learner booked is theirs", async () => {
+    const user = await userFixture();
+    const citation = { passage: "Test dates", sourceId: "notice" };
+
+    const blueprint = await examBlueprintFixture({
+      edition: {
+        check: null,
+        citations: [],
+        dates: [{ citation, date: "2099-11-08", kind: "exam", label: "Test day", startTime: null }],
+        noticeUrl: null,
+        questionCount: null,
+        sourceHash: null,
+        timeZone: null,
+        year: 2099,
+      },
+    });
+
+    const goal = await goalFixture({
+      details: { answered: [], examDay: "booked", examName: blueprint.name },
+      examBlueprintId: blueprint.id,
+      kind: "exam",
+      userId: user.id,
+    });
+
+    mockSession(user.id);
+
+    await expect(getOnboarding({ goalId: goal.id })).resolves.toMatchObject({
+      onboarding: { bookedExam: true, examDays: null, goal: { targetDate: null } },
+    });
+  });
 
   it("reads onboarding display without writing", async () => {
     const user = await userFixture();

@@ -255,7 +255,7 @@ export async function getOnboarding({
       contentCountry: getCountryQuestion({ kind: goal.kind, view }),
       dateProblem,
       examChoices: notice.choices,
-      examDays: notice.examDays,
+      examDays: bookedExam ? null : notice.examDays,
       examSubjects: notice.subjects,
       firstLesson,
       followUps: getFollowUpQuestions(details),

@@ -78,7 +78,7 @@ export const onboardingResponseSchema = z
       .nullable()
       .meta({
         description:
-          "The days of the exam's next sitting, for the `targetDate` screen to lead with, when the exam has a public calendar (a goal started from a public exam course, or an exam goal whose notice is public); null for other goals",
+          "The days of the exam's next sitting, for the `targetDate` screen to lead with, when the exam has a public calendar (a goal started from a public exam course, or an exam goal whose notice is public); null for other goals and for a booked exam, whose day is the learner's booking",
       }),
     examSubjects: z
       .array(

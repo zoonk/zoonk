@@ -222,7 +222,7 @@ export type OnboardingView = {
   dateProblem: OnboardingDateProblem | null;
   /** Studies only selected options; empty when the exam offers no choices. `subject` is the saved pick or the option the learner's stated position or answers name, which is taken without asking. */
   examChoices: ExamChoiceView[];
-  /** The next sitting's days, the first the plan's default date; null unless the exam has a public calendar. */
+  /** The next sitting's days, the first the plan's default date; null unless the exam has a public calendar, and for a booked exam. */
   examDays: { days: string[]; estimated: boolean } | null;
   /** knownSubjects must send notice names, not display short names. */
   examSubjects: { name: string; shortName: string | null }[];
