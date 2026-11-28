@@ -118,7 +118,7 @@ final class PlacementTestRenderTests: XCTestCase {
         spoken(in: window).contains(title)
       }
       try await waitForLayout(in: window)
-      let words = spoken(in: window)
+      let words = plainFacts(spoken(in: window))
       // The tree is walked more than once over; each row is read as often as the title is.
       let passes = words.filter { $0 == title }.count
 
