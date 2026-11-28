@@ -21,38 +21,19 @@ import { TestOutcome } from "../onboarding/test-outcome";
 import { useSkippedLessonsSentences } from "../plan/use-skipped-lessons-sentences";
 import { type ResultUndo, useResultUndo } from "../questions/undo-button";
 import { DaySegment } from "../today/day-segments";
+import { toCourseSegments } from "./course-line";
 import { type PlacementResultPhase } from "./placement-test-phase";
 import { type TestPressed } from "./test-offer";
 
 type Course = NonNullable<PlacementResultPhase["course"]>;
-type Chapter = Course["chapters"][number];
-
-function toChapterState(chapter: Chapter) {
-  if (chapter.start) {
-    return "current";
-  }
-
-  return chapter.lessons > 0 && chapter.skipped >= chapter.lessons ? "done" : "ahead";
-}
 
 function CourseLine({ course }: { course: Course }) {
   return (
     <MeterParts data-slot="course-line">
-      {course.chapters.map((chapter, index) => {
-        const state = toChapterState(chapter);
-
-        return (
-          <DaySegment
-            // oxlint-disable-next-line react/no-array-index-key -- Chapters are positions in the plan.
-            key={index}
-            share={
-              state === "done" || chapter.lessons === 0 ? 0 : chapter.skipped / chapter.lessons
-            }
-            state={state}
-            weight={chapter.lessons}
-          />
-        );
-      })}
+      {toCourseSegments(course.chapters).map((segment, index) => (
+        // oxlint-disable-next-line react/no-array-index-key -- Chapters are positions in the plan.
+        <DaySegment key={index} {...segment} />
+      ))}
     </MeterParts>
   );
 }
