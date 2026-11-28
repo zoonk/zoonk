@@ -1,6 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { chooseServiceTier } from "@zoonk/ai/provider-options";
+import { checkCoverage } from "@zoonk/ai/tasks/curriculum/coverage-check";
+import { generateSkillGraphSection } from "@zoonk/ai/tasks/curriculum/skill-graph-calls";
 import { decideLibraryIdentity } from "@zoonk/ai/tasks/identity/decision";
 import { generateSearchTerms } from "@zoonk/ai/tasks/identity/search-terms";
 import { checkCitedFacts } from "@zoonk/ai/tasks/research/check-cited-facts";
@@ -34,6 +36,7 @@ import { NoObjectGeneratedError } from "ai";
 import { Response as PageResponse, fetch } from "undici";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { followWithOutdatedSummary, readFollowerDetails } from "../_test-utils/focus-test-follower";
+import { mockNoticeSubjectWriter } from "../_test-utils/notice-subject-writer";
 import { getStartMock } from "../_test-utils/start-mock";
 import { courseReleaseWorkflow } from "../products/course-release-workflow";
 import { findAndStoreSources } from "../research/research-sources";
@@ -697,6 +700,107 @@ describe(freshnessWorkflow, () => {
     );
 
     expect(extractExamBlueprint).not.toHaveBeenCalled();
+  });
+
+  it("reconciles a whole subject on a reread before updating followers' plans", async () => {
+    const { blueprint, extraction } = await examWithLearner();
+    const [known, added] = extraction.subjects;
+
+    if (!known || !added) {
+      throw new Error("Expected two subjects in the notice.");
+    }
+
+    const knownTopics = known.topics.slice(0, 1);
+    const topics = added.topics.slice(0, 2);
+
+    const read = {
+      ...withExamDate({ extraction, line: OLD_DATE_LINE }),
+      choiceGroups: [],
+      subjects: [
+        { ...known, topics: knownTopics },
+        { ...added, topics },
+      ],
+      topicFrequency: [],
+    };
+
+    const [course, skill] = await Promise.all([
+      courseFixture({ language: "pt" }),
+      skillFixture({ language: "pt" }),
+    ]);
+
+    const original = {
+      area: "Leitura e interpretação",
+      courseIds: [course.id],
+      lessons: 5,
+      name: skill.name,
+      phase: 0,
+      skillId: skill.id,
+      topics: knownTopics,
+      weight: 3,
+    };
+
+    const graph = { phases: [{ milestone: null, name: "Basics" }], skills: [original] };
+    const user = await userFixture();
+
+    const goal = await goalFixture({
+      examBlueprintId: blueprint.id,
+      kind: "exam",
+      userId: user.id,
+    });
+
+    await Promise.all([
+      prisma.examSkillGraph.create({
+        data: {
+          examBlueprintId: blueprint.id,
+          generatedAt: new Date(),
+          graph,
+          model: "test/fixture",
+          promptVersion: "test",
+          runId: randomUUID(),
+        },
+      }),
+      planFixture({ goalId: goal.id, graph }),
+    ]);
+
+    const name = `Distinguir competências administrativas ${randomUUID().slice(0, 8)}`;
+    vi.mocked(extractExamBlueprint).mockResolvedValue({ ...TASK, data: read });
+
+    vi.mocked(checkCoverage).mockResolvedValue({
+      ...TASK,
+      data: {
+        examWeights: [],
+        missing: [],
+        placements: [{ area: known.name, key: skill.id, topics: knownTopics }],
+      },
+    });
+
+    mockNoticeSubjectWriter({
+      area: added.name,
+      courseTitle: `Direito administrativo ${randomUUID().slice(0, 8)}`,
+      lessonCount: 16,
+      skillName: name,
+      topicIds: ["S2.1", "S2.2"],
+    });
+
+    await expect(readNoticeAgainWorkflow({ examBlueprintId: blueprint.id })).resolves.toStrictEqual(
+      { status: "read" },
+    );
+
+    expect(generateSkillGraphSection).toHaveBeenCalledOnce();
+
+    const [shared, plan] = await Promise.all([
+      prisma.examSkillGraph.findUniqueOrThrow({ where: { examBlueprintId: blueprint.id } }),
+      prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
+    ]);
+
+    for (const stored of [shared, plan]) {
+      expect(stored.graph).toMatchObject({
+        skills: [
+          { ...original, area: known.name },
+          { area: added.name, lessons: 16, name, topics },
+        ],
+      });
+    }
   });
 
   it("reads an exam's stored notice again on an admin's request, though nothing changed", async () => {

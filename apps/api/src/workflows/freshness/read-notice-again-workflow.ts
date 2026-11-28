@@ -1,7 +1,6 @@
 import { getWorkflowMetadata } from "workflow";
 import { toResearchAnalytics } from "../research/_utils/research-analytics";
 import { readExamBlueprint } from "../research/read-exam-blueprint";
-import { addMissingExamSkillsStep } from "./steps/add-missing-exam-skills-step";
 import { loadBlueprintNoticeStep } from "./steps/load-blueprint-notice-step";
 
 /** The only way a reading is redone: a prompt or code change never reads one again on its own. */
@@ -27,8 +26,6 @@ export async function readNoticeAgainWorkflow({
     isNew: false,
     sourceIds: notice.sourceIds,
   });
-
-  await addMissingExamSkillsStep(examBlueprintId);
 
   return { status: "read" };
 }

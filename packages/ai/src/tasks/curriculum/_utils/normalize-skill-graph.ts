@@ -185,26 +185,23 @@ export function toHours(lessons: number): number {
   return Math.round(((lessons * STUDY_MINUTES_PER_LESSON) / MINUTES_PER_HOUR) * 10) / 10;
 }
 
-export function normalizePhases({
-  phases,
-  skills,
-}: {
-  phases: RawSkillGraph["phases"];
-  skills: readonly SkillGraphSkill[];
-}): { phases: SkillGraphPhase[]; skills: SkillGraphSkill[] } {
+function sumSkillHours(skills: readonly SkillGraphSkill[]): number {
+  return toHours(skills.reduce((total, skill) => total + skill.estimatedLessons, 0));
+}
+
+export function normalizePhases(
+  { phases, skills }: { phases: RawSkillGraph["phases"]; skills: readonly SkillGraphSkill[] },
+  keepPhaseSlots = false,
+): { phases: SkillGraphPhase[]; skills: SkillGraphSkill[] } {
   const used = phases
     .map((phase, index) => ({ number: index + 1, phase }))
-    .filter(({ number }) => skills.some((skill) => skill.phase === number));
+    .filter(({ number }) => keepPhaseSlots || skills.some((skill) => skill.phase === number));
 
   const renumber = new Map(used.map(({ number }, index) => [number, index + 1]));
 
   return {
     phases: used.map(({ number, phase }) => ({
-      estimatedHours: toHours(
-        skills
-          .filter((skill) => skill.phase === number)
-          .reduce((total, skill) => total + skill.estimatedLessons, 0),
-      ),
+      estimatedHours: sumSkillHours(skills.filter((skill) => skill.phase === number)),
       milestone: toPlainLine(phase.milestone),
       title: toPlainLine(phase.title),
     })),
@@ -323,6 +320,7 @@ export function normalizeSkillGraph(
   raw: RawSkillGraph,
   outline?: ExamOutline,
   lessonBudget?: number | null,
+  { keepPhaseSlots = false }: { keepPhaseSlots?: boolean } = {},
 ): SkillGraph {
   const courseTitles = new Map(
     raw.courses.map((course) => [toKey(course.key), course.title.trim()]),
@@ -356,7 +354,7 @@ export function normalizeSkillGraph(
     ),
   });
 
-  const normalized = normalizePhases({ phases: raw.phases, skills: ordered });
+  const normalized = normalizePhases({ phases: raw.phases, skills: ordered }, keepPhaseSlots);
   const skills = fitLessonBudget({ budget: lessonBudget, skills: normalized.skills });
 
   const extraSkills = normalizeExtras({ courseTitles, phase: normalized.phases.length, raw });
@@ -364,7 +362,7 @@ export function normalizeSkillGraph(
   return {
     courses: normalizeCourses({ courses: raw.courses, skills: [...skills, ...extraSkills] }),
     ...(extraSkills.length > 0 && { extraSkills }),
-    estimatedHours: toHours(skills.reduce((total, skill) => total + skill.estimatedLessons, 0)),
+    estimatedHours: sumSkillHours(skills),
     phases: normalized.phases,
     skills,
   };

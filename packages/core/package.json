@@ -333,6 +333,7 @@
     "./library/curriculum/lesson-pictures": "./src/library/curriculum/lesson-pictures.ts",
     "./library/curriculum/lesson-spec-inputs": "./src/library/curriculum/lesson-spec-inputs.ts",
     "./library/curriculum/merge-skill-twins": "./src/library/curriculum/merge-skill-twins.ts",
+    "./library/curriculum/notice-graph-sections": "./src/library/curriculum/notice-graph-sections.ts",
     "./library/curriculum/opening-graph": "./src/library/curriculum/opening-graph.ts",
     "./library/curriculum/place-chapters-after": "./src/library/curriculum/place-chapters-after.ts",
     "./library/curriculum/prune-goal-notice-graph": "./src/library/curriculum/prune-goal-notice-graph.ts",

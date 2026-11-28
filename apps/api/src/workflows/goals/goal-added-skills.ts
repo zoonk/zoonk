@@ -8,7 +8,7 @@ function listAddedKeys({
   curriculum,
   graph,
 }: {
-  curriculum: BuiltCurriculum;
+  curriculum: Pick<BuiltCurriculum, "idsByKey">;
   graph: BuiltCurriculum["graph"];
 }): string[] {
   return graph.skills.flatMap((skill) =>
@@ -24,7 +24,7 @@ export async function mergeAddedTwins({
   scope,
 }: {
   context: GoalRunContext;
-  curriculum: BuiltCurriculum;
+  curriculum: Pick<BuiltCurriculum, "idsByKey">;
   graph: BuiltCurriculum["graph"];
   scope: CurriculumScope;
 }): Promise<BuiltCurriculum["graph"]> {
@@ -37,11 +37,15 @@ export async function saveAddedSkills({
   context,
   curriculum,
   graph,
+  provenance,
+  provenanceByKey = {},
   scope,
 }: {
   context: GoalRunContext;
-  curriculum: BuiltCurriculum;
+  curriculum: Pick<BuiltCurriculum, "idsByKey">;
   graph: BuiltCurriculum["graph"];
+  provenance: BuiltCurriculum["provenance"];
+  provenanceByKey?: Record<string, BuiltCurriculum["provenance"]>;
   scope: CurriculumScope;
 }): Promise<Record<string, string>> {
   const newKeys = new Set(listAddedKeys({ curriculum, graph }));
@@ -51,15 +55,19 @@ export async function saveAddedSkills({
     return curriculum.idsByKey;
   }
 
+  const groups = Map.groupBy(added, (skill) => provenanceByKey[skill.key] ?? provenance);
+
   const saved = await Promise.all(
-    toSlices(added).map((skills) =>
-      saveGoalSkillsStep({
-        courses: graph.courses,
-        ...context,
-        provenance: curriculum.provenance,
-        scope,
-        skills,
-      }),
+    [...groups].flatMap(([generation, skills]) =>
+      toSlices(skills).map((slice) =>
+        saveGoalSkillsStep({
+          ...context,
+          courses: graph.courses,
+          provenance: generation,
+          scope,
+          skills: slice,
+        }),
+      ),
     ),
   );
 

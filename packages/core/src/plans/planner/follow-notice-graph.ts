@@ -1,5 +1,6 @@
+import { isDeepStrictEqual } from "node:util";
 import { joinOptionSkills } from "./option-skills";
-import { type PlanGraph } from "./plan-state";
+import { type PlanGraph, type PlanGraphSkill } from "./plan-state";
 
 export function followNoticeGraph({
   askedExtras = [],
@@ -48,4 +49,45 @@ export function followNoticeGraph({
     : priorExtras;
 
   return { ...reading, ...(extraSkills && { extraSkills }), skills };
+}
+
+export function placeFromSharedNotice(
+  graph: PlanGraph,
+  sharedSkills: readonly PlanGraphSkill[],
+): PlanGraph {
+  const placements = new Map(
+    sharedSkills
+      .filter((skill) => !skill.extra && skill.topics !== undefined)
+      .map((skill) => [skill.skillId, skill]),
+  );
+
+  let changed = false;
+
+  const place = <Skill extends PlanGraphSkill>(skill: Skill): Skill => {
+    const shared = placements.get(skill.skillId);
+
+    if (
+      !shared ||
+      skill.extra ||
+      (skill.area === shared.area &&
+        isDeepStrictEqual(skill.topics, shared.topics) &&
+        (!shared.outcome || skill.outcome))
+    ) {
+      return skill;
+    }
+
+    changed = true;
+
+    return {
+      ...skill,
+      area: shared.area,
+      topics: shared.topics,
+      ...(shared.outcome && { outcome: true }),
+    };
+  };
+
+  const skills = graph.skills.map(place);
+  const options = graph.optionSkills?.map(place);
+
+  return changed ? { ...graph, ...(options && { optionSkills: options }), skills } : graph;
 }

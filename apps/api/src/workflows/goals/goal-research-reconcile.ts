@@ -4,16 +4,19 @@ import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
 import { retryPlanConflicts } from "../_shared/plan-conflict-retry";
 import { mergeAddedTwins, saveAddedSkills } from "./goal-added-skills";
 import { isBuiltBeforeResearch, loadResearchedInputs } from "./goal-content-inputs";
+import { findGoalCourses } from "./goal-courses";
 import { type BuiltCurriculum } from "./goal-curriculum";
 import { outlinePlanAhead } from "./goal-outlines";
 import { type GoalRunContext } from "./goal-run-context";
 import { preparePlacementItems } from "./placement-items";
+import { reconcileNoticeGraph } from "./reconcile-notice-graph";
 import {
   checkGraphCoverageStep,
   pruneNoticeGraphStep,
   saveExamSkillGraphStep,
 } from "./steps/goal-curriculum-steps";
 import { followNoticeStep } from "./steps/goal-plan-steps";
+import { prepareGoalNoticeParamsStep } from "./steps/notice-graph-steps";
 import {
   applyNoticeGraphStep,
   claimNoticeLandingStep,
@@ -54,12 +57,14 @@ function listResearchedReferences({
 }
 
 function keepExamGraph({
+  courseIdsByKey,
   curriculum,
   graph,
   idsByKey,
   researched,
   scope,
 }: {
+  courseIdsByKey: Record<string, string>;
   curriculum: BuiltCurriculum;
   graph: BuiltCurriculum["graph"];
   idsByKey: Record<string, string>;
@@ -67,10 +72,11 @@ function keepExamGraph({
   scope: CurriculumScope;
 }): Promise<void> {
   return saveExamSkillGraphStep({
-    courseIdsByKey: curriculum.courseIdsByKey,
+    courseIdsByKey,
     graph,
     idsByKey,
     inputs: researched,
+    previous: curriculum,
     provenance: curriculum.provenance,
     scope,
   });
@@ -86,6 +92,39 @@ function endNoticeWait(goalId: string): Promise<unknown> {
  */
 function claimNoticeLanding(goalId: string): Promise<boolean> {
   return claimNoticeLandingStep(goalId).catch(() => false);
+}
+
+async function checkResearchedGraph({
+  context,
+  curriculum,
+  references,
+  researched,
+  scope,
+}: Pick<ReconcileInput, "context" | "curriculum" | "scope"> & {
+  references: Reference[];
+  researched: GoalCurriculumInputs;
+}) {
+  const { graph } = curriculum;
+
+  if (references.length === 0) {
+    return { changed: false, graph, provenance: curriculum.provenance, provenanceByKey: {} };
+  }
+
+  const params = await prepareGoalNoticeParamsStep({ context, inputs: researched, scope });
+
+  if (params) {
+    return reconcileNoticeGraph({ graph, params, references });
+  }
+
+  const covered = await checkGraphCoverageStep({
+    ...context,
+    graph,
+    inputs: researched,
+    references,
+    scope,
+  });
+
+  return { ...covered, provenance: curriculum.provenance, provenanceByKey: {} };
 }
 
 async function landReading({
@@ -111,16 +150,13 @@ async function landReading({
     return;
   }
 
-  const covered =
-    references.length > 0
-      ? await checkGraphCoverageStep({
-          ...context,
-          graph: curriculum.graph,
-          inputs: researched,
-          references,
-          scope,
-        })
-      : { changed: false, graph: curriculum.graph };
+  const covered = await checkResearchedGraph({
+    context,
+    curriculum,
+    references,
+    researched,
+    scope,
+  });
 
   const pruned = await pruneNoticeGraphStep({
     graph: covered.graph,
@@ -134,9 +170,22 @@ async function landReading({
     ? await mergeAddedTwins({ context, curriculum, graph: pruned.graph, scope })
     : pruned.graph;
 
-  const idsByKey = changed
-    ? await saveAddedSkills({ context, curriculum, graph, scope })
-    : curriculum.idsByKey;
+  const { provenance, provenanceByKey } = covered;
+
+  const [idsByKey, courseIdsByKey] = await Promise.all([
+    changed
+      ? saveAddedSkills({ context, curriculum, graph, provenance, provenanceByKey, scope })
+      : curriculum.idsByKey,
+    findGoalCourses({
+      ...context,
+      courses: graph.courses,
+      goal: researched.goal,
+      product: researched.product,
+      provenance,
+      resolved: curriculum.courseIdsByKey,
+      scope,
+    }),
+  ]);
 
   const keptIds = new Set(graph.skills.flatMap((skill) => idsByKey[skill.key] ?? []));
 
@@ -145,7 +194,7 @@ async function landReading({
     return id && !keptIds.has(id) ? [id] : [];
   });
 
-  const input = { courseIdsByKey: curriculum.courseIdsByKey, goalId, graph, idsByKey };
+  const input = { courseIdsByKey, goalId, graph, idsByKey };
 
   const early =
     waitsForReading &&
@@ -161,7 +210,7 @@ async function landReading({
     await retryPlanConflicts(applyNoticeGraphStep, { ...input, blueprintId, droppedSkillIds });
   }
 
-  await keepExamGraph({ curriculum, graph, idsByKey, researched, scope });
+  await keepExamGraph({ courseIdsByKey, curriculum, graph, idsByKey, researched, scope });
   await endNoticeWait(goalId);
   await proposeNoticeChangeStep({ goalId });
 

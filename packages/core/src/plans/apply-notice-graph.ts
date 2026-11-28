@@ -15,7 +15,7 @@ import { isPlanUnchanged } from "./_utils/plan-unchanged";
 import { computePlan } from "./_utils/replan";
 import { NOTICE_SOURCE } from "./plan-change-contract";
 import { PlanConflictError, withPlanRetry } from "./plan-conflict";
-import { followNoticeGraph } from "./planner/follow-notice-graph";
+import { followNoticeGraph, placeFromSharedNotice } from "./planner/follow-notice-graph";
 import { addSharedOptionSkills, joinOptionSkills } from "./planner/option-skills";
 import {
   type PlanGraph,
@@ -253,8 +253,11 @@ async function checkNoticeGraph({
       ? followNoticeGraph({ askedExtras: parsePlanSettings(saved.settings).extras, current, graph })
       : graph;
 
+  const beforePlacement = legacyReading ?? current;
+  const placed = placeFromSharedNotice(beforePlacement, checkedNotice.skills);
+
   const checked = await prunePlanNoticeGraph({
-    graph: legacyReading ?? current,
+    graph: placed,
     loadProtectedIds: async () => protectedIds ?? loadPlanAdditions(saved.id),
     subjects: checkedNotice.subjects,
   });
@@ -269,7 +272,7 @@ async function checkNoticeGraph({
     checkedNotice.extraSkills,
   );
 
-  const addsShared = repaired !== checked.graph;
+  const addsShared = placed !== beforePlacement || repaired !== checked.graph;
 
   if (!graph && dropped.size === 0 && !addsShared) {
     return null;

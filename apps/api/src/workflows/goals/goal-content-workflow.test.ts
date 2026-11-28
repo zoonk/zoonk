@@ -8,6 +8,7 @@ import {
 import { checkCoverage } from "@zoonk/ai/tasks/curriculum/coverage-check";
 import {
   generateSkillGraphFrame,
+  generateSkillGraphSection,
   generateWholeSkillGraph,
 } from "@zoonk/ai/tasks/curriculum/skill-graph-calls";
 import { decideLibraryIdentity } from "@zoonk/ai/tasks/identity/decision";
@@ -65,6 +66,7 @@ import { z } from "zod";
 import { loadPlacementPlan } from "../../../../../packages/core/src/learner/_utils/goal-skill-graph";
 import { loadPlacementState } from "../../../../../packages/core/src/learner/placement/_utils/load-placement-state";
 import { saveAnswerInputs } from "../../../../../packages/core/src/view-models/onboarding/_utils/save-onboarding-answer";
+import { mockNoticeSubjectWriter } from "../_test-utils/notice-subject-writer";
 import { getStreamedEvents } from "../_test-utils/parse-stream-events";
 import { recordedOutput, replayStreamedOutline, taskResult } from "../_test-utils/recorded-outputs";
 import { solveAsKeyed, solveLikeTheKeys } from "../_test-utils/solved-items";
@@ -2611,6 +2613,81 @@ describe(goalContentWorkflow, () => {
     ]);
 
     expect(events.filter((event) => event === "createPlan:completed")).toHaveLength(1);
+  });
+
+  it("writes a subject absent from the early draft as a sized section", async () => {
+    const { goal } = await newGoal({ details: { examName: "Board exam" }, kind: "exam" });
+    const area = "Statistics";
+    const name = `Compare sampling methods ${crypto.randomUUID().slice(0, 8)}`;
+    const title = `Statistics ${crypto.randomUUID().slice(0, 8)}`;
+    const topics = ["Random samples", "Sampling bias"];
+
+    const known = {
+      ...examStructure([]).subjects[0],
+      citation,
+      name: "Immunology",
+      topics: ["Vaccines"],
+    };
+
+    const blueprint = await examBlueprintFixture({
+      name: "Board exam",
+      structure: { ...examStructure([]), subjects: [known, { ...known, name: area, topics }] },
+    });
+
+    const [opening] = graph.skills;
+
+    if (!opening) {
+      throw new Error("Expected the draft opening skill.");
+    }
+
+    vi.mocked(checkCoverage).mockResolvedValue(
+      taskResult({
+        examWeights: [],
+        missing: [],
+        placements: [{ area: "Immunology", key: opening.key, topics: ["Vaccines"] }],
+      }),
+    );
+
+    mockNoticeSubjectWriter({
+      area,
+      courseTitle: title,
+      lessonCount: 14,
+      skillName: name,
+      topicIds: ["S2.1", "S2.2"],
+    });
+
+    researchEndsWhenAsked(async () => {
+      await prisma.goal.update({ data: { examBlueprintId: blueprint.id }, where: { id: goal.id } });
+    });
+
+    await goalContentWorkflow({ goalId: goal.id, researchId: "research-run" });
+
+    expect(generateSkillGraphSection).toHaveBeenCalledOnce();
+    expect(checkCoverage).toHaveBeenCalledOnce();
+
+    const [plan, shared, course] = await Promise.all([
+      prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
+      prisma.examSkillGraph.findUniqueOrThrow({ where: { examBlueprintId: blueprint.id } }),
+      prisma.course.findFirstOrThrow({ where: { title } }),
+    ]);
+
+    const sizes = z.object({
+      skills: z.array(
+        z.object({
+          area: z.string(),
+          courseIds: z.array(z.string()),
+          lessons: z.number(),
+          name: z.string(),
+          topics: z.array(z.string()).optional(),
+        }),
+      ),
+    });
+
+    for (const stored of [plan, shared]) {
+      expect(sizes.parse(stored.graph).skills.filter((skill) => skill.area === area)).toStrictEqual(
+        [{ area, courseIds: [course.id], lessons: 14, name, topics }],
+      );
+    }
   });
 
   it("follows a late notice and asks separately about its date", async () => {

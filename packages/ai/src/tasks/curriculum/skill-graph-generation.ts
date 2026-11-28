@@ -6,12 +6,14 @@ import { draftAgainWhenFlawed } from "../_utils/draft-again";
 import { EmptySkillGraphError } from "./_utils/empty-skill-graph-error";
 import { findRedraftProblems, redraftFlawedSections } from "./_utils/graph-drafts";
 import { addLibraryCourses, formatLibrarySkills } from "./_utils/library-skills";
-import { toKey } from "./_utils/normalize-skill-graph";
+import { type SkillGraph, normalizeSkillGraph, toKey } from "./_utils/normalize-skill-graph";
 import {
   type GraphFrameSection,
+  joinSections,
   shouldWriteInSections,
   toSectionCalls,
 } from "./_utils/skill-graph-sections";
+import { type ExamOutline, getTopicId } from "./exam-outline";
 import {
   type SkillGraphParams,
   type SkillsPart,
@@ -121,4 +123,49 @@ export function runSkillGraphGeneration({ params, tasks }: Generation) {
       findRedraftProblems({ data, params }).filter((problem) => problem.keys.length === 0).length,
     draft: () => generateSectionedGraph({ params, tasks }),
   });
+}
+
+export function normalizeNoticeSections({
+  frame,
+  outline,
+  skills,
+  written,
+}: {
+  frame: SkillsPart["frame"];
+  outline: ExamOutline;
+  skills: SkillGraph["skills"];
+  written: Awaited<ReturnType<typeof generateSkillGraphSection>>["output"][];
+}): SkillGraph["skills"] {
+  const known = skills.map((skill, index) => ({
+    ...skill,
+    key: String(index),
+    outcome: skill.outcome ?? false,
+    prerequisites: [],
+    topics: skill.topics.flatMap(
+      (topic) => getTopicId({ outline, subject: skill.area, topic }) ?? [],
+    ),
+  }));
+
+  const additions = written.map(({ skills: drafted }) =>
+    drafted.filter((skill) => !("extra" in skill && skill.extra)),
+  );
+
+  const normalized = normalizeSkillGraph(
+    { ...frame, skills: joinSections([known, ...additions]) },
+    outline,
+    undefined,
+    { keepPhaseSlots: true },
+  );
+
+  const originalKeys = new Map(
+    known.map(({ key }, index) => [`s1-${key}`, skills[index]?.key ?? ""]),
+  );
+
+  return normalized.skills
+    .filter((skill) => !originalKeys.has(skill.key))
+    .map((skill) => ({
+      ...skill,
+      key: `notice-${skill.key}`,
+      prerequisites: skill.prerequisites.map((key) => originalKeys.get(key) ?? `notice-${key}`),
+    }));
 }

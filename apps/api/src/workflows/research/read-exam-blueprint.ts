@@ -1,4 +1,5 @@
 import { type ExamIdentity } from "@zoonk/core/library/exams/identity";
+import { reconcileExamNotice } from "../freshness/reconcile-exam-notice";
 import {
   listNoticeGoalsStep,
   logNoticeRepairFailureStep,
@@ -131,12 +132,18 @@ export async function readExamBlueprint({
 
   await refreshFollowerSummariesStep(saved.examBlueprintId);
 
-  await updateExamNoticePlans({
-    examBlueprintId: saved.examBlueprintId,
-    exceptGoalId,
-    movesExamDays: saved.movesExamDays,
-    noticeId: saved.noticeId,
-  });
+  try {
+    if (!saved.created && shared) {
+      await reconcileExamNotice({ analytics, examBlueprintId: saved.examBlueprintId });
+    }
+  } finally {
+    await updateExamNoticePlans({
+      examBlueprintId: saved.examBlueprintId,
+      exceptGoalId,
+      movesExamDays: saved.movesExamDays,
+      noticeId: saved.noticeId,
+    });
+  }
 
   return saved;
 }
