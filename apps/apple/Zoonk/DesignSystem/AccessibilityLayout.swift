@@ -204,9 +204,12 @@ struct StackingLabelStyle: LabelStyle {
 /// The system's label stays one view at every size, so its title grows with Dynamic Type instead of
 /// being replaced when content stacks: only the icon moves, out of the label to beside or above it.
 private struct StackingLabel: View {
-  @Environment(\.stacksContent) private var isStacked
+  @Environment(\.stacksContent) private var stacksContent
+  @Environment(\.labelIconStacks) private var iconStacks
 
   let configuration: LabelStyleConfiguration
+
+  private var isStacked: Bool { stacksContent && iconStacks }
 
   var body: some View {
     StackingLabelLayout {
@@ -227,6 +230,11 @@ private struct StackingLabel: View {
       .labelStyle(.automatic)
     }
   }
+}
+
+extension EnvironmentValues {
+  /// Off inside a button, whose icon stays at its words.
+  @Entry var labelIconStacks = true
 }
 
 /// A label alone, or after its icon: beside it when the label fits there as it is, with the system's

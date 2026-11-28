@@ -173,6 +173,13 @@ extension PlacementTestEnd {
 
   /// The lessons Undo gives back.
   var undoLessons: Int { changeId == nil ? 0 : lessonsSkipped }
+
+  /// The plan's stop the learner starts in: its name, or the plan's own name for a stop with none
+  /// ("Phase 2", by its place among the course's stops).
+  var startName: String? {
+    if let chapter { return chapter }
+    return course?.chapters.firstIndex(where: \.start).map(PlanPhase.placeName(at:))
+  }
 }
 
 extension GoalPlacement {

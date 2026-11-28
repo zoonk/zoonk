@@ -183,8 +183,10 @@ enum TestCopy {
   static let startLesson = LocalizedStringResource(
     "Start lesson", table: "Onboarding")
 
+  /// Its own key: a wait's finished step says "Done" too, which some languages word otherwise.
   static let done = LocalizedStringResource(
-    "Done", table: "Onboarding", comment: "Leaves a test's result")
+    "leaveTestResult", defaultValue: "Done", table: "Onboarding",
+    comment: "Leaves a test's result")
 
   static let answersSaved = LocalizedStringResource(
     "Your answers are saved", table: "Onboarding")

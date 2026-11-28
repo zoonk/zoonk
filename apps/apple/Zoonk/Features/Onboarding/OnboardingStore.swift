@@ -19,6 +19,8 @@ final class OnboardingStore {
   @ObservationIgnored private var onboardings: [String: Resource<GoalOnboarding>] = [:]
   @ObservationIgnored private var planLinks: [String: Resource<Components.Schemas.PlanLink>] = [:]
   @ObservationIgnored private var revealDays: [String: Resource<PlanRevealRead>] = [:]
+  /// A test's answers, which save even when the learner leaves while one is on its way.
+  @ObservationIgnored private let saves: LearnerSaves
 
   init(clients: APIClientFactory, cache: AppCache, session: SessionStore) {
     let api = OnboardingAPI(clients: clients)
@@ -26,6 +28,7 @@ final class OnboardingStore {
     self.cache = cache
     self.clients = clients
     self.session = session
+    saves = LearnerSaves(cache: cache)
     resume = cache.resource(
       audience: .signedIn, domains: [.goals], isEmpty: { $0.draft == nil },
       fetch: { session in
@@ -389,7 +392,8 @@ final class OnboardingStore {
       attemptId: attempt?.id,
       timeZone: TimeZone.current.identifier)
 
-    return try await cache.onboardingWrite(invalidating: [.learnerModel]) { [api] identity in
+    return try await cache.learnerAnswer(through: saves, invalidating: [.learnerModel]) {
+      [api] identity in
       try await api.answerPlacement(input, goalID: goalID, token: identity.bearerToken)
     }
   }
@@ -562,7 +566,8 @@ final class OnboardingStore {
       skipped: skipped ? true : nil)
 
     // The plan's row says where the open test stands.
-    return try await cache.onboardingWrite(invalidating: [.goals]) { [api] identity in
+    return try await cache.learnerAnswer(through: saves, invalidating: [.goals]) {
+      [api] identity in
       try await api.answerLevelTest(input, goalID: goalID, token: identity.bearerToken)
     }
   }
@@ -611,7 +616,8 @@ final class OnboardingStore {
   func answerLevelTestOut(
     goalID: String, attemptID: String, itemID: String, answer: PracticeAnswer, duration: Duration
   ) async throws -> LevelTestOut {
-    try await cache.onboardingWrite(invalidating: [.learnerModel]) { [api] identity in
+    try await cache.learnerAnswer(through: saves, invalidating: [.learnerModel]) {
+      [api] identity in
       try await api.answerLevelTestOut(
         goalID: goalID, attemptID: attemptID, itemID: itemID, answer: answer,
         durationMs: Int(duration.components.seconds * 1000), token: identity.bearerToken)
@@ -678,9 +684,27 @@ extension AppCache {
     invalidating domains: Set<DataDomain> = [],
     _ write: (AuthenticatedSession) async throws -> Value
   ) async throws -> Value {
+    try Self.onboardingValue(await onboardingMutation(invalidating: domains, write))
+  }
+
+  /// A test's answer, which saves even when its screen closes first (`LearnerSaves`), so what it
+  /// changes is read again once the server has it, never by a leave that cut the request short.
+  func learnerAnswer<Value: Sendable>(
+    through saves: LearnerSaves, invalidating domains: Set<DataDomain>,
+    _ write: @escaping @MainActor (AuthenticatedSession) async throws -> Value
+  ) async throws -> Value {
+    try Self.onboardingValue(
+      await saves.save { await self.onboardingMutation(invalidating: domains, write) })
+  }
+
+  private func onboardingMutation<Value: Sendable>(
+    invalidating domains: Set<DataDomain>,
+    _ write: (AuthenticatedSession) async throws -> Value
+  ) async -> MutationResult<Result<Value, OnboardingError>> {
     // A refusal changed nothing, so nothing is read again for it.
     let wrote: (Result<Value, OnboardingError>) -> Bool = { (try? $0.get()) != nil }
-    let result = await mutate(invalidating: domains, wrote: wrote) {
+
+    return await mutate(invalidating: domains, wrote: wrote) {
       identity -> Result<Value, OnboardingError> in
       do {
         return .success(try await write(identity))
@@ -688,7 +712,11 @@ extension AppCache {
         return .failure(refusal)
       }
     }
+  }
 
+  private static func onboardingValue<Value: Sendable>(
+    _ result: MutationResult<Result<Value, OnboardingError>>
+  ) throws -> Value {
     switch result {
     case .done(let outcome):
       return try outcome.get()

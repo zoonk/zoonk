@@ -41,7 +41,7 @@ struct LanguageTestResultView: View {
       .listRowInsets(.vertical, 0)
 
       if let nextLesson = result?.nextLesson, !restored {
-        UpNextPanel(title: nextLesson.title)
+        UpNextLessonRow(lesson: nextLesson)
       }
 
       if let appLanguage, onboarding {
@@ -181,7 +181,7 @@ struct LevelTestOutResult: View {
             ? Text(PlacementTestCopy.knownLessons(lessons))
             : Text(
               "Your lessons keep adjusting as you answer.", tableName: "Onboarding")),
-      continueLabel: Text("Done", tableName: "Onboarding", comment: "Leaves a test's result"),
+      continueLabel: Text(TestCopy.done),
       undo: undo, isSaving: isSaving, failed: failed, onContinue: onDone
     )
     .announcesStatus(undo?.announcement)

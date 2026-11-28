@@ -55,6 +55,112 @@ final class PlacementTestRenderTests: XCTestCase {
     }
   }
 
+  func testTheFocusTestsHintComesWithItsWaysOut() async throws {
+    let question = PracticeQuestion(
+      itemId: goalID, format: .multipleChoice, question: "Which fraction is smaller?",
+      options: ["1/2", "1/3"])
+    let hint = LocalizedStringResource(
+      "Haven't studied most of this yet? That's fine. You can stop here and start learning.",
+      table: "FocusTest")
+    try await readsWhatVoiceOverReads()
+    let window = try show(
+      NavigationStack {
+        PlacementQuestionScreen(
+          subject: "Fractions", number: 3, total: 6, question: question, labels: .trueFalse,
+          isSaving: false, failures: 0, stopHint: hint, onReport: {}, onAnswer: { _ in },
+          onStop: {}
+        )
+        .testTask(name: Text(verbatim: "Focus test")) {}
+      }
+      .environment(AppRouter())
+      .zoonkStyles())
+
+    try await waitForTestCondition("Missing the question: \(spoken(in: window))") {
+      spoken(in: window).contains("Fractions")
+    }
+    try await pressBarButton("Close", in: window)
+    try await waitForTestCondition("✕ didn't ask for the ways out") {
+      presentedAlert(in: window) != nil
+    }
+    let alert = try XCTUnwrap(presentedAlert(in: window))
+    XCTAssertEqual(
+      [alert.title, alert.message].compactMap { $0 }.joined(), String(localized: hint),
+      "The hint says why stopping now is fine, over the two ways out")
+    alert.dismiss(animated: false)
+  }
+
+  func testAResultsRowsAreEachReadOnce() async throws {
+    var result = PlacementTestResult(finishedAt: .now, lessonsSkipped: 0)
+    result.ranges = ["reading": LevelRange(high: "B2", low: "B1")]
+    result.nextLesson = .init(id: goalID, title: "There is, there are")
+    try await readsWhatVoiceOverReads()
+
+    for (screen, title, rows) in [
+      (
+        AnyView(
+          LanguageTestResultView(
+            result: result, targetLanguage: "en", testOutLevel: nil, pressed: nil, failed: false,
+            onboarding: true, onContinue: {}, onTestOut: {})),
+        "Your English level", ["Reading B1–B2", "Listening · Not tested yet", "Up next"]
+      ),
+      (
+        AnyView(
+          PlacementTestResultView(
+            end: Self.startedPast, onboarding: true, pressed: nil, failed: false, onDone: {})),
+        "Why prices move", ["4 of 9 lessons skipped", "Up next"]
+      ),
+    ] {
+      let window = try show(
+        NavigationStack { screen }
+          .environment(AppRouter())
+          .zoonkStyles())
+      try await waitForTestCondition("The result didn't show: \(spoken(in: window))") {
+        spoken(in: window).contains(title)
+      }
+      try await waitForLayout(in: window)
+      let words = plainFacts(spoken(in: window))
+      // The tree is walked more than once over; each row is read as often as the title is.
+      let passes = words.filter { $0 == title }.count
+
+      for row in rows {
+        XCTAssertEqual(words.filter { $0 == row }.count, passes, "\(row): \(words)")
+      }
+      for part in ["B1–B2", "Not tested yet", "Reading", "Listening"] {
+        XCTAssertFalse(words.contains(part), "\(part) is read on its own: \(words)")
+      }
+      window.isHidden = true
+    }
+  }
+
+  func testAButtonsIconStaysBesideItsWordsWhenTheyWrap() async throws {
+    try await readsWhatVoiceOverReads()
+    var heights: [CGFloat] = []
+
+    for icon in [ActionIcon.play, nil] {
+      let window = try show(
+        BusyButton(isBusy: false, icon: icon) {
+        } label: {
+          Text(verbatim: "Responder mais perguntas")
+        }
+        .buttonStyle(.outline)
+        .controlSize(.large)
+        .frame(width: 300)
+        .dynamicTypeSize(.accessibility3)
+        .zoonkStyles())
+      try await waitForTestCondition("The button didn't show: \(spoken(in: window))") {
+        spoken(in: window).contains("Responder mais perguntas")
+      }
+      heights.append(
+        accessibilityElements(in: window).first {
+          $0.accessibilityLabel == "Responder mais perguntas"
+        }?.accessibilityFrame.height ?? -1)
+      window.isHidden = true
+    }
+
+    XCTAssertEqual(
+      heights[0], heights[1], accuracy: 1, "The icon took a line of its own: \(heights)")
+  }
+
   func testAListeningQuestionsSecondButtonChangesWithoutMovingConfirm() async throws {
     XCTAssertEqual(
       LevelTestQuestionScreen.listeningLabel(skips: false, heard: false), TestCopy.cantListen)
@@ -308,6 +414,33 @@ final class PlacementTestRenderTests: XCTestCase {
     ) {
       PlacementTestResultView(
         end: revisited, onboarding: false, pressed: nil, failed: false, onDone: {})
+    }
+  }
+
+  func testAResultWhoseStartStopHasNoNameUsesThePlansName() async throws {
+    var unnamed = Self.startedPast
+    unnamed.chapter = nil
+
+    try await capture(
+      "placement-result-unnamed-stop", title: "Phase 3", detail: "You start here",
+      absent: ["4 lessons skipped"]
+    ) {
+      PlacementTestResultView(
+        end: unnamed, onboarding: false, pressed: nil, failed: false, onDone: {})
+    }
+  }
+
+  func testALanguageResultWithNoLessonUpNextHasNoRow() async throws {
+    var result = PlacementTestResult(finishedAt: .now, lessonsSkipped: 0)
+    result.ranges = ["reading": LevelRange(high: "B1", low: "A1")]
+
+    try await capture(
+      "language-result-no-next-lesson", title: "Your English level", detail: "Done",
+      absent: ["Up next", "Start lesson"]
+    ) {
+      LanguageTestResultView(
+        result: result, targetLanguage: "en", testOutLevel: nil, pressed: nil, failed: false,
+        onContinue: {}, onTestOut: {})
     }
   }
 

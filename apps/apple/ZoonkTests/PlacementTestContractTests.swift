@@ -70,6 +70,34 @@ final class PlacementTestContractTests: XCTestCase {
       "Reading B1–B2\nListening A2–B1")
   }
 
+  func testALanguageFinishAndItsPlanReadWithAndWithoutALessonUpNext() throws {
+    for nextLesson in [
+      #","nextLesson":{"id":"c367d72f-4d87-408a-ba10-6bbcddca31ba","title":"There is, there are"}"#,
+      "",
+    ] {
+      let resultJSON = #"""
+        {"attemptId":"c367d72f-4d87-408a-ba10-6bbcddca31ba","changeId":null,"end":"audio_deferred",
+         "finishedAt":"2026-11-21T16:23:39Z","lessonsSkipped":0,"levelsSkipped":[],
+         "ranges":{"reading":{"high":"B1","low":"A1"}}\#(nextLesson)}
+        """#
+      let finish = try read(
+        #"{"levels":[],"result":\#(resultJSON)}"#,
+        as: Components.Schemas.LanguageLevelTestResult.self, then: LanguageFinish.self)
+      let plan = try planTest(
+        #"""
+        {"attempt":null,"estimatedMinutes":6,"kind":"language","nextTestOutLevel":"B2",
+         "state":"result","result":\#(resultJSON)}
+        """#)
+
+      for result in [finish.result, plan.languageResult] {
+        XCTAssertEqual(result?.ranges?["reading"], LevelRange(high: "B1", low: "A1"))
+        XCTAssertEqual(
+          result?.nextLesson?.title, nextLesson.isEmpty ? nil : "There is, there are",
+          "A result with no lesson up next draws no row")
+      }
+    }
+  }
+
   func testALevelTestWhoseQuestionsAreBeingWrittenReads() throws {
     let test = try read(
       #"""
@@ -291,4 +319,9 @@ private actor FinishRefusingServer: ClientTransport {
     response.headerFields[.contentType] = "application/json"
     return (response, HTTPBody(#"{"error":{"code":"CONFLICT","message":"Conflict"}}"#))
   }
+}
+
+/// The language test's finish as `OnboardingAPI.finishLanguageTest` reads it.
+private struct LanguageFinish: Decodable {
+  let result: PlacementTestResult?
 }
