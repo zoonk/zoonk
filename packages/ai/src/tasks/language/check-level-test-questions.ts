@@ -6,7 +6,7 @@ import { formatUntrustedInput } from "../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
-import { fillPromptLanguages } from "../_utils/prompt-language";
+import { fillPromptLanguages, getLanguagePromptContext } from "../_utils/prompt-language";
 import promptTemplate from "./check-level-test-questions.prompt.md";
 
 /**
@@ -82,6 +82,11 @@ function toPicks(answer: readonly string[]): number[] {
 }
 
 function buildUserPrompt(params: CheckLevelTestQuestionsParams): string {
+  const languages = getLanguagePromptContext({
+    targetLanguage: params.targetLanguage,
+    userLanguage: params.learnerLanguage,
+  });
+
   /* oxlint-disable eslint/sort-keys -- The model reads the text, then the question, then its options. */
   const questions = params.questions.map((question, index) => ({
     number: index + 1,
@@ -93,7 +98,10 @@ function buildUserPrompt(params: CheckLevelTestQuestionsParams): string {
   }));
   /* oxlint-enable eslint/sort-keys */
 
-  return formatUntrustedInput({ QUESTIONS: JSON.stringify(questions, null, 1) });
+  return `TARGET_LANGUAGE: ${languages.targetLanguageName}
+LEARNER_LANGUAGE: ${languages.userLanguageName}
+
+${formatUntrustedInput({ QUESTIONS: JSON.stringify(questions, null, 1) })}`;
 }
 
 /**
