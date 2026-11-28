@@ -3,7 +3,6 @@
 import { Button } from "@zoonk/ui/components/button";
 import { MeterParts } from "@zoonk/ui/components/meter";
 import { useExtracted } from "next-intl";
-import { Eyebrow } from "../_components/eyebrow";
 import {
   ListGroup,
   ListRow,
@@ -14,7 +13,6 @@ import {
   ListRowTrailing,
 } from "../_components/list-group";
 import { StatusMark } from "../_components/status-mark";
-import { Surface } from "../_components/surface";
 import { TaskMeta } from "../_components/task-meta";
 import { useFormatDuration } from "../_utils/time-format";
 import { OnboardingDescription } from "../onboarding/onboarding-frame";
@@ -52,18 +50,13 @@ function useSkippedFact() {
     });
 }
 
-export function UpNextLesson({ title }: { title: string }) {
-  const t = useExtracted();
-
-  return (
-    <Surface className="flex flex-col gap-1 p-4">
-      <Eyebrow className="self-start">{t("Up next")}</Eyebrow>
-      <p className="font-medium [text-box:trim-end_cap_alphabetic]">{title}</p>
-    </Surface>
-  );
-}
-
-function StartLesson({ lesson }: { lesson: NonNullable<PlacementResultPhase["nextLesson"]> }) {
+export function UpNextLesson({
+  estimatedMinutes,
+  title,
+}: {
+  estimatedMinutes?: number;
+  title: string;
+}) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
 
@@ -74,10 +67,12 @@ function StartLesson({ lesson }: { lesson: NonNullable<PlacementResultPhase["nex
           <StatusMark status="next" />
         </ListRowLeading>
         <ListRowContent>
-          <ListRowTitle>{lesson.title}</ListRowTitle>
+          <ListRowTitle>{title}</ListRowTitle>
           <ListRowDescription>{t("Up next")}</ListRowDescription>
         </ListRowContent>
-        <ListRowTrailing>{formatDuration(lesson.estimatedMinutes)}</ListRowTrailing>
+        {estimatedMinutes !== undefined && (
+          <ListRowTrailing>{formatDuration(estimatedMinutes)}</ListRowTrailing>
+        )}
       </ListRow>
     </ListGroup>
   );
@@ -192,7 +187,9 @@ export function PlacementResult({
         </div>
       )}
 
-      {course && nextLesson && <StartLesson lesson={nextLesson} />}
+      {course && nextLesson && (
+        <UpNextLesson estimatedMinutes={nextLesson.estimatedMinutes} title={nextLesson.title} />
+      )}
 
       {onRetake && (
         <Button
