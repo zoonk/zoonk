@@ -39,6 +39,13 @@ type LessonAttempt = {
 
 type MissingReason = "answerNotSaved" | "pictureReady";
 
+/** "Turn back on" undoes the skip the notice names while the learner is still on that screen. */
+type SkipNotice = "speakingSkipped" | "writingSkipped";
+
+export function isSkipNotice(notice: LessonPlayerState["notice"]): notice is SkipNotice {
+  return notice === "speakingSkipped" || notice === "writingSkipped";
+}
+
 export type LessonPlayerState = {
   /**
    * The screens the learner worked on in this page, never set by restoring: a late run start leaves
@@ -63,7 +70,7 @@ export type LessonPlayerState = {
   misses: { skillId: string | null; stepId: string }[];
   /** The screens a finished lesson came back to because the run still needs them. */
   missing: Record<string, MissingReason>;
-  notice: MissingReason | "selfCorrect" | "writingSkipped" | null;
+  notice: MissingReason | SkipNotice | "selfCorrect" | null;
   phase: LessonPlayerPhase;
   position: number;
   queue: string[];
@@ -81,13 +88,17 @@ export type LessonPlayerState = {
   reviewing: boolean;
   selfCorrected: string[];
   skippedWritingStepIds: string[];
+  /** The lesson from before the skip a skip notice names, for "Turn back on". */
+  skipRestore: Pick<
+    LessonPlayerState,
+    "position" | "queue" | "skippedWritingStepIds" | "unavailableStepIds"
+  > | null;
   startedAt: number;
   stepStartedAt: number;
   steps: Record<string, PlayableLibraryStep>;
   unavailableStepIds: string[];
   /** Set only by a save that failed, so a resend that gets through at once never shows it. */
   unsavedAnswers: boolean;
-  writingRestore: Pick<LessonPlayerState, "position" | "queue" | "skippedWritingStepIds"> | null;
 };
 
 export type LessonPlayerAction =
@@ -96,6 +107,7 @@ export type LessonPlayerAction =
   | { attemptId: string; savedMistake: boolean; stepId: string; type: "checkConfirmed" }
   | { direction: "next" | "prev"; type: "navigate" }
   | { opening?: boolean; stepId?: string; type: "skipWriting" }
+  | { opening?: boolean; stepIds: string[]; type: "skipSpeaking" }
   | { stepIds: string[]; type: "skipSteps" }
   | { refusal: LessonRunRefusal; type: "runRefused" }
   | { result: LessonPlayerCompletionState["result"]; type: "completionSaved" }
@@ -131,7 +143,7 @@ export type LessonPlayerAction =
   | { type: "recordingStarted" }
   | { type: "runStarting" }
   | { type: "saveFailed" }
-  | { type: "writingRestored" };
+  | { type: "skipRestored" };
 
 export function createInitialState(
   lesson: Pick<LessonPlayerLesson, "id" | "steps"> & { hasMap: boolean },
@@ -167,13 +179,13 @@ export function createInitialState(
     rounds: {},
     run: { status: "idle" },
     selfCorrected: [],
+    skipRestore: null,
     skippedWritingStepIds: [],
     startedAt: now,
     stepStartedAt: now,
     steps,
     unavailableStepIds: [],
     unsavedAnswers: false,
-    writingRestore: null,
   };
 }
 

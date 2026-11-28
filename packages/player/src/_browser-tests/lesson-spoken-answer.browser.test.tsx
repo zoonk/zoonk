@@ -35,6 +35,10 @@ function barNote() {
   return document.querySelector("[data-slot=bottom-bar-note]");
 }
 
+function speakingOff() {
+  return page.getByRole("status").filter({ hasText: "Speaking is off for today." });
+}
+
 function hang<T>(): Promise<T> {
   return new Promise<T>(() => {});
 }
@@ -164,9 +168,10 @@ describe("spoken answers", () => {
 
     second.unmount();
     const third = openSpokenLesson({ gradeSpokenAnswer });
-    await expect.element(page.getByRole("textbox")).toBeVisible();
-    await expect.element(page.getByRole("button", { name: "Record" })).not.toBeInTheDocument();
-    await page.getByRole("button", { name: "I can talk now" }).click();
+    await expect.element(speakingOff()).toBeVisible();
+    await expect.element(page.getByText("The electron is a cloud")).not.toBeInTheDocument();
+    await expect.element(page.getByRole("textbox")).not.toBeInTheDocument();
+    await page.getByRole("button", { name: "Turn back on" }).click();
     await expect.element(page.getByRole("button", { name: "Record" })).toBeVisible();
 
     third.unmount();
@@ -266,7 +271,7 @@ describe("spoken answers", () => {
     await expect.element(failed).not.toBeInTheDocument();
   });
 
-  it("with no words in it says so and lets the learner try again or type", async () => {
+  it("with no words in it says so and lets the learner try again or say they can't talk", async () => {
     allowMicrophone();
 
     const gradeSpokenAnswer = vi.fn<GradeSpokenAnswer>(() =>
@@ -304,85 +309,66 @@ describe("spoken answers", () => {
     await expect.element(page.getByRole("button", { name: "I can't talk now" })).toBeVisible();
   });
 
-  it("brings up the typing field when the microphone is blocked, and checks what's typed", async () => {
-    vi.spyOn(navigator.mediaDevices, "getUserMedia").mockRejectedValue(
+  it("keeps Record when the microphone is blocked, says how to allow it, and records once it's allowed", async () => {
+    vi.spyOn(navigator.mediaDevices, "getUserMedia").mockRejectedValueOnce(
       new DOMException("Permission denied", "NotAllowedError"),
     );
 
-    const gradeSpokenAnswer = vi.fn<GradeSpokenAnswer>();
-    const step = spokenSentenceStep();
-    const lesson = buildLesson([step, teachingStep("summary")]);
-    const adapters = buildAdapters(lesson, { gradeSpokenAnswer });
-    renderLessonPlayer({ adapters, lesson });
-
+    openSpokenLesson({ gradeSpokenAnswer: vi.fn<GradeSpokenAnswer>(), step: spokenSentenceStep() });
     await page.getByRole("button", { name: "Record" }).click();
 
-    await expect
-      .element(
-        page.getByText(
-          "To speak instead, allow the microphone for Zoonk in your browser settings.",
-        ),
-      )
-      .toBeVisible();
+    const blocked = page.getByText(
+      "Allow the microphone in your browser settings, then tap Record.",
+    );
 
-    const field = page.getByRole("textbox", { name: "Pergunte quanto é o aluguel." });
-    await expect.element(field).toHaveFocus();
-    await field.fill("How much is the rent?");
+    await expect.element(blocked).toBeVisible();
+    await expect.element(page.getByRole("textbox")).not.toBeInTheDocument();
+    await expect.element(page.getByRole("button", { name: "I can't talk now" })).toBeVisible();
 
-    await page.getByRole("button", { name: /^Check/u }).click();
+    allowMicrophone();
+    await page.getByRole("button", { name: "Record" }).click();
+    await expect.element(page.getByText("Listening… Tap Stop to check.")).toBeVisible();
+    await expect.element(blocked).not.toBeInTheDocument();
+  });
 
-    await expect
-      .poll(() => adapters.checkStep)
-      .toHaveBeenCalledWith(
-        expect.objectContaining({
-          answer: { kind: "spokenAnswer", text: "How much is the rent?" },
-          stepId: step.id,
-        }),
-      );
+  it("leaves out a speaking screen quietly on a device that can't record", async () => {
+    // oxlint-disable-next-line no-useless-undefined -- A browser without MediaRecorder has none.
+    vi.stubGlobal("MediaRecorder", undefined);
 
-    expect(gradeSpokenAnswer).not.toHaveBeenCalled();
+    try {
+      openSpokenLesson({ gradeSpokenAnswer: vi.fn<GradeSpokenAnswer>() });
+      await expect.element(page.getByRole("heading", { name: "Summary" })).toBeVisible();
+      await expect.element(page.getByText("The electron is a cloud")).not.toBeInTheDocument();
+      await expect.element(speakingOff()).not.toBeInTheDocument();
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
 
   it("doesn't offer to explain a typed spoken answer, which has no question to explain it against", async () => {
-    vi.spyOn(navigator.mediaDevices, "getUserMedia").mockRejectedValue(
-      new DOMException("Permission denied", "NotAllowedError"),
-    );
+    const step = spokenSentenceStep();
+    const lesson = buildLesson([step, teachingStep("explanation"), teachingStep("check")]);
+    const typed = "How much rent?";
 
-    const lesson = buildLesson([spokenSentenceStep(), teachingStep("summary")]);
-
-    const checkStep = vi.fn<LessonPlayerAdapters["checkStep"]>(() =>
-      Promise.resolve({
-        result: {
-          checked: true,
-          correctAnswer: "How much is the rent?",
-          corrections: [],
-          expected: null,
-          feedback: null,
-          isCorrect: false,
-          keyPoints: null,
-          savedMistake: false,
-          score: 0,
-          spelling: null,
-        },
-        status: "checked" as const,
+    const resume = [
+      runAnswer({
+        answer: { kind: "spokenAnswer", text: typed },
+        answerText: typed,
+        isCorrect: false,
+        stepId: step.id,
       }),
-    );
+    ];
 
     const adapters = buildAdapters(lesson, {
-      checkStep,
       explainAnswer: vi.fn<NonNullable<LessonPlayerAdapters["explainAnswer"]>>(),
       gradeSpokenAnswer: vi.fn<GradeSpokenAnswer>(),
+      startLesson: () => Promise.resolve(startedRun({ answers: resume })),
     });
 
-    renderLessonPlayer({ adapters, lesson });
-    await page.getByRole("button", { name: "Record" }).click();
+    renderLessonPlayer({ adapters, lesson, resume });
+    await page.getByRole("button", { name: "Previous screen" }).click();
 
-    await page
-      .getByRole("textbox", { name: "Pergunte quanto é o aluguel." })
-      .fill("How much rent?");
-
-    await page.getByRole("button", { name: /^Check/u }).click();
-
+    await expect.element(page.getByRole("textbox")).toHaveValue(typed);
     await expect.element(page.getByRole("status").filter({ hasText: "Not quite" })).toBeVisible();
 
     await expect

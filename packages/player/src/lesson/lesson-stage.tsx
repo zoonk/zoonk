@@ -4,7 +4,7 @@ import { Eyebrow } from "@zoonk/learn/eyebrow";
 import { Button } from "@zoonk/ui/components/button";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CloudOffIcon, ImageIcon, PenOffIcon, PencilIcon, ZapIcon } from "lucide-react";
+import { CloudOffIcon, ImageIcon, MicOffIcon, PenOffIcon, PencilIcon, ZapIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useLayoutEffect, useState } from "react";
 import { SCREEN_TURN_CLASS, type ScreenTurn } from "../components/screen-turn";
@@ -51,11 +51,11 @@ function NoticeLine({
   );
 }
 
-function WriteAgainButton() {
+function TurnBackOnButton() {
   const t = useExtracted();
   const { actions, state } = useLessonPlayer();
 
-  if (!state.writingRestore || state.phase !== "playing") {
+  if (!state.skipRestore || state.phase !== "playing") {
     return null;
   }
 
@@ -63,7 +63,7 @@ function WriteAgainButton() {
     <Button
       edge="end"
       onClick={() => {
-        actions.restoreWriting();
+        actions.restoreSkipped();
         focusLessonAfterTurn();
       }}
       size="sm"
@@ -107,15 +107,21 @@ function LessonNotice() {
           {t("This question was waiting for its picture. Answer it to finish the lesson.")}
         </NoticeLine>
       );
-    case "writingSkipped":
+    case "speakingSkipped":
+    case "writingSkipped": {
+      const Icon = state.notice === "writingSkipped" ? PenOffIcon : MicOffIcon;
+
       return (
         <NoticeLine
-          action={<WriteAgainButton />}
-          icon={<PenOffIcon aria-hidden="true" className="size-4" />}
+          action={<TurnBackOnButton />}
+          icon={<Icon aria-hidden="true" className="size-4" />}
         >
-          {t("Writing is off for today.")}
+          {state.notice === "writingSkipped"
+            ? t("Writing is off for today.")
+            : t("Speaking is off for today.")}
         </NoticeLine>
       );
+    }
     case null:
       return null;
     default:

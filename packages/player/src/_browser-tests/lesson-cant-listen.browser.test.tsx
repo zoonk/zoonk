@@ -72,7 +72,10 @@ describe("a learner who can't listen now", () => {
     expect(play.closest("[data-slot=bottom-bar]")).not.toBeNull();
 
     await page.getByRole("button", { name: "I can't listen now" }).click();
-    await expect.element(page.getByRole("textbox")).toBeVisible();
+
+    await expect
+      .element(page.getByRole("status").filter({ hasText: "Speaking is off for today." }))
+      .toBeVisible();
 
     await expect
       .element(page.getByRole("button", { name: "Play pronunciation" }))
@@ -126,7 +129,7 @@ describe("a learner who can't listen now", () => {
     await expect.poll(() => plays.mock.calls.length).toBeGreaterThan(playedBefore);
   });
 
-  it("types a spoken answer when it can't be said or heard", async () => {
+  it("leaves a spoken screen out once it can't be said or heard, until speaking is turned back on", async () => {
     countPlays();
     openLesson(spokenStepWithListening());
 
@@ -135,9 +138,16 @@ describe("a learner who can't listen now", () => {
     await bank.getByRole("button", { name: /^quanto$/iu }).click();
 
     await page.getByRole("button", { name: "I can't listen now" }).click();
-    await expect.element(page.getByRole("textbox")).toBeVisible();
-    await expect.element(page.getByRole("group", { name: "Word bank" })).not.toBeInTheDocument();
-    await expect.element(page.getByRole("button", { name: "I can talk now" })).toBeVisible();
+
+    await expect
+      .element(page.getByRole("status").filter({ hasText: "Speaking is off for today." }))
+      .toBeVisible();
+
+    await expect.element(page.getByText("How much is the rent?")).not.toBeInTheDocument();
+    await expect.element(page.getByRole("textbox")).not.toBeInTheDocument();
+
+    await page.getByRole("button", { name: "Turn back on" }).click();
+    await expect.element(page.getByRole("button", { name: "Record" })).toBeVisible();
   });
 
   it("keeps a spoken step answered by listening quiet when the learner comes back after turning listening off", async () => {

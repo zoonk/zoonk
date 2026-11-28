@@ -1,5 +1,6 @@
 import {
   type PlayableLanguageStep,
+  type PlayableSpokenAnswerStep,
   type PlayableTeachingStep,
   type PlayableTeachingStepOf,
   type TeachingStepKind,
@@ -70,6 +71,17 @@ export function typedAnswerStep(id: string): PlayableTeachingStep {
     question: "Why a cloud?",
     sampleAnswer: "Because it maps chances.",
   });
+}
+
+export function spokenAnswerStep(id: string): PlayableSpokenAnswerStep {
+  return {
+    ...teachingStep("spokenAnswer", id, {
+      language: "en",
+      prompt: "Say it out loud",
+      targetText: "The electron is a cloud",
+    }),
+    listening: null,
+  };
 }
 
 export function numberAnswerStep(id: string): PlayableTeachingStep {

@@ -26,12 +26,15 @@ export type LessonPlayerActions = {
   explainFirst: () => void;
   goBack: () => void;
   knowThis: () => void;
-  restoreWriting: () => void;
+  /** Undoes the skip the notice names and turns that kind of question back on for today. */
+  restoreSkipped: () => void;
   retryCompletion: () => void;
   retryStart: () => void;
   selectAnswer: (stepId: string, answer: LessonPlayerAnswer | null) => void;
   /** Applies to every lesson today without changing the plan. */
   skipWriting: () => void;
+  /** Leaves out speaking screens the learner can't answer while they can't talk, with a way to undo it. */
+  skipSpeaking: (stepIds: string[], options: { opening: boolean }) => void;
   skipSteps: (stepIds: string[]) => void;
   startRecording: () => void;
   submitSpokenAnswer: (input: {

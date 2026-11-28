@@ -17,7 +17,7 @@ import {
 } from "./lesson-resume";
 import { pickKeys } from "./records";
 import { restorePicturedSteps } from "./restore-pictured-steps";
-import { skipWriting } from "./writing-skip";
+import { undoSkip } from "./today-skips";
 
 function isSameList(a: string[], b: string[]): boolean {
   return a.length === b.length && a.every((id, index) => b[index] === id);
@@ -46,15 +46,17 @@ function resumeFrom(state: LessonPlayerState, answers: LessonRunAnswers): Lesson
     steps: Object.values(state.steps),
   });
 
-  const writingRestore = state.notice === "writingSkipped" ? state.writingRestore : null;
+  const undo = undoSkip(state);
 
-  const skippedWritingStepIds =
-    writingRestore?.skippedWritingStepIds ?? state.skippedWritingStepIds;
+  const { skippedWritingStepIds, unavailableStepIds } = undo?.lists ?? {
+    skippedWritingStepIds: state.skippedWritingStepIds,
+    unavailableStepIds: state.unavailableStepIds,
+  };
 
   const available = {
     ...fresh,
     queue: fresh.queue.filter(
-      (id) => ![...state.unavailableStepIds, ...skippedWritingStepIds].includes(id),
+      (id) => ![...unavailableStepIds, ...skippedWritingStepIds].includes(id),
     ),
   };
 
@@ -74,11 +76,11 @@ function resumeFrom(state: LessonPlayerState, answers: LessonRunAnswers): Lesson
     rounds: state.rounds,
     run: state.run,
     skippedWritingStepIds,
-    unavailableStepIds: state.unavailableStepIds,
+    unavailableStepIds,
     unsavedAnswers: state.unsavedAnswers,
   };
 
-  return writingRestore ? skipWriting(resumed, { opening: true }) : resumed;
+  return undo ? undo.redo(resumed) : resumed;
 }
 
 function showsSameAnswer({

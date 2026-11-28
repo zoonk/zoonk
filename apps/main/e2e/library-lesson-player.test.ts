@@ -74,18 +74,10 @@ async function answerTyped(page: Page) {
   await primary(page, /^Continue/u).click();
 }
 
-async function answerSpokenByTyping(page: Page) {
+/** With nothing to listen to instead, the speaking screen leaves the lesson, which still finishes. */
+async function leaveSpokenOut(page: Page) {
   await expect(page.getByText("The electron is a cloud")).toBeVisible();
-  const cantTalk = page.getByRole("button", { name: "I can't talk now" });
-
-  if (await cantTalk.isVisible()) {
-    await cantTalk.click();
-  }
-
-  await page.getByRole("textbox", { name: "Say it out loud" }).fill("The electron is a cloud");
-  await primary(page, /^Check/u).click();
-  await expectVerdict(page, "Correct!");
-  await primary(page, /^Continue/u).click();
+  await page.getByRole("button", { name: "I can't talk now" }).click();
 }
 
 async function createChapterGuest(browser: Browser) {
@@ -191,7 +183,7 @@ test.describe("Library lesson player", () => {
     await followWorkedExample(page);
     await answerCheckWithKeys(page);
     await answerTyped(page);
-    await answerSpokenByTyping(page);
+    await leaveSpokenOut(page);
 
     const map = page.getByRole("main").getByRole("heading", { name: "Lesson map" });
     await expect(map).toBeVisible();
@@ -207,7 +199,7 @@ test.describe("Library lesson player", () => {
           where: { endedAt: { not: null }, userId: noProgressUser.id },
         }),
       )
-      .toStrictEqual({ correctAnswers: 3 });
+      .toStrictEqual({ correctAnswers: 2 });
   });
 
   test("a guest's plan lesson played from its chapter, outside any session, counts for the plan and closes to the chapter", async ({

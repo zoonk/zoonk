@@ -231,7 +231,7 @@ describe("recorder ownership", () => {
     await page.getByRole("button", { exact: true, name: "Record" }).click();
 
     await expect
-      .element(page.getByText("We can't use your microphone, so type what you'd say."))
+      .element(page.getByText("We can't use your microphone. Check it, then tap Record."))
       .toBeVisible();
 
     expect(mic.track.stop).toHaveBeenCalledOnce();
