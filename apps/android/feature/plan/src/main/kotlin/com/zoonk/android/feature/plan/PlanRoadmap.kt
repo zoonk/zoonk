@@ -51,12 +51,11 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.PlaceholderVerticalAlign
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.Hyphens
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
@@ -69,7 +68,6 @@ import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.ListRowChevron
 import com.zoonk.android.ui.components.glyphScale
-import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.theme.Geist
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.balanced
@@ -112,8 +110,8 @@ internal fun PlanRoadmap(
 
 private val FULL_ROADMAP_WIDTH = 560.dp
 
+/** Where the learner is: the row under the roadmap already names the phase. */
 private data class RoadmapPosition(
-    val name: String,
     val end: PlanDateWords?,
     val number: Int,
     val total: Int,
@@ -127,7 +125,6 @@ private fun roadmapPosition(
     val index = phases.indexOfFirst { it.state == PlanPhase.State.CURRENT }
     val current = phases.getOrNull(index) ?: return null
     return RoadmapPosition(
-        phaseName(current, page.mocksRequirePlus),
         phaseEnd(page, current).takeUnless { page.isPaused },
         index + 1,
         phases.size,
@@ -146,28 +143,17 @@ private fun PhaseEndLine(end: PlanDateWords) {
     )
 }
 
-/**
- * "Phase 1 of 4 · Basics" on one line, or the name under the number when they don't fit, so a wrapped line never
- * starts on a dot, as web's `FactSegments` cuts it.
- */
 @Composable
 private fun PositionLine(
     position: RoadmapPosition,
     modifier: Modifier,
 ) {
-    val style = MaterialTheme.typography.labelMedium.balanced()
-    val number = stringResource(R.string.plan_roadmap_phase_number, position.number, position.total)
-    val oneLine = positionWords(number, listOf(position.name))
-    val measurer = rememberTextMeasurer()
-    BoxWithConstraints(modifier) {
-        val fits = measurer.measure(oneLine, style, softWrap = false, maxLines = 1).size.width <= constraints.maxWidth
-        Text(
-            text = if (fits) oneLine else positionWords(number, listOf(position.name), separator = "\n"),
-            style = style,
-            maxLines = 3,
-            overflow = TextOverflow.Ellipsis,
-        )
-    }
+    Text(
+        text = stringResource(R.string.plan_roadmap_phase_number, position.number, position.total),
+        modifier = modifier,
+        style = MaterialTheme.typography.labelMedium,
+        fontWeight = FontWeight.Medium,
+    )
 }
 
 @Composable
@@ -197,7 +183,7 @@ private fun RoadmapCompact(
             if (position != null) {
                 PositionLine(position, Modifier.weight(1f))
                 position.end?.let { PhaseEndLine(it) }
-            } else {
+            } else if (onOpen != null) {
                 Text(
                     text = pluralStringResource(R.plurals.plan_phases_done, phases.size, done, phases.size),
                     modifier = Modifier.weight(1f),
@@ -924,19 +910,6 @@ private fun FractionRow(
                 placeable.placeRelative(end?.let { left.coerceAtMost(it - placeable.width) } ?: left, 0)
             }
         }
-    }
-}
-
-@Composable
-private fun positionWords(
-    name: String,
-    details: List<String>,
-    separator: String = FACT_SEPARATOR,
-): AnnotatedString {
-    val quiet = MaterialTheme.colorScheme.onSurfaceVariant
-    return buildAnnotatedString {
-        append(name)
-        withStyle(SpanStyle(color = quiet)) { details.forEach { append("$separator$it") } }
     }
 }
 
