@@ -32,6 +32,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.zoonk.android.R
 import com.zoonk.android.feature.goalcontent.planOutsideReason
 import com.zoonk.android.ui.characters.Trickster
@@ -212,6 +213,8 @@ internal fun PhaseRow(
         leading = { if (nextChapter != null) ChapterMark(nextChapter, isNext = true) else PhaseMark(phase) },
         supporting = line?.let { { Text(it.text, Modifier.semantics { contentDescription = it.spoken }) } },
         meta = date?.let { { TrailingText(it) } },
+        // Main's PathRowBody gives its milestone titles a 9rem basis.
+        headlineBasis = 144.sp,
     )
 }
 
