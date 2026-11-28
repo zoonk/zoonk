@@ -1,8 +1,7 @@
 import { type ExamResearchPlan } from "@zoonk/ai/tasks/research/plan";
 import { type ExamIdentity } from "@zoonk/core/library/exams/identity";
-import { getWorkflowMetadata, sleep } from "workflow";
+import { createHook, getWorkflowMetadata } from "workflow";
 import { type Run } from "workflow/api";
-import { repeatUntil } from "../_shared/repeat-until";
 import { claimRunToken, joinRun, startOnce } from "../_shared/run-token";
 import { scheduleFreshnessChecksStep } from "../freshness/steps/schedule-freshness-checks-step";
 import { getGoalContentToken, goalContentWorkflow } from "../goals/goal-content-workflow";
@@ -31,27 +30,31 @@ import { lookUpTargetCutoffStep } from "./steps/target-cutoff-step";
 import { lookUpTopicFrequencyStep } from "./steps/topic-frequency-step";
 import { waitForMaterialReading } from "./wait-for-material-reading";
 
-const COUNTRY_POLL = "3s";
-const MAX_COUNTRY_POLLS = 60;
+/** A goal's own research runs once at a time, holding this token from its start. */
+export function getGoalResearchToken(goalId: string): string {
+  return `research-goal:${goalId}`;
+}
 
-/** Another country's exam by the same name is another exam, so none is read before the learner says whose. */
+/**
+ * Another country's exam by the same name is another exam, so none is read before the learner says
+ * whose. The answer owes this research (`researchGoal`), which wakes the run holding the goal's
+ * token once it is saved; a run that doesn't hold it leaves the research to the one that does.
+ */
 async function waitForExamCountry(goal: ResearchGoal): Promise<ResearchGoal | null> {
   if (!goal.awaitingCountry) {
     return goal;
   }
 
-  const waited = await repeatUntil({
-    done: (latest) => !latest?.awaitingCountry,
-    run: () => loadResearchGoalStep(goal.id),
-    times: MAX_COUNTRY_POLLS,
-    wait: () => sleep(COUNTRY_POLL),
-  });
+  const answered = createHook({ token: getGoalResearchToken(goal.id) });
 
-  if (waited?.awaitingCountry) {
-    throw new Error("Choose the exam's country before researching it.");
+  if (await answered.getConflict()) {
+    return null;
   }
 
-  return waited;
+  await answered;
+  const latest = await loadResearchGoalStep(goal.id);
+
+  return latest?.awaitingCountry ? null : latest;
 }
 
 export type ResearchInput = {

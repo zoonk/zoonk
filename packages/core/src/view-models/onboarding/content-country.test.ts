@@ -84,6 +84,32 @@ describe("content country question", () => {
     ).resolves.toMatchObject([{ input: { goalId: current.id }, revision: 0 }]);
   });
 
+  it("owes the exam's research once, when its country answer lets it start", async () => {
+    const user = await userFixture();
+
+    const unplaced = { answered: [], countryDependent: true };
+
+    const [exam, learn] = await Promise.all([
+      goalFixture({ details: unplaced, kind: "exam", planRevealedAt: null, userId: user.id }),
+      goalFixture({ details: unplaced, kind: "learn", planRevealedAt: null, userId: user.id }),
+    ]);
+
+    const answer = (current: typeof exam, country: string) =>
+      saveAnswerInputs({ goal: current, input: { country, question: "contentCountry" } });
+
+    await answer(exam, "CA");
+    await answer(exam, "CA");
+    await answer(exam, "US");
+    await answer(learn, "PT");
+
+    await expect(
+      prisma.followUp.findMany({
+        select: { input: true, revision: true },
+        where: { kind: "researchGoal", userId: user.id },
+      }),
+    ).resolves.toStrictEqual([{ input: { goalId: exam.id }, revision: 0 }]);
+  });
+
   it("owes one rebuild when another tab or the goal's settings change the country the first build read", async () => {
     const user = await userFixture();
 

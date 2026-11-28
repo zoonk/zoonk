@@ -39,7 +39,7 @@ import { MS_PER_DAY } from "@zoonk/utils/date";
 import { SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { Response as PageResponse, fetch } from "undici";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { sleep } from "workflow";
+import { createHook, sleep } from "workflow";
 import { getRun, start } from "workflow/api";
 import { saveAnswerInputs } from "../../../../../packages/core/src/view-models/onboarding/_utils/save-onboarding-answer";
 import { mockHookConflict } from "../../../mocks/workflow";
@@ -51,6 +51,15 @@ import { recordNoticeFormatsStep } from "./steps/notice-formats-step";
 import { storeSource } from "./steps/store-sources-step";
 import { lookUpSubjectQuestionsStep } from "./steps/subject-questions-step";
 import { lookUpTopicFrequencyStep } from "./steps/topic-frequency-step";
+
+/** The goal's start hook, held by this run, which the learner answers while it waits. */
+function answerHook(answer: () => Promise<void>) {
+  const getConflict = () => answer().then(() => null);
+
+  return Object.assign(Promise.resolve({}), { getConflict }) as unknown as ReturnType<
+    typeof createHook
+  >;
+}
 
 function otherRun(status: "completed" | "failed" | "running") {
   const cancel = vi.fn(() => Promise.resolve());
@@ -279,15 +288,19 @@ describe(researchWorkflow, () => {
 
     await replayTcdfResearch();
 
-    vi.mocked(sleep).mockImplementationOnce(async () => {
-      expect(generateExamResearchPlan).not.toHaveBeenCalled();
+    vi.mocked(createHook).mockReturnValueOnce(
+      answerHook(async () => {
+        expect(generateExamResearchPlan).not.toHaveBeenCalled();
 
-      await expect(
-        saveAnswerInputs({ goal, input: { country: "BR", question: "contentCountry" } }),
-      ).resolves.toMatchObject({ status: "saved" });
-    });
+        await expect(
+          saveAnswerInputs({ goal, input: { country: "BR", question: "contentCountry" } }),
+        ).resolves.toMatchObject({ status: "saved" });
+      }),
+    );
 
     await expect(researchWorkflow({ goalId: goal.id })).resolves.toMatchObject({ status: "ready" });
+
+    expect(createHook).toHaveBeenCalledWith({ token: `research-goal:${goal.id}` });
 
     expect(generateExamResearchPlan).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({ details: '{"contentCountry":"BR"}' }),
