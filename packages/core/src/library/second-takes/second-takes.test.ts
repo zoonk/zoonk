@@ -169,6 +169,38 @@ describe("second takes across skill merges", () => {
     const lessons = await findSecondTakes({ skillIds: [survivor.id], userId: admin.id });
     expect(lessons.get(survivor.id)?.lessonId).toBe(kept.id);
   });
+
+  it.each([
+    { contentStatus: "failed" as const, setAsideAt: null },
+    { contentStatus: "completed" as const, setAsideAt: new Date() },
+  ])(
+    "keeps the duplicate's written take when the survivor's is unusable (%o)",
+    async (unusable) => {
+      const [admin, duplicate, survivor] = await Promise.all([
+        userFixture({ role: "admin" }),
+        skillFixture(),
+        skillFixture(),
+      ]);
+
+      const [written, dropped] = await Promise.all([
+        writtenTake(duplicate.id),
+        libraryLessonFixture({
+          ...unusable,
+          identityKey: getSecondTakeIdentityKey({ ownerId: null, skillId: survivor.id }),
+        }),
+      ]);
+
+      mockAdminSession(admin.id);
+      await mergeSkillForAdmin({ duplicateId: duplicate.id, survivorId: survivor.id });
+
+      const lessons = await findSecondTakes({ skillIds: [survivor.id], userId: admin.id });
+      expect(lessons.get(survivor.id)?.lessonId).toBe(written.id);
+
+      await expect(
+        prisma.lesson.findUniqueOrThrow({ where: { id: dropped.id } }),
+      ).resolves.toMatchObject({ setAsideAt: expect.any(Date) });
+    },
+  );
 });
 
 describe(ensureSecondTake, () => {

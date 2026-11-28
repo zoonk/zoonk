@@ -1,5 +1,11 @@
 import "server-only";
-import { type LearnerSkill, type Skill, type TransactionClient, prisma } from "@zoonk/db";
+import {
+  type LearnerSkill,
+  type Lesson,
+  type Skill,
+  type TransactionClient,
+  prisma,
+} from "@zoonk/db";
 import { markLockedPlanInputsChanged } from "@zoonk/db/learner-writes";
 import { isUuid } from "@zoonk/utils/uuid";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
@@ -145,22 +151,44 @@ async function moveSecondTake(tx: TransactionClient, { duplicate, survivor }: Sk
   const to = secondTakeKey(survivor);
 
   const lessons = await tx.lesson.findMany({
-    select: { id: true, identityKey: true, setAsideAt: true },
+    select: { contentStatus: true, id: true, identityKey: true, setAsideAt: true },
     where: { identityKey: { in: [from, to] }, language: survivor.language },
   });
 
   const take = lessons.find(({ identityKey }) => identityKey === from);
+  const kept = lessons.find(({ identityKey }) => identityKey === to);
 
   if (!take) {
     return;
   }
 
+  if (!kept) {
+    await tx.lesson.update({ data: { identityKey: to }, where: { id: take.id } });
+    return;
+  }
+
+  if (!isUsable(take) || isUsable(kept)) {
+    await tx.lesson.update({
+      data: { setAsideAt: take.setAsideAt ?? new Date() },
+      where: { id: take.id },
+    });
+
+    return;
+  }
+
+  // Keys are unique per language, so the two lessons trade keys through a third.
+  await tx.lesson.update({ data: { identityKey: `${from}:swap` }, where: { id: take.id } });
+
   await tx.lesson.update({
-    data: lessons.some(({ identityKey }) => identityKey === to)
-      ? { setAsideAt: take.setAsideAt ?? new Date() }
-      : { identityKey: to },
-    where: { id: take.id },
+    data: { identityKey: from, setAsideAt: kept.setAsideAt ?? new Date() },
+    where: { id: kept.id },
   });
+
+  await tx.lesson.update({ data: { identityKey: to }, where: { id: take.id } });
+}
+
+function isUsable(lesson: Pick<Lesson, "contentStatus" | "setAsideAt">): boolean {
+  return lesson.contentStatus !== "failed" && !lesson.setAsideAt;
 }
 
 async function mergeInto(pair: SkillPair) {
