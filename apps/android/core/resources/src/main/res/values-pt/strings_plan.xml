@@ -227,9 +227,9 @@
   "plan_effect_row_starts_with": "98dbaeeb2625c960dbb21550fc5f8f2f5f4568d02cbb81d10480f7fb02bab888",
   "plan_effect_row_weekly_challenge": "2476835291c7c4278272a469eeb86ffc1d051bbbbba0222ff07910a6cc75d731",
   "plan_effect_see_all": "a8b2268c5968a089baf2c38fd9e7f66eb650a72d8b8efb3591e78d8ae553942d",
-  "plan_effect_topic_added": "13113065eb2bd9f6da6c2afea94ad564a83abef5c87c89f459002d322bd144f5",
+  "plan_effect_topic_added": "5bfe80da2814e82348b59b253d6001ab354202643113024dd0df0dd40d96fd4f",
   "plan_effect_topic_leaves": "6dff903deaa95f3e6a041333fedb828570c35171b47640ab9f44840ca50b43da",
-  "plan_effect_topics_added": "d8c31a2e670b27304fb32a79247d695b5b2d35d60fc20d820f2ce1f4ebf9b684",
+  "plan_effect_topics_added": "fbf6830ccff8f70786d5f74355384055efcdc95871a224dc3304f08ded3aa303",
   "plan_effect_topics_leave": "239a0498f2979816ddbe11d819f5f48d5a21a46e441a51539d36a554858b55e1",
   "plan_effect_weekly_challenge_on": "f60b8b4c04d9ba2e77412448e26293b6fec1797b46c41d3adf741ed798ab8559",
   "plan_end_none_set": "d9dbe65c08a236418fbdd816c1f085270990ab99b3ee78e3346d55bef56af2ed",
@@ -1268,9 +1268,9 @@
     <!-- %1$s lists topics, such as "Statistics and Geometry" or "Statistics, Geometry and 3 more topics". -->
     <string name="plan_effect_topics_leave">%1$s ficam de fora do seu plano.</string>
     <!-- %1$s is one topic\'s name. -->
-    <string name="plan_effect_topic_added">%1$s entra no seu plano.</string>
+    <string name="plan_effect_topic_added">%1$s vai entrar no seu plano.</string>
     <!-- %1$s lists topics, such as "Statistics and Geometry". -->
-    <string name="plan_effect_topics_added">%1$s entram no seu plano.</string>
+    <string name="plan_effect_topics_added">%1$s vão entrar no seu plano.</string>
     <plurals name="plan_effect_fewer_before_exam">
         <item quantity="one">Você estuda %d aula a menos antes da sua prova.</item>
         <item quantity="many">Você estuda %d aulas a menos antes da sua prova.</item>
