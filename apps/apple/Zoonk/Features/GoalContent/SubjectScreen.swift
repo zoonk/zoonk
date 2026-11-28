@@ -391,12 +391,6 @@ private struct SubjectContent: View {
               comment: "Shows the phase's chapters left out around the next one"),
             isUnfolded: $showsAllChapters)
         }
-
-        LeftOutTopicsRows(names: subject.leftOutTopics, isUnfolded: $showsLeftOut)
-
-        if !subject.leftOutTopics.isEmpty {
-          LeftOutWhy()
-        }
       } header: {
         SectionTitle(
           Text("Chapters", tableName: "Plan", comment: "Section of a subject's chapters"),
@@ -424,6 +418,18 @@ private struct SubjectContent: View {
             .fixedSize(horizontal: true, vertical: false)
           }
         }
+      }
+      .listSectionSpacing(subject.leftOutTopics.isEmpty ? listSectionGap : 0)
+
+      // Main's fold sits flush under the chapter list, divided like its rows though outside it:
+      // it isn't a chapter.
+      if !subject.leftOutTopics.isEmpty {
+        Section {
+          LeftOutTopicsRows(names: subject.leftOutTopics, isUnfolded: $showsLeftOut)
+        } footer: {
+          LeftOutWhy()
+        }
+        .listSectionSeparator(.visible, edges: .top)
       }
     }
   }
@@ -827,6 +833,7 @@ private struct LeftOutWhy: View {
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .listRowSeparator(.hidden)
+    .layoutSectionText()
   }
 }
 
