@@ -31,7 +31,6 @@ export async function loadAttemptState({
   const status = questions.waiting ? pending : idle;
 
   return {
-    attemptQuestions: questions,
     focusTest: null,
     state: {
       answered: questions.answered,

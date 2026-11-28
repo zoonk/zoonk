@@ -16,7 +16,10 @@ import { makeReceipt, storeFinishedResult } from "./course-placement-receipt";
 import { applyCourseStart } from "./course-start-items";
 import { loadPlacementWithSummary } from "./load-placement-state";
 import { savePlacementAttempt } from "./placement-attempt";
+import { readAttemptQuestions } from "./placement-attempt-questions";
 import { type PlacementRecord, readPlacementAttempt } from "./placement-attempt-record";
+import { loadCourseAnswers } from "./placement-evidence";
+import { coursePreparationFailed } from "./placement-plan-build";
 import { readPlacementChange } from "./placement-result";
 
 function findAppliedReceipt({
@@ -121,20 +124,13 @@ async function finishActivePart(
     return unchanged({ event: null, receipt: last ?? null });
   }
 
-  const plan = await loadPlacementPlan(goalId, tx);
-
-  const { attemptQuestions, state } = await loadPlacementWithSummary({
-    goalId,
-    plan,
-    timeZone,
-    today,
-    tx,
-    userId,
-  });
-
-  if (!attemptQuestions || state.status === "failed") {
+  if (coursePreparationFailed(attempt)) {
     return unchanged(null);
   }
+
+  const legacyPlan = attempt.search ? undefined : await loadPlacementPlan(goalId, tx);
+  const attempts = await loadCourseAnswers(attempt.id, userId, tx);
+  const attemptQuestions = readAttemptQuestions({ attempt, attempts, plan: legacyPlan });
 
   const previous = findAppliedReceipt({
     answered: answered ?? attemptQuestions.answered,
@@ -157,22 +153,22 @@ async function finishActivePart(
   );
 
   const { confirmed, heldUntilTomorrow, partLessonsSkipped, testedOutPlanItemIds, sharedItemIds } =
-    attempt.search
-      ? await applyCourseStart({
-          goalId,
-          lineSkillIds: attempt.search.topics?.map((topic) => topic.id),
-          now,
-          startedPastSkillIds: attemptQuestions.startedPastSkillIds,
-          tx,
-        })
-      : await applyLegacyPlacement({
+    legacyPlan
+      ? await applyLegacyPlacement({
           attempt,
           goal,
           now,
-          plan,
-          skillIds: state.knownSkillIds,
+          plan: legacyPlan,
+          skillIds: attemptQuestions.knownSkillIds,
           timeZone,
           today,
+          tx,
+        })
+      : await applyCourseStart({
+          goalId,
+          lineSkillIds: attempt.search?.topics?.map((topic) => topic.id),
+          now,
+          startedPastSkillIds: attemptQuestions.startedPastSkillIds,
           tx,
         });
 

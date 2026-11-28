@@ -1,7 +1,7 @@
 import "server-only";
 import { type Goal, type TransactionClient } from "@zoonk/db";
-import { type loadPlacementWithSummary } from "./load-placement-state";
 import { savePlacementAttempt } from "./placement-attempt";
+import { type readAttemptQuestions } from "./placement-attempt-questions";
 import { type PlacementRecord } from "./placement-attempt-record";
 import { readPlacementCourse } from "./placement-result";
 
@@ -20,9 +20,7 @@ export async function storeFinishedResult({
   tx,
 }: {
   attempt: NonNullable<PlacementRecord["attempt"]>;
-  attemptQuestions: NonNullable<
-    Awaited<ReturnType<typeof loadPlacementWithSummary>>["attemptQuestions"]
-  >;
+  attemptQuestions: ReturnType<typeof readAttemptQuestions>;
   current: Goal;
   finish: NonNullable<PlacementRecord["finishedParts"][number]["finish"]>;
   goalId: string;
@@ -81,9 +79,7 @@ export function makeReceipt({
   testedOutPlanItemIds,
 }: {
   attempt: NonNullable<PlacementRecord["attempt"]>;
-  attemptQuestions: NonNullable<
-    Awaited<ReturnType<typeof loadPlacementWithSummary>>["attemptQuestions"]
-  >;
+  attemptQuestions: ReturnType<typeof readAttemptQuestions>;
   confirmed: ReadonlySet<string>;
   last: PlacementRecord["finishedParts"][number] | undefined;
   heldUntilTomorrow: boolean;

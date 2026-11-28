@@ -66,7 +66,11 @@ export async function recordTestOutChange(input: Input): Promise<void> {
         skillIds: new Set(starts ?? items.flatMap(({ skillId }) => skillId ?? [])),
       });
 
-      await tx.plan.update({ data: { version: versionAfter }, where: { id: context.plan.id } });
+      await tx.plan.update({
+        data: { version: versionAfter },
+        select: { id: true },
+        where: { id: context.plan.id },
+      });
 
       await tx.planChangeSnapshot.deleteMany({ where: { change: { planId: context.plan.id } } });
 
@@ -96,6 +100,7 @@ export async function recordTestOutChange(input: Input): Promise<void> {
             : "Placement or a test-out skipped lessons the learner already knows.",
           status: "applied",
         },
+        select: { id: true },
       });
 
       // Undo restores tested-out snapshot items named in the change to todo, including new stand-ins.

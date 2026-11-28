@@ -23,7 +23,6 @@ import { loadAttemptState, readIdleCourse } from "./load-placement-attempt-state
 import { findNextQuestion } from "./next-placement-skill";
 import { countPlacementAnswers } from "./placement-answers";
 import { getAskingBudget } from "./placement-asking-budget";
-import { type readAttemptQuestions } from "./placement-attempt-questions";
 import { type PlacementAttemptView, type PlacementResult } from "./placement-attempt-record";
 import { loadPlacementItems } from "./placement-bank-items";
 import { loadCourseAnswers, loadEvidence, loadSeenPlacementItems } from "./placement-evidence";
@@ -58,7 +57,6 @@ export type PlacementState = {
 };
 
 export type PlacementLoad = {
-  attemptQuestions?: ReturnType<typeof readAttemptQuestions>;
   firstQuestionReady?: boolean;
   /** What an exam goal's writes need beside the state; null for other goals. */
   focusTest: Awaited<ReturnType<typeof loadFocusTest>>;
