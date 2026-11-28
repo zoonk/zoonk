@@ -16,17 +16,15 @@ export type PracticeAnswer = QuestionAnswer | LessonStepAnswer;
 
 /**
  * `attemptId` stays the same when an answer is sent again, so the server records one answer per
- * question.
+ * question. A question's answer sends back its entry's `showing`, the order its options were in.
  */
 export type MistakePracticeAnswer = {
   answer: PracticeAnswer;
   attemptId: string;
   durationMs: number;
-  itemId?: string;
-  stepId?: string;
   mistakeId: string;
   runAnswerIds: string[];
-};
+} & ({ itemId: string; showing: string } | { stepId: string });
 
 export type MistakePracticeFeedback =
   | Extract<MistakePracticeAnswerResult, { status: "ready" }>["feedback"]
@@ -44,6 +42,23 @@ export type PracticeStep = {
   lesson: PracticeEntry["lesson"];
 };
 
+/** What an answer to the step in view sends: a lesson screen by its id, a question with the order it was shown in. */
+export function toPracticeAnswer({
+  step,
+  ...sent
+}: Omit<MistakePracticeAnswer, "itemId" | "mistakeId" | "showing" | "stepId"> & {
+  step: PracticeStep;
+}): MistakePracticeAnswer {
+  const { entry, lesson, question } = step;
+  const mistakeId = entry.mistakeId;
+
+  if (lesson) {
+    return { ...sent, mistakeId, stepId: lesson.step.id };
+  }
+
+  return { ...sent, itemId: question?.itemId ?? "", mistakeId, showing: entry.showing };
+}
+
 type Graded = NonNullable<MistakePracticeFeedback>;
 type PracticeVerdict = "read" | "right" | "wrong";
 export type SentPracticeAnswer = {
@@ -59,6 +74,7 @@ type PracticePhase =
   | ({ kind: "answerFailed" } & SentPracticeAnswer)
   | ({ feedback: Graded; kind: "feedback"; spoken?: SpokenAnswerGrade } & SentPracticeAnswer)
   | { kind: "ending" }
+  | { kind: "finishFailed" }
   | { kind: "ended"; summary: MistakePracticeSummary | null };
 
 /**
@@ -85,7 +101,9 @@ export type PracticeAction =
   | { type: "retry" }
   | { type: "next" }
   | { type: "end" }
-  | { summary: MistakePracticeSummary | null; type: "ended" };
+  | { summary: MistakePracticeSummary | null; type: "ended" }
+  | { type: "finishFailed" }
+  | { practice: readonly PracticeEntry[]; type: "again" };
 
 function toPracticeSteps(practice: readonly PracticeEntry[]): PracticeStep[] {
   return practice.flatMap<PracticeStep>((entry) => {
@@ -112,6 +130,7 @@ function getOpeningPhase(step: PracticeStep | undefined): PracticePhase {
     : { kind: "answering", selected: initialOrderAnswer(step.question) };
 }
 
+/** An empty run still ends through its finish, so a day's block with nothing left completes. */
 export function createPracticeState(practice: readonly PracticeEntry[]): PracticeState {
   const steps = toPracticeSteps(practice);
 
@@ -120,7 +139,7 @@ export function createPracticeState(practice: readonly PracticeEntry[]): Practic
     failures: 0,
     fixedIds: [],
     index: 0,
-    phase: steps.length === 0 ? { kind: "ended", summary: null } : getOpeningPhase(steps[0]),
+    phase: getOpeningPhase(steps[0]),
     reached: NOTHING_REACHED,
     steps,
     verdicts: [],
@@ -244,22 +263,31 @@ export function practiceReducer(state: PracticeState, action: PracticeAction): P
           ? mergeReached(state.reached, action.summary.reached)
           : state.reached,
       };
+    case "finishFailed":
+      return state.phase.kind === "ending"
+        ? { ...state, failures: state.failures + 1, phase: { kind: "finishFailed" } }
+        : state;
+    case "again":
+      return state.phase.kind === "ended" ? createPracticeState(action.practice) : state;
     default:
       return state;
   }
 }
 
-export type PracticeEndNote = "missed" | "missedAndUnreached" | "unreached";
+/**
+ * Practicing again can fix something today only while an entry missed on an earlier day is still
+ * open in the run's scope, which the finish says (`hasMorePractice`).
+ */
+export function canPracticeAgain(state: PracticeState): boolean {
+  return state.phase.kind === "ended" && Boolean(state.phase.summary?.hasMorePractice);
+}
 
-export function getPracticeEndNote(state: PracticeState): PracticeEndNote | null {
-  const missed = state.verdicts.some((verdict) => verdict !== "right");
-  const unreached = state.verdicts.length < state.steps.length;
-
-  if (missed) {
-    return unreached ? "missedAndUnreached" : "missed";
-  }
-
-  return unreached ? "unreached" : null;
+/** The run's own score, from its answers: a batch whose answers earn nothing new still has one. */
+export function getPracticeScore(state: PracticeState): { answered: number; correct: number } {
+  return {
+    answered: state.answerIds.length,
+    correct: state.verdicts.filter((verdict) => verdict === "right").length,
+  };
 }
 
 export function getPracticeSegments(state: PracticeState): TaskSegment[] {

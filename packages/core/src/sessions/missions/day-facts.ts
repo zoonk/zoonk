@@ -1,6 +1,5 @@
 import "server-only";
 import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
-import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { type findActiveSubscription } from "../../auth/subscription";
 import {
   type UsageTotals,
@@ -8,17 +7,8 @@ import {
   loadUsageTotals,
 } from "../../entitlements/_utils/usage-counts";
 import { readExamPicks } from "../../exams/choices/exam-choices";
-import {
-  type GoalPlan,
-  getMistakeSkillIds,
-  loadGoalPlan,
-} from "../../learner/_utils/goal-skill-graph";
+import { loadGoalPlan } from "../../learner/_utils/goal-skill-graph";
 import { getLearnerTier } from "../../lookahead/learner-lookahead";
-import { listReadyMistakes } from "../../mistakes/mistake-availability";
-import {
-  type PracticeMistake,
-  loadPracticeMistakes,
-} from "../../mistakes/mistake-practice-eligibility";
 import { type loadPreparationInputs } from "../../preparation/_utils/load-preparation-inputs";
 import { getGoalDayMinutes } from "../_utils/day-minutes";
 import { type loadDayPlan } from "../_utils/day-plan";
@@ -27,37 +17,12 @@ import { loadPreparingMockPositions } from "../_utils/preparing-mock-blocks";
 import { type SelectedDayPlan } from "../_utils/selected-day-plan";
 import { type MissionFactBlock, blockCandidates, finishChapterCandidate } from "./block-candidates";
 import { hasMissionAllowance } from "./candidate-allowance";
-import { MISSION_RULES, type MissionKind, type MissionPick, readMissionDocument } from "./catalog";
+import { type MissionKind, type MissionPick, readMissionDocument } from "./catalog";
 import { type FirstSteps, loadFirstSteps } from "./first-steps";
 import { languageCandidates } from "./language-candidates";
 import { weakSpotCandidate } from "./weak-spot";
 
 const RECENT_SESSIONS = 7;
-
-function fixCandidate({
-  count,
-  plannedMinutes,
-}: {
-  count: number;
-  plannedMinutes: number;
-}): MissionPick[] {
-  if (count === 0) {
-    return [];
-  }
-
-  return [
-    {
-      anchor: {},
-      detail: { count },
-      kind: "fixMistake",
-      opens: { kind: "mistakesPractice" },
-      total:
-        count >= MISSION_RULES.mistakePileSize && plannedMinutes >= MISSION_RULES.roomyDayMinutes
-          ? 3
-          : 1,
-    },
-  ];
-}
 
 /** Language unit titles may require the library because their plan skills do not carry them. */
 async function withChapterTitles(picks: readonly MissionPick[]): Promise<MissionPick[]> {
@@ -93,33 +58,10 @@ export type DayMissionFacts = {
   candidates: MissionPick[];
   firstSteps: FirstSteps | null;
   localDate: Date;
-  oldestReadyMistakeAt: Date | null;
-  patternExpiresTomorrow: boolean;
   plannedMinutes: number;
-  readyMistakeCount: number;
   /** Most recent session first, restricted to this goal. */
   recentPicks: MissionKind[][];
 };
-
-async function readyMistakes({
-  goalPlan,
-  localDate,
-  readMistakes,
-  timeZone,
-  userId,
-}: {
-  goalPlan: GoalPlan;
-  localDate: Date;
-  readMistakes?: () => Promise<PracticeMistake[]>;
-  timeZone: string;
-  userId: string;
-}) {
-  const mistakes = readMistakes
-    ? await readMistakes()
-    : await loadPracticeMistakes({ skillIds: getMistakeSkillIds(goalPlan.skills), userId });
-
-  return listReadyMistakes({ localDate, mistakes, timeZone });
-}
 
 type MissionContext = Pick<
   Parameters<typeof loadDayMissionFacts>[0],
@@ -169,7 +111,6 @@ export async function loadDayMissionFacts({
   now = new Date(),
   plannedMinutes,
   preparing: knownPreparing,
-  readMistakes,
   readPreparation,
   readSubscription,
   readUsage,
@@ -186,8 +127,6 @@ export async function loadDayMissionFacts({
   now?: Date;
   plannedMinutes: number;
   preparing?: ReadonlySet<number>;
-  /** A GET's request-wide practice mistakes; without it, they're read fresh. */
-  readMistakes?: () => Promise<PracticeMistake[]>;
   readPreparation?: () => ReturnType<typeof loadPreparationInputs>;
   readSubscription?: typeof findActiveSubscription;
   /** A GET's request-wide usage; without it, it's counted fresh. */
@@ -210,7 +149,12 @@ export async function loadDayMissionFacts({
   const dayMinutes = getGoalDayMinutes({ date: localDate, goal, planSettings: plan?.settings });
   const dailyMinutes = dayMinutes;
 
-  const available = goal.status !== "paused" && goal.status !== "archived" && dailyMinutes > 0;
+  const available =
+    goal.status !== "paused" &&
+    goal.status !== "archived" &&
+    dailyMinutes > 0 &&
+    blocks.length > 0 &&
+    plannedMinutes > 0;
 
   const recentPicks = recent.map(
     (session) => readMissionDocument(session.missions)?.picks.map((pick) => pick.kind) ?? [],
@@ -223,17 +167,13 @@ export async function loadDayMissionFacts({
     dailyMinutes,
     firstSteps: null,
     localDate,
-    oldestReadyMistakeAt: null,
-    patternExpiresTomorrow: false,
     plannedMinutes,
-    readyMistakeCount: 0,
     recentPicks,
   };
 
   const items = plan?.items ?? [];
 
-  const [mistakes, language, weakSpot, structure, preparing] = await Promise.all([
-    readyMistakes({ goalPlan, localDate, readMistakes, timeZone, userId }),
+  const [language, weakSpot, structure, preparing] = await Promise.all([
     languageCandidates({ blocks, goal, items, now, tier, usage, userId }),
     weakSpotCandidate({
       blocks,
@@ -264,8 +204,7 @@ export async function loadDayMissionFacts({
   const candidates = await withChapterTitles([
     ...blockCandidates({ blocks, plannedMinutes, preparing, tier }),
     ...(chapter ? [chapter] : []),
-    ...fixCandidate({ count: mistakes.length, plannedMinutes: dailyMinutes }),
-    ...language.candidates,
+    ...language,
     ...(buddyAllowed
       ? [{ anchor: {}, kind: "askBuddy" as const, opens: { kind: "buddy" as const }, total: 1 }]
       : []),
@@ -285,15 +224,5 @@ export async function loadDayMissionFacts({
     userId,
   });
 
-  return {
-    ...base,
-    available: available && ((blocks.length > 0 && plannedMinutes > 0) || mistakes.length > 0),
-    candidates,
-    firstSteps,
-    oldestReadyMistakeAt: mistakes[0]
-      ? getDateInTimeZone({ date: mistakes[0].createdAt, timeZone })
-      : null,
-    patternExpiresTomorrow: language.patternExpiresTomorrow,
-    readyMistakeCount: mistakes.length,
-  };
+  return { ...base, candidates, firstSteps };
 }

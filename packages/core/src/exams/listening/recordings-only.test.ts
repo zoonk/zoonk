@@ -7,7 +7,7 @@ import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fix
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
-import { pickInMistake } from "../../_test-utils/shown-choice";
+import { mistakeShowing, pickInMistake } from "../../_test-utils/shown-choice";
 import { learnerGoalFixture } from "../../learner/_test-utils/learner-goal";
 import { lowGuessTapItems } from "../../learner/_test-utils/placement-tap-items";
 import { startPlacementSitting } from "../../learner/placement/start-placement-sitting";
@@ -502,6 +502,7 @@ describe("an exam's listening skills outside practice", () => {
         answer: await pickInMistake({ mistakeId: practiced.id }),
         durationMs: 9000,
         itemId: missed?.id ?? "",
+        showing: await mistakeShowing(practiced.id),
       },
       mistakeId: practiced.id,
     });

@@ -25,7 +25,7 @@ export function useMissionName(buddy: Pick<LearnBuddy, "kind" | "name"> | null) 
   const area = (detail: MissionDetail) =>
     detail?.areaTitle ? t("Practice {area}", { area: detail.areaTitle }) : t("Practice");
 
-  return ({ detail, kind, total }: Pick<Mission, "detail" | "kind" | "total">): string => {
+  return ({ detail, kind }: Pick<Mission, "detail" | "kind">): string => {
     switch (kind) {
       case "review":
         return t("Review");
@@ -43,10 +43,6 @@ export function useMissionName(buddy: Pick<LearnBuddy, "kind" | "name"> | null) 
         return t({ description: "A mission to practice an essay.", message: "Practice writing" });
       case "practice":
         return t("Practice");
-      case "fixMistake":
-        return t("{count, plural, one {Fix a mistake} other {Fix # mistakes}}", { count: total });
-      case "pattern":
-        return t("Practice a pattern");
       case "pronunciation":
         return t("Practice pronunciation");
       case "call":
@@ -97,10 +93,6 @@ function useOpensLabel(buddy: LearnBuddy | null) {
       case "practice":
       case "weakSpot":
         return t(", go to today's practice");
-      case "fixMistake":
-        return t(", practice your mistakes");
-      case "pattern":
-        return t(", go to the pattern");
       case "pronunciation":
         return t(", go to pronunciation practice");
       case "call":

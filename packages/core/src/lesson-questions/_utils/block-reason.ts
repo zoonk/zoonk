@@ -1,6 +1,7 @@
 import { type PlanItemReason } from "@zoonk/ai/tasks/lessons/question-context";
 import { type StudySessionBlock } from "@zoonk/db";
 import { type BlockPayload, readBlockPayload } from "../../sessions/block-payload";
+import { isOutsidePlanLesson } from "../../sessions/day-block";
 
 function getPracticeReason(payload: BlockPayload): PlanItemReason {
   if (payload.fullReview) {
@@ -23,7 +24,7 @@ export function getBlockReason(
     case "checkpoint":
       return "checkpoint";
     case "learn":
-      return payload.reinforcement ? "reinforcement" : "newSkill";
+      return isOutsidePlanLesson(payload) ? "reinforcement" : "newSkill";
     case "practice":
       return getPracticeReason(payload);
     case "produce":

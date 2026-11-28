@@ -146,7 +146,7 @@ const marcos: SeedLearner = {
     { memory: "solid", skill: "explain-visit" },
     { memory: "mastered", skill: "airport-directions" },
     { memory: "learning", skill: "ask-rent" },
-    { memory: "learning", skill: "rental-words" },
+    { memory: "fading", skill: "rental-words" },
   ],
   timeZone: "America/Sao_Paulo",
   username: "marcos_toronto",

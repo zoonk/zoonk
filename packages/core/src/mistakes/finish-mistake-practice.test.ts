@@ -8,7 +8,7 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession } from "../_test-utils/mock-session";
-import { pickInMistake } from "../_test-utils/shown-choice";
+import { mistakeShowing, pickInMistake } from "../_test-utils/shown-choice";
 import { answerMistakePractice } from "./answer-mistake-practice";
 import { finishMistakePractice } from "./finish-mistake-practice";
 
@@ -64,7 +64,15 @@ async function answer({
   const choice = await pickInMistake({ mistakeId: target.id, right });
 
   const result = await answerMistakePractice({
-    input: { answer: choice, attemptId, durationMs: 20_000, itemId, run, timeZone: "UTC" },
+    input: {
+      answer: choice,
+      attemptId,
+      durationMs: 20_000,
+      itemId,
+      run,
+      showing: await mistakeShowing(target.id),
+      timeZone: "UTC",
+    },
     mistakeId: target.id,
   });
 
@@ -203,6 +211,7 @@ describe(finishMistakePractice, () => {
         answer: { practiceMistakeId: mistake.id },
         answeredAt: new Date(Date.now() - secondsAgo * 1000),
         durationMs: 1000,
+        evidence: "replay",
         userId: user.id,
       });
 
@@ -302,6 +311,7 @@ describe(finishMistakePractice, () => {
         durationMs: 20_000,
         itemId: original.id,
         run: { answerIds: [] },
+        showing: await mistakeShowing(mistake.id),
         timeZone: "UTC",
       },
       mistakeId: mistake.id,

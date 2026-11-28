@@ -21,7 +21,16 @@ const ANSWER_ID_SEPARATOR = ",";
 function findAnswers(tx: TransactionClient, where: AttemptWhereInput) {
   return tx.attempt.findMany({
     orderBy: [{ answeredAt: "asc" }, { id: "asc" }],
-    select: { answeredAt: true, durationMs: true, id: true, isCorrect: true },
+    select: {
+      answer: true,
+      answeredAt: true,
+      durationMs: true,
+      evidence: true,
+      id: true,
+      isCorrect: true,
+      itemId: true,
+      skillId: true,
+    },
     where,
   });
 }
@@ -76,52 +85,6 @@ export function readFixedMistakeIds(answer: Attempt["answer"]): string[] {
   return answer.fixedMistakeIds.filter((id): id is string => typeof id === "string");
 }
 
-/** Only server-recorded corrections may satisfy missions; reopened or later-fixed entries cannot prove this run's contribution. */
-export async function hasPracticeRunCorrection({
-  from,
-  runId,
-  through,
-  tx,
-  userId,
-}: {
-  from: Date;
-  runId: string;
-  through: Date;
-  tx: TransactionClient;
-  userId: string;
-}): Promise<boolean> {
-  const run = await tx.learningEvent.findFirst({
-    select: { contentIds: true },
-    where: { id: runId, lessonKind: MISTAKE_PRACTICE_LEDGER_KIND, userId },
-  });
-
-  if (!run) {
-    return false;
-  }
-
-  const answers = await tx.attempt.findMany({
-    select: { answer: true, answeredAt: true },
-    where: {
-      answer: { not: "", path: ["practiceMistakeId"] },
-      answeredAt: { gte: from, lte: through },
-      id: { in: readRunAnswerIds(run) },
-      isCorrect: true,
-      studySessionId: null,
-      userId,
-    },
-  });
-
-  const corrections = answers.flatMap((answer) =>
-    readFixedMistakeIds(answer.answer).map((id) => ({ fixedAt: answer.answeredAt, id })),
-  );
-
-  if (corrections.length === 0) {
-    return false;
-  }
-
-  return (await tx.mistake.count({ where: { OR: corrections, status: "fixed", userId } })) > 0;
-}
-
 export function toRunContentIds(answers: readonly PracticeAnswer[]): Record<string, string> {
   return { answerIds: answers.map((answer) => answer.id).join(ANSWER_ID_SEPARATOR) };
 }
@@ -156,16 +119,17 @@ export async function matchRun(
     userId,
   }: { answers: readonly PracticeAnswer[]; runs: readonly CountedRun[]; userId: string },
 ) {
-  const ids = new Set(answers.map((answer) => answer.id));
+  const credited = answers.filter((answer) => answer.evidence === "replay");
+  const ids = new Set(credited.map((answer) => answer.id));
   const counted = new Set(runs.flatMap((run) => readRunAnswerIds(run)));
   const run = runs.find((candidate) => readRunAnswerIds(candidate).some((id) => ids.has(id)));
-  const fresh = answers.filter((answer) => !counted.has(answer.id));
+  const fresh = credited.filter((answer) => !counted.has(answer.id));
   const members = new Set([...(run ? readRunAnswerIds(run) : []), ...fresh.map(({ id }) => id)]);
 
   const runAnswers =
     fresh.length > 0 && !members.isSubsetOf(ids)
       ? await findAnswers(tx, { id: { in: [...members] }, userId })
-      : answers.filter(({ id }) => members.has(id));
+      : credited.filter(({ id }) => members.has(id));
 
   return { fresh, run: run ?? null, runAnswers };
 }

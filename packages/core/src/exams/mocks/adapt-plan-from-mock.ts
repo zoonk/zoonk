@@ -1,21 +1,15 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLearnerModelCacheTag } from "../../cache/tags";
 import { markPlanItemsTestedOut } from "../../learner/_utils/known-skills";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
-import { loadFocusOwnership } from "../../learner/placement/_utils/focus-proposal-facts";
-import { readFocusTestRecord } from "../../learner/placement/focus-test-state";
-import { type UnchangedFocusReason } from "../../plans/_utils/apply-plan-change";
-import { changeGoalPlan } from "../../plans/change-goal-plan";
 import { loadMockPlanOffers } from "./_utils/mock-adapt";
 import { findOwnedMock } from "./_utils/owned-mock";
 import { type MockPlanOfferInput, mockResultSchema } from "./mock-contract";
 
 export type AdaptPlanFromMockResult =
   | { changeId: string | null; lessonsSkipped: number; status: "applied" }
-  | { reason: UnchangedFocusReason | null; status: "unchanged" }
-  | { status: "conflict" | "notFound" | "unauthorized" };
+  | { status: "notFound" | "unauthorized" | "unchanged" };
 
 export async function adaptPlanFromMock({
   blockId,
@@ -43,65 +37,21 @@ export async function adaptPlanFromMock({
     result: mockResultSchema.safeParse(mock.result).data ?? null,
   });
 
-  const timeZone = getAnswerTimeZone({ goal, timeZone: input.timeZone });
-
-  if (input.offer === "skip") {
-    if (!offers?.view.skip) {
-      return { reason: null, status: "unchanged" };
-    }
-
-    const skipped = await markPlanItemsTestedOut({
-      goalId: goal.id,
-      items: offers.plan.items,
-      knownSkillIds: offers.aced,
-      testedOutAt: new Date(),
-      timeZone,
-    });
-
-    revalidateCacheTags([getLearnerModelCacheTag(userId)]);
-
-    return skipped.planItemIds.length > 0
-      ? { changeId: skipped.changeId, lessonsSkipped: skipped.lessonsSkipped, status: "applied" }
-      : { reason: null, status: "unchanged" };
+  if (!offers) {
+    return { status: "unchanged" };
   }
 
-  if (!offers?.view.focus) {
-    return { reason: null, status: "unchanged" };
-  }
-
-  const plan = await prisma.plan.findUniqueOrThrow({
-    select: { id: true },
-    where: { goalId: goal.id },
-  });
-
-  const { handPicked } = await loadFocusOwnership({
-    focusAreas: offers.focusAreas,
-    planId: plan.id,
-    record: readFocusTestRecord(goal),
-    tx: prisma,
-  });
-
-  const changed = await changeGoalPlan({
+  const skipped = await markPlanItemsTestedOut({
     goalId: goal.id,
-    input: {
-      operations: [{ areas: [...offers.focusAreas, offers.view.focus.area], kind: "focusAreas" }],
-      timeZone,
-    },
-    source: handPicked ? "learner" : "mock",
-    trackAnalytics: false,
+    items: offers.plan.items,
+    knownSkillIds: offers.aced,
+    testedOutAt: new Date(),
+    timeZone: getAnswerTimeZone({ goal, timeZone: input.timeZone }),
   });
 
-  if (changed.status === "applied") {
-    return { changeId: changed.change?.id ?? null, lessonsSkipped: 0, status: "applied" };
-  }
+  revalidateCacheTags([getLearnerModelCacheTag(userId)]);
 
-  if (
-    changed.status === "conflict" ||
-    changed.status === "notFound" ||
-    changed.status === "unauthorized"
-  ) {
-    return changed;
-  }
-
-  return { reason: changed.status === "unchanged" ? changed.reason : null, status: "unchanged" };
+  return skipped.planItemIds.length > 0
+    ? { changeId: skipped.changeId, lessonsSkipped: skipped.lessonsSkipped, status: "applied" }
+    : { status: "unchanged" };
 }

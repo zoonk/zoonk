@@ -19,6 +19,21 @@
     <!-- A block practising one subject the learner chose. {subject} names it, like "Percentages". -->
     <string name="session_block_practice_subject">Practice: %1$s</string>
     <string name="session_block_rematch_lesson">Short lesson before the rematch</string>
+    <plurals name="session_block_fix_mistakes">
+        <item quantity="one">Fix %d mistake</item>
+        <item quantity="other">Fix %d mistakes</item>
+    </plurals>
+    <!-- Under "Fix 3 mistakes", a step of the day that practices questions the learner got wrong. -->
+    <string name="session_block_mistakes_line">Questions you missed before</string>
+    <!-- A study step that drills one rule the learner keeps getting wrong, titled like the day's other practice steps ("Practice: Fractions"). {pattern} names the rule, like "Adjective endings after der". -->
+    <string name="session_block_practice_pattern">Practice: %1$s</string>
+    <string name="session_block_pattern_line">A pattern in your mistakes</string>
+    <!-- Under a lesson the learner takes again because its idea has been hard for them. -->
+    <string name="session_block_returning_again">Once more: this one\'s been tricky</string>
+    <!-- Under a short lesson that explains, in a new way, an idea the learner keeps missing. -->
+    <string name="session_block_returning_another_way">Another way to see it</string>
+    <!-- Under a short lesson written for an idea that has been hard for the learner. -->
+    <string name="session_block_returning_missed">This one\'s been tricky</string>
     <plurals name="session_block_questions">
         <item quantity="one">%d question</item>
         <item quantity="other">%d questions</item>

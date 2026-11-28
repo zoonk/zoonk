@@ -8,6 +8,7 @@ import { planDayBlocks } from "../../sessions/_utils/plan-study-day";
 import { readSavedDayPlan } from "../../sessions/_utils/saved-day-plan";
 import { readClaimEvents } from "./claim-events";
 import { readOwnedGoal } from "./owned-goal";
+import { readPracticeMistakes } from "./practice-mistakes";
 import { getRequestInstant } from "./request-instant";
 import { readSavedPlan } from "./saved-plan";
 import { readScheduledAnswers } from "./scheduled-answers";
@@ -41,6 +42,7 @@ export async function readPlannedDay(userId: string, goalId: string, timeZone: s
     localDate: getDateInTimeZone({ date: now, timeZone }),
     now,
     readClaims: (skillIds: readonly string[]) => readClaimEvents(userId, goalId, toIdKey(skillIds)),
+    readDayMistakes: () => readPracticeMistakes(userId, goalId),
     readSubscription: readActiveSubscription,
     readWritingAnswers: readScheduledAnswers,
     selection,

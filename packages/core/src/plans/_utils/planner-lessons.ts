@@ -14,6 +14,7 @@ import {
   mergePlannerLessons,
 } from "../../library/curriculum/chapter-taught-lessons";
 import { QUICK_LESSON_KEY_WHERE } from "../../library/quick-lessons/quick-lesson-identity";
+import { SECOND_TAKE_KEY_WHERE } from "../../library/second-takes/second-take-identity";
 import { type PlanGraph } from "../planner/plan-state";
 import { type PlannerLesson } from "../planner/plan-units";
 import { withCourseLessonOrder } from "./course-lesson-order";
@@ -61,7 +62,11 @@ async function loadLessons({
       skillId: true,
     },
     where: {
-      lesson: { ...libraryRowsVisibleTo(userId), NOT: QUICK_LESSON_KEY_WHERE, setAsideAt: null },
+      lesson: {
+        ...libraryRowsVisibleTo(userId),
+        NOT: [QUICK_LESSON_KEY_WHERE, SECOND_TAKE_KEY_WHERE],
+        setAsideAt: null,
+      },
       skillId: { in: skillIds },
     },
   });

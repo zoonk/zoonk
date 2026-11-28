@@ -252,6 +252,8 @@ describe(submitChapterTestOut, () => {
 
     const right = await prisma.attempt.findMany({ where: { isCorrect: true, userId: user.id } });
 
+    expect(right.every(({ evidence }) => evidence === null)).toBe(true);
+
     expect(new Set(right.map((attempt) => attempt.skillId))).toStrictEqual(
       new Set(skills.slice(0, 3).map((skill) => skill.id)),
     );

@@ -50,8 +50,6 @@
   "today_mistakes_notebook": "4053ac2d12afda4ccd7cca0af203e5c51e39c3a2c7aebc9c5fa95626c3265fcb",
   "today_mistakes_ready": "e41748e52b4bb1273bdbe098d125a2c5507a6f42b94aa2485e99b45a6e10d377",
   "today_mistakes_redo": "4441d6fa51616b2df0ba23473be437782bdc1f96ad4930c186ed259987215153",
-  "today_mistakes_return_tomorrow": "807a37626b2d0c2fc3c4aa88403416fbdb3cced39912f5de6372749413f300ec",
-  "today_mistakes_tomorrow": "383b5a04cb61e35207df6fbca1ea498bb3c4e99b0037846f0a998d6d109ddc57",
   "today_more_count": "f3f53b13f972c6f0816eefe7c3557df04fc3f2ad772da48aebbd523dda253546",
   "today_more_lessons": "095adf5fba281c8d123ef65242c9fed1fb8bdfc9abfac3fc982c984b76e81e57",
   "today_more_time_a_day": "03aa6cd822e16f7dbc6ae8d94267335ae9221c5fa346a9537745c5abe3d8b2b0",
@@ -287,16 +285,10 @@
     <string name="today_saved_lessons_line">Aulas que você quer fazer de novo</string>
     <!-- The line under Completed lessons in Practice anytime. -->
     <string name="today_completed_lessons_line">Faça uma aula de novo</string>
-    <string name="today_mistakes_return_tomorrow">Os erros de hoje voltam amanhã</string>
     <plurals name="today_mistakes_ready">
         <item quantity="one">%d para praticar</item>
         <item quantity="many">%d para praticar</item>
         <item quantity="other">%d para praticar</item>
-    </plurals>
-    <plurals name="today_mistakes_tomorrow">
-        <item quantity="one">Amanhã você terá %d à disposição</item>
-        <item quantity="many">Amanhã você terá %d à disposição</item>
-        <item quantity="other">Amanhã você terá %d à disposição</item>
     </plurals>
     <string name="today_take_mock">Fazer um simulado</string>
     <string name="today_take_mock_detail">Quando você quiser: um dia inteiro ou meio dia de prova</string>

@@ -1,6 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
+import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
   studySessionBlockFixture,
@@ -11,6 +12,7 @@ import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession } from "../_test-utils/mock-session";
 import { pickInBlock } from "../_test-utils/shown-choice";
+import { getSecondTakeIdentityKey } from "../library/second-takes/second-take-identity";
 import { getReviewHorizon, loadReviewCapsules } from "./_utils/load-review-capsules";
 import { answerStudyQuestion } from "./answer-study-question";
 import { readBlockPayload, toBlockPayload } from "./block-payload";
@@ -267,6 +269,36 @@ describe("shared daily skill reviews", () => {
         userId: fixture.user.id,
       }),
     ).resolves.toStrictEqual([]);
+  });
+
+  it("names a review capsule for its skill when the only linked lesson is a second take", async () => {
+    const { shared, user } = await setup();
+
+    const secondTake = await libraryLessonFixture({
+      contentStatus: "completed",
+      identityKey: getSecondTakeIdentityKey({ ownerId: null, skillId: shared.id }),
+      title: "The second take",
+    });
+
+    await lessonSkillFixture({ lessonId: secondTake.id, skillId: shared.id });
+
+    const capsules = await loadReviewCapsules({
+      dailyMinutes: 20,
+      examBlueprintId: null,
+      field: null,
+      horizon: getReviewHorizon({
+        finalStretchStart: null,
+        goal: { kind: "learn", targetDate: null },
+        localDate: TODAY,
+        timeZone: "UTC",
+      }),
+      netScoring: false,
+      planLessons: [],
+      skillIds: [shared.id],
+      userId: user.id,
+    });
+
+    expect(capsules).toMatchObject([{ lessonId: null, title: shared.name }]);
   });
 
   it("uses quick questions before wordy matches and keeps a skill with only a wordy match", async () => {

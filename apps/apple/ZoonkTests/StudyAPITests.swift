@@ -66,9 +66,173 @@ final class StudyAPITests: XCTestCase {
       let block = try JSONDecoder().decode(
         StudyBlock.self, from: JSONSerialization.data(withJSONObject: fixture))
 
-      XCTAssertEqual(block.label(document: .notice), expectedLine)
+      XCTAssertEqual(block.label, expectedLine)
       XCTAssertEqual(block.detail, expectedLine)
     }
+  }
+
+  /// A remedial row says only why it's in the day, in both of Today's places for a row's line.
+  func testRemedialRowsSayWhyTheyAreInTheDay() throws {
+    let base = try XCTUnwrap(
+      JSONSerialization.jsonObject(with: Data(Self.block.utf8)) as? [String: Any])
+    let cases: [([String: Any], String, String)] = [
+      (
+        ["returning": "again"], "What you own when you buy a share",
+        "Once more: this one's been tricky"
+      ),
+      (["returning": "anotherWay"], "What you own when you buy a share", "Another way to see it"),
+      (["returning": "missed"], "What you own when you buy a share", "This one's been tricky"),
+      (
+        ["kind": "practice", "screen": "mistakesPractice", "questions": 3, "title": NSNull()],
+        "Fix 3 mistakes", "Questions you missed before"
+      ),
+      (
+        ["kind": "practice", "screen": "pattern", "patternId": "p1", "title": "Ser or estar"],
+        "Practice: Ser or estar", "A pattern in your mistakes"
+      ),
+    ]
+
+    for (changes, title, line) in cases {
+      let fixture = base.merging(changes) { $1 }
+      let block = try JSONDecoder().decode(
+        StudyBlock.self, from: JSONSerialization.data(withJSONObject: fixture))
+
+      XCTAssertEqual(block.displayTitle, title)
+      XCTAssertEqual(block.label, line)
+      XCTAssertEqual(block.detail, line)
+      XCTAssertEqual(block.learnKind, block.kind == .learn ? .lesson : .mistakes)
+    }
+  }
+
+  /// A reason a newer server gives for a lesson being back keeps the lesson's own row, without a
+  /// line this version can't say.
+  func testAnUnknownReturningReasonKeepsAnOrdinaryLessonRow() throws {
+    let base = try XCTUnwrap(
+      JSONSerialization.jsonObject(with: Data(Self.block.utf8)) as? [String: Any])
+    let wire = try JSONDecoder().decode(
+      Components.Schemas.StudyBlock.self,
+      from: JSONSerialization.data(
+        withJSONObject: base.merging([
+          "id": "01a182f3-64b4-7b61-82d2-47d32878c252", "practiceNumber": NSNull(),
+          "returning": "lastChance",
+        ]) { $1 })
+    )
+    let block: StudyBlock = try StudyJSON.recode(wire)
+    let plain = try JSONDecoder().decode(StudyBlock.self, from: Data(Self.block.utf8))
+
+    XCTAssertNil(block.returning)
+    XCTAssertEqual(block.displayTitle, plain.displayTitle)
+    XCTAssertEqual(block.label, plain.label)
+  }
+
+  /// A day's mistakes all fixed elsewhere since it opened: the row says so, with no line, until
+  /// opening it marks it done; a finished row keeps the count it recorded.
+  func testAMistakesRowWithNothingLeftReadsAlreadyFixed() throws {
+    let base = try XCTUnwrap(
+      JSONSerialization.jsonObject(with: Data(Self.block.utf8)) as? [String: Any])
+    func row(status: String) throws -> StudyBlock {
+      let fixture = base.merging([
+        "kind": "practice", "screen": "mistakesPractice", "questions": 0, "title": NSNull(),
+        "status": status,
+      ]) { $1 }
+      return try JSONDecoder().decode(
+        StudyBlock.self, from: JSONSerialization.data(withJSONObject: fixture))
+    }
+
+    let pending = try row(status: "pending")
+    XCTAssertTrue(pending.isAlreadyFixed)
+    XCTAssertEqual(pending.displayTitle, "Already fixed")
+    XCTAssertNil(pending.label)
+    XCTAssertNil(pending.detail)
+
+    let done = try row(status: "completed")
+    XCTAssertFalse(done.isAlreadyFixed)
+    XCTAssertNotEqual(done.displayTitle, "Already fixed")
+  }
+
+  /// Opening a preview row names the same remedial work core showed, and leaves out what it isn't.
+  func testOpeningARemedialRowEchoesWhatItIs() async throws {
+    let base = try XCTUnwrap(
+      JSONSerialization.jsonObject(with: Data(Self.block.utf8)) as? [String: Any])
+    let rows: [[String: Any]] = [
+      [:],
+      ["returning": "anotherWay"],
+      ["kind": "practice", "screen": "mistakesPractice"],
+      ["kind": "practice", "screen": "pattern", "patternId": "p1"],
+    ]
+    var refs: [NSDictionary] = []
+
+    for row in rows {
+      let transport = StudyRecordingTransport()
+      let api = StudyAPI(clients: APIClientFactory(baseURL: Self.baseURL, transport: transport))
+      let block = try JSONDecoder().decode(
+        StudyBlock.self,
+        from: JSONSerialization.data(withJSONObject: base.merging(row) { $1 }))
+
+      _ = try? await api.openDay(
+        token: "token", goalID: "56adb511-8f30-426f-b358-fb4a556aaeb1", shownDate: "2026-10-28",
+        timeZone: "America/Sao_Paulo", target: .ref(DayBlockRef(block)))
+
+      let sent = try XCTUnwrap(transport.sent.value.first)
+      let target = try XCTUnwrap(sent.json["target"] as? NSDictionary)
+      refs.append(try XCTUnwrap(target["ref"] as? NSDictionary))
+    }
+
+    let flags = try refs.map { try XCTUnwrap($0["flags"] as? NSDictionary) }
+    XCTAssertNil(flags[0]["mistakesPractice"])
+    XCTAssertNil(flags[0]["returning"])
+    XCTAssertNil(refs[0]["patternId"])
+    XCTAssertEqual(flags[1]["returning"] as? String, "anotherWay")
+    XCTAssertEqual(flags[2]["mistakesPractice"] as? Bool, true)
+    XCTAssertEqual(refs[3]["patternId"] as? String, "p1")
+  }
+
+  /// A mock's run names only its mock, so it works after the learner switched goals, and its finish
+  /// names the run's scope and formats so the answer says whether more is left to practice.
+  func testAMockRunNamesOnlyItsMock() async throws {
+    let transport = StudyRecordingTransport()
+    let api = PracticeAPI(clients: APIClientFactory(baseURL: Self.baseURL, transport: transport))
+    let mock = MistakePracticeScope.mock("6f0b5a52-63a8-4c1e-9a52-1d1d0c6c9e11")
+
+    _ = try? await api.answerMistake(
+      token: "token", mistakeId: "m1", itemId: "i1", showing: "mistake:m1:1", answer: .choice(0),
+      durationMs: 1000, attemptId: "a1", runAnswerIds: [], goalId: "g1", scope: mock)
+    _ = try? await api.finishMistakePractice(
+      token: "token", answerIds: ["a1"], goalId: "g1", scope: mock)
+    _ = try? await api.finishMistakePractice(
+      token: "token", answerIds: [], goalId: "g1", scope: .skill("s1"))
+
+    let sent = transport.sent.value.map(\.json)
+    let run = try XCTUnwrap(sent.first?["run"] as? NSDictionary)
+    XCTAssertEqual(run["mockId"] as? String, mock.mockId)
+    XCTAssertNil(run["goalId"])
+
+    XCTAssertEqual(sent[1]["mockId"] as? String, mock.mockId)
+    XCTAssertNil(sent[1]["goalId"])
+    XCTAssertEqual(sent[1]["ended"] as? Bool, true)
+    XCTAssertEqual(sent[2]["skillId"] as? String, "s1")
+    XCTAssertEqual(sent[2]["goalId"] as? String, "g1")
+    XCTAssertEqual(sent[2]["includeAllFormats"] as? Bool, true)
+  }
+
+  /// A question's answer names the order its entry showed, so a tab left open after a miss elsewhere
+  /// is graded in that order; a lesson screen's answer names its option instead.
+  func testAMistakeAnswerSendsTheOrderItsEntryShowed() async throws {
+    let transport = StudyRecordingTransport()
+    let api = PracticeAPI(clients: APIClientFactory(baseURL: Self.baseURL, transport: transport))
+
+    _ = try? await api.answerMistake(
+      token: "token", mistakeId: "m1", itemId: "i1", showing: "mistake:m1:1", answer: .choice(0),
+      durationMs: 1000, attemptId: "a1", runAnswerIds: [], goalId: "g1", scope: .notebook)
+    _ = try? await api.answerLessonMistake(
+      token: "token", mistakeId: "m1", stepId: "s1", answer: nil, durationMs: 1000,
+      attemptId: "a2", runAnswerIds: [], goalId: "g1", scope: .notebook)
+
+    let sent = transport.sent.value.map(\.json)
+    XCTAssertEqual(sent.first?["showing"] as? String, "mistake:m1:1")
+    XCTAssertEqual(sent.first?["itemId"] as? String, "i1")
+    XCTAssertNil(sent.last?["showing"])
+    XCTAssertEqual(sent.last?["stepId"] as? String, "s1")
   }
 
   /// Core reads the shown block's missing values as `null` and refuses a body that leaves them out.

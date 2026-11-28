@@ -642,6 +642,10 @@ extension StudyDestination {
       .lesson(lessonId: lessonID, sessionId: sessionID)
     case .mock(let blockID, let sessionID):
       .mock(blockId: blockID, sessionId: sessionID)
+    case .mistakesPractice(let blockID):
+      .mistakePractice(.block(blockID))
+    case .pattern(let patternID):
+      .pattern(patternId: patternID, inDay: true)
     case .questionBlock, .session, .lessonWait, .today, .changed:
       nil
     }

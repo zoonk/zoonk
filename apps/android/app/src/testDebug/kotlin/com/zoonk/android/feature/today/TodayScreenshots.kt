@@ -277,7 +277,7 @@ class TodayScreenshots {
                     refreshIfLessonsMoved = app.today::refreshIfLessonsMoved,
                     practice = {
                         TodayPracticeRows(
-                            MistakeListAvailability(ready = 3, tomorrow = 1),
+                            MistakeListAvailability(ready = 3),
                             MOCKS,
                             SPEAKING,
                             completedLessons = true,
@@ -862,12 +862,12 @@ class TodayScreenshots {
                 )
                 add(
                     buildJsonObject {
-                        put("done", 1)
-                        put("kind", "fixMistake")
+                        put("done", 0)
+                        put("kind", "askBuddy")
                         put("status", "todo")
-                        put("total", 3)
-                        put("minutes", 4)
-                        putJsonObject("opens") { put("kind", "mistakesPractice") }
+                        put("total", 1)
+                        put("minutes", 2)
+                        putJsonObject("opens") { put("kind", "buddy") }
                     },
                 )
             }

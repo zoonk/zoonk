@@ -12,8 +12,6 @@
   "missions_essay": "c2f68d9ca71e3b357df8c0a506c3474bca7f208a80f1d0a0ee00c8d78c1d07a8",
   "missions_finish_chapter": "7f77bed01caa3d5255c88a5c639fa54012404a4771a94b7e50e4388baf83dca2",
   "missions_finish_chapter_named": "a41e36113eb21cf0f8b5d5911277097e5ac4db91960f9e2c47d8ce34f288b006",
-  "missions_fix_a_mistake": "372bd1a11e793634cfe11f99e94fdd658e3056293e08707b4893b7fa5b3dc0d4",
-  "missions_fix_mistakes": "5de226de442096bdb5ee023203790531a67b9bf1e7aee61dd75c2824e380b2c8",
   "missions_just_done": "e78944ed0888054f449f77aa438586bb6b1a2939a4a3c9bb69726b256fec614c",
   "missions_mock": "35b568161ef6b2d9aa67061329bcc6c15344558c9ec522f28402006b3a69c48a",
   "missions_moment_all_done": "c910dc0f28aaa107854d428ca1e4ca7f7a98fcd886506b1db80f44eb357ea947",
@@ -25,15 +23,12 @@
   "missions_open_challenge": "69aef155a44e06196a3010bffae37ffd5761fe6cb173dd6986f907ea8bf10b68",
   "missions_open_chapter": "2c8a41c799f267be98f17596679ebc5cc29605db55db06c644c6a940dac12b5f",
   "missions_open_essay": "30f4237fce35fc7bf54664fe15438bea3153cacfdd8db6c978ca11a646afcff6",
-  "missions_open_mistakes": "16fdd8eb6c83c2b6688f09c4d74123895c2bbce1979fa602633ae2686e8c5531",
   "missions_open_mock": "75801a0fad015626aad5d72e22422ce728a370a8513f73ddfee2105d9671c3e8",
   "missions_open_mock_chooser": "ef9862aec892028288da5034b80340d2be93ed91760aed52dc3ff84c3db354d1",
   "missions_open_new_lesson": "de1c1e82ec776a5958526c2ebae9eba6dd1c31c58454624d17f533d1a7634135",
-  "missions_open_pattern": "c62ec7bc31ccc10618cdfe12babdc3970d4addaa158b824eb0fc1c549ee42fc6",
   "missions_open_practice": "a99fb4134985c76b877c09d872c60eb0b1009b383d194587890ef7f33f0d3371",
   "missions_open_pronunciation": "6a58030851d14e8bcad80f628a65b9279d333d266fe68b867c5b0bc2d92995c9",
   "missions_open_review": "286e05e9fcba21e6037474a36daf9f2f3584efa25673f08e7b32f7848d0a06da",
-  "missions_pattern": "48df19ac7231540770a5792f9400ca4e434aa972fc8d15bea34912ddbad06e03",
   "missions_points": "ce85417822edc4432d03262d0c56320b08950c2f8517ef8fda05031027566d1b",
   "missions_practice": "a38e22e14658362147abe5f06bcb17e17c68394faa4e101ee49cc1176e56d40c",
   "missions_practice_area": "2f6ffd5b6af525b027612b3b72851cd2ee68519d21b2783fdc09fb06fbc0d3e0",
@@ -83,14 +78,6 @@
     <string name="missions_essay">Practica la redacción</string>
     <!-- A verb: a mission to practice. -->
     <string name="missions_practice">Practica</string>
-    <string name="missions_fix_a_mistake">Corrige un error</string>
-    <plurals name="missions_fix_mistakes">
-        <item quantity="one">Corrige %d error</item>
-        <item quantity="many">Corrige %d errores</item>
-        <item quantity="other">Corrige %d errores</item>
-    </plurals>
-    <!-- A mission: practice a kind of mistake the learner keeps making. -->
-    <string name="missions_pattern">Practica un patrón</string>
     <string name="missions_pronunciation">Practica la pronunciación</string>
     <string name="missions_call">Haz una llamada</string>
     <!-- %1$s is the learner's buddy's name. -->
@@ -107,8 +94,6 @@
     <string name="missions_open_mock">Ir al simulacro de hoy</string>
     <string name="missions_open_essay">Ir a la redacción de hoy</string>
     <string name="missions_open_practice">Ir a la práctica de hoy</string>
-    <string name="missions_open_mistakes">Practicar tus errores</string>
-    <string name="missions_open_pattern">Ir al patrón</string>
     <string name="missions_open_pronunciation">Ir a la práctica de pronunciación</string>
     <string name="missions_open_call">Elegir una llamada</string>
     <!-- %1$s is the learner's buddy's name. -->

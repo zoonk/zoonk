@@ -83,6 +83,7 @@ msgstr "Pominięte"
 #: src/language/level-test/level-test-results.tsx
 #: src/language/pattern/language-pattern-screen.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
+#: src/mistakes/practice-done.tsx
 #: src/mock/mock-speaking.tsx
 #: src/placement-test/placement-test-screens.tsx
 #: src/plan/plan-change-applied.tsx
@@ -267,8 +268,10 @@ msgstr "{days, plural, one {Został mniej więcej # dzień} few {Zostały mniej 
 #: src/language/conversation/speaking-mock-result.tsx
 #: src/language/exam-speaking/exam-speaking-result.tsx
 #: src/language/level-test/level-test-results.tsx
+#: src/language/pattern/language-pattern-screen.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/language/unit/practice-conversation.tsx
+#: src/mistakes/practice-done.tsx
 #: src/mock/mock-entry.tsx
 #: src/mock/mock-result-actions.tsx
 #: src/mock/mock-screen.tsx
@@ -1625,7 +1628,6 @@ msgstr "Zu"
 #: src/focus-test/focus-test-screens.tsx
 #: src/language/level-test/level-test-flow.tsx
 #: src/language/level-test/level-test-preparing.tsx
-#: src/mock/mock-result-plan.tsx
 #: src/placement-test/placement-test-flow.tsx
 #: src/plan/plan-fit-suggestion.tsx
 #: src/plan/plan-offer-preview.tsx
@@ -3079,7 +3081,6 @@ msgstr "Ustaw moją datę"
 
 #: src/conversation/tutor-plan-change.tsx
 #: src/focus-test/focus-test-proposal.tsx
-#: src/mock/mock-result-plan.tsx
 #: src/plan/plan-offer-preview.tsx
 #: src/today/today-plan-change.tsx
 msgctxt "ZPLfTK"
@@ -6695,16 +6696,6 @@ msgctxt "mEBzEG"
 msgid "Say them"
 msgstr "Powiedz je na głos"
 
-#: src/language/today/language-today-section.tsx
-msgctxt "vM7I9_"
-msgid "Practice it"
-msgstr "Przećwicz to"
-
-#: src/language/today/language-today-section.tsx
-msgctxt "7kZ0WC"
-msgid "We noticed a pattern: {pattern}"
-msgstr "Zauważyliśmy powtarzający się błąd: {pattern}"
-
 #: src/language/unit/language-unit-screen.tsx
 msgctxt "gHReMQ"
 msgid "Grammar tips"
@@ -7341,17 +7332,6 @@ msgid "Do your first review"
 msgstr "Zrób pierwszą powtórkę"
 
 #: src/missions/first-step-copy.tsx
-msgctxt "missions.ttVg8D"
-msgid "Fix your first mistake"
-msgstr "Popraw pierwszy błąd"
-
-#: src/missions/first-step-copy.tsx
-#: src/missions/mission-copy.tsx
-msgctxt "missions.kiRlIl"
-msgid "Practice a pattern"
-msgstr "Popracuj nad powtarzającym się błędem"
-
-#: src/missions/first-step-copy.tsx
 #: src/missions/mission-copy.tsx
 msgctxt "missions.3x5cH9"
 msgid "Ask {buddy} something"
@@ -7445,11 +7425,6 @@ msgid "Practice writing"
 msgstr "Poćwicz pisanie wypracowań"
 
 #: src/missions/mission-copy.tsx
-msgctxt "missions.wCMhp6"
-msgid "{count, plural, one {Fix a mistake} other {Fix # mistakes}}"
-msgstr "{count, plural, one {Popraw błąd} few {Popraw # błędy} other {Popraw # błędów}}"
-
-#: src/missions/mission-copy.tsx
 msgctxt "missions.YahrnI"
 msgid "Practice pronunciation"
 msgstr "Ćwicz wymowę"
@@ -7508,16 +7483,6 @@ msgstr ", przejdź do dzisiejszego wypracowania"
 msgctxt "GKiQ-V"
 msgid ", go to today's practice"
 msgstr ", przejdź do dzisiejszych ćwiczeń"
-
-#: src/missions/mission-copy.tsx
-msgctxt "0DwB4q"
-msgid ", practice your mistakes"
-msgstr ", popracuj nad swoimi błędami"
-
-#: src/missions/mission-copy.tsx
-msgctxt "7Qfw5L"
-msgid ", go to the pattern"
-msgstr ", przejdź do powtarzającego się błędu"
 
 #: src/missions/mission-copy.tsx
 msgctxt "MuPgWl"
@@ -7639,11 +7604,6 @@ msgid "Open the lesson"
 msgstr "Otwórz lekcję"
 
 #: src/mistakes/mistake-entry.tsx
-msgctxt "BICox_"
-msgid "Practice tomorrow"
-msgstr "Do przećwiczenia jutro"
-
-#: src/mistakes/mistake-entry.tsx
 msgctxt "E7KLhm"
 msgid "Practice this topic"
 msgstr "Przećwicz ten temat"
@@ -7652,6 +7612,26 @@ msgstr "Przećwicz ten temat"
 msgctxt "z2HeMD"
 msgid "Leave. What you answered counts."
 msgstr "Wyjdź. Dotychczasowe odpowiedzi się liczą."
+
+#. Under "Already fixed" when marking the day's practice done didn't reach the server.
+#: src/mistakes/mistake-practice-run.tsx
+msgctxt "tV3pjd"
+msgid "We couldn't mark it done. Check your connection."
+msgstr "Nie udało się oznaczyć jako ukończone. Sprawdź połączenie."
+
+#. Title of a practice of mistakes whose end didn't reach the server, so it doesn't count yet.
+#: src/mistakes/mistake-practice-run.tsx
+msgctxt "dHwNew"
+msgid "Your practice isn't saved yet"
+msgstr "Twoje ćwiczenie nie zostało jeszcze zapisane"
+
+#. Title when a day's practice of mistakes opens and every one of its mistakes was already fixed elsewhere.
+#: src/mistakes/mistake-practice-run.tsx
+#: src/mistakes/practice-done.tsx
+#: src/session/use-block-copy.ts
+msgctxt "Q3nyx6"
+msgid "Already fixed"
+msgstr "Już poprawione"
 
 #: src/mistakes/mistake-practice-run.tsx
 #: src/session/use-block-copy.ts
@@ -7713,34 +7693,14 @@ msgid "What you got wrong"
 msgstr "Błędne odpowiedzi"
 
 #: src/mistakes/mistakes-row.tsx
-msgctxt "lLGcbO"
-msgid "{ready, plural, =0 {# ready to practice} one {# ready to practice} other {# ready to practice}} · {tomorrow, plural, =0 {# available tomorrow} one {# available tomorrow} other {# available tomorrow}}"
-msgstr "{ready, plural, =0 {# do przećwiczenia} other {# do przećwiczenia}} · {tomorrow, plural, =0 {# dostępnych jutro} one {# dostępny jutro} few {# dostępne jutro} other {# dostępnych jutro}}"
-
-#: src/mistakes/mistakes-row.tsx
 msgctxt "AMKpbi"
 msgid "Redo what you got wrong"
 msgstr "Popraw błędne odpowiedzi"
 
 #: src/mistakes/mistakes-row.tsx
-msgctxt "DZU4se"
-msgid "Today's mistakes return tomorrow"
-msgstr "Dzisiejsze błędy wrócą jutro"
-
-#: src/mistakes/mistakes-row.tsx
 msgctxt "DWCSOn"
 msgid "{count, plural, =0 {# ready to practice} one {# ready to practice} other {# ready to practice}}"
 msgstr "{count, plural, =0 {# do przećwiczenia} other {# do przećwiczenia}}"
-
-#: src/mistakes/mistakes-row.tsx
-msgctxt "XiaKfK"
-msgid "{count, plural, =0 {# available tomorrow} one {# available tomorrow} other {# available tomorrow}}"
-msgstr "{count, plural, =0 {# dostępnych jutro} one {# błąd dostępny jutro} few {# błędy dostępne jutro} other {# błędów dostępnych jutro}}"
-
-#: src/mistakes/notebook-availability-text.tsx
-msgctxt "LoO9E7"
-msgid "Practice opens tomorrow"
-msgstr "Ćwiczenia będą dostępne jutro"
 
 #: src/mistakes/practice-done.tsx
 msgctxt "_GkpAM"
@@ -7748,29 +7708,15 @@ msgid "{count, plural, one {# mistake fixed} other {# mistakes fixed}}"
 msgstr "{count, plural, one {# poprawiony błąd} few {# poprawione błędy} other {# poprawionych błędów}}"
 
 #: src/mistakes/practice-done.tsx
-msgctxt "ith1Nx"
-msgid "Nothing to practice yet"
-msgstr "Jeszcze nie ma nic do przećwiczenia"
+msgctxt "qSu8Tu"
+msgid "Nothing to practice"
+msgstr "Nie ma nic do ćwiczenia"
 
+#. Beside Done at the end of a practice of mistakes: starts another round right away.
 #: src/mistakes/practice-done.tsx
-msgctxt "IBOhsd"
-msgid "Mistakes come back for practice from the day after you make them."
-msgstr "Do błędów możesz wrócić w ćwiczeniach już następnego dnia."
-
-#: src/mistakes/practice-done.tsx
-msgctxt "zaS-g7"
-msgid "The ones you missed come back another day, when they stick better."
-msgstr "Te, przy których pojawił się błąd, wrócą innego dnia, żeby łatwiej było je zapamiętać."
-
-#: src/mistakes/practice-done.tsx
-msgctxt "gMgMMy"
-msgid "The ones you missed come back another day. The rest are still ready to practice."
-msgstr "Te z błędną odpowiedzią wrócą innego dnia. Pozostałe nadal możesz przećwiczyć."
-
-#: src/mistakes/practice-done.tsx
-msgctxt "4bskgW"
-msgid "The rest are still ready to practice."
-msgstr "Pozostałe nadal możesz przećwiczyć."
+msgctxt "UCNJdd"
+msgid "Practice again"
+msgstr "Ćwicz ponownie"
 
 #: src/mistakes/practice-step.tsx
 #: src/session/question-block/block-question.tsx
@@ -7783,6 +7729,12 @@ msgstr "Nie mam pewności"
 msgctxt "HJwk2o"
 msgid "{count, plural, =0 {No mistakes fixed} one {Mistake fixed. It leaves your notebook.} other {# mistakes fixed. They leave your notebook.}}"
 msgstr "{count, plural, =0 {Nie poprawiono żadnego błędu} one {Poprawiono błąd. Znika z twojego zeszytu błędów.} few {Poprawiono # błędy. Znikają z twojego zeszytu błędów.} other {Poprawiono # błędów. Znikają z twojego zeszytu błędów.}}"
+
+#. After a right answer to a question the learner missed earlier the same day. A mistake is fixed only by a right answer on a later day.
+#: src/mistakes/practice-step.tsx
+msgctxt "rOJjcd"
+msgid "This question comes back another day to make sure."
+msgstr "Wrócimy do tego pytania innego dnia, żeby sprawdzić, czy nadal pamiętasz odpowiedź."
 
 #: src/mistakes/practice-step.tsx
 #: src/session/question-block/question-feedback.tsx
@@ -8411,11 +8363,6 @@ msgid "{count, plural, one {# lesson} other {# lessons}} skipped."
 msgstr "Pominięto {count, plural, one {# lekcję} few {# lekcje} other {# lekcji}}."
 
 #: src/mock/mock-result-plan.tsx
-msgctxt "DRJEUg"
-msgid "Your plan gives {area} more time."
-msgstr "Twój plan przewiduje więcej czasu na obszar: {area}."
-
-#: src/mock/mock-result-plan.tsx
 #: src/plan-diff/change-names.ts
 #: src/plan/use-short-list.ts
 msgctxt "v5V1P2"
@@ -8443,16 +8390,6 @@ msgid "Skip {count, plural, one {# lesson} other {# lessons}} you already know?"
 msgstr "Pominąć {count, plural, one {# lekcję z materiałem, który już znasz} few {# lekcje z materiałem, który już znasz} other {# lekcji z materiałem, który już znasz}}?"
 
 #: src/mock/mock-result-plan.tsx
-msgctxt "b4G-y7"
-msgid "You got {correct, plural, =0 {# of {total} right} one {# of {total} right} other {# of {total} right}} there."
-msgstr "Poprawne odpowiedzi w tym obszarze: {correct, plural, =0 {# z {total}} other {# z {total}}}."
-
-#: src/mock/mock-result-plan.tsx
-msgctxt "1-4FCE"
-msgid "Focus more on {area}?"
-msgstr "Skupić się bardziej na: {area}?"
-
-#: src/mock/mock-result-plan.tsx
 msgctxt "iaHiP_"
 msgid "Down from {before}"
 msgstr "Spadek z {before}"
@@ -8461,6 +8398,12 @@ msgstr "Spadek z {before}"
 msgctxt "U5RRFl"
 msgid "Up from {before}"
 msgstr "Wzrost z {before}"
+
+#. On a mock exam's result: the plan moved the topics the learner missed earlier. The topics follow, one per line.
+#: src/mock/mock-result-plan.tsx
+msgctxt "5PMRDS"
+msgid "What you missed now comes sooner"
+msgstr "Zagadnienia, które ci umknęły, pojawią się wcześniej"
 
 #: src/mock/mock-result-plan.tsx
 #: src/mock/mock-result-view.tsx
@@ -12854,6 +12797,35 @@ msgctxt "vrNWq4"
 msgid "Earned today"
 msgstr "Zdobyte dziś"
 
+#. Under "Fix 3 mistakes", a step of the day that practices questions the learner got wrong.
+#: src/session/use-block-copy.ts
+msgctxt "s1C8zD"
+msgid "Questions you missed before"
+msgstr "Pytania, na które wcześniej źle odpowiedziano"
+
+#: src/session/use-block-copy.ts
+msgctxt "hHRG9b"
+msgid "A pattern in your mistakes"
+msgstr "Powtarzający się błąd"
+
+#. Under a lesson the learner takes again because its idea has been hard for them.
+#: src/session/use-block-copy.ts
+msgctxt "AYWLbe"
+msgid "Once more: this one's been tricky"
+msgstr "Jeszcze raz: to było trudne"
+
+#. Under a short lesson that explains, in a new way, an idea the learner keeps missing.
+#: src/session/use-block-copy.ts
+msgctxt "yeSnsN"
+msgid "Another way to see it"
+msgstr "Inny sposób, by to zrozumieć"
+
+#. Under a short lesson written for an idea that has been hard for the learner.
+#: src/session/use-block-copy.ts
+msgctxt "eqv6T0"
+msgid "This one's been tricky"
+msgstr "To było trudne"
+
 #: src/session/use-block-copy.ts
 msgctxt "z0XIiH"
 msgid "What you already know"
@@ -12863,6 +12835,17 @@ msgstr "To, co już wiesz"
 msgctxt "n1W87b"
 msgid "New lesson"
 msgstr "Nowa lekcja"
+
+#: src/session/use-block-copy.ts
+msgctxt "GYx283"
+msgid "{count, plural, one {Fix # mistake} other {Fix # mistakes}}"
+msgstr "{count, plural, one {Popraw # błąd} few {Popraw # błędy} many {Popraw # błędów} other {Popraw # błędu}}"
+
+#. A study step that drills one rule the learner keeps getting wrong, titled like the day's other practice steps ("Practice: Fractions"). {pattern} names the rule, like "Adjective endings after der".
+#: src/session/use-block-copy.ts
+msgctxt "HECBTo"
+msgid "Practice: {pattern}"
+msgstr "Ćwiczenie: {pattern}"
 
 #. A block practising one subject the learner chose. {subject} names it, like "Percentages".
 #: src/session/use-block-copy.ts

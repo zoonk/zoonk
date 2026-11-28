@@ -60,6 +60,130 @@
         }
       }
     },
+    "%@ of %lld right" : {
+      "comment" : "A task's score: right answers, the first number shown large, out of all asked.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ von %2$lld richtig"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ of %2$lld right"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ de %2$lld correctas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ bonnes réponses sur %2$lld"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ risposte corrette su %2$lld"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@/%2$lld問正解"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "정답 %1$@/%2$lld개"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ z %2$lld poprawnych"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ de %2$lld acertos"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ / %2$lld doğru"
+          }
+        }
+      }
+    },
+    "%@ right" : {
+      "comment" : "How many answers the learner got right in a challenge, shown large.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ richtig"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ correctas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ bonnes réponses"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ risposte corrette"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@問正解"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "정답 %@개"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ poprawnych"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ acertos"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ doğru"
+          }
+        }
+      }
+    },
     "%lld mistakes fixed" : {
       "comment" : "How many mistakes a run fixed.",
       "localizations" : {
@@ -2776,6 +2900,65 @@
         }
       }
     },
+    "Already fixed" : {
+      "comment" : "Title when a day's practice of mistakes opens and every one of its mistakes was already fixed elsewhere.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schon behoben"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ya corregidos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Déjà corrigées"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tutto già corretto"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "すでに克服済み"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이미 모두 고쳤어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Już poprawione"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Já corrigidos"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zaten düzeltildi"
+          }
+        }
+      }
+    },
     "Already know this?" : {
       "comment" : "Title of a chapter test-out's start.",
       "localizations" : {
@@ -2954,7 +3137,7 @@
       }
     },
     "Back" : {
-      "comment" : "Leaves a finished run.\nLeaves an empty practice.",
+      "comment" : "Leaves an empty practice.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -6136,65 +6319,6 @@
         }
       }
     },
-    "Mistakes come back for practice from the day after you make them." : {
-      "comment" : "Why no mistake is ready to practice yet.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du kannst Fehler ab dem nächsten Tag üben."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tus errores vuelven para que practiques a partir del día siguiente a cometerlos."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu peux réviser tes erreurs dès le lendemain."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Puoi esercitarti sugli errori a partire dal giorno dopo averli fatti."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "間違えた問題は、翌日から練習できます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "틀린 문제는 다음 날부터 연습할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Błędy można przećwiczyć najwcześniej następnego dnia po ich popełnieniu."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Os erros ficam disponíveis para praticar a partir do dia seguinte."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Yanlışların ertesi günden itibaren alıştırmalarda tekrar karşına çıkar."
-          }
-        }
-      }
-    },
     "Mistakes notebook" : {
       "comment" : "Title of the mistakes notebook.",
       "localizations" : {
@@ -6962,61 +7086,60 @@
         }
       }
     },
-    "Nothing to practice yet" : {
-      "comment" : "Title when no mistake is ready to practice.",
+    "Nothing to practice" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Noch nichts zum Üben"
+            "value" : "Nichts zu üben"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aún no hay nada para practicar"
+            "value" : "Nada que practicar"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rien à réviser pour le moment"
+            "value" : "Rien à corriger"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ancora nulla su cui esercitarti"
+            "value" : "Niente da ripassare"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "まだ練習する問題はありません"
+            "value" : "練習する問題はありません"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "아직 연습할 문제가 없어요"
+            "value" : "연습할 문제가 없어요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Na razie nie ma nic do przećwiczenia"
+            "value" : "Nie ma nic do ćwiczenia"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nada para praticar ainda"
+            "value" : "Nada para praticar"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Henüz üzerinde çalışacak bir şey yok"
+            "value" : "Çalışılacak bir şey yok"
           }
         }
       }
@@ -8073,6 +8196,65 @@
         }
       }
     },
+    "Practice again" : {
+      "comment" : "Beside Done at the end of a practice of mistakes: starts another round right away.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch einmal üben"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Practicar de nuevo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recommencer"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Riprova"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "もう一度練習する"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다시 연습하기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ćwicz ponownie"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Praticar de novo"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tekrar çalış"
+          }
+        }
+      }
+    },
     "Practice done" : {
       "comment" : "End of a practice run.",
       "localizations" : {
@@ -8191,65 +8373,6 @@
         }
       }
     },
-    "Practice opens tomorrow" : {
-      "comment" : "Under the notebook's title, when no mistake is ready today and some are tomorrow",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ab morgen kannst du üben"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Podrás practicar mañana"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu pourras réviser tes erreurs demain"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Potrai esercitarti domani"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "明日から練習できます"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "내일부터 연습할 수 있어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ćwiczenia będą dostępne jutro"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prática disponível amanhã"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alıştırmalar yarın açılacak"
-          }
-        }
-      }
-    },
     "Practice this topic" : {
       "comment" : "Practices only this topic's mistakes.",
       "localizations" : {
@@ -8305,65 +8428,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu konuda alıştırma yap"
-          }
-        }
-      }
-    },
-    "Practice tomorrow" : {
-      "comment" : "A mistake from today, ready to practice tomorrow.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Morgen üben"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Para practicar mañana"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "À réviser demain"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Puoi esercitarti domani"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "明日練習できます"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "내일 연습 가능"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Do przećwiczenia jutro"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Praticar amanhã"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Yarın alıştırmaya hazır"
           }
         }
       }
@@ -9860,7 +9924,7 @@
       }
     },
     "Right" : {
-      "comment" : "Judging an exam statement as right (Cebraspe style).\nReadout label: right answers out of the total.",
+      "comment" : "Judging an exam statement as right (Cebraspe style).",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -11497,124 +11561,6 @@
         }
       }
     },
-    "The ones you missed come back another day, when they stick better." : {
-      "comment" : "End of a mistakes practice run with a miss.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Was du noch nicht richtig beantwortet hast, kommt an einem anderen Tag wieder, damit du es dir besser merkst."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lo que no respondiste bien vuelve otro día para que lo recuerdes mejor."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Les questions que tu as ratées reviennent un autre jour, pour que tu les retiennes mieux."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quello che sbagli torna un altro giorno, così ti resta più impresso."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "間違えた問題は、記憶に残りやすくなるように、日を置いてまた出てきます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "틀린 문제는 기억에 더 잘 남도록 다른 날 다시 나와요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Te, przy których pojawił się błąd, wrócą innego dnia, żeby łatwiej było je zapamiętać."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O que você errou volta outro dia, quando fica mais fácil fixar."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Yanlış cevapladıkların başka bir gün yeniden karşına çıkar, böylece aklında daha iyi kalır."
-          }
-        }
-      }
-    },
-    "The ones you missed come back another day. The rest are still ready to practice." : {
-      "comment" : "End of a mistakes practice run stopped early after a miss.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Was du nicht richtig beantwortet hast, kommt an einem anderen Tag wieder. Den Rest kannst du weiterhin üben."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lo que no respondiste bien volverá otro día. El resto aún está disponible para practicar."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu retrouveras un autre jour les erreurs que tu n’as pas corrigées. Tu peux toujours réviser les autres."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ritroverai un altro giorno quello che hai sbagliato. Puoi ancora esercitarti sul resto."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "間違えた問題は別の日にまた出てきます。残りの問題は引き続き練習できます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "틀린 문제는 다른 날 다시 나와요. 나머지 문제는 언제든 연습할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Te z błędną odpowiedzią wrócą innego dnia. Pozostałe nadal możesz przećwiczyć."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O que você errou volta outro dia. O restante continua disponível para praticar."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Yanlış cevapladıkların başka bir gün tekrar karşına çıkacak. Kalanlarla hâlâ alıştırma yapabilirsin."
-          }
-        }
-      }
-    },
     "The questions were removed" : {
       "comment" : "A checkpoint ended without questions.",
       "localizations" : {
@@ -11729,65 +11675,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ses kaydı yüklenemedi. Bağlantını kontrol edip tekrar dene."
-          }
-        }
-      }
-    },
-    "The rest are still ready to practice." : {
-      "comment" : "End of a mistakes practice run stopped early, with no miss.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Den Rest kannst du weiterhin üben."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "El resto aún está disponible para practicar."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu peux toujours réviser les autres."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Puoi ancora esercitarti sul resto."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "残りの問題は引き続き練習できます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "나머지 문제는 언제든 연습할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pozostałe nadal możesz przećwiczyć."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O restante continua disponível para praticar."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kalanlarla hâlâ alıştırma yapabilirsin."
           }
         }
       }
@@ -12378,6 +12265,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yüklenemedi"
+          }
+        }
+      }
+    },
+    "This question comes back another day to make sure." : {
+      "comment" : "After a right answer to a question the learner missed earlier the same day. A mistake is fixed only by a right answer on a later day.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Frage kommt an einem anderen Tag noch einmal, damit du sie wirklich kannst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta pregunta volverá otro día para comprobar que ya la sabes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette question reviendra un autre jour pour vérifier que tu la connais bien."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questa domanda tornerà un altro giorno per verificare che tu l’abbia imparata."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "定着を確認するため、この問題は別の日にもう一度出てきます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "확실히 익힐 수 있도록 이 문제는 다른 날 다시 나와요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wrócimy do tego pytania innego dnia, żeby sprawdzić, czy nadal pamiętasz odpowiedź."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Essa pergunta vai voltar outro dia para garantir que você aprendeu."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Emin olmak için bu soru başka bir gün tekrar karşına çıkacak."
           }
         }
       }
@@ -13328,6 +13274,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Geri al"
+          }
+        }
+      }
+    },
+    "We couldn't mark it done. Check your connection." : {
+      "comment" : "Under \"Already fixed\" when marking the day's practice done didn't reach the server.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir konnten es nicht als erledigt markieren. Prüf deine Verbindung."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No pudimos marcarlo como completado. Revisa tu conexión."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de valider. Vérifie ta connexion."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non siamo riusciti a completarla. Controlla la connessione."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完了にできませんでした。接続を確認してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "완료로 표시하지 못했어요. 인터넷 연결을 확인해 보세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie udało się oznaczyć jako ukończone. Sprawdź połączenie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível marcar como concluído. Confira sua conexão."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tamamlandı olarak işaretleyemedik. Bağlantını kontrol et."
           }
         }
       }
@@ -15684,6 +15689,65 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "Your practice isn't saved yet" : {
+      "comment" : "Title of a practice of mistakes whose end didn't reach the server, so it doesn't count yet.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Übung ist noch nicht gespeichert"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu práctica aún no se guardó"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ta séance n’est pas encore enregistrée"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La tua pratica sugli errori non è ancora salvata"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "練習内容はまだ保存されていません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아직 연습이 저장되지 않았어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twoje ćwiczenie nie zostało jeszcze zapisane"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sua prática ainda não foi salva"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yanlışlarını gözden geçirme çalışman henüz kaydedilmedi"
           }
         }
       }

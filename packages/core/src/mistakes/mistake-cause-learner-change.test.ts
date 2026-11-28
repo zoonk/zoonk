@@ -1,6 +1,6 @@
 import { classifyMistakeCause } from "@zoonk/ai/tasks/mistakes/cause";
 import { prisma } from "@zoonk/db";
-import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
+import { attemptFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { resolveMistakeCause } from "./resolve-mistake-cause";
@@ -27,7 +27,9 @@ function classifiedAs(cause: "gap" | "trap") {
 describe(resolveMistakeCause, () => {
   it("saves the cause once when the notebook entry gets it", async () => {
     const user = await userFixture();
-    const mistake = await mistakeFixture({ cause: null, userId: user.id });
+    const original = await attemptFixture({ isCorrect: false, userId: user.id });
+    const later = await attemptFixture({ isCorrect: false, userId: user.id });
+    const mistake = await mistakeFixture({ attemptId: original.id, cause: null, userId: user.id });
 
     classifiedAs("trap");
     await resolveMistakeCause({ cause: CAUSE, mistakeId: mistake.id, userId: user.id });
@@ -35,6 +37,14 @@ describe(resolveMistakeCause, () => {
     await expect(
       prisma.mistake.findUniqueOrThrow({ where: { id: mistake.id } }),
     ).resolves.toMatchObject({ cause: "trap" });
+
+    await expect(
+      prisma.attempt.findUniqueOrThrow({ where: { id: original.id } }),
+    ).resolves.toMatchObject({ cause: "trap" });
+
+    await expect(
+      prisma.attempt.findUniqueOrThrow({ where: { id: later.id } }),
+    ).resolves.toMatchObject({ cause: null });
   });
 
   it("never overwrites a cause set meanwhile", async () => {

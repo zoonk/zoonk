@@ -28,6 +28,7 @@ export function toStudyBlockViews({
   blocks,
   blockedTestOutChapters,
   oftenTestedSkillIds,
+  pendingMistakeMinutes,
   preparing,
   subjects,
   writingTasks,
@@ -36,6 +37,7 @@ export function toStudyBlockViews({
   blocks: readonly StudySessionBlock[];
   blockedTestOutChapters?: ReadonlySet<string>;
   oftenTestedSkillIds?: ReadonlySet<string>;
+  pendingMistakeMinutes?: ReadonlyMap<string, number>;
   preparing: ReadonlySet<number>;
   subjects?: ReadonlyMap<number, BlockSubject>;
   writingTasks?: Parameters<typeof toDayBlockView>[0]["writingTasks"];
@@ -59,6 +61,7 @@ export function toStudyBlockViews({
         blockedTestOutChapters,
         blocks,
         oftenTestedSkillIds,
+        pendingMistakeMinutes,
         preparing: preparing.has(block.position),
         savedWritingTasks,
         ...subjects?.get(block.position),

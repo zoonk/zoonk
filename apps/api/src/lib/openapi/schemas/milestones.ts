@@ -48,7 +48,7 @@ const buddyDietSchema = z
 const firstStepWhenSchema = z.discriminatedUnion("kind", [
   z.object({ date: logicalDateSchema.optional(), kind: z.literal("challenge") }),
   z.object({ date: logicalDateSchema.optional(), kind: z.literal("essay") }),
-  z.object({ kind: z.enum(["mistake", "review", "pattern", "call", "buddy", "lesson", "mock"]) }),
+  z.object({ kind: z.enum(["review", "call", "buddy", "lesson", "mock"]) }),
 ]);
 
 const firstStepsSchema = z

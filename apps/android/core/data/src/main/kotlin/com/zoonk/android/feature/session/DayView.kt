@@ -141,6 +141,10 @@ data class DayStep(
     val drill: Boolean = false,
     val preparing: Boolean = false,
     val mockPreparationReview: Boolean = false,
+    /** Why a lesson is back in the day: the learner keeps missing what it teaches. */
+    val returning: StudyBlock.Returning? = null,
+    /** The language pattern a [StudyBlock.Screen.PATTERN] step drills. */
+    val patternId: UUID? = null,
 ) {
     val isFinished: Boolean
         get() = status == StudyBlock.Status.COMPLETED || status == StudyBlock.Status.SKIPPED
@@ -178,12 +182,6 @@ sealed interface MissionOpens {
         val position: Long?,
     ) : MissionOpens
 
-    data object MistakesPractice : MissionOpens
-
-    data class Pattern(
-        val patternId: UUID,
-    ) : MissionOpens
-
     data object Pronunciation : MissionOpens
 
     data class Call(
@@ -203,8 +201,6 @@ sealed interface MissionOpens {
 fun MissionOpens.page(goalId: String): AppRoute? =
     when (this) {
         is MissionOpens.Block -> null
-        MissionOpens.MistakesPractice -> AppRoute.MistakePractice()
-        is MissionOpens.Pattern -> AppRoute.Pattern(patternId.toString())
         MissionOpens.Pronunciation -> AppRoute.Pronunciation(goalId)
         is MissionOpens.Call -> AppRoute.LanguageUnit(chapterId.toString())
         MissionOpens.Buddy -> AppRoute.Buddy()
@@ -369,6 +365,8 @@ fun StudyBlock.toDayStep(): DayStep =
         drill = writingUnit == StudyBlock.WritingUnit.DRILL,
         preparing = preparing,
         mockPreparationReview = mockPreparationReview == true,
+        returning = returning,
+        patternId = patternId,
     )
 
 private fun UnstartedStudyDayBlocksInner.toDayStep(): DayStep =
@@ -411,6 +409,8 @@ private fun UnstartedStudyDayBlocksInner.toDayStep(): DayStep =
         drill = writingUnit == UnstartedStudyDayBlocksInner.WritingUnit.DRILL,
         preparing = preparing,
         mockPreparationReview = mockPreparationReview == true,
+        returning = returning?.let { shown -> StudyBlock.Returning.entries.first { it.value == shown.value } },
+        patternId = patternId,
     )
 
 fun StudyMission.toDayMission(): DayMission? {
@@ -449,20 +449,18 @@ private fun UnstartedStudyDayMissionsInner.toDayMission(): DayMission? {
 
 fun StudyMissionOpens.toMissionOpens(): MissionOpens? =
     when (this) {
-        is StudyMissionOpens.StudyMissionOpensOneOf8Value -> null
+        is StudyMissionOpens.StudyMissionOpensOneOf6Value -> null
         is StudyMissionOpens.StudyMissionOpensOneOfValue -> MissionOpens.Block(blockId = value.blockId, position = null)
-        is StudyMissionOpens.StudyMissionOpensOneOf1Value -> MissionOpens.MistakesPractice
-        is StudyMissionOpens.StudyMissionOpensOneOf2Value -> MissionOpens.Pattern(value.patternId)
-        is StudyMissionOpens.StudyMissionOpensOneOf3Value -> MissionOpens.Pronunciation
-        is StudyMissionOpens.StudyMissionOpensOneOf4Value -> MissionOpens.Call(value.chapterId)
-        is StudyMissionOpens.StudyMissionOpensOneOf5Value -> MissionOpens.Buddy
-        is StudyMissionOpens.StudyMissionOpensOneOf6Value -> MissionOpens.AreaPractice(value.areaId)
-        is StudyMissionOpens.StudyMissionOpensOneOf7Value -> MissionOpens.MockChooser
+        is StudyMissionOpens.StudyMissionOpensOneOf1Value -> MissionOpens.Pronunciation
+        is StudyMissionOpens.StudyMissionOpensOneOf2Value -> MissionOpens.Call(value.chapterId)
+        is StudyMissionOpens.StudyMissionOpensOneOf3Value -> MissionOpens.Buddy
+        is StudyMissionOpens.StudyMissionOpensOneOf4Value -> MissionOpens.AreaPractice(value.areaId)
+        is StudyMissionOpens.StudyMissionOpensOneOf5Value -> MissionOpens.MockChooser
     }
 
 private fun UnstartedStudyDayMissionsInnerOpens.toMissionOpens(): MissionOpens? =
     when (this) {
-        is UnstartedStudyDayMissionsInnerOpens.StudyMissionOpensOneOf8Value -> {
+        is UnstartedStudyDayMissionsInnerOpens.StudyMissionOpensOneOf6Value -> {
             null
         }
 
@@ -471,30 +469,22 @@ private fun UnstartedStudyDayMissionsInnerOpens.toMissionOpens(): MissionOpens? 
         }
 
         is UnstartedStudyDayMissionsInnerOpens.StudyMissionOpensOneOf1Value -> {
-            MissionOpens.MistakesPractice
-        }
-
-        is UnstartedStudyDayMissionsInnerOpens.StudyMissionOpensOneOf2Value -> {
-            MissionOpens.Pattern(value.patternId)
-        }
-
-        is UnstartedStudyDayMissionsInnerOpens.StudyMissionOpensOneOf3Value -> {
             MissionOpens.Pronunciation
         }
 
-        is UnstartedStudyDayMissionsInnerOpens.StudyMissionOpensOneOf4Value -> {
+        is UnstartedStudyDayMissionsInnerOpens.StudyMissionOpensOneOf2Value -> {
             MissionOpens.Call(value.chapterId)
         }
 
-        is UnstartedStudyDayMissionsInnerOpens.StudyMissionOpensOneOf5Value -> {
+        is UnstartedStudyDayMissionsInnerOpens.StudyMissionOpensOneOf3Value -> {
             MissionOpens.Buddy
         }
 
-        is UnstartedStudyDayMissionsInnerOpens.StudyMissionOpensOneOf6Value -> {
+        is UnstartedStudyDayMissionsInnerOpens.StudyMissionOpensOneOf4Value -> {
             MissionOpens.AreaPractice(value.areaId)
         }
 
-        is UnstartedStudyDayMissionsInnerOpens.StudyMissionOpensOneOf7Value -> {
+        is UnstartedStudyDayMissionsInnerOpens.StudyMissionOpensOneOf5Value -> {
             MissionOpens.MockChooser
         }
     }

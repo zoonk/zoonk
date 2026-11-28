@@ -47,8 +47,6 @@
     <string name="buddy_page_first_steps_done">You\'ve tried everything.</string>
     <string name="buddy_page_first_lesson">Finish your first lesson</string>
     <string name="buddy_page_first_review">Do your first review</string>
-    <string name="buddy_page_first_mistake">Fix your first mistake</string>
-    <string name="buddy_page_first_pattern">Practice a pattern</string>
     <string name="buddy_page_first_ask">Ask %1$s something</string>
     <string name="buddy_page_first_essay">Write your first essay</string>
     <string name="buddy_page_first_call">Have your first call</string>

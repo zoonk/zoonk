@@ -64,7 +64,7 @@ export const studyBlockSchema = z
       .min(0)
       .meta({
         description:
-          "Personal lesson estimate, rounded once when the block is planned and persisted for queue packing and display. Other block kinds use their planned duration.",
+          "Personal lesson estimate, rounded when the block is planned. For pending or active mistake practice, the estimate covers the assigned questions that are still playable. Other blocks use their planned duration.",
       }),
     extra: z.boolean().meta({ description: 'A "10 more minutes" block after the day\'s session' }),
     fullReview: z
@@ -109,6 +109,7 @@ export const studyBlockSchema = z
     opensInPlayer: z
       .boolean()
       .describe("Written work that can navigate to the player before the combined start admits it"),
+    patternId: dayBlockRefSchema.shape.patternId,
     planItemId: idSchema.nullable(),
     planItemKey: dayBlockRefSchema.shape.planItemKey.describe(
       "Logical plan work identity; never a database UUID",
@@ -125,7 +126,13 @@ export const studyBlockSchema = z
     preparing: z
       .boolean()
       .describe("True when a scheduled mock cannot start because some questions are unavailable."),
-    questions: z.number().int().min(0),
+    questions: z
+      .number()
+      .int()
+      .min(0)
+      .describe(
+        "Question count. For pending or active mistake practice, counts only the assigned questions that are still playable.",
+      ),
     refresh: z
       .boolean()
       .meta({
@@ -133,9 +140,10 @@ export const studyBlockSchema = z
           "Content's \"Review\" (`POST /v1/goals/{goalId}/refresh-practice`): bonus practice on the goal's skills that are fading or due today",
       }),
     reinforcement: z.boolean().meta({ description: "A short lesson before a boss rematch" }),
+    returning: dayBlockRefSchema.shape.flags.shape.returning,
     screen: dayBlockScreenSchema.meta({
       description:
-        "Where a tap on the block opens it. `session`: the session screen, which plays questions and shows the wait of a lesson not written yet (or not picked yet). `lesson`: the lesson player, since its lesson is written. `challenge`: its own screen (a checkpoint or a mock), on its intro while it hasn't started. `essay`: the writing screen. `unknown`: a lesson block whose lesson this response didn't check (a block's questions read on their own): ask for its lesson's readiness (`GET /v1/library/lessons/{lessonId}/readiness`) before opening it",
+        "Where a tap on the block opens it. `session`: the session screen, which plays questions and shows the wait of a lesson not written yet (or not picked yet). `lesson`: the lesson player, since its lesson is written. `challenge`: its own screen (a checkpoint or a mock), on its intro while it hasn't started. `essay`: the writing screen. `mistakesPractice`: mistake practice scoped to this block. `pattern`: the existing pattern drill identified by patternId. `unknown`: a lesson block whose lesson this response didn't check (a block's questions read on their own): ask for its lesson's readiness (`GET /v1/library/lessons/{lessonId}/readiness`) before opening it",
     }),
     status: z.enum(StudyBlockStatus),
     subject: z

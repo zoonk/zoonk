@@ -1,11 +1,10 @@
 import "server-only";
-import { type Goal, type TransactionClient } from "@zoonk/db";
+import { type Goal, type TransactionClient, prisma } from "@zoonk/db";
 import { trackLearnerEvents } from "../analytics/track-learner-event";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getUserProgressCacheTag } from "../cache/tags";
-import { getLearnerTimeZone } from "../learner/_utils/goal-time-zone";
 import { getLearnerLocalTime } from "../learner/_utils/local-time";
-import { findOwnedGoal, getAnswerTimeZone } from "../learner/_utils/owned-goal";
+import { findOwnedGoal } from "../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { celebrateProgress } from "../milestones/celebrate-progress";
 import {
@@ -15,12 +14,17 @@ import {
 } from "../sessions/_utils/session-progress";
 import { getAnswersEnergyDelta, scoreAnswers } from "../sessions/brain-power";
 import { type MissionMomentView } from "../sessions/completion-contract";
+import { finishStudyBlock } from "../sessions/finish-study-block";
 import { withActivityMissionMoment } from "../sessions/missions/activity-mission-result";
 import { settleLearnerMissions } from "../sessions/missions/settle-learner-missions";
 import { type ProgressCelebration } from "../sessions/progress-celebration";
 import { getCompletionEnergyContext } from "../stats/completion-energy";
 import { recordLearningEvent } from "../stats/record-learning-event";
 import { getSession } from "../users/get-session";
+import { findPracticeMock, mockMistakeWhere } from "./_utils/mock-practice";
+import { findPracticeBlock } from "./_utils/practice-block";
+import { readPracticeMistakeId } from "./_utils/practice-claim";
+import { hasPracticeRemaining } from "./_utils/practice-entries";
 import {
   MISTAKE_PRACTICE_EVENT,
   type PracticeAnswer,
@@ -31,10 +35,12 @@ import {
   toRunContentIds,
 } from "./_utils/practice-runs";
 import { type MistakePracticeFinishInput } from "./contract";
+import { getPracticeTimeZone } from "./mistake-availability";
 
 type MistakePracticeSummary = ProgressCelebration & {
   brainPower: number;
   correct: number;
+  hasMorePractice: boolean;
   /** The missions the run completed, for the end of its screen; null when it completed none. */
   missionMoment: MissionMomentView | null;
   seconds: number;
@@ -43,7 +49,7 @@ type MistakePracticeSummary = ProgressCelebration & {
 
 type PracticeRunTotals = Omit<
   MistakePracticeSummary,
-  "ceremony" | "certificates" | "missionMoment" | "reached"
+  "ceremony" | "certificates" | "hasMorePractice" | "missionMoment" | "reached"
 >;
 
 export type FinishMistakePracticeResult =
@@ -200,6 +206,52 @@ function settlePracticeRun({ answers, ...input }: SettleInput) {
   });
 }
 
+async function loadCompletionScope(input: MistakePracticeFinishInput, userId: string) {
+  const { blockId, mockId } = input;
+
+  const [block, mock, answers] = await Promise.all([
+    blockId ? findPracticeBlock({ blockId, userId }) : null,
+    mockId ? findPracticeMock({ mockId, userId }) : null,
+    loadPracticeAnswers({ answerIds: input.answerIds, userId }),
+  ]);
+
+  if (
+    (blockId && (!block || (input.goalId && block.session.goalId !== input.goalId))) ||
+    (mockId && (!mock || blockId))
+  ) {
+    return { status: "notFound" as const };
+  }
+
+  const scope = block ? block.session : mock;
+  const goal = scope ? scope.goal : await resolveGoal(input.goalId);
+
+  if (goal === "notFound") {
+    return { status: "notFound" as const };
+  }
+
+  if (!answers || (!block && answers.length === 0)) {
+    return { status: "invalid" as const };
+  }
+
+  const answerMistakes = new Set(answers.map(({ answer }) => readPracticeMistakeId(answer) ?? ""));
+
+  if (block && [...answerMistakes].some((id) => !block.mistakeIds.includes(id))) {
+    return { status: "invalid" as const };
+  }
+
+  if (mockId) {
+    const matches = await prisma.mistake.count({
+      where: { ...(await mockMistakeWhere({ mockId, userId })), id: { in: [...answerMistakes] } },
+    });
+
+    if (matches !== answerMistakes.size) {
+      return { status: "invalid" as const };
+    }
+  }
+
+  return { answers, block, goal, status: "ready" as const };
+}
+
 /** Send every answer so far after each answer and once more with ended=true on stop; retries count only fresh answers. */
 export async function finishMistakePractice(
   input: MistakePracticeFinishInput,
@@ -211,23 +263,14 @@ export async function finishMistakePractice(
   }
 
   const userId = session.user.id;
+  const scope = await loadCompletionScope(input, userId);
 
-  const [goal, answers] = await Promise.all([
-    resolveGoal(input.goalId),
-    loadPracticeAnswers({ answerIds: input.answerIds, userId }),
-  ]);
-
-  if (goal === "notFound") {
-    return { status: "notFound" };
+  if (scope.status !== "ready") {
+    return scope;
   }
 
-  if (!answers) {
-    return { status: "invalid" };
-  }
-
-  const timeZone = goal
-    ? getAnswerTimeZone({ goal, timeZone: input.timeZone })
-    : await getLearnerTimeZone({ timeZone: input.timeZone, userId });
+  const { answers, block, goal } = scope;
+  const timeZone = await getPracticeTimeZone({ goal, timeZone: input.timeZone, userId });
 
   const { counted, progress, result, runId } = await settlePracticeRun({
     answers,
@@ -235,6 +278,14 @@ export async function finishMistakePractice(
     timeZone,
     userId,
   });
+
+  if (block) {
+    await finishStudyBlock({
+      blockId: block.block.id,
+      input: { timeZone },
+      sessionId: block.session.id,
+    });
+  }
 
   const source = runId ? { id: runId, kind: "mistakePractice" } : null;
 
@@ -263,9 +314,11 @@ export async function finishMistakePractice(
     });
   }
 
+  const hasMorePractice = await hasPracticeRemaining({ goal, input, timeZone, userId });
+
   return {
     result: await withActivityMissionMoment({
-      result: { ...result, ...celebration },
+      result: { ...result, ...celebration, hasMorePractice },
       source,
       timeZone,
       userId,

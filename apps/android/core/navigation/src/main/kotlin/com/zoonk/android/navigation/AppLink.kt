@@ -274,45 +274,89 @@ object AppLink {
 
             2 -> {
                 when (first) {
-                    "plan" -> AppRoute.Subject(subjectKey = second)
+                    "plan" -> {
+                        AppRoute.Subject(subjectKey = second)
+                    }
 
-                    "buddy" -> buddyPage(second, ask = query["ask"])
+                    "buddy" -> {
+                        buddyPage(second, ask = query["ask"])
+                    }
 
-                    "mock" -> if (second == "new") AppRoute.MockChooser else AppRoute.Mock(second, session)
+                    "mock" -> {
+                        if (second == "new") AppRoute.MockChooser else AppRoute.Mock(second, session)
+                    }
 
-                    "mistakes" -> if (second == "practice") AppRoute.MistakePractice(query["skill"]) else null
+                    "mistakes" -> {
+                        if (second ==
+                            "practice"
+                        ) {
+                            AppRoute.MistakePractice(query["skill"], query["blockId"], query["mockId"])
+                        } else {
+                            null
+                        }
+                    }
 
-                    "settings" -> settingsPage(second)
+                    "settings" -> {
+                        settingsPage(second)
+                    }
 
                     // Each currency's pricing page becomes the in-app offer with Play's prices.
-                    "pricing" -> AppRoute.Subscription
+                    "pricing" -> {
+                        AppRoute.Subscription
+                    }
 
-                    "courses" -> AppRoute.Catalog(category = second)
+                    "courses" -> {
+                        AppRoute.Catalog(category = second)
+                    }
 
-                    "start" -> AppRoute.GoalSetup(goalId = second)
+                    "start" -> {
+                        AppRoute.GoalSetup(goalId = second)
+                    }
 
-                    "learn" -> AppRoute.Lesson(second, sessionId = session, firstAnswer = query["answer"], opening = lessonOpening(query))
+                    "learn" -> {
+                        AppRoute.Lesson(second, sessionId = session, firstAnswer = query["answer"], opening = lessonOpening(query))
+                    }
 
-                    "pattern" -> AppRoute.Pattern(patternId = second)
+                    "pattern" -> {
+                        AppRoute.Pattern(patternId = second)
+                    }
 
-                    "test-out" -> AppRoute.TestOut(chapterId = second, sessionId = session)
+                    "test-out" -> {
+                        AppRoute.TestOut(chapterId = second, sessionId = session)
+                    }
 
-                    "challenge" -> AppRoute.Challenge(planItemId = second, sessionId = session)
+                    "challenge" -> {
+                        AppRoute.Challenge(planItemId = second, sessionId = session)
+                    }
 
-                    "checkpoint" -> AppRoute.Checkpoint(blockId = second, sessionId = session)
+                    "checkpoint" -> {
+                        AppRoute.Checkpoint(blockId = second, sessionId = session)
+                    }
 
                     // What stood before the question is the learner's own tap's answer, never a link's: a link starts nothing.
-                    "essay" -> AppRoute.Essay(blockId = second)
+                    "essay" -> {
+                        AppRoute.Essay(blockId = second)
+                    }
 
-                    "conversation" -> AppRoute.Conversation(conversationId = second, from = query["from"], mock = query["mock"])
+                    "conversation" -> {
+                        AppRoute.Conversation(conversationId = second, from = query["from"], mock = query["mock"])
+                    }
 
-                    "explain" -> AppRoute.Explain(goalId = second)
+                    "explain" -> {
+                        AppRoute.Explain(goalId = second)
+                    }
 
-                    "plan-link" -> AppRoute.PlanLink(planId = second)
+                    "plan-link" -> {
+                        AppRoute.PlanLink(planId = second)
+                    }
 
-                    "c" -> AppRoute.Certificate(code = second)
+                    "c" -> {
+                        AppRoute.Certificate(code = second)
+                    }
 
-                    else -> null
+                    else -> {
+                        null
+                    }
                 }
             }
 

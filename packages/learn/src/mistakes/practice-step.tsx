@@ -120,23 +120,37 @@ export function PracticeStepActions({
   );
 }
 
-function FixedMistakesNote({ count }: { count: number }) {
+/** Fixed entries leave the notebook; a right answer on the day of the miss fixes nothing yet. */
+function NotebookNote({ feedback }: { feedback: NonNullable<MistakePracticeFeedback> }) {
   const t = useExtracted();
+  const count = feedback.fixedMistakeIds.length;
 
-  if (count === 0) {
-    return null;
+  if (count > 0) {
+    return (
+      <FeedbackNote>
+        {t({
+          description: '"Your notebook" is the learner\'s Mistakes notebook.',
+          message:
+            "{count, plural, =0 {No mistakes fixed} one {Mistake fixed. It leaves your notebook.} other {# mistakes fixed. They leave your notebook.}}",
+          values: { count },
+        })}
+      </FeedbackNote>
+    );
   }
 
-  return (
-    <FeedbackNote>
-      {t({
-        description: '"Your notebook" is the learner\'s Mistakes notebook.',
-        message:
-          "{count, plural, =0 {No mistakes fixed} one {Mistake fixed. It leaves your notebook.} other {# mistakes fixed. They leave your notebook.}}",
-        values: { count },
-      })}
-    </FeedbackNote>
-  );
+  if (feedback.requiresLaterDay) {
+    return (
+      <FeedbackNote>
+        {t({
+          description:
+            "After a right answer to a question the learner missed earlier the same day. A mistake is fixed only by a right answer on a later day.",
+          message: "This question comes back another day to make sure.",
+        })}
+      </FeedbackNote>
+    );
+  }
+
+  return null;
 }
 
 function PracticeFeedback({
@@ -156,7 +170,6 @@ function PracticeFeedback({
 }) {
   const t = useExtracted();
   const verdict = useVerdict({ ...feedback, notSure });
-  const fixed = feedback.fixedMistakeIds.length;
   const answerLine = useAnswerLine(trueFalseLabels);
 
   const correct =
@@ -180,7 +193,7 @@ function PracticeFeedback({
 
       {notes}
 
-      <FixedMistakesNote count={fixed} />
+      <NotebookNote feedback={feedback} />
     </FeedbackPanel>
   );
 }
@@ -213,7 +226,7 @@ function ReplayQuestion({
           timedOut={graded.sender === "timer"}
           trap={graded.feedback.trap}
         />
-        <FixedMistakesNote count={graded.feedback.fixedMistakeIds.length} />
+        <NotebookNote feedback={graded.feedback} />
       </>
     ),
     onAnswer: run.select,

@@ -2,54 +2,56 @@ import { t } from "../../_utils/localize";
 import { bankOption } from "../content";
 import { type SeedItem } from "../types";
 
-export const stockMarketItems: SeedItem[] = [
-  {
-    content: {
-      context: t(
-        "Bia owns 200 common shares of a clothing company. The company calls a shareholders' meeting to vote on selling one of its factories.",
-        "Bia tem 200 ações ordinárias de uma confecção. A empresa convoca uma assembleia de acionistas para votar a venda de uma das fábricas.",
+export const shareholderVoteItem = {
+  content: {
+    context: t(
+      "Bia owns 200 common shares of a clothing company. The company calls a shareholders' meeting to vote on selling one of its factories.",
+      "Bia tem 200 ações ordinárias de uma confecção. A empresa convoca uma assembleia de acionistas para votar a venda de uma das fábricas.",
+    ),
+    options: [
+      bankOption(
+        t(
+          "She can vote, and her vote counts by her shares",
+          "Ela pode votar, e o voto dela pesa pelas ações que tem",
+        ),
+        t(
+          "Common shares come with a vote on big decisions, one vote per share.",
+          "Ações ordinárias dão voto nas grandes decisões, um voto por ação.",
+        ),
       ),
-      options: [
-        bankOption(
-          t(
-            "She can vote, and her vote counts by her shares",
-            "Ela pode votar, e o voto dela pesa pelas ações que tem",
-          ),
-          t(
-            "Common shares come with a vote on big decisions, one vote per share.",
-            "Ações ordinárias dão voto nas grandes decisões, um voto por ação.",
-          ),
+      bankOption(
+        t("Only the company's managers vote", "Só os diretores da empresa votam"),
+        t(
+          "Big decisions go to the owners, and a shareholder is one of them.",
+          "As grandes decisões vão para os donos, e o acionista é um deles.",
         ),
-        bankOption(
-          t("Only the company's managers vote", "Só os diretores da empresa votam"),
-          t(
-            "Big decisions go to the owners, and a shareholder is one of them.",
-            "As grandes decisões vão para os donos, e o acionista é um deles.",
-          ),
-          t(
-            "Thinks managers decide instead of owners",
-            "Acha que os diretores decidem no lugar dos donos",
-          ),
+        t(
+          "Thinks managers decide instead of owners",
+          "Acha que os diretores decidem no lugar dos donos",
         ),
-        bankOption(
-          t(
-            "She needs to own most of the shares to vote",
-            "Ela precisa ter a maioria das ações para votar",
-          ),
-          t(
-            "Every common share votes. Owning most of them decides the result, not the right to vote.",
-            "Toda ação ordinária vota. Ter a maioria decide o resultado, não o direito de votar.",
-          ),
-          t("Thinks only a majority owner can vote", "Acha que só quem tem a maioria pode votar"),
+      ),
+      bankOption(
+        t(
+          "She needs to own most of the shares to vote",
+          "Ela precisa ter a maioria das ações para votar",
         ),
-      ],
-      question: t("What can Bia do at the meeting?", "O que Bia pode fazer na assembleia?"),
-    },
-    difficulty: 0,
-    format: "multipleChoice",
-    key: "paid-last",
-    skill: "shareholder-rights",
+        t(
+          "Every common share votes. Owning most of them decides the result, not the right to vote.",
+          "Toda ação ordinária vota. Ter a maioria decide o resultado, não o direito de votar.",
+        ),
+        t("Thinks only a majority owner can vote", "Acha que só quem tem a maioria pode votar"),
+      ),
+    ] as const,
+    question: t("What can Bia do at the meeting?", "O que Bia pode fazer na assembleia?"),
   },
+  difficulty: 0,
+  format: "multipleChoice",
+  key: "paid-last",
+  skill: "shareholder-rights",
+} satisfies SeedItem;
+
+export const stockMarketItems: SeedItem[] = [
+  shareholderVoteItem,
   {
     content: {
       context: null,

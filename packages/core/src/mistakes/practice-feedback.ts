@@ -29,6 +29,9 @@ export const mistakePracticeFeedbackSchema = z
       description:
         "What counting the run with this answer reached (a belt level, a tenth of Energy), when the answer came with its run: the run counts as it goes, so its end celebrates what each answer's count reached together with the completion's own",
     }),
+    requiresLaterDay: z
+      .boolean()
+      .meta({ description: "The answer was right on the same local day as the last miss" }),
     trap: z
       .string()
       .nullable()

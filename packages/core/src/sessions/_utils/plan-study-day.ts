@@ -1,6 +1,5 @@
 import "server-only";
 import { type UsageTotals } from "../../entitlements/_utils/usage-counts";
-import { type PracticeMistake } from "../../mistakes/mistake-practice-eligibility";
 import { type loadPreparationInputs } from "../../preparation/_utils/load-preparation-inputs";
 import { type MissionDocument } from "../missions/catalog";
 import { loadDayMissionFacts } from "../missions/day-facts";
@@ -20,11 +19,18 @@ export type PlannedStudyDay = {
   plan: Awaited<ReturnType<typeof loadDayPlan>>;
   plannedMinutes: number;
   preparing: ReadonlySet<number>;
+  remedialGeneration?: ReturnType<typeof buildSessionBlocks>["remedialGeneration"];
 };
+
+export function getPlanAllocationBlocks(day: Pick<PlannedStudyDay, "blocks" | "input">) {
+  return day.input.remedial
+    ? buildSessionBlocks({ ...day.input, remedial: undefined }).blocks
+    : day.blocks;
+}
 
 /** The day's blocks without its missions, for reads that show only what the day holds. */
 export async function planDayBlocks(
-  context: SessionDayContext & { selection: SelectedDayPlan },
+  context: SessionDayContext & { savedDay?: boolean; selection: SelectedDayPlan },
 ): Promise<Omit<PlannedStudyDay, "missions" | "preparing">> {
   const plan = await loadDayPlan(context);
   const input = await loadSessionBuildInput({ ...context, dayPlan: plan });
@@ -34,10 +40,10 @@ export async function planDayBlocks(
 /** Uses the supplied selected plan; preview and persistence must never re-plan independently. */
 export async function planStudyDay(
   context: SessionDayContext & {
-    readMistakes?: () => Promise<PracticeMistake[]>;
     readPreparation?: () => ReturnType<typeof loadPreparationInputs>;
     readUsage?: () => Promise<UsageTotals>;
     plannedDay?: Omit<PlannedStudyDay, "missions" | "preparing">;
+    savedDay?: boolean;
     selection: SelectedDayPlan;
   },
 ): Promise<PlannedStudyDay> {
