@@ -139,6 +139,8 @@ private struct DialogueCanvas: View {
           .padding(.vertical, 10)
           .background(.boxBackground, in: Self.theirBubble)
           .overlay(Self.theirBubble.strokeBorder(.border))
+          // A line takes the width it needs before the gap beside it does, as main's does.
+          .layoutPriority(1)
 
         if let speak = audio.speak {
           Button {
@@ -161,6 +163,7 @@ private struct DialogueCanvas: View {
         Spacer(minLength: 40)
 
         words.learnerBubble()
+          .layoutPriority(1)
       }
     }
   }
