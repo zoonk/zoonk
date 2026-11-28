@@ -241,7 +241,6 @@ internal fun ColumnScope.PurposeStep(
 
     StepForm(
         title = stringResource(R.string.onboarding_purpose_title),
-        description = stringResource(R.string.onboarding_purpose_description),
         subject = subject,
         canContinue = purpose != null,
         pending = pending,
