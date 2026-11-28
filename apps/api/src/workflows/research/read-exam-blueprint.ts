@@ -96,6 +96,18 @@ export async function updateExamNoticePlans({
   } while (after);
 }
 
+async function extractBlueprintWithCorrections(input: Parameters<typeof extractBlueprint>[0]) {
+  const first = await extractBlueprint(input);
+
+  const isCorrected = input.corrections?.some((problem) => problem.kind === "wholeExamSubjects");
+
+  // Subjects that each hold the whole exam are worth one more reading told what they are, since a
+  // planner would teach every version as compulsory.
+  return first.wholeExamSubjects && !isCorrected
+    ? extractBlueprint({ ...input, corrections: first.problems ?? [first.wholeExamSubjects] })
+    : first;
+}
+
 /**
  * Never reads a notice the blueprint was already read from, whatever instructions would read it;
  * only an admin's `force` does.
@@ -138,19 +150,7 @@ export async function readExamBlueprint({
   const shared = identity.ownerId === null;
   const corrections = stored?.problems ?? [];
   const read = { analytics, background, exam: describeExam(identity), shared, sourceIds };
-  const first = await extractBlueprint({ ...read, corrections });
-
-  const isCorrected = corrections.some((problem) => problem.kind === "wholeExamSubjects");
-
-  // Subjects that each hold the whole exam are worth one more reading told what they are, since a
-  // planner would teach every version as compulsory.
-  const reading =
-    first.wholeExamSubjects && !isCorrected
-      ? await extractBlueprint({
-          ...read,
-          corrections: first.problems ?? [first.wholeExamSubjects],
-        })
-      : first;
+  const reading = await extractBlueprintWithCorrections({ ...read, corrections });
 
   if (reading.wholeExamSubjects) {
     await setAsideReadingStep({ identity, problem: reading.wholeExamSubjects, reading });
