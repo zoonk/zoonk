@@ -189,6 +189,27 @@ class CodeFlowTest {
         assertEquals("const doubled = numbers.map((n) => n * 2);", runs.last().code.lines()[1])
     }
 
+    @Test
+    fun eachRunRunsTheCodeAsItIsWhenRunIsTapped() {
+        play(javaScriptRunner, javaScriptExpected, isCorrect = true) { request ->
+            ScriptedSandbox.printed(if ("n * 2" in request.code) "[ 2, 4, 6 ]\n" else "[ 2, 3, 4 ]\n")
+        }
+
+        line(2).performTextReplacement("const doubled = numbers.map((n) => n + 1);")
+        tap("Run")
+        shows("[ 2, 3, 4 ]")
+        line(2).performTextReplacement("const doubled = numbers.map((n) => n * 2);")
+        tap("Run")
+
+        val runs = { scripted.requests.filter { it.getValue("type").jsonPrimitive.content == "runProgram" } }
+        rule.waitUntil(WAIT_MS) { runs().size == 2 }
+        assertEquals(
+            listOf("const doubled = numbers.map((n) => n + 1);", "const doubled = numbers.map((n) => n * 2);"),
+            runs().map { it.code.lines()[1] },
+        )
+        rule.waitUntil(WAIT_MS) { rule.onAllNodesWithText("[ 2, 4, 6 ]").fetchSemanticsNodes().size == 2 }
+    }
+
     private fun field(name: String) = rule.onNode(hasContentDescription(name))
 
     private fun sqlRows(request: JsonObject): JsonElement {

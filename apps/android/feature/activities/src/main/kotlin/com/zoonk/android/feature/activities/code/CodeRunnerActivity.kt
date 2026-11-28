@@ -110,14 +110,17 @@ private fun CodeRunnerActivity(props: ActivityProps) {
         }
     var run by rememberSaveable(stateSaver = RunSaver) { mutableStateOf(props.answer.output?.let(ProgramRun::printed)) }
     val program = programWithEdits(original, editors.mapValues { it.value.text.toString() })
+    // References to runProgram compare equal whatever they capture, so Run and Enter can keep an older one: it reads this instead.
+    val currentProgram by rememberUpdatedState(program)
     val matches = run?.let { sameOutput(it.output, fields.expectedOutput) } == true
     val mistake = run?.takeUnless { matches || props.isExploring }?.let { mistakeFor(it.output, fields.mistakes)?.feedback }
 
     fun runProgram() {
-        if (props.isLocked) return
+        if (isLocked) return
         val revision = editorRun.start() ?: return
+        val code = currentProgram
         scope.launch {
-            val result = sandbox.runProgram(program, language)
+            val result = sandbox.runProgram(code, language)
             val current = editorRun.finish(revision)
             if (isLocked) return@launch
             run = result
