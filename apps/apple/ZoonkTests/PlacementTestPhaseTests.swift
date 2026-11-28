@@ -147,6 +147,15 @@ final class PlacementTestPhaseTests: XCTestCase {
       .unavailable, "Another test's result isn't this one's")
   }
 
+  func testAStartStopWithNoNameOfItsOwnIsNamedAsThePlanNamesIt() {
+    let end = PlacementTestEnd(lessonsSkipped: 4, course: course)
+    XCTAssertEqual(end.startName, "Phase 3", "The start entry is the course's third stop")
+    XCTAssertEqual(
+      PlacementTestEnd(lessonsSkipped: 4, chapter: "Why prices move", course: course).startName,
+      "Why prices move")
+    XCTAssertNil(PlacementTestEnd(lessonsSkipped: 4).startName, "No course: no start to name")
+  }
+
   func testAFinishShowsWhereTheLearnerStartsAndItsUndoOnlyWhenItGivesBackWhatItCounts() {
     var result = PlacementTestResult(finishedAt: .now, lessonsSkipped: 4)
     result.chapter = "Why prices move"

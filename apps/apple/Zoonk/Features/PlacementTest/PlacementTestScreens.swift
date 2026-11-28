@@ -19,7 +19,7 @@ struct PlacementTestResultView: View {
     let restored = undo?.restored != nil
     let isSaving = pressed != nil || undo?.request.isRunning == true
     // Undone, the start is back at the course's first lesson, which the result doesn't name.
-    let place = restored ? nil : end.chapter
+    let place = restored ? nil : end.startName
 
     TestOutcome(
       subject: place == nil ? nil : String(localized: PlacementTestCopy.youStartHere),

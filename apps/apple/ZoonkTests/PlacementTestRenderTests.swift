@@ -406,6 +406,33 @@ final class PlacementTestRenderTests: XCTestCase {
     }
   }
 
+  func testAResultWhoseStartStopHasNoNameUsesThePlansName() async throws {
+    var unnamed = Self.startedPast
+    unnamed.chapter = nil
+
+    try await capture(
+      "placement-result-unnamed-stop", title: "Phase 3", detail: "You start here",
+      absent: ["4 lessons skipped"]
+    ) {
+      PlacementTestResultView(
+        end: unnamed, onboarding: false, pressed: nil, failed: false, onDone: {})
+    }
+  }
+
+  func testALanguageResultWithNoLessonUpNextHasNoRow() async throws {
+    var result = PlacementTestResult(finishedAt: .now, lessonsSkipped: 0)
+    result.ranges = ["reading": LevelRange(high: "B1", low: "A1")]
+
+    try await capture(
+      "language-result-no-next-lesson", title: "Your English level", detail: "Done",
+      absent: ["Up next", "Start lesson"]
+    ) {
+      LanguageTestResultView(
+        result: result, targetLanguage: "en", testOutLevel: nil, pressed: nil, failed: false,
+        onContinue: {}, onTestOut: {})
+    }
+  }
+
   func testAResultThatSkippedNothingHasNoCountLine() async throws {
     let nothing = PlacementTestEnd(
       lessonsSkipped: 0, chapter: "What a stock is",

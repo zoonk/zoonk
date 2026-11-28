@@ -230,6 +230,16 @@ final class PlacementTestShots: XCTestCase {
             onDone: {}))
       ),
       (
+        "10f-result-unnamed-stop", false,
+        AnyView(
+          PlacementTestResultView(
+            end: {
+              var end = PlacementTestRenderTests.startedPast
+              end.chapter = nil
+              return end
+            }(), onboarding: false, pressed: nil, failed: false, undo: undo, onDone: {}))
+      ),
+      (
         "11-result-no-course", false,
         AnyView(
           PlacementTestResultView(
@@ -271,6 +281,17 @@ final class PlacementTestShots: XCTestCase {
             preselected: .quick,
             context: .init(goalID: id, test: .language, surface: .plan), isSaving: false,
             failed: false, onNotNow: {}, onStart: { _ in }))
+      ),
+      (
+        "15b-language-result-no-next-lesson", false,
+        AnyView(
+          LanguageTestResultView(
+            result: {
+              var result = languageResult
+              result.nextLesson = nil
+              return result
+            }(), targetLanguage: "pt", testOutLevel: nil, pressed: nil, failed: false,
+            onContinue: {}, onTestOut: {}))
       ),
       (
         "15-language-result", false,
