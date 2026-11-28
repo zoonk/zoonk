@@ -17,6 +17,57 @@ const UPSC_CSE_2026_NOTICE = {
   url: "https://www.upsc.gov.in/sites/default/files/Notif-CSP-2026-Engl-060226Rev.pdf",
 };
 
+const ENEM_WRITING_GUIDE = {
+  title: "A redação no Enem 2025: cartilha do participante",
+  url: "https://download.inep.gov.br/publicacoes/institucionais/avaliacoes_e_exames_da_educacao_basica/a_redacao_no_enem_2025_cartilha_do_participante.pdf",
+};
+
+export const ENEM_SCALE = [0, 40, 80, 120, 160, 200];
+
+/** The documents production's FE reading read, which it read as five compulsory subjects. */
+const FE_DOCUMENTS = [
+  {
+    title: "NCEES Examinee Guide (November 2026)",
+    url: "https://ncees.org/wp-content/uploads/2026/11/NCEESExamGuide_November-2026_3.pdf",
+  },
+  { title: "FE Exam | NCEES", url: "https://ncees.org/exams/fe-exam/" },
+  {
+    title: "FE Civil CBT Exam Specifications",
+    url: "https://ncees.org/wp-content/uploads/2022/09/FE-Civil-CBT-specs-1.pdf",
+  },
+  {
+    title: "FE Mechanical CBT Exam Specifications",
+    url: "https://ncees.org/wp-content/uploads/FE-Mechanical-CBT-specs.pdf",
+  },
+  {
+    title: "FE Electrical and Computer CBT Exam Specifications",
+    url: "https://ncees.org/wp-content/uploads/FE-Electrical-and-Computer-CBT-specs.pdf",
+  },
+  {
+    title: "FE Chemical CBT Exam Specifications",
+    url: "https://ncees.org/wp-content/uploads/FE-Che-CBT-specs.pdf",
+  },
+  {
+    title: "FE Other Disciplines CBT Exam Specifications",
+    url: "https://ncees.org/wp-content/uploads/2022/09/FE-Other-Disciplines-CBT-specs.pdf",
+  },
+];
+
+/** An invented notice whose two papers every candidate sits have the same count and plain names. */
+const TWO_PAPERS_NOTICE = `NATIONAL TECHNICAL CERTIFICATE IN ACCOUNTING – 2027 EXAMINATION REGULATIONS
+
+3 STRUCTURE OF THE EXAMINATION
+3.1 The examination consists of Paper 1 and Paper 2, taken on the same day with a one-hour break between them.
+3.2 Paper 1: 80 multiple-choice questions, 2 hours.
+3.3 Paper 2: 80 multiple-choice questions, 2 hours.
+3.4 A candidate's result is the total of the marks in both papers, out of 160.
+4 DATES
+4.1 The examination will be held on 14 June 2027.
+
+ANNEX A – SYLLABUS
+Paper 1: 1 Double-entry bookkeeping. 2 Bank reconciliations. 3 Financial statements.
+Paper 2: 1 Cost accounting. 2 Budgeting. 3 Variance analysis.`;
+
 /** An invented notice whose written test states its lines but no scale or grading rule. */
 const NO_SCALE_NOTICE = `PREFEITURA MUNICIPAL DE VALE ALTO
 EDITAL Nº 3/2026 – CONCURSO PÚBLICO PARA O CARGO DE ASSISTENTE ADMINISTRATIVO
@@ -33,6 +84,57 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
   {
     expected: {
       facts: [
+        { kind: "choice", options: ["Chemical", "Civil", "Electrical and Computer", "Mechanical"] },
+        { kind: "questionCount", value: 110 },
+      ],
+    },
+    id: "fe-one-discipline",
+    language: "en",
+    origin: "production",
+    userInput: { documents: FE_DOCUMENTS, exam: "FE Exam" },
+  },
+  {
+    expected: {
+      facts: [
+        { kind: "subject", name: "Paper 1", questions: 80 },
+        { kind: "subject", name: "Paper 2", questions: 80 },
+        { kind: "noChoice" },
+        { kind: "questionCount", value: 160 },
+      ],
+    },
+    id: "two-equal-papers-not-a-choice",
+    language: "en",
+    userInput: {
+      documents: [{ text: TWO_PAPERS_NOTICE, title: "Examination regulations 2027" }],
+      exam: "National Technical Certificate in Accounting",
+    },
+  },
+  {
+    expected: {
+      facts: [
+        { count: 1, criteriaTotal: 35, kind: "writtenTask" },
+        { kind: "writtenTask", limits: 1 },
+        { kind: "writtenTask", zeroing: true },
+        /** Each factual error takes a point off one criterion, which no sheet field holds. */
+        { kind: "writtenTask", total: false },
+      ],
+    },
+    id: "matura-2025-polski-rozszerzony-scoring-rules",
+    language: "pl",
+    userInput: {
+      documents: [
+        {
+          title:
+            "Zasady oceniania rozwiązań zadań: egzamin maturalny, język polski, poziom rozszerzony, 21 maja 2025",
+          url: "https://oke.poznan.pl/files/cms/875/mpop_r0_200_2505_zasady.pdf",
+        },
+      ],
+      exam: "Egzamin maturalny z języka polskiego, poziom rozszerzony",
+    },
+  },
+  {
+    expected: {
+      facts: [
         { kind: "scoring", method: "wrongCancelsRight" },
         { groups: ["P1", "P2", "P3", "P4"], kind: "groupedSubjects" },
         { kind: "subject", name: "Prova discursiva" },
@@ -46,32 +148,38 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
         { kind: "finalShare", parts: ["discursiva"], share: 0.5 },
         { kind: "session", mentions: "manhã" },
         { kind: "session", mentions: "tarde" },
+        { count: 1, drawsOn: "P2", handwritten: true, kind: "writtenTask", lines: 30, points: 30 },
         {
-          count: 1,
+          combination: null,
           criterionPoints: [30],
-          drawsOn: "P2",
-          grading: "points",
-          handwritten: true,
+          kind: "writtenTask",
+          points: 30,
+          scales: [null],
+          total: true,
+        },
+        {
           kind: "writtenTask",
           language: { factor: 6, method: "errorsPerLine" },
-          lines: 30,
           points: 30,
-          rounding: false,
-          zeroing: true,
+          rounding: true,
+        },
+        { kind: "writtenTask", points: 30, zeroKinds: ["blank", "offTopic"], zeroing: true },
+        { count: 1, drawsOn: "P3", handwritten: true, kind: "writtenTask", lines: 60, points: 70 },
+        {
+          combination: null,
+          criterionPoints: [70],
+          kind: "writtenTask",
+          points: 70,
+          scales: [null],
+          total: true,
         },
         {
-          count: 1,
-          criterionPoints: [70],
-          drawsOn: "P3",
-          grading: "points",
-          handwritten: true,
           kind: "writtenTask",
           language: { factor: 14, method: "errorsPerLine" },
-          lines: 60,
           points: 70,
-          rounding: false,
-          zeroing: true,
+          rounding: true,
         },
+        { kind: "writtenTask", points: 70, zeroKinds: ["blank", "offTopic"], zeroing: true },
       ],
     },
     id: "cgu-2026-affc-ti-points",
@@ -121,13 +229,12 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
         { kind: "timeLimit", minutes: 300 },
         { kind: "testedLanguage", language: null },
         { kind: "sharedClock" },
+        { count: 1, kind: "writtenTask", lines: 30, points: 1000, total: true },
+        { kind: "writtenTask", points: 1000, scales: Array.from({ length: 5 }, () => ENEM_SCALE) },
         {
-          count: 1,
-          grading: "enem",
           kind: "writtenTask",
-          lines: null,
           points: 1000,
-          zeroing: true,
+          zeroKinds: ["blank", "offTopic", "tooFewLines", "wrongForm"],
         },
       ],
     },
@@ -139,6 +246,7 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
           title: "Edital Inep nº 64, de 21 de maio de 2026 (Enem 2026)",
           url: "http://www.abmes.org.br/arquivos/legislacoes/Edital-inep-064-2026-05-21.pdf",
         },
+        ENEM_WRITING_GUIDE,
       ],
       exam: "ENEM",
     },
@@ -334,22 +442,30 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
         { kind: "session", mentions: "13" },
         {
           count: 1,
-          grading: "oab",
+          criterionPoints: [5],
           handwritten: true,
           kind: "writtenTask",
           language: null,
           lines: null,
           points: 5,
-          rounding: true,
+          rounding: false,
+          scales: [null],
+          total: true,
+        },
+        {
+          kind: "writtenTask",
+          points: 5,
+          zeroKinds: ["blank", "offTopic", "wrongForm"],
           zeroing: true,
         },
         {
           count: 4,
-          grading: "oab",
+          criterionPoints: [1.25],
           handwritten: true,
           kind: "writtenTask",
           lines: 30,
           points: 1.25,
+          total: true,
         },
       ],
     },
@@ -372,12 +488,12 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
           count: 1,
           criterionPoints: [],
           drawsOn: null,
-          grading: null,
           handwritten: null,
           kind: "writtenTask",
           language: null,
           lines: 30,
           points: null,
+          total: false,
         },
         { kind: "section", minutes: 240, questions: 40 },
         { kind: "sharedClock" },

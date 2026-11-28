@@ -33,6 +33,22 @@ function savedSpec(hook: Record<string, unknown>) {
 }
 
 describe(parseStoredLessonSpec, () => {
+  it("infers a template for an application whose activity uses a picture", () => {
+    const spec = savedSpec({});
+
+    const application = {
+      activityTemplate: "labeledDiagram",
+      brief: "Place the labels on the diagram.",
+      kind: "application",
+      skills: [0],
+      visual: "A cross-section of a leaf.",
+    };
+
+    const stored = parseStoredLessonSpec({ ...spec, screens: [...spec.screens, application] });
+
+    expect(stored?.screens.at(-1)).toStrictEqual({ ...application, visualKind: "template" });
+  });
+
   it("reads a saved scene's visual as planned, and a plan saved before visual kinds as text only", () => {
     const [legacy, bare, table] = [{}, { visualKind: "none" }, { visualKind: "table" }].map(
       (hook) => parseStoredLessonSpec(savedSpec(hook))?.screens,

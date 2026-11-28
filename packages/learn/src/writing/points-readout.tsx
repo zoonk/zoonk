@@ -45,7 +45,7 @@ export function PointsReadout({
 
 /**
  * The range on its scale: the sure part solid, the uncertain part light, and the minimum's tick.
- * With no range yet, a dashed outline holds its place.
+ * With nothing measured there is nothing to draw, so the words beside it say so.
  */
 export function PointsMeter({
   max,
@@ -57,7 +57,7 @@ export function PointsMeter({
   range: Range | null;
 }) {
   if (!range) {
-    return <div className="border-border rounded-meter h-1.5 border border-dashed" />;
+    return null;
   }
 
   const low = Math.min(1, range.low / max);

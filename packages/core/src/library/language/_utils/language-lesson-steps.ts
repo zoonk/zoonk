@@ -3,6 +3,7 @@ import { type StepKind } from "@zoonk/db";
 import { normalizeDistractorKey } from "@zoonk/utils/distractors";
 import { isSameLanguage } from "@zoonk/utils/languages";
 import { safeParseStepContent } from "../../steps/contract/step-contract";
+import { buildLanguageActivities } from "./language-lesson-activities";
 
 export type LanguageStepToSave = {
   kind: StepKind;
@@ -128,18 +129,29 @@ function getPracticeSteps(practice: LanguageLessonContent["practice"]) {
   );
 }
 
+function activityStep(content: object | null) {
+  return content ? [step("activity", content)] : [];
+}
+
+/**
+ * The pattern table follows the tip it practices, and the dialogue comes once the learner has heard
+ * the lesson's sentences, before they say any.
+ */
 export function buildLanguageLessonSteps(input: LanguageLessonStepsInput): LanguageStepToSave[] {
   const { content, wordIds } = input;
   const wordStepIds = wordIds.map((wordId) => ({ wordId }));
   const sentenceSteps = getSentenceSteps(input);
+  const activities = buildLanguageActivities(input);
 
   const steps = [
     ...wordStepIds.map((ids) => step("vocabulary", {}, ids)),
     ...rotate(wordStepIds).map((ids) => step("translation", {}, ids)),
     step("explanation", { text: getTipText(content.tip), title: content.tip.title }),
+    ...activityStep(activities.patternTable.content),
     ...getPracticeSteps(content.practice),
     ...sentenceSteps.reading,
     ...sentenceSteps.listening,
+    ...activityStep(activities.dialogue.content),
     ...sentenceSteps.speaking,
     ...getWritingStep(content.writing),
     step("summary", { ideas: content.summary.map((text) => ({ text })) }),

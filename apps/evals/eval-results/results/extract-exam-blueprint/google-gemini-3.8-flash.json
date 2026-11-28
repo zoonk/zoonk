@@ -1350,19 +1350,19 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 2/4 (read 4). passages found 52/52. problems left 1. missing: {\"count\":1,\"grading\":\"oab\",\"handwritten\":true,\"kind\":\"writtenTask\",\"language\":null,\"lines\":null,\"points\":5,\"rounding\":true,\"zeroing\":true}; {\"count\":4,\"grading\":\"oab\",\"handwritten\":true,\"kind\":\"writtenTask\",\"lines\":30,\"points\":1.25}",
+          "conclusion": "Facts kept 5/5 (read 5). passages found 55/55. problems left 1",
           "kind": "majorErrors",
-          "score": 8.4
+          "score": 10
         },
         {
-          "conclusion": "Facts kept 2/4 (read 4). passages found 52/52. problems left 1. missing: {\"count\":1,\"grading\":\"oab\",\"handwritten\":true,\"kind\":\"writtenTask\",\"language\":null,\"lines\":null,\"points\":5,\"rounding\":true,\"zeroing\":true}; {\"count\":4,\"grading\":\"oab\",\"handwritten\":true,\"kind\":\"writtenTask\",\"lines\":30,\"points\":1.25}",
+          "conclusion": "Facts kept 5/5 (read 5). passages found 55/55. problems left 1",
           "kind": "minorErrors",
-          "score": 8.4
+          "score": 10
         },
         {
-          "conclusion": "Facts kept 2/4 (read 4). passages found 52/52. problems left 1. missing: {\"count\":1,\"grading\":\"oab\",\"handwritten\":true,\"kind\":\"writtenTask\",\"language\":null,\"lines\":null,\"points\":5,\"rounding\":true,\"zeroing\":true}; {\"count\":4,\"grading\":\"oab\",\"handwritten\":true,\"kind\":\"writtenTask\",\"lines\":30,\"points\":1.25}",
+          "conclusion": "Facts kept 5/5 (read 5). passages found 55/55. problems left 1",
           "kind": "potentialImprovements",
-          "score": 8.4
+          "score": 10
         }
       ],
       "testCase": {
@@ -1378,22 +1378,40 @@
             },
             {
               "count": 1,
-              "grading": "oab",
+              "criterionPoints": [
+                5
+              ],
               "handwritten": true,
               "kind": "writtenTask",
               "language": null,
               "lines": null,
               "points": 5,
-              "rounding": true,
+              "rounding": false,
+              "scales": [
+                null
+              ],
+              "total": true
+            },
+            {
+              "kind": "writtenTask",
+              "points": 5,
+              "zeroKinds": [
+                "blank",
+                "offTopic",
+                "wrongForm"
+              ],
               "zeroing": true
             },
             {
               "count": 4,
-              "grading": "oab",
+              "criterionPoints": [
+                1.25
+              ],
               "handwritten": true,
               "kind": "writtenTask",
               "lines": 30,
-              "points": 1.25
+              "points": 1.25,
+              "total": true
             }
           ]
         },
@@ -1413,17 +1431,17 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 0/3 (read 3). passages found 20/20. problems left 0. missing: {\"count\":1,\"criterionPoints\":[],\"drawsOn\":null,\"grading\":null,\"handwritten\":null,\"kind\":\"writtenTask\",\"language\":null,\"lines\":30,\"points\":null}; {\"kind\":\"section\",\"minutes\":240,\"questions\":40}; {\"kind\":\"sharedClock\"}",
+          "conclusion": "Facts kept 0/3 (read 2). passages found 21/21. problems left 0. missing: {\"count\":1,\"criterionPoints\":[],\"drawsOn\":null,\"handwritten\":null,\"kind\":\"writtenTask\",\"language\":null,\"lines\":30,\"points\":null,\"total\":false}; {\"kind\":\"section\",\"minutes\":240,\"questions\":40}; {\"kind\":\"sharedClock\"}",
           "kind": "majorErrors",
           "score": 6.8
         },
         {
-          "conclusion": "Facts kept 0/3 (read 3). passages found 20/20. problems left 0. missing: {\"count\":1,\"criterionPoints\":[],\"drawsOn\":null,\"grading\":null,\"handwritten\":null,\"kind\":\"writtenTask\",\"language\":null,\"lines\":30,\"points\":null}; {\"kind\":\"section\",\"minutes\":240,\"questions\":40}; {\"kind\":\"sharedClock\"}",
+          "conclusion": "Facts kept 0/3 (read 2). passages found 21/21. problems left 0. missing: {\"count\":1,\"criterionPoints\":[],\"drawsOn\":null,\"handwritten\":null,\"kind\":\"writtenTask\",\"language\":null,\"lines\":30,\"points\":null,\"total\":false}; {\"kind\":\"section\",\"minutes\":240,\"questions\":40}; {\"kind\":\"sharedClock\"}",
           "kind": "minorErrors",
           "score": 6.8
         },
         {
-          "conclusion": "Facts kept 0/3 (read 3). passages found 20/20. problems left 0. missing: {\"count\":1,\"criterionPoints\":[],\"drawsOn\":null,\"grading\":null,\"handwritten\":null,\"kind\":\"writtenTask\",\"language\":null,\"lines\":30,\"points\":null}; {\"kind\":\"section\",\"minutes\":240,\"questions\":40}; {\"kind\":\"sharedClock\"}",
+          "conclusion": "Facts kept 0/3 (read 2). passages found 21/21. problems left 0. missing: {\"count\":1,\"criterionPoints\":[],\"drawsOn\":null,\"handwritten\":null,\"kind\":\"writtenTask\",\"language\":null,\"lines\":30,\"points\":null,\"total\":false}; {\"kind\":\"section\",\"minutes\":240,\"questions\":40}; {\"kind\":\"sharedClock\"}",
           "kind": "potentialImprovements",
           "score": 6.8
         }
@@ -1435,12 +1453,12 @@
               "count": 1,
               "criterionPoints": [],
               "drawsOn": null,
-              "grading": null,
               "handwritten": null,
               "kind": "writtenTask",
               "language": null,
               "lines": 30,
-              "points": null
+              "points": null,
+              "total": false
             },
             {
               "kind": "section",
@@ -1468,19 +1486,19 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 15/15 (read 15). passages found 100/100. problems left 0",
+          "conclusion": "Facts kept 19/21 (read 21). passages found 83/83. problems left 0. missing: {\"count\":1,\"drawsOn\":\"P2\",\"handwritten\":true,\"kind\":\"writtenTask\",\"lines\":30,\"points\":30}; {\"count\":1,\"drawsOn\":\"P3\",\"handwritten\":true,\"kind\":\"writtenTask\",\"lines\":60,\"points\":70}",
           "kind": "majorErrors",
-          "score": 10
+          "score": 9.695238095238096
         },
         {
-          "conclusion": "Facts kept 15/15 (read 15). passages found 100/100. problems left 0",
+          "conclusion": "Facts kept 19/21 (read 21). passages found 83/83. problems left 0. missing: {\"count\":1,\"drawsOn\":\"P2\",\"handwritten\":true,\"kind\":\"writtenTask\",\"lines\":30,\"points\":30}; {\"count\":1,\"drawsOn\":\"P3\",\"handwritten\":true,\"kind\":\"writtenTask\",\"lines\":60,\"points\":70}",
           "kind": "minorErrors",
-          "score": 10
+          "score": 9.695238095238096
         },
         {
-          "conclusion": "Facts kept 15/15 (read 15). passages found 100/100. problems left 0",
+          "conclusion": "Facts kept 19/21 (read 21). passages found 83/83. problems left 0. missing: {\"count\":1,\"drawsOn\":\"P2\",\"handwritten\":true,\"kind\":\"writtenTask\",\"lines\":30,\"points\":30}; {\"count\":1,\"drawsOn\":\"P3\",\"handwritten\":true,\"kind\":\"writtenTask\",\"lines\":60,\"points\":70}",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 9.695238095238096
         }
       ],
       "testCase": {
@@ -1588,38 +1606,78 @@
             },
             {
               "count": 1,
+              "drawsOn": "P2",
+              "handwritten": true,
+              "kind": "writtenTask",
+              "lines": 30,
+              "points": 30
+            },
+            {
+              "combination": null,
               "criterionPoints": [
                 30
               ],
-              "drawsOn": "P2",
-              "grading": "points",
-              "handwritten": true,
+              "kind": "writtenTask",
+              "points": 30,
+              "scales": [
+                null
+              ],
+              "total": true
+            },
+            {
               "kind": "writtenTask",
               "language": {
                 "factor": 6,
                 "method": "errorsPerLine"
               },
-              "lines": 30,
               "points": 30,
-              "rounding": false,
+              "rounding": true
+            },
+            {
+              "kind": "writtenTask",
+              "points": 30,
+              "zeroKinds": [
+                "blank",
+                "offTopic"
+              ],
               "zeroing": true
             },
             {
               "count": 1,
+              "drawsOn": "P3",
+              "handwritten": true,
+              "kind": "writtenTask",
+              "lines": 60,
+              "points": 70
+            },
+            {
+              "combination": null,
               "criterionPoints": [
                 70
               ],
-              "drawsOn": "P3",
-              "grading": "points",
-              "handwritten": true,
+              "kind": "writtenTask",
+              "points": 70,
+              "scales": [
+                null
+              ],
+              "total": true
+            },
+            {
               "kind": "writtenTask",
               "language": {
                 "factor": 14,
                 "method": "errorsPerLine"
               },
-              "lines": 60,
               "points": 70,
-              "rounding": false,
+              "rounding": true
+            },
+            {
+              "kind": "writtenTask",
+              "points": 70,
+              "zeroKinds": [
+                "blank",
+                "offTopic"
+              ],
               "zeroing": true
             }
           ]
@@ -2880,6 +2938,480 @@
           ],
           "exam": "Physics test on circuits",
           "material": true
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 0/4 (read 4). passages found 25/27. problems left 0. missing: {\"count\":1,\"criteriaTotal\":35,\"kind\":\"writtenTask\"}; {\"kind\":\"writtenTask\",\"limits\":1}; {\"kind\":\"writtenTask\",\"zeroing\":true}; {\"kind\":\"writtenTask\",\"total\":false}",
+          "kind": "majorErrors",
+          "score": 6.7407407407407405
+        },
+        {
+          "conclusion": "Facts kept 0/4 (read 4). passages found 25/27. problems left 0. missing: {\"count\":1,\"criteriaTotal\":35,\"kind\":\"writtenTask\"}; {\"kind\":\"writtenTask\",\"limits\":1}; {\"kind\":\"writtenTask\",\"zeroing\":true}; {\"kind\":\"writtenTask\",\"total\":false}",
+          "kind": "minorErrors",
+          "score": 6.7407407407407405
+        },
+        {
+          "conclusion": "Facts kept 0/4 (read 4). passages found 25/27. problems left 0. missing: {\"count\":1,\"criteriaTotal\":35,\"kind\":\"writtenTask\"}; {\"kind\":\"writtenTask\",\"limits\":1}; {\"kind\":\"writtenTask\",\"zeroing\":true}; {\"kind\":\"writtenTask\",\"total\":false}",
+          "kind": "potentialImprovements",
+          "score": 6.7407407407407405
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "count": 1,
+              "criteriaTotal": 35,
+              "kind": "writtenTask"
+            },
+            {
+              "kind": "writtenTask",
+              "limits": 1
+            },
+            {
+              "kind": "writtenTask",
+              "zeroing": true
+            },
+            {
+              "kind": "writtenTask",
+              "total": false
+            }
+          ]
+        },
+        "id": "matura-2025-polski-rozszerzony-scoring-rules-1",
+        "language": "pl",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Zasady oceniania rozwiązań zadań: egzamin maturalny, język polski, poziom rozszerzony, 21 maja 2025",
+              "url": "https://oke.poznan.pl/files/cms/875/mpop_r0_200_2505_zasady.pdf"
+            }
+          ],
+          "exam": "Egzamin maturalny z języka polskiego, poziom rozszerzony"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 12/17 (read 17). passages found 67/68. problems left 2. missing: {\"date\":\"2026-11-08\",\"dateKind\":\"exam\",\"kind\":\"date\"}; {\"date\":\"2026-11-15\",\"dateKind\":\"exam\",\"kind\":\"date\"}; {\"count\":1,\"kind\":\"writtenTask\",\"lines\":30,\"points\":1000,\"total\":true}; {\"kind\":\"writtenTask\",\"points\":1000,\"scales\":[[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200]]}; {\"kind\":\"writtenTask\",\"points\":1000,\"zeroKinds\":[\"blank\",\"offTopic\",\"tooFewLines\",\"wrongForm\"]}",
+          "kind": "majorErrors",
+          "score": 9.047058823529412
+        },
+        {
+          "conclusion": "Facts kept 12/17 (read 17). passages found 67/68. problems left 2. missing: {\"date\":\"2026-11-08\",\"dateKind\":\"exam\",\"kind\":\"date\"}; {\"date\":\"2026-11-15\",\"dateKind\":\"exam\",\"kind\":\"date\"}; {\"count\":1,\"kind\":\"writtenTask\",\"lines\":30,\"points\":1000,\"total\":true}; {\"kind\":\"writtenTask\",\"points\":1000,\"scales\":[[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200]]}; {\"kind\":\"writtenTask\",\"points\":1000,\"zeroKinds\":[\"blank\",\"offTopic\",\"tooFewLines\",\"wrongForm\"]}",
+          "kind": "minorErrors",
+          "score": 9.047058823529412
+        },
+        {
+          "conclusion": "Facts kept 12/17 (read 17). passages found 67/68. problems left 2. missing: {\"date\":\"2026-11-08\",\"dateKind\":\"exam\",\"kind\":\"date\"}; {\"date\":\"2026-11-15\",\"dateKind\":\"exam\",\"kind\":\"date\"}; {\"count\":1,\"kind\":\"writtenTask\",\"lines\":30,\"points\":1000,\"total\":true}; {\"kind\":\"writtenTask\",\"points\":1000,\"scales\":[[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200]]}; {\"kind\":\"writtenTask\",\"points\":1000,\"zeroKinds\":[\"blank\",\"offTopic\",\"tooFewLines\",\"wrongForm\"]}",
+          "kind": "potentialImprovements",
+          "score": 9.047058823529412
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "questionCount",
+              "value": 180
+            },
+            {
+              "date": "2026-11-08",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2026-11-15",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2026-06-05",
+              "dateKind": "registrationEnd",
+              "kind": "date"
+            },
+            {
+              "kind": "subject",
+              "name": "Linguagens",
+              "questions": 45
+            },
+            {
+              "kind": "subject",
+              "name": "Matemática",
+              "questions": 45
+            },
+            {
+              "kind": "choice",
+              "options": [
+                "Inglês",
+                "Espanhol"
+              ],
+              "partOf": "Linguagens"
+            },
+            {
+              "format": "multipleChoice",
+              "kind": "format"
+            },
+            {
+              "format": "essay",
+              "kind": "format"
+            },
+            {
+              "kind": "scoring",
+              "method": "itemResponseTheory"
+            },
+            {
+              "kind": "timeLimit",
+              "minutes": 330
+            },
+            {
+              "kind": "timeLimit",
+              "minutes": 300
+            },
+            {
+              "kind": "testedLanguage",
+              "language": null
+            },
+            {
+              "kind": "sharedClock"
+            },
+            {
+              "count": 1,
+              "kind": "writtenTask",
+              "lines": 30,
+              "points": 1000,
+              "total": true
+            },
+            {
+              "kind": "writtenTask",
+              "points": 1000,
+              "scales": [
+                [
+                  0,
+                  40,
+                  80,
+                  120,
+                  160,
+                  200
+                ],
+                [
+                  0,
+                  40,
+                  80,
+                  120,
+                  160,
+                  200
+                ],
+                [
+                  0,
+                  40,
+                  80,
+                  120,
+                  160,
+                  200
+                ],
+                [
+                  0,
+                  40,
+                  80,
+                  120,
+                  160,
+                  200
+                ],
+                [
+                  0,
+                  40,
+                  80,
+                  120,
+                  160,
+                  200
+                ]
+              ]
+            },
+            {
+              "kind": "writtenTask",
+              "points": 1000,
+              "zeroKinds": [
+                "blank",
+                "offTopic",
+                "tooFewLines",
+                "wrongForm"
+              ]
+            }
+          ]
+        },
+        "id": "enem-2026-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital Inep nº 64, de 21 de maio de 2026 (Enem 2026)",
+              "url": "http://www.abmes.org.br/arquivos/legislacoes/Edital-inep-064-2026-05-21.pdf"
+            },
+            {
+              "title": "A redação no Enem 2025: cartilha do participante",
+              "url": "https://download.inep.gov.br/publicacoes/institucionais/avaliacoes_e_exames_da_educacao_basica/a_redacao_no_enem_2025_cartilha_do_participante.pdf"
+            }
+          ],
+          "exam": "ENEM"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 2/2 (read 2). passages found 39/39. problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 2/2 (read 2). passages found 39/39. problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 2/2 (read 2). passages found 39/39. problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "choice",
+              "options": [
+                "Chemical",
+                "Civil",
+                "Electrical and Computer",
+                "Mechanical"
+              ]
+            },
+            {
+              "kind": "questionCount",
+              "value": 110
+            }
+          ]
+        },
+        "id": "fe-one-discipline-1",
+        "language": "en",
+        "origin": "production",
+        "userInput": {
+          "documents": [
+            {
+              "title": "NCEES Examinee Guide (November 2026)",
+              "url": "https://ncees.org/wp-content/uploads/2026/11/NCEESExamGuide_November-2026_3.pdf"
+            },
+            {
+              "title": "FE Exam | NCEES",
+              "url": "https://ncees.org/exams/fe-exam/"
+            },
+            {
+              "title": "FE Civil CBT Exam Specifications",
+              "url": "https://ncees.org/wp-content/uploads/2022/09/FE-Civil-CBT-specs-1.pdf"
+            },
+            {
+              "title": "FE Mechanical CBT Exam Specifications",
+              "url": "https://ncees.org/wp-content/uploads/FE-Mechanical-CBT-specs.pdf"
+            },
+            {
+              "title": "FE Electrical and Computer CBT Exam Specifications",
+              "url": "https://ncees.org/wp-content/uploads/FE-Electrical-and-Computer-CBT-specs.pdf"
+            },
+            {
+              "title": "FE Chemical CBT Exam Specifications",
+              "url": "https://ncees.org/wp-content/uploads/FE-Che-CBT-specs.pdf"
+            },
+            {
+              "title": "FE Other Disciplines CBT Exam Specifications",
+              "url": "https://ncees.org/wp-content/uploads/2022/09/FE-Other-Disciplines-CBT-specs.pdf"
+            }
+          ],
+          "exam": "FE Exam"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 1/2 (read 2). passages found 38/38. problems left 0. missing: {\"kind\":\"questionCount\",\"value\":110}",
+          "kind": "majorErrors",
+          "score": 8.4
+        },
+        {
+          "conclusion": "Facts kept 1/2 (read 2). passages found 38/38. problems left 0. missing: {\"kind\":\"questionCount\",\"value\":110}",
+          "kind": "minorErrors",
+          "score": 8.4
+        },
+        {
+          "conclusion": "Facts kept 1/2 (read 2). passages found 38/38. problems left 0. missing: {\"kind\":\"questionCount\",\"value\":110}",
+          "kind": "potentialImprovements",
+          "score": 8.4
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "choice",
+              "options": [
+                "Chemical",
+                "Civil",
+                "Electrical and Computer",
+                "Mechanical"
+              ]
+            },
+            {
+              "kind": "questionCount",
+              "value": 110
+            }
+          ]
+        },
+        "id": "fe-one-discipline-2",
+        "language": "en",
+        "origin": "production",
+        "userInput": {
+          "documents": [
+            {
+              "title": "NCEES Examinee Guide (November 2026)",
+              "url": "https://ncees.org/wp-content/uploads/2026/11/NCEESExamGuide_November-2026_3.pdf"
+            },
+            {
+              "title": "FE Exam | NCEES",
+              "url": "https://ncees.org/exams/fe-exam/"
+            },
+            {
+              "title": "FE Civil CBT Exam Specifications",
+              "url": "https://ncees.org/wp-content/uploads/2022/09/FE-Civil-CBT-specs-1.pdf"
+            },
+            {
+              "title": "FE Mechanical CBT Exam Specifications",
+              "url": "https://ncees.org/wp-content/uploads/FE-Mechanical-CBT-specs.pdf"
+            },
+            {
+              "title": "FE Electrical and Computer CBT Exam Specifications",
+              "url": "https://ncees.org/wp-content/uploads/FE-Electrical-and-Computer-CBT-specs.pdf"
+            },
+            {
+              "title": "FE Chemical CBT Exam Specifications",
+              "url": "https://ncees.org/wp-content/uploads/FE-Che-CBT-specs.pdf"
+            },
+            {
+              "title": "FE Other Disciplines CBT Exam Specifications",
+              "url": "https://ncees.org/wp-content/uploads/2022/09/FE-Other-Disciplines-CBT-specs.pdf"
+            }
+          ],
+          "exam": "FE Exam"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 24/24. problems left 6",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 24/24. problems left 6",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 24/24. problems left 6",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "subject",
+              "name": "Paper 1",
+              "questions": 80
+            },
+            {
+              "kind": "subject",
+              "name": "Paper 2",
+              "questions": 80
+            },
+            {
+              "kind": "noChoice"
+            },
+            {
+              "kind": "questionCount",
+              "value": 160
+            }
+          ]
+        },
+        "id": "two-equal-papers-not-a-choice-1",
+        "language": "en",
+        "userInput": {
+          "documents": [
+            {
+              "text": "NATIONAL TECHNICAL CERTIFICATE IN ACCOUNTING – 2027 EXAMINATION REGULATIONS\n\n3 STRUCTURE OF THE EXAMINATION\n3.1 The examination consists of Paper 1 and Paper 2, taken on the same day with a one-hour break between them.\n3.2 Paper 1: 80 multiple-choice questions, 2 hours.\n3.3 Paper 2: 80 multiple-choice questions, 2 hours.\n3.4 A candidate's result is the total of the marks in both papers, out of 160.\n4 DATES\n4.1 The examination will be held on 14 June 2027.\n\nANNEX A – SYLLABUS\nPaper 1: 1 Double-entry bookkeeping. 2 Bank reconciliations. 3 Financial statements.\nPaper 2: 1 Cost accounting. 2 Budgeting. 3 Variance analysis.",
+              "title": "Examination regulations 2027"
+            }
+          ],
+          "exam": "National Technical Certificate in Accounting"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 18/18. problems left 6",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 18/18. problems left 6",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 18/18. problems left 6",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "subject",
+              "name": "Paper 1",
+              "questions": 80
+            },
+            {
+              "kind": "subject",
+              "name": "Paper 2",
+              "questions": 80
+            },
+            {
+              "kind": "noChoice"
+            },
+            {
+              "kind": "questionCount",
+              "value": 160
+            }
+          ]
+        },
+        "id": "two-equal-papers-not-a-choice-2",
+        "language": "en",
+        "userInput": {
+          "documents": [
+            {
+              "text": "NATIONAL TECHNICAL CERTIFICATE IN ACCOUNTING – 2027 EXAMINATION REGULATIONS\n\n3 STRUCTURE OF THE EXAMINATION\n3.1 The examination consists of Paper 1 and Paper 2, taken on the same day with a one-hour break between them.\n3.2 Paper 1: 80 multiple-choice questions, 2 hours.\n3.3 Paper 2: 80 multiple-choice questions, 2 hours.\n3.4 A candidate's result is the total of the marks in both papers, out of 160.\n4 DATES\n4.1 The examination will be held on 14 June 2027.\n\nANNEX A – SYLLABUS\nPaper 1: 1 Double-entry bookkeeping. 2 Bank reconciliations. 3 Financial statements.\nPaper 2: 1 Cost accounting. 2 Budgeting. 3 Variance analysis.",
+              "title": "Examination regulations 2027"
+            }
+          ],
+          "exam": "National Technical Certificate in Accounting"
         }
       }
     }

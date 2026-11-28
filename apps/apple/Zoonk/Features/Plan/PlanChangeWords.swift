@@ -219,8 +219,10 @@ enum PlanChangeWords {
     case "addSkills":
       let topics = planTopicList((operation.skills ?? []).map(\.name))
       return String(
-        localized: "Add \(topics) to your plan?", table: "Plan",
-        comment: "Asks to add topics to the plan; the argument lists them")
+        localized: "Add to your plan: \(topics)?", table: "Plan",
+        comment:
+          "Asks whether to add topics to the learner's plan. {topics} lists their names, which are often actions themselves, such as “Memorize An-Nahl”, so they stay after the colon rather than inside the sentence."
+      )
     case "focusAreas":
       return (operation.areas ?? []).isEmpty
         ? String(

@@ -1,6 +1,6 @@
 import { type GeneratedItem } from "@zoonk/ai/tasks/items/schemas";
 import { describe, expect, it } from "vitest";
-import { writingPromptSchema } from "../../exams/essays/writing-contract";
+import { readWritingPrompt } from "../../exams/essays/writing-contract";
 import { generatedMultipleChoice } from "./_test-utils/generated-items";
 import { discountMath } from "./_test-utils/math-problems";
 import { parseItemContent, toStoredItem } from "./item-content";
@@ -158,7 +158,6 @@ describe(parseItemContent, () => {
             text: criterion.name,
           },
         ],
-        kind: "points",
         language: null,
         rounding: null,
         zeroing: [],
@@ -186,8 +185,11 @@ describe(parseItemContent, () => {
       format: "essay",
     });
 
-    expect(item).toMatchObject({ content: { writing } });
-    const question = writingPromptSchema.parse(writing);
+    const { charactersPerLine: _savedWidth, ...basis } = writing;
+    expect(item).toMatchObject({ content: { writing: basis } });
+    expect(item).not.toHaveProperty("content.writing.charactersPerLine");
+    const question = readWritingPrompt(writing);
+    expect(question).toMatchObject({ charactersPerLine: 87, maxCharactersPerLine: 160 });
     expect(question.criteria).toStrictEqual([criterion]);
     expect(question).not.toHaveProperty("aspects");
     expect(question).not.toHaveProperty("grading");

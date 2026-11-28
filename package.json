@@ -80,18 +80,18 @@
     "@zoonk/tsconfig": "workspace:*",
     "fast-check": "catalog:",
     "jsdom": "catalog:",
-    "knip": "6.47.0",
+    "knip": "6.49.0",
     "mdast-util-from-markdown": "2.1.0",
     "mdast-util-gfm": "3.1.0",
     "micromark-extension-gfm": "3.0.0",
-    "neon": "9.9.2",
-    "oxc-parser": "0.159.0",
-    "oxfmt": "0.79.0",
-    "oxlint": "1.94.0",
-    "oxlint-tsgolint": "7.0.2007",
+    "neon": "9.10.0",
+    "oxc-parser": "0.160.0",
+    "oxfmt": "0.80.0",
+    "oxlint": "1.95.0",
+    "oxlint-tsgolint": "7.0.2009",
     "portless": "0.18.1",
     "sharp": "catalog:",
-    "tsrs": "7.1.0-beta.tsrs4",
+    "tsrs": "7.1.0-beta.tsrs5",
     "turbo": "2.11.13",
     "typescript": "catalog:",
     "vitest": "catalog:",
@@ -100,5 +100,5 @@
   "engines": {
     "node": "^26"
   },
-  "packageManager": "pnpm@12.21.0"
+  "packageManager": "pnpm@12.23.0"
 }

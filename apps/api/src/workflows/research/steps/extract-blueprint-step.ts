@@ -1,16 +1,14 @@
 import { chooseServiceTier } from "@zoonk/ai/provider-options";
 import { checkCitedFacts } from "@zoonk/ai/tasks/research/check-cited-facts";
 import { checkExamReading } from "@zoonk/ai/tasks/research/check-exam-reading";
-import { listExamParts } from "@zoonk/ai/tasks/research/exam-parts";
 import {
   type BlueprintExtraction,
   extractExamBlueprint,
 } from "@zoonk/ai/tasks/research/extract-exam-blueprint";
 import {
-  applyQuestionFormats,
-  extractQuestionFormats,
-} from "@zoonk/ai/tasks/research/extract-question-formats";
-import { translatePassMarks } from "@zoonk/ai/tasks/research/translate-pass-marks";
+  type WrittenTaskGrading,
+  applyWrittenGrading,
+} from "@zoonk/ai/tasks/research/read-written-grading";
 import {
   isUsableBlueprint,
   toBlueprintContent,
@@ -26,15 +24,21 @@ import {
   toCitedFacts,
 } from "@zoonk/core/library/exams/blueprint-facts";
 import { toMaterialContent } from "@zoonk/core/library/exams/material-topics";
-import { listPassMarkTexts, withPassMarkTranslations } from "@zoonk/core/library/exams/pass-marks";
-import { findReadingProblems, toReadingCorrections } from "@zoonk/core/library/exams/reading-check";
+import { withPassMarkTranslations } from "@zoonk/core/library/exams/pass-marks";
+import {
+  findReadingProblems,
+  findWholeExamSubjects,
+  toReadingCorrections,
+} from "@zoonk/core/library/exams/reading-check";
 import { type ReusePolicy } from "@zoonk/core/library/sources/contract";
 import { loadSourceDocuments } from "@zoonk/core/library/sources/load-documents";
 import { safeAsync } from "@zoonk/utils/error";
-import { SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { logError } from "@zoonk/utils/logger";
 import { FatalError } from "workflow";
 import { type ResearchAnalytics } from "../_utils/research-analytics";
+import { readBlueprintFormatsStep } from "./blueprint-formats-step";
+import { translateReadPassMarks } from "./pass-marks-step";
+import { readWrittenGradingStep } from "./written-grading-step";
 import { readWrittenTaskSubjectsStep } from "./written-task-subjects-step";
 
 export type BlueprintReading = {
@@ -43,6 +47,8 @@ export type BlueprintReading = {
   provenance: { generatedAt: string; model: string; promptVersion: string; runId: string };
   reusePolicy: { policy: ReusePolicy; sourceId: string } | null;
   usable: boolean;
+  /** Subjects that each hold the whole exam: a reading no planner may use. */
+  wholeExamSubjects: ReadingProblem | null;
 };
 
 type BlueprintTextDocument = Pick<
@@ -90,36 +96,6 @@ async function checkReading({
   }
 
   return data?.data ?? null;
-}
-
-async function translateReadPassMarks({
-  analytics,
-  exam,
-  extraction,
-  serviceTier,
-}: {
-  analytics: ResearchAnalytics;
-  exam: string;
-  extraction: BlueprintExtraction;
-  serviceTier: ReturnType<typeof chooseServiceTier>;
-}) {
-  "use step";
-
-  const texts = listPassMarkTexts(extraction.rules);
-
-  if (texts.length === 0) {
-    return { texts, translations: {} };
-  }
-
-  const { data, error } = await safeAsync(() =>
-    translatePassMarks({ analytics, languages: SUPPORTED_LOCALES, serviceTier, texts }),
-  );
-
-  if (error) {
-    logError(`The pass marks of "${exam}" couldn't be translated:`, error);
-  }
-
-  return { texts, translations: data?.data.translations ?? {} };
 }
 
 type ExtractInput = {
@@ -171,36 +147,20 @@ async function extractBlueprintDraftStep({
   };
 }
 
-async function readBlueprintFormatsStep({
-  extraction,
-  sourceIds,
-  ...input
-}: Omit<Parameters<typeof extractQuestionFormats>[0], "documents" | "parts"> & {
-  sourceIds: string[];
-  extraction: BlueprintExtraction;
-}) {
-  "use step";
-  const documents = await loadSourceDocuments(sourceIds);
-
-  const { data } = await extractQuestionFormats({
-    ...input,
-    documents,
-    parts: listExamParts(extraction),
-  });
-
-  return applyQuestionFormats({ extraction, found: data });
-}
-
 async function prepareBlueprintChecksStep({
   documents,
-  extraction,
+  gradings,
+  reading,
   shared,
 }: {
   documents: BlueprintTextDocument[];
-  extraction: BlueprintExtraction;
+  gradings: WrittenTaskGrading[];
+  reading: BlueprintExtraction;
   shared: boolean;
 }) {
   "use step";
+
+  const extraction = applyWrittenGrading({ extraction: reading, found: gradings });
 
   const facts = listBlueprintFacts({
     documents: documents.map((document) => ({ sourceId: document.id, text: document.text })),
@@ -208,7 +168,7 @@ async function prepareBlueprintChecksStep({
     material: !shared,
   });
 
-  return { batches: toCheckBatches(toCitedFacts(facts)), facts };
+  return { batches: toCheckBatches(toCitedFacts(facts)), extraction, facts };
 }
 
 async function checkCitedFactsStep(input: Parameters<typeof checkCitedFacts>[0]) {
@@ -244,11 +204,17 @@ export async function extractBlueprint({
     () => draft.data,
   );
 
-  const extraction = await readWrittenTaskSubjectsStep({ ...reads, extraction: withFormats }).catch(
-    () => withFormats,
-  );
+  const [withSubjects, gradings] = await Promise.all([
+    readWrittenTaskSubjectsStep({ ...reads, extraction: withFormats }).catch(() => withFormats),
+    readWrittenGradingStep({ ...reads, extraction: withFormats }).catch(() => []),
+  ]);
 
-  const { batches, facts } = await prepareBlueprintChecksStep({ documents, extraction, shared });
+  const { batches, extraction, facts } = await prepareBlueprintChecksStep({
+    documents,
+    gradings,
+    reading: withSubjects,
+    shared,
+  });
 
   const [checks, findings, passMarks] = await Promise.all([
     Promise.all(
@@ -336,5 +302,6 @@ async function assembleBlueprintStep({
     provenance: { generatedAt, model, promptVersion, runId },
     reusePolicy: toReusePolicy({ extraction, facts, supportedIds }),
     usable: isUsableBlueprint({ content, shared }),
+    wholeExamSubjects: findWholeExamSubjects(content),
   };
 }

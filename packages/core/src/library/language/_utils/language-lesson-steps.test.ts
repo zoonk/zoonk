@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { parseStepContent } from "../../steps/contract/step-contract";
-import { languageLessonDraft, sameLanguageLessonDraft } from "../_test-utils/language-lesson-draft";
+import {
+  languageDialogue,
+  languageLessonDraft,
+  languagePatternTable,
+  sameLanguageLessonDraft,
+} from "../_test-utils/language-lesson-draft";
 import { buildLanguageLessonSteps } from "./language-lesson-steps";
 
 const WORD_IDS = ["word-rent", "word-deposit", "word-utilities"];
@@ -127,5 +132,70 @@ describe(buildLanguageLessonSteps, () => {
       text: "After a plural subject like `plants`, the verb has no -s.\n\n- `Plants need water`\n- `Do plants need light?`",
       title: "Verbs after plural subjects",
     });
+  });
+
+  it("shows the pattern table after the tip and the dialogue before the learner speaks", () => {
+    const steps = build(
+      languageLessonDraft({ dialogue: languageDialogue(), patternTable: languagePatternTable() }),
+    );
+
+    expect(steps.map((step) => step.kind)).toStrictEqual([
+      "vocabulary",
+      "vocabulary",
+      "vocabulary",
+      "translation",
+      "translation",
+      "translation",
+      "explanation",
+      "activity",
+      "fillBlank",
+      "reading",
+      "reading",
+      "listening",
+      "activity",
+      "spokenAnswer",
+      "spokenAnswer",
+      "typedAnswer",
+      "summary",
+    ]);
+
+    expect(
+      steps.filter((step) => step.kind === "activity").map((step) => step.content),
+    ).toMatchObject([
+      { check: { kind: "interaction" }, template: "patternTable" },
+      {
+        check: { kind: "interaction" },
+        fields: {
+          language: "en",
+          replies: [{ id: "reply-1" }, { id: "reply-2" }, { id: "reply-3" }],
+        },
+        template: "dialogueSimulator",
+      },
+    ]);
+  });
+
+  it("leaves out a pattern meaning the learner doesn't need", () => {
+    const table = languagePatternTable({ modelMeaning: null, newMeaning: null });
+    const steps = build(sameLanguageLessonDraft({ patternTable: table }), "en");
+    const activity = steps.find((step) => step.kind === "activity");
+
+    expect(activity?.content).toMatchObject({ template: "patternTable" });
+    expect(activity?.content).not.toHaveProperty("fields.modelMeaning");
+    expect(activity?.content).not.toHaveProperty("fields.newMeaning");
+  });
+
+  it("leaves out a dialogue whose replies don't have exactly one best", () => {
+    const dialogue = languageDialogue();
+
+    const steps = build(
+      languageLessonDraft({
+        dialogue: {
+          ...dialogue,
+          replies: dialogue.replies.map((reply) => ({ ...reply, isBest: true })),
+        },
+      }),
+    );
+
+    expect(steps.some((step) => step.kind === "activity")).toBe(false);
   });
 });

@@ -2,7 +2,7 @@ import { type LessonScreen } from "./lesson-spec-rules";
 
 /**
  * A picture is described in `visual`; a table, a chart or a timeline is drawn by the app from the
- * brief's data; a template is the explanation's `activityTemplate`.
+ * brief's data; a template is the screen's `activityTemplate`.
  */
 export const LESSON_VISUAL_KINDS = [
   "picture",

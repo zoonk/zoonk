@@ -133,6 +133,23 @@ describe(loadNoticeDay, () => {
     await expect(loadDay({ blueprint: null, goalDate: "2026-10-09" })).resolves.toBeNull();
   });
 
+  it("never offers a booked exam a date, since each candidate books their own day", async () => {
+    const booked = { examDay: "booked" };
+
+    await expect(loadDay({ blueprint: OAB, details: booked, goalDate: null })).resolves.toBeNull();
+
+    const stored = await examBlueprintFixture(OAB);
+
+    await expect(
+      loadNoticeDates({
+        goal: { details: booked, examBlueprintId: stored.id, id: randomUUID(), kind: "exam" },
+        goalDate: "2026-12-01",
+        noticeDate: null,
+        today: TODAY,
+      }),
+    ).resolves.toStrictEqual({ day: null, nextSitting: null, noSitting: null });
+  });
+
   it("offers the sitting in the learner's month when the notice lists several, or none", async () => {
     const dele = notice({
       days: ["2026-10-16", "2026-11-14", "2027-04-02", "2027-05-22", "2027-07-09"],

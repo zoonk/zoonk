@@ -43,10 +43,12 @@ function getRows({
 
 /**
  * Picking doesn't move on, unlike the other one-answer steps: a mis-tap would start a course about
- * the wrong country. Skip uses the language's own country and is never asked again.
+ * the wrong country. Skip uses the language's own country and is never asked again; an exam's
+ * plans from the exam's name alone.
  */
 export function CountryStep({
   defaultCountry,
+  exam,
   language,
   onAnswer,
   pending,
@@ -54,6 +56,8 @@ export function CountryStep({
   suggested,
 }: {
   defaultCountry: CountryName | null;
+  /** Another country's exam of the same name is another exam, so the question is whose it is. */
+  exam: boolean;
   language: string;
   onAnswer: (input: OnboardingAnswerInput) => void;
   pending: boolean;
@@ -78,13 +82,15 @@ export function CountryStep({
   return (
     <StepForm
       canContinue={picked !== null}
-      description={t("We use it for examples, money and units in your lessons.")}
+      description={exam ? undefined : t("We use it for examples, money and units in your lessons.")}
       notice={lessonLanguage && <p className="text-muted-foreground text-sm">{lessonLanguage}</p>}
       onContinue={() => picked && onAnswer({ country: picked.code, question: "contentCountry" })}
       onSkip={() => onAnswer({ country: null, question: "contentCountry" })}
       pending={pending}
       subject={subject}
-      title={t("Which country should your lessons be about?")}
+      title={
+        exam ? t("Which country's exam is it?") : t("Which country should your lessons be about?")
+      }
     >
       <ListGroup>
         <div className="contents" ref={listRef}>

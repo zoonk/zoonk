@@ -25,6 +25,7 @@ import {
   PageSectionTitle,
 } from "../_components/page";
 import { StatusMark } from "../_components/status-mark";
+import { LeftOutTopicsRow } from "../journey/journey-chapters";
 import { LearnLink } from "../learn-link";
 import { FoldRow } from "../today/today-fold-row";
 import { getDoneChapters } from "./done-chapters";
@@ -123,13 +124,38 @@ function MindMapsLink({ href }: { href: string }) {
   );
 }
 
+/** Why the fold above leaves topics out, and the way to fit them in. */
+function LeftOutWhy({ adjustHref }: { adjustHref: string }) {
+  const t = useExtracted();
+
+  return (
+    <div className="flex flex-col items-start gap-3 pt-2" data-slot="left-out-why">
+      <p className="text-muted-foreground text-sm">
+        {t({
+          description:
+            "Under the folded list of a module's or a subject's topics that the learner's plan leaves out: they don't fit in the study time before the date the learner set. Followed by a button to change the plan.",
+          message: "They don't fit before your date.",
+        })}
+      </p>
+      <LearnLink className={buttonVariants({ size: "lg", variant: "outline" })} href={adjustHref}>
+        {t("Adjust plan")}
+      </LearnLink>
+    </div>
+  );
+}
+
 export function SubjectChapters({
+  adjustHref,
   chapterHref,
   chapters,
+  leftOut,
   mindMapsHref,
 }: {
+  adjustHref: string;
   chapterHref: (chapterId: string) => string;
   chapters: readonly SyllabusChapter[];
+  /** Its topics the plan's date leaves out, folded after the chapters it keeps. */
+  leftOut: readonly string[];
   mindMapsHref: string | null;
 }) {
   const t = useExtracted();
@@ -182,6 +208,14 @@ export function SubjectChapters({
           </li>
         )}
       </ListGroup>
+
+      {leftOut.length > 0 && (
+        // Flush under the list and divided like its rows, though outside it: it isn't a chapter.
+        <div className="-mt-3 flex flex-col border-t">
+          <LeftOutTopicsRow className="min-h-control" names={leftOut} />
+          <LeftOutWhy adjustHref={adjustHref} />
+        </div>
+      )}
     </PageSection>
   );
 }

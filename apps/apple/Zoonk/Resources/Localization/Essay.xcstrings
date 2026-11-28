@@ -189,6 +189,71 @@
         }
       }
     },
+    "%@ to −%@" : {
+      "comment" : "Points language errors take off an answer, from none to some, like '0.0 to −0.6'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ bis −%2$@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ to −%2$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ a −%2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ à −%2$@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ a −%2$@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@〜−%2$@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@에서 −%2$@까지"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ do −%2$@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ a −%2$@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ ile −%2$@ arası"
+          }
+        }
+      }
+    },
     "%@–%@" : {
       "localizations" : {
         "de" : {
@@ -789,65 +854,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "0 / %lld satır"
-          }
-        }
-      }
-    },
-    "0 to −%@" : {
-      "comment" : "Points language errors take off an answer, from none to some, like '0 to −0.6'",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "0 bis −%@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "0 a −%@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "0 à −%@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "da 0 a −%@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "0〜−%@"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "0에서 −%@까지"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "0 do −%@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "0 a −%@"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "0 ile −%@ arası"
           }
         }
       }
@@ -2857,6 +2863,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yeniden yazımı değerlendir"
+          }
+        }
+      }
+    },
+    "Graded by level. A points estimate isn't available for this answer yet." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nach Level bewertet. Für diese Antwort gibt es noch keine Punktschätzung."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calificada por nivel. Aún no hay una estimación del puntaje para esta respuesta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Évaluation par niveau. Aucune estimation en points n’est encore disponible pour cette réponse."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Valutazione per livello. Per questa risposta non è ancora disponibile una stima del punteggio."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "レベル別に評価されています。この回答のポイントはまだ推定できません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "등급으로 채점했어요. 이 답변의 점수 예상치는 아직 제공되지 않아요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oceniono według poziomów. Szacunkowa liczba punktów za tę odpowiedź nie jest jeszcze dostępna."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avaliado por nível. Ainda não há estimativa de pontuação disponível para esta resposta."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Düzeye göre değerlendirildi. Bu cevap için henüz puan tahmini yapılamıyor."
           }
         }
       }

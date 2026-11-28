@@ -5,6 +5,7 @@ import {
   createEmDashReplacer,
   ensureLocaleSuffix,
   getFirstSentence,
+  keepHyphenatedWords,
   normalizePunctuation,
   normalizeString,
   removeAccents,
@@ -589,5 +590,17 @@ describe(getFirstSentence, () => {
     expect(getFirstSentence("日本語は日本の言語です。会話を学びます。", "ja")).toBe(
       "日本語は日本の言語です。",
     );
+  });
+});
+
+describe(keepHyphenatedWords, () => {
+  it("joins a hyphenated name so a line can't break inside it", () => {
+    expect(keepHyphenatedWords("every surah except An-Nahl.")).toBe(
+      "every surah except An\u2011Nahl.",
+    );
+  });
+
+  it("leaves a hyphen between spaces or numbers alone", () => {
+    expect(keepHyphenatedWords("Surahs 61-63 - then review")).toBe("Surahs 61-63 - then review");
   });
 });

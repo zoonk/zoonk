@@ -37,10 +37,10 @@ const FIXTURE_ID_PREFIX = "ffffffff-ffff-7fff-bfff-";
 const FIXTURE_IDS_START = `${FIXTURE_ID_PREFIX}000000000000`;
 
 const LEARNER_STATES = [
-  { choice: false, reread: false },
-  { choice: true, reread: false },
-  { choice: false, reread: true },
-  { choice: true, reread: true },
+  { choice: false, reread: false, scale: "levels" },
+  { choice: true, reread: false, scale: "levels" },
+  { choice: false, reread: true, scale: "points" },
+  { choice: true, reread: true, scale: "points" },
 ];
 
 const WRITTEN = { area: null, day: null, kind: "written" } as const;
@@ -194,7 +194,7 @@ describe("written preparation for the saved CGU notice", () => {
 
   it.each(LEARNER_STATES)(
     "keeps the exam and practice readable with choice=$choice and reread=$reread",
-    async ({ choice, reread }) => {
+    async ({ choice, reread, scale }) => {
       const { goal, structure, tasks, user, written } = await setup({ choice, reread });
 
       const positions = [
@@ -230,7 +230,7 @@ describe("written preparation for the saved CGU notice", () => {
               {
                 minutes: 210,
                 questions: 2,
-                scale: "levels",
+                scale,
                 share: 0.5,
                 ...(!choice && { availability: NEEDS_CHOICE }),
                 writeActions: [
@@ -311,7 +311,7 @@ describe("written preparation for the saved CGU notice", () => {
                 max: 100,
                 minimum: { unit: "points", value: 50 },
                 range: null,
-                scale: "levels",
+                scale,
                 standing: "unmeasured",
                 tasks: [
                   { key: short.key, range: null },

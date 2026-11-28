@@ -1,13 +1,16 @@
 package com.zoonk.android.feature.activities
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -35,7 +38,10 @@ import com.zoonk.android.feature.audio.rememberSpokenAudio
 import com.zoonk.android.feature.player.LocalLessonSpeech
 import com.zoonk.android.feature.player.steps.ChoiceOption
 import com.zoonk.android.feature.player.steps.ChoiceOptions
-import com.zoonk.android.ui.richtext.RichText
+import com.zoonk.android.feature.questions.itemLine
+import com.zoonk.android.ui.components.LearnerBubble
+import com.zoonk.android.ui.richtext.RichTextLine
+import com.zoonk.android.ui.richtext.SpokenText
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf21FieldsLinesInner
@@ -67,20 +73,22 @@ private fun DialogueSimulatorActivity(props: ActivityProps) {
     val conversationLabel = stringResource(R.string.activities_dialogue_conversation)
 
     ActivityCanvas(gap = 16.dp) {
-        val sceneStyle = MaterialTheme.typography.labelMedium
-        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-            LineMarker(sceneStyle) {
-                Icon(
-                    painterResource(R.drawable.ic_location_on),
-                    contentDescription = null,
-                    modifier = Modifier.size(14.dp),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            val sceneStyle = MaterialTheme.typography.labelMedium
+            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                LineMarker(sceneStyle) {
+                    Icon(
+                        painterResource(R.drawable.ic_location_on),
+                        contentDescription = null,
+                        modifier = Modifier.size(14.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                Text(fields.scene, color = MaterialTheme.colorScheme.onSurfaceVariant, style = sceneStyle)
             }
-            Text(fields.scene, color = MaterialTheme.colorScheme.onSurfaceVariant, style = sceneStyle)
-        }
-        Column(Modifier.semantics { contentDescription = conversationLabel }, verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            fields.lines.forEach { ChatLine(it, speech, fields.language) }
+            Column(Modifier.semantics { contentDescription = conversationLabel }, verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                fields.lines.forEach { ChatLine(it, speech, fields.language) }
+            }
         }
         ChoiceOptions(
             options = fields.replies.map { ChoiceOption(it.id, it.text, it.id in expectedIds) },
@@ -112,52 +120,52 @@ private fun ChatLine(
 ) {
     val isThem = line.speaker == Speaker.THEM
     val said = stringResource(if (isThem) R.string.activities_dialogue_they_say else R.string.activities_dialogue_you_said)
-    val bubble =
-        if (isThem) {
-            RoundedCornerShape(
-                topStart = ZoonkRadius.option,
-                topEnd = ZoonkRadius.option,
-                bottomEnd = ZoonkRadius.option,
-                bottomStart = 4.dp,
-            )
-        } else {
-            RoundedCornerShape(
-                topStart = ZoonkRadius.option,
-                topEnd = ZoonkRadius.option,
-                bottomEnd = 4.dp,
-                bottomStart = ZoonkRadius.option,
-            )
+    val reading =
+        Modifier.clearAndSetSemantics {
+            text =
+                buildAnnotatedString {
+                    append("$said ")
+                    append(spoken(line.text, language))
+                    append(" ${line.translation}")
+                }
         }
+    val words: @Composable () -> Unit = {
+        Column {
+            Text(spoken(line.text, language), style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium))
+            Text(line.translation, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+        }
+    }
 
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(10.dp, if (isThem) Alignment.Start else Alignment.End),
-        verticalAlignment = Alignment.Bottom,
-    ) {
-        if (isThem) {
-            val secondary = MaterialTheme.zoonk.vizSecondary
-            Box(Modifier.size(36.dp).clip(CircleShape).background(secondary.copy(alpha = SOFT)), contentAlignment = Alignment.Center) {
-                Icon(painterResource(R.drawable.ic_person), contentDescription = null, modifier = Modifier.size(16.dp), tint = secondary)
-            }
+    if (!isThem) {
+        Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
+            LearnerBubble(Modifier.fillMaxWidth(BUBBLE_SHARE).wrapContentWidth(Alignment.End).then(reading), words)
         }
-        Column(
+        return
+    }
+
+    val bubble =
+        RoundedCornerShape(
+            topStart = ZoonkRadius.option,
+            topEnd = ZoonkRadius.option,
+            bottomEnd = ZoonkRadius.option,
+            bottomStart = 4.dp,
+        )
+    Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.Bottom) {
+        val secondary = MaterialTheme.zoonk.vizSecondary
+        Box(Modifier.size(36.dp).clip(CircleShape).background(secondary.copy(alpha = SOFT)), contentAlignment = Alignment.Center) {
+            Icon(painterResource(R.drawable.ic_person), contentDescription = null, modifier = Modifier.size(16.dp), tint = secondary)
+        }
+        Box(
             Modifier
                 .weight(1f, fill = false)
                 .widthIn(min = 48.dp)
                 .clip(bubble)
-                .background(if (isThem) MaterialTheme.colorScheme.surface else MaterialTheme.zoonk.vizAccent.copy(alpha = SOFT))
-                .clearAndSetSemantics {
-                    text =
-                        buildAnnotatedString {
-                            append("$said ")
-                            append(spoken(line.text, language))
-                            append(" ${line.translation}")
-                        }
-                }.padding(horizontal = 14.dp, vertical = 10.dp),
-        ) {
-            Text(spoken(line.text, language), style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium))
-            Text(line.translation, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
-        }
-        if (isThem && speech != null) {
+                .background(MaterialTheme.colorScheme.surface)
+                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, bubble)
+                .then(reading)
+                .padding(horizontal = 14.dp, vertical = 10.dp),
+        ) { words() }
+        if (speech != null) {
             ActivitySpeakButton(rememberSpokenAudio(speech, language), line.text, stringResource(R.string.activities_dialogue_hear_line))
         }
     }
@@ -173,12 +181,30 @@ private fun ReplyContent(
         Text(spoken(reply.text, language), style = MaterialTheme.typography.bodyLarge)
         if (isChecked) {
             Text(reply.translation, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
-            RichText(reply.why, style = MaterialTheme.typography.bodyMedium)
+            // Every reply stays to say why, so the best one is named, whichever was picked.
+            val lead = stringResource(R.string.activities_dialogue_best_reply).takeIf { reply.isBest }
+            val why = itemLine(reply.why)
+            val line =
+                buildAnnotatedString {
+                    lead?.let {
+                        withStyle(
+                            SpanStyle(color = MaterialTheme.colorScheme.onTertiaryContainer, fontWeight = FontWeight.Medium),
+                        ) { append(it) }
+                        append(" ")
+                    }
+                    append(why.text)
+                }
+            RichTextLine(
+                SpokenText(line, why.spoken?.let { listOfNotNull(lead, it).joinToString(" ") }),
+                Modifier,
+                MaterialTheme.typography.bodyMedium,
+            )
         }
     }
 }
 
 private const val SOFT = 0.16f
+private const val BUBBLE_SHARE = 0.8f
 
 /** Words in the language being learned, marked so TalkBack voices them in it. */
 private fun spoken(

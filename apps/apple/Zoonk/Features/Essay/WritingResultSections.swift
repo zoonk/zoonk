@@ -130,34 +130,37 @@ private struct WritingPointsSection: View {
 
 }
 
-/// A range of points on its scale: what's surely earned, then what may be, then the rest.
+/// A range of points on its scale: what's surely earned, then what may be, then the rest. With
+/// nothing measured there is nothing to draw, so the words beside it say so.
 struct RangeBar: View {
-  let range: WritingRange
+  let range: WritingRange?
   let max: Double
   var minimum: Double?
 
   var body: some View {
-    let low = Swift.max(0, Swift.min(1, range.low / max))
-    let high = Swift.max(low, Swift.min(1, range.high / max))
+    if let range {
+      let low = Swift.max(0, Swift.min(1, range.low / max))
+      let high = Swift.max(low, Swift.min(1, range.high / max))
 
-    MeterParts(
-      parts: [
-        low > 0 ? .init(weight: low, fill: .color(.success)) : nil,
-        high > low ? .init(weight: high - low, fill: .color(.success.opacity(0.4))) : nil,
-        high < 1 ? .init(weight: 1 - high, fill: .track) : nil,
-      ].compactMap { $0 }
-    )
-    .overlay(alignment: .leading) {
-      if let minimum {
-        GeometryReader { proxy in
-          Capsule()
-            .fill(Color(.foreground))
-            .frame(width: 2, height: 14)
-            .position(x: proxy.size.width * Swift.min(1, minimum / max), y: proxy.size.height / 2)
+      MeterParts(
+        parts: [
+          low > 0 ? .init(weight: low, fill: .color(.success)) : nil,
+          high > low ? .init(weight: high - low, fill: .color(.success.opacity(0.4))) : nil,
+          high < 1 ? .init(weight: 1 - high, fill: .track) : nil,
+        ].compactMap { $0 }
+      )
+      .overlay(alignment: .leading) {
+        if let minimum {
+          GeometryReader { proxy in
+            Capsule()
+              .fill(Color(.foreground))
+              .frame(width: 2, height: 14)
+              .position(x: proxy.size.width * Swift.min(1, minimum / max), y: proxy.size.height / 2)
+          }
         }
       }
+      .accessibilityHidden(true)
     }
-    .accessibilityHidden(true)
   }
 }
 
@@ -206,14 +209,12 @@ private struct WritingNextStepSection: View {
 
   var body: some View {
     Section {
-      VStack(alignment: .leading, spacing: 10) {
+      VStack(alignment: .leading, spacing: 12) {
         switch step {
         case .done:
-          Text("Nothing left to work on", tableName: "Essay", comment: "Full marks")
-            .typeStyle(.stepHeading)
-          Text("Every criterion is complete.", tableName: "Essay")
-            .typeStyle(.body)
-            .foregroundStyle(.mutedForeground)
+          PageHeader(
+            Text("Nothing left to work on", tableName: "Essay", comment: "Full marks"),
+            supporting: Text("Every criterion is complete.", tableName: "Essay"))
         case .limit:
           card(title: limitTitle, text: limitText)
         case .short:
@@ -246,22 +247,23 @@ private struct WritingNextStepSection: View {
   private func card(title: String, text: String, quote: String? = nil, example: String? = nil)
     -> some View
   {
-    Chip(Text("Next step", tableName: "Essay", comment: "The one thing to work on next"))
+    PageHeader(
+      Text(title),
+      chip: Chip(Text("Next step", tableName: "Essay", comment: "The one thing to work on next")))
 
-    Text(title)
-      .typeStyle(.stepHeading)
+    VStack(alignment: .leading, spacing: 20) {
+      if let quote {
+        QuotedPassage(quote, accent: .warning)
+      }
 
-    if let quote {
-      QuotedPassage(quote, accent: .warning)
-    }
+      Text(text)
+        .typeStyle(.reading)
 
-    Text(text)
-      .typeStyle(.reading)
-
-    if let example {
-      Text("For example: \(example)", tableName: "Essay", comment: "A rewrite example")
-        .typeStyle(.body)
-        .foregroundStyle(.mutedForeground)
+      if let example {
+        Text("For example: \(example)", tableName: "Essay", comment: "A rewrite example")
+          .typeStyle(.body)
+          .foregroundStyle(.mutedForeground)
+      }
     }
   }
 
@@ -374,36 +376,30 @@ private struct WritingCriteriaSection: View {
       }
       .buttonStyle(.outline)
       .controlSize(.small)
+      .listRowSeparator(.hidden)
       .sheet(isPresented: $showsComments) {
-        NavigationStack {
-          ZoonkList {
-            ForEach(grade.criteria) { criterion in
-              VStack(alignment: .leading, spacing: 6) {
-                Text(criterion.name)
-                  .typeStyle(.rowTitle)
-                if let quote = criterion.quote {
-                  QuotedPassage(quote)
-                    .foregroundStyle(.mutedForeground)
-                }
-                Text(criterion.comment)
-                  .typeStyle(.reading)
+        DetailsSheet(
+          title: Text("Comments", tableName: "Essay", comment: "The criteria comments sheet")
+        ) {
+          ForEach(grade.criteria) { criterion in
+            VStack(alignment: .leading, spacing: 6) {
+              Text(criterion.name)
+                .typeStyle(.rowTitle)
+              if let quote = criterion.quote {
+                QuotedPassage(quote)
+                  .foregroundStyle(.mutedForeground)
               }
+              Text(criterion.comment)
+                .typeStyle(.reading)
             }
           }
-          .navigationTitle(
-            String(localized: "Comments", table: "Essay", comment: "The criteria comments sheet")
-          )
-          .navigationBarTitleDisplayMode(.inline)
-          .sheetClose { showsComments = false }
         }
-        .presentationDetents([.medium, .large])
-        .zoonkSheet()
       }
     } header: {
       SectionTitle(Text("Criteria", tableName: "Essay"))
     } footer: {
-      if let source {
-        SectionFooter { Text(source) }
+      if let footer {
+        SectionFooter { Text(footer) }
       }
     }
   }
@@ -451,7 +447,7 @@ private struct WritingCriteriaSection: View {
   private func score(_ row: WritingResult.Row) -> String {
     String(
       localized:
-        "\(WritingLabels.range(row.range ?? .init(high: row.earned, low: row.earned), decimals: decimals(row))) of \(WritingLabels.points(row.max, decimals: decimals(row)))",
+        "\(WritingLabels.range(row.range ?? .init(high: row.earned, low: row.earned), decimals: decimals(row))) of \(WritingLabels.partPoints(row.max))",
       table: "Essay", comment: "A criterion's points, like '7.1 of 9.5'")
   }
 
@@ -459,14 +455,24 @@ private struct WritingCriteriaSection: View {
     row.decimals ?? grade.points?.decimals
   }
 
-  private var source: String? {
+  private var footer: String? {
     if grade.points == nil, prompt.criteria.allSatisfy({ $0.points == nil }) {
       return String(
         localized: "The exam notice doesn't say how many points each criterion is worth.",
         table: "Essay")
     }
 
-    guard grade.points != nil else { return nil }
+    guard grade.points != nil else {
+      let turnedBack = grade.nextStep?.kind == .short || grade.nextStep?.kind == .zero
+
+      if turnedBack {
+        return nil
+      }
+
+      return String(
+        localized: "Graded by level. A points estimate isn't available for this answer yet.",
+        table: "Essay")
+    }
 
     return prompt.keySource == .notice
       ? String(
@@ -535,15 +541,5 @@ struct MinimumLegend: View {
         .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
     }
-  }
-}
-
-/// A meter's place while nothing is measured yet: a dashed outline.
-struct UnmeasuredBar: View {
-  var body: some View {
-    RoundedRectangle(cornerRadius: 3, style: .continuous)
-      .strokeBorder(.border, style: StrokeStyle(lineWidth: 1, dash: [3, 3]))
-      .frame(height: 6)
-      .accessibilityHidden(true)
   }
 }

@@ -2,6 +2,7 @@ import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { onboardingDraftFixture } from "@zoonk/testing/fixtures/onboarding-drafts";
+import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
@@ -82,6 +83,94 @@ describe("content country question", () => {
     await expect(
       prisma.followUp.findMany({ where: { key: current.id, kind: "rebuildGoalCurriculum" } }),
     ).resolves.toMatchObject([{ input: { goalId: current.id }, revision: 0 }]);
+  });
+
+  it("owes the exam's research once, when its country answer lets it start", async () => {
+    const user = await userFixture();
+
+    const unplaced = { answered: [], countryDependent: true };
+
+    const [exam, learn] = await Promise.all([
+      goalFixture({ details: unplaced, kind: "exam", planRevealedAt: null, userId: user.id }),
+      goalFixture({ details: unplaced, kind: "learn", planRevealedAt: null, userId: user.id }),
+    ]);
+
+    const answer = (current: typeof exam, country: string) =>
+      saveAnswerInputs({ goal: current, input: { country, question: "contentCountry" } });
+
+    await answer(exam, "CA");
+    await answer(exam, "CA");
+    await answer(exam, "US");
+    await answer(learn, "PT");
+
+    await expect(
+      prisma.followUp.findMany({
+        select: { input: true, revision: true },
+        where: { kind: "researchGoal", userId: user.id },
+      }),
+    ).resolves.toStrictEqual([{ input: { goalId: exam.id }, revision: 1 }]);
+  });
+
+  it("lets go of another country's exam and owes research for the new one when the country changes", async () => {
+    const user = await userFixture();
+
+    const exam = await goalFixture({
+      details: { answered: [], countryDependent: true },
+      kind: "exam",
+      planRevealedAt: null,
+      userId: user.id,
+    });
+
+    const answer = (country: string) =>
+      saveAnswerInputs({ goal: exam, input: { country, question: "contentCountry" } });
+
+    const research = () =>
+      prisma.followUp.findMany({
+        select: { revision: true },
+        where: { key: exam.id, kind: "researchGoal" },
+      });
+
+    await answer("CA");
+    const canadian = await examBlueprintFixture({ country: "CA" });
+    await prisma.goal.update({ data: { examBlueprintId: canadian.id }, where: { id: exam.id } });
+
+    await answer("CA");
+    await expect(research()).resolves.toStrictEqual([{ revision: 0 }]);
+
+    await answer("AU");
+    await answer("AU");
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: exam.id } })).resolves.toMatchObject({
+      contentCountry: "AU",
+      examBlueprintId: null,
+    });
+
+    await expect(research()).resolves.toStrictEqual([{ revision: 1 }]);
+  });
+
+  it("keeps an exam that fits any country when the country changes", async () => {
+    const user = await userFixture();
+    const international = await examBlueprintFixture({ country: "ZZ" });
+
+    const exam = await goalFixture({
+      contentCountry: "CA",
+      details: { answered: ["contentCountry"], countryDependent: true },
+      examBlueprintId: international.id,
+      kind: "exam",
+      planRevealedAt: null,
+      userId: user.id,
+    });
+
+    await saveAnswerInputs({ goal: exam, input: { country: "AU", question: "contentCountry" } });
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: exam.id } })).resolves.toMatchObject({
+      contentCountry: "AU",
+      examBlueprintId: international.id,
+    });
+
+    await expect(
+      prisma.followUp.count({ where: { key: exam.id, kind: "researchGoal" } }),
+    ).resolves.toBe(0);
   });
 
   it("owes one rebuild when another tab or the goal's settings change the country the first build read", async () => {
@@ -214,5 +303,79 @@ describe("content country question", () => {
       contentCountry: null,
       countryDependent: true,
     });
+  });
+
+  it("never promotes the home country to an exam's: only the reading's or the learner's pick", async () => {
+    const user = await userFixture();
+    await learningProfileFixture({ homeCountry: "PT", userId: user.id });
+    const title = "Get a private pilot licence";
+
+    const card = await onboardingDraftFixture({
+      understanding: {
+        goals: [{ countryDependent: true, draft: { kind: "exam", title } }],
+        status: "goals",
+      },
+      userId: user.id,
+    });
+
+    const draft: GoalDraft = {
+      details: { onboardingId: card.id },
+      kind: "exam",
+      language: "en",
+      prompt: title,
+      title,
+    };
+
+    const resolve = (input: GoalDraft) =>
+      prisma.$transaction((tx) => resolveNewGoalCountry({ draft: input, tx, userId: user.id }));
+
+    await expect(resolve(draft)).resolves.toStrictEqual({
+      contentCountry: null,
+      countryDependent: true,
+      source: "default",
+    });
+
+    await expect(resolve({ ...draft, contentCountry: "CA" })).resolves.toStrictEqual({
+      contentCountry: "CA",
+      countryDependent: true,
+      source: "picked",
+    });
+
+    await prisma.onboardingDraft.update({
+      data: {
+        understanding: {
+          goals: [
+            {
+              contentCountry: { code: "CA", source: "said" },
+              countryDependent: true,
+              draft: { contentCountry: "CA", kind: "exam", title },
+            },
+          ],
+          status: "goals",
+        },
+      },
+      where: { id: card.id },
+    });
+
+    await expect(resolve(draft)).resolves.toStrictEqual({
+      contentCountry: "CA",
+      countryDependent: true,
+      source: "said",
+    });
+  });
+
+  it("asks an unplaced country-dependent exam for its country once, and never one the learner gave", () => {
+    const exam = { kind: "exam" as const, targetDate: null };
+
+    expect(getMissingQuestions({ ...exam, details: { countryDependent: true } })[0]).toBe(
+      "contentCountry",
+    );
+
+    expect(
+      getMissingQuestions({
+        ...exam,
+        details: { answered: ["contentCountry"], countryDependent: true },
+      }),
+    ).not.toContain("contentCountry");
   });
 });

@@ -38,6 +38,11 @@ const ICON_TONE = {
 type StatTone = keyof typeof ICON_TONE;
 
 export type StatChange = {
+  /**
+   * `points` compares two percentages by their difference ("3 pts"): a share's own percent change
+   * reads as a different, larger number.
+   */
+  by?: "percent" | "points";
   current: number;
   /** What a fall means. Left out, it has no color. */
   fall?: ChangeMeaning;
@@ -63,39 +68,61 @@ function changeTone({ current, fall, previous, rise }: StatChange): string {
   return meaning ? MEANING_CLASS[meaning] : "text-muted-foreground";
 }
 
-function StatChangeLine({ change }: { change: StatChange }) {
-  const { current, format, previous } = change;
+function formatChangeAmount({ by = "percent", current, previous }: StatChange): string | null {
+  const difference = Math.abs(current - previous);
+
+  if (by === "points") {
+    const points = difference.toLocaleString("en", { maximumFractionDigits: 1 });
+    return `${points} ${points === "1" ? "pt" : "pts"}`;
+  }
+
+  return previous > 0
+    ? `${Math.round((difference / previous) * PERCENT).toLocaleString("en")}%`
+    : null;
+}
+
+/** How far a number moved and which way, colored by what the move means. */
+export function StatChangeAmount({ change }: { change: StatChange }) {
+  const { current, previous } = change;
 
   if (current === previous) {
     return (
-      <StatDetail className="flex items-center gap-1">
+      <span className="text-muted-foreground flex items-center gap-1">
         <MinusIcon aria-hidden="true" className="size-3" />
-        Same as before
-      </StatDetail>
+        Same
+      </span>
     );
   }
 
   const isUp = current > previous;
   const Icon = isUp ? TrendingUpIcon : TrendingDownIcon;
   const direction = isUp ? "Up" : "Down";
-
-  const percent =
-    previous > 0 ? Math.round((Math.abs(current - previous) / previous) * PERCENT) : null;
+  const amount = formatChangeAmount(change);
 
   return (
+    <span className={cn("flex items-center gap-1 font-medium", changeTone(change))}>
+      <Icon aria-hidden="true" className="size-3" />
+      {amount === null ? (
+        direction
+      ) : (
+        <>
+          <span className="sr-only">{direction}</span>
+          {amount}
+        </>
+      )}
+    </span>
+  );
+}
+
+function StatChangeLine({ change }: { change: StatChange }) {
+  return (
     <StatDetail className="flex items-center gap-1">
-      <span className={cn("flex items-center gap-1 font-medium", changeTone(change))}>
-        <Icon aria-hidden="true" className="size-3" />
-        {percent === null ? (
-          direction
-        ) : (
-          <>
-            <span className="sr-only">{direction}</span>
-            {percent.toLocaleString("en")}%
-          </>
-        )}
+      <StatChangeAmount change={change} />
+      <span className="truncate">
+        {change.current === change.previous
+          ? "as before"
+          : `from ${change.format(change.previous)}`}
       </span>
-      <span className="truncate">from {format(previous)}</span>
     </StatDetail>
   );
 }

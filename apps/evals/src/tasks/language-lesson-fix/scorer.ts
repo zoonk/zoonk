@@ -15,7 +15,7 @@ function countChangedItems(before: LanguageLessonContent, after: LanguageLessonC
     before[list].map((item, index) => !isDeepStrictEqual(item, after[list][index])),
   );
 
-  const parts = (["tip", "writing", "summary"] as const).map(
+  const parts = (["tip", "patternTable", "dialogue", "writing", "summary"] as const).map(
     (part) => !isDeepStrictEqual(before[part], after[part]),
   );
 

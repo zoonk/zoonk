@@ -34,9 +34,6 @@ export const essayViewResponseSchema = z
       ),
     pacing: writingPacingSchema,
     question: z.string(),
-    rubric: z
-      .enum(["enem", "oab", "points", "levels"])
-      .meta({ description: "The scoring rubric recorded with the writing prompt" }),
     sessionId: uuidSchema(),
     status: z.enum(StudyBlockStatus),
     writing: writingPromptSchema,

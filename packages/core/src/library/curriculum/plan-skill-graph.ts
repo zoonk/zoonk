@@ -40,6 +40,7 @@ function toGraphSkills({
     area: skill.area ?? "",
     course: courseId,
     description: row?.description ?? skill.name,
+    ...(skill.domain && { domain: skill.domain }),
     estimatedLessons: skill.lessons,
     examWeight: skill.weight,
     key: index === 0 ? skill.skillId : `${skill.skillId}:${courseId}`,
@@ -49,6 +50,7 @@ function toGraphSkills({
     ...(skill.outlined ? { outlined: true } : {}),
     phase: skill.phase + 1,
     prerequisites: prerequisites.get(skill.skillId) ?? [],
+    ...(skill.subject && { subject: skill.subject }),
     topics: skill.topics ?? [],
     ...(skill.topics ? {} : { topicsUnknown: true }),
   }));

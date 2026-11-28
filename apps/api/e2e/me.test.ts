@@ -188,6 +188,10 @@ test.describe("Current User API", () => {
       ),
     ]);
 
+    // The taken username's refusal sets Better Auth's session cache cookie, which a native client
+    // never sends back (its requests keep no cookies).
+    await apiContext.clearCookies();
+
     await expect(prisma.user.findUniqueOrThrow({ where: { id: userId } })).resolves.toMatchObject({
       name,
       username,
@@ -306,17 +310,12 @@ test.describe("Current User API", () => {
       prisma.user.update({ data: { emailVerified: true }, where: { id: userId } }),
     ]);
 
-    // The refusal sets Better Auth's session cache cookie, which a native client never sends back
-    // (its requests keep no cookies), so it comes from a request context of its own.
-    const staleContext = await request.newContext({
-      baseURL,
-      extraHTTPHeaders: { Authorization: `Bearer ${token}` },
-    });
-
-    const stale = await staleContext.delete("/v1/me", { data: {} });
+    const stale = await apiContext.delete("/v1/me", { data: {} });
 
     await expectApiError({ code: "FORBIDDEN", response: stale, status: 403 });
-    await staleContext.dispose();
+    // The refusal sets Better Auth's session cache cookie, which a native client never sends back
+    // (its requests keep no cookies).
+    await apiContext.clearCookies();
     await expect(prisma.user.findUnique({ where: { id: userId } })).resolves.not.toBeNull();
 
     const otpResponse = await apiContext.post("/v1/email-sign-in-codes", { data: { email } });

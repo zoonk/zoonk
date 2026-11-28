@@ -68,7 +68,7 @@ class MockEssayGradingTest {
         }, writingWaits = writingWaits(WritingRuns()), clock = clock)
     }
 
-    private fun essays(vararg essays: String) = finishedMock(extra = """"essayRubric":"enem","essays":[${essays.joinToString(",")}]""")
+    private fun essays(vararg essays: String) = finishedMock(extra = """"essays":[${essays.joinToString(",")}]""")
 
     private val MockRunnerViewModel.essayStatuses get() =
         state.value.view.essays

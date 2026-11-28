@@ -1,7 +1,6 @@
 package com.zoonk.android.feature.writing
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -35,6 +34,7 @@ import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonkType
 import java.util.Locale
+import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.pow
@@ -47,10 +47,7 @@ fun pointsRange(
     decimals: Int,
     headline: Boolean = false,
 ): String {
-    val locale = currentLocale()
-    // A zeroed score is "0", never "0.0" or "0–0".
-    if (low == 0.0 && high == 0.0) return formatNumber(0.0, locale)
-    val (from, to) = rangeEnds(low, high, decimals, locale, headline)
+    val (from, to) = rangeEnds(low, high, decimals, currentLocale(), headline)
     return if (from == to) from else stringResource(R.string.essay_range, from, to)
 }
 
@@ -80,7 +77,10 @@ internal fun rangeEnds(
     locale: Locale,
     headline: Boolean,
 ): Pair<String, String> {
-    if (!headline) return formatPoints(low, locale, decimals) to formatPoints(high, locale, decimals)
+    // One grade isn't a range: the number format rounds it as it rounds the parts beside it, so 48.01 reads "48".
+    if (!headline || abs(high - low) < FLOAT_SLACK) {
+        return formatPoints(low, locale, decimals) to formatPoints(high, locale, decimals)
+    }
     val step = 10.0.pow(decimals)
     // 0.3 × 10 is 3.0000000000000004 in floating point, which must still round to 3; zero stays zero, never "−0".
     val shownLow = floor(low * step + FLOAT_SLACK) / step + 0.0
@@ -88,7 +88,10 @@ internal fun rangeEnds(
     return formatPoints(shownLow, locale, decimals) to formatPoints(shownHigh, locale, decimals)
 }
 
-/** A score on its scale with exactly its [decimals]; a fixed amount, such as a question's worth, as it is. */
+/**
+ * A score on its scale with exactly its [decimals]; a fixed amount, such as a maximum or a question's worth, as it is,
+ * never padded to a mark's decimals: "14.7 of 22", never "14.7 of 22.0".
+ */
 fun formatPoints(
     value: Double,
     locale: Locale,
@@ -134,7 +137,7 @@ fun PointsReadout(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     val range = pointsRange(low, high, decimals, headline = true)
-    val ofMax = stringResource(R.string.essay_of_max, formatPoints(max, currentLocale(), decimals))
+    val ofMax = stringResource(R.string.essay_of_max, formatPoints(max, currentLocale()))
     Text(
         buildAnnotatedString {
             append(range)
@@ -148,8 +151,8 @@ fun PointsReadout(
 
 /**
  * The range on its scale: what it surely reaches solid, what it may reach lighter, and the rest as
- * track; [minimumShare] stands over it as a tick. With no [low] and [high] it's a dashed outline, so an
- * unmeasured part never reads as zero.
+ * track; [minimumShare] stands over it as a tick. With nothing measured there is nothing to draw, so the
+ * words beside it say so.
  */
 @Composable
 fun RangeMeter(
@@ -159,15 +162,7 @@ fun RangeMeter(
     modifier: Modifier = Modifier,
     minimumShare: Double? = null,
 ) {
-    if (low == null || high == null || max <= 0) {
-        Box(
-            modifier
-                .fillMaxWidth()
-                .height(METER_HEIGHT)
-                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(METER_HEIGHT)),
-        )
-        return
-    }
+    if (low == null || high == null || max <= 0) return
     val green = MaterialTheme.colorScheme.tertiary
     val surely = (low / max).toFloat().coerceIn(0f, 1f)
     val maybe = (high / max).toFloat().coerceIn(surely, 1f)
@@ -226,7 +221,7 @@ fun PointsValue(
                 stringResource(
                     R.string.essay_points_of,
                     pointsRange(low, high, decimals, headline),
-                    formatPoints(max, currentLocale(), decimals),
+                    formatPoints(max, currentLocale()),
                 )
             }
 
@@ -248,7 +243,6 @@ private const val MAX_FIXED_DECIMALS = 2
 private const val DEDUCTION_DECIMALS = 1
 private const val PERCENT = 100.0
 private const val FLOAT_SLACK = 1e-9
-private val METER_HEIGHT = 6.dp
 private val TICK_HEIGHT = 14.dp
 private val TICK_WIDTH = 2.dp
 private const val MAYBE_ALPHA = 0.4f

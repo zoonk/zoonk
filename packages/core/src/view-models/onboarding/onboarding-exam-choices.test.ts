@@ -85,6 +85,7 @@ describe("onboarding an exam with a choice", () => {
           { name: ENGLISH, shortName: "Inglês" },
           { name: SPANISH, shortName: "Espanhol" },
         ],
+        required: false,
         subjects: [],
         take: 1,
       },

@@ -126,7 +126,12 @@ export function PhaseDetails({ links, phase }: { links: JourneyPathLinks; phase:
 
       <DrawerContent className="pt-2">
         {listsChapters ? (
-          <JourneyChapters chapters={phase.chapters} checkpoint={phase.checkpoint} links={links} />
+          <JourneyChapters
+            chapters={phase.chapters}
+            checkpoint={phase.checkpoint}
+            leftOut={phase.leftOut}
+            links={links}
+          />
         ) : (
           <ExamPhaseEvents links={links} phase={phase} />
         )}

@@ -29,6 +29,14 @@ export type TranscriptionModelId = (typeof TRANSCRIPTION_MODELS)[number];
  */
 const defaultModel: TranscriptionModelId = "openai/gpt-transcribe";
 
+/**
+ * Says whether anyone spoke when the default model's transcript has none of the expected words; its
+ * text is never graded, since it often writes another script. On synthetic clips (27 Nov 2026) both
+ * wrote "" for all 27 silent, noisy or coughing WebM and AAC clips, but gpt-transcribe also wrote ""
+ * for real one-syllable words ("vin" 5 of 5, "pão" 4 of 5, "un" 2 of 2) that this model always heard.
+ */
+export const NO_SPEECH_CHECK_MODEL: TranscriptionModelId = "google/gemini-3.5-transcribe";
+
 /** Never includes the expected answer, which would bias the model toward "hearing" it. */
 const TRANSCRIPTION_PROMPT =
   "A language learner is practicing. Write exactly the words you hear, including mispronounced words, wrong grammar and wrong words. Never correct them.";

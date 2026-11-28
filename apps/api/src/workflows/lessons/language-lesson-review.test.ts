@@ -5,12 +5,17 @@ import {
   generateLanguageLesson,
 } from "@zoonk/ai/tasks/language/language-lesson";
 import { checkLanguageLesson } from "@zoonk/ai/tasks/language/language-lesson-check";
+import { generateLessonSpec } from "@zoonk/ai/tasks/lesson-spec";
 import { prisma } from "@zoonk/db";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { languageLessonDraft } from "../../../../../packages/core/src/library/language/_test-utils/language-lesson-draft";
+import {
+  languageDialogue,
+  languageLessonDraft,
+  languagePatternTable,
+} from "../../../../../packages/core/src/library/language/_test-utils/language-lesson-draft";
 import { taskResult } from "../_test-utils/recorded-outputs";
 import { lessonContentWorkflow } from "./lesson-content-workflow";
 
@@ -23,6 +28,9 @@ const SECOND_CARD = 1;
 const FIRST_WORD_CHOICE = 5;
 
 const DRAFT = languageLessonDraft();
+
+const OUTLINE_CAN_DO = "Perguntar quanto é o aluguel";
+const OUTLINE_MINUTES = 3;
 
 function review(issues: { problem: string; screen: number | null }[]) {
   return taskResult(
@@ -48,6 +56,7 @@ function withDistractors(lesson: LanguageLessonContent, index: number, distracto
 
 async function writeLanguageLesson(
   drafts: Awaited<ReturnType<typeof generateLanguageLesson>>[] = [],
+  { specStatus = "completed" }: { specStatus?: "completed" | "pending" } = {},
 ) {
   await aiOrganizationFixture();
 
@@ -58,9 +67,11 @@ async function writeLanguageLesson(
   });
 
   const lesson = await libraryLessonFixture({
+    canDo: OUTLINE_CAN_DO,
+    estimatedMinutes: OUTLINE_MINUTES,
     homeChapterId: chapter.id,
     language: "pt",
-    specStatus: "completed",
+    specStatus,
     targetLanguage: "en",
   });
 
@@ -118,6 +129,77 @@ describe("a language lesson's review", () => {
     );
 
     expect(fixLanguageLesson).not.toHaveBeenCalled();
+  });
+
+  it("writes a lesson nobody planned without planning it, keeping its outline's details", async () => {
+    vi.mocked(checkLanguageLesson).mockResolvedValue(review([]));
+
+    const { lessonId, result } = await writeLanguageLesson([], { specStatus: "pending" });
+
+    expect(result).toStrictEqual({ lessonId, status: "ready" });
+    expect(generateLessonSpec).not.toHaveBeenCalled();
+
+    await expect(
+      prisma.lesson.findUniqueOrThrow({
+        select: { canDo: true, estimatedMinutes: true, spec: true, specStatus: true },
+        where: { id: lessonId },
+      }),
+    ).resolves.toStrictEqual({
+      canDo: OUTLINE_CAN_DO,
+      estimatedMinutes: OUTLINE_MINUTES,
+      spec: null,
+      specStatus: "completed",
+    });
+  });
+
+  it("publishes the dialogue and pattern table the writer wrote, reviewed with the other screens", async () => {
+    vi.mocked(checkLanguageLesson).mockResolvedValue(review([]));
+
+    const { lessonId } = await writeLanguageLesson([
+      taskResult(
+        { ...DRAFT, dialogue: languageDialogue(), patternTable: languagePatternTable() },
+        "openai/gpt-6.1-terra",
+      ),
+    ]);
+
+    const activities = await prisma.step.findMany({
+      orderBy: { position: "asc" },
+      select: { content: true },
+      where: { kind: "activity", lessonId },
+    });
+
+    expect(activities.map((step) => step.content)).toMatchObject([
+      { template: "patternTable" },
+      { template: "dialogueSimulator" },
+    ]);
+
+    expect(checkLanguageLesson).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        screens: expect.arrayContaining([
+          { content: expect.objectContaining({ template: "dialogueSimulator" }), kind: "activity" },
+        ]),
+      }),
+    );
+  });
+
+  it("publishes the lesson without a dialogue it can't grade, and records why", async () => {
+    vi.mocked(checkLanguageLesson).mockResolvedValue(review([]));
+    const dialogue = languageDialogue();
+    const replies = dialogue.replies.map((reply) => ({ ...reply, isBest: true }));
+
+    const { lessonId, result } = await writeLanguageLesson([
+      taskResult({ ...DRAFT, dialogue: { ...dialogue, replies } }, "openai/gpt-6.1-terra"),
+    ]);
+
+    expect(result).toStrictEqual({ lessonId, status: "ready" });
+    await expect(prisma.step.count({ where: { kind: "activity", lessonId } })).resolves.toBe(0);
+
+    await expect(
+      prisma.lessonQualityDecision.findFirst({ where: { lessonId, phase: "codeCheck" } }),
+    ).resolves.toMatchObject({
+      minor: [expect.objectContaining({ code: "droppedActivity", screen: null })],
+      outcome: "passed",
+    });
   });
 
   it("publishes the lesson as written when its writer finds the problem isn't real", async () => {

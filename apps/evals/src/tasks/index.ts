@@ -33,6 +33,7 @@ import { extractExamBlueprintTask } from "./extract-exam-blueprint/task";
 import { extractQuestionFormatsTask } from "./extract-question-formats/task";
 import { findChoiceOptionsTask } from "./find-choice-options/task";
 import { findCourseWeightsTask } from "./find-course-weights/task";
+import { findDomainSharesTask } from "./find-domain-shares/task";
 import { findExamDateTask } from "./find-exam-date/task";
 import { findOfficialSourcesTask } from "./find-official-sources/task";
 import { findProductPagesTask } from "./find-product-pages/task";
@@ -70,6 +71,7 @@ import { levelTestConfirmationsTask } from "./level-test-confirmations/task";
 import { libraryIdentityDecisionTask } from "./library-identity-decision/task";
 import { librarySearchTermsTask } from "./library-search-terms/task";
 import { liveConversationTask } from "./live-conversation/task";
+import { memberCoverageTask } from "./member-coverage/task";
 import { memoryExtractionTask } from "./memory-extraction/task";
 import { memoryGateTask } from "./memory-gate/task";
 import { memoryInsightTask } from "./memory-insight/task";
@@ -87,6 +89,7 @@ import { planRoutineFitTask } from "./plan-routine-fit/task";
 import { questionGeneralityTask } from "./question-generality/task";
 import { quickExplanationTask } from "./quick-explanation/task";
 import { readProductPagesTask } from "./read-product-pages/task";
+import { readWrittenGradingTask } from "./read-written-grading/task";
 import { researchPlanTask } from "./research-plan/task";
 import { setupLessonOutlineTask } from "./setup-lesson-outline/task";
 import { skillGraphTask } from "./skill-graph/task";
@@ -126,6 +129,7 @@ export const TASK_GROUPS: readonly { name: string; tasks: readonly RegisteredTas
       skillGraphTask,
       skillLevelsTask,
       coverageCheckTask,
+      memberCoverageTask,
       topicSkillNamesTask,
       planEditIntentTask,
       planRoutineFitTask,
@@ -152,6 +156,8 @@ export const TASK_GROUPS: readonly { name: string; tasks: readonly RegisteredTas
       extractExamBlueprintTask,
       extractQuestionFormatsTask,
       findWrittenTaskSubjectsTask,
+      findDomainSharesTask,
+      readWrittenGradingTask,
       checkCitedFactsTask,
       checkExamReadingTask,
       examIdentityDecisionTask,

@@ -2,7 +2,7 @@ import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { io } from "next/cache";
-import { hasUnpickedChoice } from "../../exams/choices/load-exam-choices";
+import { loadUnpickedChoices } from "../../exams/choices/load-exam-choices";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { findLearningProfileView } from "../../profile/_utils/learning-profile-view";
 import { type LearningProfileView } from "../../profile/learning-profile-contract";
@@ -55,8 +55,8 @@ async function isInOnboarding({
 
   const steps = getOnboardingSteps({
     goal: {
+      ...(await loadUnpickedChoices(goal)),
       details: readDetails(goal),
-      hasUnpickedChoice: await hasUnpickedChoice(goal),
       kind: goal.kind,
       planRevealed: goal.planRevealedAt !== null,
       replacesGoalId: goal.replacesGoalId,

@@ -25,6 +25,20 @@ const exam = (
 
 export const TEST_CASES: TestCase<ExamIdentityExpected, ExamIdentityInput>[] = [
   pair(
+    "faa-certificate-named-by-a-canadian",
+    "en",
+    exam("FAA Private Pilot Certificate", "CA"),
+    exam("Private Pilot Licence", "CA", "Transport Canada"),
+    false,
+  ),
+  pair(
+    "sat-sitting-place-is-no-country",
+    "en",
+    exam("SAT", null),
+    exam("SAT", "US", "College Board"),
+    true,
+  ),
+  pair(
     "enem-full-name",
     "pt",
     exam("Exame Nacional do Ensino Médio", "BR", "INEP"),
@@ -33,13 +47,6 @@ export const TEST_CASES: TestCase<ExamIdentityExpected, ExamIdentityInput>[] = [
   ),
   pair("enem-with-year", "pt", exam("ENEM 2027", "BR"), exam("ENEM", "BR", "INEP"), true),
   pair("enem-unknown-country", "pt", exam("ENEM", null), exam("ENEM", "BR", "INEP"), true),
-  pair(
-    "bar-exam-unknown-country",
-    "en",
-    exam("Bar exam", null),
-    exam("Uniform Bar Examination", "US", "NCBE"),
-    false,
-  ),
   pair(
     "tcdf-same-role",
     "pt",

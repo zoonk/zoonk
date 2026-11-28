@@ -1,76 +1,90 @@
-import { createHash } from "node:crypto";
-import { normalizeString } from "@zoonk/utils/string";
 import { writtenGradingSchema } from "../../../library/exams/written-grading";
 import { type listWrittenTasks } from "../../../library/exams/written-tasks";
 
 type Basis = Pick<ReturnType<typeof listWrittenTasks>[number], "grading" | "lines" | "points">;
+type ZeroRule = { kinds?: readonly string[] | null; maxLines?: number | null };
 
-const DECIMAL_PLACES =
-  /\b(?<places>\d+|one|two|three|four|zero|uma|duas|tres|quatro)\s+(?:decimal(?:s| places?)?|places?|casas? decimais?)\b/u;
+const LINE_COUNTED_ZEROS = new Set(["copiedSupport", "tooFewLines"]);
 
-const PLACE_WORDS: Readonly<Record<string, number>> = {
-  duas: 2,
-  four: 4,
-  one: 1,
-  quatro: 4,
-  three: 3,
-  tres: 3,
-  two: 2,
-  uma: 1,
-  zero: 0,
-};
+/**
+ * The answers a sheet zeroes, whichever way its notice was read into rules: one rule naming two
+ * triggers zeroes what two rules naming one each do. A line limit belongs only to triggers counted
+ * in lines.
+ */
+function groupZeroTriggers(zeroing: readonly ZeroRule[]) {
+  const triggers = zeroing.flatMap(({ kinds, maxLines }) =>
+    (kinds ?? []).map((kind) => ({
+      kind,
+      maxLines: LINE_COUNTED_ZEROS.has(kind) ? (maxLines ?? null) : null,
+    })),
+  );
 
-export function getWritingRounding(rule: Basis["grading"]["rounding"]) {
-  if (!rule) {
-    return null;
-  }
-
-  const words = normalizeString(rule.citation.passage || rule.text);
-
-  if (/\b(?:no rounding|without rounding|sem arredondamento)\b/u.test(words)) {
-    return { mode: "none" as const };
-  }
-
-  const place = DECIMAL_PLACES.exec(words)?.groups?.places;
-  const places = place === undefined ? Number.NaN : (PLACE_WORDS[place] ?? Number(place));
-
-  if (!Number.isSafeInteger(places) || places < 0) {
-    return "unknown" as const;
-  }
-
-  if (/\b(?:truncate|truncamento|truncar|round down|arredondamento para baixo)\b/u.test(words)) {
-    return { mode: "down" as const, places };
-  }
-
-  return /\b(?:round|rounded|arredondamento|arredondar|arredondada|arredondado)\b/u.test(words)
-    ? { mode: "nearest" as const, places }
-    : ("unknown" as const);
+  return [...Map.groupBy(triggers, ({ maxLines }) => maxLines)]
+    .map(([maxLines, own]) => ({
+      kinds: [...new Set(own.map(({ kind }) => kind))].toSorted(),
+      maxLines,
+    }))
+    .toSorted((first, second) => (first.maxLines ?? 0) - (second.maxLines ?? 0));
 }
 
-function getWritingGradingFacts({ criteria, kind, language, rounding, zeroing }: Basis["grading"]) {
+function readsAsNumbers(rounding: Basis["grading"]["rounding"]) {
+  return rounding && { mode: rounding.mode, stage: rounding.stage, step: rounding.step };
+}
+
+/**
+ * A mean's weights for the criteria no award scale already states, as [id, points, weight], so
+ * two criteria swapping weights change it: absent while every one weighs 1, as an unweighted
+ * mean does.
+ */
+function meanWeights({ combination, criteria }: Basis["grading"]) {
+  const weights =
+    combination?.method === "mean"
+      ? criteria.flatMap(({ awards, id, points, weight }) =>
+          awards ? [] : [{ id, points, weight: weight ?? 1 }],
+        )
+      : [];
+
+  return weights.some(({ weight }) => weight !== 1)
+    ? weights
+        .toSorted((first, second) => first.id.localeCompare(second.id))
+        .map(({ id, points, weight }) => [id, points, weight])
+    : null;
+}
+
+/**
+ * The facts that change a mark. Fields a sheet states only when it has them are left out when
+ * absent, so a sheet without them keeps the basis it was issued with.
+ */
+function getWritingGradingFacts(grading: Basis["grading"]) {
+  const { combination, criteria, language, limits, rounding, totalSuppressed, zeroing } = grading;
+
+  const scales = criteria.flatMap(({ awards, id, weight }) =>
+    awards ? [{ awards, id, weight }] : [],
+  );
+
+  const weights = meanWeights(grading);
+
   return {
     criteria: criteria.map(({ points }) => points).toSorted((a, b) => (a ?? -1) - (b ?? -1)),
-    kind,
     language: language && {
       factor: language.factor,
       formula: language.formula?.replaceAll(/\s+/gu, ""),
       method: language.method,
     },
-    rounding: getWritingRounding(rounding),
-    zeroing: zeroing.map(({ kinds, maxLines }) => ({
-      kinds: [...(kinds ?? [])].toSorted(),
-      maxLines: maxLines ?? null,
-    })),
+    rounding: readsAsNumbers(rounding),
+    zeroing: groupZeroTriggers(zeroing),
+    ...(combination && { combination: { method: combination.method, step: combination.step } }),
+    ...(limits?.length && { limits: limits.map(({ criteria: ids, max }) => ({ ids, max })) }),
+    ...(scales.length > 0 && {
+      scales: scales.map(({ awards, id, weight }) => ({
+        awards: awards.map(({ count, points, pointsHigh }) => [points, pointsHigh, count]),
+        id,
+        weight,
+      })),
+    }),
+    ...(totalSuppressed && { totalSuppressed }),
+    ...(weights && { weights }),
   };
-}
-
-export function getWritingRubricFingerprint({
-  grading,
-  points,
-}: Pick<Basis, "grading" | "points">): string {
-  return createHash("sha256")
-    .update(JSON.stringify({ ...getWritingGradingFacts(grading), points }))
-    .digest("hex");
 }
 
 export function getWritingTaskBasis({ grading, lines, points }: Basis): string {
@@ -83,6 +97,41 @@ function readTaskBasis(saved: string): unknown {
   } catch {
     return null;
   }
+}
+
+function hasPointedCriterion(facts: object): boolean {
+  return (
+    "criteria" in facts &&
+    Array.isArray(facts.criteria) &&
+    facts.criteria.some((points: unknown) => typeof points === "number")
+  );
+}
+
+/**
+ * A basis issued while sheets carried a `kind` reads as the same sheet without it. Its rounding
+ * was guessed from the rule's wording, in a shape no sheet has now, so it takes the task's.
+ */
+function withoutStoredKind(saved: string, rounding: unknown): string | null {
+  const value = readTaskBasis(saved);
+
+  if (!Array.isArray(value)) {
+    return null;
+  }
+
+  const [lines, points, grading] = value as unknown[];
+
+  if (typeof grading !== "object" || grading === null || !("kind" in grading)) {
+    return null;
+  }
+
+  const { kind, ...facts } = grading;
+  const suppressed = kind === "levels" && hasPointedCriterion(facts);
+
+  return JSON.stringify([
+    lines,
+    points,
+    { ...facts, rounding, ...(suppressed && { totalSuppressed: true }) },
+  ]);
 }
 
 function legacyTaskBasis(saved: string): string | null {
@@ -127,6 +176,56 @@ function withCitation(value: unknown) {
     : value;
 }
 
+function isZeroRule(rule: unknown): rule is ZeroRule {
+  return typeof rule === "object" && rule !== null;
+}
+
+/** A stored basis with its zero rules grouped as a new reading groups them. */
+function withGroupedZeroTriggers(saved: string | null): string | null {
+  const value = saved === null ? null : readTaskBasis(saved);
+
+  if (!Array.isArray(value)) {
+    return saved;
+  }
+
+  const [lines, points, grading] = value as unknown[];
+
+  if (
+    typeof grading !== "object" ||
+    grading === null ||
+    !("zeroing" in grading) ||
+    !Array.isArray(grading.zeroing) ||
+    !grading.zeroing.every((rule) => isZeroRule(rule))
+  ) {
+    return saved;
+  }
+
+  return JSON.stringify([
+    lines,
+    points,
+    { ...grading, zeroing: groupZeroTriggers(grading.zeroing) },
+  ]);
+}
+
+/**
+ * A basis stored before a mean's weights were part of it, with the weights of the sheet its
+ * prompt was issued with.
+ */
+function withIssuedWeights(saved: string | null, grading: Basis["grading"]): string | null {
+  const value = saved === null ? null : readTaskBasis(saved);
+  const weights = meanWeights(grading);
+
+  if (!weights || !Array.isArray(value)) {
+    return saved;
+  }
+
+  const [lines, points, facts] = value as unknown[];
+
+  return typeof facts === "object" && facts !== null && !("weights" in facts)
+    ? JSON.stringify([lines, points, { ...facts, weights }])
+    : saved;
+}
+
 export function matchesWritingTaskBasis({
   prompt,
   task,
@@ -140,5 +239,32 @@ export function matchesWritingTaskBasis({
     return getWritingTaskBasis(prompt) === taskBasis;
   }
 
-  return prompt.taskBasis === taskBasis || legacyTaskBasis(prompt.taskBasis) === taskBasis;
+  const rounding = readsAsNumbers(task.grading.rounding);
+
+  return [
+    prompt.taskBasis,
+    withoutStoredKind(prompt.taskBasis, rounding),
+    legacyTaskBasis(prompt.taskBasis),
+  ]
+    .map((saved) => withIssuedWeights(withGroupedZeroTriggers(saved), prompt.grading))
+    .includes(taskBasis);
+}
+
+/**
+ * Whether a saved answer still answers this task: a whole answer to it, marked by the rules the
+ * task has now. A correction that changes how the task is marked leaves earlier answers out of
+ * its estimate and out of a mock's verdict alike.
+ */
+export function answersWritingTask({
+  prompt,
+  task,
+}: {
+  prompt: Basis & { taskBasis?: string; taskKey: string; unit: string };
+  task: Basis & { key: string };
+}): boolean {
+  return (
+    prompt.taskKey === task.key &&
+    prompt.unit === "answer" &&
+    matchesWritingTaskBasis({ prompt, task })
+  );
 }

@@ -30,6 +30,8 @@ export type LearnerSummaryGoal = GoalCountryFields & {
   /** The level of the goal's next lesson in that course, so its page opens there; null with no course. */
   courseLevel: CourseLevel | null;
   dailyMinutes: number;
+  /** Calendar days until the target date in the goal's time zone. Zero on the date, null once past or without a date. */
+  daysLeft: number | null;
   id: string;
   isActive: boolean;
   /** Questions are left before its plan is set, so continuing it opens its setup instead of Today. */

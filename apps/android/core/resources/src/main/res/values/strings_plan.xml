@@ -92,6 +92,11 @@
         <item quantity="other">%1$d of %2$d lessons done</item>
     </plurals>
     <string name="plan_not_in_your_plan">Not in your plan</string>
+    <!-- Under a module or a phase of the learner's plan, and on the row that lists them: how many of its topics the plan leaves out because they don't fit before the plan's date. -->
+    <plurals name="plan_left_out_topics">
+        <item quantity="one">%d topic not in your plan</item>
+        <item quantity="other">%d topics not in your plan</item>
+    </plurals>
     <plurals name="plan_lessons_not_studied">
         <item quantity="one">%d lesson not studied</item>
         <item quantity="other">%d lessons not studied</item>
@@ -786,7 +791,8 @@
     <string name="plan_change_areas_from_basics">%1$s start from the basics.</string>
     <string name="plan_change_exam_date">Exam date: %1$s.</string>
     <string name="plan_change_end_date">End date: %1$s.</string>
-    <string name="plan_ask_add_topics">Add %1$s to your plan?</string>
+    <!-- Asks whether to add topics to the learner's plan. {topics} lists their names, which are often actions themselves, such as “Memorize An-Nahl”, so they stay after the colon rather than inside the sentence. -->
+    <string name="plan_ask_add_topics">Add to your plan: %1$s?</string>
     <string name="plan_ask_focus">Focus on %1$s?</string>
     <string name="plan_ask_remove_focus">Remove your focus?</string>
     <string name="plan_ask_less_time">Less time for %1$s?</string>
@@ -849,14 +855,15 @@
     <string name="plan_call_not_in_plan">The call isn\'t in your plan</string>
     <string name="plan_outside_past_basics">Skipped · you already know the basics</string>
     <string name="plan_outside_skipped_base">Skipped · your choice</string>
-    <string name="plan_written_below_minimum">Below the minimum to pass</string>
+    <string name="plan_written_below_minimum">Likely below the minimum to pass</string>
     <string name="plan_written_asks_for">%1$s needs %2$s points, whatever your other scores.</string>
     <string name="plan_written_asks_for_share">%1$s needs %2$s of its points, whatever your other scores.</string>
     <string name="plan_written_not_measured">%1$s isn\'t measured yet.</string>
     <string name="plan_written_not_measured_half">%1$s, half your final score, isn\'t measured yet.</string>
     <string name="plan_written_not_measured_share">%1$s, %2$s of your final score, isn\'t measured yet.</string>
     <string name="plan_written_objective">Objective test</string>
-    <string name="plan_written_above_minimum">Above the %1$s points needed</string>
-    <string name="plan_written_points_below">%1$s points short of the %2$s needed</string>
-    <string name="plan_written_close_to_minimum">Close to the %1$s points needed</string>
+    <string name="plan_written_above_minimum">Likely above the %1$s points needed</string>
+    <string name="plan_written_likely_below">Likely below the %1$s points needed</string>
+    <string name="plan_written_close_to_minimum">Could be either side of the %1$s points needed</string>
+    <string name="plan_written_cant_say">Can\'t say yet whether this reaches the %1$s points needed</string>
 </resources>

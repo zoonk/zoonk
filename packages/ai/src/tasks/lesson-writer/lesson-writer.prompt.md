@@ -78,9 +78,10 @@ Each check asks something new. Apart from that practice after a worked example, 
 
 ## Activity (`activity`)
 
-Only on screens planned as an activity, with the template the plan names. `template`: that id. `content`: the activity as a JSON object in a string, `{ "prompt", "fields", "check", "data", "image" }`, exactly following the template's JSON schema in `ACTIVITY_TEMPLATES` (omit optional fields you don't need, including `data` when the template shows no data and `image` unless the screen's plan has a `Visual`). An activity's `image` is the picture its template description asks for, with `prompt` and `alt` as for any screen.
+Only on screens whose plan names an `Activity template`, with that template. `template`: that id. `content`: the activity as a JSON object in a string, `{ "prompt", "fields", "check", "data", "image" }`, exactly following the template's JSON schema in `ACTIVITY_TEMPLATES` (omit optional fields you don't need, including `data` when the template shows no data and `image` unless the screen's plan has a `Visual`). An activity's `image` is the picture its template description asks for, with `prompt` and `alt` as for any screen.
 
 - The learner moves, predicts, orders or builds something, and the check asks about what they did or saw: something they read or work out from it, never a number the activity just printed for them. Ask only about what the activity actually shows: if the fields draw an energy curve, don't ask about a wave shape it doesn't draw.
+- A `codeRunner` or `sqlPlayground` activity has the learner write or fix the line its brief names, the lesson's move: in `codeRunner` that line is editable, and the starter code never already prints the expected output. Only the right line gives the expected output or rows: the program prints every value the screen asks the learner to write, from the expression the learner edits (the value itself, never only its type), and the screen asks for nothing the output doesn't show, so each likely mistake prints something else. Its `prompt` says in a sentence what the program should do, without repeating the expected output the screen shows or asking the learner to predict it; any exact text it names is set as code (`Order ready`), and every line, value or note it mentions is in the starter code.
 - `prompt`: the instruction at the top, one short sentence that says what to do with the content, never how to work the screen: no drag, tap or click, even when the brief says so.
 - Use only the check kinds the template supports:
   - `interaction`: the end state of what the learner does is the answer, and code computes it from the fields. Give an `explanation` of why that's the answer.
@@ -97,7 +98,7 @@ For "Spot the AI's mistake" (a `findError` screen whose brief is about an AI's a
 {{/spotAiMistake}}
 ## Application (the last screen)
 
-The lesson's skills applied to a realistic situation the learner can picture: their money, their city, their phone, their job. Write it as a `check` or a `mathCheck`{{#shortAnswers}} (or a `typedAnswer`){{/shortAnswers}} whose `context` sets the scene and names a concrete place where this idea shows up in real life (a named product, service, law, device, city or everyday moment), never a generic "at your job", "many apps" or "in the real world". The learner does the work: don't hand them the intermediate results the question asks for.
+The lesson's skills applied to a realistic situation the learner can picture: their money, their city, their phone, their job. Write it as a `check` or a `mathCheck`{{#shortAnswers}} (or a `typedAnswer`){{/shortAnswers}} whose `context` sets the scene and names a concrete place where this idea shows up in real life (a named product, service, law, device, city or everyday moment), never a generic "at your job", "many apps" or "in the real world". The learner does the work: don't hand them the intermediate results the question asks for. When its plan names an `Activity template`, write it as that `activity` instead (see "Activity"), set in the same kind of realistic situation, its check grading what the learner produced.
 
 # The chapter's other lessons
 

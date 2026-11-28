@@ -114,6 +114,7 @@
   "mock_result_up": "9564df470c8322eb8bd929540300aad75a77f75e5b57378060c3ac1ff2918333",
   "mock_result_up_from": "95ea8d69f5e0eca12606a1cd70baf88d7e85ac8c594604c8e8b7806c2e47947f",
   "mock_result_work_on": "3acb5c9c0d06e636094adbde5ccfe93d027fbc587a5acec1569f7702086beddf",
+  "mock_result_written_no_estimate": "53cfbe54f40ee9e4b9fa8a7f5c5c7582fd64a2d9c6f021f620dae02e4ee4e4f3",
   "mock_result_wrong": "8ed2f563dbf561fb21acb396deeb523e6ec87527797dcbcff0393b7b0f90ce96",
   "mock_result_your_plan": "037bc363fd551cacdf3bd13f2adafe7a7aadbbe3d83fb79711168c87ed3c21a3",
   "mock_result_your_preparation": "4cb55edd7c1b1bf5b4e3cf6b713b1a2ed12350015ebaa46ae609b63bf4c1ba96"
@@ -228,6 +229,7 @@
     <string name="mock_result_reached_points_decimal">Alcanzó los %1$s puntos necesarios</string>
     <!-- Under a test whose minimum this mock can't judge. %1$s is the percent of its points it needs, such as "40%". -->
     <string name="mock_result_needs_percent">Necesita el %1$s de sus puntos</string>
+    <string name="mock_result_written_no_estimate">Aún no hay una estimación del puntaje</string>
     <!-- Under a test whose minimum this mock can't judge. %1$s is the points it needs, possibly a decimal. -->
     <plurals name="mock_result_needs_points">
         <item quantity="one">Necesita %1$s punto</item>

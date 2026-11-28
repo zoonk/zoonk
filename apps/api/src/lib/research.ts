@@ -1,6 +1,10 @@
 import "server-only";
 import { startOnce } from "@/workflows/_shared/run-token";
-import { type ResearchInput, researchWorkflow } from "@/workflows/research/research-workflow";
+import {
+  type ResearchInput,
+  getGoalResearchToken,
+  researchWorkflow,
+} from "@/workflows/research/research-workflow";
 import { start } from "workflow/api";
 
 /** A goal's own research runs once at a time; reading new uploads always starts its own run. */
@@ -10,5 +14,5 @@ export async function startResearch(input: ResearchInput): Promise<string> {
     return run.runId;
   }
 
-  return startOnce(researchWorkflow, [input], `research-goal:${input.goalId}`);
+  return startOnce(researchWorkflow, [input], getGoalResearchToken(input.goalId));
 }

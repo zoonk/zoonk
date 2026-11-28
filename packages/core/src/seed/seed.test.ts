@@ -24,6 +24,9 @@ const FRIDAY = new Date("2026-10-16T20:52:12Z");
 const TODAY = new Date("2026-10-16T00:00:00Z");
 const HISTORY_DAYS = 14;
 
+// Maya's day then has no review, so her second block is a lesson nobody has written yet.
+const IN_MAYAS_STUDY_HOUR = new Date("2026-10-16T11:13:38Z");
+
 const ANA_STUDY_DATES = Array.from({ length: HISTORY_DAYS }, (_, index) =>
   toIsoDate(addDays(TODAY, index - HISTORY_DAYS)),
 );
@@ -210,6 +213,15 @@ describe("a persona's copy", () => {
 });
 
 describe("a persona's copy, opened later", () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(IN_MAYAS_STUDY_HOUR);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it.each(SEED_PERSONA_NAMES)(
     "%s: finished lessons replay, open mistakes can be practiced, and the open block’s clock is stopped",
     async (persona) => {

@@ -202,6 +202,29 @@ describe(applyPlanOperations, () => {
     });
   });
 
+  it("puts an added skill in the phase it names rather than its anchor's", () => {
+    const result = apply([
+      {
+        kind: "addSkills",
+        skills: [
+          {
+            area: null,
+            beforeSkillId: "bio",
+            lessons: 1,
+            name: "Fractions",
+            phase: 1,
+            skillId: "fractions",
+          },
+        ],
+      },
+    ]);
+
+    expect("state" in result && result.state.graph.skills[1]).toMatchObject({
+      phase: 1,
+      skillId: "fractions",
+    });
+  });
+
   it("applies nothing when one operation fails", () => {
     expect(
       apply([

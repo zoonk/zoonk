@@ -112,7 +112,8 @@ internal fun ColumnScope.UnderstoodScreen(
     val locale = currentLocale()
     val resources = LocalResources.current
     val is24Hour = DateFormat.is24HourFormat(LocalContext.current)
-    val rows = remember(resources, locale, is24Hour) { UnderstoodRows(resources, locale, is24Hour) }
+    val today = LocalDate.now(goalZone(timeZone))
+    val rows = remember(resources, locale, is24Hour, today) { UnderstoodRows(resources, locale, is24Hour, today) }
     var rewriting by rememberSaveable { mutableStateOf(false) }
     var clearedCountry by rememberSaveable { mutableStateOf(listOf<Int>()) }
     val firstGoalRows =

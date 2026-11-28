@@ -7,6 +7,7 @@ import { type UsageDecision } from "../../entitlements/contract";
 import { getCertificateLanguage } from "../../exams/language-exam";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
+import { findCountryExamId } from "../../library/exams/exam-country";
 import { linkGoalSources } from "../../library/sources/link-goal-sources";
 import { findOwnSources } from "../../library/sources/own-sources";
 import { fromIsoDate, toIsoDate } from "../../plans/planner/plan-calendar";
@@ -127,6 +128,12 @@ export async function insertGoalWithPlan(
     userId,
   });
 
+  const examBlueprintId = await findCountryExamId(tx, {
+    contentCountry: country.contentCountry,
+    examBlueprintId: draft.examBlueprintId,
+    kind: draft.kind,
+  });
+
   await tx.goal.create({
     data: {
       contentCountry: country.contentCountry,
@@ -137,7 +144,7 @@ export async function insertGoalWithPlan(
         ...(courseStart && { courseStart: courseStart.details }),
       },
       displayName: draft.displayName ?? defaultDisplayName(draft),
-      examBlueprintId: draft.examBlueprintId ?? null,
+      examBlueprintId,
       id,
       kind: draft.kind,
       language: draft.language,
@@ -149,7 +156,10 @@ export async function insertGoalWithPlan(
       sourceCourseId: courseStart?.sourceCourseId,
       studyTime: input.studyTime ?? null,
       targetDate: draft.targetDate ? fromIsoDate(draft.targetDate) : null,
-      targetLanguage: testedLanguage ?? draft.targetLanguage ?? getCertificateLanguage(draft),
+      targetLanguage:
+        (examBlueprintId ? testedLanguage : null) ??
+        draft.targetLanguage ??
+        getCertificateLanguage(draft),
       targetRegion: draft.targetRegion ?? null,
       timezone: input.timeZone ?? null,
       title: draft.title,

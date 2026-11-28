@@ -1,7 +1,7 @@
 import { type LessonScreenKind, type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
 import { generateText } from "ai";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { scoreLessonSpec } from "./scorer";
+import { checkLessonSpecOutput, scoreLessonSpec } from "./scorer";
 import { type LessonSpecExpected } from "./visual-test-cases";
 
 // The judge is an external model; keep its response deterministic and prevent paid calls.
@@ -63,6 +63,48 @@ function score(lessons: LessonSpec[], expected?: LessonSpecExpected) {
     },
   });
 }
+
+describe(checkLessonSpecOutput, () => {
+  it.each([
+    { kind: "activity", matches: true, skills: [0] },
+    { kind: "application", matches: true, skills: [0] },
+    { kind: "explanation", matches: false, skills: [0] },
+    { kind: "activity", matches: false, skills: [] },
+    { kind: "application", matches: false, skills: [] },
+  ] satisfies { kind: LessonScreenKind; matches: boolean; skills: number[] }[])(
+    "matches a practice template on $kind with skills $skills only when eligible",
+    async ({ kind, matches, skills }) => {
+      const plan = passingLesson();
+
+      const screens = plan.screens.map((screen) =>
+        screen.kind === kind
+          ? { ...screen, activityTemplate: "numberLine", skills, visualKind: "template" }
+          : screen,
+      );
+
+      const result = await checkLessonSpecOutput({
+        output: JSON.stringify({ lessons: [{ ...plan, screens }] }),
+        testCase: {
+          expectations: "The learner places a value on a number line.",
+          expected: { practiceTemplates: ["numberLine", "sliderGraph"] },
+          id: "template-practice",
+          userInput: {},
+        },
+      });
+
+      expect(result.total).toBe(2);
+
+      expect(result.passed === result.total).toBe(matches);
+      expect(result.criteria?.includes("activitiesAndVisuals")).toBe(!matches);
+
+      expect(
+        result.problems.includes(
+          "No practice screen lets the learner do this skill with numberLine or sliderGraph.",
+        ),
+      ).toBe(!matches);
+    },
+  );
+});
 
 describe(scoreLessonSpec, () => {
   beforeEach(() => {

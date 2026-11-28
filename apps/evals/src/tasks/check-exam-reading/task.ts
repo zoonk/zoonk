@@ -35,6 +35,10 @@ function describe(problem: ReadingProblem): string {
     return `unconfirmed ${problem.subject ?? problem.part}`;
   }
 
+  if (problem.kind === "wholeExamSubjects") {
+    return `${problem.subjects.join(", ")} each of ${problem.total}`;
+  }
+
   return problem.kind === "missingCount"
     ? `${problem.questions} for "${problem.subject}"`
     : `${problem.sum} of ${problem.total}`;

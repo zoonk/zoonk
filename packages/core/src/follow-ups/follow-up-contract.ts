@@ -110,6 +110,7 @@ export const followUpSchema = z.discriminatedUnion("kind", [
   }),
   z.object({ input: writeSecondTakeInputSchema, kind: z.literal("writeSecondTake") }),
   z.object({ input: z.object({ goalId: uuidSchema() }), kind: z.literal("rebuildGoalCurriculum") }),
+  z.object({ input: z.object({ goalId: uuidSchema() }), kind: z.literal("researchGoal") }),
   z.object({
     input: z.object({
       goalId: uuidSchema(),

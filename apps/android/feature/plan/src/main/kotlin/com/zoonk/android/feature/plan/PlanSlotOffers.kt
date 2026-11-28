@@ -3,7 +3,9 @@ package com.zoonk.android.feature.plan
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -367,12 +369,13 @@ private fun DateOverSuggestion(
     val preview = (slot.host.preview as? PlanPreviewState.Asked)?.takeIf { it.matchesPlan(page.plan) }
     val search = state.dateSearch
     val retry = search == DateSearch.Failed || search == DateSearch.Building
+    val currentPlan by rememberUpdatedState(page.plan)
 
     fun findDate() {
         val request = ++state.searches
         state.waiting = request
         state.dateSearch = DateSearch.Finding
-        slot.edits.findTimeToCover(page.plan, TimeAsker.PastDate(request))
+        slot.edits.findTimeToCover(currentPlan, TimeAsker.PastDate(request))
     }
 
     fun stopWaiting() {

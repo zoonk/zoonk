@@ -20,6 +20,7 @@ import { mockDecision, uniqueWord } from "../identity/_test-utils/identity-mocks
 import { getSourceValidUntil } from "../sources/freshness-schedule";
 import { findStoredResearchSources } from "../sources/stored-research-sources";
 import { storeWebSource } from "../sources/web-sources";
+import { examEditionSchema } from "./blueprint-contract";
 import { checkFreshness } from "./check-freshness";
 
 const NOW = new Date("2026-09-26T12:00:00.000Z");
@@ -143,6 +144,34 @@ describe(checkFreshness, () => {
     expect(check).toMatchObject({
       blueprintUpdate: { examBlueprintId: blueprint.id },
       nextCheckAt: daysFromNow(7).toISOString(),
+      status: "scheduled",
+    });
+  });
+
+  it("doesn't ask again for a notice version whose reading was set aside", async () => {
+    const { blueprint, source } = await examWithLearner({ examDate: daysFromNow(90) });
+    servePage("A prova terá 60 questões.");
+    const target = { examBlueprintId: blueprint.id, kind: "exam" } as const;
+
+    await checkFreshness({ now: NOW, target });
+
+    const { contentHash } = await prisma.source.findUniqueOrThrow({ where: { id: source.id } });
+    const stored = await prisma.examBlueprint.findUniqueOrThrow({ where: { id: blueprint.id } });
+    const edition = examEditionSchema.parse(stored.edition);
+    const problem = { kind: "wholeExamSubjects" as const, subjects: ["A", "B"], total: 60 };
+
+    await prisma.examBlueprint.update({
+      data: {
+        edition: {
+          ...edition,
+          setAside: { checkedAt: NOW.toISOString(), problems: [problem], sourceHash: contentHash },
+        },
+      },
+      where: { id: blueprint.id },
+    });
+
+    await expect(checkFreshness({ now: NOW, target })).resolves.toMatchObject({
+      blueprintUpdate: null,
       status: "scheduled",
     });
   });

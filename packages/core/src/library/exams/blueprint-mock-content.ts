@@ -157,14 +157,7 @@ function toSections({
           count: task.count,
           description,
           ...(plays ? { plays } : {}),
-          ...(grading
-            ? {
-                grading:
-                  !verifiedPoints && grading.kind !== "enem"
-                    ? { ...grading, kind: "levels" as const }
-                    : grading,
-              }
-            : {}),
+          ...(grading ? { grading } : {}),
           ...(typeof handwritten === "boolean" && kept.has(`${id}.handwritten`)
             ? { handwritten }
             : {}),

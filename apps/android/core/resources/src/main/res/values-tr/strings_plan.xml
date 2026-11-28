@@ -17,7 +17,7 @@
   "plan_archive_goal": "5641c8e85b0924c50ecfd1a63e15cf7099acd7f7243633ae35c684c2fcd74b15",
   "plan_archive_goal_short": "6ad498b1a532b820a297efc9dbdca3a7a763f41c8c7c25423fd9b8f2d5755015",
   "plan_archive_title": "b9fa61423c0203de5a7270ba0a23495831d56eded75d415d97323ad456ca3d75",
-  "plan_ask_add_topics": "4e6809bcb57e0afd2962d0888bb1fdc09f8e45713349520aa6f365a3c327ecce",
+  "plan_ask_add_topics": "f92137d0699b00292a633eded974013297ad467dce4c007f8894cd5fe9d067a6",
   "plan_ask_aim": "799c8de7309b843b3e3735b7fca2ab13fef563c79223803f3d887fcbf2e913c8",
   "plan_ask_change": "20a57dcab8bb23aecfbe3c0a3aeeb5c186b099efc8aebaa45e5c9eb0ae8ac8a9",
   "plan_ask_daily_time": "86d071171d3e79441680a2ffb778dcc022292fa300aeb6635412690dd8ebf80e",
@@ -281,6 +281,7 @@
   "plan_going_deeper": "c6676339e3672f28169c69eeacc170db63d3e8ebf0115415c2c81d71034c6a19",
   "plan_how_calculated": "a7883158c74e8d82bf53ae3ebbda9c3460dc06097cb136e16b3ca038162bb012",
   "plan_keep_studying": "92981b39491ef5320d97f9d110c6f5f05a77389626abda9207090300a4662580",
+  "plan_left_out_topics": "42e3a97dd4caf978d9cf35715c112af83713035d308508a8bb75c84ec1e20a8d",
   "plan_legend_phase_questions": "42094716d7adb46c7ab4d1a5b29085fde8a62420c5fa66195133b6b80d59ae82",
   "plan_lessons": "56bedeaeea4bc07e669e164401573bfd11ca76dad04f68ec64e4f57c0d1b661b",
   "plan_lessons_done_of": "225a776889f0cc67b5844f74a028524fca70ba9d4830e9138aa5c3f059bc277c",
@@ -511,16 +512,17 @@
   "plan_why_phase_dates_later": "44d8a132f48802d0e8ab329557f5ff7e24bdd2a6710e2056338c55b83ada5786",
   "plan_why_phase_end_later": "e22885723edf30c9d059cf0e289cbb8c0ee383d9f4fbb71b2ff1ebacfee1c9fc",
   "plan_why_phase_end_off_rest": "36219ac56f8711ab56c358156175a943895c529c4b76e379b1fc794f3fdceff5",
-  "plan_written_above_minimum": "8e5b6d79ba19500cfc4f15d383ff7e3a2c697df176cdbf0974ec21a852ca13b1",
+  "plan_written_above_minimum": "bc578055dd791c2c2347b65a33f375f389bef7a634d72e8407efa29f839d53e4",
   "plan_written_asks_for": "447cd2d1b956e81c0fcae2d427827cdacad30978f61c5afa202b266a26a34522",
   "plan_written_asks_for_share": "55b9fa92cc5141a4531a7c8c7767e1d622aafd3e0bd11d267179cae534926be6",
-  "plan_written_below_minimum": "f964daeb927887f62553e4314cf1a6077dc7bb7b8d0e3b34d51ae225b7284113",
-  "plan_written_close_to_minimum": "21a61ce30bbccc8874185dad47fa41775b159200ba96f2946dd25e0ef87fb26e",
+  "plan_written_below_minimum": "22f10c88a7b396c914eb43fe4265f4c6c8ed63f5af940794d6ca9364672b514d",
+  "plan_written_cant_say": "5874b0ffa16ce711499c6133a6eae09f501f15ce0bba257abb9680a26e3853d7",
+  "plan_written_close_to_minimum": "a20b8b7c1ee23e0f3331cda00cda7ff3e37106e0950b01fabee704a7c63cb291",
+  "plan_written_likely_below": "1f27cf73afd407f78d616b53cf73a28c7bf22e72ddeccaa2fd87ffb009ab05b4",
   "plan_written_not_measured": "c4543aee6911475eb591b2541a914e4eae70afc339a7e3860691fb27ef5afb1b",
   "plan_written_not_measured_half": "3d960db870809932a654a0f7e9aa0498d2ca55549bc0add75799a9b4e204e7a5",
   "plan_written_not_measured_share": "fa666f939823fbae65119eed5151bd9e0869c53de7c80308b4637b0e3b3c60c7",
   "plan_written_objective": "f14560237fd88c6164e71c40bc1f6769270a0fd38b296e78e060c46fecb01baa",
-  "plan_written_points_below": "076c08ad77cd7349b7f2badee372e146adcd05481c9f16821f05805e046837ad",
   "plan_you_are_here_suffix": "b4bbc92b5333ed7afb16dbcafb380f29a355a161149af3547aaab24f2a60868c",
   "plan_your_level": "8bf9296150c876aeda940092bd996f58382add41a83f18421e5b4d0a0b662ed3",
   "plan_your_pace": "a9ccda368ec84a95b8680e4218b59fd99b13000ed53850abfeaae67d2ecdae60",
@@ -618,6 +620,11 @@
         <item quantity="other">%1$d / %2$d ders tamamlandı</item>
     </plurals>
     <string name="plan_not_in_your_plan">Planında yok</string>
+    <!-- Under a module or a phase of the learner's plan, and on the row that lists them: how many of its topics the plan leaves out because they don't fit before the plan's date. -->
+    <plurals name="plan_left_out_topics">
+        <item quantity="one">%d konu planında yok</item>
+        <item quantity="other">%d konu planında yok</item>
+    </plurals>
     <plurals name="plan_lessons_not_studied">
         <item quantity="one">%d ders çalışılmadı</item>
         <item quantity="other">%d ders çalışılmadı</item>
@@ -1301,7 +1308,8 @@
     <string name="plan_change_areas_from_basics">%1$s için temelden başlanıyor.</string>
     <string name="plan_change_exam_date">Sınav tarihi: %1$s.</string>
     <string name="plan_change_end_date">Bitiş tarihi: %1$s.</string>
-    <string name="plan_ask_add_topics">Planına %1$s eklensin mi?</string>
+    <!-- Asks whether to add topics to the learner's plan. {topics} lists their names, which are often actions themselves, such as “Memorize An-Nahl”, so they stay after the colon rather than inside the sentence. -->
+    <string name="plan_ask_add_topics">Planına eklensin mi: %1$s?</string>
     <string name="plan_ask_focus">%1$s öncelikli olsun mu?</string>
     <string name="plan_ask_remove_focus">Öncelikleri kaldıralım mı?</string>
     <string name="plan_ask_less_time">%1$s için daha az zaman ayıralım mı?</string>
@@ -1364,14 +1372,15 @@
     <string name="plan_call_not_in_plan">Sohbet planında yer almıyor</string>
     <string name="plan_outside_past_basics">Atlandı · temel bilgileri zaten biliyorsun</string>
     <string name="plan_outside_skipped_base">Atlandı · senin tercihin</string>
-    <string name="plan_written_below_minimum">Geçmek için gereken minimum puanın altında</string>
+    <string name="plan_written_below_minimum">Geçmek için gereken minimum puanın altında görünüyor</string>
     <string name="plan_written_asks_for">Diğer puanların ne olursa olsun, %1$s %2$s puan almalı.</string>
     <string name="plan_written_asks_for_share">Diğer puanların ne olursa olsun, %1$s puanlarının %2$s kadarını almalı.</string>
     <string name="plan_written_not_measured">%1$s henüz ölçülmedi.</string>
     <string name="plan_written_not_measured_half">Nihai puanının yarısını oluşturan %1$s henüz ölçülmedi.</string>
     <string name="plan_written_not_measured_share">Nihai puanının %2$s kadarını oluşturan %1$s henüz ölçülmedi.</string>
     <string name="plan_written_objective">Objektif test</string>
-    <string name="plan_written_above_minimum">Gerekli %1$s puanın üzerinde</string>
-    <string name="plan_written_points_below">Gerekli %2$s puana ulaşmak için %1$s puan eksiğin var</string>
-    <string name="plan_written_close_to_minimum">Gerekli %1$s puana yakın</string>
+    <string name="plan_written_above_minimum">Gereken %1$s puanın üstünde görünüyor</string>
+    <string name="plan_written_likely_below">Gereken %1$s puanın altında görünüyor</string>
+    <string name="plan_written_close_to_minimum">Gereken %1$s puan sınırının altında da üstünde de olabilir</string>
+    <string name="plan_written_cant_say">Henüz gereken %1$s puana ulaşıp ulaşmadığını söyleyemiyoruz</string>
 </resources>

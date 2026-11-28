@@ -5,15 +5,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -22,15 +19,15 @@ import com.zoonk.android.feature.goalcontent.WriteNow
 import com.zoonk.android.feature.writing.PointsReadout
 import com.zoonk.android.feature.writing.PointsValue
 import com.zoonk.android.feature.writing.RangeMeter
+import com.zoonk.android.feature.writing.WrittenStandingLine
 import com.zoonk.android.feature.writing.formatPoints
 import com.zoonk.android.feature.writing.minimumShare
-import com.zoonk.android.feature.writing.pointsRange
+import com.zoonk.android.feature.writing.readableMinimum
 import com.zoonk.android.feature.writing.toName
 import com.zoonk.android.feature.writing.writingTaskName
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatPercent
-import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.WritingRangeOutput
 import com.zoonk.api.models.WrittenPartPoints
 import com.zoonk.api.models.WrittenPartPointsMinimum
@@ -48,9 +45,9 @@ internal fun WrittenProjectionScore(
     writeNow: WriteNow?,
 ) {
     val below = projection.parts.firstOrNull { it.standing == WrittenPartPoints.Standing.BELOW }
-    // A part graded by level has no points to wait for, so the headline doesn't say it's waiting.
-    val unmeasured =
-        projection.parts.firstOrNull { it.inPoints() && (it.standing == WrittenPartPoints.Standing.UNMEASURED || it.range == null) }
+    // A part graded by level has no points to wait for, and one with an estimate says on its own row whether it
+    // reaches its minimum, so the headline names only a part with no estimate yet.
+    val unmeasured = projection.parts.firstOrNull { it.inPoints() && it.range == null }
     val combined = projection.combined
     val max = projection.max
 
@@ -64,7 +61,7 @@ internal fun WrittenProjectionScore(
             when {
                 below != null -> {
                     Text(stringResource(R.string.plan_written_below_minimum), style = MaterialTheme.typography.titleLarge)
-                    below.minimum?.let {
+                    below.readableMinimum()?.let {
                         val locale = currentLocale()
                         MetaLine(
                             if (it.unit == WrittenPartPointsMinimum.Unit.PERCENT) {
@@ -96,13 +93,21 @@ internal fun WrittenProjectionScore(
                     part.name,
                     part.range,
                     part.max,
-                    minimumShare = part.minimum?.let { minimumShare(it.unit == WrittenPartPointsMinimum.Unit.PERCENT, it.value, part.max) },
+                    minimumShare =
+                        part.readableMinimum()?.let {
+                            minimumShare(
+                                it.unit == WrittenPartPointsMinimum.Unit.PERCENT,
+                                it.value,
+                                part.max,
+                            )
+                        },
                     decimals = part.decimals?.toInt() ?: 0,
                     levels = !part.inPoints(),
                     written = true,
                 ) {
                     TaskRows(part)
-                    Standing(part)
+                    // The headline already says this part is likely below its minimum.
+                    if (part != below) WrittenStandingLine(part)
                 }
             }
         }
@@ -116,8 +121,13 @@ internal fun WrittenProjectionScore(
     }
 }
 
-/** A server from before `scale` says a part is in points by having measured it in points. */
-private fun WrittenPartPoints.inPoints(): Boolean = scale?.let { it == WrittenPartPoints.Scale.POINTS } ?: (range != null)
+/** A server from before `scale`, or a scale this version doesn't know, says a part is in points by having measured it. */
+private fun WrittenPartPoints.inPoints(): Boolean =
+    when (scale) {
+        WrittenPartPoints.Scale.POINTS -> true
+        WrittenPartPoints.Scale.LEVELS -> false
+        else -> range != null
+    }
 
 /** The part still to measure, with its share of the final score when the projection knows it. */
 @Composable
@@ -140,7 +150,7 @@ private fun ScoreRow(
     max: Double?,
     minimumShare: Double? = null,
     decimals: Int = 0,
-    /** Graded by level: no points to wait for, so no meter holds their place. */
+    /** Graded by level: no points to wait for. */
     levels: Boolean = false,
     written: Boolean = false,
     below: @Composable () -> Unit = {},
@@ -150,7 +160,7 @@ private fun ScoreRow(
             Text(name, Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
             PointsValue(range?.low, range?.high, max, decimals = decimals, levels = levels, headline = written)
         }
-        if (!(levels && range == null)) max?.let { RangeMeter(range?.low, range?.high, it, minimumShare = minimumShare) }
+        max?.let { RangeMeter(range?.low, range?.high, it, minimumShare = minimumShare) }
         below()
     }
 }
@@ -176,62 +186,6 @@ private fun TaskRows(part: WrittenPartPoints) {
             }
         }
     }
-}
-
-/** Said against the part's own minimum, never the objective's: 50 of 100 on the sum of its answers. */
-@Composable
-private fun Standing(part: WrittenPartPoints) {
-    val range = part.range ?: return
-    val minimum = part.minimumPoints() ?: return
-    val locale = currentLocale()
-    val points = formatPoints(minimum, locale)
-    val decimals = part.decimals?.toInt() ?: 0
-
-    when (part.standing) {
-        WrittenPartPoints.Standing.UNKNOWN_DEFAULT_OPEN_API -> {}
-
-        WrittenPartPoints.Standing.MET -> {
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-                Icon(painterResource(R.drawable.ic_check), null, Modifier.size(14.dp), tint = MaterialTheme.colorScheme.tertiary)
-                MetaLine(stringResource(R.string.plan_written_above_minimum, points))
-            }
-        }
-
-        WrittenPartPoints.Standing.BELOW -> {
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-                Icon(painterResource(R.drawable.ic_close), null, Modifier.size(14.dp), tint = MaterialTheme.colorScheme.error)
-                Text(
-                    stringResource(
-                        R.string.plan_written_points_below,
-                        pointsRange(minimum - range.high, minimum - range.low, decimals),
-                        points,
-                    ),
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            }
-        }
-
-        WrittenPartPoints.Standing.OVERLAPS -> {
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-                Icon(painterResource(R.drawable.ic_warning), null, Modifier.size(14.dp), tint = MaterialTheme.zoonk.warningText)
-                Text(
-                    stringResource(R.string.plan_written_close_to_minimum, points),
-                    color = MaterialTheme.zoonk.warningText,
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            }
-        }
-
-        WrittenPartPoints.Standing.UNMEASURED, null -> {}
-    }
-}
-
-/** The part's minimum in its own points: a percent minimum is that share of its maximum, as its meter's tick is. */
-internal fun WrittenPartPoints.minimumPoints(): Double? {
-    val minimum = minimum ?: return null
-    if (minimum.unit != WrittenPartPointsMinimum.Unit.PERCENT) return minimum.value
-    return max?.let { minimum.value / PERCENT * it }
 }
 
 private const val PERCENT = 100.0

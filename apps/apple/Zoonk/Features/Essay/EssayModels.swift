@@ -25,7 +25,7 @@ struct WritingPrompt: Hashable, Decodable, Sendable {
   }
 
   /// The written test's own minimum on the sum of its questions, never this question's.
-  struct PartMinimum: Hashable, Decodable, Sendable {
+  struct PartMinimum: Hashable, OmittableAPIContent, Sendable {
     var max: Double?
     var minimum: PointsMinimum
 

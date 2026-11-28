@@ -114,6 +114,7 @@
   "mock_result_up": "47418c2fda33d1ad2ce515c50643c6c37d6182c6f0af9b3cd4ca5cfad49d51f0",
   "mock_result_up_from": "a794b0683288406591152082e32a9d9ddcab6626f14f68e09e7c15d54b244166",
   "mock_result_work_on": "ed67d38e0aafc2d95e8ea96fab3e6776e7604491cf6dfd1ee730e8b4f59e9e03",
+  "mock_result_written_no_estimate": "e56c95399f57dbcef8ca48c92ffad937d52580aa085691d3d3c90358e42e4b09",
   "mock_result_wrong": "8bf24bc3ddd634fc87543a0fd5ec5fbd9ccc6ecb6fcdef10d870db115b8b0928",
   "mock_result_your_plan": "7bab11fffba1ccda2b2510b496c47828eeef93e79e38731fbda21eea43063420",
   "mock_result_your_preparation": "aefc217f82e056986801c05c4a838a5407f0ee1403c438f79971ef729a216c2b"
@@ -222,6 +223,7 @@
     <string name="mock_result_reached_points_decimal">Gereken %1$s puana ulaşıldı</string>
     <!-- Under a test whose minimum this mock can't judge. %1$s is the percent of its points it needs, such as "40%". -->
     <string name="mock_result_needs_percent">Puanın en az %1$s kadarını almak gerekiyor</string>
+    <string name="mock_result_written_no_estimate">Henüz puan tahmini yok</string>
     <!-- Under a test whose minimum this mock can't judge. %1$s is the points it needs, possibly a decimal. -->
     <plurals name="mock_result_needs_points">
         <item quantity="one">En az %1$s puan gerekiyor</item>

@@ -3,7 +3,12 @@ package com.zoonk.android.feature.mock.result
 import com.zoonk.api.models.MockPoints
 import com.zoonk.api.models.MockPointsPartsInner
 import com.zoonk.api.models.PointsMinimum
+import com.zoonk.api.models.WritingRangeOutput
+import com.zoonk.api.models.WrittenPartPoints
+import com.zoonk.api.models.WrittenPartPointsMinimum
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class MockTestRowsTest {
@@ -56,5 +61,22 @@ class MockTestRowsTest {
         val rows = testRows(points(part("Reading", met = true), minimum = PointsMinimum(PointsMinimum.Unit.POINTS, 20.0)))
 
         assertEquals(listOf("Reading", null), rows.map { it.name })
+    }
+
+    @Test
+    fun aWrittenMinimumNeverLetsTheResultSayEveryMinimumWasReached() {
+        val reached = points(part("Reading", met = true), part("Writing", met = true))
+        val written =
+            WrittenPartPoints(
+                max = 100.0,
+                minimum = WrittenPartPointsMinimum(WrittenPartPointsMinimum.Unit.POINTS, 50.0),
+                name = "Discursive test",
+                range = WritingRangeOutput(high = 64.0, low = 58.0),
+                standing = WrittenPartPoints.Standing.MET,
+                tasks = emptyList(),
+            )
+
+        assertTrue(reachedEveryMinimum(reached))
+        assertFalse(reachedEveryMinimum(reached.copy(written = listOf(written))))
     }
 }

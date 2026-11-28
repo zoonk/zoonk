@@ -1,8 +1,10 @@
 import { type ServiceTier, chooseServiceTier } from "@zoonk/ai/provider-options";
 import { checkCoverage } from "@zoonk/ai/tasks/curriculum/coverage-check";
+import { checkMemberCoverage } from "@zoonk/ai/tasks/curriculum/member-coverage";
 import { type generateSkillGraph } from "@zoonk/ai/tasks/curriculum/skill-graph";
 import { classifyGoalSpecificity } from "@zoonk/ai/tasks/identity/goal-specificity";
 import { applyGraphCoverage } from "@zoonk/core/library/curriculum/add-coverage-skills";
+import { addMemberSkills } from "@zoonk/core/library/curriculum/add-member-skills";
 import { beginGoalCurriculum } from "@zoonk/core/library/curriculum/begin-goal-curriculum";
 import { getStartedCourseScope } from "@zoonk/core/library/curriculum/course-start-graph";
 import {
@@ -22,6 +24,7 @@ import {
   toLanguageGoal,
   toScopedGraphPrompt,
 } from "@zoonk/core/library/curriculum/shared-graph-prompt";
+import { type MemberCheckRequest } from "@zoonk/core/plans/member-check";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
 
 type GraphProvenance = Awaited<ReturnType<typeof generateSkillGraph>>["provenance"];
@@ -40,7 +43,7 @@ export async function loadGoalCurriculumStep(goalId: string): Promise<GoalCurric
   return loadGoalCurriculumInputs(goalId);
 }
 
-function toPrivateScope(goal: GoalCurriculumInputs["goal"]): CurriculumScope {
+export function toPrivateScope(goal: GoalCurriculumInputs["goal"]): CurriculumScope {
   return {
     country: goal.contentCountry,
     generalGoal: null,
@@ -152,6 +155,49 @@ export async function checkGraphCoverageStep({
   });
 
   return applyGraphCoverage({ coverage: coverage.data, graph, outline });
+}
+
+export type MemberCheckInputs = RunScope & {
+  inputs: Pick<
+    GoalCurriculumInputs,
+    "examIdentity" | "goal" | "graphPrompt" | "hasMaterial" | "sharedContext" | "startedCourse"
+  >;
+  scope: CurriculumScope;
+};
+
+/**
+ * The member check reads the goal the way its graph was written, so a shared one never sees the
+ * learner's words.
+ */
+export function toMemberCheckRequest({
+  analytics,
+  inputs,
+  scope,
+  workflowRunId,
+}: MemberCheckInputs): MemberCheckRequest {
+  const prompt = toScopedGraphPrompt({ inputs, scope });
+
+  return {
+    analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
+    goal: prompt.goal,
+    language: prompt.language,
+  };
+}
+
+/** Adds a skill for each member of the complete list the goal names that the graph leaves out. */
+export async function checkGraphMembersStep({
+  graph,
+  ...input
+}: MemberCheckInputs & { graph: GoalSkillGraph }): Promise<GoalSkillGraph> {
+  "use step";
+
+  const { data } = await checkMemberCoverage({
+    ...toMemberCheckRequest(input),
+    serviceTier: chooseServiceTier({ wait: "learner" }),
+    skills: graph.skills.map(({ key, name }) => ({ key, name })),
+  });
+
+  return addMemberSkills({ coverage: data, graph });
 }
 
 export async function pruneNoticeGraphStep(input: Parameters<typeof pruneGoalNoticeGraph>[0]) {

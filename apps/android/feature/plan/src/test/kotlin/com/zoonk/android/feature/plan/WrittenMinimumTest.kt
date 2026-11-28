@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.plan
 
+import com.zoonk.android.feature.writing.minimumPoints
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.WrittenPartPoints
 import org.junit.Assert.assertEquals
