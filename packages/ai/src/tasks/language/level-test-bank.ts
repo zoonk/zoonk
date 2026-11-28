@@ -13,7 +13,7 @@ import {
   type LevelTestLanguages,
   QUESTION_SITUATIONS,
   QUESTION_TESTS,
-  formatLevelTestPlace,
+  formatLevelTestLanguages,
   formatWords,
   hashText,
   withLevelTestRules,
@@ -117,15 +117,14 @@ function buildQuestionsPrompt({
   level,
   situations,
   skill,
-  targetLanguage,
-}: {
+  ...languages
+}: LevelTestLanguages & {
   level: TestLevel;
   situations: readonly string[];
   skill: LevelTestSkill;
-  targetLanguage: string;
 }): string {
   return `
-${formatLevelTestPlace(targetLanguage)}
+${formatLevelTestLanguages(languages)}
 LEVEL: ${level}
 SKILL: ${skill}
 WORDS: ${formatWords(LEVEL_TEST_PASSAGE_WORDS[level][skill])}

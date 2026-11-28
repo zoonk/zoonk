@@ -1,5 +1,5 @@
 import { formatLocalContext } from "../../_utils/language-context";
-import { fillPromptLanguages } from "../../_utils/prompt-language";
+import { fillPromptLanguages, getLanguagePromptContext } from "../../_utils/prompt-language";
 import ladder from "../level-test-ladder.prompt.md";
 import languageRules from "../level-test-language-rules.prompt.md";
 import { type LevelTestSkill, type TestLevel } from "../level-test-levels";
@@ -254,8 +254,12 @@ export function withLevelTestRules({
   });
 }
 
-export function formatLevelTestPlace(targetLanguage: string): string {
-  return formatLocalContext({ country: null, language: targetLanguage, register: false });
+export function formatLevelTestLanguages({ learnerLanguage, targetLanguage }: LevelTestLanguages) {
+  const languages = getLanguagePromptContext({ targetLanguage, userLanguage: learnerLanguage });
+
+  return `TARGET_LANGUAGE: ${languages.targetLanguageName}
+LEARNER_LANGUAGE: ${languages.userLanguageName}
+${formatLocalContext({ country: null, language: targetLanguage, register: false })}`;
 }
 
 export function formatWords({ max, min }: { max: number; min: number }): string {

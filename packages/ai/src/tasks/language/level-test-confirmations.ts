@@ -8,7 +8,7 @@ import {
   CONFIRMATION_SITUATIONS,
   type LevelTestLanguages,
   QUESTION_TESTS,
-  formatLevelTestPlace,
+  formatLevelTestLanguages,
   formatWords,
   hashText,
   withLevelTestRules,
@@ -111,12 +111,8 @@ function toConfirmation({
 function buildUserPrompt({
   level,
   previousPassages,
-  targetLanguage,
-}: {
-  level: TestLevel;
-  previousPassages?: readonly string[];
-  targetLanguage: string;
-}): string {
+  ...languages
+}: LevelTestLanguages & { level: TestLevel; previousPassages?: readonly string[] }): string {
   const words = LEVEL_TEST_PASSAGE_WORDS[level];
 
   const situations = LEVEL_TEST_SKILLS.flatMap((skill) =>
@@ -130,7 +126,7 @@ function buildUserPrompt({
     : "";
 
   return `
-${formatLevelTestPlace(targetLanguage)}
+${formatLevelTestLanguages(languages)}
 LEVEL: ${level}
 READING_WORDS: ${formatWords(words.reading)}
 LISTENING_WORDS: ${formatWords(words.listening)}
