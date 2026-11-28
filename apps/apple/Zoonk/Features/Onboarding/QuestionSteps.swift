@@ -320,15 +320,18 @@ private struct CountryQuestion: View {
         Button {
           isPickingAnother = true
         } label: {
-          Text(
+          let another = Text(
             "Another country", tableName: "Onboarding",
             comment: "Opens every country, after the ones the content country question suggests"
           )
-          .typeStyle(.rowTitle)
-          .foregroundStyle(Color(.foreground))
-          .frame(maxWidth: .infinity, alignment: .leading)
-          .disclosureChevron()
-          .contentShape(.rect)
+
+          another
+            .layoutPart(.label, text: another)
+            .typeStyle(.rowTitle)
+            .foregroundStyle(Color(.foreground))
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .disclosureChevron()
+            .contentShape(.rect)
         }
         // On the row itself: a modifier on the Section reaches each of its rows, one sheet each.
         .sheet(isPresented: $isPickingAnother) {
