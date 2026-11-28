@@ -176,9 +176,34 @@ msgid "Don't play this string"
 msgstr "この弦は弾かない"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
+msgctxt "-Redg6"
+msgid "Running {runtime} code needs a connection. Check yours and try again."
+msgstr ""
+
+#: src/activities/_sandbox/sandbox-run-bar.tsx
+msgctxt "WH1ru4"
+msgid "Your code didn't run. Try again."
+msgstr ""
+
+#: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "eYmsAC"
 msgid "{runtime} didn't load. Check your connection and try again."
 msgstr "{runtime}を読み込めませんでした。接続を確認して、もう一度試してください。"
+
+#: src/activities/_sandbox/sandbox-run-bar.tsx
+msgctxt "evmUu7"
+msgid "Getting {runtime} ready…"
+msgstr ""
+
+#: src/activities/_sandbox/sandbox-run-bar.tsx
+msgctxt "xWwz6u"
+msgid "Compiling your code…"
+msgstr ""
+
+#: src/activities/_sandbox/sandbox-run-bar.tsx
+msgctxt "yP7nBA"
+msgid "Running your code…"
+msgstr ""
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
@@ -714,14 +739,19 @@ msgid "A {language} program of {count, plural, one {# line} other {# lines}}. Ed
 msgstr "{language}で書かれた{count, plural, other {#行のプログラムです}}。編集できる行を書き換えて実行し、出力が次の内容と一致するか確かめてください：{expected}"
 
 #: src/activities/code-runner/code-runner-output.tsx
-msgctxt "qpwrn5"
-msgid "Line {line}: {error}"
-msgstr "{line}行目：{error}"
+msgctxt "_4sBFi"
+msgid "Stopped because it took too long. Is there a loop that never ends?"
+msgstr ""
 
 #: src/activities/code-runner/code-runner-output.tsx
 msgctxt "IY8DPN"
 msgid "Stopped after {seconds} seconds. Is there a loop that never ends?"
 msgstr "{seconds}秒で停止しました。終わらないループはありませんか？"
+
+#: src/activities/code-runner/code-runner-output.tsx
+msgctxt "qpwrn5"
+msgid "Line {line}: {error}"
+msgstr "{line}行目：{error}"
 
 #: src/activities/code-runner/code-runner-output.tsx
 msgctxt "wzki3Y"

@@ -431,6 +431,16 @@ msgid "You've used your questions"
 msgstr "問題数の上限に達しました"
 
 #: src/_components/help-limit-notice.tsx
+msgctxt "19tT0C"
+msgid "No more code runs today"
+msgstr ""
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "JnTk6z"
+msgid "You've used your code runs"
+msgstr ""
+
+#: src/_components/help-limit-notice.tsx
 msgctxt "aw2Ukw"
 msgid "No more material today"
 msgstr "今日はこれ以上資料を追加できません"

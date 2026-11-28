@@ -431,6 +431,16 @@ msgid "You've used your questions"
 msgstr "Alcanzaste tu límite de preguntas"
 
 #: src/_components/help-limit-notice.tsx
+msgctxt "19tT0C"
+msgid "No more code runs today"
+msgstr ""
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "JnTk6z"
+msgid "You've used your code runs"
+msgstr ""
+
+#: src/_components/help-limit-notice.tsx
 msgctxt "aw2Ukw"
 msgid "No more material today"
 msgstr "No puedes subir más material hoy"

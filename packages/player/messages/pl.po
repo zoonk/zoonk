@@ -176,9 +176,34 @@ msgid "Don't play this string"
 msgstr "Nie graj na tej strunie"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
+msgctxt "-Redg6"
+msgid "Running {runtime} code needs a connection. Check yours and try again."
+msgstr ""
+
+#: src/activities/_sandbox/sandbox-run-bar.tsx
+msgctxt "WH1ru4"
+msgid "Your code didn't run. Try again."
+msgstr ""
+
+#: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "eYmsAC"
 msgid "{runtime} didn't load. Check your connection and try again."
 msgstr "Nie udało się wczytać środowiska: {runtime}. Sprawdź połączenie i spróbuj ponownie."
+
+#: src/activities/_sandbox/sandbox-run-bar.tsx
+msgctxt "evmUu7"
+msgid "Getting {runtime} ready…"
+msgstr ""
+
+#: src/activities/_sandbox/sandbox-run-bar.tsx
+msgctxt "xWwz6u"
+msgid "Compiling your code…"
+msgstr ""
+
+#: src/activities/_sandbox/sandbox-run-bar.tsx
+msgctxt "yP7nBA"
+msgid "Running your code…"
+msgstr ""
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
@@ -714,14 +739,19 @@ msgid "A {language} program of {count, plural, one {# line} other {# lines}}. Ed
 msgstr "Program w języku {language} ma {count, plural, one {# wiersz} few {# wiersze} other {# wierszy}}. Edytuj swoje wiersze, uruchom program i porównaj to, co wyświetli, z oczekiwanym wynikiem: {expected}"
 
 #: src/activities/code-runner/code-runner-output.tsx
-msgctxt "qpwrn5"
-msgid "Line {line}: {error}"
-msgstr "Wiersz {line}: {error}"
+msgctxt "_4sBFi"
+msgid "Stopped because it took too long. Is there a loop that never ends?"
+msgstr ""
 
 #: src/activities/code-runner/code-runner-output.tsx
 msgctxt "IY8DPN"
 msgid "Stopped after {seconds} seconds. Is there a loop that never ends?"
 msgstr "Zatrzymano po {seconds} sek. Czy w kodzie jest pętla, która nigdy się nie kończy?"
+
+#: src/activities/code-runner/code-runner-output.tsx
+msgctxt "qpwrn5"
+msgid "Line {line}: {error}"
+msgstr "Wiersz {line}: {error}"
 
 #: src/activities/code-runner/code-runner-output.tsx
 msgctxt "wzki3Y"
