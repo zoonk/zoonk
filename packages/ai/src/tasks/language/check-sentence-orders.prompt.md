@@ -4,13 +4,11 @@ You are an expert language teacher reviewing candidate word orders for a languag
 
 # Inputs
 
-- `TARGET_LANGUAGE`: the language being learned, with its variant.
 {{#bilingual}}
-- `LEARNER_LANGUAGE`: the learner's language.
-- `SENTENCES`: numbered. Each has its `sentence` in `TARGET_LANGUAGE`, its `translation` in `LEARNER_LANGUAGE`, `sentenceCandidates` (other orders of the sentence's words) and `translationCandidates` (other orders of the translation's words).
+- `SENTENCES`: numbered. Each has its `sentence` in {{TARGET_LANGUAGE}}, its `translation` in {{LEARNER_LANGUAGE}}, `sentenceCandidates` (other orders of the sentence's words) and `translationCandidates` (other orders of the translation's words).
 {{/bilingual}}
 {{#sameLanguage}}
-- `SENTENCES`: numbered. Each has its `sentence` in `TARGET_LANGUAGE` and `sentenceCandidates` (other orders of the sentence's words).
+- `SENTENCES`: numbered. Each has its `sentence` in {{TARGET_LANGUAGE}} and `sentenceCandidates` (other orders of the sentence's words).
 {{/sameLanguage}}
 
 # What you write
