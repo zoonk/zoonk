@@ -53,7 +53,7 @@ function getSystemPrompt({
   }).replace("{{READER_RESPELLING}}\n", () => respelling);
 }
 
-/* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: words come before the sentences that use them, and the tip before its practice. */
+/* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: words come before the sentences that use them, and the tip before its practice and pattern. */
 const schema = z.object({
   words: z
     .array(
@@ -97,6 +97,50 @@ const schema = z.object({
       }),
     )
     .min(1),
+  patternTable: z
+    .object({
+      prompt: z.string(),
+      modelWord: z.string(),
+      modelMeaning: z.string().nullable(),
+      newWord: z.string(),
+      newMeaning: z.string().nullable(),
+      rows: z
+        .array(
+          z.object({
+            label: z.string(),
+            labelMeaning: z.string().nullable(),
+            model: z.string(),
+            answer: z.string(),
+            blank: z.boolean(),
+          }),
+        )
+        .min(2),
+      choices: z.array(z.string()).min(2),
+      explanation: z.string(),
+    })
+    .nullable(),
+  dialogue: z
+    .object({
+      prompt: z.string(),
+      scene: z.string(),
+      lines: z
+        .array(
+          z.object({ speaker: z.enum(["them", "you"]), text: z.string(), translation: z.string() }),
+        )
+        .min(1),
+      replies: z
+        .array(
+          z.object({
+            text: z.string(),
+            translation: z.string(),
+            isBest: z.boolean(),
+            why: z.string(),
+          }),
+        )
+        .min(2),
+      explanation: z.string(),
+    })
+    .nullable(),
   writing: z.object({
     prompt: z.string(),
     answers: z.array(z.string()).min(1),

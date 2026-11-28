@@ -3,6 +3,8 @@ import { type LanguageLessonCheckInput } from "./test-cases";
 
 const italianGreetings: LanguageLessonCheckInput = {
   lesson: {
+    dialogue: null,
+    patternTable: null,
     practice: [
       {
         answer: "Buonasera",
@@ -104,6 +106,8 @@ const italianGreetings: LanguageLessonCheckInput = {
 
 const spanishSlowly: LanguageLessonCheckInput = {
   lesson: {
+    dialogue: null,
+    patternTable: null,
     practice: [
       {
         answer: "Puede",
@@ -207,6 +211,8 @@ const spanishSlowly: LanguageLessonCheckInput = {
 
 const englishIntroductions: LanguageLessonCheckInput = {
   lesson: {
+    dialogue: null,
+    patternTable: null,
     practice: [
       {
         answer: "from",
@@ -311,6 +317,8 @@ const englishIntroductions: LanguageLessonCheckInput = {
 
 const italianPastWeather: LanguageLessonCheckInput = {
   lesson: {
+    dialogue: null,
+    patternTable: null,
     practice: [
       {
         answer: "pioveva",
