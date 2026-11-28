@@ -1193,61 +1193,61 @@
         }
       }
     },
-    "Not quite" : {
-      "comment" : "Gentle verdict after a wrong answer, above the feedback on its likely mistake",
+    "Not quite:" : {
+      "comment" : "Before the feedback on the likely mistake behind a program's wrong output",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das stimmt so nicht"
+            "value" : "Das stimmt so nicht:"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Casi"
+            "value" : "No es así:"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ce n’est pas ça"
+            "value" : "Ce n’est pas ça :"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Non proprio"
+            "value" : "Non proprio:"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "少し違います"
+            "value" : "少し違います："
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "조금 달라요"
+            "value" : "정답은 아니에요:"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nie do końca"
+            "value" : "Niezupełnie:"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não é bem isso"
+            "value" : "Não é bem isso:"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tam olmadı"
+            "value" : "Pek öyle değil:"
           }
         }
       }

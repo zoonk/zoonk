@@ -341,16 +341,7 @@ private struct CodeRunnerOutput: View {
 
           if let mistake {
             Label {
-              VStack(alignment: .leading, spacing: 2) {
-                Text(
-                  "Not quite", tableName: "ActivitiesCode",
-                  comment:
-                    "Gentle verdict after a wrong answer, above the feedback on its likely mistake"
-                )
-                .typeWeight(.semibold)
-                .foregroundStyle(.destructiveText)
-                LessonRichText(mistake)
-              }
+              RichInlineText(Self.notQuite + LessonRichText.typeset(mistake))
             } icon: {
               Image(systemName: "xmark.circle")
                 .foregroundStyle(.destructive)
@@ -418,6 +409,17 @@ private struct CodeRunnerOutput: View {
     Text(verbatim: text.replacingOccurrences(of: "\\s+$", with: "", options: .regularExpression))
       .typeStyle(.section.monospaced())
       .textSelection(.enabled)
+  }
+
+  /// Main's `NotQuiteLead`: the feedback's own line starts with it.
+  private static var notQuite: RichInline {
+    var lead = AttributedString(
+      localized: LocalizedStringResource(
+        "Not quite:", table: "ActivitiesCode",
+        comment: "Before the feedback on the likely mistake behind a program's wrong output"))
+    lead.inlinePresentationIntent = .stronglyEmphasized
+    lead.foregroundColor = .destructiveText
+    return RichInline(text: lead + AttributedString(" "))
   }
 
   @ViewBuilder
