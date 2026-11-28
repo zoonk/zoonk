@@ -67,9 +67,11 @@ sentry {
     autoUploadProguardMapping = providers.gradleProperty("sentryUploadMapping").map { it.toBoolean() }.orElse(false)
     telemetry = false
     autoInstallation.enabled = false
-    // Its instrumentation varies with Gradle's caches, so :core:data's release setup traces OkHttp in code:
-    // https://github.com/getsentry/sentry-android-gradle-plugin/issues/1492
-    tracingInstrumentation.enabled = false
+    tracingInstrumentation {
+        // Keep only app-start timing. The API client installs its own interceptor without failed-request events.
+        features = emptySet()
+        logcat.enabled = false
+    }
 }
 
 aboutLibraries {
