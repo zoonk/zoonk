@@ -57,6 +57,7 @@ model User {
   feedback              Feedback[]
   learningEvents        LearningEvent[]
   usageRecords          UsageRecord[]
+  codeRuns              CodeRun[]
   modelGrades           ModelGrade[]
   instrumentWaitlist    InstrumentWaitlistEntry[]
   mockExams             MockExam[]

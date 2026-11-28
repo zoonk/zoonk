@@ -11,12 +11,15 @@ import {
   runnerMessageSchema,
   toProgramRun,
 } from "./program-runs";
+import { type SandboxJob, runSandboxPrograms } from "./run-sandbox-programs";
 import { type SqlStatement } from "./sql-setup";
 
-export type ProgramJob =
+type LocalJob =
   | { kind: "javascript"; code: string }
   | { kind: "python"; code: string; watch?: readonly string[] }
   | { kind: "sql"; query: string; setup: readonly SqlStatement[] };
+
+export type ProgramJob = LocalJob | SandboxJob;
 
 const BOOT_TIMEOUT_MS = 30_000;
 const RESULT_GRACE_MS = 1000;
@@ -132,7 +135,7 @@ function startRunner(kinds: readonly ProgramKind[]): Runner {
   };
 }
 
-type IndexedJob = { id: number; job: ProgramJob };
+type IndexedJob = { id: number; job: LocalJob };
 
 async function runUntilStopped(runner: Runner, jobs: readonly IndexedJob[]): Promise<ProgramRun[]> {
   const [current, ...rest] = jobs;
@@ -176,5 +179,23 @@ async function runBatch(jobs: readonly IndexedJob[]): Promise<ProgramRun[]> {
 
 /** Returns one result per job in input order; throws if the runner cannot start. */
 export async function runPrograms(jobs: readonly ProgramJob[]): Promise<ProgramRun[]> {
-  return runBatch(jobs.map((job, id) => ({ id, job })));
+  const local: IndexedJob[] = [];
+  const cloud: { id: number; job: SandboxJob }[] = [];
+
+  jobs.forEach((job, id) => {
+    if (job.kind === "javascript" || job.kind === "python" || job.kind === "sql") {
+      local.push({ id, job });
+    } else {
+      cloud.push({ id, job });
+    }
+  });
+
+  const [localRuns, sandboxRuns] = await Promise.all([runBatch(local), runSandboxPrograms(cloud)]);
+
+  return [
+    ...localRuns.map((result, index) => ({ id: local[index]?.id ?? -1, result })),
+    ...sandboxRuns,
+  ]
+    .toSorted((first, second) => first.id - second.id)
+    .map(({ result }) => result);
 }

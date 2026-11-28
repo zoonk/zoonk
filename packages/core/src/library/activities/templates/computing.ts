@@ -10,6 +10,7 @@ import {
 } from "../../steps/contract/content-schemas";
 import { aimForItems, codeSchema, identifierSchema } from "../activity-schemas";
 import { defineActivityTemplate } from "../define-activity-template";
+import { PROGRAM_LANGUAGES, PROGRAM_LANGUAGE_IDS } from "../programs/program-languages";
 import { answerCapacityIssues, duplicateIssues, issue } from "./_utils/template-helpers";
 import { normalizeProgramOutput } from "./_utils/text-normalizers";
 
@@ -24,6 +25,10 @@ const TRACE_VALUE_TARGET = 60;
 const COLUMNS_TARGET = 6;
 const ROWS_TARGET = 30;
 const TABLES_TARGET = 3;
+
+const runnerLanguageConventions = Object.values(PROGRAM_LANGUAGES).map(
+  ({ convention, fileName, name }) => `${name} (\`${fileName}\`): ${convention}`,
+);
 
 const languageSchema = z.enum(["javascript", "python"]);
 
@@ -43,7 +48,7 @@ const codeRunnerFields = z
       .describe(aimForItems(EDITABLE_LINES_TARGET)),
     expectedOutput: aimForCharacters(z.string().min(1), OUTPUT_TARGET),
     fileName: labelSchema.optional(),
-    language: languageSchema,
+    language: z.enum(PROGRAM_LANGUAGE_IDS),
     mistakes: z
       .array(
         z
@@ -96,8 +101,7 @@ function solutionIssues(fields: CodeRunnerFields) {
 
 export const codeRunnerTemplate = defineActivityTemplate({
   checks: ["interaction"],
-  description:
-    "Run and fix real code in the browser (JavaScript, or Python through Pyodide), like an off-by-one loop. The learner's program output must equal the expected output. `solution` is the starter code with the editable lines fixed; code runs it before publishing, and `expectedOutput` must be exactly what it prints. JavaScript's console.log prints like Node on one line (arrays as [ 1, 2 ], objects as { a: 1 }); Python has its standard library but no input() and no network. Keep output the same on every run and every device: no randomness, clock, time zone or locale formatting. Fills: the language, starter code, editable lines, the solution, expected output and feedback keyed by the output of each likely mistake.",
+  description: `Run and fix real code, like an off-by-one loop. Use a single file, the standard library, no stdin and no network. Runnable languages: ${runnerLanguageConventions.join(" ")} The learner's program output must equal the expected output. The solution is the starter code with only the editable lines fixed. The checker runs it before publishing, and expectedOutput must be exactly what it prints. Keep output deterministic: no randomness, clock, time zone or locale formatting. Fills: the language, starter code, editable lines, solution, expected output and feedback keyed by the output of each likely mistake.`,
   expected: (fields) => ({ kind: "output", output: normalizeProgramOutput(fields.expectedOutput) }),
   fields: codeRunnerFields,
   id: "codeRunner",

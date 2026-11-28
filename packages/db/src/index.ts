@@ -94,6 +94,7 @@ export type {
   TutorSharedAnswer,
   User,
   UsageRecord,
+  CodeRun,
   UserLearningProfile,
   UserProgress,
   WarmUp,

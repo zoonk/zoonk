@@ -296,9 +296,12 @@
     "./library/activities/music": "./src/library/activities/templates/_utils/music.ts",
     "./library/activities/pattern-checks": "./src/library/activities/templates/_utils/pattern-checks.ts",
     "./library/activities/process-icons": "./src/library/activities/process-icons.ts",
+    "./library/activities/program-languages": "./src/library/activities/programs/program-languages.ts",
     "./library/activities/program-limits": "./src/library/activities/programs/program-limits.ts",
     "./library/activities/python-error": "./src/library/activities/programs/python-error.ts",
     "./library/activities/schemas": "./src/library/activities/activity-schemas.ts",
+    "./library/activities/sandbox-contract": "./src/library/activities/programs/sandbox-contract.ts",
+    "./library/activities/run-learner-program": "./src/library/activities/programs/run-learner-program.ts",
     "./library/activities/sql-setup": "./src/library/activities/programs/sql-setup.ts",
     "./library/activities/templates": "./src/library/activities/activity-templates.ts",
     "./library/activities/text-normalizers": "./src/library/activities/templates/_utils/text-normalizers.ts",
@@ -803,6 +806,7 @@
     "./library/challenges/field-token": "./src/library/challenges/field-challenge-token.ts"
   },
   "scripts": {
+    "sandbox:build": "tsx --conditions=react-server --env-file-if-exists=../../apps/api/.env.local scripts/build-sandbox-bases.ts",
     "seed": "NEXT_PUBLIC_APP_DOMAIN=localhost:3000 tsx --conditions=react-server scripts/seed.ts",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -815,6 +819,7 @@
     "@vercel/blob": "2.9.0",
     "@vercel/functions": "catalog:",
     "@vercel/oidc": "4.0.9",
+    "@vercel/sandbox": "5.0.0",
     "@zoonk/ai": "workspace:*",
     "@zoonk/auth": "workspace:*",
     "@zoonk/db": "workspace:*",

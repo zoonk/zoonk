@@ -26,6 +26,7 @@ import {
   lockOpenRun,
 } from "./_utils/lesson-runs";
 import { getMistakeCorrectAnswer } from "./_utils/mistake-correct-answer";
+import { resolveMeasuredOutput } from "./_utils/resolve-measured-output";
 import { getStepQuestion } from "./_utils/step-question";
 import {
   type LessonStepAnswer,
@@ -252,12 +253,8 @@ export async function checkLessonStep({
     return { status: "unauthorized" };
   }
 
-  if (!isUuid(stepId)) {
-    return { status: "notFound" };
-  }
-
   const userId = session.user.id;
-  const row = await findPlayableStepRow({ stepId, userId });
+  const row = isUuid(stepId) && (await findPlayableStepRow({ stepId, userId }));
   const run = row && (await findLessonRun({ lessonId: row.lessonId, runId: input.runId, userId }));
 
   if (!row || !run) {
@@ -279,6 +276,17 @@ export async function checkLessonStep({
 
   const { step } = loaded;
 
+  const answer = await resolveMeasuredOutput({
+    answer: input.answer,
+    savedAnswer: saved?.answer,
+    step,
+    userId,
+  });
+
+  if (!answer) {
+    return { status: "invalid" };
+  }
+
   const isRecorded =
     !saved &&
     (await findClosingAnswer({
@@ -289,22 +297,14 @@ export async function checkLessonStep({
       userId,
     })) === null;
 
-  const verdict = await gradeRunAnswer({
-    answer: input.answer,
-    isRecorded,
-    lesson: row.lesson,
-    step,
-    userId,
-  });
+  const verdict = await gradeRunAnswer({ answer, isRecorded, lesson: row.lesson, step, userId });
 
   const excused = saved ? null : await excuseFixedAnswer({ run, screen: row, verdict });
 
-  if (excused) {
-    return { result: toCheckResult({ savedMistake: false, verdict: excused }), status: "checked" };
-  }
-
-  if (!verdict) {
-    return { status: "invalid" };
+  if (excused || !verdict) {
+    return excused
+      ? { result: toCheckResult({ savedMistake: false, verdict: excused }), status: "checked" }
+      : { status: "invalid" };
   }
 
   if (saved) {
@@ -325,7 +325,7 @@ export async function checkLessonStep({
 
   return recordCheck({
     attemptId,
-    input,
+    input: { ...input, answer },
     receivedAt,
     row,
     run,

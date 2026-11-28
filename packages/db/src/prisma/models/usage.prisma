@@ -5,6 +5,7 @@ enum UsageKind {
   tutorMessage  @map("tutor_message")
   upload
   conversation
+  codeRun       @map("code_run")
   assist
   /// Reading one that exists is free.
   mindMap       @map("mind_map")

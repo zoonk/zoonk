@@ -45,7 +45,10 @@
     "packages/auth": {
       "project": ["src/**/*.ts!", "!**/_test-utils/**!", "!src/{e2e,testing}.ts"]
     },
-    "packages/core": { "project": ["src/**/*.{ts,tsx}!", "!**/_test-utils/**!"] },
+    "packages/core": {
+      "entry": ["scripts/build-sandbox-bases.ts!"],
+      "project": ["src/**/*.{ts,tsx}!", "!**/_test-utils/**!"]
+    },
     "packages/db": {
       "entry": [
         "prisma.config.ts",

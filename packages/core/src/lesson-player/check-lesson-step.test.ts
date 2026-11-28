@@ -386,6 +386,52 @@ describe(checkLessonStep, () => {
     });
   });
 
+  it("saves measured code output and replays the check after its code run is gone", async () => {
+    const fixture = activityContentFixtures.codeRunner;
+    const content = { ...fixture, fields: { ...fixture.fields, language: "java" } };
+
+    const { run, steps, user } = await setupRun({ steps: [{ content, kind: "activity" }] });
+    const stepId = stepOfKind(steps, "activity").id;
+    const codeRunId = randomUUID();
+
+    await prisma.codeRun.create({
+      data: {
+        finishedAt: new Date(),
+        id: codeRunId,
+        language: "java",
+        output: fixture.fields.expectedOutput,
+        requestId: randomUUID(),
+        sandboxName: `run-${codeRunId}`,
+        startedAt: new Date(),
+        stop: "done",
+        userId: user.id,
+      },
+    });
+
+    const attemptId = randomUUID();
+    const input = { attemptId, runId: run.id, stepId };
+    const answer = { kind: "output", output: "Forged output", runId: codeRunId } as const;
+
+    await expect(check({ ...input, answer: { answer, kind: "activity" } })).resolves.toMatchObject({
+      result: { isCorrect: true },
+      status: "checked",
+    });
+
+    await expect(
+      prisma.attempt.findFirst({ where: { stepId, userId: user.id } }),
+    ).resolves.toMatchObject({
+      answer: { answer: { ...answer, output: fixture.fields.expectedOutput }, kind: "activity" },
+      isCorrect: true,
+    });
+
+    await prisma.codeRun.delete({ where: { id: codeRunId } });
+
+    await expect(check({ ...input, answer: { answer, kind: "activity" } })).resolves.toMatchObject({
+      result: { isCorrect: true },
+      status: "checked",
+    });
+  });
+
   it("gives a numeric activity's answer as its expected value, and no end state for other screens", async () => {
     const { run, steps } = await setupRun({ steps: ["activity", "check"] });
 

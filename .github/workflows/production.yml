@@ -56,6 +56,8 @@ jobs:
         run: pnpm deploy:database
       - name: Check every app runs one release and keep open tabs off older ones
         run: pnpm deploy prepare-migration
+      - name: Build code runner bases for the API project
+        run: pnpm --filter @zoonk/core sandbox:build
       - name: Migrate production once
         run: pnpm --filter @zoonk/db db:deploy
       - name: Deploy all production apps concurrently on Turbo machines

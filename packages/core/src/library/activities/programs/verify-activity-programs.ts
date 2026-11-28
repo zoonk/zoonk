@@ -5,6 +5,7 @@ import { type ActivityStepContent } from "../activity-templates";
 import { type ActivityIssue } from "../define-activity-template";
 import { issue } from "../templates/_utils/template-helpers";
 import { instrumentJavaScript } from "./instrument-javascript";
+import { type SandboxLanguage } from "./program-languages";
 import {
   MAX_QUERY_ROWS,
   MAX_TRACE_STEPS,
@@ -13,6 +14,7 @@ import {
 } from "./program-limits";
 import { type ProgramRun } from "./program-runs";
 import { type ProgramJob, runPrograms } from "./run-programs";
+import { SANDBOX_RUN_SECONDS, compileSeconds } from "./sandbox-languages";
 import { sqlSetupStatements } from "./sql-setup";
 import { findTraceMismatch } from "./trace-match";
 
@@ -30,7 +32,7 @@ function preview(text: string): string {
   return JSON.stringify(text.length > PREVIEW_LENGTH ? `${text.slice(0, PREVIEW_LENGTH)}…` : text);
 }
 
-function failure(run: ProgramRun, kind: ProgramKind): string | null {
+function failure(run: ProgramRun, kind: ProgramKind | SandboxLanguage): string | null {
   switch (run.status) {
     case "crashed":
       return "stopped the checker, likely by using too much memory";
@@ -38,8 +40,17 @@ function failure(run: ProgramRun, kind: ProgramKind): string | null {
       const line = run.error?.line ? ` on line ${run.error.line}` : "";
       return `fails${line}: ${run.error?.message ?? "unknown error"}`;
     }
-    case "timeout":
-      return `doesn't finish within ${PROGRAM_TIME_LIMIT_MS[kind] / MS_PER_SECOND} seconds`;
+    case "timeout": {
+      if (kind === "javascript" || kind === "python" || kind === "sql") {
+        return `doesn't finish within ${PROGRAM_TIME_LIMIT_MS[kind] / MS_PER_SECOND} seconds`;
+      }
+
+      const compileLimit = compileSeconds(kind);
+
+      return compileLimit
+        ? `exceeds the time limit (${compileLimit} seconds to compile, ${SANDBOX_RUN_SECONDS} seconds to run)`
+        : `doesn't finish within ${SANDBOX_RUN_SECONDS} seconds`;
+    }
     case "tooManySteps":
       return `runs more than ${MAX_TRACE_STEPS} lines; trace a shorter program`;
     case "tooMuchOutput":
@@ -57,7 +68,7 @@ function runIssues({
   run,
   what,
 }: {
-  kind: ProgramKind;
+  kind: ProgramKind | SandboxLanguage;
   path: string;
   run: ProgramRun | undefined;
   what: string;
