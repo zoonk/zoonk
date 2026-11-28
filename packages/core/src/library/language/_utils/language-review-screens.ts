@@ -7,6 +7,15 @@ export type LanguageReviewScreen = { kind: string; content: unknown };
 type Word = LanguageLessonContent["words"][number];
 type Sentence = LanguageLessonContent["sentences"][number];
 
+/** A word as a published lesson stores it, without the writer's respelling or sound tip. */
+type ReviewWord = Pick<Word, "distractors" | "note" | "romanization" | "translation" | "word"> &
+  Partial<Pick<Word, "pronunciation" | "tip">>;
+
+type ReviewSentence = Pick<
+  Sentence,
+  "distractors" | "explanation" | "sentence" | "translation" | "translationDistractors"
+>;
+
 function toOptions({ correct, wrong }: { correct: readonly string[]; wrong: readonly string[] }) {
   return [
     ...correct.map((text) => ({ isCorrect: true, text })),
@@ -14,7 +23,7 @@ function toOptions({ correct, wrong }: { correct: readonly string[]; wrong: read
   ];
 }
 
-function toWordScreen({ kind, word }: { kind: string; word: Word }): LanguageReviewScreen {
+function toWordScreen({ kind, word }: { kind: string; word: ReviewWord }): LanguageReviewScreen {
   if (kind === "translation") {
     return {
       content: {
@@ -38,7 +47,7 @@ function toSentenceScreen({
   sentence,
 }: {
   kind: string;
-  sentence: Sentence;
+  sentence: ReviewSentence;
 }): LanguageReviewScreen {
   const { explanation } = sentence;
 
@@ -67,7 +76,10 @@ function toSentenceScreen({
   };
 }
 
-function toContentScreen(step: LanguageStepToSave): LanguageReviewScreen {
+function toContentScreen(step: {
+  kind: LanguageStepToSave["kind"];
+  content: unknown;
+}): LanguageReviewScreen {
   if (step.kind !== "fillBlank") {
     return { content: step.content, kind: step.kind };
   }
@@ -116,5 +128,26 @@ export function listLanguageReviewScreens({
     }
 
     return toContentScreen(step);
+  });
+}
+
+export function listStoredLanguageReviewScreens(
+  steps: readonly {
+    kind: LanguageStepToSave["kind"];
+    content: unknown;
+    word: ReviewWord | null;
+    sentence: ReviewSentence | null;
+  }[],
+): LanguageReviewScreen[] {
+  return steps.map(({ content, kind, sentence, word }) => {
+    if (word) {
+      return toWordScreen({ kind, word });
+    }
+
+    if (sentence && (kind === "reading" || kind === "listening")) {
+      return toSentenceScreen({ kind, sentence });
+    }
+
+    return toContentScreen({ content, kind });
   });
 }

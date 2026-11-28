@@ -1,7 +1,7 @@
 import { generateText } from "ai";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createGenerateTextResult } from "../_test-utils/generate-text-result";
-import { generateLanguageLesson } from "./language-lesson";
+import { generateLanguageLesson, generateLanguageLessonActivities } from "./language-lesson";
 import type * as Ai from "ai";
 
 vi.mock("server-only", () => ({}));
@@ -16,6 +16,10 @@ vi.mock("./language-lesson-respelling-pt.prompt.md", () => ({
 }));
 
 vi.mock("./language-lesson-fix.prompt.md", () => ({ default: "Fix the problems." }));
+
+vi.mock("./language-lesson-activities.prompt.md", () => ({
+  default: "Write only the table and the dialogue.",
+}));
 
 vi.mock("./language-lesson-respelling-es.prompt.md", () => ({ default: "- Spanish readers.\n" }));
 vi.mock("./language-lesson-respelling-en.prompt.md", () => ({ default: "- English readers.\n" }));
@@ -76,5 +80,31 @@ describe(generateLanguageLesson, () => {
     const { systemPrompt } = await generateLanguageLesson(LESSON);
 
     expect(systemPrompt).toContain("Reply in US English, explain in Português Brasileiro.");
+  });
+});
+
+describe(generateLanguageLessonActivities, () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(generateText).mockResolvedValue(createGenerateTextResult({}));
+  });
+
+  it("writes a published lesson's activities by the writer's own rules, from its words", async () => {
+    const { systemPrompt, userPrompt } = await generateLanguageLessonActivities({
+      ...LESSON,
+      lesson: {
+        sentences: [{ sentence: "How much is the rent?", translation: "Quanto é o aluguel?" }],
+        tip: { text: "Ask with `How much is`.", title: "Asking a price" },
+        words: [{ translation: "o aluguel", word: "the rent" }],
+      },
+    });
+
+    expect(systemPrompt).toContain("Reply in US English, explain in Português Brasileiro.");
+    expect(systemPrompt).toMatch(/Write only the table and the dialogue\.$/u);
+    expect(userPrompt).toContain('"sentence": "How much is the rent?"');
+
+    expect(vi.mocked(generateText).mock.calls[0]?.[0]).toMatchObject({
+      model: "openai/gpt-6.1-terra",
+    });
   });
 });

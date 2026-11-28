@@ -1,4 +1,7 @@
-import { type LanguageLessonContent } from "@zoonk/ai/tasks/language/language-lesson";
+import {
+  type LanguageLessonActivities,
+  type LanguageLessonContent,
+} from "@zoonk/ai/tasks/language/language-lesson";
 import { definitionNamesWord } from "@zoonk/ai/tasks/language/language-lesson-rules";
 import { normalizeDistractorKey, sanitizeDistractors } from "@zoonk/utils/distractors";
 import { normalizePunctuation, segmentWords } from "@zoonk/utils/string";
@@ -213,6 +216,15 @@ function cleanDialogue(
   );
 }
 
+export function cleanLanguageActivities(
+  activities: LanguageLessonActivities,
+): LanguageLessonActivities {
+  return {
+    dialogue: cleanDialogue(activities.dialogue),
+    patternTable: cleanPatternTable(activities.patternTable),
+  };
+}
+
 export function cleanLanguageLesson({
   content,
   knownWords,
@@ -223,8 +235,7 @@ export function cleanLanguageLesson({
   sameLanguage: boolean;
 }): LanguageLessonContent {
   return {
-    dialogue: cleanDialogue(content.dialogue),
-    patternTable: cleanPatternTable(content.patternTable),
+    ...cleanLanguageActivities(content),
     practice: cleanPractice(content),
     sentences: cleanSentences({ content, sameLanguage }),
     summary: content.summary.map(cleanText).filter(Boolean),

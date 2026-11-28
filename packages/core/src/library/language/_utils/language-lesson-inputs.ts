@@ -47,15 +47,8 @@ async function findKnownWords({
   return [...new Set(words.map((row) => row.word.word))];
 }
 
-/** Internal: the calling workflow must hold the lesson's content claim. */
-export async function loadLanguageLessonInputs({
-  lessonId,
-  workflowRunId,
-}: {
-  lessonId: string;
-  workflowRunId: string;
-}): Promise<LanguageLessonState> {
-  const lesson = await prisma.lesson.findUnique({
+async function findLesson(lessonId: string) {
+  return prisma.lesson.findUnique({
     include: {
       homeChapter: {
         include: { goalSkills: { select: { skill: { select: { cefrLevel: true } } } } },
@@ -68,17 +61,13 @@ export async function loadLanguageLessonInputs({
     omit: { spec: true, summary: true },
     where: { id: lessonId },
   });
+}
 
-  if (lesson?.contentStatus !== "running" || lesson.contentRunId !== workflowRunId) {
-    return { status: "notClaimed" };
-  }
-
-  if (!lesson.targetLanguage) {
-    return { status: "notLanguageLesson" };
-  }
-
+async function toInputs(
+  lesson: NonNullable<Awaited<ReturnType<typeof findLesson>>> & { targetLanguage: string },
+): Promise<LanguageLessonInputs> {
   const unit = lesson.homeChapter;
-  const knownWords = await findKnownWords({ chapterId: unit?.id ?? null, lessonId });
+  const knownWords = await findKnownWords({ chapterId: unit?.id ?? null, lessonId: lesson.id });
 
   // Finer skills have no level, so a lesson linked only to them takes its unit's plan skills' levels.
   const lessonLevels = lesson.skills.flatMap(({ skill }) => skill.cefrLevel ?? []);
@@ -89,22 +78,54 @@ export async function loadLanguageLessonInputs({
       : (unit?.goalSkills ?? []).flatMap(({ skill }) => skill.cefrLevel ?? []);
 
   return {
-    inputs: {
+    learnerLanguage: lesson.language,
+    skillId: lesson.skills[0]?.skillId ?? null,
+    targetLanguage: lesson.targetLanguage,
+    writerInput: {
+      knownWords,
       learnerLanguage: lesson.language,
-      skillId: lesson.skills[0]?.skillId ?? null,
+      lessonCanDo: lesson.canDo,
+      lessonDescription: lesson.description,
+      lessonTitle: lesson.title,
+      level: formatLevels({ band: lesson.level, levels }),
       targetLanguage: lesson.targetLanguage,
-      writerInput: {
-        knownWords,
-        learnerLanguage: lesson.language,
-        lessonCanDo: lesson.canDo,
-        lessonDescription: lesson.description,
-        lessonTitle: lesson.title,
-        level: formatLevels({ band: lesson.level, levels }),
-        targetLanguage: lesson.targetLanguage,
-        unitCanDos: unit?.objectives ?? [],
-        unitTitle: unit?.title ?? lesson.title,
-      },
+      unitCanDos: unit?.objectives ?? [],
+      unitTitle: unit?.title ?? lesson.title,
     },
+  };
+}
+
+/** Internal: the calling workflow must hold the lesson's content claim. */
+export async function loadLanguageLessonInputs({
+  lessonId,
+  workflowRunId,
+}: {
+  lessonId: string;
+  workflowRunId: string;
+}): Promise<LanguageLessonState> {
+  const lesson = await findLesson(lessonId);
+
+  if (lesson?.contentStatus !== "running" || lesson.contentRunId !== workflowRunId) {
+    return { status: "notClaimed" };
+  }
+
+  if (!lesson.targetLanguage) {
+    return { status: "notLanguageLesson" };
+  }
+
+  return {
+    inputs: await toInputs({ ...lesson, targetLanguage: lesson.targetLanguage }),
     status: "ready",
   };
+}
+
+/** What the writer was given for a written language lesson, or null for any other lesson. */
+export async function readLanguageLessonInputs(
+  lessonId: string,
+): Promise<LanguageLessonInputs | null> {
+  const lesson = await findLesson(lessonId);
+
+  return lesson?.targetLanguage
+    ? toInputs({ ...lesson, targetLanguage: lesson.targetLanguage })
+    : null;
 }

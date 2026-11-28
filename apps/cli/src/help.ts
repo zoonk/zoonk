@@ -31,6 +31,11 @@ Shared clip audit
                                            Listen for added speech or sounds in one page of clips.
                                            Default 100, at most 250. Use the same cutoff on each page.
 
+Language lesson activities
+  staff language-activities <lessonId>...  Write the dialogue and pattern table up to 10 published
+                                           language lessons lack, check them, and print each one's
+                                           setScreens fix in "fixes", ready for staff fixes propose.
+
 Content fixes (proposed here, approved by a staff person in Admin with a passkey)
   staff fixes propose [--check] <file.json>  Propose the fix or batch in the file, and print its review
                                            link and each fix's changes and effects. Nothing changes
