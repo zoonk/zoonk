@@ -30,6 +30,7 @@
   "disclosure_collapsed": "fcd7630ba4dc71efaab53d712b71e7b3497072e6c3f7bdfb54323dc86bab99ef",
   "disclosure_expanded": "ef1bf7e2d28892c32b244eafef0271c4189d5800fcc4a5b4b08879bfb573c0e7",
   "exam_choice_left_out": "51ee9b7d5f55acd41993345ae765d0f949b8b1411987d4d75aad2ec1f057534c",
+  "exam_choice_left_out_several": "707accdb87bcb4ee3f2eee6e5ed1c7c9fdd458950dee90fabaf986af018c466d",
   "exam_choice_pick_up_to": "0394ea194e2f963787f04e2e95fcc1da97fc23da6264d2b873576611c44be1b4",
   "gate_build_plan": "213a6aac116dc01a1430a4b4677720d2f76de9e094f4ad231a53f3b18e345f0f",
   "gate_log_in": "1c71d46eaf237666a02992594fcf206f0995899f0f72eff412c4c5535e8b2162",
@@ -141,6 +142,8 @@
     <string name="weekend_time_label">Hafta sonu çalışma süresi</string>
     <!-- Under a question asking which option of an exam the learner will take, such as its foreign language. Until they pick, their plan has none of the options. -->
     <string name="exam_choice_left_out">Planında yer alması için birini seç.</string>
+    <!-- Under a question asking which options of an exam the learner will take, such as two of its subject modules. Until they pick, their plan has none of the options. %1$d is how many they can pick, always 2 or more. -->
+    <string name="exam_choice_left_out_several">Planına eklemek için en fazla %1$d tane seç.</string>
     <string name="disclosure_expanded">Genişletildi</string>
     <string name="disclosure_collapsed">Daraltıldı</string>
     <!-- TalkBack reads one line of a before-and-after list: which side it's on, then its words, such as "Now: Plan ends June 3" or "Better: Un café, por favor". -->
