@@ -13,7 +13,10 @@ import { usesTools } from "../../plans/_utils/plan-tools";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { type OnboardingQuestion } from "../../view-models/onboarding/onboarding-contract";
-import { getMissingQuestions } from "../../view-models/onboarding/onboarding-steps";
+import {
+  getFollowUpQuestions,
+  getMissingQuestions,
+} from "../../view-models/onboarding/onboarding-steps";
 import { getContentCountryScope } from "../content-country";
 import { type CandidateExam, toGoalCandidateExams } from "../exams/candidate-exams";
 import { GOAL_PRODUCT_SELECT, type GoalProduct, toGoalProduct } from "../products/goal-product";
@@ -65,6 +68,8 @@ export type GoalCurriculumInputs = {
   exams: CandidateExam[];
   blueprintReference: { text: string; title: string } | null;
   references: { text: string; title: string }[];
+  /** Its reading asked the learner follow-up questions, which only a private graph reads. */
+  asksFollowUps: boolean;
   hasMaterial: boolean;
   hasPlanGraph: boolean;
   usesTools: boolean;
@@ -228,6 +233,7 @@ export async function loadGoalCurriculumInputs(
   });
 
   return {
+    asksFollowUps: getFollowUpQuestions(details).length > 0,
     blueprintReference: blueprint,
     examIdentity: goal.kind === "exam" ? toExamIdentity({ details, exams }) : null,
     exams,

@@ -35,6 +35,7 @@ const goalSchema = z.object({
   examSubjects: z.array(z.string()).nullable(),
   examTarget: z.enum(["admission", "score", "position"]).nullable(),
   examYear: z.number().nullable(),
+  followUps: z.array(z.string()),
   institution: z.string().nullable(),
   kind: z.enum(["learn", "exam", "language"]),
   level: z.string().nullable(),
@@ -54,7 +55,6 @@ const goalSchema = z.object({
 
 const schema = z.object({
   dailyMinutes: z.number().nullable(),
-  followUps: z.array(z.string()),
   goals: z.array(goalSchema),
   instrument: z.string().nullable(),
   question: z.string().nullable(),
@@ -114,6 +114,7 @@ function getSystemPrompt({
   const variants = {
     material: Boolean(material?.overview),
     unreadMaterial: material?.overview === null,
+    wordsOnly: !material?.overview,
   };
 
   return fillPromptLanguages({
@@ -201,7 +202,7 @@ export async function understandGoal(params: UnderstandGoalParams) {
 export const goalRouteClassifier = {
   instructions: selectPromptVariants({
     template,
-    variants: { material: false, unreadMaterial: false },
+    variants: { material: false, unreadMaterial: false, wordsOnly: true },
   }),
   labels: {
     explain: "A one-off question about how or why something works or what something means.",

@@ -745,6 +745,98 @@ export const TEST_CASES: UnderstandGoalCase[] = [
     goal: "Prova de matemática na sexta sobre frações",
     language: "pt",
   }),
+  testCase("ko-term-finals-with-a-target-average-asks-which-subjects", {
+    expected: {
+      followUp: /과목/u,
+      goals: [{ examName: null, examSubjects: null, kind: "exam", targetScore: /85/u }],
+      route: "goals",
+    },
+    goal: "이번 기말고사 평균 85점 넘기고 싶어요",
+    language: "ko",
+  }),
+  testCase("ko-term-midterms-asks-which-subjects", {
+    expected: {
+      followUp: /과목/u,
+      goals: [{ examName: null, examSubjects: null, kind: "exam" }],
+      route: "goals",
+    },
+    goal: "다음 달 중간고사 준비",
+    language: "ko",
+  }),
+  testCase("en-end-of-semester-exams-asks-which-subjects", {
+    expected: {
+      followUp: /subject|class|course/iu,
+      goals: [{ examName: null, examSubjects: null, kind: "exam" }],
+      route: "goals",
+    },
+    goal: "Help me get through my end-of-semester exams in December",
+    language: "en",
+  }),
+  testCase("pt-term-tests-asks-which-subjects", {
+    expected: {
+      followUp: /mat[ée]ria|disciplina/iu,
+      goals: [{ examName: null, examSubjects: null, kind: "exam" }],
+      route: "goals",
+    },
+    goal: "Quero tirar notas boas nas provas do trimestre",
+    language: "pt",
+  }),
+  testCase("es-term-finals-asks-which-subjects", {
+    expected: {
+      followUp: /materia|asignatura|curso|clase/iu,
+      goals: [{ examName: null, examSubjects: null, kind: "exam" }],
+      route: "goals",
+    },
+    goal: "Aprobar los finales de este cuatrimestre",
+    language: "es",
+  }),
+  testCase("ja-term-test-with-a-target-average-asks-which-subjects", {
+    expected: {
+      followUp: /科目|教科/u,
+      goals: [{ examName: null, examSubjects: null, kind: "exam", targetScore: /80/u }],
+      route: "goals",
+    },
+    goal: "期末テストで平均80点を取りたい",
+    language: "ja",
+  }),
+  testCase("ko-term-finals-naming-its-subjects-asks-nothing", {
+    expected: {
+      followUp: null,
+      goals: [
+        {
+          examName: null,
+          examSubjects: [/국어/u, /수학/u, /영어/u],
+          kind: "exam",
+          targetScore: /90/u,
+        },
+      ],
+      route: "goals",
+    },
+    goal: "기말고사 국어, 수학, 영어 평균 90점",
+    language: "ko",
+  }),
+  testCase("ko-term-finals-in-one-subject-asks-nothing", {
+    expected: { followUp: null, goals: [{ examName: null, kind: "exam" }], route: "goals" },
+    goal: "수학 기말고사 대비",
+    language: "ko",
+  }),
+  testCase("en-finals-as-a-second-goal-ask-nothing", {
+    expected: {
+      followUp: null,
+      goals: [
+        { kind: "language", targetLanguage: "fr" },
+        { examName: null, kind: "exam" },
+      ],
+      route: "goals",
+    },
+    goal: "I want to learn French and get ready for my finals",
+    language: "en",
+  }),
+  testCase("en-chemistry-final-asks-nothing", {
+    expected: { followUp: null, goals: [{ examName: null, kind: "exam" }], route: "goals" },
+    goal: "chemistry final next week",
+    language: "en",
+  }),
   testCase("pt-learn-music-zero", {
     expected: { goals: [{ kind: "learn", ownLevel: "none" }], route: "goals" },
     goal: "Aprender música do zero",

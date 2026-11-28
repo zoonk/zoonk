@@ -243,11 +243,16 @@ function normalizeGoals({
   raw: RawGoalUnderstanding;
   today: string;
 }): GoalUnderstanding {
-  const goals = withChosenKind({ goals: raw.goals, materialIntent })
+  const kept = withChosenKind({ goals: raw.goals, materialIntent })
     .slice(0, MAX_GOALS)
-    .flatMap((goal) => normalizeGoal({ goal, today }) ?? []);
+    .flatMap((goal) => {
+      const normalized = normalizeGoal({ goal, today });
+      return normalized ? [{ followUps: goal.followUps, goal: normalized }] : [];
+    });
 
-  if (goals.length === 0) {
+  const [main] = kept;
+
+  if (!main) {
     return { route: "unclear" };
   }
 
@@ -256,10 +261,11 @@ function normalizeGoals({
 
   return {
     dailyMinutes: cleanDailyMinutes({ limits: dailyMinutesLimits, value: raw.dailyMinutes }),
-    followUps: raw.followUps
+    // Onboarding asks these while setting up the main goal, so another goal's would land on it.
+    followUps: main.followUps
       .flatMap((question) => cleanText(question) ?? [])
       .slice(0, MAX_FOLLOW_UPS),
-    goals,
+    goals: kept.map(({ goal }) => goal),
     route: "goals",
     studyDays: cleanStudyDays(raw.studyDays),
     studyTime,
