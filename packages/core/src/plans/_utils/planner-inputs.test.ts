@@ -1,3 +1,4 @@
+import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import {
   chapterSkillFixture,
@@ -13,6 +14,13 @@ import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
+import {
+  ENGLISH,
+  FOREIGN,
+  MATH,
+  choiceBlueprintFixture,
+} from "../../exams/choices/_test-utils/choice-blueprint";
+import { chooseExamOptionSkills } from "./exam-option-skills";
 import { loadGoalPlannerLessons, loadSkillLessons } from "./planner-lessons";
 
 const citation = { passage: "passage", sourceId: "source" };
@@ -182,5 +190,50 @@ describe(loadGoalPlannerLessons, () => {
     expect(lessons.map((lesson) => lesson.lessonId).toSorted()).toStrictEqual(
       [basicLesson.id, levelLesson.id].toSorted(),
     );
+  });
+});
+
+describe(chooseExamOptionSkills, () => {
+  it("loads the same exam estimates for plans with different saved sizes", async () => {
+    const blueprint = await choiceBlueprintFixture();
+    const item = { area: MATH, name: "Algebra", phase: 0, skillId: "algebra", weight: 1 };
+    const option = { ...item, area: ENGLISH, name: "Read a passage", skillId: "reading" };
+    const own = { ...item, lessons: 3, name: "Practice", skillId: "private-skill" };
+    const phases = [{ milestone: null, name: "Start" }];
+
+    await prisma.examSkillGraph.create({
+      data: {
+        examBlueprintId: blueprint.id,
+        generatedAt: new Date(),
+        graph: {
+          phases,
+          skills: [
+            { ...item, lessons: 12 },
+            { ...option, lessons: 8 },
+          ],
+        },
+        model: "test/fixture",
+        promptVersion: "test",
+        runId: crypto.randomUUID(),
+      },
+    });
+
+    const planned = await Promise.all(
+      [4, 24].map((lessons) =>
+        chooseExamOptionSkills({
+          goal: { examBlueprintId: blueprint.id, kind: "exam" },
+          graph: { phases, skills: [{ ...item, lessons }, { ...option, lessons }, own] },
+          picks: { examChoices: [{ group: FOREIGN, subjects: [ENGLISH] }], examSubjects: [] },
+        }),
+      ),
+    );
+
+    for (const graph of planned) {
+      expect(graph.skills).toStrictEqual([
+        { ...item, lessons: 12 },
+        { ...option, lessons: 8 },
+        own,
+      ]);
+    }
   });
 });

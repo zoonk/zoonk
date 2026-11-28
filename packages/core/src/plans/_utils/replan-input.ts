@@ -79,15 +79,17 @@ export async function loadReplanFacts({
   mode,
   now = new Date(),
   pace: paceSource = "saved",
+  readExamOptionSource,
   state,
   todayShown: shownToday,
 }: Pick<
   ComputePlanRequest,
-  "carrySnapshot" | "context" | "mode" | "now" | "pace" | "todayShown"
+  "carrySnapshot" | "context" | "mode" | "now" | "pace" | "readExamOptionSource" | "todayShown"
 > & { state: PlanState }) {
   const { extraSkills, getActiveItemIds, resolved } = await loadExtraPlanGraph({
     context,
     now,
+    readExamOptionSource,
     state,
   });
 

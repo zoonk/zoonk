@@ -15,7 +15,7 @@ import {
   joinOptionSkills,
   setAsideOptionSkills,
 } from "../planner/option-skills";
-import { type PlanGraph, parsePlanGraph } from "../planner/plan-state";
+import { type PlanGraph, type PlanGraphSkill, parsePlanGraph } from "../planner/plan-state";
 
 function listAreas(graph: PlanGraph): string[] {
   return [...new Set(graph.skills.map((skill) => getSkillArea({ graph, skill })))];
@@ -36,13 +36,13 @@ function listTakenOptions({
 }
 
 async function addTakenFromSharedGraph({
-  examBlueprintId,
   graph,
+  shared,
   structure,
   taken,
 }: {
-  examBlueprintId: string;
   graph: PlanGraph;
+  shared: PlanGraph;
   structure: ExamStructure;
   taken: ReadonlySet<string>;
 }): Promise<PlanGraph> {
@@ -56,27 +56,51 @@ async function addTakenFromSharedGraph({
     return graph;
   }
 
-  const stored = await prisma.examSkillGraph.findUnique({
-    select: { graph: true },
-    where: { examBlueprintId },
-  });
-
   const { graph: source } = await prunePlanNoticeGraph({
-    graph: parsePlanGraph(stored?.graph),
+    graph: shared,
     subjects: structure.subjects.map((subject) => ({
       ...subject,
       writtenTasks: getWrittenTasks({ structure, subject }),
     })),
   });
 
-  const shared = joinOptionSkills(source);
-  const sharedAreas = findSubjectAreas({ areas: listAreas(shared), names: taken, structure });
+  const sharedAreas = findSubjectAreas({ areas: listAreas(source), names: taken, structure });
 
   const areas = new Set(
     [...sharedAreas].flatMap(([area, option]) => (missing.includes(option) ? [area] : [])),
   );
 
-  return addSharedOptionSkills({ areas, graph, shared });
+  return addSharedOptionSkills({ areas, graph, shared: source });
+}
+
+function applySharedSizes(graph: PlanGraph, shared: PlanGraph): PlanGraph {
+  const estimates = new Map(
+    [...shared.skills, ...(shared.extraSkills ?? [])].map((skill) => [
+      skill.skillId,
+      skill.lessons,
+    ]),
+  );
+
+  const size = <Skill extends PlanGraphSkill>(skill: Skill): Skill => ({
+    ...skill,
+    lessons: estimates.get(skill.skillId) ?? skill.lessons,
+  });
+
+  return {
+    ...graph,
+    ...(graph.extraSkills && { extraSkills: graph.extraSkills.map(size) }),
+    ...(graph.optionSkills && { optionSkills: graph.optionSkills.map(size) }),
+    skills: graph.skills.map(size),
+  };
+}
+
+export async function loadExamOptionSource(goal: Pick<Goal, "examBlueprintId" | "kind">) {
+  return goal.kind === "exam" && goal.examBlueprintId
+    ? prisma.examBlueprint.findUnique({
+        select: { skillGraph: { select: { graph: true } }, structure: true },
+        where: { id: goal.examBlueprintId },
+      })
+    : null;
 }
 
 /** Sets aside the skills of the subjects the learner doesn't take, and brings in the options they do. */
@@ -84,30 +108,31 @@ export async function chooseExamOptionSkills({
   goal,
   graph,
   picks,
+  readSource = () => loadExamOptionSource(goal),
 }: {
   goal: Pick<Goal, "examBlueprintId" | "kind">;
   graph: PlanGraph;
   picks: ExamPicks;
+  readSource?: () => ReturnType<typeof loadExamOptionSource>;
 }): Promise<PlanGraph> {
-  const blueprint =
-    goal.kind === "exam" && goal.examBlueprintId
-      ? await prisma.examBlueprint.findUnique({
-          select: { id: true, structure: true },
-          where: { id: goal.examBlueprintId },
-        })
-      : null;
-
+  const blueprint = await readSource();
   const structure = examStructureSchema.safeParse(blueprint?.structure).data;
+  const shared = joinOptionSkills(parsePlanGraph(blueprint?.skillGraph?.graph));
+  const personal = joinOptionSkills(graph);
 
-  if (!(blueprint && structure)) {
-    return joinOptionSkills(graph);
+  if (!blueprint?.skillGraph && !structure) {
+    return personal;
+  }
+
+  if (!structure) {
+    return applySharedSizes(personal, shared);
   }
 
   const untaken = listUnchosenSubjects({ picks, structure });
 
   const joined = await addTakenFromSharedGraph({
-    examBlueprintId: blueprint.id,
-    graph: joinOptionSkills(graph),
+    graph: personal,
+    shared,
     structure,
     taken: listTakenOptions({ structure, untaken }),
   });
@@ -116,5 +141,5 @@ export async function chooseExamOptionSkills({
     findSubjectAreas({ areas: listAreas(joined), names: untaken, structure }).keys(),
   );
 
-  return setAsideOptionSkills({ areas, graph: joined });
+  return applySharedSizes(setAsideOptionSkills({ areas, graph: joined }), shared);
 }

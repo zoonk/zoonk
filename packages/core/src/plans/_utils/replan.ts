@@ -18,6 +18,7 @@ import { type SelectedItemFacts, listSelectedItemFacts } from "../planner/select
 import { summarizeSelectedPlan } from "../planner/selected-plan-summary";
 import { type MockMiss } from "../planner/skill-order";
 import { type PlanCarrySnapshot } from "./carried-lessons";
+import { loadExamOptionSource } from "./exam-option-skills";
 import { withPlacedExtras } from "./extra-plan-graph";
 import { layOutUnmetPhaseDates } from "./phase-end-layout";
 import { type PlanChangeKind, type StoredPlanChangePayload } from "./plan-change-payload";
@@ -77,6 +78,7 @@ export type ComputePlanRequest = {
   now?: Date;
   openedKeys?: readonly string[];
   pace?: "sampled" | "saved";
+  readExamOptionSource?: () => ReturnType<typeof loadExamOptionSource>;
   releasedPhases?: ReadonlySet<number>;
   setAsideLeftWork?: boolean;
   sharedReads?: {
@@ -97,9 +99,15 @@ export function computePlan(
 export function computePlan(input: ComputePlanRequest): Promise<ComputedPlan>;
 export async function computePlan({
   skipUnchangedInputs,
-  ...request
+  ...inputRequest
 }: ComputePlanRequest & { skipUnchangedInputs?: boolean }): Promise<ComputedPlan | null> {
-  const { context, mode, state = context.state, studyScheduleAt } = request;
+  const { context, mode, state = context.state, studyScheduleAt } = inputRequest;
+
+  const request = {
+    ...inputRequest,
+    readExamOptionSource:
+      inputRequest.readExamOptionSource ?? once(() => loadExamOptionSource(context.goal)),
+  };
 
   const {
     advise,
