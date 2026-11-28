@@ -60,9 +60,6 @@ async function finishExam({
   if (isShared) {
     await Promise.all([
       Promise.allSettled([
-        saved
-          ? reconcileReadExamBlueprint({ analytics, exceptGoalId: null, saved, shared: true })
-          : null,
         lookUpChoiceOptionsStep({ analytics, examBlueprintId }),
         lookUpSubjectQuestionsStep({ analytics, examBlueprintId }),
         lookUpTopicFrequencyStep({ analytics, examBlueprintId }),
@@ -71,6 +68,13 @@ async function finishExam({
       ]),
       scheduleFreshnessChecksStep([{ examBlueprintId, kind: "exam" }]),
     ]);
+
+    // The reconcile saves only onto the notice it read, so it reads the one the lookups wrote.
+    if (saved) {
+      await Promise.allSettled([
+        reconcileReadExamBlueprint({ analytics, exceptGoalId: null, saved, shared: true }),
+      ]);
+    }
 
     await refreshFollowerSummariesStep(examBlueprintId);
   }

@@ -286,6 +286,42 @@ describe(researchWorkflow, () => {
     }
   });
 
+  it("reconciles a shared graph against the notice its lookups wrote, so the save isn't refused", async () => {
+    const { goal } = await examGoal();
+    const { extraction } = await replayTcdfResearch();
+    const observed: { pastQuestions?: unknown } = {};
+
+    vi.mocked(findSubjectQuestions).mockResolvedValue({
+      ...TASK_RESULT,
+      data: {
+        board: "Cebraspe",
+        edition: "TCDF 2023",
+        questions: extraction.subjects.map((_, index) => index + 1),
+        source: { title: "Distribuição de itens", url: "https://example.com/tcdf" },
+        status: "found",
+      },
+    });
+
+    const reconcile = vi
+      .spyOn(noticeReconcile, "reconcileExamNotice")
+      .mockImplementation(async ({ examBlueprintId }) => {
+        const blueprint = await prisma.examBlueprint.findUniqueOrThrow({
+          where: { id: examBlueprintId },
+        });
+
+        observed.pastQuestions = examStructureSchema.parse(blueprint.structure).pastQuestions;
+      });
+
+    try {
+      await researchWorkflow({ goalId: goal.id });
+
+      expect(reconcile).toHaveBeenCalledOnce();
+      expect(observed.pastQuestions).toMatchObject({ edition: "TCDF 2023" });
+    } finally {
+      reconcile.mockRestore();
+    }
+  });
+
   it("does nothing for a goal that doesn't depend on changing facts", async () => {
     const user = await userFixture();
     const goal = await goalFixture({ prompt: "calculus from scratch", userId: user.id });
