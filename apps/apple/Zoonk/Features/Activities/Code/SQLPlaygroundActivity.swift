@@ -100,6 +100,7 @@ private struct SQLPlaygroundCanvas: View {
   @State private var runner = CodeSQLRunner()
   @ActivityState private var query: String
   @State private var selection: TextSelection?
+  @FocusState private var isEditorFocused: Bool
   @ActivityState private var queryRun: SQLRun?
   @State private var activeRun: UUID?
   @State private var revision = 0
@@ -210,7 +211,8 @@ private struct SQLPlaygroundCanvas: View {
         .lineLimit(3...)
         .typeStyle(.body.monospaced())
         .textFieldStyle(.plain)
-        .fieldBorder()
+        .focused($isEditorFocused)
+        .fieldBorder(isFocused: isEditorFocused)
         .textInputAutocapitalization(.never)
         .autocorrectionDisabled()
         .keyboardType(.asciiCapable)

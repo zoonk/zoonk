@@ -7,6 +7,7 @@ struct PatternTesterCanvas: View {
 
   @ActivityState private var pattern: String
   @State private var selection: TextSelection?
+  @FocusState private var isFocused: Bool
   @ActivityState("hintsShown") private var hintsShown = 0
   /// The `.task` below tests the kept pattern again whenever the canvas appears.
   @State private var regexTest: (pattern: String, results: PatternRegex.Results?)?
@@ -126,13 +127,14 @@ struct PatternTesterCanvas: View {
       .autocorrectionDisabled()
       .keyboardType(.asciiCapable)
       .disabled(isChecked)
+      .focused($isFocused)
 
       if isRegex {
         Text(verbatim: "/").foregroundStyle(.mutedForeground)
       }
     }
     .typeStyle(.reading.monospaced())
-    .fieldBorder()
+    .fieldBorder(isFocused: isFocused)
   }
 
   private var snippetList: [SnippetKey] {
