@@ -314,7 +314,8 @@ struct TodayPlanChangeSection: View {
         SuggestionHeader(Text(title))
 
         if change.source != "focusTest", let why = words.why {
-          SuggestionDescription(Text(why))
+          // Main's `keepHyphenatedWords`: a name like "An-Nahl" wraps whole, never half on a line.
+          SuggestionDescription(Text(why.replacing(/(\p{L})-(?=\p{L})/) { "\($0.1)\u{2011}" }))
         }
       }
 
