@@ -1,5 +1,10 @@
 import { learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
-import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
+import {
+  choiceItemContent,
+  itemFixture,
+  itemSetFixture,
+  skillFixture,
+} from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { getPracticePicks } from "../library/exams/practice-picks";
@@ -85,6 +90,29 @@ describe("practice picks", () => {
     expect(new Set(practice.map((item) => item.itemId))).toStrictEqual(
       new Set([onePick.id, selectAll.id]),
     );
+  });
+
+  it("leaves out a whole passage when one of its questions asks for several picks", async () => {
+    const [user, skill, set] = await Promise.all([userFixture(), skillFixture(), itemSetFixture()]);
+
+    const [onePick] = await Promise.all([
+      itemFixture({ skillId: skill.id }),
+      itemFixture({ setId: set.id, setPosition: 0, skillId: skill.id }),
+      itemFixture({
+        content: { ...choiceItemContent(), select: 2 },
+        setId: set.id,
+        setPosition: 1,
+        skillId: skill.id,
+      }),
+    ]);
+
+    const practice = await loadPractice({
+      picks: getPracticePicks({ goal: LEARN_GOAL, structure: null }),
+      skillId: skill.id,
+      userId: user.id,
+    });
+
+    expect(practice.map((item) => item.itemId)).toStrictEqual([onePick.id]);
   });
 
   it("keeps several-pick questions out of a review", async () => {

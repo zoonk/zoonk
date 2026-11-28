@@ -100,7 +100,7 @@ export function getAskedItemFilter({
   };
 }
 
-function getPickFilter(picks: readonly OptionSelect[]) {
+export function getPickFilter(picks: readonly OptionSelect[]) {
   return {
     OR: [
       { format: { not: "multipleChoice" as const } },
