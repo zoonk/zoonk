@@ -1,6 +1,8 @@
 import { type TTSVoice, getBaseLanguage } from "@zoonk/utils/languages";
 import { getPromptVersion } from "@zoonk/utils/prompt-version";
 import { getPromptLanguageName } from "../_utils/prompt-language";
+import { type SpeechModelName, speechModels } from "./speech-models";
+import { getSpeechRequest } from "./speech-request";
 
 /** One voice for every clip, so a word sounds the same in every lesson and screen. */
 export const DEFAULT_LANGUAGE_AUDIO_VOICE: TTSVoice = "Kore";
@@ -29,17 +31,19 @@ function fillLanguage(template: string, languageName: string): string {
 /**
  * Names the language even for English: text-to-speech otherwise guesses it, and a short or
  * borrowed-word sentence can come out with another language's sounds. Kept apart from the task's
- * Markdown prompts so tests can replace it alone.
+ * Markdown prompts so tests can replace it alone. The version covers only what `model` is sent.
  */
 export function getLanguageAudioPrompt({
   ipa,
   language,
+  model = speechModels.geminiFlash,
   usagePrompt = "",
   voice = DEFAULT_LANGUAGE_AUDIO_VOICE,
 }: {
   /** For a single word English spells the same. */
   ipa?: string;
   language: string;
+  model?: SpeechModelName;
   usagePrompt?: string;
   voice?: TTSVoice;
 }): { instructions: string; promptVersion: string } {
@@ -56,8 +60,10 @@ export function getLanguageAudioPrompt({
     .filter(Boolean)
     .join("\n\n");
 
+  const sent = getSpeechRequest({ instructions, language, model, voice });
+
   return {
     instructions,
-    promptVersion: getPromptVersion({ systemPrompt: `${voice}\n${instructions}` }),
+    promptVersion: getPromptVersion({ systemPrompt: `${sent.voice}\n${sent.instructions ?? ""}` }),
   };
 }

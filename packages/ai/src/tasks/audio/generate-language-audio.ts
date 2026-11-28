@@ -1,5 +1,4 @@
 import "server-only";
-import { randomUUID } from "node:crypto";
 import { isBlockedTestCall } from "@zoonk/utils/blocked-test-call";
 import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
@@ -7,7 +6,6 @@ import { type TTSVoice, getBaseLanguage, usesNonLatinScript } from "@zoonk/utils
 import { logError } from "@zoonk/utils/logger";
 import { segmentWords } from "@zoonk/utils/string";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
-import { captureAiGeneration } from "../../provenance/ai-generation-sink";
 import { type TaskProvenance } from "../../provenance/task-provenance";
 import { checkWordPronunciation } from "../language/check-word-pronunciation";
 import { type WordIpa, writeWordIpa } from "../language/word-ipa";
@@ -15,10 +13,9 @@ import { convertWavToMp3 } from "./convert-wav-to-mp3";
 import { type ClipAddition, findClipAddition } from "./find-clip-addition";
 import alphabetSymbolPrompt from "./generate-language-audio-alphabet-symbol.prompt.md";
 import { DEFAULT_LANGUAGE_AUDIO_VOICE, getLanguageAudioPrompt } from "./language-audio-prompt";
+import { generateRecordedSpeech } from "./recorded-speech";
 import { assertExpectedAudioSize, getMaxSeconds } from "./speech-limits";
 import { type SpeechModelName, getSpeakingModels, speechModels } from "./speech-models";
-import { buildSpeechProvenance } from "./speech-provenance";
-import { generateSpeechWithProvider } from "./speech-provider";
 
 const TASK = "language-audio";
 
@@ -36,8 +33,7 @@ type VoicedAudio = {
   audio: Uint8Array;
   durationSeconds: number;
   format: "mp3";
-  model: SpeechModelName;
-  providerMetadata: Record<string, unknown>;
+  provenance: TaskProvenance;
 };
 
 export type AudioResult = {
@@ -178,7 +174,7 @@ class AddedToClipError extends Error {
   readonly voiced: VoicedAudio;
 
   constructor({ added, voiced }: { added: ClipAddition; voiced: VoicedAudio }) {
-    super(`${voiced.model} added ${added} to the clip`);
+    super(`${voiced.provenance.model} added ${added} to the clip`);
     this.name = "AddedToClipError";
     this.added = added;
     this.voiced = voiced;
@@ -187,10 +183,11 @@ class AddedToClipError extends Error {
 
 type VoiceInput = {
   analytics?: AiGenerationContext;
-  instructions: string;
   language: string;
   lookAlike: LookAlike | null;
+  requestedModel: SpeechModelName;
   text: string;
+  usage?: LanguageAudioUsage;
   voice: TTSVoice;
 };
 
@@ -200,19 +197,32 @@ type VoiceInput = {
  */
 async function generateWithModel({
   analytics,
-  instructions,
   language,
   lookAlike,
   model,
+  requestedModel,
   text,
+  usage,
   voice,
 }: VoiceInput & { model: SpeechModelName }): Promise<VoicedAudio> {
   const maxSeconds = getMaxSeconds(text);
 
-  const { audio: wavAudio, providerMetadata } = await generateSpeechWithProvider({
+  const { instructions, promptVersion } = getLanguageAudioPrompt({
+    ...(lookAlike ? { ipa: lookAlike.ipa } : {}),
+    language,
+    model,
+    usagePrompt: usage ? usagePrompts[usage] : "",
+    voice,
+  });
+
+  const { audio: wavAudio, provenance } = await generateRecordedSpeech({
+    analytics,
     instructions,
     language,
     model,
+    promptVersion,
+    requestedModel,
+    task: TASK,
     text,
     voice,
   });
@@ -228,7 +238,7 @@ async function generateWithModel({
       : undefined,
   ]);
 
-  const voiced: VoicedAudio = { audio, durationSeconds, format: "mp3", model, providerMetadata };
+  const voiced: VoicedAudio = { audio, durationSeconds, format: "mp3", provenance };
 
   if (added) {
     throw new AddedToClipError({ added, voiced });
@@ -280,7 +290,10 @@ async function generateWithFallback({
   }
 }
 
-/** The result names the model that actually voiced it, after any fallback. */
+/**
+ * The result names the model that actually voiced it, after any fallback; every voicing it paid
+ * for, kept or not, is recorded once.
+ */
 export async function generateLanguageAudio({
   analytics,
   language,
@@ -297,47 +310,26 @@ export async function generateLanguageAudio({
   voice?: TTSVoice;
 }): Promise<SafeReturn<AudioResult>> {
   const lookAlike = await findLookAlike({ analytics, language, text, usage });
-
-  const { instructions, promptVersion } = getLanguageAudioPrompt({
-    ...(lookAlike ? { ipa: lookAlike.ipa } : {}),
-    language,
-    usagePrompt: usage ? usagePrompts[usage] : "",
-    voice,
-  });
-
   const models = getSpeechModels({ language, lookAlike, ...(model ? { model } : {}) });
   const [requestedModel = speechModels.geminiFlash] = models;
-  const runId = randomUUID();
-  const startedAt = performance.now();
 
   return safeAsync(async () => {
     const voiced = await generateWithFallback({
       analytics,
-      instructions,
       language,
       lookAlike,
       models,
+      requestedModel,
       text,
+      ...(usage ? { usage } : {}),
       voice,
     });
-
-    const provenance = buildSpeechProvenance({
-      instructions,
-      latencyMs: Math.round(performance.now() - startedAt),
-      promptVersion,
-      requestedModel,
-      runId,
-      text,
-      voiced,
-    });
-
-    await captureAiGeneration({ context: analytics, provenance, task: TASK });
 
     return {
       audio: voiced.audio,
       durationMs: Math.round(voiced.durationSeconds * MS_PER_SECOND),
       format: voiced.format,
-      provenance,
+      provenance: voiced.provenance,
     };
   });
 }
