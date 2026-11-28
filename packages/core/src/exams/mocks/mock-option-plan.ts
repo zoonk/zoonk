@@ -93,9 +93,11 @@ export function planOptionMock({
     return planWrittenTest({ day: option.day, essays, structure });
   }
 
+  // The written paper's section is what marks its subject as written, so candidates are sorted
+  // against the whole exam before the objective paper drops it.
   if (option.kind === "objective") {
     return planOptionMock({
-      candidates,
+      candidates: toSubjectCandidates({ candidates, structure }),
       option: { ...option, kind: "full" },
       structure: onlyObjectiveStructure(structure),
     });

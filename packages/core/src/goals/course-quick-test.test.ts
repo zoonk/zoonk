@@ -1,51 +1,20 @@
-import { randomUUID } from "node:crypto";
-import { prisma } from "@zoonk/db";
-import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { describe, expect, it } from "vitest";
 import { getQuickTestMinutes } from "../language/level-test/level-test-contract";
 import { DAY_PLACEMENT_MINUTES } from "../learner/placement/placement-budget";
 import { getCourseQuickTestMinutes } from "./course-quick-test";
 
-function publicCourse(attrs: Parameters<typeof courseFixture>[0] = {}) {
-  return courseFixture({ isPublished: true, visibility: "public", ...attrs });
-}
-
 describe(getCourseQuickTestMinutes, () => {
-  it("times a language course's quick test as its level test, and other courses' as the placement", async () => {
-    const courses = await Promise.all([
-      publicCourse({ targetLanguage: "es" }),
-      publicCourse(),
-      publicCourse({ format: "exam" }),
-    ]);
+  it("times a language course's quick test as its level test, and other courses' as the placement", () => {
+    const courses = [
+      { format: "language", targetLanguage: "es" },
+      { format: "core", targetLanguage: null },
+      { format: "exam", targetLanguage: null },
+    ] as const;
 
-    await expect(
-      Promise.all(courses.map((course) => getCourseQuickTestMinutes(course))),
-    ).resolves.toStrictEqual([
-      getQuickTestMinutes("language"),
+    expect(courses.map((course) => getCourseQuickTestMinutes(course))).toStrictEqual([
+      6,
       getQuickTestMinutes("learn"),
       DAY_PLACEMENT_MINUTES,
     ]);
-  });
-
-  it("times a language course an exam is built on as that exam's placement, the goal starting it makes", async () => {
-    const [course, blueprint] = await Promise.all([
-      publicCourse({ targetLanguage: "es" }),
-      examBlueprintFixture(),
-    ]);
-
-    await prisma.examSkillGraph.create({
-      data: {
-        examBlueprintId: blueprint.id,
-        generatedAt: new Date(),
-        graph: {},
-        model: "test",
-        primaryCourseId: course.id,
-        promptVersion: "test",
-        runId: randomUUID(),
-      },
-    });
-
-    await expect(getCourseQuickTestMinutes(course)).resolves.toBe(DAY_PLACEMENT_MINUTES);
   });
 });

@@ -4,13 +4,13 @@ import { isValidTimeZone } from "@zoonk/utils/time-zone";
 import { listChoiceGroups } from "../../exams/choices/choice-groups";
 import { type ReusePolicy } from "../sources/source-contract";
 import { toChoiceGroups } from "./blueprint-choices";
-import { type BlueprintContent, type Citation, type ExamStructure } from "./blueprint-contract";
+import { type BlueprintContent, type ExamStructure } from "./blueprint-contract";
 import { type FactEntry } from "./blueprint-fact-claims";
 import { type KeptFacts, keptOr, toKeptFacts } from "./blueprint-kept";
 import { toTestedLanguage } from "./blueprint-language";
 import { toMock } from "./blueprint-mock-content";
 import { type ExtractionDocument } from "./blueprint-passages";
-import { toSubjectTopics } from "./blueprint-subject-topics";
+import { findKeptGroups, toSubject } from "./blueprint-subject-content";
 import { keepExamParts } from "./format-sections";
 import {
   getFormatShares,
@@ -43,57 +43,6 @@ function toStartTime(value: string | null): string | null {
 
 function toTimeZone(value: string | null): string | null {
   return value && isValidTimeZone(value) ? value : null;
-}
-
-function toShortName({ name, shortName }: { name: string; shortName?: string | null }) {
-  const short = shortName?.trim();
-  return short && short.length < name.trim().length ? short : null;
-}
-
-/** A choice's kept count vouches for its options: an option left out of it would be studied by every learner. */
-function toSubject({
-  choices,
-  documents,
-  found,
-  groups,
-  id,
-  item,
-  kept,
-}: {
-  choices: ReadonlySet<string>;
-  documents: ExtractionDocument[];
-  found: Citation;
-  groups: ReadonlySet<string>;
-  id: string;
-  item: Extraction["subjects"][number];
-  kept: KeptFacts;
-}): ExamStructure["subjects"][number] {
-  const choiceGroup =
-    item.choiceGroup && choices.has(item.choiceGroup)
-      ? item.choiceGroup
-      : keptOr({ gap: null, id: `${id}.choiceGroup`, kept, value: item.choiceGroup });
-
-  const partOf = keptOr({ gap: null, id: `${id}.partOf`, kept, value: item.partOf });
-
-  return {
-    ...(choiceGroup && { choiceGroup }),
-    citation: found,
-    group: item.group && groups.has(item.group) ? item.group : null,
-    name: item.name,
-    ...(partOf && { partOf }),
-    questions: keptOr({ gap: null, id: `${id}.questions`, kept, value: item.questions }),
-    shortName: toShortName(item),
-    ...toSubjectTopics({ documents, subject: item }),
-    weight: keptOr({ gap: null, id: `${id}.weight`, kept, value: item.weight }),
-  };
-}
-
-function findKeptGroups({ extraction, kept }: { extraction: Extraction; kept: KeptFacts }) {
-  return new Set(
-    extraction.subjects.flatMap((subject, index) =>
-      subject.group && kept.has(`subjects.${index}.group`) ? [subject.group] : [],
-    ),
-  );
 }
 
 function keepRealChoices({
@@ -180,7 +129,10 @@ function toStructure({
   const mock = toMock({
     extraction,
     kept,
-    partNames: [...groups, ...subjects.map((subject) => subject.name)],
+    partNames: [
+      ...groups,
+      ...subjects.flatMap((subject) => [subject.name, ...(subject.otherGroups ?? [])]),
+    ],
     subjects,
   });
 

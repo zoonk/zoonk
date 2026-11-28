@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { cacdStructure } from "./_test-utils/cacd-structure";
 import { type BlueprintContent } from "./blueprint-contract";
 import { findReadingProblems } from "./reading-check";
 
@@ -122,6 +123,25 @@ describe(findReadingProblems, () => {
         findings: { missingSubjects: [], statedCounts: [] },
       }),
     ).toStrictEqual([{ kind: "countsOffTotal", sum: 76, total: 80 }]);
+  });
+
+  it("counts a first phase's questions on the subjects a later written phase tests again", () => {
+    const structure = cacdStructure();
+
+    const subjects = structure.subjects.map((subject) =>
+      subject.choiceGroup ? subject : { ...subject, questions: 30 },
+    );
+
+    const content = { ...reading([]), structure: { ...structure, subjects } };
+
+    expect(
+      findReadingProblems({
+        checked: subjects,
+        content,
+        documents,
+        findings: { missingSubjects: [], statedCounts: [] },
+      }),
+    ).toStrictEqual([]);
   });
 
   it("counts a choice's questions once, and an option counted inside another subject not again", () => {

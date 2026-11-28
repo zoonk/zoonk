@@ -216,6 +216,7 @@ model ExamSkillGraph {
   examBlueprint   ExamBlueprint @relation(fields: [examBlueprintId], references: [id], onDelete: Cascade)
   /// The graph as plans store it (`PlanGraph`).
   graph           Json
+  /// The exam's own course (format `exam`), never a subject course the exam reuses.
   primaryCourseId String?       @map("primary_course_id") @db.Uuid
   primaryCourse   Course?       @relation(fields: [primaryCourseId], references: [id], onDelete: SetNull)
   model           String

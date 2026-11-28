@@ -82,10 +82,11 @@ internal fun mockOptionDetail(
         return sections.mapNotNull { it.session }.takeIf { it.isNotEmpty() }?.factsLine()
     }
     val subjects = option.areas.takeIf { severalDays && option.kind != MockOption.Kind.AREA }.orEmpty()
-    val parts = option.covers ?: (subjects + option.written)
+    val parts = option.covers ?: (subjects + option.written).distinct()
+    val noWrittenPart = option.objectiveOnly && option.kind != MockOption.Kind.AREA
     return when {
         parts.isNotEmpty() -> formatList(parts, currentLocale())
-        option.objectiveOnly -> stringResource(R.string.mock_chooser_no_written_part)
+        noWrittenPart -> stringResource(R.string.mock_chooser_no_written_part)
         else -> null
     }
 }

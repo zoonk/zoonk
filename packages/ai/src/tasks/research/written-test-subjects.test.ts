@@ -28,6 +28,7 @@ function subject(name: string, group: string | null): Subject {
     group,
     matrix: [],
     name,
+    otherGroups: [],
     partOf: null,
     passages: [],
     questions: null,

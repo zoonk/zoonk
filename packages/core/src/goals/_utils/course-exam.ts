@@ -2,11 +2,9 @@ import "server-only";
 import { type Course, prisma } from "@zoonk/db";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 
-async function findQuestionBankExam(course: Pick<Course, "format" | "id" | "language">) {
-  if (course.format !== "exam") {
-    return null;
-  }
+const PUBLIC_EXAM = { ownerId: null, visibility: "public" } as const;
 
+async function findQuestionBankExam(course: Pick<Course, "id" | "language">) {
   const chapter = { courses: { some: { courseId: course.id } }, visibility: "public" as const };
 
   const blueprints = await prisma.examBlueprint.findMany({
@@ -34,9 +32,8 @@ async function findQuestionBankExam(course: Pick<Course, "format" | "id" | "lang
           },
         },
       },
+      ...PUBLIC_EXAM,
       language: course.language,
-      ownerId: null,
-      visibility: "public",
     },
   });
 
@@ -47,31 +44,38 @@ async function findQuestionBankExam(course: Pick<Course, "format" | "id" | "lang
     : null;
 }
 
-/** Linked by its curriculum or question bank, never by its title. */
+/**
+ * Only a course made for the whole exam is that exam's course; a subject course an exam reuses
+ * stays a course of its own. The exam that owns the course comes first, then an exam whose graph
+ * names it, then its question bank; never its title.
+ */
 export async function loadCourseExam(courseId: string) {
   const course = await prisma.course.findFirst({
     omit: { landingPage: true },
-    where: { id: courseId, visibility: "public" },
+    where: { format: "exam", id: courseId, visibility: "public" },
   });
 
   if (!course) {
     return null;
   }
 
-  const linked = await prisma.examSkillGraph.findMany({
+  const owners = await prisma.examSkillGraph.findMany({
     include: { examBlueprint: true },
     take: 2,
-    where: {
-      OR: [
-        { primaryCourseId: courseId },
-        {
-          examBlueprint: { language: course.language },
-          graph: { array_contains: [{ courseIds: [courseId] }], path: ["skills"] },
-        },
-      ],
-      examBlueprint: { ownerId: null, visibility: "public" },
-    },
+    where: { examBlueprint: PUBLIC_EXAM, primaryCourseId: courseId },
   });
+
+  const linked =
+    owners.length > 0
+      ? owners
+      : await prisma.examSkillGraph.findMany({
+          include: { examBlueprint: true },
+          take: 2,
+          where: {
+            examBlueprint: { ...PUBLIC_EXAM, language: course.language },
+            graph: { array_contains: [{ courseIds: [courseId] }], path: ["skills"] },
+          },
+        });
 
   const [graph] = linked;
 

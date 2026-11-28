@@ -25,7 +25,6 @@ import { findReusableCurriculum } from "../library/curriculum/reusable-curriculu
 import { parsePlanGraph } from "../plans/planner/plan-state";
 import { getOnboarding } from "../view-models/onboarding/get-onboarding";
 import { loadCourseExam } from "./_utils/course-exam";
-import { getCourseQuickTestMinutes } from "./course-quick-test";
 import { prepareCourseGoalPlan } from "./prepare-course-goal-plan";
 import { startCourseGoal } from "./start-course-goal";
 
@@ -137,7 +136,7 @@ describe("exams sharing a primary course", () => {
   it.each([true, false])(
     "keeps several public exam links ambiguous regardless of graph write order (primary: %s)",
     async (primary) => {
-      const { course, exams } = await sharedCourse({ primary });
+      const { course, exams } = await sharedCourse({ attrs: { format: "exam" }, primary });
       await expect(loadCourseExam(course.id)).resolves.toBeNull();
       await touchFirstGraph(exams);
       await expect(loadCourseExam(course.id)).resolves.toBeNull();
@@ -145,9 +144,9 @@ describe("exams sharing a primary course", () => {
   );
 
   it.each([false, true])(
-    "starts a shared core course as an undated course goal (rewritten: %s)",
+    "starts a shared exam course as an undated exam goal of no single exam (rewritten: %s)",
     async (rewrite) => {
-      const { course, exams } = await sharedCourse();
+      const { course, exams } = await sharedCourse({ attrs: { format: "exam" } });
 
       if (rewrite) {
         await touchFirstGraph(exams);
@@ -157,12 +156,12 @@ describe("exams sharing a primary course", () => {
       mockSession(user.id);
 
       await expect(startCourseGoal({ courseId: course.id, input: {} })).resolves.toMatchObject({
-        goal: { examBlueprintId: null, kind: "learn", targetDate: null },
+        goal: { examBlueprintId: null, kind: "exam", targetDate: null },
         status: "created",
       });
 
       const saved = await prisma.goal.findFirstOrThrow({ where: { userId: user.id } });
-      expect(saved).toMatchObject({ examBlueprintId: null, kind: "learn", targetDate: null });
+      expect(saved).toMatchObject({ examBlueprintId: null, kind: "exam", targetDate: null });
     },
   );
 
@@ -239,11 +238,6 @@ describe("exams sharing a primary course", () => {
     const { course } = await sharedCourse({ attrs: { format: "exam" } });
     await expect(getCourseExamDays(course.id)).resolves.toBeNull();
     await expect(getCoursePlanExample(course)).resolves.toMatchObject({ exam: null });
-  });
-
-  it("times a shared language course as a language level test", async () => {
-    const { course } = await sharedCourse({ attrs: { format: "language", targetLanguage: "es" } });
-    await expect(getCourseQuickTestMinutes(course)).resolves.toBe(6);
   });
 
   it("prepares a course-start plan with the goal's exam graph", async () => {

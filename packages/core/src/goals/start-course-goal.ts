@@ -131,11 +131,7 @@ function toCourseGoalDraft({
     },
     displayName: course.title,
     examBlueprintId: decision.kind === "learnerLanguage" ? undefined : examBlueprintId,
-    kind: getCourseGoalKind({
-      format: course.format,
-      hasExam: Boolean(examBlueprintId),
-      targetLanguage: course.targetLanguage,
-    }),
+    kind: getCourseGoalKind(course),
     language: decision.kind === "learnerLanguage" ? decision.language : course.language,
     primaryCourseId: decision.kind === "learnerLanguage" ? undefined : course.id,
     prompt: course.title,
