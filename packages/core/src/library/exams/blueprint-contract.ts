@@ -7,6 +7,7 @@ import {
   pastQuestionsSchema,
   pastTopicFrequencySchema,
 } from "./blueprint-past-contract";
+import { readingCheckSchema, setAsideReadingSchema } from "./reading-check-contract";
 import { citationSchema, sectionTaskSchema } from "./written-grading";
 
 const EXAM_FORMAT_KINDS = [
@@ -28,6 +29,35 @@ const EXAM_DATE_KINDS = [
   "other",
 ] as const;
 
+const TOPIC_SHARE_BASES = ["marks", "questions"] as const;
+
+const topicGroupSchema = z.object({
+  basis: z
+    .enum(TOPIC_SHARE_BASES)
+    .optional()
+    .meta({ description: "Whether `share` counts the subject's marks or its questions" }),
+  citation: citationSchema
+    .optional()
+    .meta({ description: "The official passage that states this heading's share" }),
+  name: z.string(),
+  questions: z
+    .object({ max: z.number().int().min(0), min: z.number().int().min(0) })
+    .optional()
+    .meta({ description: "The official range of the subject's questions on this heading" }),
+  share: z
+    .number()
+    .min(0)
+    .max(1)
+    .optional()
+    .meta({
+      description:
+        "Its official part of the subject; set on every heading of the subject or on none, adding up to 1",
+    }),
+  topics: z.array(z.string()),
+});
+
+export type BlueprintTopicGroup = z.infer<typeof topicGroupSchema>;
+
 const blueprintSubjectSchema = z.object({
   choiceGroup: z.string().nullable().optional(),
   citation: citationSchema,
@@ -37,15 +67,7 @@ const blueprintSubjectSchema = z.object({
   partOf: z.string().nullable().optional(),
   questions: z.number().int().nullable(),
   shortName: z.string().nullable().optional(),
-  topicGroups: z
-    .array(
-      z.object({
-        name: z.string(),
-        share: z.number().min(0).max(1).optional(),
-        topics: z.array(z.string()),
-      }),
-    )
-    .optional(),
+  topicGroups: z.array(topicGroupSchema).optional(),
   topics: z.array(z.string()),
   weight: z.number().nullable(),
 });
@@ -267,36 +289,13 @@ const examDateSchema = z.object({
   startTime: clockTimeSchema.nullable(),
 });
 
-const readingProblemSchema = z.discriminatedUnion("kind", [
-  z.object({ citation: citationSchema, kind: z.literal("missingSubject"), name: z.string() }),
-  z.object({
-    citation: citationSchema,
-    kind: z.literal("missingCount"),
-    questions: z.number().int(),
-    subject: z.string(),
-  }),
-  z.object({ kind: z.literal("countsOffTotal"), sum: z.number().int(), total: z.number().int() }),
-  z.object({
-    kind: z.literal("unconfirmed"),
-    part: z.enum(["examDate", "scale", "topics"]),
-    subject: z.string().nullable(),
-  }),
-]);
-
-const readingCheckSchema = z.object({
-  checkedAt: z.iso.datetime(),
-  problems: z.array(readingProblemSchema),
-});
-
-export type ReadingProblem = z.infer<typeof readingProblemSchema>;
-export type ReadingCheck = z.infer<typeof readingCheckSchema>;
-
 export const examEditionSchema = z.object({
   check: readingCheckSchema.nullable(),
   citations: z.array(citationSchema),
   dates: z.array(examDateSchema),
   noticeUrl: z.string().nullable(),
   questionCount: z.number().int().nullable(),
+  setAside: setAsideReadingSchema.nullable().optional(),
   sourceHash: z.string().nullable(),
   /** Every document the reading read, the notice first, so a new reading reads them all again. */
   sourceIds: z.array(z.string()).optional(),
@@ -315,6 +314,7 @@ export const topicFrequencySchema = z.array(
   }),
 );
 
+export type { ReadingCheck, ReadingProblem } from "./reading-check-contract";
 export type Citation = z.infer<typeof citationSchema>;
 export type ExamStructure = z.infer<typeof examStructureSchema>;
 export type ExamEdition = z.infer<typeof examEditionSchema>;

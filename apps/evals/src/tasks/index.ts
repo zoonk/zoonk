@@ -32,6 +32,7 @@ import { extractExamBlueprintTask } from "./extract-exam-blueprint/task";
 import { extractQuestionFormatsTask } from "./extract-question-formats/task";
 import { findChoiceOptionsTask } from "./find-choice-options/task";
 import { findCourseWeightsTask } from "./find-course-weights/task";
+import { findDomainSharesTask } from "./find-domain-shares/task";
 import { findExamDateTask } from "./find-exam-date/task";
 import { findOfficialSourcesTask } from "./find-official-sources/task";
 import { findProductPagesTask } from "./find-product-pages/task";
@@ -151,6 +152,7 @@ export const TASK_GROUPS: readonly { name: string; tasks: readonly RegisteredTas
       extractExamBlueprintTask,
       extractQuestionFormatsTask,
       findWrittenTaskSubjectsTask,
+      findDomainSharesTask,
       checkCitedFactsTask,
       checkExamReadingTask,
       examIdentityDecisionTask,
