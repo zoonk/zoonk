@@ -34,7 +34,7 @@ function SkillNames({
           <li key={name}>
             <ListRow>
               <ListRowContent>
-                <ListRowTitle>{name}</ListRowTitle>
+                <ListRowTitle className="text-muted-foreground">{name}</ListRowTitle>
               </ListRowContent>
             </ListRow>
           </li>
