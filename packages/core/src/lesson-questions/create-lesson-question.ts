@@ -112,20 +112,15 @@ async function getCreateLessonQuestionOutcome({
 function findExistingLessonQuestion({
   requestId,
   subject,
-  threadId,
   userId,
 }: {
   requestId: string;
   subject: TutorSubject;
-  threadId?: string;
   userId: string;
 }) {
   return prisma.lessonQuestion.findFirst({
     ...lessonQuestionResourceQuery,
-    where: {
-      requestId,
-      thread: { ...getSubjectThreadColumn(subject), ...(threadId && { id: threadId }), userId },
-    },
+    where: { requestId, thread: { ...getSubjectThreadColumn(subject), userId } },
   });
 }
 
@@ -290,12 +285,7 @@ export async function createLessonQuestion({
 
   const existingQuestion =
     !knownThread || knownThread.thread
-      ? await findExistingLessonQuestion({
-          requestId: input.requestId,
-          subject,
-          threadId: knownThread?.thread?.id,
-          userId,
-        })
+      ? await findExistingLessonQuestion({ requestId: input.requestId, subject, userId })
       : null;
 
   if (existingQuestion) {

@@ -52,7 +52,12 @@ const translationOptionSchema = z.object({
 });
 
 const serializedStepResourceShape = {
-  fillBlankOptions: z.array(wordBankOptionSchema),
+  fillBlankOptions: z
+    .array(wordBankOptionSchema)
+    .meta({
+      description:
+        "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer.",
+    }),
   id: uuidSchema(),
   matchColumnsRightItems: z.array(z.string()),
   position: z.number().int().min(0),

@@ -33,7 +33,7 @@ const CARD_ROW_CLASS =
 
 const AREA_ROW_CLASS = cn(
   CARD_ROW_CLASS,
-  "has-focus-visible:ring-ring/50 cursor-pointer has-focus-visible:ring-[3px] has-data-disabled:pointer-events-none",
+  "has-focus-visible:ring-ring/50 cursor-pointer has-focus-visible:ring-[3px] has-data-disabled:pointer-events-none has-data-disabled:opacity-50",
   CHOICE_CARD_PICKED_CLASS,
 );
 

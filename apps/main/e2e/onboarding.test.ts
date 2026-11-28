@@ -333,7 +333,13 @@ test("a learner who starts another goal from Today lands on it, never on the goa
   await page.getByRole("button", { exact: true, name: "Start" }).press("Enter");
   await expect(page).toHaveURL(/\/today$/u);
 
-  await expect(page.getByRole("main").getByRole("button", { name: "Get lessons" })).toBeVisible();
+  const main = page.getByRole("main");
+  const getLessons = main.getByRole("button", { name: "Get lessons" });
+  const gettingReady = main.getByText("Getting today's lessons ready…");
+
+  // The new day gets its lessons ready until the run preparing them ends, which another test's
+  // outline of the same course can hold up.
+  await expect(getLessons.or(gettingReady)).toBeVisible();
 
   const newSwitcher = page.getByRole("button", { name: /^Quantum physics.*Switch goal$/u });
 

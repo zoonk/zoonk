@@ -8,6 +8,9 @@ extension EnvironmentValues {
 extension ContainerValues {
   /// A block draws no hairline under this row, as the list draws none under a row that hides it.
   @Entry var hidesSeparatorBelow = false
+  /// A picked or current row: the hairlines touching it go clear, as the list hides them, so
+  /// nothing moves when the pick does.
+  @Entry var hidesSeparatorsAround = false
 }
 
 extension View {
@@ -67,20 +70,8 @@ struct PageSection<Content: View, Header: View, Footer: View>: View {
     let stack = VStack(alignment: .leading, spacing: 12) {
       header
 
-      VStack(alignment: .leading, spacing: 0) {
-        Group(subviews: content) { rows in
-          ForEach(rows.indices, id: \.self) { index in
-            let row = rows[index]
-
-            row
-              .padding(.vertical, 11)
-              .frame(maxWidth: .infinity, alignment: .leading)
-
-            if index < rows.count - 1, !row.containerValues.hidesSeparatorBelow {
-              Divider()
-            }
-          }
-        }
+      DividedRows {
+        content
       }
 
       footer
@@ -197,6 +188,35 @@ private struct BlockGrid: Layout {
           subview.sizeThatFits(ProposedViewSize(width: columns[column], height: nil)).height
         }
         .max() ?? 0
+    }
+  }
+}
+
+/// Main's `divided-rows` outside a list, as in a block or a sheet: rows one under the other as a
+/// list section draws them, with a hairline between two.
+struct DividedRows<Content: View>: View {
+  @ViewBuilder let content: Content
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 0) {
+      Group(subviews: content) { rows in
+        ForEach(rows.indices, id: \.self) { index in
+          let row = rows[index]
+
+          row
+            .padding(.vertical, 11)
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+          if index < rows.count - 1, !row.containerValues.hidesSeparatorBelow {
+            let next = rows[index + 1]
+
+            Divider()
+              .opacity(
+                row.containerValues.hidesSeparatorsAround
+                  || next.containerValues.hidesSeparatorsAround ? 0 : 1)
+          }
+        }
+      }
     }
   }
 }

@@ -1,3 +1,21 @@
+enum ClipEndingAddition {
+  none
+  speech
+  sound
+}
+
+model ClipEndingAudit {
+  unit           ContentFixUnit
+  clipId         String              @map("clip_id") @db.Uuid
+  audioUrl       String              @map("audio_url")
+  claimExpiresAt DateTime            @map("claim_expires_at")
+  added          ClipEndingAddition?
+  heard          String              @default("")
+
+  @@id([unit, clipId, audioUrl], name: "recording")
+  @@map("clip_ending_audits")
+}
+
 /// Shared by every language pair learning it. Its provenance and `audio*` columns are null for rows
 /// made before generated rows stored their provenance.
 model Word {

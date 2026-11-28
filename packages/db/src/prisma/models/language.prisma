@@ -149,6 +149,9 @@ model ConversationScenario {
   chapterId     String   @map("chapter_id") @db.Uuid
   chapter       Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
   level         String   @db.VarChar(3)
+  /// The country the call is set in when a learner's goal names one lessons don't teach; empty for
+  /// the language's own country, which every other learner of the unit shares.
+  targetRegion  String   @default("") @map("target_region") @db.VarChar(2)
   content       Json
   model         String
   promptVersion String   @map("prompt_version")
@@ -156,7 +159,7 @@ model ConversationScenario {
   generatedAt   DateTime @default(now()) @map("generated_at")
   createdAt     DateTime @default(now()) @map("created_at")
 
-  @@unique([chapterId, level], name: "chapterLevel")
+  @@unique([chapterId, level, targetRegion], name: "chapterLevelRegion")
   @@map("conversation_scenarios")
 }
 

@@ -705,6 +705,7 @@
     "./sessions/summary-visit": "./src/sessions/claim-study-session-summary-visit.ts",
     "./sessions/summary-visit-contract": "./src/sessions/summary-visit-contract.ts",
     "./staff/actor": "./src/staff/get-staff-actor.ts",
+    "./staff/audit-clips": "./src/staff/audit-clips.ts",
     "./staff/cli-login": "./src/staff/decide-cli-login.ts",
     "./staff/content-fixes/batches": "./src/staff/content-fixes/batches.ts",
     "./staff/content-fixes/contract": "./src/staff/content-fixes/contract.ts",

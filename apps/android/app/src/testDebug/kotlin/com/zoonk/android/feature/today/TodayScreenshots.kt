@@ -220,6 +220,46 @@ class TodayScreenshots {
     fun placementChangeTabletDark() =
         captureFocusTestNotice("today-placement-change-tablet-dark", dark = true, day = "notice-placement-change")
 
+    /** An exam choice that takes several options, beside the day and in a phone's sheet. */
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun examModulesPanel() = captureFocusTestNotice("today-exam-modules-panel", day = "notice-exam-modules")
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-night-xhdpi")
+    fun examModulesPanelDarkMoreContrast() =
+        captureFocusTestNotice("today-exam-modules-panel-dark", dark = true, day = "notice-exam-modules")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun examModulesSheet() = captureNoticeSheet("today-exam-modules-sheet", day = "notice-exam-modules", open = "Choose")
+
+    @Test
+    @Config(qualifiers = "w411dp-h1600dp-xxhdpi")
+    fun examModulesSheetAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        captureNoticeSheet("today-exam-modules-sheet-font200", day = "notice-exam-modules", open = "Choose")
+    }
+
+    private fun captureNoticeSheet(
+        name: String,
+        day: String,
+        open: String,
+    ) {
+        val read = DAYS.first { it.first == day }.second
+        compose.setContent { ZoonkTheme { Screen(read) } }
+        compose.onNodeWithText(open).performClick()
+        compose.waitForIdle()
+        write(
+            name,
+            compose
+                .onAllNodes(isRoot())
+                .onLast()
+                .captureRender()
+                .asAndroidBitmap(),
+        )
+    }
+
     /** The Focus test's suggestion on Today, or its proposal on [day]. */
     private fun captureFocusTestNotice(
         name: String,

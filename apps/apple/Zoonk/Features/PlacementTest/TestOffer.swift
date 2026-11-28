@@ -127,7 +127,7 @@ private struct TestOfferCardView: View {
       }
 
       if picks {
-        ChoiceMark(isPicked: isPicked)
+        ChoiceMark(kind: .one, isPicked: isPicked)
       }
     }
     .onGeometryChange(for: CGFloat.self) {

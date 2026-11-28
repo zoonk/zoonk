@@ -2,7 +2,8 @@ package com.zoonk.android.feature.plan
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -13,19 +14,18 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.onboarding.CheckList
+import com.zoonk.android.feature.onboarding.Choice
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.MenuSelect
-import com.zoonk.android.ui.components.SelectionChip
 import com.zoonk.android.ui.components.Suggestion
 import com.zoonk.android.ui.components.SuggestionAction
-import com.zoonk.android.ui.components.SuggestionActions
 import com.zoonk.android.ui.components.SuggestionDescription
 import com.zoonk.android.ui.components.SuggestionHeader
 import com.zoonk.android.ui.components.SuggestionLayout
@@ -56,19 +56,21 @@ private fun ExamChoiceOptions(
     edits: PlanEdits,
 ) {
     val pending = edits.isPending(PlanPart.ExamChoices)
+    val asked = edits.askedExamChoice(choice.group)
 
     if (choice.take > 1) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             SectionLabel(choice.group)
-            ExamChoicePicks(choice, saving = false, enabled = !pending, onSave = { edits.chooseExamOption(choice.group, it, null) })
+            ExamPickLimit(choice.take)
+            ExamChoicePicks(
+                choice,
+                saving = asked != null,
+                enabled = !pending || asked != null,
+                onSave = { edits.chooseExamOption(choice.group, it, null) },
+            )
         }
     } else {
-        val shown =
-            edits
-                .asked(PlanPart.ExamChoices)
-                .filterIsInstance<PlanOp.ExamChoice>()
-                .firstOrNull { it.group == choice.group }
-                ?.subjects ?: choice.subjects
+        val shown = asked?.subjects ?: choice.subjects
         MenuSelect(
             label = choice.group,
             options = choice.options,
@@ -76,6 +78,7 @@ private fun ExamChoiceOptions(
             optionLabel = { it.shortName ?: it.name },
             onPick = { if (it.name !in shown) edits.chooseExamOption(choice.group, listOf(it.name), null) },
             enabled = !pending,
+            placeholder = stringResource(R.string.plan_exam_choice_not_set),
         )
     }
 }
@@ -98,28 +101,17 @@ fun ExamChoicePicks(
     var draft by rememberSaveable(choice.subjects) { mutableStateOf(choice.subjects) }
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Text(
-            text = stringResource(R.string.exam_choice_pick_up_to, choice.take),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        CheckList(
+            choices = choice.options.map { Choice(it.name, it.shortName ?: it.name) },
+            value = draft,
+            label = choice.group,
+            onToggle = { draft = choice.toggled(draft, it) },
+            max = choice.take.toInt(),
+            readOnly = !enabled || saving,
         )
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            choice.options.forEach { option ->
-                val picked = option.name in draft
-                SelectionChip(
-                    text = option.shortName ?: option.name,
-                    selected = picked,
-                    onClick = { draft = choice.toggled(draft, option.name) },
-                    role = Role.Checkbox,
-                    enabled = enabled && !saving && (picked || !choice.isFull(draft)),
-                )
-            }
-        }
         save({ onSave(draft) }, enabled && choice.canSave(draft))
     }
 }
-
-internal fun ExamChoice.isFull(picked: List<String>) = picked.size >= take
 
 /** [picked] with [option] ticked or unticked, in the notice's order. */
 fun ExamChoice.toggled(
@@ -128,7 +120,7 @@ fun ExamChoice.toggled(
 ): List<String> =
     when {
         option in picked -> picked - option
-        isFull(picked) -> picked
+        picked.size >= take -> picked
         else -> options.map { it.name }.filter { it in picked || it == option }
     }
 
@@ -175,6 +167,45 @@ fun examChoiceQuestion(choice: ExamChoice): String =
         choice.group,
     )
 
+/** Main's `ExamPickLimit`: how many options a choice takes, where nothing above the picks says it already. */
+@Composable
+fun ExamPickLimit(take: Long) {
+    Text(
+        text = stringResource(R.string.exam_choice_pick_up_to, take),
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+}
+
+@Composable
+fun ExamChoiceDescription(choice: ExamChoice) {
+    SuggestionDescription(
+        if (choice.take > 1) {
+            stringResource(R.string.exam_choice_left_out_several, choice.take)
+        } else {
+            stringResource(R.string.exam_choice_left_out)
+        },
+    )
+}
+
+@Composable
+fun ExamChoiceButtons(
+    choice: ExamChoice,
+    enabled: Boolean,
+    onChoose: (subjects: List<String>) -> Unit,
+) {
+    Column(Modifier.padding(top = 4.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        choice.options.forEach { option ->
+            SuggestionAction(
+                onClick = { onChoose(listOf(option.name)) },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = enabled,
+                secondary = true,
+            ) { Text(option.shortName ?: option.name) }
+        }
+    }
+}
+
 /**
  * Main's `ExamChoiceSuggestion`, for the plan's suggestion slot: each option saves at once, or the
  * options taken together once saved. Once the [answer] shows, it says what the change did instead, with Undo.
@@ -185,6 +216,7 @@ internal fun ExamChoiceSuggestion(
     layout: SuggestionLayout,
     failed: Boolean,
     pending: Boolean,
+    saving: Boolean,
     answer: SlotAnswer?,
     onChoose: (subjects: List<String>) -> Unit,
     modifier: Modifier = Modifier,
@@ -207,20 +239,11 @@ internal fun ExamChoiceSuggestion(
             answer.Result()
             return@Suggestion
         }
-        SuggestionDescription(stringResource(R.string.exam_choice_left_out))
+        ExamChoiceDescription(choice)
         if (choice.take > 1) {
-            ExamChoicePicks(choice, saving = false, enabled = !pending, onSave = onChoose)
+            ExamChoicePicks(choice, saving, onChoose, enabled = !pending || saving)
         } else {
-            SuggestionActions {
-                choice.options.forEach { option ->
-                    SuggestionAction(
-                        option.shortName ?: option.name,
-                        onClick = { onChoose(listOf(option.name)) },
-                        enabled = !pending,
-                        secondary = true,
-                    )
-                }
-            }
+            ExamChoiceButtons(choice, enabled = !pending, onChoose = onChoose)
         }
         if (failed) SuggestionSaveError()
     }

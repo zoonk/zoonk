@@ -1,4 +1,3 @@
-import GameController
 import SwiftUI
 
 extension EnvironmentValues {
@@ -8,23 +7,15 @@ extension EnvironmentValues {
 }
 
 extension View {
-  /// Follows whether a hardware keyboard is connected, as it connects and disconnects.
+  /// Follows whether a hardware keyboard is connected (`HardwareKeyboard`), as it connects and
+  /// disconnects.
   func followsHardwareKeyboard() -> some View {
     modifier(HardwareKeyboardPresence())
   }
 }
 
 private struct HardwareKeyboardPresence: ViewModifier {
-  @State private var isConnected = GCKeyboard.coalesced != nil
-
   func body(content: Content) -> some View {
-    content
-      .environment(\.hasHardwareKeyboard, isConnected)
-      .onReceive(NotificationCenter.default.publisher(for: .GCKeyboardDidConnect)) { _ in
-        isConnected = true
-      }
-      .onReceive(NotificationCenter.default.publisher(for: .GCKeyboardDidDisconnect)) { _ in
-        isConnected = GCKeyboard.coalesced != nil
-      }
+    content.environment(\.hasHardwareKeyboard, HardwareKeyboard.shared.isConnected)
   }
 }

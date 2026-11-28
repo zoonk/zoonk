@@ -1,31 +1,56 @@
 import SwiftUI
 
-/// Main's `ChoiceList` row: one of a few choices to pick. Its words, then a ring at the row's end
-/// that fills with a check once picked, the picked row on the pick's tint, so the rows read as
+/// Main's `ChoiceList` row, or its `CheckList` row where several can be picked: one of a few choices
+/// to pick. Its words, then its `ChoiceMark`, the picked row on the pick's tint, so the rows read as
 /// choices before any is picked. What a pick leads to is the screen's action, in its bar. For
 /// `ZoonkList`'s rows.
 struct ChoiceRow<Words: View>: View {
+  var picks: ChoiceMark.Kind = .one
   let isPicked: Bool
   /// A choice the learner can't pick yet shows a lock where its ring would be.
   var isLocked = false
+  /// A choice that can't be picked now, such as one past its list's limit, dims, as main's
+  /// `CheckList` rows do.
+  var canPick = true
+  /// On a card of its own (`CardRowStyle`), as main's plan Focus areas are.
+  var isCard = false
   let action: () -> Void
   @ViewBuilder let words: Words
 
+  @Environment(\.isEnabled) private var isEnabled
+
   var body: some View {
-    Button(action: action) {
-      ChoiceRowLabel(isPicked: isPicked, isLocked: isLocked) {
+    let button = Button(action: action) {
+      ChoiceRowLabel(picks: picks, isPicked: isPicked, isLocked: isLocked) {
         words
       }
+      .opacity(dims && !isCard ? 0.5 : 1)
     }
-    .disabled(isLocked)
-    .pickedRow(isPicked)
-    .accessibilityAddTraits(isPicked ? .isSelected : [])
+    .disabled(isLocked || !canPick)
+    .choiceTraits(picks, isPicked: isPicked)
+
+    if isCard {
+      button
+        .buttonStyle(CardRowStyle(isPicked: isPicked))
+        .cardRowInList()
+    } else {
+      button.pickedRow(isPicked)
+    }
+  }
+
+  /// Main's `CheckList` also dims every row while its list can't change, as while it saves; a
+  /// `ChoiceList` keeps its pick standing out.
+  private var dims: Bool {
+    !canPick || (picks == .several && !isEnabled)
   }
 }
 
 extension ChoiceRow where Words == ChoiceWords {
-  init(_ title: Text, detail: Text? = nil, isPicked: Bool, action: @escaping () -> Void) {
-    self.init(isPicked: isPicked, action: action) {
+  init(
+    _ title: Text, detail: Text? = nil, picks: ChoiceMark.Kind = .one, isPicked: Bool,
+    canPick: Bool = true, action: @escaping () -> Void
+  ) {
+    self.init(picks: picks, isPicked: isPicked, canPick: canPick, action: action) {
       ChoiceWords(title: title, detail: detail)
     }
   }
@@ -33,6 +58,7 @@ extension ChoiceRow where Words == ChoiceWords {
 
 /// A choice row's label, for a row whose button is its own, such as one that shows it's saving.
 struct ChoiceRowLabel<Words: View>: View {
+  var picks: ChoiceMark.Kind = .one
   let isPicked: Bool
   var isLocked = false
   @ViewBuilder let words: Words
@@ -43,36 +69,27 @@ struct ChoiceRowLabel<Words: View>: View {
         .multilineTextAlignment(.leading)
         .frame(maxWidth: .infinity, alignment: .leading)
 
-      ChoiceMark(isPicked: isPicked, isLocked: isLocked)
-        .layoutPart(.end)
+      Group {
+        if isLocked {
+          Image(systemName: "lock")
+            .foregroundStyle(.mutedForeground)
+            .accessibilityHidden(true)
+        } else {
+          ChoiceMark(kind: picks, isPicked: isPicked)
+        }
+      }
+      .layoutPart(.end)
     }
     .contentShape(.rect)
     .layoutRow(.choiceList)
   }
 }
 
-/// A choice's ring, which fills with a check once picked; a lock for one the learner can't pick
-/// yet.
-struct ChoiceMark: View {
-  let isPicked: Bool
-  var isLocked = false
-
-  var body: some View {
-    Image(systemName: isLocked ? "lock" : isPicked ? "checkmark.circle.fill" : "circle")
-      .foregroundStyle(
-        isLocked
-          ? AnyShapeStyle(.mutedForeground)
-          : AnyShapeStyle(Color(.foreground).opacity(isPicked ? 1 : 0.5))
-      )
-      .accessibilityHidden(true)
-  }
-}
-
-/// A choice's name over at most one line about it.
+/// A choice's name over a line or two about it.
 struct ChoiceWords: View {
   let title: Text
   var detail: Text?
-  /// Why the choice can't be taken now, under its detail.
+  /// A second line under its detail, such as why the choice can't be taken now.
   var note: Text?
 
   var body: some View {

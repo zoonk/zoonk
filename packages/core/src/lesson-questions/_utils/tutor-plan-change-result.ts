@@ -189,19 +189,50 @@ function describeChange(change: PlanChangeView): string {
     .join("; ");
 }
 
+/**
+ * The card's one count, or none when topics leave and name the change instead: a count beside a
+ * request to take a subject out reads backwards ("removes 115 lessons and adds 151").
+ */
+function toLessonCount(
+  effect: NonNullable<PlanChangeView["effect"]>,
+): NonNullable<GoalTutorPlanChangeEffect>["lessonCount"] {
+  const net = effect.lessonsAdded - effect.lessonsRemoved;
+
+  if (net === 0 || (effect.topicsLeftOut ?? []).length > 0) {
+    return undefined;
+  }
+
+  return {
+    count: Math.abs(net),
+    kind: net > 0 ? "more" : "fewer",
+    ...(effect.lessonsAddedEstimated && { estimated: true }),
+  };
+}
+
 /** An end the change doesn't move isn't said: the card never mentions it. */
 function toModelEffect(effect: PlanChangeView["effect"]): GoalTutorPlanChangeEffect {
   if (!effect) {
     return null;
   }
 
-  const { areaEnds, areaStarts, weeklyEvents: _said, ...rest } = effect;
+  const {
+    areaEnds,
+    areaStarts,
+    lessonsAdded: _added,
+    lessonsAddedEstimated: _estimated,
+    lessonsRemoved: _removed,
+    weeklyEvents: _said,
+    ...rest
+  } = effect;
+
   const endMoves = effect.endDateAfter !== effect.endDateBefore;
+  const lessonCount = toLessonCount(effect);
 
   return {
     ...rest,
     endDateAfter: endMoves ? effect.endDateAfter : null,
     endDateBefore: endMoves ? effect.endDateBefore : null,
+    ...(lessonCount && { lessonCount }),
     ...(areaStarts && {
       areaStarts: areaStarts.map((start) => ({
         area: start.area,

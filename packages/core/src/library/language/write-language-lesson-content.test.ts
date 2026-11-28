@@ -515,7 +515,7 @@ describe(writeLanguageLessonDraft, () => {
     expect(sentence.romanization).toBe("hau mach iz da rent");
   });
 
-  it("voices each word its word banks show once, so every target-language tile plays it", async () => {
+  it("voices each word a reading tile shows once, and leaves fill-in-the-blank tiles silent", async () => {
     const organization = await aiOrganizationFixture();
     const key = `ka${crypto.randomUUID()}`;
     const draft = uniqueDraft(key);
@@ -544,6 +544,7 @@ describe(writeLanguageLessonDraft, () => {
       .mock.calls.map(([call]) => call.text.toLowerCase());
 
     expect(voiced).not.toContain(key);
+    expect(voiced).not.toContain("be");
 
     const caseVariants = await prisma.word.findMany({
       where: { targetLanguage: "en", word: { equals: key, mode: "insensitive" } },
@@ -578,9 +579,8 @@ describe(writeLanguageLessonDraft, () => {
         .toSorted(),
     ).toStrictEqual(["are", "be", "is"]);
 
-    expect(
-      [...readingTiles, ...tilesOf("fillBlank")].filter((tile) => !tile.audioUrl),
-    ).toStrictEqual([]);
+    expect(readingTiles.filter((tile) => !tile.audioUrl)).toStrictEqual([]);
+    expect(tilesOf("fillBlank").filter((tile) => tile.audioUrl)).toStrictEqual([]);
 
     expect(readingTiles.find((tile) => tile.word === key)?.audioUrl).toBe(sentenceWord.audioUrl);
 

@@ -28,6 +28,7 @@ import { seenQuote } from "../plans/_test-utils/seen-quote";
 import { changeGoalPlan } from "../plans/change-goal-plan";
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { decidePlanChange } from "../plans/decide-plan-change";
+import { buddyTarget } from "./_test-utils/buddy-target";
 import { parseLessonQuestionContextSnapshot } from "./_utils/context-snapshot-schema";
 import { claimLessonQuestionAnswer, completeLessonQuestionAnswer } from "./answer-lifecycle";
 import { createLessonQuestion } from "./create-lesson-question";
@@ -109,7 +110,7 @@ async function setup() {
 async function askBuddy({ goalId, question }: { goalId: string; question: string }) {
   const created = await createLessonQuestion({
     input: { context: { kind: "plan" }, question, requestId: randomUUID() },
-    target: { conversationId: null, goalId, kind: "plan" },
+    target: buddyTarget(goalId),
   });
 
   if (created.status !== "created") {
@@ -132,7 +133,7 @@ async function askBuddy({ goalId, question }: { goalId: string; question: string
 async function readThread(goalId: string) {
   const result = await getLessonQuestionThread({
     contextKind: "plan",
-    target: { conversationId: null, goalId, kind: "plan" },
+    target: buddyTarget(goalId),
   });
 
   return result.status === "ready" ? (result.thread?.questions ?? []) : [];
