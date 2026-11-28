@@ -5,261 +5,6 @@
       "categoryScores": [
         {
           "categoryId": "correctness",
-          "reasoning": "The controlled pH comparison is correct, and the rate decrease is 40 − 10 = 30 µmol/min. The temperature and pH mechanisms are scientifically sound. Reduced proportional inhibition at higher substrate concentration is consistent with competitive inhibition, as cautiously stated. The cooling experiment and expected recovery appropriately test reversibility. No factual-error cap applies.",
-          "score": 10,
-          "label": "Correctness",
-          "weight": 30
-        },
-        {
-          "categoryId": "misconceptionsAndFeedback",
-          "reasoning": "The rubric provides clear, independently scored requirements, and the sample outline supports them accurately. However, the molecular-mechanism key point combines temperature and pH rather than expressing each as a separately checkable idea. Distractor and misconception-label requirements are not applicable to this essay item.",
-          "score": 8,
-          "label": "Misconceptions & feedback",
-          "weight": 25
-        },
-        {
-          "categoryId": "realism",
-          "reasoning": "This is a plausible AP Biology experimental free-response question with lettered parts, appropriate task verbs, data interpretation, molecular explanation, and experimental design. Its eight one-point scoring rows specify what earns credit and total eight points, within the explicitly permitted range. There is no identifiable copying or near-copying of a real question.",
-          "score": 10,
-          "label": "Exam and setting realism",
-          "weight": 25
-        },
-        {
-          "categoryId": "skillFit",
-          "reasoning": "The question directly assesses temperature, pH, and inhibitor effects on enzyme activity using experimental data. Its parts vary the cognitive work through controlled comparison, calculation, molecular explanation, evidence-based identification, and experimental design. The language and intermediate difficulty fit the supplied values.",
-          "score": 10,
-          "label": "Skill fit & variety",
-          "weight": 20
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 1 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2780,
-          "outputTokens": 1302,
-          "reasoningTokens": 763
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "The second key point bundles temperature and pH mechanisms into one broad statement rather than providing independently checkable ideas. This is a minor grading-usability issue because the rubric correctly scores the two mechanisms separately.",
-          "kind": "minorErrors",
-          "score": 9
-        },
-        {
-          "conclusion": "Strengthen the sample response for part (c) with the calculated inhibition percentages: 75% at 2 mM substrate versus approximately 39% at 20 mM. This would demonstrate explicitly how the data support competitive inhibition.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "One original AP Biology free-response question in English on enzyme activity, with lettered parts that use AP task verbs (identify, describe, explain, predict or justify) around an experiment or data. Its rubric must read like AP scoring guidelines: one row per point-bearing part, each description saying exactly what earns the points, and every row with whole points (1 to 3), adding up to a realistic total for a short free-response question (4 to 10). It must not copy a real College Board question.",
-        "id": "en-ap-biology-free-response-essay-1",
-        "userInput": {
-          "count": 1,
-          "examFormat": {
-            "name": "AP Biology",
-            "style": "multipleChoice (4 options): questions on data, experiments and models. essay: free-response questions with parts (a), (b), (c) and (d) using task verbs (identify, describe, explain, predict, justify), scored with point-based scoring guidelines."
-          },
-          "format": "essay",
-          "language": "en",
-          "level": "intermediate",
-          "skill": {
-            "description": "Explain how temperature, pH and inhibitors change an enzyme's shape and activity, using data from an experiment.",
-            "name": "Enzyme activity"
-          }
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "correctness",
-          "reasoning": "The supporting texts contain no identifiable factual errors, and the fictional everyday scenario makes no unsupported statistical or legal claims. The rubric accurately summarizes ENEM's five competencies, with every row's points set to null as required. An open-ended essay appropriately has no uniquely keyed answer.",
-          "score": 10,
-          "label": "Correctness",
-          "weight": 30
-        },
-        {
-          "categoryId": "misconceptionsAndFeedback",
-          "reasoning": "The key points and outline provide relevant guidance, but several key points are not independently checkable single ideas. In particular, the intervention checklist should separate agent, action, means, purpose, detail, and respect for human rights. Paragraph articulation and formal language should also be assessed separately. Distractor requirements do not apply to this essay.",
-          "score": 8,
-          "label": "Misconceptions & feedback",
-          "weight": 25
-        },
-        {
-          "categoryId": "realism",
-          "reasoning": "The result fits the task-specific ENEM essay format: a socially relevant Brazilian theme, two short motivating texts, the standard formal dissertative-argumentative command, a human-rights-respecting intervention, a 30-line limit, and the five-competency rubric. Multiple-choice options are correctly absent.",
-          "score": 10,
-          "label": "Exam and setting realism",
-          "weight": 25
-        },
-        {
-          "categoryId": "skillFit",
-          "reasoning": "The single prompt directly exercises thesis construction, argument development, productive use of repertoire, cohesion, and intervention planning rather than factual recall. Its accessible but substantive topic suits intermediate learners, and the learner-facing material is in Brazilian Portuguese. Variety across multiple questions is not applicable to the requested single essay.",
-          "score": 10,
-          "label": "Skill fit & variety",
-          "weight": 20
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 1 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2582,
-          "outputTokens": 774,
-          "reasoningTokens": 249
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Several key points combine independently assessable requirements. The intervention point bundles five components and respect for human rights; another combines paragraph organization with formal language. This makes partial achievement harder to evaluate consistently.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Make the sample outline more instructive by illustrating one relevant sociocultural reference and its connection to an argument, while clearly presenting it as one possible approach rather than a required answer.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "One ENEM essay prompt (redação) in Brazilian Portuguese: a theme with short motivating texts and the standard command for a dissertative-argumentative text with an intervention proposal. The rubric uses ENEM's five competencies, and since ENEM's grid doesn't give its rows points of their own, every row's points is null.",
-        "id": "pt-enem-redacao-essay-1",
-        "userInput": {
-          "count": 1,
-          "examFormat": {
-            "name": "ENEM",
-            "optionCount": 5,
-            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada. Redação: texto dissertativo-argumentativo com proposta de intervenção, corrigido pelas cinco competências."
-          },
-          "format": "essay",
-          "language": "pt",
-          "level": "intermediate",
-          "skill": {
-            "description": "Escrever um texto dissertativo-argumentativo com tese, argumentos com repertório e proposta de intervenção completa.",
-            "name": "Redação do ENEM"
-          }
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "correctness",
-          "reasoning": "Independent calculations give 240 × 1.20 × 0.85 = 244.80; 276 ÷ (0.80 × 1.15) = 300; and a cumulative factor of 1.25 × 0.80 × 1.10 = 1.10, requiring a discount of 1 − 1/1.10 ≈ 9.09%. Each item has exactly one defensible correct option, correctly keyed.",
-          "score": 10,
-          "label": "Correctness",
-          "weight": 30
-        },
-        {
-          "categoryId": "misconceptionsAndFeedback",
-          "reasoning": "All distractors correspond to specific, reproducible mistakes, including combining signed rates, omitting a change, reversing signs instead of dividing by factors, and using the wrong base. The stated mistakes produce their associated values, and feedback explains the errors without positional references. Showing 15/115 × 100 explicitly would make the otherwise valid explanation for 13,04% easier to follow.",
-          "score": 9,
-          "label": "Misconceptions & feedback",
-          "weight": 25
-        },
-        {
-          "categoryId": "realism",
-          "reasoning": "Each item uses a short, plausible everyday context, a clear command, and five concise options with one correct answer, consistent with the requested ENEM format. Different people and towns appear in every item. CAST membership cannot be verified because no CAST list was supplied.",
-          "score": 10,
-          "label": "Exam and setting realism",
-          "weight": 25
-        },
-        {
-          "categoryId": "skillFit",
-          "reasoning": "All three items require applying successive percentage changes rather than recalling definitions. They vary the mathematical demand: calculate a final price, recover an original price, and determine a compensating discount after three changes. Difficulty progresses appropriately, and all learner-facing content is in Portuguese. Broader everyday contexts would add variety beyond the shared retail-price setting.",
-          "score": 9,
-          "label": "Skill fit & variety",
-          "weight": 20
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 3 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 3325,
-          "outputTokens": 922,
-          "reasoningTokens": 370
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Make the feedback for 13,04% more transparent by showing the mistaken calculation 15/115 × 100. For broader contextual variety, one retail-price scenario could be replaced with a salary, service fee, or consumption scenario.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "ENEM-style Mathematics items in Brazilian Portuguese about successive percentage changes. Distractors should come from typical mistakes such as adding the percentages (10% + 20% = 30%) or applying the second change to the original value. Every item needs 5 options. People and towns come from CAST, a different person and town in each item, and no reason points at an option by its place (\"a segunda\", \"alternativa B\"): each names the option by what it says.",
-        "id": "pt-enem-matematica-porcentagens-sucessivas-1",
-        "userInput": {
-          "count": 3,
-          "examFormat": {
-            "name": "ENEM",
-            "optionCount": 5,
-            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada."
-          },
-          "format": "multipleChoice",
-          "language": "pt",
-          "level": "intermediate",
-          "skill": {
-            "description": "Calcular o efeito de aumentos e descontos percentuais aplicados um após o outro.",
-            "example": "Um produto sobe 10% e depois cai 10%: termina 1% mais barato.",
-            "name": "Aumentos e descontos percentuais sucessivos"
-          }
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "correctness",
           "reasoning": "All three keys are uniquely correct. Item 1 has shortfalls of 5, 10, 25, 30 and 22, so Viagem 4 is correct. Item 2 has discounts of 50%, approximately 26.7%, 10%, 60% and 10%, so Garrafa térmica is correct. Item 3 totals R$ 170 and R$ 200, giving R$ 30 more. The stated correct-answer calculations are accurate.",
           "score": 10,
           "label": "Correctness",
@@ -432,92 +177,6 @@
       "categoryScores": [
         {
           "categoryId": "correctness",
-          "reasoning": "All three items have exactly one correct answer, correctly keyed. Item 1 costs 1.5 × (40/60) × 30 × $0.80 = $24. Item 2 saves [1.2 × 1.5 − 0.8 × 0.75] × 20 × $0.25 = $6. Item 3 permits floor[($10 − $3)/(1.1 × $0.25)] = 25 days. The worked explanations are accurate.",
-          "score": 10,
-          "label": "Correctness",
-          "weight": 30
-        },
-        {
-          "categoryId": "misconceptionsAndFeedback",
-          "reasoning": "Every distractor matches its stated mistake when recomputed. For example, treating 45 minutes as 0.45 hour produces $7.20 savings in item 2; treating both times as hundredths of an hour produces a maximum of 42 days in item 3. Labels identify specific mistakes, and feedback explains the incorrect operation or omission rather than merely repeating the correct answer.",
-          "score": 10,
-          "label": "Misconceptions & feedback",
-          "weight": 25
-        },
-        {
-          "categoryId": "realism",
-          "reasoning": "Each item follows the requested ENEM structure: a short everyday support text, a clear command, and five concise options with one correct answer. The assumptions make the electricity calculations well-defined, and option wording does not reveal the key. Naming the unspecified appliances in items 2 and 3 would further strengthen the household context.",
-          "score": 9,
-          "label": "Exam and setting realism",
-          "weight": 25
-        },
-        {
-          "categoryId": "skillFit",
-          "reasoning": "The set directly assesses household energy and cost calculations through three distinct tasks: calculating a bill, comparing replacement savings, and finding a budget-constrained maximum. Difficulty progresses through additional reasoning rather than repeated identical calculations. All learner-facing text is in English.",
-          "score": 10,
-          "label": "Skill fit & variety",
-          "weight": 20
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 3 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 3270,
-          "outputTokens": 768,
-          "reasoningTokens": 227
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Name plausible household appliances in items 2 and 3 instead of using only their power ratings. This would make the everyday settings more concrete without changing the calculations.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "ENEM-style Natural Sciences items in US English about household electricity use (energy is power times time, in kWh, and its cost). Each item has a short everyday support text and 5 options; distractors come from typical mistakes such as not converting watts to kilowatts or minutes to hours, or using the wrong number of days. All learner-facing text must be in English.",
-        "id": "en-enem-natural-sciences-electricity-consumption-1",
-        "userInput": {
-          "count": 3,
-          "examFormat": {
-            "name": "ENEM",
-            "optionCount": 5,
-            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada."
-          },
-          "format": "multipleChoice",
-          "language": "en",
-          "level": "intermediate",
-          "skill": {
-            "description": "Calculate the energy a household appliance uses from its power and time of use, and what it costs.",
-            "example": "A 5,500 W electric shower used 10 minutes a day for 30 days uses 27.5 kWh.",
-            "name": "Household electricity consumption"
-          }
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "correctness",
           "reasoning": "All three keys are legally correct and unambiguous. Efficiency cannot authorize direct contracting outside legally permitted circumstances. Personally promotional institutional advertising violates impersonality and article 37, paragraph 1, of the Constitution. Article 7, paragraph 2, of the Access to Information Law guarantees access to the nonrestricted portion when only part of a document is protected. The explanations accurately state these rules.",
           "score": 10,
           "label": "Correctness",
@@ -594,90 +253,6 @@
           "skill": {
             "description": "Aplicar os princípios da administração pública do art. 37 da Constituição a situações concretas.",
             "name": "Princípios da administração pública (LIMPE)"
-          }
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "correctness",
-          "reasoning": "All three keys are defensible and legally accurate. The unlawful appointment requires annulment with procedural safeguards; revocation does not erase lawful past effects; and Article 54’s five-year limit applies to the favorable, good-faith grant, with no timely administrative challenge. The one-time payment avoids ambiguity about continuing payments. No correctness cap applies.",
-          "score": 10,
-          "label": "Correctness",
-          "weight": 30
-        },
-        {
-          "categoryId": "misconceptionsAndFeedback",
-          "reasoning": "The false item contains one realistic trap: attributing retroactive effects to revocation. Its label identifies that precise mistake, and its explanation directly corrects it while addressing convenience, opportunity, and acquired rights. Feedback on the true items clearly explains the applicable rules.",
-          "score": 10,
-          "label": "Misconceptions & feedback",
-          "weight": 25
-        },
-        {
-          "categoryId": "realism",
-          "reasoning": "Each item presents a concise hypothetical followed by one assertion judged true or false. The false assertion uses a plausible doctrinal trap appropriate to Cebraspe. The situations and legal vocabulary fit an intermediate Brazilian administrative-law assessment in English.",
-          "score": 10,
-          "label": "Exam and setting realism",
-          "weight": 25
-        },
-        {
-          "categoryId": "skillFit",
-          "reasoning": "The set requires application across three distinct situations: an unlawful appointment, revocation of a lawful authorization, and expiration of annulment authority. It varies the legal issue and difficulty and stays entirely in English. Explicitly contrasting the ordinary temporal effects of annulment and revocation would make the effects coverage more complete.",
-          "score": 9,
-          "label": "Skill fit & variety",
-          "weight": 20
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 3 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2328,
-          "outputTokens": 765,
-          "reasoningTokens": 290
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "The feedback could explicitly contrast revocation’s prospective effects with annulment’s ordinarily retroactive effects, while noting applicable protections. This would strengthen coverage of the skill’s effects component.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "Cebraspe-style true/false items in US English on annulment and revocation of administrative acts in Brazilian administrative law: the administration must annul its own illegal acts and may revoke lawful ones for reasons of convenience or opportunity, respecting acquired rights (STF Precedent 473; Law 9.784/1999, arts. 53 and 54). False items must hide one realistic trap, such as swapping annulment and revocation, saying revocation reaches illegal acts or that only the courts can annul. Check the legal accuracy of every statement.",
-        "id": "en-cebraspe-annulment-revocation-administrative-acts-1",
-        "userInput": {
-          "count": 3,
-          "examFormat": {
-            "name": "Cebraspe (concurso público)",
-            "style": "Cada item é uma afirmação sobre uma situação hipotética ou um conceito, julgada Certo ou Errado; um erro anula um acerto; as pegadinhas trocam conceitos, invertem exceções ou usam palavras absolutas."
-          },
-          "format": "trueFalse",
-          "language": "en",
-          "level": "intermediate",
-          "skill": {
-            "description": "Tell when Brazilian public administration must annul an administrative act and when it may revoke it, and what effects each has.",
-            "name": "Annulment and revocation of administrative acts"
           }
         }
       }
@@ -937,95 +512,6 @@
           "skill": {
             "description": "Find a part of a whole as a fraction from a word problem or a ratio.",
             "name": "Fractions of a whole"
-          }
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "correctness",
-          "reasoning": "The empty items list exactly matches the task-specific expectation. There are no questions, keys, or factual claims to introduce errors.",
-          "score": 10,
-          "label": "Correctness",
-          "weight": 30
-        },
-        {
-          "categoryId": "misconceptionsAndFeedback",
-          "reasoning": "No items are required, so no distractors, misconception labels, or feedback are missing.",
-          "score": 10,
-          "label": "Misconceptions & feedback",
-          "weight": 25
-        },
-        {
-          "categoryId": "realism",
-          "reasoning": "The result correctly avoids inventing numeric-response Words in Context questions that would not fit Digital SAT Reading and Writing.",
-          "score": 10,
-          "label": "Exam and setting realism",
-          "weight": 25
-        },
-        {
-          "categoryId": "skillFit",
-          "reasoning": "Returning no items respects the explicit expectation that this vocabulary-in-context skill has no suitable numeric-answer problem.",
-          "score": 10,
-          "label": "Skill fit & variety",
-          "weight": 20
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 1 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 1823,
-          "outputTokens": 298,
-          "reasoningTokens": 0
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expectations": "No items: \"Words in Context\" is a Digital SAT Reading and Writing skill, choosing the most precise word for a passage, so it has no problem whose answer is one number the learner works out. The right output is an empty items list. Any item fails the case, above all one that forces a number onto the skill (counting words or letters, a line number, a year, a share of a passage).",
-        "id": "en-sat-words-in-context-numeric-none-1",
-        "userInput": {
-          "count": 3,
-          "examFormat": {
-            "entry": {
-              "kind": "fraction",
-              "places": null
-            },
-            "name": "Digital SAT",
-            "optionCount": 4,
-            "style": "Reading and Writing: short passages, each with one question and 4 options (A to D). Math: a short context or equation with 4 options, or a student-produced numeric response typed into a grid."
-          },
-          "format": "numeric",
-          "language": "en",
-          "level": "intermediate",
-          "skill": {
-            "description": "Choose the word or phrase that most precisely fits the meaning of a short passage.",
-            "name": "Words in Context"
           }
         }
       }
@@ -2635,6 +2121,535 @@
           "skill": {
             "description": "Usar vocabulário, expressões e estruturas linguísticas para entender o tema e a função de textos em espanhol.",
             "name": "Interpretar vocabulário e estruturas de textos em espanhol"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "The rate rises through 45 °C and falls at 65 °C. The inhibitor decreases are (20−10)/20 = 50% and (40−26.7)/40 = 33.25%, as keyed. Both mechanistic inferences are appropriately qualified: the cooling trial does not directly measure structure, and the inhibitor data support rather than establish competition.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The rubric usefully separates a structural inference from its evidentiary limitation and a pH-induced charge change from its effect on activity. The key-points list merges some of those ideas again, and the final scoring row does not state a general criterion for accepting other valid experiments.",
+          "score": 8,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The experimental stimulus, four lettered parts, task verbs and eight one-point scoring rows fit the requested format. Part (d) is dense for a short FRQ: after analyzing temperature and pH, the student must perform two calculations, interpret their difference and design another experiment.",
+          "score": 8,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "Each requested factor serves a distinct reasoning task: students interpret a temperature trend and cooling control, connect pH to active-site chemistry, and use proportional inhibition at two substrate concentrations to evaluate a mechanism. The English-language item tests application rather than definition recall.",
+          "score": 10,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "itemsScored": 1,
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 1261,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3434,
+          "outputTokens": 667,
+          "reasoningTokens": 77
+        }
+      },
+      "keyFlaws": [],
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The further-experiment row is narrower than part (d): a student could propose testing whether X and the substrate compete for binding, yet the rubric specifies only a rate-curve experiment. Several key points also combine independently gradable ideas, such as the inference from cooling and the limitation of that inference.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "In (b), make the control comparison explicit: the 45 °C sample returns to the baseline rate of 20 after cooling, while the 65 °C sample remains at 3. In (d), sharpen the proposed rate-curve test by specifying the prediction for simple competitive inhibition: the two curves should approach the same maximum rate at sufficiently high substrate concentrations.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "One original AP Biology free-response question in English on enzyme activity, with lettered parts that use AP task verbs (identify, describe, explain, predict or justify) around an experiment or data. Its rubric must read like AP scoring guidelines: one row per point-bearing part, each description saying exactly what earns the points, and every row with whole points (1 to 3), adding up to a realistic total for a short free-response question (4 to 10). It must not copy a real College Board question.",
+        "id": "en-ap-biology-free-response-essay-1",
+        "userInput": {
+          "count": 1,
+          "examFormat": {
+            "name": "AP Biology",
+            "style": "multipleChoice (4 options): questions on data, experiments and models. essay: free-response questions with parts (a), (b), (c) and (d) using task verbs (identify, describe, explain, predict, justify), scored with point-based scoring guidelines."
+          },
+          "format": "essay",
+          "language": "en",
+          "level": "intermediate",
+          "skill": {
+            "description": "Explain how temperature, pH and inhibitors change an enzyme's shape and activity, using data from an experiment.",
+            "name": "Enzyme activity"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "The prompt correctly asks for an argumentative essay and an intervention that respects human rights. The rubric accurately distinguishes the five ENEM competencies, and every row has null points as requested. The outline illustrates a defensible approach without prescribing a single thesis.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The thesis check is independently assessable, but the remaining checks bundle distinct skills. Most notably, the intervention check gives a grader no separate way to record which elements are present, and the cohesion check also tests genre and formal register.",
+          "score": 7,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The Brazilian public-service scenario, social theme, formal command, human-rights requirement and 30-line limit make this recognizable as an ENEM redação. The two short texts serve distinct purposes, though the generic second passage offers less documentary texture than an attributed excerpt would.",
+          "score": 8,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The single task is entirely in Brazilian Portuguese and requires learners to formulate a thesis, support it with arguments and repertoire, and design an intervention. Wesley’s experience gives an intermediate writer a concrete starting point without determining the argument.",
+          "score": 10,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "itemsScored": 1,
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 1261,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3011,
+          "outputTokens": 499,
+          "reasoningTokens": 0
+        }
+      },
+      "keyFlaws": [],
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Several key points combine judgments a grader should make separately. For example, an essay can be cohesive without consistently using formal Portuguese, and an intervention can identify an agent and action while omitting a means of execution.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Keep the five competency rows, but split the key points into observable checks. In particular, assess argument development separately from productive use of repertoire. A short, attributed excerpt in Texto II could also complement Wesley’s vignette with a more documentary perspective.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "One ENEM essay prompt (redação) in Brazilian Portuguese: a theme with short motivating texts and the standard command for a dissertative-argumentative text with an intervention proposal. The rubric uses ENEM's five competencies, and since ENEM's grid doesn't give its rows points of their own, every row's points is null.",
+        "id": "pt-enem-redacao-essay-1",
+        "userInput": {
+          "count": 1,
+          "examFormat": {
+            "name": "ENEM",
+            "optionCount": 5,
+            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada. Redação: texto dissertativo-argumentativo com proposta de intervenção, corrigido pelas cinco competências."
+          },
+          "format": "essay",
+          "language": "pt",
+          "level": "intermediate",
+          "skill": {
+            "description": "Escrever um texto dissertativo-argumentativo com tese, argumentos com repertório e proposta de intervenção completa.",
+            "name": "Redação do ENEM"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "The empty items list is the required result. There are no keys, calculations or factual claims in error.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "With no valid numeric item, no distractors, misconception labels or feedback are needed.",
+          "score": 10,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "Returning no items avoids misrepresenting a Digital SAT Reading and Writing question as a student-produced numeric response.",
+          "score": 10,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "Words in Context requires choosing the most precise word or phrase. The empty list respects that skill rather than substituting a counting task.",
+          "score": 10,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "itemsScored": 0,
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 1264,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2300,
+          "outputTokens": 263,
+          "reasoningTokens": 0
+        }
+      },
+      "keyFlaws": [],
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "No items: \"Words in Context\" is a Digital SAT Reading and Writing skill, choosing the most precise word for a passage, so it has no problem whose answer is one number the learner works out. The right output is an empty items list. Any item fails the case, above all one that forces a number onto the skill (counting words or letters, a line number, a year, a share of a passage).",
+        "expected": {
+          "empty": true
+        },
+        "id": "en-sat-words-in-context-numeric-none-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "entry": {
+              "kind": "fraction",
+              "places": null
+            },
+            "name": "Digital SAT",
+            "optionCount": 4,
+            "style": "Reading and Writing: short passages, each with one question and 4 options (A to D). Math: a short context or equation with 4 options, or a student-produced numeric response typed into a grid."
+          },
+          "format": "numeric",
+          "language": "en",
+          "level": "intermediate",
+          "skill": {
+            "description": "Choose the word or phrase that most precisely fits the meaning of a short passage.",
+            "name": "Words in Context"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Each item has one correct option. The heater costs 1.5 × (40/60) × 30 × $0.24 = $7.20. The dryer costs (2 × 0.75 + 0.2 × 0.25) × 12 × $0.25 = $4.65. The added appliance uses 24 kWh; only 10 kWh fit below the threshold, so the increase is 10 × $0.20 + 14 × $0.30 = $6.20.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Every stated error reproduces its option. The omitted cool-down and reversed tier allocations are particularly useful traps because the feedback identifies exactly which energy was miscounted. The $4.95 explanation identifies the numerical substitution but could diagnose premature rounding more precisely.",
+          "score": 8,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "Each item pairs a short household scenario with a direct command and five comparable monetary options. The dryer’s cool-down and the household’s starting usage serve a purpose in the calculations rather than merely decorating the stems.",
+          "score": 10,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "All three items require applied calculation in US English. Although each asks for a cost, the reasoning progresses from converting units at constant power to summing energy across two power levels to allocating added consumption across a billing threshold.",
+          "score": 10,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "itemsScored": 3,
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 1271,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3736,
+          "outputTokens": 578,
+          "reasoningTokens": 0
+        }
+      },
+      "keyFlaws": [],
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The dryer’s $4.95 distractor is numerically sound, but its label misses the likely mistake: 0.8 hours is a valid rounding of 0.75 hours. The problem is rounding before calculating the cost, not converting minutes incorrectly.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "For the $4.95 choice, explain that rounding 0.75 hours to 0.8 too soon adds 0.05 hours of drying per cycle. Across 12 cycles, that overstates the cost by $0.30. This gives the learner a concrete reason to keep the exact time.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "ENEM-style Natural Sciences items in US English about household electricity use (energy is power times time, in kWh, and its cost). Each item has a short everyday support text and 5 options; distractors come from typical mistakes such as not converting watts to kilowatts or minutes to hours, or using the wrong number of days. All learner-facing text must be in English.",
+        "id": "en-enem-natural-sciences-electricity-consumption-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "ENEM",
+            "optionCount": 5,
+            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada."
+          },
+          "format": "multipleChoice",
+          "language": "en",
+          "level": "intermediate",
+          "skill": {
+            "description": "Calculate the energy a household appliance uses from its power and time of use, and what it costs.",
+            "example": "A 5,500 W electric shower used 10 minutes a day for 30 days uses 27.5 kWh.",
+            "name": "Household electricity consumption"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Each key is uniquely correct: 250 × 1.20 × 0.90 = 270; 1,650 ÷ (0.80 × 0.75) = 2,750; and returning from 880 clients to 1,000 requires an increase of 120 ÷ 880 ≈ 13.64%. The worked steps agree with the keys.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The labels generally identify reproducible mistakes. For example, adding the bicycle discounts gives 1,650 ÷ 0.55 = 3,000, whereas adding 45% back to the payment gives 1,650 × 1.45 = 2,392.50. The cancellation trap in the headphone item is weaker, and several reasons explain the operation without explicitly connecting it to the option value.",
+          "score": 8,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The short Brazilian Portuguese scenarios, clear commands and five compact numerical choices fit the ENEM format. The Pix discount is a natural contextual detail. The main setting failure is that none of the three scenarios includes the required distinct town.",
+          "score": 8,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The three tasks require different uses of successive percentages: calculating a final price, recovering an initial price and finding a compensating increase relative to the current client count. This gives a meaningful difficulty progression without leaving the skill or the requested language.",
+          "score": 10,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "itemsScored": 3,
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 1271,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3819,
+          "outputTokens": 603,
+          "reasoningTokens": 0
+        }
+      },
+      "keyFlaws": [],
+      "steps": [
+        {
+          "conclusion": "All three items omit the required town. The people are distinct, but no CAST roster was supplied, so their membership cannot be verified.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "No feedback refers to an option by position, but several reasons do not explicitly identify the selected value as requested. For example, the R$ 275,00 feedback identifies the wrong discount base without showing that it yields R$ 275,00.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Strengthen the R$ 250,00 distractor in the headphone item. Assuming a 10% discount cancels a 20% increase is less persuasive than a recognizable calculation error, such as computing the 10% discount amount and reporting it instead of the final price.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "ENEM-style Mathematics items in Brazilian Portuguese about successive percentage changes. Distractors should come from typical mistakes such as adding the percentages (10% + 20% = 30%) or applying the second change to the original value. Every item needs 5 options. People and towns come from CAST, a different person and town in each item, and no reason points at an option by its place (\"a segunda\", \"alternativa B\"): each names the option by what it says.",
+        "id": "pt-enem-matematica-porcentagens-sucessivas-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "ENEM",
+            "optionCount": 5,
+            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada."
+          },
+          "format": "multipleChoice",
+          "language": "pt",
+          "level": "intermediate",
+          "skill": {
+            "description": "Calcular o efeito de aumentos e descontos percentuais aplicados um após o outro.",
+            "example": "Um produto sobe 10% e depois cai 10%: termina 1% mais barato.",
+            "name": "Aumentos e descontos percentuais sucessivos"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "The keys are true, false, and true. The agency must annul the uncorrectable illegal act given the stated absence of a legal bar; revocation ordinarily operates prospectively; and a court reviewing an agency act cannot revoke it merely because the court prefers another policy. Each assertion has a determinate answer on its facts.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The false item isolates one realistic mistake: transferring annulment’s ordinarily retroactive effect to revocation. Its label names that confusion, and the explanation tells the learner what happens to both past and future effects.",
+          "score": 10,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "Each item presents a concise hypothetical and one proposition to judge. Item 2 is particularly exam-like: the agency has grounds to revoke, but the assertion is false solely because of the claimed effect on the past.",
+          "score": 10,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The English-language scenarios test three distinct applications: the required remedy for illegality, the temporal effect of revocation, and who may reconsider administrative convenience. The difficulty spread is somewhat narrow because even the hardest item states the decisive distinction plainly.",
+          "score": 8,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "itemsScored": 3,
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 1271,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2843,
+          "outputTokens": 559,
+          "reasoningTokens": 47
+        }
+      },
+      "keyFlaws": [],
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Item 3 is easier than its “hard” label suggests: the act is expressly valid, and the challenge concerns only policy preference, so there is little difficulty distinguishing judicial review from administrative revocation.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "To deepen the difficulty range, make a legal limit decisive in one scenario rather than ruling it out in the facts. For example, an unlawful favorable act left unchallenged by the agency for more than five years, with no proven bad faith, would test when Article 54 limits annulment.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Cebraspe-style true/false items in US English on annulment and revocation of administrative acts in Brazilian administrative law: the administration must annul its own illegal acts and may revoke lawful ones for reasons of convenience or opportunity, respecting acquired rights (STF Precedent 473; Law 9.784/1999, arts. 53 and 54). False items must hide one realistic trap, such as swapping annulment and revocation, saying revocation reaches illegal acts or that only the courts can annul. Check the legal accuracy of every statement.",
+        "id": "en-cebraspe-annulment-revocation-administrative-acts-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "Cebraspe (concurso público)",
+            "style": "Cada item é uma afirmação sobre uma situação hipotética ou um conceito, julgada Certo ou Errado; um erro anula um acerto; as pegadinhas trocam conceitos, invertem exceções ou usam palavras absolutas."
+          },
+          "format": "trueFalse",
+          "language": "en",
+          "level": "intermediate",
+          "skill": {
+            "description": "Tell when Brazilian public administration must annul an administrative act and when it may revoke it, and what effects each has.",
+            "name": "Annulment and revocation of administrative acts"
           }
         }
       }
