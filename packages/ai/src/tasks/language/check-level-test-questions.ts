@@ -6,8 +6,8 @@ import { formatUntrustedInput } from "../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
-import { getLanguagePromptContext } from "../_utils/prompt-language";
-import systemPrompt from "./check-level-test-questions.prompt.md";
+import { fillPromptLanguages } from "../_utils/prompt-language";
+import promptTemplate from "./check-level-test-questions.prompt.md";
 
 /**
  * A missed flaw reaches every learner of the pair. On the eval's 15 levels (11 Nov 2026, each run 3
@@ -82,11 +82,6 @@ function toPicks(answer: readonly string[]): number[] {
 }
 
 function buildUserPrompt(params: CheckLevelTestQuestionsParams): string {
-  const languages = getLanguagePromptContext({
-    targetLanguage: params.targetLanguage,
-    userLanguage: params.learnerLanguage,
-  });
-
   /* oxlint-disable eslint/sort-keys -- The model reads the text, then the question, then its options. */
   const questions = params.questions.map((question, index) => ({
     number: index + 1,
@@ -98,10 +93,7 @@ function buildUserPrompt(params: CheckLevelTestQuestionsParams): string {
   }));
   /* oxlint-enable eslint/sort-keys */
 
-  return `TARGET_LANGUAGE: ${languages.targetLanguageName}
-LEARNER_LANGUAGE: ${languages.userLanguageName}
-
-${formatUntrustedInput({ QUESTIONS: JSON.stringify(questions, null, 1) })}`;
+  return formatUntrustedInput({ QUESTIONS: JSON.stringify(questions, null, 1) });
 }
 
 /**
@@ -117,6 +109,7 @@ export async function checkLevelTestQuestions(params: CheckLevelTestQuestionsPar
     useFallback = true,
   } = params;
 
+  const systemPrompt = fillPromptLanguages({ ...params, template: promptTemplate });
   const userPrompt = buildUserPrompt(params);
 
   const providerOptions = buildProviderOptions({
