@@ -41,7 +41,6 @@
   "onboarding_country_description": "a83cc6077e6d923458f4241629ac3c8c3ab285b9ff52e0fd0802443763789790",
   "onboarding_country_from_home": "9147b7ac85f02e845d22c3edcb0730cf72b07e311acf47d6b34c8772d1a4491a",
   "onboarding_country_other": "4cdbec7bf4795c0c6396ef5fcfa72e75788d351cb44a7797eff897e9f29832e9",
-  "onboarding_country_skip_default": "5390383f5adc15a6b8f576c3b4f86dd60b480877c79ee8000b122d5d4464132a",
   "onboarding_country_title": "919c9b3e3961f9979bf23c1def97dee2f3c94b1529dfa5138c7f73670b55ab93",
   "onboarding_course_build": "a771d8bcf0479148630cd30f5c0c515b11b14bd4cc60785399fe7c4170563e84",
   "onboarding_course_chapter_description": "4393acf3b3527d157877c5361d938efa90be263465a3bc0ee47cc5a37b583982",
@@ -54,8 +53,6 @@
   "onboarding_course_start_free": "d4aa5b9fc12cea0c22f4728a275ed4bc9a4c592dbca53b2a2cf1c7e113378c11",
   "onboarding_course_starting": "f244ac82bbe254d0f42736765f9c2024e82374264d155dc93fb7ced1e4054da2",
   "onboarding_create_account": "e78850413e636c4f82cc1c42ecaae14e893f2bbb2864494cd98d54eae9022fa8",
-  "onboarding_date_continue_without": "fcf33747e3c75d55901d2fe0043b0ec6a7de41a8d232e06277ff19eb8d865d56",
-  "onboarding_date_description": "e4b79dacf44d7ccd941a1507888cc72b9109bbd93c7599a305edfe5002b68b47",
   "onboarding_date_is_today": "4d33e0c70777a4b962ee483d57e91c2d08acd26605e21dc593a8e582ef749b59",
   "onboarding_date_label": "2310eb16c128515fa8f99752294ae87ec1f4aee04aa7d24b1fb7993ebdc169a5",
   "onboarding_date_passed": "127ec03127d00181c1cf16202293690535140147139536e34abef7dc736c4966",
@@ -75,8 +72,6 @@
   "onboarding_exam_expected": "4372654a9c62cdd63a9d1ff23d0fb0959dee02a45088939092521050dfd23786",
   "onboarding_exam_on": "3e041950fc096e8e4f7cd8497566a14af7bfcbfdc78bb6ccd55ac57c2aa5db85",
   "onboarding_exam_on_two": "3b07954134450c84c9940f1bd6c646e440d37325cc3fddb2c8bd979b7d834f6e",
-  "onboarding_exam_ready": "5192e8107525628fd29250c14eccbd1114c46478366231286e7702f447158ae2",
-  "onboarding_exam_ready_first_day": "f6c46518667c5965023137880358947c0f886927296befd49a4d44a3745a1773",
   "onboarding_explain_description": "9b0cc73ffb0fa4e0f009437b50fd81f4ffd0b3b9284c56cc9adde8ef635c7905",
   "onboarding_explain_it": "8c85c5c9846190272c9390189f145c423a556a4aab439ac62961bee894570a07",
   "onboarding_finish_later": "49032c272a76f69bc3bd3b0dfa0bbb62b44ed081310602d7eec2844a96674035",
@@ -261,7 +256,6 @@
   "onboarding_role_work_title": "6496f962e9dfe30fc8cb7e8c0336a6c71e49cf29bb0bdbfbcd1811a29ee02d88",
   "onboarding_row_course": "33aac90fd699cf255ff91d4a92606554fe630576ca975ab75e66fbd0b5d86ea1",
   "onboarding_row_cutoff_score": "c640161c5676afee0c4fa7925c3e520d21cb85d700e6811bb71af214fd87d143",
-  "onboarding_row_date_booked": "5eafb4fb112c50c1717e37531fd9028cedb133f783a8494c93f520f6d0e67526",
   "onboarding_row_date_not_out_guide": "76bb955e1303c491dad3d71c0fcc7eb4e39a99f8c06858d2b84f9acb76ce0b0a",
   "onboarding_row_date_not_out_notice": "7aba8cd86eacfdc6f0322b8aca4f0f7be5abd2ba926fb12a8c50b96a683bf9bc",
   "onboarding_row_date_to_be_confirmed": "166f9579a403c936fb688a417ce6113ada5b50b154a1b28f1739cf66fe6407c3",
@@ -484,7 +478,6 @@
     <string name="onboarding_row_date_unknown">Sai la data? Impostala qui.</string>
     <string name="onboarding_row_date_not_out_notice">La data ufficiale sarà pubblicata nel bando d’esame. La conosci già? Impostala qui.</string>
     <string name="onboarding_row_date_not_out_guide">La data sarà pubblicata sul calendario ufficiale dell’esame. La conosci già? Impostala qui.</string>
-    <string name="onboarding_row_date_booked">Scegli la data di questo test quando lo prenoti. Hai già prenotato? Impostala qui.</string>
     <string name="onboarding_row_dates_estimated">Stima basata sulle date abituali. Ti avviseremo quando usciranno quelle ufficiali.</string>
     <string name="onboarding_row_pick_date">Scegli la tua data</string>
     <string name="onboarding_row_several_sittings">Questo esame si svolge più volte all’anno. Finché non scegli una data, il tuo piano si basa sulla prima.</string>
@@ -719,13 +712,9 @@
     <string name="onboarding_exam_on">Il tuo esame è il %1$s</string>
     <!-- %1$s is an exam's first day, %2$s its second. -->
     <string name="onboarding_exam_on_two">Il tuo esame è il %1$s (e il %2$s)</string>
-    <string name="onboarding_exam_ready">Il piano distribuisce le lezioni per completarle entro quella data.</string>
-    <string name="onboarding_exam_ready_first_day">Il piano distribuisce le lezioni per completarle entro il primo giorno.</string>
     <string name="onboarding_exam_expected">Questa è la data prevista, in attesa della conferma nel bando.</string>
     <string name="onboarding_another_date">Un’altra data</string>
     <string name="onboarding_date_title">Hai una data in mente?</string>
-    <string name="onboarding_date_description">Senza una data, studi tutto al tuo ritmo e ti mostriamo quando raggiungerai ogni traguardo.</string>
-    <string name="onboarding_date_continue_without">Continua senza data</string>
     <string name="onboarding_date_remove">Rimuovi la data</string>
     <string name="onboarding_date_label">Data</string>
     <!-- Leads the date question asked again because the goal's date passed. %1$s is that date, such as "May 5". -->
@@ -839,8 +828,6 @@
     <string name="onboarding_country_description">Quello che impari qui cambia da paese a paese. Puoi cambiare questa scelta in seguito nel tuo piano.</string>
     <!-- The last choice of that question, which opens the full list of countries. -->
     <string name="onboarding_country_other">Un altro paese</string>
-    <!-- Above that question's buttons before a country is picked: %1$s is the country Skip uses, in the reader's language, after the colon so it needs no article or case. -->
-    <string name="onboarding_country_skip_default">Se salti: %1$s</string>
     <!-- A badge beside the content country in "Here's what we understood": the country came from where the learner said they live, as "you said" marks what came from their words. -->
     <string name="onboarding_country_from_home">dove vivi</string>
     <string name="onboarding_test_question_progress">Domanda %1$d di %2$d</string>
