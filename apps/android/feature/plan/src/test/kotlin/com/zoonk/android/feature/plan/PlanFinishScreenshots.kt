@@ -13,11 +13,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onLast
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.feature.onboarding.languageAimOf
@@ -129,6 +133,39 @@ class PlanFinishScreenshots {
     @Config(qualifiers = "w1280dp-h900dp-land-xhdpi")
     fun expanded() =
         capture("expanded", pages = listOf("year" to yearPage(), "beyond" to beyondPage(), "one-phase" to onePhasePage()), editor = false)
+
+    @Test
+    @Config(qualifiers = "w411dp-h1220dp-xxhdpi")
+    fun topicsLeftOutPhone() = topicsLeftOut("phone")
+
+    @Test
+    @Config(qualifiers = "w700dp-h1300dp-xhdpi")
+    fun topicsLeftOutMedium() = topicsLeftOut("medium")
+
+    @Test
+    @Config(qualifiers = "w1280dp-h900dp-land-xhdpi")
+    fun topicsLeftOutExpanded() = topicsLeftOut("expanded")
+
+    private fun topicsLeftOut(name: String) {
+        val base = monthPage().plan
+        val topics = listOf("User authentication", "Database migrations")
+        val partial = base.phases[2].copy(leftOut = topics)
+        val plan =
+            base.copy(
+                phases = base.phases.take(2) + partial,
+                schedule = base.schedule.copy(targetDate = partial.endDate),
+                estimate = base.estimate.copy(endDate = partial.endDate),
+            )
+        compose.setContent { ZoonkTheme { Surface { Content(page(plan)) } } }
+
+        val count = "2 topics not in your plan"
+        compose.onNodeWithText(count).assertExists()
+        write("plan-topics-left-out-$name", compose.onRoot().captureRender().asAndroidBitmap())
+        compose.onNode(hasText(count) and hasClickAction()).performSemanticsAction(SemanticsActions.OnClick)
+        compose.onNode(hasText(count) and hasClickAction()).performSemanticsAction(SemanticsActions.OnClick)
+        compose.onNodeWithText(topics.last()).assertExists()
+        write("plan-topics-left-out-open-$name", compose.onRoot().captureRender().asAndroidBitmap())
+    }
 
     @Test
     @Config(qualifiers = "w411dp-h1200dp-xxhdpi")

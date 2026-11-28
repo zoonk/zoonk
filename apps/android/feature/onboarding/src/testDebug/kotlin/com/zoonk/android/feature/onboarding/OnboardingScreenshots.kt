@@ -26,7 +26,9 @@ import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasSetTextAction
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onFirst
@@ -184,6 +186,39 @@ class OnboardingScreenshots {
             ZoonkTheme { Surface { Reveal(api, goal = learnGoal()) } }
         }
         write("$scenario-phone-screen", compose.onRoot().captureRender(scenario = scenario).asAndroidBitmap())
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun revealTopicsLeftOutPhone() = revealTopicsLeftOut("phone")
+
+    @Test
+    @Config(qualifiers = "w700dp-h900dp-xhdpi")
+    fun revealTopicsLeftOutMedium() = revealTopicsLeftOut("medium")
+
+    @Test
+    @Config(qualifiers = "w1280dp-h900dp-land-xhdpi")
+    fun revealTopicsLeftOutExpanded() = revealTopicsLeftOut("expanded")
+
+    private fun revealTopicsLeftOut(name: String) {
+        val today = LocalDate.now()
+        val end = today.plusDays(53)
+        val precision = PlanFinishPrecision.MONTH
+        val ends = listOf(today.plusDays(14), today.plusDays(30), end).map { it to precision }
+        val base = planOf(phases = learnPhases(ends), targetDate = end, endDate = end)
+        val topics = listOf("User authentication", "Database migrations")
+        val chapter = ApiJson.decodeFromString<PlanPhaseChaptersInner>(chapterOf("Flask"))
+        val partial = base.phases.last().copy(chapters = listOf(chapter), chapterCount = 1, leftOut = topics)
+        val api = setupPlanApi().apply { shownPlan = base.copy(phases = base.phases.dropLast(1) + partial) }
+        compose.setContent { ZoonkTheme { Surface { Reveal(api, goal = learnGoal()) } } }
+
+        val count = "2 topics not in your plan"
+        compose.onNodeWithText(count).assertIsDisplayed()
+        write("reveal-topics-left-out-$name", compose.onRoot().captureRender().asAndroidBitmap())
+        compose.onNode(hasText(count) and hasClickAction()).performSemanticsAction(SemanticsActions.OnClick)
+        compose.onNode(hasText(count) and hasClickAction()).performSemanticsAction(SemanticsActions.OnClick)
+        compose.onNodeWithText(topics.last()).assertIsDisplayed()
+        write("reveal-topics-left-out-open-$name", compose.onRoot().captureRender().asAndroidBitmap())
     }
 
     /** Questions still being written wait for the learner's Start, so it's tapped first. */
