@@ -31,9 +31,9 @@ const ATTEMPT: PlacementAttemptView = {
 
 const COURSE = {
   chapters: [
-    { lessons: 3, skipped: 3, start: false },
-    { lessons: 4, skipped: 2, start: true },
-    { lessons: 2, skipped: 0, start: false },
+    { done: 0, lessons: 3, skipped: 3, start: false },
+    { done: 1, lessons: 4, skipped: 2, start: true },
+    { done: 0, lessons: 2, skipped: 0, start: false },
   ],
   lessons: 9,
 };
