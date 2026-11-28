@@ -444,10 +444,26 @@ private struct PlanToolsSection: View {
   }
 }
 
+/// What a tool's Save sends, as main's sheet: nothing until the learner picks, and a setup lesson
+/// only with the device they picked.
+struct ToolAnswer: Equatable {
+  let choice: ToolChoice
+  let system: String?
+
+  init?(choice: ToolChoice?, system: String?) {
+    guard let choice, choice != .setup || system != nil else {
+      return nil
+    }
+
+    self.choice = choice
+    self.system = choice == .setup ? system : nil
+  }
+}
+
 private struct PlanToolChoiceSheet: View {
   @Environment(\.dismiss) private var dismiss
-  @State private var choice: ToolChoice
-  @State private var system: String
+  @State private var choice: ToolChoice?
+  @State private var system: String?
   @State private var isWriting = false
   @State private var saving = VisitRequest<Bool>()
 
@@ -461,8 +477,8 @@ private struct PlanToolChoiceSheet: View {
     self.editor = editor
     self.goal = goal
     self.tool = tool
-    _choice = State(initialValue: tool.choice.flatMap(ToolChoice.init(rawValue:)) ?? .have)
-    _system = State(initialValue: tool.system ?? "macos")
+    _choice = State(initialValue: tool.choice.flatMap(ToolChoice.init(rawValue:)))
+    _system = State(initialValue: tool.system)
   }
 
   var body: some View {
@@ -502,9 +518,13 @@ private struct PlanToolChoiceSheet: View {
 
         ToolbarItem(placement: .confirmationAction) {
           BusyButton(isBusy: editor.isSaving, role: .confirm, icon: .check) {
+            guard let answer else {
+              return
+            }
+
             saving.run {
               // Saved even when the sheet closed first; then there's nothing left to close.
-              let saved = await save()
+              let saved = await save(answer)
               guard !Task.isCancelled else { return nil }
               if saved { dismiss() }
               return !saved
@@ -512,11 +532,16 @@ private struct PlanToolChoiceSheet: View {
           } label: {
             Text("Save", tableName: "Plan", comment: "Saves the tool choice")
           }
+          .disabled(answer == nil)
         }
       }
     }
     .presentationDetents([.medium, .large])
     .onDisappear { saving.leave() }
+  }
+
+  private var answer: ToolAnswer? {
+    ToolAnswer(choice: choice, system: system)
   }
 
   @ViewBuilder
@@ -556,19 +581,17 @@ private struct PlanToolChoiceSheet: View {
   }
 
   /// False when it didn't save: the sheet stays with the learner's choice for Save to try again.
-  private func save() async -> Bool {
+  private func save(_ answer: ToolAnswer) async -> Bool {
     let goalId = goal.id
     let tools = [tool.name]
-    let choice = choice
-    let system = choice == .setup ? system : nil
     let names = tool.name
 
     let sentence =
-      switch choice {
+      switch answer.choice {
       case .setup:
         String(
           localized:
-            "A lesson to set up \(names) on \(planSystemName(system ?? "")) comes before you need it.",
+            "A lesson to set up \(names) on \(planSystemName(answer.system ?? "")) comes before you need it.",
           table: "Plan", comment: "Says a setup lesson comes first")
       case .have:
         String(
@@ -580,7 +603,7 @@ private struct PlanToolChoiceSheet: View {
 
     await editor.apply(sentence: sentence) { api, token in
       try await api.chooseTools(
-        token: token, goalId: goalId, tools: tools, choice: choice, system: system
+        token: token, goalId: goalId, tools: tools, choice: answer.choice, system: answer.system
       ) {
         isWriting = true
       }
