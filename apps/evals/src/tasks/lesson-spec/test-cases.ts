@@ -850,6 +850,7 @@ export const TEST_CASES: TestCase<LessonSpecExpected, OptionalCountry<LessonSpec
 
       ${SHARED_EXPECTATIONS}
     `,
+    expected: { practiceTemplates: ["sqlPlayground"] },
     id: "ko-sql-where-beginner",
     userInput: {
       activityTemplates: ACTIVITY_TEMPLATES,

@@ -65,6 +65,7 @@ export const PRACTICE_TEST_CASES: PracticeCase[] = [
       - A regression to avoid (production, 26 Nov 2026): this lesson planned a codeRunner with "the same code as starter and solution, no editable lines", so the learner only pressed Run, and its application was a choice about ordering print statements. A codeRunner the learner only runs, or a starter that already equals its solution, is the regression
       - Ideally the application is that activity in a realistic situation: a short program for a real task (a sign, a check-in desk, a receipt) the learner completes so it prints what the task asks
     `,
+    expected: { practiceTemplates: ["codeRunner", "codeTracer"] },
     id: "en-python-statements",
     lessonCanDo: "Run a short Python program and predict its output.",
     lessonDescription:
@@ -98,6 +99,7 @@ export const PRACTICE_TEST_CASES: PracticeCase[] = [
       - A regression to avoid (production, issue report 20 Nov 2026): a lesson on Python values was nine screens of guessing, choosing and sorting, and the learner never wrote or ran a line of code
       - Checks can still ask which type a value has or what an expression gives, with tempting answers learners really pick ("5" is a number, True in quotes is a Boolean)
     `,
+    expected: { practiceTemplates: ["codeRunner", "codeTracer"] },
     id: "en-python-values",
     lessonCanDo: "Distinguish numbers, text, and Boolean values in Python.",
     lessonDescription: "Python values have types that determine how they behave in a program.",
@@ -156,6 +158,7 @@ export const PRACTICE_TEST_CASES: PracticeCase[] = [
       - Ideally the application is a codeRunner in a realistic task (a countdown, the numbers of a queue's tickets, a table of a few prices) whose brief names the line the learner writes and what the program prints when it's right; never a program the learner only runs
       - Checks keep the classic off-by-one trap: \`<=\` against \`<\` printing one number too many or too few
     `,
+    expected: { practiceTemplates: ["codeRunner", "codeTracer"] },
     id: "pt-javascript-for",
     language: "pt",
     lessonCanDo: "Escrever um laço for que repete uma ação um número certo de vezes",
