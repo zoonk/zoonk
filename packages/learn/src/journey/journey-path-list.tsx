@@ -106,7 +106,8 @@ function ChaptersPhase({
   open: boolean;
   phase: PlanPhaseView;
 }) {
-  const hasContent = phase.chapters.length > 0 || phase.checkpoint !== null;
+  const hasContent =
+    phase.chapters.length > 0 || phase.leftOut.length > 0 || phase.checkpoint !== null;
 
   const header = <PhaseColumns byPlace={byPlace} open={open} phase={phase} />;
 
@@ -139,6 +140,7 @@ function ChaptersPhase({
             <JourneyChapters
               chapters={phase.chapters}
               checkpoint={phase.checkpoint}
+              leftOut={phase.leftOut}
               links={links}
             />
           </div>

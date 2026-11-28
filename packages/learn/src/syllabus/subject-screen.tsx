@@ -24,7 +24,7 @@ import { namesModules } from "./names-modules";
 import { useAlsoIn } from "./shared-exams";
 import { SubjectAside, SubjectCoverage } from "./subject-aside";
 import { SubjectChapters } from "./subject-chapters";
-import { SubjectCovers } from "./subject-covers";
+import { SubjectCovers, SubjectLeftOut } from "./subject-covers";
 import { SubjectMatrix } from "./subject-matrix";
 import { NotPlannedCallout, type SubjectActions } from "./subject-not-planned";
 import { SubjectTopics } from "./subject-topics";
@@ -306,6 +306,8 @@ export function SubjectScreen({
           chapters={subject.chapters}
           mindMapsHref={hrefs.mindMaps?.(subject.key) ?? null}
         />
+
+        <SubjectLeftOut leftOut={subject.leftOut} />
 
         <SubjectWrittenPractice
           actions={actions}

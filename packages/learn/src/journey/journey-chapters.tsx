@@ -17,6 +17,8 @@ import { useId, useState } from "react";
 import { ChapterMark } from "../_components/chapter-mark";
 import { LearnLink } from "../learn-link";
 import { usePlanScreen } from "../plan/plan-context";
+import { useLeftOutTopicsLabel } from "../syllabus/left-out-topics";
+import { TopicMark } from "../syllabus/topic-mark";
 import { FoldRow } from "../today/today-fold-row";
 import { FarTopicSheet } from "../topic-outline/far-topic-sheet";
 import { useTopicOutlineActions } from "../topic-outline/topic-outline-actions";
@@ -187,14 +189,42 @@ function useShowMoreLabel({ hidden, showAll }: { hidden: number; showAll: boolea
     : t("{count, plural, one {# more chapter} other {# more chapters}}", { count: hidden });
 }
 
+/** The topics the plan's date leaves out of a phase, folded under one row that names them. */
+function LeftOutRow({ names }: { names: readonly string[] }) {
+  const label = useLeftOutTopicsLabel();
+
+  return (
+    <Collapsible>
+      <CollapsibleTrigger className={cn(PATH_ROW_CLASS, "hover:bg-muted/70")} data-slot="path-row">
+        <span className={PATH_ROW_LEADING_CLASS} data-slot="path-row-mark">
+          <TopicMark mark={{ kind: "notPlanned" }} />
+        </span>
+        <PathRowBody>
+          <span className="text-muted-foreground font-medium">{label(names.length)}</span>
+        </PathRowBody>
+        <FoldChevron />
+      </CollapsibleTrigger>
+      <CollapsibleContent>
+        <ul className="text-muted-foreground flex list-disc flex-col gap-1 pb-2 pl-7 text-sm">
+          {names.map((name) => (
+            <li key={name}>{name}</li>
+          ))}
+        </ul>
+      </CollapsibleContent>
+    </Collapsible>
+  );
+}
+
 /** Without `links` the rows only say what's there, every one of them, and none opens anything. */
 export function JourneyChapters({
   chapters,
   checkpoint,
+  leftOut,
   links,
 }: {
   chapters: PlanChapterView[];
   checkpoint: PlanPhaseCheckpointView | null;
+  leftOut?: readonly string[];
   links: JourneyPathLinks | null;
 }) {
   const [showAll, setShowAll] = useState(false);
@@ -226,6 +256,12 @@ export function JourneyChapters({
             onToggle={() => setShowAll((open) => !open)}
             open={showAll}
           />
+        </li>
+      )}
+
+      {leftOut && leftOut.length > 0 && (
+        <li>
+          <LeftOutRow names={leftOut} />
         </li>
       )}
 

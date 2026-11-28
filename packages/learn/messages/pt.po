@@ -5014,6 +5014,7 @@ msgstr "<start></start> a <end></end>"
 
 #: src/journey/phase-details.tsx
 #: src/plan-diff/use-change-rows.ts
+#: src/syllabus/subject-covers.tsx
 msgctxt "L_oGIZ"
 msgid "Not in your plan"
 msgstr "Fora do seu plano"
@@ -13097,6 +13098,12 @@ msgctxt "tSwkMF"
 msgid "Asked a lot"
 msgstr "Cai muito"
 
+#. Under a module or a phase of the learner's plan, and on the row that lists them: how many of its topics the plan leaves out because they don't fit before the plan's date.
+#: src/syllabus/left-out-topics.tsx
+msgctxt "JUUl4s"
+msgid "{count, plural, one {# topic not in your plan} other {# topics not in your plan}}"
+msgstr "{count, plural, one {# tópico não está no seu plano} other {# tópicos não estão no seu plano}}"
+
 #. On one exam's plan. {exams} names the learner's other exams that test some of the same topics.
 #: src/syllabus/shared-exams.tsx
 msgctxt "zK-7PG"
@@ -13184,6 +13191,18 @@ msgstr "Ver todos os {count, number}"
 msgctxt "MaFsVi"
 msgid "Add it back"
 msgstr "Adicionar de novo"
+
+#. On a module's page, on a plan that isn't for an exam: the plan teaches some of the module, but the rest of its topics don't fit before the plan's date. Followed by a link to change the plan.
+#: src/syllabus/subject-not-planned.tsx
+msgctxt "JahFZg"
+msgid "Part of this module isn't in your plan. Other topics come first."
+msgstr "Parte deste módulo não está no seu plano. Outros tópicos vêm primeiro."
+
+#. On a subject's page: the plan teaches some of the subject, but the rest of its topics don't fit before the plan's date. Followed by a link to change the plan.
+#: src/syllabus/subject-not-planned.tsx
+msgctxt "hFK1s9"
+msgid "Part of this subject isn't in your plan. Other topics come first."
+msgstr "Parte desta matéria não está no seu plano. Outros tópicos vêm primeiro."
 
 #. On a module's page, on a plan that isn't for an exam: the learner took this module out of their plan. Followed by a button to add it back.
 #: src/syllabus/subject-not-planned.tsx

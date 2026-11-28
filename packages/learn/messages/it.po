@@ -5014,6 +5014,7 @@ msgstr "<start></start> – <end></end>"
 
 #: src/journey/phase-details.tsx
 #: src/plan-diff/use-change-rows.ts
+#: src/syllabus/subject-covers.tsx
 msgctxt "L_oGIZ"
 msgid "Not in your plan"
 msgstr "Non è nel tuo piano"
@@ -13097,6 +13098,12 @@ msgctxt "tSwkMF"
 msgid "Asked a lot"
 msgstr "Molto frequente"
 
+#. Under a module or a phase of the learner's plan, and on the row that lists them: how many of its topics the plan leaves out because they don't fit before the plan's date.
+#: src/syllabus/left-out-topics.tsx
+msgctxt "JUUl4s"
+msgid "{count, plural, one {# topic not in your plan} other {# topics not in your plan}}"
+msgstr "{count, plural, one {# argomento non previsto nel tuo piano} other {# argomenti non previsti nel tuo piano}}"
+
 #. On one exam's plan. {exams} names the learner's other exams that test some of the same topics.
 #: src/syllabus/shared-exams.tsx
 msgctxt "zK-7PG"
@@ -13184,6 +13191,18 @@ msgstr "Mostra tutto ({count, number})"
 msgctxt "MaFsVi"
 msgid "Add it back"
 msgstr "Reinseriscila"
+
+#. On a module's page, on a plan that isn't for an exam: the plan teaches some of the module, but the rest of its topics don't fit before the plan's date. Followed by a link to change the plan.
+#: src/syllabus/subject-not-planned.tsx
+msgctxt "JahFZg"
+msgid "Part of this module isn't in your plan. Other topics come first."
+msgstr "Una parte di questo modulo non è prevista nel tuo piano. Prima vengono altri argomenti."
+
+#. On a subject's page: the plan teaches some of the subject, but the rest of its topics don't fit before the plan's date. Followed by a link to change the plan.
+#: src/syllabus/subject-not-planned.tsx
+msgctxt "hFK1s9"
+msgid "Part of this subject isn't in your plan. Other topics come first."
+msgstr "Una parte di questa materia non è prevista nel tuo piano. Prima vengono altri argomenti."
 
 #. On a module's page, on a plan that isn't for an exam: the learner took this module out of their plan. Followed by a button to add it back.
 #: src/syllabus/subject-not-planned.tsx

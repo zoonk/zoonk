@@ -5014,6 +5014,7 @@ msgstr "<start></start> – <end></end>"
 
 #: src/journey/phase-details.tsx
 #: src/plan-diff/use-change-rows.ts
+#: src/syllabus/subject-covers.tsx
 msgctxt "L_oGIZ"
 msgid "Not in your plan"
 msgstr "Poza twoim planem"
@@ -13097,6 +13098,12 @@ msgctxt "tSwkMF"
 msgid "Asked a lot"
 msgstr "Często na egzaminie"
 
+#. Under a module or a phase of the learner's plan, and on the row that lists them: how many of its topics the plan leaves out because they don't fit before the plan's date.
+#: src/syllabus/left-out-topics.tsx
+msgctxt "JUUl4s"
+msgid "{count, plural, one {# topic not in your plan} other {# topics not in your plan}}"
+msgstr "{count, plural, one {# temat poza planem} few {# tematy poza planem} many {# tematów poza planem} other {# tematu poza planem}}"
+
 #. On one exam's plan. {exams} names the learner's other exams that test some of the same topics.
 #: src/syllabus/shared-exams.tsx
 msgctxt "zK-7PG"
@@ -13184,6 +13191,18 @@ msgstr "Zobacz wszystkie ({count, number})"
 msgctxt "MaFsVi"
 msgid "Add it back"
 msgstr "Przywróć"
+
+#. On a module's page, on a plan that isn't for an exam: the plan teaches some of the module, but the rest of its topics don't fit before the plan's date. Followed by a link to change the plan.
+#: src/syllabus/subject-not-planned.tsx
+msgctxt "JahFZg"
+msgid "Part of this module isn't in your plan. Other topics come first."
+msgstr "Część tego modułu nie mieści się w planie. Najpierw pojawią się inne tematy."
+
+#. On a subject's page: the plan teaches some of the subject, but the rest of its topics don't fit before the plan's date. Followed by a link to change the plan.
+#: src/syllabus/subject-not-planned.tsx
+msgctxt "hFK1s9"
+msgid "Part of this subject isn't in your plan. Other topics come first."
+msgstr "Część tego przedmiotu nie mieści się w planie. Najpierw pojawią się inne tematy."
 
 #. On a module's page, on a plan that isn't for an exam: the learner took this module out of their plan. Followed by a button to add it back.
 #: src/syllabus/subject-not-planned.tsx
