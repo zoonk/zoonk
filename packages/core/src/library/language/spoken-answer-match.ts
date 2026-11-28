@@ -221,10 +221,11 @@ export function hasMissedStart({
   }
 
   const firstCorrect = words.findIndex((word) => word.status === "correct");
+  const lostWords = firstCorrect === -1 ? words.length : firstCorrect;
 
   return (
-    firstCorrect > 0 &&
-    firstCorrect <= Math.floor(micStartupMs / SHORTEST_WORD_MS) &&
-    words.slice(firstCorrect).every((word) => word.status === "correct")
+    lostWords > 0 &&
+    lostWords <= Math.floor(micStartupMs / SHORTEST_WORD_MS) &&
+    words.slice(lostWords).every((word) => word.status === "correct")
   );
 }
