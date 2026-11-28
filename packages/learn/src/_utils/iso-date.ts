@@ -1,6 +1,5 @@
 "use client";
 
-import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { getIsoDay } from "@zoonk/utils/calendar-day";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import {
@@ -11,11 +10,11 @@ import {
   isoDateToUtc,
 } from "@zoonk/utils/date-format";
 import { getDateInTimeZone, isValidTimeZone } from "@zoonk/utils/time-zone";
-import { useExtracted, useFormatter, useTimeZone } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 import { use } from "react";
 import { PlanScreenContext } from "../plan/plan-context";
+import { type LearnerClock, useLearnerClock } from "./learner-clock";
 
-/** Core counts a goal's or draft's days in its zone, UTC without one, so date pickers do too. */
 export function getTodayInZone({ now, timeZone }: { now: Date; timeZone: string | null }): string {
   const zone = timeZone && isValidTimeZone(timeZone) ? timeZone : "UTC";
 
@@ -24,17 +23,9 @@ export function getTodayInZone({ now, timeZone }: { now: Date; timeZone: string 
     .slice(0, "YYYY-MM-DD".length);
 }
 
-export function daysUntilIsoDate({ isoDate, today }: { isoDate: string; today: Date }): number {
-  return Math.max(0, countDaysUntil({ isoDate, today }));
-}
-
-function countDaysUntil({ isoDate, today }: { isoDate: string; today: Date }): number {
-  const start = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
-  return Math.round((isoDateToUtc(isoDate).getTime() - start) / MS_PER_DAY);
-}
-
-export function hasIsoDatePassed({ isoDate, today }: { isoDate: string; today: Date }): boolean {
-  return countDaysUntil({ isoDate, today }) < 0;
+/** Core counts a goal's or draft's days in its zone, UTC without one, so date pickers do too. */
+export function useTodayInZone(timeZone: string | null): string {
+  return getTodayInZone({ now: useLearnerClock().now, timeZone });
 }
 
 export function daysBetween(from: string, to: string): number {
@@ -50,21 +41,12 @@ type DateOptions = Omit<DateFormat, "role">;
 
 const REFERENCE_SUNDAY = Date.parse("2023-01-01T00:00:00Z");
 
-/**
- * The zone every date is drawn in: the provider's, which Main sets to the server's, so the server's
- * HTML and the browser's first render say the same words.
- */
-function useDrawingTimeZone(): string {
-  return useTimeZone() ?? "UTC";
-}
-
-/** Today as a calendar day: the plan's own day, or today in the zone dates are drawn in. */
+/** Today as a calendar day: the plan's own day, or today on the learner's clock. */
 export function useIsoToday(): string {
   const plan = use(PlanScreenContext);
-  const timeZone = useDrawingTimeZone();
-  const mountedAt = useMountTime();
+  const clock = useLearnerClock();
 
-  return plan?.today ?? getIsoDay({ now: mountedAt, timeZone });
+  return plan?.today ?? getIsoDay(clock);
 }
 
 /** A calendar day from the server ("2027-11-14"), written for the place it has on the screen. */
@@ -105,37 +87,49 @@ export function useFormatWeekday() {
     });
 }
 
-/** An instant's calendar day and today's, in the zone it's drawn in, for "Today" and "Yesterday". */
-export function useMomentDays() {
-  const timeZone = useDrawingTimeZone();
-  const now = useMountTime();
-
+/** An instant's calendar day and today's, in the clock's zone, for "Today" and "Yesterday". */
+export function getMomentDays({ now, timeZone }: LearnerClock) {
   return {
     dayOf: (moment: Date | string) => getIsoDay({ now: new Date(moment), timeZone }),
     today: getIsoDay({ now, timeZone }),
   };
 }
 
-/**
- * An instant (a timestamp), drawn in the provider's zone; its day and today are read in that same
- * zone, so the year shows exactly when the drawn date is in another year.
- */
-export function useFormatMomentDate() {
-  const format = useFormatter();
-  const timeZone = useDrawingTimeZone();
-  const { dayOf, today } = useMomentDays();
-
-  return (moment: Date | string, role: DateRole = "row", options: DateOptions = {}): string =>
-    format.dateTime(new Date(moment), {
-      ...getIsoDateOptions({ ...options, isoDate: dayOf(moment), role, today }),
-      timeZone,
-    });
+export function useMomentDays() {
+  return getMomentDays(useLearnerClock());
 }
 
-/** An instant's time of day ("2:32 PM"), in the zone it's drawn in. */
+/** Its day and today are read in the clock's zone, so the year shows exactly when the drawn date is in another year. */
+export function getMomentDateOptions({
+  clock,
+  moment,
+  role = "row",
+  ...options
+}: DateFormat & { clock: LearnerClock; moment: Date | string }): Omit<
+  ReturnType<typeof getIsoDateOptions>,
+  "timeZone"
+> & { timeZone: string } {
+  const { dayOf, today } = getMomentDays(clock);
+
+  return {
+    ...getIsoDateOptions({ ...options, isoDate: dayOf(moment), role, today }),
+    timeZone: clock.timeZone,
+  };
+}
+
+/** An instant (a timestamp), drawn in the learner's zone. */
+export function useFormatMomentDate() {
+  const format = useFormatter();
+  const clock = useLearnerClock();
+
+  return (moment: Date | string, role: DateRole = "row", options: DateOptions = {}): string =>
+    format.dateTime(new Date(moment), getMomentDateOptions({ ...options, clock, moment, role }));
+}
+
+/** An instant's time of day ("2:32 PM"), in the learner's zone. */
 export function useFormatMomentTime() {
   const format = useFormatter();
-  const timeZone = useDrawingTimeZone();
+  const { timeZone } = useLearnerClock();
 
   return (moment: Date | string): string =>
     format.dateTime(new Date(moment), { hour: "numeric", minute: "2-digit", timeZone });

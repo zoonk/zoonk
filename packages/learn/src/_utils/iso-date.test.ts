@@ -1,31 +1,46 @@
 import { describe, expect, it } from "vitest";
-import { daysUntilIsoDate, hasIsoDatePassed } from "./iso-date";
+import { getMomentDateOptions, getMomentDays } from "./iso-date";
 
-describe(daysUntilIsoDate, () => {
-  it("counts whole days from the viewer's calendar day, whatever the time of day", () => {
-    const lateEvening = new Date(2026, 8, 28, 23, 30);
-    const earlyMorning = new Date(2026, 8, 28, 0, 15);
+describe(getMomentDays, () => {
+  it("keeps two turns either side of UTC midnight on the device's one day", () => {
+    const { dayOf, today } = getMomentDays({
+      now: new Date("2026-11-28T01:00:00Z"),
+      timeZone: "America/Sao_Paulo",
+    });
 
-    expect(daysUntilIsoDate({ isoDate: "2026-09-30", today: lateEvening })).toBe(2);
-    expect(daysUntilIsoDate({ isoDate: "2026-09-30", today: earlyMorning })).toBe(2);
-    expect(daysUntilIsoDate({ isoDate: "2026-11-08", today: earlyMorning })).toBe(41);
+    expect(dayOf("2026-11-27T23:30:00Z")).toBe("2026-11-27");
+    expect(dayOf("2026-11-28T00:30:00Z")).toBe("2026-11-27");
+    expect(today).toBe("2026-11-27");
   });
 
-  it("never counts below zero for today or a day already past", () => {
-    const today = new Date(2026, 8, 28, 12, 0);
+  it("splits turns that UTC puts on one day when the device's midnight falls between them", () => {
+    const { dayOf, today } = getMomentDays({
+      now: new Date("2026-12-31T12:00:00Z"),
+      timeZone: "Pacific/Kiritimati",
+    });
 
-    expect(daysUntilIsoDate({ isoDate: "2026-09-28", today })).toBe(0);
-    expect(daysUntilIsoDate({ isoDate: "2026-09-01", today })).toBe(0);
+    expect(dayOf("2026-12-30T09:30:00Z")).toBe("2026-12-30");
+    expect(dayOf("2026-12-30T11:00:00Z")).toBe("2026-12-31");
+    expect(today).toBe("2027-01-01");
   });
 });
 
-describe(hasIsoDatePassed, () => {
-  it("has passed from the day after the date, by the viewer's calendar day", () => {
-    const lateOnTheDay = new Date(2026, 9, 12, 23, 30);
-    const earlyNextDay = new Date(2026, 9, 13, 0, 15);
+describe(getMomentDateOptions, () => {
+  const now = new Date("2026-12-31T12:00:00Z");
+  const moment = "2026-12-31T08:00:00Z";
 
-    expect(hasIsoDatePassed({ isoDate: "2026-10-12", today: lateOnTheDay })).toBe(false);
-    expect(hasIsoDatePassed({ isoDate: "2026-10-12", today: earlyNextDay })).toBe(true);
-    expect(hasIsoDatePassed({ isoDate: "2026-10-20", today: earlyNextDay })).toBe(false);
+  it("shows the year of an instant from last year on the device's New Year's Day", () => {
+    const options = getMomentDateOptions({
+      clock: { now, timeZone: "Pacific/Kiritimati" },
+      moment,
+    });
+
+    expect(options).toMatchObject({ timeZone: "Pacific/Kiritimati", year: "numeric" });
+  });
+
+  it("leaves the year out where the instant and today share one", () => {
+    const options = getMomentDateOptions({ clock: { now, timeZone: "UTC" }, moment });
+
+    expect(options.year).toBeUndefined();
   });
 });
