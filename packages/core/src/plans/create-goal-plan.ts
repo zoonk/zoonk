@@ -195,6 +195,7 @@ async function planFromGraph({
     (!primaryCourseId || primaryCourseId === goal.primaryCourseId) &&
     isPlanUnchanged({ computed, context })
   ) {
+    await prisma.plan.updateMany({ data: membersMark, where: { id: context.plan.id } });
     return { computed, goal, isFirst, status: "unchanged" as const };
   }
 

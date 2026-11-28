@@ -470,6 +470,20 @@ describe(createGoalPlan, () => {
     expect(changed.version).toBe(before.version + 1);
   });
 
+  it("records a rebuild's member check when planning again changes nothing", async () => {
+    const { goal, library, plan } = await setup();
+
+    await createGoalPlan({ goalId: goal.id, graph: library.graph, membersCheckedAt: null });
+
+    await expect(
+      createGoalPlan({ goalId: goal.id, graph: library.graph, membersCheckedAt: NOW }),
+    ).resolves.toMatchObject({ status: "unchanged" });
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+      membersCheckedAt: NOW,
+    });
+  });
+
   it("keeps this week's lessons when planning again finds only a later week out of course order", async () => {
     const user = await userFixture();
     const library = await planLibraryFixture({ skills: [{ lessons: 12 }, { lessons: 12 }] });
