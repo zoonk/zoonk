@@ -798,7 +798,7 @@ class OnboardingScreenshots {
         compose.setContent { ZoonkTheme { Surface { FINISH_SCREENS.first().second() } } }
         compose.waitForIdle()
         listOf("Mon", "Tue", "Wed", "Thu", "Fri").forEach {
-            compose.onNodeWithText(it).performClick()
+            compose.onNodeWithText(it).performSemanticsAction(SemanticsActions.OnClick)
             compose.waitForIdle()
         }
         // The chips fade as each is switched off; the picture is of where they settle.
@@ -1420,16 +1420,16 @@ class OnboardingScreenshots {
                 )
             return ends.mapIndexed { index, (end, precision) ->
                 val start = if (index == 0) LocalDate.now() else ends[index - 1].first?.plusDays(1)
-                val dates =
-                    if (end == null || start == null) {
-                        """"startDate":null,"endDate":null,"later":true,"precision":null"""
-                    } else {
-                        """"startDate":"$start","endDate":"$end","later":false,"precision":"${precision?.value}""""
-                    }
+                val later = end == null || start == null
+                val startDate = start?.takeUnless { later }?.let { "\"$it\"" }
+                val endDate = end?.takeUnless { later }?.let { "\"$it\"" }
+                val endPrecision = precision?.takeUnless { later }?.let { "\"${it.value}\"" }
                 """
                 {"chapterCount":0,"chapters":[],"hours":20,"index":$index,"kind":"learn","lessonsDone":0,"lessonsTotal":12,
                  "mocks":{"count":0,"nextDate":null},"milestone":"${named[index].second}","name":"${named[index].first}",
-                 "notPlannedReason":null,"state":"${if (index == 0) "current" else "upcoming"}",$dates}
+                 "checkpoint":{"date":$endDate,"later":$later,"locked":false,"planItemId":null,"precision":$endPrecision,"state":"upcoming","when":"date"},
+                 "notPlannedReason":null,"state":"${if (index == 0) "current" else "upcoming"}",
+                 "startDate":$startDate,"endDate":$endDate,"later":$later,"precision":$endPrecision}
                 """.trimIndent()
             }
         }

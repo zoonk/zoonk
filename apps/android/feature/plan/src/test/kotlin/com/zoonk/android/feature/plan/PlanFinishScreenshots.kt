@@ -374,7 +374,19 @@ class PlanFinishScreenshots {
                         checkpoint = LATER_CHALLENGE,
                     )
                 } else {
-                    it.copy(milestone = milestone, endDate = end, startDate = start ?: it.startDate, precision = precision)
+                    val checkpoint = it.checkpoint
+                    it.copy(
+                        milestone = milestone,
+                        endDate = end,
+                        startDate = start ?: it.startDate,
+                        precision = precision,
+                        checkpoint =
+                            if (checkpoint?.state == PlanPhaseCheckpoint.State.UPCOMING) {
+                                checkpoint.copy(date = end, precision = precision)
+                            } else {
+                                checkpoint
+                            },
+                    )
                 }
             },
     )
@@ -425,8 +437,11 @@ class PlanFinishScreenshots {
 
     /** A plan of one phase: its bar still ends on the plan's finish. */
     private fun onePhasePage(): PlanPageState {
-        val plan = undated(learnPlan(), LocalDate(2027, 3, 10), PlanFinishPrecision.MONTH)
-        val only = plan.phases[1].copy(index = 0, milestone = "Organize data with lists and dictionaries", endDate = LocalDate(2027, 3, 10))
+        val end = LocalDate(2027, 3, 10)
+        val plan =
+            undated(learnPlan(), end, PlanFinishPrecision.MONTH)
+                .phase(1, "Organize data with lists and dictionaries", end)
+        val only = plan.phases[1].copy(index = 0)
         return page(plan.copy(phases = listOf(only), currentPhase = 0))
     }
 
