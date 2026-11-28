@@ -2,14 +2,15 @@ package com.zoonk.android.data
 
 import com.zoonk.api.models.LearnerSummary
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
 
@@ -46,12 +47,14 @@ fun CoroutineScope.invalidateAtNextChange(
     isForeground: Flow<Boolean> = flowOf(true),
     now: () -> Long = System::currentTimeMillis,
 ) = launch {
-    combine(summary.state.map { it.value?.nextChangeAt }.distinctUntilChanged(), isForeground) { nextChangeAt, foreground ->
-        nextChangeAt.takeIf { foreground }
-    }.distinctUntilChanged()
+    summary.state
+        .map { it.value?.nextChangeAt }
+        .distinctUntilChanged()
         .collectLatest { nextChangeAt ->
             nextChangeAt ?: return@collectLatest
-            delay((nextChangeAt - now()).coerceAtLeast(0).milliseconds)
+            withTimeoutOrNull((nextChangeAt - now()).coerceAtLeast(0).milliseconds) {
+                isForeground.firstOrNull { it && now() >= nextChangeAt } ?: awaitCancellation()
+            }
             resource.invalidate()
         }
 }
