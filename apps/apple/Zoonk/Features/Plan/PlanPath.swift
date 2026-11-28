@@ -178,36 +178,16 @@ private struct PlanPhaseRow: View {
     }
   }
 
-  /// Main's left-out row: the topics the plan's date leaves out of the phase, folded under one row
-  /// that names them.
-  @ViewBuilder
   private var leftOutRows: some View {
-    let names = phase.leftOutTopics
-
-    if !names.isEmpty {
-      FoldRow(
-        isUnfolded: Binding {
-          disclosure.showsLeftOut
-        } set: { shows in
-          store.setPhaseDisclosure(goalId: context.goal.id, phase: phase.index) {
-            $0.showsLeftOut = shows
-          }
+    LeftOutTopicsRows(
+      names: phase.leftOutTopics,
+      isUnfolded: Binding {
+        disclosure.showsLeftOut
+      } set: { shows in
+        store.setPhaseDisclosure(goalId: context.goal.id, phase: phase.index) {
+          $0.showsLeftOut = shows
         }
-      ) {
-        ListRow(leftOutTopicsText(names.count).foregroundStyle(.mutedForeground)) {
-          Image(systemName: "minus.circle")
-            .foregroundStyle(.mutedForeground)
-        }
-      }
-
-      if disclosure.showsLeftOut {
-        ForEach(Array(names.enumerated()), id: \.offset) { _, name in
-          ListRow(Text(name).foregroundStyle(.mutedForeground)) {
-            Color.clear.frame(width: 0, height: 0)
-          }
-        }
-      }
-    }
+      })
   }
 
   private func foldLabel(hidden: Int, showsAll: Bool) -> Text {
@@ -1182,9 +1162,68 @@ func examExtraLabel(hasNotice: Bool, document: ExamDocument) -> String {
 
 /// How many topics of a module or a phase the plan's date leaves out, wherever the plan says it.
 func leftOutTopicsText(_ count: Int) -> Text {
-  Text(
-    "\(count) topics not in your plan", tableName: "Plan",
+  Text(verbatim: leftOutTopicsWords(count))
+}
+
+func leftOutTopicsWords(_ count: Int) -> String {
+  String(
+    localized: "\(count) topics not in your plan", table: "Plan", locale: .appLanguage,
     comment:
       "Under a module or a phase of the learner's plan, and on the row that lists them: how many of its topics the plan leaves out because they don't fit before the plan's date."
   )
+}
+
+/// Main's `LeftOutTopicsRow`: the topics the plan's date leaves out of a phase or a module, folded
+/// under one row that names them.
+struct LeftOutTopicsRows: View {
+  let names: [String]
+  @Binding var isUnfolded: Bool
+
+  var body: some View {
+    if !names.isEmpty {
+      FoldRow(isUnfolded: $isUnfolded) {
+        ListRow(leftOutTopicsText(names.count).foregroundStyle(.mutedForeground)) {
+          Image(systemName: "minus.circle")
+            .foregroundStyle(.mutedForeground)
+        }
+      }
+
+      if isUnfolded {
+        FoldedNames(names: names)
+      }
+    }
+  }
+}
+
+/// Main's `FoldedNames`: names a fold opens to, which open nothing themselves, as one quiet list of
+/// bullets hanging off the rows' title edge.
+struct FoldedNames: View {
+  let names: [String]
+
+  var body: some View {
+    let hang = Self.bulletWidth + Self.bulletGap
+
+    RowLayout(hasMark: true) {
+      Color.clear.frame(width: 0, height: 0)
+    } words: {
+      VStack(alignment: .leading, spacing: 4) {
+        ForEach(Array(names.enumerated()), id: \.offset) { _, name in
+          HStack(alignment: .firstTextBaseline, spacing: Self.bulletGap) {
+            Text(verbatim: "•")
+              .frame(width: Self.bulletWidth, alignment: .leading)
+              .accessibilityHidden(true)
+            Text(name)
+          }
+        }
+      }
+      .alignmentGuide(.leading) { $0[.leading] + hang }
+      .typeStyle(.body)
+      .foregroundStyle(.mutedForeground)
+    } value: {
+    }
+    .listRowSeparator(.hidden)
+  }
+
+  private static let bulletWidth = 8.0
+  private static let bulletGap = 6.0
 }
