@@ -74,12 +74,12 @@
           }
           GallerySection(id: "choices", title: "Choice list") { Choices() }
           GallerySection(id: "checks", title: "Check list") { Choices(picks: .several) }
+          GallerySection(id: "checksSaving", title: "Check list saving") {
+            Choices(picks: .several).disabled(true)
+          }
           GallerySection(id: "cards", title: "Card rows") { CardRows() }
           GallerySection(id: "cardsSaving", title: "Card rows saving") {
             CardRows().disabled(true)
-          }
-          GallerySection(id: "checksSaving", title: "Check list saving") {
-            Choices(picks: .several).disabled(true)
           }
           GallerySection(id: "match", title: "Match cards") { MatchCards() }
           GallerySection(id: "questionBar", title: "Question bar") { QuestionBar() }
