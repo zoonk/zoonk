@@ -24,6 +24,9 @@
   "activities_code_pass_count": "d90b4107491b543e81eccb5b320a3977ba47dd2d1d10ebd4b6efd6b067b504ef",
   "activities_code_pattern_cant_run": "02171474f3db5112e2240dc52a46cdea9a57d6901d9c3aa5a98cd3b90de45eba",
   "activities_code_pattern_that_works": "39e93fbd1afd38e7a79ca5a6928f2e56d3e9016e6417cded712a38295c17860e",
+  "activities_code_phase_compiling": "a46da52d8e2b7ad1a14786740503e9de8413e0f56e671be382d04892004fe128",
+  "activities_code_phase_running": "90104032ba332783aaa2a9805a18aec6dd3633fe89e3b5946a0d9d8d252c045a",
+  "activities_code_phase_starting": "c1782ec3cd8b50be9e68d659b215ffdd725109ae79b35972594cfa08b8269913",
   "activities_code_predict_ahead": "cd59131fb8588c388b64c3d104c07a210f343b8bb8b96356d1cc4749d59d3743",
   "activities_code_predict_first": "a2f9e1283134095221cf448a255309079103c054cadb85158b37d9ace419976f",
   "activities_code_query": "af79fc33d366525d5df68e1a11b209ac8cf5512ca403c91186eeaa206e6f7860",
@@ -35,6 +38,8 @@
   "activities_code_row_missing": "3326800ee1688a7181e742e0e660b49351be154a73089f36e2d9119c24396ff6",
   "activities_code_run": "502a6541d831f54a0b1642d8f323c0a4bf8f4d71c2b06750daae660ad063e16c",
   "activities_code_run_again": "bffe7b22f864dc69558f15cd98c13149a617034b30c130a1a4b9b55bf3c12c43",
+  "activities_code_run_failed": "3ca48c627417c2916da40d30b83c44d5378514f616c0af5a333d1b8a9396aa40",
+  "activities_code_run_offline": "3ee02d8dc6790b8fe6977911967c4e2c2b2a751d1af4291a61d2a46de19c9d39",
   "activities_code_run_to_see": "39aa537ade0af9439133d199714ce025f627c65d5d92149c17e2831c00ed0083",
   "activities_code_runtime_failed": "bdf6a4b5d01fd8b4642b52007c85fe70027ec4e9cef96e9ee78c584991ee4b3c",
   "activities_code_runtime_loading": "68fefdaeb16ca8599e27bef1318e2d89b8e22b7d7516df29733a058c508271c8",
@@ -77,6 +82,7 @@
   "activities_code_table_named": "ed7a26f6b39fc1a01e2f1fb448ba19ca67c3c6bf0cdc5fefb7a017a6b028a694",
   "activities_code_table_rows": "d27bae19689ecb9afe51696527bc4a8701cc22a58a4809b2f59b4c76ab2a15c7",
   "activities_code_too_much_output": "e63dba6147c120ee98b256bf0f17c3cf81b5a064cf264a8ae32f9bdf813fe839",
+  "activities_code_took_too_long": "75addc7ae9137abc049ccee6fce196607a441e43c72e44208680bb62a6cbf20b",
   "activities_code_value_was": "f5ca9b6f7e4e65bb4671df3d8c1f90e5b41365b7224bcc523742d07b32cce5c6",
   "activities_code_variables": "7bb1ed4012b83dc79a5633dd4f1f25ac86567eaee3360f4b1e8f3a1d59b1eefa",
   "activities_code_whole_run": "bccf485e6943e09c4e281e2bb216fc5ed14a726e246a0d2c7655da31670e6c94",
@@ -98,6 +104,11 @@
     <string name="activities_code_run">Ejecutar</string>
     <string name="activities_code_run_again">Volver a ejecutar</string>
     <string name="activities_code_start_over">Volver a empezar</string>
+    <string name="activities_code_phase_starting">Preparando %1$s…</string>
+    <string name="activities_code_phase_compiling">Compilando tu código…</string>
+    <string name="activities_code_phase_running">Ejecutando tu código…</string>
+    <string name="activities_code_run_offline">Para ejecutar código de %1$s, necesitas conexión. Revisa la tuya e inténtalo de nuevo.</string>
+    <string name="activities_code_run_failed">No se ejecutó tu código. Inténtalo de nuevo.</string>
     <!-- The name of a block of program code, for TalkBack. -->
     <string name="activities_code_code">Código</string>
     <!-- The lines of a program the learner may edit; %1$s lists their numbers, like "2 and 3". -->
@@ -122,6 +133,7 @@
         <item quantity="many">Se detuvo después de %d segundos. ¿Hay un ciclo que nunca termina?</item>
         <item quantity="other">Se detuvo después de %d segundos. ¿Hay un ciclo que nunca termina?</item>
     </plurals>
+    <string name="activities_code_took_too_long">Se detuvo porque tardó demasiado. ¿Hay un bucle que nunca termina?</string>
     <string name="activities_code_too_much_output">Se detuvo porque imprimió demasiado. ¿Hay un ciclo que nunca termina?</string>
     <!-- Before the feedback for a likely mistake the program's output shows. -->
     <string name="activities_code_not_quite">No del todo:</string>

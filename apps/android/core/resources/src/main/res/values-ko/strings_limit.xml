@@ -38,6 +38,8 @@
   "limit_questions_day": "e458c5a439f790524a44259f77660c2d1f24347cedc439ea8bedf6e746c9d5fc",
   "limit_questions_used": "8ad748bed5048d78d42447408ea74ad6a621a701921721133036d09bbd7a6dc4",
   "limit_quick_explanations_used": "0bfd2cb50c58900b78ce0de337431641c32a0486c22604850f021a985ce271b8",
+  "limit_runs_day": "ae4ff0cef6399e49e10708203a35248bfbad635e445047f83d76eb655b3e9cb1",
+  "limit_runs_used": "4c071ddc8ec0345dd23ae60aea9d7cd7ff95ce8cb589698d3f935fd3fb2e6a3a",
   "limit_sentence": "d1f077669c7a7f752de86e3c9818c0adbbdadf0db60a5b339125522bf83343c7",
   "limit_sign_up_required": "3d824410080e0b53b06ac2bdcc65fd27f4ac04340e5b98b957ceac40518cae4b",
   "limit_slow_down_minutes": "238fccb9c34e0458c2810664b76d07651b9d890aac840d5bbdcac16d24d86eb1",
@@ -87,6 +89,8 @@
     <string name="limit_questions_used">질문 한도를 다 썼어요</string>
     <string name="limit_uploads_day">오늘은 자료를 더 올릴 수 없어요</string>
     <string name="limit_questions_day">오늘은 질문을 더 할 수 없어요</string>
+    <string name="limit_runs_day">오늘은 더 이상 코드를 실행할 수 없어요</string>
+    <string name="limit_runs_used">코드 실행 횟수를 다 사용했어요</string>
     <string name="limit_call_time_used">대화 시간을 다 썼어요</string>
     <!-- The title over "You can try again now." once a call the learner's call time stopped can be made again. -->
     <string name="limit_call_time_back">다시 대화할 수 있어요</string>

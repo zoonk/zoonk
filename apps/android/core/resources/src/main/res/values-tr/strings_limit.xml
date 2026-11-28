@@ -38,6 +38,8 @@
   "limit_questions_day": "9414a84de8a267a6049e0737df1b9cf7c0d825ebc8953f341643b21f8dd76d18",
   "limit_questions_used": "cb3677106a49741d48e2d8ec63f5a03aba2b98e16f3f33e497b39626c3632d1b",
   "limit_quick_explanations_used": "f557bf77ef6df9d439e77688013f94bcf5167e555712d8a4d6447626bd003508",
+  "limit_runs_day": "d6209b7ce3e540371dc969d2684d01af3acaf0f950539a88fe1ab7b121449ac9",
+  "limit_runs_used": "3ddfb91fe40cdc72e04441c22bf19f2b4ba982cf3676a62fb5efa6b3aa4468d3",
   "limit_sentence": "b2ba71e50648d586b8f76853a2215cc9f0d7ede270ffbec2cbd0a7619864ef9b",
   "limit_sign_up_required": "240c692522f22585f79cdc02e0ef909a0bec1064d9ec9e7779e4dc0eebf65bd8",
   "limit_slow_down_minutes": "e4fb6c3b6849359150c21b6dd524d9f15fdca9ef54b3c25a8c4658d3414ac80c",
@@ -89,6 +91,8 @@
     <string name="limit_questions_used">Soru hakkın bitti</string>
     <string name="limit_uploads_day">Bugünkü materyal yükleme hakkın bitti</string>
     <string name="limit_questions_day">Bugünkü soru hakkın bitti</string>
+    <string name="limit_runs_day">Bugün daha fazla kod çalıştıramazsın</string>
+    <string name="limit_runs_used">Kod çalıştırma hakkını kullandın</string>
     <string name="limit_call_time_used">Sohbet süren doldu</string>
     <!-- The title over "You can try again now." once a call the learner's call time stopped can be made again. -->
     <string name="limit_call_time_back">Sohbet süren yenilendi</string>

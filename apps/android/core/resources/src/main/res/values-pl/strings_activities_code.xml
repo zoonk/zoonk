@@ -24,6 +24,9 @@
   "activities_code_pass_count": "73ab016dc82382a8e1e2a695f868a65ed86095b20bf0629c89bb54daa0288578",
   "activities_code_pattern_cant_run": "3bd965d5edc0439a0f4e2b7ce004f5c9cdd42d554678b1b4b1e4ced8e871c2a0",
   "activities_code_pattern_that_works": "144562bd519df86156b605d27ab30313e65464c18c2135bc35ac58d242199266",
+  "activities_code_phase_compiling": "9a964da99f4da9791adf65dad421630116d0316866ad9568591d5ef1e378ce12",
+  "activities_code_phase_running": "6c1ee13667504da292d680409955308acda997ca22bcfdb3ef58ed73900b6474",
+  "activities_code_phase_starting": "09397459cae8c7a5bcdb2cd643a2d625f96a51e8f4f3da14df2cc74c7739a9ff",
   "activities_code_predict_ahead": "e058c12bce91126968e6e2c3f67d4e8950386f3b4f7e0cf2c6191ed39d9b038f",
   "activities_code_predict_first": "1707e03ce4b872d9821f7330499c7223fa72603c1a331f3a751234100bb5ff7e",
   "activities_code_query": "4b488a8b5dbc842e43500f483190d89c65774a2b7d4ad6594aa2182b85c5e772",
@@ -35,6 +38,8 @@
   "activities_code_row_missing": "bf33471ddc056baa99b1e132c4f49a7a77f961f62d2e648f1dcee5d19a415747",
   "activities_code_run": "aa3a090ba8d1f6af260ea9aa456995f7af55431880da074fe8fcd5e5d93f0a8f",
   "activities_code_run_again": "1ae0d645e124964666dfb3e51f58574b2c48a027f970091eb79d1e83538d8ab6",
+  "activities_code_run_failed": "2938c67656e9b69456ee31f185e91822ef8913af26a4a3425d429be588dbefdb",
+  "activities_code_run_offline": "8ad39d27d4179c55035927cf8c8a24bfc6db41feec37744a8f4abd9438ccee94",
   "activities_code_run_to_see": "7da7bcc932180e9d1f9beee4a1ca02c4c09870e6911b1689662aee3150ccf166",
   "activities_code_runtime_failed": "af64ec94702f76ad419be1baadc92faaf5ff78fd90b185a45da5b1bc815586de",
   "activities_code_runtime_loading": "97067bb8ea51c3bafb8f284f06e72d70ccbca689f1d7024b81f48e2878a9a741",
@@ -77,6 +82,7 @@
   "activities_code_table_named": "6cddfaa5f05e69faa56300b55b8f203477ea32ea4955c065c81124c9fa543f46",
   "activities_code_table_rows": "c8a0555b2e754310840755e671b3804022fbea6a77281c48b79f9d40a9fcc31a",
   "activities_code_too_much_output": "0f14c1fe909e4ebd6cdc582c2adf109078cb1fed4d43637e295a1d0ba67820d4",
+  "activities_code_took_too_long": "37662e11a236f0a0b74d287c55bf97feea352075294145db5b7b4613d2c8e813",
   "activities_code_value_was": "71ddd4b993334ce824620c40dd1e9a2df6c3ea7ed9f98a80361a40850682e8ac",
   "activities_code_variables": "9b8145212514ecc5f65062ad2944d8731de8061c99ea23d988752b26e4113376",
   "activities_code_whole_run": "496c7861cdb214b59a720b686c194b1040c341260aa9b9b29a01b72079a9bd56",
@@ -98,6 +104,11 @@
     <string name="activities_code_run">Uruchom</string>
     <string name="activities_code_run_again">Uruchom ponownie</string>
     <string name="activities_code_start_over">Zacznij od nowa</string>
+    <string name="activities_code_phase_starting">Przygotowujemy %1$s…</string>
+    <string name="activities_code_phase_compiling">Kompilujemy twój kod…</string>
+    <string name="activities_code_phase_running">Uruchamiamy twój kod…</string>
+    <string name="activities_code_run_offline">Do uruchomienia kodu %1$s potrzebujesz połączenia. Sprawdź swoje połączenie i spróbuj ponownie.</string>
+    <string name="activities_code_run_failed">Nie udało się uruchomić kodu. Spróbuj ponownie.</string>
     <!-- The name of a block of program code, for TalkBack. -->
     <string name="activities_code_code">Kod</string>
     <!-- The lines of a program the learner may edit; %1$s lists their numbers, like "2 and 3". -->
@@ -124,6 +135,7 @@
         <item quantity="many">Zatrzymano, gdy minęło %d sekund. Czy jakaś pętla działa bez końca?</item>
         <item quantity="other">Zatrzymano, gdy minęło %d sekundy. Czy jakaś pętla działa bez końca?</item>
     </plurals>
+    <string name="activities_code_took_too_long">Program został zatrzymany, bo działał zbyt długo. Czy w kodzie jest pętla, która nigdy się nie kończy?</string>
     <string name="activities_code_too_much_output">Zatrzymano, bo program wyświetlił za dużo tekstu. Czy w kodzie jest pętla, która nigdy się nie kończy?</string>
     <!-- Before the feedback for a likely mistake the program's output shows. -->
     <string name="activities_code_not_quite">Nie do końca:</string>

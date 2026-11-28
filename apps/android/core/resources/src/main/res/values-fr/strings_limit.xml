@@ -38,6 +38,8 @@
   "limit_questions_day": "0456df92f5515b74818776138c7f0b4e09a91bbaaa68c59f85314df44024cee4",
   "limit_questions_used": "a468838a67fbbc19b547e509bcd37dfdabb1e3a92eedb9f973a49713408e5f52",
   "limit_quick_explanations_used": "5e5a02996572f52502f7d2a00f98b624b7df2e12e97d7dba4c6e125d7f68ab0f",
+  "limit_runs_day": "e83bf6707cb1aeafc22bb61094867df32d60091af4868212bc052d1d310d954c",
+  "limit_runs_used": "4be4ca5e9b45f906dad50492b6f937958a9c16c0cec710a8782b8f7d077460ec",
   "limit_sentence": "31450e9c865b50909733b4e60d7e55ad8130c525b3c7e810f934d89258fd50bc",
   "limit_sign_up_required": "bb8215bd3c0258c03e058d4d5f714237dca38c3a536d96ac0ca0e4e435017f6a",
   "limit_slow_down_minutes": "4ce866c8cee46be7cb4be727d531e97bce5c3bb4d46dd4432a99b2704e8ac123",
@@ -91,6 +93,8 @@
     <string name="limit_questions_used">Tu as atteint ta limite de questions</string>
     <string name="limit_uploads_day">Tu ne peux plus ajouter de documents aujourd’hui</string>
     <string name="limit_questions_day">Tu as atteint ta limite de questions pour aujourd’hui</string>
+    <string name="limit_runs_day">Plus d’exécutions de code aujourd’hui</string>
+    <string name="limit_runs_used">Tu as utilisé toutes tes exécutions de code</string>
     <string name="limit_call_time_used">Tu as utilisé tout ton temps d’appel</string>
     <!-- The title over "You can try again now." once a call the learner's call time stopped can be made again. -->
     <string name="limit_call_time_back">Tu as de nouveau du temps d’appel</string>

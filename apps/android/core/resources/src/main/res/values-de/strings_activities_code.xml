@@ -24,6 +24,9 @@
   "activities_code_pass_count": "035c93235b5718a796b6078d463c86ab990a68d8efee5235df47c26f2d7cc5d3",
   "activities_code_pattern_cant_run": "b41e4c0715a5be504f1b7b377280f3ac2b427fbba343c7420d2a28cf237e2e7a",
   "activities_code_pattern_that_works": "fb9f56a1781edf4d60fba5afed1d45ebf8f1441a0743e1f1c1c8a7d669a48f84",
+  "activities_code_phase_compiling": "5669d739dff53455372ddb2992f2e55900655f8c3c3a5418d8c15a2d2239e024",
+  "activities_code_phase_running": "53bd194b99c56c7baf8c4bfcd79e1a1a3e5c16c55b2670216810df99a42a084b",
+  "activities_code_phase_starting": "943b26565d62dfe3260a2f5f2b29d6631ed8939d0d338ada0c4042dcb1de5118",
   "activities_code_predict_ahead": "f18e36bc322ad796e09f55413d1b09df2dfff1eada642953b5335c16cd388876",
   "activities_code_predict_first": "88a1b49fdb99313761c2d538d51253aa53b5db107ea203bf9d49fb1ed08fefaf",
   "activities_code_query": "d4ded41f80ef1fa67fec2b973bb6a4302754df68a62ee8a46b851a6bccc834db",
@@ -35,6 +38,8 @@
   "activities_code_row_missing": "155fb6809e55f91ebc463aee155641412e0ae24a0d7ce15e376a828e39fc5f4f",
   "activities_code_run": "89d1764a30cfdb1a0fd418c350d071dcda2665765f8560de7e27ac5175514486",
   "activities_code_run_again": "6e1b580294f19af115f16a5adfe8083172f19bc855ee2cd005aca153147838fb",
+  "activities_code_run_failed": "383122362518d534d903cb2bd4372be5009024104c72ecf2ddf510d8d2d01489",
+  "activities_code_run_offline": "26e5b78e30c96a692928f28171a7b42e461850214442745a670d5a7f05caea2f",
   "activities_code_run_to_see": "a82978082c389b38155a45e91ee88eccf4a7be8b0df73ef0c371bb2aa241e2dc",
   "activities_code_runtime_failed": "eb78f3c8821e6c8c245a9b6d4cb7040e67ef4993f387692a37ead81ed1791f77",
   "activities_code_runtime_loading": "3a075fa7c7f92981df10d41cbd33907b3fb8116b85b2af449af0470bd3caa51e",
@@ -77,6 +82,7 @@
   "activities_code_table_named": "1a2201cb78183fc0fc21a04e7f75bb7fe707ff25ec390d9f6cc53f35a549ebd3",
   "activities_code_table_rows": "c57a4a47fb17791b1f465eed0040145e4485070c4c47f998203c959ab390742e",
   "activities_code_too_much_output": "2f7f78d34ca0aa348de07f7ecf4716e173d36368ee04c676476d223618c97dd0",
+  "activities_code_took_too_long": "72e987cc8b0908affe1db28317c2f2207f26596f9932a4c39b4dfaecb3706548",
   "activities_code_value_was": "4e2686688c2fd96eadd1e3686e5ea18f1ebd512ea61401a067efb98b8c37a791",
   "activities_code_variables": "67d21837f03ca6dcd1f3ae26a5d5b4d8ebacee69f701303cafa2fed596353b74",
   "activities_code_whole_run": "63e84c137126bd517aaf0e2b13d5d9faf58dd1a034f715ef0152e40ebd450833",
@@ -98,6 +104,11 @@
     <string name="activities_code_run">Ausführen</string>
     <string name="activities_code_run_again">Noch einmal ausführen</string>
     <string name="activities_code_start_over">Von vorn beginnen</string>
+    <string name="activities_code_phase_starting">%1$s wird vorbereitet…</string>
+    <string name="activities_code_phase_compiling">Dein Code wird kompiliert…</string>
+    <string name="activities_code_phase_running">Dein Code wird ausgeführt…</string>
+    <string name="activities_code_run_offline">Zum Ausführen von %1$s-Code brauchst du eine Verbindung. Prüfe deine Verbindung und versuch es noch einmal.</string>
+    <string name="activities_code_run_failed">Dein Code wurde nicht ausgeführt. Versuch es noch einmal.</string>
     <!-- The name of a block of program code, for TalkBack. -->
     <string name="activities_code_code">Code</string>
     <!-- The lines of a program the learner may edit; %1$s lists their numbers, like "2 and 3". -->
@@ -120,6 +131,7 @@
         <item quantity="one">Nach %d Sekunde gestoppt. Gibt es eine Endlosschleife?</item>
         <item quantity="other">Nach %d Sekunden gestoppt. Gibt es eine Endlosschleife?</item>
     </plurals>
+    <string name="activities_code_took_too_long">Gestoppt, weil es zu lange gedauert hat. Gibt es eine Schleife, die nie endet?</string>
     <string name="activities_code_too_much_output">Wurde gestoppt, weil zu viel ausgegeben wurde. Gibt es eine Endlosschleife?</string>
     <!-- Before the feedback for a likely mistake the program's output shows. -->
     <string name="activities_code_not_quite">Fast:</string>
