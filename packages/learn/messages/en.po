@@ -13057,7 +13057,13 @@ msgctxt "7Y6Yvq"
 msgid "Record"
 msgstr "Record"
 
-#: src/speech/record-note.tsx
+#. Shown the moment the microphone is on, telling the learner to start talking.
+#: src/speech/record-cue.tsx
+msgctxt "NQsS5y"
+msgid "Speak now"
+msgstr "Speak now"
+
+#: src/speech/record-cue.tsx
 #: src/today/today-block-row.tsx
 #: src/today/today-coming-lessons.tsx
 #: src/today/today-segment-popover.tsx
@@ -13065,17 +13071,16 @@ msgctxt "2LhxfA"
 msgid "Getting ready…"
 msgstr "Getting ready…"
 
-#. “Stop” is the label of the button that ends the recording.
-#: src/speech/record-note.tsx
-msgctxt "CzQFwa"
-msgid "Listening… Tap Stop to check."
-msgstr "Listening… Tap Stop to check."
+#. Before recording. “Speak now” must match the cue shown when the microphone is on.
+#: src/speech/record-cue.tsx
+msgctxt "p9c99m"
+msgid "Say it after “Speak now”"
+msgstr "Say it after “Speak now”"
 
-#. “Record” is the label of the button that starts the recording.
 #: src/speech/record-note.tsx
-msgctxt "PDfU14"
-msgid "Tap Record and say it out loud"
-msgstr "Tap Record and say it out loud"
+msgctxt "pvPbx0"
+msgid "We may have missed the start. Say it again."
+msgstr "We may have missed the start. Say it again."
 
 #: src/speech/speech-parts.tsx
 msgctxt "e__Yqd"
