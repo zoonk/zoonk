@@ -12,6 +12,7 @@ import {
 } from "../library/curriculum/curriculum-scope";
 import { type MemberPlacement, placeUncoveredOf } from "../library/curriculum/place-list-members";
 import { resolveScopeSkills } from "../library/curriculum/resolve-lesson-skills";
+import { type PlanContext } from "./_utils/plan-context";
 import { type AddedSkill } from "./plan-contract";
 import { type PlanGraph, planGraphSchema } from "./planner/plan-state";
 import { proposePlanChange } from "./propose-plan-change";
@@ -244,26 +245,33 @@ export async function toMemberSkills({
   });
 }
 
-/**
- * An offer is made once per claim, and only to the graph the check read: a rebuild since then runs
- * its own check, and its new skills would leave the offer's anchors pointing nowhere.
- */
-async function isOfferDue(claimed: ClaimedMemberCheck): Promise<boolean> {
-  const [plan, offered] = await Promise.all([
-    prisma.plan.findUnique({ select: { graph: true }, where: { id: claimed.planId } }),
-    prisma.planChange.count({
-      where: {
-        createdAt: { gte: claimed.checkedAt },
-        payload: { equals: MEMBER_CHECK_SOURCE, path: ["source"] },
-        planId: claimed.planId,
-      },
-    }),
-  ]);
+/** An offer is made once per claim, so a retried step never brings back one the learner declined. */
+async function wasOffered(claimed: ClaimedMemberCheck): Promise<boolean> {
+  const offered = await prisma.planChange.count({
+    where: {
+      createdAt: { gte: claimed.checkedAt },
+      payload: { equals: MEMBER_CHECK_SOURCE, path: ["source"] },
+      planId: claimed.planId,
+    },
+  });
 
-  const current = plan ? planGraphSchema.parse(plan.graph).skills : [];
+  return offered > 0;
+}
+
+/**
+ * The offer fits only the graph the check read: a rebuild since then runs its own check, and its
+ * new skills would leave the offer's anchors pointing nowhere.
+ */
+function hasClaimedGraph({
+  claimed,
+  context,
+}: {
+  claimed: ClaimedMemberCheck;
+  context: PlanContext;
+}) {
+  const current = context.state.graph.skills;
 
   return (
-    offered === 0 &&
     current.length === claimed.skills.length &&
     current.every((skill, index) => skill.skillId === claimed.skills[index]?.skillId)
   );
@@ -279,13 +287,14 @@ export async function offerMemberSkills({
   claimed: ClaimedMemberCheck;
   skills: AddedSkill[];
 }): Promise<void> {
-  if (skills.length === 0 || !(await isOfferDue(claimed))) {
+  if (skills.length === 0 || (await wasOffered(claimed))) {
     return;
   }
 
   await proposePlanChange({
     approval: "always",
     goalId: claimed.goalId,
+    isDue: (context) => hasClaimedGraph({ claimed, context }),
     operations: [{ kind: "addSkills", skills }],
     provenance: toProvenanceData(check.provenance),
     // With no reason, the learner still sees which skills it adds.

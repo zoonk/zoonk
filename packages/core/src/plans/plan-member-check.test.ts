@@ -281,6 +281,24 @@ describe(offerMemberSkills, () => {
     await expect(countOffers(plan.id)).resolves.toBe(0);
   });
 
+  it("offers nothing when the plan's graph is rebuilt while the offer is being saved", async () => {
+    const { goal, plan } = await plannedGoal();
+    mockCoverage(listMissingSecond(`Do the second step ${uniqueWord()}`));
+
+    const found = await findMembers(await claim(plan.id));
+    const rebuilt = await planLibraryFixture({ skills: [{ lessons: 2 }, { lessons: 3 }] });
+    const transaction = prisma.$transaction.bind(prisma);
+
+    vi.spyOn(prisma, "$transaction").mockImplementationOnce(async (...args) => {
+      await createGoalPlan({ goalId: goal.id, graph: rebuilt.graph, membersCheckedAt: null });
+      return transaction(...(args as Parameters<typeof transaction>));
+    });
+
+    await offerMemberSkills(found);
+
+    await expect(countOffers(plan.id)).resolves.toBe(0);
+  });
+
   it("offers nothing and keeps the plan marked when every member is taught", async () => {
     const { plan } = await plannedGoal();
 
