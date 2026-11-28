@@ -1,7 +1,6 @@
 package com.zoonk.android.feature.writing
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -152,8 +151,8 @@ fun PointsReadout(
 
 /**
  * The range on its scale: what it surely reaches solid, what it may reach lighter, and the rest as
- * track; [minimumShare] stands over it as a tick. With no [low] and [high] it's a dashed outline, so an
- * unmeasured part never reads as zero.
+ * track; [minimumShare] stands over it as a tick. With nothing measured there is nothing to draw, so the
+ * words beside it say so.
  */
 @Composable
 fun RangeMeter(
@@ -163,15 +162,7 @@ fun RangeMeter(
     modifier: Modifier = Modifier,
     minimumShare: Double? = null,
 ) {
-    if (low == null || high == null || max <= 0) {
-        Box(
-            modifier
-                .fillMaxWidth()
-                .height(METER_HEIGHT)
-                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(METER_HEIGHT)),
-        )
-        return
-    }
+    if (low == null || high == null || max <= 0) return
     val green = MaterialTheme.colorScheme.tertiary
     val surely = (low / max).toFloat().coerceIn(0f, 1f)
     val maybe = (high / max).toFloat().coerceIn(surely, 1f)
@@ -252,7 +243,6 @@ private const val MAX_FIXED_DECIMALS = 2
 private const val DEDUCTION_DECIMALS = 1
 private const val PERCENT = 100.0
 private const val FLOAT_SLACK = 1e-9
-private val METER_HEIGHT = 6.dp
 private val TICK_HEIGHT = 14.dp
 private val TICK_WIDTH = 2.dp
 private const val MAYBE_ALPHA = 0.4f

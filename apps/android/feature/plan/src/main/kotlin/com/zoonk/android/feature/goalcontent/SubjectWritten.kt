@@ -243,7 +243,13 @@ internal fun WrittenStanding(written: WrittenPracticeSubjectsInner) {
                 Text(stringResource(R.string.essay_not_measured), style = MaterialTheme.typography.titleLarge)
             }
             max?.let { RangeMeter(range?.low, range?.high, it, minimumShare = share) }
-            minimumLine?.let { MinimumLegend(it) }
+            minimumLine?.let {
+                if (range != null) {
+                    MinimumLegend(it)
+                } else {
+                    Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
+                }
+            }
             WrittenStandingLine(points)
         }
         Column {

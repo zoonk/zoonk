@@ -150,7 +150,7 @@ private fun ScoreRow(
     max: Double?,
     minimumShare: Double? = null,
     decimals: Int = 0,
-    /** Graded by level: no points to wait for, so no meter holds their place. */
+    /** Graded by level: no points to wait for. */
     levels: Boolean = false,
     written: Boolean = false,
     below: @Composable () -> Unit = {},
@@ -160,7 +160,7 @@ private fun ScoreRow(
             Text(name, Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
             PointsValue(range?.low, range?.high, max, decimals = decimals, levels = levels, headline = written)
         }
-        if (!(levels && range == null)) max?.let { RangeMeter(range?.low, range?.high, it, minimumShare = minimumShare) }
+        max?.let { RangeMeter(range?.low, range?.high, it, minimumShare = minimumShare) }
         below()
     }
 }
