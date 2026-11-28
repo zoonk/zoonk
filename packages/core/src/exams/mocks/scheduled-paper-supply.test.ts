@@ -16,54 +16,70 @@ const OBJECTIVE_SUBJECTS = ["Direito Administrativo", "Ética no Serviço Públi
 /** The written paper's name shares a word with the objective section's, as "Prova" and "Provas" do. */
 const WRITTEN = "Prova discursiva";
 
-const STRUCTURE = examStructureSchema.parse({
-  formats: [],
-  mock: {
-    adaptive: false,
-    citations: [],
-    order: null,
-    scoring: { description: "Each right answer earns one point.", method: "raw" },
-    sections: [
-      { day: 1, kind: "objective", minutes: 60, name: "Provas objetivas", questions: 20 },
-      {
-        day: 1,
-        kind: "written",
-        minutes: 60,
-        name: WRITTEN,
-        questions: null,
-        tasks: [
-          {
-            count: 1,
-            description: "Short question",
-            grading: CGU_WRITTEN_GRADING,
-            key: "short",
-            lines: 30,
-            points: 100,
-          },
-        ],
-      },
-    ],
-    timeLimitMinutes: 120,
-    totalQuestions: null,
-  },
-  rules: [],
-  subjects: [...OBJECTIVE_SUBJECTS, WRITTEN].map((name) => ({
-    citation: CITATION,
-    group: null,
-    name,
-    questions: name === WRITTEN ? null : 10,
-    topics: [],
-    weight: null,
-  })),
-});
+function examStructure(writtenQuestions: number | null) {
+  return examStructureSchema.parse({
+    formats: [],
+    mock: {
+      adaptive: false,
+      citations: [],
+      order: null,
+      scoring: { description: "Each right answer earns one point.", method: "raw" },
+      sections: [
+        {
+          day: 1,
+          kind: "objective",
+          minutes: 60,
+          name: "Provas objetivas",
+          questions: 20,
+          session: "Morning",
+        },
+        {
+          day: 1,
+          kind: "written",
+          minutes: 60,
+          name: WRITTEN,
+          questions: null,
+          session: "Afternoon",
+          tasks: [
+            {
+              count: 1,
+              description: "Short question",
+              grading: CGU_WRITTEN_GRADING,
+              key: "short",
+              lines: 30,
+              points: 100,
+            },
+          ],
+        },
+      ],
+      timeLimitMinutes: 120,
+      totalQuestions: null,
+    },
+    rules: [],
+    subjects: [...OBJECTIVE_SUBJECTS, WRITTEN].map((name) => ({
+      citation: CITATION,
+      group: null,
+      name,
+      questions: name === WRITTEN ? writtenQuestions : 10,
+      topics: [],
+      weight: null,
+    })),
+  });
+}
 
 const AREAS = [...OBJECTIVE_SUBJECTS, ...OBJECTIVE_SUBJECTS, WRITTEN, WRITTEN];
 
 /** `day` is the exam day the plan saved for the paper; null when it predates the notice's days. */
-async function scheduledPaperSetup({ day }: { day: number | null }) {
+async function scheduledPaperSetup({
+  day,
+  writtenQuestions = null,
+}: {
+  day: number | null;
+  writtenQuestions?: number | null;
+}) {
   const [user, blueprint, skills] = await Promise.all([
     userFixture(),
-    examBlueprintFixture({ structure: STRUCTURE }),
+    examBlueprintFixture({ structure: examStructure(writtenQuestions) }),
     skillsFixture(AREAS.map((area, index) => `${area} ${index} ${crypto.randomUUID()}`)),
   ]);
 
@@ -119,6 +135,21 @@ async function listScheduledWrites(goalId: string) {
   return { urgentShort, writes: paper?.writes ?? null };
 }
 
+/** The written paper's skills already hold objective questions, as an earlier writer left them. */
+async function bankWrittenSkillQuestions({
+  examBlueprintId,
+  written,
+}: {
+  examBlueprintId: string;
+  written: ReadonlySet<string>;
+}) {
+  await Promise.all(
+    [...written].flatMap((skillId) =>
+      Array.from({ length: 10 }, () => itemFixture({ examBlueprintId, mockOnly: true, skillId })),
+    ),
+  );
+}
+
 /** Stands in for the question writers: every question each write asks for. */
 async function writeQuestions({
   examBlueprintId,
@@ -136,6 +167,41 @@ async function writeQuestions({
       ),
     ),
   );
+}
+
+/** One pass of the daily supply: each paper in turn writes what it still lacks after the last. */
+async function supplyPass({
+  examBlueprintId,
+  goalId,
+}: {
+  examBlueprintId: string;
+  goalId: string;
+}) {
+  const { papers } = await listMockPrepWrites({ goalId });
+
+  /* oxlint-disable no-await-in-loop -- Each paper draws on the questions the previous one wrote. */
+  for (const { key } of papers) {
+    const { papers: short } = await listMockPrepWrites({ goalId, only: key });
+    await writeQuestions({ examBlueprintId, writes: short[0]?.writes ?? [] });
+  }
+  /* oxlint-enable no-await-in-loop */
+
+  return papers;
+}
+
+/**
+ * The notice counts the written paper's two questions, so only its section marks it as written,
+ * and the plan saved its mock before the notice put the exam's sections on a day.
+ */
+async function writtenBankSetup() {
+  const fixture = await scheduledPaperSetup({ day: null, writtenQuestions: 2 });
+
+  await bankWrittenSkillQuestions({
+    examBlueprintId: fixture.blueprint.id,
+    written: fixture.written,
+  });
+
+  return fixture;
 }
 
 describe("preparing a scheduled mock's questions", () => {
@@ -167,13 +233,7 @@ describe("preparing a scheduled mock's questions", () => {
   it("doesn't seat questions written for the written paper's skills on the objective paper", async () => {
     const { blueprint, goal, written } = await scheduledPaperSetup({ day: 1 });
 
-    await Promise.all(
-      [...written].flatMap((skillId) =>
-        Array.from({ length: 10 }, () =>
-          itemFixture({ examBlueprintId: blueprint.id, mockOnly: true, skillId }),
-        ),
-      ),
-    );
+    await bankWrittenSkillQuestions({ examBlueprintId: blueprint.id, written });
 
     const { urgentShort, writes } = await listScheduledWrites(goal.id);
 
@@ -191,5 +251,35 @@ describe("preparing a scheduled mock's questions", () => {
       urgentShort: false,
       writes: null,
     });
+  });
+});
+
+describe("writing an exam's mock questions ahead", () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(NOW);
+  });
+
+  afterEach(() => vi.useRealTimers());
+
+  it("asks no paper's questions of the written paper's skills", async () => {
+    const { goal, written } = await writtenBankSetup();
+    const { papers } = await listMockPrepWrites({ goalId: goal.id });
+
+    const asked = papers.flatMap((paper) => paper.writes.flatMap((write) => write.skillIds));
+
+    expect(papers.map(({ key }) => key)).toContain(JSON.stringify(["objective", 1, null]));
+    expect(asked.length).toBeGreaterThan(0);
+    expect(asked.filter((skillId) => written.has(skillId))).toStrictEqual([]);
+  });
+
+  it("writes nothing on the next pass once every paper holds its questions", async () => {
+    const { blueprint, goal } = await writtenBankSetup();
+
+    const first = await supplyPass({ examBlueprintId: blueprint.id, goalId: goal.id });
+    const { papers } = await listMockPrepWrites({ goalId: goal.id });
+
+    expect(first.map(({ key }) => key)).toContain(JSON.stringify(["objective", 1, null]));
+    expect(papers.flatMap((paper) => paper.writes)).toStrictEqual([]);
   });
 });
