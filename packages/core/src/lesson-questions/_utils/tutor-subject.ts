@@ -1,5 +1,5 @@
 import "server-only";
-import { type Goal, type LessonQuestionThread, type TransactionClient, prisma } from "@zoonk/db";
+import { type Goal, type LessonQuestionThread, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { hasStoredTimeRunOutAway } from "../../exams/mocks/_utils/owned-mock";
 import { mockConditionsSchema } from "../../exams/mocks/mock-contract";
@@ -293,16 +293,14 @@ export function getSubjectThreadColumn(subject: TutorSubject) {
 }
 
 export async function findTutorThread({
-  client = prisma,
   subject,
   userId,
 }: {
-  client?: Pick<TransactionClient, "lessonQuestionThread">;
   subject: TutorSubject;
   userId: string;
 }) {
   if (subject.kind === "plan") {
-    const thread = await client.lessonQuestionThread.findUnique({
+    const thread = await prisma.lessonQuestionThread.findUnique({
       where: { id: subject.conversationId },
     });
 
@@ -316,7 +314,7 @@ export async function findTutorThread({
     return { status: "ready" as const, thread };
   }
 
-  const thread = await client.lessonQuestionThread.findFirst({
+  const thread = await prisma.lessonQuestionThread.findFirst({
     where: { ...getSubjectThreadColumn(subject), userId },
   });
 
