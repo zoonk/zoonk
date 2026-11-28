@@ -10,7 +10,7 @@ import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons"
 import { getString } from "@zoonk/utils/json";
 import { captureAnalytics } from "./analytics";
 import { type Page, expect, test } from "./fixtures";
-import { mapGoalSkills } from "./onboarding-fixtures";
+import { addOrderQuestions, mapGoalSkills } from "./onboarding-fixtures";
 import { openAs } from "./study-day";
 
 type Understanding = Parameters<typeof goalUnderstandingFixture>[0]["result"];
@@ -145,6 +145,8 @@ test.describe("Onboarding from a typed goal", () => {
     // No test is offered while its questions can't be asked yet: setup goes on.
     await expect(page.getByRole("heading", { name: "Building your plan" })).toBeVisible();
     await mapGoalSkills({ goalId: created.id });
+    // No question writer runs here: these stand in for what it writes, questions a guess rarely passes.
+    await addOrderQuestions(created.id);
 
     const time = page.getByRole("heading", { name: "How much time can you study each day?" });
     await expect(time).toBeVisible({ timeout: NEXT_CHECK_TIMEOUT_MS });
