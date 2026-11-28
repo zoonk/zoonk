@@ -11,7 +11,7 @@ import kotlin.time.Instant
 
 enum class LessonPhase { Playing, Checking, Feedback, Completed }
 
-enum class LessonNotice { AnswerNotSaved, PictureReady, SelfCorrect, WritingSkipped }
+enum class LessonNotice { AnswerNotSaved, PictureReady, SelfCorrect, SkillSkipped }
 
 /** A typed or spoken answer the server couldn't grade for a reason the learner should see. */
 @Immutable
@@ -89,11 +89,27 @@ data class Miss(
     val skillId: String?,
 )
 
+/** A skill "Can't write now" or "I can't talk now" turns off for the day: its screens ahead leave the lesson until it's back on. */
 @Immutable
-data class WritingRestore(
+sealed interface DaySkill {
+    data object Writing : DaySkill
+
+    /** Speaking screens leave when there's nothing to hear instead ([isUnspeakable]). */
+    data class Speaking(
+        val cantListen: Boolean,
+    ) : DaySkill
+}
+
+/**
+ * "Turn back on" for the [skill] just turned off: the lesson as it was ([position], [queue]) and the screens it [leftOut]. Left-out
+ * writing is sent to the server as skipped; left-out speaking is this device's alone, kept with the screens it can't play.
+ */
+@Immutable
+data class SkillRestore(
+    val skill: DaySkill,
     val position: Int,
     val queue: List<String>,
-    val skippedWritingStepIds: List<String>,
+    val leftOut: List<String>,
 )
 
 /**
@@ -131,7 +147,8 @@ data class LessonPlayerState(
     val skippedWritingStepIds: List<String> = emptyList(),
     val stepStartedAt: Long = 0,
     val unavailableStepIds: List<String> = emptyList(),
-    val writingRestore: WritingRestore? = null,
+    /** While [notice] is [LessonNotice.SkillSkipped]: how to put the skill's screens back. */
+    val skillRestore: SkillRestore? = null,
 ) {
     val currentStep: LessonStep? get() = queue.getOrNull(position)?.let(steps::get)
 

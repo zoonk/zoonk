@@ -86,6 +86,7 @@ import com.zoonk.android.feature.ceremonies.CertificatesMoment
 import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
 import com.zoonk.android.feature.ceremonies.MomentCeremony
 import com.zoonk.android.feature.player.engine.CompletionStatus
+import com.zoonk.android.feature.player.engine.DaySkill
 import com.zoonk.android.feature.player.engine.LessonAction
 import com.zoonk.android.feature.player.engine.LessonNotice
 import com.zoonk.android.feature.player.engine.LessonPhase
@@ -820,18 +821,30 @@ private fun Notice(
     val (icon, text) =
         when (state.notice) {
             // Drawn with what the check adds ([CheckAdded]), so nothing above the answer moves.
-            LessonNotice.SelfCorrect, null -> return
+            LessonNotice.SelfCorrect, null -> {
+                return
+            }
 
-            LessonNotice.AnswerNotSaved -> R.drawable.ic_cloud_off to R.string.player_notice_answer_not_saved
+            LessonNotice.AnswerNotSaved -> {
+                R.drawable.ic_cloud_off to R.string.player_notice_answer_not_saved
+            }
 
-            LessonNotice.PictureReady -> R.drawable.ic_image to R.string.player_notice_picture_ready
+            LessonNotice.PictureReady -> {
+                R.drawable.ic_image to R.string.player_notice_picture_ready
+            }
 
-            LessonNotice.WritingSkipped -> R.drawable.ic_edit_off to R.string.player_notice_writing_skipped
+            LessonNotice.SkillSkipped -> {
+                when (state.skillRestore?.skill) {
+                    DaySkill.Writing -> R.drawable.ic_edit_off to R.string.player_notice_writing_skipped
+                    is DaySkill.Speaking -> R.drawable.ic_mic_off to R.string.player_notice_speaking_skipped
+                    null -> return
+                }
+            }
         }
 
     NoticeLine(icon, text) {
-        if (state.notice == LessonNotice.WritingSkipped && state.writingRestore != null && state.phase == LessonPhase.Playing) {
-            TextButton(onClick = viewModel::restoreWriting) { Text(stringResource(R.string.player_write_again)) }
+        if (state.notice == LessonNotice.SkillSkipped && state.phase == LessonPhase.Playing) {
+            TextButton(onClick = viewModel::restoreSkill) { Text(stringResource(R.string.player_turn_back_on)) }
         }
     }
 }

@@ -2,6 +2,7 @@ package com.zoonk.android.feature.player.language
 
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.SpokenMode
+import com.zoonk.android.feature.player.engine.isUnspeakable
 import com.zoonk.android.feature.player.engine.shownStep
 import com.zoonk.android.feature.player.engine.spokenMode
 import com.zoonk.android.feature.player.model.LanguageExercise
@@ -14,11 +15,14 @@ import com.zoonk.android.feature.player.model.StepKind
 import com.zoonk.android.feature.player.model.StepResult
 import com.zoonk.api.ApiJson
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
- * "I can't listen now": a sentence to hear stays quiet, and a spoken screen that can't be said or heard is typed. An answered
+ * "I can't listen now": a sentence to hear stays quiet, and a spoken screen that can't be said or heard has no way to answer, so
+ * the lesson leaves it out; it's never typed. An answered
  * spoken screen shows, plays and offers what it was answered with, whatever the day's choices are by the time the learner
  * goes back to it.
  */
@@ -61,16 +65,27 @@ class CantListenTest {
     }
 
     @Test
-    fun aSpokenScreenIsHeardWhenTheLearnerCantTalkAndTypedWhenTheyCantListenEither() {
+    fun aSpokenScreenIsHeardWhenTheLearnerCantTalkAndLeftWithoutAnAnswerWhenTheyCantListenEither() {
         assertEquals(SpokenMode.Listen, unanswered.spokenMode(spokenStep, cantTalk = true, cantListen = false))
         assertEquals(StepKind.Listening, unanswered.shownStep(spokenStep, cantTalk = true, cantListen = false).kind)
         assertEquals(AUDIO, shownPromptUrl(spokenStep, unanswered, cantTalk = true, cantListen = false))
 
-        assertEquals(SpokenMode.Type, unanswered.spokenMode(spokenStep, cantTalk = true, cantListen = true))
+        assertNull(unanswered.spokenMode(spokenStep, cantTalk = true, cantListen = true))
         assertNull(shownPromptUrl(spokenStep, unanswered, cantTalk = true, cantListen = true))
+        assertTrue(spokenStep.isUnspeakable(cantListen = true))
+        assertFalse(spokenStep.isUnspeakable(cantListen = false))
 
         assertEquals(SpokenMode.Speak, unanswered.spokenMode(spokenStep, cantTalk = false, cantListen = true))
-        assertEquals(SpokenMode.Type, unanswered.spokenMode(spokenStep, cantTalk = false, cantListen = false, micBlocked = true))
+    }
+
+    @Test
+    fun aSpokenScreenWithNothingToHearHasNoAnswerOnceTheLearnerCantTalk() {
+        val unheard = spokenStep.copy(content = spoken.copy(listening = null))
+        val state = unanswered.copy(steps = mapOf(unheard.id to unheard))
+
+        assertNull(state.spokenMode(unheard, cantTalk = true, cantListen = false))
+        assertTrue(unheard.isUnspeakable(cantListen = false))
+        assertEquals(SpokenMode.Speak, state.spokenMode(unheard, cantTalk = false, cantListen = false))
     }
 
     @Test
@@ -94,11 +109,11 @@ class CantListenTest {
     }
 
     @Test
-    fun aSpokenScreenTypedStaysTypedOnceTheLearnerCanTalkAgain() {
+    fun aSpokenScreenAnOlderAppTypedStillShowsItsTypedAnswer() {
         val typed = unanswered.copy(answers = mapOf("say" to LessonAnswer.Spoken("Tengo hambre")))
 
-        assertEquals(SpokenMode.Type, typed.spokenMode(spokenStep, cantTalk = false, cantListen = false))
-        assertEquals(SpokenMode.Type, typed.spokenMode(spokenStep, cantTalk = true, cantListen = false))
+        assertEquals(SpokenMode.Typed, typed.spokenMode(spokenStep, cantTalk = false, cantListen = false))
+        assertEquals(SpokenMode.Typed, typed.spokenMode(spokenStep, cantTalk = true, cantListen = true))
     }
 
     private companion object {

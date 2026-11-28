@@ -124,20 +124,23 @@ fun numberAnswerStep(id: String) =
         ),
     )
 
-fun spokenStep(id: String) =
-    LessonStep(
-        id,
-        null,
-        StepContent.SpokenAnswer(
-            SpokenAnswerStepContent(
-                language = "es",
-                prompt = "Say that you're hungry",
-                targetText = "Tengo hambre",
-                translation = "I'm hungry",
-            ),
-            listening = null,
+/** A spoken screen; [heardInstead] gives it the listening exercise a learner who can't talk does instead. */
+fun spokenStep(
+    id: String,
+    heardInstead: Boolean = false,
+) = LessonStep(
+    id,
+    null,
+    StepContent.SpokenAnswer(
+        SpokenAnswerStepContent(
+            language = "es",
+            prompt = "Say that you're hungry",
+            targetText = "Tengo hambre",
+            translation = "I'm hungry",
         ),
-    )
+        listening = (fillBlankStep("$id-heard").content as StepContent.Language).exercise.takeIf { heardInstead },
+    ),
+)
 
 fun lessonMapStep() =
     LessonStep(
