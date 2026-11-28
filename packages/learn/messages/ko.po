@@ -1237,6 +1237,12 @@ msgctxt "vj_mVz"
 msgid "{belt}, level {level}"
 msgstr "{belt}, 레벨 {level}"
 
+#. Under a question asking which options of an exam the learner will take, such as two of its subject modules. Until they pick, their plan has none of the options. {take} is how many they can pick, always 2 or more.
+#: src/_utils/use-choice-left-out.ts
+msgctxt "Wu7pJv"
+msgid "Pick up to {take, number} so your plan includes them."
+msgstr "최대 {take, number}개까지 선택해 계획에 포함해 보세요."
+
 #. Under a question asking which option of an exam the learner will take, such as its foreign language. Until they pick, their plan has none of the options.
 #: src/_utils/use-choice-left-out.ts
 msgctxt "vYD7Jb"
@@ -9547,12 +9553,6 @@ msgctxt "y_efbE"
 msgid "{count, plural, one {Which one will you take?} other {Which ones will you take?}}"
 msgstr "{count, plural, other {어떤 시험을 볼 건가요?}}"
 
-#: src/onboarding/steps/exam-choice-step.tsx
-#: src/plan/exam-choice-picks.tsx
-msgctxt "cIh6nO"
-msgid "Pick up to {take, number}."
-msgstr "최대 {take, number}개를 고르세요."
-
 #: src/onboarding/steps/level-choices.tsx
 msgctxt "BY-vT3"
 msgid "I know it well"
@@ -10446,6 +10446,11 @@ msgstr "{date} 복습"
 msgctxt "LcFFqV"
 msgid "New lessons start"
 msgstr "새 레슨 시작"
+
+#: src/plan/exam-choice-picks.tsx
+msgctxt "cIh6nO"
+msgid "Pick up to {take, number}."
+msgstr "최대 {take, number}개를 고르세요."
 
 #: src/plan/exam-choice-question.tsx
 msgctxt "FXC8l3"
