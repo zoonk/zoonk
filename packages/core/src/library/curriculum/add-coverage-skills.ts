@@ -310,18 +310,16 @@ export function applyGraphCoverage({
 }): { changed: boolean; graph: PlannedSkillGraph } {
   const { examWeights, missing, placements } = coverage;
 
-  const checked = addCoverageSkills({
-    graph: placeExamSkills({
-      graph: reweightExamSkills({ examWeights, graph }),
-      outline,
-      placements,
-    }),
-    missing,
+  const placed = placeExamSkills({
+    graph: reweightExamSkills({ examWeights, graph }),
     outline,
+    placements,
   });
 
+  const checked = addCoverageSkills({ graph: placed, missing, outline });
+
   const covered = outline
-    ? coverRemainingTopics({ graph: checked, outline, sized: graph })
+    ? coverRemainingTopics({ graph: checked, outline, sized: placed })
     : checked;
 
   const moved = examWeights.length > 0 || missing.length > 0 || placements.length > 0;

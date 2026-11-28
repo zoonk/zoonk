@@ -450,6 +450,31 @@ describe("sizing a notice topic no skill teaches", () => {
     });
   });
 
+  it("reads lessons per topic after the check places the subject's skills on their topics", () => {
+    const skills = applyGraphCoverage({
+      coverage: {
+        examWeights: [],
+        missing: [],
+        placements: [
+          {
+            area: "Língua Portuguesa",
+            key: "grammar",
+            topics: ["1 Leitura", "2 Crase", "3 Concordância"],
+          },
+        ],
+      },
+      graph: {
+        ...graph,
+        skills: [skill({ area: null, estimatedLessons: 12, key: "grammar", topics: [] })],
+      },
+      outline: { ...sizedOutline, subjects: sizedOutline.subjects.slice(0, 1) },
+    }).graph.skills;
+
+    expect(skills.find((item) => item.topics.includes("4 Regência"))).toMatchObject({
+      estimatedLessons: 4,
+    });
+  });
+
   it("falls back to the whole graph's median when its subject has no skill yet", () => {
     const skills = coverTopics([]);
 
