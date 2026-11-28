@@ -43,6 +43,7 @@ import { sleep } from "workflow";
 import { getRun, start } from "workflow/api";
 import { mockHookConflict } from "../../../mocks/workflow";
 import { followWithOutdatedSummary, readFollowerDetails } from "../_test-utils/focus-test-follower";
+import * as noticeReconcile from "../freshness/reconcile-exam-notice";
 import { goalContentWorkflow } from "../goals/goal-content-workflow";
 import { researchWorkflow } from "./research-workflow";
 import { extractBlueprint } from "./steps/extract-blueprint-step";
@@ -251,6 +252,38 @@ describe(researchWorkflow, () => {
         status: "unknown",
       },
     });
+  });
+
+  it("links a first notice before reconciling its graph, and keeps the link if reconcile fails", async () => {
+    const { goal } = await examGoal();
+    await replayTcdfResearch();
+    const observed: { linkedBlueprintId?: string | null } = {};
+
+    const reconcile = vi
+      .spyOn(noticeReconcile, "reconcileExamNotice")
+      .mockImplementation(async () => {
+        const linked = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+        observed.linkedBlueprintId = linked.examBlueprintId;
+        throw new Error("Graph writer exhausted its workflow retries");
+      });
+
+    try {
+      const result = await researchWorkflow({ goalId: goal.id });
+      expect(result).toMatchObject({ examBlueprintId: expect.any(String), status: "ready" });
+      expect(reconcile).toHaveBeenCalledOnce();
+
+      expect(observed.linkedBlueprintId).toBe(
+        result.status === "ready" ? result.examBlueprintId : null,
+      );
+
+      const linked = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+
+      expect(linked.examBlueprintId).toBe(
+        result.status === "ready" ? result.examBlueprintId : null,
+      );
+    } finally {
+      reconcile.mockRestore();
+    }
   });
 
   it("does nothing for a goal that doesn't depend on changing facts", async () => {

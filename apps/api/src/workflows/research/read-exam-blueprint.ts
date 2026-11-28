@@ -12,7 +12,37 @@ import { findNoticeReadingStep } from "./steps/is-notice-read-step";
 import { refreshFollowerSummariesStep } from "./steps/link-goal-step";
 import { saveBlueprintStep } from "./steps/save-blueprint-step";
 
-export type SavedBlueprint = { created: boolean; examBlueprintId: string; movesExamDays: boolean };
+export type SavedBlueprint = {
+  created: boolean;
+  examBlueprintId: string;
+  movesExamDays: boolean;
+  noticeId: string | null;
+};
+
+export async function reconcileReadExamBlueprint({
+  analytics,
+  exceptGoalId,
+  saved,
+  shared,
+}: {
+  analytics: ResearchAnalytics;
+  exceptGoalId: string | null;
+  saved: SavedBlueprint;
+  shared: boolean;
+}): Promise<void> {
+  try {
+    if (shared) {
+      await reconcileExamNotice({ analytics, examBlueprintId: saved.examBlueprintId });
+    }
+  } finally {
+    await updateExamNoticePlans({
+      examBlueprintId: saved.examBlueprintId,
+      exceptGoalId,
+      movesExamDays: saved.movesExamDays,
+      noticeId: saved.noticeId,
+    });
+  }
+}
 
 export function describeExam(identity: ExamIdentity): string {
   return identity.role ? `${identity.name}, ${identity.role}` : identity.name;
@@ -132,17 +162,8 @@ export async function readExamBlueprint({
 
   await refreshFollowerSummariesStep(saved.examBlueprintId);
 
-  try {
-    if (!saved.created && shared) {
-      await reconcileExamNotice({ analytics, examBlueprintId: saved.examBlueprintId });
-    }
-  } finally {
-    await updateExamNoticePlans({
-      examBlueprintId: saved.examBlueprintId,
-      exceptGoalId,
-      movesExamDays: saved.movesExamDays,
-      noticeId: saved.noticeId,
-    });
+  if (background || !shared) {
+    await reconcileReadExamBlueprint({ analytics, exceptGoalId, saved, shared });
   }
 
   return saved;
