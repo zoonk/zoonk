@@ -5,11 +5,13 @@ import { gradeTypedAnswer } from "./grade-typed-answer";
 import type * as Ai from "ai";
 
 vi.mock("server-only", () => ({}));
-vi.mock("./grade-typed-answer.prompt.md", () => ({ default: "Grade the answer." }));
+vi.mock("./grade-typed-answer.prompt.md", () => ({
+  default: "Grade the answer in {{LEARNER_LANGUAGE}}.",
+}));
 vi.mock("../_utils/regional-forms.prompt.md", () => ({ default: "Regional forms." }));
 
 vi.mock("./grade-typed-answer-language-practice.prompt.md", () => ({
-  default: "Language practice rules.",
+  default: "Language practice rules for {{TARGET_LANGUAGE}}.",
 }));
 
 vi.mock("ai", async (importOriginal) => {
@@ -412,6 +414,8 @@ describe(gradeTypedAnswer, () => {
       question: "Escreva uma mensagem ao recrutador perguntando quem você deve contatar.",
     });
 
+    expect(result.systemPrompt).toContain("Grade the answer in Português Brasileiro.");
+    expect(result.systemPrompt).toContain("Language practice rules for US English.");
     expect(result.userPrompt).toContain("FEEDBACK_LANGUAGE: Português Brasileiro");
     expect(result.userPrompt).toContain("PRACTICED_LANGUAGE: US English");
     expect(result.data).toMatchObject({ isCorrect: true, score: 1 });
@@ -437,7 +441,7 @@ describe(gradeTypedAnswer, () => {
     const practice = await gradeTypedAnswer({ ...params, practicedLanguage: "en" });
 
     expect(practice.systemPrompt).toBe(
-      "Grade the answer.\nLanguage practice rules.\nRegional forms.",
+      "Grade the answer in Português Brasileiro.\nLanguage practice rules for US English.\nRegional forms.",
     );
 
     expect(vi.mocked(generateText).mock.calls[0]?.[0].instructions).toBe(practice.systemPrompt);
@@ -456,7 +460,7 @@ describe(gradeTypedAnswer, () => {
     vi.mocked(generateText).mockClear();
     const other = await gradeTypedAnswer(params);
 
-    expect(other.systemPrompt).toBe("Grade the answer.");
+    expect(other.systemPrompt).toBe("Grade the answer in Português Brasileiro.");
     expect(other.userPrompt).not.toContain("PRACTICED_LANGUAGE");
 
     await expect(requestedSchemaFields()).resolves.toStrictEqual([
