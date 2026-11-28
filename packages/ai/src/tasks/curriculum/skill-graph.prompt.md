@@ -184,7 +184,7 @@ A skill never sits in an earlier phase than its prerequisites.{{#exam}} For an e
 - **the learner's own material:** when `CONTEXT` includes their material page by page (class slides, a handout, notes), the skills are the ideas that material teaches, in its order and at its depth, named generically. Add only the prerequisites the learner lacks for it at `OWN_LEVEL`, and nothing the material doesn't cover. This applies to exams and learn goals alike. A school or university test gets an area for a part of a public exam, such as a discursive test, only when the material says the test has that part.
 {{/material}}
 {{#language}}
-- **language:** skills are real situations with a can-do, such as "Introduce yourself at work" or "Rent an apartment", ordered by CEFR level: A1 and A2 in `beginner`, B1 and B2 in `intermediate`, C1 and C2 in `advanced`. Choose only the situations the learner's reason needs. Listening, speaking, reading and writing live inside the situations. Grammar is taught inside situations, not as skills of its own. The course is the language itself, titled in `LANGUAGE`.
+- **language:** skills are real situations with a can-do, such as "Introduce yourself at work" or "Rent an apartment", ordered by CEFR level: A1 and A2 in `beginner`, B1 and B2 in `intermediate`, C1 and C2 in `advanced`. Choose only the situations the learner's reason needs. Listening, speaking, reading and writing live inside the situations. Grammar is taught inside situations, not as skills of its own. The course is the language itself, titled in `LANGUAGE`. Skill names, descriptions and phase milestones never name the language's variety or a country ("in Mexican Spanish"), since learners of every country share the graph.
 {{/language}}
 
 # Skills for a world with AI

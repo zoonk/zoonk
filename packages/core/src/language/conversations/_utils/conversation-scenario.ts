@@ -1,8 +1,9 @@
 import "server-only";
 import { generateConversationScenario } from "@zoonk/ai/tasks/language/conversation-scenario";
 import { generateSpeakingMockScenario } from "@zoonk/ai/tasks/language/speaking-mock-scenario";
-import { prisma } from "@zoonk/db";
+import { type Goal, prisma } from "@zoonk/db";
 import { type CefrLevel } from "@zoonk/utils/cefr";
+import { getTaughtRegion } from "@zoonk/utils/language-regions";
 import { toProvenanceData } from "../../../library/_utils/library-rows";
 import { type ScenarioUnit } from "../call-writing-contract";
 import {
@@ -17,15 +18,24 @@ export function toScenarioUnit(unit: ScenarioUnit): ScenarioUnit {
   return { description, id, language, objectives, targetLanguage, title };
 }
 
-function findSavedScenario({ chapterId, level }: { chapterId: string; level: CefrLevel }) {
-  return prisma.conversationScenario.findUnique({ where: { chapterLevel: { chapterId, level } } });
+type ScenarioKey = { chapterId: string; level: CefrLevel; targetRegion: string };
+
+/**
+ * The country a goal's calls are set in, when it isn't the one lessons teach. Empty otherwise, so
+ * every learner without one of their own shares the language's scenario.
+ */
+export function getScenarioRegion(goal: Pick<Goal, "targetLanguage" | "targetRegion"> | null) {
+  const { targetLanguage, targetRegion } = goal ?? {};
+
+  return targetLanguage && targetRegion && targetRegion !== getTaughtRegion(targetLanguage)
+    ? targetRegion
+    : "";
 }
 
-export async function findUnitScenario(where: {
-  chapterId: string;
-  level: CefrLevel;
-}): Promise<ConversationScenario | null> {
-  const saved = await findSavedScenario(where);
+export async function findUnitScenario(
+  chapterLevelRegion: ScenarioKey,
+): Promise<ConversationScenario | null> {
+  const saved = await prisma.conversationScenario.findUnique({ where: { chapterLevelRegion } });
   const parsed = conversationScenarioSchema.safeParse(saved?.content);
   return parsed.success ? parsed.data : null;
 }
@@ -33,14 +43,16 @@ export async function findUnitScenario(where: {
 /** Workflow only: a request reads the saved scenario and asks for this when it's missing. */
 export async function writeUnitScenario({
   level,
+  targetRegion,
   unit,
   userId,
 }: {
   level: CefrLevel;
+  targetRegion: string;
   unit: ScenarioUnit;
   userId: string;
 }): Promise<void> {
-  if (await findUnitScenario({ chapterId: unit.id, level })) {
+  if (await findUnitScenario({ chapterId: unit.id, level, targetRegion })) {
     return;
   }
 
@@ -50,12 +62,15 @@ export async function writeUnitScenario({
     learnerLanguage: unit.language,
     level,
     targetLanguage: unit.targetLanguage,
+    targetRegion: targetRegion || null,
     unitDescription: unit.description,
     unitTitle: unit.title,
   });
 
   await prisma.conversationScenario.createMany({
-    data: [{ content: data, ...toProvenanceData(provenance), chapterId: unit.id, level }],
+    data: [
+      { content: data, ...toProvenanceData(provenance), chapterId: unit.id, level, targetRegion },
+    ],
     skipDuplicates: true,
   });
 }

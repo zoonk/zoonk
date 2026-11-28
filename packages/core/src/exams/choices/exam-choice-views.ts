@@ -106,6 +106,17 @@ export function findUnpickedChoices(views: readonly ExamChoiceView[]): UnpickedC
   };
 }
 
+/** A short name that two options share can't tell them apart, so both show their full names. */
+function listOptions(options: readonly Subject[]): ExamChoiceView["options"] {
+  const shorts = options.map((option) => option.shortName);
+  const shared = new Set(shorts.filter((short, index) => short && shorts.indexOf(short) !== index));
+
+  return options.map((option) => ({
+    name: option.name,
+    shortName: option.shortName && !shared.has(option.shortName) ? option.shortName : null,
+  }));
+}
+
 export function listExamChoiceViews({
   picks,
   structure: whole,
@@ -122,10 +133,7 @@ export function listExamChoiceViews({
     return {
       group: group.name,
       leftOut: describeLeftOut({ group, structure }),
-      options: group.options.map((option) => ({
-        name: option.name,
-        shortName: option.shortName ?? null,
-      })),
+      options: listOptions(group.options),
       required: isRequiredChoice({ group, structure }),
       subjects: (chosen ?? []).map((option) => option.name),
       take: group.take,

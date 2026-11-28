@@ -52,6 +52,7 @@ import com.zoonk.android.feature.onboarding.CheckList
 import com.zoonk.android.feature.onboarding.Choice
 import com.zoonk.android.feature.onboarding.ChoiceList
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
+import com.zoonk.android.feature.plan.ExamPickLimit
 import com.zoonk.android.feature.plan.toggled
 import com.zoonk.android.ui.characters.BuddyKind
 import com.zoonk.android.ui.characters.BuddyPicker
@@ -794,11 +795,7 @@ internal fun ColumnScope.ExamChoiceStep(
                     style = MaterialTheme.typography.titleSmall,
                 )
                 if (choice.take > 1) {
-                    Text(
-                        stringResource(R.string.exam_choice_pick_up_to, choice.take),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
+                    ExamPickLimit(choice.take)
                     CheckList(
                         choices = options,
                         value = picked,

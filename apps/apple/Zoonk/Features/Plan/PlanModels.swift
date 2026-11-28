@@ -43,7 +43,6 @@ struct GoalPlan: Decodable, Equatable, Sendable {
     }
 
     let group: String
-    let leftOut: ExamChoiceLeftOut
     let options: [Option]
     /// The options picked, in the notice's order; empty until the learner picks, and the plan
     /// leaves the group out.

@@ -449,8 +449,6 @@ struct LessonWordBank<Tiles: View>: View {
 
 /// A tile fills the first empty blank, and a filled blank empties on a tap.
 private struct FillBlankView: View {
-  @Environment(\.lessonAudio) private var audio
-
   let exercise: LanguageExercise
   let context: LessonStepContext
 
@@ -549,7 +547,6 @@ private struct FillBlankView: View {
 
     answers[empty] = option.word
     context.select(.fillBlank(userAnswers: answers))
-    audio.playWord(option.audioUrl)
   }
 }
 

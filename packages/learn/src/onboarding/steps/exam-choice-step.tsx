@@ -6,6 +6,7 @@ import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { PageSectionTitle } from "../../_components/page";
+import { ExamPickLimit } from "../../plan/exam-choice-picks";
 import { CheckList, ChoiceList } from "../choice-list";
 import { StepForm } from "./step-form";
 
@@ -72,9 +73,7 @@ export function ExamChoiceStep({
 
             {choice.take > 1 ? (
               <>
-                <p className="text-muted-foreground text-sm">
-                  {t("Pick up to {take, number}.", { take: choice.take })}
-                </p>
+                <ExamPickLimit take={choice.take} />
 
                 <CheckList
                   choices={options}

@@ -192,6 +192,43 @@ const carbonShells: ImageScene = {
   supportingObjects: [],
 };
 
+const blankLegendMap: ImageScene = {
+  focalObject:
+    "a simplified map of Brazil with state boundaries, where most states are neutral light gray, but Tocantins is colored pale yellow, Goiás is yellow, Mato Grosso is medium green, and Mato Grosso do Sul is dark green",
+  labels: [
+    { target: "on the medium green state in central-west Brazil", text: "MT" },
+    { target: "on the dark green state directly south of MT", text: "MS" },
+    { target: "on the yellow state east of MT and MS", text: "GO" },
+    { target: "on the pale yellow state north of GO", text: "TO" },
+  ],
+  layout: "single",
+  motion: null,
+  relation:
+    "the legend box stands to the right of the map, displaying four colored squares that match the four colored states",
+  supportingObjects: [
+    "a small vertical legend box showing four color patches from pale yellow to dark green",
+  ],
+};
+
+const labeledLegendMap: ImageScene = {
+  focalObject:
+    "a simplified thematic map of Brazil with state boundaries, showing Rio Grande do Norte in dark blue, Ceará in light blue, Pernambuco in beige, and all remaining states in uniform gray",
+  labels: [
+    { target: "on the dark blue state", text: "RN" },
+    { target: "on the light blue state", text: "CE" },
+    { target: "on the beige state", text: "PE" },
+    { target: "next to the dark blue swatch", text: "70%–89%" },
+    { target: "next to the light blue swatch", text: "50%–69%" },
+    { target: "next to the beige swatch", text: "30%–49%" },
+  ],
+  layout: "single",
+  motion: null,
+  relation: "the legend box sits beside the map in the lower left corner",
+  supportingObjects: [
+    "a vertical legend box containing three colored square swatches: dark blue, light blue, and beige",
+  ],
+};
+
 const discount = sceneOf("discount-pt");
 const electronCloud = sceneOf("electron-cloud-en");
 const microwave = sceneOf("microwave-en");
@@ -453,5 +490,21 @@ export const TEST_CASES = [
       language: "pt",
       scene: carbonShells,
     },
+  }),
+  checkCase({
+    expected: false,
+    id: "legend-blank-swatches",
+    imageFile: "flare-legend-blank-swatches-pt.webp",
+    input: {
+      alt: "Mapa fictício com Tocantins em amarelo-claro, Goiás em amarelo, Mato Grosso em verde e Mato Grosso do Sul em verde-escuro.",
+      language: "pt",
+      scene: blankLegendMap,
+    },
+  }),
+  checkCase({
+    expected: true,
+    id: "legend-labeled",
+    imageFile: "flare-legend-labeled-pt.webp",
+    input: { language: "pt", scene: labeledLegendMap },
   }),
 ];
