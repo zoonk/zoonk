@@ -11,7 +11,53 @@ export type MemberPlacement<T> = {
 
 type CoveredMember = { first: number; last: number };
 
-type Run<T> = { items: T[]; next?: CoveredMember; previous?: CoveredMember };
+type Run<T> = { forward: boolean; items: T[]; next?: CoveredMember; previous?: CoveredMember };
+
+/** The nearest covered member past `from`, stepping by `step`, that a different skill teaches. */
+function findDistinct({
+  covered,
+  from,
+  step,
+}: {
+  covered: readonly (CoveredMember | null)[];
+  from: number;
+  step: 1 | -1;
+}): CoveredMember | undefined {
+  const position = covered[from]?.first;
+  const side = step === 1 ? covered.slice(from + 1) : covered.slice(0, from).toReversed();
+
+  return side.find((member) => member && member.first !== position) ?? undefined;
+}
+
+/**
+ * A stretch between two covered members follows whichever the graph teaches first. One at an end
+ * of the list reads the direction from its neighbor and the next distinct member inward, so a fixed
+ * opening skill elsewhere in the graph doesn't flip it.
+ */
+function isForwardAt({
+  covered,
+  end,
+  start,
+}: {
+  covered: readonly (CoveredMember | null)[];
+  end: number;
+  start: number;
+}): boolean {
+  const previous = covered[start - 1];
+  const next = covered[end];
+
+  if (previous && next) {
+    return previous.first <= next.first;
+  }
+
+  if (previous) {
+    const inward = findDistinct({ covered, from: start - 1, step: -1 });
+    return !inward || inward.first <= previous.first;
+  }
+
+  const inward = next ? findDistinct({ covered, from: end, step: 1 }) : undefined;
+  return !next || !inward || next.first <= inward.first;
+}
 
 /** Each stretch of members no skill teaches, with the covered members on either side. */
 function toRuns<T>({
@@ -26,37 +72,26 @@ function toRuns<T>({
   );
 
   return starts.map((start) => {
-    const end = covered.findIndex((member, index) => index > start && member !== null);
+    const found = covered.findIndex((member, index) => index > start && member !== null);
+    const end = found === -1 ? members.length : found;
 
     return {
-      items: members.slice(start, end === -1 ? undefined : end).map((member) => member.item),
+      forward: isForwardAt({ covered, end, start }),
+      items: members.slice(start, end).map((member) => member.item),
       next: covered[end] ?? undefined,
       previous: covered[start - 1] ?? undefined,
     };
   });
 }
 
-/**
- * The graph teaches the list forward when its first covered member comes before its last, so a gap
- * at either end of the list goes on the side that direction implies.
- */
-function isForward(covered: readonly (CoveredMember | null)[]): boolean {
-  const listed = covered.filter((member) => member !== null);
-  return (listed[0]?.first ?? 0) <= (listed.at(-1)?.first ?? 0);
-}
-
-function placeRun<T>({ forward, run }: { forward: boolean; run: Run<T> }): MemberPlacement<T>[] {
-  const { next, previous } = run;
-
-  // Between two covered members, it follows whichever the graph teaches first.
-  const forwardHere = previous && next ? previous.first <= next.first : forward;
-  const anchor = forwardHere ? previous : next;
-  const other = forwardHere ? next : previous;
+function placeRun<T>({ forward, items, next, previous }: Run<T>): MemberPlacement<T>[] {
+  const anchor = forward ? previous : next;
+  const other = forward ? next : previous;
   const after = anchor ? anchor.last : (other?.first ?? 0) - 1;
   const neighbor = anchor ? anchor.last : (other?.first ?? 0);
-  const items = forwardHere ? run.items : run.items.toReversed();
+  const ordered = forward ? items : items.toReversed();
 
-  return items.map((item) => ({ after, item, neighbor }));
+  return ordered.map((item) => ({ after, item, neighbor }));
 }
 
 /**
@@ -84,10 +119,8 @@ export function placeUncoveredMembers<T>({
     return members.map((member) => ({ after: last, item: member.item, neighbor: last }));
   }
 
-  const forward = isForward(covered);
-
   return toRuns({ covered, members })
-    .flatMap((run) => placeRun({ forward, run }))
+    .flatMap((run) => placeRun(run))
     .toSorted((a, b) => a.after - b.after);
 }
 

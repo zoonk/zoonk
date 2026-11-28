@@ -69,6 +69,42 @@ describe(placeUncoveredMembers, () => {
     ]);
   });
 
+  it("reads an end gap's side from the members next to it, past a fixed opening member", () => {
+    expect(teach({ order: ["m1", "m6", "m5", "m4", "m3", "m2"], size: 7 })).toStrictEqual([
+      "m1",
+      "m7",
+      "m6",
+      "m5",
+      "m4",
+      "m3",
+      "m2",
+    ]);
+
+    expect(teach({ order: ["m7", "m2", "m3", "m4", "m5", "m6"], size: 7 })).toStrictEqual([
+      "m7",
+      "m1",
+      "m2",
+      "m3",
+      "m4",
+      "m5",
+      "m6",
+    ]);
+  });
+
+  it("reads an end gap's side past members one skill teaches together", () => {
+    const placed = placeUncoveredMembers({
+      members: [
+        { item: 1, skills: ["m1"] },
+        { item: 2, skills: ["m2-3"] },
+        { item: 3, skills: ["m2-3"] },
+        { item: 4, skills: [] },
+      ],
+      order: ["m2-3", "m1"],
+    });
+
+    expect(placed).toStrictEqual([{ after: -1, item: 4, neighbor: 0 }]);
+  });
+
   it("takes the phase and area of the skill it sits beside", () => {
     expect(place({ order: ["intro", "m2", "m3"], size: 4 })).toStrictEqual([
       { after: 0, item: 1, neighbor: 1 },
