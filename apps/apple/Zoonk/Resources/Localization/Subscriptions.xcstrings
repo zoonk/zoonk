@@ -8280,7 +8280,9 @@
           }
         }
       }
-    }
+    },
+    "No more code runs today" : {},
+    "You've used your code runs" : {}
   },
   "version" : "1.0"
 }

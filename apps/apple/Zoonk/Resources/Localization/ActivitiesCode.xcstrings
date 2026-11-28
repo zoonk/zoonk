@@ -3560,7 +3560,13 @@
           }
         }
       }
-    }
+    },
+    "Compiling your code…" : {},
+    "Getting %@ ready…" : {},
+    "Running %@ code needs a connection. Check yours and try again." : {},
+    "Running your code…" : {},
+    "Stopped because it took too long. Is there a loop that never ends?" : {},
+    "Your code didn't run. Try again." : {}
   },
   "version" : "1.1"
 }

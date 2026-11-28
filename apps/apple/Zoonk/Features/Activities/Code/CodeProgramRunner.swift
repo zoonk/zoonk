@@ -1,29 +1,6 @@
 import Foundation
 import WebKit
 
-extension CodeLanguage {
-  var runtimeName: String {
-    switch self {
-    case .javascript: "JavaScript"
-    case .python: "Python"
-    }
-  }
-
-  var defaultFileName: String {
-    switch self {
-    case .javascript: "main.js"
-    case .python: "main.py"
-    }
-  }
-
-  var timeLimitSeconds: Int {
-    switch self {
-    case .javascript: 3
-    case .python: 5
-    }
-  }
-}
-
 struct CodeProgramRun: Equatable, Sendable {
   enum Stop: String, Sendable {
     case done, error, timeout, tooMuchOutput, unavailable
@@ -34,6 +11,8 @@ struct CodeProgramRun: Equatable, Sendable {
   var errorOutput = ""
   var error: String?
   var errorLine: Int?
+  /// A run on our servers, whose output the server grades: the answer names it.
+  var runID: String?
 }
 
 /// Runs a learner's program on the device, never on our servers, in main's sandbox

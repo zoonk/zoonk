@@ -9,10 +9,6 @@ extension ActivityRenderer {
   }
 }
 
-enum CodeLanguage: String, Decodable, Sendable {
-  case javascript, python
-}
-
 struct CodeRunnerFields: Decodable, Sendable {
   struct Mistake: Decodable, Sendable {
     let feedback: String
@@ -48,8 +44,11 @@ struct CodeRunnerFields: Decodable, Sendable {
 }
 
 extension ActivityAnswer {
-  static func output(_ output: String) -> ActivityAnswer {
-    ActivityAnswer(value: .object(["kind": .string("output"), "output": .string(output)]))
+  /// A run on our servers names its `runID`, so the server grades the output it measured.
+  static func output(_ output: String, runID: String? = nil) -> ActivityAnswer {
+    var answer: [String: JSONValue] = ["kind": .string("output"), "output": .string(output)]
+    answer["runId"] = runID.map(JSONValue.string)
+    return ActivityAnswer(value: .object(answer))
   }
 
   var output: String? {
@@ -61,16 +60,30 @@ extension ActivityAnswer {
   }
 }
 
+/// Why the last Run on our servers brought no output.
+private enum CodeRunIssue: Equatable {
+  case offline, unavailable
+  case refused(HelpLimit)
+}
+
 /// The output of the last run is the answer, so editing after a run waits for the next run.
 private struct CodeRunnerCanvas: View {
   let context: ActivityCanvasContext
   let fields: CodeRunnerFields
 
-  @State private var runner: CodeProgramRunner
+  @Environment(\.codeRuns) private var codeRuns
+  /// Nil for a language that runs on our servers.
+  @State private var runner: CodeProgramRunner?
   @ActivityState("edits") private var edits: [Int: String] = [:]
   @ActivityState private var run: CodeProgramRun?
   /// The run in progress; a result for any other run is dropped.
   @State private var activeRun: UUID?
+  @State private var runPhase = CodeRunPhase.starting
+  /// A quick run ends before its steps would flash under Run.
+  @State private var showsPhase = false
+  @State private var issue: CodeRunIssue?
+  /// A run that broke off is sent again under its request, so the server answers it once.
+  @State private var retryRequest: (code: String, id: String)?
   @State private var revision = 0
   @ActivityState("isStale") private var isStale = false
   @State private var runtime: CodeRuntimeStatus
@@ -80,7 +93,10 @@ private struct CodeRunnerCanvas: View {
   init(context: ActivityCanvasContext, fields: CodeRunnerFields) {
     self.context = context
     self.fields = fields
-    _runner = State(initialValue: CodeProgramRunner(language: fields.language))
+    _runner = State(
+      initialValue: fields.language.runsOnDevice
+        ? CodeProgramRunner(language: fields.language) : nil
+    )
     _run = ActivityState(
       wrappedValue: context.answer?.output.map { CodeProgramRun(stop: .done, output: $0) }, "run")
     // JavaScript needs no download, so there's nothing to wait for.
@@ -117,6 +133,38 @@ private struct CodeRunnerCanvas: View {
     return fields.mistakes.first { CodeRunnerFields.sameOutput($0.output, run.output) }?.feedback
   }
 
+  private var refusal: HelpLimit? {
+    if case .refused(let limit) = issue { limit } else { nil }
+  }
+
+  private var runFailure: LocalizedStringResource? {
+    switch issue {
+    case .offline:
+      LocalizedStringResource(
+        "Running \(fields.language.runtimeName) code needs a connection. Check yours and try again.",
+        table: "ActivitiesCode")
+    case .unavailable:
+      LocalizedStringResource("Your code didn't run. Try again.", table: "ActivitiesCode")
+    case .refused, nil:
+      nil
+    }
+  }
+
+  private var phaseLine: String? {
+    guard showsPhase, activeRun != nil else {
+      return nil
+    }
+
+    return switch runPhase {
+    case .starting:
+      String(localized: "Getting \(fields.language.runtimeName) ready…", table: "ActivitiesCode")
+    case .compiling:
+      String(localized: "Compiling your code…", table: "ActivitiesCode")
+    case .running:
+      String(localized: "Running your code…", table: "ActivitiesCode")
+    }
+  }
+
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
       GroupBox {
@@ -129,21 +177,36 @@ private struct CodeRunnerCanvas: View {
         run: run, expectedOutput: isExploring ? nil : fields.expectedOutput,
         language: fields.language, isStale: isStale, matches: matches, mistake: mistake)
 
+      if !isChecked, let refusal {
+        LimitNotice(limit: refusal, kind: .runs)
+      }
+
       if !isChecked {
         CodeRunBar(
-          runtimeName: fields.language.runtimeName, status: runtime, hasRun: run != nil,
-          isExploring: isExploring, isRunning: activeRun != nil, run: { startRun() },
-          retry: { runtimeAttempt += 1 },
-          reset: edits.isEmpty ? nil : { reset() })
+          runtimeName: fields.language.runtimeName, status: runFailure == nil ? runtime : .failed,
+          hasRun: run != nil, isExploring: isExploring, isRunning: activeRun != nil,
+          run: { startRun() },
+          retry: retry,
+          reset: edits.isEmpty ? nil : { reset() }, failure: runFailure, progress: phaseLine)
       }
     }
+    .announcesStatus(refusal?.words(.runs).said)
     .task(id: runtimeAttempt) {
       guard fields.language == .python else {
         return
       }
 
       runtime = .loading
-      runtime = await runner.warmUp() ? .ready : .failed
+      runtime = await runner?.warmUp() ?? false ? .ready : .failed
+    }
+    .task(id: activeRun) {
+      showsPhase = false
+
+      guard activeRun != nil, (try? await Task.sleep(for: .milliseconds(400))) != nil else {
+        return
+      }
+
+      showsPhase = true
     }
     // A run still going at Check ends unseen, so the answer keeps the output it was graded on.
     .onChange(of: isChecked) {
@@ -151,7 +214,7 @@ private struct CodeRunnerCanvas: View {
     }
     .onDisappear {
       activeRun = nil
-      runner.close()
+      runner?.close()
     }
   }
 
@@ -274,25 +337,75 @@ private struct CodeRunnerCanvas: View {
     let started = revision
     let code = lines.joined(separator: "\n")
     activeRun = id
+    runPhase = .starting
+    issue = nil
     // As on main, where Run takes focus from the code, the keyboard goes so the output shows.
     editingLine = nil
 
     Task {
-      let result = await runner.run(code)
+      let outcome = await outcome(of: code, run: id)
 
       guard activeRun == id else {
         return
       }
 
       activeRun = nil
-      run = result
-      isStale = revision != started
-      // A worker a timeout ended reloads Pyodide on the next run, which can fail offline.
-      if result.stop == .unavailable, fields.language == .python {
-        runtime = .failed
+
+      switch outcome {
+      case .finished(let result):
+        show(result, startedAt: started)
+      case .refused(let limit):
+        issue = .refused(limit)
+      case .offline:
+        issue = .offline
+      case .unavailable:
+        issue = .unavailable
+      case nil:
+        break
       }
-      context.setAnswer(isStale || result.stop == .unavailable ? nil : .output(result.output))
     }
+  }
+
+  private func outcome(of code: String, run id: UUID) async -> CodeRunOutcome? {
+    if let runner {
+      return .finished(await runner.run(code))
+    }
+
+    let requestID =
+      retryRequest.flatMap { $0.code == code ? $0.id : nil } ?? UUID().uuidString.lowercased()
+    let outcome = await codeRuns.run(
+      CodeRuns.Request(
+        code: code, language: fields.language, id: requestID,
+        phase: { phase in
+          if activeRun == id {
+            runPhase = phase
+          }
+        },
+        keepWaiting: { activeRun == id }))
+
+    retryRequest = outcome == .offline ? (code, requestID) : nil
+    return outcome
+  }
+
+  /// Python downloads again; a language that runs on our servers runs again.
+  private func retry() {
+    if runner == nil {
+      startRun()
+    } else {
+      runtimeAttempt += 1
+    }
+  }
+
+  private func show(_ result: CodeProgramRun, startedAt started: Int) {
+    run = result
+    isStale = revision != started
+    // A worker a timeout ended reloads Pyodide on the next run, which can fail offline.
+    if result.stop == .unavailable, fields.language == .python {
+      runtime = .failed
+    }
+    context.setAnswer(
+      isStale || result.stop == .unavailable
+        ? nil : .output(result.output, runID: result.runID))
   }
 }
 
@@ -458,6 +571,11 @@ private struct CodeRunnerOutput: View {
       return String(
         localized: "Line \(line): \(error)", table: "ActivitiesCode",
         locale: .appLanguage, comment: "A program's error and the line it happened on")
+    // Our servers stop a program's build and its run at different limits, so a time can't be named.
+    case .timeout where !language.runsOnDevice:
+      return String(
+        localized: "Stopped because it took too long. Is there a loop that never ends?",
+        table: "ActivitiesCode")
     case .timeout:
       return String(
         localized:

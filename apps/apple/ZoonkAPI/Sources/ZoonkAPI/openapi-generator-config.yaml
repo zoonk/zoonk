@@ -234,6 +234,7 @@ filter:
     - requestSpeechClip
     - resumeStripeSubscription
     - reviseGoalUnderstanding
+    - runCode
     - saveLesson
     - saveMindMap
     - saveMockAnswer
