@@ -137,7 +137,6 @@ export function PronunciationReviewScreen({
   const mic = useWordRecorder(round.record);
   const { current, step } = round;
   const total = round.segments.length;
-  const recording = mic.recorder.status === "recording";
   const ready = step.kind === "word" && step.word.kind === "ready" ? step.word : null;
   const take = useWordTake({ mic, pending: round.isPending, ready });
 
@@ -204,7 +203,7 @@ export function PronunciationReviewScreen({
       footerNote={ready && take.note}
       headerEnd={
         !graded &&
-        mic.available && <WordMenu disabled={round.isPending || recording} onSkip={round.next} />
+        mic.available && <WordMenu disabled={round.isPending || take.on} onSkip={round.next} />
       }
       headerTitle={<TaskHeaderTitle title={t("Say it again")} />}
       progress={{
