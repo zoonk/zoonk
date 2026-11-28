@@ -272,20 +272,7 @@ struct TodayPlanChangeSection: View {
       } else if isBehind, let behind = change.behind {
         missedDays(behind)
       } else {
-        SuggestionLine {
-          SuggestionMark(kind: change.source == "notice" ? .symbol("doc.badge.clock") : .sparkle)
-        } summary: {
-          Text(title)
-        } action: {
-          SuggestionOpen(
-            isOpen: $isOpen, note: failed ? BarNote(SuggestionSaveError.message) : nil
-          ) {
-            proposal
-          } actions: {
-            proposalAnswers
-          }
-        }
-        .listRowSeparator(.hidden)
+        proposalCard
       }
 
       if failed, !answersInSheet {
@@ -320,17 +307,47 @@ struct TodayPlanChangeSection: View {
     return words.title
   }
 
+  /// Main's card: the question and its reason, with what changes and the answers in its sheet.
+  private var proposalCard: some View {
+    TodaySuggestionCard(mark: change.source == "notice" ? .symbol("doc.badge.clock") : .sparkle) {
+      VStack(alignment: .leading, spacing: 4) {
+        SuggestionHeader(Text(title))
+
+        if change.source != "focusTest", let why = words.why {
+          // Main's `keepHyphenatedWords`: a name like "An-Nahl" wraps whole, never half on a line.
+          SuggestionDescription(Text(why.replacing(/(\p{L})-(?=\p{L})/) { "\($0.1)\u{2011}" }))
+        }
+      }
+
+      ButtonRow(wraps: true) {
+        SuggestionOpen(
+          isOpen: $isOpen, note: failed ? BarNote(SuggestionSaveError.message) : nil,
+          label: Text("See what changes", tableName: "Today")
+        ) {
+          proposal
+        } actions: {
+          proposalAnswers
+        }
+
+        if !keepsMine {
+          Button {
+            answer(.declined)
+          } label: {
+            Text("Not now", tableName: "Today", comment: "Declines a proposed plan change")
+          }
+          .buttonStyle(.outline)
+          .disabled(isSaving)
+        }
+      }
+      .controlSize(.small)
+    }
+  }
+
   @ViewBuilder
   private var proposal: some View {
     let today = view.session.localDate
 
-    VStack(alignment: .leading, spacing: 4) {
-      SuggestionHeader(Text(title))
-
-      if change.source != "focusTest", let why = words.why {
-        SuggestionDescription(Text(why))
-      }
-    }
+    SuggestionHeader(Text(title))
 
     PlanEffectDiff(
       effect: change.effect, today: today,

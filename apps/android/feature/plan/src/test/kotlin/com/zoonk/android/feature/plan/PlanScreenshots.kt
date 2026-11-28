@@ -15,10 +15,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.hasScrollAction
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollToNode
+import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -31,6 +37,7 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.feature.conversation.callStarter
 import com.zoonk.android.feature.goalcontent.examSyllabus
+import com.zoonk.android.feature.goalcontent.modulesWithTopicsLeftOut
 import com.zoonk.android.feature.language.languageProgress
 import com.zoonk.android.feature.onboarding.DAILY_TIMES
 import com.zoonk.android.navigation.rememberAppNavigator
@@ -255,6 +262,7 @@ class PlanScreenshots {
                 group = group,
                 leftOut = ExamChoiceLeftOut(examPoints = null, examQuestions = null, name = group, points = null, questions = 24 * take),
                 options = options.map { ExamChoiceOptionsInner(name = it, shortName = null) },
+                required = false,
                 subjects = emptyList(),
                 take = take,
             )
@@ -410,6 +418,9 @@ class PlanScreenshots {
                 "09-score-before-levels" to { links -> PreparationDetails(Standing.Preparation(withWritten(WRITTEN_LEVELS)), links) },
                 "10-score-after" to { links -> PreparationDetails(Standing.Preparation(withWritten(WRITTEN_AFTER)), links) },
                 "10b-score-below-minimum" to { links -> PreparationDetails(Standing.Preparation(withWritten(WRITTEN_BELOW)), links) },
+                "10c-score-overlaps-minimum" to { links -> PreparationDetails(Standing.Preparation(withWritten(WRITTEN_OVERLAPS)), links) },
+                "10d-score-unmeasured-estimate" to
+                    { links -> PreparationDetails(Standing.Preparation(withWritten(WRITTEN_UNMEASURED)), links) },
                 "plan-sheet-phase-details" to { links -> PhaseDetails(page, page.plan.phases[1], links) },
                 "plan-change-diff" to
                     { _ ->
@@ -1139,6 +1150,34 @@ class PlanScreenshots {
     @Config(qualifiers = "w411dp-h1900dp-xxhdpi")
     fun callsOutOfTimePathPhone() = captureCallsPath("calls-time-path-phone", "time")
 
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun partlyPlannedModulesPhone() {
+        show(structure = modulesWithTopicsLeftOut())
+        compose.onNode(hasScrollAction()).performScrollToNode(hasText("2 topics not in your plan"))
+        write("plan-modules-partly-left-out-phone", compose.onRoot().captureRender().asAndroidBitmap())
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun topicsLeftOutOfPathPhone() {
+        val original = page()
+        val phases =
+            original.plan.phases.map { phase ->
+                if (phase.state == PlanPhase.State.CURRENT) {
+                    phase.copy(leftOut = listOf("Reading and writing CSV files", "Cleaning messy data"))
+                } else {
+                    phase
+                }
+            }
+        show(exam = original.copy(plan = original.plan.copy(phases = phases)))
+        val omittedTopics = hasText("2 topics not in your plan") and SemanticsMatcher.keyIsDefined(SemanticsActions.Expand)
+        // Opened through its expand action, as TalkBack does, so the render shows the row at rest, without a tap's ripple.
+        compose.onNode(omittedTopics).performSemanticsAction(SemanticsActions.Expand)
+        compose.onNodeWithText("Cleaning messy data").assertExists()
+        write("path-left-out-open-phone", compose.onRoot().captureRender().asAndroidBitmap())
+    }
+
     private fun captureCallsPath(
         name: String,
         outsideReason: String = "skippedBase",
@@ -1318,14 +1357,26 @@ class PlanScreenshots {
               "tasks":[{"key":"short","name":"30-line question","max":30,"range":{"low":12,"high":14}},
                {"key":"long","name":"60-line question","max":70,"range":{"low":29,"high":33}}]}]}"""
 
+        val WRITTEN_OVERLAPS =
+            """{"objective":{"low":62,"high":68},"objectiveMax":100,"combined":{"low":109,"high":122},"max":200,
+            "parts":[{"name":"Written test","max":100,"minimum":{"unit":"points","value":50},"range":{"low":47,"high":54},"standing":"overlaps",
+              "tasks":[{"key":"short","name":"30-line question","max":30,"range":{"low":14,"high":16}},
+               {"key":"long","name":"60-line question","max":70,"range":{"low":33,"high":38}}]}]}"""
+
+        val WRITTEN_UNMEASURED =
+            """{"objective":{"low":62,"high":68},"objectiveMax":100,"combined":{"low":118,"high":131},"max":200,
+            "parts":[{"name":"Written test","max":100,"minimum":{"unit":"points","value":50},"range":{"low":56,"high":63},"standing":"unmeasured",
+              "scale":"points","tasks":[{"key":"short","name":"30-line question","max":30,"range":{"low":17,"high":19}},
+               {"key":"long","name":"60-line question","max":70,"range":{"low":39,"high":44}}]}]}"""
+
         const val LANGUAGE_CHOICE =
             """{"group":"Língua estrangeira","leftOut":{"examPoints":null,"examQuestions":180,"name":"Língua estrangeira","points":null,"questions":5},
-             "options":[{"name":"Inglês","shortName":null},{"name":"Espanhol","shortName":null}],"subjects":[],"take":1}"""
+             "options":[{"name":"Inglês","shortName":null},{"name":"Espanhol","shortName":null}],"subjects":[],"take":1,"required":false}"""
 
         const val MODULES_CHOICE =
             """{"group":"Módulos","leftOut":{"examPoints":null,"examQuestions":null,"name":"Módulos","points":null,"questions":48},
              "options":[{"name":"Biología","shortName":null},{"name":"Química","shortName":null},{"name":"Derecho","shortName":null},
-              {"name":"Premedicina","shortName":null}],"subjects":["Biología"],"take":2}"""
+              {"name":"Premedicina","shortName":null}],"subjects":["Biología"],"take":2,"required":false}"""
 
         val EDITOR_CHOICES =
             """

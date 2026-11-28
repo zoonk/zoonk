@@ -89,7 +89,11 @@ export function dropDecorativePictures({
       ...spec,
       screens: spec.screens.map((screen, index) =>
         decorative.has(findSharedPicture(spec.screens, index) ?? index)
-          ? { ...screen, visual: null, visualKind: "none" as const }
+          ? {
+              ...screen,
+              visual: null,
+              visualKind: screen.visualKind === "picture" ? "none" : screen.visualKind,
+            }
           : screen,
       ),
     };

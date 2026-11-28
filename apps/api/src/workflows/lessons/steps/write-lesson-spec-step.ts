@@ -6,7 +6,11 @@ import {
   type CourseContentWrite,
   collectCourseContentTags,
 } from "@zoonk/core/cache/course-content";
-import { claimLibraryGeneration } from "@zoonk/core/library/claims/generation";
+import {
+  claimLibraryGeneration,
+  finishLibraryGeneration,
+} from "@zoonk/core/library/claims/generation";
+import { lessonNeedsPlan } from "@zoonk/core/library/curriculum/lesson-needs-plan";
 import {
   type JudgedPicture,
   type PlannedPicture,
@@ -116,6 +120,17 @@ async function writeLessonPlan(input: SpecInput): Promise<PlanResult> {
 
   if (claim === "running") {
     return { status: "waiting" };
+  }
+
+  if (!(await lessonNeedsPlan(input.lessonId))) {
+    const finished = await finishLibraryGeneration({
+      id: input.lessonId,
+      status: "completed",
+      target: "lessonSpec",
+      workflowRunId: input.workflowRunId,
+    });
+
+    return { status: finished ? "ready" : "missing" };
   }
 
   await using stream = createStepStream<LessonStreamStep>();

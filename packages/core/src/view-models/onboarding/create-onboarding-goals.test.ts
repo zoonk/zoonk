@@ -1,7 +1,11 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { onboardingDraftFixture } from "@zoonk/testing/fixtures/onboarding-drafts";
-import { learnerSourceFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
+import {
+  examBlueprintFixture,
+  learnerSourceFixture,
+  sourceFixture,
+} from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../../_test-utils/frozen-clock";
@@ -26,6 +30,18 @@ function learnGoal(details: GoalDraft["details"]): GoalDraft {
     prompt: "Learn chess",
     targetDate: getLearnerToday(dayAheadZone),
     title: "Learn chess",
+  };
+}
+
+function canadianExamGoal(examBlueprintId: string): GoalDraft {
+  return {
+    contentCountry: "CA",
+    details: {},
+    examBlueprintId,
+    kind: "exam",
+    language: "en",
+    prompt: "Pass my private pilot exam in Canada",
+    title: "Private pilot exam",
   };
 }
 
@@ -446,6 +462,28 @@ describe(createOnboardingGoals, () => {
     const goalId = created.status === "created" ? created.goals[0]?.id : undefined;
 
     await expect(findLinkedGoalIds([notes])).resolves.toStrictEqual([[goalId]]);
+  });
+
+  it("keeps an exam goal from another country's exam, as research does", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+
+    const [american, international] = await Promise.all([
+      examBlueprintFixture({ country: "US", name: "Private Pilot Certificate" }),
+      examBlueprintFixture({ country: "ZZ", name: "IELTS Academic" }),
+    ]);
+
+    const ids = await confirm([canadianExamGoal(american.id), canadianExamGoal(international.id)]);
+
+    const goals = await prisma.goal.findMany({
+      select: { contentCountry: true, examBlueprintId: true, id: true },
+      where: { id: { in: ids } },
+    });
+
+    expect(ids.map((id) => goals.find((goal) => goal.id === id))).toStrictEqual([
+      { contentCountry: "CA", examBlueprintId: null, id: ids[0] },
+      { contentCountry: "CA", examBlueprintId: international.id, id: ids[1] },
+    ]);
   });
 
   it("refuses a date no card gave", async () => {

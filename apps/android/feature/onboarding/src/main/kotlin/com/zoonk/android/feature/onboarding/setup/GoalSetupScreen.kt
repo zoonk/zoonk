@@ -422,7 +422,7 @@ private fun ColumnScope.QuestionStep(
         }
 
         OnboardingStep.CONTENT_COUNTRY -> {
-            CountryStep(subject, view.contentCountry, view.goal.language, pending, vm::answer)
+            CountryStep(subject, view.contentCountry, view.goal.kind == Goal.Kind.EXAM, view.goal.language, pending, vm::answer)
         }
 
         OnboardingStep.PURPOSE -> {
@@ -466,6 +466,7 @@ private fun ColumnScope.QuestionStep(
         OnboardingStep.TARGET_DATE -> {
             DateStep(
                 subject,
+                view.bookedExam,
                 view.examDays,
                 view.goal.targetDate?.toJavaLocalDate(),
                 view.dateProblem,

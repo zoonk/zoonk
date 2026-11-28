@@ -8,6 +8,7 @@ import { useIsoToday } from "../_utils/iso-date";
 import { usePlanScreen } from "../plan/plan-context";
 import { useFormatPlanDate } from "../plan/plan-date-text";
 import { usePhaseName } from "../plan/use-phase-name";
+import { LeftOutTopicsLine } from "../syllabus/left-out-topics";
 import { namesModules } from "../syllabus/names-modules";
 import { ReasonText } from "../syllabus/topic-note";
 import { CurrentPhaseMark } from "./current-phase-mark";
@@ -60,7 +61,12 @@ function PhaseResume({ phase }: { phase: PlanPhaseView }) {
 }
 
 function isLeftOut(phase: PlanPhaseView): boolean {
-  return phase.state === "leftOut" || phase.state === "unfinished" || phase.challengeLeftOut;
+  return (
+    phase.state === "leftOut" ||
+    phase.state === "unfinished" ||
+    phase.challengeLeftOut ||
+    phase.leftOut.length > 0
+  );
 }
 
 function PhaseLeftOut({ phase }: { phase: PlanPhaseView }) {
@@ -80,6 +86,10 @@ function PhaseLeftOut({ phase }: { phase: PlanPhaseView }) {
         })}
       </span>
     );
+  }
+
+  if (!phase.challengeLeftOut) {
+    return <LeftOutTopicsLine count={phase.leftOut.length} />;
   }
 
   return (

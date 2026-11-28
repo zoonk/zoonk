@@ -1,4 +1,8 @@
-import { finishGoalRebuild, isGoalRebuildOwed } from "@zoonk/core/goals/rebuild-follow-up";
+import {
+  findGoalResearch,
+  finishGoalRebuild,
+  isGoalRebuildOwed,
+} from "@zoonk/core/goals/rebuild-follow-up";
 import { recordGoalBuildFailure } from "@zoonk/core/goals/record-generation";
 import { requestGoalPlacement } from "@zoonk/core/learner/placement/request";
 import { readGoalGraphState } from "@zoonk/core/library/curriculum/begin-goal-curriculum";
@@ -8,6 +12,7 @@ import {
 } from "@zoonk/core/lookahead/placement-item-skills";
 import { prisma } from "@zoonk/db";
 import { logError } from "@zoonk/utils/logger";
+import { isRunActive } from "../../_shared/run-activity";
 
 export async function isGoalRebuildOwedStep(input: Parameters<typeof isGoalRebuildOwed>[0]) {
   "use step";
@@ -21,6 +26,13 @@ export async function finishGoalRebuildStep(
   "use step";
 
   await finishGoalRebuild(input);
+}
+
+export async function isGoalResearchPendingStep(goalId: string): Promise<boolean> {
+  "use step";
+
+  const { owed, runId } = await findGoalResearch(goalId);
+  return owed || (runId !== null && (await isRunActive(runId)));
 }
 
 export async function readGoalGraphStateStep(goalId: string) {

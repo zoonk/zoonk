@@ -6,7 +6,9 @@ import { answerOnceWith } from "../_test-utils/answer-once-with";
 import { createGenerateTextResult } from "../_test-utils/generate-text-result";
 import { type LessonScreen, type LessonSpec } from "../lesson-spec/lesson-spec-rules";
 import { getLessonCheckModels } from "../quality/lesson-check-models";
+import { formatLessonPlan } from "./format-lesson-plan";
 import { getLessonWriterModel, writeLessonDraft } from "./lesson-writer";
+import { getWrittenKinds } from "./written-lesson-schema";
 import type * as Ai from "ai";
 
 /** Where the schema the answer follows starts, after the writer's rules. */
@@ -106,6 +108,57 @@ describe(getLessonWriterModel, () => {
 });
 
 const EMPTY_MAP = { ideas: [], shape: "hub" };
+
+describe(getWrittenKinds, () => {
+  it.each([false, true])(
+    "writes a templated application as an activity with shortAnswers=%s",
+    (shortAnswers) => {
+      const application = screen("application", "numberLine");
+
+      expect(getWrittenKinds({ ...application, shortAnswers })).toStrictEqual(["activity"]);
+    },
+  );
+
+  it("keeps the written check kinds for an ordinary application", () => {
+    const application = screen("application");
+
+    expect(getWrittenKinds({ ...application, shortAnswers: false })).toStrictEqual([
+      "check",
+      "mathCheck",
+    ]);
+
+    expect(getWrittenKinds({ ...application, shortAnswers: true })).toStrictEqual([
+      "check",
+      "mathCheck",
+      "typedAnswer",
+    ]);
+  });
+});
+
+describe(formatLessonPlan, () => {
+  it("gives the writer the application activity and its schema", () => {
+    const plan = formatLessonPlan({
+      activityTemplates: [
+        {
+          description: "Place a number on the line.",
+          id: "numberLine",
+          schema: '{"type":"object"}',
+        },
+      ],
+      chapterTitle: "Temperature",
+      country: null,
+      courseTitle: "Weather",
+      language: "en",
+      level: "beginner",
+      spec: spec([{ ...screen("application", "numberLine"), visualKind: "template" }]),
+    });
+
+    expect(plan).toContain("application, written as: activity\n");
+    expect(plan).toContain("Activity template: numberLine");
+    expect(plan).not.toContain("Explore template:");
+    expect(plan).toContain('JSON schema of the activity content: {"type":"object"}');
+  });
+});
 
 describe(writeLessonDraft, () => {
   it("keeps only its own variants' rules, in place, and the date only for setup", async () => {

@@ -1,6 +1,10 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
 import { type TaskCodeChecks, type TaskScorer } from "@/lib/types";
-import { findUncoveredTopics } from "@zoonk/ai/tasks/curriculum/exam-outline";
+import {
+  type ExamOutline,
+  canBuildOn,
+  findUncoveredTopics,
+} from "@zoonk/ai/tasks/curriculum/exam-outline";
 import { type generateSkillGraph } from "@zoonk/ai/tasks/curriculum/skill-graph";
 import {
   type SkillGraphProblem,
@@ -47,6 +51,112 @@ function toCheck(code: SkillGraphProblem["code"]): GraphCheck {
 }
 
 type ExpectedCheck = { criterion: string; problem: string | null };
+
+function checkWrittenOptions({
+  graph,
+  outline,
+  section,
+}: {
+  graph: SkillGraphOutput;
+  outline: ExamOutline;
+  section: string;
+}): ExpectedCheck[] {
+  const options = outline.subjects.filter(({ choiceGroup }) => choiceGroup).map(({ name }) => name);
+
+  const written = graph.skills.filter(
+    (skill) => skill.area === section && skill.topics.length === 0,
+  );
+
+  const byNamedOption = Map.groupBy(written, (skill) =>
+    options.find((option) => normalizeString(skill.name).includes(normalizeString(option))),
+  );
+
+  const placement = [...options, undefined].map((option) => {
+    const skills = byNamedOption.get(option) ?? [];
+
+    if (skills.length === 0) {
+      return {
+        criterion: "coverage",
+        problem: `No topicless skill in "${section}" for ${option ?? "the common task"}.`,
+      };
+    }
+
+    const mismatches = skills
+      .filter((skill) => (skill.subject ?? undefined) !== option)
+      .map(
+        (skill) =>
+          `"${skill.name}" has subject ${JSON.stringify(skill.subject ?? null)}; expected ${JSON.stringify(option ?? null)}.`,
+      );
+
+    return { criterion: "coverage", problem: mismatches.join(" ") || null };
+  });
+
+  const subjects = new Map(graph.skills.map((skill) => [skill.key, skill.subject ?? skill.area]));
+
+  const invalidLinks = graph.skills.flatMap((skill) =>
+    skill.prerequisites
+      .filter(
+        (key) =>
+          !canBuildOn({
+            area: skill.subject ?? skill.area ?? "",
+            outline,
+            prerequisiteArea: subjects.get(key) ?? "",
+          }),
+      )
+      .map((key) => `"${skill.name}" requires "${key}" from another option.`),
+  );
+
+  return [
+    ...placement,
+    { criterion: "orderAndPrerequisites", problem: invalidLinks.join(" ") || null },
+  ];
+}
+
+const DOMAIN_SHARE_TOLERANCE_POINTS = 5;
+
+function checkDomainShares({
+  graph,
+  outline,
+}: {
+  graph: SkillGraphOutput;
+  outline: ExamOutline;
+}): ExpectedCheck[] {
+  return outline.subjects.flatMap(({ name, topicGroups = [] }) => {
+    if (topicGroups.length === 0) {
+      return [];
+    }
+
+    const skills = graph.skills.filter((skill) => skill.area === name);
+    const total = skills.reduce((sum, skill) => sum + skill.estimatedLessons, 0);
+
+    const byDomain = Map.groupBy(skills, ({ topics }) => {
+      const counts = topicGroups.map(
+        (group) => topics.filter((topic) => group.topics.includes(topic)).length,
+      );
+
+      const most = Math.max(0, ...counts);
+      return most > 0 ? topicGroups[counts.indexOf(most)] : undefined;
+    });
+
+    return topicGroups.map((group) => {
+      const lessons = (byDomain.get(group) ?? []).reduce(
+        (sum, skill) => sum + skill.estimatedLessons,
+        0,
+      );
+
+      const percent = total > 0 ? (lessons * 100) / total : 0;
+      const targetPercent = group.share * 100;
+
+      return {
+        criterion: "coverage",
+        problem:
+          lessons === 0 || Math.abs(percent - targetPercent) > DOMAIN_SHARE_TOLERANCE_POINTS
+            ? `"${group.name}" has ${lessons}/${total} of "${name}" lessons (${percent.toFixed(1)}%; target ${targetPercent}%).`
+            : null,
+      };
+    });
+  });
+}
 
 function checkCoursePlacement({
   accepted,
@@ -176,9 +286,14 @@ function checkExpected({
   graph: SkillGraphOutput;
   input: SkillGraphCase;
 }) {
+  const outline = input.examBlueprint;
+  const section = expected?.writtenOptionSection;
+
   const checks = [
     ...(expected ? [...checkReuse({ expected, graph }), ...checkCourses({ expected, graph })] : []),
     ...checkFirstSkill({ graph, input }),
+    ...(outline && section ? checkWrittenOptions({ graph, outline, section }) : []),
+    ...(outline ? checkDomainShares({ graph, outline }) : []),
   ];
 
   return { failures: checks.filter(({ problem }) => problem !== null), total: checks.length };

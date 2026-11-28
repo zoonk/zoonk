@@ -33,6 +33,7 @@ final class PlanStore {
     /// Nil until the learner opens or closes it: the phase they're in starts open.
     var isExpanded: Bool?
     var showsAllChapters = false
+    var showsLeftOut = false
   }
 
   struct SuggestionState {

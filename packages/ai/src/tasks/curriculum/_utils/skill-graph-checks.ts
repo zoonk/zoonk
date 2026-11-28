@@ -9,6 +9,7 @@ export type CheckedGraphSkill = {
   name: string;
   phase: number;
   prerequisites: readonly string[];
+  subject?: string | null;
   /** Empty outside exams and beyond their notice. */
   topics: readonly string[];
 };
@@ -100,8 +101,17 @@ export function toSkillNameKey(name: string): string {
   return toNameWords(name).join(" ");
 }
 
-export function toSkillIdentityKey(skill: Pick<CheckedGraphSkill, "libraryId" | "name">): string {
-  return skill.libraryId ? `library:${skill.libraryId}` : toSkillNameKey(skill.name);
+export function toSkillIdentityKey(skill: {
+  libraryId?: string;
+  name: string;
+  subject?: string | null;
+}): string {
+  if (skill.libraryId) {
+    return `library:${skill.libraryId}`;
+  }
+
+  const identity = toSkillNameKey(skill.name);
+  return skill.subject ? JSON.stringify([skill.subject, identity]) : identity;
 }
 
 type Graph = ReadonlyMap<string, CheckedGraphSkill>;

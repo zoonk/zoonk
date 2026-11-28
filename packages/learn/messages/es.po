@@ -29,7 +29,6 @@ msgid "Your answer and the right one"
 msgstr "Tu respuesta y la correcta"
 
 #: src/_components/answer-pair.tsx
-#: src/essay/essay-labels.tsx
 #: src/mock/mock-question.tsx
 #: src/onboarding/steps/question-steps.tsx
 #: src/questions/numeric-answer-field.tsx
@@ -3239,11 +3238,6 @@ msgctxt "3Rx6Qo"
 msgid "Advanced"
 msgstr "Avanzado"
 
-#: src/essay/essay-labels.tsx
-msgctxt "EWD_9X"
-msgid "Your essay"
-msgstr "Tu redacción"
-
 #: src/essay/essay-skip-button.tsx
 #: src/focus-test/focus-test-flow.tsx
 #: src/focus-test/focus-test-screens.tsx
@@ -4841,6 +4835,7 @@ msgstr "Preguntar a {name}"
 #: src/onboarding/steps/reveal-body.tsx
 #: src/plan/plan-past-date-suggestion.tsx
 #: src/plan/plan-suggestion.tsx
+#: src/syllabus/subject-chapters.tsx
 #: src/syllabus/subject-not-planned.tsx
 #: src/today/today-falling-behind.tsx
 msgctxt "2f2Vee"
@@ -5197,6 +5192,7 @@ msgstr "Hacer tu primer desafío semanal"
 
 #: src/journey/preparation/written-projection.tsx
 #: src/language/exam-speaking/exam-speaking-labels.ts
+#: src/mock/mock-result-points.tsx
 #: src/syllabus/subject-written-standing.tsx
 msgctxt "st8F-L"
 msgid "{range} of {max}"
@@ -5214,21 +5210,6 @@ msgid "Not measured yet"
 msgstr "Aún no se mide"
 
 #: src/journey/preparation/written-projection.tsx
-msgctxt "uOG8dr"
-msgid "Above the {minimum} points needed"
-msgstr "Por encima de los {minimum} puntos necesarios"
-
-#: src/journey/preparation/written-projection.tsx
-msgctxt "qjfXcf"
-msgid "{points} points short of the {minimum} needed"
-msgstr "A {points} puntos de alcanzar los {minimum} necesarios"
-
-#: src/journey/preparation/written-projection.tsx
-msgctxt "vUZHcz"
-msgid "Close to the {minimum} points needed"
-msgstr "Cerca de los {minimum} puntos necesarios"
-
-#: src/journey/preparation/written-projection.tsx
 msgctxt "iPMJIn"
 msgid "{part} needs {share} of its points, whatever your other scores."
 msgstr "{part} necesita {share} de sus puntos, sin importar tus otros puntajes."
@@ -5239,9 +5220,9 @@ msgid "{part} needs {minimum} points, whatever your other scores."
 msgstr "{part} necesita {minimum} puntos, sin importar tus otros puntajes."
 
 #: src/journey/preparation/written-projection.tsx
-msgctxt "doYQpO"
-msgid "Below the minimum to pass"
-msgstr "Por debajo del mínimo para aprobar"
+msgctxt "IDmbkm"
+msgid "Likely below the minimum to pass"
+msgstr "Probablemente no alcanza el puntaje mínimo para aprobar"
 
 #: src/journey/preparation/written-projection.tsx
 msgctxt "P8eo6O"
@@ -8480,6 +8461,11 @@ msgid "{name} needs {unit, select, percent {{minimum} of its points} other {{val
 msgstr "El mínimo en {name} es {unit, select, percent {{minimum} de sus puntos} other {{value, plural, one {# punto} other {# puntos}}}} y este simulacro no incluye esa prueba."
 
 #: src/mock/mock-result-points.tsx
+msgctxt "DLtMyQ"
+msgid "No points estimate yet"
+msgstr "Aún no hay una estimación del puntaje"
+
+#: src/mock/mock-result-points.tsx
 msgctxt "JOdrmN"
 msgid "By test"
 msgstr "Por prueba"
@@ -9425,6 +9411,11 @@ msgid "We use it for examples, money and units in your lessons."
 msgstr "Lo usamos para adaptar los ejemplos, la moneda y las unidades de tus lecciones."
 
 #: src/onboarding/steps/country-step.tsx
+msgctxt "E7Yvro"
+msgid "Which country's exam is it?"
+msgstr "¿De qué país es el examen?"
+
+#: src/onboarding/steps/country-step.tsx
 msgctxt "jFT6CV"
 msgid "Which country should your lessons be about?"
 msgstr "¿Sobre qué país quieres que traten tus lecciones?"
@@ -9469,6 +9460,16 @@ msgstr "Tu examen es el {date} (y el {second})"
 msgctxt "cozhs1"
 msgid "{when, select, today {Your date is today, so there are no days left to plan.} other {Your date, {date}, has passed.}}"
 msgstr "{when, select, today {La fecha que elegiste es hoy, así que no quedan días para planear.} other {La fecha que elegiste, {date}, ya pasó.}}"
+
+#: src/onboarding/steps/date-step.tsx
+msgctxt "tFQzba"
+msgid "Not booked yet"
+msgstr "Aún no lo reservé"
+
+#: src/onboarding/steps/date-step.tsx
+msgctxt "4-H9Zy"
+msgid "When is your exam?"
+msgstr "¿Cuándo es tu examen?"
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "xle5hd"
@@ -10000,11 +10001,6 @@ msgstr "Este examen se realiza varias veces al año. Hasta que elijas una fecha,
 msgctxt "I5Nteo"
 msgid "Pick your date"
 msgstr "Elegir tu fecha"
-
-#: src/onboarding/understood/understood-date-row.ts
-msgctxt "oxqgs5"
-msgid "You pick this test's day when you book it. Booked already? Set it here."
-msgstr "Eliges la fecha de esta prueba cuando la reservas. ¿Ya la reservaste? Ingresa la fecha aquí."
 
 #. Under the date of a test with no official notice, such as a class test, when the learner hasn't given its date.
 #: src/onboarding/understood/understood-date-row.ts
@@ -11059,10 +11055,11 @@ msgctxt "VDuR1W"
 msgid "The official exam date is {date}."
 msgstr "La fecha oficial del examen es el {date}."
 
+#. Asks whether to add topics to the learner's plan. {topics} lists their names, which are often actions themselves, such as “Memorize An-Nahl”, so they stay after the colon rather than inside the sentence.
 #: src/plan/use-operation-question.ts
-msgctxt "EP7Gpz"
-msgid "Add {topics} to your plan?"
-msgstr "¿Agregar {topics} a tu plan?"
+msgctxt "UDs2Ah"
+msgid "Add to your plan: {topics}?"
+msgstr "¿Agregar a tu plan: {topics}?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "oeLkPK"
@@ -13096,6 +13093,12 @@ msgctxt "tSwkMF"
 msgid "Asked a lot"
 msgstr "Muy frecuente"
 
+#. Under a module or a phase of the learner's plan, and on the row that lists them: how many of its topics the plan leaves out because they don't fit before the plan's date.
+#: src/syllabus/left-out-topics.tsx
+msgctxt "JUUl4s"
+msgid "{count, plural, one {# topic not in your plan} other {# topics not in your plan}}"
+msgstr "{count, plural, one {# tema no está en tu plan} other {# temas no están en tu plan}}"
+
 #. On one exam's plan. {exams} names the learner's other exams that test some of the same topics.
 #: src/syllabus/shared-exams.tsx
 msgctxt "zK-7PG"
@@ -13146,6 +13149,12 @@ msgstr "{count, plural, one {# capítulo completado} other {# capítulos complet
 msgctxt "oUXyHJ"
 msgid "{done, plural, one {# chapter done} other {# chapters done}}, {known, plural, one {# you already know} other {# you already know}}"
 msgstr "{done, plural, one {# capítulo completado} other {# capítulos completados}}, {known, plural, other {# que ya conocías}}"
+
+#. Under the folded list of a module's or a subject's topics that the learner's plan leaves out: they don't fit in the study time before the date the learner set. Followed by a button to change the plan.
+#: src/syllabus/subject-chapters.tsx
+msgctxt "TKVmQQ"
+msgid "They don't fit before your date."
+msgstr "No hay tiempo suficiente para estudiar estos temas antes de la fecha que elegiste."
 
 #: src/syllabus/subject-chapters.tsx
 msgctxt "Do1Pfd"
@@ -14447,6 +14456,11 @@ msgid "The exam notice doesn't say how many points each criterion is worth."
 msgstr "El aviso del examen no indica cuántos puntos vale cada criterio."
 
 #: src/writing/writing-result.tsx
+msgctxt "pU5Oul"
+msgid "Graded by level. A points estimate isn't available for this answer yet."
+msgstr "Calificada por nivel. Aún no hay una estimación del puntaje para esta respuesta."
+
+#: src/writing/writing-result.tsx
 msgctxt "JrF1rx"
 msgid "Criteria and points from the exam notice."
 msgstr "Criterios y puntajes del aviso del examen."
@@ -14653,3 +14667,23 @@ msgstr "Quita los nombres, las firmas y las marcas que no formen parte de la res
 msgctxt "DsBKHH"
 msgid "Leave out anything that identifies you"
 msgstr "Quita todo lo que te identifique"
+
+#: src/writing/written-standing.tsx
+msgctxt "S2T3vo"
+msgid "Likely above the {minimum} points needed"
+msgstr "Probablemente supera el mínimo de {minimum} puntos"
+
+#: src/writing/written-standing.tsx
+msgctxt "sUornn"
+msgid "Likely below the {minimum} points needed"
+msgstr "Probablemente no alcanza el mínimo de {minimum} puntos"
+
+#: src/writing/written-standing.tsx
+msgctxt "8vhDfM"
+msgid "Could be either side of the {minimum} points needed"
+msgstr "Podría quedar por encima o por debajo del mínimo de {minimum} puntos"
+
+#: src/writing/written-standing.tsx
+msgctxt "bNTvU0"
+msgid "Can't say yet whether this reaches the {minimum} points needed"
+msgstr "Aún no podemos saber si alcanza el mínimo de {minimum} puntos"

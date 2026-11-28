@@ -49,6 +49,11 @@ function getAnsweredByWords(understanding: Extract<GoalUnderstanding, { route: "
   return understanding.dailyMinutes === undefined ? [] : ["schedule"];
 }
 
+/** "Not booked yet" is the date question's answer the words already gave. */
+function getGoalAnswered({ answered, goal }: { answered: string[]; goal: UnderstoodGoal }) {
+  return goal.examNotBooked ? [...answered, "targetDate"] : answered;
+}
+
 /** Offer conflicting official notice dates without replacing the learner's month; never offer estimates. */
 function getOfferedNoticeDay({
   dates,
@@ -80,7 +85,7 @@ function understoodCountrySource({
     return "said" as const;
   }
 
-  return context.homeCountry ? ("home" as const) : ("default" as const);
+  return goal.kind === "learn" && context.homeCountry ? ("home" as const) : ("default" as const);
 }
 
 function understoodCountry({
@@ -90,7 +95,16 @@ function understoodCountry({
   context: UnderstandingContext;
   goal: UnderstoodGoal;
 }) {
-  return goal.kind === "learn" ? (goal.contentCountry ?? context.homeCountry ?? null) : null;
+  switch (goal.kind) {
+    case "learn":
+      return goal.contentCountry ?? context.homeCountry ?? null;
+    case "exam":
+      return goal.contentCountry ?? null;
+    case "language":
+      return null;
+    default:
+      return null;
+  }
 }
 
 async function toGoalView({
@@ -114,10 +128,11 @@ async function toGoalView({
   const source = understoodCountrySource({ context, goal });
 
   const details = compactDetails({
-    answered,
+    answered: getGoalAnswered({ answered, goal }),
     examDay: goal.examDay,
     examMonth: goal.examMonth,
     examName: goal.examName,
+    examOption: goal.examOption,
     examSubjects: goal.examSubjects,
     examTarget: goal.examTarget,
     examYear: exam?.pastYear ? undefined : goal.examYear,
@@ -145,8 +160,8 @@ async function toGoalView({
     contentCountry: goal.countryDependent
       ? toContentCountryView({
           code: contentCountry,
-          editable: true,
-          kind: "content",
+          editable: goal.kind !== "exam",
+          kind: goal.kind === "exam" ? "exam" : "content",
           language,
           source,
         })

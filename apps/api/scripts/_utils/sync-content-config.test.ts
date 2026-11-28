@@ -1,7 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { getLocalDatabaseUrl } from "../../../../packages/db/src/local-database";
 import { getContentDatabaseUrls } from "../../../../packages/db/src/prisma/_sync-content/config";
 
-const LOCAL_DATABASE_URL = "postgresql://postgres:secret@localhost:5432/zoonk";
+const LOCAL_DATABASE_URL = getLocalDatabaseUrl();
 const SOURCE_DATABASE_URL = "postgresql://postgres:secret@source.example.invalid/zoonk";
 
 describe(getContentDatabaseUrls, () => {

@@ -5,6 +5,7 @@ import { type PlanChangeDecisionInput } from "@zoonk/core/plans/decision-contrac
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { type TodayView } from "@zoonk/core/view-models/today/get";
 import { safeAsync } from "@zoonk/utils/error";
+import { keepHyphenatedWords } from "@zoonk/utils/string";
 import { Undo2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
@@ -233,7 +234,9 @@ function PlanChangeNotice({
         ) : (
           <>
             <SuggestionHeader>{words.title}</SuggestionHeader>
-            {words.why && <SuggestionDescription>{words.why}</SuggestionDescription>}
+            {words.why && (
+              <SuggestionDescription>{keepHyphenatedWords(words.why)}</SuggestionDescription>
+            )}
             <SuggestionActions main={<SuggestionOpen>{t("See what changes")}</SuggestionOpen>}>
               {change.source !== NOTICE_SOURCE && change.source !== PHASE_DATES_SOURCE && (
                 <SuggestionAction

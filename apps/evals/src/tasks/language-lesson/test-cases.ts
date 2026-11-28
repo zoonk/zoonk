@@ -257,7 +257,7 @@ export const TEST_CASES: TestCase<unknown, LanguageLessonInput>[] = [
     },
   },
   {
-    expectations: `An IELTS candidate reads the app in English and learns to hear words that differ in their first consonant ("pat" and "bat", "pin" and "bin"). Nothing is translated: words get short plain-English definitions that never contain the word, and sentence \`translation\` fields repeat the sentence. The lesson is about hearing a sound, which writing can't test: a written word gives its spelling away, so practice never asks about a sound or letter in writing ("The first sound in pat is ___" with options "p", "t", "b" fails). Practice tests the contrast through meaning instead: a sentence where only one word of the pair fits ("He hit the ball with a ___": "bat", with "pat" as a wrong option). Each sentence uses one word of a pair, and its distractors include the other word of that pair, so hearing the sentence and building it tests the sound. Tips say how to make each sound, without claims about "your language".`,
+    expectations: `An IELTS candidate reads the app in English and learns to hear words that differ in their first consonant ("pat" and "bat", "pin" and "bin"). Nothing is translated: words get short plain-English definitions that never contain the word, and sentence \`translation\` fields repeat the sentence. The lesson is about hearing a sound, which writing can't test: a written word gives its spelling away, so practice never asks about a sound or letter in writing ("The first sound in pat is ___" with options "p", "t", "b" fails). Practice tests the contrast through meaning instead: a sentence where only one word of the pair fits ("He hit the ball with a ___": "bat", with "pat" as a wrong option). Each sentence uses one word of a pair, and its distractors include the other word of that pair, so hearing the sentence and building it tests the sound. Tips say how to make each sound, without claims about "your language". There is no dialogue: its written lines would show the word a learner should tell apart by ear.`,
     id: "en-en-a1-ielts-consonant-contrasts",
     userInput: {
       knownWords: [],
@@ -273,6 +273,41 @@ export const TEST_CASES: TestCase<unknown, LanguageLessonInput>[] = [
         "Use endings, clusters and stress to identify spoken words",
       ],
       unitTitle: "Hearing the sounds in words",
+    },
+  },
+  {
+    expectations: `US English speaker learning Polish, A1–A2, saying which household chores they do. When the tip is the present-tense endings of common verbs like "sprzątać" or "gotować" ("sprzątam", "sprzątasz", "sprząta"), a pattern table shows one verb's endings for each person and has the learner complete another verb of the same group; every form in it is correct Polish, and each blank's right ending is the longest choice its answer ends with. A tip about something else has no table. Sentences use chores a learner really does ("Sprzątam kuchnię", "Robię pranie") with the accusative where it belongs.`,
+    id: "en-pl-a1-household-chores",
+    origin: "production",
+    userInput: {
+      knownWords: [],
+      learnerLanguage: "en",
+      lessonCanDo: "Describe regular household chores",
+      lessonDescription: "Talk about cleaning and laundry with common Polish verbs.",
+      lessonTitle: "Household chores",
+      level: "A1–A2",
+      targetLanguage: "pl",
+      unitCanDos: [
+        "Describe personal care and household routines",
+        "Talk about errands and breaks",
+        "Connect simultaneous activities and contrast weekday routines",
+      ],
+      unitTitle: "Household and personal routines",
+    },
+  },
+  {
+    expectations: `US English speaker learning Mexican Spanish, A1, saying what they and others do on a weekday ("trabajo", "estudias", "cocina"). The tip is the present-tense endings of regular -ar verbs, so a pattern table shows one -ar verb for yo, tú, él/ella/usted, nosotros and ustedes/ellos, and has the learner complete another -ar verb; Mexican Spanish uses "ustedes", so no vosotros row. Each blank's right ending is the longest choice its answer ends with.`,
+    id: "en-es-a1-weekday-verbs",
+    userInput: {
+      knownWords: ["el lunes", "la casa"],
+      learnerLanguage: "en",
+      lessonCanDo: "Say what you and others do on a weekday",
+      lessonDescription: "Talk about work, study and cooking with regular -ar verbs",
+      lessonTitle: "What we do on weekdays",
+      level: "A1",
+      targetLanguage: "es",
+      unitCanDos: ["Describe a typical day", "Ask someone about their routine"],
+      unitTitle: "Daily routines",
     },
   },
   {

@@ -1,0 +1,12 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+  <!-- Main's lucide TextQuote and Apple's text.quote: a quoted passage, which no Material Symbol draws. -->
+  <path
+      android:strokeColor="@android:color/black"
+      android:strokeWidth="2"
+      android:strokeLineCap="round"
+      android:pathData="M17,5H3M21,12H8M21,19H8M3,12v7"/>
+</vector>

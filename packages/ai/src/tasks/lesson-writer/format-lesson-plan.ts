@@ -10,6 +10,7 @@ import {
   type LessonScreen,
   type LessonSpec,
   type LessonSpecSkill,
+  isPlannedActivity,
 } from "../lesson-spec/lesson-spec-rules";
 import { type LessonVisualKind, findSharedPicture } from "../lesson-spec/lesson-visuals";
 import { getWrittenKinds } from "./written-lesson-schema";
@@ -74,16 +75,16 @@ function formatVisual({
   screen: LessonScreen;
   screens: readonly LessonScreen[];
 }): string {
+  const picture = `   Visual: ${screen.visual ? `a picture: ${screen.visual}` : "none"}`;
+
+  if (isPlannedActivity(screen)) {
+    return `${picture}\n   Activity template: ${screen.activityTemplate}`;
+  }
+
   const shared = findSharedPicture(screens, index);
 
   if (shared !== null) {
     return `   Visual: the picture of screen ${shared + 1} again, as its \`image\``;
-  }
-
-  const picture = `   Visual: ${screen.visual ? `a picture: ${screen.visual}` : "none"}`;
-
-  if (screen.kind === "activity") {
-    return `${picture}\n   Activity template: ${screen.activityTemplate}`;
   }
 
   if (screen.visualKind === "template") {
@@ -109,7 +110,7 @@ function formatScreen({
   shortAnswers: boolean;
 }): string {
   const skillNames = screen.skills.flatMap((skill) => skills[skill]?.name ?? []);
-  const kinds = getWrittenKinds({ kind: screen.kind, shortAnswers });
+  const kinds = getWrittenKinds({ ...screen, shortAnswers });
 
   return [
     `${index + 1}. ${screen.kind}, written as: ${kinds.join(" or ")}`,

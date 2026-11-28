@@ -82,7 +82,7 @@ export type MockReviewEntry = {
 };
 
 export type MockEssayView = {
-  writing?: WritingPrompt;
+  writing: WritingPrompt;
   area: string | null;
   context: string | null;
   grade: z.infer<typeof writtenAnswerSchema>["grade"] | null;

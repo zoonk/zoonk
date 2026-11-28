@@ -13,7 +13,12 @@ export function countCoreLessons({
 }): number {
   return getCoreLessons(
     outlined +
-      countStandInLessons({ lessons: skill.lessons, outlined: skill.outlined, taught: outlined }),
+      countStandInLessons({
+        domain: skill.domain,
+        lessons: skill.lessons,
+        outlined: skill.outlined,
+        taught: outlined,
+      }),
   );
 }
 

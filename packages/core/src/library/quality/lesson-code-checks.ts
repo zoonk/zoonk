@@ -1,4 +1,8 @@
-import { type LessonScreen, type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
+import {
+  type LessonScreen,
+  type LessonSpec,
+  isPlannedActivity,
+} from "@zoonk/ai/tasks/lesson-spec/rules";
 import {
   type LessonMap,
   type WrittenLesson,
@@ -66,10 +70,10 @@ function getKindProblems({
   specScreen,
   shortAnswers,
 }: ScreenCheckInput): Problem[] {
-  const kinds = getWrittenKinds({ kind: specScreen.kind, shortAnswers });
+  const kinds = getWrittenKinds({ ...specScreen, shortAnswers });
+  const plannedActivity = isPlannedActivity(specScreen);
 
-  const fallback =
-    allowActivityFallback && specScreen.kind === "activity" && screen.kind === "check";
+  const fallback = allowActivityFallback && plannedActivity && screen.kind === "check";
 
   return [
     !kinds.includes(screen.kind) &&
@@ -78,7 +82,7 @@ function getKindProblems({
         problem: `Planned as ${specScreen.kind} but written as ${screen.kind}; write it as ${kinds.join(" or ")}.`,
       },
     screen.kind === "activity" &&
-      specScreen.kind === "activity" &&
+      plannedActivity &&
       screen.template !== specScreen.activityTemplate && {
         code: "activityTemplate",
         problem: `Uses the ${screen.template} template; the plan asks for ${specScreen.activityTemplate}.`,

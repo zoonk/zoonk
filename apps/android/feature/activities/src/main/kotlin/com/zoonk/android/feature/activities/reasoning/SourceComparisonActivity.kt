@@ -91,7 +91,8 @@ private fun SourceComparisonActivity(props: ActivityProps) {
 
     fun toggle(id: String) {
         if (props.isLocked) return
-        val next = if (id in marked) marked - id else marked + id
+        val current = learnerMarks ?: return
+        val next = if (id in current) current - id else current + id
         learnerMarks = next
         if (content.check is InteractionCheckValue) props.onAnswerChange(next.takeIf { it.isNotEmpty() }?.let(::selectionAnswer))
     }

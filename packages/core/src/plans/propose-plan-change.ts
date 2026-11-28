@@ -1,6 +1,7 @@
 import "server-only";
 import { type AppliedChange, type UnchangedPlan, proposeChange } from "./_utils/apply-plan-change";
 import { type PlanChangePayload } from "./_utils/plan-change-payload";
+import { type PlanContext } from "./_utils/plan-context";
 import { loadPlanAtToken } from "./_utils/plan-token";
 import { type PlanChangeRecord } from "./_utils/replan";
 import { withPlanRetry } from "./plan-conflict";
@@ -18,6 +19,7 @@ export type PlanProposalResult =
 export async function proposePlanChange({
   approval,
   goalId,
+  isDue,
   operations,
   payload,
   provenance = null,
@@ -29,6 +31,11 @@ export async function proposePlanChange({
   /** "always" asks the learner even for a change small enough to apply at once. */
   approval?: "always" | "whenLarge";
   goalId: string;
+  /**
+   * Read against the plan each attempt proposes to, so a change that only fits the plan a caller
+   * read is never made to a newer one.
+   */
+  isDue?: (context: PlanContext) => boolean;
   payload?: Pick<PlanChangePayload, "releaseId">;
   operations: readonly PlanOperation[];
   provenance?: PlanChangeRecord["provenance"];
@@ -42,6 +49,10 @@ export async function proposePlanChange({
 
     if (!context) {
       return { status: "notFound" };
+    }
+
+    if (isDue && !isDue(context)) {
+      return { status: "notDue" };
     }
 
     return proposeChange({ approval, context, operations, payload, provenance, reason, source });

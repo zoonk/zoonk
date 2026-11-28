@@ -4,12 +4,12 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@zoonk/ui/components/to
 
 export function StatsTitle({ title, help }: { title: string; help?: string }) {
   if (!help) {
-    return <span>{title}</span>;
+    return <span className="text-balance">{title}</span>;
   }
 
   return (
     <Tooltip>
-      <TooltipTrigger className="decoration-muted-foreground/50 hit-area relative cursor-help text-left uppercase decoration-dotted underline-offset-4 hover:underline">
+      <TooltipTrigger className="decoration-muted-foreground/50 hit-area relative cursor-help text-left text-balance uppercase decoration-dotted underline-offset-4 hover:underline">
         {title}
       </TooltipTrigger>
       <TooltipContent>{help}</TooltipContent>

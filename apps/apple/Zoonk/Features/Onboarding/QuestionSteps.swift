@@ -38,7 +38,8 @@ struct QuestionStep: View {
         onAnswer: onAnswer)
     case .targetDate:
       DateQuestion(
-        subject: subject, examDays: view.examDays, initialDate: view.goal.targetDate,
+        subject: subject, booked: view.bookedExam, examDays: view.examDays,
+        initialDate: view.goal.targetDate,
         problem: DateProblem(view.dateProblem),
         today: GoalDate.today(now: .now, timeZone: view.goal.timezone), onAnswer: onAnswer)
     case .followUps:
@@ -280,7 +281,7 @@ struct ChoiceRows<Value: Hashable>: View {
 }
 
 /// Main's `CountryStep`: a pick waits for Continue, since a mis-tap would start a course about the
-/// wrong country. Skip keeps the language's own country.
+/// wrong country. Skip keeps the language's own country; an exam's plans from the exam's name alone.
 private struct CountryQuestion: View {
   let view: GoalOnboarding
   let subject: String
@@ -295,12 +296,18 @@ private struct CountryQuestion: View {
 
   var body: some View {
     QuestionForm {
+      // Another country's exam of the same name is another exam, so the question is whose it is.
       StepHeader(
         subject: subject,
-        title: Text(
-          "Which country should your lessons be about?", tableName: "Onboarding",
-          comment: "Onboarding question for a goal whose content changes from country to country"),
-        description: nil)
+        title: isExam
+          ? Text("Which country's exam is it?", tableName: "Onboarding")
+          : Text(
+            "Which country should your lessons be about?", tableName: "Onboarding",
+            comment: "Onboarding question for a goal whose content changes from country to country"),
+        description: isExam
+          ? nil
+          : Text(
+            "We use it for examples, money and units in your lessons.", tableName: "Onboarding"))
 
       Section {
         ForEach(choices) { choice in
@@ -313,15 +320,18 @@ private struct CountryQuestion: View {
         Button {
           isPickingAnother = true
         } label: {
-          Text(
+          let another = Text(
             "Another country", tableName: "Onboarding",
             comment: "Opens every country, after the ones the content country question suggests"
           )
-          .typeStyle(.rowTitle)
-          .foregroundStyle(Color(.foreground))
-          .frame(maxWidth: .infinity, alignment: .leading)
-          .disclosureChevron()
-          .contentShape(.rect)
+
+          another
+            .layoutPart(.label, text: another)
+            .typeStyle(.rowTitle)
+            .foregroundStyle(Color(.foreground))
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .disclosureChevron()
+            .contentShape(.rect)
         }
         // On the row itself: a modifier on the Section reaches each of its rows, one sheet each.
         .sheet(isPresented: $isPickingAnother) {
@@ -357,7 +367,7 @@ private struct CountryQuestion: View {
           .announcesStatus(notice)
       }
     } buttons: {
-      StepButtons(canContinue: picked != nil) {
+      StepButtons(canContinue: picked != nil, skipIcon: .skip) {
         if let picked {
           onAnswer(["country": picked.code, "question": "contentCountry"])
         }
@@ -365,6 +375,10 @@ private struct CountryQuestion: View {
         onAnswer(["question": "contentCountry"])
       }
     }
+  }
+
+  private var isExam: Bool {
+    view.goal.kind == .exam
   }
 
   private var suggested: [CountryChoice] {
@@ -688,7 +702,9 @@ private struct RoleQuestion: View {
       .locksWhileSaving()
 
     } buttons: {
-      StepButtons(canContinue: !trimmed(isCareerChange ? second : role).isEmpty) {
+      StepButtons(
+        canContinue: !trimmed(isCareerChange ? second : role).isEmpty, skipIcon: .skip
+      ) {
         var input: [String: Any] = ["question": "role", "role": value(role)]
         input[isCareerChange ? "targetPosition" : "tasks"] = value(second)
         onAnswer(input)
@@ -770,7 +786,7 @@ private struct TextQuestion: View {
       .locksWhileSaving()
 
     } buttons: {
-      StepButtons(canContinue: !trimmed(text).isEmpty) {
+      StepButtons(canContinue: !trimmed(text).isEmpty, skipIcon: .skip) {
         onAnswer(answer(trimmed(text)))
       } onSkip: {
         onAnswer(answer(nil))
@@ -828,6 +844,8 @@ private struct TextQuestion: View {
 /// chooses one, and Continue needs one.
 private struct DateQuestion: View {
   let subject: String
+  /// An exam the learner books their own day for: not having booked it yet is the other answer.
+  let booked: Bool
   let examDays: Components.Schemas.Onboarding.ExamDaysPayload?
   let initialDate: String?
   let problem: DateProblem?
@@ -840,6 +858,7 @@ private struct DateQuestion: View {
 
   init(
     subject: String,
+    booked: Bool,
     examDays: Components.Schemas.Onboarding.ExamDaysPayload?,
     initialDate: String?,
     problem: DateProblem?,
@@ -847,6 +866,7 @@ private struct DateQuestion: View {
     onAnswer: @escaping ([String: Any]) -> Void
   ) {
     self.subject = subject
+    self.booked = booked
     self.examDays = examDays
     self.initialDate = initialDate
     self.problem = problem
@@ -867,9 +887,11 @@ private struct DateQuestion: View {
       QuestionForm {
         StepHeader(
           subject: subject,
-          title: Text(
-            "Is there a date you're aiming for?", tableName: "Onboarding",
-            comment: "Onboarding question"),
+          title: booked
+            ? Text("When is your exam?", tableName: "Onboarding")
+            : Text(
+              "Is there a date you're aiming for?", tableName: "Onboarding",
+              comment: "Onboarding question"),
           description: passedNote.map { Text($0) })
 
         Section {
@@ -909,7 +931,11 @@ private struct DateQuestion: View {
         }
         .locksWhileSaving()
       } buttons: {
-        StepButtons(canContinue: date != nil) {
+        StepButtons(
+          canContinue: date != nil,
+          skipLabel: booked ? Text("Not booked yet", tableName: "Onboarding") : nil,
+          skipIcon: .skip
+        ) {
           if let date {
             onAnswer(["question": "targetDate", "targetDate": isoDay(date)])
           }
@@ -1001,7 +1027,8 @@ private struct DateQuestion: View {
     } buttons: {
       StepButtons(
         skipLabel: Text(
-          "Another date", tableName: "Onboarding", comment: "Picks another date than the exam's")
+          "Another date", tableName: "Onboarding", comment: "Picks another date than the exam's"),
+        skipIcon: .calendar
       ) {
         onAnswer(["question": "targetDate", "targetDate": first])
       } onSkip: {
@@ -1107,7 +1134,7 @@ private struct FollowUpsQuestion: View {
       .locksWhileSaving()
 
     } buttons: {
-      StepButtons {
+      StepButtons(skipIcon: .skip) {
         onAnswer(["answers": answers.map(value), "question": "followUps"])
       } onSkip: {
         onAnswer(["answers": questions.map { _ in NSNull() }, "question": "followUps"])
@@ -1192,10 +1219,10 @@ private struct ExamChoiceQuestion: View {
         canContinue: choices.allSatisfy { !(picks[$0.group] ?? []).isEmpty },
         skipLabel: Text(
           "Decide later", tableName: "Onboarding", comment: "Leaves an exam's choice for later"),
-        onContinue: submit
-      ) {
-        onAnswer(["choices": NSNull(), "question": "examChoice"])
-      }
+        skipIcon: .skip,
+        onContinue: submit,
+        onSkip: choices.contains(where: \.required)
+          ? nil : { onAnswer(["choices": NSNull(), "question": "examChoice"]) })
     }
   }
 
@@ -1348,7 +1375,7 @@ private struct SubjectsLevelQuestion: View {
       .locksWhileSaving()
 
     } buttons: {
-      StepButtons {
+      StepButtons(skipIcon: .skip) {
         onAnswer([
           "knownSubjects": subjects.map(\.name).filter(known.contains), "level": NSNull(),
           "question": "level",

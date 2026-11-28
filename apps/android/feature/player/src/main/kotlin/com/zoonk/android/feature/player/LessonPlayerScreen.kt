@@ -117,6 +117,7 @@ import com.zoonk.android.feature.player.steps.LocalBoardMisses
 import com.zoonk.android.feature.player.steps.LocalPrimaryFocus
 import com.zoonk.android.feature.player.steps.LocalResultNotes
 import com.zoonk.android.feature.player.steps.LocalScreenWork
+import com.zoonk.android.feature.player.steps.LocalStepChecked
 import com.zoonk.android.feature.player.steps.LocalStepViewHeight
 import com.zoonk.android.feature.player.steps.LocalWordBankCheck
 import com.zoonk.android.feature.player.steps.SpokenRecordAction
@@ -687,6 +688,7 @@ private fun Content(
 
             CompositionLocalProvider(
                 LocalFeedbackReveal provides reveal,
+                LocalStepChecked provides (state.phase == LessonPhase.Feedback),
                 LocalScreenWork provides work,
                 LocalBoardMisses provides boardMisses,
             ) {

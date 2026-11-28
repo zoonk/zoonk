@@ -1,9 +1,9 @@
 import SwiftUI
 
-struct LessonOption: Identifiable, Hashable {
+struct LessonOption: Identifiable {
   let id: String
   let text: String
-  var detail: String?
+  var detail: RichInline?
   var isCorrect: Bool?
   /// A picture option's description, shown with its text until its picture is drawn.
   var pictureAlt: String?
@@ -11,9 +11,10 @@ struct LessonOption: Identifiable, Hashable {
 }
 
 /// Main's `PlayerChoiceSceneOptions`: number keys pick them on a hardware keyboard, and once
-/// checked only the right option and a wrong pick stay, unless it was a guess. A picture option
-/// keeps its key, its verdict once checked, and its mark in its picture's top corners, each on the
-/// page's color so it reads over any picture.
+/// checked only the right option and a wrong pick stay, unless it was a guess or every option says
+/// something after the check (`keepsEveryOption`). A picture option keeps its key, its verdict once
+/// checked, and its mark in its picture's top corners, each on the page's color so it reads over any
+/// picture.
 struct LessonOptionList: View {
   @Environment(\.lessonScreenHeight) private var screenHeight
 
@@ -23,6 +24,7 @@ struct LessonOptionList: View {
   let isLocked: Bool
   /// A guess is never wrong: a missed pick says "Your guess".
   var isGuess = false
+  var keepsEveryOption = false
   /// Picture options are still being drawn: a missing picture shows its placeholder.
   var picturesPending = false
   let select: (String) -> Void
@@ -36,7 +38,8 @@ struct LessonOptionList: View {
 
   private var shown: [(marker: Int, option: LessonOption)] {
     options.enumerated().compactMap { index, option in
-      isChecked && result(option) == nil && !isGuess ? nil : (index + 1, option)
+      isChecked && result(option) == nil && !isGuess && !keepsEveryOption
+        ? nil : (index + 1, option)
     }
   }
 

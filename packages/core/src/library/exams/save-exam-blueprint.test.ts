@@ -19,11 +19,8 @@ import {
 } from "./blueprint-contract";
 import { type ExamIdentity, buildExamIdentityKey } from "./exam-identity";
 import { type ExamRequest, findSameExam } from "./find-same-exam";
-import {
-  findNoticeReading,
-  previewExamBlueprintChanges,
-  saveExamBlueprint,
-} from "./save-exam-blueprint";
+import { findNoticeReading } from "./notice-reading";
+import { previewExamBlueprintChanges, saveExamBlueprint } from "./save-exam-blueprint";
 
 async function searchedCandidates(request: Partial<ExamRequest> & Pick<ExamRequest, "name">) {
   vi.mocked(decideExamIdentity).mockClear();

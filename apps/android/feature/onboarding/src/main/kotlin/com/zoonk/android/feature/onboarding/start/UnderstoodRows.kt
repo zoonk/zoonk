@@ -145,7 +145,7 @@ class UnderstoodRows(
 
     /**
      * A country-dependent goal's country, from the learner's words or where they live, which they can
-     * change here before anything is built; a foreign exam's, which they can't. Shown even when the
+     * change here before anything is built; an exam's, which they can't. Shown even when the
      * title names it: this row is where it changes. A goal whose country is unknown is asked next.
      */
     fun countryRow(goal: UnderstoodGoal): UnderstoodRow? {
@@ -165,7 +165,7 @@ class UnderstoodRows(
                 country.lessonVariety?.let {
                     text(R.string.country_lesson_language_value, varietyName(it.language, it.region, locale))
                 },
-            editable = EditableField.ContentCountry.takeIf { country.editable && !exam },
+            editable = EditableField.ContentCountry.takeIf { country.editable },
         )
     }
 
@@ -365,7 +365,8 @@ class UnderstoodRows(
         examDates: List<OnboardingExamDate>,
     ): UnderstoodRow? {
         draft.targetDate?.let { return ownDateRow(draft, examDates, it.toJavaLocalDate()) }
-        if (draft.kind != GoalDraftOutput.Kind.EXAM) return null
+        // A booked exam's day is the learner's own booking, which the date question asks.
+        if (draft.kind != GoalDraftOutput.Kind.EXAM || draft.details.text("examDay") == "booked") return null
 
         val first =
             examDates.firstOrNull()
@@ -376,7 +377,6 @@ class UnderstoodRows(
                     note =
                         text(
                             when {
-                                draft.details.text("examDay") == "booked" -> R.string.onboarding_row_date_booked
                                 draft.details.text("examName").isNullOrEmpty() -> R.string.onboarding_row_date_unknown
                                 isGuide(draft) -> R.string.onboarding_row_date_not_out_guide
                                 else -> R.string.onboarding_row_date_not_out_notice

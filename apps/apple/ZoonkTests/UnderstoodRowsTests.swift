@@ -104,7 +104,21 @@ final class UnderstoodRowsTests: XCTestCase {
     XCTAssertNotNil(content.badge, "It came from where the learner lives")
     XCTAssertNotNil(content.note, "Portugal's lessons are written in Brazilian Portuguese")
     XCTAssertNil(examCountry.field)
-    XCTAssertNil(examCountry.badge)
+    XCTAssertNotNil(examCountry.badge, "The learner named the exam's country")
+  }
+
+  func testABookedExamWithoutADayHasNoDateRow() throws {
+    let goal = try understoodGoal(
+      draft: [
+        "kind": "exam", "language": "en", "prompt": "pass the ielts academic",
+        "title": "Pass the IELTS Academic", "displayName": "IELTS",
+        "details": ["examDay": "booked", "examName": "IELTS Academic"],
+      ])
+
+    XCTAssertFalse(
+      UnderstoodRows.rows(for: goal, today: today).contains {
+        $0.id == "targetDate" || $0.id == "examDates"
+      })
   }
 
   func testOnlyANamedExamWaitsForItsNotice() throws {

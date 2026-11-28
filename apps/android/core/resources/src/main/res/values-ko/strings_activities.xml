@@ -17,6 +17,7 @@
   "activities_chart_span": "aa95b0e70935e69e896fd06557b7b7647c3a0ccd39264a70e1ed3bc1317222d5",
   "activities_chart_spans": "2d429195fb6118b93334efe0c9653784ba6b49d1edf0c0c5babc71ef2ce33391",
   "activities_chart_tap_span": "b796ff7518c9c42dd4e7e4b0d830c57cf466b4844291b441775658e3297b1edb",
+  "activities_dialogue_best_reply": "e3c3764ff2025f64d8ad32b867ed095eb02d3873f82a7c1010c18651a763fe46",
   "activities_dialogue_conversation": "2e150e32e097ea8cbf361d35deb043a7d3b770b377e87c5afc048f9d95df3465",
   "activities_dialogue_hear_best": "964c054fa3eeaceb686b9c2382e624f6fa274b5f96a6aac5d9f02c96331bf27d",
   "activities_dialogue_hear_line": "0fbf385d9b2c04a923cb8e2595739aa1d5286cad528ab0471fc675c8b3cfa22b",
@@ -142,6 +143,7 @@
     <string name="activities_dialogue_you_said">내가 한 말:</string>
     <string name="activities_dialogue_hear_line">이 대사 듣기</string>
     <string name="activities_dialogue_hear_best">가장 알맞은 대답 듣기</string>
+    <string name="activities_dialogue_best_reply">가장 적절한 답변:</string>
     <!-- The name of the list of replies the learner picks from in a conversation, for TalkBack. -->
     <string name="activities_dialogue_your_reply">내 답변</string>
     <!-- Read by TalkBack when a row is lifted with the keyboard, like "Picked up Water is split at position 2." -->

@@ -22,6 +22,8 @@ export type ExamFacts = {
 };
 
 type NamedExam = {
+  /** The country whose exam it is, from the learner's words; null when they named none. */
+  country?: string | null;
   examName: string;
   /** The month the learner named with the year (1 to 12), such as 3 in "in March". */
   examMonth?: number | null;
@@ -70,6 +72,11 @@ export function isNamedExam(goal: UnderstoodGoal): goal is UnderstoodGoal & { ex
   return goal.kind === "exam" && Boolean(goal.examName);
 }
 
+/** Each country runs its own exam by that name, so none is matched until the learner says whose. */
+function isUnplacedExam(goal: UnderstoodGoal): boolean {
+  return goal.countryDependent && !goal.contentCountry;
+}
+
 function toExamLookup({
   goal,
   language,
@@ -85,6 +92,7 @@ function toExamLookup({
 
   return {
     exam: {
+      country: goal.contentCountry ?? null,
       examMonth: goal.examMonth,
       examName: goal.examName,
       examYear: goal.examYear,
@@ -116,7 +124,9 @@ export function listExamLookups({
   }
 
   return understanding.goals.map((goal) =>
-    isNamedExam(goal) ? toExamLookup({ goal, language, today, words }) : null,
+    isNamedExam(goal) && !isUnplacedExam(goal)
+      ? toExamLookup({ goal, language, today, words })
+      : null,
   );
 }
 
@@ -218,7 +228,7 @@ export async function searchStoredExam({
   const search = await searchSameExam({
     request: {
       board: null,
-      country: null,
+      country: exam.country ?? null,
       language,
       name: exam.examName,
       ownerId: null,

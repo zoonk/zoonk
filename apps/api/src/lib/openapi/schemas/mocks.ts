@@ -50,7 +50,7 @@ const mockOptionSchema = mockShapeSchema
       .array(z.string())
       .meta({
         description:
-          "The written parts a full mock asks beside its questions, as the notice names them (the exam's own essays, graded by its rubric once it's over)",
+          "The written parts a full mock asks beside its questions, as the notice names them (the exam's own written questions, graded by their notice's criteria once it's over)",
       }),
   })
   .meta({ id: "MockOption" }) satisfies z.ZodType<MockOptionView>;

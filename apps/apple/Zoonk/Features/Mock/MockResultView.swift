@@ -91,12 +91,14 @@ struct MockResultView: View {
       }
       .bottomBar { actions }
     } single: {
+      // Main's steps in order: the score with what supports it and the questions to review, then
+      // each part, then the plan.
       ReviewList(review: view.review, place: $choices.reviewPlace) {
         scoreSections
         diagnosisSections
+        reviewSections
         partSections
         planSections(answersInBar: true)
-        reviewSections
       }
       .bottomBar {
         if choices.plan.isAsking(view.adapt) {
@@ -135,10 +137,21 @@ struct MockResultView: View {
     run.essayGrading == .grading && view.essays.contains { $0.status == .pending }
   }
 
+  private var showsScore: Bool {
+    guard let result = view.result else { return false }
+
+    return result.total > 0 || (view.essays.isEmpty && view.speaking == nil)
+  }
+
   @ViewBuilder
   private var scoreSections: some View {
-    if let result = view.result, result.total > 0 || (view.essays.isEmpty && view.speaking == nil) {
+    if let result = view.result, showsScore {
       MockScoreSections(view: view, result: result, part: .score)
+
+      // A missed minimum's headline isn't followed by a celebration; the day's summary still shows it.
+      if result.points?.missedMinimum == nil {
+        DayMomentSections(result: view.day)
+      }
     }
   }
 
@@ -173,38 +186,37 @@ struct MockResultView: View {
   /// Main's `Details` drawer: each test, what it takes to pass, what stood out and every caveat,
   /// said once.
   private var details: some View {
-    NavigationStack {
-      ZoonkList {
-        if let result = view.result {
-          MockScoreSections(view: view, result: result, part: .details)
-          MockInsightsSection(result: result)
-        }
-
-        MockNotesSection(view: view)
+    DetailsSheet(
+      title: Text("Details", tableName: "Mock", comment: "Title of a mock exam's details")
+    ) {
+      if let result = view.result {
+        MockScoreSections(view: view, result: result, part: .details)
+        MockInsightsSection(result: result)
       }
-      .navigationTitle(
-        Text("Details", tableName: "Mock", comment: "Title of a mock exam's details")
-      )
-      .toolbarTitleDisplayMode(.inline)
-      .sheetClose { choices.showsDetails = false }
+
+      MockNotesSection(view: view)
     }
-    .zoonkSheet()
   }
 
+  /// Each part's result. Without a score, the day's moment follows the first, as it ends main's
+  /// first step.
   @ViewBuilder
   private var partSections: some View {
-    // A missed minimum's headline isn't followed by a celebration; the day's summary still shows it.
-    if view.result?.points?.missedMinimum == nil {
-      DayMomentSections(result: view.day)
-    }
-
     ForEach(Array(view.essays.enumerated()), id: \.element.id) { index, essay in
       MockEssaySections(
         run: run, essay: essay, number: index + 1, total: view.essays.count)
+
+      if index == 0, !showsScore {
+        DayMomentSections(result: view.day)
+      }
     }
 
     if let speaking = view.speaking {
       MockSpeakingSection(paper: speaking) { choices.speakingTask = $0 }
+
+      if view.essays.isEmpty, !showsScore {
+        DayMomentSections(result: view.day)
+      }
     }
   }
 
@@ -849,13 +861,8 @@ private struct MockEssaySections: View {
     Section {
       VStack(alignment: .leading, spacing: 6) {
         // The question's topic names it; its whole prompt was on the question's own page.
-        if let title = essay.writing?.title {
-          Text(title)
-            .typeStyle(.rowTitle)
-        } else {
-          LessonTextBlocks(essay.question)
-            .typeStyle(.body.weight(.semibold))
-        }
+        Text(essay.writing.title)
+          .typeStyle(.rowTitle)
         if essay.unsure {
           FactSegments(facts: [.unsure])
             .typeStyle(.note)
@@ -873,8 +880,8 @@ private struct MockEssaySections: View {
       }
     }
 
-    if let grade = essay.grade, let writing = essay.writing {
-      WritingResultSections(grade: grade, prompt: writing, text: essay.text ?? "")
+    if let grade = essay.grade {
+      WritingResultSections(grade: grade, prompt: essay.writing, text: essay.text ?? "")
     }
   }
 

@@ -58,11 +58,10 @@ function essayView(q: URLSearchParams): Props["essay"] {
     gradesLeft: 2,
     pacing: { minutes: 60, source: "practice" },
     question: "",
-    rubric: "enem",
     sessionId: "00000000-0000-4000-8000-000000000006",
     status: "active",
     writing: {
-      charactersPerLine: 70,
+      charactersPerLine: 87,
       criteria: rows.map(({ id, max: points }, index) => ({ id, name: `C${index + 1}`, points })),
       keySource: "publishedStandard",
       lines: 30,

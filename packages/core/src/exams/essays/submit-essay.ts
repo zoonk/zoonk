@@ -15,7 +15,7 @@ import { findOwnedEssay } from "./_utils/owned-essay";
 import { getWritingAttemptId } from "./_utils/writing-attempt-id";
 import { type EssaySubmissionInput } from "./essay-contract";
 import { getWritingAdmissionId } from "./writing-admission";
-import { type WritingResult, writtenAnswerSchema } from "./writing-contract";
+import { type WritingResult, writingResultSchema, writtenAnswerSchema } from "./writing-contract";
 
 export type SubmitEssayResult =
   | { grade: WritingResult; status: "writingGraded" }
@@ -151,5 +151,5 @@ async function gradeAdmittedEssay({
 
   return recorded.status === "saved"
     ? replaySaved(recorded.saved)
-    : { grade, status: "writingGraded" };
+    : { grade: writingResultSchema.parse(grade), status: "writingGraded" };
 }

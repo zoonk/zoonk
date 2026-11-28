@@ -8,13 +8,11 @@ import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
 import { fillPromptLanguages, getPromptLanguageName } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
-import {
-  type RawGoalUnderstanding,
-  normalizeGoalUnderstanding,
-} from "./normalize-goal-understanding";
+import { normalizeGoalUnderstanding } from "./normalize-goal-understanding";
 import template from "./understand-goal.prompt.md";
+import { type RawGoalUnderstanding } from "./understood-goal";
 
-export type { GoalUnderstanding, UnderstoodGoal } from "./normalize-goal-understanding";
+export type { GoalUnderstanding, UnderstoodGoal } from "./understood-goal";
 
 /**
  * The first wait a new learner sees: Flash Lite passed every check on 53 of 58 goals in 1.59 s p50
@@ -32,6 +30,8 @@ const goalSchema = z.object({
   examDay: z.enum(["official", "booked"]).nullable(),
   examMonth: z.number().nullable(),
   examName: z.string().nullable(),
+  examNotBooked: z.boolean(),
+  examOption: z.string().nullable(),
   examSubjects: z.array(z.string()).nullable(),
   examTarget: z.enum(["admission", "score", "position"]).nullable(),
   examYear: z.number().nullable(),

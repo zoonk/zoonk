@@ -265,3 +265,22 @@ export function moduleBlueprintFixture() {
     structure: EXANI_STRUCTURE,
   });
 }
+
+export const DISCIPLINE = "Discipline";
+export const MECHANICAL = "Mechanical";
+const FE_QUESTIONS = 110;
+
+/** An exam taken in one of several whole versions: every subject is an option of one choice. */
+export const FE_STRUCTURE = {
+  formats: [],
+  mock: null,
+  rules: [],
+  subjects: ["Civil", "Electrical and Computer", MECHANICAL].map((name) => ({
+    choiceGroup: DISCIPLINE,
+    citation: { passage: "Examinees take the exam in one discipline.", sourceId: "notice" },
+    name,
+    questions: FE_QUESTIONS,
+    topics: [],
+    weight: null,
+  })),
+};

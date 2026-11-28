@@ -16,6 +16,7 @@ import {
 } from "../../learner/placement/_utils/test-sitting";
 import { getPlanState } from "../../plans/_utils/plan-context";
 import { applyPlanOperations } from "../../plans/planner/plan-operations";
+import { isExamCountryOwed } from "../../view-models/onboarding/onboarding-steps";
 import { getReferenceSyllabusNeed } from "../curriculum/goal-curriculum-inputs";
 import { toExamIdentity, toSharedContext } from "../curriculum/shared-graph-prompt";
 import { courseFollowersFilter } from "../products/course-release";
@@ -24,6 +25,7 @@ import { linkGoalSources } from "../sources/link-goal-sources";
 import { followSourceRedirects } from "../sources/own-sources";
 import { type ExamStructure, examStructureSchema } from "./blueprint-contract";
 import { readTestedLanguage } from "./blueprint-language";
+import { isOtherCountryExam } from "./exam-country";
 
 export function countActiveExamGoals(examBlueprintId: string): Promise<number> {
   return prisma.goal.count({ where: { examBlueprintId, status: "active" } });
@@ -130,7 +132,10 @@ async function saveNamedChoices(
   return true;
 }
 
-/** Also takes the options of the notice's choices that the learner's stated position or answers name. */
+/**
+ * Also takes the options of the notice's choices that the learner's stated position or answers
+ * name. Returns false without linking a notice of another country than the one the learner gave.
+ */
 export async function linkGoalToExamBlueprint({
   examBlueprintId,
   goalId,
@@ -139,7 +144,7 @@ export async function linkGoalToExamBlueprint({
   goalId: string;
 }): Promise<boolean> {
   const blueprint = await prisma.examBlueprint.findUnique({
-    select: { structure: true },
+    select: { country: true, ownerId: true, structure: true },
     where: { id: examBlueprintId },
   });
 
@@ -157,7 +162,7 @@ export async function linkGoalToExamBlueprint({
     async (tx) => {
       const current = await tx.goal.findUnique({ include: { plan: true }, where: { id: goalId } });
 
-      if (!current) {
+      if (!current || (blueprint && isOtherCountryExam({ blueprint, goal: current }))) {
         return unchanged(false);
       }
 
@@ -263,6 +268,7 @@ export async function linkGoalToResearchSources({
 export async function getResearchGoal(goalId: string) {
   const goal = await prisma.goal.findUnique({
     select: {
+      contentCountry: true,
       details: true,
       goalSources: {
         orderBy: { createdAt: "asc" },
@@ -285,9 +291,11 @@ export async function getResearchGoal(goalId: string) {
   }
 
   const { goalSources, targetDate: _targetDate, ...rest } = goal;
+  const details = isJsonObject(goal.details) ? goal.details : {};
 
   return {
     ...rest,
+    awaitingCountry: isExamCountryOwed({ details, kind: goal.kind }),
     referenceSyllabi: getReferenceSyllabusNeed(goal),
     uploadIds: goalSources.map((link) => link.sourceId),
   };
@@ -307,6 +315,7 @@ export function toLearnerWords(goal: { prompt: string; title: string }): string 
 }
 
 export function toResearchPlanInput(goal: {
+  contentCountry: string | null;
   details: unknown;
   kind: GoalKind;
   prompt: string;
@@ -321,7 +330,10 @@ export function toResearchPlanInput(goal: {
   }
 
   return {
-    details: toSharedContext(details) ?? "none",
+    details:
+      toSharedContext(details, {
+        contentCountry: goal.kind === "exam" ? goal.contentCountry : null,
+      }) ?? "none",
     goal: goal.kind === "exam" ? toResearchedExam({ details, title: goal.title }) : goal.title,
     personal: false,
   };

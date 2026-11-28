@@ -35,9 +35,15 @@ export type LessonScreen = {
   visualKind: LessonVisualKind;
   /** The picture's description, only when `visualKind` is a picture. */
   visual: string | null;
-  /** On activity screens, and on an explanation that shows a template to explore. */
   activityTemplate: string | null;
 };
+
+export function isPlannedActivity({
+  activityTemplate,
+  kind,
+}: Pick<LessonScreen, "activityTemplate" | "kind">): boolean {
+  return kind === "activity" || (kind === "application" && Boolean(activityTemplate));
+}
 
 export type LessonSpec = {
   title: string;

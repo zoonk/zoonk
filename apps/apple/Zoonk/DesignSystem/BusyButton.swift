@@ -67,6 +67,7 @@ private struct BusyButtonLabel<Title: View>: View {
 enum ActionIcon: String {
   case addLessons = "text.badge.plus"
   case archive = "archivebox"
+  case calendar = "calendar"
   case certificate = "rosette"
   /// Commits what the learner entered or picked: check, confirm, save, apply.
   case check = "checkmark"
@@ -79,7 +80,7 @@ enum ActionIcon: String {
   case notSure = "questionmark.circle"
   case notify = "bell"
   /// Starts or resumes something: a session, a lesson, a test, a mock, a task.
-  case play = "play.fill"
+  case play = "play"
   case print = "printer"
   case retry = "arrow.clockwise"
   case send = "paperplane"

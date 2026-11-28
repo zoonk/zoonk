@@ -1,13 +1,17 @@
+import { type PlanGraphSkill } from "./plan-state";
+
 const MIN_STAND_IN_LESSONS = 4;
 
 /** The most lessons one chapter written ahead for a topic holds. */
 export const CHAPTER_LESSONS = 10;
 
 export function countStandInLessons({
+  domain,
   lessons,
   outlined = false,
   taught,
 }: {
+  domain?: PlanGraphSkill["domain"];
   lessons: number;
   outlined?: boolean;
   taught: number;
@@ -21,5 +25,5 @@ export function countStandInLessons({
   }
 
   const missing = lessons - taught;
-  return missing >= MIN_STAND_IN_LESSONS ? missing : 0;
+  return missing >= (domain ? 1 : MIN_STAND_IN_LESSONS) ? missing : 0;
 }

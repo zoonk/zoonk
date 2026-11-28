@@ -14,9 +14,11 @@ extension View {
   }
 
   /// Every sheet's root; a popover keeps `zoonkStyles()` alone. The sheet's background stays the
-  /// system's: a sheet is chrome, and its Liquid Glass is the platform's, never repainted.
+  /// system's: a sheet is chrome, and its Liquid Glass is the platform's, never repainted. A
+  /// `ZoonkList` in it is content, so it stands on the page's surface.
   func zoonkSheet() -> some View {
     zoonkStyles()
       .sheetColumn()
+      .environment(\.isInSheet, true)
   }
 }

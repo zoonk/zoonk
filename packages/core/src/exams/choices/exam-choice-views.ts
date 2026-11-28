@@ -2,7 +2,12 @@ import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { getSubjectPoints } from "../../library/exams/subject-points";
 import { getSubjectQuestions } from "../../library/exams/subject-questions";
 import { findExamQuestions } from "../mocks/mock-structure";
-import { type ChoiceGroup, findChosenOptions, listChoiceGroups } from "./choice-groups";
+import {
+  type ChoiceGroup,
+  findChosenOptions,
+  isRequiredChoice,
+  listChoiceGroups,
+} from "./choice-groups";
 import { type ExamChoiceView } from "./exam-choice-contract";
 import { type ExamPicks, toChosenStructure } from "./exam-choices";
 import { scopeExamStructure } from "./exam-scope";
@@ -86,6 +91,21 @@ function describeLeftOut({
   };
 }
 
+export type UnpickedChoices = {
+  hasUnpickedChoice: boolean;
+  /** A choice that makes up the whole exam is unpicked, so it's asked even after "Decide later". */
+  hasUnpickedRequiredChoice: boolean;
+};
+
+export function findUnpickedChoices(views: readonly ExamChoiceView[]): UnpickedChoices {
+  const unpicked = views.filter((choice) => choice.subjects.length === 0);
+
+  return {
+    hasUnpickedChoice: unpicked.length > 0,
+    hasUnpickedRequiredChoice: unpicked.some((choice) => choice.required),
+  };
+}
+
 /** A short name that two options share can't tell them apart, so both show their full names. */
 function listOptions(options: readonly Subject[]): ExamChoiceView["options"] {
   const shorts = options.map((option) => option.shortName);
@@ -114,6 +134,7 @@ export function listExamChoiceViews({
       group: group.name,
       leftOut: describeLeftOut({ group, structure }),
       options: listOptions(group.options),
+      required: isRequiredChoice({ group, structure }),
       subjects: (chosen ?? []).map((option) => option.name),
       take: group.take,
     };

@@ -140,3 +140,67 @@ test("an exam whose candidates take two modules asks for both and saves them tog
     .poll(() => loadPicks(goal.id))
     .toStrictEqual([{ group: MODULES, subjects: ["Biología", "Química"] }]);
 });
+
+const DISCIPLINE = "Discipline";
+
+async function createDisciplineGoal(userId: string) {
+  const citation = { passage: "Examinees take the exam in one discipline.", sourceId: "notice" };
+
+  const discipline = (name: string) => ({
+    choiceGroup: DISCIPLINE,
+    citation,
+    name,
+    questions: 110,
+    topics: [`${name} fundamentals`],
+    weight: null,
+  });
+
+  const blueprint = await examBlueprintFixture({
+    country: "US",
+    language: "en",
+    name: "FE exam",
+    structure: {
+      formats: [{ citation, description: "Multiple choice", kind: "multipleChoice", options: 4 }],
+      mock: null,
+      rules: [],
+      subjects: [
+        discipline("Civil"),
+        discipline("Electrical and Computer"),
+        discipline("Mechanical"),
+      ],
+    },
+  });
+
+  const goal = await goalFixture({
+    details: { answered: ["target"], examName: "FE exam" },
+    examBlueprintId: blueprint.id,
+    kind: "exam",
+    title: "Pass the FE exam",
+    userId,
+  });
+
+  await planFixture({ goalId: goal.id, phases: [] });
+  return goal;
+}
+
+test("an exam taken in one discipline asks which one with no way to put it off, and saves the pick", async ({
+  noProgressUser,
+  userWithoutProgress: page,
+}) => {
+  const goal = await createDisciplineGoal(noProgressUser.id);
+
+  await page.goto(`/start/${goal.id}`);
+
+  const disciplines = page.getByRole("radiogroup", { name: DISCIPLINE });
+  await expect(disciplines.getByRole("radio")).toHaveCount(3);
+  await expect(page.getByRole("button", { name: "Decide later" })).toBeHidden();
+
+  await disciplines.getByRole("radio", { name: "Mechanical" }).click();
+  await page.getByRole("button", { exact: true, name: "Continue" }).click();
+
+  await expect
+    .poll(() => loadPicks(goal.id))
+    .toStrictEqual([{ group: DISCIPLINE, subjects: ["Mechanical"] }]);
+
+  await expect(page.getByRole("heading", { name: "How much do you already know?" })).toBeVisible();
+});
