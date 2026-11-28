@@ -24,11 +24,13 @@ function skillKey(name: string): string {
   return buildSkillIdentityKey({ name, targetLanguage: null });
 }
 
+const longJapanese = `${"語".repeat(66)} C++`;
+const tooLong = `${"a ".repeat(96)}C++`;
 const cppPicture = "A diagram of C++ inheritance";
 const oldPictureHash = createHash("sha256").update("a-diagram-of-c-inheritance").digest("hex");
 
 describe("symbol identity keys migration", () => {
-  it("moves rows named with + or # to the keys the app now builds, and leaves the rest", async () => {
+  it("moves rows named with + or # off the keys a plain name builds, and leaves the rest", async () => {
     await prisma.$transaction(async (tx) => {
       const setup = [
         "CREATE TEMP TABLE skills (id text, language text, name text, identity_key text) ON COMMIT DROP",
@@ -43,6 +45,8 @@ describe("symbol identity keys migration", () => {
           ('private', 'en', 'Compile and run C++ programs', 'private:owner:PT::compile-and-run-c-programs'),
           ('accents', 'pt', 'Escrever programas simples em C++ (introdução)', ':escrever-programas-simples-em-c-introducao'),
           ('japanese', 'ja', 'C#プログラミング入門', ':c-プログラミング入門'),
+          ('long-japanese', 'ja', '${longJapanese}', ':${"語".repeat(66)}-c'),
+          ('too-long', 'en', '${tooLong}', ':${"a-".repeat(96)}c'),
           ('taken', 'es', 'Write simple C++ programs', ':write-simple-c-programs'),
           ('holder', 'es', 'Write simple C plus plus programs', ':write-simple-c-plus-plus-programs'),
           ('renamed', 'en', 'Use C# delegates', ':use-events'),
@@ -63,6 +67,9 @@ describe("symbol identity keys migration", () => {
         `INSERT INTO goals VALUES ('cpp', 'Learn C++', 'C++'), ('physics', 'Learn physics', 'Physics')`,
       ];
 
+      // Its new key is long enough to be hashed, which this migration can't rebuild.
+      expect(skillKey(tooLong)).toMatch(/^sha256:/u);
+
       /* oxlint-disable no-await-in-loop -- Statements create and then populate the same temporary tables. */
       for (const statement of setup) {
         await tx.$executeRawUnsafe(statement);
@@ -80,6 +87,7 @@ describe("symbol identity keys migration", () => {
         { id: "cpp", identity_key: skillKey("Write simple C++ programs") },
         { id: "holder", identity_key: ":write-simple-c-plus-plus-programs" },
         { id: "japanese", identity_key: skillKey("C#プログラミング入門") },
+        { id: "long-japanese", identity_key: skillKey(longJapanese) },
         { id: "plain", identity_key: ":use-fundamental-types" },
         {
           id: "private",
@@ -93,7 +101,8 @@ describe("symbol identity keys migration", () => {
         },
         { id: "renamed", identity_key: ":use-events" },
         { id: "setup", identity_key: ":setup:g:windows" },
-        { id: "taken", identity_key: ":write-simple-c-programs" },
+        { id: "taken", identity_key: ":write-simple-c-programs#retired" },
+        { id: "too-long", identity_key: `:${"a-".repeat(96)}c#retired` },
       ]);
 
       await expect(tx.$queryRaw`SELECT identity_key FROM library_chapters`).resolves.toStrictEqual([
@@ -147,7 +156,7 @@ describe("symbol identity keys migration", () => {
       await expect(
         tx.$queryRaw`SELECT id, identity_key FROM warm_ups ORDER BY id`,
       ).resolves.toStrictEqual([
-        { id: "cpp", identity_key: "retired:cpp" },
+        { id: "cpp", identity_key: "learn::learn-c-programming-language#retired" },
         { id: "physics", identity_key: "learn::learn-physics" },
       ]);
     });
