@@ -153,6 +153,7 @@ async function planFromGraph({
   }
 
   const { goal } = context;
+  const { id: planId, version } = context.plan;
   const isFirst = context.state.graph.skills.length === 0;
 
   const [target, skills] = await Promise.all([
@@ -195,7 +196,7 @@ async function planFromGraph({
     (!primaryCourseId || primaryCourseId === goal.primaryCourseId) &&
     isPlanUnchanged({ computed, context })
   ) {
-    await prisma.plan.updateMany({ data: membersMark, where: { id: context.plan.id } });
+    await prisma.plan.updateMany({ data: membersMark, where: { id: planId, version } });
     return { computed, goal, isFirst, status: "unchanged" as const };
   }
 
