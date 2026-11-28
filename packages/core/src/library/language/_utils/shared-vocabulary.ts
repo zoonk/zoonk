@@ -30,7 +30,7 @@ function findBankWords({
   texts,
 }: Omit<BankWordsInput, "provenance">) {
   return prisma.word.findMany({
-    orderBy: { createdAt: "asc" },
+    orderBy: [{ createdAt: "asc" }, { id: "asc" }],
     where: { organizationId, targetLanguage, word: { in: [...texts], mode: "insensitive" } },
   });
 }

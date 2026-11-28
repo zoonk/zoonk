@@ -52477,7 +52477,7 @@
             "type": "integer",
             "minimum": -9007199254740991,
             "maximum": 9007199254740991,
-            "description": "When the summary changes without a write: the next local or UTC midnight (when the allowance starts over), the end of a day carried over from the night before, the subscription's next change or the session's end"
+            "description": "When the summary changes without a write: the active goal's next local midnight, a midnight that changes a goal's days left, the UTC allowance reset, the end of a day carried over from the night before, the subscription's next change or the session's end"
           },
           "places": {
             "type": "object",
@@ -52823,6 +52823,13 @@
             "minimum": -9007199254740991,
             "maximum": 9007199254740991
           },
+          "daysLeft": {
+            "nullable": true,
+            "description": "Calendar days until the target date in the goal's time zone. Zero on the date, null once past or without a date.",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
           "displayName": {
             "type": "string"
           },
@@ -52917,6 +52924,7 @@
           "courseId",
           "courseLevel",
           "dailyMinutes",
+          "daysLeft",
           "displayName",
           "id",
           "isActive",

@@ -25,6 +25,7 @@ import { AuthChangeReload } from "./auth-change-reload";
 import { LearnerSummarySync } from "./learner-summary-sync";
 import { PaletteRequestReset } from "./palette-request-reset";
 import { SignedInHintScript } from "./signed-in-hint-script";
+import { TimeZoneCookieScript } from "./time-zone-cookie-script";
 import { UsageNoticeScript } from "./usage-notice-script";
 import "../globals.css";
 
@@ -59,6 +60,7 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
     <html className={FONT_VARIABLES} lang={locale} suppressHydrationWarning>
       <head>
         <SignedInHintScript />
+        <TimeZoneCookieScript />
         <UsageNoticeScript />
         <SidebarStateScript />
         <KeepTypingScript />

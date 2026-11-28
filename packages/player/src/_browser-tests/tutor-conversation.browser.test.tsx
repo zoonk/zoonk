@@ -6,7 +6,6 @@ import {
 } from "@zoonk/core/lesson-questions/contract";
 import { type TutorToolOffer } from "@zoonk/core/lesson-questions/tool-offer-contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
-import { NextIntlClientProvider } from "next-intl";
 import { Activity, type ReactNode, useState, useTransition } from "react";
 import { describe, expect, it, onTestFinished, vi } from "vitest";
 import { page, userEvent } from "vitest/browser";
@@ -211,9 +210,9 @@ describe("the buddy's conversation", () => {
     expect(api.requests.thread).toBe(0);
   });
 
-  it("tells the days apart in the zone the server draws them in, not the browser's", async () => {
+  it("tells the days apart in the device's zone", async () => {
     vi.useFakeTimers({ toFake: ["Date"] });
-    vi.setSystemTime(new Date("2026-12-31T12:00:00Z"));
+    vi.setSystemTime(new Date(2027, 0, 1, 12));
 
     onTestFinished(() => {
       vi.useRealTimers();
@@ -221,24 +220,18 @@ describe("the buddy's conversation", () => {
 
     const api = stubTutorApi({});
 
-    const turn = (question: string, createdAt: string) => ({
+    const turn = (question: string, createdAt: Date) => ({
       ...api.question({ answer: TUTOR_ANSWER, question, status: "completed" }),
-      createdAt,
+      createdAt: createdAt.toISOString(),
     });
 
-    // In Kiritimati (UTC+14) now is Jan 1, 2027, and these are Dec 30 at 23:30, Dec 31 and Jan 1.
     api.questions = [
-      turn("What is a share?", "2026-12-30T09:30:00Z"),
-      turn("What is a bond?", "2026-12-30T11:00:00Z"),
-      turn("What is a fund?", "2026-12-31T11:00:00Z"),
+      turn("What is a share?", new Date(2026, 11, 30, 23, 30)),
+      turn("What is a bond?", new Date(2026, 11, 31, 1)),
+      turn("What is a fund?", new Date(2027, 0, 1, 0, 30)),
     ];
 
     renderConversation({
-      around: (conversation) => (
-        <NextIntlClientProvider locale="en" timeZone="Pacific/Kiritimati">
-          {conversation}
-        </NextIntlClientProvider>
-      ),
       initialThread: { hasMore: false, nextCursor: null, questions: api.questions },
     });
 

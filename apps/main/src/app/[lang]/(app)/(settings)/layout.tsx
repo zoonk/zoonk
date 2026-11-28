@@ -1,4 +1,5 @@
 import { SectionPage } from "@/components/learn/section-page";
+import { LearnerClock } from "@/components/learner/learner-clock";
 import { LearnerSummarySeed } from "@/components/learner/learner-summary-seed";
 import { getMenu } from "@/lib/menu";
 import { getExtracted } from "next-intl/server";
@@ -39,7 +40,7 @@ export default async function Layout({ children }: LayoutProps<"/[lang]">) {
         }
         parents={[{ href: getMenu("aboutYou").url, title: t("About you") }]}
       >
-        {children}
+        <LearnerClock>{children}</LearnerClock>
       </SectionPage>
       <LearnerSummarySeed />
     </>

@@ -105,7 +105,8 @@ class UnderstoodRows(
     private val resources: Resources,
     private val locale: Locale,
     private val is24Hour: Boolean,
-    private val today: LocalDate = LocalDate.now(),
+    /** The draft's calendar day in its zone, as core counts its dates. */
+    private val today: LocalDate,
 ) {
     private fun text(
         id: Int,

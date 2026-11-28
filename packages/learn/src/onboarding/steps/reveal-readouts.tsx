@@ -1,10 +1,9 @@
 "use client";
 
 import { BigQuantity } from "@zoonk/ui/components/big-quantity";
-import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { useExtracted } from "next-intl";
 import { FinishReadout, Readout } from "../../_components/finish-readout";
-import { daysUntilIsoDate } from "../../_utils/iso-date";
+import { daysBetween, useIsoToday } from "../../_utils/iso-date";
 import { useFormatDuration } from "../../_utils/time-format";
 import { getAimAhead } from "../../language-aim/aim-ahead";
 import { usePlanScreen } from "../../plan/plan-context";
@@ -45,12 +44,12 @@ function TimeReadout() {
 /** The days left to a date the learner has, else when the plan finishes (`FinishReadout`). */
 function EndReadout() {
   const t = useExtracted();
-  const today = useMountTime();
+  const today = useIsoToday();
   const { goal, plan } = usePlanScreen();
   const { targetDate, targetDateEstimated } = plan.schedule;
 
   if (targetDate) {
-    const days = daysUntilIsoDate({ isoDate: targetDate, today });
+    const days = Math.max(0, daysBetween(today, targetDate));
 
     return (
       <Readout

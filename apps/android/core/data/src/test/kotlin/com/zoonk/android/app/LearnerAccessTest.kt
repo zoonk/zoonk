@@ -25,6 +25,7 @@ class LearnerAccessTest {
         courseId = null,
         courseLevel = null,
         dailyMinutes = 20,
+        daysLeft = null,
         id = UUID.randomUUID(),
         isActive = true,
         isSettingUp = false,

@@ -699,20 +699,30 @@ describe(gradeSpokenAnswer, () => {
       libraryLessonFixture({ language: "pt", targetLanguage: "en" }),
     ]);
 
-    const [step, lowercase] = await Promise.all([
-      libraryStepFixture({
-        content: { language: "en", prompt: "Agradeça.", targetText: `${word} a lot` },
-        kind: "spokenAnswer",
-        lessonId: lesson.id,
-        skillId: skill.id,
-      }),
-      wordFixture({ organizationId: organization.id, targetLanguage: "en", word }),
-    ]);
+    const step = await libraryStepFixture({
+      content: { language: "en", prompt: "Agradeça.", targetText: `${word} a lot` },
+      kind: "spokenAnswer",
+      lessonId: lesson.id,
+      skillId: skill.id,
+    });
+
+    const savedAt = new Date();
+    const [olderId, newerId] = [crypto.randomUUID(), crypto.randomUUID()].toSorted();
 
     const capitalized = await wordFixture({
+      createdAt: savedAt,
+      id: newerId,
       organizationId: organization.id,
       targetLanguage: "en",
       word: word.charAt(0).toUpperCase() + word.slice(1),
+    });
+
+    const lowercase = await wordFixture({
+      createdAt: savedAt,
+      id: olderId,
+      organizationId: organization.id,
+      targetLanguage: "en",
+      word,
     });
 
     await Promise.all([

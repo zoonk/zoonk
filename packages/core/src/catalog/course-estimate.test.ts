@@ -78,7 +78,7 @@ async function outlinedCourse({
 }
 
 async function examCourse() {
-  const outlined = await outlinedCourse();
+  const outlined = await outlinedCourse({ format: "exam" });
 
   const blueprint = await examBlueprintFixture({
     structure: {
@@ -322,7 +322,6 @@ describe(estimateCoursePlan, () => {
     ]);
 
     await Promise.all([
-      prisma.course.update({ data: { format: "exam" }, where: { id: course.id } }),
       prisma.examSkillGraph.update({
         data: { primaryCourseId: areaCourse.id },
         where: { examBlueprintId: blueprint.id },
