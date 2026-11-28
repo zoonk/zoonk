@@ -25,6 +25,27 @@ const exam = (
 
 export const TEST_CASES: TestCase<ExamIdentityExpected, ExamIdentityInput>[] = [
   pair(
+    "canadian-licence-vs-faa-certificate",
+    "en",
+    exam("Private Pilot Licence", "CA", "Transport Canada"),
+    exam("FAA Private Pilot Certificate", "US", "Federal Aviation Administration"),
+    false,
+  ),
+  pair(
+    "faa-certificate-named-by-a-canadian",
+    "en",
+    exam("FAA Private Pilot Certificate", "CA"),
+    exam("Private Pilot Licence", "CA", "Transport Canada"),
+    false,
+  ),
+  pair(
+    "sat-named-with-another-country",
+    "en",
+    exam("SAT", "KE"),
+    exam("SAT", "US", "College Board"),
+    true,
+  ),
+  pair(
     "enem-full-name",
     "pt",
     exam("Exame Nacional do Ensino Médio", "BR", "INEP"),
