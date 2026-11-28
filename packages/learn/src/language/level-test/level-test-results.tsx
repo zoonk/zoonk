@@ -6,12 +6,15 @@ import { getLanguageNameInSentence } from "@zoonk/utils/languages";
 import { isValidLocale } from "@zoonk/utils/locale";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
-import { TaskMeta } from "../../_components/task-meta";
 import { useAppLocale } from "../../_utils/locale";
 import { useLanguageNameInSentence } from "../../_utils/use-language-name";
 import { OnboardingDescription } from "../../onboarding/onboarding-frame";
 import { TestOutcome } from "../../onboarding/test-outcome";
-import { UpNextLesson, useResultAction } from "../../placement-test/placement-test-screens";
+import {
+  SkippedCaption,
+  UpNextLesson,
+  useResultAction,
+} from "../../placement-test/placement-test-screens";
 import { type TestPressed } from "../../placement-test/test-offer";
 import { useSkippedLessonsSentences } from "../../plan/use-skipped-lessons-sentences";
 import { useResultUndo } from "../../questions/undo-button";
@@ -95,10 +98,9 @@ export function LevelResult({
       }
     >
       {result && (
-        <div className="flex flex-col gap-2.5">
+        <SkippedCaption lessons={skippedNow}>
           <LevelRanges ranges={result.ranges} />
-          {skippedNow > 0 && <TaskMeta facts={[skipped(skippedNow)]} />}
-        </div>
+        </SkippedCaption>
       )}
       {nextLesson && <UpNextLesson title={nextLesson.title} />}
       {testOutLevel && (

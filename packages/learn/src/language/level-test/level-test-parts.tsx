@@ -142,8 +142,16 @@ export function ListeningMessage({
   );
 }
 
+/**
+ * What follows the rows in their group (what the test skipped) is about every row, so a hairline
+ * closes the rows over it: right under the last row, it would read as that row's own line.
+ */
 function LevelRows({ children }: { children: React.ReactNode }) {
-  return <ul className="grid grid-cols-[auto_1fr_auto] items-center gap-x-4">{children}</ul>;
+  return (
+    <ul className="border-border grid grid-cols-[auto_1fr_auto] items-center gap-x-4 not-last:border-b">
+      {children}
+    </ul>
+  );
 }
 
 function LevelRow({

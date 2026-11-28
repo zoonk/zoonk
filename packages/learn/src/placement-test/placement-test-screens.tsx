@@ -2,6 +2,7 @@
 
 import { Button } from "@zoonk/ui/components/button";
 import { MeterParts } from "@zoonk/ui/components/meter";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import {
   ListGroup,
@@ -35,6 +36,29 @@ function CourseLine({ course }: { course: Course }) {
         <DaySegment key={index} {...segment} />
       ))}
     </MeterParts>
+  );
+}
+
+/**
+ * What a result drew (the course's line, a language's level rows) with how many lessons the test
+ * skipped under it, which the picture can't say; nothing under it when none were.
+ */
+export function SkippedCaption({
+  children,
+  className,
+  lessons,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  lessons: number;
+}) {
+  const { skipped } = useSkippedLessonsSentences();
+
+  return (
+    <div className={cn("flex flex-col gap-2.5", className)}>
+      {children}
+      {lessons > 0 && <TaskMeta facts={[skipped(lessons)]} />}
+    </div>
   );
 }
 
@@ -181,12 +205,11 @@ export function PlacementResult({
       }
       title={place ?? sentences.skipped(undone ? 0 : lessonsSkipped)}
     >
+      {/* With nothing skipped the line and its ring say it; with no start the title says it. */}
       {course && !undone && (
-        <div className="-mt-1 flex flex-col gap-2.5">
+        <SkippedCaption className="-mt-1" lessons={place ? lessonsSkipped : 0}>
           <CourseLine course={course} />
-          {/* With nothing skipped the line and its ring say it; with no start the title says it. */}
-          {place && lessonsSkipped > 0 && <TaskMeta facts={[sentences.skipped(lessonsSkipped)]} />}
-        </div>
+        </SkippedCaption>
       )}
 
       {course && nextLesson && (
