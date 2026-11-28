@@ -267,7 +267,7 @@ export function SuggestionDescription({ className, ...props }: React.ComponentPr
 
   return (
     <p
-      className={cn("text-muted-foreground", DESCRIPTION_SIZE[presentation], className)}
+      className={cn("text-muted-foreground text-pretty", DESCRIPTION_SIZE[presentation], className)}
       data-slot="suggestion-description"
       {...props}
     />

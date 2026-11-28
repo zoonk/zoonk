@@ -75,7 +75,7 @@ function listMissingSecond(name: string): Coverage {
       { name: "Third", number: 3, skills: ["s2"] },
       { name: "Fourth", number: 4, skills: ["s3"] },
     ],
-    reason: "Your plan covered every step except the second.",
+    reason: "Your plan covers every step except the second.",
     set: "Steps",
     uncovered: [{ description: "Do the second step.", member: "Second", name, number: 2 }],
   };
@@ -221,7 +221,7 @@ describe(offerMemberSkills, () => {
     const proposed = changes.filter((change) => change.status === "proposed");
 
     expect(proposed).toHaveLength(1);
-    expect(proposed[0]?.reason).toBe("Your plan covered every step except the second.");
+    expect(proposed[0]?.reason).toBe("Your plan covers every step except the second.");
     expect(parsePlanChangePayload(proposed[0]?.payload).source).toBe(MEMBER_CHECK_SOURCE);
   });
 

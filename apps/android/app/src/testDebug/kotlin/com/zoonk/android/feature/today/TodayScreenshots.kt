@@ -540,7 +540,7 @@ class TodayScreenshots {
                                                 """[{"kind":"addSkills","skills":[{"area":"Long surahs","beforeSkillId":null,"lessons":1,
                                                     "name":"Memorize An-Nahl","skillId":"00000000-0000-0000-0000-000000000001"}]}]""",
                                             ),
-                                        "reason" to "Your plan covered every surah of the Quran except An-Nahl.",
+                                        "reason" to "Your plan covers every surah of the Quran except An-Nahl.",
                                     ),
                             ),
                     ),

@@ -52,4 +52,4 @@ When every member has a skill, `missing` is empty. Don't invent gaps to look tho
 
 # Reason
 
-When `missing` has entries, `reason` is one short, plain sentence in `LANGUAGE`, written to the learner, that says what their plan left out of the list, such as "Your plan covered every US state except Ohio." Never promise a result. Otherwise `reason` is empty.
+When `missing` has entries, `reason` is one short, plain sentence in `LANGUAGE`, written to the learner, in the present tense, that says what their plan leaves out of the list, such as "Your plan covers every US state except Ohio." Never promise a result. Otherwise `reason` is empty.
