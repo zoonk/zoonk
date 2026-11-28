@@ -27,192 +27,6 @@
             "Probabilidade de eventos simples"
           ]
         },
-        "id": "pt-enem-matematica-planted-gaps-1",
-        "userInput": {
-          "courses": [
-            {
-              "key": "matematica",
-              "title": "Matemática"
-            }
-          ],
-          "goal": "Passar no ENEM 2026",
-          "goalKind": "exam",
-          "language": "pt",
-          "references": [
-            {
-              "text": "Números: operações com inteiros, frações e decimais\nPorcentagem e juros simples e compostos\nRazão, proporção e regra de três\nLeitura e interpretação de gráficos e tabelas\nMedidas de tendência central: média, mediana e moda\nFunções do primeiro e do segundo grau\nGeometria plana: áreas e perímetros\nGeometria espacial: volumes de prismas, cilindros, cones e esferas\nAnálise combinatória: princípio fundamental da contagem\nProbabilidade de eventos simples\nTrigonometria no triângulo retângulo\nInscrições e taxa de inscrição: consulte o edital",
-              "title": "Matemática e suas Tecnologias: conteúdos"
-            }
-          ],
-          "skills": [
-            {
-              "description": "Operar com inteiros, frações e decimais.",
-              "key": "operacoes",
-              "name": "Operar com inteiros, frações e decimais"
-            },
-            {
-              "description": "Calcular porcentagens.",
-              "key": "porcentagem",
-              "name": "Calcular porcentagens"
-            },
-            {
-              "description": "Calcular juros simples e compostos.",
-              "key": "juros",
-              "name": "Calcular juros simples e compostos"
-            },
-            {
-              "description": "Resolver problemas de razão e proporção.",
-              "key": "proporcao",
-              "name": "Resolver problemas de razão e proporção"
-            },
-            {
-              "description": "Interpretar gráficos e tabelas.",
-              "key": "graficos",
-              "name": "Interpretar gráficos e tabelas"
-            },
-            {
-              "description": "Calcular média, mediana e moda.",
-              "key": "media",
-              "name": "Calcular média, mediana e moda"
-            },
-            {
-              "description": "Usar funções do primeiro e do segundo grau.",
-              "key": "funcoes",
-              "name": "Usar funções do primeiro e do segundo grau"
-            },
-            {
-              "description": "Calcular áreas e perímetros de figuras planas.",
-              "key": "areas",
-              "name": "Calcular áreas e perímetros de figuras planas"
-            },
-            {
-              "description": "Usar seno, cosseno e tangente no triângulo retângulo.",
-              "key": "trigonometria",
-              "name": "Usar seno, cosseno e tangente no triângulo retângulo"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "gaps": [
-            "Geometria espacial: volumes de prismas, cilindros, cones e esferas",
-            "Análise combinatória: princípio fundamental da contagem",
-            "Probabilidade de eventos simples"
-          ]
-        },
-        "id": "pt-enem-matematica-planted-gaps-2",
-        "userInput": {
-          "courses": [
-            {
-              "key": "matematica",
-              "title": "Matemática"
-            }
-          ],
-          "goal": "Passar no ENEM 2026",
-          "goalKind": "exam",
-          "language": "pt",
-          "references": [
-            {
-              "text": "Números: operações com inteiros, frações e decimais\nPorcentagem e juros simples e compostos\nRazão, proporção e regra de três\nLeitura e interpretação de gráficos e tabelas\nMedidas de tendência central: média, mediana e moda\nFunções do primeiro e do segundo grau\nGeometria plana: áreas e perímetros\nGeometria espacial: volumes de prismas, cilindros, cones e esferas\nAnálise combinatória: princípio fundamental da contagem\nProbabilidade de eventos simples\nTrigonometria no triângulo retângulo\nInscrições e taxa de inscrição: consulte o edital",
-              "title": "Matemática e suas Tecnologias: conteúdos"
-            }
-          ],
-          "skills": [
-            {
-              "description": "Operar com inteiros, frações e decimais.",
-              "key": "operacoes",
-              "name": "Operar com inteiros, frações e decimais"
-            },
-            {
-              "description": "Calcular porcentagens.",
-              "key": "porcentagem",
-              "name": "Calcular porcentagens"
-            },
-            {
-              "description": "Calcular juros simples e compostos.",
-              "key": "juros",
-              "name": "Calcular juros simples e compostos"
-            },
-            {
-              "description": "Resolver problemas de razão e proporção.",
-              "key": "proporcao",
-              "name": "Resolver problemas de razão e proporção"
-            },
-            {
-              "description": "Interpretar gráficos e tabelas.",
-              "key": "graficos",
-              "name": "Interpretar gráficos e tabelas"
-            },
-            {
-              "description": "Calcular média, mediana e moda.",
-              "key": "media",
-              "name": "Calcular média, mediana e moda"
-            },
-            {
-              "description": "Usar funções do primeiro e do segundo grau.",
-              "key": "funcoes",
-              "name": "Usar funções do primeiro e do segundo grau"
-            },
-            {
-              "description": "Calcular áreas e perímetros de figuras planas.",
-              "key": "areas",
-              "name": "Calcular áreas e perímetros de figuras planas"
-            },
-            {
-              "description": "Usar seno, cosseno e tangente no triângulo retângulo.",
-              "key": "trigonometria",
-              "name": "Usar seno, cosseno e tangente no triângulo retângulo"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "gaps": [
-            "Geometria espacial: volumes de prismas, cilindros, cones e esferas",
-            "Análise combinatória: princípio fundamental da contagem",
-            "Probabilidade de eventos simples"
-          ]
-        },
         "id": "pt-enem-matematica-planted-gaps-3",
         "userInput": {
           "courses": [
@@ -1437,308 +1251,6 @@
             }
           ]
         },
-        "id": "pt-camara-notice-topics-1",
-        "userInput": {
-          "courses": [
-            {
-              "key": "ciencia-politica",
-              "title": "Ciência Política"
-            },
-            {
-              "key": "portugues",
-              "title": "Língua Portuguesa"
-            }
-          ],
-          "examOutline": {
-            "name": "Concurso da Câmara dos Deputados, Analista Legislativo",
-            "notes": [
-              "Scoring: cada item errado anula um item certo"
-            ],
-            "subjects": [
-              {
-                "group": "Conhecimentos básicos (P1)",
-                "name": "Língua Portuguesa",
-                "questions": null,
-                "topics": [
-                  "1 Compreensão e interpretação de textos de gêneros variados",
-                  "3 Domínio da ortografia",
-                  "5 Domínio da estrutura morfossintática do período",
-                  "5.5 Concordância verbal e nominal",
-                  "5.7 Emprego do sinal indicativo de crase"
-                ],
-                "weight": null
-              },
-              {
-                "group": "Conhecimentos específicos (P2)",
-                "name": "Ciência Política",
-                "questions": null,
-                "topics": [
-                  "1 Regimes políticos",
-                  "2 Sistemas e formas de governo",
-                  "5 Sistemas eleitorais"
-                ],
-                "weight": null
-              }
-            ],
-            "topicFrequency": []
-          },
-          "goal": "quero passar no concurso da câmara dos deputados para analista legislativo",
-          "goalKind": "exam",
-          "language": "pt",
-          "references": [],
-          "skills": [
-            {
-              "description": "Interpretar textos de gêneros variados.",
-              "key": "leitura",
-              "name": "Interpretar textos de gêneros variados",
-              "examWeight": 4,
-              "area": "Língua Portuguesa",
-              "topics": [
-                "1 Compreensão e interpretação de textos de gêneros variados"
-              ]
-            },
-            {
-              "description": "Aplicar as regras de ortografia.",
-              "key": "ortografia",
-              "name": "Aplicar as regras de ortografia",
-              "examWeight": 3,
-              "area": "Língua Portuguesa",
-              "topics": [
-                "3 Domínio da ortografia"
-              ]
-            },
-            {
-              "description": "Empregar o acento grave indicativo de crase.",
-              "key": "crase",
-              "name": "Empregar o acento grave indicativo de crase",
-              "examWeight": 4,
-              "area": "Língua Portuguesa",
-              "topics": []
-            },
-            {
-              "description": "Fazer a concordância do verbo e do nome.",
-              "key": "concordancia",
-              "name": "Fazer a concordância do verbo e do nome",
-              "examWeight": 4,
-              "area": "Língua Portuguesa",
-              "topics": []
-            },
-            {
-              "description": "Comparar regimes políticos.",
-              "key": "regimes",
-              "name": "Comparar regimes políticos",
-              "examWeight": 3,
-              "area": "Ciência Política",
-              "topics": [
-                "1 Regimes políticos"
-              ]
-            },
-            {
-              "description": "Distinguir sistemas e formas de governo.",
-              "key": "governo",
-              "name": "Distinguir sistemas e formas de governo",
-              "examWeight": 3,
-              "area": "Ciência Política",
-              "topics": [
-                "2 Sistemas e formas de governo"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "gapCourses": [
-            "ciencia-politica"
-          ],
-          "gaps": [
-            "5 Sistemas eleitorais"
-          ],
-          "placements": [
-            {
-              "key": "crase",
-              "topics": [
-                "5.7 Emprego do sinal indicativo de crase"
-              ]
-            },
-            {
-              "key": "concordancia",
-              "topics": [
-                "5.5 Concordância verbal e nominal"
-              ]
-            }
-          ]
-        },
-        "id": "pt-camara-notice-topics-2",
-        "userInput": {
-          "courses": [
-            {
-              "key": "ciencia-politica",
-              "title": "Ciência Política"
-            },
-            {
-              "key": "portugues",
-              "title": "Língua Portuguesa"
-            }
-          ],
-          "examOutline": {
-            "name": "Concurso da Câmara dos Deputados, Analista Legislativo",
-            "notes": [
-              "Scoring: cada item errado anula um item certo"
-            ],
-            "subjects": [
-              {
-                "group": "Conhecimentos básicos (P1)",
-                "name": "Língua Portuguesa",
-                "questions": null,
-                "topics": [
-                  "1 Compreensão e interpretação de textos de gêneros variados",
-                  "3 Domínio da ortografia",
-                  "5 Domínio da estrutura morfossintática do período",
-                  "5.5 Concordância verbal e nominal",
-                  "5.7 Emprego do sinal indicativo de crase"
-                ],
-                "weight": null
-              },
-              {
-                "group": "Conhecimentos específicos (P2)",
-                "name": "Ciência Política",
-                "questions": null,
-                "topics": [
-                  "1 Regimes políticos",
-                  "2 Sistemas e formas de governo",
-                  "5 Sistemas eleitorais"
-                ],
-                "weight": null
-              }
-            ],
-            "topicFrequency": []
-          },
-          "goal": "quero passar no concurso da câmara dos deputados para analista legislativo",
-          "goalKind": "exam",
-          "language": "pt",
-          "references": [],
-          "skills": [
-            {
-              "description": "Interpretar textos de gêneros variados.",
-              "key": "leitura",
-              "name": "Interpretar textos de gêneros variados",
-              "examWeight": 4,
-              "area": "Língua Portuguesa",
-              "topics": [
-                "1 Compreensão e interpretação de textos de gêneros variados"
-              ]
-            },
-            {
-              "description": "Aplicar as regras de ortografia.",
-              "key": "ortografia",
-              "name": "Aplicar as regras de ortografia",
-              "examWeight": 3,
-              "area": "Língua Portuguesa",
-              "topics": [
-                "3 Domínio da ortografia"
-              ]
-            },
-            {
-              "description": "Empregar o acento grave indicativo de crase.",
-              "key": "crase",
-              "name": "Empregar o acento grave indicativo de crase",
-              "examWeight": 4,
-              "area": "Língua Portuguesa",
-              "topics": []
-            },
-            {
-              "description": "Fazer a concordância do verbo e do nome.",
-              "key": "concordancia",
-              "name": "Fazer a concordância do verbo e do nome",
-              "examWeight": 4,
-              "area": "Língua Portuguesa",
-              "topics": []
-            },
-            {
-              "description": "Comparar regimes políticos.",
-              "key": "regimes",
-              "name": "Comparar regimes políticos",
-              "examWeight": 3,
-              "area": "Ciência Política",
-              "topics": [
-                "1 Regimes políticos"
-              ]
-            },
-            {
-              "description": "Distinguir sistemas e formas de governo.",
-              "key": "governo",
-              "name": "Distinguir sistemas e formas de governo",
-              "examWeight": 3,
-              "area": "Ciência Política",
-              "topics": [
-                "2 Sistemas e formas de governo"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "gapCourses": [
-            "ciencia-politica"
-          ],
-          "gaps": [
-            "5 Sistemas eleitorais"
-          ],
-          "placements": [
-            {
-              "key": "crase",
-              "topics": [
-                "5.7 Emprego do sinal indicativo de crase"
-              ]
-            },
-            {
-              "key": "concordancia",
-              "topics": [
-                "5.5 Concordância verbal e nominal"
-              ]
-            }
-          ]
-        },
         "id": "pt-camara-notice-topics-3",
         "userInput": {
           "courses": [
@@ -1843,184 +1355,6 @@
               "area": "Ciência Política",
               "topics": [
                 "2 Sistemas e formas de governo"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "gapCourses": [
-            "penal",
-            "administrativo"
-          ],
-          "gaps": [
-            "1 Crimes de falsidade documental",
-            "4 Improbidade administrativa"
-          ]
-        },
-        "id": "pt-notice-subject-combines-disciplines-1",
-        "userInput": {
-          "courses": [
-            {
-              "key": "administrativo",
-              "title": "Direito Administrativo"
-            },
-            {
-              "key": "penal",
-              "title": "Direito Penal"
-            }
-          ],
-          "examOutline": {
-            "name": "Concurso do Tribunal de Justiça, Escrevente Técnico Judiciário",
-            "notes": [],
-            "subjects": [
-              {
-                "group": null,
-                "name": "Conhecimentos em Direito",
-                "questions": null,
-                "topics": [
-                  "1 Crimes de falsidade documental",
-                  "2 Atos administrativos",
-                  "3 Peculato e concussão",
-                  "4 Improbidade administrativa"
-                ],
-                "weight": null
-              }
-            ],
-            "topicFrequency": []
-          },
-          "goal": "quero passar no concurso de escrevente do tribunal de justiça",
-          "goalKind": "exam",
-          "language": "pt",
-          "references": [],
-          "skills": [
-            {
-              "description": "Aplicar as regras dos atos administrativos.",
-              "key": "atos",
-              "name": "Aplicar as regras dos atos administrativos",
-              "examWeight": 3,
-              "area": "Conhecimentos em Direito",
-              "topics": [
-                "2 Atos administrativos"
-              ]
-            },
-            {
-              "description": "Distinguir peculato de concussão.",
-              "key": "peculato",
-              "name": "Distinguir peculato de concussão",
-              "examWeight": 3,
-              "area": "Conhecimentos em Direito",
-              "topics": [
-                "3 Peculato e concussão"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "gapCourses": [
-            "penal",
-            "administrativo"
-          ],
-          "gaps": [
-            "1 Crimes de falsidade documental",
-            "4 Improbidade administrativa"
-          ]
-        },
-        "id": "pt-notice-subject-combines-disciplines-2",
-        "userInput": {
-          "courses": [
-            {
-              "key": "administrativo",
-              "title": "Direito Administrativo"
-            },
-            {
-              "key": "penal",
-              "title": "Direito Penal"
-            }
-          ],
-          "examOutline": {
-            "name": "Concurso do Tribunal de Justiça, Escrevente Técnico Judiciário",
-            "notes": [],
-            "subjects": [
-              {
-                "group": null,
-                "name": "Conhecimentos em Direito",
-                "questions": null,
-                "topics": [
-                  "1 Crimes de falsidade documental",
-                  "2 Atos administrativos",
-                  "3 Peculato e concussão",
-                  "4 Improbidade administrativa"
-                ],
-                "weight": null
-              }
-            ],
-            "topicFrequency": []
-          },
-          "goal": "quero passar no concurso de escrevente do tribunal de justiça",
-          "goalKind": "exam",
-          "language": "pt",
-          "references": [],
-          "skills": [
-            {
-              "description": "Aplicar as regras dos atos administrativos.",
-              "key": "atos",
-              "name": "Aplicar as regras dos atos administrativos",
-              "examWeight": 3,
-              "area": "Conhecimentos em Direito",
-              "topics": [
-                "2 Atos administrativos"
-              ]
-            },
-            {
-              "description": "Distinguir peculato de concussão.",
-              "key": "peculato",
-              "name": "Distinguir peculato de concussão",
-              "examWeight": 3,
-              "area": "Conhecimentos em Direito",
-              "topics": [
-                "3 Peculato e concussão"
               ]
             }
           ]
@@ -2956,6 +2290,858 @@
               "examWeight": 5,
               "area": "Redação discursiva",
               "topics": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "gaps": [
+            "Geometria espacial: volumes de prismas, cilindros, cones e esferas",
+            "Análise combinatória: princípio fundamental da contagem",
+            "Probabilidade de eventos simples"
+          ]
+        },
+        "id": "pt-enem-matematica-planted-gaps-1",
+        "userInput": {
+          "courses": [
+            {
+              "key": "matematica",
+              "title": "Matemática"
+            }
+          ],
+          "goal": "Passar no ENEM 2026",
+          "goalKind": "exam",
+          "language": "pt",
+          "references": [
+            {
+              "text": "Números: operações com inteiros, frações e decimais\nPorcentagem e juros simples e compostos\nRazão, proporção e regra de três\nLeitura e interpretação de gráficos e tabelas\nMedidas de tendência central: média, mediana e moda\nFunções do primeiro e do segundo grau\nGeometria plana: áreas e perímetros\nGeometria espacial: volumes de prismas, cilindros, cones e esferas\nAnálise combinatória: princípio fundamental da contagem\nProbabilidade de eventos simples\nTrigonometria no triângulo retângulo\nInscrições e taxa de inscrição: consulte o edital",
+              "title": "Matemática e suas Tecnologias: conteúdos"
+            }
+          ],
+          "skills": [
+            {
+              "description": "Operar com inteiros, frações e decimais.",
+              "key": "operacoes",
+              "name": "Operar com inteiros, frações e decimais"
+            },
+            {
+              "description": "Calcular porcentagens.",
+              "key": "porcentagem",
+              "name": "Calcular porcentagens"
+            },
+            {
+              "description": "Calcular juros simples e compostos.",
+              "key": "juros",
+              "name": "Calcular juros simples e compostos"
+            },
+            {
+              "description": "Resolver problemas de razão e proporção.",
+              "key": "proporcao",
+              "name": "Resolver problemas de razão e proporção"
+            },
+            {
+              "description": "Interpretar gráficos e tabelas.",
+              "key": "graficos",
+              "name": "Interpretar gráficos e tabelas"
+            },
+            {
+              "description": "Calcular média, mediana e moda.",
+              "key": "media",
+              "name": "Calcular média, mediana e moda"
+            },
+            {
+              "description": "Usar funções do primeiro e do segundo grau.",
+              "key": "funcoes",
+              "name": "Usar funções do primeiro e do segundo grau"
+            },
+            {
+              "description": "Calcular áreas e perímetros de figuras planas.",
+              "key": "areas",
+              "name": "Calcular áreas e perímetros de figuras planas"
+            },
+            {
+              "description": "Usar seno, cosseno e tangente no triângulo retângulo.",
+              "key": "trigonometria",
+              "name": "Usar seno, cosseno e tangente no triângulo retângulo"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "gaps": [
+            "Geometria espacial: volumes de prismas, cilindros, cones e esferas",
+            "Análise combinatória: princípio fundamental da contagem",
+            "Probabilidade de eventos simples"
+          ]
+        },
+        "id": "pt-enem-matematica-planted-gaps-2",
+        "userInput": {
+          "courses": [
+            {
+              "key": "matematica",
+              "title": "Matemática"
+            }
+          ],
+          "goal": "Passar no ENEM 2026",
+          "goalKind": "exam",
+          "language": "pt",
+          "references": [
+            {
+              "text": "Números: operações com inteiros, frações e decimais\nPorcentagem e juros simples e compostos\nRazão, proporção e regra de três\nLeitura e interpretação de gráficos e tabelas\nMedidas de tendência central: média, mediana e moda\nFunções do primeiro e do segundo grau\nGeometria plana: áreas e perímetros\nGeometria espacial: volumes de prismas, cilindros, cones e esferas\nAnálise combinatória: princípio fundamental da contagem\nProbabilidade de eventos simples\nTrigonometria no triângulo retângulo\nInscrições e taxa de inscrição: consulte o edital",
+              "title": "Matemática e suas Tecnologias: conteúdos"
+            }
+          ],
+          "skills": [
+            {
+              "description": "Operar com inteiros, frações e decimais.",
+              "key": "operacoes",
+              "name": "Operar com inteiros, frações e decimais"
+            },
+            {
+              "description": "Calcular porcentagens.",
+              "key": "porcentagem",
+              "name": "Calcular porcentagens"
+            },
+            {
+              "description": "Calcular juros simples e compostos.",
+              "key": "juros",
+              "name": "Calcular juros simples e compostos"
+            },
+            {
+              "description": "Resolver problemas de razão e proporção.",
+              "key": "proporcao",
+              "name": "Resolver problemas de razão e proporção"
+            },
+            {
+              "description": "Interpretar gráficos e tabelas.",
+              "key": "graficos",
+              "name": "Interpretar gráficos e tabelas"
+            },
+            {
+              "description": "Calcular média, mediana e moda.",
+              "key": "media",
+              "name": "Calcular média, mediana e moda"
+            },
+            {
+              "description": "Usar funções do primeiro e do segundo grau.",
+              "key": "funcoes",
+              "name": "Usar funções do primeiro e do segundo grau"
+            },
+            {
+              "description": "Calcular áreas e perímetros de figuras planas.",
+              "key": "areas",
+              "name": "Calcular áreas e perímetros de figuras planas"
+            },
+            {
+              "description": "Usar seno, cosseno e tangente no triângulo retângulo.",
+              "key": "trigonometria",
+              "name": "Usar seno, cosseno e tangente no triângulo retângulo"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "gapCourses": [
+            "ciencia-politica"
+          ],
+          "gaps": [
+            "5 Sistemas eleitorais"
+          ],
+          "placements": [
+            {
+              "key": "crase",
+              "topics": [
+                "5.7 Emprego do sinal indicativo de crase"
+              ]
+            },
+            {
+              "key": "concordancia",
+              "topics": [
+                "5.5 Concordância verbal e nominal"
+              ]
+            }
+          ]
+        },
+        "id": "pt-camara-notice-topics-1",
+        "userInput": {
+          "courses": [
+            {
+              "key": "ciencia-politica",
+              "title": "Ciência Política"
+            },
+            {
+              "key": "portugues",
+              "title": "Língua Portuguesa"
+            }
+          ],
+          "examOutline": {
+            "name": "Concurso da Câmara dos Deputados, Analista Legislativo",
+            "notes": [
+              "Scoring: cada item errado anula um item certo"
+            ],
+            "subjects": [
+              {
+                "group": "Conhecimentos básicos (P1)",
+                "name": "Língua Portuguesa",
+                "questions": null,
+                "topics": [
+                  "1 Compreensão e interpretação de textos de gêneros variados",
+                  "3 Domínio da ortografia",
+                  "5 Domínio da estrutura morfossintática do período",
+                  "5.5 Concordância verbal e nominal",
+                  "5.7 Emprego do sinal indicativo de crase"
+                ],
+                "weight": null
+              },
+              {
+                "group": "Conhecimentos específicos (P2)",
+                "name": "Ciência Política",
+                "questions": null,
+                "topics": [
+                  "1 Regimes políticos",
+                  "2 Sistemas e formas de governo",
+                  "5 Sistemas eleitorais"
+                ],
+                "weight": null
+              }
+            ],
+            "topicFrequency": []
+          },
+          "goal": "quero passar no concurso da câmara dos deputados para analista legislativo",
+          "goalKind": "exam",
+          "language": "pt",
+          "references": [],
+          "skills": [
+            {
+              "description": "Interpretar textos de gêneros variados.",
+              "key": "leitura",
+              "name": "Interpretar textos de gêneros variados",
+              "examWeight": 4,
+              "area": "Língua Portuguesa",
+              "topics": [
+                "1 Compreensão e interpretação de textos de gêneros variados"
+              ]
+            },
+            {
+              "description": "Aplicar as regras de ortografia.",
+              "key": "ortografia",
+              "name": "Aplicar as regras de ortografia",
+              "examWeight": 3,
+              "area": "Língua Portuguesa",
+              "topics": [
+                "3 Domínio da ortografia"
+              ]
+            },
+            {
+              "description": "Empregar o acento grave indicativo de crase.",
+              "key": "crase",
+              "name": "Empregar o acento grave indicativo de crase",
+              "examWeight": 4,
+              "area": "Língua Portuguesa",
+              "topics": []
+            },
+            {
+              "description": "Fazer a concordância do verbo e do nome.",
+              "key": "concordancia",
+              "name": "Fazer a concordância do verbo e do nome",
+              "examWeight": 4,
+              "area": "Língua Portuguesa",
+              "topics": []
+            },
+            {
+              "description": "Comparar regimes políticos.",
+              "key": "regimes",
+              "name": "Comparar regimes políticos",
+              "examWeight": 3,
+              "area": "Ciência Política",
+              "topics": [
+                "1 Regimes políticos"
+              ]
+            },
+            {
+              "description": "Distinguir sistemas e formas de governo.",
+              "key": "governo",
+              "name": "Distinguir sistemas e formas de governo",
+              "examWeight": 3,
+              "area": "Ciência Política",
+              "topics": [
+                "2 Sistemas e formas de governo"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "gapCourses": [
+            "ciencia-politica"
+          ],
+          "gaps": [
+            "5 Sistemas eleitorais"
+          ],
+          "placements": [
+            {
+              "key": "crase",
+              "topics": [
+                "5.7 Emprego do sinal indicativo de crase"
+              ]
+            },
+            {
+              "key": "concordancia",
+              "topics": [
+                "5.5 Concordância verbal e nominal"
+              ]
+            }
+          ]
+        },
+        "id": "pt-camara-notice-topics-2",
+        "userInput": {
+          "courses": [
+            {
+              "key": "ciencia-politica",
+              "title": "Ciência Política"
+            },
+            {
+              "key": "portugues",
+              "title": "Língua Portuguesa"
+            }
+          ],
+          "examOutline": {
+            "name": "Concurso da Câmara dos Deputados, Analista Legislativo",
+            "notes": [
+              "Scoring: cada item errado anula um item certo"
+            ],
+            "subjects": [
+              {
+                "group": "Conhecimentos básicos (P1)",
+                "name": "Língua Portuguesa",
+                "questions": null,
+                "topics": [
+                  "1 Compreensão e interpretação de textos de gêneros variados",
+                  "3 Domínio da ortografia",
+                  "5 Domínio da estrutura morfossintática do período",
+                  "5.5 Concordância verbal e nominal",
+                  "5.7 Emprego do sinal indicativo de crase"
+                ],
+                "weight": null
+              },
+              {
+                "group": "Conhecimentos específicos (P2)",
+                "name": "Ciência Política",
+                "questions": null,
+                "topics": [
+                  "1 Regimes políticos",
+                  "2 Sistemas e formas de governo",
+                  "5 Sistemas eleitorais"
+                ],
+                "weight": null
+              }
+            ],
+            "topicFrequency": []
+          },
+          "goal": "quero passar no concurso da câmara dos deputados para analista legislativo",
+          "goalKind": "exam",
+          "language": "pt",
+          "references": [],
+          "skills": [
+            {
+              "description": "Interpretar textos de gêneros variados.",
+              "key": "leitura",
+              "name": "Interpretar textos de gêneros variados",
+              "examWeight": 4,
+              "area": "Língua Portuguesa",
+              "topics": [
+                "1 Compreensão e interpretação de textos de gêneros variados"
+              ]
+            },
+            {
+              "description": "Aplicar as regras de ortografia.",
+              "key": "ortografia",
+              "name": "Aplicar as regras de ortografia",
+              "examWeight": 3,
+              "area": "Língua Portuguesa",
+              "topics": [
+                "3 Domínio da ortografia"
+              ]
+            },
+            {
+              "description": "Empregar o acento grave indicativo de crase.",
+              "key": "crase",
+              "name": "Empregar o acento grave indicativo de crase",
+              "examWeight": 4,
+              "area": "Língua Portuguesa",
+              "topics": []
+            },
+            {
+              "description": "Fazer a concordância do verbo e do nome.",
+              "key": "concordancia",
+              "name": "Fazer a concordância do verbo e do nome",
+              "examWeight": 4,
+              "area": "Língua Portuguesa",
+              "topics": []
+            },
+            {
+              "description": "Comparar regimes políticos.",
+              "key": "regimes",
+              "name": "Comparar regimes políticos",
+              "examWeight": 3,
+              "area": "Ciência Política",
+              "topics": [
+                "1 Regimes políticos"
+              ]
+            },
+            {
+              "description": "Distinguir sistemas e formas de governo.",
+              "key": "governo",
+              "name": "Distinguir sistemas e formas de governo",
+              "examWeight": 3,
+              "area": "Ciência Política",
+              "topics": [
+                "2 Sistemas e formas de governo"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "gapLessons": [
+            {
+              "max": 20,
+              "min": 6
+            },
+            {
+              "max": 4,
+              "min": 1
+            }
+          ],
+          "gaps": [
+            "3 Engenharia de software: processos de desenvolvimento, requisitos, testes, manutenção e qualidade",
+            "4 Notação assintótica (Big O)"
+          ]
+        },
+        "id": "pt-notice-gap-sized-like-neighbors-1",
+        "userInput": {
+          "courses": [
+            {
+              "key": "computacao",
+              "title": "Ciência da Computação"
+            }
+          ],
+          "examOutline": {
+            "name": "CGU, Auditor Federal de Finanças e Controle - Tecnologia da Informação (Cebraspe)",
+            "notes": [],
+            "subjects": [
+              {
+                "group": "Conhecimentos específicos (P3)",
+                "name": "Desenvolvimento de Sistemas",
+                "questions": 90,
+                "topics": [
+                  "1 Lógica de programação: algoritmos, estruturas de controle, funções e recursão",
+                  "2 Estruturas de dados: listas, pilhas, filas, árvores, grafos e tabelas hash",
+                  "3 Engenharia de software: processos de desenvolvimento, requisitos, testes, manutenção e qualidade",
+                  "4 Notação assintótica (Big O)"
+                ],
+                "weight": null
+              }
+            ],
+            "topicFrequency": []
+          },
+          "goal": "Passar no concurso da CGU na área de TI",
+          "goalKind": "exam",
+          "language": "pt",
+          "references": [],
+          "skills": [
+            {
+              "description": "Escrever algoritmos com funções e recursão.",
+              "key": "logica",
+              "name": "Escrever algoritmos com funções e recursão",
+              "examWeight": 5,
+              "area": "Desenvolvimento de Sistemas",
+              "topics": [
+                "1 Lógica de programação: algoritmos, estruturas de controle, funções e recursão"
+              ],
+              "estimatedLessons": 12
+            },
+            {
+              "description": "Escolher a estrutura de dados para um problema.",
+              "key": "estruturas",
+              "name": "Escolher a estrutura de dados para um problema",
+              "examWeight": 5,
+              "area": "Desenvolvimento de Sistemas",
+              "topics": [
+                "2 Estruturas de dados: listas, pilhas, filas, árvores, grafos e tabelas hash"
+              ],
+              "estimatedLessons": 14
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "gapLessons": [
+            {
+              "max": 20,
+              "min": 6
+            },
+            {
+              "max": 4,
+              "min": 1
+            }
+          ],
+          "gaps": [
+            "3 Engenharia de software: processos de desenvolvimento, requisitos, testes, manutenção e qualidade",
+            "4 Notação assintótica (Big O)"
+          ]
+        },
+        "id": "pt-notice-gap-sized-like-neighbors-2",
+        "userInput": {
+          "courses": [
+            {
+              "key": "computacao",
+              "title": "Ciência da Computação"
+            }
+          ],
+          "examOutline": {
+            "name": "CGU, Auditor Federal de Finanças e Controle - Tecnologia da Informação (Cebraspe)",
+            "notes": [],
+            "subjects": [
+              {
+                "group": "Conhecimentos específicos (P3)",
+                "name": "Desenvolvimento de Sistemas",
+                "questions": 90,
+                "topics": [
+                  "1 Lógica de programação: algoritmos, estruturas de controle, funções e recursão",
+                  "2 Estruturas de dados: listas, pilhas, filas, árvores, grafos e tabelas hash",
+                  "3 Engenharia de software: processos de desenvolvimento, requisitos, testes, manutenção e qualidade",
+                  "4 Notação assintótica (Big O)"
+                ],
+                "weight": null
+              }
+            ],
+            "topicFrequency": []
+          },
+          "goal": "Passar no concurso da CGU na área de TI",
+          "goalKind": "exam",
+          "language": "pt",
+          "references": [],
+          "skills": [
+            {
+              "description": "Escrever algoritmos com funções e recursão.",
+              "key": "logica",
+              "name": "Escrever algoritmos com funções e recursão",
+              "examWeight": 5,
+              "area": "Desenvolvimento de Sistemas",
+              "topics": [
+                "1 Lógica de programação: algoritmos, estruturas de controle, funções e recursão"
+              ],
+              "estimatedLessons": 12
+            },
+            {
+              "description": "Escolher a estrutura de dados para um problema.",
+              "key": "estruturas",
+              "name": "Escolher a estrutura de dados para um problema",
+              "examWeight": 5,
+              "area": "Desenvolvimento de Sistemas",
+              "topics": [
+                "2 Estruturas de dados: listas, pilhas, filas, árvores, grafos e tabelas hash"
+              ],
+              "estimatedLessons": 14
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "gapCourses": [
+            "penal",
+            "administrativo"
+          ],
+          "gaps": [
+            "1 Crimes de falsidade documental",
+            "4 Improbidade administrativa"
+          ]
+        },
+        "id": "pt-notice-subject-combines-disciplines-1",
+        "userInput": {
+          "courses": [
+            {
+              "key": "administrativo",
+              "title": "Direito Administrativo"
+            },
+            {
+              "key": "penal",
+              "title": "Direito Penal"
+            }
+          ],
+          "examOutline": {
+            "name": "Concurso do Tribunal de Justiça, Escrevente Técnico Judiciário",
+            "notes": [],
+            "subjects": [
+              {
+                "group": null,
+                "name": "Conhecimentos em Direito",
+                "questions": null,
+                "topics": [
+                  "1 Crimes de falsidade documental",
+                  "2 Atos administrativos",
+                  "3 Peculato e concussão",
+                  "4 Improbidade administrativa"
+                ],
+                "weight": null
+              }
+            ],
+            "topicFrequency": []
+          },
+          "goal": "quero passar no concurso de escrevente do tribunal de justiça",
+          "goalKind": "exam",
+          "language": "pt",
+          "references": [],
+          "skills": [
+            {
+              "description": "Aplicar as regras dos atos administrativos.",
+              "key": "atos",
+              "name": "Aplicar as regras dos atos administrativos",
+              "examWeight": 3,
+              "area": "Conhecimentos em Direito",
+              "topics": [
+                "2 Atos administrativos"
+              ]
+            },
+            {
+              "description": "Distinguir peculato de concussão.",
+              "key": "peculato",
+              "name": "Distinguir peculato de concussão",
+              "examWeight": 3,
+              "area": "Conhecimentos em Direito",
+              "topics": [
+                "3 Peculato e concussão"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "gapCourses": [
+            "penal",
+            "administrativo"
+          ],
+          "gaps": [
+            "1 Crimes de falsidade documental",
+            "4 Improbidade administrativa"
+          ]
+        },
+        "id": "pt-notice-subject-combines-disciplines-2",
+        "userInput": {
+          "courses": [
+            {
+              "key": "administrativo",
+              "title": "Direito Administrativo"
+            },
+            {
+              "key": "penal",
+              "title": "Direito Penal"
+            }
+          ],
+          "examOutline": {
+            "name": "Concurso do Tribunal de Justiça, Escrevente Técnico Judiciário",
+            "notes": [],
+            "subjects": [
+              {
+                "group": null,
+                "name": "Conhecimentos em Direito",
+                "questions": null,
+                "topics": [
+                  "1 Crimes de falsidade documental",
+                  "2 Atos administrativos",
+                  "3 Peculato e concussão",
+                  "4 Improbidade administrativa"
+                ],
+                "weight": null
+              }
+            ],
+            "topicFrequency": []
+          },
+          "goal": "quero passar no concurso de escrevente do tribunal de justiça",
+          "goalKind": "exam",
+          "language": "pt",
+          "references": [],
+          "skills": [
+            {
+              "description": "Aplicar as regras dos atos administrativos.",
+              "key": "atos",
+              "name": "Aplicar as regras dos atos administrativos",
+              "examWeight": 3,
+              "area": "Conhecimentos em Direito",
+              "topics": [
+                "2 Atos administrativos"
+              ]
+            },
+            {
+              "description": "Distinguir peculato de concussão.",
+              "key": "peculato",
+              "name": "Distinguir peculato de concussão",
+              "examWeight": 3,
+              "area": "Conhecimentos em Direito",
+              "topics": [
+                "3 Peculato e concussão"
+              ]
             }
           ]
         }
