@@ -5,6 +5,7 @@ import { CodeBlock, CodeListing, InlineCode } from "@zoonk/learn/code";
 import { DisplayMath } from "@zoonk/learn/rich-text/display-math";
 import {
   AlertDialog,
+  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -12,10 +13,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@zoonk/ui/components/alert-dialog";
-import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
-import { ExternalLinkIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ComponentProps, type MouseEvent, createContext, use, useState } from "react";
 import {
@@ -60,9 +59,7 @@ function ExternalLinkConfirmation({ isOpen, onClose, onConfirm, url }: LinkSafet
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>{t("Cancel")}</AlertDialogCancel>
-          <Button icon={<ExternalLinkIcon aria-hidden="true" />} onClick={openLink}>
-            {t("Open link")}
-          </Button>
+          <AlertDialogAction onClick={openLink}>{t("Open link")}</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

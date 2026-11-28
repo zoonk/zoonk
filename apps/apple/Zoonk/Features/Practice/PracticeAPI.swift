@@ -59,6 +59,8 @@ struct MistakePracticeEntry: Equatable, Identifiable {
   var drill: PracticeDrill
   var mistakeId: String
   var questions: [PracticeQuestion]
+  /// The order this entry laid out its options in, sent back with an answer to its question.
+  var showing: String
   var lesson: MistakeLessonReplay? = nil
   var tutorAvailable = true
 
@@ -80,6 +82,8 @@ struct MistakePracticeGrade: Equatable {
   var isStillOpen: Bool
   var reached: PracticeReached
   var trap: String?
+  /// Right on the day of the miss: it counts, and fixes the entry only on a later day.
+  var requiresLaterDay = false
   var lessonResult: LessonStepResult? = nil
   var notSure = false
   var workedSteps: [String] = []
@@ -216,14 +220,14 @@ struct PracticeAPI: Sendable {
     }
   }
 
-  func mistakePractice(token: String, goalId: String?, skillId: String?) async throws
+  func mistakePractice(token: String, goalId: String?, scope: MistakePracticeScope) async throws
     -> MistakePracticeSet
   {
     try await perform(token) { client in
       switch try await client.getCurrentUserMistakePractice(
         query: .init(
-          goalId: goalId, includeAllFormats: ._true, skillId: skillId,
-          timeZone: timeZone))
+          blockId: scope.blockId, goalId: scope.goal(goalId), includeAllFormats: ._true,
+          mockId: scope.mockId, skillId: scope.skillId, timeZone: timeZone))
       {
       case .ok(let response):
         let practice = try response.body.json
@@ -235,6 +239,7 @@ struct PracticeAPI: Sendable {
               drill: try PracticeJSON.recode(entry.drill),
               mistakeId: entry.mistakeId,
               questions: try entry.questions.map { try PracticeJSON.recode($0) },
+              showing: entry.showing,
               lesson: try entry.lesson.map { try PracticeJSON.recode($0) },
               tutorAvailable: entry.tutorAvailable)
           },
@@ -246,14 +251,15 @@ struct PracticeAPI: Sendable {
   }
 
   func answerMistake(
-    token: String, mistakeId: String, itemId: String, answer: PracticeAnswer, durationMs: Int,
-    attemptId: String, runAnswerIds: [String], goalId: String?
+    token: String, mistakeId: String, itemId: String, showing: String, answer: PracticeAnswer,
+    durationMs: Int, attemptId: String, runAnswerIds: [String], goalId: String?,
+    scope: MistakePracticeScope
   ) async throws -> MistakePracticeGrade {
     let body: Components.Schemas.MistakePracticeAnswerInput = try PracticeJSON.recode(
       MistakeAnswerRequest(
         answer: answer, durationMs: min(durationMs, 3_600_000), itemId: itemId,
-        stepId: nil, attemptId: attemptId, run: .init(answerIds: runAnswerIds, goalId: goalId),
-        timeZone: timeZone))
+        showing: showing, stepId: nil, attemptId: attemptId,
+        run: .init(answerIds: runAnswerIds, scope: scope, goalId: goalId), timeZone: timeZone))
 
     return try await perform(token) { client in
       switch try await client.createMistakePracticeAnswer(
@@ -271,12 +277,12 @@ struct PracticeAPI: Sendable {
 
   func answerLessonMistake(
     token: String, mistakeId: String, stepId: String, answer: LessonAnswer?, durationMs: Int,
-    attemptId: String, runAnswerIds: [String], goalId: String?
+    attemptId: String, runAnswerIds: [String], goalId: String?, scope: MistakePracticeScope
   ) async throws -> MistakePracticeGrade {
     let request = MistakeAnswerRequest(
       answer: LessonMistakeAnswer(answer), durationMs: min(durationMs, 3_600_000),
-      itemId: nil, stepId: stepId, attemptId: attemptId,
-      run: .init(answerIds: runAnswerIds, goalId: goalId), timeZone: timeZone)
+      itemId: nil, showing: nil, stepId: stepId, attemptId: attemptId,
+      run: .init(answerIds: runAnswerIds, scope: scope, goalId: goalId), timeZone: timeZone)
     let body: Components.Schemas.MistakePracticeAnswerInput = try PracticeJSON.recode(request)
     return try await perform(token) { client in
       switch try await client.createMistakePracticeAnswer(
@@ -289,12 +295,14 @@ struct PracticeAPI: Sendable {
     }
   }
 
-  func finishMistakePractice(token: String, answerIds: [String], ended: Bool, goalId: String?)
-    async throws
-    -> Components.Schemas.MistakePracticeCompletion
-  {
+  /// Names the run's scope and format filter as its read did, so the answer says whether another
+  /// batch is left to practice.
+  func finishMistakePractice(
+    token: String, answerIds: [String], goalId: String?, scope: MistakePracticeScope
+  ) async throws -> Components.Schemas.MistakePracticeCompletion {
     let body = Components.Schemas.MistakePracticeFinishInput(
-      answerIds: answerIds, ended: ended, goalId: goalId, timeZone: timeZone)
+      answerIds: answerIds, blockId: scope.blockId, ended: true, goalId: scope.goal(goalId),
+      includeAllFormats: true, mockId: scope.mockId, skillId: scope.skillId, timeZone: timeZone)
 
     return try await perform(token) { client in
       switch try await client.createMistakePracticeCompletion(body: .json(body)) {
@@ -655,11 +663,22 @@ extension PracticeTrueFalseLabels {
 private struct MistakeAnswerRequest<Answer: Encodable>: Encodable {
   struct Run: Encodable {
     let answerIds: [String]
+    let blockId: String?
     let goalId: String?
+    let mockId: String?
+
+    init(answerIds: [String], scope: MistakePracticeScope, goalId: String?) {
+      self.answerIds = answerIds
+      blockId = scope.blockId
+      self.goalId = scope.goal(goalId)
+      mockId = scope.mockId
+    }
   }
   let answer: Answer
   let durationMs: Int
   let itemId: String?
+  /// The question's entry's order, so the answer is graded as it was shown; a lesson screen has none.
+  let showing: String?
   let stepId: String?
   let attemptId: String
   let run: Run
@@ -687,6 +706,7 @@ extension MistakePracticeGrade {
       explanation: grade.explanation, fixed: grade.fixed, fixedMistakeIds: grade.fixedMistakeIds,
       isCorrect: grade.isCorrect, isStillOpen: grade.mistakeStatus == .open,
       reached: try PracticeJSON.recode(grade.reached), trap: grade.trap,
+      requiresLaterDay: grade.requiresLaterDay,
       lessonResult: grade.lessonResult.map { LessonStepResult($0.value1) },
       workedSteps: grade.workedSteps)
   }

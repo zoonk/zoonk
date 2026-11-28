@@ -65,7 +65,12 @@ describe("a phase challenge's questions in the day", () => {
   it("leave the day's review and lessons in place when the challenge does not fit", async () => {
     const { blocks } = await buildPhaseEndDay(20);
 
-    expect(blocks.map((block) => block.kind)).toStrictEqual(["review", "learn", "learn"]);
+    expect(blocks.map((block) => block.kind)).toStrictEqual([
+      "practice",
+      "review",
+      "learn",
+      "learn",
+    ]);
 
     expect(
       blocks.flatMap((block) => block.payload.drills.flatMap((drill) => drill.itemIds)),
@@ -77,7 +82,12 @@ describe("a phase challenge's questions in the day", () => {
     const challenge = blocks.find((block) => block.kind === "checkpoint");
     const others = blocks.filter((block) => block !== challenge);
 
-    expect(blocks.map((block) => block.kind)).toStrictEqual(["learn", "learn", "checkpoint"]);
+    expect(blocks.map((block) => block.kind)).toStrictEqual([
+      "practice",
+      "learn",
+      "learn",
+      "checkpoint",
+    ]);
 
     expect(challenge?.payload.itemIds.length).toBeGreaterThan(0);
 

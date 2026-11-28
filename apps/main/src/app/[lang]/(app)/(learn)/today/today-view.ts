@@ -84,7 +84,7 @@ async function loadTodayMocks(goal: TodayView["goal"]) {
 /** Lessons the plan skipped because the learner already knew them, for Today's progress cells. */
 async function countOpenMistakes(goalId: string): Promise<MistakeAvailability> {
   const result = await listCurrentUserMistakes({ goalId, limit: 1, offset: 0, status: "open" });
-  return result.status === "ready" ? result.availability : { ready: 0, tomorrow: 0 };
+  return result.status === "ready" ? result.availability : { ready: 0 };
 }
 
 export async function loadTodayPractice(goalId: string) {

@@ -130,7 +130,8 @@ export async function layOutUnmetPhaseDates({
   if (
     !kept?.size ||
     !mayCostToKeepPhaseDates(built) ||
-    (await hasTakenChallenge({ goalId: goal.id, userId: goal.userId }))
+    (await (request.sharedReads?.hasTakenChallenge() ??
+      hasTakenChallenge({ goalId: goal.id, userId: goal.userId })))
   ) {
     return null;
   }

@@ -4,16 +4,16 @@ import { loadScheduledAnswersForRefresh } from "../../learner/facts/scheduled-an
 import { loadPlanAtToken } from "../../plans/_utils/plan-token";
 import { PlanConflictError, withPlanRetry } from "../../plans/plan-conflict";
 import { getItemKey } from "../../plans/planner/plan-items";
-import { getBlockItemIds, readBlockPayload } from "../block-payload";
+import { readBlockPayload } from "../block-payload";
 import { loadRebuildMissionFacts, rebuildMissions } from "../missions/rebuild-missions";
-import { type PlannedLesson, type SessionBuildInput, buildSessionBlocks } from "../session-builder";
-import { getSessionUsedMinutes } from "../session-minutes";
 import { getKeptBlocks, hasSameBlocks, hasSameContent } from "./day-block-content";
+import { getGoalDayMinutes } from "./day-minutes";
 import { loadDayPlan } from "./day-plan";
 import { withSessionAppendLock } from "./extra-blocks";
 import { loadSessionBuildInput } from "./load-build-inputs";
 import { oweStartedDaySettlements } from "./owe-started-day-settlements";
 import { planStudyDay } from "./plan-study-day";
+import { buildRemainingDay } from "./rebuild-day-input";
 import { prepareSelectedPlanSave, saveSelectedPlan } from "./save-selected-plan";
 import { type SelectedDayPlan, selectDayPlan, selectDayPlanFromContext } from "./selected-day-plan";
 import { isSelectedPlanCurrent } from "./selected-plan-current";
@@ -23,80 +23,6 @@ import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-acc
 export type DaySessionRefresh = "kept" | "notBuilt" | "rebuilt" | "same";
 
 type DaySession = { goal: Goal; session: StudySessionRow; timeZone: string };
-
-/** Preserve opened practice's share only after study begins; unstarted days rebuild whole. */
-function getOpenedPractice({
-  kept,
-  session,
-}: {
-  kept: readonly StudySessionBlock[];
-  session: StudySessionRow;
-}): SessionBuildInput["openedPractice"] {
-  const keptIds = new Set(kept.map((block) => block.id));
-
-  const minutes = getSessionUsedMinutes(
-    session.blocks.filter((block) => block.kind === "practice" && !keptIds.has(block.id)),
-  );
-
-  if (kept.length === 0 || minutes <= 0 || session.plannedMinutes <= 0) {
-    return undefined;
-  }
-
-  return { dayMinutes: session.plannedMinutes, minutes };
-}
-
-function withoutKept({
-  input,
-  kept,
-  session,
-}: {
-  input: SessionBuildInput;
-  kept: readonly StudySessionBlock[];
-  session: StudySessionRow;
-}): SessionBuildInput {
-  const kinds = new Set(kept.map((block) => block.kind));
-  const lessonIds = new Set(kept.flatMap((block) => (block.lessonId ? [block.lessonId] : [])));
-  const itemIds = new Set(kept.flatMap((block) => getBlockItemIds(readBlockPayload(block))));
-
-  const keptCheckpoints = new Set(
-    kept.flatMap((block) =>
-      block.kind === "checkpoint" ? [readBlockPayload(block).planItemId] : [],
-    ),
-  );
-
-  const isNewLesson = (lesson: { lessonId: string | null }) =>
-    !lesson.lessonId || !lessonIds.has(lesson.lessonId);
-
-  const drillLessons = new Set(kept.map((block) => readBlockPayload(block).writingLessonId));
-
-  const newLessons = (lessons: readonly PlannedLesson[]) =>
-    lessons
-      .filter((lesson) => isNewLesson(lesson))
-      .map((lesson) =>
-        lesson.drill && lesson.lessonId && drillLessons.has(lesson.lessonId)
-          ? { ...lesson, drill: undefined, minutes: lesson.minutes - lesson.drill.minutes }
-          : lesson,
-      );
-
-  return {
-    ...input,
-    capsules: kinds.has("review") ? [] : input.capsules,
-    checkpoints: input.checkpoints
-      .filter((checkpoint) => !keptCheckpoints.has(checkpoint.planItemId))
-      .map((checkpoint) => ({
-        ...checkpoint,
-        reinforcement: checkpoint.reinforcement?.filter(isNewLesson),
-      })),
-    fillLessons: input.fillLessons && newLessons(input.fillLessons),
-    lessons: newLessons(input.lessons),
-    openedPractice: getOpenedPractice({ kept, session }),
-    placementItemIds: kinds.has("review") ? [] : input.placementItemIds,
-    practice: input.practice.filter((item) => !itemIds.has(item.itemId)),
-    // A day that keeps its practice gives the rest of its time to lessons.
-    practiceShare: kinds.has("practice") ? 0 : input.practiceShare,
-    usedMinutes: getSessionUsedMinutes(kept),
-  };
-}
 
 /** Supply today's selection to preserve its allocation; omitting it fills from the plan's next lessons. */
 export async function planRestOfDayWithPlan({
@@ -130,18 +56,19 @@ export async function planRestOfDayWithPlan({
     keepsBlocks: kept.length > 0,
     keepsMock: kept.some((block) => readBlockPayload(block).checkpoint?.mock),
     keptLessonIds,
+    savedDay: true,
     selection,
   });
 
   // The day keeps the shape it opened with: a welcome back stays light, practice keeps its share.
-  const { blocks, plannedMinutes } = buildSessionBlocks(
-    withoutKept({ input: { ...input, freshStart: session.freshStart }, kept, session }),
-  );
-
   return {
-    blocks,
+    ...buildRemainingDay({
+      dated: goal.targetDate !== null,
+      input: { ...input, freshStart: session.freshStart },
+      kept,
+      session,
+    }),
     plan: await dayPlan,
-    plannedMinutes: Math.ceil(getSessionUsedMinutes(kept) + plannedMinutes),
   };
 }
 
@@ -166,7 +93,15 @@ async function replaceNotStartedBlocks({
   // A rest day must not fill from future lessons outside its selected allocation.
   const selection = selected ?? (await selectDayPlan(context)) ?? undefined;
 
-  const kept = getKeptBlocks(session.blocks, selection?.state);
+  const minutes = selection
+    ? getGoalDayMinutes({
+        date: context.localDate,
+        goal: context.goal,
+        planSettings: selection.state.settings,
+      })
+    : context.goal.dailyMinutes;
+
+  const kept = getKeptBlocks(session.blocks, selection?.state, minutes > 0);
   const keptIds = new Set(kept.map((block) => block.id));
   const replaced = session.blocks.filter((block) => !keptIds.has(block.id));
 
@@ -177,7 +112,7 @@ async function replaceNotStartedBlocks({
     plan,
     plannedMinutes,
   } = selection && unstarted
-    ? await planStudyDay({ ...context, selection })
+    ? await planStudyDay({ ...context, savedDay: true, selection })
     : await planRestOfDayWithPlan({ day, kept, selection });
 
   const unchanged = hasSameContent({ anyOrder: kept.length > 0, planned, replaced });

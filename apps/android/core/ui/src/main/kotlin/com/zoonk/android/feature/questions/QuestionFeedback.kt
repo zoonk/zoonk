@@ -192,13 +192,14 @@ fun WorkedSteps(
     }
 }
 
-/** Whether a checked answer fixed mistakes in the notebook or saved one to it. */
+/** Whether a checked answer fixed mistakes in the notebook, waits for another day to fix one, or saved one to it. */
 @Composable
 fun MistakeNote(feedback: AnswerFeedback) {
     val text =
         when {
             feedback.fixedCount == 1 -> stringResource(R.string.questions_mistake_fixed)
             feedback.fixedCount > 1 -> pluralStringResource(R.plurals.questions_mistakes_fixed, feedback.fixedCount, feedback.fixedCount)
+            feedback.requiresLaterDay -> stringResource(R.string.mistakes_practice_later_day)
             feedback.savedToNotebook -> stringResource(R.string.questions_saved)
             else -> return
         }

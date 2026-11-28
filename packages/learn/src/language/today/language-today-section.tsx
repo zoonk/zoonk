@@ -79,82 +79,41 @@ export function PronunciationRow({
   );
 }
 
-function PracticeNotice({
-  action,
-  description,
+/** Today's notice when mispronounced words are due to be said again. */
+export function PronunciationNotice({
   href,
-  label,
-  mark,
-  summary,
+  pronunciation,
 }: {
-  action: string;
-  description: string;
   href: string;
-  label: string;
-  mark?: React.ReactNode;
-  summary: string;
+  pronunciation: Pronunciation;
 }) {
+  const t = useExtracted();
+  const format = useFormatter();
+
+  const title = t("{count, plural, one {Say # word again} other {Say # words again}}", {
+    count: pronunciation.count,
+  });
+
   return (
-    <Suggestion data-slot="language-practice" label={label} mark={mark}>
+    <Suggestion label={title} mark={<MicIcon />}>
       <SuggestionLine>
-        <SuggestionSummary>{summary}</SuggestionSummary>
+        <SuggestionSummary>{title}</SuggestionSummary>
         <SuggestionLinkAction className="shrink-0" href={href} variant="outline">
-          {action}
+          {t("Say them")}
         </SuggestionLinkAction>
       </SuggestionLine>
 
       <SuggestionContent>
-        <SuggestionHeader>{label}</SuggestionHeader>
-        <SuggestionDescription>{description}</SuggestionDescription>
+        <SuggestionHeader>{title}</SuggestionHeader>
+        <SuggestionDescription>
+          {format.list(pronunciation.words, { type: "conjunction" })}
+        </SuggestionDescription>
         <SuggestionActions>
           <SuggestionLinkAction href={href} variant="outline">
-            {action}
+            {t("Say them")}
           </SuggestionLinkAction>
         </SuggestionActions>
       </SuggestionContent>
     </Suggestion>
-  );
-}
-
-export function LanguagePracticeRow({
-  hrefs,
-  today,
-}: {
-  hrefs: { pattern: string | null; pronunciation: string };
-  today: { pattern: NoticedPattern | null; pronunciation: LanguageTodayView["pronunciation"] };
-}) {
-  const t = useExtracted();
-  const format = useFormatter();
-  const { pattern, pronunciation } = today;
-
-  if (pronunciation) {
-    const title = t("{count, plural, one {Say # word again} other {Say # words again}}", {
-      count: pronunciation.count,
-    });
-
-    return (
-      <PracticeNotice
-        action={t("Say them")}
-        description={format.list(pronunciation.words, { type: "conjunction" })}
-        href={hrefs.pronunciation}
-        label={title}
-        mark={<MicIcon />}
-        summary={title}
-      />
-    );
-  }
-
-  if (!pattern || !hrefs.pattern) {
-    return null;
-  }
-
-  return (
-    <PracticeNotice
-      action={t("Practice it")}
-      description={pattern.title}
-      href={hrefs.pattern}
-      label={t("We noticed a pattern")}
-      summary={t("We noticed a pattern: {pattern}", { pattern: pattern.title })}
-    />
   );
 }

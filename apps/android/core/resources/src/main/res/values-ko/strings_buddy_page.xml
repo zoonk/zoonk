@@ -15,9 +15,7 @@
   "buddy_page_first_challenge": "797ec4155db9653a9f8ba82ea487160e65cc786cd8003176252bbcf316c6dd1b",
   "buddy_page_first_essay": "d5cc256f0e344d08ff669a6327aadbdcffcb965ccfb1b80e0e4bf64b8d79a6f8",
   "buddy_page_first_lesson": "cc810cab4c1fbf003f65e51d8eeb7e7d1c42d9f0b229b07cb3c9dd0b776eb2b6",
-  "buddy_page_first_mistake": "ef024efa6c8a376498b2c1f8fc83d0a6ff72af719b6d439220bfdc50ea219f67",
   "buddy_page_first_mock": "b703c3e8d4ca55ca5d03acb336ef59341f7a4581c86cef83451402029158fed3",
-  "buddy_page_first_pattern": "e8938bf6c15312b067b8d49522a22328d7ec4ccddde912eb286e96ec8a4b2511",
   "buddy_page_first_review": "3e259b5b03c644a1ace144fe5ea4bf44b200895f76633c46be32848165b5b6d7",
   "buddy_page_first_steps": "33316f40225704abf2faa843477c1975fbb17b7d9f9f27919bbfdcfedce538a4",
   "buddy_page_first_steps_done": "c9c744c4e8440658fe2bb3f0e81c2d1bc4566cc1fa129e5c0d98b15b73c7dac2",
@@ -86,8 +84,6 @@
     <string name="buddy_page_first_steps_done">모든 활동을 해 봤어요.</string>
     <string name="buddy_page_first_lesson">첫 레슨 끝내기</string>
     <string name="buddy_page_first_review">첫 복습하기</string>
-    <string name="buddy_page_first_mistake">첫 오답 고치기</string>
-    <string name="buddy_page_first_pattern">실수 패턴 연습하기</string>
     <string name="buddy_page_first_ask">%1$s에게 물어보기</string>
     <string name="buddy_page_first_essay">첫 에세이 쓰기</string>
     <string name="buddy_page_first_call">첫 대화 나누기</string>

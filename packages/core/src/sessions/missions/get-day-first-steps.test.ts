@@ -1,6 +1,5 @@
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
-import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import {
   studySessionBlockFixture,
@@ -53,7 +52,6 @@ describe(getDayFirstSteps, () => {
     await Promise.all([
       learningEventFixture({ endedAt: earlier, kind: "lesson", userId: user.id }),
       learningEventFixture({ endedAt: earlier, kind: "review", userId: user.id }),
-      mistakeFixture({ fixedAt: earlier, status: "fixed", userId: user.id }),
       prisma.lessonQuestion.create({
         data: {
           contextKind: "plan",
@@ -75,7 +73,7 @@ describe(getDayFirstSteps, () => {
     });
 
     const steps = await getDayFirstSteps({ missions: [], session: row, timeZone });
-    expect(steps).toMatchObject({ completedOn: "2026-10-14", done: 4, total: 4 });
+    expect(steps).toMatchObject({ completedOn: "2026-10-14", done: 3, total: 3 });
   });
 
   it("says a challenge step waits for the day's lessons when no mission covers it", async () => {

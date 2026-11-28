@@ -2757,6 +2757,64 @@
         }
       }
     },
+    "A pattern in your mistakes" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Muster in deinen Fehlern"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un patrón en tus errores"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une erreur récurrente"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un errore ricorrente"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ミスの傾向"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "반복되는 실수 패턴"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Powtarzający się błąd"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um padrão nos seus erros"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tekrarlayan hataların"
+          }
+        }
+      }
+    },
     "A practice exam, like the real one." : {
       "comment" : "What a mock exam in the day's session is for",
       "localizations" : {
@@ -3518,6 +3576,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yanlış yaptığın soruları bir kez daha denersin."
+          }
+        }
+      }
+    },
+    "Another way to see it" : {
+      "comment" : "Under a short lesson that explains, in a new way, an idea the learner keeps missing.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anders erklärt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otra forma de entenderlo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une autre façon de comprendre"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un altro modo per capirlo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "別の説明で見てみましょう"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다르게 이해해 보기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inny sposób, by to zrozumieć"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Outra forma de entender"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir de böyle düşün"
           }
         }
       }
@@ -5480,7 +5597,7 @@
       }
     },
     "Fix %lld mistakes" : {
-      "comment" : "Mission: fix mistakes",
+      "comment" : "Mistakes to fix: a step of the day, or how many the notebook has ready",
       "localizations" : {
         "de" : {
           "variations" : {
@@ -5488,7 +5605,7 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Einen Fehler korrigieren"
+                  "value" : "%lld Fehler korrigieren"
                 }
               },
               "other" : {
@@ -5506,7 +5623,7 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "new",
-                  "value" : "Fix a mistake"
+                  "value" : "Fix %lld mistake"
                 }
               },
               "other" : {
@@ -5524,13 +5641,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Corrige %lld error"
+                  "value" : "Corregir %lld error"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Corrige %lld errores"
+                  "value" : "Corregir %lld errores"
                 }
               }
             }
@@ -5542,7 +5659,7 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Corriger une erreur"
+                  "value" : "Corriger %lld erreur"
                 }
               },
               "other" : {
@@ -5560,7 +5677,7 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Correggi un errore"
+                  "value" : "Correggi %lld errore"
                 }
               },
               "other" : {
@@ -5590,7 +5707,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "오답 %lld개 고치기"
+                  "value" : "실수 %lld개 고치기"
                 }
               }
             }
@@ -5605,16 +5722,22 @@
                   "value" : "Popraw %lld błędy"
                 }
               },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Popraw %lld błędów"
+                }
+              },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Popraw błąd"
+                  "value" : "Popraw %lld błąd"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Popraw %lld błędów"
+                  "value" : "Popraw %lld błędu"
                 }
               }
             }
@@ -5626,7 +5749,7 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Corrigir um erro"
+                  "value" : "Corrigir %lld erro"
                 }
               },
               "other" : {
@@ -5644,7 +5767,7 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Bir yanlışını düzelt"
+                  "value" : "%lld yanlışını düzelt"
                 }
               },
               "other" : {
@@ -7678,6 +7801,65 @@
         }
       }
     },
+    "Once more: this one's been tricky" : {
+      "comment" : "Under a lesson the learner takes again because its idea has been hard for them.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch einmal: Das war bisher knifflig"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una vez más: esta idea te ha costado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Encore une fois : cette notion t’a posé problème"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ancora: questo argomento ti ha messo in difficoltà"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "もう一度：ここは難しかったところです"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다시 한번: 어려웠던 내용이에요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jeszcze raz: to było trudne"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De novo: esse tópico tem sido difícil"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir kez daha: Bu konu zor gelmişti"
+          }
+        }
+      }
+    },
     "Out of your plan: %@" : {
       "comment" : "Lists every subject or topic the plan no longer holds, like \"Portuguese, Logic and English\".",
       "localizations" : {
@@ -8157,65 +8339,6 @@
         }
       }
     },
-    "Practice a pattern" : {
-      "comment" : "Mission: a pattern",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ein Muster üben"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Practica un patrón"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Réviser une erreur récurrente"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Esercitati su un errore ricorrente"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ミスの傾向に合わせて練習する"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "실수 패턴 고치는 연습"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Popracuj nad powtarzającym się błędem"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Praticar um padrão"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tekrarlayan bir hata üzerinde çalış"
-          }
-        }
-      }
-    },
     "Practice anytime" : {
       "comment" : "Practice section header",
       "localizations" : {
@@ -8271,71 +8394,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "İstediğin zaman alıştırma yap"
-          }
-        }
-      }
-    },
-    "Practice it" : {
-      "comment" : "Opens the noticed pattern",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Muster üben"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Practice it"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Practicarlo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "S’entraîner"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Esercitati"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "練習する"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "연습하기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Przećwicz to"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Praticar"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu konuda alıştırma yap"
           }
         }
       }
@@ -8642,6 +8700,72 @@
         }
       }
     },
+    "practicePattern" : {
+      "comment" : "A study step that drills one rule the learner keeps getting wrong, titled like the day's other practice steps (\"Practice: Fractions\"). {pattern} names the rule, like \"Adjective endings after der\".",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Übung: %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Practice: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Práctica: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entraînement : %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esercitazione: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "練習：%@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 연습"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ćwiczenie: %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prática: %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alıştırma: %@"
+          }
+        }
+      }
+    },
     "practiceSubject" : {
       "comment" : "A block practising one subject the learner chose. {subject} names it, like \"Percentages\".",
       "extractionState" : "extracted_with_value",
@@ -8822,6 +8946,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "İlerleme"
+          }
+        }
+      }
+    },
+    "Questions you missed before" : {
+      "comment" : "Under \"Fix 3 mistakes\", a step of the day that practices questions the learner got wrong.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fragen, die du zuvor falsch beantwortet hast"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preguntas que respondiste mal antes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questions auxquelles tu as déjà mal répondu"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Domande che avevi sbagliato"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "前に間違えた問題"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "전에 틀린 문제"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pytania, na które wcześniej źle odpowiedziano"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perguntas que você errou antes"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Daha önce yanlış yaptığın sorular"
           }
         }
       }
@@ -10946,6 +11129,65 @@
         }
       }
     },
+    "This one's been tricky" : {
+      "comment" : "Under a short lesson written for an idea that has been hard for the learner.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das war bisher knifflig"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta idea te ha costado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette notion t’a posé problème"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questo argomento è stato difficile"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ここは難しかったところです"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "어려웠던 내용이에요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To było trudne"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esse tópico tem sido difícil"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu konu zor gelmişti"
+          }
+        }
+      }
+    },
     "This week" : {
       "comment" : "The week's header",
       "localizations" : {
@@ -12606,64 +12848,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cevabını kaydedemedik. Tekrar dene."
-          }
-        }
-      }
-    },
-    "We noticed a pattern: %@" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Uns ist ein Muster aufgefallen: %@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Notamos un patrón: %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nous avons remarqué une tendance : %@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Abbiamo notato un errore ricorrente: %@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ミスの傾向が見つかりました：%@"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "실수 패턴을 발견했어요: %@"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zauważyliśmy powtarzający się błąd: %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A gente percebeu um padrão: %@"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tekrarlayan bir hata fark ettik: %@"
           }
         }
       }

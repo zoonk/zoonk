@@ -164,6 +164,14 @@ export const mockResultSchema = z
       })
       .nullable(),
     minutesUsed: z.number(),
+    movedTopics: z
+      .array(z.string())
+      .min(1)
+      .optional()
+      .meta({
+        description:
+          "Up to three topics this mock missed that the plan hadn't taught yet and moved earlier after it finished, soonest first; absent when nothing moved",
+      }),
     net: z
       .object({
         blank: z.int(),
@@ -219,10 +227,13 @@ export type MockView = {
   minutes: number;
   missionMoment: MissionMomentView | null;
   mistakes: { cause: MistakeCause | null; count: number }[];
+  /** The sitting itself, for a practice run of its mistakes; null before it starts. */
+  mockId: string | null;
   number: number;
   pacing?: MockConditions["pacing"];
   passMarks: PassMarks | null;
   planItemId: string | null;
+  practiceAvailable: boolean;
   purpose: MockPurpose;
   questions: number;
   reached: Reached;
@@ -297,7 +308,7 @@ export type MockOptionsView = {
   running: { id: string; purpose: MockPurpose; shape: MockShape | null } | null;
 };
 
-const MOCK_PLAN_OFFERS = ["skip", "focus"] as const;
+const MOCK_PLAN_OFFERS = ["skip"] as const;
 
 export const mockPlanOfferInputSchema = z
   .object({
@@ -305,7 +316,7 @@ export const mockPlanOfferInputSchema = z
       .enum(MOCK_PLAN_OFFERS)
       .meta({
         description:
-          "`skip`: the plan skips the lessons of the topics the mock showed the learner knows (`adapt.skip`), with an undo. `focus`: the area that went worst gets more of the plan's time (`adapt.focus`)",
+          "`skip`: the plan skips the lessons of the topics the mock showed the learner knows (`adapt.skip`), with an undo",
       }),
     timeZone: answerTimeZoneSchema,
   })

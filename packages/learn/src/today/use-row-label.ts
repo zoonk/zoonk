@@ -2,7 +2,7 @@
 
 import { useExtracted } from "next-intl";
 import { type DayStep } from "../session/session-types";
-import { practisesTopics } from "../session/use-block-copy";
+import { practisesTopics, useRemedialLine } from "../session/use-block-copy";
 import { toTopicWords } from "../syllabus/topic-number";
 import { useExtraLabel } from "../syllabus/use-extra-label";
 import { useWritingLine } from "../writing/writing-header";
@@ -28,6 +28,7 @@ export function useBlockSubject() {
  */
 export function useStepLabel({ includeSubject = true } = {}) {
   const t = useExtracted();
+  const remedialLine = useRemedialLine();
   const writingLine = useWritingLine();
 
   return function stepLabel(block: DayStep): string | null {
@@ -38,6 +39,12 @@ export function useStepLabel({ includeSubject = true } = {}) {
 
     if (block.waitReason) {
       return t("After today's lessons");
+    }
+
+    const remedial = remedialLine(block);
+
+    if (remedial) {
+      return remedial;
     }
 
     // A practice's name doesn't say what it's on, so the line counts its topics before naming the

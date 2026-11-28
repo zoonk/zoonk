@@ -5,10 +5,8 @@ import { after } from "next/server";
 import { trackLearnerEvents } from "../../analytics/track-learner-event";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getUserProgressCacheTag } from "../../cache/tags";
-import { getStartOfLocalDay } from "../../learner/_utils/local-time";
 import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
 import { awardMilestones } from "../../milestones/award-milestones";
-import { hasPracticeRunCorrection } from "../../mistakes/_utils/practice-runs";
 import { getCompletionEnergyContext } from "../../stats/completion-energy";
 import { addSessionBrainPower } from "../_utils/session-ledger";
 import { applySessionProgress } from "../_utils/session-progress";
@@ -35,8 +33,6 @@ export type MissionCompletionSource = NonNullable<SessionSnapshot["fullMealSourc
 const ACTIVITY_MISSIONS: Readonly<Record<string, MissionKind>> = {
   buddyQuestion: "askBuddy",
   conversation: "call",
-  mistakePractice: "fixMistake",
-  patternDrill: "pattern",
   pronunciationRound: "pronunciation",
 };
 
@@ -92,34 +88,6 @@ function getNewlyDone({
         missions.some((mission) => mission.kind === pick.kind && mission.status === "done"),
     ) ?? []
   );
-}
-
-async function getCompletingSource({
-  session,
-  source,
-  through,
-  timeZone,
-  tx,
-}: {
-  session: StudySessionRow;
-  source: MissionCompletionSource | undefined;
-  through: Date;
-  timeZone: string;
-  tx: TransactionClient;
-}) {
-  if (source?.kind !== "mistakePractice") {
-    return source;
-  }
-
-  const corrected = await hasPracticeRunCorrection({
-    from: getStartOfLocalDay({ localDate: session.localDate, timeZone }),
-    runId: source.id,
-    through,
-    tx,
-    userId: session.userId,
-  });
-
-  return corrected ? source : undefined;
 }
 
 /** The once-only reward and its recoverable evidence share the mission's owning transaction. */
@@ -230,14 +198,6 @@ export async function settleMissions({
 
       const document = readMissionDocument(session.missions);
 
-      const completingSource = await getCompletingSource({
-        session,
-        source,
-        through: lock.completedAt,
-        timeZone,
-        tx,
-      });
-
       const link = await findSourceLink(tx, { source, userId });
       const newlyDone = getNewlyDone({ document, missions });
 
@@ -245,9 +205,9 @@ export async function settleMissions({
       const claimed =
         document?.picks.filter(
           (pick) =>
-            completingSource !== undefined &&
+            source !== undefined &&
             !pick.completedBy &&
-            (isCompletedBy({ kind: pick.kind, source: completingSource }) ||
+            (isCompletedBy({ kind: pick.kind, source }) ||
               isLinkedSourceMission({ blocks: session.blocks, link, pick })) &&
             ((pick.done ?? 0) >= pick.total || newlyDone.includes(pick)),
         ) ?? [];
@@ -261,7 +221,7 @@ export async function settleMissions({
                 const done = newlyDone.includes(pick) ? { done: pick.total } : {};
 
                 return claimed.includes(pick)
-                  ? { ...pick, ...done, completedBy: completingSource }
+                  ? { ...pick, ...done, completedBy: source }
                   : { ...pick, ...done };
               }),
             },
@@ -298,7 +258,7 @@ export async function settleMissions({
         return result;
       }
 
-      const reward = await payFullMeal(tx, { lock, session, source: completingSource, userId });
+      const reward = await payFullMeal(tx, { lock, session, source, userId });
 
       return { ...settled, fullMealPaid: true, fullMealReward: reward };
     }),
@@ -313,12 +273,7 @@ export async function settleMissions({
           name: "Mission Completed" as const,
           properties: {
             full_meal: isFullMeal(settled.missions),
-            mission:
-              (
-                { fixMistake: "fix", somethingNew: "new" } as Partial<
-                  Record<MissionKind, "fix" | "new">
-                >
-              )[pick.kind] ?? pick.kind,
+            mission: pick.kind === "somethingNew" ? "new" : pick.kind,
           },
         })),
         goalId: settled.session.goalId,

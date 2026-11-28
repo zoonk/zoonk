@@ -21,6 +21,7 @@ import {
 import { getSettledSkillIds } from "./settled-skills";
 import {
   FOCUS_WEIGHT_FACTOR,
+  type MockMiss,
   type SkillReadiness,
   getExamValue,
   inheritValues,
@@ -42,6 +43,7 @@ type QueueInput = {
   >[];
   lessons: readonly PlannerLesson[];
   missedSkillIds?: ReadonlySet<string>;
+  mockMisses?: ReadonlyMap<string, MockMiss>;
   paceFactor: number;
   prerequisites: ReadonlyMap<string, readonly string[]>;
   readiness: ReadonlyMap<string, SkillReadiness>;
@@ -57,6 +59,7 @@ type RankedSkill = PlanGraphSkill & {
   index: number;
   reduced: boolean;
   minutes: number;
+  mockPriority: number;
   value: number;
   baseValue: number;
   rank: number;
@@ -166,6 +169,7 @@ function rankSkills(input: QueueInput): RankedSkill[] {
     const reduced = !focused && input.settings.reducedAreas.includes(area);
 
     const readiness = input.readiness.get(skill.skillId);
+    const mockMiss = input.mockMisses?.get(skill.skillId);
     const baseValue = getExamValue({ readiness, weight: skill.weight ?? 1 });
 
     const value = getExamValue({
@@ -189,6 +193,7 @@ function rankSkills(input: QueueInput): RankedSkill[] {
       focused,
       index,
       minutes,
+      mockPriority: mockMiss === "shortPart" ? 2 : Number(mockMiss === "missed"),
       outcome,
       phase,
       reduced,
@@ -227,6 +232,7 @@ function compareExamSkills(a: RankedSkill, b: RankedSkill): number {
 
 export function buildPlanQueue(queueInput: QueueInput): {
   focused: Set<string>;
+  mockPriority: ReadonlyMap<string, number>;
   prerequisites: Map<string, string[]>;
   ranks: Map<string, number>;
   rates: Map<string, number> | null;
@@ -305,8 +311,28 @@ export function buildPlanQueue(queueInput: QueueInput): {
   const values = new Map(ordered.map((skill) => [skill.skillId, skill.value]));
   const focused = new Set(ordered.filter((skill) => skill.focused).map((skill) => skill.skillId));
 
+  const missed = orderSkills({
+    compare: (a, b) =>
+      a.phase - b.phase || b.mockPriority - a.mockPriority || (b.weight ?? 1) - (a.weight ?? 1),
+    prerequisites: input.prerequisites,
+    skills: ordered.filter((skill) => skill.mockPriority > 0),
+  });
+
+  const mockPriority = new Map(
+    missed.map((skill, index) => [skill.skillId, missed.length - index]),
+  );
+
+  const priorities = {
+    focused,
+    mockPriority,
+    prerequisites: input.prerequisites,
+    ranks,
+    rates,
+    values,
+  };
+
   if (isExamSchedule(input.goal) || input.goal.kind === "explain") {
-    return { focused, prerequisites: input.prerequisites, ranks, rates, units, values };
+    return { ...priorities, units };
   }
 
   const share = getLearningShare({ phaseKind: "learn", practiceBias: input.settings.practiceBias });
@@ -319,12 +345,5 @@ export function buildPlanQueue(queueInput: QueueInput): {
     units,
   });
 
-  return {
-    focused,
-    prerequisites: input.prerequisites,
-    ranks,
-    rates,
-    units: withCheckpoints,
-    values,
-  };
+  return { ...priorities, units: withCheckpoints };
 }

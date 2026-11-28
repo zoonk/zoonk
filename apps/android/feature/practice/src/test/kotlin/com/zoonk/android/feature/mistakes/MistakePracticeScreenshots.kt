@@ -16,6 +16,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ANA
+import com.zoonk.android.data.ApiError
+import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
@@ -112,19 +114,35 @@ class MistakePracticeScreenshots {
         feedback: () -> MistakePracticeFeedback = {
             practiceFeedback(isCorrect = true, fixed = true, fixedMistakeIds = listOf(FIRST_MISTAKE))
         },
+        hasMorePractice: Boolean = false,
+        block: Boolean = false,
+        finish: suspend (com.zoonk.api.models.MistakePracticeFinishInput) -> com.zoonk.api.models.MistakePracticeCompletion = {
+            completion(correct = 1, total = 2, hasMorePractice = hasMorePractice)
+        },
     ) {
         val api =
             FakeMistakesApi(
                 practice(entry ?: practiceEntry(FIRST_MISTAKE, *questions, drill = drill)),
                 answer = { feedback() },
-                finish = { completion(correct = 1, total = 2) },
+                finish = finish,
             )
         val cache =
             AppCache(
                 FakeSession(AuthenticatedSession(ANA, "token", "local")),
                 CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
             )
-        val viewModel = practiceViewModel(cache, api)
+        val viewModel =
+            if (block) {
+                practiceViewModel(
+                    cache,
+                    api,
+                    key = PracticeKey(goalId = null, blockId = java.util.UUID.randomUUID()),
+                    sessionId = java.util.UUID.randomUUID(),
+                    steps = com.zoonk.android.feature.practice.UnusedSessionSteps,
+                )
+            } else {
+                practiceViewModel(cache, api)
+            }
         viewModel.started()
 
         rule.setContent {
@@ -138,6 +156,67 @@ class MistakePracticeScreenshots {
         rule.waitForIdle()
         if (fold) rule.unfoldBook(folds)
         write(name)
+    }
+
+    /** A day block whose mistakes are all gone: its completion is the only thing that marks the row, so it waits for it. */
+    private fun emptyBlock(
+        name: String,
+        dark: Boolean = false,
+        retried: Boolean = false,
+    ) {
+        val api = FakeMistakesApi(practice(), finish = { throw ApiException(ApiError.Network) })
+        val cache =
+            AppCache(
+                FakeSession(AuthenticatedSession(ANA, "token", "local")),
+                CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
+            )
+        val viewModel =
+            practiceViewModel(
+                cache,
+                api,
+                key = PracticeKey(goalId = null, blockId = java.util.UUID.randomUUID()),
+                sessionId = java.util.UUID.randomUUID(),
+                steps = com.zoonk.android.feature.practice.UnusedSessionSteps,
+            )
+        viewModel.beginEmpty()
+        if (retried) {
+            api.finish = { completion() }
+            viewModel.retryFinish()
+        }
+
+        rule.setContent {
+            ZoonkTheme(darkTheme = dark) {
+                val navigator = rememberAppNavigator()
+                val state by viewModel.state.collectAsStateWithLifecycle()
+                state?.let { PracticeRun(it, viewModel, AppContainer.preview(rule.activity), navigator) }
+            }
+        }
+        rule.waitForIdle()
+        write(name)
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneEmptyBlockFailed() = emptyBlock("phone-empty-block-failed")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun phoneEmptyBlockFailedDark() = emptyBlock("phone-empty-block-failed-dark", dark = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneEmptyBlockRetried() = emptyBlock("phone-empty-block-retried", retried = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun phoneDonePracticeAgainDark() {
+        show("phone-done-again-dark", dark = true, play = ::playToEnd, hasMorePractice = true)
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun phoneDoneDark() {
+        show("phone-done-dark", dark = true, play = ::finish)
     }
 
     private fun check() {
@@ -173,6 +252,62 @@ class MistakePracticeScreenshots {
     @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
     fun phoneTimedDark() {
         show("phone-timed-dark", drill = drill("timed", seconds = 45), dark = true)
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneRightOnTheDayOfTheMiss() {
+        show("phone-same-day-right", play = ::check, feedback = { practiceFeedback(requiresLaterDay = true) })
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun phoneRightOnTheDayOfTheMissDarkLarge() {
+        RuntimeEnvironment.setFontScale(2f)
+        show("phone-same-day-right-dark-font200", dark = true, play = ::check, feedback = { practiceFeedback(requiresLaterDay = true) })
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneDonePracticeAgain() {
+        show("phone-done-again", play = ::playToEnd, hasMorePractice = true)
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneDoneSameDayNothingCounted() {
+        show(
+            "phone-done-same-day",
+            play = ::playToEnd,
+            feedback = { practiceFeedback(requiresLaterDay = true) },
+            finish = { completion(correct = 0, total = 0) },
+        )
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneBlockDone() = show("phone-block-done", play = ::playToEnd, block = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun phoneBlockDoneDark() = show("phone-block-done-dark", dark = true, play = ::playToEnd, block = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneBlockNotSaved() =
+        show("phone-block-not-saved", play = ::playToEnd, block = true, finish = { throw ApiException(ApiError.Network) })
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun phoneBlockNotSavedDarkLarge() {
+        RuntimeEnvironment.setFontScale(2f)
+        show(
+            "phone-block-not-saved-dark-font200",
+            dark = true,
+            play = ::playToEnd,
+            block = true,
+            finish = { throw ApiException(ApiError.Network) },
+        )
     }
 
     @Test
@@ -461,6 +596,11 @@ class MistakePracticeScreenshots {
         val step = lesson.getValue("step").jsonObject
         val original = JsonObject(step + mapOf("kind" to JsonPrimitive(kind), "content" to content))
         return JsonObject(entry + ("lesson" to JsonObject(lesson + ("step" to original))))
+    }
+
+    private fun playToEnd() {
+        check()
+        rule.onNodeWithText("Continue").performClick()
     }
 
     private fun finish() {

@@ -75,9 +75,7 @@ export function useMissionLinks(
         areaPractice: (areaId) => `/content/chapters/${areaId}`,
         buddy: "/buddy",
         call: (chapterId) => `/content/units/${chapterId}`,
-        mistakesPractice: "/mistakes/practice",
         mockChooser: "/mock/new",
-        pattern: (patternId) => `/pattern/${patternId}`,
         pronunciation: `/pronunciation?goal=${goalId}`,
       },
       openBlock: async (blockId) => {

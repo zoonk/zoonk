@@ -14,10 +14,6 @@ export function useFirstStepName(buddy: LearnBuddy | null) {
         return t("Finish your first lesson");
       case "review":
         return t("Do your first review");
-      case "fixMistake":
-        return t("Fix your first mistake");
-      case "pattern":
-        return t("Practice a pattern");
       case "askBuddy":
         return t("Ask {buddy} something", { buddy: buddyName });
       case "essay":

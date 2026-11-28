@@ -528,6 +528,7 @@ describe("CGU written exam preparation", () => {
     });
 
     const first = await prisma.attempt.findFirstOrThrow({ where: { itemId, userId: user.id } });
+    expect(first).toMatchObject({ cause: null, evidence: null });
     expect(first.score).toBeNull();
     expect(first.answer).toMatchObject({ conditions: { estimatedLines: 22 } });
     await expectDraftFlag(false);

@@ -203,6 +203,7 @@ function mockView(lang: Lang, state: "running" | "finished"): Mock {
     goalId: "exam",
     minutes: lang === "pt" ? 300 : 67,
     missionMoment: null,
+    mockId: "mock",
     mistakes: [
       { cause: "gap", count: 4 },
       { cause: "misread", count: 3 },
@@ -211,6 +212,7 @@ function mockView(lang: Lang, state: "running" | "finished"): Mock {
     number: 1,
     passMarks: null,
     planItemId: "mock-item",
+    practiceAvailable: !running,
     purpose: "planned",
     questions: total,
     reached: { energy: null, level: null },
@@ -249,7 +251,7 @@ const HREFS = {
   again: "/challenge/mock-item",
   continue: "/today",
   exit: "/today",
-  mistakes: "/mistakes",
+  mistakes: (mockId: string) => `/mistakes/practice?mockId=${mockId}`,
   speakingTask: () => "/conversation/x",
 };
 

@@ -112,13 +112,6 @@ export const mockPlanOfferResultSchema = z
         description: "The plan change it made, whose undo brings it back; null when unchanged",
       }),
     lessonsSkipped: z.number().int().min(0),
-    reason: z
-      .enum(["alreadyIn", "cantMove"])
-      .nullable()
-      .meta({
-        description:
-          "Why a focus left the plan as it is: every lesson of the area is in already (`alreadyIn`), or it starts as early as what it builds on allows (`cantMove`)",
-      }),
     status: z.enum(["applied", "unchanged"]),
   })
   .meta({ id: "MockPlanOfferResult" });

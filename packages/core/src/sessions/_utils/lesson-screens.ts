@@ -38,7 +38,11 @@ export function withLessonScreens<
         ? { setAside: state.status === "failed" && state.setAside, status: state.status }
         : null;
 
-      const screened = { ...block, lesson, screen: getBlockScreen(block, lessonStates) };
+      const screened = {
+        ...block,
+        lesson,
+        ...(block.kind === "learn" && { screen: getBlockScreen(block, lessonStates) }),
+      };
 
       return {
         ...screened,

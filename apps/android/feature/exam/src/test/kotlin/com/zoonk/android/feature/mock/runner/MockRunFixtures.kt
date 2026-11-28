@@ -43,7 +43,7 @@ internal fun runningMock(
                 {"adapt":null,"blockId":"$RUN_BLOCK","brainPower":0,"breakUntil":null,"canMove":false,"ceremony":null,"certificates":[],"checklist":[],
                  "current":$current,
                  "date":"2026-10-29","day":null,"essays":[],"examDocument":"notice","examName":"ENEM","examQuestions":null,
-                 "fullLength":true,"goalId":"6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1a01","leftOut":[],"minutes":60,"missionMoment":null,"mistakes":[],
+                 "fullLength":true,"goalId":"6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1a01","leftOut":[],"minutes":60,"missionMoment":null,"mistakes":[],"mockId":null,"practiceAvailable":false,
                  "number":3,"passMarks":null,"planItemId":null,"purpose":"practice","questions":3,"reached":{"energy":null,"level":null},
                  "result":null,"reusedQuestions":0,"review":[],"scoreNotes":{"noticeScoring":null,"relative":false,"scale":null},
                  "scoring":"raw","scoringNote":null,
@@ -210,7 +210,7 @@ internal class FakeMockRunApi(
         offerFailure?.let { throw it }
         offers += offer
         afterOffer?.invoke()
-        return MockPlanOfferResult(changeId = null, lessonsSkipped = 3, reason = null, status = MockPlanOfferResult.Status.APPLIED)
+        return MockPlanOfferResult(changeId = null, lessonsSkipped = 3, status = MockPlanOfferResult.Status.APPLIED)
     }
 }
 

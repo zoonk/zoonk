@@ -482,6 +482,12 @@
   }
 }
 
+/* While a dialog, sheet or menu is open, Enter answers only what's in it: Base UI marks the rest `data-base-ui-inert`, and a dialog under another one `data-nested-*-open`. So the ⏎ of a main action under it isn't drawn. */
+:is([data-base-ui-inert], [data-nested-dialog-open], [data-nested-drawer-open])
+  [data-slot="key-hint"] {
+  display: none;
+}
+
 [data-code-visual] span[style] {
   @variant dark {
     color: var(--shiki-dark) !important;

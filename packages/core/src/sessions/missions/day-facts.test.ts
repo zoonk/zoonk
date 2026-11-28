@@ -165,10 +165,8 @@ describe("build-time mission facts and selection against the real database", () 
     },
   );
 
-  it("uses a new learner's first step before a pile of ready mistakes", async () => {
+  it("uses a new learner's first step before the rotation", async () => {
     const input = await fixture();
-    await mistakeFixture({ fixedAt: now, status: "fixed", userId: input.userId });
-    await mistakes(input, 5);
 
     const facts = await load(input, [
       { ...block("review"), estimatedMinutes: 8 },
@@ -182,25 +180,29 @@ describe("build-time mission facts and selection against the real database", () 
     });
   });
 
-  it("scales ready fixes to three only on roomy days and excludes ordinary practice", async () => {
+  it("picks the day's own missions on roomy and short days, whatever mistakes are ready", async () => {
     const input = await fixture();
     await experienced(input);
     await mistakes(input, 5);
-    const planned = [block("review"), block("learn"), block("practice")];
-    const roomy = await load(input, planned);
-    expect(pickMissions(roomy).at(-1)).toMatchObject({ kind: "fixMistake", total: 3 });
+
+    const roomy = await load(input, [block("review"), block("learn"), block("practice")]);
+    roomy.firstSteps = null;
+
+    expect(pickMissions(roomy).map((pick) => pick.kind)).toStrictEqual([
+      "review",
+      "somethingNew",
+      "practice",
+    ]);
+
     const short = await load(input, [block("review"), block("practice")], 14);
     expect(pickMissions(short).map((pick) => pick.kind)).toStrictEqual(["review", "practice"]);
-    const medium = await load(input, planned, 20);
-    expect(pickMissions(medium).at(-1)).toMatchObject({ kind: "fixMistake", total: 1 });
   });
 
-  it("does not offer an old mistake with no drill material", async () => {
+  it("offers no missions on a day without blocks, whatever mistakes are ready", async () => {
     const input = await fixture();
-    await mistakeFixture({ createdAt: earlierDate, skillId: input.skill.id, userId: input.userId });
-    const facts = await load(input, [block("review")]);
-    expect(facts.readyMistakeCount).toBe(0);
-    expect(facts.candidates.some((pick) => pick.kind === "fixMistake")).toBe(false);
+    await mistakes(input, 5);
+    const facts = await load(input, []);
+    expect(pickMissions(facts)).toStrictEqual([]);
   });
 
   it("rotates away from a kind offered most recently on this goal", async () => {

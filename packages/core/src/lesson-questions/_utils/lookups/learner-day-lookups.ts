@@ -12,7 +12,6 @@ import { type Lookup, toPageLink, toPoints } from "./learner-page-link";
 const MAX_MISSIONS = 8;
 
 const MISSION_PAGES: Partial<Record<NonNullable<Mission["opens"]>["kind"], GoalTutorPage>> = {
-  mistakesPractice: "mistakesPractice",
   mockChooser: "mockChooser",
   pronunciation: "pronunciation",
 };
@@ -42,7 +41,7 @@ function toMissionLink({
 }
 
 function getMissionTitle({ detail }: Mission): string | null {
-  return detail?.title ?? detail?.chapterTitle ?? detail?.patternTitle ?? detail?.areaTitle ?? null;
+  return detail?.title ?? detail?.chapterTitle ?? detail?.areaTitle ?? null;
 }
 
 /** Reads only a saved day and never creates it. */

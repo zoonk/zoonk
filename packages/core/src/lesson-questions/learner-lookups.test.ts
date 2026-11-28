@@ -105,7 +105,6 @@ async function savedDay({ goalId, userId }: { goalId: string; userId: string }) 
       picks: [
         { anchor: { blockKind: "learn" }, kind: "somethingNew", total: 1 },
         { anchor: { blockKind: "review" }, kind: "review", total: 1 },
-        { anchor: {}, kind: "fixMistake", opens: { kind: "mistakesPractice" }, total: 1 },
         { anchor: {}, kind: "pronunciation", opens: { kind: "pronunciation" }, total: 1 },
         { anchor: {}, kind: "call", opens: { chapterId: randomUUID(), kind: "call" }, total: 1 },
       ],
@@ -161,11 +160,6 @@ describe("the learner's data the buddy looks up", () => {
         }),
         expect.objectContaining({ done: 1, kind: "review", link: null, status: "done" }),
         expect.objectContaining({
-          kind: "fixMistake",
-          link: { kind: "page", page: "mistakesPractice" },
-          status: "todo",
-        }),
-        expect.objectContaining({
           kind: "pronunciation",
           link: { kind: "page", page: "pronunciation" },
         }),
@@ -188,7 +182,6 @@ describe("the learner's data the buddy looks up", () => {
       missions: [
         { kind: "somethingNew", link: null },
         { kind: "review", link: null },
-        { kind: "fixMistake", link: null },
         { kind: "pronunciation", link: null },
         { kind: "call", link: null },
       ],

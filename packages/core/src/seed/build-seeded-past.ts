@@ -27,6 +27,10 @@ import { getPlannedItemIds } from "../exams/mocks/mock-plan";
 import { getItemMarking } from "../exams/scoring/mock-points";
 import { getPickOutcome } from "../exams/scoring/partial-credit";
 import { loadGoalPlan } from "../learner/_utils/goal-skill-graph";
+import { loadSkillHistory } from "../learner/_utils/skill-answer-history";
+import { inferMistakeCause } from "../mistakes/mistake-cause";
+import { type MistakeSnapshot } from "../mistakes/mistake-snapshot";
+import { getStudyAnswerEvidence } from "../sessions/_utils/record-study-answer";
 import { gradeSessionAnswer, parseSessionItem } from "../sessions/_utils/session-items";
 import { readBlockPayload, toBlockPayload } from "../sessions/block-payload";
 
@@ -77,6 +81,50 @@ function toDuelAnswer({
   return isRight
     ? gradeSessionAnswer({ answer: unknown.correctAnswer, blockId, item: question })
     : unknown;
+}
+
+type SeededAnswer = {
+  durationMs: number;
+  /** A wrong answer; a blank gets no cause. */
+  missed: boolean;
+  recorded: Record<string, unknown>;
+  skillId: string | null;
+  snapshot: MistakeSnapshot;
+  timeLimitMs?: number | null;
+};
+
+/** The cause core's notebook gives each miss, from the learner's history before the checkpoint. */
+async function inferCauses({ answers, userId }: { answers: SeededAnswer[]; userId: string }) {
+  const missed = [
+    ...new Set(answers.filter((answer) => answer.missed).map((answer) => answer.skillId)),
+  ];
+
+  const histories = new Map(
+    await Promise.all(
+      missed.map(
+        async (skillId) =>
+          [skillId, await loadSkillHistory({ skillId, transaction: prisma, userId })] as const,
+      ),
+    ),
+  );
+
+  return answers.map((answer) => {
+    const history = histories.get(answer.skillId);
+
+    if (!answer.missed || !history) {
+      return null;
+    }
+
+    return inferMistakeCause({
+      dontKnow: answer.recorded.dontKnow === true,
+      durationMs: answer.durationMs,
+      misconception: answer.snapshot.misconception,
+      questionText: answer.snapshot.question,
+      recentSkillAnswers: history.recent,
+      skillState: history.before?.state ?? "new",
+      timeLimitMs: answer.timeLimitMs,
+    });
+  });
 }
 
 function getSeconds(checkpoint: Pick<PastCheckpoint, "completedAt" | "startedAt">): number {
@@ -148,6 +196,17 @@ async function fillBoss({
 
   const payload = readBlockPayload(block);
 
+  const causes = await inferCauses({
+    answers: graded.map(({ answer, row }) => ({
+      durationMs,
+      missed: !answer.isCorrect,
+      recorded: answer.recorded,
+      skillId: row.skillId,
+      snapshot: answer.snapshot,
+    })),
+    userId: goal.userId,
+  });
+
   await Promise.all([
     prisma.attempt.createMany({
       data: graded.map(({ answer, row }, index) => {
@@ -156,7 +215,9 @@ async function fillBoss({
         return {
           answer: answer.recorded,
           answeredAt,
+          cause: causes[index] ?? null,
           durationMs,
+          evidence: getStudyAnswerEvidence({ blank: false, placement: false }),
           fromLesson: false,
           isCorrect: answer.isCorrect,
           itemId: row.id,
@@ -258,6 +319,59 @@ async function answerMock({
     };
 
     return { answer, grade, item, result };
+  });
+}
+
+/** A finished mock's answers count as the learner's own, as the mock's finish marks them. */
+async function writeMockAttempts({
+  checkpoint,
+  durationMs,
+  ended,
+  goal,
+  graded,
+  timeLimitMs,
+}: {
+  checkpoint: PastCheckpoint;
+  durationMs: number;
+  ended: PastCheckpoint;
+  goal: Goal;
+  graded: Awaited<ReturnType<typeof answerMock>>;
+  timeLimitMs: number;
+}) {
+  const moments = answerMoments(ended, graded.length);
+
+  const causes = await inferCauses({
+    answers: graded.map(({ grade, item }) => ({
+      durationMs,
+      missed: grade.answered && !grade.isCorrect,
+      recorded: grade.recorded,
+      skillId: item.skillId,
+      snapshot: grade.snapshot,
+      timeLimitMs,
+    })),
+    userId: goal.userId,
+  });
+
+  await prisma.attempt.createMany({
+    data: graded.map(({ grade, item }, index) => {
+      const answeredAt = moments[index] ?? ended.completedAt;
+
+      return {
+        answer: grade.recorded,
+        answeredAt,
+        cause: causes[index] ?? null,
+        durationMs,
+        evidence: grade.answered ? ("independent" as const) : null,
+        fromLesson: false,
+        isCorrect: grade.isCorrect,
+        itemId: item.id,
+        mockExamId: checkpoint.mockExamId,
+        skillId: item.skillId,
+        studySessionId: checkpoint.sessionId,
+        userId: goal.userId,
+        ...localFields(answeredAt, goal.timezone ?? "UTC"),
+      };
+    }),
   });
 }
 
@@ -365,8 +479,6 @@ async function fillMock({
     total: questions.length,
   });
 
-  const moments = answerMoments(ended, questions.length);
-
   await prisma.mockExam.create({
     data: {
       blockId: checkpoint.blockId,
@@ -393,24 +505,13 @@ async function fillMock({
         mockExamId: checkpoint.mockExamId,
       })),
     }),
-    prisma.attempt.createMany({
-      data: graded.map(({ grade, item }, index) => {
-        const answeredAt = moments[index] ?? ended.completedAt;
-
-        return {
-          answer: grade.recorded,
-          answeredAt,
-          durationMs,
-          fromLesson: false,
-          isCorrect: grade.isCorrect,
-          itemId: item.id,
-          mockExamId: checkpoint.mockExamId,
-          skillId: item.skillId,
-          studySessionId: checkpoint.sessionId,
-          userId: goal.userId,
-          ...localFields(answeredAt, goal.timezone ?? "UTC"),
-        };
-      }),
+    writeMockAttempts({
+      checkpoint,
+      durationMs,
+      ended,
+      goal,
+      graded,
+      timeLimitMs: (planned.minutes * MS_PER_MINUTE) / Math.max(questions.length, 1),
     }),
     prisma.studySessionBlock.update({
       data: {

@@ -110,16 +110,19 @@ describe(getTodayStudySession, () => {
     expect(session.freshStart).toBeNull();
 
     expect(session.blocks.map((block) => [block.kind, block.lessonId])).toStrictEqual([
+      ["practice", null],
       ["review", null],
       ["learn", lessons[1]?.id],
       ["learn", lessons[2]?.id],
     ]);
 
-    expect(session.blocks[0]?.capsules).toMatchObject([
+    expect(session.blocks[0]?.screen).toBe("mistakesPractice");
+
+    expect(session.blocks[1]?.capsules).toMatchObject([
       { format: "rapidFire", lessonId: lessons[0]?.id, opened: false, title: "Lesson 1" },
     ]);
 
-    expect(session.blocks[1]).toMatchObject({ canDo: "You'll do thing 2", status: "pending" });
+    expect(session.blocks[2]).toMatchObject({ canDo: "You'll do thing 2", status: "pending" });
     expect(session.blocks.every((block) => !block.mistakesOnly)).toBe(true);
     expect(session.nextBlockId).toBe(session.blocks[0]?.id);
 

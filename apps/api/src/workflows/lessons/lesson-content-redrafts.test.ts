@@ -180,6 +180,19 @@ describe("lesson content redrafts", () => {
     ]);
   });
 
+  it("sets a remedial lesson aside when its writer exhausts workflow retries", async () => {
+    const { lesson } = await plannedLesson();
+    vi.mocked(writeLessonDraft).mockRejectedValueOnce(new Error("Provider failed"));
+
+    await expect(
+      lessonContentWorkflow({ forExam: true, lessonId: lesson.id, remedial: true }),
+    ).rejects.toThrow("Provider failed");
+
+    await expect(
+      prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } }),
+    ).resolves.toMatchObject({ contentStatus: "failed", setAsideAt: expect.any(Date) });
+  });
+
   it("never writes a lesson set aside after its last draft", async () => {
     const { lesson } = await plannedLesson({
       contentStatus: "failed",

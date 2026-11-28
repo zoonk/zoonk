@@ -218,6 +218,8 @@ struct MockResult: Hashable, Decodable, Sendable {
   var correct: Double
   var irt: IRT?
   var minutesUsed: Double
+  /// Topics the plan moved earlier when this mock finished, as the plan names them.
+  var movedTopics: [String]?
   var net: Net?
   var plannedMinutes: Double
   /// Nil for an exam not scored in points.
@@ -395,20 +397,14 @@ struct MockReviewItem: Hashable, OmittableAPIContent, Sendable, Identifiable {
   var id: String { itemId }
 }
 
+/// The one plan change a finished mock asks about: skipping lessons it showed the learner knows.
 struct MockAdapt: Hashable, Decodable, Sendable {
-  struct Focus: Hashable, Decodable, Sendable {
-    var area: String
-    var correct: Double
-    var total: Int
-  }
-
   struct Skip: Hashable, Decodable, Sendable {
     var lessons: Int
     var topics: [String]
   }
 
-  var focus: Focus?
-  var skip: Skip?
+  var skip: Skip
 }
 
 struct MockScoreNotes: Hashable, Decodable, Sendable {
@@ -542,6 +538,13 @@ struct MockVerdict: Hashable, Decodable, Sendable {
   var weakest: String?
 }
 
+extension MockView {
+  /// The sitting whose open mistakes the result offers to practice; nil once none are left.
+  var mistakesToPractice: String? {
+    practiceAvailable && purpose != .placement ? mockId : nil
+  }
+}
+
 struct MockView: Hashable, Decodable, Sendable {
   enum Status: String, Decodable, Sendable {
     case ready
@@ -584,7 +587,11 @@ struct MockView: Hashable, Decodable, Sendable {
   var minutes: Int
   var missionMoment: DayResult.MissionMoment?
   var mistakes: [Mistake]
+  /// The sitting, once it started: a run practices its mistakes.
+  var mockId: String?
   var number: Int
+  /// The finished mock still has open mistakes to practice.
+  var practiceAvailable: Bool
   /// `practice` where the exam shares one clock with its essay: the timer is pacing, not the board's.
   var pacing: Pacing?
   var passMarks: PassMarks?

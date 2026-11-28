@@ -8,6 +8,7 @@ const PLAN_CHANGE_KINDS = [
   "edited",
   "estimateUpdated",
   "missedDays",
+  "mockReordered",
   "noticeChanged",
   "relearn",
   "resumed",

@@ -22,6 +22,17 @@ export function getMistakeShowing(mistake: Pick<Mistake, "id" | "missedAt">): st
   return `mistake:${mistake.id}:${mistake.missedAt.getTime()}`;
 }
 
+/** A tab keeps the order it was given after a miss elsewhere reorders the mistake, so an answer is graded in the showing it names. */
+export function isMistakeShowing({
+  mistakeId,
+  showing,
+}: {
+  mistakeId: string;
+  showing: string;
+}): boolean {
+  return showing.startsWith(`mistake:${mistakeId}:`);
+}
+
 /** The showing a practice answer was given in, saved with it as `practiceShowing`; the current one for answers saved before it was. */
 export function getAnsweredShowing({
   answer,
@@ -33,15 +44,17 @@ export function getAnsweredShowing({
   return getString(answer, "practiceShowing") ?? getMistakeShowing(mistake);
 }
 
-/** What a practice answer saves beside the answer: its mistake and the showing it was given in. */
-export function getPracticeAnswerKeys({
+/** What a practice answer saves beside the answer: the feedback it got, its mistake and the showing it was given in. */
+export function getPracticeAnswerKeys<Feedback>({
+  feedback,
   mistake,
   showing = getMistakeShowing(mistake),
 }: {
+  feedback: Feedback;
   mistake: Pick<Mistake, "id" | "missedAt">;
   showing?: string;
 }) {
-  return { practiceMistakeId: mistake.id, practiceShowing: showing };
+  return { practiceFeedback: feedback, practiceMistakeId: mistake.id, practiceShowing: showing };
 }
 
 export function toMistakeQuestion({

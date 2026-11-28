@@ -36,6 +36,10 @@ vi.mock("./lesson-spec.prompt.md", () => ({
 
 vi.mock("./quick-lesson.prompt.md", () => ({ default: "This is a quick lesson." }));
 
+vi.mock("./second-take.prompt.md", () => ({
+  default: "This is a second take of {{SECOND_TAKE_SCREENS}} screens.",
+}));
+
 vi.mock("ai", async (importOriginal) => {
   const actual = await importOriginal<typeof Ai>();
   return { ...actual, generateText: vi.fn() };
@@ -311,6 +315,110 @@ describe(generateLessonSpec, () => {
 
     expect(regular.systemPrompt).toBe("Plan the lesson.\nCheck the plan.");
     expect(regular.userPrompt).toBe(userPrompt);
+  });
+
+  it("plans a second take as one lesson from the first lesson's map and wrong answers", async () => {
+    const lesson = {
+      ...oneSkillLesson({
+        kinds: [
+          "hook",
+          "guess",
+          "explanation",
+          "explanation",
+          "workedExample",
+          "check",
+          "application",
+        ],
+        title: "Below zero, another way",
+      }),
+      opensOn: 1,
+    };
+
+    vi.mocked(generateText).mockResolvedValueOnce(
+      createGenerateTextResult({ lessons: [lesson, { ...lesson, title: "A second one" }] }),
+    );
+
+    const { data, systemPrompt, userPrompt } = await generateLessonSpec({
+      activityTemplates: [],
+      chapterTitle: "Weather",
+      country: null,
+      courseTitle: "Science",
+      language: "en",
+      lessonDescription: "Temperatures below zero.",
+      lessonTitle: "Reading a thermometer",
+      level: "intermediate",
+      secondTake: {
+        firstLessonMap: {
+          ideas: [{ label: "Below zero", text: "Colder than freezing." }],
+          shape: "hub",
+        },
+        wrongAnswers: [
+          {
+            answer: "-2",
+            question: "Which is colder, -2 or -8?",
+            reason: "A bigger digit is colder.",
+          },
+        ],
+      },
+      skills: ["Read a temperature below zero"],
+    });
+
+    expect(generateText).toHaveBeenCalledOnce();
+
+    expect(systemPrompt).toBe(
+      "Plan the lesson.\nCheck the plan.\nThis is a second take of 6 to 10 screens.",
+    );
+
+    expect(userPrompt).toContain("FIRST_LESSON_MAP:\n- Below zero: Colder than freezing.");
+
+    expect(userPrompt).toContain(
+      "WRONG_ANSWERS:\n1. Question: Which is colder, -2 or -8?\n   Wrong answer: -2\n   Why it's wrong: A bigger digit is colder.",
+    );
+
+    expect(data.lessons.map((spec) => [spec.title, spec.opensOn])).toStrictEqual([
+      ["Below zero, another way", 1],
+    ]);
+  });
+
+  it("plans a second take again when its guess doesn't open it, and keeps the better plan", async () => {
+    const late = {
+      ...oneSkillLesson({
+        kinds: ["hook", "explanation", "guess", "explanation", "check", "application"],
+        title: "Late guess",
+      }),
+      opensOn: 1,
+    };
+
+    const opening = {
+      ...oneSkillLesson({
+        kinds: ["hook", "guess", "explanation", "explanation", "check", "application"],
+        title: "Opening guess",
+      }),
+      opensOn: 1,
+    };
+
+    vi.mocked(generateText)
+      .mockResolvedValueOnce(createGenerateTextResult({ lessons: [late] }))
+      .mockResolvedValueOnce(createGenerateTextResult({ lessons: [opening] }));
+
+    const { data } = await generateLessonSpec({
+      activityTemplates: [],
+      chapterTitle: "Weather",
+      country: null,
+      courseTitle: "Science",
+      language: "en",
+      lessonDescription: "Temperatures below zero.",
+      lessonTitle: "Reading a thermometer",
+      level: "intermediate",
+      secondTake: {
+        firstLessonMap: { ideas: [{ text: "Colder than freezing." }], shape: "hub" },
+        wrongAnswers: [{ answer: "-2", question: "Which is colder?", reason: "Bigger digit." }],
+      },
+      skills: ["Read a temperature below zero"],
+    });
+
+    expect(generateText).toHaveBeenCalledTimes(2);
+    expect(data.lessons.map((spec) => spec.title)).toStrictEqual(["Opening guess"]);
   });
 
   it("keeps only its own variants' rules, in place, and quick lessons' rules last", async () => {

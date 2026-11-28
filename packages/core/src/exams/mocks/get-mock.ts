@@ -9,6 +9,7 @@ import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { type PassMarks, getPassMarks } from "../../library/exams/pass-marks";
 import { getTrueFalseLabels } from "../../library/exams/true-false-labels";
 import { NO_RESULT_MOMENTS, loadResultMoments } from "../../milestones/load-ceremony";
+import { loadPracticeEntries } from "../../mistakes/_utils/practice-entries";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { BRAIN_POWER_BONUS } from "../../sessions/brain-power";
 import { NOTHING_REACHED, reachedSchema } from "../../sessions/reached";
@@ -89,6 +90,7 @@ async function loadFinished({
       adapt: null,
       essays: [],
       mistakes: [],
+      practiceAvailable: false,
       reached: NOTHING_REACHED,
       result: null,
       review: [],
@@ -98,7 +100,7 @@ async function loadFinished({
   const result = mockResultSchema.safeParse(owned.mock.result).data ?? null;
   const reached = keptReachedSchema.safeParse(owned.mock.result).data?.reached ?? NOTHING_REACHED;
 
-  const [review, offers, { grades, numericBlankItems, views: essays }] = await Promise.all([
+  const [review, offers, { grades, numericBlankItems, views: essays }, practice] = await Promise.all([
     loadMockReview({ areas, mock: owned.mock, userId: owned.userId }),
     loadMockPlanOffers({
       blueprint: owned.blueprint,
@@ -107,12 +109,14 @@ async function loadFinished({
       result,
     }),
     loadMockEssayViews({ areas, mock: owned.mock }),
+    loadPracticeEntries({ mockId: owned.mock.id, skillIds: null, userId: owned.userId }),
   ]);
 
   return {
     ...review,
     adapt: offers?.view ?? null,
     essays,
+    practiceAvailable: practice.length > 0,
     reached,
     result: withMockWrittenPoints({ conditions, grades, numericBlankItems, result }),
   };
@@ -132,6 +136,11 @@ function getMockPassMarks({
     : null;
 }
 
+/** The sitting once the mock started; a mock still to take has none. */
+function getSittingId({ mock }: OwnedMock): string | null {
+  return mock?.id ?? null;
+}
+
 function describeOwner({
   conditions,
   owned,
@@ -149,6 +158,7 @@ function describeOwner({
     examName: owned.blueprint?.name ?? owned.goal?.title ?? null,
     goalId: owned.goal?.id ?? null,
     leftOut: listSatMockLeftOut({ conditions, structure: owned.structure, typed }),
+    mockId: getSittingId(owned),
     passMarks: getMockPassMarks({ conditions, owned }),
     scoreNotes: getScoreNotes({
       blueprint: owned.blueprint,
@@ -216,6 +226,7 @@ export async function getMock(blockId: string): Promise<MockViewResult> {
       number,
       pacing: conditions.pacing,
       planItemId: owned.payload.planItemId,
+      practiceAvailable: finished.practiceAvailable,
       purpose: conditions.purpose,
       questions: conditions.sections.reduce((sum, section) => sum + section.questions, 0),
       reached: finished.reached,

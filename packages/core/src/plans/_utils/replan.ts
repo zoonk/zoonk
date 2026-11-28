@@ -16,13 +16,14 @@ import { type PlanState } from "../planner/plan-state";
 import { getRunEffect, withBuiltSettings } from "../planner/run-outcome";
 import { type SelectedItemFacts, listSelectedItemFacts } from "../planner/selected-item-facts";
 import { summarizeSelectedPlan } from "../planner/selected-plan-summary";
+import { type MockMiss } from "../planner/skill-order";
 import { type PlanCarrySnapshot } from "./carried-lessons";
 import { withPlacedExtras } from "./extra-plan-graph";
 import { layOutUnmetPhaseDates } from "./phase-end-layout";
 import { type PlanChangeKind, type StoredPlanChangePayload } from "./plan-change-payload";
 import { type PlanContext } from "./plan-context";
 import { getPlanInputsKey, readLanding, shouldSkipPlanBuild } from "./plan-inputs-key";
-import { readReplanInputs } from "./replan-input";
+import { type loadReplanFacts, readReplanInputs } from "./replan-input";
 import { summarizeRetainedPlan } from "./retained-plan-allocation";
 import { type SelectedSummary } from "./selected-summary-contract";
 
@@ -78,6 +79,11 @@ export type ComputePlanRequest = {
   pace?: "sampled" | "saved";
   releasedPhases?: ReadonlySet<number>;
   setAsideLeftWork?: boolean;
+  sharedReads?: {
+    facts: () => ReturnType<typeof loadReplanFacts>;
+    hasTakenChallenge: () => Promise<boolean>;
+    mockMisses?: ReadonlyMap<string, MockMiss>;
+  };
   state?: PlanState;
   todayExceptAreas?: readonly string[] | null;
   todayShown?: boolean;
