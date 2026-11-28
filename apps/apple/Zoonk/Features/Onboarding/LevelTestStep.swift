@@ -33,6 +33,7 @@ extension LevelTest.Question {
 
     var shown = self
     shown.audioPending = false
+    shown.audioUnconfirmed = true
     return shown
   }
 }
@@ -88,8 +89,7 @@ struct LevelTestQuestionScreen: View {
     let isListening = question.skill == .listening
     let owner = AnyHashable([audioOwner.uuidString, question.id])
     let audioFailed = if case .failed = voice.player.state(for: owner) { true } else { false }
-    // A message the learner can't hear yet is skipped: answering it would move their level.
-    let skips = isListening && (question.audioPending || audioFailed)
+    let skips = isListening && Self.skips(question, audioFailed: audioFailed, heard: heard)
     var shown = PracticeQuestion(
       itemId: question.id, format: .multipleChoice, question: question.question,
       options: question.options, select: selectsAll ? .all : .one)
@@ -120,6 +120,12 @@ struct LevelTestQuestionScreen: View {
     return QuestionSecondAction(
       label: label, steadyAmong: Self.listeningLabels,
       action: label == TestCopy.cantListen ? onDeferAudio : nil)
+  }
+
+  /// A message the learner can't hear yet is skipped, this question only: answering it would move
+  /// their level, and ending the test's listening is for a learner who chose not to listen.
+  static func skips(_ question: LevelTest.Question, audioFailed: Bool, heard: Bool) -> Bool {
+    question.audioPending || audioFailed || (question.audioUnconfirmed && !heard)
   }
 
   static let skipQuestion = LocalizedStringResource("Skip this question", table: "Onboarding")
