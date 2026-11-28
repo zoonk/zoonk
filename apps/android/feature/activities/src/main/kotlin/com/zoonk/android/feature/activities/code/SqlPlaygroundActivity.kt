@@ -219,7 +219,7 @@ private fun SqlPlaygroundActivity(props: ActivityProps) {
 @Composable
 private fun SqlTableViewer(table: SqlTable) {
     val colors = MaterialTheme.colorScheme
-    val shape = RoundedCornerShape(ZoonkRadius.option)
+    val shape = RoundedCornerShape(ZoonkRadius.xl)
     var open by rememberSaveable(table.name) { mutableStateOf(table.rows.size <= OPEN_ROW_LIMIT) }
     val state = stringResource(if (open) R.string.disclosure_expanded else R.string.disclosure_collapsed)
     val mono = GeistMono
@@ -297,7 +297,7 @@ private fun SqlRowsTable(
     framed: Boolean = true,
 ) {
     val colors = MaterialTheme.colorScheme
-    val shape = RoundedCornerShape(ZoonkRadius.option)
+    val shape = RoundedCornerShape(ZoonkRadius.xl)
     // Digits share one width, so a column of numbers lines up by place.
     val body = MaterialTheme.typography.bodyMedium.withTabularFigures()
     val header = MaterialTheme.typography.labelSmall.copy(fontFamily = GeistMono)
@@ -468,7 +468,7 @@ private fun SqlReview(
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 val label = stringResource(R.string.activities_code_query_that_works)
                 ActivityCanvasLabel(label)
-                val shape = RoundedCornerShape(ZoonkRadius.option)
+                val shape = RoundedCornerShape(ZoonkRadius.xl)
                 Column(
                     Modifier
                         .fillMaxWidth()

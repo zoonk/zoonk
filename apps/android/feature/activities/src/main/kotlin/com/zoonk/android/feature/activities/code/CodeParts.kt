@@ -174,7 +174,7 @@ internal fun CodeEditor(
     modifier: Modifier = Modifier,
 ) {
     val colors = MaterialTheme.colorScheme
-    val shape = RoundedCornerShape(ZoonkRadius.option)
+    val shape = RoundedCornerShape(ZoonkRadius.xl)
     val style = MaterialTheme.zoonkType.codeField.copy(color = colors.onSurface)
     Box(
         modifier

@@ -273,7 +273,7 @@ private fun CodeRunnerOutput(
     isStale: Boolean,
 ) {
     val colors = MaterialTheme.colorScheme
-    val shape = RoundedCornerShape(ZoonkRadius.option)
+    val shape = RoundedCornerShape(ZoonkRadius.xl)
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Row(
             Modifier
