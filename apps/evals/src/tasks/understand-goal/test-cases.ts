@@ -725,6 +725,18 @@ export const TEST_CASES: UnderstandGoalCase[] = [
     goal: "수학 기말고사 대비",
     language: "ko",
   }),
+  testCase("en-finals-as-a-second-goal-ask-nothing", {
+    expected: {
+      followUp: null,
+      goals: [
+        { kind: "language", targetLanguage: "fr" },
+        { examName: null, kind: "exam" },
+      ],
+      route: "goals",
+    },
+    goal: "I want to learn French and get ready for my finals",
+    language: "en",
+  }),
   testCase("en-chemistry-final-asks-nothing", {
     expected: { followUp: null, goals: [{ examName: null, kind: "exam" }], route: "goals" },
     goal: "chemistry final next week",

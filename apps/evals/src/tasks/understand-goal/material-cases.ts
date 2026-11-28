@@ -496,6 +496,50 @@ export const MATERIAL_TEST_CASES: MaterialCase[] = [
     language: "en",
     sources: [UNREAD_PHOTO],
   }),
+  materialCase("finals-with-notes-are-named-by-the-notes", {
+    expected: {
+      followUp: null,
+      goals: [{ examName: null, kind: "exam", title: /equilibri/iu }],
+      route: "goals",
+    },
+    goal: "study for my finals",
+    intent: "exam",
+    language: "en",
+    sources: [
+      {
+        text: lines(
+          "Chem 102 – Chemical equilibrium review",
+          "A reversible reaction reaches equilibrium when the forward and reverse rates are equal.",
+          "The equilibrium constant K: products over reactants, each raised to its coefficient.",
+          "Le Chatelier's principle: adding a reactant, removing a product or changing pressure shifts the equilibrium.",
+          "Q vs K: when Q < K the reaction moves forward; when Q > K it moves back.",
+        ),
+        title: "equilibrium-review.pdf",
+      },
+    ],
+  }),
+  materialCase("midterms-with-notes-are-named-by-the-notes", {
+    expected: {
+      followUp: null,
+      goals: [{ examName: null, kind: "exam", title: /삼각함수/u }],
+      route: "goals",
+    },
+    goal: "중간고사 대비",
+    intent: "exam",
+    language: "ko",
+    sources: [
+      {
+        text: lines(
+          "수학 II 단원 정리 – 삼각함수",
+          "사인, 코사인, 탄젠트의 정의와 단위원",
+          "sin²θ + cos²θ = 1",
+          "삼각함수의 그래프: 주기, 최댓값과 최솟값",
+          "사인법칙과 코사인법칙으로 삼각형의 변과 각 구하기",
+        ),
+        title: "수학 정리.pdf",
+      },
+    ],
+  }),
   materialCase("an-unread-photo-and-test-tomorrow-say-no-subject", {
     expected: { route: "unclear" },
     goal: "I have a test tomorrow",

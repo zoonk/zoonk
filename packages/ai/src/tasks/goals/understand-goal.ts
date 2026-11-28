@@ -114,6 +114,7 @@ function getSystemPrompt({
   const variants = {
     material: Boolean(material?.overview),
     unreadMaterial: material?.overview === null,
+    wordsOnly: !material?.overview,
   };
 
   return fillPromptLanguages({
@@ -201,7 +202,7 @@ export async function understandGoal(params: UnderstandGoalParams) {
 export const goalRouteClassifier = {
   instructions: selectPromptVariants({
     template,
-    variants: { material: false, unreadMaterial: false },
+    variants: { material: false, unreadMaterial: false, wordsOnly: true },
   }),
   labels: {
     explain: "A one-off question about how or why something works or what something means.",
