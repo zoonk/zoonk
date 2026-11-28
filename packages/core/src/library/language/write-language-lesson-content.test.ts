@@ -745,6 +745,60 @@ describe(writeLanguageLessonDraft, () => {
     expect(tiles.map((option) => option.audioUrl)).toStrictEqual([voiced.audioUrl]);
   });
 
+  it("voices a word bank tile from the older of two spellings saved at the same moment", async () => {
+    const organization = await aiOrganizationFixture();
+    const key = crypto.randomUUID();
+    const draft = uniqueDraft(key);
+    const tile = `hello-${key}`;
+    const savedAt = new Date();
+    const [olderId, newerId] = [crypto.randomUUID(), crypto.randomUUID()].toSorted();
+
+    await wordFixture({
+      audioUrl: "https://blob.test/hello-capitalized.mp3",
+      createdAt: savedAt,
+      id: newerId,
+      organizationId: organization.id,
+      targetLanguage: "en",
+      word: `Hello-${key}`,
+    });
+
+    const older = await wordFixture({
+      audioUrl: "https://blob.test/hello.mp3",
+      createdAt: savedAt,
+      id: olderId,
+      organizationId: organization.id,
+      targetLanguage: "en",
+      word: tile,
+    });
+
+    const { lesson, workflowRunId } = await claimLanguageLesson({ language: "pt" });
+    const [firstSentence, ...otherSentences] = draft.sentences;
+
+    mockDraft({
+      ...draft,
+      sentences: [
+        { ...firstSentence!, sentence: `${tile} ${firstSentence!.sentence}` },
+        ...otherSentences,
+      ],
+    });
+
+    mockAudio();
+
+    await writeAndPublishLanguageLesson({ lessonId: lesson.id, workflowRunId });
+
+    mockSession(crypto.randomUUID());
+    const played = await getPlayableLibraryLesson({ lessonId: lesson.id });
+    const steps = played?.status === "ready" ? played.lesson.steps : [];
+
+    const tiles = steps.flatMap((step) =>
+      "exercise" in step && step.kind === "reading"
+        ? step.exercise.wordBankOptions.filter((option) => option.word === tile)
+        : [],
+    );
+
+    expect(tiles.map((option) => option.audioUrl)).toStrictEqual([older.audioUrl]);
+  });
+
   it("doesn't teach words the unit's earlier lessons taught", async () => {
     await aiOrganizationFixture();
     const key = crypto.randomUUID();
