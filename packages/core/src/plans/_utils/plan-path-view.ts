@@ -3,10 +3,12 @@ import { type CheckpointResult } from "../../checkpoints/_utils/checkpoint-resul
 import { listTodayLearnBlocks } from "../../learner/facts/today-learn-blocks";
 import { readTodayPlanSession } from "../../learner/facts/today-plan-session";
 import { previewTodayBlocks } from "../../sessions/_utils/read-study-day";
+import { listLeftOutSkills } from "../../view-models/syllabus/_utils/left-out-skills";
 import { type SyllabusInput } from "../../view-models/syllabus/_utils/syllabus-input";
 import { getNotPlannedReason } from "../../view-models/syllabus/_utils/syllabus-topics";
 import { type PlanView } from "../plan-view-contract";
 import { getSkillArea } from "../planner/graph-areas";
+import { hasPlanDeadline, withinLessonScope } from "./plan-end";
 import { buildPhaseViews } from "./plan-phase-views";
 import { type PlanReadContext, getPlanReadItemKey } from "./plan-read-projection";
 import { getOutlinedUntil } from "./stand-in-lessons";
@@ -55,8 +57,27 @@ export function buildPlanPath({
   const todayBlocks = listTodayLearnBlocks(today.session?.blocks ?? []);
 
   const next = findUpNextItem({ items, todayBlocks });
+  const studiesPastTarget = goal.kind === "exam" && state.settings.fullCourse;
+  const deadline = hasPlanDeadline({ studiesPastTarget, targetDate: goal.targetDate });
 
-  return buildPhaseViews({
+  const heldSkillIds = new Set(
+    withinLessonScope({ deadline, items }).flatMap((item) => (item.skillId ? [item.skillId] : [])),
+  );
+
+  const leftOut = listLeftOutSkills({
+    facts: {
+      heldSkillIds,
+      knownSkillIds: syllabus?.knownSkillIds ?? new Set(),
+      pastBasicsSkillIds: syllabus?.pastBasicsSkillIds ?? new Set(),
+      skippedAreas: state.settings.skippedAreas,
+      skippedBaseIds: syllabus?.skippedBaseIds,
+    },
+    skills: state.graph.skills
+      .filter((skill) => !skill.extra)
+      .map((skill) => ({ ...skill, area: getSkillArea({ graph: state.graph, skill }) })),
+  });
+
+  const views = buildPhaseViews({
     ...input,
     challengesOpen: input.phaseChallengesRequired !== false,
     goalKind: goal.kind,
@@ -93,7 +114,7 @@ export function buildPlanPath({
     ),
     phases,
     skillPhases: new Map(state.graph.skills.map((skill) => [skill.skillId, skill.phase])),
-    studiesPastTarget: goal.kind === "exam" && state.settings.fullCourse,
+    studiesPastTarget,
     targetDate: goal.targetDate,
     timings: getChallengeTimings({
       goal,
@@ -110,4 +131,12 @@ export function buildPlanPath({
     ),
     upNextItemId: next ? getPlanReadItemKey(next) : null,
   });
+
+  return views.map((phase) => ({
+    ...phase,
+    leftOut:
+      phase.kind === "learn" && phase.state !== "leftOut"
+        ? leftOut.flatMap((skill) => (skill.phase === phase.index ? [skill.name] : []))
+        : [],
+  }));
 }
