@@ -1,7 +1,7 @@
 import { generateText } from "ai";
 import { describe, expect, it, vi } from "vitest";
 import { createGenerateTextResult } from "../_test-utils/generate-text-result";
-import { gradeWritingEvidence } from "./grade-essay";
+import { getWritingGrader, gradeWritingEvidence } from "./grade-essay";
 import type * as Ai from "ai";
 
 vi.mock("server-only", () => ({}));
@@ -24,9 +24,11 @@ vi.mock("ai", async (importOriginal) => {
 });
 
 const evidence = {
-  aspects: [],
+  awards: [],
   criteria: [],
+  elements: [],
   errors: [],
+  limits: [],
   nextStep: null,
   onTopicQuote: null,
   zeroKind: null,
@@ -34,40 +36,68 @@ const evidence = {
   zeroRuleIndex: null,
 };
 
+const sheet = {
+  conventions: ["A source named without a reason earns nothing."],
+  criteria: [{ id: "argument", text: "Argument" }],
+  limits: [{ criteria: ["argument"], max: 2, text: "A conditional proposal earns at most 2." }],
+  rows: [
+    {
+      awards: [
+        { points: 0, text: "No argument." },
+        { count: 2, points: 4, text: "A developed argument with two reasons." },
+      ],
+      criterionId: "argument",
+      text: "Argument",
+    },
+  ],
+  zeroing: [{ kinds: ["offTopic"], text: "An answer on another subject." }],
+};
+
 describe(gradeWritingEvidence, () => {
-  it.each([
-    { heading: "The ENEM redação", kind: "enem" },
-    { heading: "The OAB legal brief and questions", kind: "oab" },
-    { heading: "Points", kind: "points" },
-    { heading: "No points", kind: "levels" },
-  ] as const)("selects the $kind instructions and evidence fields", async ({ heading, kind }) => {
+  it("grades every sheet with one prompt and sends the sheet's rows as numbered data", async () => {
     vi.mocked(generateText).mockResolvedValue(createGenerateTextResult(evidence));
 
-    const grade = await gradeWritingEvidence({
-      aspects: [],
+    const input = {
       context: null,
       keyPoints: [],
       language: "pt",
       question: "Escreva sobre o tema.",
-      scoringBasis: { kind },
       text: "O tema é relevante.",
+    };
+
+    const grade = await gradeWritingEvidence({ ...input, ...sheet });
+
+    const unpointed = await gradeWritingEvidence({
+      ...input,
+      conventions: [],
+      criteria: sheet.criteria,
+      limits: [],
+      rows: [],
+      zeroing: [],
     });
 
-    expect(grade.systemPrompt).toContain(`# ${heading}`);
-    expect(grade.systemPrompt).not.toContain("For the structured response");
+    expect(unpointed.systemPrompt).toBe(grade.systemPrompt);
+    expect(getWritingGrader().promptVersion).toBe(grade.provenance?.promptVersion);
+    expect(grade.systemPrompt).not.toContain("{{");
     expect(grade.userPrompt).toContain("O tema é relevante.");
+    expect(grade.userPrompt).toContain('"row":0');
+    expect(grade.userPrompt).toContain('"award":1,"count":2,"points":4');
+    expect(grade.userPrompt).toContain("A conditional proposal earns at most 2.");
+    expect(grade.userPrompt).toContain("A source named without a reason earns nothing.");
 
     const output = vi.mocked(generateText).mock.lastCall?.[0].output;
     const format = await output?.responseFormat;
 
     expect(format).toMatchObject({
       schema: {
-        properties: { zeroQuote: { description: expect.stringContaining("exact passage") } },
+        properties: {
+          awards: { type: "array" },
+          elements: { type: "array" },
+          limits: { type: "array" },
+          zeroQuote: { description: expect.stringContaining("exact passage") },
+        },
       },
       type: "json",
     });
-
-    const properties = format?.type === "json" ? format.schema?.properties : {};
-    expect(Object.hasOwn(properties ?? {}, "interventionElements")).toBe(kind === "enem");
   });
 });

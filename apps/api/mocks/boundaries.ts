@@ -23,6 +23,12 @@ export const boundaries = {
   },
   "@zoonk/ai/tasks/curriculum/coverage-check": { checkCoverage: vi.fn() },
   "@zoonk/ai/tasks/curriculum/goal-opening": { generateGoalOpening: vi.fn() },
+  // A goal that names no complete list, unless a test says otherwise.
+  "@zoonk/ai/tasks/curriculum/member-coverage": {
+    checkMemberCoverage: vi.fn(async () => ({
+      data: { members: [], reason: null, set: null, uncovered: [] },
+    })),
+  },
   "@zoonk/ai/tasks/curriculum/skill-graph-calls": {
     generateSkillGraphFrame: vi.fn(),
     generateSkillGraphSection: vi.fn(),
@@ -103,6 +109,7 @@ export const boundaries = {
   "@zoonk/ai/tasks/research/find-written-task-subjects": { findWrittenTaskSubjects: vi.fn() },
   "@zoonk/ai/tasks/research/plan": { generateExamResearchPlan: vi.fn() },
   "@zoonk/ai/tasks/research/read-product-pages": { readProductPages: vi.fn() },
+  "@zoonk/ai/tasks/research/read-written-grading": { readWrittenGrading: vi.fn() },
   "@zoonk/ai/tasks/research/source-change-notice": { generateSourceChangeNotice: vi.fn() },
   "@zoonk/ai/tasks/research/source-plan": { generateSourceResearchPlan: vi.fn() },
   "@zoonk/ai/tasks/research/translate-pass-marks": { translatePassMarks: vi.fn() },

@@ -22,7 +22,7 @@ export function listPracticeWritingTasks({
     {
       count: 1,
       description: shortAnswer.description,
-      grading: { criteria: [], kind: "levels", language: null, rounding: null, zeroing: [] },
+      grading: { criteria: [], language: null, rounding: null, zeroing: [] },
       handwritten: null,
       key: "class-short-answer",
       lines: null,

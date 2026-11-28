@@ -13,6 +13,8 @@ enum WritingLabels {
     return value.formatted(.number.precision(.fractionLength(decimals)).locale(locale))
   }
 
+  /// A fixed amount, such as a maximum or a minimum, as it is: "22", "9.5", "1.25". It never pads
+  /// to a mark's decimals, so a criterion reads "14.7 of 22", never "14.7 of 22.0".
   static func partPoints(_ value: Double) -> String {
     let format = FloatingPointFormatStyle<Double>.number
       .precision(.fractionLength(0...2))
@@ -30,8 +32,11 @@ enum WritingLabels {
   private static let floatSlack = 1e-9
 
   /// A headline's ends rounded outward, the low one down and the high one up, so it never claims
-  /// more than its parts.
+  /// more than its parts. One grade isn't a range: it stays as it is, for the number format to round
+  /// as it rounds the parts beside it, so 48.01 reads "48", never "48–49".
   static func roundedOutward(_ range: WritingRange, decimals: Int) -> WritingRange {
+    guard abs(range.high - range.low) >= floatSlack else { return range }
+
     let step = pow(10, Double(decimals))
 
     return WritingRange(
@@ -42,14 +47,12 @@ enum WritingLabels {
   /// A range of points with exactly the scale's `decimals` (whole points when the server sends
   /// none), one number when both ends read alike ("29.8", never "29.79–29.8"), joined by an en
   /// dash. Each end rounds to the nearest; a `headline` rounds its low end down and its high end
-  /// up, so it never claims more than its parts. Nothing at all reads "0", never "0.0".
+  /// up, so it never claims more than its parts.
   static func range(_ range: WritingRange, decimals: Int? = nil, headline: Bool = false) -> String {
     let decimals = decimals ?? 0
     let shown = headline ? roundedOutward(range, decimals: decimals) : range
     let low = points(shown.low, decimals: decimals)
     let high = points(shown.high, decimals: decimals)
-
-    if [low, high].allSatisfy(isZero) { return points(0, decimals: 0) }
 
     return low == high
       ? low
@@ -57,8 +60,8 @@ enum WritingLabels {
         localized: "\(low)–\(high)", table: "Essay")
   }
 
-  /// What language errors take away, to one decimal: "−0.3 to −0.6", one number when both ends
-  /// read alike, and "0" when nothing is taken, never "−0".
+  /// What language errors take away, to one decimal: "−0.3 to −0.6", "0.0 to −0.4" from none,
+  /// one number when both ends read alike, and "0" when nothing is taken, never "−0".
   static func deduction(_ range: WritingRange) -> String {
     let low = points(range.low, decimals: 1)
     let high = points(range.high, decimals: 1)
@@ -68,9 +71,9 @@ enum WritingLabels {
 
     return isZero(low)
       ? String(
-        localized: "0 to −\(high)", table: "Essay",
+        localized: "\(low) to −\(high)", table: "Essay",
         comment:
-          "Points language errors take off an answer, from none to some, like '0 to −0.6'")
+          "Points language errors take off an answer, from none to some, like '0.0 to −0.6'")
       : String(
         localized: "−\(low) to −\(high)", table: "Essay",
         comment: "Points language errors take off an answer, as a range, like '−0.3 to −0.6'")
@@ -87,7 +90,7 @@ enum WritingLabels {
   ) -> String {
     String(
       localized:
-        "\(self.range(range, decimals: decimals, headline: headline)) of \(points(max, decimals: decimals))",
+        "\(self.range(range, decimals: decimals, headline: headline)) of \(partPoints(max))",
       table: "Essay", comment: "A range of points of a question's total, like '16–19 of 30'")
   }
 

@@ -17,7 +17,7 @@
   "plan_archive_goal": "4a8b856d6641a8abbae5942f00690062d2b2c0b1a4340cbf88ca3cf417da519e",
   "plan_archive_goal_short": "bcb6659135a0a52b293155b4eb15d41bcae4f7d570c4c617f0a4510b439e5901",
   "plan_archive_title": "a608c81b76bae6f04b5cebfa19057abedacaa91ca8d6af6d13f11c53cd1d0c8b",
-  "plan_ask_add_topics": "7ded63a8d2a3bfaf033bde9b4624ef204e228ced9d02539005aab2d8dc6bf464",
+  "plan_ask_add_topics": "050d31ec3030138e04f183cbd5ecd0f8e1970c2dffb6ed29b3426dd1b907f870",
   "plan_ask_aim": "94cfea3a2f4c6f7b45ca54d1f38496f2633b8faa1275bde43de56d32133c4c64",
   "plan_ask_change": "8fc3b0c567743467ce740d14ff5791406c5c06752aa2afc8e5660f75204c89d0",
   "plan_ask_daily_time": "63238f0db1a83a1e23a5884cc1d66a859a8d67fbbc82ddb0fbfbcc0cbbce8e0e",
@@ -281,6 +281,7 @@
   "plan_going_deeper": "7725d2ac4f133206f9a9041b03e70ccd96e27584ca20e400e8dfc6ff7c32260f",
   "plan_how_calculated": "4e3ef66d26681ec72edc3904d5fb9e0c63706a44ed556e117192657a58b993ff",
   "plan_keep_studying": "65c0935be11444b5b4f85f0652642cc07b5337f7b299e52ba57e318020b75d9c",
+  "plan_left_out_topics": "a2421520a193fae793994a943cf2bee12dc61814304aa1f61136a724aae58d7a",
   "plan_legend_phase_questions": "7551d749d694371d1966791a58da26b2fce642f8738ad1b04e067e6add002ea4",
   "plan_lessons": "7e706b806ec55d99ddb289dc4baa8968b01af0eb9d6a7ee78b512d6f690993a7",
   "plan_lessons_done_of": "46b68a8695613d3d129c603690e026edc8b99e83aaaa0cbea14d84a10a02cdb0",
@@ -511,16 +512,17 @@
   "plan_why_phase_dates_later": "601537df74e76ae6daccf08ba67e2f16309e357c10b4e71cd89845ef83030ddc",
   "plan_why_phase_end_later": "f8f52ff3857fba0eba821e42417e28c03155e14e440621adde2957ed9b11a137",
   "plan_why_phase_end_off_rest": "06fbdd2a5688a9359e7affab32dc13ea267baf74ca6aba31930f156796410c10",
-  "plan_written_above_minimum": "e30fc7146f4d791b182f51692d0b10c7b443207094299c5d74af3ebbcf245aef",
+  "plan_written_above_minimum": "b38afe09b119a363e1847c18be7057e2bc6140db751a393c1d6a3ef3a0fab0b1",
   "plan_written_asks_for": "33cd5cea491828921a3924ab3adfcbfd8bc52ad10ef695c0045504c8781a89ca",
   "plan_written_asks_for_share": "d42009f25d3e72051bc69f71afd319e6082415345c2ae61403785108df015cdd",
-  "plan_written_below_minimum": "2fb527069c43c9b8ebd511d656a25124db2e4977df597256cd7408ebb6c0135a",
-  "plan_written_close_to_minimum": "de2e0045769d694236a4c9d11f9b869d2c3544dd67563134ed0d3fad49aba435",
+  "plan_written_below_minimum": "5dc3ba5549e7b9b758072ab10ec837c7a54ecb9c612a5c9cf73ae0b97b37b687",
+  "plan_written_cant_say": "4444def52b3e8110248c98376640cb6bef664ba228c62131022e4f74a73eb8c1",
+  "plan_written_close_to_minimum": "4ef360746efbb5228eba7175dedb40c9964c137ffb88e63751dafbf0b373471d",
+  "plan_written_likely_below": "68e94b38fe83e8f88cea89d67434096b34ab93b78ae67d865490fdd35c487b1a",
   "plan_written_not_measured": "920a50f2400811aa49f12cb537c91dbaf51cc322a75fbf8214f14e1865a2e225",
   "plan_written_not_measured_half": "994680cf6b10bc5c92746f131540c6288a94fb4965551f7078c695e2778ffac7",
   "plan_written_not_measured_share": "bba9430898072fc64134d0f6456a94ac88d0c2c742e18aaa95f87222930cd634",
   "plan_written_objective": "93b9d7e8954c96d4328524b35ef214b60f19752a0ad844defdd9ba64d8d146ce",
-  "plan_written_points_below": "20397c502311509826b039a5ae06466b2342b89b2db13357de963b023974be5e",
   "plan_you_are_here_suffix": "a1d5f649b8a32699abe62b3940107c03d22a0a2860fe6de4515ea928ec7f2d60",
   "plan_your_level": "a03f9c757029d9c9d51c38580bf1e548a6968184257b2889f4abd356f197cdd5",
   "plan_your_pace": "8dd25b8068a1b8882d61ec30c37593d6b661970a100c0075cacb1c1362f305c1",
@@ -623,6 +625,12 @@
         <item quantity="other">%1$d de %2$d lecciones completadas</item>
     </plurals>
     <string name="plan_not_in_your_plan">No está en tu plan</string>
+    <!-- Under a module or a phase of the learner's plan, and on the row that lists them: how many of its topics the plan leaves out because they don't fit before the plan's date. -->
+    <plurals name="plan_left_out_topics">
+        <item quantity="one">%d tema no está en tu plan</item>
+        <item quantity="many">%d temas no están en tu plan</item>
+        <item quantity="other">%d temas no están en tu plan</item>
+    </plurals>
     <plurals name="plan_lessons_not_studied">
         <item quantity="one">%d lección sin estudiar</item>
         <item quantity="many">%d lecciones sin estudiar</item>
@@ -1367,7 +1375,8 @@
     <string name="plan_change_areas_from_basics">%1$s empiezan desde lo básico.</string>
     <string name="plan_change_exam_date">Fecha del examen: %1$s.</string>
     <string name="plan_change_end_date">Fecha de finalización: %1$s.</string>
-    <string name="plan_ask_add_topics">¿Agregar %1$s a tu plan?</string>
+    <!-- Asks whether to add topics to the learner's plan. {topics} lists their names, which are often actions themselves, such as “Memorize An-Nahl”, so they stay after the colon rather than inside the sentence. -->
+    <string name="plan_ask_add_topics">¿Agregar a tu plan: %1$s?</string>
     <string name="plan_ask_focus">¿Priorizar %1$s?</string>
     <string name="plan_ask_remove_focus">¿Dejar de priorizar materias?</string>
     <string name="plan_ask_less_time">¿Menos tiempo para %1$s?</string>
@@ -1431,14 +1440,15 @@
     <string name="plan_call_not_in_plan">La llamada no está en tu plan</string>
     <string name="plan_outside_past_basics">Saltado · ya conoces lo básico</string>
     <string name="plan_outside_skipped_base">Saltado · tú lo decidiste</string>
-    <string name="plan_written_below_minimum">Por debajo del mínimo para aprobar</string>
+    <string name="plan_written_below_minimum">Probablemente no alcanza el puntaje mínimo para aprobar</string>
     <string name="plan_written_asks_for">%1$s necesita %2$s puntos, sin importar tus otros puntajes.</string>
     <string name="plan_written_asks_for_share">%1$s necesita %2$s de sus puntos, sin importar tus otros puntajes.</string>
     <string name="plan_written_not_measured">%1$s aún no se mide.</string>
     <string name="plan_written_not_measured_half">%1$s, que representa la mitad de tu puntaje final, aún no se mide.</string>
     <string name="plan_written_not_measured_share">%1$s, que representa el %2$s de tu puntaje final, aún no se mide.</string>
     <string name="plan_written_objective">Prueba objetiva</string>
-    <string name="plan_written_above_minimum">Por encima de los %1$s puntos necesarios</string>
-    <string name="plan_written_points_below">A %1$s puntos de alcanzar los %2$s necesarios</string>
-    <string name="plan_written_close_to_minimum">Cerca de los %1$s puntos necesarios</string>
+    <string name="plan_written_above_minimum">Probablemente supera el mínimo de %1$s puntos</string>
+    <string name="plan_written_likely_below">Probablemente no alcanza el mínimo de %1$s puntos</string>
+    <string name="plan_written_close_to_minimum">Podría quedar por encima o por debajo del mínimo de %1$s puntos</string>
+    <string name="plan_written_cant_say">Aún no podemos saber si alcanza el mínimo de %1$s puntos</string>
 </resources>

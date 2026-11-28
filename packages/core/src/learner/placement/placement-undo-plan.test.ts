@@ -1,7 +1,8 @@
 import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import * as planContext from "../../plans/_utils/plan-context";
 import { loadPlanSnapshot } from "../../plans/_utils/restore-plan";
 import { loadTodayPlanChange } from "../../plans/_utils/today-plan-change";
 import { decidePlanChange } from "../../plans/decide-plan-change";
@@ -88,6 +89,10 @@ async function finishPart({
 }
 
 describe("placement Undo restores the plan", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it.each([
     { length: "quick", surface: "result" },
     { length: "wholeCourse", surface: "result" },
@@ -148,6 +153,51 @@ describe("placement Undo restores the plan", () => {
     ).resolves.toMatchObject({ change: { status: "undone" }, status: "updated" });
 
     await expect(readPlanView(goal.id)).resolves.toStrictEqual(shown);
+    await expect(readSchedule(goal.id)).resolves.toStrictEqual(before);
+  });
+
+  it("undoes when the finish's reschedule lands while Undo reads the plan", async () => {
+    const user = await userFixture();
+
+    const { goal, skills } = await learnerGoalFixture({
+      itemsPerSkill: 0,
+      phases: [3],
+      userId: user.id,
+    });
+
+    mockSession(user.id);
+    const before = await readSchedule(goal.id);
+
+    const finished = await finishPart({
+      goalId: goal.id,
+      length: "quick",
+      skillIds: skills.map(({ id }) => id),
+    });
+
+    if (finished.status !== "ready" || !finished.completion.changeId) {
+      throw new Error("Expected a finish that skips lessons and offers Undo");
+    }
+
+    // A commit between two of Undo's reads can't be timed from outside: once Undo has read the
+    // plan's version, the reschedule the finish owes commits before Undo reads the rest.
+    const readContext = planContext.loadPlanContext;
+    const landed = { done: false };
+
+    vi.spyOn(planContext, "loadPlanContext").mockImplementationOnce(async (input) => {
+      landed.done = true;
+      await refreshTestedOutPlan({ goalId: goal.id, userId: user.id });
+      return readContext(input);
+    });
+
+    await expect(
+      decidePlanChange({
+        changeId: finished.completion.changeId,
+        goalId: goal.id,
+        input: { status: "undone" },
+      }),
+    ).resolves.toMatchObject({ change: { status: "undone" }, status: "updated" });
+
+    expect(landed.done).toBe(true);
     await expect(readSchedule(goal.id)).resolves.toStrictEqual(before);
   });
 });

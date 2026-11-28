@@ -1,5 +1,5 @@
 import { type BlueprintExtraction } from "@zoonk/ai/tasks/research/extract-exam-blueprint";
-import { FORMAT_WORDS, type FactEntry, toFacts } from "./blueprint-fact-claims";
+import { FORMAT_WORDS, type FactEntry, describePoints, toFacts } from "./blueprint-fact-claims";
 import {
   type ExtractionDocument,
   type Passage,
@@ -13,10 +13,6 @@ type FinalShare = Scoring["finalShares"][number];
 type Minimum = { unit: "percent" | "points"; value: number };
 
 const PERCENT_TENTHS = 1000;
-
-function describePoints(points: number): string {
-  return `${points} ${points === 1 ? "point" : "points"}`;
-}
 
 function describeSelection(row: MarkingRow): string {
   if (row.format !== "multipleChoice" || row.select === null) {

@@ -1,0 +1,451 @@
+[
+  {
+    "id": "4",
+    "question": "Mit welcher Folge und welcher Dauer müssen Sie rechnen, wenn Sie Ihre notwendigen Eigenbemühungen nicht rechtzeitig oder nicht vollständig erfüllen?",
+    "points": [
+      { "text": "Es tritt eine Sperrzeit ein.", "points": 0.75 },
+      { "text": "Die Sperrzeit dauert zwei Wochen.", "points": 0.25 }
+    ],
+    "answers": [
+      {
+        "id": "ad97c9e410fe4d668550ea35fecac37a",
+        "text": "Die Agentur für Arbeit kann die Arbeitsvermittlung für einen Zeitraum von zwölf Wochen einstellen kann (Vermittlungssperre), wenn der Arbeitsuchende oder Arbeitslose ohne Leistungsbezug Ihren Mitwirkungspflichten oder Pflichten aus der Eingliederungsvereinbarung bzw. den festgesetzten Eigenbemühungen nicht nachkommen. Die Vermitt­lungssperre kann nachteilige Wirkungen in Versicherungsbiographie haben, da für diesen Zeitraum keine Zeiten der Arbeitslosigkeit an die Rentenversicherung gemeldet werden.",
+        "score": 0.0
+      },
+      { "id": "add284fa963443aaab77d0ef44699cf6", "text": "2 Wochen", "score": 0.25 },
+      {
+        "id": "04186f2ef22345f6859b6cb93a2c9fb2",
+        "text": "Dann bekomme ich eine Sperre von 12 Wochen, in denen mir keine Arbeit vermittelt wird, zudem wird diese Zeit nicht von der Rentenversicherung angerechnet, in der Zeit bekomme ich kein Geld",
+        "score": 0.375
+      },
+      {
+        "id": "f4ecc95945c84cf38ef29c0c5ef76e19",
+        "text": "Einem kann passieren, dass man zwei Wochen gesperrt wird oder zwölf Wochen Vermittlungssperre auferlegt bekommt. Zudem kann einem das Arbeitslosengeld gestrichen werden.",
+        "score": 0.5
+      },
+      { "id": "c5a6e4c9340c4cf7b199a6ab002fcce7", "text": "Keine Ahnung", "score": 0.0 },
+      {
+        "id": "ccffc263721a4c8b8c0ecc06e750288d",
+        "text": "Mit einer Abmahnung  die bei weiteren Verstößen zur Speere führen könnte.",
+        "score": 0.375
+      },
+      {
+        "id": "bfa3cc4787b04937b4a1d4d995b36f47",
+        "text": "Zunächst werden mir Sanktionen angedroht falls ich mich nicht weiter bemühen werden dann Sanktionen bis zu 100% umgesetzt",
+        "score": 0.0
+      },
+      {
+        "id": "43043fbdce36493fa291677d6a4ae085",
+        "text": "Wenn die geforderten und notwendigen eigenbemühungen nicht erbracht werden oder nicht rechtzeitig erfolgen, kann das Arbeitsamt Sanktionen in Form von Sperrfristen verhängen. Diese können 3,6 oder 12 Wochen lang sein. In dieser Zeit erhält der Bezieher keine oder teilweise Leistung.",
+        "score": 0.375
+      },
+      {
+        "id": "ead4870224124abda7d670d1d6f23719",
+        "text": "Es kann eine Vermittlungssperre von 12 Wochen festgesetzt werden, die Nachteile bei der gesetzlichen Rentenversicherung nach sich ziehen.",
+        "score": 0.0
+      },
+      {
+        "id": "4258b57af87645948872437da3775b32",
+        "text": "Das kann meines wissens zu Sperrzeiten führen und das fehlen von teilweise oder ganz das Arbeitslosengeld. Die Strafzeiten sind mir nicht bekannt",
+        "score": 0.375
+      },
+      {
+        "id": "1b58e4457ee44868a48f2966a3687299",
+        "text": "Ich kann eine Sperrfrist erhalten in der ich nicht versichert bin. Diese dauert zwei Wochen.",
+        "score": 0.625
+      },
+      {
+        "id": "6f85981ad04748a89b6881d897190d07",
+        "text": "Es kann zu Sperrzeiten von bis zu 12 Wo. führen; bei zweimaliger Sperrzeit á 12 Wo. kann der Anspruch auf ALG erlöschen.",
+        "score": 0.75
+      },
+      {
+        "id": "9388543af2e5416d910b51aae2f8e16d",
+        "text": "Ich muß mit einer Sperrzeit rechnen, wenn ich meine Eigenbemühungen nicht ordnungsgemäß erfülle. Das kann bis zu zwei Wochen sein.",
+        "score": 0.875
+      },
+      {
+        "id": "8f247b69b8024d16a368ee0c2e303d71",
+        "text": "Als Folge von nicht erfüllten Eigenbemühungen kann eine Speerzeit von zwei Wochen eintreten.",
+        "score": 1.0
+      },
+      {
+        "id": "8d89d87592de4cd5972598b69d0fd28e",
+        "text": "Bei unzureichenden Eigenbemühungen tritt eine Sperrzeit von 2 Wochen ein. Das heißt, die Gesamtanspruchsdauer des Arbeitslosengeldes sinkt um diese Frist. Da man in der Zeit nicht pflichtversichert ist, sollte man zum Jobcenter gehen und dort einen Antrag auf ALG II stellen.",
+        "score": 0.625
+      },
+      {
+        "id": "01002c1b58b04abda290d64d8e6b1084",
+        "text": "Wenn ich keine Eigenbemühungen unternehme, besteht kein Anspruch auf Arbeitslosengeld. Dies kann auch rückwirkend zurückgefordert werden. Dies gilt, bis Eigenbemühungen wieder aufgenommen werden, bzw. für die gesamte Dauer in der keine Eigenbemühungen unternommen/nachgewiesen werden (können).",
+        "score": 0.75
+      },
+      {
+        "id": "93b0209ed1014aee83dd39c4d5ed4464",
+        "text": "Bei unzureichenden Eigenbemühungen wird man für das Arbeitslosengeld für etwa 2 Wochen gesperrt. Bei Meldeversäumnis und verspäteter Arbeitsuchendmeldung jeweils eine Woche.",
+        "score": 0.875
+      },
+      {
+        "id": "75145c25f6424342b380c4cd6e887143",
+        "text": "Ich muss mit einer Sperrzeit rechnen. Diese beträgt 2 Wochen, wenn ich mich nicht ausreichend selbst um eine neue Arbeitsstelle bemühe.",
+        "score": 1.0
+      },
+      {
+        "id": "b4293c0e1fda4eaa9f2e4a02fc8a7fd6",
+        "text": "Es kann zur Kürzung der Leistung oder sogar zu einer Sperrzeit von zwei Wochen kommen.",
+        "score": 0.625
+      },
+      {
+        "id": "94e2c20a196e44dba5a2db7322297c67",
+        "text": "Es muss damit gerechnet werden das man für 12 Wochen eine Sperre, also kein Geld bekommt.",
+        "score": 0.75
+      }
+    ]
+  },
+  {
+    "id": "8",
+    "question": "Unter welchen Voraussetzungen könnten Sie eine Ihnen von der Agentur für Arbeit vorgeschlagene Beschäftigung mit der Begründung ablehnen, dass die täglichen Pendelzeiten Ihnen unzumutbar sind?",
+    "points": [
+      {
+        "text": "Bei mehr als sechs Stunden Arbeitszeit gilt eine tägliche Gesamtpendelzeit von mehr als zweieinhalb Stunden als unverhältnismäßig.",
+        "points": 0.25
+      },
+      {
+        "text": "Die erste Pendelzeitgrenze gilt für eine Arbeitszeit von mehr als sechs Stunden.",
+        "points": 0.25
+      },
+      {
+        "text": "Bei kürzerer Arbeitszeit sind mehr als zwei Stunden Gesamtpendelzeit unverhältnismäßig.",
+        "points": 0.25
+      },
+      {
+        "text": "Die zweite Pendelzeitgrenze gilt bei höchstens sechs Stunden Arbeitszeit.",
+        "points": 0.25
+      }
+    ],
+    "answers": [
+      {
+        "id": "dc7607c73ac8448b852330028b34b25e",
+        "text": "Die Länge des Arbeitsweges kann kein Grund für die Arbeitsverweigerung sein.",
+        "score": 0.0
+      },
+      {
+        "id": "523fb0f149324f31bd37a0d16c7c5c32",
+        "text": "Wenn die Pendel Zeiten länger als 2,5 Std fur den hin und Rückweg betragen.",
+        "score": 0.25
+      },
+      {
+        "id": "b94ef78652ba4af3b0798972495b8454",
+        "text": "Bei Arbeitszeiten von 6h ist eine Pendelzeit länger als 2,5h nicht zumutbar. Sonst kürzer.",
+        "score": 0.375
+      },
+      {
+        "id": "66c1b3186e9a4c24b008568637b2c84b",
+        "text": "Bei einer Arbeitszeit über 6 Stunden täglich, kann eine Pendelzeit über zweieinhalb Stunden als unzumutbar angesehen werden. Auch die Vereinbarkeit von Familie und Beruf spielt eine Rolle, wenn Kinder zum Beispiel nicht mehr beaufsichtigt werden könnten.",
+        "score": 0.5
+      },
+      { "id": "eed0ee3d9c1b4f68abe1257582109420", "text": "keine Ahnung", "score": 0.0 },
+      {
+        "id": "fb809cbdfe2b41939c99b8761da506c9",
+        "text": "Wenn der Arbeitsweg länger als 2 Stunden täglich ist oder eine bestimmte Entfernung ( 100km)überschreitet.",
+        "score": 0.25
+      },
+      {
+        "id": "6a4f7598025049ef8c75bf10c2803412",
+        "text": "Bis 6 std Arbeitszeit sind bis zu 2std  hin und Rückfahrt unzumutbar",
+        "score": 0.375
+      },
+      {
+        "id": "aa06a1d9f22b47f1afc809995915d7f6",
+        "text": "bis zu zwei Stunden bei einer Arbeitszeit von sechs Stunden (oder weniger), bis zu zweieinhalb Stunden bei einer Arbeitszeit von mehr als sechs Stunden oder. wenn in der betroffenen Region längere Wegzeiten üblich sind, gelten diese als zumutbare Pendelzeiten.",
+        "score": 0.5
+      },
+      {
+        "id": "e050441ae0ef4dbca059ccda49928c1d",
+        "text": "Wenn die die Pendelzeit im Verhältnis zur ausgeführten Arbeitszeit unverhältnismäßig lang ist.",
+        "score": 0.0
+      },
+      { "id": "be9b9aa020834c5691d4ab03b94ac087", "text": "Pendelzeit mehr als 2h", "score": 0.25 },
+      {
+        "id": "457c0760d66d4aa6a1690d7f01f35cc3",
+        "text": "Bei einer Arbeitszeit von mehr als 6 Stunden: 2,5 Stunden Fahrtzeit\nBei einer Arbeitszeit von weniger als 6 Stunden: 2 Stunden Fahrtzeit",
+        "score": 0.625
+      },
+      {
+        "id": "ad9b6d4e865c402e916e582af6d5e486",
+        "text": "Ich kann eine Beschäftigung ablehnen, wenn die Pendelzeit bei einer mehr als sechsstündigen Arbeitszeit zweieinhalb Stunden überschreitet oder bei einer weniger als sechsstündigen Arbeitszeit die Pendelzeit zwei Stunden überschreitet.",
+        "score": 0.875
+      },
+      {
+        "id": "77dddaea48a94c7d9927fa55a2d25b9d",
+        "text": "Wenn er unverhältnismäßig lang ist, mehr als zweieinhalb Stunden bei mehr als sechs Stunden Arbeit, darunter mehr als zwei Stunden",
+        "score": 1.0
+      },
+      {
+        "id": "84ffcb112abd485697ee3c7de5e4d621",
+        "text": "Bei einer Arbeitszeit von mehr als 6 Stunden: 2,5 Stunden Fahrtzeit\nBei einer Arbeitszeit von weniger als 6 Stunden: 2 Stunden Fahrtzeit",
+        "score": 0.625
+      },
+      {
+        "id": "701534c4c66a412da968211d76afce08",
+        "text": "Als Zumutbar gilt für Hin-und Rückweg insgesamt 2 bis 2,5 Stunden je nach Beschäftigungsdauer (< 6 Stunden; > 6 Stunden)",
+        "score": 0.875
+      },
+      {
+        "id": "2a793c8f52744f2eab004a4e9dcc8405",
+        "text": "Zumutbar sind bis zu zwei Stunden Pendelzeit bei einer Arbeitszeit von bis zu 6 Stunden und 2,5 Stunden Pendelzeit bei einer Arbeitszeit von mehr als 6 Stunden. Sollten in der Region längere Wegzeiten üblich sein, so gelten diese als zumutbar.",
+        "score": 1.0
+      },
+      {
+        "id": "d6f6ded6ea394668806b227e09d0e161",
+        "text": "Die Voraussetzung dafür ist, dass wenn die Pendelzeiten an einem Tag über 2,5 Stunden betragen bei über 6 Stunden Arbeit oder wenn die Pendelzeiten an einem Tag über 2 Stunden betragen bei unter 6 Stunden Arbeit. In diesen Fällen kann man die vorgeschlagene Beschäftigung mit dieser Begründung ablehnen.",
+        "score": 0.875
+      },
+      {
+        "id": "913cb77620674c8ab0a0b58456a20a3a",
+        "text": "Wenn die täglichen Pendelzeiten zwischen ihrer Wohnung und der Arbeitsstätte im Vergleich zur Arbeitszeit unverhältnismäßig lang sind, d.h. insgesamt mehr als zweieinhalb Stunden, wenn die Arbeitszeit bei mehr als sechs Stunden liegt oder mehr als zwei Stunden, wenn die Arbeitszeit sechs Stunden und weniger beträgt.",
+        "score": 1.0
+      },
+      {
+        "id": "cf4d03b53b3840e4b03e9f8bfe88a2d3",
+        "text": "Die Pendelzeiten sind dann nicht zumutbar, wenn sie im Verhältnis zur eigentlichen Arbeitszeit unverhältnismäßig lang sind. Bei Arbeitszeiten von mehr als sechs Stunden sind dies Pendelzeiten von insgesamt mehr als 2.5 Stunden, bei einer Arbeitszeit bis zu sechs Stunden eine Pendelzeit von insgesamt mehr als zwei Stunden.",
+        "score": 1.0
+      },
+      {
+        "id": "47ee1f6d521c4ccda241544e6dbb39e6",
+        "text": "Wenn die Fahrzeit bei mehr als 6 Arbeitsstunden 2,5 Stunden überschreitet.\nWenn die Fahrzeit bei bis zu 6 Arbeitsstunden/Tag 2 Stunden überschreitet.",
+        "score": 1.0
+      }
+    ]
+  },
+  {
+    "id": "10",
+    "question": "Was müssen Sie tun und beachten, wenn Sie vorhaben, vorübergehend abwesend zu sein (1) oder umzuziehen (2), und bis wann müssen Sie es tun, um eventuelle leistungsrechtliche Nachteile auszuschließen?",
+    "points": [
+      {
+        "text": "Die Agentur für Arbeit vor einem Umzug oder einer ganztägigen Abwesenheit an einem Werktag informieren.",
+        "points": 0.375
+      },
+      {
+        "text": "Geplante Ortsabwesenheit möglichst eine Woche im Voraus mitteilen.",
+        "points": 0.125
+      },
+      { "text": "Geplanten Umzug möglichst eine Woche vor dem Termin mitteilen.", "points": 0.125 },
+      {
+        "text": "Vor einer Reise oder Ortsabwesenheit die Zustimmung der Agentur einholen.",
+        "points": 0.375
+      }
+    ],
+    "answers": [
+      {
+        "id": "b15f38ec58c347e6ad610b47b960f5d2",
+        "text": "Ich denke ich müsste meinen Arbeitgeber informieren und offiziell meine Adresse ändern.",
+        "score": 0.0
+      },
+      {
+        "id": "53acb1095d0c47b887b2d3275fc17eba",
+        "text": "Ich muß diese Informationen sofort mitteilen.",
+        "score": 0.125
+      },
+      {
+        "id": "264f9d985b814d869565677e02c2c1fd",
+        "text": "Man muss vorab eine Genehmigung bei der Agentur für Arbeit einholen (1 Woche vorher)",
+        "score": 0.25
+      },
+      {
+        "id": "21626cda267b44f6a140e76d2a300fa7",
+        "text": "(1) eine Ortsabwesenheit muss ich spätestens 14 Tage vorher der Arbeitsagentur bekannt gegeben haben\n(2) einen Umzug muss ich rechtzeitig - am besten wenn ich weiß wann der Umzug stattfinden wird - der Arbeitsagentur melden, damit meine Daten an die Arbeitsagentur meines Umzugsortes weitergegeben werden können.",
+        "score": 0.375
+      },
+      {
+        "id": "63467b9338274f64917450e2763d0f2c",
+        "text": "die Abwesenheit ankündigen, bei einem Umzug am besten eine Woche vorher.",
+        "score": 0.5
+      },
+      { "id": "e4fcee5746c2478ca0d217ad567a2c58", "text": "Keine Ahnung", "score": 0.0 },
+      {
+        "id": "a6fdd33277ee4a2fbab89ba8065a5bf9",
+        "text": "Dies dem Jobcenter melden bzw einen Antrag frühzeitig stellen",
+        "score": 0.125
+      },
+      {
+        "id": "c0a281eca01e4e8da738cc5e7b7b5581",
+        "text": "Eine Genehmigung im Voraus bei der Agentur für Arbeit einholen (1 Woche vorher)",
+        "score": 0.25
+      },
+      {
+        "id": "a07cd654c57c483383659266f25dd4e8",
+        "text": "Die Erreichbarkeit für die Agentur für Arbeit muss weiter gesichert sein. \nDafür bedarf es einer werktäglichen Leerung des Briefkastens. \nEin Umzug muss der Agentur für Arbeit rechtzeitig bekannt gegeben werden. Ebenfalls muss eine Information an die Agentur für Arbeit erfolgen, wenn die Erreichbarkeit an einem Tag nicht gesichert ist. Dazu gehört auch, wenn man Werktag nicht zu Hause ist. Eine ganztägige Ortsabwesenheit muss von der Agentur für Arbeit genehmigt werden.\nEin Umzug sollte mindestens eine Woche vor dem Umzugstermin bekannt gegeben werden. Ein erstellter Nachsendeauftrag bei der Post gehört nicht zu der Sicherung der Erreichbarkeit.\n\nBeachtet werden muss, dass bei einem Ortswechsel eine andere Agentur für Arbeit zuständig werden kann. Daher wird dem Umziehenden ein Termin zur Meldung bei der neuen Agentur mitgeteilt. Dieser Termin muss besucht werden.",
+        "score": 0.375
+      },
+      {
+        "id": "65c5726aed2f45ef92d4144b737c02f3",
+        "text": "Jeder Umzug bzw. jede Abwesendheit muss der Agentur direkt mitgeteilt werden, damit keine Nachteile entstehen. Ein Umzug wird am besten mindestens eine Woche vorher mitgeteilt",
+        "score": 0.5
+      },
+      {
+        "id": "32462079bd3747dda0075bfc353d8051",
+        "text": "Man hat dies dem Arbeitsamt stets 1 Woche vor antritt anzuzeigen.",
+        "score": 0.625
+      },
+      {
+        "id": "5cabd22ac4074edbbdc976b3155bec81",
+        "text": "Beides ist sofort anzumelden, ein Umzug am besten eine Woche vorher. Ein Umzug ist mit dem Umzugstermin anzuzeigen. Um keine Leistungsnachteil zu erleiden ist eine Zustimmung durch das Arbeitsamt einzuholen. Bei einem Umzug ist häufig auch eine andere Agentur für Arbeit zuständig. Diese wird den Arbeitslosen zur Meldung auffordern.",
+        "score": 0.75
+      },
+      {
+        "id": "7778b74572e64bbca01ce5eb0900eda0",
+        "text": "1) Wenn ich ganztags an einem oder mehreren Werktagen unter der der Agentur für Arbeit bekannten Anschrift nicht erreichbar bin, ist dies ohne leistungsrechtliche Nachteile nur möglich, wenn die Agentur für Arbeit vorher zugestimmt hat.\n2) Ich muss der Agentur für Arbeit jeden Umzug rechtzeitig vor dem Umzugstermin, am besten eine Woche vorher, mitteilen.",
+        "score": 0.875
+      },
+      {
+        "id": "8c9720fd721245868a3da07f2e5584e8",
+        "text": "Der Agentur für Arbeit mitteilen, wenn man nicht erreichbar ist oder umzieht (am besten eine Woche vorher).\nOrtsabwesendheit ist nur möglich, wenn die Agentur vorher zugestimmt hat.",
+        "score": 1.0
+      },
+      {
+        "id": "71e7c20253b844518570a32928a440a7",
+        "text": "Dies muss der Agentur für Arbeit angezeigt werden und vor der Abwesenheit bzw. Umzug (bestenfalls eine Woche vorjer) mitgeteilt werden.",
+        "score": 0.625
+      },
+      {
+        "id": "303dfccdabec4949885d8ba7c2908243",
+        "text": "Das Aufhalten unter einer anderen Adresse muss mindestens eine Woche vor stattfinden der AGfA gemeldet werden. Sie entscheidet dann, ob dies ohne leistungsabzug möglich ist und wird eine Bewilligung oder Ablehnung mitteilen. Erfolgt eine Abwesenheit ohne Inkenntnisnahme bzw Erlaubnis der AGfA, erlischt die bewillige der Leistung ab dem Tag, an dem die Abwesenheit eintritt.",
+        "score": 0.75
+      },
+      {
+        "id": "3323c07942054bb9b1e325cdc0aebd6a",
+        "text": "(1) Eine vorübergehende Abwesenheit ist nur nach vorheriger Zustimmung der Arbeitsagentur möglich. (2) Ein Umzug sollte rechtzeitig, am besten eine Woche im Voraus, gemeldet werden.",
+        "score": 0.875
+      },
+      {
+        "id": "80aaf2647be740cfa70937c1b298c423",
+        "text": "Es ist von Nöten vorher bei der Arbeitsargentur um Erlaubnis zu fragen, ob ich vorübergehend abwesend sein darf. Dies muss mindestens eine Woche vor dem entsprechenden Termin getan werden. Bei Umzügen muss nicht um Erlaubnis gefragt werden, eine Mitteilung ist allerdings trotzdem mindestens sieben Tage vorher nötig.",
+        "score": 1.0
+      },
+      {
+        "id": "069356a7f9b24e2f8b647671413f26f3",
+        "text": "Rechtzeitig vor dem Umzugstermin oder Abwesenheit der BA mitteilen das man z.B. umzieht und die neue Adresse, am besten 1 Woche davor.",
+        "score": 0.625
+      },
+      {
+        "id": "cec00d10afc34513b75c96702e08b0ec",
+        "text": "Wenn möglich,  mindestens 1 Woche vorher der Arbeitsagentur Bescheid geben und sich die Abwesenheit genehmigen lassen.",
+        "score": 0.75
+      }
+    ]
+  },
+  {
+    "id": "11",
+    "question": "Was sollten Sie tun, wenn Sie vorübergehend oder dauerhaft keinen oder einen sehr geringen Anspruch auf Arbeitslosengeld haben, und warum?",
+    "points": [
+      { "text": "Die zuständige Anlaufstelle ist das Jobcenter.", "points": 0.5 },
+      { "text": "Sofort Kontakt aufnehmen.", "points": 0.125 },
+      {
+        "text": "Das Jobcenter prüft einen Anspruch auf Grundsicherung für Arbeitsuchende.",
+        "points": 0.375
+      }
+    ],
+    "answers": [
+      {
+        "id": "63c746a0d2194ed3a9133f07432154d0",
+        "text": "Rücksprache mit dem Sachbearbeiter über die Gründe halten und die Anordnungen befolgen.",
+        "score": 0.0
+      },
+      {
+        "id": "4634ba1e7ac04c80bfd255b331ac8484",
+        "text": "Ggf. ALG 2 (Hartz 4) beantragen, damit eine KV / PV durch das Amt gezahlt wird.",
+        "score": 0.125
+      },
+      {
+        "id": "49bf73747a1d4012bdd531f796110192",
+        "text": "In diesem Fall sollte man sich mit dem Arbeitsamt schnellstmöglich in Verbindung setzen, da vielleicht ein Anspruch auf zusätzliche Sozialleistungen besteht.",
+        "score": 0.25
+      },
+      {
+        "id": "759bbf7b5e16443b9457a583fddfb044",
+        "text": "Grundsicherung beantragen, weil ich nur so krankenversichert bin",
+        "score": 0.375
+      },
+      {
+        "id": "9ac31ce42b684d62bab7485dad7d8584",
+        "text": "In dem Fall sollte ich mich mut dem zuständigen Jobsenter in Verbindung setzen, da dann geprüft wird, ob mir ggf. andere Leistungen zustehen.",
+        "score": 0.5
+      },
+      {
+        "id": "09df53e2f15c4d19a6ed25c134841759",
+        "text": "Trotzdem bei der Arbeitsagentur arbeitslos melden, da diese  bei der Arbeitssuche behilflich sein können und sich der Status ändern kann.",
+        "score": 0.0
+      },
+      {
+        "id": "fd16d8c8406f46eeaeccd4bd0b78ce2f",
+        "text": "Ich sollte mir ein Anstellung suchen damit sich das ändert oder wenn das noch klappt. Nach Sozialhilfe fragen",
+        "score": 0.125
+      },
+      {
+        "id": "711e9748afe2462da87ad272378edf2a",
+        "text": "Es sollte sich direkt mit der Agentur für Arbeit in Verbindung gesetzt werden. Diese kann prüfen, ob weitere Leistungen genehmigt werden.",
+        "score": 0.25
+      },
+      {
+        "id": "cc2c2b3e0c0941fb8922f5980343356d",
+        "text": "Dann kommen zusätzlich Wohngeld, Kinderzuschlag oder Arbeitslosengeld II infrage. Damit wird dann viel zusätzliches wie Mittagessen der Kinder oder Schulausflüge bezahlt.",
+        "score": 0.375
+      },
+      {
+        "id": "5f91893091a748e9a221bc091f1c30c7",
+        "text": "In diesem Fall sollte ich mich unverzüglich mit der Agentur für Arbeit in Verbindung setzen, um prüfen zu lassen, ob mir gegebenenfalls zusätzliche Leistungen der Grundsicherung für Arbeitsuchende (Arbeitslosengeld II/Sozialgeld) zustehen.",
+        "score": 0.5
+      },
+      {
+        "id": "a487237434a34cc88cc52332e5779a86",
+        "text": "unverzüglich mit dem zuständigen Jobcenter in Verbindung setzen",
+        "score": 0.625
+      },
+      {
+        "id": "1bfea3f05de64c7f8615f167e9dd24ed",
+        "text": "Mit Jobcenter in Verbindung setzen.  Evlt.  können zusätzliche Sozialleistungen beantragt werden.",
+        "score": 0.75
+      },
+      {
+        "id": "f7de389e0e614b7ba23838caa7f4c04c",
+        "text": "Mit dem Jobcenter in Verbindung setzen, dies prüft ggf. zusätzliche Leistungen der Grundsicherung",
+        "score": 0.875
+      },
+      {
+        "id": "2105182e73d648ed96d3265e8b18b48e",
+        "text": "unverzüglich mit dem zuständigen Jobcenter Kontakt aufnehmen um ggf. dort Leistungen (ALG II) zu erhalten",
+        "score": 1.0
+      },
+      {
+        "id": "a72474155e294e818d6affaac454c4cb",
+        "text": "Unverzüglich mit Jobcenter in Verbindung setzen. Das Jobcenter prüft asap, ob Ihnen weitere Leistungen zustehen.",
+        "score": 0.625
+      },
+      {
+        "id": "a0ebc1c942ce4d14b26451ebace9d99d",
+        "text": "Besteht ein sehr geringer Anspruch auf Arbeitslosengeld, sollte man sich mit dem zuständigen Jobcenter in Verbindung setzen, um zu prüfen, ob einem evtl. zusätzliche Leistungen (Arbeitslosengeld II/Sozialgeld) zustehen.",
+        "score": 0.875
+      },
+      {
+        "id": "0c4c8cd1eb5240a396f43ad96b887f96",
+        "text": "Ich setze mich unverzüglich mit dem zuständigen Jobcenter in Verbindung. Diese wird prüfen, ob mir ggf. zusätzliche Leistungen der Grundsicherung für Arbeitssuchende zustehen.",
+        "score": 1.0
+      },
+      {
+        "id": "6f9ad8fed88948e880fc9de8828456d1",
+        "text": "Ich muss mich beim jobcenter melden um dort noch Leistungen zu bekommen",
+        "score": 0.625
+      },
+      {
+        "id": "e20fd8ec9a2f470d9f97fc13073391f1",
+        "text": "Man sollte sich beim Jobcenter melden, da dieses prüfen kann, ob zusätzliche Leistungen der Grundsicherung für Arbeitssuchende möglich sind.",
+        "score": 0.875
+      },
+      {
+        "id": "437b59e332a44e3b812e9a73bfa5270a",
+        "text": "Direkt mit dem jobcenter in Verbingung bringen und eentuell Grundsicherung beantragen",
+        "score": 1.0
+      }
+    ]
+  }
+]

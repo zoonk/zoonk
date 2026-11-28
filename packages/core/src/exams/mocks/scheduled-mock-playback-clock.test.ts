@@ -496,7 +496,6 @@ describe("a scheduled mock's playable sections keep the funded clock", () => {
         writing: {
           aspects: [],
           assessedSkillIds: [skillId],
-          charactersPerLine: 55,
           criteria: [],
           grading: CGU_WRITTEN_GRADING,
           keySource: "practiceKey",

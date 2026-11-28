@@ -4795,7 +4795,7 @@
     },
     "/essays/{blockId}": {
       "get": {
-        "description": "A writing block of the learner's session (produce): an exam's essay prompt, the rubric it's graded with (ENEM's five competencies, OAB's brief section by section, or the item's criteria) and the graded drafts so far, latest first, with how many grades are left today.",
+        "description": "A writing block of the learner's session (produce): an exam's written question with the criteria its notice grades it by, and the graded drafts so far, latest first, with how many grades are left today.",
         "operationId": "getEssay",
         "security": [
           {
@@ -35412,12 +35412,6 @@
       "WritingPrompt": {
         "type": "object",
         "properties": {
-          "charactersPerLine": {
-            "type": "integer",
-            "minimum": 0,
-            "exclusiveMinimum": true,
-            "maximum": 9007199254740991
-          },
           "criteria": {
             "type": "array",
             "items": {
@@ -35453,14 +35447,6 @@
           },
           "lines": {
             "nullable": true,
-            "type": "integer",
-            "minimum": 0,
-            "exclusiveMinimum": true,
-            "maximum": 9007199254740991
-          },
-          "maxCharactersPerLine": {
-            "default": 160,
-            "description": "The densest handwriting a board read in full; text past `lines` even at this width is not graded",
             "type": "integer",
             "minimum": 0,
             "exclusiveMinimum": true,
@@ -35528,10 +35514,23 @@
               "drill",
               "answer"
             ]
+          },
+          "charactersPerLine": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991,
+            "description": "Characters a line in a typical hand, as the estimated line count uses"
+          },
+          "maxCharactersPerLine": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991,
+            "description": "The densest handwriting a board read in full; text past `lines` even at this width is not graded"
           }
         },
         "required": [
-          "charactersPerLine",
           "criteria",
           "keySource",
           "lines",
@@ -35539,7 +35538,9 @@
           "points",
           "taskKey",
           "title",
-          "unit"
+          "unit",
+          "charactersPerLine",
+          "maxCharactersPerLine"
         ]
       },
       "WritingTask": {
@@ -43915,17 +43916,6 @@
           "question": {
             "type": "string"
           },
-          "rubric": {
-            "type": "string",
-            "enum": [
-              "enem",
-              "oab",
-              "points",
-              "levels",
-              "__unknown_api_value__"
-            ],
-            "description": "The scoring rubric recorded with the writing prompt"
-          },
           "sessionId": {
             "type": "string",
             "format": "uuid",
@@ -43960,7 +43950,6 @@
           "gradesLeft",
           "pacing",
           "question",
-          "rubric",
           "sessionId",
           "status",
           "writing"
@@ -45844,6 +45833,11 @@
                           },
                           "name": {
                             "type": "string"
+                          },
+                          "phase": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
                           },
                           "skillId": {
                             "type": "string"
@@ -93080,6 +93074,14 @@
             "type": "string",
             "description": "Stable within the goal's syllabus, URL-safe: the subject's page"
           },
+          "leftOut": {
+            "default": [],
+            "description": "The skills of a subject in the plan that the plan leaves out because they don't fit before its date (`notPlannedReason` `time` for each), by their names in the plan's graph, in the graph's order. A later date or more study time brings them back. Empty when the subject has `topics` (each topic carries its own status), when it's out of the plan as a whole (`covers` lists it then), and when everything fits",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "lessonsDone": {
             "type": "integer",
             "minimum": 0,
@@ -93241,6 +93243,7 @@
           "group",
           "imageUrl",
           "key",
+          "leftOut",
           "lessonsDone",
           "lessonsKnown",
           "lessonsTotal",
@@ -95110,6 +95113,14 @@
             ],
             "description": "Exam phases have no name; clients name them by kind"
           },
+          "leftOut": {
+            "default": [],
+            "description": "A `learn` phase the plan holds part of: the skills of it the plan leaves out because they don't fit before its date, by their names in the plan's graph, in the graph's order. A later date or more study time brings them back. Empty for other kinds, for a phase that's `leftOut` as a whole (`notPlannedReason` says why) and when everything fits",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "lessonsDone": {
             "type": "integer",
             "minimum": 0,
@@ -95214,6 +95225,7 @@
           "hours",
           "index",
           "kind",
+          "leftOut",
           "lessonsDone",
           "lessonsTotal",
           "milestone",
@@ -99610,7 +99622,7 @@
             "items": {
               "type": "string"
             },
-            "description": "The written parts a full mock asks beside its questions, as the notice names them (the exam's own essays, graded by its rubric once it's over)"
+            "description": "The written parts a full mock asks beside its questions, as the notice names them (the exam's own written questions, graded by their notice's criteria once it's over)"
           }
         },
         "required": [
@@ -100082,18 +100094,6 @@
             "type": "integer",
             "minimum": -9007199254740991,
             "maximum": 9007199254740991
-          },
-          "essayRubric": {
-            "nullable": true,
-            "description": "The rubric its essays are graded by; null when it asks none",
-            "type": "string",
-            "enum": [
-              "enem",
-              "oab",
-              "points",
-              "levels",
-              "__unknown_api_value__"
-            ]
           },
           "essays": {
             "type": "array",
@@ -100620,7 +100620,6 @@
           "current",
           "date",
           "day",
-          "essayRubric",
           "essays",
           "examDocument",
           "examName",
@@ -100737,11 +100736,7 @@
             "description": "Whether the learner marked the essay as unsure"
           },
           "writing": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/WritingPromptOutput"
-              }
-            ]
+            "$ref": "#/components/schemas/WritingPromptOutput"
           }
         },
         "required": [
@@ -100752,7 +100747,8 @@
           "question",
           "status",
           "text",
-          "unsure"
+          "unsure",
+          "writing"
         ],
         "additionalProperties": false
       },
@@ -101201,9 +101197,10 @@
               ],
               "additionalProperties": false
             },
-            "description": "Minimums this mock couldn't check, so they're still ahead: a written test, a test on another exam day, a test none of its questions belong to, or the tests together when it didn't ask them all"
+            "description": "Minimums this mock couldn't check, so they're still ahead: a test on another exam day, a test none of its questions belong to, or the tests together when it didn't ask them all. A written part this mock asked carries its minimum in `written` instead"
           },
           "written": {
+            "description": "Each written part this mock asked, with its estimate once its answers are graded in points, and where that estimate stands against the part's minimum",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/WrittenPartPoints"
@@ -105776,6 +105773,89 @@
                           "grading": {
                             "type": "object",
                             "properties": {
+                              "combination": {
+                                "description": "How the criteria's marks become the answer's mark; a sum when absent",
+                                "nullable": true,
+                                "type": "object",
+                                "properties": {
+                                  "citation": {
+                                    "type": "object",
+                                    "properties": {
+                                      "passage": {
+                                        "type": "string"
+                                      },
+                                      "sourceId": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": [
+                                      "passage",
+                                      "sourceId"
+                                    ],
+                                    "additionalProperties": false
+                                  },
+                                  "text": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "method": {
+                                    "type": "string",
+                                    "enum": [
+                                      "sum",
+                                      "mean",
+                                      "__unknown_api_value__"
+                                    ]
+                                  },
+                                  "step": {
+                                    "nullable": true,
+                                    "description": "The unit the combined mark is reported in, such as half a band",
+                                    "type": "number",
+                                    "minimum": 0,
+                                    "exclusiveMinimum": true
+                                  }
+                                },
+                                "required": [
+                                  "citation",
+                                  "text",
+                                  "method",
+                                  "step"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "conventions": {
+                                "description": "The board's own rules on what earns or loses credit, as it words them",
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "citation": {
+                                      "type": "object",
+                                      "properties": {
+                                        "passage": {
+                                          "type": "string"
+                                        },
+                                        "sourceId": {
+                                          "type": "string"
+                                        }
+                                      },
+                                      "required": [
+                                        "passage",
+                                        "sourceId"
+                                      ],
+                                      "additionalProperties": false
+                                    },
+                                    "text": {
+                                      "type": "string",
+                                      "minLength": 1
+                                    }
+                                  },
+                                  "required": [
+                                    "citation",
+                                    "text"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
                               "criteria": {
                                 "type": "array",
                                 "items": {
@@ -105801,12 +105881,110 @@
                                       "type": "string",
                                       "minLength": 1
                                     },
+                                    "awards": {
+                                      "description": "The board's own scale for this criterion, lowest award first; only one applies to an answer. Absent when the board states a maximum and no scale.",
+                                      "minItems": 2,
+                                      "type": "array",
+                                      "items": {
+                                        "type": "object",
+                                        "properties": {
+                                          "citation": {
+                                            "type": "object",
+                                            "properties": {
+                                              "passage": {
+                                                "type": "string"
+                                              },
+                                              "sourceId": {
+                                                "type": "string"
+                                              }
+                                            },
+                                            "required": [
+                                              "passage",
+                                              "sourceId"
+                                            ],
+                                            "additionalProperties": false
+                                          },
+                                          "text": {
+                                            "type": "string",
+                                            "minLength": 1
+                                          },
+                                          "count": {
+                                            "description": "How many distinct counted parts an answer needs to earn this award",
+                                            "type": "integer",
+                                            "minimum": 0,
+                                            "exclusiveMinimum": true,
+                                            "maximum": 9007199254740991
+                                          },
+                                          "points": {
+                                            "nullable": true,
+                                            "type": "number",
+                                            "minimum": 0
+                                          },
+                                          "pointsHigh": {
+                                            "description": "The top of the award's span when the board states a band of several marks",
+                                            "type": "number",
+                                            "minimum": 0
+                                          }
+                                        },
+                                        "required": [
+                                          "citation",
+                                          "text",
+                                          "points"
+                                        ],
+                                        "additionalProperties": false
+                                      }
+                                    },
                                     "id": {
                                       "type": "string",
                                       "minLength": 1
                                     },
+                                    "parts": {
+                                      "description": "The named elements the board counts toward this criterion's awards",
+                                      "type": "array",
+                                      "items": {
+                                        "type": "object",
+                                        "properties": {
+                                          "citation": {
+                                            "type": "object",
+                                            "properties": {
+                                              "passage": {
+                                                "type": "string"
+                                              },
+                                              "sourceId": {
+                                                "type": "string"
+                                              }
+                                            },
+                                            "required": [
+                                              "passage",
+                                              "sourceId"
+                                            ],
+                                            "additionalProperties": false
+                                          },
+                                          "text": {
+                                            "type": "string",
+                                            "minLength": 1
+                                          },
+                                          "id": {
+                                            "type": "string",
+                                            "minLength": 1
+                                          }
+                                        },
+                                        "required": [
+                                          "citation",
+                                          "text",
+                                          "id"
+                                        ],
+                                        "additionalProperties": false
+                                      }
+                                    },
                                     "points": {
                                       "nullable": true,
+                                      "type": "number",
+                                      "minimum": 0,
+                                      "exclusiveMinimum": true
+                                    },
+                                    "weight": {
+                                      "description": "Its weight in a weighted mean; 1 when absent",
                                       "type": "number",
                                       "minimum": 0,
                                       "exclusiveMinimum": true
@@ -105820,16 +105998,6 @@
                                   ],
                                   "additionalProperties": false
                                 }
-                              },
-                              "kind": {
-                                "type": "string",
-                                "enum": [
-                                  "enem",
-                                  "oab",
-                                  "points",
-                                  "levels",
-                                  "__unknown_api_value__"
-                                ]
                               },
                               "language": {
                                 "nullable": true,
@@ -105883,6 +106051,54 @@
                                 ],
                                 "additionalProperties": false
                               },
+                              "limits": {
+                                "description": "Cases in which the board caps the named criteria at fewer marks",
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "citation": {
+                                      "type": "object",
+                                      "properties": {
+                                        "passage": {
+                                          "type": "string"
+                                        },
+                                        "sourceId": {
+                                          "type": "string"
+                                        }
+                                      },
+                                      "required": [
+                                        "passage",
+                                        "sourceId"
+                                      ],
+                                      "additionalProperties": false
+                                    },
+                                    "text": {
+                                      "type": "string",
+                                      "minLength": 1
+                                    },
+                                    "criteria": {
+                                      "minItems": 1,
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      }
+                                    },
+                                    "max": {
+                                      "type": "number",
+                                      "minimum": 0
+                                    }
+                                  },
+                                  "required": [
+                                    "citation",
+                                    "text",
+                                    "criteria",
+                                    "max"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
                               "rounding": {
                                 "nullable": true,
                                 "type": "object",
@@ -105906,6 +106122,33 @@
                                   "text": {
                                     "type": "string",
                                     "minLength": 1
+                                  },
+                                  "mode": {
+                                    "nullable": true,
+                                    "type": "string",
+                                    "enum": [
+                                      "nearest",
+                                      "down",
+                                      "up",
+                                      "__unknown_api_value__"
+                                    ]
+                                  },
+                                  "stage": {
+                                    "description": "Whether each criterion's mark is rounded or only the final mark",
+                                    "nullable": true,
+                                    "type": "string",
+                                    "enum": [
+                                      "criterion",
+                                      "total",
+                                      "__unknown_api_value__"
+                                    ]
+                                  },
+                                  "step": {
+                                    "description": "The unit marks are rounded to, such as 0.01",
+                                    "nullable": true,
+                                    "type": "number",
+                                    "minimum": 0,
+                                    "exclusiveMinimum": true
                                   }
                                 },
                                 "required": [
@@ -105913,6 +106156,10 @@
                                   "text"
                                 ],
                                 "additionalProperties": false
+                              },
+                              "totalSuppressed": {
+                                "description": "True when a rule that changes the mark could not be read or verified, so no total is worked out",
+                                "type": "boolean"
                               },
                               "zeroing": {
                                 "type": "array",
@@ -105972,7 +106219,6 @@
                             },
                             "required": [
                               "criteria",
-                              "kind",
                               "language",
                               "rounding",
                               "zeroing"
@@ -109391,12 +109637,6 @@
       "WritingPromptOutput": {
         "type": "object",
         "properties": {
-          "charactersPerLine": {
-            "type": "integer",
-            "minimum": 0,
-            "exclusiveMinimum": true,
-            "maximum": 9007199254740991
-          },
           "criteria": {
             "type": "array",
             "items": {
@@ -109434,14 +109674,6 @@
           },
           "lines": {
             "nullable": true,
-            "type": "integer",
-            "minimum": 0,
-            "exclusiveMinimum": true,
-            "maximum": 9007199254740991
-          },
-          "maxCharactersPerLine": {
-            "default": 160,
-            "description": "The densest handwriting a board read in full; text past `lines` even at this width is not graded",
             "type": "integer",
             "minimum": 0,
             "exclusiveMinimum": true,
@@ -109513,19 +109745,33 @@
               "answer",
               "__unknown_api_value__"
             ]
+          },
+          "charactersPerLine": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991,
+            "description": "Characters a line in a typical hand, as the estimated line count uses"
+          },
+          "maxCharactersPerLine": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991,
+            "description": "The densest handwriting a board read in full; text past `lines` even at this width is not graded"
           }
         },
         "required": [
-          "charactersPerLine",
           "criteria",
           "keySource",
           "lines",
-          "maxCharactersPerLine",
           "minimumWords",
           "points",
           "taskKey",
           "title",
-          "unit"
+          "unit",
+          "charactersPerLine",
+          "maxCharactersPerLine"
         ],
         "additionalProperties": false
       },

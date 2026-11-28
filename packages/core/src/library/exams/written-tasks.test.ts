@@ -46,16 +46,21 @@ function readWrittenTest({
               count: 2,
               description: "Part A",
               grading: {
+                combination: null,
+                conventions: [],
                 criteria: [
                   {
+                    awards: [],
                     document: 1,
                     id: "reasoning",
+                    parts: [],
                     passage: CRITERION_PASSAGE,
                     points: 30.5,
                     text: "Clear reasoning",
+                    weight: null,
                   },
                 ],
-                kind: "points" as const,
+                deductions: [],
                 language: {
                   document: 1,
                   factor: 2,
@@ -64,9 +69,13 @@ function readWrittenTest({
                   passage: RULE_PASSAGE,
                   text: "Deduct for language errors",
                 },
+                limits: [],
                 rounding: {
                   document: 1,
+                  mode: "nearest" as const,
                   passage: "Round to two decimals.",
+                  stage: "total" as const,
+                  step: 0.01,
                   text: "Round to two decimals",
                 },
                 zeroing: [],
@@ -110,12 +119,12 @@ describe(listWrittenTasks, () => {
       count: 2,
       grading: {
         criteria: [{ citation: { passage: CRITERION_PASSAGE, sourceId: "notice" }, points: 30.5 }],
-        kind: "levels",
         language: {
           citation: { passage: RULE_PASSAGE, sourceId: "notice" },
           formula: "2 × errors ÷ lines",
         },
         rounding: null,
+        totalSuppressed: true,
       },
       handwritten: true,
       lines: 30,

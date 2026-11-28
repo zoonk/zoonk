@@ -31,6 +31,7 @@
   "essay_grade_answer": "e13d441d3383db54aa20b29006a2cdfd54d4d2bff3e8e747523c9a528d707507",
   "essay_grade_rewrite": "6af0b6c5238938d5c34b441204efbd0f958ec7f04b28145248529f7735bcdd3c",
   "essay_graded_by_level": "ef22855ac2c6769ac635a987a33380487114cda238a3d813795aa29d1434b405",
+  "essay_graded_by_level_why": "524649e8bb35e6f96432665715a61b70fbbf8651ee85a914f47073ae8ccce396",
   "essay_graded_earlier_version": "85db086b5117ca9f5b8d8c69a007389f0121875fa41e64398aca4836bfbda124",
   "essay_grading": "2a5008f10aec6ddec33e511d64b993df83f63f44e7faf1c29096c5cad024acff",
   "essay_grading_criteria": "07b828e51872254c103965d36c92cc26123ab98e244bae32e3e708b97886e790",
@@ -302,6 +303,7 @@
     <string name="essay_no_points_in_notice">Sınav ilanında her ölçütün kaç puan değerinde olduğu belirtilmiyor.</string>
     <string name="essay_criteria_from_notice">Sınav ilanındaki ölçütler ve puanlar.</string>
     <string name="essay_criteria_from_notice_practice_key">Sınav ilanındaki ölçütler ve puanlar. Cevap anahtarı bize ait, pratik yapman için hazırlandı.</string>
+    <string name="essay_graded_by_level_why">Düzeye göre değerlendirildi. Bu cevap için henüz puan tahmini yapılamıyor.</string>
     <string name="essay_see_comments">Yorumları gör</string>
     <string name="essay_comments">Yorumlar</string>
     <string name="essay_your_text">Metnin</string>

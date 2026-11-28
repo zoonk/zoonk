@@ -19,6 +19,7 @@ import {
 } from "../language/sentence-orders-workflow";
 import { getSkillLevelsToken, skillLevelsWorkflow } from "../language/skill-levels-workflow";
 import { startOwedMindMapRedraws } from "../mind-maps/start-owed-mind-map-redraws";
+import { checkOwedPlanMembers } from "../plans/member-check-workflow";
 import { updateCoursesBehind } from "../products/product-releases";
 import {
   examNoticePlansWorkflow,
@@ -56,6 +57,7 @@ type SweepCounts = {
   itemsRecalibrated: number;
   levelTestBankChecks: number;
   levelTestQuestionsRemoved: number;
+  memberChecks: number;
   memoryFactsPurged: number;
   oauthRecordsPurged: number;
   pictureChecks: number;
@@ -206,6 +208,7 @@ async function sweep(): Promise<SweepCounts> {
     levelTestAnswers,
     sentenceOrders,
     skillLevels,
+    memberChecks,
   ] = await Promise.allSettled([
     checkFreshness(),
     deleteGuests(),
@@ -224,6 +227,7 @@ async function sweep(): Promise<SweepCounts> {
     checkLevelTestAnswersStep(),
     writeOwedSentenceOrders(),
     tagOwedSkillLevels(),
+    checkOwedPlanMembers(),
     startOwedMindMapRedraws(),
     startExamNoticeRepairs(),
     listDueMockGoalsStep().then((goals) => Promise.all(goals.map((goal) => startMockSupply(goal)))),
@@ -240,6 +244,7 @@ async function sweep(): Promise<SweepCounts> {
     itemsRecalibrated: countOf(items),
     levelTestBankChecks: countOf(levelTestBanks),
     levelTestQuestionsRemoved: countOf(levelTestAnswers),
+    memberChecks: countOf(memberChecks),
     memoryFactsPurged: countOf(facts),
     oauthRecordsPurged: access.status === "fulfilled" ? access.value.oauthRecordsPurged : 0,
     pictureChecks: countOf(pictures),

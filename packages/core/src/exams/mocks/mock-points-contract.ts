@@ -134,9 +134,15 @@ export const mockPointsSchema = z
       )
       .meta({
         description:
-          "Minimums this mock couldn't check, so they're still ahead: a written test, a test on another exam day, a test none of its questions belong to, or the tests together when it didn't ask them all",
+          "Minimums this mock couldn't check, so they're still ahead: a test on another exam day, a test none of its questions belong to, or the tests together when it didn't ask them all. A written part this mock asked carries its minimum in `written` instead",
       }),
-    written: z.array(writtenPartPointsSchema).optional(),
+    written: z
+      .array(writtenPartPointsSchema)
+      .optional()
+      .meta({
+        description:
+          "Each written part this mock asked, with its estimate once its answers are graded in points, and where that estimate stands against the part's minimum",
+      }),
   })
   .meta({
     description:
@@ -147,6 +153,7 @@ export const mockPointsSchema = z
 export type MockPoints = z.infer<typeof mockPointsSchema>;
 
 const writtenTaskWithItems = writtenPartPointsSchema.shape.tasks.element.extend({
+  count: z.int().positive().optional(),
   itemIds: z.array(uuidSchema()),
 });
 

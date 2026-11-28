@@ -36,6 +36,7 @@ const PHASE: PlanPhaseView = {
   hours: 1,
   index: 0,
   kind: "learn",
+  leftOut: [],
   lessonsDone: 0,
   lessonsTotal: 3,
   milestone: null,

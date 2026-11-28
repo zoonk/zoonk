@@ -20,7 +20,7 @@
     "typecheck": "next typegen && tsrs --noEmit"
   },
   "dependencies": {
-    "@ai-sdk/gateway": "4.0.152",
+    "@ai-sdk/gateway": "4.0.157",
     "@zoonk/ai": "workspace:*",
     "@zoonk/core": "workspace:*",
     "@zoonk/db": "workspace:*",

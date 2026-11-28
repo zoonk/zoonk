@@ -29,7 +29,6 @@ msgid "Your answer and the right one"
 msgstr "回答と正解"
 
 #: src/_components/answer-pair.tsx
-#: src/essay/essay-labels.tsx
 #: src/mock/mock-question.tsx
 #: src/onboarding/steps/question-steps.tsx
 #: src/questions/numeric-answer-field.tsx
@@ -3239,11 +3238,6 @@ msgctxt "3Rx6Qo"
 msgid "Advanced"
 msgstr "上級"
 
-#: src/essay/essay-labels.tsx
-msgctxt "EWD_9X"
-msgid "Your essay"
-msgstr "小論文"
-
 #: src/essay/essay-skip-button.tsx
 #: src/focus-test/focus-test-flow.tsx
 #: src/focus-test/focus-test-screens.tsx
@@ -4841,6 +4835,7 @@ msgstr "{name}に聞く"
 #: src/onboarding/steps/reveal-body.tsx
 #: src/plan/plan-past-date-suggestion.tsx
 #: src/plan/plan-suggestion.tsx
+#: src/syllabus/subject-chapters.tsx
 #: src/syllabus/subject-not-planned.tsx
 #: src/today/today-falling-behind.tsx
 msgctxt "2f2Vee"
@@ -5197,6 +5192,7 @@ msgstr "初めての週間チャレンジに挑戦する"
 
 #: src/journey/preparation/written-projection.tsx
 #: src/language/exam-speaking/exam-speaking-labels.ts
+#: src/mock/mock-result-points.tsx
 #: src/syllabus/subject-written-standing.tsx
 msgctxt "st8F-L"
 msgid "{range} of {max}"
@@ -5214,21 +5210,6 @@ msgid "Not measured yet"
 msgstr "まだ測定されていません"
 
 #: src/journey/preparation/written-projection.tsx
-msgctxt "uOG8dr"
-msgid "Above the {minimum} points needed"
-msgstr "必要な{minimum}点を上回っています"
-
-#: src/journey/preparation/written-projection.tsx
-msgctxt "qjfXcf"
-msgid "{points} points short of the {minimum} needed"
-msgstr "必要な{minimum}点まであと{points}点です"
-
-#: src/journey/preparation/written-projection.tsx
-msgctxt "vUZHcz"
-msgid "Close to the {minimum} points needed"
-msgstr "必要な{minimum}点に近い状態です"
-
-#: src/journey/preparation/written-projection.tsx
 msgctxt "iPMJIn"
 msgid "{part} needs {share} of its points, whatever your other scores."
 msgstr "ほかのスコアにかかわらず、{part}は配点の{share}が必要です。"
@@ -5239,9 +5220,9 @@ msgid "{part} needs {minimum} points, whatever your other scores."
 msgstr "ほかのスコアにかかわらず、{part}は{minimum}点が必要です。"
 
 #: src/journey/preparation/written-projection.tsx
-msgctxt "doYQpO"
-msgid "Below the minimum to pass"
-msgstr "合格に必要な最低点を下回っています"
+msgctxt "IDmbkm"
+msgid "Likely below the minimum to pass"
+msgstr "合格最低点に届かない可能性が高い"
 
 #: src/journey/preparation/written-projection.tsx
 msgctxt "P8eo6O"
@@ -8480,6 +8461,11 @@ msgid "{name} needs {unit, select, percent {{minimum} of its points} other {{val
 msgstr "{name}では{unit, select, percent {満点の{minimum}} other {{value, plural, other {#点}}}}が必要ですが、この模試には含まれていません。"
 
 #: src/mock/mock-result-points.tsx
+msgctxt "DLtMyQ"
+msgid "No points estimate yet"
+msgstr "ポイントの推定はまだありません"
+
+#: src/mock/mock-result-points.tsx
 msgctxt "JOdrmN"
 msgid "By test"
 msgstr "試験別"
@@ -11069,10 +11055,11 @@ msgctxt "VDuR1W"
 msgid "The official exam date is {date}."
 msgstr "正式な試験日は{date}です。"
 
+#. Asks whether to add topics to the learner's plan. {topics} lists their names, which are often actions themselves, such as “Memorize An-Nahl”, so they stay after the colon rather than inside the sentence.
 #: src/plan/use-operation-question.ts
-msgctxt "EP7Gpz"
-msgid "Add {topics} to your plan?"
-msgstr "{topics}を学習計画に追加しますか？"
+msgctxt "UDs2Ah"
+msgid "Add to your plan: {topics}?"
+msgstr "学習計画に追加：{topics}？"
 
 #: src/plan/use-operation-question.ts
 msgctxt "oeLkPK"
@@ -13106,6 +13093,12 @@ msgctxt "tSwkMF"
 msgid "Asked a lot"
 msgstr "よく出る"
 
+#. Under a module or a phase of the learner's plan, and on the row that lists them: how many of its topics the plan leaves out because they don't fit before the plan's date.
+#: src/syllabus/left-out-topics.tsx
+msgctxt "JUUl4s"
+msgid "{count, plural, one {# topic not in your plan} other {# topics not in your plan}}"
+msgstr "{count, plural, other {#トピックが学習計画に入っていません}}"
+
 #. On one exam's plan. {exams} names the learner's other exams that test some of the same topics.
 #: src/syllabus/shared-exams.tsx
 msgctxt "zK-7PG"
@@ -13156,6 +13149,12 @@ msgstr "{count, plural, other {#章を完了}}"
 msgctxt "oUXyHJ"
 msgid "{done, plural, one {# chapter done} other {# chapters done}}, {known, plural, one {# you already know} other {# you already know}}"
 msgstr "{done, plural, other {#章完了}}、{known, plural, other {もともと知っていた#章}}"
+
+#. Under the folded list of a module's or a subject's topics that the learner's plan leaves out: they don't fit in the study time before the date the learner set. Followed by a button to change the plan.
+#: src/syllabus/subject-chapters.tsx
+msgctxt "TKVmQQ"
+msgid "They don't fit before your date."
+msgstr "設定した日までの学習計画に入りきりません。"
 
 #: src/syllabus/subject-chapters.tsx
 msgctxt "Do1Pfd"
@@ -14457,6 +14456,11 @@ msgid "The exam notice doesn't say how many points each criterion is worth."
 msgstr "試験要項には、各採点基準の配点が記載されていません。"
 
 #: src/writing/writing-result.tsx
+msgctxt "pU5Oul"
+msgid "Graded by level. A points estimate isn't available for this answer yet."
+msgstr "レベル別に評価されています。この回答のポイントはまだ推定できません。"
+
+#: src/writing/writing-result.tsx
 msgctxt "JrF1rx"
 msgid "Criteria and points from the exam notice."
 msgstr "採点基準と配点は試験要項に記載されています。"
@@ -14663,3 +14667,23 @@ msgstr "回答に関係のない名前、署名、印を取り除きましょう
 msgctxt "DsBKHH"
 msgid "Leave out anything that identifies you"
 msgstr "自分だとわかる情報を入れない"
+
+#: src/writing/written-standing.tsx
+msgctxt "S2T3vo"
+msgid "Likely above the {minimum} points needed"
+msgstr "必要な{minimum}点を上回る可能性が高い"
+
+#: src/writing/written-standing.tsx
+msgctxt "sUornn"
+msgid "Likely below the {minimum} points needed"
+msgstr "必要な{minimum}点に届かない可能性が高い"
+
+#: src/writing/written-standing.tsx
+msgctxt "8vhDfM"
+msgid "Could be either side of the {minimum} points needed"
+msgstr "必要な{minimum}点を上回る可能性も下回る可能性もあります"
+
+#: src/writing/written-standing.tsx
+msgctxt "bNTvU0"
+msgid "Can't say yet whether this reaches the {minimum} points needed"
+msgstr "必要な{minimum}点に届くかどうかは、まだ判断できません"

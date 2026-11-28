@@ -131,7 +131,8 @@ private fun ChangeNotice(
                 after?.let { SuggestionActions { it() } }
             } else {
                 SuggestionHeader(words.title)
-                words.why?.let { SuggestionDescription(it) }
+                // Main's keepHyphenatedWords: a name like "An-Nahl" wraps whole, never half on a line.
+                words.why?.let { SuggestionDescription(it.replace(HYPHEN_IN_WORD, "\u2011")) }
                 SuggestionActions {
                     if (followed) {
                         SuggestionAction(
@@ -337,3 +338,5 @@ private const val PHASE_DATES_SOURCE = "phaseDates"
 private const val NAMED_TOPICS = 2
 
 internal val TodayGoal.dateKind: GoalDateKind get() = if (kind == TodayGoal.Kind.EXAM) GoalDateKind.Exam else GoalDateKind.Goal
+
+private val HYPHEN_IN_WORD = Regex("(?<=\\p{L})-(?=\\p{L})")

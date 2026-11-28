@@ -29,7 +29,6 @@ msgid "Your answer and the right one"
 msgstr "내 답과 정답"
 
 #: src/_components/answer-pair.tsx
-#: src/essay/essay-labels.tsx
 #: src/mock/mock-question.tsx
 #: src/onboarding/steps/question-steps.tsx
 #: src/questions/numeric-answer-field.tsx
@@ -3239,11 +3238,6 @@ msgctxt "3Rx6Qo"
 msgid "Advanced"
 msgstr "고급"
 
-#: src/essay/essay-labels.tsx
-msgctxt "EWD_9X"
-msgid "Your essay"
-msgstr "내 에세이"
-
 #: src/essay/essay-skip-button.tsx
 #: src/focus-test/focus-test-flow.tsx
 #: src/focus-test/focus-test-screens.tsx
@@ -4841,6 +4835,7 @@ msgstr "{name}에게 물어보기"
 #: src/onboarding/steps/reveal-body.tsx
 #: src/plan/plan-past-date-suggestion.tsx
 #: src/plan/plan-suggestion.tsx
+#: src/syllabus/subject-chapters.tsx
 #: src/syllabus/subject-not-planned.tsx
 #: src/today/today-falling-behind.tsx
 msgctxt "2f2Vee"
@@ -5197,6 +5192,7 @@ msgstr "첫 주간 챌린지에 도전하기"
 
 #: src/journey/preparation/written-projection.tsx
 #: src/language/exam-speaking/exam-speaking-labels.ts
+#: src/mock/mock-result-points.tsx
 #: src/syllabus/subject-written-standing.tsx
 msgctxt "st8F-L"
 msgid "{range} of {max}"
@@ -5214,21 +5210,6 @@ msgid "Not measured yet"
 msgstr "아직 측정되지 않았어요"
 
 #: src/journey/preparation/written-projection.tsx
-msgctxt "uOG8dr"
-msgid "Above the {minimum} points needed"
-msgstr "필요한 최소 점수인 {minimum}점보다 높아요"
-
-#: src/journey/preparation/written-projection.tsx
-msgctxt "qjfXcf"
-msgid "{points} points short of the {minimum} needed"
-msgstr "필요 점수 {minimum}점에 {points}점 모자라요"
-
-#: src/journey/preparation/written-projection.tsx
-msgctxt "vUZHcz"
-msgid "Close to the {minimum} points needed"
-msgstr "필요한 최소 점수 {minimum}점에 가까워요"
-
-#: src/journey/preparation/written-projection.tsx
 msgctxt "iPMJIn"
 msgid "{part} needs {share} of its points, whatever your other scores."
 msgstr "다른 점수와 관계없이 {part}에서 배점의 {share}를 받아야 해요."
@@ -5239,9 +5220,9 @@ msgid "{part} needs {minimum} points, whatever your other scores."
 msgstr "다른 점수와 관계없이 {part}에서 {minimum}점을 받아야 해요."
 
 #: src/journey/preparation/written-projection.tsx
-msgctxt "doYQpO"
-msgid "Below the minimum to pass"
-msgstr "합격 최소 점수 미달"
+msgctxt "IDmbkm"
+msgid "Likely below the minimum to pass"
+msgstr "합격선에 못 미칠 가능성이 높아요"
 
 #: src/journey/preparation/written-projection.tsx
 msgctxt "P8eo6O"
@@ -8480,6 +8461,11 @@ msgid "{name} needs {unit, select, percent {{minimum} of its points} other {{val
 msgstr "{name}에서는 {unit, select, percent {총점의 {minimum}} other {{value, plural, other {#점}}}} 이상을 받아야 하지만, 이번 모의고사에는 포함되어 있지 않아요."
 
 #: src/mock/mock-result-points.tsx
+msgctxt "DLtMyQ"
+msgid "No points estimate yet"
+msgstr "아직 점수 예상치가 없어요"
+
+#: src/mock/mock-result-points.tsx
 msgctxt "JOdrmN"
 msgid "By test"
 msgstr "시험별"
@@ -11069,10 +11055,11 @@ msgctxt "VDuR1W"
 msgid "The official exam date is {date}."
 msgstr "공식 시험일은 {date}이에요."
 
+#. Asks whether to add topics to the learner's plan. {topics} lists their names, which are often actions themselves, such as “Memorize An-Nahl”, so they stay after the colon rather than inside the sentence.
 #: src/plan/use-operation-question.ts
-msgctxt "EP7Gpz"
-msgid "Add {topics} to your plan?"
-msgstr "계획에 {topics}을(를) 추가할까요?"
+msgctxt "UDs2Ah"
+msgid "Add to your plan: {topics}?"
+msgstr "내 계획에 추가할까요: {topics}?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "oeLkPK"
@@ -13106,6 +13093,12 @@ msgctxt "tSwkMF"
 msgid "Asked a lot"
 msgstr "자주 출제"
 
+#. Under a module or a phase of the learner's plan, and on the row that lists them: how many of its topics the plan leaves out because they don't fit before the plan's date.
+#: src/syllabus/left-out-topics.tsx
+msgctxt "JUUl4s"
+msgid "{count, plural, one {# topic not in your plan} other {# topics not in your plan}}"
+msgstr "{count, plural, other {계획에 없는 주제 #개}}"
+
 #. On one exam's plan. {exams} names the learner's other exams that test some of the same topics.
 #: src/syllabus/shared-exams.tsx
 msgctxt "zK-7PG"
@@ -13156,6 +13149,12 @@ msgstr "{count, plural, other {챕터 #개 완료}}"
 msgctxt "oUXyHJ"
 msgid "{done, plural, one {# chapter done} other {# chapters done}}, {known, plural, one {# you already know} other {# you already know}}"
 msgstr "{done, plural, other {챕터 #개 완료}}, {known, plural, other {이미 알던 챕터 #개}}"
+
+#. Under the folded list of a module's or a subject's topics that the learner's plan leaves out: they don't fit in the study time before the date the learner set. Followed by a button to change the plan.
+#: src/syllabus/subject-chapters.tsx
+msgctxt "TKVmQQ"
+msgid "They don't fit before your date."
+msgstr "설정한 날짜 전까지 공부할 시간이 부족해요."
 
 #: src/syllabus/subject-chapters.tsx
 msgctxt "Do1Pfd"
@@ -14457,6 +14456,11 @@ msgid "The exam notice doesn't say how many points each criterion is worth."
 msgstr "시험 공고에 각 기준의 배점이 나와 있지 않아요."
 
 #: src/writing/writing-result.tsx
+msgctxt "pU5Oul"
+msgid "Graded by level. A points estimate isn't available for this answer yet."
+msgstr "등급으로 채점했어요. 이 답변의 점수 예상치는 아직 제공되지 않아요."
+
+#: src/writing/writing-result.tsx
 msgctxt "JrF1rx"
 msgid "Criteria and points from the exam notice."
 msgstr "시험 공고에 나온 채점 기준과 배점이에요."
@@ -14663,3 +14667,23 @@ msgstr "답안에 필요하지 않은 이름, 서명, 표시를 지우세요."
 msgctxt "DsBKHH"
 msgid "Leave out anything that identifies you"
 msgstr "나를 알아볼 수 있는 내용 빼기"
+
+#: src/writing/written-standing.tsx
+msgctxt "S2T3vo"
+msgid "Likely above the {minimum} points needed"
+msgstr "필요한 {minimum}점보다 높을 가능성이 높아요"
+
+#: src/writing/written-standing.tsx
+msgctxt "sUornn"
+msgid "Likely below the {minimum} points needed"
+msgstr "필요한 {minimum}점에 못 미칠 가능성이 높아요"
+
+#: src/writing/written-standing.tsx
+msgctxt "8vhDfM"
+msgid "Could be either side of the {minimum} points needed"
+msgstr "필요한 {minimum}점보다 높을 수도 낮을 수도 있어요"
+
+#: src/writing/written-standing.tsx
+msgctxt "bNTvU0"
+msgid "Can't say yet whether this reaches the {minimum} points needed"
+msgstr "필요한 {minimum}점에 도달할지 아직 알 수 없어요"

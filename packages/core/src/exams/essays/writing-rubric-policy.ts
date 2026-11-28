@@ -1,61 +1,54 @@
-import { ENEM_WRITING_MAX, hasEnemCompetences } from "./_utils/enem-writing";
-import { passedWritingEvaluations } from "./_utils/writing-rubric-evaluations";
-import { getWritingRounding, getWritingRubricFingerprint } from "./_utils/writing-task-basis";
+import { type WrittenTask } from "../scoring/written-points";
+import {
+  type RowCalibration,
+  type WritingGrader,
+  writingCalibration,
+} from "./_utils/writing-calibration";
+import { type SheetBasis, getScoringRowKinds, isComputableSheet } from "./_utils/writing-sheet";
+import { type WritingRowKind } from "./writing-contract";
 
-export type WritingArithmetic = {
-  rounding: { mode: "nearest" | "down"; places: number } | null;
-  zeroRules: readonly number[];
-};
+type TaskBasis = Pick<WrittenTask, "grading" | "points">;
+type Basis = TaskBasis & { aspects?: SheetBasis["aspects"]; rowKinds?: WritingRowKind[] };
+export type { WritingGrader } from "./_utils/writing-calibration";
 
-type Basis = Parameters<typeof getWritingRubricFingerprint>[0];
+export function getWritingCalibration({
+  basis,
+  observed,
+}: {
+  basis: Basis;
+  observed?: WritingGrader;
+}): RowCalibration[] | null {
+  const calibration = writingCalibration;
 
-export function supportsWritingArithmetic(
-  { language, rounding }: Basis["grading"],
-  arithmetic: WritingArithmetic,
-) {
-  const rule = getWritingRounding(rounding);
-  const rounds = Boolean(rounding) && (typeof rule !== "object" || rule?.mode !== "none");
+  if (
+    !calibration ||
+    !isComputableSheet(basis) ||
+    (observed &&
+      (observed.model !== calibration.grader.model ||
+        observed.promptVersion !== calibration.grader.promptVersion))
+  ) {
+    return null;
+  }
 
-  return (
-    rounds === Boolean(arithmetic.rounding) &&
-    (!language || (language.method !== "other" && language.factor !== null && language.formula))
+  const kinds = basis.rowKinds ?? getScoringRowKinds(basis);
+
+  const rows = kinds.flatMap((kind) => calibration.rows[kind] ?? []);
+
+  return rows.length > 0 && rows.length === kinds.length ? rows : null;
+}
+
+export function canCalibrateWritingTask(basis: TaskBasis): boolean {
+  const rows = writingCalibration?.rows;
+
+  return Boolean(
+    rows &&
+    isComputableSheet(basis) &&
+    basis.grading.criteria.every(({ awards }) =>
+      awards ? rows.boardScale : rows.definitePoint || rows.judgedScale,
+    ),
   );
 }
 
-export function getWritingArithmetic(
-  basis: Basis,
-  observed?: { model: string; promptVersion: string },
-): WritingArithmetic | null {
-  const { grading, points } = basis;
-  const { criteria, kind } = grading;
-  const rounding = getWritingRounding(grading.rounding);
-
-  if (
-    points === null ||
-    kind === "levels" ||
-    rounding === "unknown" ||
-    (kind === "enem"
-      ? points !== ENEM_WRITING_MAX || !hasEnemCompetences(criteria)
-      : criteria.length === 0)
-  ) {
-    return null;
-  }
-
-  const passed = passedWritingEvaluations[getWritingRubricFingerprint(basis)];
-
-  if (
-    !passed ||
-    passed.kind !== kind ||
-    !supportsWritingArithmetic(grading, passed.arithmetic) ||
-    (observed &&
-      (passed.model !== observed.model || passed.promptRevision !== observed.promptVersion))
-  ) {
-    return null;
-  }
-
-  return passed.arithmetic;
-}
-
-export function isNumericWritingRubric(basis: Basis): boolean {
-  return getWritingArithmetic(basis) !== null;
+export function isNumericWritingRubric(basis: Basis, observed?: WritingGrader): boolean {
+  return getWritingCalibration({ basis, observed }) !== null;
 }

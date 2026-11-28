@@ -1,3 +1,4 @@
+import { SCORING_SHEET_EXAMPLES } from "@zoonk/core/exams/essays/scoring-sheet-examples";
 import { FGV_ANSWERS } from "./fgv-answers";
 import { type WritingCase, type ZeroKind, publishedCase, publishedQuestion } from "./shared";
 
@@ -65,7 +66,7 @@ function oabCases({
 
     const input = publishedQuestion({
       citation: { passage: `Questão ${number}, Distribuição dos Pontos`, sourceId: standard },
-      kind: "oab",
+      conventions: SCORING_SHEET_EXAMPLES.oab.grading.conventions,
       lines: 30,
       question,
       sections,
@@ -93,7 +94,6 @@ function oabCases({
       },
       userInput: {
         ...input,
-        arithmetic: { rounding: null, zeroRules: zeroing.map((_, index) => index) },
         basis: {
           ...input.basis,
           grading: { ...input.basis.grading, zeroing },

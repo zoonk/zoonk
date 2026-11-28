@@ -15,10 +15,19 @@ struct ZoonkList<Content: View>: View {
   @ViewBuilder let content: Content
 
   @Environment(\.listRowMargin) private var rowMargin
+  @Environment(\.isInSheet) private var isInSheet
 
   var body: some View {
     ScrollViewReader { scroll in
       list.environment(\.listScroll, scroll)
+    }
+    // In a sheet the list stands on the page's surface, as main's drawer does: below full height
+    // the sheet is glass, and its rows' words would sit on the page under it.
+    .scrollContentBackground(isInSheet ? .hidden : .automatic)
+    .background {
+      if isInSheet {
+        Color(.systemBackground).ignoresSafeArea()
+      }
     }
     .modifier(ListRowTrailingHost())
     .modifier(ListRowTrailingScope())
@@ -41,6 +50,8 @@ struct ZoonkList<Content: View>: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .listRowInsets(.vertical, 12)
         .listRowInsets(.horizontal, margin)
+        // No fill of a row's own: the list's surface is the row's, so no row bands across a sheet.
+        .listRowBackground(Color.clear)
         .listSectionSeparator(.hidden)
         .alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
         // With a margin of its own, a row's hairline ends where its content does, not at the
@@ -79,6 +90,8 @@ extension EnvironmentValues {
   /// and a bottom bar over it leave.
   @Entry var listScroll: ScrollViewProxy?
   @Entry fileprivate var pageColumnFillsRoom = false
+  /// Inside a sheet (`zoonkSheet()`).
+  @Entry var isInSheet = false
   /// How far folds moved a row's content in from its column's edge, so the current row's band
   /// still spans the column.
   @Entry var rowIndent: CGFloat = 0

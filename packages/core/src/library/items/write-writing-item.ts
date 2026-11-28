@@ -5,17 +5,16 @@ import {
 } from "@zoonk/ai/tasks/items/write-writing-prompt";
 import { prisma } from "@zoonk/db";
 import { scopeIdentityKey } from "@zoonk/utils/identity-key";
-import { ENEM_WRITING_MAX, hasEnemCompetences } from "../../exams/essays/_utils/enem-writing";
 import { type listPracticeWritingTasks } from "../../exams/essays/_utils/practice-writing-tasks";
 import { getWritingTaskBasis } from "../../exams/essays/_utils/writing-task-basis";
 import { type WritingPrompt, writtenItemSchema } from "../../exams/essays/writing-contract";
-import { WRITING_CHARACTERS_PER_LINE } from "../../exams/essays/writing-lines";
 import { getWrittenPartMinimum } from "../../exams/scoring/written-points";
 import { getAnswerAttemptId } from "../../learner/_utils/answer-once";
 import { getWritingSkillIds } from "../../learner/writing-skills";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { toProvenanceData } from "../_utils/library-rows";
 import { lockPlanBlueprintWrite, writePlanInputs } from "../_utils/plan-input-write";
+import { type WritingSheet } from "../exams/written-grading";
 import { createSkill } from "../skills/create-skill";
 import { requireWritingPromptSpend } from "./_utils/writing-prompt-spend";
 import { type WritingSupplyInput, loadWritingSupply, readWritingPool } from "./writing-prompt-pool";
@@ -49,13 +48,36 @@ function getAnswerWordFloor({
 
 type Task = Omit<ReturnType<typeof listPracticeWritingTasks>[number], "subjects">;
 
-function getIssuedTask(task: Task, unit: WritingSupplyInput["unit"]): Task {
-  if (unit === "drill" || task.grading.kind !== "enem") {
-    return task;
-  }
+function stepAwards(points: number, steps: readonly string[]) {
+  const last = steps.length - 1;
 
-  const criteria = hasEnemCompetences(task.grading.criteria) ? task.grading.criteria : [];
-  return { ...task, grading: { ...task.grading, criteria }, points: ENEM_WRITING_MAX };
+  return steps.map((text, index) => ({
+    points: index === last ? points : Math.round((points * index * 100) / last) / 100,
+    text,
+  }));
+}
+
+/** A key's aspects as the sheet keeps them: points only under a pointed criterion with no board scale, split evenly across the aspect's steps. */
+export function keyAspects({
+  aspects,
+  grading,
+}: {
+  aspects: readonly (Omit<WritingPromptOutput["aspects"][number], "kind" | "steps"> &
+    Partial<Pick<WritingPromptOutput["aspects"][number], "kind" | "steps">>)[];
+  grading: Pick<WritingSheet, "criteria">;
+}) {
+  const scaled = new Set(grading.criteria.flatMap(({ awards, id }) => (awards ? [id] : [])));
+
+  return aspects.map(({ steps, ...aspect }) => {
+    const points =
+      grading.criteria.length > 0 && !scaled.has(aspect.criterionId) ? aspect.points : null;
+
+    return {
+      ...aspect,
+      ...(points !== null && steps && steps.length > 1 && { awards: stepAwards(points, steps) }),
+      points,
+    };
+  });
 }
 
 export function promptContent({
@@ -64,11 +86,9 @@ export function promptContent({
   partMinimum,
   skills,
   task,
-  issuedTask = task,
   placement,
 }: {
   data: WritingPromptOutput;
-  issuedTask?: Task;
   input: WritingSupplyInput;
   partMinimum?: WritingPrompt["partMinimum"];
   placement?: { chosenSubjects?: string[]; subject?: string };
@@ -78,8 +98,8 @@ export function promptContent({
   const drill = input.unit === "drill";
 
   const grading = drill
-    ? { criteria: [], kind: "levels" as const, language: null, rounding: null, zeroing: [] }
-    : issuedTask.grading;
+    ? { criteria: [], language: null, rounding: null, zeroing: [] }
+    : task.grading;
 
   const criteria =
     grading.criteria.length > 0
@@ -93,19 +113,14 @@ export function promptContent({
     assessedSkillIds.some((id) => !skills.some((skill) => skill.id === id)) ||
     (drill && (assessedSkillIds.length !== 1 || assessedSkillIds[0] !== input.skillId)) ||
     data.aspects.some(({ criterionId }) => !criterionIds.has(criterionId)) ||
-    criterionIds.size !== criteria.length ||
-    (grading.kind === "enem" && !hasEnemCompetences(criteria))
+    criterionIds.size !== criteria.length
   ) {
     throw new Error("Writing prompt does not match its criteria or candidate skills.");
   }
 
   const writing = writtenItemSchema.parse({
-    aspects: data.aspects.map((aspect) => ({
-      ...aspect,
-      points: grading.criteria.length > 0 ? aspect.points : null,
-    })),
+    aspects: keyAspects({ aspects: data.aspects, grading }),
     assessedSkillIds,
-    charactersPerLine: WRITING_CHARACTERS_PER_LINE,
     criteria,
     grading,
     keySource: "practiceKey",
@@ -118,9 +133,9 @@ export function promptContent({
         }),
     part: task.section,
     ...(!drill && partMinimum && { partMinimum }),
-    points: drill ? null : issuedTask.points,
+    points: drill ? null : task.points,
     ...placement,
-    ...((drill || task !== issuedTask) && { taskBasis: getWritingTaskBasis(task) }),
+    ...(drill && { taskBasis: getWritingTaskBasis(task) }),
     taskKey: task.key,
     title: data.title,
     unit: input.unit,
@@ -234,7 +249,6 @@ export async function writeWritingItem({
   });
 
   const { subjects: _subjects, ...writtenTask } = task;
-  const issuedTask = getIssuedTask(writtenTask, input.unit);
 
   const { data, provenance } = await writeWritingPrompt({
     analytics: { distinctId: input.userId, goalId: input.goalId },
@@ -246,7 +260,7 @@ export async function writeWritingItem({
       language: goal.language,
       skills,
       subject: pool.subject,
-      task: issuedTask,
+      task: writtenTask,
       unit: input.unit,
       usedTitles: pool.usedTitles,
     },
@@ -257,7 +271,6 @@ export async function writeWritingItem({
   const content = promptContent({
     data,
     input,
-    issuedTask,
     partMinimum: getWrittenPartMinimum({ structure, taskKey: task.key }),
     placement: pool.placement,
     skills,

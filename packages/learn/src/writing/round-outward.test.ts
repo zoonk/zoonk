@@ -12,6 +12,10 @@ describe(roundOutward, () => {
     expect(roundOutward({ high: 18.7, low: 16.6 }, 1)).toStrictEqual({ high: 18.7, low: 16.6 });
   });
 
+  it("leaves one grade for the number format to round, never widening it into a range", () => {
+    expect(roundOutward({ high: 48.01, low: 48.01 }, 0)).toStrictEqual({ high: 48.01, low: 48.01 });
+  });
+
   it("keeps a zeroed answer at zero, never negative zero", () => {
     const { high, low } = roundOutward({ high: 0, low: 0 }, 0);
 

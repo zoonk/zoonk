@@ -155,8 +155,8 @@ function LessonPlayerVisit({
   const router = useRouter();
   const locale = useAppLocale();
 
-  const [reopenedBlockId, setReopenedBlockId] = useState(finishedBlockId);
-  void setReopenedBlockId;
+  // oxlint-disable-next-line react/hook-use-state -- Read once as the page opens, never updated.
+  const [reopenedBlockId] = useState(finishedBlockId);
 
   const adapters = useMemo(
     () =>

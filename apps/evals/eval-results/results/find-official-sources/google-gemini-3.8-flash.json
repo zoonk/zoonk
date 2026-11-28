@@ -22,162 +22,6 @@
       "testCase": {
         "expected": {
           "noticeHints": [
-            "2026",
-            "64"
-          ],
-          "officialDomains": [
-            "inep.gov.br",
-            "gov.br",
-            "in.gov.br"
-          ]
-        },
-        "id": "enem-2026:native-1",
-        "userInput": {
-          "plan": {
-            "board": "INEP",
-            "country": "BR",
-            "edition": "2026",
-            "name": "ENEM",
-            "officialDomains": [
-              "gov.br/inep",
-              "enem.inep.gov.br",
-              "download.inep.gov.br"
-            ],
-            "queries": [
-              "edital ENEM 2026 INEP",
-              "Enem 2026 datas de aplicação edital retificação"
-            ],
-            "role": null
-          },
-          "searchTool": "native"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "noticeHints": [
-            "2026",
-            "64"
-          ],
-          "officialDomains": [
-            "inep.gov.br",
-            "gov.br",
-            "in.gov.br"
-          ]
-        },
-        "id": "enem-2026:exa-1",
-        "userInput": {
-          "plan": {
-            "board": "INEP",
-            "country": "BR",
-            "edition": "2026",
-            "name": "ENEM",
-            "officialDomains": [
-              "gov.br/inep",
-              "enem.inep.gov.br",
-              "download.inep.gov.br"
-            ],
-            "queries": [
-              "edital ENEM 2026 INEP",
-              "Enem 2026 datas de aplicação edital retificação"
-            ],
-            "role": null
-          },
-          "searchTool": "exa"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "noticeHints": [
-            "2026",
-            "64"
-          ],
-          "officialDomains": [
-            "inep.gov.br",
-            "gov.br",
-            "in.gov.br"
-          ]
-        },
-        "id": "enem-2026:perplexity-1",
-        "userInput": {
-          "plan": {
-            "board": "INEP",
-            "country": "BR",
-            "edition": "2026",
-            "name": "ENEM",
-            "officialDomains": [
-              "gov.br/inep",
-              "enem.inep.gov.br",
-              "download.inep.gov.br"
-            ],
-            "queries": [
-              "edital ENEM 2026 INEP",
-              "Enem 2026 datas de aplicação edital retificação"
-            ],
-            "role": null
-          },
-          "searchTool": "perplexity"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "Nothing found",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Nothing found",
-          "kind": "minorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Nothing found",
-          "kind": "potentialImprovements",
-          "score": 6
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "noticeHints": [
             "tc_df_26",
             "2026",
             "anace"
@@ -1561,114 +1405,6 @@
       "testCase": {
         "expected": {
           "noticeHints": [
-            "2026",
-            "64"
-          ],
-          "officialDomains": [
-            "inep.gov.br",
-            "gov.br",
-            "in.gov.br"
-          ]
-        },
-        "id": "enem-2026:parallel-1",
-        "language": "pt",
-        "userInput": {
-          "plan": {
-            "board": "INEP",
-            "country": "BR",
-            "edition": "2026",
-            "name": "ENEM",
-            "officialDomains": [
-              "gov.br/inep",
-              "enem.inep.gov.br",
-              "download.inep.gov.br"
-            ],
-            "queries": [
-              "edital ENEM 2026 INEP",
-              "Enem 2026 datas de aplicação edital retificação"
-            ],
-            "role": null
-          },
-          "searchTool": "parallel",
-          "topic": "exam"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "Titled with a file name: Cronograma, Enem",
-          "kind": "majorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Titled with a file name: Cronograma, Enem",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Titled with a file name: Cronograma, Enem",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "noticeHints": [
-            "2026",
-            "64"
-          ],
-          "officialDomains": [
-            "inep.gov.br",
-            "gov.br",
-            "in.gov.br"
-          ]
-        },
-        "id": "enem-2026:parallel-2",
-        "language": "pt",
-        "userInput": {
-          "plan": {
-            "board": "INEP",
-            "country": "BR",
-            "edition": "2026",
-            "name": "ENEM",
-            "officialDomains": [
-              "gov.br/inep",
-              "enem.inep.gov.br",
-              "download.inep.gov.br"
-            ],
-            "queries": [
-              "edital ENEM 2026 INEP",
-              "Enem 2026 datas de aplicação edital retificação"
-            ],
-            "role": null
-          },
-          "searchTool": "parallel",
-          "topic": "exam"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "noticeHints": [
             "tc_df_26",
             "2026",
             "anace"
@@ -2427,6 +2163,234 @@
             "https://www.vunesp.com.br/TJSP2503",
             "https://www.vunesp.com.br/TJSP2401"
           ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Nothing found",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Nothing found",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Nothing found",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "noticeHints": [
+            "2026",
+            "64"
+          ],
+          "officialDomains": [
+            "inep.gov.br",
+            "gov.br",
+            "in.gov.br"
+          ],
+          "sectionHints": [
+            "cartilha"
+          ]
+        },
+        "id": "enem-2026:native-1",
+        "language": "pt",
+        "userInput": {
+          "plan": {
+            "board": "INEP",
+            "country": "BR",
+            "edition": "2026",
+            "name": "ENEM",
+            "officialDomains": [
+              "gov.br/inep",
+              "enem.inep.gov.br",
+              "download.inep.gov.br"
+            ],
+            "queries": [
+              "edital ENEM 2026 INEP",
+              "Enem 2026 datas de aplicação edital retificação"
+            ],
+            "role": null
+          },
+          "searchTool": "native",
+          "topic": "exam"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "No official document found for: cartilha",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "No official document found for: cartilha",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "No official document found for: cartilha",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "noticeHints": [
+            "2026",
+            "64"
+          ],
+          "officialDomains": [
+            "inep.gov.br",
+            "gov.br",
+            "in.gov.br"
+          ],
+          "sectionHints": [
+            "cartilha"
+          ]
+        },
+        "id": "enem-2026:exa-1",
+        "language": "pt",
+        "userInput": {
+          "plan": {
+            "board": "INEP",
+            "country": "BR",
+            "edition": "2026",
+            "name": "ENEM",
+            "officialDomains": [
+              "gov.br/inep",
+              "enem.inep.gov.br",
+              "download.inep.gov.br"
+            ],
+            "queries": [
+              "edital ENEM 2026 INEP",
+              "Enem 2026 datas de aplicação edital retificação"
+            ],
+            "role": null
+          },
+          "searchTool": "exa",
+          "topic": "exam"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "noticeHints": [
+            "2026",
+            "64"
+          ],
+          "officialDomains": [
+            "inep.gov.br",
+            "gov.br",
+            "in.gov.br"
+          ],
+          "sectionHints": [
+            "cartilha"
+          ]
+        },
+        "id": "enem-2026:parallel-1",
+        "language": "pt",
+        "userInput": {
+          "plan": {
+            "board": "INEP",
+            "country": "BR",
+            "edition": "2026",
+            "name": "ENEM",
+            "officialDomains": [
+              "gov.br/inep",
+              "enem.inep.gov.br",
+              "download.inep.gov.br"
+            ],
+            "queries": [
+              "edital ENEM 2026 INEP",
+              "Enem 2026 datas de aplicação edital retificação"
+            ],
+            "role": null
+          },
+          "searchTool": "parallel",
+          "topic": "exam"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "noticeHints": [
+            "2026",
+            "64"
+          ],
+          "officialDomains": [
+            "inep.gov.br",
+            "gov.br",
+            "in.gov.br"
+          ],
+          "sectionHints": [
+            "cartilha"
+          ]
+        },
+        "id": "enem-2026:perplexity-1",
+        "language": "pt",
+        "userInput": {
+          "plan": {
+            "board": "INEP",
+            "country": "BR",
+            "edition": "2026",
+            "name": "ENEM",
+            "officialDomains": [
+              "gov.br/inep",
+              "enem.inep.gov.br",
+              "download.inep.gov.br"
+            ],
+            "queries": [
+              "edital ENEM 2026 INEP",
+              "Enem 2026 datas de aplicação edital retificação"
+            ],
+            "role": null
+          },
+          "searchTool": "perplexity",
+          "topic": "exam"
         }
       }
     }
