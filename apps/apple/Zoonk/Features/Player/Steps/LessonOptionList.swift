@@ -42,7 +42,7 @@ struct LessonOptionList: View {
 
   var body: some View {
     if isPictureGrid {
-      LazyVGrid(columns: [GridItem(.adaptive(minimum: 140), spacing: 10)], spacing: 10) {
+      LazyVGrid(columns: [GridItem(.adaptive(minimum: 140), spacing: 12)], spacing: 12) {
         pictureButtons
       }
     } else {
@@ -82,7 +82,7 @@ struct LessonOptionList: View {
                     .opacity(isLocked || isChecked ? 0 : 1)
                 }
               }
-              .padding(6)
+              .padding(4)
               .dynamicTypeSize(...Self.cornerMarkSize)
             }
           }
@@ -90,11 +90,11 @@ struct LessonOptionList: View {
             ChoiceMark(kind: .one, isPicked: option.id == selectedId)
               .padding(4)
               .background(.boxBackground, in: .circle)
-              .padding(6)
+              .padding(4)
               .dynamicTypeSize(...Self.cornerMarkSize)
           }
       }
-      .buttonStyle(LessonOptionStyle(mark: mark(option)))
+      .buttonStyle(LessonOptionStyle(mark: mark(option), holdsPicture: true))
       .disabled(isLocked || isChecked)
       .modifier(PickKey(index: marker - 1))
       .accessibilityAddTraits(option.id == selectedId ? .isSelected : [])
@@ -108,12 +108,14 @@ struct LessonOptionList: View {
       if let picture = option.picture {
         LessonPictureView(
           image: picture, alt: option.pictureAlt, isPending: false, asks: true,
-          drawnAspectRatio: LessonPicturePlaceholder.optionAspectRatio)
+          drawnAspectRatio: LessonPicturePlaceholder.optionAspectRatio,
+          cornerRadius: LessonOptionStyle.pictureRadius)
       } else {
         LessonPicturePlaceholder(alt: option.pictureAlt, isDrawing: picturesPending)
           .pictureFrame(
             aspectRatio: LessonPicturePlaceholder.optionAspectRatio,
-            maxHeight: LessonPictureFrame.question.maxHeight(screen: screenHeight))
+            maxHeight: LessonPictureFrame.question.maxHeight(screen: screenHeight),
+            cornerRadius: LessonOptionStyle.pictureRadius)
       }
 
       // Its name would give the answer away, so it shows once the answer is checked, as on main.
@@ -209,6 +211,10 @@ struct LessonOptionStyle: ButtonStyle {
   }
 
   let mark: Mark
+  /// Main's picture card: 8pt round its picture, whose corners nest in the card's.
+  var holdsPicture = false
+
+  static let pictureRadius = Radius.sm
 
   func makeBody(configuration: Configuration) -> some View {
     configuration.label
@@ -216,9 +222,11 @@ struct LessonOptionStyle: ButtonStyle {
       .foregroundStyle(foreground)
       .multilineTextAlignment(.leading)
       .frame(maxWidth: .infinity, alignment: .leading)
-      .padding(.horizontal, 14)
-      .padding(.vertical, 12)
-      .answerSurface(tone, isPressed: configuration.isPressed)
+      .padding(.horizontal, holdsPicture ? 8 : 14)
+      .padding(.vertical, holdsPicture ? 8 : 12)
+      .answerSurface(
+        tone, cornerRadius: holdsPicture ? Radius.xl : Radius.option,
+        isPressed: configuration.isPressed)
   }
 
   private var foreground: Color {
