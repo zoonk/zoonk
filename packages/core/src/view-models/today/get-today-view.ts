@@ -30,8 +30,6 @@ import { type PlanStatus } from "../../preparation/plan-status";
 import { type ReadStudyDay, readStudyDay } from "../../sessions/_utils/read-study-day";
 import { type TodayStudySessionInput } from "../../sessions/contract";
 import { type DayView } from "../../sessions/day-view";
-import { loadNoticedPattern, selectDayPattern } from "../language/_utils/today-pattern";
-import { type NoticedPattern } from "../language/language-view-contract";
 import { getLessonShare } from "../syllabus/lesson-share";
 import { type TodayAdmission, admitToday } from "./_utils/admit-today";
 import { countLessonsLeftToday } from "./_utils/count-lessons-left-today";
@@ -94,8 +92,6 @@ export type TodayView = {
   mockFunding: MockFundingView | null;
   /** The one notice Today shows, the most pressing first; null when nothing needs saying. */
   notice: TodayNoticeKind | null;
-  /** Hidden when missions already provide the drill entry, unless their unfinished rows are hidden. */
-  pattern: NoticedPattern | null;
   /** Only actionable changes; proposals wait while the expired-trial notice owns the suggestion slot. */
   planChange: TodayPlanChangeView | null;
   progress: TodayProgress | null;
@@ -216,7 +212,7 @@ async function loadSourceChange(goalId: string): Promise<string | null> {
   return message || null;
 }
 
-/** A language goal's words to say again; its noticed pattern is already in the view. */
+/** A language goal's words to say again. */
 async function hasPronunciationDue(goal: Goal): Promise<boolean> {
   if (goal.kind !== "language" || !goal.targetLanguage) {
     return false;
@@ -258,7 +254,6 @@ async function readAdmittedToday({
     planChange,
     dateKind,
     examChoice,
-    noticedPattern,
     sourceChange,
     pronunciationDue,
     focusTest,
@@ -270,7 +265,6 @@ async function readAdmittedToday({
     loadTodayPlanChange({ goal: owned.goal, now: new Date(), timeZone }),
     loadGoalDateKind(owned.goal, day.blueprint),
     loadOpenExamChoice(owned.goal),
-    loadNoticedPattern({ goal: owned.goal, userId }),
     loadSourceChange(id),
     hasPronunciationDue(owned.goal),
     loadFocusTestSuggestion({ goal: owned.goal, localDate: day.session.localDate, timeZone }),
@@ -284,12 +278,11 @@ async function readAdmittedToday({
     ? await countLessonsLeftToday({ selectedItems: day.selection?.items, session: studySession })
     : 0;
 
-  const pattern = selectDayPattern({ day: studySession, pattern: noticedPattern });
   const studiedToday = studied || studySession.minutes.done > 0;
 
   const notice = pickTodayNotice({
     host: {
-      practice: pattern !== null || pronunciationDue,
+      practice: pronunciationDue,
       sourceChange: sourceChange !== null,
       uploadRequest: uploadRequest !== null,
     },
@@ -328,7 +321,6 @@ async function readAdmittedToday({
       ),
       mockFunding,
       notice,
-      pattern,
       planChange,
       progress: toTodayProgress({ ...around, lessonsToday }),
       session: studySession,

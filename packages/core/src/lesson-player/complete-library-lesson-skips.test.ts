@@ -60,7 +60,10 @@ describe("non-language open-answer skips", () => {
     expect(gradeTypedAnswer).not.toHaveBeenCalled();
     await expect(prisma.attempt.count({ where: { userId: setup.user.id } })).resolves.toBe(0);
     await expect(prisma.mistake.count({ where: { userId: setup.user.id } })).resolves.toBe(0);
-    await expect(prisma.learnerSkill.count({ where: { userId: setup.user.id } })).resolves.toBe(0);
+
+    await expect(
+      prisma.learnerSkill.findMany({ where: { userId: setup.user.id } }),
+    ).resolves.toMatchObject([{ helpedAt: run.endedAt, reps: 0, skillId: setup.skill.id }]);
 
     await expect(
       completeLibraryLesson({ input: { runId, timeZone: TIME_ZONE }, lessonId: setup.lesson.id }),

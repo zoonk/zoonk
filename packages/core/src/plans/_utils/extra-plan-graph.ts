@@ -8,34 +8,26 @@ import { chooseExamOptionSkills } from "./exam-option-skills";
 import { type PlanContext } from "./plan-context";
 import { resolveMergedSkills } from "./planner-inputs";
 
-async function findActiveExtraItems({
-  context,
-  now,
-}: {
-  context: PlanContext;
-  now: Date;
-}): Promise<Set<string>> {
+function getPendingExtraItems(context: PlanContext): Map<string, string> {
   const extraIds = new Set(
     context.state.graph.skills.filter((skill) => skill.extra).map((skill) => skill.skillId),
   );
 
-  if (extraIds.size === 0) {
-    return new Set();
-  }
-
-  const pending = new Map(
+  return new Map(
     context.items.flatMap((item) =>
       item.status === "todo" && item.skillId && extraIds.has(item.skillId) && item.lessonId
         ? [[item.lessonId, item.id] as const]
         : [],
     ),
   );
+}
 
-  if (pending.size === 0) {
-    return new Set();
+async function findActiveExtraLessons({ context, now }: { context: PlanContext; now: Date }) {
+  const lessonIds = [...getPendingExtraItems(context).keys()];
+
+  if (lessonIds.length === 0) {
+    return [];
   }
-
-  const lessonIds = [...pending.keys()];
 
   const [blocks, runs] = await Promise.all([
     prisma.studySessionBlock.groupBy({
@@ -55,8 +47,7 @@ async function findActiveExtraItems({
     }),
   ]);
 
-  const activeLessonIds = [...runs, ...blocks.flatMap((block) => block.lessonId ?? [])];
-  return new Set(activeLessonIds.flatMap((lessonId) => pending.get(lessonId) ?? []));
+  return [...runs, ...blocks.flatMap((block) => block.lessonId ?? [])];
 }
 
 export async function loadExtraPlanGraph({
@@ -68,8 +59,8 @@ export async function loadExtraPlanGraph({
   now: Date;
   state: PlanState;
 }) {
-  const [activeExtraItemIds, resolved] = await Promise.all([
-    findActiveExtraItems({ context, now }),
+  const [activeLessons, resolved] = await Promise.all([
+    findActiveExtraLessons({ context, now }),
     chooseExamOptionSkills({ goal: context.goal, graph: state.graph, picks: state.settings }).then(
       (chosen) => resolveMergedSkills(withAskedExtras(chosen, state.settings.extras)),
     ),
@@ -82,7 +73,14 @@ export async function loadExtraPlanGraph({
     ].map((skill) => [skill.skillId, skill]),
   );
 
-  return { activeExtraItemIds, extraSkills, resolved };
+  return {
+    extraSkills,
+    getActiveItemIds: (forContext: PlanContext) => {
+      const pending = getPendingExtraItems(forContext);
+      return new Set(activeLessons.flatMap((lessonId) => pending.get(lessonId) ?? []));
+    },
+    resolved,
+  };
 }
 
 export function withPlacedExtras({

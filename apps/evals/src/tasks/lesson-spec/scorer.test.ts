@@ -105,6 +105,28 @@ describe(scoreLessonSpec, () => {
     expect(generateText).not.toHaveBeenCalled();
   });
 
+  it("holds a second take to the rules production checks it against", async () => {
+    const secondTake = {
+      firstLessonMap: {
+        ideas: [{ text: "Valence electrons sit in the outer shell." }],
+        shape: "hub" as const,
+      },
+      wrongAnswers: [
+        {
+          answer: "6",
+          question: "How many valence electrons does carbon have?",
+          reason: "All of them.",
+        },
+      ],
+    };
+
+    const result = await score([{ ...passingLesson(), opensOn: 1 }], { secondTake });
+
+    expect(result.score).toBe(6);
+    expect(result.steps[0]?.conclusion).toContain("The screen after the scene must be the guess");
+    expect(generateText).not.toHaveBeenCalled();
+  });
+
   it("does not judge an empty output even when absence checks pass", async () => {
     const result = await score([], { avoidTemplates: ["atom-builder"], pictures: "none" });
 

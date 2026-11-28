@@ -15,7 +15,6 @@ import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -223,7 +222,7 @@ class BuddyScreenshots {
                         ),
                     ].replace(TutorThread(turns, hasMore = false, nextCursor = null))
                     today.mistakes[UUID.fromString(GOAL)]
-                        .replace(GoalMistakes(MistakeListAvailability(ready = 0, tomorrow = 0), total = 1))
+                        .replace(GoalMistakes(MistakeListAvailability(ready = 0), total = 1))
                     memory.memory.replace(Memory(enabled = true, facts = emptyList()))
                 }
             }
@@ -250,13 +249,15 @@ class BuddyScreenshots {
             return
         }
         if (day) {
-            compose.onNodeWithText(compose.activity.getString(R.string.missions_title), substring = true).performClick()
+            val buddy = status.buddy.name ?: compose.activity.getString(R.string.buddy_name_zu)
+            compose
+                .onNodeWithContentDescription(compose.activity.getString(R.string.buddy_page_energy_named, buddy), substring = true)
+                .performClick()
             compose.waitForIdle()
             writeRender(file, compose.onNode(isDialog()).captureRender().asAndroidBitmap())
             return
         }
         writeRender(file, compose.onRoot().captureRender().asAndroidBitmap())
-        if (name == "calls-no-missions-phone") compose.onNodeWithText("Zu today").assertExists()
         if (name.startsWith("calls-")) {
             compose
                 .onNode(

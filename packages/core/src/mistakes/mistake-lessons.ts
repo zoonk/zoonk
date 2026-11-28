@@ -1,6 +1,7 @@
 import "server-only";
 import { type Lesson, prisma } from "@zoonk/db";
 import { libraryRowsVisibleTo } from "../library/_utils/library-visibility";
+import { SECOND_TAKE_KEY_WHERE } from "../library/second-takes/second-take-identity";
 import { readMistakeReplay } from "./mistake-replay";
 
 export type MistakeLesson = { id: string; title: string };
@@ -56,7 +57,7 @@ async function findNotebookTeachingLessons({
     include: { lesson: { select: { contentStatus: true, id: true, title: true } } },
     orderBy: { createdAt: "asc" },
     where: {
-      lesson: { ...libraryRowsVisibleTo(userId), setAsideAt: null },
+      lesson: { ...libraryRowsVisibleTo(userId), NOT: SECOND_TAKE_KEY_WHERE, setAsideAt: null },
       skillId: { in: [...skillIds] },
     },
   });
@@ -114,7 +115,12 @@ export async function findMistakeLessons({
     lessonIds.length > 0
       ? prisma.lesson.findMany({
           select: { id: true, title: true },
-          where: { ...libraryRowsVisibleTo(userId), id: { in: lessonIds }, setAsideAt: null },
+          where: {
+            ...libraryRowsVisibleTo(userId),
+            NOT: SECOND_TAKE_KEY_WHERE,
+            id: { in: lessonIds },
+            setAsideAt: null,
+          },
         })
       : [],
   ]);

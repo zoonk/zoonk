@@ -13,7 +13,7 @@ import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
-import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.text.AnnotatedString
@@ -21,7 +21,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.feature.plan.learnerSummary
 import com.zoonk.android.feature.tutor.TutorAccess
-import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
@@ -57,48 +56,12 @@ class BuddyPageTest {
     }
 
     @Test
-    fun theEnergyFactOpensEnergyWithoutOpeningTheDaySheet() {
-        lateinit var navigator: AppNavigator
-        var dayOpened = false
-        compose.setContent {
-            navigator = rememberAppNavigator()
-            ZoonkTheme {
-                BuddyTodayLine(
-                    STATUS,
-                    com.zoonk.android.ui.characters
-                        .BuddyLook(),
-                    "Zu",
-                    BuddyDayTaps({}),
-                    false,
-                    { dayOpened = it },
-                    navigator,
-                )
-            }
-        }
-        compose.onNodeWithText("Zu's Energy").performClick()
-        assertEquals(AppRoute.StatsEnergy, navigator.currentRoute)
-        assertEquals(false, dayOpened)
-    }
-
-    @Test
-    fun aDayWithNoMissionsStillOpensTheBuddyDay() {
-        val empty =
-            STATUS.copy(
-                today =
-                    com.zoonk.api.models.BuddyStatusToday(
-                        fullMeal =
-                            com.zoonk.api.models
-                                .BuddyStatusTodayFullMeal(50, false),
-                        goalId = java.util.UUID.fromString(GOAL),
-                        localDate = kotlinx.datetime.LocalDate(2026, 11, 16),
-                        missions = emptyList(),
-                    ),
-            )
+    fun theEnergyBesideTheNameOpensTheBuddyDay() {
         var opened = false
         compose.setContent {
             ZoonkTheme {
                 BuddyTodayLine(
-                    empty,
+                    STATUS,
                     com.zoonk.android.ui.characters
                         .BuddyLook(),
                     "Zu",
@@ -109,7 +72,7 @@ class BuddyPageTest {
                 )
             }
         }
-        compose.onNodeWithText("Zu today", substring = false).performClick()
+        compose.onNodeWithContentDescription("Zu's Energy 64%").performClick()
         assertEquals(true, opened)
     }
 

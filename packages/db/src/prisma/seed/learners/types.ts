@@ -117,6 +117,8 @@ export type SeedAttempt = {
   isCorrect: boolean;
   day: Day;
   inSession?: boolean;
+  /** A placement question, which says nothing about a skill the learner keeps missing. */
+  placement?: true;
   seconds: number;
   mistake?: {
     cause: MistakeCause | null;

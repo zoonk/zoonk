@@ -72,7 +72,7 @@ class MistakesNotebookFailureTest {
                 if (if (key.fixed) fixedOffline else openOffline) throw IOException("offline")
                 return ApiJson.decodeFromString(
                     MistakeList.serializer(),
-                    """{"availability":{"ready":1,"tomorrow":0},"counts":{"byCause":{"gap":0,"guess":0,"misread":0,"time":0,"trap":0,"unsorted":0},"fixed":0,"open":1},"data":[],"pagination":{"hasMore":false,"nextCursor":null},"trueFalseLabels":"trueFalse"}""",
+                    """{"availability":{"ready":1},"counts":{"byCause":{"gap":0,"guess":0,"misread":0,"time":0,"trap":0,"unsorted":0},"fixed":0,"open":1},"data":[],"pagination":{"hasMore":false,"nextCursor":null},"trueFalseLabels":"trueFalse"}""",
                 )
             }
 

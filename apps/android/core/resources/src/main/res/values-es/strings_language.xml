@@ -28,8 +28,6 @@
   "language_level_up": "fe0c5ec9805f2a42556c4fee1c3fbdc775d191169e35e82ed64fa2fd5d622ec9",
   "language_levels_move": "ffa3429b4b7c331830d0a4814c8b3fc4cb80820696a23efa60d6c73778f70e7f",
   "language_pattern_noticed": "73f78abbd0edb6c2b8995f53b96348edd1cbfb5fd5f366b9d196baabd58a903f",
-  "language_pattern_noticed_summary": "32906f53f409665ecbf362824b2b6985152dce277d8052ab5905cd414cd6e543",
-  "language_pattern_practice": "98d26022ad094763e74a6e07cd3f006f9a86e8916e8360b3d5a77c0d86e9297e",
   "language_pattern_typos": "c1bc2f5d2e4169ddafc5c6ade327128d594aac4f5e76c2d410780ae73289ad67",
   "language_pattern_typos_description": "46d752f52eb1a2cd6ae1dbfcc1b7a4c1ab051958cc544716ed29d7c8e9d64c46",
   "language_practice_estimates": "0562020e3f08c8ae559ef5c7dc8b4535719482765d483b3cdf4fd36414090bf0",
@@ -141,10 +139,6 @@
     <string name="language_alphabet_skip_failed">No se pudo guardar. Inténtalo de nuevo.</string>
     <!-- Button that opens the words to say aloud again; "them" is those words. -->
     <string name="language_say_them">Decirlas</string>
-    <!-- %1$s names the rule the learner keeps getting wrong. -->
-    <string name="language_pattern_noticed_summary">Notamos un patrón: %1$s</string>
-    <!-- Opens the noticed pattern. -->
-    <string name="language_pattern_practice">Practicarlo</string>
     <string name="language_level">Nivel de %1$s</string>
     <!-- %1$s is the learner's language level now, %2$s the level they aim for: "A2 → B1". -->
     <string name="language_level_toward">%1$s → %2$s</string>

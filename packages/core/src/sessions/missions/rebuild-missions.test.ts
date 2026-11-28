@@ -1,10 +1,8 @@
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
-import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
-import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
   studySessionBlockFixture,
   studySessionFixture,
@@ -229,76 +227,4 @@ describe("stored outside targets when an unstarted queue changes", () => {
       ),
     ).toBe(false);
   });
-
-  it.each([30, 22])(
-    "keeps a three-fix target with one already done and two ready on a %i-minute day",
-    async (dailyMinutes) => {
-      const input = await setupChapter();
-      const skill = await skillFixture();
-      const material = await itemFixture({ content: choiceItemContent(), skillId: skill.id });
-
-      await prisma.planItem.updateMany({
-        data: { skillId: skill.id },
-        where: { planId: input.plan.id },
-      });
-
-      const mistakes = await Promise.all(
-        Array.from({ length: 5 }, () =>
-          mistakeFixture({
-            createdAt: new Date("2026-10-01"),
-            itemId: material.id,
-            skillId: skill.id,
-            userId: input.user.id,
-          }),
-        ),
-      );
-
-      const goal = await prisma.goal.update({
-        data: { dailyMinutes: 30 },
-        where: { id: input.goal.id },
-      });
-
-      const load = (currentGoal: typeof goal) =>
-        loadDayMissionFacts({
-          blocks: [{ ...input.block, estimatedMinutes: 18 }],
-          goal: currentGoal,
-          localDate: LOCAL_DATE,
-          plannedMinutes: 18,
-          timeZone: "UTC",
-          userId: input.user.id,
-        });
-
-      const initial = await load(goal);
-      const fix = initial.candidates.find((pick) => pick.kind === "fixMistake");
-      expect(fix?.total).toBe(3);
-      const picks = [...input.picks, ...(fix ? [fix] : [])];
-
-      await prisma.studySession.update({
-        data: { missions: { picks, version: 1 } },
-        where: { id: input.session.id },
-      });
-
-      await prisma.mistake.update({
-        data: { fixedAt: new Date(), status: "fixed" },
-        where: { id: mistakes[0]?.id },
-      });
-
-      await prisma.mistake.deleteMany({
-        where: { id: { in: mistakes.slice(1, 3).map((mistake) => mistake.id) } },
-      });
-
-      const changed = await prisma.goal.update({ data: { dailyMinutes }, where: { id: goal.id } });
-      const facts = await load(changed);
-      expect(facts.readyMistakeCount).toBe(2);
-
-      const session = await prisma.studySession.findUniqueOrThrow({
-        include: STUDY_SESSION_INCLUDE,
-        where: { id: input.session.id },
-      });
-
-      expect(session.startedAt).toBeNull();
-      const rebuilt = await rebuildMissions({ client: prisma, facts, session, timeZone: "UTC" });
-      expect(rebuilt?.picks.find((pick) => pick.kind === "fixMistake")).toStrictEqual(fix);
-    },
-  );
 });

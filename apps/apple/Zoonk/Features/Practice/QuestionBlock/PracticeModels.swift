@@ -387,6 +387,8 @@ extension PracticeBlock: NamedBlock {
     kind == .review && !capsules.isEmpty
   }
 
+  /// A question block is never a day's mistakes run or pattern drill.
+  var remedialTitle: String? { nil }
   /// A question block is never written work.
   var writingUnit: WritingPrompt.Unit? { nil }
   var writingTask: WritingTaskName? { nil }

@@ -28,6 +28,7 @@ function attemptRows({
     answer: { selectedIndex: 0 },
     answeredAt,
     durationMs: 5000,
+    fromLesson: false,
     hour: answeredAt.getUTCHours(),
     isCorrect: results[index] ?? false,
     itemId,
@@ -76,7 +77,7 @@ const FOUR_OPTIONS = {
 };
 
 describe(recalibrateItemDifficulties, () => {
-  it.each(["legacy step", "deleted step", "anonymous"])(
+  it.each(["deleted step", "anonymous"])(
     "drops a learner who first met the item in a lesson (%s)",
     async (history) => {
       const now = isolatedNow();
@@ -96,13 +97,7 @@ describe(recalibrateItemDifficulties, () => {
       const item = await itemFixture({ content: FOUR_OPTIONS, difficulty: 0, skillId: skill.id });
       const answeredAt = new Date(now.getTime() - MS_PER_HOUR);
 
-      await attemptFixture({
-        answeredAt,
-        fromLesson: history !== "legacy step",
-        itemId: item.id,
-        stepId: step.id,
-        userId: learner.id,
-      });
+      await attemptFixture({ answeredAt, itemId: item.id, stepId: step.id, userId: learner.id });
 
       await Promise.all([
         attemptFixture({ answeredAt, itemId: item.id, userId: learner.id }),

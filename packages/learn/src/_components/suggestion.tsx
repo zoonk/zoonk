@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { Button } from "@zoonk/ui/components/button";
 import {
   Drawer,
   DrawerCloseButton,
@@ -9,18 +9,16 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@zoonk/ui/components/drawer";
-import { OVERLAY_ACTIONS_CLASS } from "@zoonk/ui/lib/overlay-actions";
 import { cn } from "@zoonk/ui/lib/utils";
 import { SparkleIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { createContext, use, useRef, useState } from "react";
-import { type LearnLinkComponentProps } from "../learn-context";
-import { LearnLink } from "../learn-link";
 import { ChangeSaveError } from "./save-error";
 import { type Answered, useFocusOnAnswer, useFocusOnRemovedControl } from "./suggestion-focus";
+import { type Presentation, PresentationContext } from "./suggestion-presentation";
 import { SURFACE_CLASS } from "./surface";
 
-type Presentation = "line" | "panel" | "sheet";
+export { SuggestionAction, SuggestionActions, SuggestionLinkAction } from "./suggestion-actions";
 
 type SuggestionValue = {
   answered: boolean;
@@ -31,7 +29,6 @@ type SuggestionValue = {
 };
 
 const SuggestionContext = createContext<SuggestionValue | null>(null);
-const PresentationContext = createContext<Presentation>("panel");
 
 /** Whether the page shows its own main action beside a suggestion's panel; a page whose action comes and goes says so. */
 export const PageHasMainAction = createContext(true);
@@ -295,61 +292,4 @@ export function SuggestionResult({ className, ...props }: React.ComponentProps<"
 
 export function SuggestionSaveError({ className }: { className?: string }) {
   return <ChangeSaveError className={cn("text-compact leading-snug", className)} />;
-}
-
-/** In the panel each button fills its share of a row, so buttons that wrap stack at one width. */
-const ACTIONS_CLASS: Readonly<Record<Presentation, string>> = {
-  line: "flex max-w-full flex-wrap items-center gap-2",
-  panel:
-    "flex flex-wrap items-center gap-2 pt-1 [&>*]:h-auto [&>*]:min-h-7.5 [&>*]:max-w-full [&>*]:grow [&>*]:py-1 [&>*]:text-balance [&>*]:whitespace-normal",
-  sheet: cn(OVERLAY_ACTIONS_CLASS, "pt-1"),
-};
-
-/**
- * The answers by role: `main`, the other one, then `menu` ("Other options"). The line and the panel
- * are part of the page and draw them in that order; the sheet is written as every sheet's foot is,
- * ending with `main`.
- */
-export function SuggestionActions({
-  children,
-  className,
-  main,
-  menu,
-}: React.PropsWithChildren<{
-  className?: string;
-  main?: React.ReactNode;
-  menu?: React.ReactNode;
-}>) {
-  const presentation = use(PresentationContext);
-  const sheet = presentation === "sheet";
-
-  return (
-    <div
-      className={cn(ACTIONS_CLASS[presentation], "empty:hidden", className)}
-      data-slot="suggestion-actions"
-    >
-      {sheet ? menu : main}
-      {children}
-      {sheet ? main : menu}
-    </div>
-  );
-}
-
-function useActionSize(): "lg" | "sm" {
-  return use(PresentationContext) === "sheet" ? "lg" : "sm";
-}
-
-export function SuggestionAction(props: Omit<React.ComponentProps<typeof Button>, "size">) {
-  const size = useActionSize();
-
-  return <Button focusableWhenDisabled size={size} {...props} />;
-}
-
-export function SuggestionLinkAction({
-  className,
-  variant = "default",
-  ...props
-}: LearnLinkComponentProps & { variant?: "default" | "outline" }) {
-  const size = useActionSize();
-  return <LearnLink className={cn(buttonVariants({ size, variant }), className)} {...props} />;
 }

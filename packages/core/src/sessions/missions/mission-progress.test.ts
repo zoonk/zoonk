@@ -1,6 +1,5 @@
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
-import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import {
@@ -25,15 +24,7 @@ async function readMissions(sessionId: string) {
   });
 }
 
-async function goalActivityFixture({
-  goalId,
-  skillId,
-  userId,
-}: {
-  goalId: string;
-  skillId: string | undefined;
-  userId: string;
-}) {
+async function goalActivityFixture({ goalId, userId }: { goalId: string; userId: string }) {
   const thread = await prisma.lessonQuestionThread.create({
     data: { goalId, kind: "plan", userId },
   });
@@ -68,7 +59,6 @@ async function goalActivityFixture({
       },
     }),
     learningEventFixture({ goalId, kind: "review", lessonKind: "pronunciationReview", userId }),
-    mistakeFixture({ fixedAt: new Date(), skillId, status: "fixed", userId }),
   ]);
 }
 
@@ -86,7 +76,6 @@ describe("progress of missions done outside the day's blocks", () => {
         { anchor: {}, kind: "askBuddy", total: 1 },
         { anchor: {}, kind: "call", total: 1 },
         { anchor: {}, kind: "pronunciation", total: 1 },
-        { anchor: {}, kind: "fixMistake", total: 1 },
       ],
       version: 1,
     };
@@ -96,11 +85,7 @@ describe("progress of missions done outside the day's blocks", () => {
       studySessionFixture({ goalId: other.goal.id, missions, userId: user.id }),
     ]);
 
-    await goalActivityFixture({
-      goalId: mine.goal.id,
-      skillId: mine.skills[0]?.id,
-      userId: user.id,
-    });
+    await goalActivityFixture({ goalId: mine.goal.id, userId: user.id });
 
     const [mineMissions, otherMissions] = await Promise.all([
       readMissions(mineDay.id),
@@ -111,65 +96,68 @@ describe("progress of missions done outside the day's blocks", () => {
       ["askBuddy", "done"],
       ["call", "done"],
       ["pronunciation", "done"],
-      ["fixMistake", "done"],
     ]);
 
     expect(otherMissions.map((mission) => [mission.kind, mission.status])).toStrictEqual([
       ["askBuddy", "todo"],
       ["call", "todo"],
       ["pronunciation", "todo"],
-      ["fixMistake", "todo"],
     ]);
   });
 });
 
-describe("progress of a pattern drill both goals offered", () => {
-  it("counts the drill only for the goal it was practiced for", async () => {
+describe("a day saved with fixMistake and pattern missions, which are no longer offered", () => {
+  it("shows and completes the day without them", async () => {
     const user = await userFixture();
+    const goal = await goalFixture({ userId: user.id });
+    const patternId = crypto.randomUUID();
 
-    const [mine, other] = await Promise.all([
-      goalFixture({ userId: user.id }),
-      goalFixture({ userId: user.id }),
-    ]);
-
-    const pattern = await prisma.mistakePattern.create({
-      data: {
-        content: {},
-        kind: "pattern",
-        language: "es",
-        model: "test",
-        practicedAt: new Date(),
-        promptVersion: "test",
-        runId: "test",
-        title: "Ser and estar",
-        userId: user.id,
+    const session = await studySessionFixture({
+      goalId: goal.id,
+      missions: {
+        picks: [
+          { anchor: {}, kind: "fixMistake", opens: { kind: "mistakesPractice" }, total: 3 },
+          {
+            anchor: { patternId },
+            detail: { patternTitle: "Ser and estar" },
+            kind: "pattern",
+            opens: { kind: "pattern", patternId },
+            total: 1,
+          },
+          { anchor: { blockKind: "review" }, kind: "review", total: 1 },
+        ],
+        version: 1,
       },
+      userId: user.id,
     });
 
-    const missions = {
-      picks: [{ anchor: { patternId: pattern.id }, kind: "pattern", total: 1 }],
-      version: 1,
-    };
+    const block = await studySessionBlockFixture({
+      kind: "review",
+      payload: { missionResult: { completed: ["fixMistake", "pattern"], fullMealPaid: false } },
+      sessionId: session.id,
+    });
 
-    const [mineDay, otherDay] = await Promise.all([
-      studySessionFixture({ goalId: mine.id, missions, userId: user.id }),
-      studySessionFixture({ goalId: other.id, missions, userId: user.id }),
-      learningEventFixture({
-        contentIds: { mistakePatternId: pattern.id, patternDrillId: crypto.randomUUID() },
-        goalId: mine.id,
-        kind: "questions",
-        lessonKind: "patternDrill",
+    await expect(readMissions(session.id)).resolves.toStrictEqual([
+      expect.objectContaining({ kind: "review", status: "todo" }),
+    ]);
+
+    await prisma.studySessionBlock.update({
+      data: { completedAt: new Date(), status: "completed" },
+      where: { id: block.id },
+    });
+
+    await expect(
+      settleMissions({
+        revalidation: "skip",
+        sessionId: session.id,
+        timeZone: "UTC",
         userId: user.id,
       }),
-    ]);
+    ).resolves.toMatchObject({ fullMealPaid: true, newlyDone: [{ kind: "review" }] });
 
-    const [mineMissions, otherMissions] = await Promise.all([
-      readMissions(mineDay.id),
-      readMissions(otherDay.id),
+    await expect(readMissions(session.id)).resolves.toStrictEqual([
+      expect.objectContaining({ kind: "review", status: "done" }),
     ]);
-
-    expect(mineMissions).toMatchObject([{ kind: "pattern", status: "done" }]);
-    expect(otherMissions).toMatchObject([{ kind: "pattern", status: "todo" }]);
   });
 });
 

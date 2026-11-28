@@ -23,6 +23,7 @@ import {
   type CycleContext,
   type CycleState,
   type Lane,
+  compareLanes,
   countBySkill,
   getJoinWindow,
   getSubjectsPerDay,
@@ -55,11 +56,19 @@ function chooseLanes({
   );
 
   const ranked = ready.toSorted(
-    (a, b) => Number(isWaiting(a)) - Number(isWaiting(b)) || a.pass - b.pass || a.order - b.order,
+    (a, b) => Number(isWaiting(a)) - Number(isWaiting(b)) || compareLanes({ a, b, context }),
   );
 
   const due = ranked.slice(count).filter((lane) => isDue({ date: dateOf(lane), lane }));
   const chosen = [...ranked.slice(0, Math.max(0, count - due.length)), ...due];
+
+  if (context.mockPriority) {
+    chosen.sort(
+      (a, b) =>
+        Number(isDue({ date: dateOf(b), lane: b })) - Number(isDue({ date: dateOf(a), lane: a })),
+    );
+  }
+
   const floor = chosen[0]?.pass ?? 0;
 
   open
@@ -238,6 +247,7 @@ export function arrangeStudyCycle({
   days,
   firstAreas,
   knownAreas,
+  mockPriority,
   noticeAreas,
   prerequisites,
   rates,
@@ -248,6 +258,7 @@ export function arrangeStudyCycle({
   days: readonly PlanDay[];
   firstAreas?: ReadonlySet<string>;
   knownAreas?: ReadonlySet<string>;
+  mockPriority?: CycleContext["mockPriority"];
   noticeAreas?: ReadonlySet<string> | null;
   prerequisites: ReadonlyMap<string, readonly string[]>;
   rates: ReadonlyMap<string, number>;
@@ -262,6 +273,7 @@ export function arrangeStudyCycle({
     counts,
     cumulative: getCumulativeCapacity(days),
     days,
+    mockPriority,
     prerequisites,
   };
 

@@ -285,6 +285,9 @@ export function readRecordedAnswer(answer: unknown): QuestionAnswer | null {
           ([key]) =>
             key !== "fixedMistakeIds" &&
             key !== "practiceMistakeId" &&
+            key !== "mockMistakeId" &&
+            key !== "mockReplay" &&
+            key !== "practiceFeedback" &&
             key !== "practiceShowing" &&
             key !== "placementRecheck" &&
             key !== "passedOverMiss",

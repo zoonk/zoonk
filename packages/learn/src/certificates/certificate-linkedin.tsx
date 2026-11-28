@@ -1,7 +1,6 @@
 "use client";
 
 import { type CertificateFacts } from "@zoonk/core/certificates/contract";
-import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   Drawer,
   DrawerContent,
@@ -10,15 +9,24 @@ import {
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
+import { EnterLink, type EnterLinkHostProps } from "@zoonk/ui/components/enter-button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type CertificateLinks, formatCertificateCode } from "@zoonk/utils/certificate-links";
-import { ArrowUpRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { ListGroup, ListRow, ListRowContent } from "../_components/list-group";
 import { SheetHeader } from "../_components/sheet-header";
 import { SoftBreaks } from "../_components/soft-breaks";
 import { CopyButton } from "./certificate-copy-button";
 import { useCertificateDate, useCertificateName } from "./certificate-labels";
+
+/** LinkedIn's form opens in a new tab, so this page stays where the learner copies from. */
+function NewTabLink({ children, ...props }: EnterLinkHostProps) {
+  return (
+    <a {...props} rel="noopener noreferrer" target="_blank">
+      {children}
+    </a>
+  );
+}
 
 type LinkedInCertificate = Pick<
   CertificateFacts,
@@ -117,15 +125,9 @@ export function CertificateLinkedInDialog({
         </DrawerContent>
 
         <DrawerFooter>
-          <a
-            className={buttonVariants({ size: "lg" })}
-            href={links.linkedInUrl}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
+          <EnterLink href={links.linkedInUrl} link={NewTabLink}>
             {t("Open LinkedIn")}
-            <ArrowUpRightIcon aria-hidden="true" data-icon="inline-end" />
-          </a>
+          </EnterLink>
         </DrawerFooter>
       </DrawerPopup>
     </Drawer>

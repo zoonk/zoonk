@@ -1,4 +1,4 @@
-import { type StudySessionBlock } from "@zoonk/db";
+import { type AttemptEvidence, type StudySessionBlock } from "@zoonk/db";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { applyPlacement } from "../../learner/placement/_utils/apply-placement";
 import { type LearnerAnswer } from "../../learner/record-learner-answer";
@@ -28,6 +28,14 @@ type StudyAnswerRecord = {
   userId: string;
 };
 
+/** A placement question or a net-scored blank says nothing about what the learner can do alone. */
+export function getStudyAnswerEvidence({
+  blank,
+  placement,
+}: Pick<StudyAnswerRecord, "blank" | "placement">): AttemptEvidence | null {
+  return blank || placement ? null : "independent";
+}
+
 /** Placement answers skip notebook writes; learning misses on unconfirmed known topics restore their lessons. */
 export async function recordStudyAnswer({
   blank,
@@ -51,6 +59,7 @@ export async function recordStudyAnswer({
       ...(passedOverMiss && { passedOverMiss: true }),
       ...(recheck && { placementRecheck: true }),
     },
+    evidence: getStudyAnswerEvidence({ blank, placement }),
     graded: { durationMs: input.durationMs, isCorrect: drilled.isCorrect },
     isPlacement: placement,
     itemId: item.id,

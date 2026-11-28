@@ -50,8 +50,6 @@
   "today_mistakes_notebook": "4a3231ab7d8714bc7364e13703c0b36d45da08733bd50bbc2292ad9a5f199fa0",
   "today_mistakes_ready": "a356d8bb06a03f074c22197fafa30b694be7dfd9c300184219d861e6dd59f4a3",
   "today_mistakes_redo": "eb1b3d27cb0d86b8862379c7c085394c3feacc9156caaa5437f867c9427cdbfe",
-  "today_mistakes_return_tomorrow": "50152d7253ccc561a749a86697ef9ced53830da231e64d38f03356547c269122",
-  "today_mistakes_tomorrow": "96ea1877746e4d4fb7014702bd54c9fe9c0eec7f760e8f9c29f6e6b3bcbd40d9",
   "today_more_count": "0a398a7aaf1b6ff65f10bd1e9d92a8cfef65f4c07f0d38a5bf6ad02ec31735a0",
   "today_more_lessons": "4946043ab171bf580faab7e6cff085babb241227414716c9a197f54dde7f31d7",
   "today_more_time_a_day": "a9ece1eed991ffa75d1a8db1a534fa41c6f1982c17cd39d5e4f2e175e2f2f374",
@@ -287,16 +285,10 @@
     <string name="today_saved_lessons_line">Lezioni da rifare</string>
     <!-- The line under Completed lessons in Practice anytime. -->
     <string name="today_completed_lessons_line">Rifai una lezione</string>
-    <string name="today_mistakes_return_tomorrow">Gli errori di oggi tornano domani</string>
     <plurals name="today_mistakes_ready">
         <item quantity="one">Puoi esercitarti su %d errore</item>
         <item quantity="many">Puoi esercitarti su %d errori</item>
         <item quantity="other">Puoi esercitarti su %d errori</item>
-    </plurals>
-    <plurals name="today_mistakes_tomorrow">
-        <item quantity="one">%d errore disponibile domani</item>
-        <item quantity="many">%d errori disponibili domani</item>
-        <item quantity="other">%d errori disponibili domani</item>
     </plurals>
     <string name="today_take_mock">Fai una simulazione</string>
     <string name="today_take_mock_detail">Quando vuoi: un’intera giornata d’esame o mezza giornata</string>

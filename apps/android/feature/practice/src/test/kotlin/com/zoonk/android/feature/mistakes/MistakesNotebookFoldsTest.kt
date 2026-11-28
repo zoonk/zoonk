@@ -59,14 +59,14 @@ class MistakesNotebookFoldsTest {
         val lesson = if (id == 1) "null" else """{"id":"00000000-0000-4000-8000-0000000000c$id","title":"Lesson"}"""
         return """{"cause":"trap","createdAt":"2026-10-2${id}T12:00:00Z","fixedAt":null,"id":"00000000-0000-4000-8000-00000000000$id",
         "itemId":null,"lesson":$lesson,"practiceAvailable":true,
-        "practiceAvailableTomorrow":false,"skill":{"id":"00000000-0000-4000-8000-0000000000b$skill","name":"Skill $skill"},
+        "skill":{"id":"00000000-0000-4000-8000-0000000000b$skill","name":"Skill $skill"},
         "snapshot":{"answer":"R$55","correctAnswer":"R$60","question":"$question"},"status":"open"}"""
     }
 
     private var page: MistakeList =
         ApiJson.decodeFromString(
             MistakeList.serializer(),
-            """{"availability":{"ready":3,"tomorrow":0},"counts":{"byCause":{"gap":0,"guess":0,"misread":0,"time":0,"trap":3,"unsorted":0},
+            """{"availability":{"ready":3},"counts":{"byCause":{"gap":0,"guess":0,"misread":0,"time":0,"trap":3,"unsorted":0},
             "fixed":0,"open":3},"data":[${mistake(1, 1, "First question")},${mistake(2, 1, "Second question")},
             ${mistake(3, 2, "Third question")}],"pagination":{"hasMore":false,"nextCursor":null},"trueFalseLabels":"trueFalse"}""",
         )

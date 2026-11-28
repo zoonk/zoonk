@@ -104,6 +104,7 @@ export function getPlanFeasibility({
   plannedInput?: BuildPlanInput;
   studyScheduleAt?: StudyScheduleAt;
 }): PlanFeasibility {
+  const { mockMisses: _mockMisses, ...unprioritized } = input;
   const known = input.knownSkillIds ?? new Set<string>();
   const coverage = getSelectedCoverage({ built: planned, examSubjects, input });
   const deadline = coverage ? fromIsoDate(coverage.deadline) : null;
@@ -113,10 +114,17 @@ export function getPlanFeasibility({
   const fits = coverage?.fits ?? coreFits;
   const coveredShare = coverage ? (coverage.coveredShare ?? Number(coreFits)) : 1;
   const skillFits = toSkillFits(coverage);
-  const fullCourseEndDate = once(() => (deadline && !fits ? getFullCourseEnd(input) : null));
+
+  const fullCourseEndDate = once(() =>
+    deadline && !fits ? getFullCourseEnd(unprioritized) : null,
+  );
 
   const plannedAt = once(() =>
-    planAtMinutes(input, studyScheduleAt, plannedInput && { built: planned, input: plannedInput }),
+    planAtMinutes(
+      unprioritized,
+      studyScheduleAt,
+      plannedInput && { built: planned, input: plannedInput },
+    ),
   );
 
   const selectedAt = (dailyMinutes: number) =>

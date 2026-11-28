@@ -1,11 +1,6 @@
 import "server-only";
 import { type Sql, type TransactionClient, prisma, sql } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
-import {
-  type GoalPlan,
-  getMistakeSkillIds,
-  loadGoalPlan,
-} from "../../learner/_utils/goal-skill-graph";
 import { getStartOfLocalDay } from "../../learner/_utils/local-time";
 import { type DayBlockInput, toDayBlockView } from "../_utils/day-block-view";
 import { readBlockPayload } from "../block-payload";
@@ -23,31 +18,11 @@ export type MissionDay = {
   userId: string;
 };
 
-const DAY_PROGRESS_KINDS: readonly MissionPick["kind"][] = [
-  "askBuddy",
-  "call",
-  "fixMistake",
-  "pattern",
-  "pronunciation",
-];
+const DAY_PROGRESS_KINDS: readonly MissionPick["kind"][] = ["askBuddy", "call", "pronunciation"];
 
 type MissionView = Omit<Mission, "opens"> & { opens?: Mission["opens"] | DayMission["opens"] };
 
-type DayProgress = {
-  fixed: number;
-  patterns: Set<string>;
-  pronunciation: number;
-  calls: number;
-  questions: number;
-};
-
-type DayProgressRow = {
-  calls: number;
-  fixed: number;
-  patterns: string[];
-  pronunciation: number;
-  questions: number;
-};
+type DayProgress = { calls: number; pronunciation: number; questions: number };
 
 /** Each goal's missions count only that goal's activity. */
 export type DayProgressQuery = {
@@ -59,50 +34,17 @@ export type DayProgressQuery = {
 };
 
 /** A GET's request-wide day progress; without it, it's read fresh. */
-export type DayProgressReader = (query: DayProgressQuery) => Promise<DayProgressRow | undefined>;
-
-/** A goal's mistakes are the ones on its skills, as its notebook lists them. */
-async function loadMistakeSkillIds({
-  goalId,
-  kinds,
-  readPlan,
-}: {
-  goalId: string | null;
-  kinds: ReadonlySet<MissionPick["kind"]>;
-  readPlan: (goalId: string) => Promise<GoalPlan>;
-}): Promise<string[]> {
-  if (!goalId || !kinds.has("fixMistake")) {
-    return [];
-  }
-
-  const plan = await readPlan(goalId);
-  return getMistakeSkillIds(plan.skills);
-}
+export type DayProgressReader = (query: DayProgressQuery) => Promise<DayProgress | undefined>;
 
 export async function queryDayProgress(
   client: TransactionClient,
   { from, goalId, kinds: queried, to, userId }: DayProgressQuery,
-  readPlan: (goalId: string) => Promise<GoalPlan> = (id) =>
-    loadGoalPlan(id, undefined, { tx: client }),
-): Promise<DayProgressRow | undefined> {
+): Promise<DayProgress | undefined> {
   const kinds = new Set(queried);
   const counted = (kind: MissionPick["kind"], query: Sql) => (kinds.has(kind) ? query : sql`0`);
-  const skillIds = await loadMistakeSkillIds({ goalId, kinds, readPlan });
 
-  const [row] = await client.$queryRaw<DayProgressRow[]>`
+  const [row] = await client.$queryRaw<DayProgress[]>`
     SELECT
-      ${counted(
-        "fixMistake",
-        sql`(SELECT count(*) FROM mistakes WHERE user_id = ${userId}::uuid AND status = 'fixed'
-          AND skill_id = ANY(${skillIds}::uuid[]) AND fixed_at >= ${from} AND fixed_at < ${to})`,
-      )}::int AS fixed,
-      ${
-        kinds.has("pattern")
-          ? sql`ARRAY(SELECT content_ids->>'mistakePatternId' FROM learning_events
-              WHERE user_id = ${userId}::uuid AND goal_id = ${goalId}::uuid
-              AND lesson_kind = 'patternDrill' AND ended_at >= ${from} AND ended_at < ${to})`
-          : sql`'{}'::text[]`
-      } AS patterns,
       ${counted(
         "pronunciation",
         sql`(SELECT count(*) FROM learning_events WHERE user_id = ${userId}::uuid
@@ -152,7 +94,7 @@ async function loadDayProgress({
   const { goalId, userId } = session;
 
   if (!DAY_PROGRESS_KINDS.some((kind) => kinds.has(kind))) {
-    return { calls: 0, fixed: 0, patterns: new Set(), pronunciation: 0, questions: 0 };
+    return { calls: 0, pronunciation: 0, questions: 0 };
   }
 
   const query = { from, goalId, kinds: [...kinds].toSorted(), to, userId };
@@ -160,8 +102,6 @@ async function loadDayProgress({
 
   return {
     calls: row?.calls ?? 0,
-    fixed: row?.fixed ?? 0,
-    patterns: new Set(row?.patterns),
     pronunciation: row?.pronunciation ?? 0,
     questions: row?.questions ?? 0,
   };
@@ -180,14 +120,6 @@ function getDone({
 
   if (pick.kind === "challenge") {
     return completed.filter((block) => readBlockPayload(block).milestoneReward?.bossWon).length;
-  }
-
-  if (pick.kind === "fixMistake") {
-    return progress.fixed;
-  }
-
-  if (pick.kind === "pattern") {
-    return progress.patterns.has(pick.anchor.patternId ?? "") ? 1 : 0;
   }
 
   if (pick.kind === "pronunciation") {

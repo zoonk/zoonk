@@ -1,6 +1,5 @@
 import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
-import { NOT_LESSON_ANSWER_FILTER } from "@zoonk/db/lesson-answer";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import {
   LOW_GUESS_ANSWERS_TO_SKIP,
@@ -89,11 +88,11 @@ async function listTestOutSkills({
       distinct: ["skillId"],
       select: { skillId: true },
       where: {
+        fromLesson: false,
         isCorrect: false,
         itemId: { not: null },
         localDate: { gte: today },
         skillId: { in: [...skills.keys()] },
-        ...NOT_LESSON_ANSWER_FILTER,
         userId,
       },
     }),

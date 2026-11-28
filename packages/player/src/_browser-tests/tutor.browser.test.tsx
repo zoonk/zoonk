@@ -932,11 +932,13 @@ describe("tutor answers", () => {
 
     const confirmation = page.getByRole("alertdialog", { name: "Open this link?" });
     const cancel = confirmation.getByRole("button", { name: "Cancel" });
+    const open = confirmation.getByRole("button", { name: "Open link" });
+    await expect.element(confirmation).toHaveFocus();
+    await expect.element(open).toHaveAttribute("aria-keyshortcuts", "Enter");
+    await press("Tab");
     await expect.element(cancel).toHaveFocus();
     await press("Tab");
-    await expect.element(confirmation.getByRole("button", { name: "Open link" })).toHaveFocus();
-    await press("Tab");
-    await expect.element(cancel).toHaveFocus();
+    await expect.element(open).toHaveFocus();
     await press("Escape");
     await expect.element(confirmation).not.toBeInTheDocument();
     await expect.element(link).toHaveFocus();

@@ -41,6 +41,7 @@ async function finishedMocks({
         answer: { selectedIndex: 0 },
         answeredAt: finishedAt,
         durationMs: seconds * MS_PER_SECOND,
+        fromLesson: false,
         hour: finishedAt.getUTCHours(),
         isCorrect: true,
         localDate: new Date("2026-09-20T00:00:00Z"),

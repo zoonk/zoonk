@@ -83,22 +83,28 @@ final class MistakePracticeStateTests: XCTestCase {
     XCTAssertEqual(state.phase, .ending)
   }
 
-  func testTheEndSaysMissesWaitAndUnreachedMistakesAreStillReady() {
-    let entries = [makeEntry("m1", questions: ["a"]), makeEntry("m2", questions: ["b"])]
-    var state = MistakePracticeState(entries: entries)
-    XCTAssertEqual(state.endNote, .unreached)
+  /// Another run only while the server says an earlier day's mistake is still open; never in the
+  /// day, which goes on.
+  func testPracticeAgainFollowsTheServerOutsideTheDay() {
+    XCTAssertTrue(MistakePracticeScope.notebook.offersPracticeAgain(hasMorePractice: true))
+    XCTAssertTrue(MistakePracticeScope.mock("k").offersPracticeAgain(hasMorePractice: true))
+    XCTAssertFalse(MistakePracticeScope.skill("s").offersPracticeAgain(hasMorePractice: false))
+    XCTAssertFalse(MistakePracticeScope.notebook.offersPracticeAgain(hasMorePractice: nil))
+    XCTAssertFalse(MistakePracticeScope.block("b").offersPracticeAgain(hasMorePractice: true))
+  }
 
-    answer(&state, .dontKnow, by: .notSure, grade: makeGrade(isCorrect: false))
-    XCTAssertEqual(state.endNote, .missedAndUnreached)
-    state.next()
+  /// The score comes from the run's own answers, so a batch with no summary still ends on it.
+  func testTheScoreCountsTheRunsRightAnswers() {
+    var state = MistakePracticeState(entries: [makeEntry("m", questions: ["a", "b", "c"])])
+
     answer(&state, grade: makeGrade(isCorrect: true))
-    XCTAssertEqual(state.endNote, .missed)
+    state.next()
+    answer(&state, .dontKnow, by: .notSure, grade: makeGrade(isCorrect: false))
+    state.next()
+    answer(&state, grade: makeGrade(isCorrect: false))
 
-    var right = MistakePracticeState(entries: entries)
-    answer(&right, grade: makeGrade(isCorrect: true))
-    right.next()
-    answer(&right, grade: makeGrade(isCorrect: true))
-    XCTAssertNil(right.endNote)
+    XCTAssertEqual(state.rightAnswers, 1)
+    XCTAssertEqual(state.answerIds.count, 3)
   }
 
   private func answer(
@@ -193,7 +199,8 @@ private func makeEntry(
     cause: nil, drill: drill, mistakeId: mistakeId,
     questions: questions.map {
       PracticeQuestion(itemId: $0, format: .multipleChoice, question: $0, options: ["x", "y"])
-    })
+    },
+    showing: "mistake:\(mistakeId):1")
 }
 
 private func makeGrade(

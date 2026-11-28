@@ -18,7 +18,6 @@
   "mock_result_by_test": "0ad4a9d94547a5ab0e6b2d2b4e003f84ea13022e76eb29a3c7cfb7312272c6d7",
   "mock_result_by_topic": "a0263608958011cc23b5e2e693dd194cf1e64b1b63d293a8c9a68d6a0bed4975",
   "mock_result_calibration_detail": "aa1298e17225141bb7421b73ebf775a70f489f109ed2db07a7ac030803280c4e",
-  "mock_result_change_plan": "e985660f7f3e3a444a1da2e13ee698b8b9aa7c35991d475fcce6733f67e1df4b",
   "mock_result_continue": "136a0f124f5fffd12d3db8ca8692a23bff460ba0d4caf5de815acf22d90e29f5",
   "mock_result_details": "a6282d97c0a190678d2ae84ae132afa45f6c409535c02f67a339c8e05dde3902",
   "mock_result_down": "0b2ae66072c2aaa486837115bf2c0e981cc83d0d45be5118b169e7ecf91ab0df",
@@ -29,9 +28,6 @@
   "mock_result_estimated_exam_score": "3cc96c094357cadf016cc23e42fe154f54f3e53a5f0b879de101684c8a169a1c",
   "mock_result_estimated_score": "9ed24c03ed62f635266a41a060aeee06545c047f858a468b6d043d83d19646df",
   "mock_result_every_minimum": "1faf00c817d642af4707640392990cdb668460c0495da3ac50d510418985b02a",
-  "mock_result_focus_done": "974214b89c41ecf5b4f1ec28f8750862f5b4d6ce6f8bc01d30af5a8f1f01a9d4",
-  "mock_result_focus_line": "5c5851b227b31059788c17c4cfba94b25b8b9fed6fed0f3da5b99016ea75a91a",
-  "mock_result_focus_title": "57df87ad6d93518f116c969c21bbc5cd51832f64da01c4b5be32465e1bf61281",
   "mock_result_grade_it": "a8bdb9d9fa4e2ebf305ea37d1073e11274222fe217168cc4e198ccda9b44e7cc",
   "mock_result_grading": "2bc929dcb2641c43d0f62e502ccd0708ca39bb91faaf751bf63f1bbeecab1105",
   "mock_result_grading_failed": "c22351fa6e1cb78e99913c83433a2a4a78ad53c9000ba72799df85bc9c17b0a6",
@@ -58,7 +54,6 @@
   "mock_result_not_done": "8e52f2e8c7199936929c5ee3d3c4ba124874486b84d2ce601087b815990b6eb0",
   "mock_result_not_every_task": "a52e77205c8c7c4d14d6ab3219d753615353c64038ee4f801ce6486efb903d9c",
   "mock_result_not_graded": "06d993d76deaeef29a5182c6e4fb5b02324dee9f63e2f2d0e8d478a695e46648",
-  "mock_result_not_now": "5b295dfabf3e3afe841c4bccc2bf4d6d3d122df0adcf28c7e11dac7e887e4dd3",
   "mock_result_notice_scoring": "6b94d938dea28562ab7db1ef05f71d51d9df48c9917416c7fc17cc3886e14999",
   "mock_result_of": "1714df5a7391f0f49f62aa1e0cf4a7885c10c8b90b6ee2f41a6059f53a2aab9d",
   "mock_result_partly_right": "576cefef3212802751199c1f4104b42f0418195e83c8709fb2d3b5c96c8f3dee",
@@ -67,6 +62,7 @@
   "mock_result_pass_marks_language": "dadda94117534229139cf334d468d23e236b4feffd04eb423235314d384995a7",
   "mock_result_pass_paper": "d0779d9cd9cd1da52a0aba7735f300ea7f3eb813c75a94c155858b8ae199d21e",
   "mock_result_pass_score": "fea42e1b3bd2eaff6de72a7ea73104e24fced79ea743367922d4a42ce870bbe2",
+  "mock_result_plan_moved": "bfe45549de02c7285fd61a7c39ec8cb1f22b846db5a9474930068b1523b9f4fc",
   "mock_result_plan_not_saved": "77d9bcc2fd235d3afec142cda20e16801eeb0073565c47648def2431de452eeb",
   "mock_result_plan_unchanged": "04708af19694f4b2395f2f60623fb3394b63d4cd5dacefbf1ab80f47c5b597da",
   "mock_result_points": "786f3dad25c11968cb9e45faca470da840dd667acb8e7bbc6f2c5d39d0a3afd3",
@@ -312,24 +308,19 @@
     <string name="mock_result_not_done">未完了</string>
     <string name="mock_result_your_preparation">準備状況</string>
     <string name="mock_result_your_plan">学習計画</string>
+    <!-- On a mock exam's result: the plan moved the topics the learner missed earlier. The topics follow, one per line. -->
+    <string name="mock_result_plan_moved">間違えた内容が、より早く出てきます</string>
     <plurals name="mock_result_skip_title">
         <item quantity="other">すでに知っている%dレッスンをスキップしますか？</item>
     </plurals>
-    <!-- %1$s is a subject, such as "Mathematics". -->
-    <string name="mock_result_focus_title">%1$sを重点的に学習しますか？</string>
     <!-- %1$s lists the topics, such as "Fractions, Ratios and 2 more topics". -->
     <string name="mock_result_skip_line">%1$sでは全問正解でした。</string>
     <!-- %1$s names three topics; %2$d counts the rest: "Fractions, Ratios, Areas and 2 more topics". -->
     <plurals name="mock_result_topics_and_more">
         <item quantity="other">%1$s、ほか%2$dトピック</item>
     </plurals>
-    <!-- %1$s can be a decimal, since some questions give partial credit: "You got 4.5 of 10 right there." -->
-    <plurals name="mock_result_focus_line">
-        <item quantity="other">正解は%1$s問でした（全%2$d問）。</item>
-    </plurals>
     <string name="mock_result_skip_them">スキップする</string>
     <string name="mock_result_keep_them">学習計画に残す</string>
-    <string name="mock_result_change_plan">学習計画を変更する</string>
     <!-- The share the learner is prepared rose since the last mock exam: "Up from 12%". -->
     <string name="mock_result_up_from">前回の%1$sから上昇</string>
     <!-- The share the learner is prepared fell since the last mock exam: "Down from 15%". -->
@@ -339,9 +330,6 @@
     <plurals name="mock_result_skip_done">
         <item quantity="other">%dレッスンをスキップしました。</item>
     </plurals>
-    <!-- %1$s is a subject, such as "Mathematics". -->
-    <string name="mock_result_focus_done">学習計画では%1$sの学習時間が増えます。</string>
     <string name="mock_result_after">今回の模試のあと</string>
     <string name="mock_result_continue">続ける</string>
-    <string name="mock_result_not_now">今はしない</string>
 </resources>

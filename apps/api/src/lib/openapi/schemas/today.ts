@@ -4,7 +4,6 @@ import { todayFocusTestSchema } from "@zoonk/core/learner/placement/focus-test-c
 import { planChangeSchema } from "@zoonk/core/plans/change-contract";
 import { mockFundingSchema } from "@zoonk/core/plans/mock-funding-contract";
 import { lessonGenerationStatusSchema } from "@zoonk/core/sessions/block-view-contract";
-import { noticedPatternSchema } from "@zoonk/core/view-models/language/contract";
 import { TODAY_NOTICE_KINDS } from "@zoonk/core/view-models/today/notice";
 import { GoalKind } from "@zoonk/db";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
@@ -83,13 +82,7 @@ export const todayResponseSchema = z
       .default(null)
       .meta({
         description:
-          "Today's one notice, the most pressing first: `exam` (its days and how it went), `planChange`, `insight`, `sourceChange`, `uploadRequest`, `examChoice`, `practice` (a language goal's noticed pattern or words to say again, from its Today view), `focusTest` or `suggestedGoal`; null when none applies",
-      }),
-    pattern: noticedPatternSchema
-      .nullable()
-      .meta({
-        description:
-          "A language goal's rule noticed in recent mistakes (never a finding of typos, which leaves nothing to do), not practiced or dismissed yet, offered beside the day; open it with GET /v1/mistake-patterns/{patternId}. Null for any other goal, without one, and when one of the day's missions already opens it",
+          "Today's one notice, the most pressing first: `exam` (its days and how it went), `planChange`, `insight`, `sourceChange`, `uploadRequest`, `examChoice`, `practice` (a language goal's words to say again, from its Today view), `focusTest` or `suggestedGoal`; null when none applies",
       }),
     planChange: planChangeSchema
       .nullable()

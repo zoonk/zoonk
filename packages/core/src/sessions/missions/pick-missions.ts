@@ -1,4 +1,3 @@
-import { MS_PER_DAY } from "@zoonk/utils/date";
 import {
   FIRST_STEP_KINDS,
   type FirstStepKind,
@@ -12,9 +11,7 @@ import { fitMission } from "./fit-mission";
 const DISTINCTIVE: readonly MissionKind[] = ["challenge", "mock", "weeklyChallenge", "essay"];
 
 const ROTATION: readonly MissionKind[] = [
-  "fixMistake",
   "practice",
-  "pattern",
   "pronunciation",
   "call",
   "askBuddy",
@@ -54,14 +51,6 @@ function rotationAge({ facts, kind }: { facts: DayMissionFacts; kind: MissionKin
   return index === -1 ? WEEK_DAYS : index;
 }
 
-function hasPressingMistakes(facts: DayMissionFacts): boolean {
-  return (
-    facts.readyMistakeCount >= MISSION_RULES.mistakePileSize ||
-    (facts.oldestReadyMistakeAt !== null &&
-      facts.localDate.getTime() - facts.oldestReadyMistakeAt.getTime() >= WEEK_DAYS * MS_PER_DAY)
-  );
-}
-
 function rankUseCandidates(facts: DayMissionFacts): MissionPick[] {
   const get = (kind: MissionKind) => facts.candidates.find((candidate) => candidate.kind === kind);
   const distinctive = DISTINCTIVE.flatMap((kind) => get(kind) ?? []);
@@ -77,16 +66,11 @@ function rankUseCandidates(facts: DayMissionFacts): MissionPick[] {
 
   const firstPick = first ? get(first.kind) : undefined;
 
-  const pressing = [
-    hasPressingMistakes(facts) && get("fixMistake"),
-    facts.patternExpiresTomorrow && get("pattern"),
-  ].filter((pick): pick is MissionPick => Boolean(pick));
-
   const rotation = ROTATION.toSorted(
     (a, b) => rotationAge({ facts, kind: b }) - rotationAge({ facts, kind: a }),
   ).flatMap((kind) => get(kind) ?? []);
 
-  return [...distinctive, ...(firstPick ? [firstPick] : []), ...pressing, ...rotation].filter(
+  return [...distinctive, ...(firstPick ? [firstPick] : []), ...rotation].filter(
     (pick, index, all) => all.findIndex((other) => other.kind === pick.kind) === index,
   );
 }
@@ -103,11 +87,7 @@ function conflicts({
   }
 
   const kinds = new Set([...chosen.map((other) => other.kind), pick.kind]);
-
-  return (
-    (kinds.has("practice") && kinds.has("fixMistake")) ||
-    (kinds.has("practice") && kinds.has("weakSpot"))
-  );
+  return kinds.has("practice") && kinds.has("weakSpot");
 }
 
 function fillSlots({
@@ -133,7 +113,7 @@ function fillSlots({
 
 /** Deterministic daily picks prioritize reviews and new learning before distinctive work and rotation. */
 export function pickMissions(facts: DayMissionFacts): MissionPick[] {
-  if (!facts.available || (facts.plannedMinutes <= 0 && facts.readyMistakeCount === 0)) {
+  if (!facts.available || facts.plannedMinutes <= 0) {
     return [];
   }
 

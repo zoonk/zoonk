@@ -4,6 +4,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.feature.player.SessionMove
+import com.zoonk.android.feature.player.SessionMover
+import com.zoonk.android.feature.player.SessionSteps
 import com.zoonk.android.ui.components.TaskSegment
 import com.zoonk.api.models.MistakePattern
 import com.zoonk.api.models.MistakePatternDrillInner
@@ -57,7 +60,23 @@ class PatternViewModel(
     private val patternId: UUID,
     private val store: PatternStore,
     private val saved: SavedStateHandle,
+    /** Opened from its row on Today: its end goes on to the day's next stop. */
+    sessionId: UUID? = null,
+    steps: SessionSteps? = null,
 ) : ViewModel() {
+    private val sessionMover = if (sessionId != null && steps != null) SessionMover(steps, sessionId, viewModelScope) else null
+    val sessionMove: StateFlow<SessionMove> = sessionMover?.move ?: MutableStateFlow(SessionMove()).asStateFlow()
+
+    val leadsOn: Boolean get() = sessionMover != null
+
+    fun continueSession() {
+        sessionMover?.continueSession()
+    }
+
+    fun stopSession() {
+        sessionMover?.stop()
+    }
+
     private val mutableState = MutableStateFlow<PatternDrill?>(null)
     val state: StateFlow<PatternDrill?> = mutableState.asStateFlow()
 

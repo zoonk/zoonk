@@ -5,6 +5,7 @@ import {
   isPhaseChallenge,
 } from "../../checkpoints/_utils/challenge-reach";
 import { readBlockPayload } from "../block-payload";
+import { isOutsidePlanLesson } from "../day-block";
 import { type PlannedCheckpoint, type PlannedLesson } from "../session-builder";
 
 type Identified = { planItemId: string | null; planItemKey?: string | null };
@@ -224,14 +225,32 @@ export function listFittingLessons({
   );
 }
 
+export function putWelcomeBackMistakesSecond<Block extends Pick<StudySessionBlock, "payload">>(
+  blocks: Block[],
+): Block[] {
+  const first = blocks.findIndex((block) => readBlockPayload(block).mistakeIds.length === 0);
+  const lead = blocks[first];
+
+  return first > 0 && lead ? [lead, ...blocks.slice(0, first), ...blocks.slice(first + 1)] : blocks;
+}
+
 export function orderDayBlocks<
   Block extends {
     kind: StudyBlockKind;
     lessonId: string | null;
     payload: StudySessionBlock["payload"];
   },
->({ blocks, items }: { blocks: readonly Block[]; items: readonly ChallengeReachItem[] }): Block[] {
+>({
+  blocks,
+  items,
+  welcomeBack = false,
+}: {
+  blocks: readonly Block[];
+  items: readonly ChallengeReachItem[];
+  welcomeBack?: boolean;
+}): Block[] {
   const ranks = [
+    "mistakes",
     "review",
     "writtenPlacement",
     "reinforcement",
@@ -244,6 +263,10 @@ export function orderDayBlocks<
   const group = (block: Block): (typeof ranks)[number] => {
     const payload = readBlockPayload(block);
 
+    if (payload.mistakeIds.length > 0) {
+      return "mistakes";
+    }
+
     if (block.kind === "review") {
       return "review";
     }
@@ -252,7 +275,7 @@ export function orderDayBlocks<
       return "writtenPlacement";
     }
 
-    if (payload.reinforcement) {
+    if (payload.patternId || isOutsidePlanLesson(payload)) {
       return "reinforcement";
     }
 
@@ -278,9 +301,11 @@ export function orderDayBlocks<
 
   const afterLessons = (block: Block) => Number(readBlockPayload(block).afterLessons);
 
-  return blocks.toSorted(
+  const ordered = blocks.toSorted(
     (a, b) =>
       rank(a) - rank(b) ||
       (group(a) === "stretch" ? afterLessons(a) - afterLessons(b) || position(a) - position(b) : 0),
   );
+
+  return welcomeBack ? putWelcomeBackMistakesSecond(ordered) : ordered;
 }

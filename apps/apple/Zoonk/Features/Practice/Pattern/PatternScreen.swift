@@ -1,12 +1,15 @@
 import SwiftUI
 
 /// Counted once at the end. Mistakes that were only typos get a kind note and nothing to practice.
+/// Opened from its row on Today, it opens over the session and ends by going on into the day.
 struct PatternScreen: View {
   let patternId: String
+  var inDay = false
 
   @Environment(SessionStore.self) private var session
   @Environment(PracticeStore.self) private var practice
   @Environment(\.dismiss) private var dismiss
+  @Environment(\.practiceHooks) private var hooks
   @State private var load: PracticeLoad<Components.Schemas.MistakePattern> = .loading
   @State private var step: Step = .intro
   @State private var picks: [String] = []
@@ -39,7 +42,7 @@ struct PatternScreen: View {
       }
       .navigationBarTitleDisplayMode(.inline)
       .taskClose {
-        PracticeCloseButton { dismiss() }
+        PracticeCloseButton { close() }
       }
     }
     .completionMoments(
@@ -236,11 +239,23 @@ struct PatternScreen: View {
     }
   }
 
+  /// In the day, the session beneath shows the day's next stop.
   private var doneButton: some View {
     PracticeMainButton(
-      title: LocalizedStringResource(
-        "Done", table: "Practice", comment: "Leaves a finished screen.")
+      title: inDay
+        ? LocalizedStringResource(
+          "Continue", table: "Practice", comment: "Moves on after a grade.")
+        : LocalizedStringResource("Done", table: "Practice", comment: "Leaves a finished screen.")
     ) {
+      dismiss()
+    }
+  }
+
+  /// Leaving a day's step goes back to Today, not on into the day.
+  private func close() {
+    if inDay {
+      hooks.navigate(.today)
+    } else {
       dismiss()
     }
   }

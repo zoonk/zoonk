@@ -114,6 +114,45 @@ class TodayDayScreenshots {
     fun unfinishedGoalTablet() = render("today-unfinished-goal-tablet", underway(), unfinished = UNFINISHED_GOAL)
 
     @Test
+    @Config(qualifiers = "w411dp-h1500dp-xxhdpi")
+    fun remedialPhone() = render("today-remedial-phone", remedial())
+
+    @Test
+    @Config(qualifiers = "w411dp-h1500dp-night-xxhdpi")
+    fun remedialPhoneDark() = render("today-remedial-phone-dark", remedial())
+
+    @Test
+    @Config(qualifiers = "w411dp-h3000dp-xxhdpi")
+    fun remedialPhoneLargeText() {
+        RuntimeEnvironment.setFontScale(2f)
+        render("today-remedial-phone-font200", remedial())
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1500dp-xxhdpi")
+    fun remedialLanguagePhone() = render("today-remedial-language-phone", remedial(language = true))
+
+    @Test
+    @Config(qualifiers = "w411dp-h1500dp-xxhdpi")
+    fun mistakesAlreadyFixedPhone() = render("today-mistakes-already-fixed-phone", remedial(oneSubject = true, mistakesLeft = 0))
+
+    @Test
+    @Config(qualifiers = "w411dp-h1500dp-night-xxhdpi")
+    fun mistakesAlreadyFixedPhoneDark() = render("today-mistakes-already-fixed-phone-dark", remedial(oneSubject = true, mistakesLeft = 0))
+
+    @Test
+    @Config(qualifiers = "w411dp-h1500dp-xxhdpi")
+    fun anotherWayPhone() = render("today-another-way-phone", remedial(oneSubject = true, returning = "anotherWay"))
+
+    @Test
+    @Config(qualifiers = "w411dp-h1500dp-xxhdpi")
+    fun missedPhone() = render("today-missed-phone", remedial(oneSubject = true, returning = "missed"))
+
+    @Test
+    @Config(qualifiers = "w411dp-h1500dp-xxhdpi")
+    fun remedialOneSubjectPhone() = render("today-remedial-one-subject-phone", remedial(oneSubject = true))
+
+    @Test
     @Config(qualifiers = "w411dp-h1100dp-xxhdpi")
     fun doneKeepLearningPhone() = render("today-done-phone", done())
 
@@ -417,6 +456,86 @@ class TodayDayScreenshots {
             ),
         )
 
+    /**
+     * A day as core builds one that works on the learner's mistakes: their missed questions lead,
+     * then review, the day's one teaching row (a lesson back, its second take, or a language
+     * pattern), the new lessons and practice.
+     */
+    private fun remedial(
+        language: Boolean = false,
+        oneSubject: Boolean = false,
+        mistakesLeft: Int = 3,
+        returning: String = "again",
+    ) = Day(
+        day(
+            "underway",
+            if (language) languageRemedialBlocks(mistakesLeft) else remedialBlocks(oneSubject, mistakesLeft, returning),
+            next = 0,
+            left = mistakesLeft + REMEDIAL_DAY_MINUTES,
+            done = 0,
+            dailyGoal = mistakesLeft + REMEDIAL_DAY_MINUTES,
+        ),
+    )
+
+    private fun remedialBlocks(
+        oneSubject: Boolean,
+        mistakesLeft: Int,
+        returning: String,
+    ): List<JsonObject> {
+        val other = if (oneSubject) "Biology" else "Genetics"
+        val teaching =
+            when (returning) {
+                "anotherWay" -> lesson(2, "Why cells divide", "subject" to "Biology", "returning" to "anotherWay", "estimatedMinutes" to 4)
+                "missed" -> lesson(2, "Osmosis in a cell", "subject" to "Biology", "returning" to "missed", "estimatedMinutes" to 4)
+                else -> lesson(2, "Photosynthesis step by step", "subject" to "Biology", "returning" to "again", "estimatedMinutes" to 4)
+            }
+        return listOf(
+            mistakesBlock(mistakesLeft),
+            block(1, "review", "estimatedMinutes" to 4, "questions" to 6, "subject" to "Biology"),
+            teaching,
+            lesson(3, "Genes and proteins", "subject" to other),
+            lesson(4, "DNA replication", "subject" to other),
+            block(
+                5,
+                "practice",
+                "estimatedMinutes" to 5,
+                "subject" to "Biology",
+                "topics" to JsonArray(listOf("Cell membranes", "Mitosis", "Osmosis").map(::JsonPrimitive)),
+            ),
+        )
+    }
+
+    private fun languageRemedialBlocks(mistakesLeft: Int) =
+        listOf(
+            mistakesBlock(mistakesLeft),
+            block(1, "review", "estimatedMinutes" to 4, "questions" to 6),
+            block(
+                2,
+                "practice",
+                "screen" to "pattern",
+                "patternId" to "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d09",
+                "title" to "Gender of nouns",
+                "estimatedMinutes" to 4,
+            ),
+            lesson(3, "Ordering at a café"),
+            lesson(4, "Asking for directions"),
+            block(
+                5,
+                "practice",
+                "estimatedMinutes" to 5,
+                "topics" to JsonArray(listOf("Food words", "Polite requests").map(::JsonPrimitive)),
+            ),
+        )
+
+    private fun mistakesBlock(left: Int) =
+        block(
+            0,
+            "practice",
+            "screen" to "mistakesPractice",
+            "estimatedMinutes" to left,
+            "questions" to left,
+        )
+
     /** An exam day with a lesson of the exam strategy the learner added, which the notice doesn't list. */
     private fun strategy(document: String = "notice") =
         Day(
@@ -626,5 +745,8 @@ class TodayDayScreenshots {
         val ana = AuthenticatedSession("ana", "token-a", "local-a")
         const val SESSION = "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d02"
         const val UNFINISHED_GOAL = "Learn enough Japanese to order food and ask for directions on my trip to Osaka in April"
+
+        /** Review, the teaching row, two new lessons and practice: what a remedial day holds besides its mistakes. */
+        const val REMEDIAL_DAY_MINUTES = 4 + 4 + 6 + 6 + 5
     }
 }

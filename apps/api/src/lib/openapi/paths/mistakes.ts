@@ -24,7 +24,7 @@ export const mistakePaths = {
   "/me/mistake-practice": {
     get: {
       description:
-        '"Practice mistakes": the open mistakes from earlier days, up to 50, oldest first, each with a drill chosen by its cause and one question: its own while it can still be asked, otherwise another on its skill. A mistake with no question of its own (other than a timed one) has no entry when the run already asks a question on its skill or none is left there, since a right answer on that skill fixes it too. No question comes twice in a run. With `skillId`, "Practice this skill": only that skill\'s mistakes.',
+        "Open, replayable mistakes, with misses from earlier learner-local days before today's. A notebook run has up to 50 original questions. A block scope keeps the remaining entries from that block's frozen list in order. A mock scope includes only a finished mock's mistakes.",
       operationId: "getCurrentUserMistakePractice",
       requestParams: { query: mistakePracticeInputSchema },
       responses: {
@@ -44,7 +44,7 @@ export const mistakePaths = {
   "/me/mistake-practice/completions": {
     post: {
       description:
-        "Finishes a \"Practice mistakes\" run, at its end or when the learner stops early, so it counts like any practice: Brain Power (due material, with Hyperdrive), Energy, the answers and time in today's totals and a learning day. Send the answer ids the run's answers returned. Finishing the same answers again counts nothing new and returns what the run earned.",
+        "Counts the first answer per mistake per local day toward Brain Power, Energy, and the day's totals. Retries add no rewards. A day block completes once every assigned mistake has been answered today or can no longer be asked. A block completion can have no answer IDs.",
       operationId: "createMistakePracticeCompletion",
       requestBody: {
         content: { "application/json": { schema: mistakePracticeFinishInputSchema } },
@@ -68,7 +68,7 @@ export const mistakePaths = {
   "/me/mistakes": {
     get: {
       description:
-        "The mistakes notebook, newest first, filterable by goal, skill, cause and status, with counts for the filters and shared practice availability. Each entry preserves the original question, answers, context, picture, visual and shared passage or recording. Mistakes from today remain visible and become available to practice on the next learner-local day; only mistakes with usable drill material are offered for practice.",
+        "The mistakes notebook, newest first, filterable by goal, skill, cause and status, with counts for the filters and shared practice availability. Each entry preserves the original question, answers, context, picture, visual and shared passage or recording. Open mistakes with usable practice material are available as soon as they are saved.",
       operationId: "listCurrentUserMistakes",
       requestParams: { query: mistakeListQuerySchema },
       responses: {
@@ -88,7 +88,7 @@ export const mistakePaths = {
   "/me/mistakes/{mistakeId}/answers": {
     post: {
       description:
-        "Answers the mistake's question or another question on its skill, by the rules of its drill. Right on a later day than the mistake, it fixes the entry and the learner's other entries with no question of their own that this question could practice on the run's goal (`run.goalId`; without it, on this question's skill only). A timed entry is fixed only by its own drill, under its clock. Sent with its run, saving it counts the run so far toward today and says what that count reached (`reached`); finishing the run (POST /me/mistake-practice/completions) counts it once more.",
+        "Grades the original question, and fixes the entry if answered right on a later learner-local day than its last miss. Each new submission gets a verdict. The same attempt ID replays its saved verdict. The first answer per mistake per local day counts toward progress.",
       operationId: "createMistakePracticeAnswer",
       requestBody: {
         content: { "application/json": { schema: mistakePracticeAnswerInputSchema } },

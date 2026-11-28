@@ -1,76 +1,53 @@
 import "server-only";
-import { type Attempt, type TransactionClient, prisma } from "@zoonk/db";
+import { type TransactionClient } from "@zoonk/db";
+import { isJsonObject } from "@zoonk/utils/json";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { findSavedAttempt } from "../../learner/_utils/answer-once";
 import { getStartOfLocalDay } from "../../learner/_utils/local-time";
-import { findOwnedGoal } from "../../learner/_utils/owned-goal";
-import { getPracticeTimeZone, readyMistakeWhere } from "../mistake-availability";
+import { openVisibleMistakeWhere } from "./visible-mistake";
 
-type PracticeClaim = { mistakeId: string; timeZone: string; userId: string };
-
-function today(timeZone: string) {
-  return { localDate: getDateInTimeZone({ date: new Date(), timeZone }), timeZone };
+export function readPracticeMistakeId(answer: unknown): string | null {
+  return isJsonObject(answer) && typeof answer.practiceMistakeId === "string"
+    ? answer.practiceMistakeId
+    : null;
 }
 
-/** A ready mistake takes one practice answer: it leaves fixed, or waits for the next day. Under the learner lock, this is that answer's claim. */
-async function isMistakeReady(
-  { mistakeId, timeZone, userId }: PracticeClaim,
-  db: TransactionClient = prisma,
-): Promise<boolean> {
-  const ready = await db.mistake.count({
-    where: { ...readyMistakeWhere(today(timeZone)), id: mistakeId, userId },
-  });
-
-  return ready > 0;
-}
-
-/** For `recordAnswerOnce`: refuses a second answer that got past the first check at the same time. */
-export function refuseAnsweredMistake(claim: PracticeClaim) {
-  return async function refuse(transaction: TransactionClient): Promise<"answered" | null> {
-    return (await isMistakeReady(claim, transaction)) ? null : "answered";
-  };
-}
-
-/** The answer that counted for this mistake today, so a stale screen or a lost reply gets it back instead of a second reward. */
-function findCountedPracticeAnswer({
+/** Caller holds the learner lock. A distinct submission can get a verdict even if credit was used. */
+export async function hasPracticeCredit({
+  answeredAt,
   mistakeId,
   timeZone,
+  transaction,
   userId,
-}: PracticeClaim): Promise<Attempt | null> {
-  return prisma.attempt.findFirst({
-    orderBy: [{ answeredAt: "desc" }, { id: "desc" }],
+}: {
+  answeredAt: Date;
+  mistakeId: string;
+  timeZone: string;
+  transaction: TransactionClient;
+  userId: string;
+}): Promise<boolean> {
+  const localDate = getDateInTimeZone({ date: answeredAt, timeZone });
+
+  const counted = await transaction.attempt.findFirst({
+    select: { id: true },
     where: {
       answer: { equals: mistakeId, path: ["practiceMistakeId"] },
-      answeredAt: { gte: getStartOfLocalDay(today(timeZone)) },
+      answeredAt: { gte: getStartOfLocalDay({ localDate, timeZone }) },
       studySessionId: null,
       userId,
     },
   });
+
+  return counted === null;
 }
 
-/** The day's zone and the answer to replay, if any; null when the mistake takes no answer today and none counted. */
-export async function readPracticeClaim({
-  attemptId,
-  goalId,
-  mistakeId,
-  timeZone,
-  userId,
-}: {
-  attemptId: string;
-  goalId?: string;
-  mistakeId: string;
-  timeZone?: string;
-  userId: string;
-}): Promise<{ saved: Attempt | null; timeZone: string } | null> {
-  const owned = goalId ? await findOwnedGoal(goalId) : null;
-  const goal = owned?.status === "ready" ? owned.goal : null;
-  const zone = await getPracticeTimeZone({ goal, timeZone, userId });
-  const claim = { mistakeId, timeZone: zone, userId };
-  const ready = await isMistakeReady(claim);
+/** An intervening fix closes the entry to new submissions, even when grading began earlier. */
+export function refuseClosedMistake({ mistakeId, userId }: { mistakeId: string; userId: string }) {
+  return async function refuse(transaction: TransactionClient): Promise<"closed" | null> {
+    const open = await transaction.mistake.findFirst({
+      select: { id: true },
+      where: { ...openVisibleMistakeWhere, id: mistakeId, userId },
+    });
 
-  const saved =
-    (await findSavedAttempt({ attemptId, userId })) ??
-    (ready ? null : await findCountedPracticeAnswer(claim));
-
-  return ready || saved ? { saved, timeZone: zone } : null;
+    return open ? null : "closed";
+  };
 }

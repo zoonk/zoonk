@@ -1,5 +1,6 @@
 import "server-only";
 import { type Lesson, prisma } from "@zoonk/db";
+import { SECOND_TAKE_KEY_WHERE } from "../../library/second-takes/second-take-identity";
 import { getItemKey } from "../../plans/planner/plan-items";
 import { DEFAULT_LESSON_MINUTES } from "../../plans/planner/plan-units";
 import { type PlannedLesson } from "../session-builder";
@@ -82,7 +83,10 @@ export async function loadLessonsForSkills({
   const rows = await prisma.lessonSkill.findMany({
     include: { lesson: { include: LESSON_INCLUDE } },
     orderBy: [{ createdAt: "asc" }, { lessonId: "asc" }],
-    where: { lesson: { setAsideAt: null }, skillId: { in: [...skillIds] } },
+    where: {
+      lesson: { NOT: SECOND_TAKE_KEY_WHERE, setAsideAt: null },
+      skillId: { in: [...skillIds] },
+    },
   });
 
   const bySkill = skillIds.flatMap((skillId) => {

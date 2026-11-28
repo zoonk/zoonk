@@ -1,6 +1,8 @@
 import { randomUUID } from "node:crypto";
+import { FREE_LESSON_LIMIT } from "@zoonk/core/entitlements/limits";
 import { PlanConflictError } from "@zoonk/core/plans/conflict";
 import { refreshPlanSuggestion } from "@zoonk/core/plans/refresh-suggestion";
+import { catchUpMockReplan } from "@zoonk/core/plans/replan-after-mock";
 import { refreshOwedStudyDay } from "@zoonk/core/sessions/refresh-owed-day";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
@@ -8,8 +10,11 @@ import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import {
   chapterLessonFixture,
+  lessonSkillFixture,
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
+import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
+import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { sleep } from "workflow";
@@ -23,12 +28,15 @@ import {
   getSentenceOrdersToken,
   sentenceOrdersWorkflow,
 } from "../language/sentence-orders-workflow";
+import { getLessonContentHookToken } from "../lessons/lesson-content-result";
+import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { chapterMindMapWorkflow } from "../mind-maps/chapter-mind-map-workflow";
 import { followUpsWorkflow } from "./follow-ups-workflow";
 
 // Force a competing plan write after core's quick retry without timing real database writers.
 vi.mock("@zoonk/core/sessions/refresh-owed-day", () => ({ refreshOwedStudyDay: vi.fn() }));
 vi.mock("@zoonk/core/plans/refresh-suggestion", () => ({ refreshPlanSuggestion: vi.fn() }));
+vi.mock("@zoonk/core/plans/replan-after-mock", () => ({ catchUpMockReplan: vi.fn() }));
 
 const CAUSE = {
   correctAnswer: "since",
@@ -74,6 +82,97 @@ async function owedMindMap() {
 }
 
 describe(followUpsWorkflow, () => {
+  it("dispatches a second take on its lesson token and acknowledges the ask", async () => {
+    const [user, skill, original] = await Promise.all([
+      userFixture(),
+      skillFixture(),
+      libraryLessonFixture({
+        contentStatus: "completed",
+        summary: { ideas: [{ text: "The denominator names the size of each equal part." }] },
+      }),
+    ]);
+
+    await Promise.all([
+      lessonSkillFixture({ lessonId: original.id, skillId: skill.id }),
+      libraryStepFixture({ lessonId: original.id, skillId: skill.id }),
+      prisma.followUp.create({
+        data: {
+          input: { skillId: skill.id, userId: user.id },
+          key: skill.id,
+          kind: "writeSecondTake",
+          userId: user.id,
+        },
+      }),
+    ]);
+
+    await followUpsWorkflow({ userId: user.id });
+
+    const secondTake = await prisma.lesson.findFirstOrThrow({
+      where: { identityKey: `retake:${skill.id}`, language: skill.language },
+    });
+
+    expect(getStartMock()).toHaveBeenCalledExactlyOnceWith(
+      lessonContentWorkflow,
+      [
+        expect.objectContaining({
+          analytics: expect.objectContaining({ distinctId: user.id }),
+          lessonId: secondTake.id,
+          remedial: true,
+          wait: "learner",
+        }),
+      ],
+      { experimental_hook: { token: getLessonContentHookToken(secondTake.id) } },
+    );
+
+    await expect(
+      prisma.usageRecord.count({
+        where: { generated: true, targetId: secondTake.id, userId: user.id },
+      }),
+    ).resolves.toBe(1);
+
+    await expect(prisma.followUp.count({ where: { userId: user.id } })).resolves.toBe(0);
+  });
+
+  it("starts no paid second-take work when the learner has used their lesson allowance", async () => {
+    const [user, skill, original] = await Promise.all([
+      userFixture(),
+      skillFixture(),
+      libraryLessonFixture({
+        contentStatus: "completed",
+        summary: { ideas: [{ text: "The denominator names the size of each equal part." }] },
+      }),
+    ]);
+
+    await Promise.all([
+      lessonSkillFixture({ lessonId: original.id, skillId: skill.id }),
+      libraryStepFixture({ lessonId: original.id, skillId: skill.id }),
+      prisma.usageRecord.createMany({
+        data: Array.from({ length: FREE_LESSON_LIMIT }, () => ({
+          countedAt: new Date(),
+          kind: "lessonStart",
+          targetId: randomUUID(),
+          userId: user.id,
+        })),
+      }),
+      prisma.followUp.create({
+        data: {
+          input: { skillId: skill.id, userId: user.id },
+          key: skill.id,
+          kind: "writeSecondTake",
+          userId: user.id,
+        },
+      }),
+    ]);
+
+    await followUpsWorkflow({ userId: user.id });
+
+    expect(getStartMock()).not.toHaveBeenCalled();
+
+    await expect(
+      prisma.usageRecord.count({ where: { generated: true, userId: user.id } }),
+    ).resolves.toBe(0);
+  });
+
   it("starts the word orders an approved sentence fix owes at once", async () => {
     const user = await userFixture({ role: "admin" });
     const lesson = await libraryLessonFixture({ contentStatus: "completed" });
@@ -302,6 +401,26 @@ describe(followUpsWorkflow, () => {
 
     expect(refreshPlanSuggestion).toHaveBeenCalledTimes(2);
     expect(refreshPlanSuggestion).toHaveBeenLastCalledWith({ goalId: goal.id, userId: user.id });
+    await expect(prisma.followUp.count({ where: { userId: user.id } })).resolves.toBe(0);
+  });
+
+  it("runs and acknowledges the mock re-plan an opened day owes after a plan conflict", async () => {
+    const user = await userFixture();
+    const goal = await goalFixture({ kind: "exam", userId: user.id });
+    const input = { goalId: goal.id, timeZone: "America/Sao_Paulo" };
+
+    await prisma.followUp.create({
+      data: { input, key: goal.id, kind: "catchUpMockReplan", userId: user.id },
+    });
+
+    vi.mocked(catchUpMockReplan)
+      .mockRejectedValueOnce(new PlanConflictError())
+      .mockResolvedValueOnce();
+
+    await followUpsWorkflow({ userId: user.id });
+
+    expect(catchUpMockReplan).toHaveBeenCalledTimes(2);
+    expect(catchUpMockReplan).toHaveBeenLastCalledWith({ ...input, userId: user.id });
     await expect(prisma.followUp.count({ where: { userId: user.id } })).resolves.toBe(0);
   });
 

@@ -14,11 +14,13 @@ import {
 } from "@zoonk/testing/fixtures/library-lessons";
 import { sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { normalizeString } from "@zoonk/utils/string";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { waitForBlockedStatement } from "../../_test-utils/learner-lock";
 import { claimLibraryGeneration } from "../claims/generation-claim";
 import { mockDecision, mockSearchTerms, uniqueWord } from "../identity/_test-utils/identity-mocks";
 import { temperatureSpec } from "../quality/_test-utils/written-lessons";
+import { getSecondTakeIdentityKey } from "../second-takes/second-take-identity";
 import { loadLessonSpecInputs } from "./lesson-spec-inputs";
 import { saveLessonSpecs } from "./save-lesson-specs";
 
@@ -160,7 +162,11 @@ describe(saveLessonSpecs, () => {
       prisma.lesson.findUniqueOrThrow({ where: { id: splitId ?? "" } }),
     ]);
 
-    expect(stored).toMatchObject({ canDo: temperatureSpec().canDo, specStatus: "completed" });
+    expect(stored).toMatchObject({
+      canDo: temperatureSpec().canDo,
+      specStatus: "completed",
+      title: "Temperatures",
+    });
 
     expect(split).toMatchObject({
       homeChapterId: chapter.id,
@@ -274,6 +280,45 @@ describe(saveLessonSpecs, () => {
       { articles: ["Art. 1º"], lessonId: first.id },
       { articles: ["Art. 1º"], lessonId: partId },
     ]);
+  });
+
+  it("names a second take from its own plan instead of the lesson it explains again", async () => {
+    const lesson = await libraryLessonFixture({
+      description: "Physics works with numbers too big and too small to write out.",
+      identityKey: getSecondTakeIdentityKey({ ownerId: null, skillId: randomUUID() }),
+      specStatus: "pending",
+      title: "Writing very big and very small numbers",
+    });
+
+    const workflowRunId = randomUUID();
+    await claimLibraryGeneration({ id: lesson.id, target: "lessonSpec", workflowRunId });
+
+    const spec = {
+      ...temperatureSpec(),
+      description: "Rebuild a tiny or huge number from its short form.",
+      title: "Build back the original number",
+    };
+
+    await expect(
+      saveLessonSpecs({
+        homeChapterId: null,
+        lessonId: lesson.id,
+        provenance,
+        scope,
+        specs: [spec],
+        workflowRunId,
+      }),
+    ).resolves.toStrictEqual({ lessonIds: [lesson.id], status: "saved" });
+
+    await expect(
+      prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } }),
+    ).resolves.toMatchObject({
+      canDo: spec.canDo,
+      description: spec.description,
+      normalizedTitle: normalizeString(spec.title),
+      specStatus: "completed",
+      title: spec.title,
+    });
   });
 
   it("writes nothing for a run that doesn't hold the claim", async () => {

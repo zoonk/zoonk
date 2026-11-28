@@ -139,6 +139,12 @@ const planSettingsSchema = z.object({
   fullCourse: z.boolean().default(false),
   lightWeeks: z.array(lightWeekSchema).default([]),
   mockFunding: z.array(mockFundingSchema).default([]),
+  /**
+   * The latest finished mock the plan has re-planned for: `applied` when its order follows that
+   * mock's misses, false when the re-plan would have cost coverage or phase dates. Absent until a
+   * mock finishes, so plans saved before keep their inputs key.
+   */
+  mockReplan: z.object({ applied: z.boolean(), mockId: z.string() }).optional(),
   mockSchedule: z
     .array(
       z.object({

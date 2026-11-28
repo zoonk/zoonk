@@ -107,7 +107,7 @@ internal fun TodayNotice(
 
         Today.Notice.PRACTICE -> {
             state.language?.let {
-                LanguagePracticeNotice(read.today.goal.id, read.today.pattern, it.pronunciation, layout, state.navigate, modifier)
+                LanguagePracticeNotice(read.today.goal.id, it.pronunciation, layout, state.navigate, modifier)
             }
         }
 

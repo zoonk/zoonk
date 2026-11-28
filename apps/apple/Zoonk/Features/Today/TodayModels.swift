@@ -116,13 +116,6 @@ struct TodayView: Decodable, Equatable, Sendable {
     var setsFocus: Bool { operations.contains { $0.kind == "focusAreas" } }
   }
 
-  struct Pattern: Decodable, Equatable, Sendable {
-    let id: String
-    /// Always `pattern`: Today takes no typos finding.
-    let kind: String
-    let title: String
-  }
-
   struct WeeklyChallenge: Decodable, Equatable, Sendable {
     let access: String
     let date: String?
@@ -170,7 +163,6 @@ struct TodayView: Decodable, Equatable, Sendable {
   let insight: MemoryInsight?
   let mockFunding: MockFunding?
   let notice: Notice?
-  let pattern: Pattern?
   let planChange: PlanChange?
   let progress: Progress?
   var session: StudyDay

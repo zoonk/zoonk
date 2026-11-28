@@ -25,8 +25,6 @@ extension BuddyFirstStep.KindPayload {
     case .unrecognized: ""
     case .somethingNew: String(localized: "Finish your first lesson", table: "Buddy")
     case .review: String(localized: "Do your first review", table: "Buddy")
-    case .fixMistake: String(localized: "Fix your first mistake", table: "Buddy")
-    case .pattern: String(localized: "Practice a pattern", table: "Buddy")
     case .askBuddy: String(localized: "Ask \(buddy) something", table: "Buddy")
     case .essay: String(localized: "Write your first essay", table: "Buddy")
     case .call: String(localized: "Have your first call", table: "Buddy")

@@ -269,6 +269,48 @@ export function readPanel({
     );
   }
 
+  const name = (control: Element) =>
+    control.getAttribute("aria-label") ?? control.textContent.trim().slice(0, LABEL_LENGTH);
+
+  // Craft B1 and B2: a panel's main action is the one Enter presses, so it opens on what keeps it.
+  function enter() {
+    if (!known || anchored) {
+      return null;
+    }
+
+    const controls = [...(panel?.querySelectorAll<HTMLElement>("a[href], button") ?? [])].filter(
+      shown,
+    );
+
+    const bound = controls.filter(
+      (control) =>
+        control.dataset.enter === "bound" && !control.matches(":disabled, [aria-disabled=true]"),
+    );
+
+    const focused = document.activeElement;
+
+    const takenBy =
+      bound.length > 0 &&
+      focused instanceof HTMLElement &&
+      panel?.contains(focused) &&
+      !bound.includes(focused) &&
+      focused.matches("a[href], button:not([role=radio], [role=checkbox]), [role=button]")
+        ? name(focused)
+        : null;
+
+    return {
+      bound: bound.map(name),
+      takenBy,
+      unmarked: controls
+        .filter(
+          (control) =>
+            !control.dataset.enter &&
+            getComputedStyle(control).getPropertyValue("--button-variant").trim() === "default",
+        )
+        .map(name),
+    };
+  }
+
   return {
     centered: centered(),
     closeDrawn: [
@@ -281,6 +323,7 @@ export function readPanel({
         ? dim(overlays.find(({ panel: piece }) => piece === slot)?.backdrop)
         : null,
     edge: edge(),
+    enter: enter(),
     focusInside: known ? panel.contains(document.activeElement) : null,
     label:
       panel.getAttribute("aria-label") ??

@@ -3,6 +3,7 @@
   "drill": { "kind": "readCarefully", "lesson": null, "timeLimitSeconds": null },
   "mistakeId": "7b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b",
   "questions": [],
+  "showing": "mistake:7b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b:1",
   "snapshot": { "answer": "Original wrong", "question": "Which original answer?" },
   "tutorAvailable": true,
   "lesson": {
