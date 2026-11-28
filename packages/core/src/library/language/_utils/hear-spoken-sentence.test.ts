@@ -3,7 +3,7 @@ import {
   NO_SPEECH_CHECK_MODEL,
   transcribeSpeech,
 } from "@zoonk/ai/tasks/language/transcribe-speech";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { matchSpokenAnswer } from "../spoken-answer-match";
 import { hearSpokenSentence } from "./hear-spoken-sentence";
 
@@ -14,12 +14,6 @@ const recording = {
   audio: { bytes: new Uint8Array(), mediaType: "audio/webm" },
   userId: "speaker",
 };
-
-function transcribe(text: string) {
-  vi.mocked(transcribeSpeech).mockResolvedValueOnce({ data: { text } } as Awaited<
-    ReturnType<typeof transcribeSpeech>
-  >);
-}
 
 /** The no-speech check's model answers `second`; any other call answers `first`. */
 function transcribers({ first, second }: { first: string | Error; second?: string | Error }) {
@@ -38,6 +32,11 @@ function transcribers({ first, second }: { first: string | Error; second?: strin
   });
 }
 
+/** The no-speech check hears speech here; its own text is never graded. */
+function transcribe(text: string) {
+  transcribers({ first: text, second: "mm" });
+}
+
 function verdict(text: string, correct: boolean) {
   vi.mocked(assessPronunciation).mockResolvedValueOnce({
     data: {
@@ -48,6 +47,10 @@ function verdict(text: string, correct: boolean) {
 }
 
 describe(hearSpokenSentence, () => {
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
+
   it.each([
     ["zh", "我叫林芳", "我叫林方", "Wǒ jiào Lín Fāng"],
     ["sr", "Људи пију чај.", "Ljudi piju čaj.", undefined],
@@ -244,6 +247,23 @@ describe(hearSpokenSentence, () => {
     },
   );
 
+  it.each(["fast", "thorough"] as const)(
+    "hears no speech when the transcriber writes a stray word the no-speech check doesn't hear (%s)",
+    async (check) => {
+      transcribers({ first: "Uno.", second: "" });
+      verdict("Abito a Milano.", true);
+
+      const result = await hearSpokenSentence({
+        ...recording,
+        check,
+        expected: "Abito a Milano.",
+        language: "it",
+      });
+
+      expect(result.match).toMatchObject({ isCorrect: false, normalizedHeard: "" });
+    },
+  );
+
   it("hears no speech when the transcriber fails and the no-speech check hears no words", async () => {
     transcribers({ first: new Error("language not supported"), second: "" });
     verdict("Dia duit", true);
@@ -254,29 +274,71 @@ describe(hearSpokenSentence, () => {
     expect(assessPronunciation).not.toHaveBeenCalled();
   });
 
-  it("hears no speech when the transcriber hears no words and the no-speech check fails", async () => {
-    transcribers({ first: "", second: new Error("unavailable") });
+  it.each([
+    ["fast", "", new Error("unavailable")],
+    ["thorough", "", new Error("unavailable")],
+    ["fast", new Error("unavailable"), new Error("unavailable")],
+    ["thorough", new Error("unavailable"), new Error("unavailable")],
+    ["fast", "Uno.", new Error("unavailable")],
+    ["thorough", "Uno.", new Error("unavailable")],
+  ] as const)(
+    "doesn't grade a recording the no-speech check couldn't hear (%s, first %s)",
+    async (check, first, second) => {
+      transcribers({ first, second });
+      verdict("Abito a Milano.", true);
+
+      await expect(
+        hearSpokenSentence({ ...recording, check, expected: "Abito a Milano.", language: "it" }),
+      ).rejects.toThrow("couldn't listen");
+    },
+  );
+
+  it("grades a transcript with the sentence's words even when the no-speech check fails", async () => {
+    transcribers({ first: "Abito a Milano.", second: new Error("unavailable") });
 
     const result = await hearSpokenSentence({
       ...recording,
-      expected: "Take the bus",
-      language: "en",
-    });
-
-    expect(result.match).toMatchObject({ isCorrect: false, normalizedHeard: "" });
-    expect(assessPronunciation).not.toHaveBeenCalled();
-  });
-
-  it("lets the judge grade when both transcribers fail", async () => {
-    transcribers({ first: new Error("unavailable"), second: new Error("unavailable") });
-    verdict("Take the bus", true);
-
-    const result = await hearSpokenSentence({
-      ...recording,
-      expected: "Take the bus",
-      language: "en",
+      expected: "Abito a Milano.",
+      language: "it",
     });
 
     expect(result.match.isCorrect).toBe(true);
+    expect(assessPronunciation).not.toHaveBeenCalled();
+  });
+
+  it.each(["fast", "thorough"] as const)(
+    "hears no speech in a sound too short for a sentence the transcriber heard nothing of (%s)",
+    async (check) => {
+      transcribers({ first: "", second: "啊。" });
+      verdict("Abito a Milano.", true);
+
+      const result = await hearSpokenSentence({
+        ...recording,
+        check,
+        expected: "Abito a Milano.",
+        language: "it",
+      });
+
+      expect(result.match).toMatchObject({ isCorrect: false, normalizedHeard: "" });
+      expect(assessPronunciation).not.toHaveBeenCalled();
+    },
+  );
+
+  it("gives the thorough check's judge the transcript as a second listener's guess", async () => {
+    transcribers({ first: "anno.", second: "ano" });
+    verdict("Milano", false);
+
+    const result = await hearSpokenSentence({
+      ...recording,
+      check: "thorough",
+      expected: "Milano",
+      language: "it",
+    });
+
+    expect(assessPronunciation).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ transcriberHeard: "anno." }),
+    );
+
+    expect(result.match.isCorrect).toBe(false);
   });
 });

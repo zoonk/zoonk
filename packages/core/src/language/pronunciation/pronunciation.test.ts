@@ -24,8 +24,18 @@ import { schedulePronunciationReviews } from "./schedule-pronunciation-reviews";
 const AUDIO = { bytes: ONE_SECOND_RECORDING, mediaType: "audio/webm;codecs=opus" };
 const TIME_ZONE = "America/Sao_Paulo";
 
+/** Queues what the transcriber writes, then what the no-speech check hears. */
+function mockTranscripts(...texts: string[]) {
+  for (const text of texts) {
+    vi.mocked(transcribeSpeech).mockResolvedValueOnce({ data: { text } } as Awaited<
+      ReturnType<typeof transcribeSpeech>
+    >);
+  }
+}
+
 function mockHeard({ heard, word }: { heard: string; word: string }) {
   const isCorrect = heard === word;
+  mockTranscripts(heard, heard);
 
   vi.mocked(assessPronunciation).mockResolvedValueOnce({
     data: {
@@ -301,10 +311,7 @@ describe(answerPronunciationReview, () => {
 
     const answer = (text: string) => {
       vi.mocked(assessPronunciation).mockRejectedValueOnce(new Error("provider down"));
-
-      vi.mocked(transcribeSpeech).mockResolvedValueOnce({ data: { text } } as Awaited<
-        ReturnType<typeof transcribeSpeech>
-      >);
+      mockTranscripts(text, text);
 
       return answerPronunciationReview({
         audio: AUDIO,

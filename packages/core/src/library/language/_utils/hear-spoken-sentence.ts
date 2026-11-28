@@ -70,17 +70,29 @@ async function transcribe(
 }
 
 /**
- * The word-by-word judge writes the expected sentence for silence, noise or a cough, so only
- * transcribers decide that nobody spoke, and it takes both: each alone misses some real
- * one-syllable words. With both down, the judge grades alone.
+ * The word-by-word judge writes the expected sentence for silence, noise or a cough, so it grades a
+ * recording whose transcript has none of the sentence's words only once this check's model hears
+ * speech: each transcriber alone misses some real one-syllable words. Without the check's answer
+ * nothing tells silence from speech, so the answer isn't graded.
  */
-async function heardNoWords(input: HearInput, transcript: string | null): Promise<boolean> {
-  const check = await transcribe(input, NO_SPEECH_CHECK_MODEL);
-  return check === null ? transcript === "" : check === "";
+function spoke(check: string | null): boolean {
+  if (check === null) {
+    throw new Error("The no-speech check couldn't listen to the recording");
+  }
+
+  return check !== "";
 }
 
 function noSpeech({ expected, language }: HearInput): HeardSentence {
   return { match: matchSpokenAnswer({ expected, heard: "", language }), transcript: "" };
+}
+
+/**
+ * The default transcriber wrote words for every real sentence we tried and heard nothing only in
+ * some one-word answers, so a longer sentence it heard nothing of wasn't said in full.
+ */
+function isOneWord(input: HearInput): boolean {
+  return noSpeech(input).match.words.length <= 1;
 }
 
 async function compareTranscript({
@@ -145,49 +157,51 @@ async function assessWordByWord(
   };
 }
 
-/** The providers back each other up, including for languages the transcriber refuses. */
+/**
+ * The providers back each other up, including for languages the transcriber refuses. A thorough
+ * check, like a surname's, lets the judge grade even a transcript that settles the answer.
+ */
 export async function hearSpokenSentence({
   check = "fast",
   ...input
 }: HearInput & { check?: SentenceCheck }): Promise<HeardSentence> {
   // A transcript can spell a surname correctly even when the speaker used its ordinary reading.
-  const verifyExactReading = await needsSurnameCheck(input);
+  const [verifyExactReading, transcript, noSpeechCheck] = await Promise.all([
+    needsSurnameCheck(input),
+    transcribe(input),
+    transcribe(input, NO_SPEECH_CHECK_MODEL),
+  ]);
 
-  if (check === "thorough" || verifyExactReading) {
-    const [judged, transcript] = await Promise.all([
-      safeAsync(() => assessWordByWord(input)),
-      transcribe(input),
-    ]);
-
-    if (!transcript && (await heardNoWords(input, transcript))) {
+  if (!transcript) {
+    if (!spoke(noSpeechCheck) || (transcript === "" && !isOneWord(input))) {
       return noSpeech(input);
     }
 
-    if (!judged.error) {
-      return judged.data;
-    }
+    return assessWordByWord(input);
+  }
 
-    logError("The thorough speech check failed; trying transcription", judged.error);
+  const { heard, listen } = await compareTranscript({ ...input, transcript, verifyExactReading });
 
-    if (!transcript) {
-      throw judged.error;
-    }
-
-    const { heard, listen } = await compareTranscript({ ...input, transcript, verifyExactReading });
-
-    if (listen) {
-      throw judged.error;
-    }
-
+  if (!listen && check === "fast" && !verifyExactReading) {
     return heard;
   }
 
-  const transcript = await transcribe(input);
-
-  if (!transcript) {
-    return (await heardNoWords(input, transcript)) ? noSpeech(input) : assessWordByWord(input);
+  if (heard.match.score === 0 && !spoke(noSpeechCheck)) {
+    return noSpeech(input);
   }
 
-  const { heard, listen } = await compareTranscript({ ...input, transcript });
-  return listen ? assessWordByWord({ ...input, transcriberHeard: transcript }) : heard;
+  const judged = await safeAsync(() =>
+    assessWordByWord({ ...input, transcriberHeard: transcript }),
+  );
+
+  if (!judged.error) {
+    return judged.data;
+  }
+
+  if (listen) {
+    throw judged.error;
+  }
+
+  logError("The thorough speech check failed; grading the transcript", judged.error);
+  return heard;
 }
