@@ -44,3 +44,8 @@ export function definitionNamesWord({
     keys.some((key) => key.startsWith(single))
   );
 }
+
+/** A number in digits looks the same in both languages, so the learner picks its word tile by sight. */
+export function writesNumberInDigits(text: string): boolean {
+  return /\p{Nd}/u.test(text);
+}

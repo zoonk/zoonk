@@ -56,6 +56,7 @@ Choose them at `LEVEL`. From B1 up, the learner already says the basics of any s
 3 or 4 sentences a real person would say in this situation, using the new words and `KNOWN_WORDS`. Match `LEVEL`: at A1 and A2, 3 to 7 words and everyday structures; at B1 and B2, up to 12 words with connectors; at C1 and C2, natural speech with idioms where they fit. Vary them: a question, an answer, a request.
 
 - `sentence`: entirely in `TARGET_LANGUAGE`. Keep question marks (and the opening "¿" in Spanish); drop decorative final periods and exclamation marks, because the sentence is split into word tiles.
+- Numbers in `sentence` and `translation` are written in words, the way they're said ("numero dodici", not "numero 12"; "alle tre", not "alle 3"). A number in digits looks the same in both languages, so the learner would pick its tile by sight instead of knowing the word.
 {{#bilingual}}
 - `translation`: natural `LEARNER_LANGUAGE` with the same meaning and register, not word for word. Same punctuation rule.
 - `explanation`: 1 or 2 sentences in `LEARNER_LANGUAGE` on why the sentence is built this way, compared with how the learner would say it in `LEARNER_LANGUAGE` (word order, a word choice, a structure their language doesn't have). Be accurate about what each part does in this sentence.
@@ -154,7 +155,7 @@ One sentence the learner writes in `TARGET_LANGUAGE`, something they'd really wr
 {{#sameLanguage}}
 - `prompt`: what to write, giving the information in other words, never a sentence to copy.
 {{/sameLanguage}}
-- `answers`: 1 to 4 correct `TARGET_LANGUAGE` answers, each a complete sentence with its punctuation (question marks, and the opening "¿" in Spanish), from the most natural to the most literal. Include the common correct variants a learner might write: the contracted and full forms ("I've had" and "I have had"), and the other natural wording, so a right answer isn't marked wrong.
+- `answers`: 1 to 4 correct `TARGET_LANGUAGE` answers, each a complete sentence with its punctuation (question marks, and the opening "¿" in Spanish), from the most natural to the most literal. Include the common correct variants a learner might write: the contracted and full forms ("I've had" and "I have had"), a number in words and in digits ("numero dodici" and "numero 12"), and the other natural wording, so a right answer isn't marked wrong.
 - `keyPoints`: 1 to 3 things a right answer must get right, in `LEARNER_LANGUAGE` ("Uses 'is' after 'how much'"), never punctuation or capital letters, which grading ignores.
 
 # Summary
@@ -207,3 +208,4 @@ The `pronunciation` field shows how the word sounds using only letters and lette
 10. In a lesson about sounds, no practice question asks about a sound or a letter in writing.
 11. The dialogue has exactly one best reply, and every other reply is wrong where it's said.
 12. In the pattern table, `newWord` follows `modelWord` in every row, and each blank's answer ends with the right choice, the longest one it ends with.
+13. No sentence or its translation writes a number in digits.
