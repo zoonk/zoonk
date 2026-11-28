@@ -1840,6 +1840,446 @@
           }
         }
       }
+    },
+    {
+      "classification": {
+        "expected": "read right",
+        "predicted": "read right"
+      },
+      "judge": {
+        "modelId": "google/gemini-3.8-flash",
+        "usage": {
+          "inputTokens": 1634,
+          "outputTokens": 154
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Read right: eval-results/audio/language-audio/google-gemini-3.8-flash-tts/it-open-vivo-in.mp3. Read \"vivo in\". gpt-transcribe heard \"Vivo in.\" (misheard []); the pronunciation check heard \"vivo in\" (unclear []); the ending check heard \"vivo in\" (added: none).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Read right: eval-results/audio/language-audio/google-gemini-3.8-flash-tts/it-open-vivo-in.mp3. Read \"vivo in\". gpt-transcribe heard \"Vivo in.\" (misheard []); the pronunciation check heard \"vivo in\" (unclear []); the ending check heard \"vivo in\" (added: none).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Read right: eval-results/audio/language-audio/google-gemini-3.8-flash-tts/it-open-vivo-in.mp3. Read \"vivo in\". gpt-transcribe heard \"Vivo in.\" (misheard []); the pronunciation check heard \"vivo in\" (unclear []); the ending check heard \"vivo in\" (added: none).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "id": "it-open-vivo-in-1",
+        "userInput": {
+          "caseId": "it-open-vivo-in",
+          "language": "it",
+          "text": "vivo in"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "read right",
+        "predicted": "read right"
+      },
+      "judge": {
+        "modelId": "google/gemini-3.8-flash",
+        "usage": {
+          "inputTokens": 1611,
+          "outputTokens": 143
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Read right: eval-results/audio/language-audio/google-gemini-3.8-flash-tts/it-open-abito-a.mp3. Read \"abito a\". gpt-transcribe heard \"Abito a.\" (misheard []); the pronunciation check heard \"abito a\" (unclear []); the ending check heard \"abito a\" (added: none).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Read right: eval-results/audio/language-audio/google-gemini-3.8-flash-tts/it-open-abito-a.mp3. Read \"abito a\". gpt-transcribe heard \"Abito a.\" (misheard []); the pronunciation check heard \"abito a\" (unclear []); the ending check heard \"abito a\" (added: none).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Read right: eval-results/audio/language-audio/google-gemini-3.8-flash-tts/it-open-abito-a.mp3. Read \"abito a\". gpt-transcribe heard \"Abito a.\" (misheard []); the pronunciation check heard \"abito a\" (unclear []); the ending check heard \"abito a\" (added: none).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "id": "it-open-abito-a-1",
+        "userInput": {
+          "caseId": "it-open-abito-a",
+          "language": "it",
+          "text": "abito a"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "read right",
+        "predicted": "read right"
+      },
+      "judge": {
+        "modelId": "google/gemini-3.8-flash",
+        "usage": {
+          "inputTokens": 1637,
+          "outputTokens": 141
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Read right: eval-results/audio/language-audio/google-gemini-3.8-flash-tts/it-open-lavoro-a.mp3. Read \"lavoro a\". gpt-transcribe heard \"Lavoro a.\" (misheard []); the pronunciation check heard \"lavoro a\" (unclear []); the ending check heard \"Lavoro a\" (added: none).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Read right: eval-results/audio/language-audio/google-gemini-3.8-flash-tts/it-open-lavoro-a.mp3. Read \"lavoro a\". gpt-transcribe heard \"Lavoro a.\" (misheard []); the pronunciation check heard \"lavoro a\" (unclear []); the ending check heard \"Lavoro a\" (added: none).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Read right: eval-results/audio/language-audio/google-gemini-3.8-flash-tts/it-open-lavoro-a.mp3. Read \"lavoro a\". gpt-transcribe heard \"Lavoro a.\" (misheard []); the pronunciation check heard \"lavoro a\" (unclear []); the ending check heard \"Lavoro a\" (added: none).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "id": "it-open-lavoro-a-1",
+        "userInput": {
+          "caseId": "it-open-lavoro-a",
+          "language": "it",
+          "text": "lavoro a"
+        }
+      }
+    },
+    {
+      "judge": {
+        "modelId": "google/gemini-3.8-flash",
+        "usage": {
+          "inputTokens": 1618,
+          "outputTokens": 256
+        }
+      },
+      "listeningReview": {
+        "audioPath": "language-audio/google-gemini-3.8-flash-tts/it-open-studio-a.mp3",
+        "conclusion": "Needs a listen: eval-results/audio/language-audio/google-gemini-3.8-flash-tts/it-open-studio-a.mp3. Single-provider flags: (added speech). Read \"studio a\". gpt-transcribe heard \"Studio, a.\" (misheard []); the pronunciation check heard \"Studio a\" (unclear []); the ending check heard \"studio a fi\" (added: speech)."
+      },
+      "steps": [],
+      "testCase": {
+        "id": "it-open-studio-a-1",
+        "userInput": {
+          "caseId": "it-open-studio-a",
+          "language": "it",
+          "text": "studio a"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "read right",
+        "predicted": "read right"
+      },
+      "judge": {
+        "modelId": "google/gemini-3.8-flash",
+        "usage": {
+          "inputTokens": 1654,
+          "outputTokens": 149
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Read right: eval-results/audio/language-audio/google-gemini-3.8-flash-tts/en-open-your-message-to.mp3. Read \"your message to\". gpt-transcribe heard \"Your message to.\" (misheard []); the pronunciation check heard \"Your message to\" (unclear []); the ending check heard \"your message to\" (added: none).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Read right: eval-results/audio/language-audio/google-gemini-3.8-flash-tts/en-open-your-message-to.mp3. Read \"your message to\". gpt-transcribe heard \"Your message to.\" (misheard []); the pronunciation check heard \"Your message to\" (unclear []); the ending check heard \"your message to\" (added: none).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Read right: eval-results/audio/language-audio/google-gemini-3.8-flash-tts/en-open-your-message-to.mp3. Read \"your message to\". gpt-transcribe heard \"Your message to.\" (misheard []); the pronunciation check heard \"Your message to\" (unclear []); the ending check heard \"your message to\" (added: none).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "id": "en-open-your-message-to-1",
+        "userInput": {
+          "caseId": "en-open-your-message-to",
+          "language": "en",
+          "text": "your message to"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "read right",
+        "predicted": "read right"
+      },
+      "judge": {
+        "modelId": "google/gemini-3.8-flash",
+        "usage": {
+          "inputTokens": 1596,
+          "outputTokens": 125
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Read right: eval-results/audio/language-audio/google-gemini-3.8-flash-tts/en-open-what.mp3. Read \"what\". gpt-transcribe heard \"What?\" (misheard []); the pronunciation check heard \"What?\" (unclear []); the ending check heard \"What\" (added: none).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Read right: eval-results/audio/language-audio/google-gemini-3.8-flash-tts/en-open-what.mp3. Read \"what\". gpt-transcribe heard \"What?\" (misheard []); the pronunciation check heard \"What?\" (unclear []); the ending check heard \"What\" (added: none).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Read right: eval-results/audio/language-audio/google-gemini-3.8-flash-tts/en-open-what.mp3. Read \"what\". gpt-transcribe heard \"What?\" (misheard []); the pronunciation check heard \"What?\" (unclear []); the ending check heard \"What\" (added: none).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "id": "en-open-what-1",
+        "userInput": {
+          "caseId": "en-open-what",
+          "language": "en",
+          "text": "what"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "read right",
+        "predicted": "read right"
+      },
+      "judge": {
+        "modelId": "google/gemini-3.8-flash",
+        "usage": {
+          "inputTokens": 1619,
+          "outputTokens": 99
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Read right: eval-results/audio/language-audio/google-gemini-3.8-flash-tts/pt-open-moro-em.mp3. Read \"moro em\". gpt-transcribe heard \"Moro em.\" (misheard []); the pronunciation check heard \"moro em\" (unclear []); the ending check heard \"moro em\" (added: none).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Read right: eval-results/audio/language-audio/google-gemini-3.8-flash-tts/pt-open-moro-em.mp3. Read \"moro em\". gpt-transcribe heard \"Moro em.\" (misheard []); the pronunciation check heard \"moro em\" (unclear []); the ending check heard \"moro em\" (added: none).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Read right: eval-results/audio/language-audio/google-gemini-3.8-flash-tts/pt-open-moro-em.mp3. Read \"moro em\". gpt-transcribe heard \"Moro em.\" (misheard []); the pronunciation check heard \"moro em\" (unclear []); the ending check heard \"moro em\" (added: none).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "id": "pt-open-moro-em-1",
+        "userInput": {
+          "caseId": "pt-open-moro-em",
+          "language": "pt",
+          "text": "moro em"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "read right",
+        "predicted": "read right"
+      },
+      "judge": {
+        "modelId": "google/gemini-3.8-flash",
+        "usage": {
+          "inputTokens": 1620,
+          "outputTokens": 156
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Read right: eval-results/audio/language-audio/google-gemini-3.8-flash-tts/es-open-vivo-en.mp3. Read \"vivo en\". gpt-transcribe heard \"Vivo en.\" (misheard []); the pronunciation check heard \"vivo en\" (unclear []); the ending check heard \"Vivo en\" (added: none).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Read right: eval-results/audio/language-audio/google-gemini-3.8-flash-tts/es-open-vivo-en.mp3. Read \"vivo en\". gpt-transcribe heard \"Vivo en.\" (misheard []); the pronunciation check heard \"vivo en\" (unclear []); the ending check heard \"Vivo en\" (added: none).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Read right: eval-results/audio/language-audio/google-gemini-3.8-flash-tts/es-open-vivo-en.mp3. Read \"vivo en\". gpt-transcribe heard \"Vivo en.\" (misheard []); the pronunciation check heard \"vivo en\" (unclear []); the ending check heard \"Vivo en\" (added: none).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "id": "es-open-vivo-en-1",
+        "userInput": {
+          "caseId": "es-open-vivo-en",
+          "language": "es",
+          "text": "vivo en"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "read right",
+        "predicted": "read right"
+      },
+      "judge": {
+        "modelId": "google/gemini-3.8-flash",
+        "usage": {
+          "inputTokens": 1620,
+          "outputTokens": 141
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Read right: eval-results/audio/language-audio/google-gemini-3.8-flash-tts/fr-open-je-vais-a.mp3. Read \"je vais à\". gpt-transcribe heard \"Je vais à.\" (misheard []); the pronunciation check heard \"je vais à\" (unclear []); the ending check heard \"je vais à\" (added: none).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Read right: eval-results/audio/language-audio/google-gemini-3.8-flash-tts/fr-open-je-vais-a.mp3. Read \"je vais à\". gpt-transcribe heard \"Je vais à.\" (misheard []); the pronunciation check heard \"je vais à\" (unclear []); the ending check heard \"je vais à\" (added: none).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Read right: eval-results/audio/language-audio/google-gemini-3.8-flash-tts/fr-open-je-vais-a.mp3. Read \"je vais à\". gpt-transcribe heard \"Je vais à.\" (misheard []); the pronunciation check heard \"je vais à\" (unclear []); the ending check heard \"je vais à\" (added: none).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "id": "fr-open-je-vais-a-1",
+        "userInput": {
+          "caseId": "fr-open-je-vais-a",
+          "language": "fr",
+          "text": "je vais à"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "read right",
+        "predicted": "read right"
+      },
+      "judge": {
+        "modelId": "google/gemini-3.8-flash",
+        "usage": {
+          "inputTokens": 1635,
+          "outputTokens": 149
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Read right: eval-results/audio/language-audio/google-gemini-3.8-flash-tts/de-open-ich-wohne-in.mp3. Read \"ich wohne in\". gpt-transcribe heard \"Ich wohne in.\" (misheard []); the pronunciation check heard \"Ich wohne in\" (unclear []); the ending check heard \"ich wohne in\" (added: none).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Read right: eval-results/audio/language-audio/google-gemini-3.8-flash-tts/de-open-ich-wohne-in.mp3. Read \"ich wohne in\". gpt-transcribe heard \"Ich wohne in.\" (misheard []); the pronunciation check heard \"Ich wohne in\" (unclear []); the ending check heard \"ich wohne in\" (added: none).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Read right: eval-results/audio/language-audio/google-gemini-3.8-flash-tts/de-open-ich-wohne-in.mp3. Read \"ich wohne in\". gpt-transcribe heard \"Ich wohne in.\" (misheard []); the pronunciation check heard \"Ich wohne in\" (unclear []); the ending check heard \"ich wohne in\" (added: none).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "id": "de-open-ich-wohne-in-1",
+        "userInput": {
+          "caseId": "de-open-ich-wohne-in",
+          "language": "de",
+          "text": "ich wohne in"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "read right",
+        "predicted": "read right"
+      },
+      "judge": {
+        "modelId": "google/gemini-3.8-flash",
+        "usage": {
+          "inputTokens": 1664,
+          "outputTokens": 239
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Read right: eval-results/audio/language-audio/google-gemini-3.8-flash-tts/ru-open-ya-zhivu-v.mp3. Read \"я живу в\". gpt-transcribe heard \"Я живу в.\" (misheard []); the pronunciation check heard \"я живу в\" (unclear []); the ending check heard \"Я живу в\" (added: none).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Read right: eval-results/audio/language-audio/google-gemini-3.8-flash-tts/ru-open-ya-zhivu-v.mp3. Read \"я живу в\". gpt-transcribe heard \"Я живу в.\" (misheard []); the pronunciation check heard \"я живу в\" (unclear []); the ending check heard \"Я живу в\" (added: none).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Read right: eval-results/audio/language-audio/google-gemini-3.8-flash-tts/ru-open-ya-zhivu-v.mp3. Read \"я живу в\". gpt-transcribe heard \"Я живу в.\" (misheard []); the pronunciation check heard \"я живу в\" (unclear []); the ending check heard \"Я живу в\" (added: none).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "id": "ru-open-ya-zhivu-v-1",
+        "userInput": {
+          "caseId": "ru-open-ya-zhivu-v",
+          "language": "ru",
+          "text": "я живу в"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "read right",
+        "predicted": "read right"
+      },
+      "judge": {
+        "modelId": "google/gemini-3.8-flash",
+        "usage": {
+          "inputTokens": 1619,
+          "outputTokens": 172
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Read right: eval-results/audio/language-audio/google-gemini-3.8-flash-tts/ja-open-eki-made.mp3. Read \"駅まで\". gpt-transcribe heard \"駅まで。\" (misheard []); the pronunciation check heard \"駅まで\" (unclear []); the ending check heard \"駅まで\" (added: none).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Read right: eval-results/audio/language-audio/google-gemini-3.8-flash-tts/ja-open-eki-made.mp3. Read \"駅まで\". gpt-transcribe heard \"駅まで。\" (misheard []); the pronunciation check heard \"駅まで\" (unclear []); the ending check heard \"駅まで\" (added: none).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Read right: eval-results/audio/language-audio/google-gemini-3.8-flash-tts/ja-open-eki-made.mp3. Read \"駅まで\". gpt-transcribe heard \"駅まで。\" (misheard []); the pronunciation check heard \"駅まで\" (unclear []); the ending check heard \"駅まで\" (added: none).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "id": "ja-open-eki-made-1",
+        "userInput": {
+          "caseId": "ja-open-eki-made",
+          "language": "ja",
+          "text": "駅まで"
+        }
+      }
     }
   ],
   "taskId": "language-audio"

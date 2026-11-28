@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-08T14:47:20.701Z",
+  "generatedAt": "2026-11-28T01:57:49.662Z",
   "modelId": "google/gemini-3.8-flash-tts",
   "outputs": [
     {
@@ -890,6 +890,379 @@
       "systemPrompt": "",
       "testCaseId": "it-lookalike-pane-1",
       "userPrompt": "pane"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-3.1-flash-lite",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 387,
+            "outputTokens": 20,
+            "reasoningTokens": 0
+          }
+        }
+      ],
+      "caseInputHash": "46af1f07603da8148bfbe6c26381f9b6359cffebf569b6864cfb3a9eb01c176f",
+      "duration": 6518.569624999998,
+      "generation": {
+        "model": "google/gemini-3.8-flash-tts",
+        "reasoning": "provider-default",
+        "sourceHash": "840a7dd972e0e0b18cd12242a70b8378e994bc4b675455f7322bc052340ec14d"
+      },
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-tts/it-open-vivo-in.mp3\",\n  \"costUsd\": 0.000483,\n  \"durationMs\": 1840\n}",
+      "systemPrompt": "",
+      "testCaseId": "it-open-vivo-in-1",
+      "userPrompt": "vivo in"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-3.1-flash-lite",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 375,
+            "outputTokens": 14,
+            "reasoningTokens": 0
+          }
+        }
+      ],
+      "caseInputHash": "a7878c3c7e11025ed76b042b3d88475208f4a08dd9302b0e0c7633a612c37eff",
+      "duration": 6138.229208000001,
+      "generation": {
+        "model": "google/gemini-3.8-flash-tts",
+        "reasoning": "provider-default",
+        "sourceHash": "840a7dd972e0e0b18cd12242a70b8378e994bc4b675455f7322bc052340ec14d"
+      },
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-tts/it-open-abito-a.mp3\",\n  \"costUsd\": 0.000366,\n  \"durationMs\": 1320\n}",
+      "systemPrompt": "",
+      "testCaseId": "it-open-abito-a-1",
+      "userPrompt": "abito a"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-3.1-flash-lite",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 381,
+            "outputTokens": 21,
+            "reasoningTokens": 0
+          }
+        },
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-3.1-flash-lite",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 389,
+            "outputTokens": 21,
+            "reasoningTokens": 0
+          }
+        }
+      ],
+      "caseInputHash": "b0c0f200c7eccf46aca6da70de2834b1804a6a45b66111ef4a96b703b91e6559",
+      "duration": 9617.189166999999,
+      "generation": {
+        "model": "google/gemini-3.8-flash-tts",
+        "reasoning": "provider-default",
+        "sourceHash": "840a7dd972e0e0b18cd12242a70b8378e994bc4b675455f7322bc052340ec14d"
+      },
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-tts/it-open-lavoro-a.mp3\",\n  \"costUsd\": 0.000492,\n  \"durationMs\": 1880\n}",
+      "systemPrompt": "",
+      "testCaseId": "it-open-lavoro-a-1",
+      "userPrompt": "lavoro a"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-3.1-flash-lite",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 379,
+            "outputTokens": 20,
+            "reasoningTokens": 0
+          }
+        }
+      ],
+      "caseInputHash": "e8e9695e2f9a52b237a794736e1dd5777f494a1c688dbf9fe93708b50acab807",
+      "duration": 5613.356625,
+      "generation": {
+        "model": "google/gemini-3.8-flash-tts",
+        "reasoning": "provider-default",
+        "sourceHash": "840a7dd972e0e0b18cd12242a70b8378e994bc4b675455f7322bc052340ec14d"
+      },
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-tts/it-open-studio-a.mp3\",\n  \"costUsd\": 0.000411,\n  \"durationMs\": 1520\n}",
+      "systemPrompt": "",
+      "testCaseId": "it-open-studio-a-1",
+      "userPrompt": "studio a"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-3.1-flash-lite",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 395,
+            "outputTokens": 21,
+            "reasoningTokens": 0
+          }
+        }
+      ],
+      "caseInputHash": "a73854cd5be3e62d592eed19ae073738f64d5ce723e7041d0b81703affdc7ab1",
+      "duration": 4005.9112920000007,
+      "generation": {
+        "model": "google/gemini-3.8-flash-tts",
+        "reasoning": "provider-default",
+        "sourceHash": "840a7dd972e0e0b18cd12242a70b8378e994bc4b675455f7322bc052340ec14d"
+      },
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-tts/en-open-your-message-to.mp3\",\n  \"costUsd\": 0.000513,\n  \"durationMs\": 2080\n}",
+      "systemPrompt": "",
+      "testCaseId": "en-open-your-message-to-1",
+      "userPrompt": "your message to"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-3.1-flash-lite",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 370,
+            "outputTokens": 17,
+            "reasoningTokens": 0
+          }
+        }
+      ],
+      "caseInputHash": "ff5741f8f267bd937e6421990390147f67130e6f25d5c08ae2b736a72f9b6c00",
+      "duration": 3667.509167,
+      "generation": {
+        "model": "google/gemini-3.8-flash-tts",
+        "reasoning": "provider-default",
+        "sourceHash": "840a7dd972e0e0b18cd12242a70b8378e994bc4b675455f7322bc052340ec14d"
+      },
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-tts/en-open-what.mp3\",\n  \"costUsd\": 0.0003045,\n  \"durationMs\": 1160\n}",
+      "systemPrompt": "",
+      "testCaseId": "en-open-what-1",
+      "userPrompt": "what"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-3.1-flash-lite",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 379,
+            "outputTokens": 14,
+            "reasoningTokens": 0
+          }
+        }
+      ],
+      "caseInputHash": "d9907c144f1827b2330cea4ec5fb85e1709c04f43bd4f9c49df9a73615be7b95",
+      "duration": 3301.1112500000017,
+      "generation": {
+        "model": "google/gemini-3.8-flash-tts",
+        "reasoning": "provider-default",
+        "sourceHash": "840a7dd972e0e0b18cd12242a70b8378e994bc4b675455f7322bc052340ec14d"
+      },
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-tts/pt-open-moro-em.mp3\",\n  \"costUsd\": 0.000381,\n  \"durationMs\": 1360\n}",
+      "systemPrompt": "",
+      "testCaseId": "pt-open-moro-em-1",
+      "userPrompt": "moro em"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-3.1-flash-lite",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 380,
+            "outputTokens": 20,
+            "reasoningTokens": 0
+          }
+        }
+      ],
+      "caseInputHash": "5d982523d56dd34346a4e46f072dbf88fd86c3e9d0cc1add06d3f9ad45bf716d",
+      "duration": 3348.1980829999993,
+      "generation": {
+        "model": "google/gemini-3.8-flash-tts",
+        "reasoning": "provider-default",
+        "sourceHash": "840a7dd972e0e0b18cd12242a70b8378e994bc4b675455f7322bc052340ec14d"
+      },
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-tts/es-open-vivo-en.mp3\",\n  \"costUsd\": 0.00040649999999999996,\n  \"durationMs\": 1480\n}",
+      "systemPrompt": "",
+      "testCaseId": "es-open-vivo-en-1",
+      "userPrompt": "vivo en"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-3.1-flash-lite",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 378,
+            "outputTokens": 21,
+            "reasoningTokens": 0
+          }
+        }
+      ],
+      "caseInputHash": "c727fe41024628dc18b19e0a156936fd81a102012d7cb54be02af061ae7ea36b",
+      "duration": 2973.3952080000017,
+      "generation": {
+        "model": "google/gemini-3.8-flash-tts",
+        "reasoning": "provider-default",
+        "sourceHash": "840a7dd972e0e0b18cd12242a70b8378e994bc4b675455f7322bc052340ec14d"
+      },
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-tts/fr-open-je-vais-a.mp3\",\n  \"costUsd\": 0.00039299999999999996,\n  \"durationMs\": 1440\n}",
+      "systemPrompt": "",
+      "testCaseId": "fr-open-je-vais-a-1",
+      "userPrompt": "je vais à"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-3.1-flash-lite",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 385,
+            "outputTokens": 22,
+            "reasoningTokens": 0
+          }
+        }
+      ],
+      "caseInputHash": "7b4d2a5dd5b22d947a8e7173418c0be36af59246abcd92256287c12e58371ee4",
+      "duration": 3027.4455420000013,
+      "generation": {
+        "model": "google/gemini-3.8-flash-tts",
+        "reasoning": "provider-default",
+        "sourceHash": "840a7dd972e0e0b18cd12242a70b8378e994bc4b675455f7322bc052340ec14d"
+      },
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-tts/de-open-ich-wohne-in.mp3\",\n  \"costUsd\": 0.00044699999999999997,\n  \"durationMs\": 1680\n}",
+      "systemPrompt": "",
+      "testCaseId": "de-open-ich-wohne-in-1",
+      "userPrompt": "ich wohne in"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-3.1-flash-lite",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 400,
+            "outputTokens": 21,
+            "reasoningTokens": 0
+          }
+        }
+      ],
+      "caseInputHash": "22efeb1d73476366765e82168d4d614dd4955ea540063b811294336ee1601743",
+      "duration": 3661.7599999999984,
+      "generation": {
+        "model": "google/gemini-3.8-flash-tts",
+        "reasoning": "provider-default",
+        "sourceHash": "840a7dd972e0e0b18cd12242a70b8378e994bc4b675455f7322bc052340ec14d"
+      },
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-tts/ru-open-ya-zhivu-v.mp3\",\n  \"costUsd\": 0.0005905,\n  \"durationMs\": 2320\n}",
+      "systemPrompt": "",
+      "testCaseId": "ru-open-ya-zhivu-v-1",
+      "userPrompt": "я живу в"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-3.1-flash-lite",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 381,
+            "outputTokens": 20,
+            "reasoningTokens": 0
+          }
+        }
+      ],
+      "caseInputHash": "33e1cf7c6bac1c92a1961b80de13184e39a5538cb692ae335c0c807758ff47d2",
+      "duration": 3164.308583000002,
+      "generation": {
+        "model": "google/gemini-3.8-flash-tts",
+        "reasoning": "provider-default",
+        "sourceHash": "840a7dd972e0e0b18cd12242a70b8378e994bc4b675455f7322bc052340ec14d"
+      },
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-tts/ja-open-eki-made.mp3\",\n  \"costUsd\": 0.000417,\n  \"durationMs\": 1560\n}",
+      "systemPrompt": "",
+      "testCaseId": "ja-open-eki-made-1",
+      "userPrompt": "駅まで"
     }
   ],
   "taskId": "language-audio"
