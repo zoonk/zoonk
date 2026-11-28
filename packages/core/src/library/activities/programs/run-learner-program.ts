@@ -35,6 +35,9 @@ type RunAdmission =
 
 type ClaimedRun = { status: "ready"; row: CodeRun; reuseName: string | null };
 
+/** A sandbox whose last run timed out or never finished may still be busy, so the next run forks. */
+const REUSABLE_STOPS = new Set<CodeRunResult["stop"]>(["done", "error", "tooMuchOutput"]);
+
 const MAX_RUN_LIFE_MS =
   Math.max(...SANDBOX_LANGUAGE_IDS.map((language) => runBudgetMs(language))) + SANDBOX_FORK_MS;
 
@@ -120,7 +123,8 @@ async function claimRun({
 
   const reuseName =
     latest?.finishedAt &&
-    latest.stop !== "unavailable" &&
+    latest.stop &&
+    REUSABLE_STOPS.has(latest.stop) &&
     latest.finishedAt.getTime() > now.getTime() - SANDBOX_IDLE_MS
       ? latest.sandboxName
       : null;

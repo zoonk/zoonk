@@ -91,6 +91,26 @@ describe("learner code run admission", () => {
     expect(sandboxDriver.reuse).toHaveBeenCalledTimes(2);
   });
 
+  it("forks fresh after a run that timed out", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+
+    vi.mocked(sandboxDriver.fork)
+      .mockResolvedValueOnce(scriptedSandbox({ run: { exitCode: 137 } }))
+      .mockResolvedValueOnce(scriptedSandbox());
+
+    await expect(finish(await runLearnerProgram(program()))).resolves.toMatchObject({
+      stop: "timeout",
+    });
+
+    await expect(finish(await runLearnerProgram(program()))).resolves.toMatchObject({
+      stop: "done",
+    });
+
+    expect(sandboxDriver.reuse).not.toHaveBeenCalled();
+    expect(sandboxDriver.fork).toHaveBeenCalledTimes(2);
+  });
+
   it("lets a lost run expire and replays its request as unavailable", async () => {
     const user = await userFixture();
     mockSession(user.id);
