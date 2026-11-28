@@ -1,7 +1,7 @@
 import "server-only";
 import { isDeepStrictEqual } from "node:util";
 import { chooseServiceTier } from "@zoonk/ai/provider-options";
-import { checkClipEnding } from "@zoonk/ai/tasks/audio/check-clip-ending";
+import { type ClipEndingCheck, checkClipEnding } from "@zoonk/ai/tasks/audio/check-clip-ending";
 import { prisma } from "@zoonk/db";
 import { chunk } from "@zoonk/utils/chunk";
 import { safeAsync } from "@zoonk/utils/error";
@@ -24,6 +24,7 @@ const MAX_CLIPS_PER_PAGE = 96;
 const CLIPS_AT_ONCE = 12;
 const DOWNLOAD_TIMEOUT_MS = 8000;
 const LISTEN_TIMEOUT_MS = 20_000;
+const AUDIT_CLAIM_TTL_MS = 360_000;
 const AUDIT_MODEL = "google/gemini-3.8-flash";
 const AUDIO_MEDIA_TYPE = "audio/mpeg";
 
@@ -197,19 +198,15 @@ async function downloadClip({ signal, url }: { signal: AbortSignal; url: string 
   return { audio, mediaType };
 }
 
-async function listenToClip({ clip, signal }: { clip: StoredClip; signal?: AbortSignal }) {
-  const {
-    audio: { audioUrl },
-    id,
-    language,
-    model,
-    text,
-  } = clip;
-
-  if (!audioUrl || !language || !text) {
-    return uncheckedClip({ clip, reason: "Clip is missing a URL, language, or text." });
-  }
-
+async function listenToClip({
+  audioUrl,
+  clip,
+  signal,
+}: {
+  audioUrl: string;
+  clip: StoredClip;
+  signal?: AbortSignal;
+}) {
   const downloadSignal = timedSignal({ signal, timeoutMs: DOWNLOAD_TIMEOUT_MS });
   const download = await safeAsync(() => downloadClip({ signal: downloadSignal, url: audioUrl }));
 
@@ -232,11 +229,11 @@ async function listenToClip({ clip, signal }: { clip: StoredClip; signal?: Abort
     checkClipEnding({
       abortSignal,
       audio,
-      language,
+      language: clip.language,
       mediaType,
       model: AUDIT_MODEL,
       serviceTier: chooseServiceTier({ wait: "soon" }),
-      text,
+      text: clip.text,
     }),
   );
 
@@ -248,11 +245,73 @@ async function listenToClip({ clip, signal }: { clip: StoredClip; signal?: Abort
     });
   }
 
-  const { added, heard } = listen.data.data;
+  return { status: "heard", verdict: listen.data.data } as const;
+}
 
+function auditResult({
+  clip: { id, language, model, text },
+  verdict: { added, heard },
+}: {
+  clip: StoredClip;
+  verdict: ClipEndingCheck;
+}) {
   return added === "none"
     ? ({ status: "clean" } as const)
     : ({ entry: { added, heard, id, language, model, text }, status: "flagged" } as const);
+}
+
+async function auditClip({ clip, signal }: { clip: StoredClip; signal?: AbortSignal }) {
+  const { audioUrl } = clip.audio;
+
+  if (!audioUrl || !clip.language || !clip.text) {
+    return uncheckedClip({ clip, reason: "Clip is missing a URL, language, or text." });
+  }
+
+  const recording = { audioUrl, clipId: clip.id, unit: UNIT_KIND[clip.model] };
+  const where = { recording };
+  const current = await prisma.clipEndingAudit.findUnique({ where });
+
+  if (current?.added) {
+    return auditResult({ clip, verdict: { added: current.added, heard: current.heard } });
+  }
+
+  const now = new Date();
+  const claimExpiresAt = new Date(now.getTime() + AUDIT_CLAIM_TTL_MS);
+
+  const claim = current
+    ? await prisma.clipEndingAudit.updateMany({
+        data: { claimExpiresAt },
+        where: { ...recording, added: null, claimExpiresAt: { lte: now } },
+      })
+    : await prisma.clipEndingAudit.createMany({
+        data: { ...recording, claimExpiresAt },
+        skipDuplicates: true,
+      });
+
+  if (claim.count === 0) {
+    const replay = await prisma.clipEndingAudit.findUnique({ where });
+
+    return replay?.added
+      ? auditResult({ clip, verdict: { added: replay.added, heard: replay.heard } })
+      : uncheckedClip({ clip, reason: "Another audit claimed this clip. Retry this page." });
+  }
+
+  const result = await listenToClip({ audioUrl, clip, signal });
+  const ownedClaim = { ...recording, added: null, claimExpiresAt };
+
+  if (result.status === "unchecked") {
+    await prisma.clipEndingAudit.deleteMany({ where: ownedClaim });
+    return result;
+  }
+
+  const saved = await prisma.clipEndingAudit.updateMany({
+    data: result.verdict,
+    where: ownedClaim,
+  });
+
+  return saved.count === 0
+    ? uncheckedClip({ clip, reason: "The audit claim expired. Retry this page." })
+    : auditResult({ clip, verdict: result.verdict });
 }
 
 async function auditPage({ page, signal }: { page: AuditPage; signal?: AbortSignal }) {
@@ -264,7 +323,7 @@ async function auditPage({ page, signal }: { page: AuditPage; signal?: AbortSign
 
   for (const batch of chunk(candidates, CLIPS_AT_ONCE)) {
     // oxlint-disable-next-line no-await-in-loop -- Finish this group before opening more downloads and model calls.
-    results.push(...(await Promise.all(batch.map((clip) => listenToClip({ clip, signal })))));
+    results.push(...(await Promise.all(batch.map((clip) => auditClip({ clip, signal })))));
   }
 
   const entries = results.flatMap((result) => (result.status === "flagged" ? [result.entry] : []));

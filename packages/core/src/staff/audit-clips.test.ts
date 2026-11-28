@@ -17,12 +17,34 @@ const cutoff = "2026-11-27T12:00:00.000Z";
 const old = new Date("2026-11-26T12:00:00.000Z");
 const cursor = "ffffffff-ffff-4fff-8fff-000000000000";
 
-function clipId(number: number) {
-  return `ffffffff-ffff-4fff-8fff-${String(number).padStart(12, "0")}`;
+function clipId(number: number, prefix = "ffffffff") {
+  return `${prefix}-ffff-4fff-8fff-${String(number).padStart(12, "0")}`;
 }
 
 function clipUrl(number: number) {
   return `https://example.test/${String(number)}.mp3`;
+}
+
+async function wordToAudit(number: number) {
+  const { id: organizationId } = await organizationFixture();
+
+  const word = await prisma.word.create({
+    data: {
+      audioUrl: clipUrl(number),
+      id: clipId(number, "fffffffe"),
+      organizationId,
+      targetLanguage: "en",
+      word: "living in",
+    },
+  });
+
+  return {
+    audit: () =>
+      auditStoredClips({
+        input: { after: clipId(number - 1, "fffffffe"), kind: "words", limit: 1 },
+      }),
+    id: word.id,
+  };
 }
 
 function priorFix({
@@ -91,6 +113,91 @@ describe(auditStoredClips, () => {
 
     listen.mockReset();
     listen.mockResolvedValue({ data: { added: "none", heard: "living in" } });
+  });
+
+  it("replays the saved result without downloading or listening again", async () => {
+    const { audit, id } = await wordToAudit(31);
+    listen.mockResolvedValue({ data: { added: "speech", heard: "living in town" } });
+
+    const first = await audit();
+    const replay = await audit();
+
+    expect(first).toMatchObject({
+      entries: [{ added: "speech", heard: "living in town", id }],
+      listened: 1,
+      status: "ready",
+    });
+
+    expect(replay).toStrictEqual(first);
+    expect(fetch).toHaveBeenCalledOnce();
+    expect(listen).toHaveBeenCalledOnce();
+  });
+
+  it("reports a concurrent claim as unchecked while the first request listens", async () => {
+    const { audit, id } = await wordToAudit(32);
+    const finish = Promise.withResolvers<null>();
+
+    listen.mockImplementationOnce(async () => {
+      await finish.promise;
+      return { data: { added: "none", heard: "living in" } };
+    });
+
+    const requests = [audit(), audit()];
+    const unchecked = await Promise.race(requests).finally(() => finish.resolve(null));
+    const results = await Promise.all(requests);
+    const replay = await audit();
+
+    expect(unchecked).toMatchObject({
+      listened: 0,
+      status: "ready",
+      uncheckedEntries: [{ id, model: "Word" }],
+    });
+
+    expect(replay).toMatchObject({ entries: [], listened: 1, status: "ready" });
+    expect(results).toContainEqual(replay);
+    expect(fetch).toHaveBeenCalledOnce();
+    expect(listen).toHaveBeenCalledOnce();
+  });
+
+  it("listens to a replacement recording on the same word", async () => {
+    const { audit, id } = await wordToAudit(33);
+    listen.mockResolvedValueOnce({ data: { added: "speech", heard: "living in town" } });
+
+    await expect(audit()).resolves.toMatchObject({ flagged: 1, status: "ready" });
+
+    await prisma.word.update({ data: { audioUrl: clipUrl(34) }, where: { id } });
+
+    await expect(audit()).resolves.toMatchObject({ flagged: 0, listened: 1, status: "ready" });
+    expect(listen).toHaveBeenCalledTimes(2);
+    expect(fetch).toHaveBeenLastCalledWith(clipUrl(34), expect.any(Object));
+  });
+
+  it("retries a failed listen on the next request", async () => {
+    const { audit, id } = await wordToAudit(35);
+    listen.mockRejectedValueOnce(new Error("Provider unavailable"));
+
+    await expect(audit()).resolves.toMatchObject({
+      listened: 0,
+      status: "ready",
+      uncheckedEntries: [{ id, reason: "Listen failed." }],
+    });
+
+    await expect(audit()).resolves.toMatchObject({ listened: 1, status: "ready", unchecked: 0 });
+    expect(listen).toHaveBeenCalledTimes(2);
+  });
+
+  it("reclaims an expired audit and saves its verdict", async () => {
+    const { audit, id } = await wordToAudit(36);
+    const recording = { audioUrl: clipUrl(36), clipId: id, unit: "word" } as const;
+
+    await prisma.clipEndingAudit.create({ data: { ...recording, claimExpiresAt: new Date(0) } });
+
+    await expect(audit()).resolves.toMatchObject({ listened: 1, status: "ready", unchecked: 0 });
+    expect(listen).toHaveBeenCalledOnce();
+
+    await expect(
+      prisma.clipEndingAudit.findUnique({ where: { recording } }),
+    ).resolves.toMatchObject({ added: "none", heard: "living in" });
   });
 
   it("pages by ID, includes legacy timestamps, and skips only waiting fixes targeting audio", async () => {
