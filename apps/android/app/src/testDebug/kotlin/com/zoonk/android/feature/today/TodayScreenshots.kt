@@ -3,6 +3,7 @@ package com.zoonk.android.feature.today
 import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
@@ -24,6 +25,8 @@ import androidx.window.testing.layout.TestWindowLayoutInfo
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.app.WithTabRootBar
+import com.zoonk.android.data.ANA
+import com.zoonk.android.data.account
 import com.zoonk.android.feature.session.decodeFixture
 import com.zoonk.android.feature.session.fixture
 import com.zoonk.android.feature.session.toDayView
@@ -268,7 +271,7 @@ class TodayScreenshots {
         var index by mutableIntStateOf(0)
         compose.setContent {
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
-                key(index) { Screen(DAYS[index].second) }
+                key(index) { Screen(DAYS[index].second, signedIn = DAYS[index].first == "notice-missing-member") }
             }
         }
         DAYS.indices.forEach { day ->
@@ -280,9 +283,16 @@ class TodayScreenshots {
     }
 
     @Composable
-    private fun Screen(read: TodayRead.Day) {
+    private fun Screen(
+        read: TodayRead.Day,
+        signedIn: Boolean = false,
+    ) {
         val context = LocalContext.current
-        val app = remember { AppContainer.preview(context) }
+        val account = if (signedIn) account(ANA) else null
+        val app = remember { AppContainer.preview(context, account = account) }
+        LaunchedEffect(app) {
+            if (signedIn) app.sessions.restore()
+        }
         val navigator = rememberAppNavigator()
         val viewModel = viewModel { TodayViewModel(app.studyOpener, app.today, app.plans, app.focusTests) }
 

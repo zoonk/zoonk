@@ -17,11 +17,13 @@ import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -34,6 +36,7 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.feature.conversation.callStarter
 import com.zoonk.android.feature.goalcontent.examSyllabus
+import com.zoonk.android.feature.goalcontent.modulesWithTopicsLeftOut
 import com.zoonk.android.feature.language.languageProgress
 import com.zoonk.android.feature.onboarding.DAILY_TIMES
 import com.zoonk.android.navigation.rememberAppNavigator
@@ -1114,6 +1117,14 @@ class PlanScreenshots {
     @Test
     @Config(qualifiers = "w411dp-h1900dp-xxhdpi")
     fun callsOutOfTimePathPhone() = captureCallsPath("calls-time-path-phone", "time")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun partlyPlannedModulesPhone() {
+        show(structure = modulesWithTopicsLeftOut())
+        compose.onNode(hasScrollAction()).performScrollToNode(hasText("2 topics not in your plan"))
+        write("plan-modules-partly-left-out-phone", compose.onRoot().captureRender().asAndroidBitmap())
+    }
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")

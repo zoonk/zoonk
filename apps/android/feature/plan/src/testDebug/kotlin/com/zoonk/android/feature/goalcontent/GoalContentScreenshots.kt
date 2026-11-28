@@ -116,22 +116,27 @@ class GoalContentScreenshots {
     @Config(qualifiers = "w1280dp-h1600dp-land-xhdpi")
     fun expanded() = capture("expanded")
 
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun partlyPlannedModulePhone() = capture("phone", screens = SCREENS.filter { it.first == "subject-module-partly-left-out" })
+
     private fun capture(
         name: String,
         dark: Boolean = false,
         moreContrast: Boolean = false,
         opens: Boolean = true,
+        screens: List<Pair<String, @Composable () -> Unit>> = SCREENS,
     ) {
         var index by mutableIntStateOf(0)
         compose.setContent {
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
-                Surface { key(index) { SCREENS[index].second() } }
+                Surface { key(index) { screens[index].second() } }
             }
         }
-        SCREENS.indices.forEach { screen ->
+        screens.indices.forEach { screen ->
             index = screen
             compose.waitForIdle()
-            val shot = SCREENS[screen].first
+            val shot = screens[screen].first
             write("$shot-$name", compose.onRoot().captureRender().asAndroidBitmap())
             // The taps find English words.
             val taps = OPENED[shot]?.takeIf { opens } ?: return@forEach
@@ -228,20 +233,6 @@ class GoalContentScreenshots {
             val syllabus = modulesWithDataOut(reason)
             val (menu, ask) = tools(TutorScope.Subject(GOAL, "data", module = true))
             SubjectPage(syllabus, syllabus.subjects.first { it.key == "data" }, SubjectWrites(), NO_ACTIONS, TODAY, menu, ask)
-        }
-
-        fun modulesWithTopicsLeftOut(): Syllabus {
-            val syllabus = modulesSyllabus()
-            return syllabus.copy(
-                subjects =
-                    syllabus.subjects.map { subject ->
-                        if (subject.key == "data") {
-                            subject.copy(leftOut = listOf("Reading and writing CSV files", "Cleaning messy data"))
-                        } else {
-                            subject
-                        }
-                    },
-            )
         }
 
         /** The written subject as [edit] changes it: graded by level, or waiting for an exam choice. */
@@ -362,8 +353,6 @@ class GoalContentScreenshots {
                     val (menu, ask) = tools(TutorScope.Subject(GOAL, "data", module = true))
                     SubjectPage(syllabus, syllabus.subjects.first { it.key == "data" }, SubjectWrites(), NO_ACTIONS, TODAY, menu, ask)
                 },
-                "plan-section-module-partly-left-out" to
-                    { PlanSyllabusSection(modulesWithTopicsLeftOut(), {}, Modifier.padding(vertical = 16.dp)) },
                 "subject-written-levels" to { WrittenSubject(::gradedByLevel) },
                 "subject-written-needs-choice" to { WrittenSubject(::waitingForAChoice) },
                 "subject-module" to { Subject("basics") },
