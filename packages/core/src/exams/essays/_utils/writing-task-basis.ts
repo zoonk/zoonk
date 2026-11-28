@@ -32,17 +32,22 @@ function readsAsNumbers(rounding: Basis["grading"]["rounding"]) {
 }
 
 /**
- * A mean's weights for the criteria no award scale already states, as [points, weight]: absent
- * while every one weighs 1, as an unweighted mean does.
+ * A mean's weights for the criteria no award scale already states, as [id, points, weight], so
+ * two criteria swapping weights change it: absent while every one weighs 1, as an unweighted
+ * mean does.
  */
 function meanWeights({ combination, criteria }: Basis["grading"]) {
   const weights =
     combination?.method === "mean"
-      ? criteria.flatMap(({ awards, points, weight }) => (awards ? [] : [[points, weight ?? 1]]))
+      ? criteria.flatMap(({ awards, id, points, weight }) =>
+          awards ? [] : [{ id, points, weight: weight ?? 1 }],
+        )
       : [];
 
-  return weights.some(([, weight]) => weight !== 1)
-    ? weights.toSorted(([a, x], [b, y]) => (a ?? -1) - (b ?? -1) || (x ?? 1) - (y ?? 1))
+  return weights.some(({ weight }) => weight !== 1)
+    ? weights
+        .toSorted((first, second) => first.id.localeCompare(second.id))
+        .map(({ id, points, weight }) => [id, points, weight])
     : null;
 }
 

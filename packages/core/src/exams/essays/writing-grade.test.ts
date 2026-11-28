@@ -757,6 +757,10 @@ describe(getWritingTaskBasis, () => {
     expect(getWritingTaskBasis(mean([1, 1]))).toBe(ISSUED_MEAN_BASIS);
   });
 
+  it("tells apart two criteria swapping their weights", () => {
+    expect(getWritingTaskBasis(mean([1, 3]))).not.toBe(getWritingTaskBasis(mean([3, 1])));
+  });
+
   it("keeps matching a basis stored in today's shape", () => {
     const prompt = { ...mean([1, 1]), taskBasis: ISSUED_MEAN_BASIS };
 
