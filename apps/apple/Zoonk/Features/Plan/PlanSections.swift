@@ -915,6 +915,11 @@ struct PlanSettingsSection: View {
     return (finish.isoDate, finish.grain)
   }
 
+  /// A plan without a date whose finish lies past the years it lays out.
+  private var finishesLater: Bool {
+    !context.isPaused && context.goal.kind != .exam && context.plan.finishesLater
+  }
+
   /// A time alone is a value, in the data face; with the weekend's words, the words' face.
   @ViewBuilder
   private func dailyTimeValue(_ shape: GoalPlan.WeekShape) -> some View {
@@ -930,7 +935,7 @@ struct PlanSettingsSection: View {
   /// The setting is the goal's date; while it holds the finish the plan works out, it's named as
   /// that.
   private var dateLabel: Text {
-    if estimatedFinish != nil {
+    if estimatedFinish != nil || finishesLater {
       return Text(verbatim: planFinishLabel(context))
     }
 
@@ -948,7 +953,8 @@ struct PlanSettingsSection: View {
           grain: schedule.targetDateNamedMonth ? DateGrain.month : .day
         )
       },
-      finish: estimatedFinish, isExam: context.goal.kind == .exam, today: context.plan.today)
+      finish: estimatedFinish, finishesLater: finishesLater, isExam: context.goal.kind == .exam,
+      today: context.plan.today)
     return Text(verbatim: value.shown)
       .typeStyle(value.isDate ? .data : .body)
       .accessibilityLabel(Text(verbatim: value.spoken))

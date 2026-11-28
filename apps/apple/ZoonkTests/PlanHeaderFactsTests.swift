@@ -39,6 +39,14 @@ final class PlanHeaderFactsTests: XCTestCase {
     XCTAssertEqual(nextYearsMonth.shown, "~Apr 2028")
   }
 
+  func testAnEndDateNotSetSaysTenPlusYearsPastTheYearsAPlanLaysOut() {
+    let value = PlanEndDateValue(
+      target: nil, finishesLater: true, isExam: false, today: "2027-01-04")
+
+    XCTAssertEqual(value.shown, "10+ years")
+    XCTAssertFalse(value.isDate)
+  }
+
   func testTheFinishReadoutNamesItsMonthsYearEvenInThisYear() {
     XCTAssertEqual(PlanDate.finishText("2027-04-20", grain: .month), "April 2027")
   }

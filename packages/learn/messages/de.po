@@ -382,6 +382,7 @@ msgstr "bis zum Abschluss"
 
 #. How long finishing the plan takes at the time picked, when it's more than ten years.
 #: src/_components/finish-readout.tsx
+#: src/plan/plan-properties.tsx
 msgctxt "t2dXRJ"
 msgid "10+ years"
 msgstr "Über 10 Jahre"
