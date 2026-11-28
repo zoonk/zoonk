@@ -22,6 +22,14 @@ describe(normalizeIdentityText, () => {
     expect(normalizeIdentityText("日本語 N5")).toBe("日本語-n5");
     expect(normalizeIdentityText("Python 3.12")).toBe("python-3-12");
   });
+
+  it("spells out the symbols that name languages and notes, and only those", () => {
+    expect(normalizeIdentityText("C++")).toBe("c-plus-plus");
+    expect(normalizeIdentityText("C#")).toBe("c-sharp");
+    expect(normalizeIdentityText("F# and C# major")).toBe("f-sharp-and-c-sharp-major");
+    expect(normalizeIdentityText("#1 tips")).toBe("1-tips");
+    expect(normalizeIdentityText("Learn C programming")).toBe("learn-c-programming");
+  });
 });
 
 describe(buildSkillIdentityKey, () => {
@@ -33,6 +41,16 @@ describe(buildSkillIdentityKey, () => {
     expect(buildSkillIdentityKey({ name: "Conjugate ser", targetLanguage: "es" })).not.toBe(
       buildSkillIdentityKey({ name: "Conjugate ser", targetLanguage: "pt" }),
     );
+  });
+
+  it("never gives C, C++ and C# skills one key", () => {
+    const keys = [
+      "Write simple C programs",
+      "Write simple C++ programs",
+      "Write simple C# programs",
+    ].map((name) => buildSkillIdentityKey({ name, targetLanguage: null }));
+
+    expect(new Set(keys).size).toBe(3);
   });
 });
 
