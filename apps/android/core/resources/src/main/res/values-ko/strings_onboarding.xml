@@ -6,6 +6,9 @@
   "onboarding_adding_material": "5c5c6702b90c3e02b5af74e84daed0b0a204cc908f567071f4d970197a0649b3",
   "onboarding_admission_placeholder": "812a9a52fdfea78bb22e4787368d0d152844f4c6832bac111b935ae2cd50eea7",
   "onboarding_admission_title": "92a0fcb7720c0af5cce006fee27090144423dd963587e1c0a2698eb574caf29f",
+  "onboarding_aim_around_month": "5fc6daafefb0c48b79099758265460e2ff53df697b7095e14232f0b01d7b8a5b",
+  "onboarding_aim_around_year": "df581666a18ea9ce4417730fd8c880e5ebd0c6f6e322c0927f44f626e9e171ba",
+  "onboarding_aim_beyond": "3470ae55c668e4bb77d3a01800addc776a555868a4e5a15eb1de00b8684307af",
   "onboarding_aim_by_month": "8821a9447d5f6337619998c53d524300e2ee75f1f5ddb5cfbe5d542a653eb739",
   "onboarding_aim_change": "8146e604d16a766277aa5091b21e0e67d5fd8ca87052aec6c3b3ebdbdc18b0d5",
   "onboarding_aim_description": "788d63711e1a12694ceae6e754c02ed4a6d3a037542b20448831bc5ddfe78429",
@@ -15,8 +18,6 @@
   "onboarding_aim_from_intermediate": "1408c0fc5368fd4811aa46cfc29447807ee5bdd6d96252f933d8d65304bd90cd",
   "onboarding_aim_from_level": "b7a4b6f876e32a1096dee64ba2df3cdcded51ffbec6f5d3d8b1a4efc21180f36",
   "onboarding_aim_from_none": "811c3f5f7f821e11793355625da540640932eaeaa23a2d2a00f319f0f8b3abd1",
-  "onboarding_aim_hours_month": "7816f9c5ca461b70f2556144a41aef0bc5315e70d96c4b37750f987c2053edaa",
-  "onboarding_aim_hours_more": "c90457e11254deb802ab74e4580d3998103921b315a1898bdf0b7c5e6f838668",
   "onboarding_aim_picker_title": "648c9c41ceaf788ac36727b6df799eddf5c1659612d468d1379fd5504a77d78a",
   "onboarding_aim_talk": "22b987f21cbda4cceb44e30c44b268f2b85cd06b93bdb092c0222697ba94ba64",
   "onboarding_aim_title": "2859427bc5f0eb0fad527a2caf300cf67244ccaad62355aa7319c5d3bc0a16b5",
@@ -778,10 +779,11 @@
     <string name="onboarding_aim_title">%1$s 목표 수준</string>
     <string name="onboarding_aim_change">바꾸기</string>
     <string name="onboarding_aim_picker_title">어느 수준까지 배우고 싶나요?</string>
-    <!-- %1$s is hours of study, such as "190 hr". -->
-    <string name="onboarding_aim_hours_more">약 %1$s 더</string>
-    <!-- %1$s is hours of study, such as "190 hr"; %2$s a month, such as "Mar 2027". -->
-    <string name="onboarding_aim_hours_month">약 %1$s 더 · %2$s쯤</string>
+    <!-- Under a language level to aim for, when reaching it takes more than ten years at the learner's time. -->
+    <string name="onboarding_aim_beyond">10년 이상 후</string>
+    <!-- When a language level is reached. {year} is a year, like "2031". -->
+    <string name="onboarding_aim_around_year">%1$s쯤</string>
+    <string name="onboarding_aim_around_month">%1$s쯤</string>
     <string name="onboarding_aim_by_month">%1$s까지</string>
     <string name="onboarding_reason_travel">여행</string>
     <string name="onboarding_reason_travel_description">여행지에서 주문하기, 길 묻기, 가벼운 대화 나누기</string>

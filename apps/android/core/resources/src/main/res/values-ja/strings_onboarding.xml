@@ -6,6 +6,9 @@
   "onboarding_adding_material": "a35b237f82d469ddc9214f0fcadd5bd1a41466aae49289e2491ae4b2ee19288c",
   "onboarding_admission_placeholder": "a8ba7b01173de710cbba399752319fa8352a716f47968dcf4923d7952c071709",
   "onboarding_admission_title": "0bfdfaa40aaeea412e663b95454c72b0ddfc02bb93ce664a4ea23bd522b0cc6c",
+  "onboarding_aim_around_month": "3cc3ba5002e3c1e720bb0be3d74487b3b1928ddbe1cb80104fad8d650ea5aacb",
+  "onboarding_aim_around_year": "72e526affae7b74da30d378fa64318f3f84af66b2ae95d520a5ffdbc49c525ac",
+  "onboarding_aim_beyond": "b401716acdc9c92cdd24605b346fa30c3dc6e7abbc1e86151736297f240a6ece",
   "onboarding_aim_by_month": "d2ab1d5371bcdcbe606d8682c08d4e3ba0a88a6e88ea0c20e035baaad1387824",
   "onboarding_aim_change": "8dea3e4c220c46dfe31f216635ab735a559bded91e4b5d1a1373e04345b15e53",
   "onboarding_aim_description": "8541cd8ebcacd93cb65b61f067f2d9e52045a10ebbfb6fb7b84ff740287fc65e",
@@ -15,8 +18,6 @@
   "onboarding_aim_from_intermediate": "09cd5ae89dc646ccd241b8e814b0d25af311885d5b65aacfd7eaf12351d9ac4f",
   "onboarding_aim_from_level": "13635d980559d3f050277347de1acad1acf0aeb89b30f766b72854474f14d4e1",
   "onboarding_aim_from_none": "8ed5433e3e555448838e2be5623764797d759051b172010a3f640655322122fc",
-  "onboarding_aim_hours_month": "27bb799417e4c33c9020720eb8cb0feea34f2074782fef127f144715f8df7ec0",
-  "onboarding_aim_hours_more": "5eb3c82f8199f619872cc640bc01d531f97a53bb430ca50f2a53d555b3e4bfee",
   "onboarding_aim_picker_title": "7da21b9e5b01588d89b3847704b830e4a134510c255dedf0e3f03beddfca1ebb",
   "onboarding_aim_talk": "98e2757832d2283149713a2ce06c42f4d4697f38436c0d4aae4ed9e75e5ffeec",
   "onboarding_aim_title": "26b23e164a22d17c799f3023737cefd51c16145b557003fe8bf176a1067b6a53",
@@ -778,10 +779,11 @@
     <string name="onboarding_aim_title">%1$sの目標レベル</string>
     <string name="onboarding_aim_change">変更する</string>
     <string name="onboarding_aim_picker_title">どのレベルを目指しますか？</string>
-    <!-- %1$s is hours of study, such as "190 hr". -->
-    <string name="onboarding_aim_hours_more">あと約%1$s</string>
-    <!-- %1$s is hours of study, such as "190 hr"; %2$s a month, such as "Mar 2027". -->
-    <string name="onboarding_aim_hours_month">あと約%1$s・%2$sごろ</string>
+    <!-- Under a language level to aim for, when reaching it takes more than ten years at the learner's time. -->
+    <string name="onboarding_aim_beyond">10年以上先</string>
+    <!-- When a language level is reached. {year} is a year, like "2031". -->
+    <string name="onboarding_aim_around_year">%1$sごろ</string>
+    <string name="onboarding_aim_around_month">%1$sごろ</string>
     <string name="onboarding_aim_by_month">%1$sまでに</string>
     <string name="onboarding_reason_travel">旅行</string>
     <string name="onboarding_reason_travel_description">旅行先で注文したり、道を尋ねたり、ちょっと話したりする</string>

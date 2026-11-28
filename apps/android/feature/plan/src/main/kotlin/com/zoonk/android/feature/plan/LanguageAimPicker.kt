@@ -29,7 +29,6 @@ import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
-import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.languageName
 import com.zoonk.api.models.LanguageAimChoicesInner
 import java.util.Locale
@@ -115,6 +114,26 @@ fun LanguageAimRow(
     }
 }
 
+/** Main's `useAimWords().around`: when an aim is reached at the learner's time; null while that isn't known. */
+@Composable
+fun aimAround(forecast: PlanForecast?): String? =
+    when (forecast) {
+        PlanForecast.Beyond -> {
+            stringResource(R.string.onboarding_aim_beyond)
+        }
+
+        is PlanForecast.On -> {
+            stringResource(
+                if (forecast.year) R.string.onboarding_aim_around_year else R.string.onboarding_aim_around_month,
+                forecastDate(forecast),
+            )
+        }
+
+        null -> {
+            null
+        }
+    }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LanguageAimSheet(
@@ -129,7 +148,6 @@ fun LanguageAimSheet(
     endDates: Map<String, PlanForecast?> = emptyMap(),
     label: String? = null,
 ) {
-    val locale = currentLocale()
     var picked by rememberSaveable { mutableStateOf<String?>(null) }
     ModalBottomSheet(onDismissRequest = onDismiss) {
         Column(
@@ -145,25 +163,13 @@ fun LanguageAimSheet(
             ChoiceList(
                 choices =
                     choices.map { choice ->
-                        val date = (if (choice.aim.value == aim) endDate else endDates[choice.aim.value]) as? PlanForecast.On
                         Choice(
                             choice.aim.value,
                             listOfNotNull(
                                 if (choice.aim.value == aim) label ?: aim else choice.aim.value,
                                 languageAimName(choice.aim.value),
                             ).factsLine(),
-                            if (date == null) {
-                                stringResource(
-                                    R.string.onboarding_aim_hours_more,
-                                    formatMinutes(choice.hours.toInt() * MINUTES_PER_HOUR, locale),
-                                )
-                            } else {
-                                stringResource(
-                                    R.string.onboarding_aim_hours_month,
-                                    formatMinutes(choice.hours.toInt() * MINUTES_PER_HOUR, locale),
-                                    forecastDate(date),
-                                )
-                            },
+                            aimAround(if (choice.aim.value == aim) endDate else endDates[choice.aim.value]),
                         )
                     },
                 value = aim,
@@ -183,5 +189,3 @@ fun LanguageAimSheet(
         }
     }
 }
-
-private const val MINUTES_PER_HOUR = 60

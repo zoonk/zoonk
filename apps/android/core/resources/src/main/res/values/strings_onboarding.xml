@@ -442,10 +442,11 @@
     <string name="onboarding_aim_title">%1$s level to reach</string>
     <string name="onboarding_aim_change">Change</string>
     <string name="onboarding_aim_picker_title">How far do you want to go?</string>
-    <!-- %1$s is hours of study, such as "190 hr". -->
-    <string name="onboarding_aim_hours_more">About %1$s more</string>
-    <!-- %1$s is hours of study, such as "190 hr"; %2$s a month, such as "Mar 2027". -->
-    <string name="onboarding_aim_hours_month">About %1$s more · around %2$s</string>
+    <!-- Under a language level to aim for, when reaching it takes more than ten years at the learner's time. -->
+    <string name="onboarding_aim_beyond">In 10+ years</string>
+    <!-- When a language level is reached. {year} is a year, like "2031". -->
+    <string name="onboarding_aim_around_year">Around %1$s</string>
+    <string name="onboarding_aim_around_month">Around %1$s</string>
     <string name="onboarding_aim_by_month">by %1$s</string>
     <string name="onboarding_reason_travel">Travel</string>
     <string name="onboarding_reason_travel_description">Get by on trips: order, ask the way, small talk</string>

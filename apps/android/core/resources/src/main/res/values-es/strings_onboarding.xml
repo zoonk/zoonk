@@ -6,6 +6,9 @@
   "onboarding_adding_material": "d3b285a8a000a9c93877928cede632fe935814dfb9cd952e08322a6159ada0a3",
   "onboarding_admission_placeholder": "25feeb42da9a7f9deec35c4cbdd90d0820de26dc47fb82933d415f98a1efbedf",
   "onboarding_admission_title": "27f5149104e6b839bbcb3d2d23b89870d751381a81a85f4b8d57134d7227eee4",
+  "onboarding_aim_around_month": "b27be9951da68b319ab355dff7fd1fce8d8ec0a5acdea04be402877a445e9b55",
+  "onboarding_aim_around_year": "ca712bbd5b8e78f5d2fb43ca7de06010019cf082cd2ee378c83dacd06f790ed4",
+  "onboarding_aim_beyond": "bb660138322d725d1b493f3d986619ecdf22ffb2c5f50813ee402c201359e9d0",
   "onboarding_aim_by_month": "9e3be8baf653b7a880d817be86f6468bc33f3fdd9b104280b73c3b2cbb3dd0a2",
   "onboarding_aim_change": "13c5eb7915a156cdbbadfa4b54d18a5970f24f33652a506f1024abd7e714b00a",
   "onboarding_aim_description": "a4ab1cdbdeb0272ebb06dc35e2b74c39eb6df3b260a5d8a55c1790041234d1d0",
@@ -15,8 +18,6 @@
   "onboarding_aim_from_intermediate": "faa20e2ee493021f5e99d993940f0506dcae6344569d13ca9ce28d5e6b3c4e20",
   "onboarding_aim_from_level": "a5194c6350176b426fa250e9d36c6532c77828fd55ca642f66b08128c9cd906b",
   "onboarding_aim_from_none": "a650bf0305215bbba0f0d845e1ce7402e9bc6b683c2652d474a4f99476c1f72f",
-  "onboarding_aim_hours_month": "4d55fb0b1bc9dd7befa35aa6668385cda05ef3b73a90dd531d0feabe5e4ef085",
-  "onboarding_aim_hours_more": "cc8782cbd61923a794dbbc8d7760e8ea8afb77cd8ffc408c981ab331fb03a6aa",
   "onboarding_aim_picker_title": "c16641852fc4d5f2ab4588ee29d2c599d20bdb075e37df9258be60619daa3d05",
   "onboarding_aim_talk": "d8236b5168428ab1b3cef35498732cb7ed28ad95182155e52d010c108bfae851",
   "onboarding_aim_title": "cb4ef4404108913f4b794b35f6d191ff65143f3f5405041e5192ce0eb330f203",
@@ -796,10 +797,11 @@
     <string name="onboarding_aim_title">Nivel de %1$s que quieres alcanzar</string>
     <string name="onboarding_aim_change">Cambiar</string>
     <string name="onboarding_aim_picker_title">¿Hasta dónde quieres llegar?</string>
-    <!-- %1$s is hours of study, such as "190 hr". -->
-    <string name="onboarding_aim_hours_more">Aproximadamente %1$s más</string>
-    <!-- %1$s is hours of study, such as "190 hr"; %2$s a month, such as "Mar 2027". -->
-    <string name="onboarding_aim_hours_month">Aproximadamente %1$s más · alrededor de %2$s</string>
+    <!-- Under a language level to aim for, when reaching it takes more than ten years at the learner's time. -->
+    <string name="onboarding_aim_beyond">En más de 10 años</string>
+    <!-- When a language level is reached. {year} is a year, like "2031". -->
+    <string name="onboarding_aim_around_year">Alrededor de %1$s</string>
+    <string name="onboarding_aim_around_month">Hacia %1$s</string>
     <string name="onboarding_aim_by_month">para %1$s</string>
     <string name="onboarding_reason_travel">Viajar</string>
     <string name="onboarding_reason_travel_description">Desenvolverte al viajar: pedir comida, preguntar cómo llegar y conversar un poco</string>

@@ -6,6 +6,9 @@
   "onboarding_adding_material": "e5a9f6f2a1faf3d241ac3e585014c929332cadd3a70531b40f98f0df7801f2ff",
   "onboarding_admission_placeholder": "6145a9f62a381dcf8f3534f6fa76f746893fe928cc744b47a1440eba093adcb1",
   "onboarding_admission_title": "4dc2ecb29937fcc79060260804da50e8f7788a51acccfe5afcb313eccf4e6fb8",
+  "onboarding_aim_around_month": "b877a9cae1bd0d8aa16e860b573b399eeee74d9eb2893cee759cf571295b1bae",
+  "onboarding_aim_around_year": "4bbce486cb19ac8aaabc231534868be0f18dbb270f7327fde933567493b8a464",
+  "onboarding_aim_beyond": "81a2b42f15eb6ced7174651146f3b23552d89fe2db77ee9fa5291ea7db18a31a",
   "onboarding_aim_by_month": "8c18223bb3fd179ba0ec3a64456ff27d00b04796521e40660da67a698b9e851d",
   "onboarding_aim_change": "3917b4a0202f421cd6b4bf35763df80ac30301a5ac660f7ac23f0a42b9fdd1f0",
   "onboarding_aim_description": "f085f2b4e875003f31a7bcc5b19d401f948de823112156e345960efe602fa29b",
@@ -15,8 +18,6 @@
   "onboarding_aim_from_intermediate": "8bb729785931cb452a95915049ac26512cf3cdb0d3284a8af46408b816c8a144",
   "onboarding_aim_from_level": "bd5576e4713c8743ff0e3f1252ec6280ea92a081cf45437c6570c486f073b2d5",
   "onboarding_aim_from_none": "5888ab83031c50469a8a3b387185ed59347cdd8dee9ea8d0f400413ce4a1d361",
-  "onboarding_aim_hours_month": "84b5504dd45e09cfc6d5d2c1bd0cfef9a0c6c1a59b860fc5fc2da85db13b3298",
-  "onboarding_aim_hours_more": "9ae4283559e3ad73d77b3e0f3ff983c7b6f1338dcf2fef1adea273a9739b6bc2",
   "onboarding_aim_picker_title": "ec709dfaa75412cc4cfb71cd260df2f537e322ee9ba16c29e12a3ae3a13654b1",
   "onboarding_aim_talk": "a6d1cec1197dc25da2e0875a3ed8c60c80ca36dd139ef9a84a75e3cef2c537e2",
   "onboarding_aim_title": "18696d9282fae76415f57b7eeacd69bc3f14696a3b82fb91a8555445f1533e8a",
@@ -787,10 +788,11 @@
     <string name="onboarding_aim_title">Ulaşmak istediğin %1$s seviyesi</string>
     <string name="onboarding_aim_change">Değiştir</string>
     <string name="onboarding_aim_picker_title">Hangi seviyeye ulaşmak istiyorsun?</string>
-    <!-- %1$s is hours of study, such as "190 hr". -->
-    <string name="onboarding_aim_hours_more">Yaklaşık %1$s daha</string>
-    <!-- %1$s is hours of study, such as "190 hr"; %2$s a month, such as "Mar 2027". -->
-    <string name="onboarding_aim_hours_month">Yaklaşık %1$s daha · %2$s civarı</string>
+    <!-- Under a language level to aim for, when reaching it takes more than ten years at the learner's time. -->
+    <string name="onboarding_aim_beyond">10+ yıl içinde</string>
+    <!-- When a language level is reached. {year} is a year, like "2031". -->
+    <string name="onboarding_aim_around_year">Yaklaşık %1$s</string>
+    <string name="onboarding_aim_around_month">%1$s civarı</string>
     <string name="onboarding_aim_by_month">en geç %1$s</string>
     <string name="onboarding_reason_travel">Seyahat</string>
     <string name="onboarding_reason_travel_description">Seyahatlerde anlaşabilmek: sipariş vermek, yol sormak, sohbet etmek</string>
