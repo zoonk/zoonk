@@ -1,15 +1,19 @@
 import { randomUUID } from "node:crypto";
+import { format } from "node:util";
 import { put } from "@vercel/blob";
 import { generateLanguageAudio } from "@zoonk/ai/tasks/audio";
 import { prisma } from "@zoonk/db";
 import { mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { logError } from "@zoonk/utils/logger";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { storeBlobUploads } from "../_test-utils/blob-uploads";
 import { GUEST_OUT_OF_HELP, useGuestOutOfHelp } from "../_test-utils/guest-out-of-help";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { requestSpeechClip } from "./request-speech-clip";
 import { getSpeechClipKey } from "./speech-clip-key";
+
+vi.mock("@zoonk/utils/logger", () => ({ logError: vi.fn(), logInfo: vi.fn() }));
 
 const VOICED = {
   audio: new Uint8Array([1, 2, 3]),
@@ -298,5 +302,25 @@ describe(requestSpeechClip, () => {
     await expect(
       prisma.mediaAsset.count({ where: { reuseKey: getSpeechClipKey({ language: "it", text }) } }),
     ).resolves.toBe(0);
+  });
+
+  it("logs no learner words when every voice fails", async () => {
+    await signIn();
+    const text = uniqueSentence();
+
+    vi.mocked(generateLanguageAudio).mockResolvedValueOnce({
+      data: null,
+      error: Object.assign(new Error("Bad Request"), { requestBodyValues: { input: text } }),
+    });
+
+    await requestSpeechClip({ language: "it", text });
+
+    const logged = vi
+      .mocked(logError)
+      .mock.calls.map((args) => format(...args))
+      .join("\n");
+
+    expect(logged).toContain("Bad Request");
+    expect(logged).not.toContain(text);
   });
 });
