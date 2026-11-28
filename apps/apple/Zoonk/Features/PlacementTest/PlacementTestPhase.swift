@@ -98,7 +98,7 @@ enum PlacementTestPhase: Equatable {
       self = .waiting
     case .failed:
       self = .preparationFailed(attempt)
-    case .unavailable:
+    case .unavailable, .unrecognized:
       self = .unavailable
     case .asking, .done:
       if let next {
@@ -144,7 +144,7 @@ enum PlacementTestPhase: Equatable {
       self = .waiting
     case .failed:
       self = .preparationFailed(nil)
-    case .unavailable, .asking, .done:
+    case .unavailable, .unrecognized, .asking, .done:
       self = .unavailable
     }
   }
