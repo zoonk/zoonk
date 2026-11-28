@@ -28460,6 +28460,9 @@
         }
       }
     },
+    "Pick up to %lld so your plan includes them." : {
+      "comment" : "Under a question asking which options of an exam the learner will take, such as two of its subject modules. Until they pick, their plan has none of the options. {take} is how many they can pick, always 2 or more."
+    },
     "Pick up to %lld." : {
       "comment" : "Over the options of an exam's choice whose candidates take several of them, like two of a course's modules",
       "localizations" : {

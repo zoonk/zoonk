@@ -72,7 +72,6 @@ struct TodayView: Decodable, Equatable, Sendable {
   /// One of the exam's choices the learner hasn't picked yet; the plan studies none of its options.
   struct ExamChoice: OmittableAPIContent, Equatable, Sendable {
     let group: String
-    let leftOut: ExamChoiceLeftOut
     let options: [GoalPlan.ExamChoice.Option]
     let take: Int
   }
