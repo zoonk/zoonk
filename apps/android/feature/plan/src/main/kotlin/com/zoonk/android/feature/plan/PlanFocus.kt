@@ -38,6 +38,7 @@ import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.controlInk
 import com.zoonk.android.ui.components.pickedBorder
+import com.zoonk.android.ui.theme.disabledEmphasis
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.FocusTestSummary
 import com.zoonk.api.models.Plan
@@ -213,6 +214,7 @@ private fun AreaChoice(
     onCheckedChange: (Boolean) -> Unit,
 ) {
     val colors = MaterialTheme.colorScheme
+    val ink = { color: Color -> if (enabled) color else color.disabledEmphasis() }
 
     Surface(
         checked = checked,
@@ -228,19 +230,24 @@ private fun AreaChoice(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(Modifier.weight(1f)) {
-                Text(choice.area.name, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
+                Text(
+                    choice.area.name,
+                    color = ink(colors.onSurface),
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Medium,
+                )
                 if (choice.parts.isNotEmpty()) {
                     Text(
                         stringResource(R.string.plan_focus_includes, joinList(choice.parts)),
                         style = MaterialTheme.typography.bodyMedium,
-                        color = colors.onSurfaceVariant,
+                        color = ink(colors.onSurfaceVariant),
                     )
                 }
                 choice.area.focusPart?.takeIf { checked }?.let {
                     Text(
                         stringResource(R.string.plan_focus_only, it),
                         style = MaterialTheme.typography.bodyMedium,
-                        color = colors.onSurfaceVariant,
+                        color = ink(colors.onSurfaceVariant),
                     )
                 }
             }

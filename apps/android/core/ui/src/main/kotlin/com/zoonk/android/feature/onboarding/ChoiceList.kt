@@ -33,6 +33,7 @@ import com.zoonk.android.ui.components.controlInk
 import com.zoonk.android.ui.components.layoutPart
 import com.zoonk.android.ui.components.listRowDescription
 import com.zoonk.android.ui.components.pickIndex
+import com.zoonk.android.ui.theme.disabledEmphasis
 import com.zoonk.android.ui.theme.zoonk
 
 data class Choice<T>(
@@ -148,7 +149,7 @@ fun <T> CheckList(
             val open = !readOnly && (checked || !full)
             // A disabled option is dimmed in its words' own colors (Material's disabled emphasis), so what it draws
             // stays its words' color, and the box takes Material's disabled look.
-            val dim = { color: Color -> if (open) Color.Unspecified else color.copy(alpha = color.alpha * DISABLED_ALPHA) }
+            val dim = { color: Color -> if (open) Color.Unspecified else color.disabledEmphasis() }
             ListRow(
                 headline = { Text(choice.label, color = dim(MaterialTheme.colorScheme.onSurface)) },
                 interactionSource = interaction,
@@ -169,6 +170,3 @@ fun <T> CheckList(
         }
     }
 }
-
-/** Material's disabled emphasis. */
-private const val DISABLED_ALPHA = 0.38f
