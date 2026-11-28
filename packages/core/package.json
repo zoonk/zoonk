@@ -608,6 +608,7 @@
     "./plans/get": "./src/plans/get-goal-plan.ts",
     "./plans/link": "./src/plans/get-plan-link.ts",
     "./plans/link-contract": "./src/plans/plan-link-contract.ts",
+    "./plans/member-check": "./src/plans/plan-member-check.ts",
     "./plans/mock-funding-contract": "./src/plans/mock-funding-contract.ts",
     "./plans/notice-graph": "./src/plans/apply-notice-graph.ts",
     "./plans/notice-change": "./src/plans/notice-plan-change.ts",
