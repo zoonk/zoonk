@@ -28,8 +28,6 @@
   "language_level_up": "ee7db36529f4552d4a758dece6aa2bbf91d04a936e5eeb701c85990de190feb9",
   "language_levels_move": "19a1ef9440cc84f14517d366b679ff9817b3954a8ecd0886fe3865570ae8a7a5",
   "language_pattern_noticed": "9642a1748adf301c121d6854f75f930e97167a90c01baf2ee2838e827870c283",
-  "language_pattern_noticed_summary": "450e755e330abe15338df5830f806884daa27817e8da4ee024abb49e9dc56d1b",
-  "language_pattern_practice": "39c74ee43bbb635cf50b9e63745d1248b7110704a7f8bd9efc70623d22a8891a",
   "language_pattern_typos": "940d9d0fd9d278cc04d979a227d87f75bd72d55fad57a874a271e1c39cd7419a",
   "language_pattern_typos_description": "4f7fee5ac4d86f4df0d5139d577612076533c3192329486c4b2173208246306c",
   "language_practice_estimates": "3b822d7fb69787487299b4bfd571ced75a88b493494291c5d67c69cff02a3942",
@@ -138,10 +136,6 @@
     <string name="language_alphabet_skip_failed">Das wurde nicht gespeichert. Versuch es noch einmal.</string>
     <!-- Button that opens the words to say aloud again; "them" is those words. -->
     <string name="language_say_them">Sprich sie aus</string>
-    <!-- %1$s names the rule the learner keeps getting wrong. -->
-    <string name="language_pattern_noticed_summary">Uns ist ein Muster aufgefallen: %1$s</string>
-    <!-- Opens the noticed pattern. -->
-    <string name="language_pattern_practice">Übe es</string>
     <string name="language_level">Level in %1$s</string>
     <!-- %1$s is the learner's language level now, %2$s the level they aim for: "A2 → B1". -->
     <string name="language_level_toward">%1$s → %2$s</string>

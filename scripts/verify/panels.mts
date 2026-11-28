@@ -29,6 +29,35 @@ function behavior(id: string, message: string, fails = false): Finding {
   return { check: `Behavior: ${id}`, level: fails ? "fail" : "warn", message };
 }
 
+/** Craft B1 and B2 in a panel: its one main action answers Enter as soon as it opens. */
+function panelEnterFindings({ enter, label }: PanelFacts): Finding[] {
+  if (!enter) {
+    return [];
+  }
+
+  const main = enter.bound.join(", ");
+
+  return [
+    ...enter.unmarked.map((control) =>
+      behavior(
+        "Enter",
+        `${label} draws ${control} filled, but Enter doesn't press it and it shows no ⏎: draw its main action with EnterButton, or say Enter must not press it (enter="off")`,
+      ),
+    ),
+    ...(enter.takenBy
+      ? [
+          behavior(
+            "Enter",
+            `${label} opens on ${enter.takenBy}, so Enter presses that instead of ${main}`,
+          ),
+        ]
+      : []),
+    ...(enter.bound.length > 1
+      ? [behavior("Enter", `two main actions answer Enter in ${label}: ${main}`)]
+      : []),
+  ];
+}
+
 /** Focus, closing behavior and responsive placement for a panel opened by the walk. */
 export function panelFindings(panel: PanelFacts): Finding[] {
   return [
@@ -78,6 +107,7 @@ export function panelFindings(panel: PanelFacts): Finding[] {
           ),
         ]
       : []),
+    ...panelEnterFindings(panel),
     ...(panel.sheet === false
       ? [
           behavior(

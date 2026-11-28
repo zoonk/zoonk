@@ -1,17 +1,11 @@
 import { auth } from "@zoonk/auth";
 import { prisma } from "@zoonk/db";
-import {
-  goalFixture,
-  planFixture,
-  planItemFixture,
-  plannedSkills,
-} from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { RENTING_SCENARIO } from "@zoonk/testing/fixtures/language";
-import { attemptFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
+import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
-import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
   studySessionBlockFixture,
   studySessionFixture,
@@ -26,18 +20,14 @@ import {
   testCallCompletionInput,
 } from "../_test-utils/connect-test-call";
 import { reviewRunsInline } from "../_test-utils/review-runs";
-import { pickInMistake } from "../_test-utils/shown-choice";
 import { completeLanguageConversation } from "../language/conversations/complete-language-conversation";
 import { getLanguageConversation } from "../language/conversations/get-language-conversation";
-import { practiceMistakePattern } from "../language/patterns/practice-mistake-pattern";
 import { finishPronunciationRound } from "../language/pronunciation/finish-pronunciation-round";
 import { createLessonQuestion } from "../lesson-questions/create-lesson-question";
 import { getBuddyStatus } from "../milestones/get-buddy-status";
 import { getStudySession } from "../sessions/get-study-session";
 import { loadMissionMoment } from "../sessions/missions/mission-moment";
 import { settleLearnerMissions } from "../sessions/missions/settle-learner-missions";
-import { answerMistakePractice } from "./answer-mistake-practice";
-import { finishMistakePractice } from "./finish-mistake-practice";
 
 /** Vitest lacks Next's request scope; use the test auth boundary with real activity persistence. */
 vi.unmock("../users/get-session");
@@ -76,7 +66,7 @@ async function missionDay({
 }: {
   anchor?: Record<string, string>;
   goalId: string;
-  kind: "askBuddy" | "call" | "pattern" | "pronunciation";
+  kind: "askBuddy" | "call" | "pronunciation";
   localDate?: Date;
   userId: string;
 }) {
@@ -147,209 +137,6 @@ describe("missions completed outside a study block", () => {
   afterEach(async () => {
     await cleanupTestCalls();
     vi.useRealTimers();
-  });
-
-  it("pays the last notebook mission immediately, for its own goal only, without closing the session", async () => {
-    const { goal, user } = await signedInLearner();
-    const skill = await skillFixture();
-
-    const [item, secondGoal] = await Promise.all([
-      itemFixture({ content: choiceItemContent(), skillId: skill.id }),
-      goalFixture({ timezone: TIME_ZONE, userId: user.id }),
-      planFixture({ goalId: goal.id, graph: { skills: plannedSkills([skill]) } }),
-    ]);
-
-    const missions = {
-      picks: [
-        { anchor: { blockKind: "review" }, kind: "review", total: 1 },
-        { anchor: {}, kind: "fixMistake", total: 1 },
-      ],
-      version: 1,
-    };
-
-    const [day, otherDay, mistake] = await Promise.all([
-      studySessionFixture({ goalId: goal.id, localDate: TODAY, missions, userId: user.id }),
-      studySessionFixture({ goalId: secondGoal.id, localDate: TODAY, missions, userId: user.id }),
-      mistakeFixture({
-        cause: "misread",
-        createdAt: new Date("2026-10-11T18:00:00.000Z"),
-        itemId: item.id,
-        skillId: skill.id,
-        userId: user.id,
-      }),
-    ]);
-
-    await Promise.all([
-      studySessionBlockFixture({ kind: "review", sessionId: day.id, status: "completed" }),
-      studySessionBlockFixture({ kind: "review", sessionId: otherDay.id, status: "completed" }),
-    ]);
-
-    const answered = await answerMistakePractice({
-      input: {
-        answer: await pickInMistake({ mistakeId: mistake.id }),
-        durationMs: 5000,
-        itemId: item.id,
-        timeZone: "UTC",
-      },
-      mistakeId: mistake.id,
-    });
-
-    expect(answered).toMatchObject({ feedback: { mistakeStatus: "fixed" }, status: "ready" });
-
-    if (answered.status !== "ready") {
-      throw new Error(`Mistake answer failed: ${answered.status}`);
-    }
-
-    const input = { answerIds: [answered.feedback.answerId], ended: true, timeZone: "UTC" };
-    const result = await finishMistakePractice(input);
-
-    expect(result).toMatchObject({
-      result: {
-        brainPower: 2,
-        correct: 1,
-        missionMoment: { completed: ["fixMistake"], fullMeal: { bonus: 50, paid: true } },
-        total: 1,
-      },
-      status: "ready",
-    });
-
-    await expect(finishMistakePractice(input)).resolves.toStrictEqual(result);
-
-    const [progress, days, runs, daily] = await Promise.all([
-      prisma.userProgress.findUniqueOrThrow({ where: { userId: user.id } }),
-      prisma.studySession.findMany({ where: { userId: user.id } }),
-      prisma.learningEvent.findMany({ where: { lessonKind: "mistakePractice", userId: user.id } }),
-      prisma.dailyProgress.findUniqueOrThrow({
-        where: { userDate: { date: TODAY, userId: user.id } },
-      }),
-    ]);
-
-    expect(progress.totalBrainPower).toBe(52n);
-    expect(daily.brainPowerEarned).toBe(52);
-
-    expect(
-      days.filter((session) => session.fullMealAt !== null).map((session) => session.id),
-    ).toStrictEqual([day.id]);
-
-    expect(days.find((session) => session.id === otherDay.id)?.missions).toMatchObject({
-      picks: [
-        { done: 1, kind: "review" },
-        { anchor: {}, kind: "fixMistake", total: 1 },
-      ],
-    });
-
-    expect(days.every((session) => session.status === "planned" && session.endedAt === null)).toBe(
-      true,
-    );
-
-    expect(runs).toHaveLength(1);
-  });
-
-  it("pays the final pattern mission as soon as its drill is stored", async () => {
-    const { goal, user } = await signedInLearner();
-
-    const pattern = await prisma.mistakePattern.create({
-      data: {
-        content: {
-          contrast: [],
-          drill: [
-            {
-              answer: "since",
-              feedback: "A starting date.",
-              options: ["since", "for"],
-              sentence: "I've lived here ___ 2020.",
-            },
-          ],
-          examples: [],
-          rule: "Use since for a starting date.",
-        },
-        goalId: goal.id,
-        kind: "pattern",
-        language: "en",
-        model: "test",
-        promptVersion: "test",
-        runId: "test",
-        title: "Since and for",
-        userId: user.id,
-      },
-    });
-
-    const day = await missionDay({
-      anchor: { patternId: pattern.id },
-      goalId: goal.id,
-      kind: "pattern",
-      userId: user.id,
-    });
-
-    const input = { answers: ["since"], requestId: crypto.randomUUID(), timeZone: "UTC" };
-    const result = await practiceMistakePattern({ input, patternId: pattern.id });
-
-    expect(result).toMatchObject({
-      result: {
-        brainPower: 2,
-        missionMoment: {
-          completed: ["pattern"],
-          fullMeal: { bonus: 50, paid: true },
-          missions: [{ kind: "pattern", status: "done" }],
-        },
-      },
-      status: "ready",
-    });
-
-    await expectMissionPaid({ dayId: day.id, userId: user.id });
-
-    const retries = await Promise.all([
-      practiceMistakePattern({ input, patternId: pattern.id }),
-      practiceMistakePattern({ input, patternId: pattern.id }),
-    ]);
-
-    expect(retries).toStrictEqual([result, result]);
-
-    const [drills, progress, daily] = await Promise.all([
-      prisma.learningEvent.count({ where: { lessonKind: "patternDrill", userId: user.id } }),
-      prisma.userProgress.findUniqueOrThrow({ where: { userId: user.id } }),
-      prisma.dailyProgress.findUniqueOrThrow({
-        where: { userDate: { date: TODAY, userId: user.id } },
-      }),
-    ]);
-
-    expect(drills).toBe(1);
-    expect(progress.totalBrainPower).toBe(52n);
-    expect(daily.timeSpentSeconds).toBe(180);
-
-    const other = await prisma.mistakePattern.create({
-      data: {
-        content: {
-          contrast: [],
-          drill: [
-            {
-              answer: "for",
-              feedback: "A length of time.",
-              options: ["since", "for"],
-              sentence: "I've lived here ___ two years.",
-            },
-          ],
-          examples: [],
-          rule: "Use for with a length of time.",
-        },
-        goalId: goal.id,
-        kind: "pattern",
-        language: "en",
-        model: "test",
-        promptVersion: "test",
-        runId: "test",
-        title: "For a length of time",
-        userId: user.id,
-      },
-    });
-
-    await expect(
-      practiceMistakePattern({ input: { ...input, answers: ["for"] }, patternId: other.id }),
-    ).resolves.toMatchObject({ result: { correct: 1, total: 1 }, status: "ready" });
-
-    await expect(
-      prisma.learningEvent.count({ where: { lessonKind: "patternDrill", userId: user.id } }),
-    ).resolves.toBe(2);
   });
 
   it.each([true, false])(

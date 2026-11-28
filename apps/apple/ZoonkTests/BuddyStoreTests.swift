@@ -301,7 +301,7 @@ final class BuddyDayOpeningTests: XCTestCase {
   }
 
   private func showDay(in window: UIWindow) async throws {
-    try await activate("Today's missions, 0 of 1", in: window)
+    try await activate("Zu's Energy", in: window)
     try await waitForTestCondition("The day sheet did not appear") {
       window.rootViewController?.presentedViewController != nil
     }

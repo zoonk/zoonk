@@ -139,29 +139,36 @@ struct DrillCountdownView: View {
   }
 }
 
-/// An answer can fix more than the mistake it replays, when others were the same mistake. Drawn as
+/// Fixed entries leave the notebook, and an answer can fix more than the mistake it replays when
+/// others were the same mistake; a right answer on the day of the miss fixes nothing yet. Drawn as
 /// the lesson's own note under a verdict ("Saved to your mistakes"), as on the web and Android.
 struct FixedMistakesNote: View {
-  let count: Int
+  let grade: MistakePracticeGrade
 
   var body: some View {
-    if count > 0 {
-      Group {
-        if count == 1 {
-          Text(
-            "Mistake fixed. It leaves your notebook.", tableName: "Practice",
-            comment: "After answering a saved mistake right.")
-        } else {
-          Text(
-            "\(count) mistakes fixed. They leave your notebook.", tableName: "Practice",
-            comment:
-              "\"Your notebook\" is the learner's Mistakes notebook. Shown only for 2 or more; one mistake shows \"Mistake fixed. It leaves your notebook.\" instead."
-          )
-        }
+    let count = grade.fixedMistakeIds.count
+
+    Group {
+      if count == 1 {
+        Text(
+          "Mistake fixed. It leaves your notebook.", tableName: "Practice",
+          comment: "After answering a saved mistake right.")
+      } else if count > 1 {
+        Text(
+          "\(count) mistakes fixed. They leave your notebook.", tableName: "Practice",
+          comment:
+            "\"Your notebook\" is the learner's Mistakes notebook. Shown only for 2 or more; one mistake shows \"Mistake fixed. It leaves your notebook.\" instead."
+        )
+      } else if grade.requiresLaterDay {
+        Text(
+          "This question comes back another day to make sure.", tableName: "Practice",
+          comment:
+            "After a right answer to a question the learner missed earlier the same day. A mistake is fixed only by a right answer on a later day."
+        )
       }
-      .typeStyle(.meta)
-      .foregroundStyle(.mutedForeground)
     }
+    .typeStyle(.meta)
+    .foregroundStyle(.mutedForeground)
   }
 }
 

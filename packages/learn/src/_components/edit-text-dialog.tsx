@@ -14,6 +14,7 @@ import { Textarea } from "@zoonk/ui/components/textarea";
 import { safeAsync } from "@zoonk/utils/error";
 import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
+import { EnterButton } from "./enter-button";
 import { useChangeSaveFailed } from "./save-error";
 import { SheetHeader } from "./sheet-header";
 
@@ -109,14 +110,14 @@ export function EditTextDialog({
             >
               {t("Cancel")}
             </Button>
-            <Button
+            <EnterButton
               busy={isPending}
               disabled={!trimmed || trimmed === value}
               size="lg"
               type="submit"
             >
               {t("Save")}
-            </Button>
+            </EnterButton>
           </DrawerFooter>
         </form>
       </DrawerPopup>

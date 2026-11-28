@@ -36,7 +36,7 @@ const WRITING_REFRESH_MS = 5000;
 
 /** Outlasts a learner's ask for lessons' outlines, so a screen left open reads the day again once it lapses. */
 const WRITING_WAIT_MS = OUTLINE_STALE_AFTER_MS + WRITING_REFRESH_MS;
-const NO_MISTAKES: MistakeAvailability = { ready: 0, tomorrow: 0 };
+const NO_MISTAKES: MistakeAvailability = { ready: 0 };
 
 const NOTICE_CLASS = "max-[72rem]:-mt-4 sm:col-span-2";
 

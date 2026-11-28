@@ -15,6 +15,7 @@ import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/p
 import { changeGoalPlan } from "../plans/change-goal-plan";
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { getSyllabusView } from "../view-models/syllabus/get-syllabus-view";
+import { buddyTarget } from "./_test-utils/buddy-target";
 import { claimLessonQuestionAnswer, completeLessonQuestionAnswer } from "./answer-lifecycle";
 import { createLessonQuestion } from "./create-lesson-question";
 import { lookUpTutorData } from "./look-up-tutor-data";
@@ -50,7 +51,7 @@ async function learnerWithEmptyPlan() {
 async function answering(goalId: string) {
   const created = await createLessonQuestion({
     input: { context: { kind: "plan" }, question: "How am I doing?", requestId: randomUUID() },
-    target: { conversationId: null, goalId, kind: "plan" },
+    target: buddyTarget(goalId),
   });
 
   if (created.status !== "created") {
@@ -562,7 +563,7 @@ describe("the exam's question counts the buddy reads", () => {
         question: "A Ética cai quanto?",
         requestId: randomUUID(),
       },
-      target: { conversationId: null, goalId: goal.id, kind: "plan" },
+      target: buddyTarget(goal.id),
     });
 
     if (created.status !== "created") {

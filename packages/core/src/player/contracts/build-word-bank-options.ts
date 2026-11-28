@@ -190,14 +190,18 @@ function getFillBlankWords(content: StepContentByKind["fillBlank"]): string[] {
 
 type BankWordsInput = { sentences: ReadonlyMap<string, BankSentence> };
 
-function getTargetBankWords({ sentences, step }: BankWordsInput & { step: BankStep }): string[] {
+function getReadingTileWords({ sentences, step }: BankWordsInput & { step: BankStep }): string[] {
   const sentence = step.sentenceId ? sentences.get(step.sentenceId) : undefined;
 
-  if (step.kind === "reading" && sentence) {
-    const { correctWords, distractors } = getReadingBankWords(sentence);
-    return [...correctWords, ...distractors];
+  if (step.kind !== "reading" || !sentence) {
+    return [];
   }
 
+  const { correctWords, distractors } = getReadingBankWords(sentence);
+  return [...correctWords, ...distractors];
+}
+
+function getFillBlankTileWords(step: BankStep): string[] {
   if (step.kind !== "fillBlank") {
     return [];
   }
@@ -206,15 +210,25 @@ function getTargetBankWords({ sentences, step }: BankWordsInput & { step: BankSt
   return parsed.success ? getFillBlankWords(parsed.data) : [];
 }
 
+function toBankWords(words: string[]): string[] {
+  return words.map((word) => trimPunctuation(word)).filter(Boolean);
+}
+
+type BankWordsList = BankWordsInput & { steps: readonly BankStep[] };
+
 /** The target-language words a lesson's reading and fill-in-the-blank tiles show, as their Word rows save them. */
-export function listTargetBankWords({
-  sentences,
-  steps,
-}: BankWordsInput & { steps: readonly BankStep[] }): string[] {
-  return steps
-    .flatMap((step) => getTargetBankWords({ sentences, step }))
-    .map((word) => trimPunctuation(word))
-    .filter(Boolean);
+export function listTargetBankWords({ sentences, steps }: BankWordsList): string[] {
+  return toBankWords(
+    steps.flatMap((step) => [
+      ...getReadingTileWords({ sentences, step }),
+      ...getFillBlankTileWords(step),
+    ]),
+  );
+}
+
+/** The tile words that get a clip: only reading tiles, since fill-in-the-blank tiles stay silent. */
+export function listVoicedBankWords({ sentences, steps }: BankWordsList): string[] {
+  return toBankWords(steps.flatMap((step) => getReadingTileWords({ sentences, step })));
 }
 
 type WordBankConfig = {
@@ -300,7 +314,10 @@ export function buildWordBankOptions(
   return words.map((word) => buildOption(word));
 }
 
-/** Only a language lesson loads target words, so other lessons' tiles stay silent. */
+/**
+ * Fill-in-the-blank tiles play no clip: a voice tends to say a wrong option, a near-miss on purpose,
+ * as the right phrase, and voicing only the answer would give it away.
+ */
 export function buildFillBlankOptions({
   step,
   ...sources
@@ -319,7 +336,7 @@ export function buildFillBlankOptions({
   });
 
   return words.map((word) => {
-    const option = buildOption(word);
+    const option = { ...buildOption(word), audioUrl: null };
     const romanization = content.romanizations?.[word];
 
     return romanization

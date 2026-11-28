@@ -26,8 +26,10 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonObject
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.util.UUID
 
 class StudyOpenerTest {
     private val ana = AuthenticatedSession("ana", "token-a", "local-a")
@@ -281,6 +283,88 @@ class StudyOpenerTest {
             assertEquals(MutationResult.Done(AppRoute.QuestionBlock(SESSION.toString(), blockId(1).toString())), result)
             assertEquals(target("next", "sessionId" to SESSION.toString()), sent(api.targets.single()))
             assertEquals(0, api.sessionReads)
+        }
+
+    @Test
+    fun aMistakesRowOpensItsBlocksPracticeAndAPatternRowItsPattern() =
+        runTest {
+            val api = FakeStudyApi()
+            val pattern = "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d09"
+            api.openings =
+                listOf(
+                    opening("mistakesPractice", "blockId" to blockId(0).toString(), "sessionId" to SESSION.toString()),
+                    opening("pattern", "blockId" to blockId(1).toString(), "patternId" to pattern, "sessionId" to SESSION.toString()),
+                )
+            val mistakes = step(0, kind = StudyBlock.Kind.PRACTICE, screen = StudyBlock.Screen.MISTAKES_PRACTICE, lessonId = null)
+            val drill = step(1, kind = StudyBlock.Kind.PRACTICE, screen = StudyBlock.Screen.PATTERN, lessonId = null)
+            val day = day(listOf(mistakes, drill))
+
+            assertEquals(
+                MutationResult.Done(AppRoute.MistakePractice(blockId = blockId(0).toString(), sessionId = SESSION.toString())),
+                opener(api).open(day, mistakes, next = false, goalId = GOAL),
+            )
+            assertEquals(
+                MutationResult.Done(AppRoute.Pattern(pattern, SESSION.toString())),
+                opener(api).open(day, drill, next = false, goalId = GOAL),
+            )
+        }
+
+    @Test
+    fun aDayNotOpenedYetNamesItsMistakesPatternAndReturningRowsByTheirWork() =
+        runTest {
+            val api = FakeStudyApi()
+            api.dayOpening = opening("today")
+            val pattern = UUID.fromString("5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d09")
+            val steps =
+                listOf(
+                    step(0, kind = StudyBlock.Kind.PRACTICE, screen = StudyBlock.Screen.MISTAKES_PRACTICE, saved = false, lessonId = null),
+                    step(1, kind = StudyBlock.Kind.PRACTICE, screen = StudyBlock.Screen.PATTERN, saved = false, lessonId = null)
+                        .copy(patternId = pattern),
+                    step(2, screen = StudyBlock.Screen.SESSION, saved = false).copy(returning = StudyBlock.Returning.ANOTHER_WAY),
+                )
+
+            steps.forEach { opener(api).open(day(steps, saved = false), it, next = false, goalId = GOAL) }
+
+            val refs =
+                api.opened.map {
+                    ApiRequestJson
+                        .encodeToJsonElement(OpenStudyDayRequest.serializer(), it)
+                        .jsonObject
+                        .getValue("target")
+                        .jsonObject
+                        .getValue("ref")
+                        .jsonObject
+                }
+            assertEquals(JsonPrimitive(true), refs[0].getValue("flags").jsonObject.getValue("mistakesPractice"))
+            assertEquals(JsonPrimitive(pattern.toString()), refs[1].getValue("patternId"))
+            assertEquals(JsonPrimitive("anotherWay"), refs[2].getValue("flags").jsonObject.getValue("returning"))
+        }
+
+    @Test
+    fun aReturningReasonThisVersionDoesNotKnowOpensTheRowWithoutEchoingIt() =
+        runTest {
+            val api = FakeStudyApi()
+            api.dayOpening = opening("today")
+            val lesson =
+                step(
+                    0,
+                    screen = StudyBlock.Screen.SESSION,
+                    saved = false,
+                ).copy(returning = StudyBlock.Returning.UNKNOWN_DEFAULT_OPEN_API)
+
+            opener(api).open(day(listOf(lesson), saved = false), lesson, next = false, goalId = GOAL)
+
+            val flags =
+                ApiRequestJson
+                    .encodeToJsonElement(OpenStudyDayRequest.serializer(), api.opened.single())
+                    .jsonObject
+                    .getValue("target")
+                    .jsonObject
+                    .getValue("ref")
+                    .jsonObject
+                    .getValue("flags")
+                    .jsonObject
+            assertFalse("returning" in flags)
         }
 
     private fun unwritten() =

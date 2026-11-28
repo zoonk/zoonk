@@ -16,6 +16,7 @@ import {
 } from "../lesson-player/_test-utils/playable-lesson-setup";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { createGoalPlan } from "../plans/create-goal-plan";
+import { buddyTarget } from "./_test-utils/buddy-target";
 import { claimLessonQuestionAnswer, completeLessonQuestionAnswer } from "./answer-lifecycle";
 import { type LessonQuestionContextInput, type TutorTarget } from "./contract";
 import { createLessonQuestion } from "./create-lesson-question";
@@ -421,7 +422,7 @@ describe("the buddy on a screen inside a goal", () => {
 
     const created = await createLessonQuestion({
       input: { context: { kind: "plan" }, question: "Where was the bar?", requestId: randomUUID() },
-      target: { conversationId: null, goalId: goal.id, kind: "plan" },
+      target: buddyTarget(goal.id),
     });
 
     if (created.status !== "created") {

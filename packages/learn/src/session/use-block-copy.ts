@@ -3,6 +3,7 @@
 import { useExtracted } from "next-intl";
 import { useShortList } from "../plan/use-short-list";
 import { useWritingLine, useWritingTaskTitle } from "../writing/writing-header";
+import { isAlreadyFixed } from "./block-kind";
 import { type StudyBlock } from "./session-types";
 import { useReviewTitle } from "./use-review-title";
 
@@ -16,9 +17,13 @@ type BlockCopyInput = Pick<
   | "hasWritingDraft"
   | "kind"
   | "mistakesOnly"
+  | "patternId"
   | "practiceNumber"
   | "questions"
   | "reinforcement"
+  | "returning"
+  | "screen"
+  | "status"
   | "title"
   | "topics"
   | "weakest"
@@ -69,6 +74,58 @@ export function practisesTopics(
   );
 }
 
+/**
+ * Why a block the plan added for the learner's mistakes is on the day. It never counts: a count can
+ * be false by the time it's read.
+ */
+export function useRemedialLine() {
+  const t = useExtracted();
+
+  return function remedialLine(
+    block: Pick<BlockCopyInput, "patternId" | "questions" | "returning" | "screen" | "status">,
+  ): string | null {
+    if (isAlreadyFixed(block)) {
+      return null;
+    }
+
+    if (block.screen === "mistakesPractice") {
+      return t({
+        description:
+          'Under "Fix 3 mistakes", a step of the day that practices questions the learner got wrong.',
+        message: "Questions you missed before",
+      });
+    }
+
+    if (block.patternId) {
+      return t("A pattern in your mistakes");
+    }
+
+    if (block.returning === "again") {
+      return t({
+        description:
+          "Under a lesson the learner takes again because its idea has been hard for them.",
+        message: "Once more: this one's been tricky",
+      });
+    }
+
+    if (block.returning === "anotherWay") {
+      return t({
+        description:
+          "Under a short lesson that explains, in a new way, an idea the learner keeps missing.",
+        message: "Another way to see it",
+      });
+    }
+
+    return block.returning === "missed"
+      ? t({
+          description:
+            "Under a short lesson written for an idea that has been hard for the learner.",
+          message: "This one's been tricky",
+        })
+      : null;
+  };
+}
+
 export function useBlockTitle() {
   const t = useExtracted();
   // Elsewhere "Practice" names an action; here it names a block.
@@ -93,6 +150,29 @@ export function useBlockTitle() {
 
     if (block.kind === "learn") {
       return block.title ?? t("New lesson");
+    }
+
+    if (isAlreadyFixed(block)) {
+      return t({
+        description:
+          "Title when a day's practice of mistakes opens and every one of its mistakes was already fixed elsewhere.",
+        message: "Already fixed",
+      });
+    }
+
+    if (block.screen === "mistakesPractice") {
+      return t("{count, plural, one {Fix # mistake} other {Fix # mistakes}}", {
+        count: block.questions,
+      });
+    }
+
+    if (block.patternId && block.title) {
+      return t({
+        description:
+          'A study step that drills one rule the learner keeps getting wrong, titled like the day\'s other practice steps ("Practice: Fractions"). {pattern} names the rule, like "Adjective endings after der".',
+        message: "Practice: {pattern}",
+        values: { pattern: block.title },
+      });
     }
 
     if (block.kind === "produce") {
@@ -131,6 +211,7 @@ export function useBlockTitle() {
 
 export function useBlockDetail() {
   const t = useExtracted();
+  const remedialLine = useRemedialLine();
   const shortList = useShortList();
   const writingLine = useWritingLine();
 
@@ -143,6 +224,12 @@ export function useBlockDetail() {
   }
 
   function describe(block: BlockCopyInput & Pick<StudyBlock, "canDo" | "subject">): string | null {
+    const remedial = remedialLine(block);
+
+    if (remedial) {
+      return remedial;
+    }
+
     if (hasCapsules(block) && block.weakest) {
       return t(
         "{count, plural, one {# question on what's been hardest for you} other {# questions on what's been hardest for you}}",

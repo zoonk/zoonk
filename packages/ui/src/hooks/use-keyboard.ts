@@ -16,6 +16,7 @@ import { PopupShortcutLayer } from "./_utils/popup-shortcut-layer";
 import {
   SCREEN_ENTER_ATTRIBUTE,
   getNumberKeyIndex,
+  isInLayerOf,
   isScreenShortcut,
 } from "./_utils/screen-shortcut";
 
@@ -205,7 +206,7 @@ function isDrawn(element: HTMLElement | null): element is HTMLElement {
 
 /** Return `false` when the action can't run, so Enter keeps its default. */
 export function useEnterKey(
-  callback: () => ShortcutResult,
+  callback: (event: KeyboardEvent) => ShortcutResult,
   { enabled = true }: { enabled?: boolean } = {},
 ) {
   useShortcut("main", callback, { enabled });
@@ -222,8 +223,8 @@ export function useEnterClick<Target extends HTMLElement>({
   const ref = useRef<Target>(null);
 
   useEnterKey(
-    () => {
-      if (!isDrawn(ref.current)) {
+    (event) => {
+      if (!isDrawn(ref.current) || !isInLayerOf(event, ref.current)) {
         return false;
       }
 

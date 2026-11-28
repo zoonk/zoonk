@@ -97,23 +97,18 @@ function OpenMistakeLessonButton({
 
 function MistakeEntryActions({
   links,
-  availableTomorrow,
   openLesson,
 }: {
   links: MistakeEntryLinks;
-  availableTomorrow: boolean;
   openLesson: () => Promise<boolean>;
 }) {
   const t = useExtracted();
 
   // Alone on its line, its words start on the column's edge like the text above.
-  const edge = links.practiceSkill || availableTomorrow ? undefined : "start";
+  const edge = links.practiceSkill ? undefined : "start";
 
   return (
     <div className="flex flex-wrap items-center gap-2 pt-1" data-slot="mistake-entry-actions">
-      {availableTomorrow && (
-        <p className="text-muted-foreground text-xs">{t("Practice tomorrow")}</p>
-      )}
       {links.practiceSkill && (
         <LearnLink
           className={buttonVariants({ size: "sm", variant: "outline" })}
@@ -146,15 +141,12 @@ export function MistakeEntryCard({
   links,
   mistake,
   openLesson,
-  tomorrowOnPage = false,
   trueFalseLabels,
 }: {
   continued?: boolean;
   links: MistakeEntryLinks;
   mistake: MistakeEntry;
   openLesson: (mistakeId: string) => Promise<boolean>;
-  /** The page already says practice opens tomorrow, so the entry doesn't say it again. */
-  tomorrowOnPage?: boolean;
   trueFalseLabels: TrueFalseLabels;
 }) {
   const entryDate = useFormatMomentDate();
@@ -204,11 +196,7 @@ export function MistakeEntryCard({
         <ItemText className="text-muted-foreground leading-relaxed" text={snapshot.explanation} />
       )}
 
-      <MistakeEntryActions
-        availableTomorrow={mistake.practiceAvailableTomorrow && !tomorrowOnPage}
-        links={links}
-        openLesson={() => openLesson(mistake.id)}
-      />
+      <MistakeEntryActions links={links} openLesson={() => openLesson(mistake.id)} />
     </li>
   );
 }

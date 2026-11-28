@@ -170,6 +170,11 @@ struct StudyDay: Decodable, Equatable, Sendable {
       + Double(hiddenExtras.reduce(0) { $0 + $1.estimatedMinutes })
   }
 
+  /// Main's `SessionQueue`: rows name their subject only when the day's blocks span more than one.
+  var showsSubjects: Bool {
+    Set(blocks.compactMap { $0.subject ?? $0.subjectExtra?.rawValue }).count > 1
+  }
+
   var isStarted: Bool {
     blocks.contains { $0.status != .pending }
   }
@@ -286,8 +291,20 @@ struct StudyBlock: OmittableAPIContent, Hashable, Sendable {
     case challenge
     case essay
     case lesson
+    case mistakesPractice
+    case pattern
     case session
     case unknown
+  }
+
+  /// Why a lesson the learner already had is back in the day.
+  enum Returning: String, Codable, OmittableAPIContent, Sendable {
+    /// The same lesson again, for a skill they keep missing.
+    case again
+    /// A second lesson that explains the skill another way.
+    case anotherWay
+    /// A lesson written for a skill they keep missing that had none.
+    case missed
   }
 
   /// Whether the exam that leaves the optional study out has an official guide.
@@ -342,6 +359,8 @@ struct StudyBlock: OmittableAPIContent, Hashable, Sendable {
   let mockPreparationReview: Bool?
   let opensInPlayer: Bool
   let oftenTested: Bool
+  /// The language pattern a pattern block practices.
+  let patternId: String?
   let planItemId: String?
   let planItemKey: String?
   let position: Int
@@ -350,6 +369,7 @@ struct StudyBlock: OmittableAPIContent, Hashable, Sendable {
   let questions: Int
   let refresh: Bool
   let reinforcement: Bool
+  let returning: Returning?
   let screen: Screen
   var status: Status
   let subject: String?
@@ -368,6 +388,12 @@ struct StudyBlock: OmittableAPIContent, Hashable, Sendable {
 
   var isFinished: Bool {
     status == .completed || status == .skipped
+  }
+
+  /// A day's mistakes whose every question was fixed elsewhere since the day opened: still to open,
+  /// which marks it done. A finished row keeps the count it recorded.
+  var isAlreadyFixed: Bool {
+    screen == .mistakesPractice && questions == 0 && !isFinished
   }
 
   /// Core's `isDayBlock`, not skipped: what the day's count, meter and time left are made of. Extra
@@ -401,7 +427,7 @@ struct StudyBlock: OmittableAPIContent, Hashable, Sendable {
       return .challenge
     }
 
-    if mistakesOnly {
+    if mistakesOnly || screen == .mistakesPractice || screen == .pattern {
       return .mistakes
     }
 
@@ -474,10 +500,31 @@ struct DayBlockRef: Encodable, Equatable, Sendable {
     let extra: Bool
     let fullReview: Bool
     let mistakesOnly: Bool
+    let mistakesPractice: Bool
     let mockPreparationReview: Bool?
     let refresh: Bool
     let reinforcement: Bool
+    let returning: StudyBlock.Returning?
     let weakest: Bool
+
+    /// Core leaves out a remedial flag a block doesn't have.
+    func encode(to encoder: any Encoder) throws {
+      var container = encoder.container(keyedBy: CodingKeys.self)
+      try container.encode(extra, forKey: .extra)
+      try container.encode(fullReview, forKey: .fullReview)
+      try container.encode(mistakesOnly, forKey: .mistakesOnly)
+      if mistakesPractice { try container.encode(true, forKey: .mistakesPractice) }
+      try container.encodeIfPresent(mockPreparationReview, forKey: .mockPreparationReview)
+      try container.encode(refresh, forKey: .refresh)
+      try container.encode(reinforcement, forKey: .reinforcement)
+      try container.encodeIfPresent(returning, forKey: .returning)
+      try container.encode(weakest, forKey: .weakest)
+    }
+
+    private enum CodingKeys: String, CodingKey {
+      case extra, fullReview, mistakesOnly, mistakesPractice, mockPreparationReview, refresh
+      case reinforcement, returning, weakest
+    }
   }
 
   /// A mock carries its identity; any other checkpoint has none at all, and its phase is null when
@@ -509,6 +556,7 @@ struct DayBlockRef: Encodable, Equatable, Sendable {
   let flags: Flags
   let kind: StudyBlock.Kind
   let lessonId: String?
+  let patternId: String?
   let planItemKey: String?
   let position: Int
 
@@ -522,10 +570,12 @@ struct DayBlockRef: Encodable, Equatable, Sendable {
     }
     flags = Flags(
       extra: block.extra, fullReview: block.fullReview, mistakesOnly: block.mistakesOnly,
+      mistakesPractice: block.screen == .mistakesPractice,
       mockPreparationReview: block.mockPreparationReview, refresh: block.refresh,
-      reinforcement: block.reinforcement, weakest: block.weakest)
+      reinforcement: block.reinforcement, returning: block.returning, weakest: block.weakest)
     kind = block.kind
     lessonId = block.lessonId
+    patternId = block.patternId
     planItemKey = block.planItemKey
     position = block.position
   }
@@ -539,12 +589,13 @@ struct DayBlockRef: Encodable, Equatable, Sendable {
     try container.encode(flags, forKey: .flags)
     try container.encode(kind, forKey: .kind)
     try container.encode(lessonId, forKey: .lessonId)
+    try container.encodeIfPresent(patternId, forKey: .patternId)
     try container.encode(planItemKey, forKey: .planItemKey)
     try container.encode(position, forKey: .position)
   }
 
   private enum CodingKeys: String, CodingKey {
-    case areaId, chapterId, checkpoint, flags, kind, lessonId, planItemKey, position
+    case areaId, chapterId, checkpoint, flags, kind, lessonId, patternId, planItemKey, position
   }
 }
 

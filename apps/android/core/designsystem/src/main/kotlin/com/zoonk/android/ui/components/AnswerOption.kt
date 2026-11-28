@@ -1,6 +1,7 @@
 package com.zoonk.android.ui.components
 
 import android.content.res.Configuration
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -38,6 +39,7 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.ParentDataModifier
 import androidx.compose.ui.layout.VerticalAlignmentLine
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.semantics
@@ -46,6 +48,7 @@ import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
+import com.zoonk.android.R
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.zoonkType
 import kotlin.math.max
@@ -89,13 +92,15 @@ fun AnswerOption(
 ) {
     val tone = answerTone(picked, result)
     val shape = RoundedCornerShape(ZoonkRadius.option)
-    // Once checked or locked a number key does nothing, so it hides in its room and the words stay put, as main's does.
+    // Once checked a number key does nothing, so its room shows the verdict's mark and the words stay put, as main's
+    // does; a locked option without one hides its key.
     val key =
         if (glyph != null) {
             AnswerKey.Visible
         } else {
             answerKey(LocalConfiguration.current.keyboard, result != null || !enabled, tag != null, keyed = LocalOptionKeys.current)
         }
+    val keyGlyph = result?.let { painterResource(it.glyph()) } ?: glyph
     val several = role == Role.Checkbox
     val marked = several || role == Role.RadioButton
     val label = MaterialTheme.typography.labelLarge
@@ -143,7 +148,7 @@ fun AnswerOption(
                         marker,
                         picked && result == null && !marked,
                         Modifier
-                            .alpha(if (key == AnswerKey.Visible) 1f else 0f)
+                            .alpha(if (key == AnswerKey.Visible || result != null) 1f else 0f)
                             .then(
                                 if (stacked) {
                                     Modifier.background(
@@ -154,7 +159,7 @@ fun AnswerOption(
                                     Modifier
                                 },
                             ),
-                        glyph,
+                        keyGlyph,
                     )
                 }
             },
@@ -192,6 +197,14 @@ private fun AnswerMark(
         }
     }
 }
+
+@DrawableRes
+private fun AnswerResult.glyph(): Int =
+    when (this) {
+        AnswerResult.Right -> R.drawable.ic_check
+        AnswerResult.Guess -> R.drawable.ic_remove
+        AnswerResult.Wrong -> R.drawable.ic_close
+    }
 
 /** The number key that picks an option or a card, in ink once [picked]; a [glyph] takes the digit's place. */
 @Composable

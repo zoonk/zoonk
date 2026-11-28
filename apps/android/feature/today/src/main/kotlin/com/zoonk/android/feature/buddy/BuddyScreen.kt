@@ -404,7 +404,7 @@ internal fun BuddyHeader(
 
 /**
  * Main's `BuddyIdentityRow`: the day's [line] beside the name while they fit, and under it when they
- * don't, pulled back by its padding so its words start on the name's edge.
+ * don't, pulled back by its padding so its ink sits the row's gap from the name, or starts on its edge.
  */
 @Composable
 internal fun NameAndLine(
@@ -418,10 +418,10 @@ internal fun NameAndLine(
     }, modifier = modifier) { measurables, constraints ->
         val loose = constraints.copy(minWidth = 0, minHeight = 0)
         val title = measurables[0].measure(loose)
-        val gap = IDENTITY_GAP.roundToPx()
+        val inset = DAY_LINE_PADDING.roundToPx()
+        val start = title.width + IDENTITY_GAP.roundToPx() - inset
         // Beside the name only while the line fits there on one line of its own.
-        val beside =
-            measurables.getOrNull(1)?.let { title.width + gap + it.maxIntrinsicWidth(title.height) <= constraints.maxWidth } == true
+        val beside = measurables.getOrNull(1)?.let { start + it.maxIntrinsicWidth(title.height) <= constraints.maxWidth } == true
         val day = measurables.getOrNull(1)?.measure(loose)
         when {
             day == null -> {
@@ -430,16 +430,16 @@ internal fun NameAndLine(
 
             beside -> {
                 val height = maxOf(title.height, day.height)
-                layout(constraints.constrainWidth(title.width + gap + day.width), height) {
+                layout(constraints.constrainWidth(start + day.width), height) {
                     title.placeRelative(0, (height - title.height) / 2)
-                    day.placeRelative(title.width + gap, (height - day.height) / 2)
+                    day.placeRelative(start, (height - day.height) / 2)
                 }
             }
 
             else -> {
                 layout(constraints.constrainWidth(maxOf(title.width, day.width)), title.height + day.height) {
                     title.placeRelative(0, 0)
-                    day.placeRelative(-DAY_LINE_PADDING.roundToPx(), title.height)
+                    day.placeRelative(-inset, title.height)
                 }
             }
         }

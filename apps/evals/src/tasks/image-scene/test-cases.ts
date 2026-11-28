@@ -280,4 +280,36 @@ export const TEST_CASES: ImageSceneCase[] = [
       textAllowed: true,
     },
   },
+  {
+    expectations:
+      "A thematic map read through its colors: the screen gives four colors and their ranges, so the scene has a legend with a swatch for each of the four colors (pale yellow, yellow, green, dark green), each labeled with its exact range (0%–24%, 25%–49%, 50%–74%, 75%–100%), and the states colored to match. A legend with swatches and no text fails this case.",
+    expected: { labels: "some" },
+    id: "thematic-map-legend-in-screen-pt",
+    userInput: {
+      alt: "Mapa fictício com Tocantins em amarelo-claro, Goiás em amarelo, Mato Grosso em verde e Mato Grosso do Sul em verde-escuro.",
+      context: "ENEM › Geografia › Mapas temáticos e legendas",
+      language: "pt",
+      request:
+        "Mapa fictício do Brasil dividido em UFs. TO amarelo-claro, GO amarelo, MT verde e MS verde-escuro; demais UFs em cinza. Siglas TO, GO, MT e MS visíveis. Tema: percentual de escolas com biblioteca.",
+      screenText:
+        "Cada cor tem uma faixa\nUma **faixa de valores** é um intervalo: a cor indica onde o percentual está, não seu valor exato. Nesta legenda fictícia de escolas com biblioteca, cada cor ocupa uma UF diferente no mapa.\n\n| Cor | Percentual |\n| --- | ---: |\n| Amarelo-claro | 0%–24% |\n| Amarelo | 25%–49% |\n| Verde | 50%–74% |\n| Verde-escuro | 75%–100% |",
+      textAllowed: true,
+    },
+  },
+  {
+    expectations:
+      "The request asks for a legend: the scene keeps it, with a blue swatch labeled 60%–79% and a green swatch labeled 40%–59%, and Rio de Janeiro in blue and Espírito Santo in green. The legend never names which state is in which range, since the question asks that.",
+    expected: { labels: "some" },
+    id: "thematic-map-legend-question-pt",
+    userInput: {
+      alt: "Mapa fictício de coleta seletiva: Rio de Janeiro em azul, faixa de 60% a 79%, e Espírito Santo em verde, faixa de 40% a 59%.",
+      context: "ENEM › Geografia › Mapas temáticos e legendas",
+      language: "pt",
+      request:
+        "Mapa fictício do Brasil dividido em UFs. RJ em azul e ES em verde; demais UFs em cinza. Siglas RJ e ES visíveis. Legenda: azul, 60%–79%; verde, 40%–59%. Tema: domicílios atendidos por coleta seletiva.",
+      screenText:
+        "Em um novo mapa fictício de coleta seletiva, vale a mesma legenda: verde indica 40%–59% e azul indica 60%–79%.\nQuais são as faixas percentuais de RJ e ES, respectivamente?",
+      textAllowed: true,
+    },
+  },
 ];

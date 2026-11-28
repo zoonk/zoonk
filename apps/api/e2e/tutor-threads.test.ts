@@ -130,7 +130,6 @@ test.describe("Tutor threads beyond lessons", () => {
 
     const paths = [
       `/v1/chapters/${id}/questions`,
-      `/v1/goals/${id}/plan/questions`,
       `/v1/goals/${id}/buddy/conversations/${id}/questions`,
       `/v1/goals/${id}/subjects/law/questions`,
       `/v1/items/${id}/questions`,
@@ -153,7 +152,7 @@ test.describe("Tutor threads beyond lessons", () => {
     await anonymous.dispose();
   });
 
-  test("opens and retries separate Buddy conversations without moving the legacy thread", async () => {
+  test("opens and retries separate Buddy conversations", async () => {
     const [{ api, userId }, other] = await Promise.all([
       createBearerLearner({ baseURL, prefix: "buddy-conversations" }),
       createBearerLearner({ baseURL, prefix: "buddy-conversation-other" }),
@@ -166,7 +165,6 @@ test.describe("Tutor threads beyond lessons", () => {
     ]);
 
     const listPath = `/v1/goals/${goal.id}/buddy/conversations`;
-    const legacyPath = `/v1/goals/${goal.id}/plan/questions`;
     const firstId = randomUUID();
     const secondId = randomUUID();
     const firstPath = `${listPath}/${firstId}/questions`;
@@ -174,15 +172,10 @@ test.describe("Tutor threads beyond lessons", () => {
     const requestId = randomUUID();
     const data = { context: { kind: "plan" }, question: "How do I study this?", requestId };
 
-    const [emptyThread, emptyList, emptyLegacy] = await Promise.all([
-      api.get(firstPath),
-      api.get(listPath),
-      api.get(legacyPath),
-    ]);
+    const [emptyThread, emptyList] = await Promise.all([api.get(firstPath), api.get(listPath)]);
 
     expect(emptyThread.status()).toBe(200);
     await expect(emptyThread.json()).resolves.toBeNull();
-    await expect(emptyLegacy.json()).resolves.toBeNull();
 
     expect(buddyConversationsSchema.parse(await emptyList.json())).toStrictEqual({
       conversations: [],
@@ -194,8 +187,6 @@ test.describe("Tutor threads beyond lessons", () => {
       0,
     );
 
-    const original = await readCreated(await api.post(legacyPath, { data }));
-
     const [first, retry, second] = await Promise.all([
       api.post(firstPath, { data }).then(readCreated),
       api.post(firstPath, { data }).then(readCreated),
@@ -205,21 +196,13 @@ test.describe("Tutor threads beyond lessons", () => {
     ]);
 
     expect(retry.id).toBe(first.id);
-    expect(new Set([original.id, first.id, second.id]).size).toBe(3);
+    expect(second.id).not.toBe(first.id);
 
-    const [legacy, firstThread, secondThread, list, legacyRetry] = await Promise.all([
-      api.get(legacyPath),
+    const [firstThread, secondThread, list] = await Promise.all([
       api.get(firstPath),
       api.get(secondPath),
       api.get(listPath),
-      api.post(legacyPath, { data }).then(readCreated),
     ]);
-
-    expect(legacyRetry.id).toBe(original.id);
-
-    expect(lessonQuestionThreadResponseSchema.parse(await legacy.json())).toMatchObject({
-      questions: [{ id: original.id }],
-    });
 
     expect(lessonQuestionThreadResponseSchema.parse(await firstThread.json())).toMatchObject({
       id: firstId,
@@ -231,7 +214,7 @@ test.describe("Tutor threads beyond lessons", () => {
       questions: [{ id: second.id }],
     });
 
-    expect(buddyConversationsSchema.parse(await list.json()).conversations).toHaveLength(3);
+    expect(buddyConversationsSchema.parse(await list.json()).conversations).toHaveLength(2);
 
     const siblingPath = `/v1/goals/${siblingGoal.id}/buddy/conversations/${firstId}/questions`;
     const otherPath = `/v1/goals/${otherGoal.id}/buddy/conversations/${firstId}/questions`;
@@ -300,7 +283,7 @@ test.describe("Tutor threads beyond lessons", () => {
     ]);
 
     const goal = await createPlannedGoal(userId);
-    const path = `/v1/goals/${goal.id}/plan/questions`;
+    const path = `/v1/goals/${goal.id}/buddy/conversations/${randomUUID()}/questions`;
 
     const [created, hidden] = await Promise.all([
       ask({ api, context: { kind: "plan" }, path, question: "Why am I studying this today?" }),

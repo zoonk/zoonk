@@ -1,5 +1,11 @@
 import "server-only";
-import { type LearnerSkill, type Skill, type TransactionClient, prisma } from "@zoonk/db";
+import {
+  type LearnerSkill,
+  type Lesson,
+  type Skill,
+  type TransactionClient,
+  prisma,
+} from "@zoonk/db";
 import { markLockedPlanInputsChanged } from "@zoonk/db/learner-writes";
 import { isUuid } from "@zoonk/utils/uuid";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
@@ -10,6 +16,7 @@ import {
 } from "../../cache/tags";
 import { getAdminAccess } from "../../users/get-admin-access";
 import { writePlanInputs } from "../_utils/plan-input-write";
+import { getSecondTakeIdentityKey } from "../second-takes/second-take-identity";
 import { findSurvivingSkill } from "./_utils/find-surviving-skill";
 import { lockSkillPlanInputs } from "./_utils/skill-input-write";
 
@@ -59,9 +66,22 @@ async function moveLearnerSkills(tx: TransactionClient, { duplicate, survivor }:
     return existing && !keepsDuplicateRow({ duplicate: row, survivor: existing });
   });
 
-  await tx.learnerSkill.deleteMany({
-    where: { id: { in: [...replaced, ...dropped].map((row) => row.id) } },
-  });
+  const removedIds = [...replaced, ...dropped].map((row) => row.id);
+
+  if (removedIds.length > 0) {
+    await tx.$executeRaw`
+      UPDATE learner_skills kept SET helped_at = removed.helped_at
+      FROM learner_skills removed
+      WHERE removed.id = ANY(${removedIds}::uuid[])
+        AND kept.user_id = removed.user_id
+        AND kept.skill_id IN (${duplicate.id}::uuid, ${survivor.id}::uuid)
+        AND kept.id <> removed.id
+        AND removed.helped_at IS NOT NULL
+        AND (kept.helped_at IS NULL OR kept.helped_at < removed.helped_at)
+    `;
+  }
+
+  await tx.learnerSkill.deleteMany({ where: { id: { in: removedIds } } });
 
   await tx.learnerSkill.updateMany({
     data: { skillId: survivor.id },
@@ -119,6 +139,58 @@ async function moveLinks(tx: TransactionClient, { duplicate, survivor }: SkillPa
   return lessonLinks.map((link) => link.lessonId);
 }
 
+function secondTakeKey(skill: Skill): string {
+  return getSecondTakeIdentityKey({
+    ownerId: skill.visibility === "private" ? skill.ownerId : null,
+    skillId: skill.id,
+  });
+}
+
+async function moveSecondTake(tx: TransactionClient, { duplicate, survivor }: SkillPair) {
+  const from = secondTakeKey(duplicate);
+  const to = secondTakeKey(survivor);
+
+  const lessons = await tx.lesson.findMany({
+    select: { contentStatus: true, id: true, identityKey: true, setAsideAt: true },
+    where: { identityKey: { in: [from, to] }, language: survivor.language },
+  });
+
+  const take = lessons.find(({ identityKey }) => identityKey === from);
+  const kept = lessons.find(({ identityKey }) => identityKey === to);
+
+  if (!take) {
+    return;
+  }
+
+  if (!kept) {
+    await tx.lesson.update({ data: { identityKey: to }, where: { id: take.id } });
+    return;
+  }
+
+  if (!isUsable(take) || isUsable(kept)) {
+    await tx.lesson.update({
+      data: { setAsideAt: take.setAsideAt ?? new Date() },
+      where: { id: take.id },
+    });
+
+    return;
+  }
+
+  // Keys are unique per language, so the two lessons trade keys through a third.
+  await tx.lesson.update({ data: { identityKey: `${from}:swap` }, where: { id: take.id } });
+
+  await tx.lesson.update({
+    data: { identityKey: from, setAsideAt: kept.setAsideAt ?? new Date() },
+    where: { id: kept.id },
+  });
+
+  await tx.lesson.update({ data: { identityKey: to }, where: { id: take.id } });
+}
+
+function isUsable(lesson: Pick<Lesson, "contentStatus" | "setAsideAt">): boolean {
+  return lesson.contentStatus !== "failed" && !lesson.setAsideAt;
+}
+
 async function mergeInto(pair: SkillPair) {
   return writePlanInputs(async (tx) => {
     const planIds = await lockSkillPlanInputs({
@@ -138,6 +210,7 @@ async function mergeInto(pair: SkillPair) {
 
     await markLockedPlanInputsChanged(tx, { planIds });
 
+    await moveSecondTake(tx, pair);
     const userIds = await moveLearnerSkills(tx, pair);
 
     await movePointers(tx, pair);

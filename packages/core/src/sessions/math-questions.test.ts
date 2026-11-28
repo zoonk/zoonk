@@ -163,6 +163,7 @@ describe("math problems in sessions", () => {
       where: { itemId: item.id, userId: user.id },
     });
 
+    expect(attempt.evidence).toBe("independent");
     expect(attempt.answer).toStrictEqual({ number: paid, values: { discount, price } });
 
     const tomorrow = await studySessionFixture({

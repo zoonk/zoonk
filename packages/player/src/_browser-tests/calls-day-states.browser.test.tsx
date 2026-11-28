@@ -107,9 +107,7 @@ describe("calls with partial or empty days", () => {
                 areaPractice: () => "/practice",
                 buddy: "/buddy",
                 call: () => "/call",
-                mistakesPractice: "/mistakes",
                 mockChooser: "/mock",
-                pattern: () => "/pattern",
                 pronunciation: "/pronunciation",
               },
               openBlock: async () => true,
@@ -120,7 +118,7 @@ describe("calls with partial or empty days", () => {
         </LearnProvider>,
       );
 
-      await page.getByRole("button", { exact: true, name: "Zu today" }).click();
+      await page.getByRole("button", { name: "Zu's Energy" }).click();
 
       await expect
         .element(page.getByRole("dialog").getByRole("heading", { name: "Zu today" }))

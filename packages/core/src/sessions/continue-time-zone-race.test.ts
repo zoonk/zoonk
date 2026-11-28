@@ -1,14 +1,14 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
-import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { revalidateTag } from "next/cache";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { mockAccountSession } from "../_test-utils/mock-session";
+import { getMistakePractice } from "../mistakes/get-mistake-practice";
 import { seedPersonaCopy } from "../seed/seed";
 import { getTodayView } from "../view-models/today/get-today-view";
+import { readBlockPayload } from "./block-payload";
 import { getStudySession } from "./get-study-session";
 import { openStudyBlock } from "./open-block";
-import { startStudyBlock } from "./start-study-block";
 
 const NOW = new Date("2026-10-15T12:00:00Z");
 const DEVICE_ZONE = "Pacific/Kiritimati";
@@ -49,29 +49,37 @@ describe("Continue on an already studied day while another device reads it", () 
 
     const [followed, opened] = await Promise.all([
       getTodayView({ goalId: goal.id, timeZone: DEVICE_ZONE }),
-      countDatabaseStatements(() =>
-        openStudyBlock({ target: { kind: "next", sessionId: saved.id }, timeZone: DEVICE_ZONE }),
-      ),
+      openStudyBlock({ target: { kind: "next", sessionId: saved.id }, timeZone: DEVICE_ZONE }),
     ]);
 
     expect(followed).toMatchObject({ status: "ready" });
     const target = before.session.blocks.find((block) => block.id === before.session.nextBlockId);
-    expect(target).toMatchObject({ kind: "learn", lessonId: expect.any(String) });
 
-    expect(opened.result).toMatchObject({
-      opening: { lessonId: target?.lessonId, sessionId: saved.id },
+    expect(target).toMatchObject({
+      kind: "practice",
+      screen: "mistakesPractice",
+      status: "active",
+    });
+
+    const blockId = target!.id;
+
+    expect(opened).toMatchObject({
+      opening: { blockId, kind: "mistakesPractice", sessionId: saved.id },
       status: "ready",
     });
 
     expect(revalidateTag).toHaveBeenCalledTimes(expirations);
 
-    await expect(
-      startStudyBlock({
-        blockId: target!.id,
-        input: { timeZone: DEVICE_ZONE },
-        sessionId: saved.id,
-      }),
-    ).resolves.toMatchObject({ status: "ready" });
+    const block = await prisma.studySessionBlock.findUniqueOrThrow({ where: { id: blockId } });
+    const { mistakeIds, timing } = readBlockPayload(block);
+
+    expect(timing).toMatchObject({ activeAt: NOW.toISOString(), elapsedMs: 0 });
+    expect(mistakeIds.length).toBeGreaterThan(0);
+
+    await expect(getMistakePractice({ blockId, timeZone: DEVICE_ZONE })).resolves.toMatchObject({
+      practice: mistakeIds.map((mistakeId) => ({ mistakeId })),
+      status: "ready",
+    });
 
     await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
       timezone: goal.timezone,

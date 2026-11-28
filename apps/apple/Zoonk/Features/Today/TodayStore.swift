@@ -7,6 +7,8 @@ enum StudyDestination: Hashable, Sendable {
   case essay(blockID: String, start: WritingStart?)
   case lesson(lessonID: String, sessionID: String)
   case mock(blockID: String, sessionID: String)
+  case mistakesPractice(blockID: String)
+  case pattern(patternID: String)
   case questionBlock(blockID: String)
   case instantLesson(lessonID: String, sessionID: String?, opening: LessonOpening)
   case session
@@ -542,11 +544,13 @@ extension StudyBlockOpening {
     case .StudyBlockOpeningUnwrittenLesson(let lesson): lesson.sessionId
     case .StudyBlockOpeningPreparingLesson(let step): step.sessionId
     case .StudyBlockOpeningEssay(let essay): essay.sessionId
+    case .StudyBlockOpeningMistakesPractice(let practice): practice.sessionId
+    case .StudyBlockOpeningPattern(let pattern): pattern.sessionId
     case .StudyBlockOpeningCheckpoint(let checkpoint): checkpoint.sessionId
     case .StudyBlockOpeningMock(let mock): mock.sessionId
     case .StudyBlockOpeningChallenge(let challenge): challenge.sessionId
     case .StudyBlockOpeningSession(let session): session.sessionId
-    case .StudyBlockOpeningToday, .StudyBlockOpeningChanged, .case11: nil
+    case .StudyBlockOpeningToday, .StudyBlockOpeningChanged, .case13: nil
     }
   }
 }
@@ -572,9 +576,13 @@ extension StudyDestination {
       self = .challenge(planItemID: challenge.planItemId, sessionID: challenge.sessionId)
     case .StudyBlockOpeningSession(let session):
       self = session.blockId.map { .questionBlock(blockID: $0) } ?? .session
+    case .StudyBlockOpeningMistakesPractice(let practice):
+      self = .mistakesPractice(blockID: practice.blockId)
+    case .StudyBlockOpeningPattern(let pattern):
+      self = .pattern(patternID: pattern.patternId)
     case .StudyBlockOpeningToday:
       self = .today
-    case .StudyBlockOpeningChanged, .case11:
+    case .StudyBlockOpeningChanged, .case13:
       self = .changed
     }
   }

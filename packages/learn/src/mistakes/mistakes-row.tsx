@@ -14,20 +14,6 @@ import {
   ListRowTrailing,
 } from "../_components/list-group";
 
-function MistakesRowDescription({ availability }: { availability: MistakeAvailability }) {
-  const t = useExtracted();
-  const { ready, tomorrow } = availability;
-
-  if (ready > 0 && tomorrow > 0) {
-    return t(
-      "{ready, plural, =0 {# ready to practice} one {# ready to practice} other {# ready to practice}} · {tomorrow, plural, =0 {# available tomorrow} one {# available tomorrow} other {# available tomorrow}}",
-      { ready, tomorrow },
-    );
-  }
-
-  return ready > 0 ? t("Redo what you got wrong") : t("Today's mistakes return tomorrow");
-}
-
 export function MistakesRow({
   availability,
   href,
@@ -36,10 +22,9 @@ export function MistakesRow({
   href: string;
 }) {
   const t = useExtracted();
-  const { ready, tomorrow } = availability;
-  const count = ready + tomorrow;
+  const { ready } = availability;
 
-  if (count === 0) {
+  if (ready === 0) {
     return null;
   }
 
@@ -53,25 +38,16 @@ export function MistakesRow({
       <ListRowBody>
         <ListRowContent>
           <ListRowTitle>{t("Mistakes notebook")}</ListRowTitle>
-          <ListRowDescription>
-            <MistakesRowDescription availability={availability} />
-          </ListRowDescription>
+          <ListRowDescription>{t("Redo what you got wrong")}</ListRowDescription>
         </ListRowContent>
         <ListRowTrailing>
-          <span aria-hidden="true">{ready > 0 ? ready : tomorrow}</span>
-          {!(ready > 0 && tomorrow > 0) && (
-            <span className="sr-only">
-              {ready > 0
-                ? t(
-                    "{count, plural, =0 {# ready to practice} one {# ready to practice} other {# ready to practice}}",
-                    { count: ready },
-                  )
-                : t(
-                    "{count, plural, =0 {# available tomorrow} one {# available tomorrow} other {# available tomorrow}}",
-                    { count: tomorrow },
-                  )}
-            </span>
-          )}
+          <span aria-hidden="true">{ready}</span>
+          <span className="sr-only">
+            {t(
+              "{count, plural, =0 {# ready to practice} one {# ready to practice} other {# ready to practice}}",
+              { count: ready },
+            )}
+          </span>
         </ListRowTrailing>
       </ListRowBody>
     </ListRowLink>

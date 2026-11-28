@@ -187,12 +187,23 @@ private struct LeavesOnEscape: ViewModifier {
   }
 }
 
+/// Whether the screen shows its own options in the bar, which then has less room for the shell's.
+struct ScreenOptionsKey: PreferenceKey {
+  static let defaultValue = false
+
+  static func reduce(value: inout Bool, nextValue: () -> Bool) {
+    value = value || nextValue()
+  }
+}
+
 private struct TaskOptionsToolbar<Actions: View>: ViewModifier {
   let isShown: Bool
   let label: Text
   let actions: Actions
 
   func body(content: Content) -> some View {
+    let content = content.preference(key: ScreenOptionsKey.self, value: isShown)
+
     if #available(iOS 27, *) {
       content.toolbar {
         if isShown {

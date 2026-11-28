@@ -6,6 +6,7 @@ import { BUDGET_LESSON_SPECS } from "../lesson-writer/budget-lesson-specs";
 import { MOBILITY_LESSON } from "../lesson-writer/mobility-lesson-spec";
 import { SOURCED_LESSONS } from "../lesson-writer/sourced-lesson-specs";
 import { BROAD_SAMPLE_CASES } from "./broad-sample-cases";
+import { SECOND_TAKE_TEST_CASES } from "./second-take-test-cases";
 import { type LessonSpecExpected, VISUAL_TEST_CASES } from "./visual-test-cases";
 
 const ACTIVITY_TEMPLATES: LessonSpecParams["activityTemplates"] = listPlannerTemplates();
@@ -814,6 +815,7 @@ export const TEST_CASES: TestCase<LessonSpecExpected, OptionalCountry<LessonSpec
   },
   ...VISUAL_TEST_CASES,
   ...BROAD_SAMPLE_CASES,
+  ...SECOND_TAKE_TEST_CASES,
   {
     expectations: `
       - MUST be in natural Japanese: です・ます, never あなた

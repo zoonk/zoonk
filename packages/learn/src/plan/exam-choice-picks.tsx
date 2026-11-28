@@ -24,10 +24,6 @@ function Picks({ choice, onSave, pending, saveVariant = "default" }: ExamChoiceP
 
   return (
     <div className="flex flex-col gap-3">
-      <p className="text-muted-foreground text-sm">
-        {t("Pick up to {take, number}.", { take: choice.take })}
-      </p>
-
       <CheckList
         choices={choice.options.map((option) => ({
           label: option.shortName ?? option.name,
@@ -57,6 +53,15 @@ function Picks({ choice, onSave, pending, saveVariant = "default" }: ExamChoiceP
         {t("Save")}
       </Button>
     </div>
+  );
+}
+
+/** How many options a choice takes, where nothing above the picks says it already. */
+export function ExamPickLimit({ take }: { take: number }) {
+  const t = useExtracted();
+
+  return (
+    <p className="text-muted-foreground text-sm">{t("Pick up to {take, number}.", { take })}</p>
   );
 }
 

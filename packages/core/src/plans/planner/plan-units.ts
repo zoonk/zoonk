@@ -52,6 +52,8 @@ export type QueueUnit = {
   phase: number;
   rankedOut?: boolean;
   reduced?: boolean;
+  /** A chapter's lessons that each teach the same skills, split into runs by skill: taught in order. */
+  sharedRun?: string;
   skillId: string | null;
   title: string;
   teachingShare?: number;
@@ -97,6 +99,9 @@ function toLessonUnit({
     ...(teaches.outcome ? { outcome: true } : {}),
     ...(teaches.reduced ? { reduced: true } : {}),
     phase: lesson.courseOrder?.phase ?? skill.phase,
+    ...(lesson.chapterId && lesson.skillIds.length > 1
+      ? { sharedRun: `${lesson.chapterId}:${lesson.skillIds.toSorted().join("+")}` }
+      : {}),
     skillId: teaches.skillId,
     title: lesson.title,
   };

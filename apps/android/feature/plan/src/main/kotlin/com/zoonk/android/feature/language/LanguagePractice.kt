@@ -44,7 +44,6 @@ import com.zoonk.android.ui.format.formatList
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.api.models.LanguageTodayPronunciation
 import com.zoonk.api.models.LanguageUnitsAlphabet
-import com.zoonk.api.models.TodayPattern
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -128,42 +127,29 @@ internal fun AlphabetRow(
     }
 }
 
-/** Today's one language notice (main's `LanguagePracticeRow`): words to say again first, else the pattern noticed in recent mistakes. */
+/** Today's one language notice (main's `PronunciationNotice`): the words due to be said again. */
 @Composable
 fun LanguagePracticeNotice(
     goalId: UUID,
-    pattern: TodayPattern?,
     pronunciation: LanguageTodayPronunciation?,
     layout: SuggestionLayout,
     open: (AppRoute) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    when {
-        pronunciation != null -> {
-            val title = pluralStringResource(R.plurals.language_say_again, pronunciation.count.toInt(), pronunciation.count.toInt())
-            PracticeNotice(
-                label = title,
-                summary = title,
-                description = formatList(pronunciation.words, currentLocale()),
-                action = stringResource(R.string.language_say_them),
-                mark = SuggestionMark.Symbol(R.drawable.ic_mic),
-                layout = layout,
-                modifier = modifier,
-            ) { open(AppRoute.Pronunciation(goalId.toString())) }
-        }
-
-        pattern != null -> {
-            PracticeNotice(
-                label = stringResource(R.string.language_pattern_noticed),
-                summary = stringResource(R.string.language_pattern_noticed_summary, pattern.title),
-                description = pattern.title,
-                action = stringResource(R.string.language_pattern_practice),
-                mark = SuggestionMark.New,
-                layout = layout,
-                modifier = modifier,
-            ) { open(AppRoute.Pattern(pattern.id.toString())) }
-        }
+    if (pronunciation == null) {
+        return
     }
+
+    val title = pluralStringResource(R.plurals.language_say_again, pronunciation.count.toInt(), pronunciation.count.toInt())
+    PracticeNotice(
+        label = title,
+        summary = title,
+        description = formatList(pronunciation.words, currentLocale()),
+        action = stringResource(R.string.language_say_them),
+        mark = SuggestionMark.Symbol(R.drawable.ic_mic),
+        layout = layout,
+        modifier = modifier,
+    ) { open(AppRoute.Pronunciation(goalId.toString())) }
 }
 
 @Composable

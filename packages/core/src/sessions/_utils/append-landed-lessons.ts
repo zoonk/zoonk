@@ -12,6 +12,27 @@ import { type SelectedDayPlan } from "./selected-day-plan";
 import { isSelectedPlanCurrent } from "./selected-plan-current";
 import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-access";
 
+/** Only appended work moves an open day's time; a refresh that adds nothing keeps what Today showed. */
+function getAppendedMinutes({
+  appended,
+  ended,
+  planned,
+  previous,
+  saved,
+}: {
+  appended: boolean;
+  ended: boolean;
+  planned: number;
+  previous: number;
+  saved: number;
+}): number {
+  if (ended) {
+    return saved;
+  }
+
+  return appended ? Math.max(previous, planned) : previous;
+}
+
 /** Append only within the day's remaining time; preserve shown order and never change a finished day. */
 export async function appendLandedLessons({
   dropped,
@@ -101,9 +122,13 @@ export async function appendLandedLessons({
       await transaction.studySession.update({
         data: {
           planVersion: savedVersion,
-          plannedMinutes: locked.endedAt
-            ? locked.plannedMinutes
-            : Math.max(previousMinutes, plannedMinutes),
+          plannedMinutes: getAppendedMinutes({
+            appended: lessons.length > 0,
+            ended: locked.endedAt !== null,
+            planned: plannedMinutes,
+            previous: previousMinutes,
+            saved: locked.plannedMinutes,
+          }),
         },
         where: { id: session.id },
       });

@@ -147,8 +147,6 @@ private fun firstStepName(
         Kind.UNKNOWN_DEFAULT_OPEN_API -> ""
         Kind.SOMETHING_NEW -> stringResource(R.string.buddy_page_first_lesson)
         Kind.REVIEW -> stringResource(R.string.buddy_page_first_review)
-        Kind.FIX_MISTAKE -> stringResource(R.string.buddy_page_first_mistake)
-        Kind.PATTERN -> stringResource(R.string.buddy_page_first_pattern)
         Kind.ASK_BUDDY -> stringResource(R.string.buddy_page_first_ask, buddyName)
         Kind.ESSAY -> stringResource(R.string.buddy_page_first_essay)
         Kind.CALL -> stringResource(R.string.buddy_page_first_call)

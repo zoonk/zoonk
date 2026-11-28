@@ -5,6 +5,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { DrawerContent, DrawerFooter } from "@zoonk/ui/components/drawer";
 import { type LucideIcon, Undo2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { EnterButton } from "../_components/enter-button";
 import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
 import { usePlanScreen } from "./plan-context";
 import { useAppliedLine, usePlanChangeSentence, usePlanDateKind } from "./use-change-sentence";
@@ -78,9 +79,9 @@ export function PlanChangeApplied({
             {t("Undo")}
           </Button>
         )}
-        <Button onClick={onDone} size="lg">
+        <EnterButton onClick={onDone} size="lg">
           {t("Done")}
-        </Button>
+        </EnterButton>
       </DrawerFooter>
     </>
   );

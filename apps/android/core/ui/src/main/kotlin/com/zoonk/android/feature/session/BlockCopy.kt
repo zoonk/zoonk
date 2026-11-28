@@ -38,7 +38,7 @@ val DayStep.learnKind: LearnKind
                 LearnKind.Challenge
             }
 
-            mistakesOnly -> {
+            mistakesOnly || fromMistakes -> {
                 LearnKind.Mistakes
             }
 
@@ -57,6 +57,31 @@ val DayStep.learnKind: LearnKind
 /** A language unit's challenge is a live call with the Trickster, with no questions. */
 private val DayStep.isCall: Boolean
     get() = checkpointFacts?.let { !it.mock && it.kind != CheckpointFacts.Kind.Weekly } == true && questions == 0L
+
+/** The day's own work on the learner's mistakes: their missed questions, or a pattern in them. */
+private val DayStep.fromMistakes: Boolean
+    get() = screen == StudyBlock.Screen.MISTAKES_PRACTICE || screen == StudyBlock.Screen.PATTERN
+
+/**
+ * A day's mistakes block whose questions were all fixed elsewhere before it opened: it still opens,
+ * says so and completes. A finished one keeps the count it recorded.
+ */
+val DayStep.alreadyFixed: Boolean
+    get() = screen == StudyBlock.Screen.MISTAKES_PRACTICE && !isFinished && questions == 0L
+
+/** Why a mistakes block or a returning lesson is in the day, said in place of what the row would say otherwise. */
+@Composable
+fun remedialLine(step: DayStep): String? =
+    when {
+        step.alreadyFixed -> null
+        step.screen == StudyBlock.Screen.MISTAKES_PRACTICE -> stringResource(R.string.session_block_mistakes_line)
+        step.screen == StudyBlock.Screen.PATTERN -> stringResource(R.string.session_block_pattern_line)
+        step.kind != StudyBlock.Kind.LEARN -> null
+        step.returning == StudyBlock.Returning.AGAIN -> stringResource(R.string.session_block_returning_again)
+        step.returning == StudyBlock.Returning.ANOTHER_WAY -> stringResource(R.string.session_block_returning_another_way)
+        step.returning == StudyBlock.Returning.MISSED -> stringResource(R.string.session_block_returning_missed)
+        else -> null
+    }
 
 private val DayStep.hasCapsules: Boolean
     get() = kind == StudyBlock.Kind.REVIEW && capsules.isNotEmpty()
@@ -95,6 +120,18 @@ fun blockTitle(step: DayStep): String {
             writingTaskTitle(drill = step.drill, task = step.writingTask, fallback = step.title)
         }
 
+        step.alreadyFixed -> {
+            stringResource(R.string.mistakes_practice_already_fixed)
+        }
+
+        step.screen == StudyBlock.Screen.MISTAKES_PRACTICE -> {
+            pluralStringResource(R.plurals.session_block_fix_mistakes, step.questions.toInt(), step.questions.toInt())
+        }
+
+        step.screen == StudyBlock.Screen.PATTERN -> {
+            stringResource(R.string.session_block_practice_pattern, step.title.orEmpty())
+        }
+
         step.fullReview -> {
             stringResource(R.string.session_block_review)
         }
@@ -125,6 +162,8 @@ private fun practiceTitle(step: DayStep): String {
 @Composable
 fun blockDetail(step: DayStep): String? {
     val count = step.questions.toInt()
+    if (step.alreadyFixed) return null
+    remedialLine(step)?.let { return it }
 
     return when {
         // Nothing was due, so the day reviews the weakest topics: never called due.

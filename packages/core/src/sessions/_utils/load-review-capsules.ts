@@ -8,6 +8,7 @@ import { getSkillRetrievability } from "../../learner/fsrs-scheduler";
 import { getDailyReviewCap, selectDueReviews } from "../../learner/review-load";
 import { getItemAudienceFilter } from "../../library/items/item-field";
 import { type ItemSetPick, listItemSetsForSkills } from "../../library/items/item-sets";
+import { SECOND_TAKE_KEY_WHERE } from "../../library/second-takes/second-take-identity";
 import { type BlockCapsule } from "../block-payload";
 import {
   type CapsuleItemCandidate,
@@ -179,7 +180,7 @@ async function loadCapsuleSources({
     prisma.lessonSkill.findMany({
       include: { lesson: { select: { id: true, title: true } } },
       orderBy: { createdAt: "asc" },
-      where: { skillId: { in: [...skillIds] } },
+      where: { lesson: { NOT: SECOND_TAKE_KEY_WHERE }, skillId: { in: [...skillIds] } },
     }),
   ]);
 

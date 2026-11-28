@@ -1,12 +1,13 @@
 import "server-only";
 import { type StudySessionBlock, prisma } from "@zoonk/db";
-import { NOT_LESSON_ANSWER_FILTER } from "@zoonk/db/lesson-answer";
 import { type CheckpointOutcome } from "../checkpoints/_utils/checkpoint-outcome";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { readFinishedChapter } from "../mind-maps/finished-chapters";
+import { getPracticeTimeZone } from "../mistakes/mistake-availability";
 import { findReminderOffer } from "../reminders/_utils/reminder-offer";
 import { completeBlockMoment } from "./_utils/block-completion";
 import { finishEmptyBlock } from "./_utils/finish-empty-block";
+import { finishMistakeBlock } from "./_utils/finish-mistake-block";
 import { findLessonFinish, markLessonBlockDone, readFinishedLessonId } from "./_utils/lesson-block";
 import { getNetScore, getNetScoredItemIds } from "./_utils/net-score";
 import { trackBlockCompleted } from "./_utils/session-events";
@@ -90,12 +91,7 @@ async function toCheckpointResult({
     prisma.item.findMany({ where: { id: { in: itemIds } } }),
     prisma.attempt.findMany({
       select: { answer: true, isCorrect: true, itemId: true },
-      where: {
-        ...NOT_LESSON_ANSWER_FILTER,
-        itemId: { in: itemIds },
-        studySessionId: sessionId,
-        userId,
-      },
+      where: { fromLesson: false, itemId: { in: itemIds }, studySessionId: sessionId, userId },
     }),
   ]);
 
@@ -244,6 +240,7 @@ export async function finishLessonBlock({
     block: owned.block,
     brainPower: finish.brainPower,
     eventId: finish.id,
+    firstCompletion: finish.kind === "lesson",
     goalId,
     lessonId,
     timeZone: owned.timeZone,
@@ -307,11 +304,29 @@ export async function finishStudyBlock({
     return owned;
   }
 
+  const payload = readBlockPayload(owned.block);
+
+  if (payload.mistakeIds.length > 0) {
+    const timeZone = await getPracticeTimeZone({
+      goal: owned.session.goal,
+      timeZone: input.timeZone,
+      userId: owned.userId,
+    });
+
+    return finishMistakeBlock({ ...owned, payload, timeZone });
+  }
+
   const timeZone = getAnswerTimeZone({ goal: owned.session.goal, timeZone: input.timeZone });
   const context = { ...owned, timeZone };
 
   if (owned.block.kind === "learn") {
     return finishLessonBlock(context);
+  }
+
+  const { mistakeIds, patternId } = readBlockPayload(owned.block);
+
+  if (mistakeIds.length > 0 || patternId) {
+    return { status: "notFound" };
   }
 
   const source = await findMissionSource(owned.block);

@@ -28,8 +28,6 @@
   "language_level_up": "b3b108f8a3a2b71c30336f1fd7a58467947788bae3da8e10ed3c241c9713c066",
   "language_levels_move": "da05c2c3fb787ad73d9d8e823f4968f1dee4c3df1293a0f4d9a8642ec608c4bb",
   "language_pattern_noticed": "e654497e18125714de702274c66c61a23382355609d20f4eb173ad101f5699e9",
-  "language_pattern_noticed_summary": "d3bfefbfc8a3ee83647d967f4b51e3d4fd640fedce622f6d8fdf928b8cc18437",
-  "language_pattern_practice": "8dc478cb016b5d420a0720da5ebcbe53557ce6757ef839c15480c4fb475641c9",
   "language_pattern_typos": "b7078f215dd2a79e2ebb6d82f83776747611dcc13a9227d32cf9fd25883a6917",
   "language_pattern_typos_description": "36e2a7cd3973bd3c92a2955557aa01b6b83a96c38b9934d4f0ebd5adf3c252ba",
   "language_practice_estimates": "38bec0941066314b1ec84fb14ceb7f9e7234df3ee8fa33da2391a890bbee7d33",
@@ -141,10 +139,6 @@
     <string name="language_alphabet_skip_failed">Il salvataggio non è riuscito. Riprova.</string>
     <!-- Button that opens the words to say aloud again; "them" is those words. -->
     <string name="language_say_them">Dille</string>
-    <!-- %1$s names the rule the learner keeps getting wrong. -->
-    <string name="language_pattern_noticed_summary">Abbiamo notato un errore ricorrente: %1$s</string>
-    <!-- Opens the noticed pattern. -->
-    <string name="language_pattern_practice">Esercitati</string>
     <string name="language_level">Livello di %1$s</string>
     <!-- %1$s is the learner's language level now, %2$s the level they aim for: "A2 → B1". -->
     <string name="language_level_toward">%1$s → %2$s</string>

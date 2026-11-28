@@ -1,6 +1,5 @@
 import "server-only";
 import { type Attempt, type StudySessionBlock, prisma, sql } from "@zoonk/db";
-import { NOT_LESSON_ANSWER_SQL } from "@zoonk/db/lesson-answer";
 import { restoreCheckpointAnswers } from "../../checkpoints/_utils/checkpoint-answer-evidence";
 import { writingTaskSchema } from "../../exams/essays/writing-contract";
 import { classifyAnswers } from "../answer-material";
@@ -55,7 +54,7 @@ export async function loadSessionAnswers({
   userId: string;
 }): Promise<SessionAnswer[]> {
   const rows = await prisma.$queryRaw<SessionAnswerRow[]>`
-    SELECT ${ANSWER_COLUMNS}, (${NOT_LESSON_ANSWER_SQL}) AS "isBlockAnswer", answer -> 'writingTask' AS "writingTask",
+    SELECT ${ANSWER_COLUMNS}, NOT from_lesson AS "isBlockAnswer", answer -> 'writingTask' AS "writingTask",
            CASE WHEN ${SAVED_WRITING_ITEM} IS NOT NULL
              THEN answer #>> '{conditions,version}' END AS "writingVersion"
     FROM attempts

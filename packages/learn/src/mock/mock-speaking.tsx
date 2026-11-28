@@ -122,6 +122,7 @@ function SpeakingHandIn({ isLast, left }: { isLast: boolean; left: number }) {
           <AlertDialogFooter>
             <AlertDialogCancel>{t("Keep going")}</AlertDialogCancel>
             <AlertDialogAction
+              enter="off"
               onClick={() => {
                 setConfirming(false);
                 void runner.submitSection();

@@ -47,14 +47,13 @@ internal fun missionArcs(
 
 /**
  * Today's missions as a ring around [content]: done ones darker, all in Brain Power's violet once
- * every one is done. Decorative: what it sits in says the count. [strokeWidth] is in main's 36-unit box.
+ * every one is done. Decorative: what it sits in says the count.
  */
 @Composable
 fun MissionsRing(
     done: Int,
     total: Int,
     modifier: Modifier = Modifier,
-    strokeWidth: Float = 2f,
     content: @Composable BoxScope.() -> Unit = {},
 ) {
     val arcs = remember(done, total) { missionArcs(done, total) }
@@ -67,7 +66,7 @@ fun MissionsRing(
             modifier.drawBehind {
                 val unit = size.minDimension / RING_VIEW_BOX
                 val radius = RADIUS * unit
-                val stroke = Stroke(width = strokeWidth * unit, cap = StrokeCap.Round)
+                val stroke = Stroke(width = STROKE_WIDTH * unit, cap = StrokeCap.Round)
 
                 arcs.forEach { arc ->
                     drawArc(
@@ -93,6 +92,7 @@ fun MissionsRing(
 
 private const val RING_VIEW_BOX = 36f
 private const val RADIUS = 17f
+private const val STROKE_WIDTH = 2f
 private const val FULL_TURN = 360f
 private const val GAP_DEGREES = 22f
 private const val START_DEGREES = -90f

@@ -2,7 +2,6 @@ import { assessPronunciation } from "@zoonk/ai/tasks/language/assess-pronunciati
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
-import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
@@ -14,7 +13,6 @@ import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
-import { pickInMistake } from "../../_test-utils/shown-choice";
 import { startLanguageConversation } from "../../language/conversations/start-language-conversation";
 import { practiceMistakePattern } from "../../language/patterns/practice-mistake-pattern";
 import { answerPronunciationReview } from "../../language/pronunciation/answer-pronunciation-review";
@@ -27,8 +25,6 @@ import { checkLessonStep } from "../../lesson-player/check-lesson-step";
 import { completeLibraryLesson } from "../../lesson-player/complete-library-lesson";
 import { startLibraryLesson } from "../../lesson-player/start-library-lesson";
 import { createLessonQuestion } from "../../lesson-questions/create-lesson-question";
-import { answerMistakePractice } from "../../mistakes/answer-mistake-practice";
-import { finishMistakePractice } from "../../mistakes/finish-mistake-practice";
 import * as planning from "../../plans/_utils/replan";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { getTodayView } from "../../view-models/today/get-today-view";
@@ -133,36 +129,6 @@ describe("an activity done from Today before the learner starts the day", () => 
     vi.useRealTimers();
   });
 
-  it("credits a pattern drill to the day Today showed, once", async () => {
-    const { goal, user } = await languageGoalFixture();
-    mockSession(user.id);
-
-    const pattern = await patternFixture({ goalId: goal.id, userId: user.id });
-    const shown = await readShownMissions(goal.id);
-
-    expect(shown).toContain("pattern");
-
-    const input = drillInput();
-    const drilled = await practiceMistakePattern({ input, patternId: pattern.id });
-
-    expect(drilled).toMatchObject({
-      result: { missionMoment: { completed: ["pattern"] } },
-      status: "ready",
-    });
-
-    await expect(readSavedMissions(goal.id)).resolves.toStrictEqual([shown]);
-
-    await expect(practiceMistakePattern({ input, patternId: pattern.id })).resolves.toStrictEqual(
-      drilled,
-    );
-
-    await expect(
-      practiceMistakePattern({ input: drillInput(), patternId: pattern.id }),
-    ).resolves.toMatchObject({ result: { missionMoment: null }, status: "ready" });
-
-    await expect(readSavedMissions(goal.id)).resolves.toStrictEqual([shown]);
-  });
-
   it("opens one day when Start is tapped while a drill saves it", async () => {
     const { goal, user } = await languageGoalFixture();
     mockSession(user.id);
@@ -179,64 +145,7 @@ describe("an activity done from Today before the learner starts the day", () => 
 
     expect(opened.status).toBe("opened");
 
-    expect(drilled).toMatchObject({
-      result: { missionMoment: { completed: ["pattern"] } },
-      status: "ready",
-    });
-
-    await expect(readSavedMissions(goal.id)).resolves.toStrictEqual([shown]);
-  });
-
-  it("saves the day at a notebook practice's first answer, before it fixes anything", async () => {
-    const user = await userFixture();
-
-    const { goal, items, skills } = await sessionGoalFixture({
-      challengesDone: true,
-      lessons: 4,
-      userId: user.id,
-    });
-
-    mockSession(user.id);
-
-    const mistake = await mistakeFixture({
-      cause: "misread",
-      createdAt: new Date(SESSION_NOW.getTime() - MS_PER_DAY),
-      itemId: items[0]?.id,
-      skillId: skills[0]?.id,
-      userId: user.id,
-    });
-
-    const shown = await readShownMissions(goal.id);
-    expect(shown).toContain("fixMistake");
-
-    const answered = await answerMistakePractice({
-      input: {
-        answer: await pickInMistake({ mistakeId: mistake.id }),
-        durationMs: 5000,
-        itemId: mistake.itemId ?? "",
-        run: { answerIds: [], goalId: goal.id },
-        timeZone: TIME_ZONE,
-      },
-      mistakeId: mistake.id,
-    });
-
-    if (answered.status !== "ready") {
-      throw new Error(`Mistake answer failed: ${answered.status}`);
-    }
-
-    expect(answered.feedback.mistakeStatus).toBe("fixed");
-
-    const finished = await finishMistakePractice({
-      answerIds: [answered.feedback.answerId],
-      ended: true,
-      goalId: goal.id,
-      timeZone: TIME_ZONE,
-    });
-
-    expect(finished).toMatchObject({
-      result: { missionMoment: { completed: ["fixMistake"] } },
-      status: "ready",
-    });
+    expect(drilled).toMatchObject({ status: "ready" });
 
     await expect(readSavedMissions(goal.id)).resolves.toStrictEqual([shown]);
   });
@@ -338,37 +247,6 @@ describe("an activity done from Today before the learner starts the day", () => 
 
     await expect(readSavedMissions(goal.id)).resolves.toStrictEqual([shown]);
   });
-
-  it.each(["paused", "removed"] as const)(
-    "credits a drill to the goal whose Today offered it when the goal that noticed it is %s",
-    async (noticedGoal) => {
-      const noticed = await languageGoalFixture();
-      const { goal, user } = await languageGoalFixture({ userId: noticed.user.id });
-
-      const [pattern] = await Promise.all([
-        patternFixture({ goalId: noticed.goal.id, userId: user.id }),
-        learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
-      ]);
-
-      await (noticedGoal === "paused"
-        ? prisma.goal.update({ data: { status: "paused" }, where: { id: noticed.goal.id } })
-        : prisma.goal.delete({ where: { id: noticed.goal.id } }));
-
-      mockSession(user.id);
-
-      const shown = await readShownMissions(goal.id);
-      expect(shown).toContain("pattern");
-
-      await expect(
-        practiceMistakePattern({ input: drillInput(), patternId: pattern.id }),
-      ).resolves.toMatchObject({
-        result: { missionMoment: { completed: ["pattern"] } },
-        status: "ready",
-      });
-
-      await expect(readSavedMissions(goal.id)).resolves.toStrictEqual([shown]);
-    },
-  );
 
   it("saves the day of the goal a pronunciation round is for, not another goal of its language", async () => {
     const round = await languageGoalFixture();

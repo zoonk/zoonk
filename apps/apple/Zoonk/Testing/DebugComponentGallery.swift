@@ -856,7 +856,7 @@
       earlierWork: [], exam: nil, examChoice: nil, focusTest: nil,
       goal: decode(
         #"{"dateEstimated":false,"daysLeft":120,"id":"g1","kind":"exam","title":"ENEM 2027"}"#),
-      insight: nil, mockFunding: nil, notice: nil, pattern: nil,
+      insight: nil, mockFunding: nil, notice: nil,
       planChange: change, progress: nil,
       session: decode(
         #"""

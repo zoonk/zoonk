@@ -11,45 +11,66 @@ import { type MistakePracticeFeedback, MistakePracticeRun } from "@zoonk/learn/m
 import { LessonPracticeStep } from "@zoonk/player/lesson/practice";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { type ComponentProps } from "react";
-import { finishMistakePracticeAction } from "./practice-actions";
+import { finishMistakePracticeAction, loadMistakePracticeAction } from "./practice-actions";
 
 type RunProps = ComponentProps<typeof MistakePracticeRun>;
 
-/** A link opens practice with the mistakes ready now; Back and forward keep the screen as it was. */
+type PracticeScope = { blockId?: string; mockId?: string; skillId?: string };
+
+/**
+ * A link opens practice with the mistakes ready now; Back and forward keep the screen as it was. A
+ * day's block (`blockId`) plays the mistakes it holds and ends back on Today. A mock's run names
+ * only the mock: its goal is the sitting's, whichever goal is current.
+ */
 export function MistakePracticeClient({
+  backHref,
+  doneHref,
   goalId,
   practice,
+  scope,
   trueFalseLabels,
   tutor,
 }: {
+  backHref: string;
+  /** A day's block goes on to the session's next stop, as the day's other blocks do. */
+  doneHref?: string;
   goalId: string;
   practice: RunProps["practice"];
+  scope: PracticeScope;
   trueFalseLabels: RunProps["trueFalseLabels"];
   tutor: TutorViewer;
 }) {
   const lessonHref = useLessonPlayerHref();
   const questionTutor = useQuestionTutor(tutor);
   const { bfcacheId } = useRouter();
+  const { blockId, mockId, skillId } = scope;
+  const run = mockId ? { mockId } : { blockId, goalId };
 
   return (
     <MistakePracticeRun
       actions={{
+        again: () => loadMistakePracticeAction({ ...run, skillId }),
         answer: ({ mistakeId, runAnswerIds, ...answer }) =>
           postToApp<MistakePracticeFeedback>({
             body: {
               ...answer,
-              run: { answerIds: runAnswerIds, goalId },
+              run: { ...run, answerIds: runAnswerIds },
               timeZone: getLocalTimeZone(),
             },
             path: `/api/me/mistakes/${encodeURIComponent(mistakeId)}/answers`,
           }),
-        finish: (run) =>
-          finishMistakePracticeAction({
-            ...run,
-            ended: true,
-            goalId,
-            timeZone: getLocalTimeZone(),
-          }),
+        // A block's run finishes even unanswered: one whose mistakes are all gone completes it.
+        finish: async ({ answerIds }) =>
+          answerIds.length === 0 && !blockId
+            ? null
+            : finishMistakePracticeAction({
+                ...run,
+                answerIds,
+                ended: true,
+                includeAllFormats: true,
+                skillId,
+                timeZone: getLocalTimeZone(),
+              }),
         record: async ({
           audio,
           durationMs,
@@ -63,7 +84,7 @@ export function MistakePracticeClient({
             attemptId,
             audio,
             durationMs,
-            practice: { answerIds: runAnswerIds, goalId, mistakeId, practiceDurationMs },
+            practice: { ...run, answerIds: runAnswerIds, mistakeId, practiceDurationMs },
             stepId,
             studySessionId: null,
           });
@@ -77,8 +98,10 @@ export function MistakePracticeClient({
             : { status: "failed" };
         },
       }}
-      backHref="/mistakes"
+      backHref={backHref}
       buddy={tutor.buddy}
+      dayBlock={Boolean(blockId)}
+      doneHref={doneHref}
       key={bfcacheId}
       lessonHref={lessonHref}
       practice={practice}

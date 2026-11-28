@@ -40,6 +40,7 @@ export function getSessionLessonCandidates({
   const reviewDay = findPlannedReview({ items: plan.items, today: localDate }) !== null;
 
   if (
+    blocks.some((block) => readBlockPayload(block).replacedOnlyLesson) ||
     (reviewDay && goal.kind !== "exam") ||
     isSavedFullReviewDay({
       blocks,
