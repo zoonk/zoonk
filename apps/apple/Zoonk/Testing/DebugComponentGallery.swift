@@ -69,6 +69,9 @@
           GallerySection(id: "waits", title: "Waits") { Waits() }
           GallerySection(id: "marks", title: "Marks, kinds and belts") { Marks() }
           GallerySection(id: "options", title: "Answer options") { Options() }
+          GallerySection(id: "shownAnswers", title: "Answers shown after the fact") {
+            ShownAnswers()
+          }
           GallerySection(id: "choices", title: "Choice list") { Choices() }
           GallerySection(id: "checks", title: "Check list") { Choices(picks: .several) }
           GallerySection(id: "checksSaving", title: "Check list saving") {
@@ -1180,13 +1183,16 @@
           marker: 4, isPicked: true, result: .wrong, isLocked: true,
           text: RichInline(text: AttributedString("Checked wrong")), action: {})
         AnswerOption(
-          marker: 5, isPicked: true, result: .guess, isLocked: true,
+          marker: 5, isPicked: true, isGuessed: true,
+          text: RichInline(text: AttributedString("A guess, picked")), action: {})
+        AnswerOption(
+          marker: 6, isPicked: true, result: .guess, isLocked: true,
           text: RichInline(text: AttributedString("A guess, checked")), action: {})
         AnswerOption(
-          marker: 6, picks: .several,
+          marker: 7, picks: .several,
           text: RichInline(text: AttributedString("One of several at rest")), action: {})
         AnswerOption(
-          marker: 7, picks: .several, isPicked: true,
+          marker: 8, picks: .several, isPicked: true,
           text: RichInline(text: AttributedString("One of several, picked")), action: {})
 
         LessonOptionList(
@@ -1195,6 +1201,26 @@
           },
           selectedId: "A green pear", isChecked: false, isLocked: false, select: { _ in })
       }
+      .padding(.vertical, 8)
+    }
+  }
+
+  /// Main's `AnswerPair`, as the mistakes notebook and a mock's review show it, then a checkpoint's
+  /// answers as its review shows them.
+  private struct ShownAnswers: View {
+    var body: some View {
+      VStack(spacing: 10) {
+        MistakeAnswerRow(text: "What the learner answered", isRight: false, isLiteral: true)
+        MistakeAnswerRow(text: "The right answer", isRight: true, isLiteral: true)
+      }
+      .padding(.vertical, 8)
+
+      ChoiceItemView(
+        options: ["The right one they missed", "Their wrong pick", "Another option"],
+        select: .one,
+        result: PracticeItemResult(answer: .choice(1), correctAnswer: .choice(0), isCorrect: false),
+        isLocked: true, draft: .constant(nil), isReview: true
+      )
       .padding(.vertical, 8)
     }
   }

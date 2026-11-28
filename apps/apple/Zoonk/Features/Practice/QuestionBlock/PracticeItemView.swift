@@ -35,6 +35,8 @@ struct PracticeItemView: View {
   var result: PracticeItemResult?
   var isLocked = false
   var showsStatement = true
+  /// Answers shown after the fact, as a checkpoint's review shows them.
+  var isReview = false
   @Binding var draft: PracticeAnswer?
   var onSubmit: (PracticeAnswer) -> Void = { _ in }
 
@@ -45,11 +47,12 @@ struct PracticeItemView: View {
     case .multipleChoice:
       ChoiceItemView(
         options: question.options, select: question.select, result: result, isLocked: locked,
-        draft: $draft)
+        draft: $draft, isReview: isReview)
     case .trueFalse:
       TrueFalseItemView(
         statement: question.question, labels: labels, allowsBlank: allowsBlank,
-        showsStatement: showsStatement, result: result, isLocked: locked, draft: $draft)
+        showsStatement: showsStatement, result: result, isLocked: locked, draft: $draft,
+        isReview: isReview)
     case .matchPairs:
       MatchPairsItemView(
         question: question, result: result, isLocked: locked, draft: $draft, onSubmit: onSubmit)
@@ -73,13 +76,15 @@ struct ChoiceItemView: View {
   let result: PracticeItemResult?
   let isLocked: Bool
   @Binding var draft: PracticeAnswer?
+  /// Each answer starts with its verdict and has nothing to press.
+  var isReview = false
 
   var body: some View {
     let correct = result?.correctAnswer?.picks ?? []
     let shownPicks = result?.answer.picks ?? picks
 
     VStack(alignment: .leading, spacing: 10) {
-      if select.isMulti {
+      if select.isMulti && !isReview {
         PickRule(select: select)
       }
 
@@ -87,14 +92,15 @@ struct ChoiceItemView: View {
         if result == nil || correct.isEmpty || correct.contains(index) || shownPicks.contains(index)
         {
           AnswerOption(
-            marker: index + 1,
+            marker: isReview ? nil : index + 1,
             picks: select.isMulti ? .several : .one,
             isPicked: shownPicks.contains(index),
             result: optionResult(index, correct: correct, picked: shownPicks),
             isLocked: isLocked,
             text: LessonRichText.typeset(option),
-            action: { pick(index) }
+            action: isReview ? nil : { pick(index) }
           )
+          .accessibilityAddTraits(isReview && shownPicks.contains(index) ? .isSelected : [])
           .practiceFocus(index == 0 ? .answer : nil)
         }
       }
@@ -158,6 +164,8 @@ struct TrueFalseItemView: View {
   let result: PracticeItemResult?
   let isLocked: Bool
   @Binding var draft: PracticeAnswer?
+  /// Each answer starts with its verdict and has nothing to press.
+  var isReview = false
 
   var body: some View {
     let shownPick = result?.answer ?? draft
@@ -176,13 +184,14 @@ struct TrueFalseItemView: View {
           if result == nil || optionResult(answer) != nil || shownPick == answer {
             let text = localizedLabel(for: answer)
             AnswerOption(
-              marker: index + 1,
+              marker: isReview ? nil : index + 1,
               isPicked: shownPick == answer,
               result: optionResult(answer),
               isLocked: isLocked,
               text: RichInline(text: AttributedString(text)),
-              action: { draft = draft == answer ? nil : answer }
+              action: isReview ? nil : { draft = draft == answer ? nil : answer }
             )
+            .accessibilityAddTraits(isReview && shownPick == answer ? .isSelected : [])
             .practiceFocus(index == 0 ? .answer : nil)
           }
         }

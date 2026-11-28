@@ -11,7 +11,7 @@ enum AnswerOptionResult: Equatable {
 /// Main's `AnswerOption`: its words, a mark at its end that shows what's picked, a ring where the
 /// question takes one answer and a square where it takes several, and once checked the word its
 /// result shows. On a hardware keyboard the first ten answer to their number key (the tenth to 0),
-/// as on the web, and show it before the words.
+/// as on the web, and show it before the words; once checked, that room shows the verdict's mark.
 struct AnswerOption: View {
   var marker: Int?
   var shortcut: Int?
@@ -25,7 +25,7 @@ struct AnswerOption: View {
   let text: RichInline
   var detail: String?
   /// Without one, the answer is shown after the fact: the same look, with nothing to press and no
-  /// mark, its marker (such as a step's place) in ink once picked.
+  /// mark, led by its marker (such as a step's place) in ink once picked, or else by its verdict's.
   let action: (() -> Void)?
 
   var body: some View {
@@ -35,6 +35,8 @@ struct AnswerOption: View {
       HStack(alignment: .firstTextBaseline, spacing: 12) {
         if let marker {
           KeyMarker(number: marker, isPicked: isPicked && result == nil)
+        } else if let result {
+          VerdictMark(result: result)
         }
         answerContent
       }
@@ -76,10 +78,16 @@ struct AnswerOption: View {
     .choiceTraits(picks, isPicked: isPicked)
   }
 
-  /// Once locked the key answers nothing, so it hides in its room and the words stay put.
+  /// Once locked the key answers nothing, so it hides in its room, which shows the verdict's mark
+  /// once checked, and the words stay put.
   private func pickKey(_ number: Int) -> some View {
     KeyMarker(number: number)
-      .opacity(isLocked ? 0 : 1)
+      .opacity(isLocked || result != nil ? 0 : 1)
+      .overlay {
+        if let result {
+          VerdictMark(result: result)
+        }
+      }
   }
 
   private var answerContent: some View {
@@ -328,6 +336,29 @@ struct KeyMarker: View {
       .background(Color(.foreground).opacity(isPicked ? 1 : 0.04), in: shape)
       .overlay(shape.strokeBorder(Color(.foreground).opacity(isPicked ? 0 : 0.12)))
       .accessibilityHidden(true)
+  }
+}
+
+/// Main's verdict mark, in a key's room or before an answer shown after the fact: bare and in the
+/// words' color, so it never reads as a ticked checkbox. VoiceOver hears the verdict from the row
+/// and its feedback.
+struct VerdictMark: View {
+  let result: AnswerOptionResult
+
+  var body: some View {
+    Image(systemName: symbol)
+      .fontWeight(.semibold)
+      .imageScale(.small)
+      .frame(minWidth: 20)
+      .accessibilityHidden(true)
+  }
+
+  private var symbol: String {
+    switch result {
+    case .guess: "minus"
+    case .right: "checkmark"
+    case .wrong: "xmark"
+    }
   }
 }
 
