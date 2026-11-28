@@ -74,24 +74,22 @@ private struct TaskTitleToolbar: ViewModifier {
   /// The screen's edges and the room the bar gives the title, both across the window.
   @State private var screen: ClosedRange<CGFloat>?
   @State private var room: ClosedRange<CGFloat>?
-  @State private var lineWidth: CGFloat?
 
   let title: Text?
   /// What the system calls the screen (VoiceOver, the window, Back's menu): the title when it shows.
   let name: Text
 
   /// Takes from the side nearer the screen's edge what the other side lacks, so the title's room is
-  /// as wide on each side of the screen's middle, but no more than the room the title can spare on
-  /// one line.
+  /// as wide on each side of the screen's middle, as main's: a long title is cut sooner rather
+  /// than drawn off center.
   private var inset: (leading: CGFloat, trailing: CGFloat) {
-    guard let screen, let room, let lineWidth else {
+    guard let screen, let room else {
       return (0, 0)
     }
 
     let leading = room.lowerBound - screen.lowerBound
     let trailing = screen.upperBound - room.upperBound
-    let spare = max(0, room.upperBound - room.lowerBound - lineWidth)
-    return (min(max(0, trailing - leading), spare), min(max(0, leading - trailing), spare))
+    return (max(0, trailing - leading), max(0, leading - trailing))
   }
 
   private func styled(_ title: Text) -> some View {
@@ -113,25 +111,12 @@ private struct TaskTitleToolbar: ViewModifier {
       .navigationTitle(title ?? name)
       .toolbarTitleDisplayMode(.inline)
       .toolbar {
-        // Stands in for the bar's own title, which keeps to one line.
+        // Stands in for the bar's own title: one line, as main's, so a long topic never moves
+        // what's under the bar.
         if let title {
           ToolbarItem(placement: .title) {
             styled(title)
-              .lineLimit(2)
-              .multilineTextAlignment(.center)
-              .minimumScaleFactor(0.85)
-              .fixedSize(horizontal: false, vertical: true)
-              .background {
-                styled(title)
-                  .lineLimit(1)
-                  .fixedSize()
-                  .hidden()
-                  .onGeometryChange(for: CGFloat.self) { proxy in
-                    proxy.size.width.rounded(.up)
-                  } action: {
-                    lineWidth = $0
-                  }
-              }
+              .lineLimit(1)
               .padding(.leading, inset.leading)
               .padding(.trailing, inset.trailing)
               // The bar sizes a title to its ideal width when it first lays it out, and then puts a
