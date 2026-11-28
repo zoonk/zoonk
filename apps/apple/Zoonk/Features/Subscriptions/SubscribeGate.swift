@@ -343,7 +343,11 @@ extension HelpLimit {
         "No more calls today", table: "Subscriptions", comment: "The plan's call time is used")
     case .runs:
       LocalizedStringResource("No more code runs today", table: "Subscriptions")
-    case .quickExplanations, .goals, .uploads, .questions, nil:
+    case .questions:
+      LocalizedStringResource("No more questions today", table: "Subscriptions")
+    case .uploads:
+      LocalizedStringResource("No more material today", table: "Subscriptions")
+    case .quickExplanations, .goals, nil:
       LocalizedStringResource(
         "You've reached today's limit", table: "Subscriptions",
         comment: "The learner used today's AI checks, clips and similar")
