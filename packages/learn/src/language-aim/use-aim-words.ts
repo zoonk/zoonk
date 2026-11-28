@@ -22,7 +22,11 @@ export function useAimWords() {
     /** When the plan reaches that level at the learner's time; nothing while it isn't known. */
     around: (forecast: FinishForecast | null): string | undefined => {
       if (forecast?.finishReason === "beyondHorizon") {
-        return t("In 10+ years");
+        return t({
+          description:
+            "Under a language level to aim for, when reaching it takes more than ten years at the learner's time.",
+          message: "In 10+ years",
+        });
       }
 
       if (!forecast?.endDate) {

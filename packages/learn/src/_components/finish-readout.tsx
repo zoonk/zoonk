@@ -102,7 +102,13 @@ export function FinishReadout({
 
   if (!endDate) {
     return (
-      <Readout className={className} label={t("to finish")}>
+      <Readout
+        className={className}
+        label={t({
+          description: "Under '10+ years': how long finishing the plan takes at the time picked.",
+          message: "to finish",
+        })}
+      >
         <BigQuantity>
           {t({
             description:
