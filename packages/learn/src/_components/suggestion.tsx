@@ -240,14 +240,17 @@ export function SuggestionHeader({ children }: { children: React.ReactNode }) {
   if (presentation === "sheet") {
     return (
       <div className="flex items-start gap-3" data-slot="suggestion-header">
-        <DrawerTitle className="min-w-0 flex-1 text-pretty">{children}</DrawerTitle>
+        <DrawerTitle className="min-w-0 flex-1 text-balance">{children}</DrawerTitle>
         <DrawerCloseButton label={t("Close")} />
       </div>
     );
   }
 
   return (
-    <h2 className="text-compact leading-snug font-semibold" data-slot="suggestion-header">
+    <h2
+      className="text-compact leading-snug font-semibold text-balance"
+      data-slot="suggestion-header"
+    >
       {children}
     </h2>
   );
