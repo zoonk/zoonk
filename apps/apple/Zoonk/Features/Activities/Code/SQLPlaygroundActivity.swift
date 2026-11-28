@@ -378,6 +378,8 @@ private struct SQLPlaygroundCanvas: View {
     let started = revision
     let sql = query
     activeRun = id
+    // As on main, where Run takes focus from the query, the keyboard goes so the rows show.
+    isEditorFocused = false
 
     Task {
       let run = await runner.run(query: sql, tables: fields.tables)

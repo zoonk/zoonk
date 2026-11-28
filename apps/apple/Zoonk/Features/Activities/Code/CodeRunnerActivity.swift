@@ -75,6 +75,7 @@ private struct CodeRunnerCanvas: View {
   @ActivityState("isStale") private var isStale = false
   @State private var runtime: CodeRuntimeStatus
   @State private var runtimeAttempt = 0
+  @FocusState private var editingLine: Int?
 
   init(context: ActivityCanvasContext, fields: CodeRunnerFields) {
     self.context = context
@@ -220,6 +221,7 @@ private struct CodeRunnerCanvas: View {
             .autocorrectionDisabled()
             .keyboardType(.asciiCapable)
             .submitLabel(.go)
+            .focused($editingLine, equals: number)
             .codeColors(line, language: fields.language.rawValue)
           } else {
             CodeText(tokens: colored.indices.contains(index) ? colored[index] : [])
@@ -256,6 +258,8 @@ private struct CodeRunnerCanvas: View {
     let started = revision
     let code = lines.joined(separator: "\n")
     activeRun = id
+    // As on main, where Run takes focus from the code, the keyboard goes so the output shows.
+    editingLine = nil
 
     Task {
       let result = await runner.run(code)
