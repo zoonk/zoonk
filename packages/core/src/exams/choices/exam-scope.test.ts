@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { CACD_SHARED, cacdStructure } from "../../library/exams/_test-utils/cacd-structure";
 import { type ExamStructure, examStructureSchema } from "../../library/exams/blueprint-contract";
+import { listPlanShares } from "../../library/exams/subject-shares";
 import { getSubjectShares } from "../mocks/mock-options";
 import {
   COMMON_TEST_STRUCTURE,
@@ -222,6 +223,11 @@ describe("a learner who prepares an exam's first phase", () => {
     });
 
     expect(firstPhase.mock?.scoring).not.toHaveProperty("finalShares");
+  });
+
+  it("weighs every area of the phase by its place in it", () => {
+    const shares = listPlanShares(firstPhase);
+    expect(new Set(shares).size).toBe(1);
   });
 
   it("splits the phase's items among all its areas", () => {

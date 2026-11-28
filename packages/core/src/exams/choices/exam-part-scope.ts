@@ -24,6 +24,26 @@ export function listNamedParts({
   return parts.every((part) => part !== undefined) ? [...new Set(parts)] : [];
 }
 
+type Subject = ExamStructure["subjects"][number];
+
+/** A subject of the kept parts names only those parts, so a part left out can't count it. */
+function keepPartGroups({
+  parts,
+  subject,
+}: {
+  parts: readonly string[];
+  subject: Subject;
+}): Subject {
+  const [group, ...others] = listSubjectGroups(subject).filter((name) => parts.includes(name));
+  const { otherGroups: _others, ...rest } = subject;
+
+  return {
+    ...rest,
+    group: group ?? subject.group ?? null,
+    ...(others.length > 0 && { otherGroups: others }),
+  };
+}
+
 /**
  * A part the learner prepares as a whole keeps its own sittings and scoring, so a first phase's
  * mock still asks its questions and judges its minimum. Null when no sitting names the part.
@@ -66,6 +86,8 @@ export function scopeToParts({
         sumKnown(sections.map((section) => section.questions)) ??
         sumKnown((scored ?? []).map((part) => part.questions)),
     },
-    subjects: structure.subjects.filter((subject) => kept.has(subject.name)),
+    subjects: structure.subjects
+      .filter((subject) => kept.has(subject.name))
+      .map((subject) => keepPartGroups({ parts, subject })),
   };
 }
