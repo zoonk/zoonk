@@ -11,7 +11,6 @@ import { usePhaseName } from "../plan/use-phase-name";
 import { namesModules } from "../syllabus/names-modules";
 import { ReasonText } from "../syllabus/topic-note";
 import { CurrentPhaseMark } from "./current-phase-mark";
-import { getMilestoneLabel } from "./path-phases";
 
 /** A row's end: when the phase ends, on the edge every row's value ends on. */
 export const PHASE_END_CLASS = "text-muted-foreground text-right text-xs";
@@ -127,9 +126,7 @@ export function usePhaseRowName() {
   const { plan } = usePlanScreen();
 
   return (phase: PlanPhaseView): string =>
-    phase.milestone
-      ? getMilestoneLabel(phase.milestone)
-      : phaseName(phase, { mocksRequirePlus: plan.access.mocksRequirePlus });
+    phase.milestone ?? phaseName(phase, { mocksRequirePlus: plan.access.mocksRequirePlus });
 }
 
 /**

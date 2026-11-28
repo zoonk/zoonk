@@ -3,11 +3,6 @@ import { normalizeString } from "@zoonk/utils/string";
 
 type PathChapter = Pick<PlanChapterView, "chapterId" | "far" | "state" | "title" | "writing">;
 
-/** A milestone is written as a sentence, but where it names a phase it's a label, which has no period. */
-export function getMilestoneLabel(milestone: string): string {
-  return milestone.replace(/\.+$/u, "");
-}
-
 function isSameName(first: string, second: string): boolean {
   return normalizeString(first) === normalizeString(second);
 }
