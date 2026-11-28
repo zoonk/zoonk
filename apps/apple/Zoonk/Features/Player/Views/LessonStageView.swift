@@ -435,7 +435,7 @@ extension LessonPlayerState.Notice {
       String(
         localized: "Speaking is off for today.", table: "Player",
         comment:
-          "Shown after \"I can't talk now\" left the lesson's speaking questions out for the rest of the day."
+          "Shown after the learner chose \"I can't talk now\": the lesson's questions answered out loud are off until tomorrow. Word it like its twin \"Writing is off for today.\" (shown after \"Can't write now\"), naming the spoken questions the way that line names the written ones."
       )
     }
   }

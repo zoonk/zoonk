@@ -112,7 +112,7 @@
   "player_notice_answer_not_saved": "0fd793d07d09efdb1491ae3d3cb108330b802939371467ee1efd533a81fe4040",
   "player_notice_picture_ready": "376e19d769b6a20991b0705e38e12108c7a2684956989f240de13827bd4bde31",
   "player_notice_self_correct": "f2dd7fd9e38d9a4d5d3a879c1526907ca47e445b4841004909c4f2a8b8324553",
-  "player_notice_speaking_skipped": "9056d45f0d40cd3df034f1792de3173390628ff67a7eb1005bcc9cab310f1b11",
+  "player_notice_speaking_skipped": "e8c508cdc3a522be5abef7b34e6b07c15b2b75099b4afe0a953c4f163be16595",
   "player_notice_writing_skipped": "8f1b25454876121f8ce4721d29d18031cfc4d5b24fd698ebf3bf926bcfd72251",
   "player_offer_no_thanks": "6746925ee9a0d649b62060162bcbff0b96a0f408f78af5cf33a8732992d9eec0",
   "player_offer_taking_time": "07a7964ad76bc6785c1b40101010a1207321f1ef158c395b4afbab1203e6ffee",
@@ -230,8 +230,8 @@
     <string name="player_notice_answer_not_saved">この問題の回答が保存されませんでした。レッスンを完了するには、もう一度答えてください。</string>
     <string name="player_notice_picture_ready">画像の準備ができました。この問題に答えてレッスンを完了してください。</string>
     <string name="player_notice_writing_skipped">今日は記述式の問題を出しません。</string>
-    <!-- Shown after "I can't talk now" left the lesson's speaking questions out for the rest of the day. -->
-    <string name="player_notice_speaking_skipped">今日はスピーキングはお休みです。</string>
+    <!-- Shown after the learner chose "I can't talk now": the lesson's questions answered out loud are off until tomorrow. Word it like its twin "Writing is off for today." (shown after "Can't write now"), naming the spoken questions the way that line names the written ones. -->
+    <string name="player_notice_speaking_skipped">声に出して答える問題は今日はお休みです。</string>
     <string name="player_turn_back_on">記述式の問題を再開する</string>
     <string name="player_verdict_almost">あと少し</string>
     <string name="player_verdict_correct">正解です！</string>

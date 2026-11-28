@@ -9389,7 +9389,7 @@
       }
     },
     "Speaking is off for today." : {
-      "comment" : "Shown after \"I can't talk now\" left the lesson's speaking questions out for the rest of the day.",
+      "comment" : "Shown after the learner chose \"I can't talk now\": the lesson's questions answered out loud are off until tomorrow. Word it like its twin \"Writing is off for today.\" (shown after \"Can't write now\"), naming the spoken questions the way that line names the written ones.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -9406,43 +9406,43 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L’expression orale est désactivée pour aujourd’hui."
+            "value" : "Les questions à l’oral sont désactivées pour aujourd’hui."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Per oggi, l’esercitazione orale è disattivata."
+            "value" : "La parte orale è disattivata per oggi."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "今日はスピーキングを利用できません。"
+            "value" : "声に出して答える問題は今日はお休みです。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "오늘은 말하기를 사용할 수 없어요."
+            "value" : "오늘은 말하기 문제를 건너뛰어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dziś mówienie jest wyłączone."
+            "value" : "Mówienie jest dziś wyłączone."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "As perguntas de fala ficaram desativadas pelo resto do dia."
+            "value" : "As perguntas de fala estão desativadas por hoje."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bugün konuşma özelliği kapalı."
+            "value" : "Bugün konuşma kapalı."
           }
         }
       }

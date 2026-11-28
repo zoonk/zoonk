@@ -230,7 +230,7 @@
     <string name="player_notice_answer_not_saved">Bu soruya verdiğin cevap kaydedilmedi. Dersi bitirmek için tekrar cevapla.</string>
     <string name="player_notice_picture_ready">Bu soru için görsel bekleniyordu. Dersi bitirmek için soruyu cevapla.</string>
     <string name="player_notice_writing_skipped">Yazma soruları bugün kapalı.</string>
-    <!-- Shown after "I can't talk now" left the lesson's speaking questions out for the rest of the day. -->
+    <!-- Shown after the learner chose "I can't talk now": the lesson's questions answered out loud are off until tomorrow. Word it like its twin "Writing is off for today." (shown after "Can't write now"), naming the spoken questions the way that line names the written ones. -->
     <string name="player_notice_speaking_skipped">Bugün konuşma kapalı.</string>
     <string name="player_turn_back_on">Yeniden aç</string>
     <string name="player_verdict_almost">Çok yaklaştın</string>

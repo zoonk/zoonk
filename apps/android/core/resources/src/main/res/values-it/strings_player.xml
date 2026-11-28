@@ -112,7 +112,7 @@
   "player_notice_answer_not_saved": "712f8fbce0f8a5fe818eb7dd14852644037d8dae2731172ba3b1479011159837",
   "player_notice_picture_ready": "cf2b2b3a088caaf44848119d7c6fb6d9a6a39c6083613d0bba30146a830369d7",
   "player_notice_self_correct": "a9207bac48c263b0e2ef306dd1b96cb680e0c16f724b3ca346b0b7695d05ab6f",
-  "player_notice_speaking_skipped": "374bfc0b7a63214982fbfef2dbe063347f9cd79255c5a93e674b5a329b25a74a",
+  "player_notice_speaking_skipped": "44031a63561d30e0b88fb7cd05a30f1d2e76432aed62c727d8c2956683972ace",
   "player_notice_writing_skipped": "4efc68a614bfe11ed0fc45eb6e755c0045b045936d05850fb2aefafd6e585441",
   "player_offer_no_thanks": "d437e64d7e279c64bcff5b652b419ca6c28bc8a0b9e26bf54e6408fd3566f85f",
   "player_offer_taking_time": "f9738ac6d6fd729c87bf5f18cd33d3fe13c593cc972a8d64fdac61330eb4bf99",
@@ -230,8 +230,8 @@
     <string name="player_notice_answer_not_saved">Questa risposta non è stata salvata. Rispondi di nuovo per completare la lezione.</string>
     <string name="player_notice_picture_ready">Per questa domanda mancava l’immagine. Rispondi per completare la lezione.</string>
     <string name="player_notice_writing_skipped">Le domande a risposta scritta sono disattivate per oggi.</string>
-    <!-- Shown after "I can't talk now" left the lesson's speaking questions out for the rest of the day. -->
-    <string name="player_notice_speaking_skipped">Per oggi la parte orale è disattivata.</string>
+    <!-- Shown after the learner chose "I can't talk now": the lesson's questions answered out loud are off until tomorrow. Word it like its twin "Writing is off for today." (shown after "Can't write now"), naming the spoken questions the way that line names the written ones. -->
+    <string name="player_notice_speaking_skipped">La parte orale è disattivata per oggi.</string>
     <string name="player_turn_back_on">Riattiva</string>
     <string name="player_verdict_almost">Ci sei quasi</string>
     <string name="player_verdict_correct">Esatto!</string>

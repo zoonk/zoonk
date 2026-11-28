@@ -112,7 +112,7 @@
   "player_notice_answer_not_saved": "93128fbd4011582e59c4990f0a68a84fdae2008283ecfae28b0fee73da8da10a",
   "player_notice_picture_ready": "1548da42120fba36ffcb895688ebb3eb7f8155fdf86382c6a71e3f706257c8fb",
   "player_notice_self_correct": "62aad019a74a3fcc36f27201ed49626ae0f0294cc26a004a285a7a822a246e2a",
-  "player_notice_speaking_skipped": "19e6fe0ed78eb3b5589f257f092443678835f231de490e5dbef8f834791598f3",
+  "player_notice_speaking_skipped": "fe5d0b283cfdd5ead44f797c51ecf49974449091218a192e7f1c273844a229a8",
   "player_notice_writing_skipped": "8c57a81545dc5d46142ccdd19296e78cf6ad6b605f5a9ec0a3576720e9ef18af",
   "player_offer_no_thanks": "0454c96572ae6ecd36cab68e356395957f8b95efa76c5cbef0960074ff45121a",
   "player_offer_taking_time": "82266d6402b2e15a7429d6e237a04f3e522237314ec2e5496f08e3ca028d2b69",
@@ -230,8 +230,8 @@
     <string name="player_notice_answer_not_saved">Deine Antwort wurde hier nicht gespeichert. Beantworte die Frage noch einmal, um die Lektion abzuschließen.</string>
     <string name="player_notice_picture_ready">Das Bild zu dieser Frage hat noch gefehlt. Beantworte die Frage, um die Lektion abzuschließen.</string>
     <string name="player_notice_writing_skipped">Schreibaufgaben sind für heute ausgeschaltet.</string>
-    <!-- Shown after "I can't talk now" left the lesson's speaking questions out for the rest of the day. -->
-    <string name="player_notice_speaking_skipped">Sprechen ist für heute ausgeschaltet.</string>
+    <!-- Shown after the learner chose "I can't talk now": the lesson's questions answered out loud are off until tomorrow. Word it like its twin "Writing is off for today." (shown after "Can't write now"), naming the spoken questions the way that line names the written ones. -->
+    <string name="player_notice_speaking_skipped">Sprechen ist für heute deaktiviert.</string>
     <string name="player_turn_back_on">Wieder einschalten</string>
     <string name="player_verdict_almost">Fast geschafft</string>
     <string name="player_verdict_correct">Richtig!</string>

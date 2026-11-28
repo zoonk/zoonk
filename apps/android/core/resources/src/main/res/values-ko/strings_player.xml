@@ -112,7 +112,7 @@
   "player_notice_answer_not_saved": "ae62b6807073e0d45e5e9c92e3d4abe70551dac8b28cbb21f0b690d3789ccf0c",
   "player_notice_picture_ready": "dc438a40dac0f3d4ab94dad36bd3beefe9632a7167116152665edc46b7a40a6c",
   "player_notice_self_correct": "d984649639fa70ee8e5602fc980419775975f4f130bc600ddcf7de4442cb23a7",
-  "player_notice_speaking_skipped": "736eee9761a75fc39226deea99fea4e20c48a93d9b998afdec29cde7328ee500",
+  "player_notice_speaking_skipped": "2f9abcb32b8a1ea5d097adc896551a4a585ae240af2325f561fe53331f76a83c",
   "player_notice_writing_skipped": "6d2363a80615d234d31d5f9eb9177a31cc5a0fc5529212690269d966b82f522a",
   "player_offer_no_thanks": "1ed1b1f66e58da51a94ac0d4b52b20fe92072d554b059ffae9ffca51872fef52",
   "player_offer_taking_time": "cd288dfa3aaf597fba43ae6f9c84b54f575ff0537ff678212284a5e660d1e422",
@@ -230,8 +230,8 @@
     <string name="player_notice_answer_not_saved">이 문제의 답안이 저장되지 않았어요. 레슨을 마치려면 다시 답해 주세요.</string>
     <string name="player_notice_picture_ready">그림이 준비되기를 기다리던 문제예요. 레슨을 마치려면 이 문제에 답해 주세요.</string>
     <string name="player_notice_writing_skipped">오늘은 쓰기 문제를 건너뛰어요.</string>
-    <!-- Shown after "I can't talk now" left the lesson's speaking questions out for the rest of the day. -->
-    <string name="player_notice_speaking_skipped">오늘은 말하기가 꺼져 있어요.</string>
+    <!-- Shown after the learner chose "I can't talk now": the lesson's questions answered out loud are off until tomorrow. Word it like its twin "Writing is off for today." (shown after "Can't write now"), naming the spoken questions the way that line names the written ones. -->
+    <string name="player_notice_speaking_skipped">오늘은 말하기 문제를 건너뛰어요.</string>
     <string name="player_turn_back_on">다시 켜기</string>
     <string name="player_verdict_almost">거의 맞았어요</string>
     <string name="player_verdict_correct">정답이에요!</string>

@@ -230,7 +230,7 @@
     <string name="player_notice_answer_not_saved">Tu respuesta a esta pregunta no se guardó. Responde de nuevo para terminar la lección.</string>
     <string name="player_notice_picture_ready">Faltaba la imagen de esta pregunta. Respóndela para terminar la lección.</string>
     <string name="player_notice_writing_skipped">Las preguntas de respuesta escrita están desactivadas por hoy.</string>
-    <!-- Shown after "I can't talk now" left the lesson's speaking questions out for the rest of the day. -->
+    <!-- Shown after the learner chose "I can't talk now": the lesson's questions answered out loud are off until tomorrow. Word it like its twin "Writing is off for today." (shown after "Can't write now"), naming the spoken questions the way that line names the written ones. -->
     <string name="player_notice_speaking_skipped">La expresión oral está desactivada por hoy.</string>
     <string name="player_turn_back_on">Volver a activar</string>
     <string name="player_verdict_almost">Ya casi</string>

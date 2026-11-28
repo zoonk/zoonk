@@ -112,7 +112,7 @@
   "player_notice_answer_not_saved": "2d6bd0ce41024031f31f1a65aa1c74c2c33fc94f33ad09dbb958088f6ad0c4dc",
   "player_notice_picture_ready": "b39390e81b40f532fc388b654a7a5c404b9ab57202cf216f2657fc4bb530b276",
   "player_notice_self_correct": "9c1aa63606682080135b519f4898ab60878336e95a680fba69f18cec2dc530f7",
-  "player_notice_speaking_skipped": "515fe3f034ff1b25dd1e1e0cfcd08b6531f3682406aca6c383b49e6df518ce0c",
+  "player_notice_speaking_skipped": "274c7db48db74bd5513990bcbf0091e1602e4cc1e4e294283fb12f68304f07ce",
   "player_notice_writing_skipped": "9886157c3671d70005a3365312955f1881ec19dd698e488a90d7bd0ec2eb3308",
   "player_offer_no_thanks": "3699164534c0f13ab2823dfdbc9c6ac661f776312502d1662b1503f396b41f9b",
   "player_offer_taking_time": "cb86d072ad7330935ccf24817f62ca81a0c8d981b2f6f2fe40d573d515114397",
@@ -230,8 +230,8 @@
     <string name="player_notice_answer_not_saved">Sua resposta aqui não foi salva. Responda de novo para concluir a aula.</string>
     <string name="player_notice_picture_ready">Esta pergunta estava esperando a imagem ficar pronta. Responda para concluir a aula.</string>
     <string name="player_notice_writing_skipped">Perguntas de escrita desativadas por hoje.</string>
-    <!-- Shown after "I can't talk now" left the lesson's speaking questions out for the rest of the day. -->
-    <string name="player_notice_speaking_skipped">As perguntas de fala ficaram desativadas pelo resto do dia.</string>
+    <!-- Shown after the learner chose "I can't talk now": the lesson's questions answered out loud are off until tomorrow. Word it like its twin "Writing is off for today." (shown after "Can't write now"), naming the spoken questions the way that line names the written ones. -->
+    <string name="player_notice_speaking_skipped">As perguntas de fala estão desativadas por hoje.</string>
     <string name="player_turn_back_on">Reativar</string>
     <string name="player_verdict_almost">Quase lá</string>
     <string name="player_verdict_correct">Correto!</string>
