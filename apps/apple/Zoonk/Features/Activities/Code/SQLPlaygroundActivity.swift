@@ -195,7 +195,7 @@ private struct SQLPlaygroundCanvas: View {
 
       // A checked query stays as it was run, read-only.
       if isChecked {
-        Text(verbatim: query)
+        Text(CodeHighlight.colored(query, language: "sql"))
           .typeStyle(.body.monospaced())
           .textSelection(.enabled)
           .frame(maxWidth: .infinity, alignment: .leading)
@@ -206,6 +206,7 @@ private struct SQLPlaygroundCanvas: View {
         MultilineTextField(
           text: $query, selection: $selection, prompt: Text(verbatim: "SELECT"), label: editorLabel
         )
+        .codeColors(query, language: "sql")
         .lineLimit(3...)
         .typeStyle(.body.monospaced())
         .textFieldStyle(.plain)

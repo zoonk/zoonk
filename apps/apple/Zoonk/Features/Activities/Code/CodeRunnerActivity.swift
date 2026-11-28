@@ -207,20 +207,20 @@ private struct CodeRunnerCanvas: View {
           spoken: isEditable ? nil : SpokenCode.line(line, number: number)
         ) {
           if isEditable {
-            TextField(
+            // Wraps as main's does, and as the lines around it do; Return runs the program.
+            MultilineTextField(
               text: Binding(get: { line }, set: { edit(number, $0) }),
-              prompt: nil
-            ) {
-              Text(
+              label: Text(
                 "Line \(number), yours to edit", tableName: "ActivitiesCode",
-                comment: "VoiceOver: a line of a program the learner edits")
-            }
+                comment: "VoiceOver: a line of a program the learner edits"),
+              onSubmit: startRun
+            )
             .textFieldStyle(.plain)
             .textInputAutocapitalization(.never)
             .autocorrectionDisabled()
             .keyboardType(.asciiCapable)
             .submitLabel(.go)
-            .onSubmit(startRun)
+            .codeColors(line, language: fields.language.rawValue)
           } else {
             CodeText(tokens: colored.indices.contains(index) ? colored[index] : [])
           }
@@ -229,8 +229,9 @@ private struct CodeRunnerCanvas: View {
     }
   }
 
+  /// A paste keeps to its line, as main's does.
   private func edit(_ number: Int, _ value: String) {
-    edits[number] = value
+    edits[number] = value.filter { !$0.isNewline }
     changed()
   }
 
