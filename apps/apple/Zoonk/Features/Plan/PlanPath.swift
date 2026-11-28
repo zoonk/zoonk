@@ -980,10 +980,16 @@ struct SyllabusSubjectRow: View {
       }
 
       if !subject.leftOutTopics.isEmpty {
-        leftOutTopicsLine(subject.leftOutTopics.count)
-          .typeStyle(.meta)
-          .foregroundStyle(.mutedForeground)
-          .layoutPart(.note)
+        // The mark beside the words, not inside them, so the line measures as text.
+        HStack(alignment: .firstTextBaseline, spacing: 4) {
+          Image(systemName: "minus.circle")
+            .foregroundStyle(.mutedForeground.opacity(0.7))
+            .accessibilityHidden(true)
+          leftOutTopicsText(subject.leftOutTopics.count)
+            .foregroundStyle(.mutedForeground)
+            .layoutPart(.note)
+        }
+        .typeStyle(.meta)
       }
     }
   }
