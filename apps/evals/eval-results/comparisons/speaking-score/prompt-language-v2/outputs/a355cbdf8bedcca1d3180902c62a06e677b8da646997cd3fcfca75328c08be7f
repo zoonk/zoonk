@@ -1,0 +1,35 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "fluencyCoherence",
+      "evidence": "You present the change in a clear sequence: “Before I drove one hour every day to the office. Now I can sleep longer.” Your ideas stay on topic, but most answers are brief and linked with basic connectors.",
+      "tip": "Develop each main point with a specific result: after “Now I can sleep longer,” add, “That extra rest helps me feel more focused when I start work.”",
+      "bandHigh": 6.5,
+      "bandLow": 5.5
+    },
+    {
+      "criterion": "lexicalResource",
+      "evidence": "You use relevant phrases such as “more relaxed than before” and “running in the forest,” but much of your vocabulary is common and general, as in “the team is nice.”",
+      "tip": "Replace general words with a more precise description: instead of “the team is nice,” try “I work with a supportive team, which makes the job more rewarding.”",
+      "bandHigh": 6.5,
+      "bandLow": 5.5
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "You use past and present forms to explain the change, but some tense and phrasing choices are inaccurate, as in “I am working here since three years” and “two days in the week.”",
+      "tip": "For something that began in the past and continues now, use the present perfect with “since”: change “I am working here since three years” to “I have been working here for three years.”",
+      "bandHigh": 6,
+      "bandLow": 5
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "The transcript can't show how you sounded, so this is a wider estimate guided by the range of your other performance. There are no transcript signs of words being misheard or requests to repeat.",
+      "tip": "To make key words easier to understand, give clear stress to the final syllable in “engineer” and the third syllable in “possibility.”",
+      "bandHigh": 6.5,
+      "bandLow": 5.5
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

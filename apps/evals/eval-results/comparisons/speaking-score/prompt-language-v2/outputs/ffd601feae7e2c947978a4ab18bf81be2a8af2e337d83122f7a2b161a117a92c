@@ -1,0 +1,42 @@
+{
+  "brief": true,
+  "criteria": [
+    {
+      "criterion": "repetition",
+      "evidence": "Você repetiu exatamente “The library opens at eight.”, mas em “Please show your card in the door” mudou “student card” para “your card” e “at” para “in”. Nas frases mais longas, omitiu trechos importantes, como em “Students who want a group room... reserve online... one day.”",
+      "tip": "Divida as frases longas em grupos de palavras para guardar a ordem e os detalhes: “Students who want to book a group study room / should reserve it online / at least a day in advance.”",
+      "bandHigh": 2.5,
+      "bandLow": 2
+    },
+    {
+      "criterion": "elaboration",
+      "evidence": "Você respondeu às perguntas e deu uma razão em “Because students don't have much money”, além de sugerir opções futuras em “Maybe more bicycle. Or electric car.”, mas as respostas ficam pouco desenvolvidas, sem explicar as ideias com exemplos ou detalhes.",
+      "tip": "Depois de dar sua opinião, acrescente uma consequência concreta: em vez de parar em “Bus is expensive”, explique, por exemplo, “A free pass would help students save money and get to class on time.”",
+      "bandHigh": 3,
+      "bandLow": 2.5
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você usa estruturas simples para responder, mas há erros frequentes de tempo verbal, artigos e construção de frases, como “One day the bus is broken” e “I think is good.”",
+      "tip": "Para contar um acontecimento passado, use o passado simples: “One day the bus is broken” → “One day the bus broke down.”",
+      "bandHigh": 2.5,
+      "bandLow": 2
+    },
+    {
+      "criterion": "vocabulary",
+      "evidence": "Você usa palavras pertinentes ao tema, como “bus”, “expensive” e “electric car”, mas o vocabulário é básico e as ideias aparecem com pouca variedade e precisão.",
+      "tip": "Substitua palavras muito gerais por expressões mais específicas para comparar opções de transporte, como “a cheaper and more reliable way to commute.”",
+      "bandHigh": 3,
+      "bandLow": 2.5
+    },
+    {
+      "criterion": "delivery",
+      "evidence": "A transcrição não mostra como você soou; por isso, esta é uma estimativa mais ampla, guiada pelos demais aspectos da sua fala, e não é possível avaliar diretamente a clareza da pronúncia, o ritmo ou a entonação.",
+      "tip": "Ao dizer “electric car”, articule com clareza o final de “electric” e o início de “car”, para que as duas palavras sejam fáceis de distinguir.",
+      "bandHigh": 3,
+      "bandLow": 2
+    }
+  ],
+  "focus": "repetition",
+  "heard": true
+}

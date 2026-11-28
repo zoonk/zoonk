@@ -1,0 +1,35 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "fluencyCoherence",
+      "evidence": "Você responde às perguntas e apresenta a pessoa do tema, mas as respostas ficam curtas e pouco desenvolvidas. Repetições como “and... and” e “because... because” e o encerramento “Is it.” interrompem o fluxo e deixam algumas ideias incompletas.",
+      "tip": "No tema longo, organize a resposta em sequência: quem é a pessoa, o que fez e por que isso foi importante. Por exemplo: “My uncle supported me financially by paying for my books, and he also guided me through my studies.”",
+      "bandHigh": 5,
+      "bandLow": 4
+    },
+    {
+      "criterion": "lexicalResource",
+      "evidence": "Você usa vocabulário básico e relevante, como “the beach and the food”, mas há pouca variedade e algumas descrições são genéricas, como “very good person” e “very friendly”.",
+      "tip": "Troque descrições muito gerais por combinações mais específicas. Em vez de “very good person”, você poderia dizer “a generous and encouraging person”.",
+      "bandHigh": 5,
+      "bandLow": 4
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você usa principalmente frases simples, com erros frequentes em estruturas básicas, como “Is a big city” e “The people is very friendly”. Também há pouca variedade de estruturas mais complexas.",
+      "tip": "Em inglês, uma oração precisa de sujeito explícito. Acrescente o sujeito em “Is a big city”: “It is a big city.”",
+      "bandHigh": 5,
+      "bandLow": 4
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "A transcrição não permite avaliar como você soou, então esta é uma estimativa mais ampla, alinhada às outras áreas; não há nela um sinal claro de que alguém tenha pedido repetição. Por exemplo, a transcrição registra “I am grateful because... because without him I don't go to university”, mas isso não mostra como as palavras foram pronunciadas.",
+      "tip": "Para ajudar o ouvinte a reconhecer palavras importantes, trabalhe a sílaba tônica em “university” (uniVERsity) e “grateful” (GRATEful).",
+      "bandHigh": 5,
+      "bandLow": 4
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

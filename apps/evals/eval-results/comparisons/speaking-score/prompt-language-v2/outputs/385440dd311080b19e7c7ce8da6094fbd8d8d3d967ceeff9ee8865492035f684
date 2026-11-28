@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "taskCompletion",
+      "evidence": "Você cobre bem as cinco partes: apresenta o tema e a estrutura, fala da própria experiência e da situação no Brasil, compara vantagens e desvantagens, dá sua opinião e encerra agradecendo. Isso aparece em trechos como „Zuerst erzähle ich, wie ich selbst Deutsch lerne“ e „Meiner Meinung nach ist eine Mischung am besten“.",
+      "tip": "Para aprofundar ainda mais a situação no Brasil, acrescente um exemplo concreto, como „Zum Beispiel können Menschen auf dem Land online einen Sprachkurs besuchen, ohne in eine große Stadt fahren zu müssen.“",
+      "bandHigh": 4,
+      "bandLow": 4
+    },
+    {
+      "criterion": "coherence",
+      "evidence": "Sua apresentação segue uma sequência fácil de acompanhar, com marcadores como „Zuerst“, „danach“, „anschließend“ e „zum Schluss“. As ideias também se conectam com clareza, por exemplo em „Viele Leute wohnen weit weg von großen Städten, deshalb ist das Internet für sie oft die einzige Möglichkeit“.",
+      "tip": "Ao passar dos argumentos para sua opinião, use uma frase que mostre explicitamente a conclusão, como „Aus diesen Gründen ist eine Mischung für mich die beste Lösung.“",
+      "bandHigh": 4,
+      "bandLow": 4
+    },
+    {
+      "criterion": "vocabulary",
+      "evidence": "Você usa vocabulário adequado ao tema, por exemplo „Vollzeit arbeite“, „flexibel“ e „sich selbst motivieren“. As escolhas são claras, mas a variedade de expressões ainda é um pouco limitada para alcançar a faixa mais alta.",
+      "tip": "Varie uma expressão geral por outra mais precisa: em vez de apenas „Online-Kurse sind sehr beliebt geworden“, você pode dizer „Online-Kurse sind inzwischen weit verbreitet“.",
+      "bandHigh": 3,
+      "bandLow": 3
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Suas estruturas estão bem controladas e incluem orações subordinadas corretas, como „weil ich Vollzeit arbeite“ e „damit ich auch mit echten Menschen sprechen kann“. Você também usa uma oração relativa em „in einem Kurs, in dem der Lehrer einen direkt korrigiert“.",
+      "tip": "Você já usa „deshalb“ corretamente; para variar, lembre-se de que, depois de „weil“, o verbo conjugado vai para o fim: „Viele Leute wohnen weit weg von großen Städten. Deshalb ist das Internet für sie oft die einzige Möglichkeit“ pode virar „Weil viele Leute weit weg von großen Städten wohnen, ist das Internet für sie oft die einzige Möglichkeit“.",
+      "bandHigh": 4,
+      "bandLow": 4
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "A transcrição não permite avaliar como você soou, então esta é uma faixa mais ampla, estimada a partir da clareza e da organização observáveis nos outros critérios.",
+      "tip": "Para favorecer a compreensão, destaque a sílaba tônica nas palavras „Sprachschule“ e „Möglichkeit“ ao falar.",
+      "bandHigh": 4,
+      "bandLow": 3
+    }
+  ],
+  "focus": "vocabulary",
+  "heard": true
+}

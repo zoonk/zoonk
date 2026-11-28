@@ -1,0 +1,13 @@
+{
+  "caseId": "en-en-toefl-c1-candidate",
+  "challenger": {
+    "costUsd": 0.0013210399999999999,
+    "durationMs": 18622.006915999984,
+    "hash": "9a49217ead4155dfc5c8ac6b3b2fe9da97001ef20a8affd8e53432b39688e262",
+    "systemPromptHash": "c05d55c9f7ad3fa5b416426c4142a58736e269722f6aa6014b04865dd821ba70",
+    "userPromptHash": "63d8aa1945dd60425452812fe6df44adb73c31faf942f75bac1fa7399042dbfa"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 1
+}

@@ -1,0 +1,19 @@
+{
+  "caseId": "en-es-dele-b1-photo",
+  "challenger": {
+    "costUsd": 0.001231975,
+    "durationMs": 12492.604959000018,
+    "hash": "ccecc60d0358ea11ecfb54ff48dec43b04c9bfc00dc9a708973bd7d7a4fdda3e",
+    "systemPromptHash": "754cbe70502f0637a52cec36d1539bb51ecb8b7237041f9089e5d7c7ba01d504",
+    "userPromptHash": "b9c0ad8564f37aefb67b1d888a7e165ef715a8dded15a20948c770d021b5343f"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.00073272,
+    "durationMs": 11465.189040999976,
+    "hash": "be40af015b2130f900ede69962e23690fb204a59d61ad6b060a02f9b4f91d61a",
+    "systemPromptHash": "02d820935dcdb62d6249b65a70980ca34d02f7e8a21246a91256df9510d01e48",
+    "userPromptHash": "b9c0ad8564f37aefb67b1d888a7e165ef715a8dded15a20948c770d021b5343f"
+  },
+  "run": 1
+}

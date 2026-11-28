@@ -1,0 +1,42 @@
+{
+  "brief": true,
+  "criteria": [
+    {
+      "criterion": "repetition",
+      "evidence": "Você repetiu exatamente “The library opens at eight.”, mas várias respostas perderam ou alteraram partes, como “You can borrow ten books” sem o limite e a frequência, e “Students who want a group room... reserve online... one day.” sem boa parte da frase original.",
+      "tip": "Agrupe as frases longas em blocos e preserve também as palavras pequenas e os finais: “Students who want to book a group study room / should reserve it online / at least a day in advance.”",
+      "bandHigh": 3,
+      "bandLow": 2
+    },
+    {
+      "criterion": "elaboration",
+      "evidence": "Você responde ao tema e dá uma razão em “Because students don't have much money.”, além de incluir um detalhe pessoal em “I wait long time, one hour.”. Porém, as respostas ficam curtas e quase não desenvolvem os pontos, especialmente a previsão “Maybe more bicycle. Or electric car.”",
+      "tip": "Depois de responder, acrescente uma consequência ou exemplo: em vez de parar em “I wait long time, one hour.”, desenvolva com “The bus broke down, so I waited for an hour and arrived late for class.”",
+      "bandHigh": 2.5,
+      "bandLow": 2
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você usa algumas frases simples compreensíveis, como “I go by bus.”, mas há problemas frequentes nas estruturas básicas, por exemplo “Is about thirty minutes.” e “One day the bus is broken.”. As respostas também mostram pouca variedade de estruturas.",
+      "tip": "Em inglês, uma oração completa precisa de sujeito explícito: transforme “Is about thirty minutes.” em “It takes about thirty minutes.”",
+      "bandHigh": 2.5,
+      "bandLow": 2
+    },
+    {
+      "criterion": "vocabulary",
+      "evidence": "Você usa vocabulário pertinente ao assunto, como “bus is expensive” e “electric car”, mas o repertório é básico e algumas escolhas ficam vagas, como “Maybe more bicycle.”.",
+      "tip": "Use verbos de transporte mais precisos em vez de apenas nomear o veículo: transforme “Maybe more bicycle.” em “Maybe more students will ride bicycles or drive electric cars.”",
+      "bandHigh": 2.5,
+      "bandLow": 2
+    },
+    {
+      "criterion": "delivery",
+      "evidence": "A transcrição não mostra como você soou, então esta é uma estimativa mais ampla, baseada nas outras respostas; não há nela sinais suficientes para avaliar diretamente a clareza, o ritmo ou a entonação.",
+      "tip": "Ao repetir, articule com clareza os finais das palavras “rooms” e “close” para ajudar quem ouve a distinguir as palavras e as formas gramaticais.",
+      "bandHigh": 3,
+      "bandLow": 2
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

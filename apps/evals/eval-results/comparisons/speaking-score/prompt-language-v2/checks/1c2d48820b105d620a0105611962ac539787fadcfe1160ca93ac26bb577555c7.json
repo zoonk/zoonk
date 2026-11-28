@@ -1,0 +1,13 @@
+{
+  "caseId": "pt-en-a2-candidate",
+  "costUsd": 0,
+  "criteria": [
+    "evidence"
+  ],
+  "name": "code checks",
+  "passed": 5,
+  "problems": [],
+  "run": 2,
+  "side": "challenger",
+  "total": 5
+}

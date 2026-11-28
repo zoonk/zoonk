@@ -1,0 +1,28 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "grammarVocabulary",
+      "evidence": "Você usa vocabulário apropriado e estruturas corretas para comparar as formas de aprendizagem, como “more personal and relaxed” e “without feeling embarrassed”. As frases são claras, mas você poderia mostrar uma variedade maior de estruturas e desenvolver um pouco mais as ideias.",
+      "tip": "Para variar a comparação, você pode usar uma oração concessiva: partindo de “it's more personal and relaxed”, diga “Although learning at home is more personal and relaxed, a class gives you the chance to meet other people.”",
+      "bandHigh": 3.5,
+      "bandLow": 2.5
+    },
+    {
+      "criterion": "discourse",
+      "evidence": "Você organiza a resposta com clareza: compara as fotos, apresenta motivos e acrescenta um contraste com “Also, learning in a group can be more motivating”. Porém, não desenvolve esses motivos com exemplos ou consequências antes de passar à preferência pessoal.",
+      "tip": "Depois de cada motivo, acrescente uma consequência concreta. Por exemplo, após “it's more personal and relaxed”, você poderia dizer: “so the learner can ask questions at their own pace.”",
+      "bandHigh": 3.5,
+      "bandLow": 2.5
+    },
+    {
+      "criterion": "global",
+      "evidence": "Você comunica com clareza as diferenças entre as fotos e explica sua escolha pessoal com “I spend all day in front of a computer and I want to do something with my hands”. Para dar uma impressão geral mais desenvolvida, poderia ampliar a comparação com mais detalhes sobre os motivos de cada grupo.",
+      "tip": "Ao terminar a comparação, conecte as duas situações numa conclusão breve, por exemplo: “Both ways offer practical learning, but the class also lets people share ideas with one another.”",
+      "bandHigh": 3.5,
+      "bandLow": 2.5
+    }
+  ],
+  "focus": "discourse",
+  "heard": false
+}

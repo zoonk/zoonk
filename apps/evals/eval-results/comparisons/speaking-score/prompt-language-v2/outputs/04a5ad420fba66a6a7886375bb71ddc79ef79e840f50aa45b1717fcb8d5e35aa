@@ -1,0 +1,35 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "fluencyCoherence",
+      "evidence": "Você desenvolve as ideias com clareza e conecta bem explicações e ressalvas, como em “On top of that” e “although I can see why a small business couldn't justify it”. Em algumas respostas, a explicação termina após um ponto principal, sem desenvolver muito além dele, o que limita a evidência de fluência sustentada nos níveis mais altos.",
+      "tip": "Depois de apresentar uma opinião, acrescente uma consequência concreta para desenvolver o raciocínio: em vez de parar em “Maybe a middle ground would be a modest allowance”, tente “Maybe a middle ground would be a modest allowance, which could boost morale without putting too much pressure on a small business.”",
+      "bandHigh": 7.5,
+      "bandLow": 7
+    },
+    {
+      "criterion": "lexicalResource",
+      "evidence": "Você usa combinações precisas e expressões naturais, como “eat into the time” e “spilled over into other areas of my life”. Para chegar a uma faixa mais alta com mais consistência, poderia demonstrar ainda mais flexibilidade lexical ao descrever ideias semelhantes com nuances diferentes.",
+      "tip": "Para dar mais nuance a “slow progress”, experimente “painstakingly slow progress”, que enfatiza que o avanço exigiu bastante paciência.",
+      "bandHigh": 8,
+      "bandLow": 7.5
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você usa estruturas variadas com bom controle, por exemplo em “I'd always been drawn to its sound” e “people who are learning something tend to be more engaged overall”. Há alguns deslizes em “I work as data analyst” e “A lot of them could easily have been an email”, além de uma ligação incompleta entre orações em “the intonation is so unforgiving, there are no frets”.",
+      "tip": "Antes de uma profissão singular contável, use um artigo: “I work as data analyst” deve ser “I work as a data analyst”.",
+      "bandHigh": 7.5,
+      "bandLow": 6.5
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "A transcrição não permite avaliar como você soou, então esta é uma estimativa mais ampla, baseada nas outras dimensões; não há sinais registrados de palavras incompreendidas ou pedidos de repetição.",
+      "tip": "Para facilitar a compreensão, pratique o acento tônico de “unforgiving” (un-for-GIV-ing) e “allowance” (uh-LOW-uhns), deixando essas sílabas bem audíveis.",
+      "bandHigh": 8,
+      "bandLow": 7
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

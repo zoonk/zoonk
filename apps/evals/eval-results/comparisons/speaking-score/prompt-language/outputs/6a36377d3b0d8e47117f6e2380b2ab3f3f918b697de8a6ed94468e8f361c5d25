@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "grammarVocabulary",
+      "evidence": "Você usa vocabulário adequado ao tema e estruturas para expressar opinião e contraste, como “I partly agree” e “On the other hand, it depends of your routine”. Os erros em “more easy” e “depends of” reduzem a precisão, e as ideias usam sobretudo estruturas simples.",
+      "tip": "Para formar o comparativo de adjetivos curtos, use “-er” em vez de “more”: troque “more easy” por “easier”.",
+      "bandHigh": 3.5,
+      "bandLow": 2.5
+    },
+    {
+      "criterion": "discourse",
+      "evidence": "Você organiza as ideias com marcadores como “On the other hand” e “So”, e explica sua opinião com “When I don't sleep well, I can't concentrate at all”. Porém, desenvolve pouco cada ponto e passa rapidamente da comparação à decisão.",
+      "tip": "Depois de contrastar duas ideias, desenvolva uma delas com uma razão ou consequência: “On the other hand, although some people work at night, regular sleep still matters because it helps them concentrate.”",
+      "bandHigh": 4,
+      "bandLow": 3
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "A transcrição não permite avaliar como você soou, e não há nela sinais indiretos claros de dificuldade de compreensão; por isso, esta é uma estimativa mais ampla, alinhada às outras evidências.",
+      "tip": "Para deixar palavras importantes fáceis de acompanhar, marque a sílaba tônica ao dizer “EXercise” e “CONcentrate”.",
+      "bandHigh": 4,
+      "bandLow": 3
+    },
+    {
+      "criterion": "interaction",
+      "evidence": "Você responde ao que foi dito, pergunta “What do you think about sleep?” e depois propõe “Shall we decide?”. Isso mantém a troca e ajuda a encaminhar a escolha, embora você pudesse explorar mais diretamente as razões apresentadas pela outra pessoa.",
+      "tip": "Depois de responder à opinião da outra pessoa, convide-a a comparar as opções: “You mentioned that sleep is underrated. Do you think it affects the other habits too?”",
+      "bandHigh": 4,
+      "bandLow": 3
+    },
+    {
+      "criterion": "global",
+      "evidence": "Você comunica opiniões relevantes sobre alimentação, exercício, sono e atividades ao ar livre, e consegue explicar por que prioriza o sono: “because without it nothing else works”. A comunicação é coerente, mas a precisão gramatical e o desenvolvimento das ideias ainda variam.",
+      "tip": "Para tornar sua contribuição mais completa, acrescente um exemplo concreto à sua justificativa, como: “For example, after a good night's sleep, I find it easier to focus on studying and exercise.”",
+      "bandHigh": 3.5,
+      "bandLow": 2.5
+    }
+  ],
+  "focus": "grammarVocabulary",
+  "heard": true
+}

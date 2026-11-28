@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "coherence",
+      "evidence": "Você organiza as ideias em sequência e usa conectores para apresentar contrastes e razões, como em “Sin embargo, en una ciudad con muchas cuestas no todo el mundo puede ir en bici” e “En cambio, en ciudades más pequeñas se puede ir andando a casi todos los sitios”. As justificativas são claras, mas algumas propostas e a situação no país poderiam ser desenvolvidas com mais detalhes.",
+      "tip": "Depois de apresentar uma proposta, explique também uma consequência ou uma condição para que funcione: “Abaratar el transporte público sería eficaz, siempre que aumentaran también la frecuencia y la cobertura de las líneas”.",
+      "bandHigh": 2,
+      "bandLow": 2
+    },
+    {
+      "criterion": "fluency",
+      "evidence": "Você apresenta suas ideias em frases completas e encadeadas, por exemplo: “Si se invirtiera más en transporte, el tráfico mejoraría mucho”. A transcrição não permite avaliar como você soou; por isso, esta é uma estimativa mais ampla, apoiada apenas na organização e continuidade que aparecem no texto.",
+      "tip": "Para facilitar a compreensão de uma expressão longa, diga com clareza cada grupo de palavras em “abaratar el transporte público”, sem acelerar no final.",
+      "bandHigh": 3,
+      "bandLow": 2
+    },
+    {
+      "criterion": "accuracy",
+      "evidence": "Você usa estruturas variadas e compreensíveis, como “Si se invirtiera más en transporte, el tráfico mejoraría mucho”. Há, porém, erros de concordância em “la gente están dispuesta” e de forma verbal em “Si tendría más tiempo”.",
+      "tip": "Depois de “la gente”, use o verbo no singular: troque “la gente están dispuesta” por “la gente está dispuesta”. Em uma condição hipotética, use o imperfeito do subjuntivo após “si”: “Si tuviera más tiempo”.",
+      "bandHigh": 2,
+      "bandLow": 1
+    },
+    {
+      "criterion": "range",
+      "evidence": "Você usa vocabulário pertinente ao tema, como “carriles bici”, “contaminación” e “transporte público”, e expressa avaliações e condições. A variedade de argumentos e de estruturas permanece relativamente simples, com pouca elaboração além das vantagens e desvantagens mais diretas.",
+      "tip": "Acrescente vocabulário para ponderar os efeitos de uma proposta, por exemplo: “Aunque requiere una inversión inicial, a largo plazo podría reducir la contaminación y los atascos”.",
+      "bandHigh": 2,
+      "bandLow": 2
+    },
+    {
+      "criterion": "holistic",
+      "evidence": "Você aborda quatro propostas, escolhe a que considera melhor e relaciona o tema à realidade de sua cidade, como em “Sin duda, abaratar el transporte público” e “en São Paulo el tráfico es un caos”. A comunicação é clara, embora a comparação entre as propostas e a explicação da situação no país pudessem ser mais aprofundadas.",
+      "tip": "Ao escolher a melhor proposta, compare-a explicitamente com outra e justifique a preferência: “Aunque cerrar el centro los domingos ayudaría, abaratar el transporte público sería más eficaz porque beneficiaría a quienes viajan todos los días”.",
+      "bandHigh": 2,
+      "bandLow": 2
+    }
+  ],
+  "focus": "accuracy",
+  "heard": true
+}

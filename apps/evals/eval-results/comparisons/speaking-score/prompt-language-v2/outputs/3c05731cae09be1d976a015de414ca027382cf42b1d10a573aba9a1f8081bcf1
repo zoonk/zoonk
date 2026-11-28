@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "coherence",
+      "evidence": "You organize the description in a clear sequence and connect ideas with phrases such as “Creo que son los padres y dos niños” and “porque seguramente van de vacaciones.” The ideas stay brief, and you do not develop what the people might be talking about.",
+      "tip": "Add one more linked detail to each main idea, using a connector such as “además” or “por eso.” For example: “Los niños parecen cansados y, además, llevan mochilas; por eso, creo que han hecho un viaje largo.”",
+      "bandHigh": 2,
+      "bandLow": 1
+    },
+    {
+      "criterion": "fluency",
+      "evidence": "The transcript can't show how you sounded, so this is a wider estimate. Your ideas connect with “pero” and “porque,” while the transcript shows mostly short, simple stretches rather than extended elaboration.",
+      "tip": "Build each answer from two or three connected idea groups, with a brief pause between them. For example: “En mi país no hay muchos trenes. Sin embargo, el año pasado viajé de Madrid a Sevilla y disfruté mucho del viaje.”",
+      "bandHigh": 2,
+      "bandLow": 1
+    },
+    {
+      "criterion": "accuracy",
+      "evidence": "You control several basic structures, as in “el año pasado viajé en tren por España,” but there is an agreement error in “Me gusta mucho los trenes.”",
+      "tip": "Make the verb agree with a plural subject: change “Me gusta mucho los trenes” to “Me gustan mucho los trenes.”",
+      "bandHigh": 2,
+      "bandLow": 1
+    },
+    {
+      "criterion": "range",
+      "evidence": "You use enough everyday vocabulary to describe the scene, including “una estación de tren” and “una maleta grande.” The word choices remain general, as in “una experiencia muy buena,” with little elaboration or variety.",
+      "tip": "Replace broad evaluations with more precise vocabulary and a reason. For example, upgrade “fue una experiencia muy buena” to “fue una experiencia inolvidable porque pude disfrutar del paisaje.”",
+      "bandHigh": 2,
+      "bandLow": 1
+    },
+    {
+      "criterion": "holistic",
+      "evidence": "You identify the people, place, and likely reason for their trip, then answer the personal question with “el año pasado viajé en tren por España, de Madrid a Sevilla.” The response does not cover every part of the photo prompt, especially what the people might be discussing.",
+      "tip": "Include a plausible comment about the people’s conversation before moving to your own experience, for example: “Quizá están hablando del horario del tren y de dónde van a pasar las vacaciones.”",
+      "bandHigh": 2,
+      "bandLow": 1
+    }
+  ],
+  "focus": "range",
+  "heard": true
+}

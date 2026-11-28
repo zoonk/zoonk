@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "repetition",
+      "evidence": "You repeated the first two sentences exactly, but changed or dropped small parts in the longer ones: “Club tables are set along the main hallway” omits “up,” and “The workshop that was planned for Friday has been moved to the lecture hall near the bookstore” leaves out “afternoon” and changes “next to” to “near.”",
+      "tip": "Listen for short words and endings as well as the main meaning. Group a longer sentence into chunks, such as “The workshop that was planned for Friday afternoon / has been moved / to the lecture hall next to the bookstore.”",
+      "bandHigh": 3.5,
+      "bandLow": 3
+    },
+    {
+      "criterion": "elaboration",
+      "evidence": "You answer the questions and add relevant reasons, as in “I chose it because my family has a small restaurant and I want to help them to manage it better,” and you give both a benefit and a drawback of studying abroad. Your prediction, though, ends with “living in another country is different than see it on a screen” without developing that idea with a concrete example.",
+      "tip": "After giving a prediction, add a specific example to develop it: “For example, students could take a semester-long course with a university abroad while staying at home.”",
+      "bandHigh": 4,
+      "bandLow": 3.5
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "You use reasons and clauses, including “because everybody had different ideas,” but there is a missing subject in “I learned that is important to communicate.” The structures are generally clear, though this kind of small grammatical error keeps the accuracy from being more consistent.",
+      "tip": "In a clause after “that,” include the subject before the verb: “I learned that is important to communicate” becomes “I learned that it is important to communicate.”",
+      "bandHigh": 3.5,
+      "bandLow": 3
+    },
+    {
+      "criterion": "vocabulary",
+      "evidence": "You use relevant phrases such as “a marketing plan for a local shop” and “people from other cultures,” which make your points clear. Some descriptions stay broad, such as “very useful” and “a good grade,” rather than expressing the ideas more precisely.",
+      "tip": "Replace a broad description with a more precise one: instead of “studying abroad is very useful,” try “studying abroad offers daily language immersion.”",
+      "bandHigh": 4,
+      "bandLow": 3.5
+    },
+    {
+      "criterion": "delivery",
+      "evidence": "The transcript can't show how you sounded, so this is a wider estimate centered on the level suggested by your other criteria; it does not provide reliable evidence about intelligibility, rhythm, or intonation.",
+      "tip": "In “living in another country is different than see it on a screen,” give “different” and “screen” clear stress, with a small pause before the contrast, so the main point is easy to follow.",
+      "bandHigh": 4,
+      "bandLow": 3
+    }
+  ],
+  "focus": "repetition",
+  "heard": true
+}

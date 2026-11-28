@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "repetition",
+      "evidence": "Você repetiu corretamente várias frases, inclusive “Students who haven't completed the online safety course won't be allowed to work in the lab until they finished it.”, mas nessa frase mudou a forma verbal de “finish” para “finished”. Em “If something spills, tell the lab assistant before you try to clean it.”, faltou a palavra final “up”.",
+      "tip": "Ao repetir frases longas, divida-as em grupos de palavras e confira se manteve a última parte: “If something spills / tell the lab assistant / before you try to clean it up.”",
+      "bandHigh": 5.5,
+      "bandLow": 4.5
+    },
+    {
+      "criterion": "elaboration",
+      "evidence": "Você desenvolve as respostas com razões e detalhes, como em “because printing everything would be expensive and not very sustainable” e ao explicar que a IA pode levar a “more oral exams and projects”. As respostas são coerentes, mas algumas conclusões ficam gerais, como “it depends on the teacher and on the class”, sem um exemplo específico de regra ou situação.",
+      "tip": "Depois de apresentar uma opinião, acrescente um exemplo concreto que mostre como ela funcionaria: “For example, students could use phones for quizzes but keep them away during discussions.”",
+      "bandHigh": 5.5,
+      "bandLow": 4.5
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você usa estruturas variadas para explicar ideias e relações, como “because a tool can explain the same idea in different ways until you get it”. Há alguns erros de forma e construção, como “I use my laptop since the first semester”, “more easy” e “discuss about clear rules”.",
+      "tip": "Com “since” para indicar quando algo começou e continua, use o present perfect: “I use my laptop since the first semester” → “I've used my laptop since the first semester.”",
+      "bandHigh": 4.5,
+      "bandLow": 4
+    },
+    {
+      "criterion": "vocabulary",
+      "evidence": "Você usa vocabulário apropriado e relativamente variado para os temas, por exemplo “not very sustainable”, “really distracting” e “evaluate us”. Algumas escolhas ficam menos precisas ou naturais, como “thinking by themselves” para falar de pensar por conta própria.",
+      "tip": "Para expressar essa ideia de forma mais precisa, troque “really distracting” por uma consequência específica: “Phones can make it difficult to stay focused during class.”",
+      "bandHigh": 5,
+      "bandLow": 4.5
+    },
+    {
+      "criterion": "delivery",
+      "evidence": "A transcrição não permite avaliar como você soou, então esta faixa é uma estimativa mais ampla, baseada na organização das respostas e em frases como “I believe it will make learning more personal”. Não há sinais claros no texto de palavras que tenham sido mal reconhecidas, mas a transcrição, por si só, não comprova a inteligibilidade nem o ritmo da fala.",
+      "tip": "Para tornar palavras importantes mais fáceis de entender, pratique a sílaba tônica de “sustainable” (sus-TAIN-able) e “evaluate” (e-VAL-u-ate), mantendo-a clara quando a palavra aparecer na frase.",
+      "bandHigh": 5,
+      "bandLow": 4
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

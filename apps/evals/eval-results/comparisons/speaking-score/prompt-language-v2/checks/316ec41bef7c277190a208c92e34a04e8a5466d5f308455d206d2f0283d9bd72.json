@@ -1,0 +1,13 @@
+{
+  "caseId": "en-en-toefl-b1-candidate",
+  "costUsd": 0,
+  "criteria": [
+    "evidence"
+  ],
+  "name": "code checks",
+  "passed": 6,
+  "problems": [],
+  "run": 1,
+  "side": "challenger",
+  "total": 6
+}

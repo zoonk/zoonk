@@ -1,0 +1,35 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "fluencyCoherence",
+      "evidence": "Você responde às perguntas e apresenta uma ideia central, como em “I like the beach and the food.” Porém, as respostas são curtas e há pausas e repetições, como em “because... because”, com pouca expansão das ideias.",
+      "tip": "Desenvolva cada resposta com uma explicação ou consequência; em vez de parar em “He give me money for the books”, acrescente: “He helped me afford my textbooks, and his advice gave me the confidence to start university.”",
+      "bandHigh": 5,
+      "bandLow": 4
+    },
+    {
+      "criterion": "lexicalResource",
+      "evidence": "Você usa vocabulário pertinente ao tema, como “the beach and the food” e “help me when I go to the university”. A variedade é limitada e algumas descrições são genéricas, como “very good person”, o que reduz a precisão.",
+      "tip": "Troque descrições genéricas por expressões mais específicas: em vez de “He is very good person”, diga “He was incredibly generous with both money and advice.”",
+      "bandHigh": 5,
+      "bandLow": 4
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você produz algumas frases simples compreensíveis, como “I like the beach and the food”, mas há erros frequentes de sujeito, concordância e tempo verbal em “The people is very friendly” e “He help me when I go to the university”.",
+      "tip": "Para ações passadas, use o verbo no passado; além disso, no presente, “he” pede verbo com “-s”: “He help me when I go to the university” → “He helped me when I went to university.”",
+      "bandHigh": 4.5,
+      "bandLow": 3.5
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "A transcrição não mostra como você soou nem permite avaliar diretamente a facilidade de compreensão; sem sinais claros de palavras mal compreendidas, esta é uma estimativa mais ampla, alinhada às outras áreas.",
+      "tip": "Dê destaque às sílabas tônicas para que as palavras-chave fiquem claras, especialmente em “university” e “grateful”.",
+      "bandHigh": 5,
+      "bandLow": 4
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

@@ -1,0 +1,35 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "fluencyCoherence",
+      "evidence": "Você responde às perguntas e apresenta ideias relevantes, como em “I like the beach and the food”. Porém, as respostas ficam curtas e há pausas e repetições, como em “because... because”, sem desenvolver muito as ideias.",
+      "tip": "Depois de responder, acrescente um motivo e um detalhe para conectar as ideias. Por exemplo: “I enjoy living in Recife because I can go to the beach, and the local food makes the city special.”",
+      "bandHigh": 5,
+      "bandLow": 4
+    },
+    {
+      "criterion": "lexicalResource",
+      "evidence": "Você usa vocabulário básico e pertinente, como “the beach and the food”, mas repete palavras gerais como “very” e “good”, e expressões como “more same age” mostram pouca precisão lexical.",
+      "tip": "Troque descrições gerais por combinações mais específicas. Em vez de “He is very good person”, experimente “He is a generous and supportive person.”",
+      "bandHigh": 5,
+      "bandLow": 4
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você comunica ideias simples, mas há erros frequentes de concordância e de forma verbal, como em “The people is very friendly” e “He give me money for the books”.",
+      "tip": "Com o sujeito plural “people”, use “are”, não “is”: “The people is very friendly” → “The people are very friendly.”",
+      "bandHigh": 4.5,
+      "bandLow": 3.5
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "A transcrição não mostra como você soou; como não há sinais claros de palavras mal compreendidas ou pedidos de repetição, esta faixa mais ampla acompanha, com cautela, a estimativa dos demais critérios.",
+      "tip": "Para facilitar o entendimento, treine a articulação do final de “beach” (/tʃ/) e mantenha nítido o início de “people”. Use as palavras na frase: “The beach is beautiful, and the people are friendly.”",
+      "bandHigh": 5,
+      "bandLow": 4
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

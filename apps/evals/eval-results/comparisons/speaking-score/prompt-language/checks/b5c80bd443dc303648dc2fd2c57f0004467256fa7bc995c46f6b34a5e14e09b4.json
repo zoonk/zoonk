@@ -1,0 +1,13 @@
+{
+  "caseId": "pt-fr-delf-b2-monologue-at-level",
+  "costUsd": 0,
+  "criteria": [
+    "evidence"
+  ],
+  "name": "code checks",
+  "passed": 5,
+  "problems": [],
+  "run": 2,
+  "side": "challenger",
+  "total": 5
+}

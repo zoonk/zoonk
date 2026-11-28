@@ -1,0 +1,42 @@
+{
+  "brief": true,
+  "criteria": [
+    {
+      "criterion": "coherence",
+      "evidence": "Você responde às perguntas de forma pertinente, por exemplo, “Porque tienen el móvil”, mas as ideias ficam em frases curtas e quase não há conexão ou desenvolvimento para comparar os resultados e explicar sua opinião.",
+      "tip": "Depois de responder, acrescente uma comparação e uma justificativa: “En Brasil ocurre algo parecido, aunque creo que los jóvenes leen menos porque pasan más tiempo con el móvil”.",
+      "bandHigh": 2,
+      "bandLow": 1
+    },
+    {
+      "criterion": "fluency",
+      "evidence": "A transcrição não permite avaliar como você soou, então esta é uma estimativa mais ampla; pelas respostas breves, como “No mucho. A veces”, a fluidez parece depender de frases curtas, sem muita continuidade.",
+      "tip": "Una respostas curtas com um conector e uma explicação, por exemplo: “No mucho, aunque intento leer cuando tengo tiempo”.",
+      "bandHigh": 2,
+      "bandLow": 1
+    },
+    {
+      "criterion": "accuracy",
+      "evidence": "Você transmite algumas ideias básicas, como “los jóvenes no leen mucho”, mas há formas que não correspondem ao espanhol, como “mucho importante” e “no sabo”, além de trechos em português.",
+      "tip": "Antes de um adjetivo, use “muy”, não “mucho”: troque “El móvil es mucho importante” por “El móvil es muy importante”.",
+      "bandHigh": 2,
+      "bandLow": 1
+    },
+    {
+      "criterion": "range",
+      "evidence": "Você usa vocabulário básico e adequado ao tema, como “los jóvenes no leen mucho” e “El móvil”, mas ainda oferece poucas palavras e estruturas para expressar opiniões ou comparar os dados.",
+      "tip": "Acrescente expressões mais específicas para falar do tema, como “dedicar tiempo a la lectura” e “el consumo de contenidos digitales”.",
+      "bandHigh": 2,
+      "bandLow": 1
+    },
+    {
+      "criterion": "holistic",
+      "evidence": "Você responde a perguntas sobre os hábitos de leitura e relaciona o tema ao Brasil, como em “en Brasil también”, mas desenvolve pouco as comparações e as opiniões solicitadas na tarefa.",
+      "tip": "Em cada resposta, inclua sua posição, uma comparação com o Brasil e um motivo, por exemplo: “Estoy de acuerdo con el resultado. En Brasil pasa algo parecido, porque muchos jóvenes prefieren usar el móvil”.",
+      "bandHigh": 2,
+      "bandLow": 1
+    }
+  ],
+  "focus": "coherence",
+  "heard": true
+}

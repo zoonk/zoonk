@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "repetition",
+      "evidence": "Você repetiu as frases quase sempre com precisão, como em “The emergency shower is next to the back door.” Nas duas mais longas, omitiu “up” em “before you try to clean it” e mudou “finish” para “finished” em “until they finished it”.",
+      "tip": "Agrupe as frases longas em blocos e confira as palavras finais, que são fáceis de perder: “If something spills / tell the lab assistant / before you try to clean it up.”",
+      "bandHigh": 5.5,
+      "bandLow": 4.5
+    },
+    {
+      "criterion": "elaboration",
+      "evidence": "Você respondeu às perguntas com razões, exemplos e consequências, como ao explicar que o aplicativo ajudou você a lembrar mais e melhorar a nota, e ao prever “more oral exams and projects”. Algumas respostas poderiam desenvolver mais um exemplo específico para sustentar as ideias.",
+      "tip": "Depois de explicar como a IA pode ajudar, acrescente uma situação concreta de uso: “For example, it could explain a difficult concept in simpler steps and then give the student a short quiz.”",
+      "bandHigh": 5.5,
+      "bandLow": 4.5
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você usa estruturas variadas e geralmente claras, como “because printing everything would be expensive and not very sustainable”. Ainda há erros em “more easy” e “discuss about clear rules”, que reduzem a precisão.",
+      "tip": "Com adjetivos curtos, forme o comparativo com “-er”, não com “more”: troque “more easy” por “easier”.",
+      "bandHigh": 4.5,
+      "bandLow": 4
+    },
+    {
+      "criterion": "vocabulary",
+      "evidence": "Seu vocabulário é pertinente e inclui expressões como “not very sustainable”, “really distracting” e “change how they evaluate us”. Algumas escolhas permanecem gerais, como “make learning more personal”, sem especificar de que modo a aprendizagem mudaria.",
+      "tip": "Para tornar a previsão mais precisa, substitua “make learning more personal” por “tailor explanations to each student’s needs”.",
+      "bandHigh": 5,
+      "bandLow": 4.5
+    },
+    {
+      "criterion": "delivery",
+      "evidence": "A transcrição não mostra como você soou, então esta é uma estimativa mais ampla, alinhada aos outros aspectos da sua fala. Não há sinais no texto de palavras que tenham sido entendidas de forma diferente ou de pedidos para repetir.",
+      "tip": "Para deixar as ideias mais fáceis de acompanhar, destaque a sílaba forte em “sustainable” e “evaluate” e faça uma pausa curta antes de “so universities will have to change how they evaluate us”.",
+      "bandHigh": 5,
+      "bandLow": 4
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

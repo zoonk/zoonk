@@ -1,0 +1,35 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "fluencyCoherence",
+      "evidence": "Você desenvolve respostas relevantes e conecta ideias com expressões como “But on the other hand” e “because banning it completely is not realistic nowadays”. As ideias são claras, embora algumas respostas pudessem ser mais desenvolvidas, por exemplo, com uma consequência concreta para a opinião sobre o uso de celulares.",
+      "tip": "Depois de apresentar uma opinião, acrescente uma consequência específica: em vez de parar em “everybody is looking at the phone instead of talking”, explique o efeito, por exemplo, “As a result, conversations become less engaging and people may feel ignored.”",
+      "bandHigh": 6.5,
+      "bandLow": 6
+    },
+    {
+      "criterion": "lexicalResource",
+      "evidence": "Você usa vocabulário adequado e algumas expressões precisas, como “quite comfortable”, “a big advantage” e “in a responsible way”. Há também escolhas de palavras e combinações pouco naturais, como “the thing I use more in my day” e “for pay things”, que limitam a precisão.",
+      "tip": "Para descrever o trânsito com mais precisão, troque “the traffic is getting worse every year” por “traffic congestion has been worsening year after year.”",
+      "bandHigh": 6.5,
+      "bandLow": 6
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você combina frases simples e complexas, por exemplo, “I've been thinking about moving to a smaller city, because Curitiba is getting more expensive”. Porém, há erros em “I use it since I wake up” e “I also use it for pay things”, que mostram dificuldade com formas verbais e construções com infinitivo.",
+      "tip": "Para indicar o período entre dois momentos do dia, use “from ... until”, não “since ... until”: troque “I use it since I wake up until I go to sleep” por “I use it from the moment I wake up until I go to sleep.”",
+      "bandHigh": 6.5,
+      "bandLow": 6
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "A transcrição não mostra como você soou, e não há sinais indiretos claros de dificuldade de compreensão; por isso, esta é uma estimativa mais ampla, alinhada às outras dimensões.",
+      "tip": "Para ajudar o ouvinte a reconhecer palavras longas, pratique o acento tônico de “complicated”: destaque a sílaba “PLI” ao dizer a palavra.",
+      "bandHigh": 6.5,
+      "bandLow": 5.5
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

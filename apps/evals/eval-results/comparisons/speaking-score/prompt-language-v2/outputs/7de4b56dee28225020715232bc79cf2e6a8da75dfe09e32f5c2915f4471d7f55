@@ -1,0 +1,35 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "fluencyCoherence",
+      "evidence": "Você mantém as respostas no tema e usa conexões simples, como “But” e “because”. Porém, algumas respostas são curtas, e as repetições em “and... and” e “because... because” interrompem o desenvolvimento das ideias.",
+      "tip": "Depois de responder, acrescente uma razão e um exemplo específico. Por exemplo: “I enjoy the beaches because they help me relax, especially after a busy week.”",
+      "bandHigh": 5,
+      "bandLow": 4
+    },
+    {
+      "criterion": "lexicalResource",
+      "evidence": "Você comunica ideias básicas sobre família, estudos e sua cidade com palavras como “the beach and the food”. O vocabulário é repetitivo e pouco específico, como em “He is very good person”.",
+      "tip": "Troque avaliações gerais por palavras mais precisas para descrever a ajuda do seu tio: em vez de “He is very good person”, experimente “He was generous and supportive, especially when I needed help with my studies.”",
+      "bandHigh": 5,
+      "bandLow": 4
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Há erros frequentes em estruturas básicas, por exemplo, “The people is very friendly” e “He help me”. Também aparecem frases incompletas ou com formas verbais inadequadas, como “without him I don't go to university”.",
+      "tip": "Para contar acontecimentos passados, use o passado simples nos verbos: “He help me” passa a “He helped me”, e “He give me money” passa a “He gave me money”.",
+      "bandHigh": 4,
+      "bandLow": 3
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "A transcrição não mostra como você soou, então não permite avaliar diretamente a pronúncia; esta é uma estimativa mais ampla, guiada pelo perfil das outras respostas. Não há sinais transcritos de pedidos para repetir ou de palavras substituídas que indiquem dificuldade de compreensão.",
+      "tip": "Ao revisar a clareza das palavras “beach”, “people” e “university”, confira se cada uma é entendida com facilidade; não é necessário mudar seu sotaque.",
+      "bandHigh": 5,
+      "bandLow": 4
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

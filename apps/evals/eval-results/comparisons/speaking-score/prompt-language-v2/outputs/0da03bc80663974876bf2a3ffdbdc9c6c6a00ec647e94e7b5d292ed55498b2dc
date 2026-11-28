@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "repetition",
+      "evidence": "You repeated the first two sentences exactly, but later said “Club tables are set along the main hallway” and “The workshop that was planned for Friday has been moved to the lecture hall near the bookstore,” omitting or changing small parts of the originals. The main meaning stayed clear, though several words and phrases were not reproduced exactly.",
+      "tip": "Listen for sentences in word groups and hold onto small words and endings: “The workshop planned for Friday afternoon / has been moved to the lecture hall / next to the bookstore.”",
+      "bandHigh": 4,
+      "bandLow": 3
+    },
+    {
+      "criterion": "elaboration",
+      "evidence": "You answered each question with relevant reasons or details, such as “because my family has a small restaurant and I want to help them to manage it better” and your point that studying abroad is “also expensive.” The answers are coherent, though some explanations stay brief or general rather than developing the ideas in depth.",
+      "tip": "Add a specific example to support a general point: after “you meet people from other cultures,” explain how one such interaction could change your perspective.",
+      "bandHigh": 4.5,
+      "bandLow": 4
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "You use a range of connected structures, including “because everybody had different ideas” and “living in another country is different than see it on a screen.” One clear error is “I learned that is important to communicate,” where the clause needs a subject.",
+      "tip": "A complete clause needs a subject after “that”: change “I learned that is important to communicate” to “I learned that it is important to communicate.”",
+      "bandHigh": 4.5,
+      "bandLow": 4
+    },
+    {
+      "criterion": "vocabulary",
+      "evidence": "Your vocabulary is relevant to the topics, with phrases such as “business administration,” “marketing plan,” and “different cultures.” You explain your ideas clearly, but rely mostly on familiar, general wording such as “very useful” and “a good grade.”",
+      "tip": "Replace a general phrase with a more precise one: instead of “very useful,” try “valuable for building language skills and cross-cultural understanding.”",
+      "bandHigh": 4.5,
+      "bandLow": 4
+    },
+    {
+      "criterion": "delivery",
+      "evidence": "The transcript cannot show how you sounded, so this is a wider estimate based on the other criteria. There are no clear signs in the transcript that a listener had trouble understanding you.",
+      "tip": "Make the stressed syllables clear in “administration” and “communicate” so listeners can catch these key words.",
+      "bandHigh": 4.5,
+      "bandLow": 3.5
+    }
+  ],
+  "focus": "repetition",
+  "heard": true
+}

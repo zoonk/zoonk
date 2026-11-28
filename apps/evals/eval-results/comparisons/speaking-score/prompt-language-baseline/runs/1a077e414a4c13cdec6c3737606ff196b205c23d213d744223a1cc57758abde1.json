@@ -1,0 +1,13 @@
+{
+  "caseId": "pt-en-cambridge-b2-collaborative-accent",
+  "challenger": {
+    "costUsd": 0.00075582,
+    "durationMs": 12031.188832999993,
+    "hash": "2c2464b267104aac400bf50e2c8d106032ba9b13692b8013bd72a288d348d5e8",
+    "systemPromptHash": "211daa4c9eaa7115aefcf5948ace527038e70aa2f74e23004e595bf16dc60030",
+    "userPromptHash": "2112b69df70d18dd0367610f69b0cb7a87f120a2e9fd2d0b73f25bae7bd31ca6"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 2
+}

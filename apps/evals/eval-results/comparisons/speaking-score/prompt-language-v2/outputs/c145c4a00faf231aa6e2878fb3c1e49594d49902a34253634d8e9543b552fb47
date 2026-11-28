@@ -1,0 +1,42 @@
+{
+  "brief": true,
+  "criteria": [
+    {
+      "criterion": "repetition",
+      "evidence": "Você repetiu exatamente “The library opens at eight.”, mas depois houve trocas e omissões: “Please show your card in the door” mudou “student card” e “at the door”, e “Students who want a group room... reserve online... one day” perdeu partes importantes da frase original. ",
+      "tip": "Ao repetir frases longas, agrupe as palavras para guardar a estrutura e os detalhes: “Students who want to book a group study room / should reserve it online / at least a day in advance.”",
+      "bandHigh": 2.5,
+      "bandLow": 2
+    },
+    {
+      "criterion": "elaboration",
+      "evidence": "Você respondeu às perguntas com informações relevantes, como “I wait long time, one hour. I arrive late in the class.”, mas as respostas são curtas e trazem poucos detalhes ou explicações. “Maybe more bicycle. Or electric car. I don't know.” também não desenvolve a previsão.",
+      "tip": "Depois de responder, acrescente um motivo ou exemplo concreto. Em vez de “Bus is expensive”, experimente: “Bus fares are expensive, so free passes would help students save money.”",
+      "bandHigh": 2.5,
+      "bandLow": 2
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você usa estruturas simples, mas há erros frequentes, como “Is about thirty minutes” e “I arrive late in the class”. Também aparecem problemas de concordância e forma verbal em “Quiet study rooms is on the second floor” e “the library close”.",
+      "tip": "Em frases no presente simples, use “is” antes de uma descrição e ajuste o verbo ao sujeito: em vez de “Is about thirty minutes”, diga “It is about thirty minutes”; para um sujeito plural, diga “Quiet study rooms are on the second floor.”",
+      "bandHigh": 2.5,
+      "bandLow": 2
+    },
+    {
+      "criterion": "vocabulary",
+      "evidence": "Você usa palavras básicas e pertinentes ao tema, como “bus”, “expensive” e “electric car”. Porém, o vocabulário fica pouco variado e, em “Maybe more bicycle”, falta uma forma natural para expressar a ideia de mais bicicletas.",
+      "tip": "Amplie a resposta com expressões de transporte mais específicas: em vez de “Maybe more bicycle”, diga “More students may commute by bicycle.”",
+      "bandHigh": 2.5,
+      "bandLow": 2
+    },
+    {
+      "criterion": "delivery",
+      "evidence": "A transcrição não mostra como você soou, então esta é uma estimativa mais ampla, orientada pelas outras evidências da fala, como as respostas breves “I go by bus” e “Maybe more bicycle.”",
+      "tip": "Para tornar as palavras-chave mais fáceis de entender, pratique a sílaba tônica de “electric”: diga e-LEC-tric, com o destaque na sílaba do meio.",
+      "bandHigh": 3,
+      "bandLow": 2
+    }
+  ],
+  "focus": "repetition",
+  "heard": true
+}

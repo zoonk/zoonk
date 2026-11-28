@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "repetition",
+      "evidence": "You repeated the first six sentences accurately, including the longer one beginning “The employer fair, which usually takes place in the gym.” In the final item, you said “Students who would like feedback on their cover letters should upload them at least two days before the appointment,” changing “who'd” and “their appointment” from the prompt.",
+      "tip": "For the longest sentence, hold onto each small word and ending by hearing it in groups: “Students who'd like feedback on their cover letters / should upload them / at least two days before their appointment.”",
+      "bandHigh": 6,
+      "bandLow": 5.5
+    },
+    {
+      "criterion": "elaboration",
+      "evidence": "You develop your answers with clear reasons and specific details, such as “people were worried about noise, about losing parking, about their small shops,” and you connect that experience to your career choice. Some predictions, such as graduates facing “less opportunities to learn on the job,” could be supported with a more concrete example.",
+      "tip": "After making a prediction, add a specific example: “For instance, a city-planning placement could teach graduates to weigh transit data against residents’ needs.”",
+      "bandHigh": 5.5,
+      "bandLow": 5
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "You handle complex structures well, including “Seeing planners balance all of that, and actually change the design because of what residents said, is what convinced me.” A couple of errors appear in “less opportunities” and “the most of graduates.”",
+      "tip": "Use “fewer” with countable plural nouns: change “less opportunities” to “fewer opportunities.”",
+      "bandHigh": 5,
+      "bandLow": 4.5
+    },
+    {
+      "criterion": "vocabulary",
+      "evidence": "You use a varied, precise range, including “reshape the way an entire neighborhood lives and works,” “a double-edged sword,” and “arrive fully formed.” Some wording remains broad, such as “technical skills,” rather than naming a specific skill.",
+      "tip": "Make broad terms more precise by naming a relevant skill: instead of “technical skills,” try “the ability to analyze transit data.”",
+      "bandHigh": 5.5,
+      "bandLow": 5
+    },
+    {
+      "criterion": "delivery",
+      "evidence": "The transcript can't show how you sounded, so this is a wider estimate guided by your performance on the other criteria. There are no transcript signs of words being misheard or of a request to repeat.",
+      "tip": "To help listeners follow key ideas, make the main words stand out when you say “urban planning” and “public transport projects.”",
+      "bandHigh": 5.5,
+      "bandLow": 4.5
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

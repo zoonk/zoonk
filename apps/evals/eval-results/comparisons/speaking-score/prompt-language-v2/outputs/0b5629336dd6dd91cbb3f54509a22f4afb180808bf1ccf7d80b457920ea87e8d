@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "repetition",
+      "evidence": "Você repetiu corretamente frases como “Goggles must be worn at all times.”, mas em “before you try to clean it” faltou o “up” da frase original, e em “until they finished it” você mudou “finish” para “finished”.",
+      "tip": "Nas frases longas, memorize blocos de sentido e preserve as palavras finais: “If something spills / tell the lab assistant / before you try to clean it up.”",
+      "bandHigh": 5.5,
+      "bandLow": 4.5
+    },
+    {
+      "criterion": "elaboration",
+      "evidence": "Você respondeu às perguntas com razões, exemplos e consequências, como em “because printing everything would be expensive and not very sustainable” e na previsão sobre “more oral exams and projects”. As respostas são coerentes e bem desenvolvidas, embora algumas ideias pudessem ganhar exemplos mais específicos.",
+      "tip": "Depois de apresentar uma opinião, acrescente um exemplo concreto que mostre como ela se aplica, por exemplo: “For example, a teacher could allow phones only during research activities.”",
+      "bandHigh": 5.5,
+      "bandLow": 5
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você usa estruturas variadas, inclusive frases com condicionais e explicações, mas há alguns erros em “I use my laptop since the first semester”, “more easy” e “discuss about clear rules”.",
+      "tip": "Para comparar, use o comparativo irregular “easier”, sem “more”: em vez de “more easy”, diga “easier”.",
+      "bandHigh": 4.5,
+      "bandLow": 4
+    },
+    {
+      "criterion": "vocabulary",
+      "evidence": "Você emprega vocabulário pertinente e variado, como “organic chemistry exam”, “not very sustainable” e “really distracting”. Algumas escolhas poderiam ser mais precisas para expressar suas ideias com naturalidade.",
+      "tip": "Para especificar melhor a ideia de aprendizagem personalizada, troque “make learning more personal” por “tailor explanations to each student's needs”.",
+      "bandHigh": 5,
+      "bandLow": 4.5
+    },
+    {
+      "criterion": "delivery",
+      "evidence": "A transcrição não mostra como você soou, então esta é uma estimativa mais ampla; pelo encadeamento das respostas, como em “The risk is that students stop thinking by themselves”, sua fala parece organizada e sustentada.",
+      "tip": "Ao falar de termos importantes, destaque as sílabas tônicas para facilitar a compreensão, especialmente em “organic chemistry” e “artificial intelligence”.",
+      "bandHigh": 5.5,
+      "bandLow": 4.5
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

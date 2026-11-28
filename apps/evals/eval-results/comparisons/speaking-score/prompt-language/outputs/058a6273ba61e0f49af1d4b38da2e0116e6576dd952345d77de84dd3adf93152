@@ -1,0 +1,28 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "grammarVocabulary",
+      "evidence": "Você usa vocabulário adequado para comparar as fotos e explicar suas preferências, como em “more personal and relaxed” e “more motivating”. As estruturas estão corretas, mas são em geral simples, como “I want to do something with my hands”, sem muita variedade gramatical.",
+      "tip": "Para acrescentar uma consequência à sua ideia, use uma oração relativa com “which”: de “I want to do something with my hands” para “I want to do something with my hands, which would give me a break from screens.”",
+      "bandHigh": 4,
+      "bandLow": 3
+    },
+    {
+      "criterion": "discourse",
+      "evidence": "A comparação está organizada com marcadores como “In the first photo”, “In the second photo” e “while”, e você apresenta razões para as escolhas. As ideias são pertinentes, mas você quase não as desenvolve além de afirmações curtas, como “At home you can make mistakes without feeling embarrassed”.",
+      "tip": "Depois de cada razão, acrescente uma explicação ou exemplo concreto; por exemplo, depois de falar sobre não sentir vergonha, diga: “That might make it easier to try a new recipe without worrying about getting it wrong.”",
+      "bandHigh": 3.5,
+      "bandLow": 2.5
+    },
+    {
+      "criterion": "global",
+      "evidence": "Você responde ao tema, compara as duas formas de aprender e explica sua própria preferência com clareza, por exemplo: “I'd prefer pottery, because I spend all day in front of a computer”. A comunicação é adequada, mas as respostas trazem poucas explicações e detalhes para sustentar as ideias.",
+      "tip": "Ao explicar sua preferência, acrescente um benefício específico e conecte-o ao seu dia a dia: “I'd prefer pottery because I spend all day in front of a computer, and working with clay would help me switch off.”",
+      "bandHigh": 3.5,
+      "bandLow": 2.5
+    }
+  ],
+  "focus": "discourse",
+  "heard": false
+}

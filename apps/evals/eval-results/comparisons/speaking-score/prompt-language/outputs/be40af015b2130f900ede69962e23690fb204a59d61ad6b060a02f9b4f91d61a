@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "coherence",
+      "evidence": "You organize the description in a clear sequence, from the family and their plans to your own experience: “En la foto hay una familia en una estación de tren” and “Pero el año pasado viajé en tren por España”. Your ideas are linked with simple connectors, though the description and follow-up remain fairly brief.",
+      "tip": "Extend the description by linking an observation to a likely reason, for example: “Como la madre lleva una maleta grande, parece que la familia va a pasar varios días fuera.”",
+      "bandHigh": 2,
+      "bandLow": 2
+    },
+    {
+      "criterion": "fluency",
+      "evidence": "You connect ideas in phrases such as “El año pasado viajé en tren por España, de Madrid a Sevilla, y fue una experiencia muy buena.” The transcript cannot show how you sounded, so this is a wider estimate centered on the level suggested by your other criteria.",
+      "tip": "Group related words into complete phrases, then pause briefly between ideas. For example: “El año pasado viajé en tren por España. Fui de Madrid a Sevilla y fue una experiencia muy buena.”",
+      "bandHigh": 2,
+      "bandLow": 1
+    },
+    {
+      "criterion": "accuracy",
+      "evidence": "You use simple past and present forms successfully, as in “el año pasado viajé en tren por España”. There is a subject-verb agreement error in “Me gusta mucho los trenes”; it does not prevent understanding.",
+      "tip": "With “gustar,” make the verb agree with the thing liked: singular “Me gusta el tren,” but plural “Me gustan mucho los trenes.”",
+      "bandHigh": 2,
+      "bandLow": 2
+    },
+    {
+      "criterion": "range",
+      "evidence": "You use vocabulary for the setting, people, travel and opinions, including “una estación de tren” and “más cómodos que el avión”. The range is enough for this familiar topic, but you rely mainly on straightforward descriptions and common words.",
+      "tip": "Add a few precise words for the scene and people’s actions, for example: “La familia espera junto al andén mientras consulta los horarios.”",
+      "bandHigh": 2,
+      "bandLow": 2
+    },
+    {
+      "criterion": "holistic",
+      "evidence": "You describe the main people and setting, suggest what they may be doing, and connect the photo to your own experience: “seguramente van de vacaciones” and “viajé en tren por España, de Madrid a Sevilla”. The communication is clear, though the description develops the scene and its details only briefly.",
+      "tip": "Include more of the requested photo details, then relate one of them to your own life. For example: “Los niños parecen cansados, quizá porque llevan mucho tiempo esperando. A mí también me ha pasado cuando he viajado en tren.”",
+      "bandHigh": 2,
+      "bandLow": 2
+    }
+  ],
+  "focus": "accuracy",
+  "heard": true
+}

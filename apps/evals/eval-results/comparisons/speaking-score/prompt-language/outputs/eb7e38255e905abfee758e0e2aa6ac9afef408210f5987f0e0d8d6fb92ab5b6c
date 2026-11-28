@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "coherence",
+      "evidence": "Você organiza a fala por propostas e usa conectores para apresentar contrastes, como em “Por un lado” e “Sin embargo”. Na conversa, responde às perguntas e mantém o tema, mas desenvolve pouco as respostas finais e não retoma a comparação entre as propostas.",
+      "tip": "Na conclusão, compare explicitamente a proposta escolhida com uma alternativa, usando uma relação de causa e contraste, por exemplo: “Aunque cerrar el centro los domingos ayudaría a las familias, abaratar el transporte público tendría un efecto más duradero”.",
+      "bandHigh": 2,
+      "bandLow": 2
+    },
+    {
+      "criterion": "fluency",
+      "evidence": "Você encadeia explicações e respostas, como em “Si se invirtiera más en transporte, el tráfico mejoraría mucho”. O transcript não mostra como você soou, então esta é uma estimativa mais ampla, apoiada na continuidade das suas frases e nas demais evidências.",
+      "tip": "Ao falar, articule com clareza “abaratar el transporte público” e “atascos de horas”, para que essas expressões importantes sejam facilmente entendidas.",
+      "bandHigh": 3,
+      "bandLow": 2
+    },
+    {
+      "criterion": "accuracy",
+      "evidence": "Você controla bem várias estruturas, como “mucha gente usaría la bici si fuera más segura”, mas há erros de concordância e de hipótese em “la gente están dispuesta” e “Si tendría más tiempo”.",
+      "tip": "Em hipóteses com “si”, use o imperfeito do subjuntivo antes do condicional: troque “Si tendría más tiempo” por “Si tuviera más tiempo, explicaría también la de los aparcamientos en las afueras”.",
+      "bandHigh": 2,
+      "bandLow": 2
+    },
+    {
+      "criterion": "range",
+      "evidence": "Você usa vocabulário pertinente ao tema, como “carriles bici”, “contaminación” e “aparcamientos en las afueras”, e apresenta razões e ressalvas. As justificativas permanecem relativamente simples, sem explorar muito os efeitos ou as diferenças entre as propostas.",
+      "tip": "Acrescente uma consequência concreta às suas avaliações, por exemplo: “Abaratar el transporte público reduciría el gasto de las familias y podría disminuir los atascos”.",
+      "bandHigh": 2,
+      "bandLow": 2
+    },
+    {
+      "criterion": "holistic",
+      "evidence": "Você avalia quatro propostas, indica qual prefere e relaciona o tema à situação no Brasil, como em “En mi ciudad, en Brasil, el autobús es caro y muy lento”. A comunicação é clara e pertinente, mas algumas ideias ficam pouco desenvolvidas e aparecem erros como “la gente están dispuesta”.",
+      "tip": "Ao justificar sua escolha, inclua uma comparação com outra proposta e uma condição para que a solução funcione, por exemplo: “Abaratar el transporte público sería la mejor opción, siempre que también aumentara la frecuencia de los autobuses”.",
+      "bandHigh": 2,
+      "bandLow": 2
+    }
+  ],
+  "focus": "accuracy",
+  "heard": true
+}

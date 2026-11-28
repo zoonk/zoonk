@@ -1,0 +1,35 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "fluencyCoherence",
+      "evidence": "Você desenvolve as respostas com clareza e conecta ideias de forma natural, como em “On top of that” e “Looking back”. Em alguns momentos, as respostas são concisas, sem desenvolver muito além do ponto principal, o que limita a evidência de uma fala mais extensa e sustentada.",
+      "tip": "Para desenvolver melhor uma ideia, acrescente uma consequência ou exemplo depois de apresentá-la. Por exemplo, depois de “the beginner phase feels almost humiliating”, você poderia acrescentar: “That feeling can make people mistake early difficulty for a lack of ability.”",
+      "bandHigh": 8,
+      "bandLow": 7.5
+    },
+    {
+      "criterion": "lexicalResource",
+      "evidence": "Você usa vocabulário preciso e combinações naturais, como “eat into the time” e “spilled over into other areas of my life”. Para chegar a uma faixa mais alta, poderia mostrar ainda mais flexibilidade lexical ao desenvolver as respostas, em vez de se apoiar principalmente em expressões já muito claras e diretas.",
+      "tip": "Eleve uma expressão simples com um modificador mais preciso: em vez de “slow progress”, experimente “painstakingly slow progress” ao falar sobre aprender uma habilidade.",
+      "bandHigh": 8,
+      "bandLow": 7.5
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você usa estruturas variadas com controle, como “I'd always been drawn to its sound” e “although I can see why a small business couldn't justify it”. Há alguns deslizes em frases como “I work as data analyst” e “A lot of them could easily have been an email”, que reduzem a consistência da precisão gramatical.",
+      "tip": "Em inglês, um substantivo contável no singular normalmente precisa de um artigo. Corrija “I work as data analyst” para “I work as a data analyst.”",
+      "bandHigh": 7.5,
+      "bandLow": 7
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "A transcrição não mostra como você soou, e não há nela sinais claros de palavras mal compreendidas ou pedidos de repetição; por isso, esta é uma estimativa mais ampla, baseada nas outras habilidades avaliadas.",
+      "tip": "Para ajudar o ouvinte a reconhecer “unforgiving”, deixe clara a sílaba tônica: unforGIVing.",
+      "bandHigh": 8,
+      "bandLow": 7
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

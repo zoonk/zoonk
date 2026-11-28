@@ -1,0 +1,28 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "grammarVocabulary",
+      "evidence": "Você usa estruturas corretas e vocabulário adequado para comparar as opções, como “more personal and relaxed” e “more motivating”. As ideias são claras, mas o vocabulário e as estruturas permanecem relativamente simples, sem muita elaboração.",
+      "tip": "Amplie o vocabulário acrescentando uma razão mais específica: em vez de apenas “more personal and relaxed”, tente “The informal setting may make it easier to ask questions and learn at your own pace.”",
+      "bandHigh": 3.5,
+      "bandLow": 2.5
+    },
+    {
+      "criterion": "discourse",
+      "evidence": "Você organiza a comparação com contrastes claros, usando “while” e “Also”, e relaciona cada forma de aprendizagem a possíveis motivos. Para desenvolver melhor as ideias, poderia explicar mais a comparação entre as fotos, em vez de passar rapidamente de um ponto ao seguinte.",
+      "tip": "Depois de comparar os ambientes, desenvolva o contraste com uma consequência: “While learning at home offers more privacy, a group class can provide feedback from both the teacher and other learners.”",
+      "bandHigh": 3.5,
+      "bandLow": 2.5
+    },
+    {
+      "criterion": "global",
+      "evidence": "Você responde às perguntas de forma relevante e compreensível, com razões apropriadas, como “I want to do something with my hands.” A comunicação é coerente, mas as respostas apresentam pouco desenvolvimento das ideias e variedade limitada de estruturas.",
+      "tip": "Para dar mais profundidade à sua resposta final, acrescente como a atividade poderia beneficiar você: “I'd prefer pottery because I spend all day in front of a computer, and working with clay would help me relax while creating something practical.”",
+      "bandHigh": 3.5,
+      "bandLow": 2.5
+    }
+  ],
+  "focus": "discourse",
+  "heard": false
+}

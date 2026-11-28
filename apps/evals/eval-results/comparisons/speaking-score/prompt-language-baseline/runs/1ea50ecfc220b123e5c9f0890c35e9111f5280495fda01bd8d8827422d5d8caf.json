@@ -1,0 +1,13 @@
+{
+  "caseId": "pt-en-cambridge-b2-long-turn-typed",
+  "challenger": {
+    "costUsd": 0.0010458499999999999,
+    "durationMs": 11784.530166000011,
+    "hash": "729ae6a5797347122a97172c5679efe614d4c65c70014fe892368b6fe517ae87",
+    "systemPromptHash": "211daa4c9eaa7115aefcf5948ace527038e70aa2f74e23004e595bf16dc60030",
+    "userPromptHash": "2684efd06f0724eba38b7dfdfcc546b894ce11a76e042b65c89c1a3d71e33aa9"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 1
+}

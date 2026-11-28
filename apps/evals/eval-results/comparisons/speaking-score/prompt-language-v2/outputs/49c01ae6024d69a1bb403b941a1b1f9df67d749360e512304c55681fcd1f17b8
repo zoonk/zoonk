@@ -1,0 +1,35 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "fluencyCoherence",
+      "evidence": "You organize your answers clearly and connect ideas with phrases such as “On the other hand” and “that's why.” Your cue-card answer gives reasons and examples, though your discussion answers are brief and could develop their ideas further.",
+      "tip": "After making a point, add a brief explanation or example, such as: “Practical skills belong in school because they help students manage everyday life, for example, by learning to plan a budget.”",
+      "bandHigh": 6.5,
+      "bandLow": 6
+    },
+    {
+      "criterion": "lexicalResource",
+      "evidence": "You use some precise and natural topic vocabulary, including “overwhelming” and “a steep learning curve.” Some later wording is more general, such as “more choice,” which limits the range and precision of your vocabulary.",
+      "tip": "Replace general descriptions with more specific phrases. For example, develop “the basic mix of spices” into “a balanced blend of spices.”",
+      "bandHigh": 6.5,
+      "bandLow": 6
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "You use a mix of sentence structures, as in “once I understood the basic mix of spices,” but several forms are inaccurate: “I am doing this job since two years,” “I am agree,” and “depends of.” These errors keep your range and accuracy from being more consistent.",
+      "tip": "Use the present perfect continuous with “for” to describe an activity that began in the past and continues now: “I am doing this job since two years” becomes “I have been doing this job for two years.”",
+      "bandHigh": 6,
+      "bandLow": 5.5
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "The transcript can't show how you sounded, so this is a wider estimate based on your other criteria rather than direct evidence of pronunciation.",
+      "tip": "Make the stressed syllables clear in “overwhelming” and “confident” so listeners can catch these key details easily.",
+      "bandHigh": 6.5,
+      "bandLow": 5.5
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

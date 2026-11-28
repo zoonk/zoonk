@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "taskCompletion",
+      "evidence": "Você cobriu os cinco pontos: apresentou o tema e a estrutura em “Zuerst erzähle ich von meinen Erfahrungen”, falou da situação no Brasil, citou vantagens e desvantagens, deu sua opinião e encerrou com “Vielen Dank für Ihre Aufmerksamkeit.”",
+      "tip": "Para tornar a apresentação ainda mais completa, acrescente um exemplo concreto sobre o Brasil, como “Viele Jugendliche nutzen soziale Medien, um sich über Veranstaltungen zu informieren.”",
+      "bandHigh": 4,
+      "bandLow": 4
+    },
+    {
+      "criterion": "coherence",
+      "evidence": "A sequência é fácil de acompanhar, com sinalizações como “Zuerst”, “dann” e “am Ende”, além de relações claras em “Das ist ein Problem, weil sie im Unterricht nicht aufpassen.”",
+      "tip": "Use uma transição explícita ao passar da experiência pessoal para a situação no Brasil, por exemplo: “Nachdem ich von meinen Erfahrungen erzählt habe, möchte ich jetzt die Situation in Brasilien beschreiben.”",
+      "bandHigh": 4,
+      "bandLow": 3
+    },
+    {
+      "criterion": "vocabulary",
+      "evidence": "Você usa vocabulário pertinente ao tema, como “in Kontakt bleiben”, “Informationen finden” e “vergleicht sich mit anderen”; as ideias, porém, são expressas sobretudo com palavras e formulações bastante comuns.",
+      "tip": "Amplie o vocabulário sobre os efeitos das redes sociais, substituindo “Man schläft weniger” por uma formulação mais específica, como “Die Nutzung sozialer Medien kann den Schlaf beeinträchtigen.”",
+      "bandHigh": 3,
+      "bandLow": 3
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você constrói frases compreensíveis e usa estruturas variadas, como “Meiner Meinung nach sollten Jugendliche soziale Medien benutzen”; em “weil ich habe viele Freunde in anderen Städten”, a ordem do verbo na oração subordinada não está correta.",
+      "tip": "Depois de “weil”, o verbo conjugado vai para o fim: troque “weil ich habe viele Freunde in anderen Städten” por “weil ich viele Freunde in anderen Städten habe.”",
+      "bandHigh": 3,
+      "bandLow": 2
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "A transcrição não permite saber como você soou, então esta é uma estimativa mais ampla; sem sinais indiretos de problemas de compreensão no trecho, ela acompanha os demais aspectos da sua produção.",
+      "tip": "Ao dizer “Jugendlichen” e “Informationen”, articule com clareza as sílabas finais para que cada palavra seja facilmente reconhecida.",
+      "bandHigh": 4,
+      "bandLow": 3
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}
