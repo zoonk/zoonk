@@ -735,6 +735,7 @@ msgstr "保存できませんでした。もう一度お試しください。"
 #: src/country/country-picker.tsx
 #: src/explain/explain-waiting.tsx
 #: src/mind-maps/mind-map-viewer.tsx
+#: src/onboarding/onboarding-task.tsx
 #: src/plan/plan-editor.tsx
 msgctxt "rbrahO"
 msgid "Close"
