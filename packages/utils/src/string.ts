@@ -13,6 +13,14 @@ export function removeAccents(str: string): string {
     .normalize("NFC");
 }
 
+/**
+ * A hyphen between letters becomes a non-breaking one, so a name like "An-Nahl" wraps whole: a
+ * line break inside it splits the name and leaves half of it alone on a line.
+ */
+export function keepHyphenatedWords(text: string): string {
+  return text.replaceAll(/(?<=\p{L})-(?=\p{L})/gu, "\u2011");
+}
+
 export function normalizeString(str: string): string {
   return removeAccents(str).toLowerCase().replaceAll(/\s+/gu, " ").trim();
 }
