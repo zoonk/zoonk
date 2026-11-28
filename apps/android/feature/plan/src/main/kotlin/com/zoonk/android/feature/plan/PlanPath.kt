@@ -139,7 +139,7 @@ private fun PhaseItem(
             )
             if (open) {
                 phase.mocks.nextDate?.let { MockRow(page, it.toJavaLocalDate(), links, phase.mocks.nextPlanItemId) }
-                phase.checkpoint?.let { CheckpointRow(page, it, links, indent = nested, brief = brief) }
+                phase.checkpoint?.let { CheckpointRow(page, phase, it, links, indent = nested, brief = brief) }
             }
         }
         return
@@ -167,7 +167,7 @@ private fun PhaseItem(
             byPlace = byPlace && expanded && phase.state != PlanPhase.State.CURRENT,
         )
         if (expanded) {
-            PhaseChapters(page, phase.chapters, phase.checkpoint, links, indent = nested, brief = brief)
+            PhaseChapters(page, phase, links, indent = nested, brief = brief)
             phase.mocks.nextDate?.let { MockRow(page, it.toJavaLocalDate(), links, phase.mocks.nextPlanItemId) }
         }
     }
@@ -417,14 +417,13 @@ internal fun ChapterMark(
 @Composable
 internal fun PhaseChapters(
     page: PlanPageState,
-    chapters: List<PlanPhaseChaptersInner>,
-    checkpoint: PlanPhaseCheckpoint?,
+    phase: PlanPhase,
     links: PlanLinks,
     indent: Dp = 0.dp,
     brief: Boolean = false,
 ) {
     var showAll by rememberSaveable { mutableStateOf(false) }
-    val rows = chapters.filterNot { it.isWritingAhead }
+    val rows = phase.chapters.filterNot { it.isWritingAhead }
     val window = chapterWindow(rows.map { it.state })
     val hidden = rows.size - (window.last - window.first + 1).coerceAtLeast(0)
     val shown = if (showAll) rows else rows.slice(window)
@@ -445,7 +444,7 @@ internal fun PhaseChapters(
                 indent = indent,
             ) { showAll = !showAll }
         }
-        checkpoint?.let { CheckpointRow(page, it, links, indent, brief) }
+        phase.checkpoint?.let { CheckpointRow(page, phase, it, links, indent, brief) }
     }
 }
 
@@ -530,6 +529,7 @@ private fun challengeNotInPlan(page: PlanPageState): String =
 @Composable
 internal fun CheckpointRow(
     page: PlanPageState,
+    phase: PlanPhase,
     checkpoint: PlanPhaseCheckpoint,
     links: PlanLinks,
     indent: Dp = 0.dp,
@@ -560,7 +560,7 @@ internal fun CheckpointRow(
             }
 
             else -> {
-                when (val day = page.plan.challengeDay(checkpoint)) {
+                when (val day = page.plan.challengeDay(phase)) {
                     PhaseEnd.Later -> sameWords(stringResource(R.string.plan_later))
                     is PlanEnd -> planDate(day.date, page.today, day.estimate, day.month, day.year)
                     else -> null
@@ -780,7 +780,7 @@ internal fun ColumnScope.PhaseDetails(
 
     Column(Modifier.bleed(LIST_ITEM_INSET)) {
         if (learn) {
-            PhaseChapters(page, phase.chapters, phase.checkpoint, links)
+            PhaseChapters(page, phase, links)
         } else {
             phase.mocks.nextDate?.let { MockRow(page, it.toJavaLocalDate(), links, phase.mocks.nextPlanItemId) }
             if (phase.mocks.nextDate == null && phase.mocks.count > 0) {
@@ -792,7 +792,7 @@ internal fun ColumnScope.PhaseDetails(
                     MetaLine(pluralStringResource(R.plurals.plan_mock_exams_count, phase.mocks.count.toInt(), phase.mocks.count.toInt()))
                 }
             }
-            phase.checkpoint?.let { CheckpointRow(page, it, links) }
+            phase.checkpoint?.let { CheckpointRow(page, phase, it, links) }
         }
     }
 }

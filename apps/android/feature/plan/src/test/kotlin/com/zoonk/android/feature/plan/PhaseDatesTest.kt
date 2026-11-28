@@ -98,20 +98,26 @@ class PhaseDatesTest {
                 phase(0),
                 phase(1, checkpoint = """{"date":null,"later":true,"locked":false,"planItemId":null,"state":"upcoming","when":"date"}"""),
             )
-        assertEquals(PhaseEnd.Later, shaped.challengeDay(shaped.phases[1].checkpoint!!))
+        assertEquals(PhaseEnd.Later, shaped.challengeDay(shaped.phases[1]))
     }
 
     @Test
-    fun saysAChallengeByItsPhasesPrecision() {
-        val byYear = planOf(phase(0, checkpoint = challenge("2031-04-02", precision = "year")))
-        val byMonth = planOf(phase(0, checkpoint = challenge("2027-04-02", precision = "month")))
-        val byDay = planOf(phase(0, checkpoint = challenge("2027-04-02")))
-        assertEquals(
-            PlanEnd(day("2031-04-02"), estimate = true, month = false, year = true),
-            byYear.challengeDay(byYear.phases[0].checkpoint!!),
-        )
-        assertEquals(PlanEnd(day("2027-04-02"), estimate = true, month = true), byMonth.challengeDay(byMonth.phases[0].checkpoint!!))
-        assertEquals(PlanEnd(day("2027-04-02"), estimate = true, month = false), byDay.challengeDay(byDay.phases[0].checkpoint!!))
+    fun datesAChallengeAsItsPhasesEndIs() {
+        val byYear = planOf(phase(0, end = "2031-04-02", checkpoint = challenge("2031-04-02"), precision = "year"))
+        val far = planOf(phase(0, end = "2027-04-02", checkpoint = challenge("2027-04-02"), precision = "month"))
+        val near = planOf(phase(0, end = "2026-12-01", checkpoint = challenge("2026-12-01")))
+        assertEquals(PlanEnd(day("2031-04-02"), estimate = true, month = false, year = true), byYear.challengeDay(byYear.phases[0]))
+        assertEquals(PlanEnd(day("2027-04-02"), estimate = true, month = true), far.challengeDay(far.phases[0]))
+        assertEquals(PlanEnd(day("2026-12-01"), estimate = true, month = false), near.challengeDay(near.phases[0]))
+    }
+
+    @Test
+    fun datesAChallengeOnTheLastDayOfThePhaseUnderWayByThatDayAsThePhase() {
+        val shaped =
+            planOf(phase(0, "current", "2027-02-27", checkpoint = challenge("2027-02-27", precision = "month"), precision = "month"))
+        val phaseEnd = PlanEnd(day("2027-02-27"), estimate = true, month = false)
+        assertEquals(phaseEnd, shaped.phaseEnd(shaped.phases[0]))
+        assertEquals(phaseEnd, shaped.challengeDay(shaped.phases[0]))
     }
 
     @Test

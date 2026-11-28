@@ -80,7 +80,7 @@ class PlanFinishScreenshots {
     @Config(qualifiers = "w411dp-h1200dp-night-xxhdpi")
     fun phaseSheetDark() = sheets("phone-dark", dark = true)
 
-    /** A phase years off, one with no place yet and its challenge, and an exam phase ending on its challenge's day. */
+    /** A phase years off, one with no place yet and its challenge, and an exam phase ahead and one under way ending on its challenge's day. */
     private fun sheets(
         name: String,
         dark: Boolean = false,
@@ -90,6 +90,7 @@ class PlanFinishScreenshots {
                 "year" to (yearPage() to 2),
                 "later" to (beyondPage() to 3),
                 "exam-challenge-day" to (examChallengeDayPage() to 2),
+                "exam-current-challenge-day" to (examCurrentChallengeDayPage() to 1),
             )
         var shown by mutableStateOf(sheets.first())
         compose.setContent {
@@ -110,7 +111,12 @@ class PlanFinishScreenshots {
     }
 
     /** An exam phase ahead whose challenge falls on its last day, as both its row and the challenge's say "~". */
-    private fun examChallengeDayPage(): PlanPageState {
+    private fun examChallengeDayPage(): PlanPageState = examPhaseEndingOnItsChallenge(2)
+
+    /** The exam phase under way, months from its end on its challenge's day: both keep that day. */
+    private fun examCurrentChallengeDayPage(): PlanPageState = examPhaseEndingOnItsChallenge(1)
+
+    private fun examPhaseEndingOnItsChallenge(index: Long): PlanPageState {
         val page = examPage(year = false)
         val challenge =
             ApiJson.decodeFromString(
@@ -121,12 +127,13 @@ class PlanFinishScreenshots {
             page.plan.copy(
                 phases =
                     page.plan.phases.map {
-                        if (it.index == 2L) {
+                        if (it.index == index) {
                             it.copy(
                                 name = "",
                                 milestone = null,
                                 kind = PlanPhase.Kind.GAPS,
                                 endDate = LocalDate(2027, 1, 20),
+                                precision = PlanFinishPrecision.MONTH,
                                 checkpoint = challenge,
                             )
                         } else {
