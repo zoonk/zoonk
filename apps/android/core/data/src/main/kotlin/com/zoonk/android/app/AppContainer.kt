@@ -362,6 +362,10 @@ class AppContainer private constructor(
             ?: combine(sessions.state, learnerSummary.summary.state, ::learnerAccess)
                 .stateIn(scope, SharingStarted.Eagerly, LearnerAccess.Restoring)
 
+    fun retrySessionRestore() {
+        scope.launch { sessions.retryRestore() }
+    }
+
     val catalog = CatalogStore(LiveCatalogApi(api), cache)
     val countries = CountryStore(LiveCountryApi(api), cache)
     val stats = StatsStore(LiveStatsApi(api), cache)
